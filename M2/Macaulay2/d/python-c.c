@@ -37,10 +37,6 @@ int python_ErrOccurred(void) {
 		return (PyErr_Occurred() != NULL);
 }
 
-void python_ErrPrint(void) {
-	PyErr_Print();
-}
-
 PyObject *python_RunString(M2_string s) {
   char *t = M2_tocharstar(s);
   init();
@@ -59,30 +55,6 @@ int python_Main() {
 /***********
  * objects *
  ***********/
-
-PyObject *python_ObjectType(PyObject *o) {
-  return PyObject_Type(o);
-}
-
-int python_ObjectRichCompareBool(PyObject *o1, PyObject *o2, int opid) {
-	return PyObject_RichCompareBool(o1, o2, opid);
-}
-
-int python_ObjectHasAttrString(PyObject *o, char *attr) {
-	return PyObject_HasAttrString(o, attr);
-}
-
-PyObject *python_ObjectGetAttrString(PyObject *o, char *attr) {
-	return PyObject_GetAttrString(o, attr);
-}
-
-int python_ObjectSetAttrString(PyObject *o, char *attr_name, PyObject *v) {
-	return PyObject_SetAttrString(o, attr_name, v);
-}
-
-PyObject *python_ObjectStr(PyObject *o) {
-	return PyObject_Str(o);
-}
 
 /* see http://docs.python.org/extending/extending.html for this example */
 
@@ -109,123 +81,6 @@ void python_initspam() {
   SpamError = PyErr_NewException(name, NULL, NULL);
   Py_INCREF(SpamError);
   PyModule_AddObject(m, "error", SpamError);
-}
-
-/*********
- * bools *
- *********/
-
-PyObject *python_True = Py_True;
-PyObject *python_False = Py_False;
-
-/********
- * ints *
- ********/
-
-long python_LongAsLong(PyObject *o) {
-	return PyLong_AsLong(o);
-}
-
-PyObject *python_LongFromLong(long v) {
-	return PyLong_FromLong(v);
-}
-
-/**********
- * floats *
- **********/
-
-double python_FloatAsDouble(PyObject *o) {
-	return PyFloat_AsDouble(o);
-}
-
-PyObject *python_FloatFromDouble(double v) {
-	return PyFloat_FromDouble(v);
-}
-
-/*************
- * complexes *
- *************/
-
-PyObject* python_ComplexFromDoubles(double real, double imag) {
-	return PyComplex_FromDoubles(real, imag);
-}
-
-/***********
- * strings *
- ***********/
-
-const char *python_UnicodeAsUTF8(PyObject *o) {
-	return PyUnicode_AsUTF8(o);
-}
-
-PyObject *python_UnicodeFromString(char *u) {
-	return PyUnicode_FromString(u);
-}
-
-/**********
- * tuples *
- **********/
-
-PyObject *python_TupleNew(int n) {
-	return PyTuple_New(n);
-}
-
-int python_TupleSetItem(PyObject *L, int i, PyObject *item) {
-	return PyTuple_SetItem(L, i, item);
-}
-
-/*********
- * lists *
- *********/
-
-PyObject *python_ListNew(int n) {
-	return PyList_New(n);
-}
-
-int python_ListSetItem(PyObject *L, int i, PyObject *item) {
-	return PyList_SetItem(L, i, item);
-}
-
-/****************
- * dictionaries *
- ****************/
-
-PyObject *python_DictNew(void) {
-	return PyDict_New();
-}
-
-int python_DictSetItem(PyObject *p, PyObject *key, PyObject *val) {
-	return PyDict_SetItem(p, key, val);
-}
-
-/********
- * sets *
- ********/
-
-PyObject *python_SetNew(PyObject *o) {
-	return PySet_New(o);
-}
-
-/*************
- * callables *
- *************/
-
-PyObject *python_ObjectCall(PyObject *o, PyObject *args, PyObject *kwargs) {
-	return PyObject_Call(o, args, kwargs);
-}
-
-/********
- * none *
- ********/
-
-PyObject *python_None = Py_None;
-
-/*************
- * importing *
- *************/
-
-PyObject *python_ImportImportModule(char *name) {
-	return PyImport_ImportModule(name);
 }
 
 #if 0
