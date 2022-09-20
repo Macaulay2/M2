@@ -1246,10 +1246,9 @@ assert Equation(value int16(-2^15), -2^15)
 assert Equation(value uint32(2^32 - 1), 2^32 - 1)
 assert Equation(value int32(2^31 - 1), 2^31 - 1)
 assert Equation(value int32(-2^31), -2^31)
-if version#"pointer size" == 8 then (
-    assert Equation(value uint64(2^64 - 1), 2^64 - 1);
-    assert Equation(value int64(2^63 - 1), 2^63 - 1);
-    assert Equation(value int64(-2^63), -2^63))
+assert Equation(value uint64(2^64 - 1), 2^64 - 1)
+assert Equation(value int64(2^63 - 1), 2^63 - 1)
+assert Equation(value int64(-2^63), -2^63)
 assert Equation(value uchar(2^8 - 1), 2^8 - 1)
 assert Equation(value char'(2^7 - 1), 2^7 - 1)
 assert Equation(value char'(-2^7), -2^7)
