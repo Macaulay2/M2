@@ -14,19 +14,21 @@ subring Matrix := opts -> M -> (
 	M.cache#"Subring"
 	) else (
 	R := ring M;
+	coeffRing := coefficientRing R;
+	local subductionRing;
+	if instance(opts.GeneratorSymbol,Nothing) then
+	     subductionRing = coeffRing[Variables => numcols M]
+	else if instance(opts.GeneratorSymbol,Symbol) then
+	     subductionRing = coeffRing[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
+	else error("Invalid GeneratorSymbol option");
+
     	S := new Subring from{
             "ambientRing" => R,
             "generators" => M,
+	    "subductionQuotientRing" => subductionRing,
             cache => new CacheTable from M.cache
     	    };
-    	M.cache#"Subring" = S;
-	baseRing := coefficientRing R;
-	S.cache#"subductionQuotientRing" = (
-	    if instance(opts.GeneratorSymbol, Nothing) then baseRing[Variables => numcols M]
-	    else if instance(opts.GeneratorSymbol, Symbol) then baseRing[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
-	    else error("Invalid value for the option GeneratorSymbol")
-	    );
-    	S
+    	M.cache#"Subring" = S
 	)
     )
 subring List := opts -> L -> subring(matrix{L}, opts)
@@ -36,7 +38,8 @@ subring List := opts -> L -> subring(matrix{L}, opts)
 ambient Subring := S -> S#"ambientRing"
 gens Subring := opts -> S -> S#"generators"
 numgens Subring := S -> numcols gens S
-subductionQuotientRing = S -> S.cache#"subductionQuotientRing"
+subdunctionQuotientRing = method()
+subductionQuotientRing := S -> S#"subductionQuotientRing"
 net Subring := S -> (
     R := ambient S;
     A := subductionQuotientRing S;    
@@ -48,16 +51,16 @@ net Subring := S -> (
 -- A SAGBIBasis represents a partial or complete SAGBI computation.
 -- It contains all the data necessary to continue a computation
 -- including: sagbi generators, rings, ideals, maps, and options.
--- When constructing a SAGBIBasis, it is therefore necessary to specify
+-- When constructing a SAGBIBasis, it is therefore suggested to specify
 -- all options of the computation, so the default options table is 
 -- identical to the sagbi options table.
 
 SAGBIBasis = new Type of HashTable
 
 -- Options:
--- > AutoSubduce is a boolean that determined whether the generators should be subducted against each other
+-- > AutoSubduce is a boolean that determines whether the generators should be subducted against each other
 --   at the beginning of the sagbi computation.
--- > ReduceNewGenerators boolean that determined whether guassian elimination is applied to newly found
+-- > ReduceNewGenerators is a boolean that determines whether guassian elimination is applied to newly found
 --   sagbi generators.
 -- > StorePending is a boolean that determines whether the pending list is stored in the computation
 --   object. The pending list may be quite large in some cases.
@@ -65,13 +68,14 @@ SAGBIBasis = new Type of HashTable
 -- > SubductionMethod is either "Top" or "Engine", determines which code is used for performing subductions
 -- > Limit is a positive integer that determines when the computation should terminate if no finite sagbi
 --   basis is computed
--- > AutoSubduceOnPartialCompletion if true then apllies autoSubduction to the sagbi Generators the first time no new
---   sagbi generators are added at a particular degree
+-- > AutoSubduceOnPartialCompletion is a boolean that determines whether autoSubduction is applied
+--   to the sagbi Generators the first time no new sagbi generators are added at a particular degree
 -- > PrintLevel a non-negative integer that controls the verbosity of the computation
 -- > Recompute if true then the sagbi computation restarts
--- > RenewOptions if true then the options of the SAGBIBasis are ignored and the newly supplied options are used instead
--- 
--- Note, the sagbiBasis object stores all the options used for the computation
+-- > RenewOptions if true then the options of the SAGBIBasis are ignored and the newly supplied
+---  options are used instead
+--- 
+--- Note, the sagbiBasis object stores all the options used for the sagbi basis computation
 
 sagbiBasis = method(
     TypicalValue => Subring,
@@ -82,7 +86,7 @@ sagbiBasis = method(
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- Top (default) or Engine
     	Limit => 100,
-	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
+	AutoSubduceOnPartialCompletion => false,
     	PrintLevel => 0,
 	Recompute => false,
 	RenewOptions => false
@@ -138,10 +142,14 @@ sagbiBasis Subring := opts -> S -> (
     -- > sagbiInclusion:   TensorRing -> TensorRing:    x_i -> 0,   y_j -> y_j
     -- > fullSubstitution: TensorRing -> LiftedRing:    x_i -> z_i, y_j -> g_j(z_1 .. z_s)
     -- > quotientRing:     LiftedRing -> QuotientRing : z_i -> z_i    
-    inclusionLifted := map(rings#"tensorRing",rings#"liftedRing",(vars rings#"tensorRing")_{0..numberVariables-1});
-    substitution := map(rings#"tensorRing",rings#"tensorRing",(vars rings#"tensorRing")_{0..numberVariables-1});
-    projectionLifted := map(rings#"liftedRing",rings#"tensorRing",vars rings#"liftedRing");
-    sagbiInclusion := map(rings#"tensorRing",rings#"tensorRing",matrix {toList (numberVariables:0_(rings#"tensorRing"))});
+    inclusionLifted := map(rings#"tensorRing",rings#"liftedRing",
+    		    (vars rings#"tensorRing")_{0..numberVariables-1});
+    substitution := map(rings#"tensorRing",rings#"tensorRing",
+    		    (vars rings#"tensorRing")_{0..numberVariables-1});
+    projectionLifted := map(rings#"liftedRing",rings#"tensorRing",
+    		    vars rings#"liftedRing");
+    sagbiInclusion := map(rings#"tensorRing",rings#"tensorRing",
+    		    matrix {toList (numberVariables:0_(rings#"tensorRing"))});
     maps := new HashTable from {
         "inclusionLifted" => inclusionLifted,
         "projectionLifted" => projectionLifted,
@@ -210,8 +218,7 @@ sagbiBasis Subring := opts -> S -> (
         "options" => options
     	};
     
-    S.cache#"SAGBIBasis" = newSAGBIBasis;
-    newSAGBIBasis
+    S.cache#"SAGBIBasis" = newSAGBIBasis
 )
 
 net SAGBIBasis := S -> (
@@ -221,7 +228,8 @@ net SAGBIBasis := S -> (
     ) else (
     	description = "Partial SAGBIBasis Computation Object with "
     );
-    description | toString(numcols S#"data"#"sagbiGenerators") | " generators, Limit = " | toString(S#"data"#"limit") | "."
+    description | toString(numcols S#"data"#"sagbiGenerators") |
+    		" generators, Limit = " | toString(S#"data"#"limit") | "."
 )
 
 sagbiBasis HashTable := opts -> H -> (
@@ -240,8 +248,7 @@ sagbiBasis HashTable := opts -> H -> (
         "options" => options
     };
     
-    newSAGBIBasis#"data"#"subring".cache#"SAGBIBasis" = newSAGBIBasis;
-    newSAGBIBasis
+    newSAGBIBasis#"data"#"subring".cache#"SAGBIBasis" = newSAGBIBasis
 )
 
 -- gens(SAGBIBasis) returns the current list of sagbi generators.
@@ -251,29 +258,33 @@ sagbiBasis HashTable := opts -> H -> (
 -- apply the quotient map for the user.
 
 gens SAGBIBasis := opts -> S -> (
-    local M;
+--    local M;
     if numColumns S#"data"#"sagbiGenerators" == 0 then (
-    	M = S#"maps"#"quotient" matrix(S#"rings"#"liftedRing",{{}});
+        -- M = 
+        S#"maps"#"quotient" matrix(S#"rings"#"liftedRing",{{}});
     	) else (
-    	M = S#"maps"#"quotient" S#"data"#"sagbiGenerators";
+	-- M =
+    	S#"maps"#"quotient" S#"data"#"sagbiGenerators";
 	);
-    M.cache#"Subring" = S#"data"#"subring";
-    M 
+--    M.cache#"Subring" = S#"data"#"subring";
+--    M 
 )
 
 -- Returns the lifted ring
-ring SAGBIBasis := A -> (
-    A#"rings"#"liftedRing"
+ring SAGBIBasis := S -> (
+    S#"rings"#"liftedRing"
 )
 
 -- Returns the quotient ring
-ambient SAGBIBasis := A -> (
-    A#"rings"#"quotientRing"
+ambient SAGBIBasis := S -> (
+    S#"rings"#"quotientRing"
 )
 
 -- Returns the subring that a SAGBIBasis points to
 subring SAGBIBasis := opts -> S -> (
     S#"data"#"subring"
 )
+
+numgens SAGBIBasis := S -> numcols gens S
 
 end--

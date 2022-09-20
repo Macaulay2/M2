@@ -22,7 +22,8 @@ export {
     "subring",
     "Compute",
     "sagbiBasis",
-    "GeneratorSymbol"
+    "GeneratorSymbol",
+    "subductionQuotientRing"
     }
 
 -- From high-level-sagbi-functions.m2

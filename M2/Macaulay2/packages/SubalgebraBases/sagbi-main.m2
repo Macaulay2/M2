@@ -85,7 +85,7 @@ sagbi(Matrix) := opts -> M -> (
 
 sagbi(List) := opts -> L -> (
     sagbi(opts, subring L)
-);
+);--
 
 sagbi(Subring) := opts -> S -> (
     local SB;
