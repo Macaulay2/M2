@@ -7,9 +7,6 @@ export {
     "getitem",
     "hasattr",
     "import",
-    "iter",
-    "iterableToList",
-    "next",
     "pythonValue",
     "setattr",
     "setitem",
@@ -37,13 +34,8 @@ hasattr(PythonObject, String) := err
 import = method()
 import String := err
 
-iter = method()
-iter PythonObject := err
+iterator PythonObject := err
 
-iterableToList = method()
-iterableToList PythonObject := err
-
-next = method()
 next PythonObject := err
 
 pythonValue = method(Dispatch => Thing)

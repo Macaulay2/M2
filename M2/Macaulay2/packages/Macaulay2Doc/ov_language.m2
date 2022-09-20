@@ -63,6 +63,7 @@ document {
 	      TO "printing and formatting for new classes",
 	      TO "making a new method function",
 	      TO "methods",
+	      TO "iterators",
 	  "input and output",
 	      TO "printing to the screen",
 	      TO "reading files",
@@ -860,7 +861,9 @@ document { Key => "for",
 		 }}),
      SYNOPSIS (
 	  Usage => "for i in v when p list x do z",
-	  Inputs => { "v" => ofClass{BasicList, String} },
+	  Inputs => {"v" => {ofClass{BasicList, String},
+		  ", or an instance of an iterable class (see ", TO "iterators",
+		  ")"}},
 	  Consequences => {{"The variable ", TT "i", " is set to consecutive values of the list ", TT "v", ".  First ", TT "p", " is evaluated.  
 	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated, and its value is saved.  Then
 	       ", TT "z", " is evaluated and its value is discarded.  Then the loop repeats with the next element of ", TT "v", ".  When the value of ", TT "p", " is false,

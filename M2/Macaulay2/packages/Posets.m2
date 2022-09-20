@@ -828,7 +828,6 @@ lcmLattice Ideal := Poset => opts -> I -> (
     )
 
 -- non-exported
-protect next
 lcmLatticeRecursive = G -> (
     if #G === 0 then return {{}}; -- empty set has 1 as a divisor.
     n := numgens ring first G;

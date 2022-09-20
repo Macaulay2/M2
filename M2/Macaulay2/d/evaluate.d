@@ -20,6 +20,12 @@ export chars := new array(Expr) len 256 do (
 	provide Expr(stringCell(string(char(i))));
 	i = i+1;
 	));
+
+-- symbols for iteration
+-- "iterator" and "next" will be reassigned as methods at top level
+export iteratorS := setupvar("iterator", nullE);
+export nextS := setupvar("next", nullE);
+
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -277,6 +283,18 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
+export getIterator(e:Expr):Expr := (
+    f := lookup1(Class(e), getGlobalVariable(iteratorS));
+    if f == notfoundE
+    then nullE
+    else applyEE(f, e));
+
+export getNextFunction(e:Expr):Expr := (
+    f := lookup1(Class(e), getGlobalVariable(nextS));
+    if f == notfoundE
+    then nullE
+    else f);
+
 export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
     foreach c in s.v do provide chars.(int(uchar(c)));
 
@@ -286,8 +304,11 @@ evalForCode(c:forCode):Expr := (
      j := 0;				    -- the value of the loop variable if it's an integer loop, else the index in the list if it's "for i in w ..."
      w := emptySequence;				    -- the list x when it's "for i in w ..."
      n := 0;				    -- the upper bound on j, if there is a toClause.
+     iter := nullE;                         -- iterator
+     nextfunc := nullE;                     -- next function for iterator
      listLoop := false;
      toLimit := false;
+     iterLoop := false;
      if c.inClause != dummyCode then (
      	  listLoop = true;
 	  invalue := eval(c.inClause);
@@ -295,8 +316,17 @@ evalForCode(c:forCode):Expr := (
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
 	  is s:stringCell do w = strtoseq(s)
-	  else return printErrorMessageE(c.inClause,"expected a list, sequence, or string");
-	  )
+	  else (
+	      iter = getIterator(invalue);
+	      if iter != nullE
+	      then (
+		  nextfunc = getNextFunction(iter);
+		  if nextfunc != nullE
+		  then (listLoop = false; iterLoop = true)
+		  else return printErrorMessageE(c.inClause,
+		      "no method for applying next to iterator"))
+	      else return printErrorMessageE(c.inClause,
+		  "expected a list, sequence, string, or iterable")))
      else (
 	  if c.fromClause != dummyCode then (
 	       fromvalue := eval(c.fromClause);
@@ -320,7 +350,13 @@ evalForCode(c:forCode):Expr := (
      while true do (
 	  if toLimit && j > n then break;
 	  if listLoop && j >= length(w) then break;
-	  localFrame.values.0 = if listLoop then w.j else Expr(ZZcell(toInteger(j)));		    -- should be the frame spot for the loop var
+	  localFrame.values.0 = ( -- should be the frame spot for the loop var
+	      if listLoop then w.j
+	      else if iterLoop then(
+		  tmp := applyEE(nextfunc, iter);
+		  if tmp == StopIterationE then break;
+		  tmp)
+	      else Expr(ZZcell(toInteger(j))));
 	  j = j+1;
 	  if c.whenClause != dummyCode then (
 	       p := eval(c.whenClause);

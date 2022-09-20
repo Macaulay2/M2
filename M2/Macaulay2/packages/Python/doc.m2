@@ -247,12 +247,11 @@ doc ///
 
 doc ///
   Key
-    iter
-    (iter, PythonObject)
+    (iterator, PythonObject)
   Headline
     get iterator of iterable python object
   Usage
-    i = iter x
+    i = iterator x
   Inputs
     x:PythonObject -- an iterable
   Outputs
@@ -265,15 +264,13 @@ doc ///
       for the iterable object @TT "x"@.
     Example
       x = pythonValue "range(3)"
-      i = iter x
+      i = iterator x
   SeeAlso
-    next
-    iterableToList
+    (next, PythonObject)
 ///
 
 doc ///
   Key
-    next
     (next, PythonObject)
   Headline
     retrieve the next item from a python iterator
@@ -289,44 +286,16 @@ doc ///
       from an iterator.
     Example
       x = pythonValue "range(3)"
-      i = iter x
+      i = iterator x
       next i
       next i
       next i
     Text
-      When the iterator is exhausted, @TO "null"@ is returned.
+      When the iterator is exhausted, @TO "StopIteration"@ is returned.
     Example
-      next i === null
+      next i
   SeeAlso
-    iter
-    iterableToList
-///
-
-doc ///
-  Key
-    iterableToList
-    (iterableToList, PythonObject)
-  Headline
-    convert an iterable python object to a Macaulay2 list
-  Usage
-    iterableToList x
-  Inputs
-    x:PythonObject -- must be iterable
-  Outputs
-    :List
-  Description
-    Text
-      A list is constructed containing each element of the iterable.
-      The elements are converted to Macaulay2 objects (if
-      possible) using @TO "value"@.
-    Example
-      x = pythonValue "range(3)"
-      iterableToList x
-      class \ oo
-  SeeAlso
-    iter
-    next
-    iterableToList
+    (iterator, PythonObject)
 ///
 
 doc ///

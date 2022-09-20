@@ -8,11 +8,13 @@ WrongArgPythonObject(n:int):Expr := WrongArg(n,"a python object");
 import ErrOccurred():int;
 import ErrPrint():void;
 
-buildPythonErrorPacket():Expr :=
-    if ErrOccurred() == 1 then (
+buildPythonErrorPacket():Expr := (
+    e := ErrOccurred();
+    if e == 1 then (
 	ErrPrint();
-	buildErrorPacket("python error")
-    ) else nullE;
+	buildErrorPacket("python error"))
+    else if e == -1 then StopIterationE
+    else nullE);
 
 pythonObjectOrNull := pythonObject or null;
 toExpr(r:pythonObjectOrNull):Expr := when r is null do buildPythonErrorPacket() is po:pythonObject do Expr(pythonObjectCell(po));
