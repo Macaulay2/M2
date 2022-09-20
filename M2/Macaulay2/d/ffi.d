@@ -251,27 +251,25 @@ ffiIntegerValue(e:Expr):Expr := (
 		    is signed:Boolean do (
 			bits := toInt(y);
 			if signed.v then (
-			    n := Ccode(long, "*(long *)", x.v);
 			    if bits == 8
-			    then toExpr(long(int8_t(n)))
+			    then toExpr(Ccode(int8_t, "*(int8_t *)", x.v))
 			    else if bits == 16
-			    then toExpr(long(int16_t(n)))
+			    then toExpr(Ccode(int16_t, "*(int16_t *)", x.v))
 			    else if bits == 32
-			    then toExpr(long(int32_t(n)))
+			    then toExpr(Ccode(int32_t, "*(int32_t *)", x.v))
 			    else if bits == 64
-			    then toExpr(long(int64_t(n)))
+			    then toExpr(Ccode(int64_t, "*(int64_t *)", x.v))
 			    else buildErrorPacket(
 				"expected 8, 16, 32, or 64 bits"))
 			else (
-			    n := Ccode(long, "*(unsigned long *)", x.v);
 			    if bits == 8
-			    then toExpr(ulong(uint8_t(n)))
+			    then toExpr(Ccode(uint8_t, "*(uint8_t *)", x.v))
 			    else if bits == 16
-			    then toExpr(ulong(uint16_t(n)))
+			    then toExpr(Ccode(uint16_t, "*(uint16_t *)", x.v))
 			    else if bits == 32
-			    then toExpr(ulong(uint32_t(n)))
+			    then toExpr(Ccode(uint32_t, "*(uint32_t *)", x.v))
 			    else if bits == 64
-			    then toExpr(ulong(uint64_t(n)))
+			    then toExpr(Ccode(uint64_t, "*(uint64_t *)", x.v))
 			    else buildErrorPacket(
 				"expected 8, 16, 32, or 64 bits")))
 		    else WrongArgBoolean(3))
