@@ -638,9 +638,6 @@ doc ///
       int 12
       ulong pi
       short(-2.71828)
-  Caveat
-    On 32-bit systems, @TT "int64"@ and @TT "uint64"@ objects may exhibit
-    unexpected behavior when converting to and from Macaulay2 integers.
 ///
 
 doc ///
