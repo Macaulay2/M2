@@ -3,7 +3,7 @@
 
 #  include "engine-includes.hpp"
 
-// TODO: fix this
+// TODO: make this unnecessary
 #  if defined(__cplusplus)
 class Ring;
 class Monoid;
@@ -31,20 +31,20 @@ const Monoid * /* or Null */ rawMonoid(const MonomialOrdering *mo,
                                        M2_ArrayString names,
                                        M2_arrayint degrees,
                                        M2_arrayint heftvec);
+// TODO: this is wrong and needs to be updated
 /* This function will return NULL if the monomial order cannot be handled
    currently, if the first components for each degree are not all
    positive, or under various other "internal" error conditions */
 
+int rawMonoidNumberOfBlocks(const Monoid *M);
+
+/* connected to the interpreter in d/basic.d */
 unsigned int rawMonoidHash(const Monoid *M);
-/* drg: connected hash */
 /* Assigned sequentially */
 
-M2_string IM2_Monoid_to_string(const Monoid *M);
-/* drg: connected */
+/* connected to the interpreter in d/actors4.d */
+M2_string rawMonoidToString(const Monoid *M);
 /* For debugging purposes */
-
-int rawMonoidNumberOfBlocks(const Monoid *M);
-/* connected rawMonoidNumberOfBlocks */
 
 #  if defined(__cplusplus)
 }
