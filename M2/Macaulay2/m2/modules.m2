@@ -1,7 +1,7 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "monoids.m2"  -- for degreesMonoid
 needs "reals.m2" -- for inexact number
-needs "ofcm.m2"  -- for degreesMonoid
 
 -----------------------------------------------------------------------------
 -- Matrix
@@ -147,6 +147,7 @@ new Module from Sequence := (Module,x) -> (
      	       symbol numgens => rawRank rM
      	       })) x
 
+-- TODO: deprecate these
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
 degreesRing Module := PolynomialRing => M -> degreesRing ring M
 degreeLength Module := M -> degreeLength ring M
@@ -182,8 +183,6 @@ isFreeModule Module := M -> not M.?relations and not M.?generators
 isSubmodule = method(TypicalValue => Boolean)
 isSubmodule Thing := x -> false
 isSubmodule Module := M -> not M.?relations
-
-degreeLength Module := M -> degreeLength ring M
 
 isQuotientModule = method(TypicalValue => Boolean)
 isQuotientModule Thing := x -> false

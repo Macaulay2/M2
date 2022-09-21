@@ -35,7 +35,6 @@ nonempty = x -> select(x, i -> i =!= "")
 -- TODO: deprecate these
 undocumentedkeys = new MutableHashTable
 undocumented' = key -> undocumentedkeys#key = true
-somethingElse = () -> error "something else needs to be implemented here"
 
 -- a first-in last-out list of symbol values
 -- TODO: move to the interpreter and make thread-safe

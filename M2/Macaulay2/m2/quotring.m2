@@ -36,6 +36,7 @@ ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
 degrees QuotientRing := R -> degrees ambient R
 precision QuotientRing := precision @@ ambient
 isSkewCommutative QuotientRing := R -> isSkewCommutative ambient R
+isWeylAlgebra     QuotientRing := R -> isWeylAlgebra     ambient R
 
 Ring / Module := QuotientRing => (R,I) -> (
      if ambient I != R^1 or I.?relations

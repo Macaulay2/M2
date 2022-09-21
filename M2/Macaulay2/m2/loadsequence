@@ -43,10 +43,10 @@ reals.m2
 intervals.m2
 quotient.m2
 powers.m2
-orderedmonoidrings.m2
 variables.m2
 indeterminates.m2
-ofcm.m2
+monoids.m2
+orderedmonoidrings.m2
 dotdot.m2
 
 modules.m2

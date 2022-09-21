@@ -6,12 +6,17 @@
 -- (tensor, Matrix, Matrix)
 -- (tensor, Module, Module)
 
-undocumented {
+L := {
     (tensor, QuotientRing,   QuotientRing),
     (tensor, PolynomialRing, PolynomialRing),
     (tensor, QuotientRing,   PolynomialRing),
-    (tensor, PolynomialRing, QuotientRing),
+    (tensor, PolynomialRing, QuotientRing)
     }
+undocumented L
+undocumented flatten table(L, {
+	DegreeLift, DegreeMap, DegreeRank, Degrees, Global, Heft,
+	Join, Local, MonomialOrder, MonomialSize, VariableBaseName,
+	Inverses, Variables, SkewCommutative, Weights, WeylAlgebra}, (m,o) -> [m, o])
 
 doc ///
 Node
@@ -33,7 +38,24 @@ Node
    [(tensor, Monoid, Monoid), SkewCommutative]
    [(tensor, Monoid, Monoid), Weights]
    [(tensor, Monoid, Monoid), WeylAlgebra]
-    (tensor, Ring,   Ring)
+    (tensor, Ring, Ring)
+   [(tensor, Ring, Ring), DegreeLift]
+   [(tensor, Ring, Ring), DegreeMap]
+   [(tensor, Ring, Ring), DegreeRank]
+   [(tensor, Ring, Ring), Degrees]
+   [(tensor, Ring, Ring), Global]
+   [(tensor, Ring, Ring), Heft]
+   [(tensor, Ring, Ring), Inverses]
+   [(tensor, Ring, Ring), Join]
+   [(tensor, Ring, Ring), Local]
+   [(tensor, Ring, Ring), MonomialOrder]
+   [(tensor, Ring, Ring), MonomialSize]
+   [(tensor, Ring, Ring), VariableBaseName]
+   [(tensor, Ring, Ring), Variables]
+   [(tensor, Ring, Ring), SkewCommutative]
+   [(tensor, Ring, Ring), Weights]
+   [(tensor, Ring, Ring), WeylAlgebra]
+    (symbol**, Ring, Ring)
     (symbol**, Monoid, Monoid)
   Headline
     tensor product of monoids
