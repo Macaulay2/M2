@@ -38,8 +38,8 @@ subring List := opts -> L -> subring(matrix{L}, opts)
 ambient Subring := S -> S#"ambientRing"
 gens Subring := opts -> S -> S#"generators"
 numgens Subring := S -> numcols gens S
-subdunctionQuotientRing = method()
-subductionQuotientRing := S -> S#"subductionQuotientRing"
+subductionQuotientRing = method()
+subductionQuotientRing Subring := S -> S#"subductionQuotientRing"
 net Subring := S -> (
     R := ambient S;
     A := subductionQuotientRing S;    
@@ -261,11 +261,11 @@ gens SAGBIBasis := opts -> S -> (
 --    local M;
     if numColumns S#"data"#"sagbiGenerators" == 0 then (
         -- M = 
-        S#"maps"#"quotient" matrix(S#"rings"#"liftedRing",{{}});
+        S#"maps"#"quotient" matrix(S#"rings"#"liftedRing",{{}})
     	) else (
 	-- M =
-    	S#"maps"#"quotient" S#"data"#"sagbiGenerators";
-	);
+    	S#"maps"#"quotient" S#"data"#"sagbiGenerators"
+	)
 --    M.cache#"Subring" = S#"data"#"subring";
 --    M 
 )
