@@ -13,7 +13,7 @@ header "// required for toString routines
 #include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
 #include <interface/freemodule.h>           // for IM2_FreeModule_to_string
 #include <interface/matrix.h>               // for IM2_Matrix_to_string
-#include <interface/monoid.h>               // for IM2_Monoid_to_string
+#include <interface/monoid.h>               // for rawMonoidToString
 #include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
 #include <interface/mutable-matrix.h>       // for IM2_MutableMatrix_to_string
 #include <interface/random.h>               // for system_randomint
@@ -1012,7 +1012,7 @@ tostringfun(e:Expr):Expr := (
      -- NAG stuff end
      is x:RawRingMapCell do toExpr(Ccode(string, "IM2_RingMap_to_string(",x.p,")" ))
      is x:RawMonomialOrderingCell do toExpr(Ccode(string, "IM2_MonomialOrdering_to_string(",x.p,")" ))
-     is x:RawMonoidCell do toExpr(Ccode(string, "IM2_Monoid_to_string(",x.p,")" ))
+     is x:RawMonoidCell do toExpr(Ccode(string, "rawMonoidToString(",x.p,")" ))
      is x:RawRingCell do toExpr(Ccode(string, "IM2_Ring_to_string(",x.p,")" ))
      is x:RawRingElementCell do toExpr( Ccode(string, "IM2_RingElement_to_string(",x.p,")" ) )
      is x:RawMonomialIdealCell do toExpr(
