@@ -1364,6 +1364,23 @@ assert Equation(value x_(-1), 3)
 ptrarray = 3 * voidstar
 x = ptrarray {address int 1, address int 2, address int 3}
 assert Equation(for ptr in x list value int value ptr, {1, 2, 3})
+x = charstarstar {"foo", "bar", "baz"}
+assert Equation(length x, 3)
+assert Equation(value \ value x, {"foo", "bar", "baz"})
+assert Equation(value x_0, "foo")
+assert Equation(value x_(-1), "baz")
+x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
+assert Equation(length x, 4)
+assert Equation(value \ for ptr in x list int value ptr, {1, 2, 3, 4})
+assert Equation(value int value x_0, 1)
+assert Equation(value int value x_(-1), 4)
+int3star = foreignPointerArrayType(3 * int)
+x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
+assert Equation(length x, 4)
+assert Equation(for y in x list value \ value y,
+    {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
+assert Equation(value \ value x_0, {1, 2, 3})
+assert Equation(value \ value x_(-1), {10, 11, 12})
 
 -- struct types
 teststructtype = foreignStructType("foo",
