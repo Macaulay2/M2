@@ -131,6 +131,10 @@ foreignObject VisibleList := x -> (
     if #types == 1 then (foreignArrayType(first types, #x)) x
     else error("expected all elements to have the same type"))
 
+registerFinalizer(ForeignObject, Function) := (
+    x, f) -> registerFinalizerForPointer(
+    address x, f, ffiPointerValue address x)
+
 -----------------------------------
 -- foreign type (abstract class) --
 -----------------------------------
@@ -251,9 +255,6 @@ voidstar.Address = ffiPointerType
 value voidstar := ffiPointerValue @@ address
 ForeignPointerType Pointer := (T, x) -> new T from {
     Address => ffiPointerAddress x}
-
-registerFinalizer(voidstar, Function) := (
-    x, f) -> registerFinalizerForPointer(address x, f, value x)
 
 -------------------------
 -- foreign string type --
