@@ -1365,13 +1365,14 @@ assert (checkTangentSpace gens J == true)
 assert (checkComparisonTheorem gens J == true)
 ///
 
-TEST ///
-needsPackage "Truncations"
-S = ZZ/32003[a..d]
-I = monomialIdeal(a^2,a*b,b^4,a*c^3)
-J = truncate(3, I)
-(F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
-///
+-- TEST ///
+-- needsPackage "Truncations"
+-- S = ZZ/32003[a..d]
+-- I = monomialIdeal(a^2,a*b,b^4,a*c^3)
+-- J = truncate(3, I)
+-- (F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
+-- ///
+
 TEST ///
 S=QQ[x,y]/ideal {x^4+y^3}
 f= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}
