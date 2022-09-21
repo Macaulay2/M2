@@ -1304,9 +1304,8 @@ assert Equation(value \ value intarray3 ptr, {1, 2, 3})
 assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
 ptrarray = 3 * voidstar
-assert Equation(
-    apply(value ptrarray {address int 1, address int 2, address int 3},
-    x -> value int value x), {1, 2, 3})
+x = ptrarray {address int 1, address int 2, address int 3}
+assert Equation(for ptr in x list value int value ptr, {1, 2, 3})
 
 -- struct types
 teststructtype = foreignStructType("foo",
