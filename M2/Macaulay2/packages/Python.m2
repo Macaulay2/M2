@@ -35,12 +35,12 @@ exportFrom_Core {
     "objectType"}
 
 importFrom_Core {
+    "getPythonNone",
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonFalse",
     "pythonImportImportModule",
-    "pythonNone",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
@@ -57,7 +57,6 @@ importFrom_Core {
     "pythonSetNew",
     "pythonTrue",
     "pythonTupleNew",
-    "pythonTupleSetItem",
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString"
 }
@@ -87,6 +86,8 @@ PythonObject#{Standard,AfterPrint} = x -> (
      t = replace("<([a-z]+) '(.*)'>","of \\1 \\2",t);
      << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject " << t << endl;
      )
+
+pythonNone = getPythonNone()
 
 pythonValue = method(Dispatch => Thing)
 pythonValue String := s -> (
@@ -312,11 +313,7 @@ toPython ZZ := pythonLongFromLong
 toPython Boolean := x -> if x then pythonTrue else pythonFalse
 toPython Constant := x -> toPython(x + 0)
 toPython String := pythonUnicodeFromString
-toPython Sequence := L -> (
-    n := #L;
-    result := pythonTupleNew n;
-    for i to n - 1 do pythonTupleSetItem(result, i, toPython L_i);
-    result)
+toPython Sequence := x -> pythonTupleNew \\ toPython \ x
 toPython VisibleList := L -> (
     n := #L;
     result := pythonListNew n;
@@ -574,6 +571,14 @@ assert Equation(ceiling(-e), -2)
 x = help (import "math")@@cos
 assert instance(x, String)
 assert match("cosine", x)
+///
+
+TEST ///
+-- large integers
+assert Equation(toPython 10^100, pythonValue "10**100")
+assert Equation(toPython(-10^100), pythonValue "-10**100")
+assert Equation(value pythonValue "10**100", 10^100)
+assert Equation(value pythonValue "-10**100", -10^100)
 ///
 
 end --------------------------------------------------------
