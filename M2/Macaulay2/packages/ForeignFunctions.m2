@@ -130,6 +130,7 @@ foreignObject VisibleList := x -> (
     types := unique(class \ foreignObject \ x);
     if #types == 1 then (foreignArrayType(first types, #x)) x
     else error("expected all elements to have the same type"))
+foreignObject Pointer := x -> voidstar x
 
 registerFinalizer(ForeignObject, Function) := (
     x, f) -> registerFinalizerForPointer(
