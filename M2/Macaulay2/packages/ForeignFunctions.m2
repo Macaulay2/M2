@@ -1467,3 +1467,14 @@ asctime = foreignFunction("asctime", charstar, voidstar)
 epoch = tm value gmtime address long 0
 assert Equation(value asctime address epoch,"Thu Jan  1 00:00:00 1970\n")
 ///
+
+TEST ///
+-------------------
+-- foreignSymbol --
+-------------------
+mpfi = openSharedLibrary "mpfi"
+(foreignFunction(mpfi, "mpfi_set_error", void, int)) 5
+assert Equation(value foreignSymbol(mpfi, "mpfi_error", int), 5)
+assert Equation(value foreignSymbol("mpfi_error", int), 5)
+(foreignFunction(mpfi, "mpfi_reset_error", void, void))()
+///
