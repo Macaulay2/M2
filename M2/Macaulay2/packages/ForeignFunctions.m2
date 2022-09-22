@@ -775,13 +775,26 @@ doc ///
       @TT "voidstar"@.
     Example
       voidstar
+///
+
+doc ///
+  Key
+    (registerFinalizer, ForeignObject, Function)
+  Headline
+    register a finalizer for a foreign object
+  Usage
+    registerFinalizer(x, f)
+  Inputs
+    x:ForeignObject
+    f:Function
+  Description
     Text
       If a foreign pointer object corresponds to memory that was not allocated
       by the @TO "GC garbage collector"@, then a function to properly
       deallocate this memory when the @TO "Pointer"@ object that stores this
       pointer is garbage collected should be called.  The function should
-      take a single argument, a foreign object of type @TO "voidstar"@,
-      which corresponds to the memory to deallocate.
+      take a single argument, a foreign object, typically  of type
+      @TO "voidstar"@, which corresponds to the memory to deallocate.
     Example
       malloc = foreignFunction("malloc", voidstar, ulong)
       free = foreignFunction("free", void, voidstar)
