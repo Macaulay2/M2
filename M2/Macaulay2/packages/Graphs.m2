@@ -3151,7 +3151,7 @@ doc ///
             the clique number of G
     Description
         Text
-            The clique number is the maximum number of vertices comprising a clique in G. A clique in a graph G is a set of vertices such that all the the vertices are mutually adjacent (they are all connected to each other).
+            The clique number is the maximum number of vertices comprising a clique in G. A clique in a graph G is a set of vertices such that all the vertices are mutually adjacent (they are all connected to each other).
         Example
             G = graph({{1, 2}, {1, 3}, {2, 3}, {3, 4}},EntryMode=>"edges");
             cliqueNumber G

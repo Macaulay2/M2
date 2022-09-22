@@ -164,7 +164,7 @@ doc ///
       This function returns a hash table with the Schur functor decompositions 
       of the syzygies of $\mathcal{O}(b)$ under the embedding by
       $\mathcal{O}(d)$. The keys of the hash
-      table $H$ are pairs $(p,q)$ where $H#(p,q)$ gives the the Schur functor 
+      table $H$ are pairs $(p,q)$ where $H#(p,q)$ gives the Schur functor 
       decomposition of $K_{p,q}(\mathbb{P}^n, d;b)$. $\mathcal{O}(b)$ the 
       Schur functor decomposition as a list of tuples $(\{a_1,a_2,a_3\},b)$ where
       $\{a_1,a_2,a_3\}$ specifies the weight of the Schur functor and $m$ the multiplicity

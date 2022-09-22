@@ -1867,7 +1867,7 @@ gfanRingToRationalString Ring := ZRing -> (
 )
 
 -- Polyhedra wants fans to be constructed from the maximal cones.
--- May be a way of doing this where we cut down on the the cones we are iterating over.
+-- May be a way of doing this where we cut down on the cones we are iterating over.
 maximalConesFromList = method()
 maximalConesFromList List := cones -> (
 	maximalCones := cones;
@@ -2570,7 +2570,7 @@ doc ///
 			Most of the functions in gfanInterface require @TO MarkedPolynomialList@
 			marked polynomial lists as input.
 			In a marked polynomial list, the leading term of each polynomial is distinguished.
-			New users should read the the guide @TO "Conventions for calling methods with options"@.
+			New users should read the guide @TO "Conventions for calling methods with options"@.
 			Since {\tt gfan} is distributed with @EM "Macaulay2"@, one rarely needs to consult
 			the guide for @TO "Installation and Configuration of gfanInterface"@.
 

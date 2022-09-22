@@ -18,7 +18,7 @@ doc ///
 		Text
 			A GKM variety is a variety $X$, often assumed to be smooth and complete, with an 
 			action of an algebraic torus $T$ satisfying the following conditions:
-			(i) $X$ is equivariantly formal with respect to the the action of $T$,
+			(i) $X$ is equivariantly formal with respect to the action of $T$,
 			(ii) $X$ has finitely many $T$-fixed points, and (iii) $X$ has finitely
 			many one-dimensional $T$-orbits.  The data of the zero and one dimensional
 			$T$-orbits of $X$ define the moment graph of $X$, with which one can carry out

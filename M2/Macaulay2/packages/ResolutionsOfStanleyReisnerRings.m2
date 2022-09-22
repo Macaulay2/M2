@@ -366,7 +366,7 @@ doc ///
             D = simplicialComplex {a*b*c,c*d,e};
             colorfulSOP(D)
     Caveat
-         This current version requires the input of the barycentric subdivision of a simplicial complex {\tt D} without the minimal element of the face poset, which corresponds to the empty set of {\tt D}. This must be accomplished by using using the {\tt barycentricSubdivision} method, included in this package. It also has the option of inputting any simplicial complex. The system then takes the barycentric subdivision of {\tt D} and removes its minimal element in order to obtain the colorful system of parameters. 
+         This current version requires the input of the barycentric subdivision of a simplicial complex {\tt D} without the minimal element of the face poset, which corresponds to the empty set of {\tt D}. This must be accomplished by using the {\tt barycentricSubdivision} method, included in this package. It also has the option of inputting any simplicial complex. The system then takes the barycentric subdivision of {\tt D} and removes its minimal element in order to obtain the colorful system of parameters. 
     SeeAlso
         barycentricSubdivision
         SimplicialComplexes

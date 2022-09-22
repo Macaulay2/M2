@@ -359,7 +359,7 @@ findMultiplicity=(M,I)->(
     K:=ideal(leadTerm(1,J));
     --you saturate since you don't want the components outside the torus
     initialIdeal:= saturate(sub(K,S), product gens S);
-    --this is the the basis of the lattice associated to the toric ideal we are going to compute
+    --this is the basis of the lattice associated to the toric ideal we are going to compute
 --    Basis:= (maxCol( generators kernel transpose M))_0;
       toricIdeal:= ideal apply(entries transpose gens kernel transpose M, u->(
 	      mon1:=1_R;

@@ -71,7 +71,7 @@ export {
 -- Method: coeffVarFF
 -- Input: (RingElement,RingElement) -- (rational function, variable)
 -- Output: List -- list of {coeff,degree} where f is treated as a polynomial
---     	   in var with coefficients in the the rational function field of the
+--     	   in var with coefficients in the rational function field of the
 --     	   other variables.
 -- Description:
 -- As long as the denominator of f does not involve var, this method

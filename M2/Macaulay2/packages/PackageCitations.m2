@@ -296,7 +296,7 @@ doc ///
             cite PackageCitations
             cite Text
         Text
-            If @TO cite@ is given a string, then it will will load the package
+            If @TO cite@ is given a string, then it will load the package
             if necessary and issue the corresponding citation. Note that if
             the package is @TO2 {Certification, "certified"}@ then two bibtex
             entries will be produced: one for the article witnessing the

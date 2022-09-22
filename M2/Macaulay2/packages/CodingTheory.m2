@@ -1146,7 +1146,7 @@ hammingCode(ZZ,ZZ) := LinearCode => (q,r) -> (
     K := GF(q);
     -- setK is the set that contains all the elements of the field.
     setK := set(  {0}| apply(toList(1..q-1),i -> K_1^i));
-    -- C is the transpose of the parity check matrix of the code. Its rows are the the points of the
+    -- C is the transpose of the parity check matrix of the code. Its rows are the points of the
     -- projective space P(r-1,q).
     j := 1;
     C := matrix(apply(toList(1..q^(r-j)), i -> apply(toList(1..1),j -> 1))) | matrix apply(toList(toList setK^**(r-j)/deepSplice),i->toList i);
