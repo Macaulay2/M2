@@ -1632,7 +1632,7 @@ doc ///
         the adjoint ideal of I.
   Outputs
     :Ideal
-        of the the rational normal curve.
+        of the rational normal curve.
   Description
    Text
      Maps a plane rational curve birationally to a rational normal curve by the adjoints of degree=degree(C)-2

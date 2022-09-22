@@ -1726,7 +1726,7 @@ doc ///
      
      We have eOdd_i*eEv_j+eOdd_j*eEv_i = B(e_i,e_j), where
      the e_i form a basis of the space on which qq acts and B is the bilinear form associated to 2qq
-     thus the the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
+     thus the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
      --If qq is nonsingular over the generic point of R, then C is an Azumaya algebra over R, and this implies that the representation is faithful.
      
      In the following we construct the generic symmetric

@@ -1249,7 +1249,7 @@ document {
 	"checkTangentSpace I",
 	"checkTangentSpace J"
      },
-    PARA{"Even if ",TT "checkTangentSpace"," returns the value ",TT "true",", it may occur that the map from the deformation space computed by ",TO localHilbertScheme," to the the local Hilbert scheme is not an isomorphism on tangent spaces, since the rank of the map is not computed."}
+    PARA{"Even if ",TT "checkTangentSpace"," returns the value ",TT "true",", it may occur that the map from the deformation space computed by ",TO localHilbertScheme," to the local Hilbert scheme is not an isomorphism on tangent spaces, since the rank of the map is not computed."}
      } 
 
 

@@ -1526,7 +1526,7 @@ doc ///
             time regularInCodimension(2, S/J) 
         Text
             We try to verify that $S/J$ is regular in codimension 1 or 2 by computing the ideal made up of a small number of minors of the Jacobian matrix.  
-            In this example, instead of computing all relevant 1465128 minors to compute the singular locus, and then trying to compute the dimension of the ideal they generate, we instead compute a few of them.  {\tt regularInCodimension} returns {\tt true} if it verified the the ring with regular in codim 1 or 2 (respectively) and {\tt null} if not.  Because of the randomness that exists in terms of selecting minors, the execution time can actually vary quite a bit.   Let's take a look at what is occurring by using the {\tt Verbose} option.  We go through the output and explain what each line is telling us.
+            In this example, instead of computing all relevant 1465128 minors to compute the singular locus, and then trying to compute the dimension of the ideal they generate, we instead compute a few of them.  {\tt regularInCodimension} returns {\tt true} if it verified that the ring is regular in codim 1 or 2 (respectively) and {\tt null} if not.  Because of the randomness that exists in terms of selecting minors, the execution time can actually vary quite a bit.   Let's take a look at what is occurring by using the {\tt Verbose} option.  We go through the output and explain what each line is telling us.
         Example
             time regularInCodimension(1, S/J, Verbose=>true) 
         Text

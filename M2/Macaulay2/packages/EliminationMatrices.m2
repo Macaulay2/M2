@@ -1625,7 +1625,7 @@ document {
        	},
        
     PARA{}, TT "regularityVar", " computes the Castelnuovo-Mumford regularity of homogeneous ideals in a polynomial ring by computing the shifts and degrees of generators in a minimal free resolution of the homogeneous ideal.",
-    PARA{}, "The list of variables ", TT "l", " contains the variables of the ring having degree 1. Those variables on the ring not in ", TT "l", " have automatically degree 0, as well as the the elements on the coefficient ring",
+    PARA{}, "The list of variables ", TT "l", " contains the variables of the ring having degree 1. Those variables on the ring not in ", TT "l", " have automatically degree 0, as well as the elements on the coefficient ring",
              
     	EXAMPLE {" R=QQ[a..i,x,y,z]",
 	"f1 = a*x+b*y+c*z",

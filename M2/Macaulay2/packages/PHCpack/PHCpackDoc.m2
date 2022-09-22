@@ -1036,7 +1036,7 @@ doc ///
     Example
       L = solveSystem(S)
     Text
-      The method {\tt solveSystem} prints the the {\tt PHCpack} input and output file names 
+      The method {\tt solveSystem} prints the {\tt PHCpack} input and output file names 
       and returns two solutions. The solutions are of type @TO Point@, defined in @TO NAGtypes@. 
       Each point {\tt p} comes with cached diagnostics.
       For example, {\tt p.cache.LastT} is the end value of the continuation parameter; 

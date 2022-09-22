@@ -149,7 +149,7 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
 	  enlarge(x);
 	  hmod = int(h & (length(x.table)-1));
 	  );
-     -- We add the the front of the linked list, for thread consistency, as explained above:
+     -- We add the front of the linked list, for thread consistency, as explained above:
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
      --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
      --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering

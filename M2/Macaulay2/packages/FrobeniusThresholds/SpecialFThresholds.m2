@@ -29,7 +29,7 @@ carryTest = ( p, w ) ->
 --===============================================================================
 
 --Given a vector w of rational integers in [0,1], returns the first spot
---e where the the sum of the entries in w carry in base p
+--e where the sum of the entries in w carry in base p
 firstCarry = ( p, w ) ->
 (
     if any( w, x -> x < 0 or x > 1 ) then
