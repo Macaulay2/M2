@@ -63,6 +63,7 @@ export {
     "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
+    "foreignSymbol",
 
 -- symbols
     "Variadic"
@@ -506,6 +507,15 @@ foreignFunction(Pointer, String, ForeignType, VisibleList) :=  o -> (
 		    then error("expected ", #argtypes, " arguments");
 		    avalues := apply(#args, i -> address (argtypes#i args#i));
 		    dereference_rtype ffiCall(cif, funcptr, 100, avalues)))))
+
+--------------------
+-- foreign symbol --
+--------------------
+
+foreignSymbol = method(TypicalValue => ForeignObject)
+foreignSymbol(SharedLibrary, String, ForeignType) := (
+    lib, symb, T) -> dereference_T dlsym(lib#0, symb)
+foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
 
 beginDocumentation()
 
