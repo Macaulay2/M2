@@ -1319,6 +1319,36 @@ doc ///
       registerFinalizer(x, free)
 ///
 
+doc ///
+  Key
+    foreignSymbol
+    (foreignSymbol, SharedLibrary, String, ForeignType)
+    (foreignSymbol, String, ForeignType)
+  Headline
+    get a foreign symbol
+  Usage
+    foreignSymbol(lib, symb, T)
+    foreignSymbol(symb, T)
+  Inputs
+    lib:SharedLibrary
+    symb:String
+    T:ForeignType
+  Outputs
+    :ForeignObject
+  Description
+    Text
+      This function is a wrapper around the C function @TT "dlsym"@.  It
+      loads a symbol from a shared library using the specified foreign type.
+    Example
+      mps = openSharedLibrary "mps"
+      cplxT = foreignStructType("cplx_t", {"r" => double, "i" => double})
+      foreignSymbol(mps, "cplx_i", cplxT)
+    Text
+      If the shared library is already linked against Macaulay2, then it may
+      be omitted.
+    Example
+      foreignSymbol("cplx_i", cplxT)
+///
 
 TEST ///
 -----------
