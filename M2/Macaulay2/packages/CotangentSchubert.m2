@@ -28,7 +28,7 @@ multidoc ///
   Key
    CotangentSchubert
   Headline
-   A package for contangent Schubert calculus
+   A package for cotangent Schubert calculus
   Description
    Text
     @BOLD "CotangentSchubert"@ is a package for calculations in cotangent Schubert calculus.

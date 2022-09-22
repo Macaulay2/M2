@@ -141,10 +141,10 @@ Node
      Key
      	  WhitneyStratifications
      Headline
-     	  Computes Whitney Statifications of complex varities.
+     	  Computes Whitney Statifications of complex varieties.
      Description
      	  Text
-	      This package computes Whitney stratifications of complex algebraic varieites using algorithms described in [1]. Homogeneous ideals will be treated as defining a projective variety, non-homogeneous ideals will be treated as defining affine varieties. Input ideals are assumed to define pure dimensional varieties.   
+	      This package computes Whitney stratifications of complex algebraic varieties using algorithms described in [1]. Homogeneous ideals will be treated as defining a projective variety, non-homogeneous ideals will be treated as defining affine varieties. Input ideals are assumed to define pure dimensional varieties.   
 	      
 	      References:
 	      
@@ -164,7 +164,7 @@ Node
 	    an ideal defining a closed subvariety of $\CC^n$ or $\PP^{n}$.
     Outputs
         WS:MutableHashTable
-	    a hash table indexed by dimension, with the entry of dimension $i$ consisting of a list of prime ideals. The variety of each prime ideal defines a connected open stratum of $V(I)$ obtained by removing the varities of all lower dimensional entries of the hash table.    
+	    a hash table indexed by dimension, with the entry of dimension $i$ consisting of a list of prime ideals. The variety of each prime ideal defines a connected open stratum of $V(I)$ obtained by removing the varieties of all lower dimensional entries of the hash table.    
     Description 
     	Text
 	    For a affine or projective complex variety $X$ this command computes a Whitney stratification WS where WS#i is a list of strata closures in dimension $i$; for a prime ideal $P$ in WS#i the associated open (connected) strata is given by $V(P)-Z$ where $Z$ is the union of the varieties defined by the entries of WS#(i-1). We demonstrate the method for the affine Whitney umbrella and its projective closure below.
@@ -188,7 +188,7 @@ Node
 	    V=whitneyStratify I
 	    peek V
 	Text 
-	    Note that as with the Whitney umbrella simpley taking successive singular loci will not yield the correct stratification, in particular one would miss the two points defined by the second entry of V#0. 
+	    Note that as with the Whitney umbrella, simply taking successive singular loci will not yield the correct stratification, in particular one would miss the two points defined by the second entry of V#0. 
 	Example 
 	    J=radical (I+minors(codim I, jacobian I))
 	    J2=radical (J+minors(codim J, jacobian J))                   

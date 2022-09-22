@@ -250,6 +250,9 @@ deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e,
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
+-- for iterables
+toList Thing := x -> for y in x list y
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

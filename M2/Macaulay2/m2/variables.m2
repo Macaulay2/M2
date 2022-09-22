@@ -70,6 +70,13 @@ installMethod(symbol <-, Sequence, (x,y) -> (
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> apply(toSequence v .. toSequence w, xi -> new IndexedVariable from xi)
 IndexedVariable ..< IndexedVariable := Sequence => (v,w) -> apply(toSequence v ..< toSequence w, xi -> new IndexedVariable from xi)
 
+-- baseName
+baseName Thing := R -> (
+    if not hasAttribute(R, ReverseDictionary) then error "baseName: no base name available";
+    x := getAttribute(R, ReverseDictionary);
+    if mutable x then x else error("baseName: base name ", toString x,
+	" is not mutable, hence not available for use as a variable"))
+baseName Symbol :=
 baseName IndexedVariable := identity
 baseName IndexedVariableTable := x -> if x#?symbol$ then x#symbol$ else error "indexed variable table not associated to a symbol"
 baseName Subscript := x -> new IndexedVariable from { baseName x#0 , x#1 }

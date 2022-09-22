@@ -307,7 +307,7 @@ export DictionaryClosure := {+
      frame:Frame,      -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
      };
-export FunctionClosure := {+ frame:Frame, model:functionCode };
+export FunctionClosure := {+ frame:Frame, model:functionCode, hash:int };
 export SymbolClosure := {+
      frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
      symbol:Symbol
@@ -352,7 +352,7 @@ export MysqlField  := Pointer "struct st_mysql_field *";
 export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 
 export pythonObject := Pointer "struct _object *";
-export pythonObjectCell := {+v:pythonObject};
+export pythonObjectCell := {+v:pythonObject, hash:int};
 
 export TaskCellBody := {+
      hash:int,
@@ -361,6 +361,7 @@ export TaskCellBody := {+
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };
 
+export pointerCell := {+ v:voidPointer };
 
 export Expr := (
      CCcell or
@@ -415,7 +416,8 @@ export Expr := (
      pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
-     fileOutputSyncState
+     fileOutputSyncState or
+     pointerCell
      );
 export fun := function(Expr):Expr;
 

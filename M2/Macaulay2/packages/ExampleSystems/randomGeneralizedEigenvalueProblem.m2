@@ -38,7 +38,7 @@ doc ///
 	    This function creates a square target system representing the problem
 	    for random $A$ and $B$ and a start system representing  
 	    the problem with eigenvalues that
-	    are $n$-th roots of unity and the corresponding eignevectors 
+	    are $n$-th roots of unity and the corresponding eigenvectors 
 	    form the standard basis. 
 	    
 	    This system was solved in May 2020, using @TO track@ in Macaulay2 v1.15

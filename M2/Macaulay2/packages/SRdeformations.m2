@@ -33,7 +33,7 @@ If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
 Then automatically the package "OldPolyhedra" is used,
-but that is several magnitues slower compared to maple/convex.
+but that is several magnitudes slower compared to maple/convex.
 
 "OldPolyhedra" relies on the package "FourierMotzkin".
 
@@ -2499,7 +2499,7 @@ I)
 -- this is the Stanley-Reisner complex
 -- but the cocomplex is always dual to a complex in the polytope
 -- which is the true geometric strata of the vanishing locus of the ideal
--- in the Cox ring of the toric varietey)
+-- in the Cox ring of the toric variety)
 
 ---------------------------------------------------------
 -- cocomplexes:
@@ -4661,7 +4661,7 @@ doc ///
     :Boolean
   Description
    Text
-        Checks whether a deformation f is homogeneous with respect to the small torus gradin, i.e., the grading added to R = @TO simplexRing@ f by @TO addCokerGrading@.
+        Checks whether a deformation f is homogeneous with respect to the small torus grading, i.e., the grading added to R = @TO simplexRing@ f by @TO addCokerGrading@.
    Example
         R=QQ[x_0..x_4];
         addCokerGrading(R);
@@ -5119,7 +5119,7 @@ doc ///
        If L is specified then the grading of a weighted projective space is added.
        
        This command does not change the behaviour of R with respect to the standard
-       Macaualy2 image grading, which we want to use independently.
+       Macaulay2 image grading, which we want to use independently.
 
    Example
         R=QQ[x_0..x_4];
@@ -5185,7 +5185,7 @@ doc ///
         
         {\bf The data stored in a face F:}
         
-        {\it F.vert}, a list with the vertices of F, which are variables of a @TO PolynomialRing@ R. We use a list to prevent Macaualy from reordering sets or monomials.
+        {\it F.vert}, a list with the vertices of F, which are variables of a @TO PolynomialRing@ R. We use a list to prevent Macaulay from reordering sets or monomials.
         
         {\it F.ofComplex}, a list with the @TO Complex@es and @TO CoComplex@es of which F is a face (optional).
         

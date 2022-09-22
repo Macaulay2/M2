@@ -126,7 +126,7 @@ resolutionBySchreyerFrame := (opts, M) -> (
     C)
 
 resolutionBySyzygies := (opts, M) -> (
-    resLog("using resolution by syzygyies");
+    resLog("using resolution by syzygies");
     C := if M.cache.?resolution then M.cache.resolution
     else M.cache.resolution = chainComplex presentation M;
     i := length C;

@@ -285,7 +285,7 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     nPlus1rows := toList(0..n);
     nPlus1by1submatrix := M -> submatrix(M,nPlus1rows,{0});
     
-    -- bactrack from x0in to x0
+    -- backtrack from x0in to x0
     x0out := mutableMatrix(ring x0in,n+2,1);     
     dt0 := x0in_(n,0)-t'end;
     x0out_(n,0) = t'end + o#"backtrack factor"*dt0;  

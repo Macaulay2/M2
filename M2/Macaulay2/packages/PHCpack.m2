@@ -1477,7 +1477,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     totalN := #result;
     scan(result, s->(
       if s#1#"mult">1 then error "multiple root encountered";
-      if s#1#"mult"<0 then error "negative mutiplicity";
+      if s#1#"mult"<0 then error "negative multiplicity";
     ));			 
     result = select(result, 
       s-> 

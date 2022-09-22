@@ -164,7 +164,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 
 		    --debugging code: multiply the representative by 10
 		    --dPatch = matrix{ flatten entries (10*x0) / conjugateQI}; -- x0* used in evaluation
-		    --compute'dt'epsilon(10*x0,t0); -- check independence on a respresentative
+		    --compute'dt'epsilon(10*x0,t0); -- check independence on a representative
 		    --dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
 
                     dx := 0; -- 0-th order predictor

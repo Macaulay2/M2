@@ -223,7 +223,7 @@ doc ///
     	point
         (point, VisibleList)
     Headline
-        consructs a projective point from the list (or array) of coordinates.
+        constructs a projective point from the list (or array) of coordinates.
     Usage
         point(L)
     Inputs

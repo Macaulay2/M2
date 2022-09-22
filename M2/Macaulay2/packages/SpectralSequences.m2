@@ -909,7 +909,7 @@ SpectralSequencePageMap _ List := Matrix => (d,i)-> (if (d)#?i then d#i
 SpectralSequencePageMap ^ List := Matrix => (d,i)-> (d_(-i))    
 
 
--- auxlillary spectral sequence stuff.  
+-- auxiliary spectral sequence stuff.  
 
 filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
 chainComplex SpectralSequence := ChainComplex => E -> chainComplex filteredComplex E
@@ -1252,7 +1252,7 @@ doc ///
 	      E^infinity    
 	  Text
      	     If we want the homology of the complex to be the non-reduced homology
-     	     of the simpicial complex we set the ReducedHomology option to false:
+     	     of the simplicial complex we set the ReducedHomology option to false:
      	  Example 
 	     k = filteredComplex({F2D, F1D, F0D}, ReducedHomology => false)
 	  Text
@@ -1499,7 +1499,7 @@ doc ///
     Description
     	  Text
 	       Here we give an example of a spectral sequence that takes n+2 steps to degenerate, where
-	       n is the embedding dimesion of the ring.  We present this when n = 2 but the user with 
+	       n is the embedding dimension of the ring.  We present this when n = 2 but the user with 
 	       computational power can easily do a bigger case. 	       
      	  Example
     	       S = ZZ/101[x,y];
@@ -1578,7 +1578,7 @@ doc ///
 	      B = truncate(chainComplex realProjectivePlane,1)	 
 	      prune HH B
     	  Text
-	      We now compute the fibers of the anti-podal quoitent map
+	      We now compute the fibers of the anti-podal quotient map
  	      $\mathbb{S}^2 \rightarrow  \mathbb{R} \mathbb{P}^2$.
 	      The way this works for example is:
 	      $a = v3 ~ v1, b = v6 ~ v5, d = v36 ~ v15, c = v4 ~ v2, 
@@ -1634,7 +1634,7 @@ doc///
 	      prune HH C
     	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the fibration
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the fibration
 	      $S^1 \rightarrow {\rm Klein Bottle} \rightarrow S^1$.
 	      The subsimplicial complexes of $\Delta$, which arise from the 
 	      the inverse images of the simplicies of $S$, are described below.
@@ -1685,7 +1685,7 @@ doc ///
 	      prune HH C
 	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the trivial fibration
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the trivial fibration
 	      $\mathbb{S}^1 \rightarrow \mathbb{S}^1 \times \mathbb{S}^1 \rightarrow \mathbb{S}^1$.
 	      We now make subsimplicial complexes arising from the filtrations of the
 	      inverse images of the simplicies.
@@ -1894,7 +1894,7 @@ doc ///
 		    associated to the Hopf Fibration 
 		    $S^1 \rightarrow S^3 \rightarrow S^2$.
 		    This example is made possible by the minimal
-		    triangualtion of this fibration given in the paper
+		    triangulation of this fibration given in the paper
 		    "A minimal triangulation of the Hopf map and its application"
 		    by K.V. Madahar and K.S Sarkaria. Geom Dedicata, 2000.
      	       Text
@@ -1918,7 +1918,7 @@ doc ///
 		    $c_i \mapsto c$, and $d_i \mapsto d$.  
 		    		    
 		    We now explain how to construct the filtration of $S3$ obtained by
-		    considering the $k$-sketeltons of this fibration.
+		    considering the $k$-skeletons of this fibration.
 		    
 		    The simplicial complex $F1S3$ below
 		    is the subsimplicial complex of $S3$ obtained by considering the 
@@ -1964,7 +1964,7 @@ doc ///
      	       Text		    
 		    We now compute the various pages of the spectral sequence.
 		    To make the output 
-		    intelliagble we prune the spectral sequence.
+		    intelligible we prune the spectral sequence.
      	       Example		     
      	       	    E = prune spectralSequence K;
      	       Example		    		    
@@ -2752,7 +2752,7 @@ doc ///
 	    compute the hard truncation of a chain complex   
      Description
      	  Text
-	       Computes the hard trucaton of a chain complex as a specified homological degree.
+	       Computes the hard truncation of a chain complex as a specified homological degree.
 	  Example
 	       B = QQ[a..d];
 	       C = koszul vars B
@@ -2915,7 +2915,7 @@ doc ///
 	      K = filteredComplex{D,E,F}
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we can do the following.
+     	     of the simplicial complexes we can do the following.
      	  Example 
 	     filteredComplex({D,E,F}, ReducedHomology => false)
      SeeAlso
@@ -2938,7 +2938,7 @@ doc ///
           K: FilteredComplex
      Description	  
      	  Text
-	     Produces the filtered complex obtained by succesively truncating the complex.
+	     Produces the filtered complex obtained by successively truncating the complex.
 	  Example 
 	    needsPackage "SpectralSequences"
 	    A = QQ[x,y]
@@ -3627,7 +3627,7 @@ doc ///
      	  Text 
 	       Returns the chain complex map specifying the inclusion of the i piece 
 	       of the filtered
-	       complex to the ambeint chain complex.
+	       complex to the ambient chain complex.
 	  Example
 	      A = QQ[x,y];
 	      C = koszul vars A;
@@ -3826,7 +3826,7 @@ doc ///
     	       (prune E) ^infinity
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we set the ReducedHomology option
+     	     of the simplicial complexes we set the ReducedHomology option
 	     to false.
      	  Example 
 	     J = filteredComplex({a,b,c}, ReducedHomology => false)           	     
@@ -4060,7 +4060,7 @@ doc ///
      Key
      	  "Example 1"
      Headline
-     	  Easy example of a filtered simpilcial complex	  
+     	  Easy example of a filtered simplicial complex	  
      Description
      	  Text
 	       Here we provide an easy example of a filtered simplicial complex and 
@@ -4085,7 +4085,7 @@ doc ///
 	  Text
 	       Considering the $E^2$ and $E^3$ pages of the spectral sequence 
 	       we conclude that the map $d^2_{2,-1}$ must have a $1$-dimensional
-	       image and a $1$-dimensinal kernel.  This can be verified easily:
+	       image and a $1$-dimensional kernel.  This can be verified easily:
 	  Example
 	      rank ker E^2 .dd_{2,-1}
 	      rank image E^2 .dd_{2,-1}     

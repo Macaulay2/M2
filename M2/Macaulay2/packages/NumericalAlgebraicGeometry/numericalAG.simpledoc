@@ -124,7 +124,7 @@ Description
      Text 
      	 To restore the quadratic convergence we use is {\em deflation}.
      Example
-     	 r = deflate(T,P) -- returns the numerical rank, stores defalted system
+     	 r = deflate(T,P) -- returns the numerical rank, stores deflated system
 	 DF := T.Deflation#r
 	 P' := liftPointToDeflation(P,T,r) 
      Text 

@@ -40,7 +40,7 @@ doc ///
           NN=N-transpose N; -- NN will be a random skew-matrix of the given shape
           K=pfaffians(numrows NN-1,NN);
           I=preimage (seg, K);
-          Quartic=(inverseSystem (super basis(4,I)))_0;--commpute the quartic
+          Quartic=(inverseSystem (super basis(4,I)))_0; -- compute the quartic
           Betti=betti resolution inverseSystem Quartic;
           return Betti)
 

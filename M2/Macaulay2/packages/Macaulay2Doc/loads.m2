@@ -69,6 +69,7 @@ load "./functions.m2"
 load "./shared.m2"
 load "./types.m2"
 load "./methods.m2"
+load "./doc_iterators.m2"
 load "./options.m2" -- this must come last
 
 load "./M2-Singular-Book.m2"

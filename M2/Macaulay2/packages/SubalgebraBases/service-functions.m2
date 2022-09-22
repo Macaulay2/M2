@@ -364,7 +364,7 @@ updateComputation(HashTable) := (compTable) -> (
     -- TODO: we can add a "Master" (default) strategy which can dynamically switch between these strategy 
     -- Current ideas for "Master" strategy:
     -- 1) If "Incremental" was used last time (i.e. we have a full GB for reductionIdeal computed) and only 1 new
-    --    sagbiGenerator is added, then use "Incremenetal"
+    --    sagbiGenerator is added, then use "Incremental"
     -- [Add more specifications based on heuristics about computations]
     if compTable#"options"#Strategy == "Master" then (
 	updateComputationMaster(compTable);
@@ -389,7 +389,7 @@ updateComputation(HashTable) := (compTable) -> (
 -- if 0 or 1 sagbiGenerators were added and the degree of the last added generator > 5 then use Incremental
 -- otherwise use DegreeByDegree
 --
--- TODO: the number 5 is COMPLETELY ABRITRARY, find a better heuristic
+-- TODO: the number 5 is COMPLETELY ARBITRARY, find a better heuristic
 --       Ollie's idea is that while there are generators of low degree it's okay to use DegreeByDegree
 --       
 

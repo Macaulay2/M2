@@ -62,7 +62,9 @@ toString SparseResultant := net SparseResultant := R -> (
     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
     else "-*An example of sparse resultant*-"
 );
+texMath SparseResultant := texMath @@ net;
 
+SparseResultant#{WebApp,AfterPrint} = SparseResultant#{WebApp,AfterNoPrint} = 
 SparseResultant#{Standard,AfterPrint} = SparseResultant#{Standard,AfterNoPrint} = (R) -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class R << " ("; 
     << "sparse " << (if R#"Unmixed" then "unmixed" else "mixed") << " resultant associated to " << R#"exponents"; 
@@ -296,7 +298,9 @@ toString SparseDiscriminant := net SparseDiscriminant := D -> (
     if hasAttribute(D,ReverseDictionary) then toString getAttribute(D,ReverseDictionary)
     else "-*An example of sparse discriminant*-"
 );
+texMath SparseDiscriminant := texMath @@ net;
 
+SparseDiscriminant#{WebApp,AfterPrint} = SparseDiscriminant#{WebApp,AfterNoPrint} = 
 SparseDiscriminant#{Standard,AfterPrint} = SparseDiscriminant#{Standard,AfterNoPrint} = (D) -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class D << " ("; 
     << "sparse discriminant associated to " << D#"exponents"; 
@@ -556,6 +560,7 @@ MultidimensionalMatrix = new Type of HashTable;
 
 MultidimensionalMatrix.synonym = "multidimensional matrix";
 
+MultidimensionalMatrix#{WebApp,AfterPrint} = MultidimensionalMatrix#{WebApp,AfterNoPrint} = 
 MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,AfterNoPrint} = M -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << dim M << "-dimensional matrix of shape " << printedShape M << " over " << ring M << endl;
 );
@@ -563,6 +568,7 @@ MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,
 MultidimensionalMatrix.Wrap = x -> wrap(printWidth,"-", net x);
 
 net MultidimensionalMatrix := M -> net entries M;
+texMath MultidimensionalMatrix := texMath @@ net;
 
 multidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);
 
@@ -1112,7 +1118,7 @@ document {
      SeeAlso => {sparseResultant}
 }
 
-undocumented {(describe, SparseResultant), (toString, SparseResultant), (net, SparseResultant), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Matrix)}
+undocumented {(describe, SparseResultant), (toString, SparseResultant), (net, SparseResultant), (texMath, SparseResultant), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Matrix)}
 
 document { 
     Key => {sparseDiscriminant,(sparseDiscriminant,Matrix),(sparseDiscriminant,RingElement),[sparseDiscriminant,CoefficientRing]}, 
@@ -1180,7 +1186,7 @@ document {
      SeeAlso => {sparseDiscriminant}
 }
 
-undocumented {(describe, SparseDiscriminant), (toString, SparseDiscriminant), (net, SparseDiscriminant)}
+undocumented {(describe, SparseDiscriminant), (toString, SparseDiscriminant), (net, SparseDiscriminant), (texMath, SparseDiscriminant)}
 
 document { 
     Key => {exponentsMatrix,(exponentsMatrix,Sequence),[exponentsMatrix,Unmixed]}, 
@@ -1419,7 +1425,7 @@ document {
      SeeAlso => {(symbol *,RingElement,MultidimensionalMatrix)}
 }
 
-undocumented {(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ),(sub,MultidimensionalMatrix,Ring),
+undocumented {(texMath,MultidimensionalMatrix),(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ),(sub,MultidimensionalMatrix,Ring),
               (matrix,MultidimensionalMatrix),(multidimensionalMatrix,Matrix)}
 
 document { 

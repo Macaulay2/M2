@@ -273,7 +273,7 @@ lowestOrder:=(G,F,C,nk)->(
     A:=sub(matrix {LO},ring G_0);
     (A,B))
 
---auxilliary function, used to translate a vector representation of a homomorphism to a map
+--auxiliary function, used to translate a vector representation of a homomorphism to a map
 vecToHom:=(v,T,S)->(
 	matrix map(T,S, transpose matrix pack(flatten entries v,numgens T)))
 
@@ -927,7 +927,7 @@ document {
      Key =>{firstOrderDeformations,(firstOrderDeformations,Matrix,Matrix,Matrix),
 	  [firstOrderDeformations,SanityCheck],
      	  [firstOrderDeformations,DefParam]},
-     Headline => "use tangent space to create first order peturbations and find relations",
+     Headline => "use tangent space to create first order perturbations and find relations",
      Usage => "(F,R) = firstOrderDeformations(F0,R0,T1)",
      Inputs => {"F0" =>Matrix, "R0"=>Matrix, "T1"=>Matrix},
      Outputs=>{"F" => {ofClass List, " of matrices"},
@@ -1271,7 +1271,7 @@ document {
 document {
     Key =>DefParam,
    Headline => "deformation parameter",
-   PARA {TT "DefParam"," is the name of an optional arguemt. Its value is ",ofClass Symbol,", which specifies the name of the deformation parameter.
+   PARA {TT "DefParam"," is the name of an optional argument. Its value is ",ofClass Symbol,", which specifies the name of the deformation parameter.
 	Its default value is determined by the loadtime configuration ",TO Option," ",TT "DefaultDefParam",", which
 	 has default value ",TT "t","."
 	},
@@ -1365,13 +1365,14 @@ assert (checkTangentSpace gens J == true)
 assert (checkComparisonTheorem gens J == true)
 ///
 
-TEST ///
-needsPackage "Truncations"
-S = ZZ/32003[a..d]
-I = monomialIdeal(a^2,a*b,b^4,a*c^3)
-J = truncate(3, I)
-(F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
-///
+-- TEST ///
+-- needsPackage "Truncations"
+-- S = ZZ/32003[a..d]
+-- I = monomialIdeal(a^2,a*b,b^4,a*c^3)
+-- J = truncate(3, I)
+-- (F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
+-- ///
+
 TEST ///
 S=QQ[x,y]/ideal {x^4+y^3}
 f= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}

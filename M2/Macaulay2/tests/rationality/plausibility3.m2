@@ -1,5 +1,5 @@
 ------------------------
--- Testing priodicity --
+-- Testing periodicity --
 ------------------------
 
 -- the precision

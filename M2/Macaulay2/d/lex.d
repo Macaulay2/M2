@@ -356,7 +356,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       else while isdigit(peek(file)) do
 		    tokenbuf << char(getc(file));
 	       c := peek(file);
-	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e'))
+	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')) || c == int('E')
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
@@ -377,9 +377,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			      )
 			 );
 	       	    c = peek(file);
-		    if c == int('e') then (
+		    if c == int('e') || c == int('E') then (
 			 tokenbuf << char(getc(file));
-			 if ( peek(file) == int('-') && isdigit(peek(file,1)) || isdigit(peek(file)) )
+			 if ( peek(file) == int('-') && isdigit(peek(file,1)) ||
+			      peek(file) == int('+') && isdigit(peek(file,1)) ||
+			      isdigit(peek(file)) )
 			 then (
 			      tokenbuf << char(getc(file));
 			      while isdigit(peek(file)) do tokenbuf << char(getc(file));

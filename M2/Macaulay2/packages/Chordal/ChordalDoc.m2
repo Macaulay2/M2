@@ -1019,7 +1019,7 @@ doc /// --nextChain
         C':ChordalNetChain
           the next chain of the chordal network, if any
         data:Sequence
-          cached data for future compuations (if codimension is specified)
+          cached data for future computations (if codimension is specified)
     Consequences
     Description
       Text

@@ -882,7 +882,7 @@ doc ///
     i = points pointsMat
    Inputs
     pointsMat:Matrix
-     matrix whose columns are the homogeneous cooredinates of the points
+     matrix whose columns are the homogeneous coordinates of the points
    Outputs
     i:Ideal
    Description

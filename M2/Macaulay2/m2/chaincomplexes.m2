@@ -877,18 +877,6 @@ minimalPresentation ChainComplexMap := prune ChainComplexMap := ChainComplexMap 
      map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f#k)
      )
 ----------------------------------------
-compositions = method(TypicalValue => List);
-compositions(ZZ,ZZ) := (n,k) -> (
-     compositionn := (n,k) -> (
-	  if n===0 or k < 0 then {}
-	  else if k===0 then {toList(n:0)}
-	  else join(
-	       apply(compositionn(n-1,k), s -> s | {0}),
-	       apply(compositionn(n,k-1), s -> s + (toList(n-1:0) | {1}))));
-     compositionn = memoize compositionn;
-     result := compositionn(n,k);
-     compositionn = null;
-     result);
 
 eagonNorthcott = method(TypicalValue => ChainComplex)
 eagonNorthcott Matrix := f -> (

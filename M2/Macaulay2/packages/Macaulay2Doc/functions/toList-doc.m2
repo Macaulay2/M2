@@ -7,13 +7,14 @@ doc///
   (toList, BasicList)
   (toList, Set)
   (toList, String)
+  (toList, Thing)
  Headline
   create a list
  Usage
   toList A
  Inputs
-  A:
-   a @TO Set@, @TO String@, or a @TO BasicList@ such as a @TO Sequence@
+  A:{Set,String,BasicList,ZZ}
+   or an instance of an iterable class (see @TO "iterators"@)
  Outputs
   L:List
    a list whose elements are the elements of {\tt A}

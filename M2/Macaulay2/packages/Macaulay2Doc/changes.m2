@@ -48,9 +48,9 @@ document {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "CotangentSchubert::CotangentSchubert", ", a package by Paul Zinn-Justin for cotangent Schubert calculus, has been added." },
 		    LI { TO "OnlineLookup::OnlineLookup", ", a package by Paul Zinn-Justin for looking up mathematical information online, has been added." },
-		    LI { TO "MergeTeX::MergeTeX", ", a package by Paul Zinn-Justin for runniung Macaulay2 code and inserting the results into a LaTeX file, has been added." },
+		    LI { TO "MergeTeX::MergeTeX", ", a package by Paul Zinn-Justin for running Macaulay2 code and inserting the results into a LaTeX file, has been added." },
 		    LI { TO "Probability::Probability", ", a package by Doug Torrance for basic probability, has been added." },
-		    LI { TO "Isomorphism::Isomorphism", ", a package by David Eisenbud for probabalistic searching for isomorphisms between modules, has been added." },
+		    LI { TO "Isomorphism::Isomorphism", ", a package by David Eisenbud for probabilistic searching for isomorphisms between modules, has been added." },
 		    LI { star, " ", TO "SchurVeronese::SchurVeronese", ", a package by Juliette Bruce, Daniel Erman, Steve Goldstein and Jay Yang for examining data for Veronese embeddings of projective space, has been added and published." },
 		    LI { star, " ", TO "CodingTheory::CodingTheory", ", a package by Taylor Ball, Eduardo Camps, Henry Chimal-Dzul, Delio Jaramillo-Velez, Hiram H. Lopez, Nathan Nichols, Matthew Perkins, Ivan Soprunov, German Vera, and Gwyn Whieldon for coding theory, has been added and published." },
 		    }
@@ -1659,7 +1659,7 @@ document {
 		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", ", a package for Hodge integrals on the moduli space of curves, has been added and certified." },
 		    LI { TO "Kronecker::Kronecker", ", a package for Kronecker and rational normal forms, has been added." },
 		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", ", a package for
-			 computating versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
+			 computing versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
 		    LI { TO "NAGtypes::NAGtypes", ", a package containing declarations of types needed by two 
 			 other packages, has been added." },
 		    LI { TO "Nauty::Nauty", ", an interface package for the program ", TT "nauty", ", which
@@ -2101,7 +2101,7 @@ document {
 		    TO (all,ZZ,Function),
 		    TO (any,ZZ,Function),
 		    TO (degreesMonoid,List),
-		    TO (degreesRing,GeneralOrderedMonoid),
+		    TO (degreesRing,Monoid),
 		    TO (degreesRing,List),
 		    TO (export,String),
 		    TO (findFiles,List),

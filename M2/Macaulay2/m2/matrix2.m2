@@ -128,7 +128,7 @@ complement Matrix := Matrix => (f) -> (
 	  submatrix'(id_(ZZ^m),rows') // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
      else if complementOkay R then (
-	  (R',F) := flattenRing R; -- we flatten because otherwise we might get the degree map wrong, spoiling homoeneity
+	  (R',F) := flattenRing R; -- we flatten because otherwise we might get the degree map wrong, spoiling homogeneity
 	  f' := F f;
 	  map(target f,,R ** complement (map(coefficientRing R', R')) f')
 	  )
@@ -503,20 +503,6 @@ listOfVars(Ring,RingElement) := (R,x) -> (
      if class x === R 
      then {index x}
      else error "expected a ring element of the same ring")
-
-coefficient(MonoidElement,RingElement) := (m,f) -> (
-     RM := ring f;
-     R := coefficientRing RM;
-     M := monoid RM;
-     if not instance(m,M) then error "expected monomial from same ring";     
-     new R from rawCoefficient(raw R, raw f, raw m))
-coefficient(RingElement,RingElement) := (m,f) -> (
-     if size m != 1 or leadCoefficient m != 1 then error "expected a monomial";
-     RM := ring f;
-     R := coefficientRing RM;
-     promote(rawCoefficient(raw R, raw f, rawLeadMonomialR m), R))
-RingElement _ MonoidElement := RingElement => (f,m) -> coefficient(m,f)
-RingElement _ RingElement := RingElement => (f,m) -> coefficient(m,f)
 
 coefficients = method(Options => {Variables => null, Monomials => null})
 coefficients(RingElement) := o -> (f) -> coefficients(matrix{{f}},o)

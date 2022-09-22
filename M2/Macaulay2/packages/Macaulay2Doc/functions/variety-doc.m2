@@ -23,7 +23,7 @@ document {
      Key => (variety,SheafOfRings),
      Usage => "variety O",
      Inputs => { "O" },
-     Outputs => { { "the variety over which O is a qusicoherent sheaf of rings" } },
+     Outputs => { { "the variety over which O is a quasicoherent sheaf of rings" } },
      EXAMPLE lines ///
      	  X = Proj(QQ[x..z])
 	  O = OO_X

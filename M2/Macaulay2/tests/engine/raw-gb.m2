@@ -438,7 +438,7 @@ m = mat{{x^2+y^2, z^2+w^2}}
 A = rawQuotientRing(R,m)
 P = mat{{rawPromote(A,x), rawPromote(A,y), rawPromote(A,z), rawPromote(A,w)}}
 P1 = rawsyz P
-P2 = rawsyz P1 -- (One problem: syzygyies are not reduced mod ideal)
+P2 = rawsyz P1 -- (One problem: syzygies are not reduced mod ideal)
 print "ERROR: syzygies are not reduced modulo the quotient ideal"
 P3 = rawsyz P2
 P * P1

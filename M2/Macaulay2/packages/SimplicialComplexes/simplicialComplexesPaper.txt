@@ -65,7 +65,7 @@ MORE DETAILED SECTION PLANNING
 - Certain "chess-board" complexes are pure but not Cohen-Macaulay
 - Use Reisner's criterion (corollary 5.3.9) in Bruns-Herzog for an example + non-example
 - Another way to check CM is to look at the minimal free resolution to compute projective
-  dimension and compare with dimension (may be worth mentoning)
+  dimension and compare with dimension (may be worth mentioning)
 - Lemma 5.1.8 relates h and f-vectors
 - Use Thm 5.1.15 in Bruns-Herzog on an example to illustrate connection with h-vector
 - Ex 1.2 in Stanley for h-vector relating to poincare series of P1 x P1
@@ -82,9 +82,9 @@ MORE DETAILED SECTION PLANNING
 - Taylor resolution that's not minimal
 - References: Miller-Sturmfels, Peeva, ...
 
-- Section 4 (toplogy)
+- Section 4 (topology)
 - Simplicial maps, relative homology, database of small 2/3-manifolds
 - Maybe take a classical map (Hopf fibration), then approximate by simplicial complexes
   and illustrate the example
-- To this end, find classical examples in toplogy. e.g. in Hatcher/Munkres
+- To this end, find classical examples in topology. e.g. in Hatcher/Munkres
 - References: Munkres, Hatcher, Tight polyhedral submanifolds and tight triangulations, introduction to piecewise linear topology

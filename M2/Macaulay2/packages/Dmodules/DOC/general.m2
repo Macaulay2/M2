@@ -338,7 +338,7 @@ doc ///
       and rational solutions of a holonomic system} by
       Oaku, Takayama and Tsai (2000).  The second algorithm is based
       on homological algebra - see the paper {\em Computing
-      homomorphims between holonomic D-modules} by Tsai and Walther (2000).
+      homomorphisms between holonomic D-modules} by Tsai and Walther (2000).
     Example
       makeWA(QQ[x])
       I = ideal(dx^2, (x-1)*dx-1)

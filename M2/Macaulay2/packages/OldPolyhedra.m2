@@ -173,7 +173,7 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 --  -Symmetry group for polytopes
 
 
--- Definind the new type PolyhedralObject
+-- Defining the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
 globalAssignment PolyhedralObject
 
@@ -936,7 +936,7 @@ ambDim PolyhedralObject := X -> X#"ambient dimension"
 
 
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
+-- PURPOSE : Giving the k dimensional Cones of the Fan
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)
@@ -948,7 +948,7 @@ cones(ZZ,Fan) := (k,F) -> (
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 
 
--- PURPOSE : Giving the k dimensionial Polyhedra of the Polyhedral Complex
+-- PURPOSE : Giving the k dimensional Polyhedra of the Polyhedral Complex
 --   INPUT : (k,PC)  where 'k' is a positive integer and PC is a PolyhedralComplex 
 --  OUTPUT : a List of Polyhedra
 polyhedra = method(TypicalValue => List)
@@ -1868,7 +1868,7 @@ latticePoints Polyhedron := P -> (
      if not P.cache.?latticePoints then (
 	  -- Checking for input errors
 	  if  not isCompact P then error("The polyhedron must be compact");
-	  -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+	  -- Recursive function that intersects the polyhedron with parallel hyperplanes in the axis direction
 	  -- in which P has its minimum extension
 	  latticePointsRec := P -> (
 	       -- Finding the direction with minimum extension of P
@@ -3044,7 +3044,7 @@ Cone + Cone := minkowskiSum
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
 --   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
 --     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
+--  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
      if k <= 0 then error("The factor must be strictly positiv");
@@ -3405,14 +3405,14 @@ secondaryPolytope Polyhedron := P -> (
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
---   INPUT : 'I',  a homogeneous ideal with resect to some strictly psoitive grading
+--   INPUT : 'I',  a homogeneous ideal with resect to some strictly positive grading
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
-	  -- Generate the matrix 'M' that spans the space of the differeneces of the 
+	  -- Generate the matrix 'M' that spans the space of the differences of the 
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
@@ -4942,7 +4942,7 @@ document {
 	  " Q = intersection (M,v,N,w)"
 	  },
      
-     PARA{}, "If we have another polyehdron or cone, we can also intersect them with the others.",
+     PARA{}, "If we have another polyhedron or cone, we can also intersect them with the others.",
      
      EXAMPLE {
 	  " HC = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}},matrix {{1},{1},{1},{1},{1},{1}})",
@@ -5094,7 +5094,7 @@ document {
      of them. If one of the first two conditions fails, there will be an error and no PolyhedralComplex 
      will be returned. The pairs of incompatible polyhedra can be accessed with the 
      function ",TO incompPolyhedra,". If the last condition fails, then the Polyhedron is already in 
-     the PolyhedralComplex as a face of one of the poyhedra, so it does not have to be added. The conditions 
+     the PolyhedralComplex as a face of one of the polyhedra, so it does not have to be added. The conditions 
      are checked in this order.",
      
      PARA{}, "If ",TT "addPolyhedron"," is applied to a ",TO List," and a ",TO PolyhedralComplex,", then 

@@ -1470,7 +1470,7 @@ doc ///
             peek StrategyDefaultWithPoints
             peek StrategyPoints
         Text
-            {\tt StrategyDefaultNonRandom} is like {\tt StrategyDefault} but removes random submatrices (which can be suprisingly beneficial in some cases).  {\tt StrategyDefaultWithPoints} removes randomness but adds in points instead.  
+            {\tt StrategyDefaultNonRandom} is like {\tt StrategyDefault} but removes random submatrices (which can be surprisingly beneficial in some cases).  {\tt StrategyDefaultWithPoints} removes randomness but adds in points instead.  
         Text
             {\it A warning on chooseGoodMinors:}  The strategies {\tt LexSmallest} and {\tt LexSmallestTerm} will very frequently {\bf repeatedly} choose the same submatrix of the given matrix.  Hence if one tries to run {\tt chooseGoodMinors} and choose too many minors with such a strategy, one can get into a long loop (the function give up eventually, but only after doing way too much work).  The {\tt GRevLex} strategies periodically temporarily change the underlying matrix to avoid this sort of loop.
         Text
@@ -1727,7 +1727,7 @@ doc ///
         M1: Matrix
     Outputs
         : List
-            the first entry is a list of row indicies, the second is a list of column indices
+            the first entry is a list of row indices, the second is a list of column indices
     Description
         Text
             This function looks at submatrices of the given matrix, and tries to find
@@ -2299,7 +2299,7 @@ J = ideal(g^3+h^3+1,f*g^3+f*h^3+f,c*g^3+c*h^3+c,f^2*g^3+f^2*h^3+f^2,c*f*g^3+c*f*
 assert((regularInCodimension(2, S/J) === true) or (regularInCodimension(2, S/J) === true));
 ///
 
-TEST /// --check #6, we found this example by dehomogenizing a homongeneous example, pdim does not provide the correct answer (of course, it does if you rehomogenize)
+TEST /// --check #6, we found this example by dehomogenizing a homogeneous example, pdim does not provide the correct answer (of course, it does if you rehomogenize)
 S = QQ[t_0, t_1, t_2, t_3, t_4, t_5];
 J = ideal(-t_2^3+2*t_1*t_2*t_3-t_0*t_3^2-t_1^2*t_4+t_0*t_2*t_4,-t_2^2*t_3+t_1*t_3^2+t_1*t_2*t_4-t_0*t_3*t_4-t_1^2*t_5+t_0*t_2*t_5,-t_2*t_3^2+t_2^2*t_4+t_1*t_3*t_4-t_0*t_4^2-t_1*t_2*t_5+t_0*t_3*t_5,-t_3^3+2*t_2*t_3*t_4-t_1*t_4^2-t_2^2*t_5+t_1*t_3*t_5,-t_2^2*t_4+t_1*t_3*t_4+t_1*t_2*t_5-t_0*t_3*t_5-t_1^2+t_0*t_2,-t_2*t_3*t_4+t_1*t_4^2+t_2^2*t_5-t_0*t_4*t_5-t_1*t_2+t_0*t_3,-t_3^2*t_4+t_2*t_4^2+t_2*t_3*t_5-t_1*t_4*t_5-t_2^2+t_1*t_3,-t_2*t_4^2+t_2*t_3*t_5+t_1*t_4*t_5-t_0*t_5^2-t_1*t_3+t_0*t_4,
     -t_3*t_4^2+t_3^2*t_5+t_2*t_4*t_5-t_1*t_5^2-t_2*t_3+t_1*t_4,-t_4^3+2*t_3*t_4*t_5-t_2*t_5^2-t_3^2+t_2*t_4);

@@ -143,7 +143,7 @@ zeroDimensionalDual (AbstractPoint,Matrix) := o -> (p,I) -> zeroDimensionalDual(
 zeroDimensionalDual (Matrix,Matrix) := o -> (p,I) -> zeroDimensionalDual(point p, ideal I, o)
 ----------------------------------
 
---An object that stores the data for an ongoing iterative tuncated dual space computation
+--An object that stores the data for an ongoing iterative truncated dual space computation
 TruncDualData = new Type of MutableHashTable
 initializeDualData = method(Options => {KernelStrategy => "Default"})
 initializeDualData (Matrix,Boolean,Number) := opts -> (Igens,syl,t) -> (
@@ -2168,7 +2168,7 @@ doc ///
 	  Text
 	       See also @TO truncatedDual@.
      Caveat
-	  The space of dual elements satisying the conditions is not in general of finite dimension.
+	  The space of dual elements satisfying the conditions is not in general of finite dimension.
 	  If the dimension is infinite, this function will not terminate.  This is not checked.  To ensure
 	  termination, the local dimension of I at p should not exceed the length of v, and certain genericity
 	  constraints on the coordinates must be met.
@@ -2346,7 +2346,7 @@ doc ///
       [truncatedDual, Tolerance]
       [zeroDimensionalDual, Tolerance]
      Headline
-          optional argument for numerical tolernace
+          optional argument for numerical tolerance
      Description
           Text
 	       Many of the numerical operations require a tolerance value, below which numbers are considered to be numerically zero.
@@ -2609,7 +2609,7 @@ Outputs
 Description
     Text
         Let $R = \mathbb{F}[x_1,\dots,x_n]$ and $S = R[dx_1,\dotsc,dx_n]$. The elements of $S$ operate naturally on elements of $R$.
-        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, i.e., $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
+        The operator $dx_i$ acts as a partial derivative with respect to $x_i$, i.e., $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
         and a polynomial acts by multiplication, i.e., $x_i \bullet f = x_i f$.
 
         Suppose $D \in S^k$ and $f \in R^k$. Then the operation of $D$ on $f$ is defined as $D\bullet f := \sum_{i=1}^k D_i \bullet f_i \in R$.
@@ -3063,7 +3063,7 @@ Description
         will be used as the trusted point.
 
         {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the variables $dx_i$).
-            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speed-ups when the maxmial degree of the Noetherian operators
+            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speed-ups when the maximal degree of the Noetherian operators
             is known in advance.
 
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the

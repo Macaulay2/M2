@@ -1679,6 +1679,16 @@ AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
 AC_SEARCH_LIBS(lzma_end,lzma,,AC_MSG_ERROR(library lzma not found or not linkable))
 AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linkable))
 
+AC_MSG_CHECKING([whether package libffi is provided])
+AS_IF([pkg-config --exists libffi],
+      [AC_MSG_RESULT([yes])
+       CPPFLAGS="$(pkg-config --cflags-only-I libffi) $CPPFLAGS"
+       AC_CHECK_HEADER([ffi.h], [], [AC_MSG_ERROR([ffi.h not found])])
+       AC_SEARCH_LIBS([ffi_call], [ffi], [],
+	   [AC_MSG_ERROR([libffi not found or not linkable])])],
+      [AC_MSG_RESULT([no])
+       AC_MSG_ERROR([libffi is required])])
+
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 

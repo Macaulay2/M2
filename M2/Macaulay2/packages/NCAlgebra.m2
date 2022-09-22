@@ -1285,7 +1285,7 @@ toNCRing Ring := R -> (
    isComm := isCommutative R;
    isExter := isExterior R;
    if not isComm and not isExter then error "Input ring must be either strictly (-1)-skew commutative or commutative.";
-   --- generate the (skew)commutivity relations
+   --- generate the (skew)commutativity relations
    Q := coefficientRing R;
    A := Q (gens R);
    phi := ncMap(A,ambient R,gens A);
@@ -3182,8 +3182,8 @@ assignDegrees (NCMatrix, List, List) := (M,targetDeg,sourceDeg) -> (
    -- this means an input matrix may not have "source" and "target" keys
    -- but it will if it's a map to the zero module
    if (#(targetDeg) != #(entries M)) then error "Target degree list does not match number of rows of matrix";
-   if #(entries M) !=0 and (#(sourceDeg) != #(first entries M)) then error "Source degree list does not match number of columns of matriix";   
-   if #(entries M) == 0 and (#(sourceDeg) != #(M.source)) then error "Source degree list does not match number of columns of matriix";
+   if #(entries M) !=0 and (#(sourceDeg) != #(first entries M)) then error "Source degree list does not match number of columns of matrix";   
+   if #(entries M) == 0 and (#(sourceDeg) != #(M.source)) then error "Source degree list does not match number of columns of matrix";
    M#(symbol source) = sourceDeg;
    M#(symbol target) = targetDeg;
    -- set the isHomogeneous flag.

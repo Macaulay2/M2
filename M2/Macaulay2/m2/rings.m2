@@ -61,12 +61,7 @@ isSkewCommutative = method(TypicalValue => Boolean)
 isSkewCommutative Ring := R -> false
 
 isWeylAlgebra = method(TypicalValue => Boolean)
-isWeylAlgebra Ring := R -> (
-    not isCommutative R and 
-    isPolynomialRing R and 
-    R.monoid.Options.?WeylAlgebra and 
-    #R.monoid.Options.WeylAlgebra > 0
-    )
+isWeylAlgebra Ring := R -> false
 
 ZZ.isCommutative = true
 QQ.isCommutative = true
@@ -86,6 +81,17 @@ isHomogeneous Ring := R -> (
 promote = method(Dispatch=>{Thing,Type,Type})
 lift = method(Dispatch=>{Thing,Type,Type}, Options => {Verify => true})
 liftable  = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
+
+Number   ^ Ring :=
+Constant ^ Ring :=
+Constant ^ RingFamily :=
+RingElement ^ Ring    := (x, R) -> lift(x, R)
+
+Number      ^ RingFamily :=
+RingElement ^ RingFamily := (x, R) -> lift(x, default R)
+
+Number      _ Ring := promote
+RingElement _ Ring := promote
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

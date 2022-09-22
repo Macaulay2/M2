@@ -32,7 +32,7 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
 needsPackage "FourierMotzkin"
 
 
--- Definind the new type PolyhedralObject
+-- Defining the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
 globalAssignment PolyhedralObject
 
@@ -640,7 +640,7 @@ ambDim Fan := F -> F#"ambient dimension"
 
 
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
+-- PURPOSE : Giving the k dimensional Cones of the Fan
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)
@@ -1347,7 +1347,7 @@ latticePoints = method(TypicalValue => List)
 latticePoints Polyhedron := P -> (
      -- Checking for input errors
      if  not isCompact P then error("The polyhedron must be compact");
-     -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+     -- Recursive function that intersects the polyhedron with parallel hyperplanes in the axis direction
      -- in which P has its minimum extension
      latticePointsRec := P -> (
 	  -- Finding the direction with minimum extension of P
@@ -2270,7 +2270,7 @@ Cone + Cone := minkowskiSum
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
 --   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
 --     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
+--  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
      if k <= 0 then error("The factor must be strictly positiv");
@@ -2477,14 +2477,14 @@ posOrthant ZZ := n -> posHull map(QQ^n,QQ^n,1)
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
---   INPUT : 'I',  a homogeneous ideal with resect to some strictly psoitive grading
+--   INPUT : 'I',  a homogeneous ideal with resect to some strictly positive grading
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
-	  -- Generate the matrix 'M' that spans the space of the differeneces of the 
+	  -- Generate the matrix 'M' that spans the space of the differences of the 
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
@@ -3830,7 +3830,7 @@ document {
 	  " Q = intersection (M,v,N,w)"
 	  },
      
-     PARA{}, "If we have another polyehdron or cone, we can also intersect them with the others.",
+     PARA{}, "If we have another polyhedron or cone, we can also intersect them with the others.",
      
      EXAMPLE {
 	  " HC = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}},matrix {{1},{1},{1},{1},{1},{1}})",

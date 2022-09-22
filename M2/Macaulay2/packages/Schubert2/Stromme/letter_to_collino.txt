@@ -17,7 +17,7 @@ COLLINO@dm.unito.it writes:
  > If I am correct knowing this number 
  > would allow one to find some information
  > about quartic curves in the 3-fold, 
- > by means of the quantum coomology circus.
+ > by means of the quantum cohomology circus.
 
 Dear Collino,
 

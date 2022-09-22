@@ -268,7 +268,7 @@ doc ///
       N:Matrix
          Matrix containing generators of the lineality space as columns (optional)
       L:List
-         List contiaining lists with indices of the vertices of the maximal cells.
+         List containing lists with indices of the vertices of the maximal cells.
    Outputs
       PC:PolyhedralComplex
    Description

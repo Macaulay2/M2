@@ -668,7 +668,7 @@ extractBlocks = method()
 extractBlocks(Matrix, List) := Matrix => (phi, src) ->(
     -- returns the submatrix corresponding to the block or blocks listed in src.
     -- src is a list of integers or a list of such lists,
-    -- respresenting block(s) in source phi.
+    -- representing block(s) in source phi.
     -- note that this behavior is DIFFERENT than the function with the same
     -- name in EagonResolution, where the list is an ordinal list of integers
     -- representing the blocks (in some order??).
@@ -683,7 +683,7 @@ extractBlocks(Matrix, List) := Matrix => (phi, src) ->(
 extractBlocks(Matrix, List, List) := Matrix => (phi, tar, src) ->(
     -- returns the submatrix corresponding to the block or blocks listed in src and tar.
     -- src and tar are lists of integers or lists of such lists,
-    -- respresenting block(s) in phi.
+    -- representing block(s) in phi.
     -- note that this behavior is DIFFERENT than the function with the same
     -- name in EagonResolution, where the list is an ordinal list of integers
     -- representing the blocks (in some order??).

@@ -55,7 +55,7 @@ sagbiBasis Subring := opts -> S -> (
     -- rings stores the various rings we need in our constructions
     -- maps stores the maps between our rings
     -- ideals stores the ideals for the sagbi computations
-    -- data stores any SAGBI-related data from the computaiton
+    -- data stores any SAGBI-related data from the computation
     -- pending stores the pending list from the computation
     -- (if StorePending is true)
     -- strategy stores the desired strategy.  DegreeByDegree is 0
@@ -157,9 +157,9 @@ sagbiBasis Subring := opts -> S -> (
     -- a finite sagbi basis.  It is initially false.
     -- The degree is the current degree under consideration by
     -- the algorithm.  It is initially -1 to indicate that no
-    -- computation has occured.
+    -- computation has occurred.
     -- The limit is the maximum value of the degree.
-    -- It is initally set to infinity to indicate that no limit
+    -- It is initially set to infinity to indicate that no limit
     -- is set.
 
     data := new HashTable from {

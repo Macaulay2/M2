@@ -1879,7 +1879,7 @@ doc ///
             $\{0,\dots,n\}$; the entries index the rays that generate the
             cone.
         Text	    
-            The rojective plane has three fixed points and three fixed curves
+            The projective plane has three fixed points and three fixed curves
             (under the action of its torus), and projective $3$-space has four
             fixed points, six fixed curves, and four divisors.  More
             generally, the orbits of projective $(n-1)$-space are enumerated
@@ -2028,7 +2028,7 @@ doc ///
     Headline 
         make a birational simplicial toric variety
     Usage 
-        makeSimplical X
+        makeSimplicial X
     Inputs
         X : NormalToricVariety
         Strategy => ZZ

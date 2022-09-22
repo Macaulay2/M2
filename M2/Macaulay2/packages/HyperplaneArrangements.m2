@@ -280,7 +280,7 @@ prune Arrangement := Arrangement => options -> A -> (
 normal = h -> (1 / leadCoefficient h) * h -- representative of functional, mod scalars
 
 -- reduce an arrangement with possibly repeated hyperplanes to a 
--- simple arrangement.  Cache the simple arrangement and multipliticies.
+-- simple arrangement.  Cache the simple arrangement and multiplicities.
 trim Arrangement := Arrangement => opts -> (cacheValue symbol trim)(A -> (
      	if hyperplanes A === {} then (
 	    A.cache.trim = A; 
@@ -2185,7 +2185,7 @@ doc ///
 	E: PolynomialRing
 	    a skew-commutative polynomial ring with one variable for each hyperplane
 	    with indexed variables, optionally, given by the symbol $e$.  
-	    The user can also just specify a cofficient ring $k$.
+	    The user can also just specify a coefficient ring $k$.
     Outputs
     	: Ideal
 	    the defining ideal of the Orlik-Solomon algebra of A
@@ -2813,7 +2813,7 @@ doc ///
 	Text
 	    If $({\mathcal A},m)$ is a free multiarrangement and so is
 	    $({\mathcal A},m')$, where $m'$ is obtained from $m$ by lowering a
-	    single multiplicitity by one, the Euler restriction is free as
+	    single multiplicity by one, the Euler restriction is free as
 	    well, and the modules of @TO2 {(der, CentralArrangement, List), 
 		"logarithmic derivations"}@ form a short
 	    exact sequence.  See the paper of Abe, Terao and Wakefield for

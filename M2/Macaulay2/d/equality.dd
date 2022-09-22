@@ -244,6 +244,10 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is xmlAttrCell do False				    -- unimplemented
      is TaskCell do False
      is fileOutputSyncState do False
+     is x:pointerCell do
+	 when rhs
+	 is y:pointerCell do if x.v == y.v then True else False
+	 else False
      );
 
 -- Local Variables:

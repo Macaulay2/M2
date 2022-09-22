@@ -273,9 +273,9 @@ doc /// --triangularizeBatch
           either "Maple" or "Epsilon"
         R:Ring
         F:HashTable
-          whose values are polynmial sets
+          whose values are polynomial sets
         H:HashTable
-          whose values are polynmial sets
+          whose values are polynomial sets
     Outputs
         :HashTable
           containing triangular decompositions of each system
