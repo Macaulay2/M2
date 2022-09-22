@@ -50,7 +50,7 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 -- [functionality v2] DGModuleMap
 -- [functionality v2] torDelta - is this possible?  Would be great.
 -- [functionality v2] Golod/Levin/Avramov index? (see paper of Liana)
--- [functionality v2] Matric Massey products? (see Gulliksen-Levin)
+-- [functionality v2] Matrix Massey products? (see Gulliksen-Levin)
 -- [functionality v2] Computing Betti numbers using Massey products? (Ref?)
 
 -- Not sure if the below are possible

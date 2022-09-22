@@ -55,7 +55,7 @@ document {
 	  I = ideal vars R
 	  M = I / I^2
 	  ///,
-     "There is a diffference between typing I/J and (I+J)/J
+     "There is a difference between typing I/J and (I+J)/J
      in Macaulay2, although conceptually they are the same module.
      The former has as its generating set the generators of I,
      while the latter has as its (redundant) generators 

@@ -961,7 +961,7 @@ doc ///
   Inputs
     m:ZZ -- nonnegative
     n:ZZ -- nonnegative
-    k:ZZ -- between 0 and and @TT "m + n"@
+    k:ZZ -- between 0 and @TT "m + n"@
   Outputs
     :DiscreteProbabilityDistribution
   Description

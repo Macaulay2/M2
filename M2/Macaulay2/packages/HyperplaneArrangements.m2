@@ -2526,7 +2526,7 @@ doc ///
     Inputs
         F : Flat
 	G : Flat
-	    in the same arrangment as $F$
+	    in the same arrangement as $F$
     Outputs
         : Flat
     	    having the greatest codimension among those contained in both $F$
@@ -2575,7 +2575,7 @@ doc ///
     Inputs
         F : Flat
 	G : Flat
-	    in the same arrangment as $F$
+	    in the same arrangement as $F$
     Outputs
         : Flat
     	    having the least codimension among those contained in both $F$

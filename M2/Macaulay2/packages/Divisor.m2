@@ -875,7 +875,7 @@ installMethod( symbol SPACE, OO, RWeilDivisor, (OO, D1) ->(divisorToModule(D1)) 
 
 --Given a divisor D, 
 --ideal D 
---produces an ideal isomorphic to to the sheaf O(-D).  If D is effective, this will be the honest ideal corresponding to O(-D), 
+--produces an ideal isomorphic to the sheaf O(-D).  If D is effective, this will be the honest ideal corresponding to O(-D), 
 --otherwise it will just produce some ideal abstractly isomorphic to O(-D) (as a module)
 
 

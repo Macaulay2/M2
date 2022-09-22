@@ -3638,7 +3638,7 @@ composedFunctions = () -> (
      --Text
      -- The additional entry h in the zero position of the cohomology matrix of uQ
      -- indicates that we can recover
-     -- the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+     -- the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
      -- in this specific case.
      --Example
       uQ.dd_(-1)
@@ -4017,7 +4017,7 @@ doc ///
      Text
       The additional entry h in the zero position of the cohomology matrix of uQ
       indicates that we can recover
-      the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+      the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
       in this specific case.
      Example
       uQ.dd_(-1)

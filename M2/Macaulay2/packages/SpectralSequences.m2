@@ -1618,7 +1618,7 @@ doc///
     	 Text
 	      In this example we give a simplicial realization of the fibration 
 	      $\mathbb{S}^1 \rightarrow {\rm Klein Bottle} \rightarrow \mathbb{S}^1$.  
-	      To give a simplicial realization of of this fibration we first make a simplicial
+	      To give a simplicial realization of this fibration we first make a simplicial
 	      complex which gives a triangulation of the Klein Bottle.
 	      The triangulation of the Klein Bottle that we use has 18 facets and is, up to relabling, the triangulation of the Klein bottle given
 	      in Figure 6.14 of Armstrong's book {\it Basic Topology}.
@@ -1730,7 +1730,7 @@ doc ///
 		-- make the frobenious power of the irrelevant ideal
 		B = B_*/(x -> x^2)//ideal;
 		-- need to take a large enough power. 
-		-- it turns out that that 2 is large enough for this example 
+		-- it turns out that 2 is large enough for this example 
 		G = complete res image gens B;
 		F = koszul gens I;
 		K = Hom(G, filteredComplex(F));

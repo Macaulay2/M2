@@ -416,7 +416,7 @@ doc///
    An option to designate the CONFIG part of a Bertini Input file.
  Description
    Text
-     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPType" and and the second element is what the Bertini option will be set to e.g. "2".
+     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPType" and the second element is what the Bertini option will be set to e.g. "2".
    Example
      R=QQ[x0,x1,y0,y1,z]
      makeB'InputFile(storeBM2Files,

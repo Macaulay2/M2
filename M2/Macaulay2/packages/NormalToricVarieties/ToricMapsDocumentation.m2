@@ -1569,7 +1569,7 @@ doc ///
 	    Given a toric map $f : X \to Y$ where $Y$ is smooth, this method
 	    returns the induced map from the total coordinate ring $S$ of $Y$
 	    to the total coordinate ring $R$ of $X$.  Since $f$ is
-	    torus-equivarient, each variable in the polynomial ring $S$ maps
+	    torus-equivariant, each variable in the polynomial ring $S$ maps
 	    to a monomial in $R$.  
 	Text
 	    As a first example, we compute the map on the total coordinate
