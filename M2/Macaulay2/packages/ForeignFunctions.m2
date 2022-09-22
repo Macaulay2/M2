@@ -573,20 +573,15 @@ doc ///
     Text
       This is the abstract class from which all other foreign type classes
       should inherit.  All @TT "ForeignType"@ objects should have, at minimum,
-      three key-value pairs:
+      two key-value pairs:
 
       @UL {
-	  LI {TT "name", ", ", ofClass String, ", a human-readable name of ",
+	  LI {TT "Name", ", ", ofClass String, ", a human-readable name of ",
 	      "the class for display purposes, used by ",
 	      TT "net(ForeignType)", "."},
-	  LI {TT "address", ", ", ofClass Pointer, ", a pointer to the ",
+	  LI {TT "Address", ", ", ofClass Pointer, ", a pointer to the ",
 	      "corresponding ", TT "ffi_type", " object, used by ",
-	      TO (address, ForeignType), "."},
-	  LI {TT "value", ", ", ofClass Function, ", a function that sends ",
-	      "objects of this type to corresponding Macaulay2 values, ",
-	      "used by ", TO (value, ForeignObject), "."}}@
-
-      Subclasses may add additional key-value pairs as needed.
+	      TO (address, ForeignType), "."}}@
 ///
 
 doc ///
