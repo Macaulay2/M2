@@ -34,13 +34,14 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
 }
 
 template <typename RT>
-SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
-      M2_string libName,
-      int nInputs,
-      int nOutputs,
-      const MutableMat<DMat<RT> >* empty
-      ): mRing(empty->getMat().ring())
+SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
+(M2_string libName,
+ int nInputs,
+ int nOutputs,
+ const MutableMat<DMat<RT> >* empty
+ ): mRing(empty->getMat().ring()), isCompiled(true), nInputs(nInputs), nOutputs(nOutputs)
 {
+  slp = NULL;
   const char* funname = "evaluate";
   auto libName_std = string_M2_to_std(libName);
   const char* lib_name = libName_std.c_str();
@@ -55,7 +56,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
 // copy constructor
 template <typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
-    : SLEvaluator(a), mRing(a.ring()), values(a.values.size())
+  : SLEvaluator(a), mRing(a.ring()), isCompiled(a.isCompiled), values(a.values.size()), compiled_fn(a.compiled_fn), nInputs(a.nInputs), nOutputs(a.nOutputs)
 {
   slp = a.slp;
   varsPos = a.varsPos;
@@ -69,16 +70,17 @@ template <typename RT>
 SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
 {
   // std::cout << "~SLEvaluatorConcrete: " << this << std::endl
-  for (auto& v : values) ring().clear(v);
+  if (isCompiled) {// dlclose???
+  } else for (auto& v : values) ring().clear(v);
 }
 
 template <typename RT>
-SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
-    SLProgram* SLP,
-    M2_arrayint cPos,
-    M2_arrayint vPos,
-    const MutableMat<DMat<RT> >* consts /* DMat<RT>& DMat_consts */)
-    : mRing(consts->getMat().ring())
+SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
+(SLProgram* SLP,
+ M2_arrayint cPos,
+ M2_arrayint vPos,
+ const MutableMat<DMat<RT> >* consts /* DMat<RT>& DMat_consts */
+ ): mRing(consts->getMat().ring()), isCompiled(false), compiled_fn(NULL)
 {
   slp = SLP;
   // for(int i=0; i<cPos->len; i++)
@@ -91,6 +93,8 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     ring().set(values[slp->inputCounter + cPos->array[i]],
                consts->getMat().entry(0, i));
   // std::cout << "SLEvaluatorConcrete(MutableMat): " << this << std::endl;
+  nInputs = varsPos.size();
+  nOutputs = slp->mOutputPositions.size();
 }
 
 template <typename RT>
@@ -108,6 +112,8 @@ template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMat<DMat<RT> >* parameters) const
 {
+  if (isCompiled)
+    throw exc::engine_error("not implemented for compiled SLEvaluatorConcrete");
   if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size()) 
     throw exc::engine_error("1-column matrix expected; or #parameters > #vars");
   SLEvaluatorConcrete<RT>* e = new SLEvaluatorConcrete<RT>(*this);
@@ -115,6 +121,7 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
   for (int i = 0; i < nParams; ++i)
     ring().set(e->values[varsPos[i]], parameters->getMat().entry(i, 0));
   e->varsPos.erase(e->varsPos.begin(), e->varsPos.begin() + nParams);
+  e->nInputs = e->varsPos.size();
   return e;
 }
 
@@ -189,54 +196,57 @@ template <typename RT>
 bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
                                        DMat<RT>& outputs)
 {
-  if (varsPos.size() != inputs.numRows() * inputs.numColumns())
-    {
-      ERROR(
+  if (nInputs != inputs.numRows() * inputs.numColumns()) {
+    ERROR(
           "inputs: the number of inputs does not match the number of entries "
           "in the inputs matrix");
-      std::cout << varsPos.size()
-                << " != " << inputs.numRows() * inputs.numColumns()
-                << std::endl;
-      return false;
-    }
-  if (compiled_fn!=NULL) {
-    std::cerr << "need to implement JIT evaluation\n";    abort();
-  }                           
-  size_t i = 0;
-  for (size_t r = 0; r < inputs.numRows(); r++)
-    for (size_t c = 0; c < inputs.numColumns(); c++)
-      ring().set(values[varsPos[i++]], inputs.entry(r, c));
-
-  nIt = slp->mNodes.begin();
-  numInputsIt = slp->mNumInputs.begin();
-  inputPositionsIt = slp->mInputPositions.begin();
-  for (vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
-    computeNextNode();
-
-  if (slp->mOutputPositions.size() != outputs.numRows() * outputs.numColumns())
-    {
-      ERROR(
+    std::cout << nInputs
+              << " != " << inputs.numRows() * inputs.numColumns()
+              << std::endl;
+    return false;
+  }
+  if (nOutputs != outputs.numRows() * outputs.numColumns()) {
+    ERROR(
           "outputs: the number of outputs does not match the number of entries "
           "in the outputs matrix");
-      std::cout << slp->mOutputPositions.size() << " != " << outputs.numRows()
-                << " * " << outputs.numColumns() << std::endl;
-      return false;
-    }
-  i = 0;
-  for (size_t r = 0; r < outputs.numRows(); r++)
-    for (size_t c = 0; c < outputs.numColumns(); c++)
-      ring().set(outputs.entry(r, c), values[ap(slp->mOutputPositions[i++])]);
-  return true;
+    std::cout << nOutputs << " != " << outputs.numRows()
+              << " * " << outputs.numColumns() << std::endl;
+    return false;
+  }
+
+  if (isCompiled) {
+    throw exc::engine_error("not implemented for compiled SLEvaluatorConcrete");    
+  } else {                           
+    size_t i = 0;
+    for (size_t r = 0; r < inputs.numRows(); r++)
+      for (size_t c = 0; c < inputs.numColumns(); c++)
+        ring().set(values[varsPos[i++]], inputs.entry(r, c));
+
+    nIt = slp->mNodes.begin();
+    numInputsIt = slp->mNumInputs.begin();
+    inputPositionsIt = slp->mInputPositions.begin();
+    for (vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
+      computeNextNode();
+    i = 0;
+    for (size_t r = 0; r < outputs.numRows(); r++)
+      for (size_t c = 0; c < outputs.numColumns(); c++)
+        ring().set(outputs.entry(r, c), values[ap(slp->mOutputPositions[i++])]);
+    return true;
+  }
 }
 
 template <typename RT>
 void SLEvaluatorConcrete<RT>::text_out(buffer& o) const
 {
-  o << "SLEvaluator(slp = ";
-  slp->text_out(o);
-  o << ", mRing = ";
-  ring().text_out(o);
-  o << ")" << newline;
+  if(isCompiled) {
+    o << "compiled SLEvaluator" << newline;
+  } else {
+    o << "SLEvaluator(slp = ";
+    slp->text_out(o);
+    o << ", mRing = ";
+    ring().text_out(o);
+    o << ")" << newline;
+  }
 }
 
 template <typename RT>
