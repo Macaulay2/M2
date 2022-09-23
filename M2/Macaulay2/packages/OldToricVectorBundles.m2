@@ -938,8 +938,8 @@ findWeights ToricVectorBundleKlyachko := (cacheValue symbol weights)( T -> (
      	  k := rank T;
 	  -- Recursive function that goes through the rays and checks for the current ray which filtration steps are possible and for 
 	  -- these calls itself again
-	  -- E is the intersection of filtrations of the rays considered so far, L is the list of remaining rays with filtration steps not choosen so far, 
-	  -- R is the list of filtration steps not choosen before for rays already handled, these are the possible steps for the next column and newColumn 
+	  -- E is the intersection of filtrations of the rays considered so far, L is the list of remaining rays with filtration steps not chosen so far, 
+	  -- R is the list of filtration steps not chosen before for rays already handled, these are the possible steps for the next column and newColumn 
 	  -- is the already created part of the new column
      	  recursiveColumnsConstructer := (E,L,R,newColumn) -> (
 	       if L != {} then (

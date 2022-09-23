@@ -557,7 +557,7 @@ addCone (Cone,Fan) := (C,F) -> (
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
      -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GC into two seperate lists
+     -- the cones of higher or equal dimension. For this we divide GC into two separate lists
      GC = partition(Cf -> (dim Cf) >= d,GC);
      GC = {if GC#?true then GC#true else {},if GC#?false then GC#false else {}};
      if all(GC#0, Cf ->  (

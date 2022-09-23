@@ -1865,7 +1865,7 @@ doc ///
     	  Text
 	       To use hypercohomology to compute the cohomology groups of the 
 	       line bundle $\mathcal{O}_C(1,0)$ on $C$ we twist the
-	       complex $F$ above by a line of rulting and then 
+	       complex $F$ above by a line of ruling and then 
 	       make a filtered complex whose associated spectral
 	       sequence abuts to the desired cohomology groups.
 	  Example     		 		 

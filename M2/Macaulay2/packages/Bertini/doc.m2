@@ -1026,8 +1026,8 @@ doc ///
      an integer stating the desired number of coordinates for each solution.
      When solving a zero-dimensional
      system, Bertini creates several solution files; @TO importPoints@ works
-     with the following Bertini solution files: "finite_solutions", "nonsingluar-solutions",
-     "real_finite_solutions", "singluar_solutions".
+     with the following Bertini solution files: "finite_solutions", "nonsingular-solutions",
+     "real_finite_solutions", "singular_solutions".
 --     The output is a list of points.
      The user can specify which solutions to read from the file using the @TO SpecifyPoints@ option
      or which coordinates to select using the @TO SpecifyCoordinates@ option.

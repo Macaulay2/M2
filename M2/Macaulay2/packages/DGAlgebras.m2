@@ -1859,7 +1859,7 @@ doc ///
     acyclicClosure
     (acyclicClosure,DGAlgebra)
   Headline
-    Compute theae acyclic closure of a DGAlgebra.
+    Compute the acyclic closure of a DGAlgebra.
   Usage
     B = acyclicClosure(A)
   Inputs

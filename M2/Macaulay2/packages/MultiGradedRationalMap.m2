@@ -536,7 +536,7 @@ jacobianDualRank(Ideal) := (I) -> (
 -- CAVEAT: For the moment, it only supports multi-projective spaces in the source
 -- REMARK: From Theorem 4.4 we can simply compute the rank of the "full" Jacobian dual matrix.
 --         Therefore, we only need to check the rank of one matrix and it allows us to treat 
---         the muli-graded case similarly to the single-graded.
+--         the multi-graded case similarly to the single-graded.
 isBiratMap = method()
 isBiratMap(Ideal) := (I) -> (    
     grading := checkMultiGraded(I);

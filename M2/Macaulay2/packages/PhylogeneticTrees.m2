@@ -1601,7 +1601,7 @@ doc///
 	    of group elements
     Description
         Text
-            Every group-based phyogenetic model has a finite group associated to it.  This function
+            Every group-based phylogenetic model has a finite group associated to it.  This function
 	    returns the group, represented as a list of elements.
 	Example
 	    M = K3Pmodel
@@ -1626,7 +1626,7 @@ doc///
 	    of lists of group elements
     Description
         Text
-            Every group-based phyogenetic model has a finite group {\tt G} associated to it.  Parameters
+            Every group-based phylogenetic model has a finite group {\tt G} associated to it.  Parameters
 	    for the model are assigned to equivalence classes of group elements, which are orbits
 	    of some subgroup of the automorphism group of {\tt G}.  This function returns the equivalence
 	    classes as a list of list of group elements.
@@ -1667,7 +1667,7 @@ doc///
         Text
             An object of class @TO LeafTree@ is specified by listing its leaves, and for each internal edge, 
 	    the partition the edge induces on the set of leaves.
-	    {\tt L} is the set of leaves, or if an integer {\tt n} is input then the leaves will be be named $0,\ldots,n-1$.
+	    {\tt L} is the set of leaves, or if an integer {\tt n} is input then the leaves will be named $0,\ldots,n-1$.
 	    {\tt E} is a list with one entry for each internal edge.
 	    Each entry is a partition specified as a list or set of the leaves in one side of the partition.
 	    Thus each edge can be specified in two possible ways.
