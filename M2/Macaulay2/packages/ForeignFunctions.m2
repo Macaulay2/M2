@@ -704,8 +704,6 @@ doc ///
     "uint"
     "long"
     "ulong"
-    (symbol SPACE, ForeignIntegerType, Number)
-    (symbol SPACE, ForeignIntegerType, Constant)
   Headline
     foreign integer type
   Description
@@ -732,6 +730,30 @@ doc ///
       uint
       long
       ulong
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignIntegerType, Number)
+    (symbol SPACE, ForeignIntegerType, Constant)
+    (NewFromMethod, int8, ZZ)
+    (NewFromMethod, int16, ZZ)
+    (NewFromMethod, int32, ZZ)
+    (NewFromMethod, int64, ZZ)
+    (NewFromMethod, uint8, ZZ)
+    (NewFromMethod, uint16, ZZ)
+    (NewFromMethod, uint32, ZZ)
+    (NewFromMethod, uint64, ZZ)
+  Headline
+    cast a Macaulay2 number to a foreign integer object
+  Usage
+    T n
+  Inputs
+    T:ForeignIntegerType
+    n:Number
+  Outputs
+    :ForeignObject
+  Description
     Text
       To cast a Macaulay2 number to a foreign object with an integer type,
       give the type followed by the number.  Non-integers will be truncated.
@@ -746,9 +768,6 @@ doc ///
     ForeignRealType
     "float"
     "double"
-    (symbol SPACE, ForeignRealType, Constant)
-    (symbol SPACE, ForeignRealType, Number)
-    (symbol SPACE, ForeignRealType, RRi)
   Headline
     foreign real type
   Description
@@ -760,6 +779,25 @@ doc ///
     Example
       float
       double
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignRealType, Number)
+    (symbol SPACE, ForeignRealType, Constant)
+    (symbol SPACE, ForeignRealType, RRi)
+    (NewFromMethod, float, RR)
+    (NewFromMethod, double, RR)
+  Headline
+    cast a Macaulay2 number to a foreign real object
+  Usage
+    T x
+  Inputs
+    T:ForeignRealType
+    x:Number
+  Outputs
+    :ForeignObject
+  Description
     Text
       To cast a Macaulay2 number to a foreign object with a real type, give
       the type followed by the number.
@@ -784,32 +822,6 @@ doc ///
       @TT "voidstar"@.
     Example
       voidstar
-///
-
-doc ///
-  Key
-    (registerFinalizer, ForeignObject, Function)
-  Headline
-    register a finalizer for a foreign object
-  Usage
-    registerFinalizer(x, f)
-  Inputs
-    x:ForeignObject
-    f:Function
-  Description
-    Text
-      If a foreign pointer object corresponds to memory that was not allocated
-      by the @TO "GC garbage collector"@, then a function to properly
-      deallocate this memory when the @TO "Pointer"@ object that stores this
-      pointer is garbage collected should be called.  The function should
-      take a single argument, a foreign object, typically  of type
-      @TO "voidstar"@, which corresponds to the memory to deallocate.
-    Example
-      malloc = foreignFunction("malloc", voidstar, ulong)
-      free = foreignFunction("free", void, voidstar)
-      finalizer = x -> (print("freeing memory at " | net x); free x)
-      for i to 9 do (x := malloc 8; registerFinalizer(x, finalizer))
-      collectGarbage()
 ///
 
 doc ///
@@ -876,6 +888,24 @@ doc ///
     Text
       This is the class for array types.  There are no built-in types.  They
       must be constructed using @TO "foreignArrayType"@.
+    Example
+      x = (3 * int) {3, 5, 7}
+    Text
+      Foreign arrays may be subscripted using @TO "_"@.
+    Example
+      x_1
+      x_(-1)
+    Text
+      Their lengths may be found using @TO "length"@.
+    Example
+      length x
+    Text
+      They are also @TO2 {"iterators", "iterable"}@.
+    Example
+       i = iterator x;
+       next i
+       next i
+       for y in x list value y + 1
 ///
 
 doc ///
@@ -919,6 +949,8 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignArrayType, VisibleList)
+  Headline
+    cast a Macaulay2 list to a foreign array
   Usage
     T x
   Inputs
@@ -933,11 +965,6 @@ doc ///
     Example
       intarray5 = 5 * int
       x = intarray5 {2, 4, 6, 8, 10}
-    Text
-      Use @TT "_"@ to return a single element of a foreign array.
-    Example
-      x_2
-      x_(-1)
  Caveat
    The number of elements of @TT "x"@ must match the number of elements
    that were specified when @TT "T"@ was constructed.
@@ -1104,7 +1131,23 @@ doc ///
 doc ///
   Key
     (value, ForeignObject)
+    (value, charstar)
+    (value, charstarstar)
+    (value, double)
+    (value, float)
+    (value, int8)
+    (value, int16)
+    (value, int32)
+    (value, int64)
+    (value, uint8)
+    (value, uint16)
+    (value, uint32)
+    (value, uint64)
+    (value, voidstar)
+    (value, voidstarstar)
     (net, ForeignObject)
+    (net, double)
+    (net, float)
   Headline
     get the value of a foreign object as a Macaulay2 thing
   Usage
@@ -1185,6 +1228,10 @@ doc ///
     Example
       foreignObject "Hello, world!"
     Text
+      Pointers are converted to @TO "voidstar"@ objects.
+    Example
+      foreignObject nullPointer
+    Text
       Lists are converted to foreign objects with the appropriate
       @TO "ForeignArrayType"@.
     Example
@@ -1216,6 +1263,32 @@ doc ///
       x = chararray4 append(ascii "foo", 0)
       y = charstar x
       address x === address y
+///
+
+doc ///
+  Key
+    (registerFinalizer, ForeignObject, Function)
+  Headline
+    register a finalizer for a foreign object
+  Usage
+    registerFinalizer(x, f)
+  Inputs
+    x:ForeignObject
+    f:Function
+  Description
+    Text
+      If a foreign pointer object corresponds to memory that was not allocated
+      by the @TO "GC garbage collector"@, then a function to properly
+      deallocate this memory when the @TO "Pointer"@ object that stores this
+      pointer is garbage collected should be called.  The function should
+      take a single argument, a foreign object, typically  of type
+      @TO "voidstar"@, which corresponds to the memory to deallocate.
+    Example
+      malloc = foreignFunction("malloc", voidstar, ulong)
+      free = foreignFunction("free", void, voidstar)
+      finalizer = x -> (print("freeing memory at " | net x); free x)
+      for i to 9 do (x := malloc 8; registerFinalizer(x, finalizer))
+      collectGarbage()
 ///
 
 doc ///
