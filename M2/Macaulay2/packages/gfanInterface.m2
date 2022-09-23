@@ -1859,7 +1859,7 @@ convertRingToRational Ring := ZRing -> (
 	return QQ(monoid[gens ZRing]);
 )
 
--- Takes a ring and and returns a gfan string with rational coefficients.
+-- Takes a ring and returns a gfan string with rational coefficients.
 gfanRingToRationalString = method()
 gfanRingToRationalString Ring := ZRing -> (
 	out := "Q" | gfanToExternalString(new Array from gens ZRing) | newline;

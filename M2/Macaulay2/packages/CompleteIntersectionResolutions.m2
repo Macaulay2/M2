@@ -1682,7 +1682,7 @@ moduleAsExt(Module,Ring) := (M,R) ->(
 	    map(K_i,
 		R^{d}**K_(i+2), 
 		T1_i_j)));
-    --T_i_j: is the matrix of of the CI map K_(2+i) \to K_i
+    --T_i_j: is the matrix of the CI map K_(2+i) \to K_i
     --corresponding to ff_j.
     V := apply(m+1, i->R^(rank F_i));
     tar := directSum apply(m+1, i->(

@@ -796,7 +796,7 @@ doc ///
 		L: List
 	Outputs
 		M: List
-			a list with a product of of the rings input, and information about its structure
+			a list with a product of the rings input, and information about its structure
 	Description
 		Text
 			Given a list of rings, of finite type over the same coefficient ring, this computes a ring isomorphic to a product of the rings.  It returns a list with three entries.  First is the ring.  Second is the list of orthogonal idempotents.  Finally, it lists where the variables of each of the rings in the list go in the new ring.

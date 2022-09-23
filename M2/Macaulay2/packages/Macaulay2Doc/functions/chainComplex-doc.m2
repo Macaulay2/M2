@@ -39,7 +39,7 @@ document {
 	  "R = ZZ/101[x,y]",
       	  "C = chainComplex{matrix{{x,y}},matrix{{x*y},{-x^2}}}",
 	  },
-     "We check that that this is a complex:",
+     "We check that this is a complex:",
      EXAMPLE {
 	  "C.dd^2 == 0"
 	  },

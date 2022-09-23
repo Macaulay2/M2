@@ -746,7 +746,7 @@ document {
 	{ofClass Matrix, " ", TT "B", " specifies a fixed (r+1)-by-n matrix to use in the deflation construction."},
 	{"a pair of matrices ", TT "(B,M)", " specifies additionally a matrix that is used to ", TO squareUp, "."},
 	{"a list", TT "{(B1,M1),(B2,M2),...}", 
-	    " prompts a chain of successive delations using the provided pairs of matrices."},
+	    " prompts a chain of successive deflations using the provided pairs of matrices."},
 	},
     "The option ", TT "Variable", " specifies the base name for the augmented variables.",
     EXAMPLE lines ///

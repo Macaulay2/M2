@@ -506,7 +506,7 @@ doc ///
               The function produces a list of facets of a random shellable simplicial complex.
 	      The order of the facets is a shelling.
 	  Text
-	      The alogorithm works by choosing one of the previous facets at random, and replacing one of its vertices with a new vertex chosen at random.
+	      The algorithm works by choosing one of the previous facets at random, and replacing one of its vertices with a new vertex chosen at random.
 	      If the choice meets the criteria of a shelling, that facet is added to list, otherwise it is discarded and the algorithm tries again.
 	      The first facet is chosen uniformly at random.
 

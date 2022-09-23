@@ -71,7 +71,7 @@ document {
 	  "numgens I"
 	  },
      PARA{},
-     "In order to find a more efficient set of of generators, use ",
+     "In order to find a more efficient set of generators, use ",
      TO mingens, " or ", TO trim, ".",
      EXAMPLE {
 	  "mingens I",

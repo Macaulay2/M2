@@ -2795,7 +2795,7 @@ multidoc ///
     	Description
 	    Text	
     	    	This optional argument decides between two ways to calculate higherSpechtPolynomials.
-	    	If it is set to to true then a calculation involving the row and column stabilizers
+	    	If it is set to true then a calculation involving the row and column stabilizers
 	    	is used.                                                                                                                                                                                                      
     	    	If it is set to false then another strategy is used. This strategy is based on a
 	    	representation of higher specht polynomials as a multiplication

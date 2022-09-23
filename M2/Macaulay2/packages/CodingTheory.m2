@@ -411,7 +411,7 @@ linearCode(Module) := LinearCode => opts -> V -> (
     -- input: some submodule V of S.
     -- outputs: if ParityCheck => false then code defined by submodule V.
     --	      	if ParityCheck => true then code defined as the dual 
-    --                            of of the code defined by V.
+    --                            of the code defined by V.
     
     -- produce a set of generators for the specified submodule V.
     GorP := transpose generators V;
