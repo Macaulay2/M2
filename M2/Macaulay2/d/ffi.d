@@ -15,6 +15,8 @@ voidPointerOrNull := voidPointer or null;
 toExpr(x:voidPointer):Expr := Expr(pointerCell(x));
 WrongArgPointer():Expr := WrongArg("a pointer");
 WrongArgPointer(n:int):Expr := WrongArg(n, "a pointer");
+setupconst("nullPointer", toExpr(nullPointer()));
+
 getMem(n:int):voidPointer := Ccode(voidPointer, "getmem(", n, ")");
 getMemAtomic(n:int):voidPointer := Ccode(voidPointer, "getmem_atomic(", n, ")");
 
