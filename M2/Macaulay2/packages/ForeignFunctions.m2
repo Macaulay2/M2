@@ -488,6 +488,7 @@ foreignFunction(Pointer, String, ForeignType, VisibleList) :=  o -> (
 	    if not o.Variadic and #argtypes == 1 then argtypes = {}
 	    else error("void must be the only parameter"));
 	argtypePointers := address \ argtypes;
+	rsize := max(size rtype, version#"pointer size");
 	if o.Variadic then (
 	    nfixedargs := #argtypes;
 	    ForeignFunction(args -> (
@@ -499,7 +500,7 @@ foreignFunction(Pointer, String, ForeignType, VisibleList) :=  o -> (
 			argtypePointers | varargtypePointers);
 		    avalues := apply(nfixedargs, i ->
 			address (argtypes#i args#i)) | address \ varargs;
-		    dereference_rtype ffiCall(cif, funcptr, 100, avalues))))
+		    dereference_rtype ffiCall(cif, funcptr, rsize, avalues))))
 	else (
 	    cif := ffiPrepCif(address rtype, argtypePointers);
 	    ForeignFunction(args -> (
@@ -507,7 +508,7 @@ foreignFunction(Pointer, String, ForeignType, VisibleList) :=  o -> (
 		    if #argtypes != #args
 		    then error("expected ", #argtypes, " arguments");
 		    avalues := apply(#args, i -> address (argtypes#i args#i));
-		    dereference_rtype ffiCall(cif, funcptr, 100, avalues)))))
+		    dereference_rtype ffiCall(cif, funcptr, rsize, avalues)))))
 
 --------------------
 -- foreign symbol --
