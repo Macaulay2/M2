@@ -566,6 +566,19 @@ doc ///
 
 doc ///
   Key
+    "nullPointer"
+  Headline
+    the null pointer
+  Description
+    Text
+      This @TO Pointer@ object represents the @wikipedia "null pointer"@,
+      indicating that the pointer does not refer to a valid object.
+    Example
+      nullPointer
+///
+
+doc ///
+  Key
     ForeignType
     (net, ForeignType)
   Headline
