@@ -972,6 +972,104 @@ doc ///
 
 doc ///
   Key
+    ForeignPointerArrayType
+    charstarstar
+    voidstarstar
+    (symbol _, charstarstar, ZZ)
+    (symbol _, voidstarstar, ZZ)
+    (length, charstarstar)
+    (length, voidstarstar)
+    (iterator, charstarstar)
+    (iterator, voidstarstar)
+  Headline
+    foreign type for NULL-terminated arrays of pointers
+  Description
+    Text
+      This is the class for a particular kind of array type, where the entries
+      of each array are some sort of pointer type and the lengths are arbitrary.
+      There are two built-in types, @TT "charstarstar"@ (for arrays of strings)
+      and @TT "voidstarstar"@ (for arrays of pointers), but more types may be
+      constructed using @TO foreignPointerArrayType@.
+    Example
+      charstarstar {"foo", "bar", "baz"}
+      charstarstar {"the", "quick", "brown", "fox", "jumps", "over", "the",
+	  "lazy", "dog"}
+      voidstarstar {address int 0, address int 1, address int 2}
+    Text
+      Foreign pointer arrays may be subscripted using @TO "_"@.
+    Example
+      x = charstarstar {"foo", "bar", "baz"}
+      x_1
+      x_(-1)
+    Text
+      Their lengths may be found using @TO "length"@.
+    Example
+      length x
+    Text
+      They are also @TO2 {"iterators", "iterable"}@.
+    Example
+       i = iterator x;
+       next i
+       next i
+       scan(x, print)
+///
+
+doc ///
+  Key
+    foreignPointerArrayType
+    (foreignPointerArrayType, ForeignType)
+    (foreignPointerArrayType, String, ForeignType)
+  Headline
+    construct a foreign pointer array type
+  Usage
+    foreignArrayType(name, T)
+    foreignArrayType T
+  Inputs
+    name:String
+    T:ForeignType
+  Outputs
+    :ForeignPointerArrayType
+  Description
+    Text
+      To construct a foreign array pointer type, specify a name and the type of
+      the  elements of each array.  This type must necessarily be some kind of
+      pointer type.
+    Example
+      foreignPointerArrayType("myPointerArray", 3 * int)
+    Text
+      If the name is omitted, then a default one is chosen by taking the name of
+      the type of the elements and appending a star.
+    Example
+      foreignPointerArrayType(3 * int)
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignPointerArrayType, VisibleList)
+    (NewFromMethod, charstarstar, VisibleList)
+    (NewFromMethod, voidstarstar, VisibleList)
+  Headline
+    cast a Macaulay2 list to a foreign pointer array
+  Usage
+    T x
+  Inputs
+    T:ForeignPointerArrayType
+    x:VisibleList
+  Outputs
+    :ForeignObject -- of type @TT "T"@
+  Description
+    Text
+      To cast a Macaulay2 list to a foreign pointer array type, give the
+      type followed by the list.
+    Example
+      charstarstar {"foo", "bar"}
+      voidstarstar {address int 0, address int 1, address int 2}
+      int2star = foreignPointerArrayType(2 * int)
+      int2star {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}}
+///
+
+doc ///
+  Key
     ForeignStructType
   Headline
     foreign struct type
