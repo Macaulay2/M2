@@ -235,6 +235,7 @@ foreignRealType(String, ZZ) := (name, bits) -> (
     T.Address = ffiRealType(bits);
     new T from RR := (T, x) -> new T from {Address => ffiRealAddress(x, bits)};
     value T := x -> ffiRealValue(address x, bits);
+    net T := x -> format(0, value x);
     T)
 
 float = foreignRealType("float", 32)
