@@ -3797,7 +3797,7 @@ doc ///
 	    matrix id_Δ
 	    assert(matrix id_Δ === vars S)
 	Text
-    	    The next map projects an octehedron onto a square.
+    	    The next map projects an octahedron onto a square.
 	Example
 	    R = ZZ[y_0..y_3];
 	    Γ = simplicialComplex monomialIdeal(y_1*y_2)

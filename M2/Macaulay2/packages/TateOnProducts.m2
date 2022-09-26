@@ -198,7 +198,7 @@ coarseMultigradedRegularity = method(Options =>
                {Strategy =>"MinimalResolution"})
 
 -*coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     el := length F;
     r := degreeLength ring F;
     D := apply((min F..max F), i-> degrees F_i);
@@ -240,7 +240,7 @@ LL (ZZ,List) := (d,n) -> (
     )
 
 coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
     degsF := flatten apply(range,i -> degrees (F_i));

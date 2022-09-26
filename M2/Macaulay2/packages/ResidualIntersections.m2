@@ -612,10 +612,10 @@ doc ///
      Thus genericArtinNagata(s,I)_0 = 0 means that K is an s-residual intersection
      of codim s and R/K is Cohen-Macaulay.
      
-     If I is a monomial idal, the function residualCodims I returns the list of codimensions s for which there
+     If I is a monomial ideal, the function residualCodims I returns the list of codimensions s for which there
      might be a residual intersection of codimension s.
      
-     In the following example, all the generic residual intersectionsa are Cohen-Macaulay,
+     In the following example, all the generic residual intersections are Cohen-Macaulay,
      until we get to the 6-residual intersection, which cannot be codim 6 because
      there are only 5 variables.
     Example

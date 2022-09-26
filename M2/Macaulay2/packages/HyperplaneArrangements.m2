@@ -807,7 +807,7 @@ flats Arrangement := List => A -> apply(1+rank A, j-> flats(j,A))
 circuits CentralArrangement := List => A -> toList \ circuits matroid A
      
      
--- should overload "directSum" when tersor product of a sequence of rings
+-- should overload "directSum" when tensor product of a sequence of rings
 -- becomes available
 arrangementSum = method()
 arrangementSum (Arrangement, Arrangement) := Arrangement => (A, B) -> (

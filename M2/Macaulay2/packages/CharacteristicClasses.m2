@@ -1622,9 +1622,9 @@ doc ///
                symbolically, using Gr&ouml;bner bases, and numerically, using the regenerative cascade implemented in Bertini. The regenerative
 	       cascade is described in [3].   
 	       
-	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjecvtiveDegree method 
+	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjectiveDegree method 
                practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
                Read more under @TO "probabilistic algorithm"@.
 	       
@@ -2324,8 +2324,8 @@ doc ///
                computing the correct class. 
                Skeptical users should repeat calculations several times to increase the probability of computing the correct class.
 
-               In the case of the symbolic implementation of the ProjecvtiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               In the case of the symbolic implementation of the ProjectiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using the finite field kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
 	       
 	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 

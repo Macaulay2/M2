@@ -1427,7 +1427,7 @@ doc ///
             rays X
             weilDivisorGroup X
     	Text
-             When the normal toric variety is nondegerenate, the number of
+             When the normal toric variety is nondegenerate, the number of
              rays equals the number of variables in the total coordinate ring.
     	Example  
              #rays X == numgens ring X

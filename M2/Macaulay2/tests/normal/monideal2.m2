@@ -32,7 +32,7 @@ assert( borel J == monomialIdeal matrix {{a^5, a^4*b, a^3*b^2, a^2*b^3, a*b^4, b
 
 --  ALEXANDER DUALS  ---------------------------------------
 
--- stick twisted cublc 
+-- stick twisted cubic 
 R = QQ[a,b,c,d];
 I = monomialIdeal(a*b, b*c, c*d)
 assert isSquareFree I
