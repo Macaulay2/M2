@@ -1295,8 +1295,8 @@ document {
  
   document {
      Key => {degreeOfJetSeparation, (degreeOfJetSeparation,Matrix,Matrix),(degreeOfJetSeparation,List,Matrix)},
-     Headline => "computes the degree of jetSeperation at a given point",
-     Usage => " degreeOfJetSeperation(A,pt)",
+     Headline => "computes the degree of jetSeparation at a given point",
+     Usage => " degreeOfJetSeparation(A,pt)",
      Inputs => {
 	  "A" => Matrix => {" or  ", ofClass List," where the columns are lattice points"},
 	  "pt"=>Matrix =>{"a point as a column vector"},

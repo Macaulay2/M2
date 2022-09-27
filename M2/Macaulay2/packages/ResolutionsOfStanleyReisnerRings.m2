@@ -30,7 +30,7 @@ export {"colorfulSOP","universalSOP","colorfulPresentation","universalPresentati
 -----------------------------------------
 --Barycentric Subdivision-
 -----------------------------------------
--- the 'barycentricSubdivison' method is defined in 'SimplicialComplexes'
+-- the 'barycentricSubdivision' method is defined in 'SimplicialComplexes'
 barycentricSubdivision (SimplicialComplex) := D -> (
    orderComplex(facePoset(D),CoefficientRing=>coefficientRing(ring(D)))
 );

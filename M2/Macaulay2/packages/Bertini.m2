@@ -271,7 +271,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%%%--The first is in BertiniInputConfiguration where we just list the configurations.
   myConfigs:=(o.BertiniInputConfiguration);
   if o.UseRegeneration===1 then myConfigs=myConfigs|{"UseRegeneration"=>1};
---  TODO: Regeneraetion test R=QQ[x]; length(bertiniZeroDimSolve({x^2}))==1;  bertiniZeroDimSolve({x^2},UseRegeneration=>1)=={}
+--  TODO: Regeneration test R=QQ[x]; length(bertiniZeroDimSolve({x^2}))==1;  bertiniZeroDimSolve({x^2},UseRegeneration=>1)=={}
 --  print myConfigs;
 --%%-- We use the makeB'InputFile method to write a Bertini file.
   makeB'InputFile(myTopDir,

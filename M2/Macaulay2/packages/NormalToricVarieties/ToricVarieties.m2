@@ -595,7 +595,7 @@ orbits (NormalToricVariety, ZZ) := List => (X,i) -> (
 -- THIS METHOD IS NOT EXPORTED.  Given a normal toric variety 'X', a maximal
 -- cone indexed by the list 's', and a weight vector encoded by the integer
 -- list 'w', this method makes a new normal toric variety in which the maximal
--- cone corresponding to 's' has been replace by the regular subdivison
+-- cone corresponding to 's' has been replace by the regular subdivision
 -- associated to the weight vector 'w'.  In particular, the entries in 'w' are
 -- used as heights to lift the maximal cone corresponding to 's' into the next
 -- dimension.  The lower faces (those for which the normal vector has negative

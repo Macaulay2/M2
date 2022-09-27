@@ -2718,7 +2718,7 @@ chkZZQQ = (M,msg) -> (
      promote(M,QQ));
 
 
--- PURPOSE : Compting the Hilbert basis of a standardised cone (project and lift algorithm
+-- PURPOSE : Computing the Hilbert basis of a standardised cone (project and lift algorithm
 --   INPUT : 'A' a matrix, the row echolon form of the defining half-spaces of the cone
 --  OUTPUT : a list of one column matrices, the generators of the cone over A intersected with 
 --     	     the positive orthant

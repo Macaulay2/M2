@@ -106,7 +106,7 @@ struct our_new_delete
 #if !defined(__GNUC__) || defined(__INTEL_COMPILER)
 // see Scott Meyers, Effective C++, item 14!  This avoids something really bad
 // in the c++ standard.
-// ... but it slows down destuctors in every class inheriting from this one
+// ... but it slows down destructors in every class inheriting from this one
 // gnu cc does it right, running all the destructors, so we don't bother with
 // this.
 #if 0
