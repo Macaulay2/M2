@@ -132,8 +132,7 @@ ffiCall(e:Expr):Expr :=
 		is fn:pointerCell do when a.2
 		    is n:ZZcell do when a.3
 			is z:List do (
-			    rvalue := Ccode(voidPointer,
-				"getmem(", toInt(n), ")");
+			    rvalue := getMem(toInt(n));
 			    avalues := new array(voidPointer)
 				len length(z.v) at i
 				    do provide when z.v.i is p:pointerCell
