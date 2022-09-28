@@ -158,6 +158,29 @@ forceSB Subring := opts -> S -> (
 -- it is used as an intermediate step for isSAGBI when it is passed something
 --   that does not have a cached SAGBIBasis object
 
+-- TODO:
+-- internalIsSAGBI = memoize internalIsSAGBI
+-- when calling isSAGBI on a subring without SAGBIBasis
+-- it produces a very simple object: sagbiBasis(S) which has no sagbiGenerators etc.
+-- (in particular it can be used for sagbi in the future)
+-- and in internalIsSAGBI, we check the sagbi generators (and create the correct compTable if necessary)
+-- remove the Recompute flag from the compTable
+-- WARNING (in documentation): memoize is used so excessive use of isSAGBI will cause a lot of computation objects 
+-- to be created / not be garbage collected since they may be stored
+
+-- TODO:
+-- do the same for internalVerifySagbi
+
+-- TODO: (debatable - don't do it!)
+-- add an option for remembering the output of internalIsSAGBI
+-- to do this, one could: let mem = memoize memoize
+-- then if the remembering option is true then run "mem internalIsSAGBI" otherwise
+-- run "internalIsSAGBI"
+--
+-- (recommended)
+-- this is just a fancy way of not having to create two almost-identical functions
+-- but that would be fine too: memInternalIsSAGBI = memoize internalIsSAGBI, would also be fine
+
 internalIsSAGBI = method(
     TypicalValue => SAGBIBasis,
     Options => {
@@ -193,6 +216,8 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
     sagbiBasis compTable
     );
 
+-- Memoize here ...
+
 
 -- isSAGBI determines / checks if the generators of an objects form a sagbi basis
 -- isSAGBI SAGBIBasis checks the flag of the SAGBIBasis
@@ -221,7 +246,7 @@ isSAGBI SAGBIBasis := opts -> SB -> (
     if SB#"data"#"sagbiDone" or (not opts.Compute) then (
         SB#"data"#"sagbiDone"
 	) else (
-	SB' := internalVerifySagbi(SB, opts);
+	SB' := internalVerifySagbi(SB, opts); -- TODO: "Memoize" this
 	if SB'#"data"#"sagbiDone" then ( -- only update the Subring of the SAGBIBasis if we have a sagbi basis
 	    S := SB#"data"#"subring";
 	    S.cache#"SAGBIBasis" = SB';
@@ -261,7 +286,7 @@ isSAGBI Subring := opts -> S -> (
 	    compTable#"data"#"sagbiGenerators" = lift(gens S, compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
 	    updateComputation(compTable);
 	    SB = sagbiBasis compTable;
-	    SB = internalIsSAGBI(opts, SB);
+	    SB = internalIsSAGBI(opts, SB); -- TODO: "Memoize" this 
     	    -- S.cache#"SAGBIBasis" = SB;
     	    SB#"data"#"sagbiDone"
 	    ) else ( 
