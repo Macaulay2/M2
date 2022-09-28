@@ -2584,7 +2584,7 @@ doc ///
         Text
 	    In the geometric lattice of flats, the vee (also known as the
 	    supremum or least upper bound) is the join operation.
-	    Equivalently, identifyings flats with subspaces, this operation is
+	    Equivalently, identifying flats with subspaces, this operation is
 	    the closure of the union.
 	Text
     	    The vee operation is commutative, associative, and idempotent.

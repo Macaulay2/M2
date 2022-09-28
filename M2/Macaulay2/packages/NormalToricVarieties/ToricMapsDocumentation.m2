@@ -860,7 +860,7 @@ doc ///
         Text
 	    Given a positive integer {\tt m} and a normal toric variety {\tt
 	    X}, the diagonal morphism is the toric map from {\tt X} to the
-	    {\tt m}-ary Cartersion product of {\tt X} such that it composes to
+	    {\tt m}-ary Cartesian product of {\tt X} such that it composes to
 	    the identity with the {\tt i}-th 
 	    @TO2((symbol ^, NormalToricVariety, Array), "projection map")@, 
 	    for all {\tt i} in {\tt A}, and compose to the zero map with the

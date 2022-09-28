@@ -1384,7 +1384,7 @@ doc ///
      Description
      	  Text  
        	    We describe
-	    the most primitative way to create filtered complexes.
+	    the most primitive way to create filtered complexes.
 	    
 	    Let $C$ be a chain complex and consider a list of
 	    chain complex maps $\{\phi_n, \phi_{n - 1}, \dots, \phi_0  \}$ 

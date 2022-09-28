@@ -3505,7 +3505,7 @@ elapsedTime assert(gens(If*Ig) % integralClosure(Ifg, Verbosity => 4) == 0)
 elapsedTime integralClosure Ifg
 
 
--- MES: this is me playing around tryiing to find better fractions, cvan be removed.
+-- MES: this is me playing around trying to find better fractions, can be removed.
 use ring ideal R'
 contract(w_(2,0), gens ideal R')
 ideal R'

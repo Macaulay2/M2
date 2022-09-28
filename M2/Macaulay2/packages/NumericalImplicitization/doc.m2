@@ -1,5 +1,5 @@
 
---Documention--
+--Documentation--
 --<<docTemplate
 doc ///
     Key
