@@ -224,6 +224,7 @@ export {
 	"Inverses",
 	"Invertible",
 	"Iterate",
+	"Iterator",
 	"Jacobian",
 	"Join",
 	"Jupyter",

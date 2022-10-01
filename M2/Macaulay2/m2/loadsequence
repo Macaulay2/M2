@@ -19,6 +19,7 @@ structure.m2
 combinatorics.m2
 lists.m2
 tables.m2
+iterators.m2
 
 nets.m2
 robust.m2
