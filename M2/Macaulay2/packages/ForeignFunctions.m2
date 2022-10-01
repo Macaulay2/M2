@@ -303,11 +303,16 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
     value S := x -> for y in x list y;
     S_ZZ := (x, i) -> dereference_T(
 	ffiPointerValue address x + size T * checkarraybounds(n, i));
-    iterator S := x -> ForeignArrayIterator {
-	symbol Pointer => ffiPointerValue address x,
-	symbol Type => T,
-	Index => 0,
-	Length => n};
+    iterator S := x -> Iterator(
+	ptr := ffiPointerValue address x;
+	i := 0;
+	() -> (
+	    if i >= n then StopIteration
+	    else (
+		r := dereference_T ptr;
+		i = i + 1;
+		ptr = ptr + size T;
+		r)));
     S)
 
 ForeignArrayType VisibleList := (T, x) -> new T from x
@@ -315,19 +320,6 @@ ForeignArrayType VisibleList := (T, x) -> new T from x
 -- syntactic sugar based on Python's ctypes
 ZZ * ForeignType := (n, T) -> foreignArrayType(T, n)
 ForeignType * ZZ := (T, n) -> n * T
-
--- iterator for foreign arrays
-protect Index
-protect Length
-ForeignArrayIterator = new SelfInitializingType of MutableHashTable
-iterator ForeignArrayIterator := identity
-next ForeignArrayIterator := i -> (
-    if i.Index >= i.Length then StopIteration
-    else (
-	ret := dereference_(i.Type) i.Pointer;
-	i.Index = i.Index + 1;
-	i.Pointer = i.Pointer + size i.Type;
-	ret))
 
 -- null-terminated arrays of pointers
 ForeignPointerArrayType = new Type of ForeignType
@@ -365,23 +357,20 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
 	if i >= 0 or i < -len then error(
 	    "array index ", i, " out of bounds 0 .. ", len - 1)
 	else dereference_T(ptr + sz * i));
-    iterator S := x -> ForeignPointerArrayIterator {
-	symbol Pointer => ffiPointerValue address x, symbol Type => T};
+    iterator S := x -> Iterator(
+	ptr := ffiPointerValue address x;
+	() -> (
+	    if ffiPointerValue ptr === nullPointer then StopIteration
+	    else (
+		r := dereference_T ptr;
+		ptr = ptr + version#"pointer size";
+		r)));
     S)
 
 voidstarstar = foreignPointerArrayType voidstar
 charstarstar = foreignPointerArrayType charstar
 
 ForeignPointerArrayType VisibleList := (T, x) -> new T from x
-
-ForeignPointerArrayIterator = new SelfInitializingType of MutableHashTable
-iterator ForeignPointerArrayIterator := identity
-next ForeignPointerArrayIterator := i -> (
-    if ffiPointerValue i.Pointer === nullPointer then StopIteration
-    else (
-	ret := dereference_(i.Type) i.Pointer;
-	i.Pointer = i.Pointer + version#"pointer size";
-	ret))
 
 -------------------------
 -- foreign struct type --
