@@ -470,7 +470,7 @@ bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
 bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
     --myPol are your polynomial system that you want to solve.
     --myParams are your parameters.
-    --myParValues are the values the parametres will take.
+    --myParValues are the values the parameters will take.
 --%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini.
 --%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files.
 --%%%%--To change the default directory, set the TopDirectory option to the directory you would like.

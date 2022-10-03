@@ -302,7 +302,7 @@ randomElement = L -> (
     )
 
 ----------------------
---Auxilary functions for phyloToricFP
+--Auxiliary functions for phyloToricFP
 ----------------------
 
 --A function that takes an invariant on a small tree and extends it in all possible ways to a big tree.

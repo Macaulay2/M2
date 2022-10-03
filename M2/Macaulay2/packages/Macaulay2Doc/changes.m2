@@ -90,7 +90,7 @@ document {
                 	 methods, improves interoperability with ", 
                 	 TO "Polyhedra::Polyhedra", " and completely overhauls the
                 	 documentation. Changes that break backwards
-                	 compatiblity include changing the output of faces and
+                	 compatibility include changing the output of faces and
                 	 facets from Matrix to List, changing the output type
                 	 of fVector from HashTable to List, and replacing ==
                 	 with === for SimplicialComplexes."
