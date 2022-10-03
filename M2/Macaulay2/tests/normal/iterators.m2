@@ -1,14 +1,12 @@
-BoundedPrimeIterator = new SelfInitializingType of MutableHashTable;
-iterator BoundedPrimeIterator := identity;
-next BoundedPrimeIterator := i -> (
-    q := nextPrime(i#"val" + 1);
-    if q > i#"max" then StopIteration else i#"val" = q);
-BoundedPrimeIterable = new SelfInitializingType of HashTable;
-iterator BoundedPrimeIterable := x -> BoundedPrimeIterator {
-    "val" => 1, "max" => x#"max"};
-P = BoundedPrimeIterable {"max" => 20};
-i = iterator P
+BoundedPrimeNumbers = new SelfInitializingType of HashTable
+iterator BoundedPrimeNumbers := P -> Iterator(
+    q := 1;
+    () -> (
+	q = nextPrime(q + 1);
+	if q > 20 then StopIteration else q))
+P = new BoundedPrimeNumbers
 
+i = iterator P
 assert Equation(next i, 2)
 assert Equation(next i, 3)
 assert Equation(next i, 5)
