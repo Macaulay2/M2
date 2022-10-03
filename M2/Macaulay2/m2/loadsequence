@@ -10,6 +10,7 @@ regex.m2
 profile.m2
 debugging.m2
 remember.m2
+iterators.m2
 files.m2
 
 set.m2
@@ -19,7 +20,6 @@ structure.m2
 combinatorics.m2
 lists.m2
 tables.m2
-iterators.m2
 
 nets.m2
 robust.m2
