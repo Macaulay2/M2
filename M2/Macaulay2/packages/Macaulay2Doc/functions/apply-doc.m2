@@ -11,7 +11,7 @@ document {
      SeeAlso => {"applyKeys", "applyPairs", "applyValues", "applyTable", "lists and sequences"}
      }
 document { 
-     Key => {(apply,BasicList,Function), (apply,String,Function)},
+     Key => {(apply,BasicList,Function)},
      Headline => "apply a function to each element of a list",
      Usage => "apply(L,f)",
      Inputs => {
