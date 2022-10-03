@@ -1590,12 +1590,11 @@ map(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
-     is s:stringCell do map(strtoseq(s), f)
      else (
 	 iter := getIterator(e);
 	 if iter != nullE
 	 then applyEEE(getGlobalVariable(applyIteratorS), iter, f)
-	 else WrongArg(1,"a list, sequence, integer, string, or iterable")));
+	 else WrongArg(1,"a list, sequence, integer, or iterable")));
 map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
@@ -2078,7 +2077,6 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
-     is s:stringCell do scan(strtoseq(s), f)
      else (
 	 i := getIterator(e);
 	 if i != nullE
@@ -2097,7 +2095,7 @@ scan(e:Expr,f:Expr):Expr := (
 		     else nothing);
 		 nullE)
 	     else buildErrorPacket("no method for applying next to iterator"))
-	 else WrongArg(1, "a list, sequence, integer, string, or iterable")));
+	 else WrongArg(1, "a list, sequence, integer, or iterable")));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
