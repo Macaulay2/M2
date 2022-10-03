@@ -272,7 +272,7 @@ tt#"\\"= "_bs"			 -- can't occur in a file name: MS-DOS and sh
 tt#"_" = "_us"					      -- our escape character
 
 -- some OSes are case insensitive:
-apply("ABCDEFGHIJKLMNOPQRSTUVWXYZ", cap -> tt#cap = concatenate("__", cap))
+for cap in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" do tt#cap = concatenate("__", cap)
 
 toFilename = method()
 toFilename String := s -> (
@@ -283,7 +283,7 @@ toFilename String := s -> (
      -- from occurring in the first position, where it would have a special
      -- meaning to Macaulay2.
      -- We should check which characters are allowed in URLs.
-     s = concatenate("_",apply(s, c -> tt#c));
+     s = concatenate("_", for c in s list tt#c);
      s)
 
 regexpString := s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
