@@ -163,8 +163,10 @@ orientedCircuits = method(Options => {Homogenize=>true})
 orientedCircuits String := opts -> (chiro) -> (
     (outfile,errfile) := callTopcom("chiro2circuits", {chiro});
     s := lines get outfile;
+    s = if match(///^C\[///, first s) -- TOPCOM >= 1.1.0
+    then apply(s, line -> replace(///^C\[\d+\] := (.*);///, ///\1///, line))
     -- remove first 2 lines, and last line:
-    s = drop(drop(s, 2), -1);
+    else drop(drop(s, 2), -1);
     circs := s/(x -> toList value x);
     -- now sort it all
     circs/sort//sort
