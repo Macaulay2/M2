@@ -22,3 +22,10 @@ iterator String      := x -> Iterator (
 	    r := x#i;
 	    i = i + 1;
 	    r)))
+
+-- called by map(Expr,Expr) in actors3.d
+applyIterator = (iter, f) -> Iterator (
+    () -> (
+	x := next iter;
+	if x === StopIteration then StopIteration
+	else f x))
