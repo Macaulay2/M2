@@ -22,3 +22,7 @@ for x in P do n = n + x
 assert Equation(n, 77)
 assert Equation(for x in P list if x % 4 == 1 then x else continue, {5, 13, 17})
 assert Equation(for x in P list if x == 11 then break x, 11)
+
+assert Equation(toList iterator {1, 2, 3}, {1, 2, 3})
+assert Equation(toList iterator (1, 2, 3), {1, 2, 3})
+assert Equation(toList iterator "foo", {"f", "o", "o"})
