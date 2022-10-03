@@ -29,3 +29,16 @@ applyIterator = (iter, f) -> Iterator (
 	x := next iter;
 	if x === StopIteration then StopIteration
 	else f x))
+
+select(Thing, Function) := Iterator => {} >> o -> (X, f) -> (
+    if lookup(iterator, class X) === null
+    then error "expected argument 1 to be iterable";
+    iter := iterator X;
+    Iterator (
+	() -> while true do (
+	    x := next iter;
+	    if x === StopIteration then return StopIteration;
+	    y := f x;
+	    if not instance(y, Boolean)
+	    then error("select: expected predicate to yield true or false");
+	    if y then return x)))
