@@ -116,7 +116,7 @@ isRegularTriangulation = method(Options=>{Homogenize=>true})
 isRegularTriangulation(Matrix, List) := opts -> (A, tri) -> (
     -- now create the output file
     (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
-    match("Checked 1 triangulations, 0 non-regular so far", get errfile)
+    match("[Cc]hecked 1 triangulations, 0 non-regular so far", get errfile)
     )
 
 regularTriangulationWeights = method(Options => options isRegularTriangulation)
