@@ -47,7 +47,6 @@ append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
-apply(String,Function) := Sequence => apply
 apply(BasicList,String,Function) := Sequence => apply
 apply(String,BasicList,Function) := Sequence => apply
 apply(String,String,Function) := Sequence => apply
@@ -129,7 +128,7 @@ read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
 Function Thing := Thing => x -> (dummy x;)
-scan(BasicList,Function) := scan(String,Function) := Nothing => scan
+scan(BasicList,Function) := Nothing => scan
 scan(BasicList,BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scan(Thing,Function) := Nothing => scan
