@@ -1591,7 +1591,11 @@ map(e:Expr,f:Expr):Expr := (
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
      is s:stringCell do map(strtoseq(s), f)
-     else WrongArg(1,"a list, sequence, integer, or string"));
+     else (
+	 iter := getIterator(e);
+	 if iter != nullE
+	 then applyEEE(getGlobalVariable(applyIteratorS), iter, f)
+	 else WrongArg(1,"a list, sequence, integer, string, or iterable")));
 map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (

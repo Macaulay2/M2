@@ -21,10 +21,10 @@ export chars := new array(Expr) len 256 do (
 	i = i+1;
 	));
 
--- symbols for iteration
--- "iterator" and "next" will be reassigned as methods at top level
+-- symbols for iteration; will be reassigned at top level
 export iteratorS := setupvar("iterator", nullE);
 export nextS := setupvar("next", nullE);
+export applyIteratorS := setupvar("applyIterator", nullE);
 
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
