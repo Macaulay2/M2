@@ -33,7 +33,8 @@ export {
     "isSAGBI",
     "groebnerMembershipTest",
     "groebnerSubductionQuotient",
-    "subringIntersection"
+    "subringIntersection",
+    "UseSubringGens"
     }
 
 
