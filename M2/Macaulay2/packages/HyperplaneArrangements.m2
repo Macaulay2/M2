@@ -2695,7 +2695,7 @@ doc ///
 	    A = arrangement "braid"
 	    deletion(A,5)
 	Text
-	    You can also remove a hyperplane by specifiying its linear form.
+	    You can also remove a hyperplane by specifying its linear form.
 	Example
 	    R = QQ[x,y]
 	    A = arrangement {x,y,x-y}

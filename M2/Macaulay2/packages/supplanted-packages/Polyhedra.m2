@@ -1004,7 +1004,7 @@ isProjective Fan := F -> (
 	  edgeTCNoTable := hashTable apply(edgeTable, e -> e#0 => (e#2,e#3));
 	  edgeTable = hashTable apply(edgeTable, e -> e#1 => (e#2,e#3));
 	  -- Computing the list of correspondencies, i.e. for each codim 2 cone ( corresponding to 2dim-faces of the polytope) save 
-	  -- the indeces of the top cones containing it
+	  -- the indices of the top cones containing it
 	  corrList := hashTable {};
 	  scan(keys L, j -> (corrList = merge(corrList,hashTable apply(faces(2,L#j), C -> C => {j}),join)));
 	  corrList = pairs corrList;
@@ -1015,7 +1015,7 @@ isProjective Fan := F -> (
 	  HP := flatten apply(#corrList, j -> (
 		    v := corrList#j#1;
 		    HPnew := NM;
-		    -- Scanning trough the top cones containing the active codim2 cone and order them in a circle by their 
+		    -- Scanning through the top cones containing the active codim2 cone and order them in a circle by their 
 		    -- connecting edges
 		    v = apply(v, e -> L#e);
 		    C := v#0;
@@ -1251,7 +1251,7 @@ hilbertBasis Cone := C -> (
 	  (M,BC));
      -- Function to compute the/one preimage of h under A
      preim := (h,A) -> (
-	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entrys are a preimage
+	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entries are a preimage
 	  -- vector
 	  N := gens ker(-h|A);
 	  N = transpose (ref transpose N)#0;
@@ -1612,7 +1612,7 @@ minkSummandCone Polyhedron := P -> (
 -- PURPOSE : Computing the closest point of a polyhedron to a given point
 --   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
 --                   'P' is a Polyhedron
---  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
+--  OUTPUT : the point in 'P' with the minimal euclidean distance to 'p'
 proximum = method(TypicalValue => Matrix)
 proximum (Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
@@ -1700,7 +1700,7 @@ proximum (Matrix,Polyhedron) := (p,P) -> (
 
 --   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
 --                   'C' is a Cone
---  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
+--  OUTPUT : the point in 'C' with the minimal euclidean distance to 'p'
 proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
 
 
@@ -1728,7 +1728,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
      if contains(P,convexHull p) then (
 	  (M,v) := halfspaces P;
      	  (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfil equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
 	  N = N || M^pos;
@@ -1749,7 +1749,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
      if contains(C,posHull p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfil equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
@@ -1881,7 +1881,7 @@ vertexEdgeMatrix Polyhedron := P -> (
      vp = apply(numColumns vp, i -> vp_{i});
      d := #vp;
      n := #eP;
-     -- Generate the matrix with indeces in the first row and column and for every edge add two 1's in the corresponding column
+     -- Generate the matrix with indices in the first row and column and for every edge add two 1's in the corresponding column
      transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
 
 
@@ -1900,7 +1900,7 @@ vertexFacetMatrix Polyhedron := P -> (
      vp = apply(numColumns vp, i -> vp_{i});
      d := #vp;
      n := #fP;
-     -- Generate the matrix with indeces in the first row and column and for every facet add 1's in the corresponding column
+     -- Generate the matrix with indices in the first row and column and for every facet add 1's in the corresponding column
      transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp, v -> apply(fP,f -> if f#?v then 1 else 0))))
 
 
@@ -2602,7 +2602,7 @@ stdSimplex ZZ := d -> (
 --     	     to the file. But keep in mind that this works only for such objects assigned to a Symbol! The session 
 -- 	     can be reovered by calling
 --     	     load F
--- 	     It is not neccessary to load Polyhedra before loading the saved session, because if not yet loaded it will
+-- 	     It is not necessary to load Polyhedra before loading the saved session, because if not yet loaded it will
 --     	     load Polyhedra. Also if PPDivisor was loaded when the session has been saved it will also be loaded.
 saveSession = method()
 saveSession String := F -> (

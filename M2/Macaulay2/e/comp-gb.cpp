@@ -187,7 +187,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 //                                 collect_syz,
 //                                 collect_change,
 //                                 n_rows_to_keep,
-//                                 stategy);
+//                                 strategy);
 //       return 0;
 //     }
 #endif
