@@ -300,7 +300,7 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
 	if #x != n then error("expected a list of length ", n);
 	new S from ForeignObject {Address =>
 	    ffiPointerAddress(address T, address \ apply(x, y -> T y))});
-    value S := x -> for y in x list y;
+    value S := x -> for y in x list value y;
     S_ZZ := (x, i) -> dereference_T(
 	ffiPointerValue address x + size T * checkarraybounds(n, i));
     iterator S := x -> ForeignArrayIterator {
@@ -353,7 +353,7 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
     new S from VisibleList := (S, x) -> new S from ForeignObject {
 	Address => ffiPointerAddress(address T,
 	    append(apply(x, y -> address T y), address voidstar nullPointer))};
-    value S := x -> for y in x list y;
+    value S := x -> for y in x list value y;
     S_ZZ := (x, i) -> (
 	len := 0;
 	ptr := ffiPointerValue address x;
@@ -409,7 +409,7 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     value T := y -> (
 	ptr' := address y;
 	applyPairs(types, (mbr, type) ->
-	    (mbr, dereference_type(ptr' + offsets#mbr))));
+	    (mbr, value dereference_type(ptr' + offsets#mbr))));
     T_String := (y, mbr) -> dereference_(types#mbr)(address y + offsets#mbr);
     T)
 
@@ -434,7 +434,7 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
     types := hashTable x;
     value T := y -> (
 	ptr := address y;
-	applyPairs(types, (mbr, type) -> (mbr, dereference_type ptr)));
+	applyPairs(types, (mbr, type) -> (mbr, value dereference_type ptr)));
     T_String := (y, mbr) -> dereference_(types#mbr) address y;
     T)
 
@@ -1592,9 +1592,9 @@ assert Equation(value charstar "Hello, world!", "Hello, world!")
 -- array types
 intarray3 = 3 * int
 x = intarray3 {1, 2, 3}
-assert Equation(value \ value x, {1, 2, 3})
+assert Equation(value x, {1, 2, 3})
 ptr = address x
-assert Equation(value \ value intarray3 ptr, {1, 2, 3})
+assert Equation(value intarray3 ptr, {1, 2, 3})
 assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
 ptrarray = 3 * voidstar
@@ -1602,7 +1602,7 @@ x = ptrarray {address int 1, address int 2, address int 3}
 assert Equation(for ptr in x list value int value ptr, {1, 2, 3})
 x = charstarstar {"foo", "bar", "baz"}
 assert Equation(length x, 3)
-assert Equation(value \ value x, {"foo", "bar", "baz"})
+assert Equation(value x, {"foo", "bar", "baz"})
 assert Equation(value x_0, "foo")
 assert Equation(value x_(-1), "baz")
 x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
@@ -1613,10 +1613,9 @@ assert Equation(value int value x_(-1), 4)
 int3star = foreignPointerArrayType(3 * int)
 x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
 assert Equation(length x, 4)
-assert Equation(for y in x list value \ value y,
-    {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
-assert Equation(value \ value x_0, {1, 2, 3})
-assert Equation(value \ value x_(-1), {10, 11, 12})
+assert Equation(value x, {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
+assert Equation(value x_0, {1, 2, 3})
+assert Equation(value x_(-1), {10, 11, 12})
 
 -- struct types
 teststructtype = foreignStructType("foo",
@@ -1646,9 +1645,9 @@ TEST ///
 assert Equation(value foreignObject 3, 3)
 assert Equation(value foreignObject 3.14159, 3.14159)
 assert Equation(value foreignObject "foo", "foo")
-assert Equation(value \ value foreignObject {1, 2, 3}, {1, 2, 3})
-assert Equation(value \ value foreignObject {1.0, 2.0, 3.0}, {1.0, 2.0, 3.0})
-assert Equation(value \ value foreignObject {"foo", "bar"}, {"foo", "bar"})
+assert Equation(value foreignObject {1, 2, 3}, {1, 2, 3})
+assert Equation(value foreignObject {1.0, 2.0, 3.0}, {1.0, 2.0, 3.0})
+assert Equation(value foreignObject {"foo", "bar"}, {"foo", "bar"})
 ///
 
 TEST ///
