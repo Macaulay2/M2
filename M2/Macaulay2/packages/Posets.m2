@@ -6407,6 +6407,7 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
 assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
+assert(toString degreePolynomial B == "x^3+3*x^2*y+3*x*y^2+y^3")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)
