@@ -127,7 +127,11 @@ regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
     (outfile, errfile) := callTopcom("checkregularity --heights", {topcomPoints(A, opts), [], tri });
     output := get outfile;
     if match("non-regular", output) then return null;
-    result := value first lines output;
+    result := (
+	if match(///^\(///, first lines output) -- TOPCOM < 1.1.0
+	then value first lines output
+	else value replace(///^h\[\d+\] := (.*);///, ///\1///,
+	    (lines output)#1));
     return if instance(result, Number) then {result} else toList result
     )
 
