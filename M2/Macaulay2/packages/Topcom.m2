@@ -112,12 +112,23 @@ callTopcom(String, List) := (command, inputs) -> (
     (retval#"output file", retval#"error file")
     )
 
+-- before 1.1.0:
+--   Checked 1 triangulations, 0 non-regular so far.
+-- after 1.1.0:
+--   checked 1 triangulations, 0 non-regular so far.
+
 isRegularTriangulation = method(Options=>{Homogenize=>true})
 isRegularTriangulation(Matrix, List) := opts -> (A, tri) -> (
     -- now create the output file
     (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
     match("[Cc]hecked 1 triangulations, 0 non-regular so far", get errfile)
     )
+
+-- before 1.1.0:
+--   (2,0,0,0)
+-- after 1.1.0:
+--   T[1] = {{1,2,3},{0,1,2}} is regular.
+--   h[1] := [1,0,0,0];
 
 regularTriangulationWeights = method(Options => options isRegularTriangulation)
 regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
@@ -163,6 +174,18 @@ naiveChirotope Matrix := opts -> A -> (
         )
     )
 
+-- before 1.1.0:
+--   8,4:
+--   {
+--   [{0,3,6},{2,5}]
+--   [{0,7},{2,5}]
+--   ...
+--   }
+-- after 1.1.0:
+--   C[0] := [{0,3},{1,2}];
+--   C[1] := [{0,7},{1,2,4}];
+--   ...
+
 orientedCircuits = method(Options => {Homogenize=>true})
 orientedCircuits String := opts -> (chiro) -> (
     (outfile,errfile) := callTopcom("chiro2circuits", {chiro});
@@ -200,6 +223,11 @@ numTriangsExecutable = hashTable {
     (false, true) => "points2ntriangs",
     (false, false) => "points2nalltriangs"
     }
+
+-- before 1.1.0:
+--   T[0]:=[0->4,3:{{0,1,2},{1,2,3}}];
+-- after 1.1.0:
+--   T[0] := {{0,1,2},{1,2,3}};
 
 allTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
 allTriangulations Matrix := opts -> (A) -> (
