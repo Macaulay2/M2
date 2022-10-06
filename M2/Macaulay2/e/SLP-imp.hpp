@@ -48,7 +48,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
   printf("loading from %s\n", lib_name);
   void* handle = dlopen(lib_name, RTLD_LAZY | RTLD_GLOBAL);
   if (handle == NULL) ERROR("can't load library %s", lib_name);
-  compiled_fn = (void (*)(double const*, double*)) dlsym(handle, funname);
+  compiled_fn = (void (*)(ElementType const*, ElementType*)) dlsym(handle, funname);
   if (compiled_fn == NULL) 
     std::cerr << "can't link function " << funname << " from library " << lib_name << std::endl;
 }
@@ -215,7 +215,8 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
   }
 
   if (isCompiled) {
-    throw exc::engine_error("not implemented for compiled SLEvaluatorConcrete");    
+    (*compiled_fn)(inputs.array(), outputs.array());
+    return true;
   } else {                           
     size_t i = 0;
     for (size_t r = 0; r < inputs.numRows(); r++)

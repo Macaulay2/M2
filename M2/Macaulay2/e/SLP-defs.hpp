@@ -187,8 +187,8 @@ class SLEvaluatorConcrete : public SLEvaluator
                                       continuing with the values of other GATEs */
 
   // data used by compiled evaluation
-  // void (*)(ElementType const*, ElementType*)  compiled_fn;
-  void (*compiled_fn)(double const*, double*);
+  void (*compiled_fn)(ElementType const*, ElementType*);
+  //void (*compiled_fn)(double const*, double*);
   int nInputs, nOutputs;
 };
 

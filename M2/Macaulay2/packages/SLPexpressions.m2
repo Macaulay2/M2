@@ -748,7 +748,7 @@ slp.cache#K else (
     f := openOut cppName;
     -- f << "#include <complex>" << endl; 
     f << "typedef " | typeName | " C;" << endl; -- << "extern" << endl; -- the type needs to be adjusted!!!
-    cCode (slp#"input", slp#"output", f);
+    cCode (slp#"output", slp#"input", f);
     f << close;
     compileCommand := "gcc -shared -Wall -fPIC -Wextra -o "| libName | " " | cppName;
     print compileCommand;

@@ -16,7 +16,7 @@ doc ///
             f = x + 1
             n = 12;
             for i from 1 to n do f = f*f -- f = (x+1)^(2^n)
-            slp = makeSLProgram({x},{f})
+            slp = makeInterpretedSLProgram({x},{f})
 	    time A = evaluate(slp,matrix{{1}});
             ZZ[y];
             time B = sub((y+1)^(2^n),{y=>1})    
@@ -24,6 +24,7 @@ doc ///
 	Text
     SeeAlso
         NAGtypes
+	makeCompiledSLProgram
 ///
 
 doc ///

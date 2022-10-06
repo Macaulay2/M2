@@ -25,16 +25,15 @@ declareVariable X; declareVariable C;
 XpC = X+C
 XXC = productGate{X,X,C}
 XoC = X/C
--*
-slp = makeInterpretedSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XpC+2}})
-*-
+slp' = makeInterpretedSLProgram(matrix{{C,X}},matrix{{XXC,XoC,XpC+2}})
 slp = makeCompiledSLProgram(matrix{{C,X}},matrix{{XXC,XoC,XpC+2}})
 inp = mutableMatrix{{1.2,-1}}
 out = mutableMatrix(ring inp,1,3)
--*
-interpretedE = rawSLEvaluatorK(slp,ring inp)
-*-    
-compiledE = rawCompiledSLEvaluatorK(slp,ring inp); -- SIGSEGV when prints
-oo
+out' = mutableMatrix(ring inp,1,3)
+interpretedE = rawSLEvaluatorK(slp',ring inp)
+compiledE = rawCompiledSLEvaluatorK(slp,ring inp)
+evaluate(slp',inp,out')
 evaluate(slp,inp,out)
+out'
 out
+pr
