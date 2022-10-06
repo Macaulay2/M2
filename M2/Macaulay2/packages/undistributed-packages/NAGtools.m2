@@ -160,7 +160,7 @@ gateHomotopy4preimage(GateMatrix,List,List) := (F,V,W) -> (
     H := F-((1-t)*transpose A+t*transpose B);
     gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
--- in: S, polynomials desribing a subvariety of CC^V
+-- in: S, polynomials describing a subvariety of CC^V
 gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
     assert(#W == numrows F); 
     A := matrix{apply(W, w->inputGate symbol A_w)};

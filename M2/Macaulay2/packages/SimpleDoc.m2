@@ -267,7 +267,7 @@ nodeCheck = (processed, keylinenum) -> (
 -- helper functions for writing documentation
 load("./SimpleDoc/helpers.m2")
 
--- docstring and package templetes
+-- docstring and package templates
 load("./SimpleDoc/templates.m2")
 
 -- an example that can also be used as a test

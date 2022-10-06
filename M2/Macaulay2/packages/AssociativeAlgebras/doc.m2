@@ -161,7 +161,7 @@ doc ///
    Key
       (isNormal, RingElement)
    Headline
-      Determines if an element of a noncommutatie ring is normal
+      Determines if an element of a noncommutative ring is normal
    Usage
       isNormal x
    Inputs

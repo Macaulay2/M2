@@ -90,7 +90,7 @@ FormalSeries * FormalSeries := (s,t) ->
 	new FormalSeries from {sum for i from 0 to k list (part(i,i,n,s#0))*(part(0,(k-i),m,t#0)),k}
 	)
 
---Defining inverse of FormalSeries. It has the same precision. Still slow because the internal multiplication of macaulay2 is not used. Instead, we use our multiplciation, that is slow.
+--Defining inverse of FormalSeries. It has the same precision. Still slow because the internal multiplication of macaulay2 is not used. Instead, we use our multiplication, that is slow.
 
 inverse(FormalSeries) := (s) ->
 	(
@@ -174,7 +174,7 @@ compositionInverse(FormalSeries):= (s) ->
 --Defining the class of formal group laws
 FormalGroupLaw = new Type of FormalSeries 
 
---Method to construct a new formal group law from a FormalSeries in two variables. It tests if the formal series defines a commutative formal group law with neutral element. This is quite conservative. We might also want to make things quicker by forgeting about formal series in the computations, and then truncating at the end. 
+--Method to construct a new formal group law from a FormalSeries in two variables. It tests if the formal series defines a commutative formal group law with neutral element. This is quite conservative. We might also want to make things quicker by forgetting about formal series in the computations, and then truncating at the end. 
 FGL = method()
 FGL(FormalSeries) := (s) -> 
 	(
@@ -279,7 +279,7 @@ gcdCoeffs(BasicList):= (L) ->
 	  )	
 	)
 
---Universal FGL with integer coefficients. Try to remove the dependence on the name of the b's in all this by asking for a string "b" maybe. The idea is to express the coefficients of the universal formal group law in terms of some b_i's that are the coefficients of a universal logarithm. Then, we form the a_i's thatare linear combinations of the a_(i,j) using some special coefficients. It turns out that these a_i's are multiples of the b_i's modulo some smaller b_j's. So rationnally, we can express the b_i's in terms of the a_i's, and so the a_(i,j)'s in terms of a_i's. The coefficients appearing in this last expression are integers, and this gives the coeffs of the universal formal group law on Z[a_i], which is the Lazard ring (really seen as a polynomial ring).
+--Universal FGL with integer coefficients. Try to remove the dependence on the name of the b's in all this by asking for a string "b" maybe. The idea is to express the coefficients of the universal formal group law in terms of some b_i's that are the coefficients of a universal logarithm. Then, we form the a_i's that are linear combinations of the a_(i,j) using some special coefficients. It turns out that these a_i's are multiples of the b_i's modulo some smaller b_j's. So rationally, we can express the b_i's in terms of the a_i's, and so the a_(i,j)'s in terms of a_i's. The coefficients appearing in this last expression are integers, and this gives the coeffs of the universal formal group law on Z[a_i], which is the Lazard ring (really seen as a polynomial ring).
 universalFGL=method()
 universalFGL(ZZ,String,String,String) := (n,s,u,v) ->
 	(

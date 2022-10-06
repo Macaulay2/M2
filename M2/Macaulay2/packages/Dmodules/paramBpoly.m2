@@ -248,8 +248,6 @@ loadVTree(String) := filename -> (
 	  }
      )
 
-toString(Option) := o -> (toString o#0 | "=>" | toString o#1);
-
 search4ABigGuy := (V, I, pNODE) -> (
      dad := V#tempN#pNODE;
      grandpa := dad#parentNODE;
@@ -540,7 +538,7 @@ homGBparam := (I, w) -> (
      -- Do some sanity checking
      if dpairs === {} 
      then error "expected a Weyl algebra";
-     if any(dpairs, v -> class v =!= Option)
+     if any(dpairs, v -> class v =!= List)
      then error "expected non-homogenized Weyl algebra";
      if #w =!= numgens W
      then error ("expected weight vector of length " | numgens W);

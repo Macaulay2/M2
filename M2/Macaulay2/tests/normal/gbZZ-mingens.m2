@@ -12,7 +12,7 @@ I = ideal"ac-a-c+1, a2+3c2-2a-6c+4, c3-3c2+3c-1"
 mingens I
 assert(gens gb I == gens gb mingens I)
 
--- 'mingens' when computng a GB over ZZ[x,y]
+-- 'mingens' when computing a GB over ZZ[x,y]
 -- is not considering the coefficients...
 -- It needs to be more conservative...
 

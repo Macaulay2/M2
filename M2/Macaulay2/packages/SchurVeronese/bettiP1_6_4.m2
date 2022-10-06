@@ -11,7 +11,7 @@ new HashTable from {
 "dw"=>new HashTable from {(0,0) => {{4,0}}, (0,1) => {}, (1,0) => {{9,1}}, (1,1) => {}, (2,0) => {{13,3}}, (2,1) => {}, (3,0) => {{16,6}}, (3,1) => {}, (4,0) => {{18,10}}, (4,1) => {}, (5,0) => {}, (5,1) => {{20,20}}},
 --lw encodes the lex leading weight in each entry
 "lw"=>new HashTable from {(0,0) => {4,0}, (0,1) => {}, (1,0) => {9,1}, (1,1) => {}, (2,0) => {13,3}, (2,1) => {}, (3,0) => {16,6}, (3,1) => {}, (4,0) => {18,10}, (4,1) => {}, (5,0) => {}, (5,1) => {20,20}},
---nr encodes the number of disctinct reprsentations in each entry
+--nr encodes the number of distinct representations in each entry
 "nr"=>new HashTable from {(0,0) => 1, (0,1) => 0, (1,0) => 1, (1,1) => 0, (2,0) => 1, (2,1) => 0, (3,0) => 1, (3,1) => 0, (4,0) => 1, (4,1) => 0, (5,0) => 0, (5,1) => 1},
 --nrm encodes the number of representations with multiplicity in each entry
 "nrm"=>new HashTable from {(0,0) => 1, (0,1) => 0, (1,0) => 1, (1,1) => 0, (2,0) => 1, (2,1) => 0, (3,0) => 1, (3,1) => 0, (4,0) => 1, (4,1) => 0, (5,0) => 0, (5,1) => 1},

@@ -12,6 +12,6 @@ o22 = merge
 
       If x and y have the same class and parent, then so will z.
 
-      This function is useful for multiplying monomials or adding polynomials.  We illustrate that with a simple-minded implmentation of the free abelian
+      This function is useful for multiplying monomials or adding polynomials.  We illustrate that with a simple-minded implementation of the free abelian
       group on the set of strings, representing an element as a type of hash table that associates coefficients to strings.
 

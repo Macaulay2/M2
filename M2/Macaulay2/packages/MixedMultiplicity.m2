@@ -729,7 +729,7 @@ doc ///
      Here X is of type boolean. Each of these functions involves the
      computation of a Rees ideal, which involves a saturation step.
      This optional argument determines whether or not 
-     the output of the saturation step will be forced to have a minmimal generating set.
+     the output of the saturation step will be forced to have a minimal generating set.
      This is described in the documentation node for @TO saturate@.
    SeeAlso
     multiReesIdeal

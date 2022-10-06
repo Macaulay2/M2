@@ -280,7 +280,7 @@ prune Arrangement := Arrangement => options -> A -> (
 normal = h -> (1 / leadCoefficient h) * h -- representative of functional, mod scalars
 
 -- reduce an arrangement with possibly repeated hyperplanes to a 
--- simple arrangement.  Cache the simple arrangement and multipliticies.
+-- simple arrangement.  Cache the simple arrangement and multiplicities.
 trim Arrangement := Arrangement => opts -> (cacheValue symbol trim)(A -> (
      	if hyperplanes A === {} then (
 	    A.cache.trim = A; 
@@ -807,7 +807,7 @@ flats Arrangement := List => A -> apply(1+rank A, j-> flats(j,A))
 circuits CentralArrangement := List => A -> toList \ circuits matroid A
      
      
--- should overload "directSum" when tersor product of a sequence of rings
+-- should overload "directSum" when tensor product of a sequence of rings
 -- becomes available
 arrangementSum = method()
 arrangementSum (Arrangement, Arrangement) := Arrangement => (A, B) -> (
@@ -2185,7 +2185,7 @@ doc ///
 	E: PolynomialRing
 	    a skew-commutative polynomial ring with one variable for each hyperplane
 	    with indexed variables, optionally, given by the symbol $e$.  
-	    The user can also just specify a cofficient ring $k$.
+	    The user can also just specify a coefficient ring $k$.
     Outputs
     	: Ideal
 	    the defining ideal of the Orlik-Solomon algebra of A
@@ -2526,7 +2526,7 @@ doc ///
     Inputs
         F : Flat
 	G : Flat
-	    in the same arrangment as $F$
+	    in the same arrangement as $F$
     Outputs
         : Flat
     	    having the greatest codimension among those contained in both $F$
@@ -2575,7 +2575,7 @@ doc ///
     Inputs
         F : Flat
 	G : Flat
-	    in the same arrangment as $F$
+	    in the same arrangement as $F$
     Outputs
         : Flat
     	    having the least codimension among those contained in both $F$
@@ -2584,7 +2584,7 @@ doc ///
         Text
 	    In the geometric lattice of flats, the vee (also known as the
 	    supremum or least upper bound) is the join operation.
-	    Equivalently, identifyings flats with subspaces, this operation is
+	    Equivalently, identifying flats with subspaces, this operation is
 	    the closure of the union.
 	Text
     	    The vee operation is commutative, associative, and idempotent.
@@ -2695,7 +2695,7 @@ doc ///
 	    A = arrangement "braid"
 	    deletion(A,5)
 	Text
-	    You can also remove a hyperplane by specifiying its linear form.
+	    You can also remove a hyperplane by specifying its linear form.
 	Example
 	    R = QQ[x,y]
 	    A = arrangement {x,y,x-y}
@@ -2813,7 +2813,7 @@ doc ///
 	Text
 	    If $({\mathcal A},m)$ is a free multiarrangement and so is
 	    $({\mathcal A},m')$, where $m'$ is obtained from $m$ by lowering a
-	    single multiplicitity by one, the Euler restriction is free as
+	    single multiplicity by one, the Euler restriction is free as
 	    well, and the modules of @TO2 {(der, CentralArrangement, List), 
 		"logarithmic derivations"}@ form a short
 	    exact sequence.  See the paper of Abe, Terao and Wakefield for

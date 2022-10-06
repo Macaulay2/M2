@@ -87,7 +87,7 @@ mingensSubring(Subring, Matrix) := (subR, M) -> (
 monoCoef = method(TypicalValue => RingElement)
 monoCoef(RingElement, RingElement) := (m, p) -> (
     
-    -- This does not completley guarentee that they are elements of the same ring... 
+    -- This does not completely guarantee that they are elements of the same ring... 
     if ring m =!= ring p then (
 	error "monoCoef expected m and p to be elements of the same ring.";
 	);

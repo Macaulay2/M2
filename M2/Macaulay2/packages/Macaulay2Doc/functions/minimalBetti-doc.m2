@@ -8,13 +8,13 @@ doc ///
      [minimalBetti,LengthLimit]
      [minimalBetti,Weights]
    Headline
-     minimal betti numbers of (the mininimal free resolution of) a homogeneous ideal or module
+     minimal betti numbers of (the minimal free resolution of) a homogeneous ideal or module
    Usage
      B = minimalBetti I
      B = minimalBetti(I, DegreeLimit=>d, LengthLimit=>len, Weights=>h)
    Inputs
      I:{Ideal,Module,MonomialIdeal}
-       a homogeneous ideal or module in a singly graded polynomifal ring or skew commuting polynomial ring over a finite prime field
+       a homogeneous ideal or module in a singly graded polynomial ring or skew commuting polynomial ring over a finite prime field
      DegreeLimit=>ZZ
        if given, only compute enough to determine the Betti diagram up to and including the row labelled {\tt d}
      LengthLimit=>ZZ

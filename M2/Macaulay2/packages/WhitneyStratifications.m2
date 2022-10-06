@@ -1,7 +1,7 @@
 newPackage(
 	"WhitneyStratifications",
-	Version => "1.1", 
-    	Date => "June 17, 2022",
+	Version => "1.2", 
+    	Date => "July 29, 2022",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "mhelmer@ncsu.edu", 
 		  HomePage => "http://martin-helmer.com/"}},
@@ -85,6 +85,7 @@ whitneyStratify (Ideal):=(I)->(
 	    );
 	wS=V;
 	);
+    use R;
     return wS;
     );
 whitneyStratify (Ideal,Ring,Ring):=(I,R,S)->(
@@ -109,16 +110,14 @@ whitneyStratify (Ideal,Ring,Ring):=(I,R,S)->(
     if codim(J)==n then return V;
     CI:=conormal(ideal mingens I,S);
     Cpull:=0;
-    Ccap:=0;
     for j from 0 to mu do(
 	ell=mu-j;
 	for Z in V#ell do(
 	    Cpull=(CI+sub(Z,S));
-	    Ccap=conormal(Z,S)+CI;
-	    W=(Z+sub(eliminate((gens S)_{(numgens(R))..numgens(S)-1},saturate(Cpull,Ccap)),R));
-	    for K in decompose(W) do(
+	    W=for q in decompose Cpull list sub(eliminate((gens S)_{(numgens(R))..numgens(S)-1},q),R);
+	    for K in W do(
 		for i from 0 to ell-1 do(
-		    if i==(n-codim(K)) then (V#i)#(#(V#i))=K;
+		    if i==(n-codim(K)) then (V#i)#(#(V#i))=ideal mingens(K+Z);
 		    );
 		);
 	    );
@@ -142,10 +141,10 @@ Node
      Key
      	  WhitneyStratifications
      Headline
-     	  Computes Whitney Statifications of complex varities.
+     	  Computes Whitney Statifications of complex varieties.
      Description
      	  Text
-	      This package computes Whitney stratifications of complex algebraic varieites using algorithms described in [1]. Homogeneous ideals will be treated as defining a projective variety, non-homogeneous ideals will be treated as defining affine varieties. Input ideals are assumed to define pure dimensional varieties.   
+	      This package computes Whitney stratifications of complex algebraic varieties using algorithms described in [1]. Homogeneous ideals will be treated as defining a projective variety, non-homogeneous ideals will be treated as defining affine varieties. Input ideals are assumed to define pure dimensional varieties.   
 	      
 	      References:
 	      
@@ -165,7 +164,7 @@ Node
 	    an ideal defining a closed subvariety of $\CC^n$ or $\PP^{n}$.
     Outputs
         WS:MutableHashTable
-	    a hash table indexed by dimension, with the entry of dimension $i$ consisting of a list of prime ideals. The variety of each prime ideal defines a connected open stratum of $V(I)$ obtained by removing the varities of all lower dimensional entries of the hash table.    
+	    a hash table indexed by dimension, with the entry of dimension $i$ consisting of a list of prime ideals. The variety of each prime ideal defines a connected open stratum of $V(I)$ obtained by removing the varieties of all lower dimensional entries of the hash table.    
     Description 
     	Text
 	    For a affine or projective complex variety $X$ this command computes a Whitney stratification WS where WS#i is a list of strata closures in dimension $i$; for a prime ideal $P$ in WS#i the associated open (connected) strata is given by $V(P)-Z$ where $Z$ is the union of the varieties defined by the entries of WS#(i-1). We demonstrate the method for the affine Whitney umbrella and its projective closure below.
@@ -189,7 +188,7 @@ Node
 	    V=whitneyStratify I
 	    peek V
 	Text 
-	    Note that as with the Whitney umbrella simpley taking successive singular loci will not yield the correct stratification, in particular one would miss the two points defined by the second entry of V#0. 
+	    Note that as with the Whitney umbrella, simply taking successive singular loci will not yield the correct stratification, in particular one would miss the two points defined by the second entry of V#0. 
 	Example 
 	    J=radical (I+minors(codim I, jacobian I))
 	    J2=radical (J+minors(codim J, jacobian J))                   
@@ -220,23 +219,38 @@ TEST ///
 -*  
     restart
     needsPackage "WhitneyStratifications"
-    needsPackage "SegreClasses"
-    installPackage "WhitStrat"
+    installPackage "WhitneyStratifications"
 *- 
+--Whitney Umbrella, projective
 R=QQ[x_0..x_3];
 I=ideal(x_1^2*x_2-x_3*x_0^2);
 V=whitneyStratify I;
 v0={ideal(x_2,x_1,x_0), ideal(x_3,x_1,x_0)};
 assert(V#0==v0);
 
+--Whitney Umbrella, affine
 R=QQ[x_0..x_2];
 I=ideal(x_1^2*x_2-x_0^2);
 V=whitneyStratify I;
 assert((first V#0)==ideal(gens R));
 
+--Whitney Cusp, affine 
+R=QQ[x_1..x_3];
+I=ideal(x_2^2+x_1^3-x_1^2*x_3^2);
+V=whitneyStratify I;
+assert((first V#0)==ideal(gens R));
+
+
+--Whitney Cusp, projective 
+R=QQ[x_0..x_3]
+I=ideal(x_2^2*x_0^2+x_1^3*x_0-x_1^2*x_3^2);
+V=whitneyStratify I;
+assert((first V#0)==ideal(R_1,R_2,R_3));
+
 R=QQ[x_0..x_4];
 I=ideal(x_0^2*x_4-x_1*x_2^2+x_3^3-x_3*x_0^2-x_4^2*x_3);
 V=whitneyStratify I;
-v0={ideal(x_4,x_3,x_2,x_0), ideal(x_3-x_4,x_2,x_1,x_0^2-2*x_4^2)};
+v0={ ideal(x_3-x_4,x_2,x_1,x_0^2-2*x_4^2),ideal(x_4,x_3,x_2,x_0)};
 assert(V#0==v0);
+
 ///

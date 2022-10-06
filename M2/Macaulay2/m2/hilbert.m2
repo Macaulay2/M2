@@ -70,8 +70,6 @@ heft Ring           :=
 heft Monoid         := R -> if (o := options R) =!= null and o.?Heft then o.Heft
 heft PolynomialRing := R -> heft R.FlatMonoid
 heft QuotientRing   := R -> heft ambient R
--- TODO: deprecate this in favor of just "heft ring M"
-heft Module         := M -> heft ring M
 
 -----------------------------------------------------------------------------
 -- poincare

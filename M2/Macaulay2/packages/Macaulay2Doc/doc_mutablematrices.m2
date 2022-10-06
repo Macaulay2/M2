@@ -84,7 +84,7 @@ document {
 	  TO columnMult,
 	  },
      HEADER3 "matrix arithmetic",
-     "Many matrix arithmetic routines are only available for immutabie 
+     "Many matrix arithmetic routines are only available for immutable 
      matrices, not
      mutable matrices.  It is necessary to use ", TO matrix, " to make
      an immutable matrix first.",

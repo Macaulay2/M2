@@ -8,7 +8,7 @@ document {
      "In a singly graded ambient ring, the ", 
      TO2(hilbertFunction, "Hilbert function"), 
      " eventually is a polynomial called the Hilbert polynomial. By
-     default this polynomal is written in terms of the Hilbert
+     default this polynomial is written in terms of the Hilbert
      polynomials of projective spaces because it is a good form for
      extracting geometric information from the polynomial. The Hilbert
      polynomial of ", TT "P^i", " is ",  TT "z |--> binomial(z + i, i).",

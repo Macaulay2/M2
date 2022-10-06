@@ -345,7 +345,7 @@ segmentHomotopy = method(Options=>{gamma=>1})
 segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
 segmentHomotopy (GateSystem, GateSystem) := o -> (S,T) -> (
     if T.Variables =!= S.Variables 
-    then error "expented systems with the same inputs";  
+    then error "expected systems with the same inputs";  
     if numFunctions T =!= numFunctions S
     then error "expected systems with the same dimension of codomain";
     t := local t;

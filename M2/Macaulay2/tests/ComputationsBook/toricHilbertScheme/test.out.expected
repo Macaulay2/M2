@@ -5,9 +5,8 @@ i2 : R = QQ[a..e,Degrees=>transpose A];
 
 i3 : describe R 
 
-o3 = QQ[a..e, Degrees => {{1}, {1}, {1}, {1}, {1}}, Heft => {1, 0}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 2]
-                          {0}  {1}  {2}  {7}  {8}                                    {GRevLex => {5:1}  }
-                                                                                     {Position => Up    }
+o3 = QQ[a..e, Degrees => {{1}, {1}, {1}, {1}, {1}}, Heft => {1, 0}, DegreeRank => 2]
+                          {0}  {1}  {2}  {7}  {8}
 
 i4 : B = transpose syz matrix A 
 

@@ -164,7 +164,7 @@ randomNicePencil(Ring,ZZ) := (kk,g) -> (
     X -- is the irrelevant ideal of PP^(2g+1)
     Y -- Y is the coefficient vector of qq written as a linear combination of X
     assert(X*transpose Y==qq)
-    u -- are the linear equations defining a maximal isotropic saubspace
+    u -- are the linear equations defining a maximal isotropic subspace
     betti M1, betti M2 -- is the matrix factorization of qq   
     --  corresponding to the resolution of kk
     betti Mu1, betti Mu2  -- is the matrix factorization of qq 
@@ -1726,7 +1726,7 @@ doc ///
      
      We have eOdd_i*eEv_j+eOdd_j*eEv_i = B(e_i,e_j), where
      the e_i form a basis of the space on which qq acts and B is the bilinear form associated to 2qq
-     thus the the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
+     thus the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
      --If qq is nonsingular over the generic point of R, then C is an Azumaya algebra over R, and this implies that the representation is faithful.
      
      In the following we construct the generic symmetric
@@ -2044,7 +2044,7 @@ doc ///
 	    polynomial ring kk[s,t]
     Description
     	Text
-	     The base ring kk[s,t] which is the coordnate ring of PP^1.  
+	     The base ring kk[s,t] which is the coordinate ring of PP^1.  
 	Example
 	    kk=ZZ/101;
 	    g=1;
@@ -2474,7 +2474,7 @@ doc ///
     Text
      A vector bundle on a hyperelliptic curve E with
      equation y^2 - (-1)^g * f
-     can be represeted by it's pushforward V to PP^1,
+     can be represented by it's pushforward V to PP^1,
      under the degree 2 map, 
      which will be a vector bundle of twice the rank,
      together with a matrix 

@@ -3,13 +3,6 @@
 use expr;
 
 header "#include <engine.h>"; -- required for raw hash functions
-header "
-#ifdef WITH_PYTHON
-#  include <Python.h>
-#else
-#  define PyObject_Hash(o) 0
-#  define PyErr_Clear()    0
-#endif";
 
 export hash(e:Expr):int := (
      when e
@@ -40,7 +33,7 @@ export hash(e:Expr):int := (
      is n:Net do hash(n)
      is n:NetFile do hash(n)
      is x:file do x.hash
-     is f:FunctionClosure do f.model.hash
+     is f:FunctionClosure do f.hash
      is x:Error do (
 	  929+hash(x.message)+12963*(
 	       hash(x.position.filename) 
@@ -70,16 +63,13 @@ export hash(e:Expr):int := (
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
      is f:CompiledFunctionBody do 12347
-     is po:pythonObjectCell do (
-	 h := int(Ccode(long, "PyObject_Hash(",po.v,")"));
-	 if h == -1 then ( -- unhashable object (e.g., a list)
-	     Ccode(void, "PyErr_Clear()");
-	     int(123455))
-	 else h)
+     is po:pythonObjectCell do po.hash
      is xmlNodeCell do int(123456)
      is xmlAttrCell do int(123457)
      is t:TaskCell do t.body.hash
      is foss:fileOutputSyncState do int(123458)
+     -- cast to long first to avoid "different size" compiler warning
+     is x:pointerCell do int(long(Ccode(long, x.v)))
      );
 
 export hash(x:List):int := (

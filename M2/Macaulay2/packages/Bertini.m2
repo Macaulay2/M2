@@ -271,7 +271,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%%%--The first is in BertiniInputConfiguration where we just list the configurations.
   myConfigs:=(o.BertiniInputConfiguration);
   if o.UseRegeneration===1 then myConfigs=myConfigs|{"UseRegeneration"=>1};
---  TODO: Regeneraetion test R=QQ[x]; length(bertiniZeroDimSolve({x^2}))==1;  bertiniZeroDimSolve({x^2},UseRegeneration=>1)=={}
+--  TODO: Regeneration test R=QQ[x]; length(bertiniZeroDimSolve({x^2}))==1;  bertiniZeroDimSolve({x^2},UseRegeneration=>1)=={}
 --  print myConfigs;
 --%%-- We use the makeB'InputFile method to write a Bertini file.
   makeB'InputFile(myTopDir,
@@ -470,7 +470,7 @@ bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
 bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
     --myPol are your polynomial system that you want to solve.
     --myParams are your parameters.
-    --myParValues are the values the parametres will take.
+    --myParValues are the values the parameters will take.
 --%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini.
 --%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files.
 --%%%%--To change the default directory, set the TopDirectory option to the directory you would like.
@@ -1539,7 +1539,7 @@ makeB'InputFile(String) := o ->(IFD)->(
      else filesGoHere=IFD;
      openedInputFile:= openOut(filesGoHere|o.NameB'InputFile);
      openedInputFile <<  endl  << "% This input file was written with the Bertini.m2 Macaulay2 package." << endl<<endl;
---The first part of a Bertini input file is the configurations.  We write the configuratiosn followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file.
+--The first part of a Bertini input file is the configurations.  We write the configurations followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file.
      openedInputFile << "CONFIG" << endl << endl;
      for oneConfig in o.BertiniInputConfiguration do (
        if class oneConfig===Option

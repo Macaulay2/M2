@@ -18,7 +18,7 @@ doc ///
 		Text
 			A GKM variety is a variety $X$, often assumed to be smooth and complete, with an 
 			action of an algebraic torus $T$ satisfying the following conditions:
-			(i) $X$ is equivariantly formal with respect to the the action of $T$,
+			(i) $X$ is equivariantly formal with respect to the action of $T$,
 			(ii) $X$ has finitely many $T$-fixed points, and (iii) $X$ has finitely
 			many one-dimensional $T$-orbits.  The data of the zero and one dimensional
 			$T$-orbits of $X$ define the moment graph of $X$, with which one can carry out
@@ -443,7 +443,7 @@ doc ///
 			peek SpFl4
 		
 		Text
-			The following example produces the Orthogonal Grassmaninnian $SOGr(2,5)$ from its
+			The following example produces the Orthogonal Grassmannian $SOGr(2,5)$ from its
 			moment graph.
 
 		Example
@@ -1186,7 +1186,7 @@ doc ///
 
 	Caveat
 		Functionalities concerning intersection cohomology of sheaves on moment graphs, which had been 
-		implemenented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
+		implemented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
 		have not been imported into this package yet.
 
 	SeeAlso
@@ -1394,7 +1394,7 @@ doc ///
 			Let $X$ be a generalized flag variety parameterizing flags of linear subspaces of dimensions $\{r_1, ... , r_k\}$ 
 			in $\mathbb C^n$ with $1 <= r_1 < \cdots < r_k$. Then a point $p$ of $X$ can be identified with a matrix $M$ of 
 			size  $r_k \times n$ such that the first $r_i$ rows of $M$ spans a subspace of dimension $r_i$. Given $X$ and
-			such a matrix $M$ representing the point $p$, this method computes the equivariant K-class of the closue of
+			such a matrix $M$ representing the point $p$, this method computes the equivariant K-class of the closure of
 			the torus orbit of $p$. 
 		
 

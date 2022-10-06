@@ -54,7 +54,7 @@ doc ///
 		  
 	     Text
 	          Choosing another generator to delete gives another presentation
-		  (which is still isomorhic to the holonomy 
+		  (which is still isomorphic to the holonomy 
 		      Lie algebra in degrees $\ge\ 2$).
 		  
 	     Example

@@ -45,7 +45,7 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
     if getDefault Normalize then f = f/sqrt(numgens R * BombieriWeylNormSquared f); 
     c2 := new MutableHashTable; -- new components
     for comp in components c1 do (
-	if DBG>2 then << "*** proccesing component " << peek comp << endl;
+	if DBG>2 then << "*** processing component " << peek comp << endl;
 	(cIn,cOut) := splitWitness(comp,f); 
 	if cIn =!= null then (
 	    if DBG>2 then << "( regeneration: " << net cIn << " is contained in V(f) for" << endl <<  

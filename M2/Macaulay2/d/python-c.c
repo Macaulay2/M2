@@ -1,6 +1,8 @@
 #include <Python.h>
 #include "python-exports.h"
 
+#include <gmp.h>
+
 int python_RunSimpleString(M2_string s) {
   char *t = M2_tocharstar(s);
   int ret = PyRun_SimpleString(t);
@@ -28,17 +30,13 @@ static void init() {
  * exceptions *
  **************/
 
-/* simplified to return 1 or 0 rather than a PyObject or NULL */
+/* simplified to return -1, 0, or 1 rather than a PyObject or NULL */
 int python_ErrOccurred(void) {
 	if (PyErr_ExceptionMatches(PyExc_StopIteration)) {
 		PyErr_Clear();
-		return 0;
+		return -1;
 	} else
 		return (PyErr_Occurred() != NULL);
-}
-
-void python_ErrPrint(void) {
-	PyErr_Print();
 }
 
 PyObject *python_RunString(M2_string s) {
@@ -59,30 +57,6 @@ int python_Main() {
 /***********
  * objects *
  ***********/
-
-PyObject *python_ObjectType(PyObject *o) {
-  return PyObject_Type(o);
-}
-
-int python_ObjectRichCompareBool(PyObject *o1, PyObject *o2, int opid) {
-	return PyObject_RichCompareBool(o1, o2, opid);
-}
-
-int python_ObjectHasAttrString(PyObject *o, char *attr) {
-	return PyObject_HasAttrString(o, attr);
-}
-
-PyObject *python_ObjectGetAttrString(PyObject *o, char *attr) {
-	return PyObject_GetAttrString(o, attr);
-}
-
-int python_ObjectSetAttrString(PyObject *o, char *attr_name, PyObject *v) {
-	return PyObject_SetAttrString(o, attr_name, v);
-}
-
-PyObject *python_ObjectStr(PyObject *o) {
-	return PyObject_Str(o);
-}
 
 /* see http://docs.python.org/extending/extending.html for this example */
 
@@ -111,125 +85,96 @@ void python_initspam() {
   PyModule_AddObject(m, "error", SpamError);
 }
 
-/*********
- * bools *
- *********/
-
-PyObject *python_True = Py_True;
-PyObject *python_False = Py_False;
-
 /********
  * ints *
  ********/
 
-long python_LongAsLong(PyObject *o) {
-	return PyLong_AsLong(o);
+/* GMP <-> Python integer conversion routines from gmpy2
+ * https://github.com/aleaxit/gmpy
+ * Copyright 2000-2009 Alex Martelli
+ * Copyright 2008-2022 Case Van Horsen
+ * LGPL-3.0+ */
+
+mpz_ptr python_LongAsZZ(mpz_ptr z, PyObject *obj)
+{
+  int negative;
+  Py_ssize_t len;
+  PyLongObject *templong;
+
+  templong = (PyLongObject *)obj;
+
+  switch (Py_SIZE(templong)) {
+  case -1:
+    mpz_set_si(z, -(sdigit)templong->ob_digit[0]);
+    break;
+  case 0:
+    mpz_set_si(z, 0);
+    break;
+  case 1:
+    mpz_set_si(z, templong->ob_digit[0]);
+    break;
+  default:
+    mpz_set_si(z, 0);
+
+    if (Py_SIZE(templong) < 0) {
+      len = -Py_SIZE(templong);
+      negative = 1;
+    } else {
+      len = Py_SIZE(templong);
+      negative = 0;
+    }
+
+    mpz_import(z, len, -1, sizeof(templong->ob_digit[0]), 0,
+	       sizeof(templong->ob_digit[0])*8 - PyLong_SHIFT,
+	       templong->ob_digit);
+
+    if (negative)
+      mpz_neg(z, z);
+  }
+
+  return z;
 }
 
-PyObject *python_LongFromLong(long v) {
-	return PyLong_FromLong(v);
-}
+PyObject *python_LongFromZZ(mpz_srcptr z)
+{
+  int negative;
+  size_t count, size;
+  PyLongObject *result;
 
-/**********
- * floats *
- **********/
+  if (mpz_sgn(z) < 0)
+    negative = 1;
+  else
+    negative = 0;
 
-double python_FloatAsDouble(PyObject *o) {
-	return PyFloat_AsDouble(o);
-}
+  size = (mpz_sizeinbase(z, 2) + PyLong_SHIFT + 1) / PyLong_SHIFT;
+  result = _PyLong_New(size);
+  if (!result)
+    return NULL;
 
-PyObject *python_FloatFromDouble(double v) {
-	return PyFloat_FromDouble(v);
-}
+  mpz_export(result->ob_digit, &count, -1, sizeof(result->ob_digit[0]), 0,
+	     sizeof(result->ob_digit[0]) * 8 - PyLong_SHIFT, z);
 
-/*************
- * complexes *
- *************/
+  if (count == 0)
+    result->ob_digit[0] = 0;
 
-PyObject* python_ComplexFromDoubles(double real, double imag) {
-	return PyComplex_FromDoubles(real, imag);
-}
+  while ((size > 0) && (result->ob_digit[size - 1] == 0))
+    size--;
 
-/***********
- * strings *
- ***********/
+#if PY_VERSION_HEX >= 0x030900A4
+  Py_SET_SIZE(result, size);
+#else
+  Py_SIZE(result) = size;
+#endif
 
-const char *python_UnicodeAsUTF8(PyObject *o) {
-	return PyUnicode_AsUTF8(o);
-}
+  if (negative) {
+#if PY_VERSION_HEX >= 0x030900A4
+    Py_SET_SIZE(result, - Py_SIZE(result));
+#else
+    Py_SIZE(result) = - Py_SIZE(result);
+#endif
+  }
 
-PyObject *python_UnicodeFromString(char *u) {
-	return PyUnicode_FromString(u);
-}
-
-PyObject *python_UnicodeConcat(PyObject *o1, PyObject *o2) {
-	return PyUnicode_Concat(o1, o2);
-}
-
-/**********
- * tuples *
- **********/
-
-PyObject *python_TupleNew(int n) {
-	return PyTuple_New(n);
-}
-
-int python_TupleSetItem(PyObject *L, int i, PyObject *item) {
-	return PyTuple_SetItem(L, i, item);
-}
-
-/*********
- * lists *
- *********/
-
-PyObject *python_ListNew(int n) {
-	return PyList_New(n);
-}
-
-int python_ListSetItem(PyObject *L, int i, PyObject *item) {
-	return PyList_SetItem(L, i, item);
-}
-
-/****************
- * dictionaries *
- ****************/
-
-PyObject *python_DictNew(void) {
-	return PyDict_New();
-}
-
-int python_DictSetItem(PyObject *p, PyObject *key, PyObject *val) {
-	return PyDict_SetItem(p, key, val);
-}
-
-/********
- * sets *
- ********/
-
-PyObject *python_SetNew(PyObject *o) {
-	return PySet_New(o);
-}
-
-/*************
- * callables *
- *************/
-
-PyObject *python_ObjectCall(PyObject *o, PyObject *args, PyObject *kwargs) {
-	return PyObject_Call(o, args, kwargs);
-}
-
-/********
- * none *
- ********/
-
-PyObject *python_None = Py_None;
-
-/*************
- * importing *
- *************/
-
-PyObject *python_ImportImportModule(char *name) {
-	return PyImport_ImportModule(name);
+  return (PyObject*)result;
 }
 
 #if 0

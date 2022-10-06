@@ -2,9 +2,6 @@
 --- author(s): 
 --- notes: heft is defined in hilbert.m2
 
--- This is to be deprecated
-undocumented (heft, Module)
-
 doc ///
 Node
   Key

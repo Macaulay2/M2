@@ -206,7 +206,7 @@ document {
 	       the integers ", TT "m", " and ", TT "n"}
 	  },
      EXAMPLE "10 ^^ 12",
-     SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
+     SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ), (symbol ~, ZZ) }
      }
 
 document {

@@ -322,7 +322,7 @@ canonicalCarpet = method(Options=>{Characteristic=>32003,FineGrading => false,Sc
 canonicalCarpet(ZZ,ZZ) := opts -> (gen,cliff) -> 
      carpet(gen-cliff-1, cliff,Characteristic => opts.Characteristic, FineGrading => opts.FineGrading,Scrolls=>opts.Scrolls)
 
---Here's a structural approach that instead takes the kernel of the unique map of mainimal degree
+--Here's a structural approach that instead takes the kernel of the unique map of minimal degree
 --from the ideal of the scroll to the canonical module of the scroll. This code produces
 --Gorenstein double structures on ACM varieties more generally. 
 --computationally, the bare hands approach of carpet is much faster.
@@ -990,7 +990,7 @@ $$
    "The hyperplane section of a K3 carpet is a canonical ribbon indexed by genus g=a+b+1 and clifford index b.
    ",
     PARA{},
-    "The K3 carpets generalize to a family of degenerate K3 surfaces which are unoins of two scrolls,
+    "The K3 carpets generalize to a family of degenerate K3 surfaces which are unions of two scrolls,
     whose hyperplane sections are reducible canonical curves consisting of two rational normal curves of degree
     g-1 intersecting in g+1 points. The functions in this package explore the syzygies of these surfaces
     for fields of arbitrary characteristic. Inparticular, the functions in the package allow for g <= 15 a computational proof of the following
@@ -1411,7 +1411,7 @@ doc ///
        Betti tables of the degenerate K3 for various characteristics of the ground field  
    Description
     Text
-     We compute the equation and nonminimal resolution F of the degeneate K3 of type (a,b,e)
+     We compute the equation and nonminimal resolution F of the degenerate K3 of type (a,b,e)
      where $a \ge b$ over a large finite prime field, lift the complex to the integers,
      which is possible if the coefficients are small. Finally we study the nonminimal
      strands over ZZ by computing the Smith normal form. The resulting data allow us
@@ -2059,7 +2059,7 @@ doc ///
    Description
     Text 
      We compute the twists of the relative resolution in the resonance scroll of a degenerate K3 
-     X_e(a,b) in case of k resonance after re-embedding the resonace scroll with |H+jR|
+     X_e(a,b) in case of k resonance after re-embedding the resonance scroll with |H+jR|
      for j=am-a_0=bm-b_0 where $\{a_i\}|\{b_j\}$ is the splitting type of the resonance scroll. 
     Example
      F = relativeResolution(5,4,3);
@@ -2087,7 +2087,7 @@ doc ///
     b:ZZ
      type of the degenerate K3
     k:ZZ
-     the resonace
+     the resonance
    Outputs
     as:List
     bs:List

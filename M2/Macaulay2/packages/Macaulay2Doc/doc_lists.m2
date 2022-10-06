@@ -480,7 +480,7 @@ document {
      Key => BasicList,
      Headline => "the class of all basic lists",
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     "A basic list is a sequence of expressions indexed by a seequence of consecutive integers of the form
+     "A basic list is a sequence of expressions indexed by a sequence of consecutive integers of the form
      ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ".  The number ", TT "N", " is called the length of the list.",
      PARA{},
      "There are various types of basic lists, depending on the application, and they are displayed in different ways.

@@ -961,7 +961,7 @@ doc ///
   Inputs
     m:ZZ -- nonnegative
     n:ZZ -- nonnegative
-    k:ZZ -- between 0 and and @TT "m + n"@
+    k:ZZ -- between 0 and @TT "m + n"@
   Outputs
     :DiscreteProbabilityDistribution
   Description
@@ -976,7 +976,7 @@ doc ///
       quantile_X 0.4
       random X
  Caveat
-   Probabiltity texts often use the total number of balls (our @TT "m + n"@)
+   Probability texts often use the total number of balls (our @TT "m + n"@)
    as one of the parameters of this distribution.  Our definition is
    consistent with R.
 ///
