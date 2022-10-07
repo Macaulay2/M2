@@ -22,6 +22,8 @@ extern "C" {
 /**** Cone routines (via Normaliz) ****************/
 /**************************************************/
 
+const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C);
+
 const Matrix /* or null */ *rawHilbertBasis(const Matrix *C);
 
 #  if defined(__cplusplus)

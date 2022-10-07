@@ -3856,6 +3856,11 @@ setupfun("rawNCReductionTwoSided",rawNCReductionTwoSided);
 -- Hilbert basis of a cone
 -----------------------------------------------------------------------------
 
+export rawFourierMotzkin(e:Expr):Expr := (
+     when e is G:RawMatrixCell do toExpr(Ccode(RawMatrixOrNull, "rawFourierMotzkin(", G.p, ")"))
+     else WrongArgMatrix());
+setupfun("rawFourierMotzkin", rawFourierMotzkin);
+
 export rawHilbertBasis(e:Expr):Expr := (
      when e is G:RawMatrixCell do toExpr(Ccode(RawMatrixOrNull, "rawHilbertBasis(", G.p, ")"))
      else WrongArgMatrix());

@@ -20,6 +20,42 @@ typedef mpz_class Integer;
  * \ingroup cones
  */
 
+const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C)
+{
+  try
+    {
+      const Ring *R = C->get_ring();
+      const size_t c = C->n_cols();  // rank of ambient lattice
+      const size_t r = C->n_rows();  // number of cone inequalities
+
+      auto ineqs = libnormaliz::Matrix<Integer>(r, c);
+      for (size_t i = 0; i < r; i++)
+        for (size_t j = 0; j < c; j++)
+	  // libnormaliz uses A*x >= 0, Macaulay2 uses A*x <= 0
+          ineqs[i][j] = (-1) * static_cast<Integer>(C->elem(i, j).get_mpz());
+
+      auto cone = libnormaliz::Cone<Integer>(libnormaliz::Type::inequalities, ineqs);
+      auto rays = cone.getExtremeRays();
+      size_t n = rays.size();  // number of extremal rays
+
+      MatrixConstructor mat(R->make_FreeModule(n), c);
+      for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < c; j++)
+          {
+            mpz_ptr z = newitem(__mpz_struct);
+            mpz_init_set(z, rays[i][j].get_mpz_t());
+            mpz_reallocate_limbs(z);
+            mat.set_entry(i, j, ring_elem(z));
+          }
+
+      return mat.to_matrix();
+  } catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+  }
+}
+
 const Matrix /* or null */ *rawHilbertBasis(const Matrix *C)
 {
   try
