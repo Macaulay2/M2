@@ -74,3 +74,35 @@ document {
      	  },
      }
 
+doc ///
+  Key
+    (apply, Thing, Function)
+  Headline
+    apply a function to an object with an iterator
+  Usage
+    apply(x, f)
+  Inputs
+    x:Thing -- an instance of a class with the @TO iterator@ method installed
+    f:Function
+  Outputs
+    :Iterator
+  Description
+    Text
+      Suppose @TT "x"@ is an instance of a class with the @TO iterator@ method
+      installed, e.g., a string, and suppose @TT "iter"@ is the output of
+      @TT "iterator x"@.  Then a new @TO Iterator@ object is returned whose
+      @TO next@ method returns @TT "f next iter"@  until @TT "next iter"@
+      returns @TO StopIteration@, in which case this new iterator does the same.
+    Example
+      applyiter = apply("foo", toUpper)
+      next applyiter
+      next applyiter
+      next applyiter
+      next applyiter
+  SeeAlso
+    iterator
+    Iterator
+    next
+    StopIteration
+    (select, Thing, Function)
+///
