@@ -596,7 +596,7 @@ document {
           M = negLexMatrix 10;
           ///,
      PARA {
-	  "The rings should be poly rings over poly rings with local monomial orerings to emphasize series" 
+	  "The rings should be poly rings over poly rings with local monomial orderings to emphasize series"
 	  }
      }	
 

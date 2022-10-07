@@ -51,7 +51,7 @@ intrinsicReduce(Subring, Matrix, RingElement) := (subR, G, p) -> (
 	error "Can only use IntrinsicReduce on a Subring instance that is a Sagbi basis.";
 	);
     
-    -- This is one way to guarentee that p is actually an element of subR, but it requires
+    -- This is one way to guarantee that p is actually an element of subR, but it requires
     -- p to be put into normal form beforehand which is an expensive operation. 
     -- TODO: Look into what happens when p isn't an element of subR.
     --if projInc p != p then(
@@ -65,7 +65,7 @@ intrinsicReduce(Subring, Matrix, RingElement) := (subR, G, p) -> (
     fullSub := pres#"fullSubstitution";
     result := p;
     
-    -- If the  === comparison is true, it  does not guarentee that will not throw an error.
+    -- If the  === comparison is true, it  does not guarantee that will not throw an error.
     if source fullSub === ring p then(
     	result = fullSub p;
     	);    

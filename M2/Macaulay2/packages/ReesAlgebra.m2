@@ -1001,7 +1001,7 @@ doc ///
       B1=symmetricKernel inc
       B=(map(ring A, ring B1)) B1
    Text
-      Finallly, the map g1:
+      Finally, the map g1:
    Example
       C1 = symmetricKernel g
       C=(map(ring A, ring C1)) C1

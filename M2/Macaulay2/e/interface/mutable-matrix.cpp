@@ -531,7 +531,7 @@ MutableMatrix /* or null */ *IM2_MutableMatrix_submatrix1(
 }
 
 /*******************************
- ** Cmputations ****************
+ ** Computations ***************
  *******************************/
 
 M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M)

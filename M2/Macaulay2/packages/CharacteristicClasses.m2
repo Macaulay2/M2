@@ -582,7 +582,7 @@ Segre (NormalToricVariety, Ideal):= opts->(TorVar,I)->(
     );
 
 Segre (QuotientRing,NormalToricVariety, Ideal):= opts->(ChRing,TorVar,I)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     A:=ChRing;
     R:=ring I;
     irel:=ideal TorVar;
@@ -703,13 +703,13 @@ multr=(RayMatrix,r)->(
     )
 
 SegreMainToric = (ChRing,TorVar,I,PDl,AlphNList,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     alpha:=AlphNList_0;
     n:=AlphNList_1;
     return SegreMain(ChRing,I,PDl,{alpha,n,Output});
     );
 SegreMainToric2 = (ChRing,TorVar,I,PDl,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     irel:=ideal TorVar;
     n:=dim(TorVar);
     A:=ChRing;

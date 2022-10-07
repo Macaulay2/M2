@@ -2584,7 +2584,7 @@ doc ///
         Text
 	    In the geometric lattice of flats, the vee (also known as the
 	    supremum or least upper bound) is the join operation.
-	    Equivalently, identifyings flats with subspaces, this operation is
+	    Equivalently, identifying flats with subspaces, this operation is
 	    the closure of the union.
 	Text
     	    The vee operation is commutative, associative, and idempotent.
@@ -2695,7 +2695,7 @@ doc ///
 	    A = arrangement "braid"
 	    deletion(A,5)
 	Text
-	    You can also remove a hyperplane by specifiying its linear form.
+	    You can also remove a hyperplane by specifying its linear form.
 	Example
 	    R = QQ[x,y]
 	    A = arrangement {x,y,x-y}

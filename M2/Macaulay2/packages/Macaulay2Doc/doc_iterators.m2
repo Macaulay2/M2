@@ -1,82 +1,102 @@
 doc ///
   Key
-    "iterators"
+    Iterator
   Headline
-    an overview of iterators in Macaulay2
+    class for iterators
   Description
     Text
-      A class in Macaulay2 is @EM "iterable"@ if there is a method
-      function installed for @TO iterator@ that takes as input instances
-      of that class and returns instances of an @EM "iterator"@ class, which
-      has method functions installed for @TO iterator@ (typically @TO identity@)
-      and @TO next@.  Note that iterators are themselves iterable.
+      This is a class designed to simplify writing @TO iterator@ methods.
+      Each instance is a nullary @TO FunctionClosure@ that serves as the
+      @TO next@ method for the iterator.
     Example
-      PrimeIterator = new SelfInitializingType of MutableHashTable;
-      iterator PrimeIterator := identity;
-      next PrimeIterator := p -> p#"val" = nextPrime(p#"val" + 1);
-      i = PrimeIterator {"val" => 1};
-      next i
-      next i
-      next i
+      iter = iterator {1, 2, 3}
+      code iter
     Text
-      If we wish to iterate over an object more than once, then it should have
-      a separate corresponding iterator class.
+      Each call of @TT "next iter"@ is equivalent to @TT "iter()"@.
     Example
-      PrimeIterable = new Type of HashTable;
-      iterator PrimeIterable := x -> PrimeIterator {"val" => 1};
-      P = new PrimeIterable;
-      i = iterator P;
-      next i
-      next i
-      j = iterator P;
-      next j
-      next j
+      next iter
+      iter()
+      next iter
+      iter()
     Text
-      If we would like iteration to stop at a certain point, then the @TO next@
-      method should return the symbol @TO StopIteration@.
+      For example, let us create a class that we may use to iterate over the
+      Fibonacci numbers.
     Example
-      BoundedPrimeIterator = new SelfInitializingType of MutableHashTable;
-      iterator BoundedPrimeIterator := identity;
-      next BoundedPrimeIterator := i -> (
-	  q := nextPrime(i#"val" + 1);
-	  if q > i#"max" then StopIteration else i#"val" = q);
-      BoundedPrimeIterable = new SelfInitializingType of HashTable;
-      iterator BoundedPrimeIterable := x -> BoundedPrimeIterator {
-	  "val" => 1, "max" => x#"max"};
-      P = BoundedPrimeIterable {"max" => 6};
-      i = iterator P;
-      next i
-      next i
-      next i
-      next i
-    Text
-      When an iterator eventually returns @TO StopIteration@, then it (or the
-      iterable to which it corresponds) may be used with @TO toList@, @TO scan@,
-      and @TO "for"@.
-    Example
-      toList P
-      scan(P, print)
-      for x in P list x + 2
+      FibonacciNumbers = new Type of HashTable;
+      iterator FibonacciNumbers := fib -> Iterator(
+	  a := 0;
+	  b := 1;
+	  () -> (
+	      r := a;
+	      (a, b) = (b, a + b);
+	      r));
+      fibonacci = new FibonacciNumbers;
+      for i in fibonacci list if i > 100 then break else i
+  SeeAlso
+    iterator
+    next
+    StopIteration
 ///
 
 doc ///
   Key
     iterator
+    (iterator, Iterator)
+    (iterator, Sequence)
+    (iterator, String)
+    (iterator, VisibleList)
   Headline
-    get an iterator for an iterable
+    get an iterator
   Usage
     iterator x
   Inputs
-    x:Thing -- an instance of an iterable class
+    x:Thing
   Outputs
-    :Thing -- an iterator for @TT "x"@
+    :Thing -- likely an @TO Iterator@
+  Description
+    Text
+      An iterator is an object that is used to traverse through @TT "x"@.
+      Usually, but not necessarily, this will be an instance of the
+      @TO Iterator@ class.
+    Example
+      iter = iterator {1, 2, 3}
+    Text
+      The class of an iterator should have a @TO next@ method installed that
+      gets the next element of @TT "x"@.
+    Example
+      next iter
+      next iter
+      next iter
+    Text
+      If @TT "x"@ contains only a finite number of elements, then @TO next@
+      should return the symbol @TO StopIteration@ after exhausting them all.
+    Example
+      next iter
+    Text
+      Instances of classes with this method installed can be used like lists
+      in @TO "for"@ loops and @TO scan@.
+    Example
+      lookup(iterator, String)
+      for i in "foo" list i
+      scan("foo", print)
+    Text
+      They can also be passed to @TO apply@ and @TO select@.  In each case, an
+      @TO Iterator@ object will be returned that is an iterator for itself.
+    Example
+      apply("foo", toUpper)
+      for i in oo list i
+      select("foo", i -> i == "o")
+      for i in oo list i
   SeeAlso
-    "iterators"
+    Iterator
+    next
+    StopIteration
 ///
 
 doc ///
   Key
     next
+    (next, Iterator)
   Headline
     get the next object from an iterator
   Usage
@@ -84,9 +104,25 @@ doc ///
   Inputs
     x:Thing -- an iterator
   Outputs
-    :Thing -- the next object in an iterable
+    :Thing -- the next object from @TT "x"@
+  Description
+    Text
+      This gets the next object from an iterator, i.e., something returned by
+      @TO iterator@.
+    Example
+      iter = iterator {1, 2, 3}
+      next iter
+      next iter
+      next iter
+    Text
+      If the iterator is exhausted, then the symbol @TO StopIteration@ is
+      returned.
+    Example
+      next iter
   SeeAlso
-    "iterators"
+    Iterator
+    iterator
+    StopIteration
 ///
 
 doc ///
@@ -97,6 +133,14 @@ doc ///
   Description
     Text
       This symbol is returned by @TO next@ to signal that iteration is complete.
+    Example
+      iter = iterator {1, 2, 3}
+      next iter
+      next iter
+      next iter
+      next iter
   SeeAlso
-    "iterators"
+    Iterator
+    iterator
+    next
 ///

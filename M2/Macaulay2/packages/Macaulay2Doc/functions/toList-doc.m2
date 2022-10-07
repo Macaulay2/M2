@@ -14,7 +14,7 @@ doc///
   toList A
  Inputs
   A:{Set,String,BasicList,ZZ}
-   or an instance of an iterable class (see @TO "iterators"@)
+   or an instance of a class with the @TO iterator@ method installed
  Outputs
   L:List
    a list whose elements are the elements of {\tt A}

@@ -7,7 +7,6 @@ doc///
   (scan, BasicList, Function)
   (scan, BasicList, BasicList, Function)
   (scan, ZZ, Function)
-  (scan, String, Function)
   (scan, Thing, Function)
  Headline
   apply a function to each element in a list or sequence
@@ -15,11 +14,10 @@ doc///
   scan(L, f)
   scan(L, L', f)
   scan(n, f)
-  scan(x, f)
  Inputs
-  L: {BasicList, String}
+  L: BasicList
+   or instance of a class with the @TO iterator@ method installed
   n: ZZ
-  x: Thing -- an instance of an iterable class (see @TO "iterators"@)
   f: Function
  Description
   Text
@@ -40,6 +38,13 @@ doc///
    use it to locate the first even number in a list.
   Example
    scan({3,5,7,11,44,55,77}, i -> if even i then break i)
+  Text
+   If @TT "L"@ is an instance of a class with the @TO iterator@ method installed
+   (e.g., a string), then @TT "f"@ is applied to the values obtained by
+   repeatedly calling @TO next@ on the output of @TT "iterator L"@ until
+   @TO StopIteration@ is returned.
+  Example
+   scan("foo", print)
  SeeAlso
   apply
   accumulate

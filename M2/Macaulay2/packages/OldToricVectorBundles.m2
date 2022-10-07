@@ -392,7 +392,7 @@ details ToricVectorBundle := tvb -> (
 --     	     conditions automatically.
 regCheck = method(TypicalValue => Boolean)
 regCheck ToricVectorBundleKaneyama := (cacheValue symbol regCheck)( tvb -> (
-     	  -- Extracting the neccesary data
+     	  -- Extracting the necessary data
      	  tCT := sort keys tvb#"topConeTable";
      	  c1T := tvb#"codim1Table";
      	  bCT := tvb#"baseChangeTable";
@@ -654,7 +654,7 @@ deltaE ToricVectorBundle := (cacheValue symbol deltaE)( T -> (
 --     	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
 --     	  n := tvb#"dimension of the variety";
 --	  if instance(tvb,ToricVectorBundleKaneyama) then (
---	       -- Extracting neccesary data
+--	       -- Extracting necessary data
 --     	       raylist := rays tvb;
 --     	       rl := #raylist;
 --     	       k := tvb#"rank of the vector bundle";
@@ -684,7 +684,7 @@ deltaE ToricVectorBundle := (cacheValue symbol deltaE)( T -> (
 --     	       M = matrix {L};
 --     	       convexHull M)
 --	  else (
---	       -- Extracting neccesary data
+--	       -- Extracting necessary data
 --	       rayTable := tvb#"rayTable";
 --	       l := #rayTable;
 --	       fMT := hashTable apply(pairs tvb#"filtrationMatricesTable", (i,j) -> (j = flatten entries j; i => matrix{{-(min j),max j}}));

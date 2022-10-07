@@ -239,7 +239,7 @@ zeroize Matrix := m -> (
      map(W^(numgens target m), W^(numgens source m), m)
      )
 
--- MES added 1/30/05 temorpary fix
+-- MES added 1/30/05 temporary fix
 -- check whether a module is a quotient of a free module.
 --   In the Dmodule code, it appears that this is checked in
 --   3 ways: using isQuotientModule, doing what is done here,

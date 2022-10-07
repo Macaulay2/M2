@@ -944,7 +944,7 @@ chordalElim(ChordalNet) := opts -> N -> (
         debugPrint "\nGroebner Step";
         debugPrint N;
         if p===null then continue;
-        debugPrint "Elimation Step";
+        debugPrint "Elimination Step";
         debugPrint N;
         netRankElim(p,tree,N.net#p,N.net#i);
     );
@@ -1064,7 +1064,7 @@ chordalTria(ChordalNet) := opts -> N -> (
         );
         netRankElim(p,tree,N.net#p,N.net#i);
         netRankDelIneqs(N.net#i);
-        debugPrint "Elimation Step";
+        debugPrint "Elimination Step";
         debugPrint N;
     );
     checkConsistency N;
