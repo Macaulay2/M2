@@ -44,9 +44,10 @@ o6 : Point
 
 i7 : peek oneSoln
 
-o7 = Point{ConditionNumber => 33.3778                                                   }
-           Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}
-           LastT => 1
-           SolutionStatus => Regular
+o7 = Point{cache => CacheTable{...3...}                             
+           Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii,
+     ------------------------------------------------------------------------
+                        }
+     2.41964-.606291*ii}
 
 i8 : 
