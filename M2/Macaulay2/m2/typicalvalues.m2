@@ -51,6 +51,7 @@ apply(BasicList,String,Function) := Sequence => apply
 apply(String,BasicList,Function) := Sequence => apply
 apply(String,String,Function) := Sequence => apply
 apply(ZZ,Function) := List => apply
+apply(Thing,Function) := Iterator => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
 applyKeys(HashTable,Function,Function) := HashTable => applyKeys
 applyPairs(HashTable,Function) := HashTable => applyPairs
