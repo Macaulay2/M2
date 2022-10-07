@@ -4,7 +4,7 @@
 --   are handled slightly differently
 -- 
 
-internalVerifySagbi = method(
+internalVerifySagbiProcess = method(
     TypicalValue => SAGBIBasis,
     Options => {
 	Compute => true,
@@ -19,9 +19,9 @@ internalVerifySagbi = method(
     );
 
 
-internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
+internalVerifySagbiProcess(SAGBIBasis) := opts -> SB -> (
     compTable := initializeCompTable(SB, opts);    
-        if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
+    if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
 	compTable#"data"#"sagbiGenerators" = lift(compTable#"data"#"subalgebraGenerators", compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
         updateComputation(compTable);
 	);
@@ -43,7 +43,25 @@ internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
     SB'
     );
 
-internalVerifySagbi = memoize internalVerifySagbi;
+memoizeInternalVerifySagbiProcess = memoize internalVerifySagbiProcess;
+
+internalVerifySagbi = method(
+    TypicalValue => SAGBIBasis,
+    Options => {
+	Compute => true,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- top or engine
+	Limit => 100,
+	PrintLevel => 0, -- see print level for sagbi
+    	Recompute => false,
+	RenewOptions => false,
+	UseSubringGens => false
+	}
+    );
+
+internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
+    memoizeInternalVerifySagbiProcess(SB, opts)
+    )
 
 
 -- verifySagbi [no longer used in any of the methods - it is here for legacy purposes]
@@ -55,6 +73,8 @@ internalVerifySagbi = memoize internalVerifySagbi;
 --
 -- the resulting SAGBIBasis object SB will have SB#"data"#"sagbiDone" updated appropriately
 -- the function then returns true or false depending on whether the generating set is a SAGBIBasis 
+--
+-- TODO: kill verifySagbi
 --
 
 verifySagbi = method(
@@ -76,23 +96,26 @@ verifySagbi(Subring) := opts -> S -> (
     
     if (S#cache#?"SAGBIBasis") and (gens(S#cache#"SAGBIBasis") == gens S) then (
 	-- S has a sagbi basis so use this object as a compTable
-	SB = S#cache#"SAGBIBasis";
+	SB = S#cache#"SAGBIBasis";	
+	SB = internalVerifySagbi(SB, opts);
 	) else (
     	trimmedOptionKeys := delete(Compute, keys opts);
 	trimmedOptionKeys = delete(UseSubringGens, trimmedOptionKeys);
     	trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
-	SB = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
+	--SB = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
 	-- add the generators to the sagbiGenerators
-	SB#"data"#"sagbiGenerators" = lift(gens S, SB#"rings"#"liftedRing");
-	updateComputation(SB);
-	SB = sagbiBasis(SB, trimmedOptionTable);
+	--SB#"data"#"sagbiGenerators" = lift(gens S, SB#"rings"#"liftedRing");
+	--updateComputation(SB);
+	SB = sagbiBasis(S, trimmedOptionTable);
+	SB = internalVerifySagbi(SB, opts, UseSubringGens => true);
 	);
-    SB = internalVerifySagbi(SB, opts);
-    if not S.cache#?"SAGBIBasis" then (
-    	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
-	) else if (SB#"data"#"sagbiDone" and not S.cache#"SAGBIBasis"#"data"#"sagbiDone") then (
-	S.cache#"SAGBIBasis" = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
-	);
+    
+    -- The following is done automatically by sagbiBasis
+    --if not S.cache#?"SAGBIBasis" then (
+    --	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
+	--) else if (SB#"data"#"sagbiDone" and not S.cache#"SAGBIBasis"#"data"#"sagbiDone") then (
+	--S.cache#"SAGBIBasis" = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
+	--);
     SB#"data"#"sagbiDone"
     )
 
@@ -172,7 +195,7 @@ forceSB Subring := opts -> S -> (
 -- it is used as an intermediate step for isSAGBI when it is passed something
 --   that does not have a cached SAGBIBasis object
 
--- internalIsSAGBI = memoize internalIsSAGBI
+-- memoizeInternalIsSAGBI = memoize internalIsSAGBI
 --   when calling isSAGBI on a subring without SAGBIBasis
 --   it produces a very simple object: sagbiBasis(S) which has no sagbiGenerators etc.
 --   (in particular it can be used for sagbi in the future)
@@ -188,12 +211,15 @@ forceSB Subring := opts -> S -> (
 -- then if the remembering option is true then run "mem internalIsSAGBI" otherwise
 -- run "internalIsSAGBI"
 --
---
 -- idea: we could have memoize as an option and use a custom version of memoize for the package
 -- this is just a fancy way of not having to create two almost-identical functions
 -- but that would be fine too: memInternalIsSAGBI = memoize internalIsSAGBI
 
-internalIsSAGBI = method(
+
+-- internalIsSAGBIProcess is the core method
+--  internalIsSAGBI is a wrapper for the memoized version of this method
+
+internalIsSAGBIProcess = method(
     TypicalValue => SAGBIBasis,
     Options => {
 	Compute => true,
@@ -207,7 +233,7 @@ internalIsSAGBI = method(
 	}
     );
 
-internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
+internalIsSAGBIProcess(SAGBIBasis) := opts -> SB -> (
     compTable := initializeCompTable(SB, opts);    
     if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
 	compTable#"data"#"sagbiGenerators" = lift(compTable#"data"#"subalgebraGenerators", compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
@@ -242,7 +268,50 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
 --  time on a SAGBIBasis, the groebner basis and subductions are not performed
 --  again.
 
-internalIsSAGBI = memoize internalIsSAGBI;
+memoizeInternalIsSAGBIProcess = memoize internalIsSAGBIProcess;
+
+-- memoizeInternalIsSAGBIValues: a way to check if an internalIsSAGBI computation was already performed
+
+isInMemoizeInternalIsSAGBIValues = method(
+    TypicalValue => SAGBIBasis,
+    Options => {
+	Compute => true,
+	Strategy => "Master",
+        SubductionMethod => "Top",
+	Limit => 100,
+	PrintLevel => 0,
+    	Recompute => false,
+	RenewOptions => false,
+	UseSubringGens => false
+	}
+    );
+
+isInMemoizeInternalIsSAGBIValues(SAGBIBasis) := opts -> SB -> (
+    (memoizeValues memoizeInternalIsSAGBIProcess)#?(SB, opts) 
+    )
+
+
+-- internalIsSAGBI is a wrapper for the memoized version of internalIsSAGBIProcess
+--  it makes the input of the wrapper uniform: i.e. it passes the SAGBIBasis + Option Table in that order
+--  so the memoize value table does not increase in size unnecessarily
+
+internalIsSAGBI = method(
+    TypicalValue => SAGBIBasis,
+    Options => {
+	Compute => true,
+	Strategy => "Master",
+        SubductionMethod => "Top",
+	Limit => 100,
+	PrintLevel => 0,
+    	Recompute => false,
+	RenewOptions => false,
+	UseSubringGens => false
+	}
+    );
+
+internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
+    memoizeInternalIsSAGBIProcess(SB, opts)
+    );
 
 
 -- isSAGBI determines / checks if the generators of an objects form a sagbi basis
@@ -295,14 +364,8 @@ isSAGBI Subring := opts -> S -> (
     if S.cache#?"SAGBIBasis" then (
 	SB = S.cache#"SAGBIBasis";
 	-- if SB has no sagbiGenerators then it is possible that internalIsSAGBI was already
-	-- called on SB previously. 
-    	if (zero SB#"data"#"sagbiGenerators") and (memoizeValues internalIsSAGBI)#?SB then (
-	    return (internalIsSAGBI(SB))#"data"#"sagbiDone";
-	    );
-	if (zero SB#"data"#"sagbiGenerators") and (memoizeValues internalIsSAGBI)#?(SB, opts) then (
-	    return (internalIsSAGBI(SB, opts))#"data"#"sagbiDone";
-	    );
-	if (zero SB#"data"#"sagbiGenerators") and (memoizeValues internalIsSAGBI)#?(SB, opts, UseSubringGens => true) then (
+	-- called on SB previously.  
+    	if (zero SB#"data"#"sagbiGenerators") and isInMemoizeInternalIsSAGBIValues(SB, opts, UseSubringGens => true) then (
 	    return (internalIsSAGBI(SB, opts, UseSubringGens => true))#"data"#"sagbiDone";
 	    );
 	
