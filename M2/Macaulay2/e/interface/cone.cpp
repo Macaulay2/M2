@@ -24,6 +24,7 @@ const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C)
 {
   try
     {
+      // TODO: generalize the input type, in particular to allow lineality space
       const Ring *R = C->get_ring();
       const size_t c = C->n_cols();  // rank of ambient lattice
       const size_t r = C->n_rows();  // number of cone inequalities

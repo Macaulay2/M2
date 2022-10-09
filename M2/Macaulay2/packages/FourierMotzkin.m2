@@ -232,6 +232,7 @@ fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
      (sort A, sort E))
 
 
+-- TODO: use rawFourierMotzkin?
 --   INPUT : 'Z' a matrix; the columns are the rays generating the cone
 fourierMotzkin Matrix := Sequence => Z -> (
      -- creating zero equalities
@@ -431,7 +432,7 @@ document {
      heft);"
      },
      	  
-     PARA{}, "If a polynomial ring as a multigrading determined by a
+     PARA{}, "If a polynomial ring has a multigrading determined by a
      vector configuration, then a positive linear functional plays the
      role of a ", TO Heft, " vector.",
 
