@@ -54,7 +54,6 @@ doc ///
   Key
     iterator
     (iterator, Iterator)
-    (iterator, Sequence)
     (iterator, String)
     (iterator, VisibleList)
   Headline
