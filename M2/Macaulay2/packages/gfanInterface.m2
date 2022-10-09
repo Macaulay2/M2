@@ -4569,7 +4569,7 @@ doc///
 	-- assert(gfanKrullDimension gfanBuchberger L === 3)
 	-- ///
 	--
-	-- -- TEST gfanLaticeIdeal
+	-- -- TEST gfanLatticeIdeal
 	-- TEST ///
 	-- L = gfanLatticeIdeal {{2,-1,0},{3,0,-1}}
 	-- assert(L === {-x_0 *x_1 + x_2, x_0^2 - x_1})

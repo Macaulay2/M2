@@ -6013,7 +6013,7 @@ doc ///
      isPolytope
      facets
   Caveat
-     This just returns C.dualComplex.grading. If this data has not beed computed use @TO verticesDualPolytope@.
+     This just returns C.dualComplex.grading. If this data has not been computed use @TO verticesDualPolytope@.
      Integrate into this verticesDualPolytope.
 ///
 

@@ -217,7 +217,7 @@ doc ///
 			SOGr48even.points
 
 	Caveat
-		Does not check for low-dimensional isogeneis.  For instance, always use type $D_n$ with $n\geq 4$ to be safe.
+		Does not check for low-dimensional isogenies.  For instance, always use type $D_n$ with $n\geq 4$ to be safe.
 
 	SeeAlso
 		generalizedFlagVariety
