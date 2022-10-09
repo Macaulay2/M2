@@ -946,7 +946,7 @@ doc ///
     Text
       {\bf Overview:}
 
-      Consider a monoid B in \mathbb{N}^m and a submonid A \subseteq B (both finitely generated)
+      Consider a monoid B in \mathbb{N}^m and a submonoid A \subseteq B (both finitely generated)
       such that K[B] is a finitely generated K[A]-module (with the module structure
       given by inclusion, and K being a field).
 

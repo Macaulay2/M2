@@ -1897,7 +1897,7 @@ document {
     Headline => "strategies for choosing submatrices",
     "Many of the core functions of this package allow the user to fine tune the strategy used for selecting submatrices.  Different strategies yield markedly different performance or results on various examples.
     These are controlled by specifying a ", TT " Strategy => ", " option, pointing to a ", TT " HashTable", "which specifies several strategies should be used simultaneously, or to a symbol saying we should use only a single strategy.  For a more detailed look at this in an example please see ", TO FastMinorsStrategyTutorial, 
-    "Before describing the available strategies, we beging by roughly outlining the different approaches.",
+    "Before describing the available strategies, we begin by roughly outlining the different approaches.",
     UL {
         { BOLD "Heuristic submatrix selection:", " In this case, a submatrix is chosen via a greedy algorithm, looking for a submatrix with smallest (or largest) degree with respect to a random monomial order." }, 
         { BOLD "Submatrix selection via rational and geometric points:", " Here a rational or geometric point is found where a given ideal vanishes.  That point is plugged into the matrix and a submatrix of full rank is identified.   This approach currently only works over a finite field and is accomplished with the help of the package ", TO RandomPoints, "."},

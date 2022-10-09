@@ -776,7 +776,7 @@ matrixFactorization(Matrix, Module) := opts -> (ff, M) -> (
     h := new MutableHashTable;
     A := new MutableHashTable;
     A1 := new MutableHashTable;
-    --A1#p is A#p substituteed into R#(p-1)
+    --A1#p is A#p substituted into R#(p-1)
     B1 := new MutableHashTable;
     --B1#p would be B#p over R#(p-1) (there is no B)
     BS := new MutableHashTable; --same over S
