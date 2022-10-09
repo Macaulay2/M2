@@ -12,7 +12,6 @@ net Iterator := iter -> (
     net FunctionApplication(iterator,
 	(if instance(x, String) then format else identity) x))
 
-iterator Sequence    :=
 iterator VisibleList :=
 iterator String      := x -> Iterator (
     i := 0;
