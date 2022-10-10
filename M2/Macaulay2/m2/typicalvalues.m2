@@ -107,7 +107,9 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toSequence BasicList := toSequence String := Sequence => toSequence
+toSequence BasicList :=
+toSequence String    :=
+toSequence Thing     := Sequence => toSequence
 ascii String := List => ascii
 ascii List := String => ascii
 remove(HashTable,Thing) := Nothing => remove
