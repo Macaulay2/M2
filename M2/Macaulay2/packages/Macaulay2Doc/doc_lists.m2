@@ -615,18 +615,33 @@ document {
      SeeAlso => {splice, (symbol..,ZZ,ZZ), "lists and sequences"}
      }
 
-document {
-     Key => {toSequence,(toSequence, BasicList),(toSequence, String)},
-     Headline => "convert to sequence",
-     TT "toSequence x", " -- yields the elements of a list or string ", TT "x", " as a sequence.",
-     PARA{},
-     "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
-     PARA{},
-     EXAMPLE {
-	  "toSequence {1,2,3}",
-	  ///toSequence "foo"///
-	  },
-     }
+doc ///
+  Key
+    toSequence
+    (toSequence, BasicList)
+    (toSequence, String)
+    (toSequence, Thing)
+  Headline
+    convert to sequence
+  Usage
+    toSequence x
+  Inputs
+    x:{BasicList, String}
+      or an instance of a class with the @TO iterator@ method installed
+  Outputs
+     :Sequence
+  Description
+    Text
+      @TT "toSequence x"@ yields the elements of a @TT "x"@ as a sequence.
+    Example
+      toSequence {1, 2, 3}
+      toSequence "foo"
+      toSequence iterator {1, 2, 3}
+    Text
+      If @TT "x"@ is already a sequence, then @TT "x"@ is returned.
+    Example
+      toSequence (1, 2, 3)
+///
 
 document {
      Key => sequence,
