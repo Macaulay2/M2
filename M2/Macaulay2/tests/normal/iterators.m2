@@ -11,6 +11,7 @@ assert Equation(next i, 2)
 assert Equation(next i, 3)
 assert Equation(next i, 5)
 assert Equation(toList P, {2, 3, 5, 7, 11, 13, 17, 19})
+assert Equation(toSequence P, (2, 3, 5, 7, 11, 13, 17, 19))
 n = 0
 scan(P, x -> n = n + x)
 assert Equation(n, 77)
