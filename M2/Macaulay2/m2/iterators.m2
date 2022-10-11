@@ -31,7 +31,7 @@ applyIterator = (iter, f) -> Iterator (
 
 select(Thing, Function) := Iterator => {} >> o -> (X, f) -> (
     if lookup(iterator, class X) === null
-    then error "expected argument 1 to be iterable";
+    then error "expected argument 1 to be an iterable object";
     iter := iterator X;
     Iterator (
 	() -> while true do (

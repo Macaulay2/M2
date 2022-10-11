@@ -1594,7 +1594,7 @@ map(e:Expr,f:Expr):Expr := (
 	 iter := getIterator(e);
 	 if iter != nullE
 	 then applyEEE(getGlobalVariable(applyIteratorS), iter, f)
-	 else WrongArg(1,"a list, sequence, integer, or iterable")));
+	 else WrongArg(1,"a list, sequence, integer, or iterable object")));
 map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
@@ -2095,7 +2095,7 @@ scan(e:Expr,f:Expr):Expr := (
 		     else nothing);
 		 nullE)
 	     else buildErrorPacket("no method for applying next to iterator"))
-	 else WrongArg(1, "a list, sequence, integer, or iterable")));
+	 else WrongArg(1, "a list, sequence, integer, or iterable object")));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -2153,7 +2153,7 @@ toSequence(e:Expr):Expr := (
 		     else new Sequence len j do (
 			 foreach x in r do provide x)))
 	     else buildErrorPacket("no method for applying next to iterator"))
-	 else WrongArg("a list, sequence, string, or iterable")));
+	 else WrongArg("a list, sequence, string, or iterable object")));
 setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (
