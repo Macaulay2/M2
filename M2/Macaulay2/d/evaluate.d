@@ -325,7 +325,7 @@ evalForCode(c:forCode):Expr := (
 		  else return printErrorMessageE(c.inClause,
 		      "no method for applying next to iterator"))
 	      else return printErrorMessageE(c.inClause,
-		  "expected a list, sequence, or iterable")))
+		  "expected a list, sequence, or iterable object")))
      else (
 	  if c.fromClause != dummyCode then (
 	       fromvalue := eval(c.fromClause);
