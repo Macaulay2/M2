@@ -1386,7 +1386,7 @@ document{
     Key=>{HybridLimit},
     Headline=>"an option to control HybridStrategy",
        "This controls behavior when using ", TT "Strategy=>HybridStrategy", ".  ", "By increasing the HybridLimit value (default 15), 
-       HybridStrategy will execte SimisStrategy longer. 
+       HybridStrategy will execute SimisStrategy longer. 
 	     Infinity will behave exactly like SimisStrategy.",
     SeeAlso=>{
         "HybridStrategy"        

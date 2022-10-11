@@ -300,7 +300,7 @@ Node
     monoid[x,y, DegreeMap => p, DegreeLift => q]
   Description
     Text
-      The @TT "DegreeMap"@ option speficies the degree map, particularly when @TT "Join => false"@
+      The @TT "DegreeMap"@ option specifies the degree map, particularly when @TT "Join => false"@
       is given. The degree map is a (linear) function from the multidegrees of the
       (future) coefficient ring to the multidegrees of the monoid ring (polynomial ring)
       made from it with the monoid created here, to be used in determining homogeneity
