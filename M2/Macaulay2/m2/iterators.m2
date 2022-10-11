@@ -22,6 +22,8 @@ iterator String      := x -> Iterator (
 	    i = i + 1;
 	    r)))
 
+toList Thing := x -> for y in x list y
+
 -- called by map(Expr,Expr) in actors3.d
 applyIterator = (iter, f) -> Iterator (
     () -> (
