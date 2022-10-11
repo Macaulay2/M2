@@ -11,6 +11,39 @@ header "#include <dlfcn.h>
 	#endif
 	#include <M2mem.h>";
 
+-- ffi_get_struct_offsets not introduced until libffi 3.3 in 2019
+-- so we provide an alternate implementation
+header "
+#ifndef HAVE_FFI_GET_STRUCT_OFFSETS
+#define FFI_ALIGN(v, a)  (((((size_t) (v))-1) | ((a)-1))+1)
+
+ffi_status
+ffi_get_struct_offsets(ffi_abi abi, ffi_type *struct_type, size_t *offsets)
+{
+  ffi_cif cif;
+  ffi_status status;
+  ffi_type **ptr;
+  size_t size;
+
+  status = ffi_prep_cif(&cif, abi, 0, struct_type, NULL);
+  if (status != FFI_OK)
+    return status;
+
+  ptr = &(struct_type->elements[0]);
+  size = 0;
+
+  while ((*ptr) != NULL) {
+      size = FFI_ALIGN(size, (*ptr)->alignment);
+      *offsets++ = size;
+      size += (*ptr)->size;
+      ptr++;
+  }
+
+  return FFI_OK;
+}
+#endif
+";
+
 voidPointerOrNull := voidPointer or null;
 toExpr(x:voidPointer):Expr := Expr(pointerCell(x));
 WrongArgPointer():Expr := WrongArg("a pointer");
