@@ -58,7 +58,8 @@ importFrom_Core {
     "pythonTrue",
     "pythonTupleNew",
     "pythonUnicodeAsUTF8",
-    "pythonUnicodeFromString"
+    "pythonUnicodeFromString",
+    "pythonWrapM2Function"
 }
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
@@ -327,6 +328,13 @@ toPython HashTable := x -> (
 toPython Set := pythonSetNew @@ toPython @@ toList
 toPython Nothing := x -> pythonNone
 toPython PythonObject := identity
+
+toPython Function := f -> (
+    pythonWrapM2Function(toString f, pyargs -> (
+	    m2args := value pyargs;
+	    if instance(m2args, Sequence) and #m2args == 1
+	    then m2args = m2args#0;
+	    toPython f m2args)))
 
 load "Python/doc.m2"
 
