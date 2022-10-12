@@ -359,6 +359,7 @@ assert BinaryOperation(symbol ===, value pythonValue "{'a':1, 'b':2, 'c':3}",
     hashTable{"a" => 1, "b" => 2, "c" => 3})
 assert Equation((value pythonValue "abs")(-1), pythonValue "1")
 assert Equation(value pythonValue "None", null)
+assert Equation((toPython sqrt) 2, toPython sqrt 2)
 ///
 
 TEST ///
