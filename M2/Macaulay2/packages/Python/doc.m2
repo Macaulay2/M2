@@ -467,6 +467,7 @@ doc ///
     (toPython,Boolean)
     (toPython,CC)
     (toPython,Constant)
+    (toPython,Function)
     (toPython,HashTable)
     (toPython,Nothing)
     (toPython,PythonObject)
@@ -500,6 +501,11 @@ doc ///
       toPython set {1, 2, 3, 4}
       toPython true
       toPython null
+      m2sqrt = x -> (
+	  print "calling Macaulay2 code from Python!";
+	  sqrt x)
+      pysqrt = toPython m2sqrt
+      pysqrt 2
 ///
 
 doc ///
