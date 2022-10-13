@@ -492,14 +492,6 @@ assert Equation(-x, -5)
 assert Equation(+x, 5)
 ///
 
--- test @ (not part of default testsuite since it requires numpy)
-///
-np = import "numpy"
-v = np@@array {1, 2, 3}
-w = np@@array {4, 5, 6}
-assert Equation(v @ w, 32)
-///
-
 TEST ///
 -----------------------
 -- string operations --
@@ -610,6 +602,70 @@ assert Equation(toPython 10^100, pythonValue "10**100")
 assert Equation(toPython(-10^100), pythonValue "-10**100")
 assert Equation(value pythonValue "10**100", 10^100)
 assert Equation(value pythonValue "-10**100", -10^100)
+///
+
+
+-- not part of default testsuite since it requires numpy
+///
+-----------
+-- NumPy --
+-----------
+np = import "numpy"
+
+-- @ (__matmul__ operator)
+v = np@@array {1, 2, 3}
+w = np@@array {4, 5, 6}
+assert Equation(v @ w, 32)
+
+-- scalar types
+checkNumPyIntDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1, 1)
+checkNumPyIntDtype "int8"
+checkNumPyIntDtype "uint8"
+checkNumPyIntDtype "int16"
+checkNumPyIntDtype "uint16"
+checkNumPyIntDtype "int32"
+checkNumPyIntDtype "uint32"
+checkNumPyIntDtype "int64"
+checkNumPyIntDtype "uint64"
+checkNumPyIntDtype "byte"
+checkNumPyIntDtype "ubyte"
+checkNumPyIntDtype "short"
+checkNumPyIntDtype "ushort"
+checkNumPyIntDtype "intc"
+checkNumPyIntDtype "uintc"
+checkNumPyIntDtype "int_"
+checkNumPyIntDtype "uint"
+checkNumPyIntDtype "longlong"
+checkNumPyIntDtype "ulonglong"
+checkNumPyIntDtype "intp"
+checkNumPyIntDtype "uintp"
+
+checkNumPyRealDtype = T -> assert BinaryOperation(symbol ===,
+    value np@@T 1, 1.0)
+checkNumPyRealDtype "float16"
+checkNumPyRealDtype "float32"
+checkNumPyRealDtype "float64"
+-- checkNumPyRealDtype "float96"
+checkNumPyRealDtype "float128"
+checkNumPyRealDtype "float_"
+checkNumPyRealDtype "half"
+checkNumPyRealDtype "single"
+checkNumPyRealDtype "double"
+checkNumPyRealDtype "longdouble"
+
+assert BinaryOperation(symbol ===, value np@@"bool_" true, true)
+assert BinaryOperation(symbol ===, value np@@"bool8" true, true)
+
+checkNumPyComplexDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1,
+    toCC(1.0, 0.0))
+checkNumPyComplexDtype "complex64"
+checkNumPyComplexDtype "complex128"
+-- checkNumPyComplexDtype "complex192"
+checkNumPyComplexDtype "complex256"
+checkNumPyComplexDtype "complex_"
+checkNumPyComplexDtype "csingle"
+checkNumPyComplexDtype "cdouble"
+checkNumPyComplexDtype "clongdouble"
 ///
 
 end --------------------------------------------------------
