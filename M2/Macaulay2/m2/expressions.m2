@@ -1073,9 +1073,9 @@ texMath Product := v -> (
     else (
 	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
 	p := precedence v;
-	nums := apply(v, x -> isNumber x);
+	nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0));
 	precs := apply(v, x -> precedence x <= p);
-	seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot "
+	seps := apply (n-1, i-> if nums#(i+1) then "\\times "
 	    else if class v#i =!= Power and class v#i =!= Subscript and not precs#i and not precs#(i+1) then
 	    if nums#i or class v#i === Symbol then "\\," else "\\ "
 	    else "");

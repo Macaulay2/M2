@@ -111,8 +111,8 @@ numeric(ZZ,Vector) := (prec,v) -> (
      error "expected vector of numbers"
      )
 
-- Vector := Vector => v -> vector (-v#0)
-Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}
+- Vector := Vector => v -> new class v from {-v#0}
+Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
 Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)

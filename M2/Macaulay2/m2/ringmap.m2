@@ -361,7 +361,7 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	  if S === null
 	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
 	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
-	  if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
+	  if not h#?x and ((try x=promote(x,R))===null or not h#?x) then error( "expected ", toString x, " to be a generator of ", toString R );
 	  for i in h#x do (
 	       if m#i =!= symbol dummy and m#i =!= y then error "multiple destinations specified for a generator";
 	       m#i = y;
@@ -378,7 +378,9 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	       try commonzero = commonzero + 0_A
 	       else error "expected substitution values and omitted generators to be in compatible rings";
 	       );
-	  for i from 0 to #m-1 do m#i = promote(m#i, ring commonzero);
+	  S = ring commonzero;
+	  if instance(R,FractionField) then S=frac S;
+	  for i from 0 to #m-1 do m#i = promote(m#i, S);
 	  )
      else if R === S and S === ring commonzero then (
      	  -- if source==target, then the default is to leave generators alone
