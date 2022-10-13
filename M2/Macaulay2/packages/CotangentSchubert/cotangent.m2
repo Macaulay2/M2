@@ -162,7 +162,9 @@ new DiagonalAlgebra from Module := (X,M) -> (
     D == Vector := Vector == D := (x,y) -> x#0 == y#0;
     D == Number := (x,n) -> x == new D from n;
     Number == DD := (n,x) -> x == new D from n;
-    D + D := D + Vector := Vector + D := (x,y) -> new D from vector (x#0+y#0); -- shouldn't be needed but whatever
+    D + D := D + Vector := Vector + D := (x,y) -> new D from {x#0+y#0};
+    D - D := D + Vector := Vector + D := (x,y) -> new D from {x#0-y#0};
+    Number * D := (n,x) -> new D from {n*x#0};
     D)
 ring DiagonalAlgebra := D -> ring D.Module;
 rank DiagonalAlgebra := D -> rank D.Module;
