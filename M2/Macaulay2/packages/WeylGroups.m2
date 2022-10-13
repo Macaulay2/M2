@@ -444,8 +444,8 @@ Weight + Weight := (p1,p2) -> new Weight from ((new Vector from p1)+(new Vector 
 --redefining difference of two weights
 Weight - Weight := (p1,p2) -> new Weight from ((new Vector from p1)-(new Vector from p2))
 
---defining opposite to a weight
-- Weight := (p) -> (-1)*p
+--defining scalar times weight
+ZZ * Weight := (n,p) -> new Weight from {n*p#0}
 
 --check whether a weight is a positive root
 isPositiveRoot = method()
