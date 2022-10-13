@@ -735,7 +735,7 @@ DiffOp - DiffOp := DiffOp => (a,b) -> (
     else error"expected pair to have a method for '-'"
 )
 --Left action
-RingElement * DiffOp := DiffOp => (r,d) -> (
+Number * DiffOp := RingElement * DiffOp := DiffOp => (r,d) -> (
     R := class r;
     S := class d;
     if ring r === ring d or member(ring r, (ring d).baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
@@ -1816,6 +1816,7 @@ assert(M == U)
 undocumented {
     (symbol +, DiffOp, DiffOp),
     (symbol -, DiffOp, DiffOp),
+    (symbol *, Number, DiffOp),
     (symbol *, RingElement, DiffOp),
     (symbol ?, DiffOp, DiffOp),
     (symbol ==, DiffOp, DiffOp),
