@@ -342,23 +342,32 @@ TEST ///
 -----------
 -- value --
 -----------
-assert Equation(value pythonValue "True", true)
-assert Equation(value pythonValue "5", 5)
-assert Equation(value pythonValue "3.14159", 3.14159)
-assert Equation(value pythonValue "complex(1, 2)", 1 + 2*ii)
-assert Equation(value pythonValue "'foo'", "foo")
-assert Equation(value pythonValue "(1, 3, 5, 7, 9)", (1, 3, 5, 7, 9))
-assert Equation(value pythonValue "range(5)", (0, 1, 2, 3, 4))
-assert Equation(value pythonValue "[1, 3, 5, 7, 9]", {1, 3, 5, 7, 9})
+checkInM2 = x -> assert BinaryOperation(symbol ===, value toPython x, x)
+checkInM2 true
+checkInM2 5
+checkInM2 3.14159
+checkInM2 toCC(1., 2.)
+checkInM2 "foo"
+checkInM2 (1, 3, 5, 7, 9)
+checkInM2 {1, 3, 5, 7, 9}
+checkInM2 set {1, 3, 5, 7, 9}
+checkInM2 hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkInM2 null
 assert BinaryOperation(symbol ===,
-    value pythonValue "{1, 3, 5, 7, 9}", set {1, 3, 5, 7, 9})
-assert BinaryOperation(symbol ===,
-    value pythonValue "frozenset([1, 3, 5, 7, 9])",
-    set {1, 3, 5, 7, 9})
-assert BinaryOperation(symbol ===, value pythonValue "{'a':1, 'b':2, 'c':3}",
-    hashTable{"a" => 1, "b" => 2, "c" => 3})
+    value pythonValue "frozenset([1, 3, 5, 7, 9])", set {1, 3, 5, 7, 9})
+
+checkInPython = x -> (y := pythonValue x; assert Equation(toPython value y, y))
+checkInPython "True"
+checkInPython "5"
+checkInPython "3.14159"
+checkInPython "complex(1, 2)"
+checkInPython "'foo'"
+checkInPython "(1, 3, 5, 7, 9)"
+checkInPython "[1, 3, 5, 7, 9]"
+checkInPython "{1, 3, 5, 7, 9}"
+checkInPython "{'a': 1, 'b': 2, 'c': 3}"
+checkInPython "None"
 assert Equation((value pythonValue "abs")(-1), pythonValue "1")
-assert Equation(value pythonValue "None", null)
 assert Equation((toPython sqrt) 2, toPython sqrt 2)
 ///
 
