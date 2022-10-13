@@ -190,12 +190,22 @@ addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
     "tuple -> Sequence")
 addPyToM2Function("str", toString, "str -> String")
 addPyToM2Function(
-    "complex",
+    {"complex", "complex64", "complex128", "complex256"},
     x -> toCC(pythonFloatAsDouble x@@"real", pythonFloatAsDouble x@@"imag"),
     "complex -> CC")
-addPyToM2Function("float", pythonFloatAsDouble, "float -> RR")
-addPyToM2Function("int", pythonLongAsLong, "int -> ZZ")
-addPyToM2Function("bool", x -> toString x == "True", "bool -> Boolean")
+addPyToM2Function(
+    {"float", "float16", "float32", "float64", "float128"},
+    pythonFloatAsDouble,
+    "float -> RR")
+addPyToM2Function(
+    {"int", "int8", "uint8", "int16", "uint16", "int32", "uint32",
+	"int64", "uint64", "longlong", "ulonglong"},
+    pythonLongAsLong,
+    "int -> ZZ")
+addPyToM2Function(
+    {"bool", "bool_"},
+    x -> toString x == "True",
+    "bool -> Boolean")
 value PythonObject := x -> runHooks((value, PythonObject), x)
 
 -- Py_LT, Py_GT, and Py_EQ are #defines from /usr/include/python3.9/object.h
