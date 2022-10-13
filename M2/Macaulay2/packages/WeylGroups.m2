@@ -1891,22 +1891,23 @@ TEST ///
 
 doc ///
 	Key
-		(symbol -,Weight)
+		(symbol *,ZZ,Weight)
 	Headline
-		the negative of a weight
+		the multiple of a weight
 	Usage
-		- p
+		n * p
 	Inputs
+	        n: ZZ
 		p: Weight
 	Outputs
 		: Weight
-			the negative of {\tt p}
+			n times {\tt p}
 	Description
 		Example
 			R=rootSystemA(4)
 			M=cartanMatrix R
 			p=weight(R,M_2)
-			-p
+			-2*p
 ///
 
 TEST ///
