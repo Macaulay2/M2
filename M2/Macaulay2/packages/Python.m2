@@ -189,7 +189,10 @@ addPyToM2Function("list", pyListToM2List, "list -> List")
 addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
     "tuple -> Sequence")
 addPyToM2Function("str", toString, "str -> String")
-addPyToM2Function("complex", x -> x@@"real" + ii * x@@"imag", "complex -> CC")
+addPyToM2Function(
+    "complex",
+    x -> toCC(pythonFloatAsDouble x@@"real", pythonFloatAsDouble x@@"imag"),
+    "complex -> CC")
 addPyToM2Function("float", pythonFloatAsDouble, "float -> RR")
 addPyToM2Function("int", pythonLongAsLong, "int -> ZZ")
 addPyToM2Function("bool", x -> toString x == "True", "bool -> Boolean")
