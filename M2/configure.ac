@@ -1685,7 +1685,8 @@ AS_IF([pkg-config --exists libffi],
        CPPFLAGS="$(pkg-config --cflags-only-I libffi) $CPPFLAGS"
        AC_CHECK_HEADER([ffi.h], [], [AC_MSG_ERROR([ffi.h not found])])
        AC_SEARCH_LIBS([ffi_call], [ffi], [],
-	   [AC_MSG_ERROR([libffi not found or not linkable])])],
+	   [AC_MSG_ERROR([libffi not found or not linkable])])
+       AC_CHECK_FUNCS([ffi_get_struct_offsets])],
       [AC_MSG_RESULT([no])
        AC_MSG_ERROR([libffi is required])])
 
