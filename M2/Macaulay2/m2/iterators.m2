@@ -12,7 +12,6 @@ net Iterator := iter -> (
     net FunctionApplication(iterator,
 	(if instance(x, String) then format else identity) x))
 
-iterator Sequence    :=
 iterator VisibleList :=
 iterator String      := x -> Iterator (
     i := 0;
@@ -23,6 +22,8 @@ iterator String      := x -> Iterator (
 	    i = i + 1;
 	    r)))
 
+toList Thing := x -> for y in x list y
+
 -- called by map(Expr,Expr) in actors3.d
 applyIterator = (iter, f) -> Iterator (
     () -> (
@@ -32,7 +33,7 @@ applyIterator = (iter, f) -> Iterator (
 
 select(Thing, Function) := Iterator => {} >> o -> (X, f) -> (
     if lookup(iterator, class X) === null
-    then error "expected argument 1 to be iterable";
+    then error "expected argument 1 to be an iterable object";
     iter := iterator X;
     Iterator (
 	() -> while true do (

@@ -890,7 +890,7 @@ doc ///
     Example
       length x
     Text
-      They are also @TO2 {"iterators", "iterable"}@.
+      They are also @TO2 {iterator, "iterable"}@.
     Example
        i = iterator x;
        next i
@@ -996,7 +996,7 @@ doc ///
     Example
       length x
     Text
-      They are also @TO2 {"iterators", "iterable"}@.
+      They are also @TO2 {iterator, "iterable"}@.
     Example
        i = iterator x;
        next i

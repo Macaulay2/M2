@@ -19,19 +19,31 @@ doc ///
       next iter
       iter()
     Text
-      For example, let us create a class that we may use to iterate over the
-      Fibonacci numbers.
+      Every @TT "Iterator"@ object is an iterator for itself.
     Example
-      FibonacciNumbers = new Type of HashTable;
-      iterator FibonacciNumbers := fib -> Iterator(
-	  a := 0;
-	  b := 1;
+      primes = Iterator (
+	  p := 2;
 	  () -> (
-	      r := a;
-	      (a, b) = (b, a + b);
+	      r := p;
+	      p = nextPrime(p + 1);
 	      r));
-      fibonacci = new FibonacciNumbers;
-      for i in fibonacci list if i > 100 then break else i
+      iterator primes === primes
+    Text
+      However, we cannot "rewind" an @TT "Iterator"@ object.  Every time that
+      it is iterated upon using @TO "for"@, @TO scan@, etc., iteration will
+      resume where it left off previously.
+    Example
+      for p in primes list if p > 20 then break else p
+      for p in primes list if p > 20 then break else p
+    Text
+      Contrast this with most other classes with the @TO iterator@ method
+      installed, like, strings, for which a new @TT "Iterator"@ object is
+      created every time it is iterated upon, and so iteration starts over
+      from the beginning
+    Example
+      s = "Hello, world!"
+      for c in s list c
+      for c in s list c
   SeeAlso
     iterator
     next
@@ -42,7 +54,6 @@ doc ///
   Key
     iterator
     (iterator, Iterator)
-    (iterator, Sequence)
     (iterator, String)
     (iterator, VisibleList)
   Headline
