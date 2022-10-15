@@ -863,7 +863,7 @@ stanleyReisnerPresentation(List,List,ZZ):=Matrix=>opts->(V,F,r)->(
     --add variables under diagonal embedding to ring generators of M--
     GCR = join(apply(gens S,v->(ident)*matrix{{v}}),GCR);
     dg := apply(GCR,f->(degrees f)_1_0_0);
-    --create stanley reisner ring
+    --create Stanley Reisner ring
     phi := stanleyReisner(V,F,BaseRing=>S,InputType=>opts.InputType,Homogenize=>opts.Homogenize,VariableName=>opts.VariableName,CoefficientRing=>opts.CoefficientRing);
     T := source phi;
     I := ker phi;
@@ -2390,7 +2390,7 @@ doc ///
 	    R=QQ[x,y];
 	    phi=stanleyReisnerPresentation(V,F,1,Homogenize=>false,BaseRing=>R)
 	    H=source phi;
-	    scan(gens H, g->print phi(g))--see the expression of each generator in the stanley reisner ring
+	    scan(gens H, g->print phi(g))--see the expression of each generator in the Stanley Reisner ring
     	Text
 	    The kernel of the map is the same as the kernel of the map returned by @TO ringStructure@, but the generators
 	    are expressed differently.
