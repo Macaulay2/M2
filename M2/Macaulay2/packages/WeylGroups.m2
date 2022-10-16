@@ -3,8 +3,8 @@
 
 newPackage(
 	"WeylGroups",
-	Version => "0.5.2",
-	Date => "November 1, 2021",
+	Version => "0.5.3",
+	Date => "October 15, 2022",
 	Authors => {
 		{Name => "Baptiste Calmès",
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
@@ -18,26 +18,30 @@ newPackage(
 
 -- Put here the name of functions that should be visible to users
 export{
-"RootSystem", 
-"cartanMatrix", 
-"rootSystem", "rootSystemA", "rootSystemB", "rootSystemC", "rootSystemD", "rootSystemE", "rootSystemF4", "rootSystemG2", 
-"Weight", 
-"weight", 
-"Root", 
+"RootSystem",
+"cartanMatrix",
+"rootSystem", "rootSystemA", "rootSystemB", "rootSystemC", "rootSystemD", "rootSystemE", "rootSystemF4", "rootSystemG2",
+"Weight",
+"weight",
+"Root",
 "isPositiveRoot", "isRoot", "addRoots",
-"halfSumOfRoots", "reflect", "simpleRoot", "rootCoefficients", 
-"WeylGroupElement", 
-"reduce", "reducedDecomposition", "isReduced", "coxeterLength", "longestWeylGroupElement", "positiveRoots", "reflection", "scalarProduct", "eval", "isReflection", "whoseReflection", 
-"Parabolic", "WeylGroupLeftCoset", "WeylGroupRightCoset", "WeylGroupDoubleCoset", 
-"parabolic", "minimalRepresentative", "isMinimalRepresentative", 
-"DynkinDiagram", "DynkinType", 
-"dynkinDiagram", "connectedComponents", "endVertices", "dynkinType", "dynkinExponents",
-"poincareSeries",
-"HasseDiagram", "HasseGraph", 
+"numberOfPositiveRoots",
+"halfSumOfRoots", "reflect", "simpleRoot", "rootCoefficients",
+"WeylGroupElement",
+"reduce", "reducedDecomposition", "isReduced", "coxeterLength", "longestWeylGroupElement",
+"underBruhat", "aboveBruhat", "isLtBruhat", "intervalBruhat",
+"positiveRoots", "reflection", "scalarProduct", "eval", "isReflection", "whoseReflection",
+"listWeylGroupElements", "neutralWeylGroupElement",
+"Parabolic", "parabolic",
+"WeylGroupLeftCoset", "WeylGroupRightCoset", "WeylGroupDoubleCoset",
+"minimalRepresentative", "isMinimalRepresentative",
+"DynkinDiagram",
+"dynkinDiagram", "connectedComponents", "endVertices", "dynkinType",
+"DynkinType",
+"dynkinExponents",
+"HasseDiagram", "HasseGraph",
 "hasseDiagramToGraph", "hasseGraphToPicture", "storeHasseGraph", "loadHasseGraph",
-"underBruhat", "aboveBruhat",
-"isLtBruhat", "intervalBruhat",
-"numberOfPositiveRoots", "listWeylGroupElements", "neutralWeylGroupElement"
+"poincareSeries"
 }
 
 -- Variables that can be modified by the user
@@ -443,6 +447,9 @@ Weight + Weight := (p1,p2) -> new Weight from ((new Vector from p1)+(new Vector 
 
 --redefining difference of two weights
 Weight - Weight := (p1,p2) -> new Weight from ((new Vector from p1)-(new Vector from p2))
+
+--defining scalar times weight
+ZZ * Weight := (n,p) -> new Weight from {n*p#0}
 
 --defining opposite to a weight
 - Weight := (p) -> (-1)*p
@@ -1535,6 +1542,19 @@ doc ///
 			This package provides functions to compute in Weyl groups of root systems. In particular, it can compute intervals for the Bruhat order.
 		Text	
 			Here is a quick @HREF(currentLayout#"packages" | "WeylGroups/tutorial.html","tutorial")@ on how to use it.
+	Subnodes
+		RootSystem
+		Weight
+		Root
+		WeylGroupElement
+		Parabolic
+		WeylGroupLeftCoset
+		WeylGroupRightCoset
+		WeylGroupDoubleCoset
+		DynkinDiagram
+		DynkinType
+		HasseDiagram
+		HasseGraph
 ///
 
 doc ///
@@ -1542,6 +1562,18 @@ doc ///
 		RootSystem
 	Headline
 		the class of all root systems
+	Subnodes
+		rootSystem
+		cartanMatrix
+		(rank, RootSystem)
+		(rootSystem,DynkinType)
+		rootSystemA
+		rootSystemB
+		rootSystemC
+		rootSystemD
+		rootSystemE
+		(rootSystem,RootSystem,Parabolic)
+		(rootSystem,DynkinDiagram)
 ///
 
 doc ///
@@ -1829,6 +1861,12 @@ doc ///
 	Description
 		Text
 			a weight is represented by an element of ZZ^n, the basis consisting in the fundamental weights
+	Subnodes
+		weight
+		(weight,RootSystem,BasicList)
+		(weight,RootSystem,Vector)
+		isPositiveRoot
+		isRoot
 ///
 
 doc ///
@@ -1887,6 +1925,33 @@ TEST ///
 	p1=weight(R,{1,1,2,3});
 	p2=weight(R,{1,1,-2,3});
 	assert(p1-p2==weight(R,{0,0,4,0}))
+///
+
+doc ///
+	Key
+		(symbol *,ZZ,Weight)
+	Headline
+		the multiple of a weight
+	Usage
+		n * p
+	Inputs
+	        n: ZZ
+		p: Weight
+	Outputs
+		: Weight
+			n times {\tt p}
+	Description
+		Example
+			R=rootSystemA(4)
+			M=cartanMatrix R
+			p=weight(R,M_2)
+			-2*p
+///
+
+TEST ///
+	R=rootSystemA(3);
+	p=weight(R,{1,2,1});
+	assert(2*p==weight(R,{2,4,2}))
 ///
 
 doc ///
@@ -1980,6 +2045,16 @@ doc ///
 	Description
 		Text
 			a root is represented by the respective weight
+	Subnodes
+		addRoots
+		(addRoots, RootSystem, Root, Root)
+		(symbol *, ZZ, Root)
+		halfSumOfRoots
+		simpleRoot
+		(norm, RootSystem, Root)
+		rootCoefficients
+		positiveRoots
+		numberOfPositiveRoots
 ///
 
 doc ///
@@ -2729,6 +2804,21 @@ doc ///
 	Description
 		Text
 			{\tt w} is represented by the list consisting of a root system and {\tt w} applied to the half-sum of positive roots
+	Subnodes
+		reduce
+		reducedDecomposition
+		isReduced
+		coxeterLength
+		longestWeylGroupElement
+		reflection
+		isReflection
+		whoseReflection
+		listWeylGroupElements
+		neutralWeylGroupElement
+		underBruhat
+		aboveBruhat
+		isLtBruhat
+		intervalBruhat
 ///
 
 doc ///
@@ -4275,6 +4365,11 @@ doc ///
 	Description
 		Text
 			A Hasse graph is a Hasse diagram ready for display. It contains labels instead of Weyl group elements and reflections.
+	Subnodes
+		hasseDiagramToGraph
+		hasseGraphToPicture
+		storeHasseGraph
+		loadHasseGraph
 ///
 
 doc ///
@@ -4510,6 +4605,9 @@ doc ///
 	SeeAlso	
 		"storeHasseGraph(HasseGraph,String)"
 ///
+
+
+
 
 
 
