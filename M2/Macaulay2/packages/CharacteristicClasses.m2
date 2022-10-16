@@ -1522,7 +1522,7 @@ checkUserInput = (I,CompMethod) -> (
 
 
 -- The function prepare does two things to prepare the later computations. At first, it trims the ideal I, taking away
--- nonnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
+-- unnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
 -- step is done to avoid possible later conflicts in the choice of variables.
 prepare = I -> (
 
