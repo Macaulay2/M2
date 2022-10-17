@@ -414,7 +414,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
 --   INPUT : 'tvb',  a ToricVectorBundleKaneyama
 --  OUTPUT : '(A,C)',	 where 'A' is a hashTable giving the enumeration of the maximal cones with their rays and degree matrix, 
 --     	    	      	 and 'B' gives the transition matrices for the codim 1 pairs
--- COMMENT : This function gives the posibillity to have a quick overview on the main properties of a ToricVectorBundleKaneyama
+-- COMMENT : This function gives the possibility to have a quick overview on the main properties of a ToricVectorBundleKaneyama
 details = method()
 details ToricVectorBundle := tvb -> (
      if instance(tvb,ToricVectorBundleKaneyama) then (hashTable apply(pairs(tvb#"topConeTable"), p -> ( p#1 => (rays posHull p#0,tvb#"degreeTable"#(p#0)))),tvb#"baseChangeTable")
@@ -1334,7 +1334,7 @@ ToricVectorBundle == ToricVectorBundle := (tvb1,tvb2) -> tvb1 === tvb2
 -- PURPOSE : Computing the tensor product of two toric vector bundles over the same Fan
 --   INPUT : '(tvb1,tvb2)',  two ToricVectorBundle over the same Fan in the same description
 --  OUTPUT : 'tvb',  a ToricVectorBundle which is the tensor product in the same description
-tensor (ToricVectorBundle,ToricVectorBundle) := ToricVectorBundle => opts -> (tvb1,tvb2) -> (
+tensor(ToricVectorBundle, ToricVectorBundle) := ToricVectorBundle => {} >> opts -> (tvb1, tvb2) -> (
      -- Checking for input errors
      if tvb1#"ToricVariety" != tvb2#"ToricVariety" then error("Expected bundles over the same toric variety.");
      k1 := tvb1#"rank of the vector bundle";
@@ -1870,7 +1870,7 @@ intersectMatrices = (M,N) -> (
 
 -- PURPOSE : Building a Vector Bundle of rank 'k' on the Toric Variety given by the Fan 'F'
 --           with 0 degrees and identity transition matrices
---   INPUT : '(k,F)',  a strictly psoitive integer 'k' and a pure and full dimensional
+--   INPUT : '(k,F)',  a strictly positive integer 'k' and a pure and full dimensional
 --                     Fan 'F' 
 --  OUTPUT : The ToricVectorBundleKaneyama 'VB'
 makeVBKaneyama = method(TypicalValue => ToricVectorBundleKaneyama)
@@ -1916,7 +1916,7 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
 --     	    	       over QQ, one for each pair of top dimensional Cones intersecting in a common codim 1 face. 
 --  OUTPUT : The ToricVectorBundleKaneyama 'tvb' 
 -- COMMENT : Note that the top dimensional cones are numbered starting with 0 and the codim 1 intersections are 
---           labelled by pairs (i,j) denoting the the two top dim cones involved, with i<j and they are ordered
+--           labelled by pairs (i,j) denoting the two top dim cones involved, with i<j and they are ordered
 --     	     in lexicographic order. So the matrices in 'matrixList' will be assigned to the pairs (i,j) in that 
 --     	     order, where the matrix A assigned to (i,j) denotes the transition
 --     	    	 (e_i^1,...,e_i^k) = (e_j^1,...,e_j^k)* A
@@ -1932,7 +1932,7 @@ makeVBKaneyama (ZZ,Fan,List,List) := (k,F,degreelist,matrixlist) -> (
 
 -- PURPOSE : Building a Vector Bundle in the Klyachko description of rank 'k' on the Toric Variety given by the Fan 'F'
 --           with trivial Filtration for every ray
---   INPUT : '(k,F)',  a strictly psoitive integer 'k' and a pure and full dimensional Fan 'F' 
+--   INPUT : '(k,F)',  a strictly positive integer 'k' and a pure and full dimensional Fan 'F' 
 --  OUTPUT : The ToricVectorBundleKlyachko 'VB'
 makeVBKlyachko = method(TypicalValue => ToricVectorBundleKlyachko)
 makeVBKlyachko (ZZ,Fan) := (k,F) -> (

@@ -1,7 +1,7 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "monoids.m2"  -- for degreesMonoid
 needs "reals.m2" -- for inexact number
-needs "ofcm.m2"  -- for degreesMonoid
 
 -----------------------------------------------------------------------------
 -- Matrix
@@ -111,8 +111,8 @@ numeric(ZZ,Vector) := (prec,v) -> (
      error "expected vector of numbers"
      )
 
-- Vector := Vector => v -> vector (-v#0)
-Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}
+- Vector := Vector => v -> new class v from {-v#0}
+Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
 Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
@@ -147,6 +147,7 @@ new Module from Sequence := (Module,x) -> (
      	       symbol numgens => rawRank rM
      	       })) x
 
+-- TODO: deprecate these
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
 degreesRing Module := PolynomialRing => M -> degreesRing ring M
 degreeLength Module := M -> degreeLength ring M
@@ -182,8 +183,6 @@ isFreeModule Module := M -> not M.?relations and not M.?generators
 isSubmodule = method(TypicalValue => Boolean)
 isSubmodule Thing := x -> false
 isSubmodule Module := M -> not M.?relations
-
-degreeLength Module := M -> degreeLength ring M
 
 isQuotientModule = method(TypicalValue => Boolean)
 isQuotientModule Thing := x -> false
@@ -230,7 +229,7 @@ describe Module := M -> Describe (
      )
 toExternalString Module := M -> toString describe M
 
-Module == Module := (M,N) -> (
+Module == Module := (M,N) -> M === N or (
      -- this code might not be the quickest - Mike should check it
      ring M === ring N
      and degrees ambient M === degrees ambient N
@@ -242,6 +241,8 @@ Module == Module := (M,N) -> (
 	       -- else 
 		    (
 		    -- temporary
+		    M.relations === N.relations
+		    or
 		    isSubset(image M.relations, image N.relations)
 		    and
 		    isSubset(image N.relations, image M.relations)
@@ -297,7 +298,7 @@ degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees =
      if nd == 0 then toList (rk : {})
      else pack(nd,rawMultiDegree N.RawFreeModule))
 
-Module ^ ZZ := Module => (M,i) -> directSum (i:M)
+Module ^ ZZ := Module => (M,i) -> if i > 0 then directSum (i:M) else 0*M
 
 Ring ^ List := Module => (
      (R,degs) -> (
@@ -345,26 +346,6 @@ schreyerOrder Module := Matrix => (F) -> (
 
 schreyerOrder Matrix := Matrix => (m) -> map(target m, new Module from (ring m, rawSchreyerSource raw m), m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
-
-euler Module := (M) -> euler hilbertPolynomial M
-euler Ring := (R) -> euler R^1
-
-eulers Module := (M) -> (
-     h := hilbertPolynomial M;
-     apply(toList ( 0 .. dim h ), i -> euler diff(h,i) ))
-eulers Ring := (R) -> eulers R^1
-
-genera Module := (M) -> (
-     e := eulers M;
-     d := dim M - 1;
-     apply(#e, i -> (-1)^(i+d) * (e#i - 1)))
-genera Ring := (R) -> genera R^1
-
-genus Module := (M) -> (
-     e := euler M;
-     d := dim M - 1;
-     (-1)^d * (e - 1))
-genus Ring := (R) -> genus R^1
 
 possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
 

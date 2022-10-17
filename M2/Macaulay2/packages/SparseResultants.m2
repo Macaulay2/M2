@@ -15,7 +15,21 @@ newPackage(
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
 	Keywords => {"Commutative Algebra"},
         PackageExports => {"Resultants"},
-        DebuggingMode => false
+        DebuggingMode => false,
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "A package for computations with sparse resultants",
+	     "acceptance date" => "5 May 2021",
+	     "published article URI" => "https://msp.org/jsag/2021/11-1/p07.xhtml",
+	     "published article DOI" => "10.2140/jsag.2021.11.61",
+	     "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x07-SparseResultants.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SparseResultants.m2",
+	     "release at publication" => "4b0b826f08857b22cf17aebf9c56257ff44d8946",	    -- git commit number in hex
+	     "version at publication" => "1.1",
+	     "volume number" => "11",
+	     "volume URI" => "https://msp.org/jsag/2021/11-1/"
+	     }
 )
 
 export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",
@@ -48,7 +62,9 @@ toString SparseResultant := net SparseResultant := R -> (
     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
     else "-*An example of sparse resultant*-"
 );
+texMath SparseResultant := texMath @@ net;
 
+SparseResultant#{WebApp,AfterPrint} = SparseResultant#{WebApp,AfterNoPrint} = 
 SparseResultant#{Standard,AfterPrint} = SparseResultant#{Standard,AfterNoPrint} = (R) -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class R << " ("; 
     << "sparse " << (if R#"Unmixed" then "unmixed" else "mixed") << " resultant associated to " << R#"exponents"; 
@@ -282,7 +298,9 @@ toString SparseDiscriminant := net SparseDiscriminant := D -> (
     if hasAttribute(D,ReverseDictionary) then toString getAttribute(D,ReverseDictionary)
     else "-*An example of sparse discriminant*-"
 );
+texMath SparseDiscriminant := texMath @@ net;
 
+SparseDiscriminant#{WebApp,AfterPrint} = SparseDiscriminant#{WebApp,AfterNoPrint} = 
 SparseDiscriminant#{Standard,AfterPrint} = SparseDiscriminant#{Standard,AfterNoPrint} = (D) -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class D << " ("; 
     << "sparse discriminant associated to " << D#"exponents"; 
@@ -542,6 +560,7 @@ MultidimensionalMatrix = new Type of HashTable;
 
 MultidimensionalMatrix.synonym = "multidimensional matrix";
 
+MultidimensionalMatrix#{WebApp,AfterPrint} = MultidimensionalMatrix#{WebApp,AfterNoPrint} = 
 MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,AfterNoPrint} = M -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << dim M << "-dimensional matrix of shape " << printedShape M << " over " << ring M << endl;
 );
@@ -549,6 +568,7 @@ MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,
 MultidimensionalMatrix.Wrap = x -> wrap(printWidth,"-", net x);
 
 net MultidimensionalMatrix := M -> net entries M;
+texMath MultidimensionalMatrix := texMath @@ net;
 
 multidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);
 
@@ -1098,7 +1118,7 @@ document {
      SeeAlso => {sparseResultant}
 }
 
-undocumented {(describe, SparseResultant), (toString, SparseResultant), (net, SparseResultant), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Matrix)}
+undocumented {(describe, SparseResultant), (toString, SparseResultant), (net, SparseResultant), (texMath, SparseResultant), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Matrix)}
 
 document { 
     Key => {sparseDiscriminant,(sparseDiscriminant,Matrix),(sparseDiscriminant,RingElement),[sparseDiscriminant,CoefficientRing]}, 
@@ -1166,7 +1186,7 @@ document {
      SeeAlso => {sparseDiscriminant}
 }
 
-undocumented {(describe, SparseDiscriminant), (toString, SparseDiscriminant), (net, SparseDiscriminant)}
+undocumented {(describe, SparseDiscriminant), (toString, SparseDiscriminant), (net, SparseDiscriminant), (texMath, SparseDiscriminant)}
 
 document { 
     Key => {exponentsMatrix,(exponentsMatrix,Sequence),[exponentsMatrix,Unmixed]}, 
@@ -1405,7 +1425,7 @@ document {
      SeeAlso => {(symbol *,RingElement,MultidimensionalMatrix)}
 }
 
-undocumented {(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ),(sub,MultidimensionalMatrix,Ring),
+undocumented {(texMath,MultidimensionalMatrix),(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ),(sub,MultidimensionalMatrix,Ring),
               (matrix,MultidimensionalMatrix),(multidimensionalMatrix,Matrix)}
 
 document { 
@@ -1640,7 +1660,7 @@ document {
 -- Tests -- 
 
 TEST ///
- -- p. 318 Cox-Little-Shea
+ -- p. 318 Cox-Little-O'Shea
 M = matrix {{0,1,0,1},{0,0,1,1}};
 R := QQ[a_0..a_3,b_0..b_3,c_0..c_3][s,t];
 f = a_0 + a_1*s + a_2*t + a_3*s*t;

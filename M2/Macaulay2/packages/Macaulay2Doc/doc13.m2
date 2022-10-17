@@ -96,6 +96,18 @@ document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)
 	  }
      }
 
+document { Key => {uniquePermutations, (uniquePermutations, ZZ), (uniquePermutations, VisibleList)},
+     Headline => "produce all unique permutations of a list",
+     Usage => "uniquePermutations x",
+     Inputs => { "x" => { ofClass {VisibleList, ZZ} } },
+     Outputs => { { "a list of all distinct permutations of the visible list ", TT "x", ", or, if ", TT "x", " is an integer, of the list of
+	       integers from 0 through ", TT "n-1"
+	       } },
+     EXAMPLE {
+	  "uniquePermutations {a,b,a,b}",
+	  }
+     }
+
 document { Key => tutorial,
      Headline => "convert documentation from tutorial format",
      Usage => "tutorial x",
@@ -235,7 +247,7 @@ document { Key => NumberedVerticalList,
 
 document { Key => {LowerBound,(symbol SPACE,CoherentSheaf,LowerBound),(symbol SPACE,SheafOfRings,LowerBound)},
      Headline => "the class of lower bound objects",
-     "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condititon
+     "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condition
      that some other integer, such as the index in a direct sum, should be at least as large.",
      EXAMPLE {
 	  "LowerBound {4}",

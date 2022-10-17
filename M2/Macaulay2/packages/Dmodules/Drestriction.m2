@@ -36,12 +36,8 @@ findExps := (w, k0, k1) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
--- Computes the derived restriction complex of D+n/I or (D_n)^r/N
+-- Computes the derived restriction complex of D_n/I or (D_n)^r/N
 -- with respect to the weight vector w
---
--- CAVEATS:
--- 1. Currently, the routines only work for cyclic modules since b-function
---     only works for ideals
 --     
 -- Computes the p-th derived restriction module of D_n/I or (D_n)^r/N 
 -- with respect to the weight vector w
@@ -294,15 +290,16 @@ Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
 
      d := #positions(w, i -> (i>0));
      MF := cokernel Fourier relations M; 
-     outputRequest := {HomologyModules};
-     restrictOut := (computeRestriction (MF, w, k-1, k+1,
-	       outputRequest, options))#HomologyModules#k;
-     
+     outputRequest := {HomologyModules, BFunction};
+     restriction := computeRestriction (MF, w, k-1, k+1,
+	 outputRequest, options);
+     restrictOut := restriction#HomologyModules#k;
+    
      resW := ring restrictOut;
      nrW := numgens resW;
      if nrW == 0 then Mout := restrictOut
      else Mout = FourierInverse restrictOut; 
-     
+     Mout.cache.BFunction = restriction#BFunction;
      Mout
      )     
 

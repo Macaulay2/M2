@@ -1,5 +1,12 @@
 --		Copyright 2018 by Daniel R. Grayson and Lily Silverstein
 
+undocumented {
+    symbol (,  symbol ),
+    symbol [,  symbol ],
+    symbol <|, symbol |>,
+    symbol {,  symbol },
+    }
+
 doc///
  Key
   "lists and sequences"
@@ -473,7 +480,7 @@ document {
      Key => BasicList,
      Headline => "the class of all basic lists",
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     "A basic list is a sequence of expressions indexed by a seequence of consecutive integers of the form
+     "A basic list is a sequence of expressions indexed by a sequence of consecutive integers of the form
      ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ".  The number ", TT "N", " is called the length of the list.",
      PARA{},
      "There are various types of basic lists, depending on the application, and they are displayed in different ways.
@@ -608,18 +615,33 @@ document {
      SeeAlso => {splice, (symbol..,ZZ,ZZ), "lists and sequences"}
      }
 
-document {
-     Key => {toSequence,(toSequence, BasicList),(toSequence, String)},
-     Headline => "convert to sequence",
-     TT "toSequence x", " -- yields the elements of a list or string ", TT "x", " as a sequence.",
-     PARA{},
-     "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
-     PARA{},
-     EXAMPLE {
-	  "toSequence {1,2,3}",
-	  ///toSequence "foo"///
-	  },
-     }
+doc ///
+  Key
+    toSequence
+    (toSequence, BasicList)
+    (toSequence, String)
+    (toSequence, Thing)
+  Headline
+    convert to sequence
+  Usage
+    toSequence x
+  Inputs
+    x:{BasicList, String}
+      or an instance of a class with the @TO iterator@ method installed
+  Outputs
+     :Sequence
+  Description
+    Text
+      @TT "toSequence x"@ yields the elements of a @TT "x"@ as a sequence.
+    Example
+      toSequence {1, 2, 3}
+      toSequence "foo"
+      toSequence iterator {1, 2, 3}
+    Text
+      If @TT "x"@ is already a sequence, then @TT "x"@ is returned.
+    Example
+      toSequence (1, 2, 3)
+///
 
 document {
      Key => sequence,

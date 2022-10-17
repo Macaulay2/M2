@@ -28,6 +28,7 @@
   #include <gmp.h>
   #endif
 
+  #define MPFR_USE_NO_MACRO
   #include <mpfr.h>
   #include <mpfi.h>
 

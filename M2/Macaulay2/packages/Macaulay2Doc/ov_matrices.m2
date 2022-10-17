@@ -261,7 +261,7 @@ document {
 	    },
        "From the definition above of ", TT "ff", " and ", TT "gg", 
        " we see that ", TO "!=", " will return a value of ", TO "true", 
-       " if the degrees attached the the matrices are different, 
+       " if the degrees attached to the matrices are different, 
        even if the entries are the same.", 
 
      SUBSECTION "**",
@@ -347,7 +347,7 @@ document {
 
 document {
      Key => "determinants and minors",
-     "The command ", TO "det", " can be used to compute the determinant of 
+     "The command ", TO2(determinant, "det"), " can be used to compute the determinant of
      a square matrix.",
      EXAMPLE {
 	  "R = ZZ[a..d];",

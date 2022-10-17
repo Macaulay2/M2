@@ -186,3 +186,36 @@ document {
 	  },
      SeeAlso => {(select,ZZ,BasicList,Function), partition, positions}
      }
+
+doc ///
+  Key
+    (select, Thing, Function)
+  Headline
+    select elements from an object with an iterator
+  Usage
+    select(x, f)
+  Inputs
+    x:Thing -- an instance of a class with the @TO iterator@ method installed
+    f:Function -- returning either @TO true@ or @TO false@
+  Outputs
+    :Iterator
+  Description
+    Text
+      Suppose @TT "x"@ is an instance of a class with the @TO iterator@ method
+      installed, e.g., a string, and suppose @TT "iter"@ is the output of
+      @TT "iterator x"@.  Then a new @TO Iterator@ object is returned
+      whose @TO next@ method returns the next output of @TT "next iter"@
+      for which @TT "f next iter" @ is true, unless @TT "next iter"@ returns
+      @TO StopIteration@, in which case this new iterator does the same.
+    Example
+      selectiter = select("foo", i -> i == "o")
+      next selectiter
+      next selectiter
+      next selectiter
+  SeeAlso
+    iterator
+    Iterator
+    next
+    StopIteration
+    (apply, Thing, Function)
+///

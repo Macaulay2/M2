@@ -50,7 +50,7 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 -- [functionality v2] DGModuleMap
 -- [functionality v2] torDelta - is this possible?  Would be great.
 -- [functionality v2] Golod/Levin/Avramov index? (see paper of Liana)
--- [functionality v2] Matric Massey products? (see Gulliksen-Levin)
+-- [functionality v2] Matrix Massey products? (see Gulliksen-Levin)
 -- [functionality v2] Computing Betti numbers using Massey products? (Ref?)
 
 -- Not sure if the below are possible
@@ -1043,7 +1043,7 @@ masseyTripleProductOnCycles(DGAlgebra, RingElement, RingElement, RingElement) :=
 -- lift13*z4 + lift12*lift34 + z1*lift24
 
 -- Furthermore, according to O'Niell's paper, the two Massey
--- operations must vanish *simulaneously*.  That is, one must
+-- operations must vanish *simultaneously*.  That is, one must
 -- trivialize the Massey operations defining lift13 and lift24 with
 -- the same lifts lift12, lift23 and lift34.  to check that they
 -- simultaneously vanish, one must perform a calculation similar to
@@ -1082,7 +1082,7 @@ masseyTripleProduct(DGAlgebra, ZZ, ZZ, ZZ) := (A,l,m,n) -> (
    basisHl := flatten entries basis(l,H);
    basisHm := flatten entries basis(m,H);
    basisHn := flatten entries basis(n,H);
-   domainBasis := (basisHl ** basisHm ** basisHn) / flatten;
+   domainBasis := (basisHl ** basisHm ** basisHn) / splice;
    codomainBasis := basis(l+m+n+1,H);
    masseyProducts := matrix {apply(domainBasis, d -> masseyTripleProduct(A,d#0,d#1,d#2))};
    sub(last coefficients(masseyProducts,Monomials=>codomainBasis), coefficientRing A.ring)
@@ -1859,7 +1859,7 @@ doc ///
     acyclicClosure
     (acyclicClosure,DGAlgebra)
   Headline
-    Compute theae acyclic closure of a DGAlgebra.
+    Compute the acyclic closure of a DGAlgebra.
   Usage
     B = acyclicClosure(A)
   Inputs

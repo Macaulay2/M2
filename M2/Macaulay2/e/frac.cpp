@@ -9,6 +9,7 @@
 #include "gbring.hpp"
 #include "relem.hpp"
 #include "polyring.hpp"
+#include "exceptions.hpp"
 
 #define FRAC_VAL(f) (reinterpret_cast<frac_elem *>((f).poly_val))
 #define FRAC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
@@ -534,8 +535,7 @@ ring_elem FractionField::power(const ring_elem a, int n) const
     {
       if (R_->is_zero(f->numer))
         {
-          ERROR("attempt to divide by zero");
-          return zero();
+          throw exc::division_by_zero_error();
         }
       top = R_->power(f->denom, -n);
       bottom = R_->power(f->numer, -n);
@@ -560,8 +560,7 @@ ring_elem FractionField::power(const ring_elem a, mpz_srcptr n) const
     {
       if (R_->is_zero(f->numer))
         {
-          ERROR("attempt to divide by zero");
-          return zero();
+          throw exc::division_by_zero_error();
         }
       mpz_t abs_n;
       mpz_init(abs_n);
@@ -619,7 +618,7 @@ ring_elem FractionField::eval(const RingMap *map,
   ring_elem bottom = R_->eval(map, f->denom, first_var);
   if (S->is_zero(bottom))
     {
-      if (not error()) ERROR("division by zero!");
+      throw exc::division_by_zero_error();
       S->remove(bottom);
       top = S->from_long(0);
       bottom = S->from_long(1);

@@ -321,14 +321,14 @@ doc ///
    Description
     Text
      Correspondence Scrolls generalize rational normal scrolls and K3 Carpets, among other
-     familiar constuctions.
+     familiar constructions.
      Suppose that Z is a subscheme of a product of projective spaces
      Z \subset P^{a_0} x .. x P^{a_{n-1}}
      The Correspondence Scroll C(Z;b), where b = (b_0,..,b_{n-1}) is the subscheme of
      P^{N-1} consisting set theoretically of the planes spanned by the points of the 
      Segre-Veronese embedding corresponding to Z.
      
-     More generally, we treat the case of a multi-homogneous subscheme
+     More generally, we treat the case of a multi-homogeneous subscheme
      Z' \subset A^{a_0-1} x .. x A^{a_{n-1}-1}.
 ///
 

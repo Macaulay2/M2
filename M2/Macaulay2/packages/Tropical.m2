@@ -359,7 +359,7 @@ findMultiplicity=(M,I)->(
     K:=ideal(leadTerm(1,J));
     --you saturate since you don't want the components outside the torus
     initialIdeal:= saturate(sub(K,S), product gens S);
-    --this is the the basis of the lattice associated to the toric ideal we are going to compute
+    --this is the basis of the lattice associated to the toric ideal we are going to compute
 --    Basis:= (maxCol( generators kernel transpose M))_0;
       toricIdeal:= ideal apply(entries transpose gens kernel transpose M, u->(
 	      mon1:=1_R;
@@ -500,7 +500,7 @@ tropicalVariety (Ideal) := o -> (I) ->(
 
 --auxiliary function to quotient out the lineality space (1,1,...1) introduced by the homogenisation
 --input= matrix whose columns are either the rays or the generators of the lineality space of a fan
---output= matrix whose columns are either the rays or the generators of the linelity space of the fan quotiented by (1,...,1)
+--output= matrix whose columns are either the rays or the generators of the lineality space of the fan quotiented by (1,...,1)
 dehomogenise=(M) -> (
 	vectorList:= entries transpose M;
 	dehomog:= new List;
@@ -757,9 +757,9 @@ isSimplicial TropicalCycle:= Boolean => T->( isSimplicial(fan(T)))
 --------------------
 
 
--- BergmanconeC returns the matrix of of generators of the cones
--- corresponding to the chain of flats C it does not check whether C
--- is a chain of flat or not 
+-- BergmanconeC returns the matrix of generators of the cones
+-- corresponding to the chain of flats C. It does not check whether C
+-- is a chain of flats or not.
 
 BergmanconeC  = (M, C) -> (
     groundSetM:=#M.groundSet;
@@ -832,7 +832,7 @@ doc ///
 	       {HREF("https://math.berkeley.edu/~yelena/", "Yelena Mandelshtam")},
 	       {HREF("https://alessioborzi.github.io/", "Alessio Borzì")},
 	       {HREF("https://www.linkedin.com/in/timothyxu/", "Timothy Xu")},
-	       {HREF{"publish.uwo.ca/~aashra9/","Ahmed Umer Ashraf"}}
+	       {HREF{"https://publish.uwo.ca/~aashra9/","Ahmed Umer Ashraf"}}
     	     }@
 ///
 
@@ -841,6 +841,7 @@ doc ///
 	Key
 		visualizeHypersurface
 		(visualizeHypersurface,RingElement)
+		Valuation
 	Headline
 		visualize the tropical hypersurface of the given polynomial
 	Usage
@@ -860,7 +861,7 @@ doc ///
 		tropical hypersurface given an input polynomial. The input
 		should be entered as a homogeneous polynomial. Running
 		this method opens an image in a new browser window. The
-		coefficients can be intereted as p-adic coefficients or as
+		coefficients can be interpreted as p-adic coefficients or as
 		polynomials via the option @TO Valuation@. Examples are
 		commented out because they open a new browser window.
 	    Example
@@ -1258,7 +1259,7 @@ doc///
     Key
 	(fan,TropicalCycle)
     Headline
-	    outputs the fan assocated to the tropical cycle
+	    outputs the fan associated to the tropical cycle
     Usage
     	fan(T)
     Inputs
@@ -1266,7 +1267,7 @@ doc///
 
     Outputs
 	F:Fan
-	    the fan associated to the  tropical cycle T
+	    the fan associated to the tropical cycle T
 
     Description
 		Text

@@ -685,7 +685,7 @@ isNormal(Ring) := Boolean => (R) -> (
      )
 
 --------------------------------------------------------------------
--- MES TODO: don't require homogeneeous!!
+-- MES TODO: don't require homogeneous!!
 conductor = method()
 conductor RingMap := Ideal => (F) -> (
      --Input:  A ring map where the target is finitely generated as a 
@@ -1102,9 +1102,6 @@ makeS2 (S/intersect(ideal"a,b", ideal"b,c",ideal"c,a"))
 ///
 *-
 
---------------------------------------------------------------------
--- This is used in some examples.  Move to the engine?
-content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
 --------------------------------------------------------------------
 TOOSLOW = method()
 TOOSLOW String := (str) -> null
@@ -3508,7 +3505,7 @@ elapsedTime assert(gens(If*Ig) % integralClosure(Ifg, Verbosity => 4) == 0)
 elapsedTime integralClosure Ifg
 
 
--- MES: this is me playing around tryiing to find better fractions, cvan be removed.
+-- MES: this is me playing around trying to find better fractions, can be removed.
 use ring ideal R'
 contract(w_(2,0), gens ideal R')
 ideal R'

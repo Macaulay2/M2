@@ -248,8 +248,6 @@ loadVTree(String) := filename -> (
 	  }
      )
 
-toString(Option) := o -> (toString o#0 | "=>" | toString o#1);
-
 search4ABigGuy := (V, I, pNODE) -> (
      dad := V#tempN#pNODE;
      grandpa := dad#parentNODE;
@@ -540,7 +538,7 @@ homGBparam := (I, w) -> (
      -- Do some sanity checking
      if dpairs === {} 
      then error "expected a Weyl algebra";
-     if any(dpairs, v -> class v =!= Option)
+     if any(dpairs, v -> class v =!= List)
      then error "expected non-homogenized Weyl algebra";
      if #w =!= numgens W
      then error ("expected weight vector of length " | numgens W);
@@ -1046,7 +1044,19 @@ paramGB = I -> (
     );
 
 
-
+TEST ///
+x = symbol x; Dx = symbol Dx; 
+y = symbol y; Dy = symbol Dy; 
+a = symbol a; b = symbol b; c = symbol c; d = symbol d; 
+A =  (QQ [a,b,c,d]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+Dtrace 1
+pInfo(1, "testing paramBpoly...")
+bf = paramBpoly(
+     a*x^2,
+     "quadratic2" 
+     )
+assert(listForm value first bf == {({2},1/1), ({1},3/2), ({0},1/2)})
+///
 
 
 

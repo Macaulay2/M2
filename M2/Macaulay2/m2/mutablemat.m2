@@ -227,9 +227,16 @@ solve(Matrix,Matrix) := opts -> (A,b) -> (
      if ultimate(coefficientRing, ring A) === ZZ then (
          return (b // A);
         );
-     matrix solve(mutableMatrix(A,Dense=>true),
+     ans := solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
-		  opts))
+		  opts);
+     if ans === null then null else matrix ans
+     )
+
+solve(Matrix,Vector) := opts -> (A,b) -> (
+    ans := solve(A,b#0,opts);
+    if ans === null then null else vector ans
+    )
 
 eigenvalues = method(Options => {Hermitian => false})
 eigenvalues(MutableMatrix) := o -> (A) -> (
@@ -258,7 +265,7 @@ eigenvectors(Matrix) := o -> (A) -> (
      (e,v) := eigenvectors(mutableMatrix(numeric A,Dense=>true),o);
      (e, matrix v))
 
-SVD = method(Options=>{DivideConquer=>false})
+SVD = method(Options=>{DivideConquer=>true})
 SVD MutableMatrix := o -> A -> (
      k := ring A;
      if not instance(k,InexactField) then error "SVD requires matrices over RR or CC";
@@ -296,6 +303,7 @@ rank MutableMatrix := (M) -> (
       rank matrix M
     )
 
+determinant = method(Options => { Strategy => null })
 determinant MutableMatrix := opts -> (M) -> (
     if numRows M =!= numColumns M then error "expected a square matrix";
     if isField ring M then

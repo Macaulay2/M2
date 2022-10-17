@@ -17,7 +17,7 @@ doc ///
   	    the pair $(S,B)$.
         Text	  
   	    @UL {
-    		{"The variety ", EM "X", " is a good categorial ",
+    		{"The variety ", EM "X", " is a good categorical ",
     		 "quotient of Spec(", EM "S", ") -  V(", EM "B",
 		 ") by a suitable group action."},
                 {"The category of coherent sheaves on ", EM "X", " is
@@ -77,7 +77,7 @@ doc ///
 	    The total coordinate ring, which is also known as the Cox ring, of
   	    a normal toric variety is a polynomial ring in which the variables
   	    correspond to the rays in the fan.  The map from the group of
-  	    torus-invarient Weil divisors to the class group endows this ring
+  	    torus-invariant Weil divisors to the class group endows this ring
   	    with a grading by the @TO2(classGroup,"class group")@.  For more
   	    information, see Subsection 5.2 in Cox-Little-Schenck's 
 	    {\em Toric Varieties}.
@@ -339,6 +339,7 @@ doc ///
     Key 
         (cotangentSheaf, NormalToricVariety)
 	(cotangentSheaf, ZZ, NormalToricVariety)
+	(cotangentSheaf, List, NormalToricVariety)
     Headline
         make the sheaf of Zariski 1-forms
     Usage 

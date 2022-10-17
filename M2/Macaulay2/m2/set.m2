@@ -80,11 +80,13 @@ product Set := s -> product toList s
 
 unique = method(Dispatch => Thing, TypicalValue => List)
 unique Sequence := x -> unique toList x
-unique List := x -> (
+unique VisibleList := x -> (
      -- old faster way: keys set x
      -- new way preserves order:
      seen := new MutableHashTable;
      select(x, i -> if seen#?i then false else seen#i = true))
+
+repeats = L -> #L - #unique L
 
 -- we've been waiting to do this:
 binaryOperators = unique binaryOperators
@@ -119,14 +121,23 @@ permutations = method()
 permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten apply(#x, i -> apply(permutations drop(x,{i,i}), t -> prepend(x#i,t)))
 permutations ZZ := List => n -> permutations toList (0 .. n-1)
 
+uniquePermutations = method()
+uniquePermutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else (
+    l := new MutableHashTable;
+    flatten apply(#x,i -> if l#?(x#i) then {} else (
+            l#(x#i)=1;
+            apply(uniquePermutations drop(x,{i,i}), t -> prepend(x#i,t)))
+    ))
+uniquePermutations ZZ := permutations
+
 partition = method()
-partition(Function,VirtualTally) := (f,s) -> partition(f,s,{})
-partition(Function,VirtualTally,VisibleList) := (f,s,i) -> (
+partition(Function,VirtualTally) := HashTable => (f,s) -> partition(f,s,{})
+partition(Function,VirtualTally,VisibleList) := HashTable => (f,s,i) -> (
      p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
      scanPairs(s, (x,n) -> ( y := f x; if p#?y then if p#y#?x then p#y#x = p#y#x + n else p#y#x = n else (p#y = new MutableHashTable)#x = n; ));
      applyValues(new HashTable from p, px -> new class s from px))
-partition(Function,VisibleList) := (f,s) -> partition(f,s,{})
-partition(Function,VisibleList,VisibleList) := (f,s,i) -> (
+partition(Function,VisibleList) := HashTable => (f,s) -> partition(f,s,{})
+partition(Function,VisibleList,VisibleList) := HashTable => (f,s,i) -> (
      p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
      scan(s, x -> ( y := f x; if p#?y then (p#y)#(#p#y) = x else p#y = new MutableHashTable from {(0,x)}));
      p = pairs p;

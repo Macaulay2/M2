@@ -2467,7 +2467,7 @@ void gbA::do_computation()
                         hilb_comp::coeff_of(hf_diff, this_degree);
                     if (error())
                       {
-                        // The previous line can give an error, which measn that
+                        // The previous line can give an error, which means that
                         // the Hilbert
                         // function declared was actually incorrect.
                         set_status(COMP_ERROR);

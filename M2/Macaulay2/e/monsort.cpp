@@ -45,7 +45,7 @@ class MSorter
                    long len0)
   {
     // monoms0 is an array 0..len0-1 of monomials
-    // indices0 is an array 0..len0-1, starts at the identity permutatation
+    // indices0 is an array 0..len0-1, starts at the identity permutation
     // monoms0 is not modified.  Only the permutation to place the
     // elements in descending monomial order is modified.
     MSorter S(M0, monoms0, indices0, len0);

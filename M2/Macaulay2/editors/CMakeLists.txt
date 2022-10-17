@@ -3,6 +3,7 @@
 ## and syntax highlighting engines as well as the M2-mode package for Emacs.
 ## - M2-editors generates grammar files
 ## - M2-emacs   generates the M2-mode package for Emacs
+## - M2-highlightjs   generates syntax highlighting library for javascript
 
 # TODO: generate vim grammar
 # TODO: generate textmate grammar
@@ -15,6 +16,7 @@ set(M2_ARGS --script)
 ## To add to the M2-editors target, add grammar filenames here and in .gitignore.
 set(GRAMMAR_FILES
   atom/macaulay2.cson
+  highlightjs/macaulay2.js
   prism/macaulay2.js
   pygments/macaulay2.py
 #  rouge/macaulay2.rb
@@ -58,3 +60,24 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
   DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)
+
+################################################################################
+## Generating highlight.js for syntax highlighting in the html documentation
+
+if(NOT NPM)
+  message(WARNING "npm is missing; html docs will not have syntax highlighting")
+  file(TOUCH highlightjs/highlight.js)
+  return()
+endif()
+
+set(HIGHLIGHTJS_DIR ${CMAKE_CURRENT_BINARY_DIR}/highlightjs)
+file(MAKE_DIRECTORY HIGHLIGHTJS_DIR)
+file(COPY highlightjs/ DESTINATION ${HIGHLIGHTJS_DIR}
+  FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
+
+add_custom_target(M2-highlightjs ALL DEPENDS highlightjs/highlight.js)
+add_custom_command(OUTPUT highlightjs/highlight.js
+  COMMENT "Generating highlight.js syntax file"
+  COMMAND ${NPM} install && ${NPM} run build
+  WORKING_DIRECTORY ${HIGHLIGHTJS_DIR}
+  DEPENDS highlightjs/macaulay2.js)

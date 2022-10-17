@@ -1,0 +1,90 @@
+-- -*- M2-comint -*- hash: -507498815
+
+i1 : toPython 2
+
+o1 = 2
+
+o1 : PythonObject of class int
+
+i2 : toPython (1/2)
+
+o2 = 0.5
+
+o2 : PythonObject of class float
+
+i3 : toPython pi
+
+o3 = 3.141592653589793
+
+o3 : PythonObject of class float
+
+i4 : toPython ii
+
+o4 = 1j
+
+o4 : PythonObject of class complex
+
+i5 : toPython "foo"
+
+o5 = foo
+
+o5 : PythonObject of class str
+
+i6 : toPython {1, 2, 3, 4}
+
+o6 = [1, 2, 3, 4]
+
+o6 : PythonObject of class list
+
+i7 : toPython (1, 2, 3, 4)
+
+o7 = (1, 2, 3, 4)
+
+o7 : PythonObject of class tuple
+
+i8 : toPython hashTable {"foo" => "bar"}
+
+o8 = {'foo': 'bar'}
+
+o8 : PythonObject of class dict
+
+i9 : toPython set {1, 2, 3, 4}
+
+o9 = {1, 2, 3, 4}
+
+o9 : PythonObject of class set
+
+i10 : toPython true
+
+o10 = True
+
+o10 : PythonObject of class bool
+
+i11 : toPython null
+
+o11 = None
+
+o11 : PythonObject of class NoneType
+
+i12 : m2sqrt = x -> (
+          print "calling Macaulay2 code from Python!";
+          sqrt x)
+
+o12 = m2sqrt
+
+o12 : FunctionClosure
+
+i13 : pysqrt = toPython m2sqrt
+
+o13 = <built-in method m2sqrt of PyCapsule object at 0x7f70199e7c00>
+
+o13 : PythonObject of class builtin_function_or_method
+
+i14 : pysqrt 2
+calling Macaulay2 code from Python!
+
+o14 = 1.4142135623730951
+
+o14 : PythonObject of class float
+
+i15 : 

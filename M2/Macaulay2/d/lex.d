@@ -96,8 +96,9 @@ recognize(file:PosFile):(null or Word) := (
 	  );
      when last
      is null do (
-	  printErrorMessage(position(file),"invalid character" );
+	  p := position(file);
 	  getc(file);
+	  printErrorMessage(p,"invalid character" );
 	  (null or Word)(NULL))
      is word:Word do ( 
 	  for length(word.name) do getc(file); 
@@ -355,7 +356,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       else while isdigit(peek(file)) do
 		    tokenbuf << char(getc(file));
 	       c := peek(file);
-	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e'))
+	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')) || c == int('E')
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
@@ -376,9 +377,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			      )
 			 );
 	       	    c = peek(file);
-		    if c == int('e') then (
+		    if c == int('e') || c == int('E') then (
 			 tokenbuf << char(getc(file));
-			 if ( peek(file) == int('-') && isdigit(peek(file,1)) || isdigit(peek(file)) )
+			 if ( peek(file) == int('-') && isdigit(peek(file,1)) ||
+			      peek(file) == int('+') && isdigit(peek(file,1)) ||
+			      isdigit(peek(file)) )
 			 then (
 			      tokenbuf << char(getc(file));
 			      while isdigit(peek(file)) do tokenbuf << char(getc(file));
@@ -410,6 +413,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    return errorToken
 		    )
 	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	  else if ch == 226 then (
+	       tokenbuf << char(getc(file));
+	       tokenbuf << char(getc(file));
+	       tokenbuf << char(getc(file));
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else (
 	       when recognize(file)
 	       is null do (

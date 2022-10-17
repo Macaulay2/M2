@@ -173,7 +173,7 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 --  -Symmetry group for polytopes
 
 
--- Definind the new type PolyhedralObject
+-- Defining the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
 globalAssignment PolyhedralObject
 
@@ -765,7 +765,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      d := P#"dimension of polyhedron";
      inserted := false;
      -- Polyhedra in the list 'GP' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GP into two seperate lists
+     -- the cones of higher or equal dimension. For this we divide GP into two separate lists
      GP = partition(Pf -> (dim Pf) >= d,GP);
      GP = {if GP#?true then GP#true else {},if GP#?false then GP#false else {}};
      if all(GP#0, Pf ->  (
@@ -839,7 +839,7 @@ addCone (Cone,Fan) := (C,F) -> (
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
      -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GC into two seperate lists
+     -- the cones of higher or equal dimension. For this we divide GC into two separate lists
      GC = partition(Cf -> (dim Cf) >= d,GC);
      GC = {if GC#?true then GC#true else {},if GC#?false then GC#false else {}};
      if all(GC#0, Cf ->  (
@@ -936,7 +936,7 @@ ambDim PolyhedralObject := X -> X#"ambient dimension"
 
 
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
+-- PURPOSE : Giving the k dimensional Cones of the Fan
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)
@@ -948,7 +948,7 @@ cones(ZZ,Fan) := (k,F) -> (
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 
 
--- PURPOSE : Giving the k dimensionial Polyhedra of the Polyhedral Complex
+-- PURPOSE : Giving the k dimensional Polyhedra of the Polyhedral Complex
 --   INPUT : (k,PC)  where 'k' is a positive integer and PC is a PolyhedralComplex 
 --  OUTPUT : a List of Polyhedra
 polyhedra = method(TypicalValue => List)
@@ -1868,7 +1868,7 @@ latticePoints Polyhedron := P -> (
      if not P.cache.?latticePoints then (
 	  -- Checking for input errors
 	  if  not isCompact P then error("The polyhedron must be compact");
-	  -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+	  -- Recursive function that intersects the polyhedron with parallel hyperplanes in the axis direction
 	  -- in which P has its minimum extension
 	  latticePointsRec := P -> (
 	       -- Finding the direction with minimum extension of P
@@ -3044,7 +3044,7 @@ Cone + Cone := minkowskiSum
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
 --   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
 --     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
+--  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
      if k <= 0 then error("The factor must be strictly positiv");
@@ -3242,7 +3242,7 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
      convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
---   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
+--   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with lattice points of 'P' 
 --     	    	       many entries
 --  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
 cellDecompose = method(TypicalValue => List)
@@ -3405,14 +3405,14 @@ secondaryPolytope Polyhedron := P -> (
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
---   INPUT : 'I',  a homogeneous ideal with resect to some strictly psoitive grading
+--   INPUT : 'I',  a homogeneous ideal with resect to some strictly positive grading
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
-	  -- Generate the matrix 'M' that spans the space of the differeneces of the 
+	  -- Generate the matrix 'M' that spans the space of the differences of the 
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
@@ -3536,7 +3536,7 @@ stdSimplex ZZ := d -> (
 --     	     to the file. But keep in mind that this works only for such objects assigned to a Symbol! The session 
 -- 	     can be reovered by calling
 --     	     load F
--- 	     It is not neccessary to load Polyhedra before loading the saved session, because if not yet loaded it will
+-- 	     It is not necessary to load Polyhedra before loading the saved session, because if not yet loaded it will
 --     	     load Polyhedra. Also if PPDivisor was loaded when the session has been saved it will also be loaded.
 saveSession = method()
 saveSession String := F -> (
@@ -4942,7 +4942,7 @@ document {
 	  " Q = intersection (M,v,N,w)"
 	  },
      
-     PARA{}, "If we have another polyehdron or cone, we can also intersect them with the others.",
+     PARA{}, "If we have another polyhedron or cone, we can also intersect them with the others.",
      
      EXAMPLE {
 	  " HC = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}},matrix {{1},{1},{1},{1},{1},{1}})",
@@ -4965,7 +4965,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "fan", " is applied to a ", TO Cone, " it generates 
-     the ", TO Fan, " given by the the Cone and all of its faces. If applied to 
+     the ", TO Fan, " given by the Cone and all of its faces. If applied to 
      a ", TO List, " the list must only contain Cones and Fans in the same 
      ambient space. Then it adds the Cones in the List and the generating Cones 
      of the Fans in the List one by one to the Fan, checking each time if the 
@@ -5001,7 +5001,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "polyhedralComplex", " is applied to a ", TO Polyhedron, " it generates 
-     the ", TO PolyhedralComplex, " given by the the Polyhedron and all of its faces. If applied to 
+     the ", TO PolyhedralComplex, " given by the Polyhedron and all of its faces. If applied to 
      a ", TO List, " the list must only contain Polyhedra and PolyhedralComplexes in the same 
      ambient space. Then it adds the Polyhedra in the List and the generating Polyhedra 
      of the PolyhedralComplexes in the List one by one to the new PolyhedralComplex, checking each time if the 
@@ -5094,7 +5094,7 @@ document {
      of them. If one of the first two conditions fails, there will be an error and no PolyhedralComplex 
      will be returned. The pairs of incompatible polyhedra can be accessed with the 
      function ",TO incompPolyhedra,". If the last condition fails, then the Polyhedron is already in 
-     the PolyhedralComplex as a face of one of the poyhedra, so it does not have to be added. The conditions 
+     the PolyhedralComplex as a face of one of the polyhedra, so it does not have to be added. The conditions 
      are checked in this order.",
      
      PARA{}, "If ",TT "addPolyhedron"," is applied to a ",TO List," and a ",TO PolyhedralComplex,", then 

@@ -236,7 +236,7 @@ EXAMPLE lines ///
 
 document {
 	Key =>toricVariety,
-	Headline => "gives the torric variety associated to a set of ray generators",
+	Headline => "gives the toric variety associated to a set of ray generators",
 	Inputs => {{"M, a ", TO Matrix, "representing the toric variety"}},
 	Outputs =>{"the toric variety"},
 	Usage => "toricVariety(M)",

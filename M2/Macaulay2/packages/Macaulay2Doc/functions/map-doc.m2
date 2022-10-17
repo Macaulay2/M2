@@ -156,7 +156,7 @@ document {
      SeeAlso => inducedMap,
      Caveat => {
      	  "If ", TT "M", " or ", TT "N", " is not free,
-     	  then we don't check that the the result is a well defined homomorphism."
+     	  then we do not check that the result is a well defined homomorphism."
 	  }
      }
 
@@ -187,7 +187,7 @@ document {
      SeeAlso => inducedMap,
      Caveat => {
      	  "If ", TT "M", " or ", TT "N", " is not free,
-     	  then we don't check that the the result is a well defined homomorphism."
+     	  then we do not check that the result is a well defined homomorphism."
 	  }
      }
 document {
@@ -291,7 +291,7 @@ document {
      output matrix ", TT "h: h_(i,j) = f", ", for every ", TT "(i,j) => f", 
      " in the list ", TT "v", ".",
      PARA{},
-     "The ring elements appearing in ", TT "v", " should be be in ", 
+     "The ring elements appearing in ", TT "v", " should be in ", 
      TT "R", ", or in a base
      ring of ", TT "R", ".",
      PARA{},
@@ -328,7 +328,7 @@ document {
      "The list ", TT "v", " must be a doubly nested list of 
      ring elements, which are used to fill the matrix, row by row.",
      PARA{},
-     "The ring elements appearing in ", TT "v", " should be be in ", 
+     "The ring elements appearing in ", TT "v", " should be in ", 
      TT "R", ", or in a base
      ring of ", TT "R", ".",
      PARA{},

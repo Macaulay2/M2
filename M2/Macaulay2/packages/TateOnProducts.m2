@@ -198,7 +198,7 @@ coarseMultigradedRegularity = method(Options =>
                {Strategy =>"MinimalResolution"})
 
 -*coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     el := length F;
     r := degreeLength ring F;
     D := apply((min F..max F), i-> degrees F_i);
@@ -240,7 +240,7 @@ LL (ZZ,List) := (d,n) -> (
     )
 
 coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
     degsF := flatten apply(range,i -> degrees (F_i));
@@ -611,7 +611,7 @@ outsideBeilinsonRange(Matrix) :=  m -> (
      t:=#unique degrees E;
      n:=apply(unique degrees E,d-> (#select( degrees  E, e-> e==d)-1));
      d:=0;
-	  --source indices not in the Beilison window
+	  --source indices not in the Beilinson window
      sourcem := select(rank source m,i-> (d=degree (source m)_i;#select(#d,i->d_i<0 or d_i>n_i)>0));
      m_sourcem)
 
@@ -1467,14 +1467,6 @@ beilinson = method(Options=>{BundleType=>PrunedQuotient}) -- other options: Quot
      beilinson(E^{{-1,-1}})
      beilinson random(E^{{-1,0}}, E^{{-2,-1}})
 *-
-
--- The following function should be moved to the Macaulay2 Core.
-tensor(Matrix,Matrix) := opts -> (A,B) -> A ** B
-tensor List := opts -> (L) -> (
-    result := L#0;
-    for i from 1 to #L-1 do result = tensor(result,L#i,opts);
-    result
-    )
 
 -- The following functions are here to facilitate the construction
 -- of the beilinson functor.  In particular, they make sure that the
@@ -3485,7 +3477,7 @@ isIsomorphic(truncate(3, R0), truncate(3,dual dual R0))
 
 R1=prune HH^1 source AA#1#0
 degree R1, rank R1, ann R1
--- R1 is a skyscrapper sheaf at the the images of P and Q (indeed, P and Q map to the same point of P^1)
+-- R1 is a skyscrapper sheaf at the images of P and Q (indeed, P and Q map to the same point of P^1)
 --------------------------------
 
 
@@ -3646,7 +3638,7 @@ composedFunctions = () -> (
      --Text
      -- The additional entry h in the zero position of the cohomology matrix of uQ
      -- indicates that we can recover
-     -- the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+     -- the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
      -- in this specific case.
      --Example
       uQ.dd_(-1)
@@ -3664,7 +3656,7 @@ composedFunctions = () -> (
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      --Text
-     -- Hence both Lp and RMc are azyclic.
+     -- Hence both Lp and RMc are acyclic.
      --Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -3693,7 +3685,7 @@ composedFunctions = () -> (
       comT=cohomologyMatrix(T,low,high)
       assert(sub(comT',vars ring comT)==comT)
      --Text
-     -- Finally we illustate how shifting the Beilinson window works.
+     -- Finally we illustrate how shifting the Beilinson window works.
      --Example
       cohomologyMatrix(T,low,high)
       cohomologyMatrix(beilinsonWindow T,low, high)
@@ -3785,7 +3777,7 @@ betti M1,betti M
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
 isIsomorphic(M,M1')
--- we comclude: It works for various P=kerC.dd_p
+-- we conclude: It works for various P=kerC.dd_p
 
 
 RM=bgg M
@@ -4025,7 +4017,7 @@ doc ///
      Text
       The additional entry h in the zero position of the cohomology matrix of uQ
       indicates that we can recover
-      the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+      the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
       in this specific case.
      Example
       uQ.dd_(-1)
@@ -4043,7 +4035,7 @@ doc ///
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      Text
-      Hence both Lp and RMc are azyclic.
+      Hence both Lp and RMc are acyclic.
      Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -4123,9 +4115,9 @@ doc ///
     R = coarseMultigradedRegularity M
    Inputs
     M:Module
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     M:ChainComplex
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     Strategy => String
    Outputs
     R:List
@@ -4587,7 +4579,7 @@ doc ///
        where a is a multi-index, low<=a<=high in the partial order
        (thus the value is 0 when i is not in the range 0..sum n.)
        In case T is a Tate resolution corresponding to an object F in D^b(P^n), then
-       the values returned are the polyomials of the hypercohomology groups of twists of F, and
+       the values returned are the polynomials of the hypercohomology groups of twists of F, and
        the values can be nonzero in a wider range.
 
        In case the number of factors t is 2, the output of @ TO cohomologyMatrix @ is
@@ -5481,7 +5473,7 @@ doc ///
     apply the beilinson functor
   Usage
     M=beilinson F
-    phi=beilison psi
+    phi=beilinson psi
     C=beilinson T
   Inputs
     F: Module
@@ -5514,7 +5506,7 @@ doc ///
        free S-modules in case of the default option BundleType=>PrunedQuotient, or as submodules of free S-modules.
        The true Beilinson functor is obtained by the sheafication of resulting the complex.
 
-       The Beilinson monad of a coherent sheaf $\mathcal F$ is the the sheafication of
+       The Beilinson monad of a coherent sheaf $\mathcal F$ is the sheafication of
        beilinson( T($\mathcal F$)) of its Tate resolution T($\mathcal F$).
      Example
         (S,E) = productOfProjectiveSpaces {2,1}
@@ -5653,7 +5645,7 @@ doc ///
     value for the option BundleType in beilinson
   Description
      Text
-      The Beilinson bundlse U^a will be represented by subbundles.
+      The Beilinson bundles U^a will be represented by subbundles.
   SeeAlso
     beilinson
     BundleType

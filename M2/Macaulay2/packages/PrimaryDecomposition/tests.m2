@@ -308,7 +308,7 @@ TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E
 ///
 
 TEST /// -- [associatedPrimes, CodimensionLimit] test
-  importFrom_PrimaryDecomposition {"AssociatedPrimesOptions"}
+  importFrom_PrimaryDecomposition {"AssociatedPrimesContext"}
   R = QQ[x_0..x_5]
   exps = {6,7}
   supps = {ideal(R_0,R_1,R_2), ideal(R_0,R_3,R_4,R_5)}
@@ -318,13 +318,13 @@ TEST /// -- [associatedPrimes, CodimensionLimit] test
   elapsedTime AP = associatedPrimes(M, CodimensionLimit => 4) -- ~ 3 seconds
   -- elapsedTime associatedPrimes(M, CodimensionLimit => infinity) -- > 40 seconds (computing unnecessary Ext)
   assert(all(AP, P -> any(supps, Q -> Q == P)) and all(supps, P -> any(AP, Q -> Q == P)))
-  M.cache#(AssociatedPrimesOptions{}).CodimensionLimit = infinity
+  M.cache#(AssociatedPrimesContext{}).CodimensionLimit = infinity
   elapsedTime comps = primaryDecomposition M; -- ~ 4 seconds
   assert(intersect comps == 0 and all(comps, isPrimary_M))
 ///
 
 TEST /// -- Optimizing cases for associatedPrimes without computing res
-  importFrom_PrimaryDecomposition {"AssociatedPrimesOptions"}
+  importFrom_PrimaryDecomposition {"AssociatedPrimesContext"}
   R = QQ[x_1..x_5]
   I = intersect apply(10, i -> ideal apply(gens R, v -> v - random QQ)); -- 10 points in A^5
   M = comodule I;
@@ -335,7 +335,7 @@ TEST /// -- Optimizing cases for associatedPrimes without computing res
   I = intersect apply(10, i -> ideal apply(delete(first random gens R, gens R), v -> v - random QQ)); -- 10 lines in A^5
   M = comodule I;
   elapsedTime AP = associatedPrimes(M, CodimensionLimit => codim M) -- < 2 seconds
-  M.cache#(AssociatedPrimesOptions{}).CodimensionLimit = infinity
+  M.cache#(AssociatedPrimesContext{}).CodimensionLimit = infinity
   elapsedTime comps = primaryDecomposition M; -- ~ 3 seconds
   assert(intersect comps == 0 and all(comps, isPrimary_M))
 ///

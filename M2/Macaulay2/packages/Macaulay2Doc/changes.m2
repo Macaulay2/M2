@@ -6,6 +6,9 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.20",
+	  TO "changes, 1.19.1",
+	  TO "changes, 1.19",
 	  TO "changes, 1.18",
 	  TO "changes, 1.17",
 	  TO "changes, 1.16",
@@ -34,7 +37,149 @@ document {
      }
 
 document {
-     Key => "changes made for the next release"
+     Key => "changes made for the next release",
+     }
+
+document {
+     Key => "changes, 1.20",
+     UL {
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "CotangentSchubert::CotangentSchubert", ", a package by Paul Zinn-Justin for cotangent Schubert calculus, has been added." },
+		    LI { TO "OnlineLookup::OnlineLookup", ", a package by Paul Zinn-Justin for looking up mathematical information online, has been added." },
+		    LI { TO "MergeTeX::MergeTeX", ", a package by Paul Zinn-Justin for running Macaulay2 code and inserting the results into a LaTeX file, has been added." },
+		    LI { TO "Probability::Probability", ", a package by Doug Torrance for basic probability, has been added." },
+		    LI { TO "Isomorphism::Isomorphism", ", a package by David Eisenbud for probabilistic searching for isomorphisms between modules, has been added." },
+		    LI { star, " ", TO "SchurVeronese::SchurVeronese", ", a package by Juliette Bruce, Daniel Erman, Steve Goldstein and Jay Yang for examining data for Veronese embeddings of projective space, has been added and published." },
+		    LI { star, " ", TO "CodingTheory::CodingTheory", ", a package by Taylor Ball, Eduardo Camps, Henry Chimal-Dzul, Delio Jaramillo-Velez, Hiram H. Lopez, Nathan Nichols, Matthew Perkins, Ivan Soprunov, German Vera, and Gwyn Whieldon for coding theory, has been added and published." },
+		    }
+	       },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic and Shahrzad Zelenberg, for computing a Groebner basis using the classical Buchberger algorithm with multiple threads, has been published." },
+		    LI { star, " ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", a package by Giovanni Staglianò for multi-projective varieties, has been published." },
+		    }
+	       },
+	  LI { "improved packages:",
+               UL {
+       	    	    LI { "The package ", TO "GraphicalModelsMLE::GraphicalModelsMLE", 
+                	 " has been improved following many recommendations
+       	        	 through its certification process. Several
+       	        	 computations have been optimized. The names of several
+       	        	 procedures and options have been modified. " 
+                	 },
+  		    LI { "The package ", TO "Complexes::Complexes", 
+                	 " has been improved.  The documentation has been
+                	 enhanced, numerous minor bugs have been fixed, and
+                	 free resolutions have been implemented independent of
+                	 the current ", TO "ChainComplex", " class."
+                	 },
+  		    LI { "The package ", TO "HyperplaneArrangements::HyperplaneArrangements", 
+                	 " has been improved.  It includes several improvements
+                	 in the basic code, increased functionality with the
+                	 Matroids package, completely rewritten documentation,
+                	 numerous bug fixes, and better consistency with
+                	 Macaulay2 conventions."
+                	 },
+  		    LI { "The package ", TO "SimplicialComplexes::SimplicialComplexes", 
+                	 " has been improved.  It adds constructors for many
+                	 classic examples, implements a new data type for
+                	 simplicial maps, incorporates many improvements to the
+                	 methods, improves interoperability with ", 
+                	 TO "Polyhedra::Polyhedra", " and completely overhauls the
+                	 documentation. Changes that break backwards
+                	 compatibility include changing the output of faces and
+                	 facets from Matrix to List, changing the output type
+                	 of fVector from HashTable to List, and replacing ==
+                	 with === for SimplicialComplexes."
+                	 }
+	       	    }},
+ 	  LI { "functionality added:",
+	       UL {
+		    LI { "New functions ", TO "memoizeValues", " and ", TO "memoizeClear", " have been added for dealing with the values retained by functions created with memoize." },
+		    LI { "A new method ", TO "uniquePermutations", " has been added. Equivalent to ", M2CODE "unique @@ permutations", " except faster." },
+		    LI { "A number of unicode symbols have been added as synonyms, e.g., ℤ or ⊗." },
+		    LI { "New numeric functions ", TO "Beta", ", ", TO "Digamma", ", ", TO "inverseErf", ", ", TO "regularizedBeta", ", ", TO "inverseRegularizedBeta", ", ", TO "regularizedGamma", ", and ", TO "inverseRegularizedGamma", ", new numeric constant ", TO "CatalanConstant",
+			 ".  ", TO "Gamma", " now accepts two arguments, for the incomplete gamma function.  Numeric functions accept constants as arguments." },
+		    LI { TO "pack", ", ", TO "reverse", ", and ", TO "tally", " now support strings." },
+		    LI { TO "unique", " now supports all visible lists." },
+		    LI { "Syntax highlighting of Macaulay2 code in the HTML documentation has been added as a build-time option.  Use ", TO "M2CODE", " to indicate code to be highlighted." }
+		    }
+	       },
+	  LI { "functionality changed in a way that could break code:",
+	       UL {
+		    LI { "The update to SimplicialComplexes has several minor breaking changes, outlined above." }
+		    }
+	       }
+	  }}
+
+document {
+     Key => "changes, 1.19.1",
+     UL {
+          LI { "bugs fixed:",
+	       UL {
+		    LI { "repaired two broken links to packages in the changes documentation" },
+		    LI { "restored the 'Ways to use' and 'For the programmer' sections of the documentation provided by ", TO "help", " for a method function." }
+		    }
+	       }
+     	  }
+     }
+
+document {
+     Key => "changes, 1.19",
+     UL {
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "MonomialIntegerPrograms::MonomialIntegerPrograms", ", a package by Lily Silverstein and Jay White for using integer programming for fast computations with monomial ideals, has been added." },
+		    LI { TO "ThinSincereQuivers::ThinSincereQuivers", ", a package by Mary Barker and Patricio Gallardo for construction of flow polytopes and their associated quivers, has been added." },
+		    LI { TO "Python::Python", ", a package by Daniel R. Grayson and Doug Torrance for an interface to Python, has been added." },
+		    LI { TO "BettiCharacters::BettiCharacters", ", a package by Federico Galetto for finite group characters on free resolutions and graded modules, has been added." },
+		    LI { TO "Jets::Jets", ", a package by Federico Galetto and Nicholas Iammarino, for computing jets of various algebraic, geometric and combinatorial objects, has been added." },
+		    LI { TO "FunctionFieldDesingularization::FunctionFieldDesingularization", ", a package by Douglas A. Leonard for desingularization of function fields, has been added." },
+		    LI { TO "HomotopyLieAlgebra::HomotopyLieAlgebra", ", a package by David Eisenbud for homotopy Lie algebra, has been added." },
+		    LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by Luca Amata for t-spread ideals of a polynomial ring, has been added." },
+		    LI { TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been added." },
+            	    LI { TO "GroebnerStrata::GroebnerStrata", ", a package by Kristine Jones and Mike Stillman for working with Groebner families and subschemes of Hilbert schemes, has been added." },
+            	    LI { TO "QuaternaryQuartics::QuaternaryQuartics", ", a package by Kapustka, Kapustka, Ranestad, Schenck, Stillman and Yuan containing code and examples for their paper 'Quaternary Quartic Forms and Gorenstein Rings', has been added." },
+		    LI { TO "RealRoots::RealRoots", ", a package by Jordy Lopez, Kelly Maluccio, Frank Sottile, and Thomas Yahl for symbolically exploring, counting, and locating real solutions to polynomial systems, has been added." },
+		    LI { TO "K3Surfaces::K3Surfaces", ", a package by Michael Hoff and Giovanni Staglianò for explicit constructions of K3 surfaces, has been added." }
+		    }
+	       },
+ 	  LI { "improved packages:",
+	       UL {
+		    LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." },
+		    LI { "The package ", TO "MonodromySolver::MonodromySolver", " includes several new convenience functions for manipulating systems and creating seed pairs."},
+		    LI { "The package ", TO "Complexes::Complexes", " has been improved.  The documentation is complete, and all methods involving Yoneda Ext and connecting maps have been written.  This package will soon replace the chain complex code from the Core."}
+		    }
+	       },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "DecomposableSparseSystems::DecomposableSparseSystems", ", a package by 
+		       	 Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been published." 
+			 },
+		    LI { star, " ", TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been published." },
+		    LI { star, " ", TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been published." }     
+		    }
+	       },
+	  LI { "packages that have been renamed:",
+	       UL {
+		    LI { "The package ", TT "FastLinAlg", " has been renamed to ", TO "FastMinors::FastMinors", "." },
+		    LI { "The package ", TT "RandomRationalPoints", " has been renamed to ", TO "RandomPoints::RandomPoints", "." }			    
+		    }
+	       },
+ 	  LI { "functionality added:",
+	       UL {
+		    LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with the prefixes \"0b\", \"0o\", and \"0x\", respectively."},
+		    LI { "A new binary operator, ", TO2 {(symbol ^^, ZZ, ZZ), "^^"}, ", has been added for computing the bitwise XOR of two integers.  This replaces the \"xor\" method."},
+		    LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
+		    LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
+		    }
+	       }
+	  }
      }
 
 document {
@@ -1514,7 +1659,7 @@ document {
 		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", ", a package for Hodge integrals on the moduli space of curves, has been added and certified." },
 		    LI { TO "Kronecker::Kronecker", ", a package for Kronecker and rational normal forms, has been added." },
 		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", ", a package for
-			 computating versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
+			 computing versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
 		    LI { TO "NAGtypes::NAGtypes", ", a package containing declarations of types needed by two 
 			 other packages, has been added." },
 		    LI { TO "Nauty::Nauty", ", an interface package for the program ", TT "nauty", ", which
@@ -1956,7 +2101,7 @@ document {
 		    TO (all,ZZ,Function),
 		    TO (any,ZZ,Function),
 		    TO (degreesMonoid,List),
-		    TO (degreesRing,GeneralOrderedMonoid),
+		    TO (degreesRing,Monoid),
 		    TO (degreesRing,List),
 		    TO (export,String),
 		    TO (findFiles,List),
@@ -2048,9 +2193,9 @@ document {
 		    TO [symmetricAlgebra,DegreeLift],
 		    TO [symmetricAlgebra,DegreeMap],
 		    TO [symmetricAlgebra,Join],
-		    TO [tensor,DegreeLift],
-		    TO [tensor,DegreeMap],
-		    TO [tensor,Join],
+		    TO [(tensor, Monoid, Monoid),DegreeLift],
+		    TO [(tensor, Monoid, Monoid),DegreeMap],
+		    TO [(tensor, Monoid, Monoid),Join],
 		    }
 	       },
 	  LI { "functionality removed or changed:",

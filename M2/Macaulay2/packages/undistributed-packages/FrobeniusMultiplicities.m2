@@ -200,8 +200,8 @@ document {
      Headline => "Computations in characteristic p>0 related to the Frobenius
                   and Hilbert-Kunz multiplicities",      
      EM "FrobeniusMultiplicities", " is a package which will hopefully help users
-     make computations involving the frobenius endomorphism, the Hilbert-Kunz
-     Multiplicity and the higher derived Hilbert-Kunz multiplicites.  In particular
+     make computations involving the Frobenius endomorphism, the Hilbert-Kunz
+     Multiplicity and the higher derived Hilbert-Kunz multiplicities.  In particular
      we add functions", TO (frob,Module,ZZ), ", ", TO (hkSeq,Module,ZZ), ", ", TO (tiSeq, Module, ZZ, ZZ), ", ",
      TO (frobeniusPower, Ideal, ZZ), ", ", TO (torF, Module, ZZ, ZZ), " and ", 
      TO (tensorF, Module, ZZ, ZZ), "."
@@ -297,7 +297,7 @@ document {
      Key => {tensorF,
 	  (tensorF, Module, ZZ, ZZ)
 	  },
-     Headline => "computes the complex F^n(C) where C is the free resoltuion of M (with LengthLimit set to i+1) and where F^n is the nth iteration of the Frobenius functor",
+     Headline => "computes the complex F^n(C) where C is the free resolution of M (with LengthLimit set to i+1) and where F^n is the nth iteration of the Frobenius functor",
      Usage => "tensorF(M,i,n)",
      Inputs => {
 	  "M" => Module,

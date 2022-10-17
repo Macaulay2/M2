@@ -21,7 +21,6 @@ newPackage select((
         Headline => "partially ordered sets (posets)",
 	Keywords => {"Combinatorics"},
         Configuration => {
-            "DefaultPDFViewer" => "",
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true
             },
@@ -37,9 +36,9 @@ newPackage select((
 	     "article title" => "Partially ordered sets in Macaulay2",
 	     "acceptance date" => "5 June 2015",
 	     "published article URI" => "http://msp.org/jsag/2015/7-1/p02.xhtml",
-	     "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.9-15",
+	     "published article DOI" => "https://dx.doi.org/10.2140/jsag.2015.7.9-15",
 	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
 	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
 	     "version at publication" => "1.1.2",
 	     "volume number" => "7",
@@ -50,9 +49,6 @@ newPackage select((
 -- Load configurations
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
 posets'SuppressLabels = if instance((options Posets).Configuration#"DefaultSuppressLabels", Boolean) then (options Posets).Configuration#"DefaultSuppressLabels" else true;
-
-if (options Posets).Configuration#"DefaultPDFViewer" != "" then
-    printerr "warning: the \"DefaultPDFViewer\" configuration option is deprecated"
 
 export {
     --
@@ -185,6 +181,7 @@ export {
     "tuttePolynomial",
     "zetaPolynomial",
     "coxeterPolynomial",
+    "degreePolynomial",
     --
     -- Properties
     "dilworthNumber",
@@ -781,7 +778,7 @@ dominanceLattice ZZ := Poset => n -> (
 
 facePoset = method()
 facePoset SimplicialComplex := Poset => D -> (
-    faceList := apply(toList(-1..dim D), i -> support \ toList flatten entries faces(i, D));
+    faceList := apply(toList(-1..dim D), i -> support \ faces(i, D));
     P := poset(flatten faceList, isSubset, AntisymmetryStrategy => "none");
     if posets'Precompute then (
         idx := hashTable apply(#P.GroundSet, i -> P_i => i);
@@ -832,7 +829,6 @@ lcmLattice Ideal := Poset => opts -> I -> (
     )
 
 -- non-exported
-protect next
 lcmLatticeRecursive = G -> (
     if #G === 0 then return {{}}; -- empty set has 1 as a divisor.
     n := numgens ring first G;
@@ -1482,7 +1478,7 @@ fPolynomial Poset := RingElement => opts -> P -> (
     oP := orderComplex P;
     fV := fVector oP;
     R := ZZ(monoid [opts.VariableName]);
-    sum(-1..dim oP, i -> fV#i * R_0^(i + 1))
+    sum(-1..dim oP, i -> fV#(i+1) * R_0^(i + 1))
     )
 
 greeneKleitmanPartition = method(Options => {symbol Strategy => "antichains"})
@@ -1561,7 +1557,7 @@ zetaPolynomial Poset := RingElement => opts -> P -> (
     fV := fVector oP;
     R := QQ(monoid [opts.VariableName]);
     X := toList(2..dim oP+2);
-    Y := apply(X, n -> sum(2..n, i -> fV#(i-2) * binomial(n-2, i-2)));
+    Y := apply(X, n -> sum(2..n, i -> fV#(i-1) * binomial(n-2, i-2)));
     sum(#X, i -> Y_i * product(drop(X, {i,i}), xj -> (R_0 - xj)/(X_i-xj)))
     )
 
@@ -1572,6 +1568,18 @@ coxeterPolynomial Poset := RingElement => opts -> P -> (
     n := numrows M;
     C := -M * inverse transpose M;
     det (R_0 * id_(R^n) - C)
+    )
+
+degreePolynomial = method()
+degreePolynomial Poset := RingElement => P -> (
+    R := ZZ(monoid [getSymbol "x", getSymbol "y"]);
+    cr := P.cache.coveringRelations;
+    if #cr == 0 then cr = {{}};
+    covering := tally apply(cr, last);
+    covered := tally apply(cr, first);
+    sum(#P.GroundSet, i -> (indegree := if covering#?i then covering#i else 0;
+                            outdegree := if covered#?i then covered#i else 0;
+                            (R_0)^indegree * (R_1)^outdegree))
     )
 
 ------------------------------------------
@@ -2124,7 +2132,7 @@ doc ///
             with entries $(i,j)$ equal to 1 if $G_j \leq G_i$ and 0 otherwise
     Description
         Text
-            This method uses the @TO "descendents"@ method from the @TO "Graphs"@ package
+            This method uses the @TO "descendants"@ method from the @TO "Graphs"@ package
             to compute the @TO "RelationMatrix"@ from the relations $R$.
         Example
             G = {1,2,3,4,5};
@@ -2452,6 +2460,7 @@ doc ///
         pPartitionRing
         (pPartitionRing,Poset)
         [pPartitionRing,CoefficientRing]
+        [pPartitionRing,Strategy]
     Headline
         produces the p-partition ring of a poset
     Usage
@@ -5173,7 +5182,7 @@ doc ///
         [poincarePolynomial,VariableName]
         (poincare, Poset)
     Headline
-        computes the Poincare polynomial of a ranked poset with a unique minimal element
+        computes the Poincaré polynomial of a ranked poset with a unique minimal element
     Usage
         p = poincarePolynomial P
         p = poincarePolynomial(P, VariableName => symbol)
@@ -5184,18 +5193,18 @@ doc ///
         VariableName=>Symbol
     Outputs
         p:RingElement
-            the Poincare polynomial of $P$
+            the Poincaré polynomial of $P$
     Description
         Text
-            The Poincare polynomial of $P$ is the polynomial in a single variable
+            The Poincaré polynomial of $P$ is the polynomial in a single variable
             $t$ derived from the @TO "rankFunction"@ and the @TO "moebiusFunction"@ of $P$.
 
-            The Poincare polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
+            The Poincaré polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
         Example
             n = 5;
             factor poincarePolynomial booleanLattice n
         Text
-            The Poincare polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
+            The Poincaré polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
         Example
             R = QQ[x,y,z];
             A = {x,y,z,x+y,x+z,y+z,x-y,x-z,y-z};
@@ -5292,12 +5301,13 @@ doc ///
             the Tutte polynomial of $P$
     Description
         Text
-            The Tutte polynomial of $P$ is the polynomial $f$ such that
+            The Tutte polynomial of $P$ is a polynomial $f$ in two variables
+            obtained by a summation over antichains.
         Example
             B = booleanLattice 3;
             f = tuttePolynomial B
         Text
-            The Tutte polynomial evaluates at $t = 1$ and $z = 1$ is always
+            The Tutte polynomial evaluated at $t = 1$ and $z = 1$ is always
             the number of subsets of the groundset of $P$.
         Example
             R = ring f;
@@ -5370,6 +5380,32 @@ doc ///
         Example
             B = booleanLattice 3;
             z = coxeterPolynomial B
+///
+-- degreePolynomial
+doc ///
+    Key
+        degreePolynomial
+        (degreePolynomial,Poset)
+    Headline
+        computes the degree polynomial of a poset
+    Usage
+        z = degreePolynomial P
+    Inputs
+        P:Poset
+    Outputs
+        z:RingElement
+            the degree polynomial of $P$
+    Description
+        Text
+            The degree polynomial of $P$ is the sum over elements $v$ of
+            $x^{\operatorname{in}(v)} y^{\operatorname{out}(v)}$,
+            when the exponents are the incoming and outgoing valences of $v$
+            in the Hasse diagram.
+
+            This polynomial is multiplicative for Cartesian product of posets.
+        Example
+            B = booleanLattice 3;
+            z = factor degreePolynomial B
 ///
 ------------------------------------------
 -- Properties
@@ -6285,7 +6321,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_4*v_6*v_7,v_0*v_2*v_6*v_7,v_0*v_4*v_5*v_7,v_0*v_1*v_5*v_7,v_0*v_2*v_3*v_7,v_0*v_1*v_3*v_7),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_4*v_6*v_7,v_0*v_2*v_6*v_7,v_0*v_4*v_5*v_7,v_0*v_1*v_5*v_7,v_0*v_2*v_3*v_7,v_0*v_1*v_3*v_7),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2, v_1*v_4, v_2*v_4, v_3*v_4, v_2*v_5, v_3*v_5, v_1*v_6, v_3*v_6, v_5*v_6),R))
 assert(closedInterval(B, "001","111") == booleanLattice 2)
 assert(openInterval(B, "001","111") == poset({a,b},{}))
@@ -6371,6 +6407,7 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
 assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
+assert(toString degreePolynomial B == "x^3+3*x^2*y+3*x*y^2+y^3")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)
@@ -6398,7 +6435,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_1*v_2*v_3*v_4),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_1*v_2*v_3*v_4),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(),R))
 assert(closedInterval(B,1,4) == chain 4)
 assert(openInterval(B,1,4) == chain 2)
@@ -6502,7 +6539,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_2*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_9*v_11),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_2*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_9*v_11),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_5*v_6,v_2*v_7,v_4*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_9*v_10),R))
 assert(closedInterval(B,2,24) == poset({{2, 4}, {2, 6}, {2, 8}, {2, 12}, {2, 24}, {4, 8}, {4, 12}, {4,24}, {6, 12}, {6, 24}, {8, 24}, {12, 24}}))
 assert(openInterval(B,2,24) == poset({{4, 8}, {4, 12}, {6, 12}}))
@@ -6616,7 +6653,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 S=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_3*v_7*v_10*v_11,v_0*v_3*v_6*v_10*v_11,v_0*v_2*v_6*v_10*v_11,v_0*v_3*v_7*v_9*v_11,v_0*v_3*v_5*v_9*v_11,v_0*v_1*v_5*v_9*v_11,v_0*v_3*v_6*v_8*v_11,v_0*v_2*v_6*v_8*v_11,v_0*v_3*v_5*v_8*v_11,v_0*v_1*v_5*v_8*v_11,v_0*v_2*v_4*v_8*v_11,v_0*v_1*v_4*v_8*v_11),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_3*v_7*v_10*v_11,v_0*v_3*v_6*v_10*v_11,v_0*v_2*v_6*v_10*v_11,v_0*v_3*v_7*v_9*v_11,v_0*v_3*v_5*v_9*v_11,v_0*v_1*v_5*v_9*v_11,v_0*v_3*v_6*v_8*v_11,v_0*v_2*v_6*v_8*v_11,v_0*v_3*v_5*v_8*v_11,v_0*v_1*v_5*v_8*v_11,v_0*v_2*v_4*v_8*v_11,v_0*v_1*v_4*v_8*v_11),R))
 assert(sub(ideal(orderComplex B),S) == sub(ideal(v_1*v_2,v_1*v_3,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_1*v_6,v_4*v_6,v_5*v_6,v_1*v_7,v_2*v_7,v_4*v_7,v_5*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_1*v_10,v_4*v_10,v_5*v_10,v_8*v_10,v_9*v_10),S))
 assert(closedInterval(B,y*z,x^2*y*z) == poset({{y*z, x*y*z}, {x*y*z, x^2*y*z}}))
 assert(openInterval(B,sub(1,R),x^2*y*z) == poset({{z, x*z}, {z, y*z}, {y, x*y}, {y, y*z}, {x, x*z}, {x, x*y}, {x, x^2}, {y*z, x*y*z}, {x*z, x^2*z}, {x*z, x*y*z}, {x*y, x^2*y}, {x*y, x*y*z}, {x^2, x^2*z}, {x^2, x^2*y}}))

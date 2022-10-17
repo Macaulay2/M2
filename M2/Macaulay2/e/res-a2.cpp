@@ -160,7 +160,7 @@ gbres_comp::gbres_comp(const Matrix *m,
                        const RingElement * /*hf*/,
                        int strategy)
 {
-  // MES: check homogeniety
+  // MES: check homogeneity
   setup(m, length, origsyz, strategy);
   // nodes[0]->set_HF(hf);
 }

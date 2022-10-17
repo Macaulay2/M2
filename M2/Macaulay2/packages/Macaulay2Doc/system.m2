@@ -1,4 +1,29 @@
--- TODO: GCstats
+document {
+     Key => GCstats,
+     Headline => "information about the status of the garbage collector",
+     PARA {
+	  "Macaulay2 uses the Hans Boehm ", TO2 {"GC garbage collector", "garbage collector"}, " to reclaim unused memory.  The function ", TT "GCstats", " 
+	  provides information about its status."
+	  },
+     EXAMPLE lines ///
+     s = GCstats()
+     ///,
+     PARA {
+	  "The value returned is a hash table, from which individual bits of information can be
+	  easily extracted, as follows."
+	  },
+     EXAMPLE lines ///
+     s#"heap size"
+     ///,
+     PARA {
+	  "The entries whose keys are upper case give the values of environment variables affecting the operation of the 
+	  garbage collector that have been specified by the user."
+	  },
+     PARA {
+	  "For further information about the individual items in the table, we refer the user to the source code and documentation of the garbage collector."
+	  },
+     SeeAlso => { "GC garbage collector" }
+     }
 
 document {
     Key => "system facilities",
@@ -728,7 +753,7 @@ document {
 	  for your system."
 	  },
      PRE replace(regexQuote homeDirectory, "/home/m2user/",
-	   concatenate between_"\n" apply(value Core#"private dictionary"#"userpath",s -> (5,s))),
+	   concatenate between_"\n" apply(core "userpath", s -> (5, s))),
      EXAMPLE {
 	  "stack path",
 	  ///path = append(path, "~/resolutions/"); stack path///
@@ -789,7 +814,7 @@ document {
      Headline => "time a computation",
      TT "timing e", " evaluates ", TT "e", " and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
-     of cpu timing used, and ", TT "v", " is the value of the the expression.",
+     of cpu timing used, and ", TT "v", " is the value of the expression.",
      PARA{},
      "The default method for printing such timing results is to display the
      timing separately in a comment below the computed value.",
@@ -813,7 +838,7 @@ document {
      Headline => "time a computation using time elapsed",
      TT "elapsedTiming e", " evaluates ", TT "e", " and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
-     of time elapsed, and ", TT "v", " is the value of the the expression.",
+     of time elapsed, and ", TT "v", " is the value of the expression.",
      PARA{},
      "The default method for printing such timing results is to display the
      timing separately in a comment below the computed value.",
@@ -838,7 +863,7 @@ document {
      TT "Time", " is the class of all timing results.  Each timing result
      is ", ofClass BasicList, " of the form ", TT "{t,v}", ", where ", TT "t", "
      is the number of seconds of cpu time used, and ", TT "v", " is the value
-     of the the expression.",
+     of the expression.",
      SeeAlso => {"timing", "time", "cpuTime", "elapsedTiming", "elapsedTime"}
      }
 document {
@@ -1384,7 +1409,7 @@ document {
      "In the case of an output file, any buffered output is first
      written to the file, and the return value is an integer,
      normally 0, or -1 on error, or the return status of the child
-     process in case the the file was a pipe.",
+     process in case the file was a pipe.",
      PARA{},
      "If the file was open for both input and output, both directions
      are closed.",
@@ -1443,7 +1468,7 @@ document {
      "Any buffered output is first written to the file,
      and the return value is an integer, normally 0, or -1
      on error, or the return status of the child process
-     in case the the file was a pipe.",
+     in case the file was a pipe.",
      PARA{},
      "If the file was open only for output, then ", TO "close", " is
      easier to use and has the same effect.",

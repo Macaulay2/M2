@@ -261,6 +261,9 @@ assert( isReal 1. )
 assert( isReal(1. + 0 * ii ) )
 assert( not isReal (1.- ii) )
 assert( isReal (1/1) )
+assert( isReal pi )
+assert( not isReal ii )
+assert( not isReal infinity )
 
 assert( instance(log(3.), RR) )
 assert( instance(log(3/1), RR) )
@@ -833,10 +836,63 @@ assert ( size2 (1/0.-1/0.) > 2000 )
 assert ( isInfinite ( ii / 0. ) )
 assert ( isInfinite ( ii * (1/0.) ) )
 assert ( isInfinite ( ii * (1/(0.+0.*ii)) ) )
+assert ( not isInfinite pi )
+assert ( isInfinite infinity )
+
+assert ( binomial(5, 3) === 10 )
+assert ( binomial(5, 3.0) === 10.0 )
+assert ( binomial(5, 3/1) === 10.0 )
+assert ( binomial(5.0, 3) === 10.0 )
+assert ( binomial(5.0, 3.0) === 10.0 )
+assert ( binomial(5.0, 3/1) === 10.0 )
+assert ( binomial(5/1, 3) === 10.0 )
+assert ( binomial(5/1, 3.0) === 10.0 )
+assert ( binomial(5/1, 3/1) === 10.0 )
+assert small(binomial(5.1, 3.2) - 1/((5.1 + 1) * Beta(3.2 + 1, 5.1 - 3.2 + 1)))
 
 assert ( atan (1/0.) === pi/2 )
 assert ( atan (1/(0.*ii)) == pi/2 )
 assert ( instance(atan (1/(0.*ii)) , CC) )
+
+assert small(1 - inverseErf erf 1)
+assert small(1/2 - erf inverseErf(1/2))
+
+assert small(Gamma(5, 0) - Gamma 5)
+assert small(Gamma(1, 5) - exp(-5))
+assert small(Gamma(1/2, 5) - sqrt pi * erfc sqrt 5)
+
+assert small(Gamma(1/2, 5) / Gamma(1/2) - regularizedGamma(1/2, 5))
+assert small(5 - inverseRegularizedGamma(1/2, regularizedGamma(1/2, 5)))
+assert small(1/5 - regularizedGamma(1/2, inverseRegularizedGamma(1/2, 1/5)))
+
+assert small(lngamma 0.5 - log sqrt pi)
+assert small(lngamma(1/2) - log sqrt pi)
+assert small(lngamma 4 - log 6)
+assert small(lngamma pi - log Gamma pi)
+
+assert small(regularizedBeta(1/3, 4, 1) - 1/81)
+assert small(regularizedBeta(1/3, 4, 5) -
+    (regularizedBeta(1/3, 3, 5) - (1/3)^3 * (2/3)^5 / (3 * Beta(3, 5))))
+assert small(1/3 - inverseRegularizedBeta(regularizedBeta(1/3, 4, 5), 4, 5))
+assert small(1/3 - regularizedBeta(inverseRegularizedBeta(1/3, 4, 5), 4, 5))
+
+-- a few values from Abrahamowitz & Stegun Table 9.1
+assert ( BesselJ(0, 0) == 1 )
+assert ( abs(BesselJ(1, 2) - 0.5767248078) < 1e-10 )
+assert ( abs(BesselJ(2, 3) - 0.4860912606) < 1e-10 )
+assert ( abs(BesselY(0, 1) - 0.0882569642) < 1e-10 )
+assert ( abs(BesselY(1, 2) + 0.1070324315) < 1e-10 )
+assert ( abs(BesselY(2, 3) + 0.16040039) < 1e-8 )
+
+assert Equation(truncate 1, 1)
+assert Equation(truncate 1.9, 1)
+assert Equation(truncate(-1.9), -1)
+assert Equation(truncate(19/10), 1)
+assert Equation(truncate(-19/10), -1)
+assert Equation(truncate pi, 3)
+assert Equation(truncate(2.5 + ii), 2)
+assert Equation(truncate interval(2.7, 3.4), 2)
+assert Equation(truncate interval(-2.3, 5.1), 0)
 
 -- I don't know whether we want to fix this:
 -- assert ( 1/11 == toRR(1/11) )

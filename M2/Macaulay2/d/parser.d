@@ -146,7 +146,7 @@ export peektoken(file:TokenFile,obeylines:bool):Token := (
      );
 --What is this?   It doesn't appear to be used anywhere
 level := 0;
---Empty Parsetree to reresent error
+--Empty Parsetree to represent error
 export errorTree := ParseTree(dummy(dummyPosition));
 skip(file:TokenFile,prec:int):void := (
      while peektoken(file,false).word.parse.precedence > prec 

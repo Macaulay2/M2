@@ -14,9 +14,11 @@
 #include <flint/flint.h>
 #pragma GCC diagnostic pop
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
+#include "exceptions.hpp"           // for exc::division_by_zero_error
 
 class PolynomialRing;
 class RingElement;
@@ -150,8 +152,9 @@ class ARingGFFlint : public RingInterface
 
   void invert(ElementType& result, const ElementType& a) const
   {
-    assert(not is_zero(a));
-    fq_zech_inv(&result, &a, mContext);
+    if (is_zero(a))
+      throw exc::division_by_zero_error();
+    else fq_zech_inv(&result, &a, mContext);
   }
 
   void add(ElementType& result,
@@ -202,7 +205,6 @@ class ARingGFFlint : public RingInterface
       printf("\n  b = ");
       fq_zech_print_pretty(&b, mContext);
 #endif
-    assert(not is_zero(b));
     invert(c, b);
 #if 0
       printf("\n  1/b = ");
@@ -219,9 +221,7 @@ class ARingGFFlint : public RingInterface
 
   void power(ElementType& result, const ElementType& a, int n) const
   {
-    if (is_zero(a))
-      set_zero(result);
-    else if (n < 0)
+    if (n < 0)
       {
         invert(result, a);
         fq_zech_pow_ui(&result, &result, -n, mContext);
@@ -232,19 +232,15 @@ class ARingGFFlint : public RingInterface
 
   void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
-    if (is_zero(a))
-      {
-        set_zero(result);
-        return;
-      }
-    mpz_t abs_n;
-    mpz_init(abs_n);
-    mpz_abs(abs_n, n);
     if (mpz_sgn(n) < 0)
       invert(result, a);
     else
       copy(result, a);
 
+    mpz_t abs_n;
+    mpz_init(abs_n);
+    mpz_abs(abs_n, n);
+    
     fmpz_t fn;
     fmpz_init_set_readonly(fn, abs_n);
     fq_zech_pow(&result, &result, fn, mContext);
@@ -280,8 +276,11 @@ class ARingGFFlint : public RingInterface
 
   void random(ElementType& result) const
   {
-    //      printf("calling ARingGFFlint::random\n");
-    fq_zech_randtest(&result, mRandomState, mContext);
+    std::vector<long> poly;
+    for (int i = 0; i < dimension(); ++i)
+      poly.push_back(rawRandomULong(characteristic()));
+    fromSmallIntegerCoefficients(result, poly);
+    //    fq_zech_randtest(&result, mRandomState, mContext);
   }
 
   void fromSmallIntegerCoefficients(ElementType& result,

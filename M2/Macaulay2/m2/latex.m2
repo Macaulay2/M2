@@ -28,17 +28,17 @@ shorten := s -> (
      s)
 
 -- TODO: remove as duplicate
-noopts := x -> select(x,e -> class e =!= Option)
+noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 texLiteralTable := new MutableHashTable
 scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
-scan(characters ascii(32 .. 126), c -> texLiteralTable#c = c)
-scan(characters "\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
+scan(ascii(32 .. 126), c -> texLiteralTable#c = c)
+scan("\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
 texLiteralTable#"\n" = "\n"
 texLiteralTable#"\r" = "\r"
 texLiteralTable#"\t" = "\t"
 texLiteralTable#"`"  = "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
+texLiteral = s -> concatenate for c in s list texLiteralTable#c
 
 HALFLINE    := "\\vskip 4.75pt\n"
 ENDLINE     := "\\leavevmode\\hss\\endgraf\n"
@@ -47,7 +47,8 @@ ENDVERBATIM := "\\endgroup{}"
 
 texExtraLiteralTable := copy texLiteralTable
 texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c)))
+texExtraLiteral := s -> demark(ENDLINE,
+    apply(lines s, l -> for c in l list texExtraLiteralTable#c))
 
 --------------------------------------------
 -- this loop depends on the feature of hash tables that when the keys
@@ -97,6 +98,8 @@ texMath Thing := x -> texMath net x -- if we're desperate (in particular, for ra
 tex     String := texLiteral
 texMath String := s -> "\\texttt{" | texLiteral s | "}"
 
+tex Net := n -> concatenate(
+    "\\begin{tabular}[t]{l}", demark("\\\\\n", apply(unstack n, tex)), "\\end{tabular}")
 texMath Net := n -> concatenate(
     "\\begin{array}{l}", demark("\\\\\n", apply(unstack n, texMath)), "\\end{array}")
 
@@ -106,20 +109,27 @@ texMath VerticalList := s -> concatenate(
 texMath NumberedVerticalList := s -> concatenate(
     "\\left\\{\\begin{aligned}", demark("\\\\", apply(#s, i -> i | ".\\quad&" | texMath s#i)), "\\end{aligned}\\right\\}")
 
-texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, demark_delim apply(toList L, texMath), "\\right", cl)
+texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L > 0 then demark_delim apply(toList L, texMath) else "\\,", "\\right", cl)
 texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
 texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
 texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
-texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\,", "\\}")
+texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\:", "\\}")
 texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\{", L, ",\\,", "\\}"))
-texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots", "\\right\\}")
+texMathMutable :=
+texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
 texMath HashTable := H -> if H.?texMath then H.texMath else (
-    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary) else
-    if mutable H then      (lookup(texMath, MutableList)) H
-    else texMath class H | (lookup(texMath, List)) apply(sortByName pairs H, (k, v) -> k => v))
+    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
+    else if mutable H then texMathMutable H
+    else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
 
 texMath Function := f -> texMath toString f
+
+texMath ZZ := n -> (
+    s := simpleToString n;
+    j := 1 - (#s-1) % 3;
+    concatenate for i in s list (if j==2 then (j=0; "\\,",i) else (j=j+1; i))
+    )
 
 --     \rm     Roman
 --     \sf     sans-serif
@@ -180,7 +190,8 @@ tex     TABLE := x -> concatenate applyTable(noopts x, tex)
 
 tex  PRE :=
 tex CODE := x -> concatenate ( VERBATIM, "\n\\penalty-200\n", HALFLINE,
-     shorten lines concatenate x
+     shorten lines concatenate apply(noopts x, y ->
+	  if instance(y, Hypertext) then concatenate noopts y else y)
      / (line ->
 	  if #line <= maximumCodeWidth then line
 	  else concatenate(substring(0,maximumCodeWidth,line), " ..."))
@@ -211,7 +222,10 @@ tex     STYLE := x -> ""
 -- (tex, TOH) defined in format.m2
 tex TO   := x -> tex TT format x#0
 tex TO2  := x -> ( tag := x#0; text := x#1; tex TT text )
-tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+--tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+scan({texMath,tex}, f ->
+    f HREF := x -> concatenate("\\href{", texLiteral toURL first x, "}{", f last x, "}")
+    )
 
 tex MENU := x -> tex drop(redoMENU x, 1)
 

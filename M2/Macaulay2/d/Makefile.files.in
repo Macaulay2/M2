@@ -63,9 +63,9 @@ M2_DFILES += buckets.dd
 M2_DFILES += equality.dd
 M2_DFILES += hashtables.dd
 M2_DFILES += regex.dd
+M2_DFILES += evaluate.d
 M2_DFILES += sets.dd
 M2_DFILES += version.dd
-M2_DFILES += evaluate.d
 ifeq (@MYSQL@,yes)
 M2_DFILES += mysql.d
 M2_SRCFILES += mysqldummy.d
@@ -96,6 +96,8 @@ M2_SRCFILES += python-c.c python.d
 endif
 M2_DFILES += interface.dd interface2.d
 M2_DFILES += texmacs.d
+M2_DFILES += boostmath.dd
+M2_DFILES += ffi.d
 # this one is last, because it contains the top level interpreter
 M2_DFILES += interp.dd
 

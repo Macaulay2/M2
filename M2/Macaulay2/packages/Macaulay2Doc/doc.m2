@@ -10,39 +10,6 @@ document {
      }
 
 document {
-     Key => {describe,
-	  (describe, PolynomialRing),
-	  (describe, QuotientRing),
-	  (describe, FractionField),
-	  (describe, Thing),
-	  (describe, AffineVariety),
-	  (describe, CoherentSheaf),
-	  (describe, GaloisField),
-	  (describe, GeneralOrderedMonoid),
-	  (describe, Matrix),
-	  (describe, Module),
-	  (describe, ProjectiveVariety),
-	  (describe, RingMap)
-	  },
-     Headline => "real description",
-     TT "describe x", " -- returns ", ofClass Expression, " containing the 
-     real description of ", TT "x", ", bypassing the feature that causes
-     certain types of things to acquire, for brevity, the names of global variables to which
-     they are assigned.  For polynomial rings, it also displays the options used at creation.",
-     PARA{},
-     EXAMPLE lines ///
-	  R = ZZ/101[a,b,c_1,c_2];
-      	  R
-      	  describe R
-	  toString describe R
-	  toExternalString R
-	  QQ[x,d,WeylAlgebra=>{x=>d}]
-	  describe oo
-	  ///,
-     SeeAlso => {"toString", "toExternalString"}
-     }
-
-document {
      Key => symbol SPACE, 
      Headline => "blank operator; often used for function application, making polynomial rings",
      SeeAlso =>(symbol SPACE, Function, Thing)		    -- not really a method
@@ -102,7 +69,6 @@ document {
     (symbol *,Constant,Number),
     (symbol *,InexactNumber,Constant),
     (symbol *,Matrix,Number),
-    (symbol *,Matrix,ZZ),
     (symbol *,Number,Constant),
     (symbol *,Number,Matrix),
     (symbol *,QQ,CC),
@@ -152,6 +118,7 @@ document {
     (symbol*,  RingElement, RingElement),
     (symbol*,  Thing, List),
     (symbol*,  ZZ, ProjectiveHilbertPolynomial),
+    (symbol*,  ProjectiveHilbertPolynomial, ZZ),
     (symbol*,  RingElement, Vector)
 	  },
      Headline => "a binary operator, usually used for multiplication",
@@ -189,7 +156,7 @@ document {
 	  "isHomogeneous N"
 	  },
      HEADER3 "Intervals",
-     PARA { "If one of the factors is an ", TO "RRi", ", the output is an interval containing all poducts of pairs in the factors." },
+     PARA { "If one of the factors is an ", TO "RRi", ", the output is an interval containing all products of pairs in the factors." },
     EXAMPLE {
     "2*interval(1,3)",
     "interval(1,3)*interval(-1,2)",
@@ -213,7 +180,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
 	  },
      EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^15 + 2^42",
-     SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
+     SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
      }
 
 undocumented {
@@ -225,6 +192,8 @@ document {
 	  (symbol +, ChainComplexMap, ChainComplexMap),
 	  (symbol +, Number, InfiniteNumber),
 	  (symbol +, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol +, ZZ, ProjectiveHilbertPolynomial),
+	  (symbol +, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol +, MonomialIdeal, MonomialIdeal),
 	  (symbol +,CC),
 	  (symbol +,CC,CC),
@@ -311,6 +280,8 @@ document {
 	  (symbol -, ChainComplexMap, ChainComplexMap),
 	  (symbol -, Minus),
 	  (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol -, ProjectiveHilbertPolynomial, ZZ),
+	  (symbol -, ZZ, ProjectiveHilbertPolynomial),
 	  (symbol -, Number, InfiniteNumber),
 	  (symbol -, RingElement, GradedModuleMap),
 	  (symbol -, GradedModuleMap),
@@ -599,6 +570,32 @@ document {
      SeeAlso =>{ "and", "or" }
      }
 
+doc ///
+  Key
+    (symbol ~, ZZ)
+  Headline
+    logical not
+  Usage
+    n~
+  Inputs
+    n:ZZ
+  Outputs
+    :ZZ -- the bitwise complement of @TT "n"@
+  Description
+    Example
+      7~
+    Text
+      Note that @TT "~"@ has @TO2 {"precedence of operators",
+      "higher precedence"}@ than @TT "-"@, so enclose negative integers in
+      parentheses.
+    Example
+      (-12)~
+  SeeAlso
+    (symbol &, ZZ, ZZ)
+    (symbol |, ZZ, ZZ)
+    (symbol ^^, ZZ, ZZ)
+///
+
 document {
      Key => symbol |, 
      Headline => "a binary operator, often used for horizontal concatenation",
@@ -651,7 +648,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'or'."}
 	  },
      EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
-     SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
+     SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
      }
 
 document {
@@ -814,6 +811,7 @@ document {
 document {
      Key => { symbol ==,
 	  (symbol==, Matrix, Matrix), (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol==, ZZ, ProjectiveHilbertPolynomial), (symbol==, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol==, ChainComplex, ChainComplex), (symbol==, RingElement, RingElement), (symbol==, GradedModuleMap, GradedModuleMap),
 	  (symbol==, Ideal, Ideal), (symbol==, MutableMatrix, MutableMatrix), (symbol ==,Boolean,Boolean),
 	  (symbol ==,CC,CC), (symbol ==,CC,QQ), (symbol ==,CC,RR), (symbol ==,CC,ZZ), (symbol ==,Matrix,Number),

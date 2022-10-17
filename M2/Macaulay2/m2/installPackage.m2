@@ -7,8 +7,10 @@
 -- TODO: not reentrant yet, see resetCounters
 
 needs "document.m2"
+needs "examples.m2"
 needs "hypertext.m2"
 needs "packages.m2"
+needs "printing.m2"
 needs "validate.m2"
 
 -----------------------------------------------------------------------------
@@ -150,7 +152,7 @@ makeTree := (parent, graph, visits, node) -> (
     new TreeNode from {node, tree})
 
 -- pre-compute the list of orphan nodes in a graph, with parent
--- node (typcally topDocumentTag) appearing in the beginning
+-- node (typically topDocumentTag) appearing in the beginning
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
     if not nonLeaves#?parent and signalDocumentationWarning parent then printerr("warning: top node ", parent, " not a root");
@@ -205,7 +207,7 @@ assembleTree := (pkg, nodes) -> (
 	    and pkg#"raw documentation"#fkey.?Subnodes then (
 		subnodes := pkg#"raw documentation"#fkey.Subnodes;
 		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(subnodes, node -> package node === pkg);
+		subnodes  = select(fixup \ subnodes, node -> package node === pkg);
 		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest
@@ -456,10 +458,6 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 -----------------------------------------------------------------------------
 -- helper functions for installPackage
 -----------------------------------------------------------------------------
-
-dispatcherMethod := m -> m#-1 === Sequence and (
-    f := lookup m;
-    any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
 reproduciblePaths = outstr -> (
      if topSrcdir === null then return outstr;
@@ -720,11 +718,14 @@ installPackage Package := opts -> pkg -> (
 	(hadError, numErrors) = (false, 0); -- declared in run.m2
 	generateExampleResults(pkg, rawDocumentationCache, exampleDir, exampleOutputDir, verboseLog, pkgopts, opts);
 
-	if not opts.IgnoreExampleErrors and hadError
-	then error("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
+	if hadError then (
+	    errmsg := ("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
 	    if opts.Verbose or debugLevel > 0 then ":" | newline | newline |
 	    concatenate apply(select(readDirectory exampleOutputDir, file -> match("\\.errors$", file)), err ->
 		err | newline |	concatenate(width err : "*") | newline | getErrors(exampleOutputDir | err)) else "");
+	    if opts.IgnoreExampleErrors
+	    then stderr << " -- warning: " << concatenate errmsg << endl
+	    else error errmsg);
 
 	-- if no examples were generated, then remove the directory
 	if length readDirectory exampleOutputDir == 2 then removeDirectory exampleOutputDir;
@@ -777,7 +778,6 @@ installPackage Package := opts -> pkg -> (
 				tag := makeDocumentTag m;
 				if  not isUndocumented tag
 				and not hasDocumentation tag
-				and not dispatcherMethod m
 				and signalDocumentationWarning tag then printerr(
 				    "warning: method has no documentation: ", toString tag,
 				    ", key ", toExternalString tag.Key,

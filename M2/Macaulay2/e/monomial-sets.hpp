@@ -16,7 +16,7 @@
 // Features of these classes:
 
 
-#include "memtailor/memtailor.h"
+#include "memtailor.h"
 #include <unordered_set>
 #include <unordered_map>
 #include <utility>
@@ -36,7 +36,7 @@ public:
   
   // if m is the begin part of the last range allocated here, then this pops that.
   // Afterwards, one can pop the next, etc.  If they are popped out of order though,
-  // undedfined behavior results.
+  // undefined behavior results.
   void popLastAlloc(int* m) { mCount--; mArena.freeTop(m); }
 
   // If m is a pointer into the last monomial (i.e. >= a.first <= a.second), this resets the monomial

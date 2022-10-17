@@ -62,12 +62,14 @@ exportMutable {
 userPath = MonomialIntegerPrograms#Options#Configuration#"CustomPath";
 
 ScipPath = if userPath === "" then(
+    if debugLevel > 0 then
     print("Using default executable name \"scip\".\nTo change this, load package using CustomPath option.");
     "scip") else userPath;
 
 userPrintLevel = MonomialIntegerPrograms#Options#Configuration#"CustomScipPrintLevel";
 
 ScipPrintLevel = if userPrintLevel === "" then(
+    if debugLevel > 0 then
     print("Current value of ScipPrintLevel is 0.\nTo set a custom default value, load package using CustomScipPrintLevel option.");
     0) else value userPrintLevel;
 ------------------------
@@ -970,7 +972,7 @@ doc ///
   KnownDim => ZZ
    the dimension, @TT"k"@, of the ideal
   IgnorePrimes => List
-    a list of primes to not include the the result. See @TO IgnorePrimes@.
+    a list of primes to not include in the result. See @TO IgnorePrimes@.
  Outputs
   L:List
    all minimal associated primes of dimension $k$
@@ -1066,7 +1068,7 @@ doc ///
   Text
    When the package gets loaded, codim and degree are replaced with
    @TT"codimensionIP"@ and @TT"degreeIP"@ respectively for a @TT"MonomialIdeal"@.
-   @TT"loadSCIPCodimAndDegree"@ can be used to reload the the SCIP methods in the
+   @TT"loadSCIPCodimAndDegree"@ can be used to reload the SCIP methods in the
    event that @TO loadBuiltinCodimAndDegree@ was called.
   Example
    R = QQ[a,b,c];

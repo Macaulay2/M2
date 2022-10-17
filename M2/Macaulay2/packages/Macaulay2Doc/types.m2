@@ -26,7 +26,7 @@ document {
 	       instances of the new type to nets for display."
 	       },
 	  EXAMPLE lines ///
-	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f }; -* no-capture-flag *-
+	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f, html => f }; -* no-capture-flag *-
 	  ///,
 	  PARA {
 	       "The hash tables ", TT "AA", ", ", TT "BB", ", and ", TT "C", " will normally be instances of ", TO "Type", "."
@@ -562,54 +562,6 @@ document {
      }
 
 document {
-     Key => RingElement,
-     Headline => "the class of all ring elements handled by the engine",
-     SeeAlso => "engine"}
-document {
-     Key => EngineRing,
-     Headline => "the class of rings handled by the engine",
-     "The ", TO "engine", " handles most of the types of rings in the
-     system.",
-     PARA{},
-     "The command ", TT "new Engine from x", " is not meant for general
-     users, and provides the developers with a way to create top-level
-     rings corresponding to rings implemented in the engine.  Here ", TT "x", "
-     may be:",
-     UL {
-	  "commands for the engine, as a string, or a sequence or list
-	  of strings, which cause a ring to be placed on the top of the
-	  engine's stack.",
-	  "a ring, in which case another top-level ring is formed as
-	  an interface to the same underlying engine ring.",
-	  "the handle of on engine ring"
-	  }}
-document {
-     Key => FractionField,
-     Headline => "the class of all fraction fields",
-     "Macaulay2 provides for fraction fields of integral domains.",
-     PARA{},
-     "In some cases, normal forms of fractions makes sense, but in general
-     for fraction fieldss of quotient rings, there is no notion of
-     normal form for a fraction.
-     In other words, fractions
-     may be equal without displaying the same numerator and denominator.",
-     PARA{},
-     "Computations over fraction fields, or polynomial rings over fraction fields,
-     especially Gröbner basis computations, are much slower than over prime fields.
-     Still, an attempt is made to speed up these computations as much as possible, and
-     more is planned in the future.",
-     PARA{},
-     "For an overview, see ", TO "fraction fields", " and  ", TO frac, ".",
-     HEADER4 "Useful functions for use with fractions and fraction fields include:",
-     UL {
-	  TO frac,
-	  TO numerator,
-	  TO denominator,
-	  TO liftable,
-	  TO lift
-	  }
-     }
-document {
      Key => ZZ,
      Headline => "the class of all integers" }
 
@@ -679,6 +631,47 @@ document {
      }
 
 document {
+     Key => RR',
+     Headline => "the parent class of all rings of real numbers",
+     PARA {
+	  "Floating point real numbers are treated in a special way.  Recall first to create a polynomial, one must
+	  first create a polynomial ring to contain it.  And then, the polynomial ring is the class of the polynomial."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y,z]
+     x^2
+     class x^2
+     ///,
+     PARA {
+	  "Floating point real numbers, however, can be created directly, as follows, without creating a ring."
+	  },
+     EXAMPLE lines ///
+     r = 4.5
+     s = 4.3p300
+     ///,
+     PARA {
+	  "The floating point numbers created above have different precisions, and thus are regarded as being elements of 
+	  different rings, whose elements all have the same precision."
+	  },
+     EXAMPLE lines ///
+     precision r
+     precision s
+     ring r
+     ring s
+     ///,
+     PARA {
+	  "In order to make it convenient to define methods that apply to all such rings, those rings have a common
+	  parent, namely ", TT "RR'", ".  Notice that ", TT "RR'", " is printed in a special way."
+	  },
+     EXAMPLE lines ///
+     RR'
+     parent ring r     
+     parent ring s
+     parent ring s === RR'
+     ///
+     }
+
+document {
      Key => CC,
      Headline => "the class of all complex numbers",
      "In Macaulay2, complex numbers are represented as floating point numbers, and so are
@@ -722,6 +715,47 @@ document {
      SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
+document {
+     Key => CC',
+     Headline => "the parent class of all rings of complex numbers",
+     PARA {
+	  "Floating point complex numbers are treated in a special way.  Recall first to create a polynomial, one must
+	  first create a polynomial ring to contain it.  And then, the polynomial ring is the class of the polynomial."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y,z]
+     x^2
+     class x^2
+     ///,
+     PARA {
+	  "Floating point complex numbers, however, can be created directly, as follows, without creating a ring."
+	  },
+     EXAMPLE lines ///
+     r = 4.5 * ii
+     s = 4.3p300 * ii
+     ///,
+     PARA {
+	  "The floating point numbers created above have different precisions, and thus are regarded as being elements of 
+	  different rings, whose elements all have the same precision."
+	  },
+     EXAMPLE lines ///
+     precision r
+     precision s
+     ring r
+     ring s
+     ///,
+     PARA {
+	  "In order to make it convenient to define methods that apply to all such rings, those rings have a common
+	  parent, namely ", TT "CC'", ".  Notice that ", TT "CC'", " is printed in a special way."
+	  },
+     EXAMPLE lines ///
+     CC'
+     parent ring r     
+     parent ring s
+     parent ring s === CC'
+     ///
+     }
+
 undocumented {RRi'}
 
 document {
@@ -755,73 +789,6 @@ document {
     SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)}
 	  }
 
-document {
-     Key => OrderedMonoid,
-     Headline => "the class of all ordered monoids",
-     "An ordered monoid is a multiplicative monoid together with an ordering of
-     its elements.  The ordering is required to be compatible with the
-     multiplication in the sense that if x < y then x z < y z.  The class
-     of all ordered monomials is ", TO "OrderedMonoid", ".",
-     PARA{},
-     "The reason for making a separate class for ordered monoids is that monoid
-     rings can be implemented more efficiently for them - an element of the
-     monoid ring can be stored as a sorted list, each element of which is
-     a pair consisting of an element of the monoid and a coefficient.
-     See ", TO "PolynomialRing", ".",
-     PARA{},
-     "A free commutative ordered monoid can be created with ", TO "monoid", ".",
-     SeeAlso =>  {"Monoid"}}
-document {
-     Key => PolynomialRing,
-     Headline => "the class of all ordered monoid rings",
-     "Every element of a polynomial ring is also a ", TO "RingElement", ".",
-     SeeAlso => "polynomial rings"}
-document {
-     Key => IndexedVariable,
-     Headline => "the class of all indexed variables",
-     "Indexed variables provide the possibility of producing
-     polynomial rings ", TT "R[x_0, x_1, ..., x_(n-1)]", " in n variables,
-     where n is not known in advance.  If ", TT "x", " is an symbol,
-     and i is an integer, then ", TT "x_i", " produces an indexed variable.
-     After this has been done, an assignment ", TT "x_i=v", " will assign another
-     value to it.  A new sequence of indexed variables of
-     length n assigned to the symbol ", TT "x", " can be produced with ",
-     TT "x_1 .. x_n", " and that sequence can be used in constructing
-     a polynomial ring.",
-     EXAMPLE {
-	  "ZZ/101[t_0 .. t_4]",
-	  "(t_0 -  2*t_1)^3",
-	  },
-     "Warning: the values of the indexed variables ", TT "t_i", " are stored in a global location,
-     behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
-     }
-
-undocumented {(NewFromMethod,IndexedVariableTable,Symbol)}
-document {
-     Key => {IndexedVariableTable,((symbol _,symbol =),IndexedVariableTable,Thing),(symbol _,IndexedVariableTable,Thing)},
-     "This class is used as part of the implementation of indexed variables.  Objects of this class contain
-     the values of the indexed variables that share the same base.",
-     EXAMPLE lines ///
-	  p_1 = a
-	  p_2 = b
-	  p
-	  peek p
-     ///,
-     SeeAlso => {IndexedVariable}
-     }
-document {
-     Key => MonoidElement,
-     Headline => "the class of all monoid elements",
-     SeeAlso => "monoid"}
-document {
-     Key => GeneralOrderedMonoid,
-     Headline => "the class of all ordered free commutative monoids",
-     "This is the class of free monoids that can be handled by
-     the ", TO "engine", ".  Elements of such monoids are implemented
-     as instances of ", TO "MonoidElement", ".",
-     PARA{},
-     SeeAlso => { "monoid" }
-     }
 document {
      Key => Vector,
      Headline => "the class of all elements of free modules that are handled by the engine",
@@ -878,11 +845,6 @@ document {
 	  TO (kernel, Matrix),
 	  TO (homology, Matrix, Matrix),
 	  }}
-
-document {
-     Key => QuotientRing,
-     Headline => "the class of all quotient rings"
-     }
 
 document {
      Key => Descent,

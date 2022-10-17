@@ -269,7 +269,7 @@ document {
 		},
 
     	PARA {
-	    "Here is an example of a diagoanl action by the product of
+	    "Here is an example of a diagonal action by the product of
 	     a two-dimensional torus with a cyclic group of order 3 
 	    acting on a two-dimensional vector space:"
 	},

@@ -516,7 +516,7 @@ doc /// --sosdecTernary
         This implementation only works with the @TO2 {Solver,"solvers"}@ "CSDP" and "MOSEK".
 
         $\bullet$
-        Due to the iterative nature of the algorithm, it could happen that some of the the output sums of squares are rational while some are real.
+        Due to the iterative nature of the algorithm, it could happen that some of the output sums of squares are rational while some are real.
 ///
 
 doc /// --sosInIdeal

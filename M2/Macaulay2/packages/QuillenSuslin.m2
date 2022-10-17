@@ -71,7 +71,7 @@ export {
 -- Method: coeffVarFF
 -- Input: (RingElement,RingElement) -- (rational function, variable)
 -- Output: List -- list of {coeff,degree} where f is treated as a polynomial
---     	   in var with coefficients in the the rational function field of the
+--     	   in var with coefficients in the rational function field of the
 --     	   other variables.
 -- Description:
 -- As long as the denominator of f does not involve var, this method
@@ -1999,7 +1999,7 @@ document {
      },
      
      PARA{}, "Notice that after multiplying ", TT "U", " by the unimodular matrix ", TT "A", " and applying the
-     change of variables ", TT "B", " (using the ", TO "sub", " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
+     change of variables ", TT "B", " (using the ", TO2(substitute, "sub"), " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
      
      PARA{}, "The order of the variables given in the list matter, as changeVar 
      will construct a change of variable so that the new unimodular row is monic in the ", EM "last",

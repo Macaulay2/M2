@@ -79,6 +79,7 @@ setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
 setupconst("Task",Expr(taskClass));
 setupconst("FileOutputSyncState",Expr(fileOutputSyncStateClass));
+setupconst("Pointer",Expr(pointerClass));
 
 export ancestor(o:HashTable,p:HashTable):bool := (
      while true do (
@@ -168,6 +169,7 @@ export Class(e:Expr):HashTable := (
      is RawPointArrayCell do rawPointArrayClass
      -- NAG end
      is fileOutputSyncState do fileOutputSyncStateClass
+     is pointerCell do pointerClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);

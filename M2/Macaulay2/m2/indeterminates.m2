@@ -90,6 +90,12 @@ runLengthEncode0 = x -> (
 		    (dupin = null; oi = i; m = 1))));
      x)
 
+rle = method(Dispatch => Thing)
+rle VisibleList := x -> apply(runLengthEncode x, rle)
+rle Holder := x -> rle x#0
+rle Option := x -> x#0 => rle x#1
+rle Thing := identity
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

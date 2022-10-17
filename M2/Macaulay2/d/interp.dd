@@ -107,6 +107,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
+		    if isatty(file) || file.posFile.file.fulllines then flush(file);
 		    )
 	       )
 	  else (
@@ -381,12 +382,19 @@ load(e:Expr):Expr := (
      else buildErrorPacket("expected string as file name"));
 setupfun("simpleLoad",load);
 
-currentLineNumber(e:Expr):Expr := (
+currentRowNumber(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then toExpr(int(currentPosFile.line))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
-setupfun("currentLineNumber",currentLineNumber);
+setupfun("currentRowNumber",currentRowNumber);
+
+currentColumnNumber(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) == 0 then toExpr(int(currentPosFile.column))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("currentColumnNumber",currentColumnNumber);
 
 input(e:Expr):Expr := (
      when e

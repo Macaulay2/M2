@@ -1,3 +1,6 @@
+-----------------------------------
+-- Tests from the previous version:
+-----------------------------------
 -- 0) Subring tests
 -- 1) Infinite generators
 -- 2) simple inhomog example
@@ -16,8 +19,17 @@
 -- 15) invariants of A^1, with a nilpotent action of A^4
 -- 16) elimination order on ambient ring
 -- 17) 'symmetric' quadratic artin ideal in 2x3 variables
--- 18) toricSyz, Sturmfels example 11.19
+-- 18) toricSyz, Sturmfels example 11.19 -- Removed due to toricSyz removal
 
+----------------------------------------
+-- New Tests 
+----------------------------------------
+-- 19) Lex term order, simple example (verifying sagbi basis)
+-- 20) Lex term order, harder example (requires new generators)
+-- 21) GRevLex version of 19 (one more generator than 19)
+-- 22) GRevLex version of 20 (one more generator than 20)
+-- 23) Test for %
+-- 24) Test for groebnerMembershipTest
 
 -- 0) Subring tests
 TEST ///
@@ -26,7 +38,7 @@ S = QQ[e1, e2, e3, y];
 f = map(R, S, {x1 + x2 + x3, x1*x2 + x1*x3 + x2*x3, x1*x2*x3,
 (x1 - x2)*(x1 - x3)*(x2 - x3)});
 A = subring matrix f;
-assert(not (verifySagbi A)#"isSAGBI")
+assert(not (verifySagbi A))
 ///
 ---------------------
 
@@ -61,7 +73,7 @@ R = kk[a,b,c]
 F = matrix{{a+b+c-1, a^2+b^2+c^2-a, a^3+b^3+c^3-b}}
 ans = matrix {{a+b+c-1, a*b+a*c+b*c+50*b+50*c, a*b*c+50*b^2+50*b*c+50*c^2-9*b+25*c}}
 assert(
-     time subalgebraBasis(F,Limit=>3,Autosubduce=>false)
+     time subalgebraBasis(F,Limit=>3,AutoSubduce=>false)
      ==
      ans)
 ///
@@ -160,7 +172,7 @@ ans = matrix {{x_17*x_18-x_16*x_19,
         x_1*x_4-x_0*x_5,
         x_1*x_2-x_0*x_3}}
 assert(
-     time subalgebraBasis(F,Limit=>100, Autosubduce=>false)
+     time subalgebraBasis(F,Limit=>100, AutoSubduce=>false)
      ==
      ans)
 ///
@@ -225,13 +237,13 @@ genericminors = (minorsize,rowsize,colsize) -> (
     gens minors(minorsize,genericMatrix(R,x_0,rowsize,colsize)))
 
 F = genericminors(2,3,5)
-ans = matrix {{x_11*x_13-x_10*x_14, x_8*x_13-x_7*x_14, x_5*x_13-x_4*x_14, x_2*x_13-x_1*x_14, x_11*x_12-x_9*x_14, x_10*x_12-x_9*x_13, x_8*x_12-x_6*x_14, x_7*x_12-x_6*x_13, x_5*x_12-x_3*x_14, x_4*x_12-x_3*x_13, x_2*x_12-x_0*x_14, x_1*x_12-x_0*x_13, x_8*x_10-x_7*x_11, x_5*x_10-x_4*x_11, x_2*x_10-x_1*x_11, x_8*x_9-x_6*x_11, x_7*x_9-x_6*x_10, x_5*x_9-x_3*x_11, x_4*x_9-x_3*x_10, x_2*x_9-x_0*x_11, x_1*x_9-x_0*x_10, x_5*x_7-x_4*x_8, x_2*x_7-x_1*x_8, x_5*x_6-x_3*x_8, x_4*x_6-x_3*x_7, x_2*x_6-x_0*x_8, x_1*x_6-x_0*x_7, x_2*x_4-x_1*x_5, x_2*x_3-x_0*x_5, x_1*x_3-x_0*x_4, x_8*x_10*x_12*x_14-x_7*x_11*x_12*x_14-x_8*x_9*x_13*x_14+x_6*x_11*x_13*x_14+x_7*x_9*x_14^2-x_6*x_10*x_14^2, x_5*x_10*x_12*x_14-x_4*x_11*x_12*x_14-x_5*x_9*x_13*x_14+x_3*x_11*x_13*x_14+x_4*x_9*x_14^2-x_3*x_10*x_14^2, x_2*x_10*x_12*x_14-x_1*x_11*x_12*x_14-x_2*x_9*x_13*x_14+x_0*x_11*x_13*x_14+x_1*x_9*x_14^2-x_0*x_10*x_14^2, x_5*x_7*x_12*x_14-x_4*x_8*x_12*x_14-x_5*x_6*x_13*x_14+x_3*x_8*x_13*x_14+x_4*x_6*x_14^2-x_3*x_7*x_14^2, x_2*x_7*x_12*x_14-x_1*x_8*x_12*x_14-x_2*x_6*x_13*x_14+x_0*x_8*x_13*x_14+x_1*x_6*x_14^2-x_0*x_7*x_14^2, x_2*x_4*x_12*x_14-x_1*x_5*x_12*x_14-x_2*x_3*x_13*x_14+x_0*x_5*x_13*x_14+x_1*x_3*x_14^2-x_0*x_4*x_14^2, x_5*x_7*x_9*x_14-x_4*x_8*x_9*x_14-x_5*x_6*x_10*x_14+x_3*x_8*x_10*x_14+x_4*x_6*x_11*x_14-x_3*x_7*x_11*x_14, x_2*x_7*x_9*x_14-x_1*x_8*x_9*x_14-x_2*x_6*x_10*x_14+x_0*x_8*x_10*x_14+x_1*x_6*x_11*x_14-x_0*x_7*x_11*x_14, x_2*x_4*x_9*x_14-x_1*x_5*x_9*x_14-x_2*x_3*x_10*x_14+x_0*x_5*x_10*x_14+x_1*x_3*x_11*x_14-x_0*x_4*x_11*x_14, x_2*x_4*x_6*x_14-x_1*x_5*x_6*x_14-x_2*x_3*x_7*x_14+x_0*x_5*x_7*x_14+x_1*x_3*x_8*x_14-x_0*x_4*x_8*x_14, x_6*x_8*x_10*x_12-x_6*x_7*x_11*x_12-x_6*x_8*x_9*x_13+x_6^2*x_11*x_13+x_6*x_7*x_9*x_14-x_6^2*x_10*x_14, x_3*x_8*x_10*x_12-x_3*x_7*x_11*x_12-x_3*x_8*x_9*x_13+x_3*x_6*x_11*x_13+x_3*x_7*x_9*x_14-x_3*x_6*x_10*x_14, x_0*x_8*x_10*x_12-x_0*x_7*x_11*x_12-x_0*x_8*x_9*x_13+x_0*x_6*x_11*x_13+x_0*x_7*x_9*x_14-x_0*x_6*x_10*x_14, x_3*x_5*x_10*x_12-x_3*x_4*x_11*x_12-x_3*x_5*x_9*x_13+x_3^2*x_11*x_13+x_3*x_4*x_9*x_14-x_3^2*x_10*x_14, x_0*x_5*x_10*x_12-x_0*x_4*x_11*x_12-x_0*x_5*x_9*x_13+x_0*x_3*x_11*x_13+x_0*x_4*x_9*x_14-x_0*x_3*x_10*x_14, x_0*x_2*x_10*x_12-x_0*x_1*x_11*x_12-x_0*x_2*x_9*x_13+x_0^2*x_11*x_13+x_0*x_1*x_9*x_14-x_0^2*x_10*x_14, x_3*x_5*x_7*x_12-x_3*x_4*x_8*x_12-x_3*x_5*x_6*x_13+x_3^2*x_8*x_13+x_3*x_4*x_6*x_14-x_3^2*x_7*x_14, x_0*x_5*x_7*x_12-x_0*x_4*x_8*x_12-x_0*x_5*x_6*x_13+x_0*x_3*x_8*x_13+x_0*x_4*x_6*x_14-x_0*x_3*x_7*x_14, x_0*x_2*x_7*x_12-x_0*x_1*x_8*x_12-x_0*x_2*x_6*x_13+x_0^2*x_8*x_13+x_0*x_1*x_6*x_14-x_0^2*x_7*x_14, x_0*x_2*x_4*x_12-x_0*x_1*x_5*x_12-x_0*x_2*x_3*x_13+x_0^2*x_5*x_13+x_0*x_1*x_3*x_14-x_0^2*x_4*x_14, x_5*x_7*x_9*x_11-x_4*x_8*x_9*x_11-x_5*x_6*x_10*x_11+x_3*x_8*x_10*x_11+x_4*x_6*x_11^2-x_3*x_7*x_11^2, x_2*x_7*x_9*x_11-x_1*x_8*x_9*x_11-x_2*x_6*x_10*x_11+x_0*x_8*x_10*x_11+x_1*x_6*x_11^2-x_0*x_7*x_11^2, x_2*x_4*x_9*x_11-x_1*x_5*x_9*x_11-x_2*x_3*x_10*x_11+x_0*x_5*x_10*x_11+x_1*x_3*x_11^2-x_0*x_4*x_11^2, x_2*x_4*x_6*x_11-x_1*x_5*x_6*x_11-x_2*x_3*x_7*x_11+x_0*x_5*x_7*x_11+x_1*x_3*x_8*x_11-x_0*x_4*x_8*x_11, x_3*x_5*x_7*x_9-x_3*x_4*x_8*x_9-x_3*x_5*x_6*x_10+x_3^2*x_8*x_10+x_3*x_4*x_6*x_11-x_3^2*x_7*x_11, x_0*x_5*x_7*x_9-x_0*x_4*x_8*x_9-x_0*x_5*x_6*x_10+x_0*x_3*x_8*x_10+x_0*x_4*x_6*x_11-x_0*x_3*x_7*x_11, x_0*x_2*x_7*x_9-x_0*x_1*x_8*x_9-x_0*x_2*x_6*x_10+x_0^2*x_8*x_10+x_0*x_1*x_6*x_11-x_0^2*x_7*x_11, x_0*x_2*x_4*x_9-x_0*x_1*x_5*x_9-x_0*x_2*x_3*x_10+x_0^2*x_5*x_10+x_0*x_1*x_3*x_11-x_0^2*x_4*x_11, x_2*x_4*x_6*x_8-x_1*x_5*x_6*x_8-x_2*x_3*x_7*x_8+x_0*x_5*x_7*x_8+x_1*x_3*x_8^2-x_0*x_4*x_8^2, x_0*x_2*x_4*x_6-x_0*x_1*x_5*x_6-x_0*x_2*x_3*x_7+x_0^2*x_5*x_7+x_0*x_1*x_3*x_8-x_0^2*x_4*x_8}}
+ans = matrix {{x_11*x_13-x_10*x_14, x_8*x_13-x_7*x_14, x_5*x_13-x_4*x_14, x_2*x_13-x_1*x_14, x_11*x_12-x_9*x_14, x_10*x_12-x_9*x_13, x_8*x_12-x_6*x_14, x_7*x_12-x_6*x_13, x_5*x_12-x_3*x_14, x_4*x_12-x_3*x_13, x_2*x_12-x_0*x_14, x_1*x_12-x_0*x_13, x_8*x_10-x_7*x_11, x_5*x_10-x_4*x_11, x_2*x_10-x_1*x_11, x_8*x_9-x_6*x_11, x_7*x_9-x_6*x_10, x_5*x_9-x_3*x_11, x_4*x_9-x_3*x_10, x_2*x_9-x_0*x_11, x_1*x_9-x_0*x_10, x_5*x_7-x_4*x_8, x_2*x_7-x_1*x_8, x_5*x_6-x_3*x_8, x_4*x_6-x_3*x_7, x_2*x_6-x_0*x_8, x_1*x_6-x_0*x_7, x_2*x_4-x_1*x_5, x_2*x_3-x_0*x_5, x_1*x_3-x_0*x_4, x_8*x_10*x_12*x_14-x_7*x_11*x_12*x_14-x_8*x_9*x_13*x_14+x_6*x_11*x_13*x_14+x_7*x_9*x_14^2-x_6*x_10*x_14^2, x_5*x_10*x_12*x_14-x_4*x_11*x_12*x_14-x_5*x_9*x_13*x_14+x_3*x_11*x_13*x_14+x_4*x_9*x_14^2-x_3*x_10*x_14^2, x_2*x_10*x_12*x_14-x_1*x_11*x_12*x_14-x_2*x_9*x_13*x_14+x_0*x_11*x_13*x_14+x_1*x_9*x_14^2-x_0*x_10*x_14^2, x_5*x_7*x_12*x_14-x_4*x_8*x_12*x_14-x_5*x_6*x_13*x_14+x_3*x_8*x_13*x_14+x_4*x_6*x_14^2-x_3*x_7*x_14^2, x_2*x_7*x_12*x_14-x_1*x_8*x_12*x_14-x_2*x_6*x_13*x_14+x_0*x_8*x_13*x_14+x_1*x_6*x_14^2-x_0*x_7*x_14^2, x_2*x_4*x_12*x_14-x_1*x_5*x_12*x_14-x_2*x_3*x_13*x_14+x_0*x_5*x_13*x_14+x_1*x_3*x_14^2-x_0*x_4*x_14^2, x_5*x_7*x_9*x_14-x_4*x_8*x_9*x_14-x_5*x_6*x_10*x_14+x_3*x_8*x_10*x_14+x_4*x_6*x_11*x_14-x_3*x_7*x_11*x_14, x_2*x_7*x_9*x_14-x_1*x_8*x_9*x_14-x_2*x_6*x_10*x_14+x_0*x_8*x_10*x_14+x_1*x_6*x_11*x_14-x_0*x_7*x_11*x_14, x_2*x_4*x_9*x_14-x_1*x_5*x_9*x_14-x_2*x_3*x_10*x_14+x_0*x_5*x_10*x_14+x_1*x_3*x_11*x_14-x_0*x_4*x_11*x_14, x_2*x_4*x_6*x_14-x_1*x_5*x_6*x_14-x_2*x_3*x_7*x_14+x_0*x_5*x_7*x_14+x_1*x_3*x_8*x_14-x_0*x_4*x_8*x_14, x_6*x_8*x_10*x_12-x_6*x_7*x_11*x_12-x_6*x_8*x_9*x_13+x_6^2*x_11*x_13+x_6*x_7*x_9*x_14-x_6^2*x_10*x_14, x_3*x_8*x_10*x_12-x_3*x_7*x_11*x_12-x_3*x_8*x_9*x_13+x_3*x_6*x_11*x_13+x_3*x_7*x_9*x_14-x_3*x_6*x_10*x_14, x_0*x_8*x_10*x_12-x_0*x_7*x_11*x_12-x_0*x_8*x_9*x_13+x_0*x_6*x_11*x_13+x_0*x_7*x_9*x_14-x_0*x_6*x_10*x_14, x_3*x_5*x_10*x_12-x_3*x_4*x_11*x_12-x_3*x_5*x_9*x_13+x_3^2*x_11*x_13+x_3*x_4*x_9*x_14-x_3^2*x_10*x_14, x_0*x_5*x_10*x_12-x_0*x_4*x_11*x_12-x_0*x_5*x_9*x_13+x_0*x_3*x_11*x_13+x_0*x_4*x_9*x_14-x_0*x_3*x_10*x_14, x_0*x_2*x_10*x_12-x_0*x_1*x_11*x_12-x_0*x_2*x_9*x_13+x_0^2*x_11*x_13+x_0*x_1*x_9*x_14-x_0^2*x_10*x_14, x_3*x_5*x_7*x_12-x_3*x_4*x_8*x_12-x_3*x_5*x_6*x_13+x_3^2*x_8*x_13+x_3*x_4*x_6*x_14-x_3^2*x_7*x_14, x_0*x_5*x_7*x_12-x_0*x_4*x_8*x_12-x_0*x_5*x_6*x_13+x_0*x_3*x_8*x_13+x_0*x_4*x_6*x_14-x_0*x_3*x_7*x_14, x_0*x_2*x_7*x_12-x_0*x_1*x_8*x_12-x_0*x_2*x_6*x_13+x_0^2*x_8*x_13+x_0*x_1*x_6*x_14-x_0^2*x_7*x_14, x_0*x_2*x_4*x_12-x_0*x_1*x_5*x_12-x_0*x_2*x_3*x_13+x_0^2*x_5*x_13+x_0*x_1*x_3*x_14-x_0^2*x_4*x_14, x_5*x_7*x_9*x_11-x_4*x_8*x_9*x_11-x_5*x_6*x_10*x_11+x_3*x_8*x_10*x_11+x_4*x_6*x_11^2-x_3*x_7*x_11^2, x_2*x_7*x_9*x_11-x_1*x_8*x_9*x_11-x_2*x_6*x_10*x_11+x_0*x_8*x_10*x_11+x_1*x_6*x_11^2-x_0*x_7*x_11^2, x_2*x_4*x_9*x_11-x_1*x_5*x_9*x_11-x_2*x_3*x_10*x_11+x_0*x_5*x_10*x_11+x_1*x_3*x_11^2-x_0*x_4*x_11^2, x_2*x_4*x_6*x_11-x_1*x_5*x_6*x_11-x_2*x_3*x_7*x_11+x_0*x_5*x_7*x_11+x_1*x_3*x_8*x_11-x_0*x_4*x_8*x_11, x_3*x_5*x_7*x_9-x_3*x_4*x_8*x_9-x_3*x_5*x_6*x_10+x_3^2*x_8*x_10+x_3*x_4*x_6*x_11-x_3^2*x_7*x_11, x_0*x_5*x_7*x_9-x_0*x_4*x_8*x_9-x_0*x_5*x_6*x_10+x_0*x_3*x_8*x_10+x_0*x_4*x_6*x_11-x_0*x_3*x_7*x_11, x_0*x_2*x_7*x_9-x_0*x_1*x_8*x_9-x_0*x_2*x_6*x_10+x_0^2*x_8*x_10+x_0*x_1*x_6*x_11-x_0^2*x_7*x_11, x_0*x_2*x_4*x_9-x_0*x_1*x_5*x_9-x_0*x_2*x_3*x_10+x_0^2*x_5*x_10+x_0*x_1*x_3*x_11-x_0^2*x_4*x_11, x_2*x_4*x_6*x_8-x_1*x_5*x_6*x_8-x_2*x_3*x_7*x_8+x_0*x_5*x_7*x_8+x_1*x_3*x_8^2-x_0*x_4*x_8^2, x_0*x_2*x_4*x_6-x_0*x_1*x_5*x_6-x_0*x_2*x_3*x_7+x_0^2*x_5*x_7+x_0*x_1*x_3*x_8-x_0^2*x_4*x_8}};
 assert(
      time subalgebraBasis(F,Limit=>100,PrintLevel=>1)
      ==
      ans)
 assert(
-     time subalgebraBasis(F,Limit=>100,PrintLevel=>1,Autosubduce=>false)
+     time subalgebraBasis(F,Limit=>100,PrintLevel=>1,AutoSubduce=>false)
      ==
      ans)
 ///
@@ -245,7 +257,7 @@ R = kk[symbol x,symbol y]   -- x>y gives infinite, y>x gives finite
 F = matrix{{x, x*y-y^2, x*y^2}}
 ans = matrix {{x, x*y-y^2, x*y^2, x*y^3+50*y^4, x*y^4, x*y^5-34*y^6, x*y^6, x*y^7+25*y^8, x*y^8, x*y^9+20*y^10, x*y^10, x*y^11-17*y^12, x*y^12, x*y^13-29*y^14, x*y^14, x*y^15-38*y^16, x*y^16, x*y^17-45*y^18, x*y^18, x*y^19+10*y^20, x*y^20, x*y^21-46*y^22, x*y^22, x*y^23+42*y^24, x*y^24, x*y^25+31*y^26, x*y^26, x*y^27+36*y^28, x*y^28, x*y^29-27*y^30}}
 assert(
-     time subalgebraBasis(F,Limit=>30,PrintLevel=>1)
+     time subalgebraBasis(F,Limit=>30,PrintLevel=>0)
      ==
      ans)
 ///
@@ -425,13 +437,82 @@ assert(
 ----------------------------------------------------
 
 -- 18) toricSyz, Sturmfels example 11.19
-TEST ///
-R = QQ[t_1,t_2];
-A = subring sagbi{t_1^2,t_1*t_2,t_2^2};
-M = matrix{{t_1^2, t_1*t_2}};
-assert(toricSyz(A, M)==matrix {{-t_2^2, t_1*t_2}, {-t_1*t_2, t_1^2}});
-///
+--TEST ///
+--R = QQ[t_1,t_2];
+--A = subring sagbi{t_1^2,t_1*t_2,t_2^2};
+--M = matrix{{t_1^2, t_1*t_2}};
+--assert(toricSyz(A, M)==matrix {{-t_2^2, t_1*t_2}, {-t_1*t_2, t_1^2}});
+--///
 ----------------------------------------------------
+
+------------------------------------------
+-- New Tests
+------------------------------------------
+-- These tests have been added after 2021
+-- These are to help test the new version of sagbi
+--   which has options for using different strategies 
+--   including DegreeByDegree and Incremental
+---------------------------------------------------
+
+-- 19) Lex term order simple
+--
+-- These generators already form a sagbi basis
+-- The sagbi algorithm should check for S-pairs up and including degree 10
+TEST ///
+R = QQ[x, y, MonomialOrder => Lex]
+S = subring({x*y - y, x - y^2, y^3})
+assert(
+    time subalgebraBasis(S,PrintLevel=>0,Limit=>30)
+    ==
+    matrix {{x - y^2, x*y - y, y^3}}
+    )
+///
+
+-- 20) Lex term order harder
+-- Similar generating set to TEST 19
+-- Should test for S-pairs up to degree 23
+TEST ///
+R = QQ[x, y, MonomialOrder => Lex]
+S = subring({x^2,x*y-y,2*x+y^3,y^4})
+ans =  matrix {{x*y-y, 2*x+y^3, y^4, 4*x*y^3+y^6, y^10-4*y^7, x*y^6+y^6-4*y^3, y^9-6*y^6+16*y^3, y^6-4*y^3}}
+assert(time subalgebraBasis(S,PrintLevel=>0,Limit=>30) == ans)
+///
+
+-- 21) GRevLex version of 19
+TEST ///
+R = QQ[x, y];
+S = subring({x*y-y,2*x+y^3,y^4});
+ans = matrix {{x*y-y, y^3+2*x, y^4, x^4-4*x^3+6*x^2-4*x}}
+assert(time subalgebraBasis(S,PrintLevel=>0,Limit=>30) == ans)
+///
+
+-- 22) GRevLex version of 20
+TEST ///
+R = QQ[x, y]
+S = subring({x^2,x*y-y,2*x+y^3,y^4})
+ans = matrix {{x*y-y, x^2, y^3+2*x, y^4, x^4*y-y, x*y^6-4*x*y^3-12*x^3-4*x, x^5-2*x*y^3-4*x^3-x, x*y^3+2*x^3, x^3+x}}
+assert(time subalgebraBasis(S,PrintLevel=>0,Limit=>30) == ans)
+///
+
+-- 23) Test for %
+TEST ///
+R = QQ[x, y];
+S = subring({x+y, x*y, x*y^2});
+f1 = x+y + 2*x*y;
+f2 = x+2*y;
+assert(time (f1 % S)== 0)
+assert(time (f2 % S)== y)
+///
+
+-- 24) Test for groebnerMembershipTest
+TEST ///
+R = QQ[x, y];
+S = subring({x+y, x*y, x*y^2});
+f1 = x+y + 2*x*y;
+f2 = x+2*y;
+assert(time groebnerMembershipTest(f1,S))
+assert(time not groebnerMembershipTest(f2,S))
+///
 
 end
 

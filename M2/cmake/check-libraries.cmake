@@ -6,10 +6,11 @@
 ## - list NTL variables:        cmake -LA . | grep NTL
 ##    reconfigure NTL variables: cmake -U*NTL* .
 
-# These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
+# These are some of the libraries linked with Macaulay2 in Macaulay2/{d,e,bin}/CMakeLists.txt
+# Others, like TBB::tbb, FFI::ffi, and Boost::regex, are linked as imported libraries in those files.
+# TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-
-set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK TBB)
+set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -19,6 +20,7 @@ message(CHECK_START " Checking for existing libraries and programs")
 find_package(PkgConfig	REQUIRED QUIET)
 find_program(MAKE  NAMES gmake make)
 find_program(ETAGS NAMES etags)
+find_program(NPM   NAMES npm)
 
 if(BUILD_DOCS)
   find_package(Doxygen)
@@ -30,7 +32,7 @@ endif()
 #   Threads	libc6-dev	glibc-headers	N/A
 #   LAPACK	libopenblas-dev	openblas-devel	N/A (Accelerate)
 #   Boost	libboost-dev    boost-devel     boost (Regex and Stacktrace)
-#   TBB 	libtbb-dev	tbb-devel	tbb
+#   TBB 	libtbb-dev	tbb-devel	tbb (Optional)
 #   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
 #   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
@@ -51,7 +53,6 @@ else()
   set(Boost_stacktrace_header_only YES)
 endif()
 
-find_package(TBB	REQUIRED QUIET) # See FindTBB.cmake
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
@@ -70,9 +71,17 @@ foreach(lang IN ITEMS C CXX)
     get_filename_component(_libdir "${OpenMP_${_lib}_LIBRARY}" DIRECTORY)
     # TODO: remove when this is fixed: https://gitlab.kitware.com/cmake/cmake/-/issues/20934
     string(REGEX REPLACE "^lib" "" _lib "${_lib}")
-    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
+    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -Wl,-rpath,${_libdir} -l${_lib}")
   endforeach()
 endforeach()
+
+if(WITH_TBB)
+  find_package(TBB REQUIRED)
+endif()
+
+if(WITH_FFI)
+  find_package(FFI REQUIRED QUIET)
+endif()
 
 ###############################################################################
 ## Platform dependent requirements:
@@ -108,6 +117,12 @@ foreach(var IN ITEMS FOUND ROOT INCLUDE_DIRS LIBRARY_DIRS LIBRARIES VERSION_OK)
 endforeach()
 
 ###############################################################################
+## Libraries we build as a part of engine
+#   memtailor	special purpose memory allocators	(needs googletest + thread)
+#   mathic	symbolic algebra data structures	(needs memtailor  + thread)
+#   mathicgb	signature Groebner bases library	(needs mathic     + thread, tbb)
+
+###############################################################################
 ## Libraries we can download and build:
 #   eigen3	C++ template library for linear algebra
 #   bdw-gc	Boehm-Demers-Weiser conservative C/C++ Garbage Collector
@@ -137,6 +152,9 @@ find_package(MPSolve	3.2.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)
+#find_package(Memtailor 1.0.0)
+#find_package(Mathic    1.0.0)
+#find_package(Mathicgb  1.0.0)
 find_package(GLPK      4.59.0)
 
 pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
@@ -162,7 +180,7 @@ if(WITH_SQL)
   list(APPEND LIBRARIES_LIST SQLite3)
 endif()
 if(WITH_PYTHON)
-  find_package(Python3 3.7 REQUIRED)
+  find_package(Python3 3.7 REQUIRED COMPONENTS Development)
   list(APPEND LIBRARIES_LIST Python3)
 endif()
 
@@ -268,7 +286,7 @@ endforeach()
 ###############################################################################
 ## Check that found libraries can be linked to catch linking conflicts early.
 # When a conflict is detected, default to building all involved libraries.
-# TIP: cmake --debug-trycompile keeps the termporary sources and binaries
+# TIP: cmake --debug-trycompile keeps the temporary sources and binaries
 option(CHECK_LIBRARY_COMPATIBILITY "Check for library incompatibilities" ON)
 
 set(CMAKE_REQUIRED_LIBRARIES "")
@@ -308,7 +326,7 @@ if(CHECK_LIBRARY_COMPATIBILITY)
 endif()
 
 ###############################################################################
-## Set three library related definitions
+## Set four library related definitions
 
 if(GIVARO_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${GIVARO_INCLUDE_DIRS}")
@@ -336,4 +354,11 @@ if(FROBBY_FOUND)
     int main(){frobby_version;return 0;}]] HAVE_FROBBY_VERSION)
 else()
   unset(HAVE_FROBBY_VERSION CACHE)
+endif()
+
+if(FFI_FOUND)
+  set(CMAKE_REQUIRED_LIBRARIES "${FFI_LIBRARIES}")
+  check_function_exists(ffi_get_struct_offsets HAVE_FFI_GET_STRUCT_OFFSETS)
+else()
+  unset(HAVE_FFI_GET_STRUCT_OFFSETS CACHE)
 endif()

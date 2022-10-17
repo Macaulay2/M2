@@ -924,7 +924,7 @@ Key
   (generateOffline,ZZ,ZZ)
   Expected
 Headline
-  generate tables of reflexive 4d poytopes from the Kreuzer-Skarke list
+  generate tables of reflexive 4d polytopes from the Kreuzer-Skarke list
 Usage
   filename = generateOffline(h11,h12)
   filename = generateOffline h11

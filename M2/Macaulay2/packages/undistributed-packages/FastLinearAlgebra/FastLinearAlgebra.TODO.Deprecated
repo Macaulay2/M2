@@ -153,7 +153,7 @@ XXXXXXXXXXXXXX
 --    a. bugs in ffpack ZZ/p: basis(2,R) fails (R = polyring over ZZ/p).  Fix this?  MIKE
 --    b. DONE GF givaro: routine to get the defining polynomial coeffs (see M2_makearrayint in monordering.c). JAKOB
 ---   b1. DONE M2 GF in the same framework (as ConcreteRing). MIKE
---    c. promote/lift/eval beween these rings MIKE (or both of us, after a,b,d,e are done).
+--    c. promote/lift/eval between these rings MIKE (or both of us, after a,b,d,e are done).
 --    d. DONE top level M2 function to create GF from Givaro. (needs (b).  MIKE).
 --       this needs: the polynomial
 --       DONE another routine: create givaro GF ring using a specific poly (M2_arrayint as input) (JAKOB)
@@ -303,7 +303,7 @@ XXXXXXXXXXXXXX
 --   Milestone #2:
 --     Connect sparse matrix routines from linbox to M2 (over ZZ/p, other fields)
 --   Milestone #3:
---     Write basic linear algebra functiions (more generic versions) for more general rings/fields
+--     Write basic linear algebra functions (more generic versions) for more general rings/fields
 --   Milestone #4:
 --     Connect normal form operations from linbox to M2 (Hermite, Smith, LLL, Frobenius, ...)
 --     Make sure that ZZ operations and QQ operations match linbox
@@ -348,7 +348,7 @@ XXXXXXXXXXXXXX
 --  mike todo:
 --   make fplll a standard install?
 --     make linear algebra code ready for 1.5.1?  or 1.6?
---   latest scientifuc linux (version 6.3) uses gcc 4.4.6, too bad!
+--   latest scientific linux (version 6.3) uses gcc 4.4.6, too bad!
 --     check on std++0x and gcc 4.4.6, and what is available.
 --   make sure the linear algebra routines runwith the original ZZ/p.
 --     maybe only need to connect the top level routines:

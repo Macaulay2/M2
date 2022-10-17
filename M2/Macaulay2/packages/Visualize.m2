@@ -440,9 +440,9 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
 
     openPortTest();
         
-    vertexSet = flatten entries faces(0,D);
-    edgeSet = flatten entries faces(1,D);
-    face2Set = flatten entries faces(2,D);
+    vertexSet = faces(0,D);
+    edgeSet = faces(1,D);
+    face2Set = faces(2,D);
     vertexList = apply(vertexSet, v -> apply(new List from factor v, i -> i#0));
     edgeList = apply(edgeSet, e -> apply(new List from factor e, i -> i#0));
     face2List = apply(face2Set, f -> apply(new List from factor f, i -> i#0));
@@ -476,7 +476,7 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
         
     if dim D>2 then (
 	error "3-dimensional simplicial complexes not implemented yet.";
-	face3Set = flatten entries faces(3,D);
+	face3Set = faces(3,D);
 	face3List = apply(face3Set, f -> apply(new List from factor f, i -> i#0));
        	face3String = toString new Array from apply(#face3List, i -> {"\"v1\": "|toString(position(vertexSet, j -> j == face3List#i#3))|",\"v2\": "|toString(position(vertexSet, j -> j == face3List#i#2))|",\"v3\": "|toString(position(vertexSet, j -> j == face3List#i#1))|",\"v4\": "|toString(position(vertexSet, j -> j == face3List#i#0))});
 	searchReplace("vis3Faces",face3String, visTemp); -- Replace vis3Faces in the visSimplicialComplex html file by the list of faces. 

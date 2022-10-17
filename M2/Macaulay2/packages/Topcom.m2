@@ -112,12 +112,23 @@ callTopcom(String, List) := (command, inputs) -> (
     (retval#"output file", retval#"error file")
     )
 
+-- before 1.1.0:
+--   Checked 1 triangulations, 0 non-regular so far.
+-- after 1.1.0:
+--   checked 1 triangulations, 0 non-regular so far.
+
 isRegularTriangulation = method(Options=>{Homogenize=>true})
 isRegularTriangulation(Matrix, List) := opts -> (A, tri) -> (
     -- now create the output file
     (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
-    match("Checked 1 triangulations, 0 non-regular so far", get errfile)
+    match("[Cc]hecked 1 triangulations, 0 non-regular so far", get errfile)
     )
+
+-- before 1.1.0:
+--   (2,0,0,0)
+-- after 1.1.0:
+--   T[1] = {{1,2,3},{0,1,2}} is regular.
+--   h[1] := [1,0,0,0];
 
 regularTriangulationWeights = method(Options => options isRegularTriangulation)
 regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
@@ -127,7 +138,11 @@ regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
     (outfile, errfile) := callTopcom("checkregularity --heights", {topcomPoints(A, opts), [], tri });
     output := get outfile;
     if match("non-regular", output) then return null;
-    result := value first lines output;
+    result := (
+	if match(///^\(///, first lines output) -- TOPCOM < 1.1.0
+	then value first lines output
+	else value replace(///^h\[\d+\] := (.*);///, ///\1///,
+	    (lines output)#1));
     return if instance(result, Number) then {result} else toList result
     )
 
@@ -159,12 +174,26 @@ naiveChirotope Matrix := opts -> A -> (
         )
     )
 
+-- before 1.1.0:
+--   8,4:
+--   {
+--   [{0,3,6},{2,5}]
+--   [{0,7},{2,5}]
+--   ...
+--   }
+-- after 1.1.0:
+--   C[0] := [{0,3},{1,2}];
+--   C[1] := [{0,7},{1,2,4}];
+--   ...
+
 orientedCircuits = method(Options => {Homogenize=>true})
 orientedCircuits String := opts -> (chiro) -> (
     (outfile,errfile) := callTopcom("chiro2circuits", {chiro});
     s := lines get outfile;
+    s = if match(///^C\[///, first s) -- TOPCOM >= 1.1.0
+    then apply(s, line -> replace(///^C\[\d+\] := (.*);///, ///\1///, line))
     -- remove first 2 lines, and last line:
-    s = drop(drop(s, 2), -1);
+    else drop(drop(s, 2), -1);
     circs := s/(x -> toList value x);
     -- now sort it all
     circs/sort//sort
@@ -195,6 +224,11 @@ numTriangsExecutable = hashTable {
     (false, false) => "points2nalltriangs"
     }
 
+-- before 1.1.0:
+--   T[0]:=[0->4,3:{{0,1,2},{1,2,3}}];
+-- after 1.1.0:
+--   T[0] := {{0,1,2},{1,2,3}};
+
 allTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
 allTriangulations Matrix := opts -> (A) -> (
     if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
@@ -205,7 +239,7 @@ allTriangulations Matrix := opts -> (A) -> (
     -- if ConnectToRegular is true, then the output is different, and needs to be parsed.
     -- in the other case, we can avoid the first 2 lines but they don't do anything either.
     for t in tris list (
-        t1 := replace(///T\[[0-9]+\]:=\[.*:///, "", t);
+        t1 := replace(///T\[[0-9]+\] ?:= ?(\[.*:)?///, "", t);
         t2 := replace(///\];///, "", t1);
         t3 := sort value t2
         )
@@ -360,7 +394,7 @@ Description
     what files are written to Topcom, and what the executable is.
     Setting debugLevel to 0 means that the function will run silently.
 Caveat
-  Do we check that the triangulation is actually welll defined?
+  Do we check that the triangulation is actually well defined?
 SeeAlso
   regularFineTriangulation  
 ///
@@ -375,7 +409,7 @@ TEST ///
   regularFineTriangulation(A, Homogenize=>false)
   tri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}}
   assert isRegularTriangulation(A,tri)
-  assert(regularTriangulationWeights(A,tri,Homogenize=>false) == {1,1,0,0,0})
+  regularTriangulationWeights(A,tri,Homogenize=>false) == {1,1,0,0,0}
 ///
 
 TEST ///

@@ -14,6 +14,18 @@ export trace := false;
 threadLocal export backtrace := true;
 threadLocal lastCode := dummyCode;
 threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
+export chars := new array(Expr) len 256 do (
+    i := 0;
+    while i<256 do (
+	provide Expr(stringCell(string(char(i))));
+	i = i+1;
+	));
+
+-- symbols for iteration; will be reassigned at top level
+export iteratorS := setupvar("iterator", nullE);
+export nextS := setupvar("next", nullE);
+export applyIteratorS := setupvar("applyIterator", nullE);
+
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -271,8 +283,20 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
+export getIterator(e:Expr):Expr := (
+    f := lookup1(Class(e), getGlobalVariable(iteratorS));
+    if f == notfoundE
+    then nullE
+    else applyEE(f, e));
+
+export getNextFunction(e:Expr):Expr := (
+    f := lookup1(Class(e), getGlobalVariable(nextS));
+    if f == notfoundE
+    then nullE
+    else f);
+
 export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
-    foreach c in s.v do provide stringCell(string(c));
+    foreach c in s.v do provide chars.(int(uchar(c)));
 
 evalForCode(c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
@@ -280,17 +304,28 @@ evalForCode(c:forCode):Expr := (
      j := 0;				    -- the value of the loop variable if it's an integer loop, else the index in the list if it's "for i in w ..."
      w := emptySequence;				    -- the list x when it's "for i in w ..."
      n := 0;				    -- the upper bound on j, if there is a toClause.
+     iter := nullE;                         -- iterator
+     nextfunc := nullE;                     -- next function for iterator
      listLoop := false;
      toLimit := false;
+     iterLoop := false;
      if c.inClause != dummyCode then (
      	  listLoop = true;
 	  invalue := eval(c.inClause);
 	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
-	  is s:stringCell do w = strtoseq(s)
-	  else return printErrorMessageE(c.inClause,"expected a list, sequence, or string");
-	  )
+	  else (
+	      iter = getIterator(invalue);
+	      if iter != nullE
+	      then (
+		  nextfunc = getNextFunction(iter);
+		  if nextfunc != nullE
+		  then (listLoop = false; iterLoop = true)
+		  else return printErrorMessageE(c.inClause,
+		      "no method for applying next to iterator"))
+	      else return printErrorMessageE(c.inClause,
+		  "expected a list, sequence, or iterable object")))
      else (
 	  if c.fromClause != dummyCode then (
 	       fromvalue := eval(c.fromClause);
@@ -314,7 +349,13 @@ evalForCode(c:forCode):Expr := (
      while true do (
 	  if toLimit && j > n then break;
 	  if listLoop && j >= length(w) then break;
-	  localFrame.values.0 = if listLoop then w.j else Expr(ZZcell(toInteger(j)));		    -- should be the frame spot for the loop var
+	  localFrame.values.0 = ( -- should be the frame spot for the loop var
+	      if listLoop then w.j
+	      else if iterLoop then(
+		  tmp := applyEE(nextfunc, iter);
+		  if tmp == StopIterationE then break;
+		  tmp)
+	      else Expr(ZZcell(toInteger(j))));
 	  j = j+1;
 	  if c.whenClause != dummyCode then (
 	       p := eval(c.whenClause);
@@ -776,7 +817,13 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 	  recursionDepth = recursionDepth + 1;
 	  v := evalSequence(cs);
 	  recursionDepth = recursionDepth - 1;
-	  if evalSequenceHadError then evalSequenceErrorMessage else applyFCS(c,v)
+	  if evalSequenceHadError 
+	  then (
+	       tmp := evalSequenceErrorMessage;
+	       evalSequenceHadError = false;
+	       evalSequenceErrorMessage = nullE;
+	       tmp)
+	  else applyFCS(c,v)
 	  )
      else if desc.numparms != length(cs)
      then WrongNumArgs(model.arrow,desc.numparms,length(cs))
@@ -1307,7 +1354,7 @@ export evalraw(c:Code):Expr := (
      	       	    else binarymethod(left,b.rhs,AdjacentS))
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
-	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))
+	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m,nextHash()))
 	  is r:localMemoryReferenceCode do (
 	       f := localFrame;
 	       nd := r.nestingDepth;
@@ -1415,20 +1462,44 @@ export evalraw(c:Code):Expr := (
 	  is v:sequenceCode do (
 	       if length(v.x) == 0 then return emptySequence;
 	       r := evalSequence(v.x);
-	       if evalSequenceHadError then evalSequenceErrorMessage else Expr(r)) -- speed up
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else Expr(r))
 	  is v:listCode do (
 	       if length(v.y) == 0 then return emptyList;
 	       r := evalSequence(v.y);
-	       if evalSequenceHadError then evalSequenceErrorMessage else list(r))
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else list(r))
 	  is v:arrayCode do (
 	       if length(v.z) == 0 then return emptyArray;
 	       r := evalSequence(v.z);
-	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else Array(r)
 	       )
 	  is v:angleBarListCode do (
 	       if length(v.t) == 0 then return emptyAngleBarList;
 	       r := evalSequence(v.t);
-	       if evalSequenceHadError then evalSequenceErrorMessage else AngleBarList(r)
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else AngleBarList(r)
 	       ));
      when e is Error do handleError(c,e) else e);
 

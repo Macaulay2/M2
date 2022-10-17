@@ -439,7 +439,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
       for (int i = 0; i < nrows; i++)
         {
           comps[i] = nullptr;
-          last[i] = nullptr;  // used to easily placce monomials in the correct
+          last[i] = nullptr;  // used to easily place monomials in the correct
                               // bin, at the end of the polynomials.
         }
       const res_monomial_word* w = f.monoms.data();
@@ -849,28 +849,16 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
     }
   int rkSparse = -1;
   int rkDense = -1;
-  if (frac_nonzero <= .02)
-    rkSparse = rankUsingSparseMatrix(D);
-  if (frac_nonzero >= .01)
+  if (frac_nonzero <= .007)
+    {
+      rkSparse = rankUsingSparseMatrix(D);
+      return rkSparse;
+    }
+  else
     {
       rkDense = rankUsingDenseMatrix(D);
-      int rkDense1B = rankUsingDenseMatrix(D, true);
-      int rkDense2 = rankUsingDenseMatrixFlint(D);
-      int rkDense3 = rankUsingDenseMatrixFlint(D, true);
-      if (rkDense != rkDense2 or rkDense != rkDense3 or rkDense != rkDense1B)
-        {
-          std::cout << "ERROR!! dense ranks(" << slanted_degree << "," << lev << ") = " << rkDense
-                    << " and " << rkDense2 << " and " << rkDense3 << " and " << rkDense1B << std::endl;
-        }
+      return rkDense;
     }
-      
-  if (rkSparse >= 0 and rkDense >= 0 and rkSparse != rkDense)
-    {
-      std::cout << "ERROR!! ranks(" << slanted_degree << "," << lev << ") = " << rkSparse
-                << " and " << rkDense << std::endl;
-    }
-
-  return (rkSparse >= 0 ? rkSparse : rkDense);
 }
 
 M2_arrayint rawMinimalBetti(Computation* C,

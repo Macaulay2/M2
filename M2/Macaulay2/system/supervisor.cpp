@@ -13,7 +13,7 @@ const static unsigned int numCores = std::thread::hardware_concurrency();
 const static int maxNumThreads = (numCores < 4) ? 4 : (16 < numCores ? 16 : numCores);
 
 // The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
-// There may be I/O bound threads, such as the the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
+// There may be I/O bound threads, such as the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
 // number of cores plus the expected number of I/O bound threads.
 static int currentAllowedThreads = 2;
 

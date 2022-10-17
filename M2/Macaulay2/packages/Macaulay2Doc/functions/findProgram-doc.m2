@@ -1,5 +1,5 @@
 document {
-    Key => {Program, (net, Program)},
+    Key => Program,
     Headline => "external program object",
     PARA {"A hash table returned by ", TO "findProgram",
 	" with the following strings as keys:"},

@@ -32,6 +32,7 @@ codeHelper#(functionBody({} >> identity)) = g -> {
      ("-- option table opts:", value' (first localDictionaries g)#"opts")
      }
 
+-- TODO: https://github.com/Macaulay2/M2/issues/1878
 installMethod(symbol >>, Boolean, Function, Function => 
   (opts,f) -> args -> (
        -- Common code for functions created with >> to separate options from arguments.

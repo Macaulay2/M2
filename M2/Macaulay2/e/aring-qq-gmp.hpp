@@ -172,29 +172,27 @@ class ARingQQGMP : public RingInterface
   }
 
   ///@brief test doc
-  bool divide(ElementType& result,
+  void divide(ElementType& result,
               const ElementType& a,
               const ElementType& b) const
   {
-    if (is_zero(b)) return false;
+    if (is_zero(b)) throw exc::division_by_zero_error();
     mpq_div(&result, &a, &b);
-    return true;
   }
 
   void power(ElementType& result, const ElementType& a, long n) const
   {
-    assert(n >= 0);
-    if (n >= 0)
+    bool n_is_negative = false;
+    if (n < 0)
       {
-        mpz_pow_ui(mpq_numref(&result), mpq_numref(&a), n);
-        mpz_pow_ui(mpq_denref(&result), mpq_denref(&a), n);
-      }
-    else
-      {
+        if (is_zero(a)) throw exc::division_by_zero_error();
+        n_is_negative = true;
         n = -n;
-        mpz_pow_ui(mpq_numref(&result), mpq_denref(&a), n);
-        mpz_pow_ui(mpq_denref(&result), mpq_numref(&a), n);
       }
+    mpz_pow_ui(mpq_numref(&result), mpq_numref(&a), n);
+    mpz_pow_ui(mpq_denref(&result), mpq_denref(&a), n);
+    if (n_is_negative)
+      mpq_inv(&result, &result);
   }
 
   void power_mpz(ElementType& result,

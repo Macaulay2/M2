@@ -323,6 +323,7 @@ export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
 export angleBarListClass := newtypeof(visibleListClass);
 export RRiClass := newbignumbertype();
+export pointerClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 
@@ -339,6 +340,8 @@ export WrongArgZZ():Expr := WrongArg("an integer");
 export WrongArgZZ(n:int):Expr := WrongArg(n,"an integer");
 export WrongArgRR():Expr := WrongArg("a real number");
 export WrongArgRR(n:int):Expr := WrongArg(n,"a real number");
+export WrongArgRRorRRi():Expr := WrongArg("a real number or interval");
+export WrongArgRRorRRi(n:int):Expr := WrongArg(n,"a real number or interval");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
 export WrongArgSmallUInteger():Expr := WrongArg("a small non-negative integer");
