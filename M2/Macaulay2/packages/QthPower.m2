@@ -988,7 +988,7 @@ document {
 	  The method here allows for more than one independent row of weights
 	  matrix{{5,6,6},{3,6,0}} to be extended to
 	  matrix{{5,6,6},{3,6,0},{1,0,0}}.
-	  Note that the number of rows necessairly matches the number of (free) variables,
+	  Note that the number of rows necessarily matches the number of (free) variables,
 	  those of P, since the rightmost square submatrix defines a monomial ordering on P."
 	  }
      }	

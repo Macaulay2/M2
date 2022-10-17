@@ -65,7 +65,7 @@ document {
 	  },
      Outputs => {
 	  Matrix => {"the zero matrix, if F is not equipped with a Schreyer order, otherwise
-	    a matrix with source F, such that the the monomial order on F is the one induced
+	    a matrix with source F, such that the monomial order on F is the one induced
 	    by this matrix."}
 	  },
      "For examples, see ", TO "Schreyer orders", ", and ", TO (schreyerOrder,Matrix), ".",

@@ -56,6 +56,7 @@ for type in {
     Boolean,
     CC,
     Constant,
+    Function,
     HashTable,
     Nothing,
     PythonObject,

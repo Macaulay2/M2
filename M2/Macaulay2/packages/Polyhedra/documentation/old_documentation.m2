@@ -569,7 +569,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "fan", " is applied to a ", TO Cone, " it generates 
-     the ", TO Fan, " given by the the Cone and all of its faces. If applied to 
+     the ", TO Fan, " given by the Cone and all of its faces. If applied to 
      a ", TO List, " the list must only contain Cones and Fans in the same 
      ambient space. Then it adds the Cones in the List and the generating Cones 
      of the Fans in the List one by one to the Fan, checking each time if the 
@@ -605,7 +605,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "polyhedralComplex", " is applied to a ", TO Polyhedron, " it generates 
-     the ", TO PolyhedralComplex, " given by the the Polyhedron and all of its faces. If applied to 
+     the ", TO PolyhedralComplex, " given by the Polyhedron and all of its faces. If applied to 
      a ", TO List, " the list must only contain Polyhedra and PolyhedralComplexes in the same 
      ambient space. Then it adds the Polyhedra in the List and the generating Polyhedra 
      of the PolyhedralComplexes in the List one by one to the new PolyhedralComplex, checking each time if the 

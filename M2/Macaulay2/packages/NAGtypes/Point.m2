@@ -25,8 +25,8 @@ net Point := p -> (
     s := if p.cache.?SolutionStatus then p.cache.SolutionStatus else Regular;
     if s === Regular then net p.Coordinates 
     else if s === Singular then net toSequence p.Coordinates
-    else if s === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
-    else if s === Infinity then net "[I,t=" | net p.LastT | net "]"
+    else if s === MinStepFailure then net "[M,t=" | net p.cache.LastT | net "]"
+    else if s === Infinity then net "[I,t=" | net p.cache.LastT | net "]"
     else if s === NumericalRankFailure then net "[NF]"
     else if s === RefinementFailure then net "[RF]"
     else if s === IncreasePrecision then net "[P+]"

@@ -181,6 +181,7 @@ export {
     "tuttePolynomial",
     "zetaPolynomial",
     "coxeterPolynomial",
+    "degreePolynomial",
     --
     -- Properties
     "dilworthNumber",
@@ -1567,6 +1568,18 @@ coxeterPolynomial Poset := RingElement => opts -> P -> (
     n := numrows M;
     C := -M * inverse transpose M;
     det (R_0 * id_(R^n) - C)
+    )
+
+degreePolynomial = method()
+degreePolynomial Poset := RingElement => P -> (
+    R := ZZ(monoid [getSymbol "x", getSymbol "y"]);
+    cr := P.cache.coveringRelations;
+    if #cr == 0 then cr = {{}};
+    covering := tally apply(cr, last);
+    covered := tally apply(cr, first);
+    sum(#P.GroundSet, i -> (indegree := if covering#?i then covering#i else 0;
+                            outdegree := if covered#?i then covered#i else 0;
+                            (R_0)^indegree * (R_1)^outdegree))
     )
 
 ------------------------------------------
@@ -5169,7 +5182,7 @@ doc ///
         [poincarePolynomial,VariableName]
         (poincare, Poset)
     Headline
-        computes the Poincare polynomial of a ranked poset with a unique minimal element
+        computes the Poincaré polynomial of a ranked poset with a unique minimal element
     Usage
         p = poincarePolynomial P
         p = poincarePolynomial(P, VariableName => symbol)
@@ -5180,18 +5193,18 @@ doc ///
         VariableName=>Symbol
     Outputs
         p:RingElement
-            the Poincare polynomial of $P$
+            the Poincaré polynomial of $P$
     Description
         Text
-            The Poincare polynomial of $P$ is the polynomial in a single variable
+            The Poincaré polynomial of $P$ is the polynomial in a single variable
             $t$ derived from the @TO "rankFunction"@ and the @TO "moebiusFunction"@ of $P$.
 
-            The Poincare polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
+            The Poincaré polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
         Example
             n = 5;
             factor poincarePolynomial booleanLattice n
         Text
-            The Poincare polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
+            The Poincaré polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
         Example
             R = QQ[x,y,z];
             A = {x,y,z,x+y,x+z,y+z,x-y,x-z,y-z};
@@ -5288,12 +5301,13 @@ doc ///
             the Tutte polynomial of $P$
     Description
         Text
-            The Tutte polynomial of $P$ is the polynomial $f$ such that
+            The Tutte polynomial of $P$ is a polynomial $f$ in two variables
+            obtained by a summation over antichains.
         Example
             B = booleanLattice 3;
             f = tuttePolynomial B
         Text
-            The Tutte polynomial evaluates at $t = 1$ and $z = 1$ is always
+            The Tutte polynomial evaluated at $t = 1$ and $z = 1$ is always
             the number of subsets of the groundset of $P$.
         Example
             R = ring f;
@@ -5366,6 +5380,32 @@ doc ///
         Example
             B = booleanLattice 3;
             z = coxeterPolynomial B
+///
+-- degreePolynomial
+doc ///
+    Key
+        degreePolynomial
+        (degreePolynomial,Poset)
+    Headline
+        computes the degree polynomial of a poset
+    Usage
+        z = degreePolynomial P
+    Inputs
+        P:Poset
+    Outputs
+        z:RingElement
+            the degree polynomial of $P$
+    Description
+        Text
+            The degree polynomial of $P$ is the sum over elements $v$ of
+            $x^{\operatorname{in}(v)} y^{\operatorname{out}(v)}$,
+            when the exponents are the incoming and outgoing valences of $v$
+            in the Hasse diagram.
+
+            This polynomial is multiplicative for Cartesian product of posets.
+        Example
+            B = booleanLattice 3;
+            z = factor degreePolynomial B
 ///
 ------------------------------------------
 -- Properties
@@ -6367,6 +6407,7 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
 assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
+assert(toString degreePolynomial B == "x^3+3*x^2*y+3*x*y^2+y^3")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)

@@ -1667,7 +1667,7 @@ doc ///
    Description
     Text
       This function allows one to move from the labels of the basis
-      elements of a labeled free module of rank $r$ to the the integers
+      elements of a labeled free module of rank $r$ to the integers
       $\{0,1, \dots, r-1\}$.
       More specifically, if $F$ is a labeled free module where we have labeled the
       basis with the list $L$, then this function an element  $l\in L$

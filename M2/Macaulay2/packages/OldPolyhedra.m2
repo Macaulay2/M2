@@ -765,7 +765,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      d := P#"dimension of polyhedron";
      inserted := false;
      -- Polyhedra in the list 'GP' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GP into two seperate lists
+     -- the cones of higher or equal dimension. For this we divide GP into two separate lists
      GP = partition(Pf -> (dim Pf) >= d,GP);
      GP = {if GP#?true then GP#true else {},if GP#?false then GP#false else {}};
      if all(GP#0, Pf ->  (
@@ -839,7 +839,7 @@ addCone (Cone,Fan) := (C,F) -> (
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
      -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GC into two seperate lists
+     -- the cones of higher or equal dimension. For this we divide GC into two separate lists
      GC = partition(Cf -> (dim Cf) >= d,GC);
      GC = {if GC#?true then GC#true else {},if GC#?false then GC#false else {}};
      if all(GC#0, Cf ->  (
@@ -3242,7 +3242,7 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
      convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
---   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
+--   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with lattice points of 'P' 
 --     	    	       many entries
 --  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
 cellDecompose = method(TypicalValue => List)
@@ -3536,7 +3536,7 @@ stdSimplex ZZ := d -> (
 --     	     to the file. But keep in mind that this works only for such objects assigned to a Symbol! The session 
 -- 	     can be reovered by calling
 --     	     load F
--- 	     It is not neccessary to load Polyhedra before loading the saved session, because if not yet loaded it will
+-- 	     It is not necessary to load Polyhedra before loading the saved session, because if not yet loaded it will
 --     	     load Polyhedra. Also if PPDivisor was loaded when the session has been saved it will also be loaded.
 saveSession = method()
 saveSession String := F -> (
@@ -4965,7 +4965,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "fan", " is applied to a ", TO Cone, " it generates 
-     the ", TO Fan, " given by the the Cone and all of its faces. If applied to 
+     the ", TO Fan, " given by the Cone and all of its faces. If applied to 
      a ", TO List, " the list must only contain Cones and Fans in the same 
      ambient space. Then it adds the Cones in the List and the generating Cones 
      of the Fans in the List one by one to the Fan, checking each time if the 
@@ -5001,7 +5001,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "polyhedralComplex", " is applied to a ", TO Polyhedron, " it generates 
-     the ", TO PolyhedralComplex, " given by the the Polyhedron and all of its faces. If applied to 
+     the ", TO PolyhedralComplex, " given by the Polyhedron and all of its faces. If applied to 
      a ", TO List, " the list must only contain Polyhedra and PolyhedralComplexes in the same 
      ambient space. Then it adds the Polyhedra in the List and the generating Polyhedra 
      of the PolyhedralComplexes in the List one by one to the new PolyhedralComplex, checking each time if the 

@@ -1916,7 +1916,7 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
 --     	    	       over QQ, one for each pair of top dimensional Cones intersecting in a common codim 1 face. 
 --  OUTPUT : The ToricVectorBundleKaneyama 'tvb' 
 -- COMMENT : Note that the top dimensional cones are numbered starting with 0 and the codim 1 intersections are 
---           labelled by pairs (i,j) denoting the the two top dim cones involved, with i<j and they are ordered
+--           labelled by pairs (i,j) denoting the two top dim cones involved, with i<j and they are ordered
 --     	     in lexicographic order. So the matrices in 'matrixList' will be assigned to the pairs (i,j) in that 
 --     	     order, where the matrix A assigned to (i,j) denotes the transition
 --     	    	 (e_i^1,...,e_i^k) = (e_j^1,...,e_j^k)* A

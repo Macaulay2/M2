@@ -69,7 +69,6 @@ document {
     (symbol *,Constant,Number),
     (symbol *,InexactNumber,Constant),
     (symbol *,Matrix,Number),
-    (symbol *,Matrix,ZZ),
     (symbol *,Number,Constant),
     (symbol *,Number,Matrix),
     (symbol *,QQ,CC),

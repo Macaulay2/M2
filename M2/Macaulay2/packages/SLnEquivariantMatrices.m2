@@ -557,7 +557,7 @@ doc ///
 	(slIrreducibleRepresentationsTensorProduct, ZZ, ZZ, ZZ)
 	(slIrreducibleRepresentationsTensorProduct, PolynomialRing, ZZ, ZZ)
     Headline 
-    	computes the the irreducible SL-subrepresentations of the tensor product of two symmetric products
+    	computes the irreducible SL-subrepresentations of the tensor product of two symmetric products
     Usage
     	D = slIrreducibleRepresentationsTensorProduct(n,a,b)
 	D = slIrreducibleRepresentationsTensorProduct(R,a,b)	 

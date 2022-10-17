@@ -2455,7 +2455,7 @@ doc ///
             a complete multipartite graph
     Description
         Text
-            A complete multipartite graph is a graph that is first and foremost multi-partite. That is, the vertex set of a complete multipartite graph can be partitioned into k sets such that within each set, none of the vertices are connected by an edge.  The second condition is that each vertex is connected to ever vertex except for those in its partition so that it is "almost" a complete graph. For programming this graph, the input is a list P. The length of the list P will be the number of groups of vertices. For example, in a complete bipartite graph, the length of the list would be 2. The entry P_i will determine how many vertices are in each partition; necisarrily, we see that the entries of the list must be positive integers.
+            A complete multipartite graph is a graph that is first and foremost multi-partite. That is, the vertex set of a complete multipartite graph can be partitioned into k sets such that within each set, none of the vertices are connected by an edge.  The second condition is that each vertex is connected to ever vertex except for those in its partition so that it is "almost" a complete graph. For programming this graph, the input is a list P. The length of the list P will be the number of groups of vertices. For example, in a complete bipartite graph, the length of the list would be 2. The entry P_i will determine how many vertices are in each partition; necessarily, we see that the entries of the list must be positive integers.
         Example
             G = completeMultipartiteGraph {1,2,3}
 ///
@@ -3151,7 +3151,7 @@ doc ///
             the clique number of G
     Description
         Text
-            The clique number is the maximum number of vertices comprising a clique in G. A clique in a graph G is a set of vertices such that all the the vertices are mutually adjacent (they are all connected to each other).
+            The clique number is the maximum number of vertices comprising a clique in G. A clique in a graph G is a set of vertices such that all the vertices are mutually adjacent (they are all connected to each other).
         Example
             G = graph({{1, 2}, {1, 3}, {2, 3}, {3, 4}},EntryMode=>"edges");
             cliqueNumber G

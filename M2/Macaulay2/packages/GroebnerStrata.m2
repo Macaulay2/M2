@@ -626,7 +626,7 @@ doc ///
         with the constraints on a weight vector for $M$ to be the lead monomial
         considering the given tail monomials in $L$.  
         The number of rows of the matrix is the number of variables in the ring of $M$,
-        The number of columms is the total size of $L$
+        The number of columns is the total size of $L$
   Description
     Example
       R = ZZ/32003[a,b,c, d];

@@ -795,7 +795,7 @@ doc ///
     cJ:ChainComplex
         resolution of J
     W:PolynomialRing
-        over the the same @TO coefficientRing@ as R
+        over the same @TO coefficientRing@ as R
         with one variable T.
   Outputs
     :ChainComplex

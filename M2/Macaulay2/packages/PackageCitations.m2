@@ -7,8 +7,8 @@
 --
 --  This program is free software; you can redistribute it
 --  and/or modify  it under the terms of the GNU General
---  Public License as   published by  the Free Software Found-
---  ation; either version 2 of the License, or (at  your
+--  Public License as   published by  the Free Software Foundation;
+--  either version 2 of the License, or (at  your
 --  option) any later version.
 --
 --  This program is distributed in the hope that it will be
@@ -296,7 +296,7 @@ doc ///
             cite PackageCitations
             cite Text
         Text
-            If @TO cite@ is given a string, then it will will load the package
+            If @TO cite@ is given a string, then it will load the package
             if necessary and issue the corresponding citation. Note that if
             the package is @TO2 {Certification, "certified"}@ then two bibtex
             entries will be produced: one for the article witnessing the

@@ -661,7 +661,7 @@ Node
        @ ofClass{List} @  $\{s_0, ..., s_{q-1}\}$ of length $q$ of integers, with $n-q \ge{} s_0 \ge{} ... \ge{} s_{q-1} \ge{} 0$
   Outputs
      c:
-       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the the type of {\tt s}.  See 
+       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the type of {\tt s}.  See 
        page 271 of Fulton's book, {\em Intersection Theory} for the notation for @TO schubertCycle@, of which this
        is the dual.
 
@@ -708,7 +708,7 @@ Node
        @ ofClass{List} @  $\{s_0, ..., s_{r-1}\}$ of length $r$ of integers, with $n-r \ge{} s_0 \ge{} ... \ge{} s_{r-1} \ge{} 0$
   Outputs
      c:
-       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the the type of {\tt s}.  See 
+       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the type of {\tt s}.  See 
        page 271 of Fulton's book, {\em Intersection Theory} for the notations.
 
        In the case where {\tt s} is a @ ofClass Sequence @, the value returned is the {\em homology} class of the {\em Schubert variety} in
