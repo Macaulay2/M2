@@ -1877,7 +1877,7 @@ doc ///
 	    hilbertComparisonTable(0,4,M')
 	    postulationNumber(M')
     	Text
-	    In the following example, we compare the hilbert polynomial and hilbert function of splines over a centrally triangulated
+	    In the following example, we compare the Hilbert polynomial and Hilbert function of splines over a centrally triangulated
 	    octahedron; the behavior is very similar to the Morgan-Scot partition, except there is an extra degree of symmetry 
 	    available which alters the Hilbert polynomials.  Notice the use of the option Homogenize=>false to consider splines 
 	    of degree precisely d instead of splines of degree at most d.

@@ -273,7 +273,7 @@ R := ring M;
 u := unique ((gens R)/degree);
 n := #u;
 nums := apply(u, i-> #select(gens R, x -> degree x == i));
---form the hilbert polynomials of the factor rings
+--form the Hilbert polynomials of the factor rings
 a := local a;
 polys1 := apply(n, j-> (
   hilbertPolynomial(ZZ/2[a_0 .. a_(nums_j-1)], 

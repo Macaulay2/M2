@@ -78,7 +78,7 @@ document {
 	  "f" => {"usually returned via ", TO "hilbertPolynomial"}
 	  },
      Outputs => {
-	  ZZ => "the degree of any graded module having this hilbert polynomial"
+	  ZZ => "the degree of any graded module having this Hilbert polynomial"
 	  },
      "This degree is obtained from the Hilbert polynomial ", TT "f", " as follows:
      if ", TT "f = d z^e/e! + lower terms in z", ", then ", TT "d", " is returned.

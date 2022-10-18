@@ -42,7 +42,7 @@ truncateSeries = (n, wts, f) -> (
 	(pow, r) -> truncatePower(r, recipN(n-lo, wts, pow#0), pow#1, tr)))
 
 -----------------------------------------------------------------------------
--- helpers for hilbert methods
+-- helpers for Hilbert methods
 -----------------------------------------------------------------------------
 
 -- also used in betti.m2
@@ -320,7 +320,7 @@ hilbertSeries Module := opts -> M -> (
 	    return last(M.cache#approxKey = (ord, truncateSeries(ord, hft, M.cache#reducedKey))))
 	    )
     else error "hilbertSeries: option Order expected infinity or an integer";
-    -- computing the hilbert series
+    -- computing the Hilbert series
     ser = runHooks((hilbertSeries, Module), (opts, M));
     if ser === null   then error("no applicable strategy for computing Hilbert series over ", toString R);
     -- returning the appropriate format
