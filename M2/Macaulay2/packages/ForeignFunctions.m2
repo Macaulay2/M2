@@ -27,6 +27,7 @@ export {
     "ForeignPointerArrayType",
     "ForeignUnionType",
     "ForeignStructType",
+    "ForeignFunctionPointerType",
     "ForeignObject",
 
 -- built-in foreign types
@@ -63,6 +64,7 @@ export {
     "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
+    "foreignFunctionPointerType",
     "foreignSymbol",
 
 -- symbols
@@ -91,6 +93,7 @@ importFrom_Core {
     "ffiGetStructOffsets",
     "ffiStructAddress",
     "ffiUnionType",
+    "ffiFunctionPointerAddress",
     "registerFinalizerForPointer"
     }
 
@@ -429,6 +432,48 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
 
 ForeignUnionType Thing := (T, x) -> new T from {Address =>
     address foreignObject x}
+
+-----------------------------------
+-- foreign function pointer type --
+-----------------------------------
+
+ForeignFunctionPointerType = new Type of ForeignType
+ForeignFunctionPointerType.synonym = "foreign function pointer type"
+
+foreignFunctionPointerType = method(TypicalValue => ForeignFunctionPointerType)
+foreignFunctionPointerType(ForeignType, ForeignType) := (
+    rtype, argtype) -> foreignFunctionPointerType(rtype, {argtype})
+foreignFunctionPointerType(ForeignType, VisibleList) := (
+    rtype, argtypes) -> foreignFunctionPointerType(
+    net rtype | "(*)(" | demark(",", net \ argtypes) | ")", rtype, argtypes)
+foreignFunctionPointerType(String, ForeignType, ForeignType) := (
+    name, rtype, argtype) -> foreignFunctionPointerType(name, rtype, {argtype})
+foreignFunctionPointerType(String, ForeignType, VisibleList) := (
+    name, rtype, argtypes) -> (
+    if any(argtypes, argtype -> not instance(argtype, ForeignType))
+    then error("expected argument types to be foreign types");
+    if any(argtypes, argtype -> instance(argtype, ForeignVoidType)) then (
+	if #argtypes == 1 then argtypes = {}
+	else error("void must be the only parameter"));
+    T := new ForeignFunctionPointerType;
+    T.Name = name;
+    T.Address = ffiPointerType;
+    cif := ffiPrepCif(address rtype, address \ argtypes);
+    net T := x -> concatenate(net rtype, "(*", x.Name, ")(",
+	demark(",", net \ argtypes), ")");
+    new T from Function := (T, f) -> new T from {
+	Address => ffiFunctionPointerAddress(
+	    if #argtypes == 1
+	    then args -> address rtype f value dereference_(argtypes#0) args
+	    else args -> address rtype f apply(0..#args-1,
+		i -> value dereference_(argtypes#i) args#i),
+	    cif),
+	Name => net f};
+    value T := x -> foreignFunction(ffiPointerValue address x, x.Name, rtype,
+	argtypes);
+    T)
+
+ForeignFunctionPointerType Function := (T, f) -> new T from f
 
 --------------------
 -- shared library --
