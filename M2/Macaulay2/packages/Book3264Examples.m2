@@ -77,7 +77,7 @@ placeholderToSchubertBasis(RingElement,FlagBundle) := (c,G) -> (
      if R.cache.?schubertring then S = R.cache.schubertring else (
 	  --should maybe add option to choose variable name
 	  s := getSymbol "s";
-	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> schubert basis elts
+	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> Schubert basis elts
 	  R.cache.schubertring = S;
 	  S.cache = new MutableHashTable;
 	  S.cache.intersectionmap = map(R,S,M));

@@ -1774,7 +1774,7 @@ schubertRing(FlagBundle) := G -> (
 	  T' = T^-1; --matrix converting from h-basis to s-basis
           local S;
 	  s := local s;
-	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> schubert basis elts
+	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> Schubert basis elts
 	  S.cache = new CacheTable;
 	  S#{Standard,AfterPrint} = X -> (
 	       << endl;

@@ -1650,7 +1650,7 @@ EXAMPLE lines ///
 
 document {
      Key => {grading},
-PARA{}, "grading is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ", ",TO torusInvariants, ", ",TO finiteDiagInvariants, ", ",TO diagInvariants, ", ",TO intersectionValRings, ", ",TO intersectionValRingIdeals, ". Its default value is an empty list. If it is set to a list of integers it will be used as grading. This has no influence on the generators of the computed objects, but on additional data like the multiplicity or the hilbert series.
+PARA{}, "grading is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ", ",TO torusInvariants, ", ",TO finiteDiagInvariants, ", ",TO diagInvariants, ", ",TO intersectionValRings, ", ",TO intersectionValRingIdeals, ". Its default value is an empty list. If it is set to a list of integers it will be used as grading. This has no influence on the generators of the computed objects, but on additional data like the multiplicity or the Hilbert series.
 The grading may have non-positive entries, but it must give positive values for all generators.",
 EXAMPLE lines ///
           R=ZZ/37[x,y,t];
@@ -1670,7 +1670,7 @@ document {
      Headline => "returns the numerical invariants computed",
      Usage => "getNumInvs()",
      Outputs => {HashTable => "the numerical invariants"},
-     PARA{},"This function returns a hashtable containing the invariants printed to the file with suffix ", TT "inv", ", if the files are kept, i.e., if a filename is specified (see ", TO "Keeping results of the computation by Normaliz", "). The key of an entry is a ", TO String, " describing the invariant, the value is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the grading, the Hilbert series and the Hilbert quasi-polynomial and a ", TO Boolean, " for graded and primary (in the case of a rees algebra).",
+     PARA{},"This function returns a hashtable containing the invariants printed to the file with suffix ", TT "inv", ", if the files are kept, i.e., if a filename is specified (see ", TO "Keeping results of the computation by Normaliz", "). The key of an entry is a ", TO String, " describing the invariant, the value is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the grading, the Hilbert series and the Hilbert quasi-polynomial and a ", TO Boolean, " for graded and primary (in the case of a Rees algebra).",
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3,x^2*y,y^3);

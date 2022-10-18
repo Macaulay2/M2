@@ -924,7 +924,7 @@ connectingMorphism(ChainComplexMap,ZZ) := (a,n) -> (
     e := spectralSequence K ;
     e^1 .dd_{1, n}
     )
--- here are some needed functions related to hilbert polynomials --
+-- here are some needed functions related to Hilbert polynomials --
 hilbertPolynomial ZZ := ProjectiveHilbertPolynomial => o -> (M) -> ( if M == 0
     then new ProjectiveHilbertPolynomial from {} else
     new ProjectiveHilbertPolynomial from {0 => M}
