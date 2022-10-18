@@ -1814,3 +1814,20 @@ assert Equation(value foreignSymbol(mpfi, "mpfi_error", int), 5)
 assert Equation(value foreignSymbol("mpfi_error", int), 5)
 (foreignFunction(mpfi, "mpfi_reset_error", void, void))()
 ///
+
+TEST ///
+-------------------------------
+-- foreign function pointers --
+-------------------------------
+doubledouble = foreignFunctionPointerType(double, double)
+assert Equation(value (value doubledouble cos) pi, -1)
+intint = foreignFunctionPointerType(int, int)
+assert Equation(value (value intint abs)(-2), 2)
+doubledoubledouble = foreignFunctionPointerType(double, {double, double})
+assert Equation(value (value doubledoubledouble atan2)(-1, -1), -3*pi/4)
+compar = foreignFunctionPointerType(int, {voidstar, voidstar})
+qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong, compar})
+x = (4 * int) {4, 2, 3, 1}
+qsort(x, 4, size int, compar((a, b) -> value int a - value int b))
+assert Equation(value x, {1, 2, 3, 4})
+///
