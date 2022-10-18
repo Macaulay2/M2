@@ -1241,6 +1241,85 @@ doc ///
 
 doc ///
   Key
+    ForeignFunctionPointerType
+  Headline
+    foreign function pointer type
+  Description
+    Text
+      This is the class for @wikipedia "function pointer"@ types.  There
+      are no built-in types.  They must be  constructed using
+      @TO "foreignFunctionPointerType"@.
+///
+
+doc ///
+  Key
+    foreignFunctionPointerType
+    (foreignFunctionPointerType, ForeignType, ForeignType)
+    (foreignFunctionPointerType, ForeignType, VisibleList)
+    (foreignFunctionPointerType, String, ForeignType, ForeignType)
+    (foreignFunctionPointerType, String, ForeignType, VisibleList)
+  Headline
+    construct a foreign function pointer type
+  Usage
+    foreignFunctionPointerType(rtype, argtype)
+    foreignFunctionPointerType(rtype, argtypes)
+    foreignFunctionPointerType(name, rtype, argtype)
+    foreignFunctionPointerType(name, rtype, argtypes)
+  Inputs
+    name:String
+    rtype:ForeignType
+    argtype:ForeignType
+    argtypes:VisibleList -- of @TT "ForeignType"@ objects
+  Outputs
+    :ForeignFunctionPointerType
+  Description
+    Text
+      To construct a foreign function pointer type, (optionally) specify a name,
+      the return type, and either the argument type or a list of argument types.
+      If no name is specified, then one is constructed using the return
+      and argument types.
+    Example
+      foreignFunctionPointerType("compar", int, {voidstar, voidstar})
+      foreignFunctionPointerType(int, {voidstar, voidstar})
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignFunctionPointerType, Function)
+  Headline
+    cast a Macaulay2 function to a foreign function pointer
+  Usage
+    T f
+  Inputs
+    T:ForeignFunctionPointerType
+    f:Function
+  Outputs
+    :ForeignObject
+  Description
+    Text
+      To cast a Macaulay2 function to a foreign object with a foreign function
+      type, give the type followed by the function.
+    Example
+      compar = foreignFunctionPointerType("compar", int, {voidstar, voidstar})
+      f = (a, b) -> value int a - value int b
+      intcmp = compar f
+    Text
+      The resulting function pointers may be passed as callbacks to
+      @TO ForeignFunction@ objects.
+    Example
+      qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong, compar})
+      x = (4 * int) {4, 2, 3, 1}
+      qsort(x, 4, size int, intcmp)
+      x
+    Text
+      Foreign function pointers may be cast back to @TO ForeignFunction@ objects
+      using @TT "value"@ for testing purposes.
+    Example
+      (value intcmp)(address int 5, address int 6)
+///
+
+doc ///
+  Key
     ForeignObject
   Headline
     foreign object
