@@ -814,7 +814,7 @@ document {
      Headline => "time a computation",
      TT "timing e", " evaluates ", TT "e", " and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
-     of cpu timing used, and ", TT "v", " is the value of the the expression.",
+     of cpu timing used, and ", TT "v", " is the value of the expression.",
      PARA{},
      "The default method for printing such timing results is to display the
      timing separately in a comment below the computed value.",
@@ -838,7 +838,7 @@ document {
      Headline => "time a computation using time elapsed",
      TT "elapsedTiming e", " evaluates ", TT "e", " and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
-     of time elapsed, and ", TT "v", " is the value of the the expression.",
+     of time elapsed, and ", TT "v", " is the value of the expression.",
      PARA{},
      "The default method for printing such timing results is to display the
      timing separately in a comment below the computed value.",
@@ -863,7 +863,7 @@ document {
      TT "Time", " is the class of all timing results.  Each timing result
      is ", ofClass BasicList, " of the form ", TT "{t,v}", ", where ", TT "t", "
      is the number of seconds of cpu time used, and ", TT "v", " is the value
-     of the the expression.",
+     of the expression.",
      SeeAlso => {"timing", "time", "cpuTime", "elapsedTiming", "elapsedTime"}
      }
 document {
@@ -1409,7 +1409,7 @@ document {
      "In the case of an output file, any buffered output is first
      written to the file, and the return value is an integer,
      normally 0, or -1 on error, or the return status of the child
-     process in case the the file was a pipe.",
+     process in case the file was a pipe.",
      PARA{},
      "If the file was open for both input and output, both directions
      are closed.",
@@ -1468,7 +1468,7 @@ document {
      "Any buffered output is first written to the file,
      and the return value is an integer, normally 0, or -1
      on error, or the return status of the child process
-     in case the the file was a pipe.",
+     in case the file was a pipe.",
      PARA{},
      "If the file was open only for output, then ", TO "close", " is
      easier to use and has the same effect.",

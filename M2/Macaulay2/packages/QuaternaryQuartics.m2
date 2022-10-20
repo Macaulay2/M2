@@ -407,8 +407,8 @@ doc ///
     Description
         Text
             The result is a hash table whose keys are the names of the 
-            19 Betti table strata for quartenary quartics.  For each, the
-            value is a matrix wholse columns represent points.  The quartic
+            19 Betti table strata for quaternary quartics.  For each, the
+            value is a matrix whose columns represent points.  The quartic
             corresponding to this matrix is the sum of the 4th powers of the
             corresponding linear forms.
         Example

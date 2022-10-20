@@ -156,7 +156,7 @@ document {
      SeeAlso => inducedMap,
      Caveat => {
      	  "If ", TT "M", " or ", TT "N", " is not free,
-     	  then we don't check that the the result is a well defined homomorphism."
+     	  then we do not check that the result is a well defined homomorphism."
 	  }
      }
 
@@ -187,7 +187,7 @@ document {
      SeeAlso => inducedMap,
      Caveat => {
      	  "If ", TT "M", " or ", TT "N", " is not free,
-     	  then we don't check that the the result is a well defined homomorphism."
+     	  then we do not check that the result is a well defined homomorphism."
 	  }
      }
 document {

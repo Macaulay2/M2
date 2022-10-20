@@ -90,7 +90,7 @@ doc ///
 
 
 		Text
-		    	{\bf Regular Root Ceritification Methods:}
+		    	{\bf Regular Root Certification Methods:}
 
 			    $\bullet$ @TO "certifyRegularSolution"@
 
@@ -165,7 +165,7 @@ doc ///
 
 
 		Text
-		    	{\bf Multiple Root Ceritification Method:}
+		    	{\bf Multiple Root Certification Method:}
 
 			    $\bullet$ @TO "certifySingularSolution"@
 
@@ -268,7 +268,7 @@ doc ///
 		p2 = point{{.65,.77,.76,-.64}};
     	    	certifyDistinctSolutions(f,p1,p2)
 	    Text
-	    	However, if two solutions are too close, it concludes that inputs are not disticnt.
+	    	However, if two solutions are too close, it concludes that inputs are not distinct.
 	    Example
 		p1 = point{{.6525,.7712,.7577,-.6366}};
 		p2 = point{{.653,.771,.758,-.637}};

@@ -854,7 +854,7 @@ I = ideal I_*; elapsedTime J1 = ideal NCGB(I, deg, Strategy=>"F4"); -- this give
 --- 45 sec d = 30, kk = ZZ/32003, parallel
 --- 5.37sec, d = 25, kk = ZZ/32003
 --- 60 sec, d = 15, kk = QQ
-numgens J1 == 78 -- this fails here and there... (run this and the the line before it over and over).
+numgens J1 == 78 -- this fails here and there... (run this and the line before it over and over).
 
 gbTrace=2
 I = ideal I_*; time NCGB(I, 23, Strategy=>"F4"); 

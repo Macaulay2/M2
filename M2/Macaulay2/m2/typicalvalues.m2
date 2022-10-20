@@ -132,6 +132,7 @@ Function Thing := Thing => x -> (dummy x;)
 scan(BasicList,Function) := scan(String,Function) := Nothing => scan
 scan(BasicList,BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
+scan(Thing,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
 lines(String,String) := List => lines
 lines String := List => lines
@@ -260,8 +261,6 @@ scanPairs(new HashTable from variants, (args,f) -> (
 	installMethod append(args,f);
 	undocumented args;
 	))
-
--- TODO abs Constant
 
 nilp := x -> (  -- degree of nilpotency
     R := ring x;

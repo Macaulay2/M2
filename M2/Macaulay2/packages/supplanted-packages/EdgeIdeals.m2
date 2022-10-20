@@ -3020,7 +3020,7 @@ doc ///
 		  An edge in a graph is a leaf if it contains a vertex of degree one.
 		  An edge {\tt E} in a hypergraph is a leaf if there is another edge {\tt B} with the
 	          property that for all edges {\tt F} (other than {\tt E}), the intersection of {\tt F} 
-		  with {\tt E} is contained in the interesection of {\tt B} with {\tt E}.
+		  with {\tt E} is contained in the intersection of {\tt B} with {\tt E}.
 
 		  A vertex of a graph is a leaf if it has degree one.
 		  A vertex of a hypergraph is a leaf if it is contained in precisely one

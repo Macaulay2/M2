@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- Computes deRham cohomology of a smooth affine variety. For more options on localCohom strategy use ICcohom instead.
--- Special algorithm for the de Rham cohomolgy of K^n - V(f) using the algorithm of Oaku-Takayama.
+-- Special algorithm for the de Rham cohomology of K^n - V(f) using the algorithm of Oaku-Takayama.
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 

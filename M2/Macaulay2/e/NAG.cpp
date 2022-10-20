@@ -789,7 +789,7 @@ void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
         copy_complex_array<Field>(rows_out * cols_out, out, ret);
         break;
       default:
-        // interptretation
+        // interpretation
         element_type* c = ret;
         for (i = 0; i < rows_out; i++)
           for (int j = 0; j < cols_out; j++, c++)

@@ -152,15 +152,6 @@ clearAll
 
 
 --
-R = ZZ/101[a..d]
-I = monomialCurveIdeal(R,{1,3,4})
-A = R/I
-jacobian A
-singA = minors(codim ideal presentation A, jacobian A)
-generators gb singA
-
-
---
 R=ZZ/101[a..d]
 f = matrix {{a}}
 assert( isHomogeneous f )
@@ -196,40 +187,6 @@ assert isSurjective R^2_{0,0,1}
 assert not isSurjective R^2_{1}
 
 
---
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover exteriorPower(2,M) == exteriorPower(2,cover M) ))
-
---
-R = ZZ/101[x];
-k = coker vars R;
-M = R^3 ++ k^5;
-assert( fittingIdeal(0,M) == ideal 0_R )
-assert( fittingIdeal(1,M) == ideal 0_R )
-assert( fittingIdeal(2,M) == ideal 0_R )
-assert( fittingIdeal(3,M) == ideal x^5 )
-assert( fittingIdeal(4,M) == ideal x^4 )
-assert( fittingIdeal(5,M) == ideal x^3 )
-assert( fittingIdeal(6,M) == ideal x^2 )
-assert( fittingIdeal(7,M) == ideal x )
-assert( fittingIdeal(8,M) == ideal 1_R )
-assert( fittingIdeal(9,M) == ideal 1_R )
-
---
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
 
 --
 scan(3, n -> scan(-3 .. 3, d -> (
@@ -241,10 +198,6 @@ r = ZZ/101[a,b]
 assert ( 2 * degree (a * b^2) === {6} )
 M = cokernel matrix (r,{{1}})
 assert ( isFreeModule prune M )
-
---
-GF(8,Variable => x)
-assert ( det matrix{{x,1},{x^2,x^3}} == x^4 - x^2 )
 
 --
 clearAll
@@ -449,7 +402,7 @@ assert (not isPrimitive 0_R)
 
 --
 assert ( class (x->x) === FunctionClosure )
-assert ( class abs === CompiledFunction )
+assert ( class any === CompiledFunction )
 assert ( class depth === MethodFunction )
 
 
@@ -709,49 +662,6 @@ assert(size promote(f,S) == 4)
 
 --
 clearAll
-R = ZZ/101
-exteriorPower(3,R^5)
-R = ZZ/101[a..d]
-I = monomialCurveIdeal(R,{1,3,4})
-M = Ext^2(coker generators I, R)
-prune exteriorPower(3,M)
-exteriorPower(0,R^3)
-exteriorPower(0,M)
-prune exteriorPower(1,M)
-exteriorPower(2,M)
-exteriorPower(-1,M)
-exteriorPower(-2,M)
-
-M = subquotient(matrix{{a,b,c}}, matrix{{a^2,b^2,c^2,d^2}})
-N = subquotient(matrix{{a^2,b^2,c^2}}, matrix{{a^3,b^3,c^3,d^3}})
-m = map(N,M,matrix(R,{{1,0,0},{0,1,0},{0,0,1}}))
-source m
-target m
-trim ker m
-M1 = coker presentation M
-N1 = coker presentation N
-m1 = map(N1,M1,matrix m)
-M2 = trim exteriorPower(2,M)
-N2 = trim exteriorPower(2,N)
-
-
---
-R = ZZ/101[a .. i]
-m = genericMatrix(R,a,3,3)
-assert( exteriorPower(1,m) == m )
-assert( minors(1,m) == image vars R )
-assert( exteriorPower(2,m*m) == exteriorPower(2,m)*exteriorPower(2,m) )
-assert(
-     exteriorPower(2,m)
-     ==
-     matrix {
-	  {-b*d+a*e, -b*g+a*h, -e*g+d*h},
-	  {-c*d+a*f, -c*g+a*i, -f*g+d*i},
-	  {-c*e+b*f, -c*h+b*i, -f*h+e*i}} )
-assert( exteriorPower(3,m) == matrix {{-c*e*g+b*f*g+c*d*h-a*f*h-b*d*i+a*e*i}} )
-
-
---
 k = ZZ/101
 f = random(k^3,k^9)
 R = k[a,b,c]
@@ -828,12 +738,6 @@ S = ZZ/101[a..j]
 m = matrix {{d*g*i-a*g*j, c*h^2-e*h*i, a*b^2*g-a*b*d*h, b*d*f-d*e*j}}
 E = Ext^3(cokernel m, S)
 annihilator E
-
-
---
-    R = ZZ/101[s,t]
-    J = image matrix {{s^4, s^3*t, s*t^3, t^4}}
-    S = symmetricAlgebra J  -- MES: make an assertion here...
 
 
 --
@@ -1249,17 +1153,6 @@ assert ( rank HH_2 C == 1 )
 
 
 --
-    R = QQ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover cokernel M_{1} ==  cover M ) )
-
-
---
   R = ZZ[x]
   M = image map(R^2,,{{2},{0}})
   f = coverMap M
@@ -1383,19 +1276,6 @@ F 3
 	  lift(oo,QQ)
 
 
-
-
---
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover M == target presentation M ) )
-
-
 --
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 
@@ -1417,17 +1297,6 @@ F 3
 
 --
 clearAll
-R=ZZ/101[a..f]
-m=genericSkewMatrix(R,a,4)
-assert( pfaffians(-2,m) == ideal(0_R) )
-assert( pfaffians(0,m) == ideal(1_R) )
-assert( pfaffians(1,m) == ideal(0_R) )
-assert( pfaffians(2,m) == ideal(a,b,c,d,e,f) )
-assert( pfaffians(3,m) == ideal(0_R) )
-assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
-
-
---
 numgens ZZ
 numgens GF(9)
 A = ZZ[a,b,c]
@@ -1851,13 +1720,3 @@ IL = substitute(I,Rlex);
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit now seems OK
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4);
 assert(numgens source selectInSubring(1,gens G) == 1)
-
-
-
---
--- For more determinant tests, see Macaulay2/test/testdet.m2
-R = ZZ/103[a,b,c,d]
-h = matrix {{a,b},{c,d}}
-assert( det h == a * d - b * c )
-assert( minors(1,h) == image matrix {{a,b,c,d}} )
-assert( minors(2,h) == image matrix {{a * d - b * c}} )

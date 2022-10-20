@@ -1619,12 +1619,12 @@ SeeAlso
 Description
  Text
    If both $A$ and $B$ are instances of {\tt LieIdeal}, 
-   then $S$ is of tyoe  {\tt LieIdeal}.
+   then $S$ is of type  {\tt LieIdeal}.
    If both $A$ and $B$ are instances of {\tt LieSubAlgebra} 
    but not both of {\tt LieIdeal}, 
    then 
-   $S$ is of tyoe  {\tt LieSubAlgebra}. 
-   Otherwise, $S$ is of tyoe  {\tt LieSubSpace}. 
+   $S$ is of type  {\tt LieSubAlgebra}. 
+   Otherwise, $S$ is of type  {\tt LieSubSpace}. 
  Example
   L = lieAlgebra{a,b,c}
   A=lieIdeal{a}

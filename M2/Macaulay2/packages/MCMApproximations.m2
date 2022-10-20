@@ -216,7 +216,7 @@ setupModules = method()
 setupModules(List,Module) := (R,M)->(
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
     --M is a a module over R_c.
     c := length R-1;
@@ -368,7 +368,7 @@ doc ///
      If k==0 then the N=M. If k>0 then the syzygy module is computed from the 
      resolution. If k<0 then the program returns the dual of the (n-k)-th syzygy
      of the dual of the k-th syzygy, where n is one more than Codepth if that
-     opition is specified, and else n is the number of variables of ring M. 
+     option is specified, and else n is the number of variables of ring M. 
      Of course the resulting N is 0 if ring M is regular, and otherwise correct
      only if ring M is Gorenstein. In the Gorenstein case, syzygyModule(-k, syzygyModule(k, M))
      -is the non-free part of the source of the MCM approximation of M.
@@ -729,7 +729,7 @@ doc ///
 ///
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
 
 doc ///

@@ -412,7 +412,7 @@ Now we discuss the various maps gi.  Note that all maps are degree 0 maps, excep
 
 g0: we define a trace map 
     trMap: S--> [\otimes_{j=r1}^n S^d1 B_j] ** [\otimes_{j=r1}^n S^d1 B_j]^*
-    then we degine g0=trMap**id_(F1).
+    then we define g0=trMap**id_(F1).
 
 g1: is given by an identity matrix, as the only difference between G1 and G2 is how we
     label the bases.
@@ -1667,7 +1667,7 @@ doc ///
    Description
     Text
       This function allows one to move from the labels of the basis
-      elements of a labeled free module of rank $r$ to the the integers
+      elements of a labeled free module of rank $r$ to the integers
       $\{0,1, \dots, r-1\}$.
       More specifically, if $F$ is a labeled free module where we have labeled the
       basis with the list $L$, then this function an element  $l\in L$

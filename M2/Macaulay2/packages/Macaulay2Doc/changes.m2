@@ -1659,7 +1659,7 @@ document {
 		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", ", a package for Hodge integrals on the moduli space of curves, has been added and certified." },
 		    LI { TO "Kronecker::Kronecker", ", a package for Kronecker and rational normal forms, has been added." },
 		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", ", a package for
-			 computating versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
+			 computing versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
 		    LI { TO "NAGtypes::NAGtypes", ", a package containing declarations of types needed by two 
 			 other packages, has been added." },
 		    LI { TO "Nauty::Nauty", ", an interface package for the program ", TT "nauty", ", which
@@ -2101,7 +2101,7 @@ document {
 		    TO (all,ZZ,Function),
 		    TO (any,ZZ,Function),
 		    TO (degreesMonoid,List),
-		    TO (degreesRing,GeneralOrderedMonoid),
+		    TO (degreesRing,Monoid),
 		    TO (degreesRing,List),
 		    TO (export,String),
 		    TO (findFiles,List),

@@ -120,6 +120,14 @@ export toInt(x:ZZ):int  := int(Ccode(long, "mpz_get_si(", x, ")"));
 
 export toInt(x:ZZcell):int  := int(Ccode(long, "mpz_get_si(", x.v, ")"));
 
+export isUInt(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_uint_p(", x, ")");
+
+export isUInt(x:ZZcell):bool := 0 != Ccode(int, "mpz_fits_uint_p(", x.v, ")");
+
+export toUInt(x:ZZ):uint  := uint(Ccode(ulong, "mpz_get_ui(", x, ")"));
+
+export toUInt(x:ZZcell):uint  := uint(Ccode(ulong, "mpz_get_ui(", x.v, ")"));
+
 export isLong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_slong_p(", x, ")");
 
 export isLong(x:ZZcell):bool := 0 != Ccode(int, "mpz_fits_slong_p(", x.v, ")");
@@ -135,6 +143,22 @@ export isULong(x:ZZcell):bool := 0 != Ccode(int, "mpz_fits_ulong_p(", x.v, ")");
 export toULong(x:ZZ):ulong  := Ccode(ulong, "mpz_get_ui(", x, ")");
 
 export toULong(x:ZZcell):ulong  := Ccode(ulong, "mpz_get_ui(", x.v, ")");
+
+export toInt64(x:ZZ):int64_t := (
+    if Ccode(bool, "sizeof(long) >= 8") then int64_t(toLong(x))
+    else (
+	rop := int64_t(0);
+	Ccode(void, "mpz_export(&", rop, ", NULL, 1, 8, 0, 0, ", x, ")");
+	if isNegative0(x) then -rop else rop));
+export toInt64(x:ZZcell):int64_t := toInt64(x.v);
+
+export toUInt64(x:ZZ):uint64_t := (
+    if Ccode(bool, "sizeof(long) >= 8") then uint64_t(toULong(x))
+    else (
+	rop := uint64_t(0);
+	Ccode(void, "mpz_export(&", rop, ", NULL, 1, 8, 0, 0, ", x, ")");
+	rop));
+export toUInt64(x:ZZcell):uint64_t := toUInt64(x.v);
 
 export minprec := Ccode(ulong,"MPFR_PREC_MIN");
 
@@ -248,6 +272,7 @@ export moveToRRiandclear(z:RRimutable):RRi := (
      
 set(x:ZZmutable, y:ZZ   ) ::= Ccode( void, "mpz_set   (", x, ",", y, ")" );
 set(x:ZZmutable, n:int  ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
+set(x:ZZmutable, n:uint ) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 set(x:ZZmutable, n:long ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
 set(x:ZZmutable, n:ulong) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 
@@ -261,6 +286,13 @@ smallints := (
 
 export toInteger(i:int):ZZ := (
      if i >= negsmall && i <= possmall then smallints.(i-negsmall)
+     else (
+	  x := newZZmutable();
+	  set(x,i);
+	  moveToZZandclear(x)));
+
+export toInteger(i:uint):ZZ := (
+     if i <= uint(possmall) then smallints.(int(i)-negsmall)
      else (
 	  x := newZZmutable();
 	  set(x,i);
@@ -281,7 +313,7 @@ export  minusoneZZcell := ZZcell( minusoneZZ);
 export toInteger(i:ushort):ZZ := toInteger(int(i));
 
 export toInteger(i:ulong):ZZ := (
-     if i >= ulong(negsmall) && i <= ulong(possmall) then smallints.(int(i)-negsmall)
+     if i <= ulong(possmall) then smallints.(int(i)-negsmall)
      else (
 	  x := newZZmutable();
 	  set(x,i);
@@ -294,12 +326,40 @@ export toInteger(i:long):ZZ := (
 	  set(x,i);
 	  moveToZZandclear(x)));
 
+-- ints are at least 16 bits, so cast 8- and 16-bit fixed-width ints to int
+export toInteger(i:int8_t  ):ZZ := toInteger(int(i));
+export toInteger(i:uint8_t ):ZZ := toInteger(uint(i));
+export toInteger(i:int16_t ):ZZ := toInteger(int(i));
+export toInteger(i:uint16_t):ZZ := toInteger(uint(i));
+-- longs are at least 32 bits, so cast 32-bit fixed-width ints to long
+export toInteger(i:int32_t ):ZZ := toInteger(long(i));
+export toInteger(i:uint32_t):ZZ := toInteger(ulong(i));
+
 neg(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_neg(", x, ",", y, ")" );
 
 export - (x:ZZ) : ZZ := (
      w := newZZmutable();
      neg(w,x);
      moveToZZandclear(w));
+
+export toInteger(i:int64_t):ZZ := (
+    if i >= int64_t(negsmall) && i <= int64_t(possmall) then (
+	smallints.(int(i) - negsmall))
+    else if Ccode(bool, "sizeof(long) >= 8") then toInteger(long(i))
+    else (
+	isneg := i < int64_t(0);
+	absi := if isneg then -i else i;
+	x := newZZmutable();
+	Ccode(void, "mpz_import(", x, ", 1, 1, 8, 0, 0, &", absi, ")");
+	if isneg then -moveToZZandclear(x)
+	else moveToZZandclear(x)));
+export toInteger(i:uint64_t):ZZ := (
+    if i <= uint64_t(possmall) then smallints.(int(i) - negsmall)
+    else if Ccode(bool, "sizeof(long) >= 8") then toInteger(ulong(i))
+    else (
+	x := newZZmutable();
+	Ccode(void, "mpz_import(", x, ", 1, 1, 8, 0, 0, &", i, ")");
+	moveToZZandclear(x)));
 
 abs(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_abs(", x, ",", y, ")" );
 
@@ -452,6 +512,13 @@ export (x:ZZ) ^^ (y:ZZ) : ZZ := (
      w := newZZmutable();
      xor(w,x,y);
      moveToZZandclear(w));
+
+not(x:ZZmutable, y:ZZ) ::= Ccode(void, "mpz_com(", x, ",", y, ")");
+
+export not(y:ZZ) : ZZ := (
+    x := newZZmutable();
+    not(x, y);
+    moveToZZandclear(x));
 
 base := 10;
 toCstring(x:ZZ) ::= getstr(charstarOrNull(null()), base, x);
@@ -911,6 +978,11 @@ export toRRi(n:ulong,prec:ulong):RRi := (
     Ccode( void, "mpfi_set_ui(",  x, ",(unsigned long)", n, ")" );
     moveToRRiandclear(x));
 
+export toRR(n:float, prec:ulong):RR := (
+     x := newRRmutable(prec);
+     Ccode(void, "mpfr_set_flt(",  x, ", ", n, ", MPFR_RNDN)");
+     moveToRRandclear(x));
+
 export toRR(n:double,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_d(",  x, ",", n, ", MPFR_RNDN)" );
@@ -1077,6 +1149,11 @@ export toCC(x:ulong,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:double,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 
 export toCC(x:double,y:double,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
+
+export toFloat(x:RR):float := Ccode(float, "mpfr_get_flt(", x, ", MPFR_RNDN)");
+export toFloat(x:RRi):float := toFloat(midpointRR(x));
+export toFloat(x:RRcell):float := toFloat(x.v);
+export toFloat(x:RRicell):float := toFloat(x.v);
 
 export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(",  x, ", MPFR_RNDN)" );
                                     

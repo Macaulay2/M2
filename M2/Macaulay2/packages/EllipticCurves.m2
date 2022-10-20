@@ -48,7 +48,7 @@ EllipticCurveW = new Type of HashTable
 EllPoint = new Type of HashTable
 EllPointW = new Type of HashTable
 ---------------------------------------------
--- Definying elliptic curves and points
+-- Defining elliptic curves and points
 ---------------------------------------------
 ellCurve = method()
 ellCurve(Thing,Thing,Thing) := (A,B,K) ->(

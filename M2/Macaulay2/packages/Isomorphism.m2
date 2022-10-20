@@ -91,7 +91,7 @@ checkDegrees(Module, Module) := Sequence => o -> (A,B) -> (
         degdiffs := for i from 0 to #dA-1 list dA_i-dB_i;
         matches := all(degdiffs, s-> s == degdiffs_0);
         if matches then(
-        	--now the degrees of the generators are euqal.
+        	--now the degrees of the generators are equal.
         if v and not isDegreeListZero degdiffs then 
 	       <<"To make the degree sequences equal, tensor "<<A<<"with ring " << A << "to " << {dA_0-dB_0} <<endl;
                return (true, dA_0-dB_0)

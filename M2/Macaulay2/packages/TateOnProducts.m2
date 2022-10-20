@@ -611,7 +611,7 @@ outsideBeilinsonRange(Matrix) :=  m -> (
      t:=#unique degrees E;
      n:=apply(unique degrees E,d-> (#select( degrees  E, e-> e==d)-1));
      d:=0;
-	  --source indices not in the Beilison window
+	  --source indices not in the Beilinson window
      sourcem := select(rank source m,i-> (d=degree (source m)_i;#select(#d,i->d_i<0 or d_i>n_i)>0));
      m_sourcem)
 
@@ -3477,7 +3477,7 @@ isIsomorphic(truncate(3, R0), truncate(3,dual dual R0))
 
 R1=prune HH^1 source AA#1#0
 degree R1, rank R1, ann R1
--- R1 is a skyscrapper sheaf at the the images of P and Q (indeed, P and Q map to the same point of P^1)
+-- R1 is a skyscrapper sheaf at the images of P and Q (indeed, P and Q map to the same point of P^1)
 --------------------------------
 
 
@@ -3685,7 +3685,7 @@ composedFunctions = () -> (
       comT=cohomologyMatrix(T,low,high)
       assert(sub(comT',vars ring comT)==comT)
      --Text
-     -- Finally we illustate how shifting the Beilinson window works.
+     -- Finally we illustrate how shifting the Beilinson window works.
      --Example
       cohomologyMatrix(T,low,high)
       cohomologyMatrix(beilinsonWindow T,low, high)
@@ -4115,9 +4115,9 @@ doc ///
     R = coarseMultigradedRegularity M
    Inputs
     M:Module
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     M:ChainComplex
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     Strategy => String
    Outputs
     R:List
@@ -5506,7 +5506,7 @@ doc ///
        free S-modules in case of the default option BundleType=>PrunedQuotient, or as submodules of free S-modules.
        The true Beilinson functor is obtained by the sheafication of resulting the complex.
 
-       The Beilinson monad of a coherent sheaf $\mathcal F$ is the the sheafication of
+       The Beilinson monad of a coherent sheaf $\mathcal F$ is the sheafication of
        beilinson( T($\mathcal F$)) of its Tate resolution T($\mathcal F$).
      Example
         (S,E) = productOfProjectiveSpaces {2,1}

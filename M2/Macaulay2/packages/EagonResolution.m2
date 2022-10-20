@@ -650,7 +650,7 @@ Description
    The command  @TO eagon@ produces a type of hashTable called an @TO EagonData@, defined in the package.
    It contains all the data produced in
    Eagon's construction of the resolution: a double complex Y^n_i, and some internal 
-   maps. The vertical differental is called dVert: Y^n_i -> Y^n_{i+1} and the horizontal
+   maps. The vertical differential is called dVert: Y^n_i -> Y^n_{i+1} and the horizontal
    differential is dHor: Y^n_i -> Y^{n-1}_i. 
 
    Thus for example if $R$ is a factor ring of a polynomial ring S, then

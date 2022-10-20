@@ -698,6 +698,13 @@ bitxorfun(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("bitxorfun",bitxorfun);
+
+bitnotfun(e:Expr):Expr := (
+    when e
+    is x:ZZcell do toExpr(not(x.v))
+    else WrongArgZZ());
+setupfun("bitnotfun", bitnotfun);
+
 semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
 setup(SemicolonS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
@@ -2068,7 +2075,25 @@ scan(e:Expr,f:Expr):Expr := (
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
      is s:stringCell do scan(strtoseq(s), f)
-     else buildErrorPacket("scan expects a list, sequence, integer, or string"));
+     else (
+	 i := getIterator(e);
+	 if i != nullE
+	 then (
+	     nextfunc := getNextFunction(i);
+	     if nextfunc != nullE
+	     then (
+		 y := nullE;
+		 while (
+		     y = applyEE(nextfunc, i);
+		     y != StopIterationE)
+		 do (
+		     tmp := applyEE(f, y);
+		     when tmp
+		     is Error do return returnFromLoop(tmp)
+		     else nothing);
+		 nullE)
+	     else buildErrorPacket("no method for applying next to iterator"))
+	 else WrongArg(1, "a list, sequence, integer, string, or iterable")));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2

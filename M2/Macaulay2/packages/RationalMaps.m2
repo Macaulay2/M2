@@ -650,7 +650,7 @@ isBirationalOntoImageRees(RationalMapping) := o -> (phi1) -> (
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 1) then print "isBirationalOntoImageRees: computed Jacobian dual matrix";
     if (o.Verbosity >= 2) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and   "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and   "|nr|" rows.");
     );
     jdd:=(numgens ambient Rlin1)-1;
     if (o.Verbosity >= 2) then print "isBirationalOntoImageRees: is computing the rank of the  Jacobian dual matrix- barJD";
@@ -937,7 +937,7 @@ inverseOfMapRees(RationalMapping) := o->(phi1)->(
      nc:=numColumns(transpose barJD);
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 2 ) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
     );
     nonZMinor := null;
     if (o.MinorsLimit > 0) then (
@@ -1606,7 +1606,7 @@ doc ///
             tau*tauInverse == identP2 --a map composed with its inverse is the identity
             tauInverse*tau == identBlowUp
         Text
-            Note that one can only raise maps to powers (with the exception of 1 and -1) if the source and target of the the same.  In that case, raising a map to a negative power means compose the inverse of a map with itself.  We illustrate this with the quadratic transformation on $P^2$ that we started with (an transformation of order 2 in the Cremona group).
+            Note that one can only raise maps to powers (with the exception of 1 and -1) if the source and target are the same.  In that case, raising a map to a negative power means compose the inverse of a map with itself.  We illustrate this with the quadratic transformation on $P^2$ that we started with (an transformation of order 2 in the Cremona group).
         Example
             phi^3 == phi^-1 
             phi^-2 == ident

@@ -823,7 +823,7 @@ doc ///
    Text
      The many ways of working with this function allows the system 
      to compute both the classic Rees algebra of an ideal over a ring 
-     (polynomial or quotient) and to compute the the Rees algebra of a 
+     (polynomial or quotient) and to compute the Rees algebra of a 
      module or ideal using a versal embedding as described in the paper 
      of Eisenbud, Huneke and Ulrich.  It also allows different ways of 
      setting up the quotient ring.
@@ -1505,7 +1505,7 @@ doc ///
      minimal primes P_i over K with S/I \subset{} gr_IS, that is,
      the minimal primes of the support in R/I of the normal cone of f(I).
      The multiplicity associated
-     with p_i is by definition the the multiplicities of P_i in the primary
+     with p_i is by definition the multiplicity of P_i in the primary
      decomposition of K.
      
      Distinguished subvarieties and their multiplicity

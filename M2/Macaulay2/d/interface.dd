@@ -1399,7 +1399,19 @@ export rawDivMod(e:Expr):Expr := (
 	       )
 	  )
      else WrongArg(2,"a raw ring element")
-     else WrongArg(1,"a raw ring element")
+     is x:ZZcell do
+     when a.1 is y:ZZcell do (
+	 if isZero(y.v) then return seq(zeroE, Expr(x));
+	 q := newZZmutable();
+	 r := newZZmutable();
+	 if isPositive(y.v)
+	 then Ccode(void,
+	     "mpz_fdiv_qr(", q, ", ", r, ", ", x.v, ", ", y.v, ")")
+	 else Ccode(void,
+	     "mpz_cdiv_qr(", q, ", ", r, ", ", x.v, ", ", y.v, ")");
+	 seq(toExpr(moveToZZandclear(q)), toExpr(moveToZZandclear(r))))
+     else WrongArg(2, "an integer")
+     else WrongArg(1,"a raw ring element or integer")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawDivMod",rawDivMod);

@@ -380,7 +380,7 @@ isMassEliminate BettiTally :=  B -> (
      )
 
 --  input:  BettiTally of a Cohen-Macaulay Module
---     	    Cohen-Macualay Ideal
+--     	    Cohen-Macaulay Ideal
 -- output:  List, if no mass elimination occurs, a list is given sequencing
 --     	    the homological degree of the elimination of betti numbers
 -- options: EliminationSequence => Boolean; default is false, thus the output is 
@@ -1697,7 +1697,7 @@ document {
 	  TableEntries => String => "proscribes the scaled versions of the entries of the pure diagram; options are LeastIntegerEntries, HerzogKuhl, and RealizationModules."
 	  },
      Outputs => {
-	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defults to the minimal integral Betti numberswhich satisfy the Herzog-Kuhl equations."
+	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defaults to the minimal integral Betti numbers which satisfy the Herzog-Kuhl equations."
 	  },
      "See ", TO "pureBetti", " for a description of the Herzog-Kuhl equations.",
      EXAMPLE lines ///

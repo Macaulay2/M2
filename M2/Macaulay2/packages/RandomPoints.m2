@@ -1386,7 +1386,7 @@ findANonZeroMinor(ZZ, Matrix, Ideal) := opts -> (n,M,I)->(
     --Karl:  I modified the following.
     if (rank(M3)<n) then error "findANonZeroMinor:  Something went wrong, the matrix rank fell taking the first submatrix.  This indicates a bug in the program.";
     --this is what was written before:
-    --return (P,N1,N2,"findANonZeroMinor: Using the the second and third outputs failed to generate a random matrix of the given size, that has full rank when evaluated at the first output.");
+    --return (P,N1,N2,"findANonZeroMinor: Using the second and third outputs failed to generate a random matrix of the given size, that has full rank when evaluated at the first output.");
     N2rand := random(rowRankProfile(M3));
     N2new = {};
     for i from 0 to n-1 do(
@@ -1783,7 +1783,7 @@ doc ///
         Full
         Trinomial
     Headline
-        When changing coordinates, whether to replace variables by general degre 1 forms, binomials, etc.
+        When changing coordinates, whether to replace variables by general degree 1 forms, binomials, etc.
     Usage
         Replacement => Full
         Replacement => Monomial
@@ -1842,7 +1842,7 @@ doc///
         [extendIdealByNonZeroMinor, NumThreadsToUse]
         [findANonZeroMinor, NumThreadsToUse]
     Headline
-        number of threads the the function will use in a brute force search for a point 
+        number of threads that the function will use in a brute force search for a point 
     Description
         Text
             When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy, this denotes the number of threads to use in brute force point checking.
@@ -1859,7 +1859,7 @@ doc///
         [extendIdealByNonZeroMinor,PointCheckAttempts ]
         [findANonZeroMinor, PointCheckAttempts]
     Headline
-        Number of times the the function will search for a point 
+        Number of times that the function will search for a point 
     Description
         Text
             When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy strategy, this denotes the number of trials for brute force point checking.  When calling it with a {\tt LinearIntersection} strategy, this controls how many linear spaces are created.

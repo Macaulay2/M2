@@ -359,7 +359,7 @@ findMultiplicity=(M,I)->(
     K:=ideal(leadTerm(1,J));
     --you saturate since you don't want the components outside the torus
     initialIdeal:= saturate(sub(K,S), product gens S);
-    --this is the the basis of the lattice associated to the toric ideal we are going to compute
+    --this is the basis of the lattice associated to the toric ideal we are going to compute
 --    Basis:= (maxCol( generators kernel transpose M))_0;
       toricIdeal:= ideal apply(entries transpose gens kernel transpose M, u->(
 	      mon1:=1_R;
@@ -861,7 +861,7 @@ doc ///
 		tropical hypersurface given an input polynomial. The input
 		should be entered as a homogeneous polynomial. Running
 		this method opens an image in a new browser window. The
-		coefficients can be intereted as p-adic coefficients or as
+		coefficients can be interpreted as p-adic coefficients or as
 		polynomials via the option @TO Valuation@. Examples are
 		commented out because they open a new browser window.
 	    Example

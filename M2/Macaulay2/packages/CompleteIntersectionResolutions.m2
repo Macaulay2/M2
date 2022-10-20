@@ -1430,7 +1430,7 @@ exteriorTorModule(Matrix,Module,Module) := (ff,M,N) ->(
     --ff is a sequence of elements in S that annihilate M and N;
     --The script defines a new ring
     --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
-    --with with degree e_j = degree f_j.
+    --with degree e_j = degree f_j.
     --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
     --
     --the script returns Tor^S(M,N) as an SE-module with structure induced
@@ -1455,7 +1455,7 @@ exteriorExtModule(Matrix, Module, Module) := (ff, M,N)->(
     --ff is a sequence of elements in S that annihilate M and N;
     --The script defines a new ring
     --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
-    --with with degree e_j = degree f_j.
+    --with degree e_j = degree f_j.
     --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
     --
     --the script returns Ext_S(M,N) as an SE-module with structure induced
@@ -2417,7 +2417,7 @@ Description
   module Ext_R(M,k). TateResolution returns 
   a specified part of the Tate resolution of a 
   maximal Cohen-Macaulay module M
-  first calling the routine cosysyzy.
+  first calling the routine cosyzygy.
   
   The routines moduleAsExt and hfModuleAsExt give
   partial converse constructions (following Avramov-Jorgensen)
@@ -3842,7 +3842,7 @@ Description
   At one time DE hoped that, if M were a module over the complete intersection R with
   residue field k,
   then the natural map from "complete" Ext module "(widehat Ext)_R(M,k)"
-  to the the S2-ification of Ext_R(M,k) would be surjective; equivalently, if
+  to the S2-ification of Ext_R(M,k) would be surjective; equivalently, if
   N were a sufficiently negative syzygy of M, then the first local cohomology module
   of Ext_R(M,k) would be zero. This is false, as shown by the following example:
  Example
@@ -4938,7 +4938,7 @@ doc///
     D = layeredMFaug (ff,M)
    Inputs
     ff:Matrix
-     1 x c matrix containing a regular sequence in a polynomomial ring S
+     1 x c matrix containing a regular sequence in a polynomial ring S
     M:Module
      MCM module over S/(ideal ff)
     Check:Boolean
@@ -5028,7 +5028,7 @@ doc///
     D = layeredMFaug (ff,M)
    Inputs
     ff:Matrix
-     1 x c matrix containing a regular sequence in a polynomomial ring S
+     1 x c matrix containing a regular sequence in a polynomial ring S
     M:Module
      MCM module over S/(ideal ff)
     Check:Boolean

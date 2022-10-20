@@ -1249,7 +1249,7 @@ document {
 	"checkTangentSpace I",
 	"checkTangentSpace J"
      },
-    PARA{"Even if ",TT "checkTangentSpace"," returns the value ",TT "true",", it may occur that the map from the deformation space computed by ",TO localHilbertScheme," to the the local Hilbert scheme is not an isomorphism on tangent spaces, since the rank of the map is not computed."}
+    PARA{"Even if ",TT "checkTangentSpace"," returns the value ",TT "true",", it may occur that the map from the deformation space computed by ",TO localHilbertScheme," to the local Hilbert scheme is not an isomorphism on tangent spaces, since the rank of the map is not computed."}
      } 
 
 
@@ -1365,18 +1365,19 @@ assert (checkTangentSpace gens J == true)
 assert (checkComparisonTheorem gens J == true)
 ///
 
-TEST ///
-needsPackage "Truncations"
-S = ZZ/32003[a..d]
-I = monomialIdeal(a^2,a*b,b^4,a*c^3)
-J = truncate(3, I)
-(F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
-///
-TEST ///
-S=QQ[x,y]/ideal {x^4+y^3}
-f= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}
-(F,R,G,C)=versalDeformation(f,CT^1(f),extMatrix(f),Verbose=>4)
-assert (sum G==map(target G_0,source G_0,sub( matrix {{t_1^6+t_1^3*t_2^2+3*t_1^4*t_5+12*t_1^3*t_2*t_6-12*t_1^3*t_6^2+(1/2)*t_2^4+t_1*t_2^2*t_3+2*t_1^2*t_2*t_4+(7/2)*t_1*t_2^2*t_5+3*t_1^2*t_5^2+2*t_2^3*t_6+2*t_1*t_2*t_3*t_6-8*t_1^2*t_4*t_6+4*t_1*t_2*t_5*t_6+3*t_2^2*t_6^2-6*t_1*t_5*t_6^2+2*t_2*t_6^3+t_6^4-t_1*t_4^2-(3/2)*t_2*t_4*t_5+t_5^3-3*t_4*t_5*t_6}, {-t_1^4-6*t_1*t_6^2+t_3^2-t_2*t_4+t_3*t_5+t_5^2-2*t_4*t_6}, {0}, {0}, {0}, {-4*t_1^3*t_2-t_2^3-4*t_1*t_2*t_3-5*t_1*t_2*t_5-2*t_2^2*t_6+4*t_1*t_3*t_6+2*t_1*t_5*t_6-2*t_2*t_6^2+2*t_3*t_4+t_4*t_5}},ring G_0)))
-assert (sum F==map(target F_0,source F_0,sub(matrix {{t_1^2+t_3+t_5+y, -t_1^3-t_2^2-t_1*t_5-t_2*t_6-t_6^2+y*t_1+x*t_2-x^2, -t_1*t_2+2*t_1*t_6+t_4}, {t_2+t_6+x, 3*t_1*t_2-2*t_1*t_6-t_4, t_1^2+t_5-y}, {-t_1, -t_1^2+t_3-y, t_6-x}},ring F_0)))
-///
+-- TEST ///
+-- needsPackage "Truncations"
+-- S = ZZ/32003[a..d]
+-- I = monomialIdeal(a^2,a*b,b^4,a*c^3)
+-- J = truncate(3, I)
+-- (F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
+-- ///
+
+-- TEST ///
+-- S=QQ[x,y]/ideal {x^4+y^3}
+-- f= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}
+-- (F,R,G,C)=versalDeformation(f,CT^1(f),extMatrix(f),Verbose=>4)
+-- assert (sum G==map(target G_0,source G_0,sub( matrix {{t_1^6+t_1^3*t_2^2+3*t_1^4*t_5+12*t_1^3*t_2*t_6-12*t_1^3*t_6^2+(1/2)*t_2^4+t_1*t_2^2*t_3+2*t_1^2*t_2*t_4+(7/2)*t_1*t_2^2*t_5+3*t_1^2*t_5^2+2*t_2^3*t_6+2*t_1*t_2*t_3*t_6-8*t_1^2*t_4*t_6+4*t_1*t_2*t_5*t_6+3*t_2^2*t_6^2-6*t_1*t_5*t_6^2+2*t_2*t_6^3+t_6^4-t_1*t_4^2-(3/2)*t_2*t_4*t_5+t_5^3-3*t_4*t_5*t_6}, {-t_1^4-6*t_1*t_6^2+t_3^2-t_2*t_4+t_3*t_5+t_5^2-2*t_4*t_6}, {0}, {0}, {0}, {-4*t_1^3*t_2-t_2^3-4*t_1*t_2*t_3-5*t_1*t_2*t_5-2*t_2^2*t_6+4*t_1*t_3*t_6+2*t_1*t_5*t_6-2*t_2*t_6^2+2*t_3*t_4+t_4*t_5}},ring G_0)))
+-- assert (sum F==map(target F_0,source F_0,sub(matrix {{t_1^2+t_3+t_5+y, -t_1^3-t_2^2-t_1*t_5-t_2*t_6-t_6^2+y*t_1+x*t_2-x^2, -t_1*t_2+2*t_1*t_6+t_4}, {t_2+t_6+x, 3*t_1*t_2-2*t_1*t_6-t_4, t_1^2+t_5-y}, {-t_1, -t_1^2+t_3-y, t_6-x}},ring F_0)))
+-- ///
 

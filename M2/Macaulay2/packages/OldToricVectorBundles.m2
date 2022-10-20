@@ -1485,7 +1485,7 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
      -- Checking for input errors
      if numRows u != T#"dimension of the variety" or numColumns u != 1 then error("Expected a matrix with 1 column and ", toString T#"dimension of the variety", " rows.");
      if ring u =!= ZZ then error("The degree has to be an integer vector.");
-     if k < -1 or T#"dimension of the variety"+1 < k then error("k has to be between 0 and the variety dimension for the k-th cohomolgy");
+     if k < -1 or T#"dimension of the variety"+1 < k then error("k has to be between 0 and the variety dimension for the k-th cohomology");
      -- For a given space F1 at chain k in the filtration together with the degree vector 'u' and the information of the bundle this auxillary 
      -- function computes the boundary operator to the next chain (k+1) which is F1toF2, the dimensions of the summands of 'F1' in 'F1columns' 
      -- and the next chain 'F2'
@@ -1598,7 +1598,7 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
      -- Checking for input errors
      if numRows u != tvb#"dimension of the variety" or numColumns u != 1 then error("Expected a matrix with 1 column and ", toString tvb#"dimension of the variety", " rows.");
      if ring u =!= ZZ then error("The degree has to be an integer vector.");
-     if k < 0 or tvb#"dimension of the variety"+1 < k then error("k has to be between 0 and the variety dimension for the k-th cohomolgy.");
+     if k < 0 or tvb#"dimension of the variety"+1 < k then error("k has to be between 0 and the variety dimension for the k-th cohomology.");
      -- For a given space F1 at chain k in the filtration together with the degree vector 'u' and the information of the bundle this auxillary 
      -- function computes the boundary operator to the next chain (k+1) which is F1toF2, the dimensions of the summands of 'F1' in 'F1columns' 
      -- and the next chain 'F2'
@@ -1863,7 +1863,7 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
 --     	    	       over QQ, one for each pair of top dimensional Cones intersecting in a common codim 1 face. 
 --  OUTPUT : The ToricVectorBundleKaneyama 'tvb' 
 -- COMMENT : Note that the top dimensional cones are numbered starting with 0 and the codim 1 intersections are 
---           labelled by pairs (i,j) denoting the the two top dim cones involved, with i<j and they are ordered
+--           labelled by pairs (i,j) denoting the two top dim cones involved, with i<j and they are ordered
 --     	     in lexicographic order. So the matrices in 'matrixList' will be assigned to the pairs (i,j) in that 
 --     	     order, where the matrix A assigned to (i,j) denotes the transition
 --     	    	 (e_i^1,...,e_i^k) = (e_j^1,...,e_j^k)* A
@@ -2315,7 +2315,7 @@ document {
      step in the filtration is given by all columns of the basis matrix for which the corresponding entry 
      in the filtration matrix is less or equal to $j$."///,
      
-     PARA{}, "The matrices need not satisfy the compatability condition. This can be checked 
+     PARA{}, "The matrices need not satisfy the compatibility condition. This can be checked 
      with ",TO isVectorBundle,".",
      
      EXAMPLE {
@@ -3723,7 +3723,7 @@ document {
      matrices over ",TO ZZ,". The assignment order is the same as for the basis matrices.",
      
      PARA{}, "Note that the basis and filtration matrices that are given to the function need not 
-     satisfy the compatability condition. This can by checked by using ",TO regCheck,".",
+     satisfy the compatibility condition. This can by checked by using ",TO regCheck,".",
      
      EXAMPLE {
 	  " L1 = {matrix {{1,0},{0,1}},matrix{{0,1},{1,0}},matrix{{-1,0},{-1,1}}}",

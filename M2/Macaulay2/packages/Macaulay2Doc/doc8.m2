@@ -455,48 +455,6 @@ document {
      SeeAlso => "GaloisField"
      }
 
-document {
-     Key => flatten {newRing,(newRing, QuotientRing),(newRing, PolynomialRing),apply(keys options monoid,k -> [newRing,k])},
-     Headline => "make a copy of a ring, with some features changed",
-     Usage => "S = newRing(R,options)",
-     Inputs => {
-	  "R" => {"a polynomial ring or a quotient of a polynomial ring"}
-	  },
-     Outputs => {
-	  "S" => Ring => {
-	       "a new ring, constructed in the same way ", TT "R", " was,
-	       over the same coefficient ring, but with the newly specified options
-	       overriding those used before.  See ", TO "monoid", " for a description of those options.
-	       If ", TT "R", " was a quotient ring, then the number of variables must be the same, and S will
-	       be a quotient ring, too, with defining ideal obtained from the old by substituting the new
-	       variables for the old, preserving their order."
-	       }},
-     PARA {
-	  "If a different number of variables is given with ", TO "Variables", ", then
-	  the list of degrees in ", TT "R", " will be ignored.  If a new degree rank is specified with ", TO "DegreeRank", "
-	  then the list of degrees and the heft vector of ", TT "R", " will be ignored.  If a new nonempty list of degrees is
-	  specified with ", TO "Degrees", ", then the degree rank and and the heft vector of ", TT "R", " will be ignored."
-	  },
-     EXAMPLE lines ///
-     R = QQ[x,y,MonomialOrder => Lex,Degrees=>{3,5}];
-     describe newRing(R,MonomialOrder => GRevLex)
-     describe newRing(R,Variables=>4)
-     describe newRing(R,Heft=>{2})
-     S = R/(x^2+y^3);
-     describe newRing(R,Variables=>2)
-     ///,
-     PARA {
-	  "The default values for the options of ", TT "newRing", " are all set to a non-accessible private symbol
-	  whose name is ", TT "nothing", "."
-	  }
-     }
-
-document {
-     Key => (symbol **, Ring, Ring),
-     Headline => "tensor product",
-     "For complete documentation, see ", TO "tensor", "."
-     }
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

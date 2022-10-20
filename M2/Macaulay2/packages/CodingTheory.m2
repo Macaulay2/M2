@@ -758,7 +758,7 @@ minimumWeight LinearCode := ZZ => opts -> C -> (
 	symbol IncidenceMatrix => M, -- the incidence matrix of a graph
 	symbol PolynomialSet => S,  --- a set of polynomials 
 	symbol LinearCode => linearCode(G), -- the linear code associated with the evaluation code
-	symbol Sets => S, -- the collection of subsets used for constracting a Cartesian code
+	symbol Sets => S, -- the collection of subsets used for constructing a Cartesian code
 	symbol AmbientModule => F^(#P),  --- the ambient space for an evaluation code
 	symbol cache => new CacheTable
 	}
@@ -1146,7 +1146,7 @@ hammingCode(ZZ,ZZ) := LinearCode => (q,r) -> (
     K := GF(q);
     -- setK is the set that contains all the elements of the field.
     setK := set(  {0}| apply(toList(1..q-1),i -> K_1^i));
-    -- C is the transpose of the parity check matrix of the code. Its rows are the the points of the
+    -- C is the transpose of the parity check matrix of the code. Its rows are the points of the
     -- projective space P(r-1,q).
     j := 1;
     C := matrix(apply(toList(1..q^(r-j)), i -> apply(toList(1..1),j -> 1))) | matrix apply(toList(toList setK^**(r-j)/deepSplice),i->toList i);
@@ -2312,7 +2312,7 @@ assert(dim C.LinearCode == 3)
 
 TEST ///
 -- Toric code.
-M=matrix{{1,4},{2,5},{10,6}} -- matrix of exponent vectors definind the polytope P, exponents vectors are rows
+M=matrix{{1,4},{2,5},{10,6}} -- matrix of exponent vectors defining the polytope P, exponents vectors are rows
 T=toricCode(GF 4,M) --- a toric code over F_4 with polytope P
 assert(length T.LinearCode == 9)
 assert(dim T.LinearCode == 5)
@@ -3595,7 +3595,7 @@ doc ///
 	    imply that it is always as fast or faster than @TT "BruteForce"@. 
 	       
 	    @TT "BruteForce"@ is the simplest and most reliable strategy, but also almost always the slowest. It is intended mainly for
-	    internal purposes such as debbugging and testing the other strategies.
+	    internal purposes such as debugging and testing the other strategies.
         Example
 	    C=hammingCode(2,3);
 	    minimumWeight(C, Strat=>"BruteForce")

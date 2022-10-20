@@ -1181,7 +1181,7 @@ document {
 	  ///,
      PARA {
      	  "Minimization changes the order of the variables
-	  to impicitly change to a new Noether normalization, but doesn't
+	  to implicitly change to a new Noether normalization, but doesn't
 	  actually recompute the integral closure presentation
 	  as a strict affine algebra over the new Noether normalization.
 	  Therefore a second call to an integral closure method is

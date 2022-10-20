@@ -1326,7 +1326,7 @@ document {
 	  "n"=> ZZ=>{},
 	  },
      Outputs => {
-	  "L"=>List => {"Containin bounds a and b such that a<=epsilon(X_P,L_P;1_P)<=b"},
+	  "L"=>List => {"Containing bounds a and b such that a<=epsilon(X_P,L_P;1_P)<=b"},
       	  },
      
      PARA{}, TT "epsilonBounds", " is a function. It computes bounds for the Seshadri constant at a general point by applying a set of projections. The integer n determines which projections are considered.",

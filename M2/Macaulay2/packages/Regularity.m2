@@ -397,7 +397,7 @@ fastReg (Ideal):= opts -> I -> (
 -- regCM
 
 -- INPUT: I = a Cohen-Macaulay ideal in a polynomial ring
--- OUTPUT: the Castelnupovo Mumford regularity of I
+-- OUTPUT: the Castelnuovo Mumford regularity of I
 
 regCM = (I,d) -> (
    R :=ring I;
