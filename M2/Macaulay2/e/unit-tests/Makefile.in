@@ -79,7 +79,7 @@ checkRingRRR: ARingRRRTest
 checkRingRRi: ARingRRiTest
 	time ./ARingRRiTest
 
-#fails for whatever reasins
+#fails for whatever reasons
 checkRingRRRZZp: ARingRRRZZpTest
 	time ./ARingRRRZZpTest
 

@@ -2795,10 +2795,10 @@ multidoc ///
     	Description
 	    Text	
     	    	This optional argument decides between two ways to calculate higherSpechtPolynomials.
-	    	If it is set to to true then a calculation involving the row and column stabilizers
+	    	If it is set to true then a calculation involving the row and column stabilizers
 	    	is used.                                                                                                                                                                                                      
     	    	If it is set to false then another strategy is used. This strategy is based on a
-	    	representation of higher specht polynomials as a multiplication
+	    	representation of higher Specht polynomials as a multiplication
 	    	of simpler Specht polynomials and Schur polynomials.
 	    
 	    Example
@@ -3088,7 +3088,7 @@ multidoc ///
 		
 	   Text
 	       The determinant of these matrices divided by the Vandermonde determinant of the same rank is equal
-		to a schur polynomial .
+		to a Schur polynomial .
 	   Example
 		(determinant M)//vandermondeDeterminant({0,2,3},R) 
 		
@@ -3104,7 +3104,7 @@ multidoc ///
 	    indices:List
 	    	a list of the variables that appear in each column of the matrix
 	    parti:Partition
-	    	a partition that indexes the schur polynomial
+	    	a partition that indexes the Schur polynomial
 	    R:PolynomialRing
 	    
 	Outputs
@@ -3119,7 +3119,7 @@ multidoc ///
 		
 	   Text
 	       The determinant of these matrices divided by the Vandermonde determinant of the same rank is equal
-		to a schur polynomial .
+		to a Schur polynomial .
 	   Example
 		(determinant M)//vandermondeDeterminant({0,2,3},R)
 		

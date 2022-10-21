@@ -3143,7 +3143,7 @@ doc ///
 	     Text
 	     	  The line graph {\tt L} of a hypergraph {\tt H} has a vertex for each edge in {\tt H}. 
 		  Two vertices in {\tt L} are adjacent if their edges in {\tt H} share a vertex.
-		  The order of the vertices in {\tt L} are determined by the implict order 
+		  The order of the vertices in {\tt L} are determined by the implicit order 
 		  on the edges of {\tt H}. See @TO edges@.
 	     Example
      	       	  R = QQ[a..e];

@@ -57,6 +57,9 @@
 /* whether frobby has frobby_version >=0.9.4 or constants::version <0.9.4 */
 #cmakedefine HAVE_FROBBY_VERSION 1
 
+/* whether libffi has ffi_get_struct_offsets; introduced in libffi 3.3 */
+#cmakedefine HAVE_FFI_GET_STRUCT_OFFSETS 1
+
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* whether getaddrinfo can handle numeric service (port) numbers */
 #cmakedefine GETADDRINFO_WORKS 1

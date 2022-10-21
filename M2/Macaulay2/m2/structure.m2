@@ -19,7 +19,8 @@ position(VisibleList,VisibleList,Function) := o -> (v,w,f) -> (
      else (for i to #v-1 do if f(v#i,w#i) then return i)
      )
 
-delete = (x,v) -> select(v, i -> i =!= x)
+delete = method()
+delete(Thing, VisibleList) := (x,v) -> select(v, i -> i =!= x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

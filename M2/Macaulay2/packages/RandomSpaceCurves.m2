@@ -68,7 +68,7 @@ TEST ///
 
 
 -----------------------------
--- Expected Betti Tableaus --
+-- Expected Betti Tableaux --
 -----------------------------
 
 -- convert c*t^d to (c,({d},d))

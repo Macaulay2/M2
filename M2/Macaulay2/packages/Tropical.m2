@@ -500,7 +500,7 @@ tropicalVariety (Ideal) := o -> (I) ->(
 
 --auxiliary function to quotient out the lineality space (1,1,...1) introduced by the homogenisation
 --input= matrix whose columns are either the rays or the generators of the lineality space of a fan
---output= matrix whose columns are either the rays or the generators of the linelity space of the fan quotiented by (1,...,1)
+--output= matrix whose columns are either the rays or the generators of the lineality space of the fan quotiented by (1,...,1)
 dehomogenise=(M) -> (
 	vectorList:= entries transpose M;
 	dehomog:= new List;
@@ -757,9 +757,9 @@ isSimplicial TropicalCycle:= Boolean => T->( isSimplicial(fan(T)))
 --------------------
 
 
--- BergmanconeC returns the matrix of of generators of the cones
--- corresponding to the chain of flats C it does not check whether C
--- is a chain of flat or not 
+-- BergmanconeC returns the matrix of generators of the cones
+-- corresponding to the chain of flats C. It does not check whether C
+-- is a chain of flats or not.
 
 BergmanconeC  = (M, C) -> (
     groundSetM:=#M.groundSet;

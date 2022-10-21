@@ -38,7 +38,7 @@ texLiteralTable#"\n" = "\n"
 texLiteralTable#"\r" = "\r"
 texLiteralTable#"\t" = "\t"
 texLiteralTable#"`"  = "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-texLiteral = s -> concatenate apply(s, c -> texLiteralTable#c)
+texLiteral = s -> concatenate for c in s list texLiteralTable#c
 
 HALFLINE    := "\\vskip 4.75pt\n"
 ENDLINE     := "\\leavevmode\\hss\\endgraf\n"
@@ -47,7 +47,8 @@ ENDVERBATIM := "\\endgroup{}"
 
 texExtraLiteralTable := copy texLiteralTable
 texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(l, c -> texExtraLiteralTable#c)))
+texExtraLiteral := s -> demark(ENDLINE,
+    apply(lines s, l -> for c in l list texExtraLiteralTable#c))
 
 --------------------------------------------
 -- this loop depends on the feature of hash tables that when the keys

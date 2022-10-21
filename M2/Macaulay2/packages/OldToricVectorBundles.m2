@@ -392,7 +392,7 @@ details ToricVectorBundle := tvb -> (
 --     	     conditions automatically.
 regCheck = method(TypicalValue => Boolean)
 regCheck ToricVectorBundleKaneyama := (cacheValue symbol regCheck)( tvb -> (
-     	  -- Extracting the neccesary data
+     	  -- Extracting the necessary data
      	  tCT := sort keys tvb#"topConeTable";
      	  c1T := tvb#"codim1Table";
      	  bCT := tvb#"baseChangeTable";
@@ -654,7 +654,7 @@ deltaE ToricVectorBundle := (cacheValue symbol deltaE)( T -> (
 --     	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
 --     	  n := tvb#"dimension of the variety";
 --	  if instance(tvb,ToricVectorBundleKaneyama) then (
---	       -- Extracting neccesary data
+--	       -- Extracting necessary data
 --     	       raylist := rays tvb;
 --     	       rl := #raylist;
 --     	       k := tvb#"rank of the vector bundle";
@@ -684,7 +684,7 @@ deltaE ToricVectorBundle := (cacheValue symbol deltaE)( T -> (
 --     	       M = matrix {L};
 --     	       convexHull M)
 --	  else (
---	       -- Extracting neccesary data
+--	       -- Extracting necessary data
 --	       rayTable := tvb#"rayTable";
 --	       l := #rayTable;
 --	       fMT := hashTable apply(pairs tvb#"filtrationMatricesTable", (i,j) -> (j = flatten entries j; i => matrix{{-(min j),max j}}));
@@ -938,8 +938,8 @@ findWeights ToricVectorBundleKlyachko := (cacheValue symbol weights)( T -> (
      	  k := rank T;
 	  -- Recursive function that goes through the rays and checks for the current ray which filtration steps are possible and for 
 	  -- these calls itself again
-	  -- E is the intersection of filtrations of the rays considered so far, L is the list of remaining rays with filtration steps not choosen so far, 
-	  -- R is the list of filtration steps not choosen before for rays already handled, these are the possible steps for the next column and newColumn 
+	  -- E is the intersection of filtrations of the rays considered so far, L is the list of remaining rays with filtration steps not chosen so far, 
+	  -- R is the list of filtration steps not chosen before for rays already handled, these are the possible steps for the next column and newColumn 
 	  -- is the already created part of the new column
      	  recursiveColumnsConstructer := (E,L,R,newColumn) -> (
 	       if L != {} then (
