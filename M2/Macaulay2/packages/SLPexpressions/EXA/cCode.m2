@@ -16,24 +16,3 @@ cCode (H#"Ht", inputs)
 cCode (H#"Hx", inputs)
 cCode (H#"Hx"|H#"Ht", inputs)
 
-----------------------------------
--- makeCompiledSLProgram
-restart
-errorDepth = 0
-debug needsPackage "SLPexpressions"
-declareVariable X; declareVariable C;
-XpC = X+C
-XXC = productGate{X,X,C}
-XoC = X/C
-slp' = makeInterpretedSLProgram(matrix{{C,X}},matrix{{XXC,XoC,XpC+2}})
-slp = makeCompiledSLProgram(matrix{{C,X}},matrix{{XXC,XoC,XpC+2}})
-inp = mutableMatrix{{1.2,-1}}
-out = mutableMatrix(ring inp,1,3)
-out' = mutableMatrix(ring inp,1,3)
-interpretedE = rawSLEvaluatorK(slp',ring inp)
-compiledE = rawCompiledSLEvaluatorK(slp,ring inp)
-evaluate(slp',inp,out')
-evaluate(slp,inp,out)
-out'
-out
-pr

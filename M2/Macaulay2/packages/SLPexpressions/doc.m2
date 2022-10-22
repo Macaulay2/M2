@@ -272,6 +272,22 @@ doc ///
 
 doc ///
     Key
+        makeSLProgram
+        (makeSLProgram,GateMatrix,GateMatrix)
+        (makeSLProgram,List,List)
+	setTryJustInTimeCompilation
+	(setTryJustInTimeCompilation,Boolean)
+    Headline
+        create a straight-line program (either interpreted or compiled)
+    Description
+        Text
+    	    Passes the arguments to 
+	    @TO makeInterpretedSLProgram@ or @TO makeCompiledSLProgram@ 
+	    depending on the flag set by @TO setTryJustInTimeCompilation@. 
+///
+
+doc ///
+    Key
         makeInterpretedSLProgram
         (makeInterpretedSLProgram,GateMatrix,GateMatrix)
         (makeInterpretedSLProgram,List,List)

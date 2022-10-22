@@ -180,6 +180,7 @@ class SLEvaluatorConcrete : public SLEvaluator
   // common data
   const RT& mRing;
   bool isCompiled;
+  int nInputs, nOutputs;
   
   // data used by interpreted evaluation
   std::vector<ElementType> values; /* should be a vector of values
@@ -187,9 +188,9 @@ class SLEvaluatorConcrete : public SLEvaluator
                                       continuing with the values of other GATEs */
 
   // data used by compiled evaluation
-  void (*compiled_fn)(ElementType const*, ElementType*);
-  //void (*compiled_fn)(double const*, double*);
-  int nInputs, nOutputs;
+  void (*compiled_fn)(ElementType const*, ElementType*);  //void (*compiled_fn)(double const*, double*);
+  int nParams;
+  ElementType* parametersAndInputs;  
 };
 
 class Homotopy : public MutableEngineObject

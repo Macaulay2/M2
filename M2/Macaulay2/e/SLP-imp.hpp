@@ -6,6 +6,7 @@
 #define _slp_imp_hpp_
 
 #include <cstdlib>
+#include <algorithm>
 #include "timing.hpp"
 
 // SLEvaluator
@@ -39,24 +40,28 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
  int nInputs,
  int nOutputs,
  const MutableMat<DMat<RT> >* empty
- ): mRing(empty->getMat().ring()), isCompiled(true), nInputs(nInputs), nOutputs(nOutputs)
+ ): mRing(empty->getMat().ring()), isCompiled(true), nInputs(nInputs), nOutputs(nOutputs), nParams(0), parametersAndInputs(nullptr)
 {
   slp = NULL;
-  const char* funname = "evaluate";
+  //const char* funname = "evaluate";
+  const char* funnameRR = "_Z8evaluatePKdPd";
+  const char* funnameCC = "_Z8evaluatePKSt7complexIdEPS0_";
   auto libName_std = string_M2_to_std(libName);
   const char* lib_name = libName_std.c_str();
   printf("loading from %s\n", lib_name);
   void* handle = dlopen(lib_name, RTLD_LAZY | RTLD_GLOBAL);
   if (handle == NULL) ERROR("can't load library %s", lib_name);
-  compiled_fn = (void (*)(ElementType const*, ElementType*)) dlsym(handle, funname);
+  compiled_fn = (void (*)(ElementType const*, ElementType*)) dlsym(handle, funnameRR);
+  if (compiled_fn == NULL)
+    compiled_fn = (void (*)(ElementType const*, ElementType*)) dlsym(handle, funnameCC);
   if (compiled_fn == NULL) 
-    std::cerr << "can't link function " << funname << " from library " << lib_name << std::endl;
+    std::cerr << "can't link function " << funnameRR << " or " << funnameCC << " from library " << lib_name << std::endl;
 }
   
 // copy constructor
 template <typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
-  : SLEvaluator(a), mRing(a.ring()), isCompiled(a.isCompiled), values(a.values.size()), compiled_fn(a.compiled_fn), nInputs(a.nInputs), nOutputs(a.nOutputs)
+  : SLEvaluator(a), mRing(a.ring()), isCompiled(a.isCompiled), values(a.values.size()), compiled_fn(a.compiled_fn), nInputs(a.nInputs), nOutputs(a.nOutputs), nParams(a.nParams)
 {
   slp = a.slp;
   varsPos = a.varsPos;
@@ -64,6 +69,10 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
   auto j = a.values.begin();
   for (; i != values.end(); ++i, ++j) ring().init_set(*i, *j);
   // std::cout << "SLEvaluatorConcrete: copy constructor for " << this << std::endl;
+  if (a.parametersAndInputs==nullptr) parametersAndInputs = nullptr; else {
+    parametersAndInputs = new ElementType[nParams];
+    std::copy(a.parametersAndInputs,a.parametersAndInputs+nParams, parametersAndInputs);
+  }
 }
 
 template <typename RT>
@@ -71,6 +80,7 @@ SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
 {
   // std::cout << "~SLEvaluatorConcrete: " << this << std::endl
   if (isCompiled) {// dlclose???
+    if (parametersAndInputs!=nullptr) delete[] parametersAndInputs;
   } else for (auto& v : values) ring().clear(v);
 }
 
@@ -80,7 +90,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
  M2_arrayint cPos,
  M2_arrayint vPos,
  const MutableMat<DMat<RT> >* consts /* DMat<RT>& DMat_consts */
- ): mRing(consts->getMat().ring()), isCompiled(false), compiled_fn(NULL)
+ ): mRing(consts->getMat().ring()), isCompiled(false), compiled_fn(NULL), nParams(0), parametersAndInputs(nullptr)
 {
   slp = SLP;
   // for(int i=0; i<cPos->len; i++)
@@ -112,16 +122,24 @@ template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMat<DMat<RT> >* parameters) const
 {
-  if (isCompiled)
-    throw exc::engine_error("not implemented for compiled SLEvaluatorConcrete");
-  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size()) 
+  size_t nNewParams = parameters->n_rows();  
+  if (parameters->n_cols() != 1 || nNewParams > nInputs) 
     throw exc::engine_error("1-column matrix expected; or #parameters > #vars");
   SLEvaluatorConcrete<RT>* e = new SLEvaluatorConcrete<RT>(*this);
-  size_t nParams = parameters->n_rows();
-  for (int i = 0; i < nParams; ++i)
-    ring().set(e->values[varsPos[i]], parameters->getMat().entry(i, 0));
-  e->varsPos.erase(e->varsPos.begin(), e->varsPos.begin() + nParams);
-  e->nInputs = e->varsPos.size();
+  if (isCompiled) {
+    delete[] e->parametersAndInputs;
+    e->parametersAndInputs = new ElementType[e->nParams = nParams + nNewParams];
+    std::copy(parametersAndInputs, parametersAndInputs+nParams, e->parametersAndInputs); // old parameters values
+    for (int i = 0; i < nNewParams; ++i)
+      ring().set(e->parametersAndInputs[nParams+i], parameters->getMat().entry(i, 0));
+    e->nInputs -= nNewParams;
+  }
+  else {
+    for (int i = 0; i < nParams; ++i)
+      ring().set(e->values[varsPos[i]], parameters->getMat().entry(i, 0));
+    e->varsPos.erase(e->varsPos.begin(), e->varsPos.begin() + nParams);
+    e->nInputs = e->varsPos.size();
+  }
   return e;
 }
 
@@ -215,14 +233,18 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
   }
 
   if (isCompiled) {
-    (*compiled_fn)(inputs.array(), outputs.array());
+    if(parametersAndInputs==nullptr) {
+      (*compiled_fn)(inputs.array(), outputs.array());
+    } else {
+      std::copy(inputs.array(),inputs.array()+nInputs,parametersAndInputs+nParams); 
+      (*compiled_fn)(parametersAndInputs, outputs.array());
+    }
     return true;
   } else {                           
     size_t i = 0;
     for (size_t r = 0; r < inputs.numRows(); r++)
       for (size_t c = 0; c < inputs.numColumns(); c++)
         ring().set(values[varsPos[i++]], inputs.entry(r, c));
-
     nIt = slp->mNodes.begin();
     numInputsIt = slp->mNumInputs.begin();
     inputPositionsIt = slp->mInputPositions.begin();
@@ -240,7 +262,12 @@ template <typename RT>
 void SLEvaluatorConcrete<RT>::text_out(buffer& o) const
 {
   if(isCompiled) {
-    o << "compiled SLEvaluator" << newline;
+    o << "compiled SLEvaluator("
+      << nInputs << " inputs, "
+      << nOutputs << " outputs, "
+      << nParams << " parameters, mRing = ";
+    ring().text_out(o);
+    o << ")" << newline;
   } else {
     o << "SLEvaluator(slp = ";
     slp->text_out(o);
