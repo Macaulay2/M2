@@ -86,6 +86,8 @@ unique VisibleList := x -> (
      seen := new MutableHashTable;
      select(x, i -> if seen#?i then false else seen#i = true))
 
+repeats = L -> #L - #unique L
+
 -- we've been waiting to do this:
 binaryOperators = unique binaryOperators
 prefixOperators = unique prefixOperators

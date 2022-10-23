@@ -482,6 +482,34 @@ numparms(e:Expr):Expr := (
      else WrongArg("a function"));
 setupfun("numparms",numparms);
 
+utf8substrfun(e:Expr):Expr := (
+     when e is args:Sequence do
+	  if length(args) != 3 then WrongNumArgs(3) else
+	       when args.0 is s:stringCell do
+		   when args.1 is start:ZZcell do
+		       when args.2 is width:ZZcell do
+		       toExpr(utf8substr(s.v,toInt(start),toInt(width)))
+		       else WrongArgSmallInteger(3)
+		   else WrongArgSmallInteger(2)
+	       else WrongArg(1,"a string")
+     else WrongNumArgs(3)
+);
+setupfun("utf8substring",utf8substrfun);
+
+utf8charactersfun(e:Expr):Expr := (
+     when e
+     is s:stringCell do toExpr(utf8characters(s.v))
+     else WrongArg("a string"));
+setupfun("characters",utf8charactersfun);
+
+
+
+stringWidth(e:Expr):Expr := (
+     when e
+     is s:stringCell do toExpr(utf8width(s.v))
+     else WrongArg("a string"));
+setupfun("stringWidth",stringWidth);
+
 netWidth(e:Expr):Expr := (
      when e
      is n:Net do toExpr(n.width)

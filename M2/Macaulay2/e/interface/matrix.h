@@ -110,7 +110,7 @@ const Matrix /* or null */ *IM2_Matrix_remake1(
     int preference); /* drg: connected rawMatrixRemake1, OK  */
 /* Create a new matrix (mutable or immutable), from M, with new target,
    and/or mutable-ness. The target free module must have the expected rank.
-   The source free module is computed heuristically from the the target and the
+   The source free module is computed heuristically from the target and the
    columns of the matrix.
 */
 

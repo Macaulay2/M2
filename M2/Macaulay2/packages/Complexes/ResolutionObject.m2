@@ -1,5 +1,5 @@
 -- todo for April 11, 2022:
---   we just had finished resolutionBySyzgyies, although maybe some more testing is in order.
+--   we just had finished resolutionBySyzygies, although maybe some more testing is in order.
 --   e.g.: interrupts, Weyl algebra.
 --   need: Strategy => OverZZ.
 --   need: Strategy => Inhomogeneous.
@@ -114,7 +114,7 @@ freeResolution Module := Complex => opts -> M -> (
     -- each hook must do the following:
     -- set Strategy.
     -- create any data it needs (in the RO object).
-    -- place functions RO.isComputatable, RO.compute, RO.complex into RO. (or have some other way of doing that).
+    -- place functions RO.isComputable, RO.compute, RO.complex into RO. (or have some other way of doing that).
     -- or, perhaps, make a ResolutionObjectHook type, and have each hook create methods on that.
     -- either way, each hook has to create these functions...
 

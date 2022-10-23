@@ -116,9 +116,9 @@ evaluateJacobian (GateSystem, Matrix) := (GS, x0) -> (
     out := evaluate(jacobian GS,  matrix x0);
     matrix(out, numFunctions GS, numVariables GS)
     )
-evaluateJacobian (GateSystem, Point) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
+evaluateJacobian (GateSystem, AbstractPoint) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
 evaluateJacobian (GateSystem, Matrix, Matrix) := (GS, p0, x0) -> evaluateJacobian(GS, p0 | x0)
-evaluateJacobian (GateSystem, Point, Point) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
+evaluateJacobian (GateSystem, AbstractPoint, AbstractPoint) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
 
 
 TEST /// 
@@ -345,7 +345,7 @@ segmentHomotopy = method(Options=>{gamma=>1})
 segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
 segmentHomotopy (GateSystem, GateSystem) := o -> (S,T) -> (
     if T.Variables =!= S.Variables 
-    then error "expented systems with the same inputs";  
+    then error "expected systems with the same inputs";  
     if numFunctions T =!= numFunctions S
     then error "expected systems with the same dimension of codomain";
     t := local t;

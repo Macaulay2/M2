@@ -397,7 +397,9 @@ addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
         (L, U) := extractLU(LU, r + s, n);
         for i in 0 ..< n do colReduce(L, i);
         m := - submatrix(L, {r ..< r + s}, {0 ..< n});
-        columnPermute(m, 0, (toList P)_{0 ..< n});
+        -- reverse the permutation of the first n columns
+        P = sortColumns matrix{ (toList P)_{0 ..< n} };
+        columnPermute(m, 0, P);
         -- padding is necessary when image f \nin image g, so we get a remainder
         m  = matrix m | map(RP^s, RP^(max(0, r - n)), 0);
         map(source g, source f, m,

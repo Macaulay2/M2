@@ -11,3 +11,8 @@ assert( x < y )
 assert( -x < y )
 assert( x > -y )
 assert( -x > -y )
+
+assert( 1e2  === 100. )
+assert( 1E2  === 100. )
+assert( 1e+2 === 100. )
+assert( 1E+2 === 100. )

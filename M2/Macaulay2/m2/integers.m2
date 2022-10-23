@@ -53,6 +53,10 @@ gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
 
+abs = method()
+abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
+abs Constant := abs @@ numeric
+
 lcm = method(Binary => true)
 lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
 lcm(ZZ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
@@ -79,6 +83,8 @@ ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 
 ZZ ^^ ZZ := bitxorfun
 Boolean xor Boolean := (x, y) -> x and not y or not x and y
+
+ZZ~ := bitnotfun
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -11,7 +11,7 @@ bool almostEqual(const RingCCC *R, int nbits, ring_elem a, ring_elem b)
 {
   mpfr_t epsilon;
   mpfr_init2(epsilon, 100);
-  mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);
+  mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);
 
   ring_elem f = R->subtract(a, b);
   auto f1 = BIGCC_RE(f);

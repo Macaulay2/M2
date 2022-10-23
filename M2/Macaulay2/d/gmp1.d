@@ -50,14 +50,14 @@ base := 10;
 
 getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= (
      strptr := Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
-	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)");
+	  base, ",(size_t)", sigdigs, ",", x, ",MPFR_RNDN)");
      ret := tostring(strptr);
      Ccode(void, "mpfr_free_str(", strptr, ")");
      ret);
 
 getstr(returnexponent:long, base:int, sigdigs:int, x:RRi) ::= (
      strptr := Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
-	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)");
+	  base, ",(size_t)", sigdigs, ",", x, ",MPFR_RNDN)");
      ret := tostring(strptr);
      Ccode(void, "mpfr_free_str(", strptr, ")");
      ret);

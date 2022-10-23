@@ -698,6 +698,13 @@ bitxorfun(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("bitxorfun",bitxorfun);
+
+bitnotfun(e:Expr):Expr := (
+    when e
+    is x:ZZcell do toExpr(not(x.v))
+    else WrongArgZZ());
+setupfun("bitnotfun", bitnotfun);
+
 semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
 setup(SemicolonS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
@@ -820,20 +827,20 @@ log1p(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(log1p(x.v))				    -- # typical value: log1p, RR, RR
      is x:RRicell do toExpr(log1p(x.v))				    -- # typical value: log1p, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRi()
      );
 setupfun("log1p",log1p).Protected=false;
 expm1(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(expm1(x.v))				    -- # typical value: expm1, RR, RR
      is x:RRicell do toExpr(expm1(x.v))				    -- # typical value: expm1, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRi()
      );
 setupfun("expm1",expm1).Protected=false;
 eint(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(eint(x.v))				    -- # typical value: eint, RR, RR
-     else buildErrorPacket("expected a number")
+     else WrongArgRR()
      );
 setupfun("eint",eint).Protected=false;
 Gamma(e:Expr):Expr := (
@@ -845,42 +852,42 @@ Gamma(e:Expr):Expr := (
 	     when a.1 is x:RRcell do toExpr(Gamma(s.v, x.v))       -- # typical value: Gamma, RR, RR, RR
 	     else WrongArgRR(2)
 	 else WrongArgRR(1)
-     else buildErrorPacket("expected 1 or 2 numbers")
+     else WrongArgRR()
      );
 setupfun("Gamma",Gamma).Protected=false;
 Digamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, RR, RR
-     else buildErrorPacket("expected a number")
+     else WrongArgRR()
      );
 setupfun("Digamma",Digamma).Protected=false;
 export lgamma(x:RR):Expr := (
      z := newRRmutable(precision(x));
      i := 0;
-     Ccode( void, "mpfr_lgamma((mpfr_ptr)", z, ",&",i,",(mpfr_srcptr)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_lgamma((mpfr_ptr)", z, ",&",i,",(mpfr_srcptr)", x, ", MPFR_RNDN)" );
      Expr(Sequence(toExpr(moveToRR(z)),toExpr(i))));
 lgamma(e:Expr):Expr := (
      when e
      is x:RRcell do lgamma(x.v)				    -- # typical value: lgamma, RR, RR
-     else buildErrorPacket("expected a number")
+     else WrongArgRR()
      );
 setupfun("lgamma",lgamma);
 zeta(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(zeta(x.v))				    -- # typical value: zeta, RR, RR
-     else buildErrorPacket("expected a number")
+     else WrongArgRR()
      );
 setupfun("zeta",zeta).Protected=false;
 erf(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(erf(x.v))				    -- # typical value: erf, RR, RR
-     else buildErrorPacket("expected a number")
+     else WrongArgRR()
      );
 setupfun("erf",erf).Protected=false;
 erfc(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(erfc(x.v))				    -- # typical value: erfc, RR, RR
-     else buildErrorPacket("expected a number")
+     else WrongArgRR()
      );
 setupfun("erfc",erfc).Protected=false;
 BesselJ(n:long,x:RR):RR := (
@@ -891,8 +898,8 @@ BesselJ(e:Expr):Expr := (
      when e is s:Sequence do (
 	  when s.0 is n:ZZcell do if !isLong(n.v) then WrongArg(1,"a small integer") else (
 	       when s.1 
-	       is x:RRcell do toExpr(BesselJ(toLong(n.v),x.v))	    -- # typical value: BesselJ, ZZ, RR, RR
-	       else WrongArg(2,"a number"))
+	       is x:RRcell do toExpr(BesselJ(toLong(n.v),x.v))
+	       else WrongArgRR(2))
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
 setupfun("BesselJ",BesselJ).Protected=false;
@@ -904,8 +911,8 @@ BesselY(e:Expr):Expr := (
      when e is s:Sequence do (
 	  when s.0 is n:ZZcell do if !isLong(n.v) then WrongArg(1,"a small integer") else (
 	       when s.1 
-	       is x:RRcell do toExpr(BesselY(toLong(n.v),x.v))	    -- # typical value: BesselY, ZZ, RR, RR
-	       else WrongArg(2,"a number"))
+	       is x:RRcell do toExpr(BesselY(toLong(n.v),x.v))
+	       else WrongArgRR(2))
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
 setupfun("BesselY",BesselY).Protected=false;
@@ -915,13 +922,13 @@ atan2(yy:Expr,xx:Expr):Expr := (
 	  when xx
 	  is x:RRcell do toExpr(atan2(y.v,x.v))			            -- # typical value: atan2, RR, RR, RR
 	  is x:RRicell do toExpr(atan2(toRRi(y.v),x.v))			    -- # typical value: atan2, RR, RRi, RRi
-	  else WrongArg(1,"a number"))
+	  else WrongArgRRorRRi(1))
      is y:RRicell do (
 	  when xx
 	  is x:RRcell do toExpr(atan2(y.v,toRRi(x.v)))			            -- # typical value: atan2, RRi, RR, RRi
 	  is x:RRicell do toExpr(atan2(y.v,x.v))			            -- # typical value: atan2, RRi, RRi, RRi
-	  else WrongArg(1,"a number"))
-     else WrongArg(2,"a number")
+	  else WrongArgRRorRRi(1))
+     else WrongArgRRorRRi(2)
      );
 atan(e:Expr):Expr := (
      when e
@@ -944,8 +951,8 @@ Beta(yy:Expr,xx:Expr):Expr := (
      is y:RRcell do (
 	  when xx
 	  is x:RRcell do toExpr(Beta(y.v,x.v))			            -- # typical value: Beta, RR, RR, RR
-	  else WrongArg(1,"a number"))
-     else WrongArg(2,"a number")
+	  else WrongArgRR(1))
+     else WrongArgRR(2)
      );
 Beta(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 2 then Beta(s.0,s.1)
@@ -1583,8 +1590,11 @@ map(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
-     is s:stringCell do map(strtoseq(s), f)
-     else WrongArg(1,"a list, sequence, integer, or string"));
+     else (
+	 iter := getIterator(e);
+	 if iter != nullE
+	 then applyEEE(getGlobalVariable(applyIteratorS), iter, f)
+	 else WrongArg(1,"a list, sequence, integer, or iterable object")));
 map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
@@ -2067,8 +2077,25 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
-     is s:stringCell do scan(strtoseq(s), f)
-     else buildErrorPacket("scan expects a list, sequence, integer, or string"));
+     else (
+	 i := getIterator(e);
+	 if i != nullE
+	 then (
+	     nextfunc := getNextFunction(i);
+	     if nextfunc != nullE
+	     then (
+		 y := nullE;
+		 while (
+		     y = applyEE(nextfunc, i);
+		     y != StopIterationE)
+		 do (
+		     tmp := applyEE(f, y);
+		     when tmp
+		     is Error do return returnFromLoop(tmp)
+		     else nothing);
+		 nullE)
+	     else buildErrorPacket("no method for applying next to iterator"))
+	 else WrongArg(1, "a list, sequence, integer, or iterable object")));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -2097,7 +2124,36 @@ toSequence(e:Expr):Expr := (
 	  else Expr(b.v)
 	  )
      is s:stringCell do Expr(strtoseq(s))
-     else WrongArg("a list, sequence, or string"));
+     else (
+	 iter := getIterator(e);
+	 if iter != nullE
+	 then (
+	     nextfunc := getNextFunction(iter);
+	     if nextfunc != nullE
+	     then (
+		 r := new Sequence len 1 do provide nullE;
+		 j := 0;
+		 y := nullE;
+		 while (
+		     y = applyEE(nextfunc, iter);
+		     when y
+		     is Error do return returnFromFunction(y)
+		     else nothing;
+		     y != StopIterationE)
+		 do (
+		     if j == length(r) then (
+			 r = new Sequence len 2 * length(r) do (
+			     foreach x in r do provide x;
+			     while true do provide nullE));
+		     r.j = y;
+		     j = j + 1);
+		 Expr(
+		     if j == 0 then emptySequence
+		     else if j == length(r) then r
+		     else new Sequence len j do (
+			 foreach x in r do provide x)))
+	     else buildErrorPacket("no method for applying next to iterator"))
+	 else WrongArg("a list, sequence, string, or iterable object")));
 setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (

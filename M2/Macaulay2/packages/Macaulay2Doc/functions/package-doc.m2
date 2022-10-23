@@ -454,7 +454,7 @@ Node
       if true, then do not give the @TT "-q"@ option to the Macaulay2 executable when running examples, thereby
       allowing it to load the user's @TO "initialization file"@, allowing it to load packages previously installed
       in the user's @TO2 {"applicationDirectory", "application directory"}@, and allowing packages it loads to read
-      their configuration files from the the user's @TO2{"applicationDirectory", "application directory"}@.
+      their configuration files from the user's @TO2{"applicationDirectory", "application directory"}@.
       If false, then do give the option. If @TO "null"@, then propagate the option from the current @TO "commandLine"@,
       if one occurs there.
     DebuggingMode=>Boolean

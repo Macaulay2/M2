@@ -1,4 +1,4 @@
-this code in parse.d is responsibel for computing the real number after parsing:
+this code in parse.d is responsible for computing the real number after parsing:
 
      eprec := max(prec, ulong(exponent(x)) + 4);
      y := toRR(x,eprec);

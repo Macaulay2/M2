@@ -73,7 +73,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol isBasic => true,
-	       symbol baseRings => {ZZ,QQ,RR},
+	       symbol baseRings => {ZZ,QQ,RR_prec},
 	       symbol RawRing => rawCC prec
 	       }))
 new RealIntervalField of Nothing' from ZZ := memoize (
@@ -238,6 +238,12 @@ round(ZZ,RR) := (n,x) -> (
      p := (toRR(prec,10))^n;
      toRR(prec,round(x*p)/p))
 
+truncate Number := {} >> o -> x -> (
+    if x >= 0 then floor x
+    else if x < 0 then ceiling x
+    else 0) -- e.g., RRi's containing 0 as interior pt
+truncate Constant := {} >> o -> truncate @@ numeric
+
 random RR := RR => opts -> x -> x * rawRandomRR precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
 RR'.random = opts -> R -> rawRandomRR R.precision
@@ -248,7 +254,6 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 RR.isBasic = CC.isBasic = RRi.isBasic = true
 
-InexactFieldFamily Array := (T,X) -> (default T) X
 Thing ** InexactFieldFamily := (X,T) -> X ** default T
 
 generators InexactField := opts -> R -> {}
@@ -458,6 +463,14 @@ acoth Constant := acoth @@ numeric
 acot = method()
 acot Number := z -> atan(1/z)
 acot Constant := acot @@ numeric
+
+BesselJ' = BesselJ
+BesselJ = method()
+BesselJ(ZZ, Number) := BesselJ(ZZ, Constant) := (n, x) -> BesselJ'(n, numeric x)
+
+BesselY' = BesselY
+BesselY = method()
+BesselY(ZZ, Number) := BesselY(ZZ, Constant) := (n, x) -> BesselY'(n, numeric x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

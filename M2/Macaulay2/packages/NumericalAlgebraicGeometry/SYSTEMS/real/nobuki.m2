@@ -1,4 +1,4 @@
--- example by Nobuki Takayma, July 2015
+-- example by Nobuki Takayama, July 2015
 needsPackage "SLPexpressions"
 load "NAGtools.m2"
 debug NumericalAlgebraicGeometry

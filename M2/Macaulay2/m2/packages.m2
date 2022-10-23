@@ -111,6 +111,7 @@ Package.GlobalReleaseHook = globalReleaseFunction
 
 net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
+html     Package := pkg -> html    toString pkg
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
 methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
@@ -267,7 +268,8 @@ newPackage String := opts -> pkgname -> (
 	if opts.Reload === null then warningMessage("package ", pkgname, " being reloaded")
 	else if opts.Reload === false then error("package ", pkgname, " not reloaded; try Reload => true"));
     -- load dependencies
-    scan(opts.PackageExports, needsPackage);
+    -- TODO: why is this called again later?
+    scan(nonnull opts.PackageExports, needsPackage);
     dismiss pkgname;
     -- the exit hook calls endPackage at the end of the file
     local hook;
@@ -380,8 +382,8 @@ newPackage String := opts -> pkgname -> (
     setAttribute(newpkg.Dictionary,           PrintNames, pkgname | ".Dictionary");
     setAttribute(newpkg#"private dictionary", PrintNames, pkgname | "#\"private dictionary\"");
     debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-    scan(opts.PackageImports, needsPackage);
-    scan(opts.PackageExports, needsPackage);
+    scan(nonnull opts.PackageImports, needsPackage);
+    scan(nonnull opts.PackageExports, needsPackage);
     newpkg.loadDepth = loadDepth;
     loadDepth = if pkgname === "Core" then 1 else if not debuggingMode then 2 else 3;
     newpkg)
@@ -398,7 +400,7 @@ export List   := v -> (
     d  := currentPackage.Dictionary;
     title := currentPackage#"pkgname";
     syms := new MutableHashTable;
-    scan(v, sym -> (
+    scan(nonnull v, sym -> (
 	    local nam;
 	    -- a synonym, e.g. "res" => "resolution"
 	    if instance(sym, Option) then (
@@ -426,9 +428,11 @@ exportMutable = method(Dispatch => Thing)
 exportMutable String := x -> exportMutable {x}
 exportMutable List   := v -> currentPackage#"exported mutable symbols" = join_(currentPackage#"exported mutable symbols") (export v)
 
+symbolFrom = (pkgname, name) -> value (getpkg pkgname)#"private dictionary"#name
+
 importFrom = method()
 importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
-importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s)
+importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> if not currentPackage#"private dictionary"#?s then currentPackage#"private dictionary"#s = P#"private dictionary"#s)
 
 exportFrom = method()
 exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
@@ -534,7 +538,7 @@ package Dictionary := d -> (
 
 -- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (
-    scan(pkg.Options.PackageExports, needsPackage);
+    scan(nonnull pkg.Options.PackageExports, needsPackage);
     loadedPackages = prepend(pkg,            delete(pkg,            loadedPackages));
     dictionaryPath = prepend(pkg.Dictionary, delete(pkg.Dictionary, dictionaryPath));
     checkShadow();

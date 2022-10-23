@@ -410,7 +410,7 @@ doc ///
 	    assert (isWellDefined g and source g === X and
 		target g === Z and matrix g === 2*id_(ZZ^(dim X)))	    
     	Text
-	    Setting {\tt m = 1} is a easy way to construct the canoncal
+	    Setting {\tt m = 1} is a easy way to construct the canonical
 	    @TO2((symbol ^, NormalToricVariety, Array), "projection")@
 	    associated to a @TO2(toricBlowup, "blow-up")@ or the 
 	    @TO2((id, NormalToricVariety), "identity map")@.	    
@@ -860,7 +860,7 @@ doc ///
         Text
 	    Given a positive integer {\tt m} and a normal toric variety {\tt
 	    X}, the diagonal morphism is the toric map from {\tt X} to the
-	    {\tt m}-ary Cartersion product of {\tt X} such that it composes to
+	    {\tt m}-ary Cartesian product of {\tt X} such that it composes to
 	    the identity with the {\tt i}-th 
 	    @TO2((symbol ^, NormalToricVariety, Array), "projection map")@, 
 	    for all {\tt i} in {\tt A}, and compose to the zero map with the
@@ -1569,7 +1569,7 @@ doc ///
 	    Given a toric map $f : X \to Y$ where $Y$ is smooth, this method
 	    returns the induced map from the total coordinate ring $S$ of $Y$
 	    to the total coordinate ring $R$ of $X$.  Since $f$ is
-	    torus-equivarient, each variable in the polynomial ring $S$ maps
+	    torus-equivariant, each variable in the polynomial ring $S$ maps
 	    to a monomial in $R$.  
 	Text
 	    As a first example, we compute the map on the total coordinate

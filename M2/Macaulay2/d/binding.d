@@ -377,6 +377,10 @@ export NewOfFromE := Expr(NewOfFromS);
 
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
+
+export StopIterationS := makeProtectedSymbolClosure("StopIteration");
+export StopIterationE := Expr(StopIterationS);
+
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
      e := makeSymbol(t.word,position(t),t.dictionary);

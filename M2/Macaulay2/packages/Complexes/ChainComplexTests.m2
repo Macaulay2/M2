@@ -1260,7 +1260,7 @@ TEST ///
 
   -- test #2
   -- take a random morphism between two non-free complexes
-  -- obtain the correesponding map between their resolutions.
+  -- obtain the corresponding map between their resolutions.
 
   I = ideal(a*b, b*c*d, a*e, c*e, b*d*e)
   FI = freeResolution I

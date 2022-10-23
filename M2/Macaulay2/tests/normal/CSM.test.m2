@@ -34,7 +34,7 @@ setRandomSeed 1
 --*
 --*********************************************************************
 
---getrings extracts the ring of the ideal and manifactures
+--getrings extracts the ring of the ideal and manufactures
 --local copies of the coefficient field (kk), the ring (S, assumed 
 --to be a polynomial ring), the dimension, and the ideal itself.
 

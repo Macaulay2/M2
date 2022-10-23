@@ -824,4 +824,4 @@ tests are in
 email Peter if I have more questions
 4ti2 google group: joined.
 
-glpk:open source linear progrmming
+glpk:open source linear programming

@@ -75,7 +75,7 @@ various modern operating systems:
 
   Ubuntu and Debian:
     Install packages as root with:
-      apt-get install -y -q sudo 4ti2 autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libboost-math-dev libboost-regex-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfi-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libsingular-dev libtool libxml2-dev libz-dev lrslib lsb-release make normaliz npm openssh-server patch pinentry-curses pkg-config singular-data time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev libnauty2-dev libnauty2 nauty nauty-doc coinor-csdp coinor-csdp-doc libflint-dev libtbb-dev
+      apt-get install -y -q sudo 4ti2 autoconf bison cohomcalg curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libboost-math-dev libboost-regex-dev libboost-stacktrace-dev libc6-dev libcdd-dev libffi-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfi-dev libmpfr-dev libmps-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libsingular-dev libtool libxml2-dev libz-dev lrslib lsb-release make normaliz npm openssh-server patch pinentry-curses pkg-config singular-data time topcom unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev libnauty2-dev libnauty2 nauty nauty-doc coinor-csdp coinor-csdp-doc libflint-dev libtbb-dev
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -83,6 +83,11 @@ various modern operating systems:
         # note: libflint-dev will work starting with Ubuntu 20.10 and Debian 11 (version >= 2.6.0 is required)
         # note: libmps-dev is available only starting with Ubuntu 21.04 and Debian 11
         # note: topcom is available only starting with Ubuntu 20.10 and Debian 11
+    Dependencies that aren't available in the official Ubuntu repositories on
+      older systems may be available in the Macaulay2 PPA:
+        sudo apt install software-properties-common
+        sudo add-apt-repository ppa:macaulay2/macaulay2
+      Then proceed with installing the missing dependencies as above.
     If configuring with "--with-system-X", then also install the following
     packages for each value of X:
       - gc:        libgc-dev
@@ -222,7 +227,7 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update |cat
-	brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfi mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm |cat
+	brew install autoconf automake bdw-gc boost ccache cddlib cmake ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfi mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm |cat
       
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option
@@ -426,7 +431,7 @@ instructions above.
 
 To take advantage of parallelism when running "make", append an option of
 the form "-jN" to the command line, where "N" is replaced by the number of
-processors you wish to devote to the task.  (Our makefiles are just begining to
+processors you wish to devote to the task.  (Our makefiles are just beginning to
 take advantage of this.)
 
 To enable the running of the NTL "wizard", which conducts time consuming

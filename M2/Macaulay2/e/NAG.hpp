@@ -211,8 +211,8 @@ inline complex::complex(const complex& c)
 
 inline complex::complex(gmp_CC mpfrCC)
 {
-  real = mpfr_get_d(mpfrCC->re, GMP_RNDN);
-  imag = mpfr_get_d(mpfrCC->im, GMP_RNDN);
+  real = mpfr_get_d(mpfrCC->re, MPFR_RNDN);
+  imag = mpfr_get_d(mpfrCC->im, MPFR_RNDN);
 }
 
 inline void complex::operator=(complex c)

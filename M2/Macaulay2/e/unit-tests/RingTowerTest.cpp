@@ -12,7 +12,7 @@
 #include "tower.hpp"
 #include "../util.hpp"
 
-// First: we need a routne to read a polynomial from a string.
+// First: we need a routine to read a polynomial from a string.
 // Format:  variables are a..zA..Z, and then [1], [2], ...
 // Need both input and output routines for reading/writing polynomials in this
 // format.

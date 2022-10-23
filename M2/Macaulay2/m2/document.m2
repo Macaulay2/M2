@@ -418,7 +418,8 @@ processSignature := (tag, fn) -> item -> (
     else if fn =!= null then fn else key;
 
     -- checking for various pieces of the synopsis item
-    isVariable   := y -> match(///\`[[:alnum:]']+\'///, y);
+    -- allow either a variable name or a visible list for rare exceptions
+    isVariable   := y -> match(///\`[[:alnum:]']+\'///, y) or match(///(\".+\")|(\(.+\))|(\[.+\])|(\{.+\})|(<\|.+\|>)///, y);
     isOptionName := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, Symbol);
     isInputName  := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, String) and isVariable y;
     -- putting null or Nothing as input type means don't display the type deduced from the description of the method

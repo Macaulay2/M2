@@ -1,0 +1,70 @@
+Welcome to PHC (Polynomial Homotopy Continuation) v2.4.85 30 Jun 2021
+Polynomial Continuation by a homotopy in 1 parameter, no multitasking.
+
+Reading the target polynomial system...
+Give a string of characters : 
+Reading the name of the output file.
+Give a string of characters : 
+Do you want the solutions on separate file ? (y/n) 
+Reading the name of the file for start system.
+Give a string of characters : 
+Reading the name of the file for the solutions.
+Give a string of characters : 
+Homotopy is H(x,t) = a*(1-t)^k * Q(x) + t^k * P(x) = 0, t in [0,1],
+      with Q(x) = 0 a start system, and P(x) = 0 the target system.
+
+MENU with settings for homotopy :
+  number of decimal places : 16 (standard double precision)
+  relaxation parameter k   :  2
+  accessibility constant a : -9.33411760537082E-01  -3.58807030715767E-01
+  the target value for t   :  1.00000000000000E+00   0.00000000000000E+00
+  projective transformation : no
+Type d, k, a, t, or p to change, preceded by i for info.  Type 0 to exit : Give a value (1,2, or 3) for the relaxation constant k : 
+MENU with settings for homotopy :
+  number of decimal places : 16 (standard double precision)
+  relaxation parameter k   :  2
+  accessibility constant a : -9.33411760537082E-01  -3.58807030715767E-01
+  the target value for t   :  1.00000000000000E+00   0.00000000000000E+00
+  projective transformation : no
+Type d, k, a, t, or p to change, preceded by i for info.  Type 0 to exit : 
+
+****************** CURRENT CONTINUATION PARAMETERS *****************
+GLOBAL MONITOR : 
+  1. the condition of the homotopy           : 0
+  2. number of paths tracked simultaneously  : 1
+  3. maximum number of steps along a path    : 500
+  4. distance from target to start end game  : 1.000E-01
+  5. order of extrapolator in end game       : 0
+  6. maximum number of re-runs               : 1
+STEP CONTROL (PREDICTOR) :                    along path : end game
+  7: 8. type ( x:Cub,t:Rea ):( x:Cub,t:Rea ) : 8         : 8
+  9:10. minimum step size                    : 1.000E-06 : 1.000E-08
+ 11:12. maximum step size                    : 1.000E-01 : 1.000E-02
+ 13:14. reduction factor for step size       : 7.000E-01 : 5.000E-01
+ 15:16. expansion factor for step size       : 1.250E+00 : 1.100E+00
+ 17:18. expansion threshold                  : 1         : 1
+PATH CLOSENESS (CORRECTOR) :                  along path : end game
+ 19:20. maximum number of iterations         : 3         : 3
+ 21:22. relative precision for residuals     : 1.000E-09 : 1.000E-11
+ 23:24. absolute precision for residuals     : 1.000E-09 : 1.000E-11
+ 25:26. relative precision for corrections   : 1.000E-09 : 1.000E-11
+ 27:28. absolute precision for corrections   : 1.000E-09 : 1.000E-11
+SOLUTION TOLERANCES :                         along path : end game
+ 29:30. inverse condition of Jacobian        : 1.000E-04 : 1.000E-12
+ 31:32. clustering of solutions              : 1.000E-04 : 1.000E-12
+ 33:34. solution at infinity                 : 1.000E+08 : 1.000E+12
+********************************************************************
+Type a number to change (0 to exit), preceded by i for info : 
+MENU for Output Information during Continuation : 
+  0 : no intermediate output information during continuation     
+  1 : only the final solutions at the end of the paths           
+  2 : intermediate solutions at each step along the paths        
+  3 : information of the predictor: t and step length            
+  4 : information of the corrector: corrections and residuals    
+  5 : intermediate solutions and information of the predictor    
+  6 : intermediate solutions and information of the corrector    
+  7 : information of predictor and corrector                     
+  8 : intermediate solutions, info of predictor and corrector    
+Type a number between 0 and 8 to select output information : 
+No more input expected.  See output file for results.
+

@@ -18,7 +18,7 @@ bool almostEqual(const M2::ARingRRR& R,
 {
   mpfr_t epsilon;
   mpfr_init2(epsilon, R.get_precision());
-  mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);
+  mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);
 
   M2::ARingRRR::ElementType c;
   R.init(c);

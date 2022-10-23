@@ -1,9 +1,9 @@
 newPackage( "SegreClasses",
-    Version =>"1.02",
-    Date => "July 13, 2018",
+    Version =>"1.03",
+    Date => "May 22, 2022",
     Authors => {
         {Name => "Martin Helmer",
-         Email => "m.helmer@math.ku.dk",
+         Email => "mhelmer@ncsu.edu",
          HomePage => "http://martin-helmer.com"},
         {Name => "Corey Harris",
          Email => "Corey.Harris@mis.mpg.de",
@@ -163,9 +163,9 @@ projectiveDegree(Scheme,Scheme,RingElement) := opts -> (sX,sY,w) -> (
     irrelevantIdeals := values irrelevantIdealsHash / ideal;
     LA := sum(irrelevantIdeals, p -> sub(ideal(1-sum(numgens(p),i->random(kk)*p_i)),R));
     pd := 0;
-    S:=kk(monoid[gens R,getSymbol "t"]);
-    t := last gens S;
-    EqT:=ideal( 1-t*sum((numgens X),j->(random(kk)*substitute(X_j,S))));
+    S:=kk(monoid[gens R,getSymbol "TTT"]);
+    TTT := last gens S;
+    EqT:=ideal( 1-TTT*sum((numgens X),j->(random(kk)*substitute(X_j,S))));
     ZeroDimGB:=groebnerBasis(sub(Y+Ls+G+LA,S)+EqT, Strategy=>"F4");
     pd = numColumns basis(cokernel leadTerm ZeroDimGB);
     return pd;
@@ -1035,7 +1035,7 @@ y=(gens(R))_{4..7}
 Qx = ideal (x#0*x#1 - x#2*x#3)
 Qy=sub(Qx,matrix{join(y,for i from 4 to 7 list 0)})
 D = minors(2,matrix{x,y})
-I=ideal(Qx,Qy,D) --Q in the diagional
+I=ideal(Qx,Qy,D) --Q in the diagonal
 Cx=ideal random({1,0},R)
 A = ZZ[a,b,Degrees=>{{1,0},{0,1}}]/(a^4,b^4)
 s=segre(Cx,I,A,Verbose=>true)
@@ -1130,5 +1130,6 @@ assert(isComponentContained(X,Y)==true)
 
 end
 	    
+
 
 

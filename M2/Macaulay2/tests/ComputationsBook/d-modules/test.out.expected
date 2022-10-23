@@ -37,7 +37,7 @@ o5 = OptionTable{Constants => false                              }
                                   {Position => Up               }
                  SkewCommutative => {}
                  Variables => {x, y, z, Dx, Dy, Dz}
-                 WeylAlgebra => {x => Dx, y => Dy, z => Dz}
+                 WeylAlgebra => {{x, Dx}, {y, Dy}, {z, Dz}}
 
 o5 : OptionTable
 

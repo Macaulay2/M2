@@ -584,7 +584,7 @@ doc ///
       P3 = flagBundle({1,3})
       (S,Q) = P3.Bundles
     Text
-      In this setting, the the bundle $O(1)$ is the dual of the universal subbundle
+      In this setting, the bundle $O(1)$ is the dual of the universal subbundle
       $S$.
     Example
       O1 = dual(S)

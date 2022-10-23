@@ -36,7 +36,7 @@ document {
      SeeAlso => {generators, trim, prune, mingens, ker,vars}
      }
 document { 
-     Key => (numgens,GeneralOrderedMonoid),
+     Key => (numgens, Monoid), -- TODO: combine with (numgens, Ring) below
      Headline => "number of generators of a monoid",
      Usage => "numgens M",
      Inputs => {
@@ -71,7 +71,7 @@ document {
 	  "numgens I"
 	  },
      PARA{},
-     "In order to find a more efficient set of of generators, use ",
+     "In order to find a more efficient set of generators, use ",
      TO mingens, " or ", TO trim, ".",
      EXAMPLE {
 	  "mingens I",

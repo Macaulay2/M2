@@ -40,7 +40,7 @@ monodromyGroup System := o -> GS -> (
     V := first monodromySolve(GS, new OptionTable from monOpts);
     monodromyGroup(V.Graph, o)
     )    
-monodromyGroup (System, Point, List)  := o -> (GS, p0, x0s) -> (
+monodromyGroup (System, AbstractPoint, List)  := o -> (GS, p0, x0s) -> (
     monOpts := new MutableHashTable from o#"msOptions";
     monOpts.EdgesSaturated = true;
     V := first monodromySolve(GS, p0, x0s, new OptionTable from monOpts);

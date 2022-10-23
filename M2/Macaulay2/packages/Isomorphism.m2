@@ -2,7 +2,7 @@ newPackage(
     "Isomorphism",
     Version => "1.0",
     Date => "April 27, 2022",
-    Headline => "Probabalistic test of isomorphism between modules",
+    Headline => "Probabilistic test of isomorphism between modules",
     Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org", 
                   HomePage => "http://www.msri.org/~de"}
@@ -91,7 +91,7 @@ checkDegrees(Module, Module) := Sequence => o -> (A,B) -> (
         degdiffs := for i from 0 to #dA-1 list dA_i-dB_i;
         matches := all(degdiffs, s-> s == degdiffs_0);
         if matches then(
-        	--now the degrees of the generators are euqal.
+        	--now the degrees of the generators are equal.
         if v and not isDegreeListZero degdiffs then 
 	       <<"To make the degree sequences equal, tensor "<<A<<"with ring " << A << "to " << {dA_0-dB_0} <<endl;
                return (true, dA_0-dB_0)
@@ -234,7 +234,7 @@ doc ///
 Key
  Isomorphism
 Headline
- Probabalistic test for isomorphism
+ Probabilistic test for isomorphism
 Description
   Text
    Two modules are isomorphic if there is a surjection in each direction.
@@ -339,7 +339,7 @@ Key
  [isIsomorphic, Homogeneous]
  [isIsomorphic, Strict] 
 Headline
- Probabalistic test for isomorphism of modules
+ Probabilistic test for isomorphism of modules
 Usage
  t = isIsomorphic (N,M)
  t = isIsomorphic (n,m) 

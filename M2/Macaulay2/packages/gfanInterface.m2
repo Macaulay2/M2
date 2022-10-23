@@ -1859,7 +1859,7 @@ convertRingToRational Ring := ZRing -> (
 	return QQ(monoid[gens ZRing]);
 )
 
--- Takes a ring and and returns a gfan string with rational coefficients.
+-- Takes a ring and returns a gfan string with rational coefficients.
 gfanRingToRationalString = method()
 gfanRingToRationalString Ring := ZRing -> (
 	out := "Q" | gfanToExternalString(new Array from gens ZRing) | newline;
@@ -1867,7 +1867,7 @@ gfanRingToRationalString Ring := ZRing -> (
 )
 
 -- Polyhedra wants fans to be constructed from the maximal cones.
--- May be a way of doing this where we cut down on the the cones we are iterating over.
+-- May be a way of doing this where we cut down on the cones we are iterating over.
 maximalConesFromList = method()
 maximalConesFromList List := cones -> (
 	maximalCones := cones;
@@ -2570,7 +2570,7 @@ doc ///
 			Most of the functions in gfanInterface require @TO MarkedPolynomialList@
 			marked polynomial lists as input.
 			In a marked polynomial list, the leading term of each polynomial is distinguished.
-			New users should read the the guide @TO "Conventions for calling methods with options"@.
+			New users should read the guide @TO "Conventions for calling methods with options"@.
 			Since {\tt gfan} is distributed with @EM "Macaulay2"@, one rarely needs to consult
 			the guide for @TO "Installation and Configuration of gfanInterface"@.
 
@@ -3000,7 +3000,7 @@ doc ///
 		gfanFanCommonRefinement
 		(gfanFanCommonRefinement, Fan, Fan)
 	Headline
-		find the common refinement of two polyheadral fans
+		find the common refinement of two polyhedral fans
 	Usage
 		P = gfanFanCommonRefinement(F,G)
 	Inputs
@@ -4321,7 +4321,7 @@ doc ///
 		(gfanOverIntegers,Ideal)
 		(gfanOverIntegers,Ideal,List)
 	Headline
-		all reduced Groebner bases of a poynomial ideal with coefficients in ZZ
+		all reduced Groebner bases of a polynomial ideal with coefficients in ZZ
 	Usage
 		G = gfanOverIntegers(I)
 	Inputs
@@ -4569,7 +4569,7 @@ doc///
 	-- assert(gfanKrullDimension gfanBuchberger L === 3)
 	-- ///
 	--
-	-- -- TEST gfanLaticeIdeal
+	-- -- TEST gfanLatticeIdeal
 	-- TEST ///
 	-- L = gfanLatticeIdeal {{2,-1,0},{3,0,-1}}
 	-- assert(L === {-x_0 *x_1 + x_2, x_0^2 - x_1})

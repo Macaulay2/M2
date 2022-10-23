@@ -98,7 +98,7 @@ document { Key => {Digamma,(Digamma, RR)},
      Usage => "Digamma x",
      Headline => "Digamma function",
      Inputs => { "x" },
-     Outputs => { RR => { "the digamma function (logarithmic derivative of the gamma fuction) of ", TT "x" }},
+     Outputs => { RR => { "the digamma function (logarithmic derivative of the gamma function) of ", TT "x" }},
      EXAMPLE lines ///
 	  Digamma 6
      ///,
@@ -308,7 +308,7 @@ document { Key => {InexactNumber'},
 document { Key => {RingFamily},
      "This family is used to contain classes that correspond to a family of similar rings with a default member."
      }
-document { Key => {BesselJ,(BesselJ, ZZ, RR)},
+document { Key => {BesselJ,(BesselJ, ZZ, Number), (BesselJ, ZZ, Constant)},
      Usage => "BesselJ(n,x)\nBesselJ_n x",
      Headline => "Bessel function of the first kind",
      Inputs => {
@@ -325,7 +325,7 @@ document { Key => {BesselJ,(BesselJ, ZZ, RR)},
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselY }
      }
-document { Key => {BesselY,(BesselY, ZZ, RR)},
+document { Key => {BesselY,(BesselY, ZZ, Number), (BesselY, ZZ, Constant)},
      Usage => "BesselY(n,x)\nBesselY_n x",
      Headline => "Bessel function of the second kind",
      Inputs => {
@@ -533,7 +533,8 @@ document {
 document {
      Key => {(quotientRemainder,RingElement,RingElement),
 	  (quotientRemainder,InexactNumber,RingElement), (quotientRemainder,RingElement,InexactNumber),
-	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number)},
+	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number),
+	  (quotientRemainder,ZZ,ZZ)},
      Headline => "quotient and remainder",
      Usage => "(q,r) = quotientRemainder(f,g)",
      Inputs => {"f","g"},

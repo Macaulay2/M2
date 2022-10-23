@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: 1355463756
+
+i1 : floor toPython 5.8
+
+o1 = 5
+
+o1 : PythonObject of class int
+
+i2 : floor toPython(-5.8)
+
+o2 = -6
+
+o2 : PythonObject of class int
+
+i3 : 

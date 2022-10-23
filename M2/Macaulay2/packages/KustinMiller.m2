@@ -704,7 +704,7 @@ doc ///
       general structure theorems in higher codimension are lacking and the main goal of unprojection theory 
       is to provide a substitute for a structure theorem.
 
-      Unprojection theorey has been applied in various cases to construct new varieties, for example, in [4] in the case of Campedelli surfaces and [5] in the case of Calabi-Yau varieties.
+      Unprojection theory has been applied in various cases to construct new varieties, for example, in [4] in the case of Campedelli surfaces and [5] in the case of Calabi-Yau varieties.
       
       We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller complex construction and demonstrate it on several examples connecting unprojection theory
       and combinatorics such as stellar subdivisions of simplicial complexes [6],
@@ -795,7 +795,7 @@ doc ///
     cJ:ChainComplex
         resolution of J
     W:PolynomialRing
-        over the the same @TO coefficientRing@ as R
+        over the same @TO coefficientRing@ as R
         with one variable T.
   Outputs
     :ChainComplex

@@ -259,7 +259,7 @@ TEST(MonomialOrdering, create)
      MonomialOrderings::GRevLex4(5),
      MonomialOrderings::GroupLex(3)
     })};
-  (void)mo6;//force a use, supress a warning
+  (void)mo6;//force a use, suppress a warning
 }
 
 

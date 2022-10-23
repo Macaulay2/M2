@@ -451,7 +451,7 @@ getRandomLinearForms(Ring, List) := opts -> (R1, L1) ->(
         J1 := jacobian ideal formList;
         val := min(d, #formList);
         if (rank J1 < val) then ( 
-            if (opts.Verbose) or (debugLevel > 0) then print "getRandomLinearForms: forms were not random enough, trying again recusrively.";            
+            if (opts.Verbose) or (debugLevel > 0) then print "getRandomLinearForms: forms were not random enough, trying again recursively.";            
             return getRandomLinearForms(R1, L1, opts);
         );
     );
@@ -636,7 +636,7 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
     );    
 
     if (runDecomp) then (
-        if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 4): attempting linear intersection with triinomials.";
+        if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 4): attempting linear intersection with trinomials.";
         tempPtsList =  linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
             Replacement => Trinomial,        
@@ -1058,7 +1058,7 @@ dimViaBezout(Ideal) := opts-> I1 -> (
             cancel t2;
             return tr;            
         );
-        if opts.Verbose or debugLevel > 0 then print "dimViaBezout: Something went wrong with multithrading.";              
+        if opts.Verbose or debugLevel > 0 then print "dimViaBezout: Something went wrong with multithreading.";              
         return null;
         *-
         
@@ -1386,7 +1386,7 @@ findANonZeroMinor(ZZ, Matrix, Ideal) := opts -> (n,M,I)->(
     --Karl:  I modified the following.
     if (rank(M3)<n) then error "findANonZeroMinor:  Something went wrong, the matrix rank fell taking the first submatrix.  This indicates a bug in the program.";
     --this is what was written before:
-    --return (P,N1,N2,"findANonZeroMinor: Using the the second and third outputs failed to generate a random matrix of the given size, that has full rank when evaluated at the first output.");
+    --return (P,N1,N2,"findANonZeroMinor: Using the second and third outputs failed to generate a random matrix of the given size, that has full rank when evaluated at the first output.");
     N2rand := random(rowRankProfile(M3));
     N2new = {};
     for i from 0 to n-1 do(
@@ -1783,7 +1783,7 @@ doc ///
         Full
         Trinomial
     Headline
-        When changing coordinates, whether to replace variables by general degre 1 forms, binomials, etc.
+        When changing coordinates, whether to replace variables by general degree 1 forms, binomials, etc.
     Usage
         Replacement => Full
         Replacement => Monomial
@@ -1791,7 +1791,7 @@ doc ///
         Replacement => Trinomial        
     Description
         Text
-            When calling various functions, setting {\tt Replacement => Full} will mean that coordinates are changed to a general degree 1 form.  If {\tt Replacement => Binomial}, the coordinates are only changed to bionomials, which can be much faster for certain applications.  Other options include {\tt Replacement => Monomial} and {\tt Replacement => Trinomial}.
+            When calling various functions, setting {\tt Replacement => Full} will mean that coordinates are changed to a general degree 1 form.  If {\tt Replacement => Binomial}, the coordinates are only changed to binomials, which can be much faster for certain applications.  Other options include {\tt Replacement => Monomial} and {\tt Replacement => Trinomial}.
         Example
             R = ZZ/101[a,b,c,d,e];            
             randomCoordinateChange(R, Replacement=>Monomial)
@@ -1842,7 +1842,7 @@ doc///
         [extendIdealByNonZeroMinor, NumThreadsToUse]
         [findANonZeroMinor, NumThreadsToUse]
     Headline
-        number of threads the the function will use in a brute force search for a point 
+        number of threads that the function will use in a brute force search for a point 
     Description
         Text
             When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy, this denotes the number of threads to use in brute force point checking.
@@ -1859,7 +1859,7 @@ doc///
         [extendIdealByNonZeroMinor,PointCheckAttempts ]
         [findANonZeroMinor, PointCheckAttempts]
     Headline
-        Number of times the the function will search for a point 
+        Number of times that the function will search for a point 
     Description
         Text
             When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy strategy, this denotes the number of trials for brute force point checking.  When calling it with a {\tt LinearIntersection} strategy, this controls how many linear spaces are created.

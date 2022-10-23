@@ -439,7 +439,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
       for (int i = 0; i < nrows; i++)
         {
           comps[i] = nullptr;
-          last[i] = nullptr;  // used to easily placce monomials in the correct
+          last[i] = nullptr;  // used to easily place monomials in the correct
                               // bin, at the end of the polynomials.
         }
       const res_monomial_word* w = f.monoms.data();

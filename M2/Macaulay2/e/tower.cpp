@@ -270,7 +270,7 @@ class TowerEvaluator : public DPolyTraverser
 
   virtual bool viewTerm(long coeff, const exponents exp)
   {
-    // translate exp to varpwer
+    // translate exp to varpower
     // map->eval_term
     // either:
     //  H->add, or target->add_to

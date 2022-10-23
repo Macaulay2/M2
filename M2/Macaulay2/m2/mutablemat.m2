@@ -303,6 +303,7 @@ rank MutableMatrix := (M) -> (
       rank matrix M
     )
 
+determinant = method(Options => { Strategy => null })
 determinant MutableMatrix := opts -> (M) -> (
     if numRows M =!= numColumns M then error "expected a square matrix";
     if isField ring M then

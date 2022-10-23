@@ -233,7 +233,7 @@ Mlex
 )
 
 ------------------------------------------------------------------------
--- compute the lex module whith the same Hilbert sequence of M
+-- compute the lex module with the same Hilbert sequence of M
 ------------------------------------------------------------------------
 lexModule Module := M -> lexModule(hilbertSequence M,ambient M)
 
