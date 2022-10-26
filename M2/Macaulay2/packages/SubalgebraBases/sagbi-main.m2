@@ -141,4 +141,62 @@ sagbi(SAGBIBasis) := opts -> SB -> (
     sagbiBasis compTable
 )
 
+-- the user subduction methods:
+subduction = method( 
+    TypicalValue => Matrix,
+    Options => { -- These options are only used when the user wants to use subduction for their own purposes
+	AutoSubduce => true,
+        ReduceNewGenerators => true,
+	StorePending => true,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- Top or Engine
+    	Limit => 100,
+	AutoSubduceOnPartialCompletion => false,
+    	PrintLevel => 0,
+	Recompute => false,
+	RenewOptions => false
+    	}
+);
+
+
+subduction(SAGBIBasis, Matrix) := opts -> (S, M) -> (
+    compTable := initializeCompTable(S, opts);
+    compSubduction(opts, compTable, M)
+    )
+
+subduction(SAGBIBasis, RingElement) := opts -> (S, m) -> (
+    compTable := initializeCompTable(S, opts);
+    first first entries compSubduction(opts, compTable, matrix {{m}})
+    )
+
+subduction(Matrix, Matrix) := opts -> (F, M) -> (
+    S := initializeCompTable(sagbiBasis(subring F, opts), opts);
+    S#"data"#"sagbiGenerators" = F;
+    updateComputation(S);
+    compSubduction(opts, S, M)
+    )
+
+subduction(Matrix, RingElement) := opts -> (F, m) -> (
+    first first entries subduction(opts, F, matrix {{m}})
+    )
+
+subduction(Subring, Matrix) := opts -> (S, M) -> (
+    F := gens S;
+    subduction(opts, F, M)
+    )
+
+subduction(Subring, RingElement) := opts -> (S, m) -> (
+    F := gens S;
+    first first entries subduction(opts, F, matrix {{m}})
+    )
+
+subduction(List, List) := opts -> (FList, MList) -> (
+    first entries subduction(opts, matrix {FList}, matrix {MList})
+    )
+
+subduction(List, RingElement) := opts -> (FList, m) -> (
+    first first entries subduction(opts, matrix {FList}, matrix {{m}})
+    )
+
+
 end --

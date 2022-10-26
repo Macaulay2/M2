@@ -35,8 +35,8 @@ exportMutable {}
 
 needs "./SubalgebraBases/exports.m2"
 needs "./SubalgebraBases/classes.m2"
-needs "./SubalgebraBases/high-level-sagbi-functions.m2"
-needs "./SubalgebraBases/sagbi-top-level-functions.m2"
+needs "./SubalgebraBases/sagbi-functions.m2"
+needs "./SubalgebraBases/compTable-functions.m2"
 --needs "./SubalgebraBases/toric_syz.m2"
 --needs "./SubalgebraBases/subring_modules.m2"
 needs "./SubalgebraBases/tests.m2"

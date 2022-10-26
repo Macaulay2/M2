@@ -3,7 +3,7 @@
 -- it is used as an intermediate step for verifySagbi since matrices and subrings
 --   are handled slightly differently
 -- 
-
+-*
 internalVerifySagbiProcess = method(
     TypicalValue => SAGBIBasis,
     Options => {
@@ -153,6 +153,7 @@ verifySagbi(Matrix) := opts -> M -> (
 verifySagbi(List) := opts -> L -> (
     verifySagbi(opts, subring L)
     )
+*-
 
 -- forceSB(Subring / SAGBIBasis) constructs a SAGBIBasis object, using any
 -- existing one as a template, applied autosubduction to the (sagbi)generators,
