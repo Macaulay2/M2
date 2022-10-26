@@ -19,13 +19,16 @@
 -- 15) invariants of A^1, with a nilpotent action of A^4
 -- 16) elimination order on ambient ring
 -- 17) 'symmetric' quadratic artin ideal in 2x3 variables
--- 18) toricSyz, Sturmfels example 11.19 -- Removed due to toricSyz removal
+-- * 18) toricSyz, Sturmfels example 11.19 -- Removed due to toricSyz removal
 -- 19) Lex term order, simple example (verifying sagbi basis)
 -- 20) Lex term order, harder example (requires new generators)
 -- 21) GRevLex version of 19 (one more generator than 19)
 -- 22) GRevLex version of 20 (one more generator than 20)
 -- 23) Test for %
 -- 24) Test for groebnerMembershipTest
+-- 25) subductionQuotient 
+-- 26) subring intersection (infinite sagbi basis)
+-- 27) subring intersection in a quotient ring (finite sagbi basis)
 
 -- 0) Subring tests
 TEST ///
@@ -509,6 +512,40 @@ f1 = x+y + 2*x*y;
 f2 = x+2*y;
 assert(time groebnerMembershipTest(f1,S))
 assert(time not groebnerMembershipTest(f2,S))
+///
+
+-- 25) subductionQuotient 
+TEST ///
+R = QQ[x,y];
+S = subring {x+y, x*y, x*y^2};
+f = x^5;
+subQuot = f // S;
+Q = ring subQuot;
+m = map(R, Q, gens S);
+ans = x^5+x^4*y+4*x^3*y^2+6*x^2*y^3+4*x*y^4+y^5;
+assert((m subQuot) == ans)
+assert((m subQuot) + (f % S) == f)
+///
+
+-- 26) subring intersection (infinite sagbi basis)
+TEST ///
+R = QQ[x,y];
+S1 = subring {x^2, x*y};
+S2 = subring {x^3, y};
+S12 = subringIntersection(S1, S2, Limit => 8);
+assert(gens S12 == matrix {{x^3*y, x^3*y^3, x^6}})
+///
+
+-- 27) subring intersection in a quotient ring (finite sagbi basis)
+TEST ///
+R = QQ[x,y];
+I = ideal(x^3 + x*y^2 + y^3);
+Q = R/I;
+S1 = subring {x^2, x*y};
+S2 = subring {x, y^2};
+S12 = subringIntersection(S1, S2, Limit => 20);
+assert(isSAGBI S12)
+assert(gens sagbi S12 == matrix {{x^2, x^2*y^2, y^4, x*y^3, y^6, x*y^5}})
 ///
 
 end
