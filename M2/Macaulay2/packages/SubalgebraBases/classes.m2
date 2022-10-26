@@ -229,7 +229,7 @@ sagbiBasis HashTable := opts -> H -> (
     pending := new HashTable from apply(keys H#"pending",i-> i => new List from (H#"pending"#i));
     options := new HashTable from H#"options";
     newSAGBIBasis := new SAGBIBasis from {
-        "rings" => rings,
+        "rings" => rings, -- rings -> SAGBIRings + protect
         "maps" => maps,
         "ideals" => ideals,
         "data" => data,

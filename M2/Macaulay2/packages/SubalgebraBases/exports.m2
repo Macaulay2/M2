@@ -37,11 +37,8 @@ export {
     "UseSubringGens"
     }
 
-protectedSymbols = {
-    quotientRing
-    }
+protect symbol quotientRing
 
-protect \ symbol \ protectedSymbols
 
 -- From Core:
 importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
