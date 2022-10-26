@@ -54,7 +54,7 @@ limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing compTable#"rings"#"liftedRing") tensorVariables;
     rings := new MutableHashTable from {
-        "quotientRing" => compTable#"rings"#"quotientRing",
+        quotientRing => compTable#"rings".quotientRing,
         "liftedRing" => compTable#"rings"#"liftedRing",
         "tensorRing" => tensorRing
     };

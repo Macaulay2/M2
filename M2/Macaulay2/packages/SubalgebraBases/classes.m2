@@ -123,7 +123,7 @@ sagbiBasis Subring := opts -> S -> (
         Degrees => degrees source vars liftedRing,
         MonomialOrder => newMonomialOrder];
     rings := new HashTable from {
-        "quotientRing" => ambient S,
+        quotientRing => ambient S,
         "liftedRing" => liftedRing,
         "tensorRing" => (coefficientRing liftedRing) tensorVariables
         };
@@ -156,7 +156,7 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiInclusion" => sagbiInclusion,
         "substitution" => substitution,
         "fullSubstitution" => projectionLifted * substitution, 
-        "quotient" => map(rings#"quotientRing",liftedRing,vars rings#"quotientRing")
+        "quotient" => map(rings.quotientRing,liftedRing,vars rings.quotientRing)
     };
     
     -- Ideals:
@@ -167,9 +167,9 @@ sagbiBasis Subring := opts -> S -> (
     SIdeal := ideal(0_(rings#"tensorRing"));
     leadTermsI := ideal leadTerm ideal ambient S;
     ideals := new HashTable from {
-        "I" => ideal ambient S,
-        "SIdeal" => SIdeal,
-        "leadTermsI" => leadTermsI,
+        "I" => ideal ambient S,     -- I --> quotient / presentation ideal 
+        "SIdeal" => SIdeal,         --  
+        "leadTermsI" => leadTermsI, -- 
         "reductionIdeal" => maps#"inclusionLifted" leadTermsI + SIdeal,
     };
     
@@ -277,7 +277,7 @@ ring SAGBIBasis := S -> (
 
 -- Returns the quotient ring
 ambient SAGBIBasis := S -> (
-    S#"rings"#"quotientRing"
+    S#"rings".quotientRing
 )
 
 -- Returns the subring that a SAGBIBasis points to
