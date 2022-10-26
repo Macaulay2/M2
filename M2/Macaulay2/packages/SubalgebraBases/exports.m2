@@ -12,7 +12,8 @@ export {
     "AutoSubduceOnPartialCompletion",
     "PrintLevel",
     "Recompute",
-    "RenewOptions"
+    "RenewOptions",
+    "subduction"
     }
 
 -- From classes.m2
@@ -26,9 +27,8 @@ export {
     "subductionQuotientRing"
     }
 
--- From high-level-sagbi-functions.m2
+-- From sagbi-functions.m2
 export {
-    "verifySagbi",
     "forceSB",
     "isSAGBI",
     "groebnerMembershipTest",
@@ -37,11 +37,6 @@ export {
     "UseSubringGens"
     }
 
-
--- From sagbi-top-level-functions.m2
-export {
-    "subduction"
-    }
 
 -- From Core:
 importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});

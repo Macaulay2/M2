@@ -20,10 +20,6 @@
 -- 16) elimination order on ambient ring
 -- 17) 'symmetric' quadratic artin ideal in 2x3 variables
 -- 18) toricSyz, Sturmfels example 11.19 -- Removed due to toricSyz removal
-
-----------------------------------------
--- New Tests 
-----------------------------------------
 -- 19) Lex term order, simple example (verifying sagbi basis)
 -- 20) Lex term order, harder example (requires new generators)
 -- 21) GRevLex version of 19 (one more generator than 19)
@@ -38,7 +34,8 @@ S = QQ[e1, e2, e3, y];
 f = map(R, S, {x1 + x2 + x3, x1*x2 + x1*x3 + x2*x3, x1*x2*x3,
 (x1 - x2)*(x1 - x3)*(x2 - x3)});
 A = subring matrix f;
-assert(not (verifySagbi A))
+-- assert(not (verifySagbi A))
+assert(not (isSAGBI A))
 ///
 ---------------------
 
