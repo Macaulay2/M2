@@ -37,11 +37,8 @@ export {
     "UseSubringGens"
     }
 
-protectedSymbols = {
-    quotientRing
-    }
-
-protect \ symbol \ protectedSymbols
+protect symbol quotientRing
+protect symbol tensorRing
 
 -- From Core:
 importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});

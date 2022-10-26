@@ -27,7 +27,7 @@ internalVerifySagbiProcess(SAGBIBasis) := opts -> SB -> (
 	);
     -- Get the SPairs
     sagbiGB := gb(compTable#"ideals"#"reductionIdeal");
-    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings"#"tensorRing")) - 2;
+    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings".tensorRing)) - 2;
     zeroGens := selectInSubring(k, gens sagbiGB);
     SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
     -- Reduce the SPairs
@@ -242,7 +242,7 @@ internalIsSAGBIProcess(SAGBIBasis) := opts -> SB -> (
 	);
     -- Get the SPairs
     sagbiGB := gb(compTable#"ideals"#"reductionIdeal");
-    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings"#"tensorRing")) - 2;
+    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings".tensorRing)) - 2;
     zeroGens := selectInSubring(k, gens sagbiGB);
     SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
     -- Reduce the SPairs

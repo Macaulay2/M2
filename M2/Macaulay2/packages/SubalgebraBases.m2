@@ -51,8 +51,12 @@ end--
 
 uninstallAllPackages()
 restart
-loadPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2",DebuggingMode=>true)
+path = prepend("./", path)
+installPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2",InstallPrefix=>"./")
+check "SubalgebraBases"
 
+loadPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2")
+check(1, "SubalgebraBases")
 
 path = prepend("./", path)
 installPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2",InstallPrefix=>"./")

@@ -1563,7 +1563,7 @@ doc ///
 	      -- Sort the rows of the matrix for more predictable behavior.
 	      final = matrix transpose {sort first entries transpose final};
 	      final = extractEntries(final, gVars);
-    	      subR#"presentation"#"fullSubstitution"(sub(final,subR#"presentation"#"tensorRing"))
+    	      subR#"presentation"#"fullSubstitution"(sub(final,subR#"presentation".tensorRing))
 	      );
 	Text
 	   The function @TO "mingensSubring"@ works by converting the given matrix (which should be thought of as a module) to an

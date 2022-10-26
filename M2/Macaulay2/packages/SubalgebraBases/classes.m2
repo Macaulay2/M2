@@ -125,7 +125,7 @@ sagbiBasis Subring := opts -> S -> (
     rings := new HashTable from {
         quotientRing => ambient S,
         "liftedRing" => liftedRing,
-        "tensorRing" => (coefficientRing liftedRing) tensorVariables
+        tensorRing => (coefficientRing liftedRing) tensorVariables
         };
     
     -- With the notation:
@@ -142,14 +142,14 @@ sagbiBasis Subring := opts -> S -> (
     -- > sagbiInclusion:   TensorRing -> TensorRing:    x_i -> 0,   y_j -> y_j
     -- > fullSubstitution: TensorRing -> LiftedRing:    x_i -> z_i, y_j -> g_j(z_1 .. z_s)
     -- > quotientRing:     LiftedRing -> QuotientRing : z_i -> z_i    
-    inclusionLifted := map(rings#"tensorRing",rings#"liftedRing",
-    		    (vars rings#"tensorRing")_{0..numberVariables-1});
-    substitution := map(rings#"tensorRing",rings#"tensorRing",
-    		    (vars rings#"tensorRing")_{0..numberVariables-1});
-    projectionLifted := map(rings#"liftedRing",rings#"tensorRing",
+    inclusionLifted := map(rings.tensorRing,rings#"liftedRing",
+    		    (vars rings.tensorRing)_{0..numberVariables-1});
+    substitution := map(rings.tensorRing,rings.tensorRing,
+    		    (vars rings.tensorRing)_{0..numberVariables-1});
+    projectionLifted := map(rings#"liftedRing",rings.tensorRing,
     		    vars rings#"liftedRing");
-    sagbiInclusion := map(rings#"tensorRing",rings#"tensorRing",
-    		    matrix {toList (numberVariables:0_(rings#"tensorRing"))});
+    sagbiInclusion := map(rings.tensorRing,rings.tensorRing,
+    		    matrix {toList (numberVariables:0_(rings.tensorRing))});
     maps := new HashTable from {
         "inclusionLifted" => inclusionLifted,
         "projectionLifted" => projectionLifted,
@@ -164,7 +164,7 @@ sagbiBasis Subring := opts -> S -> (
     -- > SIdeal = the ideal of S-polynomials (in the tensorRing)
     -- > leadTermsI = initial ideal of I
     -- > reductionIdeal = SIdeal + lift(leadTermsI)    
-    SIdeal := ideal(0_(rings#"tensorRing"));
+    SIdeal := ideal(0_(rings.tensorRing));
     leadTermsI := ideal leadTerm ideal ambient S;
     ideals := new HashTable from {
         "I" => ideal ambient S,     -- I --> quotient / presentation ideal 

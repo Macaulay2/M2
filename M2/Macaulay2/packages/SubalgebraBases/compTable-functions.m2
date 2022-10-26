@@ -56,19 +56,19 @@ limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
     rings := new MutableHashTable from {
         quotientRing => compTable#"rings".quotientRing,
         "liftedRing" => compTable#"rings"#"liftedRing",
-        "tensorRing" => tensorRing
+        global tensorRing => tensorRing
     };
 
     -- Maps:
-    inclusionLifted := map(rings#"tensorRing",rings#"liftedRing",
-    		    (vars rings#"tensorRing")_{0..numberVariables-1});
-    substitution := map(rings#"tensorRing",rings#"tensorRing",
-    		    (vars rings#"tensorRing")_{0..numberVariables-1} | inclusionLifted(M));
-    projectionLifted := map(rings#"liftedRing",rings#"tensorRing",
+    inclusionLifted := map(rings.tensorRing,rings#"liftedRing",
+    		    (vars rings.tensorRing)_{0..numberVariables-1});
+    substitution := map(rings.tensorRing,rings.tensorRing,
+    		    (vars rings.tensorRing)_{0..numberVariables-1} | inclusionLifted(M));
+    projectionLifted := map(rings#"liftedRing",rings.tensorRing,
     		    vars rings#"liftedRing" | matrix {toList(numberGenerators:0_(rings#"liftedRing"))});
-    sagbiInclusion := map(rings#"tensorRing",rings#"tensorRing",
-    		    matrix {toList (numberVariables:0_(rings#"tensorRing"))} |
-		    (vars rings#"tensorRing")_{numberVariables .. numberVariables + numberGenerators - 1});
+    sagbiInclusion := map(rings.tensorRing,rings.tensorRing,
+    		    matrix {toList (numberVariables:0_(rings.tensorRing))} |
+		    (vars rings.tensorRing)_{numberVariables .. numberVariables + numberGenerators - 1});
 
     maps := new MutableHashTable from {
         "inclusionLifted" => inclusionLifted,
@@ -80,7 +80,7 @@ limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
     };
     
     -- Ideals:
-    generatingVariables := (vars rings#"tensorRing")_{numberVariables..numberVariables + numberGenerators - 1};
+    generatingVariables := (vars rings.tensorRing)_{numberVariables..numberVariables + numberGenerators - 1};
     SIdeal := ideal(generatingVariables - maps#"inclusionLifted"(leadTerm M));
     ideals := new MutableHashTable from {
         "I" => compTable#"ideals"#"I",
@@ -237,7 +237,7 @@ subductionEngineLevelLeadTerm(HashTable, RingElement) := (compTable, g) -> (
 
 subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
     local result;
-    tense := compTable#"rings"#"tensorRing";
+    tense := compTable#"rings".tensorRing;
     	    
     ambR := source compTable#"maps"#"inclusionLifted";
     if ring M === tense then (
@@ -246,7 +246,7 @@ subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
 	error "M must be from ambR or tensorRing.";
 	);
     -- It is possible for ring f === ambient to be true but f is still from a different ring
-    -- than pres#"tensorRing". In this case, it shouldn't try to prevent an error by using "sub"
+    -- than pres.tensorRing. In this case, it shouldn't try to prevent an error by using "sub"
     -- or something. Instead, the following line will deliberately throw an error:
     -- (This is done because otherwise there is potential for a segfault.)
     throwError := M_(0,0) - 1_(ambR);
@@ -398,7 +398,7 @@ updateComputationDegreeByDegree(HashTable) := (compTable) -> (
         Degrees => degrees source vars liftedRing | degrees source sagbiGens,
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
-    compTable#"rings"#"tensorRing" = tensorRing;
+    compTable#"rings".tensorRing = tensorRing;
     
     -- Changes to the maps:
     -- inclusionLifted  (modified)
@@ -461,7 +461,7 @@ updateComputationIncremental(HashTable) := (compTable) -> (
         Degrees => degrees source vars liftedRing | degrees source sagbiGens,
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
-    oldTensorRing := compTable#"rings"#"tensorRing";
+    oldTensorRing := compTable#"rings".tensorRing;
     
     -- Changes to the maps:
     -- inclusionLifted  (modified)
@@ -513,7 +513,7 @@ updateComputationIncremental(HashTable) := (compTable) -> (
     
     
     -- Update the compTable:
-    compTable#"rings"#"tensorRing" = tensorRing;            
+    compTable#"rings".tensorRing = tensorRing;            
     compTable#"maps"#"inclusionLifted"  = inclusionLifted;
     compTable#"maps"#"substitution"     = substitution;
     compTable#"maps"#"projectionLifted" = projectionLifted;
@@ -663,7 +663,7 @@ collectSPairs (HashTable) := (compTable) -> (
 	    print("-- Computing the tete-a-tete's...");
     );
     sagbiGB := gb(compTable#"ideals"#"reductionIdeal", DegreeLimit => compTable#"data"#"degree");
-    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings"#"tensorRing")) - 2;
+    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings".tensorRing)) - 2;
     zeroGens := submatrixByDegree(selectInSubring(k, gens sagbiGB), compTable#"data"#"degree");
     SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
     
