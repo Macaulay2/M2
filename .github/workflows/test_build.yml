@@ -38,13 +38,13 @@ jobs:
           - cmake
           - autotools
         os:
-          - ubuntu-20.04
+          - ubuntu-22.04
           - macos-11
         compiler:
           - default
         include:
           - build-system: cmake
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             compiler: clang-11
             cxx: clang++-11
             cc: clang-11
