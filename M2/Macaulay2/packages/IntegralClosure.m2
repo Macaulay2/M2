@@ -3065,7 +3065,7 @@ loadPackage("IntegralClosure", Reload=>true)
 
     assert not localIsQuasiHomogeneous f    
 
-    -- now get the rees ideal of the euler ideal
+    -- now get the Rees ideal of the Euler ideal
     I = eulerIdeal f
     J = reesIdeal(I, I_0, Variable => w)
     J = first flattenRing J

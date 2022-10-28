@@ -953,7 +953,7 @@ document {
 	"This function is provided by the package ", TO InvariantRing,". ",
 	
 	PARA {
-	    "This method computes the hilbert series of the ring of invariants."
+	    "This method computes the Hilbert series of the ring of invariants."
 	    },
     	
 	EXAMPLE {
