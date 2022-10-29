@@ -1128,7 +1128,7 @@ texMath Subscript := v -> (
      p := precedence v;
      x := texMath v#0;
      y := if class v#1 === Sequence then demark(",", apply(v#1,texMath)) else texMath v#1; -- no () for sequences
-     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+     if precedence v#0 <  p or class v#0 === Subscript then x = "\\left(" | x | "\\right)"; -- precedence or double subscript
      concatenate(x,"_{",y,"}") -- no braces around x
      )
 
@@ -1327,6 +1327,7 @@ net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  
 shortLength := 8
 -- used e.g. in chaincomplexes.m2
 Short = new WrapperType of Holder
+unhold Short := identity
 short = method(Dispatch => Thing, TypicalValue => Short)
 short Thing := x -> short expression x
 short Holder := x -> Short unhold x
