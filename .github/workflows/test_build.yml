@@ -162,8 +162,8 @@ jobs:
           make -C ../.. all
           export PYVERSION=`python3 -c "from sys import version_info; \
             print(f'{version_info.major}.{version_info.minor}')"`
-          export CPPFLAGS="-I`brew --prefix`/include"
-          export  LDFLAGS="-L`brew --prefix`/lib \
+          export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
+          export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
             -L`brew --prefix python`/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
           ../../configure --enable-download --with-python --with-system-gc --enable-syntax-highlighting
 
