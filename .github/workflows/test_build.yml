@@ -73,7 +73,7 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
-          brew install autoconf automake bison boost tbb ccache cmake ctags gnu-tar libtool libomp llvm make ninja pkg-config yasm libffi
+          brew install automake boost tbb ccache ctags llvm make ninja yasm libffi
           brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
