@@ -1087,7 +1087,7 @@ isGeneral ToricVectorBundleKlyachko := (cacheValue symbol isGeneral)( tvb -> (
 -- PURPOSE : Checking if the data in T in fact defines a vectorbundle, i.e., satisfies the decomposition condition or
 --     	     regularity and cocycle condition
 --   INPUT : 'T',  a ToricVectorBundle
---  OUTPUT : 'true' if if 'T' is fact a bundle, 'false' otherwise
+--  OUTPUT : 'true' if 'T' is fact a bundle, 'false' otherwise
 isVectorBundle = method()
 isVectorBundle ToricVectorBundle := (cacheValue symbol isVB)( T -> (
 	  if instance(T,ToricVectorBundleKlyachko) then (
