@@ -173,6 +173,7 @@ export {
     "fPolynomial",
     "greeneKleitmanPartition",
     "hPolynomial",
+    "magnitude",
     "moebiusFunction",
   --"poincare",
     "poincarePolynomial",
@@ -1514,6 +1515,13 @@ moebiusFunction Poset := HashTable => P -> (
         for j to #P.GroundSet-1 do mu#(j, i) = if i === j then 1 else if not member(j, gtp) then 0 else -sum(gtp, z -> if mu#?(j, z) then mu#(j, z) else 0);
         );
     applyKeys(new HashTable from mu, (i, j) -> (F_i, F_j))
+    )
+
+-- following Tom Leinster's definition in Documenta Math.
+magnitude = method()
+magnitude Poset := ZZ => P -> (
+    mu := moebiusFunction P;
+    sum(#P.GroundSet, i -> sum(principalOrderIdeal'(P, i), j -> mu#(P.GroundSet_j, P.GroundSet_i)))
     )
 
 poincare Poset := RingElement => P -> poincarePolynomial P
@@ -5407,6 +5415,31 @@ doc ///
             B = booleanLattice 3;
             z = factor degreePolynomial B
 ///
+-- magnitude
+doc ///
+    Key
+        magnitude
+        (magnitude,Poset)
+    Headline
+        computes the magnitude of a poset
+    Usage
+        z = magnitude P
+    Inputs
+        P:Poset
+    Outputs
+        z:ZZ
+            the magnitude of $P$
+    Description
+        Text
+            The magnitude of $P$ is the sum over all relations $v \leq w$ of
+            the Möbius number $\mu(v,w)$.
+
+            This integer is multiplicative for Cartesian product of posets,
+            and additive for disjoint union.
+        Example
+            B = booleanLattice 3;
+            z = magnitude B
+///
 ------------------------------------------
 -- Properties
 ------------------------------------------
@@ -6408,6 +6441,7 @@ assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
 assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
 assert(toString degreePolynomial B == "x^3+3*x^2*y+3*x*y^2+y^3")
+assert(toString magnitude B == "1")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)

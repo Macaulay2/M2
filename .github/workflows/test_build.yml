@@ -38,25 +38,25 @@ jobs:
           - cmake
           - autotools
         os:
-          - ubuntu-20.04
-          - macos-11
+          - ubuntu-22.04
+          - macos-12
         compiler:
           - default
         include:
           - build-system: cmake
-            os: ubuntu-20.04
-            compiler: clang-11
-            cxx: clang++-11
-            cc: clang-11
+            os: ubuntu-22.04
+            compiler: clang-14
+            cxx: clang++-14
+            cc: clang-14
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-11
-            compiler: clang-11
+            os: macos-12
+            compiler: clang-15
             cxx: clang++
             cc: clang
         exclude:
           - build-system: cmake
-            os: macos-11
+            os: macos-12
             compiler: default
     env:
       VERBOSE: 1
@@ -73,7 +73,7 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
-          brew install autoconf automake bison boost tbb ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm libffi
+          brew install automake boost tbb ccache ctags llvm make ninja yasm libffi
           brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
@@ -85,14 +85,13 @@ jobs:
         run: |
           sudo add-apt-repository -y -n ppa:macaulay2/macaulay2
           sudo apt-get update
-          sudo apt-get install -y -q --no-install-recommends clang-11 gfortran libtool-bin ninja-build yasm ccache
+          sudo apt-get install -y -q --no-install-recommends clang-14 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
-                  libsingular-dev singular-data libcdd-dev \
-                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib polymake phcpack w3c-markup-validator \
-                  libtbb-dev qepcad # libomp5-12
+                  libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 normaliz coinor-csdp \
+                  nauty lrslib polymake phcpack w3c-markup-validator libtbb-dev qepcad libomp-14-dev
 
 # ----------------------
 #   Steps common to all build variants
@@ -103,7 +102,7 @@ jobs:
           echo "CC=${{  matrix.cc  }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
-          then alias llvm-config="llvm-config-11"
+          then alias llvm-config="llvm-config-14"
                echo "/usr/lib/ccache"                     >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
@@ -146,7 +145,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target M2-core M2-emacs M2-highlightjs install-packages
-          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang-11" ]]; then
+          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang-14" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
               cpack -G DEB
@@ -163,8 +162,8 @@ jobs:
           make -C ../.. all
           export PYVERSION=`python3 -c "from sys import version_info; \
             print(f'{version_info.major}.{version_info.minor}')"`
-          export CPPFLAGS="-I`brew --prefix`/include"
-          export  LDFLAGS="-L`brew --prefix`/lib \
+          export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
+          export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
             -L`brew --prefix python`/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
           ../../configure --enable-download --with-python --with-system-gc --enable-syntax-highlighting
 
@@ -178,7 +177,7 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-11'
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-14'
         run: |
           set -xe
           ./M2 -q --check 1 -e 'exit 0'
@@ -225,7 +224,7 @@ jobs:
              M2/BUILD/build/Macaulay2/tests/*/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-11' && success()
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-14' && success()
         uses: actions/upload-artifact@v2
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
