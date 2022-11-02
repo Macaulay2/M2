@@ -283,25 +283,25 @@ subring SAGBIBasis := opts -> S -> (
 -- current degree of the computation
 sagbiDegree = method()
 sagbiDegree SAGBIBasis := SB -> (
-    SB#"data"#"degree"
+    SB#SAGBIdata#degree
     )
 
 -- limit of the computation
 sagbiLimit = method()
 sagbiLimit SAGBIBasis := SB -> (
-    SB#"data"#"limit"
+    SB#SAGBIdata#"limit"
     )
 
 -- is the computation finished (sagbiDone)
 sagbiStatus = method()
 sagbiStatus SAGBIBasis := SB -> (
-    SB#"data"#"sagbiDone"
+    SB#SAGBIdata#"sagbiDone"
     )
 
 -- status of the computation
 status SAGBIBasis := opts -> SB -> (
     "status: " | if sagbiStatus SB then (
-	"done; sagbiGenerators encountered up to degree " | toString max first entries SB#"data"#"sagbiDegrees"
+	"done; sagbiGenerators encountered up to degree " | toString max first entries SB#SAGBIdata#"sagbiDegrees"
 	) else (
 	"DegreeLimit; current degree " | toString sagbiDegree SB
 	)
