@@ -1,5 +1,5 @@
 -- internalVerifySagbi is a version of verifySabi just for SAGBIBasis objects
--- it returns a SAGBIBasis object with its SB#"data"#"sagbiDone" flag correctly set
+-- it returns a SAGBIBasis object with its SB#SAGBIdata#"sagbiDone" flag correctly set
 -- it is used as an intermediate step for verifySagbi since matrices and subrings
 --   are handled slightly differently
 -- 
@@ -22,23 +22,23 @@ internalVerifySagbiProcess = method(
 internalVerifySagbiProcess(SAGBIBasis) := opts -> SB -> (
     compTable := initializeCompTable(SB, opts);    
     if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
-	compTable#"data"#"sagbiGenerators" = lift(compTable#"data"#"subalgebraGenerators", compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
+	compTable#SAGBIdata#"sagbiGenerators" = lift(compTable#SAGBIdata#"subalgebraGenerators", compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
         updateComputation(compTable);
 	);
     -- Get the SPairs
-    sagbiGB := gb(compTable#"ideals"#"reductionIdeal");
+    sagbiGB := gb(compTable#SAGBIideals#"reductionIdeal");
     k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings".tensorRing)) - 2;
     zeroGens := selectInSubring(k, gens sagbiGB);
-    SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
+    SPairs := compTable#SAGBImaps#"fullSubstitution"(zeroGens) % compTable#SAGBIideals#"I";
     -- Reduce the SPairs
     reducedSPairs := compSubduction(compTable, SPairs);
     -- check the sagbi gens are high enough degree (i.e. higher than the subring generators)
-    highEnoughDegree := max flatten (degrees compTable#"data"#"subalgebraGenerators")_1 <= max flatten (degrees compTable#"data"#"sagbiGenerators")_1;
+    highEnoughDegree := max flatten (degrees compTable#SAGBIdata#"subalgebraGenerators")_1 <= max flatten (degrees compTable#SAGBIdata#"sagbiGenerators")_1;
     -- if all the reduced SPairs are zero then we have a sagbiBasis
-    compTable#"data"#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
+    compTable#SAGBIdata#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
     SB' := sagbiBasis compTable; -- note that this operation caches SB' in the subring
     if opts.UseSubringGens then ( -- return the cache of the subring to SB
-	SB#"data"#"subring".cache#"SAGBIBasis" = SB;
+	SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
 	);
     SB'
     );
@@ -71,7 +71,7 @@ internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
 -- the method uses the subduction fuction so setting the option SubductionMethod will change the strategy
 -- print level will be called inside of subduction so it can be used to perform subduction 
 --
--- the resulting SAGBIBasis object SB will have SB#"data"#"sagbiDone" updated appropriately
+-- the resulting SAGBIBasis object SB will have SB#SAGBIdata#"sagbiDone" updated appropriately
 -- the function then returns true or false depending on whether the generating set is a SAGBIBasis 
 --
 -- TODO: kill verifySagbi
@@ -94,9 +94,9 @@ verifySagbi = method(
 verifySagbi(Subring) := opts -> S -> (
     local SB;
     
-    if (S#cache#?"SAGBIBasis") and (gens(S#cache#"SAGBIBasis") == gens S) then (
+    if (S#cache#?SAGBIBasis) and (gens(S#cache#SAGBIBasis) == gens S) then (
 	-- S has a sagbi basis so use this object as a compTable
-	SB = S#cache#"SAGBIBasis";	
+	SB = S#cache#SAGBIBasis;	
 	SB = internalVerifySagbi(SB, opts);
 	) else (
     	trimmedOptionKeys := delete(Compute, keys opts);
@@ -104,46 +104,46 @@ verifySagbi(Subring) := opts -> S -> (
     	trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
 	--SB = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
 	-- add the generators to the sagbiGenerators
-	--SB#"data"#"sagbiGenerators" = lift(gens S, SB#"rings"#"liftedRing");
+	--SB#SAGBIdata#"sagbiGenerators" = lift(gens S, SB#"rings"#"liftedRing");
 	--updateComputation(SB);
 	SB = sagbiBasis(S, trimmedOptionTable);
 	SB = internalVerifySagbi(SB, opts, UseSubringGens => true);
 	);
     
     -- The following is done automatically by sagbiBasis
-    --if not S.cache#?"SAGBIBasis" then (
-    --	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
-	--) else if (SB#"data"#"sagbiDone" and not S.cache#"SAGBIBasis"#"data"#"sagbiDone") then (
-	--S.cache#"SAGBIBasis" = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
+    --if not S.cache#?SAGBIBasis then (
+    --	S.cache#SAGBIBasis = SB; -- add a new SAGBIBasis if there wasn't one already
+	--) else if (SB#SAGBIdata#"sagbiDone" and not S.cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
+	--S.cache#SAGBIBasis = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
 	--);
-    SB#"data"#"sagbiDone"
+    SB#SAGBIdata#"sagbiDone"
     )
 
 verifySagbi(Matrix) := opts -> M -> (
     local S;
     local SB;
 
-    if (M#cache#?"Subring") and (gens(M#cache#"Subring"#cache#"SAGBIBasis") == M) then (
+    if (M#cache#?Subring) and (gens(M#cache#Subring#cache#SAGBIBasis) == M) then (
 	-- S has a sagbi basis so use this object as a compTable
-	S = M.cache#"Subring";
-	SB = S.cache#"SAGBIBasis";
+	S = M.cache#Subring;
+	SB = S.cache#SAGBIBasis;
 	) else (
 	SB = initializeCompTable(sagbiBasis subring M, opts);
 	-- add the generators to the sagbiGenerators
-	SB#"data"#"sagbiGenerators" = lift(M, SB#"rings"#"liftedRing");
+	SB#SAGBIdata#"sagbiGenerators" = lift(M, SB#SAGBIrings#"liftedRing");
 	updateComputation(SB);
 	SB = sagbiBasis SB;
-	S = SB#"data"#"subring";
-	M.cache#"Subring" = S;
+	S = SB#SAGBIdata#subring;
+	M.cache#Subring = S;
 	);
         
     SB = internalVerifySagbi(opts, SB);
-    if not S.cache#?"SAGBIBasis" then (
-    	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
-	) else if (SB#"data"#"sagbiDone" and not S.cache#"SAGBIBasis"#"data"#"sagbiDone") then (
-	S.cache#"SAGBIBasis" = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
+    if not S.cache#?SAGBIBasis then (
+    	S.cache#SAGBIBasis = SB; -- add a new SAGBIBasis if there wasn't one already
+	) else if (SB#SAGBIdata#"sagbiDone" and not S.cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
+	S.cache#SAGBIBasis = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
 	);
-    SB#"data"#"sagbiDone"
+    SB#SAGBIdata#"sagbiDone"
     )
 
 -- A list does not have a cache, so verifySagbi on a list 
@@ -172,17 +172,17 @@ forceSB = method(
     )
 forceSB SAGBIBasis := opts -> SB -> (
     compTable := initializeCompTable(SB, opts);
-    if zero compTable#"data"#"sagbiGenerators" then (
-	compTable#"data"#"sagbiGenerators" = lift(compTable#"data"#"subalgebraGenerators", compTable#"rings"#"liftedRing");
+    if zero compTable#SAGBIdata#"sagbiGenerators" then (
+	compTable#SAGBIdata#"sagbiGenerators" = lift(compTable#SAGBIdata#"subalgebraGenerators", compTable#SAGBIrings#"liftedRing");
 	);
     if opts#AutoSubduce then (
-	compTable#"data"#"sagbiGenerators" = lift(autosubduceSagbi compTable, compTable#"rings"#"liftedRing");
+	compTable#SAGBIdata#"sagbiGenerators" = lift(autosubduceSagbi compTable, compTable#SAGBIrings#"liftedRing");
 	);
     updateComputation(compTable);
-    compTable#"data"#"sagbiDone" = true;
+    compTable#SAGBIdata#"sagbiDone" = true;
     newSB := sagbiBasis compTable;
-    S := newSB#"data"#"subring";
-    S.cache#"SAGBIBasis" = newSB;
+    S := newSB#SAGBIdata#subring;
+    S.cache#SAGBIBasis = newSB;
     )
 
 forceSB Subring := opts -> S -> (
@@ -192,7 +192,7 @@ forceSB Subring := opts -> S -> (
     )
 
 -- internalIsSAGBI is a version of isSAGBI for a SAGBIBasis a object SB
--- it returns a modified SAGBIBasis object with the SB#"data"#"sagbiDone" flag correctly set
+-- it returns a modified SAGBIBasis object with the SB#SAGBIdata#"sagbiDone" flag correctly set
 -- it is used as an intermediate step for isSAGBI when it is passed something
 --   that does not have a cached SAGBIBasis object
 
@@ -237,29 +237,29 @@ internalIsSAGBIProcess = method(
 internalIsSAGBIProcess(SAGBIBasis) := opts -> SB -> (
     compTable := initializeCompTable(SB, opts);    
     if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
-	compTable#"data"#"sagbiGenerators" = lift(compTable#"data"#"subalgebraGenerators", compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
+	compTable#SAGBIdata#"sagbiGenerators" = lift(compTable#SAGBIdata#"subalgebraGenerators", compTable#SAGBIrings#"liftedRing"); --put into the correct ring (lifted ring)
         updateComputation(compTable);
 	);
     -- Get the SPairs
-    sagbiGB := gb(compTable#"ideals"#"reductionIdeal");
-    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings".tensorRing)) - 2;
+    sagbiGB := gb(compTable#SAGBIideals#"reductionIdeal");
+    k := rawMonoidNumberOfBlocks(raw monoid (compTable#SAGBIrings.tensorRing)) - 2;
     zeroGens := selectInSubring(k, gens sagbiGB);
-    SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
+    SPairs := compTable#SAGBImaps#"fullSubstitution"(zeroGens) % compTable#SAGBIideals#"I";
     -- Reduce the SPairs
     reducedSPairs := compSubduction(compTable, SPairs);
     -- check the sagbi gens are high enough degree (i.e. higher than the subring generators)
-    highEnoughDegree := max flatten (degrees compTable#"data"#"subalgebraGenerators")_1 <= max flatten (degrees compTable#"data"#"sagbiGenerators")_1;
+    highEnoughDegree := max flatten (degrees compTable#SAGBIdata#"subalgebraGenerators")_1 <= max flatten (degrees compTable#SAGBIdata#"sagbiGenerators")_1;
     -- if all the reduced SPairs are zero then we have a sagbiBasis
-    compTable#"data"#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
+    compTable#SAGBIdata#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
     -- if the computation gives a sagbi basis then the don't recompute in the future
-    --if compTable#"data"#"sagbiDone" then (
+    --if compTable#SAGBIdata#"sagbiDone" then (
 	--compTable#options#Recompute = false;
 	--) else (
 	--compTable#options#Recompute = true; 
 	--);
     SB' := sagbiBasis compTable; -- note that this operation caches SB' in the subring
     if opts.UseSubringGens then ( -- return the cache of the subring to SB
-	SB#"data"#"subring".cache#"SAGBIBasis" = SB;
+	SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
 	);
     SB'
     );
@@ -342,36 +342,36 @@ isSAGBI = method(
 isSAGBI SAGBIBasis := opts -> SB -> (
     local SB';
     local S;
-    if SB#"data"#"sagbiDone" or (not opts.Compute) then (
-        SB#"data"#"sagbiDone"
+    if SB#SAGBIdata#"sagbiDone" or (not opts.Compute) then (
+        SB#SAGBIdata#"sagbiDone"
 	) else (
-	if zero SB#"data"#"sagbiGenerators" then ( 
+	if zero SB#SAGBIdata#"sagbiGenerators" then ( 
 	    -- if there are not sagbi generators then assume we should check the subalgebra generators
 	    SB' = internalIsSAGBI(SB, opts, UseSubringGens => true);
 	    ) else (
 	    SB' = internalIsSAGBI(SB, opts);
 	    );
-	if SB'#"data"#"sagbiDone" then ( -- If SB' is a SAGBIBasis then store SB' in the Subring
-	    S = SB#"data"#"subring";
-	    S.cache#"SAGBIBasis" = SB';
+	if SB'#SAGBIdata#"sagbiDone" then ( -- If SB' is a SAGBIBasis then store SB' in the Subring
+	    S = SB#SAGBIdata#subring;
+	    S.cache#SAGBIBasis = SB';
 	    );
-	SB'#"data"#"sagbiDone"
+	SB'#SAGBIdata#"sagbiDone"
 	)
     )
 
 isSAGBI Subring := opts -> S -> (
     local SB;
     local compTable;
-    if S.cache#?"SAGBIBasis" then (
-	SB = S.cache#"SAGBIBasis";
+    if S.cache#?SAGBIBasis then (
+	SB = S.cache#SAGBIBasis;
 	-- if SB has no sagbiGenerators then it is possible that internalIsSAGBI was already
 	-- called on SB previously.  
-    	if (zero SB#"data"#"sagbiGenerators") and isInMemoizeInternalIsSAGBIValues(SB, opts, UseSubringGens => true) then (
-	    return (internalIsSAGBI(SB, opts, UseSubringGens => true))#"data"#"sagbiDone";
+    	if (zero SB#SAGBIdata#"sagbiGenerators") and isInMemoizeInternalIsSAGBIValues(SB, opts, UseSubringGens => true) then (
+	    return (internalIsSAGBI(SB, opts, UseSubringGens => true))#SAGBIdata#"sagbiDone";
 	    );
 	
 	sagbi(S, Limit => max flatten (degrees gens S)_1); -- ensures that gens SB generate S
-	SB = S.cache#"SAGBIBasis";
+	SB = S.cache#SAGBIBasis;
 	-- do some linear programming / binomial or toric ideal comutations to check the following:
 	--   check that the monomial algebra generated by the initial terms of
 	--   gens S and gens SB are equal 
@@ -396,12 +396,12 @@ isSAGBI Subring := opts -> S -> (
 	    -- construct a SAGBIBasis for S and verify whether it is a sagbi basis
 	    --compTable = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
 	    -- add the generators to the sagbiGenerators
-	    --compTable#"data"#"sagbiGenerators" = lift(gens S, compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
+	    --compTable#SAGBIdata#"sagbiGenerators" = lift(gens S, compTable#SAGBIrings#"liftedRing"); --put into the correct ring (lifted ring)
 	    --updateComputation(compTable);
 	    --SB = sagbiBasis compTable;
 	    --SB = internalIsSAGBI(opts, SB); 
-    	    -- S.cache#"SAGBIBasis" = SB;
-    	    SB#"data"#"sagbiDone"
+    	    -- S.cache#SAGBIBasis = SB;
+    	    SB#SAGBIdata#"sagbiDone"
 	    ) else ( 
 	    null -- S has no SAGBIBasis cached and Compute is set to false
 	    )
@@ -505,9 +505,9 @@ RingElement % SAGBIBasis := (f, SB) -> (
 Matrix % Subring := (M, S) -> (
     local result;
     assert(ring M === ambient S); 
-    if (S#cache#?"SAGBIBasis") and (S#cache#"SAGBIBasis"#"data"#"sagbiDone") then (
+    if (S#cache#?SAGBIBasis) and (S#cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
 	-- S has a complete sagbi basis so use subduction
-	SB := S#cache#"SAGBIBasis";
+	SB := S#cache#SAGBIBasis;
 	result = subduction(SB, M);	
 	) else (
 	-- extrinsic subduction

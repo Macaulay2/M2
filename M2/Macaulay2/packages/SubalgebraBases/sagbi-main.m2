@@ -79,7 +79,7 @@ sagbi = method(
 
 sagbi(Matrix) := opts -> M -> (
     B := sagbi(opts, subring M);
-    M.cache#"Subring" = B#"data"#"subring";
+    M.cache#Subring = B#SAGBIdata#subring;
     B
 );
 
@@ -90,11 +90,11 @@ sagbi(List) := opts -> L -> (
 sagbi(Subring) := opts -> S -> (
     local SB;
     if opts.Recompute then ( -- forget about the previous computation object
-	remove(S.cache, "SAGBIBasis");
+	remove(S.cache, SAGBIBasis);
 	);
     SB = sagbiBasis(S, opts);
     newSB := sagbi(opts, SB);
-    S.cache#"SAGBIBasis" = newSB;
+    S.cache#SAGBIBasis = newSB;
     newSB
 );
 
@@ -103,20 +103,20 @@ sagbi(SAGBIBasis) := opts -> SB -> (
     SBSubring := subring SB;
     -- if Recomputing then create a new SAGBIBasis object
     if opts.Recompute or SB#options#Recompute then (
-	remove(SBSubring.cache, "SAGBIBasis");
+	remove(SBSubring.cache, SAGBIBasis);
 	S = sagbiBasis(SBSubring, opts); 
 	) else (
 	S = SB;
 	);
     
-    if (S#"data"#"limit" > opts.Limit) or S#"data"#"sagbiDone" then return S;
+    if (S#SAGBIdata#"limit" > opts.Limit) or S#SAGBIdata#"sagbiDone" then return S;
     compTable := initializeCompTable(S,opts);
     processFirstStep(compTable);
     
     local SPairs;
 
-    while (compTable#"data"#degree <= opts.Limit) and
-          (not compTable#"data"#"sagbiDone") do (
+    while (compTable#SAGBIdata#degree <= opts.Limit) and
+          (not compTable#SAGBIdata#"sagbiDone") do (
     		
         SPairs = collectSPairs(compTable);
 	SPairs = compSubduction(compTable, SPairs);
@@ -124,18 +124,18 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 	-- update and process the new sagbi generators
 	-- update pending returns true if new sagbiGenerators were added and false otherwise
 	-- if new sagbiGenerators were added then updatePending
-	--    sets the compTable#"data"#degree to the lowest degree of a new generator
+	--    sets the compTable#SAGBIdata#degree to the lowest degree of a new generator
 	-- if no new sagbiGenerators were added then check for termination conditions
 	if not updatePending(compTable, SPairs) then (
 	    checkTermination(compTable);
 	    );
 
 	-- move on to the next degree
-	compTable#"data"#degree = compTable#"data"#degree + 1;
+	compTable#SAGBIdata#degree = compTable#SAGBIdata#degree + 1;
 	
 	if compTable#options#PrintLevel > 2 then(
 	    print("-- [main] sagbiGenerators are currently: ");
-	    print(transpose compTable#"data"#"sagbiGenerators");
+	    print(transpose compTable#SAGBIdata#"sagbiGenerators");
 	    );	
     );
     sagbiBasis compTable
@@ -171,7 +171,7 @@ subduction(SAGBIBasis, RingElement) := opts -> (S, m) -> (
 
 subduction(Matrix, Matrix) := opts -> (F, M) -> (
     S := initializeCompTable(sagbiBasis(subring F, opts), opts);
-    S#"data"#"sagbiGenerators" = F;
+    S#SAGBIdata#"sagbiGenerators" = F;
     updateComputation(S);
     compSubduction(opts, S, M)
     )
