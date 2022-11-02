@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------
--- PURPOSE : Compute the rees algebra of a module as it is defined in the 
+-- PURPOSE : Compute the Rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
 --           David Eisenbud and Bernde Ulrich.
 --           Also to compute many of the structures that require a Rees 

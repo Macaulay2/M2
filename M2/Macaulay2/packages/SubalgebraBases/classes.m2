@@ -10,8 +10,8 @@ Subring = new Type of HashTable
 -- Subring constructor
 subring = method(Options => {GeneratorSymbol => null})
 subring Matrix := opts -> M -> (
-    if M.cache#?"Subring" then (
-	M.cache#"Subring"
+    if M.cache#?Subring then (
+	M.cache#Subring
 	) else (
 	R := ring M;
 	coeffRing := coefficientRing R;
@@ -28,7 +28,7 @@ subring Matrix := opts -> M -> (
 	    "subductionQuotientRing" => subductionRing,
             cache => new CacheTable from M.cache
     	    };
-    	M.cache#"Subring" = S
+    	M.cache#Subring = S
 	)
     )
 subring List := opts -> L -> subring(matrix{L}, opts)
@@ -197,10 +197,10 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiGenerators" => matrix(rings#"liftedRing",{{}}),
         "sagbiDegrees" => matrix(ZZ,{{}}),
         "sagbiDone" => false,
-        "degree" => -1,
+        degree => -1,
         "limit" => -1,
 	"autoSubductedSagbiGenerators" => false, 
-	"subring" => S
+	subring => S
     };
 
     -- Pending: initially an empty hashtable. It is filled with
@@ -208,47 +208,47 @@ sagbiBasis Subring := opts -> S -> (
     pending := new HashTable from {};
     
     -- Options: see above description of the options for sagbi computations
-    options := new HashTable from opts;
+    optionTable := new HashTable from opts;
     newSAGBIBasis := new SAGBIBasis from {
-        "rings" => rings,
-        "maps" => maps,
-        "ideals" => ideals,
-        "data" => data,
-        "pending" => pending,
-        "options" => options
+        SAGBIrings => rings,
+        SAGBImaps => maps,
+        SAGBIideals => ideals,
+        SAGBIdata => data,
+        SAGBIpending => pending,
+        options => optionTable
     	};
     
     S.cache#"SAGBIBasis" = newSAGBIBasis
 )
 
 sagbiBasis HashTable := opts -> H -> (
-    rings := new HashTable from H#"rings";
-    maps := new HashTable from H#"maps";
-    ideals := new HashTable from H#"ideals";
-    data := new HashTable from H#"data";
-    pending := new HashTable from apply(keys H#"pending",i-> i => new List from (H#"pending"#i));
-    options := new HashTable from H#"options";
+    rings := new HashTable from H#SAGBIrings;
+    maps := new HashTable from H#SAGBImaps;
+    ideals := new HashTable from H#SAGBIideals;
+    data := new HashTable from H#SAGBIdata;
+    pending := new HashTable from apply(keys H#SAGBIpending,i-> i => new List from (H#SAGBIpending#i));
+    optionTable := new HashTable from H#options;
     newSAGBIBasis := new SAGBIBasis from {
-        "rings" => rings, -- rings -> SAGBIRings + protect
-        "maps" => maps,
-        "ideals" => ideals,
-        "data" => data,
-        "pending" => pending,
-        "options" => options
+        SAGBIrings => rings, -- rings -> SAGBIRings + protect
+        SAGBImaps => maps,
+        SAGBIideals => ideals,
+        SAGBIdata => data,
+        SAGBIpending => pending,
+        options => optionTable
     };
     
-    newSAGBIBasis#"data"#"subring".cache#"SAGBIBasis" = newSAGBIBasis
+    newSAGBIBasis#SAGBIdata#subring.cache#SAGBIBasis = newSAGBIBasis
 )
 
 net SAGBIBasis := S -> (
     local description;
-    if S#"data"#"sagbiDone" then (
+    if S#SAGBIdata#"sagbiDone" then (
     	description = "SAGBIBasis Computation Object with "
     ) else (
     	description = "Partial SAGBIBasis Computation Object with "
     );
-    description | toString(numcols S#"data"#"sagbiGenerators") |
-    		" generators, Limit = " | toString(S#"data"#"limit") | "."
+    description | toString(numcols S#SAGBIdata#"sagbiGenerators") |
+    		" generators, Limit = " | toString(S#SAGBIdata#"limit") | "."
 )
 
 -- gens(SAGBIBasis) returns the current list of sagbi generators.
@@ -258,55 +258,50 @@ net SAGBIBasis := S -> (
 -- apply the quotient map for the user.
 
 gens SAGBIBasis := opts -> S -> (
---    local M;
-    if numColumns S#"data"#"sagbiGenerators" == 0 then (
-        -- M = 
-        S#"maps"#"quotient" matrix(S#"rings"#"liftedRing",{{}})
+    if numColumns S#SAGBIdata#"sagbiGenerators" == 0 then (
+        S#SAGBImaps#"quotient" matrix(S#SAGBIrings#"liftedRing",{{}})
     	) else (
-	-- M =
-    	S#"maps"#"quotient" S#"data"#"sagbiGenerators"
+    	S#SAGBImaps#"quotient" S#SAGBIdata#"sagbiGenerators"
 	)
---    M.cache#"Subring" = S#"data"#"subring";
---    M 
 )
 
 -- Returns the lifted ring
 ring SAGBIBasis := S -> (
-    S#"rings"#"liftedRing"
+    S#SAGBIrings#"liftedRing"
 )
 
 -- Returns the quotient ring
 ambient SAGBIBasis := S -> (
-    S#"rings".quotientRing
+    S#SAGBIrings.quotientRing
 )
 
 -- Returns the subring that a SAGBIBasis points to
 subring SAGBIBasis := opts -> S -> (
-    S#"data"#"subring"
+    S#SAGBIdata#subring
 )
 
 -- current degree of the computation
 sagbiDegree = method()
 sagbiDegree SAGBIBasis := SB -> (
-    SB#"data"#"degree"
+    SB#SAGBIdata#degree
     )
 
 -- limit of the computation
 sagbiLimit = method()
 sagbiLimit SAGBIBasis := SB -> (
-    SB#"data"#"limit"
+    SB#SAGBIdata#"limit"
     )
 
 -- is the computation finished (sagbiDone)
 sagbiStatus = method()
 sagbiStatus SAGBIBasis := SB -> (
-    SB#"data"#"sagbiDone"
+    SB#SAGBIdata#"sagbiDone"
     )
 
 -- status of the computation
 status SAGBIBasis := opts -> SB -> (
     "status: " | if sagbiStatus SB then (
-	"done; sagbiGenerators encountered up to degree " | toString max first entries SB#"data"#"sagbiDegrees"
+	"done; sagbiGenerators encountered up to degree " | toString max first entries SB#SAGBIdata#"sagbiDegrees"
 	) else (
 	"DegreeLimit; current degree " | toString sagbiDegree SB
 	)

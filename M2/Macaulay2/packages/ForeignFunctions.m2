@@ -27,6 +27,7 @@ export {
     "ForeignPointerArrayType",
     "ForeignUnionType",
     "ForeignStructType",
+    "ForeignFunctionPointerType",
     "ForeignObject",
 
 -- built-in foreign types
@@ -63,6 +64,7 @@ export {
     "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
+    "foreignFunctionPointerType",
     "foreignSymbol",
 
 -- symbols
@@ -91,6 +93,7 @@ importFrom_Core {
     "ffiGetStructOffsets",
     "ffiStructAddress",
     "ffiUnionType",
+    "ffiFunctionPointerAddress",
     "registerFinalizerForPointer"
     }
 
@@ -429,6 +432,48 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
 
 ForeignUnionType Thing := (T, x) -> new T from {Address =>
     address foreignObject x}
+
+-----------------------------------
+-- foreign function pointer type --
+-----------------------------------
+
+ForeignFunctionPointerType = new Type of ForeignType
+ForeignFunctionPointerType.synonym = "foreign function pointer type"
+
+foreignFunctionPointerType = method(TypicalValue => ForeignFunctionPointerType)
+foreignFunctionPointerType(ForeignType, ForeignType) := (
+    rtype, argtype) -> foreignFunctionPointerType(rtype, {argtype})
+foreignFunctionPointerType(ForeignType, VisibleList) := (
+    rtype, argtypes) -> foreignFunctionPointerType(
+    net rtype | "(*)(" | demark(",", net \ argtypes) | ")", rtype, argtypes)
+foreignFunctionPointerType(String, ForeignType, ForeignType) := (
+    name, rtype, argtype) -> foreignFunctionPointerType(name, rtype, {argtype})
+foreignFunctionPointerType(String, ForeignType, VisibleList) := (
+    name, rtype, argtypes) -> (
+    if any(argtypes, argtype -> not instance(argtype, ForeignType))
+    then error("expected argument types to be foreign types");
+    if any(argtypes, argtype -> instance(argtype, ForeignVoidType)) then (
+	if #argtypes == 1 then argtypes = {}
+	else error("void must be the only parameter"));
+    T := new ForeignFunctionPointerType;
+    T.Name = name;
+    T.Address = ffiPointerType;
+    cif := ffiPrepCif(address rtype, address \ argtypes);
+    net T := x -> concatenate(net rtype, "(*", x.Name, ")(",
+	demark(",", net \ argtypes), ")");
+    new T from Function := (T, f) -> new T from {
+	Address => ffiFunctionPointerAddress(
+	    if #argtypes == 1
+	    then args -> address rtype f value dereference_(argtypes#0) args
+	    else args -> address rtype f apply(0..#args-1,
+		i -> value dereference_(argtypes#i) args#i),
+	    cif),
+	Name => net f};
+    value T := x -> foreignFunction(ffiPointerValue address x, x.Name, rtype,
+	argtypes);
+    T)
+
+ForeignFunctionPointerType Function := (T, f) -> new T from f
 
 --------------------
 -- shared library --
@@ -1196,6 +1241,85 @@ doc ///
 
 doc ///
   Key
+    ForeignFunctionPointerType
+  Headline
+    foreign function pointer type
+  Description
+    Text
+      This is the class for @wikipedia "function pointer"@ types.  There
+      are no built-in types.  They must be  constructed using
+      @TO "foreignFunctionPointerType"@.
+///
+
+doc ///
+  Key
+    foreignFunctionPointerType
+    (foreignFunctionPointerType, ForeignType, ForeignType)
+    (foreignFunctionPointerType, ForeignType, VisibleList)
+    (foreignFunctionPointerType, String, ForeignType, ForeignType)
+    (foreignFunctionPointerType, String, ForeignType, VisibleList)
+  Headline
+    construct a foreign function pointer type
+  Usage
+    foreignFunctionPointerType(rtype, argtype)
+    foreignFunctionPointerType(rtype, argtypes)
+    foreignFunctionPointerType(name, rtype, argtype)
+    foreignFunctionPointerType(name, rtype, argtypes)
+  Inputs
+    name:String
+    rtype:ForeignType
+    argtype:ForeignType
+    argtypes:VisibleList -- of @TT "ForeignType"@ objects
+  Outputs
+    :ForeignFunctionPointerType
+  Description
+    Text
+      To construct a foreign function pointer type, (optionally) specify a name,
+      the return type, and either the argument type or a list of argument types.
+      If no name is specified, then one is constructed using the return
+      and argument types.
+    Example
+      foreignFunctionPointerType("compar", int, {voidstar, voidstar})
+      foreignFunctionPointerType(int, {voidstar, voidstar})
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignFunctionPointerType, Function)
+  Headline
+    cast a Macaulay2 function to a foreign function pointer
+  Usage
+    T f
+  Inputs
+    T:ForeignFunctionPointerType
+    f:Function
+  Outputs
+    :ForeignObject
+  Description
+    Text
+      To cast a Macaulay2 function to a foreign object with a foreign function
+      type, give the type followed by the function.
+    Example
+      compar = foreignFunctionPointerType("compar", int, {voidstar, voidstar})
+      f = (a, b) -> value int a - value int b
+      intcmp = compar f
+    Text
+      The resulting function pointers may be passed as callbacks to
+      @TO ForeignFunction@ objects.
+    Example
+      qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong, compar})
+      x = (4 * int) {4, 2, 3, 1}
+      qsort(x, 4, size int, intcmp)
+      x
+    Text
+      Foreign function pointers may be cast back to @TO ForeignFunction@ objects
+      using @TT "value"@ for testing purposes.
+    Example
+      (value intcmp)(address int 5, address int 6)
+///
+
+doc ///
+  Key
     ForeignObject
   Headline
     foreign object
@@ -1689,4 +1813,21 @@ mpfi = openSharedLibrary "mpfi"
 assert Equation(value foreignSymbol(mpfi, "mpfi_error", int), 5)
 assert Equation(value foreignSymbol("mpfi_error", int), 5)
 (foreignFunction(mpfi, "mpfi_reset_error", void, void))()
+///
+
+TEST ///
+-------------------------------
+-- foreign function pointers --
+-------------------------------
+doubledouble = foreignFunctionPointerType(double, double)
+assert Equation(value (value doubledouble cos) pi, -1)
+intint = foreignFunctionPointerType(int, int)
+assert Equation(value (value intint abs)(-2), 2)
+doubledoubledouble = foreignFunctionPointerType(double, {double, double})
+assert Equation(value (value doubledoubledouble atan2)(-1, -1), -3*pi/4)
+compar = foreignFunctionPointerType(int, {voidstar, voidstar})
+qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong, compar})
+x = (4 * int) {4, 2, 3, 1}
+qsort(x, 4, size int, compar((a, b) -> value int a - value int b))
+assert Equation(value x, {1, 2, 3, 4})
 ///

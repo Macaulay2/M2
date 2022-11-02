@@ -42,6 +42,13 @@ export {
 
 protect symbol quotientRing
 protect symbol tensorRing
+protect symbol SAGBIrings
+protect symbol SAGBImaps
+protect symbol SAGBIideals
+protect symbol SAGBIdata
+protect symbol SAGBIpending
+protect symbol SAGBIoptions
+
 
 -- From Core:
 importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
