@@ -197,7 +197,7 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiGenerators" => matrix(rings#"liftedRing",{{}}),
         "sagbiDegrees" => matrix(ZZ,{{}}),
         "sagbiDone" => false,
-        "degree" => -1,
+        degree => -1,
         "limit" => -1,
 	"autoSubductedSagbiGenerators" => false, 
 	"subring" => S
@@ -208,14 +208,14 @@ sagbiBasis Subring := opts -> S -> (
     pending := new HashTable from {};
     
     -- Options: see above description of the options for sagbi computations
-    options := new HashTable from opts;
+    optionTable := new HashTable from opts;
     newSAGBIBasis := new SAGBIBasis from {
         "rings" => rings,
         "maps" => maps,
         "ideals" => ideals,
         "data" => data,
         "pending" => pending,
-        "options" => options
+        options => optionTable
     	};
     
     S.cache#"SAGBIBasis" = newSAGBIBasis
@@ -227,14 +227,14 @@ sagbiBasis HashTable := opts -> H -> (
     ideals := new HashTable from H#"ideals";
     data := new HashTable from H#"data";
     pending := new HashTable from apply(keys H#"pending",i-> i => new List from (H#"pending"#i));
-    options := new HashTable from H#"options";
+    optionTable := new HashTable from H#options;
     newSAGBIBasis := new SAGBIBasis from {
         "rings" => rings, -- rings -> SAGBIRings + protect
         "maps" => maps,
         "ideals" => ideals,
         "data" => data,
         "pending" => pending,
-        "options" => options
+        options => optionTable
     };
     
     newSAGBIBasis#"data"#"subring".cache#"SAGBIBasis" = newSAGBIBasis

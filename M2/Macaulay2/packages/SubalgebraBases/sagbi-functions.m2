@@ -253,9 +253,9 @@ internalIsSAGBIProcess(SAGBIBasis) := opts -> SB -> (
     compTable#"data"#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
     -- if the computation gives a sagbi basis then the don't recompute in the future
     --if compTable#"data"#"sagbiDone" then (
-	--compTable#"options"#Recompute = false;
+	--compTable#options#Recompute = false;
 	--) else (
-	--compTable#"options"#Recompute = true; 
+	--compTable#options#Recompute = true; 
 	--);
     SB' := sagbiBasis compTable; -- note that this operation caches SB' in the subring
     if opts.UseSubringGens then ( -- return the cache of the subring to SB

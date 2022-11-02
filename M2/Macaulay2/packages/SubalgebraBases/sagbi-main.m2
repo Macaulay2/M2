@@ -102,7 +102,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
     local S;
     SBSubring := subring SB;
     -- if Recomputing then create a new SAGBIBasis object
-    if opts.Recompute or SB#"options"#Recompute then (
+    if opts.Recompute or SB#options#Recompute then (
 	remove(SBSubring.cache, "SAGBIBasis");
 	S = sagbiBasis(SBSubring, opts); 
 	) else (
@@ -115,7 +115,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
     
     local SPairs;
 
-    while (compTable#"data"#"degree" <= opts.Limit) and
+    while (compTable#"data"#degree <= opts.Limit) and
           (not compTable#"data"#"sagbiDone") do (
     		
         SPairs = collectSPairs(compTable);
@@ -124,16 +124,16 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 	-- update and process the new sagbi generators
 	-- update pending returns true if new sagbiGenerators were added and false otherwise
 	-- if new sagbiGenerators were added then updatePending
-	--    sets the compTable#"data"#"degree" to the lowest degree of a new generator
+	--    sets the compTable#"data"#degree to the lowest degree of a new generator
 	-- if no new sagbiGenerators were added then check for termination conditions
 	if not updatePending(compTable, SPairs) then (
 	    checkTermination(compTable);
 	    );
 
 	-- move on to the next degree
-	compTable#"data"#"degree" = compTable#"data"#"degree" + 1;
+	compTable#"data"#degree = compTable#"data"#degree + 1;
 	
-	if compTable#"options"#PrintLevel > 2 then(
+	if compTable#options#PrintLevel > 2 then(
 	    print("-- [main] sagbiGenerators are currently: ");
 	    print(transpose compTable#"data"#"sagbiGenerators");
 	    );	
