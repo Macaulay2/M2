@@ -1116,6 +1116,48 @@ sqrt(a:Expr):Expr := (
      is Error do a
      else WrongArgRR());
 setupfun("sqrt",sqrt).Protected=false;
+
+toSequence(e:Expr):Expr := (
+     when e
+     is Sequence do e
+     is b:List do (
+	  if b.Mutable
+	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
+	  else Expr(b.v)
+	  )
+     is s:stringCell do Expr(strtoseq(s))
+     else (
+	 iter := getIterator(e);
+	 if iter != nullE
+	 then (
+	     nextfunc := getNextFunction(iter);
+	     if nextfunc != nullE
+	     then (
+		 r := new Sequence len 1 do provide nullE;
+		 j := 0;
+		 y := nullE;
+		 while (
+		     y = applyEE(nextfunc, iter);
+		     when y
+		     is Error do return returnFromFunction(y)
+		     else nothing;
+		     y != StopIterationE)
+		 do (
+		     if j == length(r) then (
+			 r = new Sequence len 2 * length(r) do (
+			     foreach x in r do provide x;
+			     while true do provide nullE));
+		     r.j = y;
+		     j = j + 1);
+		 Expr(
+		     if j == 0 then emptySequence
+		     else if j == length(r) then r
+		     else new Sequence len j do (
+			 foreach x in r do provide x)))
+	     else buildErrorPacket("no method for applying next to iterator"))
+	 else WrongArg("a list, sequence, string, or iterable object")));
+setupfun("toSequence",toSequence);
+
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
      if newlen != length(a2) then return WrongArg("lists of the same length");
@@ -2114,47 +2156,6 @@ gcd(x:Expr,y:Expr):Expr := (
      else buildErrorPacket("expected an integer"));
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd0",gcdfun);
-
-toSequence(e:Expr):Expr := (
-     when e
-     is Sequence do e
-     is b:List do (
-	  if b.Mutable
-	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
-	  else Expr(b.v)
-	  )
-     is s:stringCell do Expr(strtoseq(s))
-     else (
-	 iter := getIterator(e);
-	 if iter != nullE
-	 then (
-	     nextfunc := getNextFunction(iter);
-	     if nextfunc != nullE
-	     then (
-		 r := new Sequence len 1 do provide nullE;
-		 j := 0;
-		 y := nullE;
-		 while (
-		     y = applyEE(nextfunc, iter);
-		     when y
-		     is Error do return returnFromFunction(y)
-		     else nothing;
-		     y != StopIterationE)
-		 do (
-		     if j == length(r) then (
-			 r = new Sequence len 2 * length(r) do (
-			     foreach x in r do provide x;
-			     while true do provide nullE));
-		     r.j = y;
-		     j = j + 1);
-		 Expr(
-		     if j == 0 then emptySequence
-		     else if j == length(r) then r
-		     else new Sequence len j do (
-			 foreach x in r do provide x)))
-	     else buildErrorPacket("no method for applying next to iterator"))
-	 else WrongArg("a list, sequence, string, or iterable object")));
-setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (
      when e
