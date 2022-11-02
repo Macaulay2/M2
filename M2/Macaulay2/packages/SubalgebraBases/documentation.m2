@@ -454,9 +454,110 @@ doc ///
      Recompute
 ///
 
--- ##################################################
--- ##  high-level-sagbi-functions.m2 documentation ##
--- ##################################################
+doc ///
+   Key
+      subduction
+     (subduction, SAGBIBasis, Matrix)
+     (subduction, SAGBIBasis, RingElement)
+     (subduction, Matrix, Matrix)
+     (subduction, Matrix, RingElement)
+     (subduction, Subring, Matrix)
+     (subduction, Subring, RingElement)
+     (subduction, List, List)
+     (subduction, List, RingElement)
+     [subduction,AutoSubduce]
+     [subduction,ReduceNewGenerators]
+     [subduction,StorePending]
+     [subduction,Strategy]
+     [subduction,SubductionMethod]    
+     [subduction,Limit]
+     [subduction,AutoSubduceOnPartialCompletion]
+     [subduction,PrintLevel]
+     [subduction,Recompute]
+     [subduction,RenewOptions]
+   Headline
+     Subduction of polynomials
+   Usage
+     N = subduction(SB, M)
+     n = subduction(SB, m)
+     N = subduction(S, M)
+     n = subduction(S, m)
+     N = subduction(F, M)
+     n = subduction(F, m)
+     nList = subduction(FList, mList)
+     n = subduction(FList, m)
+   Inputs
+     SB:SAGBIBasis
+       subduct with respect to the sagbi generators of $SB$
+     S:Subring
+       subduct with respect to the generators of $S$
+     F:Matrix
+       subduct with respect to the entries of $F$
+     FList:List
+       subduct with respect to the entries of $FList$
+     M:Matrix
+       a 1-row matrix whose entries are to be subducted
+     m:RingElement
+       the element to be subducted
+     mList:List
+       a list of elements to be subducted
+     AutoSubduce=>Boolean
+       a flag indicating when to perform autosubduction on the generators before performing the Sagbi basis computation (See: @TO "AutoSubduce"@)
+     ReduceNewGenerators=>Boolean
+       a flag indicating whether to apply gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
+     StorePending=>Boolean
+       a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
+     Strategy=>String
+       the update strategy at the beginning of each loop: \"DegreeByDegree\", \"Incremental\", and \"Master\". 
+       The strategy \"Master\" is a hybrid that combines the other two; starting with \"DegreeByDegree\" for low degrees and switching to \"Incremental\". (See: @TO "Strategy"@)
+     SubductionMethod=>String
+       the method used for subduction either: \"Top\" or \"Engine\". (See: @TO "SubductionMethod"@)
+     Limit=>ZZ
+       a degree limit for the binomial S-pairs that are computed internally.
+     AutoSubduceOnPartialCompletion=>Boolean
+       apply autosubduction to the sagbi generators the first time no new generators are added. 
+       Use this only if very few new sagbi generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
+     PrintLevel=>ZZ
+       When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
+     Recompute=>Boolean
+       if true then the computation will resume otherwise it starts at the beginning
+     RenewOptions=>Boolean
+       if true then the computation will use the options specified otherwise it will use the previously selected options
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@) 
+   Outputs
+     N:Matrix
+       entries of $M$ after subduction
+     n:RingElement
+       the element $m$ after subduction
+     nList:List
+       the elements of $mList$ after subduction
+   Description
+     Text
+       Performs subduction on the input with respect to the generating set of the supplied object.
+       The subduction uses the specified @TO "SubductionMethod"@ and @TO "PrintLevel"@.
+     Example
+       R = QQ[x,y];
+       S = subring {x+y, x*y, x*y^2};
+       f = x^4;
+       subduction(S, f)
+   SeeAlso
+     sagbi
+     (symbol %, RingElement, Subring)
+     AutoSubduce
+     ReduceNewGenerators
+     StorePending
+     Strategy
+     SubductionMethod    
+     Limit
+     AutoSubduceOnPartialCompletion
+     PrintLevel
+     Recompute
+     RenewOptions
+///
+
+-- #######################################
+-- ##  sagbi-functions.m2 documentation ##
+-- #######################################
 
 -*
 doc ///
@@ -516,6 +617,7 @@ doc ///
     [isSAGBI, PrintLevel]
     [isSAGBI, Recompute]
     [isSAGBI, RenewOptions]
+    [isSAGBI, UseSubringGens]
    Headline
      Check if the generators are a sagbi basis
    Usage
@@ -548,6 +650,9 @@ doc ///
        isSAGBI S'
        sagbi(S', Limit => 5)
        isSAGBI S'
+     Text
+       If @TT "isSAGBI"@ is supplied a @TO "SAGBIBasis"@ then the generators of the subring can be checked for being 
+       a sagbi basis by setting @TO "UseSubringGens"@ to true.
        
    SeeAlso
      SAGBIBasis
@@ -572,6 +677,22 @@ doc ///
        usually return null.
    SeeAlso
      isSAGBI
+///
+doc ///
+   Key
+     UseSubringGens
+   Headline
+     Flag for using the subring generators when checking a sagbi basis
+   Description
+     Text 
+       When @TO "isSAGBI"@ is supplied a @TO "SAGBIBasis"@ $SB$, then this flag determines
+       whether the sagbi generators or the subring generators are checked for being a subalgebra basis.
+       Explicitly, if the flag is set to false then the sagbi generators of $SB$ are checked for being
+       a subalgebra basis. Otherwise, if the flag is set to true then the generators of the underlying 
+       subring associated to $SB$ are checked for being a subalgebra basis.
+   SeeAlso
+     isSAGBI
+
 ///
 doc ///
    Key
@@ -886,7 +1007,8 @@ doc ///
        @UL {
 	    {BOLD {"ambientRing"}, ": The polynomial or quotient ring that contains the subring instance's generators."},
 	    {BOLD {"generators"}, ": A one-row matrix, the generators of the subring."},
-	    {BOLD {"cache"}, ": Contains unspecified information. The contents of the cache may effect performance, but should never effect the result of a computation."}
+	    {BOLD {"cache"}, ": Contains unspecified information. The contents of the cache may effect performance, but should never effect the result of a computation."},
+	    {BOLD {"subductionQuotientRing"}, ": the polynomial ring with one variable for each generator of the subring"}
 	   }@
 
    SeeAlso
@@ -895,6 +1017,7 @@ doc ///
        (ambient, Subring)
        (numgens, Subring)
        (net, Subring)
+       (subductionQuotientRing, Subring)
        sagbi
        SAGBIBasis
 ///
@@ -1018,15 +1141,45 @@ doc ///
      result:ZZ
    Description
      Text
-       Returns the number of generators of the @TO "Subring"@.
+       Returns the number of generators of a @TO "Subring"@.
      Example
        R = QQ[x,y,z];
-       S = subring({x^2, y^2, z^2});
+       S = subring({x^2, y^2, z^2, x^2+y^2});
        numgens S
-
    SeeAlso
      Subring
      subring
+     (gens, Subring)
+     (ambient, Subring)
+     (numgens, Subring)
+     (numgens, SAGBIBasis)
+     (net, Subring)
+///
+
+doc ///
+   Key
+     (numgens, SAGBIBasis)
+   Headline
+     The number of generators of a SAGBIBasis
+   Usage
+     result = numgens SB
+   Inputs
+     SB:SAGBIBasis
+   Outputs
+     result:ZZ
+   Description
+     Text
+       Returns the number of sagbi generators of a @TO "SAGBIBasis"@.
+     Example
+       R = QQ[x,y,z];
+       S = subring({x^2, y^2, z^2, x^2+y^2});
+       SB = sagbi S;
+       numgens SB
+   SeeAlso
+     Subring
+     subring
+     SAGBIBasis
+     sagbiBasis
      (gens, Subring)
      (ambient, Subring)
      (numgens, Subring)
@@ -1310,112 +1463,46 @@ doc ///
      Subring
      SAGBIBasis
 ///
-
-
--- ##################################
--- ## sagbi-top-level-functions.m2 ##
--- ##################################
-
 doc ///
    Key
-      subduction
-     (subduction, SAGBIBasis, Matrix)
-     (subduction, SAGBIBasis, RingElement)
-     (subduction, Matrix, Matrix)
-     (subduction, Matrix, RingElement)
-     (subduction, Subring, Matrix)
-     (subduction, Subring, RingElement)
-     (subduction, List, List)
-     (subduction, List, RingElement)
-     [subduction,AutoSubduce]
-     [subduction,ReduceNewGenerators]
-     [subduction,StorePending]
-     [subduction,Strategy]
-     [subduction,SubductionMethod]    
-     [subduction,Limit]
-     [subduction,AutoSubduceOnPartialCompletion]
-     [subduction,PrintLevel]
-     [subduction,Recompute]
-     [subduction,RenewOptions]
+      subductionQuotientRing
+     (subductionQuotientRing, Subring)
    Headline
-     Subduction of polynomials
+     returns the subduction quotient ring of a subring
    Usage
-     N = subduction(SB, M)
-     n = subduction(SB, m)
-     N = subduction(S, M)
-     n = subduction(S, m)
-     N = subduction(F, M)
-     n = subduction(F, m)
-     nList = subduction(FList, mList)
-     n = subduction(FList, m)
+     subQuotRing = subductionQuotientRing S
    Inputs
-     SB:SAGBIBasis
-       subduct with respect to the sagbi generators of $SB$
      S:Subring
-       subduct with respect to the generators of $S$
-     F:Matrix
-       subduct with respect to the entries of $F$
-     FList:List
-       subduct with respect to the entries of $FList$
-     M:Matrix
-       a 1-row matrix whose entries are to be subducted
-     m:RingElement
-       the element to be subducted
-     mList:List
-       a list of elements to be subducted
-     AutoSubduce=>Boolean
-       a flag indicating when to perform autosubduction on the generators before performing the Sagbi basis computation (See: @TO "AutoSubduce"@)
-     ReduceNewGenerators=>Boolean
-       a flag indicating whether to apply gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
-     StorePending=>Boolean
-       a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
-     Strategy=>String
-       the update strategy at the beginning of each loop: \"DegreeByDegree\", \"Incremental\", and \"Master\". 
-       The strategy \"Master\" is a hybrid that combines the other two; starting with \"DegreeByDegree\" for low degrees and switching to \"Incremental\". (See: @TO "Strategy"@)
-     SubductionMethod=>String
-       the method used for subduction either: \"Top\" or \"Engine\". (See: @TO "SubductionMethod"@)
-     Limit=>ZZ
-       a degree limit for the binomial S-pairs that are computed internally.
-     AutoSubduceOnPartialCompletion=>Boolean
-       apply autosubduction to the sagbi generators the first time no new generators are added. 
-       Use this only if very few new sagbi generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
-     PrintLevel=>ZZ
-       When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
-     Recompute=>Boolean
-       if true then the computation will resume otherwise it starts at the beginning
-     RenewOptions=>Boolean
-       if true then the computation will use the options specified otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@) 
    Outputs
-     N:Matrix
-       entries of $M$ after subduction
-     n:RingElement
-       the element $m$ after subduction
-     nList:List
-       the elements of $mList$ after subduction
+     subQuotRing:PolynomialRing
    Description
      Text
-       Performs subduction on the input with respect to the generating set of the supplied object.
-       The subduction uses the specified @TO "SubductionMethod"@ and @TO "PrintLevel"@.
+       Given a subring S of a quotient ring Q is a polynomial ring with same coefficient ring as Q
+       and has one variable for each generator of S. There is a natural map from the subduction quotient ring
+       to S that sends each variable to its corresponding generator of S. Elements of the subduction quotient ring 
+       represent polynomial combinations of generators. Evaluating a combination of generators is equal to
+       applying the aforementioned map.
+       
+       The subduction quotient ring naturally arises when using @TO (symbol //, RingElement, Subring)@, which takes
+       an element of a subring and expresses it as a polynomial combination of its generators.
      Example
-       R = QQ[x,y];
+       R = ZZ/2[x,y];
+       Q = R / ideal(x + y^5);
        S = subring {x+y, x*y, x*y^2};
-       f = x^4;
-       subduction(S, f)
+       f = x^2*y^3 + x^4 + y^4;
+       f % S
+       g = f // S
+       M = map(Q, subductionQuotientRing S, gens S);
+       M g == f
+       
    SeeAlso
-     sagbi
-     (symbol %, RingElement, Subring)
-     AutoSubduce
-     ReduceNewGenerators
-     StorePending
-     Strategy
-     SubductionMethod    
-     Limit
-     AutoSubduceOnPartialCompletion
-     PrintLevel
-     Recompute
-     RenewOptions
+     Subring
+     (symbol //, RingElement, Subring)
 ///
+
+
+
+
 
 -- #########################################
 -- ## Short Explanation of Screws Example ##
@@ -2171,20 +2258,23 @@ doc ///
 doc ///
    Key
      (numgens, Subring)
+     (numgens, SAGBIBasis)
    Headline
-     Returns the number of generators of a subring.
+     Returns the number of generators of a subring or sagbi generators of a SAGBIBasis.
    Inputs
-     subR:Subring
+     S:Subring
+     SB:SAGBIBasis
    Outputs
      n:ZZ
-       the number of generators of subR.
+       the number of generators of S or SB.
    Usage 
-     n = numgens subR
+     n = numgens S
+     n = numgens SB
    Description
      Example
-       gndR = QQ[x,y,z];
-       subR = subring({x^2, y^2, z^2});
-       numgens subR
+       R = QQ[x,y,z];
+       S = subring({x^2, y^2, z^2});
+       numgens S
    SeeAlso
      (gens, Subring)
      (ambient, Subring)
