@@ -24,7 +24,7 @@ percentEncoding = hashTable transpose {
 -- TODO: use in/move to html.m2
 urlEncode = method()
 urlEncode Nothing := identity
-urlEncode String := s -> concatenate toList apply(s, c -> if percentEncoding#?c then percentEncoding#c else c)
+urlEncode String := s -> concatenate apply(s, c -> if percentEncoding#?c then percentEncoding#c else c)
 
 oeisHTTP := "http://oeis.org";
 oeisHTTPS := "https://oeis.org";
