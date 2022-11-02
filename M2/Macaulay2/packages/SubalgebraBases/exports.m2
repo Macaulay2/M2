@@ -24,7 +24,10 @@ export {
     "Compute",
     "sagbiBasis",
     "GeneratorSymbol",
-    "subductionQuotientRing"
+    "subductionQuotientRing",
+    "sagbiStatus",
+    "sagbiLimit",
+    "sagbiDegree"
     }
 
 -- From sagbi-functions.m2
