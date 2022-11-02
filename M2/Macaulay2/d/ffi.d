@@ -561,3 +561,49 @@ ffiUnionType(e:Expr):Expr := (
 	toExpr(x))
     else WrongArg("a list"));
 setupfun("ffiUnionType", ffiUnionType);
+
+----------------------------
+-- function pointer types --
+----------------------------
+
+ffiClosureFunction(cif:Pointer "ffi_cif *", ret:voidPointer,
+    args:Pointer "void **", userData:voidPointer):void := (
+    nargs := Ccode(int, cif, "->nargs");
+    f := Expr(Ccode(FunctionClosure, userData));
+    x := Expr(
+	if nargs == 1 then Expr(pointerCell(Ccode(voidPointer, "*", args)))
+	else Expr(new Sequence len nargs at i do provide pointerCell(
+		Ccode(voidPointer, args, "[", i, "]"))));
+    when applyEE(f, x)
+    is ptr:pointerCell
+    do Ccode(void, "memcpy(", ret, ", ", ptr.v, ", ", cif, "->rtype->size)")
+    else nothing);
+
+ffiClosureFinalizer(ptr:voidPointer, closure:voidPointer):void := (
+    Ccode(void, "ffi_closure_free(", closure, ")"));
+
+ffiFunctionPointerAddress(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	when a.0
+	is f:FunctionClosure do (
+	    when a.1
+	    is cif:pointerCell do (
+		code := nullPointer();
+		closure := Ccode(voidPointer,
+		    "ffi_closure_alloc(sizeof(ffi_closure), &", code, ")");
+		if closure == nullPointer() then return buildErrorPacket(
+		    "ffi_closure_alloc() returned NULL");
+		r := Ccode(int, "ffi_prep_closure_loc(", closure, ", ", cif.v,
+		    ", ", ffiClosureFunction, ", ", f, ", ", code, ")");
+		if r != ffiOk then return ffiError(r);
+		ptr := getMem(pointerSize);
+		Ccode(void, "*(void **)", ptr, " = ", closure);
+		Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
+		    "(GC_finalization_proc)", ffiClosureFinalizer, ", ",
+		    closure, ", 0, 0)");
+		toExpr(ptr))
+	    else WrongArgPointer(2))
+	else WrongArg(1, "a function"))
+    else WrongNumArgs(2));
+setupfun("ffiFunctionPointerAddress", ffiFunctionPointerAddress);

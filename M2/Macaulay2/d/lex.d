@@ -112,7 +112,6 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
      pos := position(o);
-     hadnewline := false;
      tokenbuf << '\"';					    -- "
      while true do (
 	  ch := getc(o);
@@ -142,8 +141,6 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
 	  && peek(o,1) == int('/') then break;
 	  if ch == int('\"') || ch == int('\\') then tokenbuf << '\\';
      	  tokenbuf << char(ch);
-	  if ch == int('\n') && hadnewline && isatty(o) then return NULL; -- user gets out with an extra NEWLINE
-	  hadnewline = ch == int('\n')
 	  );
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
@@ -163,7 +160,6 @@ getstring(o:PosFile):(null or Word) := (
      line := o.line;
      column := o.column;
      delimiter := getc(o);
-     hadnewline := false;
      escaped := false;
      tokenbuf << char(delimiter);
      hexcoming := 0;
@@ -216,8 +212,6 @@ getstring(o:PosFile):(null or Word) := (
 	       )
 	  else if ch == delimiter then break
 	  else if ch == int('\\') then escaped = true;
-	  if ch == int('\n') && hadnewline && isatty(o) then return NULL;	-- user gets out with an extra NEWLINE
-	  hadnewline = ch == int('\n');
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
@@ -265,18 +259,9 @@ skipwhite(file:PosFile):int := (
 	  else if c == int('-') && peek(file,1) == int('*') then (
 	       -- block comment: -* ... *-
 	       getc(file); getc(file);
-	       hadnewline := false;
 	       until (
 		    c = peek(file);
 		    if c == ERROR || c == EOF then return c;
-		    if c == int('\n') then (
-			 if hadnewline && isatty(file) then (
-			      getc(file);
-			      return ERROR; -- user gets out with an extra NEWLINE
-			      );
-			 hadnewline = true;
-			 )
-		    else hadnewline = false;
 		    c == int('*') && (
 			 getc(file);
 			 c = peek(file);
