@@ -1301,6 +1301,8 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     sagbiDegree
+     sagbiLimit
      sagbi
 ///
 
@@ -1425,6 +1427,82 @@ doc ///
      (net, SAGBIBasis)
      sagbi
 ///
+doc ///
+   Key
+      sagbiDegree
+     (sagbiDegree, SAGBIBasis)
+   Headline
+     The current degree of the sagbi computation
+   Usage
+     result = sagbiDegree SB
+   Inputs
+     SB:SAGBIBasis
+   Outputs
+     result:ZZ
+   Description
+     Text
+       Returns the current degree of the sagbi computation. When the computation is resumed (without restarting)
+       then the algorithm will pick up at this degree. Note that the degree may drop during the computation.
+   SeeAlso
+     SAGBIBasis
+     (gens, SAGBIBasis)
+     (ambient, SAGBIBasis)
+     (ring, SAGBIBasis)
+     (net, SAGBIBasis)
+     sagbiLimit
+     sagbi
+///
+doc ///
+   Key
+      sagbiLimit
+     (sagbiLimit, SAGBIBasis)
+   Headline
+     The current limit of the sagbi computation
+   Usage
+     result = sagbiLimit SB
+   Inputs
+     SB:SAGBIBasis
+   Outputs
+     result:ZZ
+   Description
+     Text
+       Returns the current limit of the sagbi computation. When the computation is resumed then
+       this limit will be set to the new specified limit.
+   SeeAlso
+     SAGBIBasis
+     (gens, SAGBIBasis)
+     (ambient, SAGBIBasis)
+     (ring, SAGBIBasis)
+     (net, SAGBIBasis)
+     sagbiDegree
+     sagbi
+     Limit
+///
+doc ///
+   Key
+      sagbiStatus
+     (sagbiStatus, SAGBIBasis)
+   Headline
+     returns if the sagbi computation is done
+   Usage
+     result = sagbiStatus SB
+   Inputs
+     SB:SAGBIBasis
+   Outputs
+     result:Boolean
+   Description
+     Text
+       Returns true if the sagbi computation is completed otherwise returns false.
+   SeeAlso
+     SAGBIBasis
+     (gens, SAGBIBasis)
+     (ambient, SAGBIBasis)
+     (ring, SAGBIBasis)
+     (net, SAGBIBasis)
+     sagbiDegree
+     sagbi
+///
+
 doc ///
    Key
       forceSB
