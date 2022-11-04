@@ -590,7 +590,9 @@ ffiClosureFunction(cif:Pointer "ffi_cif *", ret:voidPointer,
 		Ccode(voidPointer, args, "[", i, "]"))));
     when applyEE(f, x)
     is ptr:pointerCell
-    do Ccode(void, "memcpy(", ret, ", ", ptr.v, ", ", cif, "->rtype->size)")
+    do Ccode(void, "memcpy(",
+	endianAdjust(ret, Ccode(voidPointer, "((ffi_cif *)", cif, ")->rtype")),
+	", ", ptr.v, ", ", cif, "->rtype->size)")
     else nothing);
 
 ffiClosureFinalizer(ptr:voidPointer, closure:voidPointer):void := (
