@@ -70,7 +70,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
   for (; i != values.end(); ++i, ++j) ring().init_set(*i, *j);
   // std::cout << "SLEvaluatorConcrete: copy constructor for " << this << std::endl;
   if (a.parametersAndInputs==nullptr) parametersAndInputs = nullptr; else {
-    parametersAndInputs = new ElementType[nParams];
+    parametersAndInputs = new ElementType[nParams+nInputs];
     std::copy(a.parametersAndInputs,a.parametersAndInputs+nParams, parametersAndInputs);
   }
 }
@@ -127,18 +127,20 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     throw exc::engine_error("1-column matrix expected; or #parameters > #vars");
   SLEvaluatorConcrete<RT>* e = new SLEvaluatorConcrete<RT>(*this);
   if (isCompiled) {
+    e->nParams = nParams + nNewParams;
+    e->nInputs -= nNewParams;
     delete[] e->parametersAndInputs;
-    e->parametersAndInputs = new ElementType[e->nParams = nParams + nNewParams];
+    e->parametersAndInputs = new ElementType[e->nParams+e->nInputs];
     std::copy(parametersAndInputs, parametersAndInputs+nParams, e->parametersAndInputs); // old parameters values
     for (int i = 0; i < nNewParams; ++i)
       ring().set(e->parametersAndInputs[nParams+i], parameters->getMat().entry(i, 0));
-    e->nInputs -= nNewParams;
   }
   else {
-    for (int i = 0; i < nParams; ++i)
+    for (int i = 0; i < nNewParams; ++i)
       ring().set(e->values[varsPos[i]], parameters->getMat().entry(i, 0));
-    e->varsPos.erase(e->varsPos.begin(), e->varsPos.begin() + nParams);
+    e->varsPos.erase(e->varsPos.begin(), e->varsPos.begin() + nNewParams);
     e->nInputs = e->varsPos.size();
+    e->nParams = nParams + nNewParams;
   }
   return e;
 }

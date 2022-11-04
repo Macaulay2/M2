@@ -248,9 +248,9 @@ specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
     SPH.Parameters = M;
     SPH
     ) 
-evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,H.Parameters,x,t) 
-evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
-evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,matrix H.Parameters,x,t) 
+evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,matrix H.Parameters,x,t) 
+evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,matrix H.Parameters,x,t) 
 
 TEST /// -- miscellaneous tests
 CC[x,y]
