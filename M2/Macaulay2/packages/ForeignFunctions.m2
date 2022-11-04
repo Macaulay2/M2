@@ -1775,10 +1775,10 @@ TEST ///
 --------------------------------
 -- foreignFunction (variadic) --
 --------------------------------
-sprintf = foreignFunction("sprintf", void, {charstar, charstar},
+sprintf = foreignFunction("sprintf", int, {charstar, charstar},
     Variadic => true)
 foo = charstar "foo"
-sprintf(foo, "%s", "bar")
+assert Equation(value sprintf(foo, "%s", "bar"), 3)
 assert Equation(value foo, "bar")
 ///
 
