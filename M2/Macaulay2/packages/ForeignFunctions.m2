@@ -1769,6 +1769,8 @@ TEST ///
 ---------------------
 cCos = foreignFunction("cos", double, double)
 assert Equation(value cCos pi, -1)
+cAbs = foreignFunction("abs", int, int)
+assert Equation(value cAbs(-2), 2)
 ///
 
 TEST ///
