@@ -490,9 +490,9 @@ doc ///
     Calculate mixed multiplicities, mixed volume and sectional Milnor numbers
   Description
     Text
-      P. B. Bhattacharya and J. J. Risler - B. Teissier proved that if $I_0,I_1,\dots,I_r$  
+      P. B. Bhattacharya and J. J. Risler - B. Teissier proved that if $I_0,I_1,\ldots,I_r$  
       are $m$-primary ideals in a Noetherian local ring $(R,m)$ of dimension $d$, then 
-      the function $B(u_0,u_1,\dots,u_r) = l(R/I_0^{u_0}I_1^{u_1} \cdots I_r^{u_r})$ is a polynomial 
+      the function $B(u_0,u_1,\ldots,u_r) = l(R/I_0^{u_0}I_1^{u_1} \cdots I_r^{u_r})$ is a polynomial 
       function in $u_0,u_1,\ldots,u_r$ of degree $d$ for large values of $u_0,u_1,\ldots,u_r.$ 
       The coefficients of the top degree term are called the mixed multiplicities of the 
       ideals $I_0,I_1,\ldots,I_r.$ This result was generalized for ideals of positive height in 
@@ -525,7 +525,7 @@ doc ///
       number of the hypersurface $H$ at the origin. Let $(X, x)$ be a germ of a 
       hypersurface in $\mathbb{C}^{n+1}$ with an isolated singularity. The Milnor 
       number of $X \cap E$, where $E$ is a general linear subspace of dimension 
-      $i$ passing through $x$ is called the $i$-th sectional Milnor number of $X$. B. Teissier 
+      $i$ passing through $x,$ is called the $i$-th sectional Milnor number of $X$. B. Teissier 
       identified the $i$-th sectional Milnor number with the $i$-th mixed multiplicity of 
       the maximal homogeneous ideal of the polynomial ring and the Jacobian ideal of $f.$      
 ///   
@@ -614,7 +614,7 @@ doc ///
       mixedMultiplicity ((m,I,I,I),(0,1,1,1))
     Text
       The function computes the Hilbert polynomial of the graded ring 
-      $\oplus I_0^{u_0}I_1^{u_1} \cdots I_r^{u_r}/I_0^{u_0+1}I_1^{u_1} \cdots I_r^{u_r}$ to
+      $\bigoplus (I_0^{u_0}I_1^{u_1} \cdots I_r^{u_r}/I_0^{u_0+1}I_1^{u_1} \cdots I_r^{u_r})$ to
       compute the mixed multiplicity. If the ideals $I_1,\ldots,I_r$ are also
       primary to the maximal ideal, then to compute the $(a_0+1, a_1,\ldots, a_r)$-th
       mixed multiplicity, one needs to enter the sequence ${a_0,a_1,\ldots,a_r}$ in 
@@ -713,7 +713,7 @@ doc ///
       mMixedVolume {C,C}
     Text 
       The following example computes the mixed volume of a 2-dimensional 
-      hypercube and a 2-cross polytope.
+      hypercube $H$ and a 2-cross polytope $C$.
     Example
       H = {(1,1),(1,-1),(-1,1),(-1,-1)};
       C = {(-1,0),(0,1),(1,0),(0,-1)};
@@ -745,7 +745,7 @@ doc ///
       The $\mathbb{C}$-vector space dimension of $\mathbb{C}\{x_0,\ldots,x_n\}/(f_{x_0},\ldots,f_{x_n})$ 
       is called the Milnor number of the hypersurface $H$ at the origin. Let $(X, x)$ be a germ 
       of a hypersurface in $\mathbb{C}^{n+1}$ with an isolated singularity at $x$. The Milnor number of 
-      $X \cap E$, where $E$ is a general linear subspace of dimension $i$ passing through $x$ is 
+      $X \cap E$, where $E$ is a general linear subspace of dimension $i$ passing through $x,$ is 
       called the $i$-th sectional Milnor number of $X$. B. Teissier identified the $i$-th sectional 
       Milnor number with the $i$-th mixed multiplicity of the maximal homogeneous ideal of the 
       polynomial ring and the Jacobian ideal of $f.$
@@ -765,7 +765,7 @@ doc ///
     [multiReesIdeal, VariableBaseName]
     [homIdealPolytope, VariableBaseName]
   Headline
-    Choose a base name for variables in the created ring
+    choose a base name for variables in the created ring
   Usage
     multiReesIdeal(..., VariableBaseName => X)
     homIdealPolytope(..., VariableBaseName => X)
@@ -788,7 +788,7 @@ doc ///
   Key 
     [homIdealPolytope, CoefficientRing]
   Headline
-    Choose the coefficient ring of the (output) ideal
+    choose the coefficient ring of the (output) ideal
   Usage
     homIdealPolytope(..., CoefficientRing => QQ)
   Description
