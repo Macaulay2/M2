@@ -1301,6 +1301,7 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
      sagbiDegree
      sagbiLimit
      sagbi
@@ -1340,8 +1341,10 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
+     sagbiDegree
+     sagbiLimit
      sagbi
-
 ///
 
 
@@ -1363,6 +1366,9 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
+     sagbiDegree
+     sagbiLimit
      sagbi
 ///
 
@@ -1394,6 +1400,9 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
+     sagbiDegree
+     sagbiLimit
      sagbi
 ///
 
@@ -1425,6 +1434,9 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
+     sagbiDegree
+     sagbiLimit
      sagbi
 ///
 doc ///
@@ -1449,6 +1461,7 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
      sagbiLimit
      sagbi
 ///
@@ -1474,6 +1487,7 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
      sagbiDegree
      sagbi
      Limit
@@ -1499,7 +1513,33 @@ doc ///
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
+     (status, SAGBIBasis)
      sagbiDegree
+     sagbiLimit
+     sagbi
+///
+doc ///
+   Key
+     (status, SAGBIBasis)
+   Headline
+     status of the sagbi computation
+   Usage
+     result = status SB
+   Inputs
+     SB:SAGBIBasis
+   Outputs
+     result:String
+   Description
+     Text
+       Returns a string with the status of sagbi computation.
+   SeeAlso
+     SAGBIBasis
+     (gens, SAGBIBasis)
+     (ambient, SAGBIBasis)
+     (ring, SAGBIBasis)
+     (net, SAGBIBasis)
+     sagbiDegree
+     sagbiLimit
      sagbi
 ///
 
