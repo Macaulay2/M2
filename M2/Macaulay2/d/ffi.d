@@ -156,6 +156,19 @@ ffiPrepCifVar(e:Expr):Expr :=
 	else WrongNumArgs(3);
 setupfun("ffiPrepCifVar", ffiPrepCifVar);
 
+-- fix return value on big-endian systems, since integer types are widened
+-- to system register size
+endianAdjust(ptr:voidPointer, rtype:voidPointer):voidPointer:= (
+    if Ccode(int, "__BYTE_ORDER__") == Ccode(int, "__ORDER_LITTLE_ENDIAN__")
+    then ptr
+    else (
+	offset := Ccode(int,
+	    "sizeof(ffi_arg) - ((ffi_type *)", rtype,")->size");
+	if (Ccode(int, "((ffi_type *)", rtype, ")->type") ==
+	    Ccode(int, "FFI_TYPE_FLOAT") || offset <= 0)
+	then ptr
+	else Ccode(voidPointer, ptr, " + ", offset)));
+
 ffiCall(e:Expr):Expr :=
     when e
     is a:Sequence do
