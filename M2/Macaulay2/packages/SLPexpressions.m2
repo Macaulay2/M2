@@ -60,7 +60,8 @@ setTryJustInTimeCompilation Boolean := v -> if v then (
     w := (run "gcc --version" == 0);
     if w then (
 	print "-- SLPexpressions: Found `gcc`. Just-in-time compilation will be attempted by `makeSLProgram`.";
-    	print "-- (To disable, `setTryJustInTimeCompilation false`)" 
+    	print "-- This is an experimental feature that works only for evaluation over real and complex numbers.";
+	print "-- (To disable, `setTryJustInTimeCompilation false`)" 
 	) else (
 	print "-- SLPexpressions: Couldn't find `gcc` --- `makeSLProgram` will output `InterpretedSLProgram`.";
 	);
@@ -68,7 +69,7 @@ setTryJustInTimeCompilation Boolean := v -> if v then (
     ) else TryJustInTimeCompilation = false
 
 TryJustInTimeCompilation = false
-setTryJustInTimeCompilation true 
+--setTryJustInTimeCompilation true 
 
 exportMutable {
     }
@@ -645,7 +646,10 @@ printName (Gate, PrintTable) := (g,h) -> error "not implemented"
 printName (InputGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     if isConstant g then (
 	h#g = "C"|toString h#"#consts";
-	addLine(h,h#g | h#"assignment symbol" | toString g.Name);
+	addLine(h,h#g | h#"assignment symbol" | 
+	    if instance(g.Name,CC) then "C("|(toString realPart g.Name)|","|(toString imaginaryPart g.Name)|")" 
+	    else toString g.Name
+	    );
     	h#"#consts" = h#"#consts" + 1;
 	)
     else (
