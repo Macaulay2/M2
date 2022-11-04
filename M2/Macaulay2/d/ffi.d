@@ -188,7 +188,8 @@ ffiCall(e:Expr):Expr :=
 				fn.v, ", ",
 				rvalue, ", ",
 				avalues, "->array)");
-			    toExpr(rvalue))
+			    toExpr(endianAdjust(rvalue, Ccode(voidPointer,
+					"((ffi_cif *)", cif.v, ")->rtype"))))
 			else WrongArg(4, "a list")
 		    else WrongArgZZ(3)
 		else WrongArgPointer(2)
