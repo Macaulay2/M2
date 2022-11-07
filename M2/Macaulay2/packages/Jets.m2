@@ -1311,7 +1311,7 @@ Node
 	    Jets of graphs and hypergraphs can be obtained by applying the
 	    @TO jets@ method to objects of type @TO "EdgeIdeals::Graph"@ and
 	    @TO "EdgeIdeals::HyperGraph"@ from the Macaulay2 @TO "EdgeIdeals::EdgeIdeals"@ package
-	    (which is automatically loaded by the @TO Jets@ package.
+	    (which is automatically loaded by the @TO Jets@ package).
 	    Consider, for example, the graph in the figure below.
     	Code
       	    IMG ("src" => replace("PKG", "Jets", currentLayout#"package") | "graph.png",
