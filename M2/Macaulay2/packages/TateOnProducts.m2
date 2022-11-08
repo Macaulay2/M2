@@ -2300,7 +2300,7 @@ bgg Module := o -> P -> (
     Ds = sort apply(D, d->(sum d,d));
     minP := min(Ds/first);
     maxP := max(Ds/first);
-    if o.LengthLimit != null then maxP=min(maxP,minP+1+o.LengthLimit);
+    if o.LengthLimit =!= null then maxP=min(maxP,minP+1+o.LengthLimit);
     freeModuleDegs := hashTable apply(toList(minP..maxP), i->
 	    (-i=>select(Ds,d-> d_0 == i)/last)
 	    );
