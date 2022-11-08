@@ -1031,13 +1031,15 @@ isPositivelyOrientable Matroid := Boolean => M -> positiveOrientation M =!= null
 
 kruskalSpanningForest = method()
 kruskalSpanningForest Graph := Graph => G -> (
-    comps := new MutableList from (vertices G/(v -> set{v}));
+    comps := new MutableHashTable from (vertices G/(v -> set{v} => 1));
     k := #connectedComponents G;
     graph(vertices G, for e in sort edges G list (
         if #comps == k then break;
-        ic := select(2, comps, c -> #(c*e) > 0);
+        ic := select(2, keys comps, c -> #(c*e) > 0);
         if #ic == 1 then continue;
-        comps = append(delete(ic#0, delete(ic#1, comps)), ic#0 + ic#1);
+		remove(comps, ic#0);
+		remove(comps, ic#1);
+		comps#(ic#0 + ic#1) = 1;
         e
     ))
 )
