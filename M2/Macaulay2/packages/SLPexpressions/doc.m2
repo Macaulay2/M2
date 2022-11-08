@@ -283,7 +283,10 @@ doc ///
         Text
     	    Passes the arguments to 
 	    @TO makeInterpretedSLProgram@ or @TO makeCompiledSLProgram@ 
-	    depending on the flag set by @TO setTryJustInTimeCompilation@. 
+	    depending on the flag set by @TO setTryJustInTimeCompilation@. (Giving `true` 
+	    as a value triggers a search for gnu C++ compiler and, 
+	    if successful, makes a @TO makeCompiledSLProgram@ the default choice.
+            Currently, just-in-time compilation works over RR_53 and CC_53)   
 ///
 
 doc ///

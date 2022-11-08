@@ -5,8 +5,8 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.20",
-     Date => "Aug 2022",
+     Version => "1.21",
+     Date => "Nov 2022",
      Headline => "straight line programs and algebraic circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -659,14 +659,14 @@ printName (InputGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     h#g
     )
 printName (SumGate, PrintTable) := (g,h) -> if h#?g then h#g else (
-    s := between(" + ", apply(g.Inputs, gg->printName(gg,h)));  
+    s := if #g.Inputs==0 then {"0"} else between(" + ", apply(g.Inputs, gg->printName(gg,h)));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | h#"assignment symbol" | concatenate s);  
     h#"#gates" = h#"#gates" + 1;
     h#g 
     )
 printName (ProductGate, PrintTable) := (g,h) -> if h#?g then h#g else (
-    s := between(" * ", apply(g.Inputs, gg->printName(gg,h)));  
+    s := if #g.Inputs==0 then {"1"} else between(" * ", apply(g.Inputs, gg->printName(gg,h)));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | h#"assignment symbol" | concatenate s);  
     h#"#gates" = h#"#gates" + 1;
