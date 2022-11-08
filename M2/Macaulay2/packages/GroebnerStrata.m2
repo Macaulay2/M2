@@ -1193,16 +1193,16 @@ TEST ///
   E = kk[a,b,c,d,e,SkewCommutative => true]
   I = ideal(a*d,a*c,a*b,b*d*e,b*c*e,b*c*d)
   F1 = groebnerFamily I
-  see F1
+  netList F1_*
   F2 = groebnerFamily(I, AllStandard => true)
-  see F2
+  netList F2_*
   assert isHomogeneous F1
   assert isHomogeneous F2
-  J2 = trim groebnerStratum F2
+  J2 = trim groebnerStratum F2;
   assert(numgens ring J2 == 24)
-  J1 = trim groebnerStratum F1
+  J1 = trim groebnerStratum F1;
   assert(numgens ring J1 == 23)
-  C2 = decompose J2
+  C2 = decompose J2;
   netList C2_0_*
   netList C2_1_*
   assert(isHomogeneous C2_0)
