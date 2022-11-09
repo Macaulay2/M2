@@ -351,7 +351,7 @@ staticMonodromySolve (System, AbstractPoint, List) := o -> (PS, p0, sols0) -> (
     local node1;
     if isGS then (
     	p1 := point random(CC^1, CC^(length coordinates p0));
-    	sols1 := trackHomotopy(specialize(parametricSegmentHomotopy PS, transpose(matrix p0|matrix p1)), sols0);
+    	sols1 := trackHomotopy(specialize(getParametricSegmentHomotopy HG, transpose(matrix p0|matrix p1)), sols0);
 	node1 = addNode(HG, p1, pointArray sols1);
 	) else node1 = addNode(HG, p0, pointArray sols0);
     setTrackTime(HG, 0);    

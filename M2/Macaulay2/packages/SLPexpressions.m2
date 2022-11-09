@@ -441,6 +441,8 @@ evaluate(SLProgram, Matrix) := (slp, inp) -> (
 		evaluate(slp,I,O);
 		matrix O
 		)
+numberOfInputs = method()
+numberOfInputs SLProgram := slp -> errorSLProgramAbstract()
 numberOfOutputs = method()
 numberOfOutputs SLProgram := slp -> errorSLProgramAbstract()
 
@@ -464,6 +466,7 @@ makeCompiledSLProgram (List,List) := (inL,outL) -> (
 	}
     )
 makeCompiledSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeCompiledSLProgram(flatten entries inM, flatten entries outM)
+numberOfInputs CompiledSLProgram := slp -> #(slp#"input")
 numberOfOutputs CompiledSLProgram := slp -> #(slp#"output")
 
 -------------------
@@ -488,6 +491,7 @@ makeInterpretedSLProgram (List,List) := (inL,outL) -> (
 				}
     )
 makeInterpretedSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeInterpretedSLProgram(flatten entries inM, flatten entries outM)
+numberOfInputs SLProgram := slp -> slp#"number of inputs"
 numberOfOutputs SLProgram := slp -> slp#"number of outputs"
 
 ----------------

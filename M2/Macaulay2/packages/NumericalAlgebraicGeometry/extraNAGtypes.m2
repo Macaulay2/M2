@@ -112,8 +112,8 @@ jacobian GateSystem := GS -> jacobian(toList(0..numVariables GS-1), GS)
 -- overrides "implementation" for System
 evaluateJacobian (GateSystem, Matrix) := (GS, x0) -> (
     J := jacobian GS;
-    assert(numcols matrix x0 == J#"number of inputs");
-    out := evaluate(jacobian GS,  matrix x0);
+    assert(numcols matrix x0 == numberOfInputs J);
+    out := evaluate(J,  matrix x0);
     matrix(out, numFunctions GS, numVariables GS)
     )
 evaluateJacobian (GateSystem, AbstractPoint) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
