@@ -1,160 +1,3 @@
--- internalVerifySagbi is a version of verifySabi just for SAGBIBasis objects
--- it returns a SAGBIBasis object with its SB#SAGBIdata#"sagbiDone" flag correctly set
--- it is used as an intermediate step for verifySagbi since matrices and subrings
---   are handled slightly differently
--- 
--*
-internalVerifySagbiProcess = method(
-    TypicalValue => SAGBIBasis,
-    Options => {
-	Compute => true,
-        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Top", -- top or engine
-	Limit => 100,
-	PrintLevel => 0, -- see print level for sagbi
-    	Recompute => false,
-	RenewOptions => false,
-	UseSubringGens => false
-	}
-    );
-
-
-internalVerifySagbiProcess(SAGBIBasis) := opts -> SB -> (
-    compTable := initializeCompTable(SB, opts);    
-    if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
-	compTable#SAGBIdata#"sagbiGenerators" = lift(compTable#SAGBIdata#"subalgebraGenerators", compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
-        updateComputation(compTable);
-	);
-    -- Get the SPairs
-    sagbiGB := gb(compTable#SAGBIideals#"reductionIdeal");
-    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings".tensorRing)) - 2;
-    zeroGens := selectInSubring(k, gens sagbiGB);
-    SPairs := compTable#SAGBImaps#"fullSubstitution"(zeroGens) % compTable#SAGBIideals#"I";
-    -- Reduce the SPairs
-    reducedSPairs := compSubduction(compTable, SPairs);
-    -- check the sagbi gens are high enough degree (i.e. higher than the subring generators)
-    highEnoughDegree := max flatten (degrees compTable#SAGBIdata#"subalgebraGenerators")_1 <= max flatten (degrees compTable#SAGBIdata#"sagbiGenerators")_1;
-    -- if all the reduced SPairs are zero then we have a sagbiBasis
-    compTable#SAGBIdata#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
-    SB' := sagbiBasis compTable; -- note that this operation caches SB' in the subring
-    if opts.UseSubringGens then ( -- return the cache of the subring to SB
-	SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
-	);
-    SB'
-    );
-
-memoizeInternalVerifySagbiProcess = memoize internalVerifySagbiProcess;
-
-internalVerifySagbi = method(
-    TypicalValue => SAGBIBasis,
-    Options => {
-	Compute => true,
-        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Top", -- top or engine
-	Limit => 100,
-	PrintLevel => 0, -- see print level for sagbi
-    	Recompute => false,
-	RenewOptions => false,
-	UseSubringGens => false
-	}
-    );
-
-internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
-    memoizeInternalVerifySagbiProcess(SB, opts)
-    )
-
-
--- verifySagbi [no longer used in any of the methods - it is here for legacy purposes]
--- checks whether or not the generators of a subring S form a sagbi basis wrt the given term order
--- 
--- the method uses the code from inside the method that collects SPairs to find them
--- the method uses the subduction fuction so setting the option SubductionMethod will change the strategy
--- print level will be called inside of subduction so it can be used to perform subduction 
---
--- the resulting SAGBIBasis object SB will have SB#SAGBIdata#"sagbiDone" updated appropriately
--- the function then returns true or false depending on whether the generating set is a SAGBIBasis 
---
--- TODO: kill verifySagbi
---
-
-verifySagbi = method(
-    TypicalValue => Subring,
-    Options => {
-	Compute => true,
-        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Engine", -- top or engine
-	Limit => 100,
-	PrintLevel => 0, -- see print level for sagbi
-    	Recompute => false,
-	RenewOptions => false,
-	UseSubringGens => false
-	}
-);
-
-verifySagbi(Subring) := opts -> S -> (
-    local SB;
-    
-    if (S#cache#?SAGBIBasis) and (gens(S#cache#SAGBIBasis) == gens S) then (
-	-- S has a sagbi basis so use this object as a compTable
-	SB = S#cache#SAGBIBasis;	
-	SB = internalVerifySagbi(SB, opts);
-	) else (
-    	trimmedOptionKeys := delete(Compute, keys opts);
-	trimmedOptionKeys = delete(UseSubringGens, trimmedOptionKeys);
-    	trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
-	--SB = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
-	-- add the generators to the sagbiGenerators
-	--SB#SAGBIdata#"sagbiGenerators" = lift(gens S, SB#"rings"#"liftedRing");
-	--updateComputation(SB);
-	SB = sagbiBasis(S, trimmedOptionTable);
-	SB = internalVerifySagbi(SB, opts, UseSubringGens => true);
-	);
-    
-    -- The following is done automatically by sagbiBasis
-    --if not S.cache#?SAGBIBasis then (
-    --	S.cache#SAGBIBasis = SB; -- add a new SAGBIBasis if there wasn't one already
-	--) else if (SB#SAGBIdata#"sagbiDone" and not S.cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
-	--S.cache#SAGBIBasis = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
-	--);
-    SB#SAGBIdata#"sagbiDone"
-    )
-
-verifySagbi(Matrix) := opts -> M -> (
-    local S;
-    local SB;
-
-    if (M#cache#?Subring) and (gens(M#cache#Subring#cache#SAGBIBasis) == M) then (
-	-- S has a sagbi basis so use this object as a compTable
-	S = M.cache#Subring;
-	SB = S.cache#SAGBIBasis;
-	) else (
-	SB = initializeCompTable(sagbiBasis subring M, opts);
-	-- add the generators to the sagbiGenerators
-	SB#SAGBIdata#"sagbiGenerators" = lift(M, SB#SAGBIrings#"liftedRing");
-	updateComputation(SB);
-	SB = sagbiBasis SB;
-	S = SB#SAGBIdata#subring;
-	M.cache#Subring = S;
-	);
-        
-    SB = internalVerifySagbi(opts, SB);
-    if not S.cache#?SAGBIBasis then (
-    	S.cache#SAGBIBasis = SB; -- add a new SAGBIBasis if there wasn't one already
-	) else if (SB#SAGBIdata#"sagbiDone" and not S.cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
-	S.cache#SAGBIBasis = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
-	);
-    SB#SAGBIdata#"sagbiDone"
-    )
-
--- A list does not have a cache, so verifySagbi on a list 
---   is only checking whether it forms a sagbi basis
---   the SAGBIBasis object becomes inaccessible
-
-verifySagbi(List) := opts -> L -> (
-    verifySagbi(opts, subring L)
-    )
-*-
-
 -- forceSB(Subring / SAGBIBasis) constructs a SAGBIBasis object, using any
 -- existing one as a template, applied autosubduction to the (sagbi)generators,
 -- and sets the sagbiDone flag to true - this function should only be applied to
@@ -196,29 +39,10 @@ forceSB Subring := opts -> S -> (
 -- it is used as an intermediate step for isSAGBI when it is passed something
 --   that does not have a cached SAGBIBasis object
 
--- memoizeInternalIsSAGBI = memoize internalIsSAGBI
---   when calling isSAGBI on a subring without SAGBIBasis
---   it produces a very simple object: sagbiBasis(S) which has no sagbiGenerators etc.
---   (in particular it can be used for sagbi in the future)
---   and in internalIsSAGBI, we check the sagbi generators (and create the correct compTable if necessary)
---   remove the Recompute flag from the compTable
--- TODO:  
---   WARNING (in documentation): memoize is used so excessive use of isSAGBI will cause a lot of computation objects 
---   to be created / not be garbage collected since they may be stored
-
--- // something that is not done but can be kept for the future //(debatable - don't do it!)
--- add an option for remembering the output of internalIsSAGBI
--- to do this, one could: let mem = memoize memoize
--- then if the remembering option is true then run "mem internalIsSAGBI" otherwise
--- run "internalIsSAGBI"
---
--- idea: we could have memoize as an option and use a custom version of memoize for the package
--- this is just a fancy way of not having to create two almost-identical functions
--- but that would be fine too: memInternalIsSAGBI = memoize internalIsSAGBI
-
-
--- internalIsSAGBIProcess is the core method
---  internalIsSAGBI is a wrapper for the memoized version of this method
+-- the function is split up into 
+-- '...Process' which is the core function
+-- 'memoize...Process' a memoized form of '...Process'
+-- 'internalIsSAGBI' sanitises the input and calls memoize using a consistent option table
 
 internalIsSAGBIProcess = method(
     TypicalValue => SAGBIBasis,
@@ -271,7 +95,7 @@ internalIsSAGBIProcess(SAGBIBasis) := opts -> SB -> (
 
 memoizeInternalIsSAGBIProcess = memoize internalIsSAGBIProcess;
 
--- memoizeInternalIsSAGBIValues: a way to check if an internalIsSAGBI computation was already performed
+-- isInMemoizeInternalIsSAGBIValues: a way to check if an internalIsSAGBI computation was already performed
 
 isInMemoizeInternalIsSAGBIValues = method(
     TypicalValue => SAGBIBasis,
@@ -372,8 +196,8 @@ isSAGBI Subring := opts -> S -> (
 	
 	sagbi(S, Limit => max flatten (degrees gens S)_1); -- ensures that gens SB generate S
 	SB = S.cache#SAGBIBasis;
-	-- do some linear programming / binomial or toric ideal comutations to check the following:
-	--   check that the monomial algebra generated by the initial terms of
+	-- Future: linear programming / binomial or toric ideal comutations to check the following:
+	--   the monomial algebra generated by the initial terms of
 	--   gens S and gens SB are equal 
 	LTgensS := leadTerm gens S;
 	LTgensSB := leadTerm gens SB;
@@ -393,15 +217,7 @@ isSAGBI Subring := opts -> S -> (
     	    trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
 	    SB = sagbiBasis(S, trimmedOptionTable); -- basic SAGBIBasis object that is compatible with future sagbi computations
 	    SB = internalIsSAGBI(SB, opts, UseSubringGens => true);
-	    -- construct a SAGBIBasis for S and verify whether it is a sagbi basis
-	    --compTable = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
-	    -- add the generators to the sagbiGenerators
-	    --compTable#SAGBIdata#"sagbiGenerators" = lift(gens S, compTable#SAGBIrings#"liftedRing"); --put into the correct ring (lifted ring)
-	    --updateComputation(compTable);
-	    --SB = sagbiBasis compTable;
-	    --SB = internalIsSAGBI(opts, SB); 
-    	    -- S.cache#SAGBIBasis = SB;
-    	    SB#SAGBIdata#"sagbiDone"
+	    SB#SAGBIdata#"sagbiDone"
 	    ) else ( 
 	    null -- S has no SAGBIBasis cached and Compute is set to false
 	    )
@@ -469,7 +285,6 @@ groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
     fNormalForm := fInTensorRing % (I + JInTensorRing);
     -- output fNormalForm in the subductionQuotientRing
     --  construct the ring if not present in the cache of S 
-    --  also store the natural map from the subductionQuotientRing to Q 
     outputRing = subductionQuotientRing S;
     outputMap := map(outputRing, tensorRing, matrix {toList((numgens R):0)} | vars outputRing);
     outputMap fNormalForm
@@ -478,6 +293,14 @@ groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
 
 -- RingElement // Subring 
 -- returns the subduction quotient
+--
+-- Future:
+-- >>  Implement an intrinsic subduction quotient via a modification of sagbi that keeps track of how
+--     new sagbi generators are expressed in terms of previous sagbi generators (or subring generators) 
+-- >>  Make // a quick-access version of a method 'subductionQuotient' which selects whether to use
+--     the intrinsic or extrinsic method
+--
+
 RingElement // Subring := (f, S) -> (
     groebnerSubductionQuotient(f, S)    
     )
@@ -491,6 +314,10 @@ RingElement // Subring := (f, S) -> (
 -- 1) If Subring has a sagbi basis (stored in its cache) then use subduction
 -- 2) If there is not a complete sagbi basis then use the 'extrinsic method' - see groebnerMembershipTest above
 -- Note: we construct the tensor ring with a monomial order lifted from the ambient ring
+--
+-- Future:
+-- >> It is possible to still use % modulo an incomplete sagbi basis - make this concrete
+--
 
 Matrix % SAGBIBasis := (M, SB) -> (
     assert(ambient SB === ring M);
@@ -554,18 +381,26 @@ subringIntersection = method(
 subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     local limit;
     local t;
+    -------------
+    -- check that both subring are subrings of the same ambient ring
     Q1 := ambient S1;
     Q2 := ambient S2;
     assert(Q1 === Q2);
     Q := Q1;
     I := ideal(Q);
     R := ambient(Q);
-    
-    -- construct the large ring
-    -- monomial order:
-    -- 1) monomial order from R (on p_1 ... p_n+1)
+    ------------
+    -- For notation:
+    -- R = K[p_1 .. p_n]
+    -- Q = R / I
+    --
+    -- Construct the ring T = tensor product of Q with K[t]/(t^2 - t)
+    -- TAmb := [t := p_0, p_1 .. p_n] 
+    -- monomial order of TAmb:
+    -- 1) monomial order from R (on p_1 ... p_n)
     -- 2) eliminate p_0
-    
+    -- J := I lifted to TAmb + (t^2 - t) --> makes t and (1-t) into idemponents in T
+    -- T := TAmb / J
     newMonomialOrder := prepend(GRevLex => 1, (monoid Q).Options.MonomialOrder); -- product order with p_0 in a different subring
     M := monoid [
 	Variables => (numgens Q + 1), 
@@ -579,12 +414,19 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     QtoT := map(T, Q, (vars T)_{1 .. numgens Q});
     TtoQ := map(Q, T, matrix{{0_Q}} | vars Q);
     t = (vars T)_(0,0);
-    ---------
+    --------------
+    -- Notation:
+    -- Gi := generators of Si lifted to T, for each i in {1, 2}
+    -- Form the subring of T given by
+    -- S := K[t*G1, (1-t)*G2]
     G1 := QtoT gens S1;
     G2 := QtoT gens S2;
     use T;
     G := t*G1 | (1-t)*G2;
     S := subring G;
+    --------------
+    -- Compute a sagbi basis for S (take care of options supplied by user)
+    -- SB := subalgebraBasis S
     if opts#"SAGBILimitType" == "Fixed" then (
 	limit = opts.Limit;
 	) else if opts#"SAGBILimitType" == "Function" then (
@@ -596,8 +438,12 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
 	Limit => limit,
 	PrintLevel => opts.PrintLevel
 	);
-    -- if SB is a sagbi basis the intersection computation is correct!
-    --  in this case, the intersectionGens form a sagbi basis for the intersection 
+    ------------
+    -- The intersection of S1 and S2 is generated by the elements SB|_Q of SB that do not contain t := p_0
+    -- If SB is a finite sagbi basis then the intersection computation is verrified to be correct!
+    -- >> In this case, the elements SB|_Q form a sagbi basis for the intersection so use forceSB 
+    -- Note that, if the intersection of S1 and S2 has a finite sagbi basis, then it is NOT guaranteed
+    -- that S has a finite sagbi basis.
     intersectionGens := selectInSubring(1, gens SB);
     result := subring TtoQ intersectionGens;
     if isSAGBI SB then forceSB result;

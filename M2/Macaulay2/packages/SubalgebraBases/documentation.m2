@@ -559,50 +559,6 @@ doc ///
 -- ##  sagbi-functions.m2 documentation ##
 -- #######################################
 
--*
-doc ///
-   Key
-     verifySagbi
-     (verifySagbi, Subring)
-     (verifySagbi, Matrix)
-     (verifySagbi, List)
-    [verifySagbi, Compute]
-    [verifySagbi, Strategy]
-    [verifySagbi, SubductionMethod]
-    [verifySagbi, Limit]
-    [verifySagbi, PrintLevel]
-    [verifySagbi, Recompute]
-    [verifySagbi, RenewOptions]
-   Headline
-     Test if the generators form sagbi basis
-   Usage
-     result = verifySagbi S
-     result = verifySagbi M
-     result = verifySagbi L
-   Inputs
-     S:Subring
-     M:Matrix
-     L:List
-   Outputs
-     result:Boolean
-       do the generators of S form a sagbi basis.
-   Description
-     Text
-       This function will check whether the generators of the given
-       object form a sagbi basis. Previously performed calculations
-       are used to speed up the test, if they exist. Otherwise, a 
-       basic computation object is produced, updated and stored.
-     Example
-       R = QQ[x,y,z];
-       L = subring {y*(x-1), y*x^2, y*(x^3+x^2+x+1), y^2};
-       verifySagbi L
-       M = {x+y+z,x*y+x*z+y*z, x*y*z, (x-y)*(x-z)*(y-z)};
-       verifySagbi M
-       N = {x+y+z, x*y+x*z+y*z, x*y*z};
-       verifySagbi N
-///
-*-
-
 doc ///
    Key
      isSAGBI
@@ -654,6 +610,10 @@ doc ///
        If @TT "isSAGBI"@ is supplied a @TO "SAGBIBasis"@ then the generators of the subring can be checked for being 
        a sagbi basis by setting @TO "UseSubringGens"@ to true.
        
+       A note of caution. Excessive use of @TT "isSAGBI"@ may impact performance.
+       The inputs and outputs of @TT "isSAGBI"@ are stored and never deleted. Since 
+       the inputs and outputs include pointers objects such as @TO "SAGBIBasis"@ computation objects, these 
+       objects will not be garbage collected. 
    SeeAlso
      SAGBIBasis
      (gens, SAGBIBasis)
