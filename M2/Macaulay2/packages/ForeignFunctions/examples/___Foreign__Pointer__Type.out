@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- hash: -952057602
+
+i1 : voidstar
+
+o1 = void*
+
+o1 : ForeignPointerType
+
+i2 : 

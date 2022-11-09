@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: -1127849569
+
+i1 : size char'
+
+o1 = 1
+
+i2 : size voidstar
+
+o2 = 8
+
+i3 : 

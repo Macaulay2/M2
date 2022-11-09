@@ -6,7 +6,10 @@ newPackage("ForeignFunctions",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Interfaces"}
+    Keywords => {"Interfaces"},
+    CacheExampleOutput => true,
+    AuxiliaryFiles => true,
+    OptionalComponentsPresent => Core#"private dictionary"#?"ffiCall"
     )
 
 -------------------------
@@ -71,7 +74,7 @@ export {
     "Variadic"
     }
 
-importFrom_Core {
+ffiDFunctions = {
     "dlopen",
     "dlsym",
     "ffiPrepCif",
@@ -97,12 +100,24 @@ importFrom_Core {
     "registerFinalizerForPointer"
     }
 
+if (options currentPackage).OptionalComponentsPresent
+then importFrom_Core ffiDFunctions else
+for f in ffiDFunctions do (
+    currentPackage#"private dictionary"#f = getSymbol f;
+    getSymbol f <- (
+	if member(f, {"ffiIntegerType", "ffiRealType"}) then x -> null
+	else x -> error "Macaulay2 built without libffi"))
 
 -------------
 -- pointer --
 -------------
 
-exportFrom_Core {"Pointer", "nullPointer"}
+exportFrom_Core {"Pointer"}
+if (options currentPackage).OptionalComponentsPresent
+then exportFrom_Core {"nullPointer"} else (
+    currentPackage#"private dictionary"#"nullPointer" = getSymbol "nullPointer";
+    getSymbol "nullPointer" <- null)
+
 Pointer.synonym = "pointer"
 Pointer + ZZ := (ptr, n) -> ptr + n -- defined in actors.d
 ZZ + Pointer := (n, ptr) -> ptr + n
@@ -1416,6 +1431,7 @@ doc ///
     (foreignObject, Number)
     (foreignObject, String)
     (foreignObject, ZZ)
+    (foreignObject, Pointer)
   Headline
     construct a foreign object
   Usage

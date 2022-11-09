@@ -1,0 +1,45 @@
+-- -*- M2-comint -*- hash: 991196957
+
+i1 : x = (3 * int) {3, 5, 7}
+
+o1 = {3, 5, 7}
+
+o1 : ForeignObject of type int32[3]
+
+i2 : x_1
+
+o2 = 5
+
+o2 : ForeignObject of type int32
+
+i3 : x_(-1)
+
+o3 = 7
+
+o3 : ForeignObject of type int32
+
+i4 : length x
+
+o4 = 3
+
+i5 : i = iterator x;
+
+i6 : next i
+
+o6 = 3
+
+o6 : ForeignObject of type int32
+
+i7 : next i
+
+o7 = 5
+
+o7 : ForeignObject of type int32
+
+i8 : for y in x list value y + 1
+
+o8 = {4, 6, 8}
+
+o8 : List
+
+i9 : 

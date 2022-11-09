@@ -377,6 +377,16 @@ to LDFLAGS.  For example, if Python has been installed using brew, then add
 the following to LDFLAGS, replacing X with the appropriate minor version:
 "-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.X/lib".
 
+-------------------------------
+Building without libffi support
+-------------------------------
+
+Use of the "ForeignFunctions" package requires linking the Macaulay2 binary
+against libffi (https://sourceware.org/libffi/).  This has been known to
+cause issues on Apple silicon machines, and so it is possible to opt out of
+this feature by adding the "--without-libffi" option to the "configure" command
+line below.
+
 -----------------------
 Compiling Macaulay2
 -----------------------

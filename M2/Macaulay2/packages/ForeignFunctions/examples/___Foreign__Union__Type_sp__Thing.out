@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- hash: 292894177
+
+i1 : myunion = foreignUnionType("myunion", {"foo" => int, "bar" => double})
+
+o1 = myunion
+
+o1 : ForeignUnionType
+
+i2 : myunion 27
+
+o2 = HashTable{bar => 6.93511e-310}
+               foo => 27
+
+o2 : ForeignObject of type myunion
+
+i3 : myunion pi
+
+o3 = HashTable{bar => 3.14159   }
+               foo => 1413754136
+
+o3 : ForeignObject of type myunion
+
+i4 : myunion double 5
+
+o4 = HashTable{bar => 5}
+               foo => 0
+
+o4 : ForeignObject of type myunion
+
+i5 : 

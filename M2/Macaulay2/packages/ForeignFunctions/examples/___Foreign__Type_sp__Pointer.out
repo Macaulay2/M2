@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: -1184332995
+
+i1 : x = int 5
+
+o1 = 5
+
+o1 : ForeignObject of type int32
+
+i2 : ptr = address x
+
+o2 = 0x7f5b2a9ec850
+
+o2 : Pointer
+
+i3 : int ptr
+
+o3 = 5
+
+o3 : ForeignObject of type int32
+
+i4 : 
