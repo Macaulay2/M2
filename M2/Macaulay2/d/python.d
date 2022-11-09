@@ -1,6 +1,7 @@
 -- Copyright 2009,2010 by Daniel R. Grayson
 use common;
 use util;
+use evaluate;
 
 header "#include <Python.h>";
 
@@ -380,6 +381,50 @@ PyObjectCall(e:Expr):Expr :=
 	else WrongNumArgs(3)
     else WrongNumArgs(3);
 setupfun("pythonObjectCall",PyObjectCall);
+
+wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
+    ptr := Ccode(voidPointer, "PyCapsule_GetPointer(", self, ", NULL)");
+    if ptr == nullPointer() then return pythonObjectOrNull(null());
+    f := Ccode(FunctionClosure, "(", FunctionClosure, ")", ptr);
+    r := applyEE(Expr(f), toExpr(pythonObjectOrNull(args)));
+    when r
+    is e:Error do (
+	Ccode(void, "PyErr_SetString(PyExc_RuntimeError, ",
+	    tocharstar(e.message), ")");
+	pythonObjectOrNull(null()))
+    is o:pythonObjectCell do pythonObjectOrNull(o.v)
+    else (
+	Ccode(void, "PyErr_SetString(PyExc_TypeError, ",
+	    "\"expected return value to be a python object\")");
+	pythonObjectOrNull(null())));
+
+PyWrapM2Function(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0 is name:stringCell do
+	    when a.1 is f:FunctionClosure do (
+		ml := Ccode(voidPointer, "PyMem_Malloc(sizeof(PyMethodDef))");
+		Ccode(void, "((PyMethodDef *)", ml, ")->ml_name = ",
+		    tocharstar(name.v));
+		Ccode(void, "((PyMethodDef *)", ml,
+		    ")->ml_meth = (PyCFunction)", wrappedM2Function);
+		Ccode(void, "((PyMethodDef *)", ml,
+		    ")->ml_flags = METH_VARARGS");
+		Ccode(void, "((PyMethodDef *)", ml,
+		    ")->ml_doc = \"wrapped Macaulay2 function\"");
+		capsule := Ccode(pythonObjectOrNull,
+		    "PyCapsule_New(", f, ", NULL, NULL)");
+		when capsule
+		is null do return buildPythonErrorPacket()
+		else toExpr(Ccode(pythonObjectOrNull,
+			"(PyObject *)PyCFunction_New(", ml,
+			", (PyObject *)", capsule, ")")))
+	    else WrongArg(2, "a function closure")
+	    else WrongArgString(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("pythonWrapM2Function", PyWrapM2Function);
 
 ----------
 -- none --

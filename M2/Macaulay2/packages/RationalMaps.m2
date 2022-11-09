@@ -50,7 +50,7 @@ export{
     "SimisStrategy", --an option for controlling how inversion of maps is run.
     "HybridStrategy", --an option for controlling how inversion of maps is run. (This is the default)
     "MinorsLimit", --an option for how many times we should randomly look for a minor before calling syz in inverseOfMap
-    "HybridLimit", --an option for controlling inversion of maps (whether to do more simis or more rees strategies)
+    "HybridLimit", --an option for controlling inversion of maps (whether to do more Simis or more Rees strategies)
     "CheckBirational", --an option for inverseOfMap, whether or not to check whether something is birational
     "SaturateOutput",  --option to turn off saturation of the output
     "AssumeDominant" --option to assume's that the map is dominant (ie, don't compute the kernel)
@@ -291,7 +291,7 @@ isRegularMap(RationalMapping) := o->(phi) ->(
   );
 
 
-  --the rees algebra computation below is too slow, we need to modify it
+  --the Rees algebra computation below is too slow, we need to modify it
   --Hamid: we may add all of the strategies and options which are applied in saturate
  blowUpIdealsSaturation(Ideal, BasicList):=(a,L)->(
     r:=length  L;
@@ -404,7 +404,7 @@ simisAlgebra(Ideal, Matrix,ZZ):=(a,M,m)->(
  --this function computes the "relation type" of an ideal in a ring R.
  --Let R be the ring given bythe  ideal a and L be a list of elements in R.
  --the relation type is the biggest degree in terms of new variables in the
- --defining ideal of the rees algebra of I over R.
+ --defining ideal of the Rees algebra of I over R.
  --
 
  relationType(Ideal,BasicList):=o->(a,L)->(
@@ -745,7 +745,7 @@ isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
 
     flag := false;   --this boolean checks whether it is birational
     giveUp := false;  --this checks whether we give up checkin birationality or not yet
-    secdeg:=1;        --the second degree of rees equations
+    secdeg:=1;        --the second degree of Rees equations
     jj := 1;
     M := null;
     while (giveUp == false) do (
@@ -1386,7 +1386,7 @@ document{
     Key=>{HybridLimit},
     Headline=>"an option to control HybridStrategy",
        "This controls behavior when using ", TT "Strategy=>HybridStrategy", ".  ", "By increasing the HybridLimit value (default 15), 
-       HybridStrategy will execte SimisStrategy longer. 
+       HybridStrategy will execute SimisStrategy longer. 
 	     Infinity will behave exactly like SimisStrategy.",
     SeeAlso=>{
         "HybridStrategy"        

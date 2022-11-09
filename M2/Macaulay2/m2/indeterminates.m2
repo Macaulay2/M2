@@ -56,10 +56,12 @@ succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === 
 	    if #d === 0 then d=y#2#0 else d=new Subscript from {y#2#0,unsequence d};
 	    a===b and c===d and succ(a,c)
 	)))
+succ(Holder,Thing) := (x,y) -> succ(x#0,y)
+succ(Thing,Holder) := (x,y) -> succ(x,y#0)
 succ(Symbol,Symbol) := (x,y) -> (
      (s,t) := (toString x, toString y);
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
-succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(expressionValue x#1,expressionValue y#1)
+succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
 succ(Thing,Thing) := x -> false
 runLengthEncode = method(Dispatch => Thing)
 runLengthEncode VisibleList := x -> (

@@ -1181,7 +1181,7 @@ Cl==C
 To save memory the goal is to store face of complexes and their 
 subcomplexes only once. If (e.g. by boundaryOfPolytope, idealToCoComplex,...) 
 a complex C1 is computed which is a subcomplex of C and is a face of C1
-then then F.ofComplex returns still C.
+then F.ofComplex returns still C.
 This e.g. allows us to dualize F if C was a polytope
 *-
 
@@ -6013,7 +6013,7 @@ doc ///
      isPolytope
      facets
   Caveat
-     This just returns C.dualComplex.grading. If this data has not beed computed use @TO verticesDualPolytope@.
+     This just returns C.dualComplex.grading. If this data has not been computed use @TO verticesDualPolytope@.
      Integrate into this verticesDualPolytope.
 ///
 

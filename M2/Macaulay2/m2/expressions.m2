@@ -533,22 +533,22 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-matrixOpts := x -> ( -- helper function
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null,MutableMatrix=>false};
-    (opts,x) = override(opts,toSequence x);
-    if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
-    (opts,x)
+matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
+matrixOpts := m -> ( -- helper function
+    (opts,x) := override(matrixOpts1,toSequence m);
+    (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    m = (if opts#MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+    m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+    -- TODO: keep track of blocks too
     if opts.Degrees === null then m else (
     R := ring m;
     map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
     ))
 toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
     (opts,m) := matrixOpts x;
-    if opts#MutableMatrix then "mutableMatrix {" else "matrix {",
+    if opts.MutableMatrix then "mutableMatrix {" else "matrix {",
     between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
     "}" )
 -----------------------------------------------------------------------------
@@ -948,12 +948,13 @@ toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
+    blk := opts.Blocks =!= null; -- whether to display blocks
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    net1 := if opts.CompactMatrix then toCompactString else net;
+    net1 := if compactMatrixForm then toCompactString else net;
     vbox0 := if opts.Degrees === null then 0 else 1;
-    (hbox,vbox) := if opts.BlockMatrix =!= null then (drop(accumulate(plus,0,opts.BlockMatrix#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.BlockMatrix#1))) else (false,{vbox0,vbox0+#m#0});
+    (hbox,vbox) := if blk then (drop(accumulate(plus,0,opts.Blocks#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.Blocks#1))) else (false,{vbox0,vbox0+#m#0});
     m = if opts.Degrees =!= null then apply(#m,i->apply(prepend(opts.Degrees#0#i,m#i),net1)) else applyTable(m,net1);
-    netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#(opts.CompactMatrix))
+    netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#compactMatrixForm)
     )
 
 --html MatrixExpression := x -> html TABLE toList x
@@ -1073,9 +1074,9 @@ texMath Product := v -> (
     else (
 	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
 	p := precedence v;
-	nums := apply(v, x -> isNumber x);
+	nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0));
 	precs := apply(v, x -> precedence x <= p);
-	seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot "
+	seps := apply (n-1, i-> if nums#(i+1) then "\\times "
 	    else if class v#i =!= Power and class v#i =!= Subscript and not precs#i and not precs#(i+1) then
 	    if nums#i or class v#i === Symbol then "\\," else "\\ "
 	    else "");
@@ -1127,7 +1128,7 @@ texMath Subscript := v -> (
      p := precedence v;
      x := texMath v#0;
      y := if class v#1 === Sequence then demark(",", apply(v#1,texMath)) else texMath v#1; -- no () for sequences
-     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+     if precedence v#0 <  p or class v#0 === Subscript then x = "\\left(" | x | "\\right)"; -- precedence or double subscript
      concatenate(x,"_{",y,"}") -- no braces around x
      )
 
@@ -1181,30 +1182,29 @@ texMath Table := m -> (
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    if opts.BlockMatrix =!= null then ( j := 1; h := 0; );
+    blk := opts.Blocks =!= null; -- whether to display blocks
+    if blk then ( j := 0; h := 0; );
     m = applyTable(m,texMath);
     concatenate(
 	if opts.Degrees =!= null then (
 	    degs := apply(opts.Degrees#0,texMath);
-	    if opts.CompactMatrix then "\\begin{smallmatrix}" else "\\begin{array}{l}",
+	    "\\begin{array}{l}",
 	    apply(#m, i -> concatenate(degs#i,"\\vphantom{",m#i, "}", if i<#m-1 then "\\\\")),
-	    if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}"
+	    "\\end{array}"
 	    ),
 	"\\left(",
-	if opts.CompactMatrix then "\\begin{smallmatrix}" else {
-	    "\\!\\begin{array}{",
-	    if opts.BlockMatrix =!= null then demark("|",apply(opts.BlockMatrix#1,i->i:"c")) else #m#0:"c",
-	    "}"
-	    },
+	"\\!\\begin{array}{",
+	if blk then demark("|",apply(opts.Blocks#1,i->i:"c")) else #m#0:"c",
+	"}",
 	newline,
 	apply(#m, i -> concatenate(
 		if opts.Degrees =!= null then "\\vphantom{"| degs#i | "}",
 		 between("&",m#i),
 		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
-		 if opts.BlockMatrix =!= null then if h<#opts.BlockMatrix#0-1 and j == opts.BlockMatrix#0#h then (j=0; h=h+1; "\\hline\n") else (j=j+1;)
+		 if blk then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
 		 )),
-	if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\end{array}\\!",
 	"\\right)"
 	)
 )
@@ -1212,10 +1212,10 @@ texMath MatrixExpression := x -> (
 texMath VectorExpression := v -> (
     concatenate(
 	"\\left(",
-	if compactMatrixForm then "\\begin{smallmatrix}" else "\\!\\begin{array}{c}",
+	"\\!\\begin{array}{c}",
 	newline,
 	between(///\\///,apply(toList v,texMath)),
-	if compactMatrixForm then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\end{array}\\!",
 	"\\right)"
 	)
     )
@@ -1316,40 +1316,42 @@ texMath Set := x -> texMath expression x
 
 -- shortening expressions
 Dots = new Type of Symbol
-texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
-toString Dots := net Dots := x -> "..."
 cdots=new Dots from symbol cdots
 ddots=new Dots from symbol ddots
 vdots=new Dots from symbol vdots
 ldots=new Dots from symbol ldots
+texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
+toString Dots := x -> "..."
+net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
 shortLength := 8
--- used in chaincomplexes.m2
-short = method(Dispatch => Thing, TypicalValue => Expression)
-short Thing := short @@ expression
-short Expression := identity
-short MatrixExpression := x -> (
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
-    (opts,x) = override(opts,toSequence x);
-    m := toList x;
+-- used e.g. in chaincomplexes.m2
+Short = new WrapperType of Holder
+unhold Short := identity
+short = method(Dispatch => Thing, TypicalValue => Short)
+short Thing := x -> short expression x
+short Holder := x -> Short unhold x
+expressionValue Short := x -> error "can't evaluate a shortened expression"
+short MatrixExpression :=
+short Table := x -> Short (
+    (opts,m) := matrixOpts x;
     shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
-    new MatrixExpression from {
+    new class x from
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
-	    else toList m,short),
-	CompactMatrix=>true
-	}
+	    else m,shortRow)
     )
-short VectorExpression :=
 short VisibleList :=
-short Product :=
-short Sum := x -> apply(if #x>shortLength then new class x from {
+short Expression := x -> Short { apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
 	}
-    else x,short)
-short String := s -> if #s > shortLength then first s | "..." | last s else s
-short Net := n -> if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
+    else x,short) }
+short Minus := identity
+short BinaryOperation := b -> Short BinaryOperation {b#0,short b#1,short b#2}
+short Power := p -> Short Power {short p#0,p#1}
+short String := s -> Short if #s > shortLength then first s | "..." | last s else s
+short Net := n -> Short if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

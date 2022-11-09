@@ -11,10 +11,45 @@ header "#include <dlfcn.h>
 	#endif
 	#include <M2mem.h>";
 
+-- ffi_get_struct_offsets not introduced until libffi 3.3 in 2019
+-- so we provide an alternate implementation
+header "
+#ifndef HAVE_FFI_GET_STRUCT_OFFSETS
+#define FFI_ALIGN(v, a)  (((((size_t) (v))-1) | ((a)-1))+1)
+
+ffi_status
+ffi_get_struct_offsets(ffi_abi abi, ffi_type *struct_type, size_t *offsets)
+{
+  ffi_cif cif;
+  ffi_status status;
+  ffi_type **ptr;
+  size_t size;
+
+  status = ffi_prep_cif(&cif, abi, 0, struct_type, NULL);
+  if (status != FFI_OK)
+    return status;
+
+  ptr = &(struct_type->elements[0]);
+  size = 0;
+
+  while ((*ptr) != NULL) {
+      size = FFI_ALIGN(size, (*ptr)->alignment);
+      *offsets++ = size;
+      size += (*ptr)->size;
+      ptr++;
+  }
+
+  return FFI_OK;
+}
+#endif
+";
+
 voidPointerOrNull := voidPointer or null;
 toExpr(x:voidPointer):Expr := Expr(pointerCell(x));
 WrongArgPointer():Expr := WrongArg("a pointer");
 WrongArgPointer(n:int):Expr := WrongArg(n, "a pointer");
+setupconst("nullPointer", toExpr(nullPointer()));
+
 getMem(n:int):voidPointer := Ccode(voidPointer, "getmem(", n, ")");
 getMemAtomic(n:int):voidPointer := Ccode(voidPointer, "getmem_atomic(", n, ")");
 
@@ -121,6 +156,19 @@ ffiPrepCifVar(e:Expr):Expr :=
 	else WrongNumArgs(3);
 setupfun("ffiPrepCifVar", ffiPrepCifVar);
 
+-- fix return value on big-endian systems, since integer types are widened
+-- to system register size
+endianAdjust(ptr:voidPointer, rtype:voidPointer):voidPointer:= (
+    if Ccode(int, "__BYTE_ORDER__") == Ccode(int, "__ORDER_LITTLE_ENDIAN__")
+    then ptr
+    else (
+	offset := Ccode(int,
+	    "sizeof(ffi_arg) - ((ffi_type *)", rtype,")->size");
+	if (Ccode(int, "((ffi_type *)", rtype, ")->type") ==
+	    Ccode(int, "FFI_TYPE_FLOAT") || offset <= 0)
+	then ptr
+	else Ccode(voidPointer, ptr, " + ", offset)));
+
 ffiCall(e:Expr):Expr :=
     when e
     is a:Sequence do
@@ -130,8 +178,7 @@ ffiCall(e:Expr):Expr :=
 		is fn:pointerCell do when a.2
 		    is n:ZZcell do when a.3
 			is z:List do (
-			    rvalue := Ccode(voidPointer,
-				"getmem(", toInt(n), ")");
+			    rvalue := getMem(toInt(n));
 			    avalues := new array(voidPointer)
 				len length(z.v) at i
 				    do provide when z.v.i is p:pointerCell
@@ -141,7 +188,8 @@ ffiCall(e:Expr):Expr :=
 				fn.v, ", ",
 				rvalue, ", ",
 				avalues, "->array)");
-			    toExpr(rvalue))
+			    toExpr(endianAdjust(rvalue, Ccode(voidPointer,
+					"((ffi_cif *)", cif.v, ")->rtype"))))
 			else WrongArg(4, "a list")
 		    else WrongArgZZ(3)
 		else WrongArgPointer(2)
@@ -527,3 +575,51 @@ ffiUnionType(e:Expr):Expr := (
 	toExpr(x))
     else WrongArg("a list"));
 setupfun("ffiUnionType", ffiUnionType);
+
+----------------------------
+-- function pointer types --
+----------------------------
+
+ffiClosureFunction(cif:Pointer "ffi_cif *", ret:voidPointer,
+    args:Pointer "void **", userData:voidPointer):void := (
+    nargs := Ccode(int, cif, "->nargs");
+    f := Expr(Ccode(FunctionClosure, userData));
+    x := Expr(
+	if nargs == 1 then Expr(pointerCell(Ccode(voidPointer, "*", args)))
+	else Expr(new Sequence len nargs at i do provide pointerCell(
+		Ccode(voidPointer, args, "[", i, "]"))));
+    when applyEE(f, x)
+    is ptr:pointerCell
+    do Ccode(void, "memcpy(",
+	endianAdjust(ret, Ccode(voidPointer, "((ffi_cif *)", cif, ")->rtype")),
+	", ", ptr.v, ", ", cif, "->rtype->size)")
+    else nothing);
+
+ffiClosureFinalizer(ptr:voidPointer, closure:voidPointer):void := (
+    Ccode(void, "ffi_closure_free(", closure, ")"));
+
+ffiFunctionPointerAddress(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	when a.0
+	is f:FunctionClosure do (
+	    when a.1
+	    is cif:pointerCell do (
+		code := nullPointer();
+		closure := Ccode(voidPointer,
+		    "ffi_closure_alloc(sizeof(ffi_closure), &", code, ")");
+		if closure == nullPointer() then return buildErrorPacket(
+		    "ffi_closure_alloc() returned NULL");
+		r := Ccode(int, "ffi_prep_closure_loc(", closure, ", ", cif.v,
+		    ", ", ffiClosureFunction, ", ", f, ", ", code, ")");
+		if r != ffiOk then return ffiError(r);
+		ptr := getMem(pointerSize);
+		Ccode(void, "*(void **)", ptr, " = ", closure);
+		Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
+		    "(GC_finalization_proc)", ffiClosureFinalizer, ", ",
+		    closure, ", 0, 0)");
+		toExpr(ptr))
+	    else WrongArgPointer(2))
+	else WrongArg(1, "a function"))
+    else WrongNumArgs(2));
+setupfun("ffiFunctionPointerAddress", ffiFunctionPointerAddress);

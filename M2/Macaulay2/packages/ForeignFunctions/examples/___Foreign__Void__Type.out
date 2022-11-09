@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- hash: -1124752212
+
+i1 : void
+
+o1 = void
+
+o1 : ForeignVoidType
+
+i2 : 

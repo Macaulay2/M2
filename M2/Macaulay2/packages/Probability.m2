@@ -1,7 +1,7 @@
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.1",
-    Date => "May 4, 2022",
+    Version => "0.2",
+    Date => "October 31, 2022",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -961,7 +961,7 @@ doc ///
   Inputs
     m:ZZ -- nonnegative
     n:ZZ -- nonnegative
-    k:ZZ -- between 0 and and @TT "m + n"@
+    k:ZZ -- between 0 and @TT "m + n"@
   Outputs
     :DiscreteProbabilityDistribution
   Description

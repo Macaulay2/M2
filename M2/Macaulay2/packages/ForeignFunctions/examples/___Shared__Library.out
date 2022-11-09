@@ -1,0 +1,13 @@
+-- -*- M2-comint -*- hash: 715115677
+
+i1 : mpfr = openSharedLibrary "mpfr"
+
+o1 = mpfr
+
+o1 : SharedLibrary
+
+i2 : peek mpfr
+
+o2 = SharedLibrary{0x7fc4806a1f90, mpfr}
+
+i3 : 

@@ -6,7 +6,10 @@ newPackage("ForeignFunctions",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Interfaces"}
+    Keywords => {"Interfaces"},
+    CacheExampleOutput => true,
+    AuxiliaryFiles => true,
+    OptionalComponentsPresent => Core#"private dictionary"#?"ffiCall"
     )
 
 -------------------------
@@ -24,8 +27,10 @@ export {
     "ForeignPointerType",
     "ForeignStringType",
     "ForeignArrayType",
+    "ForeignPointerArrayType",
     "ForeignUnionType",
     "ForeignStructType",
+    "ForeignFunctionPointerType",
     "ForeignObject",
 
 -- built-in foreign types
@@ -50,6 +55,8 @@ export {
     "double",
     "voidstar",
     "charstar",
+    "voidstarstar",
+    "charstarstar",
 
 -- methods
     "openSharedLibrary",
@@ -57,14 +64,17 @@ export {
     "foreignObject",
     "address",
     "foreignArrayType",
+    "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
+    "foreignFunctionPointerType",
+    "foreignSymbol",
 
 -- symbols
     "Variadic"
     }
 
-importFrom_Core {
+ffiDFunctions = {
     "dlopen",
     "dlsym",
     "ffiPrepCif",
@@ -86,15 +96,28 @@ importFrom_Core {
     "ffiGetStructOffsets",
     "ffiStructAddress",
     "ffiUnionType",
+    "ffiFunctionPointerAddress",
     "registerFinalizerForPointer"
     }
 
+if (options currentPackage).OptionalComponentsPresent
+then importFrom_Core ffiDFunctions else
+for f in ffiDFunctions do (
+    currentPackage#"private dictionary"#f = getSymbol f;
+    getSymbol f <- (
+	if member(f, {"ffiIntegerType", "ffiRealType"}) then x -> null
+	else x -> error "Macaulay2 built without libffi"))
 
 -------------
 -- pointer --
 -------------
 
 exportFrom_Core {"Pointer"}
+if (options currentPackage).OptionalComponentsPresent
+then exportFrom_Core {"nullPointer"} else (
+    currentPackage#"private dictionary"#"nullPointer" = getSymbol "nullPointer";
+    getSymbol "nullPointer" <- null)
+
 Pointer.synonym = "pointer"
 Pointer + ZZ := (ptr, n) -> ptr + n -- defined in actors.d
 ZZ + Pointer := (n, ptr) -> ptr + n
@@ -104,7 +127,7 @@ Pointer - ZZ := (ptr, n) -> ptr + -n
 -- foreign object --
 --------------------
 
-ForeignObject = new SelfInitializingType of BasicList
+ForeignObject = new SelfInitializingType of HashTable
 ForeignObject.synonym = "foreign object"
 net ForeignObject := x -> net value x
 ForeignObject#{Standard, AfterPrint} = x -> (
@@ -115,7 +138,7 @@ ForeignObject#{Standard, AfterPrint} = x -> (
 value ForeignObject := x -> error("no value function exists for ", class x)
 
 address = method(TypicalValue => Pointer)
-address ForeignObject := first
+address ForeignObject := x -> x.Address
 
 foreignObject = method(TypicalValue => ForeignObject)
 foreignObject ForeignObject := identity
@@ -126,6 +149,11 @@ foreignObject VisibleList := x -> (
     types := unique(class \ foreignObject \ x);
     if #types == 1 then (foreignArrayType(first types, #x)) x
     else error("expected all elements to have the same type"))
+foreignObject Pointer := x -> voidstar x
+
+registerFinalizer(ForeignObject, Function) := (
+    x, f) -> registerFinalizerForPointer(
+    address x, f, ffiPointerValue address x)
 
 -----------------------------------
 -- foreign type (abstract class) --
@@ -152,7 +180,8 @@ size ForeignType := ffiTypeSize @@ address
 -- so we add the unexported "dereference" method for the latter case
 
 dereference = method()
-dereference(ForeignType, Pointer) := (T, ptr) -> new T from ForeignObject {ptr}
+dereference(ForeignType, Pointer) := (T, ptr) -> new T from ForeignObject {
+    Address => ptr}
 ForeignType Pointer := dereference
 ForeignType ForeignObject := (T, x) -> dereference_T address x
 
@@ -181,7 +210,8 @@ foreignIntegerType(String, ZZ, Boolean) := (name, bits, signed) -> (
     T := new ForeignIntegerType;
     T.Name = name;
     T.Address = ffiIntegerType(bits, signed);
-    new T from ZZ := (T, n) -> new T from {ffiIntegerAddress(n, bits, signed)};
+    new T from ZZ := (T, n) -> new T from {
+	Address => ffiIntegerAddress(n, bits, signed)};
     value T := x -> ffiIntegerValue(address x, bits, signed);
     T)
 
@@ -221,8 +251,9 @@ foreignRealType(String, ZZ) := (name, bits) -> (
     T := new ForeignRealType;
     T.Name = name;
     T.Address = ffiRealType(bits);
-    new T from RR := (T, x) -> new T from {ffiRealAddress(x, bits)};
+    new T from RR := (T, x) -> new T from {Address => ffiRealAddress(x, bits)};
     value T := x -> ffiRealValue(address x, bits);
+    net T := x -> format(0, value x);
     T)
 
 float = foreignRealType("float", 32)
@@ -243,10 +274,8 @@ voidstar = new ForeignPointerType
 voidstar.Name = "void*"
 voidstar.Address = ffiPointerType
 value voidstar := ffiPointerValue @@ address
-ForeignPointerType Pointer := (T, x) -> new T from {ffiPointerAddress x}
-
-registerFinalizer(voidstar, Function) := (
-    x, f) -> registerFinalizerForPointer(address x, f, value x)
+ForeignPointerType Pointer := (T, x) -> new T from {
+    Address => ffiPointerAddress x}
 
 -------------------------
 -- foreign string type --
@@ -259,7 +288,8 @@ charstar = new ForeignStringType
 charstar.Name = "char*"
 charstar.Address = ffiPointerType
 value charstar := ffiStringValue @@ address
-ForeignStringType String := (T, x) -> new T from {ffiPointerAddress x}
+ForeignStringType String := (T, x) -> new T from {
+    Address => ffiPointerAddress x}
 
 ------------------------
 -- foreign array type --
@@ -286,14 +316,21 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
     length S := x -> n;
     new S from VisibleList := (S, x) -> (
 	if #x != n then error("expected a list of length ", n);
-	new S from ForeignObject {
+	new S from ForeignObject {Address =>
 	    ffiPointerAddress(address T, address \ apply(x, y -> T y))});
-    value S := x -> (
-	ptr := ffiPointerValue address x;
-	sz := size T;
-	apply(n, i -> dereference_T(ptr + i * sz)));
+    value S := x -> for y in x list value y;
     S_ZZ := (x, i) -> dereference_T(
 	ffiPointerValue address x + size T * checkarraybounds(n, i));
+    iterator S := x -> Iterator(
+	ptr := ffiPointerValue address x;
+	i := 0;
+	() -> (
+	    if i >= n then StopIteration
+	    else (
+		r := dereference_T ptr;
+		i = i + 1;
+		ptr = ptr + size T;
+		r)));
     S)
 
 ForeignArrayType VisibleList := (T, x) -> new T from x
@@ -301,6 +338,57 @@ ForeignArrayType VisibleList := (T, x) -> new T from x
 -- syntactic sugar based on Python's ctypes
 ZZ * ForeignType := (n, T) -> foreignArrayType(T, n)
 ForeignType * ZZ := (T, n) -> n * T
+
+-- null-terminated arrays of pointers
+ForeignPointerArrayType = new Type of ForeignType
+ForeignPointerArrayType.synonym = "foreign array type"
+
+foreignPointerArrayType = method(TypicalValue => ForeignPointerArrayType)
+foreignPointerArrayType ForeignType := T -> foreignPointerArrayType(
+    net T | "*", T)
+foreignPointerArrayType(String, ForeignType) := (name, T) -> (
+    if address T =!= ffiPointerType then error "expected a pointer type";
+    S := new ForeignPointerArrayType;
+    S.Name = name;
+    S.Address = ffiPointerType;
+    sz := version#"pointer size";
+    length S := x -> (
+	len := 0;
+	ptr := ffiPointerValue address x;
+	while ffiPointerValue ptr =!= nullPointer
+	do (
+	    len = len + 1;
+	    ptr = ptr + sz);
+	len);
+    new S from VisibleList := (S, x) -> new S from ForeignObject {
+	Address => ffiPointerAddress(address T,
+	    append(apply(x, y -> address T y), address voidstar nullPointer))};
+    value S := x -> for y in x list value y;
+    S_ZZ := (x, i) -> (
+	len := 0;
+	ptr := ffiPointerValue address x;
+	while ffiPointerValue ptr =!= nullPointer
+	do (
+	    if len == i then return dereference_T ptr;
+	    len = len + 1;
+	    ptr = ptr + sz);
+	if i >= 0 or i < -len then error(
+	    "array index ", i, " out of bounds 0 .. ", len - 1)
+	else dereference_T(ptr + sz * i));
+    iterator S := x -> Iterator(
+	ptr := ffiPointerValue address x;
+	() -> (
+	    if ffiPointerValue ptr === nullPointer then StopIteration
+	    else (
+		r := dereference_T ptr;
+		ptr = ptr + version#"pointer size";
+		r)));
+    S)
+
+voidstarstar = foreignPointerArrayType voidstar
+charstarstar = foreignPointerArrayType charstar
+
+ForeignPointerArrayType VisibleList := (T, x) -> new T from x
 
 -------------------------
 -- foreign struct type --
@@ -321,16 +409,18 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     ptr := T.Address = ffiStructType \\ address \ last \ x;
     types := hashTable x;
     offsets := hashTable transpose {first \ x, ffiGetStructOffsets ptr};
-    new T from HashTable := (T, H) -> new T from {ffiStructAddress(ptr,
-	    apply(first \ x, mbr -> address types#mbr H#mbr))};
+    new T from VisibleList := (T, L) -> (
+	H := hashTable L;
+	new T from hashTable {Address => ffiStructAddress(ptr,
+		apply(first \ x, mbr -> address types#mbr H#mbr))});
     value T := y -> (
 	ptr' := address y;
 	applyPairs(types, (mbr, type) ->
-	    (mbr, dereference_type(ptr' + offsets#mbr))));
+	    (mbr, value dereference_type(ptr' + offsets#mbr))));
     T_String := (y, mbr) -> dereference_(types#mbr)(address y + offsets#mbr);
     T)
 
-ForeignStructType VisibleList := (T, x) -> new T from hashTable x
+ForeignStructType VisibleList := (T, x) -> new T from x
 
 ------------------------
 -- foreign union type --
@@ -351,11 +441,54 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
     types := hashTable x;
     value T := y -> (
 	ptr := address y;
-	applyPairs(types, (mbr, type) -> (mbr, dereference_type ptr)));
+	applyPairs(types, (mbr, type) -> (mbr, value dereference_type ptr)));
     T_String := (y, mbr) -> dereference_(types#mbr) address y;
     T)
 
-ForeignUnionType Thing := (T, x) -> new T from {address foreignObject x}
+ForeignUnionType Thing := (T, x) -> new T from {Address =>
+    address foreignObject x}
+
+-----------------------------------
+-- foreign function pointer type --
+-----------------------------------
+
+ForeignFunctionPointerType = new Type of ForeignType
+ForeignFunctionPointerType.synonym = "foreign function pointer type"
+
+foreignFunctionPointerType = method(TypicalValue => ForeignFunctionPointerType)
+foreignFunctionPointerType(ForeignType, ForeignType) := (
+    rtype, argtype) -> foreignFunctionPointerType(rtype, {argtype})
+foreignFunctionPointerType(ForeignType, VisibleList) := (
+    rtype, argtypes) -> foreignFunctionPointerType(
+    net rtype | "(*)(" | demark(",", net \ argtypes) | ")", rtype, argtypes)
+foreignFunctionPointerType(String, ForeignType, ForeignType) := (
+    name, rtype, argtype) -> foreignFunctionPointerType(name, rtype, {argtype})
+foreignFunctionPointerType(String, ForeignType, VisibleList) := (
+    name, rtype, argtypes) -> (
+    if any(argtypes, argtype -> not instance(argtype, ForeignType))
+    then error("expected argument types to be foreign types");
+    if any(argtypes, argtype -> instance(argtype, ForeignVoidType)) then (
+	if #argtypes == 1 then argtypes = {}
+	else error("void must be the only parameter"));
+    T := new ForeignFunctionPointerType;
+    T.Name = name;
+    T.Address = ffiPointerType;
+    cif := ffiPrepCif(address rtype, address \ argtypes);
+    net T := x -> concatenate(net rtype, "(*", x.Name, ")(",
+	demark(",", net \ argtypes), ")");
+    new T from Function := (T, f) -> new T from {
+	Address => ffiFunctionPointerAddress(
+	    if #argtypes == 1
+	    then args -> address rtype f value dereference_(argtypes#0) args
+	    else args -> address rtype f apply(0..#args-1,
+		i -> value dereference_(argtypes#i) args#i),
+	    cif),
+	Name => net f};
+    value T := x -> foreignFunction(ffiPointerValue address x, x.Name, rtype,
+	argtypes);
+    T)
+
+ForeignFunctionPointerType Function := (T, f) -> new T from f
 
 --------------------
 -- shared library --
@@ -404,6 +537,7 @@ foreignFunction(Pointer, String, ForeignType, VisibleList) :=  o -> (
 	    if not o.Variadic and #argtypes == 1 then argtypes = {}
 	    else error("void must be the only parameter"));
 	argtypePointers := address \ argtypes;
+	rsize := max(size rtype, version#"pointer size");
 	if o.Variadic then (
 	    nfixedargs := #argtypes;
 	    ForeignFunction(args -> (
@@ -415,7 +549,7 @@ foreignFunction(Pointer, String, ForeignType, VisibleList) :=  o -> (
 			argtypePointers | varargtypePointers);
 		    avalues := apply(nfixedargs, i ->
 			address (argtypes#i args#i)) | address \ varargs;
-		    dereference_rtype ffiCall(cif, funcptr, 100, avalues))))
+		    dereference_rtype ffiCall(cif, funcptr, rsize, avalues))))
 	else (
 	    cif := ffiPrepCif(address rtype, argtypePointers);
 	    ForeignFunction(args -> (
@@ -423,7 +557,16 @@ foreignFunction(Pointer, String, ForeignType, VisibleList) :=  o -> (
 		    if #argtypes != #args
 		    then error("expected ", #argtypes, " arguments");
 		    avalues := apply(#args, i -> address (argtypes#i args#i));
-		    dereference_rtype ffiCall(cif, funcptr, 100, avalues)))))
+		    dereference_rtype ffiCall(cif, funcptr, rsize, avalues)))))
+
+--------------------
+-- foreign symbol --
+--------------------
+
+foreignSymbol = method(TypicalValue => ForeignObject)
+foreignSymbol(SharedLibrary, String, ForeignType) := (
+    lib, symb, T) -> dereference_T dlsym(lib#0, symb)
+foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
 
 beginDocumentation()
 
@@ -473,6 +616,19 @@ doc ///
 
 doc ///
   Key
+    "nullPointer"
+  Headline
+    the null pointer
+  Description
+    Text
+      This @TO Pointer@ object represents the @wikipedia "null pointer"@,
+      indicating that the pointer does not refer to a valid object.
+    Example
+      nullPointer
+///
+
+doc ///
+  Key
     ForeignType
     (net, ForeignType)
   Headline
@@ -481,20 +637,15 @@ doc ///
     Text
       This is the abstract class from which all other foreign type classes
       should inherit.  All @TT "ForeignType"@ objects should have, at minimum,
-      three key-value pairs:
+      two key-value pairs:
 
       @UL {
-	  LI {TT "name", ", ", ofClass String, ", a human-readable name of ",
+	  LI {TT "Name", ", ", ofClass String, ", a human-readable name of ",
 	      "the class for display purposes, used by ",
 	      TT "net(ForeignType)", "."},
-	  LI {TT "address", ", ", ofClass Pointer, ", a pointer to the ",
+	  LI {TT "Address", ", ", ofClass Pointer, ", a pointer to the ",
 	      "corresponding ", TT "ffi_type", " object, used by ",
-	      TO (address, ForeignType), "."},
-	  LI {TT "value", ", ", ofClass Function, ", a function that sends ",
-	      "objects of this type to corresponding Macaulay2 values, ",
-	      "used by ", TO (value, ForeignObject), "."}}@
-
-      Subclasses may add additional key-value pairs as needed.
+	      TO (address, ForeignType), "."}}@
 ///
 
 doc ///
@@ -603,8 +754,6 @@ doc ///
     "uint"
     "long"
     "ulong"
-    (symbol SPACE, ForeignIntegerType, Number)
-    (symbol SPACE, ForeignIntegerType, Constant)
   Headline
     foreign integer type
   Description
@@ -631,6 +780,30 @@ doc ///
       uint
       long
       ulong
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignIntegerType, Number)
+    (symbol SPACE, ForeignIntegerType, Constant)
+    (NewFromMethod, int8, ZZ)
+    (NewFromMethod, int16, ZZ)
+    (NewFromMethod, int32, ZZ)
+    (NewFromMethod, int64, ZZ)
+    (NewFromMethod, uint8, ZZ)
+    (NewFromMethod, uint16, ZZ)
+    (NewFromMethod, uint32, ZZ)
+    (NewFromMethod, uint64, ZZ)
+  Headline
+    cast a Macaulay2 number to a foreign integer object
+  Usage
+    T n
+  Inputs
+    T:ForeignIntegerType
+    n:Number
+  Outputs
+    :ForeignObject
+  Description
     Text
       To cast a Macaulay2 number to a foreign object with an integer type,
       give the type followed by the number.  Non-integers will be truncated.
@@ -645,9 +818,6 @@ doc ///
     ForeignRealType
     "float"
     "double"
-    (symbol SPACE, ForeignRealType, Constant)
-    (symbol SPACE, ForeignRealType, Number)
-    (symbol SPACE, ForeignRealType, RRi)
   Headline
     foreign real type
   Description
@@ -659,6 +829,25 @@ doc ///
     Example
       float
       double
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignRealType, Number)
+    (symbol SPACE, ForeignRealType, Constant)
+    (symbol SPACE, ForeignRealType, RRi)
+    (NewFromMethod, float, RR)
+    (NewFromMethod, double, RR)
+  Headline
+    cast a Macaulay2 number to a foreign real object
+  Usage
+    T x
+  Inputs
+    T:ForeignRealType
+    x:Number
+  Outputs
+    :ForeignObject
+  Description
     Text
       To cast a Macaulay2 number to a foreign object with a real type, give
       the type followed by the number.
@@ -683,19 +872,6 @@ doc ///
       @TT "voidstar"@.
     Example
       voidstar
-    Text
-      If a foreign pointer object corresponds to memory that was not allocated
-      by the @TO "GC garbage collector"@, then a function to properly
-      deallocate this memory when the @TO "Pointer"@ object that stores this
-      pointer is garbage collected should be called.  The function should
-      take a single argument, a foreign object of type @TO "voidstar"@,
-      which corresponds to the memory to deallocate.
-    Example
-      malloc = foreignFunction("malloc", voidstar, ulong)
-      free = foreignFunction("free", void, voidstar)
-      finalizer = x -> (print("freeing memory at " | net x); free x)
-      for i to 9 do (x := malloc 8; registerFinalizer(x, finalizer))
-      collectGarbage()
 ///
 
 doc ///
@@ -762,6 +938,24 @@ doc ///
     Text
       This is the class for array types.  There are no built-in types.  They
       must be constructed using @TO "foreignArrayType"@.
+    Example
+      x = (3 * int) {3, 5, 7}
+    Text
+      Foreign arrays may be subscripted using @TO "_"@.
+    Example
+      x_1
+      x_(-1)
+    Text
+      Their lengths may be found using @TO "length"@.
+    Example
+      length x
+    Text
+      They are also @TO2 {iterator, "iterable"}@.
+    Example
+       i = iterator x;
+       next i
+       next i
+       for y in x list value y + 1
 ///
 
 doc ///
@@ -805,6 +999,8 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignArrayType, VisibleList)
+  Headline
+    cast a Macaulay2 list to a foreign array
   Usage
     T x
   Inputs
@@ -819,14 +1015,107 @@ doc ///
     Example
       intarray5 = 5 * int
       x = intarray5 {2, 4, 6, 8, 10}
-    Text
-      Use @TT "_"@ to return a single element of a foreign array.
-    Example
-      x_2
-      x_(-1)
  Caveat
    The number of elements of @TT "x"@ must match the number of elements
    that were specified when @TT "T"@ was constructed.
+///
+
+doc ///
+  Key
+    ForeignPointerArrayType
+    charstarstar
+    voidstarstar
+    (symbol _, charstarstar, ZZ)
+    (symbol _, voidstarstar, ZZ)
+    (length, charstarstar)
+    (length, voidstarstar)
+    (iterator, charstarstar)
+    (iterator, voidstarstar)
+  Headline
+    foreign type for NULL-terminated arrays of pointers
+  Description
+    Text
+      This is the class for a particular kind of array type, where the entries
+      of each array are some sort of pointer type and the lengths are arbitrary.
+      There are two built-in types, @TT "charstarstar"@ (for arrays of strings)
+      and @TT "voidstarstar"@ (for arrays of pointers), but more types may be
+      constructed using @TO foreignPointerArrayType@.
+    Example
+      charstarstar {"foo", "bar", "baz"}
+      charstarstar {"the", "quick", "brown", "fox", "jumps", "over", "the",
+	  "lazy", "dog"}
+      voidstarstar {address int 0, address int 1, address int 2}
+    Text
+      Foreign pointer arrays may be subscripted using @TO "_"@.
+    Example
+      x = charstarstar {"foo", "bar", "baz"}
+      x_1
+      x_(-1)
+    Text
+      Their lengths may be found using @TO "length"@.
+    Example
+      length x
+    Text
+      They are also @TO2 {iterator, "iterable"}@.
+    Example
+       i = iterator x;
+       next i
+       next i
+       scan(x, print)
+///
+
+doc ///
+  Key
+    foreignPointerArrayType
+    (foreignPointerArrayType, ForeignType)
+    (foreignPointerArrayType, String, ForeignType)
+  Headline
+    construct a foreign pointer array type
+  Usage
+    foreignArrayType(name, T)
+    foreignArrayType T
+  Inputs
+    name:String
+    T:ForeignType
+  Outputs
+    :ForeignPointerArrayType
+  Description
+    Text
+      To construct a foreign array pointer type, specify a name and the type of
+      the  elements of each array.  This type must necessarily be some kind of
+      pointer type.
+    Example
+      foreignPointerArrayType("myPointerArray", 3 * int)
+    Text
+      If the name is omitted, then a default one is chosen by taking the name of
+      the type of the elements and appending a star.
+    Example
+      foreignPointerArrayType(3 * int)
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignPointerArrayType, VisibleList)
+    (NewFromMethod, charstarstar, VisibleList)
+    (NewFromMethod, voidstarstar, VisibleList)
+  Headline
+    cast a Macaulay2 list to a foreign pointer array
+  Usage
+    T x
+  Inputs
+    T:ForeignPointerArrayType
+    x:VisibleList
+  Outputs
+    :ForeignObject -- of type @TT "T"@
+  Description
+    Text
+      To cast a Macaulay2 list to a foreign pointer array type, give the
+      type followed by the list.
+    Example
+      charstarstar {"foo", "bar"}
+      voidstarstar {address int 0, address int 1, address int 2}
+      int2star = foreignPointerArrayType(2 * int)
+      int2star {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}}
 ///
 
 doc ///
@@ -967,6 +1256,85 @@ doc ///
 
 doc ///
   Key
+    ForeignFunctionPointerType
+  Headline
+    foreign function pointer type
+  Description
+    Text
+      This is the class for @wikipedia "function pointer"@ types.  There
+      are no built-in types.  They must be  constructed using
+      @TO "foreignFunctionPointerType"@.
+///
+
+doc ///
+  Key
+    foreignFunctionPointerType
+    (foreignFunctionPointerType, ForeignType, ForeignType)
+    (foreignFunctionPointerType, ForeignType, VisibleList)
+    (foreignFunctionPointerType, String, ForeignType, ForeignType)
+    (foreignFunctionPointerType, String, ForeignType, VisibleList)
+  Headline
+    construct a foreign function pointer type
+  Usage
+    foreignFunctionPointerType(rtype, argtype)
+    foreignFunctionPointerType(rtype, argtypes)
+    foreignFunctionPointerType(name, rtype, argtype)
+    foreignFunctionPointerType(name, rtype, argtypes)
+  Inputs
+    name:String
+    rtype:ForeignType
+    argtype:ForeignType
+    argtypes:VisibleList -- of @TT "ForeignType"@ objects
+  Outputs
+    :ForeignFunctionPointerType
+  Description
+    Text
+      To construct a foreign function pointer type, (optionally) specify a name,
+      the return type, and either the argument type or a list of argument types.
+      If no name is specified, then one is constructed using the return
+      and argument types.
+    Example
+      foreignFunctionPointerType("compar", int, {voidstar, voidstar})
+      foreignFunctionPointerType(int, {voidstar, voidstar})
+///
+
+doc ///
+  Key
+    (symbol SPACE, ForeignFunctionPointerType, Function)
+  Headline
+    cast a Macaulay2 function to a foreign function pointer
+  Usage
+    T f
+  Inputs
+    T:ForeignFunctionPointerType
+    f:Function
+  Outputs
+    :ForeignObject
+  Description
+    Text
+      To cast a Macaulay2 function to a foreign object with a foreign function
+      type, give the type followed by the function.
+    Example
+      compar = foreignFunctionPointerType("compar", int, {voidstar, voidstar})
+      f = (a, b) -> value int a - value int b
+      intcmp = compar f
+    Text
+      The resulting function pointers may be passed as callbacks to
+      @TO ForeignFunction@ objects.
+    Example
+      qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong, compar})
+      x = (4 * int) {4, 2, 3, 1}
+      qsort(x, 4, size int, intcmp)
+      x
+    Text
+      Foreign function pointers may be cast back to @TO ForeignFunction@ objects
+      using @TT "value"@ for testing purposes.
+    Example
+      (value intcmp)(address int 5, address int 6)
+///
+
+doc ///
+  Key
     ForeignObject
   Headline
     foreign object
@@ -990,7 +1358,23 @@ doc ///
 doc ///
   Key
     (value, ForeignObject)
+    (value, charstar)
+    (value, charstarstar)
+    (value, double)
+    (value, float)
+    (value, int8)
+    (value, int16)
+    (value, int32)
+    (value, int64)
+    (value, uint8)
+    (value, uint16)
+    (value, uint32)
+    (value, uint64)
+    (value, voidstar)
+    (value, voidstarstar)
     (net, ForeignObject)
+    (net, double)
+    (net, float)
   Headline
     get the value of a foreign object as a Macaulay2 thing
   Usage
@@ -1047,6 +1431,7 @@ doc ///
     (foreignObject, Number)
     (foreignObject, String)
     (foreignObject, ZZ)
+    (foreignObject, Pointer)
   Headline
     construct a foreign object
   Usage
@@ -1070,6 +1455,10 @@ doc ///
       Strings are converted to @TO "charstar"@ objects.
     Example
       foreignObject "Hello, world!"
+    Text
+      Pointers are converted to @TO "voidstar"@ objects.
+    Example
+      foreignObject nullPointer
     Text
       Lists are converted to foreign objects with the appropriate
       @TO "ForeignArrayType"@.
@@ -1102,6 +1491,32 @@ doc ///
       x = chararray4 append(ascii "foo", 0)
       y = charstar x
       address x === address y
+///
+
+doc ///
+  Key
+    (registerFinalizer, ForeignObject, Function)
+  Headline
+    register a finalizer for a foreign object
+  Usage
+    registerFinalizer(x, f)
+  Inputs
+    x:ForeignObject
+    f:Function
+  Description
+    Text
+      If a foreign pointer object corresponds to memory that was not allocated
+      by the @TO "GC garbage collector"@, then a function to properly
+      deallocate this memory when the @TO "Pointer"@ object that stores this
+      pointer is garbage collected should be called.  The function should
+      take a single argument, a foreign object, typically  of type
+      @TO "voidstar"@, which corresponds to the memory to deallocate.
+    Example
+      malloc = foreignFunction("malloc", voidstar, ulong)
+      free = foreignFunction("free", void, voidstar)
+      finalizer = x -> (print("freeing memory at " | net x); free x)
+      for i to 9 do (x := malloc 8; registerFinalizer(x, finalizer))
+      collectGarbage()
 ///
 
 doc ///
@@ -1227,6 +1642,36 @@ doc ///
       registerFinalizer(x, free)
 ///
 
+doc ///
+  Key
+    foreignSymbol
+    (foreignSymbol, SharedLibrary, String, ForeignType)
+    (foreignSymbol, String, ForeignType)
+  Headline
+    get a foreign symbol
+  Usage
+    foreignSymbol(lib, symb, T)
+    foreignSymbol(symb, T)
+  Inputs
+    lib:SharedLibrary
+    symb:String
+    T:ForeignType
+  Outputs
+    :ForeignObject
+  Description
+    Text
+      This function is a wrapper around the C function @TT "dlsym"@.  It
+      loads a symbol from a shared library using the specified foreign type.
+    Example
+      mps = openSharedLibrary "mps"
+      cplxT = foreignStructType("cplx_t", {"r" => double, "i" => double})
+      foreignSymbol(mps, "cplx_i", cplxT)
+    Text
+      If the shared library is already linked against Macaulay2, then it may
+      be omitted.
+    Example
+      foreignSymbol("cplx_i", cplxT)
+///
 
 TEST ///
 -----------
@@ -1276,15 +1721,30 @@ assert Equation(value charstar "Hello, world!", "Hello, world!")
 -- array types
 intarray3 = 3 * int
 x = intarray3 {1, 2, 3}
-assert Equation(value \ value x, {1, 2, 3})
+assert Equation(value x, {1, 2, 3})
 ptr = address x
-assert Equation(value \ value intarray3 ptr, {1, 2, 3})
+assert Equation(value intarray3 ptr, {1, 2, 3})
 assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
 ptrarray = 3 * voidstar
-assert Equation(
-    apply(value ptrarray {address int 1, address int 2, address int 3},
-    x -> value int value x), {1, 2, 3})
+x = ptrarray {address int 1, address int 2, address int 3}
+assert Equation(for ptr in x list value int value ptr, {1, 2, 3})
+x = charstarstar {"foo", "bar", "baz"}
+assert Equation(length x, 3)
+assert Equation(value x, {"foo", "bar", "baz"})
+assert Equation(value x_0, "foo")
+assert Equation(value x_(-1), "baz")
+x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
+assert Equation(length x, 4)
+assert Equation(value \ for ptr in x list int value ptr, {1, 2, 3, 4})
+assert Equation(value int value x_0, 1)
+assert Equation(value int value x_(-1), 4)
+int3star = foreignPointerArrayType(3 * int)
+x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
+assert Equation(length x, 4)
+assert Equation(value x, {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
+assert Equation(value x_0, {1, 2, 3})
+assert Equation(value x_(-1), {10, 11, 12})
 
 -- struct types
 teststructtype = foreignStructType("foo",
@@ -1314,9 +1774,9 @@ TEST ///
 assert Equation(value foreignObject 3, 3)
 assert Equation(value foreignObject 3.14159, 3.14159)
 assert Equation(value foreignObject "foo", "foo")
-assert Equation(value \ value foreignObject {1, 2, 3}, {1, 2, 3})
-assert Equation(value \ value foreignObject {1.0, 2.0, 3.0}, {1.0, 2.0, 3.0})
-assert Equation(value \ value foreignObject {"foo", "bar"}, {"foo", "bar"})
+assert Equation(value foreignObject {1, 2, 3}, {1, 2, 3})
+assert Equation(value foreignObject {1.0, 2.0, 3.0}, {1.0, 2.0, 3.0})
+assert Equation(value foreignObject {"foo", "bar"}, {"foo", "bar"})
 ///
 
 TEST ///
@@ -1325,16 +1785,18 @@ TEST ///
 ---------------------
 cCos = foreignFunction("cos", double, double)
 assert Equation(value cCos pi, -1)
+cAbs = foreignFunction("abs", int, int)
+assert Equation(value cAbs(-2), 2)
 ///
 
 TEST ///
 --------------------------------
 -- foreignFunction (variadic) --
 --------------------------------
-sprintf = foreignFunction("sprintf", void, {charstar, charstar},
+sprintf = foreignFunction("sprintf", int, {charstar, charstar},
     Variadic => true)
 foo = charstar "foo"
-sprintf(foo, "%s", "bar")
+assert Equation(value sprintf(foo, "%s", "bar"), 3)
 assert Equation(value foo, "bar")
 ///
 
@@ -1358,4 +1820,40 @@ gmtime = foreignFunction("gmtime", voidstar, voidstar)
 asctime = foreignFunction("asctime", charstar, voidstar)
 epoch = tm value gmtime address long 0
 assert Equation(value asctime address epoch,"Thu Jan  1 00:00:00 1970\n")
+///
+
+TEST ///
+-------------------
+-- foreignSymbol --
+-------------------
+mpfi = openSharedLibrary "mpfi"
+(foreignFunction(mpfi, "mpfi_set_error", void, int)) 5
+assert Equation(value foreignSymbol(mpfi, "mpfi_error", int), 5)
+assert Equation(value foreignSymbol("mpfi_error", int), 5)
+(foreignFunction(mpfi, "mpfi_reset_error", void, void))()
+///
+
+TEST ///
+-------------------------------
+-- foreign function pointers --
+-------------------------------
+assert Equation(
+    value (value (foreignFunctionPointerType(int8, int8)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int16, int16)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int32, int32)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int64, int64)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(float, float)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(double, double)) abs) (-2), 2)
+assert Equation(value (value (foreignFunctionPointerType(double,
+		{double, double})) atan2)(-1, -1), -3*pi/4)
+qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong,
+	foreignFunctionPointerType(int, {voidstar, voidstar})})
+x = (4 * int) {4, 2, 3, 1}
+qsort(x, 4, size int, (a, b) -> value int a - value int b)
+assert Equation(value x, {1, 2, 3, 4})
 ///

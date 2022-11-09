@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.3",
-    Date => "May 4, 2022",
+    Version => "0.4",
+    Date => "October 31, 2022",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -58,7 +58,8 @@ importFrom_Core {
     "pythonTrue",
     "pythonTupleNew",
     "pythonUnicodeAsUTF8",
-    "pythonUnicodeFromString"
+    "pythonUnicodeFromString",
+    "pythonWrapM2Function"
 }
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
@@ -188,10 +189,23 @@ addPyToM2Function("list", pyListToM2List, "list -> List")
 addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
     "tuple -> Sequence")
 addPyToM2Function("str", toString, "str -> String")
-addPyToM2Function("complex", x -> x@@"real" + ii * x@@"imag", "complex -> CC")
-addPyToM2Function("float", pythonFloatAsDouble, "float -> RR")
-addPyToM2Function("int", pythonLongAsLong, "int -> ZZ")
-addPyToM2Function("bool", x -> toString x == "True", "bool -> Boolean")
+addPyToM2Function(
+    {"complex", "complex64", "complex128", "complex256"},
+    x -> toCC(pythonFloatAsDouble x@@"real", pythonFloatAsDouble x@@"imag"),
+    "complex -> CC")
+addPyToM2Function(
+    {"float", "float16", "float32", "float64", "float128"},
+    pythonFloatAsDouble,
+    "float -> RR")
+addPyToM2Function(
+    {"int", "int8", "uint8", "int16", "uint16", "int32", "uint32",
+	"int64", "uint64", "longlong", "ulonglong"},
+    pythonLongAsLong,
+    "int -> ZZ")
+addPyToM2Function(
+    {"bool", "bool_"},
+    x -> toString x == "True",
+    "bool -> Boolean")
 value PythonObject := x -> runHooks((value, PythonObject), x)
 
 -- Py_LT, Py_GT, and Py_EQ are #defines from /usr/include/python3.9/object.h
@@ -328,29 +342,46 @@ toPython Set := pythonSetNew @@ toPython @@ toList
 toPython Nothing := x -> pythonNone
 toPython PythonObject := identity
 
+toPython Function := f -> (
+    pythonWrapM2Function(toString f, pyargs -> (
+	    m2args := value pyargs;
+	    if instance(m2args, Sequence) and #m2args == 1
+	    then m2args = m2args#0;
+	    toPython f m2args)))
+
 load "Python/doc.m2"
 
 TEST ///
 -----------
 -- value --
 -----------
-assert Equation(value pythonValue "True", true)
-assert Equation(value pythonValue "5", 5)
-assert Equation(value pythonValue "3.14159", 3.14159)
-assert Equation(value pythonValue "complex(1, 2)", 1 + 2*ii)
-assert Equation(value pythonValue "'foo'", "foo")
-assert Equation(value pythonValue "(1, 3, 5, 7, 9)", (1, 3, 5, 7, 9))
-assert Equation(value pythonValue "range(5)", (0, 1, 2, 3, 4))
-assert Equation(value pythonValue "[1, 3, 5, 7, 9]", {1, 3, 5, 7, 9})
+checkInM2 = x -> assert BinaryOperation(symbol ===, value toPython x, x)
+checkInM2 true
+checkInM2 5
+checkInM2 3.14159
+checkInM2 toCC(1., 2.)
+checkInM2 "foo"
+checkInM2 (1, 3, 5, 7, 9)
+checkInM2 {1, 3, 5, 7, 9}
+checkInM2 set {1, 3, 5, 7, 9}
+checkInM2 hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkInM2 null
 assert BinaryOperation(symbol ===,
-    value pythonValue "{1, 3, 5, 7, 9}", set {1, 3, 5, 7, 9})
-assert BinaryOperation(symbol ===,
-    value pythonValue "frozenset([1, 3, 5, 7, 9])",
-    set {1, 3, 5, 7, 9})
-assert BinaryOperation(symbol ===, value pythonValue "{'a':1, 'b':2, 'c':3}",
-    hashTable{"a" => 1, "b" => 2, "c" => 3})
+    value pythonValue "frozenset([1, 3, 5, 7, 9])", set {1, 3, 5, 7, 9})
+
+checkInPython = x -> (y := pythonValue x; assert Equation(toPython value y, y))
+checkInPython "True"
+checkInPython "5"
+checkInPython "3.14159"
+checkInPython "complex(1, 2)"
+checkInPython "'foo'"
+checkInPython "(1, 3, 5, 7, 9)"
+checkInPython "[1, 3, 5, 7, 9]"
+checkInPython "{1, 3, 5, 7, 9}"
+checkInPython "{'a': 1, 'b': 2, 'c': 3}"
+checkInPython "None"
 assert Equation((value pythonValue "abs")(-1), pythonValue "1")
-assert Equation(value pythonValue "None", null)
+assert Equation((toPython sqrt) 2, toPython sqrt 2)
 ///
 
 TEST ///
@@ -459,14 +490,6 @@ assert Equation(5 xor y, 7)
 ----------------------
 assert Equation(-x, -5)
 assert Equation(+x, 5)
-///
-
--- test @ (not part of default testsuite since it requires numpy)
-///
-np = import "numpy"
-v = np@@array {1, 2, 3}
-w = np@@array {4, 5, 6}
-assert Equation(v @ w, 32)
 ///
 
 TEST ///
@@ -579,6 +602,70 @@ assert Equation(toPython 10^100, pythonValue "10**100")
 assert Equation(toPython(-10^100), pythonValue "-10**100")
 assert Equation(value pythonValue "10**100", 10^100)
 assert Equation(value pythonValue "-10**100", -10^100)
+///
+
+
+-- not part of default testsuite since it requires numpy
+///
+-----------
+-- NumPy --
+-----------
+np = import "numpy"
+
+-- @ (__matmul__ operator)
+v = np@@array {1, 2, 3}
+w = np@@array {4, 5, 6}
+assert Equation(v @ w, 32)
+
+-- scalar types
+checkNumPyIntDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1, 1)
+checkNumPyIntDtype "int8"
+checkNumPyIntDtype "uint8"
+checkNumPyIntDtype "int16"
+checkNumPyIntDtype "uint16"
+checkNumPyIntDtype "int32"
+checkNumPyIntDtype "uint32"
+checkNumPyIntDtype "int64"
+checkNumPyIntDtype "uint64"
+checkNumPyIntDtype "byte"
+checkNumPyIntDtype "ubyte"
+checkNumPyIntDtype "short"
+checkNumPyIntDtype "ushort"
+checkNumPyIntDtype "intc"
+checkNumPyIntDtype "uintc"
+checkNumPyIntDtype "int_"
+checkNumPyIntDtype "uint"
+checkNumPyIntDtype "longlong"
+checkNumPyIntDtype "ulonglong"
+checkNumPyIntDtype "intp"
+checkNumPyIntDtype "uintp"
+
+checkNumPyRealDtype = T -> assert BinaryOperation(symbol ===,
+    value np@@T 1, 1.0)
+checkNumPyRealDtype "float16"
+checkNumPyRealDtype "float32"
+checkNumPyRealDtype "float64"
+-- checkNumPyRealDtype "float96"
+checkNumPyRealDtype "float128"
+checkNumPyRealDtype "float_"
+checkNumPyRealDtype "half"
+checkNumPyRealDtype "single"
+checkNumPyRealDtype "double"
+checkNumPyRealDtype "longdouble"
+
+assert BinaryOperation(symbol ===, value np@@"bool_" true, true)
+assert BinaryOperation(symbol ===, value np@@"bool8" true, true)
+
+checkNumPyComplexDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1,
+    toCC(1.0, 0.0))
+checkNumPyComplexDtype "complex64"
+checkNumPyComplexDtype "complex128"
+-- checkNumPyComplexDtype "complex192"
+checkNumPyComplexDtype "complex256"
+checkNumPyComplexDtype "complex_"
+checkNumPyComplexDtype "csingle"
+checkNumPyComplexDtype "cdouble"
+checkNumPyComplexDtype "clongdouble"
 ///
 
 end --------------------------------------------------------

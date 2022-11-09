@@ -1267,7 +1267,7 @@ SeeAlso => {allComputations, readNmzData, "Keeping results of the computation by
 document {
    Key => "output files written by Normaliz",
 PARA{},"Depending on the options enabled (see ", TO setNmzOption, "), ", TT "Normaliz", " writes additional output files. To obtain the content of these files within Macaulay2, use ", TO readNmzData, " or ", TO allComputations,". The following files may be written, provided certain conditions are satisfied and the information that should go into them has been computed. We denote the files simply by their types.
-For the most types of inputs the ambient lattice is ", TEX "\\ZZ^n", " if the input of Normaliz is a matrix of n columns. In types polytope and rees_algebra the ambient lattice is ", TEX "\\ZZ^{n+1}", " since the input vectors are extended by 1 component. For congruences and inhomogeneous input it is ", TEX "\\ZZ^{n-1}", " and for inhomogenous congruences ", TEX "\\ZZ^{n-2}", ".
+For the most types of inputs the ambient lattice is ", TEX "\\ZZ^n", " if the input of Normaliz is a matrix of n columns. In types polytope and rees_algebra the ambient lattice is ", TEX "\\ZZ^{n+1}", " since the input vectors are extended by 1 component. For congruences and inhomogeneous input it is ", TEX "\\ZZ^{n-1}", " and for inhomogeneous congruences ", TEX "\\ZZ^{n-2}", ".
 For input of type lattice_ideal the lattice is ", TEX "\\ZZ^{r}", " where n-r is the rank of the input matrix. The essential lattice is gp(M) where M is the monoid computed by Normaliz internally, i.e. after a linear transformation such that the cone is full-dimensional and the integral closure has to be computed.
 See the documentation of Normaliz at ", HREF "https://github.com/Normaliz/Normaliz/blob/master/doc/Normaliz.pdf", " for more details.",
 UL{
@@ -1397,7 +1397,7 @@ document {
          "polytope:   lattice points spanning a polytope",
          "rees_algebra:   exponent vectors of monomials generating an ideal",
          "inequalities, equations, congruences:   constraints defining the cone to be computed",
-         "inhom_inequalities, inhom_equations, inhom_congruences:   inhomogenous constraints defining the cone to be computed",
+         "inhom_inequalities, inhom_equations, inhom_congruences:   inhomogeneous constraints defining the cone to be computed",
          "lattice_ideal:  generators of a lattice ideal",
          "grading:  a grading which gives positive degree to all generators"
      },
@@ -1650,7 +1650,7 @@ EXAMPLE lines ///
 
 document {
      Key => {grading},
-PARA{}, "grading is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ", ",TO torusInvariants, ", ",TO finiteDiagInvariants, ", ",TO diagInvariants, ", ",TO intersectionValRings, ", ",TO intersectionValRingIdeals, ". Its default value is an empty list. If it is set to a list of integers it will be used as grading. This has no influence on the generators of the computed objects, but on additional data like the multiplicity or the hilbert series.
+PARA{}, "grading is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ", ",TO torusInvariants, ", ",TO finiteDiagInvariants, ", ",TO diagInvariants, ", ",TO intersectionValRings, ", ",TO intersectionValRingIdeals, ". Its default value is an empty list. If it is set to a list of integers it will be used as grading. This has no influence on the generators of the computed objects, but on additional data like the multiplicity or the Hilbert series.
 The grading may have non-positive entries, but it must give positive values for all generators.",
 EXAMPLE lines ///
           R=ZZ/37[x,y,t];
@@ -1670,7 +1670,7 @@ document {
      Headline => "returns the numerical invariants computed",
      Usage => "getNumInvs()",
      Outputs => {HashTable => "the numerical invariants"},
-     PARA{},"This function returns a hashtable containing the invariants printed to the file with suffix ", TT "inv", ", if the files are kept, i.e., if a filename is specified (see ", TO "Keeping results of the computation by Normaliz", "). The key of an entry is a ", TO String, " describing the invariant, the value is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the grading, the Hilbert series and the Hilbert quasi-polynomial and a ", TO Boolean, " for graded and primary (in the case of a rees algebra).",
+     PARA{},"This function returns a hashtable containing the invariants printed to the file with suffix ", TT "inv", ", if the files are kept, i.e., if a filename is specified (see ", TO "Keeping results of the computation by Normaliz", "). The key of an entry is a ", TO String, " describing the invariant, the value is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the grading, the Hilbert series and the Hilbert quasi-polynomial and a ", TO Boolean, " for graded and primary (in the case of a Rees algebra).",
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3,x^2*y,y^3);

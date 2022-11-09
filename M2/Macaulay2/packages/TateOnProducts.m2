@@ -198,7 +198,7 @@ coarseMultigradedRegularity = method(Options =>
                {Strategy =>"MinimalResolution"})
 
 -*coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     el := length F;
     r := degreeLength ring F;
     D := apply((min F..max F), i-> degrees F_i);
@@ -240,7 +240,7 @@ LL (ZZ,List) := (d,n) -> (
     )
 
 coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
     degsF := flatten apply(range,i -> degrees (F_i));
@@ -3638,7 +3638,7 @@ composedFunctions = () -> (
      --Text
      -- The additional entry h in the zero position of the cohomology matrix of uQ
      -- indicates that we can recover
-     -- the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+     -- the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
      -- in this specific case.
      --Example
       uQ.dd_(-1)
@@ -4017,7 +4017,7 @@ doc ///
      Text
       The additional entry h in the zero position of the cohomology matrix of uQ
       indicates that we can recover
-      the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+      the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
       in this specific case.
      Example
       uQ.dd_(-1)
@@ -5381,7 +5381,7 @@ doc ///
        a corner complex of the corresponding Tate resolution
   Description
      Text
-       Every object F in in the derived category D^d(P)
+       Every object F in the derived category D^d(P)
        of coherent sheaves on a product P=P^{n_1}x..xP^{n_t} of t projective space is of the
        form U(W) with W a complex with terms in the
        Beilinson range only. The function computes with the algorithm (not!) described in section 4 of
@@ -5431,7 +5431,7 @@ doc ///
        a non-minimal version of the quadrant complex ?!? qT_{\le 0} of the Tate resolution T=T(W) ?
   Description
      Text
-       Every object F in in the derived category D^d(P)
+       Every object F in the derived category D^d(P)
        of coherent sheaves on a product P=P^{n_1}x..xP^{n_t} of t projective space is of the
        form U(W) with W a complex with terms in the
        Beilinson range only.

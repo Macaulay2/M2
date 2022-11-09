@@ -3626,7 +3626,7 @@ trace(ZZ,LieSubSpace,LieAlgebraMap):=(n,S,f)->(
 ----------------------------------------
 --isIsomorphism
 ---------------------------------------- 
--- It is checked that f: M -> L is an isomorphismm where M==L 
+-- It is checked that f: M -> L is an isomorphism where M==L 
 
 
 isIsomorphism(LieAlgebraMap):=f->(

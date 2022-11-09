@@ -326,7 +326,7 @@ if(CHECK_LIBRARY_COMPATIBILITY)
 endif()
 
 ###############################################################################
-## Set three library related definitions
+## Set four library related definitions
 
 if(GIVARO_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${GIVARO_INCLUDE_DIRS}")
@@ -354,4 +354,11 @@ if(FROBBY_FOUND)
     int main(){frobby_version;return 0;}]] HAVE_FROBBY_VERSION)
 else()
   unset(HAVE_FROBBY_VERSION CACHE)
+endif()
+
+if(FFI_FOUND)
+  set(CMAKE_REQUIRED_LIBRARIES "${FFI_LIBRARIES}")
+  check_function_exists(ffi_get_struct_offsets HAVE_FFI_GET_STRUCT_OFFSETS)
+else()
+  unset(HAVE_FFI_GET_STRUCT_OFFSETS CACHE)
 endif()

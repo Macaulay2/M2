@@ -41,9 +41,9 @@ depthHomogMon = I-> (
 --============================================================================    
     
     
-    
+
 -- RANDOM LINEAR TRANSFORMATIONS
--- this function produces a upper triangular liniar transformation with entries in k[X]
+-- this function produces a upper triangular linear transformation with entries in k[X]
 
 upTRT2 = (k,X,m) -> (
      Trans := {};

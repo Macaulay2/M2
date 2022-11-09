@@ -1660,7 +1660,7 @@ document {
 -- Tests -- 
 
 TEST ///
- -- p. 318 Cox-Little-Shea
+ -- p. 318 Cox-Little-O'Shea
 M = matrix {{0,1,0,1},{0,0,1,1}};
 R := QQ[a_0..a_3,b_0..b_3,c_0..c_3][s,t];
 f = a_0 + a_1*s + a_2*t + a_3*s*t;

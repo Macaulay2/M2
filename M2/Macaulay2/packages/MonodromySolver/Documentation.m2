@@ -30,7 +30,7 @@ doc ///
             @TO monodromySolve@ is the core function, whose input may be @ofClass PolySystem@ or $ofClass GateSystem$.
 	    As an additional input, a seed pair consisting of initial parameter and solution values may be provided.
 	    @TO solveFamily@ is a wrapper function that returns specific solutions and parameter values.
-	    @TO sparseMonodromySolve@ is a blackbox solver for systems without parameters, that calls the core functio
+	    @TO sparseMonodromySolve@ is a blackbox solver for systems without parameters, that calls the core function.
 	    These functions have many options in common, which are summarized in @TO MonodromySolverOptions@.
 	    Here is an example illustrating how to solve a parametric family for specific parameter values.
         Example

@@ -1,0 +1,109 @@
+-- -*- M2-comint -*- hash: 2002912010
+
+i1 : mpfr = openSharedLibrary "mpfr"
+
+o1 = mpfr
+
+o1 : SharedLibrary
+
+i2 : mpfrVersion = foreignFunction(mpfr, "mpfr_get_version", charstar, void)
+
+o2 = mpfr::mpfr_get_version
+
+o2 : ForeignFunction
+
+i3 : mpfrVersion()
+
+o3 = 4.1.0
+
+o3 : ForeignObject of type char*
+
+i4 : mpfrVersion = foreignFunction("mpfr_get_version", charstar, void)
+
+o4 = mpfr_get_version
+
+o4 : ForeignFunction
+
+i5 : mpfrVersion()
+
+o5 = 4.1.0
+
+o5 : ForeignObject of type char*
+
+i6 : myatan2 = foreignFunction("atan2", double, {double, double})
+
+o6 = atan2
+
+o6 : ForeignFunction
+
+i7 : myatan2(1, sqrt 3)
+
+o7 = .523598775598299
+
+o7 : ForeignObject of type double
+
+i8 : sprintf = foreignFunction("sprintf", void, {charstar, charstar},
+         Variadic => true)
+
+o8 = sprintf
+
+o8 : ForeignFunction
+
+i9 : buf = charstar "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+o9 = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+o9 : ForeignObject of type char*
+
+i10 : sprintf(buf, "%s %d", "foo", 3)
+
+i11 : buf
+
+o11 = foo 3
+
+o11 : ForeignObject of type char*
+
+i12 : sprintf(buf, "%s %.1f", "foo", 3)
+
+i13 : buf
+
+o13 = foo 0.0
+
+o13 : ForeignObject of type char*
+
+i14 : sprintf(buf, "%s %.1f", "foo", double 3)
+
+i15 : buf
+
+o15 = foo 3.0
+
+o15 : ForeignObject of type char*
+
+i16 : stopIfError = false
+
+o16 = false
+
+i17 : sprintf(buf, "%c", char' 77)
+stdio:18:1:(3): error: libffi: bad argtype
+
+i18 : malloc = foreignFunction("malloc", voidstar, ulong)
+
+o18 = malloc
+
+o18 : ForeignFunction
+
+i19 : free = foreignFunction("free", void, voidstar)
+
+o19 = free
+
+o19 : ForeignFunction
+
+i20 : x = malloc 8
+
+o20 = 0x7fd21c052280
+
+o20 : ForeignObject of type void*
+
+i21 : registerFinalizer(x, free)
+
+i22 : 

@@ -3077,7 +3077,7 @@ SeeAlso => {(parameterCount, SpecialCubicFourfold), normalSheaf}}
 
 document {Key => {normalSheaf, (normalSheaf, EmbeddedProjectiveVariety), (normalSheaf, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}, 
 Headline => "normal sheaf", 
-Usage => "normalSheaf X"|newline|"normalSheaf(X % Y)"|newline|"normalSheal(X,Y)", 
+Usage => "normalSheaf X"|newline|"normalSheaf(X % Y)"|newline|"normalSheaf(X,Y)", 
 Inputs => {"X" => EmbeddedProjectiveVariety, "Y" => EmbeddedProjectiveVariety => {" such that ",TEX///$X\subset Y$///," (if not given, it is taken to be the ",TO2{ambientVariety,"ambient variety"}," of ",TEX///$X$///,")"}}, 
 Outputs => {CoherentSheaf => {"the normal sheaf ", TEX///$\mathcal{N}_{X, Y}$///, " of ", TEX///$X$///, " in ", TEX///$Y$///}},
 EXAMPLE {"X = PP_(ZZ/65521)^(2,2);", "Y = random(2,X);", "N = normalSheaf X;", "N' = normalSheaf(X,Y);", "rank HH^0 N", "rank HH^0 N'"}}

@@ -16,9 +16,7 @@ o3 : List
 
 i4 : peek first sols
 
-o4 = Point{ConditionNumber => 4.87567                }
+o4 = Point{cache => CacheTable{...3...}              }
            Coordinates => {.543689, .295598, .160713}
-           LastT => 1
-           SolutionStatus => Regular
 
 i5 : 

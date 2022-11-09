@@ -41,6 +41,21 @@ document {
      }
 
 document {
+     Key => "changes, 1.21",
+     UL {
+	  LI { "improved packages:",
+               UL {
+       	    	    LI { "The package ", TO "BettiCharacters::BettiCharacters", 
+                	 " has been updated to version 2.0, which introduces
+			 character tables, decompositions, and other methods for characters.
+			 The GradedCharacter type has been removed, and the Character type
+			 has been modified to accommodate both homological and internal
+			 grading in a simplied format." 
+                	 }
+	       	    }}
+	  }}
+
+document {
      Key => "changes, 1.20",
      UL {
 	  LI { "new packages:",
@@ -90,7 +105,7 @@ document {
                 	 methods, improves interoperability with ", 
                 	 TO "Polyhedra::Polyhedra", " and completely overhauls the
                 	 documentation. Changes that break backwards
-                	 compatiblity include changing the output of faces and
+                	 compatibility include changing the output of faces and
                 	 facets from Matrix to List, changing the output type
                 	 of fVector from HashTable to List, and replacing ==
                 	 with === for SimplicialComplexes."

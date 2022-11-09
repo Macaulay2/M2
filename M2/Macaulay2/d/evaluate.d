@@ -21,10 +21,10 @@ export chars := new array(Expr) len 256 do (
 	i = i+1;
 	));
 
--- symbols for iteration
--- "iterator" and "next" will be reassigned as methods at top level
+-- symbols for iteration; will be reassigned at top level
 export iteratorS := setupvar("iterator", nullE);
 export nextS := setupvar("next", nullE);
+export applyIteratorS := setupvar("applyIterator", nullE);
 
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
@@ -315,7 +315,6 @@ evalForCode(c:forCode):Expr := (
 	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
-	  is s:stringCell do w = strtoseq(s)
 	  else (
 	      iter = getIterator(invalue);
 	      if iter != nullE
@@ -326,7 +325,7 @@ evalForCode(c:forCode):Expr := (
 		  else return printErrorMessageE(c.inClause,
 		      "no method for applying next to iterator"))
 	      else return printErrorMessageE(c.inClause,
-		  "expected a list, sequence, string, or iterable")))
+		  "expected a list, sequence, or iterable object")))
      else (
 	  if c.fromClause != dummyCode then (
 	       fromvalue := eval(c.fromClause);

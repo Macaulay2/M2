@@ -1,0 +1,31 @@
+-- -*- M2-comint -*- hash: 417319600
+
+i1 : x = int 20
+
+o1 = 20
+
+o1 : ForeignObject of type int32
+
+i2 : peek x
+
+o2 = int32{Address => 0x7f80c319a120}
+
+i3 : ptr = address x
+
+o3 = 0x7f80c319a120
+
+o3 : Pointer
+
+i4 : ptr + 5
+
+o4 = 0x7f80c319a125
+
+o4 : Pointer
+
+i5 : ptr - 3
+
+o5 = 0x7f80c319a11d
+
+o5 : Pointer
+
+i6 : 

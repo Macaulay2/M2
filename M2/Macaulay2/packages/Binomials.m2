@@ -290,7 +290,7 @@ partialCharacter Ideal := Ideal => o -> I -> (
 randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (	 
      -- Generate 'random' ideals for testing purposes. The distribution is completely heuristic and designed to serve
      -- internal purposes 
-     -- Inputs: a ring R, the number of generators numgen, the maximal degree of each variable maxded,
+     -- Inputs: a ring R, the number of generators numgen, the maximal degree of each variable maxdeg,
      -- the maximal number of variables appearing in binomial, whether the output should be homogeneous
      
      -- Caveat: The result might simply be not homogeneous or of the given degree 

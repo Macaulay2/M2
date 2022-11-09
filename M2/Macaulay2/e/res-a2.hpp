@@ -192,7 +192,7 @@ class gb2_comp : public gb_node
   void gb_sort(int lo, int hi);
 
   void flush_pairs();
-  Matrix *make_lead_term_matrix();  // for computing hilbert functions
+  Matrix *make_lead_term_matrix();  // for computing Hilbert functions
 
   void schreyer_append(gbvector *f);
   bool s_pair_step();

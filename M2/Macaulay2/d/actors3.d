@@ -1116,6 +1116,48 @@ sqrt(a:Expr):Expr := (
      is Error do a
      else WrongArgRR());
 setupfun("sqrt",sqrt).Protected=false;
+
+toSequence(e:Expr):Expr := (
+     when e
+     is Sequence do e
+     is b:List do (
+	  if b.Mutable
+	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
+	  else Expr(b.v)
+	  )
+     is s:stringCell do Expr(strtoseq(s))
+     else (
+	 iter := getIterator(e);
+	 if iter != nullE
+	 then (
+	     nextfunc := getNextFunction(iter);
+	     if nextfunc != nullE
+	     then (
+		 r := new Sequence len 1 do provide nullE;
+		 j := 0;
+		 y := nullE;
+		 while (
+		     y = applyEE(nextfunc, iter);
+		     when y
+		     is Error do return returnFromFunction(y)
+		     else nothing;
+		     y != StopIterationE)
+		 do (
+		     if j == length(r) then (
+			 r = new Sequence len 2 * length(r) do (
+			     foreach x in r do provide x;
+			     while true do provide nullE));
+		     r.j = y;
+		     j = j + 1);
+		 Expr(
+		     if j == 0 then emptySequence
+		     else if j == length(r) then r
+		     else new Sequence len j do (
+			 foreach x in r do provide x)))
+	     else buildErrorPacket("no method for applying next to iterator"))
+	 else WrongArg("a list, sequence, string, or iterable object")));
+setupfun("toSequence",toSequence);
+
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
      if newlen != length(a2) then return WrongArg("lists of the same length");
@@ -1590,8 +1632,14 @@ map(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
-     is s:stringCell do map(strtoseq(s), f)
-     else WrongArg(1,"a list, sequence, integer, or string"));
+     is s:stringCell do (
+	 toSequence(applyEEE(
+		 getGlobalVariable(applyIteratorS), getIterator(e), f)))
+     else (
+	 iter := getIterator(e);
+	 if iter != nullE
+	 then applyEEE(getGlobalVariable(applyIteratorS), iter, f)
+	 else WrongArg(1,"a list, sequence, integer, or iterable object")));
 map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
@@ -2074,7 +2122,6 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
-     is s:stringCell do scan(strtoseq(s), f)
      else (
 	 i := getIterator(e);
 	 if i != nullE
@@ -2093,7 +2140,7 @@ scan(e:Expr,f:Expr):Expr := (
 		     else nothing);
 		 nullE)
 	     else buildErrorPacket("no method for applying next to iterator"))
-	 else WrongArg(1, "a list, sequence, integer, string, or iterable")));
+	 else WrongArg(1, "a list, sequence, integer, or iterable object")));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -2112,18 +2159,6 @@ gcd(x:Expr,y:Expr):Expr := (
      else buildErrorPacket("expected an integer"));
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd0",gcdfun);
-
-toSequence(e:Expr):Expr := (
-     when e
-     is Sequence do e
-     is b:List do (
-	  if b.Mutable
-	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
-	  else Expr(b.v)
-	  )
-     is s:stringCell do Expr(strtoseq(s))
-     else WrongArg("a list, sequence, or string"));
-setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (
      when e

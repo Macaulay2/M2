@@ -1859,7 +1859,7 @@ convertRingToRational Ring := ZRing -> (
 	return QQ(monoid[gens ZRing]);
 )
 
--- Takes a ring and and returns a gfan string with rational coefficients.
+-- Takes a ring and returns a gfan string with rational coefficients.
 gfanRingToRationalString = method()
 gfanRingToRationalString Ring := ZRing -> (
 	out := "Q" | gfanToExternalString(new Array from gens ZRing) | newline;
@@ -4569,7 +4569,7 @@ doc///
 	-- assert(gfanKrullDimension gfanBuchberger L === 3)
 	-- ///
 	--
-	-- -- TEST gfanLaticeIdeal
+	-- -- TEST gfanLatticeIdeal
 	-- TEST ///
 	-- L = gfanLatticeIdeal {{2,-1,0},{3,0,-1}}
 	-- assert(L === {-x_0 *x_1 + x_2, x_0^2 - x_1})

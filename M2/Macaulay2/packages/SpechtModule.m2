@@ -1533,7 +1533,7 @@ multidoc ///
     	    	the filling of the tableau, if it is not provided then it is assume that the filling is zero.
     	Outputs
     	    :YoungTableau
-    	    	a young tableau with the given shape and filling
+    	    	a Young tableau with the given shape and filling
     	SeeAlso
 	    YoungTableau
     Node
@@ -2034,7 +2034,7 @@ multidoc ///
 	    readingWord(y)
 	Inputs
 	    y:YoungTableau
-	    	a young tableau
+	    	a Young tableau
 	Outputs
 	    :List
 	    	the reading word of the Young tableau
@@ -2556,7 +2556,7 @@ multidoc ///
     	    firstRowDescent
 	    
     	Headline
-    	    retrieves the first row descent of a young tableau
+    	    retrieves the first row descent of a Young tableau
     	Usage
     	    firstRowDescent y
     	Inputs
@@ -2795,10 +2795,10 @@ multidoc ///
     	Description
 	    Text	
     	    	This optional argument decides between two ways to calculate higherSpechtPolynomials.
-	    	If it is set to to true then a calculation involving the row and column stabilizers
+	    	If it is set to true then a calculation involving the row and column stabilizers
 	    	is used.                                                                                                                                                                                                      
     	    	If it is set to false then another strategy is used. This strategy is based on a
-	    	representation of higher specht polynomials as a multiplication
+	    	representation of higher Specht polynomials as a multiplication
 	    	of simpler Specht polynomials and Schur polynomials.
 	    
 	    Example
@@ -2863,7 +2863,7 @@ multidoc ///
 	     a hash table with the polynomials index by the filling of their respective tableaux 
     	Description
 	    Text
-	    	The set of all the Specht polynomials for standard tableaux of a given shape p forms a basis for a module which is isomorphich to 
+	    	The set of all the Specht polynomials for standard tableaux of a given shape p forms a basis for a module which is isomorphic to 
 		the Specht module indexed by p.
 	   
 	   Example
@@ -2952,7 +2952,7 @@ multidoc ///
     	Description
 	    Text
 	    	Higher Specht polynomials are a family of polynomials that form a basis of the coinvariant algebra for the symmetric group.
-		The coinvariant algebra is isomorpich as a $S_n$ module to the regular representation of $S_n$. Therefore
+		The coinvariant algebra is isomorphic as a $S_n$ module to the regular representation of $S_n$. Therefore
 		every Specht modules appears as an irreducible module in this algebra with multiplicity $f^\lambda= {\rm dim} \, S^\lambda $. 
 		Higher Specht polynomials decompose this algebra into its irreducible submodules. 
 		
@@ -3088,7 +3088,7 @@ multidoc ///
 		
 	   Text
 	       The determinant of these matrices divided by the Vandermonde determinant of the same rank is equal
-		to a schur polynomial .
+		to a Schur polynomial .
 	   Example
 		(determinant M)//vandermondeDeterminant({0,2,3},R) 
 		
@@ -3104,7 +3104,7 @@ multidoc ///
 	    indices:List
 	    	a list of the variables that appear in each column of the matrix
 	    parti:Partition
-	    	a partition that indexes the schur polynomial
+	    	a partition that indexes the Schur polynomial
 	    R:PolynomialRing
 	    
 	Outputs
@@ -3119,7 +3119,7 @@ multidoc ///
 		
 	   Text
 	       The determinant of these matrices divided by the Vandermonde determinant of the same rank is equal
-		to a schur polynomial .
+		to a Schur polynomial .
 	   Example
 		(determinant M)//vandermondeDeterminant({0,2,3},R)
 		

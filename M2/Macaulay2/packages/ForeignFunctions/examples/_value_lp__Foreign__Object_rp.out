@@ -1,0 +1,79 @@
+-- -*- M2-comint -*- hash: -1042004422
+
+i1 : x = int 5
+
+o1 = 5
+
+o1 : ForeignObject of type int32
+
+i2 : value x
+
+o2 = 5
+
+i3 : x = double 5
+
+o3 = 5
+
+o3 : ForeignObject of type double
+
+i4 : value x
+
+o4 = 5
+
+o4 : RR (of precision 53)
+
+i5 : x = voidstar address int 5
+
+o5 = 0x7fe18dc10a40
+
+o5 : ForeignObject of type void*
+
+i6 : value x
+
+o6 = 0x7fe18dc10a40
+
+o6 : Pointer
+
+i7 : x = charstar "Hello, world!"
+
+o7 = Hello, world!
+
+o7 : ForeignObject of type char*
+
+i8 : value x
+
+o8 = Hello, world!
+
+i9 : x = (4 * int) {2, 4, 6, 8}
+
+o9 = {2, 4, 6, 8}
+
+o9 : ForeignObject of type int32[4]
+
+i10 : value x
+
+o10 = {2, 4, 6, 8}
+
+o10 : List
+
+i11 : mystruct = foreignStructType("mystruct", {"a" => int, "b" => float})
+
+o11 = mystruct
+
+o11 : ForeignStructType
+
+i12 : x = mystruct {"a" => 2, "b" => sqrt 2}
+
+o12 = HashTable{a => 2      }
+                b => 1.41421
+
+o12 : ForeignObject of type mystruct
+
+i13 : value x
+
+o13 = HashTable{a => 2      }
+                b => 1.41421
+
+o13 : HashTable
+
+i14 : 

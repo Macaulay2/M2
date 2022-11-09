@@ -60,7 +60,7 @@ Node
       of degrees in @TT "R"@ will be ignored.  If a new degree rank is specified with
       @TO DegreeRank@ then the list of degrees and the heft vector of @TT "R"@ will be
       ignored.  If a new nonempty list of degrees is specified with @TO Degrees@, then
-      the degree rank and and the heft vector of @TT "R"@ will be ignored.
+      the degree rank and the heft vector of @TT "R"@ will be ignored.
     Example
        R = QQ[x,y, MonomialOrder => Lex, Degrees => {3,5}];
        describe newRing(R, MonomialOrder => GRevLex)

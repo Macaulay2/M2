@@ -924,7 +924,7 @@ connectingMorphism(ChainComplexMap,ZZ) := (a,n) -> (
     e := spectralSequence K ;
     e^1 .dd_{1, n}
     )
--- here are some needed functions related to hilbert polynomials --
+-- here are some needed functions related to Hilbert polynomials --
 hilbertPolynomial ZZ := ProjectiveHilbertPolynomial => o -> (M) -> ( if M == 0
     then new ProjectiveHilbertPolynomial from {} else
     new ProjectiveHilbertPolynomial from {0 => M}
@@ -1384,7 +1384,7 @@ doc ///
      Description
      	  Text  
        	    We describe
-	    the most primitative way to create filtered complexes.
+	    the most primitive way to create filtered complexes.
 	    
 	    Let $C$ be a chain complex and consider a list of
 	    chain complex maps $\{\phi_n, \phi_{n - 1}, \dots, \phi_0  \}$ 
@@ -1618,7 +1618,7 @@ doc///
     	 Text
 	      In this example we give a simplicial realization of the fibration 
 	      $\mathbb{S}^1 \rightarrow {\rm Klein Bottle} \rightarrow \mathbb{S}^1$.  
-	      To give a simplicial realization of of this fibration we first make a simplicial
+	      To give a simplicial realization of this fibration we first make a simplicial
 	      complex which gives a triangulation of the Klein Bottle.
 	      The triangulation of the Klein Bottle that we use has 18 facets and is, up to relabling, the triangulation of the Klein bottle given
 	      in Figure 6.14 of Armstrong's book {\it Basic Topology}.
@@ -1730,7 +1730,7 @@ doc ///
 		-- make the frobenious power of the irrelevant ideal
 		B = B_*/(x -> x^2)//ideal;
 		-- need to take a large enough power. 
-		-- it turns out that that 2 is large enough for this example 
+		-- it turns out that 2 is large enough for this example 
 		G = complete res image gens B;
 		F = koszul gens I;
 		K = Hom(G, filteredComplex(F));
@@ -1865,7 +1865,7 @@ doc ///
     	  Text
 	       To use hypercohomology to compute the cohomology groups of the 
 	       line bundle $\mathcal{O}_C(1,0)$ on $C$ we twist the
-	       complex $F$ above by a line of rulting and then 
+	       complex $F$ above by a line of ruling and then 
 	       make a filtered complex whose associated spectral
 	       sequence abuts to the desired cohomology groups.
 	  Example     		 		 

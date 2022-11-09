@@ -798,7 +798,7 @@ doc ///
    Description
     Text
      prints betti tables corresponding to the minimal resolution conjecture
-     and to the lex ideal with the same hilbert function
+     and to the lex ideal with the same Hilbert function
     Example
      minMaxResolution(3,5)
    SeeAlso

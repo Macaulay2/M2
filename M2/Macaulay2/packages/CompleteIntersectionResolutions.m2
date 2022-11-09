@@ -776,7 +776,7 @@ matrixFactorization(Matrix, Module) := opts -> (ff, M) -> (
     h := new MutableHashTable;
     A := new MutableHashTable;
     A1 := new MutableHashTable;
-    --A1#p is A#p substituteed into R#(p-1)
+    --A1#p is A#p substituted into R#(p-1)
     B1 := new MutableHashTable;
     --B1#p would be B#p over R#(p-1) (there is no B)
     BS := new MutableHashTable; --same over S
@@ -1682,7 +1682,7 @@ moduleAsExt(Module,Ring) := (M,R) ->(
 	    map(K_i,
 		R^{d}**K_(i+2), 
 		T1_i_j)));
-    --T_i_j: is the matrix of of the CI map K_(2+i) \to K_i
+    --T_i_j: is the matrix of the CI map K_(2+i) \to K_i
     --corresponding to ff_j.
     V := apply(m+1, i->R^(rank F_i));
     tar := directSum apply(m+1, i->(

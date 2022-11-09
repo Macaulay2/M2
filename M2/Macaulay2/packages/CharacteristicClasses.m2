@@ -582,7 +582,7 @@ Segre (NormalToricVariety, Ideal):= opts->(TorVar,I)->(
     );
 
 Segre (QuotientRing,NormalToricVariety, Ideal):= opts->(ChRing,TorVar,I)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     A:=ChRing;
     R:=ring I;
     irel:=ideal TorVar;
@@ -703,13 +703,13 @@ multr=(RayMatrix,r)->(
     )
 
 SegreMainToric = (ChRing,TorVar,I,PDl,AlphNList,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     alpha:=AlphNList_0;
     n:=AlphNList_1;
     return SegreMain(ChRing,I,PDl,{alpha,n,Output});
     );
 SegreMainToric2 = (ChRing,TorVar,I,PDl,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     irel:=ideal TorVar;
     n:=dim(TorVar);
     A:=ChRing;
@@ -1522,7 +1522,7 @@ checkUserInput = (I,CompMethod) -> (
 
 
 -- The function prepare does two things to prepare the later computations. At first, it trims the ideal I, taking away
--- nonnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
+-- unnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
 -- step is done to avoid possible later conflicts in the choice of variables.
 prepare = I -> (
 
@@ -1622,9 +1622,9 @@ doc ///
                symbolically, using Gr&ouml;bner bases, and numerically, using the regenerative cascade implemented in Bertini. The regenerative
 	       cascade is described in [3].   
 	       
-	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjecvtiveDegree method 
+	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjectiveDegree method 
                practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
                Read more under @TO "probabilistic algorithm"@.
 	       
@@ -2324,8 +2324,8 @@ doc ///
                computing the correct class. 
                Skeptical users should repeat calculations several times to increase the probability of computing the correct class.
 
-               In the case of the symbolic implementation of the ProjecvtiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               In the case of the symbolic implementation of the ProjectiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using the finite field kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
 	       
 	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 
@@ -2418,7 +2418,7 @@ doc ///
 	       peek eu
 	       
 	  Text  
-	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the usual information that Output=>HashForm would for this configuration with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/exclusion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equailiently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficiency reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illustrate this with an example below.
+	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the usual information that Output=>HashForm would for this configuration with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/exclusion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equivalently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficiency reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illustrate this with an example below.
           Example
 	      csmXLhash=CSM(A,I,Output=>HashFormXL)
 	      peek csmXLhash
