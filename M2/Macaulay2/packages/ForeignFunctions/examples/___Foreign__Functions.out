@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: -394951237
+
+i1 : mycos = foreignFunction("cos", double, double)
+
+o1 = cos
+
+o1 : ForeignFunction
+
+i2 : mycos pi
+
+o2 = -1
+
+o2 : ForeignObject of type double
+
+i3 : value oo
+
+o3 = -1
+
+o3 : RR (of precision 53)
+
+i4 : 

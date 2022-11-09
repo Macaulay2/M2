@@ -7,6 +7,8 @@ newPackage("ForeignFunctions",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"Interfaces"},
+    CacheExampleOutput => true,
+    AuxiliaryFiles => true,
     OptionalComponentsPresent => Core#"private dictionary"#?"ffiCall"
     )
 

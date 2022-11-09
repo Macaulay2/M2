@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: -1289209129
+
+i1 : float 3
+
+o1 = 3
+
+o1 : ForeignObject of type float
+
+i2 : double pi
+
+o2 = 3.14159265358979
+
+o2 : ForeignObject of type double
+
+i3 : double(2 + 3*ii)
+
+o3 = 2
+
+o3 : ForeignObject of type double
+
+i4 : 

@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: 1705149349
+
+i1 : float
+
+o1 = float
+
+o1 : ForeignRealType
+
+i2 : double
+
+o2 = double
+
+o2 : ForeignRealType
+
+i3 : 
