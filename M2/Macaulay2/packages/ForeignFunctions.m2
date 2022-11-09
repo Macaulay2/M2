@@ -1769,16 +1769,18 @@ TEST ///
 ---------------------
 cCos = foreignFunction("cos", double, double)
 assert Equation(value cCos pi, -1)
+cAbs = foreignFunction("abs", int, int)
+assert Equation(value cAbs(-2), 2)
 ///
 
 TEST ///
 --------------------------------
 -- foreignFunction (variadic) --
 --------------------------------
-sprintf = foreignFunction("sprintf", void, {charstar, charstar},
+sprintf = foreignFunction("sprintf", int, {charstar, charstar},
     Variadic => true)
 foo = charstar "foo"
-sprintf(foo, "%s", "bar")
+assert Equation(value sprintf(foo, "%s", "bar"), 3)
 assert Equation(value foo, "bar")
 ///
 
@@ -1819,15 +1821,23 @@ TEST ///
 -------------------------------
 -- foreign function pointers --
 -------------------------------
-doubledouble = foreignFunctionPointerType(double, double)
-assert Equation(value (value doubledouble cos) pi, -1)
-intint = foreignFunctionPointerType(int, int)
-assert Equation(value (value intint abs)(-2), 2)
-doubledoubledouble = foreignFunctionPointerType(double, {double, double})
-assert Equation(value (value doubledoubledouble atan2)(-1, -1), -3*pi/4)
-compar = foreignFunctionPointerType(int, {voidstar, voidstar})
-qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong, compar})
+assert Equation(
+    value (value (foreignFunctionPointerType(int8, int8)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int16, int16)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int32, int32)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int64, int64)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(float, float)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(double, double)) abs) (-2), 2)
+assert Equation(value (value (foreignFunctionPointerType(double,
+		{double, double})) atan2)(-1, -1), -3*pi/4)
+qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong,
+	foreignFunctionPointerType(int, {voidstar, voidstar})})
 x = (4 * int) {4, 2, 3, 1}
-qsort(x, 4, size int, compar((a, b) -> value int a - value int b))
+qsort(x, 4, size int, (a, b) -> value int a - value int b)
 assert Equation(value x, {1, 2, 3, 4})
 ///

@@ -204,10 +204,20 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      u := m * v#0;
      new target u from {u})
 
+blocks := m -> if m.cache.?components then flatten apply(m.cache.components,blocks) else { rank m }
+
+protect Blocks
+blockMatrixForm=false;  -- governs expression Matrix inclusion of blocks
 expression Matrix := m -> (
     x := applyTable(entries m, expression);
     d := degrees -* cover *- target m;
-    MatrixExpression if not all(d, i -> all(i, j -> j == 0)) then { x, Degrees=>{d, degrees source m} } else { x }
+    if not all(d, i -> all(i, j -> j == 0)) then x=append(x,Degrees=>{d, degrees source m});
+    if blockMatrixForm then (
+    	b1 := blocks target m;
+    	b2 := blocks source m;
+    	if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
+	);
+    MatrixExpression x
     )
 
 net Matrix := m -> net expression m

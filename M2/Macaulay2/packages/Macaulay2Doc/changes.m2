@@ -52,10 +52,19 @@ document {
 		    LI { TO (quotientRemainder, ZZ, ZZ), " has been added, for obtaining the quotient and remainder simultaneously when performing integer division." },
 		    LI { "The bitwise not operator, ", TO (symbol ~, ZZ), " has been added." }
 		    }
-	       }
-	  }
-     }
-
+	       },
+	  LI { "improved packages:",
+               UL {
+       	    	    LI { "The package ", TO "BettiCharacters::BettiCharacters", 
+                	 " has been updated to version 2.0, which introduces
+			 character tables, decompositions, and other methods for characters.
+			 The GradedCharacter type has been removed, and the Character type
+			 has been modified to accommodate both homological and internal
+			 grading in a simplied format." 
+                	 }
+	       	    }}
+	  }}
+    
 document {
      Key => "changes, 1.20",
      UL {

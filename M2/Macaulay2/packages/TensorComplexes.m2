@@ -932,7 +932,7 @@ doc ///
       Section 14.3 of the book ``Discriminants, resultants, and multidimensional
       determinants '' by Gelfand-Kapranov-Zelevinsky.)
       
-      The following constructs the generic hyperdetermiant of format $3\times 2\times 2$,
+      The following constructs the generic hyperdeterminant of format $3\times 2\times 2$,
       which is a polynomial of degree 6 consisting of 66 monomials.
     
     Example

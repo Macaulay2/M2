@@ -223,7 +223,7 @@ static int find_pivot(const MonomialIdeal &I,
 // If I has a single monomial which is a non pure power, return 0,
 // and set 'pure', and 'npure'.  If I has at least two non pure
 // monomials, choose a monomial 'm', not in I, but at least of degree 1,
-// which is suitable for divide and conquer in hilbert function
+// which is suitable for divide and conquer in Hilbert function
 // computation.
 {
   int nhits;

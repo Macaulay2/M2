@@ -482,7 +482,7 @@ doc ///
    Text
      The many ways of working with this function allows the system 
      to compute both the classic Rees algebra of an ideal over a ring 
-     (polynomial or quotient) and to compute the the Rees algebra of a 
+     (polynomial or quotient) and to compute the Rees algebra of a 
      module or ideal using a universal embedding as described in the paper 
      of Eisenbud, Huneke and Ulrich.  It also allows different ways of 
      setting up the quotient ring.
@@ -1061,7 +1061,7 @@ doc ///
      theory: These are the ones that correspond to primes $P\subset ReesI$
      minimal among those containing $I*ReesI$---in other words, the isolated
      components of the support of the normal cone of $I$. The prime $p$
-     corresponding to $P$ is simply the kernel of the the induced map $R \to
+     corresponding to $P$ is simply the kernel of the induced map $R \to
      ReesI/P$.
 
      Each of these primes comes equipped with a multiplicity, which may be

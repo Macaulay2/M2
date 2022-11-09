@@ -522,7 +522,7 @@ betterNormalizationMap(Ring):=o->(R1) -> (
 	--map them to (R/q_j)^N
 	--apply the maps from fakeMapList to them to get elements
 	--multiply them by appropriate idempotents
-	--in other words, this gives us a function which tells us where elements of R go in in \prod_i (R/q_i)^N
+	--in other words, this gives us a function which tells us where elements of R go in \prod_i (R/q_i)^N
 	--(well, rather the sum of the images in the list should do that)
 	R1qToNormalizedRingList := apply(#quotientDomainList, jj -> (tt -> ((normalizedRing#1)#jj)*( (fakeMapList#jj)((normalizationMapList#jj)(sub(tt, source (normalizationMapList#jj)) )) ) ) ); --not a real map either, this is the "map" from each R1q to the normalizedRing, but it should work for the variables
 	--
@@ -884,7 +884,7 @@ doc ///
 			the first entry is the target of f as an algebra over the source
 	Description
 		Text
-			Given a ringmap map $f: A \to B$, this writes $B$ as $A[...]/J$.  It returns the ring $A[...]/J$ as well as the isomorphim $B \to A[...]/J$.  Consider the first example, a normalization of a cusp.
+			Given a ringmap map $f: A \to B$, this writes $B$ as $A[...]/J$.  It returns the ring $A[...]/J$ as well as the isomorphism $B \to A[...]/J$.  Consider the first example, a normalization of a cusp.
 		Example
 			A = QQ[a,b]/ideal(a^2-b^3);
 			B = QQ[t];

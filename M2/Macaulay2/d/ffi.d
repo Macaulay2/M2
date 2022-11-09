@@ -156,6 +156,19 @@ ffiPrepCifVar(e:Expr):Expr :=
 	else WrongNumArgs(3);
 setupfun("ffiPrepCifVar", ffiPrepCifVar);
 
+-- fix return value on big-endian systems, since integer types are widened
+-- to system register size
+endianAdjust(ptr:voidPointer, rtype:voidPointer):voidPointer:= (
+    if Ccode(int, "__BYTE_ORDER__") == Ccode(int, "__ORDER_LITTLE_ENDIAN__")
+    then ptr
+    else (
+	offset := Ccode(int,
+	    "sizeof(ffi_arg) - ((ffi_type *)", rtype,")->size");
+	if (Ccode(int, "((ffi_type *)", rtype, ")->type") ==
+	    Ccode(int, "FFI_TYPE_FLOAT") || offset <= 0)
+	then ptr
+	else Ccode(voidPointer, ptr, " + ", offset)));
+
 ffiCall(e:Expr):Expr :=
     when e
     is a:Sequence do
@@ -175,7 +188,8 @@ ffiCall(e:Expr):Expr :=
 				fn.v, ", ",
 				rvalue, ", ",
 				avalues, "->array)");
-			    toExpr(rvalue))
+			    toExpr(endianAdjust(rvalue, Ccode(voidPointer,
+					"((ffi_cif *)", cif.v, ")->rtype"))))
 			else WrongArg(4, "a list")
 		    else WrongArgZZ(3)
 		else WrongArgPointer(2)
@@ -576,7 +590,9 @@ ffiClosureFunction(cif:Pointer "ffi_cif *", ret:voidPointer,
 		Ccode(voidPointer, args, "[", i, "]"))));
     when applyEE(f, x)
     is ptr:pointerCell
-    do Ccode(void, "memcpy(", ret, ", ", ptr.v, ", ", cif, "->rtype->size)")
+    do Ccode(void, "memcpy(",
+	endianAdjust(ret, Ccode(voidPointer, "((ffi_cif *)", cif, ")->rtype")),
+	", ", ptr.v, ", ", cif, "->rtype->size)")
     else nothing);
 
 ffiClosureFinalizer(ptr:voidPointer, closure:voidPointer):void := (
