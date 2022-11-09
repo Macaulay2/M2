@@ -164,7 +164,7 @@ jobs:
             print(f'{version_info.major}.{version_info.minor}')"`
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
           export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
-            -L`brew --prefix python`/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
+            -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
           ../../configure --enable-download --with-python --with-system-gc --enable-syntax-highlighting
 
       - name: Build Macaulay2 using Make
