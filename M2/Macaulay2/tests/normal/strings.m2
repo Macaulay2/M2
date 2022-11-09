@@ -51,6 +51,7 @@ assert Equation(for c in "foo" list c, {"f", "o", "o"})
 i = 0
 scan("aaaaaaaaaa", c -> (assert Equation(c, "a"); i = i + 1))
 assert Equation(i, 10)
+assert Equation(apply("foo", identity), ("f", "o", "o"))
 assert Equation(apply("foo", "bar", concatenate), ("fb", "oa", "or"))
 assert Equation(apply("foo", ("b", "a", "r"), concatenate), ("fb", "oa", "or"))
 assert Equation(apply(("f", "o", "o"), "bar", concatenate), ("fb", "oa", "or"))
