@@ -1033,7 +1033,7 @@ kruskalSpanningForest = method()
 kruskalSpanningForest Graph := Graph => G -> (
     comps := new MutableHashTable from (vertices G/(v -> set{v} => 1));
     k := #connectedComponents G;
-    graph(vertices G, for e in sort edges G list (
+    graph(vertices G, for e in edges G list (
         if #comps == k then break;
         ic := select(2, keys comps, c -> #(c*e) > 0);
         if #ic == 1 then continue;
