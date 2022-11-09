@@ -102,7 +102,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
     local S;
     SBSubring := subring SB;
     -- if Recomputing then create a new SAGBIBasis object
-    if opts.Recompute or SB#options#Recompute then (
+    if opts.Recompute or SB#SAGBIoptions#Recompute then (
 	remove(SBSubring.cache, SAGBIBasis);
 	S = sagbiBasis(SBSubring, opts); 
 	) else (
@@ -133,7 +133,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 	-- move on to the next degree
 	compTable#SAGBIdata#degree = compTable#SAGBIdata#degree + 1;
 	
-	if compTable#options#PrintLevel > 2 then(
+	if compTable#SAGBIoptions#PrintLevel > 2 then(
 	    print("-- [main] sagbiGenerators are currently: ");
 	    print(transpose compTable#SAGBIdata#"sagbiGenerators");
 	    );	

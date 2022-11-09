@@ -1241,12 +1241,12 @@ doc ///
         Every instance of @TT "SAGBIBasis"@ contains the following hashtables:
 	
         @UL {
-        {BOLD {"data"}, ": contains parameters for the sagbi computation"},
+        {BOLD {"SAGBIdata"}, ": contains parameters for the sagbi computation"},
 	    {"  degree: current degree of the S-pairs in the sagbi algorithm."},
 	    {"  limit: degree limit of the computation."},
 	    {"  sagbiGenerators: generators in the sagbi basis (default none)"},
 	    {"  subalgebraGenerators: original generating set of the subring."},
-        {BOLD {"ideals"}},
+        {BOLD {"SAGBIideals"}},
 	    {"  I: the ideal defining the ambient ring = liftedRing / I"},
 	    {"  leadTermsI: initial ideal of I"},
 	    {"  reductionIdeal: SIdeal+I lifted to the tensorRing"},
@@ -1255,9 +1255,9 @@ doc ///
 	    {"  liftedRing: the polynomial ring of the quotient ring"},
 	    {"  quotientRing: ambient ring of the underlying subring"},
 	    {"  tensorRing: tensor product of the liftedRing with a polynomial ring that has one variable for each sagbi generator"},
-        {BOLD {"maps"}, ": a collection of useful maps between the 'rings'"},
-        {BOLD {"options"}, ": supplied options for the sagbi computation"},
-        {BOLD {"pending"}, ": newly computed sagbi generators before they are added to the sagbiGenerators in 'data'"}
+        {BOLD {"SAGBImaps"}, ": a collection of useful maps between the 'rings'"},
+        {BOLD {"SAGBIoptions"}, ": supplied options for the sagbi computation"},
+        {BOLD {"SAGBIpending"}, ": newly computed sagbi generators before they are added to the sagbiGenerators in 'data'"}
         }@
    SeeAlso
      sagbiBasis

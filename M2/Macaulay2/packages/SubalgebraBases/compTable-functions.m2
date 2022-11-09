@@ -14,7 +14,7 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
     if opts.RenewOptions then (
 	optionTable = new MutableHashTable from opts;
 	) else (
-	optionTable = new MutableHashTable from S#options;
+	optionTable = new MutableHashTable from S#SAGBIoptions;
 	);
     
     data#"limit" = opts.Limit;
@@ -29,7 +29,7 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
         SAGBIideals => ideals,
         SAGBIdata => data,
         SAGBIpending => pending,
-        options => optionTable
+        SAGBIoptions => optionTable
     }
 )
 
@@ -86,7 +86,7 @@ limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
         "leadTermsI" => compTable#SAGBIideals#"leadTermsI",
         "reductionIdeal" => maps#"inclusionLifted" compTable#SAGBIideals#"leadTermsI" + SIdeal
     };
-    optionTable := new MutableHashTable from compTable#options;
+    optionTable := new MutableHashTable from compTable#SAGBIoptions;
     data := null;
     pending := null;
     new HashTable from {
@@ -95,7 +95,7 @@ limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
         SAGBIideals => ideals,
         SAGBIdata => data,
         SAGBIpending => pending,
-        options => optionTable
+        SAGBIoptions => optionTable
     }
 )
 
@@ -128,7 +128,7 @@ compSubduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
 compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
     local result;
     local liftedM;
-    if compTable#options#PrintLevel > 3 then (    
+    if compTable#SAGBIoptions#PrintLevel > 3 then (    
 	print("-- subduction input:");
 	print(M);
 	);
@@ -140,24 +140,24 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 	};
     local subductedPart;
     local leadTermSubductedPart;    
-    if compTable#options#PrintLevel > 5 then(
+    if compTable#SAGBIoptions#PrintLevel > 5 then(
 	print("-- [compSubduction] elements to subduct:");
 	print(transpose liftedM);
 	);
     
     while not (zero(liftedM)) do (
-	if compTable#options#SubductionMethod == "Top" then (
+	if compTable#SAGBIoptions#SubductionMethod == "Top" then (
             subductedPart = subductionTopLevelLeadTerm(compTable, liftedM);
-	    ) else if compTable#options#SubductionMethod == "Engine" then (
+	    ) else if compTable#SAGBIoptions#SubductionMethod == "Engine" then (
     	    subductedPart = subductionEngineLevelLeadTerm(compTable, liftedM);
 	    ) else (
-	    error ("Unknown subduction type " | toString compTable#options#SubductionMethod); 
+	    error ("Unknown subduction type " | toString compTable#SAGBIoptions#SubductionMethod); 
 	    );
 	leadTermSubductedPart = leadTerm subductedPart;
 	result = result + leadTermSubductedPart;
 	liftedM = (subductedPart - leadTermSubductedPart) % compTable#SAGBIideals#"I";
 	
-	if compTable#options#PrintLevel > 5 then(
+	if compTable#SAGBIoptions#PrintLevel > 5 then(
 	    print("-- [compSubduction] result so far:");
 	    print(transpose result);
 	    print("--[compSubduction] remaining to subduct:");
@@ -166,8 +166,8 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 	);
     result = result % compTable#SAGBIideals#"I";
     
-    if compTable#options#PrintLevel > 3 then (    
-	print("-- subduction result using "| compTable#options#SubductionMethod |" strategy:");
+    if compTable#SAGBIoptions#PrintLevel > 3 then (    
+	print("-- subduction result using "| compTable#SAGBIoptions#SubductionMethod |" strategy:");
 	print(result);
 	);
     result
@@ -186,7 +186,7 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
 	h := tensorRingLeadTermg % (compTable#SAGBIideals#"reductionIdeal"); -- do partial % based on compTable option
 	projectionh := compTable#SAGBImaps#"fullSubstitution" compTable#SAGBImaps#"sagbiInclusion" h;
 
-    	if compTable#options#PrintLevel > 6 then (
+    	if compTable#SAGBIoptions#PrintLevel > 6 then (
 	    print("-- [subductionTopLevelLeadTerm] --");
 	    print("-- lift g:");
 	    print(transpose liftg);
@@ -295,7 +295,7 @@ autosubduce (HashTable) := (compTable) -> (
 autosubduceSagbi = method();
 autosubduceSagbi (HashTable) := (compTable) -> (
     
-    if compTable#options#PrintLevel > 0 then (
+    if compTable#SAGBIoptions#PrintLevel > 0 then (
 	print("-- AutoSubducting Sagbi Generators ...");
 	);	
     
@@ -320,15 +320,15 @@ autosubduceSagbi (HashTable) := (compTable) -> (
 updateComputation = method();
 updateComputation(HashTable) := (compTable) -> (
     
-    if compTable#options#Strategy == "Master" then (
+    if compTable#SAGBIoptions#Strategy == "Master" then (
 	updateComputationMaster(compTable);
 	);
     
-    if compTable#options#Strategy == "DegreeByDegree" then (
+    if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
 	updateComputationDegreeByDegree(compTable);
 	);
     
-    if compTable#options#Strategy == "Incremental" then (
+    if compTable#SAGBIoptions#Strategy == "Incremental" then (
 	updateComputationIncremental(compTable);
 	);
     )
@@ -352,19 +352,19 @@ updateComputationMaster(HashTable) := (compTable) -> (
 	-- compare the number of new generators with the total number of generators
 	-- e.g. if you're adding less than 2-3% of the total number of generators
 	if (numNewGens == 0 or numNewGens == 1) and (lastSagbiGenDegree > 8) then (
-	    if compTable#options#PrintLevel > 4 then (
+	    if compTable#SAGBIoptions#PrintLevel > 4 then (
 		print("-- [updateComputationMaster] Detected few new generators; using Incremental Strategy");
 		);
 	    updateComputationIncremental(compTable);
 	    ) else (
-	    if compTable#options#PrintLevel > 4 then (
+	    if compTable#SAGBIoptions#PrintLevel > 4 then (
 		print("-- [updateComputationMaster] Detected many or low-degree new generators; using DegreeByDegree Strategy");
 		);
 	    updateComputationDegreeByDegree(compTable);
 	    );
 	 
 	) else (
-	if compTable#options#PrintLevel > 4 then (
+	if compTable#SAGBIoptions#PrintLevel > 4 then (
 	    print("-- [updateComputationMaster] Defaulting to DegreeByDegree Strategy");
 	    );
 	updateComputationDegreeByDegree(compTable);
@@ -556,17 +556,17 @@ processPending (HashTable) := compTable -> (
     local reducedGenerators; 
     currentLowest := lowestDegree(compTable);
     if currentLowest < infinity then (
-	if compTable#options#PrintLevel > 4 then (
+	if compTable#SAGBIoptions#PrintLevel > 4 then (
 	    print("-- [processPending] generators before reduction:");
 	    print(transpose matrix{toList compTable#SAGBIpending#currentLowest});
 	    );
-	if compTable#options#ReduceNewGenerators then ( --perform guassian elimination on the new generators
+	if compTable#SAGBIoptions#ReduceNewGenerators then ( --perform guassian elimination on the new generators
 	    reducedGenerators = triangularBasis matrix{toList compTable#SAGBIpending#currentLowest};
 	    ) else (
 	    reducedGenerators = matrix{toList compTable#SAGBIpending#currentLowest};
 	    );
 	
-	if compTable#options#PrintLevel > 4 then (
+	if compTable#SAGBIoptions#PrintLevel > 4 then (
 	    print("-- [process pending]: reduced generators:");
 	    print(transpose reducedGenerators);
 	    );
@@ -577,7 +577,7 @@ processPending (HashTable) := compTable -> (
         currentLowest = lowestDegree(compTable);
         if currentLowest < infinity then (
 	    
-	    if compTable#options#PrintLevel > 4 then (
+	    if compTable#SAGBIoptions#PrintLevel > 4 then (
 		print("-- [processPending]: new sagbi generators being added:");
 		print(transpose matrix{toList compTable#SAGBIpending#currentLowest});
 		);    
@@ -626,11 +626,11 @@ insertPending (HashTable,Matrix) := (compTable, candidates) -> (
 
 processFirstStep = method();
 processFirstStep HashTable := (compTable) -> (
-    if compTable#options#AutoSubduce then (
-        if compTable#options#PrintLevel > 0 then
+    if compTable#SAGBIoptions#AutoSubduce then (
+        if compTable#SAGBIoptions#PrintLevel > 0 then
             print("-- Performing initial autosubduction...");
 	compTable#SAGBIdata#"subalgebraGenerators" = autosubduce compTable;
-    	compTable#options#AutoSubduce = false; -- autosubduction may now be skipped if the computation is resumed
+    	compTable#SAGBIoptions#AutoSubduce = false; -- autosubduction may now be skipped if the computation is resumed
     );
     
     if (numcols compTable#SAGBIdata#"sagbiGenerators" == 0) then (
@@ -654,7 +654,7 @@ submatrixByDegree (Matrix,ZZ) := (inputMatrix, selectedDegree) -> (
 collectSPairs = method();
 collectSPairs (HashTable) := (compTable) -> (
     
-    if compTable#options#PrintLevel > 0 then (
+    if compTable#SAGBIoptions#PrintLevel > 0 then (
 	    print("---------------------------------------");
 	    print("-- Current degree:"|toString(compTable#SAGBIdata#degree));
 	    print("---------------------------------------");
@@ -670,17 +670,17 @@ collectSPairs (HashTable) := (compTable) -> (
 	remove(compTable#SAGBIpending, compTable#SAGBIdata#degree);
     );
     
-    if compTable#options#PrintLevel > 2 then ( -- extra information
+    if compTable#SAGBIoptions#PrintLevel > 2 then ( -- extra information
 	print("-- GB for reductionIdeal:");
 	print(sagbiGB);
 	print(gens sagbiGB);
 	print("-- zeroGens:");
 	print(zeroGens);
 	);
-    if compTable#options#PrintLevel > 0 then (
+    if compTable#SAGBIoptions#PrintLevel > 0 then (
 	print("-- Num. S-polys before subduction: "| toString(numcols SPairs));
 	);
-    if compTable#options#PrintLevel > 1 then (
+    if compTable#SAGBIoptions#PrintLevel > 1 then (
 	print("-- S-polys:");
 	print(SPairs);
 	);
@@ -706,11 +706,11 @@ updatePending(HashTable, Matrix) := (compTable, SPairs) -> (
 	newGens = SPairs;
 	);
     
-    if compTable#options#PrintLevel > 0 then(
+    if compTable#SAGBIoptions#PrintLevel > 0 then(
 	print("-- Num. S-polys after subduction: " | toString(numcols newGens));
 	);
     
-    if compTable#options#PrintLevel > 1 then(
+    if compTable#SAGBIoptions#PrintLevel > 1 then(
 	print("-- New generators:");
 	if (numcols newGens == 0) then(
 	    -- It has to treat this as a special case because zero matrices are special.
@@ -775,7 +775,7 @@ checkTermination(HashTable) := (compTable) -> (
     -- check to make sure it is not possible to get lower degree sagbiGenerators
     -- by taking them modulo the reductionIdeal
     terminationCondition3 = compTable#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1; 
-    if compTable#options#PrintLevel > 0 then(
+    if compTable#SAGBIoptions#PrintLevel > 0 then(
 	print("-- Stopping conditions:");
 	print("--    No higher degree candidates: "|toString(terminationCondition0));
 	print("--    S-poly ideal GB completed:   "|toString(terminationCondition1));
@@ -785,11 +785,11 @@ checkTermination(HashTable) := (compTable) -> (
     
     if terminationCondition0 and terminationCondition1 and terminationCondition2 and terminationCondition3 then (
 	compTable#SAGBIdata#"sagbiDone" = true;
-	if compTable#options#PrintLevel > 0 then (
+	if compTable#SAGBIoptions#PrintLevel > 0 then (
 	    print("-- Computation complete. Finite sagbi basis found!")
 	    );
 	) else (
-	if (compTable#options#AutoSubduceOnPartialCompletion) and (not compTable#SAGBIdata#"autoSubductedSagbiGenerators") then (
+	if (compTable#SAGBIoptions#AutoSubduceOnPartialCompletion) and (not compTable#SAGBIdata#"autoSubductedSagbiGenerators") then (
 	    -- apply autosubduction to the sagbiGenerators
 	    compTable#SAGBIdata#"sagbiGenerators" = autosubduceSagbi(compTable);
 	    compTable#SAGBIdata#"autoSubductedSagbiGenerators" = true;

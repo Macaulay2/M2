@@ -45,16 +45,15 @@ needs "./SubalgebraBases/sagbi-main.m2"
 
 beginDocumentation()
 needs "./SubalgebraBases/documentation.m2"
---needs "./SubalgebraBases/tests.m2"
 
 end--
 
 uninstallAllPackages()
 restart
 path = prepend("./", path)
-installPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2",InstallPrefix=>"./")
+installPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2",InstallPrefix=>"./",RerunExamples=>true)
 check "SubalgebraBases"
-
+viewHelp SubalgebraBases
 loadPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2")
 check(1, "SubalgebraBases")
 

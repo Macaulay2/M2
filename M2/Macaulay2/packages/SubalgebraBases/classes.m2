@@ -215,7 +215,7 @@ sagbiBasis Subring := opts -> S -> (
         SAGBIideals => ideals,
         SAGBIdata => data,
         SAGBIpending => pending,
-        options => optionTable
+        SAGBIoptions => optionTable
     	};
     
     S.cache#"SAGBIBasis" = newSAGBIBasis
@@ -227,14 +227,14 @@ sagbiBasis HashTable := opts -> H -> (
     ideals := new HashTable from H#SAGBIideals;
     data := new HashTable from H#SAGBIdata;
     pending := new HashTable from apply(keys H#SAGBIpending,i-> i => new List from (H#SAGBIpending#i));
-    optionTable := new HashTable from H#options;
+    optionTable := new HashTable from H#SAGBIoptions;
     newSAGBIBasis := new SAGBIBasis from {
         SAGBIrings => rings, -- rings -> SAGBIRings + protect
         SAGBImaps => maps,
         SAGBIideals => ideals,
         SAGBIdata => data,
         SAGBIpending => pending,
-        options => optionTable
+        SAGBIoptions => optionTable
     };
     
     newSAGBIBasis#SAGBIdata#subring.cache#SAGBIBasis = newSAGBIBasis
