@@ -1431,6 +1431,7 @@ doc ///
     (foreignObject, Number)
     (foreignObject, String)
     (foreignObject, ZZ)
+    (foreignObject, Pointer)
   Headline
     construct a foreign object
   Usage
