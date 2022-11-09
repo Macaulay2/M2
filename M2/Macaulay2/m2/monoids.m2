@@ -78,9 +78,10 @@ promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
     new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
 
 -- printing helpers
-expressionTerm  := (exps, k, v) -> if v =!= 1 then Power{exps#k, v} else hold exps#k -- hold needed for single variables
 expressionTerms := (M, trms) -> ( exps := M.generatorExpressions;
-    if #trms === 1 then expressionTerm_exps trms#0 else Product apply(trms, expressionTerm_exps))
+    expressionTerm  := (k, v) -> if v =!= 1 then Power{exps#k, v} else exps#k;
+    if #trms === 0 then ONE else if #trms === 1 then hold expressionTerm trms#0 else Product apply(trms, expressionTerm))
+ -- hold needed for single variables
 
 expression MonoidElement := x -> expressionTerms(class x, rawSparseListFormMonomial x.RawMonomial);
 

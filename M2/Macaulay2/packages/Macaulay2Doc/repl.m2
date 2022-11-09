@@ -810,8 +810,27 @@ document {
 	  "f = random(R^{2},R^2)",
 	  "compactMatrixForm = false;",
 	  "f"
+	  },
+      Caveat => {"This flag currently has no effect outside of ", TO "Standard"," output mode."}
+     }
+
+document {
+     Key => symbol blockMatrixForm,
+    Headline => "global flag for block printing",
+	Usage => "blockMatrixForm = x",
+	Consequences => {"changes the display of matrices"},
+     TT "blockMatrixForm", " is a global flag that specifies whether to display
+     blocks in matrices.",
+     PARA{},
+     "The default value is ", TT "false", ".",
+     EXAMPLE {
+	  "M = ZZ^1 ++ ZZ^2 ++ ZZ^3",
+	  "f = random(M,M)",
+	  "blockMatrixForm = true;",
+	  "f"
 	  }
      }
+    
 
 document {
      Key => globalAssign,
