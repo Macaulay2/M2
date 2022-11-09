@@ -156,6 +156,9 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
+random(ZZ,   Ideal) := Matrix => opts -> (d, I) -> random({d}, I, opts)
+random(List, Ideal) := Matrix => opts -> (L, I) -> generators I * random(source generators I, (ring I)^(-L), opts)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
