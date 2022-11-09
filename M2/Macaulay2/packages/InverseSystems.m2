@@ -40,7 +40,7 @@ isStandardGradedPolynomialRing Ring := R ->(
 
 toDividedPowers = method()
 toDividedPowers RingElement := p -> (
-    --the following routine takes a polynomial and writes in in the divided power basis,
+    --the following routine takes a polynomial and writes it in the divided power basis,
     --where a^(n) is represented as a^n.
     S := ring p;
     sub0 := map(S,S,0_S*vars S);

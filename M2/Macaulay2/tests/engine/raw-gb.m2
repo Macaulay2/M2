@@ -317,7 +317,7 @@ rawStartComputation G
 rawGBGetLeadTerms(G,10)
 << "DO A MORE SUBSTANTIAL Schreyer order GB" << endl;
 --------------------------------------------
--- Gröbner bases using hilbert functions --
+-- Gröbner bases using Hilbert functions --
 --------------------------------------------
 needs "raw-util.m2"
 gbTrace = 3

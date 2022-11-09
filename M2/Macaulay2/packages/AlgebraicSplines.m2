@@ -1808,7 +1808,7 @@ doc ///
         postulationNumber
 	(postulationNumber,Module)
     Headline
-        computes the largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+        computes the largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
     Usage
         v = postulationNumber(M)
     Inputs
@@ -1816,11 +1816,11 @@ doc ///
 	    graded module
     Outputs
         v:ZZ
-	    largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+	    largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
     Description
         Text
 	    This function computes the postulation number of M which is defined as the
-	    largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+	    largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
 	Example
 	    V = {{0,0},{1,0},{1,1},{0,1}};
 	    F = {{0,1,2},{0,2,3}};
@@ -1873,7 +1873,7 @@ doc ///
 	    M' = splineModule(V',F,1);
 	    hilbertPolynomial(M',Projective=>false)
 	    hilbertComparisonTable(0,4,M)
-	    postulationNumber(M) --final integer for which hilbert function and polynomial disagree
+	    postulationNumber(M) --final integer for which Hilbert function and polynomial disagree
 	    hilbertComparisonTable(0,4,M')
 	    postulationNumber(M')
     	Text
@@ -1893,7 +1893,7 @@ doc ///
 	    M''=splineModule(V'',F,1,Homogenize=>false);
 	    hilbertPolynomial(M'',Projective=>false)
 	    hilbertComparisonTable(0,6,M)
-	    postulationNumber(M) --largest integer for which hilbert function and polynomial disagree
+	    postulationNumber(M) --largest integer for which Hilbert function and polynomial disagree
 	    hilbertComparisonTable(0,6,M')
 	    postulationNumber(M')
 	    hilbertComparisonTable(0,6,M'')
