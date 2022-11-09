@@ -88,7 +88,7 @@
 -- > > > 
 -- > > > Could I ask another Macaulay2 question regarding weighted projective spaces?
 -- > > > 
--- > > > I know, for example, the the sextic in WP_{1,1,2,2} is a K3 surface.
+-- > > > I know, for example, that the sextic in WP_{1,1,2,2} is a K3 surface.
 -- > > > 
 -- > > > So I can define:
 -- > > > 

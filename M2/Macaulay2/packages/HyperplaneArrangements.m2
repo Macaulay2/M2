@@ -711,7 +711,7 @@ subArrangement Flat := Arrangement => F -> (
      arrangement(A.hyperplanes_(toList F), ring A)
      )
 
--- the next version is redundant, but I'm putting it in in case users want to
+-- the next version is redundant, but I'm putting it here in case users want to
 -- use the usual notation
 subArrangement (Arrangement, Flat) := Arrangement => (A, F) -> (
      if (A =!= arrangement F) then error "not a flat of the arrangement";

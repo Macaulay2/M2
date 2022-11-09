@@ -52,7 +52,7 @@ HirzOmegaTable2 = (a,b)->(
                    (for j from -b to b do <<" " << numgens source basis({i,j},E3);
                    print " "))
 
--- This one produces negative values for the hilbert function of H^1 !!
+-- This one produces negative values for the Hilbert function of H^1 !!
 HirzOmegaTable(2,2)
 {* -- output
 H^0

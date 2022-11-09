@@ -503,7 +503,7 @@ ring_elem SchurRing2::negate(const ring_elem f) const
 }
 
 ring_elem SchurRing2::truncate(const ring_elem f) const
-// assumption: f is a schur poly over another schur ring, with the SAME coeff
+// assumption: f is a Schur poly over another Schur ring, with the SAME coeff
 // ring
 //  each term is copied over, if the number of elements in the partition is <=
 //  n_vars()

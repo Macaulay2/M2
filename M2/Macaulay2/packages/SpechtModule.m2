@@ -1533,7 +1533,7 @@ multidoc ///
     	    	the filling of the tableau, if it is not provided then it is assume that the filling is zero.
     	Outputs
     	    :YoungTableau
-    	    	a young tableau with the given shape and filling
+    	    	a Young tableau with the given shape and filling
     	SeeAlso
 	    YoungTableau
     Node
@@ -2034,7 +2034,7 @@ multidoc ///
 	    readingWord(y)
 	Inputs
 	    y:YoungTableau
-	    	a young tableau
+	    	a Young tableau
 	Outputs
 	    :List
 	    	the reading word of the Young tableau
@@ -2556,7 +2556,7 @@ multidoc ///
     	    firstRowDescent
 	    
     	Headline
-    	    retrieves the first row descent of a young tableau
+    	    retrieves the first row descent of a Young tableau
     	Usage
     	    firstRowDescent y
     	Inputs
@@ -2863,7 +2863,7 @@ multidoc ///
 	     a hash table with the polynomials index by the filling of their respective tableaux 
     	Description
 	    Text
-	    	The set of all the Specht polynomials for standard tableaux of a given shape p forms a basis for a module which is isomorphich to 
+	    	The set of all the Specht polynomials for standard tableaux of a given shape p forms a basis for a module which is isomorphic to 
 		the Specht module indexed by p.
 	   
 	   Example
@@ -2952,7 +2952,7 @@ multidoc ///
     	Description
 	    Text
 	    	Higher Specht polynomials are a family of polynomials that form a basis of the coinvariant algebra for the symmetric group.
-		The coinvariant algebra is isomorpich as a $S_n$ module to the regular representation of $S_n$. Therefore
+		The coinvariant algebra is isomorphic as a $S_n$ module to the regular representation of $S_n$. Therefore
 		every Specht modules appears as an irreducible module in this algebra with multiplicity $f^\lambda= {\rm dim} \, S^\lambda $. 
 		Higher Specht polynomials decompose this algebra into its irreducible submodules. 
 		

@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- hash: 130641358
+
+i1 : nullPointer
+
+o1 = (nil)
+
+o1 : Pointer
+
+i2 : 
