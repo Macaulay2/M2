@@ -49,14 +49,28 @@ for i to 9 do (
     )
 
 restart
+-- system linear in parameters
 needsPackage "MonodromySolver"
--*
-setTryJustInTimeCompilation false
-*-
+setTryJustInTimeCompilation true
 setRandomSeed 0;
 declareVariable \ {A,B,C,D,X,Y};
 F = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}});
 p0 = point{{1,1,1,1}};
-sols = solveFamily(p0, F, NumberOfNodes=>3);
+-*
+sols = solveFamily(p0, F, NumberOfNodes=>2);
 apply(length sols, i->norm(evaluate(F, p0, sols#i)))
+*-
+monodromySolve(F, NumberOfNodes=>2);
 
+-- system NONlinear in parameters
+restart
+debug needsPackage "MonodromySolver"
+setTryJustInTimeCompilation true
+setRandomSeed 0;
+declareVariable \ {A,B,C,D,X,Y};
+F = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B^2}, {C*(Y+2)^2+D}});
+errorDepth = 0 
+(p0,x0) = newtonHomotopy F
+(Hnode,nPaths) = monodromySolve(F, p0, {x0}, NumberOfNodes=>4);
+sols = points Hnode.PartialSols
+apply(length sols, i->norm(evaluate(F, Hnode.BasePoint, sols#i)))
