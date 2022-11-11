@@ -77,10 +77,6 @@ DetComputation::DetComputation(const Matrix *M0,
       D[i] = newarray(ring_elem, p);
       for (size_t j = 0; j < p; j++) D[i][j] = ZERO_RINGELEM;
     }
-  if (strategy == DET_DYNAMIC) {
-    dynamic_cache.resize(p);
-    make_dynamic_cache();
-  }
 }
 
 DetComputation::~DetComputation()
@@ -158,6 +154,10 @@ int DetComputation::step()
       r = bareiss_det();
     }
   else if (strategy == DET_DYNAMIC) {
+    if(dynamic_cache.empty()) { // Cache minors if needed
+      dynamic_cache.resize(p);
+      make_dynamic_cache();  
+    }
     std::vector<int> row_vec(p), col_vec(p);
     for(int i = 0; i < p; ++i) {
       row_vec[i] = static_cast<int>(row_set[i]);
