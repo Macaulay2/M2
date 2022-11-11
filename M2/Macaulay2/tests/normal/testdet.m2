@@ -10,12 +10,16 @@ testsame = (p,m) -> if p >= 0 then
 testsame1 = (p,m) -> (
      time answer1 := gens minors(p,m,Strategy=>Bareiss);
      time answer2 := gens minors(p,m,Strategy=>Cofactor);
-     assert(answer1 == answer2))
+     time answer3 := gens minors(p,m,Strategy=>Dynamic);
+     assert(answer1 == answer2);
+     assert(answer1 == answer3))
 
 testsame2 = (p,m) -> (
      time answer1 := exteriorPower(p,m,Strategy=>Bareiss);
      time answer2 := exteriorPower(p,m,Strategy=>Cofactor);
-     assert(answer1 == answer2))
+     time answer3 := exteriorPower(p,m,Strategy=>Dynamic);
+     assert(answer1 == answer2);
+     assert(answer1 == answer3))
 
 R = ZZ/101[a..d]
 m = matrix{{a,b},{c,d}}
