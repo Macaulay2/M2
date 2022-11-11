@@ -284,13 +284,13 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else new Sequence len i do foreach x in r do provide x)));
 
 export getIterator(e:Expr):Expr := (
-    f := lookup1(Class(e), getGlobalVariable(iteratorS));
+    f := lookup(Class(e), getGlobalVariable(iteratorS));
     if f == notfoundE
     then nullE
     else applyEE(f, e));
 
 export getNextFunction(e:Expr):Expr := (
-    f := lookup1(Class(e), getGlobalVariable(nextS));
+    f := lookup(Class(e), getGlobalVariable(nextS));
     if f == notfoundE
     then nullE
     else f);
