@@ -268,6 +268,11 @@ document { Key => Cofactor,
      "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
      SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
      }
+document { Key => Dynamic,
+     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
+     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
+     }
+
 
 document { Key => SumOfTwists,
      Headline => "the class of all sums of twists",
