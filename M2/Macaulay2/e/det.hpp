@@ -64,7 +64,7 @@ class DetComputation : public our_new_delete
   // Sets D[0..p-1,0..p-1] with the given minor of M.
 
   // Used in Dynamic:
-  void make_dynamic_cache();
+  int make_dynamic_cache();
 
   // Used in Bareiss:
   bool get_pivot(ring_elem **D, size_t p, ring_elem &pivot, size_t &pivot_col);

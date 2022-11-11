@@ -91,7 +91,7 @@ DetComputation::~DetComputation()
     }
 }
 
-void DetComputation::make_dynamic_cache() {
+int DetComputation::make_dynamic_cache() {
   // Traverse through matrix entries, find nonzero entries
   int nonzero = -1;
   for(int i = 0; i < M->n_rows(); ++i) {
@@ -108,6 +108,7 @@ void DetComputation::make_dynamic_cache() {
     for(int top_row = p-(minor_size+1); top_row <= n_nonzero_rows-minor_size; ++top_row) {
       dynamic_cache[minor_size].insert({ top_row, {} });
       for(const auto& [pp, map]: dynamic_cache[minor_size-1]) {
+        if(system_interrupted()) return COMP_INTERRUPTED; // Allow interruption
         if(pp <= top_row) { continue; } // top_row wouldn't be the top row, so skip
         for(auto x: dynamic_cache[0][top_row]) {
           for(const auto& [Didx, Dval]: map) {
@@ -138,6 +139,7 @@ void DetComputation::make_dynamic_cache() {
       }
     }
   }
+  return COMP_DONE;
 }
 
 int DetComputation::step()
@@ -156,7 +158,7 @@ int DetComputation::step()
   else if (strategy == DET_DYNAMIC) {
     if(dynamic_cache.empty()) { // Cache minors if needed
       dynamic_cache.resize(p);
-      make_dynamic_cache();  
+      if (make_dynamic_cache() == COMP_INTERRUPTED) return COMP_INTERRUPTED;
     }
     std::vector<int> row_vec(p), col_vec(p);
     for(int i = 0; i < p; ++i) {
