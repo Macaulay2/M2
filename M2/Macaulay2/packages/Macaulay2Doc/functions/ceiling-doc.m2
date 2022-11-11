@@ -9,7 +9,7 @@ document {
      }
      
 document { 
-     Key => {(ceiling,Number)},
+     Key => {(ceiling,Number), (ceiling, Constant)},
      Headline => "ceiling function",
      Usage => "ceiling x",
      Inputs => { "x" },
@@ -18,5 +18,5 @@ document {
      EXAMPLE {
      "ceiling(-3.4)"
      },
-     SeeAlso => {floor}
+     SeeAlso => {(floor, Number), (truncate, Number)}
      }

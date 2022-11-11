@@ -7,14 +7,14 @@
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
---   INPUT : 'I',  a homogeneous ideal with resect to some strictly psoitive grading
+--   INPUT : 'I',  a homogeneous ideal with resect to some strictly positive grading
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (
    -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
    -- respect to this grading
    homogeneityCheck := I -> (
-      -- Generate the matrix 'M' that spans the space of the differeneces of the 
+      -- Generate the matrix 'M' that spans the space of the differences of the 
       -- exponent vectors of the generators of 'I'
       L := flatten entries gens I;
       lt := apply(L, leadTerm);

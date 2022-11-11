@@ -162,7 +162,9 @@ new DiagonalAlgebra from Module := (X,M) -> (
     D == Vector := Vector == D := (x,y) -> x#0 == y#0;
     D == Number := (x,n) -> x == new D from n;
     Number == DD := (n,x) -> x == new D from n;
-    D + D := D + Vector := Vector + D := (x,y) -> new D from vector (x#0+y#0); -- shouldn't be needed but whatever
+    D + D := D + Vector := Vector + D := (x,y) -> new D from {x#0+y#0};
+    D - D := D + Vector := Vector + D := (x,y) -> new D from {x#0-y#0};
+    RingElement * D := Number * D := (n,x) -> new D from {n*x#0};
     D)
 ring DiagonalAlgebra := D -> ring D.Module;
 rank DiagonalAlgebra := D -> rank D.Module;
@@ -287,7 +289,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	if curCotOpts.Ktheory then canonicalClass AA :=  { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> lift(canonicalClass(AA,Partial=>false),AA)
 	    else AA -> product(n,j->product(n,k->if ω0#j<ω0#k then BB_k*BB_j^(-1) else 1)));
 	zeroSectionInv AA := { Partial => true } >> o -> (cacheValue (zeroSectionInv,o.Partial)) (AA -> (zeroSection(AA,o))^(-1));
-	-- segre Classes TODO rethink: closure?
+	-- Segre Classes TODO rethink: closure?
 	sClasses AA := {Partial=>true} >> o -> (cacheValue (sClasses,o.Partial)) (if o.Partial then AA -> lift(sClasses(AA,Partial=>false),AA)
 		else AA -> (
 		-- monodromy matrix
@@ -486,7 +488,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		(Rcheckz,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω),
 		(Rcheckz',ω) => transpose matrix ZZ^((d+1)^n)_(ind ω),
 		} );
-	-- segre & schubert classes
+	-- Segre & Schubert classes
 	sClass (List,D) := {} >> o -> (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
 		map(M,FF^#L, apply(I,i->first entries (fixedPoint(Rcheck,i))_inds))

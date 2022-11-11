@@ -1,0 +1,63 @@
+-- -*- M2-comint -*- hash: -2090051081
+
+i1 : int8
+
+o1 = int8
+
+o1 : ForeignIntegerType
+
+i2 : uint32
+
+o2 = uint32
+
+o2 : ForeignIntegerType
+
+i3 : char'
+
+o3 = int8
+
+o3 : ForeignIntegerType
+
+i4 : uchar
+
+o4 = uint8
+
+o4 : ForeignIntegerType
+
+i5 : short
+
+o5 = int16
+
+o5 : ForeignIntegerType
+
+i6 : ushort
+
+o6 = uint16
+
+o6 : ForeignIntegerType
+
+i7 : int
+
+o7 = int32
+
+o7 : ForeignIntegerType
+
+i8 : uint
+
+o8 = uint32
+
+o8 : ForeignIntegerType
+
+i9 : long
+
+o9 = int64
+
+o9 : ForeignIntegerType
+
+i10 : ulong
+
+o10 = uint64
+
+o10 : ForeignIntegerType
+
+i11 : 

@@ -13,7 +13,7 @@ entries MutableMatrix := m -> (
      applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
-expression MutableMatrix := m -> MatrixExpression {applyTable(entries m, expression), MutableMatrix => true}
+expression MutableMatrix := m -> MatrixExpression append(applyTable(entries m, expression), symbol MutableMatrix => true)
 texMath MutableMatrix := m -> texMath expression m
 net MutableMatrix := m -> net expression m
 
@@ -303,6 +303,7 @@ rank MutableMatrix := (M) -> (
       rank matrix M
     )
 
+determinant = method(Options => { Strategy => null })
 determinant MutableMatrix := opts -> (M) -> (
     if numRows M =!= numColumns M then error "expected a square matrix";
     if isField ring M then

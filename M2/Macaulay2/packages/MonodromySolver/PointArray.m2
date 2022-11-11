@@ -17,7 +17,7 @@ pointArray      -- constructor
 _               -- return points corresponding to labels
 appendPoint     -- tack on a point at the end
 appendPoints    -- ....... list of points ..........
-position        -- find a poisiton of a point in the array (null = not there)
+position        -- find a position of a point in the array (null = not there)
 points          -- returns a List of points
 
 Searching the array is likely to be O(log n), which is achieved via std::map. 

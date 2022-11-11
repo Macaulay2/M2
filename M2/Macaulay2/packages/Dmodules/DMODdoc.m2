@@ -747,7 +747,7 @@ document {
 	     ///,
      Caveat =>{
 	  "Input modules M, N should be holonomic.",
-	  "Does not yet compute explicit reprentations of Ext groups
+	  "Does not yet compute explicit representations of Ext groups
 	  such as Yoneda representation."
 	  },
      SeeAlso => {"DHom", "Drestriction"}
@@ -1102,7 +1102,7 @@ document {
      and then dehomogenize.  The second strategy is to homogenize
      with respect to the weight vector.
      These strategies are described in the paper
-     'Algorithims for D-modules'
+     'Algorithms for D-modules'
      by Oaku-Takayama(1999).",
      EXAMPLE lines ///
 	     R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
@@ -1164,7 +1164,7 @@ document {
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
 
      PARA {
-	  "The algorithm used appears in the paper 'Algorithims for D-modules'
+	  "The algorithm used appears in the paper 'Algorithms for D-modules'
 	  by Oaku-Takayama(1999).  The method is to compute an adapted resolution
 	  with respect to the weight vector w and use the b-function with respect
 	  to w to truncate the resolution."},
@@ -1391,7 +1391,7 @@ document {
      The input weight vector should be a list of ", EM "n", " numbers	    
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
      PARA "",
-     "The algorithm used appears in the paper 'Algorithims for D-modules'
+     "The algorithm used appears in the paper 'Algorithms for D-modules'
      by Oaku-Takayama(1999).  The method is to take the Fourier transform
      of M, then compute the derived restriction, then inverse
      Fourier transform back.",

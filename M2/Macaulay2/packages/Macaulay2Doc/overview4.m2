@@ -289,7 +289,7 @@ document { Key => "the debugger",
      "You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
      As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
      EXAMPLE "listLocalSymbols",
-     "We see the the value of ", TT "x", " is 0, and that explains the error message about division by zero.
+     "We see that the value of ", TT "x", " is 0, and that explains the error message about division by zero.
      The other local symbols are the ones defined in the body of the function ", TT "f", ", whose
      code can now be displayed with ", TO "code", ".",
      EXAMPLE "code f",

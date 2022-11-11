@@ -132,15 +132,19 @@ expression JoinOfCoincidentRootLoci := (Z) -> (
 
 net CoincidentRootLocus := (X) -> net expression X;
 
+CoincidentRootLocus#{WebApp,AfterPrint} = CoincidentRootLocus#{WebApp,AfterNoPrint} = 
 CoincidentRootLocus#{Standard,AfterPrint} = CoincidentRootLocus#{Standard,AfterNoPrint} = X -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Coincident root locus" << endl;
 );
 
 net JoinOfCoincidentRootLoci := (Z) -> net expression Z;
 
+JoinOfCoincidentRootLoci#{WebApp,AfterPrint} = JoinOfCoincidentRootLoci#{WebApp,AfterNoPrint} = 
 JoinOfCoincidentRootLoci#{Standard,AfterPrint} = JoinOfCoincidentRootLoci#{Standard,AfterNoPrint} = X -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Join of ", << #(X#"listCRloci") <<" coincident root loci" << endl;
 );
+
+texMath JoinOfCoincidentRootLoci := texMath CoincidentRootLocus := texMath @@ net;
 
 toString CoincidentRootLocus := (X) -> "CRL("|toString partition X|","|toString coefficientRing X|","|"Variable=>"|toString X#"variable"|")"; 
 
@@ -645,7 +649,7 @@ isSomeLinearCombinationRealRooted (Matrix) := o -> (F) -> (
        if not(isPolynomialRing K and coefficientRing K === QQ and numgens K <= 1) then error "expected coefficient ring of the form QQ or QQ[e]";
        Fe = sub(F,frac(coefficientRing K)[gens Txy]);
    );
-   if not isHomogeneous ideal Fe then error "expected a homogeneus matrix";
+   if not isHomogeneous ideal Fe then error "expected a homogeneous matrix";
    d := unique apply(flatten entries Fe,degree);
    if #d > 1 then error "expected forms of the same degree" else d = first d;
    if #d > 1 then error "expected a standard graded polynomial ring" else d = first d;

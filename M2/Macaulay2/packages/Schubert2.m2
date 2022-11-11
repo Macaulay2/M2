@@ -1593,7 +1593,7 @@ computeWedges = (n,A,d) -> (
      )
 
 exteriorPower(ZZ, AbstractSheaf) := AbstractSheaf => opts -> (n,E) -> (
-     -- wedge is an array 0..n of the chern characters of the exerior 
+     -- wedge is an array 0..n of the Chern characters of the exterior 
      -- powers of E.  The last one is what we want.
 
      -- this line of code is incorrect for virtual bundles:
@@ -1774,7 +1774,7 @@ schubertRing(FlagBundle) := G -> (
 	  T' = T^-1; --matrix converting from h-basis to s-basis
           local S;
 	  s := local s;
-	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> schubert basis elts
+	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> Schubert basis elts
 	  S.cache = new CacheTable;
 	  S#{Standard,AfterPrint} = X -> (
 	       << endl;

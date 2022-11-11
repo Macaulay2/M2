@@ -902,7 +902,7 @@ int MonomialIdeal::n_pure_powers() const
 //   partition(J)
 
 //   linear versions of: quotient, ...
-//   hilbert series
+//   Hilbert series
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

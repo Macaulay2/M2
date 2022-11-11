@@ -46,7 +46,7 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(
 /* same interface as rawGaloisField, but uses Givaro */
 
 M2_arrayintOrNull rawARingGFPolynomial(const Ring *R);
-/* given an ARingGF, return the coefficient array of the quotient polynoials.
+/* given an ARingGF, return the coefficient array of the quotient polynomials.
    So, if R = kk[a]/(f(a)), where kk = ZZ/p, then the (integer) coefficients
    {f0, f1, f2, ..., f_(degree f)} is returned.
  */

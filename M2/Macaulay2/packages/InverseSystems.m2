@@ -40,7 +40,7 @@ isStandardGradedPolynomialRing Ring := R ->(
 
 toDividedPowers = method()
 toDividedPowers RingElement := p -> (
-    --the following routine takes a polynomial and writes in in the divided power basis,
+    --the following routine takes a polynomial and writes it in the divided power basis,
     --where a^(n) is represented as a^n.
     S := ring p;
     sub0 := map(S,S,0_S*vars S);
@@ -214,7 +214,7 @@ Description
   In the 1880's these ideas were used by Max Noether, in the
   local version, as a substitute for primary decomposition in the 
   case of what he called multiple points in the plane. 
-  F. S. Macaualay studied and greatly refined Noether's
+  F. S. Macaulay studied and greatly refined Noether's
   work, and for example identified the ideals I that are
   annihilators of cyclic submodules of $D'$ as the ideals
   such that one could do residuation in $S'/I$ -- 
@@ -229,7 +229,7 @@ Description
   will have only primary components contained in
   $(x_1,\dots,x_n)$ so the distinction
   will not be important for us on that side. 
-  However, it is imporant
+  However, it is important
   to note that when taking the inverse system of an ideal,
   only the primary components contained in 
   $(x_1,\dots,x_n)$ play a role.
@@ -368,7 +368,7 @@ Description
   image M != inverseSystem N
  Text 
   There is at present no direct way to compare
-  inverseSystem(d, inverseSystem M) and M, since the matrices repreenting these submodules
+  inverseSystem(d, inverseSystem M) and M, since the matrices representing these submodules
   are really representing sets of generators in D^r. However, we can
   check equality of containment by applying inverseSystem again:
  Example
@@ -383,7 +383,7 @@ Description
   which is of course defined only on divided monomials of 
   small degree.  
 Caveat
- The translations used involve multiplying or dividing by scalars; if the polynoimials
+ The translations used involve multiplying or dividing by scalars; if the polynomials
  involved have maximum degree n, then n! must be invertible for theUsing the tool of translation to make sense.
 SeeAlso
  inverseSystem
@@ -485,7 +485,7 @@ Description
   ideals and modules. For that application
   see @TO Gorenstein@.
  
-  Let S = k[x_1..x_n] be a standard graded polyomial ring,
+  Let S = k[x_1..x_n] be a standard graded polynomial ring,
   and let D be its dual, the divided power algebra,
   regarded as an S-module.  Let M be an rxm matrix of polynomials,
   and let I be an ideal of S. 
@@ -821,7 +821,7 @@ assert(
 
 ///
 
---inverseSystem is equivariant on matricses
+--inverseSystem is equivariant on matrices
 TEST///
 setRandomSeed 0
 kk = QQ

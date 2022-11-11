@@ -1132,7 +1132,7 @@ doc ///
     a homotopy that involves parameters
   Description
     Text
-      An abstract type that of homotopy that involces parameters.
+      An abstract type that of homotopy that involves parameters.
       Can be specialized to produce @TO SpecializedParameterHomotopy@.
 ///	    
 

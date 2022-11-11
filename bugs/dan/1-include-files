@@ -1,4 +1,4 @@
 We have an include file called "config.h" in include/.  If someone tries to
 build our system and puts CPPFLAGS="-I/tmp/foo" and /tmp/foo/config.h exists,
 it will load that instead, unfortunately.  Fix the configure/Makefile system so
-our directory is earlier in the search order than those the the builder specifies.
+our directory is earlier in the search order than those that the builder specifies.

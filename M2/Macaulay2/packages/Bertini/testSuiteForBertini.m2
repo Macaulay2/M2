@@ -89,7 +89,7 @@ restart
 path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
 loadPackage("Bertini")
 
---To have a parameter homotopy you need to create a ring of unknowns and aparemters
+--To have a parameter homotopy you need to create a ring of unknowns and parameters
 --the input is 
 --- 1) a list of polynomials that make your start system,
 --- 2) a list of the parameters, 

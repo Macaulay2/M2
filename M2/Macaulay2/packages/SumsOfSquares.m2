@@ -792,7 +792,7 @@ sosdecTernary = method(
 sosdecTernary(RingElement) := o -> (f) -> (
     -- Implements Hilbert's algorithm to write a non-negative ternary
     -- form as sos of rational functions.
-    -- Returns two lists of SOSPolys, the numerator and the denomenator polys
+    -- Returns two lists of SOSPolys, the numerator and the denominator polys
     if numgens ring f =!= 3 then error "polynomial must involve 3 variables";
     if not isHomogeneous f then error "polynomial must be homogeneous";
     fi := f;

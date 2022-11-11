@@ -1,0 +1,33 @@
+-- -*- M2-comint -*- hash: 259384909
+
+i1 : x = (import "math")@@pi
+
+o1 = 3.141592653589793
+
+o1 : PythonObject of class float
+
+i2 : round x
+
+o2 = 3
+
+o2 : PythonObject of class int
+
+i3 : round(3, x)
+
+o3 = 3.142
+
+o3 : PythonObject of class float
+
+i4 : round toPython 2.5
+
+o4 = 2
+
+o4 : PythonObject of class int
+
+i5 : round toPython 3.5
+
+o5 = 4
+
+o5 : PythonObject of class int
+
+i6 : 

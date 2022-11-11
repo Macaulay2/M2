@@ -1035,7 +1035,7 @@ y=(gens(R))_{4..7}
 Qx = ideal (x#0*x#1 - x#2*x#3)
 Qy=sub(Qx,matrix{join(y,for i from 4 to 7 list 0)})
 D = minors(2,matrix{x,y})
-I=ideal(Qx,Qy,D) --Q in the diagional
+I=ideal(Qx,Qy,D) --Q in the diagonal
 Cx=ideal random({1,0},R)
 A = ZZ[a,b,Degrees=>{{1,0},{0,1}}]/(a^4,b^4)
 s=segre(Cx,I,A,Verbose=>true)

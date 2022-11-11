@@ -1,8 +1,8 @@
 needsPackage "Bertini"
 
---In Numerical Algbebraic Geometry the 'slice' is very important. For multiprojective varieties we ant a way to create slices or sections in an easy manner.
+--In Numerical Algebraic Geometry the 'slice' is very important. For multiprojective varieties we ant a way to create slices or sections in an easy manner.
 --A section corresponds to a linear equation. 
---A slice coorresponds to a set of linear equations. 
+--A slice corresponds to a set of linear equations. 
 
 --The input makeB'Section is a a list. To each element of this list we will apply toString and use the string to create a linear system of equations. 
 --We use strings to avoid the need to create a ring with these elements.
@@ -27,7 +27,7 @@ sInteger=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomIntegerCoeffici
 assert(class sInteger#B'NumberCoefficients_0===ZZ)
 
 ---These equations are homogeneous. 
---We can consider an affine system by appeneding a 1 to the inputted list.
+--We can consider an affine system by appending a 1 to the inputted list.
 affineSection=makeB'Section({x,y,z,1})
 
 --If we set the ContainsPoint option then we will create a linear equation.

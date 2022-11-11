@@ -1201,7 +1201,7 @@ doc ///
         If the degree of C odd, pI is over \mathbb{P}^{1}.
 
         If the degree of C even, pI is over a conic. So to get the conic apply @TO ideal@ @TO ring@ to the parametrization pI.
-        If the @TO Option@ parametizeConic=>true is given and C has a rational point then the conic is parametrized
+        If the @TO Option@ parametrizeConic=>true is given and C has a rational point then the conic is parametrized
         hence pI is over \mathbb{P}^{1}.
 
         If the second argument J is not specified and degree of C is bigger than 2 then J is being computed via the package AdjointIdeal.
@@ -1632,7 +1632,7 @@ doc ///
         the adjoint ideal of I.
   Outputs
     :Ideal
-        of the the rational normal curve.
+        of the rational normal curve.
   Description
    Text
      Maps a plane rational curve birationally to a rational normal curve by the adjoints of degree=degree(C)-2

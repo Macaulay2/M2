@@ -685,7 +685,7 @@ document {
     Inputs => { "V","W" },
     Outputs => { "VW"=>NumericalVariety },
     "Constructs the union of numerical varieties", 
-    Caveat => {"The rusulting numerical variety may have redundant components."},
+    Caveat => {"The resulting numerical variety may have redundant components."},
     SeeAlso=>{removeRedundantComponents}
     }
 
@@ -731,7 +731,7 @@ document {
     Outputs => { "r"=>ZZ=>"the rank used in the (last) deflation"},
     PARA{
 	"The purpose of deflation is to restore quadratic convergence of Newton's method in a neighborhood of a singular 
-    isolated solution P. This is done by constructing an augemented polynomial system with a solution of strictly lower multiplicity projecting to P."},
+    isolated solution P. This is done by constructing an augmented polynomial system with a solution of strictly lower multiplicity projecting to P."},
     Consequences => {{"Attaches the keys ", TO Deflation, " and ", TO DeflationRandomMatrix, 
 	" which are MutableHashTables that (for rank r, a potential rank of the jacobian J of F) store ",
 	" the deflated system DF and a matrix B used to obtain it. ", 
@@ -746,7 +746,7 @@ document {
 	{ofClass Matrix, " ", TT "B", " specifies a fixed (r+1)-by-n matrix to use in the deflation construction."},
 	{"a pair of matrices ", TT "(B,M)", " specifies additionally a matrix that is used to ", TO squareUp, "."},
 	{"a list", TT "{(B1,M1),(B2,M2),...}", 
-	    " prompts a chain of successive delations using the provided pairs of matrices."},
+	    " prompts a chain of successive deflations using the provided pairs of matrices."},
 	},
     "The option ", TT "Variable", " specifies the base name for the augmented variables.",
     EXAMPLE lines ///

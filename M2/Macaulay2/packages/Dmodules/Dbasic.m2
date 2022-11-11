@@ -119,7 +119,7 @@ createCommAlgebra PolynomialRing := W -> (
 
 
 
--- These routines compute the Fourier transform which is the automorhpism
+-- These routines compute the Fourier transform which is the automorphism
 -- of the Weyl algebra sending x -> -dx, dx -> x.
 -- Input: RingElement f, Matrix m, Ideal I, ChainComplex C, or Module M
 -- Output: Fourier transform of f, m, I, C, or M
@@ -239,7 +239,7 @@ zeroize Matrix := m -> (
      map(W^(numgens target m), W^(numgens source m), m)
      )
 
--- MES added 1/30/05 temorpary fix
+-- MES added 1/30/05 temporary fix
 -- check whether a module is a quotient of a free module.
 --   In the Dmodule code, it appears that this is checked in
 --   3 ways: using isQuotientModule, doing what is done here,

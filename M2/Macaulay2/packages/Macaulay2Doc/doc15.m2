@@ -164,7 +164,7 @@ Outputs
     x:Boolean
 Description
   Text
-    Returns true if the input interval is empty, i.e., the left endpoint is the the right of the right endpoint.
+    Returns true if the input interval is empty, i.e., the left endpoint is to the right of the right endpoint.
 SeeAlso
     isMember
 ///

@@ -15,7 +15,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      if not(n == #T+1 
 	  -- and all(T, isHomogeneous) and all(S, isHomogeneous) -- bug in isHomogeneous!!!
 	  ) 
-     then error "expected n equations in in n+1 variables";
+     then error "expected n equations in n+1 variables";
      deg := T/first@@degree;
      if S/first@@degree != deg then error "degrees of start and target systems do not match";
      
@@ -164,7 +164,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 
 		    --debugging code: multiply the representative by 10
 		    --dPatch = matrix{ flatten entries (10*x0) / conjugateQI}; -- x0* used in evaluation
-		    --compute'dt'epsilon(10*x0,t0); -- check independence on a respresentative
+		    --compute'dt'epsilon(10*x0,t0); -- check independence on a representative
 		    --dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
 
                     dx := 0; -- 0-th order predictor

@@ -22,7 +22,6 @@ import itertools
 import subprocess
 import argparse
 import string
-import os
 import json
 
 VALIDATOR_PATH = "/usr/lib/cgi-bin/w3c-markup-validator/check"

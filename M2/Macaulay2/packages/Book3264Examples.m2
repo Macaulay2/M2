@@ -77,7 +77,7 @@ placeholderToSchubertBasis(RingElement,FlagBundle) := (c,G) -> (
      if R.cache.?schubertring then S = R.cache.schubertring else (
 	  --should maybe add option to choose variable name
 	  s := getSymbol "s";
-	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> schubert basis elts
+	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> Schubert basis elts
 	  R.cache.schubertring = S;
 	  S.cache = new MutableHashTable;
 	  S.cache.intersectionmap = map(R,S,M));
@@ -584,7 +584,7 @@ doc ///
       P3 = flagBundle({1,3})
       (S,Q) = P3.Bundles
     Text
-      In this setting, the the bundle $O(1)$ is the dual of the universal subbundle
+      In this setting, the bundle $O(1)$ is the dual of the universal subbundle
       $S$.
     Example
       O1 = dual(S)

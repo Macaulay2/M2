@@ -2503,7 +2503,7 @@ doc ///
       Mapping cones can also be used to construct free resolutions
       of subschemes linked via a complete intersection to a
       arithmetically Cohen-Macaulay subscheme;
-      see Peskine-Szpiro, Liaison des varieties algebrique I, 
+      see Peskine-Szpiro, Liaison des variétés algébriques I, 
           {\it Invent. math.} {\bf 26} (1974) 271-302.
     Text
       Here, we consider a random complete intersection of 2 cubics
@@ -3239,7 +3239,7 @@ doc ///
     Description
         Text
             A map of chain complexes $f \colon C \to D$ is
-            null-homopic if there exists a map of chain
+            null-homotopic if there exists a map of chain
             complexes $h : C \to D$ of degree $\deg(f)+1$,
             such that we have the equality 
             \[ f = \operatorname{dd}^D h 
@@ -3301,7 +3301,7 @@ doc ///
     Description
         Text
             A map of chain complexes $f \colon C \to D$ is
-            null-homopic if there exists a map of chain
+            null-homotopic if there exists a map of chain
             complexes $h : C \to D$ of degree $\deg(f)+1$,
             such that we have the equality 
             \[ f = \operatorname{dd}^D h 
@@ -3361,7 +3361,7 @@ doc ///
     Description
         Text
             A map of chain complexes $f \colon C \to D$ is
-            null-homopic if there exists a map of chain
+            null-homotopic if there exists a map of chain
             complexes $h : C \to D$ of degree $\deg(f)+1$,
             such that we have the equality 
             \[ f = \operatorname{dd}^D h 

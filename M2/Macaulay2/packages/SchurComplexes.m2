@@ -49,7 +49,7 @@ export {"straightenTableau", "schurComplex"}
 -- Input:
 -- A Partition lambda and integers m and n, the admissible entries in tableaux of shape lambda.
 -- Output: 
--- A List of all the standard Z/2-graded tablueax with shape lambda and possible "odd"
+-- A List of all the standard Z/2-graded tableaux with shape lambda and possible "odd"
 -- (resp. "even") entries {1, ..., m} (resp. {1, ..., n}). The tableaux
 -- are encoded as HashTables. See Section 1.1 of Weyman's "Cohomology of Vector Bundles
 -- and Syzygies" for background on Z/2-graded tableaux.
@@ -522,7 +522,7 @@ doc ///
     G.dd
     
    Text
-     As a second example, we consider the ring of polynomial functions $R=\mathbb{Q}[x_{i,j}]$ on the space of 2 x 4 generic matrices. We set the complex {\tt F} to be the map $R^4\to R^2$ given by the generic matrix $(x_{i,j})$. We compute the third symmetric power {\tt G} of {\tt F}, in which case {\tt lambda} is the partition $(3)$. By Weyman "Cohomology of Vector Bundles and Syzygies", Exercise 6.34(d), the Schur complex {\tt G} is exact except in degree zero. We verify this by computng the Hilbert series of each homology module of {\tt G}.
+     As a second example, we consider the ring of polynomial functions $R=\mathbb{Q}[x_{i,j}]$ on the space of 2 x 4 generic matrices. We set the complex {\tt F} to be the map $R^4\to R^2$ given by the generic matrix $(x_{i,j})$. We compute the third symmetric power {\tt G} of {\tt F}, in which case {\tt lambda} is the partition $(3)$. By Weyman "Cohomology of Vector Bundles and Syzygies", Exercise 6.34(d), the Schur complex {\tt G} is exact except in degree zero. We verify this by computing the Hilbert series of each homology module of {\tt G}.
      
    Example
     R=QQ[x11,x21,x12,x22,x13,x23,x14,x24];

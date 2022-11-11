@@ -733,7 +733,7 @@ registerFinalizer(e:Expr):Expr := (
 	       toExpr(finalizerCount))
      	  else WrongArgString(2))
      else WrongNumArgs(2));
-setupfun("registerFinalizer",registerFinalizer);
+setupfun("registerFinalizer",registerFinalizer).Protected=false;
 
 header "extern \"C\" void do_nothing();";
 

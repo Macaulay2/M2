@@ -125,7 +125,7 @@ universalEmbedding(Module) := Matrix => (M) -> (
 --           the rees algebra of a versal embedding of the 
 --           Module regardless of the ring and for an ideal over a quotient ring. 
 --           In the case of an ideal over a polynomial ring the process is slightly 
---           streamlined, skipping the unneccessary versal computation as in that 
+--           streamlined, skipping the unnecessary versal computation as in that 
 --           case the inclusion map is a versal map.
 
 reesIdeal = method(Options => {Variable => w})
@@ -482,7 +482,7 @@ doc ///
    Text
      The many ways of working with this function allows the system 
      to compute both the classic Rees algebra of an ideal over a ring 
-     (polynomial or quotient) and to compute the the Rees algebra of a 
+     (polynomial or quotient) and to compute the Rees algebra of a 
      module or ideal using a universal embedding as described in the paper 
      of Eisenbud, Huneke and Ulrich.  It also allows different ways of 
      setting up the quotient ring.
@@ -572,7 +572,7 @@ doc ///
       syzygy map of the dual of the presentation of $M$.
 
       We first give a simple example looking at the syzygy matrix of the cube of
-      the maximial ideal of a polynomial ring.
+      the maximal ideal of a polynomial ring.
    Example
       S = ZZ/101[x,y,z];
       FF=res ((ideal vars S)^3);
@@ -1061,7 +1061,7 @@ doc ///
      theory: These are the ones that correspond to primes $P\subset ReesI$
      minimal among those containing $I*ReesI$---in other words, the isolated
      components of the support of the normal cone of $I$. The prime $p$
-     corresponding to $P$ is simply the kernel of the the induced map $R \to
+     corresponding to $P$ is simply the kernel of the induced map $R \to
      ReesI/P$.
 
      Each of these primes comes equipped with a multiplicity, which may be

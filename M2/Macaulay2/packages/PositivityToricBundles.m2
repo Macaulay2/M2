@@ -735,7 +735,7 @@ circularOrder (List) := p -> (
 
 -- MAIN METHOD: drawParliament2Dtikz -----------------------------------------
 
--- PURPOSE: Draw a two-dimensional parliamant of polytopes using tikz
+-- PURPOSE: Draw a two-dimensional parliament of polytopes using tikz
 --   INPUT: 'tvb', toric vector bundle,
 --          'parliament', parliament of 2-dim polytopes
 --          'file', string with file name
@@ -925,7 +925,7 @@ document {
   Given a toric vector bundle $\mathcal E$ in Klyachko's description on a toric variety $X = TV(\Sigma)$, 
   it is encoded by increasing filtrations $E^{\rho}(j)$  for each ray $\rho \in \Sigma(1)$.
   To these filtrations we can associated the set $L(\mathcal E)$ of intersections $\cap_{\rho} E^{\rho} (j_{\rho})$, where $(j_{\rho})_\rho$ runs over all tuples in $\mathbb Z^{\Sigma(1)}$.
-  This set $L(\mathcal E)$ is ordered by inclusion and there is a unique matriod $M(\mathcal E)$ associated to it, see [RJS, Proposition 3.1].
+  This set $L(\mathcal E)$ is ordered by inclusion and there is a unique matroid $M(\mathcal E)$ associated to it, see [RJS, Proposition 3.1].
   ///,
   TT "groundSet", " computes the ground set (i.e. building blocks) of this matroid.",
   
@@ -1105,7 +1105,7 @@ document {
   Consequences => { {"The result of ", TT "restrictToInvCurves", " will be stored as a ", TO cacheValue, " in ", TT "E.cache#restrictionsToInvCurves", ". It will be used by other methods."}
    },
 
-  "Given a toric vector bundle in Klyachko's description, ", TT "restrictToInvCurves", " computes its restrictions to the torus invariant curves, which are isomorphich to a direct sum of line bundles ", TEX ///$\mathbb P^1$///, ". ",
+  "Given a toric vector bundle in Klyachko's description, ", TT "restrictToInvCurves", " computes its restrictions to the torus invariant curves, which are isomorphic to a direct sum of line bundles ", TEX ///$\mathbb P^1$///, ". ",
   "Recall that on ", TEX ///$\mathbb P^1$///, " any vector bundle splits into ", TEX ///$\oplus_i O_{\mathbb P^1}(a_i)$///, ". Therefore ", TT "restrictToInvCurves", " returns a hash table with keys the invariant curves and as values lists with the integers ", TEX ///$a_i$///, ". ",
   BR{},
   "By [HMP, Theorem 2.1], if all these integers", TEX ///$a_i$///, " are non-negative or positive, the original toric vector bundle is nef or ample. ",

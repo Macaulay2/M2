@@ -143,7 +143,7 @@ class hilb_comp : public MutableEngineObject
 //
 //   RingElement /* or null */ *hilbert(const Matrix *M);
 //   // This one is pretty easy: loop through each component,
-//   // make a monomial ideal, and compute its hilbert function,
+//   // make a monomial ideal, and compute its Hilbert function,
 //   // then multiply it by the degree of that row component.
 //
 //

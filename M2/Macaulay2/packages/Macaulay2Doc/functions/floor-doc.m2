@@ -9,7 +9,7 @@ document {
      }
      
 document { 
-     Key => {(floor,Number)},
+     Key => {(floor,Number), (floor, Constant)},
      Headline => "floor function",
      Usage => "floor x",
      Inputs => { "x" },
@@ -18,6 +18,6 @@ document {
      EXAMPLE {
 	  "floor (7.234232131231*10^6)"
 	  },
-     SeeAlso => {ceiling}
+     SeeAlso => {(ceiling, Number), (truncate, Number)}
      }
 
