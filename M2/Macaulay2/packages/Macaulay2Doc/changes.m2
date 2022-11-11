@@ -50,7 +50,8 @@ document {
 		    LI { TO "for", " loops, as well as the methods ", TO scan, ", ", TO apply, ", ", TO select, ", ", TO fold, ", and, ", TO accumulate, " now work with any iterable object." },
 		    LI { TO (truncate, Number), " has been added, rounding numbers toward zero." },
 		    LI { TO (quotientRemainder, ZZ, ZZ), " has been added, for obtaining the quotient and remainder simultaneously when performing integer division." },
-		    LI { "The bitwise not operator, ", TO (symbol ~, ZZ), " has been added." }
+		    LI { "The bitwise not operator, ", TO (symbol ~, ZZ), " has been added." },
+		    LI { "A new strategy ", TO "Dynamic", " is implemented for ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "." }
 		    }
 	       },
 	  LI { "improved packages:",
