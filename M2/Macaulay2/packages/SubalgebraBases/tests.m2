@@ -546,7 +546,7 @@ S1 = subring {x^2, x*y};
 S2 = subring {x, y^2};
 S12 = subringIntersection(S1, S2, Limit => 20);
 assert(isSAGBI S12)
-assert(gens sagbi S12 == matrix {{x^2, y^4, x*y^3, x^2*y^2, y^6, x*y^5}})
+assert(gens sagbi S12 == matrix {{x^2, x^2*y^2, y^4, x*y^3, y^6, x*y^5}})
 ///
 
 -- 28) Bruns/Conca example 1

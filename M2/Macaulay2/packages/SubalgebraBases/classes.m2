@@ -95,7 +95,7 @@ sagbiBasis = method(
 
 -- SAGBIBasis constructor
 sagbiBasis Subring := opts -> S -> (
-    if S.cache#?"SAGBIBasis" then return S.cache#"SAGBIBasis"; 
+    if S.cache#?SAGBIBasis then return S.cache#SAGBIBasis; 
     
     -- Keys:
     -- > rings stores the various rings we need in our constructions
@@ -218,7 +218,7 @@ sagbiBasis Subring := opts -> S -> (
         SAGBIoptions => optionTable
     	};
     
-    S.cache#"SAGBIBasis" = newSAGBIBasis
+    S.cache#SAGBIBasis = newSAGBIBasis
 )
 
 sagbiBasis HashTable := opts -> H -> (
