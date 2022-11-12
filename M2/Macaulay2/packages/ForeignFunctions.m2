@@ -1710,6 +1710,42 @@ doc ///
       foreignSymbol("cplx_i", cplxT)
 ///
 
+doc ///
+  Key
+    getMemory
+    (getMemory, ZZ)
+    (getMemory, ForeignType)
+    (getMemory, ForeignVoidType)
+    Atomic
+    [getMemory, Atomic]
+  Headline
+    allocate memory using the garbage collector
+  Usage
+    getMemory n
+    getMemory T
+  Inputs
+    n:ZZ -- must be positive
+    T:ForeignType
+  Outputs
+    :voidstar
+  Description
+    Text
+      Allocate @TT "n"@ bytes of memory using the @TO "GC garbage collector"@.
+    Example
+      ptr = getMemory 8
+    Text
+      If the memory will not contain any pointers, then set the @TT "Atomic"@
+      option to @TO true@.
+    Example
+      ptr = getMemory(8, Atomic => true)
+    Text
+      Alternatively, a foreign object type @TT "T"@ may be specified.  In
+      this case, the number of bytes and whether the @TT "Atomic"@ option
+      should be set will be determined automatically.
+    Example
+      ptr = getMemory int
+///
+
 TEST ///
 -----------
 -- value --
