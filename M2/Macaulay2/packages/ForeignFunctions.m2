@@ -1746,6 +1746,27 @@ doc ///
       ptr = getMemory int
 ///
 
+doc ///
+  Key
+    (symbol *, ForeignType, voidstar)
+  Headline
+    dereference a voidstar object
+  Usage
+    T * ptr
+  Inputs
+    T:ForeignType
+    ptr:voidstar
+  Outputs
+    :ForeignObject -- of type @TT "T"@
+  Description
+    Text
+      This is syntactic sugar for @M2CODE "T value ptr"@ (see
+      @TO (symbol SPACE, ForeignType, Pointer)@) for dereferencing pointers.
+    Example
+      ptr = voidstar address int 5
+      int * ptr
+///
+
 TEST ///
 -----------
 -- value --
