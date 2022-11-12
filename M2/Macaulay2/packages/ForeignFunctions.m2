@@ -1767,6 +1767,36 @@ doc ///
       int * ptr
 ///
 
+doc ///
+  Key
+    ((symbol *, symbol =), voidstar)
+  Headline
+    assign value to object at address
+  Usage
+    *ptr = val
+  Inputs
+    ptr:voidstar
+    val:Thing
+  Description
+    Text
+      Assign the value @TT "val"@ to an object at the address given by
+      @TT "ptr"@.
+    Example
+      x = int 5
+      ptr = voidstar address x
+      *ptr = int 6
+      x
+    Text
+      If @TT "val"@ is not a @TO ForeignObject@, then @TO foreignObject@ is
+      called first.
+    Example
+      *ptr = 7
+      x
+    Text
+      Make sure that the memory at which @TT "ptr"@ points is properly
+      allocated.  Otherwise, segmentation faults may occur!
+///
+
 TEST ///
 -----------
 -- value --
