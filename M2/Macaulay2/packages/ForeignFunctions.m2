@@ -603,6 +603,8 @@ memcpy = foreignFunction("memcpy", voidstar, {voidstar, voidstar, ulong})
     if not instance(val, ForeignObject) then val = foreignObject val;
     memcpy(ptr, address val, size class val))
 
+ForeignType * voidstar := (T, ptr) -> T value ptr
+
 beginDocumentation()
 
 doc ///
@@ -1763,7 +1765,7 @@ assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
 ptrarray = 3 * voidstar
 x = ptrarray {address int 1, address int 2, address int 3}
-assert Equation(for ptr in x list value int value ptr, {1, 2, 3})
+assert Equation(for ptr in x list value (int * ptr), {1, 2, 3})
 x = charstarstar {"foo", "bar", "baz"}
 assert Equation(length x, 3)
 assert Equation(value x, {"foo", "bar", "baz"})
@@ -1771,9 +1773,9 @@ assert Equation(value x_0, "foo")
 assert Equation(value x_(-1), "baz")
 x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
 assert Equation(length x, 4)
-assert Equation(value \ for ptr in x list int value ptr, {1, 2, 3, 4})
-assert Equation(value int value x_0, 1)
-assert Equation(value int value x_(-1), 4)
+assert Equation(value \ for ptr in x list (int * ptr), {1, 2, 3, 4})
+assert Equation(value (int * x_0), 1)
+assert Equation(value (int * x_(-1)), 4)
 int3star = foreignPointerArrayType(3 * int)
 x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
 assert Equation(length x, 4)
@@ -1789,7 +1791,7 @@ assert instance(value x, HashTable)
 assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 2.0)
 assert Equation(value x_"c", "foo")
-assert Equation(value int value x_"d", 4)
+assert Equation(value (int * x_"d"), 4)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
@@ -1853,7 +1855,7 @@ tm = foreignStructType("tm", {
 	"tm_zone" => charstar})
 gmtime = foreignFunction("gmtime", voidstar, voidstar)
 asctime = foreignFunction("asctime", charstar, voidstar)
-epoch = tm value gmtime address long 0
+epoch = tm * gmtime address long 0
 assert Equation(value asctime address epoch,"Thu Jan  1 00:00:00 1970\n")
 ///
 
