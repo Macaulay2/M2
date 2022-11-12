@@ -1894,3 +1894,27 @@ x = (4 * int) {4, 2, 3, 1}
 qsort(x, 4, size int, (a, b) -> value int a - value int b)
 assert Equation(value x, {1, 2, 3, 4})
 ///
+
+TEST ///
+-- allocating and dereferencing pointers
+ptr = getMemory int
+*ptr = int 5
+assert Equation(value (int * ptr), 5)
+ptr = getMemory double
+*ptr = double pi
+assert Equation(value (double * ptr), pi)
+ptr = getMemory charstar
+*ptr = charstar "Hello, world!"
+assert Equation(value (charstar * ptr), "Hello, world!")
+ptr = getMemory (3 * int)
+*ptr = (3 * int) {1, 2, 3}
+assert Equation(value ((3 * int) * ptr), {1, 2, 3})
+ptr = getMemory charstarstar
+*ptr = charstarstar {"foo", "bar", "baz"}
+assert Equation(value (charstarstar * ptr), {"foo", "bar", "baz"})
+foo = foreignStructType("foo", {"a" => int, "b" => double, "c" => charstar})
+ptr = getMemory foo
+*ptr = foo {"a" => 5, "b" => pi, "c" => "Hello, world!"}
+assert BinaryOperation(symbol ===, value (foo * ptr),
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+///
