@@ -239,7 +239,7 @@ allTriangulations Matrix := opts -> (A) -> (
     -- if ConnectToRegular is true, then the output is different, and needs to be parsed.
     -- in the other case, we can avoid the first 2 lines but they don't do anything either.
     for t in tris list (
-        t1 := replace(///T\[[0-9]+\] ?:= ?(\[.*:)?///, "", t);
+        t1 := replace(///T\[[0-9,]+\] ?:= ?(\[.*:)?///, "", t);
         t2 := replace(///\];///, "", t1);
         t3 := sort value t2
         )
