@@ -69,8 +69,10 @@ export {
     "foreignUnionType",
     "foreignFunctionPointerType",
     "foreignSymbol",
+    "getMemory",
 
 -- symbols
+    "Atomic",
     "Variadic"
     }
 
@@ -185,6 +187,10 @@ dereference(ForeignType, Pointer) := (T, ptr) -> new T from ForeignObject {
 ForeignType Pointer := dereference
 ForeignType ForeignObject := (T, x) -> dereference_T address x
 
+-- not exported; used by getMemory
+isAtomic = method()
+isAtomic ForeignType := T -> false
+
 -----------------------
 -- foreign void type --
 -----------------------
@@ -239,6 +245,8 @@ if version#"pointer size" == 4 then (
 ForeignIntegerType Number :=
 ForeignIntegerType Constant := (T, x) -> new T from truncate x
 
+isAtomic ForeignIntegerType := T -> true
+
 -----------------------
 -- foreign real type --
 -----------------------
@@ -262,6 +270,8 @@ double = foreignRealType("double", 64)
 ForeignRealType Number :=
 ForeignRealType Constant := (T, x) -> new T from realPart numeric x
 ForeignRealType RRi := (T, x) -> T toRR x
+
+isAtomic ForeignRealType := T -> true
 
 --------------------------
 -- foreign pointer type --
@@ -406,6 +416,7 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     then error("expected options of the form string => foreign type");
     T := new ForeignStructType;
     T.Name = name;
+    T.Atomic = all(last \ x, isAtomic);
     ptr := T.Address = ffiStructType \\ address \ last \ x;
     types := hashTable x;
     offsets := hashTable transpose {first \ x, ffiGetStructOffsets ptr};
@@ -421,6 +432,8 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     T)
 
 ForeignStructType VisibleList := (T, x) -> new T from x
+
+isAtomic ForeignStructType := T -> T.Atomic
 
 ------------------------
 -- foreign union type --
@@ -438,6 +451,7 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
     T := new ForeignUnionType;
     T.Name = name;
     T.Address = ffiUnionType \\ address \ last \ x;
+    T.Atomic = all(last \ x, isAtomic);
     types := hashTable x;
     value T := y -> (
 	ptr := address y;
@@ -447,6 +461,8 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
 
 ForeignUnionType Thing := (T, x) -> new T from {Address =>
     address foreignObject x}
+
+isAtomic ForeignUnionType := T -> T.Atomic
 
 -----------------------------------
 -- foreign function pointer type --
@@ -567,6 +583,21 @@ foreignSymbol = method(TypicalValue => ForeignObject)
 foreignSymbol(SharedLibrary, String, ForeignType) := (
     lib, symb, T) -> dereference_T dlsym(lib#0, symb)
 foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
+
+---------------------------
+-- working with pointers --
+---------------------------
+
+gcMalloc = foreignFunction("GC_malloc", voidstar, ulong)
+gcMallocAtomic = foreignFunction("GC_malloc_atomic", voidstar, ulong)
+
+getMemory = method(Options => {Atomic => false}, TypicalValue => voidstar)
+getMemory ZZ := o -> n -> (
+    if n <= 0 then error "expected positive number";
+    (if o.Atomic then gcMallocAtomic else gcMalloc) n)
+getMemory ForeignType := o -> T -> getMemory(size T, Atomic => isAtomic T)
+getMemory ForeignVoidType := o -> T -> error "can't allocate a void"
+
 
 beginDocumentation()
 
