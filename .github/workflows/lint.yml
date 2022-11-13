@@ -17,7 +17,7 @@ jobs:
           mamba install codespell=2.2.2 pycodestyle=2.9.1
       - name: Run codespell
         shell: bash -l {0}
-        run: codespell -L Archiv,Assasin,BU,Bu,Comon,Damon,Enew,FO,Fo,Formes,Geometrie,Hart,INOT,Ket,LOD,Lond,Lsat,Methd,Mor,ND,Nd,OT,Ore,Ot,Ser,Skelton,Sring,Strat,TE,Te,UE,Ue,aNumber,afterwords,allEdges,allReady,alledges,alot,alph,bloks,braket,bu,coo,dOrder,debugG,egal,enew,entrys,euclidian,exitance,falsy,falt,firstH,fo,freeE,froms,fullfil,inH,includeE,independant,inout,intAll,ist,ket,lamda,loD,mor,multidimension,nD,nam,nd,nin,openIn,ore,ot,pRing,packge,pres,pring,projet,reseting,returnE,sRing,singL,strat,tRing,te,theTS,toOM,translater,trough,ue M2/Macaulay2/packages
+        run: codespell -L Archiv,Assasin,BU,Bu,Comon,Damon,Enew,FO,Fo,Formes,Geometrie,Hart,INOT,Ket,LOD,Lond,Lsat,Methd,Mor,ND,Nd,OT,Ore,Ot,Ser,Skelton,Sring,Strat,TE,Te,UE,Ue,aNumber,afterwords,allEdges,allReady,alledges,alot,alph,ans,bloks,braket,bu,coo,dOrder,debugG,egal,enew,entrys,euclidian,exitance,falsy,falt,firstH,fo,freeE,froms,fullfil,inH,includeE,independant,inout,intAll,ist,ket,lamda,loD,mor,multidimension,nD,nam,nd,nin,numer,openIn,ore,ot,pRing,packge,pres,pring,projet,reseting,returnE,sRing,singL,strat,tRing,te,theTS,toOM,translater,trough,ue M2/Macaulay2/packages
 
 env:
   MAKEFLAGS: -j2
