@@ -961,7 +961,7 @@ document {
   },
 
   "If the toric variety is two-dimensional, then the result can be visualised using ", TO drawParliament2Dtikz, ". ",
-  TT "parliament", " calles internally the method ", TO groundSet, ".",
+  TT "parliament", " calls internally the method ", TO groundSet, ".",
 
   SeeAlso => {"ToricVectorBundles::ToricVectorBundleKlyachko", groundSet, drawParliament2Dtikz}
   }
@@ -1005,7 +1005,7 @@ document {
 
   "Given a toric vector bundle in Klyachko's description, ", TT "compatibleBases", " computes for each maximal cone of the underlying toric variety a compatible basis of the filtrations, see [RJS, Section 3] for details.",
   BR{},
-  TT "compatibleBases", " calles internally the method ", TO groundSet, ".",
+  TT "compatibleBases", " calls internally the method ", TO groundSet, ".",
   PARA{},
   "The compatible bases serve as input for the computation of the toric Chern character by ", TO toricChernCharacter, ".",
 
@@ -1026,7 +1026,7 @@ document {
 
   "Given a toric vector bundle in Klyachko's description, ", TT "toricChernCharacter", " computes its toric Chern character as introduced in [P]. ",
   BR{},
-  TT "toricChernCharacter", " calles internally the method ", TO compatibleBases, ".",
+  TT "toricChernCharacter", " calls internally the method ", TO compatibleBases, ".",
 
   EXAMPLE {
    "E = tangentBundle(projectiveSpaceFan 2)",
@@ -1147,7 +1147,7 @@ document {
 
 TEST ///
 -- This is [RJS, Example 3.7]
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(3,hirzebruchFan 0);
 rays V
 -- output:
@@ -1185,7 +1185,7 @@ assert(
 
 TEST ///
 -- This is [RJS, Example 3.8] for d=2
--- auxillary methods
+-- auxiliary methods
 V = tangentBundle(projectiveSpaceFan 2);
 
 
@@ -1214,7 +1214,7 @@ assert(isAmple V);
 
 TEST ///
 -- This is [RJS, Example 4.2] 
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(3, projectiveSpaceFan 2);
 rays V
 --     {| -1 |, | 0 |, | 1 |}
@@ -1261,7 +1261,7 @@ assert(isAmple V);
 
 TEST ///
 -- This is [RJS, Example 4.4] 
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(2, hirzebruchFan 1);
 rays V
 -- {| 0  |, | -1 |, | 0 |, | 1 |}
@@ -1306,7 +1306,7 @@ assert(isAmple V);
 
 TEST ///
 -- This is [RJS, Example 6.4] 
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(3, projectiveSpaceFan 2);
 rays V
 --     {| -1 |, | 0 |, | 1 |}

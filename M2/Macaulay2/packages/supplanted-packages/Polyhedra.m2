@@ -2273,7 +2273,7 @@ Cone + Cone := minkowskiSum
 --  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
-     if k <= 0 then error("The factor must be strictly positiv");
+     if k <= 0 then error("The factor must be strictly positive");
      convexHull(k*(vertices P),rays P | linSpace P))
 
 ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P

@@ -3252,7 +3252,7 @@ modR:=(d)->(
 ----------------------------------------	
 -- KOSZULDUAL
 ----------------------------------------
--- the Lie algebra whose envelopping algebra is the Koszul dual
+-- the Lie algebra whose enveloping algebra is the Koszul dual
 -- of the input which is a quotient of a polynomial algebra
 -- modulo a quadratic ideal, some of the generators may be
 -- skewcommutative 

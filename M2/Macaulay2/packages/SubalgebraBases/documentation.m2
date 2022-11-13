@@ -1749,7 +1749,7 @@ doc ///
 	  maps p_9 to t_1^2*t_2
         Text
 	  
-	        @TT "p_0"@, ..., @TT "p_9"@ are the variables of what is refered to in the code as the @TT "tensorRing"@,
+	        @TT "p_0"@, ..., @TT "p_9"@ are the variables of what is referred to in the code as the @TT "tensorRing"@,
             which has two types of variables: The variables corresponding to the variables in the @TO "ambient"@ ring (@TT "p_0"@,...,@TT "p_2"@ in this example) and the variables corresponding to the generators of the @TO "Subring"@ (@TT "p_3"@,...,@TT "p_9"@ in this example).
 	  
 	        The function @TO "moduleToSubringIdeal"@ converts the toric syzygy module from our example (which is returned by @TO "toricSyz"@ in the form of a matrix) to an ideal

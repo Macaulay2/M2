@@ -539,7 +539,7 @@ minkowskiSum(Polyhedron,Cone) := (P,C) -> minkowskiSum(P,coneToPolyhedron C)
 
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
-     if k <= 0 then error("The factor must be strictly positiv");
+     if k <= 0 then error("The factor must be strictly positive");
      Q:=new Polyhedron from hashTable {};
      if P#?"Points" then Q#"Points"=homCoordinates(k*(dehomCoordinates P#"Points")_0,(dehomCoordinates P#"Points")_1);
      if P#?"InputLineality" then Q#"InputLineality"=P#"InputLineality";

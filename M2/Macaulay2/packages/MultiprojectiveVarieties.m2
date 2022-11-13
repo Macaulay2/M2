@@ -3680,7 +3680,7 @@ Usage => "GG(k,PP_K^n)
 GG_K(k,n)
 GG Grass(k,n,K,Variable=>\"x\")", 
 Inputs => {"k" => ZZ, "P" => EmbeddedProjectiveVariety => {"a projective space of dimension ",TEX///$n$///}},
-Outputs => {GrassmannianVariety => {"which parameterizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}},
+Outputs => {GrassmannianVariety => {"which parametrizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}},
 EXAMPLE {"GG(2,PP_QQ^5)","describe oo"},
 SeeAlso => {(GG,ZZ,MultirationalMap)}}
 
@@ -3705,7 +3705,7 @@ SeeAlso => {schubertCycle}}
 document {Key => {schubertCycle,(schubertCycle,VisibleList,GrassmannianVariety),[schubertCycle,Standard]}, 
 Headline => "take a random Schubert cycle", 
 Usage => "schubertCycle(a,G)", 
-Inputs => {"a" => VisibleList => {"a list of integers ", TEX///$a = (a_0,\ldots,a_k)$///, " with ", TEX///$n-k\geq a_0 \geq \cdots \geq a_k \geq 0$///}, "G" => GrassmannianVariety => {"which parameterizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}}, 
+Inputs => {"a" => VisibleList => {"a list of integers ", TEX///$a = (a_0,\ldots,a_k)$///, " with ", TEX///$n-k\geq a_0 \geq \cdots \geq a_k \geq 0$///}, "G" => GrassmannianVariety => {"which parametrizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}}, 
 Outputs => {EmbeddedProjectiveVariety => {"the Schubert cycle ", TEX///$\Sigma_a(\mathcal P)\subset\mathbb{G}(k,n)$///, " associated to a random complete flag ", TEX///$\mathcal P$///, " of nested projective subspace ", TEX///$\emptyset\subset P_0\subset \cdots \subset P_{n-1} \subset P_{n} = \mathbb{P}^n$///, " with ", TEX///$dim(P_i)=i$///}}, 
 PARA{"For the general theory, see e.g. the book ", HREF{"https://scholar.harvard.edu/files/joeharris/files/000-final-3264.pdf", "3264 & All That - Intersection Theory in Algebraic Geometry"}, ", by D. Eisenbud and J. Harris."}, 
 EXAMPLE {"G = GG(ZZ/33331,1,5);", "S = schubertCycle({2,1},G)", "cycleClass S"}, 
