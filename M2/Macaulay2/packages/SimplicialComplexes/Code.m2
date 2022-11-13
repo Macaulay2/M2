@@ -855,7 +855,7 @@ scarfSimplicialComplex (List,Ring) := (L,A) -> (
     -- The scarfSimplicialComplex is the subcomplex of the (#L-1)-simplex
     -- whose faces have unique multidegrees. These unique multidegrees
     -- are called Scarf multidegrees.
-    faceList := remove(subsets L, 0);
+    faceList := drop(subsets L, 1);
     faceLabels := for F in faceList list lcm F;
     scarfMultidegrees := for m in faceLabels list(
     	if #positions(faceLabels, k -> k == m) > 1
