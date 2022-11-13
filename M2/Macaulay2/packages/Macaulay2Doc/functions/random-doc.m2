@@ -91,6 +91,8 @@ Node
     (random, ZZ,   Ring)
     (random, List, Ring)
     [random, Height]
+  Headline
+    get a random homogeneous element from a graded ring
   Usage
     random(d, R)
   Inputs
@@ -115,7 +117,7 @@ Node
     (random, ZZ,   Ideal)
     (random, List, Ideal)
   Headline
-    make a random matrix from an ideal
+    get a random homogeneous element from a graded ideal
   Usage
     random(d, I)
     random(L, I)
@@ -123,20 +125,29 @@ Node
     d:{ZZ,List} -- the degree, multi-degree, or a list of degrees
     I:Ideal -- in a graded ring
   Outputs
-    :Matrix -- containing a row of homogeneous elements with prescribed degrees
+    :{RingElement,List} -- homogeneous element(s) with prescribed degrees
   Description
     Text
-      This function produces a vector of homogeneous elements of an ideal.
+      This function produces one or more homogeneous elements of an ideal.
     Example
       S = ZZ/101[x, y]
       I = ideal"x2, y2"
       random(2, I)
-      random({3, 3}, I)
+      random({2}, I)
+      random({2, 3}, I)
+      random({{2}, {3}}, I)
       R = ZZ/101[x, y, z, Degrees => {{1,0}, {-1,1}, {0,1}}]
       J = ideal"x2, y2, z2"
+      random({2, 2}, J)
       random({{2, 2}}, J)
       random(toList(3:{1, 1}), J)
+  Caveat
+    Note that in the single graded case, the input @TT "{d}"@ is treated as a multidegree
+    of length one rather than a list of length one, hence the output is one polynomial,
+    while @TT "{{d}}"@ is treated as a list containing a single multidegree of length one
+    and therefore the output is a list containing a single polynomial.
   SeeAlso
+    (random, ZZ,   Ring)
     (random, List, Ring)
 
 Node
