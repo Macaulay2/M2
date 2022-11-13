@@ -1149,9 +1149,9 @@ extractInclusionMinimalIdeals List := List => o -> l -> (
      if o#Verbose then << #l-#result << " redundant ideals removed. Computing mingens of result.";
      for i in result list ideal mingens i#0)
 
--- The remaining code implements the solver for zero-dim'l unital
+-- The remaining code implements the solver for zero-dimensional unital
 -- binomial ideals . We solve unital binomial equations using
--- modulo 1 arithmetics. The basic task is to solve a^n = 1^{k/m},
+-- modulo 1 arithmetic. The basic task is to solve a^n = 1^{k/m},
 -- whose solutions are the equivalence classes of: k/nm, 1/n +
 -- k/m, 2/n + k/nm,... , (n-1)/n + k/nm
           
