@@ -643,7 +643,7 @@ hilbertBasis Cone := opts->C -> (
 	  (M,BC));
      -- Function to compute the/one preimage of h under A
      preim := (h,A) -> (
-	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entrys are a preimage
+	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entries are a preimage
 	  -- vector
 	  N := gens ker(-h|A);
 	  N = transpose (ref transpose N)#0;
