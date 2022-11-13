@@ -552,21 +552,15 @@ endlfun(e:Expr):Expr := (
 setupfun("endl",endlfun).Protected = false;
 setupconst("newline", toExpr(newline));
 
-remove(x:Sequence,i:int):Sequence := (
-     n := length(x);
-     if i < 0 then i = i + n;
-     if 0 <= i && i < n then (
-	  new Sequence len n-1 do foreach y at j in x do if i != j then provide y
-	  )
-     else x
-     );
-
-remove(x:List,i:int):List := (
-     v := remove(x.v,i);
-     if v == x.v then return x;
-     r := List(x.Class, v, 0, x.Mutable);
-     r.hash = hash(r);
-     r);
+remove(x:List,i:int):Expr:= (
+     n := length(x.v);
+     if !x.Mutable then buildErrorPacket("expected a mutable list")
+     else if i >= n || i < -n then ArrayIndexOutOfBounds(i, n - 1)
+     else (
+	  if i < 0 then i = n + i;
+	  for j from i to n - 2 do x.v.j = x.v.(j + 1);
+	  Ccode(void, x.v, "->len = ", n - 1);
+	  nullE));
 
 removefun(e:Expr):Expr := (
      when e
@@ -577,11 +571,7 @@ removefun(e:Expr):Expr := (
 	       when args.0
 	       is x:List do (
 		    when args.1 is i:ZZcell do
-		     if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
-		    else WrongArgZZ(2))
-	       is x:Sequence do (
-		    when args.1 is i:ZZcell do
-		    if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
+		    if isInt(i) then remove(x,toInt(i)) else WrongArgSmallInteger(2)
 		    else WrongArgZZ(2))
 	       is f:Database do (
 		    when args.1 is key:stringCell do (
