@@ -113,6 +113,8 @@ toSequence String    :=
 toSequence Thing     := Sequence => toSequence
 ascii String := List => ascii
 ascii List := String => ascii
+remove(MutableList,ZZ) := Nothing => remove
+remove(Database,String) := Nothing => remove
 remove(HashTable,Thing) := Nothing => remove
 echoOff File := Nothing => echoOff
 echoOn File := Nothing => echoOn
