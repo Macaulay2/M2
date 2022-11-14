@@ -34,7 +34,7 @@ compiledE = rawSLEvaluatorK(slp,ring inp)
 
 restart
 needsPackage "NumericalAlgebraicGeometry"
--- setTryJustInTimeCompilation false
+setTryJustInTimeCompilation true
 setRandomSeed 0;
 for i to 9 do (
     declareVariable \ {a_i,X_i,Y_i};

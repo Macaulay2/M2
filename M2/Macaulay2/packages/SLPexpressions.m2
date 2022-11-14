@@ -787,7 +787,7 @@ slp.cache#K else (
     f << "typedef " | typeName | " C;" << endl; -- << "extern" << endl; -- the type needs to be adjusted!!!
     cCode (slp#"output", slp#"input", f);
     f << close;
-    compileCommand := "g++ -shared -Wall -fPIC -Wextra -o "| libName | " " | cppName;
+    compileCommand := "g++ -shared -Wall -fPIC -Wextra -O3 -o "| libName | " " | cppName;
     --compileCommand := "gcc -shared -Wall -fPIC -Wextra -o "| libName | " " | cppName;
     print compileCommand;
     if run compileCommand > 0 then error ("error compiling a straightline program:\n"|compileCommand);      

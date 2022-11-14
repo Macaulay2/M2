@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <algorithm>
+#include <dlfcn.h>
 #include "timing.hpp"
 
 // SLEvaluator
