@@ -1,3 +1,6 @@
+-- Functions used in Polyhedra:
+-- topcomRegularFineTriangulation: in Polyhedra/core/polyhedron/methods.m2.
+
 -- TODO:
 --   1. how to check if a triangulation is correct?
 --   2. generate the (oriented) circuits of a point set
@@ -12,27 +15,27 @@
 --   need to be able to check that weights are correct.
 newPackage(
         "Topcom",
-        Version => "0.9", 
-        Date => "16 June 2022",
+        Version => "0.95",
+        Date => "13 Nov 2022",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
-        Headline => "interface to the topcom software package",
+        Headline => "interface to the topcom software package which in particular computes triangulations",
         Keywords => {"Interfaces"},
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 export {
     -- triangulations
-    "allTriangulations",
-    "flips",
-    "isRegularTriangulation",
-    "numFlips",
-    "numTriangulations",
-    "regularFineTriangulation",
-    "regularTriangulationWeights",
+    "topcomAllTriangulations",
+    "topcomNumTriangulations",
+    "topcomFlips",
+    "topcomNumFlips", 
+    "topcomIsRegularTriangulation",
+    "topcomRegularTriangulationWeights", -- change name?
+    "topcomRegularFineTriangulation",
     "topcomIsTriangulation",
 
     -- chirotopes
@@ -113,8 +116,8 @@ callTopcom(String, List) := (command, inputs) -> (
 -- after 1.1.0:
 --   checked 1 triangulations, 0 non-regular so far.
 
-isRegularTriangulation = method(Options=>{Homogenize=>true})
-isRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
+topcomIsRegularTriangulation = method(Options=>{Homogenize=>true})
+topcomIsRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
     -- now create the output file
     (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
     match("[Cc]hecked 1 triangulations, 0 non-regular so far", get errfile)
@@ -126,8 +129,8 @@ isRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
 --   T[1] = {{1,2,3},{0,1,2}} is regular.
 --   h[1] := [1,0,0,0];
 
-regularTriangulationWeights = method(Options => options isRegularTriangulation)
-regularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
+topcomRegularTriangulationWeights = method(Options => options topcomIsRegularTriangulation)
+topcomRegularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
     -- returns null if the triangulation is not regular.
     -- otherwise returns a list of rational numbers which are the 
     -- heights that result in the triangulation.
@@ -142,8 +145,8 @@ regularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
     return if instance(result, Number) then {result} else toList result
     )
 
-regularFineTriangulation = method(Options => options isRegularTriangulation)
-regularFineTriangulation Matrix := List => opts -> (A) -> (
+topcomRegularFineTriangulation = method(Options => options topcomIsRegularTriangulation)
+topcomRegularFineTriangulation Matrix := List => opts -> (A) -> (
     (outfile,errfile) := callTopcom("points2finetriang --regular", {topcomPoints(A, opts)});
     value get outfile
     )
@@ -151,7 +154,7 @@ regularFineTriangulation Matrix := List => opts -> (A) -> (
 -----------------------------------
 -- Chirotope interface functions --
 -----------------------------------
-chirotopeString = method(Options => options isRegularTriangulation)
+chirotopeString = method(Options => options topcomIsRegularTriangulation)
 chirotopeString Matrix := String => opts -> A -> (
     (outfile,errfile) := callTopcom("points2chiro", {topcomPoints(A, opts)});
     get outfile
@@ -232,13 +235,13 @@ numTriangsExecutable = hashTable {
 -- after 1.1.0:
 --   T[0] := {{0,1,2},{1,2,3}};
 
-allTriangulations = method(Options => {
+topcomAllTriangulations = method(Options => {
     Homogenize=>true, 
     RegularOnly => true, 
     Fine => false, 
     ConnectedToRegular => true
     })
-allTriangulations Matrix := List => opts -> (A) -> (
+topcomAllTriangulations Matrix := List => opts -> (A) -> (
     if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
     executable := allTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
     args := if opts.RegularOnly then " --regular" else "";
@@ -253,8 +256,8 @@ allTriangulations Matrix := List => opts -> (A) -> (
         )
     )
 
-numTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
-numTriangulations Matrix := ZZ => opts -> (A) -> (
+topcomNumTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
+topcomNumTriangulations Matrix := ZZ => opts -> (A) -> (
     if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
     executable := numTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
     args := if opts.RegularOnly then " --regular" else "";
@@ -262,16 +265,16 @@ numTriangulations Matrix := ZZ => opts -> (A) -> (
     value get outfile
     )
 
-numFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
-numFlips(Matrix, List) := ZZ => opts -> (A, tri) -> (
+topcomNumFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
+topcomNumFlips(Matrix, List) := ZZ => opts -> (A, tri) -> (
     executable := "points2nflips";
     args := if opts.RegularOnly then " --regular" else "";
     (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
     value get outfile
     )
 
-flips = method(Options => {Homogenize=>true, RegularOnly =>true})
-flips(Matrix, List) := List => opts -> (A, tri) -> (
+topcomFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
+topcomFlips(Matrix, List) := List => opts -> (A, tri) -> (
     executable := "points2flips";
     args := if opts.RegularOnly then " --regular" else "";
     (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
@@ -280,7 +283,8 @@ flips(Matrix, List) := List => opts -> (A, tri) -> (
     s = replace("[0-9,]*:", "", s);
     s = replace("\\[","{",s);
     s = replace("\\]","}",s);
-    first value s -- seems to have an extra set of []'s around it.
+    ans := first value s; -- seems to have an extra set of []'s around it.
+    ans//sort//sort
     )
 
 -*
@@ -346,24 +350,24 @@ Description
     @SUBSECTION "Generating triangulations"@
   Text
     @UL {
-      TO (allTriangulations, Matrix),
-      TO (numTriangulations, Matrix)
+      TO (topcomAllTriangulations, Matrix),
+      TO (topcomNumTriangulations, Matrix)
     }@
   Text
     @SUBSECTION "Useful functions involving specific triangulations"@
   Text
     @UL {
-      TO (regularFineTriangulation, Matrix),
+      TO (topcomRegularFineTriangulation, Matrix),
       TO (topcomIsTriangulation, Matrix, List),
-      TO (isRegularTriangulation, Matrix, List),
-      TO (regularTriangulationWeights, Matrix, List)
+      TO (topcomIsRegularTriangulation, Matrix, List),
+      TO (topcomRegularTriangulationWeights, Matrix, List)
     }@
   Text
     @SUBSECTION "Useful functions involving bistellar flips"@
   Text
     @UL {
-      TO (flips, Matrix, List),
-      TO (numFlips, Matrix, List)
+      TO (topcomFlips, Matrix, List),
+      TO (topcomNumFlips, Matrix, List)
     }@
   Text
     @SUBSECTION "Chirotope functions"@
@@ -403,13 +407,13 @@ Description
     For example, consider a simple example: the square.
   Example
     sq = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0},{1,0},{-1,0},{0,1},{0,-1}}
-    tri = regularFineTriangulation sq
+    tri = topcomRegularFineTriangulation sq
     topcomIsTriangulation(sq, tri)    
-    isRegularTriangulation(sq, tri)
-    regularTriangulationWeights(sq, tri)
-    numTriangulations sq
-    numTriangulations(sq, Fine => true)
-    Ts = allTriangulations(sq, Fine => true);    
+    topcomIsRegularTriangulation(sq, tri)
+    topcomRegularTriangulationWeights(sq, tri)
+    topcomNumTriangulations sq
+    topcomNumTriangulations(sq, Fine => true)
+    Ts = topcomAllTriangulations(sq, Fine => true);    
     netList Ts
   Text
     Topcom assumes that the points do not lie on a hyperplane.  If they do, and the hyperplane is not
@@ -419,35 +423,36 @@ Description
     For example, the following three points lie on the hyperplane $x_0 + x_1 + x_2 = 2$.
   Example
     A1 = transpose matrix{{1,1,0},{1,0,1},{0,1,1}}
-    regularFineTriangulation(A1, Homogenize => false)
-    regularFineTriangulation(A1, Homogenize => true)
+    topcomRegularFineTriangulation(A1, Homogenize => false)
+    topcomRegularFineTriangulation(A1, Homogenize => true)
   Text
     Topcom generates triangulations by starting with a triangulation, and generating more by bistellar flips.
     There is a beautiful story about the collection of all (regular, or connected to regular) triangulations of a point or vector 
     configuration.  See the book De Loera, Rambau, Santos, {\it Triangulations} for details about this.
   Example
     sqh = transpose matrix {{-1,-1,1},{-1,1,1},{1,-1,1},{1,1,1},{0,0,1},{1,0,1},{-1,0,1},{0,1,1},{0,-1,1}}
-    tri = regularFineTriangulation sqh -- none found!
-    tri = regularFineTriangulation(sqh, Homogenize => false) -- none found!
-    numTriangulations(sqh, Homogenize => false)
+    tri = topcomRegularFineTriangulation sqh -- none found!
+    tri = topcomRegularFineTriangulation(sqh, Homogenize => false)
+    topcomNumTriangulations(sqh, Homogenize => false)
+    # topcomAllTriangulations(sqh, Homogenize => false)
     topcomIsTriangulation(sq, tri)    
-    isRegularTriangulation(sq, tri)
-    regularTriangulationWeights(sq, tri)
-    numTriangulations sq
-    numTriangulations(sq, Fine => true)
-    Ts = allTriangulations(sq, Fine => true);    
+    topcomIsRegularTriangulation(sq, tri)
+    topcomRegularTriangulationWeights(sq, tri)
+    topcomNumTriangulations sq
+    topcomNumTriangulations(sq, Fine => true)
+    Ts = topcomAllTriangulations(sq, Fine => true);    
     netList Ts
 ///
 
 doc ///
 Key
-  isRegularTriangulation
-  (isRegularTriangulation, Matrix, List)
-  [isRegularTriangulation, Homogenize]
+  topcomIsRegularTriangulation
+  (topcomIsRegularTriangulation, Matrix, List)
+  [topcomIsRegularTriangulation, Homogenize]
 Headline
   determine if a given triangulation is a regular triangulation
 Usage
-  isRegularTriangulation(A, tri)
+  topcomIsRegularTriangulation(A, tri)
 Inputs
   A:Matrix
     A $d \times n$ matrix over ZZ.  Each column represents one of the points
@@ -470,8 +475,8 @@ Description
     A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
     tri = {{0,1,2}, {1,3,5}, {2,3,4}, {0,1,5}, 
         {0,2,4}, {3,4,5}, {1,2,3}}
-    isRegularTriangulation(A,tri)
-    assert not isRegularTriangulation(A,tri)
+    topcomIsRegularTriangulation(A,tri)
+    assert not topcomIsRegularTriangulation(A,tri)
     assert topcomIsTriangulation(A, tri)
   Text
     Setting debugLevel to either 1,2, or 5 will give more detail about
@@ -480,23 +485,23 @@ Description
 Caveat
   Do we check that the triangulation is actually well defined?
 SeeAlso
-  regularFineTriangulation  
+  topcomRegularFineTriangulation  
   topcomIsTriangulation
 ///
 
 doc ///
   Key
-    (allTriangulations, Matrix)
-    allTriangulations
-    [allTriangulations, ConnectedToRegular]
-    [allTriangulations, Fine]
-    [allTriangulations, Homogenize]
-    [allTriangulations, RegularOnly]
+    (topcomAllTriangulations, Matrix)
+    topcomAllTriangulations
+    [topcomAllTriangulations, ConnectedToRegular]
+    [topcomAllTriangulations, Fine]
+    [topcomAllTriangulations, Homogenize]
+    [topcomAllTriangulations, RegularOnly]
   Headline
     generate all triangulations of a point or vector configuration
   Usage
-    allTriangulations A
-    allTriangulations(A, Homogenize => true, Fine => true, RegularOnly => true)
+    topcomAllTriangulations A
+    topcomAllTriangulations(A, Homogenize => true, Fine => true, RegularOnly => true)
   Inputs
     A:Matrix
     Homogenize => Boolean
@@ -517,13 +522,13 @@ doc ///
       For example, the following point set is the smallest which has a non-regular triangulation.
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
-      Ts = allTriangulations A
+      Ts = topcomAllTriangulations A
       #Ts == 16
       netList Ts
       tri = Ts#0
       topcomIsTriangulation(A, tri)
-      isRegularTriangulation(A, tri)
-      regularTriangulationWeights(A, tri)
+      topcomIsRegularTriangulation(A, tri)
+      topcomRegularTriangulationWeights(A, tri)
     Text
       The following code determines the support of each triangulation, and tallies them.
       Thus for example, we see that there are 6 regular fine triangulations.
@@ -533,28 +538,28 @@ doc ///
       The method that topcom uses depends on the optional arguments {\tt Fine}, {\tt ConnectedToRegular}
       and {\tt RegularOnly}. 
     Example 
-      options allTriangulations
+      options topcomAllTriangulations
     Text
       If the optional argument {\tt Fine} is set to true, then only 
       {\it fine} triangulations (i.e.
           those that involve every column of $A$) will be generated.
     Example 
-      Ts = allTriangulations(A, Fine => true);
+      Ts = topcomAllTriangulations(A, Fine => true);
       #Ts == 6
     Text
       If the optional argument {\tt RegularOnly} is set to false, but
       {\tt ConnectedToRegular} is true, it will generally take less time,
       as the program doesn't need to check each triangulation to see if it is regular.
     Example
-      T1s = allTriangulations(A, RegularOnly => true)
-      T2s = allTriangulations(A, RegularOnly => false)
+      T1s = topcomAllTriangulations(A, RegularOnly => true)
+      T2s = topcomAllTriangulations(A, RegularOnly => false)
       #T1s
       #T2s
     Text
       The following search would also yield all triangulations, even those not connected via
       bistellar flips to regular triangulations.
     Example
-      T3s = allTriangulations(A, RegularOnly => false, ConnectedToRegular => false)
+      T3s = topcomAllTriangulations(A, RegularOnly => false, ConnectedToRegular => false)
       #T3s
     Text
       Given the list of triangulations, we can query them using other topcom functions.
@@ -562,26 +567,26 @@ doc ///
     Example
       netList Ts
       for tri in Ts list topcomIsTriangulation(A, tri)
-      for tri in Ts list isRegularTriangulation(A, tri)
-      for tri in Ts list regularTriangulationWeights(A, tri)
+      for tri in Ts list topcomIsRegularTriangulation(A, tri)
+      for tri in Ts list topcomRegularTriangulationWeights(A, tri)
   SeeAlso
-    (numTriangulations, Matrix)
+    (topcomNumTriangulations, Matrix)
     "Triangulations::generateTriangulations"
 ///
 
 doc ///
   Key
-    (numTriangulations, Matrix)
-    numTriangulations
-    [numTriangulations, ConnectedToRegular]
-    [numTriangulations, Fine]
-    [numTriangulations, Homogenize]
-    [numTriangulations, RegularOnly]
+    (topcomNumTriangulations, Matrix)
+    topcomNumTriangulations
+    [topcomNumTriangulations, ConnectedToRegular]
+    [topcomNumTriangulations, Fine]
+    [topcomNumTriangulations, Homogenize]
+    [topcomNumTriangulations, RegularOnly]
   Headline
     the number of triangulations of a point or vector configuration
   Usage
-    numTriangulations A
-    numTriangulations(A, Homogenize => true, Fine => true, RegularOnly => true)
+    topcomNumTriangulations A
+    topcomNumTriangulations(A, Homogenize => true, Fine => true, RegularOnly => true)
   Inputs
     A:Matrix
     Homogenize => Boolean
@@ -592,34 +597,34 @@ doc ///
     :ZZ
   Description
     Text
-      This function is identical in function to @TO (allTriangulations, Matrix)@ (including optional
+      This function is identical in function to @TO (topcomAllTriangulations, Matrix)@ (including optional
           arguments), but instead just counts the number, rather than enumerate them.
       
-      For example, to use the same example as in @TO (allTriangulations, Matrix)@:
+      For example, to use the same example as in @TO (topcomAllTriangulations, Matrix)@:
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
-      numTriangulations A == 16
-      numTriangulations A == # allTriangulations A
+      topcomNumTriangulations A == 16
+      topcomNumTriangulations A == # topcomAllTriangulations A
     Text
       Similarly, one can count the number of triangulations with different properties using the
       optional arguments.
     Example
-      numTriangulations(A, RegularOnly => false)
-      assert(numTriangulations(A, RegularOnly => false) == 18)
-      assert(numTriangulations(A, RegularOnly => false) == # allTriangulations(A, RegularOnly => false))
+      topcomNumTriangulations(A, RegularOnly => false)
+      assert(topcomNumTriangulations(A, RegularOnly => false) == 18)
+      assert(topcomNumTriangulations(A, RegularOnly => false) == # topcomAllTriangulations(A, RegularOnly => false))
   SeeAlso
-    (allTriangulations, Matrix)
+    (topcomAllTriangulations, Matrix)
 ///
 
 doc ///
   Key
-    (regularFineTriangulation, Matrix)
-    regularFineTriangulation
-    [regularFineTriangulation, Homogenize]
+    (topcomRegularFineTriangulation, Matrix)
+    topcomRegularFineTriangulation
+    [topcomRegularFineTriangulation, Homogenize]
   Headline
     compute a regular triangulation using all of the given points
   Usage
-    regularFineTriangulation A
+    topcomRegularFineTriangulation A
   Inputs
     A:Matrix
     Homogenize => Boolean
@@ -638,24 +643,13 @@ doc ///
       Here we find a regular fine triangulation of the cyclic polytope with 7 vertices in 3-space.
     Example
       A = matrix {{0, 1, 2, 3, 4, 5, 6}, {0, 1, 4, 9, 16, 25, 36}, {0, 1, 8, 27, 64, 125, 216}}
-      tri = regularFineTriangulation A
+      tri = topcomRegularFineTriangulation A
       assert topcomIsTriangulation(A, tri)
-      assert isRegularTriangulation(A, tri)
-      
-    Text
-      We can also take all of the lattice points inside the convex hull of the columns of $A$, and
-      find a triangulation of that too.
-    Example
-      needsPackage "Polyhedra"
-      P = convexHull A
-      volume P
-      dim P
-      B = matrix{latticePoints P}
-      debugLevel = 5
-      triB = regularFineTriangulation B
-      topcomIsTriangulation(B, triB)
+      assert topcomIsRegularTriangulation(A, tri)
+      topcomRegularTriangulationWeights(A, tri)
   SeeAlso
     topcomIsTriangulation
+    topcomRegularTriangulationWeights
     "Polyhedra::convexHull"
 ///
 
@@ -815,13 +809,13 @@ doc ///
 
 doc ///
   Key
-    (regularTriangulationWeights, Matrix, List)
-    regularTriangulationWeights
-    [regularTriangulationWeights, Homogenize]
+    (topcomRegularTriangulationWeights, Matrix, List)
+    topcomRegularTriangulationWeights
+    [topcomRegularTriangulationWeights, Homogenize]
   Headline
     find a list of heights of a regular triangulation
   Usage
-    regularTriangulationWeights(A, tri)
+    topcomRegularTriangulationWeights(A, tri)
   Inputs
     A:Matrix
     tri:List
@@ -835,14 +829,14 @@ doc ///
 
 doc ///
   Key
-    (flips, Matrix, List)
-    flips
-    [flips, Homogenize]
-    [flips, RegularOnly]
+    (topcomFlips, Matrix, List)
+    topcomFlips
+    [topcomFlips, Homogenize]
+    [topcomFlips, RegularOnly]
   Headline
     find the neighboring triangulations (bistellar flips) of a triangulation
   Usage
-    flips(A, tri)
+    topcomFlips(A, tri)
   Inputs
     A:Matrix
     tri:List
@@ -857,23 +851,23 @@ doc ///
           {-1, -1, -1, 0}, {-1, -1, 0, -1}, {-1, -1, 0, 0}, {-1, 0, -1, -1}, 
           {-1, 0, -1, 2}, {-1, 0, 0, -1}, {0, -1, 1, -1}, {1, 1, -1, 2}, 
           {1, 1, 1, -1}, {-1, 0, -1, 0}, {-1, 0, -1, 1}, {0, 0, -1, 1}, {0,0,0,0}}
-      tri1 = regularFineTriangulation A
-      flips(A, tri1)
+      tri1 = topcomRegularFineTriangulation A
+      topcomFlips(A, tri1)
     
   SeeAlso
-    (numFlips, Matrix, List)
+    (topcomNumFlips, Matrix, List)
 ///
 
 doc ///
   Key
-    (numFlips, Matrix, List)
-    numFlips
-    [numFlips, Homogenize]
-    [numFlips, RegularOnly]
+    (topcomNumFlips, Matrix, List)
+    topcomNumFlips
+    [topcomNumFlips, Homogenize]
+    [topcomNumFlips, RegularOnly]
   Headline
     find the number of neighboring triangulations (bistellar flips) of a triangulation
   Usage
-    numFlips(A, tri)
+    topcomNumFlips(A, tri)
   Inputs
     A:Matrix
     tri:List
@@ -884,7 +878,7 @@ doc ///
   Description
     Text
   SeeAlso
-    (numFlips, Matrix, List)
+    (topcomNumFlips, Matrix, List)
 ///
 
 doc ///
@@ -932,33 +926,33 @@ TEST ///
   restart
   debug needsPackage "Topcom"
 *-
-  -- test of isRegularTriangulation
+  -- test of topcomIsRegularTriangulation
   A = transpose matrix {{-1,-1,1},{-1,1,1},{1,-1,1},{1,1,1},{0,0,1}}
-  regularFineTriangulation(A, Homogenize=>false)
+  topcomRegularFineTriangulation(A, Homogenize=>false)
   tri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}}
-  assert isRegularTriangulation(A,tri)
-  regularTriangulationWeights(A,tri,Homogenize=>false) == {1,1,0,0,0}
+  assert topcomIsRegularTriangulation(A,tri)
+  topcomRegularTriangulationWeights(A,tri,Homogenize=>false) == {1,1,0,0,0}
 ///
 
 TEST ///
   needsPackage "Topcom"
-  -- test of isRegularTriangulation
+  -- test of topcomIsRegularTriangulation
   A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
   tri = {{0,1,2}, {1,3,5}, {2,3,4},
          {0,1,5}, {0,2,4}, {3,4,5},
          {1,2,3}}
-  assert not isRegularTriangulation(A,tri)
-  assert(null === regularTriangulationWeights(A,tri))
-  numTriangulations A
-  allTriangulations A  
-  allTriangulations(A, Fine=>true)
-  allTriangulations(A, Fine=>true, RegularOnly=>false)
+  assert not topcomIsRegularTriangulation(A,tri)
+  assert(null === topcomRegularTriangulationWeights(A,tri))
+  topcomNumTriangulations A
+  topcomAllTriangulations A  
+  topcomAllTriangulations(A, Fine=>true)
+  topcomAllTriangulations(A, Fine=>true, RegularOnly=>false)
   A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{7,-2}}
   tri = {{0,1,2}, {1,3,5}, {2,3,4},
          {0,1,5}, {0,2,4}, {3,4,5},
          {1,2,3}}
-  assert isRegularTriangulation(A,tri)
-  regularTriangulationWeights(A,tri) -- Question: how to test that this is correct
+  assert topcomIsRegularTriangulation(A,tri)
+  topcomRegularTriangulationWeights(A,tri) -- Question: how to test that this is correct
     -- TODO: need a function which takes a point set, weights, and creates the lift (easy)
     --       compute the lower hull of this polytope.
 
@@ -967,13 +961,13 @@ TEST ///
   orientedCocircuits A
   A = transpose matrix {{1,0},{0,1}}
   tri = {{0,1}}
-  assert isRegularTriangulation(A,tri)
-  regularTriangulationWeights(A,tri) == {0,1} -- TODO: check that this is the correct answer
+  assert topcomIsRegularTriangulation(A,tri)
+  topcomRegularTriangulationWeights(A,tri) == {0,1} -- TODO: check that this is the correct answer
   
   A = transpose matrix {{0}}
   tri = {{0}}
-  assert isRegularTriangulation(A,tri)
-  regularTriangulationWeights(A,tri) == {1}
+  assert topcomIsRegularTriangulation(A,tri)
+  topcomRegularTriangulationWeights(A,tri) == {1}
 ///
 
 TEST ///
@@ -981,15 +975,15 @@ TEST ///
 -- How to test that triangulations are correct?  What I thought worked does not.
   needsPackage "Topcom"
   A = transpose matrix{{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
-  regularFineTriangulation A  
+  topcomRegularFineTriangulation A  
   tri1 = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}}
   tri2 = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 2, 3}}
 
   assert topcomIsTriangulation(A, tri1)
-  assert isRegularTriangulation(A, tri1)
+  assert topcomIsRegularTriangulation(A, tri1)
 
   assert not topcomIsTriangulation(A, tri2)
-  isRegularTriangulation(A, tri2) -- Wrong!!
+  topcomIsRegularTriangulation(A, tri2) -- Wrong!!
 
   debug needsPackage "Triangulations"
   assert isTriangulation(A, tri1)
@@ -997,19 +991,19 @@ TEST ///
 
   badtri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 2, 3}}
   debugLevel = 6
-  isRegularTriangulation(A,badtri) -- this should fail! But it doesn't seem to do so. BUG in something!!!
+  topcomIsRegularTriangulation(A,badtri) -- this should fail! But it doesn't seem to do so. BUG in something!!!
   debugLevel = 0
   -- hmmm, we can make non-sensical triangulations, without it noticing.
   -- this should be a bug?  
   A = transpose matrix {{0,0},{0,1},{1,0},{1,1}}
 
   tri = {{0,1,2},{0,2,3}}
-  assert not isTriangulation(A,tri) -- upshot: isRegularTriangulation NEEDS a triangulation.
+  assert not isTriangulation(A,tri) -- upshot: topcomIsRegularTriangulation NEEDS a triangulation.
   assert not topcomIsTriangulation(A,tri)
-  isRegularTriangulation(A,tri) -- this is (incorrectly) true though.
+  topcomIsRegularTriangulation(A,tri) -- this is (incorrectly) true though.
     
   tri = {{0,1,2},{1,2,3}}
-  assert isRegularTriangulation(A,tri) 
+  assert topcomIsRegularTriangulation(A,tri) 
   assert isTriangulation(A,tri)
   assert topcomIsTriangulation(A,tri)
 ///
@@ -1020,17 +1014,17 @@ TEST ///
   
   A = transpose matrix {{-1,-1,2},{-1,0,1},{-1,1,1},{0,-1,2},{0,1,1},{1,-1,3},{1,0,-1},{1,1,-2}}
   debugLevel = 0
-  tri = regularFineTriangulation A
-  assert isRegularTriangulation(A, tri)
-  assert(regularTriangulationWeights(A, tri) =!= null)
+  tri = topcomRegularFineTriangulation A
+  assert topcomIsRegularTriangulation(A, tri)
+  assert(topcomRegularTriangulationWeights(A, tri) =!= null)
   assert topcomIsTriangulation(A, tri)
 
   A = transpose matrix {{-1, 0, -1, -1}, {-1, 0, 0, -1}, {-1, 1, 2, -1}, {-1, 1, 2, 0}, {1, -1, -1, -1}, {1, -1, -1, 1}, {1, 0, -1, 2}, {1, 0, 1, 2}}
   P2 = polar convexHull A
   C = matrix {latticePoints P2}
-  tri = regularFineTriangulation C
-  assert isRegularTriangulation(C, tri)
-  regularTriangulationWeights(C, tri) -- is this correct?  Some weights have negative values??
+  tri = topcomRegularFineTriangulation C
+  assert topcomIsRegularTriangulation(C, tri)
+  topcomRegularTriangulationWeights(C, tri) -- is this correct?  Some weights have negative values??
   
   elapsedTime assert topcomIsTriangulation(C, tri) -- .09 seconds
   --elapsedTime assert isTriangulation(C, tri) -- *much* slower (51 seconds)
@@ -1069,30 +1063,30 @@ restart
   A = transpose matrix pts 
   -- debugLevel = 7
 
-  elapsedTime n1 = numTriangulations(A, Fine=>true, ConnectedToRegular=>true) -- 6.9 sec, 408 of these CORRECT
-  elapsedTime n2 = numTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false) -- 116 sec, 448 of these WRONG
-  elapsedTime n3 = numTriangulations(A, Fine=>false, ConnectedToRegular=>true)  -- 8 sec, 520 of these CORRECT
-  elapsedTime n4 = numTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false) -- 115 sec, 564 of these WRONG
+  elapsedTime n1 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>true) -- 6.9 sec, 408 of these CORRECT
+  elapsedTime n2 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false) -- 116 sec, 448 of these WRONG
+  elapsedTime n3 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>true)  -- 8 sec, 520 of these CORRECT
+  elapsedTime n4 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false) -- 115 sec, 564 of these WRONG
 
-  elapsedTime n5 = numTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false) -- .09 sec, 448 of these
-  elapsedTime n6 = numTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false) -- 115.5 sec, 448 of these
-  elapsedTime n7 = numTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false)  -- .11 sec, 564 of these
-  elapsedTime n8 = numTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false) -- 116 sec, 564 of these
+  elapsedTime n5 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false) -- .09 sec, 448 of these
+  elapsedTime n6 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false) -- 115.5 sec, 448 of these
+  elapsedTime n7 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false)  -- .11 sec, 564 of these
+  elapsedTime n8 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false) -- 116 sec, 564 of these
 
-  elapsedTime set1 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true); -- 6.9 sec, 408  CORRECT
-  elapsedTime set2 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false); -- 118 sec, 448 WRONG
-  elapsedTime set3 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true); -- 8.1 sec, 520 CORRECT
-  elapsedTime set4 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false); -- 116 sec.  564 of these. WRONG
+  elapsedTime set1 = topcomAllTriangulations(A, Fine=>true, ConnectedToRegular=>true); -- 6.9 sec, 408  CORRECT
+  elapsedTime set2 = topcomAllTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false); -- 118 sec, 448 WRONG
+  elapsedTime set3 = topcomAllTriangulations(A, Fine=>false, ConnectedToRegular=>true); -- 8.1 sec, 520 CORRECT
+  elapsedTime set4 = topcomAllTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false); -- 116 sec.  564 of these. WRONG
 
-  elapsedTime set5 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- .15 sec, 448 of these
-  elapsedTime set6 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false); -- 116 sec, 448 of these
-  elapsedTime set7 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false); -- .22 sec, 564 of these
-  elapsedTime set8 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false); -- 117 sec, 564 of these
+  elapsedTime set5 = topcomAllTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- .15 sec, 448 of these
+  elapsedTime set6 = topcomAllTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false); -- 116 sec, 448 of these
+  elapsedTime set7 = topcomAllTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false); -- .22 sec, 564 of these
+  elapsedTime set8 = topcomAllTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false); -- 117 sec, 564 of these
 
   assert((n1,n2,n3,n4,n5,n6,n7,n8) == (#set1, #set2, #set3, #set4, #set5, #set6, #set7, #set8))
   fineTris = select(set8, x -> # unique flatten x == numColumns A);
-  regularFineTris = select(fineTris, x -> isRegularTriangulation(A, x));
-  regularTris = select(set8, x -> isRegularTriangulation(A, x));
+  regularFineTris = select(fineTris, x -> topcomIsRegularTriangulation(A, x));
+  regularTris = select(set8, x -> topcomIsRegularTriangulation(A, x));
 
   assert(#regularFineTris == 408)
   assert(#fineTris == 448)
@@ -1101,8 +1095,8 @@ restart
   assert(set set5 === set set6) -- in general, this doesn't need to hold, but it is rare for this to be the case
   assert(set set7 === set set8) -- same: rare for this to not hold
   assert(set set4 === set set8) -- this one should not be true?  
-  assert(set select(set7, x -> isRegularTriangulation(A, x)) === set set3)
-  assert(set select(set5, x -> isRegularTriangulation(A, x)) === set set1)
+  assert(set select(set7, x -> topcomIsRegularTriangulation(A, x)) === set set3)
+  assert(set select(set5, x -> topcomIsRegularTriangulation(A, x)) === set set1)
 ///
 
 ///
@@ -1112,16 +1106,16 @@ restart
   needsPackage "Polyhedra"
   pts =  {{-1,0,0,-1},{-1,0,1,-1},{-1,0,1,0},{-1,1,0,-1},{-1,1,0,0},{-1,1,1,2},{1,-1,0,-1},{1,0,-1,1},{1,-1,-1,-1},{0,0,0,-1}}
   A = transpose matrix pts 
-  elapsedTime n5 = numTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false) -- .09 sec, 448 of these
-  elapsedTime set5 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- .15 sec, 448 of these
+  elapsedTime n5 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false) -- .09 sec, 448 of these
+  elapsedTime set5 = topcomAllTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- .15 sec, 448 of these
 
   set5_0
   elapsedTime for tri in set5 do assert topcomIsTriangulation(A, tri)
 
-  options flips
-  numFlips(A, set5_0)  
-  # flips(A, set5_0) == 6 -- these do not match?!
-  # flips(A, set5_0, RegularOnly => false) -- these do not match?!
+  options topcomFlips
+  topcomNumFlips(A, set5_0)  
+  # topcomFlips(A, set5_0) == 6 -- these do not match?!
+  # topcomFlips(A, set5_0, RegularOnly => false) -- these do not match?!
 ///
 
 ///
@@ -1144,10 +1138,10 @@ restart
  P2 = polar P
  A1 = vertices P2
  LP = matrix{select(latticePoints P2, x -> x != 0)}
- numTriangulations(LP, Fine => true)
- allTriangulations(LP, Fine=>true);
- numTriangulations(LP)
- allTriangulations(LP);
+ topcomNumTriangulations(LP, Fine => true)
+ topcomAllTriangulations(LP, Fine=>true);
+ topcomNumTriangulations(LP)
+ topcomAllTriangulations(LP);
 
 ///
 
@@ -1242,9 +1236,9 @@ r12'chiro = "12, 4:
   LP = drop(latticePointList P2, -1);
   A = transpose matrix LP;
   --debugLevel = 6
-  elapsedTime tri = regularFineTriangulation A;
+  elapsedTime tri = topcomRegularFineTriangulation A;
   assert topcomIsTriangulation(A, tri)
-  assert isRegularTriangulation(A, tri)
+  assert topcomIsRegularTriangulation(A, tri)
   
   -- XXX
   augment A
@@ -1264,7 +1258,7 @@ r12'chiro = "12, 4:
   restart
   debug needsPackage "Topcom"
 *-
-  -- test of isRegularTriangulation
+  -- test of topcomIsRegularTriangulation
   toppath = "/opt/homebrew/bin/"
   A = transpose matrix {{-1,-1,1},{-1,1,1},{1,-1,1},{1,1,1},{0,0,1}}
   badtri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 2}}
@@ -1289,7 +1283,7 @@ r12'chiro = "12, 4:
          {1,2,3}}
   "topcomfoo.in" << topcomPoints(A, Homogenize=>true) << endl << "[]" << endl << tri << endl << close;
   run (toppath|"checkregularity"|" --heights <topcomfoo.in >topcomfoo.out")
-  assert not isRegularTriangulation(A,tri)
+  assert not topcomIsRegularTriangulation(A,tri)
 ///
 
 ///
@@ -1308,8 +1302,8 @@ r12'chiro = "12, 4:
   LP = drop(latticePointList P2, -1)
   A1 = transpose matrix LP
   A2 = transpose matrix latticePointList P2
-  tri = regularFineTriangulation A1
-  tri2 = regularFineTriangulation A2
+  tri = topcomRegularFineTriangulation A1
+  tri2 = topcomRegularFineTriangulation A2
   #tri
   #tri2
   elapsedTime chiro1 = chirotopeString A1;
