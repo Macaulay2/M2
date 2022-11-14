@@ -357,7 +357,7 @@ Matrix % Subring := (M, S) -> (
     	JInTensorRing := liftToTensorRing J;
     	I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
     	MNormalForm := MInTensorRing % (I + JInTensorRing);
-	projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | G);
+	projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | subringGens);
         result = M - (projectToQ MNormalForm);
 	);    
     result
