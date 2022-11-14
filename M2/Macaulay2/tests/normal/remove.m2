@@ -9,6 +9,10 @@ remove(x, 0)
 assert(toList x == {2, 3, 4})
 remove(x, -1)
 assert(toList x == {2, 3})
+remove(x, 1)
+assert(toList x == {2})
+remove(x, 0)
+assert(toList x == {})
 
 filename = temporaryFileName() | ".dbm"
 x = openDatabaseOut filename
