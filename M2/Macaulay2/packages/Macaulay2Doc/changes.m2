@@ -62,7 +62,13 @@ document {
 			 has been modified to accommodate both homological and internal
 			 grading in a simplied format." 
                 	 }
-	       	    }}
+		     }
+		 },
+	  LI { "functionality changed in a way that could break code:",
+	       UL {
+		    LI { TO remove, " may now be used to remove elements from mutable lists.  Its previous (undocumented) behavior was equivalent to ", TO drop, "."}
+		    }
+	       }
 	  }}
     
 document {
