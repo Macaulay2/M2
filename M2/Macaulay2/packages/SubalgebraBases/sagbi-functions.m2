@@ -242,19 +242,20 @@ isSAGBI List := opts -> L -> (
 --
 groebnerMembershipTest = method() 
 groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
-    G := gens S;
-    Q := ring G;
+    subringGens := gens S;
+    Q := ring subringGens;
     R := ambient Q;
     J := ideal Q;
-    fR := lift(f, R);
-    GR := lift(G, R);
-    tensorRingNumVars := (numgens R) + (numcols G);
+    fLifedToR := lift(f, R);
+    subringGensLiftedToR := lift(subringGens, R);
+    -- construct the tensor ring
+    tensorRingNumVars := (numgens R) + (numcols subringGens);
     tensorRing := QQ[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens R)}];    
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
-    fInTensorRing := liftToTensorRing fR;
-    GInTensorRing := liftToTensorRing GR;
+    fInTensorRing := liftToTensorRing fLifedToR;
+    subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
     JInTensorRing := liftToTensorRing J;
-    I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - GInTensorRing);
+    I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
     fNormalForm := fInTensorRing % (I + JInTensorRing);
     numcols selectInSubring(1, matrix {{fNormalForm}}) == 1
     )
@@ -266,25 +267,25 @@ groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
 groebnerSubductionQuotient = method() 
 groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
     local outputRing;
-    G := gens S;
-    Q := ring G;
+    subringGens := gens S;
+    Q := ring subringGens;
     R := ambient Q;
     J := ideal Q;
     FF := coefficientRing R;
-    fR := lift(f, R);
-    GR := lift(G, R);
-    tensorRingNumVars := (numgens R) + (numcols G);
+    fLifedToR := lift(f, R);
+    subringGensLiftedToR := lift(subringGens, R);
+    -- construct the tensor ring
+    tensorRingNumVars := (numgens R) + (numcols subringGens);
     oldOrder := (options R).MonomialOrder;
     newOrder := prepend(Eliminate(numgens R), oldOrder);
     tensorRing := FF[Variables => tensorRingNumVars, MonomialOrder => oldOrder];
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
-    fInTensorRing := liftToTensorRing fR;
-    GInTensorRing := liftToTensorRing GR;
+    fInTensorRing := liftToTensorRing fLifedToR;
+    subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
     JInTensorRing := liftToTensorRing J;
-    I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - GInTensorRing);
+    I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
     fNormalForm := fInTensorRing % (I + JInTensorRing);
     -- output fNormalForm in the subductionQuotientRing
-    --  construct the ring if not present in the cache of S 
     outputRing = subductionQuotientRing S;
     outputMap := map(outputRing, tensorRing, matrix {toList((numgens R):0)} | vars outputRing);
     outputMap fNormalForm
@@ -338,23 +339,24 @@ Matrix % Subring := (M, S) -> (
 	result = subduction(SB, M);	
 	) else (
 	-- extrinsic subduction
-	G := gens S;
-	Q := ring G;
+	subringGens := gens S;
+	Q := ring subringGens;
     	R := ambient Q;
     	J := ideal Q;
     	FF := coefficientRing R;
-    	MR := lift(M, R);
-    	GR := lift(G, R);
-    	tensorRingNumVars := (numgens R) + (numcols G);
+    	MLiftedToR := lift(M, R);
+    	subringGensLiftedToR := lift(subringGens, R);
+    	-- construct the tensor ring
+	tensorRingNumVars := (numgens R) + (numcols subringGens);
     	oldOrder := (options R).MonomialOrder;
     	newOrder := prepend(Eliminate(numgens R), oldOrder);
     	tensorRing := FF[Variables => tensorRingNumVars, MonomialOrder => oldOrder];
-    	liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
-    	MInTensorRing := liftToTensorRing MR;
-    	GInTensorRing := liftToTensorRing GR;
+	liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
+    	MInTensorRing := liftToTensorRing MLiftedToR;
+    	subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
     	JInTensorRing := liftToTensorRing J;
-    	I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - GInTensorRing);
-    	MNormalForm := MInTensorRing % (I + JInTensorRing);	
+    	I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
+    	MNormalForm := MInTensorRing % (I + JInTensorRing);
 	projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | G);
         result = M - (projectToQ MNormalForm);
 	);    
@@ -413,7 +415,7 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     T := TAmb / J; -- tensor product of Q and K[t]/(t^2-t)
     QtoT := map(T, Q, (vars T)_{1 .. numgens Q});
     TtoQ := map(Q, T, matrix{{0_Q}} | vars Q);
-    t = (vars T)_(0,0);
+    t = (gens T)_0;
     --------------
     -- Notation:
     -- Gi := generators of Si lifted to T, for each i in {1, 2}
@@ -421,7 +423,7 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     -- S := K[t*G1, (1-t)*G2]
     G1 := QtoT gens S1;
     G2 := QtoT gens S2;
-    use T;
+    use T; -- Dev note: T contains no user variables
     G := t*G1 | (1-t)*G2;
     S := subring G;
     --------------

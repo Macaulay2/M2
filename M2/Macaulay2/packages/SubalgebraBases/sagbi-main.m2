@@ -57,8 +57,7 @@ subalgebraBasis(Subring) := opts -> S -> (
 --        then the computation will be started from new **
 --   if both are true or both are false then it does what is expected
 --
--- ** the only way this happens is if the SAGBIBasis object was
---    created from a isSAGBI call. In this case we MUST recompute
+-- ** this should never happen
 --
 
 sagbi = method(
