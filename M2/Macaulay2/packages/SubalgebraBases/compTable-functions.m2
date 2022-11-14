@@ -222,8 +222,7 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
 		i
 		)
 	    )}
-);
-
+    );
 
 -- Engine Subduction of the lead term
 -- perform the same function as subductionTopLevelLeadTerm except
@@ -251,13 +250,12 @@ subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
     -- Use the same pres ring as much as possible.
     -- M2 will automatically cache the gb calculation
     -- as long as the pres ring is not reconstructed.
-    elapsedTime gbI := gb compTable#SAGBIideals#"I";
-    elapsedTime gbReductionIdeal := gb compTable#SAGBIideals#"reductionIdeal";
+    gbI := gb compTable#SAGBIideals#"I";
+    gbReductionIdeal := gb compTable#SAGBIideals#"reductionIdeal";
     F := compTable#SAGBImaps#"substitution";
     N := monoid ambR;
     numblocks := rawMonoidNumberOfBlocks raw N;
-    print "timing raw subduction";
-    elapsedTime result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#SAGBImaps#"inclusionLifted", raw compTable#SAGBImaps#"fullSubstitution", raw (compTable#SAGBImaps#"substitution" * compTable#SAGBImaps#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
+    result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#SAGBImaps#"inclusionLifted", raw compTable#SAGBImaps#"fullSubstitution", raw (compTable#SAGBImaps#"substitution" * compTable#SAGBImaps#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
     result = matrix{apply(first entries result,i->promote(i,ambR))}
     );
 
