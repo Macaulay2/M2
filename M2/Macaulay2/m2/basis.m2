@@ -103,15 +103,17 @@ basis Ring   := opts -> R -> basis(module R, opts)
 
 -----------------------------------------------------------------------------
 
-basis(List,                           Module) := opts -> (deg,    M) -> basis( deg,   deg,  M, opts)
-basis(ZZ,                             Module) := opts -> (deg,    M) -> basis({deg}, {deg}, M, opts)
+basis(List,                           Module) := opts -> (deg,    M) -> basisHelper(opts,  deg,   deg,  M)
+basis(ZZ,                             Module) := opts -> (deg,    M) -> basisHelper(opts, {deg}, {deg}, M)
 basis(InfiniteNumber, InfiniteNumber, Module) :=
-basis(InfiniteNumber, List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts, lo, hi, M)
-basis(InfiniteNumber, ZZ,             Module) := opts -> (lo, hi, M) -> basis( lo,   {hi},  M, opts)
-basis(List,           InfiniteNumber, Module) :=
-basis(List,           List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts, lo, hi, M)
-basis(ZZ,             InfiniteNumber, Module) := opts -> (lo, hi, M) -> basis({lo},   hi,   M, opts)
-basis(ZZ,             ZZ,             Module) := opts -> (lo, hi, M) -> basis({lo},  {hi},  M, opts)
+basis(InfiniteNumber, List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts,  lo,    hi,   M)
+basis(InfiniteNumber, ZZ,             Module) :=
+basis(List,           ZZ,             Module) := opts -> (lo, hi, M) -> basisHelper(opts,  lo,   {hi},  M)
+basis(List,           List,           Module) :=
+basis(List,           InfiniteNumber, Module) := opts -> (lo, hi, M) -> basisHelper(opts,  lo,    hi,   M)
+basis(ZZ,             InfiniteNumber, Module) :=
+basis(ZZ,             List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts, {lo},   hi,   M)
+basis(ZZ,             ZZ,             Module) := opts -> (lo, hi, M) -> basisHelper(opts, {lo},  {hi},  M)
 
 -----------------------------------------------------------------------------
 
@@ -150,7 +152,9 @@ basis(InfiniteNumber, List,           Matrix) :=
 basis(InfiniteNumber, ZZ,             Matrix) :=
 basis(List,           InfiniteNumber, Matrix) :=
 basis(List,           List,           Matrix) :=
+basis(List,           ZZ,             Matrix) :=
 basis(ZZ,             InfiniteNumber, Matrix) :=
+basis(ZZ,             List,           Matrix) :=
 basis(ZZ,             ZZ,             Matrix) := opts -> (lo, hi, M) -> (
     BF := basis(lo, hi, target M, opts);
     BG := basis(lo, hi, source M, opts);
