@@ -745,12 +745,13 @@ export lookup(s:string,table:SymbolHashTable):(null or Symbol) := (
 	  then return entryListCell.entry;
 	  entryList = entryListCell.next));
 
+export ArrayIndexOutOfBounds(i:int, n:int):Expr := (
+     buildErrorPacket("array index " + tostring(i) + " out of bounds 0 .. " +
+	  tostring(n)));
+
 getvalue(x:Sequence,i:int):Expr := (
      if i < -length(x) || i >= length(x)
-     then buildErrorPacket("array index "
-	  + tostring(i)
-	  + " out of bounds 0 .. "
-	  + tostring(length(x)-1))
+     then ArrayIndexOutOfBounds(i, length(x) - 1)
      else (
 	  if i < 0
 	  then x.(length(x) + i)
@@ -760,10 +761,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
      when left is x:Sequence do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then getvalue(x,toInt(r))
-	       else buildErrorPacket("array index "
-		    + tostring(r.v)
-		    + " out of bounds 0 .. "
-		    + tostring(length(x)-1)))
+	       else WrongArgSmallInteger())
 	  else buildErrorPacket("expected subscript to be an integer"))
      is x:HashTable do lookup1force(x,right)
      is f:Database do (
@@ -777,10 +775,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
      is x:List do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then getvalue(x.v,toInt(r))
-	       else buildErrorPacket("array index "
-		    + tostring(r.v)
-		    + " out of bounds 0 .. "
-		    + tostring(length(x.v)-1)))
+	       else WrongArgSmallInteger())
 	  else buildErrorPacket("array index not an integer"))
      is dc:DictionaryClosure do (
 	  when right is s:stringCell do (
