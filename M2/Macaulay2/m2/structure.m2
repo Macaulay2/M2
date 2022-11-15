@@ -20,7 +20,7 @@ position(VisibleList,VisibleList,Function) := o -> (v,w,f) -> (
      )
 
 delete = method()
-delete(Thing, VisibleList) := (x,v) -> select(v, i -> i =!= x)
+delete(Thing, BasicList) := (x,v) -> select(v, i -> i =!= x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

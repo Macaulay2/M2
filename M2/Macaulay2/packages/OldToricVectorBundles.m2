@@ -1087,7 +1087,7 @@ isGeneral ToricVectorBundleKlyachko := (cacheValue symbol isGeneral)( tvb -> (
 -- PURPOSE : Checking if the data in T in fact defines a vectorbundle, i.e., satisfies the decomposition condition or
 --     	     regularity and cocycle condition
 --   INPUT : 'T',  a ToricVectorBundle
---  OUTPUT : 'true' if if 'T' is fact a bundle, 'false' otherwise
+--  OUTPUT : 'true' if 'T' is fact a bundle, 'false' otherwise
 isVectorBundle = method()
 isVectorBundle ToricVectorBundle := (cacheValue symbol isVB)( T -> (
 	  if instance(T,ToricVectorBundleKlyachko) then (
@@ -1368,7 +1368,7 @@ cartierIndex (List,Fan) := (L,F) -> (
      -- Checking for further errors and assigning the weights to the rays
      L = hashTable apply(#rl, i -> (if class L#i =!= ZZ then error("The weights have to be in ZZ."); rl#i => L#i));
      -- Keeping track of the lowest common multiple of denominators of the degrees,
-     -- to check wether the divisor itself is Cartier or which multiple
+     -- to check whether the divisor itself is Cartier or which multiple
      denom := 1;
      -- Computing the degree vector for every top dimensional cone
      scan(sort maxCones F, C -> (
@@ -1407,7 +1407,7 @@ weilToCartier (List,Fan) := opts -> (L,F) -> (
 	  -- Checking for further errors and assigning the weights to the rays
 	  L = hashTable apply(#rl, i -> (if class L#i =!= ZZ then error("The weights have to be in ZZ."); rl#i => L#i));
 	  -- Keeping track of the lowest common multiple of denominators of the degrees,
-	  -- to check wether the divisor itself is Cartier or which multiple
+	  -- to check whether the divisor itself is Cartier or which multiple
 	  denom := 1;
 	  -- Computing the degree vector for every top dimensional cone
 	  tvb := makeVBKaneyama(1,F);
@@ -1469,7 +1469,7 @@ hirzebruchFan ZZ := n -> hirzebruch n
 
 
 ---------------------------------------
--- AUXILLIARY FUNCTIONS, not public
+-- AUXILIARY FUNCTIONS, not public
 ---------------------------------------
 
 
@@ -1486,7 +1486,7 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
      if numRows u != T#"dimension of the variety" or numColumns u != 1 then error("Expected a matrix with 1 column and ", toString T#"dimension of the variety", " rows.");
      if ring u =!= ZZ then error("The degree has to be an integer vector.");
      if k < -1 or T#"dimension of the variety"+1 < k then error("k has to be between 0 and the variety dimension for the k-th cohomology");
-     -- For a given space F1 at chain k in the filtration together with the degree vector 'u' and the information of the bundle this auxillary 
+     -- For a given space F1 at chain k in the filtration together with the degree vector 'u' and the information of the bundle this auxiliary 
      -- function computes the boundary operator to the next chain (k+1) which is F1toF2, the dimensions of the summands of 'F1' in 'F1columns' 
      -- and the next chain 'F2'
      makeNewDiffAndTarget := (F1,u,fMT,rT,bT,tvbR,tvbrank,k,n) -> (
@@ -1567,7 +1567,7 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
 					Esum = apply(Esum, e -> (bT#(e#2))_(e#1));
 					scan(Esum, A -> E = intersectMatrices(E,A));
 					Cnum => (R,E))));
-			 -- Compute the boundary operator with the auxillary function
+			 -- Compute the boundary operator with the auxiliary function
 			 (F1toF2,F1columns,F2) := makeNewDiffAndTarget(F1,u,fMT,rT,bT,tvbR,tvbrank,k,n);
 			 T.cache.cech#(k,u) = (F1,F1columns,F1toF2);
 			 -- Save the next chain to the cache
@@ -1599,7 +1599,7 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
      if numRows u != tvb#"dimension of the variety" or numColumns u != 1 then error("Expected a matrix with 1 column and ", toString tvb#"dimension of the variety", " rows.");
      if ring u =!= ZZ then error("The degree has to be an integer vector.");
      if k < 0 or tvb#"dimension of the variety"+1 < k then error("k has to be between 0 and the variety dimension for the k-th cohomology.");
-     -- For a given space F1 at chain k in the filtration together with the degree vector 'u' and the information of the bundle this auxillary 
+     -- For a given space F1 at chain k in the filtration together with the degree vector 'u' and the information of the bundle this auxiliary 
      -- function computes the boundary operator to the next chain (k+1) which is F1toF2, the dimensions of the summands of 'F1' in 'F1columns' 
      -- and the next chain 'F2'
      makeNewDiffAndTarget := (M1,rk,l,tCT,bCT,dT) -> (

@@ -1,0 +1,34 @@
+-- -*- M2-comint -*- hash: -641194708
+
+i1 : malloc = foreignFunction("malloc", voidstar, ulong)
+
+o1 = malloc
+
+o1 : ForeignFunction
+
+i2 : free = foreignFunction("free", void, voidstar)
+
+o2 = free
+
+o2 : ForeignFunction
+
+i3 : finalizer = x -> (print("freeing memory at " | net x); free x)
+
+o3 = finalizer
+
+o3 : FunctionClosure
+
+i4 : for i to 9 do (x := malloc 8; registerFinalizer(x, finalizer))
+
+i5 : collectGarbage()
+freeing memory at 0x7f18f8052280
+freeing memory at 0x7f18f804d9a0
+freeing memory at 0x7f18f801c8f0
+freeing memory at 0x7f18f804dfa0
+freeing memory at 0x7f18f804de20
+freeing memory at 0x7f18f804e630
+freeing memory at 0x7f18f8010960
+freeing memory at 0x7f18f80493a0
+freeing memory at 0x7f18f804ec00
+
+i6 : 

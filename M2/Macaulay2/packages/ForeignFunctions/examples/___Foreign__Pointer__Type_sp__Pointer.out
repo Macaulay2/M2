@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: -1443663782
+
+i1 : ptr = address int 0
+
+o1 = 0x7fabe3a41c80
+
+o1 : Pointer
+
+i2 : voidstar ptr
+
+o2 = 0x7fabe3a41c80
+
+o2 : ForeignObject of type void*
+
+i3 : 

@@ -51,7 +51,7 @@ HirzOmegaTable2 = (a,b)->(
 end
 restart
 load "1-hal-negative-hf.m2"
--- This one produces negative values for the hilbert function of H^1 !!
+-- This one produces negative values for the Hilbert function of H^1 !!
 time HirzOmegaTable(2,2)
 H^0
 0 0 0 0 0

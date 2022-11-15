@@ -208,7 +208,7 @@ smoothLimit :=20 ;
 -- t = the variable to be used in the numerator
 hilbertNumerator = method()
 hilbertNumerator (List,ZZ,RingElement) := (L,r,t) -> (
-     -- the beginning of the hilbert series
+     -- the beginning of the Hilbert series
      p := sum(#L,i -> L#i*t^i); 
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
@@ -245,17 +245,17 @@ expectedBetti = method()
 
 
 -- calculates the expected betti tableau
--- from a hilbert Numerator
+-- from a Hilbert Numerator
 --
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
 -- sign switches that occur in the Hilbert numerator before this monomial  
 --
--- the ring of the hilbert numerator is expected to singly graded 
+-- the ring of the Hilbert numerator is expected to singly graded 
 -- and contain only one variable
 expectedBetti (RingElement) := (hilbNum) -> (
-     -- find terms of hilbert Numerator
+     -- find terms of Hilbert Numerator
      -- smallest degree first
      termsHilbNum := reverse terms hilbNum;
      -- convert terms into pairs (coefficient, ({d},d))
@@ -284,7 +284,7 @@ expectedBetti (RingElement) := (hilbNum) -> (
 
 
 -- calculate the expected betti tableau
--- from a given hilbert function.
+-- from a given Hilbert function.
 -- hilb = {h0,...,h_(d+r+1)} 
 -- where d is the regularity of the variety described 
 -- and r is the dimension of the ambient space

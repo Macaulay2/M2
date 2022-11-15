@@ -134,6 +134,7 @@ doc ///
 		(matroid, Graph)
 		(matroid, Ideal)
 		(matroid, List, MonomialIdeal)
+		(matroid, ZZ, List)
 		Loops
 		[matroid, Loops]
 		ParallelEdges
@@ -150,6 +151,8 @@ doc ///
 	Inputs
 		E:List
 			a ground set
+		n:ZZ
+			the size of the ground set
 		B:List
 			a list of bases
 		C:List
@@ -192,6 +195,10 @@ doc ///
 		Example
 			M = matroid {{a,b},{a,c}}
 			peek M
+		Text
+		
+			If an integer n is provided, the ground set is taken to be {0, ..., n-1}.
+			
 		Text
 
 			If a matrix is provided, then the realizable matroid on the 
@@ -870,6 +877,8 @@ doc ///
 	Key
 		(independentSets, Matroid, ZZ)
 		(independentSets, Matroid)
+		(independentSets, Matroid, Set)
+		(independentSets, Matroid, List)
 	Headline
 		independent subsets of a matroid
 	Usage
@@ -1995,6 +2004,160 @@ doc ///
 		(isConnected, Matroid)
 ///
 
+
+doc ///
+	Key
+		isNonCrossing
+		(isNonCrossing, Set, Set)
+		(isNonCrossing, List, List)
+	Headline
+		whether 2 subsets are non-crossing
+	Usage
+		isNonCrossing(A, B)
+	Inputs
+		A:List
+		B:List
+	Outputs
+		:Boolean
+			whether A and B are non-crossing subsets of [n]
+	Description
+		Text
+			This function determines whether two disjoint subsets 
+			of [n] are non-crossing.
+			
+		Example
+			isNonCrossing({0,1,7},{2,4,5})
+			isNonCrossing({2,3,6},{1,4})
+	SeeAlso
+		isPositivelyOriented
+///
+
+doc ///
+	Key
+		positiveOrientation
+		(positiveOrientation, Matroid)
+	Headline
+		a positive orientation of a matroid
+	Usage
+		positiveOrientation M
+	Inputs
+		M:Matroid
+	Outputs
+		:List
+			a positive orientation of M
+	Description
+		Text
+			This function computes a 
+			@TO2{relabel, "relabelling"}@
+			of the ground set of a matroid for which it is positively
+			oriented, if one exists.
+			In other words, the output of this function is @TO null@ iff
+			the output of @TO isPositivelyOrientable@ is false.
+			
+		Example
+			M = matroid({{0,1},{2,3},{4,5}}, EntryMode => "circuits")
+			isPositivelyOriented M
+			p = positiveOrientation M
+			N = relabel(M, p)
+			isPositivelyOriented N
+	SeeAlso
+		isPositivelyOriented
+		isPositivelyOrientable
+///
+
+doc ///
+	Key
+		isPositivelyOriented
+		(isPositivelyOriented, Matroid)
+	Headline
+		whether a matroid is positively oriented
+	Usage
+		isPositivelyOriented M
+	Inputs
+		M:Matroid
+	Outputs
+		:Boolean
+			whether M is positively oriented
+	Description
+		Text
+			This function determines whether a matroid is positively
+			oriented, using a theorem of da Silva (which checks whether
+			any disjoint @TO2{circuits, "circuit"}@-cocircuit pair is 
+			@TO2{isNonCrossing, "non-crossing"}@).
+			
+		Example
+			M = matroid({{0,1},{2,3},{4,5}}, EntryMode => "circuits")
+			isPositivelyOriented M
+	SeeAlso
+		isPositivelyOrientable
+		positiveOrientation
+///
+
+doc ///
+	Key
+		isPositivelyOrientable
+		(isPositivelyOrientable, Matroid)
+	Headline
+		whether a matroid is positively orientable
+	Usage
+		isPositivelyOrientable M
+	Inputs
+		M:Matroid
+	Outputs
+		:Boolean
+			whether M is positively orientable
+	Description
+		Text
+			This function determines whether a matroid is positively
+			orientable, i.e. has a @TO2{relabel, "relabelling"}@ for which 
+			it is @TO2{isPositivelyOriented, "positively oriented"}@.
+			
+		Example
+			M = matroid({{0,1},{2,3},{4,5}}, EntryMode => "circuits")
+			isPositivelyOrientable M
+	SeeAlso
+		isPositivelyOriented
+		positiveOrientation
+///
+
+doc ///
+	Key
+		searchRepresentation
+		(searchRepresentation, Matroid, GaloisField)
+		Attempts
+		[searchRepresentation, Attempts]
+	Headline
+		search for a representation of a matroid over a finite field
+	Usage
+		searchRepresentation(M, k)
+	Inputs
+		M:Matroid
+		k:GaloisField
+	Outputs
+		:Matrix
+			a purported representation of M
+	Description
+		Text
+			This function performs a brute-force search for a
+			representation of a matroid, over a given finite field
+			(essentially repeatedly testing random candidates until 
+			one is found).
+			
+			The maximum number of attempts is specified by the optional
+			argument Attempts (default 1000). 
+			
+			Over GF(2), this function is guaranteed to (quickly) find a 
+			representation, if one exists. (Over larger finite fields,
+			there is no such guarantee.)
+			
+		Example
+			searchRepresentation(uniformMatroid(2, 4), GF 2)
+			searchRepresentation(matroid completeGraph 5, GF 3, Attempts => 2000)
+	SeeAlso
+		setRepresentation
+		getRepresentation
+///
+
 doc ///
 	Key
 		getRepresentation
@@ -2703,6 +2866,14 @@ doc ///
 	Key
 		idealChowRing
 		(idealChowRing, Matroid)
+		FlatOrder
+		ChowRingOptions
+		Presentation
+		[idealChowRing, FlatOrder]
+		[idealChowRing, ChowRingOptions]
+		[idealChowRing, Presentation]
+		[idealChowRing, CoefficientRing]
+		[idealChowRing, Variable]
 	Headline
 		the defining ideal of the Chow ring
 	Usage
@@ -3369,8 +3540,858 @@ doc ///
 			fromSageMatroid s === V
 ///
 
+
+doc ///
+	Key
+		saveMatroid
+		(saveMatroid, Matroid)
+		(saveMatroid, Matroid, String)
+		readFromFile
+		(readFromFile, String)
+	Headline
+		save matroid to file
+	Usage
+		saveMatroid M
+		saveMatroid(M, s)
+	Inputs
+		M:Matroid
+		s:String
+			the desired filename
+	Outputs
+		:String
+			the output filename
+	Description
+		Text
+			This method stores a matroid in string format in an output file,
+			including much of the auxiliary data used in computations in 
+			this package (such as circuits, flats, representations, etc.)
+
+			The name of the output file can be specified. If no output file 
+			is specified, then a random filename is chosen (using 
+			@TO temporaryFileName@ - note that in this case, such files are 
+			automatically deleted when the M2 session ends, so make sure 
+			to copy the temporary file before exiting M2).
+			
+			The saved matroid can be read back into a later M2 session using
+			the function readFromFile, which takes a filename (as a 
+			@TO String@) and returns the @TO value@ of the contents, as
+			interpreted by M2.
+			
+		CannedExample
+			i2 : V = specificMatroid "vamos"
+
+			o2 = a "matroid" of rank 4 on 8 elements
+			
+			o2 : Matroid
+			
+			i3 : betti ideal V
+			
+				    0  1
+			o3 = total: 1 41
+				 0: 1  .
+				 1: .  .
+				 2: .  .
+				 3: .  5
+				 4: . 36
+			
+			o3 : BettiTally
+			
+			i4 : saveMatroid(V, "vamos.txt")
+			
+			o4 = vamos.txt
+			
+			i5 : clearAll()
+			
+			i6 : V = readFromFile "vamos.txt"
+			
+			o6 = a "matroid" of rank 4 on 8 elements
+			
+			o6 : Matroid
+			
+			i7 : keys V.cache
+			
+			o7 = {groundSet, ideal}
+			
+			o7 : List
+///
+
+
+
+
+document {
+    	Key => {
+			CheckWellDefined,
+			[relaxation, CheckWellDefined]
+		},
+	
+	Headline => "an optional argument",
+	
+	PARA {"A symbol used as the name of an optional argument provided by the package ", TO Matroids, "."},
+    }
+
+document {
+	Key => {
+	    coextension,
+	    (coextension, Matroid),
+	    },
+	
+	Headline => "the free coextension of a matroid",
+	
+	Usage => "coextension M",
+	
+	Inputs => {
+	    	"M" => Matroid,
+		},
+	
+	Outputs => {
+		Matroid => {"the free coextension of the matroid"},
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"A matroid N is a coextension of the matroid M if the dual of M is an extension of the
+	    dual of N.  The free coextension of M is the dual of the free extension of the dual of M. \n 
+	    The free coextension of a uniform matroid U_{r,n} is U_{r+1,n+1}."
+	    },
+
+	EXAMPLE {
+		"M = uniformMatroid(3, 4);",
+		"N = coextension M",
+		"quickIsomorphismTest(N, uniformMatroid(4, 5))",
+		},	
+	    
+	PARA {"The free coextension N is a matroid whose ground set is the ground set of M plus one
+	    additional element e.  Flats of the free coextension come in one of two types: They are 
+	    either independent sets of M or sets containing e that become flats of M after removing e."
+	    },
+	
+	EXAMPLE {
+		"M = matroid completeGraph 3;",
+		"partition(I -> #I, independentSets M)",
+		"partition(F -> rank(M, F), flats M)",
+		"N = coextension M",
+		"partition(F -> rank(N, F), flats N)",
+		},
+	    	    
+	SeeAlso => {extension}
+
+	    }
+
+document {
+	Key => {
+	    elementaryQuotient,
+	    (elementaryQuotient, Matroid, List),
+	    },
+	
+	Headline => "associated to a modular cut or linear subclass",
+	
+	Usage => "elementaryQuotient(M, L)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"L" => List => {"a list of flats or hyperplanes of the matroid forming a 
+		    modular cut/linear subclass"},
+		},
+	
+	Outputs => {
+		Matroid => {"the elementary quotient of the matroid associated to 
+		    modular cut/linear subclass"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"An elementary quotient a matroid M is a matroid on the same ground set that is a quotient
+	    matroid of M having rank equal to the rank of M minus one.  Every elementary quotient is 
+	    completely determined by a modular cut of flats of M.  See ", TO isModularCut, " for more 
+	    details about modular cuts.  The elementary quotient of M corresponding to a modular cut K
+	    is the extension of M by a single element e associated to K followed by the contraction of
+	    the set {e}."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"K = {{2}, {2, 4}, {2, 3}, {1, 2}, {0, 2}, {0, 1, 2, 3, 4}};",
+		"isModularCut(M, K)",
+		"Q1 = elementaryQuotient(M, K)"
+		},
+	    
+	PARA {"Equivalently since, a modular cut K of the matroid M is completely determined by a 
+	    collection of hyperplanes of M called a linear subclass, we can form an elementary quotient
+	    by specifying a much shorter list of hyperplanes as follows.  See ", TO isLinearSubclass, " for more details 
+	    about linear subclasses."},
+	
+	EXAMPLE {
+		"H = linearSubclass(M, K)",
+		"Q2 = elementaryQuotient(M, H, EntryMode => \"hyperplanes\")",
+		"Q1 == Q2"
+		},
+	    	    
+	SeeAlso => {
+	    isElementaryQuotient,
+	    isLinearSubclass, 
+	    isModularCut, 
+	    isQuotient,
+	    linearSubclass,
+	    modularCut
+	    }
+
+	    }
+
+document {
+	Key => {[elementaryQuotient, CheckWellDefined]},
+	
+	Headline => "check whether the list is a modular cut or linear subclass",
+	
+	Usage => "elementaryQuotient(M, L, CheckWellDefined => true)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"L" => List => {"a list of flats or hyperplanes of the matroid forming a 
+		    modular cut/linear subclass"},
+		},
+	
+	Outputs => {
+		Matroid => {"the elementary quotient of the matroid associated to 
+		    modular cut/linear subclass"}
+		},
+	
+	PARA {"This option is provided by the package ", TO Matroids,"."},
+	
+	PARA {"When producing the elementary quotient of a matroid M corresponding to a list of flats or 
+	    hyperplanes L, setting this option to true calls ", TO isModularCut, " or ", TO isLinearSubclass,
+	    " to check that the list is a modular cut or linear subclass respectively."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"K = modularCut(M, drop(hyperplanes M, 1))",
+		"elementaryQuotient(M, K, CheckWellDefined => true)"
+		},
+	    	    
+	SeeAlso => {elementaryQuotient}
+
+	    }	
+	
+document {
+	Key => {[elementaryQuotient, EntryMode]},
+	
+	Headline => "use a modular cut or linear subclass",
+	
+	Usage => "elementaryQuotient(M, L, Entry => \"hyperplanes\")",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"L" => List => {"a list of flats or hyperplanes of the matroid forming a 
+		    modular cut/linear subclass"},
+		},
+	
+	Outputs => {
+		Matroid => {"the elementary quotient of the matroid associated to 
+		    modular cut/linear subclass"}
+		},
+	
+	PARA {"This option is provided by the package ", TO Matroids,"."},
+	
+	PARA {"An elementary quotient of a matroid M can be produced from a list of flats forming a modular
+	    cut of M or a list of hyperplanes of M forming a linear subclass.  By default, it is assumed
+	    the specified list is a modular cut, but setting this option to \"hyperplanes\" allows passing
+	    a much shorter list of hyperplanes forming a linear subclass instead."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"H = drop(hyperplanes M, 1)",
+		"elementaryQuotient(M, H, EntryMode => \"hyperplanes\")"
+		},
+	    	    
+	SeeAlso => {elementaryQuotient}
+
+	    }		
+
+document {
+	Key => {
+	    extension,
+	    (extension, Matroid),
+	    (extension, Matroid, Set),
+	    (extension, Matroid, List),
+	    },
+	
+	Headline => "of a matroid relative to a flat or modular cut",
+	
+	Usage => "extension(M, L), \n extension(M, F), \n extension M",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"L" => List => {"a list of flats or hyperplanes of the matroid forming a 
+		    modular cut/linear subclass"},
+		"F" => Set => {"a flat of the matroid"},
+		},
+	
+	Outputs => {
+		Matroid => {"a single-element extension of the given matroid"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"A matroid N is a (single-element) extension of a matroid M if M can be obtained from N
+	    by deleting a single element e.  Every extension N of M is uniquely determined by a modular 
+	    cut of flats of M whose closure in N contains e."},
+	
+	PARA {"Given a modular cut K of M, we can construct the corresponding extension."},
+	
+	EXAMPLE {
+		"M = uniformMatroid(4, 5);",
+		"K = modularCut(M, {{0,1,2}, {2,3,4}})",
+		"isModularCut(M, K)",
+		"N = extension(M, K)"
+		},
+	    
+	PARA {"Every flat F of the matroid M determines a principal modular cut consisting of all flats
+	    containing F. The independent sets of the free extension N come in two types: They are either 
+	    independent sets of M or sets containing e that, after deleting e, become independent sets of M 
+	    whose closure in M does not contain F.   We can construct the extension corresponding to this 
+	    modular cut as follows."},
+	
+	EXAMPLE {
+		"F = set{0, 1, 3}",
+		"N = extension(M, F)",
+		"bases N",
+		},
+	    
+	PARA {"When no modular cut or flat is specified, the free extension of M is constructed.  This is the
+	    extension corresponding to the modular cut that contains the ground set of M as its only flat. 
+	    For a uniform matroid U_{r,n}, the free extension is just U_{r,n+1}."},
+	
+	EXAMPLE {
+		"N = extension M",
+		"quickIsomorphismTest(N, uniformMatroid(4, 6))",
+		},
+	        
+	SeeAlso => {coextension, elementaryQuotient, modularCut}
+	    }
+
+document {
+	Key => {[extension, CheckWellDefined]},
+	
+	Headline => "check whether the list is a modular cut or linear subclass",
+	
+	Usage => "extension(M, L, CheckWellDefined => true)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"L" => List => {"a list of flats or hyperplanes of the matroid forming a 
+		    modular cut/linear subclass"},
+		},
+	
+	Outputs => {
+		Matroid => {"the extension of the matroid associated to 
+		    modular cut/linear subclass"}
+		},
+	
+	PARA {"This option is provided by the package ", TO Matroids,"."},
+	
+	PARA {"When producing the single-element extension of a matroid M corresponding to a list of flats or 
+	    hyperplanes L, setting this option to true calls ", TO isModularCut, " or ", TO isLinearSubclass,
+	    " to check that the list is a modular cut or linear subclass respectively."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"K = modularCut(M, drop(hyperplanes M, 1))",
+		"extension(M, K, CheckWellDefined => true)"
+		},
+	    	    
+	SeeAlso => {extension}
+
+	    }	
+	
+document {
+	Key => {[extension, EntryMode]},
+	
+	Headline => "use a modular cut or linear subclass",
+	
+	Usage => "extension(M, L, Entry => \"hyperplanes\")",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"L" => List => {"a list of flats or hyperplanes of the matroid forming a 
+		    modular cut/linear subclass"},
+		},
+	
+	Outputs => {
+		Matroid => {"the extension of the matroid associated to 
+		    modular cut/linear subclass"}
+		},
+	
+	PARA {"This option is provided by the package ", TO Matroids,"."},
+	
+	PARA {"A single-element extension of a matroid M can be produced from a list of flats forming a modular
+	    cut of M or a list of hyperplanes of M forming a linear subclass.  By default, it is assumed
+	    the specified list is a modular cut, but setting this option to \"hyperplanes\" allows passing
+	    a much shorter list of hyperplanes forming a linear subclass instead."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"H = drop(hyperplanes M, 1)",
+		"extension(M, H, EntryMode => \"hyperplanes\")"
+		},
+	    	    
+	SeeAlso => {extension}
+
+	    }		
+
+document {
+	Key => {
+	    isElementaryQuotient,
+	    (isElementaryQuotient, Matroid, Matroid),
+	    },
+	
+	Headline => "whether a matroid is an elementary quotient of another matroid",
+	
+	Usage => "isElementaryQuotient(M, N)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"N" => Matroid,
+		},
+	
+	Outputs => {
+		Boolean => {"whether the first matroid is an elementary quotient of the second"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"An elementary quotient of a matroid N is a quotient M whose rank is the rank of N
+	    minus one.  Elementary quotients are completely determined by the modular cut of flats
+	    in M (which are also flats of N) whose rank in M is one less than their rank in N.  
+	    Examples of elementary quotients of N are its principal truncations with respect to a 
+	    given flat F."},
+	
+	EXAMPLE {
+		"N = matroid completeGraph 5",
+		"F = set {0,1,4};",
+		"TFN = truncate(F, N)",
+		"isElementaryQuotient(TFN, N)",
+		"T2N = truncate(2, N)",
+		"isElementaryQuotient(T2N, N)",
+		},
+	    
+	SeeAlso => {elementaryQuotient, isModularCut, isQuotient, modularCut, (truncate, Set, Matroid)}
+	    }
+
+document {
+	Key => {
+	    isLinearSubclass,
+	    (isLinearSubclass, Matroid, List),
+	    },
+	
+	Headline => "whether a list of hyperplanes of a matroid is a linear subclass",
+	
+	Usage => "isLinearSubclass(M, H)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"H" => List => {"a list of hyperplanes of the matroid"},
+		},
+	
+	Outputs => {
+		Boolean => {"whether the list of hyperplanes is a linear subclass"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"A linear subclass for a matroid M is a collection of hyperplanes H of M that uniquely determines a given modular cut
+	    of M.  Specifically, H is a linear subclass if for any hyperplanes h and h' in H whose intersection has rank equal to 
+	    the rank of M minus two, every hyperplane of M containing the intersection of h and h' is also in H."},
+	
+	PARA {"Each hyperplane in the linear subclass may be represented as either a set or a list of elements of the ground set of M. 
+	    The list of hyperplanes H below is a linear subclass for the uniform matroid U_{4,6} since no two hyperplanes in H have an 
+	    intersection of rank 2."},
+	
+	EXAMPLE {
+		"M = uniformMatroid(4, 6);",
+		"H = {set{0,1,2}, set{2,3,4}, set{0,3,5}};",
+		"isLinearSubclass(M, H)",
+		},
+	    
+	PARA {"The list of hyperplanes H' below is not a linear subclass since the hyperplanes {0,1,2} and {0,1,4} have an intersection 
+	    of rank 2 which is contained in the hyperplane {0,1,3} that does not belong to H'."},
+	
+	EXAMPLE {
+		"H' = {{0,1,2}, {2,3,4}, {0,3,5}, {0,1,4}};",
+		"isLinearSubclass(M, H')"
+		},
+	    
+	SeeAlso => {modularCut, linearSubclass}
+	    }
+
+document {
+	Key => {
+	    isModularCut,
+	    (isModularCut, Matroid, List),
+	    },
+	
+	Headline => "whether a list of flats of a matroid is a modular cut",
+	
+	Usage => "isModularCut(M, K)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"K" => List => {"a list of flats of the matroid"},
+		},
+	
+	Outputs => {
+		Boolean => {"whether the list of flats is a modular cut"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"A modular cut for a matroid M is a collection K of flats of M with the properties that for any flats F and G of M:
+	    (i) if F is in K and F is contained in G, then G is also in K, and (ii) if the rank of union of F and G plus the rank
+	    of the intersection of F and G equals the sum of the ranks of F and G, then the intersection of F and G is also in K.
+	    Two flats F and G satisfying the rank condition in (ii) above are called a modular pair.  If F is contained in G, then 
+	    F and G trivially form a modular pair."},
+	
+	PARA {"Each flat in the modular cut may be represented as either a set or a list of elements of the ground set of M. The
+	    list of flats K below is a modular cut for the uniform matroid U_{4,5} since the only two incomparable flats are not a modular
+	    pair; both flats have rank 3, but their intersection and union have rank 1 and 4 respectively."},
+	
+	EXAMPLE {
+		"M = uniformMatroid(4, 5);",
+		"K = {set{0,1,2}, set{2,3,4}, set{0,1,2,3,4}};",
+		"isModularCut(M, K)",
+		},
+	    
+	PARA {"The list of flats K' below is not a modular cut since the flats {0,1,2} and {0,1,3} are a modular pair but their
+	    intersection does not belong to K'."},
+	
+	EXAMPLE {
+		"K' = {{0,1,2}, {0,1,3}, {0,1,2,3,4}};",
+		"isModularCut(M, K')"
+		},
+	    
+	SeeAlso => {modularCut, linearSubclass}
+	    }
+
+document {
+	Key => {
+	    isQuotient,
+	    (isQuotient, Matroid, Matroid),
+	    },
+	
+	Headline => "whether a matroid is a quotient of another matroid",
+	
+	Usage => "isQuotient(M, N)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"N" => Matroid,
+		},
+	
+	Outputs => {
+		Boolean => {"whether the first matroid is a quotient of the second"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"A matroid M is a quotient of a matroid N if the matroids have the same ground set and every flat of M is a flat of N."},
+	
+	EXAMPLE {
+		"N = matroid completeGraph 6;",
+		"T2N = truncate(2, N)",
+		"partition(F -> rank(T2N, F), flats T2N)",
+		"isQuotient(T2N, N)",
+		},
+	    
+	SeeAlso => {elementaryQuotient, isElementaryQuotient, (truncate, Set, Matroid)}
+	    }
+
+document {
+	Key => {
+	    linearSubclass,
+	    (linearSubclass, Matroid, Matroid),
+	    (linearSubclass, Matroid, List),
+	    },
+	
+	Headline => "associated to an elementary quotient or modular cut",
+	
+	Usage => "linearSubclass(M, N), \n linearSubclass(M, K)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+		"N" => Matroid,
+	    	"K" => List => {"a list of flats of the matroid forming a modular cut"},
+		},
+	
+	Outputs => {
+		List => {"a list of hyperplanes of the matroid forming a linear subclass"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+
+	PARA {"A modular cut K of the matroid M is determined by the collection of hyperplanes
+	    of M that belong to K, which is called the corresponding linear subclass.  See ", 
+	    TO isLinearSubclass, " for more details about linear subclasses. Given a list K
+	    of flats of M forming a modular cut, this function produces the corresponding
+	    linear subclass."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"K = {{2}, {2, 4}, {2, 3}, {1, 2}, {0, 2}, {0, 1, 2, 3, 4}};",
+		"isModularCut(M, K)",
+		"linearSubclass(M, K)"
+		},
+	
+	PARA {"Since every elementary quotient M of a matroid N determines a modular cut
+	    of flats of N, we can find the corresponding linear subclass as follows."},
+	
+	EXAMPLE {
+		"N = matroid completeGraph 5",
+		"F = set {0, 1, 4};",
+		"TFN = truncate(F, N);",
+		"isElementaryQuotient(TFN, N)",
+		"linearSubclass(TFN, N)"
+		},
+	    	    
+	SeeAlso => {
+	    elementaryQuotient, 
+	    isElementaryQuotient,
+	    isLinearSubclass, 
+	    isModularCut, 
+	    modularCut
+	    }
+
+	    }
+	
+document {
+	Key => {[linearSubclass, CheckWellDefined]},
+	
+	Headline => "check whether the list is a modular cut",
+	
+	Usage => "linearSubclass(M, K, CheckWellDefined => true)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"K" => List => {"a list of flats of the matroid forming a modular cut"},
+		},
+	
+	Outputs => {
+		List => {"a list of hyperplanes of the matroid forming a linear subclass"}
+		},
+	
+	PARA {"This option is provided by the package ", TO Matroids,"."},
+	
+	PARA {"When producing the linear subclass of a matroid M corresponding to a list of flats K, 
+	    setting this option to true calls ", TO isModularCut, " to check that the list K is in
+	    fact a modular cut."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"K = {{2}, {2, 4}, {2, 3}, {1, 2}, {0, 2}, {0, 1, 2, 3, 4}};",
+		"linearSubclass(M, K, CheckWellDefined => true)"
+		},
+	    	    
+	SeeAlso => {linearSubclass}
+
+	    }
+
+document {
+	Key => {
+	    modularCut,
+	    (modularCut, Matroid, Matroid),
+	    (modularCut, Matroid, List),
+	    },
+	
+	Headline => "associated to an elementary quotient or linear subclass",
+	
+	Usage => "modularCut(M, N), \n modularCut(M, H)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+		"N" => Matroid,
+	    	"H" => List => {"a list of hyperplanes of the matroid forming a linear subclass"},
+		},
+	
+	Outputs => {
+		List => {"a list of flats of the matroid forming a modular cut"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"An elementary quotient M of a matroid N is completely determined by a modular cut
+	    of flats of N.  Given such an elementary quotient, this function produces the corresponding
+	    modular cut.  See ", TO isModularCut, " for more details about modular cuts."},
+	
+	EXAMPLE {
+		"N = matroid completeGraph 4;",
+		"F = set {0, 1, 3};",
+		"TFN = truncate(F, N);",
+		"isElementaryQuotient(TFN, N)",
+		"modularCut(TFN, N)"
+		},
+	    
+	PARA {"In turn, a modular cut K of the matroid M is completely determined by a collection of 
+	    hyperplanes of M called a linear subclass.  See ", TO isLinearSubclass, " for more details 
+	    about linear subclasses. Given a list H of hyperplanes of M forming a linear subclass,
+	    the corresponding modular cut consists of all flats F of M such that every hyperplane
+	    containing F belongs to H."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"H = drop(hyperplanes M, 1)",
+		"isLinearSubclass(M, H)",
+		"modularCut(M, H)"
+		},
+	    	    
+	SeeAlso => {
+	    elementaryQuotient, 
+	    isElementaryQuotient,
+	    isLinearSubclass, 
+	    isModularCut, 
+	    linearSubclass
+	    }
+
+	    }
+	
+document {
+	Key => {[modularCut, CheckWellDefined]},
+	
+	Headline => "check whether the list is a linear subclass",
+	
+	Usage => "modularCut(M, H, CheckWellDefined => true)",
+	
+	Inputs => {
+	    	"M" => Matroid,
+	    	"H" => List => {"a list of hyperplanes of the matroid forming a linear subclass"},
+		},
+	
+	Outputs => {
+		List => {"a list of flats of the matroid forming a modular cut"}
+		},
+	
+	PARA {"This option is provided by the package ", TO Matroids,"."},
+	
+	PARA {"When producing the modular cut of a matroid M corresponding to a list of hyperplanes H, 
+	    setting this option to true calls ", TO isLinearSubclass, " to check that the list H is in
+	    fact a linear subclass."},
+	
+	EXAMPLE {
+		"A = matrix {{1, 0, 0, 1, 1}, {0, 1, 0, 1, -1}, {0, 0, 1, 0, 0}}",
+		"M = matroid A",
+		"H = drop(hyperplanes M, 1)",
+		"modularCut(M, H, CheckWellDefined => true)"
+		},
+	    	    
+	SeeAlso => {modularCut}
+
+	    }	
+
+document {
+	Key => {
+	    (truncate, Set, Matroid),
+	    (truncate, Matroid), 
+	    },
+	
+	Headline => "the truncation of a matroid with respect to a flat",
+	
+	Usage => "truncate M, \n truncate(F, M)",
+	
+	Inputs => {
+		"F" => Set => {"a flat of the matroid"},
+	    	"M" => Matroid,
+		},
+	
+	Outputs => {
+		Matroid => {"the truncation of the matroid"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	
+	PARA {"The truncation of a matroid M is the matroid T(M) on the same ground set as M whose 
+	    rank function is given by taking the maximum of the rank of a set in M and the rank of M
+	    minus one.  The truncation T(M) is an example of an elementary quotient of M. For a uniform 
+	    matroid U_{r,n}, the truncation is just U_{r-1,n}."},
+	
+	EXAMPLE {
+		"M = uniformMatroid(4, 5);",
+		"TM = truncate M",
+		"quickIsomorphismTest(TM, uniformMatroid(3, 5))"
+		},
+	    
+	PARA {"The flats of the truncation T(M) are just the flats of M with the hyperplanes removed."},
+	
+	EXAMPLE {
+		"M = matroid completeGraph 5;",
+		"TM = truncate M",
+		"set flats TM === (set flats M) - hyperplanes M"
+		},
+	   
+	PARA {"The i-fold truncation T^i(M) can be constructed as follows."},
+	
+	EXAMPLE {
+		"T2M = truncate(2, M)",
+		"partition(F -> rank(T2M, F), flats T2M)",
+		},
+	
+	PARA {"We can also construct the principal truncation of M with respect to some flat F.  The 
+	    principal truncation of M with respect to F is the elementary quotient of M corresponding
+	    to the principal modular cut associated to F."},
+	
+	EXAMPLE {
+		"F = set {0, 1, 4};",
+		"TFM = truncate(F, M)",
+		"partition(G -> rank(TFM, G), flats TFM)",
+		},
+	    
+	SeeAlso => {elementaryQuotient, modularCut}
+
+	    }
+
+document {
+	Key => {
+	    (truncate, ZZ, Matroid),
+	    },
+	
+	Headline => "the truncation of a matroid with respect to a flat",
+	
+	Usage => "truncate(i, M)",
+	
+	Inputs => {
+	    	"i" => ZZ => {"a non-negative integer"},
+	    	"M" => Matroid,
+		},
+	
+	Outputs => {
+		Matroid => {"the i-fold truncation of the matroid"}
+		},
+	
+	PARA {"This function is provided by the package ", TO Matroids,"."},
+	   
+	PARA {"Constructs the i-fold truncation T^i(M) of the matroid M."},
+	
+	EXAMPLE {
+	    	"M = matroid completeGraph 5",
+		"T2M = truncate(2, M)",
+		"partition(F -> rank(T2M, F), flats T2M)",
+		},
+	    
+	SeeAlso => {elementaryQuotient, modularCut, (truncate, Matroid)}
+
+	    }
+
+
 undocumented {
 	(net, Matroid),
-	(independentSets, Matroid, Set),
-	(independentSets, Matroid, List)
+	writeToString,
+	(writeToString, Thing),
+	rescalingRepresentative,
+	(rescalingRepresentative, Matrix, List),
+	coordinatingPath,
+	(coordinatingPath, Matroid),
+	kruskalSpanningForest,
+	(kruskalSpanningForest, Graph)
 }

@@ -219,6 +219,29 @@ assert(areIsomorphic(F7, relabel F7))
 ///
 
 TEST ///
+V = specificMatroid "vamos"
+elapsedTime assert not isPositivelyOriented V
+elapsedTime assert isPositivelyOrientable V
+M = matroid(toList(0..<6), {{0,1,2},{0,3,4},{1,3,5}}, EntryMode => "nonbases")
+elapsedTime assert not isPositivelyOrientable M
+///
+
+TEST /// -- cf. https://github.com/Macaulay2/M2/issues/2403
+G = graph(toList(0..9), {{0,4},{1,4},{2,4},{3,4},{0,6},{5,6},{1,7},{5,7},{1,8},{2,8},{5,8},{1,9},{2,9},{3,9},{5,9}})
+assert isConnected G
+assert(#edges kruskalSpanningForest G == #vertices G - 1)
+assert(#edges spanningForest G == #vertices G - 2)
+///
+
+TEST ///
+B = specificMatroid betsyRoss
+k = GF 4
+setRandomSeed 5
+elapsedTime A = searchRepresentation(B, k)
+assert(matroid A == B)
+///
+
+TEST ///
 smallMatroids = apply(6, i -> allMatroids i)
 assert(smallMatroids/(l -> #l) == {1,2,4,8,17,38})
 smallMatroids = flatten smallMatroids

@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- hash: 460668767
+
+i1 : chararray4 = 4 * char'
+
+o1 = int8[4]
+
+o1 : ForeignArrayType
+
+i2 : x = chararray4 append(ascii "foo", 0)
+
+o2 = {102, 111, 111, 0}
+
+o2 : ForeignObject of type int8[4]
+
+i3 : y = charstar x
+
+o3 = foo
+
+o3 : ForeignObject of type char*
+
+i4 : address x === address y
+
+o4 = true
+
+i5 : 
