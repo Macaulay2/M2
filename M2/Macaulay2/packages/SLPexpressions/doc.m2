@@ -16,7 +16,7 @@ doc ///
             f = x + 1
             n = 12;
             for i from 1 to n do f = f*f -- f = (x+1)^(2^n)
-            slp = makeSLProgram({x},{f})
+            slp = makeInterpretedSLProgram({x},{f})
 	    time A = evaluate(slp,matrix{{1}});
             ZZ[y];
             time B = sub((y+1)^(2^n),{y=>1})    
@@ -24,6 +24,7 @@ doc ///
 	Text
     SeeAlso
         NAGtypes
+	makeCompiledSLProgram
 ///
 
 doc ///
@@ -274,28 +275,47 @@ doc ///
         makeSLProgram
         (makeSLProgram,GateMatrix,GateMatrix)
         (makeSLProgram,List,List)
-        SLProgram
+	setTryJustInTimeCompilation
+	(setTryJustInTimeCompilation,Boolean)
+    Headline
+        create a straight-line program (either interpreted or compiled)
+    Description
+        Text
+    	    Passes the arguments to 
+	    @TO makeInterpretedSLProgram@ or @TO makeCompiledSLProgram@ 
+	    depending on the flag set by @TO setTryJustInTimeCompilation@. (Giving `true` 
+	    as a value triggers a search for gnu C++ compiler and, 
+	    if successful, makes a @TO makeCompiledSLProgram@ the default choice.
+            Currently, just-in-time compilation works over RR_53 and CC_53)   
+///
+
+doc ///
+    Key
+        makeInterpretedSLProgram
+        (makeInterpretedSLProgram,GateMatrix,GateMatrix)
+        (makeInterpretedSLProgram,List,List)
+        InterpretedSLProgram
     Headline
         create a straight-line program
     Usage
-        makeSLProgram(inL, outL)
+        makeInterpretedSLProgram(inL, outL)
     Inputs
         inL:List
             of inputs
         outL:List
             of outputs
     Outputs
-        :SLProgram
+        :InterpretedSLProgram
     Description
         Text
-            This method returns an object of type @TO SLProgram@, which encodes a method for evaluating an algebraic circuit.
+            This method returns an object of type @TO InterpretedSLProgram@, which encodes a method for evaluating an algebraic circuit.
         Example
             declareVariable X; declareVariable C;
             XpC = X+C
             XXC = productGate{X,X,C}
             detXCCX = detGate{{X,C},{C,X}}
             XoC = X/C
-            slp = makeSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
+            slp = makeInterpretedSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
     SeeAlso
         (evaluate, SLProgram, MutableMatrix, MutableMatrix)
 ///
@@ -326,7 +346,7 @@ doc ///
             XXC = productGate{X,X,C}
             detXCCX = detGate{{X,C},{C,X}}
             XoC = X/C
-            slp = makeSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
+            slp = makeInterpretedSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
             inp = mutableMatrix{{1.2,-1}}
             out = mutableMatrix(ring inp,1,4)
             evaluate(slp,inp,out)
@@ -341,6 +361,8 @@ doc ///
             out
     SeeAlso
         SLProgram
+	InterpretedSLProgram
+	CompiledSLProgram 
 ///
 
 doc ///
@@ -540,7 +562,9 @@ doc ///
         G':GateMatrix
     Description
         Text
-	    These commands attempt to remove superfluous operations involving constants from the building blocks of an @TO SLProgram@. The example below is contrived, but illustrates what may happen in general.
+	    These commands attempt to remove superfluous operations involving constants 
+	    from the building blocks of a compound @TO Gate@ or @TO GateMatrix@. 
+	    The example below is contrived, but illustrates what may happen in general.
 	Example
 	    declareVariable \ {a,b,c}
 	    x = inputGate 1

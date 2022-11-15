@@ -768,6 +768,11 @@ class MutableMat : public MutableMatrix
       M2SLProgram* P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const;  // this = const matrix
+  
+  virtual M2SLEvaluator* createCompiledSLEvaluator(
+      M2_string libName,
+      int nInputs,
+      int nOutputs) const;  // this = const matrix
 };
 
 #endif

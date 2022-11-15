@@ -792,6 +792,15 @@ M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP,
   return consts->createSLEvaluator(SLP, constsPos, varsPos);
 }
 
+M2SLEvaluator /* or null */ *rawCompiledSLEvaluator(
+                                                    M2_string libName,
+                                                    int nInputs,
+                                                    int nOutputs,
+                                                    const MutableMatrix *empty)
+{
+  return empty->createCompiledSLEvaluator(libName, nInputs, nOutputs);
+}
+
 M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(
     M2SLEvaluator *H,
     const MutableMatrix *parameters)

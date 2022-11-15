@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.17",
-     Date => "Mar 2021",
+     Version => "1.21",
+     Date => "Nov 2022",
      Headline => "numerical algebraic geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,

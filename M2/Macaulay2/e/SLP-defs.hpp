@@ -150,6 +150,18 @@ class SLEvaluatorConcrete : public SLEvaluator
       M2_arrayint constsPos,
       M2_arrayint varsPos,
       const MutableMat<SMat<RT> >* consts /*const SMat<RT>& consts*/);
+  SLEvaluatorConcrete(
+      M2_string libName,
+      int nInputs,
+      int nOutputs,
+      const MutableMat<DMat<RT> >* empty
+      );
+  SLEvaluatorConcrete(
+      M2_string libName,
+      int nInputs,
+      int nOutputs,
+      const MutableMat<SMat<RT> >* empty
+      );
   ~SLEvaluatorConcrete();
   SLEvaluator* specialize(const MutableMatrix* parameters) const;
   SLEvaluator* specialize(const MutableMat<DMat<RT> >* parameters) const;
@@ -161,14 +173,24 @@ class SLEvaluatorConcrete : public SLEvaluator
   Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);
 
  private:
-  typedef typename RT::ElementType ElementType;
   void computeNextNode();  // !!! should this and vIt be here???
-  const RT& mRing;
-  std::vector<ElementType>
-      values; /* should be a vector of values
-         starting with inputCounter many vars and consts and
-         continuing with the values of other GATEs */
+  using ElementType = typename RT::ElementType;
   typename std::vector<ElementType>::iterator vIt;  // values
+
+  // common data
+  const RT& mRing;
+  bool isCompiled;
+  int nInputs, nOutputs;
+  
+  // data used by interpreted evaluation
+  std::vector<ElementType> values; /* should be a vector of values
+                                      starting with inputCounter many vars and consts and
+                                      continuing with the values of other GATEs */
+
+  // data used by compiled evaluation
+  void (*compiled_fn)(ElementType const*, ElementType*);  //void (*compiled_fn)(double const*, double*);
+  int nParams;
+  ElementType* parametersAndInputs;  
 };
 
 class Homotopy : public MutableEngineObject
