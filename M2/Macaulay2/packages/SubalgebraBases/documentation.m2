@@ -1,6 +1,10 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
 undocumented {
     }
+
+Subring.synonym = "subring"
+SAGBIBasis.synonym = "SAGBIBasis"
+
 -- ##################################
 -- ##  sagbi-main.m2 documentation ##
 -- ##################################
@@ -62,9 +66,9 @@ doc ///
    Inputs
      A:Subring
      M:Matrix
-       of generators for a subring of @ ofClass{PolynomialRing} @
+       of generators for @ ofClass Subring @ of @ ofClass{PolynomialRing} @
      L:List
-       containing generators for a subring of @ ofClass{PolynomialRing} @
+       containing generators for @ ofClass Subring @ of @ ofClass{PolynomialRing} @
      B:SAGBIBasis
         containing a partial computation of a sagbi basis
      AutoSubduce=>Boolean
@@ -86,9 +90,9 @@ doc ///
      PrintLevel=>ZZ
        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
      Recompute=>Boolean
-       if true then the computation will resume otherwise it starts at the beginning
+       if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
      RenewOptions=>Boolean
-       if true then the computation will use the options specified otherwise it will use the previously selected options
+       if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
        (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@) 
    Outputs
      N:Matrix
@@ -136,13 +140,13 @@ doc ///
    Inputs
      A:Subring
      M:Matrix
-       of generators for a subring of @ ofClass{PolynomialRing} @
+       of generators for @ ofClass Subring @ of @ ofClass{PolynomialRing} @
      L:List
-       containing generators for a subring of @ ofClass{PolynomialRing} @
+       containing generators for @ ofClass Subring @ of @ ofClass{PolynomialRing} @
      B:SAGBIBasis
         containing a partial computation of a sagbi basis
      AutoSubduce=>Boolean
-       a flag indicating when to perform autosubduction on the generators before performing the Sagbi basis computation (See: @TO "AutoSubduce"@)
+       a flag indicating when to perform autosubduction on the generators before performing the sagbi basis computation (See: @TO "AutoSubduce"@)
      ReduceNewGenerators=>Boolean
        a flag indicating whether to apply gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
      StorePending=>Boolean
@@ -160,9 +164,9 @@ doc ///
      PrintLevel=>ZZ
        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
      Recompute=>Boolean
-       if true then the computation will resume otherwise it starts at the beginning
+       if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
      RenewOptions=>Boolean
-       if true then the computation will use the options specified otherwise it will use the previously selected options
+       if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
        (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@) 
    Outputs
      N:SAGBIBasis
@@ -208,7 +212,7 @@ doc ///
      Flag for autosubduction before the Sagbi algorithm
    Description
      Text 
-       By default, the function @TO "sagbi"@ performs autosubduction on the generators of the given subring before starting the main algorithm. 
+       By default, the function @TO "sagbi"@ performs autosubduction on the generators of the given @ TO Subring @ before starting the main algorithm. 
        This step is required to guarantee correctness of the result.  
        However, the output of the @TO "sagbi"@ algorithm is often correct even when this step is skipped.  
        Setting this flag to @TT "false"@ may result in a performance improvement, albeit with a risk of errors.
@@ -234,7 +238,7 @@ doc ///
      Text 
        The function @TO "sagbi"@ computes a sagbi basis by subducting {\it S-pairs}.
        Any resulting non-zero polynomials are added to the list of sagbi generators.
-       However if ReduceNewGenerators is set to true (by default) then the new generators are reduced using gaussian elimination against the other new generators.
+       However if ReduceNewGenerators is set to @ TT "true" @ (by default) then the new generators are reduced using gaussian elimination against the other new generators.
        This process is quick (as fast as computing a groebner basis for a linear ideal) and ensures that duplicate generators are not added to the list of sagbi generators.  
    SeeAlso
      sagbi 
@@ -256,10 +260,10 @@ doc ///
      Flag for storing the pending list to the result of the Sagbi algorithm
    Description
      Text 
-       The function @TO "sagbi"@ produces a @TO "SAGBIBasis"@ computation object.
-       If the StorePending flag is true then the output will contain a copy of the pending list.
+       The function @TO "sagbi"@ produces @ ofClass SAGBIBasis @ computation object.
+       If the @ TT "StorePending" @ flag is @ TT "true" @ then the output will contain a copy of the pending list.
        The pending list contains all {\it S-pairs} grouped by their degrees.
-       If the Sagbi algorithm terminates without producing a complete sagbi basis, for example due to @TO "Limit"@, then the computation may be resumed by calling @TO "sagbi"@ on the resulting computation object with new options.
+       If the sagbi algorithm terminates without producing a complete sagbi basis, for example due to @TO "Limit"@, then the computation may be resumed by calling @TO "sagbi"@ on the resulting computation object with new options.
        The resumed computation will use the pending list stored in the @TO "SAGBIBasis"@ computation object.
        If there is no pending list in the computation object then one will be created.
        Depending on the computation, the pending list may be very large and it may not be convenient to save all the data.  
@@ -338,7 +342,7 @@ doc ///
        The stopping criteria for the main loop in @TO "sagbi"@ are: a finite sagbi basis is computed, or the smallest degree of an {\it S-pair} exceeds the @TO Limit@.
        In general, the initial terms of generators of a partial computation do not generate the initial algebra up to the degree limit.
        It is possible that, with a higher degree limit, sagbi generators of lower degree will be added.
-       One can guarantee that all sagbi generators up to a certain degree are found by using a graded term-order such as GRevLex and working with a subring or a polynomial ring (and not a quotient ring).
+       One can guarantee that all sagbi generators up to a certain degree are found by using a graded term-order such as GRevLex and working with @ ofClass Subring @ of @ ofClass PolynomialRing @ (and not @ ofClass QuotientRing @).
    SeeAlso
      sagbi 
      AutoSubduce
@@ -359,8 +363,10 @@ doc ///
      Subduct sagbi generators at the end of the Sagbi algorithm
    Description
      Text 
-       During the main loop in @TO "sagbi"@ if no new sagbi generators are added and the @TO "AutoSubduceOnPartialCompletion"@ flag is true then all sagbi generators are subducted against each other.
-       This a significant time investment, however if no new sagbi generators are to be added then the subduction of the sagbi generators will speed up the computation of the groebner basis of the {\it reduction ideal} and {\it S-pairs}.
+       During the main loop in @TO "sagbi"@ if no new sagbi generators are added and the @TO "AutoSubduceOnPartialCompletion"@ flag 
+       is @ TT "true" @ then all sagbi generators are subducted against each other.
+       This a significant time investment, however if no new sagbi generators are to be added then the subduction of the sagbi 
+       generators will speed up the computation of the groebner basis of the {\it reduction ideal} and {\it S-pairs}.
    SeeAlso
      sagbi 
      AutoSubduce
@@ -412,8 +418,8 @@ doc ///
      Flag for restarting a sagbi computation
    Description
      Text 
-       If the flag is set to true, then the sagbi computation will start from scratch.
-       This process constructs a new computation object and uses the computation options
+       If the flag is set to @ TT "true" @, then the sagbi computation will start from scratch.
+       This process constructs, from scratch, @ ofClass SAGBIBasis @ and uses the computation options
        from the previous computation.
    SeeAlso
      sagbi
@@ -439,7 +445,7 @@ doc ///
        are stored in the computation object. Whenever the computation is resumed,
        the same options will apply to the computation, with the exception of 
        @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@.
-       To change the other options in the computation, set this flag to true.
+       To change the other options in the computation, set this flag to @ TT "true" @.
        The new options will be used and stored in the computation object.
    SeeAlso
      sagbi
@@ -520,9 +526,9 @@ doc ///
      PrintLevel=>ZZ
        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
      Recompute=>Boolean
-       if true then the computation will resume otherwise it starts at the beginning
+       if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
      RenewOptions=>Boolean
-       if true then the computation will use the options specified otherwise it will use the previously selected options
+       if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
        (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@) 
    Outputs
      N:Matrix
@@ -558,7 +564,6 @@ doc ///
 -- #######################################
 -- ##  sagbi-functions.m2 documentation ##
 -- #######################################
-
 doc ///
    Key
      isSAGBI
@@ -590,12 +595,12 @@ doc ///
      result:Boolean  
    Description
      Text
-       This checks whether the generators of a subring or the sagbi generators of a computation object form a sagbi basis.
-       After running sagbi on a subring, note that the result of the computation is stored in that subring.
-       If new sagbi generators need to be added to S to make it a sagbi basis then @TT "isSAGBI"@ will return false.
+       This checks whether the generators of @ ofClass Subring @ or the sagbi generators of @ ofClass SAGBIBasis @ form a sagbi basis.
+       After running @ TO "sagbi" @ on @ ofClass Subring @, the result of the computation is stored in the @ TT "cache" @ of that subring as @ ofClass SAGBIBasis @.
+       If new sagbi generators need to be added to $S$ to make it a sagbi basis then @TT "isSAGBI"@ will return @ TT "false" @.
        If @TT "isSAGBI"@ is run on a ring for which no sagbi computation has been performed, then @TT "isSAGBI"@ will perform
-       a test to see if the generators form a sagbi basis. This test can be skipped by setting @TO "Compute"@ to false, and, in that
-       case, @TT "isSAGBI"@ will return null. 
+       a test to see if the generators form a sagbi basis. This test can be skipped by setting @TO "Compute"@ to @ TT "false" @, and, in that
+       case, @TT "isSAGBI"@ will return @ TT "null" @. 
      Example
        R = QQ[x,y,z];
        S = subring {x+y+z,x*y+x*z+y*z, x*y*z, (x-y)*(x-z)*(y-z)};
@@ -607,8 +612,8 @@ doc ///
        sagbi(S', Limit => 5)
        isSAGBI S'
      Text
-       If @TT "isSAGBI"@ is supplied a @TO "SAGBIBasis"@ then the generators of the subring can be checked for being 
-       a sagbi basis by setting @TO "UseSubringGens"@ to true.
+       If @TT "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ then the generators of the associated subring can be checked for being 
+       a sagbi basis by setting @TO "UseSubringGens"@ to @ TT "true" @.
        
        A note of caution. Excessive use of @TT "isSAGBI"@ may impact performance.
        The inputs and outputs of @TT "isSAGBI"@ are stored and never deleted. Since 
@@ -631,10 +636,10 @@ doc ///
      Text 
        A flag that determines whether computations should be performed for
        verifying the correctness of a sagbi basis. When the flag is set to
-       false then the function being called will only use the results of
+       @ TT "false" @ then the function being called will only use the results of
        previous computations, if they exist. When previous computations have
-       not been performed and the flag is set to false, then the function will
-       usually return null.
+       not been performed and the flag is set to @ TT "false" @, then the function will
+       usually return @ TT "null" @.
    SeeAlso
      isSAGBI
 ///
@@ -645,10 +650,10 @@ doc ///
      Flag for using the subring generators when checking a sagbi basis
    Description
      Text 
-       When @TO "isSAGBI"@ is supplied a @TO "SAGBIBasis"@ $SB$, then this flag determines
+       When @TO "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ $SB$, then this flag determines
        whether the sagbi generators or the subring generators are checked for being a subalgebra basis.
-       Explicitly, if the flag is set to false then the sagbi generators of $SB$ are checked for being
-       a subalgebra basis. Otherwise, if the flag is set to true then the generators of the underlying 
+       Explicitly, if the flag is set to @ TT "false" @ then the sagbi generators of $SB$ are checked for being
+       a subalgebra basis. Otherwise, if the flag is set to @ TT "true" @ then the generators of the underlying 
        subring associated to $SB$ are checked for being a subalgebra basis.
    SeeAlso
      isSAGBI
@@ -1129,7 +1134,7 @@ doc ///
      result:ZZ
    Description
      Text
-       Returns the number of sagbi generators of a @TO "SAGBIBasis"@.
+       Returns the number of sagbi generators of @ ofClass SAGBIBasis @.
      Example
        R = QQ[x,y,z];
        S = subring({x^2, y^2, z^2, x^2+y^2});
@@ -1196,7 +1201,8 @@ doc ///
      Text
         This is a computation object for sagbi bases.  
 	It stores a partial sagbi computation for picking up a computation where it left off.  
-	An instance of a @TT "SAGBIBasis"@ is constructed with the function @TO "sagbiBasis"@ and as the output of @TO "sagbi"@.
+	To create @ ofClass SAGBIBasis @, use the function @TO "sagbiBasis"@. 
+	The @TT "SAGBIBasis" @ type is the main output type of the function @TO "sagbi"@.
 
         Every instance of @TT "SAGBIBasis"@ contains the following hashtables:
 	
@@ -1253,8 +1259,8 @@ doc ///
    Description
      Text
        This function serves as the canonical constructor for the @TO "SAGBIBasis"@ type.  
-       It is also the output of the @TO "sagbi"@ function.
-       A @TO "SAGBIBasis"@ may be cast to a @TO "Subring"@ using @TO "subring"@.
+       The @TT "SAGBIBasis"@ type is also the output of the function @TO "sagbi"@.
+       A @TO "SAGBIBasis"@ may be cast to @ ofClass Subring @ using @TO "subring"@.
    SeeAlso
      SAGBIBasis
      (gens, SAGBIBasis)
@@ -1284,7 +1290,7 @@ doc ///
    Description
      Text
         Returns the current list of sagbiGenerators of the underlying @TO "Subring"@. 
-	If the @TO SAGBIBasis@ is not a complete sagbi basis (for example it is obtained from a partial computation)
+	If sagbi generators of @ ofClass SAGBIBasis @ is not a complete sagbi basis (for example it is obtained from a partial computation)
 	then the generators obtained from this command may not be a generating set for the original subring. 
      Example
         R = QQ[x,y];
@@ -1319,7 +1325,7 @@ doc ///
      S:SAGBIBasis
    Description
      Text
-        Displays the number of sagbi generators of a @TT "S"@ along with the degree limit.
+        Displays the number of sagbi generators of @ ofClass SAGBIBasis @ along with the degree limit.
    SeeAlso
      SAGBIBasis
      (gens, SAGBIBasis)
@@ -1345,7 +1351,7 @@ doc ///
      result:Ring
    Description
      Text
-       Returns the ambient ring of @TT "S"@. This may be a PolynomialRing or QuotientRing.
+       Returns the ambient ring of @ ofClass SAGBIBasis @. This may be a PolynomialRing or QuotientRing.
      Example
        R = QQ[x,y,z];
        S = sagbi {x^2, y^2, z^2}
@@ -1379,7 +1385,7 @@ doc ///
      result:Ring
    Description
      Text
-       Returns the lifted ring of @TT "S"@. This is always a PolynomialRing.
+       Returns the lifted ring of @ ofClass SAGBIBasis @. This is always a PolynomialRing.
      Example
        R = QQ[x,y,z];
        S = sagbi {x^2, y^2, z^2}
@@ -1413,7 +1419,7 @@ doc ///
      result:ZZ
    Description
      Text
-       Returns the current degree of the sagbi computation. When the computation is resumed (without restarting)
+       Returns the current degree of @ ofClass SAGBIBasis @. When the computation is resumed (without restarting)
        then the algorithm will pick up at this degree. Note that the degree may drop during the computation.
    SeeAlso
      SAGBIBasis
@@ -1466,7 +1472,7 @@ doc ///
      result:Boolean
    Description
      Text
-       Returns true if the sagbi computation is completed otherwise returns false.
+       Returns @ TT "true" @ if the sagbi computation is completed otherwise returns @ TT "false" @.
    SeeAlso
      SAGBIBasis
      (gens, SAGBIBasis)
@@ -1515,7 +1521,7 @@ doc ///
      [forceSB, RenewOptions]
      [forceSB, PrintLevel]
    Headline
-     declare the generators of a subring or SAGBIBasis to be a complete sagbi basis
+     declare the generators of @ ofClass {Subring, SAGBIBasis} @ to be a complete sagbi basis
    Usage
      forceSB S
      forceSB SB
@@ -1526,16 +1532,16 @@ doc ///
        subduct the generators against themselves 
    Description
      Text
-       If forceSB is given a @TO "SAGBIBasis"@ $SB$, then the function performs
+       If forceSB is supplied @ ofClass SAGBIBasis @ $SB$, then the function performs
        autosubduction on the sagbiGenerators of $SB$. The sagbiDone flag is then
-       set to true without checking whether the generators form a sagbi basis.
+       set to @ TT "true" @ without checking whether the generators form a sagbi basis.
        
-       If forceSB is given a @TO "Subring"@ $S$, then the function checks whether a
-       @TO "SAGBIBasis"@ $SB$ has been created for $S$. If $SB$ exists, then forceSB
+       If forceSB is supplied @ ofClass Subring @ $S$, then the function checks whether a
+       @TO "SAGBIBasis"@ $SB$ has been created for $S$. If $SB$ exists, then @ TT "forceSB" @
        is applied to $SB$ as described above. Otherwise, $SB$ is created from $S$ and
-       has its sagbiDone flag set to true.
+       has its @ TT "sagbiDone" @ flag set to @ TT "true" @.
        
-       Note, if the generators supplied to forceSB do not form a sagbi basis, then it
+       Note, if the generators supplied to @ TT "forceSB" @ do not form a sagbi basis, then it
        may cause unexpected behaviour. 
    SeeAlso
      Subring
