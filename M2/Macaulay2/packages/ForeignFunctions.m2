@@ -393,7 +393,7 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
 	    if ffiPointerValue ptr === nullPointer then StopIteration
 	    else (
 		r := dereference_T ptr;
-		ptr = ptr + version#"pointer size";
+		ptr = ptr + sz;
 		r)));
     S)
 
