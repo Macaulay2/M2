@@ -20,15 +20,21 @@ namespace M2 {
 template <class RingType>
 class ConcreteRing : public Ring
 {
-  const RingType *R;
+  std::unique_ptr<RingType> R;
 
  protected:
-  ConcreteRing(const RingType *R0) : R(R0) {}
-  virtual ~ConcreteRing() {}
+  explicit ConcreteRing(std::unique_ptr<RingType> R0) : R(std::move(R0)) {}
+  virtual ~ConcreteRing() = default;
+
  public:
+  // explicitly delete the copy constructor
+  ConcreteRing(const ConcreteRing &ring) = delete;
   typedef typename RingType::ElementType ElementType;
 
-  static ConcreteRing<RingType> *create(const RingType *R);
+  static ConcreteRing<RingType> *create(std::unique_ptr<RingType> R);
+
+  template <class... Args>
+  static ConcreteRing<RingType> *create(Args &&...args);
 
   virtual M2::RingID ringID() const { return RingType::ringID; }
   const RingType &ring() const { return *R; }
@@ -37,10 +43,15 @@ class ConcreteRing : public Ring
                                            size_t ncols,
                                            bool dense) const
   {
+    // JY: The use of get here on R is safe because MutableMat will always keep
+    // a reference to this so long as it has a reference to R, and this is in
+    // the gc heap, so that reference keeps R alive. Really, the MutableMat
+    // constructor should probably be calling ring(), but ring() is not virtual
+    // and not every Ring is an instance of ConcreteRing.
     if (dense)
-      return new MutableMat<DMat<RingType> >(this, R, nrows, ncols);
+      return new MutableMat<DMat<RingType> >(this, R.get(), nrows, ncols);
     else
-      return new MutableMat<SMat<RingType> >(this, R, nrows, ncols);
+      return new MutableMat<SMat<RingType> >(this, R.get(), nrows, ncols);
   }
 
   bool isFinitePrimeField() const
@@ -497,14 +508,18 @@ class ConcreteRing : public Ring
 class RingQQ : public ConcreteRing<ARingQQ>
 {
  public:
-  RingQQ(const ARingQQ *R0) : ConcreteRing<ARingQQ>(R0) {}
-  virtual ~RingQQ() {}
+  explicit RingQQ(std::unique_ptr<ARingQQ> R0)
+      : ConcreteRing<ARingQQ>(std::move(R0))
+  {
+  }
   bool is_QQ() const { return true; }
   CoefficientType coefficient_type() const { return COEFF_QQ; }
-  static RingQQ *create(const ARingQQ *R0)
+  static RingQQ *create()
   {
-    RingQQ *result = new RingQQ(R0);
-    result->initialize_ring(R0->characteristic());
+    auto R0 = std::make_unique<ARingQQ>();
+    auto characteristic = R0->characteristic();
+    RingQQ *result = new RingQQ(std::move(R0));
+    result->initialize_ring(characteristic);
     result->declare_field();
 
     result->zeroV = result->from_long(0);
@@ -588,10 +603,12 @@ class RingQQ : public ConcreteRing<ARingQQ>
 };
 
 template <class RingType>
-ConcreteRing<RingType> *ConcreteRing<RingType>::create(const RingType *R)
+ConcreteRing<RingType> *ConcreteRing<RingType>::create(
+    std::unique_ptr<RingType> R)
 {
-  ConcreteRing<RingType> *result = new ConcreteRing<RingType>(R);
-  result->initialize_ring(R->characteristic());
+  auto characteristic = R->characteristic();
+  ConcreteRing<RingType> *result = new ConcreteRing<RingType>(std::move(R));
+  result->initialize_ring(characteristic);
   result->declare_field();
 
   result->zeroV = result->from_long(0);
@@ -599,6 +616,14 @@ ConcreteRing<RingType> *ConcreteRing<RingType>::create(const RingType *R)
   result->minus_oneV = result->from_long(-1);
 
   return result;
+}
+
+template <class RingType>
+template <class... Args>
+ConcreteRing<RingType> *ConcreteRing<RingType>::create(Args &&...args)
+{
+  return ConcreteRing<RingType>::create(
+      std::make_unique<RingType>(std::forward<Args>(args)...));
 }
 
 //////////////////////

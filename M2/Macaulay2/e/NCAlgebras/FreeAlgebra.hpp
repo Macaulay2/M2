@@ -23,10 +23,11 @@ class FreeAlgebra : public our_new_delete
 {
 private:
   const Ring& mCoefficientRing;
-  const FreeMonoid& mMonoid;
+  std::shared_ptr<FreeMonoid> mMonoid;
+
 
 private:
-  FreeAlgebra(const Ring* K, const FreeMonoid* M);
+  FreeAlgebra(const Ring* K, std::shared_ptr<FreeMonoid> M);
 
 public:
   static FreeAlgebra* create(const Ring* K,
@@ -38,7 +39,7 @@ public:
                              );
 
   const Ring* coefficientRing() const { return &mCoefficientRing; }
-  const FreeMonoid& monoid() const { return mMonoid; }
+  const FreeMonoid& monoid() const { return *mMonoid; }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
   int numVars() const { return monoid().numVars(); }
   

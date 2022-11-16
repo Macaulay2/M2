@@ -38,22 +38,22 @@ ARingTower::ARingTower(const BaseRingType &baseRing,
     }
 }
 
-const ARingTower *ARingTower::create(const ARingZZpFFPACK &baseRing,
-                                     const std::vector<std::string> &names)
+ARingTower *ARingTower::create(const ARingZZpFFPACK &baseRing,
+                               const std::vector<std::string> &names)
 {
   std::vector<ElementType> extensions;
   return new ARingTower(baseRing, names, extensions);
 }
 
-const ARingTower *ARingTower::create(const ARingTower &R,
-                                     const std::vector<std::string> &new_names)
+ARingTower *ARingTower::create(const ARingTower &R,
+                               const std::vector<std::string> &new_names)
 {
   // TODO: write
   return 0;
 }
 
-const ARingTower *ARingTower::create(const ARingTower &R,
-                                     const std::vector<ElementType> &extensions)
+ARingTower *ARingTower::create(const ARingTower &R,
+                               const std::vector<ElementType> &extensions)
 {
   // TODO: check that 'extensions' has the correct form for R.
   //  if not: throw an exception

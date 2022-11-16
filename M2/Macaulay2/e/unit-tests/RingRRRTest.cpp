@@ -28,7 +28,7 @@ ring_elem getElement<RingRRR>(const RingRRR &R, int index)
 
 TEST(RingRRR, create)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
   EXPECT_TRUE(R != 0);
 
   EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == 0);
@@ -39,7 +39,7 @@ TEST(RingRRR, create)
 }
 TEST(RingRRR, ones)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
   EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
   EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
   EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
@@ -47,12 +47,12 @@ TEST(RingRRR, ones)
 }
 TEST(RingRRR, negate)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
   testRingNegate(R, ntrials);
 }
 TEST(RingRRR, add)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
   RingElementGenerator<RingRRR> gen(*R);
 
   for (int i = 0; i < ntrials; i++)
@@ -68,12 +68,12 @@ TEST(RingRRR, add)
 }
 TEST(RingRRR, subtract)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
   testRingSubtract(R, ntrials);
 }
 TEST(RingRRR, multDivide)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
   RingElementGenerator<RingRRR> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
@@ -92,7 +92,7 @@ TEST(RingRRR, multDivide)
 }
 TEST(RingRRR, axioms)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
   RingElementGenerator<RingRRR> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
@@ -129,7 +129,7 @@ TEST(RingRRR, axioms)
 }
 TEST(RingRRR, power)
 {
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
 
   mpz_t gmp1;
   mpz_init(gmp1);
@@ -160,7 +160,7 @@ TEST(RingRRR, syzygy)
 {
   // NOTE: RingRRR::syzygy, CCC::syzygy are not useful functions.
   // Should we remove these tests, and the corresponding functions?
-  RingRRR *R = RingRRR::create(new M2::ARingRRR(100));
+  RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
 
   RingElementGenerator<RingRRR> gen(*R);
   for (int i = 0; i < ntrials; i++)
