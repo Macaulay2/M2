@@ -53,6 +53,13 @@ example3 = () -> (
     print("gens SB' :", gens SB');
     SB'
     )
+-- quotient ring example from [Example 2, Stillman and Tsai]
+exampleQuotient = n -> (
+    R := QQ[a,b,c,d,u_1 .. u_n, v_1 .. v_n, MonomialOrder => Lex];
+    Q := R / ideal(a*d - b*c - 1);
+    S := subring flatten for i from 1 to n list {a*u_i + b*v_i, c*u_i + d*v_i};
+    sagbi S
+    )
 -- introduction to: % (modulo a subring and modulo a SAGBIBasis)
 example4 = () -> (
     x := symbol x;
