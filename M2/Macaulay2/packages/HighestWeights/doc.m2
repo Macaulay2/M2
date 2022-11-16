@@ -300,7 +300,7 @@ doc ///
 	       
 	       Use this method on a $T$-equivariant map of graded free modules,
 	       to obtain the weights of the domain from the weights of the
-	       codomain (or viceversa).
+	       codomain (or vice-versa).
 
 	       The weights of the variables in the ring must be set a priori,
 	       using the method @TO "setWeights"@.
@@ -352,7 +352,7 @@ doc ///
 	       of an algebraic torus and fix a homogeneous basis of weight
 	       vectors $\{f_j\}$ of $F$.
 	       Use this function to recover the weights of the domain $E$ 
-	       from the weights of the codomain $F$ (or viceversa, setting the
+	       from the weights of the codomain $F$ (or vice-versa, setting the
 	       optional input @TO "Forward"@ to @TT "true"@.).
 	       
 	       The input consists of @TT "M"@, the matrix of $\phi$ with 

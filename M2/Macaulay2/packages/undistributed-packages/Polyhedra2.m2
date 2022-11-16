@@ -539,7 +539,7 @@ minkowskiSum(Polyhedron,Cone) := (P,C) -> minkowskiSum(P,coneToPolyhedron C)
 
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
-     if k <= 0 then error("The factor must be strictly positiv");
+     if k <= 0 then error("The factor must be strictly positive");
      Q:=new Polyhedron from hashTable {};
      if P#?"Points" then Q#"Points"=homCoordinates(k*(dehomCoordinates P#"Points")_0,(dehomCoordinates P#"Points")_1);
      if P#?"InputLineality" then Q#"InputLineality"=P#"InputLineality";
@@ -643,7 +643,7 @@ hilbertBasis Cone := opts->C -> (
 	  (M,BC));
      -- Function to compute the/one preimage of h under A
      preim := (h,A) -> (
-	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entrys are a preimage
+	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entries are a preimage
 	  -- vector
 	  N := gens ker(-h|A);
 	  N = transpose (ref transpose N)#0;

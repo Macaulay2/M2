@@ -560,7 +560,7 @@ processPending (HashTable) := compTable -> (
 	    print("-- [processPending] generators before reduction:");
 	    print(transpose matrix{toList compTable#SAGBIpending#currentLowest});
 	    );
-	if compTable#SAGBIoptions#ReduceNewGenerators then ( --perform guassian elimination on the new generators
+	if compTable#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
 	    reducedGenerators = triangularBasis matrix{toList compTable#SAGBIpending#currentLowest};
 	    ) else (
 	    reducedGenerators = matrix{toList compTable#SAGBIpending#currentLowest};

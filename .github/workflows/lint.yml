@@ -1,0 +1,23 @@
+name: Lint
+on:
+  push: { branches: [ "development" ] }
+  pull_request: { branches: [ "development" ] }
+
+jobs:
+  codespell:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with: { submodules: recursive }
+      - uses: conda-incubator/setup-miniconda@v2
+        with: { mamba-version: "*", channels: "conda-forge", channel-priority: true }
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          mamba install codespell=2.2.2 pycodestyle=2.9.1
+      - name: Run codespell
+        shell: bash -l {0}
+        run: codespell --ignore-words=.codespell_ignore M2/Macaulay2/packages
+
+env:
+  MAKEFLAGS: -j2

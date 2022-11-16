@@ -60,7 +60,7 @@ SAGBIBasis = new Type of HashTable
 -- Options:
 -- > AutoSubduce is a boolean that determines whether the generators should be subducted against each other
 --   at the beginning of the sagbi computation.
--- > ReduceNewGenerators is a boolean that determines whether guassian elimination is applied to newly found
+-- > ReduceNewGenerators is a boolean that determines whether gaussian elimination is applied to newly found
 --   sagbi generators.
 -- > StorePending is a boolean that determines whether the pending list is stored in the computation
 --   object. The pending list may be quite large in some cases.
