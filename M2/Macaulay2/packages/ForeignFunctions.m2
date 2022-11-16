@@ -141,6 +141,7 @@ value ForeignObject := x -> error("no value function exists for ", class x)
 
 address = method(TypicalValue => Pointer)
 address ForeignObject := x -> x.Address
+address Nothing := identity
 
 foreignObject = method(TypicalValue => ForeignObject)
 foreignObject ForeignObject := identity
@@ -199,6 +200,7 @@ ForeignVoidType = new Type of ForeignType
 ForeignVoidType.synonym = "foreign void type"
 
 dereference(ForeignVoidType, Pointer) := (T, x) -> null
+ForeignVoidType Nothing := (T, x) -> null
 
 void = new ForeignVoidType
 void.Name = "void"
@@ -391,7 +393,7 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
 	    if ffiPointerValue ptr === nullPointer then StopIteration
 	    else (
 		r := dereference_T ptr;
-		ptr = ptr + version#"pointer size";
+		ptr = ptr + sz;
 		r)));
     S)
 
@@ -602,6 +604,7 @@ memcpy = foreignFunction("memcpy", voidstar, {voidstar, voidstar, ulong})
 * voidstar = (ptr, val) -> (
     if not instance(val, ForeignObject) then val = foreignObject val;
     memcpy(ptr, address val, size class val))
+* Pointer = (ptr, val) -> value (*voidstar ptr = val)
 
 ForeignType * voidstar := (T, ptr) -> T value ptr
 
@@ -1770,12 +1773,13 @@ doc ///
 doc ///
   Key
     ((symbol *, symbol =), voidstar)
+    ((symbol *, symbol =), Pointer)
   Headline
     assign value to object at address
   Usage
     *ptr = val
   Inputs
-    ptr:voidstar
+    ptr:{voidstar, Pointer}
     val:Thing
   Description
     Text
@@ -1783,7 +1787,7 @@ doc ///
       @TT "ptr"@.
     Example
       x = int 5
-      ptr = voidstar address x
+      ptr = address x
       *ptr = int 6
       x
     Text
