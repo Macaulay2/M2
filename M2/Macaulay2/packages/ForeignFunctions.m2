@@ -141,6 +141,7 @@ value ForeignObject := x -> error("no value function exists for ", class x)
 
 address = method(TypicalValue => Pointer)
 address ForeignObject := x -> x.Address
+address Nothing := identity
 
 foreignObject = method(TypicalValue => ForeignObject)
 foreignObject ForeignObject := identity
@@ -199,6 +200,7 @@ ForeignVoidType = new Type of ForeignType
 ForeignVoidType.synonym = "foreign void type"
 
 dereference(ForeignVoidType, Pointer) := (T, x) -> null
+ForeignVoidType Nothing := (T, x) -> null
 
 void = new ForeignVoidType
 void.Name = "void"
