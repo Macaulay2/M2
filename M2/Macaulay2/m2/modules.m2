@@ -300,43 +300,32 @@ degrees Module := -*(cacheValue symbol degrees) (*-N -> (
 	else apply(degs, reduceDegree_G)))
 --    )
 
-Module ^ ZZ := Module => (M,i) -> if i > 0 then directSum (i:M) else 0*M
+-----------------------------------------------------------------------------
+-- free modules and vector spaces
 
-Ring ^ List := Module => (
-     (R,degs) -> (
-	  degs = - splice degs;
-	  if R.?RawRing then (
-	       -- check the args
-	       ndegs := degreeLength R;
-	       if #degs === 0 then ()
-	       else if all(degs,i -> class i === ZZ) then (
-		    if ndegs =!= 1
-	       	    then error ("expected each multidegree to be of length ", toString ndegs))
-	       else if all(degs,v -> class v === List) then (
-		    scan(degs,v -> (
-			      if #v =!= ndegs
-			      then error (
-				   "expected each multidegree to be of length ",
-				   toString ndegs
-				   );
-			      if not all(v,i->class i === ZZ)
-			      then error "expected each multidegree to be a list of integers")))
-	       else error "expected a list of integers or a list of lists of integers";
-	       -- then adjust the args
-	       fdegs := flatten degs;
-	       -- then do it
-	       if # fdegs === 0 
-	       then new Module from (R,rawFreeModule(R.RawRing,#degs))
-	       else new Module from (R,rawFreeModule(R.RawRing,toSequence fdegs))
-	       )
-	  else error "non-engine free modules with degrees not implemented yet"
-	  ))
+Ring ^ ZZ   := Module => (R, n) -> (
+    if not R.?RawRing then error "non-engine free modules with degrees not implemented yet";
+    new Module from (R, rawFreeModule(R.RawRing, n)))
 
-SparseDisplayThreshhold := 15
+Ring ^ List := Module => (R, degs) -> (
+    if not R.?RawRing then error "non-engine free modules with degrees not implemented yet";
+    -- check the args
+    degs = - splice degs;
+    degrk := degreeLength R;
+    if #degs === 0 then ()
+    else if isListOfIntegers degs        then ( if degrk != 1
+	then error("expected each multidegree to be of length ", degrk))
+    else if isListOfListsOfIntegers degs then ( if any(degs, deg -> degrk != #deg)
+	then error("expected each multidegree to be of length ", degrk))
+    else error "expected a list of integers or a list of lists of integers";
+    -- then flatten the args
+    fdegs := toSequence flatten degs;
+    new Module from (R, rawFreeModule(R.RawRing, if #fdegs === 0 then #degs else fdegs)))
 
-Ring ^ ZZ := Module => (R,n) -> if R.?RawRing then new Module from (R, rawFreeModule(R.RawRing,n)) else notImplemented()
+RingFamily ^ ZZ   :=
+RingFamily ^ List := Module => (T, degs) -> (default T)^degs
 
-InexactFieldFamily ^ ZZ := Module => (T,n) -> (default T)^n
+-----------------------------------------------------------------------------
 
 schreyerOrder = method()
 schreyerOrder Module := Matrix => (F) -> (
