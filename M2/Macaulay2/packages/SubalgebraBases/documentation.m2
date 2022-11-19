@@ -4,7 +4,7 @@ undocumented {
 
 Subring.synonym = "subring"
 SAGBIBasis.synonym = "SAGBIBasis"
-
+IntersectedSubring.synonym = "intersected subring"
 -- ##################################
 -- ##  sagbi-main.m2 documentation ##
 -- ##################################
@@ -929,7 +929,7 @@ doc ///
      PrintLevel=>ZZ
        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@).
    Outputs
-     result:Subring  
+     result:IntersectedSubring  
    Description
      Text
        Computes the intersection of subrings "S_1" and "S_2". These subrings must be subrings of the same
@@ -942,13 +942,114 @@ doc ///
        S2 = subring {x, y^2};	
        S = subringIntersection(S1, S2);
        gens S
+       isFullIntersection S
        isSAGBI S
      Text
-       If the generators of $S$ form a sagbi basis and the degree limit is high enough, then they are
-       a generating set for the intersection.
+       To check whether the generators of the resulting @TO "IntersectedSubring"@ generate the intersection of the given subrings,
+       use the function @TO "isFullIntersection"@. If the function @TO "isFullIntersection"@ returns true, then the generators of
+       the @TO "IntersectedSubring"@ are guaranteed to be a subalgebra basis for the intersection.
    SeeAlso
      Subring
-     sagbi
+     IntersectedSubring
+     isFullIntersection
+     originalSubringGens
+     isSAGBI
+///
+doc ///
+   Key
+     IntersectedSubring
+   Headline
+     The type of all subrings arising from intersection
+   Description
+     Text
+        @TT "IntersectedSubring"@ is a type of @TO "Subring"@ produced by intersecting two subrings using the function @TO "subringIntersection"@.
+       Every instance of @TT "IntersectedSubring"@ has additional keys to those found in @ ofClass Subring@. 
+       The additional keys are as follows:
+       
+       @UL {
+	    {BOLD {"originalSubrings"}, ": The list of two subrings used in the intersection."},
+	    {BOLD {"compositeSubring"}, ": A Subring constructed during the intersection computation."}
+	   }@
+       
+       The function @TO "subringIntersection"@ may be considered to be the constructor for @TT "IntersectedSubring"@. 
+       Each instance $S$ of @TT "IntersectedSubring"@ admits the usage of the function @TO "isFullIntersection"@ for checking whether 
+       the generators of $S$ are guaranteed to generate the intersection of the original subrings.
+       
+   SeeAlso
+       Subring
+       subringIntersection
+       isFullIntersection
+       originalSubringGens
+///
+doc ///
+   Key
+      isFullIntersection
+     (isFullIntersection, IntersectedSubring)
+   Headline
+     check correctness of intersection computation
+   Usage
+     result = isFullIntersection(S)
+   Inputs
+     S:IntersectedSubring
+   Outputs
+     result:Boolean
+       returns @TT "true"@ if the generators of $S$ are guaranteed to generate the intersection of the original subrings 
+   Description
+     Text
+       Checks if the algorithm for computing the intersection of two subrings in the function @TO "subringIntersection"@ 
+       terminated resulting in a complete subalgebra basis. If the computation terminated in this way, then the generators
+       of the given subring are guranteed to generate the intersection of the originally suppied subrings. 
+     Example
+       R = QQ[x,y];
+       I = ideal(x^3 + x*y^2 + y^3);
+       Q = R/I;
+       S1 = subring {x^2, x*y};		   
+       S2 = subring {x, y^2};	
+       S = subringIntersection(S1, S2);
+       isFullIntersection S
+     Text
+       On the other hand, even if the function @TO "isFullIntersection"@ returns @ TT "false" @, the generators of the given subring
+       may generate the intersection.
+     Example
+       R = QQ[x,y];
+       S1 = subring {x^3, x^2*y};
+       S2 = subring {x^4, y};
+       S = subringIntersection(S1, S2, Limit => 15);
+       gens S
+       isFullIntersection S
+   SeeAlso
+     subringIntersection
+     Subring
+     IntersectedSubring
+///
+doc ///
+   Key
+      originalSubringGens
+     (originalSubringGens, IntersectedSubring)
+   Headline
+     generators of the original subrings
+   Usage
+     result = originalSubringGens(S)
+   Inputs
+     S:IntersectedSubring
+   Outputs
+     result:List
+       of the generators of the original subrings used in the creation of $S$ 
+   Description
+     Text
+       Returns two single-row matrices of the generators of the original subrings whose intersection, via the function @TO "subringIntersection"@, is $S$.
+     Example
+       R = QQ[x,y];
+       I = ideal(x^3 + x*y^2 + y^3);
+       Q = R/I;
+       S1 = subring {x^2, x*y};		   
+       S2 = subring {x, y^2};	
+       S = subringIntersection(S1, S2);
+       originalSubringGens S
+   SeeAlso
+     subringIntersection
+     Subring
+     IntersectedSubring
 ///
 
 

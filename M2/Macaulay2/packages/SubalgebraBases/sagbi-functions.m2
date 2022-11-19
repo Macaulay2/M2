@@ -367,6 +367,37 @@ RingElement % Subring := (f, S) -> (
     first first entries (matrix{{f}} % S)
     );
 
+
+-- IntersectedSubring
+-- a type for subrings created by intersecting two subrings
+-- keys are the usual subring keys plus the keys: 
+-- "originalSubrings" = {S1, S2} -- S1 and S2 are the original subrings used for the intersection 
+-- "compositeSubring" = S -- the subring in the tensor ring K[t*S1, (1-t)*S1] (see subringIntersection) 
+-- this type does not support a dedicated constructor since it is created by the function subringIntersection
+
+IntersectedSubring = new Type of Subring 
+
+-- originalSubringGens 
+-- returns the generators of the original subrings used in the intersection computation
+originalSubringGens = method()
+originalSubringGens(IntersectedSubring) := S -> (
+    gens \ S#"originalSubrings"
+    )
+
+-- isFullIntersection 
+-- returns true if the intersection of the "originalSubring" is guaranteed to be equal to the generators of intersectedSubring 
+-- note that the composite subring is guaranteed to have a SAGBIBasis stored in its cache
+-- note that if the function returns false, then the generators of the intersectedSubring may generate the intersection 
+--  but it is not guaranteed
+isFullIntersection = method()
+isFullIntersection(IntersectedSubring) := S -> (
+    S#"compositeSubring".cache#SAGBIBasis.SAGBIdata#"sagbiDone"
+    )
+
+-- FUTURE:
+-- add functionality to resume the computation for intersected subrings which are not guaranteed to give the full intersection
+
+
 -- subringIntersection(Subring, Subring)
 -- intersects the subrings using a method analogous to the GB method
 
@@ -446,8 +477,15 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     -- >> In this case, the elements SB|_Q form a sagbi basis for the intersection so use forceSB 
     -- Note that, if the intersection of S1 and S2 has a finite sagbi basis, then it is NOT guaranteed
     -- that S has a finite sagbi basis.
-    intersectionGens := selectInSubring(1, gens SB);
-    result := subring TtoQ intersectionGens;
+    intersectionGens := TtoQ selectInSubring(1, gens SB);
+    result := new IntersectedSubring from {
+	"ambientRing" => Q,
+	"generators" => intersectionGens,
+	"subductionQuotientRing" => (coefficientRing Q)[Variables => numcols intersectionGens],
+	cache => new CacheTable from {},
+	"originalSubrings" => {S1, S2},
+	"compositeSubring" => S
+	}; 
     if isSAGBI SB then forceSB result;
     result
     );
