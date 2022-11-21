@@ -69,6 +69,7 @@ concatenate Nothing := concatenate String := concatenate Symbol := concatenate Z
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
+take(Thing,ZZ) := List => take
 get File := get String := String => get
 getc File := String => getc
 getenv String := String => getenv

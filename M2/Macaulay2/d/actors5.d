@@ -1079,7 +1079,39 @@ take(e:Expr):Expr := (
 	       	    list(x.Class,v,x.Mutable))
 	       else vv)
 	  is v:Sequence do take(v,args.1)
-	  else WrongArg(1,"a list or sequence"))
+	  else (
+	      iter := getIterator(args.0);
+	      if iter == nullE
+	      then return WrongArg(1, "a list, sequence, or iterable object");
+	      nextfunc := getNextFunction(iter);
+	      if nextfunc == nullE
+	      then return buildErrorPacket(
+		  "no method for applying next to iterator");
+	      when args.1
+	      is n:ZZcell do (
+		  if !isInt(n) then return WrongArgSmallInteger(2);
+		  m := toInt(n);
+		  if m < 0 then return WrongArg(2, "a positive integer");
+		  if m == 0 then return Expr(emptyList);
+		  r := new Sequence len m do provide nullE;
+		  j := 0;
+		  y := nullE;
+		  while (
+		      y = applyEE(nextfunc, iter);
+		      when y
+		      is Error do return returnFromFunction(y)
+		      else nothing;
+		      y != StopIterationE)
+		  do (
+		      r.j = y;
+		      j = j + 1;
+		      if j == m then break);
+		  Expr(list(
+			  if j == 0 then emptySequence
+			  else if j == m then r
+			  else new Sequence len j do (
+			      foreach x in r do provide x))))
+	      else WrongArgZZ(2)))
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("take",take);
