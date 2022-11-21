@@ -473,6 +473,9 @@ processWeyl := weylvars -> (
 
 -----------------------------------------------------------------------------
 
+-- one-time warning for torsion grading groups; to be removed soon
+showTorsionWarning = true
+
 -- check the options for consistency, and set everything to the correct defaults
 setMonoidOptions = opts -> (
     opts = new MutableHashTable from opts;
@@ -483,6 +486,8 @@ setMonoidOptions = opts -> (
     opts.Degrees = degs;
     opts.DegreeRank = degrk;
     opts.DegreeGroup = group;
+    if showTorsionWarning and instance(group, Module) and not isFreeModule group
+    then ( showTorsionWarning = false; printerr "Warning: computations over rings with torsion grading groups are experimental" );
     if not member(opts.Join, {null, true, false}) then error "expected Join option to be true, false, or null";
     -- if opts.Join =!= false then (
     --	if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
