@@ -41,3 +41,10 @@ assert Equation(take(P, 20), {2, 3, 5, 7, 11, 13, 17, 19})
 assert Equation(toList iterator {1, 2, 3}, {1, 2, 3})
 assert Equation(toList iterator (1, 2, 3), {1, 2, 3})
 assert Equation(toList iterator "foo", {"f", "o", "o"})
+
+assert Equation(toList join(iterator {1, 2}, iterator {3, 4}, iterator {5, 6}),
+    {1, 2, 3, 4, 5, 6})
+assert Equation(toList join(iterator {1, 2}, (3, 4), {5, 6}),
+    {1, 2, 3, 4, 5, 6})
+assert Equation(toList(iterator {1, 2, 3} | iterator {4, 5, 6}),
+    {1, 2, 3, 4, 5, 6})
