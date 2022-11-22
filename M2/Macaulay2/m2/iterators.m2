@@ -59,3 +59,5 @@ joinIterators = a -> (
 		    i = i + 1;
 		    if i >= n then return StopIteration);
 		r))))
+
+Iterator | Iterator := (x, y) -> joinIterators(x, y)
