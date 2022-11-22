@@ -345,22 +345,31 @@ degreesMonoid List := memoize lookup(degreesMonoid, List)
 -----------------------------------------------------------------------------
 
 checkHeft = (degs, heftvec) -> all(degs, d -> sum apply(d, heftvec, times) > 0)
+-- vector that zeros the torsion part of the degrees
+-- TODO: what should happen when there are zero-divisors that are not torsion?
+-- compare with freeComponents and torsionComponents in basis.m2
+zeroTorsion = (degrk, G) -> if instance(G, Module) then apply(numgens G,
+    i -> if QQ ** G_{i} == 0 then 0 else 1) else toList(degrk : 1)
 
-findHeft = method(Options => { DegreeRank => null }, TypicalValue => List )
+findHeft = method(Options => { DegreeRank => null, DegreeGroup => null }, TypicalValue => List )
 findHeft List := opts -> degs -> (
     -- this function is adapted from one written by Greg Smith;
     -- it appears in the FourierMotzkin package documentation
     -- we return null if no heft vector exists
     degrk := opts.DegreeRank;
+    group := opts.DegreeGroup;
     if not isListOfListsOfIntegers degs   then error "findHeft: expected a list of lists of integers";
     if degrk === null then (
 	if #degs > 0 then degrk = #degs#0 else error "findHeft: expected either a degree list or DegreeRank");
     if not instance(degrk, ZZ)            then error "findHeft: expected option DegreeRank to be an integer";
     if not all(degs, d -> #d === degrk)   then error("findHeft: expected all degrees to be of length ", degrk);
     --
-     if #degs === 0 then return toList(degrk : 1);
+    ones := zeroTorsion(degrk, group);
+    if group =!= null then degs = apply(degs, deg -> apply(#deg, i -> deg_i * ones_i));
+    if #degs === 0 then return ones;
      if degrk === 0 then return null;
      if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
+    -- TODO: should this heuristic look at other degree components also?
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
      if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
     -- TODO: should FourierMotzkin become preloaded?
@@ -378,14 +387,14 @@ findHeft List := opts -> degs -> (
 -- helpers for monoid
 -----------------------------------------------------------------------------
 
-processHeft = (degrk, degs, heftvec, inverses) -> (
+processHeft = (degrk, degs, group, heftvec, inverses) -> (
      if inverses then return null;
     if heftvec =!= null then (
 	if not isListOfIntegers heftvec then error "expected Heft option to be a list of integers";
 	if #heftvec > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	if #heftvec < degrk then heftvec = join(heftvec, degrk - #heftvec : 0));
     if heftvec =!= null and checkHeft(degs, heftvec)
-    then heftvec else findHeft(DegreeRank => degrk, degs))
+    then heftvec else findHeft(degs, DegreeRank => degrk, DegreeGroup => group))
 
 -----------------------------------------------------------------------------
 
@@ -460,7 +469,7 @@ setMonoidOptions = opts -> (
     opts.Variables = processVars(opts.Variables, opts.VariableBaseName);
     (degs, degrk, group) := processDegrees(
 	opts.Degrees, opts.DegreeRank, opts.DegreeGroup, n := #opts.Variables);
-    opts.Heft = processHeft(degrk, degs, opts.Heft, opts.Inverses);
+    opts.Heft = processHeft(degrk, degs, group, opts.Heft, opts.Inverses);
     opts.Degrees = degs;
     opts.DegreeRank = degrk;
     opts.DegreeGroup = group;
@@ -632,6 +641,7 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
 	  (degs,degrk,group) := processDegrees(opts.Degrees, opts.DegreeRank, opts.DegreeGroup, length opts.Variables);
 	  opts.Degrees = degs;
 	  opts.DegreeRank = degrk;
+	  opts.DegreeGroup = group;
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;
 	  if opts.DegreeLift === null then opts.DegreeLift = Mopts.DegreeLift;
 	  );
@@ -641,7 +651,7 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
 	  opts.Inverses = Mopts.Inverses;
 	  )
      else opts.Inverses = opts.Inverses;
-     opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft,opts.Inverses);
+    opts.Heft = processHeft(opts.DegreeRank, opts.Degrees, opts.DegreeGroup, opts.Heft, opts.Inverses);
      wfix := (M,w,bump) -> (
 	  if class w === Option then w = {w};
 	  apply(w, o -> monoidIndex(M,o#0) + bump => monoidIndex(M,o#1) + bump));

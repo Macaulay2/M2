@@ -57,6 +57,14 @@ assert(degreeGroup A == G)
 assert(degree A_{3,0,0} == {0,3})
 assert(heft A == {0,1})
 
+-- test heft vectors in presence of torsion degree groups
+assert(heft(monoid[x,y, DegreeGroup => coker matrix"0;1", Degrees => {2:{ 1, 1}}]) == { 1, 0})
+assert(heft(monoid[x,y, DegreeGroup => coker matrix"0;1", Degrees => {2:{ 1,-1}}]) == { 1, 0})
+assert(heft(monoid[x,y, DegreeGroup => coker matrix"0;1", Degrees => {2:{-1, 1}}]) == {-1, 0})
+assert(heft(monoid[x,y, DegreeGroup => coker matrix"1;0", Degrees => {2:{ 1, 1}}]) == { 0, 1})
+assert(heft(monoid[x,y, DegreeGroup => coker matrix"1;0", Degrees => {2:{ 1,-1}}]) == { 0,-1})
+assert(heft(monoid[x,y, DegreeGroup => coker matrix"1;0", Degrees => {2:{-1, 1}}]) == { 0, 1})
+
 --- tensor of monoids with torsion
 B = A ** A
 assert(degreeGroup B == G ++ G)
