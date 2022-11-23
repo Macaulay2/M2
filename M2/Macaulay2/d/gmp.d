@@ -530,14 +530,14 @@ export not(y:ZZ) : ZZ := (
     not(x, y);
     moveToZZandclear(x));
 
-base := 10;
-toCstring(x:ZZ) ::= getstr(charstarOrNull(null()), base, x);
+toCstring(x:ZZ, base:int) ::= getstr(charstarOrNull(null()), base, x);
 
-export tostring(x:ZZ):string := (
-     cstr := toCstring(x);
+export tostring(x:ZZ, base:int):string := (
+     cstr := toCstring(x, base);
      ret := tostring(cstr);
      Ccode(void,"mp_free_str(", cstr, ")");
      ret);
+export tostring(x:ZZ):string := tostring(x, 10);
 
 export (x:int) + (y:ZZ) : ZZ := toInteger(x) + y;
 
