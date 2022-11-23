@@ -75,6 +75,9 @@ y(123, 2^63)
 
 assert( powermod(5,(3331333-1)*20000,3331333) == 1 )
 
+for b from 2 to 62 do assert(changeBase("10101", b, b) == "10101")
+assert(changeBase("0xdeadbeef", 0) == 0xdeadbeef)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test integer.out"
