@@ -151,7 +151,7 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 	    ) else if compTable#SAGBIoptions#SubductionMethod == "Engine" then (
     	    subductedPart = subductionEngineLevelLeadTerm(compTable, liftedM);
 	    ) else (
-	    error ("unknown SubductionMethod " | toString compTable#SAGBIoptions#SubductionMethod | ", expected \"Top\" or \"Engine\""); 
+	    error ("unknown SubductionMethod " | toString compTable#SAGBIoptions#SubductionMethod | ", expected \"Top\" or \"Engine\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'"); 
 	    );
 	leadTermSubductedPart = leadTerm subductedPart;
 	result = result + leadTermSubductedPart;
@@ -324,7 +324,7 @@ updateComputation(HashTable) := (compTable) -> (
 	) else if compTable#SAGBIoptions#Strategy == "Incremental" then (
 	updateComputationIncremental(compTable);
 	) else (
-	error("unknown Strategy, expected \"Master\", \"DegreeByDegree\", or \"Incremental\"");
+	error("unknown Strategy, expected \"Master\", \"DegreeByDegree\", or \"Incremental\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'");
 	);
     )
 
