@@ -275,6 +275,8 @@ set(x:ZZmutable, n:int  ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
 set(x:ZZmutable, n:uint ) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 set(x:ZZmutable, n:long ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
 set(x:ZZmutable, n:ulong) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
+set(x:ZZmutable, s:charstar, base:int):int := Ccode(
+    int, "mpz_set_str(", x, ", ", s, ", ", base, ")");
 
 negsmall := -100;
 possmall := 300;
@@ -334,6 +336,14 @@ export toInteger(i:uint16_t):ZZ := toInteger(uint(i));
 -- longs are at least 32 bits, so cast 32-bit fixed-width ints to long
 export toInteger(i:int32_t ):ZZ := toInteger(long(i));
 export toInteger(i:uint32_t):ZZ := toInteger(ulong(i));
+
+export toInteger(s:charstar, base:int):ZZorNull := (
+    x := newZZmutable();
+    if set(x, s, base) == 0
+    then ZZorNull(moveToZZandclear(x))
+    else (
+	clear(x);
+	ZZorNull(null())));
 
 neg(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_neg(", x, ",", y, ")" );
 
