@@ -672,7 +672,6 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  "left hand side of assignment inappropriate"));
 export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
-     is s:StartDictionary do bind(s.body,dictionary)
      is i:IfThen do (
 	  bind(i.predicate,dictionary);
 	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);

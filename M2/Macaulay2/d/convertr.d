@@ -133,11 +133,6 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
 
 export convert(e:ParseTree):Code := (
      when e
-     is s:StartDictionary do (
-	  if s.dictionary.framesize != 0
-	  then Code(newLocalFrameCode(s.dictionary.frameID,s.dictionary.framesize,convert(s.body)))
-	  else convert(s.body)
-	  )
      is w:For do Code(
 	  forCode(
 	       convert(w.inClause), convert(w.fromClause), convert(w.toClause),
