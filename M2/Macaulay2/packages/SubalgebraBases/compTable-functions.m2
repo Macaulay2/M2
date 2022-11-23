@@ -119,7 +119,7 @@ compSubduction = method(
 	Recompute => false,
 	RenewOptions => false
     	}
-);
+    );
 
 compSubduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
     new MutableMatrix from compSubduction(compTable, matrix M)
@@ -151,7 +151,7 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 	    ) else if compTable#SAGBIoptions#SubductionMethod == "Engine" then (
     	    subductedPart = subductionEngineLevelLeadTerm(compTable, liftedM);
 	    ) else (
-	    error ("Unknown subduction type " | toString compTable#SAGBIoptions#SubductionMethod); 
+	    error ("unknown SubductionMethod " | toString compTable#SAGBIoptions#SubductionMethod | ", expected \"Top\" or \"Engine\""); 
 	    );
 	leadTermSubductedPart = leadTerm subductedPart;
 	result = result + leadTermSubductedPart;
@@ -160,7 +160,7 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 	if compTable#SAGBIoptions#PrintLevel > 5 then(
 	    print("-- [compSubduction] result so far:");
 	    print(transpose result);
-	    print("--[compSubduction] remaining to subduct:");
+	    print("-- [compSubduction] remaining to subduct:");
 	    print(transpose liftedM);
 	    );
 	);
@@ -317,17 +317,14 @@ autosubduceSagbi (HashTable) := (compTable) -> (
 
 updateComputation = method();
 updateComputation(HashTable) := (compTable) -> (
-    
     if compTable#SAGBIoptions#Strategy == "Master" then (
 	updateComputationMaster(compTable);
-	);
-    
-    if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
+	) else if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
 	updateComputationDegreeByDegree(compTable);
-	);
-    
-    if compTable#SAGBIoptions#Strategy == "Incremental" then (
+	) else if compTable#SAGBIoptions#Strategy == "Incremental" then (
 	updateComputationIncremental(compTable);
+	) else (
+	error("unknown Strategy, expected \"Master\", \"DegreeByDegree\", or \"Incremental\"");
 	);
     )
 
