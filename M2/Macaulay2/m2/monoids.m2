@@ -8,7 +8,7 @@ needs "shared.m2" -- for tensor
 needs "variables.m2"
 
 -- TODO:
--- 1. implement a free monoid M whose degrees have torsion
+-- 1. implement a free monoid M whose degrees have torsion [done]
 -- 2. implement the degrees ring of M as a quotient ring (optional?)
 -- 3. implement the degrees monoid of M as a monoid with relations (optional?)
 
@@ -62,11 +62,18 @@ ZZ  ? MonoidElement := (n, x) -> n_(class x) ? x
 ZZ  * MonoidElement := (i, x) -> x  * i
 ZZ == MonoidElement := (i, m) -> m == i
 
+-- TODO: would skipping the the free module check make this slower?
+-- TODO: make new G from vector deg do this in the engine?
+reduceDegree = (G, deg) -> if isFreeModule G then deg else entries sum(deg, (super G)_*, times)
+
 -- TODO: move to engine
 degree MonoidElement := m -> (
-    degs := degrees(M := class m);
-    if m == 1 then toList(degreeLength M : 0) else
-    sum(rawSparseListFormMonomial raw m, (k, e) -> e * degs#k))
+    degrk := degreeLength(M := class m);
+    if m == 1 then return toList(degrk : 0);
+    degs := degrees M;
+    reduceDegree(M.degreeGroup,
+	sum(rawSparseListFormMonomial raw m,
+	    (k, e) -> e * degs#k)))
 
 baseName MonoidElement := m -> if #(s := rawSparseListFormMonomial raw m) == 1 and s#0#1 == 1
     then (class m).generatorSymbols#(s#0#0) else error "expected a generator"
@@ -174,6 +181,10 @@ numgens    Monoid := M -> if M.?numgens then M.numgens else 0
 options    Monoid := M -> if M.?Options then M.Options
 generators Monoid := o -> lookup(vars, Monoid)
 
+-- TODO: neither Matrix nor Module are defined yet
+degreeGroup = method()
+degreeGroup  Ring   :=
+degreeGroup  Monoid := M -> if M.?degreeGroup  then M.degreeGroup  else 0
 degrees      Monoid := M -> if (o := options M).?Degrees then o.Degrees else {}
 degreeLength Monoid := M -> if M.?degreeLength then M.degreeLength      else 0
 
@@ -225,6 +236,7 @@ monoidDefaults = new OptionTable from {
     DegreeLift  => null,		-- a degree lifting map from the monoid ring to the coeff ring. Gives an error if lifting is not possible
     DegreeMap   => null -* identity *-,	-- the degree map to use, if Join=>false is specified, for converting degrees in the coeff ring to degrees in the monoid ring
     DegreeRank  => null,		-- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
+    DegreeGroup => null,		-- a ZZ-module representing the degree group of the ring
     Heft        => null -* find one *-,	-- an integer vector whose dot product with the degrees of all variables is positive
     Join        => null -* true *-,	-- whether the degrees in the monoid ring are given by joining the degree of the coefficient with the degree of the monomial
     --
@@ -259,7 +271,7 @@ monoid Array := opts -> args -> (
 
 isDefault = (opts, key) -> (opts#key === monoidDefaults#key
 -- TODO: uncomment more lines to adjust which default options are shown
-    or key == DegreeRank    and        opts#key ==   1
+    or key == DegreeGroup   and isFreeModule opts#key
 --    or key == Degrees       and unique opts#key == {{1}}
 --    or key == Heft          and unique opts#key ==  {1}
     or key == MonomialOrder and opts#key === new VerticalList from {
@@ -271,7 +283,7 @@ monoidParts = M -> (
     G := if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions;
     D := runLengthEncode if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / (deg -> VerticalList deg);
     L := nonnull splice ( G, if not isDefault(opts, Degrees) then Degrees => D,
-	apply(( Heft, MonomialOrder, DegreeRank, WeylAlgebra, SkewCommutative, Inverses, Global ),
+	apply(( DegreeGroup, Heft, Join, MonomialOrder, WeylAlgebra, SkewCommutative, Inverses, Local, Global ),
 	    key -> if opts#?key and not isDefault(opts, key) then key => rle opts#key)))
 
 expressionMonoid = M -> (
@@ -292,6 +304,8 @@ texMath  Monoid :=  texMath @@ expression
 Monoid#{Standard,AfterPrint} = M -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
     << toString class M;
+    if not isFreeModule degreeGroup M
+    then << ", with torsion degree group";
     -- TODO: print whether M is ordered, a free algebra, etc.
     << endl;
     )
@@ -331,22 +345,31 @@ degreesMonoid List := memoize lookup(degreesMonoid, List)
 -----------------------------------------------------------------------------
 
 checkHeft = (degs, heftvec) -> all(degs, d -> sum apply(d, heftvec, times) > 0)
+-- vector that zeros the torsion part of the degrees
+-- TODO: what should happen when there are zero-divisors that are not torsion?
+-- compare with freeComponents and torsionComponents in basis.m2
+zeroTorsion = (degrk, G) -> if instance(G, Module) then apply(numgens G,
+    i -> if QQ ** G_{i} == 0 then 0 else 1) else toList(degrk : 1)
 
-findHeft = method(Options => { DegreeRank => null }, TypicalValue => List )
+findHeft = method(Options => { DegreeRank => null, DegreeGroup => null }, TypicalValue => List )
 findHeft List := opts -> degs -> (
     -- this function is adapted from one written by Greg Smith;
     -- it appears in the FourierMotzkin package documentation
     -- we return null if no heft vector exists
     degrk := opts.DegreeRank;
+    group := opts.DegreeGroup;
     if not isListOfListsOfIntegers degs   then error "findHeft: expected a list of lists of integers";
     if degrk === null then (
 	if #degs > 0 then degrk = #degs#0 else error "findHeft: expected either a degree list or DegreeRank");
     if not instance(degrk, ZZ)            then error "findHeft: expected option DegreeRank to be an integer";
     if not all(degs, d -> #d === degrk)   then error("findHeft: expected all degrees to be of length ", degrk);
     --
-     if #degs === 0 then return toList(degrk : 1);
+    ones := zeroTorsion(degrk, group);
+    if group =!= null then degs = apply(degs, deg -> apply(#deg, i -> deg_i * ones_i));
+    if #degs === 0 then return ones;
      if degrk === 0 then return null;
      if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
+    -- TODO: should this heuristic look at other degree components also?
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
      if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
     -- TODO: should FourierMotzkin become preloaded?
@@ -364,32 +387,46 @@ findHeft List := opts -> degs -> (
 -- helpers for monoid
 -----------------------------------------------------------------------------
 
-processHeft = (degrk, degs, heftvec, inverses) -> (
+processHeft = (degrk, degs, group, heftvec, inverses) -> (
      if inverses then return null;
     if heftvec =!= null then (
 	if not isListOfIntegers heftvec then error "expected Heft option to be a list of integers";
 	if #heftvec > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	if #heftvec < degrk then heftvec = join(heftvec, degrk - #heftvec : 0));
     if heftvec =!= null and checkHeft(degs, heftvec)
-    then heftvec else findHeft(DegreeRank => degrk, degs))
+    then heftvec else findHeft(degs, DegreeRank => degrk, DegreeGroup => group))
 
 -----------------------------------------------------------------------------
 
 diagonalDegrees = (degrk, nvars) -> table(nvars, degrk,
     (i, j) -> if j === i or i >= degrk and j === degrk-1 then 1 else 0)
 
-processDegrees = (degs, degrk, nvars) -> (
+processDegrees = (degs, degrk, group, nvars) -> (
     if not (degrk === null or instance(degrk, ZZ) and degrk >= 0)
     then error("expected DegreeRank option to be a non-negative integer");
-    if degs === null then (
-	if degrk =!= null then diagonalDegrees(degrk, nvars) else (degrk = 1; apply(nvars, i -> {1})), degrk)
-    else if instance(degs, List) then (
+    if not (group === null or instance(group, Module) and ring group === ZZ)
+    then error "expected DegreeGroup option to be a ZZ-module";
+    -- read the degrees from the generators of the degree group
+    if degs === null then degs = (
+	if group =!= null then
+	if nvars === numgens group then generators group
+	else diagonalDegrees(rank ambient group, nvars)
+	else diagonalDegrees(if degrk === null then 1 else degrk, nvars));
+    -- read the degrees from (the columns of) a map of ZZ-modules
+    if instance(degs, Matrix) then (
+	if group === null then group = target degs;
+	if degrk === null then degrk = numRows degs;
+	degs = entries transpose matrix degs);
+    -- sanity checks
+    if instance(degs, List) then (
 	degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
 	degrk = if degrk =!= null then degrk else if degs#?0 then #degs#0 else 1; -- so that degreeLength monoid[] = 1
+	group = if group =!= null then group else ZZ^degrk;
 	if not #degs === nvars                          then error "expected as many degrees as there are variables";
 	if not isListOfListsOfIntegers degs             then error "expected each degree to be an integer or list of integers";
 	if degs#?0 and unique(length \ degs) != {degrk} then error("expected all degrees to have length ", degrk);
-	(degs, degrk))
+	if degrk != rank ambient group                  then error "expected all degrees to be in the degree group";
+	(degs, degrk, group))
     else error "expected Degrees option to be list of degrees")
 
 -----------------------------------------------------------------------------
@@ -436,15 +473,21 @@ processWeyl := weylvars -> (
 
 -----------------------------------------------------------------------------
 
+-- one-time warning for torsion grading groups; to be removed soon
+showTorsionWarning = true
+
 -- check the options for consistency, and set everything to the correct defaults
 setMonoidOptions = opts -> (
     opts = new MutableHashTable from opts;
     opts.Variables = processVars(opts.Variables, opts.VariableBaseName);
-    (degs, degrk) := processDegrees(
-	opts.Degrees, opts.DegreeRank, n := #opts.Variables);
-    opts.Heft = processHeft(degrk, degs, opts.Heft, opts.Inverses);
+    (degs, degrk, group) := processDegrees(
+	opts.Degrees, opts.DegreeRank, opts.DegreeGroup, n := #opts.Variables);
+    opts.Heft = processHeft(degrk, degs, group, opts.Heft, opts.Inverses);
     opts.Degrees = degs;
     opts.DegreeRank = degrk;
+    opts.DegreeGroup = group;
+    if showTorsionWarning and instance(group, Module) and not isFreeModule group
+    then ( showTorsionWarning = false; printerr "Warning: computations over rings with torsion grading groups are experimental" );
     if not member(opts.Join, {null, true, false}) then error "expected Join option to be true, false, or null";
     -- if opts.Join =!= false then (
     --	if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
@@ -471,6 +514,7 @@ newMonoid = opts -> (
     M.Engine = true; -- used in quotring.m2 and res.m2
     --
     varlist := baseName       \ opts.Variables;
+    group   := M.degreeGroup  = opts.DegreeGroup;
     degrk   := M.degreeLength = opts.DegreeRank;
     degs    := M.degrees      = opts.Degrees;
     nvars   := M.numgens      = #varlist;
@@ -577,6 +621,8 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      if instance(opts.Degrees,List) then opts.Degrees = spliceInside opts.Degrees;
      if opts.Join === null then opts.Join = Mopts.Join;
+     if opts.Degrees === null and opts.DegreeRank === null and opts.DegreeGroup === null then opts.DegreeGroup = (
+	 if opts.Join === false then Mopts.DegreeGroup else Mopts.DegreeGroup ++ Nopts.DegreeGroup);
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
@@ -607,9 +653,10 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
 	       )
 	  else error "tensor: expected Join option to be true, false, or null")
      else (
-     	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);
+	  (degs,degrk,group) := processDegrees(opts.Degrees, opts.DegreeRank, opts.DegreeGroup, length opts.Variables);
 	  opts.Degrees = degs;
 	  opts.DegreeRank = degrk;
+	  opts.DegreeGroup = group;
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;
 	  if opts.DegreeLift === null then opts.DegreeLift = Mopts.DegreeLift;
 	  );
@@ -619,7 +666,7 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
 	  opts.Inverses = Mopts.Inverses;
 	  )
      else opts.Inverses = opts.Inverses;
-     opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft,opts.Inverses);
+    opts.Heft = processHeft(opts.DegreeRank, opts.Degrees, opts.DegreeGroup, opts.Heft, opts.Inverses);
      wfix := (M,w,bump) -> (
 	  if class w === Option then w = {w};
 	  apply(w, o -> monoidIndex(M,o#0) + bump => monoidIndex(M,o#1) + bump));

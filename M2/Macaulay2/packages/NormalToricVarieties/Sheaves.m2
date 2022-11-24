@@ -7,13 +7,12 @@ ring NormalToricVariety := PolynomialRing => (
     	if isDegenerate X then 
       	    error "-- not yet implemented for degenerate varieties";
     	if not isFreeModule classGroup X then 
-      	    error "-- gradings by torsion groups not yet implemented";
+	    printerr "Warning: computations over Cox rings with torsion grading groups are experimental";
     	-- constructing ring
     	K := X.cache.CoefficientRing;	  
     	x := X.cache.Variable;	  
     	n := #rays X;
-    	deg := entries transpose matrix fromWDivToCl X;
-    	S := K (monoid [x_0..x_(n-1), Degrees => deg]);
+	S := K (monoid [x_0..x_(n-1), Degrees => fromWDivToCl X]);
     	S.variety = X;
     	S 
 	)

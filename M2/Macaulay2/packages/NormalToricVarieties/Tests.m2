@@ -284,6 +284,7 @@ assert all (entries transpose ( (fromCDivToWDiv X) * (nefGenerators X // fromCDi
 assert isEffective X_0
 assert not isCartier X_0
 K = toricDivisor X;
+assert(set monomials(-K) === set first entries basis(degree(-K), ring X))
 assert isCartier K
 assert not isNef K
 Y = makeSimplicial X;

@@ -221,7 +221,7 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
        error "expected coefficient ring handled by the engine";
    varSymbols := findSymbols toSequence varList;
    if #varSymbols == 0 then error "Expected at least one variable.";
-   (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length varSymbols);
+   (degs,degrk,group) := processDegrees( opts.Degrees, opts.DegreeRank, null -* opts.DegreeGroup *-, length varSymbols);
    -- now check correctness of weights, flatten them
    wtvecs := combineWeightsAndDegree(#varSymbols, opts.Weights, degs);
    heftvec := if opts.Heft =!= null then opts.Heft
