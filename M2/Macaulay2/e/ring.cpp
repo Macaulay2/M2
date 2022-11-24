@@ -98,14 +98,15 @@ ring_elem Ring::var(int v) const
   return zeroV;
 }
 
-/// @brief Exponentiation. This is the default function, if a class doesn't define this.
+/// @brief Exponentiation. This is the default function, if a class doesn't
+/// define this.
 //
 //  The method used is successive squaring.
 //  Which classes actually use this?
 ring_elem Ring::power(const ring_elem gg, mpz_srcptr m) const
 {
   ring_elem ff = gg;
-  int cmp = mpz_sgn(m); // the sign of m, <0, ==0, >0
+  int cmp = mpz_sgn(m);  // the sign of m, <0, ==0, >0
   if (cmp == 0) return one();
   mpz_t n;
   mpz_init_set(n, m);
@@ -119,11 +120,12 @@ ring_elem Ring::power(const ring_elem gg, mpz_srcptr m) const
   mpz_t n;
   if (cmp < 0)
     mpz_neg(n, n);
-#endif  
+#endif
   if (cmp < 0)
     {
       mpz_neg(n, n);
-      ff = invert(ff); // this can raise an exception, in which case we need to free n.
+      ff = invert(
+          ff);  // this can raise an exception, in which case we need to free n.
       if (is_zero(ff))
         {
           ERROR(
@@ -187,10 +189,7 @@ ring_elem Ring::power(const ring_elem gg, int n) const
           prod = tmp;
         }
       n >>= 1;
-      if (n == 0)
-        {
-          return prod;
-        }
+      if (n == 0) { return prod; }
       else
         {
           tmp = mult(base, base);
@@ -200,8 +199,11 @@ ring_elem Ring::power(const ring_elem gg, int n) const
 }
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const { f = mult(f, g); }
-void Ring::add_to(ring_elem &f, ring_elem &g) const { f = add(f, g); }
-void Ring::subtract_to(ring_elem &f, ring_elem &g) const { f = subtract(f, g); }
+void Ring::add_to(ring_elem &f, const ring_elem &g) const { f = add(f, g); }
+void Ring::subtract_to(ring_elem &f, const ring_elem &g) const
+{
+  f = subtract(f, g);
+}
 void Ring::negate_to(ring_elem &f) const { f = negate(f); }
 ring_elem Ring::remainder(const ring_elem f, const ring_elem g) const
 {
@@ -248,8 +250,8 @@ bool Ring::from_BigReal(gmp_RR z, ring_elem &result) const
 
 bool Ring::from_Interval(gmp_RRi z, ring_elem &result) const
 {
-   result = from_long(0);
-   return false;
+  result = from_long(0);
+  return false;
 }
 
 bool Ring::from_double(double a, ring_elem &result) const

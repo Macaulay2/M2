@@ -137,6 +137,7 @@ export {
 	"DivideConquer",
 	"DocumentTag",
 	"Down",
+	"Dynamic",
 	"EXAMPLE",
 	"Eliminate",
 	"Email",
