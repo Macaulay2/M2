@@ -146,10 +146,9 @@ export ArrayParseTree := array(ParseTree);
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
-export StartDictionary := {+dictionary:Dictionary, body:ParseTree};
 export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
+     or EmptyParentheses or IfThen or IfThenElse
      or Quote or GlobalQuote or ThreadQuote or LocalQuote
      or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
