@@ -286,14 +286,14 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 
 export getIterator(e:Expr):Expr := (
     f := lookup(Class(e), getGlobalVariable(iteratorS));
-    if f == notfoundE
-    then nullE
+    when f
+    is Nothing do nullE
     else applyEE(f, e));
 
 export getNextFunction(e:Expr):Expr := (
     f := lookup(Class(e), getGlobalVariable(nextS));
-    if f == notfoundE
-    then nullE
+    when f
+    is Nothing do nullE
     else f);
 
 export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
