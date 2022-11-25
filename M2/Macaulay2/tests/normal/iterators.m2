@@ -48,3 +48,6 @@ assert Equation(toList join(iterator {1, 2}, (3, 4), {5, 6}),
     {1, 2, 3, 4, 5, 6})
 assert Equation(toList(iterator {1, 2, 3} | iterator {4, 5, 6}),
     {1, 2, 3, 4, 5, 6})
+assert Equation(join({1, 2, 3}, iterator {4, 5, 6}), {1, 2, 3, 4, 5, 6})
+assert Equation(join((1, 2, 3), iterator {4, 5, 6}), (1, 2, 3, 4, 5, 6))
+assert Equation(join([1, 2, 3], iterator {4, 5, 6}), [1, 2, 3, 4, 5, 6])
