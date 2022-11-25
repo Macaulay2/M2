@@ -1117,7 +1117,7 @@ sqrt(a:Expr):Expr := (
      else WrongArgRR());
 setupfun("sqrt",sqrt).Protected=false;
 
-toSequence(e:Expr):Expr := (
+export toSequence(e:Expr):Expr := (
      when e
      is Sequence do e
      is b:List do (
