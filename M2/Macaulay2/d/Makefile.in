@@ -87,6 +87,9 @@ clean::; rm -f distributed-packages.h
 actors4.o actors2.o : ../../include/M2/config.h
 
 ifeq "$(DEPENDS)" "yes"
+# We include all the files twice, once in reverse order.  Example: "include a b c d d c b a"
+# The reason for this is that some versions of gnu make build the needed files in reverse order, and some build in forward order.
+# (Compare version 4.3 to version 4.4)
 include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(M2_DFILES) $(shell ../util/echoout -r $(M2_DFILES))))
 endif
 
