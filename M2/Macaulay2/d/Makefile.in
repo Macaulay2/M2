@@ -87,7 +87,7 @@ clean::; rm -f distributed-packages.h
 actors4.o actors2.o : ../../include/M2/config.h
 
 ifeq "$(DEPENDS)" "yes"
-include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(shell ../util/echoout -r $(M2_DFILES))))
+include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(M2_DFILES) $(shell ../util/echoout -r $(M2_DFILES))))
 endif
 
 .SUFFIXES: .d .sig .dep .res .test .m2
