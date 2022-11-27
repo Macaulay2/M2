@@ -52,7 +52,7 @@ cmake-appleclang:
 	cd builds.tmp/cmake-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix`" \
+		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix libffi`;`brew --prefix`" \
 		-DBUILD_NATIVE=off \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
@@ -63,7 +63,7 @@ cmake-debug-appleclang:
 	cd builds.tmp/cmake-debug-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=Debug \
-		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix`" \
+		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix libffi`;`brew --prefix`" \
 		-DBUILD_NATIVE=off \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
