@@ -524,6 +524,7 @@ export {
 	"ceiling",
 	"centerString",
 	"chainComplex",
+	"changeBase",
 	"char",
 	"characters",
 	"check",
