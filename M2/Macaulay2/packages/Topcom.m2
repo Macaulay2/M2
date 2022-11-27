@@ -34,7 +34,7 @@ export {
     "topcomFlips",
     "topcomNumFlips", 
     "topcomIsRegularTriangulation",
-    "topcomRegularTriangulationWeights", -- change name?
+    "topcomRegularTriangulationWeights",
     "topcomRegularFineTriangulation",
     "topcomIsTriangulation",
 
@@ -338,8 +338,7 @@ Description
     of this software.
 
     The package is meant as an internal package, to be called by
-    packages such as @TO "Polyhedra::Polyhedra"@ and @TO
-    "Triangulations::Triangulations"@.  It is {\it highly} recommended
+    packages such as @TO "Polyhedra::Polyhedra"@.  It is highly recommended
     to use those packages, rather than calling this package directly.
   Text
     @SUBSECTION "Example use of Topcom"@
@@ -397,6 +396,10 @@ Headline
   interface to selected functions from topcom package
 Description
   Text
+    Topcom is software written by Jorg Rambau which has very good support for computing
+    the triangulations of a point set (or, regular triangulations, fine triangulations, and
+        triangulations which are connected to regular triangulations via bistellar flips).
+    
     Given a matrix $A$ (say of size $d \times n$), the columns represent points in $d$-space, and each
     point is labelled by its column index ($0, 1, \ldots, n-1$). Topcom appears to assume that
     the points are not contained in a hyperplane.  In this case, their convex hull is full dimensional
@@ -443,6 +446,13 @@ Description
     topcomNumTriangulations(sq, Fine => true)
     Ts = topcomAllTriangulations(sq, Fine => true);    
     netList Ts
+SeeAlso
+  (topcomIsTriangulation, Matrix, List)
+  (topcomIsRegularTriangulation, Matrix, List)
+  (topcomRegularFineTriangulation, Matrix)
+  (topcomAllTriangulations, Matrix)
+  (topcomNumTriangulations, Matrix)
+  (topcomRegularTriangulationWeights, Matrix, List)
 ///
 
 doc ///
@@ -514,16 +524,17 @@ doc ///
   Description
     Text
       This function constructs all triangulations of the point set corresponding to $A$
-      (or triangulation of the cone over $A$, if {\tt Homogenize => false} is given.
+      (or triangulation of the cone over $A$, if {\tt Homogenize => false} is given).
       With no optional arguments, the default is to construct all regular triangulations.
       
-      A triangulation is a list of list of the indices of the maximal simplices in the triangulation.
-      (the index of the point corresponding to the $i$-th column (starting at $0$) is simply $i$.
+      A triangulation is a list of lists of the indices of the maximal simplices in the triangulation.
+      (the index of the point corresponding to the $i$-th column (starting at $0$) is simply $i$).
       
       For example, the following point set is the smallest which has a non-regular triangulation.
+      Note that @TO (topcomAllTriangulations, Matrix)@ only generates all the regular triangulations.
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
-      Ts = topcomAllTriangulations A
+      Ts = topcomAllTriangulations A;
       #Ts == 16
       netList Ts
       tri = Ts#0
@@ -532,9 +543,10 @@ doc ///
       topcomRegularTriangulationWeights(A, tri)
     Text
       The following code determines the support of each triangulation, and tallies them.
-      Thus for example, we see that there are 6 regular fine triangulations.
+      Thus for example, we see that there are 6 regular fine triangulations (fine means that all of the
+      points are begin used).
     Example
-      for tri in Ts list sort unique flatten tri
+      tally for tri in Ts list sort unique flatten tri
     Text
       The method that topcom uses depends on the optional arguments {\tt Fine}, {\tt ConnectedToRegular}
       and {\tt RegularOnly}. 
@@ -557,7 +569,7 @@ doc ///
       #T1s
       #T2s
     Text
-      The following search would also yield all triangulations, even those not connected via
+      The following search yields {\bf all} triangulations, even those not connected via
       bistellar flips to regular triangulations.
     Example
       T3s = topcomAllTriangulations(A, RegularOnly => false, ConnectedToRegular => false)
@@ -570,9 +582,15 @@ doc ///
       for tri in Ts list topcomIsTriangulation(A, tri)
       for tri in Ts list topcomIsRegularTriangulation(A, tri)
       for tri in Ts list topcomRegularTriangulationWeights(A, tri)
+  Caveat
+    With no optional arguments, this function returns all {\bf regular} triangulations, not {\bf all}
+    triangulations!
   SeeAlso
     (topcomNumTriangulations, Matrix)
-    "Triangulations::generateTriangulations"
+    topcomIsTriangulation
+    topcomIsRegularTriangulation
+    topcomRegularTriangulationWeights
+    topcomNumTriangulations
 ///
 
 doc ///
@@ -756,11 +774,28 @@ doc ///
     :List
   Description
     Text
+      An oriented circuit is determined by a linear relationship on the columns of 
+      (the augmented matrix of) $A$, of minimal support.  The circuit is the pair of lists
+      of indices of the columns where the coefficients is positive (respectively negative).
+    Example
+      A = matrix {
+          {0, -1, 2, 3, 4, -5, 6}, 
+          {0, 1, -4, 9, 16, 25, 36}, 
+          {0, 1, 8, -27, 64, 125, -216}}
+      om = naiveChirotopeString A
+      netList orientedCircuits om
+    Text
+      Let's look at the linear relation giving rise to $\{\{0,3\}, \{ 2, 5, 6\}\}$.
+    Example
+      Ahomog = A || matrix{{7:1}}
+      Ahomog_{0,3,2,5,6}
+      syz oo
   SeeAlso
-    chirotopeString
+    (chirotopeString, Matrix)
     orientedCocircuits
 ///
 
+-- TODO: not finished.
 doc ///
   Key
     orientedCocircuits
@@ -787,10 +822,12 @@ doc ///
     orientedCircuits
 ///
 
+-- TODO: not finished.
 doc ///
   Key
     (topcomIsTriangulation, Matrix, List)
     topcomIsTriangulation
+    [topcomIsTriangulation, Homogenize]
   Headline
     determine if a set of subsets is a triangulation of a point set
   Usage
@@ -798,6 +835,7 @@ doc ///
   Inputs
     A:Matrix
     tri:List
+    Homogenize => Boolean
   Outputs
     :Boolean
   Description
@@ -806,6 +844,7 @@ doc ///
     topcom doesn't check that the subsets given are simplices, so we do that
     directly.
   SeeAlso
+    (topcomIsRegularTriangulation, Matrix, List)
 ///
 
 doc ///
@@ -825,9 +864,31 @@ doc ///
     :List
   Description
     Text
+      If the given triangulation is regular, this returns the corresponding list of weights.
+      If we lift each point to this height (hieights can be negative too), then the
+      lower convex hull of these lifted points is the given triangulation.  This can be checked
+      via the routine @TO "Polyhedra::regularSubdivision"@ in the package @TO "Polyhedra"@.
+    Example
+      A = matrix {
+          {0, -1, 2, 3, 4, -5, 6}, 
+          {0, 1, -4, 9, 16, 25, 36}, 
+          {0, 1, 8, -27, 64, 125, -216}}
+      Ts = topcomAllTriangulations A;
+      #Ts == 25
+      netList Ts
+      Ts/(tri -> topcomIsRegularTriangulation(A, tri))
+      weights = topcomRegularTriangulationWeights(A, Ts#0)
+      needsPackage "Polyhedra"
+      Ts#0
+      tri0 = regularSubdivision(A, matrix{weights})
+      tri0 = tri0//sort/sort
+      assert(tri0 == Ts#0)
   SeeAlso
+    (topcomIsRegularTriangulation, Matrix, List)
+    "Polyhedra::regularSubdivision"
 ///
 
+-- TODO: not finished.
 doc ///
   Key
     (topcomFlips, Matrix, List)
@@ -859,6 +920,7 @@ doc ///
     (topcomNumFlips, Matrix, List)
 ///
 
+-- TODO: not finished.
 doc ///
   Key
     (topcomNumFlips, Matrix, List)
