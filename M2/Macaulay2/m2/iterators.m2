@@ -43,3 +43,21 @@ select(Thing, Function) := Iterator => {} >> o -> (X, f) -> (
 	    if not instance(y, Boolean)
 	    then error("select: expected predicate to yield true or false");
 	    if y then return x)))
+
+joinIterators = a -> (
+    n := #a;
+    iters := iterator \ a;
+    i := 0;
+    Iterator(
+	() -> (
+	    if i >= n then StopIteration
+	    else (
+		while (
+		    r := next iters#i;
+		    r === StopIteration)
+		do (
+		    i = i + 1;
+		    if i >= n then return StopIteration);
+		r))))
+
+Iterator | Iterator := (x, y) -> joinIterators(x, y)

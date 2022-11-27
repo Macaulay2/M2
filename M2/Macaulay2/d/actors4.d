@@ -3,6 +3,7 @@
 use getline;
 use actors;
 use actors2;
+use actors3;
 use struct;
 use pthread;
 use regex;
@@ -1128,31 +1129,48 @@ denfun(e:Expr):Expr := (
      else WrongArg("a rational number"));
 setupfun("denominator",denfun);
 
+join(a:Sequence):Expr := (
+     newlen := 0;
+     foreach x at i in a do (
+	  when x
+	  is b:Sequence do (newlen = newlen + length(b);)
+	  is c:List do (newlen = newlen + length(c.v);)
+	  else (
+	      -- if x is iterable, convert it to a sequence
+	      r := toSequence(x);
+	      when r
+	      is b:Sequence do (
+		  newlen = newlen + length(b);
+		  a.i = b)
+	      is err:Error do return buildErrorPacket(
+		  "while converting argument " + tostring(i + 1) +
+		  " to a sequence, the following error occurred: " +
+		  err.message)
+	      else return buildErrorPacket(
+		  "unknown error converting argument " + tostring(i + 1) +
+		  " to a sequence")));
+     z := new Sequence len newlen do (
+	  foreach x in a do (
+	       when x
+	       is b:Sequence do foreach y in b do provide y
+	       is c:List do foreach y in c.v do provide y
+	       else nothing;
+	       ));
+     when a.0
+     is Sequence do Expr(z)
+     is c:List do list(c.Class,z,c.Mutable)
+     else nullE			    -- shouldn't happen anyway
+     );
+
 join(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  n := length(a);
 	  if n == 0 then return e;
-	  newlen := 0;
-	  foreach x in a do (
-	       when x
-	       is b:Sequence do (newlen = newlen + length(b);)
-	       is c:List do (newlen = newlen + length(c.v);)
-	       else return WrongArg("lists or sequences");
-	       );
-	  z := new Sequence len newlen do (
-	       foreach x in a do (
-		    when x
-		    is b:Sequence do foreach y in b do provide y
-		    is c:List do foreach y in c.v do provide y
-		    else nothing;
-		    );
-	       );
 	  when a.0
-	  is Sequence do Expr(z)
-	  is c:List do list(c.Class,z,c.Mutable)
-	  else nullE			  -- shouldn't happen anyway
-	  )
+	  is Sequence do join(a)
+	  is List do join(a)
+	  else applyEE(getGlobalVariable(joinIteratorsS), e))
      is c:List do if c.Mutable then Expr(copy(c)) else e
      else WrongArg("lists or sequences"));
 setupfun("join",join);
