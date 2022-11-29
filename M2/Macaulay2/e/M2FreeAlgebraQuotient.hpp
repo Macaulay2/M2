@@ -88,8 +88,8 @@ public:
                                               const ring_elem f) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual bool multi_degree(const ring_elem f, int *d) const;
+  virtual void degree(const ring_elem f, monomial d) const;
+  virtual bool multi_degree(const ring_elem f, monomial d) const;
 
   virtual SumCollector *make_SumCollector() const;
 
@@ -99,7 +99,7 @@ public:
 
   // returns true if f is homogeneous, and sets already_allocated_degree_vector
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
-  virtual bool multi_degree(const Poly* f, int *already_allocated_degree_vector) const;
+  virtual bool multi_degree(const Poly* f, monomial already_allocated_degree_vector) const;
   
   // lead coefficient, monomials and terms.
   ring_elem lead_coefficient(const Ring* coeffRing, const Poly* f) const;

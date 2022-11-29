@@ -118,8 +118,8 @@ class res_comp : public ResolutionComputation
   int compare_type;
 
   res_pair *elem(int lev, int n) const { return resn[lev]->elems[n]; }
-  int find_ring_divisor(const int *exp, ring_elem &result) const;
-  int find_divisor(const int *exp, res_pair *&result) const;
+  int find_ring_divisor(const_exponents exp, ring_elem &result) const;
+  int find_divisor(const_exponents exp, res_pair *&result) const;
   res_pair *reduce(resterm *&f, resterm *&fsyz, resterm *&pivot);
   res_pair *reduce_level_one(resterm *&f, resterm *&fsyz, resterm *&pivot);
   void reduce_gen(resterm *&f) const;
@@ -147,7 +147,7 @@ class res_comp : public ResolutionComputation
   void set_compare_nums(int level, int deg);
 
   int degree(const res_pair *q) const;
-  void multi_degree(const res_pair *q, int *result) const;
+  void multi_degree(const res_pair *q, monomial result) const;
 
   res_degree *make_degree_set(int level, int deg);
   res_degree *get_degree_set(int level, int d) const;

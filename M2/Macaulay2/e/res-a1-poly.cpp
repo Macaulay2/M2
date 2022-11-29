@@ -259,7 +259,7 @@ vec res_poly::to_vector(const resterm *f,
                         int /*to_minimal*/) const
 {
   vecHeap H(F);
-  int *mon = M->make_one();
+  monomial mon = M->make_one();
   for (const resterm *tm = f; tm != NULL; tm = tm->next)
     {
       //    int x = (to_minimal ? tm->comp->minimal_me : tm->comp->me);

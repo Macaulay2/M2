@@ -207,7 +207,7 @@ Monomial *RingElement::lead_monom(int nvars) const
       intarray resultvp;
       Nterm *t = get_value();
 
-      int *exp = newarray_atomic(int, nvars);
+      exponents_t exp = newarray_atomic(int, nvars);
       P->lead_logical_exponents(nvars, t, exp);
       varpower::from_ntuple(nvars, exp, resultvp);
       return Monomial::make(resultvp.raw());

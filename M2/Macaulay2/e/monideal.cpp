@@ -15,12 +15,15 @@
 //   MonomialIdeal: engine object which is interned, and the monomial ideal is deleted on finalization.
 // Memory layout for this data structure?
 #include "monideal.hpp"
-#include "monoid.hpp"
-#include "text-io.hpp"
 
-#include "debug.hpp"
 #include <iostream>
 #include <algorithm>
+
+#include "ExponentVector.hpp"
+#include "debug.hpp"
+#include "monoid.hpp"
+#include "text-io.hpp"
+#include "varpower.hpp"
 
 unsigned int MonomialIdeal::computeHashValue() const
 {
@@ -30,7 +33,7 @@ unsigned int MonomialIdeal::computeHashValue() const
   for (Bag& b : *this)
     {
       if (count >= 5) break;
-      const int *m = b.monom().raw();
+      const_varpower m = b.monom().raw();
       hashval = 4436435 * hashval + varpower::computeHashValue(m);
       count++;
     }
@@ -171,12 +174,12 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
     }
 }
 
-const int *MonomialIdeal::first_elem() const
+const_varpower MonomialIdeal::first_elem() const
 {
   return first_node()->monom().raw();
 }
 
-const int *MonomialIdeal::second_elem() const
+const_varpower MonomialIdeal::second_elem() const
 {
   return next(first_node())->monom().raw();
 }
@@ -198,8 +201,8 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
   Iterator sentinel = end();
   while (i != sentinel)
     {
-      const int *m = (*i).monom().raw();
-      const int *n = (*j).monom().raw();
+      const_varpower m = (*i).monom().raw();
+      const_varpower n = (*j).monom().raw();
       if (!varpower::is_equal(m, n)) return false;
       i++;
       j++;
@@ -208,7 +211,7 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
   return true;
 }
 
-int MonomialIdeal::search_expvector(const int *exp, Bag *&b) const
+int MonomialIdeal::search_expvector(const_exponents exp, Bag *&b) const
 {
   if (mi == nullptr) return 0;
 
@@ -240,7 +243,7 @@ int MonomialIdeal::search_expvector(const int *exp, Bag *&b) const
     }
 }
 
-void MonomialIdeal::find_all_divisors(const int *exp, VECTOR(Bag *)& b) const
+void MonomialIdeal::find_all_divisors(const_exponents exp, VECTOR(Bag *)& b) const
 {
   b.clear();
   if (mi == nullptr) return;
@@ -272,12 +275,11 @@ void MonomialIdeal::find_all_divisors(const int *exp, VECTOR(Bag *)& b) const
     }
 }
 
-int MonomialIdeal::search(const int *m, Bag *&b) const
+int MonomialIdeal::search(const_varpower m, Bag *&b) const
 {
-  int* exp = ARRAY_ON_STACK(int, get_ring()->n_vars());
+  exponents_t exp = ARRAY_ON_STACK(int, get_ring()->n_vars());
   varpower::to_ntuple(get_ring()->n_vars(), m, exp);
-  int result = search_expvector(exp, b);
-  return result;
+  return search_expvector(exp, b);
 }
 
 Nmi_node *MonomialIdeal::next(Nmi_node *p) const
@@ -623,7 +625,7 @@ int MonomialIdeal::insert(Bag *b)
 // monomial was actually inserted.
 {
   Bag *old_b;
-  const int *m = b->monom().raw();
+  const_varpower m = b->monom().raw();
 
   if (search(m, old_b))
     {
@@ -651,10 +653,10 @@ void MonomialIdeal::text_out(buffer &o) const
       o << "1";
       return;
     }
-  int *m = M->make_one();
+  monomial m = M->make_one();
   for (Bag& j : *this)
     {
-      const int *n = j.monom().raw();
+      const_varpower n = j.monom().raw();
       M->from_varpower(n, m);
       M->elem_text_out(o, m);
       if (M2_gbTrace > 0) o << '(' << j.basis_elem() << ")";
@@ -691,7 +693,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
   return result;
 }
 
-MonomialIdeal *MonomialIdeal::intersect(const int *m) const
+MonomialIdeal *MonomialIdeal::intersect(const_varpower m) const
 // Compute (this : m), where m is a varpower monomial.
 {
   VECTOR(Bag*) new_elems;
@@ -756,7 +758,7 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
   return result;
 }
 
-MonomialIdeal *MonomialIdeal::quotient(const int *m) const
+MonomialIdeal *MonomialIdeal::quotient(const_varpower m) const
 // Compute (this : m), where m is a varpower monomial.
 {
   VECTOR(Bag*) new_elems;
@@ -802,7 +804,7 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
 
 static MonomialIdeal *varpower_monideal(const PolynomialRing *R,
                                         const M2_arrayint top,
-                                        const int *vp)
+                                        const_varpower vp)
 {
   // If m is a varpower monomial, xi1^a1 ... xin^an, create the monomial ideal
   // (xi1^(top[i1]+1-a1), ..., xin^(top[in]+1-an))
@@ -850,7 +852,7 @@ MonomialIdeal *MonomialIdeal::alexander_dual(const M2_arrayint a) const
   return result;
 }
 
-MonomialIdeal *MonomialIdeal::erase(const int *m) const
+MonomialIdeal *MonomialIdeal::erase(const_varpower m) const
 {
   debug_check();
   VECTOR(Bag*) new_elems;
@@ -915,7 +917,7 @@ MonomialIdeal *MonomialIdeal::radical() const
   return result;
 }
 
-static void borel1(VECTOR(Bag *) &result, int *m, int loc, int nvars)
+static void borel1(VECTOR(Bag *) &result, exponents_t m, int loc, int nvars)
 {
   if (loc == 0)
     {
@@ -941,7 +943,7 @@ MonomialIdeal *MonomialIdeal::borel() const
 // Return the smallest borel monomial ideal containing 'this'.
 {
   VECTOR(Bag *) new_elems;
-  int *bexp = newarray_atomic(int, get_ring()->n_vars());
+  exponents_t bexp = newarray_atomic(int, get_ring()->n_vars());
   for (Bag& b : *this)
     {
       varpower::to_ntuple(get_ring()->n_vars(), b.monom().raw(), bexp);
@@ -954,7 +956,7 @@ MonomialIdeal *MonomialIdeal::borel() const
 
 bool MonomialIdeal::is_borel() const
 {
-  int *bexp = newarray_atomic(int, get_ring()->n_vars());
+  exponents_t bexp = newarray_atomic(int, get_ring()->n_vars());
   for (Bag& b : *this)
     {
       Bag *c;
@@ -989,7 +991,7 @@ int MonomialIdeal::n_pure_powers() const
   int v, e;
   for (Bag& b : *this)
     {
-      int *m = b.monom().raw();
+      const_varpower m = b.monom().raw();
       if (varpower::is_pure_power(m, v, e)) npure++;
     }
   return npure;

@@ -9,6 +9,7 @@
 #  include "error.h"         // for ERROR
 #  include "exceptions.hpp"  // for engine_error
 #  include "hash.hpp"        // for MutableEngineObject
+#  include "monoid.hpp"
 #  include "newdelete.hpp"   // for our_new_delete
 #  include "ringelem.hpp"    // for ring_elem, vec, vecterm (ptr only), Nter...
 
@@ -436,12 +437,12 @@ class Ring : public MutableEngineObject
   virtual int index_of_var(const ring_elem a) const;
   virtual M2_arrayint support(const ring_elem a) const;
 
-  virtual void monomial_divisor(const ring_elem a, int *exp) const;
+  virtual void monomial_divisor(const ring_elem a, exponents_t exp) const;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
-  virtual ring_elem divide_by_expvector(const int *exp,
+  virtual ring_elem divide_by_expvector(const_exponents exp,
                                         const ring_elem a) const;
 
   virtual ring_elem homogenize(const ring_elem f,
@@ -453,8 +454,8 @@ class Ring : public MutableEngineObject
   // Routines expecting a grading.  The default implementation
   // is that the only degree is 0.
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual bool multi_degree(const ring_elem f, int *d) const;
+  virtual void degree(const ring_elem f, monomial d) const;
+  virtual bool multi_degree(const ring_elem f, monomial d) const;
   // returns true iff f is homogeneous
   virtual void degree_weights(const ring_elem f,
                               M2_arrayint wts,
@@ -559,17 +560,16 @@ class Ring : public MutableEngineObject
   int vec_in_subring(int n, const vec v) const;
   void vec_degree_of_var(int n, const vec v, int &lo, int &hi) const;
   vec vec_divide_by_var(int n, int d, const vec v) const;
-  vec vec_divide_by_expvector(const int *exp, const vec v) const;
+  vec vec_divide_by_expvector(const_exponents exp, const vec v) const;
 
   // Some divisibility routines
   bool vec_is_scalar_multiple(vec f, vec g)
       const;  // is cf = dg, some scalars c,d? (not both zero).
   vec vec_remove_monomial_factors(vec f, bool make_squarefree_only) const;
 
-  bool vec_multi_degree(const FreeModule *F, const vec f, int *degf) const;
+  bool vec_multi_degree(const FreeModule *F, const vec f, monomial degf) const;
   // returns true iff f is homogeneous
 
-  void vec_degree(const FreeModule *F, const vec f, int *d) const;
   void vec_degree_weights(const FreeModule *F,
                           const vec f,
                           M2_arrayint wts,

@@ -267,9 +267,9 @@ void GB_comp::find_pairs(gb_elem *p)
 {
   VECTOR(Bag *) elems;
   intarray vplcm;
-  int *find_pairs_m = _M->make_one();
-  int *f_m = _M->make_one();
-  int *find_pairs_exp = newarray_atomic(int, _M->n_vars());
+  monomial find_pairs_m = _M->make_one();
+  monomial f_m = _M->make_one();
+  exponents_t find_pairs_exp = newarray_atomic(int, _M->n_vars());
   int *find_pairs_lcm = newarray_atomic(int, _M->n_vars());
 
   _GR->gbvector_get_lead_monomial(_F, p->f, f_m);
@@ -374,7 +374,7 @@ void GB_comp::compute_s_pair(s_pair *p)
 {
   if (p->f == NULL)
     {
-      int *s = _M->make_one();
+      monomial s = _M->make_one();
       _M->divide(p->lcm, p->first->f->monom, s);
 
       _GR->gbvector_mult_by_term(
@@ -397,7 +397,7 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, _M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, _M->n_vars());
   int count = 0;
   if (M2_gbTrace == 10)
     {
@@ -464,7 +464,7 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, _M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, _M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(_GR, _F);
@@ -556,7 +556,7 @@ void GB_comp::flush_pairs(int deg)
 
 void GB_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 {
-  int *f_m = _M->make_one();
+  monomial f_m = _M->make_one();
   gb_elem *p = new gb_elem(f, fsyz, ismin);
 
   _GR->gbvector_get_lead_monomial(_F, p->f, f_m);

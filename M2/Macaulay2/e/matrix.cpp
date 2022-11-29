@@ -29,12 +29,12 @@
 
 Matrix::Matrix(const FreeModule *rows0,
                const FreeModule *cols0,
-               const int *degree_shift0,
+               const_monomial degree_shift0,
                VECTOR(vec) & entries0)
 {
   mTarget = const_cast<FreeModule *>(rows0);
   mSource = const_cast<FreeModule *>(cols0);
-  mDegreeShift = const_cast<int *>(degree_shift0);
+  mDegreeShift = const_cast<monomial>(degree_shift0);
   for (int i = 0; i < cols0->rank(); i++) mEntries.push_back(entries0[i]);
 }
 
@@ -118,7 +118,7 @@ const Matrix /* or null */ *Matrix::make(const FreeModule *target,
         }
     }
 
-  int *degshift = R->degree_monoid()->make_one();
+  monomial degshift = R->degree_monoid()->make_one();
   R->degree_monoid()->from_expvector(deg->array, degshift);
   MatrixConstructor mat(target, source, degshift);
 
@@ -212,7 +212,7 @@ const Matrix /* or null */ *Matrix::make_sparse(
 #warning "check that all rings are correct, give error otherwise"
 #endif
   const Ring *R = target->get_ring();
-  int *degshift = R->degree_monoid()->make_one();
+  monomial degshift = R->degree_monoid()->make_one();
   R->degree_monoid()->from_expvector(deg->array, degshift);
 
   MatrixConstructor mat(target, source, degshift);
@@ -245,7 +245,7 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target,
       return nullptr;
     }
 
-  int *degshift = R->degree_monoid()->make_one();
+  monomial degshift = R->degree_monoid()->make_one();
   R->degree_monoid()->from_expvector(deg->array, degshift);
   MatrixConstructor mat(target, source, degshift);
   for (int i = 0; i < source->rank(); i++)
@@ -283,7 +283,7 @@ const Matrix /* or null */ *Matrix::make(const MonomialIdeal *mi)
       return nullptr;
     }
   const Monoid *M = P->getMonoid();
-  int *mon = M->make_one();
+  monomial mon = M->make_one();
 
   MatrixConstructor mat(P->make_FreeModule(1), mi->size());
   int next = 0;
@@ -327,7 +327,7 @@ bool Matrix::is_zero() const
 bool Matrix::is_homogeneous() const
 {
   if (!get_ring()->is_graded()) return 0;
-  int *d = degree_monoid()->make_one();
+  monomial d = degree_monoid()->make_one();
   for (int i = 0; i < n_cols(); i++)
     {
       if (elem(i) == nullptr) continue;
@@ -337,7 +337,7 @@ bool Matrix::is_homogeneous() const
           return 0;
         }
 
-      get_ring()->vec_degree(rows(), elem(i), d);
+      get_ring()->vec_multi_degree(rows(), elem(i), d);
       degree_monoid()->divide(d, degree_shift(), d);
       if (0 != degree_monoid()->compare(d, cols()->degree(i)))
         {
@@ -394,7 +394,7 @@ Matrix *Matrix::operator+(const Matrix &m) const
   const Ring *R = get_ring();
   const FreeModule *F = rows();
   const FreeModule *G = cols();
-  const int *deg;
+  const_monomial deg;
 
   if (!rows()->is_equal(m.rows())) F = R->make_FreeModule(n_rows());
 
@@ -432,7 +432,7 @@ Matrix *Matrix::operator-(const Matrix &m) const
   const Ring *R = get_ring();
   const FreeModule *F = rows();
   const FreeModule *G = cols();
-  const int *deg;
+  const_monomial deg;
 
   if (!rows()->is_equal(m.rows())) F = R->make_FreeModule(n_rows());
 
@@ -566,7 +566,7 @@ Matrix *Matrix::transpose() const
 Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
 {
   const Ring *R = get_ring();
-  int *deg = degree_monoid()->make_one();
+  monomial deg = degree_monoid()->make_one();
   if (!R->is_zero(r)) R->degree(r, deg);
   degree_monoid()->mult(deg, degree_shift(), deg);
   MatrixConstructor mat(rows(), cols(), deg);
@@ -611,7 +611,7 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
     }
 
   // direct_sum ignores the degree shift of each summand.
-  /// const int *deg;
+  /// const_monomial deg;
   ///  if (EQ == degree_monoid()->compare(degree_shift(), m->degree_shift()))
   ///    deg = degree_shift();
   ///  else
@@ -645,7 +645,7 @@ Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
       return nullptr;
     }
 
-  int *deg = degree_monoid()->make_new(degree_shift());
+  monomial deg = degree_monoid()->make_new(degree_shift());
   degree_monoid()->mult(deg, m->degree_shift(), deg);
 
   MatrixConstructor mat(rows(), m->cols(), deg);
@@ -751,7 +751,7 @@ Matrix *Matrix::tensor(const Matrix *m) const
 
   const FreeModule *F = rows()->tensor(m->rows());
   const FreeModule *G = cols()->tensor(m->cols());
-  int *deg = degree_monoid()->make_new(degree_shift());
+  monomial deg = degree_monoid()->make_new(degree_shift());
   degree_monoid()->mult(deg, m->degree_shift(), deg);
 
   MatrixConstructor mat(F, G, deg);
@@ -781,7 +781,7 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   const FreeModule *F = F1->tensor(m->rows());
   FreeModule *G1 = cols()->transpose();
   const FreeModule *G = G1->tensor(m->cols());
-  int *deg = degree_monoid()->make_one();
+  monomial deg = degree_monoid()->make_one();
   degree_monoid()->divide(m->degree_shift(), degree_shift(), deg);
   freemem(F1);
   freemem(G1);
@@ -885,8 +885,8 @@ M2_arrayintOrNull Matrix::support() const
   {
     int n = R->n_vars();
     int nsupp = 0;
-    int *exp = newarray_atomic(int, R->n_vars());
-    int *exp2 = newarray_atomic(int, R->n_vars());
+    exponents_t exp = newarray_atomic(int, R->n_vars());
+    exponents_t exp2 = newarray_atomic(int, R->n_vars());
     for (int i = 0; i < R->n_vars(); i++) exp[i] = exp2[i] = 0;
     for (int j = 0; j < n_cols(); j++)
       for (vec v = elem(j); v != nullptr; v = v->next)
@@ -1106,7 +1106,7 @@ static MonomialIdeal *makemonideal(const Matrix *A)
   MonomialIdeal *result = new MonomialIdeal(P, new_elems);
   return result;
 }
-static int signdivide(int n, const int *a, const int *b, int *exp)
+static int signdivide(int n, const_exponents a, const_exponents b, exponents_t exp)
 {
   int sign = 0;
   int sum = 0;
@@ -1150,12 +1150,12 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
   for (int j = 0; j < nskew; j++) skew_list[j] = j;
   SkewMultiplication skew(nvars, nskew, skew_list);
   int ncols = c->n_cols();
-  const int *a;  // a monomial
+  const_monomial a;
 
-  int *aexp = newarray_atomic(int, nvars);
-  int *bexp = newarray_atomic(int, nvars);
-  int *result_exp = newarray_atomic(int, nvars);
-  int *m = M->make_one();
+  exponents_t aexp = newarray_atomic(int, nvars);
+  exponents_t bexp = newarray_atomic(int, nvars);
+  exponents_t result_exp = newarray_atomic(int, nvars);
+  monomial m = M->make_one();
   VECTOR(Bag *) divisors;
   for (int i = 0; i < ncols; i++)
     {
@@ -1202,10 +1202,10 @@ Matrix /* or null */ *Matrix::koszul(const Matrix *r, const Matrix *c)
   int nvars = M->n_vars();
   int nrows = r->n_cols();
   int ncols = c->n_cols();
-  const int *a, *b;  // monomials
-  int *aexp = newarray_atomic(int, nvars);
-  int *bexp = newarray_atomic(int, nvars);
-  int *result_exp = newarray_atomic(int, nvars);
+  const_monomial a, b;
+  exponents_t aexp = newarray_atomic(int, nvars);
+  exponents_t bexp = newarray_atomic(int, nvars);
+  exponents_t result_exp = newarray_atomic(int, nvars);
   for (int i = 0; i < ncols; i++)
     {
       if (c->elem(i) == nullptr) continue;
@@ -1219,7 +1219,7 @@ Matrix /* or null */ *Matrix::koszul(const Matrix *r, const Matrix *c)
           int sign = signdivide(nvars, aexp, bexp, result_exp);
           if (sign != 0)
             {
-              int *m = M->make_one();
+              monomial m = M->make_one();
               M->from_expvector(result_exp, m);
               ring_elem s = (sign > 0 ? K->one() : K->minus_one());
               ring_elem f = P->make_flat_term(s, m);
@@ -1698,8 +1698,8 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
       }
 
   // Now collect all of the monomials
-  int *mon = M->make_one();
-  int *exp = newarray_atomic(int, M->n_vars());
+  monomial mon = M->make_one();
+  exponents_t exp = newarray_atomic(int, M->n_vars());
   ring_elem one = K->from_long(1);
   exponent_table *E =
       exponent_table_new(50000, vars->len + 1);  // the +1 is for the component
@@ -1711,7 +1711,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
         {
           for (Nterm *t = v->coeff; t != nullptr; t = t->next)
             {
-              int *exp1 = newarray_atomic(int, vars->len + 1);
+              exponents_t exp1 = newarray_atomic(int, vars->len + 1);
               M->to_expvector(t->monom, exp);
               for (unsigned int i = 0; i < vars->len; i++)
                 exp1[i] = exp[vars->array[i]];
@@ -1727,7 +1727,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   for (int i = 0; i < nvars; i++) exp[i] = 0;
   for (int i = 0; monoms[i] != 0; i += 2)
     {
-      const int *exp1 = reinterpret_cast<const int *>(monoms[i]);
+      const_exponents exp1 = reinterpret_cast<const_exponents>(monoms[i]);
       for (unsigned int j = 0; j < vars->len; j++)
         exp[vars->array[j]] = exp1[j];
       int x = exp1[vars->len];  // component
@@ -1779,12 +1779,12 @@ static vec coeffs_of_vec(exponent_table *E,
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
   if (P == nullptr) return nullptr;
   const Monoid *M = P->getMonoid();
-  int *mon = M->make_one();
+  monomial mon = M->make_one();
 
   // At this point, we know that we have a polynomial ring
   int nvars = M->n_vars();
-  int *exp = newarray_atomic(int, nvars);
-  int *scratch_exp = newarray_atomic(int, 1 + vars->len);
+  exponents_t exp = newarray_atomic(int, nvars);
+  exponents_t scratch_exp = newarray_atomic(int, 1 + vars->len);
 
   vec result = nullptr;
   for (vec g = f; g != nullptr; g = g->next)
@@ -1855,7 +1855,7 @@ Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars,
               return nullptr;
             }
           ring_elem f = v->coeff;
-          const int *m = P->lead_flat_monomial(f);
+          const_monomial m = P->lead_flat_monomial(f);
           P->getMonoid()->to_expvector(m, EXP);
 
           // grab only that part of the monomial we need

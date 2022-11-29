@@ -3,6 +3,7 @@
 #include "weylalg.hpp"
 #include "gbring.hpp"
 
+#include "ExponentVector.hpp"
 #include "geopoly.hpp"
 #include "text-io.hpp"
 
@@ -54,11 +55,11 @@ bool WeylAlgebra::initialize_weyl(M2_arrayint derivs,
     {
       bool isgraded = true;
       const Monoid *D = degree_monoid();
-      int *degxD = D->make_one();
+      monomial degxD = D->make_one();
       for (int j = 0; j < _nderivatives; j++)
         {
-          const int *degx = M_->degree_of_var(_commutative[j]);
-          const int *degD = M_->degree_of_var(_derivative[j]);
+          const_monomial degx = M_->degree_of_var(_commutative[j]);
+          const_monomial degD = M_->degree_of_var(_derivative[j]);
           D->mult(degx, degD, degxD);
           if (not D->is_one(degxD))
             {
@@ -72,15 +73,15 @@ bool WeylAlgebra::initialize_weyl(M2_arrayint derivs,
     {
       this->setIsGraded(true);
       const Monoid *D = degree_monoid();
-      const int *degh = M_->degree_of_var(_homog_var);
-      int *deg2h = D->make_one();
-      int *degxD = D->make_one();
+      const_monomial degh = M_->degree_of_var(_homog_var);
+      monomial deg2h = D->make_one();
+      monomial degxD = D->make_one();
       D->mult(degh, degh, deg2h);
 
       for (int j = 0; j < _nderivatives; j++)
         {
-          const int *degx = M_->degree_of_var(_commutative[j]);
-          const int *degD = M_->degree_of_var(_derivative[j]);
+          const_monomial degx = M_->degree_of_var(_commutative[j]);
+          const_monomial degD = M_->degree_of_var(_derivative[j]);
           D->mult(degx, degD, degxD);
           if (D->compare(deg2h, degxD) != EQ)
             {
@@ -262,7 +263,7 @@ ring_elem WeylAlgebra::multinomial(ring_elem c,
   return result;
 }
 
-bool WeylAlgebra::divides(const int *expbottom, const int *exptop) const
+bool WeylAlgebra::divides(const_exponents expbottom, const_exponents exptop) const
 {
   for (int i = 0; i < _nderivatives; i++)
     if (expbottom[i] > exptop[i]) return false;
@@ -336,7 +337,7 @@ ring_elem WeylAlgebra::diff_coefficients(const ring_elem c,
 }
 
 Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
-                              const int *expf,  // The exponent vector of f
+                              const_exponents expf,  // The exponent vector of f
                               const int *derivatives,
                               const Nterm *g) const  // An entire polynomial
 {
@@ -354,9 +355,9 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
   Nterm *result = &head;
 
   int i;
-  int *exp = newarray_atomic(int, _nderivatives);
-  int *deriv_exp = newarray_atomic(int, nvars_);
-  int *result_exp = newarray_atomic(int, nvars_);
+  exponents_t exp = newarray_atomic(int, _nderivatives);
+  exponents_t deriv_exp = newarray_atomic(int, nvars_);
+  exponents_t result_exp = newarray_atomic(int, nvars_);
   for (i = 0; i < nvars_; i++) deriv_exp[i] = 0;
   if (_homogeneous_weyl_algebra)
     {
@@ -418,12 +419,12 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
 
 ring_elem WeylAlgebra::mult_by_term(const ring_elem f,
                                     const ring_elem c,
-                                    const int *m) const
+                                    const_monomial m) const
 // Computes c*m*f
 {
   int *top_derivative = newarray_atomic(int, _nderivatives);
   int *current_derivative = newarray_atomic_clear(int, _nderivatives);
-  int *expf = newarray_atomic(int, nvars_);
+  exponents_t expf = newarray_atomic(int, nvars_);
   polyheap result(this);
 
   M_->to_expvector(m, expf);
@@ -456,7 +457,7 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
     GBRing *GR,
     const ring_elem c,  // in K_
     int comp,           // adds this component to each component of g.
-    const int *expf,    // The exponent vector of f
+    const_exponents expf,    // The exponent vector of f
     const int *derivatives,
     const FreeModule
         *F,  // freemodule of g, only needed because of possible Schreyer order
@@ -476,9 +477,9 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
   gbvector *result = &head;
 
   int i;
-  int *exp = newarray_atomic(int, _nderivatives);
-  int *deriv_exp = newarray_atomic_clear(int, nvars_);
-  int *result_exp = newarray_atomic(int, nvars_);
+  exponents_t exp = newarray_atomic(int, _nderivatives);
+  exponents_t deriv_exp = newarray_atomic_clear(int, nvars_);
+  exponents_t result_exp = newarray_atomic(int, nvars_);
   if (_homogeneous_weyl_algebra)
     {
       int sum = 0;
@@ -541,13 +542,13 @@ gbvector *WeylAlgebra::gbvector_mult_by_term(
     gbvectorHeap &result,
     const gbvector *f,
     const ring_elem c,  // in the base K_
-    const int *m,       // monomial, in M_
+    const_monomial m,   // monomial, in M_
     int comp) const     // comp is either 0 or a real component.
 // Computes c*m*f*e_comp  (where components of f and e_comp add).
 {
   int *top_derivative = newarray_atomic(int, _nderivatives);
   int *current_derivative = newarray_atomic_clear(int, _nderivatives);
-  int *expf = newarray_atomic(int, nvars_);
+  exponents_t expf = newarray_atomic(int, nvars_);
 
   GBRing *GR = result.get_gb_ring();
   const FreeModule *F = result.get_freemodule();
@@ -572,7 +573,7 @@ gbvector *WeylAlgebra::gbvector_mult_by_term(
 }
 
 /////////////////
-ring_elem WeylAlgebra::multinomial(const int *exptop, const int *exp) const
+ring_elem WeylAlgebra::multinomial(const_exponents exptop, const_exponents exp) const
 {
   ring_elem result = K_->from_long(1);
   for (int i = 0; i < nvars_; i++)

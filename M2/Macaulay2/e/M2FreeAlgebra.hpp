@@ -44,7 +44,7 @@ public:
 
   virtual ring_elem from_coefficient(const ring_elem a) const = 0;
 
-  virtual ring_elem makeTerm(const ring_elem a, const int* monom) const = 0;
+  virtual ring_elem makeTerm(const ring_elem a, const_varpower monom) const = 0;
 
   // casting functions
   virtual const M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()  const { return this; }
@@ -120,8 +120,8 @@ public:
                                               const ring_elem f) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual bool multi_degree(const ring_elem f, int *d) const;
+  virtual void degree(const ring_elem f, monomial d) const;
+  virtual bool multi_degree(const ring_elem f, monomial d) const;
 
   virtual SumCollector *make_SumCollector() const;
 
@@ -131,7 +131,7 @@ public:
 
   // returns true if f is homogeneous, and sets already_allocated_degree_vector
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
-  virtual bool multi_degree(const Poly* f, int *already_allocated_degree_vector) const;
+  virtual bool multi_degree(const Poly* f, monomial already_allocated_degree_vector) const;
   
   // lead coefficient, monomials and terms.
   ring_elem lead_coefficient(const Ring* coeffRing, const Poly* f) const;
@@ -164,11 +164,9 @@ public:
   void debug_display(const Poly* f) const;
   void debug_display(const ring_elem ff) const;
 
-  ring_elem makeTerm(const ring_elem a, const int* monom) const;
+  ring_elem makeTerm(const ring_elem a, const_varpower monom) const;
 
-  void makeTerm(Poly& result, const ring_elem a, const int* monom) const;
-  // 'monom' is in 'varpower' format
-  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+  void makeTerm(Poly& result, const ring_elem a, const_varpower monom) const;
 };
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,

@@ -90,7 +90,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 {
   int i = codim + 1;
   if (exps[i] == 0) exps[i] = newarray_atomic(int, nvars);
-  int *exp = exps[i];
+  exponents_t exp = exps[i];
   for (int j = 0; j < nvars; j++) exp[j] = exps[codim][j];
   for (;;)
     {

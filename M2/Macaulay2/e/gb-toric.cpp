@@ -84,7 +84,7 @@ void binomial_ring::set_weights(monomial m) const
     }
 }
 
-monomial binomial_ring::make_monomial(int *exp) const
+monomial binomial_ring::make_monomial(const_exponents exp) const
 // Make a monomial from an exponent vector
 {
   monomial result = new_monomial();
@@ -114,7 +114,7 @@ int binomial_ring::weight(monomial m) const
 }
 
 int binomial_ring::degree(monomial m) const { return -m[nvars]; }
-unsigned int binomial_ring::mask(monomial m) const
+unsigned int binomial_ring::mask(const_exponents m) const
 {
   return ntuple::mask(nvars, m);
 }
@@ -416,12 +416,12 @@ bool binomial_ring::calc_s_pair(binomial_s_pair &s, binomial &result) const
   return normalize(result);
 }
 
-void binomial_ring::monomial_out(buffer &o, const monomial m) const
+void binomial_ring::monomial_out(buffer &o, const_exponents m) const
 {
   if (m == NULL) return;
   intarray vp;
   varpower::from_ntuple(nvars, m, vp);
-  int *n = R->getMonoid()->make_one();
+  monomial n = R->getMonoid()->make_one();
   R->getMonoid()->from_varpower(vp.raw(), n);
   R->getMonoid()->elem_text_out(o, n);
   R->getMonoid()->remove(n);

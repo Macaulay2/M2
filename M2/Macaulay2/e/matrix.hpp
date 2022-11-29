@@ -18,8 +18,8 @@ class Matrix : public EngineObject
 {
   FreeModule * mTarget; // _rows;
   FreeModule * mSource; // _cols;
-  int * mDegreeShift; // _degree_shift;  // An element of the degree monoid
-  VECTOR(vec) mEntries; // array<vec> _entries;
+  monomial mDegreeShift; // an element of the degree monoid
+  gc_vector<vec> mEntries;
 
   friend class FreeModule;
 
@@ -27,7 +27,7 @@ class Matrix : public EngineObject
   friend class MatrixConstructor;
   Matrix(const FreeModule *rows,
          const FreeModule *cols,
-         const int *degree_shift,
+         const_monomial degree_shift,
          VECTOR(vec) & entries);
 
   static bool make_sparse_vecs(MatrixConstructor &mat,
@@ -40,11 +40,11 @@ class Matrix : public EngineObject
   // Places the elements into 'mat'.
 
   // These two routines are private to 'coeffs'
-  vec strip_vector(vec &f,
-                   const int *vars,
-                   const FreeModule *F,
-                   vec &vmonom) const;
-  int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
+  // vec strip_vector(vec &f,
+  //                  const int *vars,
+  //                  const FreeModule *F,
+  //                  vec &vmonom) const;
+  // int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
 
  protected:
   virtual unsigned int computeHashValue() const;
@@ -98,7 +98,7 @@ class Matrix : public EngineObject
   int n_rows() const { return rows()->rank(); }
   int n_cols() const { return cols()->rank(); }
   // The degree shift
-  const int *degree_shift() const { return mDegreeShift; }
+  const_monomial degree_shift() const { return mDegreeShift; }
   // to/from monideals
   MonomialIdeal *make_monideal(
       int n,
@@ -138,7 +138,7 @@ class Matrix : public EngineObject
 
   Matrix /* or null */ *symm(int n) const;  // in symm.cpp
 
-  Matrix /* or null */ *coeffs(const int *vars, Matrix *&result_monoms) const;
+  // Matrix /* or null */ *coeffs(const int *vars, Matrix *&result_monoms) const;
 
   Matrix /* or null */ *coeffs(M2_arrayint vars, const Matrix *monoms) const;
 

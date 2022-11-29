@@ -19,7 +19,7 @@ class FreeModule : public EngineObject
   FreeModule(const Ring *R, int n, bool has_schreyer_order);
 
  protected:
-  VECTOR(int *) components;  // Degrees of each component
+  gc_vector<monomial> components;  // Degrees of each component
   SchreyerOrder *schreyer;  // NULL, if not a Schreyer order...
 
   const Ring *R;
@@ -40,19 +40,19 @@ class FreeModule : public EngineObject
   virtual ~FreeModule();
 
  public:
-  void append(const int *d);
-  void append_schreyer(const int *d,
-                       const int *monom,
+  void append(const_monomial d);
+  void append_schreyer(const_monomial d,
+                       const_monomial base_monom,
                        int compare_num);  // append to a Schreyer order.
   // WARNING: change_degree modifies the degree, and should only be used during
   // the construction of a free module (or matrix).
-  void change_degree(int i, const int *deg);
+  void change_degree(int i, const_monomial deg);
 
  public:
   const Ring *get_ring() const { return R; }
   const Monoid *degree_monoid() const { return R->degree_monoid(); }
   const SchreyerOrder *get_schreyer_order() const { return schreyer; }
-  const int *degree(int i) const { return components[i]; }
+  const_monomial degree(int i) const { return components[i]; }
   int rank() const { return components.size(); }
   int primary_degree(int i) const;
 
@@ -62,9 +62,9 @@ class FreeModule : public EngineObject
   FreeModule *sub_space(M2_arrayint a) const;
   FreeModule *transpose() const;
   FreeModule *direct_sum(const FreeModule *G) const;
-  FreeModule *shift(const int *d) const;
+  FreeModule *shift(const_monomial d) const;
   FreeModule *tensor(const FreeModule *G) const;
-  FreeModule *schur(const int *m) const;
+  FreeModule *schur(const_monomial m) const;
   FreeModule *exterior(int p) const;
   FreeModule *symm(int p) const;
 

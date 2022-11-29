@@ -81,8 +81,8 @@ bool Monomial::is_equal(const Monomial &b) const
 
 int Monomial::compare(const Monoid *M, const Monomial &b) const
 {
-  int *monom1 = M->make_one();
-  int *monom2 = M->make_one();
+  monomial monom1 = M->make_one();
+  monomial monom2 = M->make_one();
   M->from_varpower(ints(), monom1);
   M->from_varpower(b.ints(), monom2);
   int result = M->compare(monom1, monom2);
@@ -93,8 +93,8 @@ int Monomial::compare(const Monoid *M, const Monomial &b) const
 
 bool Monomial::divides(const Monoid *M, const Monomial &b) const
 {
-  int *monom1 = M->make_one();
-  int *monom2 = M->make_one();
+  monomial monom1 = M->make_one();
+  monomial monom2 = M->make_one();
   M->from_varpower(ints(), monom1);
   M->from_varpower(b.ints(), monom2);
   bool result = M->divides(monom1, monom2);
