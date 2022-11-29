@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include "scc-core.h"
 
+#ifdef NDEBUG
+#define NVALGRIND 1
+#endif
+
 #include <valgrind/memcheck.h>
 
 #if defined(__cplusplus)
