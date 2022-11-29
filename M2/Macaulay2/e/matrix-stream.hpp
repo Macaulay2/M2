@@ -89,7 +89,7 @@ void matrixToStream(const Matrix* M, T& stream)
   size_t ncols = M->n_cols();
   int charac = static_cast<int>(P->characteristic());
   assert(charac > 0);
-  exponents exp =
+  exponents_t exp =
       ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(nvars));  // allocated on stack
   stream.idealBegin(ncols);
   Matrix::iterator i(M);

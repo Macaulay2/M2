@@ -8,11 +8,11 @@
 #include <assert.h>
 #include <string.h>
 
+#include "ExponentVector.hpp"
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
 #include "interface/monomial-ordering.h"
-#include "ntuple.hpp"
 #include "overflow.hpp"
 #include "polyring.hpp"
 #include "varpower.hpp"
@@ -398,7 +398,7 @@ M2_arrayint Monoid::to_arrayint(const_monomial monom) const
   return result;
 }
 
-void Monoid::to_expvector(const_monomial m, exponents result_exp) const
+void Monoid::to_expvector(const_monomial m, exponents_t result_exp) const
 {
   monomialOrderDecodeToActualExponents(monorder_, m, result_exp);
 }
@@ -524,8 +524,8 @@ bool Monoid::divides_partial_order(const_monomial m, const_monomial n) const
 {
   if (nvars_ == 0) return true;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
   // can we speed this up by not unpacking ??
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
@@ -537,8 +537,8 @@ bool Monoid::divides(const_monomial m, const_monomial n) const
 {
   if (nvars_ == 0) return true;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
   // can we speed this up by not unpacking ??
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
@@ -554,7 +554,7 @@ void Monoid::power(const_monomial m, int n, monomial result) const
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   ntuple::power(nvars_, EXP1, n, EXP1);
   from_expvector(EXP1, result);
@@ -567,8 +567,8 @@ void Monoid::monsyz(const_monomial m,
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
@@ -591,8 +591,8 @@ void Monoid::gcd(const_monomial m, const_monomial n, monomial p) const
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
@@ -604,8 +604,8 @@ void Monoid::lcm(const_monomial m, const_monomial n, monomial p) const
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
@@ -613,19 +613,37 @@ void Monoid::lcm(const_monomial m, const_monomial n, monomial p) const
   from_expvector(EXP1, p);
 }
 
+// TODO: replace buffer and use standard IO
 void Monoid::elem_text_out(buffer &o, const_monomial m, bool p_one) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  ntuple::elem_text_out(o, nvars_, EXP1, varnames_, p_one);
+  int len_ = 0;
+  for (unsigned int v = 0; v < nvars_; v++)
+    if (EXP1[v] != 0)
+      {
+        len_++;
+        if (varnames_->len < v)
+          o << ".";
+        else
+          o << varnames_->array[v];
+        int e = EXP1[v];
+        int single = (varnames_->array[v]->len == 1);
+        if (e > 1 && single)
+          o << e;
+        else if (e > 1)
+          o << "^" << e;
+        else if (e < 0)
+          o << "^(" << e << ")";
+      }
+  if (len_ == 0 && p_one) o << "1";
 }
 
 void Monoid::multi_degree(const_monomial m, monomial result) const
 {
   if (degree_monoid()->n_vars() == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   degree_monoid()->one(result);
   if (nvars_ == 0) return;
@@ -669,7 +687,7 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
 {
   if (nvars_ == 0) return 0;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   int sz = (wts->len < nvars_ ? wts->len : nvars_);
   return ntuple::weight(sz, EXP1, wts);
@@ -680,7 +698,7 @@ T Monoid::degree_weights(const_monomial m, const std::vector<T>& wts) const
 {
   if (nvars_ == 0) return 0;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   int sz = (wts.size() < nvars_ ? wts.size() : nvars_);
   T wt = 0;
@@ -695,9 +713,9 @@ int Monoid::simple_degree(const_monomial m) const
 {
   if (nvars_ == 0) return 0;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  return ntuple::degree(nvars_, EXP1);
+  return ntuple::simple_degree(nvars_, EXP1);
 }
 
 bool Monoid::is_one(const_monomial m) const
@@ -717,7 +735,7 @@ bool Monoid::is_invertible(const_monomial m) const
       return is_one(m);
     }
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   for (int i = 0; i < nvars_; i++)
     if (!monorder_->is_laurent[i] && EXP1[i] > 0) return false;
@@ -726,14 +744,14 @@ bool Monoid::is_invertible(const_monomial m) const
 
 void Monoid::from_varpower(const_varpower vp, monomial result) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   varpower::to_ntuple(nvars_, vp, EXP1);
   from_expvector(EXP1, result);
 }
 
 void Monoid::to_varpower(const_monomial m, intarray &result_vp) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   varpower::from_ntuple(nvars_, EXP1, result_vp);
 }

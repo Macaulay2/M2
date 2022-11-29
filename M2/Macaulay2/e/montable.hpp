@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stddef.h>
 
+#include "ExponentVector.hpp"
 #include "newdelete.hpp"
 #include "style.hpp"
 
@@ -22,18 +23,16 @@
     Is this really an OK idea?
  */
 
-typedef int *exponents;
-
 class MonomialTable : public our_new_delete
 {
   static MonomialTable *make_minimal(int nvars,
-                                     const VECTOR(exponents) & exps,
+                                     const VECTOR(exponents_t) & exps,
                                      const VECTOR(int) & comps,
                                      const VECTOR(int) & vals,
                                      VECTOR(int) & rejects);
 
   static void minimalize(int nvars,
-                         const VECTOR(exponents) & exps,
+                         const VECTOR(exponents_t) & exps,
                          const VECTOR(int) & comps,
                          bool keep_duplicates,
                          VECTOR(int) & result_positions);
@@ -44,7 +43,7 @@ class MonomialTable : public our_new_delete
   {
     mon_term *_next;
     mon_term *_prev;
-    exponents _lead; /* Who owns this? */
+    exponents_t _lead; /* Who owns this? */
     unsigned long _mask;
     int _val;
   };
@@ -55,18 +54,18 @@ class MonomialTable : public our_new_delete
 
   ~MonomialTable();
 
-  void insert(exponents exp, int comp, int id);
+  void insert(exponents_t exp, int comp, int id);
   /* Insert [exp,comp,id] into the table.  If there is already
      an element which is <= [exp,comp], this triple is still
      inserted.  If that is not desired, use find_divisors.
   */
 
-  int find_divisor(exponents exp, int comp);
+  int find_divisor(exponents_t exp, int comp);
   /* returns the integer 'val' of the first divisor of exp*comp found,
      or, returns -1 if none is found. */
 
   int find_divisors(int max,
-                    exponents exp,
+                    exponents_t exp,
                     int comp,
                     VECTOR(mon_term *) *result = 0);
   /* max: the max number of divisors to find.
@@ -74,7 +73,7 @@ class MonomialTable : public our_new_delete
      result: an array of mon_term's.
      return value: length of this array, i.e. the number of matches found */
 
-  mon_term *find_exact(exponents exp, int comp) const;
+  mon_term *find_exact(exponents_t exp, int comp) const;
   /* If this returns non-NULL, it is valid to grab the 'val' field, and/or to
      assign to it.
      All other fields should be considered read only */

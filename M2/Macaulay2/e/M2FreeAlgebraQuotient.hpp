@@ -19,8 +19,6 @@ class RingMap;
 class SumCollector;
 class buffer;
 
-using ExponentVector = int*;
-
 class M2FreeAlgebraQuotient : public M2FreeAlgebraOrQuotient
 {
 private:

@@ -7,6 +7,8 @@
 
 #include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 #include "interface/random.h"
+
+#include "ExponentVector.hpp"
 #include "style.hpp"
 #include "text-io.hpp"
 #include "ring.hpp"
@@ -16,7 +18,6 @@
 #include "monideal.hpp"
 #include "relem.hpp"
 #include "freemod.hpp"
-#include "ntuple.hpp"
 
 #include "exptable.h"
 

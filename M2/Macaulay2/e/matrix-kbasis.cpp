@@ -1,7 +1,7 @@
+#include "ExponentVector.hpp"
 #include "polyring.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
-#include "ntuple.hpp"
 #include "interrupted.hpp"
 
 class KBasis
@@ -348,7 +348,7 @@ static bool all_have_pure_powers(const MonomialIdeal *M, M2_arrayint vars)
 {
   // returns true iff all the variables in vars have some pure power in M
   M2_arrayint lcms = M->lcm();
-  exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(lcms->len));
+  exponents_t exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(lcms->len));
   for (int i = 0; i < lcms->len; i++) exp[i] = 0;
   for (int i = 0; i < vars->len; i++)
     {

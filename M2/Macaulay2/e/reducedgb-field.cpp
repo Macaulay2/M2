@@ -72,7 +72,7 @@ void ReducedGB_Field::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
     {
       Bag *not_used;
       gbvector *f = polys0[*i].f;
-      exponents e = R->exponents_make();
+      exponents_t e = R->exponents_make();
       R->gbvector_get_lead_exponents(F, f, e);
       if ((!Rideal || !Rideal->search_expvector(e, not_used)) &&
           T->find_divisors(1, e, f->comp) == 0)
@@ -103,7 +103,7 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while (!R->gbvector_is_zero(h.f))
     {
       R->gbvector_get_lead_exponents(F, h.f, EXP);
@@ -155,7 +155,7 @@ void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   gbvector *h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while (!R->gbvector_is_zero(h))
     {
       R->gbvector_get_lead_exponents(F, h, EXP);
