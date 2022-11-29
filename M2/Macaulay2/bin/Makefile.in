@@ -61,6 +61,8 @@ M2_LDFLAGS += -Wl,-rpath,@executable_path/../@tail_librariesdir@
 # We also look in the standard place, for system libraries, but based on the prefix
 # given at configure time:
 M2_LDFLAGS += -Wl,-rpath,@executable_path/../@tail_libdir@
+# And the Homebrew library directory:
+M2_LDFLAGS += -Wl,-rpath,$(shell brew --prefix)/lib
 endif
 
 ifeq (@HAVE_WL_X_NOEXECSTACK@,yes)
