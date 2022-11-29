@@ -63,7 +63,6 @@ augment Matrix := (A) -> (
 -- also defined:
 -- isRegularTriangulation T
 -- regularTriangulationWeights T
--- regularSubdivision(M, w) -- fixes bug in Polyhedra?
 -- naiveIsTriangulation T
 
 -- TODO: design decision:
@@ -260,21 +259,6 @@ allTriangulations = method(Options => options topcomAllTriangulations)
 allTriangulations Matrix := List => opts -> A -> (
     tris := topcomAllTriangulations(A, opts);
     for t in tris list triangulation(A, t, Homogenize => opts.Homogenize)
-    )
-
--- TODO: this routine should be submitted to Polyhedra as a bug fix.
-regularSubdivision (Matrix,Matrix) := (M,w) -> (
-    n := numColumns M;
-    M = M ** QQ;
-    -- Checking for input errors
-    if numColumns w != numColumns M or numRows w != 1 then 
-    error("The weight must be a one row matrix with number of points many entries");
-    P := convexHull(M||w,matrix (toList(numRows M:{0})|{{1}}));
-    vertsP := transpose drop(entries (vertices P), -1);
-    LPs := transpose entries M;
-    LPH := hashTable for i from 0 to #LPs - 1 list LPs#i => i;
-    F := select(faces (1,P), f -> #(f#1) == 0);
-    sort apply (F, f -> sort apply(f#0, v -> LPH#(vertsP#v)))
     )
 
 delaunayWeights = method()
