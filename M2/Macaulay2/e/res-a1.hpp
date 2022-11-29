@@ -134,7 +134,7 @@ class res_comp : public ResolutionComputation
 
   void new_pairs(res_pair *p);
 
-  int sort_value(res_pair *p, const int *sort_order) const;
+  int sort_value(res_pair *p, const std::vector<int> sort_order) const;
   int compare_res_pairs(res_pair *f, res_pair *g) const;
   res_pair *merge_res_pairs(res_pair *f, res_pair *g) const;
   void sort_res_pairs(res_pair *&p) const;

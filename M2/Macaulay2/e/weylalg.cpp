@@ -286,35 +286,35 @@ bool WeylAlgebra::increment(int *current_derivative,
   return true;
 }
 
-void WeylAlgebra::extractDerivativePart(const int *exponents,
+void WeylAlgebra::extractDerivativePart(const_exponents exp,
                                         int *result_derivatives) const
 {
-  // exponents: 0..nvars-1
+  // exp: 0..nvars-1
   // result_derivatives: 0.._nderivatives-1 is the result
   for (int i = 0; i < _nderivatives; i++)
-    result_derivatives[i] = exponents[_derivative[i]];
+    result_derivatives[i] = exp[_derivative[i]];
 }
-void WeylAlgebra::extractCommutativePart(const int *exponents,
+void WeylAlgebra::extractCommutativePart(const_exponents exp,
                                          int *result_exp) const
 {
-  // exponents: 0..nvars-1
+  // exp: 0..nvars-1
   // result_exp: 0.._nderivatives-1 is the result
   for (int i = 0; i < _nderivatives; i++)
-    result_exp[i] = exponents[_commutative[i]];
+    result_exp[i] = exp[_commutative[i]];
 }
 
 ring_elem WeylAlgebra::diff_coefficients(const ring_elem c,
                                          const int *derivatives,
-                                         const int *exponents) const
+                                         const_exponents exp) const
 {
   ring_elem result = K_->copy(c);
   for (int i = 0; i < _nderivatives; i++)
     {
       if (derivatives[i] == 0) continue;
-      if (exponents[i] <= diffcoeffstop)
+      if (exp[i] <= diffcoeffstop)
         {
           ring_elem g =
-              K_->from_long(diffcoeffstable[exponents[i]][derivatives[i]]);
+              K_->from_long(diffcoeffstable[exp[i]][derivatives[i]]);
           ring_elem h = K_->mult(result, g);
           K_->remove(g);
           K_->remove(result);
@@ -324,7 +324,7 @@ ring_elem WeylAlgebra::diff_coefficients(const ring_elem c,
       else
         for (int j = derivatives[i] - 1; j >= 0; j--)
           {
-            ring_elem g = K_->from_long(exponents[i] - j);
+            ring_elem g = K_->from_long(exp[i] - j);
             ring_elem h = K_->mult(result, g);
             K_->remove(g);
             K_->remove(result);

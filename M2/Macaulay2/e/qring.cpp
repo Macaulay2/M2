@@ -101,8 +101,8 @@ void QRingInfo_field_basic::reduce_lead_term_basic_field(Nterm *&f,
   ring_elem c = R->getCoefficients()->negate(f->coeff);
   if (R->is_skew_commutative())
     {
-      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
       // We need to determine the sign
       M->to_expvector(g->monom, EXP2);
       M->to_expvector(MONOM1, EXP1);
@@ -120,7 +120,7 @@ void QRingInfo_field_basic::normal_form(ring_elem &f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   const Monoid *M = R->getMonoid();
   Nterm head;
@@ -151,7 +151,7 @@ void QRingInfo_field_basic::normal_form(ring_elem &f) const
 void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F,
                                                  gbvector *&f) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   GBRing *GR = R->get_gb_ring();
   gbvector head;
@@ -194,8 +194,8 @@ void QRingInfo_field_QQ::reduce_lead_term_QQ(Nterm *&f, const Nterm *g) const
   c = globalQQ->RingQQ::divide(c, g->coeff);
   if (R->is_skew_commutative())
     {
-      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
       // We need to determine the sign
       M->to_expvector(g->monom, EXP2);
       M->to_expvector(MONOM1, EXP1);
@@ -213,7 +213,7 @@ void QRingInfo_field_QQ::normal_form(ring_elem &f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   const Monoid *M = R->getMonoid();
   Nterm head;
@@ -244,7 +244,7 @@ void QRingInfo_field_QQ::normal_form(ring_elem &f) const
 void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
                                               gbvector *&f) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   GBRing *GR = R->get_gb_ring();
   gbvector head;
@@ -277,7 +277,7 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
                                               bool use_denom,
                                               ring_elem &denom) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   GBRing *GR = R->get_gb_ring();
   gbvector head;
@@ -363,8 +363,8 @@ bool QRingInfo_ZZ::reduce_lead_term_ZZ(Nterm *&f, const Nterm *g) const
   M->divide(f->monom, g->monom, MONOM1);
   if (R->is_skew_commutative())
     {
-      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
       // We need to determine the sign
       M->to_expvector(g->monom, EXP2);
       M->to_expvector(MONOM1, EXP1);
@@ -385,7 +385,7 @@ void QRingInfo_ZZ::normal_form(ring_elem &f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   const Monoid *M = R->getMonoid();
   Nterm head;
@@ -415,7 +415,7 @@ void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   GBRing *GR = R->get_gb_ring();
   gbvector head;

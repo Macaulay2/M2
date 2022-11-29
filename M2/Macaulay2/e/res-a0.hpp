@@ -198,7 +198,7 @@ class res2_comp : public ResolutionComputation
   void handle_pair_by_level(res2_pair *p);
   void handle_pair_by_degree(res2_pair *p);
 
-  int sort_value(res2_pair *p, const int *sort_order) const;
+  int sort_value(res2_pair *p, const std::vector<int> sort_order) const;
   int compare_res2_pairs(res2_pair *f, res2_pair *g) const;
   res2_pair *merge_res2_pairs(res2_pair *f, res2_pair *g) const;
   void sort_res2_pairs(res2_pair *&p) const;

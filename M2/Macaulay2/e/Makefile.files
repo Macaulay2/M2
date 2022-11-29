@@ -63,7 +63,6 @@ INTERFACE = \
 	f4/monhashtable \
 	monsort \
 	f4/moninfo \
-	f4/ntuple-monomial \
 	f4/varpower-monomial \
 	f4/gausser \
 	betti \
@@ -159,7 +158,6 @@ INTERFACE = \
 	monideal \
 	monoid \
 	monomial \
-	ntuple \
 	polyring \
 	pfaff \
 	relem \
@@ -206,6 +204,7 @@ NAMES_H = \
 	m2tbb \
 	f4/f4-types \
 	f4/memblock \
+	ExponentVector \
 	VectorArithmetic \
 	ARingElem \
 	MemoryBlock \
@@ -214,6 +213,8 @@ NAMES_H = \
 	style \
 	util \
 	hash \
+	ntuple \
+	f4/ntuple-monomial \
 	res-a0-pair
 
 C_FILES = error table exptable complex

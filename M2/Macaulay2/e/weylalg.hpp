@@ -27,8 +27,8 @@ class WeylAlgebra : public PolyRing
   WeylAlgebra() {}
   virtual ~WeylAlgebra() {}
  protected:
-  void extractDerivativePart(const int *exponents, int *result) const;
-  void extractCommutativePart(const int *exponents, int *result) const;
+  void extractDerivativePart(const_exponents exp, int *result) const;
+  void extractCommutativePart(const_exponents exp, int *result) const;
   ring_elem binomial(int top, int bottom) const;
   ring_elem multinomial(const ring_elem a,
                         const int *exptop,
@@ -38,7 +38,7 @@ class WeylAlgebra : public PolyRing
   bool divides(const int *expbottom, const int *exptop) const;
   ring_elem diff_coefficients(const ring_elem c,
                               const int *derivatives,
-                              const int *exponents) const;
+                              const_exponents exp) const;
 
   Nterm *weyl_diff(const ring_elem c,
                    const int *expf,  // The exponent vector of f

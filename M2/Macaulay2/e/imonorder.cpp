@@ -10,6 +10,7 @@
 #  include <malloc.h>
 #endif
 
+#include "ExponentVector.hpp"
 #include "overflow.hpp"
 
 std::vector<bool> laurentVariables(const MonomialOrder* mo)
@@ -546,7 +547,7 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
 
 void monomialOrderDecodeToActualExponents(const MonomialOrder *mo,
                                           const_monomial psums,
-                                          exponents expon)
+                                          exponents_t expon)
 {
   if (mo == 0) return;
   int *tmpexp = static_cast<int *>(alloca((mo->nvars + 1) * sizeof(int)));

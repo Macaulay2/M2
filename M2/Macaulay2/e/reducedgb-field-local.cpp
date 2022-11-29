@@ -98,7 +98,7 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) & polys0,
     {
       Bag *not_used;
       gbvector *f = polys0[*i].f;
-      exponents e = R->exponents_make();
+      exponents_t e = R->exponents_make();
       R->gbvector_get_lead_exponents(F, f, e);
       if ((!Rideal || !Rideal->search_expvector(e, not_used)) &&
           T->find_divisors(1, e, f->comp) == 0)
@@ -167,7 +167,7 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
 #endif
 
 bool ReducedGB_Field_Local::find_good_divisor(
-    exponents h_exp,
+    exponents_t h_exp,
     int h_comp,
     int h_deg,
     int &h_alpha,         // result value
@@ -463,7 +463,7 @@ void ReducedGB_Field_Local::reset_table()
 }
 
 void ReducedGB_Field_Local::store_in_table(const POLY &h,
-                                           exponents h_exp,
+                                           exponents_t h_exp,
                                            int h_comp,
                                            int h_alpha)
 {
@@ -490,7 +490,7 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents h_exp = R->exponents_make();
+  exponents_t h_exp = R->exponents_make();
   int h_alpha, g_alpha;
   int h_deg = wt->gbvector_weight(f.f);
   while (!R->gbvector_is_zero(h.f))
@@ -574,7 +574,7 @@ void ReducedGB_Field_Local::remainder(gbvector *&f,
   POLY h;
   h.f = f;
   h.fsyz = NULL;
-  exponents h_exp = R->exponents_make();
+  exponents_t h_exp = R->exponents_make();
   int h_alpha, g_alpha;
   int h_deg = wt->gbvector_weight(f);
   while (!R->gbvector_is_zero(h.f))

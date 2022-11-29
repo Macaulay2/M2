@@ -19,8 +19,6 @@ class RingMap;
 class buffer;
 struct Monoid;
 
-using ExponentVector = int*;
-
 //struct CoefficientRingTypeExample
 //{
 //  typedef ring_elem ElementType;

@@ -7,6 +7,7 @@
 
 #include "engine-includes.hpp"
 
+#include "ExponentVector.hpp"
 #include "hash.hpp"
 #include "imonorder.hpp"
 #include "newdelete.hpp"
@@ -17,18 +18,15 @@ class buffer;
 class intarray;
 struct MonomialOrdering;
 
-typedef int *exponents;
-typedef int *graded_exponents;
-typedef int *partial_sums;
-typedef int *monomial;
-
-typedef const int *const_exponents;
-typedef const int *const_graded_exponents;
-typedef const int *const_partial_sums;
-typedef const int *const_monomial;
+// varpower is an array [len, T_(i_1), e_(i_1),..., T_(i_len), e_(i_len)]
 typedef const int *const_varpower;
 
-#define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents>(alloca(byte_len))
+// monomial is an encoded array of size monomial_size()
+typedef int *monomial;
+typedef const int *const_monomial;
+
+
+#define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents_t>(alloca(byte_len))
 #define EXPONENT_BYTE_SIZE(nvars) static_cast<int>((sizeof(int) * (nvars)))
 
 #define ALLOCATE_MONOMIAL(byte_len) static_cast<monomial>(alloca(byte_len))
@@ -160,7 +158,7 @@ class Monoid : public MutableEngineObject
   void to_varpower(const_monomial m, intarray &result_vp) const;
 
   void from_expvector(const_exponents exp, monomial result) const;
-  void to_expvector(const_monomial m, exponents result_exp) const;
+  void to_expvector(const_monomial m, exponents_t result_exp) const;
 
   M2_arrayint to_arrayint(
       const_monomial monom) const; /* Returns an exponent vector representation

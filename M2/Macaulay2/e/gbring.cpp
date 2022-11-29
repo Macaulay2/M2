@@ -3,13 +3,13 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include "ExponentVector.hpp"
 #include "ZZ.hpp"
 #include "ZZp.hpp"
 #include "aring-glue.hpp"
 #include "coeffrings.hpp"
 #include "freemod.hpp"
 #include "mem.hpp"
-#include "ntuple.hpp"
 #include "ring.hpp"
 #include "schorder.hpp"
 #include "text-io.hpp"
@@ -35,13 +35,13 @@ gbvector *GBRing::new_raw_term()
  * Exponent handling *****
  *************************/
 
-exponents GBRing::exponents_make()
+exponents_t GBRing::exponents_make()
 {
   int *e = newarray_atomic(int, _nvars + 2);  // length is nvars
   return e;
 }
 
-void GBRing::exponents_delete(exponents e) { freemem(e); }
+void GBRing::exponents_delete(exponents_t e) { freemem(e); }
 ////////////////////////////////////////////////////////////////
 GBRing::~GBRing()
 {
@@ -160,8 +160,8 @@ gbvector *GBRingSkew::mult_by_term1(const FreeModule *F,
   gbvector head;
   gbvector *inresult = &head;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
 
   M->to_expvector(m, EXP1);
 
@@ -497,8 +497,8 @@ gbvector *GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
   // is a multiple of w
   //
 
-  exponents lead = ALLOCATE_EXPONENTS(exp_size);
-  exponents e = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t lead = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t e = ALLOCATE_EXPONENTS(exp_size);
 
   M->to_expvector(leadv->monom, lead);
 
@@ -872,9 +872,9 @@ void GBRing::find_reduction_coeffs(const FreeModule *F,
 
   if (is_skew_commutative())
     {
-      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP3 = ALLOCATE_EXPONENTS(exp_size);
       gbvector_get_lead_exponents(F, f, EXP1);  // Removes the Schreyer part
       gbvector_get_lead_exponents(F, g, EXP2);  // Removes the Schreyer part
       divide_exponents(EXP1, EXP2, EXP3);
@@ -898,9 +898,9 @@ bool GBRing::find_reduction_coeffs_ZZ(const FreeModule *F,
 
   if (is_skew_commutative())
     {
-      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP3 = ALLOCATE_EXPONENTS(exp_size);
       gbvector_get_lead_exponents(F, f, EXP1);  // Removes the Schreyer part
       gbvector_get_lead_exponents(F, g, EXP2);  // Removes the Schreyer part
       divide_exponents(EXP1, EXP2, EXP3);
@@ -1065,10 +1065,10 @@ void GBRing::gbvector_cancel_lead_terms(const FreeModule *F,
   const ring_elem b = g->coeff;
   ring_elem u, v;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP4 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP3 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP4 = ALLOCATE_EXPONENTS(exp_size);
 
   monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
   monomial MONOM2 = ALLOCATE_MONOMIAL(monom_size);
@@ -1184,10 +1184,10 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
   const ring_elem b = g->coeff;
   mpz_t gab, u1, v1;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP4 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP3 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP4 = ALLOCATE_EXPONENTS(exp_size);
 
   monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
   monomial MONOM2 = ALLOCATE_MONOMIAL(monom_size);
@@ -1632,7 +1632,7 @@ void GBRing::reduce_marked_lead_term_heap(
     const FreeModule *F,
     const FreeModule *Fsyz,
     const gbvector *fcurrent_lead,
-    const int *exponents,  // exponents of fcurrent_lead
+    const_exponents exp,  // exponents of fcurrent_lead
     gbvector *flead,
     gbvectorHeap &f,
     gbvectorHeap &fsyz,
@@ -1669,7 +1669,7 @@ void GBRing::reduce_lead_term_heap(
     const FreeModule *F,
     const FreeModule *Fsyz,
     const gbvector *fcurrent_lead,
-    const int *exponents,  // exponents of fcurrent_lead
+    const_exponents exp,  // exponents of fcurrent_lead
     gbvector *flead,
     gbvectorHeap &f,
     gbvectorHeap &fsyz,
@@ -1677,7 +1677,7 @@ void GBRing::reduce_lead_term_heap(
     const gbvector *gsyz)
 {
   reduce_marked_lead_term_heap(
-      F, Fsyz, fcurrent_lead, exponents, flead, f, fsyz, g, g, gsyz);
+      F, Fsyz, fcurrent_lead, exp, flead, f, fsyz, g, g, gsyz);
 }
 
 // Local Variables:

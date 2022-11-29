@@ -350,7 +350,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
 
 void GBKernelComputation::reduce(gbvector *&f, gbvector *&fsyz)
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   const Ring *gbringK = GR->get_flattened_coefficients();
@@ -442,7 +442,7 @@ void GBKernelComputation::reduce(gbvector *&f, gbvector *&fsyz)
 
 void GBKernelComputation::geo_reduce(gbvector *&f, gbvector *&fsyz)
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   const Ring *gbringK = GR->get_flattened_coefficients();

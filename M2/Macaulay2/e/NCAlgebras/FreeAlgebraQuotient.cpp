@@ -1,7 +1,5 @@
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
 
-using ExponentVector = int*;
-
 SumCollector* FreeAlgebraQuotient::make_SumCollector() const
 {
   return mFreeAlgebra.make_SumCollector();

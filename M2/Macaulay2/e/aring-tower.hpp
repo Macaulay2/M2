@@ -4,8 +4,9 @@
 
 #include <vector>
 #include <string>
-#include "aring-zzp-ffpack.hpp"
 
+#include "ExponentVector.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "style.hpp"
 #include "aring.hpp"
 #include "ringelem.hpp"
@@ -29,8 +30,6 @@ struct ARingPolynomialStruct
     ARingPolynomial *polys;  // array of more ptrs to poly structs, at level > 0
   };
 };
-
-typedef int *exponents;
 
 class DRing;
 
@@ -465,7 +464,7 @@ class ARingTower : public RingInterface
     /////////////////////////////////////
     // Translation to/from other rings //
     /////////////////////////////////////
-    void add_term(int level, ARingPolynomial &result, long coeff, exponents exp) const; // modifies result.
+    void add_term(int level, ARingPolynomial &result, long coeff, exponents_t exp) const; // modifies result.
 #endif
 
 // Local Variables:
