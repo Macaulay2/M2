@@ -736,7 +736,7 @@ vec Ring::vec_divide_by_var(int n, int d, const vec v) const
   return head.next;
 }
 
-vec Ring::vec_divide_by_expvector(const int *exp, const vec v) const
+vec Ring::vec_divide_by_expvector(const_exponents exp, const vec v) const
 {
   vecterm head;
   vecterm *result = &head;
@@ -758,12 +758,12 @@ vec Ring::vec_divide_by_expvector(const int *exp, const vec v) const
 //  Homogeneity and the grading //////////////
 //////////////////////////////////////////////
 
-bool Ring::vec_multi_degree(const FreeModule *F, const vec f, int *degf) const
+bool Ring::vec_multi_degree(const FreeModule *F, const vec f, monomial degf) const
 // Returns true if the element is homogeneous
 // Sets degf to be the highest degree found (actually, the join of the
 //   degree vectors occurring).
 {
-  int *degv;
+  monomial degv;
   degree_monoid()->one(degf);
   if (f == NULL) return true;
   bool result = multi_degree(f->coeff, degf);
@@ -786,17 +786,12 @@ bool Ring::vec_multi_degree(const FreeModule *F, const vec f, int *degf) const
   return result;
 }
 
-void Ring::vec_degree(const FreeModule *F, const vec f, int *degf) const
-{
-  vec_multi_degree(F, f, degf);
-}
-
 bool Ring::vec_is_homogeneous(const FreeModule *F, const vec f) const
 {
   if (!this->is_graded()) return false;
   if (f == NULL) return true;
-  int *d = degree_monoid()->make_one();
-  int *e = degree_monoid()->make_one();
+  monomial d = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   bool result = multi_degree(f->coeff, d);
   if (result)
     {
@@ -943,7 +938,7 @@ vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
   if (PR == 0) return copy_vec(f);
   if (f == 0) return 0;
 
-  int *exp = newarray_atomic(int, PR->n_vars());
+  exponents_t exp = newarray_atomic(int, PR->n_vars());
 
   Nterm *t = f->coeff;
   PR->getMonoid()->to_expvector(t->monom, exp);  // Get the process started

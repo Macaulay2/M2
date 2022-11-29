@@ -97,7 +97,7 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
   if (length > 1 && origsyz > 0)
     {
       if (origsyz > m->n_cols()) origsyz = m->n_cols();
-      int *one = originalR->getMonoid()->make_one();
+      monomial one = originalR->getMonoid()->make_one();
       const int *mon;
       for (i = 0; i < origsyz; i++)
         {

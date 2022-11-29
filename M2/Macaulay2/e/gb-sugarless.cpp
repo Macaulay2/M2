@@ -281,10 +281,10 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   intarray vplcm;
   s_pair *q;
   int nvars = M->n_vars();
-  int *f_m = M->make_one();
-  int *f_m2 = M->make_one();
+  monomial f_m = M->make_one();
+  monomial f_m2 = M->make_one();
   int *find_pairs_lcm = newarray_atomic(int, nvars);
-  int *find_pairs_mon = M->make_one();
+  monomial find_pairs_mon = M->make_one();
   int *pi = newarray_atomic(int, nvars);
   int *pj = newarray_atomic(int, nvars);
   int *pij = newarray_atomic(int, nvars);
@@ -292,7 +292,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
     {
-      int *find_pairs_exp = newarray_atomic(int, nvars);
+      exponents_t find_pairs_exp = newarray_atomic(int, nvars);
       M->to_expvector(f_m, find_pairs_exp);
 
       for (int v = 0; v < GR->n_skew_commutative_vars(); v++)
@@ -444,7 +444,7 @@ void GBinhom_comp::compute_s_pair(s_pair *p)
 {
   if (p->f == NULL)
     {
-      int *s = M->make_one();
+      monomial s = M->make_one();
       M->divide(p->lcm, p->first->f->monom, s);
 
       GR->gbvector_mult_by_term(
@@ -464,7 +464,7 @@ int GBinhom_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
   result->next = 0;
   gb_elem *q;
 
-  int *div_totalexp = newarray_atomic(int, M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, M->n_vars());
   int count = 0;
   if (M2_gbTrace == 10)
     {
@@ -521,7 +521,7 @@ int GBinhom_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector head;
   gbvector *result = &head;
   result->next = 0;
-  int *div_totalexp = newarray_atomic(int, M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR, F);
@@ -615,7 +615,7 @@ int GBinhom_comp::search(const int *exp, int comp, gb_elem *&result)
 }
 void GBinhom_comp::gb_insert(gbvector *f, gbvector *fsyz, int minlevel)
 {
-  int *f_m = M->make_one();
+  monomial f_m = M->make_one();
   minlevel = (minlevel == 0 ? MINGB_MASK : MINGEN_MASK | MINGB_MASK);
   gb_elem *p = new gb_elem(f, fsyz, minlevel);
   p->me = last_gb_num++;
@@ -945,7 +945,7 @@ void GBinhom_comp::debug_out(s_pair *q) const
 void GBinhom_comp::debug_out(buffer &o, s_pair *q) const
 {
   if (q == NULL) return;
-  int *m = M->make_one();
+  monomial m = M->make_one();
   o << "(";
   if (q->first != NULL)
     o << q->first->me;

@@ -268,7 +268,7 @@ class TowerEvaluator : public DPolyTraverser
   intarray vp;
   int nvars;
 
-  virtual bool viewTerm(long coeff, const exponents_t exp)
+  virtual bool viewTerm(long coeff, const_exponents exp)
   {
     // translate exp to varpower
     // map->eval_term

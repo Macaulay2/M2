@@ -74,8 +74,8 @@ class LocalRing : public Ring
   void lower_content(ring_elem &c, const ring_elem g) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual bool multi_degree(const ring_elem f, int *d) const;
+  virtual void degree(const ring_elem f, monomial d) const;
+  virtual bool multi_degree(const ring_elem f, monomial d) const;
   virtual void degree_weights(const ring_elem f,
                               M2_arrayint wts,
                               int &lo,
@@ -111,9 +111,9 @@ class LocalRing : public Ring
 
   virtual int n_fraction_vars() const;  // FIXME
   virtual int n_terms(const ring_elem f) const;
-  virtual ring_elem term(const ring_elem a, const int *m) const;
+  virtual ring_elem term(const ring_elem a, const_monomial m) const;
   virtual ring_elem lead_coeff(const ring_elem f) const;
-  virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
+  virtual ring_elem get_coeff(const ring_elem f, const_monomial m) const;
   virtual ring_elem get_terms(int nvars0,
                               const ring_elem f,
                               int lo,

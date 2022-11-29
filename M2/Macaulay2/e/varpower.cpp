@@ -154,19 +154,18 @@ int *varpower::copy(const int *vp, intarray &result)
   return result.copy(*vp, vp);
 }
 
-void varpower::to_ntuple(int n, const int *a, int *result_exponents)
+void varpower::to_ntuple(int n, const int *a, exponents_t result)
 {
-  int *t = result_exponents;
-  for (int j = 0; j < n; j++) t[j] = 0;
+  for (int j = 0; j < n; j++) result[j] = 0;
   for (index_varpower i = a; i.valid(); ++i)
     {
       int v = i.var();
       int e = i.exponent();
-      if (v < n) t[v] = e;
+      if (v < n) result[v] = e;
     }
 }
 
-void varpower::from_ntuple(int n, const int *a, intarray &result)
+void varpower::from_ntuple(int n, const_exponents a, intarray &result)
 {
   int len = 0;
   for (int i = 0; i < n; i++)

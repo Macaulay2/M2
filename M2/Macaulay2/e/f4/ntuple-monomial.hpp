@@ -15,51 +15,6 @@ typedef ntuple_monomials::Exponent ntuple_word;
 typedef ntuple_word *ntuple_monomial;
 typedef const ntuple_word *const_ntuple_monomial;
 
-template <>
-inline void ntuple_monomials::mult(int nvars,
-                                   ntuple_monomials::ConstExponents a,
-                                   ntuple_monomials::ConstExponents b,
-                                   ntuple_monomials::Exponents result)
-{
-  for (int i = 0; i < nvars; i++)
-    {
-      Exponent x = *a++;
-      Exponent y = *b++;
-      *result++ = x + y;
-    }
-}
-
-template <>
-inline void ntuple_monomials::divide(int nvars,
-                                     ntuple_monomials::ConstExponents a,
-                                     ntuple_monomials::ConstExponents b,
-                                     ntuple_monomials::Exponents result)
-{
-  for (int i = 0; i < nvars; i++)
-    {
-      Exponent x = *a++;
-      Exponent y = *b++;
-      *result++ = x - y;
-    }
-}
-
-template <>
-inline void ntuple_monomials::quotient(int nvars,
-                                       ntuple_monomials::ConstExponents a,
-                                       ntuple_monomials::ConstExponents b,
-                                       ntuple_monomials::Exponents result)
-{
-  for (int i = 0; i < nvars; i++)
-    {
-      Exponent x = *a++;
-      Exponent y = *b++;
-      if (x <= y)
-        *result++ = 0;
-      else
-        *result++ = x - y;
-    }
-}
-
 // FIXME: different implementation
 template <>
 inline ntuple_monomials::HashExponent ntuple_monomials::mask(int nvars,
@@ -74,16 +29,6 @@ inline ntuple_monomials::HashExponent ntuple_monomials::mask(int nvars,
       if (a[i] > 0) result |= (1 << j);
     }
   return result;
-}
-
-template <>
-inline ntuple_monomials::Exponent ntuple_monomials::simple_degree(
-    int nvars,
-    ntuple_monomials::ConstExponents a)
-{
-  Exponent sum = 0;
-  for (int i = 0; i < nvars; i++) sum += a[i];
-  return sum;
 }
 
 #endif

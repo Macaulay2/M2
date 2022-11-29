@@ -6,6 +6,7 @@
 #include "gbring.hpp"
 #include "schorder.hpp"
 #include "matrix.hpp"
+#include "monoid.hpp"
 #include "comp.hpp"
 
 struct GBMatrix : public our_new_delete
@@ -53,7 +54,7 @@ class GBKernelComputation : public Computation
   void strip_gb(const VECTOR(gbvector *) & m);
   void strip_gb(const GBMatrix *m);
 
-  gbvector *make_syz_term(ring_elem c, const int *monom, int comp) const;
+  gbvector *make_syz_term(ring_elem c, const_monomial monom, int comp) const;
   // This routine grabs 'c', and 'monom' should be the total monomial.
 
   bool find_ring_divisor(const_exponents exp, const gbvector *&result);
