@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include "scc-core.h"
 
+#if WITH_VALGRIND
 #include <valgrind/memcheck.h>
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -22,11 +24,13 @@ extern char *getmoremem(char *, size_t oldsize, size_t newsize);
 extern char *getmoremem1(char *, size_t newsize);
 extern char *getmoremem_atomic(char *, size_t oldsize, size_t newsize);
 
+#if WITH_VALGRIND
 void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc)(size_t);
 void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_atomic)(size_t);
 void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_ignore_off_page)(size_t);
 void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_atomic_ignore_off_page)(size_t);
 void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_realloc)(void*, size_t);
+#endif
 
 #define sizeofarray(s,len) (sizeof(*(s)) - sizeof((s)->array) + (len)*sizeof((s)->array[0]))
 #define sizeofarraytype(S,len) sizeofarray((S)0,len)

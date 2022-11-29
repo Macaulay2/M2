@@ -398,8 +398,14 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
+AC_SUBST(ENABLE_VALGRIND,no)  AC_ARG_ENABLE(valgrind, AS_HELP_STRING(--enable-valgrind, enable use of valgrind), ENABLE_TBB=$enableval)
+if test "$ENABLE_VALGRIND" = yes
+then AC_DEFINE(WITH_VALGRIND,1,[whether using valgrind has been enabled by the builder])
+else AC_DEFINE(WITH_VALGRIND,0,[whether using valgrind has been enabled by the builder])
+fi
+
 AC_SUBST(ENABLE_TBB,yes)  AC_ARG_ENABLE(tbb, AS_HELP_STRING(--disable-tbb,disable use of the tbb (threaded building blocks) library), ENABLE_TBB=$enableval)
-if test $ENABLE_TBB = yes
+if test "$ENABLE_TBB" = yes
 then AC_DEFINE(WITH_TBB,1,[whether the tbb library has been enabled by the builder])
      AC_SUBST(LIBTBB)		dnl LIBTBB is usually set to -ltbb
      AC_LANG(C++)

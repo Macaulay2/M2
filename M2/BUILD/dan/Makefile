@@ -14,7 +14,7 @@ FC = gfortran
 # build directory name suffix
 #  DIRSUFF
 
-# careful: "make" might set CC incorrectly -- the usual values are CC=cc CXX=g++
+l# careful: "make" might set CC incorrectly -- the usual values are CC=cc CXX=g++
 
 #############################################################################
 # Example:

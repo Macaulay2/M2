@@ -32,8 +32,10 @@ all: $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
 #	@ echo "makefile: Warning : skipping temporarily disabled test in e/unit-test"
 check: runtests
 
+ifeq "$(ENABLE_VALGRIND)" "yes"
 fullCheck: $(UNITTEST_TARGET)
 	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
+endif
 
 $(UNITTEST_TARGET) : gtest-include.o $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
