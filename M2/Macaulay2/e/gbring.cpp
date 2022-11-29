@@ -132,7 +132,7 @@ GBRingSkew::GBRingSkew(const Ring *K0,
   _is_skew = true;
   _skew = skew0;
   int **skew_monoms = newarray(int *, _skew.n_skew_vars());
-  int *exp = newarray_atomic_clear(int, M0->n_vars());
+  exponents_t exp = newarray_atomic_clear(int, M0->n_vars());
   for (int v = 0; v < _skew.n_skew_vars(); v++)
     {
       exp[_skew.skew_variable(v)]++;
@@ -338,7 +338,7 @@ gbvector *GBRing::gbvector_term(const FreeModule *F,
 
 gbvector *GBRing::gbvector_term_exponents(const FreeModule *F,
                                           ring_elem coeff,
-                                          const int *exp,
+                                          const_exponents exp,
                                           int comp)
 // Returns coeff*exp*e_sub_i in F.  If comp is 0, then F is never
 // considered.
@@ -795,17 +795,17 @@ void GBRing::gbvector_text_out(buffer &o,
   if (t != NULL) o << "+...";
 }
 
-void GBRing::divide_exponents(const int *exp1,
-                              const int *exp2,
+void GBRing::divide_exponents(const_exponents exp1,
+                              const_exponents exp2,
                               int *result) const
 {
   for (int i = 0; i < _nvars; i++) *result++ = *exp1++ - *exp2++;
 }
 
-void GBRing::exponent_syzygy(const int *exp1,
-                             const int *exp2,
-                             int *exp3,
-                             int *exp4)
+void GBRing::exponent_syzygy(const_exponents exp1,
+                             const_exponents exp2,
+                             exponents_t exp3,
+                             exponents_t exp4)
 {
   for (int i = 0; i < _nvars; i++)
     {

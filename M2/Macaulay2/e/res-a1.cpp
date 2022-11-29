@@ -278,7 +278,7 @@ int res_comp::degree(const res_pair *p) const
   return result;
 }
 
-void res_comp::multi_degree(const res_pair *p, int *deg) const
+void res_comp::multi_degree(const res_pair *p, monomial deg) const
 {
   // MES: Is this correct?
   M->multi_degree(p->base_monom, deg);
@@ -632,7 +632,7 @@ void res_comp::new_pairs(res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      int *exp = newarray_atomic(int, M->n_vars());
+      exponents_t exp = newarray_atomic(int, M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();
@@ -708,7 +708,7 @@ void res_comp::new_pairs(res_pair *p)
 //  S-pairs and reduction ////////////////////
 //////////////////////////////////////////////
 
-int res_comp::find_ring_divisor(const int *exp, ring_elem &result) const
+int res_comp::find_ring_divisor(const_exponents exp, ring_elem &result) const
 // If 'exp' is divisible by a ring lead term, then 1 is returned,
 // and result is set to be that ring element.
 // Otherwise 0 is returned.
@@ -726,7 +726,7 @@ resterm *res_comp::s_pair(res_pair *p) const
 // Care is of course taken with the Schreyer order
 {
   p->syz = R->new_term(K->from_long(1), p->base_monom, p->first);
-  int *si = M->make_one();
+  monomial si = M->make_one();
   M->divide(p->base_monom, p->first->base_monom, si);
   resterm *result = R->mult_by_monomial(p->first->syz, si);
   ring_elem one = K->from_long(1);
@@ -1344,7 +1344,7 @@ const FreeModule *res_comp::free_of(int i) const
   FreeModule *result;
   result = P->make_Schreyer_FreeModule();
   if (i < 0 || i >= resn.size()) return result;
-  int *deg = P->degree_monoid()->make_one();
+  monomial deg = P->degree_monoid()->make_one();
   int n = 0;
   res_level *lev = resn[i];
   for (int j = 0; j < lev->bin.size(); j++)
@@ -1367,7 +1367,7 @@ const FreeModule *res_comp::minimal_free_of(int i) const
   if (i == 0) return generator_matrix->rows();
   result = P->make_FreeModule();
   if (i < 0 || i > length_limit) return result;
-  int *deg = P->degree_monoid()->make_one();
+  monomial deg = P->degree_monoid()->make_one();
   int nminimals = 0;
   res_level *lev = resn[i];
   for (int j = 0; j < lev->bin.size(); j++)
@@ -1518,7 +1518,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      int *exp = newarray_atomic(int, M->n_vars());
+      exponents_t exp = newarray_atomic(int, M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();

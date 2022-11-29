@@ -87,7 +87,7 @@ class hilb_comp : public MutableEngineObject
 
   // Local variables that are allocated once and for all
   // extreme care is needed for their use!
-  int *LOCAL_deg1;  // An element of the degree monoid
+  monomial LOCAL_deg1;  // An element of the degree monoid
   intarray LOCAL_vp;
   partition_table part_table;
 

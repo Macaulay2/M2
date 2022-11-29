@@ -101,7 +101,7 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
 
-  int *m1 = M->make_one();
+  monomial m1 = M->make_one();
 
   Nterm **comps = newarray(Nterm *, F->rank());
   Nterm **last = newarray(Nterm *, F->rank());

@@ -310,17 +310,13 @@ void M2FreeAlgebra::debug_display(const ring_elem ff) const
   debug_display(f);
 }
 
-void M2FreeAlgebra::makeTerm(Poly& result, const ring_elem a, const int* monom) const
-  // 'monom' is in 'varpower' format
-  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+void M2FreeAlgebra::makeTerm(Poly& result, const ring_elem a, const_varpower monom) const
 {
   result.getCoeffInserter().push_back(a);
   monoid().fromMonomial(monom, result.getMonomInserter());
 }
 
-ring_elem M2FreeAlgebra::makeTerm(const ring_elem a, const int* monom) const
-  // 'monom' is in 'varpower' format
-  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+ring_elem M2FreeAlgebra::makeTerm(const ring_elem a, const_varpower monom) const
 {
   auto result = new Poly;
   makeTerm(*result, a, monom);
@@ -426,20 +422,20 @@ bool M2FreeAlgebra::is_homogeneous(const Poly* f) const
   return freeAlgebra().is_homogeneous(*f);
 }
 
-void M2FreeAlgebra::degree(const ring_elem f, int *d) const
+void M2FreeAlgebra::degree(const ring_elem f, monomial d) const
 {
   multi_degree(f, d);
 }
 
-bool M2FreeAlgebra::multi_degree(const ring_elem g, int *d) const
+bool M2FreeAlgebra::multi_degree(const ring_elem g, monomial d) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(g.get_Poly());
   return multi_degree(f, d);
 }
 
-bool M2FreeAlgebra::multi_degree(const Poly* f, int *result) const
+bool M2FreeAlgebra::multi_degree(const Poly* f, monomial d) const
 {
-  return freeAlgebra().multi_degree(*f,result);
+  return freeAlgebra().multi_degree(*f, d);
 }
 
 SumCollector* M2FreeAlgebra::make_SumCollector() const

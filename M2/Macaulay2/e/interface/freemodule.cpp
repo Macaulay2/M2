@@ -57,7 +57,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
           ERROR("inappropriate number of degrees");
           return 0;
         }
-      int *deg = D->make_one();
+      monomial deg = D->make_one();
       FreeModule *F = R->make_FreeModule();
       for (unsigned int i = 0; i < rank; i++)
         {
@@ -90,7 +90,7 @@ M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
   const Monoid *D = R->degree_monoid();
   M2_arrayint result = M2_makearrayint(F->rank() * D->n_vars());
   int next = 0;
-  int *exp = newarray_atomic(int, D->n_vars());
+  exponents_t exp = newarray_atomic(int, D->n_vars());
   for (int i = 0; i < F->rank(); i++)
     {
       D->to_expvector(F->degree(i), exp);

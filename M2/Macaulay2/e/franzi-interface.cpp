@@ -7,7 +7,7 @@
 extern void testSPolynomial();
 extern void gb(IntermediateBasis &F, int n);
 
-brMonomial exponentsToLong(int nvars, const exponents_t exp)
+brMonomial exponentsToLong(int nvars, const_exponents exp)
 {
   brMonomial result = 0;
   for (int i = 0; i < nvars; i++)

@@ -285,7 +285,7 @@ M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I) { return I->lcm(); }
 class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
 {
   int nv;  // The size of exponentVector coming from frobby
-  int *exp;
+  exponents_t exp;
   MonomialIdeal *J;
 
  public:
@@ -324,7 +324,7 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I,
                                           const mpz_t *topvec)
 {
   int nv = I->topvar() + 1;
-  int *exp = newarray_atomic(int, nv);
+  exponents_t exp = newarray_atomic(int, nv);
   Frobby::Ideal F(nv);
   for (Bag& b : *I)
     {

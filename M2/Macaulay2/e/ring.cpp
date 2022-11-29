@@ -330,7 +330,7 @@ ring_elem Ring::split_off_content(ring_elem f, ring_elem &result) const
   return c;
 }
 
-void Ring::monomial_divisor(const ring_elem a, int *exp) const
+void Ring::monomial_divisor(const ring_elem a, exponents_t exp) const
 {
   // Do nothing
 }
@@ -353,7 +353,7 @@ ring_elem Ring::divide_by_var(int n, int d, const ring_elem a) const
   return from_long(0);
 }
 
-ring_elem Ring::divide_by_expvector(const int *exp, const ring_elem a) const
+ring_elem Ring::divide_by_expvector(const_exponents exp, const ring_elem a) const
 {
   return a;
 }
@@ -370,8 +370,8 @@ ring_elem Ring::homogenize(const ring_elem f, int, M2_arrayint) const
 }
 
 bool Ring::is_homogeneous(const ring_elem) const { return true; }
-void Ring::degree(const ring_elem, int *d) const { degree_monoid()->one(d); }
-bool Ring::multi_degree(const ring_elem f, int *d) const
+void Ring::degree(const ring_elem, monomial d) const { degree_monoid()->one(d); }
+bool Ring::multi_degree(const ring_elem f, monomial d) const
 // returns true iff f is homogeneous
 {
   degree_monoid()->one(d);

@@ -1,4 +1,5 @@
 // Copyright 1997 Michael E. Stillman
+// TODO: utilize ExponentVector instead of int *
 
 #ifndef _weylalg_hh_
 #define _weylalg_hh_
@@ -31,26 +32,26 @@ class WeylAlgebra : public PolyRing
   void extractCommutativePart(const_exponents exp, int *result) const;
   ring_elem binomial(int top, int bottom) const;
   ring_elem multinomial(const ring_elem a,
-                        const int *exptop,
-                        const int *expbottom) const;
+                        const_exponents exptop,
+                        const_exponents expbottom) const;
   bool increment(int *current_derivative, const int *top_derivative) const;
 
-  bool divides(const int *expbottom, const int *exptop) const;
+  bool divides(const_exponents expbottom, const_exponents exptop) const;
   ring_elem diff_coefficients(const ring_elem c,
                               const int *derivatives,
                               const_exponents exp) const;
 
   Nterm *weyl_diff(const ring_elem c,
-                   const int *expf,  // The exponent vector of f
+                   const_exponents expf,
                    const int *derivatives,
                    const Nterm *g) const;  // An entire polynomial
   vec weyl_diff(const ring_elem c,
-                const int *expf,  // The exponent vector of f
+                const_exponents expf,
                 const int *derivatives,
                 const vec g) const;  // An entire polynomial
   vec weyl_diff(const FreeModule *resultF,
                 const ring_elem c,
-                const int *expf,  // The exponent vector of f
+                const_exponents expf,
                 int component,
                 const int *derivatives,
                 const Nterm *g) const;  // An entire polynomial
@@ -59,7 +60,7 @@ class WeylAlgebra : public PolyRing
       GBRing *GR,
       const ring_elem c,  // in K
       int comp,           // adds this component to each component of g.
-      const int *expf,    // The exponent vector of f
+      const_exponents expf,
       const int *derivatives,
       const FreeModule *Fg,      // Free module of g, unless g is a ring element
       const gbvector *g) const;  // An entire polynomial
@@ -78,18 +79,18 @@ class WeylAlgebra : public PolyRing
   virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
-  ring_elem multinomial(const int *exptop, const int *exp) const;
+  ring_elem multinomial(const_exponents exptop, const_exponents exp) const;
 
  public:
   virtual ring_elem mult_by_term(const ring_elem f,
                                  const ring_elem c,
-                                 const int *m) const;
+                                 const_monomial m) const;
 
   gbvector *gbvector_mult_by_term(
       gbvectorHeap &result,
       const gbvector *f,
       const ring_elem c,  // in the base K
-      const int *m,       // monomial, in M
+      const_monomial m,   // monomial, in M
       int comp) const;    // comp is either 0 or a real component.
 };
 

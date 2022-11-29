@@ -139,7 +139,7 @@ void RingMap::text_out(buffer &o) const
 
 ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
                              const ring_elem a,  // coefficient of term
-                             const int *vp, // varpower monomial
+                             const_varpower vp,
                              int first_var,
                              int nvars_in_source) const
 {
@@ -156,8 +156,8 @@ ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
   ring_elem result = sourceK->eval(this, a, first_var + nvars_in_source);
   if (R->is_zero(result)) return result;
 
-  int *result_monom = NULL;
-  int *temp_monom = NULL;
+  monomial result_monom = NULL;
+  monomial temp_monom = NULL;
   ring_elem result_coeff = K->from_long(1);
 
   if (P != 0)

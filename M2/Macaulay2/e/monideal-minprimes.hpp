@@ -27,11 +27,11 @@ class MinimalPrimes
   int codim_limit;  // only consider monomial primes of codim <= this number.
   int minprime_limit;  // -1 means find all.  >= 1 means stop after that number
   int n_minprimes;  // number found so far, during associated_primes computation
-  int **exps;
+  exponents_t *exps;
 
   int depth_limit;  // -codim_limit-1
-  int *exp;
-  int *exp2;
+  exponents_t exp;
+  exponents_t exp2;
   int *monoms;
 
   void alg1_grab_prime(int depth);

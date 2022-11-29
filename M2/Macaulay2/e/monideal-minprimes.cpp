@@ -264,7 +264,7 @@ void MinimalPrimes::ass_prime_generator(Nmi_node *p, int codim)
 {
   int i = codim + 1;
   if (exps[i] == 0) exps[i] = newarray_atomic(int, nvars);
-  int *exp0 = exps[i];
+  exponents_t exp0 = exps[i];
   for (int j = 0; j < nvars; j++) exp0[j] = exps[codim][j];
   for (;;)
     {

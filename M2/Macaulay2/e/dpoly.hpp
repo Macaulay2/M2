@@ -376,7 +376,7 @@ class DPolyTraverser : public our_new_delete
   bool traverse1(int level, const TowerPolynomial g, exponents_t exp);
 
  protected:
-  virtual bool viewTerm(long coeff, const exponents_t exp) = 0;
+  virtual bool viewTerm(long coeff, const_exponents exp) = 0;
 
  public:
   DPolyTraverser(const DRing *D0) : D(D0->getDPoly()) {}

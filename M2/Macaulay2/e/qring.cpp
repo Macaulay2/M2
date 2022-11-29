@@ -57,7 +57,7 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
   Rideal = new MonomialIdeal(R);
   ringtable = MonomialTable::make(R->n_vars());
   intarray vp;
-  int *exp = newarray_atomic(int, R->n_vars());
+  exponents_t exp = newarray_atomic(int, R->n_vars());
   for (int i = 0; i < quotients.size(); i++)
     {
       // Make a varpower element.  See if it is in Rideal.
@@ -318,7 +318,7 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
     : QRingInfo(ambientR)
 {
   ringtableZZ = MonomialTableZZ::make(R->n_vars());
-  int *exp = newarray_atomic(int, R->n_vars());
+  exponents_t exp = newarray_atomic(int, R->n_vars());
   for (int i = 0; i < quotients.size(); i++)
     {
       // Make a varpower element.  See if it is in Rideal.

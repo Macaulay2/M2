@@ -256,7 +256,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   const PolynomialRing* origR = F->get_ring()->cast_to_PolynomialRing();
   const Monoid* M = origR->getMonoid();
 
-  int* m1 = M->make_one();
+  monomial m1 = M->make_one();
 
   Nterm** comps = newarray(Nterm*, F->rank());
   Nterm** last = newarray(Nterm*, F->rank());
@@ -427,7 +427,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
   Nterm** comps = newarray(Nterm*, nrows);
   Nterm** last = newarray(Nterm*, nrows);
 
-  int* m1 = M->make_one();
+  monomial m1 = M->make_one();
+  // FIXME: is exp a monomial or exponent vector?
   int* exp = new int[M->n_vars() + 1];
 
   int j = 0;

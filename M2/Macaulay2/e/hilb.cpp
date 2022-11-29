@@ -60,7 +60,7 @@ int partition_table::merge_in(int x, int y)
   return newtop;
 }
 
-void partition_table::merge_in(const int *m)
+void partition_table::merge_in(const_varpower m)
 // merge in the varpower monomial 'm'.
 {
   index_varpower i = m;
@@ -154,9 +154,9 @@ void partition_table::partition(MonomialIdeal *&I,
 #define MAX_EXP (1 << (8 * sizeof(int) - 2))
 static int popular_var(const MonomialIdeal &I,
                        int &npure,
-                       int *pure,
+                       exponents_t pure,
                        int &nhits,
-                       const int *&non_pure_power,
+                       const_varpower &non_pure_power,
                        int &exp_of_popular)
 // Return the variable which occurs the most often in non pure monomials,
 // placing the number of monomials in which it occurs into 'nhits'.
@@ -168,8 +168,8 @@ static int popular_var(const MonomialIdeal &I,
   int nvars = I.topvar() + 1;
   for (k = 0; k < nvars; k++) pure[k] = -1;
 
-  int *hits = newarray_atomic_clear(int, nvars);
-  int *minnonzero = newarray_atomic(int, nvars);
+  exponents_t hits = newarray_atomic_clear(int, nvars);
+  exponents_t minnonzero = newarray_atomic(int, nvars);
   for (k = 0; k < nvars; k++) hits[k] = 0;
   for (k = 0; k < nvars; k++) minnonzero[k] = MAX_EXP;
 
@@ -177,7 +177,7 @@ static int popular_var(const MonomialIdeal &I,
 
   for (Bag& a : I)
     {
-      const int *m = a.monom().raw();
+      const_varpower m = a.monom().raw();
       index_varpower j = m;
       assert(j.valid());  // The monomial cannot be '1'.
       int v = j.var();
@@ -219,7 +219,7 @@ static int popular_var(const MonomialIdeal &I,
 
 static int find_pivot(const MonomialIdeal &I,
                       int &npure,
-                      int *pure,
+                      exponents_t pure,
                       intarray &m)
 // If I has a single monomial which is a non pure power, return 0,
 // and set 'pure', and 'npure'.  If I has at least two non pure
@@ -229,7 +229,7 @@ static int find_pivot(const MonomialIdeal &I,
 {
   int nhits;
   int exp_of_v;
-  const int *vp;
+  const_varpower vp;
   int v = popular_var(I, npure, pure, nhits, vp, exp_of_v);
 
   // The following will take some tweaking...
@@ -249,7 +249,7 @@ static int find_pivot(const MonomialIdeal &I,
 }
 
 static void iquotient_and_sum(MonomialIdeal &I,
-                              const int *m,  // varpower
+                              const_varpower m,
                               MonomialIdeal *&quot,
                               MonomialIdeal *&sum,
                               stash *mi_stash)
@@ -481,7 +481,7 @@ int hilb_comp::step()
   return COMP_COMPUTING;
 }
 
-void hilb_comp::recurse(MonomialIdeal *&I, const int *pivot_vp)
+void hilb_comp::recurse(MonomialIdeal *&I, const_varpower pivot_vp)
 {
   depth++;
   if (depth > maxdepth) maxdepth = depth;
@@ -540,7 +540,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
       int npure;
       intarray pivot;
       intarray pure_a;
-      int *pure = pure_a.alloc(I->topvar() + 1);
+      exponents_t pure = pure_a.alloc(I->topvar() + 1);
       if (!find_pivot(*I, npure, pure, pivot))
         {
           // set F to be product(1-t^(deg x_i^e_i))
@@ -694,7 +694,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   // exp[0]=deg.
   const PolynomialRing *P = h->get_ring()->cast_to_PolynomialRing();
 
-  int *exp = newarray_atomic(int, P->n_vars());
+  exponents_t exp = newarray_atomic(int, P->n_vars());
   int result = 0;
   for (Nterm *f = h->get_value(); f != NULL; f = f->next)
     {

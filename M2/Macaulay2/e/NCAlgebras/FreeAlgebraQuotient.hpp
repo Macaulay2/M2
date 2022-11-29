@@ -78,10 +78,10 @@ public:
                      bool p_parens) const;
 
   bool is_homogeneous(const Poly& f) const;
-  void degree(const Poly& f, int *d) const;
+  void degree(const Poly& f, monomial d) const;
   // returns true if f is homogeneous, and sets already_allocated_degree_vector
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
-  bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const;
+  bool multi_degree(const Poly& f, monomial already_allocated_degree_vector) const;
 
   SumCollector* make_SumCollector() const;
 };
