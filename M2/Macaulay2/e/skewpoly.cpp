@@ -39,7 +39,7 @@ ring_elem SkewPolynomialRing::antipode(const ring_elem f) const
   Nterm head;
   Nterm *inresult = &head;
 
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
   for (Nterm *s = f; s != NULL; s = s->next)
     {
@@ -72,8 +72,8 @@ ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
   Nterm head;
   Nterm *inresult = &head;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
   M_->to_expvector(m, EXP1);
 
   for (Nterm *s = f; s != NULL; s = s->next)

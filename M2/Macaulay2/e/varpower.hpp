@@ -3,6 +3,7 @@
 #ifndef _varpower_hh_
 #define _varpower_hh_
 
+#include "ExponentVector.hpp"
 #include "buffer.hpp"
 #include "engine-includes.hpp"
 #include "intarray.hpp"
@@ -38,8 +39,8 @@ public:
   static void var(int v, int e, intarray &result);
   static int *copy(const int *vp, intarray &result);
 
-  static void to_ntuple(int n, const int *a, int *result_exponents);
-  static void from_ntuple(int n, const int *a, intarray &result);
+  static void to_ntuple(int n, const int *a, ntuple::Exponents result);
+  static void from_ntuple(int n, ntuple::ConstExponents a, intarray &result);
 
   static M2_arrayint to_arrayint(const int *vp);
   static void from_arrayint(M2_arrayint m, intarray &result);

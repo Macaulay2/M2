@@ -1,13 +1,14 @@
 // Copyright 1996 Michael E. Stillman
 
 #include <iostream>
+
+#include "ExponentVector.hpp"
 #include "poly.hpp"
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "matrix.hpp"
 #include "ZZ.hpp"
-#include "ntuple.hpp"
 #include "gbring.hpp"
 #include "frac.hpp"
 #include "geopoly.hpp"
@@ -285,7 +286,7 @@ bool PolyRing::from_complex_double(double re,
 
 ring_elem PolyRing::var(int v) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   for (int i = 0; i < nvars_; i++) EXP1[i] = 0;
   if (v >= 0 && v < nvars_)
     EXP1[v] = 1;
@@ -309,7 +310,7 @@ int PolyRing::index_of_var(const ring_elem a) const
   if (f == 0 || f->next != 0) return -1;
   if (!K_->is_equal(f->coeff, K_->from_long(1))) return -1;
   int result = -1;
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   M_->to_expvector(f->monom, EXP1);
   for (int i = 0; i < n_vars(); i++)
     if (EXP1[i] > 1)
@@ -324,8 +325,8 @@ int PolyRing::index_of_var(const ring_elem a) const
 
 M2_arrayint PolyRing::support(const ring_elem a) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
   for (int i = 0; i < n_vars(); i++) EXP1[i] = 0;
   for (const Nterm *f = a; f != 0; f = f->next)
     {
@@ -1033,9 +1034,9 @@ bool PolyRing::imp_attempt_to_cancel_lead_term(ring_elem &f,
     {
       if (is_skew_)
         {
-          exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-          exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
-          exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+          exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+          exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
+          exponents_t EXP3 = ALLOCATE_EXPONENTS(exp_size);
           M_->to_expvector(t->monom, EXP1);
           M_->to_expvector(s->monom, EXP2);
           int sign = skew_.divide(EXP1, EXP2, EXP3);
@@ -2038,9 +2039,9 @@ ring_elem PolyRing::diff_term(const int *m,
   if (!M_->divides(m, n)) return K_->from_long(0);
   if (is_skew_ && use_coeff)
     {
-      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
-      exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents_t EXP3 = ALLOCATE_EXPONENTS(exp_size);
       M_->to_expvector(m, EXP1);
       M_->to_expvector(n, EXP2);
       sign = skew_.diff(EXP1, EXP2, EXP3);
@@ -2248,7 +2249,7 @@ ring_elem PolyRing::fromSmallIntegerCoefficients(
 {
   // create a poly
   SumCollector *H = make_SumCollector();
-  exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(
+  exponents_t exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(
       n_vars()));  // deallocates automatically at end of block
   ntuple::one(n_vars(), exp);
   for (long i = 0; i < coeffs.size(); i++)

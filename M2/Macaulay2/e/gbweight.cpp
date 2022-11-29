@@ -65,7 +65,7 @@ int GBWeight::exponents_weight(const int *e, int comp) const
 int GBWeight::gbvector_term_weight(const gbvector *f) const
 {
   if (f == 0) return 0;
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
   R_->gbvector_get_lead_exponents(F_, f, EXP);
   return exponents_weight(EXP, f->comp);
 }
@@ -98,7 +98,7 @@ int GBWeight::gbvector_weight(const gbvector *f) const
 
 int GBWeight::monomial_weight(const int *monom, int comp) const
 {
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
   R_->get_flattened_monoid()->to_expvector(monom, EXP);
   return exponents_weight(EXP, comp);
 }

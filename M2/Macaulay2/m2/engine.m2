@@ -33,7 +33,6 @@ exponents(ZZ,RawMonomial) := (nvars,x) -> (
      z := new MutableList from (nvars : 0);
      scan(rawSparseListFormMonomial x, (i,e) -> z#i = z#i + e);
      toList z)
-net RawMonomial := x -> net expression x
 degree RawMonomial := x -> error "degree of raw monomial not defined (no monoid)"
 gcd(RawMonomial,RawMonomial) := (x,y) -> rawGCD(x,y)
 

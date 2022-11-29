@@ -10,13 +10,14 @@
 
 #include <cstdio>
 #include <sstream>
+#include <vector>
+
+#include "ExponentVector.hpp"
 #include "ringelem.hpp"
 #include "buffer.hpp"
-#include <vector>
 
 class Tower;
 class DPolyTraverser;
-typedef int *exponents;  // used only in add_term
 
 typedef struct TowerPolynomialStruct *TowerPolynomial;
 //typedef const struct TowerPolynomialStruct *const_poly;
@@ -120,7 +121,7 @@ class DPoly
   void add_term(int level,
                 TowerPolynomial &result,
                 long coeff,
-                exponents exp) const;  // modifies result.
+                exponents_t exp) const;  // modifies result.
   // exp is an array [0..level-1] of exponent values for each variable
   // 0..level-1
   // the outer variable is at index 0.
@@ -216,7 +217,7 @@ class DRing : public our_new_delete
     return result != 0;
   }
 
-  void add_term(elem &result, long coeff, exponents exp) const;
+  void add_term(elem &result, long coeff, exponents_t exp) const;
 
   void add(elem &result, elem a, elem b) const
   {
@@ -372,10 +373,10 @@ class DPolyTraverser : public our_new_delete
 {
   const DPoly *D;
 
-  bool traverse1(int level, const TowerPolynomial g, exponents exp);
+  bool traverse1(int level, const TowerPolynomial g, exponents_t exp);
 
  protected:
-  virtual bool viewTerm(long coeff, const exponents exp) = 0;
+  virtual bool viewTerm(long coeff, const exponents_t exp) = 0;
 
  public:
   DPolyTraverser(const DRing *D0) : D(D0->getDPoly()) {}

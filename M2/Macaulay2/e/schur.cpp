@@ -117,7 +117,7 @@ void SchurRing::text_out(buffer &o) const
 void SchurRing::to_partition(const int *m, int *exp) const
 // exp[1]..exp[nvars] are set
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
   // remark: exp_size is defined in an ancestor class of SchurRing
   M_->to_expvector(m, EXP1);
   exp[nvars_] = EXP1[nvars_ - 1];
@@ -125,7 +125,7 @@ void SchurRing::to_partition(const int *m, int *exp) const
 }
 void SchurRing::from_partition(const int *exp, int *m) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
   EXP1[nvars_ - 1] = exp[nvars_];
   for (int i = nvars_ - 1; i > 0; i--) EXP1[i - 1] = exp[i] - exp[i + 1];
   M_->from_expvector(EXP1, m);
@@ -231,10 +231,10 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
 {
   int i;
 
-  exponents a_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
-  exponents b_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
-  exponents lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
-  exponents p = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
+  exponents_t a_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t b_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
+  exponents_t p = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
 
   // First: obtain the partitions
   to_partition(m, a_part);
@@ -328,7 +328,7 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
 
 ring_elem SchurRing::dimension(const ring_elem f) const
 {
-  exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
   ring_elem result = K_->from_long(0);
   mpz_t dim;
   mpz_init(dim);
@@ -351,7 +351,7 @@ void SchurRing::elem_text_out(buffer &o,
                               bool p_plus,
                               bool p_parens) const
 {
-  exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
   int n = n_terms(f);
 
   bool needs_parens = p_parens && (n > 1);

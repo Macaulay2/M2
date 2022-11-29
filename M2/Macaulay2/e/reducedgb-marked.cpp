@@ -83,7 +83,7 @@ void MarkedGB::add_marked_elems(const VECTOR(gbvector *) & leadterms0,
         }
       leadterms[i] = iinf;
 
-      exponents e = R->exponents_make();
+      exponents_t e = R->exponents_make();
       R->gbvector_get_lead_exponents(F, iinf, e);
 
       //      if (auto_reduced)
@@ -122,7 +122,7 @@ void MarkedGB::marked_remainder(POLY &f,
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
 
   while (!R->gbvector_is_zero(h.f))
     {
@@ -173,7 +173,7 @@ void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   gbvector *h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
 
   while (!R->gbvector_is_zero(h))
     {
@@ -218,7 +218,7 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   fb.add(f);
 
   const gbvector *lead;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while ((lead = fb.get_lead_term()) != NULL)
     {
       R->gbvector_get_lead_exponents(F, lead, EXP);

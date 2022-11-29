@@ -1,17 +1,18 @@
 #define MOVE_UP_JUST_ONE
 #define INSERT_AT_END
 
-#include "montable.hpp"
-#include "ntuple.hpp"
-#include <functional>
 #include <algorithm>
 #include <assert.h>
+#include <functional>
+
+#include "ExponentVector.hpp"
+#include "montable.hpp"
 
 /********************/
 /* Support routines */
 /********************/
 
-static bool exponents_equal(int nvars, exponents a, exponents b)
+static bool exponents_equal(int nvars, exponents_t a, exponents_t b)
 {
   for (int i = 0; i < nvars; i++)
     if (a[i] != b[i]) return false;
@@ -19,7 +20,7 @@ static bool exponents_equal(int nvars, exponents a, exponents b)
 }
 
 #ifndef INSERT_AT_END
-static bool exponents_greater(int nvars, exponents a, exponents b)
+static bool exponents_greater(int nvars, exponents_t a, exponents_t b)
 {
   for (int i = 0; i < nvars; i++)
     {
@@ -30,7 +31,7 @@ static bool exponents_greater(int nvars, exponents a, exponents b)
 }
 #endif
 
-static void exponents_show(FILE *fil, exponents exp, int nvars)
+static void exponents_show(FILE *fil, exponents_t exp, int nvars)
 /* This is only for debugging */
 {
   fprintf(fil, "[");
@@ -127,7 +128,7 @@ void MonomialTable::insert_before(mon_term *const y, mon_term *const z)
 #define MOVE_UP(t, head) (remove(t), insert_before(t, head->_next))
 #endif
 
-int MonomialTable::find_divisor(exponents exp, int comp)
+int MonomialTable::find_divisor(exponents_t exp, int comp)
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return -1;
@@ -149,7 +150,7 @@ int MonomialTable::find_divisor(exponents exp, int comp)
 }
 
 int MonomialTable::find_divisors(int max,
-                                 exponents exp,
+                                 exponents_t exp,
                                  int comp,
                                  VECTOR(mon_term *) * result)
 {
@@ -189,7 +190,7 @@ int MonomialTable::find_divisors(int max,
   return nmatches;
 }
 
-MonomialTable::mon_term *MonomialTable::find_exact(exponents exp,
+MonomialTable::mon_term *MonomialTable::find_exact(exponents_t exp,
                                                    int comp) const
 {
   if (comp >= static_cast<int>(_head.size())) return 0;
@@ -214,7 +215,7 @@ MonomialTable::mon_term *MonomialTable::find_exact(exponents exp,
   return 0;
 }
 
-void MonomialTable::insert(exponents exp, int comp, int id)
+void MonomialTable::insert(exponents_t exp, int comp, int id)
 {
   /* Insert 'exp' into the monomial table.  These are kept sorted in ascending
      order
@@ -268,18 +269,18 @@ void MonomialTable::insert(exponents exp, int comp, int id)
 struct sorter
 {
   int nvars;
-  const VECTOR(exponents) & exps;
+  const VECTOR(exponents_t) & exps;
   const VECTOR(int) & comps;
   sorter(int nvars0,
-         const VECTOR(exponents) & exps0,
+         const VECTOR(exponents_t) & exps0,
          const VECTOR(int) & comps0)
       : nvars(nvars0), exps(exps0), comps(comps0)
   {
   }
   bool operator()(int x, int y)
   {
-    exponents xx = exps[x];
-    exponents yy = exps[y];
+    exponents_t xx = exps[x];
+    exponents_t yy = exps[y];
     for (int i = 0; i < nvars; i++)
       if (xx[i] < yy[i])
         return true;
@@ -294,7 +295,7 @@ struct sorter
 };
 
 void MonomialTable::minimalize(int nvars,
-                               const VECTOR(exponents) & exps,
+                               const VECTOR(exponents_t) & exps,
                                const VECTOR(int) & comps,
                                bool keep_duplicates,
                                VECTOR(int) & result_positions)
@@ -339,7 +340,7 @@ void MonomialTable::minimalize(int nvars,
   while (first != end)
     {
       VECTOR(int)::iterator next = first + 1;
-      exponents this_exp = exps[*first];
+      exponents_t this_exp = exps[*first];
       int comp = comps[*first];
       while (next != end)
         {
@@ -364,7 +365,7 @@ void MonomialTable::minimalize(int nvars,
 }
 
 MonomialTable *MonomialTable::make_minimal(int nvars,
-                                           const VECTOR(exponents) & exps,
+                                           const VECTOR(exponents_t) & exps,
                                            const VECTOR(int) & comps,
                                            const VECTOR(int) & vals,
                                            VECTOR(int) & rejects)
@@ -390,7 +391,7 @@ MonomialTable *MonomialTable::make_minimal(int nvars,
   while (first != end)
     {
       VECTOR(int)::iterator next = first + 1;
-      exponents this_exp = exps[*first];
+      exponents_t this_exp = exps[*first];
       int comp = comps[*first];
       while (next != end)
         {

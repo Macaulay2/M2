@@ -1,7 +1,8 @@
 // Copyright 1997 Michael E. Stillman
 
 #include "gb-toric.hpp"
-#include "ntuple.hpp"
+
+#include "ExponentVector.hpp"
 #include "text-io.hpp"
 
 #include "matrix-con.hpp"

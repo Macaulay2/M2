@@ -1,5 +1,9 @@
 // Copyright 1996.  Michael E. Stillman
 
+#include "res-a0.hpp"
+
+#include "ExponentVector.hpp"
+#include "intarray.hpp"
 #include "res-a0-poly.hpp"
 #include "res-a0.hpp"
 #include "geobucket.hpp"
@@ -714,7 +718,7 @@ int res2_comp::compare_res2_pairs(res2_pair *f, res2_pair *g) const
   // Lots of different orders appear here, controlled by the above
   // static variables.
   // if compare(f,g) returns -1, this says place g BEFORE f on the list.
-  exponents EXP1, EXP2, EXP3, EXP4;
+  exponents_t EXP1, EXP2, EXP3, EXP4;
   int cmp, df, dg;
 
   if (compare_use_degree)
@@ -935,13 +939,11 @@ void res2_comp::sort_reduction(res2_pair *&p)
   sort_res2_pairs(p);
 }
 
-int res2_comp::sort_value(res2_pair *p, const int *sort_order) const
+int res2_comp::sort_value(res2_pair *p, const std::vector<int> sort_order) const
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   M->to_expvector(p->syz->monom, REDUCE_exp);
-  int result = 0;
-  for (int i = 0; i < P->n_vars(); i++) result += REDUCE_exp[i] * sort_order[i];
-  return result;
+  return ntuple::weight(P->n_vars(), REDUCE_exp, sort_order);
 }
 
 //////////////////////////////////////////////
@@ -1133,7 +1135,7 @@ res2_pair *res2_comp::reduce(res2term *&f,
 // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -1208,7 +1210,7 @@ res2_pair *res2_comp::reduce2(res2term *&f,
 // 'p' is just here for auto-reduction...
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -1315,7 +1317,7 @@ res2_pair *res2_comp::reduce3(res2term *&f,
 // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -1410,7 +1412,7 @@ res2_pair *res2_comp::reduce4(res2term *&f,
 // 'p' is just here for auto-reduction...
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res2term *lastterm = fsyz;
@@ -1501,7 +1503,7 @@ res2_pair *res2_comp::reduce_by_level(res2term *&f, res2term *&fsyz)
 // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -1554,7 +1556,7 @@ res2_pair *res2_comp::reduce_by_level(res2term *&f, res2term *&fsyz)
 res2_pair *res2_comp::reduce_heap_by_level(res2term *&f, res2term *&fsyz)
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);

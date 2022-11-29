@@ -1,5 +1,9 @@
 // Copyright 1996.  Michael E. Stillman
 
+#include "res-a1.hpp"
+
+#include "ExponentVector.hpp"
+#include "intarray.hpp"
 #include "res-a1-poly.hpp"
 #include "res-a1.hpp"
 #include "text-io.hpp"
@@ -314,7 +318,7 @@ void res_comp::insert_res_pair(int level, res_pair *p)
 
 int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
 {
-  exponents EXP1, EXP2;
+  exponents_t EXP1, EXP2;
   int cmp, df, dg, i;
   //  if (f->compare_num < g->compare_num) return 1;
   //  if (f->compare_num > g->compare_num) return -1;
@@ -457,13 +461,11 @@ void res_comp::sort_res_pairs(res_pair *&p) const
   p = merge_res_pairs(p1, p2);
 }
 
-int res_comp::sort_value(res_pair *p, const int *sort_order) const
+int res_comp::sort_value(res_pair *p, const std::vector<int> sort_order) const
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   M->to_expvector(p->base_monom, REDUCE_exp);
-  int result = 0;
-  for (int i = 0; i < P->n_vars(); i++) result += REDUCE_exp[i] * sort_order[i];
-  return result;
+  return ntuple::weight(P->n_vars(), REDUCE_exp, sort_order);
 }
 
 void res_comp::sort_gens(res_degree *mypairs)
@@ -746,7 +748,7 @@ res_pair *res_comp::reduce(resterm *&f, resterm *&fsyz, resterm *&pivot)
 // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -796,7 +798,7 @@ res_pair *res_comp::reduce_level_one(resterm *&f,
                                      resterm *&pivot)
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -842,7 +844,7 @@ res_pair *res_comp::reduce_level_one(resterm *&f,
 
 void res_comp::reduce_gen(resterm *&f) const
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res_pair *q;

@@ -191,9 +191,9 @@ class GBRing : public our_new_delete
   // exponents support //
   //////////////////////
 
-  exponents exponents_make();
+  exponents_t exponents_make();
 
-  void exponents_delete(exponents e);
+  void exponents_delete(exponents_t e);
 
   size_t exponent_byte_size() const { return exp_size; }
   // use ALLOCATE_EXPONENTS(R->exponent_byte_size())
@@ -422,7 +422,7 @@ class GBRing : public our_new_delete
       const FreeModule *F,
       const FreeModule *Fsyz,
       const gbvector *fcurrent_lead,
-      const int *exponents,  // exponents of fcurrent_lead
+      const_exponents exp,  // exponents of fcurrent_lead
       gbvector *flead,
       gbvectorHeap &f,
       gbvectorHeap &fsyz,
@@ -433,7 +433,7 @@ class GBRing : public our_new_delete
       const FreeModule *F,
       const FreeModule *Fsyz,
       const gbvector *fcurrent_lead,
-      const int *exponents,  // exponents of fcurrent_lead
+      const_exponents exp,  // exponents of fcurrent_lead
       gbvector *flead,
       gbvectorHeap &f,
       gbvectorHeap &fsyz,
