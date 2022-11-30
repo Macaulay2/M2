@@ -516,6 +516,24 @@ SharedLibrary = new SelfInitializingType of BasicList
 SharedLibrary.synonym = "shared library"
 net SharedLibrary := lib -> lib#1
 
+-- on apple silicon machines, shared libraries are often in /opt/homebrew/lib,
+-- but this is not in DYLD_LIBRARY_PATH, so we try there if the first call to
+-- dlopen fails
+importFrom_Core {"isAbsolutePath"}
+if (version#"operating system" == "Darwin" and
+    version#"architecture" == "aarch64")
+then (
+    brewPrefix := replace("\\s+$", "", get "!brew --prefix");
+    dlopen' = filename -> (
+	if isAbsolutePath filename then dlopen filename
+	else (
+	    try dlopen filename
+	    else (
+		brewLibrary := brewPrefix | "/lib/" | filename;
+		if fileExists brewLibrary then dlopen brewLibrary
+		else error("could not find " | filename))))
+    ) else dlopen' = dlopen
+
 openSharedLibrary = method(TypicalValue => SharedLibrary,
     Options => {FileName => null})
 openSharedLibrary String := o -> name -> (
@@ -523,7 +541,7 @@ openSharedLibrary String := o -> name -> (
 	"lib" | name |
 	if version#"operating system" == "Darwin" then ".dylib"
 	else ".so");
-    SharedLibrary {dlopen filename, name})
+    SharedLibrary {dlopen' filename, name})
 
 ----------------------
 -- foreign function --
