@@ -871,19 +871,6 @@ TEST ///
   restart
   needsPackage "Triangulations"
 *-
-  -- test of isRegularTriangulation
-  A = transpose matrix {{-1,-1,1},{-1,1,1},{1,-1,1},{1,1,1},{0,0,1}}
-  T = regularFineTriangulation(A, Homogenize=>false)
-  assert(max T == {{0, 1, 4}, {0, 2, 4}, {1, 3, 4}, {2, 3, 4}})
-  assert isRegularTriangulation T
-  assert(regularTriangulationWeights T == {1,1,0,0,0})
-///
-
-TEST ///
--*
-  restart
-  needsPackage "Triangulations"
-*-
   A = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   T = regularFineTriangulation A
   naiveIsTriangulation T -- TODO: doc this, and allow A to be homogenized? Same with topcomIsTriangulation
