@@ -204,6 +204,9 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      return p;
      }
 
+/* Valgrind helper functions */
+#ifndef NVALGRIND
+
 void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc)(size_t s){
     long result;
     OrigFn fn;
@@ -249,6 +252,7 @@ void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_realloc)(void *p, size_t s){
     return (void*)result;
 }
 
+#endif /* NVALGRIND */
 
 /*
  Local Variables:
