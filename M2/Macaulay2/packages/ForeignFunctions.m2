@@ -30,7 +30,7 @@ export {
     "ForeignPointerArrayType",
     "ForeignUnionType",
     "ForeignStructType",
-    "ForeignFunctionPointerType",
+--    "ForeignFunctionPointerType",
     "ForeignObject",
 
 -- built-in foreign types
@@ -67,7 +67,7 @@ export {
     "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
-    "foreignFunctionPointerType",
+--    "foreignFunctionPointerType",
     "foreignSymbol",
     "getMemory",
 
@@ -469,6 +469,9 @@ isAtomic ForeignUnionType := T -> T.Atomic
 -----------------------------------
 -- foreign function pointer type --
 -----------------------------------
+
+-- not exported -- causes crashes on some systems
+-- https://github.com/Macaulay2/M2/issues/2683
 
 ForeignFunctionPointerType = new Type of ForeignType
 ForeignFunctionPointerType.synonym = "foreign function pointer type"
@@ -1294,7 +1297,8 @@ doc ///
       myunion double 5
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     ForeignFunctionPointerType
   Headline
@@ -1306,7 +1310,8 @@ doc ///
       @TO "foreignFunctionPointerType"@.
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     foreignFunctionPointerType
     (foreignFunctionPointerType, ForeignType, ForeignType)
@@ -1338,7 +1343,8 @@ doc ///
       foreignFunctionPointerType(int, {voidstar, voidstar})
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     (symbol SPACE, ForeignFunctionPointerType, Function)
   Headline
@@ -1961,7 +1967,8 @@ assert Equation(value foreignSymbol("mpfi_error", int), 5)
 (foreignFunction(mpfi, "mpfi_reset_error", void, void))()
 ///
 
-TEST ///
+-- TODO: add test when #2683 fixed
+///
 -------------------------------
 -- foreign function pointers --
 -------------------------------
