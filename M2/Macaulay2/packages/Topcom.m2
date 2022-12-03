@@ -193,6 +193,7 @@ orientedCircuits = method(Options => {Homogenize=>true})
 orientedCircuits String := List => opts -> (chiro) -> (
     (outfile,errfile) := callTopcom("chiro2circuits", {chiro});
     s := lines get outfile;
+    if #s == 0 then return s;
     s = if match(///^C\[///, first s) -- TOPCOM >= 1.1.0
     then apply(s, line -> replace(///^C\[\d+\] := (.*);///, ///\1///, line))
     -- remove first 2 lines, and last line:
