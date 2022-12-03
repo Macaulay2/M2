@@ -1,9 +1,0 @@
--- -*- M2-comint -*- hash: -945631043
-
-i1 : openSharedLibrary "mpfr"
-
-o1 = mpfr
-
-o1 : SharedLibrary
-
-i2 : 

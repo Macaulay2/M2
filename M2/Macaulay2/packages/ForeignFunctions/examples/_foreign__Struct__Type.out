@@ -1,9 +1,0 @@
--- -*- M2-comint -*- hash: 23391580
-
-i1 : foreignStructType("mystruct", {"foo" => int, "bar" => double})
-
-o1 = mystruct
-
-o1 : ForeignStructType
-
-i2 : 

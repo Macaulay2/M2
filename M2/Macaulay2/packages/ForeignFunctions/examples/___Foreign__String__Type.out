@@ -1,9 +1,0 @@
--- -*- M2-comint -*- hash: 308105664
-
-i1 : charstar
-
-o1 = char*
-
-o1 : ForeignStringType
-
-i2 : 

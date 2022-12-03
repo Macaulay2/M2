@@ -1,9 +1,0 @@
--- -*- M2-comint -*- hash: 530812175
-
-i1 : charstar "Hello, world!"
-
-o1 = Hello, world!
-
-o1 : ForeignObject of type char*
-
-i2 : 
