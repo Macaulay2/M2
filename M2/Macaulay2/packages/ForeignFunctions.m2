@@ -9,6 +9,12 @@ newPackage("ForeignFunctions",
     Keywords => {"Interfaces"}
     )
 
+if not Core#"private dictionary"#?"ffiCall" then (
+    document{Key => "ForeignFunctions",
+	"Macaulay2 was built without libffi support, so the ForeignFunctions ",
+	"package is not functional."};
+    end)
+
 -------------------------
 -- exports and imports --
 -------------------------
