@@ -950,10 +950,10 @@ doc ///
        isSAGBI S
      Text
        To check whether the generators of the resulting @TO "IntersectedSubring"@ generate the intersection of the given subrings,
-       use the function @TO "isFullIntersection"@. If the function @TO "isFullIntersection"@ returns @ TT true @, then the generators of
+       use the function @TO "isFullIntersection"@. If the function @TO "isFullIntersection"@ returns @TT "true"@, then the generators of
        the @TO "IntersectedSubring"@ are guaranteed to be a subalgebra basis for the intersection.
        
-       Note that, even if the function @TO "isFullIntersection"@ returns @ TT false @, the generators of the given instance of 
+       Note that, even if the function @TO "isFullIntersection"@ returns @TT "false"@, the generators of the given instance of 
        @TO "IntersectedSubring"@ may generate the full intersection. In general, the generators of an instance of @TO "IntersectedSubring"@
        are guaranteed to lie in each of the subrings that were intersected to produce it.
    SeeAlso
