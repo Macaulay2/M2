@@ -62,7 +62,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
 // copy constructor
 template <typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
-  : SLEvaluator(a), mRing(a.ring()), isCompiled(a.isCompiled), values(a.values.size()), compiled_fn(a.compiled_fn), nInputs(a.nInputs), nOutputs(a.nOutputs), nParams(a.nParams)
+  : SLEvaluator(a), mRing(a.ring()), isCompiled(a.isCompiled), nInputs(a.nInputs), nOutputs(a.nOutputs), values(a.values.size()), compiled_fn(a.compiled_fn), nParams(a.nParams)
 {
   slp = a.slp;
   varsPos = a.varsPos;

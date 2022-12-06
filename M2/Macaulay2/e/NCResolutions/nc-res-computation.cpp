@@ -4,9 +4,9 @@
 NCResComputation::NCResComputation(const FreeAlgebraQuotient& ring,
 				   const Matrix& gbModuleMatrix,
 				   int max_level)
- : mRing(ring),
-   mInputModuleGB(gbModuleMatrix),
-   mMaxLevel(max_level)
+  : //mRing(ring),
+  mInputModuleGB(gbModuleMatrix) //,
+   //mMaxLevel(max_level)
 {
 }
 
