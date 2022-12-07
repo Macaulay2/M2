@@ -34,7 +34,7 @@ void outofmem(void) {
 
 void outofmem2(size_t new) {
      const char *msg = "\n\n *** out of memory trying to allocate %ld bytes, exiting ***\n";
-     const int N = sizeof(msg) + 100
+     const int N = sizeof(msg) + 100;
      static char buf[N];
      snprintf(buf,N,msg,(long)new);
      int r = write(STDERR,buf,strlen(buf));
