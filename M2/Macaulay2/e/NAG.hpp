@@ -185,7 +185,7 @@ class complex
   double getimaginary() const;
   bool operator==(complex);
   void operator=(complex);
-  void sprint(char*);
+  void snprint(char*, int);
 };
 
 //                                        CONSTRUCTOR
@@ -306,9 +306,9 @@ inline bool complex::operator==(complex c)
   return (real == c.real) && (imag == c.imag) ? 1 : 0;
 }
 
-inline void complex::sprint(char* s)
+inline void complex::snprint(char* s, int N)
 {
-  sprintf(s, "(%lf) + i*(%lf)", real, imag);
+  snprintf(s, N, "(%lf) + i*(%lf)", real, imag);
 }
 
 

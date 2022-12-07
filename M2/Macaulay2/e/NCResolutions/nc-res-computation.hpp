@@ -60,10 +60,10 @@ class NCResComputation : public ResolutionComputation
 
  private:
   // input information coming from M2 objects
-  const FreeAlgebraQuotient& mRing;
+  ////Add in once we want it:  const FreeAlgebraQuotient& mRing;
   //const Matrix& mInputIdealGB; // probably a computation type from a partial GB.
   const Matrix& mInputModuleGB;  // maybe not a GB of the module either...
-  int mMaxLevel;
+  ////Add in once we want it:  int mMaxLevel;
 };
 
 #if 0
