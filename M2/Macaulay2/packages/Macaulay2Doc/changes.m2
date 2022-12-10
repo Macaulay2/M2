@@ -44,6 +44,27 @@ document {
 document {
      Key => "changes, 1.21",
      UL {
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "Triangulations::Triangulations", ", a package by Mike Stillman for triangulations of polyhedra and point sets, has been added." },
+		    LI { TO "WhitneyStratifications::WhitneyStratifications", ", a package by Martin Helmer for computing Whitney stratifications algebraically, has been added." },
+		    LI { TO "JSON::JSON", ", a package by Doug Torrance for JSON encoding and decoding, has been added." },
+		    LI { TO "ForeignFunctions::ForeignFunctions", ", a package by Doug Torrance for providing a foreign function interface, has been added." },
+		    LI { TO "GeometricDecomposability::GeometricDecomposability", ", a package by Mike Cummings and Adam Van Tuyl for determining whether ideals are geometrically vertex decomposable, has been added." },
+		    LI { TO "PseudomonomialPrimaryDecomposition::PseudomonomialPrimaryDecomposition", ", a package by Alan A. Veliz-Cuba for primary decomposition of square free pseudomonomial ideals, has been added." }
+		    }},
+	  LI { "improved packages:",
+               UL {
+       	    	    LI { "The package ", TO "BettiCharacters::BettiCharacters", 
+                	 " has been updated to version 2.0, which introduces
+			 character tables, decompositions, and other methods for characters.
+			 The GradedCharacter type has been removed, and the Character type
+			 has been modified to accommodate both homological and internal
+			 grading in a simplied format." 
+                	 }
+		     }
+		 },
 	  LI { "functionality added:",
 	       UL {
 		    LI { "New methods, ", TO iterator, " and ", TO next, ", and a new class, ", TO Iterator, " have been added to allow iteration over any Macaulay2 object." },
@@ -57,17 +78,6 @@ document {
 		    LI { TO changeBase, " has been added for changing integer bases."}
 		    }
 	       },
-	  LI { "improved packages:",
-               UL {
-       	    	    LI { "The package ", TO "BettiCharacters::BettiCharacters", 
-                	 " has been updated to version 2.0, which introduces
-			 character tables, decompositions, and other methods for characters.
-			 The GradedCharacter type has been removed, and the Character type
-			 has been modified to accommodate both homological and internal
-			 grading in a simplied format." 
-                	 }
-		     }
-		 },
 	  LI { "functionality changed in a way that could break code:",
 	       UL {
 		    LI { TO remove, " may now be used to remove elements from mutable lists.  Its previous (undocumented) behavior was equivalent to ", TO drop, "."},
