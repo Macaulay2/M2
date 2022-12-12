@@ -39,6 +39,8 @@ else
 CONFIGOPTIONS += --with-python
 endif
 
+CONFIGOPTIONS += --without-libffi
+
 # We may distribute the result, so prevent aggressive optimizations based on the current architecture:
 CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 
