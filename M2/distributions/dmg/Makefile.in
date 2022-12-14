@@ -42,42 +42,51 @@ file_preparation: always
 #		/usr/local/opt/icu4c/lib/libicudata.69.dylib (compatibility version 69.0.0, current version 69.1.0)
 #	$ otool -L M2-binary | grep libicudata
 #	$ 
-# I've install the "library $f not copied" error below to catch this.
+# I've installed the "library $f not copied" error below to catch this.
 # I'm working around this temporarily by renaming some dylib files to disable linking with them:
 #	$ find /usr/local -name \*dylib---- -ls
 #	2071418        0 lrwxrwxr-x    1 brew             admin                  50 Jul 31 12:49 /usr/local/lib/libboost_regex-mt.dylib---- -> ../Cellar/boost/1.76.0/lib/libboost_regex-mt.dylib
 #	6329913        0 lrwxrwxr-x    1 brew             admin                  19 Jul 28 03:12 /usr/local/Cellar/gcc/11.2.0/lib/gcc/11/libgfortran.dylib---- -> libgfortran.5.dylib
 #	6331397        0 lrwxrwxr-x    1 brew             admin                  19 Jul 28 03:12 /usr/local/Cellar/gcc/11.2.0/lib/gcc/11/libquadmath.dylib---- -> libquadmath.0.dylib
+# Now I'm not doing that any longer, but have descended one level further with "otool -L".
 
 
 library_preparation: file_preparation
 
 	$(MKDIR_P) files/@package@/@tail_libdir@
 
-	(																\
-	  for i in files/@package@/@tail_bindir@/* ;											\
-	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;											\
-	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'					\
-		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'								\
-		  | while read f;													\
-		    do (b=`basename $$f` ; set -xe ; install_name_tool -change $$f @executable_path/../lib/$$b $$i ) || exit 1 ; 	\
-		       echo $$f ; 													\
-		       done ;														\
-	     fi ;															\
-	  done ;															\
-	  for i in files/@package@/@tail_programsdir@/* ;										\
-	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;											\
-	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'					\
-		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'								\
-		  | while read f;													\
-		    do (b=`basename $$f` ; set -xe ; install_name_tool -change $$f @executable_path/../../../lib/$$b $$i ) || exit 1 ; 	\
-		       echo $$f ; 													\
-		       done ;														\
-	     fi ;															\
-	  done																\
-	) | sort															\
-	  | uniq															\
+	(																	\
+	  for i in files/@package@/@tail_bindir@/* files/@package@/@tail_programsdir@/* ;							\
+	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;												\
+	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'						\
+		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'									\
+		  | while read f;														\
+		    do (b=`basename $$f` ; set -xe ; install_name_tool -change $$f @executable_path/../lib/$$b $$i ) || exit 1 ;		\
+		       echo $$f ;														\
+		       @INSTALL_PROGRAM@ $$f files/@package@/@tail_libdir@ ;									\
+		       if echo $$f | grep '^[^@].*\.dylib$$' ;											\
+		       then otool -L $$f													\
+			    | grep '^\t'													\
+			    | grep -v '^[[:space:]]*\(@\|/usr/lib/\|/System/Library/\)'								\
+	  		    | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'								\
+		            | while read ff;													\
+	  		      do (bb=`basename $$ff` ;												\
+				  set -xe ;													\
+				  install_name_tool -change $$ff @executable_path/../lib/$$bb files/@package@/@tail_libdir@/`basename $$f`	\
+				 ) || exit 1 ;													\
+		                 echo $$ff ;													\
+			      done ;														\
+		       fi ;															\
+		    done ;															\
+	     fi ;																\
+	  done																	\
+	) | sort																\
+	  | uniq																\
 	  | while read f; do ls -l $$f ; (set -x ; @INSTALL_PROGRAM@ $$f files/@package@/@tail_libdir@ ) ; done
+
+# yes, the next two lines are a hack.
+	@INSTALL_PROGRAM@ /usr/local/Cellar/gcc/12.2.0/lib/gcc/12/libquadmath.0.dylib files/@package@/@tail_libdir@
+	@INSTALL_PROGRAM@ /usr/local/Cellar/gcc/12.2.0/lib/gcc/12/libgcc_s.1.1.dylib files/@package@/@tail_libdir@
 
 	for i in files/@package@/@tail_libdir@/* ;							\
 	do if [ -f $$i -a -x $$i -a ! -h $$i ] ;							\
