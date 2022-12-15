@@ -46,7 +46,7 @@ Here is the procedure:
 	      changes needed for building on various architectures.  Periodically
 	      merge the branch into the development branch.  Continue accepting pull
 	      requests into the development branch.
-	 - when all the builds are complete, then
+	 - when all the builds are complete, then, on the branch release-X.Y-branch, do:
 	      git tag release-X.Y
 	      git push origin release-X.Y
 	   This ensures that changes needed for building on various
