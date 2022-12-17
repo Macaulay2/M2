@@ -3552,17 +3552,17 @@ assert(degree(g,Strategy=>"random point") == 1 and target g === Y and dim ambien
 ///
 
 TEST /// -- Test 6 (1/3) -- associated K3 surfaces
-f = last building associatedK3surface(specialCubicFourfold "quartic scroll",Verbose=>true);
+f = last building associatedK3surface(specialCubicFourfold "quartic scroll",Verbose=>false);
 assert(f#"image" =!= null and dim image f == 2 and degree image f == 14 and dim target f == 8)
 ///
 
 TEST /// -- Test 7 (2/3) -- associated K3 surfaces
-g = last building associatedK3surface(specialCubicFourfold "quintic del Pezzo surface",Verbose=>true);
+g = last building associatedK3surface(specialCubicFourfold "quintic del Pezzo surface",Verbose=>true,Singular=>false);
 assert(g#"image" =!= null and dim image g == 2 and degree image g == 14 and dim target g == 8)
 ///
 
 TEST /// -- Test 8 (3/3) -- associated K3 surfaces
-building associatedK3surface(specialGushelMukaiFourfold "tau-quadric",Verbose=>true);
+building associatedK3surface(specialGushelMukaiFourfold "tau-quadric",Verbose=>false);
 ///
 
 TEST /// -- Test 9 -- simple tests on schubertCycle
