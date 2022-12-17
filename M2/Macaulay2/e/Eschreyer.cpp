@@ -314,13 +314,13 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
   // Remove every term of f (except the lead term)
   // which is NOT divisible by an element of mi.
   int *exp = newarray_atomic(int, GR->n_vars());
-  int nterms = 1;
-  int nsaved = 0;
+  // int nterms = 1;
+  // int nsaved = 0;
   gbvector *g = f;
   while (g->next != 0)
     {
       // First check to see if the term g->next is in the monideal
-      nterms++;
+      // nterms++;
       Bag *b;
       GR->gbvector_get_lead_exponents(F, g->next, exp);
       if (mi[g->next->comp - 1]->search_expvector(exp, b))
@@ -331,7 +331,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
       else
         {
           // Want to dump this term
-          nsaved++;
+          // nsaved++;
           gbvector *tmp = g->next;
           g->next = tmp->next;
           tmp->next = 0;
