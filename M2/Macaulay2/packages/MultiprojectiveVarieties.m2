@@ -7,12 +7,12 @@
    the License, or any later version.
 *-
 
-if version#"VERSION" < "1.18" then error "this package requires Macaulay2 version 1.18 or newer";
+if version#"VERSION" < "1.20" then error "this package requires Macaulay2 version 1.20 or newer";
 
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.6", 
-    Date => "September 9, 2022",
+    Date => "December 18, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -744,6 +744,14 @@ basisMem = (d,X) -> (
     if numgens J == 0 then J = sub(J,ring ideal X);
     X.cache#(d,"basis") = flatten entries gens image basis(d,J)
 );
+
+projectiveVariety (List,MultiprojectiveVariety) := o -> (d,X) -> (
+    if not (# d == # shape X and all(d,i -> instance(i,ZZ))) then error("expected a list of integers of length "|toString(# shape X));
+    F := basisMem(d,X);
+    if #F == 0 then return ambient X;
+    projectiveVariety(ideal F,Saturate=>false)
+);
+projectiveVariety (ZZ,MultiprojectiveVariety) := o -> (d,X) -> projectiveVariety({d},X);
 
 random (List,MultiprojectiveVariety) := o -> (l,X) -> (
     l = deepSplice l;
@@ -2176,6 +2184,56 @@ completeFlag GrassmannianVariety := o -> G -> (
         return completeFlag(G,Standard=>o.Standard);
     );
     return V;
+);
+
+QuadricFibration = new Type of MultirationalMap;
+globalAssignment QuadricFibration;
+QuadricFibration.synonym = "quadric fibration";
+quadricFibration = method(TypicalValue => QuadricFibration, Options => {Verify => true});
+quadricFibration MultirationalMap := o -> h -> (
+    if o.Verify then (
+        if not(instance(target h,EmbeddedProjectiveVariety) and codim target h == 0) then error "expected a rational map to a projective space";
+        F := h^* point target h;
+        if degree F != 2 then error "expected a quadric fibration";
+    );
+    new QuadricFibration from h
+);
+discriminant (QuadricFibration,Boolean) := o -> (h,verb) -> (
+    if h.cache#?"discriminantLocusOfQuadricFibration" then return h.cache#"discriminantLocusOfQuadricFibration";
+    K := coefficientRing h;
+    a := local a;
+    n := dim ambient target h;
+    Ka := frac(K[a_0..a_(n-1)]);
+    ha := h ** Ka;
+    pa := projectiveVariety minors(2,(vars ring ambient target ha)||((vars Ka)|1));
+    if verb then <<"-- starting computation of the generic fiber..."<<endl;    
+    F := ha^* pa;
+    if # shape F >= 2 or instance(F,WeightedProjectiveVariety) then F = (segreEmbedding ambient F) F;
+    l := parametrize linearSpan F;
+    G := l^^ F;
+    if not(numgens ideal G == 1 and first degree (ideal G)_0 == 2) then error "expected generic fiber to be a quadric";
+    if verb then <<"-- computation of the generic fiber successfully completed."<<endl;
+    G = (ideal G)_0;
+    D := associatedSymmetricMatrix G;
+    den := lcm apply(flatten entries D,denominator);
+    detD := det sub(den * D,ring den);
+    b := local b;
+    Kab := K[a_0..a_(n-1),b];
+    Y := projectiveVariety sub(homogenize(ideal sub(detD,Kab),b),vars ring ambient target h);
+    if dim Y == 0 then return (h.cache#"discriminantLocusOfQuadricFibration" = Y);
+    if verb then <<"-- verifying the computation of the discriminant locus"<<endl;
+    local Fib;
+    h.cache#"discriminantLocusOfQuadricFibration" = sum select(decompose Y, Z -> (Fib = h^* point Z; assert(degree Fib == 2 and dim Fib == dim source h - dim target h); dim singularLocus Fib >= 0))
+);
+discriminant QuadricFibration := o -> h -> discriminant(h,true);
+associatedSymmetricMatrix = method();
+associatedSymmetricMatrix RingElement := Q -> (
+    if not (isPolynomialRing ring Q and first degree Q == 2 and isHomogeneous Q) then error "expected a quadratic form";
+    x := gens ring Q;
+    M := matrix apply(x,u->apply(x,t-> 2^(-1) * coefficient(u*t,Q)));
+    M = M + 2^(-1) * diagonalMatrix(apply(x,u->coefficient(u^2,Q)));
+    assert((matrix{x} * M * transpose(matrix{x}))_(0,0) == Q);
+    return M
 );
 
 
@@ -3742,6 +3800,7 @@ undocumented {
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
 (symbol _,MultiprojectiveVariety,MultiprojectiveVariety), -- this returns a new type which is too rudimentary yet
+(projectiveVariety,List,MultiprojectiveVariety),(projectiveVariety,ZZ,MultiprojectiveVariety),
 (tangentialChowForm,EmbeddedProjectiveVariety,ZZ,ZZ),
 (expression,MultirationalMap),
 (net,MultirationalMap),
@@ -4185,3 +4244,15 @@ p = point_P l;
 assert(p == point_(random(3,p)) l)
 ///
 
+TEST /// -- quadric fibrations
+exportFrom_MultiprojectiveVarieties {"quadricFibration"};
+L = linearSpan {point PP_(ZZ/2347)^4, point PP_(ZZ/2347)^4};
+X = random(3,L);
+f = quadricFibration rationalMap(L_X,1);
+assert(dim discriminant f == 1 and degree discriminant f == 5)
+C = random(8,0_(PP_(ZZ/65521)(1,1,1,4))); S = random(8,C);
+g = quadricFibration rationalMap((0_S)_S,1);
+assert(dim discriminant g == 1 and degree discriminant g == 8)
+h = quadricFibration multirationalMap first projections random({{1,1},{1,1},{1,2}},0_(PP_(ZZ/3331)^{2,3}));
+assert(dim discriminant h == 1 and degree discriminant h == 6)
+///

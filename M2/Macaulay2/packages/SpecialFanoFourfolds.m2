@@ -12,7 +12,7 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.6", 
-    Date => "September 9, 2022",
+    Date => "December 18, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -486,6 +486,34 @@ surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,ZZ/65521,opt1,o
 surface(VisibleList,Option) := (L,opt) -> surface(L,ZZ/65521,opt);
 surface (VisibleList,Ring) := (L,K) -> surface(L,K,NumNodes=>0,ambient=>null);
 surface List := L -> surface(L,ZZ/65521,NumNodes=>0,ambient=>null);
+
+---------------------------------------------------------
+HodgeSpecialSurface = new Type of WeightedProjectiveVariety;
+globalAssignment HodgeSpecialSurface;
+HodgeSpecialSurface.synonym = "Hodge-special surface";
+surface (MultiprojectiveVariety,MultiprojectiveVariety) := (C,S) -> (
+    if ring ideal C =!= ring ideal S then error "expected varieties in the same ambient space";
+    if dim S != 2 then error "expected a surface";
+    if abs dim C != 1 then error "expected a curve";
+    if not isSubset(C,S) then error "the given curve is not contained in the surface";
+    newS := new HodgeSpecialSurface of (class S) from S;
+    if newS#?"CurveContainedInTheSurface" then newS#"CurveContainedInTheSurface" = prepend(C,newS#"CurveContainedInTheSurface") else newS#"CurveContainedInTheSurface" = {C};
+    if not newS.cache#?"hyperplane" then newS.cache#"hyperplane" = random(1,0_S);  
+    newS
+);
+map (HodgeSpecialSurface,ZZ,ZZ) := o -> (S,a,b) -> (
+    if S.cache#?("map",a,b) then return S.cache#("map",a,b);
+    H := S.cache#"hyperplane";
+    C := first S#"CurveContainedInTheSurface";
+    if a < 0 then error "expected a nonnegative integer";
+    S.cache#("map",a,b) = if b >= 0 then mapDefinedByDivisor(S,{(H,a),(C,b)}) else rationalMap(C_S,a,-b)
+);
+HodgeSpecialSurface Sequence := (S,ab) -> (
+    if not(#ab == 2 and instance(first ab,ZZ) and instance(last ab,ZZ)) then error "expected a sequence of two integers";
+    (a,b) := ab;
+    image map(S,a,b) 
+);
+---------------------------------------------------------
 
 clean HodgeSpecialFourfold := X -> (
     K := coefficientRing X;
@@ -3234,6 +3262,8 @@ EXAMPLE {
 "coefficientRing X",
 "describe X"},
 SeeAlso => {(rationalMap,PolynomialRing,List),(specialGushelMukaiFourfold,Array,Array)}}
+
+undocumented {(surface, MultiprojectiveVariety, MultiprojectiveVariety)}
 
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, EmbeddedProjectiveVariety), (unirationalParametrization, SpecialGushelMukaiFourfold), (unirationalParametrization, HodgeSpecialFourfold)}, 
 Headline => "unirational parametrization", 
