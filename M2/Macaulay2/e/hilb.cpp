@@ -10,6 +10,7 @@
 #include <utility>    // for pair, make_pair
 #include <vector>     // for vector
 
+#include "ExponentList.hpp"    // for index_varpower, varpower, const_v...
 #include "ExponentVector.hpp"  // for exponents
 #include "M2mem.h"             // for freemem
 #include "buffer.hpp"          // for buffer

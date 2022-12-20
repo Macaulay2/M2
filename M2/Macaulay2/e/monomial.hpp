@@ -3,17 +3,17 @@
 #ifndef _monomial_hh_
 #define _monomial_hh_
 
+#include <vector>
+
+#include "ExponentList.hpp"
 #include "hash.hpp"
 #include "engine-includes.hpp"
 #include "buffer.hpp"
-#include "varpower.hpp"
-
-#include <vector>
 
 // TODO: can this be combined with varpower using templates?
 class EngineMonomial : public EngineObject
 {
-  // The format of a monomial is from varpower.hpp:
+  // The format of a monomial is from ExponentList.hpp:
   // [2n+1, v1, e1, ..., vn, en]
   gc_vector<int> val;
 

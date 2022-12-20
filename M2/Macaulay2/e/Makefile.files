@@ -39,7 +39,6 @@ INTERFACE = \
 	bibasis/monomLex \
 	bibasis/settings-manager \
 	schreyer-resolution/res-monomial-sorter \
-	schreyer-resolution/res-varpower-monomial \
 	schreyer-resolution/res-f4-monlookup \
 	schreyer-resolution/res-moninfo-dense \
 	schreyer-resolution/res-moninfo-sparse \
@@ -63,7 +62,6 @@ INTERFACE = \
 	f4/monhashtable \
 	monsort \
 	f4/moninfo \
-	f4/varpower-monomial \
 	f4/gausser \
 	betti \
 	GF \
@@ -168,7 +166,7 @@ INTERFACE = \
 	solvable \
 	spair \
 	text-io \
-	varpower \
+	ExponentList \
 	weylalg
 
 COMMANDS = \
@@ -213,6 +211,7 @@ NAMES_H = \
 	util \
 	hash \
 	f4/ntuple-monomial \
+	f4/varpower-monomial \
 	res-a0-pair
 
 C_FILES = error table exptable complex

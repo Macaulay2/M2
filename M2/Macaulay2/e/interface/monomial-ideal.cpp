@@ -4,6 +4,7 @@
 
 #include <frobby.h> // TODO: move Frobby routines elsewhere?
 
+#include "ExponentList.hpp"
 #include "assprime.hpp"
 #include "buffer.hpp"
 #include "error.h"
@@ -17,7 +18,6 @@
 #include "monomial.hpp"
 #include "newdelete.hpp"
 #include "text-io.hpp"
-#include "varpower.hpp"
 
 class PolynomialRing;
 class RingElement;

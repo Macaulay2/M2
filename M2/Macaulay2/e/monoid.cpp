@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include "ExponentList.hpp"
 #include "ExponentVector.hpp"
 #include "buffer.hpp"
 #include "error.h"
@@ -15,7 +16,7 @@
 #include "interface/monomial-ordering.h"
 #include "overflow.hpp"
 #include "polyring.hpp"
-#include "varpower.hpp"
+#include "util.hpp"
 
 Monoid *Monoid::trivial_monoid = 0;
 
@@ -618,6 +619,10 @@ void Monoid::elem_text_out(buffer &o, const_monomial m, bool p_one) const
 {
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
+//   elem_text_out(o, EXP1, p_one);
+// }
+// void Monoid::elem_text_out(buffer &o, const_exponents EXP1, bool p_one) const
+// {
   int len_ = 0;
   for (unsigned int v = 0; v < nvars_; v++)
     if (EXP1[v] != 0)
@@ -638,6 +643,28 @@ void Monoid::elem_text_out(buffer &o, const_monomial m, bool p_one) const
       }
   if (len_ == 0 && p_one) o << "1";
 }
+
+// void Monoid::elem_text_out(buffer &o, const_varpower m, bool p_one) const
+// {
+//   index_varpower i = m;
+//   if (!i.valid() and p_one) o << "1";
+//   for (; i.valid(); ++i)
+//     {
+//       int v = i.var();
+//       int e = i.exponent();
+//       if (mVariableNames.size() < v)
+//         o << ".";
+//       else
+//         o << mVariableNames[v];
+//       int single = (mVariableNames[v].size() == 1);
+//       if (e > 1 && single)
+//         o << e;
+//       else if (e > 1)
+//         o << "^" << e;
+//       else if (e < 0)
+//         o << "^(" << e << ")";
+//     }
+// }
 
 void Monoid::multi_degree(const_monomial m, monomial result) const
 {

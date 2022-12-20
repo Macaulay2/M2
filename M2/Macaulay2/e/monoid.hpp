@@ -7,6 +7,7 @@
 
 #include "engine-includes.hpp"
 
+#include "ExponentList.hpp"
 #include "ExponentVector.hpp"
 #include "hash.hpp"
 #include "imonorder.hpp"
@@ -16,9 +17,6 @@
 class PolynomialRing;
 class buffer;
 struct MonomialOrdering;
-
-// varpower is an array [len, T_(i_1), e_(i_1),..., T_(i_len), e_(i_len)]
-typedef const int *const_varpower;
 
 // monomial is an encoded array of size monomial_size()
 typedef int *monomial;
@@ -214,7 +212,10 @@ class Monoid : public MutableEngineObject
               monomial result_sm,
               monomial result_sn) const;
 
+  // TODO: define all three
   void elem_text_out(buffer &o, const_monomial m, bool p_one = true) const;
+  //void elem_text_out(buffer &o, const_exponents m, bool p_one = true) const;
+  //void elem_text_out(buffer &o, const_varpower m, bool p_one = true) const;
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;

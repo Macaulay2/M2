@@ -1,25 +1,16 @@
 // (c) 1995 Michael E. Stillman
 
-#include "varpower.hpp"
-#include "error.h"
-#include "overflow.hpp"
+#include "ExponentList.hpp"
+
+#include <assert.h>      // for assert
+
+#include "buffer.hpp"    // for buffer
+#include "error.h"       // for ERROR
+#include "overflow.hpp"  // for add, mult
 
 #define MAX_VAR 2147483647
 #define MIN_EXP -2147483647
 #define MAX_EXP 2147483647
-
-unsigned int varpower::computeHashValue(const int *vp)
-{
-  unsigned int hashval = *vp;
-  index_varpower i = vp;
-  for (; i.valid(); ++i)
-    {
-      int v = i.var();
-      int e = i.exponent();
-      hashval = 4624296 * hashval + 2341 * v + e;
-    }
-  return hashval;
-}
 
 static bool check_var(int v, int e)
 {
@@ -38,97 +29,13 @@ static bool check_var(int v, int e)
   return true;
 }
 
-void varpower::elem_text_out(buffer &o, const int *a, bool p_one)
+template <>
+void varpower::from_arrayint(M2_arrayint m, Vector& result)
 {
-  index_varpower i = a;
-  if (!i.valid())
-    {
-      if (p_one) o << "1";
-    }
-  else
-    for (; i.valid(); ++i)
-      {
-        int v = i.var();
-        int e = i.exponent();
-        if (v < 26)
-          o << char('a' + v);
-        else if (v < 52)
-          o << char('A' + v - 26);
-        else
-          o << "x[" << v << "]";
-        if (e > 1)
-          o << e;
-        else if (e < 0)
-          o << "^(" << e << ")";
-      }
-}
-
-void varpower::elem_text_out(buffer &o,
-                             const int *a,
-                             M2_ArrayString varnames,
-                             bool p_one)
-{
-  index_varpower i = a;
-  if (!i.valid())
-    {
-      if (p_one) o << "1";
-    }
-  else
-    for (; i.valid(); ++i)
-      {
-        int v = i.var();
-        int e = i.exponent();
-        if (varnames->len < v)
-          o << ".";
-        else
-          o << varnames->array[v];
-        int single = (varnames->array[v]->len == 1);
-        if (e > 1 && single)
-          o << e;
-        else if (e > 1)
-          o << "^" << e;
-        else if (e < 0)
-          o << "^(" << e << ")";
-        //      if (i > 0) o << "*";
-      }
-}
-
-bool varpower::is_one(const int *a) { return *a == 1; }
-bool varpower::is_equal(const int *a, const int *b)
-{
-  if (*a != *b++) return false;
-  int len = *a++;
-  for (int i = 1; i < len; i++)
-    if (*a++ != *b++) return false;
-  return true;
-}
-
-int varpower::topvar(const int *a)
-{
-  assert(*a > 1);
-  return a[1];
-}
-
-// Used in 2 places
-void varpower::one(intarray &result) { result.append(1); }
-// Mostly used to make skew vars...
-void varpower::var(int v, int e, intarray &result)
-{
-  if (e == 0)
-    result.append(1);
-  else
-    {
-      check_var(v, e);  // Sets ERROR if a problem...
-      result.append(3);
-      result.append(v);
-      result.append(e);
-    }
-}
-
-void varpower::from_arrayint(M2_arrayint m, intarray &result)
-{
-  int *result_vp = result.alloc(m->len + 1); // FIXME: reconcile
-  *result_vp++ = m->len + 1;
+  // TODO: should result be cleared?
+  result.resize(m->len + 1);
+  int *result_vp = result.data();
+  *result_vp++ = result.size();
   int *melems = m->array;
 
   for (int i = 0; i < m->len; i += 2) // FIXME: reconcile
@@ -141,20 +48,17 @@ void varpower::from_arrayint(M2_arrayint m, intarray &result)
     }
 }
 
-M2_arrayint varpower::to_arrayint(const int *vp)
+template <>
+M2_arrayint varpower::to_arrayint(ConstExponents vp)
 {
-  int len = *vp;
+  int len = length(vp);
   M2_arrayint result = M2_makearrayint(len); // FIXME: reconcile
   for (int i = 0; i < len; i++) result->array[i] = *vp++;
   return result;
 }
 
-int *varpower::copy(const int *vp, intarray &result)
-{
-  return result.copy(*vp, vp); // FIXME: reconcile
-}
-
-void varpower::to_expvector(int n, const int *a, exponents_t result)
+template <>
+void varpower::to_expvector(int n, ConstExponents a, exponents_t result)
 {
   for (int j = 0; j < n; j++) result[j] = 0;
   for (index_varpower i = a; i.valid(); ++i)
@@ -166,15 +70,16 @@ void varpower::to_expvector(int n, const int *a, exponents_t result)
     }
 }
 
-void varpower::from_expvector(int n, const_exponents a, intarray &result)
+template <>
+void varpower::from_expvector(int n, ConstExponents a, Vector& result)
 {
   int len = 0;
   for (int i = 0; i < n; i++)
     if (a[i] != 0) len++;
-  int result_len = 2 * len + 1;
-  int *result_vp = result.alloc(result_len);
 
-  *result_vp++ = result_len; // FIXME: reconcile
+  result.resize(2 * len + 1);
+  Exponents result_vp = result.data();
+  *result_vp++ = result.size(); // FIXME: reconcile
   for (int i = n - 1; i >= 0; i--)
     if (a[i] != 0)
       {
@@ -183,18 +88,13 @@ void varpower::from_expvector(int n, const_exponents a, intarray &result)
       }
 }
 
-int varpower::simple_degree(const int *a)
+template <>
+void varpower::mult(ConstExponents a, ConstExponents b, Vector& result)
 {
-  int deg = 0;
-  for (index_varpower i = a; i.valid(); ++i) deg += i.exponent();
-  return deg;
-}
-
-void varpower::mult(const int *a, const int *b, intarray &result)
-{
-  int len = *a + *b;  // potential length
-  int *result_vp = result.alloc(len);
-  int *orig_result_vp = result_vp;
+  // TODO: should result be cleared?
+  result.resize(length(a) + length(b));  // potential length
+  Exponents result_vp = result.data();
+  Exponents orig_result_vp = result_vp;
   result_vp++;
 
   index_varpower i = a;
@@ -236,14 +136,19 @@ void varpower::mult(const int *a, const int *b, intarray &result)
     }
   int newlen = static_cast<int>(result_vp - orig_result_vp);
   *orig_result_vp = newlen;
-  result.shrink(newlen);
+  result.resize(newlen);
 }
 
-void varpower::quotient(const int *a, const int *b, intarray &result)
+template <>
+void varpower::quotient(ConstExponents a,
+                        ConstExponents b,
+                        Vector& result)
 // return a:b
 {
-  int *result_vp = result.alloc(*a);
-  int *orig_result_vp = result_vp;
+  // TODO: should result be cleared?
+  result.resize(length(a));  // potential length
+  Exponents result_vp = result.data();
+  Exponents orig_result_vp = result_vp;
   result_vp++;
 
   index_varpower i = a;
@@ -284,15 +189,17 @@ void varpower::quotient(const int *a, const int *b, intarray &result)
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
 }
 
-void varpower::power(const int *a, int n, intarray &result)
+template <>
+void varpower::power(ConstExponents a, int n, Vector& result)
 {
   if (n == 0)
     {
-      result.append(1);
+      result.push_back(1);
       return;
     }
-  int *result_vp = result.alloc(*a);
-  *result_vp++ = *a;
+  result.resize(length(a));
+  int *result_vp = result.data();
+  *result_vp++ = result.size();
   for (index_varpower i = a; i.valid(); ++i)
     {
       *result_vp++ = i.var();
@@ -300,8 +207,9 @@ void varpower::power(const int *a, int n, intarray &result)
     }
 }
 
-bool varpower::divides(const int *b, const int *a)
-// (Note the switch in order of parameters.  Does b divide a?
+template <>
+bool varpower::divides(ConstExponents b, ConstExponents a)
+// FIXME: Note the switch in order of parameters.  Does b divide a?
 {
   index_varpower i = a;
   index_varpower j = b;
@@ -330,12 +238,15 @@ bool varpower::divides(const int *b, const int *a)
     }
 }
 
-void varpower::monsyz(const int *a, const int *b, intarray &sa, intarray &sb)
+template <>
+void varpower::monsyz(ConstExponents a, ConstExponents b, Vector& sa, Vector& sb)
 // sa, sb are set so that a * sa = b * sb
 // and sa, sb have disjoint support.
 {
-  int *result_vp1 = sa.alloc(*b);
-  int *result_vp2 = sa.alloc(*a);
+  sa.resize(length(a));
+  sb.resize(length(b));
+  int *result_vp1 = sa.data();
+  int *result_vp2 = sa.data();
   int *orig_result_vp1 = result_vp1;
   int *orig_result_vp2 = result_vp2;
   result_vp1++;
@@ -389,11 +300,13 @@ void varpower::monsyz(const int *a, const int *b, intarray &sa, intarray &sb)
   *orig_result_vp2 = static_cast<int>(result_vp2 - orig_result_vp2);
 }
 
-void varpower::lcm(const int *a, const int *b, intarray &result)
+template <>
+void varpower::lcm(ConstExponents a, ConstExponents b, Vector& result)
 {
-  int len = *a + *b;  // potential length
-  int *result_vp = result.alloc(len);
-  int *orig_result_vp = result_vp;
+  // TODO: should result be cleared?
+  result.resize(length(a) + length(b));  // potential length
+  Exponents result_vp = result.data();
+  Exponents orig_result_vp = result_vp;
   result_vp++;
 
   index_varpower i = a;
@@ -435,11 +348,12 @@ void varpower::lcm(const int *a, const int *b, intarray &result)
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
 }
 
-void varpower::gcd(const int *a, const int *b, intarray &result)
+template <>
+void varpower::gcd(ConstExponents a, ConstExponents b, Vector& result)
 {
-  int len = *a;  // potential length
-  if (*b < *a) len = *b;
-  int *result_vp = result.alloc(len);
+  // TODO: should result be cleared?
+  result.resize(std::min(length(a), length(b)));  // potential length
+  int *result_vp = result.data();
   int *orig_result_vp = result_vp;
   result_vp++;
 
@@ -478,10 +392,13 @@ void varpower::gcd(const int *a, const int *b, intarray &result)
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
 }
 
-void varpower::erase(const int *a, const int *b, intarray &result)
+template <>
+void varpower::erase(ConstExponents a, ConstExponents b, Vector& result)
 // divide a by b^infinity
 {
-  int *result_vp = result.alloc(*a);
+  // TODO: should result be cleared?
+  result.resize(length(a));
+  int *result_vp = result.data();
   int *orig_result_vp = result_vp;
   result_vp++;
 
@@ -517,24 +434,19 @@ void varpower::erase(const int *a, const int *b, intarray &result)
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
 }
 
-void varpower::radical(const int *a, intarray &result)
+template <>
+void varpower::radical(ConstExponents a, Vector& result)
 {
+  // TODO: should result be cleared?
   // length of result is the same as that of a
-  int *result_vp = result.alloc(*a);
-  *result_vp++ = *a;
+  result.resize(length(a));
+  int *result_vp = result.data();
+  *result_vp++ = result.size();
   for (index_varpower i = a; i.valid(); ++i)
     {
       *result_vp++ = i.var();  // var
       *result_vp++ = 1;        // exponent
     }
-}
-
-bool varpower::is_pure_power(const int *a, int &v, int &e)
-{
-  if (*a != 3) return false;
-  v = a[1];
-  e = a[2];
-  return true;
 }
 
 // Local Variables:

@@ -19,11 +19,11 @@
 #include <iostream>
 #include <algorithm>
 
+#include "ExponentList.hpp"
 #include "ExponentVector.hpp"
 #include "debug.hpp"
 #include "monoid.hpp"
 #include "text-io.hpp"
-#include "varpower.hpp"
 
 unsigned int MonomialIdeal::computeHashValue() const
 {

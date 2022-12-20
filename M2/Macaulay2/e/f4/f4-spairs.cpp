@@ -289,7 +289,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
           while (next != end)
             {
               pre_spair *p = *next;
-              if (!varpower_monomials::equal(chosen->quot, p->quot)) break;
+              if (!varpower_monomials::is_equal(chosen->quot, p->quot)) break;
               next++;
             }
           /* At this point: [first,next) is the range of equal monomials */
