@@ -21,7 +21,8 @@ newPackage(
 	Headline => "binomial ideals of collections of cells",
 	Keywords => {"Binomial Ideals", "Inner 2-minor Ideals", "Polyomino Ideals"},
 	DebuggingMode => false,
-	Reload => true
+	Reload => true,
+	AuxiliaryFiles => true
 )
 
 export {
