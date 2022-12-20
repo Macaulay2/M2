@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 
+#include "ExponentList.hpp"
 #include "M2FreeAlgebra.hpp"
 #include "M2FreeAlgebraQuotient.hpp"
 
@@ -28,7 +29,7 @@
 #include "schur2.hpp"
 #include "schurSn.hpp"
 #include "tower.hpp"
-#include "varpower.hpp"
+#include "util.hpp"
 
 namespace M2 { class ARingRRR; }
 

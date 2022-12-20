@@ -97,6 +97,7 @@ set(HPPONLYFILES
   f4/f4-types.hpp
   f4/memblock.hpp
   f4/ntuple-monomial.hpp
+  f4/varpower-monomial.hpp
   schreyer-resolution/res-memblock.hpp
   schreyer-resolution/res-monomial-types.hpp
   schreyer-resolution/res-schreyer-order.hpp
@@ -277,7 +278,7 @@ set(SRCLIST
   spair
   text-io
   tower # TODO: move rawTowerTranslatePoly to e/interface
-  varpower
+  ExponentList
   weylalg
   # Faugère's F4 Algorithm
   f4/f4-computation
@@ -290,7 +291,6 @@ set(SRCLIST
   f4/hilb-fcn
   f4/monhashtable
   f4/moninfo
-  f4/varpower-monomial
   # Schreyer resolution a la Linear algebra (F4 Faugere style)
   schreyer-resolution/res-f4-computation
   schreyer-resolution/res-f4-m2-interface
@@ -306,7 +306,6 @@ set(SRCLIST
   schreyer-resolution/res-monomial-sorter
   schreyer-resolution/res-poly-ring
   schreyer-resolution/res-schreyer-frame
-  schreyer-resolution/res-varpower-monomial
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator

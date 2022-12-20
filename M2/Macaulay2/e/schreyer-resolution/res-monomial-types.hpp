@@ -5,6 +5,7 @@
 
 #include <cstdint>
 
+#include "ExponentList.hpp"
 #include "ExponentVector.hpp"
 
 enum class MonomialOrderingType { Lex, GRevLex, Weights };
@@ -12,25 +13,25 @@ enum class MonomialOrderingType { Lex, GRevLex, Weights };
 typedef int32_t myword;
 typedef myword component_index;
 
-// Legacy specialization
+// Legacy specialization for ExponentVector
 using res_ntuple_monomials = ExponentVector<myword, false>;
 
 typedef res_ntuple_monomials::Exponent res_ntuple_word;
 typedef res_ntuple_word *res_ntuple_monomial;
 typedef const res_ntuple_word *res_const_ntuple_monomial;
 
+// Legacy specialization for ExponentList
+using res_varpower_monomials = ExponentList<myword, false>;
+using index_res_varpower_monomial = ExponentListIterator<myword, false>;
+
+typedef res_varpower_monomials::Exponent res_varpower_word;
+typedef res_varpower_word *res_varpower_monomial;
+typedef const res_varpower_word *res_const_varpower_monomial;
+
+
 typedef myword res_monomial_word;
 typedef res_monomial_word* res_packed_monomial;
 typedef const res_monomial_word* res_const_packed_monomial;
-
-typedef myword res_varpower_word;
-typedef res_varpower_word* res_varpower_monomial;
-typedef const res_varpower_word* res_const_varpower_monomial;
-// format: [length, v1, e1, ..., vr, er]
-// and v1 > v2 > ... > vr >= 0, and all
-// exponents ei > 0.
-// and length is 2r+1.
-// Operations are defined in VarpowerMonomials
 
 // The following is possibly out of date information
 // format: [hash,component,e1,...,envars],

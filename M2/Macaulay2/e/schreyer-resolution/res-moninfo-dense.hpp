@@ -3,13 +3,12 @@
 #ifndef _res_moninfo_dense_hpp_
 #define _res_moninfo_dense_hpp_
 
-#include "skew.hpp"                                       // for SkewMultiplication
-#include "schreyer-resolution/res-monomial-types.hpp"     // for res_const_packed_monomial, res_...
-#include "schreyer-resolution/res-varpower-monomial.hpp"  // for index_res_varpower_monomial
-
 #include <iostream>                   // for ostream
 #include <memory>                     // for unique_ptr
 #include <vector>                     // for vector
+
+#include "schreyer-resolution/res-monomial-types.hpp"
+#include "skew.hpp"  // for SkewMultiplication
 
 class ResMonoidDense
 {

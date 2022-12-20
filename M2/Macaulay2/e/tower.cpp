@@ -2,9 +2,9 @@
 
 #include "tower.hpp"
 
+#include "ExponentList.hpp"
 #include "dpoly.hpp"
 #include "ring.hpp"
-#include "varpower.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
 #include "monoid.hpp"

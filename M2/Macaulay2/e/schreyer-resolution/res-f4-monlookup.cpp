@@ -1,10 +1,11 @@
 // Copyright 1994-2016 Michael E. Stillman
 
 #include "schreyer-resolution/res-f4-monlookup.hpp"
+
 #include "buffer.hpp"                                     // for buffer
 #include "engine-exports.h"                               // for newline
 #include "mem.hpp"                                        // for stash
-#include "schreyer-resolution/res-varpower-monomial.hpp"  // for index_res_v...
+#include "schreyer-resolution/res-monomial-types.hpp"     // for index_res_v...
 #include "style.hpp"                                      // for INTSIZE
 #include "text-io.hpp"                                    // for emit, emit_...
 

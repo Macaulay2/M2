@@ -4,7 +4,7 @@
 #define _monideal_hh_
 
 #include "ExponentVector.hpp"
-#include "varpower.hpp"
+#include "ExponentList.hpp"
 #include "int-bag.hpp"
 #include "monoid.hpp"
 #include "ring.hpp"
