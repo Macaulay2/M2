@@ -265,8 +265,8 @@ void GB_comp::find_pairs(gb_elem *p)
 // (includes cases m * lead(p) = 0).
 // Returns a list of new s_pair's.
 {
-  VECTOR(Bag *) elems;
-  intarray vplcm;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vplcm;
   monomial find_pairs_m = _M->make_one();
   monomial f_m = _M->make_one();
   exponents_t find_pairs_exp = newarray_atomic(int, _M->n_vars());
@@ -286,7 +286,7 @@ void GB_comp::find_pairs(gb_elem *p)
           _M->from_expvector(find_pairs_exp, find_pairs_lcm);
           find_pairs_exp[w]--;
 
-          vplcm.shrink(0);
+          vplcm.resize(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_var_pair(p, find_pairs_lcm);
           elems.push_back(new Bag(q, vplcm));
@@ -301,7 +301,7 @@ void GB_comp::find_pairs(gb_elem *p)
         {
           const gbvector *f = originalR->quotient_gbvector(i);
           _M->lcm(f->monom, f_m, find_pairs_lcm);
-          vplcm.shrink(0);
+          vplcm.resize(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
           elems.push_back(new Bag(q, vplcm));
@@ -311,9 +311,9 @@ void GB_comp::find_pairs(gb_elem *p)
   MonomialIdeal *mi1 = _monideals[p->f->comp]->mi;
   for (Bag& a : *mi1)
     {
-      _M->from_varpower(a.monom().raw(), find_pairs_m);
+      _M->from_varpower(a.monom().data(), find_pairs_m);
       _M->lcm(find_pairs_m, f_m, find_pairs_lcm);
-      vplcm.shrink(0);
+      vplcm.resize(0);
       _M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q =
           new_s_pair(p,
@@ -323,7 +323,7 @@ void GB_comp::find_pairs(gb_elem *p)
     }
 
   // Add 'p' to the correct monideal
-  intarray vp;
+  gc_vector<int> vp;
   _M->to_varpower(f_m, vp);
   mi1->insert(new Bag(p, vp));
 
@@ -569,7 +569,7 @@ void GB_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 
   if (_M->in_subring(1, f_m)) _n_subring++;
   // insert into p->f->comp->mi_search
-  intarray vp;
+  gc_vector<int> vp;
   _M->to_varpower(f_m, vp);
   _monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   _n_gb++;

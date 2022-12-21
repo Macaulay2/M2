@@ -11,7 +11,6 @@
 #include "finalize.hpp"
 #include "hilb.hpp"
 #include "int-bag.hpp"
-#include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal-minprimes.hpp"
 #include "monideal.hpp"
@@ -328,7 +327,7 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I,
   Frobby::Ideal F(nv);
   for (Bag& b : *I)
     {
-      varpower::to_expvector(nv, b.monom().raw(), exp);
+      varpower::to_expvector(nv, b.monom().data(), exp);
 
       if (M2_gbTrace >= 4) fprintf(stderr, "adding ");
       for (int j = 0; j < nv; j++)

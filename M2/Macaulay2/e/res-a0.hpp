@@ -4,7 +4,6 @@
 #define _res2_hh_
 
 #include "style.hpp"
-#include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "poly.hpp"

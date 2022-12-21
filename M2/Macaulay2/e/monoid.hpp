@@ -15,7 +15,6 @@
 
 class PolynomialRing;
 class buffer;
-class intarray;
 struct MonomialOrdering;
 
 // varpower is an array [len, T_(i_1), e_(i_1),..., T_(i_len), e_(i_len)]
@@ -155,7 +154,7 @@ class Monoid : public MutableEngineObject
   // Monomial arithmetic //
   /////////////////////////
   void from_varpower(const_varpower vp, monomial result) const;
-  void to_varpower(const_monomial m, intarray &result_vp) const;
+  void to_varpower(const_monomial m, gc_vector<int>& result_vp) const;
 
   void from_expvector(const_exponents exp, monomial result) const;
   void to_expvector(const_monomial m, exponents_t result_exp) const;

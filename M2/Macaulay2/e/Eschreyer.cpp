@@ -128,7 +128,7 @@ gbvector *GBKernelComputation::make_syz_term(ring_elem c,
 
 void GBKernelComputation::strip_gb(const GBMatrix *m)
 {
-  const VECTOR(gbvector *) &g = m->elems;
+  const gc_vector<gbvector*> &g = m->elems;
   int i;
   int *components = newarray_atomic_clear(int, F->rank());
   for (i = 0; i < g.size(); i++)
@@ -156,9 +156,9 @@ void GBKernelComputation::new_pairs(int i)
 // Create and insert all of the pairs which will have lead term 'gb[i]'.
 // This also places 'in(gb[i])' into the appropriate monomial ideal
 {
-  VECTOR(Bag *) elems;
-  intarray vp;  // This is 'p'.
-  intarray thisvp;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vp;  // This is 'p'.
+  gc_vector<int> thisvp;
 
   if (SF)
     {
@@ -176,11 +176,11 @@ void GBKernelComputation::new_pairs(int i)
     {
       exponents_t find_pairs_exp = newarray_atomic(int, M->n_vars());
 
-      varpower::to_expvector(M->n_vars(), vp.raw(), find_pairs_exp);
+      varpower::to_expvector(M->n_vars(), vp.data(), find_pairs_exp);
       for (int w = 0; w < R->n_skew_commutative_vars(); w++)
         if (find_pairs_exp[R->skew_variable(w)] > 0)
           {
-            thisvp.shrink(0);
+            thisvp.resize(0);
             varpower::var(w, 1, thisvp);
             Bag *b = new Bag(static_cast<void *>(0), thisvp);
             elems.push_back(b);
@@ -199,9 +199,9 @@ void GBKernelComputation::new_pairs(int i)
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
-          thisvp.shrink(0);
-          varpower::quotient(a.monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
+          thisvp.resize(0);
+          varpower::quotient(a.monom().data(), vp.data(), thisvp);
+          if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
           elems.push_back(b);
@@ -215,7 +215,7 @@ void GBKernelComputation::new_pairs(int i)
   for (Bag& a : *mi_orig)
     {
       Bag *b = new Bag();
-      varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
+      varpower::quotient(a.monom().data(), vp.data(), b->monom());
       elems.push_back(b);
     }
 
@@ -230,7 +230,7 @@ void GBKernelComputation::new_pairs(int i)
   monomial m = M->make_one();
   for (Bag& a : *new_mi)
     {
-      M->from_varpower(a.monom().raw(), m);
+      M->from_varpower(a.monom().data(), m);
       M->mult(m, gb[i]->monom, m);
 
       gbvector *q = make_syz_term(
@@ -262,7 +262,7 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
                                       int &result)
 {
   // Find all the possible matches, use some criterion for finding the best...
-  VECTOR(Bag *) bb;
+  gc_vector<Bag*> bb;
   this_mi->find_all_divisors(exp, bb);
   int ndivisors = bb.size();
   if (ndivisors == 0) return 0;

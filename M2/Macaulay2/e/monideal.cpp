@@ -33,7 +33,7 @@ unsigned int MonomialIdeal::computeHashValue() const
   for (Bag& b : *this)
     {
       if (count >= 5) break;
-      const_varpower m = b.monom().raw();
+      const_varpower m = b.monom().data();
       hashval = 4436435 * hashval + varpower::computeHashValue(m);
       count++;
     }
@@ -120,7 +120,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
   int count = 0;
   for (auto& b : elems)
     {
-      int deg = varpower::simple_degree(b->monom().raw());
+      int deg = varpower::simple_degree(b->monom().data());
       degs_and_indices.push_back(std::make_pair(deg, count));
       ++count;
     }
@@ -130,7 +130,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
     {
       Bag* b = elems[p.second];
       Bag* b1; // not used here...
-      if (search(b->monom().raw(), b1))
+      if (search(b->monom().data(), b1))
         rejects.push_back(b);
       else
         insert_minimal(b);
@@ -157,7 +157,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
   int count = 0;
   for (auto& b : elems)
     {
-      int deg = varpower::simple_degree(b->monom().raw());
+      int deg = varpower::simple_degree(b->monom().data());
       degs_and_indices.push_back(std::make_pair(deg, count));
       ++count;
     }
@@ -167,7 +167,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
     {
       Bag* b = elems[p.second];
       Bag* b1; // not used here...
-      if (search(b->monom().raw(), b1))
+      if (search(b->monom().data(), b1))
         delete b;
       else
         insert_minimal(b);
@@ -176,12 +176,12 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
 
 const_varpower MonomialIdeal::first_elem() const
 {
-  return first_node()->monom().raw();
+  return first_node()->monom().data();
 }
 
 const_varpower MonomialIdeal::second_elem() const
 {
-  return next(first_node())->monom().raw();
+  return next(first_node())->monom().data();
 }
 
 MonomialIdeal *MonomialIdeal::copy() const
@@ -201,8 +201,8 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
   Iterator sentinel = end();
   while (i != sentinel)
     {
-      const_varpower m = (*i).monom().raw();
-      const_varpower n = (*j).monom().raw();
+      const_varpower m = (*i).monom().data();
+      const_varpower n = (*j).monom().data();
       if (!varpower::is_equal(m, n)) return false;
       i++;
       j++;
@@ -323,7 +323,7 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
   Nmi_node **p = &top, *up = nullptr;
   int one_element = 1;
 
-  for (index_varpower i = b->monom().raw(); i.valid();)
+  for (index_varpower i = b->monom().data(); i.valid();)
     {
       one_element = 0;
       int insert_var = i.var();
@@ -479,7 +479,7 @@ void MonomialIdeal::do_node(Nmi_node *p, int indent, int disp) const
     {
       nleaves++;
       if (disp) o << ' ';
-      varpower::elem_text_out(o, p->baggage()->monom().raw());
+      varpower::elem_text_out(o, p->baggage()->monom().data());
       o << '(';
       o << p->baggage()->basis_elem();
       o << ')';
@@ -625,7 +625,7 @@ int MonomialIdeal::insert(Bag *b)
 // monomial was actually inserted.
 {
   Bag *old_b;
-  const_varpower m = b->monom().raw();
+  const_varpower m = b->monom().data();
 
   if (search(m, old_b))
     {
@@ -656,7 +656,7 @@ void MonomialIdeal::text_out(buffer &o) const
   monomial m = M->make_one();
   for (Bag& j : *this)
     {
-      const_varpower n = j.monom().raw();
+      const_varpower n = j.monom().data();
       M->from_varpower(n, m);
       M->elem_text_out(o, m);
       if (M2_gbTrace > 0) o << '(' << j.basis_elem() << ")";
@@ -674,7 +674,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
   for (Bag& a : *this)
     {
       Bag *c;
-      if (J.search(a.monom().raw(), c))
+      if (J.search(a.monom().data(), c))
         {
           new_elems.push_back(new Bag(a));
         }
@@ -682,8 +682,8 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
         for (Bag& b : J)
           {
             Bag *new_elem = new Bag(a.basis_elem());
-            varpower::lcm(a.monom().raw(),
-                          b.monom().raw(),
+            varpower::lcm(a.monom().data(),
+                          b.monom().data(),
                           new_elem->monom());
             new_elems.push_back(new_elem);
           }
@@ -700,7 +700,7 @@ MonomialIdeal *MonomialIdeal::intersect(const_varpower m) const
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
-      varpower::lcm(a.monom().raw(), m, b->monom());
+      varpower::lcm(a.monom().data(), m, b->monom());
       new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -714,9 +714,7 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
     for (Bag& b : J)
       {
         Bag *c = new Bag(a.basis_elem());
-        varpower::mult(a.monom().raw(),
-                       b.monom().raw(),
-                       c->monom());
+        varpower::mult(a.monom().data(), b.monom().data(), c->monom());
         new_elems.push_back(c);
       }
          
@@ -749,7 +747,7 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
   for (Bag& a : *this)
     {
       Bag *c;
-      if (!J.search(a.monom().raw(), c))
+      if (!J.search(a.monom().data(), c))
         {
           result->insert_minimal(new Bag(a));
         }
@@ -765,7 +763,7 @@ MonomialIdeal *MonomialIdeal::quotient(const_varpower m) const
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
-      varpower::quotient(a.monom().raw(), m, b->monom());
+      varpower::quotient(a.monom().data(), m, b->monom());
       new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -788,7 +786,7 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
   result->insert(b);
   for (Bag& a : J)
     {
-      MonomialIdeal *result1 = quotient(a.monom().raw());
+      MonomialIdeal *result1 = quotient(a.monom().data());
       // result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
       // next_result->debug_check();
@@ -826,7 +824,7 @@ M2_arrayint MonomialIdeal::lcm() const
 
   for (Bag& a : *this)
     {
-      for (index_varpower j = a.monom().raw(); j.valid(); ++j)
+      for (index_varpower j = a.monom().data(); j.valid(); ++j)
         if (result->array[j.var()] < j.exponent())
           result->array[j.var()] = j.exponent();
     }
@@ -843,7 +841,7 @@ MonomialIdeal *MonomialIdeal::alexander_dual(const M2_arrayint a) const
   for (Bag& b : *this)
     {
       MonomialIdeal *I1 =
-          varpower_monideal(get_ring(), a, b.monom().raw());
+          varpower_monideal(get_ring(), a, b.monom().data());
       MonomialIdeal *next_result = result->intersect(*I1);
       delete I1;
       delete result;
@@ -859,7 +857,7 @@ MonomialIdeal *MonomialIdeal::erase(const_varpower m) const
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
-      varpower::erase(a.monom().raw(), m, b->monom());
+      varpower::erase(a.monom().data(), m, b->monom());
       new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -884,7 +882,7 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
   result->insert(b);
   for (Bag& a : J)
     {
-      MonomialIdeal *result1 = erase(a.monom().raw());
+      MonomialIdeal *result1 = erase(a.monom().data());
       // result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
       // next_result->debug_check();
@@ -908,7 +906,7 @@ MonomialIdeal *MonomialIdeal::radical() const
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
-      varpower::radical(a.monom().raw(), b->monom());
+      varpower::radical(a.monom().data(), b->monom());
       new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -946,7 +944,7 @@ MonomialIdeal *MonomialIdeal::borel() const
   exponents_t bexp = newarray_atomic(int, get_ring()->n_vars());
   for (Bag& b : *this)
     {
-      varpower::to_expvector(get_ring()->n_vars(), b.monom().raw(), bexp);
+      varpower::to_expvector(get_ring()->n_vars(), b.monom().data(), bexp);
       borel1(new_elems, bexp, get_ring()->n_vars() - 1, get_ring()->n_vars());
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -960,7 +958,7 @@ bool MonomialIdeal::is_borel() const
   for (Bag& b : *this)
     {
       Bag *c;
-      varpower::to_expvector(get_ring()->n_vars(), b.monom().raw(), bexp);
+      varpower::to_expvector(get_ring()->n_vars(), b.monom().data(), bexp);
       for (int j = get_ring()->n_vars() - 1; j >= 1; j--)
         if (bexp[j] > 0)
           {
@@ -991,7 +989,7 @@ int MonomialIdeal::n_pure_powers() const
   int v, e;
   for (Bag& b : *this)
     {
-      const_varpower m = b.monom().raw();
+      const_varpower m = b.monom().data();
       if (varpower::is_pure_power(m, v, e)) npure++;
     }
   return npure;

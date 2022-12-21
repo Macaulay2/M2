@@ -204,13 +204,13 @@ EngineMonomial *RingElement::lead_monom(int nvars) const
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P != nullptr)
     {
-      intarray resultvp;
+      gc_vector<int> resultvp;
       Nterm *t = get_value();
 
       exponents_t exp = newarray_atomic(int, nvars);
       P->lead_logical_exponents(nvars, t, exp);
       varpower::from_expvector(nvars, exp, resultvp);
-      return EngineMonomial::make(resultvp.raw());
+      return EngineMonomial::make(resultvp.data());
     }
   const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(R);
   if (Q != nullptr)

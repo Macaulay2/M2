@@ -4,7 +4,6 @@
 #define _schorder_hpp_
 
 #include "buffer.hpp"
-#include "intarray.hpp"
 #include "monoid.hpp"
 
 class GBMatrix;
@@ -14,8 +13,9 @@ class SchreyerOrder : public our_new_delete
 {
   const Monoid *M;
 
-  intarray _order;  // Each 'entry' is an array of ints of length _nslots:
-                    // compare_num, followed by the (encoded) monomial.
+  // Each 'entry' is an array of ints of length _nslots:
+  // compare_num, followed by the (encoded) monomial.
+  gc_vector<int> _order;
   int _nslots;
   int _rank;
 
@@ -33,7 +33,7 @@ class SchreyerOrder : public our_new_delete
 
   int rank() const { return _rank; }
   int compare_num(int i) const { return _order[i * _nslots]; }
-  const_monomial base_monom(int i) const { return _order.raw() + i * _nslots + 1; }
+  const_monomial base_monom(int i) const { return _order.data() + i * _nslots + 1; }
   const Monoid *getMonoid() const { return M; }
   bool is_equal(const SchreyerOrder *G) const;
   SchreyerOrder *copy() const;

@@ -151,7 +151,6 @@ INTERFACE = \
 	hermite \
 	hilb \
 	int-bag \
-	intarray \
 	matrix \
 	matrix-con \
 	mem \

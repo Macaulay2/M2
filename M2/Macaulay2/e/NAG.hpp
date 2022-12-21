@@ -28,7 +28,6 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "hash.hpp"
-#include "intarray.hpp"
 #include "newdelete.hpp"
 #include "ring.hpp"
 #include "ringelem.hpp"
@@ -426,8 +425,8 @@ class SLP : public MutableEngineObject
   bool is_relative_position;  // can use relative or absolute addressing
   M2_arrayint program;        // std::vector???
   element_type* nodes;        // array of CCs
-  intarray node_index;  // points to position in program (rel. to start) of
-                        // operation corresponding to a node
+  gc_vector<int> node_index;  // points to position in program (rel. to start)
+                              // of operation corresponding to a node
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
   void* handle;  // dynamic library handle
@@ -439,15 +438,15 @@ class SLP : public MutableEngineObject
 
   static void make_nodes(element_type*&, int size);
   int poly_to_horner_slp(int n,
-                         intarray& prog,
-                         VECTOR(element_type) & consts,
+                         gc_vector<int>& prog,
+                         gc_vector<element_type>& consts,
                          Nterm*& f);  // used by make
 
-  int diffNodeInput(int n, int v, intarray& prog);  // used by jacobian
+  int diffNodeInput(int n, int v, gc_vector<int>& prog);  // used by jacobian
   int diffPartReference(int n,
                         int ref,
                         int v,
-                        intarray& prog);  // used by diffNodeInput
+                        gc_vector<int>& prog);  // used by diffNodeInput
 
   /* obsolete!!!
   void predictor(); // evaluates a predictor

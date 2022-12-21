@@ -749,11 +749,11 @@ void Monoid::from_varpower(const_varpower vp, monomial result) const
   from_expvector(EXP1, result);
 }
 
-void Monoid::to_varpower(const_monomial m, intarray &result_vp) const
+void Monoid::to_varpower(const_monomial m, gc_vector<int>& result) const
 {
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  varpower::from_expvector(nvars_, EXP1, result_vp);
+  varpower::from_expvector(nvars_, EXP1, result);
 }
 
 // Local Variables:

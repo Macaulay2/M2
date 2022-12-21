@@ -3,9 +3,7 @@
 #include "res-a0.hpp"
 
 #include "ExponentVector.hpp"
-#include "intarray.hpp"
 #include "res-a0-poly.hpp"
-#include "res-a0.hpp"
 #include "geobucket.hpp"
 #include "buffer.hpp"
 #include "text-io.hpp"
@@ -954,9 +952,9 @@ void res2_comp::new_pairs(res2_pair *p)
 // Create and insert all of the pairs which will have lead term 'p'.
 // This also places 'p' into the appropriate monomial ideal
 {
-  VECTOR(Bag *) elems;
-  intarray vp;  // This is 'p'.
-  intarray thisvp;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vp;  // This is 'p'.
+  gc_vector<int> thisvp;
 
   monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
 
@@ -975,7 +973,7 @@ void res2_comp::new_pairs(res2_pair *p)
   if (P->is_skew_commutative())
     {
       exponents_t exp = newarray_atomic(int, M->n_vars());
-      varpower::to_expvector(M->n_vars(), vp.raw(), exp);
+      varpower::to_expvector(M->n_vars(), vp.data(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v = 0; v < nskew; v++)
@@ -983,7 +981,7 @@ void res2_comp::new_pairs(res2_pair *p)
           int w = P->skew_variable(v);
           if (exp[w] > 0)
             {
-              thisvp.shrink(0);
+              thisvp.resize(0);
               varpower::var(w, 1, thisvp);
               Bag *b = new Bag(static_cast<void *>(0), thisvp);
               elems.push_back(b);
@@ -1002,9 +1000,9 @@ void res2_comp::new_pairs(res2_pair *p)
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
-          thisvp.shrink(0);
-          varpower::quotient(a.monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
+          thisvp.resize(0);
+          varpower::quotient(a.monom().data(), vp.data(), thisvp);
+          if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
           elems.push_back(b);
@@ -1018,7 +1016,7 @@ void res2_comp::new_pairs(res2_pair *p)
   for (Bag& a : *mi_orig)
     {
       Bag *b = new Bag(a.basis_ptr());
-      varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
+      varpower::quotient(a.monom().data(), vp.data(), b->monom());
       elems.push_back(b);
     }
 
@@ -1036,7 +1034,7 @@ void res2_comp::new_pairs(res2_pair *p)
   for (Bag& a : mi)
     {
       res2_pair *second = reinterpret_cast<res2_pair *>(a.basis_ptr());
-      M->from_varpower(a.monom().raw(), m);
+      M->from_varpower(a.monom().data(), m);
       M->mult(m, p->syz->monom, m);
 
       res2_pair *q = new_res2_pair(p, second, m);

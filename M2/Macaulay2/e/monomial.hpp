@@ -15,7 +15,7 @@ class EngineMonomial : public EngineObject
 {
   // The format of a monomial is from varpower.hpp:
   // [2n+1, v1, e1, ..., vn, en]
-  intarray val;
+  gc_vector<int> val;
 
   EngineMonomial();
   EngineMonomial(int v, int e);
@@ -34,9 +34,9 @@ class EngineMonomial : public EngineObject
   // format for this is that of a 'varpower' monomial:
   // [2n+1, v1, e1, v2, e2, ..., vn, en]
   // with each ei != 0.
-  
-  int * ints() { return val.raw(); }
-  const int * ints() const { return val.raw(); }
+
+  int * ints() { return val.data(); }
+  const int * ints() const { return val.data(); }
 
   EngineMonomial *operator*(const EngineMonomial &b) const;
   EngineMonomial *operator/(const EngineMonomial &b) const;
@@ -54,8 +54,8 @@ class EngineMonomial : public EngineObject
   int compare(const Monoid *M, const EngineMonomial &b) const;
   int simple_degree() const;
 
-  void text_out(buffer &o) const { varpower::elem_text_out(o, val.raw()); }
-  M2_arrayint to_arrayint() const { return varpower::to_arrayint(val.raw()); }
+  void text_out(buffer &o) const { varpower::elem_text_out(o, val.data()); }
+  M2_arrayint to_arrayint() const { return varpower::to_arrayint(val.data()); }
 };
 
 #endif

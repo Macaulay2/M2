@@ -265,7 +265,7 @@ class TowerEvaluator : public DPolyTraverser
   TowerPolynomial f;
   int first_var;
   const Ring *target;
-  intarray vp;
+  gc_vector<int> vp;
   int nvars;
 
   virtual bool viewTerm(long coeff, const_exponents exp)
@@ -274,10 +274,10 @@ class TowerEvaluator : public DPolyTraverser
     // map->eval_term
     // either:
     //  H->add, or target->add_to
-    vp.shrink(0);
+    vp.resize(0);
     varpower::from_expvector(nvars, exp, vp);
     ring_elem c = K->from_long(coeff);
-    ring_elem a = map->eval_term(K, c, vp.raw(), first_var, nvars);
+    ring_elem a = map->eval_term(K, c, vp.data(), first_var, nvars);
     H->add(a);
     return true;
   }
