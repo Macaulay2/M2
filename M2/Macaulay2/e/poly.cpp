@@ -1347,15 +1347,15 @@ ring_elem PolyRing::eval(const RingMap *map,
   // is a polynomial ring: if so, use a heap structure.  If not, just add to the
   // result.
 
-  intarray vp;
+  gc_vector<int> vp;
   const Ring *target = map->get_ring();
   SumCollector *H = target->make_SumCollector();
 
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      vp.shrink(0);
+      vp.resize(0);
       M_->to_varpower(t->monom, vp);
-      ring_elem g = map->eval_term(K_, t->coeff, vp.raw(), first_var, n_vars());
+      ring_elem g = map->eval_term(K_, t->coeff, vp.data(), first_var, n_vars());
       H->add(g);
     }
   ring_elem result = H->getValue();
@@ -1808,7 +1808,7 @@ engine_RawArrayPairOrNull PolyRing::list_form(const Ring *coeffR,
   result->coeffs = coeffs;
 
   exponents_t exp = newarray_atomic(int, n_vars());
-  intarray resultvp;
+  gc_vector<int> resultvp;
   const Nterm *t = f;
   for (int next = 0; next < n; next++)
     {
@@ -1816,9 +1816,9 @@ engine_RawArrayPairOrNull PolyRing::list_form(const Ring *coeffR,
       ring_elem c =
           get_logical_coeff(coeffR, t);  // increments t to the next term of f.
       varpower::from_expvector(nvars0, exp, resultvp);
-      monoms->array[next] = EngineMonomial::make(resultvp.raw());
+      monoms->array[next] = EngineMonomial::make(resultvp.data());
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
-      resultvp.shrink(0);
+      resultvp.resize(0);
 
       assert(monoms->array[next] != NULL);
       assert(coeffs->array[next] != NULL);
@@ -2051,9 +2051,9 @@ ring_elem PolyRing::diff_term(const_monomial m,
     M_->divide(n, m, resultmon);
   ring_elem result = K_->from_long(1);
   if (!use_coeff) return result;
-  intarray e1, e2;
-  exponents_t exp1 = e1.alloc(n_vars());
-  exponents_t exp2 = e2.alloc(n_vars());
+  gc_vector<int> e1(n_vars()), e2(n_vars());
+  exponents_t exp1 = e1.data();
+  exponents_t exp2 = e2.data();
   M_->to_expvector(m, exp1);
   M_->to_expvector(n, exp2);
 

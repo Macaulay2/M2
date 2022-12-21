@@ -171,7 +171,7 @@ MonomialIdeal *MinimalPrimes::alg1_min_primes(int maxcodim, int count)
   long len = 1;
   for (Bag& a : *mi)
     {
-      long d = varpower::simple_degree(a.monom().raw());
+      long d = varpower::simple_degree(a.monom().data());
       len += d;
     }
 
@@ -183,7 +183,7 @@ MonomialIdeal *MinimalPrimes::alg1_min_primes(int maxcodim, int count)
 
   for (Bag& a : *mi)
     {
-      int *m = a.monom().raw();
+      int *m = a.monom().data();
       int d = varpower::simple_degree(m);
 
       monoms[next_monom++] = d + 2;
@@ -284,7 +284,7 @@ void MinimalPrimes::ass_prime_generator(Nmi_node *p, int codim)
             }
           return;
         }
-      const int *m = p->monom().raw();
+      const int *m = p->monom().data();
       switch (reduce_exp(m, exp0))
         {
           case 0:

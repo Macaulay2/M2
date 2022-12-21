@@ -3,11 +3,10 @@
 #include "res-a1.hpp"
 
 #include "ExponentVector.hpp"
-#include "intarray.hpp"
 #include "res-a1-poly.hpp"
-#include "res-a1.hpp"
 #include "text-io.hpp"
 #include "interrupted.hpp"
+
 //////////////////////////////////////////////
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
@@ -306,7 +305,7 @@ void res_comp::insert_res_pair(int level, res_pair *p)
     }
   else
     {
-      intarray vp;
+      gc_vector<int> vp;
       M->to_varpower(p->syz->monom, vp);
       search_mi[p->syz->comp->me]->insert_minimal(new Bag(p, vp));
     }
@@ -612,9 +611,9 @@ void res_comp::new_pairs(res_pair *p)
 // and only pairs with elements before this in the sorting order
 // will be considered.
 {
-  VECTOR(Bag *) elems;
-  intarray vp;  // This is 'p'.
-  intarray thisvp;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vp;  // This is 'p'.
+  gc_vector<int> thisvp;
 
   monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
 
@@ -633,7 +632,7 @@ void res_comp::new_pairs(res_pair *p)
   if (P->is_skew_commutative())
     {
       exponents_t exp = newarray_atomic(int, M->n_vars());
-      varpower::to_expvector(M->n_vars(), vp.raw(), exp);
+      varpower::to_expvector(M->n_vars(), vp.data(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v = 0; v < nskew; v++)
@@ -641,7 +640,7 @@ void res_comp::new_pairs(res_pair *p)
           int w = P->skew_variable(v);
           if (exp[w] > 0)
             {
-              thisvp.shrink(0);
+              thisvp.resize(0);
               varpower::var(w, 1, thisvp);
               Bag *b = new Bag(static_cast<void *>(0), thisvp);
               elems.push_back(b);
@@ -660,9 +659,9 @@ void res_comp::new_pairs(res_pair *p)
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
-          thisvp.shrink(0);
-          varpower::quotient(a.monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
+          thisvp.resize(0);
+          varpower::quotient(a.monom().data(), vp.data(), thisvp);
+          if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
           elems.push_back(b);
@@ -675,7 +674,7 @@ void res_comp::new_pairs(res_pair *p)
   for (Bag& a : *mi_orig)
     {
       Bag *b = new Bag(a.basis_ptr());
-      varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
+      varpower::quotient(a.monom().data(), vp.data(), b->monom());
       elems.push_back(b);
     }
 
@@ -697,7 +696,7 @@ void res_comp::new_pairs(res_pair *p)
       res_pair *second = reinterpret_cast<res_pair *>(a.basis_ptr());
       res_pair *q = new_res_pair(SYZ_S_PAIR, p, second);
       // That set most fields except base_monom:
-      M->from_varpower(a.monom().raw(), q->base_monom);
+      M->from_varpower(a.monom().data(), q->base_monom);
       M->mult(q->base_monom, p->base_monom, q->base_monom);
       insert_res_pair(n_level, q);
     }
@@ -1498,9 +1497,9 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 // Create and insert all of the pairs which will have lead term 'p'.
 // This also places 'p' into the appropriate monomial ideal
 {
-  VECTOR(Bag *) elems;
-  intarray vp;  // This is 'p'.
-  intarray thisvp;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vp;  // This is 'p'.
+  gc_vector<int> thisvp;
 
   monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
 
@@ -1518,8 +1517,9 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 
   if (P->is_skew_commutative())
     {
+
       exponents_t exp = newarray_atomic(int, M->n_vars());
-      varpower::to_expvector(M->n_vars(), vp.raw(), exp);
+      varpower::to_expvector(M->n_vars(), vp.data(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v = 0; v < nskew; v++)
@@ -1527,7 +1527,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
           int w = P->skew_variable(v);
           if (exp[w] > 0)
             {
-              thisvp.shrink(0);
+              thisvp.resize(0);
               varpower::var(w, 1, thisvp);
               Bag *b = new Bag(static_cast<void *>(0), thisvp);
               elems.push_back(b);
@@ -1546,9 +1546,9 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
-          thisvp.shrink(0);
-          varpower::quotient(a.monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
+          thisvp.resize(0);
+          varpower::quotient(a.monom().data(), vp.data(), thisvp);
+          if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
           elems.push_back(b);
@@ -1562,7 +1562,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   for (Bag& a : *mi_orig)
     {
       Bag *b = new Bag(a.basis_ptr());
-      varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
+      varpower::quotient(a.monom().data(), vp.data(), b->monom());
       elems.push_back(b);
     }
 
@@ -1581,7 +1581,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
       res_pair *second = reinterpret_cast<res_pair *>(a.basis_ptr());
       res_pair *q = new_res_pair(SYZ_S_PAIR, p, second);
       // That set most fields except base_monom:
-      M->from_varpower(a.monom().raw(), q->base_monom);
+      M->from_varpower(a.monom().data(), q->base_monom);
       M->mult(q->base_monom, p->base_monom, q->base_monom);
       result->next = q;
       result = q;

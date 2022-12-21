@@ -127,11 +127,11 @@ void varpower::var(int v, int e, intarray &result)
 
 void varpower::from_arrayint(M2_arrayint m, intarray &result)
 {
-  int *result_vp = result.alloc(m->len + 1);
+  int *result_vp = result.alloc(m->len + 1); // FIXME: reconcile
   *result_vp++ = m->len + 1;
   int *melems = m->array;
 
-  for (int i = 0; i < m->len; i += 2)
+  for (int i = 0; i < m->len; i += 2) // FIXME: reconcile
     {
       int v = *melems++;
       int e = *melems++;
@@ -144,14 +144,14 @@ void varpower::from_arrayint(M2_arrayint m, intarray &result)
 M2_arrayint varpower::to_arrayint(const int *vp)
 {
   int len = *vp;
-  M2_arrayint result = M2_makearrayint(len);
+  M2_arrayint result = M2_makearrayint(len); // FIXME: reconcile
   for (int i = 0; i < len; i++) result->array[i] = *vp++;
   return result;
 }
 
 int *varpower::copy(const int *vp, intarray &result)
 {
-  return result.copy(*vp, vp);
+  return result.copy(*vp, vp); // FIXME: reconcile
 }
 
 void varpower::to_expvector(int n, const int *a, exponents_t result)
@@ -161,7 +161,8 @@ void varpower::to_expvector(int n, const int *a, exponents_t result)
     {
       int v = i.var();
       int e = i.exponent();
-      if (v < n) result[v] = e;
+      assert(v < n);
+      result[v] = e;
     }
 }
 
@@ -173,7 +174,7 @@ void varpower::from_expvector(int n, const_exponents a, intarray &result)
   int result_len = 2 * len + 1;
   int *result_vp = result.alloc(result_len);
 
-  *result_vp++ = result_len;
+  *result_vp++ = result_len; // FIXME: reconcile
   for (int i = n - 1; i >= 0; i--)
     if (a[i] != 0)
       {
@@ -529,8 +530,6 @@ void varpower::radical(const int *a, intarray &result)
 }
 
 bool varpower::is_pure_power(const int *a, int &v, int &e)
-// if a is a pure power, then set v, e so that v^e is a.
-// otherwise return false.
 {
   if (*a != 3) return false;
   v = a[1];

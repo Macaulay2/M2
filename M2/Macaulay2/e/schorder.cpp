@@ -15,10 +15,12 @@ SchreyerOrder *SchreyerOrder::create(const Monoid *M)
   return S;
 }
 
-void SchreyerOrder::remove() { _order.remove(); }
+void SchreyerOrder::remove() { _order.clear(); _order.shrink_to_fit(); }
 void SchreyerOrder::append(int compare_num0, const_monomial baseMonom)
 {
-  int *me = _order.alloc(_nslots);
+  auto end = _order.size();
+  _order.resize(end + _nslots);
+  int *me = _order.data() + end;
   *me++ = compare_num0;
   for (int i = 1; i < _nslots; i++) *me++ = *baseMonom++;
   _rank++;

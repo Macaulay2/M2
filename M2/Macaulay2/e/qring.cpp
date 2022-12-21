@@ -8,6 +8,7 @@
 #include "poly.hpp"
 
 #include "aring-glue.hpp"  // for globalQQ??
+
 void QRingInfo::appendQuotientElement(Nterm *f, gbvector *g)
 {
   quotient_ideal.push_back(f);
@@ -56,7 +57,7 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
 {
   Rideal = new MonomialIdeal(R);
   ringtable = MonomialTable::make(R->n_vars());
-  intarray vp;
+  gc_vector<int> vp;
   exponents_t exp = newarray_atomic(int, R->n_vars());
   for (int i = 0; i < quotients.size(); i++)
     {
@@ -74,7 +75,6 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
           int index = n_quotients();
           gbvector *g = R->translate_gbvector_from_ringelem(f);
           appendQuotientElement(f, g);
-          vp.shrink(0);
           R->getMonoid()->to_varpower(f->monom, vp);
           Bag *b = new Bag(index, vp);
           Rideal->insert(b);
@@ -129,7 +129,7 @@ void QRingInfo_field_basic::normal_form(ring_elem &f) const
   while (t != NULL)
     {
       M->to_expvector(t->monom, EXP1);
-      int_bag *b;
+      Bag *b;
       if (Rideal->search_expvector(EXP1, b))
         {
           Nterm *s = quotient_element(b->basis_elem());
@@ -222,7 +222,7 @@ void QRingInfo_field_QQ::normal_form(ring_elem &f) const
   while (t != NULL)
     {
       M->to_expvector(t->monom, EXP1);
-      int_bag *b;
+      Bag *b;
       if (Rideal->search_expvector(EXP1, b))
         {
           Nterm *s = quotient_element(b->basis_elem());

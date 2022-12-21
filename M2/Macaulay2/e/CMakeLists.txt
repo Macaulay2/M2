@@ -227,7 +227,6 @@ set(SRCLIST
   hilb
   imonorder
   int-bag
-  intarray
   interreduce
   interrupted
   lapack

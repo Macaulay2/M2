@@ -9,6 +9,7 @@
 #include "monoid.hpp"
 #include "ring.hpp"
 #include "polyring.hpp"
+#include "mem.hpp"
 
 #if 0
 SparseMonomial: pointer to an array of ints.  First is the length.  [len, v1, e1, v2, e2, ..., vr, er]
@@ -54,8 +55,8 @@ private:
 
   Nmi_node *&down() { return val.down; }
   Bag *&baggage() { return val.bag; }
-  intarray &monom() { return val.bag->monom(); }              // varpower
-  const intarray &monom() const { return val.bag->monom(); }  // varpower
+  gc_vector<int> &monom() { return val.bag->monom(); }              // varpower
+  const gc_vector<int> &monom() const { return val.bag->monom(); }  // varpower
   void insert_to_left(Nmi_node *q)
   {
     q->header = header;

@@ -111,7 +111,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
             }
           return;
         }
-      const int *m = p->monom().raw();
+      const int *m = p->monom().data();
       switch (reduce_exp(m, exp))
         {
           case 0:

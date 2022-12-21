@@ -12,7 +12,7 @@
 struct GBMatrix : public our_new_delete
 {
   const FreeModule *F;  // target
-  VECTOR(gbvector *) elems;
+  gc_vector<gbvector*> elems;
 
   GBMatrix(const Matrix *m);
   GBMatrix(const FreeModule *F);
@@ -37,9 +37,9 @@ class GBKernelComputation : public Computation
   const FreeModule *G;      // This is where the resulting syzygies live.
   // This MUST be a Schreyer free module compatible with the input!
 
-  VECTOR(MonomialIdeal *) mi;   // Used in reduction.
-  VECTOR(gbvector *) gb;        // This is the "stripped" GB.
-  VECTOR(gbvector *) syzygies;  // This is basically the result.
+  gc_vector<MonomialIdeal*> mi;   // Used in reduction.
+  gc_vector<gbvector*> gb;        // This is the "stripped" GB.
+  gc_vector<gbvector*> syzygies;  // This is basically the result.
 
   // byte sizes for allocating temp exp vectors and monomials on the stack
   size_t exp_size;
@@ -51,7 +51,7 @@ class GBKernelComputation : public Computation
   int total_reduce_count;
 
   void new_pairs(int i);
-  void strip_gb(const VECTOR(gbvector *) & m);
+  void strip_gb(const gc_vector<gbvector*> &m);
   void strip_gb(const GBMatrix *m);
 
   gbvector *make_syz_term(ring_elem c, const_monomial monom, int comp) const;

@@ -64,7 +64,7 @@ EngineMonomial* EngineMonomial::make(const std::vector<int>& vp)
 unsigned int EngineMonomial::computeHashValue() const
 {
   unsigned int hashval = 0;
-  const int *vp = val.raw();
+  const int *vp = val.data();
   for (int i = 1; i <= *vp; i++)
     {
       hashval += i * (*++vp);

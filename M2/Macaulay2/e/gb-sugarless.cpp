@@ -277,8 +277,8 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 // (includes cases m * lead(p) = 0).
 // Returns a list of new s_pair's.
 {
-  VECTOR(Bag *) elems;
-  intarray vplcm;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vplcm;
   s_pair *q;
   int nvars = M->n_vars();
   monomial f_m = M->make_one();
@@ -304,7 +304,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
           M->from_expvector(find_pairs_exp, find_pairs_lcm);
           find_pairs_exp[w]--;
 
-          vplcm.shrink(0);
+          vplcm.resize(0);
           M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q2 = new_var_pair(p, find_pairs_lcm);
           elems.push_back(new Bag(q2, vplcm));
@@ -322,7 +322,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
         {
           const gbvector *f = originalR->quotient_gbvector(i);
           M->lcm(f->monom, f_m, find_pairs_lcm);
-          vplcm.shrink(0);
+          vplcm.resize(0);
           M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q2 = new_ring_pair(p, find_pairs_lcm);
           elems.push_back(new Bag(q2, vplcm));
@@ -337,7 +337,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
       GR->gbvector_get_lead_monomial(F, s->f, f_m2);
       M->lcm(f_m, f_m2, find_pairs_lcm);
 
-      vplcm.shrink(0);
+      vplcm.resize(0);
       M->to_varpower(find_pairs_lcm, vplcm);
       q = new_s_pair(p, s, find_pairs_lcm);
       elems.push_back(new Bag(q, vplcm));

@@ -168,8 +168,8 @@ class binomial_s_pair_set : public our_new_delete
 
   // Stats for number of pairs:
   int _max_degree;
-  intarray
-      _npairs;  // npairs[2*d] = total # of pairs.  npairs[2*d+1] = number left
+  // npairs[2*d] = total # of pairs.  npairs[2*d+1] = number left
+  gc_vector<int> _npairs;
 
   void remove_lcm_list(s_pair_lcm_list *p);
   void remove_pair_list(s_pair_degree_list *p);

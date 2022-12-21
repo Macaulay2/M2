@@ -419,10 +419,10 @@ bool binomial_ring::calc_s_pair(binomial_s_pair &s, binomial &result) const
 void binomial_ring::monomial_out(buffer &o, const_exponents m) const
 {
   if (m == NULL) return;
-  intarray vp;
+  gc_vector<int> vp;
   varpower::from_expvector(nvars, m, vp);
   monomial n = R->getMonoid()->make_one();
-  R->getMonoid()->from_varpower(vp.raw(), n);
+  R->getMonoid()->from_varpower(vp.data(), n);
   R->getMonoid()->elem_text_out(o, n);
   R->getMonoid()->remove(n);
 }
@@ -442,8 +442,8 @@ binomial_s_pair_set::binomial_s_pair_set(const binomial_ring *RR)
     : R(RR), _prev_lcm(NULL), _n_elems(0), _max_degree(0)
 {
   _pairs = new s_pair_degree_list;  // list header
-  _npairs.append(0);
-  _npairs.append(0);
+  _npairs.push_back(0);
+  _npairs.push_back(0);
 }
 
 void binomial_s_pair_set::enlarge(const binomial_ring *newR)
@@ -539,7 +539,7 @@ void binomial_s_pair_set::insert(binomial_s_pair s)
   if (deg > _max_degree)
     {
       // Extend _npairs:
-      for (int i = 2 * _max_degree + 2; i < 2 * deg + 2; i++) _npairs.append(0);
+      for (int i = 2 * _max_degree + 2; i < 2 * deg + 2; i++) _npairs.push_back(0);
       _max_degree = deg;
     }
   _npairs[2 * deg]++;

@@ -211,10 +211,10 @@ class Matrix : public EngineObject
       const Matrix /* or null */ *&result) const;
 
  private:
-  void minimal_lead_terms_ZZ(intarray &result) const;
+  void minimal_lead_terms_ZZ(gc_vector<int>& result) const;
 
  public:
-  void minimal_lead_terms(intarray &result) const;
+  void minimal_lead_terms(gc_vector<int>& result) const;
 
   M2_arrayint elim_vars(int nparts) const;
   M2_arrayint elim_keep(int nparts) const;

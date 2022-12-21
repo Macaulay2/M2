@@ -51,6 +51,7 @@ public:
   static void quotient(const int *a, const int *b, intarray &result);
   // compute the quotient a:b
   static void power(const int *a, int n, intarray &result);
+  // Does a divide b?
   static bool divides(const int *a, const int *b);
   // Is a divisible by b?
   static void monsyz(const int *a, const int *b, intarray &sa, intarray &sb);
@@ -60,9 +61,8 @@ public:
   // divide a by b^infinity
   static void radical(const int *a, intarray &result);
 
+  // if a=v^e, then set v and e appropriately, otherwise return false.
   static bool is_pure_power(const int *a, int &v, int &e);
-  // if a is a pure power, then set v, e so that v^e is a.
-  // otherwise return false.
 };
 
 class index_varpower

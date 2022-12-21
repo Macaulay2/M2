@@ -143,7 +143,6 @@ interface.o :						\
 	@srcdir@/../e/error.h				\
 	@srcdir@/../e/ringelem.hpp			\
 	@srcdir@/../e/monoid.hpp			\
-	@srcdir@/../e/intarray.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/buffer.hpp			\
 	@srcdir@/../e/mem.hpp				\
@@ -233,7 +232,6 @@ engine.o :						\
 	@srcdir@/../e/monomial.hpp			\
 	@srcdir@/../e/buffer.hpp			\
 	@srcdir@/../e/varpower.hpp			\
-	@srcdir@/../e/intarray.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/mem.hpp				\
 	@srcdir@/../system/mutex.h			\

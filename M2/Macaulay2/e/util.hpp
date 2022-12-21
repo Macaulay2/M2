@@ -56,6 +56,15 @@ inline M2_arrayint stdvector_to_M2_arrayint(const std::vector<T>& v)
   return result;
 }
 
+// TODO: can this be combined with the above?
+template <typename T>
+inline M2_arrayint stdvector_to_M2_arrayint(const gc_vector<T>& v)
+{
+  M2_arrayint result = M2_makearrayint(static_cast<int>(v.size()));
+  for (auto i = 0; i < v.size(); i++) result->array[i] = static_cast<int>(v[i]);
+  return result;
+}
+
 template <typename T>
 inline std::vector<T> M2_arrayint_to_stdvector(M2_arrayint arr)
 {
