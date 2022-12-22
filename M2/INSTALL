@@ -227,7 +227,7 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update |cat
-	brew install autoconf automake bdw-gc boost ccache cddlib cmake ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfi mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm |cat
+	brew install autoconf automake bdw-gc boost ccache cddlib cmake ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfi mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm texinfo |cat
       
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option
@@ -376,6 +376,16 @@ If the Python shared library is not in a standard location, then add its path
 to LDFLAGS.  For example, if Python has been installed using brew, then add
 the following to LDFLAGS, replacing X with the appropriate minor version:
 "-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.X/lib".
+
+-------------------------------
+Building without libffi support
+-------------------------------
+
+Use of the "ForeignFunctions" package requires linking the Macaulay2 binary
+against libffi (https://sourceware.org/libffi/).  This has been known to
+cause issues on Apple silicon machines, and so it is possible to opt out of
+this feature by adding the "--without-libffi" option to the "configure" command
+line below.
 
 -----------------------
 Compiling Macaulay2

@@ -11,7 +11,7 @@ document {
      SeeAlso => {"applyKeys", "applyPairs", "applyValues", "applyTable", "lists and sequences"}
      }
 document { 
-     Key => {(apply,BasicList,Function)},
+     Key => {(apply,BasicList,Function), (apply,String,Function)},
      Headline => "apply a function to each element of a list",
      Usage => "apply(L,f)",
      Inputs => {
@@ -89,12 +89,12 @@ doc ///
   Description
     Text
       Suppose @TT "x"@ is an instance of a class with the @TO iterator@ method
-      installed, e.g., a string, and suppose @TT "iter"@ is the output of
+      installed and suppose @TT "iter"@ is the output of
       @TT "iterator x"@.  Then a new @TO Iterator@ object is returned whose
       @TO next@ method returns @TT "f next iter"@  until @TT "next iter"@
       returns @TO StopIteration@, in which case this new iterator does the same.
     Example
-      applyiter = apply("foo", toUpper)
+      applyiter = apply(iterator "foo", toUpper)
       next applyiter
       next applyiter
       next applyiter

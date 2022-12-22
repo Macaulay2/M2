@@ -24,7 +24,7 @@
 newPackage(
 	"Cyclotomic",
 	Version => "1.0",
-	Date => "Februar 2012",
+	Date => "February 2012",
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://thomas-kahle.de"}},

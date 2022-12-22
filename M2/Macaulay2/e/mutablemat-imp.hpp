@@ -15,7 +15,18 @@ M2SLEvaluator* MutableMat<Mat>::createSLEvaluator(M2SLProgram* P,
     return nullptr;
   } else return new M2SLEvaluator(
     new SLEvaluatorConcrete<typename Mat::CoeffRing> (&(P->value()), constsPos, varsPos, this)
-  );
+    );
+}
+
+template <typename Mat>
+M2SLEvaluator* MutableMat<Mat>::createCompiledSLEvaluator(
+      M2_string libName,
+      int nInputs,
+      int nOutputs) const
+{
+  return new M2SLEvaluator(
+    new SLEvaluatorConcrete<typename Mat::CoeffRing> (libName, nInputs, nOutputs, this)
+    );
 }
 
 template <typename T>

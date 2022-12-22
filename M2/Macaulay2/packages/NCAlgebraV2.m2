@@ -109,7 +109,7 @@ Ring List := (A, args) -> (
    --varSymbols := sequenceToVariableSymbols toSequence varList;
    varSymbols := findSymbols toSequence varList;
    if #varSymbols == 0 then error "Expected at least one variable.";
-   (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length varSymbols);
+   (degs,degrk,group) := processDegrees( opts.Degrees, opts.DegreeRank, null -* opts.DegreeGroup *-, length varSymbols);
    rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs);
    R := new NCFreeAlgebra from {
        (symbol RawRing) => rawR,

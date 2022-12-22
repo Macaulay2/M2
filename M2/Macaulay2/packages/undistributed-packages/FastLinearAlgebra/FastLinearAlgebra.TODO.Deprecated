@@ -64,7 +64,7 @@ XXXXXXXXXXXXXX
 --   Milestones:
 --    1. Do (B): Top level interface and documentation for these functions.  For fast linear algebra functions
 --       what is needed: FastLinearAlgebra package: have to document the functions.
---       thid package should also document: rank, det, ...  but it can't quite do that.  So we will need to change the
+--       this package should also document: rank, det, ...  but it can't quite do that.  So we will need to change the
 --       doc in M2 itself.  Need examples and tests.  Do this in July (in particular: the week of July 18).
 --    2. Do (A). The current implementation of rings: each ring type will have a type from (A) as a member field
 --      5 days of work?  Jakob: look at e/ring-test.hpp before August. 

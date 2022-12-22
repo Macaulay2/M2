@@ -255,7 +255,7 @@ document {
      Headline => "width of a net",
      TT "width n", " -- the width of a net ", TT "n", ".",
      PARA{},
-     "The width of a net is the length of its longest row, if any, else 0.  For a string, the width and the height are the same.",
+     "The width of a net is the length of its longest row, if any, else 0.",
      EXAMPLE lines ///
      	  "a c" || "-" || "adsf"
 	  width oo

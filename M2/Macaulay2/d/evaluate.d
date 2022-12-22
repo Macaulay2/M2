@@ -25,6 +25,7 @@ export chars := new array(Expr) len 256 do (
 export iteratorS := setupvar("iterator", nullE);
 export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
+export joinIteratorsS := setupvar("joinIterators", nullE);
 
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
@@ -284,15 +285,15 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else new Sequence len i do foreach x in r do provide x)));
 
 export getIterator(e:Expr):Expr := (
-    f := lookup1(Class(e), getGlobalVariable(iteratorS));
-    if f == notfoundE
-    then nullE
+    f := lookup(Class(e), getGlobalVariable(iteratorS));
+    when f
+    is Nothing do nullE
     else applyEE(f, e));
 
 export getNextFunction(e:Expr):Expr := (
-    f := lookup1(Class(e), getGlobalVariable(nextS));
-    if f == notfoundE
-    then nullE
+    f := lookup(Class(e), getGlobalVariable(nextS));
+    when f
+    is Nothing do nullE
     else f);
 
 export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do

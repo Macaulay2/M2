@@ -113,7 +113,7 @@ doc ///
 	    normal toric variety.  The variety is also cached in the ring.	    
     Caveat     
         The total coordinate ring is not yet implemented when the toric
-	variety is degenerate or the class group has torsion.
+	variety is degenerate, and is experimental when the class group has torsion.
     SeeAlso
         "working with sheaves"
     	(rays, NormalToricVariety)

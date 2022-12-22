@@ -1021,7 +1021,7 @@ smallestCycleSize Graph := G -> (
      i := 1;
      -- this loop determines if there is a non-linear syzygy
      -- the first non-linear syzygy tells us the smallest induced
-     -- cycle has lenght >= 4.  This is based upon 
+     -- cycle has length >= 4.  This is based upon 
      -- the paper of Eisenbud-Green-Hulek-Popescu,
      -- "Restricting linear syzygies: algebra and geometry"
      while  ((smallestCycle == 0) and (i <= pdim betti R)) do (
@@ -1154,7 +1154,7 @@ document {
 	SUBSECTION "Basic Constructors",
 	PARA { 
 		"The main way of constructing ", TO "Graph", " and " , TO "HyperGraph", " objects is to use the ",
-		TO "graph", " and ", TO "hyperGraph", " methods. These methods are overriden to provide many ways ",
+		TO "graph", " and ", TO "hyperGraph", " methods. These methods are overridden to provide many ways ",
 		"of specifying edges." },
 	PARA { "For the purposes of the EdgeIdeals package, every graph and hypergraph is associated to a ring ",
 		"whose variables correspond to the vertices of the (hyper)graph. Thus, the most explicit way to ",
@@ -1323,7 +1323,7 @@ doc ///
 			be a clutter. The reason is that this package is designed for edge ideals, which would
 			lose any information about edges that are supersets of other edges.			
 			
-			For the first possibility, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifies the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f]
@@ -1410,7 +1410,7 @@ doc ///
 			can input a graph in a number of different ways, which we describe below.  The information
 			describing the graph is stored in a hash table.
 			
-			For the first possibility, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifies the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f]
@@ -1522,7 +1522,7 @@ doc ///
 		       the adjacency matrix of the graph
         Description
 	        Text
-		       This function returns the adjacency matrix of the inputed graph.  The (i,j)^{th} position
+		       This function returns the adjacency matrix of the inputted graph.  The (i,j)^{th} position
 		       of the matrix is 1 if there is an edge between the i^{th} vertex and j^{th} vertex,
 		       and 0 otherwise.  The rows and columns are indexed by the variables of the ring and uses the 
 		       ordering of the variables for determining the order of the rows and columns.
@@ -2559,7 +2559,7 @@ doc ///
 		       the incidence matrix of the hypergraph
         Description
 	        Text
-			This function returns the incidence matrix of the inputed hypergraph. 
+			This function returns the incidence matrix of the inputted hypergraph. 
 			The rows of the matrix are indexed by the variables of the hypergraph 
 			and the columns are indexed by the edges. The (i,j)^{th} entry in the 
 			matrix is 1 if vertex i is contained in edge j, and is 0 otherwise.
@@ -3801,7 +3801,7 @@ doc ///
      	       	    The @TO randomHyperGraph@ method follows a backtracking algorithm
 		    to generate edges with no inclusions between them. As it may take 
 		    a long time to terminate, a time limit is imposed on the method.
-		    The {\tt TimeLimit} option is the amound of time, in seconds, that 
+		    The {\tt TimeLimit} option is the amount of time, in seconds, that 
 		    the method @TO randomHyperGraph@ will take before terminating.
 		    A value of 0 is interpreted as one day. The default value is 5 (seconds).
 	SeeAlso
@@ -3824,7 +3824,7 @@ doc ///
      	       	    The @TO randomHyperGraph@ method follows a backtracking algorithm
 		    to generate edges with no inclusions between them. As it may take 
 		    a long time to terminate, a time limit is imposed on the method.
-		    The {\tt TimeLimit} option is the amound of time, in seconds, that 
+		    The {\tt TimeLimit} option is the amount of time, in seconds, that 
 		    the method @TO randomHyperGraph@ will take before terminating.
 		    A value of 0 is interpreted as one day. The default value is 5 (seconds).
 	SeeAlso

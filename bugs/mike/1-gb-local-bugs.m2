@@ -116,7 +116,7 @@ M1 = matrix"2t2z+z3t+z3+tz,x2z4t3y+t7,x7+zy2+y2"
 M = M1 || -id_(R^3)
 leadTerm M
 gbTrace=3
-gens gb M; -- does not finish... try in in singular too...
+gens gb M; -- does not finish... try in singular too...
 s1 = gens gb(M, DegreeLimit=>50)
 
 gens gb I;

@@ -79,15 +79,15 @@ gcversion():constcharstar := Ccode(returns,"
      unsigned major = x >> 16;
      unsigned minor = (x >> 8) & 0xff;
      unsigned micro = x & 0xff;
-     if (micro == 0xff) sprintf(buf,\"%d.%d\", major, minor);
-     else sprintf(buf,\"%d.%d.%d\", major, minor, micro);
+     if (micro == 0xff) snprintf(buf,40,\"%d.%d\", major, minor);
+     else snprintf(buf,40,\"%d.%d.%d\", major, minor, micro);
      return buf");
 
 header "#include <atomic_ops.h>";
 atomicopsversion():constcharstar := Ccode(returns,"
 #ifdef AO_VERSION_MICRO
      static char buf[40];
-     sprintf(buf,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
+     snprintf(buf,40,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
      return buf
 #else
      return \"version number not available\"
@@ -114,7 +114,7 @@ factoryversion():constcharstar := Ccode(returns,"
 header "#include <readline/readline.h>";
 readlineversion():constcharstar := Ccode(returns,"
      static char buf[8];
-     sprintf(buf, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
+     snprintf(buf, 8, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
      return buf");
 
 header "#include <gdbm.h>";
@@ -125,7 +125,7 @@ lapackversion():constcharstar := Ccode(returns, "
     int major, minor, patch;
     static char buf[40];
     ilaver_(&major, &minor, &patch);
-    sprintf(buf, \"%d.%d.%d\", major, minor, patch);
+    snprintf(buf, 40, \"%d.%d.%d\", major, minor, patch);
     return buf");
 
 ic := Ccode(int, "

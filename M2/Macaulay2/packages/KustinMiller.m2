@@ -201,8 +201,8 @@ maximalElements List := L -> (
         M:=L;
         for j from 0 to #L-1 do (
           for jj from j+1 to #L-1 do (
-               if isSubset(L#j,L#jj) then (M=remove(L,j);break);
-               if isSubset(L#jj,L#j) then (M=remove(L,jj);break);
+               if isSubset(L#j,L#jj) then (M=drop(L,{j,j});break);
+               if isSubset(L#jj,L#j) then (M=drop(L,{jj,jj});break);
           );
         );
         if #M==#L then return L;

@@ -993,7 +993,7 @@ $$
     "The K3 carpets generalize to a family of degenerate K3 surfaces which are unions of two scrolls,
     whose hyperplane sections are reducible canonical curves consisting of two rational normal curves of degree
     g-1 intersecting in g+1 points. The functions in this package explore the syzygies of these surfaces
-    for fields of arbitrary characteristic. Inparticular, the functions in the package allow for g <= 15 a computational proof of the following
+    for fields of arbitrary characteristic. In particular, the functions in the package allow for g <= 15 a computational proof of the following
     conjecture.",
     PARA{},
      HREF("http://arxiv.org","Conjecture 0.1") ,

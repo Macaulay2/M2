@@ -87,7 +87,7 @@ set(DLIST
   interface.dd interface2.d
   texmacs.d
   boostmath.dd
-  ffi.d
+  ffi.d		# removed unless WITH_FFI
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
   )
@@ -103,6 +103,9 @@ else()
 endif()
 if(NOT WITH_PYTHON)
   list(REMOVE_ITEM DLIST python.d)
+endif()
+if(NOT WITH_FFI)
+  list(REMOVE_ITEM DLIST ffi.d)
 endif()
 
 ###############################################################################
@@ -141,7 +144,8 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb FFI::ffi)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb
+  $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
 
 target_include_directories(M2-interpreter
   PUBLIC

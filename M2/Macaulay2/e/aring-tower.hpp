@@ -61,12 +61,12 @@ class ARingTower : public RingInterface
   virtual ~ARingTower();
 
   // TODO: the interface for these three need to change
-  static const ARingTower *create(const BaseRingType &baseRing,
-                                  const std::vector<std::string> &names);
-  static const ARingTower *create(const ARingTower &R,
-                                  const std::vector<std::string> &new_names);
-  static const ARingTower *create(const ARingTower &R,
-                                  const std::vector<ElementType> &extensions);
+  static ARingTower *create(const BaseRingType &baseRing,
+                            const std::vector<std::string> &names);
+  static ARingTower *create(const ARingTower &R,
+                            const std::vector<std::string> &new_names);
+  static ARingTower *create(const ARingTower &R,
+                            const std::vector<ElementType> &extensions);
 
   size_t n_vars() const { return mNumVars; }
   const ARingZZpFFPACK &baseRing() const { return mBaseRing; }

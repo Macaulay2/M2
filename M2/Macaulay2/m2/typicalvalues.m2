@@ -48,6 +48,7 @@ prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
 apply(BasicList,String,Function) := Sequence => apply
+apply(String,Function) := Sequence => apply
 apply(String,BasicList,Function) := Sequence => apply
 apply(String,String,Function) := Sequence => apply
 apply(ZZ,Function) := List => apply
@@ -68,6 +69,7 @@ concatenate Nothing := concatenate String := concatenate Symbol := concatenate Z
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
+take(Thing,ZZ) := List => take
 get File := get String := String => get
 getc File := String => getc
 getenv String := String => getenv
@@ -112,6 +114,8 @@ toSequence String    :=
 toSequence Thing     := Sequence => toSequence
 ascii String := List => ascii
 ascii List := String => ascii
+remove(MutableList,ZZ) := Nothing => remove
+remove(Database,String) := Nothing => remove
 remove(HashTable,Thing) := Nothing => remove
 echoOff File := Nothing => echoOff
 echoOn File := Nothing => echoOn

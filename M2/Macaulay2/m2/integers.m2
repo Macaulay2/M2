@@ -86,6 +86,12 @@ Boolean xor Boolean := (x, y) -> x and not y or not x and y
 
 ZZ~ := bitnotfun
 
+changeBase = method()
+changeBase(ZZ,     ZZ)     := String =>
+changeBase(String, ZZ)     := ZZ     => changeBase0
+changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
+    changeBase(changeBase(s, oldbase), newbase))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

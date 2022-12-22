@@ -518,31 +518,32 @@ gbA::spair *gbA::spair_make_ring(int i, int j)
 
 void gbA::spair_text_out(buffer &o, spair *p)
 {
-  char s[100];  // enough room for all of the non polynomial cases.
+  const int N = 1000;
+  char s[N];  // enough room for all of the non polynomial cases.
   switch (p->type)
     {
       case SPAIR::SPAIR_GCD_ZZ:
-        sprintf(s, "spairgcd(g%d,g%d)", p->x.pair.j, p->x.pair.i);
+        snprintf(s, N, "spairgcd(g%d,g%d)", p->x.pair.j, p->x.pair.i);
         o << s;
-        sprintf(s, " deg(%d)", p->deg);
+        snprintf(s, N, " deg(%d)", p->deg);
         o << s;
         o << " lcm[";
         for (int i = 0; i < _nvars + 2; i++)
           {
-            sprintf(s, "%d ", p->lcm[i]);
+            snprintf(s, N, "%d ", p->lcm[i]);
             o << s;
           }
         o << "]";
         break;
       case SPAIR::SPAIR_SPAIR:
-        sprintf(s, "spair(g%d,g%d):", p->x.pair.j, p->x.pair.i);
+        snprintf(s, N, "spair(g%d,g%d):", p->x.pair.j, p->x.pair.i);
         o << s;
-        sprintf(s, " deg %d", p->deg);
+        snprintf(s, N, " deg %d", p->deg);
         o << s;
         o << " lcm exponents [";
         for (int i = 0; i < _nvars + 2; i++)
           {
-            sprintf(s, "%d ", p->lcm[i]);
+            snprintf(s, N, "%d ", p->lcm[i]);
             o << s;
           }
         o << "]";
@@ -556,11 +557,11 @@ void gbA::spair_text_out(buffer &o, spair *p)
         R->gbvector_text_out(o, _F, p->f(), 3);
         break;
       case SPAIR::SPAIR_RING:
-        sprintf(s, "rpair(%d,%d)", p->x.pair.i, p->x.pair.j);
+        snprintf(s, N, "rpair(%d,%d)", p->x.pair.i, p->x.pair.j);
         o << s;
         break;
       case SPAIR::SPAIR_SKEW:
-        sprintf(s, "skewpair(g%d,g%d)", p->x.pair.j, p->x.pair.i);
+        snprintf(s, N, "skewpair(g%d,g%d)", p->x.pair.j, p->x.pair.i);
         o << s;
         break;
       default:
@@ -2165,9 +2166,10 @@ void gbA::insert_gb(POLY f, gbelem_type minlevel)
     }
   else if (M2_gbTrace >= 5)
     {
-      char s[100];
+      const int N = 100;
+      char s[N];
       buffer o;
-      sprintf(s, "new-inserting element %d (minimal %d): ", me, minlevel);
+      snprintf(s, N, "new-inserting element %d (minimal %d): ", me, minlevel);
       o << s;
       R->gbvector_text_out(o, _F, g->g.f);
       emit_line(o.str());
@@ -2239,9 +2241,10 @@ void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term *t)
     }
   else if (M2_gbTrace >= 5)
     {
-      char s[100];
+      const int N = 100;
+      char s[N];
       buffer o;
-      sprintf(s,
+      snprintf(s, N,
               "replacing-inserting element %d (minimal %d replacing %d): ",
               me,
               g->minlevel,

@@ -122,7 +122,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
                          res->num_consts + res->num_inputs +
                              res->rows_out * res->cols_out);
               char libname[100];
-              sprintf(libname,
+              snprintf(libname, 100,
                       "%s%d.dylib",
                       libPREFIX,
                       program->array[5]);  // Mac OS
@@ -974,7 +974,7 @@ void SLP<Field>::text_out(buffer& o) const
   for (i = 0; i < num_consts; i++, cur_node++)
     {
       char s[100];
-      nodes[cur_node].sprint(s);
+      nodes[cur_node].snprint(s, 100);
       o << s << ", ";
     }
   o << newline;

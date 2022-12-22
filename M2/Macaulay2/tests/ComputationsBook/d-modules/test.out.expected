@@ -23,6 +23,8 @@ o4 : D
 i5 : options D
 
 o5 = OptionTable{Constants => false                              }
+                                  1
+                 DegreeGroup => ZZ
                  DegreeLift => null
                  DegreeMap => null
                  DegreeRank => 1

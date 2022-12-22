@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.3",
-    Date => "May 4, 2022",
+    Version => "0.4",
+    Date => "October 31, 2022",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -197,10 +197,11 @@ addPyToM2Function(
     {"float", "float16", "float32", "float64", "float128"},
     pythonFloatAsDouble,
     "float -> RR")
+pyInt = toFunction pythonValue "int"
 addPyToM2Function(
     {"int", "int8", "uint8", "int16", "uint16", "int32", "uint32",
 	"int64", "uint64", "longlong", "ulonglong"},
-    pythonLongAsLong,
+    pythonLongAsLong @@ pyInt,
     "int -> ZZ")
 addPyToM2Function(
     {"bool", "bool_"},

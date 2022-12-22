@@ -9,6 +9,12 @@ newPackage("ForeignFunctions",
     Keywords => {"Interfaces"}
     )
 
+if not Core#"private dictionary"#?"ffiCall" then (
+    document{Key => "ForeignFunctions",
+	"Macaulay2 was built without libffi support, so the ForeignFunctions ",
+	"package is not functional."};
+    end)
+
 -------------------------
 -- exports and imports --
 -------------------------
@@ -27,7 +33,7 @@ export {
     "ForeignPointerArrayType",
     "ForeignUnionType",
     "ForeignStructType",
-    "ForeignFunctionPointerType",
+--    "ForeignFunctionPointerType",
     "ForeignObject",
 
 -- built-in foreign types
@@ -64,10 +70,12 @@ export {
     "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
-    "foreignFunctionPointerType",
+--    "foreignFunctionPointerType",
     "foreignSymbol",
+    "getMemory",
 
 -- symbols
+    "Atomic",
     "Variadic"
     }
 
@@ -124,6 +132,7 @@ value ForeignObject := x -> error("no value function exists for ", class x)
 
 address = method(TypicalValue => Pointer)
 address ForeignObject := x -> x.Address
+address Nothing := identity
 
 foreignObject = method(TypicalValue => ForeignObject)
 foreignObject ForeignObject := identity
@@ -170,6 +179,10 @@ dereference(ForeignType, Pointer) := (T, ptr) -> new T from ForeignObject {
 ForeignType Pointer := dereference
 ForeignType ForeignObject := (T, x) -> dereference_T address x
 
+-- not exported; used by getMemory
+isAtomic = method()
+isAtomic ForeignType := T -> false
+
 -----------------------
 -- foreign void type --
 -----------------------
@@ -178,6 +191,7 @@ ForeignVoidType = new Type of ForeignType
 ForeignVoidType.synonym = "foreign void type"
 
 dereference(ForeignVoidType, Pointer) := (T, x) -> null
+ForeignVoidType Nothing := (T, x) -> null
 
 void = new ForeignVoidType
 void.Name = "void"
@@ -224,6 +238,8 @@ if version#"pointer size" == 4 then (
 ForeignIntegerType Number :=
 ForeignIntegerType Constant := (T, x) -> new T from truncate x
 
+isAtomic ForeignIntegerType := T -> true
+
 -----------------------
 -- foreign real type --
 -----------------------
@@ -247,6 +263,8 @@ double = foreignRealType("double", 64)
 ForeignRealType Number :=
 ForeignRealType Constant := (T, x) -> new T from realPart numeric x
 ForeignRealType RRi := (T, x) -> T toRR x
+
+isAtomic ForeignRealType := T -> true
 
 --------------------------
 -- foreign pointer type --
@@ -366,7 +384,7 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
 	    if ffiPointerValue ptr === nullPointer then StopIteration
 	    else (
 		r := dereference_T ptr;
-		ptr = ptr + version#"pointer size";
+		ptr = ptr + sz;
 		r)));
     S)
 
@@ -391,6 +409,7 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     then error("expected options of the form string => foreign type");
     T := new ForeignStructType;
     T.Name = name;
+    T.Atomic = all(last \ x, isAtomic);
     ptr := T.Address = ffiStructType \\ address \ last \ x;
     types := hashTable x;
     offsets := hashTable transpose {first \ x, ffiGetStructOffsets ptr};
@@ -406,6 +425,8 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     T)
 
 ForeignStructType VisibleList := (T, x) -> new T from x
+
+isAtomic ForeignStructType := T -> T.Atomic
 
 ------------------------
 -- foreign union type --
@@ -423,6 +444,7 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
     T := new ForeignUnionType;
     T.Name = name;
     T.Address = ffiUnionType \\ address \ last \ x;
+    T.Atomic = all(last \ x, isAtomic);
     types := hashTable x;
     value T := y -> (
 	ptr := address y;
@@ -433,9 +455,14 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
 ForeignUnionType Thing := (T, x) -> new T from {Address =>
     address foreignObject x}
 
+isAtomic ForeignUnionType := T -> T.Atomic
+
 -----------------------------------
 -- foreign function pointer type --
 -----------------------------------
+
+-- not exported -- causes crashes on some systems
+-- https://github.com/Macaulay2/M2/issues/2683
 
 ForeignFunctionPointerType = new Type of ForeignType
 ForeignFunctionPointerType.synonym = "foreign function pointer type"
@@ -483,6 +510,24 @@ SharedLibrary = new SelfInitializingType of BasicList
 SharedLibrary.synonym = "shared library"
 net SharedLibrary := lib -> lib#1
 
+-- on apple silicon machines, shared libraries are often in /opt/homebrew/lib,
+-- but this is not in DYLD_LIBRARY_PATH, so we try there if the first call to
+-- dlopen fails
+importFrom_Core {"isAbsolutePath"}
+if (version#"operating system" == "Darwin" and
+    member(version#"architecture", {"aarch64", "arm64"}))
+then (
+    brewPrefix := replace("\\s+$", "", get "!brew --prefix");
+    dlopen' = filename -> (
+	if isAbsolutePath filename then dlopen filename
+	else (
+	    try dlopen filename
+	    else (
+		brewLibrary := brewPrefix | "/lib/" | filename;
+		if fileExists brewLibrary then dlopen brewLibrary
+		else error("could not find " | filename))))
+    ) else dlopen' = dlopen
+
 openSharedLibrary = method(TypicalValue => SharedLibrary,
     Options => {FileName => null})
 openSharedLibrary String := o -> name -> (
@@ -490,7 +535,7 @@ openSharedLibrary String := o -> name -> (
 	"lib" | name |
 	if version#"operating system" == "Darwin" then ".dylib"
 	else ".so");
-    SharedLibrary {dlopen filename, name})
+    SharedLibrary {dlopen' filename, name})
 
 ----------------------
 -- foreign function --
@@ -552,6 +597,28 @@ foreignSymbol = method(TypicalValue => ForeignObject)
 foreignSymbol(SharedLibrary, String, ForeignType) := (
     lib, symb, T) -> dereference_T dlsym(lib#0, symb)
 foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
+
+---------------------------
+-- working with pointers --
+---------------------------
+
+gcMalloc = foreignFunction("GC_malloc", voidstar, ulong)
+gcMallocAtomic = foreignFunction("GC_malloc_atomic", voidstar, ulong)
+
+getMemory = method(Options => {Atomic => false}, TypicalValue => voidstar)
+getMemory ZZ := o -> n -> (
+    if n <= 0 then error "expected positive number";
+    (if o.Atomic then gcMallocAtomic else gcMalloc) n)
+getMemory ForeignType := o -> T -> getMemory(size T, Atomic => isAtomic T)
+getMemory ForeignVoidType := o -> T -> error "can't allocate a void"
+
+memcpy = foreignFunction("memcpy", voidstar, {voidstar, voidstar, ulong})
+* voidstar = (ptr, val) -> (
+    if not instance(val, ForeignObject) then val = foreignObject val;
+    memcpy(ptr, address val, size class val))
+* Pointer = (ptr, val) -> value (*voidstar ptr = val)
+
+ForeignType * voidstar := (T, ptr) -> T value ptr
 
 beginDocumentation()
 
@@ -1239,7 +1306,8 @@ doc ///
       myunion double 5
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     ForeignFunctionPointerType
   Headline
@@ -1251,7 +1319,8 @@ doc ///
       @TO "foreignFunctionPointerType"@.
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     foreignFunctionPointerType
     (foreignFunctionPointerType, ForeignType, ForeignType)
@@ -1283,7 +1352,8 @@ doc ///
       foreignFunctionPointerType(int, {voidstar, voidstar})
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     (symbol SPACE, ForeignFunctionPointerType, Function)
   Headline
@@ -1416,6 +1486,7 @@ doc ///
     (foreignObject, Number)
     (foreignObject, String)
     (foreignObject, ZZ)
+    (foreignObject, Pointer)
   Headline
     construct a foreign object
   Usage
@@ -1657,6 +1728,94 @@ doc ///
       foreignSymbol("cplx_i", cplxT)
 ///
 
+doc ///
+  Key
+    getMemory
+    (getMemory, ZZ)
+    (getMemory, ForeignType)
+    (getMemory, ForeignVoidType)
+    Atomic
+    [getMemory, Atomic]
+  Headline
+    allocate memory using the garbage collector
+  Usage
+    getMemory n
+    getMemory T
+  Inputs
+    n:ZZ -- must be positive
+    T:ForeignType
+  Outputs
+    :voidstar
+  Description
+    Text
+      Allocate @TT "n"@ bytes of memory using the @TO "GC garbage collector"@.
+    Example
+      ptr = getMemory 8
+    Text
+      If the memory will not contain any pointers, then set the @TT "Atomic"@
+      option to @TO true@.
+    Example
+      ptr = getMemory(8, Atomic => true)
+    Text
+      Alternatively, a foreign object type @TT "T"@ may be specified.  In
+      this case, the number of bytes and whether the @TT "Atomic"@ option
+      should be set will be determined automatically.
+    Example
+      ptr = getMemory int
+///
+
+doc ///
+  Key
+    (symbol *, ForeignType, voidstar)
+  Headline
+    dereference a voidstar object
+  Usage
+    T * ptr
+  Inputs
+    T:ForeignType
+    ptr:voidstar
+  Outputs
+    :ForeignObject -- of type @TT "T"@
+  Description
+    Text
+      This is syntactic sugar for @M2CODE "T value ptr"@ (see
+      @TO (symbol SPACE, ForeignType, Pointer)@) for dereferencing pointers.
+    Example
+      ptr = voidstar address int 5
+      int * ptr
+///
+
+doc ///
+  Key
+    ((symbol *, symbol =), voidstar)
+    ((symbol *, symbol =), Pointer)
+  Headline
+    assign value to object at address
+  Usage
+    *ptr = val
+  Inputs
+    ptr:{voidstar, Pointer}
+    val:Thing
+  Description
+    Text
+      Assign the value @TT "val"@ to an object at the address given by
+      @TT "ptr"@.
+    Example
+      x = int 5
+      ptr = address x
+      *ptr = int 6
+      x
+    Text
+      If @TT "val"@ is not a @TO ForeignObject@, then @TO foreignObject@ is
+      called first.
+    Example
+      *ptr = 7
+      x
+    Text
+      Make sure that the memory at which @TT "ptr"@ points is properly
+      allocated.  Otherwise, segmentation faults may occur!
+///
+
 TEST ///
 -----------
 -- value --
@@ -1712,7 +1871,7 @@ assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
 ptrarray = 3 * voidstar
 x = ptrarray {address int 1, address int 2, address int 3}
-assert Equation(for ptr in x list value int value ptr, {1, 2, 3})
+assert Equation(for ptr in x list value (int * ptr), {1, 2, 3})
 x = charstarstar {"foo", "bar", "baz"}
 assert Equation(length x, 3)
 assert Equation(value x, {"foo", "bar", "baz"})
@@ -1720,9 +1879,9 @@ assert Equation(value x_0, "foo")
 assert Equation(value x_(-1), "baz")
 x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
 assert Equation(length x, 4)
-assert Equation(value \ for ptr in x list int value ptr, {1, 2, 3, 4})
-assert Equation(value int value x_0, 1)
-assert Equation(value int value x_(-1), 4)
+assert Equation(value \ for ptr in x list (int * ptr), {1, 2, 3, 4})
+assert Equation(value (int * x_0), 1)
+assert Equation(value (int * x_(-1)), 4)
 int3star = foreignPointerArrayType(3 * int)
 x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
 assert Equation(length x, 4)
@@ -1738,7 +1897,7 @@ assert instance(value x, HashTable)
 assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 2.0)
 assert Equation(value x_"c", "foo")
-assert Equation(value int value x_"d", 4)
+assert Equation(value (int * x_"d"), 4)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
@@ -1769,16 +1928,18 @@ TEST ///
 ---------------------
 cCos = foreignFunction("cos", double, double)
 assert Equation(value cCos pi, -1)
+cAbs = foreignFunction("abs", int, int)
+assert Equation(value cAbs(-2), 2)
 ///
 
 TEST ///
 --------------------------------
 -- foreignFunction (variadic) --
 --------------------------------
-sprintf = foreignFunction("sprintf", void, {charstar, charstar},
+sprintf = foreignFunction("sprintf", int, {charstar, charstar},
     Variadic => true)
 foo = charstar "foo"
-sprintf(foo, "%s", "bar")
+assert Equation(value sprintf(foo, "%s", "bar"), 3)
 assert Equation(value foo, "bar")
 ///
 
@@ -1800,7 +1961,7 @@ tm = foreignStructType("tm", {
 	"tm_zone" => charstar})
 gmtime = foreignFunction("gmtime", voidstar, voidstar)
 asctime = foreignFunction("asctime", charstar, voidstar)
-epoch = tm value gmtime address long 0
+epoch = tm * gmtime address long 0
 assert Equation(value asctime address epoch,"Thu Jan  1 00:00:00 1970\n")
 ///
 
@@ -1815,19 +1976,52 @@ assert Equation(value foreignSymbol("mpfi_error", int), 5)
 (foreignFunction(mpfi, "mpfi_reset_error", void, void))()
 ///
 
-TEST ///
+-- TODO: add test when #2683 fixed
+///
 -------------------------------
 -- foreign function pointers --
 -------------------------------
-doubledouble = foreignFunctionPointerType(double, double)
-assert Equation(value (value doubledouble cos) pi, -1)
-intint = foreignFunctionPointerType(int, int)
-assert Equation(value (value intint abs)(-2), 2)
-doubledoubledouble = foreignFunctionPointerType(double, {double, double})
-assert Equation(value (value doubledoubledouble atan2)(-1, -1), -3*pi/4)
-compar = foreignFunctionPointerType(int, {voidstar, voidstar})
-qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong, compar})
+assert Equation(
+    value (value (foreignFunctionPointerType(int8, int8)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int16, int16)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int32, int32)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(int64, int64)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(float, float)) abs) (-2), 2)
+assert Equation(
+    value (value (foreignFunctionPointerType(double, double)) abs) (-2), 2)
+assert Equation(value (value (foreignFunctionPointerType(double,
+		{double, double})) atan2)(-1, -1), -3*pi/4)
+qsort = foreignFunction("qsort", void, {voidstar, ulong, ulong,
+	foreignFunctionPointerType(int, {voidstar, voidstar})})
 x = (4 * int) {4, 2, 3, 1}
-qsort(x, 4, size int, compar((a, b) -> value int a - value int b))
+qsort(x, 4, size int, (a, b) -> value int a - value int b)
 assert Equation(value x, {1, 2, 3, 4})
+///
+
+TEST ///
+-- allocating and dereferencing pointers
+ptr = getMemory int
+*ptr = int 5
+assert Equation(value (int * ptr), 5)
+ptr = getMemory double
+*ptr = double pi
+assert Equation(value (double * ptr), pi)
+ptr = getMemory charstar
+*ptr = charstar "Hello, world!"
+assert Equation(value (charstar * ptr), "Hello, world!")
+ptr = getMemory (3 * int)
+*ptr = (3 * int) {1, 2, 3}
+assert Equation(value ((3 * int) * ptr), {1, 2, 3})
+ptr = getMemory charstarstar
+*ptr = charstarstar {"foo", "bar", "baz"}
+assert Equation(value (charstarstar * ptr), {"foo", "bar", "baz"})
+foo = foreignStructType("foo", {"a" => int, "b" => double, "c" => charstar})
+ptr = getMemory foo
+*ptr = foo {"a" => 5, "b" => pi, "c" => "Hello, world!"}
+assert BinaryOperation(symbol ===, value (foo * ptr),
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
 ///

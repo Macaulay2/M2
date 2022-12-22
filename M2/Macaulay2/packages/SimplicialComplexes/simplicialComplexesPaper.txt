@@ -35,7 +35,7 @@ other things:
 - homogenize pictures, i.e. the placement of vertices is done in an absolute way as opposed to, e.g. "above right, above left," etc.
 - we reuse k for a field and index which is slightly taboo. pick another letter in some way--maybe use A for comm. ring? (Sasha changed index to \ell. added a sentence in section 2 to assume k is a field)
 - use \dotsc or \dotsb instead of ... or \cdots
-- sub/superscript hell in some places, e.g. alexander dual
+- sub/superscript hell in some places, e.g. Alexander dual
 
 - we could just take out the example environments entirely, any references to examples can be finessed--e.g. we can refer to <insert Ben's silly ascii symbol here> to refer to an example (and more generally we can label everything uniquely) (Ben began making this change)
 
@@ -49,8 +49,8 @@ FIRST WEEK PLANNING
 - do some relative homology, try to find some interesting topological results
 - browse through some papers in jsag journal to get ideas for structure
 - showcase database functionality
-- basic fact that we represent complexes by stanley-reisner ideals
-- showcase lybenziunk complexes and general homogenization feature
+- basic fact that we represent complexes by Stanley-Reisner ideals
+- showcase Lybenziunk complexes and general homogenization feature
 - database could be used to give examples of relative homology
 
 ---------------------------------------------
@@ -68,7 +68,7 @@ MORE DETAILED SECTION PLANNING
   dimension and compare with dimension (may be worth mentioning)
 - Lemma 5.1.8 relates h and f-vectors
 - Use Thm 5.1.15 in Bruns-Herzog on an example to illustrate connection with h-vector
-- Ex 1.2 in Stanley for h-vector relating to poincare series of P1 x P1
+- Ex 1.2 in Stanley for h-vector relating to Poincaré series of P1 x P1
 - References: Stanley, Bruns-Herzog, ...
 
 - Section 3 (resolutions)

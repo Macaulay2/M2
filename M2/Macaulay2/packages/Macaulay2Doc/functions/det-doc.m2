@@ -23,20 +23,23 @@ document {
      }
 scan({det,minors,exteriorPower}, fn -> document { 
      Key => [fn, Strategy],
-     Headline => "choose between Bareiss and Cofactor algorithms",     
+     Headline => "choose between Bareiss, Cofactor and Dynamic algorithms",
      Usage => toString fn | "(M, Strategy => s)",     
      Inputs => {
 	  "M" => Matrix,
-	  "s" => Symbol => {"either ", TT "Bareiss", " or ", TT "Cofactor"}	  
+	  "s" => Symbol => {"either ", TT "Bareiss", ", ", TT "Cofactor", ", or ", TT "Dynamic"}	  
 	  },
      Consequences => {
 	  { "If ", TT "s", " is ", TO "Bareiss", ", then the Bareiss algorithm is used; if ",
-	       TT "s", " is ", TO "Cofactor", ", then cofactor expansion is used."}},     
+	       TT "s", " is ", TO "Cofactor", ", then cofactor expansion is used; if ",
+            TT "s", " is ", TO "Dynamic", ", then a dynamic programming algorithm is used."}},     
      "The ", TO2("Ring","ring"), " of ", TT "M", " determines the default strategy.  If the ring is a ", 
      TO2("PolynomialRing","polynomial ring"), " or a field (as identified by ", TO "isField",  
      ") then the ", TO "Bareiss", " algorithm is used.  If the ring is a ", 
      TO2("QuotientRing", "quotient ring"), " (which has not been declared a field by ", TO "toField", 
-     "), then the ", TO "Cofactor", " algorithm is used.",
+     "), then the ", TO "Cofactor", " algorithm is used.", "The ", TO "Dynamic", " algorithm implements a 
+     variant of cofactor expansion that caches intermediate results. This strategy introduces some memory overhead,
+     but can be faster than ", TO "Cofactor", ", especially with sparse matrices of low degree.",
      PARA{},     
      Caveat => {
 	  {"The ", TO "Bareiss", " algorithm returns a ring element that may differ from the actual 

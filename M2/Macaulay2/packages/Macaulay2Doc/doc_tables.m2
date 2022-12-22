@@ -282,14 +282,17 @@ doc ///
  Key
   remove
   (remove, HashTable, Thing)
+  (remove, MutableList, ZZ)
+  (remove, Database, String)
  Headline
-  remove an entry from a mutable hash table
+  remove an entry from a mutable hash table, list, or database
  Usage
   remove(T, k)
  Inputs
-  T:HashTable
+  T:{HashTable, MutableList, Database}
   k:
-   key
+    the key to remove (must be @ofClass ZZ@ if @TT "T"@ is a mutable list or
+    @ofClass String@ if it is a database)
  Outputs
   :Nothing
  Description
@@ -307,6 +310,22 @@ doc ///
   Example
    T = new HashTable from {a => 1, b => 2, c => 3}
    T = applyPairs(T, (k, v) -> if k =!= a then (k, v))
+  Text
+   @TT "remove"@ works similarly when @TT "T"@ is a database.  See @TO Database@
+   for more information.
+  Text
+    If @TT "T"@ is a mutable list, then @TT "k"@ gives the index of the element
+    to be removed.
+  Example
+    T = new MutableList from {1, 2, 3, 4}; peek T
+    remove(T, 0)
+    peek T
+  Text
+    If @TT "k"@ is negative, then the index is determined by counting backwards
+    from the end of @TT "T"@.
+  Example
+    remove(T, -1)
+    peek T
   Text
    The {\tt remove} command does not return any output.
  SeeAlso

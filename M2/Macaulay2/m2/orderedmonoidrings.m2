@@ -96,6 +96,8 @@ degreesRing Monoid :=
 degreesRing PolynomialRing   := R -> if R.?degreesRing   then R.degreesRing   else error "no degrees ring present"
 degreesMonoid PolynomialRing := R -> if R.?degreesMonoid then R.degreesMonoid else error "no degrees monoid present"
 degreeLength  PolynomialRing := R -> degreeLength R.FlatMonoid
+degreeGroup   PolynomialRing := R -> degreeGroup  R.FlatMonoid
+degreeGroup   FractionField  := degreeGroup @@ baseRing
 
 -----------------------------------------------------------------------------
 -- Main polynomial ring constructor
@@ -221,7 +223,7 @@ Ring Monoid := PolynomialRing => (R, M) -> (
 	  -- TODO: what is this?
 	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
 	  processMons := (coeffs, monoms) -> if #coeffs === 0 then expression 0 else sum(coeffs, monoms,
-	      (c, m) -> expression(if c == 1 then 1 else promote(c, R)) * expression(if m == 1 then 1 else new M from m));
+	      (c, m) -> expression(if c == 1 then 1 else promote(c, R)) * expression(new M from m));
 	  -- TODO: put in something prettier when there are constants
 	  expression RM := if constants then f -> toString raw f else f -> processMons rawPairs(raw R, raw f);
      	  if M.Options.Inverses === true then (

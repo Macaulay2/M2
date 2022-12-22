@@ -35,6 +35,11 @@ M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP,
                                             M2_arrayint constsPos,
                                             M2_arrayint varsPos,
                                             const MutableMatrix *consts);
+M2SLEvaluator /* or null */ *rawCompiledSLEvaluator(
+                                                    M2_string libName,
+                                                    int nInputs,
+                                                    int nOutputs,
+                                                    const MutableMatrix *empty);
 M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(
     M2SLEvaluator *H,
     const MutableMatrix *parameters);

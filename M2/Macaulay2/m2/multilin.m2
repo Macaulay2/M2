@@ -16,11 +16,13 @@ hasNoQuotients Ring := (R) -> true
 getMinorsStrategy := (R, opts) -> (
      bareiss := 0;  -- WARNING: these must match the engine!!
      cofactor := 1;
+     dynamic := 2;
      strat := if opts.?Strategy then opts.Strategy else null;
      if strat === global Bareiss then bareiss
      else if strat === global Cofactor then cofactor
+     else if strat === global Dynamic then dynamic
      else if strat =!= null then (
-	  error "'Strategy' keyword must be 'Cofactor' or 'Bareiss'";
+	  error "'Strategy' keyword must be 'Cofactor', 'Bareiss' or 'Dynamic";
 	  )
      else (
 	  -- Use the Bareiss algorithm unless R is a quotient of

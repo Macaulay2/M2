@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.21",
 	  TO "changes, 1.20",
 	  TO "changes, 1.19.1",
 	  TO "changes, 1.19",
@@ -40,6 +41,41 @@ document {
      Key => "changes made for the next release",
      }
 
+document {
+     Key => "changes, 1.21",
+     UL {
+	  LI { "functionality added:",
+	       UL {
+		    LI { "New methods, ", TO iterator, " and ", TO next, ", and a new class, ", TO Iterator, " have been added to allow iteration over any Macaulay2 object." },
+		    LI { TO "for", " loops, as well as the methods ", TO scan, ", ", TO apply, ", ", TO select, ", ", TO fold, ", ", TO accumulate, ", ", TO take, ", and ", TO join, ", now work with any iterable object." },
+		    LI { TO (truncate, Number), " has been added, rounding numbers toward zero." },
+		    LI { TO (quotientRemainder, ZZ, ZZ), " has been added, for obtaining the quotient and remainder simultaneously when performing integer division." },
+		    LI { "The bitwise not operator, ", TO (symbol ~, ZZ), " has been added." },
+		    LI { "A new strategy ", TO "Dynamic", " is implemented for ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "." },
+		    LI { "A new global variable ", TO "blockMatrixForm", " which affects the display of matrices has been added." },
+		    LI { "Partial support for UTF-8 in strings has been added." },
+		    LI { TO changeBase, " has been added for changing integer bases."}
+		    }
+	       },
+	  LI { "improved packages:",
+               UL {
+       	    	    LI { "The package ", TO "BettiCharacters::BettiCharacters", 
+                	 " has been updated to version 2.0, which introduces
+			 character tables, decompositions, and other methods for characters.
+			 The GradedCharacter type has been removed, and the Character type
+			 has been modified to accommodate both homological and internal
+			 grading in a simplied format." 
+                	 }
+		     }
+		 },
+	  LI { "functionality changed in a way that could break code:",
+	       UL {
+		    LI { TO remove, " may now be used to remove elements from mutable lists.  Its previous (undocumented) behavior was equivalent to ", TO drop, "."},
+		    LI { TO characters, " and ", TO (width,Net)," now split strings according to UTF-8 characters rather than bytes." }
+		    }
+	       }
+	  }}
+    
 document {
      Key => "changes, 1.20",
      UL {
@@ -1073,7 +1109,7 @@ document {
      UL {
 	  LI { "major improvements and additions:",
 	        UL {
-                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and moduless over 
+                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and modules over 
                     polynomial rings over finite prime fields.  Also is functional for ideals and
                     modules over exterior algebras.  See ", TO "FastNonminimal", " and ", TO [betti,Minimize], ".  For 
                     computing minimal betti numbers, on larger examples, this code is often hundreds to thousands of times faster than 

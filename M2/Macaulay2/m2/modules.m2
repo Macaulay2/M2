@@ -290,13 +290,15 @@ Module == Module := (M,N) -> M === N or (
 		    isSubset(ambient M, image g))
 	       else true)))
 
-degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees = (
-     if not isFreeModule N then N = cover N;
-     rk := numgens N;
-     R := ring N;
-     nd := degreeLength R;
-     if nd == 0 then toList (rk : {})
-     else pack(nd,rawMultiDegree N.RawFreeModule))
+-- TODO: where is it set before being cached?
+degrees Module := -*(cacheValue symbol degrees) (*-N -> (
+    r := degreeLength(R := ring N);
+    if r == 0 then toList(numgens N : {}) else (
+	degs := pack(r, rawMultiDegree raw cover N);
+	if not (M := monoid R).?degreeGroup
+	or isFreeModule(G := M.degreeGroup) then degs
+	else apply(degs, reduceDegree_G)))
+--    )
 
 Module ^ ZZ := Module => (M,i) -> if i > 0 then directSum (i:M) else 0*M
 

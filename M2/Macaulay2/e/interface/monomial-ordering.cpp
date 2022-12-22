@@ -706,12 +706,13 @@ MonomialOrdering *rawProductMonomialOrdering(engine_RawMonomialOrderingArray M)
 M2_string intarray_to_string(int len, int *p)
 {
   int i;
-  char s[200];
+  const int N = 200;
+  char s[N];
   M2_string result = M2_tostring("{");
   for (i = 0; i < len; i++)
     {
       if (i > 0) result = M2_join(result, M2_tostring(","));
-      sprintf(s, "%d", p[i]);
+      snprintf(s, N, "%d", p[i]);
       result = M2_join(result, M2_tostring(s));
     }
   result = M2_join(result, M2_tostring("}"));
@@ -721,10 +722,11 @@ M2_string intarray_to_string(int len, int *p)
 M2_string ones_to_string(int len)
 {
   int i;
-  char s[200];
+  const int N = 200;
+  char s[N];
   M2_string one;
   M2_string result = M2_tostring("{");
-  sprintf(s, "1");
+  snprintf(s, N, "1");
   one = M2_tostring(s);
   for (i = 0; i < len; i++)
     {
@@ -743,7 +745,8 @@ unsigned int rawMonomialOrderingHash(const MonomialOrdering *mo)
 M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
 {
   int i;
-  char s[200];
+  const int N = 200;
+  char s[N];
   int p_ones = 0;
   M2_string result = M2_tostring("MonomialOrder => {");
   for (i = 0; i < mo->len; i++)
@@ -757,58 +760,58 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
       switch (p->type)
         {
           case MO_LEX:
-            sprintf(s, "Lex => %d", p->nvars);
+            snprintf(s, N, "Lex => %d", p->nvars);
             break;
           case MO_LEX2:
-            sprintf(s, "LexSmall => %d", p->nvars);
+            snprintf(s, N, "LexSmall => %d", p->nvars);
             break;
           case MO_LEX4:
-            sprintf(s, "LexTiny => %d", p->nvars);
+            snprintf(s, N, "LexTiny => %d", p->nvars);
             break;
           case MO_GREVLEX:
-            sprintf(s, "GRevLex => ");
+            snprintf(s, N, "GRevLex => ");
             p_ones = 1;
             break;
           case MO_GREVLEX2:
-            sprintf(s, "GRevLexSmall => ");
+            snprintf(s, N, "GRevLexSmall => ");
             p_ones = 1;
             break;
           case MO_GREVLEX4:
-            sprintf(s, "GRevLexTiny => ");
+            snprintf(s, N, "GRevLexTiny => ");
             p_ones = 1;
             break;
           case MO_GREVLEX_WTS:
-            sprintf(s, "GRevLex => ");
+            snprintf(s, N, "GRevLex => ");
             break;
           case MO_GREVLEX2_WTS:
-            sprintf(s, "GRevLexSmall => ");
+            snprintf(s, N, "GRevLexSmall => ");
             break;
           case MO_GREVLEX4_WTS:
-            sprintf(s, "GRevLexTiny => ");
+            snprintf(s, N, "GRevLexTiny => ");
             break;
           case MO_REVLEX:
-            sprintf(s, "RevLex => %d", p->nvars);
+            snprintf(s, N, "RevLex => %d", p->nvars);
             break;
           case MO_WEIGHTS:
-            sprintf(s, "Weights => ");
+            snprintf(s, N, "Weights => ");
             break;
           case MO_LAURENT:
-            sprintf(s, "GroupLex => %d", p->nvars);
+            snprintf(s, N, "GroupLex => %d", p->nvars);
             break;
           case MO_LAURENT_REVLEX:
-            sprintf(s, "GroupRevLex => %d", p->nvars);
+            snprintf(s, N, "GroupRevLex => %d", p->nvars);
             break;
           case MO_NC_LEX:
-            sprintf(s, "NCLex => %d", p->nvars);
+            snprintf(s, N, "NCLex => %d", p->nvars);
             break;
           case MO_POSITION_UP:
-            sprintf(s, "Position => Up");
+            snprintf(s, N, "Position => Up");
             break;
           case MO_POSITION_DOWN:
-            sprintf(s, "Position => Down");
+            snprintf(s, N, "Position => Down");
             break;
           default:
-            sprintf(s, "UNKNOWN");
+            snprintf(s, N, "UNKNOWN");
             break;
         }
       result = M2_join(result, M2_tostring(s));

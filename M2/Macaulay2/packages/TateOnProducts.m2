@@ -2300,7 +2300,7 @@ bgg Module := o -> P -> (
     Ds = sort apply(D, d->(sum d,d));
     minP := min(Ds/first);
     maxP := max(Ds/first);
-    if o.LengthLimit != null then maxP=min(maxP,minP+1+o.LengthLimit);
+    if o.LengthLimit =!= null then maxP=min(maxP,minP+1+o.LengthLimit);
     freeModuleDegs := hashTable apply(toList(minP..maxP), i->
 	    (-i=>select(Ds,d-> d_0 == i)/last)
 	    );
@@ -5381,7 +5381,7 @@ doc ///
        a corner complex of the corresponding Tate resolution
   Description
      Text
-       Every object F in in the derived category D^d(P)
+       Every object F in the derived category D^d(P)
        of coherent sheaves on a product P=P^{n_1}x..xP^{n_t} of t projective space is of the
        form U(W) with W a complex with terms in the
        Beilinson range only. The function computes with the algorithm (not!) described in section 4 of
@@ -5431,7 +5431,7 @@ doc ///
        a non-minimal version of the quadrant complex ?!? qT_{\le 0} of the Tate resolution T=T(W) ?
   Description
      Text
-       Every object F in in the derived category D^d(P)
+       Every object F in the derived category D^d(P)
        of coherent sheaves on a product P=P^{n_1}x..xP^{n_t} of t projective space is of the
        form U(W) with W a complex with terms in the
        Beilinson range only.

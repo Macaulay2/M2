@@ -134,13 +134,21 @@ regularSubdivision (Polyhedron,Matrix) := (P,w) -> (
    apply (S, s -> convexHull LP_s)
 )
 
-regularSubdivision (Matrix,Matrix) := (M,w) -> (
+regularSubdivision (Matrix,Matrix) := (MM, w) -> (
+   M := promote(MM, QQ);
    n := numColumns M;
    -- Checking for input errors
    if numColumns w != numColumns M or numRows w != 1 then error("The weight must be a one row matrix with number of points many entries");
    P := convexHull(M||w,matrix (toList(numRows M:{0})|{{1}}));
    F := select(faces (1,P), f -> #(f#1) ==0);
-   apply (F, f -> f#0)
+   pointIndices := new MutableHashTable;
+   for i from 0 to numcols M-1 do
+      pointIndices#(M_{i}) = i;
+   permutation := new MutableHashTable;
+   vertP := (vertices P)^{0..numrows M - 1};
+   for i from 0 to numcols vertP - 1 do
+      permutation#i = pointIndices#(vertP_{i});
+   sort apply (F, f -> sort apply(f#0, i->permutation#i))
   )
 
 
