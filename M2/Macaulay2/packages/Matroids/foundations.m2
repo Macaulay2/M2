@@ -627,11 +627,11 @@ assert Equation((#freePartPasture U26, #U26.hexagons), (9, 15))
 -- Old morphisms code
 ------------------------------------------
 
-changeBase = (b, n) -> (
+changeToBase = (b, n) -> (
     if n < b then return {(0, n)};
     k := floor(log_b n);
     a := floor(n/b^k);
-    {(k, a)} | changeBase(b, n - a*b^k)
+    {(k, a)} | changeToBase(b, n - a*b^k)
 )
 
 compareHex = method()
@@ -741,7 +741,7 @@ morphisms1 (Pasture, Pasture) := List => opts -> (P, P') -> (
         D := phi' * A^torsPart;
         N := (#fundEltsP')^g - 1;
         flatten while N >= 0 list (		        
-            s := hashTable changeBase(#fundEltsP', N);
+            s := hashTable changeToBase(#fundEltsP', N);
             s = apply(g, i -> if s#?(g - 1 - i) then s#(g - 1 - i) else 0);
             N = N - 1;
             candidates := apply(#G#0, i -> (
@@ -1203,6 +1203,9 @@ representations (Matroid, GaloisField) := List => opts -> (M, k) -> (
         else (k.PrimitiveElement)^(if A#i#j == 0 then 0 else (A#i#j)_(0,0))
     )), O))
 )
+
+isOrientable = method()
+isOrientable Matroid := Boolean => M -> #morphisms(foundation M, specificPasture "sign", FindOne => true) > 0
 
 TEST ///
 N = matroid(toList(0..7), {{0,1,2,3},{0,1,4,5},{2,3,4,5},{0,2,4,6},{1,3,5,7},{1,2,6,7},{3,4,6,7},{0,5,6,7}}, EntryMode => "nonbases")
