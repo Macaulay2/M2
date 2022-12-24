@@ -25,7 +25,7 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
 }
 
 void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0) {}
-struct ReducedGB_ZZ_sorter : public std::binary_function<int, int, bool>
+struct ReducedGB_ZZ_sorter
 {
   GBRing *R;
   const FreeModule *F;

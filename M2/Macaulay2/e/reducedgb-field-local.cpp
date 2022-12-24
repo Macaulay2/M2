@@ -39,7 +39,6 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
 }
 
 struct ReducedGB_Field_Local_sorter
-    : public std::binary_function<int, int, bool>
 {
   GBRing *R;
   const FreeModule *F;

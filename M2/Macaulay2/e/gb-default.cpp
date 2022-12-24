@@ -680,7 +680,6 @@ gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
 
 namespace {
 struct spair_sorter
-    : public std::binary_function<gbA::spair *, gbA::spair *, bool>
 {
   int nvars;
   spair_sorter(int nv) : nvars(nv) {}

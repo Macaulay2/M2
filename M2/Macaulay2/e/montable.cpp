@@ -265,7 +265,7 @@ void MonomialTable::insert(exponents exp, int comp, int id)
  * Minimalization ***********
  ****************************/
 
-struct sorter : public std::binary_function<exponents, exponents, bool>
+struct sorter
 {
   int nvars;
   const VECTOR(exponents) & exps;

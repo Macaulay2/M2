@@ -442,7 +442,7 @@ void MonomialTableZZ::insert(mpz_srcptr coeff, exponents exp, int comp, int id)
  * Minimalization ***********
  ****************************/
 
-struct montable_sorter_ZZ : public std::binary_function<int, int, bool>
+struct montable_sorter_ZZ
 {
   int nvars;
   const VECTOR(mpz_srcptr) & coeffs;

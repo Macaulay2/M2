@@ -12,7 +12,7 @@ ReducedGB_Field::~ReducedGB_Field()
 }
 
 void ReducedGB_Field::set_gb(VECTOR(POLY) & polys0) {}
-struct ReducedGB_Field_sorter : public std::binary_function<int, int, bool>
+struct ReducedGB_Field_sorter
 {
   GBRing *R;
   const FreeModule *F;
