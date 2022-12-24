@@ -5,7 +5,7 @@ newPackage(
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "mhelmer@ncsu.edu", 
 		  HomePage => "http://martin-helmer.com/"}},
-    	Headline => "Compute Whitney Statifications Algebraically",
+    	Headline => "Compute Whitney Stratifications Algebraically",
     	DebuggingMode => false,
 	PackageImports=>{"Elimination","PrimaryDecomposition","Saturation"}
     	);
