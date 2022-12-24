@@ -314,7 +314,7 @@ class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
       }
 
     Bag *b = new Bag();
-    varpower::from_ntuple(nv, exp, b->monom());
+    varpower::from_expvector(nv, exp, b->monom());
     J->insert_minimal(b);
   }
   MonomialIdeal *result() { return J; }
@@ -328,7 +328,7 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I,
   Frobby::Ideal F(nv);
   for (Bag& b : *I)
     {
-      varpower::to_ntuple(nv, b.monom().raw(), exp);
+      varpower::to_expvector(nv, b.monom().raw(), exp);
 
       if (M2_gbTrace >= 4) fprintf(stderr, "adding ");
       for (int j = 0; j < nv; j++)

@@ -52,8 +52,8 @@ class F4MonomialLookupTableT : public our_new_delete
   mi_node *new_mi_node(varpower_word v, varpower_word e, Key k);
   void delete_mi_node(mi_node *p);
 
-  void update_exponent_vector(int topvar, const_varpower_monomial m);
-  void reset_exponent_vector(const_varpower_monomial m);
+  void update_expvector(int topvar, const_varpower_monomial m);
+  void reset_expvector(const_varpower_monomial m);
 
   bool find_one_divisor1(mi_node *mi,
                          const_ntuple_monomial exp,

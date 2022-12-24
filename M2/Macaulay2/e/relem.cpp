@@ -209,7 +209,7 @@ Monomial *RingElement::lead_monom(int nvars) const
 
       exponents_t exp = newarray_atomic(int, nvars);
       P->lead_logical_exponents(nvars, t, exp);
-      varpower::from_ntuple(nvars, exp, resultvp);
+      varpower::from_expvector(nvars, exp, resultvp);
       return Monomial::make(resultvp.raw());
     }
   const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(R);

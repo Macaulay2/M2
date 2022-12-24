@@ -133,8 +133,8 @@ private:
     int nvars = mMonoid.n_vars();
     std::pair<int*, int*> exp = mArena.allocArrayNoCon<int>(nvars);
     std::pair<int*, int*> exp2 = mArena.allocArrayNoCon<int>(nvars);
-    mResMonoid.to_exponent_vector(mon, exp.first, comp);
-    mResMonoid.to_exponent_vector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
+    mResMonoid.to_expvector(mon, exp.first, comp);
+    mResMonoid.to_expvector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
     ntuple::mult(nvars, exp.first, exp2.first, exp2.first);
     auto p = resultAlreadyAllocateds.first;
     *p++ = mSchreyerOrder.mTieBreaker[comp];
@@ -171,8 +171,8 @@ public:
     std::pair<int*, int*> result = mArena.allocArrayNoCon<int>(mMonoid.monomial_size() + 2);
     std::pair<int*, int*> exp = mArena.allocArrayNoCon<int>(nvars);
     std::pair<int*, int*> exp2 = mArena.allocArrayNoCon<int>(nvars);
-    mResMonoid.to_exponent_vector(mon.first, exp.first, comp);
-    mResMonoid.to_exponent_vector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
+    mResMonoid.to_expvector(mon.first, exp.first, comp);
+    mResMonoid.to_expvector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
     ntuple::mult(nvars, exp.first, exp2.first, exp2.first);
     auto p = resultAlreadyAllocateds.first;
     *p++ = mSchreyerOrder.mTieBreaker[comp];

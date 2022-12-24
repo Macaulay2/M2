@@ -278,7 +278,7 @@ int SLP<Field>::poly_to_horner_slp(int n,
   return cur_p;
 }
 
-void monomials_to_conventional_exponent_vectors(int n, Nterm* f)  // auxiliary
+void monomials_to_conventional_expvectors(int n, Nterm* f)  // auxiliary
 /* "unpack" monomials */
 {
   for (; f != NULL; f = f->next)
@@ -312,7 +312,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const PolyRing* R, ring_elem e)
                          how to remove the pieces afterwards?
                          R->remove(...) is an empty function */
       Nterm* f = e.get_poly();
-      monomials_to_conventional_exponent_vectors(n, f);
+      monomials_to_conventional_expvectors(n, f);
       int out = res->poly_to_horner_slp(n, prog, consts, f);
       if (out == ZERO_CONST)
         {

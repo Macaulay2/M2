@@ -448,7 +448,7 @@ const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
         const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
         if (K != nullptr && K != P->getCoefficients()) nvars0 -= K->n_vars();
         exponents_t exp = newarray_atomic(int, nvars0);
-        varpower::to_ntuple(nvars0, m->ints(), exp);
+        varpower::to_expvector(nvars0, m->ints(), exp);
         ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
         return RingElement::make_raw(R,val);
       }

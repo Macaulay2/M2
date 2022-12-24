@@ -176,7 +176,7 @@ void GBKernelComputation::new_pairs(int i)
     {
       exponents_t find_pairs_exp = newarray_atomic(int, M->n_vars());
 
-      varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_exp);
+      varpower::to_expvector(M->n_vars(), vp.raw(), find_pairs_exp);
       for (int w = 0; w < R->n_skew_commutative_vars(); w++)
         if (find_pairs_exp[R->skew_variable(w)] > 0)
           {
