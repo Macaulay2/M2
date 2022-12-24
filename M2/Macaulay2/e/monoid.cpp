@@ -745,7 +745,7 @@ bool Monoid::is_invertible(const_monomial m) const
 void Monoid::from_varpower(const_varpower vp, monomial result) const
 {
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  varpower::to_ntuple(nvars_, vp, EXP1);
+  varpower::to_expvector(nvars_, vp, EXP1);
   from_expvector(EXP1, result);
 }
 
@@ -753,7 +753,7 @@ void Monoid::to_varpower(const_monomial m, intarray &result_vp) const
 {
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  varpower::from_ntuple(nvars_, EXP1, result_vp);
+  varpower::from_expvector(nvars_, EXP1, result_vp);
 }
 
 // Local Variables:

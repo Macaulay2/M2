@@ -44,8 +44,8 @@ class ResMonoidSparse
   mutable unsigned long ncalls_compare_grevlex;
   mutable unsigned long ncalls_mult;
   mutable unsigned long ncalls_get_component;
-  mutable unsigned long ncalls_from_exponent_vector;
-  mutable unsigned long ncalls_to_exponent_vector;
+  mutable unsigned long ncalls_from_expvector;
+  mutable unsigned long ncalls_to_expvector;
   mutable unsigned long ncalls_to_varpower;
   mutable unsigned long ncalls_from_varpower;
   mutable unsigned long ncalls_is_equal;
@@ -117,13 +117,13 @@ class ResMonoidSparse
       val += hashfcn[*v];
     result[1] = val;
   }
-  bool from_exponent_vector(res_const_ntuple_monomial e,
+  bool from_expvector(res_const_ntuple_monomial e,
                             component_index comp,
                             res_packed_monomial result) const
   {
     // Pack the vector e[0]..e[mNumVars-1],comp.  Create the hash value at the
     // same time.
-    ncalls_from_exponent_vector++;
+    ncalls_from_expvector++;
     result[0] = 0;     // length
     result[1] = 0;     // hash value, not set here (other than this...)
     result[2] = comp;  // component
@@ -171,12 +171,12 @@ class ResMonoidSparse
     return true;
   }
 
-  bool to_exponent_vector(res_const_packed_monomial m,
+  bool to_expvector(res_const_packed_monomial m,
                           res_ntuple_monomial result,
                           component_index& result_comp) const
   {
     // Unpack the monomial m.
-    ncalls_to_exponent_vector++;
+    ncalls_to_expvector++;
     result_comp = m[2];
     for (int i = 0; i < mNumVars; i++) result[i] = 0;
     auto top = *m;

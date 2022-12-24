@@ -32,7 +32,7 @@ class GBWeight : public our_new_delete
   // or, if the component is 0, then it is in the ring, not in the
   // free module F_
 
-  int exponents_weight(const int *exponent_vector, int comp) const;
+  int exponents_weight(const int *e, int comp) const;
 
   int gbvector_term_weight(const gbvector *f) const;
 

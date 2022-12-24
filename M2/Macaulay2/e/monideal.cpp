@@ -278,7 +278,7 @@ void MonomialIdeal::find_all_divisors(const_exponents exp, VECTOR(Bag *)& b) con
 int MonomialIdeal::search(const_varpower m, Bag *&b) const
 {
   exponents_t exp = ARRAY_ON_STACK(int, get_ring()->n_vars());
-  varpower::to_ntuple(get_ring()->n_vars(), m, exp);
+  varpower::to_expvector(get_ring()->n_vars(), m, exp);
   return search_expvector(exp, b);
 }
 
@@ -922,7 +922,7 @@ static void borel1(VECTOR(Bag *) &result, exponents_t m, int loc, int nvars)
   if (loc == 0)
     {
       Bag *b = new Bag();
-      varpower::from_ntuple(nvars, m, b->monom());
+      varpower::from_expvector(nvars, m, b->monom());
       result.push_back(b);
     }
   else
@@ -946,7 +946,7 @@ MonomialIdeal *MonomialIdeal::borel() const
   exponents_t bexp = newarray_atomic(int, get_ring()->n_vars());
   for (Bag& b : *this)
     {
-      varpower::to_ntuple(get_ring()->n_vars(), b.monom().raw(), bexp);
+      varpower::to_expvector(get_ring()->n_vars(), b.monom().raw(), bexp);
       borel1(new_elems, bexp, get_ring()->n_vars() - 1, get_ring()->n_vars());
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -960,7 +960,7 @@ bool MonomialIdeal::is_borel() const
   for (Bag& b : *this)
     {
       Bag *c;
-      varpower::to_ntuple(get_ring()->n_vars(), b.monom().raw(), bexp);
+      varpower::to_expvector(get_ring()->n_vars(), b.monom().raw(), bexp);
       for (int j = get_ring()->n_vars() - 1; j >= 1; j--)
         if (bexp[j] > 0)
           {
