@@ -275,7 +275,7 @@ class TowerEvaluator : public DPolyTraverser
     // either:
     //  H->add, or target->add_to
     vp.shrink(0);
-    varpower::from_ntuple(nvars, exp, vp);
+    varpower::from_expvector(nvars, exp, vp);
     ring_elem c = K->from_long(coeff);
     ring_elem a = map->eval_term(K, c, vp.raw(), first_var, nvars);
     H->add(a);

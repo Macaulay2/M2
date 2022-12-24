@@ -236,7 +236,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                         // these are integers
 
       M->to_expvector(t->monom, exp);
-      R.monoid().from_exponent_vector(
+      R.monoid().from_expvector(
           exp,
           t->comp - 1,
           nextmonom);  // gbvector components are shifted up by one
@@ -272,7 +272,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   for (int i = 0; i < f.len; i++)
     {
       component_index comp;
-      R.monoid().to_exponent_vector(w, exp, comp);
+      R.monoid().to_expvector(w, exp, comp);
       w = w + R.monoid().monomial_size(w);
       M->from_expvector(exp, m1);
       ring_elem a =
@@ -329,7 +329,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
       // unpack to exponent vector, then repack into monoid element
       monomial totalmonom = M->make_one();
       component_index comp;
-      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
+      C.monoid().to_expvector(S.mTotalMonom[i], exp, comp);
       M->from_expvector(exp, totalmonom);
       result->append_schreyer(
           deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
@@ -359,7 +359,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   for (auto i = 0; i < thislevel.size(); ++i)
     {
       component_index comp;
-      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
+      C.monoid().to_expvector(S.mTotalMonom[i], exp, comp);
       monomial deg = M->degree_monoid()->make_new(F->degree(comp)); // resulting degree of this element
       M->degree_of_expvector(exp, deg1);
       M->degree_monoid()->mult(deg, deg1, deg);
@@ -447,7 +447,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
       for (int i = 0; i < f.len; i++)
         {
           component_index comp;
-          C.ring().monoid().to_exponent_vector(w, exp, comp);
+          C.ring().monoid().to_expvector(w, exp, comp);
           w = w + C.ring().monoid().monomial_size(w);
           M->from_expvector(exp, m1);
           ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);

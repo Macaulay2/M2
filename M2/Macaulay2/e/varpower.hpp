@@ -39,8 +39,8 @@ public:
   static void var(int v, int e, intarray &result);
   static int *copy(const int *vp, intarray &result);
 
-  static void to_ntuple(int n, const int *a, exponents_t result);
-  static void from_ntuple(int n, const_exponents a, intarray &result);
+  static void to_expvector(int n, const int *a, exponents_t result);
+  static void from_expvector(int n, const_exponents a, intarray &result);
 
   static M2_arrayint to_arrayint(const int *vp);
   static void from_arrayint(M2_arrayint m, intarray &result);

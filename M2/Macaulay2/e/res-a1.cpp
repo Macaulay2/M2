@@ -633,7 +633,7 @@ void res_comp::new_pairs(res_pair *p)
   if (P->is_skew_commutative())
     {
       exponents_t exp = newarray_atomic(int, M->n_vars());
-      varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
+      varpower::to_expvector(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v = 0; v < nskew; v++)
@@ -1519,7 +1519,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   if (P->is_skew_commutative())
     {
       exponents_t exp = newarray_atomic(int, M->n_vars());
-      varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
+      varpower::to_expvector(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v = 0; v < nskew; v++)

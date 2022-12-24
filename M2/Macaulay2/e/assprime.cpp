@@ -104,7 +104,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
             {
               to_prime_ideal(nvars, exp);
               Bag *b = new Bag(0);
-              varpower::from_ntuple(nvars, exp, b->monom());
+              varpower::from_expvector(nvars, exp, b->monom());
               ass_primes->insert(b);
               n_minprimes++;
               if (minprime_limit > 0 && n_minprimes >= minprime_limit) return;

@@ -420,7 +420,7 @@ void binomial_ring::monomial_out(buffer &o, const_exponents m) const
 {
   if (m == NULL) return;
   intarray vp;
-  varpower::from_ntuple(nvars, m, vp);
+  varpower::from_expvector(nvars, m, vp);
   monomial n = R->getMonoid()->make_one();
   R->getMonoid()->from_varpower(vp.raw(), n);
   R->getMonoid()->elem_text_out(o, n);

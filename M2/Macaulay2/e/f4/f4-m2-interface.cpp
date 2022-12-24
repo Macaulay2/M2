@@ -44,7 +44,7 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
       relem_array.push_back(t->coeff);
       M->to_expvector(t->monom, exp);
       for (int a = 0; a < M->n_vars(); a++) lexp[a] = exp[a];
-      MI->from_exponent_vector(
+      MI->from_expvector(
           lexp,
           t->comp - 1,
           nextmonom);  // gbvector components are shifted up by one
@@ -118,7 +118,7 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   for (int i = 0; i < f.len; i++)
     {
       long comp;
-      MI->to_exponent_vector(w, lexp, comp);
+      MI->to_expvector(w, lexp, comp);
       w = w + MI->monomial_size(w);
       for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
