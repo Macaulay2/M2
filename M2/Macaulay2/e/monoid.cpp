@@ -10,10 +10,12 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
-#include "interface/monomial-ordering.h"
 #include "overflow.hpp"
 #include "polyring.hpp"
 #include "util.hpp"
+
+// TODO: remove this
+#include "interface/monomial-ordering.h"
 
 Monoid *Monoid::trivial_monoid = 0;
 
@@ -43,7 +45,7 @@ Monoid::Monoid()
       n_before_component_(0),
       n_after_component_(0),
       component_up_(true),
-      local_vars(nullptr),
+      local_vars({}),
       overflow(nullptr)
 {
 }
@@ -100,7 +102,7 @@ Monoid::Monoid(const MonomialOrdering *mo,
       n_before_component_(0),   // set below
       n_after_component_(0),    // set below
       component_up_(true),      // set below
-      local_vars(nullptr),      // set below
+      local_vars({}),           // set below
       overflow(nullptr)
 // nslots: set below
 {
@@ -158,7 +160,7 @@ Monoid::Monoid(const MonomialOrdering *mo,
   set_degrees();
   set_overflow_flags();
 
-  local_vars = rawNonTermOrderVariables(mo);
+  local_vars = M2_arrayint_to_stdvector<int>(rawNonTermOrderVariables(mo));
 
   for (int i=0; i<n_vars(); ++i)
     {
@@ -225,12 +227,11 @@ std::vector<int> Monoid::getFirstWeightVector() const
   if (getMonomialOrdering()->len > 0 and
       getMonomialOrdering()->array[0]->type == MO_WEIGHTS)
     {
-      int i;
-      result.reserve(n_vars());
-      const int *wts = getMonomialOrdering()->array[0]->wts;
-      for (i = 0; i < getMonomialOrdering()->array[0]->nvars; i++)
-        result.push_back(wts[i]);
-      for (; i < n_vars(); i++) result.push_back(0);
+      mon_part content = getMonomialOrdering()->array[0];
+      std::copy(content->wts,
+                content->wts + content->nvars,
+                std::back_inserter(result));
+      result.resize(n_vars());
     }
   return result;
 }
@@ -359,23 +360,6 @@ unsigned int Monoid::computeHashValue(const_monomial m) const
       seed = seed + 1342234;
     }
   return hash;
-}
-
-void Monoid::from_expvector(const_exponents exp, monomial result) const
-{
-  monomialOrderEncodeFromActualExponents(monorder_, exp, result);
-}
-
-M2_arrayint Monoid::to_arrayint(const_monomial monom) const
-{
-  M2_arrayint result = M2_makearrayint(n_vars());
-  to_expvector(monom, result->array);
-  return result;
-}
-
-void Monoid::to_expvector(const_monomial m, exponents_t result_exp) const
-{
-  monomialOrderDecodeToActualExponents(monorder_, m, result_exp);
 }
 
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
@@ -732,11 +716,8 @@ bool Monoid::is_invertible(const_monomial m) const
 // is every variable that occurs
 // in 'm' allowed to be negative?
 {
-  if (n_invertible_vars_ == 0)
-    {
-      // Only the trivial monomial is invertible in this case
-      return is_one(m);
-    }
+  // Only the trivial monomial is invertible in this case
+  if (n_invertible_vars_ == 0) { return is_one(m); }
 
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
@@ -757,6 +738,16 @@ void Monoid::to_varpower(const_monomial m, gc_vector<int>& result) const
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   varpower::from_expvector(mVariableCount, EXP1, result);
+}
+
+void Monoid::from_expvector(const_exponents exp, monomial result) const
+{
+  monomialOrderEncodeFromActualExponents(monorder_, exp, result);
+}
+
+void Monoid::to_expvector(const_monomial m, exponents_t result_exp) const
+{
+  monomialOrderDecodeToActualExponents(monorder_, m, result_exp);
 }
 
 // Local Variables:

@@ -39,7 +39,7 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
       R->getCoefficients()
           ->cast_to_FractionField()  // disallowed in x-relem.cpp
       ||
-      R->getMonoid()->getNonTermOrderVariables()->len >
+      R->getMonoid()->numNonTermOrderVariables() >
           0)  // disallowed in x-relem.cpp
     use_gcd_simplify = false;
   else

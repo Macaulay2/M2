@@ -13,10 +13,10 @@
 #include "freemod.hpp"
 #include "interface/NAG.h"
 #include "interface/gmp-util.h"
+#include "interface/monoid.h"
 #include "mat.hpp"
 #include "matrix-con.hpp"
 #include "matrix.hpp"
-#include "monoid.hpp"
 #include "mutablemat-defs.hpp"
 #include "relem.hpp"
 #include "ring.hpp"
@@ -28,9 +28,10 @@ const FreeModule *IM2_Matrix_get_target(const Matrix *M) { return M->rows(); }
 const FreeModule *IM2_Matrix_get_source(const Matrix *M) { return M->cols(); }
 int IM2_Matrix_n_rows(const Matrix *M) { return M->n_rows(); }
 int IM2_Matrix_n_cols(const Matrix *M) { return M->n_cols(); }
+
 M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
 {
-  return M->degree_monoid()->to_arrayint(M->degree_shift());
+  return to_degree_vector(M->degree_monoid(), M->degree_shift());
 }
 
 M2_string IM2_Matrix_to_string(const Matrix *M)
