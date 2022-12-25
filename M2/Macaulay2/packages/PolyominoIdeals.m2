@@ -105,7 +105,7 @@ polyoRingDefault List := opts -> Q ->  (
 --------------------------------------------------------------------------------------------------
 --
 -- The function polyoMatrix define the matrix attached to a collection of cells P, where the
--- smallest intervall containing it is [(p,q),(r,s)]. The matrix has r-p rows and s-q columns
+-- smallest interval containing it is [(p,q),(r,s)]. The matrix has r-p rows and s-q columns
 -- and the (i,j)-th entry is x_(i,j) if (i,j) is a vertex of P, otherwise it is zero. 
 --
 --------------------------------------------------------------------------------------------------
@@ -414,7 +414,7 @@ polyoToric(List, List) := (Q,H) -> (
         Im=join(Im,{m});
     );
     T:=polyoRing(Q);
-    f:=map(S,T,Im);         -- It is VERY IMPORTANT TO PAY ATTENTION for the order of varibles in T, with V:=reverse                       
+    f:=map(S,T,Im);         -- It is VERY IMPORTANT TO PAY ATTENTION for the order of variables in T, with V:=reverse                       
     J:= kernel f;
     return J;
 );
@@ -436,7 +436,7 @@ document {
         Headline => "a package to work with binomial ideals associated with collections of cells",
         EM "PolyominoIdeals", " is a package for making several computations with the inner 2-minor ideals attached to collections of  cells.\n ",
         BR{},BR{},
-        "In [AAQ2012] Ayesha Asloob Qureshi establishes a connection between Combinatorical Commutiative Algebra and collection of cells, assigning to every collection of cells the binomial ideal of its inner $2$-minors.\n",
+        "In [AAQ2012] Ayesha Asloob Qureshi establishes a connection between Combinatorial Commutiative Algebra and collection of cells, assigning to every collection of cells the binomial ideal of its inner $2$-minors.\n",
         BR{},BR{},
         " Consider the natural partial order on $\\NN^2$ and let $a,b \\in \\N^2$ with $a\\leq b$. The set $[a, b] = \\{c \\in \\NN^2 : a \\leq c \\leq b\\}$ is called an interval of $\\NN^2$; moreover, if $b=a+(1,1)$, then $[a,b]$ is called a cell of $\\NN^2$. An interval $C=[a, b]$, where $a = (i, j)$ and $b = (k, l)$, is said to be a proper interval if $i < k$ and $j < l$. The elements $a, b$ are said the diagonal corners of $C$ and  $c = (k, j)$ and $d = (i, l)$ the anti-diagonal ones. If $C$ is a cell, then $V(C)=\\{a,a+(1,1),a+(0,1),a+(1,0)\\}$ is the set of the corners of $C$.\n",
        BR{},
@@ -498,7 +498,7 @@ document {
 	Usage => "polyoMatrix Q",
 	Inputs => { "Q" => "a list of lists whose elements are the lists of diagonal corners of each cell." },
 	Outputs => {"The matrix attached to the collection of cells encoding by Q."},
-	"Let $\\mathcal{P}$ be a collection of cells and $[(p,q),(r,s)]$ be the smallest intervall of $\\NN^2$ containing $\\mathcal{P}$. The matrix $M(\\mathcal{P})$ is a matrix having $s-q$ rows and $r-q$ columns with $M(\\mathcal{P})_{i,j}=x_{(i,j)}$ if $(i,j)$ is a vertex of $\\mathcal{P}$, otherwise it is zero.\n",
+	"Let $\\mathcal{P}$ be a collection of cells and $[(p,q),(r,s)]$ be the smallest interval of $\\NN^2$ containing $\\mathcal{P}$. The matrix $M(\\mathcal{P})$ is a matrix having $s-q$ rows and $r-q$ columns with $M(\\mathcal{P})_{i,j}=x_{(i,j)}$ if $(i,j)$ is a vertex of $\\mathcal{P}$, otherwise it is zero.\n",
 	BR{},
 	 "This routine returns the matrix of the collection of cells encoding by Q. In the next example we assume for simplicity that the smallest interval containing $\\mathcal{P}$ is $[(1,1),(r,s)]$.",
 	BR{},BR{},
@@ -598,7 +598,7 @@ document {
 document {
      Key => {RingChoice,[polyoIdeal,RingChoice]},
      Headline => "optional argument for polyoIdeal",
-     "Let $\\mathcal{P}$ be a collection of cells and $[(1,1),(m,n)]$ be the smallest intervall of $\\NN^2$ containing $\\mathcal{P}$. Then we attach to $\\mathcal{P}$ the following polynomial ring $S_{\\mathcal{P}}=K[x_a:a\\in V(\\mathcal{P})$, where $K$ is a field.\n",
+     "Let $\\mathcal{P}$ be a collection of cells and $[(1,1),(m,n)]$ be the smallest interval of $\\NN^2$ containing $\\mathcal{P}$. Then we attach to $\\mathcal{P}$ the following polynomial ring $S_{\\mathcal{P}}=K[x_a:a\\in V(\\mathcal{P})$, where $K$ is a field.\n",
      BR{},
      "Whether it is 1 or by default it returns the ideal computed by ", TT "polyoIdeal ", "in the ambient ring given by ", TT "polyoRingDefault",". With a value different by 1 it returns the ideal in the ambient ring given by ", TT "polyoRingConvex",".",
      BR{},BR{},
@@ -638,7 +638,7 @@ document {
 	BR{}, 
 	"Let $\\mathcal{P}$ be a collection of cells. We say that $\\mathcal{P}$ is weakly connected if for any two cells $C$ and $D$ of $\\mathcal{P}$, there exist a sequence of cells of $\\mathcal{P}$ as $C = C_1,\\dots, C_m = D$ such that $C_i \\cap C_{i+1} \\neq \\emptyset$, for $i = 1,\\dots, m − 1$. Observe trivially that every polyomino is a weakly connected collection of cells. We say that a weakly connected collection $\\mathcal{P}$ of cells is row convex, if the horizontal cell interval $[A, B]$ is contained in $\\mathcal{P}$ for any two cells $A$ and $B$ of $\\mathcal{P}$ whose lower left corners are in horizontal position. Similarly one defines column convex. Hence $\\mathcal{P}$ is called convex if it is row and column convex.\n",
 	BR{},
-	"Assume that tha smallest intervall containing $\\mathcal{P}$ is $[(1,1),(m,n)]$. Consider the edge ring $R = K[s_it_j: (i, j) \\in V (\\mathcal{P})]$ associated to the bipartite graph $G$ with vertex set $\\{s_1,\\dots, s_m\\} \\cup\\{t_1,\\dots, t_n\\}$ to $\\mathcal{P}$ such that each vertex $(i, j) \\in V (\\mathcal{P})$ determines the edge $\\{s_i,t_j \\}$ in $G$. Let $S=K[x_a:a\\in V(\\mathcal{P})$ and $\\phi : S \\rightarrow R$ be the $K$-algebra homomorphism defined by $\\phi(x_{ij} ) = s_it_j$, for all $(i, j) \\in V (\\mathcal{P})$ and set $J_\\mathcal{P} = ker(\\phi)$. From Theorem 2.1 of [AAQ2012], we know that $I_{\\mathcal{P}}=J_{\\mathcal{P}}$, if $\\mathcal{P}$ is a weakly connected and convex collection of cells. In such a case, from [OH1999] we get that the generators of $I_{\\mathcal{P}}$ forms the reduced Groebner basis with respect to a suitable order <, and in particular the initial ideal $\\mathrm{in}_<(I_{\\mathcal{P}})$ is squarefree and generated in degree two. \n",
+	"Assume that the smallest interval containing $\\mathcal{P}$ is $[(1,1),(m,n)]$. Consider the edge ring $R = K[s_it_j: (i, j) \\in V (\\mathcal{P})]$ associated to the bipartite graph $G$ with vertex set $\\{s_1,\\dots, s_m\\} \\cup\\{t_1,\\dots, t_n\\}$ to $\\mathcal{P}$ such that each vertex $(i, j) \\in V (\\mathcal{P})$ determines the edge $\\{s_i,t_j \\}$ in $G$. Let $S=K[x_a:a\\in V(\\mathcal{P})$ and $\\phi : S \\rightarrow R$ be the $K$-algebra homomorphism defined by $\\phi(x_{ij} ) = s_it_j$, for all $(i, j) \\in V (\\mathcal{P})$ and set $J_\\mathcal{P} = ker(\\phi)$. From Theorem 2.1 of [AAQ2012], we know that $I_{\\mathcal{P}}=J_{\\mathcal{P}}$, if $\\mathcal{P}$ is a weakly connected and convex collection of cells. In such a case, from [OH1999] we get that the generators of $I_{\\mathcal{P}}$ forms the reduced Groebner basis with respect to a suitable order <, and in particular the initial ideal $\\mathrm{in}_<(I_{\\mathcal{P}})$ is squarefree and generated in degree two. \n",
 	BR{}, 
 	"Following the proof in [OH1999], this routine implements an algorithm which gives the polynomial ring where the monomial order is <.",
 	BR{},BR{},
