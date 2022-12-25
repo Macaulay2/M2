@@ -1,11 +1,10 @@
 // Copyright 2004.  Michael E. Stillman
+#pragma once
 
-#ifndef _monoid_hpp_
-#define _monoid_hpp_
-
-#include <vector>
-
-#include "engine-includes.hpp"
+#include <alloca.h>  // for alloca
+#include <stddef.h>  // for size_t
+#include <string>    // for string
+#include <vector>    // for vector
 
 #include "ExponentList.hpp"
 #include "ExponentVector.hpp"
@@ -58,7 +57,7 @@ class Monoid : public MutableEngineObject
   /// The following two Should be constant after construction
   /// [0]..[mVariableCount-1] are the multi-degrees of the variables,
   /// and [mVariableCount] = zero element in the degree monoid.
-  VECTOR(const_monomial) mDegreeOfVar;
+  gc_vector<const_monomial> mDegreeOfVar;
 
   /// sets mHeftDegrees and mDegreeOfVar
   void set_degrees();
@@ -83,12 +82,12 @@ class Monoid : public MutableEngineObject
   /// indicates whether free module components are ordered lexicographically
   bool component_up_;
   /// These are the variables which are < 1 in the monomial order.
-  // TODO: replace with whether this exists or not
-  M2_arrayint local_vars;
+  std::vector<int> local_vars;
   /// These are the variables which can have negative exponents
   std::vector<bool> mLaurentVariablesPredicate;
   /// number of slots per monomial order block
-  VECTOR(int) nslots_;
+  // TODO: why is this one a gc_vector?
+  gc_vector<int> nslots_;
   /// used for preventing overflows
   void set_overflow_flags();
   enum overflow_type { OVER, OVER1, OVER2, OVER4 } * overflow;
@@ -119,7 +118,6 @@ class Monoid : public MutableEngineObject
   static Monoid *get_trivial_monoid();
 
   const MonomialOrdering *getMonomialOrdering() const { return mo_; }
-  M2_arrayint getNonTermOrderVariables() const { return local_vars; }
   const PolynomialRing *get_degree_ring() const { return mDegreeRing; }
   const Monoid *degree_monoid() const { return mDegreeMonoid; }
   const_monomial degree_of_var(int v) const { return mDegreeOfVar[v]; }
@@ -129,13 +127,14 @@ class Monoid : public MutableEngineObject
   bool primary_degrees_of_vars_positive() const;
 
   bool is_group() const { return n_invertible_vars_ == mVariableCount; }
+  bool is_local() const { return local_vars.size() > 0; }
   bool has_monomials_lt_one() const
   {
-    return (n_invertible_vars_ > 0 || local_vars->len > 0);
+    return (n_invertible_vars_ > 0 || local_vars.size() > 0);
   }
 
   int numInvertibleVariables() const { return n_invertible_vars_; }
-  int numNonTermOrderVariables() const { return local_vars->len; }
+  int numNonTermOrderVariables() const { return local_vars.size(); }
   // returns an empty vector if the first part of the monomial ordering is
   // not a weight vector
   std::vector<int> getFirstWeightVector() const;
@@ -166,12 +165,10 @@ class Monoid : public MutableEngineObject
   void from_varpower(const_varpower vp, monomial result) const;
   void to_varpower(const_monomial m, gc_vector<int>& result_vp) const;
 
+  // convert to and from the exponent vector representation
   void from_expvector(const_exponents exp, monomial result) const;
   void to_expvector(const_monomial m, exponents_t result_exp) const;
 
-  M2_arrayint to_arrayint(
-      const_monomial monom) const; /* Returns an exponent vector representation
-                                  of the monomial */
   bool in_subring(int nslots, const_monomial m) const;
   inline int compare(int nslots, const_monomial m, const_monomial n) const
   {
@@ -284,8 +281,6 @@ inline void Monoid::divide(const_monomial m,
 {
   for (int i = monomial_size_; i > 0; i--) *result++ = *m++ - *n++;
 }
-
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

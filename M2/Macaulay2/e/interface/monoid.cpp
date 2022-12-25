@@ -4,7 +4,6 @@
 
 #include "buffer.hpp"
 #include "error.h"
-#include "interface/monomial-ordering.h"
 #include "monoid.hpp"
 #include "ring.hpp"
 #include "util.hpp"
@@ -13,7 +12,6 @@ const Monoid* rawTrivialMonoid()
 {
   return Monoid::get_trivial_monoid();  // Set up in IM2_initialize()
 }
-
 
 const Monoid* /* or Null */ rawMonoid(const MonomialOrdering* mo,
                                       const Ring* deg_ring,
@@ -43,6 +41,13 @@ M2_string rawMonoidToString(const Monoid* M)
   buffer o;
   M->text_out(o);
   return o.to_string();
+}
+
+M2_arrayint to_degree_vector(const Monoid* M, const_monomial d)
+{
+  auto result = M2_makearrayint(M->n_vars());
+  M->to_expvector(d, result->array);
+  return result;
 }
 
 // Local Variables:

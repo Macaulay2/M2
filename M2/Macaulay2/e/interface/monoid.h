@@ -22,6 +22,10 @@ typedef struct MonomialOrdering MonomialOrdering;
 extern "C" {
 #  endif
 
+/* integer types to be used for degrees and exponents */
+typedef int32_t deg_t;
+typedef const deg_t *const_monomial;
+
 /* rawMonoid(): always returns the same object */
 const Monoid *rawTrivialMonoid();
 
@@ -45,6 +49,10 @@ unsigned int rawMonoidHash(const Monoid *M);
 /* connected to the interpreter in d/actors4.d */
 M2_string rawMonoidToString(const Monoid *M);
 /* For debugging purposes */
+
+/* Service routine for converting degree monomials to int arrays.
+   To be used only by other interface routines. */
+M2_arrayint to_degree_vector(const Monoid *M, const_monomial d);
 
 #  if defined(__cplusplus)
 }

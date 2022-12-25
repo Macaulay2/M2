@@ -18,6 +18,7 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
+#include "interface/monoid.h"
 #include "monoid.hpp"
 #include "monomial.hpp"
 #include "newdelete.hpp"
@@ -361,7 +362,7 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
 
       auto M = a->get_ring()->degree_monoid();
       // TODO: do we need to manually free a->degree()?
-      return M->to_arrayint(a->degree());
+      return to_degree_vector(M, a->degree());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

@@ -39,7 +39,7 @@ bool LocalRing::initialize_local(const PolyRing *R, GBComputation *P)
       R->getCoefficients()
           ->cast_to_LocalRing()  // disallowed in x-relem.cpp
       ||
-      R->getMonoid()->getNonTermOrderVariables()->len >
+      R->getMonoid()->numNonTermOrderVariables() >
           0)  // disallowed in x-relem.cpp
     use_gcd_simplify = false;
   else
