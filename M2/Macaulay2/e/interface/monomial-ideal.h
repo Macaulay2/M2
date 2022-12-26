@@ -6,12 +6,12 @@
 // TODO: fix this
 #  if defined(__cplusplus)
 class Matrix;
-class Monomial;
+class EngineMonomial;
 class MonomialIdeal;
 class RingElement;
 #  else
 typedef struct Matrix Matrix;
-typedef struct Monomial Monomial;
+typedef struct EngineMonomial EngineMonomial;
 typedef struct MonomialIdeal MonomialIdeal;
 typedef struct RingElement RingElement;
 #  endif
@@ -70,7 +70,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
 
 const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a);
+    const EngineMonomial *a);
 /* drg: connected rawColon*/
 /* If I = (m1, ..., mr),
    Form the monomial ideal (I : a) = (m1:a, ..., mr:a) */
@@ -84,7 +84,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
 
 const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a);
+    const EngineMonomial *a);
 /* drg: connected rawSaturateMonomialIdeal*/
 /* Form I:a^\infty.  IE, set every variable which occurs in 'a' to '1' in
    every generator of I. */

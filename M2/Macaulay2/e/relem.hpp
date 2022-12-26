@@ -5,7 +5,7 @@
 
 #include "ring.hpp"
 
-class Monomial;
+class EngineMonomial;
 
 class RingElement : public EngineObject
 {
@@ -72,9 +72,9 @@ class RingElement : public EngineObject
   int n_terms(int nvars) const;
   RingElement /* or null */ *get_terms(int nvars, int lo, int hi) const;
   RingElement /* or null */ *get_coeff(const Ring *coeffR,
-                                       const Monomial *m) const;
+                                       const EngineMonomial *m) const;
   RingElement /* or null */ *lead_coeff(const Ring *coeffR) const;
-  Monomial /* or null */ *lead_monom(int nvars) const;
+  EngineMonomial /* or null */ *lead_monom(int nvars) const;
   ////////////////////////////////////
 
   bool is_homogeneous() const;

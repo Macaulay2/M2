@@ -109,7 +109,7 @@ public:
   }
 
   #if 0
-  // lead_monomial: returns an allocated Monomial meant for the front end of M2.
+  // lead_monomial: returns an allocated EngineMonomial meant for the front end of M2.
   const int* lead_monomial(const Poly* f) const;
   const int* lead_monomial(const ring_elem f) const { return lead_monomial reinterpret_cast<const Poly*>((f.get_Poly())); }
   #endif
