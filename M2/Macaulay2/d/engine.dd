@@ -5,7 +5,7 @@ declarations "// IWYU pragma: private, include \"engine-includes.hpp\"";
 use gmp;
 
 -- types
-export RawMonomial := Pointer "const struct Monomial *";
+export RawMonomial := Pointer "const struct EngineMonomial *";
 export RawMonomialArray := array(RawMonomial);
 export RawMonomialOrNull := RawMonomial or null;
 export RawArrayInt := array(int);

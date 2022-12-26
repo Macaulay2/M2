@@ -1816,7 +1816,7 @@ engine_RawArrayPairOrNull PolyRing::list_form(const Ring *coeffR,
       ring_elem c =
           get_logical_coeff(coeffR, t);  // increments t to the next term of f.
       varpower::from_expvector(nvars0, exp, resultvp);
-      monoms->array[next] = Monomial::make(resultvp.raw());
+      monoms->array[next] = EngineMonomial::make(resultvp.raw());
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
       resultvp.shrink(0);
 

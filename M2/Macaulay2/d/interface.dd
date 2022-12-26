@@ -29,7 +29,7 @@ header "// TODO: remove the following headers
 #include <error.h>                          // for ERROR
 #include <ZZp.hpp>                          // for Z_mod
 #include <exceptions.hpp>                   // for engine_error, CATCH, TRY
-#include <monomial.hpp>                     // for Monomial
+#include <monomial.hpp>                     // for EngineMonomial
 #include <relem.hpp>                        // for RingElement";
 
 -- debugging:
@@ -75,7 +75,7 @@ setupfun("rawRandomCC",rawRandomCC);
 -- monomials
 
 rawVarMonomial(v:int,e:int):RawMonomialOrNull := Ccode(returns,"
-     try { return Monomial::make(v,e); }
+     try { return EngineMonomial::make(v,e); }
      catch (const exc::engine_error& m) { ERROR(m.what()); return NULL; }");
 export rawVarMonomial(a:Expr):Expr := (
      when a
@@ -112,7 +112,7 @@ export rawSparseListFormMonomial(e:Expr):Expr := (
 setupfun("rawSparseListFormMonomial",rawSparseListFormMonomial);
 
 -- rawMakeMonomial(m:array(int)):RawMonomialOrNull := Ccode(returns,"
---      try { return Monomial::make(m); }
+--      try { return EngineMonomial::make(m); }
 --      catch (const exc::engine_error& e) { ERROR(e.what()); return NULL; }
 --      "
 --      -- /* Takes an array of the form [n, v1, e1, v2, e2, ..., vn, en]
@@ -130,7 +130,7 @@ export rawMakeMonomial(e:Expr):Expr := (
 	  else (
 	       ret := RawMonomialOrNull(null());
 	       Ccode(void, "
-     	       	    try { ",ret," = Monomial::make(",getReverseSequenceOfPairsOfSmallIntegers(l.v),"); }
+		    try { ",ret," = EngineMonomial::make(",getReverseSequenceOfPairsOfSmallIntegers(l.v),"); }
      		    catch (const exc::engine_error& e) { ERROR(e.what()); }");
 	       toExpr(ret)))
      else WrongArg("a list of pairs of integers"));
@@ -304,7 +304,7 @@ export rawSaturate(e:Expr):Expr := (
 setupfun("rawSaturate",rawSaturate);
 
 rawSyzygy(a:RawMonomial,b:RawMonomial):RawMonomialPairOrNull := Ccode(returns,"
-     try { struct Monomial *aa, *bb;
+     try { struct EngineMonomial *aa, *bb;
 	   a->monsyz(*b, aa, bb);
 	   engine_RawMonomialPair result = new engine_RawMonomialPair_struct;
 	   result->a = aa;

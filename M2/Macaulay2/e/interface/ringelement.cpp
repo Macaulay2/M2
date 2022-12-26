@@ -435,7 +435,7 @@ IM2_RingElement_homogenize(const RingElement *a, int v, M2_arrayint wts)
 
 const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
                                                       const RingElement *a,
-                                                      const Monomial *m)
+                                                      const EngineMonomial *m)
 /* R must be a polynomial ring, and 'a' an element of the
    coefficient ring of R.  Returns a*m, if this is a valid
    element of R.  Returns NULL if not (with an error message). */
@@ -490,7 +490,7 @@ const RingElement /* or null */ *IM2_RingElement_get_terms(
 const RingElement /* or null */ *IM2_RingElement_get_coeff(
     const Ring *coeffRing, /* ring of the result */
     const RingElement *a,
-    const Monomial *m)
+    const EngineMonomial *m)
 /* Return (as an element of the coefficient ring) the coeff
      of the monomial 'm'.
   */
@@ -519,7 +519,7 @@ const RingElement /* or null */ *IM2_RingElement_lead_coeff(
   }
 }
 
-const Monomial /* or null */ *IM2_RingElement_lead_monomial(
+const EngineMonomial /* or null */ *IM2_RingElement_lead_monomial(
     int nvars, /* number of variables in an outermost monoid */
     const RingElement *a)
 {

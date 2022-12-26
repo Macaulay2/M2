@@ -701,7 +701,7 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
       coeffs->array[next] =
           RingElement::make_raw(coefficientRing, i.getCoefficient());
       toVarpower(i.getMonomial(), vp);
-      monoms->array[next] = Monomial::make(vp.raw());
+      monoms->array[next] = EngineMonomial::make(vp.raw());
       vp.shrink(0);
     }
   return result;
