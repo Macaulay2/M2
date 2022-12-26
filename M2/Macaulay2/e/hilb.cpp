@@ -180,6 +180,8 @@ static int popular_var(const MonomialIdeal &I,
       const int *m = a.monom().raw();
       index_varpower j = m;
       assert(j.valid());  // The monomial cannot be '1'.
+      int v = j.var();
+      int e = j.exponent();
       ++j;
       if (j.valid())
         {
@@ -187,16 +189,14 @@ static int popular_var(const MonomialIdeal &I,
           // hits[v]++;
           for (; j.valid(); ++j)
             {
-              int v = j.var();
-              int e = j.exponent();
+              v = j.var();
+              e = j.exponent();
               if (minnonzero[v] > e) minnonzero[v] = e;
               hits[v]++;
             }
         }
       else
         {
-          int v = j.var();
-          int e = j.exponent();
           if (pure[v] == -1)
             {
               npure++;
