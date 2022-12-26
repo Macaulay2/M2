@@ -373,7 +373,7 @@ engine_RawArrayPairOrNull M2FreeAlgebra::list_form(const Ring *coeffR, const rin
       vp.resize(0);
       monoid().getMonomialReversed(i.monom(), vp); // should this instead reverse the monomial?
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
-      monoms->array[next] = Monomial::make(vp); // reverses the monomial
+      monoms->array[next] = EngineMonomial::make(vp); // reverses the monomial
     }
   
   return result;

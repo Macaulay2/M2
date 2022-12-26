@@ -120,7 +120,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
 
 const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a)
+    const EngineMonomial *a)
 {
   try
     {
@@ -159,7 +159,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
 
 const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a)
+    const EngineMonomial *a)
 {
   try
     {
