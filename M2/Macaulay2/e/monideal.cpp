@@ -668,7 +668,6 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
   // The idea: take the elements of 'this'
   //   for each: if the element is in J, then keep it directly.
   //      otherwie compute the lcm's.
-  std::cout << "monideal: calling intersect" << std::endl;
   VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
@@ -695,7 +694,6 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
 MonomialIdeal *MonomialIdeal::intersect(const int *m) const
 // Compute (this : m), where m is a varpower monomial.
 {
-  std::cout << "monideal: calling intersect with one element" << std::endl;
   VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
@@ -709,7 +707,6 @@ MonomialIdeal *MonomialIdeal::intersect(const int *m) const
 
 MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
 {
-  std::cout << "monideal: calling *" << std::endl;
   VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     for (Bag& b : J)
@@ -728,7 +725,6 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
 
 MonomialIdeal *MonomialIdeal::operator+(const MonomialIdeal &J) const
 {
-  std::cout << "monideal: calling +" << std::endl;
   VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
@@ -747,7 +743,6 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
 // Create the monomial ideal consisting of those elements of 'this'
 // that are not in 'J'.  The baggage is left the same.
 {
-  std::cout << "monideal: calling -" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   for (Bag& a : *this)
     {
@@ -764,7 +759,6 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
 MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 // Compute (this : m), where m is a varpower monomial.
 {
-  std::cout << "calling quotient of single element" << std::endl;
   VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
@@ -778,13 +772,13 @@ MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 
 MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
 {
-  std::cout << "--calling quotient -- I = ";
-  dmonideal(const_cast<MonomialIdeal*>(this));
-  std::cout << std::endl << "  -- J = ";
-  dmonideal(const_cast<MonomialIdeal*>(&J));
-  std::cout << std::endl << "  -- I:J = ";
-  debug_check();
-  J.debug_check();
+  // std::cout << "--calling quotient -- I = ";
+  // dmonideal(const_cast<MonomialIdeal*>(this));
+  // std::cout << std::endl << "  -- J = ";
+  // dmonideal(const_cast<MonomialIdeal*>(&J));
+  // std::cout << std::endl << "  -- I:J = ";
+  // debug_check();
+  // J.debug_check();
   
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
@@ -793,15 +787,15 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
   for (Bag& a : J)
     {
       MonomialIdeal *result1 = quotient(a.monom().raw());
-      result1->debug_check();
+      // result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
-      next_result->debug_check();
+      // next_result->debug_check();
       delete result1;
       delete result;
       result = next_result;
     }
-  dmonideal(result);
-  std::cout << "----" << std::endl;
+  // dmonideal(result);
+  // std::cout << "----" << std::endl;
   GC_reachable_here(&J);
   return result;
 }
@@ -812,7 +806,6 @@ static MonomialIdeal *varpower_monideal(const PolynomialRing *R,
 {
   // If m is a varpower monomial, xi1^a1 ... xin^an, create the monomial ideal
   // (xi1^(top[i1]+1-a1), ..., xin^(top[in]+1-an))
-  std::cout << "monideal: calling varpower_monideal" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(R);
   for (index_varpower i = vp; i.valid(); ++i)
     {
@@ -859,7 +852,6 @@ MonomialIdeal *MonomialIdeal::alexander_dual(const M2_arrayint a) const
 
 MonomialIdeal *MonomialIdeal::erase(const int *m) const
 {
-  std::cout << "monideal: calling erase" << std::endl;
   debug_check();
   VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
@@ -876,13 +868,13 @@ MonomialIdeal *MonomialIdeal::erase(const int *m) const
 
 MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
 {
-  std::cout << "--calling sat -- I = ";
-  dmonideal(const_cast<MonomialIdeal*>(this));
-  std::cout << std::endl << "  -- J = ";
-  dmonideal(const_cast<MonomialIdeal*>(&J));
-  std::cout << std::endl << "  -- sat(I,J) = ";
-  debug_check();
-  J.debug_check();
+  // std::cout << "--calling sat -- I = ";
+  // dmonideal(const_cast<MonomialIdeal*>(this));
+  // std::cout << std::endl << "  -- J = ";
+  // dmonideal(const_cast<MonomialIdeal*>(&J));
+  // std::cout << std::endl << "  -- sat(I,J) = ";
+  // debug_check();
+  // J.debug_check();
   
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
@@ -891,24 +883,24 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
   for (Bag& a : J)
     {
       MonomialIdeal *result1 = erase(a.monom().raw());
-      result1->debug_check();
+      // result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
-      next_result->debug_check();
+      // next_result->debug_check();
       delete result1;
       delete result;
       result = next_result;
     }
-  dmonideal(result);
-  std::cout << "----" << std::endl;
+  // dmonideal(result);
+  // std::cout << "----" << std::endl;
   GC_reachable_here(&J);
   return result;
 }
 
 MonomialIdeal *MonomialIdeal::radical() const
 {
-  std::cout << "monideal: calling radical on ";
-  dmonideal(const_cast<MonomialIdeal*>(this));
-  std::cout << std::endl << "  -- radical(I) = ";
+  // std::cout << "monideal: calling radical on ";
+  // dmonideal(const_cast<MonomialIdeal*>(this));
+  // std::cout << std::endl << "  -- radical(I) = ";
   
   VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
@@ -918,8 +910,8 @@ MonomialIdeal *MonomialIdeal::radical() const
       new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
-  dmonideal(result);
-  std::cout << "----" << std::endl;
+  // dmonideal(result);
+  // std::cout << "----" << std::endl;
   return result;
 }
 
