@@ -1,8 +1,8 @@
 #ifndef _free_monoid_hpp_
 #define _free_monoid_hpp_
 
-#include "Polynomial.hpp"      // for Monom, IntVector
-#include "newdelete.hpp"       // for VECTOR, our_new_delete
+#include "Polynomial.hpp"      // for Monom
+#include "newdelete.hpp"       // for our_new_delete
 #include "polyring.hpp"        // for PolynomialRing
 #include "style.hpp"           // for GT
 #include "NCAlgebras/Word.hpp" // for Word
@@ -56,7 +56,7 @@ private:
   const std::vector<int> mHeftVector;    // length is size of degree vector
   std::vector<int> mHeftDegrees;   // length numVars().  Should be const (after construction)
   const int mNumWeights;
-  VECTOR(const int*) mDegreeOfVar;
+  gc_vector<const int*> mDegreeOfVar;
      // length numVars(), each is a pointer to an allocated degree vector.
      // Should be const (after construction)
 public:
@@ -79,7 +79,7 @@ public:
   const Monoid& degreeMonoid() const { return * mDegreeRing->getMonoid(); }
   
   // Monomial operations
-  using MonomialInserter = IntVector;
+  using MonomialInserter = gc_vector<int>;
 
   void one(MonomialInserter& m) const;
 

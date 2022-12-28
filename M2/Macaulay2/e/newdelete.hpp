@@ -29,7 +29,10 @@
   It is a (probably hard to detect) error if exactly (1) or (2a) holds.
   In that case, redesign your class!
  */
-#define VECTOR(T) std::vector<T, gc_allocator<T>>
+template <typename T>
+using gc_vector = typename std::vector<T, gc_allocator<T>>;
+// TODO: eventually replace all uses of VECTOR(T) with gc_vector<T>
+#define VECTOR(T) gc_vector<T>
 
 // these replace all uses of the construction "new T[n]" (unless constructors
 // have to be run!):
