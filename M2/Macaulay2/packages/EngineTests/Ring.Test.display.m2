@@ -13,7 +13,7 @@ TEST ///
       );
   testit(GF(2,4))
   testit(GF(2,4,Strategy=>"New"))
-  --testit(GF(2,4,Strategy=>"Givaro")) -- fails
+  testit(GF(2,4,Strategy=>"Old"))
   testit(GF(2,4,Strategy=>"Flint"))
   testit(GF(2,4,Strategy=>"FlintBig"))
 ///

@@ -128,56 +128,6 @@ TEST ///
   assert try (ZZp(1, Strategy=>"Aring"); false) else true
 ///
 
-if false and hasFFPACK then
-TEST ///
-    debug Core
-    kk = GF(9, Strategy=>"Givaro")
-    assert(rawARingGFPolynomial raw kk == {2,2,1})
-    assert((new kk from rawMultiplicativeGenerator raw kk) == kk_0)
-    (p,d) = (3,2)
-    reps = for i from 0 to 8 list rawARingGFCoefficients raw (kk_0^i)
-    assert(reps == {{1, 0}, {0, 1}, {1, 1}, {1, 2}, 
-            {2, 0}, {0, 2}, {2, 2}, {2, 1}, {1, 0}})
-///
-
-if false and hasFFPACK then
-TEST ///
-    debug Core
-    kk = GF(32, Strategy=>"Givaro")
-    assert(rawARingGFPolynomial raw kk == {1, 0, 1, 0, 0, 1})
-    assert((new kk from rawMultiplicativeGenerator raw kk) == kk_0)
-    (p,d) = (2,5)
-    reps = for i from 0 to 31 list rawARingGFCoefficients raw (kk_0^i)
-    assert(reps == 
-        {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0},
-         {0, 0, 0, 0, 1}, {1, 0, 1, 0, 0}, {0, 1, 0, 1, 0}, {0, 0, 1, 0, 1},
-         {1, 0, 1, 1, 0}, {0, 1, 0, 1, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 0, 0},
-         {0, 1, 1, 1, 0}, {0, 0, 1, 1, 1}, {1, 0, 1, 1, 1}, {1, 1, 1, 1, 1},
-         {1, 1, 0, 1, 1}, {1, 1, 0, 0, 1}, {1, 1, 0, 0, 0}, {0, 1, 1, 0, 0},
-         {0, 0, 1, 1, 0}, {0, 0, 0, 1, 1}, {1, 0, 1, 0, 1}, {1, 1, 1, 1, 0},
-         {0, 1, 1, 1, 1}, {1, 0, 0, 1, 1}, {1, 1, 1, 0, 1}, {1, 1, 0, 1, 0},
-         {0, 1, 1, 0, 1}, {1, 0, 0, 1, 0}, {0, 1, 0, 0, 1}, {1, 0, 0, 0, 0}})
-///
-
--- this test doesn't work on a machine where "long" is 32 bits
--- TEST ///
---   -*
---     restart
---     loadPackage "EngineTests"
---   *-
---   debug Core
---   -- test that around 2^32, flint rings are created correctly, with correct charac.
---   primes = for i from -10000 to 10000 list if isPrime (2^32+i) then 2^32+i else continue;
---   badprimes = for p in primes list (
---     if p != rawCharacteristic raw ZZpFlint p then p else continue
---     )
---   assert(badprimes === {})
---   badprimes = for p in primes list (
---     if p != char ZZpFlint p then p else continue
---     )
---   assert(badprimes === {})
--- ///
-
 
 TEST ///
   -- Factorization over these finite fields
