@@ -527,14 +527,11 @@ testHasEngineLinearAlgebra = () -> (
     if hasFFPACK then (
         assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"Ffpack"));
         );
+
     -- The following do NOT have engine linear algebra yet, but they should:
-      assert not hasEngineLinearAlgebra (GF(25));
-      assert not hasEngineLinearAlgebra (GF(25, Strategy=>"New"));
-    if hasFFPACK then (
-      assert not hasEngineLinearAlgebra (GF(25, Strategy=>"CompleteGivaro"));
-      assert not hasEngineLinearAlgebra (GF(25, Strategy=>"Givaro"));
-      );
-      --hasEngineLinearAlgebra (GF(25, Strategy=>"FLINT")) -- this ring doesn't yet exist!
+    assert not hasEngineLinearAlgebra (GF(25));
+    assert not hasEngineLinearAlgebra (GF(25, Strategy=>"New"));
+    assert not hasEngineLinearAlgebra (GF(25, Strategy=>"Flint"))
     )
 
 TEST ///

@@ -5,7 +5,6 @@ load "./LinearAlgebra.Test.FFPACK.m2"
 load "./LinearAlgebra.Test.FLINT.m2"
 load "./LinearAlgebra.Test.ZZp.m2"
 load "./LinearAlgebra.Test.EngineGF.m2"
-load "./LinearAlgebra.Test.Givaro.m2"
 
 load "./LinearAlgebra.Test.all.m2"
 
@@ -28,8 +27,10 @@ TEST ///
   assert hasEngineLinearAlgebra(ZZp(101, Strategy=>"Ffpack"))
   hasEngineLinearAlgebra(ZZ/101)
   hasEngineLinearAlgebra (GF(2^3, Strategy=>null))
-  hasEngineLinearAlgebra (GF(2^3, Strategy=>"Givaro"))
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>"Flint"))
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>"FlintBig"))
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"Old"))
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>"New"))
 
   hasLinAlgRank ZZ  -- NO
   hasLinAlgRank QQ  -- NO

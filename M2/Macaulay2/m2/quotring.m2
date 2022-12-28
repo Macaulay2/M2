@@ -68,7 +68,7 @@ ZZp Ideal := opts -> (I) -> (
 	  if not isPrime n
 	  then error ("ZZ/n not implemented yet for composite n = ", toString n);
 	  S := new QuotientRing from 
-	    if typ === "Ffpack" then rawARingGaloisField(n,1)  
+      if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n
         else if typ === "Aring" then rawARingZZp n
         else if typ === "Old" then rawZZp n

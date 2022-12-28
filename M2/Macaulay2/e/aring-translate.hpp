@@ -19,7 +19,6 @@
 #include "aring-zzp-ffpack.hpp"
 #include "aring-qq.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-gf-givaro.hpp"
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
 #include "aring-tower.hpp"

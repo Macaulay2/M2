@@ -10,6 +10,9 @@
 #include "exceptions.hpp" // for exc::division_by_zero_error, exc::internal_error
 #include <iostream>
 
+#include "polyring.hpp"
+class RingMap;
+
 class GF;
 class PolynomialRing;
 class RingElement;

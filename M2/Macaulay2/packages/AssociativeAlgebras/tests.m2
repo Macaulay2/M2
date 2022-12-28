@@ -1491,7 +1491,7 @@ DEVELOPMENT ///
   I = createIdeal GF(7^5, SizeLimit => 60000) -- FlintZech
   runGBs I -- OK
 
-  I = createIdeal GF(27, Strategy => "Givaro") -- OK
+  I = createIdeal GF(27, Strategy => "Flint") -- OK
   runGBs I -- OK
 
   I = createIdeal ZZp(32003,Strategy=>"Ffpack")
@@ -1554,7 +1554,7 @@ kk = GF(3^10)
 kk = GF(7^5)
 kk = QQ
 kk = GF(13^2,Strategy=>"New")
-kk = GF(27,Strategy=>"Givaro")
+kk = GF(27,Strategy=>"Flint")
 kk = ZZp(32003,Strategy=>"Ffpack")
 kk = ZZp(32003,Strategy=>"Aring")
 A = kk<|x,y,z|>

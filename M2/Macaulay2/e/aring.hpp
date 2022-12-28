@@ -35,7 +35,6 @@ enum RingID {
   ring_ZZpFfpack,
   ring_ZZpFlint,
   ring_GFM2,
-  ring_GFGivaro,
   ring_GFFlintBig,
   ring_GFFlintZech,
   ring_RRi,

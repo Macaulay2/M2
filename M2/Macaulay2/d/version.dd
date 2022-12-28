@@ -57,9 +57,6 @@ header "
    #include <NTL/version.h>
 
    #undef ASSERT
-   #include <givaro/givinit.h>
-   #include <givaro/givconfig.h>
-   Givaro::GivaroMain givaroMain;
 
    #ifdef WITH_TBB
    #include <tbb/tbb.h>
@@ -178,7 +175,6 @@ setupconst("version", Expr(toHashTable(Sequence(
 		   \"not present\"
 	  #endif
 	  "),
-   "givaro version" => Ccode(constcharstar, "stringize(GIVARO_MAJOR_VERSION) \".\" stringize(GIVARO_MINOR_VERSION) \".\" stringize(GIVARO_REVISION_VERSION)" ),
    "fflas_ffpack version" => ffpackVersion(),
    "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
