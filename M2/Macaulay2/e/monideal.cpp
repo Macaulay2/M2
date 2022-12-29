@@ -199,7 +199,7 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
   while (i != sentinel)
     {
       const int *m = (*i).monom().raw();
-      const int *n = (*i).monom().raw();
+      const int *n = (*j).monom().raw();
       if (!varpower::is_equal(m, n)) return false;
       i++;
       j++;
