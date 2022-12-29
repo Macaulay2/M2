@@ -139,7 +139,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
           if (i.valid())
             {
               insert_node = new_mi_node(
-                  insert_var, insert_exp, reinterpret_cast<mi_node *>(NULL));
+                  insert_var, insert_exp, static_cast<mi_node *>(nullptr));
               q->insert_to_left(insert_node);
               q = insert_node;
             }
@@ -157,7 +157,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
   if (one_element)
     {
       // insert a header node and a var/exp = 0/0 leaf
-      top = new_mi_node(0, 0, reinterpret_cast<mi_node *>(NULL));
+      top = new_mi_node(0, 0, static_cast<mi_node *>(nullptr));
       mi_node *leaf_node = new_mi_node(0, 0, k);
       top->left = top->right = leaf_node;
       top->header = leaf_node->header = leaf_node->left = leaf_node->right =
