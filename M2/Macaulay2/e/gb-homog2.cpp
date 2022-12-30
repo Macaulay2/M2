@@ -331,7 +331,6 @@ void GB_comp::find_pairs(gb_elem *p)
   // the proper degree.
 
   VECTOR(Bag *) rejects;
-  Bag *b;
   MonomialIdeal mi(originalR, elems, rejects);
   for (auto& b : rejects)
     {
