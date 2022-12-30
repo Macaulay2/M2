@@ -28,7 +28,7 @@ listSplice := L -> deepSplice flatten sequence L
 baseName' = var -> baseName if instance(var, String) and match("[[:alnum:]$]+", var) then getSymbol var else var
 
 -- TODO: where should this go?
--- MES: I grabbed this from orderedmonoidrings.m2, to handle skew variables in the monoid/ring.
+-- MES: I grabbed this from polyrings.m2, to handle skew variables in the monoid/ring.
 indices := (M, variables) -> apply(variables, x -> (
 	x = baseName x;
 	if M.index#?x then M.index#x
