@@ -56,7 +56,9 @@ Node
    [(tensor, Ring, Ring), Weights]
    [(tensor, Ring, Ring), WeylAlgebra]
     (symbol**, Ring, Ring)
+    (symbol^**, Ring, ZZ)
     (symbol**, Monoid, Monoid)
+    (symbol^**, Monoid, ZZ)
   Headline
     tensor product of monoids
   Usage
