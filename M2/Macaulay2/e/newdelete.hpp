@@ -1,18 +1,19 @@
 #ifndef NEWDELETE_H
 #define NEWDELETE_H 1
 
-#define GC_REDIRECT_TO_LOCAL
-// get declarations of outofmem and getmem
-#include "../d/M2mem.h"
-#include "../d/debug.h"
+#define GC_REDIRECT_TO_LOCAL // enable thread-local allocation
 
-#include <M2/gc-include.h>
+#include "M2mem.h"  // for freemem, getmem, outofmem2
+#include "debug.h"  // for TRAPCHK, TRAPCHK_SIZE
+
+#include "M2/gc-include.h"  // for GC_base, NULL, size_t, GC_REGISTER_FINALI...
+// IWYU pragma: begin_exports
 #include <gc/gc_allocator.h>
+// IWYU pragma: end_exports
 #include <vector>
 
 #ifdef MEMDEBUG
 #include <memdebug.h>
-#include <M2mem.h>
 #endif
 
 /**
@@ -28,7 +29,10 @@
   It is a (probably hard to detect) error if exactly (1) or (2a) holds.
   In that case, redesign your class!
  */
-#define VECTOR(T) std::vector<T, gc_allocator<T>>
+template <typename T>
+using gc_vector = typename std::vector<T, gc_allocator<T>>;
+// TODO: eventually replace all uses of VECTOR(T) with gc_vector<T>
+#define VECTOR(T) gc_vector<T>
 
 // these replace all uses of the construction "new T[n]" (unless constructors
 // have to be run!):
