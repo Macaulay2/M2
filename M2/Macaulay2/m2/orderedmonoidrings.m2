@@ -13,14 +13,12 @@ needs "indeterminates.m2" -- runLengthEncode
 
 PolynomialRing = new Type of EngineRing
 PolynomialRing.synonym = "polynomial ring"
-PolynomialRing#{Standard,AfterPrint} = R -> (
-    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
-    << "PolynomialRing";
+PolynomialRing#AfterPrint = R -> (
+    class R,
     if #R.monoid.Options.WeylAlgebra > 0
-    then << ", " << #R.monoid.Options.WeylAlgebra << " differential variables";
+    then (", ", #R.monoid.Options.WeylAlgebra, " differential variables"),
     if #R.monoid.Options.SkewCommutative > 0
-    then << ", " << #R.monoid.Options.SkewCommutative << " skew commutative variables";
-    << endl;
+    then (", ", #R.monoid.Options.SkewCommutative, " skew commutative variables")
     )
 
 isPolynomialRing = method(TypicalValue => Boolean)

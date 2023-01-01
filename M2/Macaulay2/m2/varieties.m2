@@ -95,23 +95,22 @@ net CoherentSheaf := (F) -> net expression F
 texMath CoherentSheaf := (F) -> texMath expression F
 toString CoherentSheaf := (F) -> toString expression F
 
-CoherentSheaf#{Standard,AfterPrint} = F -> (
+CoherentSheaf#AfterPrint = F -> (
      X := variety F;
      M := module F;
-     << endl;				  -- double space
      n := rank ambient F;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : coherent sheaf on " << X;
+     ("coherent sheaf on ",X,
      if M.?generators then
-     if M.?relations then << ", subquotient of " << ambient F
-     else << ", subsheaf of " << ambient F
-     else if M.?relations then << ", quotient of " << ambient F
+     if M.?relations then (", subquotient of ", ambient F)
+     else (", subsheaf of ", ambient F)
+     else if M.?relations then (", quotient of ", ambient F)
      else if n > 0 then (
-	  << ", free";
+	  ", free"
 	  -- if not all(degrees M, d -> all(d, zero))
 	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
-	  );
-     << endl;
+	  )
      )
+ )
 
 sheaf(Variety,Module) :=  CoherentSheaf => (X,M) -> if M.cache#?(sheaf,X) then M.cache#(sheaf,X) else M.cache#(sheaf,X) = (
      if ring M =!= ring X then error "expected module and variety to have the same ring";

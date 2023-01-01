@@ -7,8 +7,6 @@ needs "methods.m2"
 
 Net.synonym = "net"
 
-Net#{Standard,AfterPrint} = identity
-
 toString MutableHashTable := s -> (
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
 toString Type := X -> (

@@ -301,13 +301,11 @@ toString Monoid := toString @@ expression
 net      Monoid :=      net @@ expression
 texMath  Monoid :=  texMath @@ expression
 
-Monoid#{Standard,AfterPrint} = M -> (
-    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
-    << toString class M;
+Monoid#AfterPrint = M -> (
+    class M,
     if not isFreeModule degreeGroup M
-    then << ", with torsion degree group";
+    then ", with torsion degree group";
     -- TODO: print whether M is ordered, a free algebra, etc.
-    << endl;
     )
 
 -----------------------------------------------------------------------------

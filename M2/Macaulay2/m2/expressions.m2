@@ -74,6 +74,8 @@ assert Expression := v -> (
     if not val then error toString("assertion failed:" || net v | " is false")
 )
 
+nullf = x -> null
+
 --Holder2 = new WrapperType of Expression			    -- Holder{ printable form, value form }
 --Holder2.synonym = "holder"
 --Holder = new WrapperType of Holder2			    -- Holder{ printable form, value form }, with printable form === value form
@@ -84,7 +86,7 @@ Describe = new WrapperType of Holder
 Describe.synonym = "description"
 describe = method(Dispatch => Thing)
 describe Thing := x -> new Describe from { unhold expression x }
-Describe#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
+Describe#AfterPrint = nullf -- all this to suppress "o##: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
 --      assert( #x === 2 );
@@ -1235,13 +1237,27 @@ File << Thing := File => (o,x) -> printString(o,net x)
 
 o := () -> concatenate(interpreterDepth:"o")
 
-Thing#{Standard,AfterPrint} = x -> (
+stdAfterPrint = x -> (
      << endl;				  -- double space
-     << o() << lineNumber;
-     y := class x;
-     << " : " << y;
+     << o() << lineNumber << " : ";
+     scan(deepSplice sequence x, y -> if y =!= null then << net y);
      << endl;
      )
+
+Thing#{Standard,AfterPrint} = x -> (
+    l:=lookup(AfterPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then stdAfterPrint s
+    )
+Thing#{Standard,AfterNoPrint} = x -> (
+    l:=lookup(AfterNoPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then stdAfterPrint s
+    )
+
+Thing#AfterPrint = class
 
 -* TODO: add an option to re-enable these two
 Type#{Standard,AfterPrint} = x -> (
@@ -1259,10 +1275,7 @@ Function#{Standard,AfterPrint} = x -> (
      )
 *-
 
-Expression#{Standard,AfterPrint} = x -> (
-     << endl;				  -- double space
-     << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
-     )
+Expression#AfterPrint = x ->  (Expression," of class ",class x)
 
 -----------------------------------------------------------------------------
 
@@ -1275,9 +1288,10 @@ expression Type := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 
-Nothing#{Standard,AfterPrint} = identity
-ZZ#{Standard,AfterPrint} = identity
-Boolean#{Standard,AfterPrint} = identity
+Net#AfterPrint =
+Nothing#AfterPrint =
+ZZ#AfterPrint =
+Boolean#AfterPrint = nullf
 
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"

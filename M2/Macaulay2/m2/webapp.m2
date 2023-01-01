@@ -78,59 +78,18 @@ htmlAfterPrint :=  x -> (
     printFunc x;
     )
 
-Thing#{WebApp,AfterPrint} = x -> htmlAfterPrint class x;
-
-Boolean#{WebApp,AfterPrint} = identity
-
-Expression#{WebApp,AfterPrint} = x -> htmlAfterPrint (Expression," of class ",class x)
-
-Describe#{WebApp,AfterPrint} = identity
-
-Ideal#{WebApp,AfterPrint} = Ideal#{WebApp,AfterNoPrint} = (I) -> htmlAfterPrint (Ideal," of ",ring I)
-MonomialIdeal#{WebApp,AfterPrint} = MonomialIdeal#{WebApp,AfterNoPrint} = (I) -> htmlAfterPrint (MonomialIdeal," of ",ring I)
-
-InexactNumber#{WebApp,AfterPrint} = x -> htmlAfterPrint (class x," (of precision ",precision x,")")
-
-Module#{WebApp,AfterPrint} = M -> htmlAfterPrint(
-    ring M,"-module",
-    if M.?generators then
-    if M.?relations then (", subquotient of ",ambient M)
-    else (", submodule of ",ambient M)
-    else if M.?relations then (", quotient of ",ambient M)
-    else if rank ambient M > 0 then
-    (", free",
-	if not all(degrees M, d -> all(d, zero))
-	then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
-	)
+Thing#{WebApp,AfterPrint} = x -> (
+    l:=lookup(AfterPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then htmlAfterPrint s
     )
-
-Net#{WebApp,AfterPrint} = identity
-
-Nothing#{WebApp,AfterPrint} = identity
-
-Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} =
-RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f, " ", new MapExpression from {target f,source f})
-
--- Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
-
-CoherentSheaf#{WebApp,AfterPrint} = F -> (
-     X := variety F;
-     M := module F;
-     n := rank ambient F;
-     htmlAfterPrint("coherent sheaf on ",X,
-     if M.?generators then
-     if M.?relations then (", subquotient of ", ambient F)
-     else (", subsheaf of ", ambient F)
-     else if M.?relations then (", quotient of ", ambient F)
-     else if n > 0 then (
-	  ", free"
-	  -- if not all(degrees M, d -> all(d, zero))
-	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
-	  )
-     )
- )
-
-ZZ#{WebApp,AfterPrint} = identity
+Thing#{WebApp,AfterNoPrint} = x -> (
+    l:=lookup(AfterNoPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then htmlAfterPrint s
+    )
 
 if topLevelMode === WebApp then (
     compactMatrixForm = false;
