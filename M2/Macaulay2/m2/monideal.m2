@@ -111,11 +111,7 @@ independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 
 expression MonomialIdeal := (I) -> (expression monomialIdeal) unsequence apply(toSequence first entries generators I, expression)
 
-MonomialIdeal#{Standard,AfterPrint} = MonomialIdeal#{Standard,AfterNoPrint} = (I) -> (
-     << endl;				  
-     << concatenate(interpreterDepth:"o") << lineNumber << " : MonomialIdeal of " 
-     << ring I << endl;
-     )
+MonomialIdeal#AfterPrint = MonomialIdeal#AfterNoPrint = (I) ->  (MonomialIdeal," of ",ring I)
 
 monomialIdeal Ideal :=  MonomialIdeal => (I) -> monomialIdeal generators gb I
 
