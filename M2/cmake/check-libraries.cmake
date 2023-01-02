@@ -81,6 +81,10 @@ endif()
 
 if(WITH_FFI)
   find_package(FFI REQUIRED QUIET)
+  execute_process(COMMAND pkg-config --modversion libffi
+    OUTPUT_VARIABLE LIBFFI_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+else()
+  set(LIBFFI_VERSION "not present")
 endif()
 
 ###############################################################################
