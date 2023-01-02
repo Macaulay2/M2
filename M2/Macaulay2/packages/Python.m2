@@ -81,12 +81,10 @@ pythonHelp = Command (() -> pythonValue ///help()///)
 toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
 
 PythonObject.synonym = "python object"
-PythonObject#{Standard,AfterPrint} = x -> (
-     << endl;
+PythonObject#AfterPrint = x -> (
      t := toString objectType x;
      t = replace("<([a-z]+) '(.*)'>","of \\1 \\2",t);
-     << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject " << t << endl;
-     )
+     "PythonObject " | t)
 
 pythonNone = getPythonNone()
 
