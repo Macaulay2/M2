@@ -1,5 +1,7 @@
 --		Copyright 1994-2002, 2010 by Daniel R. Grayson
 
+declarations "// IWYU pragma: private, include \"engine-includes.hpp\"";
+
 use gmp;
 
 -- types
