@@ -1240,7 +1240,7 @@ o := () -> concatenate(interpreterDepth:"o")
 stdAfterPrint = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : ";
-     scan(deepSplice sequence x, y -> if y =!= null then << net y);
+     scan(deepSplice sequence x, y -> if y =!= null then << y);
      << endl;
      )
 
