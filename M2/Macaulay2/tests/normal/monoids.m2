@@ -25,6 +25,27 @@ monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => {0,1,2,3}]
 monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => vars(0..3)]
 ---
 
+--- checking element access in towers
+-* currently not working reliably
+R = ((frac(QQ[x,y]))[t,u])/(t^2-x,u^2-y)
+assert(sum({"x", "y", "t", "u"}, s -> s_R) === t + u + x + y)
+
+-- promote
+F = frac(QQ[x,y])
+S = F[t,u]
+R = S/(t-x)
+assert all({"x", "y"}, s -> promote(s_(monoid F), R) === s_R)
+assert all({"t", "u"}, s -> promote(s_(monoid S), R) === s_R) -- monoid S === S.FlatMonoid
+assert all({"t", "u"}, s -> promote(s_(monoid R), R) === s_R)
+assert all({"t", "u"}, s -> promote(s_(R.FlatMonoid), R) === s_R)
+
+-- lift
+F = frac(kk[a,b])
+S = F[x,y]
+R = S[t,u]/(x^4-t*a*y)
+-- TODO
+*-
+
 ---- checking degreeLength, degreesMonoid, degreesRing
 assert(degreeLength degreesMonoid 0 == 0)
 assert(degreeLength degreesMonoid 2 == 0)
@@ -179,3 +200,49 @@ T = newRing(S, Degrees => degrees S)
 assert(degreeGroup T == ZZ^2)
 U = newRing(S, DegreeRank => 3)
 assert(degreeGroup U == ZZ^3)
+
+-- test tensor
+U = QQ[x, dx, WeylAlgebra => x => dx]
+A = monoid U
+assert(U^1 == Hom(U^1, U^1))
+assert(U.WeylAlgebra == {{0, 1}})
+assert(A.Options.WeylAlgebra == {{A_0, A_1}})
+W = U ** U
+B = monoid W
+assert(W^1 == Hom(W^1, W^1))
+assert(W.WeylAlgebra == {{0, 1}, {2, 3}})
+assert(B.Options.WeylAlgebra == {{B_0, B_1}, {B_2, B_3}})
+
+E = QQ[u, v, SkewCommutative => true]
+A = monoid E
+assert(E^1 == Hom(E^1, E^1))
+assert(E.SkewCommutative == {0, 1})
+assert(A.Options.SkewCommutative == {0, 1})
+F = E ** E
+B = monoid F
+assert(F^1 == Hom(F^1, F^1))
+assert(F.SkewCommutative == {0, 1, 2, 3})
+assert(B.Options.SkewCommutative == {0, 1, 2, 3})
+
+-- test variable deduplication
+assert(gens(A = monoid[x,y]) == {x,y})
+assert(gens(B = A ** A) == {x_0,y_0,x_1,y_1}) -- TODO: eliminate the warning
+assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(1,0),y_(1,0),x_(0,1),y_(0,1),x_(1,1),y_(1,1)})
+assert(toString gens(A ** B) == "{x, y, x_0, y_0, x_1, y_1}") -- TODO: not yet working without toString
+assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet working without toString
+
+-- test of Weyl algebra variable handling
+A = QQ[t, dt, WeylAlgebra => {t => dt}]
+M = monoid A
+assert(A.WeylAlgebra == {{0, 1}})
+assert(M.Options.WeylAlgebra == {{M_0, M_1}})
+B = first flattenRing(A[t])
+assert(gens B == {t_0, t_1, dt})
+N = monoid B
+assert(B.WeylAlgebra == {{1, 2}})
+assert(N.Options.WeylAlgebra == {{N_1, N_2}})
+
+-- test of adjoining variables with local variables
+needsPackage "Dmodules"
+W = QQ[u, v, Du, Dv, WeylAlgebra => {u => Du, v => Dv}];
+assert(RatAnn(u^5 - v^2) == ideal{2*u*Du+5*v*Dv+10, 5*u^4*Dv+2*v*Du})

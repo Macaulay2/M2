@@ -28,7 +28,7 @@ listSplice := L -> deepSplice flatten sequence L
 baseName' = var -> baseName if instance(var, String) and match("[[:alnum:]$]+", var) then getSymbol var else var
 
 -- TODO: where should this go?
--- MES: I grabbed this from orderedmonoidrings.m2, to handle skew variables in the monoid/ring.
+-- MES: I grabbed this from polyrings.m2, to handle skew variables in the monoid/ring.
 indices := (M, variables) -> apply(variables, x -> (
 	x = baseName x;
 	if M.index#?x then M.index#x
@@ -79,10 +79,22 @@ baseName MonoidElement := m -> if #(s := rawSparseListFormMonomial raw m) == 1 a
     then (class m).generatorSymbols#(s#0#0) else error "expected a generator"
 
 promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
-    M := monoid R;
-    k := coefficientRing R;
-    if not instance(m, M) then error "expected monomial from same ring";
-    new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
+    k := coefficientRing first flattenRing R;
+    -- TODO: audit this code
+    if instance(m, k)
+    or instance(m, monoid R)
+    or instance(m, R.FlatMonoid)
+    -- TODO: what does rawTerm expect?
+    then new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial)
+    else "expected monomial from same ring")
+
+lift(RingElement, MonoidElement) := MonoidElement => (m, M) -> (
+    k := coefficientRing first flattenRing(R := ring m);
+    if instance(m, monoid k)
+    or instance(m, monoid R)
+    or instance(m, R.FlatMonoid)
+    then new M from m.RawMonomial
+    else error "expected monomial from same monoid")
 
 -- printing helpers
 expressionTerms := (M, trms) -> ( exps := M.generatorExpressions;
@@ -204,6 +216,9 @@ ZZ            _ Monoid := MonoidElement => (i, M) -> if i === 1 then M#1 else er
 RingElement   _ Monoid :=
 MonoidElement _ Monoid := MonoidElement => (x, M) -> (baseName x)_M
 
+String _ Monoid := MonoidElement => (s, M) -> (
+    if M.?indexStrings and M.indexStrings#?s then M.indexStrings#s
+    else error "variable not found in monoid")
 Symbol _ Monoid := MonoidElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "symbol not found in monoid")
@@ -211,12 +226,28 @@ IndexedVariable _ Monoid := MonoidElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "indexed variable not found in monoid")
 
+RingElement   _ Ring :=
+MonoidElement _ Ring := RingElement => (x, M) -> try (baseName x)_M else promote(x, M)
+
+String _ Ring := RingElement => (s, M) -> (
+    if M.?indexStrings and M.indexStrings#?s then M.indexStrings#s
+    else error "variable not found in ring")
 Symbol _ Ring := RingElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "symbol not found in ring")
 IndexedVariable _ Ring := RingElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "indexed variable not found in ring")
+
+-- kept for backwards compatibility
+Ring _ String :=
+Ring _ Symbol :=
+Ring _ IndexedVariable := RingElement => (M, x) -> x_M -- deprecated
+
+-- fixes the issue of declaring kk[x] followed by kk[x_1]
+-- TODO: remove the warning
+RingElement   _ Thing :=
+MonoidElement _ Thing := IndexedVariable => (x, i) -> (baseName x)_i
 
 -----------------------------------------------------------------------------
 -- monoid
@@ -429,16 +460,33 @@ processDegrees = (degs, degrk, group, nvars) -> (
 
 -----------------------------------------------------------------------------
 
+makeVars = (n, var) -> toList(
+    (a, b) := (0, n-1);
+    (name, ind) := if instance(var = baseName' var, IndexedVariable) then toSequence var else (var, null);
+    if ind =!= null then (a, b)  = (append(listSplice ind, 0), append(listSplice ind, n-1));
+    name_a .. name_b)
+
 -- check that the objects serving as variables have an assignment method
 -- TODO: why is (symbol <-, T) and not (symbol <-, T, Thing) the right method sequence for assignment?
 checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!= null then sym else error()
 
+-- turns {x, y, z, y} into {x, y_0, z, y_1}
+-- adding 'toString' in a few places will eliminate more duplications
+-- but makes creating temporary rings in functions more difficult.
+dedupSymbols = varlist -> if 0 == repeats varlist then varlist else while 0 < repeats varlist do (
+    mapping := hashTable toList pairs varlist;
+    -- TODO: applyPairs with collision handler, and accepting MutableHashTable
+    counter := new MutableHashTable from applyKeys(mapping,
+	i -> varlist#i, dups -> makeVars(#dups, first dups));
+    varlist = values applyValues(mapping, var -> if instance(counter#(name := var), List)
+	then first(counter#name#0, counter#name = drop(counter#name, 1)) else var);
+    if 0 == repeats varlist then break varlist else varlist)
+
 -- also used in AssociativeAlgebras.m2
-findSymbols = varlist -> toList apply(pairs listSplice varlist,
+findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
     -- varlist is a list or sequence of items we wish to use for variable names.
     -- these may be: Symbol's, RingElement's (which are variables in a ring) or lists or sequences of such.
     -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
-    -- if 0 != repeats varlist then error "encountered repeated variables"; -- M ** M will have repeated variables
     (i, var) -> try checkSymbol baseName' var else error concatenate(
 	"encountered object not usable as variable at position ", toString i, " in list:",
 	newline, 8, silentRobustNetWithClass(max(printWidth, 80) - 8, 5, 3, var)))
@@ -446,9 +494,9 @@ findSymbols = varlist -> toList apply(pairs listSplice varlist,
 processVars := method()
 processVars Thing := x -> findSymbols {x}
 processVars VisibleList := findSymbols
-processVars(VisibleList, Thing) := (L, xx) -> findSymbols L
+processVars(VisibleList, Thing) := (v, xx) -> findSymbols v
 processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
-processVars(ZZ,    Thing) := (n, xx) -> toList( xx = baseName' xx; xx_0 .. xx_(n-1) )
+processVars(ZZ,    Thing) := (n, xx) -> makeVars(n, xx)
 processVars ZZ := x -> {x}
 
 processSkew := (n, skewvars) -> toList(
@@ -533,7 +581,6 @@ newMonoid = opts -> (
     remove(opts, MonomialSize);
     remove(opts, Weights);
     remove(opts, VariableBaseName);
-    M.Options = new OptionTable from opts;
     -- symbols and expressions
     M.generatorSymbols     = varlist;
     M.generatorExpressions = apply(varlist, x -> if instance(x, Symbol) then x else expression x);
@@ -558,7 +605,28 @@ newMonoid = opts -> (
     M.indexSymbols = hashTable apply(M.generatorSymbols, M.generators, identity);
     try M.indexStrings = applyKeys(M.indexSymbols, toString); -- no error, because this is often harmless
     M.use = M -> scan(M.generatorSymbols, M.vars, (sym, val) -> sym <- val);
+    M.Options = (new OptionTable from opts) ++ {
+	WeylAlgebra     => monoidSymbols_M opts.WeylAlgebra, -- FIXME: monoidIndices breaks Dmodules
+	SkewCommutative => monoidIndices_M opts.SkewCommutative,
+	};
     M)
+
+monoidSymbols = (M, v) -> apply(v, monoidSymbol_M)
+monoidSymbol  = (M, x) -> ( b := try baseName x;
+    if instance(x, ZZ)    then M.generators#x else
+    if instance(x, List)  then monoidSymbols(M, x)  else
+    if M.indexSymbols#?b  then M.indexSymbols#b     else
+    if M.?indexStrings
+    and M.indexStrings#?x then M.indexSymbols#x     else
+    error("expected an index, symbol, or name of variable of the ring or monoid: ", toString x))
+
+-- also used in Elimination
+monoidIndices = (M, v) -> apply(v, monoidIndex_M)
+monoidIndex   = (M, x) -> ( b := try baseName x;
+    if instance(x, ZZ)    then x else
+    if instance(x, List)  then monoidIndices(M, x) else
+    if M.index#?b         then M.index#b else
+    error("expected an integer or variable of the ring or monoid: ", toString x))
 
 -----------------------------------------------------------------------------
 
@@ -593,12 +661,9 @@ degreePad = (n,x) -> (
 
 degreeNoLift = () -> error "degree not liftable"
 
-monoidIndex = (M, x) -> if instance(x, ZZ) then x else (
-    if M.index#?(x = baseName x) then M.index#x else error(
-	"expected an integer or variable of the ring or monoid: ", toString x))
-
--- also used in orderedmonoidrings.m2, but we should phase that out
-monoidIndices = (M, varlist) -> apply(varlist, x -> monoidIndex(M, x))
+-- for handling SkewCommutative and WeylAlgebra indices when adjoining monoids
+shiftAndJoin = (n, L, R) -> if R === null then L else join(L,
+    apply(R, r -> if instance(r, ZZ) then r + n else apply(r, plus_n)))
 
 -- TODO: do we want to support a syntax this?
 --   'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)'
@@ -665,14 +730,12 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
 	  )
      else opts.Inverses = opts.Inverses;
     opts.Heft = processHeft(opts.DegreeRank, opts.Degrees, opts.DegreeGroup, opts.Heft, opts.Inverses);
-     wfix := (M,w,bump) -> (
-	  if class w === Option then w = {w};
-	  apply(w, o -> monoidIndex(M,o#0) + bump => monoidIndex(M,o#1) + bump));
-     opts.WeylAlgebra = join(wfix(M, Mopts.WeylAlgebra, 0), wfix(N, Nopts.WeylAlgebra, numgens M));
      if Mopts.Global === false or Nopts.Global === false then opts.Global = false;
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
-     opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
+    -- FIXME: remove these two lines once Weyl variables are stored as indices in the monoid
+    opts.WeylAlgebra     = shiftAndJoin_m (monoidIndices_M Mopts.WeylAlgebra, monoidIndices_N Nopts.WeylAlgebra);
+    opts.SkewCommutative = shiftAndJoin_m (Mopts.SkewCommutative, Nopts.SkewCommutative);
      newMonoid setMonoidOptions opts)
 
 -----------------------------------------------------------------------------

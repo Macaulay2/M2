@@ -165,7 +165,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      S := new QuotientRing from rawQuotientRing(raw R, raw gensgbI);
      S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gensgbI)} };
      S.cache = new CacheTable;
-     S.basering = R.basering;
+     S.BaseRing   = R.BaseRing;
      S.FlatMonoid = R.FlatMonoid;
      S.numallvars = R.numallvars;
      S.ideal = I;
@@ -180,6 +180,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
 	  R.generatorExpressions
 	  -- apply(R.generatorExpressions,S.generators,(e,x) -> new Holder2 from {e#0,x})
 	  );
+     if R.?index        then S.index = R.index;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);
@@ -250,9 +251,6 @@ dim QuotientRing := (R) -> (
 monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
 degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid ambient S)
 degreesRing QuotientRing := (cacheValue degreesRing) (S -> degreesRing ambient S)
-QuotientRing_String := (S,s) -> if S#?s then S#s else (
-     R := ultimate(ambient, S);
-     S#s = promote(R_s, S))
 
 generators QuotientRing := opts -> (S) -> (
      if opts.CoefficientRing === S then {}

@@ -305,6 +305,7 @@ Module.directSum = args -> (
 	  N.cache.components = toList args;
 	  N.cache.formation = FunctionApplication (directSum, args);
 	  N)
+Module ^ ZZ := Module => (M, i) -> if i > 0 then Module.directSum (i:M) else 0*M
 
 single := v -> (
      if not same v 

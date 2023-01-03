@@ -7,13 +7,14 @@ undocumented {
      (symbol _, Monoid, ZZ),
      (symbol _, Vector, ZZ),
      (symbol _, Monoid, List),
-     (symbol _, QuotientRing, String),
      (symbol _, Symbol, Monoid),
      (symbol _, IndexedVariable, Monoid),
      (symbol _, MonoidElement, Monoid),
+     (symbol _, String, Monoid),
      (symbol _, RingElement, MonoidElement),
      (symbol _, PolynomialRing, List),
      (symbol _, RingElement, RingElement), --coeff of monomials in polynomial -- deprecate or obsolete
+     (symbol _, Ring, String), -- these three are kept for backwards compatibility
      (symbol _, Ring, Symbol), -- maybe should be deprecated?
      (symbol _, Ring, IndexedVariable) -- this should be deprecated?
      }
@@ -161,12 +162,12 @@ document {
 	  S_2
 	  S_6
 	  ///,
-     SeeAlso => {generators, (symbol _, Ring, String)}
+     SeeAlso => {generators, (symbol _, String, Ring)}
      }
 document { 
-     Key => (symbol _, Ring, String), -- ring variable by name
+     Key => (symbol _, String, Ring), -- ring variable by name
      Headline => "get a ring variable by name",
-     Usage => ///R_"x"///,
+     Usage => ///"x"_R///,
      Inputs => {
 	  "R",
 	  Nothing => {TT ///"x"///, ", ", ofClass String}
@@ -184,7 +185,7 @@ document {
      There are several ways of now referring to ", TT "x", " in the ring ", TT "R", ".",
      EXAMPLE lines ///
 	  R_0
-	  R_"x"
+	  "x"_R
 	  use R;
 	  x
 	  ///,
@@ -211,11 +212,12 @@ document {
      There are various ways of now referring to ", TT "x", " in the ring ", TT "R", ".",
      EXAMPLE lines ///
 	  R_0
-	  R_"x"
+	  symbol x
+	  oo_R
 	  use R;
 	  x
 	  ///,
-     SeeAlso => {(symbol _, Ring, ZZ), (symbol _, Ring, String), (use,Ring)}
+     SeeAlso => {(symbol _, Ring, ZZ), (symbol _, String, Ring), (use,Ring)}
      }
 document { 
      Key => (symbol _, Ring, List),           -- make monomial
@@ -255,7 +257,7 @@ document {
      symbol t_1
      oo_R
      ///,
-     SeeAlso => {(symbol _, Ring , ZZ), (symbol _, Ring, String)}
+     SeeAlso => {(symbol _, Ring , ZZ), (symbol _, String, Ring)}
      }
 document { 
      Key => {

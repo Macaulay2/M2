@@ -35,7 +35,6 @@ IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
      globalReleaseFunction(X,x);
      if x#?symbol$ and x#symbol$ === X then remove(x,symbol$);
      )
-Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v

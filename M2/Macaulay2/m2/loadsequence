@@ -47,7 +47,7 @@ powers.m2
 variables.m2
 indeterminates.m2
 monoids.m2
-orderedmonoidrings.m2
+polyrings.m2
 dotdot.m2
 
 modules.m2

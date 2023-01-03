@@ -216,8 +216,8 @@ document {
      "The functions ", TO "lift", " and ", TO "substitute", " can be used to transfer
      elements between the polynomial ring and its quotient ring.",
      EXAMPLE {
-	  ///lift(U_"r",T)///,
-      	  ///substitute(T_"r",U)///,
+	  ///lift("r"_U,T)///,
+	  ///substitute("r"_T,U)///,
 	  },
      "A random element of degree ", TT "n", " can be obtained with ", TO "random", ".",
      EXAMPLE "random(2,S)",

@@ -2,7 +2,7 @@
 
 needs "enginering.m2"
 needs "quotring.m2"
-needs "orderedmonoidrings.m2"
+needs "polyrings.m2"
 
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"

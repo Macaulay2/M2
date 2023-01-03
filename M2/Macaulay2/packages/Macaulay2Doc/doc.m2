@@ -538,10 +538,7 @@ undocumented {
      }
 
 document {
-     Key => {symbol ^,
-	  (symbol ^,CC,ZZ),
-	  (symbol ^,InexactFieldFamily,ZZ)
-	  },
+     Key => {symbol ^, (symbol ^,CC,ZZ)},
      Headline => "a binary operator, usually used for powers",
      Usage => "x ^ y",
      PARA{},
