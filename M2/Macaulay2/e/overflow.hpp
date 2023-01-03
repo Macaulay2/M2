@@ -22,7 +22,13 @@
 #error integer type definitions not available
 #endif
 
-#if __has_builtin(__builtin_expect)
+#if defined(__has_builtin)
+#define HAS_BUILTIN(x) __has_builtin(x)
+#else
+#define HAS_BUILTIN(x) 0
+#endif
+
+#if defined(__GNUC__) || HAS_BUILTIN(__builtin_expect)
 #define expect_false(x) (__builtin_expect(x, 0))
 #define expect_true(x) (__builtin_expect(x, 1))
 #else
