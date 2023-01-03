@@ -123,10 +123,7 @@ Pointer - ZZ := (ptr, n) -> ptr + -n
 ForeignObject = new SelfInitializingType of HashTable
 ForeignObject.synonym = "foreign object"
 net ForeignObject := x -> net value x
-ForeignObject#{Standard, AfterPrint} = x -> (
-    << endl
-    << concatenate(interpreterDepth:"o") << lineNumber
-    << " : ForeignObject of type " << class x << endl)
+ForeignObject#AfterPrint = x -> "ForeignObject of type " | toString class x
 
 value ForeignObject := x -> error("no value function exists for ", class x)
 
