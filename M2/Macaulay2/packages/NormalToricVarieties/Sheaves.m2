@@ -209,6 +209,7 @@ cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) 
     else (
     	if not X.cache.?rawHHOO then setupHHOO X;
     	M := module F;
+	if M == 0 then kk^0 else
     	if isFreeModule M then kk^(
       	    sum apply (degrees M, deg -> sum apply(X.cache.rawHHOO#i,
 	  	    t -> rank source basis (-deg-t#0,(t#1)^(t#3))

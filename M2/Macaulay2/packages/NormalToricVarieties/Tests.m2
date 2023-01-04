@@ -160,6 +160,8 @@ S = ring X;
 assert (ideal X == intersect (ideal (S_0,S_2),ideal (S_1,S_3)))
 assert (makeSimplicial X === X)
 assert (makeSmooth X === X)
+M = saturate(image map(S^1/x_0, S^0, 0), ideal X)
+assert(0 == cohomology(0, X, sheaf_X M))
 ///
 
 -- test 4
