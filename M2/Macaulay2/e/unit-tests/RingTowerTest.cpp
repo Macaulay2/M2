@@ -30,7 +30,7 @@ ring_elem getElement<Tower>(const Tower& R, int index)
 TEST(RingTower, create)
 {
   std::vector<std::string> vars = {"a", "b"};
-  M2_ArrayString varnames = toM2ArrayString(vars);
+  M2_ArrayString varnames = stdvector_to_M2_ArrayString(vars);
   const Tower* R = Tower::create(101, varnames);
   EXPECT_TRUE(R != 0);
   EXPECT_EQ(ringName(*R), "Tower[ZZ/101[a,b]]");
@@ -48,7 +48,7 @@ TEST(RingTower, create)
 TEST(RingTower, elems)
 {
   std::vector<std::string> vars = {"a", "b"};
-  M2_ArrayString varnames = toM2ArrayString(vars);
+  M2_ArrayString varnames = stdvector_to_M2_ArrayString(vars);
   const Tower* R = Tower::create(101, varnames);
 
   ring_elem a = R->var(0);

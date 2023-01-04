@@ -67,7 +67,6 @@ INTERFACE = \
 	f4/varpower-monomial \
 	f4/gausser \
 	betti \
-	util \
 	GF \
 	ZZ \
 	ZZp \
@@ -213,6 +212,7 @@ NAMES_H = \
 	NCAlgebras/Range \
 	ringelem \
 	style \
+	util \
 	hash \
 	res-a0-pair
 
