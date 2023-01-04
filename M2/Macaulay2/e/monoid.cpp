@@ -89,7 +89,7 @@ Monoid *Monoid::create(const MonomialOrdering *mo,
 {
   
   return create(mo,
-                toM2ArrayString(names),
+                stdvector_to_M2_ArrayString(names),
                 DR,
                 stdvector_to_M2_arrayint(degs),
                 stdvector_to_M2_arrayint(hefts));
