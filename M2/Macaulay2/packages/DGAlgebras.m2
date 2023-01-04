@@ -239,8 +239,7 @@ killCycles = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDeg
 killCycles DGAlgebra := opts -> A -> (
    -- for now, this will only work for DG algebras with H_0(A) = k
    retVal := 0;
-   endDegree := 0;
-   if opts.EndDegree == -1 then endDegree = opts.StartDegree;
+   endDegree := if opts.EndDegree == -1 then endDegree = opts.StartDegree else opts.EndDegree;
    if opts.StartDegree > endDegree then error "Starting degree is not less than or equal to ending degree.";
    n := opts.StartDegree;
    foundHomology := false;
