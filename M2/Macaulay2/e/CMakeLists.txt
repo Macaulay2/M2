@@ -93,6 +93,7 @@ set(HPPONLYFILES
   ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
+  util.hpp
   style.hpp
   f4/f4-types.hpp
   f4/memblock.hpp
@@ -278,7 +279,6 @@ set(SRCLIST
   spair
   text-io
   tower # TODO: move rawTowerTranslatePoly to e/interface
-  util
   varpower
   weylalg
   # Faugère's F4 Algorithm
