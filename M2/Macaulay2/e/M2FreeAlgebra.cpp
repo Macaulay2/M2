@@ -420,13 +420,6 @@ bool M2FreeAlgebra::is_homogeneous(const Poly* f) const
   return freeAlgebra().is_homogeneous(*f);
 }
 
-const_monomial M2FreeAlgebra::degree(const ring_elem g) const
-{
-  auto d = degree_monoid()->make_one();
-  multi_degree(g, d);
-  return d;
-}
-
 bool M2FreeAlgebra::multi_degree(const ring_elem g, monomial d) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(g.get_Poly());

@@ -74,7 +74,6 @@ class LocalRing : public Ring
   void lower_content(ring_elem &c, const ring_elem g) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual const_monomial degree(const ring_elem f) const;
   virtual bool multi_degree(const ring_elem f, monomial d) const;
   virtual void degree_weights(const ring_elem f,
                               const std::vector<int> &wts,

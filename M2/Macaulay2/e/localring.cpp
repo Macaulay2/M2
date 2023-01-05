@@ -407,13 +407,6 @@ bool LocalRing::is_homogeneous(const ring_elem a) const
   return true;
 }
 
-const_monomial LocalRing::degree(const ring_elem a) const
-{
-  auto d = degree_monoid()->make_one();
-  multi_degree(a, d);
-  return d;
-}
-
 bool LocalRing::multi_degree(const ring_elem a, monomial d) const
 {
   const local_elem *f = a.get_local_elem();

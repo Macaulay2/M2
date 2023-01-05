@@ -120,7 +120,6 @@ public:
                                               const ring_elem f) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual const_monomial degree(const ring_elem f) const;
   virtual bool multi_degree(const ring_elem f, monomial d) const;
 
   virtual SumCollector *make_SumCollector() const;
