@@ -242,16 +242,6 @@ void RingElement::degree_weights(const std::vector<int> &wts,
   P->degree_weights(val, wts, lo, hi);
 }
 
-const_monomial RingElement::degree() const
-{
-  return R->degree(get_value());
-}
-
-bool RingElement::multi_degree(monomial d) const
-{
-  return R->multi_degree(get_value(), d);
-}
-
 RingElement *RingElement::homogenize(int v, const std::vector<int> &wts) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();

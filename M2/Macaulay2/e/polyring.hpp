@@ -268,7 +268,6 @@ class PolynomialRing : public Ring
   virtual M2_arrayint support(const ring_elem a) const = 0;
 
   virtual bool is_homogeneous(const ring_elem f) const = 0;
-  virtual const_monomial degree(const ring_elem f) const = 0;
   virtual bool multi_degree(const ring_elem f, monomial d) const = 0;
   virtual void degree_weights(const ring_elem f,
                               const std::vector<int> &wts,

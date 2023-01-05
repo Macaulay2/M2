@@ -536,13 +536,6 @@ bool PolyRing::is_homogeneous(const ring_elem f) const
   return true;
 }
 
-const_monomial PolyRing::degree(const ring_elem f) const
-{
-  auto degf = degree_monoid()->make_one();
-  multi_degree(f, degf);
-  return degf;
-}
-
 // TODO: what's the relationship between PolyRing and PolynomialRing?
 // PolyRing has no M_, but PolynomialRing has no multi_degree implemented
 bool PolyRing::multi_degree(const ring_elem f, monomial degf) const

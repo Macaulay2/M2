@@ -161,12 +161,6 @@ bool FreeAlgebraQuotient::is_homogeneous(const Poly& f) const
   return mFreeAlgebra.is_homogeneous(f);
 }
 
-const_monomial FreeAlgebraQuotient::degree(const Poly& f) const
-{
-  auto d = degreeMonoid().make_one();
-  multi_degree(f, d);
-}
-
 bool FreeAlgebraQuotient::multi_degree(const Poly& f,
                                monomial already_allocated_degree_vector) const
 {
