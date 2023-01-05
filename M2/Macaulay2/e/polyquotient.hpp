@@ -220,9 +220,9 @@ class PolyRingQuotient : public PolyRingFlat
     return is_graded() && numerR_->PolyRing::is_homogeneous(f);
   }
 
-  virtual void degree(const ring_elem f, monomial d) const
+  virtual const_monomial degree(const ring_elem f) const
   {
-    numerR_->PolyRing::degree(f, d);
+    return numerR_->PolyRing::degree(f);
   }
 
   virtual bool multi_degree(const ring_elem f, monomial d) const

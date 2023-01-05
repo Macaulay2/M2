@@ -637,14 +637,11 @@ bool FractionField::is_homogeneous(const ring_elem a) const
   return true;
 }
 
-void FractionField::degree(const ring_elem a, monomial d) const
+const_monomial FractionField::degree(const ring_elem a) const
 {
-  const frac_elem *f = FRAC_VAL(a);
-  R_->degree(f->numer, d);
-  monomial e = degree_monoid()->make_one();
-  R_->degree(f->denom, e);
-  degree_monoid()->divide(d, e, d);
-  degree_monoid()->remove(e);
+  auto d = degree_monoid()->make_one();
+  multi_degree(a, d);
+  return d;
 }
 
 bool FractionField::multi_degree(const ring_elem a, monomial d) const

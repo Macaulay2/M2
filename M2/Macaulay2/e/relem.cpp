@@ -223,27 +223,6 @@ EngineMonomial *RingElement::lead_monom(int nvars) const
 }
 
 bool RingElement::is_homogeneous() const { return R->is_homogeneous(val); }
-#if 0
-// intarray RingElement::degree() const
-// {
-//   // This should return an M2_arrayint?
-//   intarray result;
-//
-//   int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
-//   int *d = result.alloc(R->degree_monoid()->n_vars());
-//
-//   if (is_zero())
-//     ERROR("the zero element has no degree");
-//   else
-//     {
-//       R->degree(get_value(), mon);
-//       R->degree_monoid()->to_expvector(mon, d);
-//     }
-//
-//   freemem(mon);
-//   return result;
-// }
-#endif
 
 void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
 {
@@ -261,19 +240,14 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
   P->degree_weights(val, wts, lo, hi);
 }
 
-// TODO: align this with other multi_degree functions
-M2_arrayint RingElement::multi_degree() const
+const_monomial RingElement::degree() const
 {
-  if (is_zero())
-    {
-      ERROR("the zero element has no degree");
-      return 0;
-    }
-  auto M = R->degree_monoid();
-  auto n = MONOMIAL_BYTE_SIZE(M->monomial_size());
-  auto m = ALLOCATE_MONOMIAL(n);
-  R->degree(get_value(), m);
-  return M->to_arrayint(m);
+  return R->degree(get_value());
+}
+
+bool RingElement::multi_degree(monomial d) const
+{
+  return R->multi_degree(get_value(), d);
 }
 
 RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
