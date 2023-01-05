@@ -455,6 +455,7 @@ bool RingElement::getSmallIntegerCoefficients(
     std::vector<long> &result_coeffs) const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
+  const Ring *K = R->getCoefficientRing();
   if (R == 0 || R->n_vars() != 1)
     {
       throw exc::engine_error(
@@ -472,10 +473,9 @@ bool RingElement::getSmallIntegerCoefficients(
   result_coeffs.resize(deg + 1);
   for (int i = 0; i <= deg; i++) result_coeffs[i] = 0;
   int exp[1];
-  for (Nterm *t = get_value(); t != NULL; t = t->next)
+  for (Nterm& t : get_value())
     {
-      std::pair<bool, long> res =
-          R->getCoefficientRing()->coerceToLongInteger(t->coeff);
+      std::pair<bool, long> res = K->coerceToLongInteger(t.coeff);
       if (not res.first)
         {
           // At this point, the answer is meaningless
@@ -484,7 +484,7 @@ bool RingElement::getSmallIntegerCoefficients(
         }
       long coeff = res.second;
 
-      R->getMonoid()->to_expvector(t->monom, exp);
+      R->getMonoid()->to_expvector(t.monom, exp);
       assert(exp[0] >= 0);
       assert(exp[0] <= deg);
       result_coeffs[exp[0]] = coeff;

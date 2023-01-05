@@ -450,11 +450,10 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
   int nvars = R->n_vars();
   TowerPolynomial result = 0;
   exponents_t exp = new int[nvars];
-  for (Nterm *t = fR; t != 0; t = t->next)
+  for (Nterm& t : fR)
     {
-      M->to_expvector(t->monom, exp);
-
-      std::pair<bool, long> res = K->coerceToLongInteger(t->coeff);
+      M->to_expvector(t.monom, exp);
+      std::pair<bool, long> res = K->coerceToLongInteger(t.coeff);
       assert(res.first);
       int c1 = static_cast<int>(res.second);
 

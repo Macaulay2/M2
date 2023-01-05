@@ -159,6 +159,7 @@ INTERFACE = \
 	pfaff \
 	relem \
 	ring \
+	ringelem \
 	ringmap \
 	schur \
 	skew \
@@ -206,7 +207,6 @@ NAMES_H = \
 	ARingElem \
 	MemoryBlock \
 	NCAlgebras/Range \
-	ringelem \
 	style \
 	util \
 	hash \

@@ -711,9 +711,9 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
 
   exponents_t exp = newarray_atomic(int, P->n_vars());
   int result = 0;
-  for (Nterm *f = h->get_value(); f != NULL; f = f->next)
+  for (Nterm& f : h->get_value())
     {
-      P->getMonoid()->to_expvector(f->monom, exp);
+      P->getMonoid()->to_expvector(f.monom, exp);
       if (exp[0] < deg)
         {
           ERROR("incorrect Hilbert function given");
@@ -725,7 +725,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
       else if (exp[0] == deg)
         {
           std::pair<bool, long> res =
-              P->getCoefficientRing()->coerceToLongInteger(f->coeff);
+              P->getCoefficientRing()->coerceToLongInteger(f.coeff);
           assert(res.first &&
                  std::abs(res.second) < std::numeric_limits<int>::max());
           int n = static_cast<int>(res.second);

@@ -51,9 +51,9 @@ IntermediateBasis BRPSfromMatrix(const Matrix *m)
       vec v = m->elem(i);
       if (v == 0) continue;
       BRP temp;
-      for (Nterm *f = v->coeff; f != 0; f = f->next)
+      for (Nterm& f : v->coeff)
         {
-          M->to_expvector(f->monom, exp);
+          M->to_expvector(f.monom, exp);
           brMonomial mono = exponentsToLong(n, exp);
           temp = temp + BRP(mono);
         }

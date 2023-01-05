@@ -90,7 +90,6 @@ set(HPPONLYFILES
   newdelete.hpp
   ExponentVector.hpp
   res-a0-pair.hpp
-  ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
   util.hpp
@@ -267,6 +266,7 @@ set(SRCLIST
   res-a1
   res-a2
   ring
+  ringelem
   ringmap
   sagbi
   schorder
