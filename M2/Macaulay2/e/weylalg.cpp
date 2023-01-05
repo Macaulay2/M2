@@ -377,12 +377,12 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
         deriv_exp[_commutative[i]] = derivatives[i];
       }
 
-  for (const Nterm *t = g; t != 0; t = t->next)
+  for (Nterm& t : ring_elem(g))
     {
       // This first part checks whether the x-part of t->monom is divisible by
       // 'derivatives'.  If so, true is returned, and the resulting monomial is
       // set.
-      M_->to_expvector(t->monom, result_exp);
+      M_->to_expvector(t.monom, result_exp);
       extractCommutativePart(result_exp, exp);
       if (divides(derivatives, exp))
         {
@@ -392,7 +392,7 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
               K_->remove(a);
               continue;
             }
-          ring_elem b = K_->mult(a, t->coeff);
+          ring_elem b = K_->mult(a, t.coeff);
           K_->remove(a);
           if (K_->is_zero(b))
             {

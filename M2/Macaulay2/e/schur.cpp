@@ -266,14 +266,14 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
 {
   // return c*m*f
   ring_elem result = ZERO_RINGELEM;
-  for (Nterm *t = f; t != NULL; t = t->next)
+  for (Nterm& t : f)
     {
-      ring_elem a = K_->mult(c, t->coeff);
-      ring_elem g = const_cast<SchurRing *>(this)->mult_monomials(t->monom, m);
-      for (Nterm *s = g; s != NULL; s = s->next)
+      ring_elem a = K_->mult(c, t.coeff);
+      ring_elem g = const_cast<SchurRing *>(this)->mult_monomials(t.monom, m);
+      for (Nterm& s : g)
         {
-          ring_elem b = K_->mult(a, s->coeff);
-          s->coeff = b;
+          ring_elem b = K_->mult(a, s.coeff);
+          s.coeff = b;
         }
       Nterm *gt = g;
       sort(gt);
@@ -332,12 +332,12 @@ ring_elem SchurRing::dimension(const ring_elem f) const
   ring_elem result = K_->from_long(0);
   mpz_t dim;
   mpz_init(dim);
-  for (Nterm *t = f; t != NULL; t = t->next)
+  for (Nterm& t : f)
     {
-      to_partition(t->monom, EXP);
+      to_partition(t.monom, EXP);
       dimension(EXP, dim);
       ring_elem h = K_->from_int(dim);
-      ring_elem h2 = K_->mult(t->coeff, h);
+      ring_elem h2 = K_->mult(t.coeff, h);
       K_->add_to(result, h2);
       K_->remove(h);
     }
@@ -363,12 +363,12 @@ void SchurRing::elem_text_out(buffer &o,
     }
 
   p_one = false;
-  for (Nterm *t = f; t != NULL; t = t->next)
+  for (Nterm& t : f)
     {
-      int isone = M_->is_one(t->monom);
+      int isone = M_->is_one(t.monom);
       p_parens = !isone;
-      K_->elem_text_out(o, t->coeff, p_one, p_plus, p_parens);
-      to_partition(t->monom, EXP);
+      K_->elem_text_out(o, t.coeff, p_one, p_plus, p_parens);
+      to_partition(t.monom, EXP);
       o << "{" << EXP[1];
       for (int i = 2; i <= nvars_ && EXP[i] != 0; i++) o << "," << EXP[i];
       o << "}";

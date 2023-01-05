@@ -256,15 +256,16 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 
   if (Rf != _originalR) return false;
 
+  const Ring *K = _originalR->getCoefficients();
+
   result = from_long(0);
   int exp[1];
-  for (Nterm *t = f; t != NULL; t = t->next)
+  for (Nterm& t : f)
     {
-      std::pair<bool, long> b =
-          _originalR->getCoefficients()->coerceToLongInteger(t->coeff);
+      std::pair<bool, long> b = K->coerceToLongInteger(t.coeff);
       assert(b.first);
       ring_elem coef = from_long(b.second);
-      _originalR->getMonoid()->to_expvector(t->monom, exp);
+      _originalR->getMonoid()->to_expvector(t.monom, exp);
       // exp[0] is the variable we want.  Notice that since the ring is a
       // quotient,
       // this degree is < n (where Q_ = P^n).

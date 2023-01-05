@@ -168,10 +168,10 @@ namespace BIBasis
 
             Polynom<MonomType>* currentPolynom = new Polynom<MonomType>();
 
-            for (Nterm* currentTerm = polynomVector->coeff; currentTerm; currentTerm = currentTerm->next)
+            for (Nterm& currentTerm : polynomVector->coeff)
             {
                 exponents_t monomVector = newarray_atomic(int, independ);
-                monoid->to_expvector(currentTerm->monom, monomVector);
+                monoid->to_expvector(currentTerm.monom, monomVector);
                 
                 //construct Monom for every term
                 MonomType* currentMonom = new MonomType();

@@ -904,9 +904,9 @@ M2_arrayintOrNull Matrix::support() const
     for (int i = 0; i < R->n_vars(); i++) exp[i] = exp2[i] = 0;
     for (int j = 0; j < n_cols(); j++)
       for (vec v = elem(j); v != nullptr; v = v->next)
-        for (const Nterm *f = v->coeff; f != nullptr; f = f->next)
+        for (Nterm& f : v->coeff)
         {
-          R->getMonoid()->to_expvector(f->monom, exp2);
+          R->getMonoid()->to_expvector(f.monom, exp2);
           for (int k = 0; k < n; k++)
             if (exp2[k] != 0 && exp[k] == 0)
             {
@@ -1718,10 +1718,10 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
       vec v = elem(c);
       for (; v != nullptr; v = v->next)
         {
-          for (Nterm *t = v->coeff; t != nullptr; t = t->next)
+          for (Nterm& t : v->coeff)
             {
               exponents_t exp1 = newarray_atomic(int, vars->len + 1);
-              M->to_expvector(t->monom, exp);
+              M->to_expvector(t.monom, exp);
               for (unsigned int i = 0; i < vars->len; i++)
                 exp1[i] = exp[vars->array[i]];
               exp1[vars->len] = v->comp;
@@ -1798,15 +1798,15 @@ static vec coeffs_of_vec(exponent_table *E,
   vec result = nullptr;
   for (vec g = f; g != nullptr; g = g->next)
     {
-      for (Nterm *h = g->coeff; h != nullptr; h = h->next)
+      for (Nterm& h : g->coeff)
         {
-          M->to_expvector(h->monom, exp);
+          M->to_expvector(h.monom, exp);
           get_part_of_expvector(vars, exp, g->comp, scratch_exp);
           int val = static_cast<int>(exponent_table_get(E, scratch_exp));
           if (val > 0)
             {
               M->from_expvector(exp, mon);
-              ring_elem t = P->make_flat_term(h->coeff, mon);
+              ring_elem t = P->make_flat_term(h.coeff, mon);
               vec v = P->make_vec(val - 1, t);
               v->next = result;
               result = v;
