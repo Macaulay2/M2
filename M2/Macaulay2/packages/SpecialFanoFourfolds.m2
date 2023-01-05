@@ -11,8 +11,8 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.6", 
-    Date => "December 18, 2022",
+    Version => "2.7", 
+    Date => "January 5, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -22,14 +22,14 @@ newPackage(
     Reload => false
 )
 
-if MultiprojectiveVarieties.Options.Version < "2.6" then (
-    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.6 or newer);"<<endl;
+if MultiprojectiveVarieties.Options.Version < "2.7" then (
+    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.7 or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of MultiprojectiveVarieties in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///run "curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2";///<<endl<<endl<<"***"<<endl;
-    error "required MultiprojectiveVarieties package version 2.6 or newer";
+    error "required MultiprojectiveVarieties package version 2.7 or newer";
 );
 
 export{
@@ -397,7 +397,7 @@ CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterPrint} = CoherentSheafOnEm
 CoherentSheafOnEmbeddedProjectiveVariety#{Standard,AfterPrint} = CoherentSheafOnEmbeddedProjectiveVariety#{Standard,AfterNoPrint} = F -> (<< endl << concatenate(interpreterDepth:"o") << lineNumber << " : Coherent sheaf on " << projectiveVariety F << endl);
 
 normalSheaf = method(TypicalValue => CoherentSheaf);
-normalSheaf EmbeddedProjectiveVariety := X -> (
+normalSheaf MultiprojectiveVariety := normalSheaf EmbeddedProjectiveVariety := X -> (
     if X.cache#?("normalSheaf",ambientVariety X) then return X.cache#("normalSheaf",ambientVariety X);
     I := idealOfSubvariety X;
     R := (ring I)/I;
@@ -406,7 +406,7 @@ normalSheaf EmbeddedProjectiveVariety := X -> (
     N.variety.cache#"embedded projective variety" = X;
     X.cache#("normalSheaf",ambientVariety X) = new CoherentSheafOnEmbeddedProjectiveVariety from N
 );
-normalSheaf (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,Y) -> (
+normalSheaf (MultiprojectiveVariety,MultiprojectiveVariety) := normalSheaf (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,Y) -> (
     Z := ambientVariety X;
     N := normalSheaf makeSubvariety(X,Y);
     makeSubvariety(X,Z);
@@ -508,10 +508,70 @@ map (HodgeSpecialSurface,ZZ,ZZ) := o -> (S,a,b) -> (
     if a < 0 then error "expected a nonnegative integer";
     S.cache#("map",a,b) = if b >= 0 then mapDefinedByDivisor(S,{(H,a),(C,b)}) else rationalMap(C_S,a,-b)
 );
-HodgeSpecialSurface Sequence := (S,ab) -> (
-    if not(#ab == 2 and instance(first ab,ZZ) and instance(last ab,ZZ)) then error "expected a sequence of two integers";
-    (a,b) := ab;
-    image map(S,a,b) 
+map HodgeSpecialSurface := o -> S -> (
+    if S.cache#?"doubleCover" then return S.cache#"doubleCover";  
+    S.cache#"doubleCover" = quadricFibration(map(S,1,0),Verify=>true)
+);
+curve = method();
+curve HodgeSpecialSurface := U -> first U#"CurveContainedInTheSurface";
+discriminant HodgeSpecialSurface := o -> S -> (
+    if S.cache#?(curve S,"discriminantSurface") then return last S.cache#(curve S,"discriminantSurface");
+    C := curve S;
+    if dim C != 1 then error "expected a Hodge-special surface";
+    f := map(S,0,1);
+    if dim target f <= 0 then error "not implemented yet: self-intersection of a member of a zero-dimensional linear system";
+    C' := f^* random(1,0_(target f));
+    if dim(C * C') != 0 then error "something went wrong :(";
+    C2 := degree(C * C');
+    H := S.cache#"hyperplane";
+    H2 := S * H * random(1,0_S); 
+    if dim H2 != 0 then error "something went wrong :(";
+    H2 = degree H2;
+    HC := S * H * C;
+    if dim HC != 0 then error "something went wrong :(";
+    HC = degree HC;
+    d := det(S.cache#(curve S,"LatticeIntersectionMatrix") = matrix {{H2,HC},{HC,C2}});
+    S.cache#(curve S,"discriminantSurface") = (C2,d);
+    d
+);
+HodgeSpecialSurface#{WebApp,AfterPrint} = HodgeSpecialSurface#{WebApp,AfterNoPrint} = 
+HodgeSpecialSurface#{Standard,AfterPrint} = HodgeSpecialSurface#{Standard,AfterNoPrint} = S -> (
+    d := degree S;
+    str := "ProjectiveVariety, "|(if d <= 9 then ({"linear", "quadratic", "cubic", "quartic", "quintic", "sextic", "septic", "octic", "nonic"}_(d-1))|" surface" else "surface of degree "|toString(d));
+    str = str|" in "|(toString expression ambient S);
+    try discriminant S;
+    if S.cache#?(curve S,"LatticeIntersectionMatrix") then (
+        M := S.cache#(curve S,"LatticeIntersectionMatrix");
+        str = (str|" with rank 2 lattice")||("defined by the intersection matrix "|net(M)|" (det: "|(toString discriminant S)|")");     
+    );
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << str << endl;
+);
+parameterCount HodgeSpecialSurface := o -> S -> (
+    if not(codim S == 1 and numgens ideal S == 1) then error "expected a surface in a three-dimensional weighted projective space";
+    a := first degree (ideal S)_0;
+    C := curve S;
+    if dim C != 1 then error "expected a Hodge-special surface";
+    if o.Verbose then <<"C: "|toString(? C)<<endl;
+    if o.Verbose then <<"S: "|toString(? S)<<endl;
+    if o.Verbose then <<"ambient: P = "|toString(? ambient S)<<endl;
+    N := normalSheaf C;
+    h1N := rankHH(1,N);
+    if o.Verbose then <<"h^1(N_{C,P}) = "|toString(h1N)<<endl; 
+    if h1N != 0 then <<"--warning: condition h^1(N_{C,P}) == 0 not satisfied"<<endl;
+    h0N := rankHH(0,N);
+    if o.Verbose then <<"h^0(N_{C,P}) = "|toString(h0N)<<endl;
+    m := # basisMem({a},C);
+    if o.Verbose then <<"h^0(I_{C,P}("|(toString a)|")) = "|toString(m)<<endl;
+    if o.Verbose then <<"h^0(N_{C,P}) + "|toString(m-1)|" = "|toString(h0N + m - 1)<<endl;
+    NS := normalSheaf(C,S);
+    h0NS := rankHH(0,NS);
+    if o.Verbose then <<"h^0(N_{C,S}) = "|toString(h0NS)<<endl;
+    if o.Verbose then <<"dim{[S] : C ⊂ S ⊂ P} >= "|toString(h0N + m-1 - h0NS)<<endl;
+    Amb := # basisMem({a},0_(ambient S));
+    if o.Verbose then <<"dim P(H^0(O_P("|(toString a)|"))) = "|toString(Amb-1)<<endl;
+    w := Amb-1 - (h0N + m-1 - h0NS);
+    if o.Verbose then <<"codim{[S] : C ⊂ S ⊂ P} <= "|toString(w)<<endl;
+    return (w,(m,h0N,h0NS));
 );
 ---------------------------------------------------------
 
@@ -2000,7 +2060,7 @@ associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
     mu := multirationalMap fanoMap X;
     if U.cache#?"MapToMinimalK3Surface" then return makeSurfaceAssociated(X,mu,U,{L,C},U.cache#"MapToMinimalK3Surface"); -- inappropriate key name
     f := null; H := random(1,0_U);
-    if member(recognize X,{"NotRecognized", "surf-5-10-1", "surf-7-1-9", "surf-4-3-1-external"}) then (
+    if member(recognize X,{"NotRecognized", "surf-7-1-9", "surf-4-3-1-external"}) then (
         if o.Verbose then <<"-- skipping computation of the map f from U to the minimal Castelnuovo surface"<<endl;
     ) else if member(recognize X,{"planeInPP7", "internal-projection-K3-genus-8", "surf-5-6-2-nodal"}) then (
         f = multirationalMap super toRationalMap 1_U;
@@ -2008,6 +2068,12 @@ associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
         if o.Verbose then <<"-- computing the map f from U to the minimal Castelnuovo surface"<<endl;
         f = mapDefinedByDivisor(U,{(H,1),(L,1)});
         if char coefficientRing X <= 65521 then image(f,"F4") else image f;
+    ) else if recognize X === "surf-5-10-1" then (
+        n := multirationalMap normalization(U,Verbose=>o.Verbose);
+        if o.Verbose then <<"-- computing the map f from U to the minimal Castelnuovo surface"<<endl;
+        h := rationalMap(source n,tally {n^* H,n^* L},Dominant=>3);
+        f = multirationalMap inverse rationalMap(ring target h,ring target n,take(gens ring target h,5));
+        if not((f * (inverse f) == 1 and (inverse f) * f == 1)) then error "something went wrong";
     );
     if f =!= null then (
          U.cache#"MapToMinimalK3Surface" = f;
@@ -3109,6 +3175,8 @@ Usage => "normalSheaf X"|newline|"normalSheaf(X % Y)"|newline|"normalSheaf(X,Y)"
 Inputs => {"X" => EmbeddedProjectiveVariety, "Y" => EmbeddedProjectiveVariety => {" such that ",TEX///$X\subset Y$///," (if not given, it is taken to be the ",TO2{ambientVariety,"ambient variety"}," of ",TEX///$X$///,")"}}, 
 Outputs => {CoherentSheaf => {"the normal sheaf ", TEX///$\mathcal{N}_{X, Y}$///, " of ", TEX///$X$///, " in ", TEX///$Y$///}},
 EXAMPLE {"X = PP_(ZZ/65521)^(2,2);", "Y = random(2,X);", "N = normalSheaf X;", "N' = normalSheaf(X,Y);", "rank HH^0 N", "rank HH^0 N'"}}
+
+undocumented {(normalSheaf, MultiprojectiveVariety), (normalSheaf, MultiprojectiveVariety, MultiprojectiveVariety)}
 
 document {Key => {isAdmissible, (isAdmissible, ZZ), (isAdmissible, SpecialCubicFourfold)}, 
 Headline => "whether an integer is admissible (in the sense of the theory of cubic fourfolds)", 

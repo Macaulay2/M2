@@ -11,8 +11,8 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "2.6", 
-    Date => "December 18, 2022",
+    Version => "2.7", 
+    Date => "January 5, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -49,7 +49,7 @@ if Cremona.Options.Version < "5.2" then (
 if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
-       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus",
+       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus", "sumUp",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2", "toRationalMap",
        "∏","⋂","⋃","PP",
        "ambientVariety",
@@ -293,7 +293,7 @@ multidegree MultiprojectiveVariety := X -> (
 
 degree MultiprojectiveVariety := X -> getMultidegree(multidegree X, X#"dimAmbientSpaces");
 
-degree WeightedProjectiveVariety := X -> degree image segreEmbedding X;
+degree WeightedProjectiveVariety := X -> if dim X == 0 then degree image segreEmbedding X else degree ideal X;
 
 projections = method();
 projections MultiprojectiveVariety := X -> (
@@ -823,7 +823,8 @@ sectionalGenus EmbeddedProjectiveVariety := (cacheValue "sectionalGenus") (X -> 
 
 hilbertPolynomial EmbeddedProjectiveVariety := o -> ((cacheValue (o.Projective,"HilbertPolynomial")) (X -> hilbertPolynomial(ideal X,Projective=>o.Projective)));
 
-EmbeddedProjectiveVariety ! := X -> (
+sumUp = method();
+EmbeddedProjectiveVariety ! := sumUp EmbeddedProjectiveVariety := X -> (
     if coefficientRing X === QQ then (
         p := nextPrime random(300,10000000);
         -- <<"*** reduction to char "<< p <<" ***"<<endl;
@@ -2236,6 +2237,20 @@ associatedSymmetricMatrix RingElement := Q -> (
     return M
 );
 
+-- Some auxiliary functions for other packages
+internalProjection = method();
+internalProjection EmbeddedProjectiveVariety := (cacheValue "internalProjection") (X -> image rationalMap (point X)_X);
+internalProjection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = internalProjection X; return X);
+externalProjection = method();
+externalProjection EmbeddedProjectiveVariety := (cacheValue "externalProjection") (X -> image rationalMap (point ambient X)_X);
+externalProjection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = externalProjection X; return X);
+nodalProjection = method();
+nodalProjection EmbeddedProjectiveVariety := (cacheValue "nodalProjection") (X -> image rationalMap (point linearSpan(point X + point X))_X);
+nodalProjection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = nodalProjection X; return X);
+hyperplaneSection = method();
+hyperplaneSection EmbeddedProjectiveVariety := (cacheValue "hyperplaneSection") (X -> (parametrize random(1,0_X))^* X);
+hyperplaneSection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = hyperplaneSection X; return X);
+
 
 beginDocumentation() 
 
@@ -3376,9 +3391,10 @@ EXAMPLE {
 SeeAlso => {(describe,MultirationalMap)}}
 
 document { 
-Key => {(symbol !,EmbeddedProjectiveVariety)}, 
+Key => {(symbol !,EmbeddedProjectiveVariety),sumUp,(sumUp,EmbeddedProjectiveVariety)}, 
 Headline => "print a more detailed description of an embedded projective variety", 
-Usage => "X!", 
+Usage => "X!
+sumUp X", 
 Inputs => {"X" => EmbeddedProjectiveVariety},
 EXAMPLE lines ///
 K = ZZ/333331; K[t_0..t_5];
@@ -4217,11 +4233,11 @@ assert(toRationalMap multirationalMap g == g)
 TEST /// -- weighted-projective varieties
 K = ZZ/333331;
 X = PP_K(2,3,4);
-assert(dim X == 2 and degree X == 6)
+assert(dim X == 2 and degree X == 1 and degree image segreEmbedding X == 6)
 p = point X;
 assert(dim p == 0 and degree p == 1 and instance(|- p,Array))
 Y = random(4,0_X);
-assert(dim Y == 1 and degree Y == 2)
+assert(dim Y == 1 and degree Y == 4 and degree image segreEmbedding Y == 2)
 assert(? Y == "curve in PP(2,3,4) defined by a form of degree 4")
 assert(? image segreEmbedding Y == "curve in PP^2 defined by a form of degree 2")
 psi = rationalMap((gens ideal (2 * point X))|(gens ideal point X));
