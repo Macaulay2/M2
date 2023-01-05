@@ -508,6 +508,11 @@ map (HodgeSpecialSurface,ZZ,ZZ) := o -> (S,a,b) -> (
     if a < 0 then error "expected a nonnegative integer";
     S.cache#("map",a,b) = if b >= 0 then mapDefinedByDivisor(S,{(H,a),(C,b)}) else rationalMap(C_S,a,-b)
 );
+HodgeSpecialSurface Sequence := (S,ab) -> (
+    if not(#ab == 2 and instance(first ab,ZZ) and instance(last ab,ZZ)) then error "expected a sequence of two integers";
+    (a,b) := ab;
+    image map(S,a,b)
+);
 map HodgeSpecialSurface := o -> S -> (
     if S.cache#?"doubleCover" then return S.cache#"doubleCover";  
     S.cache#"doubleCover" = quadricFibration(map(S,1,0),Verify=>true)
