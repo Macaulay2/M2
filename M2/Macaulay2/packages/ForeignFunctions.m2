@@ -68,6 +68,7 @@ export {
     "uint",
     "long",
     "ulong",
+    "mpzT",
     "float",
     "double",
     "voidstar",
@@ -247,10 +248,16 @@ if version#"pointer size" == 4 then (
     long = int64;
     ulong = uint64)
 
+mpzT = new ForeignIntegerType;
+mpzT.Name = "mpz_t";
+mpzT.Address = ffiPointerType
+new mpzT from ZZ := (T, n) -> new T from {Address => ffiIntegerAddress n}
+value mpzT := ffiIntegerValue @@ address
+
 ForeignIntegerType Number :=
 ForeignIntegerType Constant := (T, x) -> new T from truncate x
 
-isAtomic ForeignIntegerType := T -> true
+isAtomic ForeignIntegerType := T -> if T === mpzT then false else true
 
 -----------------------
 -- foreign real type --
