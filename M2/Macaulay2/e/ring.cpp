@@ -370,7 +370,11 @@ ring_elem Ring::homogenize(const ring_elem f, int, M2_arrayint) const
 }
 
 bool Ring::is_homogeneous(const ring_elem) const { return true; }
-void Ring::degree(const ring_elem, monomial d) const { degree_monoid()->one(d); }
+
+const_monomial Ring::degree(const ring_elem) const
+{
+  return degree_monoid()->make_one();
+}
 bool Ring::multi_degree(const ring_elem f, monomial d) const
 // returns true iff f is homogeneous
 {

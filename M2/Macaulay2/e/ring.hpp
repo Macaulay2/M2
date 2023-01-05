@@ -454,7 +454,7 @@ class Ring : public MutableEngineObject
   // Routines expecting a grading.  The default implementation
   // is that the only degree is 0.
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, monomial d) const;
+  virtual const_monomial degree(const ring_elem f) const;
   virtual bool multi_degree(const ring_elem f, monomial d) const;
   // returns true iff f is homogeneous
   virtual void degree_weights(const ring_elem f,

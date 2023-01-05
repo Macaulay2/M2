@@ -581,7 +581,7 @@ Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
 {
   const Ring *R = get_ring();
   monomial deg = degree_monoid()->make_one();
-  if (!R->is_zero(r)) R->degree(r, deg);
+  if (!R->is_zero(r)) R->multi_degree(r, deg);
   degree_monoid()->mult(deg, degree_shift(), deg);
   MatrixConstructor mat(rows(), cols(), deg);
   for (int i = 0; i < n_cols(); i++)

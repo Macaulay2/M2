@@ -18,6 +18,7 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
+#include "monoid.hpp"
 #include "monomial.hpp"
 #include "newdelete.hpp"
 #include "poly.hpp"
@@ -352,7 +353,15 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
 {
   try
     {
-      return a->multi_degree();
+      if (a->is_zero())
+        {
+          ERROR("the zero element has no degree");
+          return nullptr;
+        }
+
+      auto M = a->get_ring()->degree_monoid();
+      // TODO: do we need to manually free a->degree()?
+      return M->to_arrayint(a->degree());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "exceptions.hpp"
+#include "monoid.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
 
@@ -422,9 +423,11 @@ bool M2FreeAlgebra::is_homogeneous(const Poly* f) const
   return freeAlgebra().is_homogeneous(*f);
 }
 
-void M2FreeAlgebra::degree(const ring_elem f, monomial d) const
+const_monomial M2FreeAlgebra::degree(const ring_elem g) const
 {
-  multi_degree(f, d);
+  auto d = degree_monoid()->make_one();
+  multi_degree(g, d);
+  return d;
 }
 
 bool M2FreeAlgebra::multi_degree(const ring_elem g, monomial d) const

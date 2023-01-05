@@ -81,8 +81,8 @@ class RingElement : public EngineObject
   RingElement *homogenize(int v, M2_arrayint wts) const;
   RingElement *homogenize(int v, int deg, M2_arrayint wts) const;
   void degree_weights(M2_arrayint wts, int &lo, int &hi) const;
-  M2_arrayint multi_degree() const;
-  //  intarray  degree() const;
+  const_monomial degree() const;
+  bool multi_degree(monomial deg) const;
 
   // See engine.h for the definition of 'content' here
   const RingElement /* or null */ *content() const;
