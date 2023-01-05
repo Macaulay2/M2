@@ -46,6 +46,10 @@ RR_* = RR' = new Type of InexactNumber'
 RRi_* = RRi' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
 
+RR'.texMath = ///{\mathbb R}_*///
+RRi'.texMath = ///{\square\mathbb R}_*///
+CC'.texMath = ///{\mathbb C}_*///
+
 setAttribute(CC',PrintNet,"CC" | "*"^-1)
 setAttribute(RR',PrintNet,"RR" | "*"^-1)
 setAttribute(RRi',PrintNet,"RRi" | "*"^-1)
