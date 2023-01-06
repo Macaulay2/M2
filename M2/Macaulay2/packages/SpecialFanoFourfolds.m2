@@ -1571,7 +1571,7 @@ fanoMap (HodgeSpecialFourfold,ZZ,ZZ) := o -> (X,e,sat) -> (
 fanoMapUsingSingular = method(Options => {Verbose => false});
 fanoMapUsingSingular (HodgeSpecialFourfold,ZZ,ZZ) := o -> (X,e,sat) -> ( 
     Singular := findProgram("Singular", "Singular --help");
-    if o.Verbose then XTermSingular := findProgram("xterm", "xterm -version");
+    if o.Verbose then XTermSingular := findProgram("xterm", "xterm -version"); -- using xterm we see Singular messages instantly and not at the end of the calculation
     V := ambientFivefold X;
     S := surface X;    
     x := local x;
@@ -2766,14 +2766,14 @@ trisecantFlop ZZ := o -> i -> (
         runProgram(git,"clone --depth 1 --no-checkout https://github.com/giovannistagliano/TrisecantFlops.git", RunDirectory => dir);
         runProgram(git, "checkout master", RunDirectory => dir | "/TrisecantFlops");
         if not fileExists(dir|"/TrisecantFlops/TrisecantFlops.m2") then error "something went wrong in downloading the package TrisecantFlops";
-        try needsPackage("TrisecantFlops",FileName => dir|"/TrisecantFlops/TrisecantFlops.m2") else error "something went wrong in loading the package TrisecantFlops";
+        try needsPackage("TrisecantFlops",FileName => dir|"TrisecantFlops/TrisecantFlops.m2") else error "something went wrong in loading the package TrisecantFlops";
         <<"The package TrisecantFlops has been successfully loaded."<<endl;
         f := "";
         while not(f == "y" or f == "yes" or f == "Y" or f == "Yes" or f == "n" or f == "no" or f == "N" or f == "No") 
         do f = read("Do you want to install the package for future use? (y/n) ");
         if f == "y" or f == "yes" or f == "Y" or f == "Yes" then (
             <<"-- installing the package TrisecantFlops"<<endl;    
-            installPackage("TrisecantFlops",Verbose => false,FileName => dir|"/TrisecantFlops/TrisecantFlops.m2");
+            installPackage("TrisecantFlops",Verbose => false,FileName => dir|"TrisecantFlops/TrisecantFlops.m2");
         );
     );
     if not member(value "TrisecantFlops",loadedPackages) then error "something went wrong";
@@ -2799,18 +2799,18 @@ prebuiltExamplesOfRationalFourfolds = memoize(() -> (
         <<"-- downloading the package PrebuiltExamplesOfRationalFourfolds from https://github.com/giovannistagliano"<<endl;    
         runProgram(curl,"-s -o PrebuiltExamplesOfRationalFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/PrebuiltExamplesOfRationalFourfolds/main/PrebuiltExamplesOfRationalFourfolds.m2",RunDirectory=>dir);
         if not fileExists(dir|"/PrebuiltExamplesOfRationalFourfolds.m2") then error "something went wrong in downloading the package PrebuiltExamplesOfRationalFourfolds";
-        try needsPackage("PrebuiltExamplesOfRationalFourfolds",FileName => dir|"/PrebuiltExamplesOfRationalFourfolds.m2") else error "something went wrong in loading the package PrebuiltExamplesOfRationalFourfolds";
+        try needsPackage("PrebuiltExamplesOfRationalFourfolds",FileName => dir|"PrebuiltExamplesOfRationalFourfolds.m2") else error "something went wrong in loading the package PrebuiltExamplesOfRationalFourfolds";
         <<"The package PrebuiltExamplesOfRationalFourfolds has been successfully loaded."<<endl;
         f := "";
         while not(f == "y" or f == "yes" or f == "Y" or f == "Yes" or f == "n" or f == "no" or f == "N" or f == "No") 
         do f = read("Do you want to install the package for future use? (y/n) ");
         if f == "y" or f == "yes" or f == "Y" or f == "Yes" then (
             <<"-- installing the package PrebuiltExamplesOfRationalFourfolds"<<endl;    
-            installPackage("PrebuiltExamplesOfRationalFourfolds",Verbose => false,FileName => dir|"/PrebuiltExamplesOfRationalFourfolds.m2");
+            installPackage("PrebuiltExamplesOfRationalFourfolds",Verbose => false,FileName => dir|"PrebuiltExamplesOfRationalFourfolds.m2");
         );
     );
     if not member(value "PrebuiltExamplesOfRationalFourfolds",loadedPackages) then error "something went wrong";
-    if (value "PrebuiltExamplesOfRationalFourfolds").Options.Version < "1.0" then (
+    if (value "PrebuiltExamplesOfRationalFourfolds").Options.Version < "1.1" then (
         <<"-- removing old version of PrebuiltExamplesOfRationalFourfolds"<<endl;  
         uninstallPackage "PrebuiltExamplesOfRationalFourfolds";
         error "Your version of the PrebuiltExamplesOfRationalFourfolds package was outdated and has been removed. Macaulay2 should be restarted as soon as possible.";
