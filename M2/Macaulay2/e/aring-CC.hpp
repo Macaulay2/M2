@@ -3,6 +3,9 @@
 #ifndef _aring_CC_hpp_
 #define _aring_CC_hpp_
 
+#include "interface/gmp-util.h"  // for moveTo_gmpCC
+#include "interface/random.h"    // for randomDouble
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"

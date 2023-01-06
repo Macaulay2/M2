@@ -3,7 +3,7 @@
 #ifndef _aring_QQ_flint_hpp_
 #define _aring_QQ_flint_hpp_
 
-#include <iosfwd>
+#include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>

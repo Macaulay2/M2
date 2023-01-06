@@ -1,7 +1,7 @@
 #ifndef _gmp_util_h_
 #  define _gmp_util_h_
 
-#  include "../d/M2mem.h"
+#  include "engine-includes.hpp"
 
 /**
    Multiprecision arithmetic allocation utility routines
