@@ -1,10 +1,15 @@
 // Copyright 1995-2004 Michael E. Stillman
 
+#include "matrix.hpp"
+
+#include <vector>
+#include <iostream>
+
+#include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 #include "interface/random.h"
 #include "style.hpp"
 #include "text-io.hpp"
 #include "ring.hpp"
-#include "matrix.hpp"
 #include "comb.hpp"
 #include "polyring.hpp"
 #include "assprime.hpp"
@@ -15,8 +20,6 @@
 
 #include "exptable.h"
 
-#include <vector>
-#include <iostream>
 #include "matrix-con.hpp"
 
 #include "monomial-collection.hpp"

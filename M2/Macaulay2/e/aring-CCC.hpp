@@ -3,7 +3,9 @@
 #ifndef _aring_CCC_hpp_
 #define _aring_CCC_hpp_
 
-#include <iostream>
+#include "interface/gmp-util.h"  // for mpfr_reallocate_limbs, moveTo_gmpCC
+#include "interface/random.h"    // for randomMpfr
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
