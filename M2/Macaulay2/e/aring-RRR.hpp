@@ -3,7 +3,9 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
-#include "interface/random.h"
+#include "interface/gmp-util.h"  // for moveTo_gmpRR
+#include "interface/random.h"    // for randomMpfr
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"

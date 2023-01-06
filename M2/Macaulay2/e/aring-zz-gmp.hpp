@@ -3,9 +3,9 @@
 #ifndef _aring_zz_gmp_hpp_
 #define _aring_zz_gmp_hpp_
 
-#include <iosfwd>
+#include "interface/gmp-util.h"  // for mpz_reallocate_limbs
+#include "interface/random.h"    // for rawRandomInteger
 
-#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
