@@ -521,10 +521,12 @@ curve = method();
 curve HodgeSpecialSurface := U -> first U#"CurveContainedInTheSurface";
 discriminant HodgeSpecialSurface := o -> S -> (
     if S.cache#?(curve S,"discriminantSurface") then return last S.cache#(curve S,"discriminantSurface");
+    if not member(o.Algorithm, {"Poisson", 1, 2}) then error "the Algorithm option accepts the values 1 and 2";
     C := curve S;
     if dim C != 1 then error "expected a Hodge-special surface";
+    if o.Algorithm === 2 then return discriminant2 S;
     f := map(S,0,1);
-    if dim target f <= 0 then error "not implemented yet: self-intersection of a member of a zero-dimensional linear system";
+    if dim target f <= 0 then (if o.Algorithm === 1 then error "the option Algorithm=>1 is not available for this case" else return discriminant2 S);
     C' := f^* random(1,0_(target f));
     if dim(C * C') != 0 then error "something went wrong :(";
     C2 := degree(C * C');
@@ -535,9 +537,30 @@ discriminant HodgeSpecialSurface := o -> S -> (
     HC := S * H * C;
     if dim HC != 0 then error "something went wrong :(";
     HC = degree HC;
-    d := det(S.cache#(curve S,"LatticeIntersectionMatrix") = matrix {{H2,HC},{HC,C2}});
-    S.cache#(curve S,"discriminantSurface") = (C2,d);
-    d
+    disc := det(S.cache#(curve S,"LatticeIntersectionMatrix") = matrix {{H2,HC},{HC,C2}});
+    S.cache#(curve S,"discriminantSurface") = (C2,disc);
+    disc
+);
+discriminant2 = method();
+discriminant2 HodgeSpecialSurface := S -> (
+    if not (codim S == 1 and numgens ideal S == 1) then error "the option Algorithm=>2 is not available for this case";
+    if S.cache#?(curve S,"discriminantSurface") then return last S.cache#(curve S,"discriminantSurface");
+    C := curve S;
+    H := S.cache#"hyperplane";
+    HC := H * C;
+    if dim HC != 0 then error "something went wrong :(";
+    HC = degree HC;
+    a := degree S;
+    g := sectionalGenus image segreEmbedding C;
+    e := sum degrees ring ambient S;
+    if #e != 1 then error "something went wrong :(";
+    C2 := (e_0 - a)*HC + 2*g -2;
+    H2 := S * H * random(1,0_S); 
+    if dim H2 != 0 then error "something went wrong :(";
+    H2 = degree H2;
+    disc := det(S.cache#(curve S,"LatticeIntersectionMatrix") = matrix {{H2,HC},{HC,C2}});
+    S.cache#(curve S,"discriminantSurface") = (C2,disc);
+    disc
 );
 HodgeSpecialSurface#{WebApp,AfterPrint} = HodgeSpecialSurface#{WebApp,AfterNoPrint} = 
 HodgeSpecialSurface#{Standard,AfterPrint} = HodgeSpecialSurface#{Standard,AfterNoPrint} = S -> (
@@ -3759,3 +3782,17 @@ S = associatedCastelnuovoSurface X;
 assert((dim S,dim ambient S,degree S,sectionalGenus S,degrees S) == (2, 4, 9, 9, {({3}, 1), ({4}, 3)}))
 ///
 
+TEST /// -- Test 18
+debug MultiprojectiveVarieties;
+K := ZZ/65521;
+P := PP_K(1,1,1,4);
+C = random({{2},{3}},0_P)
+assert(discriminant(surface(C,random(8,C)),Algorithm=>2) == -7)
+D = internalProjection_2 (surface({3, 1, 1, 0},K)).cache#"takeCurve"(3,{0, 0, 0});
+x := gens ring P;
+f := (rationalMap {{x_0^4,x_0^3*x_1,x_0^3*x_2,x_3}}) << (ambient D);
+E = f^* D;
+assert(discriminant(surface(E,random(8,E)),Algorithm=>1) == -43)
+E' = f^* random D;
+assert(discriminant(surface(E',random(8,E')),Algorithm=>2) == -43)
+///
