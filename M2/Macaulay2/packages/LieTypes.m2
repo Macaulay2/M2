@@ -10,7 +10,7 @@ newPackage(
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
-    DebuggingMode => true,
+    DebuggingMode => false,
     Certification => {
 	 -- same article as for package ConformalBlocks
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
