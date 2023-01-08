@@ -1661,7 +1661,7 @@ doc ///
 TEST ///
     g=simpleLieAlgebra("A",2);
     M=irreducibleLieAlgebraModule({2,1},g)
-    assert(M ** trivialModule g == M)
+    assert(M ** trivialModule g === M)
 ///
 	    
 endPackage "LieTypes" 
