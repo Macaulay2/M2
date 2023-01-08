@@ -12,7 +12,7 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.7", 
-    Date => "January 5, 2023",
+    Date => "January 8, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -2088,7 +2088,7 @@ associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
     mu := multirationalMap fanoMap X;
     if U.cache#?"MapToMinimalK3Surface" then return makeSurfaceAssociated(X,mu,U,{L,C},U.cache#"MapToMinimalK3Surface"); -- inappropriate key name
     f := null; H := random(1,0_U);
-    if member(recognize X,{"NotRecognized", "surf-7-1-9", "surf-4-3-1-external"}) then (
+    if member(recognize X,{"NotRecognized", "surf-7-1-9"}) then (
         if o.Verbose then <<"-- skipping computation of the map f from U to the minimal Castelnuovo surface"<<endl;
     ) else if member(recognize X,{"planeInPP7", "internal-projection-K3-genus-8", "surf-5-6-2-nodal"}) then (
         f = multirationalMap super toRationalMap 1_U;
@@ -2102,6 +2102,11 @@ associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
         h := rationalMap(source n,tally {n^* H,n^* L},Dominant=>3);
         f = multirationalMap inverse rationalMap(ring target h,ring target n,take(gens ring target h,5));
         if not((f * (inverse f) == 1 and (inverse f) * f == 1)) then error "something went wrong";
+    ) else if recognize X === "surf-4-3-1-external" then (
+        if o.Verbose then <<"-- computing the normalization of U"<<endl;
+        n' := normalization(U,Verbose=>false);
+        if o.Verbose then <<"-- inverting the normalization of U"<<endl;
+        f = multirationalMap super inverse3 n';
     );
     if f =!= null then (
          U.cache#"MapToMinimalK3Surface" = f;
@@ -2788,7 +2793,7 @@ trisecantFlop ZZ := o -> i -> (
         <<"-- downloading the package TrisecantFlops from https://github.com/giovannistagliano"<<endl;    
         runProgram(git,"clone --depth 1 --no-checkout https://github.com/giovannistagliano/TrisecantFlops.git", RunDirectory => dir);
         runProgram(git, "checkout master", RunDirectory => dir | "/TrisecantFlops");
-        if not fileExists(dir|"/TrisecantFlops/TrisecantFlops.m2") then error "something went wrong in downloading the package TrisecantFlops";
+        if not fileExists(dir|"TrisecantFlops/TrisecantFlops.m2") then error "something went wrong in downloading the package TrisecantFlops";
         try needsPackage("TrisecantFlops",FileName => dir|"TrisecantFlops/TrisecantFlops.m2") else error "something went wrong in loading the package TrisecantFlops";
         <<"The package TrisecantFlops has been successfully loaded."<<endl;
         f := "";
@@ -2821,7 +2826,7 @@ prebuiltExamplesOfRationalFourfolds = memoize(() -> (
         );
         <<"-- downloading the package PrebuiltExamplesOfRationalFourfolds from https://github.com/giovannistagliano"<<endl;    
         runProgram(curl,"-s -o PrebuiltExamplesOfRationalFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/PrebuiltExamplesOfRationalFourfolds/main/PrebuiltExamplesOfRationalFourfolds.m2",RunDirectory=>dir);
-        if not fileExists(dir|"/PrebuiltExamplesOfRationalFourfolds.m2") then error "something went wrong in downloading the package PrebuiltExamplesOfRationalFourfolds";
+        if not fileExists(dir|"PrebuiltExamplesOfRationalFourfolds.m2") then error "something went wrong in downloading the package PrebuiltExamplesOfRationalFourfolds";
         try needsPackage("PrebuiltExamplesOfRationalFourfolds",FileName => dir|"PrebuiltExamplesOfRationalFourfolds.m2") else error "something went wrong in loading the package PrebuiltExamplesOfRationalFourfolds";
         <<"The package PrebuiltExamplesOfRationalFourfolds has been successfully loaded."<<endl;
         f := "";
@@ -3359,7 +3364,30 @@ EXAMPLE {
 "describe X"},
 SeeAlso => {(rationalMap,PolynomialRing,List),(specialGushelMukaiFourfold,Array,Array)}}
 
-undocumented {(surface, MultiprojectiveVariety, MultiprojectiveVariety)}
+typValSurf := typicalValues#surface;
+typicalValues#surface = Nothing;
+document {Key => {(surface, MultiprojectiveVariety, MultiprojectiveVariety)}, 
+Headline => "make a Hodge-special surface", 
+Usage => "surface(C,S)", 
+Inputs => {"C" => MultiprojectiveVariety => {"an irreducible curve"}, "S" => MultiprojectiveVariety => {"a smooth surface ", TEX///$S$///, " containing the curve ", TEX///$C$///}}, 
+Outputs => {{"the Hodge special surface corresponding to the pair ", TEX///$(C,S)$///}}, 
+PARA{"The curve ",TEX///$C$///," can be recovered using the internal function ",TT "curve","."},
+EXAMPLE lines ///K = ZZ/65521;
+C = random PP_K^(1,3); -- random twisted cubic in P^3
+x = gens ring PP_K(1,1,1,4);
+f = (rationalMap {{x_0^4,x_0^3*x_1,x_0^3*x_2,x_3}}) << (ambient C); -- birational map P(1,1,1,4)-->P^3
+C = f^* C;
+describe C
+S = random(8,C);
+describe S
+S = surface(C,S);
+discriminant S
+parameterCount(S,Verbose=>true)
+f := map(S,1,0)
+exportFrom_MultiprojectiveVarieties {"QuadricFibration"};
+f = quadricFibration f
+discriminant f///}
+typicalValues#surface = typValSurf;
 
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, EmbeddedProjectiveVariety), (unirationalParametrization, SpecialGushelMukaiFourfold), (unirationalParametrization, HodgeSpecialFourfold)}, 
 Headline => "unirational parametrization", 
