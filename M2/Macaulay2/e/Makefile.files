@@ -213,7 +213,6 @@ NAMES_H = \
 	style \
 	util \
 	hash \
-	ntuple \
 	f4/ntuple-monomial \
 	res-a0-pair
 

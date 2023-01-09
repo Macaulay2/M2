@@ -1,7 +1,7 @@
 #include <stddef.h>  // for NULL
 #include <vector>    // for vector
 
-#include "ExponentVector.hpp"   // for ntuple, exponents_t
+#include "ExponentVector.hpp"   // for exponents, exponents_t
 #include "M2mem.h"              // for freemem
 #include "engine-includes.hpp"  // for M2_arrayint, M2_arrayint_struct
 #include "error.h"              // for ERROR
@@ -155,9 +155,9 @@ KBasis::KBasis(const Matrix *bottom,
     {
       int v = mVariables[i];
       D->to_expvector(M->degree_of_var(v), exp);
-      var_wts[i] = ntuple::weight(mHeftVector.size(), exp, mHeftVector);
+      var_wts[i] = exponents::weight(mHeftVector.size(), exp, mHeftVector);
       if (var_wts[i] == 0) weight_has_zeros = true;
-      ntuple::copy(mHeftVector.size(), exp, var_degs + next);
+      exponents::copy(mHeftVector.size(), exp, var_degs + next);
     }
   freemem(exp);
 
@@ -167,10 +167,10 @@ KBasis::KBasis(const Matrix *bottom,
 
   if (lo_degree != NULL)
     kb_target_lo_weight =
-        ntuple::weight(mHeftVector.size(), lo_degree, mHeftVector);
+        exponents::weight(mHeftVector.size(), lo_degree, mHeftVector);
   if (hi_degree != NULL)
     kb_target_hi_weight =
-        ntuple::weight(mHeftVector.size(), hi_degree, mHeftVector);
+        exponents::weight(mHeftVector.size(), hi_degree, mHeftVector);
 
   if (lo_degree && hi_degree && mHeftVector.size() == 1 && mHeftVector[0] < 0)
     {
@@ -187,7 +187,7 @@ KBasis::KBasis(const Matrix *bottom,
   if (mHeftVector.size() > 1 && lo_degree != NULL)
     {
       kb_target_multidegree = D->make_one();
-      ntuple::copy(mHeftVector.size(), lo_degree, kb_target_multidegree);
+      exponents::copy(mHeftVector.size(), lo_degree, kb_target_multidegree);
     }
   else { kb_target_multidegree = 0; }
 }
@@ -285,7 +285,7 @@ inline bool KBasis::backtrack_mg(int &curr)
     {
       vcurr = mVariables[curr];
       kb_exp_weight -= var_wts[curr] * kb_exp[vcurr];
-      ntuple::multpower(mHeftVector.size(),
+      exponents::multpower(mHeftVector.size(),
                         kb_exp_multidegree,
                         var_degs + (mHeftVector.size() * curr),
                         -kb_exp[vcurr],
@@ -299,7 +299,7 @@ inline bool KBasis::backtrack_mg(int &curr)
   vcurr = mVariables[curr];
   kb_exp[vcurr]--;
   kb_exp_weight -= var_wts[curr];
-  ntuple::divide(mHeftVector.size(),
+  exponents::divide(mHeftVector.size(),
                  kb_exp_multidegree,
                  var_degs + (mHeftVector.size() * curr),
                  kb_exp_multidegree);
@@ -318,7 +318,7 @@ inline bool KBasis::try_insert_mg()
     }
   if (kb_exp_weight == kb_target_lo_weight)
     {
-      if (EQ == ntuple::lex_compare(mHeftVector.size(),
+      if (EQ == exponents::lex_compare(mHeftVector.size(),
                                     kb_target_multidegree,
                                     kb_exp_multidegree))
         insert();
@@ -340,7 +340,7 @@ void KBasis::basis0_multi_graded()
           if (limit == 0 || system_interrupted()) return;
           kb_exp[vcurr]++;
           kb_exp_weight += var_wts[curr];
-          ntuple::mult(mHeftVector.size(),
+          exponents::mult(mHeftVector.size(),
                        kb_exp_multidegree,
                        var_degs + (mHeftVector.size() * curr),
                        kb_exp_multidegree);
@@ -423,7 +423,7 @@ void KBasis::compute()
       const int *component_degree = bottom_matrix->rows()->degree(i);
       D->to_expvector(component_degree, kb_exp_multidegree);
       kb_exp_weight =
-          ntuple::weight(mHeftVector.size(), kb_exp_multidegree, mHeftVector);
+          exponents::weight(mHeftVector.size(), kb_exp_multidegree, mHeftVector);
 
       // Do the recursion
       switch (computation_type)

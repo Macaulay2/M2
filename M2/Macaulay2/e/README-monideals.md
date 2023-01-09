@@ -60,7 +60,7 @@ SparseMonomial: replace code in varpower, f4/varpower-monomial, schreyer-resolut
     - display: ostream, give a list of strings for the names of the variables.
     - functions: isOne, isEqual, compare?, mult, quotient, lcm, divides, weight (default: all 1's), erase?
     -  also iSWellFormed.
-    -  some more from varpower.hpp: radical, is_pure_power, power, to_ntuple/from_ntuple? one, var.
+    -  some more from varpower.hpp: radical, is_pure_power, power, to/from_expvector? one, var.
     
     AllocatedSparseMonomial: give a length, or other SparseMonomial.  When it goes out of scope, the
       space is deallocated.  Maybe this should just be any integer vector?  Maybe just use a std::vector?

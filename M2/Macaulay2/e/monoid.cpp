@@ -220,7 +220,7 @@ void Monoid::set_degrees()
         monomial m = degree_monoid_->make_one();
         degree_monoid_->from_expvector(t, m);
         degree_of_var_.push_back(m);
-        heft_degree_of_var_->array[i] = ntuple::weight(degvars, t, heftvals_);
+        heft_degree_of_var_->array[i] = exponents::weight(degvars, t, heftvals_);
         t += degvars;
       }
   else
@@ -529,7 +529,7 @@ bool Monoid::divides_partial_order(const_monomial m, const_monomial n) const
   // can we speed this up by not unpacking ??
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
-  return ntuple::divides(nvars_, EXP1, EXP2);
+  return exponents::divides(nvars_, EXP1, EXP2);
 }
 
 bool Monoid::divides(const_monomial m, const_monomial n) const
@@ -543,7 +543,7 @@ bool Monoid::divides(const_monomial m, const_monomial n) const
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
   if (numInvertibleVariables() == 0)
-    return ntuple::divides(nvars_, EXP1, EXP2);
+    return exponents::divides(nvars_, EXP1, EXP2);
   for (int i=0; i < nvars_; ++i)
     if (not mLaurentVariablesPredicate[i] and EXP1[i] > EXP2[i])
       return false;
@@ -556,7 +556,7 @@ void Monoid::power(const_monomial m, int n, monomial result) const
 
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  ntuple::power(nvars_, EXP1, n, EXP1);
+  exponents::power(nvars_, EXP1, n, EXP1);
   from_expvector(EXP1, result);
 }
 
@@ -596,7 +596,7 @@ void Monoid::gcd(const_monomial m, const_monomial n, monomial p) const
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
-  ntuple::gcd(nvars_, EXP1, EXP2, EXP1);
+  exponents::gcd(nvars_, EXP1, EXP2, EXP1);
   from_expvector(EXP1, p);
 }
 
@@ -609,7 +609,7 @@ void Monoid::lcm(const_monomial m, const_monomial n, monomial p) const
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
-  ntuple::lcm(nvars_, EXP1, EXP2, EXP1);
+  exponents::lcm(nvars_, EXP1, EXP2, EXP1);
   from_expvector(EXP1, p);
 }
 
@@ -690,7 +690,7 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   int sz = (wts->len < nvars_ ? wts->len : nvars_);
-  return ntuple::weight(sz, EXP1, wts);
+  return exponents::weight(sz, EXP1, wts);
 }
 
 template<typename T>
@@ -715,7 +715,7 @@ int Monoid::simple_degree(const_monomial m) const
 
   exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  return ntuple::simple_degree(nvars_, EXP1);
+  return exponents::simple_degree(nvars_, EXP1);
 }
 
 bool Monoid::is_one(const_monomial m) const
