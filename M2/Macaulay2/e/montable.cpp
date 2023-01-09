@@ -133,13 +133,13 @@ int MonomialTable::find_divisor(exponents_t exp, int comp)
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return -1;
   if (comp == _last_match_comp && _last_match != NULL &&
-      ntuple::divides(_nvars, _last_match->_lead, exp))
+      exponents::divides(_nvars, _last_match->_lead, exp))
     return _last_match->_val;
-  unsigned long expmask = ~ntuple::mask(_nvars, exp);
+  unsigned long expmask = ~exponents::mask(_nvars, exp);
   mon_term *head = _head[comp];
   for (mon_term *t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
-      if (ntuple::divides(_nvars, t->_lead, exp))
+      if (exponents::divides(_nvars, t->_lead, exp))
         {
           _last_match = t;
           _last_match_comp = comp;
@@ -158,14 +158,14 @@ int MonomialTable::find_divisors(int max,
   assert(max != 0);
   if (comp >= static_cast<int>(_head.size())) return 0;
   if (max == 1 && comp == _last_match_comp && _last_match != NULL &&
-      ntuple::divides(_nvars, _last_match->_lead, exp))
+      exponents::divides(_nvars, _last_match->_lead, exp))
     {
       if (result != NULL) result->push_back(_last_match);
       return 1;
     }
   mon_term *head = _head[comp];
   int nmatches = 0;
-  unsigned long expmask = ~ntuple::mask(_nvars, exp);
+  unsigned long expmask = ~exponents::mask(_nvars, exp);
   //*DEBUG*/ long nviewed = 0;
   //*DEBUG*/ long nmasked = 0;
   for (mon_term *t = head->_next, *tnext = t->_next; t != head;
@@ -173,7 +173,7 @@ int MonomialTable::find_divisors(int max,
     if ((expmask & t->_mask) == 0)
       {
         //*DEBUG*/   nviewed++;
-        if (ntuple::divides(_nvars, t->_lead, exp))
+        if (exponents::divides(_nvars, t->_lead, exp))
           {
             nmatches++;  // this doesn't happen very often
             _last_match = t;
@@ -198,7 +198,7 @@ MonomialTable::mon_term *MonomialTable::find_exact(exponents_t exp,
   mon_term *t;
   int i;
 
-  unsigned long expmask = ntuple::mask(_nvars, exp);
+  unsigned long expmask = exponents::mask(_nvars, exp);
 
   for (t = head->_next; t != head; t = t->_next)
     if (expmask == t->_mask)
@@ -234,7 +234,7 @@ void MonomialTable::insert(exponents_t exp, int comp, int id)
   /* Make a new mon_term including exp */
   mon_term *newterm = reinterpret_cast<mon_term *>(mon_term_stash->new_elem());
   newterm->_lead = exp;
-  newterm->_mask = ntuple::mask(_nvars, exp);
+  newterm->_mask = exponents::mask(_nvars, exp);
   newterm->_val = id;
 
   _count++;

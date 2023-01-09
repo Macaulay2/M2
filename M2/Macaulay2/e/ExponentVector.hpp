@@ -272,13 +272,13 @@ class ExponentVector
 };
 
 // Legacy specialization
-using ntuple = ExponentVector<int, true>;
-typedef ntuple::Exponents exponents_t;
-typedef ntuple::ConstExponents const_exponents;
+using exponents = ExponentVector<int, true>;
+typedef exponents::Exponents exponents_t;
+typedef exponents::ConstExponents const_exponents;
 
 // TODO: compare with ntuple_monomials in e/f4/
 template <>
-inline ntuple::HashExponent ntuple::mask(int nvars, ConstExponents exp)
+inline exponents::HashExponent exponents::mask(int nvars, ConstExponents exp)
 {
   HashExponent result = 0, bit = 1;
   for (int i = nvars - 1; i >= 0; i--)

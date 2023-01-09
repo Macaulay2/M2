@@ -943,7 +943,7 @@ int res2_comp::sort_value(res2_pair *p, const std::vector<int> sort_order) const
 {
   exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   M->to_expvector(p->syz->monom, REDUCE_exp);
-  return ntuple::weight(P->n_vars(), REDUCE_exp, sort_order);
+  return exponents::weight(P->n_vars(), REDUCE_exp, sort_order);
 }
 
 //////////////////////////////////////////////
