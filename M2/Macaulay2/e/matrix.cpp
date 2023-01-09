@@ -1169,7 +1169,7 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
           int rownum = divisors[j]->basis_elem();
           const int *b = P->lead_flat_monomial(r->elem(rownum)->coeff);
           M->to_expvector(b, bexp);
-          ntuple::divide(nvars, aexp, bexp, result_exp);
+          exponents::divide(nvars, aexp, bexp, result_exp);
           int sign = skew.mult_sign(result_exp, bexp);
           if (sign != 0)
             {

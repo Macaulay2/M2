@@ -426,7 +426,7 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
   exponents_t exp = newarray_atomic(int, nvars0);
   lead_logical_exponents(nvars0, f, exp);
-  if (!ntuple::is_one(nvars0, exp)) return false;
+  if (!exponents::is_one(nvars0, exp)) return false;
   if (n_logical_terms(nvars0, f) > 1) return false;
   result = lead_logical_coeff(Rg, f);
   return true;
@@ -1725,7 +1725,7 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
   exponents_t exp2 = newarray_atomic(int, n_vars());
   int nvars = n_vars() - K->n_vars();
   M_->to_expvector(f->monom, exp);
-  ntuple::copy(n_vars(), exp, exp2);
+  exponents::copy(n_vars(), exp, exp2);
   do
     {
       Nterm *t = K->new_term();
@@ -1738,7 +1738,7 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
       if (f == 0) break;
       M_->to_expvector(f->monom, exp2);
     }
-  while (EQ == ntuple::lex_compare(nvars, exp, exp2));
+  while (EQ == exponents::lex_compare(nvars, exp, exp2));
   inresult->next = 0;
   return head.next;
 }
@@ -1751,7 +1751,7 @@ void PolyRing::lead_logical_exponents(int nvars0,
   assert(g != NULL);
   exponents_t exp = newarray_atomic(int, n_vars());
   M_->to_expvector(g->monom, exp);
-  ntuple::copy(nvars0, exp, result_exp);
+  exponents::copy(nvars0, exp, result_exp);
 }
 
 ring_elem PolyRing::lead_logical_coeff(const Ring *coeffR,
@@ -1774,7 +1774,7 @@ int PolyRing::n_logical_terms(int nvars0, const ring_elem f) const
   for (; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp2);
-      if (EQ == ntuple::lex_compare(nvars0, exp1, exp2)) continue;
+      if (EQ == exponents::lex_compare(nvars0, exp1, exp2)) continue;
       // TODO: use std::swap?
       exponents_t temp = exp1;
       exp1 = exp2;
@@ -1864,7 +1864,7 @@ ring_elem PolyRing::get_part(const M2_arrayint wts,
   for (Nterm *t = f; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp);
-      long wt = ntuple::weight(M_->n_vars(), exp, wts);
+      long wt = exponents::weight(M_->n_vars(), exp, wts);
       if (lobound_given && wt < lobound) continue;
       if (hibound_given && wt > hibound) continue;
       inresult->next = copy_term(t);
@@ -1899,7 +1899,7 @@ ring_elem PolyRing::make_logical_term(const Ring *coeffR,
   Nterm head;
   Nterm *inresult = &head;
   exponents_t exp = newarray_atomic(int, M_->n_vars());
-  ntuple::copy(nvars0, exp0, exp);  // Sets the first part of exp
+  exponents::copy(nvars0, exp0, exp);  // Sets the first part of exp
   for (Nterm *f = a; f != 0; f = f->next)
     {
       Nterm *t = new_term();
@@ -1942,7 +1942,7 @@ ring_elem PolyRing::get_terms(int nvars0,
       t = t->next;
       if (t == 0) break;
       M_->to_expvector(t->monom, exp2);
-      if (EQ == ntuple::lex_compare(nvars0, exp1, exp2)) continue;
+      if (EQ == exponents::lex_compare(nvars0, exp1, exp2)) continue;
       exponents_t temp = exp1;
       exp1 = exp2;
       exp2 = temp;
@@ -1999,7 +1999,7 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR,
   for (; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp2);
-      if (EQ == ntuple::lex_compare(nvars0, exp, exp2)) break;
+      if (EQ == exponents::lex_compare(nvars0, exp, exp2)) break;
     }
 
   ring_elem result = get_logical_coeff(coeffR, t);
@@ -2139,7 +2139,7 @@ void PolyRing::monomial_divisor(const ring_elem a, exponents_t exp) const
   for (const Nterm *t = a; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp1);
-      ntuple::gcd(n_vars(), exp1, exp, exp);
+      exponents::gcd(n_vars(), exp1, exp, exp);
     }
 }
 
@@ -2176,7 +2176,7 @@ ring_elem PolyRing::divide_by_expvector(const_exponents exp, const ring_elem a) 
   for (Nterm *t = a; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp0);
-      ntuple::quotient(n_vars(), exp0, exp, exp0);
+      exponents::quotient(n_vars(), exp0, exp, exp0);
       Nterm *u = new_term();
       u->coeff = t->coeff;
       M_->from_expvector(exp0, u->monom);
@@ -2251,7 +2251,7 @@ ring_elem PolyRing::fromSmallIntegerCoefficients(
   SumCollector *H = make_SumCollector();
   exponents_t exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(
       n_vars()));  // deallocates automatically at end of block
-  ntuple::one(n_vars(), exp);
+  exponents::one(n_vars(), exp);
   for (long i = 0; i < coeffs.size(); i++)
     {
       exp[var] = static_cast<int>(i);

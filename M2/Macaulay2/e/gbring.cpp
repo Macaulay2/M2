@@ -112,7 +112,7 @@ gbvector *GBRingPoly::mult_by_term1(const FreeModule *F,
       t->next = 0;
       t->comp = s->comp + comp;
       t->coeff = K->mult(u, s->coeff);
-      ntuple::mult(monlen, monom, s->monom, t->monom);
+      exponents::mult(monlen, monom, s->monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }

@@ -116,7 +116,7 @@ int binomial_ring::weight(monomial m) const
 int binomial_ring::degree(monomial m) const { return -m[nvars]; }
 unsigned int binomial_ring::mask(const_exponents m) const
 {
-  return ntuple::mask(nvars, m);
+  return exponents::mask(nvars, m);
 }
 
 bool binomial_ring::divides(monomial m, monomial n) const
