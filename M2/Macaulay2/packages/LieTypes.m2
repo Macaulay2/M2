@@ -10,7 +10,6 @@ newPackage(
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
-    DebuggingMode => true,
     Certification => {
 	 -- same article as for package ConformalBlocks
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -170,9 +169,12 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     if type=="E" and not member(m,{6,7,8}) then error "The rank for type E must be 6, 7, or 8.";
     if type=="F" and m!=4 then error "The rank for type F must be 4.";
     if type=="G" and m!=2 then error "The rank for type G must be 2.";
+    Q:=sum entries quadraticFormMatrix(type,m);
+    l:=lcm(denominator\Q);
+    Q=apply(Q,q->lift(q*l,ZZ));
+    x:=getSymbol "x";
     new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,"isSimple"=>true,cache=>new CacheTable from {
-	    x:=getSymbol "x";
-	    "Ring" => ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>Lex])}}
+	    "Ring" => ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])}}
     )
 -*simpleLieAlgebra(IndexedVariable) := (v) -> (
     if #v > 2 or not member(v#0,{symbol sl, symbol so, symbol sp}) or not instance(v#1,ZZ) then error "Input not understood; enter sl_k, sp_k, or so_k, or use the syntax simpleLieAlgebra(\"A\",1) instead";
@@ -739,32 +741,39 @@ weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v)
 
 dim LieAlgebraModule := M -> sum values weightDiagram M
 
-findOneHighestWeight = (W,Q) -> (
-    if #W == 0 then return null;
-    K:=select(keys W, v -> all(v,a->a>=0));
-    if #K == 0 then error "not a valid weight diagram";
-    H:=apply(K, v -> sum(v,Q,times));
-    K#(maxPosition H)
-)
-
 LieAlgebraModuleFromWeights = method(
     TypicalValue => LieAlgebraModule
     )
-LieAlgebraModuleFromWeights(VirtualTally,LieAlgebra) := (W,g) -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    Q:=sum entries quadraticFormMatrix(type,m);
+LieAlgebraModuleFromWeights(RingElement,LieAlgebra) := (c0,g) -> (
+    if ring c0 =!= ring g then error "wrong ring";
+    c:=c0;
     --find and peel off irreducibles
-    decompositionData := while (v:=findOneHighestWeight(W,Q)) =!= null list (v,mu:=W#v) do (
-        WDv:=weightDiagram (g,v); assert(WDv#v === 1);
-       	W=W-applyValues(WDv,i->i*mu);
-    );
-    new LieAlgebraModule from (g,decompositionData) -- TODO update cache
-)
+    decompositionData := while c!=0 list ( (v,mu) := first listForm leadTerm c ) do (
+	if any(v,a->a<0) then error "not a valid weight diagram";
+	c = c - mu*character(g,v);
+    	);
+    new LieAlgebraModule from {
+    	"LieAlgebra" => g,
+    	"DecompositionIntoIrreducibles" => new VirtualTally from decompositionData,
+    	cache => new CacheTable from { character => c0 }
+    	}
+    )
+-- another algorithm would be to apply the same Brauer/Klimyk algorithm as tensor product (with second weight = trivial one)
+-- not clear which is faster
+
+LieAlgebraModuleFromWeights(VirtualTally,LieAlgebra) := (W,g) -> (
+    R := ring g;
+    LieAlgebraModuleFromWeights(sum(pairs W,(w,a) -> a*R_w),g)
+    )
 
 adams = method( TypicalValue => LieAlgebraModule )
-adams (ZZ,LieAlgebraModule) := (k,M) -> LieAlgebraModuleFromWeights(applyKeys(weightDiagram M, w -> k*w, plus),M#"LieAlgebra") -- primitive but works
--- TODO treat separately k=0,1, remove plus
+adams (ZZ,LieAlgebraModule) := (k,M) -> (
+    g:=M#"LieAlgebra";
+    if k==0 then new LieAlgebraModule from (g,{})
+    else if k==1 then M
+    else if k==-1 then starInvolution M
+    else LieAlgebraModuleFromWeights(applyKeys(weightDiagram M, w -> k*w),g) -- primitive but works
+)
 
 symmetricPower(ZZ,LieAlgebraModule) := (n,M) -> (
     if n<0 then error "nonnegative powers only";
@@ -1509,6 +1518,7 @@ doc ///
     Key
        LieAlgebraModuleFromWeights
        (LieAlgebraModuleFromWeights,VirtualTally,LieAlgebra)
+       (LieAlgebraModuleFromWeights,RingElement,LieAlgebra)
     Headline
        finds a Lie algebra module based on its weights
     Usage
@@ -1718,7 +1728,7 @@ doc ///
 TEST ///
     g=simpleLieAlgebra("A",2);
     M=irreducibleLieAlgebraModule({2,1},g);
-    assert(M ** trivialModule g == M)
+    assert(M ** trivialModule g === M)
 ///
 
 doc ///
@@ -1775,7 +1785,7 @@ doc ///
 ///
 
 TEST ///
-    g=simpleLieAlgebra("A",3);
+    g=simpleLieAlgebra("B",3);
     M=irreducibleLieAlgebraModule({1,0,1},g);
     c=character M;
     scan(1..4, n -> assert(character(M^**n) == c^n))
