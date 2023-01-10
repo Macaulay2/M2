@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
-    Version => "0.9999",
-    Date => "25 April 2022",
+    Version => "0.99999",
+    Date => "10 Jan 2023",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -15,7 +15,7 @@ newPackage(
     Keywords => {"Homological Algebra"},
     PackageExports => {"Truncations"},
     AuxiliaryFiles => true,
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
 export {
@@ -136,12 +136,9 @@ Hom(Module, Module) := Module => (M,N) -> (
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
 load "Complexes/ChainComplex.m2"
-load "Complexes/ResolutionObject.m2"
+load "Complexes/FreeResolutions.m2"
 load "Complexes/ChainComplexMap.m2"
 load "Complexes/Tor.m2"
-
--- load "Complexes/Resolutions.m2"
--- load(currentFileDirectory | "Complexes/res.m2")
 
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
