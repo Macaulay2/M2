@@ -563,11 +563,11 @@ setupfun("rawMonoidNumberOfBlocks",rawMonoidNumberOfBlocks);
 -- monoids
 
 export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,degs:array(int),hefts:array(int)):Expr := toExpr(
-     Ccode(RawMonoidOrNull, "IM2_Monoid_make(", mo, ",", names, ",", degreesRing, ",", degs, ",", hefts, ")"));
+    Ccode(RawMonoidOrNull, "rawMonoid(", mo, ",", names, ",", degreesRing, ",", degs, ",", hefts, ")"));
 export rawMonoid(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) == 0 then toExpr(Ccode(RawMonoid,"IM2_Monoid_trivial()"))
-     else if length(s) == 5 then 
+    when e is s:Sequence do
+    if length(s) == 0 then toExpr(Ccode(RawMonoid, "rawTrivialMonoid()")) else
+    if length(s) == 5 then
      when s.0 is mo:RawMonomialOrderingCell do
      if isSequenceOfStrings(s.1) then (
 	  names := getSequenceOfStrings(s.1);
