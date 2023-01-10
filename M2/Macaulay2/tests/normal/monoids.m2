@@ -227,9 +227,14 @@ assert(B.Options.SkewCommutative == {0, 1, 2, 3})
 -- test variable deduplication
 assert(gens(A = monoid[x,y]) == {x,y})
 assert(gens(B = A ** A) == {x_0,y_0,x_1,y_1}) -- TODO: eliminate the warning
-assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(1,0),y_(1,0),x_(0,1),y_(0,1),x_(1,1),y_(1,1)})
+assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(0,1),y_(0,1),x_(1,0),y_(1,0),x_(1,1),y_(1,1)})
 assert(toString gens(A ** B) == "{x, y, x_0, y_0, x_1, y_1}") -- TODO: not yet working without toString
 assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet working without toString
+
+-- test ^** and runLengthEncode
+-- TODO: what should happen for odd powers?
+A = (monoid[x_0..x_2]) ^** 2
+assert(toString runLengthEncode(expression \ gens A) == "{x_(0,0)..x_(1,2)}")
 
 -- test of Weyl algebra variable handling
 A = QQ[t, dt, WeylAlgebra => {t => dt}]
