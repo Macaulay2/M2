@@ -136,6 +136,7 @@ Hom(Module, Module) := Module => (M,N) -> (
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
 load "Complexes/ChainComplex.m2"
+load "Complexes/ResolutionObject.m2"
 load "Complexes/ChainComplexMap.m2"
 load "Complexes/Tor.m2"
 

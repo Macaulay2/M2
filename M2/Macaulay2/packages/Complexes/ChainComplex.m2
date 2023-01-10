@@ -493,7 +493,7 @@ freeResolution = method(Options => {
 	}
     )
 
-load "./ResolutionObject.m2"
+--load "./ResolutionObject.m2"
 
 -- freeResolution Module := Complex => opts -> M -> (
 --     if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";

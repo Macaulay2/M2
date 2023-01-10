@@ -685,7 +685,7 @@ freeResolution(M, LengthLimit => -1)
 remove(M.cache, symbol Resolution)
 peek M.cache
 assert isWellDefined F
-F2 = freeResolution(M, LengthLimit => 2)
+F2 = freeResolution(M, LengthLimit => 2) -- TODO: is it restricting to length limit 2?
 dd^F2
 betti F2
 F3 = freeResolution(M, LengthLimit => 3)
@@ -708,7 +708,7 @@ F2 = freeResolution(M, LengthLimit => 3)
 F3 = freeResolution(M, LengthLimit => 5)
 
 restart
-debug loadPackage("Complexes")
+debug needsPackage("Complexes")
 gbTrace=1
 S = ZZ/101[vars(0..20)]
 I = ideal for i from 1 to numgens S list S_(i-1)^i
@@ -726,7 +726,7 @@ restart
 debug loadPackage("Complexes")
 E = ZZ/101[a..d, SkewCommutative => true]
 I = ideal"ab, acd"
-C = freeResolution(I) -- gives an error
+C = freeResolution(I) -- gives an error, as it should
 C = freeResolution(I, LengthLimit => 5)
 
 I = ideal"ab, acd"
@@ -811,20 +811,20 @@ F = freeResolution(M, Strategy => 2) -- works
 
 -- Over a field
 restart
-debug loadPackage("Complexes")
+debug needsPackage("Complexes")
 gbTrace=1
 kk = ZZ/32003
 M = coker random(kk^3, kk^2)
 F = freeResolution M
 g = augmentationMap F
-source g == F
-target g == complex M
-isWellDefined g
-coker g == 0
-ker g == 0 -- since this is an isomorphism
+assert(source g == F)
+assert(target g == complex M)
+assert isWellDefined g
+assert(coker g == 0)
+assert(ker g == 0) -- since this is an isomorphism
 
-assert(instance(res M, ChainComplex)) -- BUG: this is wrong. It is returning a Matrix!
-
+assert instance(res M, ChainComplex) -- BUG: this is wrong. It is returning a Matrix!
+assert instance(freeResolution M, Complex)
 
 -- Over an inexact field
 restart
@@ -871,6 +871,7 @@ assert isWellDefined F
 
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 F = freeResolution(I, Strategy => 4, LengthLimit => 6) -- nonminimal... NOT PUT BACK INTO Complexes yet...
+F = freeResolution(I, Strategy => Nonminimal, LengthLimit => 6) -- nonminimal... NOT PUT BACK INTO Complexes yet... BUG
 assert isWellDefined F
 
 I = ideal I_*
@@ -1058,6 +1059,19 @@ minimalBetti(M, DegreeLimit => 6, LengthLimit => 3) -- need to truncate it down
 minimalBetti(M, DegreeLimit => 6, LengthLimit => 4) -- need to truncate it down
 minimalBetti(M, DegreeLimit => 6)
 minimalBetti M
+
+restart
+debug needsPackage "Complexes"
+errorDepth=0
+kk = ZZ/32003
+R = kk[a,b,c,d,e]
+gbTrace=2
+
+-- TODO: we want Nonminimal to be able to take inhomogeneous input.
+I = ideal"abc-de2, abd-c2d, ac2-bd, abcde-d2-e2"
+M = comodule I
+freeResolution(M, Strategy => "Nonminimal")
+freeResolution(M, Strategy => 4)
 
 -- XXX Start here: make an example for inhomg resolution computation. DONE
 -- 25 July 2022.  (Done, sort of: Make examples, test interruptability (for Strategy => Homogenization))
