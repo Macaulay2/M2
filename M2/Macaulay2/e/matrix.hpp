@@ -176,7 +176,7 @@ class Matrix : public EngineObject
 
   // degrees
   bool is_homogeneous() const;
-  Matrix *homogenize(int v, M2_arrayint wts) const;
+  Matrix *homogenize(int v, const std::vector<int> &wts) const;
 
   // Simplification of column set
   Matrix *simplify(int n) const;

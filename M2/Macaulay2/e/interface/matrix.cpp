@@ -539,7 +539,7 @@ const Matrix /* or null */ *IM2_Matrix_homogenize(const Matrix *M,
                                                   int var,
                                                   M2_arrayint wts)
 {
-  return M->homogenize(var, wts);
+  return M->homogenize(var, M2_arrayint_to_stdvector<int>(wts));
 }
 
 const Matrix /* or null */ *rawCoefficients(M2_arrayint vars,

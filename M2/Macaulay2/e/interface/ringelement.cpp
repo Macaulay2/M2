@@ -393,7 +393,7 @@ gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts, const RingElement *a)
   try
     {
       int lo, hi;
-      a->degree_weights(wts, lo, hi);
+      a->degree_weights(M2_arrayint_to_stdvector<int>(wts), lo, hi);
       if (error()) return 0;
       gmp_ZZpair p = new gmp_ZZpair_struct;
       p->a = newitem(__mpz_struct);
@@ -418,7 +418,7 @@ const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
 {
   try
     {
-      return a->homogenize(v, deg, wts);
+      return a->homogenize(v, deg, M2_arrayint_to_stdvector<int>(wts));
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -431,7 +431,7 @@ IM2_RingElement_homogenize(const RingElement *a, int v, M2_arrayint wts)
 {
   try
     {
-      return a->homogenize(v, wts);
+      return a->homogenize(v, M2_arrayint_to_stdvector<int>(wts));
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -597,7 +597,8 @@ engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
           return 0;
         }
       long relems_len;
-      ring_elem *relems = P->get_parts(wts, f->get_value(), relems_len);
+      ring_elem *relems = P->get_parts(
+          M2_arrayint_to_stdvector<int>(wts), f->get_value(), relems_len);
       engine_RawRingElementArray result =
           getmemarraytype(engine_RawRingElementArray, relems_len);
       result->len = static_cast<int>(relems_len);
@@ -736,8 +737,12 @@ const RingElement /* or null */ *rawGetPart(const M2_arrayint wts,
           ERROR("expected a polynomial");
           return 0;
         }
-      ring_elem g = P->get_part(
-          wts, f->get_value(), lobound_given, hibound_given, lobound, hibound);
+      ring_elem g = P->get_part(M2_arrayint_to_stdvector<int>(wts),
+                                f->get_value(),
+                                lobound_given,
+                                hibound_given,
+                                lobound,
+                                hibound);
       return RingElement::make_raw(P, g);
   } catch (const exc::engine_error& e)
     {
