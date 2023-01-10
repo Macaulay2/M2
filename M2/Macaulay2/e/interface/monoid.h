@@ -25,10 +25,10 @@ extern "C" {
 /* rawMonoid(): always returns the same object */
 const Monoid *rawTrivialMonoid();
 
-/* rawMonoid(mo, names, deg_ring, degrees, heftvec) */
+/* rawMonoid(mo, deg_ring, names, degrees, heftvec) */
 const Monoid * /* or Null */ rawMonoid(const MonomialOrdering *mo,
-                                       M2_ArrayString names,
                                        const Ring *deg_ring,
+                                       M2_ArrayString names,
                                        M2_arrayint degrees,
                                        M2_arrayint heftvec);
 /* This function will return NULL if the monomial order cannot be handled

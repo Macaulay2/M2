@@ -124,11 +124,7 @@ class MonomialIdeal : public EngineObject
   void text_out(buffer &o) const;
 
   const PolynomialRing *get_ring() const { return R; }
-  const Monoid *degree_monoid() const
-  {
-    const Ring *S = R;
-    return S->degree_monoid();
-  }
+  const Monoid *degree_monoid() const { return R->degree_monoid(); }
 
   // Insertion of new monomials.
   void insert_minimal(Bag *b);

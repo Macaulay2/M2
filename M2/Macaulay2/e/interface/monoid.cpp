@@ -10,6 +10,7 @@
 #include "interface/monomial-ordering.h"
 #include "monoid.hpp"
 #include "ring.hpp"
+#include "util.hpp"
 
 class PolynomialRing;
 
@@ -19,8 +20,8 @@ const Monoid* rawTrivialMonoid()
 }
 
 const Monoid* /* or Null */ rawMonoid(const MonomialOrdering* mo,
-                                      M2_ArrayString names,
                                       const Ring* deg_ring,
+                                      M2_ArrayString names,
                                       M2_arrayint degs,
                                       M2_arrayint hefts)
 {
@@ -30,7 +31,11 @@ const Monoid* /* or Null */ rawMonoid(const MonomialOrdering* mo,
       ERROR("expected polynomial ring");
       return 0;
     }
-  return Monoid::create(mo, names, P, degs, hefts);
+  return Monoid::create(mo,
+                        P,
+                        M2_ArrayString_to_stdvector(names),
+                        M2_arrayint_to_stdvector<int>(degs),
+                        M2_arrayint_to_stdvector<int>(hefts));
 }
 
 unsigned int rawMonoidHash(const Monoid* M) { return M->hash(); }
