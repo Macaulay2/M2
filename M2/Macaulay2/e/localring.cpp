@@ -426,7 +426,7 @@ bool LocalRing::multi_degree(const ring_elem a, monomial d) const
 }
 
 void LocalRing::degree_weights(const ring_elem,
-                               M2_arrayint,
+                               const std::vector<int> &,
                                int &lo,
                                int &hi) const
 {
@@ -438,7 +438,7 @@ void LocalRing::degree_weights(const ring_elem,
 ring_elem LocalRing::homogenize(const ring_elem a,
                                 int v,
                                 int deg,
-                                M2_arrayint wts) const
+                                const std::vector<int> &wts) const
 {
   int d1, d2, lo1, lo2;
   ring_elem top, bottom;
@@ -459,7 +459,9 @@ ring_elem LocalRing::homogenize(const ring_elem a,
   return ring_elem(result);
 }
 
-ring_elem LocalRing::homogenize(const ring_elem a, int v, M2_arrayint wts) const
+ring_elem LocalRing::homogenize(const ring_elem a,
+                                int v,
+                                const std::vector<int> &wts) const
 {
   const local_elem *f = a.get_local_elem();
   ring_elem top = mRing->homogenize(f->numer, v, wts);

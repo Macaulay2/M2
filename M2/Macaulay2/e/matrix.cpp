@@ -351,7 +351,7 @@ bool Matrix::is_homogeneous() const
   return 1;
 }
 
-Matrix *Matrix::homogenize(int v, M2_arrayint wts) const
+Matrix *Matrix::homogenize(int v, const std::vector<int> &wts) const
 {
   MatrixConstructor mat(rows(), n_cols());
   for (int i = 0; i < n_cols(); i++)

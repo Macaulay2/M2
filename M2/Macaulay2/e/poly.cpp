@@ -573,7 +573,7 @@ bool PolyRing::multi_degree(const ring_elem f, monomial degf) const
 }
 
 void PolyRing::degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const
 {
@@ -598,7 +598,7 @@ void PolyRing::degree_weights(const ring_elem f,
 ring_elem PolyRing::homogenize(const ring_elem f,
                                int v,
                                int d,
-                               M2_arrayint wts) const
+                               const std::vector<int> &wts) const
 {
   // assert(wts[v] != 0);
   // If an error occurs, then return 0, and set gError.
@@ -610,7 +610,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
     {
       M_->to_expvector(a.monom, exp);
       auto e = exponents::weight(n_vars(), exp, wts);
-      if (((d - e) % wts->array[v]) != 0)
+      if (((d - e) % wts[v]) != 0)
         {
           // We cannot homogenize, so clean up and exit.
           result->next = NULL;
@@ -618,7 +618,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
           result = NULL;
           return result;
         }
-      exp[v] += (d - e) / wts->array[v];
+      exp[v] += (d - e) / wts[v];
       if (is_skew_ && skew_.is_skew_var(v) && exp[v] > 1) continue;
       result->next = new_term();
       result = result->next;
@@ -632,14 +632,16 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   return head.next;
 }
 
-ring_elem PolyRing::homogenize(const ring_elem f, int v, M2_arrayint wts) const
+ring_elem PolyRing::homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const
 {
   Nterm *result = NULL;
   if (POLY(f) == NULL) return result;
   int lo, hi;
   degree_weights(f, wts, lo, hi);
-  assert(wts->array[v] != 0);
-  int d = (wts->array[v] > 0 ? hi : lo);
+  assert(wts[v] != 0);
+  int d = (wts[v] > 0 ? hi : lo);
   return homogenize(f, v, d, wts);
 }
 
@@ -1828,7 +1830,7 @@ struct part_elem : public our_new_delete
   Nterm *inresult;
 };
 
-ring_elem *PolyRing::get_parts(const M2_arrayint wts,
+ring_elem *PolyRing::get_parts(const std::vector<int> &wts,
                                const ring_elem f,
                                long &result_len) const
 {
@@ -1842,7 +1844,7 @@ ring_elem *PolyRing::get_parts(const M2_arrayint wts,
   return NULL;
 }
 
-ring_elem PolyRing::get_part(const M2_arrayint wts,
+ring_elem PolyRing::get_part(const std::vector<int> &wts,
                              const ring_elem f,
                              bool lobound_given,
                              bool hibound_given,
