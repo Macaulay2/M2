@@ -86,8 +86,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
 
 M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
 {
-  const Ring *R = F->get_ring();
-  const Monoid *D = R->degree_monoid();
+  const Monoid *D = F->degree_monoid();
   M2_arrayint result = M2_makearrayint(F->rank() * D->n_vars());
   int next = 0;
   exponents_t exp = newarray_atomic(int, D->n_vars());
