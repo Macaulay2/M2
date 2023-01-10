@@ -562,13 +562,14 @@ setupfun("rawMonoidNumberOfBlocks",rawMonoidNumberOfBlocks);
 -----------------------------------------------------------------------------
 -- monoids
 
-export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,degs:array(int),hefts:array(int)):Expr := toExpr(
-    Ccode(RawMonoidOrNull, "rawMonoid(", mo, ",", names, ",", degreesRing, ",", degs, ",", hefts, ")"));
+export rawMonoid(mo:RawMonomialOrdering,degreesRing:RawRing,names:array(string),degs:array(int),hefts:array(int)):Expr := toExpr(
+    Ccode(RawMonoidOrNull, "rawMonoid(", mo, ",", degreesRing, ",", names, ",", degs, ",", hefts, ")"));
 export rawMonoid(e:Expr):Expr := (
     when e is s:Sequence do
     if length(s) == 0 then toExpr(Ccode(RawMonoid, "rawTrivialMonoid()")) else
     if length(s) == 5 then
      when s.0 is mo:RawMonomialOrderingCell do
+     -- TODO: fix the order of the arguments in the top level as well
      if isSequenceOfStrings(s.1) then (
 	  names := getSequenceOfStrings(s.1);
 	  when s.2 is degreesRing:RawRingCell do
@@ -585,7 +586,7 @@ export rawMonoid(e:Expr):Expr := (
 		    -- omit this test so ZZ[] will work:
 		    -- if length(hefts) > 0 then return buildErrorPacket("hefts but no variables");
 		    );
-	       rawMonoid(mo.p,names,degreesRing.p,degs,hefts))
+	       rawMonoid(mo.p,degreesRing.p,names,degs,hefts))
 	  else WrongArg(5,"a sequence of small integers (hefts)")
 	  else WrongArg(4,"a sequence of small integers (flattened degrees)")
 	  else WrongArg(3,"the degrees ring"))
