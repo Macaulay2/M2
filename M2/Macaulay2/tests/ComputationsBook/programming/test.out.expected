@@ -457,11 +457,7 @@ i88 : code(symbol **, RingMap, Module)
 
 o88 = -- code for method: RingMap ** Module
       /home/dan/src/M2/1.2/Macaulay2/m2/ringmap.m2:384:38-388:30: --source code:
-      RingMap ** Module := Module => (f,M) -> (
-           R := source f;
-           S := target f;
-           if R =!= ring M then error "expected module over source ring";
-           cokernel f presentation M);
+      RingMap ** Module := Module => (f, M) -> tensor(f, M)
 
 i89 : code(ideal, QuotientRing)
 
