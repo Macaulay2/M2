@@ -13,16 +13,16 @@
 
 class PolynomialRing;
 
-Monoid* IM2_Monoid_trivial()
+const Monoid* rawTrivialMonoid()
 {
   return Monoid::get_trivial_monoid();  // Set up in IM2_initialize()
 }
 
-engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering* mo,
-                                       M2_ArrayString names,
-                                       const Ring* deg_ring,
-                                       M2_arrayint degs,
-                                       M2_arrayint hefts)
+const Monoid* /* or Null */ rawMonoid(const MonomialOrdering* mo,
+                                      M2_ArrayString names,
+                                      const Ring* deg_ring,
+                                      M2_arrayint degs,
+                                      M2_arrayint hefts)
 {
   const PolynomialRing* P = deg_ring->cast_to_PolynomialRing();
   if (P == 0)

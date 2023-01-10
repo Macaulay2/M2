@@ -5,9 +5,11 @@
 
 // TODO: fix this
 #  if defined(__cplusplus)
+class Ring;
 class Monoid;
 class MonomialOrdering;
 #  else
+typedef struct Ring Ring;
 typedef struct Monoid Monoid;
 typedef struct MonomialOrdering MonomialOrdering;
 #  endif
@@ -20,16 +22,15 @@ typedef struct MonomialOrdering MonomialOrdering;
 extern "C" {
 #  endif
 
-Monoid *IM2_Monoid_trivial();
-/* drg: connected rawMonoid*/
-/* Always returns the same object */
+/* rawMonoid(): always returns the same object */
+const Monoid *rawTrivialMonoid();
 
-engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering *mo,
+/* rawMonoid(mo, names, deg_ring, degrees, heftvec) */
+const Monoid * /* or Null */ rawMonoid(const MonomialOrdering *mo,
                                        M2_ArrayString names,
-                                       const Ring *DegreeRing,
-                                       M2_arrayint degs,
-                                       M2_arrayint hefts);
-/* drg: connected rawMonoid*/
+                                       const Ring *deg_ring,
+                                       M2_arrayint degrees,
+                                       M2_arrayint heftvec);
 /* This function will return NULL if the monomial order cannot be handled
    currently, if the first components for each degree are not all
    positive, or under various other "internal" error conditions */
