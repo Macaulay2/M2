@@ -110,7 +110,7 @@ polyoRingDefault List := opts -> Q ->  (
 --
 --------------------------------------------------------------------------------------------------
 
--- Define two functions to compute p,q,r and s from the list Q enconding the collection of cells.
+-- Define two functions to compute p,q,r and s from the list Q encoding the collection of cells.
 -- The function Mv(Q) computes the list {p,r}:
 
 Mv=(Q)->(					  
