@@ -7,12 +7,12 @@
    the License, or any later version.
 *-
 
-if version#"VERSION" < "1.20" then error "this package requires Macaulay2 version 1.20 or newer";
+if version#"VERSION" < "1.21" then error "this package requires Macaulay2 version 1.21 or newer";
 
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.7", 
-    Date => "January 8, 2023",
+    Date => "January 11, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -22,14 +22,15 @@ newPackage(
     Reload => false
 )
 
-if MultiprojectiveVarieties.Options.Version < "2.7" then (
-    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.7 or newer);"<<endl;
+requiredMultiprojectiveVarietiesVersion := "2.7";
+if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
+    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of MultiprojectiveVarieties in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///run "curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2";///<<endl<<endl<<"***"<<endl;
-    error "required MultiprojectiveVarieties package version 2.7 or newer";
+    error("required MultiprojectiveVarieties package version "|requiredMultiprojectiveVarietiesVersion|" or newer");
 );
 
 export{

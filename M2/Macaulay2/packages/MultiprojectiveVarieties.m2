@@ -7,12 +7,12 @@
    the License, or any later version.
 *-
 
-if version#"VERSION" < "1.20" then error "this package requires Macaulay2 version 1.20 or newer";
+if version#"VERSION" < "1.21" then error "this package requires Macaulay2 version 1.21 or newer";
 
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7", 
-    Date => "January 5, 2023",
+    Date => "January 11, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -36,17 +36,16 @@ newPackage(
 	 }
     )
 
-if Cremona.Options.Version < "5.2" then (
-    <<endl<<"Your version of the Cremona package is outdated (required version 5.2 or newer);"<<endl;
+requiredCremonaVersion := "5.2.1";
+if Cremona.Options.Version < requiredCremonaVersion then (
+    <<endl<<"Your version of the Cremona package is outdated (required version "<<requiredCremonaVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of Cremona in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/master/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
-    error "required Cremona package version 5.2 or newer";
+    error("required Cremona package version "|requiredCremonaVersion|" or newer");
 );
-
-if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
        "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus", "sumUp",
@@ -54,7 +53,8 @@ export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections",
        "∏","⋂","⋃","PP",
        "ambientVariety",
        "GrassmannianVariety", "GG", "schubertCycle", "cycleClass",
-       "segreEmbedding"}
+       "segreEmbedding",
+       "WeightedProjectiveVariety","WeightedRationalMap"}
 
 debug Cremona;
 debug SparseResultants;
@@ -181,6 +181,26 @@ higherSecantVarietyToRationalNormalScroll (Array,ZZ,Ring) := (d,k,K) -> (
     X#(symbol matrix) = M;
     X
 );
+ringWeightedProjectiveSpace = memoize ((d,K) -> newRing(Grass(0,#d-1,K),Degrees=>toList(d)));
+setParametrizationOfWeightedProjectiveSpace = P -> (
+    if not(degreeLength ring P == 1 and codim P == 0) then error "expected a weighted-projective space";
+    if P.cache#?"rationalParametrization" then return P;
+    a := flatten degrees ring P;
+    if min a > 1 then return P; -- not implemented yet
+    i0 := position(a,i->i == 1);
+    K := coefficientRing P;
+    n := dim P; x := gens ring P;
+    P' := PP_K^n; y := gens ring P';
+    f := rationalMap(ring P,ring P',apply(n+1,i -> x_i * (x_i0)^((max a) - a_i)));
+    g := rationalMap(ring P',ring P,apply(n+1,i -> y_i * (y_i0)^(a_i-1)));
+    f = multirationalMap f; g = multirationalMap g;
+    f#"isBirational" = true; g#"isBirational" = true;
+    f#"isDominant" = true; g#"isDominant" = true;
+    f#"inverse" = g; g#"inverse" = f;
+    if g * f != 1 then error "something went wrong :(";
+    P.cache#"rationalParametrization" = g;
+    P
+);
 PP = new ScriptedFunctor from {
     symbol ring => null,
     argument => (
@@ -213,7 +233,7 @@ PP = new ScriptedFunctor from {
                     d -> (
                         if instance(d,Array) then higherSecantVarietyToRationalNormalScroll(d,1,K)
                         else if instance(d,Sequence) and #d==2 and instance(d_0,Array) then higherSecantVarietyToRationalNormalScroll(d_0,d_1,K)
-                        else if instance(d,Sequence) and all(d,i->instance(i,ZZ) and i>=1) then projectiveVariety(newRing(Grass(0,#d-1,K),Degrees=>toList(d)),MinimalGenerators=>false,Saturate=>false)
+                        else if instance(d,Sequence) and all(d,i->instance(i,ZZ) and i>=1) then setParametrizationOfWeightedProjectiveSpace projectiveVariety(ringWeightedProjectiveSpace(d,K),MinimalGenerators=>false,Saturate=>false)
                         else error errStr
                     )
                 )
@@ -2275,7 +2295,20 @@ EXAMPLE {
 "class X",
 "Y = X ** X;",
 "class Y"},
-SeeAlso => {MultiprojectiveVariety,(ambient,MultiprojectiveVariety),(shape,MultiprojectiveVariety)}}
+SeeAlso => {MultiprojectiveVariety,WeightedProjectiveVariety,(ambient,MultiprojectiveVariety),(shape,MultiprojectiveVariety)}}
+
+document {Key => {WeightedProjectiveVariety}, 
+Headline => "the class of all weighted projective varieties", 
+PARA {"Weighted projective varieties can be constructed using the function ",TO projectiveVariety,", just like multi- and embedded projective varieties."},
+EXAMPLE {
+"R = QQ[u,v,w,x,y,z,Degrees=>{{2},{1},{3},{1},{7},{5}}]/ideal((3/2)*u+6*v^2+v*x+4*x^2,(3/2)*u*v+(4/5)*v^3+w+(3/2)*u*x+(3/7)*v^2*x+3*v*x^2+(5/6)*x^3);",
+"projectiveVariety R",
+"describe oo"},
+PARA {"Here is a shortcut to construct weighted projective spaces:"},
+EXAMPLE {
+"K = ZZ/65521;",
+"PP_K(2,1,3,1,7,5)"},
+SeeAlso => {WeightedRationalMap,MultiprojectiveVariety,EmbeddedProjectiveVariety}}
 
 document {Key => {Saturate, [projectiveVariety,Saturate]},
 Headline => "whether to compute the multi-saturation of the ideal (intended for internal use only)",
@@ -2665,6 +2698,22 @@ Headline => "the class of all multi-rational maps",
 PARA {"A ",EM"multi-rational map"," is a rational map between ",TO2{MultiprojectiveVariety,"multi-projective varieties"},", ",TEX///$$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} .$$///,"Thus, it can be represented by an ",TO2{List,"ordered list"}," of ",TO2{RationalMap,"rational maps"},TEX///$$\Phi_i = (\Phi:X\dashrightarrow Y)\circ(pr_i:Y\to Y_i\subseteq\mathbb{P}^{s_i}) ,$$///,"for ",TEX///$i=1,\ldots,m$///,". The maps ",TEX///$\Phi_i:X\dashrightarrow Y_i\subseteq\mathbb{P}^{s_i}$///,", since the target ",TEX///$Y_i$///," is a standard projective variety, are implemented with the class ",TO RationalMap," (more properly, when ",TEX///$n>1$///," the class of such maps is called ",TT "MultihomogeneousRationalMap","). Recall that the main constructor for the class ",TO RationalMap," (as well as for the class ", TT"MultihomogeneousRationalMap",") is the method ",TO rationalMap,"."},
 PARA {"The constructor for the class of multi-rational maps is ",TO multirationalMap,", which can often be abbreviated to ",TO2{(rationalMap,List,MultiprojectiveVariety),"rationalMap"}," (see also ",TO "shortcuts","). It takes as input the list of maps ",TEX///$\{\Phi_1:X\dashrightarrow Y_1,\ldots,\Phi_m:X\dashrightarrow Y_m\}$///,", together with the variety ",TEX///$Y$///,", and returns the map ",TEX///$\Phi:X\dashrightarrow Y$///,"."},
 Subnodes => {TO multirationalMap,TO (rationalMap,List,MultiprojectiveVariety)}}
+
+document {Key => {WeightedRationalMap}, 
+Headline => "the class of all weighted-rational maps", 
+PARA {"A ",EM"weighted-rational map"," is a rational map between ",TO2{WeightedProjectiveVariety,"weighted-projective varieties"},". It can be defined using the functions ",TO rationalMap," and ",TO multirationalMap,", just like (multi-)rational maps."},
+EXAMPLE {
+"K = ZZ/65521;",
+"X = PP_K(1,1,3);", 
+"Y = PP_K(4,5);",
+"f = rationalMap(ring X,ring Y,{random(4,ring X),random(5,ring X)})",
+"F = multirationalMap f;"},
+PARA {"Note that ",TT "rationalMap(RingMap)"," and ",TT "rationalMap(Matrix)"," return a raw type of rational map (just like it happens with the multi-rational maps). You can always apply multirationalMap to the output and convert to the raw type using ",TO toRationalMap,". Alternatively, you can proceed as follows:"}, 
+EXAMPLE {
+"M = matrix f",
+"rationalMap {M}", 
+"rationalMap {f}"},
+SeeAlso => {WeightedProjectiveVariety,MultirationalMap}}
 
 document { 
 Key => {multirationalMap, (multirationalMap,List,MultiprojectiveVariety), (multirationalMap,List)}, 
@@ -3807,17 +3856,22 @@ SeeAlso => {(image,MultirationalMap),(forceImage,RationalMap,Ideal)}}
 
 undocumented {
 (expression,MultiprojectiveVariety),
+(expression,WeightedProjectiveVariety),
 (net,MultiprojectiveVariety),
 (texMath,MultiprojectiveVariety),
 (toString,MultiprojectiveVariety),
 (point,MultiprojectiveVariety,Boolean), -- Intended for internal use only
 (point,MultiprojectiveVariety,VisibleList),
+(point,WeightedProjectiveVariety),
+(point,WeightedProjectiveVariety,VisibleList),
 (euler,MultiprojectiveVariety,Option),
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
 (symbol _,MultiprojectiveVariety,MultiprojectiveVariety), -- this returns a new type which is too rudimentary yet
 (projectiveVariety,List,MultiprojectiveVariety),(projectiveVariety,ZZ,MultiprojectiveVariety),
 (tangentialChowForm,EmbeddedProjectiveVariety,ZZ,ZZ),
+(degree,WeightedProjectiveVariety),
+(segre,WeightedProjectiveVariety),
 (expression,MultirationalMap),
 (net,MultirationalMap),
 (texMath,MultirationalMap),
@@ -4258,6 +4312,17 @@ P := PP_K(1,1,2,3)
 l = {10,-4,3,7};
 p = point_P l;
 assert(p == point_(random(3,p)) l)
+P = PP_(ZZ/65521)(2,3,1,4,5);
+f = inverse parametrize P;
+assert(source f === P and degrees ring P === {{2},{3},{1},{4},{5}}) 
+P' = target f;
+g = inverse f;
+assert(source g === P' and target g === P and degrees ring P' === {{1},{1},{1},{1},{1}})
+assert last(q := point P, q == f^* f q and q == g f q)
+assert last(q' := point P', q' == g^* g q' and q' == f g q')
+assert(g * f == 1)
+h = f * g;
+assert last(q0 := point P, q0 == h q0)
 ///
 
 TEST /// -- quadric fibrations
