@@ -9,8 +9,8 @@
 
 newPackage(
        "Cremona",
-	Version => "5.2", 
-        Date => "September 9, 2022",
+	Version => "5.2.1", 
+        Date => "January 11, 2023",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -1003,7 +1003,7 @@ compose (RingMap,RingMap) := (f,g) -> (
     if L == 0 then error "rational maps may not be composable: got the empty map by composing chosen representatives";
     D := try gcd flatten entries compress L else 1_(target f);
     local Q;
-    M := if D != 0 and D != 1 then apply(flatten entries L,l -> (Q = quotientRemainder(l,D); assert(last Q == 0); first Q)) else flatten entries L;
+    M := if D != 0 and D != 1 and not(degreeLength source g == 1 and max flatten degrees source g >= 2) then apply(flatten entries L,l -> (Q = quotientRemainder(l,D); assert(last Q == 0); first Q)) else flatten entries L;
     return map(target f,source g,M);
 );
 
