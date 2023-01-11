@@ -256,7 +256,7 @@ ensureQuotientModule(Module, String) := (M,errorString) -> (
 
 -- This routine computes the dimension of a D-module
 Ddim = method()
-Ddim Ideal := I -> (
+Ddim Ideal := (cacheValue Ddim) (I -> (
      -- preprocessing
      W := ring I;
      -- error checking
@@ -266,10 +266,10 @@ Ddim Ideal := I -> (
      gbI := gb I;
      if not W.?CommAlgebra then createCommAlgebra W;
      ltI := W.WAtoCA leadTerm gens gbI;
-     dim ideal ltI
+     dim ideal ltI)
      )
 
-Ddim Module := M -> (
+Ddim Module := (cacheValue Ddim) (M -> (
      -- preprocessing
      W := ring M;
      m := presentation M;
@@ -280,7 +280,7 @@ Ddim Module := M -> (
      gbm := gb m;
      if not W.?CommAlgebra then createCommAlgebra(W);
      ltm := W.WAtoCA leadTerm gens gbm;
-     dim cokernel ltm
+     dim cokernel ltm)
      )
 
 -- install a new hook
@@ -298,7 +298,7 @@ isHolonomic Ideal := I -> (
      createDpairs W;
      if W.dpairVars#2 =!= {}
      then error "expected a Weyl algebra without central parameters";
-     Ddim I == #(W.dpairVars#0)
+     Ddim I == #(W.dpairVars#0) or Ddim I == -1
      )
 
 isHolonomic Module := M -> (
@@ -310,7 +310,7 @@ isHolonomic Module := M -> (
      createDpairs W;
      if W.dpairVars#2 =!= {}
      then error "expected a Weyl algebra without central parameters";
-     Ddim M == #(W.dpairVars#0)
+     Ddim M == #(W.dpairVars#0) or Ddim M == -1
      )
 
 -- This routine computes the rank of a D-module
