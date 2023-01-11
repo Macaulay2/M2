@@ -44,6 +44,7 @@ export{
    "detectCongruence",
    "ambientFivefold",
    "surface",
+   "curve",
    "NumNodes",
    "InputCheck",
    "parameterCount",
@@ -3372,12 +3373,11 @@ Headline => "make a Hodge-special surface",
 Usage => "surface(C,S)", 
 Inputs => {"C" => MultiprojectiveVariety => {"an irreducible curve"}, "S" => MultiprojectiveVariety => {"a smooth surface ", TEX///$S$///, " containing the curve ", TEX///$C$///}}, 
 Outputs => {{"the Hodge special surface corresponding to the pair ", TEX///$(C,S)$///}}, 
-PARA{"The curve ",TEX///$C$///," can be recovered using the internal function ",TT "curve","."},
+PARA{"The curve ",TEX///$C$///," can be recovered using the function ",TT "curve","."},
 EXAMPLE lines ///K = ZZ/65521;
 C = random PP_K^(1,3); -- random twisted cubic in P^3
-x = gens ring PP_K(1,1,1,4);
-f = (rationalMap {{x_0^4,x_0^3*x_1,x_0^3*x_2,x_3}}) << (ambient C); -- birational map P(1,1,1,4)-->P^3
-C = f^* C;
+j = parametrize PP_K(1,1,1,4); 
+C = (rationalMap(ambient C,source j) * j) C;
 describe C
 S = random(8,C);
 describe S
@@ -3385,10 +3385,11 @@ S = surface(C,S);
 discriminant S
 parameterCount(S,Verbose=>true)
 f := map(S,1,0)
-exportFrom_MultiprojectiveVarieties {"QuadricFibration"};
 f = quadricFibration f
 discriminant f///}
 typicalValues#surface = typValSurf;
+
+undocumented {"curve"}
 
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, EmbeddedProjectiveVariety), (unirationalParametrization, SpecialGushelMukaiFourfold), (unirationalParametrization, HodgeSpecialFourfold)}, 
 Headline => "unirational parametrization", 

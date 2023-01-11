@@ -54,6 +54,7 @@ export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections",
        "ambientVariety",
        "GrassmannianVariety", "GG", "schubertCycle", "cycleClass",
        "segreEmbedding",
+       "quadricFibration",
        "WeightedProjectiveVariety","WeightedRationalMap"}
 
 debug Cremona;
@@ -3893,7 +3894,8 @@ undocumented {
 (image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
 (image,MultirationalMap,String),
 (matrix,MultirationalMap),
-(random,MultirationalMap)
+(random,MultirationalMap),
+quadricFibration, (quadricFibration,MultirationalMap) -- to be documented
 }
 
 ---------------
