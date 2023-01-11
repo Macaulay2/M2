@@ -327,7 +327,8 @@ doc ///
     :List
       a basis of the polynomial solutions of $I$
       (or of $D$-homomorphisms between $M$ and the polynomial ring)
-      using $w$ for Groebner deformations
+      using $w$ for Groebner deformations. 
+      If no $w$ is given, then it is taken to be the all ones vector.
   Description
     Text
       The polynomial solutions of a holonomic system form a

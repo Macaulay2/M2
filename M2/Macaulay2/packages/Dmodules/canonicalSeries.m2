@@ -4,6 +4,9 @@
 --indicialIdeal
 --cssExpts
 --cssExptsMult
+-- 
+--CB 15 Dec 2022: What is our output command for solutions? Did we finish printing log solutions? 
+
 
 
 --Input: J an ideal in a Weyl algebra
