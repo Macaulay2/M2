@@ -52,6 +52,11 @@ const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M);
    NULL is returned if the ring is not appropriate for
    computing Hilbert series, or the computation was interrupted. */
 
+const Matrix *rawKernelOfGB(const Matrix *M);
+/* Assuming that the columns of M form a GB, this routine computes
+   a Groebner basis of the kernel of these elements, using an
+   appropriate Schreyer order on the source of M. */
+
 ///////////////////////////////////////////////////////////////////////////////
 /////// The following will be removed once the new code is functional  ///////
 ///////////////////////////////////////////////////////////////////////////////

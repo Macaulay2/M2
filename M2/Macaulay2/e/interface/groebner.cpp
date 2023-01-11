@@ -6,6 +6,7 @@
 #include <limits>
 #include <sstream>
 
+#include "Eschreyer.hpp"
 #include "hilb.hpp"
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
@@ -68,6 +69,18 @@ const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M)
       ERROR(e.what());
       return nullptr;
   }
+}
+
+const Matrix *rawKernelOfGB(const Matrix *M)
+/* Assuming that the columns of G form a GB, this routine computes
+   a Groebner basis of the kernel of these elements, using an
+   appropriate Schreyer order on the source of G. */
+{
+  GBMatrix *N = new GBMatrix(M);
+  GBKernelComputation G(N);
+  G.calc();
+  GBMatrix *syz = G.get_syzygies();
+  return syz->to_matrix();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

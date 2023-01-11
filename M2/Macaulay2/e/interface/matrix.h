@@ -418,18 +418,6 @@ const Matrix /* or null */ *rawBasis(
 
 int IM2_Matrix_dimension(const Matrix *M); /* TODO */
 
-const RingElement /* or null */ *IM2_Matrix_Hilbert(
-    const Matrix *M); /* drg: connected rawHilbert*/
-/* This routine computes the numerator of the Hilbert series
-   for coker leadterms(M), using the degrees of the rows of M.
-   NULL is returned if the ring is not appropriate for
-   computing Hilbert series, or the computation was interrupted. */
-
-const Matrix *IM2_kernel_of_GB(const Matrix *G); /* connected rawKernelOfGB */
-/* Assuming that the columns of G form a GB, this computes
-   a Groebner basis of the kernel of these elements, using an appropriate
-   Schreyer order on the source of G. */
-
 #  if defined(__cplusplus)
 }
 #  endif
