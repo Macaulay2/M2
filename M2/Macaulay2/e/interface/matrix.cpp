@@ -616,20 +616,6 @@ engine_RawMatrixAndInt IM2_Matrix_divide_by_var(const Matrix *M,
 }
 
 const Matrix *rawMatrixCompress(const Matrix *M) { return M->compress(); }
-#include "Eschreyer.hpp"
-
-const Matrix *IM2_kernel_of_GB(const Matrix *m)
-/* Assuming that the columns of G form a GB, this computes
-   a Groebner basis of the kernel of these elements, using an appropriate
-   Schreyer order on the
-   source of G. */
-{
-  GBMatrix *n = new GBMatrix(m);
-  GBKernelComputation G(n);
-  G.calc();
-  GBMatrix *syz = G.get_syzygies();
-  return syz->to_matrix();
-}
 
 const Matrix *rawRemoveMonomialFactors(const Matrix *m,
                                        M2_bool make_squarefree_only)
