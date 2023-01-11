@@ -85,7 +85,7 @@ genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
 --Input: torus-fixed left D-ideal J
 --Output: the distraction of J, viewed in ring S
 distraction = method(); 
-distraction(Ideal,Ring) := (Ideal) => (J,S) ->(
+distraction(Ideal, Ring) := Ideal => (J,S) ->(
     n := numgens ring J//2;
     if n != numgens S then error "mismatched numbers of variables";
     ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
@@ -150,20 +150,26 @@ makeRationalMonomial = (R, p) -> (
     num := makeMonomial(R, A);
     if #B == 0 then num else
     num / makeMonomial(R, B))
-makeLogTerm = f -> (expression log) makeRationalMonomial(ring f,
-    first entries transpose lift(last coefficients(f, Monomials => vars ring f), ZZ))
-makeLogMonomial = g -> Product(makeLogTerm \ select(first \ toList factor g, f -> degree f == {1}))
+
+makeLogTerm = f -> (
+    W := ring f;
+    thetas := matrix {product \ pack(2, mingle drop(W.dpairVars, -1))};
+    (expression log) makeRationalMonomial(first W.dpairVars,
+    first entries transpose lift(
+	last coefficients(f, Monomials => thetas), ZZ)))
+makeLogMonomial = g -> Product(makeLogTerm \ select(first \ toList factor g, f -> {0} < degree f))
 
 factorial' = alpha -> (first exponents alpha) / (k -> k!) // product
 
 -- Perform a lexographic breadth first search on monomials in k[x_1..x_n] \ S_< (I)
 -- and compute c#(alpha, beta) as in Algorithm 2.3.14 of SST (pp. 74)
---Input:  an Ideal, zero-dimensional Frobenius m-primary ideal
+--Input:  an Ideal, zero-dimensional Frobenius m-primary ideal, and the Weyl algebra
 --Output: a HashTable, { t^beta => f_beta } 
 solvePrimaryFrobeniusIdeal = method();
-solvePrimaryFrobeniusIdeal Ideal := List => I -> (
+solvePrimaryFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
     R := ring I;
     n := # gens R;
+    f := map(W, R, product \ pack(2, mingle drop(W.dpairVars, -1)));
     if dim I > 0 then error "expected zero-dimensional ideal";
     -- standard monomials S_<(I)
     S := new MutableHashTable from apply( first entries basis (R^1/I), elt -> (elt, elt) );
@@ -194,25 +200,32 @@ solvePrimaryFrobeniusIdeal Ideal := List => I -> (
 	-- TODO: R_j * lambda is easier to reduce, so add that instead?
 	for j to n - 1 do if not M#?(R_j * alpha) then N#(R_j * alpha) = (j, alpha);
 	);
-    makeLogMonomial \ sort values S
+    makeLogMonomial \ f \ sort values S
     -- hashTable apply(pairs S, (k, v) -> (k, factor v))
     )
 
 solveFrobeniusIdeal = method();
-solveFrobeniusIdeal Ideal := List => I -> (
+solveFrobeniusIdeal Ideal        := List =>  I     -> solveFrobeniusIdeal(I, makeWeylAlgebra ring I)
+solveFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
     R := ring I;
     n := # gens R;
+    createDpairs W;
     flatten apply(primaryDecomposition I, C -> (
 	if dim C > 0 then error "expected zero-dimensional components";
 	(p, m) := (solveMax C, degree C); -- the point and its multiplicity
-	--mon := makeRationalMonomial(R, p);
-	mon := makeMonomial(R, select(pairs p, (i, e) -> e != 0));
+	--mon := makeRationalMonomial(first W.dpairVars, p);
+	mon := makeMonomial(first W.dpairVars, select(pairs p, (i, e) -> e != 0));
 	if m == 1 then return mon;
 	psi := map(R, R, apply(n, i -> R_i + p_i));
-	apply(solvePrimaryFrobeniusIdeal psi C, ell -> mon * ell)
+	apply(solvePrimaryFrobeniusIdeal(psi C, W), ell -> mon * ell)
 	))
     )
 
+cssLeadTerm = method()
+cssLeadTerm(Ideal, List) := List => (I, w) -> (
+    createThetaRing(W := ring I);
+    J := inw(I, flatten{-w|w});
+    solveFrobeniusIdeal(distraction(J, W.ThetaRing), W))
 
 --------------------
 -- Tests section

@@ -169,10 +169,10 @@ doc ///
    Usage
      indicialIdeal(I,w)
    Inputs
-     I:
-       Ideal in a WeylAlgebra that is torus-fixed
-     w:
-       List in the numbers of variables, to yield a weight vector (-w,w) in the Weyl algebra
+     I:Ideal
+       in a WeylAlgebra that is torus-fixed
+     w:List
+       (generic) weights for $I$, of length half the number of variables in the Weyl algebra
    Outputs
      :Ideal
        that results from intersecting with the thetaRing of D with the result of extending
@@ -208,10 +208,10 @@ doc ///
    Usage
      cssExpts(I,w)
    Inputs
-     I:
-       holonomic ideal in a Weyl algebra D
-     w:
-       List of (generic) weights for I, of length half the number of variables in D
+     I:Ideal
+       (regular) holonomic ideal in the Weyl algebra
+     w:List
+       (generic) weights for $I$, of length half the number of variables in the Weyl algebra
    Outputs
      :List
        of exponents of the exponents of the canonical series solutions of I
@@ -241,10 +241,10 @@ doc ///
    Usage
      cssExptsMult(I,w)
    Inputs
-     I:
-       holonomic ideal in a Weyl algebra D
-     w:
-       List of (generic) weights for I, of length half the number of variables in D
+     I:Ideal
+       (regular) holonomic ideal in the Weyl algebra
+     w:List
+       (generic) weights for $I$, of length half the number of variables in the Weyl algebra
    Outputs
      :List
        of exponents of the starting exponents of the canonical series solutions of I
@@ -299,21 +299,21 @@ doc ///
        isTorusFixed I
 ///
 
-
 doc ///
    Key
      solveFrobeniusIdeal
-     (solveFrobeniusIdeal, Ideal)
+     (solveFrobeniusIdeal, Ideal, Ring)
    Headline
      solving Frobenius ideals
    Usage
      solveFrobeniusIdeal I
+     solveFrobeniusIdeal(I, W)
    Inputs
      I:Ideal
        a Frobenius ideal which is m-primary
    Outputs
      :List
-       a list of polynomials in logarithms of the variable
+       containing monomials times logarithms of the variables
    Description
     Text
       See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Algorithm 2.3.14].
@@ -323,6 +323,42 @@ doc ///
       R = QQ[t_1..t_5];
       I = ideal(t_1+t_2+t_3+t_4+t_5, t_1+t_2-t_4, t_2+t_3-t_4, t_1*t_3, t_2*t_4);
       solveFrobeniusIdeal I
+    Example
+      W = makeWeylAlgebra(QQ[x_1..x_5]);
+      solveFrobeniusIdeal(I, W)
+///
+
+
+doc ///
+   Key
+     cssLeadTerm
+    (cssLeadTerm, Ideal, List)
+   Headline
+     lead term of the canonical series solutions of I
+   Usage
+     cssLeadTerm(I, w)
+   Inputs
+     I:Ideal
+       (regular) holonomic ideal in the Weyl algebra
+     w:List
+       (generic) weights for $I$, of length half the number of variables in the Weyl algebra
+   Outputs
+     :List
+       containing monomials times logarithms in the variables
+   Description
+    Text
+      This routine returns the lead terms of the canonical series solutions of $I$ with respect
+      to the weight vector $w$.
+      See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Algorithm 2.3.14 and Lemma 2.5.10].
+
+      Here is [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Example 2.3.16]:
+    Example
+      needsPackage "FourTiTwo"
+      A = matrix{{1,1,1,1,1,1},{-2,0,0,0,0,1},{0,1,0,1,0,0},{1,1,2,0,0,1}}
+      beta = {2,1,0,2}
+      Hbeta = gkz(A,beta)
+      w = {9,1,99999, 9999999, 3, 999}
+      netList cssLeadTerm(Hbeta, w)
 ///
 
 end--
@@ -354,3 +390,25 @@ holonomicRank Hbeta
 
 R = QQ[t_1..t_(numgens W // 2)]
 solveFrobeniusIdeal distraction(I, R)
+
+restart
+errorDepth=2
+needsPackage "Dmodules"
+needsPackage "FourTiTwo"
+
+A = matrix{{1,1,1,1,1,1},{-2,0,0,0,0,1},{0,1,0,1,0,0},{1,1,2,0,0,1}}
+beta = {2,1,0,2}
+Hbeta = gkz(A,beta)
+--w = {1,2,101,9999,51,7}
+w = {9,1,99999, 9999999, 3, 999}
+
+cssExptsMult(Hbeta, w)
+cssLeadTerm(Hbeta, w)
+
+
+A = matrix{{1,1,1,1},{0,1,3,4}}
+beta = {1,2}
+Hbeta = gkz(A,beta)
+W = ring Hbeta
+w = {2,51,999,1}
+I = inw(Hbeta,flatten{-w|w})

@@ -126,6 +126,7 @@ export {
     -- factorial'
     "cssExpts",
     "cssExptsMult",
+    "cssLeadTerm",
     "distraction",
     "genToDistractionGens",
     "indicialIdeal",
