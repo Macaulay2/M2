@@ -460,7 +460,7 @@ segre (Ideal,Ideal,QuotientRing) :=opts->(X,Y,A) -> (
     projectiveDegreesList := projectiveDegrees(sX,sY);
     if opts.Verbose then <<"Projective degrees= "<<projectiveDegreesList<<endl;
 
-    --build segre class recursively from Proj Degs
+    --build Segre class recursively from Proj Degs
     segreClass:=0_A;
     RHS:=sum(0..dim sX,i->alpha^(dim sY-i)*chowClass(sY)) - sum(projectiveDegreesList);
     basisByCodim := partition(i -> sum(flatten exponents i), IA.basis);

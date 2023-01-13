@@ -116,7 +116,7 @@ ClassInToricChowRing (QuotientRing,RingElement) :=(A,f)->(
 --
 --Input: An Ideal I, of if the ambient spaces is a Toric variety
 --an ideal and a NormalToricVariety. Optionally the 
---associated chow ring, or toric chow ring may be input so 
+--associated Chow ring, or toric Chow ring may be input so
 --that the output is returned in this ring
 --
 --Output: If V=V(I) (in a applicable toric variety X) is smooth 
@@ -287,7 +287,7 @@ ToricChowRing NormalToricVariety:=TorVar->(
          A=C/substitute(SR+J,C);
 	 )
      else (error "Calculations for subschemes of singular toric varieties are not implemented yet";return 0;);
-    --Generators (as a ring) of the quotient ring representation of the chow ring correspond to 
+    --Generators (as a ring) of the quotient ring representation of the Chow ring correspond to 
     --the divisors associated to the rays in the fan Theorem 12.5.3. Cox, Little, Schenck and 
     --comments above
     return A;
@@ -436,7 +436,7 @@ CSM (QuotientRing, NormalToricVariety) :=opts->(A,TorVar)->(
     prodj:=0;
     --The following implements the method described 
     --in Barthel, Brasselet, and Fieseler.
-    --Lemma 12.5.2 of Cox, Little, Schenck is used to find the chow ring class of the 
+    --Lemma 12.5.2 of Cox, Little, Schenck is used to find the Chow ring class of the 
     --orbit closure from divisors
     --if the toric variety is smooth the multiplicity is 1. 
     Ssets:=0;
@@ -553,7 +553,7 @@ CSM (QuotientRing,NormalToricVariety,Ideal,MutableHashTable):=opts->(ChRing,TorV
 --
 --Input: An Ideal I, or if the ambient spaces is a Toric variety
 --an ideal and a NormalToricVariety. Optionally the 
---associated chow ring, or toric chow ring may be input so 
+--associated Chow ring, or toric Chow ring may be input so
 --that the output is returned in this ring
 --
 --Output: If V=V(I) (in a applicable toric variety X) is smooth 
