@@ -491,8 +491,7 @@ parametrize MultiprojectiveVariety := (cacheValue "rationalParametrization") (X 
     -- linear span
     if codim linearSpan X > 0 then (g := (parametrize linearSpan X)||X; return (parametrize source g) * g);
     -- Severi varieties (in particular, varieties projectively equivalent to G(1,5))
-    if ((dim X == 2 and dim ambient X == 5 and degree X == 4) or 
-        (dim X == 4 and dim ambient X == 8 and degree X == 6) or 
+    if ((dim X == 4 and dim ambient X == 8 and degree X == 6) or 
         (dim X == 8 and dim ambient X == 14 and degree X == 14) or 
         (dim X == 16 and dim ambient X == 26 and degree X == 78)) and
        degrees X == {({2},dim ambient X +1)}
