@@ -1766,7 +1766,7 @@ Node
     A:
   Outputs
     :
-     the total Segre class of {\tt A}, defined as the reciprocal of the chern class of the {\em dual} of {\tt A}.  (In
+     the total Segre class of {\tt A}, defined as the reciprocal of the Chern class of the {\em dual} of {\tt A}.  (In
      a future version, the dual may be omitted, and an alternative function {\tt segre'} may be introduced.)
   Description
     Example
