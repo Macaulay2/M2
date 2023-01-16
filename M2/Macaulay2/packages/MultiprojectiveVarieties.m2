@@ -245,6 +245,10 @@ PP = new ScriptedFunctor from {
 ----------------------------------
 
 isPoint = (cacheValue "isPoint") (X -> (
+    if instance(X,WeightedProjectiveVariety) then (
+        try parametrize X else return false; -- warning: not implemented yet -- currently this cannot work for subvarieties of PP(a_0,...,a_n) with all a_i>1
+        return (codim source parametrize X == 0 and dim source parametrize X == 0 and numgens ring source parametrize X == 1);
+    );
     n := X#"dimAmbientSpaces";
     dim X == 0 and sort degrees X == sort pairs tally deepSplice apply(n,entries diagonalMatrix toList(#n:1),(i,d) -> i:d)
 ));
@@ -269,6 +273,7 @@ expression MultiprojectiveVariety := X -> (
 
 expression WeightedProjectiveVariety := X -> (
     if X#"expression" =!= null then return X#"expression";
+    if dim X == 0 and codim X > 0 then if X.cache#?"isPoint" and X.cache#"isPoint" then return expression("a point in "|expressionVar(dim ambient X,toSequence flatten degrees ring ideal X));
     expression expressionVar(dim X,toSequence flatten degrees ring ideal X)
 );
 
@@ -373,7 +378,7 @@ describe MultiprojectiveVariety := X -> (
 
 ? MultiprojectiveVariety := X -> (
     if dim X == -1 or codim X <= 0 then return toString expression X;
-    if (not instance(X,WeightedProjectiveVariety)) and isPoint X then return ("point of coordinates "|toString coordinates X); 
+    if isPoint X then return ("point of coordinates "|toString coordinates X); 
     n := X#"dimAmbientSpaces";
     degs := degrees ideal X; 
     m := "multi-";
@@ -470,6 +475,12 @@ parametrize MultiprojectiveVariety := (cacheValue "rationalParametrization") (X 
     inv := if X#?InverseMethod then X#InverseMethod else inverse;
     if dim X == -1 then error "expected a non-empty variety";
     if X.cache#?"top" then if X != top X then error "expected an equidimensional variety";
+    if instance(X,WeightedProjectiveVariety) then (
+        setParametrizationOfWeightedProjectiveSpace ambient X;
+        if not (ambient X).cache#?"rationalParametrization" then error("not implemented yet: parametrization of "|toString(? ambient X));
+        g0 := (parametrize ambient X)||X; 
+        return (parametrize source g0) * g0;
+    );
     if # X#"dimAmbientSpaces" != 1 then (
         f := parametrizeWithAnEmbeddedProjectiveVariety X;
         return (parametrize source f) * f;
@@ -583,7 +594,14 @@ point (MultiprojectiveVariety,VisibleList) := (X,l) -> (
 );
 
 point WeightedProjectiveVariety := X -> (
-    if codim X > 0 then return (segreEmbedding X)^* point image segreEmbedding X;
+    if codim X > 0 then (
+        try parametrize ambient X;
+        if (ambient X).cache#?"rationalParametrization" then (
+            return (parametrize ambient X) point((parametrize ambient X)^* X);
+        ) else (
+            return (segreEmbedding X)^* point image segreEmbedding X;
+        );
+    );
     a := flatten degrees ring ideal X;
     n := #a-1;
     p := apply(n+1,i -> random coefficientRing X);
@@ -619,6 +637,13 @@ pointOnLinearSectionOfG14 = X -> (
 
 coordinates = (cacheValue "coordinates") (p -> (
     if not isPoint p then error "expected a point";
+    if instance(p,WeightedProjectiveVariety) then (
+        h := parametrize p;
+        if not (codim source h == 0 and dim source h == 0 and numgens ring source h == 1) then error "something went wrong";
+        c := new Array from flatten entries sub(sub(matrix h,first gens ring source h => 1),coefficientRing h);
+        if point(ambient p,c) != p then error "something went wrong"; -- provisory test
+        return c;
+    );
     unsequence toSequence apply(projections p,h -> new Array from flatten entries coefficients parametrize image h)
 ));
 
