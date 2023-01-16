@@ -273,7 +273,7 @@ expression MultiprojectiveVariety := X -> (
 
 expression WeightedProjectiveVariety := X -> (
     if X#"expression" =!= null then return X#"expression";
-    if dim X == 0 and codim X > 0 then if X.cache#?"isPoint" and X.cache#"isPoint" then return expression("a point in "|expressionVar(dim ambient X,toSequence flatten degrees ring ideal X));
+    if dim X == 0 and codim X > 0 then if isPoint X then return expression("a point in "|expressionVar(dim ambient X,toSequence flatten degrees ring ideal X));
     expression expressionVar(dim X,toSequence flatten degrees ring ideal X)
 );
 
