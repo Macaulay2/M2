@@ -92,8 +92,7 @@ html Hypertext := x -> (
     qname := T.qname;
     attr := "";
     cont := if T.?Options then (
-	(op, ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
-	    "unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
+	(op, ct) := override(options T, toSequence x);
 	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);
 	sequence ct) else x;
     pushIndentLevel 1;
@@ -163,7 +162,7 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
+html Thing := htmlLiteral @@ (x -> "$" | texMath x | "$") -- by default, we use math mode tex (as opposed to actual html)
 html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
@@ -188,8 +187,8 @@ html Boolean :=
 html Function :=
 html FilePosition :=
 html Manipulator :=
-html Dictionary :=
-html Type := html @@ toString
+html Dictionary := html @@ toString
+html Type := x -> if x.?texMath then "$"|x.texMath|"$" else html toString x
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
