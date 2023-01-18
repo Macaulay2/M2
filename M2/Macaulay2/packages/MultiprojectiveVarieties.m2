@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7", 
-    Date => "January 11, 2023",
+    Date => "January 18, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -246,6 +246,7 @@ PP = new ScriptedFunctor from {
 
 isPoint = (cacheValue "isPoint") (X -> (
     if instance(X,WeightedProjectiveVariety) then (
+        if dim X != 0 then return false;
         try parametrize X else return false; -- warning: not implemented yet -- currently this cannot work for subvarieties of PP(a_0,...,a_n) with all a_i>1
         return (codim source parametrize X == 0 and dim source parametrize X == 0 and numgens ring source parametrize X == 1);
     );
@@ -2333,6 +2334,7 @@ PARA {"Here is a shortcut to construct weighted projective spaces:"},
 EXAMPLE {
 "K = ZZ/65521;",
 "PP_K(2,1,3,1,7,5)"},
+Caveat => {"This class is currently experimental and under development."},
 SeeAlso => {WeightedRationalMap,MultiprojectiveVariety,EmbeddedProjectiveVariety}}
 
 document {Key => {Saturate, [projectiveVariety,Saturate]},
@@ -2738,6 +2740,7 @@ EXAMPLE {
 "M = matrix f",
 "rationalMap {M}", 
 "rationalMap {f}"},
+Caveat => {"This class is currently experimental and under development."},
 SeeAlso => {WeightedProjectiveVariety,MultirationalMap}}
 
 document { 

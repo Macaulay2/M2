@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.7", 
-    Date => "January 11, 2023",
+    Date => "January 18, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -61,7 +61,8 @@ export{
    "trisecantFlop",
    "GMtables",
    "fanoFourfold",
-   "parametrizeFanoFourfold"
+   "parametrizeFanoFourfold",
+   "fromOrdinaryToGushel"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
@@ -2735,7 +2736,8 @@ toGushel SpecialGushelMukaiFourfold := X -> (
     specialGushelMukaiFourfold h^* S
 );
 
-< SpecialGushelMukaiFourfold := X -> try toGushel X else error "not able to deform to Gushel type";
+fromOrdinaryToGushel = method();
+fromOrdinaryToGushel SpecialGushelMukaiFourfold := X -> try toGushel X else error "not able to deform to Gushel type";
 
 imageOfAssociatedMap = method();
 imageOfAssociatedMap HodgeSpecialFourfold := X -> (
@@ -3068,15 +3070,15 @@ beginDocumentation()
 document {Key => SpecialFanoFourfolds, 
 Headline => "A package for working with Hodge-special fourfolds",
 PARA {"This package contains several tools related to the rationality problem for cubic fourfolds, Gushel-Mukai fourfolds, and some other special Fano fourfolds. See ",HREF{"https://arxiv.org/abs/2204.11518","arXiv:2204.11518"}," for some applications."},
-PARA {"The following are some references that have benefited from this package."},
+PARA {"The following are some papers that have benefited from this package."},
 References => UL{
-{"M. Hoff and G. S., ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."},
-{"G. S., ",EM"Some new rational Gushel fourfolds",", available at ",HREF{"https://arxiv.org/abs/2003.07809","arXiv:2003.07809"}," (2020)."},
-{"G. S., ",EM"On some families of Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/2002.07026","arXiv:2002.07026"}," (2020)."},
-{"M. Hoff and G. S., ",EM"New examples of rational Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/1910.12838","arXiv:1910.12838"}," (2020)."},
-{"F. Russo and G. S., ",EM"Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds",", available at ",HREF{"https://arxiv.org/abs/1909.01263","arXiv:1909.01263"}," (2020)."},
-{"F. Russo and G. S., ",EM"Explicit rationality of some cubic fourfolds",", available at ",HREF{"https://arxiv.org/abs/1811.03502","arXiv:1811.03502"}," (2019)."},
-{"F. Russo and G. S., ",EM"Congruences of 5-secant conics and the rationality of some admissible cubic fourfolds",", available at ",HREF{"https://arxiv.org/abs/1707.00999","arXiv:1707.00999"}," (2018)."}}}
+{"M. Hoff and G. Staglianò, ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."},
+{"G. Staglianò, ",EM"Some new rational Gushel fourfolds",", available at ",HREF{"https://arxiv.org/abs/2003.07809","arXiv:2003.07809"}," (2020)."},
+{"G. Staglianò, ",EM"On some families of Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/2002.07026","arXiv:2002.07026"}," (2020)."},
+{"M. Hoff and G. Staglianò, ",EM"New examples of rational Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/1910.12838","arXiv:1910.12838"}," (2020)."},
+{"F. Russo and G. Staglianò, ",EM"Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds",", available at ",HREF{"https://arxiv.org/abs/1909.01263","arXiv:1909.01263"}," (2020)."},
+{"F. Russo and G. Staglianò, ",EM"Explicit rationality of some cubic fourfolds",", available at ",HREF{"https://arxiv.org/abs/1811.03502","arXiv:1811.03502"}," (2019)."},
+{"F. Russo and G. Staglianò, ",EM"Congruences of 5-secant conics and the rationality of some admissible cubic fourfolds",", available at ",HREF{"https://arxiv.org/abs/1707.00999","arXiv:1707.00999"}," (2018)."}}}
 
 document {Key => {SpecialGushelMukaiFourfold}, 
 Headline => "the class of all special Gushel-Mukai fourfolds", 
@@ -3139,7 +3141,7 @@ Outputs => {SpecialGushelMukaiFourfold => {"a random special Gushel-Mukai fourfo
 EXAMPLE {"X = specialGushelMukaiFourfold(\"cubic scroll\",ZZ/65521);", "describe X"},
 References => UL{
 {"O. Debarre, A. Iliev, and L. Manivel, ",EM"Special prime Fano fourfolds of degree 10 and index 2",", available at ",HREF{"https://arxiv.org/abs/1302.1398","arXiv:1302.1398"}," (2014)."},
-{"G. S., ",EM"On some families of Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/2002.07026","arXiv:2002.07026"}," (2020)."}},
+{"G. Staglianò, ",EM"On some families of Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/2002.07026","arXiv:2002.07026"}," (2020)."}},
 SeeAlso => {(specialGushelMukaiFourfold, EmbeddedProjectiveVariety), GMtables}}
 
 document {Key => {toGrass, (toGrass, SpecialGushelMukaiFourfold)}, 
@@ -3164,9 +3166,9 @@ document {Key => {GMtables, (GMtables, ZZ, Ring), (GMtables, ZZ), [GMtables, Ver
 Headline => "make examples of reducible subschemes of P^5", 
 Usage => "GMtables(i,K)", 
 Inputs => {"i" => ZZ => {"an integer between 1 and 21"}, "K" => Ring => {"the coefficient ring"}}, 
-Outputs => {{"a triple of ",TO2{EmbeddedProjectiveVariety,"varieties"},", ",TEX///$(B,V,C)$///, ", which represents a reducible subscheme of ", TEX///$\mathbb{P}^5$///, " as indicated in the paper ", HREF{"https://arxiv.org/abs/2002.07026", "On some families of Gushel-Mukai fourfolds"}, "."}}, 
+Outputs => {{"a triple of ",TO2{EmbeddedProjectiveVariety,"varieties"},", ",TEX///$(B,V,C)$///, ", which represents a reducible subscheme of ", TEX///$\mathbb{P}^5$///, ", in accordance with the 21 examples listed in Table 2 of the paper ", HREF{"https://arxiv.org/abs/2002.07026", "On some families of Gushel-Mukai fourfolds"}, "."}}, 
 EXAMPLE {"(B,V,C) := GMtables(1,ZZ/33331)", "B * V == C"}, 
-PARA{"The corresponding example of fourfold can be obtained as follows."}, 
+PARA{"The corresponding example of fourfold reported in Table 1 of the aforementioned paper can be obtained as follows."}, 
 EXAMPLE {"psi = rationalMap(ideal B,Dominant=>2);", "X = specialGushelMukaiFourfold psi ideal V;"}, 
 PARA{"This is basically the same as doing this:"}, 
 EXAMPLE {"specialGushelMukaiFourfold(\"1\",ZZ/33331);"},
@@ -3236,7 +3238,7 @@ PARA{"Objects of this type are created by ",TO detectCongruence,"."}}
 document {Key => {(symbol SPACE, CongruenceOfCurves, EmbeddedProjectiveVariety), (symbol SPACE, CongruenceOfCurves, Ideal)}, 
 Headline => "get the curve of a congruence passing through a point", 
 Usage => "f(p)", 
-Inputs => {"f" => CongruenceOfCurves => {"a congruence of curves to a surface inside a variety ", TEX///$Y$///}, "p" => EmbeddedProjectiveVariety => {"a (general) point of ",TEX///$Y$///}}, 
+Inputs => {"f" => CongruenceOfCurves => {"a congruence of curves to a surface inside a variety ", TEX///$Y$///}, "p" => EmbeddedProjectiveVariety => {"a general point on ",TEX///$Y$///," (that is, a point on ",TEX///$Y$///," outside a certain proper Zariski closed subset)"}}, 
 Outputs => {EmbeddedProjectiveVariety => {"the unique curve of the congruence ", TEX///$f$///, " that passes through ", TEX///$p$///}}, 
 EXAMPLE {"X = specialCubicFourfold surface {3,4};", "f = detectCongruence(X,1);","C = f point ambient X;","member(C,f)","assert oo"},
 SeeAlso => {detectCongruence, (member, EmbeddedProjectiveVariety, CongruenceOfCurves)}}
@@ -3266,7 +3268,7 @@ document {Key => {(detectCongruence, SpecialCubicFourfold, ZZ), (detectCongruenc
 Headline => "detect and return a congruence of (3e-1)-secant curves of degree e", 
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)", 
 Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}}, 
-Outputs => {CongruenceOfCurves => {"that is a function which takes a (general) point ", TEX///$p\in\mathbb{P}^5$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(3e-1)$///, "-secant to ", TEX///$S$///, ", and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
+Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in\mathbb{P}^5$///, " (that is, outside a certain proper Zariski closed subset of ",TEX///$\mathbb{P}^5$///,") and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(3e-1)$///, "-secant to ", TEX///$S$///, ", and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
 EXAMPLE {"-- A general cubic fourfold of discriminant 26"|newline|"X = specialCubicFourfold(\"3-nodal septic scroll\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "p := point ambient X -- random point on P^5", "time C = f p; -- 5-secant conic to the surface", "assert(dim C == 1 and degree C == 2 and dim(C * surface X) == 0 and degree(C * surface X) == 5 and isSubset(p, C))"}, 
 SeeAlso => {(detectCongruence, SpecialGushelMukaiFourfold, ZZ), coneOfLines}} 
 
@@ -3274,7 +3276,7 @@ document {Key => {(detectCongruence, SpecialGushelMukaiFourfold, ZZ), (detectCon
 Headline => "detect and return a congruence of (2e-1)-secant curves of degree e inside a del Pezzo fivefold", 
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)", 
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///,", where ",TEX///$Y$///," denotes the unique del Pezzo fivefold containing the fourfold ",TEX///$X$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}}, 
-Outputs => {CongruenceOfCurves => {"that is a function which takes a (general) point ", TEX///$p\in Y$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
+Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in Y$///, "(that is, a point on ",TEX///$Y$///," outside a certain proper Zariski closed subset) and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
 EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = specialGushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "Y = ambientFivefold X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "time C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"}, 
 SeeAlso => {(detectCongruence, SpecialCubicFourfold, ZZ), coneOfLines}} 
 
@@ -3386,7 +3388,8 @@ discriminant S
 parameterCount(S,Verbose=>true)
 f := map(S,1,0)
 f = quadricFibration f
-discriminant f///}
+discriminant f///,
+Caveat => {"This feature is currently under development."}}
 typicalValues#surface = typValSurf;
 
 undocumented {"curve"}
@@ -3411,19 +3414,19 @@ EXAMPLE {"Y = specialFourfold \"tau-quadric\";", "psi = parametrize Y;", "descri
 EXAMPLE {"Z = specialFourfold \"plane in PP^7\";", "eta = parametrize Z;", "describe eta"}, 
 SeeAlso => {unirationalParametrization, (parametrize,MultiprojectiveVariety)}} 
 
-document {Key => {(symbol <, SpecialGushelMukaiFourfold)},
+document {Key => {fromOrdinaryToGushel, (fromOrdinaryToGushel, SpecialGushelMukaiFourfold)},
 Headline => "try to deform to a fourfold of Gushel type",
-Usage => "< X", 
+Usage => "fromOrdinaryToGushel X", 
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"a fourfold of ordinary type"}}, 
 Outputs => {SpecialGushelMukaiFourfold => {"a fourfold of Gushel type, a deformation of ",TT"X"}}, 
-EXAMPLE {"X = specialGushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus ambientFivefold X", "X' = < X;", "support singularLocus ambientFivefold X'"}} 
+EXAMPLE {"X = specialGushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus ambientFivefold X", "X' = fromOrdinaryToGushel X;", "support singularLocus ambientFivefold X'"}} 
 
 document {Key => {associatedK3surface, [associatedK3surface, Strategy], building}, 
-Headline => "associated K3 surface to a rational fourfold", 
+Headline => "K3 surface associated to a rational fourfold", 
 PARA{"See ",TO (associatedK3surface, SpecialCubicFourfold)," and ",TO (associatedK3surface, SpecialGushelMukaiFourfold),"."}} 
 
 document {Key => {(associatedK3surface, SpecialCubicFourfold)}, 
-Headline => "associated K3 surface to a rational cubic fourfold", 
+Headline => "K3 surface associated to a rational cubic fourfold", 
 Usage => "U' = associatedK3surface X", 
 Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(3e-1)$///,"-secant curves of degree ",TEX///$e$///}}, 
 Outputs => {"U'" => {"the (minimal) K3 surface associated to ",TEX///$X$///}},
@@ -3433,7 +3436,7 @@ EXAMPLE {"X = specialCubicFourfold \"quartic scroll\";", "describe X", "time U' 
 SeeAlso => {(associatedK3surface, SpecialGushelMukaiFourfold), detectCongruence, mirrorFourfold}} 
 
 document {Key => {(associatedK3surface, SpecialGushelMukaiFourfold)}, 
-Headline => "associated K3 surface to a rational Gushel-Mukai fourfold", 
+Headline => "K3 surface associated to a rational Gushel-Mukai fourfold", 
 Usage => "U' = associatedK3surface X", 
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the ",TO2{ambientFivefold,"ambient fivefold"}," ",TEX///$Y$///," of the fourfold ",TEX///$X$///}}, 
 Outputs => {"U'" => {"the (minimal) K3 surface associated to ",TEX///$X$///}},
@@ -3509,7 +3512,7 @@ S = ambientVariety C;
 C;
 B;
 assert(C == S * B)///,
-References => UL{{"G. S., ",EM"Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces",", available at ",HREF{"https://arxiv.org/abs/2204.11518","arXiv:2204.11518"}," (2022)."}},
+References => UL{{"G. Staglianò, ",EM"Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces",", available at ",HREF{"https://arxiv.org/abs/2204.11518","arXiv:2204.11518"}," (2022)."}},
 SeeAlso => {(surface,VisibleList,Ring), GMtables}}
 
 document {Key => {specialFourfold, (specialFourfold, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, Ideal), (specialFourfold, Ideal, Ideal), (specialFourfold, Ideal, RingElement), (specialFourfold, String), (specialFourfold, String, Ring), [specialFourfold, NumNodes], [specialFourfold, InputCheck]}, 
@@ -3524,7 +3527,7 @@ SeeAlso => {specialCubicFourfold, specialGushelMukaiFourfold}}
 document {
 Key => {Singular, [associatedK3surface, Singular], [mirrorFourfold, Singular]},
 Headline => "whether to transfer computation to Singular",
-Usage => "Singular => true/false",
+Usage => "Singular => true or false",
 PARA{"This option allows you to transfer part of the computation to Singular."},
 SeeAlso => {associatedK3surface}} 
 
