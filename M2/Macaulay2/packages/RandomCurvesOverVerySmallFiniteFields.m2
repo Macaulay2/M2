@@ -227,7 +227,7 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 -- and singly graded
 --
 -- this function is needed to construct 
--- expected betti tables from
+-- expected Betti tables from
 -- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
@@ -1095,12 +1095,12 @@ doc ///
               the ideal of a (smooth) canonical curve of genus g over a field with characteristic p                      
   Description
      Text
-       Computes a smooth canonical curve of genus g<=15 over a field of characteristc p.
+       Computes a smooth canonical curve of genus g<=15 over a field of characteristic p.
        For genus g<=14 are based on the unirationality of M_g for g<=14 and the  RandomCurves-package.
        A unirational parametrization of M_g is only a rational map and bad choices of parameters 
        (which are quite likely over small fields) might end up in the indeterminacy locus or some
        other undesired subloci.
-       In this constructions we catch the steps which do not work out for
+       In this construction, we catch the steps which do not work out for
        very small characteristic by catching all possible missteps. 
        
        For g<=10 the curves are constructed via plane models.

@@ -777,7 +777,7 @@ doc ///
     Example
      expectedBetti(11,5)
    Caveat
-    The MRC is false, so these are sometimes not the actual betti numbers.
+    The MRC is false, so these are sometimes not the actual Betti numbers.
    SeeAlso
     expectedBetti
     minMaxResolution
