@@ -7073,7 +7073,7 @@ netList cornerCohomologyTablesOfUa({1,2})
 restart
 needsPackage "TateOnProducts"
 
--- experiment with the old dual: Question can the wrong dual produce a resolution with wrong betti numbers?
+-- experiment with the old dual: Question can the wrong dual produce a resolution with wrong Betti numbers?
 
         kk=ZZ/101;n=4;
 	E=kk[e_0..e_n,SkewCommutative =>true]

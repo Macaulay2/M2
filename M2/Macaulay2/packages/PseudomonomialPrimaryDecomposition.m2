@@ -189,7 +189,7 @@ isLinearPseudomonomial = B-> (
 
 -- finds all the factors of a square free pseudomonomial P (in bitwise form B)
 -- Input:
--- Square free pseudomonial in bitwise form 
+-- Square free pseudomonomial in bitwise form
 -- Output:
 -- A list of square free pseudomonomials, each in bitwise form
 getFactors = B -> (
