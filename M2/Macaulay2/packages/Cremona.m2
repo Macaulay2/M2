@@ -10,7 +10,7 @@
 newPackage(
        "Cremona",
 	Version => "5.2.1", 
-        Date => "January 11, 2023",
+        Date => "January 18, 2023",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -242,12 +242,13 @@ toMap Matrix := o -> ((cacheValue (o.Dominant,"RingMapAssociatedToMatrix")) (F -
    N := numgens source F - 1; 
    if N == -1 then return map(ring F,K[]);
    if not isHomogeneous ideal F then error "expected homogeneous elements";
-   d := toList(N+1:{1});
-   D := degrees ideal compress F;
-   if degreeLength ring F == 1 and #D > 0 and min D != max D then (
-      d = flatten degrees ideal F;
-      g := gcd d;
-      d = apply(d,i -> {i//g});
+   d := toList(N+1 : {1});
+   D := matrix degrees ideal compress F;
+   if rank D > 0 and # unique entries D > 1 then (
+       if rank D > 1 then error "expected homogeneous elements of compatible degrees";
+       d = flatten entries submatrix(compress matrix degrees ideal F,{0});
+       g := gcd d;
+       d = apply(d,i -> if i == 0 then {1} else {i//g});
    );
    PN := targetProj(ambient ring F,N,d);  
    phi := map(ring F,PN,F);
@@ -1051,6 +1052,7 @@ maps (RingMap) := (phi) -> (
 
 maps RationalMap := maps MultihomogeneousRationalMap := Phi -> (
    if Phi#"maps" === null then (
+            if instance(Phi,WeightedHomogeneousRationalMap) and max flatten degrees target Phi >= 2 then (<<"--warning: not implemented yet: base locus of a rational map with target a weighted-projective variety"<<endl);
             if (isPolynomialRing source Phi) then (
                  if codim ideal matrix Phi > 1 then (
                        setKeyValue(Phi,"maps",{Phi#"map"});
@@ -1720,7 +1722,7 @@ segre RationalMap := segre MultihomogeneousRationalMap := Phi -> segre source Ph
 segre PolynomialRing := R -> rationalMap(gens product apply(multigens R,ideal));
 
 segre QuotientRing := R -> (
-    phi := rationalMap(gens product apply(multigens R,ideal),Dominant=>1);
+    phi := rationalMap(compress gens product apply(multigens R,ideal),Dominant=>1);
     phi * (rationalMap inverseMap parametrize target phi)
 );
 
@@ -1752,12 +1754,10 @@ checkMultihomogeneousRationalMap = phi -> ( -- phi RingMap
    if not ((flatten multigens ambient target phi == gens ambient target phi) or (degreeLength target phi == 1 and min flatten degrees target phi >= 1)) then error "the given grading on the target of the ring map is not allowed";
    F := toMatrix phi;
    if not isHomogeneous ideal F then error "the map needs to be defined by homogeneous polynomials";
-   D := degrees ideal compress F;
-   if #D > 0 and min D != max D then (
-      if degreeLength target phi != 1 then error "the map needs to be defined by homogeneous polynomials of the same degree";
-      errI := "incongruence between the grading on the source of the ring map and the degrees of the entries of the matrix";
-      if # unique apply(flatten degrees ideal F,flatten degrees source phi,(i,j) -> (if i%j != 0 then error errI; i//j)) > 1 then error errI;  
-   );
+   p := positions(flatten entries F,f -> f != 0);
+   d := (degrees ideal F)_p;
+   T := matrix{(flatten degrees source phi)_p};
+   for i from 1 to degreeLength target phi do if minors(2,matrix{apply(d,e->e_(i-1))}||T) != 0 then error("expected homogeneous elements of compatible degrees -- grading on the source of the ring map: "|(toString degrees source phi)|", degrees of the forms: "|(toString degrees ideal F));
 );
 
 ---------------------------------------------------------------------------------------
