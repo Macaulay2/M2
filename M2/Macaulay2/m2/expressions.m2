@@ -398,6 +398,7 @@ Superscript.synonym = "superscript expression"
 Superscript#operator = symbol ^
 expressionValue Superscript := (x) -> (expressionValue x#0)^(expressionValue x#1)
 
+toString'(Function, Divide) :=
 toString'(Function, Subscript) := toString'(Function, Superscript) := (fmt,v) -> (
      x := fmt v#0;
      y := fmt v#1;

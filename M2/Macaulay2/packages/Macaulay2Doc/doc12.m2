@@ -283,15 +283,11 @@ document {
 
 undocumented {
     (symbol -, Thing, Minus),
-    (symbol +, Sum, ZeroExpression),
-    (symbol +, Holder, ZeroExpression),
     (symbol +, Sum, Sum),
     (symbol +, Sum, Holder),
     (symbol +, Holder, Sum),
     (symbol +, ZeroExpression, Expression),
     (symbol +, Expression, ZeroExpression),
-    (symbol +, Expression, Sum),
-    (symbol +, Sum, Expression),
     }
 
 expressionMethodKeys := flatten apply(toList core "expressionBinaryOperators", op -> {
