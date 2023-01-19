@@ -967,7 +967,7 @@ document {
 undocumented {
     (symbol**, OneExpression, Holder),
     (symbol**, QuotientRing, PolynomialRing),
-    (symbol**, Expression, NonAssociativeProduct),
+--    (symbol**, Expression, NonAssociativeProduct),
     (symbol**, QuotientRing, QuotientRing),
     (symbol**, Number, Matrix),
     (symbol**, Matrix, Number),
@@ -976,13 +976,13 @@ undocumented {
     (symbol **,RingElement,Number),
     (symbol **,RingElement,RingElement),
     (symbol **,Thing,InexactFieldFamily),
-    (symbol**, NonAssociativeProduct, NonAssociativeProduct),
+--    (symbol**, NonAssociativeProduct, NonAssociativeProduct),
     (symbol**, Holder, OneExpression),
     (symbol**, PolynomialRing, PolynomialRing),
     (symbol**, PolynomialRing, QuotientRing),
-    (symbol**, NonAssociativeProduct, Expression),
-    (symbol**, NonAssociativeProduct, Holder),
-    (symbol**, Holder, NonAssociativeProduct),
+--    (symbol**, NonAssociativeProduct, Expression),
+--    (symbol**, NonAssociativeProduct, Holder),
+--    (symbol**, Holder, NonAssociativeProduct),
     (symbol**, Expression, OneExpression),
     (symbol**, OneExpression, Expression)
      }

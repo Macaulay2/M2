@@ -429,12 +429,14 @@ document {
      "This is a unary operator."
      }
 
+-*
 document {
      Key => NonAssociativeProduct,
      Headline => "the class of all nonassociative product expressions",
      TT "NonAssociativeProduct", " is a type of ", TO "Expression", " representing
      a nonassociative product."
      }
+*-
 
 document {
      Key => Power,
