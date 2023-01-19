@@ -1118,8 +1118,11 @@ permutePolynomial(List,Power) := (permutation,polynomial) -> (
     new Power from {permutePolynomial(permutation,polynomial#0),polynomial#1}
     )
 
+permutePolynomial(List,Number) := (permutation,n) -> n
+
+permutePolynomial(List,Holder) :=
 permutePolynomial(List,Minus) := (permutation,polynomial) -> (
-    new Minus from {permutePolynomial(permutation,polynomial#0)}
+    new class polynomial from {permutePolynomial(permutation,polynomial#0)}
     )
 vandermondeDeterminant = method(Options => {AsExpression => false})
 vandermondeDeterminant(List,PolynomialRing):= o-> (lista,R)->(
