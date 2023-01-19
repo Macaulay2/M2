@@ -433,14 +433,12 @@ expressionValue Adjacent := x -> (expressionValue x#0) (expressionValue x#1)
 -----------------------------------------------------------------------------
 prepend0 := (e,x) -> prepend(unhold e, x)
 append0 := (x,e) -> append(x, unhold e)
-prepend1 := (e,x) -> prepend(expression e, x)
-append1 := (x,e) -> append(x, expression e)
 assocList := {Sum,Product,DirectSum,TensorProduct,Equation} -- populate automatically?
 scan(assocList, opClass -> (
 	installMethod(opClass#operator,opClass,opClass,join);
-	installMethod(opClass#operator,opClass,Thing,append1);
+	installMethod(opClass#operator,opClass,Expression,append);
 	installMethod(opClass#operator,opClass,Holder,append0);
-	installMethod(opClass#operator,Thing,opClass,prepend1);
+	installMethod(opClass#operator,Expression,opClass,prepend);
 	installMethod(opClass#operator,Holder,opClass,prepend0);
 	installMethod(opClass#operator,Expression,Expression,(x,y)-> new opClass from {unhold x,unhold y});
 	installMethod(opClass#operator,Expression,Thing,(x,y)-> operatorFunctions#(opClass#operator)(x,expression y));
