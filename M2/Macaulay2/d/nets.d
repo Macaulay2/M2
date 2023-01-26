@@ -210,7 +210,7 @@ splitcolumn(i:int, t:array(array(string))):bool := (			    -- whether we can spl
      if i <= 0 then return false;			    -- shouldn't happen!
      foreach s in t do if length(s) > i && (
           x := s.(i-1);	    	     y := s.i;
-	  a := isalnum(x);           b := isalnum(y);
+	  a := isalnum(x.0);           b := isalnum(y.0);
 	  a && b
 	  ||
 	  (!a && x.0 != ' ') && (!b && y.0 != ' ')		    -- not between two punctuation characters
