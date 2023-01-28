@@ -20,7 +20,13 @@ export {
 -------------------------
 
 -- abstract message
-LSPMessage = new SelfInitializingType of HashTable
+Message = new SelfInitializingType of HashTable
+new Message from List := (msg, L) -> msg hashTable apply(L, "jsonrpc" => "2.0")
+
+end
+
+
+
 net LSPMessage := x -> toJSON(x, Indent => 4)
 
 new LSPMessage from List := (
