@@ -44,18 +44,18 @@ handleRequest(JSONRPCServer, HashTable) := (server, request) -> (
 	(request#?"jsonrpc" and request#"jsonrpc" === "2.0") and
 	(request#?"method" and instance(request#"method", String)))
     then return handleRequest(server, null); -- invalid request
-    if not request#?"id" then return null; -- notification
-    if not (
+    if request#?"id" and not (
 	instance(request#"id", String) or
 	instance(request#"id", ZZ) or
 	request#"id" === nil)
     then return handleRequest(server, null); -- invalid request
-    if not server#?(request#"method")
-    then return responseError(-32601, "Method not found", "id" => request#"id");
-    mthd := server#(request#"method");
-    -- TODO: how to handle errors inside callMethod?
-    responseSuccess(callMethod(mthd,
-	    if request#?"params" then request#"params" else {}), request#"id"))
+    if server#?(request#"method") then (
+	-- TODO: how to handle errors inside callMethod?
+	result := callMethod(server#(request#"method"),
+	    if request#?"params" then request#"params" else {});
+	if request#?"id" then responseSuccess(result, request#"id"))
+    else if request#?"id"
+    then return responseError(-32601, "Method not found", "id" => request#"id"))
 handleRequest(JSONRPCServer, Thing) := (server, badrequest) -> (
     responseError(-32600, "Invalid Request"))
 
