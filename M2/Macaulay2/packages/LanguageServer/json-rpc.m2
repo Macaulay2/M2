@@ -3,7 +3,8 @@
 export {
     "JSONRPCServer",
     "handleRequest",
-    "addMethod"
+    "addMethod",
+    "raiseError"
     }
 
 -- response message
@@ -22,6 +23,20 @@ responseError(ZZ, String) := o -> (kode, msg) -> Response {
 responseError(ZZ, String, Thing) := o -> (kode, msg, data) -> Response {
     "error" => hashTable {"code" => kode, "message" => msg, "data" => data},
     "id" => o#"id"}
+
+-- for raising errors inside methods
+JSONRPCError = new SelfInitializingType of HashTable
+
+raiseError = method()
+raiseError(ZZ, String) := (kode, msg) -> JSONRPCError {
+    "code" => kode,
+    "message" => msg}
+raiseError(ZZ, String, Thing) := (kode, msg, data) -> JSONRPCError {
+    "code" => kode,
+    "message" => msg,
+    "data" => data}
+responseError JSONRPCError := o -> err -> Response {
+    "error" => err, "id" => o#"id"}
 
 -- JSON-RPC server
 JSONRPCServer = new Type of MutableHashTable
@@ -50,10 +65,14 @@ handleRequest(JSONRPCServer, HashTable) := (server, request) -> (
 	request#"id" === nil)
     then return handleRequest(server, null); -- invalid request
     if server#?(request#"method") then (
-	-- TODO: how to handle errors inside callMethod?
-	result := callMethod(server#(request#"method"),
-	    if request#?"params" then request#"params" else {});
-	if request#?"id" then responseSuccess(result, request#"id"))
+	result := (
+	    try callMethod(server#(request#"method"),
+		if request#?"params" then request#"params" else {})
+	    else raiseError(-32602, "Invalid params"));
+	if request#?"id" then (
+	    if instance(result, JSONRPCError)
+	    then responseError(result, "id" => request#"id")
+	    else responseSuccess(result, request#"id")))
     else if request#?"id"
     then return responseError(-32601, "Method not found", "id" => request#"id"))
 handleRequest(JSONRPCServer, Thing) := (server, badrequest) -> (
