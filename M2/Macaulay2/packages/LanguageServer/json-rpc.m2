@@ -53,10 +53,6 @@ handleRequest(JSONRPCServer, HashTable) := (server, request) -> (
     if not server#?(request#"method")
     then return responseError(-32601, "Method not found", "id" => request#"id");
     mthd := server#(request#"method");
-    if (
-	request#?"params" and not checkParameters(mthd, request#"params") or
-	not request#?"params" and not checkParameters(mthd, {}))
-    then return responseError(-32602, "Invalid params");
     -- TODO: how to handle errors inside callMethod?
     responseSuccess(callMethod(mthd,
 	    if request#?"params" then request#"params" else {}), request#"id"))
@@ -72,18 +68,16 @@ addMethod(JSONRPCServer, String, List, Function) := (
     server, name, params, f) -> (
     server#name = JSONRPCMethod {"params" => params, "function" => f})
 
-checkParameters = method()
-checkParameters(JSONRPCMethod, List) := (
-    mthd, params) -> not mthd#?"params" or #mthd#"params" == #params
-checkParameters(JSONRPCMethod, HashTable) := (
-    mthd, params) -> set mthd#"params" === set keys params
-
 callMethod = method()
 callMethod(JSONRPCMethod, List) := (
-    mthd, params) -> mthd#"function" toSequence params
+    mthd, params) -> mthd#"function" toSequence (
+    if mthd#?"params" then apply(#mthd#"params", i ->
+	if i >= #params then null
+	else params#i)
+    else params)
 callMethod(JSONRPCMethod, HashTable) := (
     mthd, params) -> mthd#"function" toSequence(apply(mthd#"params", param ->
-	params#param))
+	if params#?param then params#param else null))
 
 TEST ///
 -- examples from https://www.jsonrpc.org/specification
@@ -145,7 +139,7 @@ assertJSONRPC(handleRequest(server, "[
   {\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42,23], \"id\": \"2\"},
   {\"foo\": \"boo\"},
   {\"jsonrpc\": \"2.0\", \"method\": \"foo.get\", \"params\": {\"name\": \"myself\"}, \"id\": \"5\"},
-  {\"jsonrpc\": \"2.0\", \"method\": \"get_data\", \"id\": \"9\"} 
+  {\"jsonrpc\": \"2.0\", \"method\": \"get_data\", \"id\": \"9\"}
 ]"),
     "[
   {\"jsonrpc\": \"2.0\", \"result\": 7, \"id\": \"1\"},
