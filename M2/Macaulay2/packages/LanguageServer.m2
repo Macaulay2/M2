@@ -13,6 +13,13 @@ newPackage(
 
 load "./LanguageServer/json-rpc.m2"
 
+server = new MutableHashTable from {
+    "json-rpc server" => new JSONRPCServer,
+    "initialized" => false
+    }
+
+load "./LanguageServer/lsp-lifecycle.m2"
+
 end
 
 
