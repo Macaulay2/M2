@@ -13,12 +13,17 @@ newPackage(
 
 load "./LanguageServer/json-rpc.m2"
 
-server = new MutableHashTable from {
-    "json-rpc server" => new JSONRPCServer,
-    "initialized" => false
-    }
+LSPServer = new Type of MutableHashTable
+protect Initialized
 
 load "./LanguageServer/lsp-lifecycle.m2"
+
+createLanguageServer = () -> (
+    server := new LSPServer from {
+	symbol JSONRPCServer => new JSONRPCServer,
+	Initialized => false};
+    addLifecycleMethods server;
+    server)
 
 end
 

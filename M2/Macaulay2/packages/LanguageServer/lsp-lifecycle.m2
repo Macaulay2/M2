@@ -1,17 +1,20 @@
-callIfInitialized = f -> x -> (
-    if server#"initialized" then f x
+callIfInitialized = (server, f) -> x -> (
+    if server.Initialized then f x
     else raiseError(-32002, "Server Not Initialized"))
 
 addLSPMethod = method()
-addLSPMethod(String, Function) := (name, f) -> (
-    addMethod(server#"json-rpc server", name, callIfInitialized f))
-addLSPMethod(String, List, Function) := (name, params, f) -> (
-    addMethod(server#"json-rpc server", name, params, callIfInitialized f))
+addLSPMethod(LSPServer, String, Function) := (server, name, f) -> (
+    addMethod(server.JSONRPCServer, name, callIfInitialized(server, f)))
+addLSPMethod(LSPServer, String, List, Function) := (
+    server, name, params, f) -> (
+    addMethod(server.JSONRPCServer, name, params, callIfInitialized(server, f)))
 
-addMethod(server#"json-rpc server", "initialize", () -> (
-	server#"initialized" = true;
-	hashTable {
-	    "capabilities" => hashTable {},
-	    "serverInfo" => hashTable {
-		"name" => "Macaulay2 Language Server",
-		"version" => LanguageServer.Options.Version}}))
+addLifecycleMethods = server -> (
+    addMethod(server.JSONRPCServer, "initialize", () -> (
+	    server.Initialized = true;
+	    hashTable {
+		"capabilities" => hashTable {},
+		"serverInfo" => hashTable {
+		    "name" => "Macaulay2 Language Server",
+		    "version" => LanguageServer.Options.Version}}));
+    )
