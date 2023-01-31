@@ -78,7 +78,7 @@ doc ///
                 TO (minimize, Complex),
                 TO (gradedModule, Complex),
                 TO (part, List, Complex),
-                TO (truncate, List, Complex),
+                TO "(truncate, List, Complex)",
                 TO (yonedaExtension, Matrix)
             }@
     	Text
@@ -1892,8 +1892,8 @@ doc ///
     SeeAlso
         "Making chain complexes"
         (part, List, ComplexMap)
-        (truncate, List, Complex)
-        (truncate, List, ComplexMap)
+        "(truncate, List, Complex)"
+        "(truncate, List, ComplexMap)"
         (canonicalTruncation, Complex, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
 ///
@@ -1937,16 +1937,16 @@ doc ///
     SeeAlso
         "Making maps between chain complexes"
         (part, List, Complex)
-        (truncate, List, Complex)
-        (truncate, List, ComplexMap)
+        "(truncate, List, Complex)"
+        "(truncate, List, ComplexMap)"
         (naiveTruncation, Complex, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
 ///
 
 doc ///
     Key
-        (truncate, List, Complex)
-        (truncate, ZZ, Complex)
+        "(truncate, List, Complex)"
+        "(truncate, ZZ, Complex)"
     Headline
         truncation of a complex at a specified degree or set of degrees
     Usage
@@ -1969,6 +1969,7 @@ doc ///
             elements of degree at least $d$ in $M$.  This method applies
             this operation to each term in a chain complex.  
         Example
+            needsPackage "Truncations"
             R = QQ[a,b,c];
             I = ideal(a*b, a*c, b*c)
             C = freeResolution I
@@ -1997,8 +1998,8 @@ doc ///
             assert all({D1,D2,D3,D4,D5}, isWellDefined)
     SeeAlso
         "Making chain complexes"
-        (truncate, List, Module)
-        (truncate, List, ComplexMap)
+        "(truncate, List, Module)"
+        "(truncate, List, ComplexMap)"
         (canonicalTruncation, Complex, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
         (part, List, Complex)
@@ -2071,7 +2072,7 @@ doc ///
         (naiveTruncation, ComplexMap, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
         (canonicalTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, Complex)
+        "(truncate, List, Complex)"
 ///
 
 doc ///
@@ -2155,7 +2156,7 @@ doc ///
         (canonicalTruncation, ComplexMap, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
         (naiveTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, Complex)
+        "(truncate, List, Complex)"
 ///
 
 doc ///

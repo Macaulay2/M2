@@ -81,7 +81,7 @@ doc ///
                 TO (naiveTruncation, ComplexMap, Sequence),
                 TO (canonicalTruncation, ComplexMap, Sequence),
                 TO (part, List, ComplexMap),
-                TO (truncate, List, ComplexMap),
+                "TO (truncate, List, ComplexMap)",
                 TO (symbol SPACE, RingMap, ComplexMap),
                 TO (symbol **, RingMap, ComplexMap)
             }@
@@ -1414,8 +1414,8 @@ doc ///
 
 doc ///
     Key
-        (truncate, List, ComplexMap)
-        (truncate, ZZ, ComplexMap)
+        "(truncate, List, ComplexMap)"
+        "(truncate, ZZ, ComplexMap)"
     Headline
         truncation of a complex map at a specified degree or set of degrees
     Usage
@@ -1442,6 +1442,7 @@ doc ///
             the target.  This method applies this operation to each
             term in a map of chain complexes.
         Example
+            needsPackage "Truncations"
             R = QQ[a,b,c];
             C = freeResolution ideal(a*b, a*c, b*c)
             D = (freeResolution ideal(a*b, a*c, b*c, a^2-b^2))[-1]
@@ -1476,8 +1477,8 @@ doc ///
             assert all({g1,g2,g3,g4,g5}, isWellDefined)
     SeeAlso
         "Making maps between chain complexes"
-        (truncate, List, Matrix)
-        (truncate, List, Complex)
+        "(truncate, List, Matrix)"
+        "(truncate, List, Complex)"
         (canonicalTruncation, ComplexMap, Sequence)
         (naiveTruncation, ComplexMap, ZZ, ZZ)
         (part, List, ComplexMap)
@@ -1551,7 +1552,7 @@ doc ///
         (naiveTruncation, Complex, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
         (canonicalTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, ComplexMap)
+        "(truncate, List, ComplexMap)"
 ///
 
 doc ///
@@ -1613,7 +1614,7 @@ doc ///
         (canonicalTruncation, Complex, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
         (naiveTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, ComplexMap)
+        "(truncate, List, ComplexMap)"
 ///
 
 doc ///

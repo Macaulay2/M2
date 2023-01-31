@@ -1,3 +1,10 @@
+-- todo 27 Jan 2023:
+--  take test/code at end of FreeResolutions.m2 and make honest tests of these.
+--  make sure all resolutions types that we want are being done correctly.
+--  write doc for free resolution code.
+--  make another pass through all of our code: enough tests, doc is good.  Maybe add in Weyl algebra examples too, etc.
+--  after that: start getting it to work with other packages.
+
 -- todo for June/July 2022:
 --   we just had finished resolutionBySyzgyies, although maybe some more testing is in order.
 --   e.g.: interrupts, Weyl algebra.

@@ -13,7 +13,7 @@ newPackage(
             }},
     Headline => "development package for beta testing new version of chain complexes",
     Keywords => {"Homological Algebra"},
-    PackageExports => {"Truncations"},
+    PackageExports => {}, -- {"Truncations"},
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
