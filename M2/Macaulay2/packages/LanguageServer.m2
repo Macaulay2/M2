@@ -25,45 +25,51 @@ createLanguageServer = () -> (
     addLifecycleMethods server;
     server)
 
-end
+-- TODO: figure out how to plug this code into everything else
 
+addHeader = msg -> concatenate(
+    "Content-Length: ",
+    toString length msg,
+    "\r\n\r\n",
+    msg)
+addHeader "foo"
 
---------------------------
---------------------------
--- LSPMessage -> string --
---------------------------
---------------------------
+-- http grammar from https://www.rfc-editor.org/rfc/rfc7230#section-3.2
 
-toLSP = method()
-toLSP LSPMessage := msg -> (
-    cont := net msg;
-    concatenate(
-	"Content-Length: ",
-	toString length cont,
-	"\r\n\r\n",
-	cont))
-
---------------------------
---------------------------
--- string -> LSPMessage --
---------------------------
---------------------------
-
+owsP = *orP(" ", "\t")
 fieldVCharP = Parser(c -> if c === null then null else (
 	x := first ascii c;
 	if x < 0x21 or x == 0x7f then null
 	else terminalParser c))
 fieldValueP = *andP(fieldVCharP, optP(+orP(" ", "\t") @ fieldVCharP))
 
+-- extract content length from header
+headerP = (x -> x#2) % andP(
+    "Content-Length:", owsP, NNParser, owsP, "\r\n",
+    optP(andP("Content-Type:", owsP, fieldValueP, owsP)),"\r\n")
+
+contentP = concatenate % *Parser(c ->
+    if c === null then null else terminalParser c)
+
+removeHeader = (((n, s) -> substring(s, 0, n)) % (headerP @ contentP) :
+    charAnalyzer)
+
+end
+restart
+debug loadPackage("LanguageServer", Reload => true)
+s = "Content-Length: 5\r\nContent-Type:foo\r\nthe quick brown fox jumps over the lazy dog"
+removeHeader s
+
+f = headerP : charAnalyzer
+f "Content-Length: 3\r\nContent-Type:	  	application/vscode-jsonrpc; charset=utf-8\r\n"
+
+class oo
 headerP = (x -> x#1) % andP(
     "Content-Length: ",
     NNParser,
     "\r\n",
     optP("Content-Type: " @ fieldValueP),
     "\r\n")
-
-contentP = concatenate % *Parser(
-    c -> if c === null then null else terminalParser c)
 
 fromLSP = method()
 fromLSP String := x -> (
