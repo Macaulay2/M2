@@ -1,6 +1,7 @@
 callIfInitialized = (server, f) -> x -> (
-    if server.Initialized then f x
-    else raiseError(-32002, "Server Not Initialized"))
+    if not server.Initialized then raiseError(-32002, "Server Not Initialized")
+    else if server.Shutdown then raiseError(-32600, "Invalid Request")
+    else f x)
 
 addLSPMethod = method()
 addLSPMethod(LSPServer, String, Function) := (server, name, f) -> (
@@ -17,4 +18,5 @@ addLifecycleMethods = server -> (
 		"serverInfo" => hashTable {
 		    "name" => "Macaulay2 Language Server",
 		    "version" => LanguageServer.Options.Version}}));
+    addLSPMethod(server, "shutdown", () -> server.Shutdown = true);
     )
