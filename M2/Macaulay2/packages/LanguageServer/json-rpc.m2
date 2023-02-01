@@ -95,8 +95,12 @@ callMethod(JSONRPCMethod, List) := (
 	else params#i)
     else params)
 callMethod(JSONRPCMethod, HashTable) := (
-    mthd, params) -> mthd#"function" toSequence(apply(mthd#"params", param ->
-	if params#?param then params#param else null))
+    mthd, params) -> (
+    mthd#"function" (
+	if mthd#?"params"
+	then toSequence(apply(mthd#"params", param ->
+		if params#?param then params#param else null))
+	else ()))
 
 TEST ///
 -- examples from https://www.jsonrpc.org/specification
