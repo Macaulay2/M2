@@ -11,6 +11,10 @@ newPackage(
     PackageImports => {"JSON", "Parsing"}
     )
 
+export {
+    "runLanguageServer"
+    }
+
 load "./LanguageServer/json-rpc.m2"
 
 LSPServer = new Type of MutableHashTable
@@ -25,17 +29,20 @@ createLanguageServer = () -> (
     addLifecycleMethods server;
     server)
 
--- TODO: figure out how to plug this code into everything else
-
+------------------------------------
+-- add header to outgoing message --
+------------------------------------
 addHeader = msg -> concatenate(
-    "Content-Length: ",
-    toString length msg,
-    "\r\n\r\n",
+    "Content-Length: ", toString length msg, "\r\n",
+    "application/vscode-jsonrpc; charset=utf-8\r\n",
     msg)
-addHeader "foo"
 
--- http grammar from https://www.rfc-editor.org/rfc/rfc7230#section-3.2
+----------------------------------------------------------------------
+-- remove (and extract content length) header from incoming message --
+----------------------------------------------------------------------
 
+-- parse using http grammar from
+-- https://www.rfc-editor.org/rfc/rfc7230#section-3.2
 owsP = *orP(" ", "\t")
 fieldVCharP = Parser(c -> if c === null then null else (
 	x := first ascii c;
@@ -43,8 +50,7 @@ fieldVCharP = Parser(c -> if c === null then null else (
 	else terminalParser c))
 fieldValueP = *andP(fieldVCharP, optP(+orP(" ", "\t") @ fieldVCharP))
 
--- extract content length from header
-headerP = (x -> x#2) % andP(
+headerP = (-* extract content length *- x -> x#2) % andP(
     "Content-Length:", owsP, NNParser, owsP, "\r\n",
     optP(andP("Content-Type:", owsP, fieldValueP, owsP)),"\r\n")
 
@@ -54,83 +60,33 @@ contentP = concatenate % *Parser(c ->
 removeHeader = (((n, s) -> substring(s, 0, n)) % (headerP @ contentP) :
     charAnalyzer)
 
+-------------------------
+-- run language server --
+-------------------------
+
+runLanguageServer = method()
+runLanguageServer(LSPServer, File) := (server, f) -> (
+    g := if isListener f then openInOut f else f;
+    while true do (
+	wait g;
+	-- we send the string "error" to trigger a JSON parsing error
+	request := try removeHeader read g else "error";
+	g << addHeader handleRequest(server.JSONRPCServer, request) << flush))
+
+runLanguageServer ZZ := port -> runLanguageServer(
+    createLanguageServer(), openListener("$:" | toString port))
+installMethod(runLanguageServer, () ->
+    runLanguageServer(createLanguageServer(), stdio))
+
 end
+
 restart
-debug loadPackage("LanguageServer", Reload => true)
-s = "Content-Length: 5\r\nContent-Type:foo\r\nthe quick brown fox jumps over the lazy dog"
-removeHeader s
 
-f = headerP : charAnalyzer
-f "Content-Length: 3\r\nContent-Type:	  	application/vscode-jsonrpc; charset=utf-8\r\n"
+loadPackage("LanguageServer", Reload => true)
+runLanguageServer()
 
-class oo
-headerP = (x -> x#1) % andP(
-    "Content-Length: ",
-    NNParser,
-    "\r\n",
-    optP("Content-Type: " @ fieldValueP),
-    "\r\n")
-
-fromLSP = method()
-fromLSP String := x -> (
-    -- TODO: deal w/ Content-Length
-    msg := (((fromJSON @@ last) % headerP @ contentP) : charAnalyzer) x;
-    if msg#?"id" then ( -- TODO: check to make sure we have the correct members
-	if msg#?"method" then RequestMessage msg
-	else ResponseMessage msg)
-    else NotificationMessage msg)
-
-end
-
--- turn on lsp-mode
-///
-(add-to-list 'lsp-language-id-configuration
-    '(M2-mode . "macaulay2"))
-(lsp-register-client
-    (make-lsp-client
-    	:new-connection (lsp-stdio-connection
-	    "~/src/macaulay2/M2/M2/Macaulay2/packages/LanguageServer/macaulay2-lsp")
-    	:activation-fn (lsp-activate-on "macaulay2")
-    	:server-id 'macaulay2))
-///
-
-debug loadPackage("LanguageServer", Reload => true)
-
-errorDepth = 2
-RequestMessage {}
-
-e
-msg = requestMessage(1, "initialize")
-
-print responses#(msg#"method") msg
-print oo
-print (responses#(msg#"method") msg)
-
-respond msg
-
-responses#(msg#"method") msg
-
-responses#?(msg#"method")
-
-fromLSP toLSP responseMessage(3, responseError(4, "foo"))
-fromLSP toLSP notificationMessage("foo")
-
-
-infoHelp "currentPackage"
-currentPackage.Options.Version
-
-#///{
-    "jsonrpc": "2.0",
-    "result": {
-        "serverInfo": {
-            "version": "0.0",
-            "name": "Macaulay2 Language Server"
-        },
-        "capabilities": {
-            
-        }
-    },
-    "id": 42
-}///
-
-#demark("xxxxx", {})
+-*
+(add-to-list 'eglot-server-programs
+    '(M2-mode "M2"  "--srcdir" "/home/profzoom/src/macaulay2/M2/M2"
+	"-e" "needsPackage(\"LanguageServer\"); runLanguageServer()"))
+*-
