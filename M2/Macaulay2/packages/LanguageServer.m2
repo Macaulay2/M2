@@ -22,10 +22,11 @@ protect Initialized
 
 load "./LanguageServer/lsp-lifecycle.m2"
 
-createLanguageServer = () -> (
+createLanguageServer = file -> (
     server := new LSPServer from {
 	symbol JSONRPCServer => new JSONRPCServer,
-	Initialized => false};
+	Initialized => false,
+	symbol File => file};
     addLifecycleMethods server;
     server)
 
@@ -65,8 +66,8 @@ removeHeader = (((n, s) -> substring(s, 0, n)) % (headerP @ contentP) :
 -------------------------
 
 runLanguageServer = method()
-runLanguageServer(LSPServer, File) := (server, f) -> (
-    g := if isListener f then openInOut f else f;
+runLanguageServer LSPServer := server -> (
+    g := if isListener server.File then openInOut server.File else server.File;
     while true do (
 	wait g;
 	-- we send the string "error" to trigger a JSON parsing error
@@ -74,9 +75,9 @@ runLanguageServer(LSPServer, File) := (server, f) -> (
 	g << addHeader handleRequest(server.JSONRPCServer, request) << flush))
 
 runLanguageServer ZZ := port -> runLanguageServer(
-    createLanguageServer(), openListener("$:" | toString port))
+    createLanguageServer openListener("$:" | toString port))
 installMethod(runLanguageServer, () ->
-    runLanguageServer(createLanguageServer(), stdio))
+    runLanguageServer createLanguageServer stdio)
 
 end
 
