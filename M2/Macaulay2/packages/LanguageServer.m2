@@ -19,6 +19,7 @@ load "./LanguageServer/json-rpc.m2"
 
 LSPServer = new Type of MutableHashTable
 protect Initialized
+protect Shutdown
 
 load "./LanguageServer/lsp-lifecycle.m2"
 
@@ -26,6 +27,7 @@ createLanguageServer = file -> (
     server := new LSPServer from {
 	symbol JSONRPCServer => new JSONRPCServer,
 	Initialized => false,
+	Shutdown => false,
 	symbol File => file};
     addLifecycleMethods server;
     server)
