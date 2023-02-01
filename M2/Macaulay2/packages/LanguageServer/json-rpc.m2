@@ -74,7 +74,7 @@ handleRequest(JSONRPCServer, HashTable) := (server, request) -> (
 	    then responseError(result, "id" => request#"id")
 	    else responseSuccess(result, request#"id")))
     else if request#?"id"
-    then return responseError(-32601, "Method not found", "id" => request#"id"))
+    then responseError(-32601, "Method not found", "id" => request#"id"))
 handleRequest(JSONRPCServer, Thing) := (server, badrequest) -> (
     responseError(-32600, "Invalid Request"))
 
