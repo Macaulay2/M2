@@ -5,7 +5,8 @@
 undocumented (hypertext, Hypertext)
 
 document {
-     Key => {hypertext,(hypertext, List),(hypertext, Sequence)},
+--     Key => {hypertext,(hypertext, List),(hypertext, Sequence)},
+     Key => hypertext,
      Headline => "prepare hypertext for display",
      Usage => "hypertext x",
      Inputs => {

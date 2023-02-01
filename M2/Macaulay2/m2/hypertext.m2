@@ -173,6 +173,7 @@ MENU       = new IntermediateMarkUpType of HypertextContainer -- e.g. help sum
 TO         = new IntermediateMarkUpType of Hypertext
 TO2        = new IntermediateMarkUpType of Hypertext
 TOH        = new IntermediateMarkUpType of Hypertext
+INDENT     = new IntermediateMarkUpType of HypertextContainer -- temporary: one day, once format.m2 sorted out, we can simply have INDENT = x -> append(DIV x, "class" => "indent")
 
 -----------------------------------------------------------------------------
 -- LATER
@@ -362,6 +363,14 @@ style Hypertext := true >> o -> x -> (
 	);
     append(x,"style"=>str)
     )
+
+-- hijacked "hypertext"
+hypertext = method(Dispatch => Thing)
+-*
+hypertext Hypertext := fixup
+hypertext Sequence  :=
+hypertext List      := x -> fixup DIV x
+*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

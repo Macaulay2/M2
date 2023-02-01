@@ -12,8 +12,9 @@ needs "nets.m2"
 
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
-getSourceLines Sequence := x -> (
-     (filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" then (
+getSourceLines FilePosition := x -> (
+    filename := x#0; start := x#1; stop := x#3;
+     if filename =!= "stdio" then (
 	  wp := set characters " \t\r);";
 	  file := (
 	       if match("startup.m2.in$", filename) then startupString
@@ -33,33 +34,34 @@ getSourceLines Sequence := x -> (
 	       ) do stop = stop + 1;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
-	  stack prepend(
-	       concatenate(filename, ":", 
-		    toString start, ":", toString (startcol+1),
-		    "-",
-		    toString stop, ":", toString (stopcol+1),
-		    ": --source code:"),
-	       apply(start-1 .. stop-1, i -> file#i)
-	       )
-	  )) x
+	  DIV {
+	      x, ": --source code",
+	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
+	      }
+	  ))
 
 limit := 4
-indent := n -> "| "^(height n, depth n) | n
 
 codeFunction := (f,depth) -> (
      if depth <= limit then (
-	  if locate f === null then concatenate("function ", toString f, ": source code not available")
-	  else stack(
-	       syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
-	       getSourceLines locate f,
-	       if #syms > 0 then indent listSymbols syms,
-	       if codeHelper#?(functionBody f) 
-	       then toSequence apply(
-		    codeHelper#(functionBody f) f, 
-		    (comment,val) -> indent stack (
-			      comment, 
-			      if instance(val, Function) then codeFunction(val,depth+1) else net val
-			      )))))
+	 l := locate f;
+	  if l === null then DIV{"function ", f, ": source code not available"}
+	  else (
+	      syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
+	      DIV flatten {
+		  getSourceLines l,
+	       	  if #syms > 0 then INDENT listSymbols syms,
+	       	  if codeHelper#?(functionBody f)
+	       	  then apply(
+		      codeHelper#(functionBody f) f,
+		      (comment,val) -> INDENT {
+			  comment, BR{},
+			  if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
+			  })
+	      }
+	  )
+      )
+  )
 
 -- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
 previousMethodsFound = null
@@ -80,11 +82,11 @@ code Sequence   := s -> (
 	    and store#key.HookAlgorithms#?strategy
 	    then store#key.HookAlgorithms#strategy));
     if func =!= null or (func = lookup key) =!= null
-    then "-- code for method: "          | formatDocumentTag key || code func
+    then DIV {"-- code for method: " | formatDocumentTag key, code func }
     else "-- no method function found: " | formatDocumentTag key)
 code Function   := f -> codeFunction(f, 0)
 code Command    := C -> code C#0
-code List       := L -> stack between_"---------------------------------" apply(L, code)
+code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
 
 -----------------------------------------------------------------------------
@@ -100,7 +102,8 @@ editMethod String := filename -> (
 	  editor, " ", filename))
 EDIT = method(Dispatch => Thing)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
-EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
+EDIT FilePosition := x -> (
+     filename := x#0; start := x#1;
      editor := getViewer("EDITOR", "emacs");
      if 0 != chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
@@ -108,16 +111,17 @@ EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
 	  " +",toString start,
 	  " ",
 	  filename
-	  ) then error "command returned error code")) x
+	  ) then error "command returned error code")
 editMethod Command := c -> editMethod c#0
 editMethod Function := args -> EDIT locate args
 editMethod Sequence := args -> (
-     editor := getViewer("EDITOR", "emacs");
-     if args === () 
-     then chkrun concatenate(
-	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
-	  editor)
-     else EDIT locate args
+    if args === () then (
+	editor := getViewer("EDITOR", "emacs");
+	chkrun concatenate(
+	    if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
+	    editor)
+	)
+    else EDIT locate args
      )
 editMethod ZZ := i -> editMethod previousMethodsFound#i
 edit = Command editMethod
@@ -252,7 +256,7 @@ debuggerHook = entering -> (
      if entering then (
 	  pushvar(symbol inDebugger, true);
 	  c := code current;
-	  if c =!= null then << c << endl;
+	  if c =!= null then print c;
 	  )
      else (
 	  popvar symbol inDebugger;

@@ -20,13 +20,10 @@ new TestInput from Sequence := (T, S) -> TestInput {
 TestInput.synonym = "test input"
 
 code TestInput := T -> T#"code"
-locate TestInput := T -> (T#"filename",
+locate TestInput := T -> new FilePosition from (T#"filename",
     T#"line number" - depth net code T, 1,
     T#"line number", 1,,)
-toString TestInput := T -> (
-    loc := locate T;
-    loc#0 | ":" | loc#1 | ":" | loc#2 | "-" | loc#3 | ":" | loc#4 | ":"
-    )
+toString TestInput := T -> toString locate T | ":"
 net TestInput := T -> (toString T)^-1
 editMethod TestInput := EDIT @@ locate
 
