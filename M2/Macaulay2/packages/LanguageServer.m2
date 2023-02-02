@@ -81,6 +81,8 @@ runLanguageServer ZZ := port -> runLanguageServer(
 installMethod(runLanguageServer, () ->
     runLanguageServer createLanguageServer stdio)
 
+load "./LanguageServer/tests.m2"
+
 end
 
 restart
