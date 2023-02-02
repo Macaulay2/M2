@@ -18,7 +18,7 @@ addLifecycleMethods = server -> (
 		"serverInfo" => hashTable {
 		    "name" => "Macaulay2 Language Server",
 		    "version" => LanguageServer.Options.Version}}));
-    addLSPMethod(server, "shutdown", () -> server.Shutdown = true);
+    addLSPMethod(server, "shutdown", () -> server.Shutdown = true;);
     addMethod(server.JSONRPCServer, "exit", () -> (
 	    close server.File;
 	    exit if server.Shutdown then 0 else 1));
