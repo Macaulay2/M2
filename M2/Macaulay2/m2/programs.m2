@@ -171,4 +171,5 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 
 net Program := toString Program := program -> program#"name"
 html Program := html @@ toString
-net ProgramRun := pr -> net pr#"return value"
+status ProgramRun := o -> pr -> pr#"return value"
+net ProgramRun := net @@ status
