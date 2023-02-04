@@ -12,7 +12,7 @@ the License, or any later version.
 newPackage(
            "Normaliz",
            Version=>"2.6",
-           Date=>"February 18, 2016",
+           Date=>"February 4, 2023",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@uni-osnabrueck.de"},
                     {Name=> "Christof Soeger",
@@ -36,74 +36,63 @@ newPackage(
 		}
 )
 
-export{"rmNmzFiles",
-       "writeNmzData", "readNmzData", "readMultipleNmzData",
-       "normaliz", "setNmzOption", "showNmzOptions",
-       "normalToricRing", "intclToricRing", "ehrhartRing", "intclMonIdeal",
-       "torusInvariants", "finiteDiagInvariants", "diagInvariants", "RationalCone",
-       "allComputations", "grading",
-       "intersectionValRings", "intersectionValRingIdeals",
-       "MonomialSubalgebra",  "createMonomialSubalgebra",
-       "getNumInvs"
-      }
+export {
+    "rmNmzFiles",
+    "writeNmzData", "readNmzData", "readMultipleNmzData",
+    "normaliz", "setNmzOption", "showNmzOptions",
+    "normalToricRing", "intclToricRing", "ehrhartRing", "intclMonIdeal",
+    "torusInvariants", "finiteDiagInvariants", "diagInvariants", "RationalCone",
+    "allComputations", "grading",
+    "intersectionValRings", "intersectionValRingIdeals",
+    "MonomialSubalgebra",  "createMonomialSubalgebra",
+    "getNumInvs"
+    }
 
-exportMutable{"nmzVersion", "nmzDataPath", "nmzFilename", "nmzNumberThreads"}
+exportMutable { "nmzVersion", "nmzDataPath", "nmzFilename", "nmzNumberThreads" }
 
 ----------------------------------------------------------------------
-
 -- new classes
-
 ----------------------------------------------------------------------
-RationalCone = new Type of HashTable;
 
-MonomialSubalgebra = new Type of HashTable;
+RationalCone = new Type of HashTable
+RationalCone.synonym = "rational cone"
+
+MonomialSubalgebra = new Type of HashTable
+MonomialSubalgebra.synonym = "monomial subalgebra"
 --MonomialSubalgebra.GlobalAssignHook = globalAssignFunction
 --MonomialSubalgebra.GlobalReleaseHook = globalReleaseFunction
-MonomialSubalgebra#{Standard,AfterPrint} = R -> (
-     << endl;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : monomial subalgebra of " << ring R
-     << endl;
-     )
+MonomialSubalgebra#AfterPrint = S -> (class S, " of ", ring S)
+MonomialSubalgebra#Print = S -> (coefficientRing ring S, "[", demark_", " apply(gens S, toString), "]")
 
-MonomialSubalgebra#{Standard,Print} = S -> (
-     << endl;
-     << concatenate(interpreterDepth:"o") << lineNumber << " = "<< coefficientRing ring S << "[";
-     for i from 0 to (numgens S)-2 do( << (gens S)#i <<", "); if(numgens S!=0) then <<(gens S)#-1;
-     << "]"
-     << endl;
-     )
+createMonomialSubalgebra = method()
+createMonomialSubalgebra List := L -> (
+    if not uniform L then error "createMonomialSubalgebra: monomials must be elements of the same ring"
+    else if #L == 0  then error "createMonomialSubalgebra: empty MonomialSubalgebra has no default coefficient ring";
+    new MonomialSubalgebra from {
+	symbol ring       => ring L#0,
+	symbol generators => L,
+	symbol cache      => new CacheTable
+	})
 
-createMonomialSubalgebra =method()
-createMonomialSubalgebra List :=(L) ->
-(
-  if(not uniform(ring \ L))
-  then error("createMonomialSubalgebra: monomials must be elements of the same ring")
-  else( if(#L==0)
-       then error("createMonomialSubalgebra: empty MonomialSubalgebra has no default coefficient ring")
-  );
-  return new MonomialSubalgebra from { symbol ring =>ring L#0, symbol generators =>L,symbol cache => new CacheTable}
-)
+createEmptyMonomialSubalgebra = method()
+createEmptyMonomialSubalgebra Ring := K -> new MonomialSubalgebra from {
+    symbol ring       => K,
+    symbol generators => {},
+    symbol cache      => new CacheTable
+    }
 
-createEmptyMonomialSubalgebra =method()
-createEmptyMonomialSubalgebra Ring := K ->(
-return new MonomialSubalgebra from { symbol ring =>K, symbol generators =>{},symbol cache => new CacheTable}
-);
-
-
-vars MonomialSubalgebra:= R->matrix {R.generators};
-numgens  MonomialSubalgebra:= R -> #R.generators
+vars MonomialSubalgebra := R -> matrix {R.generators}
+numgens MonomialSubalgebra := R -> #R.generators
 gens MonomialSubalgebra := opts -> R -> R.generators
-ring MonomialSubalgebra:=R->R.ring;
+ring MonomialSubalgebra := R -> R.ring
 
 ----------------------------------------------------------------------
-
 -- initialising some values
-
 ----------------------------------------------------------------------
+
 nmzDataPath="";
 nmzFilename="";    -- Set by the user, if empty, then we use a temporary file
 nmzNumberThreads=1;
---nmzUserCalled=true;  -- whether the user calls a method
 nmzFile="";        -- Internal name of the data files
 nmzVersion="";     -- normaliz
 nmzMinExecVersion="2.11"; -- minimal normaliz version
@@ -113,837 +102,531 @@ normalizProgram = findProgram("normaliz", "normaliz --help",
     Verbose => debugLevel > 0, MinimumVersion => (nmzMinExecVersion,
 	"normaliz --version | head -1 | cut -d' ' -f 2 | tr -d '\n'"))
 
+-- FIXME: not thread-safe
 -- component 1 is name of option
 -- 2 is default value
 -- 3 is command line option to be passed to Normaliz
 -- 4 indicates whether file "gen" is generated
 -- value 2 of 4 indicates "no influence"
-nmzOptions= new MutableList from {
-            new MutableList from {"supp",false,"-s",false},
-            new MutableList from {"triang",false,"-tT",false},
-            new MutableList from {"volume",false,"-v",false},
-            new MutableList from {"hvect",false,"-p",false},
-            new MutableList from {"height1",false,"-1",false},
-            new MutableList from {"normal",false,"-n",true},
-            new MutableList from {"normal_l",false,"-N",true},
-            new MutableList from {"hilb",false,"-h",true},
-            new MutableList from {"dual",false,"-d",true},
-            new MutableList from {"control",false,"-c",2},
-            new MutableList from {"allf",false,"-a",2},
-            new MutableList from {"errorcheck",false,"-e",2},
-            new MutableList from {"bigint",false,"-B",2},
-            new MutableList from {"threads",false,"-x",2}};
--------------------------------------------------------------
+nmzOptions = new MutableList from {
+    new MutableList from {"supp",       false, "-s",  false},
+    new MutableList from {"triang",     false, "-tT", false},
+    new MutableList from {"volume",     false, "-v", false},
+    new MutableList from {"hvect",      false, "-p", false},
+    new MutableList from {"height1",    false, "-1", false},
+    new MutableList from {"normal",     false, "-n", true},
+    new MutableList from {"normal_l",   false, "-N", true},
+    new MutableList from {"hilb",       false, "-h", true},
+    new MutableList from {"dual",       false, "-d", true},
+    new MutableList from {"control",    false, "-c", 2},
+    new MutableList from {"allf",       false, "-a", 2},
+    new MutableList from {"errorcheck", false, "-e", 2},
+    new MutableList from {"bigint",     false, "-B", 2},
+    new MutableList from {"threads",    false, "-x", 2}
+    }
 
+----------------------------------------------------------------------
 --  filenames and paths
-
--------------------------------------------------------------
+----------------------------------------------------------------------
 
 -- sets the file for the exchange of data
-setNmzFile=()->
-(
-    if nmzFilename!="" then
-        nmzFile=nmzDataPath|nmzFilename
-    else
-        nmzFile=temporaryFileName();
-);
+setNmzFile = () -> nmzFile = if nmzFilename != "" then nmzDataPath | nmzFilename else temporaryFileName()
 
 -- checks if the user specified a new filename
-checkNmzFile=(errorMsg)->
-(
-    if nmzFilename!="" then  -- if the user specified a filename, we use it.
-        nmzFile = nmzDataPath|nmzFilename
-    else if nmzFile == "" then  --otherwise, there should be a temporary one.
-        error(errorMsg | ": No filename specified.");
-);
-
+checkNmzFile = errorMsg -> (
+    -- if the user specified a filename, we use it.
+    if nmzFilename != "" then nmzFile = nmzDataPath | nmzFilename
+    -- otherwise, there should be a temporary one.
+    else if nmzFile == "" then error(errorMsg | ": No filename specified."))
 
 -- get the normaliz executable with full path
-getNmzExec=()->
-(
-    if(nmzVersion!="")
-    then(
-        if(nmzVersion!="norm64" and nmzVersion !="normbig" and nmzVersion!="normaliz") then <<error("nmzVersion must be one of the following: normaliz normbig norm64")
-        else(
-        nmzExec:=nmzVersion;
-        );
-    )
-    else
-    (
-        nmzExec="normaliz";
-    );
-    return nmzExec;
-);
-
+getNmzExec = () -> (
+    if nmzVersion != "" then (
+	if not member(nmzVersion, {"norm64", "normbig", "normaliz"})
+	then error "nmzVersion must be one of the following: normaliz normbig norm64"
+	else nmzVersion)
+    else "normaliz")
 
 -- removes the files created for and by normaliz
-rmNmzFiles=()->
-(
-    suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","ht1","ext","cst","tgn","lat","mod","dec"};
-
+rmNmzFiles = () -> (
+    suffixes := {"in","gen","out","sup","egn","esp","inv","tri","typ","ht1","ext","cst","tgn","lat","mod","dec"};
     checkNmzFile("rmNmzFiles");
+    for s in suffixes do if fileExists(nmzFile | "." | s) then removeFile(nmzFile | "." | s);
+    nmzFilename = "");
 
-    for s in suffixes do (
-        if fileExists(nmzFile|"."|s) then 
-            removeFile(nmzFile|"."|s)
-    );
-    
-    nmzFilename="";
-);
-
-
----------------------------------------------------------
-
+----------------------------------------------------------------------
 --  parsing normaliz output (not exported)
-
----------------------------------------------------------
+----------------------------------------------------------------------
 
 -- returns the next number in the string s, and the remaining string
-getNumber=method()
-getNumber String :=s->
-(
-    l:=regex("[0-9-]+",s);
-    if( instance(l,Nothing)) then error("getNumber: no number found in the string.");
-    if(l#0#0!=0) then error("getNumber: string must begin with a number");
-    return(substring(l#0,s),substring(l#0#0+l#0#1,s));
-)
+getNumber = method()
+getNumber String := s -> (
+    l := regex("[0-9-]+", s);
+    if instance(l, Nothing) then error "getNumber: no number found in the string.";
+    if l#0#0 != 0 then error "getNumber: string must begin with a number";
+    (substring(l#0, s), substring(l#0#0 + l#0#1, s)))
 
 -- returns the next word (marked by whitespaces) in the string s, starting at position j and replaces "_" by " ", and the position of the first whitespace
 -- if s contains no whitespace, the returned position is not in the string!
-getKeyword=(s,j)->
-(
-   l:=regex("[[:alnum:]_-]+",j,s);
-   if( instance(l,Nothing)) then error("getKeyword: no word found in the string.");
-   if(l#0#0!=j) then << "warning: getKeyword: no word at the beginning of the string.";
-   return(replace("_"," ",substring(l#0,s)),l#0#0+l#0#1);
-);
-
+getKeyword = (s, j) -> (
+    l := regex("[[:alnum:]_-]+", j, s);
+    if instance(l, Nothing) then error "getKeyword: no word found in the string.";
+    if l#0#0 != j then << "warning: getKeyword: no word at the beginning of the string.";
+    replace("_", " ", substring(l#0, s)), l#0#0 + l#0#1)
 
 -- eliminates whitespaces and -, and transforms the next letter to upper case if possible
-elimWhitespaces=s->
-(
-    tmp:="";
-    while(match("[ -]",s))          -- while   or - is found
-    do(
-       l:=regex("[ -]",s);
-       pos:=l#0#0;     -- position of   or -
-       tmp=tmp|substring(0,pos,s);
-       if(pos+1<#s)
-       then tmp=tmp|toUpper(s#(pos+1));
-       s=substring(pos+2,s);
-   );
-   tmp=tmp|s;
-   return tmp;
-);
+elimWhitespaces = s -> (
+    tmp := "";
+    while match("[ -]", s) do (
+	l := regex("[ -]", s);
+	pos := l#0#0;
+	tmp = tmp | substring(0, pos, s);
+	if pos + 1 < #s then tmp = tmp | toUpper s#(pos+1);
+	s = substring(pos+2, s));
+    tmp | s)
 
 
- -- changes column f with column s
-changeColumns=(M,f,s)->
-(
+-- changes column f with column s
+changeColumns = (M, f, s) -> (
     columns:= new MutableList from entries transpose M;
     tmp:= columns#f;
     columns#f=columns#s;
     columns#s=tmp;
-    return transpose matrix toList columns;
-);
--------------------------------------------------------------
+    transpose matrix toList columns)
 
+----------------------------------------------------------------------
 -- input and output to/from normaliz
-
--------------------------------------------------------------
-
--- writes the given data in a normaliz input file
-doWriteNmzData=method()
-
---writes several matrices in a normaliz input file
-doWriteNmzData(List):=(matrices)->
-(
-  nmzModes := new HashTable from {
-      0 => "integral_closure",
-      1 => "normalization",
-      2 => "polytope",
-      3 => "rees_algebra",
-      4 => "inequalities",
-      5 => "equations",
-      6 => "congruences",
-      10 => "normal_toric_ideal",
-      20 => "grading"
-  };
-
-  checkNmzFile("doWriteNmzData");
-
-  outf:=nmzFile|".in" << "";
-
-  for p in matrices
-  do(
-     sgr:=p#0;
-     nmzMode:=p#1;
-     outf << numRows sgr << endl;
-     outf << numColumns sgr << endl;
-
-     for i from 0 to numRows(sgr)-1
-     do(
-        s:="";
-        for j from 0 to numColumns(sgr)-1
-        do(
-           s=s|sgr_(i,j)|" ";
-        );
-        outf << s << endl;
-     );
-     if nmzModes#?nmzMode then(
-        -- deprecated input type as integer
-        print("Using Normaliz integer input types is deprecated, please use " | nmzModes#nmzMode | " instead of " | nmzMode);
-        nmzMode = nmzModes#nmzMode);
-     -- Until version 3.9.4, input type normal_toric_ideal was called lattice_ideal
-     if normalizProgram#"version" < "3.10" and nmzMode == "normal_toric_ideal" then nmzMode = "lattice_ideal";
-     outf << nmzMode << endl;
-  );
-  outf  << close;
-);
+----------------------------------------------------------------------
 
 -- writes the given data in a normaliz input file
-writeNmzData=method()
-writeNmzData(Matrix,String):=(sgr, nmzMode)->
-(
-    doWriteNmzData({(sgr,nmzMode)});
-);
+doWriteNmzData = method()
+-- writes several matrices in a normaliz input file
+doWriteNmzData List := matrices -> (
+    checkNmzFile("doWriteNmzData");
+    outf := nmzFile | ".in" << "";
+    for p in matrices do (
+	sgr := p#0;
+	nmzMode := p#1;
+	outf << numRows sgr << endl;
+	outf << numColumns sgr << endl;
+	--
+	for i from 0 to numRows sgr - 1 do (
+	    s := "";
+	    for j from 0 to numColumns sgr - 1
+	    do s = s | sgr_(i,j) | " ";
+	    outf << s << endl;
+	    );
+	-- Until version 3.9.4, input type normal_toric_ideal was called lattice_ideal
+	if normalizProgram#"version" < "3.10" and nmzMode == "normal_toric_ideal" then nmzMode = "lattice_ideal";
+	outf << nmzMode << endl);
+    outf << close)
 
--- deprecated input type as integer
-writeNmzData(Matrix,ZZ):=(sgr, nmzMode)->
-(
-    doWriteNmzData({(sgr,nmzMode)});
-);
-
-writeNmzData(List):= matrices->
-(
-    doWriteNmzData matrices;
-);
+-- writes the given data in a normaliz input file
+writeNmzData = method()
+writeNmzData(Matrix, String) := (sgr, nmzMode) -> doWriteNmzData {(sgr, nmzMode)}
+writeNmzData List := matrices -> doWriteNmzData matrices
 
 -- reads the Normaliz output file with the specified suffix
 -- suffix should not be inv, in or out
-readNmzData=method(TypicalValue=>Matrix)
-readNmzData(String):=(nmzSuffix)->
-(
-    if member(nmzSuffix, {"inv", "in", "out", "cst"}) then
-        error("readNmzData: To read .inv use getNumInvs(), to read .cst use readMultipleNmzData, to read .out or .in there is no function provided");
-
-    L := readMultipleNmzData if nmzSuffix=="sup" then "cst" -- for backward compatibility, should only appear if nmzUserCalled
-        else nmzSuffix;
-    return L#0;
-);
+readNmzData = method(TypicalValue => Matrix)
+readNmzData String := nmzSuffix -> (
+    if member(nmzSuffix, {"inv", "in", "out", "cst"})
+    then error("readNmzData: ",
+	"to read .inv use getNumInvs(), ",
+	"to read .cst use readMultipleNmzData, ",
+	"to read .out or .in there is no function provided");
+    L := readMultipleNmzData if nmzSuffix == "sup" then "cst" else nmzSuffix; -- for backward compatibility
+    L#0)
 
 -- reads several matrices from one output file and returns them as list
 -- at the moment (!) necessary only for the suffix "cst"
-readMultipleNmzData=method()
-readMultipleNmzData String:=nmzSuffix->
-(
+readMultipleNmzData = method()
+readMultipleNmzData String := nmzSuffix -> (
     checkNmzFile("readMultipleNmzData");
 
-    if(not fileExists(nmzFile|"."|nmzSuffix))
-    then(
-        error("readMultipleNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
-    );
+    if not fileExists(nmzFile | "." | nmzSuffix)
+    then error("readMultipleNmzData: No file ", nmzFile, ".", nmzSuffix, " found. Perhaps you need to activate another option.");
 
     if debugLevel > 0 then << "--reading " << nmzFile << "." << nmzSuffix << endl;
 
-    inf:=get(nmzFile|"."|nmzSuffix);
-    s:=lines(inf);
+    s := lines get(nmzFile | "." | nmzSuffix);
 
-    L:={};
+    L := {};
     i := 0;
     j := 0;
     while i < #s do (
         while j < #s and match("[0-9-]+", s#j) do j = j + 1;
-        nmzGen := if i == j then {{}}
-            else apply(take(s, {i, j - 1}), t -> value \ select("[0-9-]+", t));
+        nmzGen := if i == j then {{}} else apply(
+	    take(s, {i, j - 1}), t -> value \ select("[0-9-]+", t));
         -- versions between 3.4.0 and 3.5.1 did not print row/column data
         -- we remove it if present
-        if #nmzGen > 2 and
-            nmzGen#0#0 == #nmzGen - 2 and -- number of rows
-            nmzGen#1#0 == #nmzGen#2 -- number of columns
+        if #nmzGen > 2
+	and nmzGen#0#0 == #nmzGen - 2 -- number of rows
+	and nmzGen#1#0 == #nmzGen#2   -- number of columns
         then nmzGen = drop(nmzGen, 2);
         L = append(L, matrix nmzGen);
-        i = j = j + 1;
-    );
-    return L;
-);
+        i = j = j + 1);
+    L)
 
--------------------------------------------------------------
-
+----------------------------------------------------------------------
 -- retrieving normaliz numerical invariants
+----------------------------------------------------------------------
 
--------------------------------------------------------------
-
-getNumInvs=()->
-(
-    numInvs:={};
-    key:="";
-    inv:=0;
+getNumInvs = () -> (
+    numInvs := {};
+    key := "";
+    inv := 0;
 
     checkNmzFile("getNumInvs");
 
-    if(not fileExists(nmzFile|".inv"))
-    then error("getNumInvs: No file "|nmzFile|".inv"|" found.");
+    if not fileExists(nmzFile | ".inv")
+    then error("getNumInvs: No file " | nmzFile | ".inv" | " found.");
 
     if debugLevel > 0 then << "--reading " << nmzFile << ".inv" << endl;
-    inf:=get(nmzFile|".inv");
-    s:=lines(inf);
+    s := lines get(nmzFile | ".inv");
 
-    for i from 0 to #s-1   -- for each line in the file
-    do(
-       key="";
-
-       if(match("^integer", s#i))
-       then(
+    for i from 0 to #s - 1 do (  -- for each line in the file
+	key = "";
+	if match("^integer", s#i) then (
 	    local j;
-            (key,j)=getKeyword(s#i,8);
-             inv=value (getNumber(substring(j+3,s#i)))#0;
-       )
-      else( if(match("^boolean",s#i))
-            then(
-                 (key,j)=getKeyword(s#i,8);
-                  if(s#i#(j+3)=="t")
-                  then( inv=true;)
-                  else( inv=false;);
-            )
-            else (if(match("^vector",s#i))
-                  then(
-                       (len,str):=getNumber(substring(7,s#i));
-                       (key,j)=getKeyword(str,1);
-                       inv={};
-                    --   en:="";
-                       --str=substring(j+10+#len,s#i);
-                        t:= replace(".* = ","",s#i);
-                        u:= select("[0-9-]+",t);
-                        inv=toSequence(apply(u,value));
-                  );
-           );
-      );
+	    (key, j) = getKeyword(s#i, 8);
+	    inv = value(getNumber substring(j + 3, s#i))#0;
+	    )
+	else(
+	    if match("^boolean", s#i) then (
+		(key, j) = getKeyword(s#i, 8);
+		inv = s#i#(j + 3) == "t")
+	    else (
+		if match("^vector", s#i) then (
+		    (len, str) := getNumber substring(7, s#i);
+		    (key, j) = getKeyword(str, 1);
+		    inv = {};
+		    --   en:="";
+		    --str=substring(j+10+#len,s#i);
+		    t:= replace(".* = ","",s#i);
+		    u:= select("[0-9-]+",t);
+		    inv=toSequence(apply(u,value));
+		    );
+		);
+	    );
+	numInvs = append(numInvs,{key,inv}));
+    hashTable numInvs)
 
-
-    numInvs=append(numInvs,{key,inv});
-    );
-    return(hashTable numInvs);
-);
-----------------------------------------------------------
-
+----------------------------------------------------------------------
 -- running normaliz (with options)
+----------------------------------------------------------------------
 
-----------------------------------------------------------
+setNmzOption = method()
+setNmzOption(String, Boolean) := (s, onoff) -> (
+    i := position(toList nmzOptions, x -> x#0 === s);
+    if i === null then (
+	print("setNmzOption: Invalid option ", s);
+	false)
+    else (
+	nmzOptions#i#1 = onoff;
+	if s == "threads" then nmzOptions#i#2 = "-x=" | nmzNumberThreads;
+	true)
+    )
 
-setNmzOption=method()
-setNmzOption (String,Boolean):=(s, onoff)->
-(
-  i:=position(toList(nmzOptions),((x)->(return x#0===s;)));
+collectNmzOptions = () -> (
+    opts := " -f ";
+    for i from 0 to #nmzOptions - 1 do if nmzOptions#i#1 then (
+	opts = opts | nmzOptions#i#2 | " ";
+	if nmzOptions#i#3 =!= 2 then nmzGen = nmzOptions#i#3);
+    opts)
 
-  if(instance(i,Nothing))
-  then(
-       print("setNmzOption: Invalid option "| s);
-       return(false);
-  )
-  else(
-       nmzOptions#i#1=onoff;
-       if(s=="threads")
-       then(
-            nmzOptions#i#2="-x="|nmzNumberThreads;
-       );
-       return(true);
-  );
-)
+showNmzOptions = () -> ( << "The following options are set:" << endl; << collectNmzOptions() )
 
-collectNmzOptions=()->
-(
-   options:=" -f ";
-    for i from 0 to #nmzOptions-1
-    do(
-        if(nmzOptions#i#1)
-        then(
-            options=options|nmzOptions#i#2|" ";
-            if(nmzOptions#i#3=!=2)
-            then(
-                nmzGen=nmzOptions#i#3;
-            );
-        );
-    );
-    return(options);
-)
-
-showNmzOptions=()->
-(
-  << "The following options are set:"<< endl;
-  << collectNmzOptions();
-)
-
-normaliz=method(Options=>true)
-opts={allComputations=>false, grading=>{}}
-normaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
-(
-  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
-                     {(sgr,nmzMode)});
-);
-
--- deprecated input type as integer
-opts={allComputations=>false, grading=>{}}
-normaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
-(
-  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
-                     {(sgr,nmzMode)});
-);
-
-normaliz(List):=opts>>o->(s)->
-(
-  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading, s);
-);
-
-runNormaliz=method(Options=>true)
-opts={allComputations=>false, grading=>{}}
-runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
-(
-  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
-                     {(sgr,nmzMode)});
-);
+normaliz = method(Options => { allComputations => false, grading => {} })
+normaliz(Matrix, String) := opts -> (sgr, nmzMode) -> runNormaliz({(sgr, nmzMode)}, opts)
+normaliz List := opts -> L -> runNormaliz(L, opts)
 
 -- sequence should contain pairs (sgr,nmzMode)
-runNormaliz(List):=opts>>o->(s)->
-(
+-- FIXME: why the duplicate?
+runNormaliz = method(Options => options normaliz)
+runNormaliz(Matrix, String) := opts -> (sgr, nmzMode) -> runNormaliz({(sgr, nmzMode)}, opts)
+runNormaliz List := opts -> s -> (
     setNmzFile();
 
-    if (#o.grading > 0) then (
-        s = append(s, (matrix{o.grading}, "grading"));
-    );
-    doWriteNmzData(s);
-    options:=collectNmzOptions();
+    if 0 < #opts.grading then s = append(s, (matrix {opts.grading}, "grading"));
+    doWriteNmzData s;
 
-    dir:=select(".*/",nmzFile);
+    dir := select(".*/", nmzFile);
     runDir := if dir != {} then dir#0 else null;
-    runProgram(normalizProgram, getNmzExec(), options | baseFilename(nmzFile),
+    runProgram(normalizProgram, getNmzExec(), collectNmzOptions() | baseFilename nmzFile,
 	RunDirectory => runDir, Verbose => debugLevel > 0);
 
-    if(not nmzGen)  -- return nothing if .gen is not
-    then(            -- generated
-         if nmzFilename=="" then rmNmzFiles();
-         --nmzUserCalled=true;  -- back to default
-         return;
-       );
+    -- return nothing if .gen is not generated
+    if not nmzGen then ( if nmzFilename == "" then rmNmzFiles(); return );
 
-    if(not o.allComputations)
-    then(
-     nmzData:=readNmzData "gen";
-     rc:=new RationalCone from {"gen"=> nmzData, "inv" =>getNumInvs()};
-     if(nmzFilename=="") then rmNmzFiles();
-------
---         nmzUserCalled=true;  -- back to default
-------
-     return rc;
-    );
+    if not opts.allComputations then (
+	nmzData := readNmzData "gen";
+	rc := new RationalCone from { "gen" => nmzData, "inv" => getNumInvs() };
+	if nmzFilename == "" then rmNmzFiles();
+	return rc);
 
     -- read all files written
-    files:={ "inv"=>getNumInvs()};
-    suffixes:={"gen","egn","esp","tri","typ","ht1","ext","tgn"};
-    for s in suffixes
-    do(
-       if(fileExists(nmzFile|"."|s))
-         then( files=append(files,s=>readNmzData(s));)
-    );
+    files := { "inv" => getNumInvs() };
+    suffixes := { "gen","egn","esp","tri","typ","ht1","ext","tgn" };
+    for s in suffixes do if fileExists(nmzFile | "." | s) then files = append(files, s => readNmzData s);
 
-    L:=readMultipleNmzData "cst";
-    files=append(files,"sup"=>L#0);
-    files=append(files,"equ"=>L#1);
-    files=append(files,"cgr"=>L#2);
+    L := readMultipleNmzData "cst";
+    files = append(files, "sup" => L#0);
+    files = append(files, "equ" => L#1);
+    files = append(files, "cgr" => L#2);
 
+    C := new RationalCone from files;
 
-    cone:= new RationalCone from files;
+    if nmzFilename == "" then rmNmzFiles();
+    C)
 
-    if(nmzFilename=="") then rmNmzFiles();
---    nmzUserCalled=true;  -- back to default
-    return cone;
-);
-
-
--------------------------------------------------------------
-
+----------------------------------------------------------------------
 -- intmats to/from monomials (not exported)
+----------------------------------------------------------------------
 
--------------------------------------------------------------
-
-mons2intmat=method()
-mons2intmat Ideal :=I->
-(
-    return(matrix(flatten\exponents\I));
-
-);
+mons2intmat = method()
+mons2intmat Ideal := I -> matrix(flatten \ exponents \ I)
 
 -- takes not column c
-mons2intmat(Ideal,ZZ):=(I,c)->
-(
-    if(c>= numgens ring I)
-    then(
-         << "mons2intmat: Warning! "|c|" exceeds the maximal index of a variable";
-         return mons2intmat(I););
-   mat:=flatten\exponents\I;
-   mat=apply(mat,(v)->(return drop(v,{c,c});));
-   return(matrix(mat));
+mons2intmat(Ideal, ZZ) := (I, c) -> (
+    if c >= numgens ring I then (
+	<< "mons2intmat: Warning! "|c|" exceeds the maximal index of a variable";
+	return mons2intmat I);
+    mat := flatten \ exponents \ I;
+    mat = apply(mat, v -> drop(v, {c, c}));
+    matrix mat)
 
-);
-
-
-
--- expos: a matrix whose numColumns is <= numgens(r)
+-- expos: a matrix whose numColumns is <= numgens r
 -- r: the ring where the ideal shall be
 -- returns the ideal
-intmat2mons=method()
-intmat2mons(Matrix,Ring):=(expoVecs, r)->
-(
-   if(numColumns(expoVecs) > numgens(r))
-   then(
-        error("intmat2mons: not enough variables in the basering");
-   );
-   l:={};
-
-   for i from 0 to numRows(expoVecs)-1
-   do(
-      l=append(l,r_((entries expoVecs)#i));
-   );
-   return l;
-);
-
+intmat2mons = method()
+intmat2mons(Matrix, Ring) := (expoVecs, r) -> (
+    if numColumns expoVecs > numgens r
+    then error "intmat2mons: not enough variables in the basering";
+    l := {};
+    for i from 0 to numRows expoVecs - 1 do l = append(l, r_((entries expoVecs)#i));
+    l)
 
 -- takes only the rows with entry d in column c, ignoring column c
-intmat2mons(Matrix,Ring,ZZ,ZZ):=(expoVecs,r,d,c)->
-(
-   if(numColumns(expoVecs)-1 > numgens(r))
-   then(
-        error("intmat2mons: not enough variables in the basering");
-   );
-   v:=gens r;  -- the variables of the basering
-   l:={};
-   rows:=entries expoVecs;
-   rows=select(rows, (row)->(row#c==d)); --only those rows with entry d in column c
+intmat2mons(Matrix, Ring, ZZ, ZZ) := (expoVecs, r, d, c) -> (
+    if numColumns expoVecs - 1 > numgens r
+    then error "intmat2mons: not enough variables in the basering";
+    v := gens r;  -- the variables of the basering
+    l := {};
+    rows := entries expoVecs;
+    rows = select(rows,  row -> row#c == d); --only those rows with entry d in column c
+    for i from 0 to #rows - 1 do (
+	m := 1;
+	for j from 0 to numColumns expoVecs - 1 do (
+	    if not j == c then m = m * (v#j)^(rows#i#j));
+	l = append(l, m));
+    l)
 
-   for i from 0 to #rows-1
-   do(
-             m:=1;
-             for j from 0 to numColumns(expoVecs)-1
-             do(
-                 if(not j==c) then
-                 (m=m*(v#j)^(rows#i#j);)
-             );
-             l=append(l,m);
-      );
-   return l;
-);
-
--------------------------------------------------------------
-
+----------------------------------------------------------------------
 -- integral closure of rings and ideals
+----------------------------------------------------------------------
 
--------------------------------------------------------------
+runIntclToricRing = method(Options => options normaliz)
+runIntclToricRing(Ideal, String) := opts -> (I, nmzMode) -> (
+    expoVecs := mons2intmat I;
+    result := runNormaliz(expoVecs, nmzMode, opts);
+    if result =!= null then (
+	S := createMonomialSubalgebra  intmat2mons(result#"gen", ring I);
+	S.cache#"cone" = result;
+	S))
 
-runIntclToricRing=method(Options=>true)
-opts={allComputations=>false, grading=>{}}
-runIntclToricRing(Ideal,String):=opts>>o->(I,nmzMode)->
-(
-    expoVecs:=mons2intmat(I);
+intclToricRing = method(Options => options normaliz)
+intclToricRing List := opts -> L -> (
+    if not uniform L then error "intclToricRing: monomials must be elements of the same ring";
+    if #L == 0       then error "intclToricRing: expected non-empty list";
+    runIntclToricRing(ideal L, "integral_closure", opts))
 
-     res:=runNormaliz(allComputations=>o.allComputations,grading=>o.grading,
-                      expoVecs,nmzMode);
-     if(instance(res,Nothing))
-     then return
-     else(
-          S:=createMonomialSubalgebra  intmat2mons(res#"gen",ring I);
-          S.cache#"cone"=res;
-          return S;
-     );
-);
+intclToricRing MonomialSubalgebra := opts -> S -> intclToricRing(gens S, opts)
 
-intclToricRing=method(Options=>true)
-opts={allComputations=>false, grading=>{}}
-intclToricRing List :=opts>>o->L->
-(
-  if(not uniform(ring \ L))
-  then error("intclToricRing: monomials must be elements of the same ring")
-  else(
-    if(#L==0)
-      then error("intclToricRing: empty list");
-    return runIntclToricRing(allComputations=>o.allComputations,grading=>o.grading,
-                             ideal L,"integral_closure");
-  );
-);
+normalToricRing=method(Options => options normaliz)
+normalToricRing List := opts -> L -> (
+  if not uniform L then error "normalToricRing: monomials must be elements of the same ring";
+  if #L == 0       then error "normalToricRing: expected non-empty list";
+  runIntclToricRing(ideal L, "normalization", opts))
 
-intclToricRing MonomialSubalgebra :=opts>>o->S->
-(
-  return intclToricRing(allComputations=>o.allComputations, grading=>o.grading, gens S);
-);
-
-normalToricRing=method(Options=>true);
-opts={allComputations=>false, grading=>{}}
-normalToricRing List :=opts>>o->L->
-(
-  if(not uniform(ring \ L))
-  then error("normalToricRing: monomials must be elements of the same ring")
-  else( if(#L==0)
-       then error("normalToricRing: empty list");
-    return runIntclToricRing(allComputations=>o.allComputations,grading=>o.grading,ideal L,"normalization");
-  );
-);
-
-normalToricRing MonomialSubalgebra :=opts>>o->S->
-(
-  return normalToricRing(allComputations=>o.allComputations,grading=>o.grading, gens S);
-);
+normalToricRing MonomialSubalgebra := opts -> S -> normalToricRing(gens S, opts)
 
 -- input binomial ideal
-normalToricRing (Ideal,Thing) :=opts>>o->(I,t)->(
-  R:=ring I;
-  a:=0;
-  b:=0;
-  M:={};
-  for g in flatten entries gens I
-  do(
-     if #(exponents g)!=2 then error("normalToricRing: ideal is not generated by binomials.");
-     a=(exponents g)#0;
-     b=(exponents g)#1;
-     if(coefficient(R_a,g)==1 and coefficient(R_b,g)==-1)
-     then M=append(M,entries(vector(a)-vector(b)))
-     else (
-            if(coefficient(R_a,g)==-1 and coefficient(R_b,g)==1)
-            then M=append(M,entries(vector(b)-vector(a)))
-            else error("normalToricRing: ideal is not generated by binomials.");
-     );
-   );
-   M=matrix M;
-   nmzCone:=normaliz(allComputations=>o.allComputations,grading=>o.grading,M,"normal_toric_ideal");
-   nmzData:=nmzCone#"gen";
-   r:=rank nmzData;
-   n:=numgens R;
-   R=(coefficientRing R)[t_1..t_(n-r)];
-   S := createMonomialSubalgebra(for i in entries nmzData list R_i);
-   S.cache#"cone"=nmzCone;
-   return S;
-);
+normalToricRing(Ideal, Thing) := opts -> (I, t) -> (
+    R := ring I;
+    a := 0;
+    b := 0;
+    M := {};
+    for g in flatten entries gens I do (
+	if #(exponents g) != 2 then error "normalToricRing: ideal is not generated by binomials.";
+	a = (exponents g)#0;
+	b = (exponents g)#1;
+	if  coefficient(R_a, g) == 1
+	and coefficient(R_b, g) == -1
+	then M = append(M, entries(vector a - vector b))
+	else (
+	    if coefficient(R_a, g) == -1 and coefficient(R_b, g) == 1
+	    then M = append(M, entries(vector b - vector a))
+	    else error "normalToricRing: ideal is not generated by binomials.");
+	);
+    nmzCone := normaliz(matrix M, "normal_toric_ideal", opts);
+    nmzData := nmzCone#"gen";
+    r := rank nmzData;
+    n := numgens R;
+    R = (coefficientRing R)(monoid[t_1..t_(n-r)]);
+    S := createMonomialSubalgebra(for i in entries nmzData list R_i);
+    S.cache#"cone" = nmzCone;
+    S)
 
---------------------------------------------------------
-
+----------------------------------------------------------------------
 -- Rees Algebra / Monomial Ideals
+----------------------------------------------------------------------
 
---------------------------------------------------------
+runIntclMonIdeal = method(Options => options normaliz)
+runIntclMonIdeal(Ideal, String) := opts -> (I, nmzMode) -> (
+    -- new variable for Rees algebra
+    alpha := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    ovars := gens ring I;
+    i := 0;
 
-runIntclMonIdeal=method(Options=>true)
-opts={allComputations=>false, grading=>{}}
-runIntclMonIdeal(Ideal,String):=opts>>o->(I,nmzMode)->
-(
-   -- new variable for Rees algebra
-    alpha:="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    ovars:=gens ring I;
-    i:=0;
+    while (unique append(ovars, value alpha#i) == ovars and i < 52) do i=i+1;
 
-    while(unique(append(ovars,value alpha#i))==ovars and i<52) do i=i+1;
+    if i == 52 then error "runIntclMonIdeal: no free letter found for auxiliary variable";
+    S := (coefficientRing ring I) (monoid[append(ovars, value alpha#i)]);
+    f := map(S, ring I, delete(last gens S, gens S));
+    runIntclMonIdeal(f I, nmzMode, last gens S, opts))
 
-    if(i==52) then error("runIntclMonIdeal: no free letter found for auxiliary variable");
-    t:=value alpha#i;
-    nvars:=append(ovars,t);
---    S:=(coefficientRing ring I)(nvars); --this will effect the variable t of the user
-    S:=(coefficientRing ring I)(monoid[nvars]); 
-    images:=delete(last gens S, gens S);
-    f:=map(S,ring I,images);
-    I= f(I);
-    return runIntclMonIdeal(allComputations=>o.allComputations,grading=>o.grading,I,nmzMode,last gens S);
-);
+runIntclMonIdeal(Ideal, String, RingElement) := opts -> (I, nmzMode, t) -> (
+    if not member(t, gens ring I) then error "runIntclMonIdeal: second argument must be a variable of the ring of the ideal.";
+    if member(t, support I)       then error "runIntclMonIdeal: extra ring variable can not be used in the ideal.";
 
+    numIvs := {};
+    c := index t;
+    expoVecs := mons2intmat(I, c);
+    result := runNormaliz(expoVecs, nmzMode, opts);
 
-runIntclMonIdeal(Ideal,String,RingElement):=opts>>o->(I,nmzMode,t)->
-(
-    if(not member(t,gens ring I))
-    then error("runIntclMonIdeal: second argument must be a variable of the ring of the ideal.");
-    if(member(t,support I))
-    then error("runIntclMonIdeal: extra ring variable can not be used in the ideal.");
-    
-    numIvs:={};
-    c:= index t;
-    expoVecs:=mons2intmat(I,c);
-    res:=runNormaliz(allComputations=>o.allComputations,grading=>o.grading,expoVecs,nmzMode);
+    if not nmzGen then return;
 
-    if(not nmzGen) then return;
+    nmzData := changeColumns(result#"gen", c, -1);
 
-    nmzData:=changeColumns(res#"gen",c,-1);
+    S1 := createMonomialSubalgebra intmat2mons(nmzData, ring I, 1, c);
+    S2 := createMonomialSubalgebra intmat2mons(nmzData, ring I);
+    S1.cache#"cone" = S2.cache#"cone" = result;
+    (S1, S2))
 
-    S1:=createMonomialSubalgebra intmat2mons(nmzData,ring(I),1,c);
-    S1.cache#"cone"=res;
-    S2:=createMonomialSubalgebra intmat2mons(nmzData,ring(I));
-    S2.cache#"cone"=res;
-    return (S1,S2);
-);
-
-intclMonIdeal=method(Options=>true)
-opts={allComputations=>false, grading=>{}}
-intclMonIdeal Ideal :=opts>>o->I->
-(
-    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,"rees_algebra");
-    return (ideal gens intcl,alg);
-);
+intclMonIdeal=method(Options => options normaliz)
+intclMonIdeal Ideal := opts -> I -> (
+    (intcl, alg) := runIntclMonIdeal(I, "rees_algebra", opts);
+    (ideal gens intcl, alg))
 
 -- if there is a free variable in the ring, it can be given as second argument
-intclMonIdeal (Ideal,RingElement) :=opts>>o->(I,t)->
-(
-    if(not member(t, gens ring I))
-    then error("intclMonIdeal: second argument must be a variable of the ring of the ideal.");
+intclMonIdeal(Ideal, RingElement) := opts -> (I, t) -> (
+    if not member(t, gens ring I) then error "intclMonIdeal: second argument must be a variable of the ring of the ideal.";
+    (intcl, alg) := runIntclMonIdeal(I, "rees_algebra", t, opts);
+    (ideal gens intcl, alg))
 
-    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,"rees_algebra",t);
-    return (ideal gens intcl, alg);
-);
-
---------------------------------------------------------
-
+----------------------------------------------------------------------
 -- Ehrhart ring
+----------------------------------------------------------------------
 
---------------------------------------------------------
-
-ehrhartRing=method(Options=>true)
-opts1={allComputations=>false}  --For polytopes we use a fixed grading
-ehrhartRing List :=opts1>>o->L->
-(
-  if(not uniform(ring \ L))
-  then error("ehrhartRing: monomials must be elements of the same ring")
-  else( if(#L==0)
-       then error("ehrhartRing: empty list");
-  );
-  return  runIntclMonIdeal(allComputations=>o.allComputations,ideal L,"polytope");
-);
-
---ehrhartRing MonomialSubalgebra :=opts1>>o->S->
---(
---  return ehrhartRing(allComputations=>o.allComputations,gens S);
---);
+ehrhartRing = method(Options => { allComputations => false }) -- for polytopes we use a fixed grading
+ehrhartRing List := opts -> L -> (
+    if not uniform L then error "ehrhartRing: monomials must be elements of the same ring";
+    if #L == 0       then error "ehrhartRing: expected non-empty list";
+    runIntclMonIdeal(ideal L, "polytope", opts))
+--ehrhartRing MonomialSubalgebra := opts -> S -> ehrhartRing(gens S, opts)
 
 -- if there is a free variable in the ring, it can be given as second argument
-ehrhartRing (List,RingElement):=opts1>>o->(L,t)->
-(
-    if(not uniform(ring \ L))
-  then error("ehrhartRing: monomials must be elements of the same ring")
-  else( if(#L==0)
-       then error("ehrhartRing: empty list");
-  );
-   I:=ideal L;
-    if(not member(t,gens ring I))
-    then error("ehrhartRing: second argument must be a variable of the ring of the ideal.");
+ehrhartRing(List, RingElement) := opts -> (L, t) -> (
+    if not uniform L then error "ehrhartRing: monomials must be elements of the same ring";
+    if #L == 0       then error "ehrhartRing: expected non-empty list";
+    I := ideal L;
+    if not member(t, gens ring I) then error "ehrhartRing: second argument must be a variable of the ring of the ideal.";
+    runIntclMonIdeal(I, "polytope", t, opts))
+--ehrhartRing(MonomialSubalgebra, RingElement) := opts -> (S, t) -> ehrhartRing(gens S, t, opts)
 
-    (latticePoints,ehrhartRing):= runIntclMonIdeal(allComputations=>o.allComputations,I,"polytope",t);
-    return (latticePoints,ehrhartRing);
-);
-
---ehrhartRing (MonomialSubalgebra,RingElement):=opts1>>o->(S,t)->
---(
---  return ehrhartRing(allComputations=>o.allComputations,gens S,t);
---);
-
---------------------------------------------------------
-
+----------------------------------------------------------------------
 -- torus invariants and valuation rings and ideals
+----------------------------------------------------------------------
 
---------------------------------------------------------
-opts={allComputations=>false, grading=>{}}
+torusInvariants = method(Options => options normaliz)
+torusInvariants(Matrix, Ring) := opts -> (T, R) -> (
+    if numgens R != numColumns T then error "torusInvariants: wrong number of columns in matrix";
 
-torusInvariants = method(Options=>true)
-torusInvariants (Matrix, Ring) := opts>>o -> (T,R) ->
-(
+    M := runNormaliz(T, "equations", opts);
+    if not nmzGen then return; -- M = null
 
-    if(numgens(R)!=numColumns(T))
-    then(
-          error("torusInvariants: wrong number of columns in matrix");
-    );
+    rt := createMonomialSubalgebra intmat2mons(M#"gen", R);
+    rt.cache#"cone" = M;
+    rt)
 
-    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, T,"equations");
-    if(not nmzGen) then return;  -- M=null
+finiteDiagInvariants = method(Options => options normaliz);
+finiteDiagInvariants(Matrix, Ring) := opts -> (M, R) -> (
+    if numgens R != numColumns M - 1 then error "finiteDiagInvariants: wrong number of columns in matrix";
 
-    rt:=createMonomialSubalgebra intmat2mons(M#"gen",R);
-    rt.cache#"cone"=M;
-    return rt;
-)
+    C := normaliz(M, "congruences", opts);
+    rt := C#"gen";
+    if rt === null then return createEmptyMonomialSubalgebra R;
 
-finiteDiagInvariants = method(Options=>true);
-finiteDiagInvariants (Matrix,Ring) := opts>>o -> (M,R) ->
-(
-  if(numgens R != numColumns M-1)
-  then error("finiteDiagInvariants: wrong number of columns in matrix");
+    S := createMonomialSubalgebra intmat2mons(rt, R);
+    S.cache#"cone" = C;
+    S)
 
-  cone:= normaliz(allComputations=>o.allComputations, grading=>o.grading,M,"congruences");
-  rt := cone#"gen";
-  if(instance(rt,Nothing,rt)) then return createEmptyMonomialSubalgebra R;
+diagInvariants = method(Options => options normaliz);
+diagInvariants(Matrix, Matrix, Ring) := opts -> (T, F, R) -> (
+    if numgens R != numColumns T or numgens R != numColumns F - 1
+    then error "diagInvariants: wrong number of columns in matrix";
 
-  S := createMonomialSubalgebra intmat2mons(rt,R);
-  S.cache#"cone"=cone;
-  return S;
-);
+    C := normaliz({(T, "equations"), (F, "congruences")}, opts);
+    rt := C#"gen";
+    if rt === null then return createEmptyMonomialSubalgebra R;
 
-diagInvariants = method(Options=>true);
-diagInvariants (Matrix,Matrix,Ring) := opts>>o -> (T,F,R) ->
-(
-  if(numgens R != numColumns T or numgens R != numColumns F -1)
-  then error("diagInvariants: wrong number of columns in matrix");
+    S := createMonomialSubalgebra intmat2mons(rt, R);
+    S.cache#"cone" = C;
+    S)
 
-  cone:=(normaliz(allComputations=>o.allComputations, grading=>o.grading,{(T,"equations"),(F,"congruences")}));
-  rt := cone#"gen";
+intersectionValRings = method(Options => options normaliz)
+intersectionValRings(Matrix, Ring) := opts -> (V, R) -> (
+    if numgens R != numColumns V then error "intersectionValRings: wrong number of columns in matrix";
 
-  if(instance(rt,Nothing)) then return createEmptyMonomialSubalgebra R;
+    I := id_(ZZ^(numColumns V)); -- identity matrix
+    V1 := I || V;
 
-  S := createMonomialSubalgebra intmat2mons(rt,R);
-  S.cache#"cone"=cone;
-  return S;
-);
+    M := runNormaliz(V1, "inequalities", opts);
+    if not nmzGen then return; -- M = null
 
-intersectionValRings = method(Options=>true)
-intersectionValRings (Matrix,Ring) := opts>>o -> (V,R) ->
-(
-    if(numgens(R)!=numColumns(V))
-    then(
-          error("intersectionValRings: wrong number of columns in matrix");
-    );
-
-    I:=id_(ZZ^(numColumns(V))); -- identity matrix
-    V1:=I||V;
-
-    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,"inequalities");
+    vr := createMonomialSubalgebra intmat2mons(M#"gen", R);
+    vr.cache#"cone" = M;
+    vr)
 
 
-    if(not nmzGen) then return; -- M=null
-
-    vr:=createMonomialSubalgebra intmat2mons(M#"gen",R);
-    vr.cache#"cone"=M;
-    return vr;
-)
-
-
-intersectionValRingIdeals = method(Options=>true)
-intersectionValRingIdeals (Matrix,Ring) := opts>>o -> (V,R) ->
-(
-    nc:=numColumns(V);
-    if(numgens(R)!=nc-1)
-    then(
-         error("intersectionValRingIdeals: wrong number of columns in matrix");
-    );
+intersectionValRingIdeals = method(Options => options normaliz)
+intersectionValRingIdeals(Matrix, Ring) := opts -> (V, R) -> (
+    nc := numColumns V;
+    if numgens R != nc - 1 then error "intersectionValRingIdeals: wrong number of columns in matrix";
 
     I:=id_(ZZ^nc); -- identity matrix
     V1:=I||V;
-    V1=mutableMatrix(V1);
+    V1=mutableMatrix V1;
 
-    for i from 0 to numRows(V)-1
+    for i from 0 to numRows V -1
     do(
        V1_(i+nc,nc-1)=-V1_(i+nc,nc-1);
     );
-    V1=matrix(V1);
+    V1=matrix V1;
 
-    nmzCone:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,"inequalities");
+    nmzCone:=runNormaliz(V1, "inequalities", opts);
     if(not nmzGen) then return; -- nmzCone=null
     M:=nmzCone#"gen";
 
-    R1:=createMonomialSubalgebra intmat2mons(M,R,0,numColumns M-1);
-    R1.cache#"cone"=nmzCone; -- ????? TODO
-    R2:=intmat2mons(M,R,1,numColumns M-1);
+    R1 := createMonomialSubalgebra intmat2mons(M, R, 0, numColumns M - 1);
+    R1.cache#"cone" = nmzCone; -- ????? TODO
+    R2 := intmat2mons(M, R, 1, numColumns M - 1);
 
-    return new HashTable from {"subalgebra"=>R1, "module generators"=>R2};
-)
+    new HashTable from {"subalgebra" => R1, "module generators" => R2})
 
-----------------------------------------------------------
+----------------------------------------------------------------------
+
 beginDocumentation()
 
 document {
@@ -2303,12 +1986,11 @@ document {
      Usage => "intersectionValRings(v,r)",
      Inputs => {
                 Matrix=> "rows are the values of the indeterminates",
-                Ring => " the basering"
-},
+                Ring => " the basering"},
      Outputs => {
                  MonomialSubalgebra => {"the subalgebra consisting of the elements with valuation ",TEX "\\geq 0", " for all given valuations"}},
      PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function computes the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,r\\}"," that is the intersection of the valuation rings of the given valuations ", TEX "v_1, \\ldots,v_r", ", i.e. it consists of all elements of R that have a nonnegative value for all r valuations. It takes as input the matrix ", TEX "V=(v_i(X_j))"," whose rows correspond to the values of the indeterminates.",
-PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ".",},
+     PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ".",},
      EXAMPLE lines ///
          R=QQ[x,y,z,w];
          V0=matrix({{0,1,2,3},{-1,1,2,1}});
@@ -2329,7 +2011,7 @@ document {
      },
      Outputs => {HashTable => "the subalgebra and the generators of the module over it"},
      PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function takes as input the matrix ", TEX "V=(v_i(X_j))", ", whose rows correspond to the values of the indeterminates for for r valuations ", TEX "v_1, \\ldots,v_r",", with an additional column holding lower bounds ", TEX "w_1,\\ldots,w_r \\in \\ZZ",". It returns the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,n\\}",", the intersection of the valuation rings of the r valuations, and a system of generators of the S-submodule ", TEX "M=\\{f\\in R: v_i(f)\\geq w_i, i=1,\\ldots,n\\}"," over R, which consists of the elements whose i-th valuation is greater or equal to the i-th bound ", TEX "w_i",". If ", TEX "w_i>=0", " for all i, then M is an ideal in S.",
-PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ". The additional data can be accessed via the subalgebra in the ",TO HashTable,".",},
+     PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ". The additional data can be accessed via the subalgebra in the ",TO HashTable,".",},
      EXAMPLE lines ///
            R=QQ[x,y,z,w];
            V=matrix({{0,1,2,3,4},{-1,1,2,1,3}});
@@ -2337,6 +2019,17 @@ PARA{},"This method can be used with the options ", TO allComputations, " and ",
      ///,
      SeeAlso=> {intersectionValRings}
      }
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Normaliz "
--- End:
+
+end--
+
+restart
+uninstallAllPackages()
+check "Normaliz"
+installPackage "Normaliz"
+
+restart
+errorDepth=2
+needsPackage "Normaliz"
+R=ZZ/37[x,y,z,w];
+I=ideal(x*z-y^2, x*w-y*z);
+normalToricRing(I,t)
