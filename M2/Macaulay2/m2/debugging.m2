@@ -186,7 +186,7 @@ listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
 listSymbols List := x -> TABLE prepend(
     apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
-    apply(x, y -> apply({y,Abbreviate class value y,Abbreviate value y,locate y},s->TD {s}))
+    apply(x, y -> apply({y,Abbreviate {class value y},Abbreviate {value y},locate y},s->TD {s}))
     );
 
 
@@ -234,6 +234,28 @@ generateAssertions List := y -> (
 	       )))^-1
 
 currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
+
+FilePosition = new Type of BasicList
+FilePosition.synonym = "file position"
+toString FilePosition :=
+net FilePosition := p -> concatenate(
+    p#0,":",toString p#1,":",toString p#2,
+    if #p>3 then ("-",toString p#3,":",toString p#4),
+--    if #p>5 then (" (",toString p#5,":",toString p#6,")")
+    )
+
+locate' = locate -- defined in d/actors4.d
+locate = method(Dispatch => Thing, TypicalValue => FilePosition)
+locate Nothing     :=
+locate FunctionBody:=
+locate Function    :=
+locate Pseudocode  :=
+locate Sequence    :=
+locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new FilePosition from x'
+locate List        := List     => x -> apply(x, locate)
+protect symbol locate
+
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

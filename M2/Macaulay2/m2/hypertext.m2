@@ -4,6 +4,8 @@
 needs "regex.m2" -- for toLower
 needs "lists.m2" -- for all
 needs "methods.m2"
+needs "packages.m2" -- for Package
+needs "monoids.m2" -- for Monoid etc
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors
@@ -27,6 +29,8 @@ toExternalString Hypertext := s -> concatenate(toString class s, toExternalStrin
 new Hypertext from VisibleList := (M,x) -> x
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
+
+Hypertext#AfterPrint = x -> null
 
 -----------------------------------------------------------------------------
 -- URL type declaration and constructor
@@ -364,13 +368,43 @@ style Hypertext := true >> o -> x -> (
     append(x,"style"=>str)
     )
 
--- hijacked "hypertext"
-hypertext = method(Dispatch => Thing)
--*
-hypertext Hypertext := fixup
-hypertext Sequence  :=
-hypertext List      := x -> fixup DIV x
-*-
+hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
+hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-align:left", -- TODO move style to CSS
+    deepSplice apply(sortByName pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then k
+	  else (k, " : ", v)
+	  , BR{})))
+hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
+TTc = c -> x -> TT {toString x,"class"=>"token "|c}
+hypertext Pseudocode :=
+hypertext CompiledFunctionBody := TTc "function"
+hypertext Command :=
+hypertext FunctionBody :=
+hypertext Function := f -> TT deepSplice {
+    if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
+	t := locate if instance(f,Command) then f#0 else f;
+	"-*",
+	SPAN class f,
+	if t =!= null then ("[", SPAN t, "]"),
+	"*-"
+	),
+    "class"=>"token function"
+    }
+hypertext Package :=
+hypertext File :=
+hypertext IndeterminateNumber :=
+hypertext Manipulator :=
+hypertext Boolean := TTc "constant"
+hypertext Type :=
+hypertext FilePosition :=
+hypertext Dictionary := TTc "class-name"
+--hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
+--hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
+
+scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
+hypertext Hypertext := identity -- this must come *after* sacnning
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

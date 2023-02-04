@@ -763,8 +763,6 @@ o100 = -- ../../../../../../Macaulay2/packages/ComputationsBook/geometry/mystery
           trim kernel map(ringC5, ringP3,
              matrix{{x_0+x_1,x_2,x_3,x_5}}))
 
-o100: DIV
-
 i101 : code prettyPrint
 
 o101 = -- ../../../../../../Macaulay2/packages/ComputationsBook/geometry/mystery.m2:15-51
@@ -806,7 +804,5 @@ o101 = -- ../../../../../../Macaulay2/packages/ComputationsBook/geometry/mystery
                       ))));
           print stack strings;  -- stack them vertically, then print
           )
-
-o101: DIV
 
 i102 : 

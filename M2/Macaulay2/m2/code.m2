@@ -35,7 +35,7 @@ getSourceLines FilePosition := x -> (
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
 	  DIV {
-	      x, ": --source code",
+	      x, ": --source code:",
 	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
 	      }
 	  ))
@@ -43,25 +43,25 @@ getSourceLines FilePosition := x -> (
 limit := 4
 
 codeFunction := (f,depth) -> (
-     if depth <= limit then (
-	 l := locate f;
-	  if l === null then DIV{"function ", f, ": source code not available"}
-	  else (
-	      syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
-	      DIV flatten {
-		  getSourceLines l,
-	       	  if #syms > 0 then INDENT listSymbols syms,
-	       	  if codeHelper#?(functionBody f)
-	       	  then apply(
-		      codeHelper#(functionBody f) f,
-		      (comment,val) -> INDENT {
-			  comment, BR{},
-			  if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
-			  })
-	      }
-	  )
-      )
-  )
+    if depth <= limit then (
+	l := locate f;
+	if l === null then DIV{"function ", f, ": source code not available"}
+	else (
+	    syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
+	    DIV flatten {
+		getSourceLines l,
+		if #syms > 0 then INDENT listSymbols syms,
+		if codeHelper#?(functionBody f)
+		then apply(
+		    codeHelper#(functionBody f) f,
+		    (comment,val) -> INDENT {
+			comment, BR{},
+			if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
+			})
+	      	}
+	    )
+      	)
+    )
 
 -- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
 previousMethodsFound = null

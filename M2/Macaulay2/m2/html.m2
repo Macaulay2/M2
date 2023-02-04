@@ -3,9 +3,7 @@
 -- html output
 -----------------------------------------------------------------------------
 
-needs "debugging.m2" -- for Descent
 needs "format.m2"
-needs "packages.m2" -- for Package
 needs "system.m2" -- for getViewer
 
 getStyleFile := fn -> locateCorePackageFileRelative("Style",
@@ -164,59 +162,19 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-texHtml =
-html Thing := x -> "$" | htmlLiteral texMath x | "$" -- by default, we use math mode tex (as opposed to actual html)
 html Nothing := x -> ""
 
--- text stuff: we use html instead of tex, much faster (and better spacing)
--- TODO: rewrite next 2 using hypertext, just like the ones after, once PRE spacing/line break issues are fixed
+-- TODO: rewrite next 2 using hypertext, once PRE spacing/line break issues are fixed
 html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
     toString(if #n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
     apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
     if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
     "</pre>")
--- a few types are just strings
-hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-align:left", -- TODO move style to CSS
-    deepSplice apply(sortByName pairs x,
-     (k,v) -> (
-	  if #v === 0
-	  then k
-	  else (k, " : ", v)
-	  , BR{})))
-hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
-TTc = c -> x -> TT {toString x,"class"=>"token "|c}
-hypertext Pseudocode :=
-hypertext CompiledFunctionBody := TTc "function"
-hypertext Command :=
-hypertext FunctionBody :=
-hypertext Function := f -> TT deepSplice {
-    if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
-	t := locate if instance(f,Command) then f#0 else f;
-	"-*",
-	SPAN class f,
-	if t =!= null then ("[", SPAN t, "]"),
-	"*-"
-	),
-    "class"=>"token function"
-    }
-hypertext Package :=
-hypertext File :=
-hypertext IndeterminateNumber :=
-hypertext Manipulator :=
-hypertext Boolean := TTc "constant"
-hypertext Type :=
-hypertext FilePosition :=
-hypertext Dictionary := TTc "class-name"
---hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
---hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
-scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
--- except not these descendants
 html Monoid :=
 html RingFamily :=
-html Ring := texHtml
-
-hypertext Hypertext := identity
+html Ring :=
+html Thing := x -> "$" | htmlLiteral texMath x | "$" -- by default, we use math mode tex (as opposed to actual html)
 
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser
