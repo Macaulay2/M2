@@ -172,6 +172,11 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
     new ProgramRun from result
 )
 
+Program << Thing := (prog, x) -> (
+    f := temporaryFileName();
+    f << x << close;
+    runProgram(prog, "< " | f))
+
 net Program := toString Program := program -> program#"name"
 html Program := html @@ toString
 status ProgramRun := o -> pr -> pr#"return value"
