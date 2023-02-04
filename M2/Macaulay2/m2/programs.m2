@@ -173,3 +173,4 @@ net Program := toString Program := program -> program#"name"
 html Program := html @@ toString
 status ProgramRun := o -> pr -> pr#"return value"
 net ProgramRun := net @@ status
+toString ProgramRun := pr -> pr#"output"
