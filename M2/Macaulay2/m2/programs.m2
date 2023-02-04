@@ -73,6 +73,8 @@ findProgram = method(TypicalValue => Program,
 	AdditionalPaths => {},
 	MinimumVersion => null
     })
+findProgram String := opts -> name -> findProgram(
+    name, name | " --version", opts)
 findProgram(String, String) := opts -> (name, cmd) ->
     findProgram(name, {cmd}, opts)
 findProgram(String, List) := opts -> (name, cmds) -> (
