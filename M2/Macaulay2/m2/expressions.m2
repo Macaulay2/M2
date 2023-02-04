@@ -1293,11 +1293,6 @@ Nothing#AfterPrint =
 ZZ#AfterPrint =
 Boolean#AfterPrint = nullf
 
-FilePosition = new Type of BasicList
-FilePosition.synonym = "file position"
-toString FilePosition :=
-net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
-
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
 net Option := net @@ expression
