@@ -108,6 +108,10 @@ nmzVersion="";     -- normaliz
 nmzMinExecVersion="2.11"; -- minimal normaliz version
 nmzGen=true;      -- indicates whether ".gen" is generated
 
+normalizProgram = findProgram("normaliz", "normaliz --help",
+    Verbose => debugLevel > 0, MinimumVersion => (nmzMinExecVersion,
+	"normaliz --version | head -1 | cut -d' ' -f 2 | tr -d '\n'"))
+
 -- component 1 is name of option
 -- 2 is default value
 -- 3 is command line option to be passed to Normaliz
@@ -261,7 +265,7 @@ doWriteNmzData(List):=(matrices)->
       4 => "inequalities",
       5 => "equations",
       6 => "congruences",
-      10 => "lattice_ideal",
+      10 => "normal_toric_ideal",
       20 => "grading"
   };
 
@@ -288,10 +292,10 @@ doWriteNmzData(List):=(matrices)->
      if nmzModes#?nmzMode then(
         -- deprecated input type as integer
         print("Using Normaliz integer input types is deprecated, please use " | nmzModes#nmzMode | " instead of " | nmzMode);
-        outf << nmzModes#nmzMode << endl;
-     )
-     else
-        outf << nmzMode << endl;
+        nmzMode = nmzModes#nmzMode);
+     -- Until version 3.9.4, input type normal_toric_ideal was called lattice_ideal
+     if normalizProgram#"version" < "3.10" and nmzMode == "normal_toric_ideal" then nmzMode = "lattice_ideal";
+     outf << nmzMode << endl;
   );
   outf  << close;
 );
@@ -490,10 +494,6 @@ normaliz(List):=opts>>o->(s)->
   return runNormaliz(allComputations=>o.allComputations, grading=>o.grading, s);
 );
 
-
--- sequence should contain pairs (sgr,nmzMode)
-normalizProgram = null
-
 runNormaliz=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
 runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
@@ -502,13 +502,10 @@ runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
                      {(sgr,nmzMode)});
 );
 
+-- sequence should contain pairs (sgr,nmzMode)
 runNormaliz(List):=opts>>o->(s)->
 (
     setNmzFile();
-    if normalizProgram === null then normalizProgram =
-	findProgram("normaliz", "normaliz --help",
-	    Verbose => debugLevel > 0, MinimumVersion => (nmzMinExecVersion,
-		"normaliz --version | head -1 | cut -d' ' -f 2 | tr -d '\n'"));
 
     if (#o.grading > 0) then (
         s = append(s, (matrix{o.grading}, "grading"));
@@ -714,7 +711,7 @@ normalToricRing (Ideal,Thing) :=opts>>o->(I,t)->(
      );
    );
    M=matrix M;
-   nmzCone:=normaliz(allComputations=>o.allComputations,grading=>o.grading,M,"lattice_ideal");
+   nmzCone:=normaliz(allComputations=>o.allComputations,grading=>o.grading,M,"normal_toric_ideal");
    nmzData:=nmzCone#"gen";
    r:=rank nmzData;
    n:=numgens R;
@@ -1268,7 +1265,7 @@ document {
    Key => "output files written by Normaliz",
 PARA{},"Depending on the options enabled (see ", TO setNmzOption, "), ", TT "Normaliz", " writes additional output files. To obtain the content of these files within Macaulay2, use ", TO readNmzData, " or ", TO allComputations,". The following files may be written, provided certain conditions are satisfied and the information that should go into them has been computed. We denote the files simply by their types.
 For the most types of inputs the ambient lattice is ", TEX "\\ZZ^n", " if the input of Normaliz is a matrix of n columns. In types polytope and rees_algebra the ambient lattice is ", TEX "\\ZZ^{n+1}", " since the input vectors are extended by 1 component. For congruences and inhomogeneous input it is ", TEX "\\ZZ^{n-1}", " and for inhomogeneous congruences ", TEX "\\ZZ^{n-2}", ".
-For input of type lattice_ideal the lattice is ", TEX "\\ZZ^{r}", " where n-r is the rank of the input matrix. The essential lattice is gp(M) where M is the monoid computed by Normaliz internally, i.e. after a linear transformation such that the cone is full-dimensional and the integral closure has to be computed.
+For input of type normal_toric_ideal the lattice is ", TEX "\\ZZ^{r}", " where n-r is the rank of the input matrix. The essential lattice is gp(M) where M is the monoid computed by Normaliz internally, i.e. after a linear transformation such that the cone is full-dimensional and the integral closure has to be computed.
 See the documentation of Normaliz at ", HREF "https://github.com/Normaliz/Normaliz/blob/master/doc/Normaliz.pdf", " for more details.",
 UL{
    {TT "gen      ", "   The Hilbert basis"},
@@ -1398,7 +1395,7 @@ document {
          "rees_algebra:   exponent vectors of monomials generating an ideal",
          "inequalities, equations, congruences:   constraints defining the cone to be computed",
          "inhom_inequalities, inhom_equations, inhom_congruences:   inhomogeneous constraints defining the cone to be computed",
-         "lattice_ideal:  generators of a lattice ideal",
+         "normal_toric_ideal:  generators of a lattice ideal",
          "grading:  a grading which gives positive degree to all generators"
      },
      "For a more detailed list see the Normaliz documentation.",
@@ -1526,7 +1523,7 @@ document {
         {"inhom_inequalities: Computes the Hilbert basis of the rational cone in ", TEX "\\RR^m", " given by the system of inhomogeneous inequalities. Each row (",TEX "x_1,\\dots,x_n,b",") represents an inequality ",TEX "x_1 z_1+\\dots+x_n z_n + b \\geq \\ 0","."},
         {"inhom_equations: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the inhomogeneous system ", TT "mat ", TEX "x\\ =\\ b", "."},
         {"inhom_congruences: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the system of congruences defined by the rows as follows: Each row (",TEX "x_1,\\dots,x_n,b,c",") represents a congruence ",TEX "x_1 z_1+\\dots+x_n z_n + b \\equiv \\ 0 \\mod \\ c","."},
-        {"lattice_ideal: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."},
+        {"normal_toric_ideal: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."},
      },
 PARA{},"It is possible to combine certain input types, see ", TO (normaliz,List),". If you want to input only one matrix you can also use ", TO (normaliz,Matrix,String),".",
  PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line, and the content of the output file .inv, under the key \"inv\".",
