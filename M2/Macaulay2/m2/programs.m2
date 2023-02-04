@@ -132,6 +132,9 @@ runProgram = method(TypicalValue => ProgramRun,
 	Verbose => false,
 	RunDirectory => null
 	})
+runProgram(String, String) := opts -> (name, args) -> (
+    prog := findProgram(name, name | " " | args);
+    runProgram(prog, args, opts))
 runProgram(Program, String) := opts -> (program, args) ->
     runProgram(program, program#"name", args, opts)
 runProgram(Program, String, String) := opts -> (program, name, args) -> (
