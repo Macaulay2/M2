@@ -5,6 +5,7 @@
 
 needs "format.m2"
 needs "system.m2" -- for getViewer
+needs "monoids.m2" -- for Monoid
 
 getStyleFile := fn -> locateCorePackageFileRelative("Style",
     layout -> replace("PKG", "Style", layout#"package") | fn,
@@ -85,6 +86,7 @@ popIndentLevel  = (n, s) -> (indentLevel = indentLevel - n; s)
 -- Most MarkUpTypes automatically work recursively
 html1 := x -> (if class x === String then htmlLiteral else html) x -- slightly annoying workaround for the ambiguous role of strings in/out of Hypertext
 
+scan(methods hypertext, (h,t) -> html t := html @@ hypertext)
 html Hypertext := x -> (
     T := class x;
     qname := T.qname;

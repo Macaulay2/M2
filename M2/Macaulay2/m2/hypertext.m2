@@ -1,9 +1,10 @@
 --  Copyright 1993-2003 by Daniel R. Grayson
 -- Revamped by P. Zinn-Justin and Mahrud Sayrafi 2020
 
+needs "debugging.m2" -- for Descent, FilePosition
 needs "regex.m2" -- for toLower
 needs "lists.m2" -- for all
-needs "code.m2"
+needs "max.m2" -- for IndeterminateNumber
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors
@@ -367,6 +368,7 @@ style Hypertext := true >> o -> x -> (
     )
 
 hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
+hypertext Hypertext := identity
 hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-align:left", -- TODO move style to CSS
     deepSplice apply(sortByName pairs x,
      (k,v) -> (
@@ -400,9 +402,6 @@ hypertext Dictionary := TTc "class-name"
 hypertext String := TTc "token string"
 --hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
 --hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
-
-scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
-hypertext Hypertext := identity -- this must come *after* sacnning
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
