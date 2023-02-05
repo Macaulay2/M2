@@ -400,6 +400,7 @@ hypertext Boolean := TTc "constant"
 hypertext Type :=
 hypertext FilePosition :=
 hypertext Dictionary := TTc "class-name"
+hypertext String := TTc "token string"
 --hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
 --hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
 

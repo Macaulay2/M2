@@ -164,13 +164,15 @@ html TO2  := x -> (
 
 html Nothing := x -> ""
 
--- TODO: rewrite next 2 using hypertext, once PRE spacing/line break issues are fixed
-html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
+-- TODO: rewrite using hypertext, once PRE spacing/line break issues are fixed
+html Net := n -> concatenate("<pre class=\"token string\" style=\"display:inline-table;text-align:left;vertical-align:",
     toString(if #n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
     apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
+-*
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
     if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
     "</pre>")
+*-
 html Monoid :=
 html RingFamily :=
 html Ring :=
