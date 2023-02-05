@@ -3,9 +3,7 @@
 
 needs "regex.m2" -- for toLower
 needs "lists.m2" -- for all
-needs "methods.m2"
-needs "packages.m2" -- for Package
-needs "monoids.m2" -- for Monoid etc
+needs "code.m2"
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors
@@ -392,7 +390,6 @@ hypertext Function := f -> TT deepSplice {
 	),
     "class"=>"token function"
     }
-hypertext Package :=
 hypertext File :=
 hypertext IndeterminateNumber :=
 hypertext Manipulator :=
