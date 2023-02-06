@@ -2,8 +2,9 @@
 
 #include "matrix.hpp"
 
-#include <vector>
+#include <algorithm>
 #include <iostream>
+#include <vector>
 
 #include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 #include "interface/random.h"
@@ -463,20 +464,32 @@ Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
   const FreeModule *G = cols()->sub_space(c);
   if (F == NULL || G == NULL) return nullptr;
 
-  int *trans = newarray_atomic(int, n_rows());
-  for (int i = 0; i < n_rows(); i++) trans[i] = -1;
+  int *minrow = newarray_atomic(int, n_rows());
+  int *maxrow = newarray_atomic(int, n_rows());
+  for (int i = 0; i < n_rows(); i++)
+    {
+      minrow[i] = n_rows();
+      maxrow[i] = -1;
+    }
 
-  for (unsigned j = 0; j < r->len; j++)
-    if (r->array[j] >= 0 && r->array[j] < n_rows()) trans[r->array[j]] = j;
+  for (int i = 0; i < r->len; i++)
+    if (r->array[i] >= 0 && r->array[i] < n_rows())
+      {
+        minrow[r->array[i]] = std::min(minrow[r->array[i]], i);
+        maxrow[r->array[i]] = std::max(maxrow[r->array[i]], i);
+      }
 
   MatrixConstructor mat(F, G, degree_shift());
-  for (unsigned int i = 0; i < c->len; i++)
+  for (size_t j = 0; j < c->len; j++)
     {
-      vec v = elem(c->array[i]);
+      vec v = elem(c->array[j]);
       for (; v != NULL; v = v->next)
-        if (trans[v->comp] != -1) mat.set_entry(trans[v->comp], i, v->coeff);
+        for (int i = minrow[v->comp]; i <= maxrow[v->comp]; i++)
+          if (v->comp == r->array[i])
+            mat.set_entry(i, j, v->coeff);
     }
-  freemem(trans);
+  freemem(minrow);
+  freemem(maxrow);
   return mat.to_matrix();
 }
 
