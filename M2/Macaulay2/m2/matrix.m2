@@ -394,7 +394,11 @@ Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
 ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
 Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
 
-listZ := v -> ( if not all(v,i -> instance(i, ZZ)) then error "expected list of integers"; v )
+-----------------------------------------------------------------------------
+-- submatrix, submatrixByDegrees
+-----------------------------------------------------------------------------
+
+listZ := v -> if isListOfIntegers v then v else error "expected list of integers"
 Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
@@ -405,15 +409,27 @@ Matrix _ ZZ := Vector => (m,i) -> (
      h = map(M, R^1, h, Degree => first degrees source h);
      new target h from {h})
 
+-- given a map of free modules, find a submatrix of it
+submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
+    then rawSubmatrix(raw cover m, listZ toList splice cols)
+    else rawSubmatrix(raw cover m, listZ toList splice rows,
+	if cols =!= null then listZ toList splice cols else 0 .. numgens source m - 1))
+-- given a module, find a part of the ambient module
+-- along with corresponding generators and relations
+submodule = (M, rows) -> (
+    rows = listZ toList splice rows;
+    if isFreeModule M    then (ring M)^((-degrees M)_rows) else
+    if not M.?relations  then image    submatrixFree(generators M, rows, ) else
+    if not M.?generators then cokernel submatrixFree(relations  M, rows, ) else
+    subquotient(submatrixFree(generators M, rows, ), submatrixFree(relations M, rows, )))
+
 submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
 
-submatrix(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
-submatrix(Matrix,VisibleList            ) := (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
-submatrix(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> submatrix(m,cols)
-submatrix(Matrix,VisibleList,Nothing    ) := (m,rows,cols) -> (
-     rows = splice rows; 
-     map((ring m)^((- degrees target m)_rows),source m,rawSubmatrix(raw m, listZ toList rows, 0 .. numgens source m - 1)))
+submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(submodule(target m, rows), submodule(source m, cols), submatrixFree(m, rows, cols))
+submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(submodule(target m, rows), source m,                  submatrixFree(m, rows, null))
+submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                  submodule(source m, cols), submatrixFree(m, null, cols))
+submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
 
 compl := (m,v) -> toList (0 .. m-1) - set v
 submatrix'(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> if #rows === 0 and #cols === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),compl(numgens source m,listZ toList splice cols))
@@ -456,6 +472,8 @@ submatrixByDegrees(Matrix, Sequence, Sequence) := (m, tarBox, srcBox) -> (
     )
 submatrixByDegrees(Matrix, ZZ, ZZ) := (m, lo, hi) -> submatrixByDegrees(m, ({lo},{lo}), ({hi},{hi}))
 submatrixByDegrees(Matrix, List, List) := (m, lo, hi) -> submatrixByDegrees(m, (lo,lo), (hi,hi))
+
+-----------------------------------------------------------------------------
 
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
