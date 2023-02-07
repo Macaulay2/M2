@@ -22,6 +22,11 @@ assert(m^{1} == map(R^1, N++R^1, {{c, d}}))
 assert(m_{0} == map(N++R^1, N, {{a}, {c}}))
 assert(m_{1} == map(N++R^1, R^1, {{b}, {d}}))
 
+R = QQ[a..d];
+M = image vars R ++ coker vars R
+assert(M^{2} == map(R^{-1}, M, {{0, 0, 1, 0, 0}}))
+assert(M_{2} == map(M, R^{-1}, {{0}, {0}, {1}, {0}, {0}}))
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test submatrix.out"
