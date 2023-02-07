@@ -53,6 +53,7 @@ isSmall := i -> class i === ZZ and i < 2^15 and i > -2^15
 isCount := i -> class i === ZZ and i >= 0 and i < 2^15
 isListOfIntegers = x -> instance(x, List) and all(x,i -> class i === ZZ)
 isListOfListsOfIntegers = x -> instance(x, List) and all(x,isListOfIntegers)
+listZ = listZZ = v -> if isListOfIntegers(v = toList splice v) then v else error "expected a list of integers"
 checkCount := i -> if not isCount i then error "expected a small positive integer"
 
 fixup1 := method(Dispatch => Thing)			    -- stage 1, everything except Tiny and Small

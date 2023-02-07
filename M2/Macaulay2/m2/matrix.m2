@@ -397,8 +397,6 @@ Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
 -----------------------------------------------------------------------------
 -- submatrix, submatrixByDegrees
 -----------------------------------------------------------------------------
-
-listZ := v -> if isListOfIntegers v then v else error "expected list of integers"
 Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
@@ -411,13 +409,14 @@ Matrix _ ZZ := Vector => (m,i) -> (
 
 -- given a map of free modules, find a submatrix of it
 submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
-    then rawSubmatrix(raw cover m, listZ toList splice cols)
-    else rawSubmatrix(raw cover m, listZ toList splice rows,
-	if cols =!= null then listZ toList splice cols else 0 .. numgens source m - 1))
+    then rawSubmatrix(raw cover m, listZZ cols)
+    else rawSubmatrix(raw cover m, listZZ rows,
+	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
 -- given a module, find a part of the ambient module
 -- along with corresponding generators and relations
 submodule = (M, rows) -> (
-    rows = listZ toList splice rows;
+    rows = listZZ rows;
+    if rows === toList(0 .. numgens M - 1) then M else
     if isFreeModule M    then (ring M)^((-degrees M)_rows) else
     if not M.?relations  then image    submatrixFree(generators M, rows, ) else
     if not M.?generators then cokernel submatrixFree(relations  M, rows, ) else
@@ -430,12 +429,14 @@ submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(submodule(
 submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(submodule(target m, rows), source m,                  submatrixFree(m, rows, null))
 submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                  submodule(source m, cols), submatrixFree(m, null, cols))
 submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
+submatrix(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
 
-compl := (m,v) -> toList (0 .. m-1) - set v
-submatrix'(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> if #rows === 0 and #cols === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),compl(numgens source m,listZ toList splice cols))
-submatrix'(Matrix,VisibleList            ) := (m,cols     ) -> if #cols === 0 then m else submatrix(m,compl(numgens source m,listZ toList splice cols))
-submatrix'(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> if #cols === 0 then m else submatrix'(m,cols)
-submatrix'(Matrix,VisibleList,Nothing    ) := (m,rows,null) -> if #rows === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),)
+compl := (M, rows) -> if #(rows = listZZ rows) > 0 then toList(0 .. numgens M - 1) - set rows
+submatrix'(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> submatrix(m, compl(target m, rows), compl(source m, cols))
+submatrix'(Matrix, VisibleList, Nothing)     := (m, rows, null) -> submatrix(m, compl(target m, rows), null)
+submatrix'(Matrix, VisibleList)              := (m,       cols) -> submatrix(m, null, compl(source m, cols))
+submatrix'(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix'(m, cols)
+submatrix'(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
 
 submatrixByDegrees = method()
 submatrixByDegrees(Matrix, Sequence, Sequence) := (m, tarBox, srcBox) -> (

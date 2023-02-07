@@ -1,7 +1,10 @@
 document {
     Key => submatrix,
-    SeeAlso => {
+    Subnodes => TO \ {
 	submatrix',
+	submatrixByDegrees,
+	(submatrix, Matrix, VisibleList),
+	(submatrix, Matrix, VisibleList, VisibleList),
 	(symbol _, Matrix, List),
 	(symbol ^, Matrix, List),
 	(symbol _, Matrix, Array),
@@ -53,8 +56,10 @@ document {
      }
 
 undocumented {
+    (submatrix,Matrix,Nothing,Nothing),
     (submatrix,Matrix,Nothing,VisibleList),
     (submatrix,Matrix,VisibleList,Nothing),
+    (submatrix,MutableMatrix,Nothing,Nothing),
     (submatrix,MutableMatrix,Nothing,VisibleList),
     (submatrix,MutableMatrix,VisibleList,Nothing)
     }
@@ -144,11 +149,13 @@ document {
 	  (symbol^,Matrix,Array)
 	  },
      }
+
 document {
      Key => {submatrix',
 	  (submatrix',Matrix,VisibleList,VisibleList),
 	  (submatrix', Matrix, Nothing, VisibleList),
 	  (submatrix', Matrix, VisibleList, Nothing),
+	  (submatrix', Matrix, Nothing, Nothing),
 	  (submatrix', Matrix, VisibleList)},
      Headline => "exclude rows and/or columns of a matrix",
      Usage => "submatrix'(f, rows, cols)\nsubmatrix'(f,,cols)\nsubmatrix'(f,cols)\nsubmatrix'(f,rows,)",
@@ -207,8 +214,6 @@ doc ///
     Text
       If only one degree (as integer, or list of integers) is given for {\tt targetBox} or {\tt sourceBox}, then
       only rows or columns that match that exact degree are used.
-
-
     Example
       R = QQ[a..d];
       I = ideal"a2b-c3,abc-d3,ac2-bd2-cd2,abcd-c4"
