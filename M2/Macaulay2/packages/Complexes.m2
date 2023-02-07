@@ -46,7 +46,6 @@ export {
     "isNullHomotopyOf",
     "isShortExactSequence",
     "liftMapAlongQuasiIsomorphism",
-    "minimize",
     "minimizingMap",
     "nullHomotopy",
     "naiveTruncation",
@@ -393,6 +392,7 @@ doc ///
 -- package tests ---------------------------------------------------
 --------------------------------------------------------------------
 load "Complexes/ChainComplexTests.m2"
+load "Complexes/FreeResolutionTests.m2"
 
 end------------------------------------------------------------
 

@@ -22,7 +22,8 @@ newPackage(
         { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
         },
     Keywords => { "Commutative Algebra" },
-    PackageImports => { "Polyhedra", "NormalToricVarieties", "Complexes" },
+    PackageImports => { "Polyhedra", "NormalToricVarieties" },
+    PackageExports => { "Complexes" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )

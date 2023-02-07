@@ -1,4 +1,12 @@
+-- todo: created 7 Feb 2023:
+--   we just did migration of Truncations.
+--   todo: 2 tests in Truncations are failing due to changes we made.
+--   todo: get doc references both directions working (recompile M2).
+--   next thing: finish tests in Complexes (and FreeResolutions)
+--               create doc node(s) for freeResolution
+--
 -- todo 27 Jan 2023:
+
 --  take test/code at end of FreeResolutions.m2 and make honest tests of these.
 --  make sure all resolutions types that we want are being done correctly.
 --  write doc for free resolution code.
@@ -669,7 +677,7 @@ minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
 
 end--
 restart
-debug loadPackage("Complexes", FileName => "../Complexes.m2")
+--debug loadPackage("Complexes", FileName => "../Complexes.m2")
 needsPackage "Complexes" -- running M2 in packages directory...
 
 --load "ResolutionObject.m2"

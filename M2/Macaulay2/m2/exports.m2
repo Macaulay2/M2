@@ -903,6 +903,7 @@ export {
 	"minimalPresentation",
 	"minimalPresentationMap",
 	"minimalPresentationMapInv",
+    "minimize",
 	"minimizeFilename",
 	"minors",
 	"minus",

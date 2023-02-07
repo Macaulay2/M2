@@ -277,7 +277,8 @@ setupMethods((), {
 	  presentation, dismiss, precision, 
 	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
-      isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
+      isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile,
+      minimize
 	  })
 
 assert = method()

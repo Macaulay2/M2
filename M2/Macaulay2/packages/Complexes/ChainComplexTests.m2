@@ -1446,8 +1446,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-  M = truncate(1,R^1)
-  prune Ext^3(M, M)
+  M = image vars R
   B = basis(-4, Ext^3(M, M))
   f = B_{2}
   g = yonedaMap(f, LengthLimit => 8)
@@ -1515,7 +1514,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z))
-  M = truncate(1,S^1)
+  M = image vars S
   E = Ext^1(M, S^1)
 
   h0 = basis(0,E)
@@ -1549,7 +1548,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]
-  M = truncate(1,S^1)
+  M = image vars S
   N = S^{{-2}}/(x)
   E = Ext^1(M, N)
 
@@ -1601,7 +1600,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z))
-  M = truncate(1,S^1)
+  M = image vars S
   E = Ext^0(M, M)
   
   h0 = basis(0,E)
@@ -1615,7 +1614,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]
-  M = truncate(1,S^1)
+  M = image vars S
   N = S^{{-2}}/(x)
   E2 = Ext^1(M, N)
   E1 = Ext^1(M ** S^{{1}},M)
@@ -1957,7 +1956,7 @@ TEST ///
 
   S = ZZ/101[a..d]
   I = monomialCurveIdeal(S, {1,3,4})
-  J = truncate(4, I)
+  J = ideal image basis(4, I)
   C = freeResolution comodule J
   D = freeResolution comodule I
   g = extend(D,C,map(D_0,C_0,1))
@@ -2073,18 +2072,14 @@ needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]
   I = ideal(y^2*z-x^3-x*z^2-z^3)
-  OC = S^1/I
-  OCp 
   R = S/I
-  OCp = coker lift(relations prune Hom(ideal(x,z), R), S)
-  basis(0, Ext^1(truncate(1,OC), OCp))
 
-  M = prune truncate(1, Hom(ideal(x,z), R))
-  N = truncate(1,R^1)
+  H = Hom(ideal(x,z), R)
+  M = prune image basis(1, H) -- basically, `prune truncate(1, H)`
+  N = image vars R
   E = Ext^1(M, N)
   f = basis(0, E)
-  source f
-  target f == E
+  assert(target f == E)
 
   pses = prune yonedaExtension f
   mods = for i from 0 to 2 list coker lift(relations pses_i, S)

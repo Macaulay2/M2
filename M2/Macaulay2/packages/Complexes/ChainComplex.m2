@@ -967,7 +967,6 @@ augmentationMap Complex := ComplexMap =>
 
 -- TODO: get this to work over fields, poly rings, quotients, and also the local case.
 --       improve the performance of this function
-minimize = method ()
 minimize Complex := C -> (
     if not isFree C then error "expected a complex of free modules";
     (lo,hi) := concentration C;

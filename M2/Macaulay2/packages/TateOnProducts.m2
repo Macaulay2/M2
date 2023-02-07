@@ -21,7 +21,7 @@ newPackage(
 	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"Truncations", "SVDComplexes"},
+    PackageImports => {"Truncations", "SVDComplexes", "Complexes"},
     PackageExports => {"SVDComplexes"},
     DebuggingMode => false
     )
@@ -1130,8 +1130,6 @@ resolutionOfChainComplex ChainComplex := o -> C -> (
     chainComplexMap(C,F[-minC],comp)
     )
 
-
-minimize = method ()
 minimize ChainComplex := E ->(
     --To simplify the notation consider the complex C = E[min E] that
     --is shifted so that the first nonzero module is C_0.
@@ -1220,7 +1218,7 @@ minimize ChainComplex := o -> E ->(
     E'
     )
 *-
-isExact=method()
+--isExact=method()
 isExact(ChainComplex):=(C) -> (
    if (all((min C,max C), i -> (prune HH_i(C) == 0))) then true else false
 )
