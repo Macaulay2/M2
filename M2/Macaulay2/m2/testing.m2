@@ -23,7 +23,7 @@ code TestInput := T -> T#"code"
 locate TestInput := T -> new FilePosition from (T#"filename",
     T#"line number" - depth net code T, 1,
     T#"line number", 1,,)
-toString TestInput := T -> toString locate T | ":"
+toString TestInput := toString @@ locate
 net TestInput := T -> (toString T)^-1
 editMethod TestInput := EDIT @@ locate
 
