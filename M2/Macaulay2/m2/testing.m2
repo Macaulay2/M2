@@ -24,7 +24,7 @@ locate TestInput := T -> new FilePosition from (T#"filename",
     T#"line number" - depth net code T, 1,
     T#"line number", 1,,)
 toString TestInput := toString @@ locate
-net TestInput := T -> (toString T)^-1
+net TestInput := T -> "-*TestInput[" | toString T | "]*-"
 editMethod TestInput := EDIT @@ locate
 
 -----------------------------------------------------------------------------
