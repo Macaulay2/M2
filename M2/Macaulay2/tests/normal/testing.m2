@@ -8,8 +8,8 @@ check "TestPackage"
 pkgtest = (tests "TestPackage")#0
 assert instance(pkgtest, TestInput)
 assert Equation(toSequence locate pkgtest, (testpkg, 3, 1, 4, 1,,))
-assert Equation(toString pkgtest, testpkg | ":3:1-4:1:")
-assert Equation(net pkgtest, (testpkg | ":3:1-4:1:")^-1)
+assert Equation(toString pkgtest, testpkg | ":3:1-4:1")
+assert Equation(net pkgtest, "-*TestInput[" | testpkg | ":3:1-4:1]*-")
 expectedCode =  "--" | toAbsolutePath testpkg |
 	":4: location of test code" | newline | "assert Equation(1 + 1, 2)"
 assert Equation(code pkgtest, expectedCode)
