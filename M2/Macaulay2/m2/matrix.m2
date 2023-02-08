@@ -220,10 +220,10 @@ expression Matrix := m -> (
     MatrixExpression x
     )
 
-net Matrix := m -> net expression m
-toString Matrix := m -> toString expression m
-texMath Matrix := m -> texMath expression m
---html Matrix := m -> html expression m
+net Matrix := net @@ expression
+toString Matrix := toString @@ expression
+texMath Matrix := texMath @@ expression
+short Matrix := short @@ expression
 
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
