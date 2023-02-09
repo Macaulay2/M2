@@ -273,8 +273,8 @@ class ExponentVector
 
 // Legacy specialization
 using exponents = ExponentVector<int, true>;
-typedef exponents::Exponents exponents_t;
-typedef exponents::ConstExponents const_exponents;
+using exponents_t = exponents::Exponents;
+using const_exponents = exponents::ConstExponents;
 
 // TODO: compare with ntuple_monomials in e/f4/
 template <>

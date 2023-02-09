@@ -3,6 +3,7 @@
 #include "gbring.hpp"
 #include "polyring.hpp"
 
+
 GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0) : F_(F)
 {
   // If wts has length 0 or is NULL:
@@ -54,12 +55,11 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0) : F_(F)
     Fdegs_ = 0;
 }
 
-int GBWeight::exponents_weight(const int *e, int comp) const
+int GBWeight::exponents_weight(const_exponents e, int comp) const
 {
-  long sum = 0;
-  for (int i = 0; i < nvars_; i++) sum += e[i] * wts_->array[i];
+  int sum = exponents::weight(nvars_, e, wts_);
   if (use_component_degrees_ && comp > 0) sum += Fdegs_[comp];
-  return static_cast<int>(sum);
+  return sum;
 }
 
 int GBWeight::gbvector_term_weight(const gbvector *f) const
@@ -96,7 +96,7 @@ int GBWeight::gbvector_weight(const gbvector *f) const
   return gbvector_weight(f, not_used);
 }
 
-int GBWeight::monomial_weight(const int *monom, int comp) const
+int GBWeight::monomial_weight(const_monomial monom, int comp) const
 {
   exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
   R_->get_flattened_monoid()->to_expvector(monom, EXP);
