@@ -1150,7 +1150,6 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
   for (int j = 0; j < nskew; j++) skew_list[j] = j;
   SkewMultiplication skew(nvars, nskew, skew_list);
   int ncols = c->n_cols();
-  const_monomial a;
 
   exponents_t aexp = newarray_atomic(int, nvars);
   exponents_t bexp = newarray_atomic(int, nvars);
@@ -1160,14 +1159,14 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
   for (int i = 0; i < ncols; i++)
     {
       if (c->elem(i) == nullptr) continue;
-      a = P->lead_flat_monomial(c->elem(i)->coeff);
+      const_monomial a = P->lead_flat_monomial(c->elem(i)->coeff);
       M->to_expvector(a, aexp);
       divisors.clear();
       A->find_all_divisors(aexp, divisors);
       for (int j = 0; j < divisors.size(); j++)
         {
           int rownum = divisors[j]->basis_elem();
-          const int *b = P->lead_flat_monomial(r->elem(rownum)->coeff);
+          const_monomial b = P->lead_flat_monomial(r->elem(rownum)->coeff);
           M->to_expvector(b, bexp);
           exponents::divide(nvars, aexp, bexp, result_exp);
           int sign = skew.mult_sign(result_exp, bexp);
