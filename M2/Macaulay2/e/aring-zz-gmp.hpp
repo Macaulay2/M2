@@ -26,6 +26,18 @@ class ARingZZGMP : public RingInterface
 
   typedef __mpz_struct ElementType;
   typedef ElementType elem;
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element(Element&& other)
+    {
+      memcpy(&mValue, &other.mValue, sizeof(mValue));
+      // this init makes sure the other element can be safely deleted
+      mpz_init(&other.mValue);
+    }
+    Element(const ARingZZGMP& R) { mpz_init(&mValue); }
+    ~Element() { mpz_clear(&mValue); }
+  };
 
   ARingZZGMP();
   ~ARingZZGMP();

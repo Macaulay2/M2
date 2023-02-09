@@ -31,6 +31,19 @@ class ARingQQGMP : public RingInterface
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
 
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element(const ARingQQGMP& R) { mpq_init(&mValue); }
+    Element(Element&& other)
+    {
+      memcpy(&mValue, &other.mValue, sizeof(mValue));
+      // make sure the other value is in a clearable state
+      mpq_init(&other.mValue);
+    }
+    ~Element() { mpq_clear(&mValue); }
+  };
+
   ARingQQGMP();
   ~ARingQQGMP();
 

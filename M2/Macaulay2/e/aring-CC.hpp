@@ -20,7 +20,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingCC : public RingInterface
+class ARingCC : public SimpleARing<ARingCC>
 {
   // approximate real numbers, implemented as doubles.
 

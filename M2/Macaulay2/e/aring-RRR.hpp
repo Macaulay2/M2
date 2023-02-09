@@ -28,6 +28,19 @@ class ARingRRR : public RingInterface
   typedef __mpfr_struct elem;
   typedef elem ElementType;
 
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element(const ARingRRR &R) { mpfr_init2(&mValue, R.mPrecision); }
+    Element(Element &&other)
+    {
+      memcpy(&mValue, &other.mValue, sizeof(mValue));
+      // make sure the other value is in a clearable state
+      mpfr_init(&other.mValue);
+    }
+    ~Element() { mpfr_clear(&mValue); }
+  };
+
   ARingRRR(unsigned long precision) : mPrecision(precision) {}
   // ring informational
   size_t characteristic() const { return 0; }

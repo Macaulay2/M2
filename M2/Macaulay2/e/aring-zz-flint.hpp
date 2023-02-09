@@ -34,6 +34,19 @@ class ARingZZ : public RingInterface
   typedef fmpz ElementType;
   typedef ElementType elem;
 
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element(const ARingZZ& R) { fmpz_init(&mValue); }
+    Element(Element&& other)
+    {
+      memcpy(&mValue, &other.mValue, sizeof(mValue));
+      // make sure the other value is in a clearable state
+      fmpz_init(&other.mValue);
+    }
+    ~Element() { fmpz_clear(&mValue); }
+  };
+
   ARingZZ();
   ~ARingZZ();
 

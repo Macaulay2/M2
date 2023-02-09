@@ -37,6 +37,26 @@ class ARingGFFlint : public RingInterface
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
 
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element&& other) : mContext(other.mContext)
+    {
+      // figure out how to move the value without the context
+      fq_zech_init2(&mValue, mContext);
+      fq_zech_set(&mValue, &other.mValue, mContext);
+    }
+    explicit Element(const ARingGFFlint& R) : mContext(R.mContext)
+    {
+      fq_zech_init2(&mValue, mContext);
+    }
+    ~Element() { fq_zech_clear(&mValue, mContext); }
+
+   private:
+    const fq_zech_ctx_struct* mContext;
+  };
+
   ARingGFFlint(const PolynomialRing& R, const ring_elem a);
 
   ~ARingGFFlint();

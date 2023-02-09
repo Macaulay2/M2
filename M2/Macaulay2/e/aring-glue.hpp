@@ -30,6 +30,7 @@ class ConcreteRing : public Ring
   // explicitly delete the copy constructor
   ConcreteRing(const ConcreteRing &ring) = delete;
   typedef typename RingType::ElementType ElementType;
+  typedef typename RingType::Element Element;
 
   static ConcreteRing<RingType> *create(std::unique_ptr<RingType> R);
 

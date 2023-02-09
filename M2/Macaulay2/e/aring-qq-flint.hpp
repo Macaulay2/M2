@@ -37,6 +37,19 @@ class ARingQQFlint : public RingInterface
   typedef fmpq ElementType;
   typedef ElementType elem;
 
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element(const ARingQQFlint& R) { fmpq_init(&mValue); }
+    Element(Element&& other)
+    {
+      memcpy(&mValue, &other.mValue, sizeof(mValue));
+      // make sure the other value is in a clearable state
+      fmpq_init(&other.mValue);
+    }
+    ~Element() { fmpq_clear(&mValue); }
+  };
+
   ARingQQFlint();
   ~ARingQQFlint();
 

@@ -26,7 +26,7 @@ namespace M2 {
    @brief wrapper for the FFPACK::ModularBalanced<double> field implementation
 */
 
-class ARingZZpFFPACK : public RingInterface
+class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
 {
  public:
   /// @jakob extract Signed_Trait from givaro.  Or use c++11.

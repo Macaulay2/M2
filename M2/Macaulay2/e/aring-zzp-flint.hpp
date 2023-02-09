@@ -24,7 +24,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZpFlint : public RingInterface
+class ARingZZpFlint : public SimpleARing<ARingZZpFlint>
 {
   // Integers mod p, implemented as
   // residues in 0..p-1, where

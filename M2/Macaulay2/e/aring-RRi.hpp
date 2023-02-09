@@ -30,6 +30,19 @@ class ARingRRi : public RingInterface
   typedef __mpfi_struct elem;
   typedef elem ElementType;
 
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element(const ARingRRi &ring) { mpfi_init(&mValue); }
+    Element(Element &&other)
+    {
+      memcpy(&mValue, &other.mValue, sizeof(mValue));
+      // make sure the other value is in a clearable state
+      mpfi_init(&other.mValue);
+    }
+    ~Element() { mpfi_clear(&mValue); }
+  };
+
   ARingRRi(unsigned long precision) : mPrecision(precision) {}
   // ring informational
   size_t characteristic() const { return 0; }

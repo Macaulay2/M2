@@ -47,6 +47,27 @@ class ARingTower : public RingInterface
 
   static const RingID ringID = ring_tower_ZZp;
   typedef ARingPolynomial ElementType;
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element &&other) : ElementImpl(other), R(other.R)
+    {
+      other.mValue = NULL;
+    }  // move constructor only,
+    explicit Element(const ARingTower &_R)
+        : ElementImpl(static_cast<ElementType>(nullptr)), R(_R)
+    {
+    }
+    ~Element()
+    {
+      if (mValue) R.clear(mValue);
+    }
+
+   private:
+    const ARingTower &R;
+  };
+
   typedef ElementType elem;
 
   //////////////////////////////

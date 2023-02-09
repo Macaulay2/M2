@@ -61,7 +61,7 @@ namespace M2 {
     @brief wrapper for the  Givaro::GFqDom<>  galois field implementation
 */
 /// @todo think about deriving from RingInterface AND from Ring
-class ARingGFGivaro : public RingInterface
+class ARingGFGivaro : public SimpleRing<ARingGFGivaro>
 {
  public:
   static const RingID ringID = ring_GFGivaro;

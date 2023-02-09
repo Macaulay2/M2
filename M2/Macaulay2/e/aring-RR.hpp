@@ -16,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRR : public RingInterface
+class ARingRR : public SimpleARing<ARingRR>
 {
   // approximate real numbers, implemented as doubles.
  public:

@@ -48,6 +48,26 @@ class ARingGFFlintBig : public RingInterface
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
 
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element&& other) : mContext(other.mContext)
+    {
+      // figure out how to move the value without the context
+      fq_nmod_init2(&mValue, mContext);
+      fq_nmod_set(&mValue, &other.mValue, mContext);
+    }
+    explicit Element(const ARingGFFlintBig& R) : mContext(R.mContext)
+    {
+      fq_nmod_init2(&mValue, mContext);
+    }
+    ~Element() { fq_nmod_clear(&mValue, mContext); }
+
+   protected:
+    const fq_nmod_ctx_struct* mContext;
+  };
+
   ARingGFFlintBig(const PolynomialRing& R, const ring_elem a);
 
   ~ARingGFFlintBig();

@@ -165,6 +165,54 @@ class DummyRing : public RingInterface
   void swap(ElementType &a, ElementType &b) const { assert(false); };
 };
 
+/**
+ * Note: ElementImpl has a protected destructor so that users cannot
+ * accidentally try to destroy an Element using an ElementImpl pointer.
+ */
+template <class ElementType>
+class ElementImpl
+{
+ protected:
+  ElementType mValue;
+  ElementImpl() = default;
+  ElementImpl(const ElementType &value) : mValue(value) {}
+  ElementImpl(ElementType &&value) : mValue(value) {}
+  ElementImpl(const ElementImpl &other) = default;
+  ElementImpl(ElementImpl &&other) = default;
+  ElementImpl &operator=(const ElementImpl &other) = default;
+  ElementImpl &operator=(ElementImpl &&other) = default;
+  ~ElementImpl() = default;
+
+ public:
+  operator const ElementType &() const { return mValue; }
+  operator ElementType &() { return mValue; }
+  const ElementType &value() const { return mValue; }
+  ElementType &value() { return mValue; }
+};
+
+/**
+ * An ARing class can inherit from this to indicate that it has a trivial clear
+ * method, and this will provide a simple implementation of Element
+ */
+template <class ARing>
+class SimpleARing : public RingInterface
+{
+ public:
+  class Element : public ElementImpl<typename ARing::ElementType>
+  {
+    typedef typename ARing::ElementType ElementType;
+    typedef ElementImpl<ElementType> Impl;
+
+   public:
+    explicit Element(const ARing &ring)
+    {
+      // without the Impl::, the compiler can't figure out where mValue comes
+      // from
+      ring.init(Impl::mValue);
+    }
+  };
+};
+
 #if 0
 
 /**

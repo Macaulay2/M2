@@ -16,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZp : public RingInterface
+class ARingZZp : public SimpleARing<ARingZZp>
 {
   // Integers mod p, implemented as
   // exponents of a primitive element a
