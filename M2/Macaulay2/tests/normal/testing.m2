@@ -5,7 +5,7 @@ TEST "assert Equation(1 + 1, 2)"
 /// << close
 loadPackage("TestPackage", FileName => testpkg)
 check "TestPackage"
-pkgtest = (tests "TestPackage")#0
+pkgtest = tests(0, "TestPackage")
 assert instance(pkgtest, TestInput)
 assert Equation(locate pkgtest, (testpkg, 3, 1, 4, 1,,))
 assert Equation(toString pkgtest, testpkg | ":3:1-4:1:")
