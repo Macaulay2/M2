@@ -1,18 +1,3 @@
-
-///
-   Consequences
-    Item
-   Description
-    Text
-      Code
-      Pre
-    Example
-      CannedExample
-   Subnodes
-   Caveat
-   SeeAlso
-///
-
 doc ///
   Key
       "Canonical Series Tutorial"

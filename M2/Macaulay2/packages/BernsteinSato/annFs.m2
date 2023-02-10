@@ -221,6 +221,20 @@ kOrderAnnFs(ZZ,RingElement) := Ideal => (k,f) -> (
 		    )))
      )
 
+--------------------------------------
+-- Other things
+--------------------------------------
+
+-- reiffen curves
+reiffen = method()
+reiffen(ZZ,ZZ) := (p,q) -> (
+     if not (p>=4 and q>=p+1) then error "wrong values of arguments: see documentation";
+     n := 2; 
+     x := symbol x;
+     R := QQ[x_1..x_n]; 
+     x_1^p+x_2^q+x_1*x_2^(q-1) 
+     )
+
 kappaAnnF1PlanarCurve = method()
 kappaAnnF1PlanarCurve RingElement := f -> (
      a := 0; b := 1; -- warning: an artificial choice
@@ -322,20 +336,22 @@ RatAnn(RingElement, RingElement) := (g,f) -> (
     if W.monoid.Options.Degrees =!= toList(numgens W:{1}) then
     error "Expect all degrees in a Weyl algebra to be 1";
 
--- get min root of b-function
-a := min getIntRoots globalBFunction f;
+    -- get min root of b-function
+    a := min getIntRoots globalBFunction f;
 
-IFs := AnnFs f;
-WFs := ring IFs;
-nFs := numgens WFs;
-Ia := substitute ( substitute(IFs, {WFs_(nFs-1) => a}), W);
+    IFs := AnnFs f;
+    WFs := ring IFs;
+    nFs := numgens WFs;
+    Ia := substitute ( substitute(IFs, {WFs_(nFs-1) => a}), W);
 
-if a == -1 and g == 1_W then Ia
-else (
-    compensate := -1 - a;
-    F := map(W^1/Ia, W^1, matrix{{g*f^compensate}});
-    ideal mingens kernel F)
-)
+    if a == -1 and g == 1_W then Ia
+    else (
+    	compensate := -1 - a;
+    	F := map(W^1/Ia, W^1, matrix{{g*f^compensate}});
+    	ideal mingens kernel F)
+    )
+
+----------------------------------------------------------------
 
 TEST ///
 -- TESTS TO WRITE (exported symbols);
@@ -380,7 +396,6 @@ assert ( Ann == ideal {
 -- TEST: AnnFs List
 
 
-
 ----------------- TEST AnnIFs -------------------
 x = symbol x; dx = symbol dx;
 W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
@@ -389,15 +404,11 @@ WS = ring Ann
 assert( Ann == ideal (x*dx - 2*WS_2) )  
 
 
-
 ----------------- TEST diffRatFun -------------------
-diffRatFun := value(Dmodules#"private dictionary"#"diffRatFun")
-
 -- Test 1
 x = symbol x, y = symbol y;
 R = QQ[x,y];
 f = 1/(x^4 + y);
 ans = -24*x^3/(x^4+y)^4;
 assert(diffRatFun({1,2}, f) == ans);
-
 ///

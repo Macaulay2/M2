@@ -19,7 +19,6 @@ doc ///
       reiffen(4,5)	
 ///
 
-
 doc ///
   Key
     kappaAnnF1PlanarCurve

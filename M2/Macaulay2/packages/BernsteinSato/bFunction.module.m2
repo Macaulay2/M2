@@ -135,7 +135,7 @@ bFunction2(Module, List, List) := o -> (M, w, m) -> (
 
 
 TEST ///
-debug Dmodules
+importFrom_"BernsteinSato" {"zeroize"}
 W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
 w = {1,1}
 m = zeroize transpose matrix{{-Dy^2-Dy, -x*Dx-x*Dy-x+1, y*Dy^2+y*Dy-Dy-7},

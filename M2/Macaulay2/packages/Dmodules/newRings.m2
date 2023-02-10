@@ -6,6 +6,7 @@
 protect WAtoHWA
 protect HWAtoWA
 protect HomWeylAlgebra
+protect IntRing
 
 -- this function associates to a Weyl algebra W
 -- the Weyl algebra W[h], where h is used for homogenizing purposes

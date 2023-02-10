@@ -12,6 +12,8 @@ Saturation
 PrimaryDecomposition
 FourierMotzkin
 Dmodules
+HolonomicSystems
+BernsteinSato
 Depth
 Elimination
 GenericInitialIdeal

@@ -105,69 +105,6 @@ doc ///
     [AppellF1,Vars]
 ///
 
-doc ///
-  Key
-    PolyAnn
-    (PolyAnn, RingElement)
-  Headline
-    annihilator of a polynomial in the Weyl algebra
-  Usage
-    PolyAnn f
-  Inputs
-    f:RingElement
-      polynomial
-  Outputs
-    :Ideal
-      the annihilating (left) ideal of @{EM "f"}@ in the Weyl algebra
-  Description
-    Example
-      makeWA(QQ[x,y])
-      f = x^2-y^3
-      I = PolyAnn f
-  Caveat
-    The input f should be an element of a Weyl algebra, and not an element of a commutative polynomial ring.
-    However, f should only involve commutative variables.
-  SeeAlso
-    RatAnn
-///
-
-doc ///
-  Key
-    RatAnn
-    (RatAnn, RingElement, RingElement)
-    (RatAnn, RingElement)
-  Headline
-    annihilator of a rational function in Weyl algebra
-  Usage
-    RatAnn f
-    RatAnn(g,f)
-  Inputs
-    f:RingElement
-      polynomial
-    g:RingElement
-      polynomial
-  Outputs
-    :Ideal
-      left ideal of the Weyl algebra
-  Description
-    Text
-      @{TT "RatAnn f"}@ computes the annihilator ideal in the Weyl algebra 
-      of the rational function $1/f$.
-      @BR{}@
-      @{TT "RatAnn(g,f)"}@ computes the annihilator ideal in the 
-      Weyl algebra of the rational function $g/f$.
-   Example
-      makeWA(QQ[x,y])
-      f = x^2-y^3
-      g = 2*x*y
-      I = RatAnn (g,f)
-  Caveat
-    The inputs f and g should be elements of a Weyl algebra, and not elements of a commutative polynomial ring.
-    However, f and g should only use the commutative variables.
-  SeeAlso
-    PolyAnn
-///
-
 end
 restart
 installPackage("Dmodules",FileName =>"../../Dmodules.m2")

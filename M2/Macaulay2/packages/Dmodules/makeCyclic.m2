@@ -190,6 +190,7 @@ makeCyclic Matrix := HashTable => M -> (
 TEST ///
 Dtrace 1
 pInfo(1, "testing makeCyclic...")
+importFrom_"BernsteinSato" { "bFunction" }
 
 -------------------------
 -- R^3

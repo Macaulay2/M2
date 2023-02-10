@@ -32,6 +32,32 @@ findExps := (w, k0, k1) -> (
 	  );
      tempExps)
 
+-- puts a module or matrix purely in shift degree 0.
+-- internal
+zeroize = method()
+zeroize Module := M -> (
+     W := ring M;
+     P := presentation M;
+     coker map(W^(numgens target P), W^(numgens source P), P)
+     )
+
+zeroize Matrix := m -> (
+     W := ring m;
+     map(W^(numgens target m), W^(numgens source m), m)
+     )
+
+-- MES added 1/30/05 temporary fix
+-- check whether a module is a quotient of a free module.
+--   In the Dmodule code, it appears that this is checked in
+--   3 ways: using isQuotientModule, doing what is done here,
+--   and doing what is done here, without the zeroize.
+-- internal
+ensureQuotientModule = method()
+ensureQuotientModule(Module, String) := (M,errorString) -> (
+   F := (ring M)^(numgens source gens M);
+   if zeroize gens M != map(F,F,1) 
+   then error errorString;
+   )
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

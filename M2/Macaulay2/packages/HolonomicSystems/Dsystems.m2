@@ -92,20 +92,6 @@ AppellF1 List := options -> w -> (
      --J = ideal(I_2, I_1+y^2*I_2); 
      I)
 
---------------------------------------
--- Other things
---------------------------------------
-
--- reiffen curves
-reiffen = method()
-reiffen(ZZ,ZZ) := (p,q) -> (
-     if not (p>=4 and q>=p+1) then error "wrong values of arguments: see documentation";
-     n := 2; 
-     x := symbol x;
-     R := QQ[x_1..x_n]; 
-     x_1^p+x_2^q+x_1*x_2^(q-1) 
-     )
-
 TEST///
 ------------------------------------
 -- A = {{1,1,1},{0,1,2}}; custom W
