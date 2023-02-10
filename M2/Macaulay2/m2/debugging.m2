@@ -10,7 +10,7 @@ processArgs := args -> concatenate (
 	  else if class x === Symbol then ("'", toString x, "'")
 	  else silentRobustString(40,3,x)
 	  ),
-     apply(args, x -> if class x === Symbol then ("\n", locate x, ": here is the first use of '",toString x, "'") else "")
+     apply(args, x -> if class x === Symbol then ("\n", toString locate x, ": here is the first use of '",toString x, "'") else "")
      )
 olderror := error
 error = args -> (
