@@ -236,6 +236,7 @@ TEST /// -- test solveFrobeniusIdeal
   R = QQ[t_1..t_5]
   I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3)
   F = solveFrobeniusIdeal I
+  end
   (A, B, C, D1, D2) = value \ (F_0, F_1#0#1, F_2#0#1, F_3#0#1, F_3#1#1)
   assert(A == 1)
   assert(B == (t_1^2*t_3^2)/(t_2^3*t_4))
