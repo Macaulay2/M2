@@ -94,6 +94,7 @@ tests Package := pkg -> (
     previousMethodsFound = new HashTable from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
+tests(ZZ, Package) := tests(ZZ, String) := (i, pkg) -> (tests pkg)#i
 
 check = method(Options => {UserMode => null, Verbose => false})
 check String  :=
