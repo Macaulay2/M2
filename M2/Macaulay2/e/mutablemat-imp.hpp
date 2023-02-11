@@ -39,12 +39,10 @@ template <typename T>
 const RingElement* MutableMat<T>::determinant() const
 {
   ring_elem det;
-  elem a;
-  mat.ring().init(a);
+  typename T::Element a(mat.ring());
   MatrixOps::determinant(mat, a);
   //  MatrixOps::BasicLinAlg<MatType>::determinant(mat, a);
   mat.ring().to_ring_elem(det, a);
-  mat.ring().clear(a);
   return RingElement::make_raw(get_ring(), det);
 }
 

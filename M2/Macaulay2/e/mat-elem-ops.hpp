@@ -16,6 +16,7 @@ class MatElementaryOps<DMat<RT> >
  public:
   typedef DMat<RT> Mat;
   typedef typename Mat::ElementType ElementType;
+  typedef typename RT::Element Element;
   typedef typename Mat::Iterator Iterator;
   typedef typename Mat::ConstIterator ConstIterator;
 
@@ -142,8 +143,7 @@ class MatElementaryOps<DMat<RT> >
     assert(j < mat.numRows());
     assert(i != j);
 
-    ElementType f;
-    mat.ring().init(f);
+    Element f(mat.ring());
     mat.ring().set_zero(f);
 
     auto loc1 = mat.rowBegin(i);
@@ -155,7 +155,6 @@ class MatElementaryOps<DMat<RT> >
         mat.ring().mult(f, r, *loc2);
         mat.ring().add(*loc1, f, *loc1);
       }
-    mat.ring().clear(f);
   }
 
   static void column_op(Mat& mat, size_t i, const ElementType& r, size_t j)
@@ -165,8 +164,7 @@ class MatElementaryOps<DMat<RT> >
     assert(j < mat.numColumns());
     assert(i != j);
 
-    ElementType f;
-    mat.ring().init(f);
+    Element f(mat.ring());
     mat.ring().set_zero(f);
 
     auto loc1 = mat.columnBegin(i);
@@ -178,7 +176,6 @@ class MatElementaryOps<DMat<RT> >
         mat.ring().mult(f, r, *loc2);
         mat.ring().add(*loc1, f, *loc1);
       }
-    mat.ring().clear(f);
   }
 
  private:
@@ -191,11 +188,7 @@ class MatElementaryOps<DMat<RT> >
                      const ElementType& b1,
                      const ElementType& b2)
   {
-    ElementType f1, f2, g1, g2;
-    ring.init(f1);
-    ring.init(f2);
-    ring.init(g1);
-    ring.init(g2);
+    Element f1(ring), f2(ring), g1(ring), g2(ring);
     ring.set_zero(f1);
     ring.set_zero(f2);
     ring.set_zero(g1);
@@ -212,10 +205,6 @@ class MatElementaryOps<DMat<RT> >
         ring.set(*loc1, f1);
         ring.set(*loc2, g1);
       }
-    ring.clear(f1);
-    ring.clear(f2);
-    ring.clear(g1);
-    ring.clear(g2);
   }
 
  public:
@@ -275,8 +264,7 @@ class MatElementaryOps<DMat<RT> >
     auto loc2 = mat.columnBegin(j);
     auto end = mat.columnEnd(i);
 
-    ElementType f;
-    mat.ring().init(f);
+    Element f(mat.ring());
     mat.ring().set_zero(f);
     mat.ring().set_zero(result);
     for (; loc1 != end; ++loc1, ++loc2)
@@ -284,7 +272,6 @@ class MatElementaryOps<DMat<RT> >
         mat.ring().mult(f, *loc1, *loc2);
         mat.ring().add(result, result, f);
       }
-    mat.ring().clear(f);
   }
 
   static bool row_permute(Mat& mat, size_t start_row, M2_arrayint perm)
@@ -500,12 +487,8 @@ class MatElementaryOps<DMat<RT> >
     //   and in row nr.
     // Replace column nc with all zeros, except 1 in nr row.
 
-    typename Mat::ElementType pivot, coef, f, zero, one;
-    M.ring().init(pivot);
-    M.ring().init(coef);
-    M.ring().init(zero);
-    M.ring().init(one);
-    M.ring().init(f);
+    Element pivot(M.ring()), coef(M.ring()), f(M.ring()), zero(M.ring()),
+        one(M.ring());
     M.ring().set_from_long(zero, 0);
     M.ring().set_from_long(one, 1);
 
@@ -530,12 +513,6 @@ class MatElementaryOps<DMat<RT> >
 
     scale_column(M, nc, zero);
     setEntry(M, nr, nc, one);
-
-    M.ring().clear(pivot);
-    M.ring().clear(coef);
-    M.ring().clear(zero);
-    M.ring().clear(one);
-    M.ring().clear(f);
   }
 
  public:
@@ -545,9 +522,7 @@ class MatElementaryOps<DMat<RT> >
     size_t nr = M.numRows() - 1;
     size_t nc = M.numColumns() - 1;
 
-    typename Mat::ElementType one, minus_one;
-    M.ring().init(one);
-    M.ring().init(minus_one);
+    Element one(M.ring()), minus_one(M.ring());
     M.ring().set_from_long(one, 1);
     M.ring().set_from_long(minus_one, -1);
 
@@ -610,9 +585,6 @@ class MatElementaryOps<DMat<RT> >
             break;
           }
       }
-
-    M.ring().clear(minus_one);
-    M.ring().clear(one);
   }
   //////////////////////////////////
 

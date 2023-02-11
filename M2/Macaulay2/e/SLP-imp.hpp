@@ -302,15 +302,13 @@ inline void norm2(const DMat<RT>& M,
 {
   const auto& C = M.ring();
   const auto& R = C.real_ring();
-  typename RT::RealElementType c;
-  R.init(c);
+  typename RT::RealRingType::Element c(R);
   R.set_zero(result);
   for (size_t i = 0; i < n; i++)
     {
       C.abs_squared(c, M.entry(0, i));
       R.add(result, result, c);
     }
-  R.clear(c);
 }
 
 enum SolutionStatus {
@@ -408,17 +406,12 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   typename RT::RealRingType R = C.real_ring();
 
   typedef typename RT::ElementType ElementType;
+  typedef typename RT::Element Element;
+  typedef typename RT::RealRingType::Element RealElement;
   typedef typename RT::RealRingType::ElementType RealElementType;
   typedef MatElementaryOps<DMat<RT> > MatOps;
 
-  RealElementType t_step;
-  RealElementType min_step2;
-  RealElementType epsilon2;
-  RealElementType infinity_threshold2;
-  R.init(t_step);
-  R.init(min_step2);
-  R.init(epsilon2);
-  R.init(infinity_threshold2);
+  RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
   R.set_from_BigReal(t_step, init_dt);  // initial step
   R.set_from_BigReal(min_step2, min_dt);
   R.mult(min_step2, min_step2, min_step2);  // min_step^2
@@ -429,35 +422,19 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
   int num_successes_before_increase = 3;
 
-  RealElementType t0, dt, one_minus_t0, dx_norm2, x_norm2, abs2dc;
-  R.init(t0);
-  R.init(dt);
-  R.init(one_minus_t0);
-  R.init(dx_norm2);
-  R.init(x_norm2);
-  R.init(abs2dc);
+  RealElement t0(R), dt(R), one_minus_t0(R), dx_norm2(R), x_norm2(R), abs2dc(R);
 
   // constants
-  RealElementType one, two, four, six, one_half, one_sixth;
+  RealElement one(R), two(R), four(R), six(R), one_half(R), one_sixth(R);
   RealElementType& dt_factor = one_half;
-  R.init(one);
   R.set_from_long(one, 1);
-  R.init(two);
   R.set_from_long(two, 2);
-  R.init(four);
   R.set_from_long(four, 4);
-  R.init(six);
   R.set_from_long(six, 6);
-  R.init(one_half);
   R.divide(one_half, one, two);
-  R.init(one_sixth);
   R.divide(one_sixth, one, six);
 
-  ElementType c_init, c_end, dc, one_half_dc;
-  C.init(c_init);
-  C.init(c_end);
-  C.init(dc);
-  C.init(one_half_dc);
+  Element c_init(C), c_end(C), dc(C), one_half_dc(C);
 
   // think: x_0..x_(n-1), c
   // c = the homotopy continuation parameter "t" upstair, varies on a (staight
@@ -769,30 +746,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       oe.ring().set_from_long(oe.entry(0, s), status);
       oe.ring().set_from_long(oe.entry(1, s), count);
     }
-
-  C.clear(c_init);
-  C.clear(c_end);
-  C.clear(dc);
-  C.clear(one_half_dc);
-
-  R.clear(t0);
-  R.clear(dt);
-  R.clear(one_minus_t0);
-  R.clear(dx_norm2);
-  R.clear(x_norm2);
-  R.clear(abs2dc);
-
-  R.clear(one);
-  R.clear(two);
-  R.clear(four);
-  R.clear(six);
-  R.clear(one_half);
-  R.clear(one_sixth);
-
-  R.clear(t_step);
-  R.clear(min_step2);
-  R.clear(epsilon2);
-  R.clear(infinity_threshold2);
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   if (M2_numericalAlgebraicGeometryTrace > 1)

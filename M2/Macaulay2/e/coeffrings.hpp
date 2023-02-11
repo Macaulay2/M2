@@ -4,6 +4,7 @@
 #define _coeffrings_hpp_
 
 class Z_mod;
+#include "aring.hpp"
 #include "ringelem.hpp"
 #include "ZZ.hpp"
 
@@ -179,7 +180,7 @@ class CoefficientRingZZp : public our_new_delete
 /**
  * \ingroup coeffrings
  */
-class CoefficientRingR : public our_new_delete
+class CoefficientRingR
 {
   const Ring *R;
 
@@ -188,6 +189,15 @@ class CoefficientRingR : public our_new_delete
   typedef ring_elem elem;
   typedef elem ElementType;
   typedef VECTOR(elem) ElementContainerType;
+
+  class Element : public M2::ElementImpl<ElementType>, public our_new_delete
+  {
+   public:
+    explicit Element(const CoefficientRingR &ring)
+    {
+      ring.init(mValue);
+    }
+  };
 
   CoefficientRingR(const Ring *R0) : R(R0) {}
   void init_set(elem &result, elem a) const { result = a; }

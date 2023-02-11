@@ -22,7 +22,7 @@ class SMat : public our_new_delete
   typedef typename CoeffRing::elem ElementType;
   typedef ElementType
       elem;  // same as ElementType.  Will possibly remove 'elem' later.
-
+  typedef typename CoeffRing::Element Element;
   //  typedef SMat<EigenvalueRing> EigenvalueMatrixType;
 
  private:
@@ -599,13 +599,11 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v,
         break;
       }
   if (vec2 == 0) return;
-  elem c;
-  ring().init(c);
+  typename CoeffRing::Element c(ring());
   ring().set_zero(c);
   ring().mult(c, vec2->coeff, a);
   if (ring().is_zero(c))
     {
-      ring().clear(c);
       return;  // nothing to change
     }
   // Now add c to the r1'th row of v
@@ -633,7 +631,6 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v,
         }
     }
   v = head.next;
-  ring().clear(c);
 }
 
 template <typename CoeffRing>
@@ -650,14 +647,9 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
 {
   // v[row r1] = a1 * v[r1] + a2 * v[r2]
   // v[row r2] = b1 * v[r1] + b2 * v[r2]
-  elem e1, e2, c1, c2, c3, c4;
+  Element e1(ring()), e2(ring()), c1(ring()), c2(ring()), c3(ring()),
+      c4(ring());
 
-  ring().init(c1);
-  ring().init(c2);
-  ring().init(c3);
-  ring().init(c4);
-  ring().init(e1);
-  ring().init(e2);
   ring().set_zero(c1);
   ring().set_zero(c2);
   ring().set_zero(c3);
@@ -668,12 +660,6 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   bool r2_nonzero = vec_get_entry(v, r2, e2);
   if (!r1_nonzero && !r2_nonzero)
     {
-      ring().clear(c1);
-      ring().clear(c2);
-      ring().clear(c3);
-      ring().clear(c4);
-      ring().clear(e1);
-      ring().clear(e2);
       return;
     }
   if (r1_nonzero)
@@ -691,12 +677,6 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   ring().add(c3, c3, c4);
   vec_set_entry(v, r1, c1);
   vec_set_entry(v, r2, c3);
-  ring().clear(c1);
-  ring().clear(c2);
-  ring().clear(c3);
-  ring().clear(c4);
-  ring().clear(e1);
-  ring().clear(e2);
 }
 
 template <typename CoeffRing>
@@ -715,8 +695,7 @@ void SMat<CoeffRing>::vec_dot_product(sparsevec *v,
                                       sparsevec *w,
                                       elem &result) const
 {
-  elem a;
-  ring().init(a);
+  Element a(ring());
   ring().set_zero(a);
   ring().set_zero(result);
   while (true)
@@ -734,7 +713,6 @@ void SMat<CoeffRing>::vec_dot_product(sparsevec *v,
           w = w->next;
         }
     }
-  ring().clear(a);
 }
 
 template <typename CoeffRing>
