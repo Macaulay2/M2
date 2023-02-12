@@ -141,6 +141,10 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      stderr << aftermatch(M2errorRegexp,get tmpf);
      stderr << inf  << ":0:1: (input file)" << endl;
      scan(statusLines get inf, x -> stderr << x << endl);
+     infcontents := get inf;
+     m := regex("^--([^\n]+): location of test code", infcontents);
+     if m =!= null then stderr << (
+	 substring(m#1, infcontents)) << ": (location of test code)" << endl;
      if # findFiles rundir == 1
      then removeDirectory rundir
      else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
