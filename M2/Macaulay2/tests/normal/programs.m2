@@ -43,9 +43,11 @@ assert(program#"path" == dir)
 fn << "if [ $1 != \"--version\" ]; then exit 1; fi" << endl << close
 program = findProgram name
 
+-- test Program << Thing
+fn << "read REPLY; echo $REPLY" << endl << close
+assert Equation(toString(program << "foo"), "foo\n")
+
 fn << "echo 1.0" << endl << close
-
-
 program = findProgram(name, name, MinimumVersion => ("0.9", name))
 assert(program#"version" == "1.0")
 program = findProgram(name, name, MinimumVersion => ("1.1", name),
