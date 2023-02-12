@@ -91,4 +91,28 @@ doc ///
   SeeAlso
     ProgramRun
     findProgram
+    (status, ProgramRun)
+///
+
+doc ///
+  Key
+    (status, ProgramRun)
+  Headline
+    get the return status of a program run
+  Usage
+    status pr
+  Inputs
+    pr:ProgramRun
+  Outputs
+    :ZZ
+  Description
+    Text
+      Get the return status of a program run.  Usually, 0 means that it was
+      successful.
+    Example
+      normaliz = findProgram "normaliz"
+      status runProgram(normaliz, "--version")
+  SeeAlso
+    findProgram
+    runProgram
 ///
