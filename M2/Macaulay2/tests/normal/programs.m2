@@ -39,6 +39,9 @@ assert(fileExists(dir | "/foo/bar/baz"))
 program = findProgram("foo", name, AdditionalPaths => {dir})
 assert(program#"path" == dir)
 
+-- test findProgram(String)
+fn << "if [ $1 != \"--version\" ]; then exit 1; fi" << endl << close
+program = findProgram name
 
 fn << "echo 1.0" << endl << close
 
