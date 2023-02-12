@@ -316,8 +316,9 @@ storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
 	rawdoc = currentPackage#rawKey#fkey;
-	printerr("error: documentation already provided for ", format tag);
-	printerr(rawdoc#"filename", ":", toString rawdoc#"linenum", ": ... here is the (end of the) previous documentation"));
+	error("documentation already provided for ", format tag, newline,
+	    toString locate rawdoc.DocumentTag,
+	    ": ... here is the (end of the) previous documentation"));
     currentPackage#rawKey#fkey = rawdoc)
 
 -----------------------------------------------------------------------------
