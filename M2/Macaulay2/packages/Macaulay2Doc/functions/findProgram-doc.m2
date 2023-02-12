@@ -79,6 +79,7 @@ doc ///
 doc ///
   Key
     findProgram
+    (findProgram, String)
     (findProgram, String, String)
     (findProgram, String, List)
     [findProgram, AdditionalPaths]
@@ -89,6 +90,7 @@ doc ///
   Headline
     load external program
   Usage
+    findProgram name
     findProgram(name, cmd)
     findProgram(name, cmds)
   Inputs
@@ -157,6 +159,11 @@ doc ///
     Example
       programPaths#"gfan" = "/path/to/gfan/"
       gfan = findProgram("gfan", "gfan _version --help", Verbose => true)
+    Text
+      If @TT "cmd"@ is not provided, then @TT "cmd"@ is run with the common
+      @TT "--version"@ command line option.
+    Example
+      findProgram "normaliz"
     Text
       One program that is shipped with a variety of prefixes in
       different distributions and for which the @TT "Prefix"@ option
