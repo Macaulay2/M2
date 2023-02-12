@@ -88,6 +88,11 @@ doc ///
       oo#"output"
       runProgram(gfan, "_foo", RaiseError => false)
       oo#"error"
+    Text
+      The value corresponding to the @TT "\"output\""@ key may also be
+      obtained using @TO toString@.
+    Example
+      toString runProgram(gfan, "_version")
   SeeAlso
     ProgramRun
     findProgram
