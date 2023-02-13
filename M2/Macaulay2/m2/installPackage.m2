@@ -743,7 +743,7 @@ installPackage Package := opts -> pkg -> (
 
 	-- should this be here, or farther up? Note: assembleTree resets the counters, so stay above that.
 	if chkdoc and hadDocumentationError then error(
-	    toString numDocumentationErrors, " errors(s) occurred in processing documentation for package ", toString pkg);
+	    toString numDocumentationErrors, " error(s) occurred in processing documentation for package ", toString pkg);
 
 	if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB;
 
@@ -786,7 +786,7 @@ installPackage Package := opts -> pkg -> (
 			))));
 
 	if chkdoc and hadDocumentationError then error(
-	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
+	    toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
 	-- ~60 -> ~70s for Macaulay2Doc
