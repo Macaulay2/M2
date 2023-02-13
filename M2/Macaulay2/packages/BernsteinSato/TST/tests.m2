@@ -105,3 +105,12 @@ RM = Drestriction(M,{0,1,0});
 assert( toString RM#0 == "cokernel matrix {{x_3*D_3+3, x_1*D_1+4, x_1^4}}" );
 assert( toString RM#1 == "cokernel matrix {{x_1, x_3*D_3+1}}" );
 ///
+
+TEST ///
+  -- moved from tests/normal/dd-modules.m2
+  R = QQ[x,y]
+  A = deRhamAll(x^2+y^3)
+  assert A.?TransferCycles
+  B = deRhamAll(x^2+y^2)
+  assert B.?TransferCycles -- seems to fail for homogeneous polynomials
+///
