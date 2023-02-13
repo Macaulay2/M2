@@ -399,8 +399,8 @@ hypertext Boolean := TTc "constant"
 hypertext Type :=
 hypertext FilePosition :=
 hypertext Dictionary := TTc "class-name"
-hypertext String := TTc "token string"
-hypertext Net := n -> PRE { toString n, BR{} , "class"=>"token string", "style" => "display:inline-table;vertical-align:"|toString(if #n>0 then 100*(height n-1) else 0)|"%" }
+hypertext String := TTc "string"
+hypertext Net := n -> PRE { toString n, BR{}, "class"=>"token string", "style" => "display:inline-table;vertical-align:"|toString(if #n>0 then 100*(height n-1) else 0)|"%" }
 --hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
 --hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
 
