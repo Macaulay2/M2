@@ -48,6 +48,7 @@ doc ///
     runProgram
     (runProgram, Program, String)
     (runProgram, Program, String, String)
+    (runProgram, String, String)
     [runProgram, KeepFiles]
     [runProgram, RaiseError]
     [runProgram, RunDirectory]
@@ -93,6 +94,13 @@ doc ///
       obtained using @TO toString@.
     Example
       toString runProgram(gfan, "_version")
+    Text
+      It is also possible to skip @TO findProgram@ and just provide
+      two strings: the name of the program and the command line
+      arguments.
+    Example
+      runProgram("normaliz", "--version")
+      peek oo
   SeeAlso
     ProgramRun
     findProgram
