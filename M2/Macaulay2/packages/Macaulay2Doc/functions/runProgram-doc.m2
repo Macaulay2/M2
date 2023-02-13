@@ -121,3 +121,29 @@ doc ///
     findProgram
     runProgram
 ///
+
+doc ///
+  Key
+    (symbol <<, Program, Thing)
+  Headline
+    run program with input redirection
+  Usage
+    prog << x
+  Inputs
+    prog:Program
+    x:Thing
+  Outputs
+    :ProgramRun
+  Description
+    Text
+      Write @TT "x"@ to a temporary file and run @TT "prog"@ with this
+      file as input using input redirection (the @TT "<"@ operator in
+      a POSIX shell).
+    Example
+      M2 = findProgram "M2"
+      M2 << "2 + 2"
+      toString oo
+  SeeAlso
+    findProgram
+    runProgram
+///
