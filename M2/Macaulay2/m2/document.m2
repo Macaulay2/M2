@@ -315,10 +315,13 @@ formatDocumentTag Sequence := s -> concatenate (
 storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
+	newloc := toString new FilePosition from (
+	    minimizeFilename rawdoc#"filename", rawdoc#"linenum", 0);
 	rawdoc = currentPackage#rawKey#fkey;
-	error("documentation already provided for ", format tag, newline,
-	    toString locate rawdoc.DocumentTag,
-	    ": ... here is the (end of the) previous documentation"));
+	oldloc := toString locate rawdoc.DocumentTag;
+	printerr("error: documentation already provided for ", format tag);
+	printerr(newloc, ": ... here is the (end of the) new documentation");
+	printerr(oldloc, ": ... here is the (end of the) previous documentation"));
     currentPackage#rawKey#fkey = rawdoc)
 
 -----------------------------------------------------------------------------
