@@ -1,5 +1,5 @@
 
-i1 : needsPackage "Dmodules";
+i1 : needsPackage "BernsteinSato";
 
 i2 : D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 
