@@ -176,8 +176,9 @@ truncationMonomials(List, Ring) := opts -> (d, R) -> (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring, quotient ring, or exterior algebra.
-    R#(symbol truncate, d, if opts#Cone =!= null then rays opts#Cone) ??= (
-        (R1, phi1) := flattenRing R;
+    C := if opts#Cone =!= null then rays opts#Cone else id_(degreeGroup R);
+    R#(symbol truncate, d, C) ??= (
+	(R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
         F := freeComponents target A;
@@ -313,7 +314,8 @@ basisMonomials(List, Ring) := opts -> (d, R) -> (
     partialdegs := opts#"partial degrees";
     if  R#?(symbol basis', d) and partialdegs === null
     then R#(symbol basis', d)
-    else if R#?(symbol truncate, d) and partialdegs === null
+    -- TODO: we should accept _any_ cached truncation as a hint
+    else if R#?(symbol truncate, d, null) and partialdegs === null
     then R#(symbol basis', d) = (
         -- opportunistically use cached truncation results
         -- TODO: is this always correct? with negative degrees?
