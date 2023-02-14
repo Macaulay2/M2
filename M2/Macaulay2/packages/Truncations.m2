@@ -166,6 +166,7 @@ truncationMonomials(List, Module) := opts -> (degs, F) -> (
     -- TODO: call findMins on degs, but with respect to the given cone!
     -- checks to see if twist S(-a) needs to be truncated
     isInCone := if nef === null then a -> any(degs, d -> d_free << a) else (
+	-- FIXME
         truncationCone := nef + convexHull(matrix (transpose degs)_free);
 	a -> contains(truncationCone, convexHull matrix transpose{a}));
     -- TODO: either figure out a way to use cached results or do this in parallel
@@ -175,9 +176,7 @@ truncationMonomials(List, Ring) := opts -> (d, R) -> (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring, quotient ring, or exterior algebra.
-    if  R#?(symbol truncate, d)
-    then R#(symbol truncate, d)
-    else R#(symbol truncate, d) = (
+    R#(symbol truncate, d, if opts#Cone =!= null then rays opts#Cone) ??= (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
@@ -288,20 +287,18 @@ basisMonomials(List, Module) := (degs, F) -> (
     -- assume checkOrMakeDegreeList has already been called on degs
     -- TODO: either figure out a way to use cached results or do this in parallel
     R := ring F; directSum apply(degrees F, a -> concatCols apply(degs, d -> basisMonomials(d - a, R))))
-basisMonomials(List, Ring) := (d, R) -> (
+basisMonomials(List, Ring) := (d, R) -> R#(symbol basis', d) ??= (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring, quotient ring, or exterior algebra.
-    if  R#?(symbol basis', d)
-    then R#(symbol basis', d)
-    else if R#?(symbol truncate, d)
-    then R#(symbol basis', d) = (
+    -- TODO: we should accept _any_ cached truncation as a hint
+    if R#?(symbol truncate, d, null) then (
         -- opportunistically use cached truncation results
         -- TODO: is this always correct? with negative degrees?
-        truncgens := R#(symbol truncate, d);
-        psrc := rawSelectByDegrees(raw source truncgens, d, d);
+        truncgens := R#(symbol truncate, d, null);
+	psrc := rawSelectByDegrees(raw source truncgens, d, d);
         submatrix(truncgens, , psrc))
-    else R#(symbol basis', d) = (
+    else (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
@@ -355,8 +352,8 @@ end--
 restart
 uninstallPackage "Truncations"
 restart
-loadPackage "Truncations"
-debug needsPackage "Truncations"
+loadPackage("Truncations", Reload => true)
+debug Truncations
 restart
 installPackage "Truncations"
 check "Truncations"
