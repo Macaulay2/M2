@@ -1,7 +1,7 @@
 -- todo: created 7 Feb 2023:
 --   we just did migration of Truncations.
---   todo: 2 tests in Truncations are failing due to changes we made.
---   todo: get doc references both directions working (recompile M2).
+--   todo: 2 tests in Truncations are failing due to changes we made. DONE
+--   todo: get doc references both directions working (recompile M2). DONE
 --   next thing: finish tests in Complexes (and FreeResolutions)
 --               create doc node(s) for freeResolution
 --
@@ -35,20 +35,21 @@
      assert(not(M == M)) -- M===M but M != M...
 *-
 
-importFrom_Core { "RawComputation", "raw" }
-importFrom_Core { "degreeToHeft", 
+importFrom_Core { 
+    "RawComputation", 
+    "raw",
+    "degreeToHeft", 
     "rawBetti", 
     "rawStartComputation", 
     "rawGBSetStop", 
     "rawStatus1", 
-    "rawGBBetti", "rawResolution",
-    "rawResolutionGetFree", "rawResolutionGetMatrix"
+    "rawGBBetti", 
+    "rawResolution",
+    "rawResolutionGetFree", 
+    "rawResolutionGetMatrix",
+    "hasNoQuotients",
+    "Computation"
     }
-
-hasNoQuotients = method()
-hasNoQuotients QuotientRing := (R) -> isField R
-hasNoQuotients PolynomialRing := (R) -> hasNoQuotients coefficientRing R
-hasNoQuotients Ring := (R) -> true
 
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
@@ -117,8 +118,7 @@ freeResolution Module := Complex => opts -> M -> (
         };
     M.cache.ResolutionObject = RO;
 
-    -- the following will return a complex (or error), 
-    -- and perhaps modify M.cache.ResolutionObject, M.Resolution?    
+    -- the following will return a complex (or null), 
     C = runHooks((freeResolution, Module), (opts, M), Strategy => opts.Strategy);
     
     if C =!= null then (
@@ -131,17 +131,10 @@ freeResolution Module := Complex => opts -> M -> (
         return C;
         );    
     
-    
-    -- each hook must do the following:
-    -- set Strategy.
-    -- create any data it needs (in the RO object).
-    -- place functions RO.isComputable, RO.compute, RO.complex into RO. (or have some other way of doing that).
-    -- or, perhaps, make a ResolutionObjectHook type, and have each hook create methods on that.
-    -- either way, each hook has to create these functions...
-
-    -- Question: where is the actual computation happening? In the hook!
-    
-    error("no method implemented to handle this ring and module"); -- FIX THIS ERROR MESSAGE.
+    remove(M.cache, symbol ResolutionObject);
+    if opts.Strategy === null then     
+        error("no method implemented to handle this ring and module");
+    error "provided Strategy does not handle this ring and module";        
     );
 
 resolutionObjectInEngine = (opts, M, matM) -> (
@@ -676,51 +669,7 @@ minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
 
 
 end--
-restart
---debug loadPackage("Complexes", FileName => "../Complexes.m2")
-needsPackage "Complexes" -- running M2 in packages directory...
 
---load "ResolutionObject.m2"
-gbTrace=1
-S = ZZ/101[a..d]
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
---F = freeResolution(M, Strategy => Engine)
-F = freeResolution(M)
-
-M = S^1/I
-freeResolution(M, LengthLimit => 0)
-
-M = S^1/I
-freeResolution(M, LengthLimit => 1)
-
-M = S^1/I
-freeResolution(M, LengthLimit => -1)
-    
-remove(M.cache, symbol Resolution)
-peek M.cache
-assert isWellDefined F
-F2 = freeResolution(M, LengthLimit => 2) -- TODO: is it restricting to length limit 2?
-dd^F2
-betti F2
-F3 = freeResolution(M, LengthLimit => 3)
-F3 = freeResolution(M, LengthLimit => 10)
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-F3 = freeResolution(M, Strategy => 2)
-assert(dd^F3_1 == gens I)
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-F3 = freeResolution(M, Strategy => 3)
-assert(dd^F3_1 == gens I)
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-F1 = freeResolution(M, LengthLimit => 2)
-F2 = freeResolution(M, LengthLimit => 3)
-F3 = freeResolution(M, LengthLimit => 5)
 
 restart
 debug needsPackage("Complexes")
@@ -736,79 +685,9 @@ F = freeResolution(M, Strategy => Engine, LengthLimit => 4) -- This one works.
 assert isWellDefined F
 F2 = freeResolution(M, LengthLimit => 2) -- BUG? Doesn't seem to finish.
 
--- exterior algebra example
-restart
-debug loadPackage("Complexes")
-E = ZZ/101[a..d, SkewCommutative => true]
-I = ideal"ab, acd"
-C = freeResolution(I) -- gives an error, as it should
-C = freeResolution(I, LengthLimit => 5)
 
-I = ideal"ab, acd"
-C = freeResolution(I, Strategy => 2, LengthLimit => 7)
+-- XXXX
 
-I = ideal"ab, acd"
-C2 = freeResolution(I, Strategy => 3, LengthLimit => 7)
-assert(betti C === betti C2)
-
--- module over a quotient ring (old res.m2 version)
-restart
-R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
-I = ideal"ab, acd"
-res(R^1/I, Strategy => "Syzygies")
-
--- module over a quotient ring
-restart
-debug loadPackage("Complexes")
-R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
-I = ideal"ab, acd"
-C0 = freeResolution(I, LengthLimit => 6, Strategy => 0)
-
-I = ideal"ab, acd"
-C1 = freeResolution(I, LengthLimit => 6, Strategy => 1)
-
-I = ideal"ab, acd"
-C2 = freeResolution(I, LengthLimit => 6, Strategy => 2)
-
-I = ideal"ab, acd"
-C3 = freeResolution(I, LengthLimit => 6, Strategy => 3)
-
-C0 == C1
-C0 == C2
-C0 == C3
-
-C = freeResolution(I, LengthLimit => 6, Strategy => 0)
-C = freeResolution(I, LengthLimit => 6, Strategy => 1)
-C = freeResolution(I, LengthLimit => 7, Strategy => 1)
-C = freeResolution(I, LengthLimit => 5, Strategy => 0)
-
-I = ideal"ab, acd"
-
--- inhomogeneous example
-restart
-debug loadPackage("Complexes")
-R = ZZ/101[a..d]
-I = ideal"a3-b2, abc-d, a3-d"
-freeResolution(I, Strategy=>2) -- BUG: error message is not accurate.
-
-C = freeResolution(I, LengthLimit => 6) -- BUG: the last call to freeResolution left the computation in a bad state probably.
-prune HH C
-
-methods res
-needsPackage "PruneComplex"
---
-C = res(I, FastNonminimal => true)
-D = pruneComplex(C, UnitTest => isScalar)
-
--- Over the rationals
-restart
-needsPackage "Complexes"
-S = QQ[a..d]
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-res M
-F = freeResolution(M, Strategy => Engine)
-F = freeResolution(M)
 
 -- Weyl algebra
 restart
@@ -824,22 +703,6 @@ res M --works
 F = freeResolution(M) -- BUG.  
 F = freeResolution(M, Strategy => 2) -- works
 
--- Over a field
-restart
-debug needsPackage("Complexes")
-gbTrace=1
-kk = ZZ/32003
-M = coker random(kk^3, kk^2)
-F = freeResolution M
-g = augmentationMap F
-assert(source g == F)
-assert(target g == complex M)
-assert isWellDefined g
-assert(coker g == 0)
-assert(ker g == 0) -- since this is an isomorphism
-
-assert instance(res M, ChainComplex) -- BUG: this is wrong. It is returning a Matrix!
-assert instance(freeResolution M, Complex)
 
 -- Over an inexact field
 restart

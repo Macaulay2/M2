@@ -61,6 +61,8 @@ Node
   Subnodes
     (truncate, List, Module)
     (truncate, List, Matrix)
+    (truncate, List, Complex)
+    (truncate, List, ComplexMap)
   SeeAlso
     basis
 

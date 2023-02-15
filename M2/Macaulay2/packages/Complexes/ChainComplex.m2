@@ -420,7 +420,7 @@ net Complex := C -> (
                  stack (net C_i, " ", net i))
      )
 
-texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
+texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
 
 -- NOTE: there are hardcoded constant values (8, 10) 
 -- in the next function.

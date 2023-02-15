@@ -2399,6 +2399,7 @@ doc ///
 doc ///
     Key
         (minimize, Complex)
+        minimize
         minimizingMap
     Headline
         a quasi-isomorphic complex whose terms have minimal rank

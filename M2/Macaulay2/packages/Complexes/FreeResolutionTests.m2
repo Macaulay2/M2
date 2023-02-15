@@ -145,6 +145,237 @@ TEST ///
 ///
 
 TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+
+  E = ZZ/101[a..d, SkewCommutative => true]
+  I = ideal"ab, acd"
+  assert try (freeResolution(I); false) else true
+  C = freeResolution(I, LengthLimit => 5)
+  assert isWellDefined C
+  assert(length C == 5)
+  assert(naiveTruncation(prune HH C, (1,4)) == 0)
+
+  I = ideal I_*
+  C = freeResolution(I, Strategy => 2, LengthLimit => 7)
+  assert isWellDefined C
+  assert(length C == 7)
+
+  I = ideal I_*
+  C2 = freeResolution(I, Strategy => 3, LengthLimit => 7)
+  assert isWellDefined C2
+  assert(betti C === betti C2)
+  
+  I = ideal I_*
+  C3 = freeResolution(I, Strategy => "Nonminimal", LengthLimit => 7)
+  assert isWellDefined C3
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
+  I = ideal"ab, acd, bd2"
+  C0 = freeResolution(I, LengthLimit => 6, Strategy => 0)
+  assert isWellDefined C0
+  assert(length C0 == 6)
+
+  I = ideal I_*
+  C1 = freeResolution(I, LengthLimit => 6, Strategy => 1)
+  assert isWellDefined C1
+  
+  I = ideal I_*
+  C2 = freeResolution(I, LengthLimit => 6, Strategy => 2)
+  assert isWellDefined C2
+  
+  I = ideal I_*
+  C3 = freeResolution(I, LengthLimit => 6, Strategy => 3)
+  assert isWellDefined C3
+  
+  assert(betti C0 == betti C1)
+  assert(betti C0 == betti C2)
+  assert(betti C0 == betti C3)
+
+  I = ideal I_*
+  (usedtime, C) = toSequence timing freeResolution(I, LengthLimit => 6, Strategy => 0)
+  assert isWellDefined C
+  assert(length C == 6)
+  
+  (usedtime1, C1) = toSequence timing freeResolution(I, LengthLimit => 6, Strategy => 1) -- no recomputation
+  assert isWellDefined C1
+  assert(length C1 == 6)
+  assert(usedtime1 < usedtime/10)
+
+  (usedtime2, C2) = toSequence timing freeResolution(I, LengthLimit => 7, Strategy => 1)
+  assert isWellDefined C2
+  assert(length C2 == 7)
+  assert(usedtime1 < usedtime2/10)
+  
+  (usedtime3, C3) = toSequence timing freeResolution(I, LengthLimit => 5, Strategy => 0) -- does change length, no recomputation
+  assert isWellDefined C3
+  assert(length C3 == 5)
+  assert(usedtime3 < usedtime2/10)
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  R = ZZ/101[a..d]
+  I = ideal"a3-b2, abc-d, a3-d"
+  assert try (freeResolution(I, Strategy=>2); false) else true
+
+  C = freeResolution(I, LengthLimit => 6)
+  assert isWellDefined C
+  assert(length C <= 6)
+  assert(naiveTruncation(prune HH C, (1,infinity)) == 0)
+
+  C1 = minimize C -- C is not minimal due to inhomogeneity
+  assert isWellDefined C1
+  assert(betti C != betti C1)
+  assert(naiveTruncation(prune HH C1, (1,infinity)) == 0)
+///
+
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  S = QQ[a..d]
+  I = ideal(13*a*b-c*d, a^3-c^3, a*b^2-12*c*d^2)
+  F = freeResolution(I, Strategy => Engine)
+  assert isWellDefined F
+  assert isQuasiIsomorphism augmentationMap F
+  
+  -- I = ideal I_*
+  -- F0 = freeResolution(I, Strategy => 0) -- BUG!!
+
+  I = ideal I_*
+  F1 = freeResolution(I, Strategy => 1)
+  assert isWellDefined F1
+  assert(betti F == betti F1)
+  
+  I = ideal I_*
+  F2 = freeResolution(I, Strategy => 2)
+  assert isWellDefined F2
+  assert(betti F == betti F2)
+
+  I = ideal I_*
+  F3 = freeResolution(I, Strategy => 3)
+  assert isWellDefined F3
+  assert(betti F == betti F3)
+    
+  I = ideal I_*
+  FS = freeResolution(I, Strategy => "Syzygies")
+  assert isWellDefined FS
+  assert(betti F == betti FS)
+
+  -- TODO: Nonminimal should be able to handle QQ coefficients.
+  -- I = ideal I_*
+  -- FN = freeResolution(I, Strategy => "Nonminimal") -- bad error message?
+  -- assert isWellDefined FN
+///
+
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  -- Over a field
+  kk = ZZ/32003
+  M = coker random(kk^3, kk^2)
+  F = freeResolution M
+  assert isWellDefined F
+  g = augmentationMap F
+  assert(source g == F)
+  assert(target g == complex M)
+  assert isWellDefined g
+  assert(coker g == 0)
+  assert(ker g == 0) -- since this is an isomorphism
+
+  -- Over a field
+  kk = GF(3^10)
+  M = coker random(kk^3, kk^2)
+  F = freeResolution M
+  assert isWellDefined F
+  g = augmentationMap F
+  assert(source g == F)
+  assert(target g == complex M)
+  assert isWellDefined g
+  assert(coker g == 0)
+  assert(ker g == 0) -- since this is an isomorphism
+
+  -- Over a field
+  kk = QQ
+  M = coker random(kk^3, kk^2, Height => 10000)
+  F = freeResolution M
+  assert isWellDefined F
+  g = augmentationMap F
+  assert(source g == F)
+  assert(target g == complex M)
+  assert isWellDefined g
+  assert(coker g == 0)
+  assert(ker g == 0) -- since this is an isomorphism
+
+  -- Over a fraction field
+  S = ZZ/101[a,b,c,d]
+  kk = frac S
+  M = coker sub(random(S^3, S^{-1,-1}), kk)
+  F = freeResolution M
+  assert isWellDefined F
+  g = augmentationMap F
+  assert(source g == F)
+  assert(target g == complex M)
+  assert isWellDefined g
+  assert(coker g == 0)
+  assert(ker g == 0) -- since this is an isomorphism
+
+  -- Over a number field
+  S = QQ[a]/(a^3-a-1)
+  kk = toField S
+  M = coker sub(random(S^3, S^{-2,-2}) + random(S^3, S^{-1,-1}) + random(S^3, S^2), kk)
+  F = freeResolution(M, Strategy => "Field") -- BUG!!: first term should be kk^1 on the nose, I would prefer.
+  assert isWellDefined F
+  g = augmentationMap F
+  assert(source g == F)
+  assert(target g == complex M)
+  assert isWellDefined g
+  assert(coker g == 0)
+  assert(ker g == 0) -- since this is an isomorphism
+///
+
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  
+///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEST ///
   -- originally from tests/normal/res.m2
 -*
   restart
