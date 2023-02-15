@@ -729,7 +729,7 @@ makeRing (List) := (L) -> (
 
 gensRing = memoize(
     (K,n) -> (
-        x := apply(#n,i -> getSymbol("x"|toString(i)));
+        x := if #n==1 then {getSymbol "x"} else apply(#n,i -> getSymbol("x"|toString(i)));
         X := apply(#n,i -> toList((x_i)_0 .. (x_i)_(n_i-1)));
         d := entries diagonalMatrix toList(#n : 1);
         R := K[flatten X,Degrees=>apply(#n,i -> n_i : d_i)];

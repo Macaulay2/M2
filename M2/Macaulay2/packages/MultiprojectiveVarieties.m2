@@ -1400,6 +1400,7 @@ segre MultirationalMap := (cacheValue "compositionWithSegreEmbedding") (Phi -> (
 ));
 
 compose (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
+    if Phi.cache#?("composition",Psi) then return Phi.cache#("composition",Psi);
     if ring ambient target Phi === ring ambient source Psi and target Phi == source Psi then (
         f := toRingMap(Phi,ring source Psi);
         Eta := multirationalMap(apply(factor Psi,g -> rationalMap(compose(f,map g),Dominant=>"notSimplify")),target Psi);
@@ -1407,10 +1408,10 @@ compose (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
         Eta#"source" = source Phi;
         if Phi#"isDominant" === true and Psi#"isDominant" === true then Eta#"isDominant" = true;
         if Phi#"isBirational" === true and Psi#"isBirational" === true then Eta#"isBirational" = true;
-        return Eta;
+        return Phi.cache#("composition",Psi) = Eta;
     );
     try Phi' := check multirationalMap(super Phi,source Psi) else error "multi-rational maps not composable: not able to define a natural map from the target of the first one to the source of the second one";
-    compose(Phi',Psi)
+    Phi.cache#("composition",Psi) = compose(Phi',Psi)
 );
 
 MultirationalMap * MultirationalMap := (Phi,Psi) -> compose(Phi,Psi);
