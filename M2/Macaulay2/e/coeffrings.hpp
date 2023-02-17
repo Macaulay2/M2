@@ -229,6 +229,9 @@ class CoefficientRingR
   void divide(elem &result, elem a, elem b) const { result = R->divide(a, b); }
   void to_ring_elem(ring_elem &result, const elem &a) const { result = a; }
   void from_ring_elem(elem &result, const ring_elem &a) const { result = a; }
+  // do not make the return type here a reference, otherwise dangling refrences
+  // become very easy to make
+  elem from_ring_elem_const(const ring_elem &a) const { return a; }
   void swap(elem &a, elem &b) const
   {
     elem tmp = a;

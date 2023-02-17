@@ -86,10 +86,8 @@ class ConcreteRing : public Ring
   ////////////////////////////
   virtual unsigned int computeHashValue(ring_elem a) const
   {
-    Element b(ring());
-    ring().from_ring_elem(b, a);
-    unsigned int result = ring().computeHashValue(b);
-    return result;
+    const ElementType &b = ring().from_ring_elem_const(a);
+    return ring().computeHashValue(b);
   }
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const
@@ -1032,8 +1030,7 @@ inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
   ARingRR::Element a(*R);  // will be the norm
-  Element b(*R);
-  R->from_ring_elem(b, f);
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
   if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
 }
@@ -1044,8 +1041,7 @@ inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RRmutable norm,
 {
   const ARingRR &realR = R->real_ring();
   ARingRR::Element a(realR);
-  Element b(*R);
-  R->from_ring_elem(b, f);
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
   if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
 }
@@ -1055,8 +1051,7 @@ inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
   ARingRRR::Element a(*R);  // will be the norm
-  Element b(*R);
-  R->from_ring_elem(b, f);
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
   if (mpfr_cmp(&a.value(), norm) > 0) mpfr_set(norm, &a.value(), MPFR_RNDN);
 }
@@ -1067,8 +1062,7 @@ inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RRmutable norm,
 {
   const ARingRRR &realR = R->real_ring();
   ARingRRR::Element a(realR);
-  Element b(*R);
-  R->from_ring_elem(b, f);
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
   if (mpfr_cmp(&a.value(), norm) > 0) mpfr_set(norm, &a.value(), MPFR_RNDN);
 }
@@ -1112,8 +1106,7 @@ inline unsigned long ConcreteRing<ARingCCC>::get_precision() const
 template <typename RT>
 std::pair<bool, long> coerceToLongIntegerFcn(const RT &ring, ring_elem a)
 {
-  typename RT::Element b(ring);
-  ring.from_ring_elem(b, a);
+  const typename RT::ElementType &b = ring.from_ring_elem_const(a);
   long result = ring.coerceToLongInteger(b);
   return std::pair<bool, long>(true, result);
 }
@@ -1252,8 +1245,7 @@ inline const RingElement *ConcreteRing<ARingGFFlintBig>::getGenerator() const
 template <>
 inline long ConcreteRing<ARingZZpFlint>::discreteLog(const ring_elem &a1) const
 {
-  Element a(ring());
-  ring().from_ring_elem(a, a1);
+  const ElementType &a = ring().from_ring_elem_const(a1);
   long result = ring().discreteLog(a);
   return result;
 }
