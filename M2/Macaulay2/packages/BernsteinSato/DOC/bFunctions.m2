@@ -389,3 +389,34 @@ document {
      SeeAlso => { "bFunction", "factorBFunction", "globalBFunction", "generalB", "globalB" }
      }
 
+document {
+     Key => {(paramBpoly, RingElement, File), paramBpoly},
+     Headline => "compute the list of all possible Bernstein-Sato polynomials 
+     for a polynomial with parametric coefficients",
+     Usage => "paramBpoly(f,file)", 	  
+     Inputs => {
+     	  "f" => RingElement => {
+	       "a polynomial in Weyl algebra ", EM "A_n(Q)"
+	       },
+	  "file" => File => {"a file for TeX output (or stdio)"}
+	  },
+     Outputs => {
+	  List => {"all possible Bernstein-Sato polynomials"}
+	  },
+     "Along with the finite list of B.-S. polynomials this function creates latex code 
+     describing strata in the parameter space 
+     corresponding to the B.-S. polynomials --- each stratum is a constructible set. ",     
+     "This is an implementation of the algorithmic approach in ", 
+     EM {"Anton Leykin. Constructibility of the Set of Polynomials with a Fixed Bernstein-Sato Polynomial: an Algorithmic Approach. 
+     Journal of Symbolic Computation, 32(6):663–675, 2001."},
+     EXAMPLE lines ///
+	  A =  (QQ [a,b,c]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+     	  paramBpoly(a*x^2 + b*x*y + c*y^2, stdio)
+	  ///,
+     Caveat => {
+	  "A finite field ZZ/p is used to speed up computations. 
+	  Option ", TT {"\"ground field\""}," may be used to change the characteristic p.
+	  If p=0 the computation will be attempted over QQ."
+	  },
+     SeeAlso => {"globalBFunction"}
+     }  

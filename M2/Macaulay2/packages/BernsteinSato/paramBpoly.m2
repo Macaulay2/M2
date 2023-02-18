@@ -1,66 +1,41 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-local factorBFunctionZmodP 
-local loadVTree
-local CALLglobalBFunctionParam
-local saveVTree
-local paramGB
-local gbWparam
-local setBSwitch
-local inWparam
-local takeCareOf
-local deleteDollars
---local GroundField
+-----------------------------------------------------------------------------
+-- paramBpoly attempts to compute the b-polys for a poly with parameters
+-- IN>  f: RingElement (an element in a Weyl algebra with a palynomial ring for a coefficientRing)
+-- IN>  file: File (e.g., stdio)
+-- OUT> list of all possible Bernstein-Sato polynomials (also write the tree of b-polys into file)
+-----------------------------------------------------------------------------
 
---keys
-local children
-children = symbol children
-local ringOpts
-ringOpts = symbol ringOpts
-local tempI
-tempI = symbol tempI 
-local tempN
-tempN = symbol tempN
-local tempT
-tempT = symbol tempT
-local tempBF
-tempBF = symbol tempBF
-local poly
-poly = symbol poly
-local inv
-inv = symbol inv
-local iList
-iList = symbol iList
-local tempV'
-tempV' = symbol tempV'
-local parentNODE
-parentNODE = symbol parentNODE
-local Itype
-Itype = symbol Itype
-local tempV''
-tempV'' = symbol tempV''
-local level
-level = symbol level
-local coeff
-coeff = symbol coeff 
-local cSet
-cSet = symbol cSet 
-
--- attempts to compute the b-polys for a poly with parameters
--- IN>  f: RingElement (an element in a Weyl algebra)
--- IN>  fname: String (base name for the .v3 and .tex files)
--- OUT> a "bSet" (also write the tree of b-polys into .v3 file 
---     	    	      	   	     and prints the bSet to .tex)
+-----------------------------------------------------------------------------
+-- keys for HashTables that are used locally
+-----------------------------------------------------------------------------
+protect children
+protect ringOpts
+protect tempI
+protect tempN
+protect tempT
+protect tempBF
+protect poly
+protect inv
+protect iList
+protect tempV'
+protect parentNODE
+protect Itype
+protect tempV''
+protect level
+protect coeff
+protect cSet
+ 
+-----------------------------------------------------------------------------
+-- "lucky" prime & QQflag (says when to use Q)
+-----------------------------------------------------------------------------
+DBIGPRIME = 32749;
+QQflag := false;
 
 -----------------------------------------------------------------------------
 -- next comes a ton of small functions needed further...
 -----------------------------------------------------------------------------
-
------------------------------------------------------------------------------
--- "lucky" prime & QQflag (says when to use Q)
-----------------------------------------
-DBIGPRIME = 32749;
-QQflag := false;
 
 -- get gens from the paramGB output
 gensGB := GB -> matrix{GB#0}
@@ -224,7 +199,7 @@ createVTree := f -> (
 saveVTree = method()
 saveVTree(HashTable, String) := (V, filename) -> ( 
      filename << toString V#coeff << endl << toString V#ringOpts << endl
-     << toString V#poly << endl << toString V#tempN	<< endl << close )
+     << toString V#poly << endl << toString V#tempN	<< endl )
 
 deleteDollars = method()
 deleteDollars(String) := (s) -> (
@@ -486,11 +461,10 @@ factorBFunctionZmodP RingElement := Product => f -> (
      result
      );-- end factorBFunctionZmodP
 
-BSet2tex := (s, filename) -> (
-     TeXfile := openOut filename;
-     TeXfile << "\\documentclass{article}\n\\begin{document}\n"; 
+BSet2tex := (s, TeXfile) -> (
+     TeXfile << "\\begin{itemize}\n"; 
      s / (u -> ( 
-	       TeXfile << "\n\n$$ b(s)=";
+	       TeXfile << "\\item $b(s)=";
 	       TeXfile << (
 		    -- b-function
 		    S := symbol S; 
@@ -502,8 +476,7 @@ BSet2tex := (s, filename) -> (
 			     -- original hashtable
 			     else substitute(v#1,ZZ)) 
 			* R_(v#0))
-	       ) << ",$$";
-	       
+	       ) << "$ corresponds to" << endl;
 	       i := 0;
 	       while i < #u#cSet do( 
 		    VSet2tex((u#cSet#i)#tempV', TeXfile);
@@ -511,9 +484,10 @@ BSet2tex := (s, filename) -> (
 	       	    VSet2tex((u#cSet#i)#tempV'', TeXfile);
 	       	    if i < #u#cSet - 1 then TeXfile << "$\\cup$";
 		    i = i + 1;
-		    );	    
+		    );
+		TeXfile << endl;	    
 	       ));
-     TeXfile << "\\end{document}" << close;
+     TeXfile << "\\end{itemize}" << endl;
      );
 
 ------------------------------------------------------------------------------
@@ -864,12 +838,12 @@ takeCareOf(HashTable, ZZ) := (V, num) -> (
 -- MAIN
 ----------
 
-paramBpoly = method(Options => {GroundField => 32749}) -- 0 stays for QQ
-paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
-     QQflag = (o#GroundField == 0);
+paramBpoly = method(Options => {"ground field" => 32749}) -- 0 stays for QQ
+paramBpoly(RingElement, File) := List => o -> (f, file) -> (
+     QQflag = (o#"ground field" == 0);
      if not QQflag then (
-	  if isPrime o#GroundField 
-     	  then DBIGPRIME = o#GroundField
+	  if isPrime o#"ground field" 
+     	  then DBIGPRIME = o#"ground field"
      	  else error "need a prime";
 	  )
      else error "algorithm is implemented over finite field so far"; 
@@ -887,12 +861,10 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      while (num = position(V#tempN, u -> u#Itype == NOTCOMPUTED)) =!= null 
      do ( 
      	  V = takeCareOf(V, num);
-     	  --!!!saveVTree(V, (fname| ".v3"));
      	  );
-     --!!!V = loadVTree((fname| ".v3"));
      -- transform into bSet
      bs := VTree2bSet2 V;
-     BSet2tex(bs,(fname | ".tex"));
+     BSet2tex(bs,file);
      ret := apply(bs, u->(
 	       s := symbol s;
 	       RZ := (ZZ/DBIGPRIME)[s];
@@ -966,22 +938,14 @@ paramGB = I -> (
     varP := first entries vars L;
     np := #varP;
     ord := R.monoid.Options.MonomialOrder;
-    -- MES: I replaced the following by the one below it.
-    newMonomialOrderOLD := ord -> (
-	 if class ord === Nothing then ProductOrder {numgens R, np}
-	 else if class ord === Eliminate then 
-	 ProductOrder {ord#0, numgens R - ord#0, np}
-	 else if class ord === ProductOrder then
-	 ProductOrder ((toList ord) | {np}) 
-	 );
     newMonomialOrder := ord -> (
 	 append(ord, GRevLex=>np));
     Rgens := (options R).Variables;
     Lgens := (options L).Variables;
     
-    -- make a new ring with parameters
-    -- !!! The only point of using "xxx", "mmm" was the fact 
-    -- !!! that M2 crashes if the old variables are used
+    -- make a new ring with parameters:
+    -- The only point of using "xxx", "mmm" was the fact 
+    -- that M2 crashes if the old variables are used
     xxx := symbol xxx;
     mmm := symbol mmm;
     NewR := (coefficientRing L) [
@@ -1045,29 +1009,8 @@ paramGB = I -> (
 
 
 TEST ///
-x = symbol x; Dx = symbol Dx; 
-y = symbol y; Dy = symbol Dy; 
-a = symbol a; b = symbol b; c = symbol c; d = symbol d; 
 A =  (QQ [a,b,c,d]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
 Dtrace 1
-pInfo(1, "testing paramBpoly...")
-bf = paramBpoly(
-     a*x^2,
-     "quadratic2" 
-     )
+bf = paramBpoly(a*x^2,stdio)
 assert(listForm value first bf == {({2},1/1), ({1},3/2), ({0},1/2)})
 ///
-
-
-
-
-
-
-
-
-
-
-
-
-
-
