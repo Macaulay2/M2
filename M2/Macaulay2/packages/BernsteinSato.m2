@@ -115,11 +115,8 @@ export {
 
 -- TODO
 -- Anton's algorithms
---load "./BernsteinSato/paramBpoly.m2" -- seems to be outdated
---export {
---    "GroundField",
---    "paramBpoly",
---    }
+load "./BernsteinSato/paramBpoly.m2" -- seems to be outdated
+export { "paramBpoly" }
 -- Harry's algorithms
 load "./BernsteinSato/WeylClosure.m2"
 export { "WeylClosure" }
