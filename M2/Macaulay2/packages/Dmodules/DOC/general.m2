@@ -73,14 +73,14 @@ doc ///
 
 doc ///
   Key
-    singLocus
-    (singLocus,Module)
-    (singLocus,Ideal)
+    DsingularLocus
+    (DsingularLocus,Module)
+    (DsingularLocus,Ideal)
   Headline
     singular locus of a D-module
   Usage
-    singLocus M
-    singLocus I
+    DsingularLocus M
+    DsingularLocus I
   Inputs
     M:Module
       over the Weyl algebra @EM "D"@
@@ -103,7 +103,7 @@ doc ///
     Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
-      singLocus I
+      DsingularLocus I
   SeeAlso
     characteristicIdeal
     holonomicRank
@@ -156,7 +156,7 @@ doc ///
       characteristicIdeal I
   SeeAlso
     Ddim
-    singLocus
+    DsingularLocus
     holonomicRank
 ///
 
@@ -210,7 +210,7 @@ doc ///
       holonomicRank I
   SeeAlso
     characteristicIdeal
-    singLocus
+    DsingularLocus
     Ddim
 ///
 
@@ -247,5 +247,5 @@ doc ///
   SeeAlso
     characteristicIdeal
     holonomicRank
-    singLocus
+    DsingularLocus
 ///

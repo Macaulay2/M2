@@ -247,9 +247,9 @@ characteristicIdeal Module := M -> (
 
 -- This routine computes the singular locus of a D-ideal
 -- SHOULD IT BE CHANGED SO THAT OUTPUT IS IN POLY SUBRING?
-singLocus = method()
-singLocus Ideal  := I -> singLocus comodule I
-singLocus Module := M -> (
+DsingularLocus = method()
+DsingularLocus Ideal  := I -> DsingularLocus comodule I
+DsingularLocus Module := M -> (
     if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
     createDpairs W;
     if not W.?CommAlgebra then createCommAlgebra W;

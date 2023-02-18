@@ -54,7 +54,8 @@ export {
     "gbw",
     "characteristicIdeal",
     "charIdeal" => "characteristicIdeal",
-    "singLocus",
+    "DsingularLocus",
+    "singLocus" => "DsingularLocus",
     "setHomSwitch",
     "getHomSwitch",
     }
