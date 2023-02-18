@@ -157,9 +157,14 @@ makeLogTerm = f -> (
     (expression log) makeRationalMonomial(first W.dpairVars,
     first entries transpose lift(
 	last coefficients(f, Monomials => thetas), ZZ)))
-makeLogMonomial = g -> Product(makeLogTerm \ select(first \ toList factor g, f -> {0} < degree f))
+makeLogMonomial = g -> Product(makeLogTerm \ select(first \ toList g, f -> {0} < degree f))
 
 factorial' = alpha -> (first exponents alpha) / (k -> k!) // product
+
+-- TODO: move elsewhere
+RingMap Sum :=
+RingMap Product := (f, v) -> apply(v, e -> f e)
+RingMap Power := (f, v) -> Power{f v#0, v#1}
 
 -- Perform a lexographic breadth first search on monomials in k[x_1..x_n] \ S_< (I)
 -- and compute c#(alpha, beta) as in Algorithm 2.3.14 of SST (pp. 74)
@@ -200,7 +205,7 @@ solvePrimaryFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
 	-- TODO: R_j * lambda is easier to reduce, so add that instead?
 	for j to n - 1 do if not M#?(R_j * alpha) then N#(R_j * alpha) = (j, alpha);
 	);
-    makeLogMonomial \ f \ sort values S
+    makeLogMonomial \ f \ factor \ sort values S
     -- hashTable apply(pairs S, (k, v) -> (k, factor v))
     )
 
@@ -231,31 +236,21 @@ cssLeadTerm(Ideal, List) := List => (I, w) -> (
 -- Tests section
 --------------------
 
--- FIXME
+-- TODO: add assertions
 TEST /// -- test solveFrobeniusIdeal
   R = QQ[t_1..t_5]
   I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3)
   F = solveFrobeniusIdeal I
-  end
-  (A, B, C, D1, D2) = value \ (F_0, F_1#0#1, F_2#0#1, F_3#0#1, F_3#1#1)
-  assert(A == 1)
-  assert(B == (t_1^2*t_3^2)/(t_2^3*t_4))
-  assert(C == (t_1*t_3)/(t_2*t_5))
-  assert(D1 == (t_2*t_4)/t_5^2)
-  assert(D2 == (t_1^2*t_3^2*t_4)/(t_2*t_5^4))
-  assert(C^2 * B^-1 == D1)
-  assert(C^4 * B^-1 == D2)
 ///
 
 end;
 --------------------
 --------------------
 
-restart; --
---uninstallPackage "Dmodules"
+restart
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
-needsPackage "Dmodules";
-check Dmodules
+needsPackage "HolonomicSystems"
+check HolonomicSystems
 viewHelp cssExpts
 viewHelp Dmodules
 
