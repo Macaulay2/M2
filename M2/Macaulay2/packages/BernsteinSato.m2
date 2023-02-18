@@ -103,8 +103,10 @@ load "./BernsteinSato/annFs.m2"
 export {
     "AnnFs",
     "AnnIFs", -- deduplicate
-    "PolyAnn",
-    "RatAnn",
+    "PolynomialAnnihilator",
+    "PolyAnn" => "PolynomialAnnihilator",
+    "RationalAnnihilator",
+    "RatAnn" => "RationalAnnihilator",
     "diffRatFun",
     "kOrderAnnFa",
     "kOrderAnnFs",

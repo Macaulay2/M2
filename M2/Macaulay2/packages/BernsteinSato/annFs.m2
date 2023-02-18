@@ -297,8 +297,8 @@ kappaAnnF1PlanarCurve RingElement := f -> (
 
 -- This routine takes a polynomial element f of the Weyl algebra
 -- and returns its annihilator ideal.
-PolyAnn = method()
-PolyAnn RingElement := f -> (
+PolynomialAnnihilator = method()
+PolynomialAnnihilator RingElement := f -> (
     W := ring f;
     createDpairs W;
     dpV := W.dpairVars;
