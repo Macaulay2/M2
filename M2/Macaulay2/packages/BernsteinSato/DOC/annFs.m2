@@ -131,12 +131,12 @@ doc ///
 
 doc ///
   Key
-    PolynomialAnnihilator
-   (PolynomialAnnihilator, RingElement)
+    polynomialAnnihilator
+   (polynomialAnnihilator, RingElement)
   Headline
     annihilator of a polynomial in the Weyl algebra
   Usage
-    PolynomialAnnihilator f
+    polynomialAnnihilator f
   Inputs
     f:RingElement
       polynomial
@@ -147,24 +147,24 @@ doc ///
     Example
       makeWA(QQ[x,y])
       f = x^2-y^3
-      I = PolynomialAnnihilator f
+      I = polynomialAnnihilator f
   Caveat
     The input f should be an element of a Weyl algebra, and not an element of a commutative polynomial ring.
     However, f should only involve commutative variables.
   SeeAlso
-    RationalAnnihilator
+    rationalFunctionAnnihilator
 ///
 
 doc ///
   Key
-    RationalAnnihilator
-    (RationalAnnihilator, RingElement, RingElement)
-    (RationalAnnihilator, RingElement)
+    rationalFunctionAnnihilator
+    (rationalFunctionAnnihilator, RingElement, RingElement)
+    (rationalFunctionAnnihilator, RingElement)
   Headline
     annihilator of a rational function in Weyl algebra
   Usage
-    RationalAnnihilator f
-    RationalAnnihilator(g,f)
+    rationalFunctionAnnihilator f
+    rationalFunctionAnnihilator(g,f)
   Inputs
     f:RingElement
       polynomial
@@ -175,19 +175,19 @@ doc ///
       left ideal of the Weyl algebra
   Description
     Text
-      @{TT "RationalAnnihilator f"}@ computes the annihilator ideal in the Weyl algebra 
+      @{TT "rationalFunctionAnnihilator f"}@ computes the annihilator ideal in the Weyl algebra 
       of the rational function $1/f$.
       @BR{}@
-      @{TT "RationalAnnihilator(g,f)"}@ computes the annihilator ideal in the 
+      @{TT "rationalFunctionAnnihilator(g,f)"}@ computes the annihilator ideal in the 
       Weyl algebra of the rational function $g/f$.
    Example
       makeWA(QQ[x,y])
       f = x^2-y^3
       g = 2*x*y
-      I = RationalAnnihilator (g,f)
+      I = rationalFunctionAnnihilator (g,f)
   Caveat
     The inputs f and g should be elements of a Weyl algebra, and not elements of a commutative polynomial ring.
     However, f and g should only use the commutative variables.
   SeeAlso
-    PolynomialAnnihilator
+    polynomialAnnihilator
 ///
