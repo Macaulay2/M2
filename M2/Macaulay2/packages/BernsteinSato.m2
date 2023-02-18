@@ -248,7 +248,8 @@ export {
     }
 load "./BernsteinSato/CC.m2"
 export {
-    "BMM",
+    "localizeCharacteristicCycle",
+    "BMM" => "localizeCharacteristicCycle",
     "populateCechComplexCC",
     "pruneCechComplexCC",
     }

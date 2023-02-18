@@ -90,9 +90,9 @@ project Ideal := I -> (
 
 ----------------------------------------------------------------------
 -- get all the components
-BMM = method()
-BMM(Ideal, RingElement) := (I,f) -> (
-     if BMMstashedCC#?(I,f) then return BMMstashedCC#(I,f);
+localizeCharacteristicCycle = method()
+localizeCharacteristicCycle(Ideal, RingElement) := (I,f) -> (
+     if localizeCharacteristicCyclestashedCC#?(I,f) then return localizeCharacteristicCyclestashedCC#(I,f);
      if f % I == 0 then return {};
      comps := {}; toCorrect := {};
      (B,I0) := processComponent(I,f);
@@ -104,7 +104,7 @@ BMM(Ideal, RingElement) := (I,f) -> (
 	 suspectedMultiplicity := multiplicityPoincare@@poincare prd#i // multiplicityPoincare@@poincare dec#i;
 	 if suspectedMultiplicity > 1 and isSubset(I0,compI) -- and any(projdec, c->isSubset(c,compI)) 
 	 then (
-	      pInfo(3,"BMM: Component "|toString compI|" should be corrected");
+	      pInfo(3,"localizeCharacteristicCycle: Component "|toString compI|" should be corrected");
 	      toCorrect = toCorrect | {i};
 	      ) 
 	 else (  
@@ -132,13 +132,13 @@ BMM(Ideal, RingElement) := (I,f) -> (
 		    multiplicityPoincare@@poincare cordec#j)}; 
 	  );
      comps = {I=>1} | comps ;
-     if BMMidealREMEMBER then BMMstashedCC#(I,f) = comps;
+     if localizeCharacteristicCycleidealREMEMBER then localizeCharacteristicCyclestashedCC#(I,f) = comps;
      return comps	  
      )
-BMM(List,RingElement)  := (cc,f) -> (
+localizeCharacteristicCycle(List,RingElement)  := (cc,f) -> (
      out := {};
      scan(cc, c->if f%c#0!=0 then (
-	       comps := BMM(c#0,f);
+	       comps := localizeCharacteristicCycle(c#0,f);
 	       scan(comps, comp->(
 			 X := select(1,toList(0..#out-1),i->out#i#0==comp#0);
 			 if #X==0 then out = out | {comp#0=>c#1*comp#1}
@@ -152,9 +152,9 @@ BMM(List,RingElement)  := (cc,f) -> (
      )
 
 ------------------------------------------------------------------------------
--- By default, BMM procedure stashed the result
-BMMidealREMEMBER = true;
-BMMstashedCC = new MutableHashTable from {};
+-- By default, localizeCharacteristicCycle procedure stashed the result
+localizeCharacteristicCycleidealREMEMBER = true;
+localizeCharacteristicCyclestashedCC = new MutableHashTable from {};
 --------------------------------------------------------------------------
 -- "Prunes" a pair of CCs, 
 -- i.e: removes identical components (accounting for multiplicity)
@@ -201,7 +201,7 @@ pruneCechComplexCC(MutableHashTable) := B -> (
 ------------------------------------------------------------------------------
 populateCechComplexCC = method()
 populateCechComplexCC(Ideal,List) := (I,cc) -> ( 
-     BMMstashedCC = new MutableHashTable from {};
+     localizeCharacteristicCyclestashedCC = new MutableHashTable from {};
      n := numgens I;
      ssets := (toList subsets set(0..n-1)) / sort@@toList; -- subsets of {0,...,n-1}
      inds := {}; -- nonempty subsets of {0,1,...,n-1} 
@@ -211,7 +211,7 @@ populateCechComplexCC(Ideal,List) := (I,cc) -> (
      	       J := B#{}#0#0;	  
      	       f := I_(last i);
      	       if #i>1 then J = B#(drop(i,-1)); 
-     	       B#i = BMM(J,f);
+     	       B#i = localizeCharacteristicCycle(J,f);
      	       pInfo(2, "localization " | toString i | ": " | toString B#i);
      	       )); 
      return B
@@ -223,7 +223,7 @@ TEST ///
 ------------------------------------
 -- Brianson-Maisonobe-Merle formula
 S = QQ[x,y,z,a,b,c]
-cc = BMM({ideal S=>1},x^3+y^3+z^3)
+cc = localizeCharacteristicCycle({ideal S=>1},x^3+y^3+z^3)
 assert(cc === {ideal S=>1, ideal(x^3+y^3+z^3)=>1, ideal(z,y,x)=>4})
 ///
 

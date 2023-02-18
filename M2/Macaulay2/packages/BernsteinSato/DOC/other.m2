@@ -3,9 +3,9 @@
 ----------------------------------------------------------------------------
 
 document {
-     Key => {BMM, (BMM, List, RingElement), (BMM, Ideal, RingElement)},
+     Key => {localizeCharacteristicCycle, (localizeCharacteristicCycle, List, RingElement), (localizeCharacteristicCycle, Ideal, RingElement)},
      Headline => "the characteristic cycle of the localized $D$-module",
-     Usage => "BMM(cc,f), BMM(I,cc)",
+     Usage => "localizeCharacteristicCycle(cc,f), localizeCharacteristicCycle(I,cc)",
      Inputs => {
 	  "cc" => List => {"the characteristic cycle of a regular holonomic ", TEX "D-module $M$"},
 	  "I" => Ideal => {"representing an `simple' ", TT "cc"}   
@@ -24,8 +24,8 @@ document {
      EXAMPLE lines ///
      	  A =  QQ[x_1,x_2,a_1,a_2]
 	  cc = {ideal A => 1} -- the characteristic ideal of R = CC[x_1,x_2] 
-	  cc1 = BMM(cc,x_1)   -- cc of R_{x_1}
-	  cc12 = BMM(cc1,x_2) -- cc of R_{x_1x_2}
+	  cc1 = localizeCharacteristicCycle(cc,x_1)   -- cc of R_{x_1}
+	  cc12 = localizeCharacteristicCycle(cc1,x_2) -- cc of R_{x_1x_2}
 	  ///,
      Caveat => {"The module has to be a regular holonomic complex-analytic module; 
 	  while the holomicity can be checked by ", 
@@ -55,7 +55,7 @@ cc = {ideal W => 1};
      Caveat => {"The module has to be a regular holonomic complex-analytic module; 
 	  while the holomicity can be checked by ", 
 	  TO "isHolonomic", " there is no algorithm to check the regularity."},
-     SeeAlso => {BMM,populateCechComplexCC}
+     SeeAlso => {localizeCharacteristicCycle,populateCechComplexCC}
      }
 
 document {
@@ -80,7 +80,7 @@ cc = {ideal W => 1};
      Caveat => {"The module has to be a regular holonomic complex-analytic module; 
 	  while the holomicity can be checked by ", 
 	  TO "isHolonomic", " there is no algorithm to check the regularity."},
-     SeeAlso => {BMM,pruneCechComplexCC}
+     SeeAlso => {localizeCharacteristicCycle,pruneCechComplexCC}
      }
 
 document {     
