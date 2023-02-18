@@ -219,7 +219,7 @@ startup.c: startup-header.h ../m2/startup.m2 @srcdir@/../m2/basictests/*.m2 Make
 	@(\
 	 cat @srcdir@/startup-header.h; \
 	 echo 'cached_file startupFile = {' ; \
-	     echo Macaulay2/Core/startup.m2.in | sed $(BSTRING) ; \
+	     echo @abs_top_srcdir@/Macaulay2/m2/startup.m2.in | sed $(BSTRING) ; \
 	     echo  ',' ; \
 	     cat ../m2/startup.m2 | sed $(SSTRING) ; \
 	 echo  '};' ; \
