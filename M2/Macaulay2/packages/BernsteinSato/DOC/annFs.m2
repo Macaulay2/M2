@@ -38,54 +38,19 @@ doc ///
      Must be over a ring of characteristic $0$.
 ///
 
--- FIXME: duplicate? which is newer?
--*
-document {
-     Key => AnnFs,
-     Headline => "the annihilating ideal of f^s",
-     "Either a single or a list of polynomials can be supplied for ",  EM "f", ".",
-     SeeAlso => {"AnnIFs", "WeylAlgebra"}
-     }
-
-document {
-     Key => {(AnnFs, RingElement)},
-     Headline => "the annihilating ideal of f^s",
-     Usage => "AnnFs f",
-     Inputs => {
-	  "f" => { 
-	       "a polynomial in a Weyl algebra ", EM {"A", SUB "n"},  
-	       " (should contain no differential variables)" 
-	       }
-	  },
-     Outputs => {
-	  Ideal => {"an ideal of ", EM {"A", SUB "n", "[s]"}}
-	  },
-     "The annihilator ideal is needed to compute a D-module 
-     representation of the localization of ", 
-     EM {"k[x", SUB "1", ",...,x", SUB "n", "]"}, " at ", EM "f", ".",
-     EXAMPLE lines ///
-     	  R = QQ[x_1..x_4, z, d_1..d_4, Dz, WeylAlgebra => toList(1..4)/(i -> x_i => d_i) | {z=>Dz}]
-     	  f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3
-     	  AnnFs f
-     	  ///,
-     Caveat => {"The ring of ", TT "f", " should not have any parameters, 
-     	  i.e., it should be a pure Weyl algebra. 
-	  Also this ring should not be a homogeneous Weyl algebra."},
-     SeeAlso => {"AnnIFs", "WeylAlgebra"}
-     }  
-
 document {
      Key => {(AnnIFs, Ideal,RingElement), AnnIFs}, 
      Headline => "the annihilating ideal of f^s for an arbitrary D-module", 
      Usage => "AnnIFs(I,f)",
      Inputs => {
 	  "I" => {
-	       "that represents a holonomic D-module", 
-	       EM {"A", SUB "n", "/I"}
+	       "that represents a holonomic D-module ", 
+	       EM {"A", SUB "n", "/I"}, 
+	       " (the ideal is expected to be f-saturated; one may use ", TO WeylClosure," if it is not) "
 	       },
 	  "f" => {"a polynomial in a Weyl algebra ", EM {"A", SUB "n"},  
 	       " (should contain no differential variables)"}
-	  },
+	  },      
      Outputs => {
 	  Ideal => {"the annihilating ideal of ", TEX "A_n[f^{-1},s] f^s", " tensored with ",
 	       TEX "A_n/I", " over the ring of polynomials" }
@@ -98,29 +63,8 @@ document {
 	  parameters: it should be a pure Weyl algebra. Similarly, 
 	  this ring should not be a homogeneous Weyl algebra."
      	  },
-     SeeAlso => {"AnnFs", "WeylAlgebra"}
+     SeeAlso => {"AnnFs", "WeylAlgebra", "WeylClosure"}
      }  
-
-document {
-     Key => {(AnnFs, List)},
-     Headline => "the annihilating ideal of f_1^{s_1}...f_r^{s_r}",
-     Usage => "AnnFs F",
-     Inputs => {
-	  "F" => { 
-	       "{f_1,...,f_r}, a list of polynomials in n variables                           
-	       (f_i has to be an element of A_n, the Weyl algebra)"
-	       }
-	  },
-     Outputs => {
-	  Ideal => {"an ideal in A_n<t_1,..., t_r,dt_1,...,dt_r>"}
-	  },
-     EXAMPLE lines ///
-     W = makeWA ( QQ[x_1..x_3] ) 
-     AnnFs {x_2^2-x_1*x_3, x_1^3-x_3^2}
-     ///,
-     SeeAlso => {"AnnIFs", "WeylAlgebra"}
-     }  
-*-
 
 doc ///
   Key
