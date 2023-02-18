@@ -1,9 +1,9 @@
 doc ///
 Node
   Key
-    Dmodules
+    BernsteinSato
   Headline
-    algorithms for D-modules
+    algorithms for b-functions, local cohomology, and intersection cohomology
   Description
     Code
      HEADER3 "B-functions:",

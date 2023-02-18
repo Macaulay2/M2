@@ -304,6 +304,8 @@ document {
      SeeAlso => "deRham"
      }
 
+end--
+
 document {
      Key => {(paramBpoly, RingElement, String), paramBpoly},
      Headline => "compute the list of all possible Bernstein-Sato polynomials 
