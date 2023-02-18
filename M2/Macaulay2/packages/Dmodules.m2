@@ -52,7 +52,7 @@ load "./Dmodules/Gbw.m2"
 export {
     "inw",
     "gbw",
-    "charIdeal",
+    "charIdeal" => "characteristicIdeal",
     "singLocus",
     "setHomSwitch",
     "getHomSwitch",

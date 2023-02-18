@@ -105,20 +105,20 @@ doc ///
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       singLocus I
   SeeAlso
-    charIdeal
+    characteristicIdeal
     holonomicRank
     Ddim
 ///
 
 doc ///
   Key
-    charIdeal
-    (charIdeal,Ideal)
-    (charIdeal,Module)
+    characteristicIdeal
+    (characteristicIdeal,Ideal)
+    (characteristicIdeal,Module)
   Headline
     characteristic ideal of a D-module
   Usage
-    charIdeal M, charIdeal I
+    characteristicIdeal M, characteristicIdeal I
   Inputs
     M:Module
       over the Weyl algebra @EM "D"@
@@ -153,7 +153,7 @@ doc ///
    Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
-      charIdeal I
+      characteristicIdeal I
   SeeAlso
     Ddim
     singLocus
@@ -209,7 +209,7 @@ doc ///
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       holonomicRank I
   SeeAlso
-    charIdeal
+    characteristicIdeal
     singLocus
     Ddim
 ///
@@ -245,7 +245,7 @@ doc ///
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       Ddim I
   SeeAlso
-    charIdeal
+    characteristicIdeal
     holonomicRank
     singLocus
 ///

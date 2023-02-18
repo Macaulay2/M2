@@ -433,31 +433,5 @@ end;
 
 ------------------------
 -* Avi's scratch work *-
-------------------------
-Dtransp Matrix := m -> (
-     W := ring m;
-     if W.monoid.Options.WeylAlgebra === {} then
-     error "expected an element of a Weyl algebra";
-     createDpairs W;
-     
-     if not isFreeModule source m or not isFreeModule target m then (
-	 error "expected a matrix between free modules";);
-     
-     if numgens source m == 0 or numgens target m == 0 then mtrans := m
-     else mtrans = matrix apply( entries m, i -> 
-	  (apply (i, j -> Dtransposition j)) );
-     mtrans
-     )
- 
-W = makeWeylAlgebra(QQ[x])
-f = map(comodule ideal (x*dx), comodule ideal x, dx)
-isWellDefined f
-Dtransposition f
+------------------------ 
 
-
-
-C = chainComplex(map(W^1, W^1,1))
-peek C
-max (C[1])
-min (C[1])
-C_0

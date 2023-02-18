@@ -149,7 +149,7 @@ doc ///
      Dtransposition A
    Inputs
      A:Matrix
-       a matrix, function, ideal, or chain complex over the Weyl algebra
+       a matrix (between free modules), function, ideal, or chain complex of free modules over the Weyl algebra
    Outputs
      :Matrix
        the standard transpose of @TT "A"@ as a matrix, function, ideal, or chain complex over the Weyl algebra
@@ -159,7 +159,7 @@ doc ///
       which sends @EM {"x", SUP "a","d", SUP "b"}@ to @EM {"(-d)", SUP "b", "x", SUP "a"}@.
       It provides the equivalence in the Weyl algebra between left and right D-modules.
     Example
-      makeWA(QQ[x,y])
+      makeWeylAlgebra(QQ[x,y])
       L = x^2*dy + y*dy^2 + 3*dx^5*dy
       Dtransposition L
    Caveat

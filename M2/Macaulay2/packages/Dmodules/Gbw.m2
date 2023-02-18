@@ -225,8 +225,8 @@ gbW2 (Ideal, List) := (I, w) -> (
 --------------------------------------------------------------------------------
 
 -- This routine computes the characteristic ideal of a D-module
-charIdeal = method()
-charIdeal Ideal := I -> (
+characteristicIdeal = method()
+characteristicIdeal Ideal := I -> (
     if not isWeylAlgebra(W := ring I) then error "expected an ideal in a Weyl algebra";
     createDpairs W;
     w := apply( toList(0..numgens W - 1),
@@ -234,7 +234,7 @@ charIdeal Ideal := I -> (
     ideal mingens inw (I, w)
     )
 
-charIdeal Module := M -> (
+characteristicIdeal Module := M -> (
     if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
     m := presentation M;
     createDpairs W;
@@ -253,7 +253,7 @@ singLocus Module := M -> (
     if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
     createDpairs W;
     if not W.?CommAlgebra then createCommAlgebra W;
-    I1 := charIdeal M;
+    I1 := characteristicIdeal M;
     I2 := W.WAtoCA ideal W.dpairVars#1;
     -- do the saturation
     SatI := saturate(I1, I2);
