@@ -254,13 +254,13 @@ PolySols(Module, List) := options -> (M, w) -> (
 -- This routine computes the dimensions of Ext^i(M,k[x]) for holonomic M
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-PolyExt = method(Options => {Strategy => Schreyer})
-PolyExt Ideal := options -> I -> (
-     PolyExt ((ring I)^1/I, options)
+polynomialExt = method(Options => {Strategy => Schreyer})
+polynomialExt Ideal := options -> I -> (
+     polynomialExt ((ring I)^1/I, options)
      )
 
-PolyExt Module := options -> (M) -> (
-     pInfo (1, "ENTERING PolyExt ...");
+polynomialExt Module := options -> (M) -> (
+     pInfo (1, "ENTERING polynomialExt ...");
      W := ring M;
      createDpairs W;
      n := #W.dpairVars#0;
@@ -273,13 +273,13 @@ PolyExt Module := options -> (M) -> (
      homologyTable
      )
 
-PolyExt(ZZ, Ideal) := options -> (k, I) -> (
+polynomialExt(ZZ, Ideal) := options -> (k, I) -> (
      if not I.?quotient then I.quotient = (ring I)^1/I;
-     PolyExt (k, I.quotient, options)
+     polynomialExt (k, I.quotient, options)
      )
 
-PolyExt(ZZ, Module) := options -> (k, M) -> (
-     pInfo (1, "ENTERING PolyExt ...");
+polynomialExt(ZZ, Module) := options -> (k, M) -> (
+     pInfo (1, "ENTERING polynomialExt ...");
      W := ring M;
      createDpairs W;
      n := #W.dpairVars#0;
@@ -905,10 +905,10 @@ compareSpans (List, List) := (list1, list2) -> (
 
 TEST ///
 -- TESTS TO WRITE (exported symbols);
---    PolyExt Ideal
---    PolyExt Module
---    PolyExt (ZZ, Ideal)
---    PolyExt (ZZ, Module)
+--    polynomialExt Ideal
+--    polynomialExt Module
+--    polynomialExt (ZZ, Ideal)
+--    polynomialExt (ZZ, Module)
 
 --    RatExt Ideal
 --    RatExt Module
@@ -1000,7 +1000,7 @@ ansDuality = PolySols(I, Alg => Duality) / (f -> sub(f, R));
 assert(compareSpans(ansGD, ansDuality));
 
 
---------------------- TESTS for PolyExt -----------------------
+--------------------- TESTS for polynomialExt -----------------------
 
 
 --------------------- TESTS for RatSols -----------------------

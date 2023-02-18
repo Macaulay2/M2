@@ -143,14 +143,14 @@ document {
      }
 
 document {
-     Key => [PolyExt,Strategy],
+     Key => [polynomialExt,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => {PolyExt, (PolyExt,Module), (PolyExt,ZZ,Ideal), (PolyExt,ZZ,Module), (PolyExt,Ideal)},
+     Key => {polynomialExt, (polynomialExt,Module), (polynomialExt,ZZ,Ideal), (polynomialExt,ZZ,Module), (polynomialExt,Ideal)},
      Headline => "Ext groups between a holonomic module and a polynomial ring",
-     Usage => "PolyExt M, PolyExt I; RatExt(i,M), RatExt(i,I)",
+     Usage => "polynomialExt M, polynomialExt I; RatExt(i,M), RatExt(i,I)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
@@ -173,7 +173,7 @@ document {
      EXAMPLE lines ///
 	     W = QQ[x, D, WeylAlgebra=>{x=>D}]
 	     M = W^1/ideal(x^2*D^2)
-	     PolyExt(M)
+	     polynomialExt(M)
 	     ///,
      Caveat =>{"Does not yet compute explicit representations of
 	  Ext groups such as Yoneda representation."},
