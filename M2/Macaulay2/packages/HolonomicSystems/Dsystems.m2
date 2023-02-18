@@ -17,7 +17,7 @@ gkzInputValidation (Matrix, List, PolynomialRing) := (A, b, W) -> (
     )
 gkzInputValidation (Matrix, PolynomialRing) := (A, W) -> gkzInputValidation(A, toList((numRows A): 0), W)
 
-
+--Takes a Weyl algebra in n vars and dxn matrix and gives a list of d Euler Operators
 eulerOperators = method();
 eulerOperators (Matrix, List, PolynomialRing) := (A, b, W) -> (
     gkzInputValidation(A, b, W);

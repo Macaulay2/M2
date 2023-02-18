@@ -101,6 +101,42 @@ doc ///
 
 doc ///
   Key
+    eulerOperators
+    (eulerOperators, Matrix, PolynomialRing)
+    (eulerOperators, Matrix, List, PolynomialRing)
+  Headline
+    Euler Operators
+  Usage
+    eulerOperators(A, D)
+    eulerOperators(A, b, D)
+  Inputs
+    A:Matrix
+    b:List
+    D:PolynomialRing
+  Outputs
+    :List
+      of Euler operators
+  Description
+    Given a $d \times n$ integer matrix $A = (a_{ij})$ and a Weyl algebra in $n$ variables, produce the $d$ corresponding Euler operators $E_i = \sum_{j=1}^n a_{ij}x_jdj$.
+    An optional list $b$ imposes a multigrading so that one can look for solutions to the Euler operatros of multidegree $b$.
+    Example
+      D = makeWeylAlgebra(QQ[x,y,z])
+      A = matrix{{2,-7,5},{14,8,-1}}
+      L = eulerOperators(A,D)
+      Example
+      D = makeWeylAlgebra(QQ[x,y,z])
+      A = matrix{{2,-7,5},{14,8,-1}}
+      b = {2,-3}
+      L = eulerOperators(A,b,D)
+  Caveat
+    Ring input should be a Weyl algebra. Matrix input should have as many columns as variables of the Weyl algebra.
+    List should have as many entries as there are rows of matrix.
+  SeeAlso
+    gkz
+///
+
+doc ///
+  Key
     Vars
     [AppellF1,Vars]
 ///
