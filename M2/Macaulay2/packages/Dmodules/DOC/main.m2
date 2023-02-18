@@ -1,9 +1,5 @@
 -- Copyright 1999-2009 by Anton Leykin and Harrison Tsai
 
-load "Dmodules/DOC/tutorial.m2" -- basic tutorial
-load "Dmodules/DOC/Dbasic.m2"   -- basic commands
-load "Dmodules/DOC/general.m2"
-
 document {
      Key => "Dmodules",
      Headline => "algorithms for D-modules",

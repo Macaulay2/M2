@@ -112,7 +112,11 @@ load "Dmodules/TST/Dbasic.m2"
 --------------------------------------------------------------------------------
 
 beginDocumentation()
-load "./Dmodules/DMODdoc.m2"
+
+load "Dmodules/DOC/main.m2"
+load "Dmodules/DOC/tutorial.m2" -- basic tutorial
+load "Dmodules/DOC/Dbasic.m2"   -- basic commands
+load "Dmodules/DOC/general.m2"
 
 --------------------------------------------------------------------------------
 

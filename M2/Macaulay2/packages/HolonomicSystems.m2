@@ -81,6 +81,8 @@ load "HolonomicSystems/TST/tests.m2"
 
 beginDocumentation()
 
+load "HolonomicSystems/DOC/main.m2"
+load "HolonomicSystems/DOC/DiffOps.m2"
 load "HolonomicSystems/DOC/Dsystems.m2"
 load "HolonomicSystems/DOC/canonicalSeries.m2"
 

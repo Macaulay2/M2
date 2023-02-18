@@ -1,4 +1,11 @@
--*
+doc ///
+Node
+  Key
+    Dmodules
+  Headline
+    algorithms for D-modules
+  Description
+    Code
      HEADER3 "B-functions:",
      UL {
 	  TO {"bFunction", " -- b-function"}, 
@@ -45,5 +52,5 @@
 	  TO {"lct", "-- log canonical threshold"},
 	  {TO "multiplierIdeal", ", ", TO "isInMultiplierIdeal", ", ", TO "jumpingCoefficients", " -- multiplier ideals"},
 	  TO "hasRationalSing"
-	  },
-*-
+	  }
+///
