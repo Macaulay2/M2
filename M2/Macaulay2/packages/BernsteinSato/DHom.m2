@@ -84,27 +84,27 @@ Ddual Module := M -> (
 -- This routine computes a basis of Hom_D(M, k[x]), polynomial solutions
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-PolySols = method(Options => {Alg => GD} )
+polynomialSolutions = method(Options => {Alg => GD} )
 
-PolySols Ideal := options -> I -> ( 
-     PolySols((ring I)^1/I, options) )
+polynomialSolutions Ideal := options -> I -> ( 
+     polynomialSolutions((ring I)^1/I, options) )
 
-PolySols(Ideal,List) := options -> (I,w) -> ( 
-     PolySols((ring I)^1/I, w, options) )
+polynomialSolutions(Ideal,List) := options -> (I,w) -> ( 
+     polynomialSolutions((ring I)^1/I, w, options) )
 
-PolySols Module := options -> M -> (
+polynomialSolutions Module := options -> M -> (
      W := ring M;
      if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";     
      createDpairs W;
      n := #W.dpairVars#0;     
      w := toList(n:1);
-     PolySols(M, w, options)
+     polynomialSolutions(M, w, options)
      )
 
-PolySols(Module, List) := options -> (M, w) -> (
+polynomialSolutions(Module, List) := options -> (M, w) -> (
 
-     pInfo (1, "ENTERING PolySols ...");
+     pInfo (1, "ENTERING polynomialSolutions ...");
      W := ring M;
      K := coefficientRing W;
      outputList := {};     
@@ -119,7 +119,7 @@ PolySols(Module, List) := options -> (M, w) -> (
 	  input to be a quotient module";
      	  if numgens target gens M > 1 then error "non-cyclic
 	  modules not yet supported for Grobner deformation method";
-	  if #w != n then error ("PolySols expected a weight vector of length" | n);
+	  if #w != n then error ("polynomialSolutions expected a weight vector of length" | n);
      	  if any(w, i -> i <= 0) then error "expected strictly
 	  positive weight vector";
 	  
@@ -323,12 +323,12 @@ RatSols(Ideal, RingElement, List) := (I, f, w) -> (
      k := (max getIntRoots bfunc) + 1;
      if k > 0 then (
 	  twistI := TwistOperator(I, f, k);
-     	  numerators := PolySols (twistI, w);
+     	  numerators := polynomialSolutions (twistI, w);
      	  R := (coefficientRing W)(monoid [W.dpairVars#0]);
      	  F := substitute(f^k, R);
      	  solsList := apply (numerators, i -> ( substitute(i,R)/F ) );
 	  )
-     else solsList = PolySols(I, w);
+     else solsList = polynomialSolutions(I, w);
      solsList
      )
 
@@ -342,12 +342,12 @@ RatSols(Ideal, List, List) := (I, f, w) -> (
 	  newk := k_nonzero;
 	  newf := f_nonzero;
      	  twistI := TwistOperator(I, newf, newk);
-     	  numerators := PolySols (twistI, w);
+     	  numerators := polynomialSolutions (twistI, w);
      	  R := (coefficientRing W)(monoid [W.dpairVars#0]);
      	  F := substitute(newf^newk, R);
      	  solsList := apply (numerators, i -> (substitute(i,R) / F) );
 	  )
-     else solsList = PolySols(I, w);
+     else solsList = polynomialSolutions(I, w);
      solsList
      )
 
@@ -970,23 +970,23 @@ assert({x,y,z}^{2,3,4} == x^2*y^3*z^4);
 
 
 
------------------------ TESTS for PolySols -------------------------
+----------------------- TESTS for polynomialSolutions -------------------------
 -- Test 1: Simple example 
 x = symbol x; Dx = symbol Dx;
 W = QQ[x,Dx,WeylAlgebra => {x=>Dx}];
 I = ideal(x*Dx^4);
 ansGD = {1, x, x^2, x^3};
 ansDuality = {-1, x, -x^2, x^3};
-assert( ansGD == PolySols I / (f -> substitute(f, W)) );
-assert( ansGD == PolySols comodule I / (f -> substitute(f, W)) );
-assert( ansDuality == PolySols(I, Alg => Duality) / (f -> substitute(f, W)) );
-assert( ansDuality == PolySols(comodule I, Alg => Duality) / (f -> substitute(f, W)) );
+assert( ansGD == polynomialSolutions I / (f -> substitute(f, W)) );
+assert( ansGD == polynomialSolutions comodule I / (f -> substitute(f, W)) );
+assert( ansDuality == polynomialSolutions(I, Alg => Duality) / (f -> substitute(f, W)) );
+assert( ansDuality == polynomialSolutions(comodule I, Alg => Duality) / (f -> substitute(f, W)) );
 
 -- Test 2: Polynomial solutions of an Appell F1
 I = AppellF1({-1,5,4,-2}, Vars => Local);
-sols1 = PolySols I;
+sols1 = polynomialSolutions I;
 R = ring sols1#0;
-sols2 = PolySols (I, Alg => Duality) / (f -> substitute(f, R));
+sols2 = polynomialSolutions (I, Alg => Duality) / (f -> substitute(f, R));
 assert(compareSpans(sols1, sols2));
 
 -- Test 3: Testing weights
@@ -994,9 +994,9 @@ x = symbol x; y = symbol y; Dx = symbol Dx; Dy = symbol Dy;
 W = QQ[x,y,Dx,Dy,WeylAlgebra => {x=>Dx,y=>Dy}];
 weight = {9, 7};
 I = ideal {x*y*Dx+y^2*Dy-2*y, x^2*Dy^2+2*x*y*Dy^2-y^2*Dy^2-2*x*Dy+2*y*Dy-2};
-ansGD = PolySols(I, weight);
+ansGD = polynomialSolutions(I, weight);
 R = ring ansGD#0;
-ansDuality = PolySols(I, Alg => Duality) / (f -> sub(f, R));
+ansDuality = polynomialSolutions(I, Alg => Duality) / (f -> sub(f, R));
 assert(compareSpans(ansGD, ansDuality));
 
 

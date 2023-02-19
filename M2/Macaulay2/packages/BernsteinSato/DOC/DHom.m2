@@ -177,7 +177,7 @@ document {
 	     ///,
      Caveat =>{"Does not yet compute explicit representations of
 	  Ext groups such as Yoneda representation."},
-     SeeAlso => {"PolySols", "RatExt", "DExt", "Dintegration"}
+     SeeAlso => {"polynomialSolutions", "RatExt", "DExt", "Dintegration"}
      }
 
 document {
@@ -224,18 +224,18 @@ document {
 
 doc ///
   Key
-    PolySols
-    (PolySols,Module)
-    (PolySols,Ideal,List)
-    (PolySols,Module,List)
-    (PolySols,Ideal)
+    polynomialSolutions
+    (polynomialSolutions,Module)
+    (polynomialSolutions,Ideal,List)
+    (polynomialSolutions,Module,List)
+    (polynomialSolutions,Ideal)
   Headline
     polynomial solutions of a holonomic system
   Usage
-    PolySols I
-    PolySols M
-    PolySols(I,w)
-    PolySols(M,w)
+    polynomialSolutions I
+    polynomialSolutions M
+    polynomialSolutions(I,w)
+    polynomialSolutions(M,w)
   Inputs
     M:Module
       over the Weyl algebra $D$
@@ -263,7 +263,7 @@ doc ///
     Example
       makeWA(QQ[x])
       I = ideal(dx^2, (x-1)*dx-1)
-      PolySols I
+      polynomialSolutions I
   SeeAlso
     RatSols
     Dintegration
@@ -271,7 +271,7 @@ doc ///
 
 document { Key => Alg }
 document {
-     Key => [PolySols, Alg],
+     Key => [polynomialSolutions, Alg],
      Headline => "algorithm for finding polynomial solutions",
      UL {
 	  {BOLD "GD", " -- uses Groebner deformations"},
@@ -280,13 +280,13 @@ document {
      }
 document {
      Key => GD,
-     Headline => "an option for PolySols=>Alg",
-     SeeAlso => "PolySols"
+     Headline => "an option for polynomialSolutions=>Alg",
+     SeeAlso => "polynomialSolutions"
      }
 document {
      Key => Duality,
-     Headline => "an option for PolySols=>Alg",
-     SeeAlso => "PolySols"
+     Headline => "an option for polynomialSolutions=>Alg",
+     SeeAlso => "polynomialSolutions"
      }
 
 doc ///
@@ -339,10 +339,10 @@ doc ///
     equations is
     to find the singular locus, then try to find its irreducible
     factors.  With these, call RatSols(I, ff, w), where w
-    should be generic enough so that the PolySols routine
+    should be generic enough so that the polynomialSolutions routine
     will not complain of a non-generic weight vector.
   SeeAlso
-    PolySols
+    polynomialSolutions
     RatExt
     DHom
 ///
