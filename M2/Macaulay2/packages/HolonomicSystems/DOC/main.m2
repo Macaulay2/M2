@@ -9,9 +9,7 @@ Node
      HEADER3 "Some examples of D-modules:",
      UL{TO {"gkz", " -- Gelfand-Kapranov-Zelevinsky hypergeometric system"},
 	  TO {"AppellF1", " -- Appell F1 system"},
-	  -- TODO: where should these two go?
-	  TO {"PolyAnn", " -- annihilator of a polynomial"},
-	  TO {"RatAnn", " -- annihilator of a rational function"}},
+	 },
 
      HEADER3 "Canonical Series:",
      UL{
