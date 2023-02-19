@@ -259,9 +259,10 @@ export {
 -- Andras' algorithms
 load "./BernsteinSato/intersectionCohom.m2"
 export {
-    "ICmodule",
-    "ICcohom",
+    "IHmodule",
+    "intersectionCohomology",
     "LocCohomStrategy",
+    "IH"
     }
 
 --------------------------------------------------------------------------------
@@ -284,6 +285,7 @@ load "BernsteinSato/DOC/WeylClosure.m2"
 load "BernsteinSato/DOC/annFs.m2"
 load "BernsteinSato/DOC/bFunctions.m2"
 load "BernsteinSato/DOC/localCohom.m2"
+load "BernsteinSato/DOC/intersectionCohom.m2"
 load "BernsteinSato/DOC/multiplierIdeals.m2"
 load "BernsteinSato/DOC/paco-anton-paper.m2"
 load "BernsteinSato/DOC/other.m2"

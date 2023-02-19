@@ -8,8 +8,8 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-ICmodule = method( Options => {LocCohomStrategy => (Walther,null), LocStrategy => OTW})  -- Strat 1,2 for LocalCohom, Strat 3 for the localization after
-ICmodule(Ideal) := options -> I -> (
+IHmodule = method( Options => {LocCohomStrategy => (Walther,null), LocStrategy => OTW})  -- Strat 1,2 for LocalCohom, Strat 3 for the localization after
+IHmodule(Ideal) := options -> I -> (
     R := ring I;
     if class R =!= PolynomialRing
     then error "expected an ideal in a polynomial ring";
@@ -49,9 +49,9 @@ ICmodule(Ideal) := options -> I -> (
 	)    		 
     );
 
-ICcohom = method( Options => {LocCohomStrategy => (Walther,null), LocStrategy => OTW, Strategy => Schreyer })
-ICcohom(Ideal) := options -> I -> (
-    IC:=minimalPresentation ICmodule(I, LocCohomStrategy => options.LocCohomStrategy, LocStrategy => options.LocStrategy);
+intersectionCohomology = method( Options => {LocCohomStrategy => (Walther,null), LocStrategy => OTW, Strategy => Schreyer })
+intersectionCohomology(Ideal) := options -> I -> (
+    IC:=minimalPresentation IHmodule(I, LocCohomStrategy => options.LocCohomStrategy, LocStrategy => options.LocStrategy);
     n:=numgens (ring I);
     d:=dim I;
     w:=toList(n:1);
@@ -59,16 +59,29 @@ ICcohom(Ideal) := options -> I -> (
     new HashTable from (for i from 0 to d list i=>integrationTable#(d-i)) 
     )
 
-ICcohom(ZZ,Ideal) := options -> (k,I) -> (
+intersectionCohomology(ZZ,Ideal) := options -> (k,I) -> (
     R:= ring I;
     if class R =!= PolynomialRing
     then error "expected an ideal in a polynomial ring";
     d:=dim I;
     if k>d then 0
     else (
-    	IC:=minimalPresentation ICmodule(I, LocCohomStrategy => options.LocCohomStrategy, LocStrategy => options.LocStrategy);
+    	IC:=minimalPresentation IHmodule(I, LocCohomStrategy => options.LocCohomStrategy, LocStrategy => options.LocStrategy);
     	n:=numgens R;
     	w:=toList(n:1);
     	Dintegration(d-k,IC,w, Strategy => options.Strategy)
       	)
     )
+
+IH = new ScriptedFunctor from {
+     superscript => (
+	  j -> new ScriptedFunctor from {
+	       argument => (
+		    X -> intersectionCohomology(j,X)
+		    )
+	       }
+	  ),
+   argument => (
+	  X -> intersectionCohomology(X)
+	  )
+     }
