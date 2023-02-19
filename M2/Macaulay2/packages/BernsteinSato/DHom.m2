@@ -296,28 +296,28 @@ polynomialExt(ZZ, Module) := options -> (k, M) -> (
 -- holonomic ideal I of linear PDE's
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-RatSols = method()
-RatSols(Ideal) := (I) -> (
+rationalFunctionSolutions = method()
+rationalFunctionSolutions(Ideal) := (I) -> (
      W := ring I;
      createDpairs W;
      w := toList(#W.dpairVars#0: 1);
      f := (singLocus I)_0;
-     RatSols(I, f, w)
+     rationalFunctionSolutions(I, f, w)
      )
 
-RatSols(Ideal, List) := (I, w) -> (
+rationalFunctionSolutions(Ideal, List) := (I, w) -> (
      f := (singLocus I)_0;
-     RatSols(I, f, w)
+     rationalFunctionSolutions(I, f, w)
      )
 
-RatSols(Ideal, RingElement) := (I, f) -> (
+rationalFunctionSolutions(Ideal, RingElement) := (I, f) -> (
      W := ring I;
      createDpairs W;
      w := toList(#W.dpairVars#0: 1);
-     RatSols(I, f, w)
+     rationalFunctionSolutions(I, f, w)
      )
 
-RatSols(Ideal, RingElement, List) := (I, f, w) -> (
+rationalFunctionSolutions(Ideal, RingElement, List) := (I, f, w) -> (
      W := ring I;
      bfunc := (globalB(I, f))#Bpolynomial;
      k := (max getIntRoots bfunc) + 1;
@@ -332,7 +332,7 @@ RatSols(Ideal, RingElement, List) := (I, f, w) -> (
      solsList
      )
 
-RatSols(Ideal, List, List) := (I, f, w) -> (
+rationalFunctionSolutions(Ideal, List, List) := (I, f, w) -> (
      W := ring I;
      createDpairs W;
      bfuncs := apply(f, i -> (globalB(I, i))#Bpolynomial);
@@ -448,14 +448,14 @@ TwistOperator(RingElement, List, List) := (L, f, k) -> (
 -- defaulted to the singular locus if no input is given
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-RatExt = method(Options => {Strategy => Schreyer} )
+rationalFunctionExt = method(Options => {Strategy => Schreyer} )
 
-RatExt Ideal := options -> I -> (
+rationalFunctionExt Ideal := options -> I -> (
      f := (singLocus(I))_0;
-     RatExt (I, f)
+     rationalFunctionExt (I, f)
      )
 
-RatExt Module := options -> M -> (
+rationalFunctionExt Module := options -> M -> (
      r := numgens target gens M; 
      -- case 1: M is a proper submodule of (D_n)^r/N
      if gens M != map (ring M)^r
@@ -464,15 +464,15 @@ RatExt Module := options -> M -> (
      if r > 1 then error "non-cyclic modules not yet supported";
      
      f := (mingens singLocus(ideal relations M))_(0,0);
-     RatExt (M, f)
+     rationalFunctionExt (M, f)
      )
 
 
-RatExt(Ideal, RingElement) := options -> (I, f) -> (
-     RatExt ((ring I)^1/I, f, options)
+rationalFunctionExt(Ideal, RingElement) := options -> (I, f) -> (
+     rationalFunctionExt ((ring I)^1/I, f, options)
      )
 
-RatExt(Module, RingElement) := options -> (M, f) -> (
+rationalFunctionExt(Module, RingElement) := options -> (M, f) -> (
      pInfo (1, "ENTERING RatlExt ...");
      W := ring M;
      createDpairs W;
@@ -487,7 +487,7 @@ RatExt(Module, RingElement) := options -> (M, f) -> (
      homologyTable
      )
 
-RatExt(ZZ, Module) := options -> (k, M) -> (
+rationalFunctionExt(ZZ, Module) := options -> (k, M) -> (
      r := numgens target gens M; 
      -- case 1: M is a proper submodule of (D_n)^r/N
      if gens M != map (ring M)^r 
@@ -496,19 +496,19 @@ RatExt(ZZ, Module) := options -> (k, M) -> (
      if r > 1 then error "non-cyclic modules not yet supported";
      
      f := (mingens singLocus(ideal relations M))_(0,0);
-     RatExt (k, M, f)
+     rationalFunctionExt (k, M, f)
      )
 
-RatExt(ZZ, Ideal) := options -> (k, I) -> (
+rationalFunctionExt(ZZ, Ideal) := options -> (k, I) -> (
      f := (singLocus(I))_0;
-     RatExt (k, I, f)
+     rationalFunctionExt (k, I, f)
      )
 
-RatExt(ZZ, Ideal, RingElement) := options -> (k, I, f) -> (
-     RatExt (k, (ring I)^1/I, f, options)
+rationalFunctionExt(ZZ, Ideal, RingElement) := options -> (k, I, f) -> (
+     rationalFunctionExt (k, (ring I)^1/I, f, options)
      )
 
-RatExt(ZZ, Module, RingElement) := options -> (k, M, f) -> (
+rationalFunctionExt(ZZ, Module, RingElement) := options -> (k, M, f) -> (
      pInfo (1, "ENTERING RatlExt ...");
      W := ring M;
      createDpairs W;
@@ -910,14 +910,14 @@ TEST ///
 --    polynomialExt (ZZ, Ideal)
 --    polynomialExt (ZZ, Module)
 
---    RatExt Ideal
---    RatExt Module
---    RatExt (Ideal, RingElement)
---    RatExt (Module, RatExt)
---    RatExt (ZZ, Module)
---    RatExt (ZZ, Ideal)
---    RatExt (ZZ, Ideal, RingElement)
---    RatExt (ZZ, Module, RingElement)
+--    rationalFunctionExt Ideal
+--    rationalFunctionExt Module
+--    rationalFunctionExt (Ideal, RingElement)
+--    rationalFunctionExt (Module, rationalFunctionExt)
+--    rationalFunctionExt (ZZ, Module)
+--    rationalFunctionExt (ZZ, Ideal)
+--    rationalFunctionExt (ZZ, Ideal, RingElement)
+--    rationalFunctionExt (ZZ, Module, RingElement)
 
 --    DHom (Module, Module, List)
 
@@ -1003,7 +1003,7 @@ assert(compareSpans(ansGD, ansDuality));
 --------------------- TESTS for polynomialExt -----------------------
 
 
---------------------- TESTS for RatSols -----------------------
+--------------------- TESTS for rationalFunctionSolutions -----------------------
 -- Test 1: 
 x = symbol x; Dx = symbol Dx;
 y = symbol y; Dy = symbol Dy;
@@ -1013,14 +1013,14 @@ ty = y*Dy;
 
 I = ideal(tx*(tx+ty)-x*(tx+ty+3)*(tx-1),
      ty*(tx+ty)-y*(tx+ty+3)*(ty+1));
-assert(#RatSols(I, y, {10,1}) == 1);
-assert(#RatSols(I, y-1, {10,1}) == 1);
+assert(#rationalFunctionSolutions(I, y, {10,1}) == 1);
+assert(#rationalFunctionSolutions(I, y-1, {10,1}) == 1);
 
 --Test 2:
 singLocFactors = {x,y,x-1,y-1,x-y};
 R = extractVarsAlgebra W;
 K = frac R;
-allSols = RatSols(I,  singLocFactors, {10,1}) / (f -> sub(f, K));
+allSols = rationalFunctionSolutions(I,  singLocFactors, {10,1}) / (f -> sub(f, K));
 ans = {(-x+y)/(-y^4 + 3*y^3 - 3*y^2 + y), (-x*y^3 + 3*x*y^2 - 3*x*y + 4*x - 3*y)/(-y^4 + 3*y^3 - 3*y^2 + y)};
 
 thelcd = lcm((allSols | ans) / denominator);

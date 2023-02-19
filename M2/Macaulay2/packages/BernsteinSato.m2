@@ -211,8 +211,10 @@ export { -- TODO: remove duplicate code
     "polynomialSolutions",
     "PolySols" => "polynomialSolutions",
     "TwistMap",
-    "RatSols",
-    "RatExt",
+    "rationalFunctionSolutions",
+    "RatSols" => "rationalFunctionSolutions",
+    "rationalFunctionExt",
+    "RatExt" => "rationalFunctionExt",
     -- TwistOperator
     "Ddual",
     "DHom",

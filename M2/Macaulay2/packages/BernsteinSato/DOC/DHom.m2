@@ -150,7 +150,7 @@ document {
 document {
      Key => {polynomialExt, (polynomialExt,Module), (polynomialExt,ZZ,Ideal), (polynomialExt,ZZ,Module), (polynomialExt,Ideal)},
      Headline => "Ext groups between a holonomic module and a polynomial ring",
-     Usage => "polynomialExt M, polynomialExt I; RatExt(i,M), RatExt(i,I)",
+     Usage => "polynomialExt M, polynomialExt I; rationalFunctionExt(i,M), rationalFunctionExt(i,I)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
@@ -177,22 +177,22 @@ document {
 	     ///,
      Caveat =>{"Does not yet compute explicit representations of
 	  Ext groups such as Yoneda representation."},
-     SeeAlso => {"polynomialSolutions", "RatExt", "DExt", "Dintegration"}
+     SeeAlso => {"polynomialSolutions", "rationalFunctionExt", "DExt", "Dintegration"}
      }
 
 document {
-     Key => [RatExt,Strategy],
+     Key => [rationalFunctionExt,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO [Dresolution,Strategy]
 }
 
 document {
-     Key => {RatExt, (RatExt,Module), (RatExt,ZZ,Ideal,RingElement), (RatExt,ZZ,Ideal), 
-	  (RatExt,Ideal,RingElement), (RatExt,Ideal),(RatExt,ZZ,Module,RingElement), 
-	  (RatExt,ZZ,Module), (RatExt,Module,RingElement)},
+     Key => {rationalFunctionExt, (rationalFunctionExt,Module), (rationalFunctionExt,ZZ,Ideal,RingElement), (rationalFunctionExt,ZZ,Ideal), 
+	  (rationalFunctionExt,Ideal,RingElement), (rationalFunctionExt,Ideal),(rationalFunctionExt,ZZ,Module,RingElement), 
+	  (rationalFunctionExt,ZZ,Module), (rationalFunctionExt,Module,RingElement)},
      Headline => "Ext(holonomic D-module, polynomial ring localized at the singular locus)",
-     Usage => "RatExt M, RatExt I; RatExt(M,f), RatExt(I,f);
-               RatExt(i,M), RatExt(i,I); RatExt(i,M,f), RatExt(i,I,f)",
+     Usage => "rationalFunctionExt M, rationalFunctionExt I; rationalFunctionExt(M,f), rationalFunctionExt(I,f);
+               rationalFunctionExt(i,M), rationalFunctionExt(i,I); rationalFunctionExt(i,M,f), rationalFunctionExt(i,I,f)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
@@ -216,7 +216,7 @@ document {
      EXAMPLE lines ///
 	     W = QQ[x, D, WeylAlgebra=>{x=>D}]
 	     M = W^1/ideal(x*D+5)
-	     RatExt M
+	     rationalFunctionExt M
 	     ///,
      Caveat =>{"Input modules M or D/I should be holonomic."},
      SeeAlso => {"Dresolution", "Dintegration"}
@@ -265,7 +265,7 @@ doc ///
       I = ideal(dx^2, (x-1)*dx-1)
       polynomialSolutions I
   SeeAlso
-    RatSols
+    rationalFunctionSolutions
     Dintegration
 ///
 
@@ -291,20 +291,20 @@ document {
 
 doc ///
   Key
-    RatSols
-    (RatSols,Ideal,List,List)
-    (RatSols,Ideal,RingElement,List)
-    (RatSols,Ideal,List)
-    (RatSols,Ideal,RingElement)
-    (RatSols,Ideal)
+    rationalFunctionSolutions
+    (rationalFunctionSolutions,Ideal,List,List)
+    (rationalFunctionSolutions,Ideal,RingElement,List)
+    (rationalFunctionSolutions,Ideal,List)
+    (rationalFunctionSolutions,Ideal,RingElement)
+    (rationalFunctionSolutions,Ideal)
   Headline
     rational solutions of a holonomic system
   Usage
-    RatSols I
-    RatSols(I,f)
-    RatSols(I,f,w)
-    RatSols(I,ff)
-    RatSols(I,ff,w)
+    rationalFunctionSolutions I
+    rationalFunctionSolutions(I,f)
+    rationalFunctionSolutions(I,f,w)
+    rationalFunctionSolutions(I,ff)
+    rationalFunctionSolutions(I,ff,w)
   Inputs
     I:Ideal
       holonomic ideal in the Weyl algebra @EM "D"@
@@ -333,16 +333,16 @@ doc ///
     Example
       makeWA(QQ[x])
       I = ideal((x+1)*dx+5)
-      RatSols I
+      rationalFunctionSolutions I
   Caveat
     The most efficient method to find rational solutions of a system of differential
     equations is
     to find the singular locus, then try to find its irreducible
-    factors.  With these, call RatSols(I, ff, w), where w
+    factors.  With these, call rationalFunctionSolutions(I, ff, w), where w
     should be generic enough so that the polynomialSolutions routine
     will not complain of a non-generic weight vector.
   SeeAlso
     polynomialSolutions
-    RatExt
+    rationalFunctionExt
     DHom
 ///

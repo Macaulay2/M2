@@ -176,7 +176,7 @@ doc ///
   Description
     Text
       @{TT "rationalFunctionAnnihilator f"}@ computes the annihilator ideal in the Weyl algebra 
-      of the rational function $1/f$.
+      of th, e rational function $1/f$.
       @BR{}@
       @{TT "rationalFunctionAnnihilator(g,f)"}@ computes the annihilator ideal in the 
       Weyl algebra of the rational function $g/f$.
