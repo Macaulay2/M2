@@ -29,9 +29,18 @@ bFunction(Module, List, List) := RingElement => o -> (M, w, m) -> (
 	  N := image map(ambient M', R^1, (toList(i : {0_R})) | {{1}} | (toList((n-i-1):{0_R})) );  
 	  NM := intersect(M', N);
 	  I := ideal apply(numgens NM, j -> NM_j_i);
-	  bf' := bFunction(I, w);
+	  
+	  -- Make sure we don't get the 0 ideal in ZZ
+	  if zero I then I = ideal 0_(ring NM);
+	  
+	  
+	  bf' := bFunction(I, w); 
 	  bf' = (map(S, ring bf', matrix{{s}})) bf';
 	  bf' = substitute(bf', { s => s - m#i });
+	  
+	  -- bFunctions can't really be zero by definition, but whatever
+	  if zero bf' then return 0_S;
+	  
 	  -- bf = lcm (bf, bf')
 	  bf = bf * (bf' // gcd(bf, bf'));
 	  i = i + 1;

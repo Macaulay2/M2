@@ -68,69 +68,52 @@ document {
      SeeAlso => {"Dlocalize", "AnnFs", "Dintegration"}
      }
 
+doc ///
+    Key
+    	DlocalizeAll
+	(DlocalizeAll,Ideal,RingElement)
+	(DlocalizeAll,Module,RingElement)
+	LocModule
+	GeneratorPower
+	LocMap
+	annFS
+	IntegrateBfunction
+	Bfunction
+    Headline
+    	localization of a D-module (extended version)
+    Usage
+    	DlocalizeAll(M,f)
+	DlocalizeAll(I,f)
+    Inputs
+    	M:Module
+	    over the Weyl algebra $D$
+	I:Ideal
+	    which represents the module $M=D/I$
+	f:RingElement
+	    a polynomial
+    Outputs
+    	:HashTable
+	    which contains the localized module $M_f = M[f^{-1}]$ and some additional information
+    Description
+    	Text
+	    An extension of @TO Dlocalize@ that in addition computes the localization map
+	    the b-function, and the power $s$ of the generator $f^s$.
+	    
+	    The keys of the output HashTable depend on which strategy is used. Common to each strategy
+	    are the keys @{TT "LocMap"}@ and @{TT "LocModule"}@, which have the localization map
+	    and the localized module, respectively; and @{TT "GeneratorPower"}@, which is an integer
+	    $s$ such that (the images of) the generators of $M$ are $f^{-s}$ times the generators of $M_f$.
+	Example
+	    W = makeWeylAlgebra(QQ[x,y])
+	    M = W^1/ideal(x*dx + 1, dy)
+	    f = x^2 - y^3
+	    Mfall = DlocalizeAll(M, f)
+	    gens image Mfall.LocMap == f^(-Mfall.GeneratorPower) * gens Mfall.LocModule
+	Text
+	    
+    SeeAlso
+        Dlocalize
+	AnnFs
+	Dintegration
+///
 
-document {
-     Key => {DlocalizeAll, (DlocalizeAll,Ideal,RingElement), (DlocalizeAll,Module,RingElement)},
-     Headline => "localization of a D-module (extended version)",
-     Usage => "DlocalizeAll(M,f), DlocalizeAll(I,f)",
-     Inputs => {
-	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
-	  "f" => RingElement => "a polynomial",
-	  },
-     Outputs => {
-	  HashTable => {"which contains the localized module", TEX "M_f = M[f^{-1}]", 
-	       " and some additional information"}
-	  },
-     "An extension of ", TO "Dlocalize", 
-     " that in addition computes the localization map, 
-     the b-function, and the power ", TEX "s", " of the generator ", TEX "f^s", ".",
-     EXAMPLE lines ///
-	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-     	M = W^1/(ideal(x*Dx+1, Dy))
-     	f = x^2-y^3
-     	DlocalizeAll(M, f)
-	///,
-     SeeAlso => {"Dlocalize", "AnnFs", "Dintegration"}
-     }
-
-     TT "DlocalizeAll (M, f)", " -- 
-     compute the localization of M with respect to f and
-     some auxiliary information",
-     BR{},
-     TT "DlocalizeAll (M, f)", " -- 
-     compute the localization of D/I with respect to f and some
-     auxiliary information",
-     PARA{},
-
-
-document {
-     Key => LocModule,
-     Headline => "a key created by Dlocalize",
-     "See ", TO "Dlocalize", "."
-     }
-document {
-     Key => GeneratorPower,
-     Headline => "a key created by Dlocalize",
-     "See ", TO "Dlocalize", "."
-     }
-document {
-     Key => LocMap,
-     Headline => "a key created by Dlocalize",
-     "See ", TO "Dlocalize", "."
-     }
-document {
-     Key => annFS,
-     Headline => "a key created by Dlocalize",
-     "See ", TO "Dlocalize", "."
-     }
-document {
-     Key => IntegrateBfunction,
-     Headline => "a key created by Dlocalize",
-     "See ", TO "Dlocalize", "."
-     }
-document {
-     Key => Bfunction,
-     Headline => "a key created by Dlocalize",
-     "See ", TO "Dlocalize", "."
-     }
