@@ -24,10 +24,10 @@ doc ///
   Description
     Text
      This routine computes a Groebner basis of a left ideal @EM "I"@ of the Weyl algebra with
-      respect to a weight vector @EM "w = (u,v)"@ where either @EM "u+v > 0"@ or @EM "u+v = 0"@.
-     In the case where @EM "u+v > 0"@ the ordinary Buchberger algorithm works for any 
+      respect to a weight vector @EM "w = (u,v)"@ where  @EM "u+v >= 0"@.
+     In the case where @EM "u_i+v_i > 0"@ for all @EM"i"@, the ordinary Buchberger algorithm works for any 
      term order refining the weight order.
-     In the case where @EM "u+v = 0"@ the Buchberger algorithm needs to be adapted to 
+     If there exists @EM "i"@ so that @EM "u_i+v_i = 0"@ the Buchberger algorithm needs to be adapted to 
      guarantee termination.
      There are two strategies for doing this. One is to homogenize to an ideal of the 
      homogeneous Weyl algebra.
