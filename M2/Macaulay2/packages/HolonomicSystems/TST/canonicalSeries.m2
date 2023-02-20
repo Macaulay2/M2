@@ -1,9 +1,4 @@
-Dtrace 1
-pInfo(1, "testing canonicalSeries...")
-
-------------------------------------
--- 
-------------------------------------
+TEST ///
 W = makeWA(QQ[x_1,x_2])
 for b in {0,1} do(
     F1 = ideal(x_1*dx_1*(x_1*dx_1+b), x_1*dx_1*(x_2*dx_2+b),  
@@ -11,12 +6,12 @@ for b in {0,1} do(
     assert(isTorusFixed F1 == true)
     )
 for b in {0,1} do(
-    F2 = ideal(x_1*dx_1*x_2*dx_2-1, x_1*dx_1-b*x_2*dx_2-b+1)
+    F2 = ideal(x_1*dx_1*x_2*dx_2-1, x_1*dx_1-b*x_2*dx_2-b+1);
     assert(isTorusFixed F2 == true)
     )
+///
 
-
-----
+TEST ///
 W = makeWeylAlgebra(QQ[x,y])
 vars W
 thetax = x*dx
@@ -32,9 +27,9 @@ distraction(I,S)
 cssExptsMult(I,w)
 --{{4, {0, 0}}, {2, {2, 0}}, {2, {0, 3}}, {1, {2, 3}}}
 --matches SST Ex 2.5.13
+///
 
------
-
+TEST ///
 A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
 beta = {1,0,0}
 I = gkz(A,beta)
@@ -46,10 +41,4 @@ isTorusFixed J --true
 distraction(J,S) == ideal(t_1 +t_2 +t_3+t_4 +t_5 -1, t_1 +t_2 -t_4, t_2 +t_3 -t_4, t_1*t_3, t_2*t_4)
 cssExptsMult(I,w) --{{4, {0, 0, 0, 0, 1}}}
 --matches Ex 2.6.4
-
-
-
-
-
-path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path)
-installPackage "Dmodules"
+///

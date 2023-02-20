@@ -268,6 +268,7 @@ doc ///
 doc ///
    Key
      solveFrobeniusIdeal
+     (solveFrobeniusIdeal, Ideal)
      (solveFrobeniusIdeal, Ideal, Ring)
    Headline
      solving Frobenius ideals

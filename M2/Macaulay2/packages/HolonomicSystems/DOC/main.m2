@@ -5,18 +5,31 @@ Node
   Headline
     Examples of Holonomic D-modules
   Description
-    Code
-     HEADER3 "Some examples of D-modules:",
-     UL{TO {"gkz", " -- Gelfand-Kapranov-Zelevinsky hypergeometric system"},
-	  TO {"AppellF1", " -- Appell F1 system"},
-	 },
-
-     HEADER3 "Canonical Series:",
-     UL{
-	  TO {"distraction", "--  the image in the thetaRing of a torus-fixed ideal in a Weyl algebra"},
-	  TO {"cssExpts", " -- the exponents of the canonical series solutions of I"},
-	  TO {"cssExptsMult", " -- the exponents of the canonical series solutions of I with multiplicities"},
-	  TO {"isTorusFixed", " -- checks if an ideal in a Weyl algebra is torus-fixed"},
-	  TO {"Canonical Series Tutorial", "-- find series solutions of regular systems"}
-	  }
+    Tree
+      :Some examples of D-modules
+        @TOH "gkz"@
+	@TOH "eulerOperators"@
+	@TOH "toricIdealPartials"@
+	@TOH "AppellF1"@
+      :@TOH "Canonical Series Tutorial"@
+        @TOH "distraction"@
+	@TOH "cssExpts"@
+	@TOH "cssExptsMult"@
+	@TOH "isTorusFixed"@
+	@TOH "solveFrobeniusIdeal"@
+      :Differential Operators
+        @TOH "diffOps"@
+  Subnodes
+   "gkz"
+   "eulerOperators"
+   "toricIdealPartials"
+   "AppellF1"
+   "Canonical Series Tutorial"
+   "diffOps"
 ///
+
+end--
+
+restart
+uninstallPackage "HolonomicSystems"
+installPackage "HolonomicSystems"

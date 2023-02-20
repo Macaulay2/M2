@@ -3,7 +3,7 @@ doc ///
     toricIdealPartials
     (toricIdealPartials,Matrix,PolynomialRing)
   Headline
-   The toric ideal of the matrix A in the polynomial ring of the partials inside of the Weyl algerba D
+   create the toric ideal of an integer matrix
   Usage
     toricIdealPartials(A,D)
   Inputs
@@ -11,7 +11,7 @@ doc ///
     D:PolynomialRing  
   Outputs
      :Ideal
-      the toric ideal of the matrix A in the polynomial ring of the partials inside of the Weyl algerba D.
+      the toric ideal of the matrix $A$ in the polynomial ring of the partials inside of the Weyl algerba $D$.
   Description
     Text 
       A $d \times n$ integer matrix $A$ determines a GKZ hypergeometric system of PDEs 
@@ -21,6 +21,8 @@ doc ///
     Example 
       A = matrix{{1,2,0},{-1,1,3}}
       D = makeWA(QQ[x_1..x_3])
+      I = toricIdealPartials(A,D)
+      describe ring I
 ///
     
 doc ///
@@ -29,22 +31,20 @@ doc ///
     (gkz, Matrix, List)
     (gkz, Matrix, List, PolynomialRing)
   Headline
-    The A-hypergeometric systems of Gelfand, Kapranov and Zelevinsky (GKZ)
+    create the A-hypergeometric system of Gelfand, Kapranov and Zelevinsky (GKZ)
   Usage
     gkz(A,b)
     gkz(A,b,D)
   Inputs
     A:Matrix
-    b:List
-    D:PolynomialRing
+    b:List -- parameter vector
+    D:PolynomialRing -- a Weyl algebra
   Outputs
     :Ideal 
-      the GKZ hypergeometric
-      system associated to the matrix A and the parameter vector b in the 
-      Weyl algebra D.
+      the GKZ hypergeometric system associated to the matrix $A$ and the parameter vector $b$ in the Weyl algebra $D$
   Description
     Text
-      The GKZ hypergeometric system of PDE's associated to a $d$ $\times$ $n$
+      The GKZ hypergeometric system of PDE's associated to a $d \times n$
       integer matrix A is an ideal in the Weyl algebra $D_n$ over $\mathbb{C}$
       with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$.
       It consists of the toric ideal $I_A$ in the polynomial
@@ -79,6 +79,8 @@ doc ///
   Key
     AppellF1
     (AppellF1, List)
+    [AppellF1,Vars]
+    Vars
   Headline
     Appell F1 system of PDE's
   Usage
@@ -135,15 +137,3 @@ doc ///
   SeeAlso
     gkz
 ///
-
-doc ///
-  Key
-    Vars
-    [AppellF1,Vars]
-///
-
-end
-restart
-installPackage("Dmodules",FileName =>"../../Dmodules.m2")
-
-viewHelp toricIdealPartials

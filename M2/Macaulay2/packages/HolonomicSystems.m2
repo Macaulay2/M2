@@ -2,9 +2,11 @@
 newPackage(
     "HolonomicSystems",
     Version => "1.0",
-    Date => "February 2023",
+    Date => "May 2023",
     Headline => "Holonomic Systems",
     Authors => {
+	{ Name => "Mahrud Sayrafi",     Email  =>  "mahrud@umn.edu",  HomePage => "https://math.umn.edu/~mahrud"   },
+	{ Name => "Christine Berkesch", Email => "cberkesc@umn.edu",  HomePage => "https://math.umn.edu/~cberkesc" },
 	{ Name => "Anton Leykin", Email => "leykin@math.gatech.edu" },
 	{ Name => "Harrison Tsai" }
 	},
@@ -86,6 +88,7 @@ export {
 --------------------------------------------------------------------------------
 
 load "HolonomicSystems/TST/tests.m2"
+load "HolonomicSystems/TST/canonicalSeries.m2"
 
 --------------------------------------------------------------------------------
 -- Documentation
