@@ -9,7 +9,7 @@ doc ///
      This package is mostly concerned with computations in the {\em Weyl algebra},
      the ring of differential operators over affine space (over a field of characteristic zero).
      Most algorithms in this package can be found in the book
-     {\em Gr\"obner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
+     {\em Gröbner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
      hereafter referred to as [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@].
      This is also the best place to learn about computational D-module theory. The book
      {\em Computational Algebraic Geometry with Macaulay2} has a chapter on D-modules and local cohomology.

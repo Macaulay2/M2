@@ -254,7 +254,7 @@ doc ///
       The polynomial solutions of a holonomic system form a
       finite-dimensional vector space.
       There are two algorithms implemented to get these solutions.
-      The first algorithm is based on Gr\"obner deformations and
+      The first algorithm is based on Gröbner deformations and
       works for ideals $I$ of PDE's - see the paper {\em Polynomial
       and rational solutions of a holonomic system} by
       Oaku, Takayama and Tsai (2000).  The second algorithm is based
@@ -326,7 +326,7 @@ doc ///
       The only possibilities for the poles of a rational solution
       are the codimension one components of the singular locus.
       An algorithm to compute rational solutions
-      is based on Gr\"obner deformations and
+      is based on Gröbner deformations and
       works for ideals $I$ of PDE's - see the paper {\em Polynomial
       and rational solutions of a holonomic system} by
       Oaku, Takayama and Tsai (2000).
