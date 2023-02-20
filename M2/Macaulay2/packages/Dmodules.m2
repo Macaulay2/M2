@@ -27,7 +27,6 @@ newPackage("Dmodules",
 load "./Dmodules/Dbasic.m2"
 export {
     "SetVariables",
-    "optGB",
     "dpairInds",
     "dpairVars",
     "makeWeylAlgebra",

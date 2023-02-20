@@ -165,11 +165,12 @@ document {
 ----------------------------------------------------------------------------
 
 document {
-     Key => {Dprune, (Dprune, Matrix), (Dprune, Module)},
+     Key => {Dprune, (Dprune, Matrix), (Dprune, Module), [Dprune, MinimalGenerators]},
      Headline => "prunes a D-module",
      Usage => "Dprune M",
      Inputs => {
-	  "M" => {ofClass Matrix, " or ", ofClass Module} 
+	  "M" => {ofClass Matrix, " or ", ofClass Module},
+	  MinimalGenerators => Boolean => {"indicates whether a Gröbner basis should be computed"}
 	  },
      Outputs => {
 	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"} 
@@ -187,10 +188,7 @@ document {
      -- Caveat => {},
 --     SeeAlso => {"BerinsteinSato::pruneCechComplexCC"} -- FIXME
      }
-document {
-     Key => { [Dprune,optGB], optGB },
-     Headline => "indicates whether a Grobner basis should be computed"
-     }
+
 document {
      Key => {
 	  FourierInverse, (FourierInverse,Matrix), (FourierInverse,Ideal), 

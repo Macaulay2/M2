@@ -1,6 +1,5 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-local GBprune
 -- Basic D-routines
 
 ----------------------------------------------------------------
@@ -375,21 +374,17 @@ holonomicRank Module := M -> (
 --     	    	lead to the appearance of more 1's
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-Dprune = method(Options => {optGB => true})
-Dprune Matrix := options -> M -> (
-     temp := reduceCompress M;
-     if options.optGB then (
-	  proceedflag := true;
-	  while proceedflag do (
-	       temp2 := reduceCompress gens gb temp;
-	       if temp2 === null or temp2 == temp then proceedflag = false;
-	       temp = temp2;
-	       );
-	  );
-     temp
-     )
+Dprune = method(Options => { MinimalGenerators => true })
+Dprune Matrix := opts -> M -> (
+    M = reduceCompress M;
+    if opts.MinimalGenerators then while (
+	M' := reduceCompress gens gb M;
+	M' =!= null and M' != M) do M = M';
+    M)
 
-Dprune Module := options -> M -> (
+-- TODO: would cokernel Dprune presentation M work more generally?
+-- TODO: compare with GBprune above and remove commented code if necessary
+Dprune Module := opts -> M -> (
      if not isQuotientModule M then error "Dprune expected a quotient module";
      cokernel Dprune relations M
      )
