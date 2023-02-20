@@ -179,7 +179,7 @@ computeLocalization = (M, f, output, options) -> (
 	   bestPower = -maxRoot - 2;
 	   pInfo(1, "localize: computing GB...");
 	   tInfo = toString first timing (
-	       G := gens gbW2 (ideal twistN, wt);
+	       G := gbw(twistN, wt, Strategy => homogenize);
 	       );
 	   pInfo(2, "\t\t\t time = " | tInfo | " seconds");
 	   i := 0;

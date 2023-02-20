@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage("Dmodules",
      Version => "1.4.1.1",
-     Date => "01/31/2020",
+     Date => "February 2023",
      Headline => "D-modules",
      HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
      AuxiliaryFiles => true,
@@ -61,18 +61,17 @@ export {
 -- Anton's basic files
 load "./Dmodules/switch.m2"
 export {
+    -- pInfo
     "Dtrace",
-    "getDtrace",
-    "pInfo",
     }
 load "./Dmodules/newRings.m2"
 export {
     -- createHomWeylAlgebra
     -- createIntRing
     -- createAssCommRing
-    -- TODO: document these
-    "ThetaRing",
-    "createThetaRing",
+    -- TODO: export and document these
+    -- "ThetaRing",
+    -- "createThetaRing",
     }
 
 -- TODO
@@ -84,7 +83,7 @@ export {
     }
 load "./Dmodules/makeCyclic.m2"
 export {
-    "AnnG",
+    "AnnG", -- TODO: move to BernsteinSato?
     "Generator",
     "makeCyclic",
     }
@@ -107,6 +106,7 @@ preimage(Matrix, Module) := (f, M) -> (
 --------------------------------------------------------------------------------
 
 load "Dmodules/TST/Dbasic.m2"
+load "Dmodules/TST/Gbw.m2"
 
 --------------------------------------------------------------------------------
 -- Documentation
@@ -116,7 +116,7 @@ beginDocumentation()
 
 load "Dmodules/DOC/main.m2"
 load "Dmodules/DOC/tutorial.m2" -- basic tutorial
-load "Dmodules/DOC/Dbasic.m2"   -- basic commands
+load "Dmodules/DOC/basics.m2"   -- basic commands
 load "Dmodules/DOC/general.m2"
 
 --------------------------------------------------------------------------------
@@ -125,6 +125,7 @@ end--
 
 restart
 uninstallPackage "Dmodules"
+installPackage "Dmodules"
 
 restart
 needsPackage "Dmodules"

@@ -22,8 +22,9 @@ newPackage(
 
 -- local symbols defined in Dmodules
 importFrom_"Dmodules" {
-    "raw", "WtoT", "gbW2", "isGeneric",
+    "raw", "WtoT", "isGeneric",
     "IntRing", "createIntRing", "RtoIR",
+    "pInfo", "createThetaRing", "ThetaRing",
     "HomWeylAlgebra", "createHomWeylAlgebra", "WAtoHWA", "HWAtoWA",
     }
 
@@ -101,6 +102,7 @@ export {
     }
 load "./BernsteinSato/annFs.m2"
 export {
+    -- TODO: AnnG is in Dmodules
     "AnnFs",
     "AnnIFs", -- deduplicate
     "polynomialAnnihilator",

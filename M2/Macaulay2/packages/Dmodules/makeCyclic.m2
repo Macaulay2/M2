@@ -188,9 +188,10 @@ makeCyclic Matrix := HashTable => M -> (
 
 
 TEST ///
+needsPackage "BernsteinSato"
 Dtrace 1
+debug Dmodules
 pInfo(1, "testing makeCyclic...")
-importFrom_"BernsteinSato" { "bFunction" }
 
 -------------------------
 -- R^3

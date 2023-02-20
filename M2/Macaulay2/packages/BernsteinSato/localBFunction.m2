@@ -163,7 +163,7 @@ localBFunctionStrata RingElement := HashTable => f -> (
 	       b = b//(s-r);
 	       pInfo(3, factorBFunction b); 
 	       myLocus := exceptionalLocusB(R,gbI3,b);
-	       if getDtrace()>9 then (
+	       if 9 < Dtrace() then (
 		    "exceptionalLocusB(...,Strategy=>Syzygies)" << myLocus << endl;
 	       	    myLocus2 := exceptionalLocusB(R,I3,b,Strategy=>ColonIdeal);
 		    "exceptionalLocusB(...,Strategy=>ColonIdeal)" << myLocus2 << endl;

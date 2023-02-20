@@ -21,7 +21,7 @@ TEST///
 
 TEST ///
   -- Initial ideals and gb's in the same Grobner cone
-  importFrom_"HolonomicSystems" { "gkz" }
+  needsPackage "HolonomicSystems"
   W = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x=>dx,y=>dy,z=>dz}]
   A = matrix{{1,1,1},{0,2,7}};
   b = {1,5};

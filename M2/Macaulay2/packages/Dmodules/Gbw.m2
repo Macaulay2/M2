@@ -7,11 +7,8 @@
 HOMOGENIZATION := true
 
 setHomSwitch = method ()
-setHomSwitch(Boolean) := Boolean => s -> (
-    t := HOMOGENIZATION;
-    HOMOGENIZATION = s;
-    t)
-getHomSwitch = ()->HOMOGENIZATION
+setHomSwitch Boolean := Boolean => s -> (t := HOMOGENIZATION; HOMOGENIZATION = s; t)
+getHomSwitch = () -> HOMOGENIZATION
 
 ----------------------------------------------------------------------------------
 
@@ -25,12 +22,8 @@ inw (RingElement, List) := (L, w) -> (
      mw := max apply(lf,t->sum(#w,i->t#0#i*w#i));
      part(mw,w,L)
      )
-
-inw (Ideal, List) := (I, w) -> (
-     ideal inw(gens I, w)
-     )
-
-inw (Matrix, List) := (m, w) -> (
+inw(Ideal,  List) := (I, w) -> ideal inw(gens I, w)
+inw(Matrix, List) := (m, w) -> (
      -- preprocessing
      W := ring m;
      -- error checking
@@ -43,9 +36,7 @@ inw (Matrix, List) := (m, w) -> (
      createDpairs W;
      
      -- case 1: weight vector w=(u,v) has u+v > 0.
-     if all(toList(0..(#W.dpairInds#0)-1), i ->
-	  w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) > 0)
-     then (
+     if all(w_(W.dpairInds#0) + w_(W.dpairInds#1), x -> x > 0) then (
 	  if not W.?CommAlgebra then createCommAlgebra W;
 	  tempW := (coefficientRing W)(monoid [(entries vars W)#0,
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
@@ -76,8 +67,7 @@ inw (Matrix, List) := (m, w) -> (
 
      -- case 2: use V-homogenization if u+v = 0 
      --	    and HOMOGENIZATION is turned off
-     else if not getHomSwitch() and all(toList(0..(#W.dpairInds#0)-1), 
-	       i -> w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) == 0) then (
+     else if not getHomSwitch() and w_(W.dpairInds#0) == -w_(W.dpairInds#1) then (
     	  if numrows m > 1 then 
 	  error "some functions are not implemented for noncyclic D-modules (matrix with one row expected)"; 
 	  -- Make the homogenizing Weyl algebra
@@ -110,8 +100,7 @@ inw (Matrix, List) := (m, w) -> (
 	  wt := toList(numgens Wh:1);
 	  tempm = homogenize(WtoWh m, Wh_(numgens Wh - 1), wt);
 	  gbtempm = gb tempm;
-	  nonCommInds := positions(toList(0..#W.dpairInds#0-1), i ->
-	       w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) == 0);
+	  nonCommInds := positions(w_(W.dpairInds#0) + w_(W.dpairInds#1), x -> x == 0);
 	  -- if some components of (u+v) equal 0, others are greater than 0,
 	  -- then associated graded is half commutative, half non-commutative
 	  if #nonCommInds != #W.dpairInds#0 then (
@@ -130,12 +119,9 @@ inw (Matrix, List) := (m, w) -> (
 
 -- this routine computes a grobner basis of an ideal or matrix with respect
 -- a weight vector w.
-gbw = method()
-gbw (Ideal, List) := (I, w) -> (
-     ideal gbw(gens I, w)
-     )
-
-gbw (Matrix, List) := (m, w) -> (
+gbw = method(Options => { Strategy => null })
+gbw(Ideal,  List) := opts -> (I, w) -> ideal gbw(gens I, w, opts)
+gbw(Matrix, List) := opts -> (m, w) -> (
      -- preprocessing
      W := ring m;
      -- error checking
@@ -148,9 +134,7 @@ gbw (Matrix, List) := (m, w) -> (
      createDpairs W;
      
      -- case 1: weight vector w=(u,v) has u+v > 0.
-     if all(toList(0..(#W.dpairInds#0)-1), i ->
-	  w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) > 0)
-     then (
+     if all(w_(W.dpairInds#0) + w_(W.dpairInds#1), x -> x > 0) then (
 	  if not W.?CommAlgebra then createCommAlgebra W;
 	  tempW := (coefficientRing W)(monoid [gens W,
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
@@ -164,8 +148,8 @@ gbw (Matrix, List) := (m, w) -> (
 
      -- case 2: use V-homogenization if u+v = 0 
      --	    and HOMOGENIZATION is turned off
-     else if not getHomSwitch() and all(toList(0..(#W.dpairInds#0)-1), 
-	       i -> w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) == 0) then (
+     else if not (opts.Strategy === homogenize or getHomSwitch())
+     and w_(W.dpairInds#0) == -w_(W.dpairInds#1) then (
 	  -- Make the homogenizing Weyl algebra
      	  if not W.?HomWeylAlgebra then
      	  createHomWeylAlgebra (ring m);
@@ -197,29 +181,6 @@ gbw (Matrix, List) := (m, w) -> (
 	  gbm = compress WhtoW gens gbtempm;
 	  );
      gbm
-     )
-
--- These routines are the old names of inw. They will eventually be eliminated.
-inW1 = method()
-inW1 (Ideal, List) := (I, w) -> (
-     setHomSwitch(false);
-     inw(I, w)
-     )
-gbW1 = method()
-gbW1 (Ideal, List) := (I, w) -> (
-     setHomSwitch(false);
-     gbw(I, w)
-     )
-inW2 = method()
-inW2 (Ideal, List) := (I, w) -> (
-     setHomSwitch(true);
-     inw(I, w)
-     )
--- used in Dlocalize.m2
-gbW2 = method()
-gbW2 (Ideal, List) := (I, w) -> (
-     setHomSwitch(true);
-     gbw(I, w)
      )
 
 --------------------------------------------------------------------------------

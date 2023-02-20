@@ -14,19 +14,19 @@
  
 INFOLEVEL := 0
 
-Dtrace  = method()
+Dtrace = method(Dispatch => Thing)
 Dtrace ZZ := ZZ => level -> (t := INFOLEVEL;  INFOLEVEL = level; t)
-getDtrace = () -> INFOLEVEL
+Dtrace Sequence := x -> INFOLEVEL
 
 -- prints Info 
 -- format: pInfo(min_level, Thing)
-pInfo = method();
+pInfo = method()
 pInfo(ZZ, Thing) := (minLevel, s) -> (
-     if minLevel <= getDtrace() then print s ;
+     if minLevel <= Dtrace() then print s ;
      << flush;
      ); 
 pInfo(ZZ, List) := (minLevel, l) -> (
-     if minLevel <= getDtrace() then (
+     if minLevel <= Dtrace() then (
 	  scan(l, u-><<u); 
      	  << endl << flush;
 	  )
