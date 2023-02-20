@@ -1106,12 +1106,10 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A,
 {
   coeffR = A.coeffR;
   initialize(rows->len, cols->len, NULL);
-
+  typename CoeffRing::Element f(*coeffR);
   for (size_t r = 0; r < rows->len; r++)
     for (size_t c = 0; c < cols->len; c++)
       {
-        elem f;
-        coeffR->init(f);
         A.get_entry(rows->array[r], cols->array[c], f);
         set_entry(r, c, f);
       }
@@ -1122,12 +1120,10 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
 {
   coeffR = A.coeffR;
   initialize(A.numRows(), cols->len, NULL);
+  typename CoeffRing::Element f(*coeffR);
   for (size_t r = 0; r < nrows_; r++)
     for (size_t c = 0; c < cols->len; c++)
       {
-        elem f;
-        coeffR->init(f);
-        //        coeffR->init(f);
         A.get_entry(r, cols->array[c], f);
         set_entry(r, c, f);
       }
