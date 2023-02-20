@@ -11,8 +11,8 @@ doc ///
   Inputs
     R:PolynomialRing
       the (commutative) polynomial ring
-    SetVariables:Boolean
-      whether to set variables of the created algebra to be global
+    SetVariables=>Boolean
+      indicates whether the generators should be assigned to global variables
   Outputs
     :PolynomialRing
       the (non-commutative) Weyl algebra
