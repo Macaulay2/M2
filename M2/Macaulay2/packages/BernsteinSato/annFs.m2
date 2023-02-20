@@ -369,7 +369,6 @@ TEST ///
 ----------
 -- AnnFs
 ----------
-pInfo(1, "testing AnnFs...")
 ----------------- TEST AnnFs -------------------
 -- TEST: AnnFs RingElement
 x = symbol x; z = symbol z; d = symbol d; Dz = symbol Dz;

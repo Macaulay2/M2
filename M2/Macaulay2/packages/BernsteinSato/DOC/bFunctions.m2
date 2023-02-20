@@ -8,7 +8,12 @@ document {
      }
 
 document {
-     Key => [bFunction,Strategy],
+     Key => {
+	 [bFunction,Strategy],
+	 NonGeneric,
+     	 TryGeneric,
+     	 IntRing
+	 },
      Headline => "specify strategy for computing b-function",
      UL { 
 	  {BOLD "IntRing", " -- the simplest algorithm available. 
@@ -33,21 +38,7 @@ document {
 	  {"Default:", BOLD "IntRing"}
 	  }
      }
-document {
-     Key => NonGeneric,
-     Headline => "a strategy option for b-functions",
-     "see ", TO "bFunction"
-     }
-document {
-     Key => TryGeneric,
-     Headline => "a strategy option for b-functions",
-     "see ", TO "bFunction"
-     }
-document {
-     Key => IntRing,
-     Headline => "a strategy option for b-functions",
-     "see ", TO "bFunction"
-     }
+
 document {
      Key => (bFunction, Ideal, List),
      Headline => "b-function of an ideal",
@@ -126,7 +117,11 @@ document {
 
 
 document {
-     Key => [globalBFunction,Strategy],
+     Key => {
+	 [globalBFunction,Strategy],
+	 ViaAnnFs,
+     	 ReducedB
+	 },
      Headline => "specify strategy for computing global b-function",
      UL { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
@@ -142,17 +137,6 @@ document {
 	  {BOLD "GeneralBernsteinSato", " -- calls ", TO "generalB", "{f}."},
 	  {"Default: ", BOLD "GeneralBernsteinSato"}
 	  }
-     }
-
-document {
-     Key => ViaAnnFs,
-     Headline => "a strategy option for global b-functions",
-     "see ", TO "globalBFunction"
-     }
-document {
-     Key => ReducedB,
-     Headline => "a strategy option for global b-functions",
-     "see ", TO "globalBFunction"
      }
 
 document { 

@@ -245,9 +245,8 @@ getIntRoots RingElement := List => f -> (
      );-- end getIntRoots
 
  
-TEST ///
+TEST /// -- testing globalBFunction...
 Dtrace 1
-pInfo(1, "testing globalBFunction...")
 
 for str in {IntRing, TryGeneric, NonGeneric, GeneralBernsteinSato} do (
      	  print str;
@@ -262,11 +261,12 @@ for str in {IntRing, TryGeneric, NonGeneric, GeneralBernsteinSato} do (
 		    product(n, i -> n * (s + 1) - i)       
 		    ))
 	  );
-	  
-clearAll()
-pInfo(1, "testing generalB...")
+///
+
+TEST /// -- testing generalB...
+Dtrace 1
+
 for str in {InitialIdeal, StarIdeal} do (
-     	  pInfo(1, "Strategy=>" | toString str);
 	  R = QQ[x_1..x_4];
 	  F = {x_3*x_1^2 + x_4*x_2^3};
 	  b = {1_R,x_1,x_2} / (g->toString factorBFunction generalB (F,g,Strategy=>str));

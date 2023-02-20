@@ -203,9 +203,8 @@ localBFunction (RingElement,Ideal) := RingElement => (f,P) -> (
      b       
      )
  
-TEST ///
+TEST /// -- testing localBFunction...
 Dtrace 1
-pInfo(1, "testing localBFunction...")
 
 R = QQ[x,y]; f = x^2*(x+y+1); P = ideal(x,y);
 b = localBFunction(f,P) 
