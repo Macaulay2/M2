@@ -22,10 +22,14 @@ HypertextParagraph.synonym = "markup list paragraph"
 HypertextContainer = new Type of Hypertext
 HypertextContainer.synonym = "markup list container"
 
+-- these must be empty
+HypertextVoid = new Type of Hypertext
+HypertextVoid.synonym = "void markup"
+
 toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
 toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
 
-new Hypertext from VisibleList := (M,x) -> x
+--new Hypertext from VisibleList := (M,x) -> x -- why is that needed? it's the default
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
 
@@ -107,16 +111,16 @@ IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction
 -- Standard html
 HTML       = new MarkUpType of HypertextContainer
 HEAD       = new MarkUpType of HypertextContainer
-META       = new MarkUpType of HypertextParagraph
-LINK       = new MarkUpType of HypertextParagraph
+META       = new MarkUpType of HypertextVoid
+LINK       = new MarkUpType of HypertextVoid
 TITLE      = new MarkUpType of HypertextParagraph
 BODY       = new MarkUpType of HypertextContainer
 STYLE      = new MarkUpType of Hypertext
 SPAN       = new MarkUpType of Hypertext
 PARA       = new MarkUpType of HypertextParagraph -- double spacing inside
 DIV        = new MarkUpType of HypertextContainer
-BR         = new MarkUpType of Hypertext
-HR         = new MarkUpType of HypertextParagraph
+BR         = new MarkUpType of HypertextVoid
+HR         = new MarkUpType of HypertextVoid
 SCRIPT     = new MarkUpType of HypertextParagraph
 
 -- Headers
@@ -138,7 +142,7 @@ SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
 
--- Lists (TODO: OL)
+-- Lists
 OL         = new MarkUpType of HypertextContainer
 UL         = new MarkUpType of HypertextContainer
 LI         = new MarkUpType of HypertextContainer
@@ -147,7 +151,7 @@ DT         = new MarkUpType of HypertextParagraph
 DD         = new MarkUpType of HypertextParagraph
 
 -- Links and references
-IMG        = new MarkUpType of Hypertext
+IMG        = new MarkUpType of HypertextVoid
 ANCHOR     = new MarkUpType of Hypertext
 LABEL      = new MarkUpType of Hypertext
 
@@ -164,9 +168,13 @@ TR         = new MarkUpType of HypertextContainer
 TD         = new MarkUpType of Hypertext
 TH         = new MarkUpType of TD
 
+-- Misc
 CDATA      = new MarkUpType of Hypertext
 COMMENT    = new MarkUpType of Hypertext
+INPUT      = new MarkUpType of HypertextVoid
+BUTTON     = new MarkUpType of Hypertext
 
+-- Fake
 TEX        = new IntermediateMarkUpType of Hypertext
 ExampleItem = new IntermediateMarkUpType of Hypertext
 HREF       = new IntermediateMarkUpType of Hypertext
@@ -188,8 +196,7 @@ toExternalString LATER := x -> toExternalString x#0()
 -- MarkUpType constructors
 -----------------------------------------------------------------------------
 
-new HR from List :=
-new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else error "expected empty list"
+new HypertextVoid from List := (X,x) -> if all(x, e -> instance(e, Option) or instance(e,OptionTable)) then x else error "expected empty list"
 br = BR{}
 hr = HR{}
 
@@ -245,22 +252,18 @@ new HREF from List      := (HREF, x) -> (
     then x#0 else error "HREF expected URL to be a string or a sequence of 2 strings";
     if x#?1 then prepend(url, drop(x, 1)) else {url})
 
-new OL from VisibleList :=
-new UL from VisibleList := (T, x) -> (
-    apply(nonnull x, e -> (
-	    if class e === TO then LI{TOH{e#0}}
-	    else if instance(e, LI) or instance(e,Option) then e
-	    else LI e)))
--- TODO: deprecate this
-ul = x -> ( x = nonnull x; if 0 < #x then UL x )
+new UL from VisibleList := (T, x) -> apply(nonnull x, e -> (
+	if class e === TO then LI{TOH{e#0}}
+	else if instance(e, LI) or instance(e,Option) or instance(e,OptionTable) then e
+	else LI e))
 
 -- Written by P. Zinn-Justin
 new TABLE from VisibleList := (T,x) -> (
     apply(nonnull x, e -> (
-           if instance(e, TR) or instance(e, Option) then e else TR e)))
+           if instance(e, TR) or instance(e, Option) or instance(e,OptionTable) then e else TR e)))
 new TR from VisibleList := (T,x) -> (
     apply(nonnull x, e -> (
-           if instance(e, TD) or instance(e, Option) then e else TD e)))
+           if instance(e, TD) or instance(e, Option) or instance(e,OptionTable) then e else TD e)))
 
 -- the main idea of these comparisons is so sorting will sort by the way things will print:
 TO  ? TO  :=
@@ -294,6 +297,7 @@ TEX.qname     = "#PCDATA"
 TO.qname      = "a"
 TO2.qname     = "a"
 TOH.qname     = "span"
+INDENT.qname  = "div"
 
 -----------------------------------------------------------------------------
 -- Add acceptable html attributes to the type of an html tag
@@ -350,6 +354,14 @@ addAttribute(TD,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
+addAttribute(OL, htmlAttr | {"start"=>"0", "reversed", "type"})
+buttonAttr = htmlAttr | {"autofocus","disabled",
+    "form","formaction","formenctype","formmethod","formnovalidate","formtarget",
+    "name", "type", "value"}
+addAttribute(BUTTON, buttonAttr)
+addAttribute(INPUT, buttonAttr | {"accept","alt","checked",
+	"height", "list", "max", "maxlength", "min", "minlength", "multiple",
+	"pattern", "placeholder", "readonly", "required", "size", "src", "step", "width" })
 
 M2CODE = method()
 M2CODE Thing := x -> prepend("class" => "language-macaulay2", CODE x)

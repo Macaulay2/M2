@@ -99,7 +99,7 @@ html Hypertext := x -> (
     (head, prefix, suffix, tail) := (
 	if instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
 	if instance(x, HypertextParagraph) then (concatenate(indentLevel:"  "), "", "", newline) else ("","","",""));
-    popIndentLevel(1, if #cont == 0
+    popIndentLevel(1, if instance(x, HypertextVoid)
 	then concatenate(head, "<", qname, attr, "/>", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
 	    apply(cont, html1), suffix, "</", qname, ">", tail)))
