@@ -191,8 +191,10 @@ class ElementImpl
 };
 
 /**
- * An ARing class can inherit from this to indicate that it has a trivial clear
- * method, and this will provide a simple implementation of Element
+ * An ARing class inheriting from this should provide a method called
+ * staticClear which does the same thing as clear member function, but should be
+ * a static member this class will then provide a simple implementation of an
+ * Element class
  */
 template <class ARing>
 class SimpleARing : public RingInterface
@@ -210,10 +212,11 @@ class SimpleARing : public RingInterface
       // from
       ring.init(Impl::mValue);
     }
+    ~Element() { ARing::staticClear(Impl::mValue); }
   };
 };
 
-#if 0
+#  if 0
 
 /**
 \ingroup rings

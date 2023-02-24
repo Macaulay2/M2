@@ -145,6 +145,7 @@ class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
   void init(ElementType &result) const;
 
   void clear(ElementType &result) const;
+  static void staticClear(ElementType &result) {}
 
   void set_zero(ElementType &result) const;
 

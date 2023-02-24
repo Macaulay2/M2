@@ -88,6 +88,7 @@ class ARingRR : public SimpleARing<ARingRR>
   {
     // do nothing
   }
+  static void staticClear(ElementType &result) {}
 
   void copy(ElementType &result, const ElementType &a) const { set(result, a); }
   void set_from_long(ElementType &result, long a) const

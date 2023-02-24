@@ -19,7 +19,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingCCC : public RingInterface
+class ARingCCC : public SimpleARing<ARingCCC>
 {
   // complex numbers represented as pairs of MPFRs.
 
@@ -32,28 +32,6 @@ class ARingCCC : public RingInterface
   typedef elem ElementType;
   typedef ARingRRR RealRingType;
   typedef RealRingType::ElementType RealElementType;
-
-  class Element : public ElementImpl<ElementType>
-  {
-   public:
-    Element(const ARingCCC& R)
-    {
-      mpfr_init2(&mValue.re, R.get_precision());
-      mpfr_init2(&mValue.im, R.get_precision());
-    }
-    Element(Element&& other)
-    {
-      memcpy(&mValue, &other.mValue, sizeof(mValue));
-      // make sure the other value is in a clearable state
-      mpfr_init(&other.mValue.re);
-      mpfr_init(&other.mValue.im);
-    }
-    ~Element()
-    {
-      mpfr_clear(&mValue.re);
-      mpfr_clear(&mValue.im);
-    }
-  };
 
   ARingCCC(unsigned long precision) : mRRR(precision) {}
   ARingCCC() : mRRR(53) {}
@@ -147,6 +125,12 @@ class ARingCCC : public RingInterface
   }
 
   void clear(ElementType& result) const
+  {
+    mpfr_clear(&result.re);
+    mpfr_clear(&result.im);
+  }
+
+  static void staticClear(ElementType& result)
   {
     mpfr_clear(&result.re);
     mpfr_clear(&result.im);

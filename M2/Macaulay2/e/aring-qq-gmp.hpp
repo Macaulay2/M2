@@ -22,7 +22,7 @@ namespace M2 {
    @brief wrapper for the gmp mpq_t integer representation
 */
 
-class ARingQQGMP : public RingInterface
+class ARingQQGMP : public SimpleARing<ARingQQGMP>
 {
  public:
   static const RingID ringID = ring_QQ;
@@ -30,19 +30,6 @@ class ARingQQGMP : public RingInterface
   typedef __mpq_struct ElementType;
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
-
-  class Element : public ElementImpl<ElementType>
-  {
-   public:
-    Element(const ARingQQGMP& R) { mpq_init(&mValue); }
-    Element(Element&& other)
-    {
-      memcpy(&mValue, &other.mValue, sizeof(mValue));
-      // make sure the other value is in a clearable state
-      mpq_init(&other.mValue);
-    }
-    ~Element() { mpq_clear(&mValue); }
-  };
 
   ARingQQGMP();
   ~ARingQQGMP();
@@ -99,6 +86,7 @@ class ARingQQGMP : public RingInterface
 
   void init(ElementType& result) const { mpq_init(&result); }
   void clear(ElementType& result) const { mpq_clear(&result); }
+  static void staticClear(ElementType& result) { mpq_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     mpq_set(&result, &a);

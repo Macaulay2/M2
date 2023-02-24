@@ -26,26 +26,13 @@ namespace M2 {
    @brief wrapper for the flint fmpz_t integer representation
 */
 
-class ARingZZ : public RingInterface
+class ARingZZ : public SimpleARing<ARingZZ>
 {
  public:
   static const RingID ringID = ring_ZZFlint;
 
   typedef fmpz ElementType;
   typedef ElementType elem;
-
-  class Element : public ElementImpl<ElementType>
-  {
-   public:
-    Element(const ARingZZ& R) { fmpz_init(&mValue); }
-    Element(Element&& other)
-    {
-      memcpy(&mValue, &other.mValue, sizeof(mValue));
-      // make sure the other value is in a clearable state
-      fmpz_init(&other.mValue);
-    }
-    ~Element() { fmpz_clear(&mValue); }
-  };
 
   ARingZZ();
   ~ARingZZ();
@@ -96,6 +83,7 @@ class ARingZZ : public RingInterface
 
   void init(ElementType& result) const { fmpz_init(&result); }
   void clear(ElementType& result) const { fmpz_clear(&result); }
+  static void staticClear(ElementType& result) { fmpz_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     fmpz_set(&result, &a);

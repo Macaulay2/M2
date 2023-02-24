@@ -19,25 +19,13 @@ namespace M2 {
    @brief wrapper for the mpz_struct integer representation
 */
 
-class ARingZZGMP : public RingInterface
+class ARingZZGMP : public SimpleARing<ARingZZGMP>
 {
  public:
   static const RingID ringID = ring_ZZ;
 
   typedef __mpz_struct ElementType;
   typedef ElementType elem;
-  class Element : public ElementImpl<ElementType>
-  {
-   public:
-    Element(Element&& other)
-    {
-      memcpy(&mValue, &other.mValue, sizeof(mValue));
-      // this init makes sure the other element can be safely deleted
-      mpz_init(&other.mValue);
-    }
-    Element(const ARingZZGMP& R) { mpz_init(&mValue); }
-    ~Element() { mpz_clear(&mValue); }
-  };
 
   ARingZZGMP();
   ~ARingZZGMP();
@@ -88,6 +76,8 @@ class ARingZZGMP : public RingInterface
 
   void init(ElementType& result) const { mpz_init(&result); }
   void clear(ElementType& result) const { mpz_clear(&result); }
+  static void staticClear(ElementType& result) { mpz_clear(&result); }
+
   void set(ElementType& result, const ElementType& a) const
   {
     mpz_set(&result, &a);

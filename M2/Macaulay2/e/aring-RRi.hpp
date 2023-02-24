@@ -20,7 +20,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRRi : public RingInterface
+class ARingRRi : public SimpleARing<ARingRRi>
 {
   // Higher precision real intervals
 
@@ -29,19 +29,6 @@ class ARingRRi : public RingInterface
 
   typedef __mpfi_struct elem;
   typedef elem ElementType;
-
-  class Element : public ElementImpl<ElementType>
-  {
-   public:
-    Element(const ARingRRi &ring) { mpfi_init(&mValue); }
-    Element(Element &&other)
-    {
-      memcpy(&mValue, &other.mValue, sizeof(mValue));
-      // make sure the other value is in a clearable state
-      mpfi_init(&other.mValue);
-    }
-    ~Element() { mpfi_clear(&mValue); }
-  };
 
   ARingRRi(unsigned long precision) : mPrecision(precision) {}
   // ring informational
@@ -128,6 +115,7 @@ class ARingRRi : public RingInterface
   }
 
   void clear(ElementType &result) const { mpfi_clear(&result); }
+  static void staticClear(ElementType &result) { mpfi_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfi_set(&result, &a);

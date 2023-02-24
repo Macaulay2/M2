@@ -18,7 +18,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRRR : public RingInterface
+class ARingRRR : public SimpleARing<ARingRRR>
 {
   // Higher precision real numbers
 
@@ -27,19 +27,6 @@ class ARingRRR : public RingInterface
 
   typedef __mpfr_struct elem;
   typedef elem ElementType;
-
-  class Element : public ElementImpl<ElementType>
-  {
-   public:
-    Element(const ARingRRR &R) { mpfr_init2(&mValue, R.mPrecision); }
-    Element(Element &&other)
-    {
-      memcpy(&mValue, &other.mValue, sizeof(mValue));
-      // make sure the other value is in a clearable state
-      mpfr_init(&other.mValue);
-    }
-    ~Element() { mpfr_clear(&mValue); }
-  };
 
   ARingRRR(unsigned long precision) : mPrecision(precision) {}
   // ring informational
@@ -117,6 +104,7 @@ class ARingRRR : public RingInterface
   }
 
   void clear(ElementType &result) const { mpfr_clear(&result); }
+  static void staticClear(ElementType &result) { mpfr_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfr_set(&result, &a, MPFR_RNDN);
