@@ -103,8 +103,7 @@ class ARingRRR : public SimpleARing<ARingRRR>
     mpfr_set_si(&result, 0, MPFR_RNDN);
   }
 
-  void clear(ElementType &result) const { mpfr_clear(&result); }
-  static void staticClear(ElementType &result) { mpfr_clear(&result); }
+  static void clear(ElementType &result) { mpfr_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfr_set(&result, &a, MPFR_RNDN);

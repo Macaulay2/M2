@@ -154,8 +154,7 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
   void init_set(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
-  static void staticClear(ElementType &result) {}
+  static void clear(elem &result) { /* nothing */}
 
   void set_from_long(elem &result, long a) const
   {

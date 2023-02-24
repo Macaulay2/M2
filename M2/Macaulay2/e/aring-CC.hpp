@@ -113,11 +113,10 @@ class ARingCC : public SimpleARing<ARingCC>
     result.im = 0.0;
   }
 
-  void clear(ElementType& result) const
+  static void clear(ElementType& result)
   {
     // do nothing
   }
-  static void staticClear(ElementType& result) {}
 
   void copy(ElementType& result, const ElementType& a) const { set(result, a); }
   void set_from_long(ElementType& result, long a) const

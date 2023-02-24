@@ -124,13 +124,7 @@ class ARingCCC : public SimpleARing<ARingCCC>
     mpfr_set_si(&result.im, 0, MPFR_RNDN);
   }
 
-  void clear(ElementType& result) const
-  {
-    mpfr_clear(&result.re);
-    mpfr_clear(&result.im);
-  }
-
-  static void staticClear(ElementType& result)
+  static void clear(ElementType& result)
   {
     mpfr_clear(&result.re);
     mpfr_clear(&result.im);

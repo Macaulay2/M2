@@ -82,8 +82,7 @@ class ARingZZ : public SimpleARing<ARingZZ>
   }
 
   void init(ElementType& result) const { fmpz_init(&result); }
-  void clear(ElementType& result) const { fmpz_clear(&result); }
-  static void staticClear(ElementType& result) { fmpz_clear(&result); }
+  static void clear(ElementType& result) { fmpz_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     fmpz_set(&result, &a);

@@ -109,8 +109,7 @@ class ARingZZp : public SimpleARing<ARingZZp>
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
-  static void staticClear(ElementType &result) {}
+  static void clear(elem &result) { /* nothing */}
 
   void set_zero(elem &result) const { result = 0; }
   void set_from_long(elem &result, long a) const

@@ -80,8 +80,7 @@ class ARingZZpFlint : public SimpleARing<ARingZZpFlint>
 
   void init(ElementType &result) const { result = 0; }
   void init_set(ElementType &result, ElementType a) const { result = a; }
-  void clear(ElementType &result) const { /* nothing */}
-  static void staticClear(ElementType &result) {}
+  static void clear(ElementType &result) { /* nothing */}
 
   void set(ElementType &result, ElementType a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0; }

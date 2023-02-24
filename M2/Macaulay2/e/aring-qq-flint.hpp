@@ -29,26 +29,13 @@ namespace M2 {
    @brief wrapper for the flint fmpq_t integer representation
 */
 
-class ARingQQFlint : public RingInterface
+class ARingQQFlint : public SimpleARing<ARingQQFlint>
 {
  public:
   static const RingID ringID = ring_QQFlint;
 
   typedef fmpq ElementType;
   typedef ElementType elem;
-
-  class Element : public ElementImpl<ElementType>
-  {
-   public:
-    Element(const ARingQQFlint& R) { fmpq_init(&mValue); }
-    Element(Element&& other)
-    {
-      memcpy(&mValue, &other.mValue, sizeof(mValue));
-      // make sure the other value is in a clearable state
-      fmpq_init(&other.mValue);
-    }
-    ~Element() { fmpq_clear(&mValue); }
-  };
 
   ARingQQFlint();
   ~ARingQQFlint();
@@ -103,7 +90,7 @@ class ARingQQFlint : public RingInterface
   }
 
   void init(ElementType& result) const { fmpq_init(&result); }
-  void clear(ElementType& result) const { fmpq_clear(&result); }
+  static void clear(ElementType& result) { fmpq_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     fmpq_set(&result, &a);

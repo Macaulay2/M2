@@ -114,8 +114,7 @@ class ARingRRi : public SimpleARing<ARingRRi>
     mpfi_set_si(&result, 0);
   }
 
-  void clear(ElementType &result) const { mpfi_clear(&result); }
-  static void staticClear(ElementType &result) { mpfi_clear(&result); }
+  static void clear(ElementType &result) { mpfi_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfi_set(&result, &a);

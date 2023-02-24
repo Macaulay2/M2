@@ -75,8 +75,7 @@ class ARingZZGMP : public SimpleARing<ARingZZGMP>
   }
 
   void init(ElementType& result) const { mpz_init(&result); }
-  void clear(ElementType& result) const { mpz_clear(&result); }
-  static void staticClear(ElementType& result) { mpz_clear(&result); }
+  static void clear(ElementType& result) { mpz_clear(&result); }
 
   void set(ElementType& result, const ElementType& a) const
   {

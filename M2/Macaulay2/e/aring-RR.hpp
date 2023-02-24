@@ -77,18 +77,16 @@ class ARingRR : public SimpleARing<ARingRR>
     return a.get_double();
   }
 
-
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { result = 0.0; }
   void init_set(ElementType &result, const ElementType &a) const { result = a; }
   void set(ElementType &result, const ElementType &a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0.0; }
-  void clear(ElementType &result) const
+  static void clear(ElementType &result)
   {
     // do nothing
   }
-  static void staticClear(ElementType &result) {}
 
   void copy(ElementType &result, const ElementType &a) const { set(result, a); }
   void set_from_long(ElementType &result, long a) const

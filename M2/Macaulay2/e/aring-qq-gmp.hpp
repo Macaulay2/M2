@@ -85,8 +85,7 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
   }
 
   void init(ElementType& result) const { mpq_init(&result); }
-  void clear(ElementType& result) const { mpq_clear(&result); }
-  static void staticClear(ElementType& result) { mpq_clear(&result); }
+  static void clear(ElementType& result) { mpq_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     mpq_set(&result, &a);
