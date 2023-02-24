@@ -867,7 +867,7 @@ size_t SMat<CoeffRing>::lead_row(size_t col, elem &result) const
 template <typename CoeffRing>
 bool SMat<CoeffRing>::get_entry(size_t r, size_t c, elem &result) const
 // Returns false if (r,c) is out of range or if result is 0.  No error
-// is returned. result <-- this(r,c), and is set to zero if false is returned.
+// is returned. result <-- this(r,c), and does not change result if false is returned.
 {
   return vec_get_entry(columns_[c], r, result);
 }
@@ -1110,6 +1110,7 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A,
   for (size_t r = 0; r < rows->len; r++)
     for (size_t c = 0; c < cols->len; c++)
       {
+        coeffR->set_zero(f);
         A.get_entry(rows->array[r], cols->array[c], f);
         set_entry(r, c, f);
       }
@@ -1124,6 +1125,7 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
   for (size_t r = 0; r < nrows_; r++)
     for (size_t c = 0; c < cols->len; c++)
       {
+        coeffR->set_zero(f);
         A.get_entry(r, cols->array[c], f);
         set_entry(r, c, f);
       }
