@@ -29,7 +29,7 @@ HypertextVoid.synonym = "void markup"
 toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
 toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
 
---new Hypertext from VisibleList := (M,x) -> x -- why is that needed? it's the default
+new Hypertext from VisibleList := (M,x) -> x
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
 
