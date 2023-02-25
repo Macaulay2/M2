@@ -62,6 +62,10 @@ class ARingGFFlintBig : public RingInterface
     {
       fq_nmod_init2(&mValue, mContext);
     }
+    Element(const ARingGFFlintBig& R, const ElementType& value) : mContext(R.mContext)
+    {
+      R.init_set(mValue, value);
+    }
     ~Element() { fq_nmod_clear(&mValue, mContext); }
 
    protected:

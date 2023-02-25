@@ -37,6 +37,13 @@ class CoefficientRingZZp : public our_new_delete
   typedef int elem;
   typedef elem ElementType;
 
+  class Element : public M2::ElementImpl<ElementType>, public our_new_delete
+  {
+   public:
+    explicit Element(const CoefficientRingZZp &ring) { ring.init(mValue); }
+    Element(const CoefficientRingZZp &ring, const ElementType &value) { ring.init_set(mValue, value); }
+  };
+
   typedef std::vector<elem> ElementContainerType;
 
   CoefficientRingZZp(int p0, int *log, int *exps)
@@ -193,16 +200,19 @@ class CoefficientRingR
   class Element : public M2::ElementImpl<ElementType>, public our_new_delete
   {
    public:
-    explicit Element(const CoefficientRingR &ring)
+    explicit Element(const CoefficientRingR &ring) { ring.init(mValue); }
+    Element(const CoefficientRingR &ring, const ElementType &value)
     {
-      ring.init(mValue);
+      ring.init_set(mValue, value);
     }
   };
 
   CoefficientRingR(const Ring *R0) : R(R0) {}
   void init_set(elem &result, elem a) const { result = a; }
   void init(elem &result) const { result = R->zero(); }
-  void clear(elem &result) const { /* do nothing */}
+  void clear(elem &result) const
+  { /* do nothing */
+  }
 
   void set_zero(elem &result) const { result = R->zero(); }
   void set(elem &result, elem a) const { result = a; }

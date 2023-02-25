@@ -51,6 +51,10 @@ class ARingGFFlint : public RingInterface
     {
       fq_zech_init2(&mValue, mContext);
     }
+    Element(const ARingGFFlint& R, const ElementType& value) : mContext(R.mContext)
+    {
+      R.init_set(mValue, value);
+    }
     ~Element() { fq_zech_clear(&mValue, mContext); }
 
    private:

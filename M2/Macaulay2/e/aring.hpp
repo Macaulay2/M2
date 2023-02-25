@@ -54,7 +54,61 @@ class RingInterface : public our_new_delete
 };  ///< inherit from this if the class is to be used as a template parameter
     /// for ConcreteRing
 
-class DummyRing : public RingInterface
+/**
+ * Note: ElementImpl has a protected destructor so that users cannot
+ * accidentally try to destroy an Element using an ElementImpl pointer.
+ */
+template <class ElementType>
+class ElementImpl
+{
+ protected:
+  ElementType mValue;
+  ElementImpl() = default;
+  ElementImpl(const ElementType &value) : mValue(value) {}
+  ElementImpl(ElementType &&value) : mValue(value) {}
+  ElementImpl(const ElementImpl &other) noexcept = default;
+  ElementImpl(ElementImpl &&other) noexcept = default;
+  ElementImpl &operator=(const ElementImpl &other) noexcept = default;
+  ElementImpl &operator=(ElementImpl &&other) noexcept = default;
+  ~ElementImpl() noexcept = default;
+
+ public:
+  operator const ElementType &() const { return mValue; }
+  operator ElementType &() { return mValue; }
+  const ElementType &value() const { return mValue; }
+  ElementType &value() { return mValue; }
+};
+
+/**
+ * An ARing class inheriting from this should provide the clear method
+ * as a static member function.
+ * This class will then provide a simple implementation of an Element class
+ */
+template <class ARing>
+class SimpleARing : public RingInterface
+{
+ public:
+  class Element : public ElementImpl<typename ARing::ElementType>
+  {
+    typedef typename ARing::ElementType ElementType;
+    typedef ElementImpl<ElementType> Impl;
+
+   public:
+    explicit Element(const ARing &ring)
+    {
+      // without the Impl::, the compiler can't figure out where mValue comes
+      // from
+      ring.init(Impl::mValue);
+    }
+    Element(const ARing &ring, const ElementType& other)
+    {
+      ring.init_set(Impl::mValue,other);
+    }
+    ~Element() { ARing::clear(Impl::mValue); }
+  };
+};
+
+class DummyRing : public SimpleARing<DummyRing>
 {
  public:
   const PolynomialRing *mOriginalRing;
@@ -122,7 +176,7 @@ class DummyRing : public RingInterface
     return 1;
   }
 
-  void clear(elem &result) const { result = 0; }
+  static void clear(elem &result) { result = 0; }
   void set_zero(elem &result) const { result = 0; }
   void copy(elem &result, const elem a) const { result = a; }
   void negate(elem &result, const elem a) const {};
@@ -163,56 +217,6 @@ class DummyRing : public RingInterface
 
   void random(ElementType &result) const { result = 0; }
   void swap(ElementType &a, ElementType &b) const { assert(false); };
-};
-
-/**
- * Note: ElementImpl has a protected destructor so that users cannot
- * accidentally try to destroy an Element using an ElementImpl pointer.
- */
-template <class ElementType>
-class ElementImpl
-{
- protected:
-  ElementType mValue;
-  ElementImpl() = default;
-  ElementImpl(const ElementType &value) : mValue(value) {}
-  ElementImpl(ElementType &&value) : mValue(value) {}
-  ElementImpl(const ElementImpl &other) = default;
-  ElementImpl(ElementImpl &&other) = default;
-  ElementImpl &operator=(const ElementImpl &other) = default;
-  ElementImpl &operator=(ElementImpl &&other) = default;
-  ~ElementImpl() = default;
-
- public:
-  operator const ElementType &() const { return mValue; }
-  operator ElementType &() { return mValue; }
-  const ElementType &value() const { return mValue; }
-  ElementType &value() { return mValue; }
-};
-
-/**
- * An ARing class inheriting from this should provide the clear method
- * as a static member function.
- * This class will then provide a simple implementation of an Element class
- */
-template <class ARing>
-class SimpleARing : public RingInterface
-{
- public:
-  class Element : public ElementImpl<typename ARing::ElementType>
-  {
-    typedef typename ARing::ElementType ElementType;
-    typedef ElementImpl<ElementType> Impl;
-
-   public:
-    explicit Element(const ARing &ring)
-    {
-      // without the Impl::, the compiler can't figure out where mValue comes
-      // from
-      ring.init(Impl::mValue);
-    }
-    ~Element() { ARing::clear(Impl::mValue); }
-  };
 };
 
 #  if 0

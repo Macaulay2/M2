@@ -59,6 +59,11 @@ class ARingTower : public RingInterface
         : ElementImpl(static_cast<ElementType>(nullptr)), R(_R)
     {
     }
+    Element(const ARingTower &_R, const ElementType& value)
+        : R(_R)
+    {
+      R.init_set(mValue,value);
+    }
     ~Element()
     {
       if (mValue) R.clear(mValue);
