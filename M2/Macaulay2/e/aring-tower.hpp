@@ -73,6 +73,28 @@ class ARingTower : public RingInterface
     const ARingTower &R;
   };
 
+  class ElementArray
+  {
+    const ARingTower &R;
+    const int mSize;
+    const std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARingTower &_R, size_t size)
+        : R(_R), mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < mSize; i++) mData[i] = nullptr;
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) R.clear(mData[i]);
+    }
+    ElementType &operator[](size_t idx) { return mData[idx]; }
+    const ElementType &operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
+
   typedef ElementType elem;
 
   //////////////////////////////

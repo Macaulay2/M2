@@ -11,7 +11,7 @@ class Z_mod;
 /**
  * \ingroup coeffrings
  */
-class CoefficientRingZZp : public our_new_delete
+class CoefficientRingZZp : public M2::SimpleARing<CoefficientRingZZp>
 {
   int p;
   int p1;  // p-1
@@ -36,13 +36,6 @@ class CoefficientRingZZp : public our_new_delete
   typedef Z_mod ring_type;
   typedef int elem;
   typedef elem ElementType;
-
-  class Element : public M2::ElementImpl<ElementType>, public our_new_delete
-  {
-   public:
-    explicit Element(const CoefficientRingZZp &ring) { ring.init(mValue); }
-    Element(const CoefficientRingZZp &ring, const ElementType &value) { ring.init_set(mValue, value); }
-  };
 
   typedef std::vector<elem> ElementContainerType;
 
@@ -83,7 +76,7 @@ class CoefficientRingZZp : public our_new_delete
   
   int to_int(int f) const { return exp_table[f]; }
   void init(elem &result) const {}
-  void clear(elem &result) const { /* nothing */}
+  static void clear(elem &result) { /* nothing */}
   void init_set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = zero; }
   void set(elem &result, elem a) const { result = a; }
@@ -205,6 +198,22 @@ class CoefficientRingR
     {
       ring.init_set(mValue, value);
     }
+  };
+
+  class ElementArray : public our_new_delete
+  {
+    ElementType *mData;
+   public:
+    ElementArray(const CoefficientRingR &ring, size_t size)
+        : mData(newarray(ElementType, size))
+    {
+      for (size_t i = 0; i < size; i++) ring.init(mData[i]);
+    }
+    ~ElementArray() { freemem(mData); }
+    ElementType &operator[](size_t idx) { return mData[idx]; }
+    const ElementType &operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData; }
+    const ElementType *data() const { return mData; }
   };
 
   CoefficientRingR(const Ring *R0) : R(R0) {}

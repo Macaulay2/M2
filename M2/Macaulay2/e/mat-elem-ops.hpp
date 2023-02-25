@@ -3,6 +3,8 @@
 #ifndef _mat_elementary_ops_hpp_
 #define _mat_elementary_ops_hpp_
 
+#include <memory>
+
 template <typename MT>
 class MatElementaryOps;
 template <typename RT>
@@ -279,7 +281,7 @@ class MatElementaryOps<DMat<RT> >
     // We copy one row to another location for each cycle in 'perm' of length >
     // 1.
     size_t nrows_to_permute = perm->len;
-    bool* done = newarray_atomic(bool, nrows_to_permute);
+    std::unique_ptr<bool[]> done(new bool[nrows_to_permute]);
     for (size_t i = 0; i < nrows_to_permute; i++) done[i] = true;
     for (size_t i = 0; i < nrows_to_permute; i++)
       {
@@ -287,13 +289,11 @@ class MatElementaryOps<DMat<RT> >
         if (!done[j])
           {
             ERROR("expected permutation");
-            freemem(done);
             return false;
           }
         done[j] = false;
       }
-    ElementType* tmp = newarray_clear(ElementType, mat.numColumns());
-    for (size_t c = 0; c < mat.numColumns(); c++) mat.ring().init(tmp[c]);
+    typename RT::ElementArray tmp(mat.ring(), mat.numColumns());
     size_t next = 0;
 
     while (next < nrows_to_permute)
@@ -307,7 +307,7 @@ class MatElementaryOps<DMat<RT> >
             // store row 'next' into tmp
             auto loc1 = mat.rowBegin(start_row + next);
             auto end1 = mat.rowEnd(start_row + next);
-            copy_from_iter(mat.ring(), tmp, tmp + mat.numColumns(), loc1);
+            copy_from_iter(mat.ring(), tmp.data(), tmp.data()+mat.numColumns(), loc1);
 
             size_t r = next;
             for (;;)
@@ -324,13 +324,11 @@ class MatElementaryOps<DMat<RT> >
                 r = perm->array[r];
               }
             // Now copy tmp back
-            copy_from_iter(mat.ring(), loc1, end1, tmp);
+            // TODO this is even more evil than the above
+            copy_from_iter(mat.ring(), loc1, end1, tmp.data());
             done[r] = true;
           }
       }
-    for (size_t c = 0; c < mat.numColumns(); c++) mat.ring().clear(tmp[c]);
-    freemem(tmp);
-    freemem(done);
     return true;
   }
 
@@ -339,7 +337,7 @@ class MatElementaryOps<DMat<RT> >
     // We copy one column to another location for each cycle in 'perm' of length
     // > 1.
     size_t ncols_to_permute = perm->len;
-    bool* done = newarray_atomic(bool, ncols_to_permute);
+    std::unique_ptr<bool[]> done(new bool[ncols_to_permute]);
     for (size_t i = 0; i < ncols_to_permute; i++) done[i] = true;
     for (size_t i = 0; i < ncols_to_permute; i++)
       {
@@ -347,13 +345,11 @@ class MatElementaryOps<DMat<RT> >
         if (!done[j])
           {
             ERROR("expected permutation");
-            freemem(done);
             return false;
           }
         done[j] = false;
       }
-    ElementType* tmp = newarray_clear(ElementType, mat.numRows());
-    for (size_t r = 0; r < mat.numRows(); r++) mat.ring().init(tmp[r]);
+    typename RT::ElementArray tmp(mat.ring(), mat.numRows());
     size_t next = 0;
 
     while (next < ncols_to_permute)
@@ -367,7 +363,7 @@ class MatElementaryOps<DMat<RT> >
             auto loc1 = mat.columnBegin(start_col + next);
             auto end1 = mat.columnEnd(start_col + next);
             // store col 'next' into tmp
-            copy_from_iter(mat.ring(), tmp, tmp + mat.numRows(), loc1);
+            copy_from_iter(mat.ring(), tmp.data(), tmp.data() + mat.numRows(), loc1);
 
             size_t r = next;
             for (;;)
@@ -385,13 +381,10 @@ class MatElementaryOps<DMat<RT> >
                 r = perm->array[r];
               }
             // Now copy tmp back
-            copy_from_iter(mat.ring(), loc1, end1, tmp);
+            copy_from_iter(mat.ring(), loc1, end1, tmp.data());
             done[r] = true;
           }
       }
-    for (size_t r = 0; r < mat.numRows(); r++) mat.ring().clear(tmp[r]);
-    freemem(tmp);
-    freemem(done);
     return true;
   }
 

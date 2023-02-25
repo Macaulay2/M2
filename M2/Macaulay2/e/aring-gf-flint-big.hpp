@@ -72,6 +72,28 @@ class ARingGFFlintBig : public RingInterface
     const fq_nmod_ctx_struct* mContext;
   };
 
+  class ElementArray
+  {
+    const fq_nmod_ctx_struct* mContext;
+    const int mSize;
+    std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARingGFFlintBig& R, size_t size)
+        : mContext(R.mContext), mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < mSize; i++) fq_nmod_init2(&mData[i], mContext);
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) fq_nmod_clear(&mData[i], mContext);
+    }
+    ElementType& operator[](size_t idx) { return mData[idx]; }
+    const ElementType& operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
+
   ARingGFFlintBig(const PolynomialRing& R, const ring_elem a);
 
   ~ARingGFFlintBig();

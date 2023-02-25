@@ -3,7 +3,8 @@
 #ifndef _aring_hpp_
 #define _aring_hpp_
 
-#include <assert.h>
+#include <cassert>
+#include <memory>
 #include "ringelem.hpp"
 #include "buffer.hpp"
 
@@ -105,6 +106,27 @@ class SimpleARing : public RingInterface
       ring.init_set(Impl::mValue,other);
     }
     ~Element() { ARing::clear(Impl::mValue); }
+  };
+  class ElementArray
+  {
+    typedef typename ARing::ElementType ElementType;
+    const size_t mSize;
+    std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARing &ring, size_t size)
+        : mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < size; i++) ring.init(mData[i]);
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) ARing::clear(mData[i]);
+    }
+    ElementType &operator[](size_t idx) { return mData[idx]; }
+    const ElementType &operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
   };
 };
 

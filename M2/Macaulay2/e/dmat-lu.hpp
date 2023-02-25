@@ -329,13 +329,10 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
 
   typename RingType::Element tmp(ring()), tmp2(ring());
 
-  ElementType* b = newarray(ElementType, LU.numRows());
-  ElementType* y = newarray(ElementType, rk);
-  ElementType* x = newarray(ElementType, LU.numColumns());
-
-  for (size_t i = 0; i < LU.numRows(); i++) ring().init(b[i]);
-  for (size_t i = 0; i < rk; i++) ring().init(y[i]);
-  for (size_t i = 0; i < LU.numColumns(); i++) ring().init(x[i]);
+  typedef typename RingType::ElementArray ElementArray;
+  ElementArray b(ring(), LU.numRows());
+  ElementArray y(ring(), rk);
+  ElementArray x(ring(), LU.numColumns());
 
   X.resize(LU.numColumns(), B.numColumns());
 
@@ -377,10 +374,6 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
             }
           if (!ring().is_zero(tmp))
             {
-              // Cleanup, and return false
-              freemem(b);
-              freemem(y);
-              freemem(x);
               // printf("returning false\n");
               return false;
             }
@@ -415,12 +408,6 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
       /// printf("%s\n", o.str());
     }
 
-  for (size_t i = 0; i < LU.numRows(); i++) ring().clear(b[i]);
-  for (size_t i = 0; i < rk; i++) ring().clear(y[i]);
-  for (size_t i = 0; i < LU.numColumns(); i++) ring().clear(x[i]);
-  freemem(b);
-  freemem(y);
-  freemem(x);
   return true;  // The system seems to have been consistent
 }
 
