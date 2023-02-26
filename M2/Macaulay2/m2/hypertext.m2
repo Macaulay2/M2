@@ -252,6 +252,7 @@ new HREF from List      := (HREF, x) -> (
     then x#0 else error "HREF expected URL to be a string or a sequence of 2 strings";
     if x#?1 then prepend(url, drop(x, 1)) else {url})
 
+new OL from VisibleList := 
 new UL from VisibleList := (T, x) -> apply(nonnull x, e -> (
 	if class e === TO then LI{TOH{e#0}}
 	else if instance(e, LI) or instance(e,Option) or instance(e,OptionTable) then e
