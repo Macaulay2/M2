@@ -250,8 +250,73 @@ end;
 restart
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
 needsPackage "HolonomicSystems"
+needsPackage "Polyhedra"
 check HolonomicSystems
 viewHelp cssExpts
 viewHelp Dmodules
 
 
+
+A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
+beta = {1,0,0}
+I = gkz(A,beta)
+w = {1,1,1,1,0}
+--help gbw
+
+S = QQ[x]
+W = makeWeylAlgebra S;
+I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
+w = {1}
+
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
+--Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
+nonpositiveWeightGens = method()
+nonpositiveWeightGens(Ideal, List) := List => (I,w) ->( 
+    
+    )
+
+
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
+--Output: Cone containing support of the Nilsson cone for css of I with weight w 
+nilssonSupportCone = method()
+nilssonSupportCone(Ideal, List) := Cone => (I,w) ->(
+    n := (numgens ring I)//2;
+    if length w != n then error "Expected a weight vector of length (numgens ring I)//2";
+    fw := flatten{-w,w};
+    G := flatten entries gens gbw(I,fw);
+    HS := 0;
+    maxW := 0;
+    scan(G,g->( 
+	    --lead term of g:
+	    LTg := inw(g,fw);
+	    newWcond := (matrix{(exponents LTg)#0})*(transpose matrix{fw});
+	    --remaining terms of g:	    
+	    RTg := select(terms g, i-> i !=LTg);
+	    scan(RTg, m->(
+    	    	   newHSeq := matrix{-drop(flatten exponents m,-n)+drop(flatten exponents m,n)};
+		   if HS == 0 then HS = newHSeq else HS = HS||newHSeq;
+	    	   if maxW == 0 then maxW = newWcond else maxW = maxW||newWcond;
+			));
+    		))
+	tailCone polar polyhedronFromHData(HS, maxW)
+	)
+
+--Input: cone for support of Nilsson series, weight k
+--Output: lattice points in cone of weight \leq k, as a List of Lists
+nilssonSupportTruncated = method()
+nilssonSupportTruncated(Cone, List, ZZ) := List => (C,w,k)->(
+    HB = hilbertBasis C;
+    wDotHB = flatten apply(HB,v-> flatten entries (matrix{w}*v));
+    L = toList apply(length HB,i-> 0)..apply(length HB,i-> (k//(wDotHB#i))-1)
+-- toList apply(L,l-> matrix{w}*(l#0*HB_0+l#1*HB_1))
+--K = apply(L,l->(sum apply(length HB,h-> (l#h)*(HB#h))))
+--drop(K, >= k+1 )
+--***STILL working here***
+    )
+
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
+--Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
+nilssonStart = method()
+nilssonStart(Ideal, List) := List => (I,w)->( 
+    
+    )
