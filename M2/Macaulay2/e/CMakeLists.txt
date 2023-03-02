@@ -281,6 +281,7 @@ set(SRCLIST
   ExponentList
   weylalg
   # Faugère's F4 Algorithm
+  f4/new-f4-types
   f4/f4-computation
   f4/f4-m2-interface
   f4/f4-mem
@@ -413,6 +414,7 @@ if(BUILD_TESTING)
     unit-tests/M2mem-replacement.c
     unit-tests/M2mem-replacement.h
 
+    unit-tests/NewF4Test.cpp
     unit-tests/MonoidTest.cpp
 
     unit-tests/ARingTest.hpp
