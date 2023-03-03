@@ -47,6 +47,12 @@ class ARingTower : public RingInterface
 
   static const RingID ringID = ring_tower_ZZp;
   typedef ARingPolynomial ElementType;
+  /**
+   * \brief A wrapper class for ElementType
+   *
+   * This keeps a pointer to the ARingTower object as it's needed to
+   * implement the destructor
+   */
   class Element : public ElementImpl<ElementType>
   {
    public:

@@ -56,7 +56,13 @@ class RingInterface : public our_new_delete
     /// for ConcreteRing
 
 /**
- * Note: ElementImpl has a protected destructor so that users cannot
+ * \brief A base class for Element
+ *
+ * \tparam ElementType the raw type to be wrapped
+ *
+ * This class template serves as a base class for the Element classes in the various ARing types,
+ * It only implements the functions to convert to an ElementType.
+ * This class has a protected destructor so that users cannot
  * accidentally try to destroy an Element using an ElementImpl pointer.
  */
 template <class ElementType>
@@ -81,14 +87,21 @@ class ElementImpl
 };
 
 /**
+ * \ingroup rings
+ *
+ * \brief A base class for simple ARings
+ *
  * An ARing class inheriting from this should provide the clear method
- * as a static member function.
- * This class will then provide a simple implementation of an Element class
+ * as a static member function. This class will then provide a simple
+ * implementation of an Element class
  */
 template <class ARing>
 class SimpleARing : public RingInterface
 {
  public:
+  /**
+   * \brief A wrapper class for ElementType
+   */
   class Element : public ElementImpl<typename ARing::ElementType>
   {
     typedef typename ARing::ElementType ElementType;
@@ -107,6 +120,12 @@ class SimpleARing : public RingInterface
     }
     ~Element() { ARing::clear(Impl::mValue); }
   };
+  /**
+   * \brief A wrapper for an array of ElementType
+   *
+   * This class is intended to replace dynamically allocated arrays of ElementType.
+   * In particular, this will correctly clear the data from the ring upon destruction
+   */
   class ElementArray
   {
     typedef typename ARing::ElementType ElementType;

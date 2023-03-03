@@ -37,6 +37,12 @@ class ARingGFFlint : public RingInterface
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
 
+  /**
+   * \brief A wrapper class for ElementType
+   *
+   * This keeps a pointer to the fq_zech_ctx_struct as it's needed to
+   * implement the destructor
+   */
   class Element : public ElementImpl<ElementType>
   {
    public:
