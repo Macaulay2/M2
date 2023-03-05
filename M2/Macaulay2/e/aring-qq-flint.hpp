@@ -234,9 +234,17 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
     fmpq_set_mpq(&result, a.get_mpq());
   }
 
-  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  /** @brief returns a read only view into the ring_elem
+   *  The return value of this function should not be modified,
+   *  since the contents point directly into the input ring_elem.
+   */
+  const ElementType from_ring_elem_const(const ring_elem& a) const
   {
-    return *reinterpret_cast<const fmpq*>(a.get_mpq());
+    mpq_srcptr a1 = a.get_mpq();
+    fmpq result;
+    result.num = PTR_TO_COEFF(mpq_numref(a1));
+    result.den = PTR_TO_COEFF(mpq_denref(a1));
+    return result;
   }
 
   /** @} */

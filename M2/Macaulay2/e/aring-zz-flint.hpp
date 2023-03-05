@@ -233,9 +233,9 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
     fmpz_set_mpz(&result, a.get_mpz());
   }
 
-  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  ElementType from_ring_elem_const(const ring_elem& a) const
   {
-    return *reinterpret_cast<const fmpz*>(a.get_mpz());
+    return PTR_TO_COEFF(a.get_mpz());
   }
 
   /** @} */
