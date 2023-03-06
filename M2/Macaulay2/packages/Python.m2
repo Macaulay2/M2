@@ -83,8 +83,8 @@ toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
 PythonObject.synonym = "python object"
 PythonObject#AfterPrint = x -> (
      t := toString objectType x;
-     t = replace("<([a-z]+) '(.*)'>","of \\1 \\2",t);
-     "PythonObject " | t)
+     t = replace("<([a-z]+) '(.*)'>"," of \\1 \\2",t);
+     (PythonObject, t))
 
 pythonNone = getPythonNone()
 
