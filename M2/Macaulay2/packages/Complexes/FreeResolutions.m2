@@ -359,6 +359,10 @@ resolutionInEngine = (opts, M) -> (
         M.cache.ResolutionObject.Strategy = 2;
         resolutionInEngine2(opts ++ {Strategy => 2}, M)
         )
+    else if isWeylAlgebra R and isHomogeneous M then (
+        M.cache.ResolutionObject.Strategy = 3;
+        resolutionInEngine3(opts ++ {Strategy => 3}, M)
+        )
     else (
         M.cache.ResolutionObject.Strategy = 1;
         resolutionInEngine1(opts ++ {Strategy => 1}, M)
@@ -438,12 +442,15 @@ resolutionBySyzygies = (opts, M) -> (
                 lengthlimit = # gens(R, CoefficientRing => K);
                 if K === ZZ then lengthlimit = lengthlimit + 1;
                 )
-            else if hasNoQuotients R then (
+            else if hasNoQuotients R and not isSkewCommutative R then (
                 K = ultimate(coefficientRing, R);
                 lengthlimit = # gens(R, CoefficientRing => K);
                 if K === ZZ then lengthlimit = lengthlimit + 2; -- +1 if we can change the first matrix.
                 )
-            else error "require LengthLimit to be finite";
+            else (
+                remove(M.cache, symbol ResolutionObject);
+                error "require LengthLimit to be finite";
+                );
             );
         m := RO.SyzygyList#(#RO.SyzygyList-1);
         for i from #RO.SyzygyList to lengthlimit-1 do (
@@ -687,40 +694,6 @@ F2 = freeResolution(M, LengthLimit => 2) -- BUG? Doesn't seem to finish.
 
 
 -- XXXX
-
-
--- Weyl algebra
-restart
-needsPackage "Complexes"
-S = QQ[x,y,Dx,Dy,h, WeylAlgebra => {{x,Dx}, {y,Dy}, h}]
-M = coker matrix{{x*Dx, y*Dx}}
-isHomogeneous M
-gbTrace=1
-res(M, Strategy => 2) -- fails
-res M --works
-
-
-F = freeResolution(M) -- BUG.  
-F = freeResolution(M, Strategy => 2) -- works
-
-
--- Over an inexact field
-restart
-debug loadPackage("Complexes")
-gbTrace=1
-kk = RR_53
-kk = ZZ/101
-M = coker random(kk^3, kk^2)
-F = freeResolution M
-g = augmentationMap F
-source g == F
-target g == complex M
-isWellDefined g
-coker g == 0
-ker g == 0 -- since this is an isomorphism
-
-res M
-
 
 restart
 debug loadPackage("Complexes")

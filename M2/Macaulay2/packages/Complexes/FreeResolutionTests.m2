@@ -349,6 +349,18 @@ TEST ///
   assert isWellDefined g
   assert(coker g == 0)
   assert(ker g == 0) -- since this is an isomorphism
+  
+  -- Over an inexact field
+  kk = RR_53
+  M = coker random(kk^3, kk^2)
+  F = freeResolution M
+  assert isWellDefined F
+  g = augmentationMap F
+  assert(source g == F)
+  assert(target g == complex M)
+  assert isWellDefined g
+  assert(coker g == 0)
+  assert(ker g == 0) -- since this is an isomorphism
 ///
 
 
@@ -357,10 +369,145 @@ TEST ///
   restart
   needsPackage "Complexes"
 *-  
+  -- Weyl algebras
+  S = QQ[x,y,Dx,Dy, WeylAlgebra => {{x,Dx}, {y,Dy}}, Degrees => {1, 1, -1, -1}]
+  I = ideal(x*Dx, y*Dx)
+  assert isHomogeneous I
+  gbTrace=1
+  F = freeResolution comodule I
+  assert isWellDefined F
+  assert isHomogeneous F
+
+  I = ideal I_*
+  freeResolution(comodule I, Strategy => "Syzygies")
+
+  -- Weyl algebras
+  S = QQ[x,y,Dx,Dy, WeylAlgebra => {{x,Dx}, {y,Dy}}]
+  I = ideal(x*Dy, y*Dx)
+  assert not isHomogeneous I
+  gbTrace=1
+  F = freeResolution comodule I
+  assert isWellDefined F
+  assert not isHomogeneous F
+  HHF = prune HH F
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+
+  -- Weyl algebras
+  S = QQ[x,y,Dx,Dy, h, WeylAlgebra => {{x,Dx}, {y,Dy}, h}]
+  I = ideal(x*Dy, y*Dx)
+  assert isHomogeneous I
+  gbTrace=1
+
+  I = ideal I_*
+  F = freeResolution comodule I
   
+  I = ideal I_*
+  F3 = freeResolution(comodule I, Strategy => 3)
+  assert isWellDefined F3
+  assert isHomogeneous F3
+
+  I = ideal I_*
+  F2 = freeResolution(comodule I, Strategy => 2)
+  assert isWellDefined F2
+  assert isHomogeneous F2
+  assert(betti F2 === betti F3)
+
+  I = ideal I_*
+  Fs = freeResolution(comodule I, Strategy => "Syzygies")
+  assert isWellDefined Fs
+  assert isHomogeneous Fs
+  assert(betti F2 === betti Fs)
+  
+  I = ideal I_*
+  assert try (freeResolution(comodule I, Strategy => 0); false) else true
+
+  I = ideal I_*
+  assert try (freeResolution(comodule I, Strategy => 1); false) else true
 ///
 
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  -- Exterior algebras
+  S = QQ[a,b,c,d, SkewCommutative => true]
+  I = ideal(a*b-c*d, b*d)
+  assert isHomogeneous I
+  gbTrace=1
+  I = ideal I_*
+  F2 = freeResolution(comodule I, LengthLimit => 5)
+  assert isWellDefined F2
+  assert isHomogeneous F2
+  HHF = prune HH canonicalTruncation(F2, 0, 4)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
 
+  I = ideal I_*
+  F3 = freeResolution(comodule I, LengthLimit => 5, Strategy => 3)
+  assert isWellDefined F3
+  assert isHomogeneous F3
+  HHF = prune HH canonicalTruncation(F3, 0, 4)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+  assert(betti F2 === betti F3)
+
+  I = ideal I_*
+  Fs = freeResolution(comodule I, LengthLimit => 5, Strategy => "Syzygies")
+  betti Fs === betti F2
+
+  I = ideal I_*
+  try(freeResolution(comodule I, Strategy => "Syzygies"); false) else true
+  Fs = freeResolution(comodule I, LengthLimit => 5, Strategy => "Syzygies")
+  assert(betti F2 === betti Fs)
+  
+  I = ideal I_*
+  assert try (freeResolution(comodule I, Strategy => 0); false) else true
+
+  I = ideal I_*
+  assert try (freeResolution(comodule I, Strategy => 1); false) else true
+  
+  I = ideal(a*b*c-a*d)
+  F = freeResolution(comodule I, LengthLimit => 5)
+  assert isWellDefined F
+  assert not isHomogeneous F
+  HHF = prune HH canonicalTruncation(F, 0, 4)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+
+  mF = minimize F
+  assert isWellDefined mF
+  HHmF = prune HH canonicalTruncation(mF, 0, 4)
+  assert(HHmF == HHF)
+
+  I = ideal(a*b*c-a*d)
+  assert try(freeResolution(comodule I, LengthLimit => 5, Strategy => "Homogenization");false) else true
+  -- possible TODO: would be nice if "Homogenization" handled skew commuting variables
+
+  -- Direct homogenization works:
+  Sh = S[h, Join => false]
+  J = ideal homogenize(gens sub(I, Sh), h)
+  F = freeResolution(comodule J, LengthLimit => 5)
+  assert isWellDefined F
+  assert isHomogeneous F
+  HHF = prune HH canonicalTruncation(F, 0, 4)
+  assert(HHF_0 == comodule J)
+  assert(length HHF == 0)
+
+  Sh1 = first flattenRing Sh  
+  J1 = sub(J, Sh1)
+  F = freeResolution(comodule J1, LengthLimit => 5)
+  isWellDefined F
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  -- Towers: start here 7 March 2023.
+///
 
 
 
