@@ -5,7 +5,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "f4/new-f4-types.hpp"
+#include "gb-f4/MonomialHashTable.hpp"
 
 TEST(NewF4, hashstats)
 {
@@ -14,7 +14,6 @@ TEST(NewF4, hashstats)
   stats.nfind_or_insert++;
   stats.dump();
 }
-
 
 class TestMonoid
 {

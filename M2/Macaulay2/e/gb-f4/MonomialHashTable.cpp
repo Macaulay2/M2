@@ -1,4 +1,4 @@
-#include "new-f4-types.hpp"
+#include "MonomialHashTable.hpp"
 
 namespace newf4 {
 

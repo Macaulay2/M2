@@ -48,7 +48,7 @@ INTERFACE = \
 	schreyer-resolution/res-schreyer-frame \
 	schreyer-resolution/res-f4 \
 	schreyer-resolution/res-f4-computation \
-	f4/new-f4-types \
+	gb-f4/MonomialHashTable \
 	f4/f4 \
 	f4/f4-mem \
 	f4/f4-monlookup \
