@@ -15,12 +15,13 @@ TEST(NewF4, hashstats)
   stats.dump();
 }
 
-class TestMonoid
-{
-};
-
 TEST(NewF4, hashtable)
 {
-  TestMonoid M;
-  newf4::MonomialHashTable<TestMonoid> hashtab(M);
+  newf4::MonomialHashTable hashtab;
+  std::vector<int32_t> mdata{5, 1, 2, 2, 3};
+  newf4::Monomial m(mdata);
+  newf4::MonomialIndex m1 = hashtab.find(m, 7342643);
+  newf4::MonomialIndex m2 = hashtab.find(m, 7342643);
+  std::cout << "m1 = " << m1 << std::endl;
+  EXPECT_EQ(m1, m2);
 }
