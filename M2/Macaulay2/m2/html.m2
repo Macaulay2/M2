@@ -57,7 +57,7 @@ defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "tex
 defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX(),
     SCRIPT {
 	"type" => "text/javascript",
-	"src" => getStyleFile "highlight.js",
+	"src" => getStyleFile "prism.js",
 	""
 	}
     }
