@@ -16,6 +16,13 @@ namespace newf4 {
   public:
     Monomial(int32_t* data) : mData(data) {}
     Monomial(std::vector<int32_t>& data) : mData(data.data()) {}
+    Monomial(std::vector<int32_t> data, MemoryBlock& block)
+    {
+      Monomial m(data.data());
+      auto rng = block.allocateArray<int32_t>(m.size());
+      mData = rng.first;
+      std::copy(m.begin(), m.end(), mData);
+    }
     Monomial(const Monomial&m, MemoryBlock& block)
     {
       auto rng = block.allocateArray<int32_t>(m.size());
@@ -76,15 +83,15 @@ namespace newf4 {
     
   struct HashTableStats
   {
-    unsigned long nfind_or_insert;
-    unsigned long nclashes;
+    unsigned long n_calls_find;
+    unsigned long n_clashes;
     unsigned long max_run_length;
     unsigned long monequal_count;
     unsigned long monequal_fails;
 
     HashTableStats()
-      : nfind_or_insert(0),
-        nclashes(0),
+      : n_calls_find(0),
+        n_clashes(0),
         max_run_length(0),
         monequal_count(0),
         monequal_fails(0)
@@ -126,10 +133,11 @@ namespace newf4 {
     auto size() const -> size_t { return mMonomialPointers.size() - 1; } // -1 because 0 index is unused.
 
     /// stats and debugging information.
-
+    void dump() const;
+    void dumpBuckets() const;    
   private:
+    void reInsert(MonomialIndex i);
     void grow();
-    void insert(const Monomial& m, HashInt hashval);
   private:
     // Backing storage
     MemoryBlock mMonomialSpace;
