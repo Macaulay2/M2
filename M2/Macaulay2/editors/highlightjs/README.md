@@ -2,8 +2,9 @@ Macaulay2 in highlight.js
 =========================
 
 [highlight.js](https://highlightjs.org/) is a JavaScript syntax highlighter
-with language auto-detection and zero dependencies.  It is used for syntax
-highlighting examples in the Macaulay2 html documentation.
+with language auto-detection and zero dependencies.  It was used for syntax
+highlighting examples in the Macaulay2 html documentation in versions 1.20
+and 1.21, but has since been replaced with [Prism](https://prismjs.com/).
 
 Downloading
 -----------
@@ -48,7 +49,9 @@ Then include your Macaulay2 code:
 </pre>
 ```
 
-Alternatively, you can use the copy of `highlight.js` that is shipped with Macaulay2 in the `Style` package.  It bundles all of the above into a single file, and so you need only one line:
+Alternatively, you can use the copy of `highlight.js` that was shipped
+in the `Style` package in Macaulay2 1.20 and 1.21.  It bundles all of
+the above into a single file, and so you need only one line:
 
 ```html
 <script type="text/javascript" src="/path/to/Macaulay2/Style/highlight.js"></script>
@@ -92,3 +95,21 @@ following files to your project:
 * `build/highlight.min.js`
 * `build/languages/macaulay2.min.js`
 * `build/styles/default.min.css` (or any of the other styles in `build/styles`)
+
+Alternatively, you can build the minimal `highlight.js` that was
+formerly included in the `Style` package using only the Macaulay2
+source repository.
+
+Using the autotools build, run:
+
+```
+make -C Macaulay2/editors highlightjs/highlight.js
+```
+
+Using the CMake build, run the following:
+
+```
+ninja M2-highlightjs
+```
+
+Both build systems will save the file in `Macaulay2/editors/highlightjs`.
