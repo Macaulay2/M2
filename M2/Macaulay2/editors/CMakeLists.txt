@@ -62,13 +62,20 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)
 
 ################################################################################
-## Generating highlight.js for syntax highlighting in the html documentation
+## Generating prism.js/highlight.js for syntax highlighting in the html
+## documentation
 
-if(NOT NPM)
-  message(WARNING "npm is missing; html docs will not have syntax highlighting")
-  file(TOUCH highlightjs/highlight.js)
-  return()
-endif()
+set(PRISM_DIR ${CMAKE_CURRENT_BINARY_DIR}/prism)
+file(MAKE_DIRECTORY PRISM_DIR)
+file(COPY prism/ DESTINATION ${PRISM_DIR}
+  FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
+
+add_custom_target(M2-prism ALL DEPENDS prism/prism.js)
+add_custom_command(OUTPUT prism/prism.js
+  COMMENT "Generating prism.js syntax file"
+  COMMAND ${NPM} install && ${NPM} run build
+  WORKING_DIRECTORY ${PRISM_DIR}
+  DEPENDS prism/macaulay2.js)
 
 set(HIGHLIGHTJS_DIR ${CMAKE_CURRENT_BINARY_DIR}/highlightjs)
 file(MAKE_DIRECTORY HIGHLIGHTJS_DIR)
