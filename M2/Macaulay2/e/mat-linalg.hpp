@@ -336,8 +336,7 @@ void mult(const DMat<RT>& A, const DMat<RT>& B, DMat<RT>& result_product)
 
   ElementType* result = result_product.array();
 
-  ElementType tmp;
-  A.ring().init(tmp);
+  typename RT::Element tmp(A.ring());
   // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
@@ -355,7 +354,6 @@ void mult(const DMat<RT>& A, const DMat<RT>& B, DMat<RT>& result_product)
           }
         result++;
       }
-  A.ring().clear(tmp);
 }
 
 template <typename RT>
@@ -378,8 +376,7 @@ void subtractMultipleTo(DMat<RT>& C, const DMat<RT>& A, const DMat<RT>& B)
 
   ElementType* result = C.array();
 
-  ElementType tmp;
-  A.ring().init(tmp);
+  typename RT::Element tmp(A.ring());
   // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
@@ -397,7 +394,6 @@ void subtractMultipleTo(DMat<RT>& C, const DMat<RT>& A, const DMat<RT>& B)
           }
         result++;
       }
-  A.ring().clear(tmp);
 }
 
 // Note: this default version only works for fields.  Any other rings
@@ -713,11 +709,9 @@ inline void determinant(const DMatZZ& A, M2::ARingZZ::ElementType& result_det)
 
 inline bool inverse(const DMatZZ& A, DMatZZ& result_inv)
 {
-  DMatZZ::ElementType den;
-  A.ring().init(den);
-  bool result = fmpz_mat_inv(result_inv.fmpz_mat(), &den, A.fmpz_mat());
-  if (!fmpz_is_pm1(&den)) result = false;
-  A.ring().clear(den);
+  M2::ARingZZ::Element den(A.ring());
+  bool result = fmpz_mat_inv(result_inv.fmpz_mat(), &den.value(), A.fmpz_mat());
+  if (!fmpz_is_pm1(&den.value())) result = false;
   return result;
 }
 
@@ -737,11 +731,9 @@ inline size_t nullSpace(const DMatZZ& A, DMatZZ& result_nullspace)
 
 inline bool solveLinear(const DMatZZ& A, const DMatZZ& B, DMatZZ& X)
 {
-  DMatZZ::ElementType den;
-  A.ring().init(den);
-  bool result = fmpz_mat_solve(X.fmpz_mat(), &den, B.fmpz_mat(), A.fmpz_mat());
-  if (!fmpz_is_pm1(&den)) result = false;
-  A.ring().clear(den);
+  M2::ARingZZ::Element den(A.ring());
+  bool result = fmpz_mat_solve(X.fmpz_mat(), &den.value(), B.fmpz_mat(), A.fmpz_mat());
+  if (!fmpz_is_pm1(&den.value())) result = false;
   return result;
 }
 

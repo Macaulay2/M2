@@ -206,7 +206,6 @@ NAMES_H = \
 	f4/memblock \
 	ExponentVector \
 	VectorArithmetic \
-	ARingElem \
 	MemoryBlock \
 	NCAlgebras/Range \
 	ringelem \

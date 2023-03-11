@@ -19,7 +19,7 @@ namespace M2 {
    @brief wrapper for the mpz_struct integer representation
 */
 
-class ARingZZGMP : public RingInterface
+class ARingZZGMP : public SimpleARing<ARingZZGMP>
 {
  public:
   static const RingID ringID = ring_ZZ;
@@ -75,7 +75,8 @@ class ARingZZGMP : public RingInterface
   }
 
   void init(ElementType& result) const { mpz_init(&result); }
-  void clear(ElementType& result) const { mpz_clear(&result); }
+  static void clear(ElementType& result) { mpz_clear(&result); }
+
   void set(ElementType& result, const ElementType& a) const
   {
     mpz_set(&result, &a);
@@ -226,6 +227,11 @@ class ARingZZGMP : public RingInterface
   {
     const ElementType* t = a.get_mpz();
     mpz_set(&result, t);
+  }
+
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_mpz();
   }
 
   /** @} */

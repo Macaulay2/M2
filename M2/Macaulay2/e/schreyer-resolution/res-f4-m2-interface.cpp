@@ -100,12 +100,8 @@ void ResGausserQQ::from_ring_elem(CoefficientVector& result,
 {
   const M2::ARingZZGMP* Z = globalZZ->get_ARing();
   auto& elems = coefficientVector(result);
-  M2::ARingZZGMP::ElementType numer1;
-  M2::ARingZZGMP::ElementType denom1;
-  Z->init(numer1);
-  Z->from_ring_elem(numer1, numer);
-  Z->init(denom1);
-  Z->from_ring_elem(denom1, denom);
+  const M2::ARingZZGMP::ElementType& numer1 = Z->from_ring_elem_const(numer);
+  const M2::ARingZZGMP::ElementType& denom1 = Z->from_ring_elem_const(denom);
   bool isunit = Z->is_equal(numer1, denom1);
   mpq_t c;
   mpq_init(c);
@@ -118,8 +114,6 @@ void ResGausserQQ::from_ring_elem(CoefficientVector& result,
   b.mDenominatorSize = (isunit ? 0 : 1);
   elems.push_back(b);
   mpq_clear(c);
-  mpz_clear(&numer1);
-  mpz_clear(&denom1);
 }
 
 ////////////////////////////////////
@@ -171,12 +165,8 @@ void ResGausserQQHybrid::from_ring_elem(CoefficientVector& result,
   //  std::cout << "creating element..." << std::flush;
   const M2::ARingZZGMP* Z = globalZZ->get_ARing();
   auto& elems = coefficientVector(result);
-  M2::ARingZZGMP::ElementType numer1;
-  M2::ARingZZGMP::ElementType denom1;
-  Z->init(numer1);
-  Z->from_ring_elem(numer1, numer);
-  Z->init(denom1);
-  Z->from_ring_elem(denom1, denom);
+  const M2::ARingZZGMP::ElementType& numer1 = Z->from_ring_elem_const(numer);
+  const M2::ARingZZGMP::ElementType& denom1 = Z->from_ring_elem_const(denom);
   bool isunit = Z->is_equal(numer1, denom1);
   mpq_t c;
   mpq_init(c);
@@ -191,8 +181,6 @@ void ResGausserQQHybrid::from_ring_elem(CoefficientVector& result,
   elems.emplace_back(std::move(b));
 
   mpq_clear(c);
-  mpz_clear(&numer1);
-  mpz_clear(&denom1);
   //  out(std::cout, result, elems.size()-1);
   //  std::cout << " done" << std::endl;
 }

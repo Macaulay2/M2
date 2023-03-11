@@ -26,7 +26,7 @@ namespace M2 {
    @brief wrapper for the flint fmpz_t integer representation
 */
 
-class ARingZZ : public RingInterface
+class ARingZZ : public SimpleARing<ARingZZ>
 {
  public:
   static const RingID ringID = ring_ZZFlint;
@@ -82,7 +82,7 @@ class ARingZZ : public RingInterface
   }
 
   void init(ElementType& result) const { fmpz_init(&result); }
-  void clear(ElementType& result) const { fmpz_clear(&result); }
+  static void clear(ElementType& result) { fmpz_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     fmpz_set(&result, &a);
@@ -231,6 +231,11 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
     fmpz_set_mpz(&result, a.get_mpz());
+  }
+
+  ElementType from_ring_elem_const(const ring_elem& a) const
+  {
+    return PTR_TO_COEFF(a.get_mpz());
   }
 
   /** @} */

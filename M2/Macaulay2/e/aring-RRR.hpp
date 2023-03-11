@@ -18,7 +18,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRRR : public RingInterface
+class ARingRRR : public SimpleARing<ARingRRR>
 {
   // Higher precision real numbers
 
@@ -79,6 +79,11 @@ class ARingRRR : public RingInterface
     mpfr_set(&result, a.get_mpfr(), MPFR_RNDN);
   }
 
+  const ElementType &from_ring_elem_const(const ring_elem &a) const
+  {
+    return *a.get_mpfr();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { mpfr_init2(&result, mPrecision); }
@@ -98,7 +103,7 @@ class ARingRRR : public RingInterface
     mpfr_set_si(&result, 0, MPFR_RNDN);
   }
 
-  void clear(ElementType &result) const { mpfr_clear(&result); }
+  static void clear(ElementType &result) { mpfr_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfr_set(&result, &a, MPFR_RNDN);

@@ -22,7 +22,7 @@ namespace M2 {
    @brief wrapper for the gmp mpq_t integer representation
 */
 
-class ARingQQGMP : public RingInterface
+class ARingQQGMP : public SimpleARing<ARingQQGMP>
 {
  public:
   static const RingID ringID = ring_QQ;
@@ -85,7 +85,7 @@ class ARingQQGMP : public RingInterface
   }
 
   void init(ElementType& result) const { mpq_init(&result); }
-  void clear(ElementType& result) const { mpq_clear(&result); }
+  static void clear(ElementType& result) { mpq_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     mpq_set(&result, &a);
@@ -259,6 +259,11 @@ class ARingQQGMP : public RingInterface
     // Currently, until QQ becomes a ConcreteRing, elements of QQ are gmp_QQ
     // (aka mpq_t)
     mpq_set(&result, a.get_mpq());
+  }
+
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_mpq();
   }
 
 /** @} */

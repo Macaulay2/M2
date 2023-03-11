@@ -56,7 +56,6 @@ set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
   VectorArithmetic.hpp
-  ARingElem.hpp
   timing.hpp
   SLP-defs.hpp
   SLP-imp.hpp

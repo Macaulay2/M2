@@ -140,22 +140,18 @@ inline const CCC* cast_to_CCC(const Ring* R)
 
 inline ring_elem from_doubles(const CCC* C, double re, double im)
 {
-  CCC::ElementType a;
-  C->ring().init(a);
+  M2::ARingCC::Element a(C->ring());
   C->ring().set_from_doubles(a, re, im);
   ring_elem result;
   C->ring().to_ring_elem(result, a);
-  C->ring().clear(a);
   return result;
 }
 
 inline gmp_CC toBigComplex(const CCC* C, ring_elem a)
 {
-  CCC::ElementType b;
-  C->ring().init(b);
+  M2::ARingCC::Element b(C->ring());
   C->ring().from_ring_elem(b, a);
   gmp_CC result = C->ring().toBigComplex(b);
-  C->ring().clear(b);
   return result;
 }
 ///////////////////////////////////////////////////////////////////////////

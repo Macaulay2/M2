@@ -26,7 +26,7 @@ namespace M2 {
    @brief wrapper for the FFPACK::ModularBalanced<double> field implementation
 */
 
-class ARingZZpFFPACK : public RingInterface
+class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
 {
  public:
   /// @jakob extract Signed_Trait from givaro.  Or use c++11.
@@ -123,6 +123,11 @@ class ARingZZpFFPACK : public RingInterface
     result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_int();
+  }
+
   /** @} */
 
   /** @name operators
@@ -139,7 +144,7 @@ class ARingZZpFFPACK : public RingInterface
   void set(ElementType &result, ElementType a) const { result = a; }
   void init(ElementType &result) const;
 
-  void clear(ElementType &result) const;
+  static void clear(ElementType &result) {};
 
   void set_zero(ElementType &result) const;
 

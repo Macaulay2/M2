@@ -16,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZp : public RingInterface
+class ARingZZp : public SimpleARing<ARingZZp>
 {
   // Integers mod p, implemented as
   // exponents of a primitive element a
@@ -96,10 +96,20 @@ class ARingZZp : public RingInterface
       result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    if (a.get_int() == 0)
+      return p1;
+    else if (a.get_int() == p1)
+      return 0;
+    else
+      return a.get_int();
+  }
+
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
+  static void clear(elem &result) { /* nothing */}
 
   void set_zero(elem &result) const { result = 0; }
   void set_from_long(elem &result, long a) const

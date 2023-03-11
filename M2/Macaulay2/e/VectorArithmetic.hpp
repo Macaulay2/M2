@@ -10,10 +10,8 @@
 #include <variant>
 #include <type_traits>
 #include "f4/f4-mem.hpp"         // for F4Mem
-#include "ARingElem.hpp"
 
 class Ring;
-union ring_elem;
 using ComponentIndex = int;
 
 // this is still deriving from our_new_delete, since this
@@ -142,9 +140,9 @@ public:
     auto& dvec = * elementArray(dense);
     auto& svec = * elementArray(sparse);
 
-    ARingElem a(mRing,dvec[comps[0]]);
+    typename RingType::Element a(*mRing,dvec[comps[0]]);
     for (int i=0; i < comps.size(); ++i)
-      mRing->subtract_multiple(dvec[comps[i]], *a, svec[i]);
+      mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
   }
 
   int denseNextNonzero(ElementArrayType& dense,
@@ -263,11 +261,11 @@ public:
   {
     auto& svec = * elementArray(sparse);
 
-    ARingElem leadCoeffInv(mRing);
+    typename RingType::Element leadCoeffInv(*mRing);
 
-    mRing->invert(*leadCoeffInv,svec[0]);
+    mRing->invert(leadCoeffInv,svec[0]);
 
-    for (auto& c : svec) { mRing->mult(c, c, *leadCoeffInv); }
+    for (auto& c : svec) { mRing->mult(c, c, leadCoeffInv); }
   }
 
   template<typename Container>

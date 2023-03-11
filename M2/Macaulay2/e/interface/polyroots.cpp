@@ -142,18 +142,16 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
     const Ring *C = IM2_Ring_CCC(prec);
     const M2::ARingCCC C0(prec);
 
-    M2::ARingCCC::ElementType cc;
-    C0.init(cc);
+    M2::ARingCCC::Element cc (C0);
     for (int i = 0; i < hideg; i++) {
       auto& mps_root = roots[i];
-      mpfr_set_f(&cc.re,mpc_Re(mps_root),MPFR_RNDN);
-      mpfr_set_f(&cc.im,mpc_Im(mps_root),MPFR_RNDN);
+      mpfr_set_f(&cc.value().re,mpc_Re(mps_root),MPFR_RNDN);
+      mpfr_set_f(&cc.value().im,mpc_Im(mps_root),MPFR_RNDN);
       ring_elem m2_root;
       C0.to_ring_elem(m2_root, cc);
       result->array[i] = RingElement::make_raw(C, m2_root);
     }
-    C0.clear(cc);
-        
+
     free(roots);
     free(radii);
   }

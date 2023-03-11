@@ -176,21 +176,17 @@ gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
   auto RCCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCCC> *>(R);
   if (RCCC != 0)
     {
-      M2::ARingCCC::ElementType b;
-      RCCC->ring().init(b);
-      RCCC->ring().from_ring_elem(b, a->get_value());
+      const M2::ARingCCC::ElementType &b =
+          RCCC->ring().from_ring_elem_const(a->get_value());
       gmp_CC result = RCCC->ring().toBigComplex(b);
-      RCCC->ring().clear(b);
       return result;
     }
   auto RCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCC> *>(R);
   if (RCC != 0)
     {
-      M2::ARingCC::ElementType b;
-      RCC->ring().init(b);
-      RCC->ring().from_ring_elem(b, a->get_value());
+      const M2::ARingCC::ElementType &b =
+          RCC->ring().from_ring_elem_const(a->get_value());
       gmp_CC result = RCC->ring().toBigComplex(b);
-      RCC->ring().clear(b);
       return result;
     }
   ERROR("expected an element of CCC");

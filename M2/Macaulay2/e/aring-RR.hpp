@@ -16,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRR : public RingInterface
+class ARingRR : public SimpleARing<ARingRR>
 {
   // approximate real numbers, implemented as doubles.
  public:
@@ -72,13 +72,18 @@ class ARingRR : public RingInterface
     result = a.get_double();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_double();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { result = 0.0; }
   void init_set(ElementType &result, const ElementType &a) const { result = a; }
   void set(ElementType &result, const ElementType &a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0.0; }
-  void clear(ElementType &result) const
+  static void clear(ElementType &result)
   {
     // do nothing
   }
