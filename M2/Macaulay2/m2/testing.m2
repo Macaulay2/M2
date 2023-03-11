@@ -7,7 +7,8 @@ needs "run.m2"
 -----------------------------------------------------------------------------
 
 sourceFileStamp = (filename, linenum) -> concatenate(
-    "--", toAbsolutePath filename, ":", toString linenum, ": location of test code")
+    pos := new FilePosition from (toAbsolutePath filename, linenum, 1);
+    concatenate("--", toString pos, ": location of test code"));
 
 -----------------------------------------------------------------------------
 -- TestInput
