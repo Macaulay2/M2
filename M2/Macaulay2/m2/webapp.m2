@@ -98,10 +98,12 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
-    -- the show hack
-    showURL := lookup(show,URL);
-    show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
-    EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> show URL concatenate("#editor:",filename,":",toString start,":",toString startcol,"-",toString stop,":",toString stopcol))x;
+    -- the show/edit hack
+    show URL := url -> (<< webAppUrlTag | url#0 | webAppEndTag;);
+    editURL := f -> "#editor:"|toString f;
+    editMethod String :=
+    editMethod FilePosition := f -> show editURL f;
+    hypertext FilePosition := f -> TT HREF {editURL f,toString f};
     -- redefine htmlLiteral to exclude codes
     htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral;
     )

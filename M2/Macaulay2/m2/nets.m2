@@ -44,20 +44,20 @@ toExternalString Function := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;
      if t === null then error "can't convert anonymous function to external string"
-     else error("can't convert anonymous function (",t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4,") to external string")
+     else error("can't convert anonymous function (",toString t,") to external string")
      )
 
 net Function := toString Function := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;
      if t === null then "-*Function*-" 
-     else concatenate("-*Function[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
+     else concatenate("-*Function[", toString t, "]*-")
      )
 
 net FunctionBody := toString FunctionBody := f -> (
-     t := locate' f;
+     t := locate f;
      if t === null then "-*FunctionBody*-" 
-     else concatenate("-*FunctionBody[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
+     else concatenate("-*FunctionBody[", toString t, "]*-")
      )
 
 toExternalString Manipulator := f -> (

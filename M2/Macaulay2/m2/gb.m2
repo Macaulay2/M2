@@ -191,7 +191,7 @@ status GroebnerBasis := o -> g -> (
 net      GroebnerBasis :=
 toString GroebnerBasis := g -> "GroebnerBasis[" | status g | "]"
 texMath  GroebnerBasis := texMath @@ toString
-html     GroebnerBasis := html    @@ toString
+html     GroebnerBasis := g -> html class g | "[" | status g | "]"
 
 
 rawsort := m -> rawSubmatrix(m, rawSortColumns(m,1,1))

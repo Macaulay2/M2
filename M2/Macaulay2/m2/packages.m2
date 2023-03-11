@@ -8,6 +8,7 @@ needs "lists.m2"
 needs "methods.m2"
 needs "regex.m2"
 needs "system.m2"
+needs "hypertext.m2"
 
 loadedPackages = {}
 
@@ -111,10 +112,10 @@ Package.GlobalReleaseHook = globalReleaseFunction
 
 net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
-html     Package := pkg -> html    toString pkg
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
 methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
+hypertext Package := TTc "constant"
 
 -- TODO: should this go elsewhere?
 toString Dictionary := dict -> (
@@ -406,7 +407,7 @@ export List   := v -> (
 	    if instance(sym, Option) then (
 		nam = sym#0;
 		if class nam =!= String then error("expected a string: ", nam);
-		if pd#?nam then error("symbol intended as exported synonym already used internally: ", format nam, "\n", symbolLocation pd#nam, ": it was used here");
+		if pd#?nam then error("symbol intended as exported synonym already used internally: ", format nam, "\n", locate pd#nam, ": it was used here");
 		if class sym#1 =!= String then error("expected a string: ", nam);
 		sym = getGlobalSymbol(pd, sym#1))
 	    else if instance(sym, String) then (

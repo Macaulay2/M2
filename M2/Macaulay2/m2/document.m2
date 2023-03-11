@@ -315,9 +315,13 @@ formatDocumentTag Sequence := s -> concatenate (
 storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
+	newloc := toString new FilePosition from (
+	    minimizeFilename rawdoc#"filename", rawdoc#"linenum", 0);
 	rawdoc = currentPackage#rawKey#fkey;
+	oldloc := toString locate rawdoc.DocumentTag;
 	printerr("error: documentation already provided for ", format tag);
-	printerr(rawdoc#"filename", ":", toString rawdoc#"linenum", ": ... here is the (end of the) previous documentation"));
+	printerr(newloc, ": ... here is the (end of the) new documentation");
+	printerr(oldloc, ": ... here is the (end of the) previous documentation"));
     currentPackage#rawKey#fkey = rawdoc)
 
 -----------------------------------------------------------------------------
@@ -386,10 +390,10 @@ isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"u
 hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
 -- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
-locate DocumentTag := tag -> (
+locate DocumentTag := tag -> new FilePosition from (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
-    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
-    else (currentFileName, currentRowNumber()))
+    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum",0)
+    else (currentFileName, currentRowNumber(), currentColumnNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
@@ -550,7 +554,7 @@ getSourceCode :=  val         -> DIV {"class" => "waystouse",
     fixup DIV {SUBSECTION "Code", PRE M2CODE demark_newline unstack stack apply(enlist val, m -> (
 		f := lookup m; if f === null then error("SourceCode: ", toString m, ": not a method");
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-		reproduciblePaths toString c))}}
+		reproduciblePaths toString net c))}}
 getSubnodes := val -> (
     val = nonnull enlist val;
     if #val == 0 then error "encountered empty Subnodes list"

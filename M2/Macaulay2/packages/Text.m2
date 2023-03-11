@@ -9,9 +9,9 @@ newPackage("Text",
 
 exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
-     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
+     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "HypertextVoid", "IMG", "ITALIC",
      "LABEL", "LATER", "LI", "LINK", "LITERAL", "M2CODE", "MENU", "META", "PARA", "PRE", "SCRIPT", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
-     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "validate",
+     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "INPUT", "BUTTON", "validate",
      "MarkUpType", "IntermediateMarkUpType",
      "style"
      }

@@ -492,8 +492,11 @@ briefDocumentation Thing       := key -> (
 	S := getAttribute(key, ReverseDictionary);
 	-- TODO: use either "formation" to enhance the result
 	-- or enhance "describe" or "getTechnical" using "formation"
-	<< endl << S << " := " << describe key << endl;
-	<< endl << getTechnical(S, key) << endl;);
+	DIV {
+	    BinaryOperation{symbol :=, key, describe key},
+	    getTechnical(S, key)
+	    }
+	);
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
     -- TODO: should it be getGlobalSymbol or getAttribute?
     symb := getGlobalSymbol toString key;
@@ -502,10 +505,12 @@ briefDocumentation Thing       := key -> (
     synopsis := getSynopsis(key, tag, rawdoc);
     waystouse := documentationValue(symb, key);
     technical := getTechnical(symb, key);
-    if title     =!= null then << endl << key << commentize title << endl;
-    if synopsis  =!= null then << endl << synopsis << endl;
-    if waystouse =!= null then << endl << waystouse << endl;
-    if technical =!= null then << endl << technical << endl;)
+    DIV {
+    if title     =!= null then PARA {key, commentize title},
+    synopsis,
+    waystouse,
+    technical }
+)
 
 ? ScriptedFunctor :=
 ? Function :=

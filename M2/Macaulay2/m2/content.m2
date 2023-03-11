@@ -203,6 +203,7 @@ validContent#"pre" = PCDATA + Inlstruct + Inlphras + set { "tt", "i", "b" } + I1
 validContent#"head" = set {"title", "base", "script", "style", "meta", "link" }
 -----------------------------------------------------------------------------
 -- <!ENTITY % td.content "( #PCDATA | %Flow.mix; )*" >
+validContent#"th" =
 validContent#"td" = PCDATA + FlowMix
 -- <!ENTITY % tr.content  "( %th.qname; | %td.qname; )+" >
 validContent#"tr" = set { "th", "td" }

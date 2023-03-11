@@ -118,12 +118,6 @@ fixup TO          :=
 fixup TO2         :=
 fixup TOH         := identity
 
--- TODO: move this
-hypertext = method(Dispatch => Thing)
-hypertext Hypertext := fixup
-hypertext Sequence  :=
-hypertext List      := x -> fixup DIV x
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

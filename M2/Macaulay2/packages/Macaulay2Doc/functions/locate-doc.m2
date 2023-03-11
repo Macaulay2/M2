@@ -10,6 +10,7 @@ Node
    (locate, Sequence)
    (locate, Pseudocode)
    (locate, Function)
+   (locate, FunctionBody)
    (locate, Nothing)
    (locate, List)
    (locate, ZZ)
@@ -20,11 +21,11 @@ Node
   Inputs
     x:{Function,Sequence,Symbol,List,ZZ}
   Outputs
-    :{Sequence,List,Nothing}
-      {\tt (filename, start,startcol, stop,stopcol, pos,poscol)}, respectively
+    :{FilePosition,List,Nothing}
+      {\tt {filename, start,startcol, stop,stopcol, pos,poscol}}, respectively
   Description
     Text
-      For a symbol interpreted function {\tt f}, returns a sequence {\tt (n,i,c,j,d,k,e)}
+      For a symbol interpreted function {\tt f}, returns a {\tt FilePosition{n,i,c,j,d,k,e}}
       describing the location of the definition in the source code:
     Tree
       :The name of the source file is {\tt n};
@@ -44,6 +45,7 @@ Node
       locate methods resolution
       methods doc
       locate 0
+      peek oo
     Text
       If the function {\tt f} is compiled, or if {\tt f} is @TO "null"@,
       then a location is not available and @TO "null"@ is returned.

@@ -2,10 +2,10 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 
-undocumented (hypertext, Hypertext)
+undocumented methods hypertext
 
 document {
-     Key => {hypertext,(hypertext, List),(hypertext, Sequence)},
+     Key => hypertext,
      Headline => "prepare hypertext for display",
      Usage => "hypertext x",
      Inputs => {
