@@ -51,7 +51,7 @@ mergeTeX = { Path => null } >> o -> s -> (
     codes := select(codeRegex,s);
     rest := separate(codeRegex,s); -- seems silly to do the regex twice
     --print(fmt\codes,fmt\rest);
-    if o.Path =!= null then (oldPath:=path; path = append(path,o.Path));
+    --if o.Path =!= null then (oldPath:=path; path = append(path,o.Path));
     codes = apply(codes, x -> (
 	    r := regex(codeRegex,x); -- ... and once more ...
 	    if r#1#1 != 0 then (
@@ -59,7 +59,7 @@ mergeTeX = { Path => null } >> o -> s -> (
 		substring(r#3,x) -- code
 		) else (
 		substring(r#4,x) | outputLanguage | substring(r#5,x) | "\n",
-		try get substring(r#6,x) else ""
+		try get substring(r#6,x) else if o.Path =!= null then try get (o.Path | substring(r#6,x)) else ""
 	       )
 	   ));
     outputs = new MutableHashTable;
@@ -67,8 +67,8 @@ mergeTeX = { Path => null } >> o -> s -> (
     topLevelMode = TeX;
     s = capture apply(codes, x -> codeComment | x#1);
     topLevelMode = saveMode;
-    if o.Path =!= null then path = oldPath;
-    if s#0 then print ("warning: running the code produced an error"|s#1);
+--    if o.Path =!= null then path = oldPath;
+    if s#0 then print ("warning: running the code produced an error: "|s#1);
     --print (fmt s#1);
     --print peek outputs;
     s = last s;
