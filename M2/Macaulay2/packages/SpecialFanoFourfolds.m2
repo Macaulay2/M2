@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.7", 
-    Date => "January 18, 2023",
+    Date => "February 15, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -350,11 +350,11 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
     if o.Verbose then <<(if c > 1 then "dim GG("|toString(c-1)|",P(H^0(O_(P^"|toString(n)|")("|toString(d)|")))) = " else "dim P(H^0(O_(P^"|toString(n)|")("|toString(d)|"))) = ")|toString(c * (binomial(n+d,d) - c))<<endl;
     w := c*(binomial(n+d,d)-c) - (h0N+M-h0NX);
     if o.Verbose then <<"codim{[X] : S ⊂ X} <= "|toString(w)<<endl;
-    return (w,(m,h0N,h0NX));
+    return X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX));
 );
 
-parameterCount (HodgeSpecialFourfold,EmbeddedProjectiveVariety) := o -> (X,Y) -> (
-    if Y =!= ambientFivefold X then error "the second argument is not the ambient fivefold of the fourfold";
+parameterCount HodgeSpecialFourfold := o -> X -> (
+    Y := ambientFivefold X;
     S := surface X;
     a := degreeHypersurface X;    
     if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
@@ -386,12 +386,8 @@ parameterCount (HodgeSpecialFourfold,EmbeddedProjectiveVariety) := o -> (X,Y) ->
     if o.Verbose then <<"dim P(H^0(O_Y("|(toString a)|"))) = "|toString(Amb-1)<<endl;
     w := Amb-1 - (h0N + m-1 - h0NX);
     if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
-    return (w,(m,h0N,h0NX));    
-);
-
-parameterCount HodgeSpecialFourfold := o -> X -> (
-    if instance(X,IntersectionOfThreeQuadricsInP7) then return parameterCount(surface X,X,Verbose=>o.Verbose);
-    parameterCount(X,ambientFivefold X,Verbose=>o.Verbose)
+    if o.Verbose and instance(X,IntersectionOfThreeQuadricsInP7) then infoAboutParameterCountInAmbientP7(w,(m,h0N,h0NX));
+    return X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX));    
 );
 
 CoherentSheafOnEmbeddedProjectiveVariety = new Type of CoherentSheaf;
@@ -1415,7 +1411,7 @@ parameterCount SpecialGushelMukaiFourfold := o -> X -> (
     if o.Verbose then <<"dim P(H^0(O_Y(2))) = 39"<<endl;
     w := 39 - (h0N + m-1 - h0NX);
     if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
-    return (w,(m,h0N,h0NX));
+    return X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX));
 );
 
 sigmaQuadric = method(); 
@@ -1485,6 +1481,31 @@ recognize3QuadricsP7 = X -> (
     if ((d == 71 or d == 87) and e == 5 and invS === (11,4,0) and degs == toList(9:2)) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 87 then return "surf-5-6-2-nodal";
     if (d == 96 and e == 13 and invS === (12,6,1) and degs == {2,2,2,2,2,2,2,2,2,3}) then return "surf-7-1-9";
     "NotRecognized"
+);
+
+infoAboutParameterCountInAmbientP7 = (x,y) -> (
+    --------------------------------------------------
+        -- Conversion between parameter counts
+        -- X : c. i. of 3 quadrics in PP^7; Y = ambientFivefold X; S = surface X; 
+        -- Suppose we have computed:
+        -- h^1(N_{S,Y}) = 0, h^0(N_{S,Y}) = a
+        -- h^1(O_S(2)) = 0, and h^0(I_{S,Y}(2)) = b = h^0(O_Y(2)) - \chi(O_S(2));
+        -- h^0(N_{S,X}) = c, dim P(H^0(O_Y(2))) = 33
+        -- codim{[X] : S ⊂ X ⊂ Y} <= 33 - (a + (b-1) - c)
+        -- parameterCount(X,Y) ----> (34-a-b+c, (b, a, c))
+        -- Now from the exact sequence 0 -> N_(S,Y) -> N_(S,PP^7) -> N_(Y,PP^7)|_S -> 0
+        -- that is 0 -> N_(S,Y) -> N_(S,PP^7) -> O_S(2)++O_S(2) -> 0
+        -- we deduce h^0(N_(S,PP^7)) = h^0(N_{S,Y}) + h^0(O_S(2)++O_S(2)) = a + 2*(34 - b) = 68 + a - 2b
+        -- Further, from the exact sequence 0 -> I_(Y,PP^7) -> I_(S,PP^7) -> I_(S,Y) -> 0
+        -- we deduce h^0(I_{S,PP^7}(2)) = h^0(I_{S,Y}(2)) + 2 = b + 2
+        -- from which we have dim GG(2, PP(h^0(I_{S,PP^7}(2)))) = 3 * (b-1)
+        -- Since dim GG(2,P(H^0(O_(P^7)(2)))) = 99 we obtain 
+        -- 99 - ( (68 + a - 2b) + 3*(b-1) - c ) = 31 - a + 2b - 3b + 3 + c = 34 - a - b + c
+        -- Therefore parameterCount(X) ----> (34-a-b+c, (b+2, 68 + a - 2b , c))
+    --------------------------------------------------
+    (b,a,c) := y;
+    if 34-a-b+c != x then <<"--warning: something went wrong"<<endl;
+    <<"[parameterCount in the ambient PP^7: "<<(34-a-b+c, (b+2, 68 + a - 2*b , c))<<"]"<<endl;
 );
 
 ------------------------------------------------------------------------
@@ -2407,7 +2428,7 @@ GMtables (Ring,String) := o -> (K,name) -> ( -- store all data in a file
 F := openOut (name|".dat"); 
 F <<"-- file created automatically using: GMtables("|toExternalString K|",\""|name|"\",Verify=>"<<(o.Verify)<<"); date: "|(toString get "!date")<<endl;
 F <<"GMtables ZZ := o -> j -> ("<<endl;
-F << "    x0 := gens ring PP_("<<(toExternalString K)<<")^5;"<<endl;
+F << "    x := gens ring PP_("<<(toExternalString K)<<")^5;"<<endl;
 close F;
 local A;
 x := gens ring PP_K^5;
@@ -2777,6 +2798,29 @@ Var = method(Options => {MinimalGenerators => false});
 Var Ideal := o -> I -> projectiveVariety(I,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
 Var Ring := o -> R -> projectiveVariety(R,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
 Var Matrix := o -> M -> projectiveVariety(M,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
+
+HodgeSpecialFourfold ? HodgeSpecialFourfold := (X,Y) -> (
+    if not uniform {X,Y} then return incomparable;
+    try (dX,dY) := (discriminant X,discriminant Y) else return incomparable;
+    if dX < dY then return symbol <;
+    if dX > dY then return symbol >;
+    if instance(X,SpecialGushelMukaiFourfold) and instance(Y,SpecialGushelMukaiFourfold) and dX == dY and dX % 8 == 2 then (
+        (a,b) := last cycleClass X; (a',b') := last cycleClass Y;
+        if (even(a+b) and odd(b)) and (odd(a'+b') and even(b')) then return symbol <;
+        if (odd(a+b) and even(b)) and (even(a'+b') and odd(b')) then return symbol >;
+    );
+    if X.cache#?(surface X,"parameterCount") and Y.cache#?(surface Y,"parameterCount") then (
+        if first X.cache#(surface X,"parameterCount") < first Y.cache#(surface Y,"parameterCount") then return symbol <;
+        if first X.cache#(surface X,"parameterCount") > first Y.cache#(surface Y,"parameterCount") then return symbol >;
+    );
+    if degree surface X < degree surface Y then return symbol <;
+    if degree surface X > degree surface Y then return symbol >;
+    if sectionalGenus surface X < sectionalGenus surface Y then return symbol <;
+    if sectionalGenus surface X > sectionalGenus surface Y then return symbol >;
+    if (surface X).cache#?"linear system on PP^2" and (surface Y).cache#?"linear system on PP^2" then return (((surface X).cache#"linear system on PP^2") ? ((surface Y).cache#"linear system on PP^2"));
+    if X == Y and surface X == surface Y then return symbol ==;
+    return incomparable;
+);
 
 ------------------------------------------------------------------------
 -------------------------- Prebuilt Examples ---------------------------
@@ -3176,7 +3220,7 @@ SeeAlso => {(specialGushelMukaiFourfold,String,Ring),(specialGushelMukaiFourfold
 
 undocumented {(GMtables, Ring, String), (GMtables,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}; 
 
-document {Key => {parameterCount, (parameterCount, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (parameterCount, HodgeSpecialFourfold), (parameterCount, HodgeSpecialFourfold, EmbeddedProjectiveVariety)}, 
+document {Key => {parameterCount, (parameterCount, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (parameterCount, HodgeSpecialFourfold)}, 
 Headline => "count of parameters",
 Usage => "parameterCount(S,X)", 
 Inputs => {"S" => EmbeddedProjectiveVariety, "X" => EmbeddedProjectiveVariety => {"such that ", TEX///$S\subseteq X$///}}, 
@@ -3561,6 +3605,8 @@ Headline => "check that a congruence of curves is well-defined",
 Usage => "check f"|newline|"check(n,f)",
 Inputs => {"n" => ZZ => {"(optional with default value 5)"}, "f" => CongruenceOfCurves},
 Outputs => {CongruenceOfCurves => {"the same object passed as input, but an error is thrown if the congruence fails when ",TO2{(symbol SPACE, CongruenceOfCurves, EmbeddedProjectiveVariety),"evaluated"}," on ",TT"n"," random points."}}}
+
+undocumented {(symbol ?, HodgeSpecialFourfold, HodgeSpecialFourfold)}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
