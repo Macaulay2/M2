@@ -419,12 +419,9 @@ Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symb
      map(M, directSum newcomps, (cover M)_(splice apply(w, i -> v#i))))
 
 -----------------------------------------------------------------------------
-Module ^ List := Matrix => (M,rows) -> submatrix(id_M,rows,)
+Module ^ List := Matrix => (M, rows) -> submatrix(map(cover M, M, id_M), rows,)
+Module _ List := Matrix => (M, cols) -> submatrix(map(M, cover M, id_M), cols)
 -----------------------------------------------------------------------------
-Module _ List := Matrix => (M,v) -> (
-     N := cover M;
-     f := id_N_v;
-     map(M, source f, f))
 
 -----------------------------------------------------------------------------
 isSubset(Module,Module) := (M,N) -> (

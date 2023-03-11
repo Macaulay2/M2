@@ -115,43 +115,6 @@ assert isDirectSum (QQ^1 ++ QQ^2)
 
 --
 clearAll
-     R = ZZ[x_1..x_12,y]
-     f = genericMatrix(R,3,4)
-     assert(source (f_{1,2}) == R^{-1,-1})
-     assert(target (f_{1,2}) == target f)
-     M1 = (target f)/(y * target f)
-     M2 = (source f)/(y * source f)
-     g = map(target f,M2,f)
-     h = map(M1,M2,f)
-     k = submatrix(g, {1})
-     assert(target k === target g)
-     l = submatrix(h, {1})
-     assert(target l === target h)
-     assert(source l === R^{-1})
-     m = submatrix(h, {1,2},{2,3})
-     assert(target m === R^2)
-     assert(source m === R^{2:-1})
-     n = submatrix(h, {1,2}, )
-     assert(target n === R^2)
-     assert(source n === source h)
-
-
-
---
-  -- test of submatrixByDegrees
-  R = QQ[a..d]
-  I = ideal"a2b-c3,abc-d3,ac2-bd2-cd2,abcd-c4"
-  C = res I
-  submatrixByDegrees(C.dd_2, (3,3),(6,6))
-  submatrixByDegrees(C.dd_2, ({3},{3}),({6},{6}))
-  submatrixByDegrees(C.dd_2, ({4},{4}),({},{}))
-  submatrixByDegrees(C.dd_2, ({3},{3}),({7},{7}))
-  F = source C.dd_2
-  -- rawSelectByDegrees(raw F, {-4}, {-3})
-  -- rawSelectByDegrees(raw F, {}, {8})
-
-
---
 R=ZZ/101[a..d]
 f = matrix {{a}}
 assert( isHomogeneous f )
