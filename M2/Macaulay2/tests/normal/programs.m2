@@ -18,8 +18,10 @@ assert(net program == name)
 pr = runProgram(program, "world", KeepFiles => true)
 assert(pr#"command" == fn | " world")
 assert(pr#"output" == "Hello world!")
+assert(toString pr == "Hello world!")
 assert(pr#"error" == "")
 assert(pr#"return value" == 0)
+assert(status pr == 0)
 assert(get pr#"output file" == "Hello world!")
 assert(get pr#"error file" == "")
 assert(net pr == "0")
@@ -37,10 +39,18 @@ assert(fileExists(dir | "/foo/bar/baz"))
 program = findProgram("foo", name, AdditionalPaths => {dir})
 assert(program#"path" == dir)
 
+-- test findProgram(String)
+fn << "if [ $1 != \"--version\" ]; then exit 1; fi" << endl << close
+program = findProgram name
+
+-- test Program << Thing
+fn << "read REPLY; echo $REPLY" << endl << close
+assert Equation(toString(program << "foo"), "foo\n")
+
+-- test runProgram(String, String)
+assert Equation(toString runProgram("echo", "foo"), "foo\n")
 
 fn << "echo 1.0" << endl << close
-
-
 program = findProgram(name, name, MinimumVersion => ("0.9", name))
 assert(program#"version" == "1.0")
 program = findProgram(name, name, MinimumVersion => ("1.1", name),
