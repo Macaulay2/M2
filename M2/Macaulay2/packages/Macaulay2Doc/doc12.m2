@@ -283,15 +283,11 @@ document {
 
 undocumented {
     (symbol -, Thing, Minus),
-    (symbol +, Sum, ZeroExpression),
-    (symbol +, Holder, ZeroExpression),
     (symbol +, Sum, Sum),
     (symbol +, Sum, Holder),
     (symbol +, Holder, Sum),
     (symbol +, ZeroExpression, Expression),
     (symbol +, Expression, ZeroExpression),
-    (symbol +, Expression, Sum),
-    (symbol +, Sum, Expression),
     }
 
 expressionMethodKeys := flatten apply(toList core "expressionBinaryOperators", op -> {
@@ -429,12 +425,14 @@ document {
      "This is a unary operator."
      }
 
+-*
 document {
      Key => NonAssociativeProduct,
      Headline => "the class of all nonassociative product expressions",
      TT "NonAssociativeProduct", " is a type of ", TO "Expression", " representing
      a nonassociative product."
      }
+*-
 
 document {
      Key => Power,

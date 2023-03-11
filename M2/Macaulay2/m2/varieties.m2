@@ -142,6 +142,8 @@ module CoherentSheaf := Module => F -> F.module
 module SheafOfRings  := Module => F -> module F.ring
 Ideal * CoherentSheaf := (I,F) -> sheaf(F.variety, I * module F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ++ G.module)
+CoherentSheaf.directSum = args -> sheaf((first args).variety,directSum apply(args, F -> F.module))
+directSum CoherentSheaf := directSum @@ sequence
 CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ** G.module)
 CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(variety F, F.module ** (ring F)^{n})
 SheafOfRings ZZ := CoherentSheaf => (O,n) -> O^1(n)
