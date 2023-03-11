@@ -144,7 +144,7 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core M2-emacs M2-highlightjs install-packages
+          cmake --build . --target M2-core M2-emacs install-packages
           if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang-14" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
@@ -165,7 +165,7 @@ jobs:
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
           export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
             -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
-          ../../configure --enable-download --with-python --with-system-gc --enable-syntax-highlighting
+          ../../configure --enable-download --with-python --with-system-gc
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
