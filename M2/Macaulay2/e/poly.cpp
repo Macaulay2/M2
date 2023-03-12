@@ -1339,12 +1339,12 @@ ring_elem PolyRing::eval(const RingMap *map,
   // The way we collect the result depends on whether the target ring
   // is a polynomial ring: if so, use a heap structure.  If not, just add to the
   // result.
+  gc_vector<int> vp;
   const Ring *target = map->get_ring();
   SumCollector *H = target->make_SumCollector();
 
   for (Nterm& t : f)
     {
-      gc_vector<int> vp;
       M_->to_varpower(t.monom, vp);
       H->add(map->eval_term(K_, t.coeff, vp.data(), first_var, n_vars()));
     }
