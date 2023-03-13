@@ -307,7 +307,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,
 		    file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
-	  else if isalpha(ch) && ch != int('\'') then (
+	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode except 226) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
@@ -398,7 +398,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    return errorToken
 		    )
 	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
-	  else if ch == 226 then (
+	  else if ch == 226 then ( -- unicode math symbols
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));

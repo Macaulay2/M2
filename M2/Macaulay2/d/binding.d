@@ -124,7 +124,7 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      makeEntry(word,position,dictionary,false,false));
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
      entry := makeEntry(word,position,dictionary,thread,locallyCreated);
-     if dictionary.frameID == 0 && isalnum(word.name) && !thread
+     if dictionary.frameID == 0 && isvalidsymbol(word.name) && !thread
      then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
      entry);
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
