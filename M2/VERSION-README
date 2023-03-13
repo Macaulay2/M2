@@ -33,6 +33,9 @@ Here is the procedure:
 	      git checkout -b release-X.Y-branch
 	 - push it upstream:
 	      git push -u origin release-X.Y-branch
+	 - update the symbols in prism.js, which adds syntax highlighting
+	   to the html documentation:
+	      make -C Macaulay2/editors update-syntax-highlighting
 	 - update the file M2/Macaulay2/packages/Macaulay2Doc/changes.m2 to take
 	      the release into account: check JSAG for published packages that
 	      need certification (download the published version and add it, if

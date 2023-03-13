@@ -231,22 +231,12 @@ fi
 
 AC_SUBST(DOCUMENTATION)
 
+dnl deprecated in 1.22
+dnl TODO: remove this completely after 1.22 is released
 AC_ARG_ENABLE([syntax-highlighting],
     [AS_HELP_STRING([--enable-syntax-highlighting],
-	[whether to enable syntax highlighting using highlightjs in the html
-	 documentation])],
-    [HIGHLIGHTJS=$enableval],
-    [HIGHLIGHTJS=no])
-
-if test "x$HIGHLIGHTJS" = xyes
-then AC_CHECK_PROGS(NPM,npm,false)
-     if test "x$NPM" = xfalse
-     then AC_MSG_ERROR([npm is required for syntax highlighting])
-     fi
-else AC_SUBST(NPM,false)
-fi
-
-AC_SUBST(HIGHLIGHTJS)
+	[this option is deprecated; syntax highlight is always enabled.])],
+    [AC_MSG_WARN([the --enable-syntax-highlighting option is deprecated; syntax highlighting is always enabled.])])
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
