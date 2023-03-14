@@ -20,6 +20,8 @@ emacs/M2-symbols.el prism/macaulay2.js highlightjs/macaulay2.js: \
 emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) @abs_srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
 
+# copy files to build directory for out-of-tree builds
+ifneq (@srcdir@,.)
 emacs prism highlightjs:
 	$(MKDIR_P) $@
 
@@ -31,6 +33,7 @@ prism/%: @srcdir@/prism/% prism
 
 highlightjs/%: @srcdir@/highlightjs/% highlightjs
 	cp $< $@
+endif
 
 %/node_modules: %/package.json
 	cd $* && npm install
