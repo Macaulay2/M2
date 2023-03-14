@@ -62,7 +62,7 @@ jobs:
       VERBOSE: 1
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
 # ----------------------
 #   Install missing tools and libraries for macOS
