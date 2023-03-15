@@ -282,6 +282,7 @@ set(SRCLIST
   weylalg
   # Faugère's F4 Algorithm
   gb-f4/MonomialHashTable
+  gb-f4/Basis
   f4/f4-computation
   f4/f4-m2-interface
   f4/f4-mem
