@@ -202,7 +202,7 @@ jobs:
 
       - name: Upload build logs
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
            name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
            path: |
@@ -225,7 +225,7 @@ jobs:
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
         if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-14' && success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
           path: |
