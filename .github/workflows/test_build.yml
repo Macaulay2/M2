@@ -112,7 +112,7 @@ jobs:
           # Necessary for clang to find the right libomp
           echo "LIBRARY_PATH=`llvm-config --libdir`" >> $GITHUB_ENV
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         if: matrix.build-system == 'cmake'
         id: restore-cache
         with:
