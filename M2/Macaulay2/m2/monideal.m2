@@ -49,10 +49,10 @@ addHook((codim, Module), Strategy => Default, (opts, M) -> (
 	  c - codim monomialIdealOfRow(0,matrix{{0_R}}) -- same as c - codim R, except works for iterated rings
 	  )))
 
+MonomialIdeal#1 = I -> monomialIdeal 1_(ring I)
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> (
      if n < 0 then error "expected nonnegative exponent"
-     else if n === 0 then monomialIdeal 1_(ring I)
-     else SimplePowerMethod(I,n)
+     else BinaryPowerMethod(I,n)
      )
 
 MonomialIdeal ^ Array := (I, e) -> (
