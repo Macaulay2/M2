@@ -257,23 +257,16 @@ viewHelp Dmodules
 
 
 
-A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
-beta = {1,0,0}
-I = gkz(A,beta)
-w = {1,1,1,1,0}
---help gbw
-
-S = QQ[x]
-W = makeWeylAlgebra S;
-I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
-w = {1}
-
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
 nonpositiveWeightGens = method()
 nonpositiveWeightGens(Ideal, List) := List => (I,w) ->( 
     
     )
+S = QQ[x]
+W = makeWeylAlgebra S;
+I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
+w = {1}
 
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
@@ -297,21 +290,27 @@ nilssonSupportCone(Ideal, List) := Cone => (I,w) ->(
 		   if HS == 0 then HS = newHSeq else HS = HS||newHSeq;
 	    	   if maxW == 0 then maxW = newWcond else maxW = maxW||newWcond;
 			));
-    		))
+    		));
 	tailCone polar polyhedronFromHData(HS, maxW)
 	)
+    
+    
+A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
+beta = {1,0,0}
+I = gkz(A,beta)
+w = {1,1,1,1,0}
+--help gbw
+
+C = nilssonSupportCone(I,w)
+k=3
+
 
 --Input: cone for support of Nilsson series, weight k
 --Output: lattice points in cone of weight \leq k, as a List of Lists
 nilssonSupportTruncated = method()
 nilssonSupportTruncated(Cone, List, ZZ) := List => (C,w,k)->(
-    HB = hilbertBasis C;
-    wDotHB = flatten apply(HB,v-> flatten entries (matrix{w}*v));
-    L = toList apply(length HB,i-> 0)..apply(length HB,i-> (k//(wDotHB#i))-1)
--- toList apply(L,l-> matrix{w}*(l#0*HB_0+l#1*HB_1))
---K = apply(L,l->(sum apply(length HB,h-> (l#h)*(HB#h))))
---drop(K, >= k+1 )
---***STILL working here***
+    P := polyhedronFromHData((halfspaces C)||matrix{w},map(target halfspaces C,ZZ^1,0)||matrix{{-k}},hyperplanes C, map(target hyperplanes C,ZZ^1,0));
+    latticePoints P
     )
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
