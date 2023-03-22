@@ -178,7 +178,11 @@ info HR := x -> concatenate(printWidth:"-")
 net  PRE  :=
 net   TT  :=
 net CODE  :=
+net SAMP  :=
+net  KBD  :=
 info TT   :=
+info SAMP :=
+info  KBD :=
 info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
 info PRE  := x ->
