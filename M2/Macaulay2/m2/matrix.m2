@@ -384,15 +384,15 @@ concatRows = mats -> (
 Matrix | Matrix := Matrix => (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)
 Matrix | RingElement := (f,g) -> concatCols(f,g**id_(target f))
-ZZ | Matrix := (f,g) -> concatCols(f*id_(target g),g)
-Matrix | ZZ := (f,g) -> concatCols(f,g*id_(target f))
+Number | Matrix := (f,g) -> concatCols(f*id_(target g),g)
+Matrix | Number := (f,g) -> concatCols(f,g*id_(target f))
 
 Matrix || Matrix := Matrix => (f,g) -> concatRows(f,g)
 RingElement || Matrix := (f,g) -> concatRows(f**id_(source g),g)
      -- we would prefer for f**id_(source g) to have the exact same source as g does
 Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
-ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
-Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
+Number || Matrix := (f,g) -> concatRows(f*id_(source g),g)
+Matrix || Number := (f,g) -> concatRows(f,g*id_(source f))
 
 -----------------------------------------------------------------------------
 -- submatrix, submatrixByDegrees
