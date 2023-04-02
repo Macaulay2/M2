@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7", 
-    Date => "February 15, 2023",
+    Date => "April 2, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -47,7 +47,7 @@ if Cremona.Options.Version < requiredCremonaVersion then (
     error("required Cremona package version "|requiredCremonaVersion|" or newer");
 );
 
-export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
+export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "projectionMaps", "fiberProduct", 
        "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus", "sumUp",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2", "toRationalMap",
        "∏","⋂","⋃","PP",
@@ -327,6 +327,9 @@ projections MultiprojectiveVariety := X -> (
     if X#"projections" =!= null then return X#"projections";
     X#"projections" = apply(X#"multigens",x -> rationalMap(sub(matrix{x},ring X),Dominant=>"notSimplify"))
 );
+
+projectionMaps = method();
+projectionMaps MultiprojectiveVariety := (cacheValue "projection maps") (X -> apply(projections X,f -> rationalMap(multirationalMap f,Dominant=>true)));
 
 segre MultiprojectiveVariety := (cacheValue "SegreMap") (X -> segre ring X);
 
@@ -1001,7 +1004,13 @@ line (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
     if # L == 0 then error("failed to find line in "|toString(? X));
     first random L    
 );
-line EmbeddedProjectiveVariety := X -> line(X,point X);
+line (EmbeddedProjectiveVariety,ZZ) := (X,n) -> (
+    L := try line(X,point X) else null;
+    for i from 1 to n-1 when L === null do (<<"-- failed attempt ["<<i<<"/"<<n<<"]"<<" to find a line in the variety, re-trying..."<<endl; L = try line(X,point X) else null);
+    if L === null then error("failed attempt ["|toString(n)|"/"|toString(n)|"] to find a line in the variety: "|toString(? X));
+    L
+);
+line EmbeddedProjectiveVariety := X -> line(X,3);
 
 linearlyNormalEmbedding = method();
 linearlyNormalEmbedding EmbeddedProjectiveVariety := X -> (
@@ -1272,7 +1281,12 @@ rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
     error "invalid value for option Dominant";
 );
 
-rationalMap MultirationalMap := o -> Phi -> rationalMap(factor super Phi,Dominant=>o.Dominant);
+rationalMap MultirationalMap := o -> Phi -> (
+    Psi := rationalMap(factor super Phi,Dominant=>o.Dominant);
+    if ring source Psi =!= ring source Phi then error "internal error encountered";
+    Psi#"source" = source Phi;
+    Psi
+);
 
 multirationalMap RationalMap := phi -> multirationalMap {phi};
 multirationalMap(RationalMap,RationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
@@ -1383,6 +1397,8 @@ target MultirationalMap := Phi -> Phi#"target";
 coefficientRing MultirationalMap := Phi -> coefficientRing target Phi;
 
 factor MultirationalMap := o -> Phi -> Phi#"maps";
+
+projectionMaps MultirationalMap := (cacheValue "projection maps") (Phi -> apply(projections target Phi,f -> Phi * f));
 
 toRingMap = method();
 toRingMap (MultirationalMap,Ring) := (Phi,R) -> (
@@ -1905,6 +1921,17 @@ inverse2 (MultirationalMap,Option) := (Phi,opt) -> (
 inverse2 MultirationalMap := Phi -> inverse2(Phi,Verify=>true);
 inverse2 (MultihomogeneousRationalMap,Option) := (Phi,opt) -> inverse2(multirationalMap {Phi},opt);
 inverse2 MultihomogeneousRationalMap := Phi -> inverse2(Phi,Verify=>true);
+
+forceInverseMap (MultirationalMap,MultirationalMap) := (Phi,Psi) -> ( -- to be improved
+    if Phi#"inverse" =!= null or Psi#"inverse" =!= null then error "not permitted to reassign inverse rational map";
+    if source Phi =!= target Psi or target Phi =!= source Psi then error "incompatible target and source";
+    Phi#"isBirational" = true;
+    Phi#"isDominant" = true;
+    Psi#"isBirational" = true;
+    Psi#"isDominant" = true;
+    Phi#"inverse" = Psi;
+    Psi#"inverse" = Phi;
+);
 
 isIsomorphism MultirationalMap := Phi -> (
     if dim source Phi != dim target Phi or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
@@ -2455,7 +2482,17 @@ Headline => "projections of a multi-projective variety",
 Usage => "projections X", 
 Inputs => {"X" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
 Outputs => {{"the list of the projections ", TEX///$X\to \mathbb{P}^{k_i}$///,", for ",TEX///$i=1,\ldots,n$///}}, 
-EXAMPLE {"X = projectiveVariety(ZZ/101[x_0..x_3]) ** projectiveVariety(ZZ/101[y_0..y_2]);","projections X"}} 
+PARA {"This function is intended for internal use. Use the ",TO projectionMaps," function instead."},
+EXAMPLE {"X = projectiveVariety(ZZ/101[x_0..x_3]) ** projectiveVariety(ZZ/101[y_0..y_2]);","projections X"},
+SeeAlso => {projectionMaps}}
+
+document {Key => {projectionMaps,(projectionMaps,MultiprojectiveVariety)}, 
+Headline => "projections of a multi-projective variety", 
+Usage => "projectionMaps X", 
+Inputs => {"X" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
+Outputs => {{"the list of the projections ", TEX///$X\to \mathbb{P}^{k_i}$///,", for ",TEX///$i=1,\ldots,n$///}}, 
+EXAMPLE {"X = random({{1,1},{1,1}},0_(PP_(ZZ/101)^{3,1}));","p = projectionMaps X;","p_0","p_1"},
+SeeAlso => {projections}}
 
 document {Key => {(ambient,MultiprojectiveVariety)}, 
 Headline => "the ambient multi-projective space of the variety", 
@@ -2845,13 +2882,23 @@ Headline => "the list of rational maps defining a multi-rational map",
 Usage => "factor Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
 Outputs => {{"the ",TO2{List,"list"}," of ",TO2{RationalMap,"rational maps"}," defining ",TT"Phi"}},
+PARA {"This function is intended for internal use. Use the ",TO2{(projectionMaps,MultirationalMap),"projectionMaps"}," function instead."},
 EXAMPLE lines ///ZZ/33331[t_0..t_2,u_0..u_1,Degrees=>{3:{1,0},2:{0,1}}];
 f0 = rationalMap {t_0,t_1,t_2}
 f1 = rationalMap {u_0,u_1}
 f2 = rationalMap {t_0*u_1,t_1*u_0}
 Phi = rationalMap {f0,f1,f2};
 assert(factor Phi === {f0,f1,f2})///,
-SeeAlso => {(target,MultirationalMap),(source,MultirationalMap)}}
+SeeAlso => {(target,MultirationalMap),(source,MultirationalMap),(projectionMaps,MultirationalMap)}}
+
+document { 
+Key => {(projectionMaps,MultirationalMap)}, 
+Headline => "get the compositions of the multi-rational map with the projections of the target", 
+Usage => "projectionMaps Phi", 
+Inputs => {MultirationalMap => "Phi"}, 
+Outputs => {{"the ",TO2{List,"list"}," of ",TO2{MultirationalMap,"rational maps"}," obtained by composing the map with the ",TO2{projectionMaps,"projections"}," of the target"}},
+EXAMPLE {"Phi = inverse first graph rationalMap PP_(ZZ/33331)^(1,4);", "p = projectionMaps Phi;", "p_0", "p_1"},
+SeeAlso => {(factor,MultirationalMap)}}
 
 document { 
 Key => {(coefficientRing,MultirationalMap)}, 
@@ -3923,7 +3970,8 @@ undocumented {
 (image,MultirationalMap,String),
 (matrix,MultirationalMap),
 (random,MultirationalMap),
-quadricFibration, (quadricFibration,MultirationalMap) -- to be documented
+quadricFibration, (quadricFibration,MultirationalMap), -- to be documented
+(forceInverseMap,MultirationalMap,MultirationalMap) -- to be improved
 }
 
 ---------------
