@@ -17,3 +17,8 @@ auto basis_to_M2_mutable_matrix(const newf4::Basis & B, const FreeModule* F) -> 
 {
   return nullptr;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
+// End:
