@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.7", 
-    Date => "February 15, 2023",
+    Date => "April 2, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -62,7 +62,9 @@ export{
    "GMtables",
    "fanoFourfold",
    "parametrizeFanoFourfold",
-   "fromOrdinaryToGushel"
+   "fromOrdinaryToGushel",
+   "IntersectionOfThreeQuadricsInP7",
+   "beauvilleMap"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
@@ -135,7 +137,12 @@ specialFourfold (Ideal,Ideal) := o -> (idS,idX) -> specialFourfold(projectiveVar
 specialFourfold (Ideal,RingElement) := o -> (idS,C) -> specialFourfold(idS,ideal C,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 specialFourfold EmbeddedProjectiveVariety := o -> S -> (
-    if dim S == 4 and S#?"SurfaceContainedInTheFourfold" then return specialFourfold(first S#"SurfaceContainedInTheFourfold",S,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    if dim S == 4 then (
+        if S#?"SurfaceContainedInTheFourfold" then 
+            return specialFourfold(first S#"SurfaceContainedInTheFourfold",S,InputCheck=>o.InputCheck,Verbose=>o.Verbose)
+        else 
+            return specialFourfold(S * random({2:{1}},0_S),S,InputCheck=>o.InputCheck,Verbose=>o.Verbose)
+    );
     if dim S != 2 then error "expected a surface";
     if dim ambient S == 5 then return specialCubicFourfold(S,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     if dim ambient S == 6 then return specialFourfold(S,random({{2},{3}},S),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
@@ -1506,6 +1513,41 @@ infoAboutParameterCountInAmbientP7 = (x,y) -> (
     (b,a,c) := y;
     if 34-a-b+c != x then <<"--warning: something went wrong"<<endl;
     <<"[parameterCount in the ambient PP^7: "<<(34-a-b+c, (b+2, 68 + a - 2*b , c))<<"]"<<endl;
+);
+
+beauvilleMap = method();
+beauvilleMap IntersectionOfThreeQuadricsInP7 := X -> (
+    R := ring ambient X;
+    l := projectiveVariety ideal submatrix'(vars R,{0,1});
+    j := rationalMap(((line X) ===> l)|X,Dominant=>true);
+    X' := target j;
+    if not isSubset(l,X') then error "something went wrong";
+    K := coefficientRing R;
+    x := local x; P7 := projectiveVariety(K[x_0..x_7]);
+    t := local t; P2 := projectiveVariety(K[t_0..t_2]);
+    u := local u; P5 := projectiveVariety(K[u_0..u_5]);
+    Q := flatten entries sub(gens ideal X',vars ring P7);
+    S := (K[x_2..x_7])[x_0,x_1];
+    L := apply(3,i -> coefficient((x_0)_S,sub(Q_i,S)));
+    M := apply(3,i -> coefficient((x_1)_S,sub(Q_i,S)));
+    F := apply(3,i -> coefficient(1_S,sub(Q_i,S)));
+    if F != apply(3,i -> sub(Q_i,S) - (x_0)_S * L_i - (x_1)_S * M_i) then error "something went wrong";
+    P2xP5 := P2 ** P5;
+    A := sub(matrix {L,M,F},for i to 5 list (gens coefficientRing S)_i => u_i);
+    Z := projectiveVariety ideal det A;
+    Y := projectiveVariety ideal(((map last projections P2xP5) A) * transpose matrix {first P2xP5#"multigens"});
+    fromXtoZ := j * rationalMap(ring X',ring P5,submatrix'(vars R,{0,1}));
+    if image fromXtoZ != Z then error "something went wrong";
+    fromXtoZ = rationalMap(fromXtoZ,Z);
+    fromYtoZ := (last projections P2xP5)|Y;
+    if image fromYtoZ != Z then error "something went wrong";
+    fromYtoZ = rationalMap(fromYtoZ,Z);
+    Y.cache#"projection maps" = {quadricFibration first projectionMaps Y, fromYtoZ};
+    f := fromXtoZ * inverse fromYtoZ;
+    g := fromYtoZ * inverse fromXtoZ;
+    if not(f * g == 1 and g * f == 1) then error "something went wrong";
+    forceInverseMap(f,g);
+    f
 );
 
 ------------------------------------------------------------------------
@@ -3155,7 +3197,7 @@ typicalValues#discriminant = typValDisc;
 
 undocumented{(expression, SpecialGushelMukaiFourfold), (describe, SpecialGushelMukaiFourfold)} 
 
-document {Key => {Verbose, [specialCubicFourfold, Verbose], [specialGushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose]}, 
+document {Key => {Verbose, [specialCubicFourfold, Verbose], [specialGushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose]}, 
 Headline => "request verbose feedback"}
 
 document {Key => {specialGushelMukaiFourfold, (specialGushelMukaiFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialGushelMukaiFourfold, Ideal, Ideal), [specialGushelMukaiFourfold, InputCheck]}, 
@@ -3569,13 +3611,13 @@ EXAMPLE {"S = surface {3,4};", "X = specialFourfold S -- a random cubic fourfold
 SeeAlso => {specialCubicFourfold, specialGushelMukaiFourfold}}
 
 document {
-Key => {Singular, [associatedK3surface, Singular], [mirrorFourfold, Singular]},
+Key => {Singular, [associatedK3surface, Singular], [associatedCastelnuovoSurface, Singular], [mirrorFourfold, Singular]},
 Headline => "whether to transfer computation to Singular",
 Usage => "Singular => true or false",
 PARA{"This option allows you to transfer part of the computation to Singular."},
 SeeAlso => {associatedK3surface}} 
 
-document {Key => {mirrorFourfold, (mirrorFourfold, SpecialCubicFourfold), (mirrorFourfold, SpecialGushelMukaiFourfold), (mirrorFourfold, HodgeSpecialFourfold), [mirrorFourfold, Strategy]}, 
+document {Key => {mirrorFourfold, (mirrorFourfold, SpecialCubicFourfold), (mirrorFourfold, SpecialGushelMukaiFourfold), (mirrorFourfold, IntersectionOfThreeQuadricsInP7), (mirrorFourfold, HodgeSpecialFourfold), [mirrorFourfold, Strategy]}, 
 Headline => "associated fourfold to a rational cubic or GM fourfold", 
 Usage => "mirrorFourfold X", 
 Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
@@ -3593,12 +3635,12 @@ Outputs => {String => {"a string representation of ",TT "X",", which can be used
 PARA{"Some of the internal data of the input ",TT"X"," are included in the returned string."},
 EXAMPLE {"describe (X = specialFourfold \"tau-quadric\")", "str = toExternalString X;", "describe (value str)"}}
 
-undocumented {associatedCastelnuovoSurface, [associatedCastelnuovoSurface, Singular], [associatedCastelnuovoSurface, Verbose], (expression, HodgeSpecialFourfold)}
+undocumented {(expression, HodgeSpecialFourfold)}
 
 document {Key => {HodgeSpecialFourfold}, 
 Headline => "the class of all Hodge-special fourfolds", 
 PARA{"An object of the class ", TO HodgeSpecialFourfold, " is basically represented by a couple ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///,". Such objects are created by the function ",TO specialFourfold,"."},
-SeeAlso => {specialFourfold, SpecialCubicFourfold, SpecialGushelMukaiFourfold}}
+SeeAlso => {specialFourfold, SpecialCubicFourfold, SpecialGushelMukaiFourfold, IntersectionOfThreeQuadricsInP7}}
 
 document {Key => {(check, ZZ, CongruenceOfCurves), (check, CongruenceOfCurves)}, 
 Headline => "check that a congruence of curves is well-defined", 
@@ -3607,6 +3649,31 @@ Inputs => {"n" => ZZ => {"(optional with default value 5)"}, "f" => CongruenceOf
 Outputs => {CongruenceOfCurves => {"the same object passed as input, but an error is thrown if the congruence fails when ",TO2{(symbol SPACE, CongruenceOfCurves, EmbeddedProjectiveVariety),"evaluated"}," on ",TT"n"," random points."}}}
 
 undocumented {(symbol ?, HodgeSpecialFourfold, HodgeSpecialFourfold)}
+
+document {Key => {IntersectionOfThreeQuadricsInP7}, 
+Headline => "the class of all special intersection of three quadrics in P^7",
+PARA {"This is a subtype of the ",TO HodgeSpecialFourfold," type."},
+SeeAlso => {specialFourfold}}
+
+undocumented {(expression, IntersectionOfThreeQuadricsInP7)}
+
+document {Key => {associatedCastelnuovoSurface, (associatedCastelnuovoSurface, IntersectionOfThreeQuadricsInP7), [associatedCastelnuovoSurface, Strategy]},
+Headline => "Castelnuovo surface associated to a rational complete intersection of three quadrics in P^7", 
+Usage => "U' = associatedCastelnuovoSurface X", 
+Inputs => {"X" => IntersectionOfThreeQuadricsInP7 => {"containing a surface ", TEX///$S\subset Y$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the ",TO2{ambientFivefold,"ambient fivefold"}," ",TEX///$Y$///," of the fourfold ",TEX///$X$///}}, 
+Outputs => {"U'" => {"the (minimal) Castelnuovo surface associated to ",TEX///$X$///}},
+Consequences => {{{TT"building U'"," will return the following four objects:"}, UL{{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal Castelnuovo surface ",TEX///$U'$///,"."}}}},
+PARA {"More details will be provided in a forthcoming paper by F. Russo and G. Staglianò."},
+EXAMPLE {"X = specialFourfold random({5:{1}},0_(PP_(ZZ/33331)^7));", "describe X", "time U' = associatedCastelnuovoSurface X;", "(mu,U,C,f) = building U';", "? mu"},
+SeeAlso => {associatedK3surface, detectCongruence}}
+
+document {Key => {beauvilleMap, (beauvilleMap, IntersectionOfThreeQuadricsInP7)},
+Headline => "construction of Beauville for complete intersections of three quadrics in P^7", 
+Usage => "f = beauvilleMap X", 
+Inputs => {"X" => IntersectionOfThreeQuadricsInP7}, 
+Outputs => {"f" => MultirationalMap => {"a birational map from ",TEX///$X$///," to a fourfold ",TEX///$Y\subset\mathbb{P}^2\times\mathbb{P}^5$///," whose first projection ",TEX///$Y\to\mathbb{P}^2$///," is a quadric surface bundle"}},
+PARA{"Smooth intersections of three quadrics in ",TEX///$\mathbb{P}^7$///," are birational to quadric surface bundles over ",TEX///$\mathbb{P}^2$///," with discriminant curve of degree 8. This is a construction of Beauville; see e.g. Proposition 6 in the paper ",HREF{"https://www.intlpress.com/site/pub/files/_fulltext/journals/sdg/2017/0022/0001/SDG-2017-0022-0001-a009.pdf", "Intersections of three quadrics in P7"}, ", by B. Hassett, A. Pirutka, and Y. Tschinkel."},
+EXAMPLE {"X = specialFourfold random({5:{1}},0_(PP_(ZZ/33331)^7));", "f = beauvilleMap X;", "Y = target f;", "inverse f;", "first projectionMaps target f;"}}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
