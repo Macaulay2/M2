@@ -644,8 +644,8 @@ document {
 	  (symbol |, RingElement, Matrix),
 	  (symbol |, Matrix, RingElement),
 	  (symbol |, RingElement, RingElement),
-	  (symbol |, ZZ, Matrix),
-	  (symbol |, Matrix, ZZ)
+	  (symbol |, Number, Matrix),
+	  (symbol |, Matrix, Number)
 	  },
      Headline => "join matrices horizontally",
 	Usage => "f = g | h",
@@ -664,7 +664,7 @@ document {
       	  h = matrix {{m,n},{o,p}}
       	  f= g | h
 	  ///,
-     "If one of the arguments is a ring element or an integer, then it
+     "If one of the arguments is a ring element or a number, then it
      will be multiplied by a suitable identity matrix.",
 	EXAMPLE "f | (m-n)",
 	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO Ring, "."},
@@ -697,8 +697,8 @@ document {
 	  (symbol ||, RingElement, Matrix),
 	  (symbol ||, Matrix, RingElement),
 	  (symbol ||, RingElement, RingElement),
-	  (symbol ||, Matrix, ZZ),
-	  (symbol ||, ZZ, Matrix)
+	  (symbol ||, Matrix, Number),
+	  (symbol ||, Number, Matrix)
 	  },
      Headline => "join matrices vertically",
 	Usage => "f = g || h",
@@ -717,7 +717,7 @@ document {
       	  h = matrix {{m,n},{o,p}}
       	  f= g || h
 	  ///,
-     "If one of the arguments is a ring element or an integer, then it
+     "If one of the arguments is a ring element or a number, then it
      will be multiplied by a suitable identity matrix.",
 	EXAMPLE "f || 33",
 	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO Ring, "."},
