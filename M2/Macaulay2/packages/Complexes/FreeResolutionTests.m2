@@ -499,6 +499,19 @@ TEST ///
   J1 = sub(J, Sh1)
   F = freeResolution(comodule J1, LengthLimit => 5)
   isWellDefined F
+
+   
+  --needsPackage "HyperplaneArrangements"
+  --A = typeA 3
+  E = ZZ/101[e_1..e_6, SkewCommutative => true]
+  --I = orlikSolomon(A, E)  
+  I = ideal(e_4*e_5-e_4*e_6+e_5*e_6,e_2*e_3-e_2*e_6+e_3*e_6,e_1*e_3-e_1*e_5+e_3*e_5,e_1*e_2-e_1*e_4+e_2*e_4)
+  F = freeResolution(E^1/I, LengthLimit => 7, Strategy => "Syzygies")
+  assert isWellDefined F
+  assert isHomogeneous F
+  HHF = prune HH canonicalTruncation(F, 0, 6)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
 ///
 
 TEST ///
@@ -506,20 +519,227 @@ TEST ///
   restart
   needsPackage "Complexes"
 *-  
-  -- Towers: start here 7 March 2023.
+  gbTrace=1
+  kk = ZZ/101
+  A = kk[a,b,c]
+  B = A/(a^2, b^3-c^3)
+  C = B[d, Join => false]
+  I = ideal(c^2*d, a*b^2-c^2*d)
+  F = freeResolution(I, LengthLimit => 10)
+  assert isWellDefined F
+  assert isHomogeneous F
+  HHF = prune HH canonicalTruncation(F, 0, 9)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+  freeResolution(I, LengthLimit => 5)
+  freeResolution(I, LengthLimit => 5, DegreeLimit => 4) -- doesn't truncate degrees to 4.
+  betti oo
+  freeResolution(I, LengthLimit => 5, DegreeLimit => 5)
+  freeResolution(I, LengthLimit => 4)
+  freeResolution(I, LengthLimit => 6, DegreeLimit => 1)
+
+  Fs = freeResolution(ideal I_*, LengthLimit => 10, Strategy => "Syzygies")
+  assert isWellDefined Fs
+  assert isHomogeneous Fs
+  HHF = prune HH canonicalTruncation(Fs, 0, 9)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+  assert(betti Fs == betti F)
+
+  F0 = freeResolution(ideal I_*, LengthLimit => 10, Strategy => 0)
+  assert isWellDefined F0
+  assert isHomogeneous F0
+  HHF = prune HH canonicalTruncation(F0, 0, 9)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+  assert(betti F0 == betti F)
+
+  F2 = freeResolution(ideal I_*, LengthLimit => 10, Strategy => 2)
+  assert isWellDefined F2
+  assert isHomogeneous F2
+  HHF = prune HH canonicalTruncation(F2, 0, 9)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+  assert(betti F2 == betti F)
+
+  F3 = freeResolution(ideal I_*, LengthLimit => 10, Strategy => 2)
+  assert isWellDefined F3
+  assert isHomogeneous F3
+  HHF = prune HH canonicalTruncation(F3, 0, 9)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+  assert(betti F3 == betti F)
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  -- Weyl algebras
+  R = ZZ/101[s,t, Degrees => {0,0}]/(s^2-t^2-1)
+  S = R[x,y,Dx,Dy, WeylAlgebra => {{x,Dx}, {y,Dy}}, Degrees => {1, 1, -1, -1}, Join => false]
+  I = ideal(x*Dx + s*t, y*Dx)
+  assert isHomogeneous I
+  gbTrace=3
+  gens gb I
+  m = gens I
+  -- TODO: once git issue as #2789 is fixed this will give an error, so change it to just call the free resolution.
+  assert try (F = freeResolution I; false) else true
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  R = ZZ/101[s,t, Degrees => {0,0}]/(s^2-t^2-1)
+  S = R[a,b,c,d, SkewCommutative => true]
+  I = ideal(a*b-s*c*d, t*b*d)
+  assert isHomogeneous I
+  gbTrace=1
+  I = ideal I_*
+  F = freeResolution(comodule I, LengthLimit => 5) -- default is, we think, "Syzygies"
+  assert isWellDefined F
+  assert isHomogeneous F
+  HHF = prune HH canonicalTruncation(F, 0, 4)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+
+
+  R = ZZ/101[a,b,c,d, SkewCommutative => true]
+  S = R[s,t, Degrees => {0,0}]/(s^2-t^2-1)  
+  I = ideal(a*b-s*c*d, t*b*d)
+  assert isHomogeneous I
+  gbTrace=1
+  I = ideal I_*
+  F2 = freeResolution(comodule I, LengthLimit => 5) -- default is, we think, "Syzygies"
+  assert isWellDefined F2
+  assert isHomogeneous F2
+  HHF = prune HH canonicalTruncation(F2, 0, 4)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
 ///
 
 
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-  
+  -- Exterior algebras
+  S = QQ[a,b,c,d, SkewCommutative => true]
+  I = ideal(a*b-c*d, b*d-a)
+  assert not isHomogeneous I
+  gbTrace=1
+  I = ideal I_*
+  F = freeResolution(comodule I, LengthLimit => 5)
+  assert isWellDefined F
+  Fm = minimize F
+  assert isWellDefined Fm
 
+  HHF = prune HH canonicalTruncation(F, 0, 4)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
 
+  HHF = prune HH canonicalTruncation(Fm, 0, 4)
+  assert(HHF_0 == comodule I)
+  assert(length HHF == 0)
+///
 
+TEST ///
+-* 
+  restart
+  needsPackage "Complexes"
+*-
+  R = ZZ
+  d = diagonalMatrix{1,7,21}
+  U = matrix {{4, 3, 3}, {3, 4, 1}, {1, 2, 0}}    
+  m = U^-1 * d * U
+  M = coker m
+  F = freeResolution M
+  phi = augmentationMap F
+  assert isWellDefined phi
+  assert isComplexMorphism phi
+  assert isQuasiIsomorphism phi
+  assert (length F == 1)
+  -- the following isn't exactly an invariant so could return false.
+  -- prune HH F == complex prune coker first smithNormalForm m
 
+  M = coker matrix {{-71, -216, 36}, {46, 129, -18}, {50, 160, -29}}
+  Fs = freeResolution(M, Strategy => "Syzygies")
+  phi = augmentationMap Fs
+  assert isWellDefined phi
+  assert isComplexMorphism phi
+  assert isQuasiIsomorphism phi
+  assert (length Fs == 1)
+  assert(prune HH F == prune HH Fs)
+///
 
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-
+  kk = ZZ/32003
+  A = kk[a,b,c,d]
+  I = ideal"a2b-c2, abc-d2, a3-a-1"
+  assert not isHomogeneous I
+  F = freeResolution I
+  assert isWellDefined F
+  f = augmentationMap F
+  assert isWellDefined f
+  assert isQuasiIsomorphism f
+  assert(coker f == 0)
 
+  I = ideal I_*
+  F2 = freeResolution(I, Strategy => "Syzygies")
+  assert isWellDefined F2
+  f = augmentationMap F2
+  assert isWellDefined f
+  assert isQuasiIsomorphism f
+  assert(coker f == 0)
+  g = extend(F2, F, id_(A^1))
+  assert isWellDefined g
+  assert isQuasiIsomorphism g
+  h = extend(F, F2, id_(A^1))
+  assert isWellDefined h
+  assert isQuasiIsomorphism h
+///
 
+TEST ///
+-- Test of nonminimal resolutions
+-*
+  restart
+  needsPackage "Complexes"
+*-
+  kk = ZZ/32003
+  R = kk[a,b,c,d,e]
+  I = ideal"abc-de2, abd-c2d, ac2-bd2, abcde"
+  gbTrace=2
 
+  (usedtime1, C) = toSequence timing freeResolution(I, Strategy => "Nonminimal")
+  assert isWellDefined C
 
+  (usedtime2, C2) = toSequence timing freeResolution(I, Strategy => "Nonminimal")
+  assert(usedtime2 < usedtime1/10)
 
+  (usedtime3, C3) = toSequence timing freeResolution I
+  assert(usedtime3 >  10*usedtime2)
+
+  (usedtime4, C4) = toSequence timing freeResolution(I, Strategy => Engine)
+  assert(usedtime4 < usedtime3/10)
+
+  freeResolution(I, Strategy => 0) -- not recomputing
+  freeResolution(I, Strategy => 1) -- not recomputing
+  freeResolution(I, Strategy => 2) -- not recomputing
+  freeResolution(I, Strategy => "Nonminimal")
+///
+
+TEST ///
+  -- MIKE TODO 7 Mar 2023: take the last test from FreeResolutions.m2, clean it
+  -- and place it here.
+///
 
 
 TEST ///

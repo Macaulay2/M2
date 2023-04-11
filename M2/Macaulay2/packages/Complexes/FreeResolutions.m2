@@ -693,78 +693,10 @@ assert isWellDefined F
 F2 = freeResolution(M, LengthLimit => 2) -- BUG? Doesn't seem to finish.
 
 
--- XXXX
 
 restart
 debug loadPackage("Complexes")
 gbTrace=1
-kk = ZZ/101
-A = kk[a,b,c]
-B = A/(a^2, b^3-c^3)
-C = B[d, Join => false]
-I = ideal(c^2*d, a*b^2-c^2*d)
-M = comodule I
-freeResolution(M, LengthLimit => 10)
-freeResolution(M, LengthLimit => 5, DegreeLimit => 4)
-freeResolution(M, LengthLimit => 4)
-freeResolution(M, LengthLimit => 6, DegreeLimit => 1)
-M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 2, LengthLimit => 5)
-assert isWellDefined F
-
-M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 0, LengthLimit => 5)
-assert isWellDefined F
-
-M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 3, LengthLimit => 6)
-assert isWellDefined F
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(I, Strategy => 4, LengthLimit => 6) -- nonminimal... NOT PUT BACK INTO Complexes yet...
-F = freeResolution(I, Strategy => Nonminimal, LengthLimit => 6) -- nonminimal... NOT PUT BACK INTO Complexes yet... BUG
-assert isWellDefined F
-
-I = ideal I_*
-F = freeResolution(I, DegreeLimit => 3, LengthLimit => 2)
-F = freeResolution(I, DegreeLimit => 2, LengthLimit => 2)
-F = freeResolution(I, LengthLimit => 4)
-
-
--- Resolution by syzygies
--- #1 Over ZZ needs separate hook. Done!
-  restart
-  needsPackage "Complexes"
-  
-  m = matrix{{2,3,7},{7,14,21}}
-  M = coker m
-  -- new code:
-  C = freeResolution M -- BUG: not a resolution!!
-  f = augmentationMap C
-  assert isWellDefined f
-  assert isQuasiIsomorphism f
-  assert(HH coker f == 0)
-
-  M = coker matrix {{2,3,7},{7,14,21}}
-  C = freeResolution(M, Strategy => "Syzygies") 
-  f = augmentationMap C
-  assert isWellDefined f
-  assert isQuasiIsomorphism f
-  assert(HH coker f == 0)
-
-  -- Weyl algebra example
-  -- Exterior algebra example
-  -- inhomog example
-  -- Orlik-Solomon algebra
-  needsPackage "HyperplaneArrangements"
-  A = typeA 3
-  E = ZZ/101[e_1..e_6, SkewCommutative => true]
-  I = orlikSolomon(A, E)
-  F = freeResolution(E^1/I, LengthLimit => 7, Strategy => "Syzygies")
-  isWellDefined F
-  -- TODO: write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
-  hashTable for i from 0 to length F - 1 list i => prune HH_i F
-  betti F
 
 
 restart
@@ -782,100 +714,11 @@ I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
 C = cechComplex I
 prune HH C
 
----- Inhomogeneous
-restart
-needsPackage "Complexes"
-kk = ZZ/32003
-A = kk[a,b,c,d]
-I = ideal"a2b-c2, abc-d2"
-isHomogeneous I
-debugLevel = 1
-gbTrace=1
-elapsedTime C1 = freeResolution I
-assert isWellDefined C1
-f = augmentationMap C1
-assert isWellDefined f
-assert isQuasiIsomorphism f
-assert(coker f == 0)
 
-I = ideal I_*
-elapsedTime C2 = freeResolution(I, Strategy => "Syzygies")
-peek C1.cache
-peek C2.cache
-
-I = ideal"a7b-c2, ab5c-d2, a5c-c2-d2, a3b3-c2d-a2"
-isHomogeneous I
-debugLevel = 1
-gbTrace=1
-elapsedTime C1 = freeResolution I
-I = ideal I_*
-elapsedTime C2 = freeResolution(I, Strategy => "Syzygies")
-peek C1.cache
-peek C2.cache
-
--- homogeneous quotient ring as coefficient ring
-restart
-loadPackage "Complexes"
-kk = ZZ/32003
-A = kk[s,t]/(s^3, t^3)
-B = A[x,y,z, Join => false]
-I = ideal(s*x-t*y, s^2*z^3-x^5)
-isHomogeneous I
-C = freeResolution(I, LengthLimit => 4)
-isWellDefined C
-
--- Test of Strategy => Homogenization
-restart
-needsPackage "Complexes"
-kk = ZZ/32003
-A = kk[s,t]/(s^2-t^3, t^5)
-B = A[x,y,z, Join => false]
-I = ideal(s*x-t*y, s^2*z^3-x^4)
-isHomogeneous I
-debugLevel = 1
-gbTrace=1
-res I -- BUG! (one we don't care about)
-res(I, Strategy => "Syzygies", LengthLimit => 3)
-freeResolution(I, Strategy => "Syzygies", LengthLimit => 3)
-debugLevel = 3
-gbTrace = 1
-printLevel = 1
-I = ideal I_*
-freeResolution(I, LengthLimit => 3) -- how to tell what strategy is being used
-
--- Test of interruptability: Strategy => Homogenization
-restart
-debug needsPackage "Complexes"
-kk = ZZ/32003
-R = kk[vars(0..17)]
-I = ideal for x in gens R list x - random kk
-debugLevel = 1
-gbTrace=1
-C = freeResolution(I, Strategy => "Homogenization")
--- control-c after a couple seconds
-peek (coker gens I).cache.ResolutionObject
-C = freeResolution(I, Strategy => "Homogenization")
--- look at the number of "."'s.  Totall should be about 18.  If much less,
--- then the computation correctly picked up from where it ended before.
+-- XXXX
 
 
--- Test of nonminimal resolutions
-restart
-debug needsPackage "Complexes"
-kk = ZZ/32003
-R = kk[a,b,c,d,e]
-I = ideal"abc-de2, abd-c2d, ac2-bd2, abcde"
-gbTrace=2
-C = freeResolution(I, Strategy => "Nonminimal")
-C = freeResolution(I, Strategy => "Nonminimal")
-C = freeResolution I
-C = freeResolution(I, Strategy => Engine) -- not recomputing
-C = freeResolution(I, Strategy => 0) -- not recomputing
-C = freeResolution(I, Strategy => 1) -- not recomputing
-C = freeResolution(I, Strategy => 2) -- not recomputing
-res(I, Strategy => 4) -- nonminimal
-res I -- minimal
-C = freeResolution I
+
 
 -- Test of minimalBetti
 -- YYY
