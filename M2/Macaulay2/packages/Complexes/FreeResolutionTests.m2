@@ -737,12 +737,6 @@ TEST ///
 ///
 
 TEST ///
-  -- MIKE TODO 7 Mar 2023: take the last test from FreeResolutions.m2, clean it
-  -- and place it here.
-///
-
-
-TEST ///
   -- originally from tests/normal/res.m2
 -*
   restart
@@ -793,4 +787,26 @@ TEST ///
   --  res M = C 
   --  assert( res M === C )
 
+///
+
+///
+  -- code to test control-c during a computation.
+  -- We don't know how to make this into a proper test.
+  -- TODO (possibly): allow snapshot of a partially computed resolution.
+-*  
+  restart
+  debug needsPackage("Complexes")
+*-
+  gbTrace=1
+  S = ZZ/101[vars(0..20)]
+  I = ideal for i from 1 to numgens S list S_(i-1)^i
+  M = S^1/I
+  F = freeResolution(M, Strategy => Engine)
+  C = res(M)
+  -- control-c in the middle, look at M.cache.ResolutionObject
+  peek M.cache.ResolutionObject
+  F = freeResolution(M, LengthLimit => 4) -- Doesn't seem to finish. Is that ok?  document this?
+  F = freeResolution(M, Strategy => Engine, LengthLimit => 4) -- This one works.
+  assert isWellDefined F
+  F2 = freeResolution(M, LengthLimit => 2)
 ///

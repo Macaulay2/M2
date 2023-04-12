@@ -1,39 +1,28 @@
--- todo: created 7 Feb 2023:
---   we just did migration of Truncations.
---   todo: 2 tests in Truncations are failing due to changes we made. DONE
---   todo: get doc references both directions working (recompile M2). DONE
---   next thing: finish tests in Complexes (and FreeResolutions)
---               create doc node(s) for freeResolution
+-- todo: (for 24 April 2023, 1 May 2023)
+--  create doc node(s) for freeResolution
 --
--- todo 27 Jan 2023:
-
---  take test/code at end of FreeResolutions.m2 and make honest tests of these.
---  make sure all resolutions types that we want are being done correctly.
---  write doc for free resolution code.
---  make another pass through all of our code: enough tests, doc is good.  Maybe add in Weyl algebra examples too, etc.
+-- 1. landing page for freeResolution: just the basics.
+--    (doesn't discuss any options), the basics. links to Complexes.
+--    projectiveResolution, semifreeResolution need to be keywords, or mentioned.
+--    injectiveResolution over exterior algebra?
+-- 2. basic useful options: LengthLimit, DegreeLimit (partial computation)
+-- 3.
+--    Each strategy has a page.
+--    The reason for this version.  Example: what it does well, what it can't handle.
+-- 4. compare and constrast strategies.
+--    when to use each one?
+--    What if you want to keep the first matrix fixed?
+--    What if you want it to give a minimal first matrix?
+-- n. less used options.
+--
+--
+--  make another pass through all of our code: enough tests, doc is good.  Add in Weyl algebra examples too, etc.
 --  after that: start getting it to work with other packages.
 
--- todo for June/July 2022:
---   we just had finished resolutionBySyzgyies, although maybe some more testing is in order.
---   e.g.: interrupts, Weyl algebra.
---   need: Strategy => Inhomogeneous.
---   . take our example collection and make into a robust set of tests.
+-- Some things to keep in mind.
 --   . write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
---   . nonminimal resolutions
 --   . revisit augmentationMap, in case when the resolution 
 --          messes with the module generators.
-
--- "BUGS" found in M2:
---  1. Issue #2405
---   M === N maybe should check equality by pointer first:
---   caused a problem in constructing the augmentation map for resolutions
---   over a field (when field is inexact).
--*
-     R = RR_53
-     M = coker matrix{{1.3, 1.4}, {1.1, 1.5}, {.3, .6}}
-     assert(M === M) -- this is good
-     assert(not(M == M)) -- M===M but M != M...
-*-
 
 importFrom_Core { 
     "RawComputation", 
@@ -580,11 +569,27 @@ cechComplex MonomialIdeal := Complex => B -> (
     complex(maps, Base => lo)
     )
 
+///
+-- once cechComplex has been thought through, we can make a test from
+-- this
+  restart
+  debug needsPackage("Complexes")
+
+  R = ZZ/101[x,y,z]
+  cechComplex monomialIdeal(x,y,z)
+
+  R = ZZ/101[a..d]
+  C = cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
+  prune HH C
+
+  R = ZZ/101[s_0,s_1,t_0,t_1]
+  I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
+  C = cechComplex I
+  prune HH C
+///
 
 -- This local function comes from m2/betti.m2.
 heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
-
--- XXX
 
 truncate(BettiTally, ZZ, ZZ) := 
 truncate(BettiTally, ZZ, InfiniteNumber) := 
@@ -676,103 +681,3 @@ minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
 
 
 end--
-
-
-restart
-debug needsPackage("Complexes")
-gbTrace=1
-S = ZZ/101[vars(0..20)]
-I = ideal for i from 1 to numgens S list S_(i-1)^i
-M = S^1/I
-F = freeResolution(M, Strategy => Engine)
--- control-c in the middle, look at M.cache.ResolutionObject
-peek M.cache.ResolutionObject
-F = freeResolution(M, LengthLimit => 4) -- BUG? Doesn't seem to finish.
-F = freeResolution(M, Strategy => Engine, LengthLimit => 4) -- This one works.
-assert isWellDefined F
-F2 = freeResolution(M, LengthLimit => 2) -- BUG? Doesn't seem to finish.
-
-
-
-restart
-debug loadPackage("Complexes")
-gbTrace=1
-
-
-restart
-debug needsPackage("Complexes")
-
-R = ZZ/101[x,y,z]
-cechComplex monomialIdeal(x,y,z)
-
-R = ZZ/101[a..d]
-C = cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
-prune HH C
-
-R = ZZ/101[s_0,s_1,t_0,t_1]
-I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
-C = cechComplex I
-prune HH C
-
-
--- XXXX
-
-
-
-
--- Test of minimalBetti
--- YYY
-restart
-debug needsPackage "Complexes"
-errorDepth=0
-kk = ZZ/32003
-R = kk[a,b,c,d,e]
-gbTrace=2
-
-I = ideal"abc-de2, abd-c2d, ac2-bd2, abcde"
-M = comodule I
-minimalBetti(M, DegreeLimit => infinity)
-peek M.cache
-peek M.cache.Resolution.cache
-C = freeResolution(M, Strategy => "Nonminimal") -- should not recompute
-
-I = ideal"abc-de2, abd-c2d, ac2-bd2, abcde"
-M = comodule I
-minimalBetti M
-C = freeResolution(M, Strategy => "Nonminimal") -- should not recompute
-
-I = ideal"abc-de2, abd-c2d, ac2-bd2, abcde"
-M = comodule I
-betti freeResolution M
-minimalBetti M -- should not need computation
-
-I = ideal"abc-de2, abd-c2d, ac2-bd2, abcde"
-M = comodule I
-freeResolution M
-minimalBetti(M, DegreeLimit => 6, LengthLimit => 3) -- need to truncate it down
-minimalBetti(M, DegreeLimit => 6, LengthLimit => 4) -- need to truncate it down
-minimalBetti(M, DegreeLimit => 6)
-minimalBetti M
-
-restart
-debug needsPackage "Complexes"
-errorDepth=0
-kk = ZZ/32003
-R = kk[a,b,c,d,e]
-gbTrace=2
-
--- TODO: we want Nonminimal to be able to take inhomogeneous input.
-I = ideal"abc-de2, abd-c2d, ac2-bd, abcde-d2-e2"
-M = comodule I
-freeResolution(M, Strategy => "Nonminimal")
-freeResolution(M, Strategy => 4)
-
--- XXX Start here: make an example for inhomg resolution computation. DONE
--- 25 July 2022.  (Done, sort of: Make examples, test interruptability (for Strategy => Homogenization))
--- We are now working on non minimal resolutions.  They seem to be working.
--- Todo: minimalBetti, doc, snapshot of res, betti.
-
--- *** need a suite of examples for towers/homogeneity, which algorithm is best?
-
--- Questions/TODO:
--- How do non-integer degree limits get handled?  e.g. by gb and freeResolution/res
