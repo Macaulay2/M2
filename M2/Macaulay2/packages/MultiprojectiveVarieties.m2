@@ -2323,7 +2323,7 @@ setSource = (X,F) -> (
     F#"source" = X;
     F
 );
--- Sets of rational maps
+-- Sets of rational maps 
 RAT = new Type of HashTable;
 globalAssignment RAT;
 RAT.synonym = "set of rational maps";
