@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7", 
-    Date => "April 15, 2023",
+    Date => "April 16, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -2349,11 +2349,13 @@ expression RAT := H -> (
     if H.target === null
     then (Y = "*")
     else (Y = if hasAttribute(H.target,ReverseDictionary) then toString getAttribute(H.target,ReverseDictionary) else toString expression H.target);
-    expression("Rat("|X|","|Y|")")
+    dom := if H.?parent then ",Dominant=>true" else "";
+    expression("Rat("|X|","|Y|dom|")")
 );
 net RAT := H -> (
     if hasAttribute(H,ReverseDictionary) then return toString getAttribute(H,ReverseDictionary);
-    net expression("Set of rational maps"|newline|"from "|(if H.source === null then "any variety" else ? H.source)|newline|"to "|(if H.target === null then "any variety" else ? H.target))
+    dom := if H.?parent then "dominant " else "";
+    net expression("Set of "|dom|"rational maps"|newline|"from "|(if H.source === null then "any variety" else ? H.source)|newline|"to "|(if H.target === null then "any variety" else ? H.target))
 );
 texMath RAT := texMath @@ net;
 RAT#{WebApp,AfterPrint} = RAT#{WebApp,AfterNoPrint} = 
@@ -2377,7 +2379,7 @@ makeMapsRAT := (H,L) -> (
     )
 );
 RAT List := (H,L) -> (
-    if #L==0 then (if H.source =!= null then return rationalMap((0_(H.source))_(H.source),toList(# shape H.source : -1)) else error "expected a nonempty list");
+    if #L==0 then (if H.source =!= null and (H.target === null or dim ambient H.target == -1) then return rationalMap((0_(H.source))_(H.source),toList(# shape H.source : -1)) else error "expected a nonempty list");
     if H.target =!= null and # shape H.target == 1 and #L != 1 then ( 
         n := numgens ring ambient H.target;
         if #L == n and all(L,l -> instance(l,RingElement) or instance(l,ZZ)) 
@@ -2419,6 +2421,22 @@ RAT MultiprojectiveVariety := (H,Z) -> (
     if H.target === null then f else rationalMap(f,H.target)
 );
 member (MultirationalMap,RAT) := (f,H) -> (if H.source =!= null then source f === H.source else true) and (if H.target =!= null then target f === H.target else true);
+DomRAT = new Type of RAT;
+globalAssignment DomRAT;
+DomRAT.synonym = "set of dominant rational maps";
+Rat (MultiprojectiveVariety,Option) := Rat (Nothing,Option) := (X,opt) -> (
+    if first toList opt =!= Dominant then error "Dominant is the only available option for Rat";
+    if not instance(last opt,Boolean) then error "expected true or false";    
+    H := Rat(X,);
+    if not (last opt) then return H;
+    new DomRAT from {
+        symbol source => X,
+        symbol target => null,
+        symbol parent => H
+    }
+);
+DomRAT Thing := (H,T) -> rationalMap(H.parent T,Dominant=>true);
+member (MultirationalMap,DomRAT) := (f,H) -> member(f,H.parent) and image f == target f;
 
 beginDocumentation() 
 
@@ -4040,7 +4058,7 @@ Headline => "the set of rational maps between two multi-projective varieties",
 PARA{"Objects of this type are created by ",TO Rat,"."},
 SeeAlso => {Rat,(symbol SPACE,RAT,List)}}
 
-document {Key => {Rat,(Rat,MultiprojectiveVariety,MultiprojectiveVariety),(Rat,Nothing,MultiprojectiveVariety),(Rat,MultiprojectiveVariety,Nothing),(Rat,Nothing,Nothing)}, 
+document {Key => {Rat,(Rat,MultiprojectiveVariety,MultiprojectiveVariety),(Rat,Nothing,MultiprojectiveVariety),(Rat,MultiprojectiveVariety,Nothing),(Rat,Nothing,Nothing),(Rat,MultiprojectiveVariety,Option),(Rat,Nothing,Option)}, 
 Headline => "get the set of rational maps between two multi-projective varieties", 
 Usage => "Rat(X,Y)", 
 Inputs => {"X" => MultiprojectiveVariety, "Y" => MultiprojectiveVariety},
@@ -4055,6 +4073,10 @@ EXAMPLE {
 "Rat(X,)",
 "Rat(,Y)",
 "Rat(,)"},
+PARA {"We can also form sets of dominant rational maps."},
+EXAMPLE {
+"Rat(X,Dominant=>true)",
+"Rat(,Dominant=>true)"},
 SeeAlso => {(symbol SPACE,RAT,List)}}
 
 document {Key => {(symbol SPACE,RAT,List)}, 
@@ -4073,6 +4095,8 @@ EXAMPLE {
 "show f"},
 PARA{"The following equality is satisfied for every ",TO2{MultirationalMap,"rational map"}," ",TT"f","."},
 EXAMPLE {"assert( f == (Rat(source f,target f)) entries f )"},
+PARA{"Here it is shown how to make a dominant rational map."},
+EXAMPLE {"H' = Rat(PP_(ZZ/3)^{1,2},Dominant=>true);", "H' F", "assert(image oo == target oo)"},
 SeeAlso => {Rat,(symbol SPACE,RAT,MultiprojectiveVariety),(symbol SPACE,RAT,Tally),(entries,MultirationalMap)}}
 
 document {Key => {(symbol SPACE,RAT,Tally)},
