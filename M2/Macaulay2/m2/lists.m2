@@ -110,7 +110,7 @@ same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
 
 uniform = L -> same apply(L, class)
 
-member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
+isMember(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 
 sum List := x -> plus toSequence x
 

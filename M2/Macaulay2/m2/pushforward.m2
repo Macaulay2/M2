@@ -207,7 +207,7 @@ algorithms#(pushForward, RingMap, Module) = new MutableHashTable from {
 	(R, S) := (f.target, f.source);
 	-- R & S should be over the same ambient polynomial ring
 	if ring presentation R =!= ring presentation S
-	or not member(S, R.baseRings) -- TODO: remove when https://github.com/Macaulay2/M2/issues/2103 if fixed
+	or not isMember(S, R.baseRings) -- TODO: remove when https://github.com/Macaulay2/M2/issues/2103 if fixed
 	then return null;
 	ringRel := presentation R ** S;
 	liftRingRel := id_(lift(ambient M, S)) ** ringRel;

@@ -77,7 +77,7 @@ checkShadow := () -> (
 		    sym := behind#nam;
 		    syns := findSynonyms sym;
 		    syns = select(syns, s -> s != nam);
-		    if #syns == 0 and class User === Package and User#?"private dictionary" and member(User#"private dictionary", dictionaryPath)
+		    if #syns == 0 and class User === Package and User#?"private dictionary" and isMember(User#"private dictionary", dictionaryPath)
 		    then for i from 0 do (
 			 newsyn := nam | "$" | toString i;
 			 if not isGlobalSymbol newsyn then (
@@ -376,7 +376,7 @@ newPackage String := opts -> pkgname -> (
     loadedPackages = {Core};
     dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
     dictionaryPath = (
-	if member(newpkg.Dictionary, dictionaryPath)
+	if isMember(newpkg.Dictionary, dictionaryPath)
 	then join({newpkg#"private dictionary"},                    dictionaryPath)
 	else join({newpkg#"private dictionary", newpkg.Dictionary}, dictionaryPath));
     --
@@ -507,7 +507,7 @@ beginDocumentation = () -> (
 	currentPackage#"documentation not loaded" = true;
 	return end);
     if notify then printerr("beginDocumentation: reading the rest of ", currentFileName);
-    if not member(pkgname, {"Text", "SimpleDoc"}) then needsPackage \ {"Text", "SimpleDoc"};)
+    if not isMember(pkgname, {"Text", "SimpleDoc"}) then needsPackage \ {"Text", "SimpleDoc"};)
 
 ---------------------------------------------------------------------
 
@@ -548,7 +548,7 @@ use Package := pkg -> (
 debug ZZ      := i   -> debugWarningHashcode = i
 debug Package := pkg -> (
     dict := pkg#"private dictionary";
-    if not member(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
+    if not isMember(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
     checkShadow())
 
 -----------------------------------------------------------------------------
@@ -563,7 +563,7 @@ popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)
 -- Probably only necessary because Text documents Hypertext objects.
 -- Is there an alternative way? Is is used by document.m2 and installPackage.m2
 evaluateWithPackage = (pkg, object, func) -> (
-    if member(pkg.Dictionary, dictionaryPath) then return func object;
+    if isMember(pkg.Dictionary, dictionaryPath) then return func object;
     popDictionary(pushDictionary pkg.Dictionary, func object))
 
 -- Local Variables:
