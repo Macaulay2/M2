@@ -139,7 +139,7 @@ document {
 	  "B = set{a^2-b*c,b*d}"
 	  },
      "Set operations, such as ", 
-     TO2((member,Thing,Set),"membership"), ", ",     
+     TO2((isMember,Thing,Set),"membership"), ", ",     
      TO2((symbol+,Set,Set),"union"), ", ",
      TO2((symbol*,Set,Set),"intersection"), ", ",
      TO2((symbol-,Set,Set),"difference"), ", ",
