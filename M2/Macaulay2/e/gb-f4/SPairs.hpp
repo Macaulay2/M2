@@ -43,10 +43,11 @@ class SPair
 {
 private:
   SPairType mType;
-  Index mFirst; //later in gb indexing.
+  Index mFirst;            // later in gb indexing.
   Index mLast;
   MonomialIndex mLCM;
-  MonomialInt mDegree; // degree of the LCM
+  MonomialInt mComponent;  // component of the SPair
+  MonomialInt mDegree;     // degree of the LCM
   MonomialIndex mQuotient; // we might not need
 };
 
