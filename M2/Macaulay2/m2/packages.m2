@@ -86,7 +86,7 @@ checkShadow := () -> (
 			      break));
 		    warn(nam, front, behind, syns);
 		    ));
-	  if not mutable front and not mutable behind then seenWarnings#(front, behind) = true;
+	  if not isMutable front and not isMutable behind then seenWarnings#(front, behind) = true;
 	  ))
 
 isOptionList := opts -> instance(opts, List) and all(opts, opt -> instance(opt, Option) and #opt == 2)
@@ -490,7 +490,7 @@ endPackage String := title -> (
 	  loadDepth = pkg.loadDepth;
 	  remove(pkg, loadDepth);
 	  );
-     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> mutable s and value s === s);
+     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> isMutable s and value s === s);
      if #b > 0 then (
 	  b = last \ sort apply(b, s -> (hash s, s));
 	  error splice ("mutable unexported unset symbol(s) in package ", pkg#"pkgname", ": ", toSequence between_", " b);

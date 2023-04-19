@@ -120,7 +120,7 @@ texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0
 
 texMath HashTable := H -> if H.?texMath then H.texMath else (
     if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
-    else if mutable H then texMathMutable H
+    else if isMutable H then texMathMutable H
     else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
 
 texMath Function := f -> texMath toString f

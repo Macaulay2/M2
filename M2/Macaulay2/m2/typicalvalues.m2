@@ -63,7 +63,7 @@ isListener(File) := Boolean => isListener
 isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
-mutable(Thing) := Boolean => mutable
+isMutable(Thing) := Boolean => isMutable
 instance(Thing,Type) := Boolean => instance
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
