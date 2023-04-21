@@ -73,7 +73,7 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
-          brew install automake boost tbb ccache ctags llvm make ninja yasm libffi
+          brew install automake boost tbb ccache ctags llvm@14 make ninja yasm libffi
           brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
@@ -106,8 +106,8 @@ jobs:
                echo "/usr/lib/ccache"                     >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
-               echo `brew --prefix llvm`/bin              >> $GITHUB_PATH
-               PATH=`brew --prefix llvm`/bin:$PATH
+               echo `brew --prefix llvm@14`/bin              >> $GITHUB_PATH
+               PATH=`brew --prefix llvm@14`/bin:$PATH
           fi
           # Necessary for clang to find the right libomp
           echo "LIBRARY_PATH=`llvm-config --libdir`" >> $GITHUB_ENV
