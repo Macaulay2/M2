@@ -602,13 +602,12 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol << => "\\ll ",
     symbol >> => "\\gg ",
     symbol ~ => "\\sim ",
-    symbol ^** => "^{\\otimes}",
+    symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol _ => "\\_ ",
     symbol { => "\\{ ",
     symbol } => "\\} ",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
-    symbol SPACE => "\\texttt{SPACE}",
     symbol # => "\\#",
     symbol #? => "\\#?",
     symbol % => "\\%",
@@ -616,7 +615,9 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol ^ => "\\wedge",
     symbol ^^ => "\\wedge\\wedge",
     symbol <| => "\\langle",
-    symbol |> => "\\rangle"
+    symbol |> => "\\rangle",
+    symbol _* => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+    symbol ^* => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     }
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
@@ -729,6 +730,8 @@ returns = t -> x -> t
 	   precedence Superscript := returns prec symbol ^
 		 precedence Power := x -> if x#1 === 1 then precedence x#0 else prec symbol ^
 		    precedence ZZ := x -> if x>=0 then strength1 symbol symbol else prec symbol -
+	       precedence Nothing :=
+	precedence InfiniteNumber :=
 		    precedence RR :=
 	      precedence Function :=
 	          precedence Type :=
@@ -742,7 +745,6 @@ returns = t -> x -> t
 		precedence String :=
 	    precedence Expression := returns strength1 symbol symbol
 	        precedence Holder := x -> precedence x#0
-	      precedence Describe := x -> precedence x#0
 --	       precedence Holder2 := x -> precedence x#0
        precedence BinaryOperation := x -> lprec x#0
   rightPrecedence BinaryOperation := x -> rprec x#0
@@ -1263,7 +1265,7 @@ Boolean#AfterPrint = nullf
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
 net Option := net @@ expression
-texMath Option := x -> texMath expression x
+texMath Option := texMath @@ expression
 toString Option := toString @@ expression
 
 SheafExpression = new WrapperType of Expression;
@@ -1288,7 +1290,7 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
-texMath Set := x -> texMath expression x
+texMath Set := texMath @@ expression
 
 -- shortening expressions
 Dots = new Type of Symbol
@@ -1326,10 +1328,13 @@ short String := s -> if #s > shortStringLength then substring(s,0,shortStringLen
 short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
 short HashTable := H -> hold ( if #H <= shortLength then H else (
     s := sortByName pairs H;
-    new class H from append(apply(shortLength,i->s#i),s#shortLength#0=>cdots)
+    new class H from append(take(s,shortLength),s#shortLength#0=>cdots)
     ))
 short MutableHashTable := expression
-
+short Set := H -> hold ( if #H <= shortLength then H else (
+	s := sort keys H;
+	new class H from append(take(s,shortLength),RowExpression{s#shortLength,ldots})
+	))
 
 Abbreviate = new WrapperType of Holder -- only used once, for listSymbols
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)

@@ -335,7 +335,7 @@ texMath  Monoid :=  texMath @@ expression
 Monoid#AfterPrint = M -> (
     class M,
     if not isFreeModule degreeGroup M
-    then ", with torsion degree group";
+    then ", with torsion degree group"
     -- TODO: print whether M is ordered, a free algebra, etc.
     )
 
