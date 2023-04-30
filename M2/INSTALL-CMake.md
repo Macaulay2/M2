@@ -32,7 +32,7 @@ There are 10 libraries that must be found on the system.
 brew tap Macaulay2/tap
 brew install --only-dependencies macaulay2/tap/M2
 ```
-and append ``-DCMAKE_PREFIX_PATH=`brew --prefix` `` to an invocation of CMake prior to starting the build so that CMake can find the dependencies installed through Homebrew.
+and append `` -DCMAKE_PREFIX_PATH=`brew --prefix` `` to an invocation of CMake prior to starting the build so that CMake can find the dependencies installed through Homebrew. See [FAQ](#faq) for solutions to frequent issues.
 
 #### Quick build
 A quick build involves the following steps:
