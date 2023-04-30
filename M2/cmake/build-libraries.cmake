@@ -1267,7 +1267,15 @@ message("## External components
 
 message("\n## Library information
      Linear Algebra    = ${LAPACK_LIBRARIES}
-     MP Arithmetic     = ${MP_LIBRARIES}\n")
+     MP Arithmetic     = ${MP_LIBRARIES}")
+
+execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "     Optional libs     =")
+foreach(_opt IN ITEMS OMP TBB FFI MPI XML PYTHON MYSQL)
+  if(WITH_${_opt})
+    execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append " ${_opt}")
+  endif()
+endforeach()
+message("\n")
 
 # Report the default flags, but if verbose
 if(VERBOSE)
