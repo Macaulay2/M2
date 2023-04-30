@@ -87,6 +87,10 @@ else()
   set(LIBFFI_VERSION "not present")
 endif()
 
+if(WITH_MPI)
+  find_package(MPI REQUIRED)
+endif()
+
 ###############################################################################
 ## Platform dependent requirements:
 #   readline, history, termcap, ...
