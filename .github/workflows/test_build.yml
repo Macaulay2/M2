@@ -54,6 +54,12 @@ jobs:
             compiler: clang-14
             cxx: clang++
             cc: clang
+          # This build tests MPI
+          - build-system: cmake
+            os: macos-12
+            compiler: MPI
+            cxx: clang++
+            cc: clang
         exclude:
           - build-system: cmake
             os: macos-12
@@ -75,6 +81,7 @@ jobs:
           brew tap macaulay2/tap
           brew install automake boost tbb ccache ctags llvm@14 make ninja yasm libffi
           brew install --only-dependencies macaulay2/tap/M2
+          brew install mpich
 
 # ----------------------
 #   Install missing tools and libraries for Linux
@@ -92,6 +99,7 @@ jobs:
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 normaliz coinor-csdp \
                   nauty lrslib polymake phcpack w3c-markup-validator libtbb-dev qepcad libomp-14-dev
+          sudo apt-get install -y -q --no-install-recommends mpich libmpich-dev
 
 # ----------------------
 #   Steps common to all build variants
@@ -101,6 +109,12 @@ jobs:
         run: |
           echo "CC=${{  matrix.cc  }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+          if [[ "${{ matrix.compiler }}" == "MPI" ]]
+          then echo "CC=mpicc"                    >> $GITHUB_ENV
+               echo "CXX=mpicxx"                  >> $GITHUB_ENV
+               echo "MPICH_CC=${{  matrix.cc  }}" >> $GITHUB_ENV
+               echo "MPICH_CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+          fi
           if [[ "${{ runner.os }}" == "Linux" ]]
           then alias llvm-config="llvm-config-14"
                echo "/usr/lib/ccache"                     >> $GITHUB_PATH
@@ -134,6 +148,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
             -DWITH_PYTHON=ON \
+            -DWITH_MPI=`[[ "${{ matrix.compiler }}" == MPI ]] && echo ON || echo OFF` \
             --debug-trycompile
 
       - name: Build libraries using Ninja
