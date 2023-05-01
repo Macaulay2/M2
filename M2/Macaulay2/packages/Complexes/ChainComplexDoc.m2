@@ -938,10 +938,6 @@ doc ///
 
 doc ///
     Key
-        freeResolution
-        (freeResolution, Module)
-        (freeResolution, Ideal)
-        (freeResolution, MonomialIdeal)
         [freeResolution, LengthLimit]
         [freeResolution, DegreeLimit]
         [freeResolution, FastNonminimal]
@@ -952,12 +948,27 @@ doc ///
         [freeResolution, Strategy]
         [freeResolution, SyzygyLimit]
     Headline
+        optional arguments for freeResolution
+    Description
+        Text
+            We would dearly love to not have this in the main node!
+///
+
+doc ///
+    Key
+        freeResolution
+        (freeResolution, Module)
+        (freeResolution, Ideal)
+        (freeResolution, MonomialIdeal)
+    Headline
         compute a free resolution of a module or ideal
     Usage
         freeResolution M
+        freeResolution I
     Inputs
         M:Module
-            or @ofClass Ideal@ or @ofClass MonomialIdeal@, an ideal {\tt I} in a ring {\tt R}
+        I:Ideal
+            in the ring $R$, treated as the quotient module {\tt R^1/I}
         LengthLimit => ZZ
             this is used to limit somehow the computation where resolutions might be too long or infinite
         DegreeLimit => List
@@ -988,37 +999,95 @@ doc ///
     Description
         Text
             A free resolution of a module $M$ is a complex
-            $ F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \ldots$
-            of free modules, which is acyclic: the cokernel of the map
-            to $F_0$ is $M$ and the complex is exact at all other 
-            locations.
+
+            $\phantom{WWWW}
+            F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
+            $
+
+            of free modules.  The homology of a resolution is
+            concentrated in homological degree zero and is isomorphic
+            to the module $M$.
+            Equivalently, the augmented complex 
+
+            $\phantom{WWWW}
+            0 \leftarrow M \leftarrow F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
+            $
+
+            is exact.
+            
+            This function lies at the heart of many computations in commutative algebra
+            and algebraic geometry.  As a consequence, this is one of the most used
+            functions in {\em Macaulay2}.
+        Text
+            As a first example, we construct the free resolution of the twisted cubic curve,
+            and extract its basic numerical invariants via @TO (length, Complex)@ and
+            @TO (betti,Complex)@.
         Example
-            R = QQ[a..d]
+            R = QQ[a..d];
             I = ideal(c^2-b*d, b*c-a*d, b^2-a*c)
             M = R^1/I
             C = freeResolution M
-            betti C
             length C
+            betti C
             dd^C
             assert isWellDefined C
+        Text
+            We verify in two ways that $C$ is a free resolution of $M$.
+        Example
             assert(prune HH C == complex M)
+            assert(length HH C == 0)
+            f = augmentationMap C
+            assert isWellDefined f
+            assert(source f === C)
+            assert(target f == complex M)
+            aC = cone f
+            assert(HH aC == 0)
         Text
             Giving an ideal as the input produces a free resolution
-            not of the module {\tt I}, but of the module {\tt R^1/I}.
+            not of the module $I$, but of the comodule $R^1/I$.
         Example
             assert(freeResolution I == C)
-            resolution complex M == freeResolution M
+            assert(resolution complex M == freeResolution M)
         Text
-            Over a quotient ring, free resolutions are often infinite.
-            Use the optional argument {\tt LengthLimit} to obtain
-            part of the resolution.
+            Over a quotient ring, free resolutions are typically infinite.
+            To specify a finite part of the resolution, one needs to use
+            the optional argument {\tt LengthLimit}.
         Example
-            S = ZZ/101[a,b]
-            R = S/(a^3+b^3)
+            S = ZZ/101[a,b];
+            R = S/(a^3+b^3);
             C = freeResolution (coker vars R, LengthLimit => 7)
+            length C
+            betti C
             dd^C
+        Text
+            Over an exterior algebra, free resolutions are again typically
+            infinite, so one needs to specify the {\tt LengthLimit}.
+        Example
+            E = ZZ/101[e_1..e_6, SkewCommutative => true];
+            I = ideal(e_4*e_5-e_4*e_6+e_5*e_6,
+                e_2*e_3-e_2*e_6+e_3*e_6,
+                e_1*e_3-e_1*e_5+e_3*e_5,
+                e_1*e_2-e_1*e_4+e_2*e_4)
+            F = freeResolution(I, LengthLimit => 5)
+            assert isWellDefined F
+            assert isHomogeneous F
+            betti F
+        Text
+            Over a Weyl algebra, free resolutions have finite length,
+            so one does not need to specific the {\tt LengthLimit}.
+        Example
+            S = QQ[x,y,Dx,Dy, WeylAlgebra => {{x,Dx}, {y,Dy}}];
+            I = ideal(x*Dy, y*Dx)
+            F = freeResolution comodule I
+            assert isWellDefined F
+            dd^F
+        Text
+            Todo: we will add pointers to more advanced nodes and usage information
+            (e.g. Strategies, Optional arguments, and seeing partial results).
     SeeAlso
         "Making chain complexes"
+        (augmentationMap, Complex)
+        (cone, ComplexMap)
         (resolution, Complex)
         (resolutionMap, Complex)
         (betti, Complex)
