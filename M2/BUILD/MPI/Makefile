@@ -7,10 +7,18 @@ BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=
 ## cmake build files ##
 #######################
 
-cmake-appleclang:
+auto-ubuntu:
 	echo "git branch is " $(BRANCH)
-	mkdir -p builds.tmp/cmake-appleclang
-	cd builds.tmp/cmake-appleclang; cmake \
+	mkdir -p builds.tmp/$@
+	cd builds.tmp/$@; ../../../../configure \
+		CC=mpicc CXX=mpic++ \
+	        --prefix="`pwd`/installed" \
+                --disable-strip \
+                --enable-download
+cmake-ubuntu:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/$@
+	cd builds.tmp/$@; cmake \
 		-GNinja \
 		-DCMAKE_C_COMPILER=mpicc \
 		-DCMAKE_CXX_COMPILER=mpic++ \
@@ -19,4 +27,3 @@ cmake-appleclang:
 		-DBUILD_DOCS=on \
 		../../../..
 #		-DLINTING=on
-

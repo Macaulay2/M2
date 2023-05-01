@@ -106,9 +106,11 @@ void clean_up(void) {
 #ifndef NDEBUG
   trap();
 #endif
-  printf("Bye world from process %d out of %d processes\n",
-	 MPImyProcessNumber(), MPInumberOfProcesses());
-  MPI_Finalize();
+  if (getenv("OMPI_COMM_WORLD_RANK") != NULL) {
+    printf("Bye world from process %d out of %d processes\n",
+	   MPImyProcessNumber(), MPInumberOfProcesses());
+    MPI_Finalize();
+  }
 }
 
 int system_isReady(int fd) {

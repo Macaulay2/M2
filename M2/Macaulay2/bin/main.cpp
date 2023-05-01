@@ -59,23 +59,24 @@ void* testFunc(ArgCell* p);
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
-  // Initialize the MPI environment
-  MPI_Init(NULL, NULL);
+  // MPI preamble
+  if (getenv("OMPI_COMM_WORLD_RANK") != NULL) {
+    // Initialize the MPI environment
+    MPI_Init(NULL, NULL);
 
-  // Get the number of processes
-  int world_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    // Get the number of processes
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
   
-  // Get the rank of the process
-  int world_rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+    // Get the rank of the process
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-  // Print off a hello world message
-  std::cout << "Hello world from process " << world_rank
-	    << " out of " << world_size << " processes" << std::endl;
+    // Print off a hello world message
+    std::cout << "Hello world from process " << world_rank
+	      << " out of " << world_size << " processes" << std::endl;
+  }//end MPI preamble
 
-  //!!! delete (together with `else`) !!! if (world_rank == 0) {
-    
   /* find the number of environment variables defined */
   int envc = -1;
   while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }
@@ -126,31 +127,6 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     pushTask(interpTask);
     waitOnTask(interpTask);
   }
-  /*  
-  } else {
-    bool done = false;
-    while(not done) {
-      MPI_Status status;
-      // Probe for an incoming message from process zero
-      MPI_Probe(0, 0, MPI_COMM_WORLD, &status);
-      // When probe returns, the status object has the size and other
-      // attributes of the incoming message. Get the message size
-      int size;
-      MPI_Get_count(&status, MPI_CHAR, &size);
-      // Allocate a buffer to hold the incoming numbers
-      char* s = (char*) malloc(sizeof(char) * size);
-      // Now receive the message with the allocated buffer
-      MPI_Recv(s, size, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      std::cout << "-- process " << world_rank << " dynamically received " << size << " characters from process 0:\n"
-		<< s << "\n-- (end of message)\n";
-      if (strcmp(s,"end")==0) done=true;
-      free(s);
-    }
-    std::cout << " -- BYE WORLD from process " << world_rank
-	    << " out of " << world_size << " processes" << std::endl;
-    MPI_Finalize();
-  } 
-  */
   return 0;
 } //end// main
 

@@ -24,10 +24,10 @@ if myID!=master then while true do (
 for i from 1  to numberOfWorkers do ( 
     s = toString i | "+" | toString i;
     << "-- " << myID << " sent: " << s << endl;
-    sendString(s,1);
+    sendString(s,i);
     )
 for i from 1  to numberOfWorkers do ( 
-    r = receiveString 1;
+    r = receiveString i;
     << "-- " << myID << " received: " << r << endl;
     )
 
