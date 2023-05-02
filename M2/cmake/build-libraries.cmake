@@ -7,7 +7,7 @@
 ## - clean all: cmake --build . --target clean-stamps
 
 ## Set the timestamp of the extracted content to the time of extraction
-cmake_policy(SET CMP0135 NEW)
+#cmake_policy(SET CMP0135 NEW)
 
 include(ExternalProject) # configure, patch, build, install, or test at build time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)

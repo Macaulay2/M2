@@ -24,7 +24,10 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#ifdef WITH_MPI
 #include <mpi.h>
+#endif
 
 /* ######################################################################### */
 
@@ -59,6 +62,7 @@ void* testFunc(ArgCell* p);
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
+  #ifdef WITH_MPI
   // MPI preamble
   if (getenv("OMPI_COMM_WORLD_RANK") != NULL) {
     // Initialize the MPI environment
@@ -76,7 +80,8 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     std::cout << "Hello world from process " << world_rank
 	      << " out of " << world_size << " processes" << std::endl;
   }//end MPI preamble
-
+  #endif
+  
   /* find the number of environment variables defined */
   int envc = -1;
   while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }

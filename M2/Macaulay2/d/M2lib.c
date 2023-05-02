@@ -9,7 +9,9 @@
 
 #include <readline/readline.h>
 #include <readline/history.h>
+#ifdef WITH_MPI
 #include <mpi.h>
+#endif
 #include <stdio.h>
 
 extern struct JumpCell abort_jmp;
@@ -41,6 +43,8 @@ void system_cpuTime_init(void) {
   startTime = system_cpuTime();
 }
 
+// begin MPI ------------------------------------------------------------------
+#ifdef WITH_MPI
 int MPInumberOfProcesses() {
   int world_size;
   MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -88,6 +92,8 @@ int MPIsendStringNonblocking(M2_string s, int p) {
   GC_FREE(t); // is it OK to free? (Should be if MPI still refers to this... but does it?)  
   return ret;
 }
+#endif
+// end MPI --------------------------------------------------------------------
 
 void clean_up(void) {
   extern void close_all_dbms();
@@ -106,11 +112,13 @@ void clean_up(void) {
 #ifndef NDEBUG
   trap();
 #endif
+#ifdef WITH_MPI  
   if (getenv("OMPI_COMM_WORLD_RANK") != NULL) {
     printf("Bye world from process %d out of %d processes\n",
 	   MPImyProcessNumber(), MPInumberOfProcesses());
     MPI_Finalize();
   }
+#endif
 }
 
 int system_isReady(int fd) {

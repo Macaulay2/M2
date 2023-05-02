@@ -84,7 +84,8 @@ set(DLIST
   actors6.dd
   threads.dd
   python.d	# removed unless WITH_PYTHON
-  interface.dd interface2.d mpi.d
+  interface.dd interface2.d
+  mpi.d         # removed unless WITH_MPI
   texmacs.d
   boostmath.dd
   ffi.d		# removed unless WITH_FFI
@@ -106,6 +107,9 @@ if(NOT WITH_PYTHON)
 endif()
 if(NOT WITH_FFI)
   list(REMOVE_ITEM DLIST ffi.d)
+endif()
+if(NOT WITH_MPI)
+  list(REMOVE_ITEM DLIST mpi.d)
 endif()
 
 ###############################################################################
