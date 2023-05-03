@@ -95,7 +95,9 @@ else
 M2_SRCFILES += python-c.c python.d
 endif
 M2_DFILES += interface.dd interface2.d
+ifeq (@MPI@,yes)
 M2_DFILES += mpi.d
+endif
 M2_DFILES += texmacs.d
 M2_DFILES += boostmath.dd
 ifneq (@LIBFFI@,no)

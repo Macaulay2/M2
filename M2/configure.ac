@@ -1351,6 +1351,8 @@ then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
 	AC_MSG_ERROR(libpython not found))
 fi
 
+AC_SUBST(MPI,no)
+
 dnl boost 1.65 was the first release containing the stacktrace library
 AX_BOOST_BASE([1.65],,
     [AC_MSG_ERROR([boost library >= 1.65 not installed, but required])])
