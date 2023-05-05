@@ -206,7 +206,7 @@ jobs:
           # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed
 
       - name: Run MPI test examples
-        if: matrix.build-system == 'cmake' && matrix.compiler == 'MPI'
+        if: matrix.compiler == 'MPI'
         run: |
           mpirun -np 4 ./M2 --script ../../Macaulay2/packages/MPI/example-homotopies.m2
           mpirun -np 4 ./M2 --script ../../Macaulay2/packages/MPI/example2.m2

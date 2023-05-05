@@ -53,7 +53,8 @@ int MPInumberOfProcesses() {
 
 int MPImyProcessNumber() {
   int world_rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+  if (MPI_Comm_rank(MPI_COMM_WORLD, &world_rank) != MPI_SUCCESS)
+    world_rank = -1;
   return world_rank;
 }
 
@@ -112,10 +113,13 @@ void clean_up(void) {
 #ifndef NDEBUG
   trap();
 #endif
-#ifdef WITH_MPI  
-  if (getenv("OMPI_COMM_WORLD_RANK") != NULL) {
-    printf("Bye world from process %d out of %d processes\n",
-	   MPImyProcessNumber(), MPInumberOfProcesses());
+#ifdef WITH_MPI
+  printf("MPI: about to finalize\n");
+  int n = MPImyProcessNumber();
+  if (n>=0) {
+    if (n>0)
+      printf("MPI: Bye world from process %d out of %d processes\n",
+	     MPImyProcessNumber(), MPInumberOfProcesses());
     MPI_Finalize();
   }
 #endif

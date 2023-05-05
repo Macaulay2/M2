@@ -63,12 +63,11 @@ void* testFunc(ArgCell* p);
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
 #ifdef WITH_MPI
-  std::cout << "WITH_MPI defined" << std::endl;
   // MPI preamble
-  if (getenv("OMPI_COMM_WORLD_RANK") != NULL) {
-    // Initialize the MPI environment
-    MPI_Init(NULL, NULL);
-
+  // Initialize the MPI environment
+  if (MPI_Init(NULL, NULL) == MPI_SUCCESS) {
+    std::cout << "MPI_Init succeeded" << std::endl;
+    
     // Get the number of processes
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -78,9 +77,10 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
     // Print off a hello world message
-    std::cout << "Hello world from process " << world_rank
-	      << " out of " << world_size << " processes" << std::endl;
-  }//end MPI preamble
+    //if (world_rank>0)
+      std::cout << "MPI: initialized process " << world_rank
+		<< " out of " << world_size << " processes" << std::endl;
+  }
   #endif
   
   /* find the number of environment variables defined */
