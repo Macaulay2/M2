@@ -333,6 +333,9 @@
 /* Whether we are building with tbb version >= 2021 */
 #cmakedefine WITH_TBB
 
+/* Whether we are building with an MPI library */
+#cmakedefine WITH_MPI
+
 /* whether we are linking with the libxml2 library */
 #cmakedefine WITH_XML
 
