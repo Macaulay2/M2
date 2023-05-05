@@ -62,7 +62,8 @@ void* testFunc(ArgCell* p);
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
-  #ifdef WITH_MPI
+#ifdef WITH_MPI
+  std::cout << "WITH_MPI defined" << std::endl;
   // MPI preamble
   if (getenv("OMPI_COMM_WORLD_RANK") != NULL) {
     // Initialize the MPI environment

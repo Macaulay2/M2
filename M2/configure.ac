@@ -458,6 +458,12 @@ if test "$MYSQL" = yes
 then AC_DEFINE(WITH_MYSQL,1,[whether we are linking with the mysql library])
 fi
 
+AC_SUBST(MPI,no)
+AC_ARG_WITH(MPI, AS_HELP_STRING(--with-MPI,[link with MPI]), MPI=$withval)
+if test "$MPI" = yes
+then AC_DEFINE(WITH_MPI,1,[whether we are linking with the MPI library])
+fi
+
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option))
 if test "$enable_altivec" = yes
 then LDFLAGS="$LDFLAGS -faltivec"
@@ -1350,8 +1356,6 @@ then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
 	python${PYTHON_VERSION} python${PYTHON_VERSION}m,,
 	AC_MSG_ERROR(libpython not found))
 fi
-
-AC_SUBST(MPI,no)
 
 dnl boost 1.65 was the first release containing the stacktrace library
 AX_BOOST_BASE([1.65],,

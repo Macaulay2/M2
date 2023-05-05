@@ -12,7 +12,8 @@ auto-ubuntu:
 	mkdir -p builds.tmp/$@
 	cd builds.tmp/$@; ../../../../configure \
 		CC=mpicc CXX=mpic++ \
-	        --prefix="`pwd`/installed" \
+		--with-MPI \
+		--prefix="`pwd`/installed" \
                 --disable-strip \
                 --enable-download
 cmake-ubuntu:
@@ -22,6 +23,7 @@ cmake-ubuntu:
 		-GNinja \
 		-DCMAKE_C_COMPILER=mpicc \
 		-DCMAKE_CXX_COMPILER=mpic++ \
+		-DWITH_MPI=ON\
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
