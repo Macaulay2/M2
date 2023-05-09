@@ -14,7 +14,8 @@ newPackage(
 	"PrimaryDecomposition",
 	"ReesAlgebra",
 	"Elimination",
-	"FourTiTwo"
+	"FourTiTwo",
+	"Polyhedra"
 	},
     AuxiliaryFiles => true,
     DebuggingMode => false

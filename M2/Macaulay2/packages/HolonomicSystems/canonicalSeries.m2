@@ -232,6 +232,47 @@ cssLeadTerm(Ideal, List) := List => (I, w) -> (
     J := inw(I, flatten{-w|w});
     solveFrobeniusIdeal(distraction(J, W.ThetaRing), W))
 
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
+--Output: Cone containing support of the Nilsson cone for css of I with weight w 
+--NOTE: We are assuming that the ideal I is provided with LT of weight 0. We will adjust to this case using nonpositiveWeightGens
+nilssonSupportCone = method()
+nilssonSupportCone(Ideal, List) := Cone => (I,w) ->(
+    n := (numgens ring I)//2;
+    if length w != n then error "Expected a weight vector of length (numgens ring I)//2";
+    fw := flatten{-w,w};
+    G := flatten entries gens gbw(I,fw);
+    HS := map(ZZ^0,ZZ^n,0);
+    maxW := map(ZZ^0,ZZ^1,0);
+    scan(G,g->( 
+	    --lead term of g:
+	    LTg := inw(g,fw);
+	    newWcond := (matrix{(exponents LTg)#0})*(transpose matrix{fw});
+	    --remaining terms of g:	    
+	    RTg := select(terms g, i-> i !=LTg);
+	    scan(RTg, m->(
+    	    	   newHSeq := matrix{-drop(flatten exponents m,-n)+drop(flatten exponents m,n)};
+		   HS = HS||newHSeq;
+--		   error 0;
+	    	   maxW = maxW||newWcond;
+			));
+    		));
+	tailCone polar polyhedronFromHData(HS, maxW)
+	)
+
+--Input: cone for support of Nilsson series, weight k
+--Output: lattice points in cone of weight \leq k, as a List of Lists
+nilssonSupportTruncated = method()
+nilssonSupportTruncated(Cone, List, ZZ) := List => (C,w,k)->(
+    P := polyhedronFromHData(
+	(halfspaces C)||matrix{w},
+	map(target halfspaces C,ZZ^1,0)||matrix{{k}},
+	hyperplanes C, 
+	map(target hyperplanes C,ZZ^1,0)
+	);
+    latticePoints P
+    )
+
+
 --------------------
 -- Tests section
 --------------------
@@ -246,14 +287,31 @@ TEST /// -- test solveFrobeniusIdeal
 end;
 --------------------
 --------------------
+--------------------
+--------------------
+--------------------
+--------------------
+
+
+
+
 
 restart
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
-needsPackage "HolonomicSystems"
+debug needsPackage "HolonomicSystems"
 needsPackage "Polyhedra"
-check HolonomicSystems
+--check HolonomicSystems
 viewHelp cssExpts
 viewHelp Dmodules
+
+
+S = QQ[x]
+W = makeWeylAlgebra S;
+I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
+w = {1}
+C = nilssonSupportCone(I,w)
+nilssonSupportTruncated(C,w,6)
+
 
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
@@ -262,36 +320,10 @@ nonpositiveWeightGens = method()
 nonpositiveWeightGens(Ideal, List) := List => (I,w) ->( 
     
     )
-S = QQ[x]
-W = makeWeylAlgebra S;
-I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
-w = {1}
 
 
---Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
---Output: Cone containing support of the Nilsson cone for css of I with weight w 
-nilssonSupportCone = method()
-nilssonSupportCone(Ideal, List) := Cone => (I,w) ->(
-    n := (numgens ring I)//2;
-    if length w != n then error "Expected a weight vector of length (numgens ring I)//2";
-    fw := flatten{-w,w};
-    G := flatten entries gens gbw(I,fw);
-    HS := 0;
-    maxW := 0;
-    scan(G,g->( 
-	    --lead term of g:
-	    LTg := inw(g,fw);
-	    newWcond := (matrix{(exponents LTg)#0})*(transpose matrix{fw});
-	    --remaining terms of g:	    
-	    RTg := select(terms g, i-> i !=LTg);
-	    scan(RTg, m->(
-    	    	   newHSeq := matrix{-drop(flatten exponents m,-n)+drop(flatten exponents m,n)};
-		   if HS == 0 then HS = newHSeq else HS = HS||newHSeq;
-	    	   if maxW == 0 then maxW = newWcond else maxW = maxW||newWcond;
-			));
-    		));
-	tailCone polar polyhedronFromHData(HS, maxW)
-	)
+
+
     
     
 A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
@@ -304,13 +336,7 @@ C = nilssonSupportCone(I,w)
 k=3
 
 
---Input: cone for support of Nilsson series, weight k
---Output: lattice points in cone of weight \leq k, as a List of Lists
-nilssonSupportTruncated = method()
-nilssonSupportTruncated(Cone, List, ZZ) := List => (C,w,k)->(
-    P := polyhedronFromHData((halfspaces C)||matrix{w},map(target halfspaces C,ZZ^1,0)||matrix{{-k}},hyperplanes C, map(target hyperplanes C,ZZ^1,0));
-    latticePoints P
-    )
+
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
@@ -320,6 +346,8 @@ nilssonStart(Ideal, List) := List => (I,w)->(
     )
 
 
+-----------
+-----------
 restart
 needsPackage "HolonomicSystems"
 debug Dmodules
