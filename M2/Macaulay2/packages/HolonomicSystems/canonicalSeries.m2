@@ -256,7 +256,6 @@ viewHelp cssExpts
 viewHelp Dmodules
 
 
-
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
 nonpositiveWeightGens = method()
@@ -319,3 +318,46 @@ nilssonStart = method()
 nilssonStart(Ideal, List) := List => (I,w)->( 
     
     )
+
+
+restart
+needsPackage "HolonomicSystems"
+debug Dmodules
+errorDepth=2
+
+R = QQ[x]
+W = makeWeylAlgebra R
+createThetaRing W
+T = W.ThetaRing -- t = x*dx
+-- multiply by x to get the leading term x free and in terms of thetas
+I = ideal(T_0*(T_0-3)) -- - x*(t+10)*(t+20))
+
+needsPackage "AssociativeAlgebras"
+importFrom_Core {"concatCols"}
+S = QQ<|dx,x,logx|>/ideal(dx*x-1-x*dx, x*logx-logx*x, x*dx*logx-1-x*logx*dx) -- FIXME: dx*logx
+--phi = map(W, S, {W_1, W_0, 0}) -- FIXME ENGINE BUGGGG
+--phi = f -> sum(listForm f, (m, c) -> c * W_(reverse drop(m, -1)))
+psi = map(W, T, {W_0*W_1})
+
+r = 2 -- rank
+t = x*dx
+P = t*(t-3) - x*(t+10)*(t+20)
+--J = inw(ideal phi P, {-1,1})
+--A = solveFrobeniusIdeal(ideal(W.WtoT \ J_*), W)
+--assert(J == psi I)
+A = solveFrobeniusIdeal(ideal(W.WtoT \ (psi I)_*), W)
+
+k = 10
+a = value A_1
+B = flatten table(k, r, (p, l) -> x^p*logx^l) - set apply(r, l -> logx^l)
+B' = a * B - set(value \ A)
+M = sub(concatCols apply(B', b -> last coefficients(P*b, Monomials => B)), QQ);
+v = sub(last coefficients(P*a, Monomials => B), QQ);
+-- TODO: why not this?
+-- v = sub(sum apply(r, l -> last coefficients(P*a*logx^l, Monomials => B)), QQ);
+-- first first entries(a + matrix{B} * (inverse M * v))
+s = first first entries(a + matrix{B'} * solve(M, -v))
+z = P * s
+z[0,x,0] -- error term
+
+truncatedCanonicalSeries = (P, r, k, W) -> ()
