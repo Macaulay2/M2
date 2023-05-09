@@ -114,14 +114,11 @@ void clean_up(void) {
   trap();
 #endif
 #ifdef WITH_MPI
-  printf("MPI: about to finalize\n");
   int n = MPImyProcessNumber();
-  if (n>=0) {
-    if (n>0)
+  if (n>0)
       printf("MPI: Bye world from process %d out of %d processes\n",
 	     MPImyProcessNumber(), MPInumberOfProcesses());
-    MPI_Finalize();
-  }
+  MPI_Finalize();
 #endif
 }
 

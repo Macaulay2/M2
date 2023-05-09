@@ -1,3 +1,20 @@
+-- -*- coding: utf-8 -*-
+newPackage(
+	"PackageTemplate",
+    	Version => "1.22", 
+    	Date => "May, 2023",
+    	Authors => {
+	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
+	     },
+    	HomePage => "https://antonleykin.math.gatech.edu/",
+    	Headline => "Message Passing Interface",
+	Keywords => {"parallel computing", "supercomputing"},
+	AuxiliaryFiles => true
+    	)
+
+exportFrom_Core {"sendString", "receiveString", "numberOfProcesses", "myProcessNumber"}
+--exportMutable {}
+
 -* 
 *** PARADIGM ***
 
@@ -54,3 +71,46 @@ Possible use case:
 E.g.: Compute random binomial ideals, find their betti numbers, and keep only the ones with regularity >= n, some fixed n.
 
 *-
+
+beginDocumentation()
+TEST ///
+master = 0
+numberOfWorkers = numberOfProcesses()-1
+myID = myProcessNumber()
+notDone = true
+if myID!=master then while true do (
+    s := receiveString master;
+    << "-- " << myID << " received: " << s << endl;
+    r := value s;
+    << "-- " << myID << " result: " << r << endl;
+    sendString(toString r, master);
+    ) else (
+    addEndFunction(()->(for i from 1 to numberOfWorkers do sendString("exit 0",i); -*sleep 1*-));
+    )
+
+-- write the code for master below
+for i from 1  to numberOfWorkers do ( 
+    s = toString i | "+" | toString i;
+    << "-- " << myID << " sent: " << s << endl;
+    sendString(s,i);
+    )
+for i from 1  to numberOfWorkers do ( 
+    r = receiveString i;
+    << "-- " << myID << " received: " << r << endl;
+    )
+///
+         
+end
+
+-- Here place M2 code that you find useful while developing this
+-- package.  None of it will be executed when the file is loaded,
+-- because loading stops when the symbol "end" is encountered.
+
+installPackage "PackageTemplate"
+installPackage("PackageTemplate", RemakeAllDocumentation=>true)
+check PackageTemplate
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
+-- End:
+

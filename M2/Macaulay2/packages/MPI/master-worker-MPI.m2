@@ -1,11 +1,11 @@
 -* 
-Run on 5 "processors":
+Run on 4 "processors":
 
-mpirun -np 5 ./M2 -q --stop --silent MPI/master-worker-MPI.m2
+mpirun -np 4 ./M2 -q --stop --silent MPI/master-worker-MPI.m2
 
 After the example is executed, the MASTER becomes interactive.
 *-
-debug Core
+needsPackage "MPI"
 master = 0
 numberOfWorkers = numberOfProcesses()-1
 myID = myProcessNumber()

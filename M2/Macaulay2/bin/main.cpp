@@ -66,8 +66,6 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   // MPI preamble
   // Initialize the MPI environment
   if (MPI_Init(NULL, NULL) == MPI_SUCCESS) {
-    std::cout << "MPI_Init succeeded" << std::endl;
-    
     // Get the number of processes
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -76,8 +74,7 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-    // Print off a hello world message
-    //if (world_rank>0)
+    if (world_rank>0)
       std::cout << "MPI: initialized process " << world_rank
 		<< " out of " << world_size << " processes" << std::endl;
   }
