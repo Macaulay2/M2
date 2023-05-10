@@ -11,8 +11,8 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.7", 
-    Date => "April 2, 2023",
+    Version => "2.7.1", 
+    Date => "May 10, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -22,7 +22,7 @@ newPackage(
     Reload => false
 )
 
-requiredMultiprojectiveVarietiesVersion := "2.7";
+requiredMultiprojectiveVarietiesVersion := "2.7.1";
 if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
     <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
@@ -689,17 +689,6 @@ toExternalString HodgeSpecialFourfold := X -> (
     );
     s = s|"X))()";
     return s;
-);
-
-switch HodgeSpecialFourfold := X -> ( -- undocumented
-    if not (dim ambient X == 6 and degrees X == {({2},1),({3},1)} and degree X == 6) then error "expected a complete intersection of type (2,3) in PP^6";
-    if degree ambientFivefold X == 3 then (
-        X.cache#"AmbientFivefold" = random(2,X);
-        return X;
-    ) else if degree ambientFivefold X == 2 then (
-        X.cache#"AmbientFivefold" = random(3,X);
-        return X;
-    ) else error "something went wrong";
 );
 
 ------------------------------------------------------------------------
@@ -3576,7 +3565,7 @@ Outputs => {HodgeSpecialFourfold => {"the i-th example of fourfold in accordance
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
 SeeAlso => trisecantFlop}
 
-undocumented {(random, HodgeSpecialFourfold), (symbol **, HodgeSpecialFourfold,Ring), (map, HodgeSpecialFourfold), (describe, HodgeSpecialFourfold), (switch, HodgeSpecialFourfold)}
+undocumented {(random, HodgeSpecialFourfold), (symbol **, HodgeSpecialFourfold,Ring), (map, HodgeSpecialFourfold), (describe, HodgeSpecialFourfold)}
 
 document {Key => {(specialGushelMukaiFourfold, Array, Array, String, Thing), (specialGushelMukaiFourfold, Array, Array), (specialGushelMukaiFourfold, Array, Array, String), (specialGushelMukaiFourfold, Array, Array, Thing)}, 
 Headline => "construct GM fourfolds by gluing cubic or quartic scrolls to surfaces in PP^6", 
