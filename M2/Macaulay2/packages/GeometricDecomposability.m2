@@ -2,8 +2,8 @@
 
 newPackage(
         "GeometricDecomposability",
-        Version => "1.1",
-        Date => "November 1, 2022",
+        Version => "1.2",
+        Date => "April 14, 2023",
         Headline => "A package to check whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
@@ -43,8 +43,7 @@ export {
         "IsIdealHomogeneous",
         "IsIdealUnmixed",
         "OnlyDegenerate",
-        "OnlyNondegenerate",
-        "Verbose"
+        "OnlyNondegenerate"
         };
 
 --------------------------------------------------------------------------------
@@ -610,9 +609,9 @@ doc///
                         oneStepGVD
                         OnlyDegenerate
                         OnlyNondegenerate
-                        Verbose
                         yInit
 ///
+
 
 --******************************************************************************
 -- Documentation for functions
@@ -872,6 +871,7 @@ doc///
                 Key
                         isGVD
                         (isGVD, Ideal)
+                        [isGVD, Verbose]
                 Headline
                         checks whether an ideal is geometrically vertex decomposable
                 Usage
@@ -987,6 +987,7 @@ doc///
                 Key
                         isLexCompatiblyGVD
                         (isLexCompatiblyGVD, Ideal, List)
+                        [isLexCompatiblyGVD, Verbose]
                 Headline
                         checks whether an ideal is <-compatibly geometrically vertex decomposable for a given order
                 Usage
@@ -1077,6 +1078,7 @@ doc///
                 Key
                         isWeaklyGVD
                         (isWeaklyGVD, Ideal)
+                        [isWeaklyGVD, Verbose]
                 Headline
                         checks whether an ideal is weakly geometrically vertex decomposable
                 Usage
@@ -1197,6 +1199,7 @@ doc///
                 Key
                         oneStepGVD
                         (oneStepGVD, Ideal, RingElement)
+                        [oneStepGVD, Verbose]
                 Headline
                         computes a geometric vertex decomposition
                 Usage
@@ -1571,31 +1574,6 @@ doc///
                         OnlyDegenerate
 ///
 
-
-doc///
-        Node
-                Key
-                        Verbose
-                        [isGVD, Verbose]
-                        [isLexCompatiblyGVD, Verbose]
-                        [isWeaklyGVD, Verbose]
-                        [oneStepGVD, Verbose]
-                Headline
-                        print additional output
-                Description
-                        Text
-                                If true, prints intermediate steps taken. Otherwise, prints nothing.
-                        Example
-                                R = QQ[x,y,z]
-                                I = ideal(x-y, x-z)
-                                isGVD I
-                                isGVD(I, Verbose=>true)
-                SeeAlso
-                        isGVD
-                        isLexCompatiblyGVD
-                        isWeaklyGVD
-                        oneStepGVD
-///
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
