@@ -28,7 +28,7 @@ noqname := (tag, x) -> (
 -- see content.m2
 chk := (p, x) -> (
     c := class x;
-    if c === Option or c === LITERAL then return;
+    if c === Option or c === OptionTable or c === LITERAL then return;
     if not c.?qname then return noqname(c, x);
     if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
     then flagError("element of type ", toString p, " may not contain an element of type ", toString c))

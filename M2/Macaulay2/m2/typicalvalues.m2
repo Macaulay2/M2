@@ -74,6 +74,7 @@ get File := get String := String => get
 getc File := String => getc
 getenv String := String => getenv
 hashTable List := HashTable => hashTable
+hashTable(Function,List) := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
