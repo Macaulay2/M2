@@ -24,6 +24,7 @@ newPackage(
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
+    Keywords => {"Flag Varieties", "Numerical Algebraic Geometry"},
     Headline => "numerical methods in Schubert Calculus",
     PackageImports => {
 	"PHCpack",
