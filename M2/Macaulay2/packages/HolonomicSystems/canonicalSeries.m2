@@ -234,44 +234,45 @@ cssLeadTerm(Ideal, List) := List => (I, w) -> (
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: Cone containing support of the Nilsson cone for css of I with weight w 
---NOTE: We are assuming that the ideal I is provided with LT of weight 0. We will adjust to this case using nonpositiveWeightGens
+--NOTE: We are assuming that the ideal I is provided with LT of weight 0.
+--We will adjust to this case using nonpositiveWeightGens
 nilssonSupportCone = method()
-nilssonSupportCone(Ideal, List) := Cone => (I,w) ->(
-    n := (numgens ring I)//2;
-    if length w != n then error "Expected a weight vector of length (numgens ring I)//2";
-    fw := flatten{-w,w};
-    G := flatten entries gens gbw(I,fw);
-    HS := map(ZZ^0,ZZ^n,0);
-    maxW := map(ZZ^0,ZZ^1,0);
-    scan(G,g->( 
-	    --lead term of g:
-	    LTg := inw(g,fw);
-	    newWcond := (matrix{(exponents LTg)#0})*(transpose matrix{fw});
-	    --remaining terms of g:	    
-	    RTg := select(terms g, i-> i !=LTg);
-	    scan(RTg, m->(
-    	    	   newHSeq := matrix{-drop(flatten exponents m,-n)+drop(flatten exponents m,n)};
-		   HS = HS||newHSeq;
---		   error 0;
-	    	   maxW = maxW||newWcond;
-			));
-    		));
-	tailCone polar polyhedronFromHData(HS, maxW)
-	)
+nilssonSupportCone(Ideal, List) := Cone => (I, w) -> (
+    n := length w;
+    fw := flatten{-w, w};
+    G := gbw(I, fw);
+    L := transpose flatten for g in G_* list (
+	--lead term of g:
+	LTg := inw(g, fw); -- FIXME: why is this not a single term?
+	vec := matrix { first exponents LTg } * transpose matrix { fw };
+	--loop over the remaining terms of g:
+	apply(terms g - set { LTg },
+	    m -> { matrix { -difference toSequence pack_n first exponents m }, vec }));
+    tailCone polar polyhedronFromHData(concatRows first L, concatRows last L))
 
+--TODO: combine with the above?
 --Input: cone for support of Nilsson series, weight k
 --Output: lattice points in cone of weight \leq k, as a List of Lists
 nilssonSupportTruncated = method()
-nilssonSupportTruncated(Cone, List, ZZ) := List => (C,w,k)->(
+nilssonSupportTruncated(Cone, List, ZZ) := List => (C, w, k) -> (
     P := polyhedronFromHData(
-	(halfspaces C)||matrix{w},
-	map(target halfspaces C,ZZ^1,0)||matrix{{k}},
-	hyperplanes C, 
-	map(target hyperplanes C,ZZ^1,0)
-	);
-    latticePoints P
-    )
+	matrix  {w}  || -halfspaces C,
+	matrix {{k}} || map(target halfspaces C, ZZ^1, 0),
+	hyperplanes C, map(target hyperplanes C, ZZ^1, 0));
+    latticePoints P)
 
+--TODO
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
+--Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
+nonpositiveWeightGens = method()
+nonpositiveWeightGens(Ideal, List) := List => (I, w) -> ()
+
+--TODO
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
+--Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
+nilssonStart = method()
+nilssonStart(Ideal, List) := List => (I, w) -> (
+    )
 
 --------------------
 -- Tests section
@@ -284,72 +285,35 @@ TEST /// -- test solveFrobeniusIdeal
   F = solveFrobeniusIdeal I
 ///
 
-end;
---------------------
---------------------
---------------------
---------------------
---------------------
---------------------
-
-
-
-
-
+end--
 restart
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
 debug needsPackage "HolonomicSystems"
 needsPackage "Polyhedra"
 --check HolonomicSystems
-viewHelp cssExpts
-viewHelp Dmodules
-
+--viewHelp cssExpts
+--viewHelp Dmodules
 
 S = QQ[x]
 W = makeWeylAlgebra S;
 I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
 w = {1}
 C = nilssonSupportCone(I,w)
-nilssonSupportTruncated(C,w,6)
+nilssonSupportTruncated(C,w,3)
 
 
-
---Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
---Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
-nonpositiveWeightGens = method()
-nonpositiveWeightGens(Ideal, List) := List => (I,w) ->( 
-    
-    )
-
-
-
-
-    
-    
 A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
 beta = {1,0,0}
 I = gkz(A,beta)
 w = {1,1,1,1,0}
---help gbw
-
 C = nilssonSupportCone(I,w)
-k=3
-
-
-
-
---Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
---Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
-nilssonStart = method()
-nilssonStart(Ideal, List) := List => (I,w)->( 
-    
-    )
+nilssonSupportTruncated(C,w,3)
 
 
 -----------
 -----------
 restart
-needsPackage "HolonomicSystems"
+debug needsPackage "HolonomicSystems"
 debug Dmodules
 errorDepth=2
 
@@ -361,12 +325,13 @@ T = W.ThetaRing -- t = x*dx
 I = ideal(T_0*(T_0-3)) -- - x*(t+10)*(t+20))
 
 needsPackage "AssociativeAlgebras"
-importFrom_Core {"concatCols"}
+
 S = QQ<|dx,x,logx|>/ideal(dx*x-1-x*dx, x*logx-logx*x, x*dx*logx-1-x*logx*dx) -- FIXME: dx*logx
 --phi = map(W, S, {W_1, W_0, 0}) -- FIXME ENGINE BUGGGG
 --phi = f -> sum(listForm f, (m, c) -> c * W_(reverse drop(m, -1)))
 psi = map(W, T, {W_0*W_1})
 
+-- TODO: where to get the rank?
 r = 2 -- rank
 t = x*dx
 P = t*(t-3) - x*(t+10)*(t+20)
@@ -375,9 +340,14 @@ P = t*(t-3) - x*(t+10)*(t+20)
 --assert(J == psi I)
 A = solveFrobeniusIdeal(ideal(W.WtoT \ (psi I)_*), W)
 
-k = 10
+k = 5
+w = {1}
+C = nilssonSupportCone(ideal(P[W_1, W_0, 0]), w)
+V = nilssonSupportTruncated(C, w, k)
+
 a = value A_1
-B = flatten table(k, r, (p, l) -> x^p*logx^l) - set apply(r, l -> logx^l)
+-- TODO: what should l range over? just rank?!
+B = flatten table(V, r, (p, l) -> S_(first entries transpose p)*logx^l) - set apply(r, l -> logx^l)
 B' = a * B - set(value \ A)
 M = sub(concatCols apply(B', b -> last coefficients(P*b, Monomials => B)), QQ);
 v = sub(last coefficients(P*a, Monomials => B), QQ);

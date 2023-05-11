@@ -24,6 +24,8 @@ newPackage(
 -- local symbols defined in Dmodules
 importFrom_"Dmodules" { }
 
+importFrom_"Core" { "concatRows", "concatCols" }
+
 --------------------------------------------------------------------------------
 -- HolonomicSystems
 --------------------------------------------------------------------------------
