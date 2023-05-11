@@ -10,7 +10,7 @@ newPackage(
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
-	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
+	    HomePage => "https://antonleykin.math.gatech.edu"},
 	{Name => "Abraham Martin del Campo", 
 	    Email => "abraham.mc@cimat.mx", 
 	    HomePage => "http://www.cimat.mx/~abraham.mc"},
@@ -24,6 +24,7 @@ newPackage(
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
+    Keywords => {"Flag Varieties", "Numerical Algebraic Geometry"},
     Headline => "numerical methods in Schubert Calculus",
     PackageImports => {
 	"PHCpack",
