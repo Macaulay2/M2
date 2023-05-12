@@ -265,8 +265,20 @@ nilssonSupportTruncated(Cone, List, ZZ) := List => (C, w, k) -> (
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
 nonpositiveWeightGens = method()
-nonpositiveWeightGens(Ideal, List) := List => (I, w) -> ()
-
+nonpositiveWeightGens(Ideal, List) := List => (I, w) -> (
+    n := length w;
+    fw := flatten{-w|w};
+    G := (gbw(I,fw))_*;
+    apply(G,g->(
+--	    g = G_3
+	    extemp := (exponents(inw(g,fw)))#0;
+	    adjustVars := take(extemp,-n) - take(extemp,n);
+    	    (product apply(length adjustVars,m->(
+		    ((ring I)_m)^(adjustVars#m)
+		    )))*g	    
+		)))
+	
+	
 --TODO
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
