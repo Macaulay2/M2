@@ -261,7 +261,6 @@ nilssonSupportTruncated(Cone, List, ZZ) := List => (C, w, k) -> (
 	hyperplanes C, map(target hyperplanes C, ZZ^1, 0));
     latticePoints P)
 
---TODO
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
 nonpositiveWeightGens = method()
@@ -270,14 +269,12 @@ nonpositiveWeightGens(Ideal, List) := List => (I, w) -> (
     fw := flatten{-w|w};
     G := (gbw(I,fw))_*;
     apply(G,g->(
---	    g = G_3
 	    extemp := (exponents(inw(g,fw)))#0;
 	    adjustVars := take(extemp,-n) - take(extemp,n);
     	    (product apply(length adjustVars,m->(
 		    ((ring I)_m)^(adjustVars#m)
 		    )))*g	    
 		)))
-	
 	
 --TODO
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
