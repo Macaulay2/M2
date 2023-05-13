@@ -150,7 +150,7 @@ scan({net, info},
 	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
-		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+		SPBKs -> if isMember(SP,SPBKs) then (BK,"",BK) else BK);
 	    x = splice sublists(x, i -> i =!= BK,
 		x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x,
 		BK -> ());

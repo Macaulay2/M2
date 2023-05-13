@@ -902,7 +902,7 @@ eagonNorthcott Matrix := f -> (
                                if any(vec, e -> e < 0 or e > 1) then 0_R 
                                else (
                                     s := first select(toList(0..#q#0-1), 
-                                         l -> not member(q#0#l, p#0));
+                                         l -> not isMember(q#0#l, p#0));
                                     t := first select(toList(0..n-1), l -> vec#l == 1);
                                     (-1)^(s+1)*f_(t,q#0#s)))))};
 		    j=j+1) ;

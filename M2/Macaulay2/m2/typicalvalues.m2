@@ -63,7 +63,7 @@ isListener(File) := Boolean => isListener
 isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
-mutable(Thing) := Boolean => mutable
+isMutable(Thing) := Boolean => isMutable
 instance(Thing,Type) := Boolean => instance
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
@@ -182,7 +182,7 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )
 
-if member("--no-tvalues", commandLine) then end
+if isMember("--no-tvalues", commandLine) then end
 
 -- numerical functions that will be wrapped
 redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},

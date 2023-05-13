@@ -356,7 +356,7 @@ resolutionNonminimal = (opts, M) -> (
     --    LengthLimit
     --    Strategy (values allowed: strats)
     strats := {4, 4.1, 5, 5.1};
-    strategy := if member(opts.Strategy, strats) then opts.Strategy
+    strategy := if isMember(opts.Strategy, strats) then opts.Strategy
     else if opts.FastNonminimal then (
 	if opts.Strategy === null then first strats
 	else error("resolution: expected FastNonminimal Strategy option to be one of: ", demark_", " \\ toString \ strats))

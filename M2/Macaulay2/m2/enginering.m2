@@ -471,10 +471,10 @@ quotientRemainder(RingElement,RingElement) := (f,g) -> (
      S := ring g;
      m := quotientRemainder(R,S) := (
 	  if R === S then divmod R
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> divmod(promote(x,S), y)
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> divmod(x, promote(y,R))
 	       )
 	  else error "expected pair to have a method for quotientRemainder"
@@ -497,10 +497,10 @@ RingElement % RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x % raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) % y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x % promote(y,R)
 	       )
 	  else error "expected pair to have a method for '%'"
@@ -520,10 +520,10 @@ RingElement // RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x // raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x // promote(y,R)
 	       )
 	  else error "expected pair to have a method for '//'"
@@ -541,10 +541,10 @@ RingElement - RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x - raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) - y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x - promote(y,R)
 	       )
 	  else error "expected pair to have a method for '-'"
@@ -562,10 +562,10 @@ RingElement * RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x * raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) * y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x * promote(y,R)
 	       )
 	  else error "expected pair to have a method for '*'"
@@ -583,10 +583,10 @@ RingElement + RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x + raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) + y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x + promote(y,R)
 	       )
 	  else error "expected pair to have a method for '+'"
@@ -608,10 +608,10 @@ RingElement == RingElement := (f,g) -> (
 	  if R === S then (
 	       (x,y) -> raw x === raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) == y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x == promote(y,R)
 	       )
 	  else error "expected pair to have a method for '=='"
@@ -627,10 +627,10 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	       frac R; 
 	       (r,s) -> fraction (r,s)
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) / y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x / promote(y,R)
 	       )
 	  else error "expected pair to have a method for '/'"

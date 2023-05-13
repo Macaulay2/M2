@@ -125,7 +125,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
-		    if A === R or member(A, R.baseRings) then (
+		    if A === R or isMember(A, R.baseRings) then (
 			 -- we can promote
 			 mE = mE | promote(vars A, R);
 			 if instance(A,GaloisField) and A.rawGaloisField then (

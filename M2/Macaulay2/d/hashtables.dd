@@ -36,7 +36,7 @@ mutablefun(e:Expr):Expr := Expr(toExpr(
      	  is d:DictionaryClosure do !d.dictionary.Protected
      	  is x:Database do x.Mutable
      	  else false));
-setupfun("mutable",mutablefun);
+setupfun("isMutable",mutablefun);
 
 MutexArray := array(ThreadMutex,49);
 enlarge(o:HashTable):void := (

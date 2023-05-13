@@ -134,7 +134,7 @@ noinitfile' := noinitfile
 -- are no longer visible, and public symbols have been exported
 endPackage "Core"
 
-path = select(if not noinitfile' then join(userpath', path) else path, dir -> not member(dir, corepath'))
+path = select(if not noinitfile' then join(userpath', path) else path, dir -> not isMember(dir, corepath'))
 if #OutputDictionary > 0 then error("symbols entered into OutputDictionary from Core: ", toString keys OutputDictionary)
 
 -- Local Variables:

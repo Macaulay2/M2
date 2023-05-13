@@ -26,8 +26,8 @@ assert( 1 .. 1 === toSequence{1} )
 -- test newClass
 aa = {1,2,3}
 bb = newClass(MutableList, aa)
-assert( not  mutable aa )
-assert( mutable bb )
+assert( not  isMutable aa )
+assert( isMutable bb )
 bb#1 = 44
 assert( bb#1 === 44 )
 assert( aa#1 === 2 )
@@ -41,7 +41,7 @@ assert( toList1 {1,2} === {1,2} )
 aa = newClass(MutableList, {1,2,3})
 bb = toList1 aa
 aa#2 = 444
-assert( not  mutable bb )
+assert( not  isMutable bb )
 assert( aa#2 === 444 )
 assert( bb#2 === 3 )
 
@@ -86,8 +86,8 @@ assert(not  (false and false))
 -- true and (i := true)
 -- assert(i === 5)
 
--- test mutable
-assert( not  mutable {1,2,3} )
+-- test isMutable
+assert( not  isMutable {1,2,3} )
 
 -- test copy
 assert( copy {1,3,5} === {1,3,5} )
@@ -98,8 +98,8 @@ assert( reverse (1,2,3) === (3,2,1) )
 -- test splice
 assert( splice (0,(1,2),(3,4)) === (0,1,2,3,4) )
 assert( splice {0,(1,2),(3,4)} === {0,1,2,3,4} )
-assert( mutable splice newClass(MutableList, {1..3,5..7}) )
-assert( not  mutable splice {1..3,5..7} )
+assert( isMutable splice newClass(MutableList, {1..3,5..7}) )
+assert( not  isMutable splice {1..3,5..7} )
 
 -- test .
 aa = new MutableHashTable
