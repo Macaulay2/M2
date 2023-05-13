@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.4",
-    Date => "October 31, 2022",
+    Version => "0.5",
+    Date => "May 13, 2023",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -19,6 +19,37 @@ newPackage("Python",
     CacheExampleOutput => true,
     OptionalComponentsPresent => pythonPresent
     )
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.5 (2023-05-13, M2 1.22)
+* improvements for displaying python objects in webapp mode
+
+0.4 (2022-10-31, M2 1.21)
+* fix bug involving hash codes for unhashtable types
+* allow subclassing of PythonObject
+* add support for more operators and builtin functions
+* add support for M2 iteration
+* improve integer conversion
+* convert M2 functions to python functions
+* add support for numpy scalars
+
+0.3 (2022-05-04, M2 1.20)
+* improve handling of lists
+* add support for collections module types
+* add support for unary operators
+* rename rs -> pythonValue
+
+0.2 (2021-11-06, M2 1.19)
+* initial release
+
+0.1 (unofficial, not distributed)
+
+*-
 
 verboseLog = if debugLevel > 0 then printerr else identity
 
