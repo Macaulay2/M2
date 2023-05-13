@@ -417,8 +417,9 @@ findHeft List := opts -> degs -> (
 -----------------------------------------------------------------------------
 
 processHeft = (degrk, degs, group, heftvec, inverses) -> (
-     if inverses then return null;
+    if inverses then return null;
     if heftvec =!= null then (
+	heftvec = splice heftvec;
 	if not isListOfIntegers heftvec then error "expected Heft option to be a list of integers";
 	if #heftvec > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	if #heftvec < degrk then heftvec = join(heftvec, degrk - #heftvec : 0));
