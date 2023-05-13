@@ -29,7 +29,7 @@ isTorusFixed(Ideal) := Boolean => (J)->(
 --Output: list of the form {list a, list b, list of coefficients and exponents for poly p}, as in SST Lem. 2.3.1 
 -- internal
 apbFactor = method();
-apbFactor(RingElement) := List => (f) -> (
+apbFactor RingElement := List => f -> (
     n := (numgens ring f)//2;
     E := exponents f;
     D := ring f;
@@ -62,42 +62,26 @@ thetaBracketSub(List,Ring) := (RingElement) => (b,S)->(
     product apply(n,i-> product apply(b#i,j-> S_i - j))
     )
 
---Input: element in D in a torus fixed ideal
---Output: List of corresponding gens from homogeneous pieces in the distraction, viewed in ring S
-genToDistractionGens = method();
-genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
-    n := (numgens ring f)//2;
-    if n != numgens S then error "mismatched numbers of variables";
-    apbF := apbFactor(f);
-    sum apply(apbF,q->( 
-         b:= drop(q#0,n);
-	 --
-	 pTheta := sum apply(q#1,v->( sub(v#0,S)*( 
-		     product apply(length v#1,k->( product apply(v#1#k,i->( S_k-i))))
-		     )));
-	 phi := map(S,S,S_*-b);
-	 pThetaMinusb := phi(pTheta);
-	 thetaBracketSub(b,S)*pThetaMinusb
-	 ))
-)
-
---this was called thetaIdeal in the past		    
+distraction = method()
 --Input: torus-fixed left D-ideal J
---Output: the distraction of J, viewed in ring S
-distraction = method(); 
-distraction(Ideal, Ring) := Ideal => (J,S) ->(
-    n := numgens ring J//2;
-    if n != numgens S then error "mismatched numbers of variables";
-    ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
-)
-
+--Output: the distraction of J, viewed in ThetaRing
+--Note: this was called thetaIdeal in the past
+distraction(Ideal, Ring) := Ideal => (J, ThetaRing) -> sum(J_*, j -> ideal distraction(j, ThetaRing))
+--Input: element in a torus-fixed left D-ideal
+--Output: list of corresponding gens from homogeneous pieces in the distraction, viewed in ThetaRing
+distraction(RingElement, Ring) := List => (f, ThetaRing) -> (
+    if (n := numgens ring f // 2) != numgens ThetaRing then error "mismatched numbers of variables";
+    sum(apbFactor f, q -> ( 
+	    b := drop(q#0, n);
+	    phi := map(ThetaRing, ThetaRing, ThetaRing_* - b);
+	    pTheta := phi sum(q#1, v -> sub(v#0, ThetaRing) * product(#v#1, k -> product(v#1#k, i -> ThetaRing_k-i )));
+	    thetaBracketSub(b, ThetaRing) * pTheta))
+    )
 
 --Input: holonomic ideal I, weight w in the form of a List
 --Output: the indicial ideal of I with respect to w
 indicialIdeal = method();
-indicialIdeal(Ideal,List) := (Ideal) => (I,w) ->(
-    distraction(inw(I,flatten{-w|w}))
-    )
+indicialIdeal(Ideal, List) := Ideal => (I, w) -> distraction(inw(I, -w|w), first createThetaRing ring I)
 
 --Input: 0-dimensional primary ideal I
 --Output: corresponding point, as a vector
@@ -140,6 +124,7 @@ cssExptsMult(Ideal,List) := List => (H,w)->(
     	apply(L,l->( {degree l,solveMax(l)}))
 	)    
 
+--------------------------------------------------------------------------------
 -- making monomial expressions with arbitrary exponents
 -- internal
 makeMonomial = (R, L) -> Product apply(L,
@@ -165,6 +150,32 @@ factorial' = alpha -> (first exponents alpha) / (k -> k!) // product
 RingMap Sum :=
 RingMap Product := (f, v) -> apply(v, e -> f e)
 RingMap Power := (f, v) -> Power{f v#0, v#1}
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- TODO: move this to AssociatedAlgebras?
+FreeAlgebraQuotient _ List := RingElement => (R, v) -> if #v === 0 then 1_R else product(
+    if isListOfIntegers v then pairs v else v, (i, e) -> R_i^e )
+
+-- TODO: move this to Core?
+listForm Number := n -> {({}, n)}
+
+protect NilssonRing
+nilssonRing = method()
+nilssonRing Ring := (cacheValue symbol NilssonRing) (W -> (
+    n := numgens W // 2;
+    X := local X;
+    dX := local dX;
+    logX := local logX;
+    S := QQ<| dX_0..dX_(n-1), X_0..X_(n-1), logX_0..logX_(n-1) |> / flatten apply(n, i -> nonnull join(
+	    flatten table(n, {X, logX, dX}, (j, sym) -> if i <  j then sym_i * sym_j - sym_j * sym_i ),
+	    flatten table(n, {X, logX},     (j, sym) -> if i != j then  dX_i * sym_j - sym_j *  dX_i ),
+	    -* FIXME: only missing dX*logX - 1/X - logX*dX, since 1/X is not allowed in this ring *-
+	    apply(n, j -> X_i * logX_j - logX_j * X_i ), { dX_i*X_i-1-X_i*dX_i, X_i*dX_i*logX_i-1-X_i*logX_i*dX_i }));
+    WtoS := f -> sum(listForm f, (m, c) -> c * S_(reverse toList pairs flatten reverse pack_n m));
+    StoW := f -> sum(listForm f, (m, c) -> c * W_(reverse drop(m, -1)));
+    S, WtoS, StoW))
+--------------------------------------------------------------------------------
 
 -- Perform a lexographic breadth first search on monomials in k[x_1..x_n] \ S_< (I)
 -- and compute c#(alpha, beta) as in Algorithm 2.3.14 of SST (pp. 74)
@@ -172,17 +183,16 @@ RingMap Power := (f, v) -> Power{f v#0, v#1}
 --Output: a HashTable, { t^beta => f_beta } 
 solvePrimaryFrobeniusIdeal = method();
 solvePrimaryFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
-    R := ring I;
-    n := # gens R;
-    f := map(W, R, product \ pack(2, mingle drop(W.dpairVars, -1)));
+    T := ring I;
+    n := numgens T;
     if dim I > 0 then error "expected zero-dimensional ideal";
     -- standard monomials S_<(I)
-    S := new MutableHashTable from apply( first entries basis (R^1/I), elt -> (elt, elt) );
+    S := new MutableHashTable from apply( first entries basis (T^1/I), elt -> (elt, elt) );
     B := sort keys S;
     -- the coefficients c#(alpha,beta)
     c := new MutableHashTable from {};
     -- non-standard monomials N_<(I)
-    N := new MutableHashTable from flatten for i to n - 1 list for beta in B list R_i * beta => (i, beta);
+    N := new MutableHashTable from flatten for i to n - 1 list for beta in B list T_i * beta => (i, beta);
     -- monomials that we have already visited
     M := new MutableHashTable from S;
 
@@ -201,86 +211,106 @@ solvePrimaryFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
 	for j to #B - 1 do c#(alpha, B_j) = coeffs_0_j;
 	apply(B, beta -> if degree beta == degree alpha then S#beta = S#beta + c#(alpha, beta) * factorial' beta / factorial' alpha * alpha);
 
-	-- Add the product of alpha and generators of R to N
-	-- TODO: R_j * lambda is easier to reduce, so add that instead?
-	for j to n - 1 do if not M#?(R_j * alpha) then N#(R_j * alpha) = (j, alpha);
+	-- Add the product of alpha and generators of T to N
+	-- TODO: T_j * lambda is easier to reduce, so add that instead?
+	for j to n - 1 do if not M#?(T_j * alpha) then N#(T_j * alpha) = (j, alpha);
 	);
-    makeLogMonomial \ f \ factor \ sort values S
     -- hashTable apply(pairs S, (k, v) -> (k, factor v))
-    )
+    -- f := map(W, T, product \ pack(2, mingle drop(W.dpairVars, -1)));
+    -- makeLogMonomial \ f \ factor \ sort values S
+    (R, f1, f2) := elapsedTime nilssonRing W;
+    g := map(R, T, R_*_{2*n .. 3*n-1});
+    g \ sort values S)
 
 solveFrobeniusIdeal = method();
 solveFrobeniusIdeal Ideal        := List =>  I     -> solveFrobeniusIdeal(I, makeWeylAlgebra ring I)
 solveFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
     R := ring I;
-    n := # gens R;
+    n := numgens R;
+    T := first nilssonRing W;
     createDpairs W;
     flatten apply(primaryDecomposition I, C -> (
 	if dim C > 0 then error "expected zero-dimensional components";
 	(p, m) := (solveMax C, degree C); -- the point and its multiplicity
 	--mon := makeRationalMonomial(first W.dpairVars, p);
-	mon := makeMonomial(first W.dpairVars, select(pairs p, (i, e) -> e != 0));
+	mon := if any(p, i -> floor i != i or i < 0)
+	then makeMonomial(first W.dpairVars, select(pairs p, (i, e) -> e != 0))
+	--FIXME: version above works for negative or rational exponents, the one below doesn't
+	else T_(flatten{toList(n:0), apply(p, i -> sub(i, ZZ)), toList(n:0)});
 	if m == 1 then return mon;
 	psi := map(R, R, apply(n, i -> R_i + p_i));
 	apply(solvePrimaryFrobeniusIdeal(psi C, W), ell -> mon * ell)
 	))
     )
 
-cssLeadTerm = method()
-cssLeadTerm(Ideal, List) := List => (I, w) -> (
-    createThetaRing(W := ring I);
-    J := inw(I, flatten{-w|w});
-    solveFrobeniusIdeal(distraction(J, W.ThetaRing), W))
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
+--Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
+nilssonStart = method()
+nilssonStart(Ideal, List) := List => (I, w) -> solveFrobeniusIdeal(indicialIdeal(I, w), ring I)
+
+--TODO: where should this go?
+--Input: cone C, weight vector k
+--Output: truncate cone containing points of weight \leq k
+truncate(Cone, List, ZZ) := List => {} >> o -> (C, w, k) -> polyhedronFromHData(
+    matrix  {w}  || -halfspaces C,
+    matrix {{k}} || map(target halfspaces C, ZZ^1, 0),
+    hyperplanes C, map(target hyperplanes C, ZZ^1, 0))
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: Cone containing support of the Nilsson cone for css of I with weight w 
 --NOTE: We are assuming that the ideal I is provided with LT of weight 0.
 --We will adjust to this case using nonpositiveWeightGens
-nilssonSupportCone = method()
-nilssonSupportCone(Ideal, List) := Cone => (I, w) -> (
+nilssonSupport = method()
+nilssonSupport(Ideal, List) := Cone => (I, w) -> (
+    -- See description before SST Thm 2.5.14
     n := length w;
-    fw := flatten{-w, w};
-    G := gbw(I, fw);
+    G := gbw(I, fw := -w|w);
     L := transpose flatten for g in G_* list (
 	--lead term of g:
 	LTg := inw(g, fw); -- FIXME: why is this not a single term?
 	vec := matrix { first exponents LTg } * transpose matrix { fw };
 	--loop over the remaining terms of g:
-	apply(terms g - set { LTg },
-	    m -> { matrix { -difference toSequence pack_n first exponents m }, vec }));
+	apply(first \ exponents \ (terms g - set { LTg }),
+	    m -> { matrix { take(m, -n) - take(m, n) }, vec }));
     tailCone polar polyhedronFromHData(concatRows first L, concatRows last L))
-
---TODO: combine with the above?
---Input: cone for support of Nilsson series, weight k
+--Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List, weight k
 --Output: lattice points in cone of weight \leq k, as a List of Lists
-nilssonSupportTruncated = method()
-nilssonSupportTruncated(Cone, List, ZZ) := List => (C, w, k) -> (
-    P := polyhedronFromHData(
-	matrix  {w}  || -halfspaces C,
-	matrix {{k}} || map(target halfspaces C, ZZ^1, 0),
-	hyperplanes C, map(target hyperplanes C, ZZ^1, 0));
-    latticePoints P)
+nilssonSupport(Ideal, List, ZZ) := List => (I, w, k) -> entries transpose concatCols latticePoints truncate(nilssonSupport(I, w), w, k)
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
 nonpositiveWeightGens = method()
 nonpositiveWeightGens(Ideal, List) := List => (I, w) -> (
+    W := ring I;
     n := length w;
-    fw := flatten{-w|w};
-    G := (gbw(I,fw))_*;
-    apply(G,g->(
-	    extemp := (exponents(inw(g,fw)))#0;
-	    adjustVars := take(extemp,-n) - take(extemp,n);
-    	    (product apply(length adjustVars,m->(
-		    ((ring I)_m)^(adjustVars#m)
-		    )))*g	    
-		)))
-	
---TODO
---Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
---Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
-nilssonStart = method()
-nilssonStart(Ideal, List) := List => (I, w) -> (
+    G := gbw(I, fw := -w|w);
+    apply(G_*, g -> (
+	    e1 := first exponents inw(g, fw);
+	    e2 := take(e1, -n) - take(e1, n);
+	    epos := apply(e2, i -> max(0, i));
+	    eneg := apply(e2, i -> max(0, -i));
+	    W_epos * g // W_eneg))
+    )
+
+truncatedCanonicalSeries = method()
+truncatedCanonicalSeries(Ideal, List, ZZ) := List => (I, w, k) -> (
+    W := ring I;
+    n := numgens W // 2;
+    r := holonomicRank I;
+    G := ideal nonpositiveWeightGens(I, w);
+    (S, WtoS, StoW) := nilssonRing W;
+    -- FIXME: this step fails if any start terms have negative or rational exponents
+    A := WtoS \ value \ nilssonStart(G, w);
+    V := elapsedTime nilssonSupport(G, w, k);
+    -- The variables of S are ordered as dX_i..., X_i..., logX_i...
+    B := splice table(V, (n:0)..(n:r-1), (e, l) -> S_(toList join(n:0,e,l)));
+    B  = B - set apply((n:0)..(n:r-1), l -> S_(toList join(n:0,n:0,l)));
+    G' := WtoS \ G_*;
+    G', apply(A, a -> (
+	    B' := a * B - set A;
+	    M := concatCols flatten table(G', B', (g, b) -> last coefficients(g * b, Monomials => B));
+	    v := concatCols apply(G', g -> last coefficients(g * a, Monomials => B));
+	    first first entries(a + matrix{B'} * solve(sub(M, QQ), sub(-v, QQ)))))
     )
 
 --------------------
@@ -294,77 +324,43 @@ TEST /// -- test solveFrobeniusIdeal
   F = solveFrobeniusIdeal I
 ///
 
+TEST ///
+  S = QQ[x]
+  W = makeWeylAlgebra S;
+  I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
+  w = {1}
+  nilssonSupport(I,w)
+  nilssonSupport(I,w,3)
+  nilssonStart(I, w)
+  (G, sols) = truncatedCanonicalSeries(I, w, 4)
+
+  A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
+  beta = {1,0,0}
+  I = gkz(A,beta)
+  w = {1,1,1,1,0}
+  nilssonSupport(I,w)
+  nilssonSupport(I,w,3)
+  nilssonStart(I, w)
+///
+
+TEST ///
+  R = QQ[x]
+  W = makeWeylAlgebra R
+  w = {1}
+  I = ideal(x*dx*(x*dx-3) - x*(x*dx+10)*(x*dx+20))
+  -- FIXME: crashes when k = 3; see https://github.com/Macaulay2/M2/issues/2831
+  (G, sols) = truncatedCanonicalSeries(I, w, 4)
+  netList G
+  netList sols
+  -- error terms:
+  table(G, sols, (g, s) -> (g * s)[0,x,0])
+///
+
 end--
 restart
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
-debug needsPackage "HolonomicSystems"
-needsPackage "Polyhedra"
---check HolonomicSystems
---viewHelp cssExpts
---viewHelp Dmodules
+installPackage "Dmodules"
+needsPackage "HolonomicSystems"
+check HolonomicSystems
+viewHelp HolonomicSystems
 
-S = QQ[x]
-W = makeWeylAlgebra S;
-I = ideal(x*dx*(x*dx-3)-x*(x*dx+101)*(x*dx+13))
-w = {1}
-C = nilssonSupportCone(I,w)
-nilssonSupportTruncated(C,w,3)
-
-
-A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
-beta = {1,0,0}
-I = gkz(A,beta)
-w = {1,1,1,1,0}
-C = nilssonSupportCone(I,w)
-nilssonSupportTruncated(C,w,3)
-
-
------------
------------
-restart
-debug needsPackage "HolonomicSystems"
-debug Dmodules
-errorDepth=2
-
-R = QQ[x]
-W = makeWeylAlgebra R
-createThetaRing W
-T = W.ThetaRing -- t = x*dx
--- multiply by x to get the leading term x free and in terms of thetas
-I = ideal(T_0*(T_0-3)) -- - x*(t+10)*(t+20))
-
-needsPackage "AssociativeAlgebras"
-
-S = QQ<|dx,x,logx|>/ideal(dx*x-1-x*dx, x*logx-logx*x, x*dx*logx-1-x*logx*dx) -- FIXME: dx*logx
---phi = map(W, S, {W_1, W_0, 0}) -- FIXME ENGINE BUGGGG
---phi = f -> sum(listForm f, (m, c) -> c * W_(reverse drop(m, -1)))
-psi = map(W, T, {W_0*W_1})
-
--- TODO: where to get the rank?
-r = 2 -- rank
-t = x*dx
-P = t*(t-3) - x*(t+10)*(t+20)
---J = inw(ideal phi P, {-1,1})
---A = solveFrobeniusIdeal(ideal(W.WtoT \ J_*), W)
---assert(J == psi I)
-A = solveFrobeniusIdeal(ideal(W.WtoT \ (psi I)_*), W)
-
-k = 5
-w = {1}
-C = nilssonSupportCone(ideal(P[W_1, W_0, 0]), w)
-V = nilssonSupportTruncated(C, w, k)
-
-a = value A_1
--- TODO: what should l range over? just rank?!
-B = flatten table(V, r, (p, l) -> S_(first entries transpose p)*logx^l) - set apply(r, l -> logx^l)
-B' = a * B - set(value \ A)
-M = sub(concatCols apply(B', b -> last coefficients(P*b, Monomials => B)), QQ);
-v = sub(last coefficients(P*a, Monomials => B), QQ);
--- TODO: why not this?
--- v = sub(sum apply(r, l -> last coefficients(P*a*logx^l, Monomials => B)), QQ);
--- first first entries(a + matrix{B} * (inverse M * v))
-s = first first entries(a + matrix{B'} * solve(M, -v))
-z = P * s
-z[0,x,0] -- error term
-
-truncatedCanonicalSeries = (P, r, k, W) -> ()

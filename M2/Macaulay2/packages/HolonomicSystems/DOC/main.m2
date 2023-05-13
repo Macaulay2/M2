@@ -14,7 +14,6 @@ Node
      HEADER3 "Canonical Series:",
      UL{
 	  TO {"distraction", "--  the image in the thetaRing of a torus-fixed ideal in a Weyl algebra"},
-	  TO {"genToDistractionGens", " -- the image in the thetaRing of a torus-fixed element in a Weyl algebra"},
 	  TO {"cssExpts", " -- the exponents of the canonical series solutions of I"},
 	  TO {"cssExptsMult", " -- the exponents of the canonical series solutions of I with multiplicities"},
 	  TO {"isTorusFixed", " -- checks if an ideal in a Weyl algebra is torus-fixed"},

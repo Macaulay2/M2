@@ -11,6 +11,7 @@ newPackage(
     Keywords => {"D-modules"},
     PackageExports => { "Dmodules" },
     PackageImports => {
+	"AssociativeAlgebras",
 	"PrimaryDecomposition",
 	"ReesAlgebra",
 	"Elimination",
@@ -22,9 +23,11 @@ newPackage(
     )
 
 -- local symbols defined in Dmodules
-importFrom_"Dmodules" { }
+importFrom_"Dmodules" {
+    "pInfo", "createThetaRing", "ThetaRing", "WtoT",
+    }
 
-importFrom_"Core" { "concatRows", "concatCols" }
+importFrom_"Core" { "nonnull", "concatRows", "concatCols", "isListOfIntegers" }
 
 --------------------------------------------------------------------------------
 -- HolonomicSystems
@@ -56,10 +59,12 @@ export {
     "cssExptsMult",
     "cssLeadTerm",
     "distraction",
-    "genToDistractionGens",
     "indicialIdeal",
     -- solvePrimaryFrobeniusIdeal
     "solveFrobeniusIdeal",
+    "nilssonSupport",
+    "nilssonStart",
+    "truncatedCanonicalSeries",
     }
 
 -- DifferentialOperators

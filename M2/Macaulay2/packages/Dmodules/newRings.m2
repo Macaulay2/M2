@@ -82,8 +82,8 @@ protect isGeneric
 protect WtoT
 protect ThetaRing
 createThetaRing = method()
-createThetaRing(PolynomialRing) := W -> (
-     createDpairs (W);
+createThetaRing PolynomialRing := W -> (
+     createDpairs W;
      dpV := W.dpairVars;
      dpI := W.dpairInds;
      
@@ -130,5 +130,5 @@ createThetaRing(PolynomialRing) := W -> (
 	       ); 
 	  t
 	  );
-     );
+    W.ThetaRing, W.WtoT)
 
