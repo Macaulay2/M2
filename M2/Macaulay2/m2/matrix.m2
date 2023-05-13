@@ -192,9 +192,10 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  then map(M,N,n.RingMap,f)
 	  else map(M,N,f)))
 
-Matrix ^ ZZ := Matrix => (f,n) -> (
-     if n === 0 then id_(target f)
-     else SimplePowerMethod (f,n))
+Matrix#1 = f -> (
+    if source f =!= target f then error "expected source and target to agree"
+    else id_(target f))
+Matrix ^ ZZ := Matrix => BinaryPowerMethod
 
 transpose Matrix := Matrix => (cacheValue symbol transpose) (
      (m) -> (

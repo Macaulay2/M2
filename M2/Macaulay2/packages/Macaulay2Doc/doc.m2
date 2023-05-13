@@ -529,7 +529,7 @@ undocumented {
      }
 
 document {
-     Key => {symbol ^, (symbol ^,CC,ZZ)},
+     Key => {symbol ^},
      Headline => "a binary operator, usually used for powers",
      Usage => "x ^ y",
      PARA{},
