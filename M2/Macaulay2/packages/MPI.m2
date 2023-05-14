@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-	"PackageTemplate",
+	"MPI",
     	Version => "1.22", 
     	Date => "May, 2023",
     	Authors => {
@@ -8,7 +8,7 @@ newPackage(
 	     },
     	HomePage => "https://antonleykin.math.gatech.edu/",
     	Headline => "Message Passing Interface",
-	Keywords => {"parallel computing", "supercomputing"},
+	Keywords => {"Parallel computing"},
 	AuxiliaryFiles => true
     	)
 

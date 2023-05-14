@@ -60,6 +60,9 @@ jobs:
             compiler: MPI
             cxx: clang++
             cc: clang
+          - build-system: cmake
+            os: ubuntu-22.04
+            compiler: MPI
         exclude:
           - build-system: cmake
             os: macos-12
