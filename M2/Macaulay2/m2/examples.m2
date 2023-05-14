@@ -110,10 +110,10 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
         then remove(Attributes,v));
     -- null out all symbols in the private dictionary, otherwise those values leak
     -- See bug #2330 for details.
-    scan(values User#"private dictionary", s -> (if mutable s then s <- null));
+    scan(values User#"private dictionary", s -> (if isMutable s then s <- null));
     User#"private dictionary" = oldPrivateDictionary;
     -- null out the symbols in the OutputDictionary as well
-    scan(values OutputDictionary, s -> (if mutable s then s <- null));
+    scan(values OutputDictionary, s -> (if isMutable s then s <- null));
     popvar symbol OutputDictionary;
     -- TODO: this should eventually be unnecessary
     scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);

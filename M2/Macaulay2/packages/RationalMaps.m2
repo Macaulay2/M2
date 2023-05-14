@@ -91,6 +91,8 @@ RationalMapping = new Type of HashTable;
 rationalMapping = method(Options=>{}); --constructor for RationalMapping
 
 rationalMapping(RingMap) := o->(phi) -> (
+    if not isHomogeneous target phi then error "rationalMapping: the target should be homogeneous";
+    if not isHomogeneous source phi then error "rationalMapping: the source should be homogeneous";
     if not isSameDegree(first entries matrix phi) then error "rationalMapping:  expected all terms to have the same degree";
     new RationalMapping from {map=>phi, cache => new CacheTable from {}}
 );

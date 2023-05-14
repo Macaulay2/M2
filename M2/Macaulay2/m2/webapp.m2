@@ -74,7 +74,7 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 
 htmlAfterPrint :=  x -> (
     << endl << on() | " : ";
-    if class x === Sequence then x = RowExpression deepSplice { x };
+    if class x === Sequence then x = SPAN deepSplice { x };
     printFunc x;
     )
 
@@ -91,6 +91,7 @@ Thing#{WebApp,AfterNoPrint} = x -> (
     if s =!= null then htmlAfterPrint s
     )
 
+removeWebAppTags = s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
 if topLevelMode === WebApp then (
     compactMatrixForm = false;
     extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
@@ -105,5 +106,5 @@ if topLevelMode === WebApp then (
     editMethod FilePosition := f -> show editURL f;
     hypertext FilePosition := f -> TT HREF {editURL f,toString f};
     -- redefine htmlLiteral to exclude codes
-    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral;
+    htmlLiteral = removeWebAppTags @@ htmlLiteral;
     )

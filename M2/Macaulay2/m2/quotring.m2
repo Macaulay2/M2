@@ -258,7 +258,7 @@ generators QuotientRing := opts -> (S) -> (
 char QuotientRing := (stashValue symbol char) ((S) -> (
      p := char ambient S;
      if p == 1 then return 1;
-     if isPrime p or member(QQ,S.baseRings) then return if S == 0 then 1 else p;
+     if isPrime p or isMember(QQ,S.baseRings) then return if S == 0 then 1 else p;
      relns := presentation S;
      if relns == 0 then return char ring relns;
      if coefficientRing S =!= ZZ then notImplemented();

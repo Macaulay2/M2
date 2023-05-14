@@ -1,13 +1,27 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.1",
-    Date => "September 11, 2022",
+    Version => "0.2",
+    Date => "May 13, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"Interfaces"}
     )
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2023-05-13, M2 1.22)
+* improvements for displaying foreign objects in webapp mode
+
+0.1 (2022-09-11, M2 1.21)
+* initial release
+
+*-
 
 if not Core#"private dictionary"#?"ffiCall" then (
     document{Key => "ForeignFunctions",

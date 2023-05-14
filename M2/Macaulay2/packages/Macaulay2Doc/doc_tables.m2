@@ -186,12 +186,12 @@ doc///
 
 doc ///
  Key
-  mutable
-  (mutable, Thing)
+  isMutable
+  (isMutable, Thing)
  Headline
   whether something may be modified
  Usage
-  mutable x
+  isMutable x
  Inputs
   x:Thing
  Outputs
@@ -205,15 +205,17 @@ doc ///
    If {\tt x} is a symbol, then it's mutable if a value can be 
    assigned to it; i.e., if it is not @TO protect@ed.
    
-   If {\tt x} is anything else, {\tt mutable x} will return {\bf false}.
+   If {\tt x} is anything else, {\tt isMutable x} will return {\bf false}.
   Example
    T = new MutableList from (a, b, c)
-   mutable T
+   isMutable T
    V = new List from (a, b, c)
-   mutable V
-   mutable join(T, V)
-   mutable a
-   mutable "a"  
+   isMutable V
+   isMutable join(T, V)
+   isMutable a
+   isMutable "a"  
+  Text
+   This function may also be called using the synonym @TT "mutable"@.
  Caveat
   The (changeable) contents of a mutable hash table or list 
   do not participate in strong comparison with @TO "==="@

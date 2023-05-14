@@ -84,7 +84,10 @@ popIndentLevel  = (n, s) -> (indentLevel = indentLevel - n; s)
 
 -- This method applies to all types that inherit from Hypertext
 -- Most MarkUpTypes automatically work recursively
-html1 := x -> (if class x === String then htmlLiteral else html) x -- slightly annoying workaround for the ambiguous role of strings in/out of Hypertext
+html1 = method(Dispatch=>Thing)
+html1 String := htmlLiteral -- slightly annoying workaround for the ambiguous role of strings in/out of Hypertext
+html1 Thing := html
+html1 Nothing := x -> ""
 
 scan(methods hypertext, (h,t) -> html t := html @@ hypertext)
 html Hypertext := x -> (
@@ -164,7 +167,7 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-html Nothing := x -> ""
+html Nothing := x -> "null"
 
 html Monoid :=
 html RingFamily :=

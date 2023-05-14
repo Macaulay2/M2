@@ -39,7 +39,7 @@ addStartFunction(
 	       newPackage("User",
 		   Headline       => "default package for interpreter interactions",
 		   DebuggingMode  => true,
-		   PackageImports => if member("--no-preload", commandLine) then {} else Core#"pre-installed packages");
+		   PackageImports => if isMember("--no-preload", commandLine) then {} else Core#"pre-installed packages");
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";

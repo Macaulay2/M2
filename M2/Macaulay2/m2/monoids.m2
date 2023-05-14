@@ -335,7 +335,7 @@ texMath  Monoid :=  texMath @@ expression
 Monoid#AfterPrint = M -> (
     class M,
     if not isFreeModule degreeGroup M
-    then ", with torsion degree group";
+    then ", with torsion degree group"
     -- TODO: print whether M is ordered, a free algebra, etc.
     )
 
@@ -417,8 +417,9 @@ findHeft List := opts -> degs -> (
 -----------------------------------------------------------------------------
 
 processHeft = (degrk, degs, group, heftvec, inverses) -> (
-     if inverses then return null;
+    if inverses then return null;
     if heftvec =!= null then (
+	heftvec = splice heftvec;
 	if not isListOfIntegers heftvec then error "expected Heft option to be a list of integers";
 	if #heftvec > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	if #heftvec < degrk then heftvec = join(heftvec, degrk - #heftvec : 0));
@@ -534,7 +535,7 @@ setMonoidOptions = opts -> (
     opts.DegreeGroup = group;
     if showTorsionWarning and instance(group, Module) and not isFreeModule group
     then ( showTorsionWarning = false; printerr "Warning: computations over rings with torsion grading groups are experimental" );
-    if not member(opts.Join, {null, true, false}) then error "expected Join option to be true, false, or null";
+    if not isMember(opts.Join, {null, true, false}) then error "expected Join option to be true, false, or null";
     -- if opts.Join =!= false then (
     --	if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
     --	if opts.DegreeLift =!= null then error "DegreeLift option provided without Join=>false";

@@ -154,7 +154,7 @@ makeDocumentTag' := opts -> key -> (
     -- Try to detect the package
     pkg = if pkg =!= null                    then pkg
     else  if opts#Package =!= null           then opts#Package
-    else  if member(fkey, allPackages())     then fkey
+    else  if isMember(fkey, allPackages())     then fkey
     -- for these three types, the method package actually calls
     -- makeDocumentTag, so we can't use it, and need workarounds:
     else  if instance(nkey, Array)           then youngest toSequence(package \ splice nkey)
@@ -641,7 +641,7 @@ document List := opts -> args -> (
     currentDocumentTag = o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage);
     fkey := format tag;
     verboseLog("Processing documentation for ", fkey);
-    if member(fkey, reservedNodeNames) then error("'document' encountered a reserved node name ", fkey);
+    if isMember(fkey, reservedNodeNames) then error("'document' encountered a reserved node name ", fkey);
     -- Check that all tags belong to this package and
     -- point the secondary keys to the primary one
     verfy := (key, tag) -> (
