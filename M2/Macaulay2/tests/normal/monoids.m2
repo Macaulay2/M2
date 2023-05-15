@@ -243,7 +243,7 @@ assert(B.WeylAlgebra == {{1, 2}})
 assert(N.Options.WeylAlgebra == {{N_1, N_2}})
 
 -- test of adjoining variables with local variables
-needsPackage "Dmodules"
+needsPackage "BernsteinSato"
 W = QQ[u, v, Du, Dv, WeylAlgebra => {u => Du, v => Dv}];
 assert(RatAnn(u^5 - v^2) == ideal{2*u*Du+5*v*Dv+10, 5*u^4*Dv+2*v*Du})
 
