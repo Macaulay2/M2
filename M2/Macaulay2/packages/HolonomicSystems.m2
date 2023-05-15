@@ -64,12 +64,12 @@ export {
     -- factorial'
     "cssExpts",
     "cssExptsMult",
+    "cssLeadTerm",
     "distraction",
     "indicialIdeal",
     -- solvePrimaryFrobeniusIdeal
     "solveFrobeniusIdeal",
     "nilssonSupport",
-    "nilssonStart",
     "truncatedCanonicalSeries",
     }
 

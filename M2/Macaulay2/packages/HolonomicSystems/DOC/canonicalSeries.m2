@@ -78,7 +78,7 @@ doc ///
   Subnodes
     "cssExpts"
     "cssExptsMult"
-    "nilssonStart"
+    "cssLeadTerm"
     "distraction"
     "indicialIdeal"
     "isTorusFixed"
@@ -298,12 +298,12 @@ doc ///
 
 doc ///
    Key
-     nilssonStart
-    (nilssonStart, Ideal, List)
+     cssLeadTerm
+    (cssLeadTerm, Ideal, List)
    Headline
      lead term of the canonical series solutions of I
    Usage
-     nilssonStart(I, w)
+     cssLeadTerm(I, w)
    Inputs
      I:Ideal
        (regular) holonomic ideal in the Weyl algebra
@@ -325,7 +325,7 @@ doc ///
       beta = {2,1,0,2}
       Hbeta = gkz(A,beta)
       w = {9,1,99999, 9999999, 3, 999}
-      netList nilssonStart(Hbeta, w)
+      netList cssLeadTerm(Hbeta, w)
 ///
 
 end--
@@ -381,7 +381,7 @@ Hbeta = gkz(A,beta)
 w = {9,1,99999, 9999999, 3, 999}
 
 cssExptsMult(Hbeta, w)
-nilssonStart(Hbeta, w)
+cssLeadTerm(Hbeta, w)
 
 
 A = matrix{{1,1,1,1},{0,1,3,4}}

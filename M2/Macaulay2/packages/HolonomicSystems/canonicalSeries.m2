@@ -245,8 +245,8 @@ solveFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
-nilssonStart = method()
-nilssonStart(Ideal, List) := List => (I, w) -> solveFrobeniusIdeal(indicialIdeal(I, w), ring I)
+cssLeadTerm = method()
+cssLeadTerm(Ideal, List) := List => (I, w) -> solveFrobeniusIdeal(indicialIdeal(I, w), ring I)
 
 --TODO: where should this go?
 --Input: cone C, weight vector k
@@ -300,7 +300,7 @@ truncatedCanonicalSeries(Ideal, List, ZZ) := List => (I, w, k) -> (
     G := ideal nonpositiveWeightGens(I, w);
     (S, WtoS, StoW) := nilssonRing W;
     -- FIXME: this step fails if any start terms have negative or rational exponents
-    A := WtoS \ value \ nilssonStart(G, w);
+    A := WtoS \ value \ cssLeadTerm(G, w);
     V := elapsedTime nilssonSupport(G, w, k);
     -- The variables of S are ordered as dX_i..., X_i..., logX_i...
     B := splice table(V, (n:0)..(n:r-1), (e, l) -> S_(toList join(n:0,e,l)));
@@ -327,7 +327,7 @@ TEST /// -- test solveFrobeniusIdeal
   J = ideal(T_0+T_1+T_2+T_3+T_4, T_0+T_1-T_3, T_1+T_2-T_3, T_0*T_2, T_1*T_3)
   F = solveFrobeniusIdeal J
   g = map(W, T, apply(5, i -> W_i*W_(i+5)))
-  nilssonStart(g J, w)
+  cssLeadTerm(g J, w)
   -- FIXME
   --truncatedCanonicalSeries(g J, w, 5)
 ///
@@ -339,7 +339,7 @@ TEST ///
   w = {1}
   nilssonSupport(I,w)
   nilssonSupport(I,w,3)
-  nilssonStart(I, w)
+  cssLeadTerm(I, w)
   (G, sols) = truncatedCanonicalSeries(I, w, 4)
 
   A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
@@ -348,7 +348,7 @@ TEST ///
   w = {1,1,1,1,0}
   nilssonSupport(I,w)
   nilssonSupport(I,w,3)
-  nilssonStart(I, w)
+  cssLeadTerm(I, w)
 ///
 
 TEST ///
