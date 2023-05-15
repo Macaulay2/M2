@@ -29,6 +29,11 @@ importFrom_"Dmodules" {
 
 importFrom_"Core" { "nonnull", "concatRows", "concatCols", "isListOfIntegers" }
 
+-- symbols exported from Dmodules
+export {
+    "createThetaRing", "ThetaRing", "WtoT",
+    }
+
 --------------------------------------------------------------------------------
 -- HolonomicSystems
 --------------------------------------------------------------------------------
@@ -57,7 +62,6 @@ export {
     -- factorial'
     "cssExpts",
     "cssExptsMult",
-    "cssLeadTerm",
     "distraction",
     "indicialIdeal",
     -- solvePrimaryFrobeniusIdeal

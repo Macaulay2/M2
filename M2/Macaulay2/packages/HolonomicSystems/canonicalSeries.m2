@@ -319,9 +319,17 @@ truncatedCanonicalSeries(Ideal, List, ZZ) := List => (I, w, k) -> (
 
 -- TODO: add assertions
 TEST /// -- test solveFrobeniusIdeal
-  R = QQ[t_1..t_5]
-  I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3)
-  F = solveFrobeniusIdeal I
+  S = QQ[x_1..x_5]
+  W = makeWeylAlgebra S
+  T = first createThetaRing W
+  -- see SST Example 2.3.16
+  w = {1,1,1,1,1}
+  J = ideal(T_0+T_1+T_2+T_3+T_4, T_0+T_1-T_3, T_1+T_2-T_3, T_0*T_2, T_1*T_3)
+  F = solveFrobeniusIdeal J
+  g = map(W, T, apply(5, i -> W_i*W_(i+5)))
+  nilssonStart(g J, w)
+  -- FIXME
+  --truncatedCanonicalSeries(g J, w, 5)
 ///
 
 TEST ///
