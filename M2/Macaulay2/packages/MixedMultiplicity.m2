@@ -9,8 +9,8 @@
 
 newPackage(
     "MixedMultiplicity",
-    Version => "2.0",
-    Date => "July, 2022",
+    Version => "3.0",
+    Date => "May, 2023",
     Authors => {
 	{    Name => "Kriti Goel", 
 	    Email => "kritigoel.maths@gmail.com", 
@@ -418,20 +418,25 @@ mixedVolumeIdeal List := ZZ => W -> (
 --------------------
 
 -- INPUT: a polynomial in $d$ variables
--- OUTPUT: e_0(m|J(f)),..., e_{d−1}(m|J(f)), where m is 
+-- OUTPUT: e_0(m|J(f)),..., e_{d}(m|J(f)), where m is 
 --         the maximal homogeneous ideal of the polynomial 
---         ring and J(f) is the Jacobian ideal
+--         ring and J(f) is the Jacobian ideal of height d.
 
 secMilnorNumbers = method() 
 
 secMilnorNumbers RingElement := HashTable => f -> ( 
     --to check if input is a nonzero polynomial
-    if f == 0 then error "Zero polynomial entered"; 
+    if f == 0 then error "Zero polynomial entered";  
     
     R := ring f;
+    --to check the characteristic of the ring
+    if char R != 0 then error "Polynomial is not over a characteristic zero ring";  
+        
     d := dim R; 
     m := ideal(apply(0..(d-1), i-> R_i));
     J := ideal jacobian ideal f;
+    if codim J != d then error "The jacobian ideal is not a finite length ideal";
+    
     RI := multiReesIdeal {m,J};
     Q := splice{numgens m : {1,0}, rank source compress gens J : {0,1}};
     A := newRing(ring RI, Degrees => Q);
@@ -461,7 +466,9 @@ secMilnorNumbers RingElement := HashTable => f -> (
     for i from 0 to d-1 do ( 
 	u := new HashTable from {i => h(i,B0)}; 
 	v = merge(v, u, plus);
-	); 
+	);
+    v1 := new HashTable from {d => degree J};
+    v = merge(v, v1, plus);
     v
 )
 
@@ -522,10 +529,10 @@ doc ///
       Let origin be an isolated singular point of a complex analytic hypersurface 
       $H = V(f).$ The $\mathbb{C}$-vector space dimension of 
       $\mathbb{C}\{x_0,\ldots,x_n\}/(f_{x_0},\ldots,f_{x_n})$ is called the Milnor 
-      number of the hypersurface $H$ at the origin. Let $(X, x)$ be a germ of a 
+      number of the hypersurface $H$ at the origin. Let $(X, 0)$ be a germ of a 
       hypersurface in $\mathbb{C}^{n+1}$ with an isolated singularity. The Milnor 
       number of $X \cap E$, where $E$ is a general linear subspace of dimension 
-      $i$ passing through $x,$ is called the $i$-th sectional Milnor number of $X$. B. Teissier 
+      $i$ passing through $0,$ is called the $i$-th sectional Milnor number of $X$. B. Teissier 
       identified the $i$-th sectional Milnor number with the $i$-th mixed multiplicity of 
       the maximal homogeneous ideal of the polynomial ring and the Jacobian ideal of $f.$      
 ///   
@@ -582,6 +589,9 @@ doc ///
       time multiReesIdeal (J, a)
   SeeAlso
     reesIdeal
+    mixedMultiplicity
+    mMixedVolume
+    secMilnorNumbers	
 ///
 
 doc ///
@@ -640,7 +650,9 @@ doc ///
       n = sub(m, T);
       mixedMultiplicity ((n,J,J),(2,0,0))
   SeeAlso
-    reesIdeal
+    multiReesIdeal
+    mMixedVolume
+    secMilnorNumbers
 ///
 
 
@@ -674,6 +686,7 @@ doc ///
       can be used as an input in the @TO mMixedVolume@ function to compute the mixed volume of polytopes.
   SeeAlso
     mMixedVolume
+    mixedMultiplicity
 ///
 
 
@@ -722,6 +735,7 @@ doc ///
     homIdealPolytope
     mixedMultiplicity
     "Polyhedra::mixedVolume"
+    multiReesIdeal
 ///
 
 
@@ -738,26 +752,36 @@ doc ///
       a polynomial
   Outputs
     :HashTable
-      First $d-1$ sectional Milnor numbers, where $d$ is the dimension of the polynomial ring
+      Sectional Milnor numbers of $f$
   Description
     Text
       Let origin be an isolated singular point of a complex analytic hypersurface $H = V(f).$ 
       The $\mathbb{C}$-vector space dimension of $\mathbb{C}\{x_0,\ldots,x_n\}/(f_{x_0},\ldots,f_{x_n})$ 
-      is called the Milnor number of the hypersurface $H$ at the origin. Let $(X, x)$ be a germ 
-      of a hypersurface in $\mathbb{C}^{n+1}$ with an isolated singularity at $x$. The Milnor number of 
-      $X \cap E$, where $E$ is a general linear subspace of dimension $i$ passing through $x,$ is 
+      is called the Milnor number of the hypersurface $H$ at the origin. Let $(X, 0)$ be a germ 
+      of a hypersurface in $\mathbb{C}^{n+1}$ with an isolated singularity at the origin. The Milnor number of 
+      $X \cap E$, where $E$ is a general linear subspace of dimension $i$ passing through the origin, is 
       called the $i$-th sectional Milnor number of $X$. B. Teissier identified the $i$-th sectional 
       Milnor number with the $i$-th mixed multiplicity of the maximal homogeneous ideal of the 
       polynomial ring and the Jacobian ideal of $f.$
    
-      Let $f$ be an element of a polynomial ring $R$ and let $d$ be the dimension of $R$. 
-      The function computes the first $d-1$ sectional Milnor numbers by computing 
-      the mixed multiplicities $e_0(m|J(f)),\ldots,e_{d-1}(m|J(f))$, where $m$ is the 
-      maximal homogeneous ideal of $R$ and $J(f)$ is the Jacobian ideal of $f$. 
+      Let $f$ be an element of a polynomial ring $R$ with characteristic zero, and let $d$ be the 
+      dimension of $R$. The function computes the sectional Milnor numbers by computing 
+      the mixed multiplicities $e_0(m|J(f)),\ldots,e_{d}(m|J(f))$, where $m$ is the 
+      maximal homogeneous ideal of $R$ and $J(f)$ is the Jacobian ideal of $f$ of height $d$. Note that
+      in this case, the last sectional Milnor number $e_d(m|J(f))$ is the Milnor number of $f.$
+	  
+      In this example, the 2-sectional Milnor number, which is the Milnor number of a general 
+      hypersurface section, is 28. The Milnor number, which is the last sectional Milnor number, is 364.
     Example 
       R = QQ[x,y,z];
       secMilnorNumbers(z^5 + x*y^7 + x^15)
-      secMilnorNumbers(z^3 + y^3 + x^3)
+  SeeAlso
+    multiReesIdeal
+    mixedMultiplicity
+    mMixedVolume
+  Caveat
+    The user is supposed to check that the given polynomial defines an isolated singularity at
+    the homogeneous maximal ideal. 
 ///
 
 doc ///
@@ -900,14 +924,14 @@ TEST ///
   R = QQ[x,y,z];
   f = x^2*y + y^2*z + z^3;
   SMN = secMilnorNumbers(f)
-  assert(SMN === hashTable{0 => 1, 1 => 2, 2 => 4})
+  assert(SMN === hashTable{0 => 1, 1 => 2, 2 => 4, 3 => 8})
 ///
 
 TEST ///
 -- test for secMilnorNumbers
   R = QQ[x,y,z];
   SMN = secMilnorNumbers(z^5 + x*y^7 + x^15)
-  assert(SMN === hashTable{0 => 1, 1 => 4, 2 => 28})
+  assert(SMN === hashTable{0 => 1, 1 => 4, 2 => 28, 3 => 364})
 ///
 
 end--
