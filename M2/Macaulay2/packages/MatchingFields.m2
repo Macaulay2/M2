@@ -1809,7 +1809,7 @@ doc ///
 	  orders derived from a weight matrix, which induces the matching field.
 	  So, for this function, we require that the matching fields be coherent.
           If a weight matrix is not supplied, then one is automatically computed.
-	  If the matching field is not coherent, then an error is thown.
+	  If the matching field is not coherent, then an error is thrown.
       	Example
           L = grMatchingField(2, 4, {{1, 2}, {1, 3}, {3, 2}, {1, 4}, {4, 2}, {3, 4}})
 	  isCoherent L
@@ -2107,7 +2107,7 @@ doc ///
         Text
           The option @TO "ExtraZeroRows"@ is used by the functions @TO "matchingFieldPolytope"@ and
 	  @TO "weightMatrixCone"@. In each case, the option controls the ambient space of the polyhedron.
-	  By default the value is zero. It is typically used interally for computing Minkowski sums of
+	  By default the value is zero. It is typically used internally for computing Minkowski sums of
 	  polyhedra that would ordinarily belong to different ambient spaces.
 	Example
 	  L = diagonalMatchingField(2, 4)
@@ -2323,11 +2323,11 @@ doc ///
 	  minors of a generic matrix. The Pleucker algebra can be constructed with
 	  the function @TO "subring"@, of the image of the Pleucker ring map that can be
 	  accessed with the function @TO "pleuckerMap"@. Note that the ambient ring
-	  containg the Pleucker algebra has a weight-based term order that comes from
+	  containing the Pleucker algebra has a weight-based term order that comes from
 	  the matching field. We compute a subalgebra basis (SAGBI basis) using the
 	  package @TO "SubalgebraBases"@ for the Pleucker algebra.
 	  
-	  The Newton-Okounkov body of the matching field is contructed from this subalgebra basis.
+	  The Newton-Okounkov body of the matching field is constructed from this subalgebra basis.
 	  In the case of Grassmannian matching fields, the NO body is simply the convex
 	  hull of the exponent vectors of the initial terms of the subalgebra basis.
 	  If the matching field gives rise to a toric degeneration (see the function @TO "isToricDegeneration"@)
@@ -2344,7 +2344,7 @@ doc ///
 	  In the case of flag matching fields, the NO body is computed in a similar way.
 	  First a subalgebra basis is computed for the Pleucker algebra.
 	  However, to construct the NO body from the subalgebra basis, we need to take into account 
-	  the grading on the Pleucker forms. From the geometric persepctive, we are simply using the
+	  the grading on the Pleucker forms. From the geometric perspective, we are simply using the
 	  Segre embedding to view the flag variety as a subvariety of a suitably large projective space.
 	Example
 	  L = diagonalMatchingField({1,2}, 4)
@@ -2354,7 +2354,7 @@ doc ///
 	Text
 	  Note that the matching field polytope is equal to the NO body if and only if the matching field
 	  gives rise to a toric degeneration. So, for a {\it hexagonal matching field} for Gr$(3,6)$, the
-	  NO body has an additional vertex. We construct a hexagonal matching field using the fucntion
+	  NO body has an additional vertex. We construct a hexagonal matching field using the function
 	  @TO "matchingFieldFromPermutation"@ as follows.
 	Example
 	  L = matchingFieldFromPermutation(3, 6, {6,1,5,2,3,4}, UsePrimePowers => true, ScalingCoefficient => 3)
@@ -2548,7 +2548,7 @@ doc ///
 	  $m(J) = c x_{1, j_1} x_{2, j_2} \dots x_{k, j_k}$ where the coefficient $c \in \{+1, -1\}$ is
 	  the sign of the permutation that permutes $J$ into ascending order. Equivalently,
 	  $c = (-1)^d$ where $d = |\{(a, b) \in [k]^2 : a < b, j_a > j_b \}|$ is the number of descents of
-	  $J$. The monomial $m(J)$ is the lead term of the correponding Pleucker form with respect to the
+	  $J$. The monomial $m(J)$ is the lead term of the corresponding Pleucker form with respect to the
 	  weight order given by the matching field.
 	Example
 	  L = matchingFieldFromPermutation(2, 4, {2, 3, 4, 1})   
