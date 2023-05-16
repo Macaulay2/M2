@@ -75,18 +75,15 @@ reduce = (tar,rawF) -> (
 
 addHook(ReduceHooks, Strategy => Default, (tar, rawF) -> rawF % raw gb presentation tar)
 
-Matrix * Number := Matrix * ZZ := (m,i) -> i * m
-Number * Matrix := (r,m) -> (
-     S := ring m;
-     try r = promote(r,S) else error "can't promote scalar to ring of matrix";
-     map(target m, source m, reduce(target m, raw r * raw m)))
 InfiniteNumber * Matrix := (r,m) -> (map(target m, source m, matrix(r*(entries m))))
 Matrix * InfiniteNumber := (m,r) -> r*m
+Number * Matrix :=
 RingElement * Matrix := (r,m) -> (
-     r = promote(r,ring m);
+    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
      map(target m, source m, reduce(target m, raw r * raw m)))
+Matrix * Number :=
 Matrix * RingElement := (m,r) -> (
-     r = promote(r,ring m);
+    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
      map(target m, source m, reduce(target m, raw m * raw r)))
 
 toSameRing = (m,n) -> (
@@ -195,9 +192,10 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  then map(M,N,n.RingMap,f)
 	  else map(M,N,f)))
 
-Matrix ^ ZZ := Matrix => (f,n) -> (
-     if n === 0 then id_(target f)
-     else SimplePowerMethod (f,n))
+Matrix#1 = f -> (
+    if source f =!= target f then error "expected source and target to agree"
+    else id_(target f))
+Matrix ^ ZZ := Matrix => BinaryPowerMethod
 
 transpose Matrix := Matrix => (cacheValue symbol transpose) (
      (m) -> (
@@ -209,16 +207,26 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      u := m * v#0;
      new target u from {u})
 
+blocks := m -> if m.cache.?components then flatten apply(m.cache.components,blocks) else { rank m }
+
+protect Blocks
+blockMatrixForm=false;  -- governs expression Matrix inclusion of blocks
 expression Matrix := m -> (
     x := applyTable(entries m, expression);
     d := degrees -* cover *- target m;
-    MatrixExpression if not all(d, i -> all(i, j -> j == 0)) then { x, Degrees=>{d, degrees source m} } else { x }
+    if not all(d, i -> all(i, j -> j == 0)) then x=append(x,Degrees=>{d, degrees source m});
+    if blockMatrixForm then (
+    	b1 := blocks target m;
+    	b2 := blocks source m;
+    	if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
+	);
+    MatrixExpression x
     )
 
-net Matrix := m -> net expression m
-toString Matrix := m -> toString expression m
-texMath Matrix := m -> texMath expression m
---html Matrix := m -> html expression m
+net Matrix := net @@ expression
+toString Matrix := toString @@ expression
+texMath Matrix := texMath @@ expression
+short Matrix := short @@ expression
 
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
@@ -300,6 +308,7 @@ Module.directSum = args -> (
 	  N.cache.components = toList args;
 	  N.cache.formation = FunctionApplication (directSum, args);
 	  N)
+Module ^ ZZ := Module => (M, i) -> if i > 0 then Module.directSum (i:M) else 0*M
 
 single := v -> (
      if not same v 
@@ -378,17 +387,19 @@ concatRows = mats -> (
 Matrix | Matrix := Matrix => (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)
 Matrix | RingElement := (f,g) -> concatCols(f,g**id_(target f))
-ZZ | Matrix := (f,g) -> concatCols(f*id_(target g),g)
-Matrix | ZZ := (f,g) -> concatCols(f,g*id_(target f))
+Number | Matrix := (f,g) -> concatCols(f*id_(target g),g)
+Matrix | Number := (f,g) -> concatCols(f,g*id_(target f))
 
 Matrix || Matrix := Matrix => (f,g) -> concatRows(f,g)
 RingElement || Matrix := (f,g) -> concatRows(f**id_(source g),g)
      -- we would prefer for f**id_(source g) to have the exact same source as g does
 Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
-ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
-Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
+Number || Matrix := (f,g) -> concatRows(f*id_(source g),g)
+Matrix || Number := (f,g) -> concatRows(f,g*id_(source f))
 
-listZ := v -> ( if not all(v,i -> instance(i, ZZ)) then error "expected list of integers"; v )
+-----------------------------------------------------------------------------
+-- submatrix, submatrixByDegrees
+-----------------------------------------------------------------------------
 Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
@@ -399,21 +410,36 @@ Matrix _ ZZ := Vector => (m,i) -> (
      h = map(M, R^1, h, Degree => first degrees source h);
      new target h from {h})
 
+-- given a map of free modules, find a submatrix of it
+submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
+    then rawSubmatrix(raw cover m, listZZ cols)
+    else rawSubmatrix(raw cover m, listZZ rows,
+	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
+-- given a module, find a part of the ambient module
+-- along with corresponding generators and relations
+submodule = (M, rows) -> (
+    rows = listZZ rows;
+    if rows === toList(0 .. numgens M - 1) then M else
+    if isFreeModule M    then (ring M)^((-degrees M)_rows) else
+    if not M.?relations  then image    submatrixFree(generators M, rows, ) else
+    if not M.?generators then cokernel submatrixFree(relations  M, rows, ) else
+    subquotient(submatrixFree(generators M, rows, ), submatrixFree(relations M, rows, )))
+
 submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
 
-submatrix(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
-submatrix(Matrix,VisibleList            ) := (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
-submatrix(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> submatrix(m,cols)
-submatrix(Matrix,VisibleList,Nothing    ) := (m,rows,cols) -> (
-     rows = splice rows; 
-     map((ring m)^((- degrees target m)_rows),source m,rawSubmatrix(raw m, listZ toList rows, 0 .. numgens source m - 1)))
+submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(submodule(target m, rows), submodule(source m, cols), submatrixFree(m, rows, cols))
+submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(submodule(target m, rows), source m,                  submatrixFree(m, rows, null))
+submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                  submodule(source m, cols), submatrixFree(m, null, cols))
+submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
+submatrix(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
 
-compl := (m,v) -> toList (0 .. m-1) - set v
-submatrix'(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> if #rows === 0 and #cols === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),compl(numgens source m,listZ toList splice cols))
-submatrix'(Matrix,VisibleList            ) := (m,cols     ) -> if #cols === 0 then m else submatrix(m,compl(numgens source m,listZ toList splice cols))
-submatrix'(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> if #cols === 0 then m else submatrix'(m,cols)
-submatrix'(Matrix,VisibleList,Nothing    ) := (m,rows,null) -> if #rows === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),)
+compl := (M, rows) -> if #(rows = listZZ rows) > 0 then toList(0 .. numgens M - 1) - set rows
+submatrix'(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> submatrix(m, compl(target m, rows), compl(source m, cols))
+submatrix'(Matrix, VisibleList, Nothing)     := (m, rows, null) -> submatrix(m, compl(target m, rows), null)
+submatrix'(Matrix, VisibleList)              := (m,       cols) -> submatrix(m, null, compl(source m, cols))
+submatrix'(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix'(m, cols)
+submatrix'(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
 
 submatrixByDegrees = method()
 submatrixByDegrees(Matrix, Sequence, Sequence) := (m, tarBox, srcBox) -> (
@@ -450,6 +476,8 @@ submatrixByDegrees(Matrix, Sequence, Sequence) := (m, tarBox, srcBox) -> (
     )
 submatrixByDegrees(Matrix, ZZ, ZZ) := (m, lo, hi) -> submatrixByDegrees(m, ({lo},{lo}), ({hi},{hi}))
 submatrixByDegrees(Matrix, List, List) := (m, lo, hi) -> submatrixByDegrees(m, (lo,lo), (hi,hi))
+
+-----------------------------------------------------------------------------
 
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f

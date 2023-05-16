@@ -87,6 +87,7 @@ set(DLIST
   interface.dd interface2.d
   texmacs.d
   boostmath.dd
+  ffi.d		# removed unless WITH_FFI
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
   )
@@ -102,6 +103,9 @@ else()
 endif()
 if(NOT WITH_PYTHON)
   list(REMOVE_ITEM DLIST python.d)
+endif()
+if(NOT WITH_FFI)
+  list(REMOVE_ITEM DLIST ffi.d)
 endif()
 
 ###############################################################################
@@ -140,7 +144,13 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb
+  $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
+
+# TODO: c.f. https://github.com/Macaulay2/M2/issues/2682
+if(NOT APPLE)
+  target_link_libraries(M2-interpreter PRIVATE quadmath)
+endif()
 
 target_include_directories(M2-interpreter
   PUBLIC
@@ -197,7 +207,7 @@ target_compile_options(M2-interpreter PRIVATE
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags -Wno-parentheses-equality>
-  # FIXME: caused by SIMD macro redefenition in fflas_ffpack
+  # FIXME: caused by SIMD macro redefinition in fflas_ffpack
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-macro-redefined>
 
   # FIXME: __builtin_frame_address M2lib.c:165 causes this:

@@ -1470,7 +1470,7 @@ doc ///
             peek StrategyDefaultWithPoints
             peek StrategyPoints
         Text
-            {\tt StrategyDefaultNonRandom} is like {\tt StrategyDefault} but removes random submatrices (which can be suprisingly beneficial in some cases).  {\tt StrategyDefaultWithPoints} removes randomness but adds in points instead.  
+            {\tt StrategyDefaultNonRandom} is like {\tt StrategyDefault} but removes random submatrices (which can be surprisingly beneficial in some cases).  {\tt StrategyDefaultWithPoints} removes randomness but adds in points instead.  
         Text
             {\it A warning on chooseGoodMinors:}  The strategies {\tt LexSmallest} and {\tt LexSmallestTerm} will very frequently {\bf repeatedly} choose the same submatrix of the given matrix.  Hence if one tries to run {\tt chooseGoodMinors} and choose too many minors with such a strategy, one can get into a long loop (the function give up eventually, but only after doing way too much work).  The {\tt GRevLex} strategies periodically temporarily change the underlying matrix to avoid this sort of loop.
         Text
@@ -1526,7 +1526,7 @@ doc ///
             time regularInCodimension(2, S/J) 
         Text
             We try to verify that $S/J$ is regular in codimension 1 or 2 by computing the ideal made up of a small number of minors of the Jacobian matrix.  
-            In this example, instead of computing all relevant 1465128 minors to compute the singular locus, and then trying to compute the dimension of the ideal they generate, we instead compute a few of them.  {\tt regularInCodimension} returns {\tt true} if it verified the the ring with regular in codim 1 or 2 (respectively) and {\tt null} if not.  Because of the randomness that exists in terms of selecting minors, the execution time can actually vary quite a bit.   Let's take a look at what is occurring by using the {\tt Verbose} option.  We go through the output and explain what each line is telling us.
+            In this example, instead of computing all relevant 1465128 minors to compute the singular locus, and then trying to compute the dimension of the ideal they generate, we instead compute a few of them.  {\tt regularInCodimension} returns {\tt true} if it verified that the ring is regular in codim 1 or 2 (respectively) and {\tt null} if not.  Because of the randomness that exists in terms of selecting minors, the execution time can actually vary quite a bit.   Let's take a look at what is occurring by using the {\tt Verbose} option.  We go through the output and explain what each line is telling us.
         Example
             time regularInCodimension(1, S/J, Verbose=>true) 
         Text
@@ -1727,7 +1727,7 @@ doc ///
         M1: Matrix
     Outputs
         : List
-            the first entry is a list of row indicies, the second is a list of column indices
+            the first entry is a list of row indices, the second is a list of column indices
     Description
         Text
             This function looks at submatrices of the given matrix, and tries to find
@@ -1897,7 +1897,7 @@ document {
     Headline => "strategies for choosing submatrices",
     "Many of the core functions of this package allow the user to fine tune the strategy used for selecting submatrices.  Different strategies yield markedly different performance or results on various examples.
     These are controlled by specifying a ", TT " Strategy => ", " option, pointing to a ", TT " HashTable", "which specifies several strategies should be used simultaneously, or to a symbol saying we should use only a single strategy.  For a more detailed look at this in an example please see ", TO FastMinorsStrategyTutorial, 
-    "Before describing the available strategies, we beging by roughly outlining the different approaches.",
+    "Before describing the available strategies, we begin by roughly outlining the different approaches.",
     UL {
         { BOLD "Heuristic submatrix selection:", " In this case, a submatrix is chosen via a greedy algorithm, looking for a submatrix with smallest (or largest) degree with respect to a random monomial order." }, 
         { BOLD "Submatrix selection via rational and geometric points:", " Here a rational or geometric point is found where a given ideal vanishes.  That point is plugged into the matrix and a submatrix of full rank is identified.   This approach currently only works over a finite field and is accomplished with the help of the package ", TO RandomPoints, "."},
@@ -2299,7 +2299,7 @@ J = ideal(g^3+h^3+1,f*g^3+f*h^3+f,c*g^3+c*h^3+c,f^2*g^3+f^2*h^3+f^2,c*f*g^3+c*f*
 assert((regularInCodimension(2, S/J) === true) or (regularInCodimension(2, S/J) === true));
 ///
 
-TEST /// --check #6, we found this example by dehomogenizing a homongeneous example, pdim does not provide the correct answer (of course, it does if you rehomogenize)
+TEST /// --check #6, we found this example by dehomogenizing a homogeneous example, pdim does not provide the correct answer (of course, it does if you rehomogenize)
 S = QQ[t_0, t_1, t_2, t_3, t_4, t_5];
 J = ideal(-t_2^3+2*t_1*t_2*t_3-t_0*t_3^2-t_1^2*t_4+t_0*t_2*t_4,-t_2^2*t_3+t_1*t_3^2+t_1*t_2*t_4-t_0*t_3*t_4-t_1^2*t_5+t_0*t_2*t_5,-t_2*t_3^2+t_2^2*t_4+t_1*t_3*t_4-t_0*t_4^2-t_1*t_2*t_5+t_0*t_3*t_5,-t_3^3+2*t_2*t_3*t_4-t_1*t_4^2-t_2^2*t_5+t_1*t_3*t_5,-t_2^2*t_4+t_1*t_3*t_4+t_1*t_2*t_5-t_0*t_3*t_5-t_1^2+t_0*t_2,-t_2*t_3*t_4+t_1*t_4^2+t_2^2*t_5-t_0*t_4*t_5-t_1*t_2+t_0*t_3,-t_3^2*t_4+t_2*t_4^2+t_2*t_3*t_5-t_1*t_4*t_5-t_2^2+t_1*t_3,-t_2*t_4^2+t_2*t_3*t_5+t_1*t_4*t_5-t_0*t_5^2-t_1*t_3+t_0*t_4,
     -t_3*t_4^2+t_3^2*t_5+t_2*t_4*t_5-t_1*t_5^2-t_2*t_3+t_1*t_4,-t_4^3+2*t_3*t_4*t_5-t_2*t_5^2-t_3^2+t_2*t_4);

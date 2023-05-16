@@ -365,7 +365,7 @@ The input to the code is a map of labeled free modules
 Based on f and w, we could define 
 a degree sequence d via the formula for d'(w) given in Notation 5.2 of the BEKS paper.  However,
 since we only need d1 in the construction, we only define that number in the code.
-The output map will go from a module F1 enerated in degree d1 to a module F0 generated in
+The output map will go from a module F1 generated in degree d1 to a module F0 generated in
 degree 0.
 
 We also define r0 and r1 following the formulas given in Notation 5.2 of BEKS.  By
@@ -412,7 +412,7 @@ Now we discuss the various maps gi.  Note that all maps are degree 0 maps, excep
 
 g0: we define a trace map 
     trMap: S--> [\otimes_{j=r1}^n S^d1 B_j] ** [\otimes_{j=r1}^n S^d1 B_j]^*
-    then we degine g0=trMap**id_(F1).
+    then we define g0=trMap**id_(F1).
 
 g1: is given by an identity matrix, as the only difference between G1 and G2 is how we
     label the bases.
@@ -932,7 +932,7 @@ doc ///
       Section 14.3 of the book ``Discriminants, resultants, and multidimensional
       determinants '' by Gelfand-Kapranov-Zelevinsky.)
       
-      The following constructs the generic hyperdetermiant of format $3\times 2\times 2$,
+      The following constructs the generic hyperdeterminant of format $3\times 2\times 2$,
       which is a polynomial of degree 6 consisting of 66 monomials.
     
     Example
@@ -1667,7 +1667,7 @@ doc ///
    Description
     Text
       This function allows one to move from the labels of the basis
-      elements of a labeled free module of rank $r$ to the the integers
+      elements of a labeled free module of rank $r$ to the integers
       $\{0,1, \dots, r-1\}$.
       More specifically, if $F$ is a labeled free module where we have labeled the
       basis with the list $L$, then this function an element  $l\in L$

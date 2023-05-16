@@ -240,7 +240,7 @@ extern "C"
   }
   void M2File_StartOutput(struct M2File* file)
   {
-    //for any mode besides thread excllusive we may ignore this function call
+    //for any mode besides thread exclusive we may ignore this function call
     if(file->currentThreadMode!=2 && !file->exclusiveRecurseCount)
       return;
     file->waitExclusiveThread(1);

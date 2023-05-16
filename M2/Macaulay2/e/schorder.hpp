@@ -4,7 +4,6 @@
 #define _schorder_hpp_
 
 #include "buffer.hpp"
-#include "intarray.hpp"
 #include "monoid.hpp"
 
 class GBMatrix;
@@ -14,8 +13,9 @@ class SchreyerOrder : public our_new_delete
 {
   const Monoid *M;
 
-  intarray _order;  // Each 'entry' is an array of ints of length _nslots:
-                    // compare_num, followed by the (encoded) monomial.
+  // Each 'entry' is an array of ints of length _nslots:
+  // compare_num, followed by the (encoded) monomial.
+  gc_vector<int> _order;
   int _nslots;
   int _rank;
 
@@ -33,7 +33,7 @@ class SchreyerOrder : public our_new_delete
 
   int rank() const { return _rank; }
   int compare_num(int i) const { return _order[i * _nslots]; }
-  const int *base_monom(int i) const { return _order.raw() + i * _nslots + 1; }
+  const_monomial base_monom(int i) const { return _order.data() + i * _nslots + 1; }
   const Monoid *getMonoid() const { return M; }
   bool is_equal(const SchreyerOrder *G) const;
   SchreyerOrder *copy() const;
@@ -46,29 +46,29 @@ class SchreyerOrder : public our_new_delete
 
   SchreyerOrder *symm(int n) const;
 
-  void append(int compare_num, const int *base_monom);
+  void append(int compare_num, const_monomial base_monom);
   // Copies the monomial
 
-  void schreyer_up(const int *m, int comp, int *result) const
+  void schreyer_up(const_monomial m, int comp, monomial result) const
   // 'result' is allowed to be 'm'.
   {
     M->mult(m, base_monom(comp), result);
   }
 
-  void schreyer_down(const int *m, int comp, int *result) const
+  void schreyer_down(const_monomial m, int comp, monomial result) const
   // 'result' is allowed to be 'm'.
   {
     M->divide(m, base_monom(comp), result);
   }
 
-  int schreyer_compare(const int *m,
+  int schreyer_compare(const_monomial m,
                        int m_comp,
-                       const int *n,
+                       const_monomial n,
                        int n_comp) const;
 
-  int schreyer_compare_encoded(const int *m,
+  int schreyer_compare_encoded(const_monomial m,
                                int m_comp,
-                               const int *n,
+                               const_monomial n,
                                int n_comp) const;
 
   void text_out(buffer &o) const;

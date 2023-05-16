@@ -8,6 +8,7 @@ needs "lists.m2"
 needs "methods.m2"
 needs "regex.m2"
 needs "system.m2"
+needs "hypertext.m2"
 
 loadedPackages = {}
 
@@ -76,7 +77,7 @@ checkShadow := () -> (
 		    sym := behind#nam;
 		    syns := findSynonyms sym;
 		    syns = select(syns, s -> s != nam);
-		    if #syns == 0 and class User === Package and User#?"private dictionary" and member(User#"private dictionary", dictionaryPath)
+		    if #syns == 0 and class User === Package and User#?"private dictionary" and isMember(User#"private dictionary", dictionaryPath)
 		    then for i from 0 do (
 			 newsyn := nam | "$" | toString i;
 			 if not isGlobalSymbol newsyn then (
@@ -85,7 +86,7 @@ checkShadow := () -> (
 			      break));
 		    warn(nam, front, behind, syns);
 		    ));
-	  if not mutable front and not mutable behind then seenWarnings#(front, behind) = true;
+	  if not isMutable front and not isMutable behind then seenWarnings#(front, behind) = true;
 	  ))
 
 isOptionList := opts -> instance(opts, List) and all(opts, opt -> instance(opt, Option) and #opt == 2)
@@ -114,6 +115,7 @@ toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
 methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
+hypertext Package := TTc "constant"
 
 -- TODO: should this go elsewhere?
 toString Dictionary := dict -> (
@@ -267,7 +269,8 @@ newPackage String := opts -> pkgname -> (
 	if opts.Reload === null then warningMessage("package ", pkgname, " being reloaded")
 	else if opts.Reload === false then error("package ", pkgname, " not reloaded; try Reload => true"));
     -- load dependencies
-    scan(opts.PackageExports, needsPackage);
+    -- TODO: why is this called again later?
+    scan(nonnull opts.PackageExports, needsPackage);
     dismiss pkgname;
     -- the exit hook calls endPackage at the end of the file
     local hook;
@@ -373,15 +376,15 @@ newPackage String := opts -> pkgname -> (
     loadedPackages = {Core};
     dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
     dictionaryPath = (
-	if member(newpkg.Dictionary, dictionaryPath)
+	if isMember(newpkg.Dictionary, dictionaryPath)
 	then join({newpkg#"private dictionary"},                    dictionaryPath)
 	else join({newpkg#"private dictionary", newpkg.Dictionary}, dictionaryPath));
     --
     setAttribute(newpkg.Dictionary,           PrintNames, pkgname | ".Dictionary");
     setAttribute(newpkg#"private dictionary", PrintNames, pkgname | "#\"private dictionary\"");
     debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-    scan(opts.PackageImports, needsPackage);
-    scan(opts.PackageExports, needsPackage);
+    scan(nonnull opts.PackageImports, needsPackage);
+    scan(nonnull opts.PackageExports, needsPackage);
     newpkg.loadDepth = loadDepth;
     loadDepth = if pkgname === "Core" then 1 else if not debuggingMode then 2 else 3;
     newpkg)
@@ -398,13 +401,13 @@ export List   := v -> (
     d  := currentPackage.Dictionary;
     title := currentPackage#"pkgname";
     syms := new MutableHashTable;
-    scan(v, sym -> (
+    scan(nonnull v, sym -> (
 	    local nam;
 	    -- a synonym, e.g. "res" => "resolution"
 	    if instance(sym, Option) then (
 		nam = sym#0;
 		if class nam =!= String then error("expected a string: ", nam);
-		if pd#?nam then error("symbol intended as exported synonym already used internally: ", format nam, "\n", symbolLocation pd#nam, ": it was used here");
+		if pd#?nam then error("symbol intended as exported synonym already used internally: ", format nam, "\n", toString locate pd#nam, ": it was used here");
 		if class sym#1 =!= String then error("expected a string: ", nam);
 		sym = getGlobalSymbol(pd, sym#1))
 	    else if instance(sym, String) then (
@@ -426,9 +429,11 @@ exportMutable = method(Dispatch => Thing)
 exportMutable String := x -> exportMutable {x}
 exportMutable List   := v -> currentPackage#"exported mutable symbols" = join_(currentPackage#"exported mutable symbols") (export v)
 
+symbolFrom = (pkgname, name) -> value (getpkg pkgname)#"private dictionary"#name
+
 importFrom = method()
 importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
-importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s)
+importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> if not currentPackage#"private dictionary"#?s then currentPackage#"private dictionary"#s = P#"private dictionary"#s)
 
 exportFrom = method()
 exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
@@ -485,7 +490,7 @@ endPackage String := title -> (
 	  loadDepth = pkg.loadDepth;
 	  remove(pkg, loadDepth);
 	  );
-     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> mutable s and value s === s);
+     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> isMutable s and value s === s);
      if #b > 0 then (
 	  b = last \ sort apply(b, s -> (hash s, s));
 	  error splice ("mutable unexported unset symbol(s) in package ", pkg#"pkgname", ": ", toSequence between_", " b);
@@ -502,7 +507,7 @@ beginDocumentation = () -> (
 	currentPackage#"documentation not loaded" = true;
 	return end);
     if notify then printerr("beginDocumentation: reading the rest of ", currentFileName);
-    if not member(pkgname, {"Text", "SimpleDoc"}) then needsPackage \ {"Text", "SimpleDoc"};)
+    if not isMember(pkgname, {"Text", "SimpleDoc"}) then needsPackage \ {"Text", "SimpleDoc"};)
 
 ---------------------------------------------------------------------
 
@@ -534,7 +539,7 @@ package Dictionary := d -> (
 
 -- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (
-    scan(pkg.Options.PackageExports, needsPackage);
+    scan(nonnull pkg.Options.PackageExports, needsPackage);
     loadedPackages = prepend(pkg,            delete(pkg,            loadedPackages));
     dictionaryPath = prepend(pkg.Dictionary, delete(pkg.Dictionary, dictionaryPath));
     checkShadow();
@@ -543,7 +548,7 @@ use Package := pkg -> (
 debug ZZ      := i   -> debugWarningHashcode = i
 debug Package := pkg -> (
     dict := pkg#"private dictionary";
-    if not member(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
+    if not isMember(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
     checkShadow())
 
 -----------------------------------------------------------------------------
@@ -558,7 +563,7 @@ popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)
 -- Probably only necessary because Text documents Hypertext objects.
 -- Is there an alternative way? Is is used by document.m2 and installPackage.m2
 evaluateWithPackage = (pkg, object, func) -> (
-    if member(pkg.Dictionary, dictionaryPath) then return func object;
+    if isMember(pkg.Dictionary, dictionaryPath) then return func object;
     popDictionary(pushDictionary pkg.Dictionary, func object))
 
 -- Local Variables:

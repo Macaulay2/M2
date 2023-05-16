@@ -2,6 +2,7 @@
 
 #include "Eschreyer.hpp"
 #include "matrix.hpp"
+#include "monoid.hpp"
 #include "text-io.hpp"
 #include "gbring.hpp"
 #include "matrix-con.hpp"
@@ -112,7 +113,7 @@ GBMatrix *GBKernelComputation::get_syzygies()
 // Private routines //
 //////////////////////
 gbvector *GBKernelComputation::make_syz_term(ring_elem c,
-                                             const int *m,
+                                             const_monomial m,
                                              int comp) const
 // c is an element of GR->get_flattened_coefficients()
 // (m,comp) is a Schreyer encoded monomial in Fsyz
@@ -127,7 +128,7 @@ gbvector *GBKernelComputation::make_syz_term(ring_elem c,
 
 void GBKernelComputation::strip_gb(const GBMatrix *m)
 {
-  const VECTOR(gbvector *) &g = m->elems;
+  const gc_vector<gbvector*> &g = m->elems;
   int i;
   int *components = newarray_atomic_clear(int, F->rank());
   for (i = 0; i < g.size(); i++)
@@ -155,10 +156,9 @@ void GBKernelComputation::new_pairs(int i)
 // Create and insert all of the pairs which will have lead term 'gb[i]'.
 // This also places 'in(gb[i])' into the appropriate monomial ideal
 {
-  Index<MonomialIdeal> j;
-  queue<Bag *> elems;
-  intarray vp;  // This is 'p'.
-  intarray thisvp;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vp;  // This is 'p'.
+  gc_vector<int> thisvp;
 
   if (SF)
     {
@@ -174,16 +174,16 @@ void GBKernelComputation::new_pairs(int i)
 
   if (R->is_skew_commutative())
     {
-      int *find_pairs_exp = newarray_atomic(int, M->n_vars());
+      exponents_t find_pairs_exp = newarray_atomic(int, M->n_vars());
 
-      varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_exp);
+      varpower::to_expvector(M->n_vars(), vp.data(), find_pairs_exp);
       for (int w = 0; w < R->n_skew_commutative_vars(); w++)
         if (find_pairs_exp[R->skew_variable(w)] > 0)
           {
-            thisvp.shrink(0);
+            thisvp.resize(0);
             varpower::var(w, 1, thisvp);
             Bag *b = new Bag(static_cast<void *>(0), thisvp);
-            elems.insert(b);
+            elems.push_back(b);
           }
 
       freemem(find_pairs_exp);
@@ -194,17 +194,17 @@ void GBKernelComputation::new_pairs(int i)
   if (R->is_quotient_ring())
     {
       const MonomialIdeal *Rideal = R->get_quotient_monomials();
-      for (j = Rideal->first(); j.valid(); j++)
+      for (Bag& a : *Rideal)
         {
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
-          thisvp.shrink(0);
-          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+          thisvp.resize(0);
+          varpower::quotient(a.monom().data(), vp.data(), thisvp);
+          if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
-          elems.insert(b);
+          elems.push_back(b);
         }
     }
 
@@ -212,11 +212,11 @@ void GBKernelComputation::new_pairs(int i)
   // The baggage of each of these is their corresponding res2_pair
 
   MonomialIdeal *mi_orig = mi[gb[i]->comp - 1];
-  for (j = mi_orig->first(); j.valid(); j++)
+  for (Bag& a : *mi_orig)
     {
       Bag *b = new Bag();
-      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
-      elems.insert(b);
+      varpower::quotient(a.monom().data(), vp.data(), b->monom());
+      elems.push_back(b);
     }
 
   // Make this monomial ideal, and then run through each minimal generator
@@ -225,15 +225,12 @@ void GBKernelComputation::new_pairs(int i)
 
   mi_orig->insert_minimal(new Bag(i, vp));
 
-  queue<Bag *> rejects;
-  Bag *b;
-  MonomialIdeal *new_mi = new MonomialIdeal(R, elems, rejects);
-  while (rejects.remove(b)) freemem(b);
+  MonomialIdeal *new_mi = new MonomialIdeal(R, elems);
 
-  int *m = M->make_one();
-  for (j = new_mi->first(); j.valid(); j++)
+  monomial m = M->make_one();
+  for (Bag& a : *new_mi)
     {
-      M->from_varpower((*new_mi)[j]->monom().raw(), m);
+      M->from_varpower(a.monom().data(), m);
       M->mult(m, gb[i]->monom, m);
 
       gbvector *q = make_syz_term(
@@ -246,7 +243,7 @@ void GBKernelComputation::new_pairs(int i)
 //  S-pairs and reduction ////////////////////
 //////////////////////////////////////////////
 
-bool GBKernelComputation::find_ring_divisor(const int *exp,
+bool GBKernelComputation::find_ring_divisor(const_exponents exp,
                                             const gbvector *&result)
 // If 'exp' is divisible by a ring lead term, then 1 is returned,
 // and result is set to be that ring element.
@@ -261,26 +258,26 @@ bool GBKernelComputation::find_ring_divisor(const int *exp,
 }
 
 int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
-                                      const int *exp,
+                                      const_exponents exp,
                                       int &result)
 {
   // Find all the possible matches, use some criterion for finding the best...
-  VECTOR(Bag *) bb;
+  gc_vector<Bag*> bb;
   this_mi->find_all_divisors(exp, bb);
   int ndivisors = bb.size();
   if (ndivisors == 0) return 0;
   result = bb[0]->basis_elem();
   // Now search through, and find the best one.  If only one, just return it.
   if (M2_gbTrace >= 5)
-    if (this_mi->length() > 1)
+    if (this_mi->size() > 1)
       {
         buffer o;
-        o << ":" << this_mi->length() << "." << ndivisors << ":";
+        o << ":" << this_mi->size() << "." << ndivisors << ":";
         emit(o.str());
       }
   if (ndivisors == 1)
     {
-      if (this_mi->length() == 1)
+      if (this_mi->size() == 1)
         n_ones++;
       else
         n_unique++;
@@ -301,7 +298,7 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
 gbvector *GBKernelComputation::s_pair(gbvector *gsyz)
 {
   gbvector *result = NULL;
-  int *si = M->make_one();
+  monomial si = M->make_one();
   for (gbvector *f = gsyz; f != 0; f = f->next)
     {
       SG->schreyer_down(f->monom, f->comp - 1, si);
@@ -317,14 +314,14 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
 {
   // Remove every term of f (except the lead term)
   // which is NOT divisible by an element of mi.
-  int *exp = newarray_atomic(int, GR->n_vars());
-  int nterms = 1;
-  int nsaved = 0;
+  exponents_t exp = newarray_atomic(int, GR->n_vars());
+  // int nterms = 1;
+  // int nsaved = 0;
   gbvector *g = f;
   while (g->next != 0)
     {
       // First check to see if the term g->next is in the monideal
-      nterms++;
+      // nterms++;
       Bag *b;
       GR->gbvector_get_lead_exponents(F, g->next, exp);
       if (mi[g->next->comp - 1]->search_expvector(exp, b))
@@ -335,7 +332,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
       else
         {
           // Want to dump this term
-          nsaved++;
+          // nsaved++;
           gbvector *tmp = g->next;
           g->next = tmp->next;
           tmp->next = 0;
@@ -354,7 +351,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
 
 void GBKernelComputation::reduce(gbvector *&f, gbvector *&fsyz)
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   const Ring *gbringK = GR->get_flattened_coefficients();
@@ -446,7 +443,7 @@ void GBKernelComputation::reduce(gbvector *&f, gbvector *&fsyz)
 
 void GBKernelComputation::geo_reduce(gbvector *&f, gbvector *&fsyz)
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   const Ring *gbringK = GR->get_flattened_coefficients();

@@ -19,7 +19,6 @@
 #include "aring-zzp-ffpack.hpp"
 #include "aring-qq.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-gf-givaro.hpp"
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
 #include "aring-tower.hpp"
@@ -457,38 +456,35 @@ inline bool mylift(const ARingRR& R,
                     const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
-    ARingRRR::ElementType gT;
-    T.init(gT);
+    ARingRRR::Element gT(T);
     auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
     S.midpoint(gT,gS1);
     bool liftstep = mylift(R,T,result_gR,gT);
     S.diameter(gT,gS1);
     return liftstep && T.is_zero(gT);
 }
-    
+
 inline bool mylift(const ARingRRR& R,
                     const ARingRRi& S,
                     ARingRRR::ElementType& result_gR,
                     const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
-    ARingRRR::ElementType gT;
-    T.init(gT);
+    ARingRRR::Element gT(T);
     auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
     S.midpoint(gT,gS1);
     bool liftstep = mylift(R,T,result_gR,gT);
     S.diameter(gT,gS1);
     return liftstep && T.is_zero(gT);
 }
-    
+
 inline bool mylift(const ARingQQ& R,
                     const ARingRRi& S,
                     ARingQQ::ElementType& result_gR,
                     const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
-    ARingRRR::ElementType gT;
-    T.init(gT);
+    ARingRRR::Element gT(T);
     auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
     S.midpoint(gT,gS1);
     bool liftstep = mylift(R,T,result_gR,gT);

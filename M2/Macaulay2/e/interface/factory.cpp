@@ -4,7 +4,8 @@
 #include "interface/matrix.h"
 #include "interface/ringelement.h"
 
-#include <assert.h>
+#include <algorithm>
+#include <cassert>
 #include <cstdio>
 #include <iostream>
 #include <utility>
@@ -31,6 +32,7 @@
 #include "ringelem.hpp"
 #include "text-io.hpp"
 #include "tower.hpp"
+#include "util.hpp"
 
 const bool notInExtension = false;
 
@@ -52,6 +54,11 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P)
   // if (F->cast_to_QQ()) return modeQQ;
   if (F->is_QQ()) return modeQQ;
   if (F->cast_to_RingZZ()) return modeZZ;
+  // factory will abort if the characteristic is too large
+  if (F->characteristic() > 536870909) {
+    ERROR("characteristic is too large (max is 2^29)");
+    return modeError;
+  }
   if (F->isFinitePrimeField()) return modeZn;
   if (F->isGaloisField()) return modeGF;
   ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
@@ -173,7 +180,7 @@ static __mpz_struct toInteger(CanonicalForm h)
   //     mpz_set(x,y);
   //     return *x;
   static const unsigned int base = 1 << 16;
-  intarray v;
+  gc_vector<int> vec;
   int sign;
   {
     struct enter_factory foo;
@@ -188,17 +195,17 @@ static __mpz_struct toInteger(CanonicalForm h)
     while (h != 0)
       {
         CanonicalForm k = h % (int)base;
-        v.append(static_cast<int>(k.intval()));
+        vec.push_back(static_cast<int>(k.intval()));
         h = h / (int)base;
       }
     if (RationalMode) On(SW_RATIONAL);
   }
   mpz_t x;
   mpz_init(x);
-  for (int i = v.length() - 1; i >= 0; i--)
+  for (int i = vec.size() - 1; i >= 0; i--)
     {
       mpz_mul_ui(x, x, base);  // x = x * base;
-      mpz_add_ui(x, x, static_cast<unsigned>(v[i]));
+      mpz_add_ui(x, x, static_cast<unsigned>(vec[i]));
     }
   if (sign == -1) mpz_neg(x, x);  // x = -x;
   return x[0];
@@ -388,20 +395,19 @@ static CanonicalForm convertGFToFactory(const ring_elem &q,
 static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use algebraicElement_Fac for converting this galois field element
   const PolynomialRing *A = k->originalR();
   RingElement *g = RingElement::make_raw(A,k->get_rep(q));
-  intarray vp;
+  gc_vector<int> vp;
   const Monoid *M = A->getMonoid();
   const Ring *Zn = k->originalR()->getCoefficientRing();
   CanonicalForm f = 0;
   for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
-    vp.shrink(0);
-    M->to_varpower(t->monom,vp);
+    M->to_varpower(t->monom, vp);
 
     std::pair<bool,long> res = Zn->coerceToLongInteger(t->coeff);
     assert(res.first);
     int coef = static_cast<int>(res.second);
 
     CanonicalForm m = CanonicalForm(coef);
-    for (index_varpower l = vp.raw(); l.valid(); ++l)
+    for (index_varpower l = vp.data(); l.valid(); ++l)
       m *= power( algebraicElement_Fac, l.exponent() );
     f += m;
   }
@@ -420,14 +426,13 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension)
     }
   const int n = P->n_vars();
   const Monoid *M = P->getMonoid();
-  intarray vp;
+  gc_vector<int> vp;
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
   CanonicalForm f = 0;
   for (Nterm *t = g.get_value(); t != NULL; t = t->next)
     {
       int coef = 0;
-      vp.shrink(0);
       M->to_varpower(t->monom, vp);
       if (foo.mode == modeZn)
         {
@@ -449,7 +454,7 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension)
                                         mpq_denref(MPQ_VAL(t->coeff))))
                                  : CanonicalForm(0)  // shouldn't happen
            );
-      for (index_varpower l = vp.raw(); l.valid(); ++l)
+      for (index_varpower l = vp.data(); l.valid(); ++l)
         {
           int index = 1 +
 #if REVERSE_VARIABLES
@@ -783,23 +788,13 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M)
       List<int> t = neworderint(I);
 
       int n = t.length();
-      intarray u(N);
+      gc_vector<int> u(N);
       ListIterator<int> ii(t);
       for (i = 0; ii.hasItem(); ii++, i++)
-        u.append((n - 1) - (ii.getItem() - 1)  // REVERSE!
-                 );
-      if (n > 0)
-        for (i = (n - 1) / 2; i >= 0; i--)
-          {  // REVERSE!
-            int tmp = u[n - 1 - i];
-            u[n - 1 - i] = u[i];
-            u[i] = tmp;
-          }
-      for (i = n; i < N; i++) u.append(i);
-
-      M2_arrayint result = M2_makearrayint(N);
-      for (i = 0; i < N; i++) result->array[i] = u[i];
-      return result;
+        u[i] = (n - 1) - (ii.getItem() - 1);  // REVERSE!
+      std::reverse(u.begin(), u.begin() + n);
+      for (i = n; i < N; i++) u[i] = i;
+      return stdvector_to_M2_arrayint<int>(u);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

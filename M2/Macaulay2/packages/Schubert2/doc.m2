@@ -302,7 +302,7 @@ Node
      of dimension greater than 0 returns
      a symbolic expression indicating the further integration that ought to be done.
      In this example, we choose to implement the integral by taking the coefficient of the
-     monomoial in our ring of top degree.
+     monomial in our ring of top degree.
    Example
      integral A := f -> coefficient(t^2,f);
    Text
@@ -661,7 +661,7 @@ Node
        @ ofClass{List} @  $\{s_0, ..., s_{q-1}\}$ of length $q$ of integers, with $n-q \ge{} s_0 \ge{} ... \ge{} s_{q-1} \ge{} 0$
   Outputs
      c:
-       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the the type of {\tt s}.  See 
+       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the type of {\tt s}.  See 
        page 271 of Fulton's book, {\em Intersection Theory} for the notation for @TO schubertCycle@, of which this
        is the dual.
 
@@ -708,7 +708,7 @@ Node
        @ ofClass{List} @  $\{s_0, ..., s_{r-1}\}$ of length $r$ of integers, with $n-r \ge{} s_0 \ge{} ... \ge{} s_{r-1} \ge{} 0$
   Outputs
      c:
-       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the the type of {\tt s}.  See 
+       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the type of {\tt s}.  See 
        page 271 of Fulton's book, {\em Intersection Theory} for the notations.
 
        In the case where {\tt s} is a @ ofClass Sequence @, the value returned is the {\em homology} class of the {\em Schubert variety} in
@@ -1510,7 +1510,7 @@ Node
       the natural map from {\tt X} to {\tt Z}.
   Description
     Text
-      Given the pullback map {\tt f} from {\tt A} to {\tt B}, builds the freest possible extension {\tt E} of {\tt A} by {\tt B} (see @ TO extensionAlgebra @), and then adds appropriate metadata to make the maps from {\tt E} to {\tt B} and vice-versa into an @ TO AbstractVarietyMap @.  Enough information must be given to compute the dimensions of {\tt X} and {\tt Y}, either by using the SubDimension, SuperDimension, and Codimension optons, or by having varieties already attached to {\tt A} and/or {\tt B}.  Likewise, enough information must be given to compute the tangent classes of {\tt X} and {\tt Y}.
+      Given the pullback map {\tt f} from {\tt A} to {\tt B}, builds the freest possible extension {\tt E} of {\tt A} by {\tt B} (see @ TO extensionAlgebra @), and then adds appropriate metadata to make the maps from {\tt E} to {\tt B} and vice-versa into an @ TO AbstractVarietyMap @.  Enough information must be given to compute the dimensions of {\tt X} and {\tt Y}, either by using the SubDimension, SuperDimension, and Codimension options, or by having varieties already attached to {\tt A} and/or {\tt B}.  Likewise, enough information must be given to compute the tangent classes of {\tt X} and {\tt Y}.
     Text
       This construction is useful for computations where the pullback map is known but the pushforward is either not known or cannot be defined.
     Example
@@ -1766,7 +1766,7 @@ Node
     A:
   Outputs
     :
-     the total Segre class of {\tt A}, defined as the reciprocal of the chern class of the {\em dual} of {\tt A}.  (In
+     the total Segre class of {\tt A}, defined as the reciprocal of the Chern class of the {\em dual} of {\tt A}.  (In
      a future version, the dual may be omitted, and an alternative function {\tt segre'} may be introduced.)
   Description
     Example
@@ -3092,7 +3092,7 @@ Node
   f:
  Outputs
   :
-   the compostion of {\tt g} and {\tt f}
+   the composition of {\tt g} and {\tt f}
  Description
   Example
    X = abstractProjectiveSpace_3 point

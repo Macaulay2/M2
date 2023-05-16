@@ -7,6 +7,8 @@
 
 #include "engine-includes.hpp"
 
+#include "ExponentList.hpp"
+#include "ExponentVector.hpp"
 #include "hash.hpp"
 #include "imonorder.hpp"
 #include "newdelete.hpp"
@@ -14,21 +16,14 @@
 
 class PolynomialRing;
 class buffer;
-class intarray;
 struct MonomialOrdering;
 
-typedef int *exponents;
-typedef int *graded_exponents;
-typedef int *partial_sums;
+// monomial is an encoded array of size monomial_size()
 typedef int *monomial;
-
-typedef const int *const_exponents;
-typedef const int *const_graded_exponents;
-typedef const int *const_partial_sums;
 typedef const int *const_monomial;
-typedef const int *const_varpower;
 
-#define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents>(alloca(byte_len))
+
+#define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents_t>(alloca(byte_len))
 #define EXPONENT_BYTE_SIZE(nvars) static_cast<int>((sizeof(int) * (nvars)))
 
 #define ALLOCATE_MONOMIAL(byte_len) static_cast<monomial>(alloca(byte_len))
@@ -157,10 +152,10 @@ class Monoid : public MutableEngineObject
   // Monomial arithmetic //
   /////////////////////////
   void from_varpower(const_varpower vp, monomial result) const;
-  void to_varpower(const_monomial m, intarray &result_vp) const;
+  void to_varpower(const_monomial m, gc_vector<int>& result_vp) const;
 
   void from_expvector(const_exponents exp, monomial result) const;
-  void to_expvector(const_monomial m, exponents result_exp) const;
+  void to_expvector(const_monomial m, exponents_t result_exp) const;
 
   M2_arrayint to_arrayint(
       const_monomial monom) const; /* Returns an exponent vector representation
@@ -217,7 +212,10 @@ class Monoid : public MutableEngineObject
               monomial result_sm,
               monomial result_sn) const;
 
+  // TODO: define all three
   void elem_text_out(buffer &o, const_monomial m, bool p_one = true) const;
+  //void elem_text_out(buffer &o, const_exponents m, bool p_one = true) const;
+  //void elem_text_out(buffer &o, const_varpower m, bool p_one = true) const;
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;

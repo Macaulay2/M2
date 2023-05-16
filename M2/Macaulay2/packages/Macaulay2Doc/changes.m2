@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.21",
 	  TO "changes, 1.20",
 	  TO "changes, 1.19.1",
 	  TO "changes, 1.19",
@@ -41,6 +42,51 @@ document {
      }
 
 document {
+     Key => "changes, 1.21",
+     UL {
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "Triangulations::Triangulations", ", a package by Mike Stillman for triangulations of polyhedra and point sets, has been added." },
+		    LI { TO "WhitneyStratifications::WhitneyStratifications", ", a package by Martin Helmer for computing Whitney stratifications algebraically, has been added." },
+		    LI { TO "JSON::JSON", ", a package by Doug Torrance for JSON encoding and decoding, has been added." },
+		    LI { TO "ForeignFunctions::ForeignFunctions", ", a package by Doug Torrance for providing a foreign function interface, has been added." },
+		    LI { TO "GeometricDecomposability::GeometricDecomposability", ", a package by Mike Cummings and Adam Van Tuyl for determining whether ideals are geometrically vertex decomposable, has been added." },
+		    LI { TO "PseudomonomialPrimaryDecomposition::PseudomonomialPrimaryDecomposition", ", a package by Alan A. Veliz-Cuba for primary decomposition of square free pseudomonomial ideals, has been added." }
+		    }},
+	  LI { "improved packages:",
+               UL {
+       	    	    LI { "The package ", TO "BettiCharacters::BettiCharacters", 
+                	 " has been updated to version 2.0, which introduces
+			 character tables, decompositions, and other methods for characters.
+			 The GradedCharacter type has been removed, and the Character type
+			 has been modified to accommodate both homological and internal
+			 grading in a simplied format." 
+                	 }
+		     }
+		 },
+	  LI { "functionality added:",
+	       UL {
+		    LI { "New methods, ", TO iterator, " and ", TO next, ", and a new class, ", TO Iterator, " have been added to allow iteration over any Macaulay2 object." },
+		    LI { TO "for", " loops, as well as the methods ", TO scan, ", ", TO apply, ", ", TO select, ", ", TO fold, ", ", TO accumulate, ", ", TO take, ", and ", TO join, ", now work with any iterable object." },
+		    LI { TO (truncate, Number), " has been added, rounding numbers toward zero." },
+		    LI { TO (quotientRemainder, ZZ, ZZ), " has been added, for obtaining the quotient and remainder simultaneously when performing integer division." },
+		    LI { "The bitwise not operator, ", TO (symbol ~, ZZ), " has been added." },
+		    LI { "A new strategy ", TO "Dynamic", " is implemented for ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "." },
+		    LI { "A new global variable ", TO "blockMatrixForm", " which affects the display of matrices has been added." },
+		    LI { "Partial support for UTF-8 in strings has been added." },
+		    LI { TO changeBase, " has been added for changing integer bases."}
+		    }
+	       },
+	  LI { "functionality changed in a way that could break code:",
+	       UL {
+		    LI { TO remove, " may now be used to remove elements from mutable lists.  Its previous (undocumented) behavior was equivalent to ", TO drop, "."},
+		    LI { TO characters, " and ", TO (width,Net)," now split strings according to UTF-8 characters rather than bytes." }
+		    }
+	       }
+	  }}
+    
+document {
      Key => "changes, 1.20",
      UL {
 	  LI { "new packages:",
@@ -48,9 +94,9 @@ document {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "CotangentSchubert::CotangentSchubert", ", a package by Paul Zinn-Justin for cotangent Schubert calculus, has been added." },
 		    LI { TO "OnlineLookup::OnlineLookup", ", a package by Paul Zinn-Justin for looking up mathematical information online, has been added." },
-		    LI { TO "MergeTeX::MergeTeX", ", a package by Paul Zinn-Justin for runniung Macaulay2 code and inserting the results into a LaTeX file, has been added." },
+		    LI { TO "MergeTeX::MergeTeX", ", a package by Paul Zinn-Justin for running Macaulay2 code and inserting the results into a LaTeX file, has been added." },
 		    LI { TO "Probability::Probability", ", a package by Doug Torrance for basic probability, has been added." },
-		    LI { TO "Isomorphism::Isomorphism", ", a package by David Eisenbud for probabalistic searching for isomorphisms between modules, has been added." },
+		    LI { TO "Isomorphism::Isomorphism", ", a package by David Eisenbud for probabilistic searching for isomorphisms between modules, has been added." },
 		    LI { star, " ", TO "SchurVeronese::SchurVeronese", ", a package by Juliette Bruce, Daniel Erman, Steve Goldstein and Jay Yang for examining data for Veronese embeddings of projective space, has been added and published." },
 		    LI { star, " ", TO "CodingTheory::CodingTheory", ", a package by Taylor Ball, Eduardo Camps, Henry Chimal-Dzul, Delio Jaramillo-Velez, Hiram H. Lopez, Nathan Nichols, Matthew Perkins, Ivan Soprunov, German Vera, and Gwyn Whieldon for coding theory, has been added and published." },
 		    }
@@ -90,7 +136,7 @@ document {
                 	 methods, improves interoperability with ", 
                 	 TO "Polyhedra::Polyhedra", " and completely overhauls the
                 	 documentation. Changes that break backwards
-                	 compatiblity include changing the output of faces and
+                	 compatibility include changing the output of faces and
                 	 facets from Matrix to List, changing the output type
                 	 of fVector from HashTable to List, and replacing ==
                 	 with === for SimplicialComplexes."
@@ -1073,7 +1119,7 @@ document {
      UL {
 	  LI { "major improvements and additions:",
 	        UL {
-                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and moduless over 
+                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and modules over 
                     polynomial rings over finite prime fields.  Also is functional for ideals and
                     modules over exterior algebras.  See ", TO "FastNonminimal", " and ", TO [betti,Minimize], ".  For 
                     computing minimal betti numbers, on larger examples, this code is often hundreds to thousands of times faster than 
@@ -1659,7 +1705,7 @@ document {
 		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", ", a package for Hodge integrals on the moduli space of curves, has been added and certified." },
 		    LI { TO "Kronecker::Kronecker", ", a package for Kronecker and rational normal forms, has been added." },
 		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", ", a package for
-			 computating versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
+			 computing versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
 		    LI { TO "NAGtypes::NAGtypes", ", a package containing declarations of types needed by two 
 			 other packages, has been added." },
 		    LI { TO "Nauty::Nauty", ", an interface package for the program ", TT "nauty", ", which
@@ -2101,7 +2147,7 @@ document {
 		    TO (all,ZZ,Function),
 		    TO (any,ZZ,Function),
 		    TO (degreesMonoid,List),
-		    TO (degreesRing,GeneralOrderedMonoid),
+		    TO (degreesRing,Monoid),
 		    TO (degreesRing,List),
 		    TO (export,String),
 		    TO (findFiles,List),
@@ -2143,9 +2189,7 @@ document {
 		    TO (symmetricAlgebra,Nothing,Ring,Matrix),
 		    TO (symmetricAlgebra,Ring,Nothing,Matrix),
 		    TO (symmetricAlgebra,Ring,Ring,Matrix),
-		    TO (symbol ^, RingElement, Ring),
 		    TO (symbol ^, Number, Ring),
-		    TO (symbol ^, RingElement, RingFamily),
 		    TO (symbol ^, Number, RingFamily),
 		    TO (symbol ^, Constant, Ring),
 		    TO (symbol ^, Constant, RingFamily)

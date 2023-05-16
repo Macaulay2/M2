@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: 1061541480
+
+i1 : truncate toPython 5.8
+
+o1 = 5
+
+o1 : PythonObject of class int
+
+i2 : truncate toPython(-5.8)
+
+o2 = -5
+
+o2 : PythonObject of class int
+
+i3 : 

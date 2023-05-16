@@ -13,7 +13,7 @@ entries MutableMatrix := m -> (
      applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
-expression MutableMatrix := m -> MatrixExpression {applyTable(entries m, expression), MutableMatrix => true}
+expression MutableMatrix := m -> MatrixExpression append(applyTable(entries m, expression), symbol MutableMatrix => true)
 texMath MutableMatrix := m -> texMath expression m
 net MutableMatrix := m -> net expression m
 
@@ -91,15 +91,14 @@ promote(MutableMatrix,Number) := Matrix => (f,S) -> (
 --------------------------------
 -- submatrices -----------------
 --------------------------------
-listZ := v -> ( if not all(v,i -> instance(i, ZZ)) then error "expected list of integers"; v )
 MutableMatrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 MutableMatrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 submatrix(MutableMatrix,VisibleList,VisibleList) := (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
 submatrix(MutableMatrix,VisibleList            ) := (m,cols     ) -> map(ring m,rawSubmatrix(raw m, listZ toList splice cols))
 submatrix(MutableMatrix,Nothing    ,VisibleList) := (m,null,cols) -> submatrix(m,cols)
-submatrix(MutableMatrix,VisibleList,Nothing    ) := (m,rows,cols) -> (
-     rows = splice rows; 
-     map((ring m, rawSubmatrix(raw m, listZ toList rows, 0 .. numColumns m - 1))))
+submatrix(MutableMatrix, VisibleList, Nothing)     := (m, rows, null) -> map(ring m, rawSubmatrix(raw m, listZZ rows, 0 .. numColumns m - 1))
+submatrix(MutableMatrix, Nothing,     Nothing)     := (m, null, null) -> m
+
 --------------------------------
 numRows(RawMutableMatrix) := (m) -> rawNumberOfRows m
 numRows(MutableMatrix) := (m) -> rawNumberOfRows raw m
@@ -303,6 +302,7 @@ rank MutableMatrix := (M) -> (
       rank matrix M
     )
 
+determinant = method(Options => { Strategy => null })
 determinant MutableMatrix := opts -> (M) -> (
     if numRows M =!= numColumns M then error "expected a square matrix";
     if isField ring M then

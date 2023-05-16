@@ -60,7 +60,7 @@ testF(10000, i) -- (leaks 715 bytes/call, time 50.37 ms/call), 503 sec total
 -- Tests on mike MBP ---
 ------------------------
 -- This one calls SVD, so cannot be called on 1.12.
--- also probaqbly doesn't leak
+-- also probably doesn't leak
 restart
 needs "eigen-leaks.m2"
 testF(1,f)

@@ -21,9 +21,8 @@ myget = memoize(x -> first(
 	if debugLevel>0 then << x << " loaded" << endl
 	))
 
-puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Labels => true, Paths => false};
-export {"Steps", "Ktheory'", "Length", "Labels", "Paths"}; -- move to main file
-protect Separation;
+puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Labels => true, Paths => false, Separation => null};
+export {"Steps", "Ktheory'", "Length", "Labels", "Paths", "Separation"}; -- move to main file
 -- lots of global variables, not thread-safe!
 upTriangles=downTriangles=rhombi={};
 apply({rhombusStyle,downTriStyle,upTriStyle},protect);
@@ -35,13 +34,17 @@ myload "equiv.m2";
 myload "generic.m2";
 myload "generic-equiv.m2";
 
+Kstyle = "fill"=>"LightPink";
+equivstyle = "fill"=>"LightGray";
+
 curPuzzleOpts := null;
 tiles := o -> (
-    if o === curPuzzleOpts then return;
+    newPuzzleOpts := apply(keys puzzleOpts, k -> o#k);
+    if newPuzzleOpts === curPuzzleOpts then return;
     if debugLevel>0 then << "rebuilding tiles" << newline;
-    curPuzzleOpts = o;
+    curPuzzleOpts = newPuzzleOpts;
     d := o.Steps;
-    if o#?Separation then (
+    if o#Separation =!= null then (
         (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Ktheory,o.Ktheory',o.Generic,o.Equivariant);
         return;
         );
@@ -52,35 +55,64 @@ tiles := o -> (
         upTriangles = downTriangles = basicTriangles d;
         if o.Ktheory then (
             (KUp,KDown) := KTriangles d;
-            upTriangles = upTriangles | apply(KUp, x -> append(x,"fill"=>"yellow"));
-            downTriangles = downTriangles | apply(KDown, x -> append(x,"fill"=>"yellow"));
+            upTriangles = upTriangles | apply(KUp, x -> append(x,Kstyle));
+            downTriangles = downTriangles | apply(KDown, x -> append(x,Kstyle));
             );
         if o#Ktheory' then (
             (KUp,KDown) = KTriangles d;
-            upTriangles = upTriangles | apply(KDown, x -> append(x,"fill"=>"yellow"));
-            downTriangles = downTriangles | apply(KUp, x -> append(x,"fill"=>"yellow"));
+            upTriangles = upTriangles | apply(KDown, x -> append(x,Kstyle));
+            downTriangles = downTriangles | apply(KUp, x -> append(x,Kstyle));
             );
-        rhombi = if o#Equivariant then apply(equivRhombi d, x -> append(x,"fill"=>"gray")) else {};
+        rhombi = if o#Equivariant then apply(equivRhombi d, x -> append(x,equivstyle)) else {};
         )
     )
 
 new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k->p#(i,j,k))));
 
-net Puzzle := p -> netList(applyTable(new List from p, a -> netList({{,a#0},{a#1,a#2}},HorizontalSpace=>1,Boxes=>false)),HorizontalSpace=>2,VerticalSpace=>1,Boxes=>false)
+-- ascii art for puzzles (inspired by Rui Xiong's sage code)
+trisize:=10;
+netTri := (b,a,c) -> (
+    if a=="_" then a="/";
+    if b=="_" then b="\\";
+    if c=="_" then c="-";
+    "    /\\    "
+    || "   /  \\  "
+    || concatenate (
+	i1:=trisize//3-(1+width a)//2;
+	i3:=trisize//3-(1+width b)//2;
+	i2:=trisize-i1-i3-width a-width b;
+	-- need to test if numbers negative
+	(i1:" ",a,i2:" ",b,i3:" ")
+	)
+    || " /      \\ "
+    || concatenate if c=="" then trisize:" " else (
+	i1=trisize//2-(1+width c)//2;
+	i2=trisize-i1-width c;
+	(if i1>=1 then " ",(i1-1):"-",c,(i2-1):"-",if i2>=1 then " ")
+	)
+    )
+
+net Puzzle := p -> (
+    stack apply(p.Length,i->horizontalJoin prepend(
+	    (trisize//2)*(p.Length-1-i):" ",
+	    apply(i+1,r->netTri(p#(i-r,r,0),p#(i-r,r,1),p#(i-r,r,2)))
+            )))
 
 puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
 
-vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => 1.7/(4.+#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
+vgFontSize := n -> 1.7/(4.+n)
+vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => vgFontSize (width s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
 vgOpts := k -> { Size => k*puzzleSize, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
-cols:={"red","green","blue","yellow","magenta","cyan"};
+cols:={"red","green","blue","yellow","magenta","cyan","orange","black"};
 strk:=0.01*puzzleSize;
 
 vg = p -> gList toSequence (
     n:=p.Length;
     flatten apply(n, i -> flatten apply(n-i, j -> (
-                a := p#(i,j,0);
-                b := p#(i,j,1);
+                a := try p#(i,j,0) else break;
+                b := try p#(i,j,1) else break;
+		c := try p#(i,j,2) else break;
                 deepSplice {
                     local kk;
                     adj := (dir,a,x,y) -> (
@@ -91,8 +123,7 @@ vg = p -> gList toSequence (
                         else if dir === 1 then [x+cf*r,y]
                         else [x+cf*r,y-cf*r]
                         );
-                    if p#(i,j,2) != "" then (
-                        c := p#(i,j,2);
+                    if c != "" then (
 			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#(i,j,upTriStyle));
                         Polygon opts,
                         if (i+j<n-1) then (
@@ -130,9 +161,9 @@ vg = p -> gList toSequence (
                                 )
                             ),
                         if p#Labels then (
-                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
-                            GraphicsText ({[i+.5,j],b} | vgTextOpts b),
-                            GraphicsText ({[i+.5,j+.5],c} | vgTextOpts c)
+                            if a!="_" then GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            if b!="_" then GraphicsText ({[i+.5,j],b} | vgTextOpts b),
+                            if c!="_" then GraphicsText ({[i+.5,j+.5],c} | vgTextOpts c)
                             )
                         ) else (
 			opts = {{[i+1,j],[i,j],[i,j+1],[i+1,j+1]}};
@@ -151,8 +182,8 @@ vg = p -> gList toSequence (
                                         )
                                     ))),
                         if p#Labels then (
-                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
-                            GraphicsText ({[i+.5,j],b} | vgTextOpts b)
+                            if a!="_" then GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            if b!="_" then GraphicsText ({[i+.5,j],b} | vgTextOpts b)
                             )
                         )
                     }
@@ -161,7 +192,7 @@ vg = p -> gList toSequence (
 html Puzzle := p -> html vg p
 tex Puzzle := texMath Puzzle := p -> tex vg p
 
-digit := s -> #s==1 and first ascii s >=48 and first ascii s <= 48+9;
+digit := s -> #s==1 -- should be enough
 valid := (x,y) -> x === y or (x === "#" and digit y) or x === "*" or x === "**";
 
 Puzzle ++ HashTable := (opts1, opts2) -> merge(opts1,opts2,last)
@@ -169,18 +200,16 @@ Puzzle ++ List := (opts1, opts2) -> opts1 ++ new class opts1 from opts2 -- cf si
 
 Puzzle == Puzzle := (p,q) -> (new List from p) == (new List from q)
 
+digitvals := l -> apply(select(flatten apply(l,ascii),i->i>=48 and i<58),i->i-48)
+
 initPuzzle = true >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
-    args = apply(args, a -> apply(if instance(a,String) then characters a
-	    else if instance(a,VisibleList) then apply(a,toString) else error "wrong arguments",
-	    c->replace("_"," ",c)
-	    ));
+    args = apply(args, a -> new LabelList from a);
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
-    separated := any(join args, s -> s===" ");
     new Puzzle from pairs o | { Length=>n,
-	if separated then Separation => 1 + max flatten apply(args#1,ascii) - 48,
-        if o.Steps === null then Steps => max(max flatten apply(join args,ascii) - 48,1) -- d>=1
+	if o.Separation === null and any(join args, s -> s==="_") then Separation => 1 + max digitvals(args#1),
+        if o.Steps === null then Steps => max(max digitvals(join args),1) -- d>=1
         } | flatten flatten apply(n, i ->
         apply(n-i, j -> {
                 (i,j,0) => if i==0 then args#1#j else "**",
@@ -227,19 +256,13 @@ puzzle = puzzleOpts >> o -> args -> (
     new List from lst
     )
 
-bottom = p -> (
-    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
-    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
-    )
+bottom = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,i,2))
 
-nwside = p -> (
-    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
-    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
-    )
-neside = p -> (
-    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
-    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
-    )
+-- these last 2 are currently not exported
+
+nwside = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,0,1))
+
+neside = p -> new LabelList from apply(p.Length,i->p#(0,i,0))
 
 -- computation of (d<=3) equivariant fugacities
 myload "fugacity.m2"
@@ -257,7 +280,7 @@ puzzle("0123","3210",Generic=>true,Equivariant=>true)
 
 #puzzle("#######","0101212","#######") -- # is any single-digit, * is anything
 
-puzzle("5 4 3 ","210   ",Generic=>false,Equivariant=>false)
+puzzle("5_4_3_","210___",Generic=>false,Equivariant=>false)
 
 -- a complicated example: app C1 d=3
 

@@ -50,7 +50,7 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 -- [functionality v2] DGModuleMap
 -- [functionality v2] torDelta - is this possible?  Would be great.
 -- [functionality v2] Golod/Levin/Avramov index? (see paper of Liana)
--- [functionality v2] Matric Massey products? (see Gulliksen-Levin)
+-- [functionality v2] Matrix Massey products? (see Gulliksen-Levin)
 -- [functionality v2] Computing Betti numbers using Massey products? (Ref?)
 
 -- Not sure if the below are possible
@@ -239,8 +239,7 @@ killCycles = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDeg
 killCycles DGAlgebra := opts -> A -> (
    -- for now, this will only work for DG algebras with H_0(A) = k
    retVal := 0;
-   endDegree := 0;
-   if opts.EndDegree == -1 then endDegree = opts.StartDegree;
+   endDegree := if opts.EndDegree == -1 then endDegree = opts.StartDegree else opts.EndDegree;
    if opts.StartDegree > endDegree then error "Starting degree is not less than or equal to ending degree.";
    n := opts.StartDegree;
    foundHomology := false;
@@ -1043,7 +1042,7 @@ masseyTripleProductOnCycles(DGAlgebra, RingElement, RingElement, RingElement) :=
 -- lift13*z4 + lift12*lift34 + z1*lift24
 
 -- Furthermore, according to O'Niell's paper, the two Massey
--- operations must vanish *simulaneously*.  That is, one must
+-- operations must vanish *simultaneously*.  That is, one must
 -- trivialize the Massey operations defining lift13 and lift24 with
 -- the same lifts lift12, lift23 and lift34.  to check that they
 -- simultaneously vanish, one must perform a calculation similar to
@@ -1859,7 +1858,7 @@ doc ///
     acyclicClosure
     (acyclicClosure,DGAlgebra)
   Headline
-    Compute theae acyclic closure of a DGAlgebra.
+    Compute the acyclic closure of a DGAlgebra.
   Usage
     B = acyclicClosure(A)
   Inputs

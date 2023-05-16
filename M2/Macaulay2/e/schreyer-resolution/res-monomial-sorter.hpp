@@ -3,8 +3,8 @@
 #ifndef _res_monomial_sorter_hpp_
 #define _res_monomial_sorter_hpp_
 
+#include "ExponentVector.hpp"                          // for ntuple
 #include "monoid.hpp"                                  // for Monoid
-#include "ntuple.hpp"                                  // for ntuple
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-schreyer-order.hpp"  // for ResSchreyerOrder
 #include "schreyer-resolution/res-monomial-types.hpp"  // for res_packed_mon...
@@ -133,9 +133,9 @@ private:
     int nvars = mMonoid.n_vars();
     std::pair<int*, int*> exp = mArena.allocArrayNoCon<int>(nvars);
     std::pair<int*, int*> exp2 = mArena.allocArrayNoCon<int>(nvars);
-    mResMonoid.to_exponent_vector(mon, exp.first, comp);
-    mResMonoid.to_exponent_vector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
-    ntuple::mult(nvars, exp.first, exp2.first, exp2.first);
+    mResMonoid.to_expvector(mon, exp.first, comp);
+    mResMonoid.to_expvector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
+    exponents::mult(nvars, exp.first, exp2.first, exp2.first);
     auto p = resultAlreadyAllocateds.first;
     *p++ = mSchreyerOrder.mTieBreaker[comp];
     *p++ = comp2;
@@ -171,9 +171,9 @@ public:
     std::pair<int*, int*> result = mArena.allocArrayNoCon<int>(mMonoid.monomial_size() + 2);
     std::pair<int*, int*> exp = mArena.allocArrayNoCon<int>(nvars);
     std::pair<int*, int*> exp2 = mArena.allocArrayNoCon<int>(nvars);
-    mResMonoid.to_exponent_vector(mon.first, exp.first, comp);
-    mResMonoid.to_exponent_vector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
-    ntuple::mult(nvars, exp.first, exp2.first, exp2.first);
+    mResMonoid.to_expvector(mon.first, exp.first, comp);
+    mResMonoid.to_expvector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
+    exponents::mult(nvars, exp.first, exp2.first, exp2.first);
     auto p = resultAlreadyAllocateds.first;
     *p++ = mSchreyerOrder.mTieBreaker[comp];
     *p++ = comp2;

@@ -52,7 +52,7 @@ numericalRank Matrix := o -> M -> (
      then error "matrix with real or complex entries expected";
      t := o.Threshold; 
      N := if t<=1 then M -- use t as an absolute cutoff for singular values, otherwise look for a "gap"  
-          else matrix apply(entries M, row->(      -- nomalize "large" rows (a hack!!!)
+          else matrix apply(entries M, row->(      -- normalize "large" rows (a hack!!!)
 	     	  m := max(row/abs);
 	     	  if m<1 then row else apply(row,e->e/m)
 	     	  ));

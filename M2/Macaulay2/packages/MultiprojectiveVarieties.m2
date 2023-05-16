@@ -7,12 +7,12 @@
    the License, or any later version.
 *-
 
-if version#"VERSION" < "1.18" then error "this package requires Macaulay2 version 1.18 or newer";
+if version#"VERSION" < "1.21" then error "this package requires Macaulay2 version 1.21 or newer";
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "2.5", 
-    Date => "November 6, 2021",
+    Version => "2.7.1", 
+    Date => "April 18, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -36,24 +36,27 @@ newPackage(
 	 }
     )
 
-if Cremona.Options.Version < "5.1" then (
-    <<endl<<"Your version of the Cremona package is outdated (required version 5.1 or newer);"<<endl;
+requiredCremonaVersion := "5.2.1";
+if Cremona.Options.Version < requiredCremonaVersion then (
+    <<endl<<"Your version of the Cremona package is outdated (required version "<<requiredCremonaVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of Cremona in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/master/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
-    error "required Cremona package version 5.1 or newer";
+    error("required Cremona package version "|requiredCremonaVersion|" or newer");
 );
 
-if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
-
-export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
-       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus",
+export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "projectionMaps", "fiberProduct", 
+       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus", "sumUp",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2", "toRationalMap",
        "∏","⋂","⋃","PP",
        "ambientVariety",
-       "GrassmannianVariety", "GG", "schubertCycle", "cycleClass"}
+       "GrassmannianVariety", "GG", "schubertCycle", "cycleClass",
+       "segreEmbedding",
+       "quadricFibration",
+       "WeightedProjectiveVariety","WeightedRationalMap",
+       "RAT"}
 
 debug Cremona;
 debug SparseResultants;
@@ -72,6 +75,12 @@ globalAssignment EmbeddedProjectiveVariety;
 
 EmbeddedProjectiveVariety.synonym = "embedded projective variety";
 
+WeightedProjectiveVariety = new Type of MultiprojectiveVariety; -- this isn't really a subtype
+
+globalAssignment WeightedProjectiveVariety;
+
+WeightedProjectiveVariety.synonym = "weighted projective variety";
+
 projectiveVariety = method(TypicalValue => MultiprojectiveVariety, Options => {MinimalGenerators => true, Saturate => true});
 
 projectiveVariety Ideal := o -> I -> (
@@ -82,7 +91,7 @@ projectiveVariety Ideal := o -> I -> (
     if not isField coefficientRing R then error "the coefficient ring needs to be a field";
     m := multigens R;
     if flatten m != gens R then error "the given grading on the polynomial ring is not allowed: the degree of each variable must be a standard basis vector of ZZ^r in the commonly used order";
-    if not isHomogeneous I then error "expected a (multi)-homogeneous ideal";
+    if not isHomogeneous I then error ("attempting to construct projective variety from a non-homogeneous ideal: numgens ring: "|(toString numgens R)|", degrees: "|(toString toSequence degrees R));
     J := I;
     if o.Saturate then (
         if not(J.cache#?"isMultisaturated" and J.cache#"isMultisaturated") then (
@@ -103,7 +112,7 @@ projectiveVariety Ideal := o -> I -> (
         "projections" => null,
         "expression" => null
     };
-    if # X#"dimAmbientSpaces" == 1 then X = new EmbeddedProjectiveVariety from X;
+    if degreeLength R == 1 then (if max flatten degrees R >= 2 then X = new WeightedProjectiveVariety from X else X = new EmbeddedProjectiveVariety from X);
     J.cache#"multiprojectiveVariety" = X;
     I.cache#"multiprojectiveVariety" = J.cache#"multiprojectiveVariety"
 );
@@ -174,6 +183,26 @@ higherSecantVarietyToRationalNormalScroll (Array,ZZ,Ring) := (d,k,K) -> (
     X#(symbol matrix) = M;
     X
 );
+ringWeightedProjectiveSpace = memoize ((d,K) -> newRing(Grass(0,#d-1,K),Degrees=>toList(d)));
+setParametrizationOfWeightedProjectiveSpace = P -> (
+    if not(degreeLength ring P == 1 and codim P == 0) then error "expected a weighted-projective space";
+    if P.cache#?"rationalParametrization" then return P;
+    a := flatten degrees ring P;
+    if min a > 1 then return P; -- not implemented yet
+    i0 := position(a,i->i == 1);
+    K := coefficientRing P;
+    n := dim P; x := gens ring P;
+    P' := PP_K^n; y := gens ring P';
+    f := rationalMap(ring P,ring P',apply(n+1,i -> x_i * (x_i0)^((max a) - a_i)));
+    g := rationalMap(ring P',ring P,apply(n+1,i -> y_i * (y_i0)^(a_i-1)));
+    f = multirationalMap f; g = multirationalMap g;
+    f#"isBirational" = true; g#"isBirational" = true;
+    f#"isDominant" = true; g#"isDominant" = true;
+    f#"inverse" = g; g#"inverse" = f;
+    if g * f != 1 then error "something went wrong :(";
+    P.cache#"rationalParametrization" = g;
+    P
+);
 PP = new ScriptedFunctor from {
     symbol ring => null,
     argument => (
@@ -193,7 +222,7 @@ PP = new ScriptedFunctor from {
         K -> (
             if not (instance(K,Ring) and isField K) then error "expected a field";
             if PP.ring === null then PP.ring = K;
-            errStr := toString(///These are some ways of using PP:///||///PP^n -> n-dimensional projective space///||///PP^{n1,n2,...} -> product of projective spaces: PP^n1 x PP^n2 x ...///||///PP^(n,d) -> d-uple embedding of PP^n: v_d(PP^n)///||///PP^({n1,n2,...},{d1,d2,...}) -> Segre-Veronese variety: v_d1(PP^n1) x v_d2(PP^n2) x ...///||///PP[a1,a2,...] -> rational normal scroll: P(O(a1))+P(O(a2))+...///||///PP([a1,a2,...],k) -> k-th secant variety of PP[a1,a2,...]///||///(PP([a1,a2,...],k)).matrix -> the matrix from which PP([a1,a2,...],k) is constructed///);
+            errStr := toString(///These are some ways of using PP:///||///PP^n -> n-dimensional projective space///||///PP^{n1,n2,...} -> product of projective spaces: PP^n1 x PP^n2 x ...///||///PP^(n,d) -> d-uple embedding of PP^n: v_d(PP^n)///||///PP^({n1,n2,...},{d1,d2,...}) -> Segre-Veronese variety: v_d1(PP^n1) x v_d2(PP^n2) x ...///||///PP[a1,a2,...] -> rational normal scroll: P(O(a1))+P(O(a2))+...///||///PP([a1,a2,...],k) -> k-th secant variety of PP[a1,a2,...]///||///(PP([a1,a2,...],k)).matrix -> the matrix from which PP([a1,a2,...],k) is constructed///||///PP(a1,a2,...) -> weighted-projective space///);
             new ScriptedFunctor from {
                 superscript => (
                     l -> (
@@ -205,7 +234,8 @@ PP = new ScriptedFunctor from {
                 argument => (
                     d -> (
                         if instance(d,Array) then higherSecantVarietyToRationalNormalScroll(d,1,K)
-                        else if instance(d,Sequence) and #d==2 then higherSecantVarietyToRationalNormalScroll(d_0,d_1,K)
+                        else if instance(d,Sequence) and #d==2 and instance(d_0,Array) then higherSecantVarietyToRationalNormalScroll(d_0,d_1,K)
+                        else if instance(d,Sequence) and all(d,i->instance(i,ZZ) and i>=1) then setParametrizationOfWeightedProjectiveSpace projectiveVariety(ringWeightedProjectiveSpace(d,K),MinimalGenerators=>false,Saturate=>false)
                         else error errStr
                     )
                 )
@@ -216,6 +246,11 @@ PP = new ScriptedFunctor from {
 ----------------------------------
 
 isPoint = (cacheValue "isPoint") (X -> (
+    if instance(X,WeightedProjectiveVariety) then (
+        if dim X != 0 then return false;
+        try parametrize X else return false; -- warning: not implemented yet -- currently this cannot work for subvarieties of PP(a_0,...,a_n) with all a_i>1
+        return (codim source parametrize X == 0 and dim source parametrize X == 0 and numgens ring source parametrize X == 1);
+    );
     n := X#"dimAmbientSpaces";
     dim X == 0 and sort degrees X == sort pairs tally deepSplice apply(n,entries diagonalMatrix toList(#n:1),(i,d) -> i:d)
 ));
@@ -238,8 +273,16 @@ expression MultiprojectiveVariety := X -> (
     expression expressionVar(dim X,n)
 );
 
-net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else ?X;
+expression WeightedProjectiveVariety := X -> (
+    if X#"expression" =!= null then return X#"expression";
+    if dim X == 0 and codim X > 0 then if isPoint X then return expression("a point in "|expressionVar(dim ambient X,toSequence flatten degrees ring ideal X));
+    expression expressionVar(dim X,toSequence flatten degrees ring ideal X)
+);
 
+net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else ?X;
+texMath MultiprojectiveVariety := texMath @@ net;
+
+MultiprojectiveVariety#{WebApp,AfterPrint} = MultiprojectiveVariety#{WebApp,AfterNoPrint} = 
 MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,AfterNoPrint} = X -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << expression X;
     if isSubvariety X then << " (subvariety of codimension " << dim ambientVariety X - dim X << " in " << ambientVariety X << ")";
@@ -278,13 +321,29 @@ multidegree MultiprojectiveVariety := X -> (
 
 degree MultiprojectiveVariety := X -> getMultidegree(multidegree X, X#"dimAmbientSpaces");
 
+degree WeightedProjectiveVariety := X -> if dim X == 0 then degree image segreEmbedding X else degree ideal X;
+
 projections = method();
 projections MultiprojectiveVariety := X -> (
     if X#"projections" =!= null then return X#"projections";
     X#"projections" = apply(X#"multigens",x -> rationalMap(sub(matrix{x},ring X),Dominant=>"notSimplify"))
 );
 
+projectionMaps = method();
+projectionMaps MultiprojectiveVariety := (cacheValue "projection maps") (X -> apply(projections X,f -> rationalMap(multirationalMap f,Dominant=>true)));
+
 segre MultiprojectiveVariety := (cacheValue "SegreMap") (X -> segre ring X);
+
+segre WeightedProjectiveVariety := (cacheValue "SegreMap") (X -> (  -- straightening out
+    d := lcm flatten degrees ring ideal X;
+    rationalMap(ideal(1_(ring X)),{d})
+));
+
+segreEmbedding = method();
+segreEmbedding MultiprojectiveVariety := X -> (
+    s := multirationalMap segre X;
+    setSource(X,s)
+);
 
 toStringDegreesVar = X -> toString(concatenate for l in degrees X list (toString unsequence toSequence first l)|"^"|(toString(last l)|" "));
 
@@ -295,11 +354,13 @@ describe MultiprojectiveVariety := X -> (
         amb = "PP^"|toString(n_0);
         for i from 1 to #n-1 do amb = amb | " x PP^" | toString(n_i);
     );
+    if instance(X,WeightedProjectiveVariety) then amb = "PP"|(toString toSequence flatten degrees ring ideal X);
     s := "ambient:.............. "|toString(amb)|newline;
     s = s|"dim:.................. "|toString(dim X);
     if dim X == -1 then return s;
-    s = s|newline|"codim:................ "|toString(codim X)|newline;
-    s = s|"degree:............... "|toString(degree X);
+    s = s|newline|"codim:................ "|toString(codim X);
+    if codim X == 0 then return s;
+    s = s|newline|"degree:............... "|toString(degree X);
     if codim X == 0 then return s; 
     s = s|newline;
     if # n > 1 then s = s|"multidegree:.......... "|toString(multidegree X)|newline;        
@@ -325,6 +386,7 @@ describe MultiprojectiveVariety := X -> (
     degs := degrees ideal X; 
     m := "multi-";
     if #n == 1 then m = "";
+    if instance(X,WeightedProjectiveVariety) then n = toSequence flatten degrees ring ideal X;
     if # degs == 1 then return(toString expressionVar(dim X,n)|" defined by a "|m|"form of "|m|"degree "|toString(unsequence toSequence first degs));
     cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of "|m|"degree "|toString(unsequence toSequence first degs) else " cut out by "|toString(#degs)|" hypersurfaces of "|m|"degrees "|toStringDegreesVar(X); 
     (expressionVar(dim X,n))|cutOut
@@ -416,6 +478,12 @@ parametrize MultiprojectiveVariety := (cacheValue "rationalParametrization") (X 
     inv := if X#?InverseMethod then X#InverseMethod else inverse;
     if dim X == -1 then error "expected a non-empty variety";
     if X.cache#?"top" then if X != top X then error "expected an equidimensional variety";
+    if instance(X,WeightedProjectiveVariety) then (
+        setParametrizationOfWeightedProjectiveSpace ambient X;
+        if not (ambient X).cache#?"rationalParametrization" then error("not implemented yet: parametrization of "|toString(? ambient X));
+        g0 := (parametrize ambient X)||X; 
+        return (parametrize source g0) * g0;
+    );
     if # X#"dimAmbientSpaces" != 1 then (
         f := parametrizeWithAnEmbeddedProjectiveVariety X;
         return (parametrize source f) * f;
@@ -437,8 +505,7 @@ parametrize MultiprojectiveVariety := (cacheValue "rationalParametrization") (X 
     -- linear span
     if codim linearSpan X > 0 then (g := (parametrize linearSpan X)||X; return (parametrize source g) * g);
     -- Severi varieties (in particular, varieties projectively equivalent to G(1,5))
-    if ((dim X == 2 and dim ambient X == 5 and degree X == 4) or 
-        (dim X == 4 and dim ambient X == 8 and degree X == 6) or 
+    if ((dim X == 4 and dim ambient X == 8 and degree X == 6) or 
         (dim X == 8 and dim ambient X == 14 and degree X == 14) or 
         (dim X == 16 and dim ambient X == 26 and degree X == 78)) and
        degrees X == {({2},dim ambient X +1)}
@@ -518,6 +585,50 @@ point MultiprojectiveVariety := X -> (
     return p;
 );
 
+point (MultiprojectiveVariety,VisibleList) := (X,l) -> (
+    if # shape X == 1 and # l == numgens ring ideal X and # l > 1 then return point(X,{l});
+    if # l != # shape X then error("expected "|(toString # shape X)|" lists of coefficients");
+    F := apply(projections ambient X,matrix);
+    p := projectiveVariety sum for i to #l-1 list minors(2,(F_i || matrix {toList l_i}));
+    if not isPoint p then error "the output of point(MultiprojectiveVariety,List) is not a point";
+    if not isSubset(p,X) then error "the point does not belong to the variety";
+    if isSubvariety X then p = makeSubvariety(p,ambientVariety X,Verify=>false);
+    return p;
+);
+
+point WeightedProjectiveVariety := X -> (
+    if codim X > 0 then (
+        try parametrize ambient X;
+        if (ambient X).cache#?"rationalParametrization" then (
+            return (parametrize ambient X) point((parametrize ambient X)^* X);
+        ) else (
+            return (segreEmbedding X)^* point image segreEmbedding X;
+        );
+    );
+    a := flatten degrees ring ideal X;
+    n := #a-1;
+    p := apply(n+1,i -> random coefficientRing X);
+    x := gens ring X;
+    P := projectiveVariety ideal flatten for k to n list for i to n list ((p_i)^(a_k) * (x_k)^(a_i) - (p_k)^(a_i) * (x_i)^(a_k));
+    assert(dim P == 0);
+    P.cache#"isPoint" = true;
+    P.cache#"coordinates" = new Array from p;
+    P
+);
+
+point (WeightedProjectiveVariety,VisibleList) := (X,p) -> (
+    n := dim ambient X;
+    if # p == n + 1 and # p > 1 then return point(X,{p});
+    a := flatten degrees ring ideal X;     
+    x := gens ring ideal X;
+    p = first p;
+    P := projectiveVariety ideal flatten for k to n list for i to n list ((p_i)^(a_k) * (x_k)^(a_i) - (p_k)^(a_i) * (x_i)^(a_k));
+    if dim P != 0 then error "the output of point(WeightedProjectiveVariety,List) is not a point";
+    if not isSubset(P,X) then error "the point does not belong to the variety";
+    if isSubvariety X then P = makeSubvariety(P,ambientVariety X,Verify=>false);
+    return P;
+);
+
 pointOnLinearSectionOfG14 = X -> (
    j := parametrize projectiveVariety(ideal apply(dim X -2,i -> random(1,ring ambient X)),MinimalGenerators=>true,Saturate=>false);
    S := j^^ X;
@@ -529,6 +640,13 @@ pointOnLinearSectionOfG14 = X -> (
 
 coordinates = (cacheValue "coordinates") (p -> (
     if not isPoint p then error "expected a point";
+    if instance(p,WeightedProjectiveVariety) then (
+        h := parametrize p;
+        if not (codim source h == 0 and dim source h == 0 and numgens ring source h == 1) then error "something went wrong";
+        c := new Array from flatten entries sub(sub(matrix h,first gens ring source h => 1),coefficientRing h);
+        if point(ambient p,c) != p then error "something went wrong"; -- provisory test
+        return c;
+    );
     unsequence toSequence apply(projections p,h -> new Array from flatten entries coefficients parametrize image h)
 ));
 
@@ -546,6 +664,7 @@ productMem = memoize(L -> (
     if #L == 1 then return first L;
     K := coefficientRing first L;
     for i from 1 to #L-1 do if K =!= coefficientRing(L_i) then error "different coefficient rings encountered";
+    if any(L,X -> instance(X,WeightedProjectiveVariety)) then error "not implemented yet: product of weighted projective varieties";
     n := toSequence apply(L,X -> apply(X#"dimAmbientSpaces",i->i+1));
     R := ring first first gensRing(K,join n);
     j := for i to #L list sum toList join take(n,i);
@@ -656,10 +775,10 @@ euler (MultiprojectiveVariety,Option) := (X,opt) -> (
     local e;
     if # X#"dimAmbientSpaces" == 1 then (
         if codim X == 0 then return X.cache#"euler" = numgens ring ideal X;
-        e = EulerCharacteristic(ideal X,MathMode=>last o,Verbose=>false);
+        e = EulerCharacteristic(ideal X,Certify=>last o,Verbose=>false);
      ) else (
         -- <<"--warning: code to be improved"<<endl;
-        e = EulerCharacteristic(image segre X,MathMode=>last o,Verbose=>false);
+        e = EulerCharacteristic(image segre X,Certify=>last o,Verbose=>false);
     );
     if last o then X.cache#"euler" = e;
     return e;
@@ -673,6 +792,14 @@ basisMem = (d,X) -> (
     if numgens J == 0 then J = sub(J,ring ideal X);
     X.cache#(d,"basis") = flatten entries gens image basis(d,J)
 );
+
+projectiveVariety (List,MultiprojectiveVariety) := o -> (d,X) -> (
+    if not (# d == # shape X and all(d,i -> instance(i,ZZ))) then error("expected a list of integers of length "|toString(# shape X));
+    F := basisMem(d,X);
+    if #F == 0 then return ambient X;
+    projectiveVariety(ideal F,Saturate=>false)
+);
+projectiveVariety (ZZ,MultiprojectiveVariety) := o -> (d,X) -> projectiveVariety({d},X);
 
 random (List,MultiprojectiveVariety) := o -> (l,X) -> (
     l = deepSplice l;
@@ -707,7 +834,9 @@ MultiprojectiveVariety ** Ring := (X,K) -> (
         error "expected a field";
     );
     if (char coefficientRing X =!= char K and char coefficientRing X =!= 0) then error "characteristic not valid";
-    projectiveVariety(sub(ideal X,vars ring projectiveVariety(shape X,K)),Saturate=>false,MinimalGenerators=>true)
+    R := ring projectiveVariety(shape X,K);
+    if instance(X,WeightedProjectiveVariety) then R = newRing(R,Degrees=>degrees ring ideal X);
+    projectiveVariety(sub(ideal X,vars R),Saturate=>false,MinimalGenerators=>true)
 );
 
 MultiprojectiveVariety ? MultiprojectiveVariety := (X,Y) -> (
@@ -742,7 +871,8 @@ sectionalGenus EmbeddedProjectiveVariety := (cacheValue "sectionalGenus") (X -> 
 
 hilbertPolynomial EmbeddedProjectiveVariety := o -> ((cacheValue (o.Projective,"HilbertPolynomial")) (X -> hilbertPolynomial(ideal X,Projective=>o.Projective)));
 
-EmbeddedProjectiveVariety ! := X -> (
+sumUp = method();
+EmbeddedProjectiveVariety ! := sumUp EmbeddedProjectiveVariety := X -> (
     if coefficientRing X === QQ then (
         p := nextPrime random(300,10000000);
         -- <<"*** reduction to char "<< p <<" ***"<<endl;
@@ -790,7 +920,10 @@ EmbeddedProjectiveVariety ! := X -> (
 
 dual EmbeddedProjectiveVariety := {} >> o -> X -> (
     if codim linearSpan X > 0 then return projectiveVariety(dualVariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from Resultants
-    return projectiveVariety(dualvariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from SparseResultants
+    x := local x;
+    I := sub(ideal X,vars((coefficientRing X)[x_0..x_(dim ambient X)]));
+    D := sub(dualvariety I,vars ring ambient X); -- from SparseResultants
+    return projectiveVariety(D,MinimalGenerators=>false,Saturate=>false);
 );
 
 conormalVariety EmbeddedProjectiveVariety := o -> X -> ( 
@@ -870,7 +1003,13 @@ line (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
     if # L == 0 then error("failed to find line in "|toString(? X));
     first random L    
 );
-line EmbeddedProjectiveVariety := X -> line(X,point X);
+line (EmbeddedProjectiveVariety,ZZ) := (X,n) -> (
+    L := try line(X,point X) else null;
+    for i from 1 to n-1 when L === null do (<<"-- failed attempt ["<<i<<"/"<<n<<"]"<<" to find a line in the variety, re-trying..."<<endl; L = try line(X,point X) else null);
+    if L === null then error("failed attempt ["|toString(n)|"/"|toString(n)|"] to find a line in the variety: "|toString(? X));
+    L
+);
+line EmbeddedProjectiveVariety := X -> line(X,3);
 
 linearlyNormalEmbedding = method();
 linearlyNormalEmbedding EmbeddedProjectiveVariety := X -> (
@@ -1031,6 +1170,12 @@ globalAssignment MultirationalMap;
 
 MultirationalMap.synonym = "multi-rational map";
 
+WeightedRationalMap = new Type of MultirationalMap; -- this isn't really a subtype
+
+globalAssignment WeightedRationalMap;
+
+WeightedRationalMap.synonym = "weighted-rational map";
+
 expression MultirationalMap := Phi -> (
     X := if hasAttribute(source Phi,ReverseDictionary) then toString getAttribute(source Phi,ReverseDictionary) else toString expression source Phi;
     Y := if hasAttribute(target Phi,ReverseDictionary) then toString getAttribute(target Phi,ReverseDictionary) else toString expression target Phi;
@@ -1046,7 +1191,9 @@ expression MultirationalMap := Phi -> (
 );
 
 net MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else ?Phi;
+texMath MultirationalMap := texMath @@ net;
 
+MultirationalMap#{WebApp,AfterPrint} = MultirationalMap#{WebApp,AfterNoPrint} = 
 MultirationalMap#{Standard,AfterPrint} = MultirationalMap#{Standard,AfterNoPrint} = Phi -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
 );
@@ -1062,12 +1209,12 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
     R = first R;
     K := coefficientRing ambient R;
     if K =!= coefficientRing Y then error("expected a multi-projective variety defined over "|toString(K));
-    m := apply(L,f -> f#"dimAmbientSource");
+    m := apply(L,f -> if instance(f#"dimAmbientSource",ZZ) then f#"dimAmbientSource" else if instance(f#"dimAmbientSource",Sequence) then #(f#"dimAmbientSource")-1 else error "internal error encountered");
     if m =!= Y#"dimAmbientSpaces"
     then if # m == 1 
          then error("expected a subvariety of PP^"|toString(first m))
          else error("expected a subvariety of a product of "|toString(# m)|" projective spaces of dimensions "|(toString toSequence m));
-    new MultirationalMap from {
+    Phi := new MultirationalMap from {
         symbol cache => new CacheTable,
         "maps" => L,
         "target" => Y,
@@ -1079,14 +1226,20 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
         "multidegree" => null,
         "baseLocus" => null,
         "inverse" => null
-    }
+    };
+    if instance(Phi#"source",WeightedProjectiveVariety) or instance(Phi#"target",WeightedProjectiveVariety) then Phi = new WeightedRationalMap from Phi;
+    return Phi;
 );
 
 multirationalMap List := L -> (
-    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";
+    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";    
     Y := productVars apply(L,f -> projectiveVariety(target f,Saturate=>false));
     Phi := multirationalMap(L,Y);
     if #L == 1 then (
+        if (map first L).cache#?"toMultirationalMapFromRationalMap" then Phi = (map first L).cache#"toMultirationalMapFromRationalMap" else (
+            Phi.cache#"toRationalMapFromMultirationalMap" = first L;
+            (map first L).cache#"toMultirationalMapFromRationalMap" = Phi;
+        );
         Phi#"isDominant" = (first L)#"isDominant";
         Phi#"isBirational" = (first L)#"isBirational";
         if # (first L)#"projectiveDegrees" > 0 then Phi#"multidegree" = (first L)#"projectiveDegrees";
@@ -1127,7 +1280,10 @@ rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
     error "invalid value for option Dominant";
 );
 
-rationalMap MultirationalMap := o -> Phi -> rationalMap(factor super Phi,Dominant=>o.Dominant);
+rationalMap MultirationalMap := o -> Phi -> (
+    Psi := rationalMap(factor super Phi,Dominant=>o.Dominant);
+    setSource(source Phi,Psi)
+);
 
 multirationalMap RationalMap := phi -> multirationalMap {phi};
 multirationalMap(RationalMap,RationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
@@ -1139,6 +1295,10 @@ toRationalMap = method(TypicalValue => RationalMap);
 toRationalMap (MultirationalMap,Boolean) := (Phi,withInverse) -> (
     if # factor Phi > 1 then error "expected a multi-rational map whose target is embedded in a single projective space"; 
     f := rationalMap(toRingMap(Phi,ring target Phi),Dominant=>"notSimplify");
+    if Phi.cache#?"toRationalMapFromMultirationalMap" then f = Phi.cache#"toRationalMapFromMultirationalMap" else (
+        (map f).cache#"toMultirationalMapFromRationalMap" = Phi;
+        Phi.cache#"toRationalMapFromMultirationalMap" = f;
+    );
     if Phi#"isDominant" =!= null then setKeyValue(f,"isDominant",Phi#"isDominant");
     if Phi#"isBirational" =!= null then setKeyValue(f,"isBirational",Phi#"isBirational");
     if Phi#"multidegree" =!= null then setKeyValue(f,"projectiveDegrees",Phi#"multidegree");
@@ -1156,6 +1316,8 @@ matrix MultirationalMap := o -> Phi -> (
     if # factor Phi > 1 then error "expected a multi-rational map whose target is embedded in a single projective space"; 
     matrix first factor Phi
 );
+
+entries MultirationalMap := Phi -> apply(factor Phi,entries);
 
 multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     if Y === target Phi then return Phi;
@@ -1235,6 +1397,8 @@ coefficientRing MultirationalMap := Phi -> coefficientRing target Phi;
 
 factor MultirationalMap := o -> Phi -> Phi#"maps";
 
+projectionMaps MultirationalMap := (cacheValue "projection maps") (Phi -> apply(projections target Phi,f -> Phi * f));
+
 toRingMap = method();
 toRingMap (MultirationalMap,Ring) := (Phi,R) -> (
     F := factor Phi;
@@ -1251,6 +1415,7 @@ segre MultirationalMap := (cacheValue "compositionWithSegreEmbedding") (Phi -> (
 ));
 
 compose (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
+    if Phi.cache#?("composition",Psi) then return Phi.cache#("composition",Psi);
     if ring ambient target Phi === ring ambient source Psi and target Phi == source Psi then (
         f := toRingMap(Phi,ring source Psi);
         Eta := multirationalMap(apply(factor Psi,g -> rationalMap(compose(f,map g),Dominant=>"notSimplify")),target Psi);
@@ -1258,10 +1423,10 @@ compose (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
         Eta#"source" = source Phi;
         if Phi#"isDominant" === true and Psi#"isDominant" === true then Eta#"isDominant" = true;
         if Phi#"isBirational" === true and Psi#"isBirational" === true then Eta#"isBirational" = true;
-        return Eta;
+        return Phi.cache#("composition",Psi) = Eta;
     );
     try Phi' := check multirationalMap(super Phi,source Psi) else error "multi-rational maps not composable: not able to define a natural map from the target of the first one to the source of the second one";
-    compose(Phi',Psi)
+    Phi.cache#("composition",Psi) = compose(Phi',Psi)
 );
 
 MultirationalMap * MultirationalMap := (Phi,Psi) -> compose(Phi,Psi);
@@ -1278,6 +1443,7 @@ MultirationalMap == MultirationalMap := (Phi,Psi) -> (
     F := factor Phi;
     G := factor Psi;
     assert(#F == #G);
+    if instance(target Phi,WeightedProjectiveVariety) then error "not implemented yet: equality of (multi-)rational maps with target a weighted-projective variety";
     for i to #F-1 do if minors(2,(matrix F_i)||(matrix G_i)) != 0 then return false;
     return true;
 );
@@ -1288,7 +1454,7 @@ MultihomogeneousRationalMap == MultirationalMap := (Phi,Psi) -> multirationalMap
 RationalMap == MultirationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
 
 multirationalMap MultiprojectiveVariety := X -> (
-    I := multirationalMap(apply(multigens ring X,o -> rationalMap(o,Dominant=>"notSimplify")),X);
+    I := multirationalMap(projections X,X);
     if ring source I =!= ring X then error "internal error encountered: bad source found";
     I#"source" = X;
     I#"isDominant" = true;
@@ -1359,6 +1525,13 @@ MultirationalMap MultiprojectiveVariety := (Phi,Z) -> (
     suby' := map(ring ambient target Phi,R,matrix{toList(s + sum n : 0)} | vars ring ambient target Phi);       
     yy := (target Phi)#"multigens";
     I := subx(ideal Z) + sum(s,i -> ideal(suby(matrix{yy_i}) - t_i * subx(F_i)));
+    if instance(target Phi,WeightedProjectiveVariety) then (     
+        d := flatten degrees ring ideal target Phi;
+        y := flatten entries suby(matrix{yy_0});
+        f := flatten entries subx(F_0);
+        if not(# yy == 1 and # F == 1 and # m == 1 and # d == m_0 and # y == m_0 and # f == m_0) then error "internal error encountered";
+        I = subx(ideal Z) + ideal(for i to #d-1 list (y#i - t#0^(d#i) * f#i));
+    );
     Phi.cache#("directImage",Z) = projectiveVariety(suby' ideal selectInSubring(1,gens gb I),MinimalGenerators=>true,Saturate=>false)
 );
 
@@ -1393,6 +1566,20 @@ image (MultirationalMap,String) := (Phi,alg) -> (
     return Phi#"image";
 );
 
+forceImage (MultirationalMap,MultiprojectiveVariety) := (Phi,X) -> (
+    if X === target Phi then (if Phi#"isDominant" === null then Phi#"isDominant" = true; return);
+    if ring ideal X =!= ring ideal target Phi then error "expected a subvariety of the target of the map";
+    if Phi#"image" =!= null then error "not permitted to reassign image of rational map";
+    if # shape X > 1 then error "not implemented yet: forceImage for rational maps with target a multi-projective variety";
+    f := toRationalMap Phi;
+    assert(multirationalMap f === Phi);
+    forceImage(f,sub(ideal X,target f));
+    multirationalMap f;
+    assert(Phi#"image" =!= null and Phi#"image" == X);
+    Phi#"image" = X;
+);
+forceImage (MultirationalMap,ZZ) := (Phi,d) -> forceImage(Phi,image(Phi,d));
+
 inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
     if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the target of the map";
@@ -1400,8 +1587,10 @@ inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     F := apply(factor Phi,f -> ideal matrix f);
     g := toRingMap(Phi,ring target Phi);
     I := g sub(ideal Z,ring target Phi);
+    K := coefficientRing Phi;
+    if K === ZZ/(char K) then F = apply(F,f -> ideal sum(for i to numgens f -1 list random K, f_*, (u,v) -> u*v));
     for f in F do I = saturate(I,f);
-    Phi.cache#("inverseImage",Z) = projectiveVariety trim lift(I,ring ambient source Phi)
+    Phi.cache#("inverseImage",Z) = makeSubvariety multisaturate I
 );
 
 MultirationalMap ^* := (Phi) -> MultiprojectiveVariety := (Z) -> inverseImageViaMultirationalMapWeak(Phi,Z);
@@ -1418,10 +1607,10 @@ MultirationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
 );
 
 MultirationalMap ^** MultiprojectiveVariety := (Phi,Z) -> (
-    if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient of the target of the map";
+    if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the target of the map";
     -- if not isSubset(Z,target Phi) then error "expected a subvariety of the target of the map";
-    <<"--warning: the code for ^** must be improved, use instead the method ^*"<<endl;
-    projectiveVariety trim lift((segre Phi)^** ((segre target Phi) ideal Z),ring ambient source Phi)
+    -- <<"--warning: the code for ^** must be improved, use instead the method ^*"<<endl;
+    makeSubvariety multisaturate ((segre Phi)^** ((segre target Phi) ideal Z))
 );
 
 inverseImageWeakInt (MutableHashTable,EmbeddedProjectiveVariety) := (Phi,X) -> (
@@ -1497,6 +1686,7 @@ graphViaKoszul = Phi -> (
 
 graph MultirationalMap := o -> Phi -> (
     if Phi#"graph" =!= null then return Phi#"graph";
+    if instance(Phi,WeightedRationalMap) then error "not implemented yet: graph of a weighted-rational map";
     local G;
     if o.BlowUpStrategy === "Eliminate" then G = graphViaElim(Phi) else (
         if o.BlowUpStrategy === "Syzygies" or o.BlowUpStrategy === "Saturate" then G = graphViaSyzygies(Phi) else (
@@ -1605,25 +1795,25 @@ projectiveDegrees MultirationalMap := o -> Phi -> (
     if o.NumDegrees < 0 then return {};
     r := dim source Phi;
     ll := {(r - min(r,o.NumDegrees))..r};
-    certificate := "MathMode: output certified!"|newline;
-    if Phi#"multidegree" =!= null then (if o.MathMode and o.Verbose then <<certificate; return (Phi#"multidegree")_ll);
-    if o.MathMode or # shape source Phi > 1 or # shape target Phi > 1 then (
+    certificate := "Certify: output certified!"|newline;
+    if Phi#"multidegree" =!= null then (if o.Certify and o.Verbose then <<certificate; return (Phi#"multidegree")_ll);
+    if o.Certify or # shape source Phi > 1 or # shape target Phi > 1 then (
         graph(Phi,BlowUpStrategy=>o.BlowUpStrategy);
         d := multidegree Phi;
-        if o.MathMode and o.Verbose then <<certificate;
+        if o.Certify and o.Verbose then <<certificate;
         return d_ll;
-    ) else return projectiveDegrees(toRationalMap Phi,MathMode=>o.MathMode,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+    ) else return projectiveDegrees(toRationalMap Phi,Certify=>o.Certify,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 );
 
 degreeMap MultirationalMap := o -> Phi -> (
-    certificate := "MathMode: output certified!"|newline;
-    if o.MathMode or Phi#"isBirational" === true or (Phi#"multidegree" =!= null and Phi#"image" =!= null) then (
+    certificate := "Certify: output certified!"|newline;
+    if o.Certify or Phi#"isBirational" === true or (Phi#"multidegree" =!= null and Phi#"image" =!= null) then (
         -- this ignores the option BlowUpStrategy
         d := degree Phi;
-        if o.MathMode and o.Verbose then <<certificate; 
+        if o.Certify and o.Verbose then <<certificate; 
         return d;
     );
-    if # shape target Phi == 1 then return degreeMap(toRationalMap Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+    if # shape target Phi == 1 then return degreeMap(toRationalMap Phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
     return degree(Phi,Strategy=>"random point");
 );
 
@@ -1731,6 +1921,17 @@ inverse2 MultirationalMap := Phi -> inverse2(Phi,Verify=>true);
 inverse2 (MultihomogeneousRationalMap,Option) := (Phi,opt) -> inverse2(multirationalMap {Phi},opt);
 inverse2 MultihomogeneousRationalMap := Phi -> inverse2(Phi,Verify=>true);
 
+forceInverseMap (MultirationalMap,MultirationalMap) := (Phi,Psi) -> ( -- to be improved
+    if Phi#"inverse" =!= null or Psi#"inverse" =!= null then error "not permitted to reassign inverse rational map";
+    if source Phi =!= target Psi or target Phi =!= source Psi then error "incompatible target and source";
+    Phi#"isBirational" = true;
+    Phi#"isDominant" = true;
+    Psi#"isBirational" = true;
+    Psi#"isDominant" = true;
+    Phi#"inverse" = Psi;
+    Psi#"inverse" = Phi;
+);
+
 isIsomorphism MultirationalMap := Phi -> (
     if dim source Phi != dim target Phi or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
     if not isMorphism Phi then return false;
@@ -1797,9 +1998,7 @@ MultirationalMap || MultirationalMap := (Phi,Psi) -> (
     pX := multirationalMap(take(projections XxY,r),X);
     pY := multirationalMap(take(projections XxY,-s),Y);
     Eta := (pX * Phi) | (pY * Psi);
-    if ring source Eta =!= ring XxY then error "internal error encountered";
-    Eta#"source" = XxY;
-    return Eta;
+    return setSource(XxY,Eta);
 );
 
 RationalMap || MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
@@ -1819,9 +2018,11 @@ describe MultirationalMap := Phi -> (
     descr=descr|"target variety: "|(? target Phi)|newline;
     descr=descr|"base locus: "|(? baseLocus Phi)|newline;
     if image Phi == target Phi then descr=descr|"dominance: "|toString(Phi#"isDominant")|newline else descr=descr|"dominance: "|toString(Phi#"isDominant")|newline|"image: "|(? image Phi)|newline;
-    descr = descr|"multidegree: "|toString(multidegree Phi)|newline;
-    descr=descr|"degree: "|toString(degree Phi)|newline;
-    for i to n-1 do descr=descr|"degree sequence (map "|toString(i+1)|"/"|toString(n)|"): "|toString(degreeSequence (factor Phi)_i)|newline;
+    if not instance(Phi,WeightedRationalMap) then (
+        descr = descr|"multidegree: "|toString(multidegree Phi)|newline;
+        descr=descr|"degree: "|toString(degree Phi)|newline;
+        for i to n-1 do descr=descr|"degree sequence (map "|toString(i+1)|"/"|toString(n)|"): "|toString(degreeSequence (factor Phi)_i)|newline;
+    );
     descr=descr|"coefficient ring: "|toString(coefficientRing Phi);
     net expression descr
 );
@@ -1874,10 +2075,10 @@ show MultirationalMap := Phi -> (
 show RationalMap := Phi -> show multirationalMap {Phi};
 show MultihomogeneousRationalMap := Phi -> show multirationalMap {Phi};
 
-rationalMap MultiprojectiveVariety := o -> X -> multirationalMap rationalMap(idealOfSubvariety X,Dominant=>o.Dominant);
-rationalMap (MultiprojectiveVariety,List) := o -> (X,l) -> multirationalMap rationalMap(idealOfSubvariety X,l,Dominant=>o.Dominant);
-rationalMap (MultiprojectiveVariety,ZZ) := o -> (X,a) -> multirationalMap rationalMap(idealOfSubvariety X,a,Dominant=>o.Dominant);
-rationalMap (MultiprojectiveVariety,ZZ,ZZ) := o -> (X,a,b) -> multirationalMap rationalMap(idealOfSubvariety X,a,b,Dominant=>o.Dominant);
+rationalMap MultiprojectiveVariety := o -> X -> setSource(ambientVariety X,multirationalMap rationalMap(idealOfSubvariety X,Dominant=>o.Dominant));
+rationalMap (MultiprojectiveVariety,List) := o -> (X,l) -> setSource(ambientVariety X,multirationalMap rationalMap(idealOfSubvariety X,l,Dominant=>o.Dominant));
+rationalMap (MultiprojectiveVariety,ZZ) := o -> (X,a) -> setSource(ambientVariety X,multirationalMap rationalMap(idealOfSubvariety X,a,Dominant=>o.Dominant));
+rationalMap (MultiprojectiveVariety,ZZ,ZZ) := o -> (X,a,b) -> setSource(ambientVariety X,multirationalMap rationalMap(idealOfSubvariety X,a,b,Dominant=>o.Dominant));
 
 PairOfVarieties = new Type of List;
 MultiprojectiveVariety _ MultiprojectiveVariety := (X,Y) -> (
@@ -1885,12 +2086,12 @@ MultiprojectiveVariety _ MultiprojectiveVariety := (X,Y) -> (
     new PairOfVarieties from {X,Y}
 );
 ideal PairOfVarieties := Z -> trim sub(ideal Z#0,ring Z#1);
-rationalMap PairOfVarieties := o -> X -> multirationalMap rationalMap(ideal X,Dominant=>o.Dominant);
-rationalMap (PairOfVarieties,List) := o -> (X,l) -> multirationalMap rationalMap(ideal X,l,Dominant=>o.Dominant);
-rationalMap (PairOfVarieties,ZZ) := o -> (X,a) -> multirationalMap rationalMap(ideal X,a,Dominant=>o.Dominant);
-rationalMap (PairOfVarieties,ZZ,ZZ) := o -> (X,a,b) -> multirationalMap rationalMap(saturate (ideal X)^b,a,Dominant=>o.Dominant);
+rationalMap PairOfVarieties := o -> X -> setSource(X#1,multirationalMap rationalMap(ideal X,Dominant=>o.Dominant));
+rationalMap (PairOfVarieties,List) := o -> (X,l) -> setSource(X#1,multirationalMap rationalMap(ideal X,l,Dominant=>o.Dominant));
+rationalMap (PairOfVarieties,ZZ) := o -> (X,a) -> setSource(X#1,multirationalMap rationalMap(ideal X,a,Dominant=>o.Dominant));
+rationalMap (PairOfVarieties,ZZ,ZZ) := o -> (X,a,b) -> setSource(X#1,multirationalMap rationalMap(saturate (ideal X)^b,a,Dominant=>o.Dominant));
 
-clean MultirationalMap := Phi -> multirationalMap(apply(factor Phi,clean),target Phi);
+clean MultirationalMap := Phi -> setSource(source Phi,multirationalMap(apply(factor Phi,clean),target Phi));
 clean RationalMap := phi -> rationalMap(map(source phi,target phi,matrix phi),Dominant=>"notSimplify");
 clean MultihomogeneousRationalMap := phi -> rationalMap(map(source phi,target phi,matrix phi),Dominant=>"notSimplify");
 
@@ -1900,9 +2101,7 @@ MultirationalMap ** Ring := (Phi,K) -> (
    X := (source Phi) ** K;
    Y := (target Phi) ** K;
    F := apply(factor Phi,projections Y,(f,p) -> rationalMap(map(ring X,target p,sub(lift(matrix f,ring ambient source Phi),vars ring ambient X)),Dominant=>"notSimplify"));
-   Psi := multirationalMap(F,Y);
-   if ring source Psi =!= ring X then error "internal error encountered";
-   Psi#"source" = X;
+   Psi := setSource(X,multirationalMap(F,Y));
    Psi#"isDominant" = Phi#"isDominant";
    Psi#"isBirational" = Phi#"isBirational";
    return Psi;
@@ -1912,18 +2111,24 @@ MultirationalMap << MultiprojectiveVariety := (Phi,Y) -> (
     if coefficientRing Phi =!= coefficientRing Y then error "different coefficient rings encountered";
     if not (# shape target Phi == # shape Y and all(shape target Phi,shape Y,(i,j) -> i <= j)) then error "shapes not compatible";
     L := apply(apply(factor Phi,matrix),shape Y,(M,d) -> M|matrix{toList(d+1-(numColumns M) : 0_(ring M))});
-    check rationalMap(L,Y)
+    check setSource(source Phi,rationalMap(L,Y))
 );
 MultiprojectiveVariety << MultiprojectiveVariety := (X,Y) -> (1_X) << Y;
 
 rationalMap (MultiprojectiveVariety,Tally) := o -> (X,E) -> (
     D := applyPairs(E,(k,v) -> if instance(k,MultiprojectiveVariety) then (idealOfSubvariety k,v) else (k,v));
     f := multirationalMap rationalMap(ring X,D,Dominant=>o.Dominant);
-    if ring source f =!= ring X then error "internal error encountered: bad source found";
-    f#"source" = X;
-    return f;
+    return setSource(X,f);
 );
 
+rationalMap (MultiprojectiveVariety,Tally,List) := o -> (X,D,d) -> (
+    D = applyPairs(D,(F,m) -> if not isSubset(F,X) then (F*X,m) else (F,m));
+    Y := ⋃ for p in pairs D list (last p) * (first p); 
+    V := X * random(d,Y);
+    W := V\Y;
+    rationalMap(W_X,d,Dominant=>o.Dominant)
+);
+rationalMap (EmbeddedProjectiveVariety,Tally,ZZ) := o -> (X,D,d) -> rationalMap(X,D,{d},Dominant=>o.Dominant);
 
 GrassmannianVariety = new Type of EmbeddedProjectiveVariety;
 
@@ -2049,6 +2254,189 @@ completeFlag GrassmannianVariety := o -> G -> (
     return V;
 );
 
+QuadricFibration = new Type of MultirationalMap;
+globalAssignment QuadricFibration;
+QuadricFibration.synonym = "quadric fibration";
+quadricFibration = method(TypicalValue => QuadricFibration, Options => {Verify => true});
+quadricFibration MultirationalMap := o -> h -> (
+    if o.Verify then (
+        if not(instance(target h,EmbeddedProjectiveVariety) and codim target h == 0) then error "expected a rational map to a projective space";
+        F := h^* point target h;
+        if degree F != 2 then error "expected a quadric fibration";
+    );
+    new QuadricFibration from h
+);
+discriminant (QuadricFibration,Boolean) := o -> (h,verb) -> (
+    if h.cache#?"discriminantLocusOfQuadricFibration" then return h.cache#"discriminantLocusOfQuadricFibration";
+    K := coefficientRing h;
+    a := local a;
+    n := dim ambient target h;
+    Ka := frac(K[a_0..a_(n-1)]);
+    ha := h ** Ka;
+    pa := projectiveVariety minors(2,(vars ring ambient target ha)||((vars Ka)|1));
+    if verb then <<"-- starting computation of the generic fiber..."<<endl;    
+    F := ha^* pa;
+    if # shape F >= 2 or instance(F,WeightedProjectiveVariety) then F = (segreEmbedding ambient F) F;
+    l := parametrize linearSpan F;
+    G := l^^ F;
+    if not(numgens ideal G == 1 and first degree (ideal G)_0 == 2) then error "expected generic fiber to be a quadric";
+    if verb then <<"-- computation of the generic fiber successfully completed."<<endl;
+    G = (ideal G)_0;
+    D := associatedSymmetricMatrix G;
+    den := lcm apply(flatten entries D,denominator);
+    detD := det sub(den * D,ring den);
+    b := local b;
+    Kab := K[a_0..a_(n-1),b];
+    Y := projectiveVariety sub(homogenize(ideal sub(detD,Kab),b),vars ring ambient target h);
+    if dim Y == 0 then return (h.cache#"discriminantLocusOfQuadricFibration" = Y);
+    if verb then <<"-- verifying the computation of the discriminant locus"<<endl;
+    local Fib;
+    h.cache#"discriminantLocusOfQuadricFibration" = sum select(decompose Y, Z -> (Fib = h^* point Z; assert(degree Fib == 2 and dim Fib == dim source h - dim target h); dim singularLocus Fib >= 0))
+);
+discriminant QuadricFibration := o -> h -> discriminant(h,true);
+associatedSymmetricMatrix = method();
+associatedSymmetricMatrix RingElement := Q -> (
+    if not (isPolynomialRing ring Q and first degree Q == 2 and isHomogeneous Q) then error "expected a quadratic form";
+    x := gens ring Q;
+    M := matrix apply(x,u->apply(x,t-> 2^(-1) * coefficient(u*t,Q)));
+    M = M + 2^(-1) * diagonalMatrix(apply(x,u->coefficient(u^2,Q)));
+    assert((matrix{x} * M * transpose(matrix{x}))_(0,0) == Q);
+    return M
+);
+
+-- Some auxiliary functions for other packages
+internalProjection = method();
+internalProjection EmbeddedProjectiveVariety := (cacheValue "internalProjection") (X -> image rationalMap (point X)_X);
+internalProjection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = internalProjection X; return X);
+externalProjection = method();
+externalProjection EmbeddedProjectiveVariety := (cacheValue "externalProjection") (X -> image rationalMap (point ambient X)_X);
+externalProjection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = externalProjection X; return X);
+nodalProjection = method();
+nodalProjection EmbeddedProjectiveVariety := (cacheValue "nodalProjection") (X -> image rationalMap (point linearSpan(point X + point X))_X);
+nodalProjection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = nodalProjection X; return X);
+hyperplaneSection = method();
+hyperplaneSection EmbeddedProjectiveVariety := (cacheValue "hyperplaneSection") (X -> (parametrize random(1,0_X))^* X);
+hyperplaneSection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = hyperplaneSection X; return X);
+
+setSource = (X,F) -> (
+    if ring source F =!= ring X then error "internal error encountered -- bad source variety";
+    F#"source" = X;
+    F
+);
+-- Hom-sets of rational maps 
+RAT = new Type of HashTable;
+globalAssignment RAT;
+RAT.synonym = "hom-set";
+Hom (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
+    if coefficientRing X =!= coefficientRing Y then error "different coefficient rings encountered";
+    new RAT from {
+        symbol source => X,
+        symbol target => Y
+    }
+);
+Hom (Nothing,MultiprojectiveVariety) := Hom (MultiprojectiveVariety,Nothing) := Hom (Nothing,Nothing) := (X,Y) -> (
+    new RAT from {
+        symbol source => X,
+        symbol target => Y
+    }
+);
+expression RAT := H -> (
+    local X; local Y;
+    if H.source === null 
+    then (X = "*") 
+    else (X = if hasAttribute(H.source,ReverseDictionary) then toString getAttribute(H.source,ReverseDictionary) else toString expression H.source);
+    if H.target === null
+    then (Y = "*")
+    else (Y = if hasAttribute(H.target,ReverseDictionary) then toString getAttribute(H.target,ReverseDictionary) else toString expression H.target);
+    dom := if H.?parent then ",Dominant=>true" else "";
+    expression("Hom("|X|","|Y|dom|")")
+);
+net RAT := H -> (
+    if hasAttribute(H,ReverseDictionary) then return toString getAttribute(H,ReverseDictionary);
+    dom := if H.?parent then "dominant " else "";
+    classORset := if H.source === null or H.target === null then "Class" else "Hom-set"; 
+    net expression(classORset|" of "|dom|"rational maps"|newline|"from "|(if H.source === null then "any variety" else ? H.source)|newline|"to "|(if H.target === null then "any variety" else ? H.target))
+);
+texMath RAT := texMath @@ net;
+RAT#{WebApp,AfterPrint} = RAT#{WebApp,AfterNoPrint} = 
+RAT#{Standard,AfterPrint} = RAT#{Standard,AfterNoPrint} = H -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << expression H << endl;
+);
+toString RAT := H -> "Hom("|(toString H.source)|","|(toString H.target)|")";
+makeMapsRAT := (H,L) -> (
+    sh := if H.target =!= null then shape H.target else null;
+    if #L > 0 and all(L,l -> instance(l,RingElement) or instance(l,ZZ)) then L = {L};
+    local M; local R; local S;
+    for i to #L-1 list (
+        M = L_i;
+        if instance(M,VisibleList) and all(M,j->instance(j,RingElement) or instance(j,ZZ)) then M = matrix{toList M};
+        if not (instance(M,Matrix) and numRows M == 1) then error "expected a list of row matrices or a nested list of lists";
+        if sh =!= null then (if numColumns M != sh_i + 1 then error("expected a list of "|toString(#sh)|" row matrice(s) of length(s) "|toString(apply(sh,i->i+1))));
+        M = toMap M;
+        R = if H.source =!= null then ring H.source else target M;
+        S = if H.target =!= null then target (projections ambient H.target)_i else source M;
+        map(R,S,toMatrix M)
+    )
+);
+RAT List := (H,L) -> (
+    if #L==0 then (if H.source =!= null and (H.target === null or dim ambient H.target == -1) then return rationalMap((0_(H.source))_(H.source),toList(# shape H.source : -1)) else error "expected a nonempty list");
+    if H.target =!= null and # shape H.target == 1 and #L != 1 then ( 
+        n := numgens ring ambient H.target;
+        if #L == n and all(L,l -> instance(l,RingElement) or instance(l,ZZ)) 
+        then return H({L})
+        else error("expected a list of "|toString(n)|" polynomial(s)");
+    );
+    if H.target =!= null then (if #L != # shape H.target then error("expected a list of length "|toString(# shape H.target)));
+    f := rationalMap makeMapsRAT(H,L);
+    if H.target =!= null then f = rationalMap(f,H.target);
+    if H.source =!= null then f = setSource(H.source,f);
+    return f;
+);
+RAT Tally := (H,D) -> (
+    if H.source === null then error "hom-set of rational maps has not fixed source";
+    f := rationalMap(H.source,D);
+    if H.target === null then f else rationalMap(f,H.target)
+);
+RAT Sequence := (H,S) -> (
+    if #S == 0 then error "expected a nonempty sequence";
+    if H.source === null then error "hom-set of rational maps has not fixed source";
+    local f;
+    if #S == 2 and instance(S_0,Tally) and (instance(S_1,List) or instance(S_1,ZZ)) then (
+        f = rationalMap(H.source,S_0,S_1);
+        if H.target === null then return f else return rationalMap(f,H.target);
+    );
+    if #S == 2 and instance(S_0,MultiprojectiveVariety) and (instance(S_1,List) or instance(S_1,ZZ)) then (
+        f = rationalMap((S_0)_(H.source),S_1);
+        if H.target === null then return f else return rationalMap(f,H.target);
+    );
+    if #S == 3 and instance(S_0,MultiprojectiveVariety) and instance(S_1,ZZ) and instance(S_2,ZZ) then (
+        f = rationalMap((S_0)_(H.source),S_1,S_2);
+        if H.target === null then return f else return rationalMap(f,H.target);
+    );
+    error "not valid input";
+);
+RAT MultiprojectiveVariety := (H,Z) -> (
+    if H.source === null then error "hom-set of rational maps has not fixed source";
+    f := rationalMap(Z_(H.source));
+    if H.target === null then f else rationalMap(f,H.target)
+);
+member (MultirationalMap,RAT) := (f,H) -> (if H.source =!= null then source f === H.source else true) and (if H.target =!= null then target f === H.target else true);
+DomRAT = new Type of RAT;
+globalAssignment DomRAT;
+DomRAT.synonym = "hom-set";
+Hom (MultiprojectiveVariety,Option) := Hom (Nothing,Option) := (X,opt) -> (
+    if first toList opt =!= Dominant then error "Dominant is the only available option for Hom(MultiprojectiveVariety)";
+    if not instance(last opt,Boolean) then error "expected true or false";    
+    H := Hom(X,);
+    if not (last opt) then return H;
+    new DomRAT from {
+        symbol source => X,
+        symbol target => null,
+        symbol parent => H
+    }
+);
+DomRAT Thing := (H,T) -> rationalMap(H.parent T,Dominant=>true);
+member (MultirationalMap,DomRAT) := (f,H) -> member(f,H.parent) and image f == target f;
 
 beginDocumentation() 
 
@@ -2073,7 +2461,21 @@ EXAMPLE {
 "class X",
 "Y = X ** X;",
 "class Y"},
-SeeAlso => {MultiprojectiveVariety,(ambient,MultiprojectiveVariety),(shape,MultiprojectiveVariety)}}
+SeeAlso => {MultiprojectiveVariety,WeightedProjectiveVariety,(ambient,MultiprojectiveVariety),(shape,MultiprojectiveVariety)}}
+
+document {Key => {WeightedProjectiveVariety}, 
+Headline => "the class of all weighted projective varieties", 
+PARA {"Weighted projective varieties can be constructed using the function ",TO projectiveVariety,", just like multi- and embedded projective varieties."},
+EXAMPLE {
+"R = QQ[u,v,w,x,y,z,Degrees=>{{2},{1},{3},{1},{7},{5}}]/ideal((3/2)*u+6*v^2+v*x+4*x^2,(3/2)*u*v+(4/5)*v^3+w+(3/2)*u*x+(3/7)*v^2*x+3*v*x^2+(5/6)*x^3);",
+"projectiveVariety R",
+"describe oo"},
+PARA {"Here is a shortcut to construct weighted projective spaces:"},
+EXAMPLE {
+"K = ZZ/65521;",
+"PP_K(2,1,3,1,7,5)"},
+Caveat => {"This class is currently experimental and under development."},
+SeeAlso => {WeightedRationalMap,MultiprojectiveVariety,EmbeddedProjectiveVariety}}
 
 document {Key => {Saturate, [projectiveVariety,Saturate]},
 Headline => "whether to compute the multi-saturation of the ideal (intended for internal use only)",
@@ -2104,11 +2506,11 @@ EXAMPLE {
 "describe X -- long description"},
 PARA{"Below, we calculate the image of ",TEX///$X$///," via the Segre embedding of ",TEX///$\mathbb{P}^{2}\times\mathbb{P}^{3}\times\mathbb{P}^{1}$///," in ",TEX///$\mathbb{P}^{23}$///,"; thus we get a projective variety isomorphic to ",TEX///$X$///," and embedded in a single projective space ",TEX///$\mathbb{P}^{19}=<X>\subset\mathbb{P}^{23}$///,"."},
 EXAMPLE {
-"s = segre X;",
-"X' = projectiveVariety image s",
+"s = segreEmbedding X;",
+"X' = image s",
 "(dim X', codim X', degree X')",
 "? X'"},
-SeeAlso => {(segre,MultiprojectiveVariety),(dim,MultiprojectiveVariety),(codim,MultiprojectiveVariety),(degree,MultiprojectiveVariety),(singularLocus,MultiprojectiveVariety),(point,MultiprojectiveVariety)}} 
+SeeAlso => {(segreEmbedding,MultiprojectiveVariety),(dim,MultiprojectiveVariety),(codim,MultiprojectiveVariety),(degree,MultiprojectiveVariety),(singularLocus,MultiprojectiveVariety),(point,MultiprojectiveVariety)}} 
 
 document {Key => {(projectiveVariety,List,Ring),(projectiveVariety,ZZ,Ring),symbol PP}, 
 Headline => "product of projective spaces", 
@@ -2177,14 +2579,32 @@ Usage => "degree X",
 Inputs => {"X" => MultiprojectiveVariety}, 
 Outputs => { ZZ => {"the degree of the image of ", TEX///$X$///," via the Segre embedding of the ",TO2{(ambient,MultiprojectiveVariety),"ambient"}," of ",TEX///$X$///}}, 
 EXAMPLE {"X = PP_QQ^({2,1},{1,3});","degree X"}, 
-SeeAlso => {(multidegree,MultiprojectiveVariety),(segre,MultiprojectiveVariety)}} 
+SeeAlso => {(multidegree,MultiprojectiveVariety),(segreEmbedding,MultiprojectiveVariety)}} 
+
+document {Key => {(hilbertPolynomial,EmbeddedProjectiveVariety)}, 
+Headline => "the Hilbert polynomial of the variety", 
+Usage => "hilbertPolynomial X", 
+Inputs => {"X" => EmbeddedProjectiveVariety}, 
+Outputs => {ProjectiveHilbertPolynomial => {"the Hilbert polynomial of ",TT"X"," (calculated as ",TO2{(hilbertPolynomial,Ideal),"hilbertPolynomial ideal"}," ",TT"X",")"}},
+EXAMPLE {"X = PP_QQ^(2,3);","hilbertPolynomial X", "hilbertPolynomial(X,Projective=>false)"}, 
+SeeAlso => {(hilbertPolynomial,Ideal)}} 
 
 document {Key => {projections,(projections,MultiprojectiveVariety)}, 
 Headline => "projections of a multi-projective variety", 
 Usage => "projections X", 
 Inputs => {"X" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
 Outputs => {{"the list of the projections ", TEX///$X\to \mathbb{P}^{k_i}$///,", for ",TEX///$i=1,\ldots,n$///}}, 
-EXAMPLE {"X = projectiveVariety(ZZ/101[x_0..x_3]) ** projectiveVariety(ZZ/101[y_0..y_2]);","projections X"}} 
+PARA {"This function is intended for internal use. Use the ",TO projectionMaps," function instead."},
+EXAMPLE {"X = projectiveVariety(ZZ/101[x_0..x_3]) ** projectiveVariety(ZZ/101[y_0..y_2]);","projections X"},
+SeeAlso => {projectionMaps}}
+
+document {Key => {projectionMaps,(projectionMaps,MultiprojectiveVariety)}, 
+Headline => "projections of a multi-projective variety", 
+Usage => "projectionMaps X", 
+Inputs => {"X" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
+Outputs => {{"the list of the projections ", TEX///$X\to \mathbb{P}^{k_i}$///,", for ",TEX///$i=1,\ldots,n$///}}, 
+EXAMPLE {"X = random({{1,1},{1,1}},0_(PP_(ZZ/101)^{3,1}));","p = projectionMaps X;","p_0","p_1"},
+SeeAlso => {projections}}
 
 document {Key => {(ambient,MultiprojectiveVariety)}, 
 Headline => "the ambient multi-projective space of the variety", 
@@ -2206,7 +2626,16 @@ Headline => "the Segre embedding of the variety",
 Usage => "segre X", 
 Inputs => {"X" => MultiprojectiveVariety}, 
 Outputs => {{"the map returned by ",TO segre," ",TO2{(ring,MultiprojectiveVariety),"ring"}," ", TEX///$X$///}}, 
+PARA {"This function is intended for internal use. Use the ",TO segreEmbedding," function instead."},
 EXAMPLE {"X = PP_(ZZ/3331)^({2,1,1},{2,1,3});","segre X"}, 
+SeeAlso => {(segreEmbedding,MultiprojectiveVariety),segre}}
+
+document {Key => {segreEmbedding,(segreEmbedding,MultiprojectiveVariety)}, 
+Headline => "the Segre embedding of the variety", 
+Usage => "segreEmbedding X", 
+Inputs => {"X" => MultiprojectiveVariety}, 
+Outputs => {MultirationalMap => {"the Segre embedding of ",TT "X"," (calculated through ",TO segre," ",TO2{(ring,MultiprojectiveVariety),"ring"}," ", TEX///$X$///,")"}}, 
+EXAMPLE {"X = PP_(ZZ/3331)^({2,1,1},{2,1,3});","segreEmbedding X"}, 
 SeeAlso => {segre,(segre,MultirationalMap)}}
 
 document {Key => {(point,MultiprojectiveVariety),(symbol |-, MultiprojectiveVariety)}, 
@@ -2263,7 +2692,8 @@ MultiprojectiveVariety => "X",
 MultiprojectiveVariety => "Y"}, 
 Outputs => { 
 MultiprojectiveVariety => {"the product of ",TT"X"," and ",TT"Y"}},
-EXAMPLE {"X = projectiveVariety ideal(random({2,1},ring PP_(ZZ/101)^{2,1}),random({1,1},ring PP^{2,1}));", 
+EXAMPLE {"PP(ZZ/101);",
+"X = projectiveVariety ideal(random({2,1},ring PP^{2,1}),random({1,1},ring PP^{2,1}));", 
 "Y = projectiveVariety ideal random({1,1,1},ring PP^{1,2,1});",
 "X ** Y"},
 SeeAlso => {fiberProduct,(symbol ^,MultiprojectiveVariety,ZZ),(∏,List)}}
@@ -2433,7 +2863,7 @@ euler(X,Verify=>b)",
 Inputs => { 
 MultiprojectiveVariety => "X" => {"which is assumed to be smooth, and ",TT"b"," is a ",TO2{Boolean,"boolean value"},", that is, ",TT"true"," or ",TT"false"," (the default value is ",TT"true",")"}}, 
 Outputs => { 
-ZZ => {"the topological Euler characteristics of the variety ",TT"X",", generally calculated as ",TO EulerCharacteristic,TT"(ideal X,MathMode=>b)"}},
+ZZ => {"the topological Euler characteristics of the variety ",TT"X",", generally calculated as ",TO EulerCharacteristic,TT"(ideal X,Certify=>b)"}},
 EXAMPLE {
 "X = PP_QQ^(2,2); -- Veronese surface",
 "euler X",
@@ -2446,6 +2876,23 @@ Headline => "the class of all multi-rational maps",
 PARA {"A ",EM"multi-rational map"," is a rational map between ",TO2{MultiprojectiveVariety,"multi-projective varieties"},", ",TEX///$$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} .$$///,"Thus, it can be represented by an ",TO2{List,"ordered list"}," of ",TO2{RationalMap,"rational maps"},TEX///$$\Phi_i = (\Phi:X\dashrightarrow Y)\circ(pr_i:Y\to Y_i\subseteq\mathbb{P}^{s_i}) ,$$///,"for ",TEX///$i=1,\ldots,m$///,". The maps ",TEX///$\Phi_i:X\dashrightarrow Y_i\subseteq\mathbb{P}^{s_i}$///,", since the target ",TEX///$Y_i$///," is a standard projective variety, are implemented with the class ",TO RationalMap," (more properly, when ",TEX///$n>1$///," the class of such maps is called ",TT "MultihomogeneousRationalMap","). Recall that the main constructor for the class ",TO RationalMap," (as well as for the class ", TT"MultihomogeneousRationalMap",") is the method ",TO rationalMap,"."},
 PARA {"The constructor for the class of multi-rational maps is ",TO multirationalMap,", which can often be abbreviated to ",TO2{(rationalMap,List,MultiprojectiveVariety),"rationalMap"}," (see also ",TO "shortcuts","). It takes as input the list of maps ",TEX///$\{\Phi_1:X\dashrightarrow Y_1,\ldots,\Phi_m:X\dashrightarrow Y_m\}$///,", together with the variety ",TEX///$Y$///,", and returns the map ",TEX///$\Phi:X\dashrightarrow Y$///,"."},
 Subnodes => {TO multirationalMap,TO (rationalMap,List,MultiprojectiveVariety)}}
+
+document {Key => {WeightedRationalMap}, 
+Headline => "the class of all weighted-rational maps", 
+PARA {"A ",EM"weighted-rational map"," is a rational map between ",TO2{WeightedProjectiveVariety,"weighted-projective varieties"},". It can be defined using the functions ",TO rationalMap," and ",TO multirationalMap,", just like (multi-)rational maps."},
+EXAMPLE {
+"K = ZZ/65521;",
+"X = PP_K(1,1,3);", 
+"Y = PP_K(4,5);",
+"f = rationalMap(ring X,ring Y,{random(4,ring X),random(5,ring X)})",
+"F = multirationalMap f;"},
+PARA {"Note that ",TT "rationalMap(RingMap)"," and ",TT "rationalMap(Matrix)"," return a raw type of rational map (just like it happens with the multi-rational maps). You can always apply multirationalMap to the output and convert to the raw type using ",TO toRationalMap,". Alternatively, you can proceed as follows:"}, 
+EXAMPLE {
+"M = matrix f",
+"rationalMap {M}", 
+"rationalMap {f}"},
+Caveat => {"This class is currently experimental and under development."},
+SeeAlso => {WeightedProjectiveVariety,MultirationalMap}}
 
 document { 
 Key => {multirationalMap, (multirationalMap,List,MultiprojectiveVariety), (multirationalMap,List)}, 
@@ -2470,7 +2917,7 @@ EXAMPLE {
 "Z = (image multirationalMap {f,g}) ** target h;",
 "Psi = multirationalMap({f,g,h},Z)",
 "assert(image Psi == image Phi)"},
-SeeAlso => {(rationalMap,List,MultiprojectiveVariety),(graph,MultirationalMap),(image,MultirationalMap),(baseLocus,MultirationalMap),(inverse,MultirationalMap),"shortcuts",rationalMap},
+SeeAlso => {(rationalMap,List,MultiprojectiveVariety),(graph,MultirationalMap),(image,MultirationalMap),(baseLocus,MultirationalMap),(inverse,MultirationalMap),"shortcuts",rationalMap,(Hom,MultiprojectiveVariety,MultiprojectiveVariety)},
 Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,MultirationalMap),"."}}
 
 document { 
@@ -2481,7 +2928,7 @@ rationalMap(Phi,Y)",
 Inputs => { "Phi" => {"whose elements are either ",TO2{RationalMap,"rational maps"}," or representatives of them (e.g., ",TO2{Matrix,"row matrices"}," or ",TO2{RingMap,"ring maps"},")"},
 "Y" => MultiprojectiveVariety => {"optional"}},
 Outputs => {MultirationalMap => {"the same as ",TO "multirationalMap",TT"(Phi,Y)",", or ",TO "multirationalMap",TT" Phi"," (if ",TT"Y"," is not specified)"}},
-SeeAlso => {multirationalMap,rationalMap}}
+SeeAlso => {multirationalMap,rationalMap,(Hom,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document { 
 Key => {(check,MultirationalMap)}, 
@@ -2529,7 +2976,7 @@ MultirationalMap => "Phi"},
 Outputs => { 
 MultiprojectiveVariety => {"the target of ",TT"Phi"}},
 PARA{"Note that, instead, the ",TO2{(target,RationalMap),"target"}," of a standard ",TO2{RationalMap,"rational map"}," is the coordinate ring of the target variety (this is done mainly for efficiency reasons)."},
-SeeAlso => {(source,MultirationalMap),(factor,MultirationalMap)}}
+SeeAlso => {(source,MultirationalMap),(entries,MultirationalMap)}}
 
 document { 
 Key => {(source,MultirationalMap)}, 
@@ -2540,7 +2987,17 @@ MultirationalMap => "Phi"},
 Outputs => { 
 MultiprojectiveVariety => {"the source of ",TT"Phi"}},
 PARA{"Note that, instead, the ",TO2{(source,RationalMap),"source"}," of a standard ",TO2{RationalMap,"rational map"}," is the coordinate ring of the source variety (this is done mainly for efficiency reasons)."},
-SeeAlso => {(target,MultirationalMap),(factor,MultirationalMap)}}
+SeeAlso => {(target,MultirationalMap),(entries,MultirationalMap)}}
+
+document {
+Key => {(entries,MultirationalMap)},
+Headline => "list the defining polynomials of a rational map", 
+Usage => "entries Phi", 
+Inputs => {"Phi" => MultirationalMap},
+Outputs => {List => {"a doubly nested list of the defining polynomials of the map ",TT "Phi"}},
+EXAMPLE {"Phi = inverse first graph segreEmbedding PP_(ZZ/13)^{1,2,1};",
+"entries Phi"},
+SeeAlso => {(source,MultirationalMap),(target,MultirationalMap),(entries,RationalMap)}}
 
 document { 
 Key => {(factor,MultirationalMap)}, 
@@ -2548,13 +3005,23 @@ Headline => "the list of rational maps defining a multi-rational map",
 Usage => "factor Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
 Outputs => {{"the ",TO2{List,"list"}," of ",TO2{RationalMap,"rational maps"}," defining ",TT"Phi"}},
+PARA {"This function is intended for internal use. Use the ",TO2{(projectionMaps,MultirationalMap),"projectionMaps"}," function instead."},
 EXAMPLE lines ///ZZ/33331[t_0..t_2,u_0..u_1,Degrees=>{3:{1,0},2:{0,1}}];
 f0 = rationalMap {t_0,t_1,t_2}
 f1 = rationalMap {u_0,u_1}
 f2 = rationalMap {t_0*u_1,t_1*u_0}
 Phi = rationalMap {f0,f1,f2};
 assert(factor Phi === {f0,f1,f2})///,
-SeeAlso => {(target,MultirationalMap),(source,MultirationalMap)}}
+SeeAlso => {(target,MultirationalMap),(source,MultirationalMap),(projectionMaps,MultirationalMap)}}
+
+document { 
+Key => {(projectionMaps,MultirationalMap)}, 
+Headline => "get the compositions of the multi-rational map with the projections of the target", 
+Usage => "projectionMaps Phi", 
+Inputs => {MultirationalMap => "Phi"}, 
+Outputs => {{"the ",TO2{List,"list"}," of ",TO2{MultirationalMap,"rational maps"}," obtained by composing the map with the ",TO2{projectionMaps,"projections"}," of the target"}},
+EXAMPLE {"Phi = inverse first graph rationalMap PP_(ZZ/33331)^(1,4);", "p = projectionMaps Phi;", "p_0", "p_1"},
+SeeAlso => {(factor,MultirationalMap)}}
 
 document { 
 Key => {(coefficientRing,MultirationalMap)}, 
@@ -2623,7 +3090,7 @@ document {Key => {(segre,MultirationalMap)},
 Headline => "the composition of a multi-rational map with the Segre embedding of the target", 
 Usage => "segre Phi", 
 Inputs => {"Phi" => MultirationalMap}, 
-Outputs => {RationalMap => {"the composition of the multi-rational map ",TT"Phi"," with the ",TO2{(segre,MultiprojectiveVariety),"Segre embedding"}," of the ",TO2{(target,MultirationalMap),"target"}," of ",TT"Phi"}}, 
+Outputs => {RationalMap => {"the composition of the multi-rational map ",TT"Phi"," with the ",TO2{(segreEmbedding,MultiprojectiveVariety),"Segre embedding"}," of the ",TO2{(target,MultirationalMap),"target"}," of ",TT"Phi"}}, 
 EXAMPLE {"ZZ/65521[x_0..x_4];",
 "f = rationalMap({x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2},Dominant=>true);",
 "g = rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3};",
@@ -2631,7 +3098,7 @@ EXAMPLE {"ZZ/65521[x_0..x_4];",
 "Phi = rationalMap {f,g,h};",
 "time segre Phi;",
 "describe segre Phi"}, 
-SeeAlso => {(segre,MultiprojectiveVariety)}}
+SeeAlso => {(segreEmbedding,MultiprojectiveVariety)}}
 
 document {Key => {(parametrize,MultiprojectiveVariety)}, 
 Headline => "try to get a parametrization of a multi-projective variety", 
@@ -3172,9 +3639,10 @@ EXAMPLE {
 SeeAlso => {(describe,MultirationalMap)}}
 
 document { 
-Key => {(symbol !,EmbeddedProjectiveVariety)}, 
+Key => {(symbol !,EmbeddedProjectiveVariety),sumUp,(sumUp,EmbeddedProjectiveVariety)}, 
 Headline => "print a more detailed description of an embedded projective variety", 
-Usage => "X!", 
+Usage => "X!
+sumUp X", 
 Inputs => {"X" => EmbeddedProjectiveVariety},
 EXAMPLE lines ///
 K = ZZ/333331; K[t_0..t_5];
@@ -3534,7 +4002,7 @@ Usage => "GG(k,PP_K^n)
 GG_K(k,n)
 GG Grass(k,n,K,Variable=>\"x\")", 
 Inputs => {"k" => ZZ, "P" => EmbeddedProjectiveVariety => {"a projective space of dimension ",TEX///$n$///}},
-Outputs => {GrassmannianVariety => {"which parameterizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}},
+Outputs => {GrassmannianVariety => {"which parametrizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}},
 EXAMPLE {"GG(2,PP_QQ^5)","describe oo"},
 SeeAlso => {(GG,ZZ,MultirationalMap)}}
 
@@ -3559,24 +4027,152 @@ SeeAlso => {schubertCycle}}
 document {Key => {schubertCycle,(schubertCycle,VisibleList,GrassmannianVariety),[schubertCycle,Standard]}, 
 Headline => "take a random Schubert cycle", 
 Usage => "schubertCycle(a,G)", 
-Inputs => {"a" => VisibleList => {"a list of integers ", TEX///$a = (a_0,\ldots,a_k)$///, " with ", TEX///$n-k\geq a_0 \geq \cdots \geq a_k \geq 0$///}, "G" => GrassmannianVariety => {"which parameterizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}}, 
+Inputs => {"a" => VisibleList => {"a list of integers ", TEX///$a = (a_0,\ldots,a_k)$///, " with ", TEX///$n-k\geq a_0 \geq \cdots \geq a_k \geq 0$///}, "G" => GrassmannianVariety => {"which parametrizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}}, 
 Outputs => {EmbeddedProjectiveVariety => {"the Schubert cycle ", TEX///$\Sigma_a(\mathcal P)\subset\mathbb{G}(k,n)$///, " associated to a random complete flag ", TEX///$\mathcal P$///, " of nested projective subspace ", TEX///$\emptyset\subset P_0\subset \cdots \subset P_{n-1} \subset P_{n} = \mathbb{P}^n$///, " with ", TEX///$dim(P_i)=i$///}}, 
 PARA{"For the general theory, see e.g. the book ", HREF{"https://scholar.harvard.edu/files/joeharris/files/000-final-3264.pdf", "3264 & All That - Intersection Theory in Algebraic Geometry"}, ", by D. Eisenbud and J. Harris."}, 
 EXAMPLE {"G = GG(ZZ/33331,1,5);", "S = schubertCycle({2,1},G)", "cycleClass S"}, 
 SeeAlso => {cycleClass}}
 
+document {Key => {(rationalMap,MultiprojectiveVariety,Tally), (rationalMap,MultiprojectiveVariety,Tally,List), (rationalMap,EmbeddedProjectiveVariety,Tally,ZZ)}, 
+Headline => "rational map defined by an effective divisor", 
+Usage => "rationalMap(X,D)", 
+Inputs => {"X" => MultiprojectiveVariety, "D" => Tally => {"a multiset of pure codimension 1 ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subschemes"}," of ",TEX///$X$///," with no embedded components; so that ",TT"D"," is interpreted as an effective divisor on ",TEX///$X$///}}, 
+Outputs => {MultirationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
+PARA{"In the example below, we take a smooth complete intersection ",TEX///$X\subset\mathbb{P}^5$///," of three quadrics containing a conic ",TEX///$C\subset\mathbb{P}^5$///,". Then we calculate the map defined by the linear system ",TEX///$|2H+C|$///,", where ",TEX///$H$///," is the hyperplane section class of ",TEX///$X$///,"."},
+EXAMPLE {"P5 = PP_(ZZ/65521)^5;", "C = random({{2},3:{1}},0_P5);", "X = random({3:{2}},C);", "H = random(1,0_X); -- it's interpreted as X * H", "D = tally {H, H, C}", "phi = rationalMap(X,D)", "assert(phi == rationalMap(X,tally {X*H, X*H, C}))"},
+PARA{"This function is based internally on the function ",TO (rationalMap,Ring,Tally),", provided by the package ",TO Cremona,"."},
+SeeAlso => {(rationalMap,Ring,Tally)}}
+
+document {Key => {(forceImage,MultirationalMap,MultiprojectiveVariety),(forceImage,MultirationalMap,ZZ)}, 
+Headline => "declare which is the image of a multi-rational map", 
+Usage => "forceImage(Phi,Y)", 
+Inputs => {"Phi" => MultirationalMap, "Y" => MultiprojectiveVariety},
+Outputs => {Nothing => {TO null}}, 
+PARA{"This method allows to inform the system about the image of a given multi-rational map without performing any computation. In particular, this can be used to declare that a rational map is dominant."},
+EXAMPLE {///Phi = rationalMap {minors(3,(PP_(ZZ/65521)([6],2)).matrix)};///, "Y = image(Phi,2)", "forceImage(Phi,Y)", "image Phi", ///Psi = rationalMap({minors(3,(PP_(ZZ/65521)([6],2)).matrix)},Dominant=>2);///, "forceImage(Psi,target Psi)", "Psi;"},
+Caveat => {"If the declaration is false, nonsensical answers may result."},
+SeeAlso => {(image,MultirationalMap),(forceImage,RationalMap,Ideal)}}
+
+document {Key => {RAT}, 
+Headline => "the hom-sets of rational maps between two multi-projective varieties", 
+PARA{"Objects of this type are created by ",TO2{(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"Hom"},"."},
+SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(symbol SPACE,RAT,List)}}
+
+document {Key => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(Hom,Nothing,MultiprojectiveVariety),(Hom,MultiprojectiveVariety,Nothing),(Hom,Nothing,Nothing),(Hom,MultiprojectiveVariety,Option),(Hom,Nothing,Option)}, 
+Headline => "get the hom-set of rational maps between two multi-projective varieties", 
+Usage => "Hom(X,Y)", 
+Inputs => {"X" => MultiprojectiveVariety, "Y" => MultiprojectiveVariety},
+Outputs => {RAT => {"the hom-set of ",TO2{MultirationalMap,"rational maps"}," from ",,TT"X"," to ",TT"Y"}}, 
+EXAMPLE {
+"K = ZZ/3;",
+"X = random({1,1},0_(PP_K^{1,1}));",
+"Y = PP_K^{2,1,3};",
+"Hom(X,Y)"},
+PARA {"Some or all of the arguments may be omitted."},
+EXAMPLE {
+"Hom(X,)",
+"Hom(,Y)",
+"Hom(,)"},
+PARA {"We can also form hom-sets of dominant rational maps."},
+EXAMPLE {
+"Hom(X,Dominant=>true)",
+"Hom(,Dominant=>true)"},
+SeeAlso => {(symbol SPACE,RAT,List)}}
+
+document {Key => {(symbol SPACE,RAT,List)}, 
+Headline => "define a multi-rational map", 
+Usage => "H {F1,F2,...}
+check H {F1,F2,...}", 
+Inputs => {RAT => "H" => {"the hom-set of rational maps between two ",TO2{MultiprojectiveVariety,"multi-projective varieties"}," ",TT"X"," and ",TT"Y"}, 
+List => "F" => {"a list of homogeneous row matrices over the ring of ",TT"X"," of lengths compatible with the ",TO2{(shape,MultiprojectiveVariety),"shape"}," of ",TT"Y"," (these matrices can be replaced by the lists of their entries)"}},
+Outputs => {MultirationalMap => {"the map from ",TT"X"," to ",TT"Y"," defined on coordinates by sending a point ",TT"p"," to the point ",TT"(F1(p),F2(p),...)"}},
+PARA{"This is a more controlled way of constructing rational maps than just using the ",TO2{(multirationalMap,List,MultiprojectiveVariety),"multirationalMap"}," function."},
+EXAMPLE {
+"R = ring PP_(ZZ/3)^{1,2};",
+"F = {apply(2,i -> random({1,1},R)), apply(4,i -> random({0,1},R)), apply(3,i -> random({1,0},R))}",
+"H = Hom(PP_(ZZ/3)^{1,2},PP_(ZZ/3)^{1,3,2})",
+"f = H F;",
+"show f"},
+PARA{"The following equality is satisfied for every ",TO2{MultirationalMap,"rational map"}," ",TT"f","."},
+EXAMPLE {"assert( f == (Hom(source f,target f)) entries f )"},
+PARA{"Here it is shown how to make a dominant rational map."},
+EXAMPLE {"H' = Hom(PP_(ZZ/3)^{1,2},Dominant=>true);", "H' F", "assert(image oo == target oo)"},
+SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(symbol SPACE,RAT,MultiprojectiveVariety),(symbol SPACE,RAT,Tally),(entries,MultirationalMap)}}
+
+document {Key => {(symbol SPACE,RAT,Tally)},
+Headline => "rational map defined by an effective divisor", 
+Usage => "H D
+check H D", 
+Inputs => {"H" => RAT => {"the hom-set of rational maps between two varieties ",TT"X"," and ",TT"Y"}, "D" => Tally => {"a multiset of pure codimension 1 ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subschemes"}," of ",TEX///$X$///," with no embedded components; so that ",TT"D"," is interpreted as an effective divisor on ",TEX///$X$///}}, 
+Outputs => {MultirationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
+PARA{"This is another way of calling ",TO(rationalMap,MultiprojectiveVariety,Tally),"."},
+EXAMPLE {
+"X = random(3,0_(PP_(ZZ/5)^2));",
+"Y = PP_(ZZ/5)^4;",
+"H = Hom(X,Y);",
+"D = tally toList(5:point X)",
+"H D",
+"show oo"},
+SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(rationalMap,MultiprojectiveVariety,Tally),(symbol SPACE,RAT,MultiprojectiveVariety)}}
+
+document {Key => {(symbol SPACE,RAT,MultiprojectiveVariety),(symbol SPACE,RAT,Sequence)},
+Headline => "rational map defined by a linear system of hypersurfaces through a variety", 
+Usage => "H(Z,d,m)
+H(Z,d)
+H(Z)", 
+Inputs => {{"the hom-set of rational maps between two varieties ",TT"X"," and ",TT"Y"}, "Z" => {"a ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subvariety"}," of ",TEX///$X$///,"; ",TT"d"," is a (multi-)degree and ",TT"e"," is a multiplicity (by default, ",TT"e=1"," and ",TT"d"," is the maximum degree of the generators)"}}, 
+Outputs => {MultirationalMap => {"the map ",TEX///$X\dashrightarrow Y$///," defined by the linear system of hypersurfaces of degree ",TEX///$d$///, " having points of multiplicity ",TEX///$e$///," along ",TEX///$Z$///}}, 
+PARA{"This is another way of calling the method ",TO2{"shortcuts",///(rationalMap,MultiprojectiveVariety,List,ZZ)///},"."},
+EXAMPLE {
+"X = random(3,0_(PP_(ZZ/17)^2));",
+"Y = PP_(ZZ/17)^4;",
+"H = Hom(X,Y);",
+"Z = point X + point X;",
+"H(Z,3,2) -- map defined by the cubics with double points along Z",
+"show oo"},
+PARA {"As always, you can invoke the functions ",TO2{(check,MultirationalMap),"check"}," and ",TO2{(isWellDefined,MultirationalMap),"isWellDefined"}," to check if the map is valid."},
+EXAMPLE {
+"X = PP_(ZZ/17)^{1,1};",
+"H = Hom(X,image segreEmbedding X);",
+"check H(0_X,{1,1}) -- Segre embedding of X",
+"show oo"},
+SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"shortcuts",(rationalMap,Ideal,ZZ,ZZ)}}
+
+document {Key => {(member,MultirationalMap,RAT)},
+Headline => "test membership in a hom-set of rational maps", 
+Usage => "member(Phi,H)", 
+Inputs => {MultirationalMap => "Phi", RAT => "H"}, 
+Outputs => {Boolean => {"whether ",TT"Phi"," is in the hom-set ",TT"H"}},
+EXAMPLE {"s = segreEmbedding PP_(ZZ/13)^{1,2};",
+"(X,Y) = (source s,target s);",
+"member(s,Hom(X,Y))",
+"member(s,Hom(X ** X,Y))",
+"member(s,Hom(X,))",
+"member(s,Hom(,))",
+"assert(o3 and (not o4) and o5 and o6)"},
+SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety)}}
+
 undocumented {
 (expression,MultiprojectiveVariety),
+(expression,WeightedProjectiveVariety),
 (net,MultiprojectiveVariety),
+(texMath,MultiprojectiveVariety),
 (toString,MultiprojectiveVariety),
 (point,MultiprojectiveVariety,Boolean), -- Intended for internal use only
+(point,MultiprojectiveVariety,VisibleList),
+(point,WeightedProjectiveVariety),
+(point,WeightedProjectiveVariety,VisibleList),
 (euler,MultiprojectiveVariety,Option),
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
 (symbol _,MultiprojectiveVariety,MultiprojectiveVariety), -- this returns a new type which is too rudimentary yet
+(projectiveVariety,List,MultiprojectiveVariety),(projectiveVariety,ZZ,MultiprojectiveVariety),
 (tangentialChowForm,EmbeddedProjectiveVariety,ZZ,ZZ),
+(degree,WeightedProjectiveVariety),
+(segre,WeightedProjectiveVariety),
 (expression,MultirationalMap),
 (net,MultirationalMap),
+(texMath,MultirationalMap),
 (toString,MultirationalMap),
 (multirationalMap,RationalMap,RationalMap), -- Intended for internal use only
 (multirationalMap,MultirationalMap,MultirationalMap), -- Intended for internal use only
@@ -3594,10 +4190,14 @@ undocumented {
 (Fano,ZZ,EmbeddedProjectiveVariety,Option),
 (image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
 (image,MultirationalMap,String),
-(rationalMap,MultiprojectiveVariety,Tally), -- It is already documented in Cremona.m2
 (matrix,MultirationalMap),
 (random,MultirationalMap),
-(hilbertPolynomial,EmbeddedProjectiveVariety) -- To be documented
+quadricFibration, (quadricFibration,MultirationalMap), -- to be documented
+(forceInverseMap,MultirationalMap,MultirationalMap), -- to be improved
+(expression,RAT),
+(net,RAT),
+(texMath,RAT),
+(toString,RAT)
 }
 
 ---------------
@@ -3962,4 +4562,82 @@ j := check multirationalMap(permute(W,{1,0}),W');
 assert(isIsomorphism j);
 ///
 
+TEST /// -- conversion between RationalMap and MultirationalMap
+X = random(2,0_(PP_(ZZ/65521)^4));
+f = parametrize X;
+assert(instance(f,MultirationalMap) and f#"inverse" =!= null)
+assert(inverse f === multirationalMap inverse toRationalMap f)
+assert(multirationalMap toRationalMap f === f)
+-- assert(inverse toRationalMap f === toRationalMap inverse f) -- this fails (28/08/2022)
+assert(inverse toRationalMap f == toRationalMap inverse f)
+assert(multirationalMap inverse toRationalMap f === multirationalMap toRationalMap inverse f)
+I = ideal random(2,0_(PP_(ZZ/333331)^4));
+g = rationalMap(parametrize I,Dominant=>true);
+assert(instance(g,RationalMap) and g#"inverseRationalMap" === null)
+assert(inverse inverse g === g)
+assert(toRationalMap multirationalMap g === g)
+-- assert(inverse multirationalMap g === multirationalMap inverse g)  -- this fails (28/08/2022)
+assert(inverse multirationalMap g == multirationalMap inverse g)
+assert(toRationalMap inverse multirationalMap g === toRationalMap multirationalMap inverse g)
+-- assert(inverse g === toRationalMap inverse multirationalMap g) -- this fails (28/08/2022)
+assert(inverse g == toRationalMap inverse multirationalMap g)
+-- assert(inverse inverse (inverse multirationalMap g) === inverse multirationalMap g) -- this fails (28/08/2022)
+assert(inverse inverse (inverse multirationalMap g) == inverse multirationalMap g)
+assert(inverse inverse multirationalMap g === multirationalMap g)
+-- assert(toRationalMap multirationalMap g === g) -- this fails (28/08/2022)
+assert(toRationalMap multirationalMap g == g)
+///
 
+TEST /// -- weighted-projective varieties
+K = ZZ/333331;
+X = PP_K(2,3,4);
+assert(dim X == 2 and degree X == 1 and degree image segreEmbedding X == 6)
+p = point X;
+assert(dim p == 0 and degree p == 1 and instance(|- p,Array))
+Y = random(4,0_X);
+assert(dim Y == 1 and degree Y == 4 and degree image segreEmbedding Y == 2)
+assert(? Y == "curve in PP(2,3,4) defined by a form of degree 4")
+assert(? image segreEmbedding Y == "curve in PP^2 defined by a form of degree 2")
+psi = rationalMap((gens ideal (2 * point X))|(gens ideal point X));
+Psi = multirationalMap psi;
+debug Cremona
+debug MultiprojectiveVarieties
+assert(instance(psi,WeightedHomogeneousRationalMap) and instance(Psi,WeightedRationalMap));
+assert(ideal image Psi == image psi and projectiveVariety image psi == image Psi)
+p = point source Psi;
+assert(p == Psi^* Psi p)
+I = ideal point source Psi;
+assert(I == psi^* psi I)
+Z = random(3,0_(PP_K(3,2,1)))
+assert(dim Z == 1 and degree Z == 3);
+p = point Z;
+assert(isSubset(p,Z) and isPoint (segreEmbedding ambient Z) p and p == (segre ambient Z)^* (segreEmbedding ambient Z) p)
+P := PP_K(1,1,2,3)
+l = {10,-4,3,7};
+p = point_P l;
+assert(p == point_(random(3,p)) l)
+P = PP_(ZZ/65521)(2,3,1,4,5);
+f = inverse parametrize P;
+assert(source f === P and degrees ring P === {{2},{3},{1},{4},{5}}) 
+P' = target f;
+g = inverse f;
+assert(source g === P' and target g === P and degrees ring P' === {{1},{1},{1},{1},{1}})
+assert last(q := point P, q == f^* f q and q == g f q)
+assert last(q' := point P', q' == g^* g q' and q' == f g q')
+assert(g * f == 1)
+h = f * g;
+assert last(q0 := point P, q0 == h q0)
+///
+
+TEST /// -- quadric fibrations
+exportFrom_MultiprojectiveVarieties {"quadricFibration"};
+L = linearSpan {point PP_(ZZ/2347)^4, point PP_(ZZ/2347)^4};
+X = random(3,L);
+f = quadricFibration rationalMap(L_X,1);
+assert(dim discriminant f == 1 and degree discriminant f == 5)
+C = random(8,0_(PP_(ZZ/65521)(1,1,1,4))); S = random(8,C);
+g = quadricFibration rationalMap((0_S)_S,1);
+assert(dim discriminant g == 1 and degree discriminant g == 8)
+h = quadricFibration multirationalMap first projections random({{1,1},{1,1},{1,2}},0_(PP_(ZZ/3331)^{2,3}));
+assert(dim discriminant h == 1 and degree discriminant h == 6)
+///

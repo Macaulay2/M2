@@ -208,7 +208,7 @@ smoothLimit :=20 ;
 -- t = the variable to be used in the numerator
 hilbertNumerator = method()
 hilbertNumerator (List,ZZ,RingElement) := (L,r,t) -> (
-     -- the beginning of the hilbert series
+     -- the beginning of the Hilbert series
      p := sum(#L,i -> L#i*t^i); 
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
@@ -218,7 +218,7 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 ----------------------------------------------------------------------------------------------------------------------------   
 
 -----------------------------
--- Expected Betti Tableaus --
+-- Expected Betti Tableaux --
 -----------------------------
 
 -- convert c*t^d to (c,({d},d))
@@ -227,12 +227,12 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 -- and singly graded
 --
 -- this function is needed to construct 
--- expected betti tables from
--- a HilberNumerator
+-- expected Betti tables from
+-- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
      c := lift((last coefficients mon)_0_0,ZZ);
-     -- the degree of the monmial
+     -- the degree of the monomial
      d := sum degree mon;
      (c,({d},d))
      );
@@ -245,17 +245,17 @@ expectedBetti = method()
 
 
 -- calculates the expected betti tableau
--- from a hilbert Numerator
+-- from a Hilbert Numerator
 --
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
 -- sign switches that occur in the Hilbert numerator before this monomial  
 --
--- the ring of the hilbert numerator is expected to singly graded 
+-- the ring of the Hilbert numerator is expected to singly graded 
 -- and contain only one variable
 expectedBetti (RingElement) := (hilbNum) -> (
-     -- find terms of hilbert Numerator
+     -- find terms of Hilbert Numerator
      -- smallest degree first
      termsHilbNum := reverse terms hilbNum;
      -- convert terms into pairs (coefficient, ({d},d))
@@ -284,7 +284,7 @@ expectedBetti (RingElement) := (hilbNum) -> (
 
 
 -- calculate the expected betti tableau
--- from a given hilbert function.
+-- from a given Hilbert function.
 -- hilb = {h0,...,h_(d+r+1)} 
 -- where d is the regularity of the variety described 
 -- and r is the dimension of the ambient space
@@ -443,7 +443,7 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R) -> (
 -- for g=11,12,13 we will only need the diameter 3 part, but we also include the functions for diameter 1 and 2:
 -- Try to construct a random Hartshorne-Rau module of
 -- length 2. Here the only problem is, that the
--- generic module may not have expected syzgies
+-- generic module may not have expected syzygies
 --
 -- HRau = {h1,h2} the Hilbertfunction of the desired module 
 -- R the ring where the module should live. It is assumed, that 
@@ -504,7 +504,7 @@ smoothCanonicalCurveViaSpaceModel = method(Options => {Printing => false})
 smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
   kk := ZZ/p;
   if isPrime(p) == false then error "p is not prime";
--- costruction of space model of degree d and genus g
+-- construction of space model of degree d and genus g
 -- therefore we first construct the HR-module
   d := g+4-floor(g/3);
   if opt.Printing then  (print("--> computing space curve of genus "|toString(g)|" and degree "|toString(d)));
@@ -513,7 +513,7 @@ smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
 -- calculate values of h^1 that are forced by the maximal rank assumption
   h1 := for i from 0 when ((i < 4) or(d*i+1-g) > binomial(i+3,3)) list max(d*i+1-g-binomial(3+i,3),0);
   e := 0; for i in h1 when i == 0 do e = e+1;
--- calculate support of Hartshorne Rao Moduole
+-- calculate support of Hartshorne Rao Module
   HRao := select(h1,i->i!=0);  
   expBettiHR := expectedBetti(HRao|{0,0,0,0},3);  
   emptyResHR := R^expBettiHR;
@@ -756,7 +756,7 @@ hasFactor (RingElement,ZZ) := (f,n) -> (
      
 hasFactor (Ideal,ZZ) := (I,n) -> (
      -- check whether a homogeneous principal ideal I in two variables over finite ground field FF
-     -- is square-free and has a factor of degee n defined over FF. 
+     -- is square-free and has a factor of degree n defined over FF. 
      R := ring I;
      if not class R === PolynomialRing and dim R !=2 then error "expected a polynomial in P^1";
      cp := decompose I; -- decompose I in its irreducible factors
@@ -1095,12 +1095,12 @@ doc ///
               the ideal of a (smooth) canonical curve of genus g over a field with characteristic p                      
   Description
      Text
-       Computes a smooth canonical curve of genus g<=15 over a field of characteristc p.
+       Computes a smooth canonical curve of genus g<=15 over a field of characteristic p.
        For genus g<=14 are based on the unirationality of M_g for g<=14 and the  RandomCurves-package.
        A unirational parametrization of M_g is only a rational map and bad choices of parameters 
        (which are quite likely over small fields) might end up in the indeterminacy locus or some
        other undesired subloci.
-       In this constructions we catch the steps which do not work out for
+       In this construction, we catch the steps which do not work out for
        very small characteristic by catching all possible missteps. 
        
        For g<=10 the curves are constructed via plane models.

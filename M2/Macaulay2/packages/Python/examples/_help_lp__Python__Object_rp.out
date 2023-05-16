@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- hash: 538010608
+
+i1 : math = import "math"
+
+o1 = <module 'math' (built-in)>
+
+o1 : PythonObject of class module
+
+i2 : help math
+
+o2 = This module provides access to the mathematical functions
+     defined by the C standard.
+
+i3 : help math@@sin
+
+o3 = Return the sine of x (measured in radians).
+
+i4 : 

@@ -197,17 +197,16 @@ void gb2_comp::find_pairs(gb_elem *p)
 // (includes cases m * lead(p) = 0).
 // Returns a list of new s_pair's.
 {
-  queue<Bag *> elems;
-  Index<MonomialIdeal> j;
-  intarray vplcm;
-  int *find_pairs_m = M->make_one();
-  int *f_m = M->make_one();
+  gc_vector<Bag*> elems;
+  gc_vector<int> vplcm;
+  monomial find_pairs_m = M->make_one();
+  monomial f_m = M->make_one();
   int *find_pairs_lcm = newarray_atomic(int, M->n_vars());
 
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
     {
-      int *find_pairs_exp = newarray_atomic(int, M->n_vars());
+      exponents_t find_pairs_exp = newarray_atomic(int, M->n_vars());
       M->to_expvector(f_m, find_pairs_exp);
 
       for (int v = 0; v < GR->n_skew_commutative_vars(); v++)
@@ -219,10 +218,10 @@ void gb2_comp::find_pairs(gb_elem *p)
           M->from_expvector(find_pairs_exp, find_pairs_lcm);
           find_pairs_exp[w]--;
 
-          vplcm.shrink(0);
+          vplcm.resize(0);
           M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
       freemem(find_pairs_exp);
     }
@@ -235,40 +234,39 @@ void gb2_comp::find_pairs(gb_elem *p)
         {
           const Nterm *f = originalR->quotient_element(i);
           M->lcm(f->monom, f_m, find_pairs_lcm);
-          vplcm.shrink(0);
+          vplcm.resize(0);
           M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
 
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = monideals[p->f->comp]->mi;
-  for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
+  for (Bag& a : *mi1)
     {
-      M->from_varpower((*mi1)[i]->monom().raw(), find_pairs_m);
+      M->from_varpower(a.monom().data(), find_pairs_m);
       M->lcm(find_pairs_m, f_m, find_pairs_lcm);
-      vplcm.shrink(0);
+      vplcm.resize(0);
       M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q =
           new_s_pair(p,
-                     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()),
+                     reinterpret_cast<gb_elem *>(a.basis_ptr()),
                      find_pairs_lcm);
-      elems.insert(new Bag(q, vplcm));
+      elems.push_back(new Bag(q, vplcm));
     }
 
   // Add 'p' to the correct monideal
-  intarray vp;
+  gc_vector<int> vp;
   M->to_varpower(f_m, vp);
   mi1->insert(new Bag(p, vp));
 
   // Now minimalize these elements, and insert them into
   // the proper degree.
 
-  queue<Bag *> rejects;
-  Bag *b;
+  VECTOR(Bag *) rejects;
   MonomialIdeal *mi = new MonomialIdeal(originalR, elems, rejects, mi_stash);
-  while (rejects.remove(b))
+  for (auto& b : rejects)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
@@ -276,10 +274,10 @@ void gb2_comp::find_pairs(gb_elem *p)
     }
 
   int is_ideal2 = (F->rank() == 1 && orig_syz == 0);
-  for (j = mi->first(); j.valid(); j++)
+  for (Bag& a : *mi)
     {
       n_pairs++;
-      s_pair *q = reinterpret_cast<s_pair *>((*mi)[j]->basis_ptr());
+      s_pair *q = reinterpret_cast<s_pair *>(a.basis_ptr());
       if (is_ideal2 && q->syz_type == SPAIR_PAIR)
         {
           // MES: the following line is suspect, for Schreyer orders
@@ -314,7 +312,7 @@ void gb2_comp::compute_s_pair(s_pair *p)
 {
   if (p->f == NULL)
     {
-      int *s = M->make_one();
+      monomial s = M->make_one();
       GR->gbvector_get_lead_monomial(F, p->first->f, s);
       M->divide(p->lcm, s, s);
 
@@ -338,7 +336,7 @@ void gb2_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, M->n_vars());
   int count = 0;
   if (M2_gbTrace == 10)
     {
@@ -402,7 +400,7 @@ void gb2_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR, F);
@@ -477,7 +475,7 @@ void gb2_comp::schreyer_append(gbvector *f)
 {
   if (orig_syz < 0)
     {
-      int *d = originalR->degree_monoid()->make_one();
+      monomial d = originalR->degree_monoid()->make_one();
       GR->gbvector_multidegree(F, f, d);
       Fsyz->append_schreyer(d, f->monom, Fsyz->rank());
       originalR->degree_monoid()->remove(d);
@@ -486,7 +484,7 @@ void gb2_comp::schreyer_append(gbvector *f)
 
 void gb2_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 {
-  int *f_m = M->make_one();
+  monomial f_m = M->make_one();
   gbvector *bull = NULL;
   gb_elem *p = new gb_elem(f, fsyz, ismin);
 
@@ -508,7 +506,7 @@ void gb2_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 
   if (M->in_subring(1, f_m)) n_subring++;
   // insert into p->f->comp->mi_search
-  intarray vp;
+  gc_vector<int> vp;
   M->to_varpower(f_m, vp);
   monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   gb.push_back(p);
@@ -552,8 +550,8 @@ int gb2_comp::get_pairs()
 
   slast->next = NULL;
   these_pairs = head.next;
-  total_pairs.append(this_degree);
-  total_pairs.append(n);
+  total_pairs.push_back(this_degree);
+  total_pairs.push_back(n);
   return n;
 }
 bool gb2_comp::s_pair_step()

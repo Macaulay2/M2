@@ -1,0 +1,27 @@
+-- -*- M2-comint -*- hash: 1175896729
+
+i1 : quotientRemainder(toPython 37, toPython 5)
+
+o1 = (7, 2)
+
+o1 : Sequence
+
+i2 : class \ oo
+
+o2 = (PythonObject, PythonObject)
+
+o2 : Sequence
+
+i3 : quotientRemainder(toPython 37, 5)
+
+o3 = (7, 2)
+
+o3 : Sequence
+
+i4 : class \ oo
+
+o4 = (PythonObject, PythonObject)
+
+o4 : Sequence
+
+i5 : 

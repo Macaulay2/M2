@@ -1,8 +1,23 @@
-#include "polyring.hpp"
-#include "matrix.hpp"
-#include "matrix-con.hpp"
-#include "ntuple.hpp"
-#include "interrupted.hpp"
+#include <stddef.h>  // for NULL
+#include <vector>    // for vector
+
+#include "ExponentVector.hpp"   // for exponents, exponents_t
+#include "M2mem.h"              // for freemem
+#include "engine-includes.hpp"  // for M2_arrayint, M2_arrayint_struct
+#include "error.h"              // for ERROR
+#include "freemod.hpp"          // for FreeModule
+#include "int-bag.hpp"          // for Bag
+#include "interrupted.hpp"      // for system_interrupted
+#include "matrix-con.hpp"       // for MatrixConstructor
+#include "matrix.hpp"           // for Matrix
+#include "monideal.hpp"         // for MonomialIdeal
+#include "monoid.hpp"           // for Monoid, ALLOCATE_EXPONENTS, EXPONENT_...
+#include "newdelete.hpp"        // for newarray_atomic, newarray_atomic_clear
+#include "polyring.hpp"         // for PolynomialRing
+#include "ring.hpp"             // for Ring
+#include "ringelem.hpp"         // for ring_elem, vec
+#include "style.hpp"            // for EQ
+#include "util.hpp"             // for M2_arrayint_to_stdvector
 
 class KBasis
 {
@@ -20,22 +35,22 @@ class KBasis
   enum { KB_FULL, KB_SINGLE, KB_MULTI } computation_type;
 
   const Matrix *bottom_matrix;
-  M2_arrayint heft_vector;  // length is D->n_vars(), or less.
+  std::vector<int> mHeftVector;  // length is D->n_vars(), or less.
   // Dot product with a degree of a variable
-  // in 'vars' will give a non-negative value.
+  // in 'mVariables' will give a non-negative value.
 
   int *var_degs;
-  int *var_wts;  // var_wts[i] is the (heft_vector . deg(vars->array[i] th
-                 // variable))
-  M2_arrayint vars;
+  // var_wts[i] is the (mHeftVector . deg(mVariables[i]-th variable))
+  int *var_wts;
+  std::vector<int> mVariables;
   bool do_truncation;
   bool weight_has_zeros;
   int limit;  // if >= 0, then stop after that number.
 
   const int *lo_degree;  // if non-null, the lowest degree to collect, of length
-                         // heft_vector->len
+                         // mHeftVector.size()
   const int *hi_degree;  // if non-null, the highest degree to collect, of
-                         // length heft_vector->len
+                         // length mHeftVector.size()
 
   // In the singly graded case: collect every monomial whose weight lies >=
   // weight of
@@ -83,8 +98,8 @@ class KBasis
   KBasis(const Matrix *bottom,
          const int *lo_degree,
          const int *hi_degree,
-         M2_arrayint wt,
-         M2_arrayint vars,
+         std::vector<int> heftvec,
+         std::vector<int> varlist,
          bool do_truncation,
          int limit);
 
@@ -92,12 +107,13 @@ class KBasis
   void compute();
 
   Matrix *value() { return (kb_error ? 0 : mat.to_matrix()); }
+
  public:
   static Matrix *k_basis(const Matrix *bottom,
                          M2_arrayint lo_degree,
                          M2_arrayint hi_degree,
-                         M2_arrayint heft,
-                         M2_arrayint vars,
+                         std::vector<int> heftvec,
+                         std::vector<int> varlist,
                          bool do_truncation,
                          int limit);
 };
@@ -105,13 +121,13 @@ class KBasis
 KBasis::KBasis(const Matrix *bottom,
                const int *lo_degree0,
                const int *hi_degree0,
-               M2_arrayint heft_vector0,
-               M2_arrayint vars0,
+               std::vector<int> heftvec,
+               std::vector<int> varlist,
                bool do_truncation0,
                int limit0)
     : bottom_matrix(bottom),
-      heft_vector(heft_vector0),
-      vars(vars0),
+      mHeftVector(heftvec),
+      mVariables(varlist),
       do_truncation(do_truncation0),
       weight_has_zeros(false),
       limit(limit0),
@@ -123,33 +139,25 @@ KBasis::KBasis(const Matrix *bottom,
   M = P->getMonoid();
   D = P->get_degree_ring()->getMonoid();
 
-  if (lo_degree == 0 && hi_degree == 0)
-    {
-      computation_type = KB_FULL;
-    }
-  else if (heft_vector->len == 1)
-    {
-      computation_type = KB_SINGLE;
-    }
-  else
-    {
-      computation_type = KB_MULTI;
-    }
+  if (lo_degree == 0 && hi_degree == 0) { computation_type = KB_FULL; }
+  else if (mHeftVector.size() == 1) { computation_type = KB_SINGLE; }
+  else { computation_type = KB_MULTI; }
 
-  // Compute the (non-negative) weights of each of the variables in 'vars'.
+  // Compute the (non-negative) weights of each of the variables in
+  // 'mVariables'.
 
-  var_wts = newarray_atomic(int, vars->len);
-  var_degs = newarray_atomic(int, vars->len * heft_vector->len);
+  var_wts = newarray_atomic(int, mVariables.size());
+  var_degs = newarray_atomic(int, mVariables.size() * mHeftVector.size());
   int *exp =
       newarray_atomic(int, D->n_vars());  // used to hold exponent vectors
   int next = 0;
-  for (int i = 0; i < vars->len; i++, next += heft_vector->len)
+  for (int i = 0; i < mVariables.size(); i++, next += mHeftVector.size())
     {
-      int v = vars->array[i];
+      int v = mVariables[i];
       D->to_expvector(M->degree_of_var(v), exp);
-      var_wts[i] = ntuple::weight(heft_vector->len, exp, heft_vector);
+      var_wts[i] = exponents::weight(mHeftVector.size(), exp, mHeftVector);
       if (var_wts[i] == 0) weight_has_zeros = true;
-      ntuple::copy(heft_vector->len, exp, var_degs + next);
+      exponents::copy(mHeftVector.size(), exp, var_degs + next);
     }
   freemem(exp);
 
@@ -159,13 +167,12 @@ KBasis::KBasis(const Matrix *bottom,
 
   if (lo_degree != NULL)
     kb_target_lo_weight =
-        ntuple::weight(heft_vector->len, lo_degree, heft_vector);
+        exponents::weight(mHeftVector.size(), lo_degree, mHeftVector);
   if (hi_degree != NULL)
     kb_target_hi_weight =
-        ntuple::weight(heft_vector->len, hi_degree, heft_vector);
+        exponents::weight(mHeftVector.size(), hi_degree, mHeftVector);
 
-  if (lo_degree && hi_degree && heft_vector->len == 1 &&
-      heft_vector->array[0] < 0)
+  if (lo_degree && hi_degree && mHeftVector.size() == 1 && mHeftVector[0] < 0)
     {
       int t = kb_target_lo_weight;
       kb_target_lo_weight = kb_target_hi_weight;
@@ -177,15 +184,12 @@ KBasis::KBasis(const Matrix *bottom,
   mat = MatrixConstructor(bottom->rows(), 0);
   kb_exp_multidegree = D->make_one();
 
-  if (heft_vector->len > 1 && lo_degree != NULL)
+  if (mHeftVector.size() > 1 && lo_degree != NULL)
     {
       kb_target_multidegree = D->make_one();
-      ntuple::copy(heft_vector->len, lo_degree, kb_target_multidegree);
+      exponents::copy(mHeftVector.size(), lo_degree, kb_target_multidegree);
     }
-  else
-    {
-      kb_target_multidegree = 0;
-    }
+  else { kb_target_multidegree = 0; }
 }
 
 void KBasis::insert()
@@ -202,16 +206,16 @@ void KBasis::insert()
 inline bool KBasis::backtrack(int &curr)
 {
   // if we are the end, decrease the last entry to 0
-  if (curr == vars->len - 1)
+  if (curr == mVariables.size() - 1)
     {
-      kb_exp_weight -= var_wts[curr] * kb_exp[vars->array[curr]];
-      kb_exp[vars->array[curr]] = 0;
+      kb_exp_weight -= var_wts[curr] * kb_exp[mVariables[curr]];
+      kb_exp[mVariables[curr]] = 0;
       do {
           curr--;
-      } while (curr >= 0 && kb_exp[vars->array[curr]] == 0);
+      } while (curr >= 0 && kb_exp[mVariables[curr]] == 0);
     }
   if (curr < 0) return false;
-  kb_exp[vars->array[curr]]--;
+  kb_exp[mVariables[curr]]--;
   kb_exp_weight -= var_wts[curr];
   curr++;
   return true;
@@ -229,11 +233,11 @@ void KBasis::basis0_full()
 {
   // insert the all zeros vector
   if (!try_insert_full()) return;
-  if (vars->len == 0) return;
+  if (mVariables.size() == 0) return;
 
   int curr = 0;
   do {
-      int vcurr = vars->array[curr];
+      int vcurr = mVariables[curr];
       // increase the curr index until we reach a limit
       do {
           if (limit == 0 || system_interrupted()) return;
@@ -260,10 +264,10 @@ void KBasis::basis0_singly_graded()
 {
   // insert the all zeros vector
   if (!try_insert_sg()) return;
-  if (vars->len == 0) return;
+  if (mVariables.size() == 0) return;
   int curr = 0;
   do {
-      int vcurr = vars->array[curr];
+      int vcurr = mVariables[curr];
       // increase the curr index until we reach a limit
       do {
           if (limit == 0 || system_interrupted()) return;
@@ -277,27 +281,27 @@ inline bool KBasis::backtrack_mg(int &curr)
 {
   int vcurr = -1;
   // if we are the end, decrease the last entry to 0
-  if (curr == vars->len - 1)
+  if (curr == mVariables.size() - 1)
     {
-      vcurr = vars->array[curr];
+      vcurr = mVariables[curr];
       kb_exp_weight -= var_wts[curr] * kb_exp[vcurr];
-      ntuple::multpower(heft_vector->len,
+      exponents::multpower(mHeftVector.size(),
                         kb_exp_multidegree,
-                        var_degs + (heft_vector->len * curr),
+                        var_degs + (mHeftVector.size() * curr),
                         -kb_exp[vcurr],
                         kb_exp_multidegree);
       kb_exp[vcurr] = 0;
       do {
           curr--;
-      } while (curr >= 0 && kb_exp[vars->array[curr]] == 0);
+      } while (curr >= 0 && kb_exp[mVariables[curr]] == 0);
     }
   if (curr < 0) return false;
-  vcurr = vars->array[curr];
+  vcurr = mVariables[curr];
   kb_exp[vcurr]--;
   kb_exp_weight -= var_wts[curr];
-  ntuple::divide(heft_vector->len,
+  exponents::divide(mHeftVector.size(),
                  kb_exp_multidegree,
-                 var_degs + (heft_vector->len * curr),
+                 var_degs + (mHeftVector.size() * curr),
                  kb_exp_multidegree);
   curr++;
   return true;
@@ -314,7 +318,7 @@ inline bool KBasis::try_insert_mg()
     }
   if (kb_exp_weight == kb_target_lo_weight)
     {
-      if (EQ == ntuple::lex_compare(heft_vector->len,
+      if (EQ == exponents::lex_compare(mHeftVector.size(),
                                     kb_target_multidegree,
                                     kb_exp_multidegree))
         insert();
@@ -326,35 +330,36 @@ void KBasis::basis0_multi_graded()
 {
   // insert the all zeros vector
   if (!try_insert_mg()) return;
-  if (vars->len == 0) return;
+  if (mVariables.size() == 0) return;
 
   int curr = 0;
   do {
-      int vcurr = vars->array[curr];
+      int vcurr = mVariables[curr];
       // increase the curr index until we reach a limit
       do {
           if (limit == 0 || system_interrupted()) return;
           kb_exp[vcurr]++;
           kb_exp_weight += var_wts[curr];
-          ntuple::mult(heft_vector->len,
+          exponents::mult(mHeftVector.size(),
                        kb_exp_multidegree,
-                       var_degs + (heft_vector->len * curr),
+                       var_degs + (mHeftVector.size() * curr),
                        kb_exp_multidegree);
       } while (try_insert_mg());
   } while (backtrack_mg(curr));
 }
 
-static bool all_have_pure_powers(const MonomialIdeal *M, M2_arrayint vars)
+static bool all_have_pure_powers(const MonomialIdeal *M,
+                                 std::vector<int> varlist)
 {
-  // returns true iff all the variables in vars have some pure power in M
-  M2_arrayint lcms = M->lcm();
-  exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(lcms->len));
-  for (int i = 0; i < lcms->len; i++) exp[i] = 0;
-  for (int i = 0; i < vars->len; i++)
+  // returns true iff all the variables in varlist have some pure power in M
+  std::vector<int> lcms = M2_arrayint_to_stdvector<int>(M->lcm());
+  exponents_t exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(lcms.size()));
+  for (int i = 0; i < lcms.size(); i++) exp[i] = 0;
+  for (int i = 0; i < varlist.size(); i++)
     {
       Bag *b;
-      int v = vars->array[i];
-      exp[v] = lcms->array[v];
+      int v = varlist[i];
+      exp[v] = lcms[v];
       if (!M->search_expvector(exp, b)) return false;
       exp[v] = 0;
     }
@@ -370,20 +375,13 @@ void KBasis::compute()
 // If 'd' is not NULL, it is an element of the degree monoid.
 {
   if (limit == 0) return;
-  M2_arrayint zero_vars = NULL;
+  std::vector<int> zero_vars;
   if (weight_has_zeros)
     {
-      zero_vars = getmematomicarraytype(M2_arrayint, vars->len);
-      int j = 0;
-      for (int i = 0; i < vars->len; i++)
+      for (int i = 0; i < mVariables.size(); i++)
         {
-          if (var_wts[i] == 0)
-            {
-              zero_vars->array[j] = i;
-              j++;
-            }
+          if (var_wts[i] == 0) { zero_vars.push_back(i); }
         }
-      zero_vars->len = j;
     }
 
   for (int i = 0; i < bottom_matrix->n_rows(); i++)
@@ -392,7 +390,7 @@ void KBasis::compute()
       kb_comp = i;
 
       // Make the monomial ideal: this should contain only
-      // monomials involving 'vars'.
+      // monomials involving 'mVariables'.
       kb_monideal = bottom_matrix->make_monideal(i, true);
       // the true means: over ZZ, don't consider monomials with non-unit lead
       // coeffs
@@ -402,15 +400,14 @@ void KBasis::compute()
         {
           // check here that kb_monideal is 0-dimensional
           // (at least for the variables being used):
-          if (!all_have_pure_powers(kb_monideal, vars))
+          if (!all_have_pure_powers(kb_monideal, mVariables))
             {
               kb_error = true;
               ERROR("module given is not finite over the base");
-              freemem(zero_vars);
               return;
             }
         }
-      else if (zero_vars)
+      else if (zero_vars.size() > 0)
         {
           // if we have any variables with zero degrees, then kb_monideal needs
           // to be 0-dimensional in those variables.
@@ -419,7 +416,6 @@ void KBasis::compute()
               kb_error = true;
               ERROR(
                   "module given is not finite over the zero-degree variables");
-              freemem(zero_vars);
               return;
             }
         }
@@ -427,7 +423,7 @@ void KBasis::compute()
       const int *component_degree = bottom_matrix->rows()->degree(i);
       D->to_expvector(component_degree, kb_exp_multidegree);
       kb_exp_weight =
-          ntuple::weight(heft_vector->len, kb_exp_multidegree, heft_vector);
+          exponents::weight(mHeftVector.size(), kb_exp_multidegree, mHeftVector);
 
       // Do the recursion
       switch (computation_type)
@@ -443,29 +439,28 @@ void KBasis::compute()
             break;
         }
     }
-  freemem(zero_vars);
 }
 
 Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
                                       M2_arrayint lo_degree,
                                       M2_arrayint hi_degree,
-                                      M2_arrayint heft,
-                                      M2_arrayint vars,
+                                      std::vector<int> heftvec,
+                                      std::vector<int> varlist,
                                       bool do_truncation,
                                       int limit)
 {
   // There are essentially 3 situations:
   // (a) basis(M) -- lo_degree and hi_degree are not given
-  //     in this case, only need that for each variable in 'vars',
+  //     in this case, only need that for each variable in 'varlist',
   //     some power is an initial term of 'bottom' (for each row of 'bottom').
   //     heft is not used here, or considered.
   // (b) basis(lo,hi,M) -- case when the ring is singly-graded
   //     one of lo and hi must be given. (otherwise we are in case (a) above)
   //     In this case, heft is a list with one element in it.
-  //     Assume: heft * deg(x) > 0, for all x in 'vars'.
+  //     Assume: heft * deg(x) > 0, for all x in 'varlist'.
   //     In this situation: we use kb_target_lo_heft, kb_target_hi_heft
   // (c) basis(d, d, M) -- ring is multi-graded
-  //   ASSUME: deg_d(x) . heft > 0 for all vars 'x' in 'vars'
+  //   ASSUME: deg_d(x) . heft > 0 for all vars 'x' in 'varlist'
   //     where deg_d(x) consists of the first #d components of deg(x)
   //   ASSUME: 1 <= #d <= degreeRank of the ring
   //   use kb_target_multidegree, kb_target_lo_heft
@@ -486,40 +481,40 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
   const int *lo = lo_degree->len > 0 ? lo_degree->array : 0;
   const int *hi = hi_degree->len > 0 ? hi_degree->array : 0;
 
-  if (heft->len > D->n_vars())
+  if (heftvec.size() > D->n_vars())
     {
       ERROR("expected heft vector of length <= %d", D->n_vars());
       return 0;
     }
 
-  if (lo && heft->len != lo_degree->len)
+  if (lo && heftvec.size() != lo_degree->len)
     {
-      ERROR("expected degrees of length %d", heft->len);
+      ERROR("expected degrees of length %d", heftvec.size());
       return 0;
     }
 
-  if (hi && heft->len != hi_degree->len)
+  if (hi && heftvec.size() != hi_degree->len)
     {
-      ERROR("expected degrees of length %d", heft->len);
+      ERROR("expected degrees of length %d", heftvec.size());
       return 0;
     }
 
-  // If heft->len is > 1, and both lo and hi are non-null,
+  // If heftvec.size() is > 1, and both lo and hi are non-null,
   // they need to be the same
-  if (heft->len > 1 && lo && hi)
-    for (int i = 0; i < heft->len; i++)
+  if (heftvec.size() > 1 && lo && hi)
+    for (int i = 0; i < heftvec.size(); i++)
       if (lo_degree->array[i] != hi_degree->array[i])
         {
           ERROR("expected degree bounds to be equal");
           return 0;
         }
 
-  KBasis KB(bottom, lo, hi, heft, vars, do_truncation, limit);
+  KBasis KB(bottom, lo, hi, heftvec, varlist, do_truncation, limit);
 
   // If either a low degree, or high degree is given, then we require a
   // non-negative heft vector:
   if (lo || hi)
-    for (int i = 0; i < vars->len; i++)
+    for (int i = 0; i < varlist.size(); i++)
       if (KB.var_wts[i] < 0)
         {
           ERROR(
@@ -539,11 +534,13 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
 
 const Matrix *Matrix::basis(M2_arrayint lo_degree,
                             M2_arrayint hi_degree,
-                            M2_arrayint heft,
-                            M2_arrayint vars,
+                            M2_arrayint heftvec,
+                            M2_arrayint varlist,
                             bool do_truncation,
                             int limit) const
 {
+  auto heft = M2_arrayint_to_stdvector<int>(heftvec);
+  auto vars = M2_arrayint_to_stdvector<int>(varlist);
   return KBasis::k_basis(
       this, lo_degree, hi_degree, heft, vars, do_truncation, limit);
 }

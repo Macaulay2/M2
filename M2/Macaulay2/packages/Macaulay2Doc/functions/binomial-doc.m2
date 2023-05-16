@@ -14,7 +14,7 @@ doc ///
     binomial(n,k)
   Inputs
     n:{ZZ,RingElement}
-    k:ZZ -- must be non-ngeative
+    k:ZZ -- must be non-negative
   Outputs
     :Number
       the binomial coefficient, the coefficient of @TEX "$x^k$"@ in

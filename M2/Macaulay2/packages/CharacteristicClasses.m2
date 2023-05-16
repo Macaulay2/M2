@@ -116,7 +116,7 @@ ClassInToricChowRing (QuotientRing,RingElement) :=(A,f)->(
 --
 --Input: An Ideal I, of if the ambient spaces is a Toric variety
 --an ideal and a NormalToricVariety. Optionally the 
---associated chow ring, or toric chow ring may be input so 
+--associated Chow ring, or toric Chow ring may be input so
 --that the output is returned in this ring
 --
 --Output: If V=V(I) (in a applicable toric variety X) is smooth 
@@ -266,7 +266,7 @@ ToricChowRing NormalToricVariety:=TorVar->(
     R:=ring(TorVar);
     A:=0;
     --For simplical toric var. Lemma 3.5 of Euler characteristic of coherent sheaves on simplicial torics via the Stanley-Reisner ring
-    -- (and probally other sources) tell us that the SR ideal is the Alexander
+    -- (and probably other sources) tell us that the SR ideal is the Alexander
     --dual of the toric irrelevant ideal 
     --SR:=dual monomialIdeal TorVar;
     P:=primaryDecomposition ideal TorVar;
@@ -287,7 +287,7 @@ ToricChowRing NormalToricVariety:=TorVar->(
          A=C/substitute(SR+J,C);
 	 )
      else (error "Calculations for subschemes of singular toric varieties are not implemented yet";return 0;);
-    --Generators (as a ring) of the quotient ring representation of the chow ring correspond to 
+    --Generators (as a ring) of the quotient ring representation of the Chow ring correspond to 
     --the divisors associated to the rays in the fan Theorem 12.5.3. Cox, Little, Schenck and 
     --comments above
     return A;
@@ -436,7 +436,7 @@ CSM (QuotientRing, NormalToricVariety) :=opts->(A,TorVar)->(
     prodj:=0;
     --The following implements the method described 
     --in Barthel, Brasselet, and Fieseler.
-    --Lemma 12.5.2 of Cox, Little, Schenck is used to find the chow ring class of the 
+    --Lemma 12.5.2 of Cox, Little, Schenck is used to find the Chow ring class of the 
     --orbit closure from divisors
     --if the toric variety is smooth the multiplicity is 1. 
     Ssets:=0;
@@ -553,7 +553,7 @@ CSM (QuotientRing,NormalToricVariety,Ideal,MutableHashTable):=opts->(ChRing,TorV
 --
 --Input: An Ideal I, or if the ambient spaces is a Toric variety
 --an ideal and a NormalToricVariety. Optionally the 
---associated chow ring, or toric chow ring may be input so 
+--associated Chow ring, or toric Chow ring may be input so
 --that the output is returned in this ring
 --
 --Output: If V=V(I) (in a applicable toric variety X) is smooth 
@@ -582,7 +582,7 @@ Segre (NormalToricVariety, Ideal):= opts->(TorVar,I)->(
     );
 
 Segre (QuotientRing,NormalToricVariety, Ideal):= opts->(ChRing,TorVar,I)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     A:=ChRing;
     R:=ring I;
     irel:=ideal TorVar;
@@ -703,13 +703,13 @@ multr=(RayMatrix,r)->(
     )
 
 SegreMainToric = (ChRing,TorVar,I,PDl,AlphNList,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     alpha:=AlphNList_0;
     n:=AlphNList_1;
     return SegreMain(ChRing,I,PDl,{alpha,n,Output});
     );
 SegreMainToric2 = (ChRing,TorVar,I,PDl,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     irel:=ideal TorVar;
     n:=dim(TorVar);
     A:=ChRing;
@@ -798,8 +798,8 @@ SegreMain = (ChRing,I,PDl,alphaANDn)->(
 	    	K=0;
 	    	v=zdim//w;
 		ve=flatten exponents(v);
-		--In this case we are working with the toric represtation
-		--and may use exponets directly
+		--In this case we are working with the toric representation
+		--and may use exponents directly
 		if length(ve)==numgens(R) then(
 	    	    for i from 0 to length(ve)-1 do(
 	    	    	if ve_i!=0 then (
@@ -808,7 +808,7 @@ SegreMain = (ChRing,I,PDl,alphaANDn)->(
 	    	    	);
 		)
 	        else(
-		    --Projective represtation, exponets associated with degrees ring
+		    --Projective representation, exponents associated with degrees ring
 		    for i from 0 to length(ve)-1 do(
 			if ve_i!=0 then (
 			    Ls=Ls+sum(ve_i,j->ideal(random(OneAti(m,i),R)));
@@ -1265,7 +1265,7 @@ residualDegs = {CompMethod => ProjectiveDegree} >> opts -> (f, ambientDim, dimen
      if (opts.CompMethod == PnResidual) then (
 
   	  for d from (ambientDim - dimension) to ambientDim do (
-	       -- Obtain the ideal J of the intersection of d hypersurfaces containing Z, where d = comdimension of Z, ..., dimension of the ambient space.
+	       -- Obtain the ideal J of the intersection of d hypersurfaces containing Z, where d = codimension of Z, ..., dimension of the ambient space.
 	       J := ideal(take(f,d));
 
 	       -- Compute the residual of Z in the intersection of the d hypersurfaces, using saturation. Compute the degree of the residual. 
@@ -1522,7 +1522,7 @@ checkUserInput = (I,CompMethod) -> (
 
 
 -- The function prepare does two things to prepare the later computations. At first, it trims the ideal I, taking away
--- nonnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
+-- unnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
 -- step is done to avoid possible later conflicts in the choice of variables.
 prepare = I -> (
 
@@ -1622,9 +1622,9 @@ doc ///
                symbolically, using Gr&ouml;bner bases, and numerically, using the regenerative cascade implemented in Bertini. The regenerative
 	       cascade is described in [3].   
 	       
-	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjecvtiveDegree method 
+	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjectiveDegree method 
                practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
                Read more under @TO "probabilistic algorithm"@.
 	       
@@ -1718,7 +1718,7 @@ doc ///
 	       All the examples were done using symbolic computations with Gr\"obner bases. Changing the
 	       option @TO CompMethod@ to bertini will do the main computations numerically, provided
 	       Bertini is  @TO2 {"configuring Bertini", "installed and configured"}@. Note that the bertini option
-	       is only avalibe for subschemes of \PP^n.
+	       is only available for subschemes of \PP^n.
 	       
 	       Observe that the algorithm is a probabilistic algorithm and may give a wrong answer with a small but nonzero probability. Read more under 
 	       @TO "probabilistic algorithm"@.
@@ -1794,7 +1794,7 @@ Description
 	       I=ideal(r_0^2*r_3-r_4*r_1*r_2,r_2^2*r_5)
 	       Chern I
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. Below we verify that the Chern-Fulton class equals the Chern class for this smooth subvariety. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieties package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. Below we verify that the Chern-Fulton class equals the Chern class for this smooth subvariety. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2026,7 +2026,7 @@ doc ///
          :Boolean
 Description
      Text
-         Note that if you are working with subvarieites of some product of projective spaces \PP^{n_1}\times \cdots \times \PP^{n_m} then the ambient space is a valid choice for use with the ChacteristicsClasses package and there is no need to load the NormalToricVarieties Package or to check validity. For other cases the CheckToricVarietyValid method returns true if the input toric variety X may be used as an ambient space for other characteristic class computations, i.e. if this method returns true we may use methods such as CSM(X,I), Chern(X,I) and Segre(X,I) for I an ideal in the coordinate ring of X. We will see an example of a valid toric variety which is not a product of projective spaces and a smooth toric variety which is not valid.
+         Note that if you are working with subvarieties of some product of projective spaces \PP^{n_1}\times \cdots \times \PP^{n_m} then the ambient space is a valid choice for use with the ChacteristicsClasses package and there is no need to load the NormalToricVarieties Package or to check validity. For other cases the CheckToricVarietyValid method returns true if the input toric variety X may be used as an ambient space for other characteristic class computations, i.e. if this method returns true we may use methods such as CSM(X,I), Chern(X,I) and Segre(X,I) for I an ideal in the coordinate ring of X. We will see an example of a valid toric variety which is not a product of projective spaces and a smooth toric variety which is not valid.
      Example
          needsPackage "NormalToricVarieties"
 	 Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2058,7 +2058,12 @@ doc ///
 	  (CSM, QuotientRing, NormalToricVariety,Ideal,MutableHashTable)
 	  (CSM, Ideal, Symbol)
 	  (CSM,NormalToricVariety)
-          (CSM,QuotientRing,NormalToricVariety)	  
+	  (CSM,QuotientRing,NormalToricVariety)
+	  [CSM, CompMethod]
+	  [CSM, Method]
+	  [CSM, CheckSmooth]
+	  [CSM, InputIsSmooth]
+	  [CSM, IndsOfSmooth]
      Headline
      	  The Chern-Schwartz-MacPherson class
      Usage
@@ -2099,11 +2104,11 @@ doc ///
 	  CheckSmooth => 
 	    this option is only used when computing the CSM class of a input toric variety X (not of a subscheme), if true it checks if the toric variety is smooth before computing its CSM class, this will lead to faster computation in the smooth cases
 	  InputIsSmooth=>
-	    this option has values true/false and tells the method whether to assume the input ideal defines a smooth scheme, and hence to call the method Chern instead for reduced run time, alternitively the Chern function can be used directly
+	    this option has values true/false and tells the method whether to assume the input ideal defines a smooth scheme, and hence to call the method Chern instead for reduced run time, alternatively the Chern function can be used directly
 	  Output=>"ChowRingElement"
 	    the type of output to return, "ChowRingElement" is default and returns a RingElement in the Chow ring of the appropriate ambient space 
 	  Output=>"HashForm"
-	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomails in the corresponding set of generators is stored, there is no extra cost to using this option
+	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomials in the corresponding set of generators is stored, there is no extra cost to using this option
           IndsOfSmooth=>
 	    this option may speed up the run time when using the DirectCompleteInt Method if the user knows additional information about the input ideal, see @TO IndsOfSmooth@ 
      Outputs
@@ -2145,7 +2150,7 @@ Description
 	       m#{0,1}=csmKHash#{0,1}
 	       time CSM(A,K,m)
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites package and must also input the toric variety. If the toric variety is a product of projective space it is recommend to use the form above rather than inputting the toric variety for efficiency reasons. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieties package and must also input the toric variety. If the toric variety is a product of projective space it is recommend to use the form above rather than inputting the toric variety for efficiency reasons. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2159,7 +2164,7 @@ Description
 	       CSM(X,I)
 	       CSM(Ch,X,I)
           Text
-               This function may also compute the CSM class of a normal toric variety defined by a fan. In this case a combinitorial method is used. This method is accessed with the usual CSM command with either only a toric variety or a toric variety and a Chow ring as input. In this case we only require that the input toric variety is complete and simplicial (in particular we do not need it to be smooth).
+               This function may also compute the CSM class of a normal toric variety defined by a fan. In this case a combinatorial method is used. This method is accessed with the usual CSM command with either only a toric variety or a toric variety and a Chow ring as input. In this case we only require that the input toric variety is complete and simplicial (in particular we do not need it to be smooth).
           Example
                needsPackage "NormalToricVarieties"
                U = hirzebruchSurface 7
@@ -2212,7 +2217,7 @@ doc ///
 	  Output=>
 	    the type of output to return the default output is an integer
 	  Output=>"HashForm"
-	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form  \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomails in the corresponding set of generators is stored, there is no extra cost to using this option
+	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form  \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomials in the corresponding set of generators is stored, there is no extra cost to using this option
           IndsOfSmooth=>
 	    this option may speed up the run time when using the DirectCompleteInt Method if the user knows additional information about the input ideal, see @TO IndsOfSmooth@
      Outputs
@@ -2246,7 +2251,7 @@ Description
 	       csmK= CSM(K)
 	       EulerK==Euler(csmK)	       
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieties package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2319,8 +2324,8 @@ doc ///
                computing the correct class. 
                Skeptical users should repeat calculations several times to increase the probability of computing the correct class.
 
-               In the case of the symbolic implementation of the ProjecvtiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               In the case of the symbolic implementation of the ProjectiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using the finite field kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
 	       
 	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 
@@ -2413,7 +2418,7 @@ doc ///
 	       peek eu
 	       
 	  Text  
-	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the usual information that Output=>HashForm would for this configuration with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/excluion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equailiently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficancy reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illustrate this with an example below.
+	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the usual information that Output=>HashForm would for this configuration with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/exclusion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equivalently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficiency reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illustrate this with an example below.
           Example
 	      csmXLhash=CSM(A,I,Output=>HashFormXL)
 	      peek csmXLhash

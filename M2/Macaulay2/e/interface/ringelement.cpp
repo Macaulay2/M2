@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 
+#include "ExponentList.hpp"
 #include "M2FreeAlgebra.hpp"
 #include "M2FreeAlgebraQuotient.hpp"
 
@@ -28,7 +29,7 @@
 #include "schur2.hpp"
 #include "schurSn.hpp"
 #include "tower.hpp"
-#include "varpower.hpp"
+#include "util.hpp"
 
 namespace M2 { class ARingRRR; }
 
@@ -176,21 +177,17 @@ gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
   auto RCCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCCC> *>(R);
   if (RCCC != 0)
     {
-      M2::ARingCCC::ElementType b;
-      RCCC->ring().init(b);
-      RCCC->ring().from_ring_elem(b, a->get_value());
+      const M2::ARingCCC::ElementType &b =
+          RCCC->ring().from_ring_elem_const(a->get_value());
       gmp_CC result = RCCC->ring().toBigComplex(b);
-      RCCC->ring().clear(b);
       return result;
     }
   auto RCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCC> *>(R);
   if (RCC != 0)
     {
-      M2::ARingCC::ElementType b;
-      RCC->ring().init(b);
-      RCC->ring().from_ring_elem(b, a->get_value());
+      const M2::ARingCC::ElementType &b =
+          RCC->ring().from_ring_elem_const(a->get_value());
       gmp_CC result = RCC->ring().toBigComplex(b);
-      RCC->ring().clear(b);
       return result;
     }
   ERROR("expected an element of CCC");
@@ -435,7 +432,7 @@ IM2_RingElement_homogenize(const RingElement *a, int v, M2_arrayint wts)
 
 const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
                                                       const RingElement *a,
-                                                      const Monomial *m)
+                                                      const EngineMonomial *m)
 /* R must be a polynomial ring, and 'a' an element of the
    coefficient ring of R.  Returns a*m, if this is a valid
    element of R.  Returns NULL if not (with an error message). */
@@ -447,8 +444,8 @@ const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
         int nvars0 = P->n_vars();
         const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
         if (K != nullptr && K != P->getCoefficients()) nvars0 -= K->n_vars();
-        int *exp = newarray_atomic(int,nvars0);
-        varpower::to_ntuple(nvars0, m->ints(), exp);
+        exponents_t exp = newarray_atomic(int, nvars0);
+        varpower::to_expvector(nvars0, m->ints(), exp);
         ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
         return RingElement::make_raw(R,val);
       }
@@ -490,7 +487,7 @@ const RingElement /* or null */ *IM2_RingElement_get_terms(
 const RingElement /* or null */ *IM2_RingElement_get_coeff(
     const Ring *coeffRing, /* ring of the result */
     const RingElement *a,
-    const Monomial *m)
+    const EngineMonomial *m)
 /* Return (as an element of the coefficient ring) the coeff
      of the monomial 'm'.
   */
@@ -519,7 +516,7 @@ const RingElement /* or null */ *IM2_RingElement_lead_coeff(
   }
 }
 
-const Monomial /* or null */ *IM2_RingElement_lead_monomial(
+const EngineMonomial /* or null */ *IM2_RingElement_lead_monomial(
     int nvars, /* number of variables in an outermost monoid */
     const RingElement *a)
 {

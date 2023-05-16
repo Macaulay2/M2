@@ -29,7 +29,7 @@ Clebsch = (L) -> (
 -- L = {(c_0,l_0),...} List of coefficients and linear forms
 -- calculates  
 --   S_d(\sum c_i l_i^d)  
--- using multilineariy
+-- using multilinearity
 Scorza = (n,L) -> (
      sum apply(subsets(L,4),CL -> (
 	       c = apply(CL,cl -> cl#0);
@@ -42,7 +42,7 @@ Scorza = (n,L) -> (
 -- L = {(c_0,l_0),...} List of coefficients and linear forms
 -- calculates
 --   T_d(\sum c_i l_i^d) 
--- using multilineariy
+-- using multilinearity
 Octa = (n,L) -> (
      sum apply(subsets(L,4),CL -> (
 	       c = apply(CL,cl -> cl#0);

@@ -112,7 +112,6 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
      pos := position(o);
-     hadnewline := false;
      tokenbuf << '\"';					    -- "
      while true do (
 	  ch := getc(o);
@@ -142,8 +141,6 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
 	  && peek(o,1) == int('/') then break;
 	  if ch == int('\"') || ch == int('\\') then tokenbuf << '\\';
      	  tokenbuf << char(ch);
-	  if ch == int('\n') && hadnewline && isatty(o) then return NULL; -- user gets out with an extra NEWLINE
-	  hadnewline = ch == int('\n')
 	  );
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
@@ -163,7 +160,6 @@ getstring(o:PosFile):(null or Word) := (
      line := o.line;
      column := o.column;
      delimiter := getc(o);
-     hadnewline := false;
      escaped := false;
      tokenbuf << char(delimiter);
      hexcoming := 0;
@@ -216,8 +212,6 @@ getstring(o:PosFile):(null or Word) := (
 	       )
 	  else if ch == delimiter then break
 	  else if ch == int('\\') then escaped = true;
-	  if ch == int('\n') && hadnewline && isatty(o) then return NULL;	-- user gets out with an extra NEWLINE
-	  hadnewline = ch == int('\n');
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
@@ -265,18 +259,9 @@ skipwhite(file:PosFile):int := (
 	  else if c == int('-') && peek(file,1) == int('*') then (
 	       -- block comment: -* ... *-
 	       getc(file); getc(file);
-	       hadnewline := false;
 	       until (
 		    c = peek(file);
 		    if c == ERROR || c == EOF then return c;
-		    if c == int('\n') then (
-			 if hadnewline && isatty(file) then (
-			      getc(file);
-			      return ERROR; -- user gets out with an extra NEWLINE
-			      );
-			 hadnewline = true;
-			 )
-		    else hadnewline = false;
 		    c == int('*') && (
 			 getc(file);
 			 c = peek(file);
@@ -322,7 +307,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,
 		    file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
-	  else if isalpha(ch) && ch != int('\'') then (
+	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode except 226) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
@@ -356,7 +341,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       else while isdigit(peek(file)) do
 		    tokenbuf << char(getc(file));
 	       c := peek(file);
-	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e'))
+	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')) || c == int('E')
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
@@ -377,9 +362,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			      )
 			 );
 	       	    c = peek(file);
-		    if c == int('e') then (
+		    if c == int('e') || c == int('E') then (
 			 tokenbuf << char(getc(file));
-			 if ( peek(file) == int('-') && isdigit(peek(file,1)) || isdigit(peek(file)) )
+			 if ( peek(file) == int('-') && isdigit(peek(file,1)) ||
+			      peek(file) == int('+') && isdigit(peek(file,1)) ||
+			      isdigit(peek(file)) )
 			 then (
 			      tokenbuf << char(getc(file));
 			      while isdigit(peek(file)) do tokenbuf << char(getc(file));
@@ -411,7 +398,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    return errorToken
 		    )
 	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
-	  else if ch == 226 then (
+	  else if ch == 226 then ( -- unicode math symbols
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));

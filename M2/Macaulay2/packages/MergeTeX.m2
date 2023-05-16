@@ -51,7 +51,7 @@ mergeTeX = { Path => null } >> o -> s -> (
     codes := select(codeRegex,s);
     rest := separate(codeRegex,s); -- seems silly to do the regex twice
     --print(fmt\codes,fmt\rest);
-    if o.Path =!= null then (oldPath:=path; path = append(path,o.Path));
+    --if o.Path =!= null then (oldPath:=path; path = append(path,o.Path));
     codes = apply(codes, x -> (
 	    r := regex(codeRegex,x); -- ... and once more ...
 	    if r#1#1 != 0 then (
@@ -59,7 +59,7 @@ mergeTeX = { Path => null } >> o -> s -> (
 		substring(r#3,x) -- code
 		) else (
 		substring(r#4,x) | outputLanguage | substring(r#5,x) | "\n",
-		try get substring(r#6,x) else ""
+		try get substring(r#6,x) else if o.Path =!= null then try get (o.Path | substring(r#6,x)) else ""
 	       )
 	   ));
     outputs = new MutableHashTable;
@@ -67,8 +67,8 @@ mergeTeX = { Path => null } >> o -> s -> (
     topLevelMode = TeX;
     s = capture apply(codes, x -> codeComment | x#1);
     topLevelMode = saveMode;
-    if o.Path =!= null then path = oldPath;
-    if s#0 then print ("warning: running the code produced an error"|s#1);
+--    if o.Path =!= null then path = oldPath;
+    if s#0 then print ("warning: running the code produced an error: "|s#1);
     --print (fmt s#1);
     --print peek outputs;
     s = last s;
@@ -156,63 +156,18 @@ texAfterPrint :=  x -> (
     printFunc x;
     )
 
-Thing#{TeX,AfterNoPrint} = identity
-
--- all that's below would go if afterprint was expressionified
-
-Thing#{TeX,AfterPrint} = x -> texAfterPrint class x;
-
-Boolean#{TeX,AfterPrint} = identity
-
-Expression#{TeX,AfterPrint} = x -> texAfterPrint (Expression," of class ",class x)
-
-Describe#{TeX,AfterPrint} = identity
-
-Ideal#{TeX,AfterPrint} = Ideal#{TeX,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
-MonomialIdeal#{TeX,AfterPrint} = MonomialIdeal#{TeX,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
-
-InexactNumber#{TeX,AfterPrint} = x -> texAfterPrint (class x," (of precision ",precision x,")")
-
-Module#{TeX,AfterPrint} = M -> texAfterPrint(
-    ring M,"-module",
-    if M.?generators then
-    if M.?relations then (", subquotient of ",ambient M)
-    else (", submodule of ",ambient M)
-    else if M.?relations then (", quotient of ",ambient M)
-    else if rank ambient M > 0 then
-    (", free",
-	if not all(degrees M, d -> all(d, zero))
-	then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
-	)
+Thing#{TeX,AfterPrint} = x -> (
+    l:=lookup(AfterPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then texAfterPrint s
     )
-
-Net#{TeX,AfterPrint} = identity
-
-Nothing#{TeX,AfterPrint} = identity
-
-Matrix#{TeX,AfterPrint} = Matrix#{TeX,AfterNoPrint} =
-RingMap#{TeX,AfterPrint} = RingMap#{TeX,AfterNoPrint} = f -> texAfterPrint (class f, " ", new MapExpression from {target f,source f})
-
--- Sequence#{TeX,AfterPrint} = Sequence#{TeX,AfterNoPrint} = identity
-
-CoherentSheaf#{TeX,AfterPrint} = F -> (
-     X := variety F;
-     M := module F;
-     n := rank ambient F;
-     texAfterPrint("coherent sheaf on ",X,
-     if M.?generators then
-     if M.?relations then (", subquotient of ", ambient F)
-     else (", subsheaf of ", ambient F)
-     else if M.?relations then (", quotient of ", ambient F)
-     else if n > 0 then (
-	  ", free"
-	  -- if not all(degrees M, d -> all(d, zero))
-	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
-	  )
-     )
- )
-
-ZZ#{TeX,AfterPrint} = identity
+Thing#{TeX,AfterNoPrint} = x -> (
+    l:=lookup(AfterNoPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then texAfterPrint s
+    )
 
 beginDocumentation()
 multidoc ///

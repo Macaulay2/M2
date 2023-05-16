@@ -496,6 +496,14 @@ utf8substrfun(e:Expr):Expr := (
 );
 setupfun("utf8substring",utf8substrfun);
 
+utf8charactersfun(e:Expr):Expr := (
+     when e
+     is s:stringCell do toExpr(utf8characters(s.v))
+     else WrongArg("a string"));
+setupfun("characters",utf8charactersfun);
+
+
+
 stringWidth(e:Expr):Expr := (
      when e
      is s:stringCell do toExpr(utf8width(s.v))
@@ -544,21 +552,15 @@ endlfun(e:Expr):Expr := (
 setupfun("endl",endlfun).Protected = false;
 setupconst("newline", toExpr(newline));
 
-remove(x:Sequence,i:int):Sequence := (
-     n := length(x);
-     if i < 0 then i = i + n;
-     if 0 <= i && i < n then (
-	  new Sequence len n-1 do foreach y at j in x do if i != j then provide y
-	  )
-     else x
-     );
-
-remove(x:List,i:int):List := (
-     v := remove(x.v,i);
-     if v == x.v then return x;
-     r := List(x.Class, v, 0, x.Mutable);
-     r.hash = hash(r);
-     r);
+remove(x:List,i:int):Expr:= (
+     n := length(x.v);
+     if !x.Mutable then buildErrorPacket("expected a mutable list")
+     else if i >= n || i < -n then ArrayIndexOutOfBounds(i, n - 1)
+     else (
+	  if i < 0 then i = n + i;
+	  for j from i to n - 2 do x.v.j = x.v.(j + 1);
+	  Ccode(void, x.v, "->len = ", n - 1);
+	  nullE));
 
 removefun(e:Expr):Expr := (
      when e
@@ -569,11 +571,7 @@ removefun(e:Expr):Expr := (
 	       when args.0
 	       is x:List do (
 		    when args.1 is i:ZZcell do
-		     if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
-		    else WrongArgZZ(2))
-	       is x:Sequence do (
-		    when args.1 is i:ZZcell do
-		    if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
+		    if isInt(i) then remove(x,toInt(i)) else WrongArgSmallInteger(2)
 		    else WrongArgZZ(2))
 	       is f:Database do (
 		    when args.1 is key:stringCell do (
@@ -1081,7 +1079,39 @@ take(e:Expr):Expr := (
 	       	    list(x.Class,v,x.Mutable))
 	       else vv)
 	  is v:Sequence do take(v,args.1)
-	  else WrongArg(1,"a list or sequence"))
+	  else (
+	      iter := getIterator(args.0);
+	      if iter == nullE
+	      then return WrongArg(1, "a list, sequence, or iterable object");
+	      nextfunc := getNextFunction(iter);
+	      if nextfunc == nullE
+	      then return buildErrorPacket(
+		  "no method for applying next to iterator");
+	      when args.1
+	      is n:ZZcell do (
+		  if !isInt(n) then return WrongArgSmallInteger(2);
+		  m := toInt(n);
+		  if m < 0 then return WrongArg(2, "a positive integer");
+		  if m == 0 then return Expr(emptyList);
+		  r := new Sequence len m do provide nullE;
+		  j := 0;
+		  y := nullE;
+		  while (
+		      y = applyEE(nextfunc, iter);
+		      when y
+		      is Error do return returnFromFunction(y)
+		      else nothing;
+		      y != StopIterationE)
+		  do (
+		      r.j = y;
+		      j = j + 1;
+		      if j == m then break);
+		  Expr(list(
+			  if j == 0 then emptySequence
+			  else if j == m then r
+			  else new Sequence len j do (
+			      foreach x in r do provide x))))
+	      else WrongArgZZ(2)))
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("take",take);
@@ -1473,6 +1503,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
+          if !isvalidsymbol(s) then return buildErrorPacket("invalid symbol");
 	  if d.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
 	  t := makeSymbol(w,dummyPosition,d);
 	  globalFrame.values.(t.frameindex)));

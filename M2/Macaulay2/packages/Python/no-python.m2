@@ -7,9 +7,6 @@ export {
     "getitem",
     "hasattr",
     "import",
-    "iter",
-    "iterableToList",
-    "next",
     "pythonValue",
     "setattr",
     "setitem",
@@ -37,13 +34,8 @@ hasattr(PythonObject, String) := err
 import = method()
 import String := err
 
-iter = method()
-iter PythonObject := err
+iterator PythonObject := err
 
-iterableToList = method()
-iterableToList PythonObject := err
-
-next = method()
 next PythonObject := err
 
 pythonValue = method(Dispatch => Thing)
@@ -64,6 +56,7 @@ for type in {
     Boolean,
     CC,
     Constant,
+    Function,
     HashTable,
     Nothing,
     PythonObject,
@@ -78,18 +71,41 @@ for type in {
 
 for op in {symbol +, symbol -, symbol *, symbol /, symbol //, symbol %,
     symbol ^, symbol <<, symbol >>, symbol &, symbol |, symbol ^^, symbol and,
-    symbol or, symbol xor, symbol ==, symbol ?} do (
+    symbol or, symbol xor, symbol ==, symbol ?, symbol @} do (
     installMethod(op, PythonObject, PythonObject, err);
     installMethod(op, PythonObject, Thing, err);
     installMethod(op, Thing, PythonObject, err))
 
-PythonObject Thing :=
-length PythonObject :=
-value PythonObject :=
-PythonObject @@ Thing :=
-PythonObject_Thing :=
-+PythonObject :=
--PythonObject := err
+-- unary methods
+for m in {
+    length,
+    value,
+    symbol +,
+    symbol -,
+    abs,
+    symbol ~,
+    round,
+    truncate,
+    floor,
+    ceiling,
+    help#0
+    } do installMethod(m, PythonObject, err)
+
+-- binary methods (PythonObject, Thing)
+for m in {
+    symbol SPACE,
+    symbol @@,
+    symbol_,
+    quotientRemainder
+    } do installMethod(m, PythonObject, Thing, err)
+
+-- others
+member(Thing, PythonObject) :=
+member(PythonObject, PythonObject) :=
+quotientRemainder(PythonObject, PythonObject) :=
+quotientRemainder(Thing, PythonObject) :=
+round(ZZ, PythonObject) :=
+round(PythonObject, PythonObject) := err
 
 objectType = x -> error errmsg
 runSimpleString = x -> error errmsg

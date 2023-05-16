@@ -1,9 +1,10 @@
 --  Copyright 1993-2003 by Daniel R. Grayson
 -- Revamped by P. Zinn-Justin and Mahrud Sayrafi 2020
 
+needs "debugging.m2" -- for Descent, FilePosition
 needs "regex.m2" -- for toLower
 needs "lists.m2" -- for all
-needs "methods.m2"
+needs "max.m2" -- for IndeterminateNumber
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors
@@ -21,12 +22,18 @@ HypertextParagraph.synonym = "markup list paragraph"
 HypertextContainer = new Type of Hypertext
 HypertextContainer.synonym = "markup list container"
 
+-- these must be empty
+HypertextVoid = new Type of Hypertext
+HypertextVoid.synonym = "void markup"
+
 toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
 toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
 
 new Hypertext from VisibleList := (M,x) -> x
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
+
+Hypertext#AfterPrint = x -> null
 
 -----------------------------------------------------------------------------
 -- URL type declaration and constructor
@@ -104,16 +111,16 @@ IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction
 -- Standard html
 HTML       = new MarkUpType of HypertextContainer
 HEAD       = new MarkUpType of HypertextContainer
-META       = new MarkUpType of HypertextParagraph
-LINK       = new MarkUpType of HypertextParagraph
+META       = new MarkUpType of HypertextVoid
+LINK       = new MarkUpType of HypertextVoid
 TITLE      = new MarkUpType of HypertextParagraph
 BODY       = new MarkUpType of HypertextContainer
 STYLE      = new MarkUpType of Hypertext
 SPAN       = new MarkUpType of Hypertext
 PARA       = new MarkUpType of HypertextParagraph -- double spacing inside
 DIV        = new MarkUpType of HypertextContainer
-BR         = new MarkUpType of Hypertext
-HR         = new MarkUpType of HypertextParagraph
+BR         = new MarkUpType of HypertextVoid
+HR         = new MarkUpType of HypertextVoid
 SCRIPT     = new MarkUpType of HypertextParagraph
 
 -- Headers
@@ -135,7 +142,7 @@ SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
 
--- Lists (TODO: OL)
+-- Lists
 OL         = new MarkUpType of HypertextContainer
 UL         = new MarkUpType of HypertextContainer
 LI         = new MarkUpType of HypertextContainer
@@ -144,7 +151,7 @@ DT         = new MarkUpType of HypertextParagraph
 DD         = new MarkUpType of HypertextParagraph
 
 -- Links and references
-IMG        = new MarkUpType of Hypertext
+IMG        = new MarkUpType of HypertextVoid
 ANCHOR     = new MarkUpType of Hypertext
 LABEL      = new MarkUpType of Hypertext
 
@@ -161,9 +168,13 @@ TR         = new MarkUpType of HypertextContainer
 TD         = new MarkUpType of Hypertext
 TH         = new MarkUpType of TD
 
+-- Misc
 CDATA      = new MarkUpType of Hypertext
 COMMENT    = new MarkUpType of Hypertext
+INPUT      = new MarkUpType of HypertextVoid
+BUTTON     = new MarkUpType of Hypertext
 
+-- Fake
 TEX        = new IntermediateMarkUpType of Hypertext
 ExampleItem = new IntermediateMarkUpType of Hypertext
 HREF       = new IntermediateMarkUpType of Hypertext
@@ -173,6 +184,7 @@ MENU       = new IntermediateMarkUpType of HypertextContainer -- e.g. help sum
 TO         = new IntermediateMarkUpType of Hypertext
 TO2        = new IntermediateMarkUpType of Hypertext
 TOH        = new IntermediateMarkUpType of Hypertext
+INDENT     = new IntermediateMarkUpType of HypertextContainer -- temporary: one day, once format.m2 sorted out, we can simply have INDENT = x -> append(DIV x, "class" => "indent")
 
 -----------------------------------------------------------------------------
 -- LATER
@@ -184,8 +196,7 @@ toExternalString LATER := x -> toExternalString x#0()
 -- MarkUpType constructors
 -----------------------------------------------------------------------------
 
-new HR from List :=
-new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else error "expected empty list"
+new HypertextVoid from List := (X,x) -> if all(x, e -> instance(e, Option) or instance(e,OptionTable)) then x else error "expected empty list"
 br = BR{}
 hr = HR{}
 
@@ -241,22 +252,19 @@ new HREF from List      := (HREF, x) -> (
     then x#0 else error "HREF expected URL to be a string or a sequence of 2 strings";
     if x#?1 then prepend(url, drop(x, 1)) else {url})
 
-new OL from VisibleList :=
-new UL from VisibleList := (T, x) -> (
-    apply(nonnull x, e -> (
-	    if class e === TO then LI{TOH{e#0}}
-	    else if instance(e, LI) or instance(e,Option) then e
-	    else LI e)))
--- TODO: deprecate this
-ul = x -> ( x = nonnull x; if 0 < #x then UL x )
+new OL from VisibleList := 
+new UL from VisibleList := (T, x) -> apply(nonnull x, e -> (
+	if class e === TO then LI{TOH{e#0}}
+	else if instance(e, LI) or instance(e,Option) or instance(e,OptionTable) then e
+	else LI e))
 
 -- Written by P. Zinn-Justin
 new TABLE from VisibleList := (T,x) -> (
     apply(nonnull x, e -> (
-           if instance(e, TR) or instance(e, Option) then e else TR e)))
+           if instance(e, TR) or instance(e, Option) or instance(e,OptionTable) then e else TR e)))
 new TR from VisibleList := (T,x) -> (
     apply(nonnull x, e -> (
-           if instance(e, TD) or instance(e, Option) then e else TD e)))
+           if instance(e, TD) or instance(e, Option) or instance(e,OptionTable) then e else TD e)))
 
 -- the main idea of these comparisons is so sorting will sort by the way things will print:
 TO  ? TO  :=
@@ -290,6 +298,7 @@ TEX.qname     = "#PCDATA"
 TO.qname      = "a"
 TO2.qname     = "a"
 TOH.qname     = "span"
+INDENT.qname  = "div"
 
 -----------------------------------------------------------------------------
 -- Add acceptable html attributes to the type of an html tag
@@ -346,6 +355,14 @@ addAttribute(TD,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
+addAttribute(OL, htmlAttr | {"start"=>"0", "reversed", "type"})
+buttonAttr = htmlAttr | {"autofocus","disabled",
+    "form","formaction","formenctype","formmethod","formnovalidate","formtarget",
+    "name", "type", "value"}
+addAttribute(BUTTON, buttonAttr)
+addAttribute(INPUT, buttonAttr | {"accept","alt","checked",
+	"height", "list", "max", "maxlength", "min", "minlength", "multiple",
+	"pattern", "placeholder", "readonly", "required", "size", "src", "step", "width" })
 
 M2CODE = method()
 M2CODE Thing := x -> prepend("class" => "language-macaulay2", CODE x)
@@ -362,6 +379,43 @@ style Hypertext := true >> o -> x -> (
 	);
     append(x,"style"=>str)
     )
+
+hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
+hypertext Hypertext := identity
+hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-align:left", -- TODO move style to CSS
+    deepSplice apply(sortByName pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then k
+	  else (k, " : ", v)
+	  , BR{})))
+hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
+TTc = c -> x -> TT {toString x,"class"=>"token "|c}
+hypertext Pseudocode :=
+hypertext CompiledFunctionBody := TTc "function"
+hypertext Command :=
+hypertext FunctionBody :=
+hypertext Function := f -> TT deepSplice {
+    if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
+	t := locate if instance(f,Command) then f#0 else f;
+	"-*",
+	SPAN class f,
+	if t =!= null then ("[", SPAN t, "]"),
+	"*-"
+	),
+    "class"=>"token function"
+    }
+hypertext File :=
+hypertext IndeterminateNumber :=
+hypertext Manipulator :=
+hypertext Boolean := TTc "constant"
+hypertext Type :=
+hypertext FilePosition :=
+hypertext Dictionary := TTc "class-name"
+hypertext String := TTc "string"
+hypertext Net := n -> PRE { toString n, BR{}, "class"=>"token string", "style" => "display:inline-table;vertical-align:"|toString(if #n>0 then 100*(height n-1) else 0)|"%" }
+--hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
+--hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

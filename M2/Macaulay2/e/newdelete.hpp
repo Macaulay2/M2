@@ -1,18 +1,19 @@
 #ifndef NEWDELETE_H
 #define NEWDELETE_H 1
 
-#define GC_REDIRECT_TO_LOCAL
-// get declarations of outofmem and getmem
-#include "../d/M2mem.h"
-#include "../d/debug.h"
+#define GC_REDIRECT_TO_LOCAL // enable thread-local allocation
 
-#include <M2/gc-include.h>
+#include "M2mem.h"  // for freemem, getmem, outofmem2
+#include "debug.h"  // for TRAPCHK, TRAPCHK_SIZE
+
+#include "M2/gc-include.h"  // for GC_base, NULL, size_t, GC_REGISTER_FINALI...
+// IWYU pragma: begin_exports
 #include <gc/gc_allocator.h>
+// IWYU pragma: end_exports
 #include <vector>
 
 #ifdef MEMDEBUG
 #include <memdebug.h>
-#include <M2mem.h>
 #endif
 
 /**
@@ -28,7 +29,10 @@
   It is a (probably hard to detect) error if exactly (1) or (2a) holds.
   In that case, redesign your class!
  */
-#define VECTOR(T) std::vector<T, gc_allocator<T>>
+template <typename T>
+using gc_vector = typename std::vector<T, gc_allocator<T>>;
+// TODO: eventually replace all uses of VECTOR(T) with gc_vector<T>
+#define VECTOR(T) gc_vector<T>
 
 // these replace all uses of the construction "new T[n]" (unless constructors
 // have to be run!):
@@ -53,6 +57,17 @@
 // Caution: this uses the pointer type, not the struct type.
 #define GETMEM(T, size) reinterpret_cast<T>(getmem(size))
 #define GETMEM_ATOMIC(T, size) reinterpret_cast<T>(getmem_atomic(size))
+
+/// ARRAY_ON_STACK
+// This allocates POD objects onto the stack.  They are then removed automatically
+// when exiting the enclosing function.  This does NOT zero the corresponding memory.
+// Example uses:
+//    int* exp = ARRAY_ON_STACK(int, n);
+//    auto exp =  ARRAY_ON_STACK(int, n);
+// In gcc or clang, we could instead use:
+//    int[n] exp;
+// But that doesn't appear to be standard c++...
+#define ARRAY_ON_STACK(type, nelems) static_cast<type*>(alloca(nelems * sizeof(type)))
 
 struct our_new_delete
 {
@@ -106,7 +121,7 @@ struct our_new_delete
 #if !defined(__GNUC__) || defined(__INTEL_COMPILER)
 // see Scott Meyers, Effective C++, item 14!  This avoids something really bad
 // in the c++ standard.
-// ... but it slows down destuctors in every class inheriting from this one
+// ... but it slows down destructors in every class inheriting from this one
 // gnu cc does it right, running all the destructors, so we don't bother with
 // this.
 #if 0

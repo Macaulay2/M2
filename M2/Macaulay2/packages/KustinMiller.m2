@@ -201,8 +201,8 @@ maximalElements List := L -> (
         M:=L;
         for j from 0 to #L-1 do (
           for jj from j+1 to #L-1 do (
-               if isSubset(L#j,L#jj) then (M=remove(L,j);break);
-               if isSubset(L#jj,L#j) then (M=remove(L,jj);break);
+               if isSubset(L#j,L#jj) then (M=drop(L,{j,j});break);
+               if isSubset(L#jj,L#j) then (M=drop(L,{jj,jj});break);
           );
         );
         if #M==#L then return L;
@@ -704,7 +704,7 @@ doc ///
       general structure theorems in higher codimension are lacking and the main goal of unprojection theory 
       is to provide a substitute for a structure theorem.
 
-      Unprojection theorey has been applied in various cases to construct new varieties, for example, in [4] in the case of Campedelli surfaces and [5] in the case of Calabi-Yau varieties.
+      Unprojection theory has been applied in various cases to construct new varieties, for example, in [4] in the case of Campedelli surfaces and [5] in the case of Calabi-Yau varieties.
       
       We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller complex construction and demonstrate it on several examples connecting unprojection theory
       and combinatorics such as stellar subdivisions of simplicial complexes [6],
@@ -795,7 +795,7 @@ doc ///
     cJ:ChainComplex
         resolution of J
     W:PolynomialRing
-        over the the same @TO coefficientRing@ as R
+        over the same @TO coefficientRing@ as R
         with one variable T.
   Outputs
     :ChainComplex

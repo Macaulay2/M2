@@ -19,17 +19,18 @@
 -- 15) invariants of A^1, with a nilpotent action of A^4
 -- 16) elimination order on ambient ring
 -- 17) 'symmetric' quadratic artin ideal in 2x3 variables
--- 18) toricSyz, Sturmfels example 11.19 -- Removed due to toricSyz removal
-
-----------------------------------------
--- New Tests 
-----------------------------------------
+-- * 18) toricSyz, Sturmfels example 11.19 -- Removed due to toricSyz removal
 -- 19) Lex term order, simple example (verifying sagbi basis)
 -- 20) Lex term order, harder example (requires new generators)
 -- 21) GRevLex version of 19 (one more generator than 19)
 -- 22) GRevLex version of 20 (one more generator than 20)
 -- 23) Test for %
 -- 24) Test for groebnerMembershipTest
+-- 25) subductionQuotient 
+-- 26) subring intersection (infinite sagbi basis)
+-- 27) subring intersection in a quotient ring (finite sagbi basis)
+-- 28) Bruns/Conca example 1
+-- 29) Bruns/Conca example 1
 
 -- 0) Subring tests
 TEST ///
@@ -38,7 +39,7 @@ S = QQ[e1, e2, e3, y];
 f = map(R, S, {x1 + x2 + x3, x1*x2 + x1*x3 + x2*x3, x1*x2*x3,
 (x1 - x2)*(x1 - x3)*(x2 - x3)});
 A = subring matrix f;
-assert(not (verifySagbi A))
+assert(not (isSAGBI A))
 ///
 ---------------------
 
@@ -512,6 +513,73 @@ f1 = x+y + 2*x*y;
 f2 = x+2*y;
 assert(time groebnerMembershipTest(f1,S))
 assert(time not groebnerMembershipTest(f2,S))
+///
+
+-- 25) subductionQuotient 
+TEST ///
+R = QQ[x,y];
+S = subring {x+y, x*y, x*y^2};
+f = x^5;
+subQuot = f // S;
+Q = ring subQuot;
+m = map(R, Q, gens S);
+ans = x^5+x^4*y+4*x^3*y^2+6*x^2*y^3+4*x*y^4+y^5;
+assert((m subQuot) == ans)
+assert((m subQuot) + (f % S) == f)
+///
+
+-- 26) subring intersection (infinite sagbi basis)
+TEST ///
+R = QQ[x,y];
+S1 = subring {x^2, x*y};
+S2 = subring {x^3, y};
+S12 = subringIntersection(S1, S2, Limit => 8);
+assert(gens S12 == matrix {{x^3*y, x^3*y^3, x^6}})
+///
+
+-- 27) subring intersection in a quotient ring (finite sagbi basis)
+TEST ///
+R = QQ[x,y];
+I = ideal(x^3 + x*y^2 + y^3);
+Q = R/I;
+S1 = subring {x^2, x*y};
+S2 = subring {x, y^2};
+S12 = subringIntersection(S1, S2, Limit => 20);
+assert(isSAGBI S12)
+assert(gens sagbi S12 == matrix {{x^2, x^2*y^2, y^4, x*y^3, y^6, x*y^5}})
+///
+
+-- 28) Bruns/Conca example 1
+TEST /// 
+R = QQ[x,y,z]
+M = matrix{{x^3+y^3+z^3,   x^4+y^4+z^4,   x^5+y^5+z^5}}
+partialSBSeventeen = gens sagbi(M, Limit => 17);
+assert(partialSBSeventeen == matrix {{x^3+y^3+z^3, x^4+y^4+z^4, x^5+y^5+z^5, x^5*y^3-2*x^4*y^4+x^3*y^5+x^5*z^3+y^5*z^3-2*x^4*z^4-2*y^4*z^4+x^3*z^5+y^3*z^5,
+      3*x^6*y^3-x^5*y^4-x^4*y^5+3*x^3*y^6+3*x^6*z^3+6*x^3*y^3*z^3+3*y^6*z^3-x^5*z^4-y^5*z^4-x^4*z^5-y^4*z^5+3*x^3*z^6+3*y^3*z^6,
+      2*x^7*y^3+x^6*y^4-2*x^5*y^5+x^4*y^6+2*x^3*y^7+2*x^7*z^3+2*x^4*y^3*z^3+2*x^3*y^4*z^3+2*y^7*z^3+x^6*z^4+2*x^3*y^3*z^4+y^6*z^4-2*x^5*z^5-2*y^5
+      *z^5+x^4*z^6+y^4*z^6+2*x^3*z^7+2*y^3*z^7, 5*x^8*y^4-4*x^7*y^5+6*x^6*y^6-4*x^5*y^7+5*x^4*y^8+12*x^6*y^3*z^3-4*x^5*y^4*z^3-4*x^4*y^5*z^3+12*x
+      ^3*y^6*z^3+5*x^8*z^4-4*x^5*y^3*z^4+18*x^4*y^4*z^4-4*x^3*y^5*z^4+5*y^8*z^4-4*x^7*z^5-4*x^4*y^3*z^5-4*x^3*y^4*z^5-4*y^7*z^5+6*x^6*z^6+12*x^3*
+      y^3*z^6+6*y^6*z^6-4*x^5*z^7-4*y^5*z^7+5*x^4*z^8+5*y^4*z^8,
+      5*x^9*y^4-4*x^8*y^5+3*x^7*y^6+3*x^6*y^7-4*x^5*y^8+5*x^4*y^9+6*x^7*y^3*z^3+3*x^6*y^4*z^3-6*x^5*y^5*z^3+3*x^4*y^6*z^3+6*x^3*y^7*z^3+5*x^9*z^4
+      +3*x^6*y^3*z^4+4*x^5*y^4*z^4+4*x^4*y^5*z^4+3*x^3*y^6*z^4+5*y^9*z^4-4*x^8*z^5-6*x^5*y^3*z^5+4*x^4*y^4*z^5-6*x^3*y^5*z^5-4*y^8*z^5+3*x^7*z^6+
+      3*x^4*y^3*z^6+3*x^3*y^4*z^6+3*y^7*z^6+3*x^6*z^7+6*x^3*y^3*z^7+3*y^6*z^7-4*x^5*z^8-4*y^5*z^8+5*x^4*z^9+5*y^4*z^9,
+      5*x^10*y^4-4*x^9*y^5-3*x^8*y^6+12*x^7*y^7-3*x^6*y^8-4*x^5*y^9+5*x^4*y^10-6*x^8*y^3*z^3+12*x^7*y^4*z^3-6*x^6*y^5*z^3-6*x^5*y^6*z^3+12*x^4*y^
+      7*z^3-6*x^3*y^8*z^3+5*x^10*z^4+12*x^7*y^3*z^4+6*x^6*y^4*z^4-2*x^5*y^5*z^4+6*x^4*y^6*z^4+12*x^3*y^7*z^4+5*y^10*z^4-4*x^9*z^5-6*x^6*y^3*z^5-2
+      *x^5*y^4*z^5-2*x^4*y^5*z^5-6*x^3*y^6*z^5-4*y^9*z^5-3*x^8*z^6-6*x^5*y^3*z^6+6*x^4*y^4*z^6-6*x^3*y^5*z^6-3*y^8*z^6+12*x^7*z^7+12*x^4*y^3*z^7+
+      12*x^3*y^4*z^7+12*y^7*z^7-3*x^6*z^8-6*x^3*y^3*z^8-3*y^6*z^8-4*x^5*z^9-4*y^5*z^9+5*x^4*z^10+5*y^4*z^10,
+      7*x^9*y^6-3*x^8*y^7-3*x^7*y^8+7*x^6*y^9+14*x^9*y^3*z^3-3*x^8*y^4*z^3-6*x^7*y^5*z^3+30*x^6*y^6*z^3-6*x^5*y^7*z^3-3*x^4*y^8*z^3+14*x^3*y^9*z^
+      3-3*x^8*y^3*z^4+6*x^7*y^4*z^4-3*x^6*y^5*z^4-3*x^5*y^6*z^4+6*x^4*y^7*z^4-3*x^3*y^8*z^4-6*x^7*y^3*z^5-3*x^6*y^4*z^5+6*x^5*y^5*z^5-3*x^4*y^6*z
+      ^5-6*x^3*y^7*z^5+7*x^9*z^6+30*x^6*y^3*z^6-3*x^5*y^4*z^6-3*x^4*y^5*z^6+30*x^3*y^6*z^6+7*y^9*z^6-3*x^8*z^7-6*x^5*y^3*z^7+6*x^4*y^4*z^7-6*x^3*
+      y^5*z^7-3*y^8*z^7-3*x^7*z^8-3*x^4*y^3*z^8-3*x^3*y^4*z^8-3*y^7*z^8+7*x^6*z^9+14*x^3*y^3*z^9+7*y^6*z^9}})
+///
+
+-- 29) Bruns/Conca 2
+TEST ///
+FF = ZZ/2
+R = FF[x,y,z]
+T = { x^6, x^5*y, y^5*z, z^5*x,    y^6+ y^3*z^3 }
+G = gens sagbi(subring T, Limit=>95);
+assert(G == matrix {{x*z^5, y^5*z, y^6+y^3*z^3, x^5*y, x^6, x^6*y^13*z^17, x^30*y^3*z^3, x^30*y^9*z^9, x^12*y^25*z^29, x^12*y^17*z^43, x^12*y^18*z^42+x^12*y^15*z^45, x^6*y^37*z^41, x^12*y^24*z^54, x^11*y^39*z^40+x^11*y^30*z^49+x^11*y^27*z^52}})
 ///
 
 end

@@ -133,6 +133,8 @@ scan({net, info},
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
+	parser' PRE := -- HACK -- might need to rethink
+	parser' INDENT :=
 	parser' TABLE :=
 	parser' MENU :=
 	parser' DL :=
@@ -148,12 +150,15 @@ scan({net, info},
 	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
-		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+		SPBKs -> if isMember(SP,SPBKs) then (BK,"",BK) else BK);
 	    x = splice sublists(x, i -> i =!= BK,
 		x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x,
 		BK -> ());
 	    -- Stack the pieces vertically
 	    stack x);
+	parser INDENT := x -> ( -- INDENT is like DIV but with extra |s on the left. sadly, can't be absorbed into DIV because of non-recursivity of this parser
+	    n := parser DIV toList x;
+	    "| "^(height n, depth n) | n )
 	))
 
 Hop := (op,filler) -> x -> (
@@ -191,10 +196,11 @@ info UL := ULop info
 net  UL := ULop net
 
 OLop := op -> x -> (
+     (o, ct) := override(options class x, toSequence x);
+     shft := try value o#"start" else 1;
      s := "000. ";
      printWidth = printWidth - #s;
-     x = toList noopts x;
-     r := stack apply(#x, i -> pad(3,toString (i+1)) | ". " | op x#i); -- html starts counting from 1!
+     r := stack apply(#ct, i -> pad(3,toString (i+shft)) | ". " | op ct#i);
      printWidth = printWidth + #s;
      r)
 info OL := OLop info

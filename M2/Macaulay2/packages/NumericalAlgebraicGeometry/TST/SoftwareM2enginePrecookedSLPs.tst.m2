@@ -9,8 +9,8 @@ for predictor in {RungeKutta4,Tangent,Euler} do (
      )
 (S,T,solsS) = smallInfinityExample()
 M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2enginePrecookedSLPs, SLP=>HornerForm);
-assert all({0,2}, i->M#i#SolutionStatus!=Regular) 
-assert all({1,3}, i->M#i#SolutionStatus==Regular) 
+assert all({0,2}, i->status M#i != Regular) 
+assert all({1,3}, i->status M#i == Regular) 
 
 end
 restart

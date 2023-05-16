@@ -1,5 +1,5 @@
 Subring ^ ZZ := Subring => (subR, n) -> (
-    tense := subR#"presentation"#"tensorRing";
+    tense := subR#"presentation".tensorRing;
     amb := ambient subR;
     if n <= 0_ZZ then (
 	error "Module rank must be positive.";
@@ -29,7 +29,7 @@ moduleToSubringIdeal(Subring, Matrix) := (subR, M) -> (
     
     -- The value of these generators doesn't matter, but they should be increasing under
     -- the monomial order.
-    tense := subR#"presentation"#"tensorRing";
+    tense := subR#"presentation".tensorRing;
     dummy := for i from 1 to numcols M list( ((vars tense)_(0,0))^i );
     dummy = matrix({dummy});
     monoRing := subring(dummy);
@@ -73,7 +73,7 @@ mingensSubring(Subring, Matrix) := (subR, M) -> (
     -- Sort the rows of the matrix for more predictable behavior.
     final = matrix transpose {sort first entries transpose final};
     final = extractEntries(final, gVars);
-    subR#"presentation"#"fullSubstitution"(sub(final,subR#"presentation"#"tensorRing"))
+    subR#"presentation"#"fullSubstitution"(sub(final,subR#"presentation".tensorRing))
     );
 
 -- For polynomial p monomial m, extract the coefficient of m in p. For example:
@@ -87,7 +87,7 @@ mingensSubring(Subring, Matrix) := (subR, M) -> (
 monoCoef = method(TypicalValue => RingElement)
 monoCoef(RingElement, RingElement) := (m, p) -> (
     
-    -- This does not completley guarentee that they are elements of the same ring... 
+    -- This does not completely guarantee that they are elements of the same ring... 
     if ring m =!= ring p then (
 	error "monoCoef expected m and p to be elements of the same ring.";
 	);

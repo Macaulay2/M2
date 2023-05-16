@@ -3,6 +3,7 @@
 use getline;
 use actors;
 use actors2;
+use actors3;
 use struct;
 use pthread;
 use regex;
@@ -96,13 +97,13 @@ setupfun("setGroupID",setpgidfun);
 
 absfun(e:Expr):Expr := (
      when e
-     is i:ZZcell do toExpr(abs(i.v))				    -- # typical value: abs, ZZ, ZZ
-     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)		    -- # typical value: abs, RR, RR
-     is x:RRicell do toExpr(abs(x.v))            -- # typical value: abs, RRi, RRi
-     is x:CCcell do toExpr(abs(x.v))				    -- # typical value: abs, CC, RR
-     is r:QQcell do toExpr(abs(r.v))				    -- # typical value: abs, QQ, RR
+     is i:ZZcell do toExpr(abs(i.v))
+     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)
+     is x:RRicell do toExpr(abs(x.v))
+     is x:CCcell do toExpr(abs(x.v))
+     is r:QQcell do toExpr(abs(r.v))
      else WrongArg("a number, real or complex"));
-setupfun("abs",absfun);
+setupfun("abs0",absfun);
 
 select(a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
@@ -1037,8 +1038,47 @@ tostringfun(e:Expr):Expr := (
 	       + ">>"
 	       ))
     is x:fileOutputSyncState do toExpr("File Output Sync State")
+    is x:pointerCell do (
+	buf := newstring(20);
+	Ccode(void, "sprintf((char *)", buf, "->array, \"%p\", ", x.v, ")");
+	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
+	toExpr(buf))
 );
 setupfun("simpleToString",tostringfun);
+
+changeBase(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is x:ZZcell do (
+		when a.1
+		is y:ZZcell do (
+		    if !isInt(y)
+		    then return WrongArgSmallInteger(2);
+		    newbase := toInt(y);
+		    if newbase > 62 || newbase < 2
+		    then buildErrorPacket("expected new base between 2 and 62")
+		    else toExpr(tostring(x.v, newbase)))
+		else WrongArgZZ(2))
+	    is x:stringCell do (
+		when a.1
+		is y:ZZcell do (
+		    if !isInt(y)
+		    then return WrongArgSmallInteger(2);
+		    oldbase := toInt(y);
+		    if oldbase > 62 || oldbase == 1 || oldbase < 0
+		    then return buildErrorPacket(
+			"expected old base to be 0 or between 2 and 62");
+		    r := toInteger(tocharstar(x.v), oldbase);
+		    when r
+		    is null do buildErrorPacket("string is not a valid number")
+		    is n:ZZ do toExpr(n))
+		else WrongArgZZ(2))
+	    else WrongArg(1, "an integer or string"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("changeBase0", changeBase);
 
 connectionCount(e:Expr):Expr := (
      when e is f:file do if f.listener then toExpr(f.numconns)
@@ -1089,31 +1129,48 @@ denfun(e:Expr):Expr := (
      else WrongArg("a rational number"));
 setupfun("denominator",denfun);
 
+join(a:Sequence):Expr := (
+     newlen := 0;
+     foreach x at i in a do (
+	  when x
+	  is b:Sequence do (newlen = newlen + length(b);)
+	  is c:List do (newlen = newlen + length(c.v);)
+	  else (
+	      -- if x is iterable, convert it to a sequence
+	      r := toSequence(x);
+	      when r
+	      is b:Sequence do (
+		  newlen = newlen + length(b);
+		  a.i = b)
+	      is err:Error do return buildErrorPacket(
+		  "while converting argument " + tostring(i + 1) +
+		  " to a sequence, the following error occurred: " +
+		  err.message)
+	      else return buildErrorPacket(
+		  "unknown error converting argument " + tostring(i + 1) +
+		  " to a sequence")));
+     z := new Sequence len newlen do (
+	  foreach x in a do (
+	       when x
+	       is b:Sequence do foreach y in b do provide y
+	       is c:List do foreach y in c.v do provide y
+	       else nothing;
+	       ));
+     when a.0
+     is Sequence do Expr(z)
+     is c:List do list(c.Class,z,c.Mutable)
+     else nullE			    -- shouldn't happen anyway
+     );
+
 join(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  n := length(a);
 	  if n == 0 then return e;
-	  newlen := 0;
-	  foreach x in a do (
-	       when x
-	       is b:Sequence do (newlen = newlen + length(b);)
-	       is c:List do (newlen = newlen + length(c.v);)
-	       else return WrongArg("lists or sequences");
-	       );
-	  z := new Sequence len newlen do (
-	       foreach x in a do (
-		    when x
-		    is b:Sequence do foreach y in b do provide y
-		    is c:List do foreach y in c.v do provide y
-		    else nothing;
-		    );
-	       );
 	  when a.0
-	  is Sequence do Expr(z)
-	  is c:List do list(c.Class,z,c.Mutable)
-	  else nullE			  -- shouldn't happen anyway
-	  )
+	  is Sequence do join(a)
+	  is List do join(a)
+	  else applyEE(getGlobalVariable(joinIteratorsS), e))
      is c:List do if c.Mutable then Expr(copy(c)) else e
      else WrongArg("lists or sequences"));
 setupfun("join",join);

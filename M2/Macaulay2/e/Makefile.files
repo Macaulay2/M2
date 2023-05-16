@@ -39,7 +39,6 @@ INTERFACE = \
 	bibasis/monomLex \
 	bibasis/settings-manager \
 	schreyer-resolution/res-monomial-sorter \
-	schreyer-resolution/res-varpower-monomial \
 	schreyer-resolution/res-f4-monlookup \
 	schreyer-resolution/res-moninfo-dense \
 	schreyer-resolution/res-moninfo-sparse \
@@ -63,11 +62,8 @@ INTERFACE = \
 	f4/monhashtable \
 	monsort \
 	f4/moninfo \
-	f4/ntuple-monomial \
-	f4/varpower-monomial \
 	f4/gausser \
 	betti \
-	util \
 	GF \
 	ZZ \
 	ZZp \
@@ -89,7 +85,6 @@ INTERFACE = \
 	aring-gf-flint \
 	aring-m2-gf \
 	aring-zzp \
-	aring-gf-givaro \
 	aring-zzp-ffpack \
 	aring \
 	schurSn \
@@ -97,7 +92,6 @@ INTERFACE = \
 	dpoly \
 	tower \
 	interreduce \
-	gb-test1 \
 	finalize \
 	NAG \
 	SLP \
@@ -155,18 +149,17 @@ INTERFACE = \
 	hermite \
 	hilb \
 	int-bag \
-	intarray \
 	matrix \
 	matrix-con \
 	mem \
 	monideal \
 	monoid \
 	monomial \
-	ntuple \
 	polyring \
 	pfaff \
 	relem \
 	ring \
+	ringelem \
 	ringmap \
 	schur \
 	skew \
@@ -174,7 +167,7 @@ INTERFACE = \
 	solvable \
 	spair \
 	text-io \
-	varpower \
+	ExponentList \
 	weylalg
 
 COMMANDS = \
@@ -209,14 +202,15 @@ NAMES_H = \
 	m2tbb \
 	f4/f4-types \
 	f4/memblock \
+	ExponentVector \
 	VectorArithmetic \
-	ARingElem \
 	MemoryBlock \
 	NCAlgebras/Range \
-	ringelem \
 	style \
+	util \
 	hash \
-	index \
+	f4/ntuple-monomial \
+	f4/varpower-monomial \
 	res-a0-pair
 
 C_FILES = error table exptable complex

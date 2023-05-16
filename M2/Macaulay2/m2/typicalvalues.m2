@@ -47,11 +47,12 @@ append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
-apply(String,Function) := Sequence => apply
 apply(BasicList,String,Function) := Sequence => apply
+apply(String,Function) := Sequence => apply
 apply(String,BasicList,Function) := Sequence => apply
 apply(String,String,Function) := Sequence => apply
 apply(ZZ,Function) := List => apply
+apply(Thing,Function) := Iterator => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
 applyKeys(HashTable,Function,Function) := HashTable => applyKeys
 applyPairs(HashTable,Function) := HashTable => applyPairs
@@ -62,16 +63,18 @@ isListener(File) := Boolean => isListener
 isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
-mutable(Thing) := Boolean => mutable
+isMutable(Thing) := Boolean => isMutable
 instance(Thing,Type) := Boolean => instance
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
+take(Thing,ZZ) := List => take
 get File := get String := String => get
 getc File := String => getc
 getenv String := String => getenv
 hashTable List := HashTable => hashTable
+hashTable(Function,List) := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
@@ -107,9 +110,13 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toSequence BasicList := toSequence String := Sequence => toSequence
+toSequence BasicList :=
+toSequence String    :=
+toSequence Thing     := Sequence => toSequence
 ascii String := List => ascii
 ascii List := String => ascii
+remove(MutableList,ZZ) := Nothing => remove
+remove(Database,String) := Nothing => remove
 remove(HashTable,Thing) := Nothing => remove
 echoOff File := Nothing => echoOff
 echoOn File := Nothing => echoOn
@@ -129,9 +136,10 @@ read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
 Function Thing := Thing => x -> (dummy x;)
-scan(BasicList,Function) := scan(String,Function) := Nothing => scan
+scan(BasicList,Function) := Nothing => scan
 scan(BasicList,BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
+scan(Thing,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
 lines(String,String) := List => lines
 lines String := List => lines
@@ -174,7 +182,7 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )
 
-if member("--no-tvalues", commandLine) then end
+if isMember("--no-tvalues", commandLine) then end
 
 -- numerical functions that will be wrapped
 redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
@@ -260,8 +268,6 @@ scanPairs(new HashTable from variants, (args,f) -> (
 	installMethod append(args,f);
 	undocumented args;
 	))
-
--- TODO abs Constant
 
 nilp := x -> (  -- degree of nilpotency
     R := ring x;

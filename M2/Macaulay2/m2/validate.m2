@@ -28,7 +28,7 @@ noqname := (tag, x) -> (
 -- see content.m2
 chk := (p, x) -> (
     c := class x;
-    if c === Option or c === LITERAL then return;
+    if c === Option or c === OptionTable or c === LITERAL then return;
     if not c.?qname then return noqname(c, x);
     if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
     then flagError("element of type ", toString p, " may not contain an element of type ", toString c))
@@ -117,12 +117,6 @@ fixup LITERAL     :=
 fixup TO          :=
 fixup TO2         :=
 fixup TOH         := identity
-
--- TODO: move this
-hypertext = method(Dispatch => Thing)
-hypertext Hypertext := fixup
-hypertext Sequence  :=
-hypertext List      := x -> fixup DIV x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

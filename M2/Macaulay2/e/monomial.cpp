@@ -4,7 +4,7 @@
 #include "error.h"
 #include "monoid.hpp"
 
-Monomial::Monomial()
+EngineMonomial::EngineMonomial()
 {
   // This routine is private because it leaves the object in
   // an incorrect state... to be filled in by varpower routines.
@@ -18,19 +18,19 @@ Monomial::Monomial()
   // then the corresponding monomial is
   //    a^2ca
 
-Monomial::Monomial(const std::vector<int>& vp) { varpower::copy(vp.data(), val); }
-Monomial::Monomial(int v, int e) { varpower::var(v, e, val); }
-Monomial::Monomial(const int *vp) { varpower::copy(vp, val); }
-Monomial::Monomial(M2_arrayint m) { varpower::from_arrayint(m, val); }
+EngineMonomial::EngineMonomial(const std::vector<int>& vp) { varpower::copy(vp.data(), val); }
+EngineMonomial::EngineMonomial(int v, int e) { varpower::var(v, e, val); }
+EngineMonomial::EngineMonomial(const int *vp) { varpower::copy(vp, val); }
+EngineMonomial::EngineMonomial(M2_arrayint m) { varpower::from_arrayint(m, val); }
 
-Monomial *Monomial::make(int v, int e)
+EngineMonomial *EngineMonomial::make(int v, int e)
 {
-  Monomial *result = new Monomial(v, e);
+  EngineMonomial *result = new EngineMonomial(v, e);
   if (error()) return 0;
   return result;
 }
 
-Monomial *Monomial::make(M2_arrayint m)
+EngineMonomial *EngineMonomial::make(M2_arrayint m)
 {
   if ((m->len % 2) != 0)
     {
@@ -43,46 +43,40 @@ Monomial *Monomial::make(M2_arrayint m)
         ERROR("Monomial expects variables in descending order");
         return 0;
       }
-  Monomial *result = new Monomial(m);
+  EngineMonomial *result = new EngineMonomial(m);
   if (error()) return 0;
   return result;
 }
 
-Monomial *Monomial::make(const int *vp)
+EngineMonomial *EngineMonomial::make(const int *vp)
 {
-  Monomial *result = new Monomial(vp);
+  EngineMonomial *result = new EngineMonomial(vp);
   if (error()) return 0;
   return result;
 }
 
-Monomial* Monomial::make(const std::vector<int>& vp)
+EngineMonomial* EngineMonomial::make(const std::vector<int>& vp)
 {
-  Monomial* result = new Monomial(vp);
+  EngineMonomial* result = new EngineMonomial(vp);
   return result;
 }
 
-unsigned int Monomial::computeHashValue() const
+unsigned int EngineMonomial::computeHashValue() const
 {
-  unsigned int hashval = 0;
-  const int *vp = val.raw();
-  for (int i = 1; i <= *vp; i++)
-    {
-      hashval += i * (*++vp);
-    }
-  return hashval;
+  return varpower::computeHashValue(val.data());
 }
 
-bool Monomial::is_one() const { return varpower::is_one(ints()); }
-bool Monomial::is_equal(const Monomial &b) const
+bool EngineMonomial::is_one() const { return varpower::is_one(ints()); }
+bool EngineMonomial::is_equal(const EngineMonomial &b) const
 {
   if (this == &b) return true;
   return varpower::is_equal(ints(), b.ints());
 }
 
-int Monomial::compare(const Monoid *M, const Monomial &b) const
+int EngineMonomial::compare(const Monoid *M, const EngineMonomial &b) const
 {
-  int *monom1 = M->make_one();
-  int *monom2 = M->make_one();
+  monomial monom1 = M->make_one();
+  monomial monom2 = M->make_one();
   M->from_varpower(ints(), monom1);
   M->from_varpower(b.ints(), monom2);
   int result = M->compare(monom1, monom2);
@@ -91,10 +85,10 @@ int Monomial::compare(const Monoid *M, const Monomial &b) const
   return result;
 }
 
-bool Monomial::divides(const Monoid *M, const Monomial &b) const
+bool EngineMonomial::divides(const Monoid *M, const EngineMonomial &b) const
 {
-  int *monom1 = M->make_one();
-  int *monom2 = M->make_one();
+  monomial monom1 = M->make_one();
+  monomial monom2 = M->make_one();
   M->from_varpower(ints(), monom1);
   M->from_varpower(b.ints(), monom2);
   bool result = M->divides(monom1, monom2);
@@ -103,61 +97,61 @@ bool Monomial::divides(const Monoid *M, const Monomial &b) const
   return result;
 }
 
-int Monomial::simple_degree() const { return varpower::simple_degree(ints()); }
-Monomial *Monomial::lcm(const Monomial &b) const
+int EngineMonomial::simple_degree() const { return varpower::simple_degree(ints()); }
+EngineMonomial *EngineMonomial::lcm(const EngineMonomial &b) const
 {
-  Monomial *result = new Monomial;
+  EngineMonomial *result = new EngineMonomial;
   varpower::lcm(ints(), b.ints(), result->val);
   return result;
 }
 
-Monomial *Monomial::gcd(const Monomial &b) const
+EngineMonomial *EngineMonomial::gcd(const EngineMonomial &b) const
 {
-  Monomial *result = new Monomial;
+  EngineMonomial *result = new EngineMonomial;
   varpower::gcd(ints(), b.ints(), result->val);
   return result;
 }
 
-void Monomial::monsyz(const Monomial &b, Monomial *&sa, Monomial *&sb) const
+void EngineMonomial::monsyz(const EngineMonomial &b, EngineMonomial *&sa, EngineMonomial *&sb) const
 {
-  sa = new Monomial;
-  sb = new Monomial;
+  sa = new EngineMonomial;
+  sb = new EngineMonomial;
   varpower::monsyz(ints(), b.ints(), sa->val, sb->val);
 }
 
-Monomial *Monomial::operator*(const Monomial &b) const
+EngineMonomial *EngineMonomial::operator*(const EngineMonomial &b) const
 {
-  Monomial *result = new Monomial;
+  EngineMonomial *result = new EngineMonomial;
   varpower::mult(ints(), b.ints(), result->val);
   if (error()) return 0;
   return result;
 }
 
-Monomial *Monomial::operator/(const Monomial &b) const
+EngineMonomial *EngineMonomial::operator/(const EngineMonomial &b) const
 {
-  Monomial *result = new Monomial;
+  EngineMonomial *result = new EngineMonomial;
   varpower::quotient(ints(), b.ints(), result->val);
   return result;
 }
 
-Monomial *Monomial::erase(const Monomial &b) const
+EngineMonomial *EngineMonomial::erase(const EngineMonomial &b) const
 {
-  Monomial *result = new Monomial;
+  EngineMonomial *result = new EngineMonomial;
   varpower::erase(ints(), b.ints(), result->val);
   return result;
 }
 
-Monomial *Monomial::power(int n) const
+EngineMonomial *EngineMonomial::power(int n) const
 {
-  Monomial *result = new Monomial;
+  EngineMonomial *result = new EngineMonomial;
   varpower::power(ints(), n, result->val);
   if (error()) return 0;
   return result;
 }
 
-Monomial *Monomial::radical() const
+EngineMonomial *EngineMonomial::radical() const
 {
-  Monomial *result = new Monomial;
+  EngineMonomial *result = new EngineMonomial;
   varpower::radical(ints(), result->val);
   return result;
 }

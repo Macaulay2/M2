@@ -46,6 +46,10 @@ RR_* = RR' = new Type of InexactNumber'
 RRi_* = RRi' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
 
+RR'.texMath = ///{\mathbb R}_*///
+RRi'.texMath = ///{\square\mathbb R}_*///
+CC'.texMath = ///{\mathbb C}_*///
+
 setAttribute(CC',PrintNet,"CC" | "*"^-1)
 setAttribute(RR',PrintNet,"RR" | "*"^-1)
 setAttribute(RRi',PrintNet,"RRi" | "*"^-1)
@@ -73,7 +77,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol isBasic => true,
-	       symbol baseRings => {ZZ,QQ,RR},
+	       symbol baseRings => {ZZ,QQ,RR_prec},
 	       symbol RawRing => rawCC prec
 	       }))
 new RealIntervalField of Nothing' from ZZ := memoize (
@@ -94,9 +98,6 @@ diameter = method()
 diameter RRi := diameter'
 
 -- lift and promote between real or complex rings
-
-Number _ InexactFieldFamily := (x,RR) -> x_(default RR)
-
 promote(RawRingElement,RR') := (x,R) -> new RR from x
 promote(RawRingElement,RRi') := (x,R) -> new RRi from x
 promote(RawRingElement,CC') := (x,R) -> new CC from x
@@ -208,7 +209,6 @@ new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 -- arithmetic operations
 
 CC.InverseMethod = y -> conjugate y / y^2
-CC ^ ZZ := BinaryPowerMethod
 
 scan((QQ,RR,CC), F -> (
 	  F // F := (x,y) -> if y == 0 then 0_F else x/y;
@@ -238,6 +238,12 @@ round(ZZ,RR) := (n,x) -> (
      p := (toRR(prec,10))^n;
      toRR(prec,round(x*p)/p))
 
+truncate Number := {} >> o -> x -> (
+    if x >= 0 then floor x
+    else if x < 0 then ceiling x
+    else 0) -- e.g., RRi's containing 0 as interior pt
+truncate Constant := {} >> o -> truncate @@ numeric
+
 random RR := RR => opts -> x -> x * rawRandomRR precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
 RR'.random = opts -> R -> rawRandomRR R.precision
@@ -248,7 +254,6 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 RR.isBasic = CC.isBasic = RRi.isBasic = true
 
-InexactFieldFamily Array := (T,X) -> (default T) X
 Thing ** InexactFieldFamily := (X,T) -> X ** default T
 
 generators InexactField := opts -> R -> {}
@@ -328,7 +333,12 @@ Constant _ Ring := (c,R) -> (
      if prec === infinity
      then error "cannot promote constant to a ring with exact arithmetic"
      else (numeric (prec, c))_R)
-Constant _ InexactFieldFamily := (x,RR) -> x_(default RR)
+-- e.g. 1_CC or ii_CC
+Number   _ RingFamily :=
+Constant _ RingFamily := (x, R) -> x_(default R)
+-- TODO: find examples, or remove
+Number   ^ RingFamily :=
+Constant ^ RingFamily := (x, R) -> lift(x, default R) -- TODO: set Verify => false?
 
 Constant + Number := (c,x) -> numeric c + x
 Number + Constant := (x,c) -> x + numeric c
@@ -414,22 +424,7 @@ withFullPrecision = f -> (
      printingAccuracy = acc;				    -- sigh, what if an interrupt or an error occurred?
      )
 InexactNumber#{Standard,Print} = x ->  withFullPrecision ( () -> Thing#{Standard,Print} x )
-InexactNumber#{Standard,AfterPrint} = x -> (
-     << endl;                             -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber;
-     y := class x;
-     << " : " << y;
-     prec := precision x;
-     -- if prec =!= defaultPrecision then
-     << " (of precision " << prec << ")";
-     -*
-     while parent y =!= Thing do (
-	  y = parent y;
-	  << " < " << y;
-	  );
-     *-
-     << endl;
-     )
+InexactNumber#AfterPrint = x ->  (class x," (of precision ",precision x,")")
 
 isReal = method()
 isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true

@@ -4,8 +4,9 @@
 
 #include <vector>
 #include <string>
-#include "aring-zzp-ffpack.hpp"
 
+#include "ExponentVector.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "style.hpp"
 #include "aring.hpp"
 #include "ringelem.hpp"
@@ -30,8 +31,6 @@ struct ARingPolynomialStruct
   };
 };
 
-typedef int *exponents;
-
 class DRing;
 
 // TODO: make this a template type, with the base e.g. ZZ/p, ZZ, QQ, etc.
@@ -48,6 +47,60 @@ class ARingTower : public RingInterface
 
   static const RingID ringID = ring_tower_ZZp;
   typedef ARingPolynomial ElementType;
+  /**
+   * \brief A wrapper class for ElementType
+   *
+   * This keeps a pointer to the ARingTower object as it's needed to
+   * implement the destructor
+   */
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element &&other) : ElementImpl(other), R(other.R)
+    {
+      other.mValue = NULL;
+    }  // move constructor only,
+    explicit Element(const ARingTower &_R)
+        : ElementImpl(static_cast<ElementType>(nullptr)), R(_R)
+    {
+    }
+    Element(const ARingTower &_R, const ElementType& value)
+        : R(_R)
+    {
+      R.init_set(mValue,value);
+    }
+    ~Element()
+    {
+      if (mValue) R.clear(mValue);
+    }
+
+   private:
+    const ARingTower &R;
+  };
+
+  class ElementArray
+  {
+    const ARingTower &R;
+    const int mSize;
+    const std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARingTower &_R, size_t size)
+        : R(_R), mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < mSize; i++) mData[i] = nullptr;
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) R.clear(mData[i]);
+    }
+    ElementType &operator[](size_t idx) { return mData[idx]; }
+    const ElementType &operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
+
   typedef ElementType elem;
 
   //////////////////////////////
@@ -61,12 +114,12 @@ class ARingTower : public RingInterface
   virtual ~ARingTower();
 
   // TODO: the interface for these three need to change
-  static const ARingTower *create(const BaseRingType &baseRing,
-                                  const std::vector<std::string> &names);
-  static const ARingTower *create(const ARingTower &R,
-                                  const std::vector<std::string> &new_names);
-  static const ARingTower *create(const ARingTower &R,
-                                  const std::vector<ElementType> &extensions);
+  static ARingTower *create(const BaseRingType &baseRing,
+                            const std::vector<std::string> &names);
+  static ARingTower *create(const ARingTower &R,
+                            const std::vector<std::string> &new_names);
+  static ARingTower *create(const ARingTower &R,
+                            const std::vector<ElementType> &extensions);
 
   size_t n_vars() const { return mNumVars; }
   const ARingZZpFFPACK &baseRing() const { return mBaseRing; }
@@ -119,6 +172,13 @@ class ARingTower : public RingInterface
   {
     Nterm *b = const_cast<Nterm *>(a.poly_val);
     result = reinterpret_cast<ElementType>(b);
+  }
+
+  // There's a strong argument that ElementType shouldn't be a pointer type
+  // it makes this function not particularly safe
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return reinterpret_cast<ElementType>(a.poly_val);
   }
 
   // 'init', 'init_set' functions
@@ -465,7 +525,7 @@ class ARingTower : public RingInterface
     /////////////////////////////////////
     // Translation to/from other rings //
     /////////////////////////////////////
-    void add_term(int level, ARingPolynomial &result, long coeff, exponents exp) const; // modifies result.
+    void add_term(int level, ARingPolynomial &result, long coeff, exponents_t exp) const; // modifies result.
 #endif
 
 // Local Variables:

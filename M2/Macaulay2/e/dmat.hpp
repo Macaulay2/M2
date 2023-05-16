@@ -75,6 +75,7 @@ class DMat
   typedef ACoeffRing CoeffRing;
   typedef typename ACoeffRing::ElementType ElementType;
   typedef ElementType elem;
+  typedef typename ACoeffRing::Element Element;
 
   typedef DMatIterator<ACoeffRing> Iterator;
   typedef DMatConstIterator<ACoeffRing> ConstIterator;

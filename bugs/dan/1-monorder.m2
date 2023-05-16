@@ -15,6 +15,6 @@ R = ZZ/101 [x,y,MonomialOrder => { Weights => {{1,3},{-4,-1}}}] -- perhaps this 
 R = ZZ/101 [a,b,c,d,MonomialOrder => { Weights => {3:1}}] -- perhaps this should be allowed?
 R = ZZ/101 [x,y,MonomialOrder => { Weights => {1,2,3}}] -- perhaps this should be an error message, if the length of weights is > nvars
 R = ZZ/101 [x,y,MonomialOrder => { GRevLex => {}, GRevLex => {1,1}}, Weights => {1,2,3,5}] -- error message wrong
-R = ZZ/101 [x,y,MonomialOrder => { GRevLex => {}, GRevLex => {1,1}, Weights => {1,2,3} }] -- allowed, but perhaos should not be.  Also, weight vector comes out wrong
+R = ZZ/101 [x,y,MonomialOrder => { GRevLex => {}, GRevLex => {1,1}, Weights => {1,2,3} }] -- allowed, but perhaps should not be.  Also, weight vector comes out wrong
 
 raw R

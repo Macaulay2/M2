@@ -100,12 +100,8 @@ void ResGausserQQ::from_ring_elem(CoefficientVector& result,
 {
   const M2::ARingZZGMP* Z = globalZZ->get_ARing();
   auto& elems = coefficientVector(result);
-  M2::ARingZZGMP::ElementType numer1;
-  M2::ARingZZGMP::ElementType denom1;
-  Z->init(numer1);
-  Z->from_ring_elem(numer1, numer);
-  Z->init(denom1);
-  Z->from_ring_elem(denom1, denom);
+  const M2::ARingZZGMP::ElementType& numer1 = Z->from_ring_elem_const(numer);
+  const M2::ARingZZGMP::ElementType& denom1 = Z->from_ring_elem_const(denom);
   bool isunit = Z->is_equal(numer1, denom1);
   mpq_t c;
   mpq_init(c);
@@ -118,8 +114,6 @@ void ResGausserQQ::from_ring_elem(CoefficientVector& result,
   b.mDenominatorSize = (isunit ? 0 : 1);
   elems.push_back(b);
   mpq_clear(c);
-  mpz_clear(&numer1);
-  mpz_clear(&denom1);
 }
 
 ////////////////////////////////////
@@ -171,12 +165,8 @@ void ResGausserQQHybrid::from_ring_elem(CoefficientVector& result,
   //  std::cout << "creating element..." << std::flush;
   const M2::ARingZZGMP* Z = globalZZ->get_ARing();
   auto& elems = coefficientVector(result);
-  M2::ARingZZGMP::ElementType numer1;
-  M2::ARingZZGMP::ElementType denom1;
-  Z->init(numer1);
-  Z->from_ring_elem(numer1, numer);
-  Z->init(denom1);
-  Z->from_ring_elem(denom1, denom);
+  const M2::ARingZZGMP::ElementType& numer1 = Z->from_ring_elem_const(numer);
+  const M2::ARingZZGMP::ElementType& denom1 = Z->from_ring_elem_const(denom);
   bool isunit = Z->is_equal(numer1, denom1);
   mpq_t c;
   mpq_init(c);
@@ -191,8 +181,6 @@ void ResGausserQQHybrid::from_ring_elem(CoefficientVector& result,
   elems.emplace_back(std::move(b));
 
   mpq_clear(c);
-  mpz_clear(&numer1);
-  mpz_clear(&denom1);
   //  out(std::cout, result, elems.size()-1);
   //  std::cout << " done" << std::endl;
 }
@@ -236,7 +224,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                         // these are integers
 
       M->to_expvector(t->monom, exp);
-      R.monoid().from_exponent_vector(
+      R.monoid().from_expvector(
           exp,
           t->comp - 1,
           nextmonom);  // gbvector components are shifted up by one
@@ -256,7 +244,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   const PolynomialRing* origR = F->get_ring()->cast_to_PolynomialRing();
   const Monoid* M = origR->getMonoid();
 
-  int* m1 = M->make_one();
+  monomial m1 = M->make_one();
 
   Nterm** comps = newarray(Nterm*, F->rank());
   Nterm** last = newarray(Nterm*, F->rank());
@@ -272,7 +260,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   for (int i = 0; i < f.len; i++)
     {
       component_index comp;
-      R.monoid().to_exponent_vector(w, exp, comp);
+      R.monoid().to_expvector(w, exp, comp);
       w = w + R.monoid().monomial_size(w);
       M->from_expvector(exp, m1);
       ring_elem a =
@@ -329,7 +317,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
       // unpack to exponent vector, then repack into monoid element
       monomial totalmonom = M->make_one();
       component_index comp;
-      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
+      C.monoid().to_expvector(S.mTotalMonom[i], exp, comp);
       M->from_expvector(exp, totalmonom);
       result->append_schreyer(
           deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
@@ -359,7 +347,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   for (auto i = 0; i < thislevel.size(); ++i)
     {
       component_index comp;
-      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
+      C.monoid().to_expvector(S.mTotalMonom[i], exp, comp);
       monomial deg = M->degree_monoid()->make_new(F->degree(comp)); // resulting degree of this element
       M->degree_of_expvector(exp, deg1);
       M->degree_monoid()->mult(deg, deg1, deg);
@@ -427,7 +415,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
   Nterm** comps = newarray(Nterm*, nrows);
   Nterm** last = newarray(Nterm*, nrows);
 
-  int* m1 = M->make_one();
+  monomial m1 = M->make_one();
+  // FIXME: is exp a monomial or exponent vector?
   int* exp = new int[M->n_vars() + 1];
 
   int j = 0;
@@ -439,14 +428,14 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
       for (int i = 0; i < nrows; i++)
         {
           comps[i] = nullptr;
-          last[i] = nullptr;  // used to easily placce monomials in the correct
+          last[i] = nullptr;  // used to easily place monomials in the correct
                               // bin, at the end of the polynomials.
         }
       const res_monomial_word* w = f.monoms.data();
       for (int i = 0; i < f.len; i++)
         {
           component_index comp;
-          C.ring().monoid().to_exponent_vector(w, exp, comp);
+          C.ring().monoid().to_expvector(w, exp, comp);
           w = w + C.ring().monoid().monomial_size(w);
           M->from_expvector(exp, m1);
           ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);

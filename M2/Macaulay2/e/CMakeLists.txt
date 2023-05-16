@@ -25,7 +25,6 @@ endif()
 set(UNDETERMINED
   dmat-ffpack.cpp
   franzi-brp-test.cpp
-  gb-trace.hpp
   overflow-test.cpp
   test.dd
   aring-wrap # both cpp and hpp
@@ -57,8 +56,6 @@ set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
   VectorArithmetic.hpp
-  ARingElem.hpp
-  newdelete.hpp
   timing.hpp
   SLP-defs.hpp
   SLP-imp.hpp
@@ -82,7 +79,6 @@ set(HPPONLYFILES
   geopoly.hpp
   geovec.hpp
   hash.hpp
-  index.hpp
   mat-arith.hpp
   mat-elem-ops.hpp
   mat-linalg.hpp
@@ -91,14 +87,16 @@ set(HPPONLYFILES
   mutablemat-imp.hpp
   mutablemat.hpp
   newdelete.hpp
-  queue.hpp
+  ExponentVector.hpp
   res-a0-pair.hpp
-  ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
+  util.hpp
   style.hpp
   f4/f4-types.hpp
   f4/memblock.hpp
+  f4/ntuple-monomial.hpp
+  f4/varpower-monomial.hpp
   schreyer-resolution/res-memblock.hpp
   schreyer-resolution/res-monomial-types.hpp
   schreyer-resolution/res-schreyer-order.hpp
@@ -184,7 +182,6 @@ set(SRCLIST
   aring-RRR
   aring-gf-flint-big
   aring-gf-flint
-  aring-gf-givaro
   aring-m2-gf
   aring-qq-flint
   aring-qq-gmp
@@ -221,7 +218,6 @@ set(SRCLIST
   gb-default
   gb-homog2
   gb-sugarless
-  gb-test1
   gb-toric
   gb-walk
   gbring
@@ -230,7 +226,6 @@ set(SRCLIST
   hilb
   imonorder
   int-bag
-  intarray
   interreduce
   interrupted
   lapack
@@ -251,7 +246,6 @@ set(SRCLIST
   montableZZ
   mutablecomplex
   ntl-interface
-  ntuple
   overflow
   pfaff
   poly
@@ -271,6 +265,7 @@ set(SRCLIST
   res-a1
   res-a2
   ring
+  ringelem
   ringmap
   sagbi
   schorder
@@ -283,8 +278,7 @@ set(SRCLIST
   spair
   text-io
   tower # TODO: move rawTowerTranslatePoly to e/interface
-  util
-  varpower
+  ExponentList
   weylalg
   # Faugère's F4 Algorithm
   f4/f4-computation
@@ -297,8 +291,6 @@ set(SRCLIST
   f4/hilb-fcn
   f4/monhashtable
   f4/moninfo
-  f4/ntuple-monomial
-  f4/varpower-monomial
   # Schreyer resolution a la Linear algebra (F4 Faugere style)
   schreyer-resolution/res-f4-computation
   schreyer-resolution/res-f4-m2-interface
@@ -314,7 +306,6 @@ set(SRCLIST
   schreyer-resolution/res-monomial-sorter
   schreyer-resolution/res-poly-ring
   schreyer-resolution/res-schreyer-frame
-  schreyer-resolution/res-varpower-monomial
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -385,9 +376,9 @@ target_compile_options(M2-engine PRIVATE
   >
 
   $<$<COMPILE_LANG_AND_ID:CXX,GNU>:
-  -Wno-deprecated-copy -Wno-unknown-pragmas # caused by Givaro and fflas_ffpack
+  -Wno-deprecated-copy #-Wno-unknown-pragmas # caused by Givaro and fflas_ffpack
   -Wno-ignored-qualifiers # FIXME: caused by bibasis/tset.hpp:44:9
-  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-test1.cpp, gb-walk.cpp, hermite.cpp, etc.
+  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-walk.cpp, hermite.cpp, etc.
   >
 
   # Intel TODO: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
@@ -407,7 +398,7 @@ install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
 ## Add source linting and formatting checks for this target, see cmake/prechecks.cmake
 
 if(LINTING)
-  _ADD_PRECHECKS(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
+  _ADD_PRECHECKS(M2-engine "IWYU" "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
 endif()
 
 _ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
@@ -426,10 +417,12 @@ if(BUILD_TESTING)
     unit-tests/M2mem-replacement.c
     unit-tests/M2mem-replacement.h
 
+    unit-tests/MonoidTest.cpp
+
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
+#    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
@@ -477,9 +470,4 @@ if(BUILD_TESTING)
     $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
     )
 
-  ###############################################################################
-  ## GivaroTest.cpp has a main function and does not use gtest
-  #add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
-  #target_link_libraries(M2-unit-tests-givaro M2-engine)
-  #add_test(NAME unit-tests:GivaroTest WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests-givaro)
 endif()

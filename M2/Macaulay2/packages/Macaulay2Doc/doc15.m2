@@ -127,23 +127,18 @@ SeeAlso
 
 doc ///
 Key
-    isMember
     (isMember, QQ, RRi)
     (isMember, ZZ, RRi)
     (isMember, RR, RRi)
 Headline
     membership test in an interval
 Usage
-    x = isMember(q,I)
-    x = isMember(z,I)
-    x = isMember(r,I)
+    isMember(x,I)
 Inputs
-    q:QQ
-    z:ZZ
-    r:RR
+    x:{QQ,ZZ,RR}
     I:RRi
 Outputs
-    x:Boolean
+    :Boolean
 Description
   Text
     Returns true if the input number is in the interval.
@@ -164,7 +159,7 @@ Outputs
     x:Boolean
 Description
   Text
-    Returns true if the input interval is empty, i.e., the left endpoint is the the right of the right endpoint.
+    Returns true if the input interval is empty, i.e., the left endpoint is to the right of the right endpoint.
 SeeAlso
     isMember
 ///

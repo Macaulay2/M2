@@ -407,21 +407,21 @@ bool LocalRing::is_homogeneous(const ring_elem a) const
   return true;
 }
 
-void LocalRing::degree(const ring_elem a, int *d) const
+void LocalRing::degree(const ring_elem a, monomial d) const
 {
   const local_elem *f = a.get_local_elem();
   mRing->degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   mRing->degree(f->denom, e);
   degree_monoid()->divide(d, e, d);
   degree_monoid()->remove(e);
 }
 
-bool LocalRing::multi_degree(const ring_elem a, int *d) const
+bool LocalRing::multi_degree(const ring_elem a, monomial d) const
 {
   const local_elem *f = a.get_local_elem();
   bool tophom = mRing->multi_degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   bool bottomhom = mRing->multi_degree(f->denom, e);
   degree_monoid()->divide(d, e, d);
   degree_monoid()->remove(e);

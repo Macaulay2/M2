@@ -86,6 +86,8 @@ unique VisibleList := x -> (
      seen := new MutableHashTable;
      select(x, i -> if seen#?i then false else seen#i = true))
 
+repeats = L -> #L - #unique L
+
 -- we've been waiting to do this:
 binaryOperators = unique binaryOperators
 prefixOperators = unique prefixOperators
@@ -100,7 +102,7 @@ isSubset(VisibleList,Set) := Boolean => (S,T) -> all(S, x -> T#?x)
 isSubset(VisibleList,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 isSubset(Set,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 
-member(Thing,Set) := Boolean => (a,s) -> s#?a
+isMember(Thing,Set) := Boolean => (a,s) -> s#?a
 
 VirtualTally / Command  :=
 VirtualTally / Function := VirtualTally => (x,f) -> applyKeys(x,f,plus)

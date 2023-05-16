@@ -485,7 +485,7 @@ Outputs
 Description
   Text
    The adjoint action of a scalar linear combination of the entries of allgens(A,d-1)
-   U, regarded as an element of Pi^d, acts by bracket multiplcation with 
+   U, regarded as an element of Pi^d, acts by bracket multiplication with 
    source Pi^e and target Pi^{d+e}. The output is a matrix whose columns 
    correspond to a generalized row of the output of bracketMatrix.
    bracketmatrix

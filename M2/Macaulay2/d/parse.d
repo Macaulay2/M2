@@ -146,10 +146,9 @@ export ArrayParseTree := array(ParseTree);
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
-export StartDictionary := {+dictionary:Dictionary, body:ParseTree};
 export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
+     or EmptyParentheses or IfThen or IfThenElse
      or Quote or GlobalQuote or ThreadQuote or LocalQuote
      or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
@@ -307,7 +306,7 @@ export DictionaryClosure := {+
      frame:Frame,      -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
      };
-export FunctionClosure := {+ frame:Frame, model:functionCode };
+export FunctionClosure := {+ frame:Frame, model:functionCode, hash:int };
 export SymbolClosure := {+
      frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
      symbol:Symbol
@@ -352,7 +351,7 @@ export MysqlField  := Pointer "struct st_mysql_field *";
 export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 
 export pythonObject := Pointer "struct _object *";
-export pythonObjectCell := {+v:pythonObject};
+export pythonObjectCell := {+v:pythonObject, hash:int};
 
 export TaskCellBody := {+
      hash:int,
@@ -361,6 +360,7 @@ export TaskCellBody := {+
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };
 
+export pointerCell := {+ v:voidPointer };
 
 export Expr := (
      CCcell or
@@ -415,7 +415,8 @@ export Expr := (
      pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
-     fileOutputSyncState
+     fileOutputSyncState or
+     pointerCell
      );
 export fun := function(Expr):Expr;
 

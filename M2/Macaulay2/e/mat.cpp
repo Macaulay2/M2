@@ -20,7 +20,6 @@
 #include "aring-zzp-ffpack.hpp"
 #include "aring-zzp-flint.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-gf-givaro.hpp"
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
 #include "aring-qq.hpp"

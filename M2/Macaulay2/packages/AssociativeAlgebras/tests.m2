@@ -854,7 +854,7 @@ I = ideal I_*; elapsedTime J1 = ideal NCGB(I, deg, Strategy=>"F4"); -- this give
 --- 45 sec d = 30, kk = ZZ/32003, parallel
 --- 5.37sec, d = 25, kk = ZZ/32003
 --- 60 sec, d = 15, kk = QQ
-numgens J1 == 78 -- this fails here and there... (run this and the the line before it over and over).
+numgens J1 == 78 -- this fails here and there... (run this and the line before it over and over).
 
 gbTrace=2
 I = ideal I_*; time NCGB(I, 23, Strategy=>"F4"); 
@@ -1491,7 +1491,7 @@ DEVELOPMENT ///
   I = createIdeal GF(7^5, SizeLimit => 60000) -- FlintZech
   runGBs I -- OK
 
-  I = createIdeal GF(27, Strategy => "Givaro") -- OK
+  I = createIdeal GF(27, Strategy => "Flint") -- OK
   runGBs I -- OK
 
   I = createIdeal ZZp(32003,Strategy=>"Ffpack")
@@ -1554,7 +1554,7 @@ kk = GF(3^10)
 kk = GF(7^5)
 kk = QQ
 kk = GF(13^2,Strategy=>"New")
-kk = GF(27,Strategy=>"Givaro")
+kk = GF(27,Strategy=>"Flint")
 kk = ZZp(32003,Strategy=>"Ffpack")
 kk = ZZp(32003,Strategy=>"Aring")
 A = kk<|x,y,z|>

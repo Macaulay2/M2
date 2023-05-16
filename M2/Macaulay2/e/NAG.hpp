@@ -28,7 +28,6 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "hash.hpp"
-#include "intarray.hpp"
 #include "newdelete.hpp"
 #include "ring.hpp"
 #include "ringelem.hpp"
@@ -140,22 +139,18 @@ inline const CCC* cast_to_CCC(const Ring* R)
 
 inline ring_elem from_doubles(const CCC* C, double re, double im)
 {
-  CCC::ElementType a;
-  C->ring().init(a);
+  M2::ARingCC::Element a(C->ring());
   C->ring().set_from_doubles(a, re, im);
   ring_elem result;
   C->ring().to_ring_elem(result, a);
-  C->ring().clear(a);
   return result;
 }
 
 inline gmp_CC toBigComplex(const CCC* C, ring_elem a)
 {
-  CCC::ElementType b;
-  C->ring().init(b);
+  M2::ARingCC::Element b(C->ring());
   C->ring().from_ring_elem(b, a);
   gmp_CC result = C->ring().toBigComplex(b);
-  C->ring().clear(b);
   return result;
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -185,7 +180,7 @@ class complex
   double getimaginary() const;
   bool operator==(complex);
   void operator=(complex);
-  void sprint(char*);
+  void snprint(char*, int);
 };
 
 //                                        CONSTRUCTOR
@@ -306,9 +301,9 @@ inline bool complex::operator==(complex c)
   return (real == c.real) && (imag == c.imag) ? 1 : 0;
 }
 
-inline void complex::sprint(char* s)
+inline void complex::snprint(char* s, int N)
 {
-  sprintf(s, "(%lf) + i*(%lf)", real, imag);
+  snprintf(s, N, "(%lf) + i*(%lf)", real, imag);
 }
 
 
@@ -430,8 +425,8 @@ class SLP : public MutableEngineObject
   bool is_relative_position;  // can use relative or absolute addressing
   M2_arrayint program;        // std::vector???
   element_type* nodes;        // array of CCs
-  intarray node_index;  // points to position in program (rel. to start) of
-                        // operation corresponding to a node
+  gc_vector<int> node_index;  // points to position in program (rel. to start)
+                              // of operation corresponding to a node
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
   void* handle;  // dynamic library handle
@@ -443,15 +438,15 @@ class SLP : public MutableEngineObject
 
   static void make_nodes(element_type*&, int size);
   int poly_to_horner_slp(int n,
-                         intarray& prog,
-                         VECTOR(element_type) & consts,
+                         gc_vector<int>& prog,
+                         gc_vector<element_type>& consts,
                          Nterm*& f);  // used by make
 
-  int diffNodeInput(int n, int v, intarray& prog);  // used by jacobian
+  int diffNodeInput(int n, int v, gc_vector<int>& prog);  // used by jacobian
   int diffPartReference(int n,
                         int ref,
                         int v,
-                        intarray& prog);  // used by diffNodeInput
+                        gc_vector<int>& prog);  // used by diffNodeInput
 
   /* obsolete!!!
   void predictor(); // evaluates a predictor

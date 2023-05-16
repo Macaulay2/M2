@@ -154,7 +154,7 @@ makeDocumentTag' := opts -> key -> (
     -- Try to detect the package
     pkg = if pkg =!= null                    then pkg
     else  if opts#Package =!= null           then opts#Package
-    else  if member(fkey, allPackages())     then fkey
+    else  if isMember(fkey, allPackages())     then fkey
     -- for these three types, the method package actually calls
     -- makeDocumentTag, so we can't use it, and need workarounds:
     else  if instance(nkey, Array)           then youngest toSequence(package \ splice nkey)
@@ -315,9 +315,13 @@ formatDocumentTag Sequence := s -> concatenate (
 storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
+	newloc := toString new FilePosition from (
+	    minimizeFilename rawdoc#"filename", rawdoc#"linenum", 0);
 	rawdoc = currentPackage#rawKey#fkey;
+	oldloc := toString locate rawdoc.DocumentTag;
 	printerr("error: documentation already provided for ", format tag);
-	printerr(rawdoc#"filename", ":", toString rawdoc#"linenum", ": ... here is the (end of the) previous documentation"));
+	printerr(newloc, ": ... here is the (end of the) new documentation");
+	printerr(oldloc, ": ... here is the (end of the) previous documentation"));
     currentPackage#rawKey#fkey = rawdoc)
 
 -----------------------------------------------------------------------------
@@ -386,10 +390,10 @@ isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"u
 hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
 -- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
-locate DocumentTag := tag -> (
+locate DocumentTag := tag -> new FilePosition from (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
-    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
-    else (currentFileName, currentRowNumber()))
+    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum",0)
+    else (currentFileName, currentRowNumber(), currentColumnNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
@@ -418,7 +422,8 @@ processSignature := (tag, fn) -> item -> (
     else if fn =!= null then fn else key;
 
     -- checking for various pieces of the synopsis item
-    isVariable   := y -> match(///\`[[:alnum:]']+\'///, y);
+    -- allow either a variable name or a visible list for rare exceptions
+    isVariable   := y -> match(///\`[[:alnum:]']+\'///, y) or match(///(\".+\")|(\(.+\))|(\[.+\])|(\{.+\})|(<\|.+\|>)///, y);
     isOptionName := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, Symbol);
     isInputName  := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, String) and isVariable y;
     -- putting null or Nothing as input type means don't display the type deduced from the description of the method
@@ -549,7 +554,7 @@ getSourceCode :=  val         -> DIV {"class" => "waystouse",
     fixup DIV {SUBSECTION "Code", PRE M2CODE demark_newline unstack stack apply(enlist val, m -> (
 		f := lookup m; if f === null then error("SourceCode: ", toString m, ": not a method");
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-		reproduciblePaths toString c))}}
+		reproduciblePaths toString net c))}}
 getSubnodes := val -> (
     val = nonnull enlist val;
     if #val == 0 then error "encountered empty Subnodes list"
@@ -636,7 +641,7 @@ document List := opts -> args -> (
     currentDocumentTag = o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage);
     fkey := format tag;
     verboseLog("Processing documentation for ", fkey);
-    if member(fkey, reservedNodeNames) then error("'document' encountered a reserved node name ", fkey);
+    if isMember(fkey, reservedNodeNames) then error("'document' encountered a reserved node name ", fkey);
     -- Check that all tags belong to this package and
     -- point the secondary keys to the primary one
     verfy := (key, tag) -> (

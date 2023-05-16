@@ -202,7 +202,7 @@ document {
 	  },
      "The command computes the ", TT "i", "-th cohomology group of ", TT "F", 
      " as a vector space over the coefficient field of ", TT "X",".  For i>0 this
-     is currently done via local duality, while for i=0 it is computed as a limmit of Homs.
+     is currently done via local duality, while for i=0 it is computed as a limit of Homs.
      Eventually there will exist an alternative option for computing sheaf cohomology
      via the Bernstein-Gelfand-Gelfand correspondence",
      PARA{},

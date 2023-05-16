@@ -1,10 +1,11 @@
 // Copyright 1994-2016 Michael E. Stillman
 
 #include "schreyer-resolution/res-f4-monlookup.hpp"
+
 #include "buffer.hpp"                                     // for buffer
 #include "engine-exports.h"                               // for newline
 #include "mem.hpp"                                        // for stash
-#include "schreyer-resolution/res-varpower-monomial.hpp"  // for index_res_v...
+#include "schreyer-resolution/res-monomial-types.hpp"     // for index_res_v...
 #include "style.hpp"                                      // for INTSIZE
 #include "text-io.hpp"                                    // for emit, emit_...
 
@@ -139,7 +140,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
           if (i.valid())
             {
               insert_node = new_mi_node(
-                  insert_var, insert_exp, reinterpret_cast<mi_node *>(NULL));
+                  insert_var, insert_exp, static_cast<mi_node *>(nullptr));
               q->insert_to_left(insert_node);
               q = insert_node;
             }
@@ -157,7 +158,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
   if (one_element)
     {
       // insert a header node and a var/exp = 0/0 leaf
-      top = new_mi_node(0, 0, reinterpret_cast<mi_node *>(NULL));
+      top = new_mi_node(0, 0, static_cast<mi_node *>(nullptr));
       mi_node *leaf_node = new_mi_node(0, 0, k);
       top->left = top->right = leaf_node;
       top->header = leaf_node->header = leaf_node->left = leaf_node->right =
@@ -236,7 +237,7 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors1(
 }
 
 template <typename Key>
-void ResF4MonomialLookupTableT<Key>::update_exponent_vector(
+void ResF4MonomialLookupTableT<Key>::update_expvector(
     int topvar,
     const_varpower_monomial m)
 {
@@ -262,7 +263,7 @@ void ResF4MonomialLookupTableT<Key>::update_exponent_vector(
 }
 
 template <typename Key>
-void ResF4MonomialLookupTableT<Key>::reset_exponent_vector(
+void ResF4MonomialLookupTableT<Key>::reset_expvector(
     const_varpower_monomial m)
 {
   int nparts = static_cast<int>(*m++);
@@ -283,9 +284,9 @@ bool ResF4MonomialLookupTableT<Key>::find_one_divisor_vp(
   if (mi == NULL) return false;
 
   ResF4MonomialLookupTableT *me = const_cast<ResF4MonomialLookupTableT *>(this);
-  me->update_exponent_vector(static_cast<int>(mi->var), m);
+  me->update_expvector(static_cast<int>(mi->var), m);
   bool result = find_one_divisor1(mi, exp0, result_k);
-  me->reset_exponent_vector(m);
+  me->reset_expvector(m);
   return result;
 }
 
@@ -300,9 +301,9 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors_vp(
   if (mi == NULL) return;
 
   ResF4MonomialLookupTableT *me = const_cast<ResF4MonomialLookupTableT *>(this);
-  me->update_exponent_vector(static_cast<int>(mi->var), m);
+  me->update_expvector(static_cast<int>(mi->var), m);
   find_all_divisors1(mi, exp0, result_k);
-  me->reset_exponent_vector(m);
+  me->reset_expvector(m);
 }
 
 template <typename Key>
@@ -316,7 +317,7 @@ bool ResF4MonomialLookupTableT<Key>::find_one_divisor_packed(
   if (comp >= mis.size()) return false;
   mi_node *mi = mis[comp];
   if (mi == NULL) return false;
-  M->to_exponent_vector(m, exp0, comp);
+  M->to_expvector(m, exp0, comp);
   return find_one_divisor1(mi, exp0, result_k);
 }
 
@@ -330,7 +331,7 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors_packed(
   if (comp >= mis.size()) return;
   mi_node *mi = mis[comp];
   if (mi == NULL) return;
-  M->to_exponent_vector(m, exp0, comp);
+  M->to_expvector(m, exp0, comp);
   find_all_divisors1(mi, exp0, result_k);
 }
 

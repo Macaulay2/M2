@@ -156,6 +156,17 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
+random(ZZ,   Ideal) := RingElement => opts -> (d, I) -> random({d}, I, opts)
+random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (
+    m := generators I;
+    r := degreeLength ring I;
+    -- TODO: what should random({}, ideal 2_ZZ) do?
+    if r == 0 then error "not yet implemented";
+    if r == 1 and #L > 1 and isListOfIntegers L then L = transpose {L};
+    if isListOfListsOfIntegers L then     first entries(m * random(source m, (ring I)^(-L), opts))
+    else if isListOfIntegers L then first first entries(m * random(source m, (ring I)^{-L}, opts))
+    else error("expected a list of integers or a list of lists of integers"))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

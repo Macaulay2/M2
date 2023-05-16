@@ -4,7 +4,6 @@ local localCohomOT
 local localCohomILOaku
 local computeLocalCohomOT
 local localCohomRegular
-local preimage
 local localCohomILOTW
 local Generator
 ------------------------------------------------------------------
@@ -372,21 +371,6 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
 	 else homology(MM#k, MM#(k-1))
 	 );
      ret
-     );
----------------------------------------------------------------------------------
-
-
-
-
--------------------------------------------------------------------------------
--- computes the preimage of a submodule M of the target of f 
--- (more precisely, M and <target f> should have the same ambient module)
-------------------------------------------------------------------------------
-preimage = method();
-preimage (Module, Matrix) := (M, f) -> (
-     T := target f;
-     g := map(T/M, T);
-     kernel (g*f)
      );
 
 ---------------------------------------------------------------------------

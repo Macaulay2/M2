@@ -86,8 +86,7 @@ if version#"VERSION" == "1.6" then ( complete GradedModule := (M) -> M );
 -- PoincareSeries: rational function, Poincare series in closed form
 -- BassSeries: rational function, Bass series in closed form
 
-T := degreesRing 1;
-T = newRing(T, Degrees => {1});
+T := degreesRing {1};
 t := T_0;
 
 toralgdata = R -> (

@@ -49,7 +49,7 @@ export{"randomSpaceCurve",
 -- t = the variable to be used in the numerator
 hilbertNumerator=method()
 hilbertNumerator(List,ZZ,RingElement):=(L,r,t)->(
-     -- the beginning of the hilbert series
+     -- the beginning of the Hilbert series
      p:=sum(#L,i->L#i*t^i);
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
@@ -68,7 +68,7 @@ TEST ///
 
 
 -----------------------------
--- Expected Betti Tableaus --
+-- Expected Betti Tableaux --
 -----------------------------
 
 -- convert c*t^d to (c,({d},d))
@@ -78,11 +78,11 @@ TEST ///
 --
 -- this function is needed to construct
 -- expected betti tables from
--- a HilberNumerator
+-- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
      c := lift((last coefficients mon)_0_0,ZZ);
-     -- the degree of the monmial
+     -- the degree of the monomial
      d := sum degree mon;
      (c,({d},d))
      )
@@ -98,17 +98,17 @@ expectedBetti=method()
 
 
 -- calculates the expected betti tableau
--- from a hilbert Numerator
+-- from a Hilbert Numerator
 --
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
--- sign switches that occur in the hilbert numerator before this monomial
+-- sign switches that occur in the Hilbert numerator before this monomial
 --
--- the ring of the hilbert numerator is expected to singly graded
+-- the ring of the Hilbert numerator is expected to singly graded
 -- and contain only one variable
 expectedBetti(RingElement):= (hilbNum) ->(
-     -- find terms of hilbert Numerator
+     -- find terms of Hilbert Numerator
      -- smallest degree first
      termsHilbNum := reverse terms hilbNum;
      -- convert terms into pairs (coefficient, ({d},d))
@@ -150,7 +150,7 @@ TEST ///
 
 
 -- calculate the expected betti tableau
--- from a given hilbert function.
+-- from a given Hilbert function.
 -- hilb = {h0,...,h_(d+r+1)}
 -- where d is the regularity of the variety described
 -- and r is the dimension of the ambient space
@@ -338,7 +338,7 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R)->(
 
 -- Try to construct a random Hartshorne-Rau module of
 -- length 2. Here the only problem is, that the
--- generic module may not have expected syzgies
+-- generic module may not have expected syzygies
 --
 -- HRau = {h1,h2} the Hilbertfunction of the desired module
 -- R the ring where the module should live. It is assumed, that
@@ -423,7 +423,7 @@ randomSpaceCurve(ZZ,ZZ,PolynomialRing) := opt->(d,g,R)->(
      h1 := for i from 0 when ((i<4) or(d*i+1-g)>binomial(i+3,3)) list max(d*i+1-g-binomial(3+i,3),0);
      -- calculate offset (i.e. number of leading 0's in h1)
      e := 0; for i in h1 when i==0 do e=e+1;
-     -- calculate support of Hartshorne Rao Moduole
+     -- calculate support of Hartshorne Rao Module
      HRao := select(h1,i->i!=0);
      -- if the Hartshorne Rao Module is zero, the curve is ACM
      -- and it can be defined by the minors of an appropriate
@@ -684,7 +684,7 @@ doc ///
        assuming that each sign change in the coefficients of q corresponds to a step
   Description
     Text
-      calculates the expected betti table  from a given hilbert Numerator.
+      calculates the expected betti table  from a given Hilbert Numerator.
 
     Example
       T=ZZ[t]
@@ -723,7 +723,7 @@ doc ///
   B=expectedBetti(h,r)
  Inputs
   h: List
-      values of the hilbert function
+      values of the Hilbert function
   r: ZZ
        dimension of ambient protective space
  Outputs
@@ -733,7 +733,7 @@ doc ///
   Example
     betti expectedBetti({0,0,4,6,3,0,0,0,0},3)
  Caveat
-  The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
+  The Hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
 ///
 
 
@@ -747,7 +747,7 @@ doc ///
    p=hilbertNumerator(L,r,t)
  Inputs
    L: List
-   	values of the hilbert function
+   	values of the Hilbert function
    r: ZZ
        dimension of ambient projective space
    t: RingElement
@@ -757,7 +757,7 @@ doc ///
     T=QQ[t];
     hilbertNumerator({0,0,4,6,3,0,0,0,0},3,t)
  Caveat
-  The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
+  The Hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
 
 ///
 

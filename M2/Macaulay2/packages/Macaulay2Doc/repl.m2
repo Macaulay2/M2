@@ -810,8 +810,27 @@ document {
 	  "f = random(R^{2},R^2)",
 	  "compactMatrixForm = false;",
 	  "f"
+	  },
+      Caveat => {"This flag currently has no effect outside of ", TO "Standard"," output mode."}
+     }
+
+document {
+     Key => symbol blockMatrixForm,
+    Headline => "global flag for block printing",
+	Usage => "blockMatrixForm = x",
+	Consequences => {"changes the display of matrices"},
+     TT "blockMatrixForm", " is a global flag that specifies whether to display
+     blocks in matrices.",
+     PARA{},
+     "The default value is ", TT "false", ".",
+     EXAMPLE {
+	  "M = ZZ^1 ++ ZZ^2 ++ ZZ^3",
+	  "f = random(M,M)",
+	  "blockMatrixForm = true;",
+	  "f"
 	  }
      }
+    
 
 document {
      Key => globalAssign,
@@ -948,7 +967,7 @@ document { Key => Pseudocode,
      the internal function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
-     and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudcode step whose execution produced the error.",
+     and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",

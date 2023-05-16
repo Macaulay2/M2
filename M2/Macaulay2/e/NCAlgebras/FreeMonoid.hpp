@@ -1,8 +1,8 @@
 #ifndef _free_monoid_hpp_
 #define _free_monoid_hpp_
 
-#include "Polynomial.hpp"      // for Monom, IntVector
-#include "newdelete.hpp"       // for VECTOR, our_new_delete
+#include "Polynomial.hpp"      // for Monom
+#include "newdelete.hpp"       // for our_new_delete
 #include "polyring.hpp"        // for PolynomialRing
 #include "style.hpp"           // for GT
 #include "NCAlgebras/Word.hpp" // for Word
@@ -56,7 +56,7 @@ private:
   const std::vector<int> mHeftVector;    // length is size of degree vector
   std::vector<int> mHeftDegrees;   // length numVars().  Should be const (after construction)
   const int mNumWeights;
-  VECTOR(const int*) mDegreeOfVar;
+  gc_vector<const int*> mDegreeOfVar;
      // length numVars(), each is a pointer to an allocated degree vector.
      // Should be const (after construction)
 public:
@@ -79,7 +79,7 @@ public:
   const Monoid& degreeMonoid() const { return * mDegreeRing->getMonoid(); }
   
   // Monomial operations
-  using MonomialInserter = IntVector;
+  using MonomialInserter = gc_vector<int>;
 
   void one(MonomialInserter& m) const;
 
@@ -103,7 +103,7 @@ public:
   // Determine the multidegree of the monomial m. Result is placed into
   // already_allocated_degree_vector which should have been allocated with
   // e.g. degreeMonoid().make_one()
-  void multi_degree(const Monom& m, int* already_allocated_degree_vector) const;
+  void multi_degree(const Monom& m, monomial already_allocated_degree_vector) const;
   
   // display (to a buffer, and to a ostream)
   void elem_text_out(buffer& o, const Monom& m1) const;
@@ -123,7 +123,7 @@ public:
   // The output is of the form, and stored in result.
   // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
   // where len = n+2 and deg = sum of the degrees of the vi 
-  void fromMonomial(const int* monom, MonomialInserter& result) const;
+  void fromMonomial(const_monomial monom, MonomialInserter& result) const;
 
   // these functions create a Word from the (prefix/suffix of) a Monom and visa versa
   void wordFromMonom(Word& result, const Monom& m) const;

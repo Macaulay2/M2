@@ -56,7 +56,7 @@ target_link_libraries(M2-binary
   ${Boost_stacktrace_lib}
   M2-supervisor M2-engine M2-interpreter ${CMAKE_DL_LIBS})
 
-#if we have a usuable link time stacktrace library, force boost to use it
+#if we have a usable link time stacktrace library, force boost to use it
 if(NOT Boost_stacktrace_header_only)
   target_compile_definitions(M2-binary PUBLIC BOOST_STACKTRACE_LINK)
 endif()
@@ -103,7 +103,7 @@ else()
   set(EXPORT_STRING   [[LD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$LD_LIBRARY_PATH]])
 endif()
 
-string(CONFIGURE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"" M2_CONTENT @ONLY)
+string(CONFIGURE "#!/bin/sh\n${EXPORT_STRING} exec `dirname \"$0\"`/M2@EXE@ \"$@\"" M2_CONTENT @ONLY)
 file(MAKE_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 execute_process(
   COMMAND ${CMAKE_COMMAND} -E echo "${M2_CONTENT}"

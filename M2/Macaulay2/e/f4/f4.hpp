@@ -9,7 +9,7 @@
 // Template parameters include:
 //    coefficient ring arithmetic
 //    packed_monomial
-//    ntuple
+//    exponents
 //    varpower_monomial
 // Types to define
 //    MonomialLookupTable

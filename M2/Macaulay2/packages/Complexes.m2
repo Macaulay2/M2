@@ -160,7 +160,7 @@ complex ChainComplex := Complex => opts -> (cacheValue symbol Complex)(D -> (
     while lo < hi and (D_lo).numgens == 0 do lo = lo+1;
     while lo < hi and (D_hi).numgens == 0 do hi = hi-1;
     if lo === hi then
-        complex D_lo
+        complex(D_lo, Base => lo)
     else 
         complex hashTable for i from lo+1 to hi list i => D.dd_i
     ))

@@ -264,18 +264,18 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
-	  entries, borel, gcdCoefficients, singularLocus,
-	  Hom, diff, diff', contract, contract', subsets, partitions, member,
-	  koszul, symmetricPower, trace, target, source,
+	  entries, baseName, borel, gcdCoefficients, singularLocus,
+	  Hom, diff, diff', contract, contract', isMember,
+	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
-	  substitute, rank, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
-	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
+	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
-	  relations, cone, standardForm, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
+	  leadComponent, assign, realPart, imaginaryPart, conjugate,
+	  relations, cone, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
-	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage,
+	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
@@ -293,8 +293,6 @@ default = method()
 --     m := lookup(X,symbol default);
 --     if m === null then error "no method found";
 --     m ())
-
-determinant = method(Options => { Strategy => null })
 
 random = method(Options => {
 	  MaximalRank => false,
@@ -355,12 +353,13 @@ map = method(
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
-	  isSubset,isHomogeneous, isIsomorphism, isField, isConstant
+	  isSubset,isHomogeneous, isIsomorphism, isField
 	  })
-setupMethods(TypicalValue => ZZ,
-     {binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
-setupMethods(TypicalValue => List,
-     {eulers, genera})
+setupMethods(TypicalValue => ZZ, {
+	binomial, char, degreeLength, depth, dim, euler, genus, height,
+	numgens, numColumns, numRows, pdim, rank, width})
+setupMethods(TypicalValue => List, {
+	degrees, eulers, genera})
 
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
@@ -701,26 +700,10 @@ Function Thing = (f,x,e) -> (
      if not storefuns#?f then error("no method for storing values of function ", toString f);
      storefuns#f (x,e))
 
--- defined in d/actors4.d
-locate' = locate -- TODO: why does (net, FunctionBody) in nets.m2 need locate'?
-locate = method(Dispatch => Thing, TypicalValue => Sequence)
-locate Nothing    := Sequence => x -> locate' x
-locate Function   := Sequence => x -> locate' x
-locate Pseudocode := Sequence => x -> locate' x
-locate Sequence   := Sequence => x -> locate' x
-locate Symbol     := Sequence => x -> locate' x
-locate List       := List     => x -> apply(x, locate)
-protect symbol locate
-
--- baseName
-baseName = method()
-baseName Thing := R -> (
-     if hasAttribute(R,ReverseDictionary) then (
-	  x := getAttribute(R,ReverseDictionary);
-	  if not mutable x then error("baseName: base name ",toString x," is not mutable, hence not available for use as a variable");
-	  x)
-     else error "baseName: no base name available"
-     )
+-- registerFinalizer
+registerFinalizer' = registerFinalizer
+registerFinalizer = method()
+registerFinalizer(Thing, String) := registerFinalizer'
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

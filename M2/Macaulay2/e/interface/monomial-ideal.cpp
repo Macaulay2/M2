@@ -4,22 +4,20 @@
 
 #include <frobby.h> // TODO: move Frobby routines elsewhere?
 
+#include "ExponentList.hpp"
 #include "assprime.hpp"
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
 #include "finalize.hpp"
 #include "hilb.hpp"
-#include "index.hpp"
 #include "int-bag.hpp"
-#include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal-minprimes.hpp"
 #include "monideal.hpp"
 #include "monomial.hpp"
 #include "newdelete.hpp"
 #include "text-io.hpp"
-#include "varpower.hpp"
 
 class PolynomialRing;
 class RingElement;
@@ -65,7 +63,7 @@ M2_string MonomialIdeal_to_string(const MonomialIdeal *I)
   }
 }
 
-int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I) { return I->length(); }
+int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I) { return I->size(); }
 int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
 // 1 = true, 0 = false, -1 = error
 {
@@ -121,7 +119,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
 
 const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a)
+    const EngineMonomial *a)
 {
   try
     {
@@ -160,7 +158,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
 
 const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a)
+    const EngineMonomial *a)
 {
   try
     {
@@ -286,7 +284,7 @@ M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I) { return I->lcm(); }
 class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
 {
   int nv;  // The size of exponentVector coming from frobby
-  int *exp;
+  exponents_t exp;
   MonomialIdeal *J;
 
  public:
@@ -315,7 +313,7 @@ class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
       }
 
     Bag *b = new Bag();
-    varpower::from_ntuple(nv, exp, b->monom());
+    varpower::from_expvector(nv, exp, b->monom());
     J->insert_minimal(b);
   }
   MonomialIdeal *result() { return J; }
@@ -325,12 +323,11 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I,
                                           const mpz_t *topvec)
 {
   int nv = I->topvar() + 1;
-  int *exp = newarray_atomic(int, nv);
+  exponents_t exp = newarray_atomic(int, nv);
   Frobby::Ideal F(nv);
-  for (Index<MonomialIdeal> i = I->first(); i.valid(); i++)
+  for (Bag& b : *I)
     {
-      Bag *b = I->operator[](i);
-      varpower::to_ntuple(nv, b->monom().raw(), exp);
+      varpower::to_expvector(nv, b.monom().data(), exp);
 
       if (M2_gbTrace >= 4) fprintf(stderr, "adding ");
       for (int j = 0; j < nv; j++)

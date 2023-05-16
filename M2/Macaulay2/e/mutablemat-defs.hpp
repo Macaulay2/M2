@@ -166,6 +166,8 @@ class MutableMat : public MutableMatrix
   typedef Mat MatType;
   typedef typename Mat::CoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
+  typedef typename CoeffRing::Element Element;
+  typedef typename CoeffRing::ElementType ElementType;
 
   typedef MatElementaryOps<Mat> MatOps;
 
@@ -259,14 +261,12 @@ class MutableMat : public MutableMatrix
      Also sets result to be the entry at this index.
      returns -1 if the column is 0 */
   {
-    elem b;
-    mat.ring().init(b);
+    Element b(mat.ring());
     mat.ring().set_zero(b);
 
     size_t ret = MatOps::lead_row(mat, col, b);
     if (ret != static_cast<size_t>(-1)) mat.ring().to_ring_elem(result, b);
 
-    mat.ring().clear(b);
     return ret;
   }
 
@@ -276,13 +276,11 @@ class MutableMat : public MutableMatrix
   {
     if (r < n_rows() && c < n_cols())
       {
-        elem a;
+        Element a(mat.ring());
 
-        mat.ring().init(a);
         MatOps::getEntry(mat, r, c, a);
         bool is_nonzero = not mat.ring().is_zero(a);
         mat.ring().to_ring_elem(result, a);
-        mat.ring().clear(a);
         return is_nonzero;
       }
 
@@ -295,11 +293,8 @@ class MutableMat : public MutableMatrix
   {
     if (error_row_bound(r, n_rows())) return false;
     if (error_column_bound(c, n_cols())) return false;
-    elem b;
-    mat.ring().init(b);
-    mat.ring().from_ring_elem(b, a);
+    const ElementType& b = mat.ring().from_ring_elem_const(a);
     MatOps::setEntry(mat, r, c, b);
-    mat.ring().clear(b);
     return true;
   }
 
@@ -333,11 +328,8 @@ class MutableMat : public MutableMatrix
   {
     size_t nrows = n_rows();
     if (error_row_bound(i, nrows)) return false;
-    elem b;
-    mat.ring().init(b);
-    mat.ring().from_ring_elem(b, r);
+    const ElementType& b = mat.ring().from_ring_elem_const(r);
     MatOps::scale_row(mat, i, b);
-    mat.ring().clear(b);
     return true;
   }
 
@@ -346,11 +338,8 @@ class MutableMat : public MutableMatrix
   {
     size_t ncols = n_cols();
     if (error_column_bound(i, ncols)) return false;
-    elem b;
-    mat.ring().init(b);
-    mat.ring().from_ring_elem(b, r);
+    const ElementType& b = mat.ring().from_ring_elem_const(r);
     MatOps::scale_column(mat, i, b);
-    mat.ring().clear(b);
     return true;
   }
 
@@ -359,11 +348,8 @@ class MutableMat : public MutableMatrix
   {
     size_t nrows = n_rows();
     if (error_row_bound(i, nrows)) return false;
-    elem b;
-    mat.ring().init(b);
-    mat.ring().from_ring_elem(b, r);
+    const ElementType& b = mat.ring().from_ring_elem_const(r);
     MatOps::divide_row(mat, i, b);
-    mat.ring().clear(b);
     return true;
   }
 
@@ -372,11 +358,8 @@ class MutableMat : public MutableMatrix
   {
     size_t ncols = n_cols();
     if (error_column_bound(i, ncols)) return false;
-    elem b;
-    mat.ring().init(b);
-    mat.ring().from_ring_elem(b, r);
+    const ElementType& b = mat.ring().from_ring_elem_const(r);
     MatOps::divide_column(mat, i, b);
-    mat.ring().clear(b);
     return true;
   }
 
@@ -386,11 +369,8 @@ class MutableMat : public MutableMatrix
     size_t nrows = n_rows();
     if (error_row_bound(i, nrows) || error_row_bound(j, nrows)) return false;
     if (i == j) return true;
-    elem b;
-    mat.ring().init(b);
-    mat.ring().from_ring_elem(b, r);
+    const ElementType& b = mat.ring().from_ring_elem_const(r);
     MatOps::row_op(mat, i, b, j);
-    mat.ring().clear(b);
     return true;
   }
 
@@ -401,11 +381,8 @@ class MutableMat : public MutableMatrix
     if (error_column_bound(i, ncols) || error_column_bound(j, ncols))
       return false;
     if (i == j) return true;
-    elem b;
-    mat.ring().init(b);
-    mat.ring().from_ring_elem(b, r);
+    const ElementType& b = mat.ring().from_ring_elem_const(r);
     MatOps::column_op(mat, i, b, j);
-    mat.ring().clear(b);
     return true;
   }
 
@@ -423,20 +400,11 @@ class MutableMat : public MutableMatrix
     if (error_column_bound(c1, ncols) || error_column_bound(c2, ncols))
       return false;
     if (c1 == c2) return true;
-    elem aa1, aa2, bb1, bb2;
-    mat.ring().init(aa1);
-    mat.ring().init(aa2);
-    mat.ring().init(bb1);
-    mat.ring().init(bb2);
-    mat.ring().from_ring_elem(aa1, a1);
-    mat.ring().from_ring_elem(aa2, a2);
-    mat.ring().from_ring_elem(bb1, b1);
-    mat.ring().from_ring_elem(bb2, b2);
+    const ElementType& aa1 = mat.ring().from_ring_elem_const(a1);
+    const ElementType& aa2 = mat.ring().from_ring_elem_const(a2);
+    const ElementType& bb1 = mat.ring().from_ring_elem_const(b1);
+    const ElementType& bb2 = mat.ring().from_ring_elem_const(b2);
     MatOps::column2by2(mat, c1, c2, aa1, aa2, bb1, bb2);
-    mat.ring().clear(aa1);
-    mat.ring().clear(aa2);
-    mat.ring().clear(bb1);
-    mat.ring().clear(bb2);
     return true;
   }
 
@@ -453,20 +421,11 @@ class MutableMat : public MutableMatrix
     size_t nrows = n_rows();
     if (error_row_bound(r1, nrows) || error_row_bound(r2, nrows)) return false;
     if (r1 == r2) return true;
-    elem aa1, aa2, bb1, bb2;
-    mat.ring().init(aa1);
-    mat.ring().init(aa2);
-    mat.ring().init(bb1);
-    mat.ring().init(bb2);
-    mat.ring().from_ring_elem(aa1, a1);
-    mat.ring().from_ring_elem(aa2, a2);
-    mat.ring().from_ring_elem(bb1, b1);
-    mat.ring().from_ring_elem(bb2, b2);
+    const ElementType& aa1 = mat.ring().from_ring_elem_const(a1);
+    const ElementType& aa2 = mat.ring().from_ring_elem_const(a2);
+    const ElementType& bb1 = mat.ring().from_ring_elem_const(b1);
+    const ElementType& bb2 = mat.ring().from_ring_elem_const(b2);
     MatOps::row2by2(mat, r1, r2, aa1, aa2, bb1, bb2);
-    mat.ring().clear(aa1);
-    mat.ring().clear(aa2);
-    mat.ring().clear(bb1);
-    mat.ring().clear(bb2);
     return true;
   }
 
@@ -475,12 +434,10 @@ class MutableMat : public MutableMatrix
     size_t ncols = n_cols();
     if (error_column_bound(c1, ncols) || error_column_bound(c2, ncols))
       return false;
-    elem a;
-    mat.ring().init(a);
+    Element a(mat.ring());
     mat.ring().set_zero(a);
     MatOps::dot_product(mat, c1, c2, a);
     mat.ring().to_ring_elem(result, a);
-    mat.ring().clear(a);
     return true;
   }
 
@@ -669,14 +626,11 @@ class MutableMat : public MutableMatrix
         ERROR("expected same ring");
         return 0;
       }
-    elem a;
-    mat.ring().init(a);
-    mat.ring().from_ring_elem(a, f->get_value());
+    const ElementType& a = mat.ring().from_ring_elem_const(f->get_value());
 
     MutableMat* result = clone();
     MatrixOps::scalarMultInPlace(result->mat, a);
 
-    mat.ring().clear(a);
     return result;
   }
 
@@ -768,6 +722,11 @@ class MutableMat : public MutableMatrix
       M2SLProgram* P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const;  // this = const matrix
+
+  virtual M2SLEvaluator* createCompiledSLEvaluator(
+      M2_string libName,
+      int nInputs,
+      int nOutputs) const;  // this = const matrix
 };
 
 #endif

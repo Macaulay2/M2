@@ -6,6 +6,7 @@
 #include <limits>
 #include <sstream>
 
+#include "Eschreyer.hpp"
 #include "hilb.hpp"
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
@@ -70,8 +71,20 @@ const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M)
   }
 }
 
+const Matrix *rawKernelOfGB(const Matrix *M)
+/* Assuming that the columns of G form a GB, this routine computes
+   a Groebner basis of the kernel of these elements, using an
+   appropriate Schreyer order on the source of G. */
+{
+  GBMatrix *N = new GBMatrix(M);
+  GBKernelComputation G(N);
+  G.calc();
+  GBMatrix *syz = G.get_syzygies();
+  return syz->to_matrix();
+}
+
 ///////////////////////////////////////////////////////////////////////////////////
-///////// The following will be reomoved once the new code is functional
+///////// The following will be removed once the new code is functional
 /////////////
 ///////////////////////////////////////////////////////////////////////////////////
 Computation /* or null */ *IM2_GB_make(
@@ -499,7 +512,7 @@ MutableMatrix /* or null */ *rawResolutionGetMutableMatrixB(Computation *C,
 // First: C must be a nonminimal res computation, over QQ M.
 // Second: R must be a polynomial ring with the same monoid M as C's,
 //  and the coefficient ring must be either RR, or ZZ/p, where p is the (a)
-//  prime being used in the computaiton.
+//  prime being used in the computation.
 {
   try
     {

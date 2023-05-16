@@ -10,7 +10,7 @@ newPackage(
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
-	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
+	    HomePage => "https://antonleykin.math.gatech.edu"},
 	{Name => "Abraham Martin del Campo", 
 	    Email => "abraham.mc@cimat.mx", 
 	    HomePage => "http://www.cimat.mx/~abraham.mc"},
@@ -24,6 +24,7 @@ newPackage(
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
+    Keywords => {"Flag Varieties", "Numerical Algebraic Geometry"},
     Headline => "numerical methods in Schubert Calculus",
     PackageImports => {
 	"PHCpack",
@@ -106,7 +107,7 @@ load "NumericalSchubertCalculus/service-functions.m2"
 --load "NumericalSchubertCalculus/UnderDevelopment/galois.m2"
 
 --------------------------------------
--- produces a matrix that parmeterizes
+-- produces a matrix that parametrizes
 -- the "big cell" of Gr(k,n)
 ------------------------------
 bigCellLocalCoordinates = method()
@@ -185,7 +186,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     critdiag := 0;
     g:=2; -- g answers where is the red checker in the critical row
     r:=2; -- r answers where is the red checker in the critical diagonal
-    -- r,g is the coordinate of the moving situaion in the 3x3 table of moves
+    -- r,g is the coordinate of the moving situation in the 3x3 table of moves
     indx := new List;
     redpos := new MutableList from redposition;
     -- find the critical row, and how the red checkers sit with respect to it
@@ -298,7 +299,7 @@ moveCheckers Array := blackred -> (
 ---------------
 -- this function displays some information about
 -- the type of moves that are performed in each
--- checkerboard game. These are the redcheker moves
+-- checkerboard game. These are the redchecker moves
 -- encoded in the 9x9 table in the paper, where we
 -- denote them by a triplet {i,j,k} where i is the
 -- row (0,1, or 2), j is the column (0,1,2) and
@@ -534,7 +535,7 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 solveSchubertProblem = method(Options=>{LinearAlgebra=>true})
 solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
     -- SchPblm is a list of sequences with two entries  a condition and a flag
-    -- Check that it does indeed form a Schubert problem, and convert the consitions to partitions (if they were brackes)
+    -- Check that it does indeed form a Schubert problem, and convert the conditions to partitions (if they were brackets)
     SchPblm = ensurePartitions(SchPblm,k,n);
 
     twoconds := take(SchPblm,2);
@@ -649,7 +650,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 ---------------------------------
 -- takes a solution matrix in global coordinates
 -- and converts it into local coordinates to know
--- what the values of the variables of the loocal 
+-- what the values of the variables of the local 
 -- coordinates are, i.e., 
 -- writes a solution Matrix in terms 
 -- of the chart MX  (as a list of values 
@@ -843,7 +844,7 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
 --    	      	    assumes the matrix lives in the Schubert cell for l with
 --                  the standard flag, but not all pivots are 1.
 --    	      b -- the bracket corresponding to the standard flag
---    	      	    this is just a list of the parts of the flag that are afected by a partition lambda
+--    	      	    this is just a list of the parts of the flag that are affected by a partition lambda
 --    	      	    (equivalent to a partition with k parts of size <= n-k)
 --            (the default bracket is  
 -- output:  Sred  --matrix reduced

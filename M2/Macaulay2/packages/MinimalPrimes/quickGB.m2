@@ -51,43 +51,8 @@ computeGB Ideal := (I) -> (
   fastGB
 )
 
--- just a function to get the indices of the variables
--- we are eliminating
-getIndices = (R,v) -> unique apply(v, index)
-
-isFlatPolynomialRing := (R) -> (
-  -- R should be a ring
-  -- determines if R is a poly ring over ZZ or a field
-  kk := coefficientRing R;
-  isPolynomialRing R and (kk === ZZ or isField kk)
-)
-
-eliminationRing = (elimvars, R) -> (
-     -- input: R: flat polynomial ring
-     --        elimvars: list of integer indices of vars to eliminate
-     --        homog:Boolean: whether to add another variable for homogenization
-     -- output: (F:R-->S, G:S-->R), where S is the new ring
-     -- S is the same as R, except that the variables have been permuted, the 
-     -- names of the variables are private, and the monomial ordering is an elim order.
-     -- If R is a WeylAlgebra, homogenized Weyl algebra, skew commutative ring, or poly
-     -- ring, then S will be the same, with the correct multiplication and grading
-     keepvars := sort toList(set(0..numgens R-1) - set elimvars);
-     perm := join(elimvars,keepvars);
-     invperm := inversePermutation perm;
-     vars := (options R).Variables;
-     degs := (options R).Degrees;
-     weyl := (options R).WeylAlgebra;
-     skew := (options R).SkewCommutative;
-     degs = degs_perm;
-     vars = vars_perm;
-     M := monoid [vars,MonomialOrder=>Eliminate(#elimvars), Degrees=>degs, 
-	  WeylAlgebra => weyl, SkewCommutative => skew, MonomialSize=>16];
-     k := coefficientRing R;
-     R1 := k M;
-     toR1 := map(R1,R,apply(invperm,i->R1_i));
-     toR := map(R,R1,apply(perm,i->R_i));
-     (toR1,toR)
-     )
+-- TODO: reduce the code duplication below
+importFrom_Elimination { "eliminationRing", "isFlatPolynomialRing", "monoidIndices" }
 
 quickEliminate = method()
 quickEliminate (List,Ideal) := (v,I) -> (
@@ -97,7 +62,7 @@ quickEliminate (List,Ideal) := (v,I) -> (
      error "expected a polynomial ring over ZZ or a field";
    if #v === 0 then return I;
    if not all(v, x -> class x === R) then error "expected a list of elements in the ring of the ideal";
-   varlist := getIndices(ring I,v);
+   varlist := monoidIndices_R v;
    quickEliminate1(varlist, I)
 )
 

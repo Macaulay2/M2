@@ -146,7 +146,7 @@ export peektoken(file:TokenFile,obeylines:bool):Token := (
      );
 --What is this?   It doesn't appear to be used anywhere
 level := 0;
---Empty Parsetree to reresent error
+--Empty Parsetree to represent error
 export errorTree := ParseTree(dummy(dummyPosition));
 skip(file:TokenFile,prec:int):void := (
      while peektoken(file,false).word.parse.precedence > prec 
@@ -527,7 +527,6 @@ export treePosition(e:ParseTree):Position := (
      	  is w:WhileDo do return position(w.whileToken)
      	  is w:WhileList do return position(w.whileToken)
      	  is w:WhileListDo do return position(w.whileToken)
-     	  is s:StartDictionary do e = s.body
 	  is n:New do return position(n.newtoken)
 	  )
      );
@@ -560,7 +559,6 @@ export size(e:ParseTree):int := (
      is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)
      is x:WhileList do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.listtoken) + size(x.listClause)
      is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause) + size(x.listtoken) + size(x.listClause)
-     is x:StartDictionary do Ccode(int,"sizeof(*",x,")") + size(x.body)
      is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newtoken) + size(x.newclass) + size(x.newparent) + size(x.newinitializer)
      );
 

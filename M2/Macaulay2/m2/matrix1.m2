@@ -56,6 +56,7 @@ makeRawTable := (R,p) -> (					    -- this is messy
      else applyTable(p,x -> raw promote(x,R)))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
+    -- TODO: why give an error? Compare with map(Module,Nothing,RawMatrix)
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
      samering(M,p);
      R := ring M;
@@ -396,14 +397,11 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-Matrix#{Standard,AfterPrint} = 
-Matrix#{Standard,AfterNoPrint} = f -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Matrix";
-     if isFreeModule target f and isFreeModule source f
-     then << " " << target f << " <--- " << source f;
-     << endl;
-     )
+-- Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (class f, " ", new MapExpression from {target f,source f})
+Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (
+    class f,
+    if isFreeModule target f and isFreeModule source f then  (" ", new MapExpression from {target f,source f})
+    )
 
 -- precedence Matrix := x -> precedence symbol x
 
@@ -435,6 +433,7 @@ isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
+-- TODO: deprecate these
 degreeLength Ideal := I -> degreeLength ring I
 degreesRing Ideal := I -> degreesRing ring I
 
@@ -489,10 +488,7 @@ generator Module := RingElement => (M) -> (
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
-Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Ideal of " << ring I << endl;
-     )
+Ideal#AfterPrint = Ideal#AfterNoPrint = (I) ->  (Ideal," of ",ring I)
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering

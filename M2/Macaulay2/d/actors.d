@@ -89,6 +89,12 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
+     is x:pointerCell do (
+	  when rhs
+	  is y:ZZcell do Expr(pointerCell(Ccode(voidPointer, x.v, " + ",
+		      toLong(y))))
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
      is Error do lhs
      else binarymethod(lhs,rhs,PlusS));
 plus(e:Expr):Expr := accumulate(plus0,plus1,op+,e);
@@ -504,7 +510,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       if onex == nullE then (
 		    return buildErrorPacket("missing unit element")
 		    )
-	       else return onex;
+	       else return applyEE(onex, x);
 	       );
 	  if i < 0 then (
 	       i = -i;
@@ -544,7 +550,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       onex := lookup(Class(x),oneE);
 	       if onex == nullE
 	       then return buildErrorPacket("missing unit element")
-	       else return onex;
+	       else return applyEE(onex, x);
 	       );
 	  if i <= 0 then (
 	       i = -i;
@@ -589,7 +595,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       else (
 		    ex := - y.v;
 		    if !isLong(ex)
-		    then buildErrorPacket("exected exponent to be a small integer")
+		    then buildErrorPacket("expected exponent to be a small integer")
 		    else (
 	       	    	 den := x.v^ex;
 		    	 if isNegative(den)

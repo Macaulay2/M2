@@ -52,8 +52,13 @@ const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M);
    NULL is returned if the ring is not appropriate for
    computing Hilbert series, or the computation was interrupted. */
 
+const Matrix *rawKernelOfGB(const Matrix *M);
+/* Assuming that the columns of M form a GB, this routine computes
+   a Groebner basis of the kernel of these elements, using an
+   appropriate Schreyer order on the source of M. */
+
 ///////////////////////////////////////////////////////////////////////////////
-/////// The following will be reomoved once the new code is functional  ///////
+/////// The following will be removed once the new code is functional  ///////
 ///////////////////////////////////////////////////////////////////////////////
 Computation /* or null */ *IM2_GB_make(
     const Matrix *m,
@@ -201,7 +206,7 @@ MutableMatrix /* or null */ *rawResolutionGetMutableMatrixB(Computation *C,
 // First: C must be a nonminimal res computation, over QQ M.
 // Second: R must be a polynomial ring with the same monoid M as C's,
 //  and the coefficient ring must be either RR, or ZZ/p, where p is the (a)
-//  prime being used in the computaiton.
+//  prime being used in the computation.
 
 MutableMatrix /* or null */ *rawResolutionGetMutableMatrix2B(
     Computation *C,

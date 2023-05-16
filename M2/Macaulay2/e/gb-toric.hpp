@@ -1,4 +1,5 @@
 // Copyright 1997  Michael E. Stillman
+// TODO: determine the monomial type of (int *)'s in this file
 
 #ifndef _gbbinom_hh_
 #define _gbbinom_hh_
@@ -78,13 +79,13 @@ class binomial_ring : public our_new_delete
 
   // monomial operations
   void remove_monomial(monomial0 &m) const;
-  monomial0 make_monomial(
-      int *exp) const;  // Make a monomial from an exponent vector
+  // Make a monomial from an exponent vector
+  monomial0 make_monomial(const_exponents exp) const;
   monomial0 copy_monomial(monomial0 m) const;
 
   int weight(monomial0 m) const;
   int degree(monomial0 m) const;
-  unsigned int mask(monomial0 m) const;
+  unsigned int mask(const_exponents m) const;
   bool divides(monomial0 m, monomial0 n) const;
 
   monomial0 quotient(monomial0 m, monomial0 n) const;
@@ -125,7 +126,7 @@ class binomial_ring : public our_new_delete
   bool one_reduction_step(binomial &f, binomial g) const;
   bool calc_s_pair(binomial_s_pair &s, binomial &result) const;
 
-  void monomial_out(buffer &o, const monomial0 m) const;
+  void monomial_out(buffer &o, const_exponents m) const;
   void elem_text_out(buffer &o, const binomial &f) const;
 };
 
@@ -167,8 +168,8 @@ class binomial_s_pair_set : public our_new_delete
 
   // Stats for number of pairs:
   int _max_degree;
-  intarray
-      _npairs;  // npairs[2*d] = total # of pairs.  npairs[2*d+1] = number left
+  // npairs[2*d] = total # of pairs.  npairs[2*d+1] = number left
+  gc_vector<int> _npairs;
 
   void remove_lcm_list(s_pair_lcm_list *p);
   void remove_pair_list(s_pair_degree_list *p);

@@ -16,8 +16,6 @@
 
 class PolynomialRing;  // lines 14-14
 
-using ExponentVector = int*;
-
 std::ostream& operator<<(std::ostream& o, const FreeAlgebraElement& f)
 {
   buffer b;
@@ -99,17 +97,17 @@ FreeAlgebra* FreeAlgebra::create(const Ring* K,
                                  )
 {
   assert(K != nullptr);
-  FreeMonoid *M = new FreeMonoid(names, degreeRing, degrees, wtvecs, heftVector);
+  std::shared_ptr<FreeMonoid> M (new FreeMonoid(names, degreeRing, degrees, wtvecs, heftVector));
   FreeAlgebra* result = new FreeAlgebra(K, M);
 
   return result;
 }
 
 FreeAlgebra::FreeAlgebra(const Ring* K,
-                         const FreeMonoid* M
+                         std::shared_ptr<FreeMonoid> M
                          )
   : mCoefficientRing(*K),
-    mMonoid(*M)
+    mMonoid(M)
 {
 }
 
@@ -555,7 +553,7 @@ void FreeAlgebra::mult_by_term_right(Poly& result,
                                      const ring_elem c,
                                      const Word& w) const
 {
-  IntVector tmp;
+  gc_vector<int> tmp;
   monoid().monomInsertFromWord(tmp,w);
   Monom tmpMonom(tmp.data());
   mult_by_term_right(result,f,c,tmpMonom);
@@ -586,7 +584,7 @@ void FreeAlgebra::mult_by_term_left(Poly& result,
                                     const ring_elem c,
                                     const Word& w) const
 {
-  IntVector tmp;
+  gc_vector<int> tmp;
   monoid().monomInsertFromWord(tmp,w);
   Monom tmpMonom(tmp.data());
   mult_by_term_left(result,f,c,tmpMonom);
@@ -633,7 +631,7 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
                                               const Word& leftW,
                                               const Word& rightW) const
 {
-  IntVector leftTmp, rightTmp;
+  gc_vector<int> leftTmp, rightTmp;
   monoid().monomInsertFromWord(leftTmp,leftW);
   monoid().monomInsertFromWord(rightTmp,rightW);
   Monom leftTmpMonom(leftTmp.data());
@@ -648,7 +646,7 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
                                               const Word& leftW,
                                               const Word& rightW) const
 {
-  IntVector leftTmp, rightTmp;
+  gc_vector<int> leftTmp, rightTmp;
   monoid().monomInsertFromWord(leftTmp,leftW);
   monoid().monomInsertFromWord(rightTmp,rightW);
   Monom leftTmpMonom(leftTmp.data());
@@ -818,8 +816,8 @@ bool FreeAlgebra::is_homogeneous(const Poly& f) const
 {
   bool result = true;
   if (f.numTerms() <= 1) return true;
-  ExponentVector e = degreeMonoid().make_one();
-  ExponentVector degf = degreeMonoid().make_one();
+  monomial e = degreeMonoid().make_one();
+  monomial degf = degreeMonoid().make_one();
   auto i = f.cbegin();
   auto end = f.cend();
   monoid().multi_degree(i.monom(), degf); // sets degf.
@@ -837,19 +835,19 @@ bool FreeAlgebra::is_homogeneous(const Poly& f) const
   return result;
 }
 
-void FreeAlgebra::degree(const Poly& f, int *d) const
+void FreeAlgebra::degree(const Poly& f, monomial d) const
 {
   multi_degree(f, d);
 }
 
 bool FreeAlgebra::multi_degree(const Poly& f,
-                               int *already_allocated_degree_vector) const
+                               monomial already_allocated_degree_vector) const
 {
-  int* degVec = already_allocated_degree_vector;
+  monomial degVec = already_allocated_degree_vector;
   bool ishomog = true;
   auto i = f.cbegin();
   monoid().multi_degree(i.monom(), degVec);
-  ExponentVector e = degreeMonoid().make_one();
+  monomial e = degreeMonoid().make_one();
   for (++i; i != f.cend(); ++i)
     {
       monoid().multi_degree(i.monom(), e);

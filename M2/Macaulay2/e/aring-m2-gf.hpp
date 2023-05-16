@@ -10,6 +10,9 @@
 #include "exceptions.hpp" // for exc::division_by_zero_error, exc::internal_error
 #include <iostream>
 
+#include "polyring.hpp"
+class RingMap;
+
 class GF;
 class PolynomialRing;
 class RingElement;
@@ -71,14 +74,13 @@ class GaloisFieldTable
 \ingroup rings
 */
 
-class ARingGFM2 : public RingInterface
+class ARingGFM2 : public SimpleARing<ARingGFM2>
 {
  public:
   static const RingID ringID = ring_GFM2;
   typedef int ElementType;
   typedef int elem;
   typedef std::vector<elem> ElementContainerType;
-
   /// a is a polynomial in a ring R = ZZ/p[x]/(f(x))
   /// where
   ///  (a) f(x) is irreducible of degree n
@@ -132,6 +134,11 @@ class ARingGFM2 : public RingInterface
     result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_int();
+  }
+
   bool is_unit(ElementType f) const { return f != 0; }
   bool is_zero(ElementType f) const { return f == 0; }
   bool is_equal(ElementType f, ElementType g) const { return f == g; }
@@ -147,7 +154,7 @@ class ARingGFM2 : public RingInterface
   void init_set(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
+  static void clear(elem &result) { /* nothing */}
 
   void set_from_long(elem &result, long a) const
   {

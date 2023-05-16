@@ -231,22 +231,12 @@ fi
 
 AC_SUBST(DOCUMENTATION)
 
+dnl deprecated in 1.22
+dnl TODO: remove this completely after 1.22 is released
 AC_ARG_ENABLE([syntax-highlighting],
     [AS_HELP_STRING([--enable-syntax-highlighting],
-	[whether to enable syntax highlighting using highlightjs in the html
-	 documentation])],
-    [HIGHLIGHTJS=$enableval],
-    [HIGHLIGHTJS=no])
-
-if test "x$HIGHLIGHTJS" = xyes
-then AC_CHECK_PROGS(NPM,npm,false)
-     if test "x$NPM" = xfalse
-     then AC_MSG_ERROR([npm is required for syntax highlighting])
-     fi
-else AC_SUBST(NPM,false)
-fi
-
-AC_SUBST(HIGHLIGHTJS)
+	[this option is deprecated; syntax highlight is always enabled.])],
+    [AC_MSG_WARN([the --enable-syntax-highlighting option is deprecated; syntax highlighting is always enabled.])])
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
@@ -1026,9 +1016,9 @@ PATH="/usr/lib/4ti2/bin:/usr/lib64/4ti2/bin:$PATH"
 FOUND_4ti2=no
 for fourti2_prefix in "" "4ti2-" "4ti2_"
 do
-    if test "`type -t ${fourti2_prefix}circuits`" = file
+    if command -v ${fourti2_prefix}circuits
     then AC_MSG_RESULT([yes, using prefix "$fourti2_prefix"])
-         FILE_PREREQS="$FILE_PREREQS `type -p ${fourti2_prefix}circuits`"
+         FILE_PREREQS="$FILE_PREREQS `command -v ${fourti2_prefix}circuits`"
          FOUND_4ti2=yes
          break
     fi
@@ -1040,7 +1030,7 @@ fi
 PATH=$SAVE
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
-if test "`type -t cohomcalg`" = file
+if command -v cohomcalg
 then if test "$OS" = Darwin -a "$DMG" = yes
      then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
           # the user just copies a directory tree to /Applications.  Change this when
@@ -1049,18 +1039,18 @@ then if test "$OS" = Darwin -a "$DMG" = yes
 	  AC_MSG_RESULT([yes, will build anyway])
           BUILD_cohomcalg=yes
      else AC_MSG_RESULT([yes])
-          FILE_PREREQS="$FILE_PREREQS `type -p cohomcalg`"
+          FILE_PREREQS="$FILE_PREREQS `command -v cohomcalg`"
      fi
 else AC_MSG_RESULT([no, will build])
      BUILD_cohomcalg=yes
 fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
-if test "`type -t gfan`" = file
+if command -v gfan
 then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
      AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
           [AC_MSG_RESULT([yes])
-           FILE_PREREQS="$FILE_PREREQS `type -p gfan`"],
+           FILE_PREREQS="$FILE_PREREQS `command -v gfan`"],
           [AC_MSG_RESULT([yes, but < 0.6, will build])
            BUILD_gfan=yes])
 else AC_MSG_RESULT([no, will build])
@@ -1070,7 +1060,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
-if test "`type -t lrs`" = file
+if command -v lrs
 then if test "$OS" = Darwin -a "$DMG" = yes
      then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
           # the user just copies a directory tree to /Applications.  Change this when
@@ -1078,26 +1068,26 @@ then if test "$OS" = Darwin -a "$DMG" = yes
 	  AC_MSG_RESULT([yes, will build anyway])
           BUILD_lrslib=yes
      else AC_MSG_RESULT(yes)
-          FILE_PREREQS="$FILE_PREREQS `type -p lrs`"
+          FILE_PREREQS="$FILE_PREREQS `command -v lrs`"
      fi
 else AC_MSG_RESULT([no, will build])
      BUILD_lrslib=yes
 fi
 
 AC_MSG_CHECKING(whether the package csdp is installed)
-if test "`type -t csdp`" = file
+if command -v csdp
 then AC_MSG_RESULT([yes])
-     FILE_PREREQS="$FILE_PREREQS `type -p csdp`"
+     FILE_PREREQS="$FILE_PREREQS `command -v csdp`"
 else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
 AC_MSG_CHECKING(whether the package normaliz is installed)
-if test "`type -t normaliz`" = file
+if command -v normaliz
 then normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
      AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
           [AC_MSG_RESULT([yes])
-           FILE_PREREQS="$FILE_PREREQS `type -p normaliz`"],
+           FILE_PREREQS="$FILE_PREREQS `command -v normaliz`"],
           [AC_MSG_RESULT([yes, but < 2.11, will build])
            BUILD_normaliz=yes])
 else AC_MSG_RESULT([no, will build])
@@ -1110,13 +1100,13 @@ then dnl debian/fedora: nauty-
      FOUND_nauty=no
      for nauty_prefix in "" "nauty-"
      do
-	 if test "`type -t ${nauty_prefix}complg`" = file
+	 if command -v ${nauty_prefix}complg
 	 then
      dnl check if #1408 is a problem
 	     if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
 	     then
 		 AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
-		 FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+		 FILE_PREREQS="$FILE_PREREQS `command -v ${nauty_prefix}complg`"
 		 FOUND_nauty=yes
 		 break
 	     else
@@ -1143,9 +1133,9 @@ AC_MSG_CHECKING(whether the package topcom is installed)
 FOUND_topcom=no
 for topcom_prefix in "" "topcom-"
 do
-    if test "`type -t ${topcom_prefix}points2finetriangs`" = file
+    if command -v ${topcom_prefix}points2finetriangs
     then AC_MSG_RESULT([yes, using prefix "$topcom_prefix"])
-         FILE_PREREQS="$FILE_PREREQS `type -p ${topcom_prefix}points2finetriangs`"
+         FILE_PREREQS="$FILE_PREREQS `command -v ${topcom_prefix}points2finetriangs`"
          FOUND_topcom=yes
          break
     fi
@@ -1395,6 +1385,7 @@ LIBS="$LIBS $BOOST_REGEX_LIB"
 
 AC_CHECK_HEADERS([boost/math/special_functions.hpp], [],
     [AC_MSG_ERROR([Boost Math Toolkit not available])])
+AC_SEARCH_LIBS([ldexpq], [quadmath])
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -1418,7 +1409,7 @@ fi
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     if test "`type -t fflas-ffpack-config`" = "file" && test "`fflas-ffpack-config --decimal-version`" -gt 20000
+     if command -v fflas-ffpack-config && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
           FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
@@ -1679,6 +1670,26 @@ AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
 AC_SEARCH_LIBS(lzma_end,lzma,,AC_MSG_ERROR(library lzma not found or not linkable))
 AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linkable))
 
+AC_ARG_WITH([libffi],
+    [AS_HELP_STRING([--without-libffi],
+        [don't link with libffi, disabling the ForeignFunctions package])],,
+    [with_libffi=yes])
+AS_IF([test x$with_libffi != xno ],
+    [AC_MSG_CHECKING([whether package libffi is provided])
+     AS_IF([pkg-config --exists libffi],
+      [AC_MSG_RESULT([yes])
+       CPPFLAGS="$(pkg-config --cflags-only-I libffi) $CPPFLAGS"
+       AC_CHECK_HEADER([ffi.h], [], [AC_MSG_ERROR([ffi.h not found])])
+       AC_SEARCH_LIBS([ffi_call], [ffi], [],
+	   [AC_MSG_ERROR([libffi not found or not linkable])])
+       AC_CHECK_FUNCS([ffi_get_struct_offsets])
+       LIBFFI_VERSION=$(pkg-config --modversion libffi)],
+      [AC_MSG_RESULT([no])
+       AC_MSG_ERROR([install libffi or use --without-libffi option])])],
+    [LIBFFI_VERSION="not present"])
+AC_SUBST([LIBFFI], [$with_libffi])
+AC_DEFINE_UNQUOTED([LIBFFI_VERSION], ["$LIBFFI_VERSION"], [libffi version])
+
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
@@ -1702,7 +1713,7 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([
     #ifdef HAVE_NETDB_H
      #include <netdb.h>
     #endif
-    main() { 
+    int main(void) {
        struct addrinfo *addr; 
        return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0 ;
        }

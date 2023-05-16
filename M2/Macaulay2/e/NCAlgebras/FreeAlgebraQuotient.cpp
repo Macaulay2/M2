@@ -1,7 +1,5 @@
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
 
-using ExponentVector = int*;
-
 SumCollector* FreeAlgebraQuotient::make_SumCollector() const
 {
   return mFreeAlgebra.make_SumCollector();
@@ -160,13 +158,13 @@ bool FreeAlgebraQuotient::is_homogeneous(const Poly& f) const
   return mFreeAlgebra.is_homogeneous(f);
 }
 
-void FreeAlgebraQuotient::degree(const Poly& f, int *d) const
+void FreeAlgebraQuotient::degree(const Poly& f, monomial d) const
 {
   multi_degree(f, d);
 }
 
 bool FreeAlgebraQuotient::multi_degree(const Poly& f,
-                               int *already_allocated_degree_vector) const
+                               monomial already_allocated_degree_vector) const
 {
   return mFreeAlgebra.multi_degree(f, already_allocated_degree_vector);
 }

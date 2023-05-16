@@ -17,7 +17,6 @@ UNITTEST_CCFILES := \
     ARingRRiTest \
     ARingCCCTest \
     ARingZZpTest \
-    ARingGFTest \
     RingZZTest \
     RingZZpTest \
     RingQQTest \
@@ -28,6 +27,7 @@ UNITTEST_CCFILES := \
 
 #    RingRRRTest \
 #    RingCCCTest \
+#    ARingGFTest \
      
 
 SHARED_UNITTEST_CFILES += \

@@ -286,7 +286,7 @@ Key
   (cohomCalg, NormalToricVariety, List)
   (cohomCalg, ToricDivisor)
   (cohomCalg, NormalToricVariety, ToricDivisor)
-  Silent
+  [cohomCalg, Silent]
 Headline
   compute cohomology vectors using the CohomCalg software
 Usage

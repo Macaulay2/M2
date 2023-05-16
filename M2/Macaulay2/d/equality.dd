@@ -8,7 +8,7 @@ header "// required for equality checks
 #include <interface/monomial-ideal.h>       // for IM2_MonomialIdeal_is_equal
 #include <interface/ringelement.h>          // for IM2_RingElement_is_equal
 #include <interface/ringmap.h>              // for IM2_RingMap_is_equal
-#include <monomial.hpp>                     // for Monomial"; -- TODO: remove this one
+#include <monomial.hpp>                     // for EngineMonomial"; -- TODO: remove this one
 
 equal(lhs:Expr,rhs:Expr):Expr;
 
@@ -244,6 +244,10 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is xmlAttrCell do False				    -- unimplemented
      is TaskCell do False
      is fileOutputSyncState do False
+     is x:pointerCell do
+	 when rhs
+	 is y:pointerCell do if x.v == y.v then True else False
+	 else False
      );
 
 -- Local Variables:

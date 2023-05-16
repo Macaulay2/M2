@@ -412,7 +412,7 @@ positiveChars ZZ := List => d -> (
 )
 bettiToList := B -> (
     --turns a BettiTally into a list of degrees in the free resolution
-    --auxillary
+    --auxiliary
     n := max apply(keys B, k -> first k);
     for i from 0 to n list (
     	b := select(keys B, k -> first k == i);
@@ -421,7 +421,7 @@ bettiToList := B -> (
 )
 listToBetti := L -> (
     --turns a list of degrees in the free resolution into a BettiTally
-    --auxillary
+    --auxiliary
     L = L / tally;
     new BettiTally from 
     flatten apply(#L, i -> flatten apply(keys L#i, j -> (i, {j},j) => L#i#j))    
@@ -1328,7 +1328,7 @@ document {
     Headline => "produces a random determinantal ideal",
     {
     	"Given a ring and a degree matrix, we produce a random determinantal ideal
-	with forms in perscribed dergee. Forms of non-positive degrees are taken as
+	with forms in prescribed degree. Forms of non-positive degrees are taken as
 	0 to ensure minimality of presentation."	
     },
     Usage => "I = randomDeterminantalIdeal(R,M)",

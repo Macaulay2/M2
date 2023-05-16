@@ -259,7 +259,7 @@ TEST(MonomialOrdering, create)
      MonomialOrderings::GRevLex4(5),
      MonomialOrderings::GroupLex(3)
     })};
-  (void)mo6;//force a use, supress a warning
+  (void)mo6;//force a use, suppress a warning
 }
 
 
@@ -382,8 +382,8 @@ TEST(FreeAlgebra, quotientArithmetic)
   G = X*Z + Z*X;
   H = Y*Z + Z*Y;
   
-  //  auto GB = std::unique_ptr<ConstPolyList> (new ConstPolyList);
-  auto GB = new ConstPolyList;
+  auto GB = std::unique_ptr<ConstPolyList> (new ConstPolyList);
+  //auto GB = new ConstPolyList;
   GB->push_back(&*F);
   GB->push_back(&*G);
   GB->push_back(&*H);

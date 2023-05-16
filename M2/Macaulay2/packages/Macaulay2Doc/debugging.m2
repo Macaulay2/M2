@@ -213,8 +213,8 @@ document {
      TT "FilePosition", " -- a type of list designed to represent a position
      in a file.",
      PARA{},
-     "It's implemented as a list whose three elements are the file name,
-     the line number, and the column number."
+     "It's implemented as a list with 3, 5 or 7 elements. The first part is the file name, then each pair is a row/column position.
+     A single pair is a position, two form a range. The last pair is the central point of interest in that range."
      }
 
 

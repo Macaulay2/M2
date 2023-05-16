@@ -78,7 +78,7 @@ document {
 	  "f" => {"usually returned via ", TO "hilbertPolynomial"}
 	  },
      Outputs => {
-	  ZZ => "the degree of any graded module having this hilbert polynomial"
+	  ZZ => "the degree of any graded module having this Hilbert polynomial"
 	  },
      "This degree is obtained from the Hilbert polynomial ", TT "f", " as follows:
      if ", TT "f = d z^e/e! + lower terms in z", ", then ", TT "d", " is returned.
@@ -137,7 +137,7 @@ document {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
      "We assume that ", TT "M", " is a graded (homogeneous) module over a 
-     polynomal ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
+     polynomial ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
      over a field ", TT "k", ".",
      PARA{
 	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
@@ -184,7 +184,7 @@ Outputs
     the length of M
 Description
   Text
-    If M is a graded module over a singly graded polynomal ring or a quotient of a
+    If M is a graded module over a singly graded polynomial ring or a quotient of a
     polynomial ring over a field k then length is the same as the degree.
 
     If M is over a local ring then length is computed by summing the output of

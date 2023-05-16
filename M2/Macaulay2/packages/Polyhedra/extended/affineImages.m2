@@ -19,7 +19,8 @@ affineImage(Matrix,Polyhedron,Matrix) := (A,P,v) -> (
    v = v * (matrix {toList((numColumns vertices P):1_QQ)});
    Mv := A*(vertices P) + v;
    Mr := A*(rays P);
-   convexHull(Mv,Mr)
+   Ml := A*(linealitySpace P);
+   convexHull(Mv, Mr, Ml)
 )
 
 

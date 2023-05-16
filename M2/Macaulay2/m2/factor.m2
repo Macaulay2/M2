@@ -5,6 +5,8 @@ needs "lists.m2"
 needs "matrix1.m2"
 needs "structure.m2" -- for position
 
+-----------------------------------------------------------------------------
+
 monic := t -> (
      c := leadCoefficient t;
      c' := 1 // c;
@@ -49,11 +51,98 @@ lcm(ZZ,RingElement) := (r,s) -> lcm(promote(abs r,ring s),s)
 lcm(RingElement,ZZ) := (r,s) -> lcm(promote(abs s,ring r),r)
 lcm(RingElement,RingElement) := (f,g) -> f * (g // gcd(f,g))
 
+-----------------------------------------------------------------------------
+
+isSimpleNumberField := F -> ( isField F
+    and instance(R := baseRing F, QuotientRing)
+    and coefficientRing R === QQ
+    and numgens ideal R == 1
+    and numgens R == 1 )
+
+leadCoeff := x -> ( R := ring x; -- iterated leadCoefficient
+    if instance(R, PolynomialRing) then leadCoeff leadCoefficient x  else
+    if instance(R, QuotientRing)
+    or instance(R, GaloisField)    then leadCoeff lift(x, ambient R) else x )
+
+isUnit RingElement := f -> if (o := options ring f).?Inverses and o.Inverses then (
+    size f === 1 and isUnit leadCoefficient f) else 1 % ideal f == 0
+
+isPrime RingElement := {} >> o -> f -> (
+    -- =0 means invertible element; =1 prime element; >1 composite element.
+    1 == sum(toList factor f, x -> if isUnit x#0 then 0 else x#1))
+
+factor RingElement := opts -> f -> (
+    RM := ring f;
+    R := coefficientRing RM;
+    c := 1_R;
+    -- get rid of monomial in factor if f Laurent polynomial
+    if (options RM).Inverses then (
+	minexps := toList last rawPairs(raw RM.BaseRing, raw f);
+	minexps  = min \ transpose apply(minexps, exponents_(RM.numallvars));
+	f = RM_(-minexps) * f;
+	c = RM_minexps);
+    -- the actual computation occurs here
+    (facs, exps) := if (ret := runHooks((factor, RingElement), (opts, f))) =!= null
+    then ret else error "factor: no method implemented for this type of element";
+    -- TODO: simplify this
+    facs = apply(facs, exps, (f, e) -> if leadCoeff(p := new RM from f) >= 0 then p else (if odd e then c = -c; -p));
+    if liftable(facs#0, RM.BaseRing) then (
+	-- factory returns the possible constant factor in front
+	assert(exps#0 == 1);
+	c = c * facs#0;
+	facs = drop(facs, 1);
+	exps = drop(exps, 1);
+	);
+    if 0 < #facs then (facs, exps) = toSequence transpose sort transpose {toList facs, toList exps};
+    if c != 1 then (
+	-- we put the possible constant (and monomial for Laurent polynomials) at the end
+	facs = append(facs, c);
+	exps = append(exps, 1);
+	);
+    --
+    new Product from apply(facs, exps, (f, e) -> new Power from {f, e}))
+
+-- This is a map from method keys to strategy hash tables
+algorithms := new MutableHashTable from {}
+algorithms#(factor, RingElement) = new MutableHashTable from {
+    -- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+    Default => (opts, f) -> rawFactor raw f,
+
+    "NumberField" => (opts, f) -> (
+	R := coefficientRing(RM := ring f);
+	if not isSimpleNumberField R
+	then return null;
+	(RM', toRM') := flattenRing(RM, CoefficientRing => QQ);
+	toRM := map(RM, RM', generators RM | {R_0});
+	minp := (ideal RM')_0; -- minimal polynomial of the number field
+	func := (fs, es) -> (for f in fs list raw toRM new RM' from f, es);
+	func rawFactor(raw toRM' f, raw minp)), -- apply rawFactor, but the factors need to be converted back to RM
+
+    FractionField => (opts, f) -> (
+	R := coefficientRing(RM := ring f);
+	if not instance(R, FractionField)
+	then return null;
+	RM' := (baseRing R) RM.monoid;
+	toRM := map(RM, RM', generators RM);
+	toRM' := map(RM', RM, generators RM');
+	denom := lcm apply(listForm f, t -> denominator t_1);
+	func := (fs, es) -> (for i to #fs - 1 list raw((toRM new RM' from fs_i) * (if i == 0 then 1/denom else 1)), es);
+	func rawFactor raw toRM'(denom * f)), -- similar: convert back to RM, and put denom back into the leadCoefficient
+    }
+
+-- Installing hooks for factor RingElement
+scan({Default, FractionField, "NumberField"}, strategy ->
+    addHook(key := (factor, RingElement), algorithms#key#strategy, Strategy => strategy))
+
+-----------------------------------------------------------------------------
+
 pseudoRemainder = method()
 pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
      new R from rawPseudoRemainder(raw f, raw g));
+
+-----------------------------------------------------------------------------
 
 inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
 
@@ -89,6 +178,8 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      TtoR.cache.inverse = RtoT;
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
+-----------------------------------------------------------------------------
+
 factor ZZ := opts -> n -> (
     if n === 0 then Product { Power{0,1} }
     else (
@@ -100,7 +191,9 @@ factor ZZ := opts -> n -> (
     )
  
 factor QQ := opts -> (r) -> factor numerator r / factor denominator r
+
 -----------------------------------------------------------------------------
+
 topCoefficients = method()
 topCoefficients Matrix := f -> (
      R := ring f;

@@ -89,7 +89,7 @@ protect \ {
 -- Create a dual space from a list of Noetherian operators
 -- Caveat: if Noetherian operators have non-constant coefficients,
 --          behavior is undefined.
-dualSpace (List, Point) := (L, p) -> (
+dualSpace (List, AbstractPoint) := (L, p) -> (
     if #L == 0 then error"expected nonempty list";
     S := ring first L;
     R := coefficientRing S;
@@ -121,29 +121,29 @@ listFactorial = L -> product(L, l->l!)
 -- Legacy methods
 ----------------------------------
 truncatedDual = method(Options => {Tolerance => null})
-truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> (
+truncatedDual (AbstractPoint,Ideal,ZZ) := o -> (p,I,d) -> (
     depVars := gens (ring I);
     t := getTolerance(ring first coordinates p,o);
     L := numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => t);
     dualSpace(L, p)
 )
 truncatedDual (Matrix, Ideal, ZZ) := o -> (p, I, d) -> truncatedDual(point p, I, d, o)
-truncatedDual (Point, Matrix, ZZ) := o -> (p, I, d) -> truncatedDual(p, ideal I, d, o)
+truncatedDual (AbstractPoint, Matrix, ZZ) := o -> (p, I, d) -> truncatedDual(p, ideal I, d, o)
 truncatedDual (Matrix, Matrix, ZZ) := o -> (p, I, d) -> truncatedDual(point p, ideal I, d, o)
 
 zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Tolerance => null})
-zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
+zeroDimensionalDual (AbstractPoint,Ideal) := o -> (p,I) -> (
     depVars := gens (ring I);
     t := getTolerance(ring first coordinates p,o);
     L := numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => t);
     dualSpace(L, p)
 )
 zeroDimensionalDual (Matrix,Ideal) := o -> (p,I) -> zeroDimensionalDual(point p, I, o)
-zeroDimensionalDual (Point,Matrix) := o -> (p,I) -> zeroDimensionalDual(p, ideal I, o)
+zeroDimensionalDual (AbstractPoint,Matrix) := o -> (p,I) -> zeroDimensionalDual(p, ideal I, o)
 zeroDimensionalDual (Matrix,Matrix) := o -> (p,I) -> zeroDimensionalDual(point p, ideal I, o)
 ----------------------------------
 
---An object that stores the data for an ongoing iterative tuncated dual space computation
+--An object that stores the data for an ongoing iterative truncated dual space computation
 TruncDualData = new Type of MutableHashTable
 initializeDualData = method(Options => {KernelStrategy => "Default"})
 initializeDualData (Matrix,Boolean,Number) := opts -> (Igens,syl,t) -> (
@@ -194,15 +194,15 @@ nextTDD (ZZ,TruncDualData,Number) := opts -> (d,H,t) -> (
     )
     
 polySpace TruncDualData := o-> H -> polySpace(H.dBasis, Reduced=>false)
-dualSpace (TruncDualData,Point) := (H,p) -> dualSpace(polySpace H,p)
+dualSpace (TruncDualData,AbstractPoint) := (H,p) -> dualSpace(polySpace H,p)
 homogPolySpace = method()
 homogPolySpace TruncDualData := H -> polySpace(H.BMintegrals*H.BMcoefs) 
 
 
 -- this version gets a piece of the eliminating DS from the "usual" truncated DS 
 eliminatingDual = method(Options => {Tolerance => null})
-eliminatingDual (Point,Ideal,List,ZZ) := o -> (p,I,ind,d) -> eliminatingDual (p,gens I,ind,d,o)
-eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
+eliminatingDual (AbstractPoint,Ideal,List,ZZ) := o -> (p,I,ind,d) -> eliminatingDual (p,gens I,ind,d,o)
+eliminatingDual (AbstractPoint,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
     R := ring Igens;
     if d < 0 then return dualSpace(map(R^1,R^0,0),p);
     t := getTolerance(R,o);
@@ -248,8 +248,8 @@ truncate (PolySpace, List, ZZ) := {} >> o -> (L,ind,d) -> (
 truncate (DualSpace, List, ZZ) := {} >> o -> (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
 gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, StandardBasis => false})
-gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
-gCorners (Point,Matrix) := o -> (p,Igens) -> (
+gCorners (AbstractPoint,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
+gCorners (AbstractPoint,Matrix) := o -> (p,Igens) -> (
     R := ring Igens;
     t := getTolerance(R,o);
     Igens = sub(Igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
@@ -311,8 +311,8 @@ hilbertFunction(List,DualSpace) := (LL,L) -> (
 hilbertFunction(ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
 
 localHilbertRegularity = method(TypicalValue => ZZ, Options=>{Tolerance => null})
-localHilbertRegularity(Point, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
-localHilbertRegularity(Point, Matrix) := o -> (p,Igens) -> (
+localHilbertRegularity(AbstractPoint, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
+localHilbertRegularity(AbstractPoint, Matrix) := o -> (p,Igens) -> (
     n := numgens ring Igens;
     gCs := gCorners(p,Igens,o);
     gCLists := apply(flatten entries gCs, l -> (listForm l)#0#0);
@@ -489,7 +489,7 @@ check DualSpace := D -> check polySpace gens D
 -------------------------------------------------------
 
 isPointEmbedded = method(Options=>{AllVisible=>false})
-isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witness sets for irreducible components
+isPointEmbedded(AbstractPoint, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witness sets for irreducible components
     R := ring I;
     time gCs := gCorners(p,I); -- assume Robert's
 	       	              -- algorithm a DualSpace D,
@@ -551,7 +551,7 @@ colon (DualSpace, Ideal) := (L,J) -> error "not implemented"
 
 
 interpolate = method()
-interpolate (Point,Ideal,List,ZZ) := (p,I,C,d) -> error "not implemented"
+interpolate (AbstractPoint,Ideal,List,ZZ) := (p,I,C,d) -> error "not implemented"
 
 TEST ///
 setRandomSeed 0
@@ -593,7 +593,7 @@ orthogonalInSubspace (Ideal,List,ZZ,PolySpace) := (I,C,e,S) -> (
     )
 
 isWitnessPolynomial = method()
-isWitnessPolynomial (Point, Ideal, RingElement, ZZ) := (p,I,g,dStop) -> (
+isWitnessPolynomial (AbstractPoint, Ideal, RingElement, ZZ) := (p,I,g,dStop) -> (
     t := 1e-6;
     R := ring g;
     n := numgens R;
@@ -650,7 +650,7 @@ assert(isWitnessPolynomial(p,I,h,10))
 
 
 isPointEmbeddedInCurve = method(Options=>{Regularity => -1})
-isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
+isPointEmbeddedInCurve (AbstractPoint,Ideal) := o-> (p,I) -> (
     R := ring I;
     I' := ideal sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
     p' := origin(R);
@@ -735,7 +735,7 @@ DiffOp - DiffOp := DiffOp => (a,b) -> (
     else error"expected pair to have a method for '-'"
 )
 --Left action
-RingElement * DiffOp := DiffOp => (r,d) -> (
+Number * DiffOp := RingElement * DiffOp := DiffOp => (r,d) -> (
     R := class r;
     S := class d;
     if ring r === ring d or member(ring r, (ring d).baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
@@ -776,7 +776,7 @@ evaluate(DiffOp, Matrix) := (D, pt) -> (
     (mon, coe) := coefficients D;
     diffOp (mon * evaluate(sub(coe, R) , pt))
 )
-evaluate(DiffOp, Point) := (D, pt) -> evaluate(D, matrix pt)
+evaluate(DiffOp, AbstractPoint) := (D, pt) -> evaluate(D, matrix pt)
 
 
 
@@ -1037,7 +1037,7 @@ liftColumns = (M,R') -> (
 )
 
 numNoethOpsAtPoint = method(Options => true)
-numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
+numNoethOpsAtPoint (Ideal, AbstractPoint) := List => true >> opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
 numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
@@ -1103,7 +1103,7 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
         first matrixToDiffOps(liftColumns(lift(K, S), R), sub(dBasis, R))
     )
 )
-hybridNoetherianOperators (Ideal, Ideal, Point) := List => true >> opts -> (I,P, pt) -> hybridNoetherianOperators(I,P, matrix pt, opts)
+hybridNoetherianOperators (Ideal, Ideal, AbstractPoint) := List => true >> opts -> (I,P, pt) -> hybridNoetherianOperators(I,P, matrix pt, opts)
 
 hybridNoetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     f := if opts.?Sampler then opts.Sampler else J -> first bertiniSample(1,first components bertiniPosDimSolve(J));
@@ -1175,7 +1175,7 @@ specializedNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) 
         )
     )
 )
-specializedNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> specializedNoetherianOperators(I, matrix pt, opts)
+specializedNoetherianOperators(Ideal, AbstractPoint) := List => true >> opts -> (I,pt) -> specializedNoetherianOperators(I, matrix pt, opts)
 
 TEST ///
 debug NoetherianOperators
@@ -1816,6 +1816,7 @@ assert(M == U)
 undocumented {
     (symbol +, DiffOp, DiffOp),
     (symbol -, DiffOp, DiffOp),
+    (symbol *, Number, DiffOp),
     (symbol *, RingElement, DiffOp),
     (symbol ?, DiffOp, DiffOp),
     (symbol ==, DiffOp, DiffOp),
@@ -1909,8 +1910,8 @@ doc ///
 doc ///
 Key
     truncatedDual
-    (truncatedDual, Point, Ideal, ZZ)
-    (truncatedDual, Point, Matrix, ZZ)
+    (truncatedDual, AbstractPoint, Ideal, ZZ)
+    (truncatedDual, AbstractPoint, Matrix, ZZ)
     (truncatedDual, Matrix, Ideal, ZZ)
     (truncatedDual, Matrix, Matrix, ZZ)
 Headline
@@ -1918,7 +1919,7 @@ Headline
 Usage
     S = truncatedDual(p, I, d)
 Inputs
-    p:Point
+    p:AbstractPoint
         or a one-row @TO2 {Matrix, "matrix"}@
     I:Ideal
         or a one-row @TO2 {Matrix, "matrix"}@ of generators
@@ -1965,8 +1966,8 @@ assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
 doc ///
 Key
     zeroDimensionalDual
-    (zeroDimensionalDual,Point,Ideal)
-    (zeroDimensionalDual, Point, Matrix)
+    (zeroDimensionalDual,AbstractPoint,Ideal)
+    (zeroDimensionalDual, AbstractPoint, Matrix)
     (zeroDimensionalDual, Matrix, Ideal)
     (zeroDimensionalDual, Matrix, Matrix)
 Headline
@@ -1974,7 +1975,7 @@ Headline
 Usage
     S = zeroDimensionalDual(p, I)
 Inputs
-    p:Point
+    p:AbstractPoint
         or a one-row @TO2 {Matrix,"matrix"}@
     I:Ideal
         or a one-row @TO2 {Matrix, "matrix"}@ of generators
@@ -2031,8 +2032,8 @@ assert(dim D2' == 0)
 doc ///
      Key 
           gCorners
-	  (gCorners,Point,Ideal)
-	  (gCorners,Point,Matrix)
+	  (gCorners,AbstractPoint,Ideal)
+	  (gCorners,AbstractPoint,Matrix)
 	  [gCorners,StandardBasis]
 	  StandardBasis
      Headline
@@ -2040,7 +2041,7 @@ doc ///
      Usage
           G = gCorners(p, I)
      Inputs
-     	  p:Point
+     	  p:AbstractPoint
 	  I:Ideal
               or a one-row @TO2 {Matrix, "matrix"}@ of generators
      Outputs
@@ -2097,15 +2098,15 @@ assert(socles G3 == 0)
 doc ///
      Key
           localHilbertRegularity
-	  (localHilbertRegularity,Point,Matrix)
-	  (localHilbertRegularity,Point,Ideal)
+	  (localHilbertRegularity,AbstractPoint,Matrix)
+	  (localHilbertRegularity,AbstractPoint,Ideal)
 	  
      Headline
           regularity of the local Hilbert function of a polynomial ideal
      Usage
           d = localHilbertRegularity(p,I)
      Inputs
-          p:Point
+          p:AbstractPoint
 	  I:Ideal
               or a one-row @TO2 {Matrix, "matrix"}@ of generators
      Outputs
@@ -2135,14 +2136,14 @@ assert(localHilbertRegularity(point matrix {{0,0,1}}, I) == 0)
 doc ///
      Key
           eliminatingDual
-	  (eliminatingDual,Point,Matrix,List,ZZ)
-	  (eliminatingDual,Point,Ideal,List,ZZ)
+	  (eliminatingDual,AbstractPoint,Matrix,List,ZZ)
+	  (eliminatingDual,AbstractPoint,Ideal,List,ZZ)
      Headline
           eliminating dual space of a polynomial ideal
      Usage
           S = eliminatingDual(p, I, v, d)
      Inputs
-     	  p:Point
+     	  p:AbstractPoint
 	  I:Ideal
               or a one-row @TO2 {Matrix, "matrix"}@ of generators
 	  v:List
@@ -2168,7 +2169,7 @@ doc ///
 	  Text
 	       See also @TO truncatedDual@.
      Caveat
-	  The space of dual elements satisying the conditions is not in general of finite dimension.
+	  The space of dual elements satisfying the conditions is not in general of finite dimension.
 	  If the dimension is infinite, this function will not terminate.  This is not checked.  To ensure
 	  termination, the local dimension of I at p should not exceed the length of v, and certain genericity
 	  constraints on the coordinates must be met.
@@ -2346,7 +2347,7 @@ doc ///
       [truncatedDual, Tolerance]
       [zeroDimensionalDual, Tolerance]
      Headline
-          optional argument for numerical tolernace
+          optional argument for numerical tolerance
      Description
           Text
 	       Many of the numerical operations require a tolerance value, below which numbers are considered to be numerically zero.
@@ -2360,7 +2361,7 @@ doc ///
 
 document {
     Key => {
-	(isPointEmbedded,Point,Ideal,List), isPointEmbedded,
+	(isPointEmbedded,AbstractPoint,Ideal,List), isPointEmbedded,
 	AllVisible, [isPointEmbedded,AllVisible],
 	},
     Headline => "numerically determine if the point is an embedded component of the scheme",
@@ -2378,7 +2379,7 @@ document {
 
 document {
     Key => {
-	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve,
+	(isPointEmbeddedInCurve,AbstractPoint,Ideal), isPointEmbeddedInCurve,
     Regularity, [isPointEmbeddedInCurve, Regularity]
 	},
     Headline => "numerically determine if the point is an embedded component of a 1-dimensional scheme",
@@ -2609,7 +2610,7 @@ Outputs
 Description
     Text
         Let $R = \mathbb{F}[x_1,\dots,x_n]$ and $S = R[dx_1,\dotsc,dx_n]$. The elements of $S$ operate naturally on elements of $R$.
-        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, i.e., $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
+        The operator $dx_i$ acts as a partial derivative with respect to $x_i$, i.e., $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
         and a polynomial acts by multiplication, i.e., $x_i \bullet f = x_i f$.
 
         Suppose $D \in S^k$ and $f \in R^k$. Then the operation of $D$ on $f$ is defined as $D\bullet f := \sum_{i=1}^k D_i \bullet f_i \in R$.
@@ -2971,7 +2972,7 @@ SeeAlso
 doc ///
 Key
     specializedNoetherianOperators
-    (specializedNoetherianOperators, Ideal, Point)
+    (specializedNoetherianOperators, Ideal, AbstractPoint)
     (specializedNoetherianOperators, Ideal, Matrix)
 Headline
     Noetherian operators evaluated at a point
@@ -2980,7 +2981,7 @@ Usage
 Inputs
     I:Ideal
         unmixed
-    pt:Point
+    pt:AbstractPoint
         or a one-row @TO2 {Matrix, "matrix"}@
 Outputs
     :List
@@ -3057,20 +3058,20 @@ Description
         @TO DependentSet@ is required. The following are supported:
         
 
-        {\tt TrustedPoint =>} a @TO2 {Point, "point"}@. The function does not compute specialized Noetherian operators from scratch for each point.
+        {\tt TrustedPoint =>} a @TO2 {AbstractPoint, "point"}@. The function does not compute specialized Noetherian operators from scratch for each point.
         Instead, it computes it for a "trusted" point on the variety, and uses the obtained Noetherian operators
         as a template for the rest of the computation. If {\tt TrustedPoint} is unset, the first point returned by the sampler
         will be used as the trusted point.
 
         {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the variables $dx_i$).
-            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speed-ups when the maxmial degree of the Noetherian operators
+            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speed-ups when the maximal degree of the Noetherian operators
             is known in advance.
 
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
         specialized Noetherian operators. The default value is {\tt 1e-6}. See @TO "Tolerance (NoetherianOperators)"@.
         
         {\tt Sampler =>} a function, taking inputs {\tt (n,I)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
-        The sampler function returns a list of {\tt n} @TO2 {Point, "points"}@ on the component of interest of {\tt I}. If unset, the default sampler
+        The sampler function returns a list of {\tt n} @TO2 {AbstractPoint, "points"}@ on the component of interest of {\tt I}. If unset, the default sampler
         uses @TO Bertini@, and assumes that {\tt I} is primary.
 
         {\tt DependentSet =>} a @TO2 {List, "list"}@ of variables that are algebraically dependent. See @TO DependentSet@ for details.
@@ -3186,7 +3187,7 @@ SeeAlso
 
 doc ///
 Key
-    (evaluate, DiffOp, Point)
+    (evaluate, DiffOp, AbstractPoint)
     (evaluate, DiffOp, Matrix)
 Headline
     evaluate coefficients of a differential operator
@@ -3194,7 +3195,7 @@ Usage
     evaluate(D, p)
 Inputs
     D:DiffOp
-    p:Point
+    p:AbstractPoint
         or a one-row @TO2 {Matrix, "matrix"}@
 Outputs
     :DiffOp

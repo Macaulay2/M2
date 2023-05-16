@@ -2,9 +2,9 @@
 
 #include "tower.hpp"
 
+#include "ExponentList.hpp"
 #include "dpoly.hpp"
 #include "ring.hpp"
-#include "varpower.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
 #include "monoid.hpp"
@@ -265,19 +265,19 @@ class TowerEvaluator : public DPolyTraverser
   TowerPolynomial f;
   int first_var;
   const Ring *target;
-  intarray vp;
+  gc_vector<int> vp;
   int nvars;
 
-  virtual bool viewTerm(long coeff, const exponents exp)
+  virtual bool viewTerm(long coeff, const_exponents exp)
   {
-    // translate exp to varpwer
+    // translate exp to varpower
     // map->eval_term
     // either:
     //  H->add, or target->add_to
-    vp.shrink(0);
-    varpower::from_ntuple(nvars, exp, vp);
+    vp.resize(0);
+    varpower::from_expvector(nvars, exp, vp);
     ring_elem c = K->from_long(coeff);
-    ring_elem a = map->eval_term(K, c, vp.raw(), first_var, nvars);
+    ring_elem a = map->eval_term(K, c, vp.data(), first_var, nvars);
     H->add(a);
     return true;
   }
@@ -449,12 +449,11 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
   const Ring *K = R->getCoefficients();
   int nvars = R->n_vars();
   TowerPolynomial result = 0;
-  exponents exp = new int[nvars];
-  for (Nterm *t = fR; t != 0; t = t->next)
+  exponents_t exp = new int[nvars];
+  for (Nterm& t : fR)
     {
-      M->to_expvector(t->monom, exp);
-
-      std::pair<bool, long> res = K->coerceToLongInteger(t->coeff);
+      M->to_expvector(t.monom, exp);
+      std::pair<bool, long> res = K->coerceToLongInteger(t.coeff);
       assert(res.first);
       int c1 = static_cast<int>(res.second);
 

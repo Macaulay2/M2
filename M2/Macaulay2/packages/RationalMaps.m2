@@ -38,7 +38,7 @@ export{
 	"mapOntoImage",
     "QuickRank",
 	--"blowUpIdeals", --at some point we should document this and expose it to the user
-	--"nonZeroMinor",-- it is internal because the answer is probobalistic (either it finds one or it doesn't) and it is controlled by MinorsLimit option
+	--"nonZeroMinor",-- it is internal because the answer is probabilistic (either it finds one or it doesn't) and it is controlled by MinorsLimit option
     "isSameMap",
     "sourceInversionFactor",
         --"simisAlgebra", --at some point we should document this and expose it to the user
@@ -50,7 +50,7 @@ export{
     "SimisStrategy", --an option for controlling how inversion of maps is run.
     "HybridStrategy", --an option for controlling how inversion of maps is run. (This is the default)
     "MinorsLimit", --an option for how many times we should randomly look for a minor before calling syz in inverseOfMap
-    "HybridLimit", --an option for controlling inversion of maps (whether to do more simis or more rees strategies)
+    "HybridLimit", --an option for controlling inversion of maps (whether to do more Simis or more Rees strategies)
     "CheckBirational", --an option for inverseOfMap, whether or not to check whether something is birational
     "SaturateOutput",  --option to turn off saturation of the output
     "AssumeDominant" --option to assume's that the map is dominant (ie, don't compute the kernel)
@@ -91,6 +91,8 @@ RationalMapping = new Type of HashTable;
 rationalMapping = method(Options=>{}); --constructor for RationalMapping
 
 rationalMapping(RingMap) := o->(phi) -> (
+    if not isHomogeneous target phi then error "rationalMapping: the target should be homogeneous";
+    if not isHomogeneous source phi then error "rationalMapping: the source should be homogeneous";
     if not isSameDegree(first entries matrix phi) then error "rationalMapping:  expected all terms to have the same degree";
     new RationalMapping from {map=>phi, cache => new CacheTable from {}}
 );
@@ -291,7 +293,7 @@ isRegularMap(RationalMapping) := o->(phi) ->(
   );
 
 
-  --the rees algebra computation below is too slow, we need to modify it
+  --the Rees algebra computation below is too slow, we need to modify it
   --Hamid: we may add all of the strategies and options which are applied in saturate
  blowUpIdealsSaturation(Ideal, BasicList):=(a,L)->(
     r:=length  L;
@@ -375,7 +377,7 @@ simisAlgebra(Ideal, BasicList, ZZ):=(a,L,m)->(
     F:=f(matrix{LL});
     myt:=(gens tR)#0;
     J:=sub(a,tR)+ideal apply(1..r,j->(gens tR)_(n+j)-myt*F_(0,(j-1)));
-    M:=gb(J,DegreeLimit=>{1,m}); --instead of computing the whole Grob. Baisis of J we only compute the parts of degree (1,m) or less,
+    M:=gb(J,DegreeLimit=>{1,m}); --instead of computing the whole Grob. Basis of J we only compute the parts of degree (1,m) or less,
     gM:=selectInSubring(1,gens M);
     L2:=ideal mingens ideal gM;
     W:=local W;
@@ -404,7 +406,7 @@ simisAlgebra(Ideal, Matrix,ZZ):=(a,M,m)->(
  --this function computes the "relation type" of an ideal in a ring R.
  --Let R be the ring given bythe  ideal a and L be a list of elements in R.
  --the relation type is the biggest degree in terms of new variables in the
- --defining ideal of the rees algebra of I over R.
+ --defining ideal of the Rees algebra of I over R.
  --
 
  relationType(Ideal,BasicList):=o->(a,L)->(
@@ -650,7 +652,7 @@ isBirationalOntoImageRees(RationalMapping) := o -> (phi1) -> (
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 1) then print "isBirationalOntoImageRees: computed Jacobian dual matrix";
     if (o.Verbosity >= 2) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and   "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and   "|nr|" rows.");
     );
     jdd:=(numgens ambient Rlin1)-1;
     if (o.Verbosity >= 2) then print "isBirationalOntoImageRees: is computing the rank of the  Jacobian dual matrix- barJD";
@@ -743,9 +745,9 @@ isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
     myt:=(gens tR)#0;
     J:=sub(di1,tR)+ideal apply(1..rs,j->(gens tR)_(n+j)-myt*F_(0,(j-1)));
 
-    flag := false;   --this boolian checks whether it is birational
-    giveUp := false;  --this checks whether we giveup checkin birationality or not yet
-    secdeg:=1;        --the second degree of rees equations
+    flag := false;   --this boolean checks whether it is birational
+    giveUp := false;  --this checks whether we give up checkin birationality or not yet
+    secdeg:=1;        --the second degree of Rees equations
     jj := 1;
     M := null;
     while (giveUp == false) do (
@@ -753,7 +755,7 @@ isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
 
         if (secdeg < o.HybridLimit) then (
             M=gb(J,DegreeLimit=>{1,secdeg}); --instead of computing the whole Grob.
-                                            --Baisis of J we only compute the parts of degree (1,m) or less,
+                                            --Basis of J we only compute the parts of degree (1,m) or less,
         )
         else(
         if (o.Verbosity >= 1) then print("isBirationalOntoImageSimis:  gave up, it will just compute the whole Groebner basis of the Rees ideal.  Increase HybridLimit and rerun to avoid this." );
@@ -937,7 +939,7 @@ inverseOfMapRees(RationalMapping) := o->(phi1)->(
      nc:=numColumns(transpose barJD);
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 2 ) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
     );
     nonZMinor := null;
     if (o.MinorsLimit > 0) then (
@@ -1039,7 +1041,7 @@ inverseOfMapSimis(RationalMapping) :=o->(phi1)->(
         if (o.Verbosity >= 2) then print("inverseOfMapSimis:  About to compute partial Groebner basis of Rees ideal up to degree " | toString({1, secdeg}) | "." );
         if (secdeg < o.HybridLimit) then (
             M=gb(J,DegreeLimit=>{1,secdeg}); --instead of computing the whole Grob.
-                                               --Baisis of J we only compute the parts of degree (1,m) or less,
+                                               --Basis of J we only compute the parts of degree (1,m) or less,
         )
         else( --we are running the hybrid strategy, so we compute the whole gb
             if (o.Verbosity >= 1) then print("inverseOfMapSimis:  We give up.  Using the previous computations, we compute the whole \r\n        Groebner basis of the Rees ideal.  Increase HybridLimit and rerun to avoid this." );
@@ -1386,7 +1388,7 @@ document{
     Key=>{HybridLimit},
     Headline=>"an option to control HybridStrategy",
        "This controls behavior when using ", TT "Strategy=>HybridStrategy", ".  ", "By increasing the HybridLimit value (default 15), 
-       HybridStrategy will execte SimisStrategy longer. 
+       HybridStrategy will execute SimisStrategy longer. 
 	     Infinity will behave exactly like SimisStrategy.",
     SeeAlso=>{
         "HybridStrategy"        
@@ -1606,7 +1608,7 @@ doc ///
             tau*tauInverse == identP2 --a map composed with its inverse is the identity
             tauInverse*tau == identBlowUp
         Text
-            Note that one can only raise maps to powers (with the exception of 1 and -1) if the source and target of the the same.  In that case, raising a map to a negative power means compose the inverse of a map with itself.  We illustrate this with the quadratic transformation on $P^2$ that we started with (an transformation of order 2 in the Cremona group).
+            Note that one can only raise maps to powers (with the exception of 1 and -1) if the source and target are the same.  In that case, raising a map to a negative power means compose the inverse of a map with itself.  We illustrate this with the quadratic transformation on $P^2$ that we started with (an transformation of order 2 in the Cremona group).
         Example
             phi^3 == phi^-1 
             phi^-2 == ident
@@ -2595,7 +2597,7 @@ TEST /// --test #27
 ///
 
 TEST /// --test #28
-     --let's parameterize the nodal plane cubic
+     --let's parametrize the nodal plane cubic
      P2 = QQ[x,y,z]
      C = QQ[a,b]
      h = map(C, P2, {b*a*(a-b), a^2*(a-b), b^3})

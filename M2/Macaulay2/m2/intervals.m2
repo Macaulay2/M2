@@ -49,8 +49,6 @@ span RRi := {Precision => -1} >> opts -> N -> interval(left N,right N,opts)
 
 span List := span Sequence := {Precision => -1} >> opts -> L -> fold(L, (N, M) -> spanRRi(N, M, opts))
 
-isMember = method()
-
 for A in {ZZ,QQ,RR} do
 isMember(A,RRi) := (N,M) -> subsetRRi(N,M);
 

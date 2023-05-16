@@ -36,9 +36,9 @@ newPackage select((
 	     "article title" => "Partially ordered sets in Macaulay2",
 	     "acceptance date" => "5 June 2015",
 	     "published article URI" => "http://msp.org/jsag/2015/7-1/p02.xhtml",
-	     "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.9-15",
+	     "published article DOI" => "https://dx.doi.org/10.2140/jsag.2015.7.9-15",
 	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
 	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
 	     "version at publication" => "1.1.2",
 	     "volume number" => "7",
@@ -173,6 +173,7 @@ export {
     "fPolynomial",
     "greeneKleitmanPartition",
     "hPolynomial",
+    "magnitude",
     "moebiusFunction",
   --"poincare",
     "poincarePolynomial",
@@ -181,6 +182,7 @@ export {
     "tuttePolynomial",
     "zetaPolynomial",
     "coxeterPolynomial",
+    "degreePolynomial",
     --
     -- Properties
     "dilworthNumber",
@@ -828,7 +830,6 @@ lcmLattice Ideal := Poset => opts -> I -> (
     )
 
 -- non-exported
-protect next
 lcmLatticeRecursive = G -> (
     if #G === 0 then return {{}}; -- empty set has 1 as a divisor.
     n := numgens ring first G;
@@ -1516,6 +1517,13 @@ moebiusFunction Poset := HashTable => P -> (
     applyKeys(new HashTable from mu, (i, j) -> (F_i, F_j))
     )
 
+-- following Tom Leinster's definition in Documenta Math.
+magnitude = method()
+magnitude Poset := ZZ => P -> (
+    mu := moebiusFunction P;
+    sum(#P.GroundSet, i -> sum(principalOrderIdeal'(P, i), j -> mu#(P.GroundSet_j, P.GroundSet_i)))
+    )
+
 poincare Poset := RingElement => P -> poincarePolynomial P
 
 poincarePolynomial = method(Options => {symbol VariableName => getSymbol "t"})
@@ -1568,6 +1576,18 @@ coxeterPolynomial Poset := RingElement => opts -> P -> (
     n := numrows M;
     C := -M * inverse transpose M;
     det (R_0 * id_(R^n) - C)
+    )
+
+degreePolynomial = method()
+degreePolynomial Poset := RingElement => P -> (
+    R := ZZ(monoid [getSymbol "x", getSymbol "y"]);
+    cr := P.cache.coveringRelations;
+    if #cr == 0 then cr = {{}};
+    covering := tally apply(cr, last);
+    covered := tally apply(cr, first);
+    sum(#P.GroundSet, i -> (indegree := if covering#?i then covering#i else 0;
+                            outdegree := if covered#?i then covered#i else 0;
+                            (R_0)^indegree * (R_1)^outdegree))
     )
 
 ------------------------------------------
@@ -2120,7 +2140,7 @@ doc ///
             with entries $(i,j)$ equal to 1 if $G_j \leq G_i$ and 0 otherwise
     Description
         Text
-            This method uses the @TO "descendents"@ method from the @TO "Graphs"@ package
+            This method uses the @TO "descendants"@ method from the @TO "Graphs"@ package
             to compute the @TO "RelationMatrix"@ from the relations $R$.
         Example
             G = {1,2,3,4,5};
@@ -2448,6 +2468,7 @@ doc ///
         pPartitionRing
         (pPartitionRing,Poset)
         [pPartitionRing,CoefficientRing]
+        [pPartitionRing,Strategy]
     Headline
         produces the p-partition ring of a poset
     Usage
@@ -5169,7 +5190,7 @@ doc ///
         [poincarePolynomial,VariableName]
         (poincare, Poset)
     Headline
-        computes the Poincare polynomial of a ranked poset with a unique minimal element
+        computes the Poincaré polynomial of a ranked poset with a unique minimal element
     Usage
         p = poincarePolynomial P
         p = poincarePolynomial(P, VariableName => symbol)
@@ -5180,18 +5201,18 @@ doc ///
         VariableName=>Symbol
     Outputs
         p:RingElement
-            the Poincare polynomial of $P$
+            the Poincaré polynomial of $P$
     Description
         Text
-            The Poincare polynomial of $P$ is the polynomial in a single variable
+            The Poincaré polynomial of $P$ is the polynomial in a single variable
             $t$ derived from the @TO "rankFunction"@ and the @TO "moebiusFunction"@ of $P$.
 
-            The Poincare polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
+            The Poincaré polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
         Example
             n = 5;
             factor poincarePolynomial booleanLattice n
         Text
-            The Poincare polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
+            The Poincaré polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
         Example
             R = QQ[x,y,z];
             A = {x,y,z,x+y,x+z,y+z,x-y,x-z,y-z};
@@ -5288,12 +5309,13 @@ doc ///
             the Tutte polynomial of $P$
     Description
         Text
-            The Tutte polynomial of $P$ is the polynomial $f$ such that
+            The Tutte polynomial of $P$ is a polynomial $f$ in two variables
+            obtained by a summation over antichains.
         Example
             B = booleanLattice 3;
             f = tuttePolynomial B
         Text
-            The Tutte polynomial evaluates at $t = 1$ and $z = 1$ is always
+            The Tutte polynomial evaluated at $t = 1$ and $z = 1$ is always
             the number of subsets of the groundset of $P$.
         Example
             R = ring f;
@@ -5366,6 +5388,57 @@ doc ///
         Example
             B = booleanLattice 3;
             z = coxeterPolynomial B
+///
+-- degreePolynomial
+doc ///
+    Key
+        degreePolynomial
+        (degreePolynomial,Poset)
+    Headline
+        computes the degree polynomial of a poset
+    Usage
+        z = degreePolynomial P
+    Inputs
+        P:Poset
+    Outputs
+        z:RingElement
+            the degree polynomial of $P$
+    Description
+        Text
+            The degree polynomial of $P$ is the sum over elements $v$ of
+            $x^{\operatorname{in}(v)} y^{\operatorname{out}(v)}$,
+            when the exponents are the incoming and outgoing valences of $v$
+            in the Hasse diagram.
+
+            This polynomial is multiplicative for Cartesian product of posets.
+        Example
+            B = booleanLattice 3;
+            z = factor degreePolynomial B
+///
+-- magnitude
+doc ///
+    Key
+        magnitude
+        (magnitude,Poset)
+    Headline
+        computes the magnitude of a poset
+    Usage
+        z = magnitude P
+    Inputs
+        P:Poset
+    Outputs
+        z:ZZ
+            the magnitude of $P$
+    Description
+        Text
+            The magnitude of $P$ is the sum over all relations $v \leq w$ of
+            the Möbius number $\mu(v,w)$.
+
+            This integer is multiplicative for Cartesian product of posets,
+            and additive for disjoint union.
+        Example
+            B = booleanLattice 3;
+            z = magnitude B
 ///
 ------------------------------------------
 -- Properties
@@ -6367,6 +6440,8 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
 assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
+assert(toString degreePolynomial B == "x^3+3*x^2*y+3*x*y^2+y^3")
+assert(toString magnitude B == "1")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)

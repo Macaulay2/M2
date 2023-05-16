@@ -216,7 +216,7 @@ setupModules = method()
 setupModules(List,Module) := (R,M)->(
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
     --M is a a module over R_c.
     c := length R-1;
@@ -236,7 +236,7 @@ Headline
   Maximal Cohen-Macaulay Approximations and Complete Intersections
 Description
   Text
-   Maximal Cohen-Macaulay approximatiodns were introduced by Auslander and Buchweitz
+   Maximal Cohen-Macaulay approximations were introduced by Auslander and Buchweitz
    [The homological theory of maximal Cohen-Macaulay (MCM) approximations, 
    Colloque en l'honneur de Pierre Samuel (Orsay, 1987)
    Soc. Math. France (N.S.)} No. {\bf 38}, (1989), 5 - 37.] 
@@ -277,7 +277,7 @@ Description
    gives the coapproximation sequence
    0\to M \to N''\to M'' \to 0.
    
-   The routine coApproximation M resurns the map M --> N''.
+   The routine coApproximation M returns the map M --> N''.
    Here is an example of a simple approximation sequence, 
    exhibited by the betti tables of its 3 middle terms:
    
@@ -297,7 +297,7 @@ Description
    netList apply({1,2,3}, i-> betti res Ea_i)
   Text
    Here is a similar display for the co-approximation sequence. Here
-   the Betti table of M is at the bottom, the Betti table of the module of finite projecdtive dimension
+   the Betti table of M is at the bottom, the Betti table of the module of finite projective dimension
    is in the middle, and that of the MCM module is at the top (
   Example
    Ec = coApproximationSequence M;
@@ -368,7 +368,7 @@ doc ///
      If k==0 then the N=M. If k>0 then the syzygy module is computed from the 
      resolution. If k<0 then the program returns the dual of the (n-k)-th syzygy
      of the dual of the k-th syzygy, where n is one more than Codepth if that
-     opition is specified, and else n is the number of variables of ring M. 
+     option is specified, and else n is the number of variables of ring M. 
      Of course the resulting N is 0 if ring M is regular, and otherwise correct
      only if ring M is Gorenstein. In the Gorenstein case, syzygyModule(-k, syzygyModule(k, M))
      -is the non-free part of the source of the MCM approximation of M.
@@ -709,7 +709,7 @@ doc ///
     c:ZZ
      desired codimension
     d:ZZ
-     degree of homogoneous generators
+     degree of homogeneous generators
     ff:Matrix
      a regular sequence
    Outputs
@@ -729,7 +729,7 @@ doc ///
 ///
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
 
 doc ///

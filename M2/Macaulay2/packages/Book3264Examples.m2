@@ -77,7 +77,7 @@ placeholderToSchubertBasis(RingElement,FlagBundle) := (c,G) -> (
      if R.cache.?schubertring then S = R.cache.schubertring else (
 	  --should maybe add option to choose variable name
 	  s := getSymbol "s";
-	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> schubert basis elts
+	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> Schubert basis elts
 	  R.cache.schubertring = S;
 	  S.cache = new MutableHashTable;
 	  S.cache.intersectionmap = map(R,S,M));
@@ -584,7 +584,7 @@ doc ///
       P3 = flagBundle({1,3})
       (S,Q) = P3.Bundles
     Text
-      In this setting, the the bundle $O(1)$ is the dual of the universal subbundle
+      In this setting, the bundle $O(1)$ is the dual of the universal subbundle
       $S$.
     Example
       O1 = dual(S)
@@ -651,7 +651,7 @@ doc ///
       equivalently calculate the degree of $\alpha \cap [X]$.  In this way we ``push the problem
       forward'' to ${\mathbb P}^n$.
       
-      As an example, if we want to calculate the degree of the top chern class of
+      As an example, if we want to calculate the degree of the top Chern class of
       the tangent bundle to a hypersurface $X$ of degree $4$ in ${\mathbb P}^3$, we can compute:
     Example
       P3 = flagBundle({1,3})
@@ -773,7 +773,7 @@ doc ///
 	   O01 := dual(PnxPm.Bundles#0); -- O(0,1)
 	   NX := (O10^**a)**(O01^**b); -- O(a,b)
 	   X := chern(1,NX); -- Chow class of divisor of type (a,b)
-	   TX := chern(T - NX) * X; -- pushed-forward total chern class of tangent bundle to X
+	   TX := chern(T - NX) * X; -- pushed-forward total Chern class of tangent bundle to X
 	   integral TX) -- chi of a smooth hypersurface of bidegree (a,b) in PnxPm
       eulerChar(4,4) -- chi of a smooth hypersurface of bidegree (a,b) in P4xP4
       sub(eulerChar(2,3),{a=>1,b=>0/1}) -- is P1xP3, should be 8 by Kunneth
@@ -788,11 +788,11 @@ doc ///
     Bundles on Grassmannians
   Description
     Text
-      We already know everything necessary to calculate chern classes of bundles on Grassmannians.
+      We already know everything necessary to calculate Chern classes of bundles on Grassmannians.
       
       As an example, we can do:
       
-      Exercise 5.17: {\bf Calculate the chern classes of the tangent bundle to} ${\mathbb G}(1,3)$
+      Exercise 5.17: {\bf Calculate the Chern classes of the tangent bundle to} ${\mathbb G}(1,3)$
       {\bf in two different ways.}
       
       We calculate directly:

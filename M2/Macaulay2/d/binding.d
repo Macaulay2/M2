@@ -124,7 +124,7 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      makeEntry(word,position,dictionary,false,false));
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
      entry := makeEntry(word,position,dictionary,thread,locallyCreated);
-     if dictionary.frameID == 0 && isalnum(word.name) && !thread
+     if dictionary.frameID == 0 && isvalidsymbol(word.name) && !thread
      then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
      entry);
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
@@ -377,6 +377,10 @@ export NewOfFromE := Expr(NewOfFromS);
 
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
+
+export StopIterationS := makeProtectedSymbolClosure("StopIteration");
+export StopIterationE := Expr(StopIterationS);
+
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
      e := makeSymbol(t.word,position(t),t.dictionary);
@@ -668,7 +672,6 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  "left hand side of assignment inappropriate"));
 export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
-     is s:StartDictionary do bind(s.body,dictionary)
      is i:IfThen do (
 	  bind(i.predicate,dictionary);
 	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);

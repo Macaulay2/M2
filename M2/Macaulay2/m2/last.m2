@@ -5,13 +5,14 @@
 needs "engine.m2"
 needs "methods.m2"
 needs "nets.m2"
-needs "orderedmonoidrings.m2" -- for degreesRing
+needs "monoids.m2"
 needs "packages.m2"
 needs "robust.m2"
 needs "varieties.m2"
 
 recursionLimit = 300
 
+-- initialize the trivial monoid, see rawMonoid()
 degreesRing 0;
 
 setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
@@ -38,7 +39,7 @@ addStartFunction(
 	       newPackage("User",
 		   Headline       => "default package for interpreter interactions",
 		   DebuggingMode  => true,
-		   PackageImports => if member("--no-preload", commandLine) then {} else Core#"pre-installed packages");
+		   PackageImports => if isMember("--no-preload", commandLine) then {} else Core#"pre-installed packages");
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";

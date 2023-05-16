@@ -159,6 +159,7 @@ SVDComplexes
 RandomComplexes
 CohomCalg
 Topcom
+Triangulations
 ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
@@ -244,3 +245,11 @@ MergeTeX
 Probability
 Isomorphism
 CodingTheory
+WhitneyStratifications
+JSON
+ForeignFunctions
+GeometricDecomposability
+PseudomonomialPrimaryDecomposition
+PolyominoIdeals
+MatchingFields
+CellularResolutions

@@ -73,6 +73,8 @@ findProgram = method(TypicalValue => Program,
 	AdditionalPaths => {},
 	MinimumVersion => null
     })
+findProgram String := opts -> name -> findProgram(
+    name, name | " --version", opts)
 findProgram(String, String) := opts -> (name, cmd) ->
     findProgram(name, {cmd}, opts)
 findProgram(String, List) := opts -> (name, cmds) -> (
@@ -130,6 +132,9 @@ runProgram = method(TypicalValue => ProgramRun,
 	Verbose => false,
 	RunDirectory => null
 	})
+runProgram(String, String) := opts -> (name, args) -> (
+    prog := findProgram(name, name | " " | args);
+    runProgram(prog, args, opts))
 runProgram(Program, String) := opts -> (program, args) ->
     runProgram(program, program#"name", args, opts)
 runProgram(Program, String, String) := opts -> (program, name, args) -> (
@@ -167,6 +172,13 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
     new ProgramRun from result
 )
 
+Program << Thing := (prog, x) -> (
+    f := temporaryFileName();
+    f << x << close;
+    runProgram(prog, "< " | f))
+
 net Program := toString Program := program -> program#"name"
 html Program := html @@ toString
-net ProgramRun := pr -> net pr#"return value"
+status ProgramRun := o -> pr -> pr#"return value"
+net ProgramRun := net @@ status
+toString ProgramRun := pr -> pr#"output"

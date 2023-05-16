@@ -10,8 +10,7 @@ document {
      Headline => "addition",
      TT "plus(x,y,...)", " -- yields the sum of its arguments.",
      PARA{},
-     "If the arguments are strings, they are concatenated.  If there
-     are no arguments, the answer is the integer 0."
+     "If there are no arguments, the answer is the integer 0."
      }
 
 document {
@@ -206,7 +205,7 @@ document {
 	       the integers ", TT "m", " and ", TT "n"}
 	  },
      EXAMPLE "10 ^^ 12",
-     SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
+     SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ), (symbol ~, ZZ) }
      }
 
 document {

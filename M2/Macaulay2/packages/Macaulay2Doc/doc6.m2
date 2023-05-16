@@ -13,7 +13,10 @@ document {
      TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."}
 
 document {
-     Key => (symbol ^, Ring, List),
+     Key => {
+	 (symbol ^, Ring,       List),
+	 (symbol ^, RingFamily, List)
+	 },
      Headline => "make a free module",
      Usage => "M = R^{i,j,k,...}",
      Inputs => {"R", 
@@ -48,7 +51,10 @@ document {
      SeeAlso => {directSum, symbol++}
      }
 document {
-     Key => (symbol ^,Ring,ZZ),
+     Key => {
+	 (symbol ^, Ring,       ZZ),
+	 (symbol ^, RingFamily, ZZ)
+	 },
      Headline => "make a free module",
      Usage => "R^n",
      Inputs => {"R", "n"},

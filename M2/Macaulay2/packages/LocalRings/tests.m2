@@ -254,6 +254,14 @@ TEST /// -- test for // -- TODO add more
   leadTerm oo
 ///
 
+TEST /// -- see https://github.com/Macaulay2/M2/issues/2542
+  RP = localRing(QQ[a,b,c,u,v,w],ideal(a,b,c,u,v,w))
+  f = matrix {{0, -9*u, u, 9*a}, {-b^2*w-w, b^2*w+w, 0, 0}, {-9*w, 0, w, 0}, {0, 0, 0, b^2*v+v}}
+  g = matrix {{u, -9*a, -9*u}, {0, 0, b^2*w+w}, {w, 0, 0}, {0, -b^2*v-v, 0}}
+  assert(f  % g == matrix{for i from 0 to numcols f - 1 list f_{i}  % g})
+  assert(f // g == matrix{for i from 0 to numcols f - 1 list f_{i} // g})
+///
+
 TEST ///
   -- by hand compute Ext^1(RP/IP,RP) == 0
   R = ZZ/32003[a..c]

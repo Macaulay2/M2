@@ -645,7 +645,7 @@ void DPoly::reset_degree_n(int level, TowerPolynomial &f)
   dealloc_poly(f);  // sets f to 0
 }
 
-void DPoly::add_term(int level, TowerPolynomial &result, long coeff, exponents exp) const
+void DPoly::add_term(int level, TowerPolynomial &result, long coeff, exponents_t exp) const
 {
   // modifies result.
   // exp is an array [0..level-1] of exponent values for each variable
@@ -1545,7 +1545,7 @@ void DRing::elem_text_out(buffer &o,
   D.elem_text_out(o, level, f, p_one, p_plus, p_parens, names);
 }
 
-void DRing::add_term(elem &result, long coeff, exponents exp) const
+void DRing::add_term(elem &result, long coeff, exponents_t exp) const
 {
   long c;
   ZZp_FROM_INT(P, c, coeff);  // puts it into normal form, just in case.
@@ -1555,7 +1555,7 @@ void DRing::add_term(elem &result, long coeff, exponents exp) const
 
 void DPolyTraverser::traverse(const TowerPolynomial f)
 {
-  exponents exp = new int[D->nvars];
+  exponents_t exp = new int[D->nvars];
   for (size_t i = 0; i < D->nvars; i++) exp[i] = 0;
   traverse1(D->nlevels - 1,
             f,
@@ -1563,7 +1563,7 @@ void DPolyTraverser::traverse(const TowerPolynomial f)
   delete[] exp;
 }
 
-bool DPolyTraverser::traverse1(int level, const TowerPolynomial f, exponents exp)
+bool DPolyTraverser::traverse1(int level, const TowerPolynomial f, exponents_t exp)
 {
   if (level == 0)
     {

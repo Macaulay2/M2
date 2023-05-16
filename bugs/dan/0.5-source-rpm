@@ -61,7 +61,7 @@ More rpm docs at
 >> I guess the number of third party libraries makes it difficult,
 >> but I'd really rather the time was spent making the source
 >> distribution easy to build on the standard OSes
->> (I'm afraid that that might mean a different .spec files for SuSE,
+>> (I'm afraid that this might mean a different .spec files for SuSE,
 >> Red Hat and Fedora).
 >> I guess the version dependencies could become a nightmare,
 >> but then again if I already have gc, gdbm, gmp, pari, readline, libtool

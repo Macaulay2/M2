@@ -122,18 +122,6 @@ R = QQ[x,y]
      	  "tutorial oo",
 	  "peek oo"
 	  }}
-document { Key => {preimage,(preimage, RingMap, Ideal)},
-     Headline => "preimage of an ideal under a ring map",   -- hopefully more general later
-     Usage => "preimage(f,I)",
-     Inputs => { "I" => { "an ideal in the target ring of ", TT "f" }, "f" },
-     Outputs => { { "the preimage of ", TT "I", " under the map ", TT "f" } },
-     EXAMPLE lines /// 
-	  R = QQ[x,y,z]
-	  S = QQ[t,u]
-	  f = map(R,S,{x*y,y*z})
-	  preimage_f ideal(x^2,y^2)
-     	  ///
-     }
 document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,CC)},
      Headline => "round a number",
      SYNOPSIS (
@@ -247,7 +235,7 @@ document { Key => NumberedVerticalList,
 
 document { Key => {LowerBound,(symbol SPACE,CoherentSheaf,LowerBound),(symbol SPACE,SheafOfRings,LowerBound)},
      Headline => "the class of lower bound objects",
-     "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condititon
+     "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condition
      that some other integer, such as the index in a direct sum, should be at least as large.",
      EXAMPLE {
 	  "LowerBound {4}",

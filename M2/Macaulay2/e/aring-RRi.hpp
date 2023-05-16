@@ -20,7 +20,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRRi : public RingInterface
+class ARingRRi : public SimpleARing<ARingRRi>
 {
   // Higher precision real intervals
 
@@ -91,6 +91,10 @@ class ARingRRi : public RingInterface
       mpfi_set(&result, a.get_mpfi());
   }
 
+  const ElementType &from_ring_elem_const(const ring_elem &a) const
+  {
+    return *a.get_mpfi();
+  }
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { mpfi_init2(&result, mPrecision); }
@@ -110,7 +114,7 @@ class ARingRRi : public RingInterface
     mpfi_set_si(&result, 0);
   }
 
-  void clear(ElementType &result) const { mpfi_clear(&result); }
+  static void clear(ElementType &result) { mpfi_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfi_set(&result, &a);
@@ -334,7 +338,7 @@ class ARingRRi : public RingInterface
 
     /* Needs to be redone. */
   void eval(const RingMap *map,
-            ElementType &f,
+            const ElementType &f,
             int first_var,
             ring_elem &result) const
   {

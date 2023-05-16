@@ -128,7 +128,7 @@ namespace BIBasis
                  currentMonom; 
                  currentMonom = currentMonom->Next)
             {
-                exponents currentExponent = newarray_atomic_clear(int, MonomType::GetDimIndepend());
+                exponents_t currentExponent = newarray_atomic_clear(int, MonomType::GetDimIndepend());
                 typename std::set<typename MonomType::Integer> variablesSet = currentMonom->GetVariablesSet();
                 
                 for (typename std::set<typename MonomType::Integer>::const_iterator currentVariable = variablesSet.begin();
@@ -168,10 +168,10 @@ namespace BIBasis
 
             Polynom<MonomType>* currentPolynom = new Polynom<MonomType>();
 
-            for (Nterm* currentTerm = polynomVector->coeff; currentTerm; currentTerm = currentTerm->next)
+            for (Nterm& currentTerm : polynomVector->coeff)
             {
-                exponents monomVector = newarray_atomic(int, independ);
-                monoid->to_expvector(currentTerm->monom, monomVector);
+                exponents_t monomVector = newarray_atomic(int, independ);
+                monoid->to_expvector(currentTerm.monom, monomVector);
                 
                 //construct Monom for every term
                 MonomType* currentMonom = new MonomType();

@@ -414,7 +414,7 @@ rem=method()
 rem(List,Set):=(L,I)->(
   while #I>0 do (
     m:=max(toList I);
-    L=remove(L,m);
+    L=drop(L,{m,m});
     I=I - set {m};
   );
   L)
@@ -730,7 +730,7 @@ randomSemigroup(ZZ,ZZ,ZZ):=opt->(a,d,c)->(
        j:=random(#E);
        if #E==0 then error("Codimension too large");
        B=append(B,E#j);
-       E=remove(E,j);
+       E=drop(E,{j,j});
      );
    ) else (
      dPB:=-1;
@@ -741,7 +741,7 @@ randomSemigroup(ZZ,ZZ,ZZ):=opt->(a,d,c)->(
          j=random(#E);
          if #E==0 then error("Codimension too large");
          B=append(B,E#j);
-         E=remove(E,j);
+         E=drop(E,{j,j});
        );
        PB:=posHull transpose matrix B;
        dPB=dim PB;
@@ -946,7 +946,7 @@ doc ///
     Text
       {\bf Overview:}
 
-      Consider a monoid B in \mathbb{N}^m and a submonid A \subseteq B (both finitely generated)
+      Consider a monoid B in \mathbb{N}^m and a submonoid A \subseteq B (both finitely generated)
       such that K[B] is a finitely generated K[A]-module (with the module structure
       given by inclusion, and K being a field).
 
@@ -2318,7 +2318,7 @@ doc ///
     randomMonomialAlgebra
     (randomMonomialAlgebra,ZZ,ZZ,ZZ)
   Headline
-    Generate random monoimal algebra.
+    Generate random monomial algebra.
   Usage
     randomMonomialAlgebra(a,d,c)
   Inputs

@@ -32,7 +32,7 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
 needsPackage "FourierMotzkin"
 
 
--- Definind the new type PolyhedralObject
+-- Defining the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
 globalAssignment PolyhedralObject
 
@@ -557,7 +557,7 @@ addCone (Cone,Fan) := (C,F) -> (
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
      -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GC into two seperate lists
+     -- the cones of higher or equal dimension. For this we divide GC into two separate lists
      GC = partition(Cf -> (dim Cf) >= d,GC);
      GC = {if GC#?true then GC#true else {},if GC#?false then GC#false else {}};
      if all(GC#0, Cf ->  (
@@ -640,7 +640,7 @@ ambDim Fan := F -> F#"ambient dimension"
 
 
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
+-- PURPOSE : Giving the k dimensional Cones of the Fan
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)
@@ -1004,7 +1004,7 @@ isProjective Fan := F -> (
 	  edgeTCNoTable := hashTable apply(edgeTable, e -> e#0 => (e#2,e#3));
 	  edgeTable = hashTable apply(edgeTable, e -> e#1 => (e#2,e#3));
 	  -- Computing the list of correspondencies, i.e. for each codim 2 cone ( corresponding to 2dim-faces of the polytope) save 
-	  -- the indeces of the top cones containing it
+	  -- the indices of the top cones containing it
 	  corrList := hashTable {};
 	  scan(keys L, j -> (corrList = merge(corrList,hashTable apply(faces(2,L#j), C -> C => {j}),join)));
 	  corrList = pairs corrList;
@@ -1015,7 +1015,7 @@ isProjective Fan := F -> (
 	  HP := flatten apply(#corrList, j -> (
 		    v := corrList#j#1;
 		    HPnew := NM;
-		    -- Scanning trough the top cones containing the active codim2 cone and order them in a circle by their 
+		    -- Scanning through the top cones containing the active codim2 cone and order them in a circle by their 
 		    -- connecting edges
 		    v = apply(v, e -> L#e);
 		    C := v#0;
@@ -1251,7 +1251,7 @@ hilbertBasis Cone := C -> (
 	  (M,BC));
      -- Function to compute the/one preimage of h under A
      preim := (h,A) -> (
-	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entrys are a preimage
+	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entries are a preimage
 	  -- vector
 	  N := gens ker(-h|A);
 	  N = transpose (ref transpose N)#0;
@@ -1347,7 +1347,7 @@ latticePoints = method(TypicalValue => List)
 latticePoints Polyhedron := P -> (
      -- Checking for input errors
      if  not isCompact P then error("The polyhedron must be compact");
-     -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+     -- Recursive function that intersects the polyhedron with parallel hyperplanes in the axis direction
      -- in which P has its minimum extension
      latticePointsRec := P -> (
 	  -- Finding the direction with minimum extension of P
@@ -1612,7 +1612,7 @@ minkSummandCone Polyhedron := P -> (
 -- PURPOSE : Computing the closest point of a polyhedron to a given point
 --   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
 --                   'P' is a Polyhedron
---  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
+--  OUTPUT : the point in 'P' with the minimal euclidean distance to 'p'
 proximum = method(TypicalValue => Matrix)
 proximum (Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
@@ -1700,7 +1700,7 @@ proximum (Matrix,Polyhedron) := (p,P) -> (
 
 --   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
 --                   'C' is a Cone
---  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
+--  OUTPUT : the point in 'C' with the minimal euclidean distance to 'p'
 proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
 
 
@@ -1728,7 +1728,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
      if contains(P,convexHull p) then (
 	  (M,v) := halfspaces P;
      	  (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfil equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
 	  N = N || M^pos;
@@ -1749,7 +1749,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
      if contains(C,posHull p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfil equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
@@ -1881,7 +1881,7 @@ vertexEdgeMatrix Polyhedron := P -> (
      vp = apply(numColumns vp, i -> vp_{i});
      d := #vp;
      n := #eP;
-     -- Generate the matrix with indeces in the first row and column and for every edge add two 1's in the corresponding column
+     -- Generate the matrix with indices in the first row and column and for every edge add two 1's in the corresponding column
      transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
 
 
@@ -1900,7 +1900,7 @@ vertexFacetMatrix Polyhedron := P -> (
      vp = apply(numColumns vp, i -> vp_{i});
      d := #vp;
      n := #fP;
-     -- Generate the matrix with indeces in the first row and column and for every facet add 1's in the corresponding column
+     -- Generate the matrix with indices in the first row and column and for every facet add 1's in the corresponding column
      transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp, v -> apply(fP,f -> if f#?v then 1 else 0))))
 
 
@@ -2270,10 +2270,10 @@ Cone + Cone := minkowskiSum
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
 --   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
 --     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
+--  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
-     if k <= 0 then error("The factor must be strictly positiv");
+     if k <= 0 then error("The factor must be strictly positive");
      convexHull(k*(vertices P),rays P | linSpace P))
 
 ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
@@ -2477,14 +2477,14 @@ posOrthant ZZ := n -> posHull map(QQ^n,QQ^n,1)
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
---   INPUT : 'I',  a homogeneous ideal with resect to some strictly psoitive grading
+--   INPUT : 'I',  a homogeneous ideal with resect to some strictly positive grading
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
-	  -- Generate the matrix 'M' that spans the space of the differeneces of the 
+	  -- Generate the matrix 'M' that spans the space of the differences of the 
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
@@ -2602,7 +2602,7 @@ stdSimplex ZZ := d -> (
 --     	     to the file. But keep in mind that this works only for such objects assigned to a Symbol! The session 
 -- 	     can be reovered by calling
 --     	     load F
--- 	     It is not neccessary to load Polyhedra before loading the saved session, because if not yet loaded it will
+-- 	     It is not necessary to load Polyhedra before loading the saved session, because if not yet loaded it will
 --     	     load Polyhedra. Also if PPDivisor was loaded when the session has been saved it will also be loaded.
 saveSession = method()
 saveSession String := F -> (
@@ -2718,7 +2718,7 @@ chkZZQQ = (M,msg) -> (
      promote(M,QQ));
 
 
--- PURPOSE : Compting the Hilbert basis of a standardised cone (project and lift algorithm
+-- PURPOSE : Computing the Hilbert basis of a standardised cone (project and lift algorithm
 --   INPUT : 'A' a matrix, the row echolon form of the defining half-spaces of the cone
 --  OUTPUT : a list of one column matrices, the generators of the cone over A intersected with 
 --     	     the positive orthant
@@ -3830,7 +3830,7 @@ document {
 	  " Q = intersection (M,v,N,w)"
 	  },
      
-     PARA{}, "If we have another polyehdron or cone, we can also intersect them with the others.",
+     PARA{}, "If we have another polyhedron or cone, we can also intersect them with the others.",
      
      EXAMPLE {
 	  " HC = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}},matrix {{1},{1},{1},{1},{1},{1}})",
@@ -3853,7 +3853,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "makeFan", " is applied to a ", TO Cone, " it generates 
-     the ", TO Fan, " given by the the Cone and all of its faces. If applied to 
+     the ", TO Fan, " given by the Cone and all of its faces. If applied to 
      a ", TO List, " the list must only contain Cones and Fans in the same 
      ambient space. Then it adds the Cones in the List and the generating Cones 
      of the Fans in the List one by one to the Fan, checking each time if the 

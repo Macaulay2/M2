@@ -9,7 +9,7 @@ document {
 	Usage => "Fano(k,I)",
 	Inputs => {
 		"k" => {"a positive integer less than ", TT "r"},
-		"I" => {"an ideal representing a variety in in projective ", TT "r", "-space"}, 
+		"I" => {"an ideal representing a variety in projective ", TT "r", "-space"}, 
 		},
 	Outputs => {"the ideal of a Fano scheme in the Grassmannian"},
 	  "Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
@@ -30,7 +30,7 @@ document {
 	Usage => "Fano(k,I,GR)",
 	Inputs => {
 		"k" => {"a positive integer less than ", TT "r"},
-		"I" => {"an ideal representing a variety in in projective ", TT "r", "-space"},
+		"I" => {"an ideal representing a variety in projective ", TT "r", "-space"},
 		"GR" => {} 
 		},
 	Outputs => {"the ideal of a Fano scheme in the Grassmannian"},

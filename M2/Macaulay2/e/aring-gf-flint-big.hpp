@@ -48,6 +48,58 @@ class ARingGFFlintBig : public RingInterface
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
 
+  /**
+   * \brief A wrapper class for ElementType
+   *
+   * This keeps a pointer to the fq_nmod_ctx_struct as it's needed to
+   * implement the destructor
+   */
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element&& other) : mContext(other.mContext)
+    {
+      // figure out how to move the value without the context
+      fq_nmod_init2(&mValue, mContext);
+      fq_nmod_set(&mValue, &other.mValue, mContext);
+    }
+    explicit Element(const ARingGFFlintBig& R) : mContext(R.mContext)
+    {
+      fq_nmod_init2(&mValue, mContext);
+    }
+    Element(const ARingGFFlintBig& R, const ElementType& value) : mContext(R.mContext)
+    {
+      R.init_set(mValue, value);
+    }
+    ~Element() { fq_nmod_clear(&mValue, mContext); }
+
+   protected:
+    const fq_nmod_ctx_struct* mContext;
+  };
+
+  class ElementArray
+  {
+    const fq_nmod_ctx_struct* mContext;
+    const int mSize;
+    std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARingGFFlintBig& R, size_t size)
+        : mContext(R.mContext), mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < mSize; i++) fq_nmod_init2(&mData[i], mContext);
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) fq_nmod_clear(&mData[i], mContext);
+    }
+    ElementType& operator[](size_t idx) { return mData[idx]; }
+    const ElementType& operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
+
   ARingGFFlintBig(const PolynomialRing& R, const ring_elem a);
 
   ~ARingGFFlintBig();
@@ -94,6 +146,11 @@ class ARingGFFlintBig : public RingInterface
     ElementType* b = getmemstructtype(ElementType*);
     init(*b);
     copy(*b, a);
+    size_t coeffs_size = sizeof(mp_limb_t)*b->alloc;
+    mp_ptr coeffs = reinterpret_cast<mp_ptr>(getmem_atomic(coeffs_size));
+    memcpy(coeffs,b->coeffs,coeffs_size);
+    flint_free(b->coeffs);
+    b->coeffs = coeffs;
     result.poly_val = reinterpret_cast<Nterm*>(b);
   }
 
@@ -101,6 +158,11 @@ class ARingGFFlintBig : public RingInterface
   {
     ElementType* b = reinterpret_cast<ElementType*>(a.poly_val);
     copy(result, *b);
+  }
+
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *reinterpret_cast<ElementType*>(a.poly_val);
   }
 
   bool is_unit(const ElementType& f) const { return not is_zero(f); }

@@ -9,12 +9,12 @@ WHITE := 8;
 NEWLINE := 16;
 QUOTE := 32;
 CTRL := 64;
-DOLLAR := 128;
+ALNUMEXTRA := 128;
 HEX := 256;
 BINARY := 512;
 SPACE := WHITE | NEWLINE;
 ALPHA := UPPER | LOWER;
-ALNUM := ALPHA | DIGIT | DOLLAR;
+ALNUM := ALPHA | DIGIT | ALNUMEXTRA;
 
 foreach c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  do setchartype(c,UPPER);
 foreach c in "abcdefghijklmnopqrstuvwxyz"  do setchartype(c,LOWER);
@@ -23,11 +23,10 @@ foreach c in "0123456789abcdefABCDEF"      do setchartype(c,HEX);
 foreach c in "01"                          do setchartype(c,BINARY);
 foreach c in " \t\r"	                   do setchartype(c,WHITE);
 foreach c in "\n"                          do setchartype(c,NEWLINE);
-foreach c in "$"                           do setchartype(c,DOLLAR);
+foreach c in "$'"                          do setchartype(c,ALNUMEXTRA);
 
-for c from 128 to 225	       	    	   do setchartype(char(c),ALPHA);  -- 226 is unicode math symbol
+for c from 128 to 225	       	    	   do setchartype(char(c),ALPHA);  -- 226 is unicode math symbols
 for c from 227 to 255	       	    	   do setchartype(char(c),ALPHA);
-					      setchartype('\'',ALPHA);
 					      setchartype('\"',QUOTE);
 
 chartype(c:int):int := if (c & ~255) == 0 then int(chartypes.c) else 0;
@@ -53,8 +52,9 @@ export isspace    (c:char):bool := (chartype(c) & SPACE    ) != 0;
 export isnewline  (c:char):bool := (chartype(c) & NEWLINE  ) != 0;
 export isquote    (c:char):bool := (chartype(c) & QUOTE    ) != 0;
 
-export isalnum  (s:string):bool := (
-     if int(uchar(s.0)) == 226 && length(s) == 3 then return true; -- unicode math symbol
+export isvalidsymbol  (s:string):bool := (
+     if int(uchar(s.0)) == 226 && length(s) == 3 then return true; -- ugly unicode math symbol hack
+     if !isalpha(s.0) then return false;
      foreach c in s do if !isalnum(c) then return false;
      true);
 

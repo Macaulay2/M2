@@ -3,9 +3,13 @@
 #ifndef _gbweight_hpp_
 #define _gbweight_hpp_
 
-#include "ringelem.hpp" // TODO: needed for M2_arrayint
-#include "newdelete.hpp"
+#include "engine-includes.hpp"  // for M2_arrayint
 
+#include "ExponentVector.hpp"   // for const_exponents
+#include "monoid.hpp"           // for const_monomial
+#include "newdelete.hpp"        // for our_new_delete
+
+class FreeModule;
 class GBRing;
 class gbvector;
 
@@ -32,7 +36,7 @@ class GBWeight : public our_new_delete
   // or, if the component is 0, then it is in the ring, not in the
   // free module F_
 
-  int exponents_weight(const int *exponent_vector, int comp) const;
+  int exponents_weight(const_exponents e, int comp) const;
 
   int gbvector_term_weight(const gbvector *f) const;
 
@@ -40,7 +44,7 @@ class GBWeight : public our_new_delete
 
   int gbvector_weight(const gbvector *f, int &lead_term_weight) const;
 
-  int monomial_weight(const int *monom, int comp) const;
+  int monomial_weight(const_monomial m, int comp) const;
 };
 
 #endif

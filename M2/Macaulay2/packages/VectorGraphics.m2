@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.99",
-        Date => "March 30, 2022", -- "May 18, 2018",
+        Version => "1.0",
+        Date => "October 4, 2022", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -64,14 +64,22 @@ gParse Thing := identity
 GraphicsAncestor = new Type of HashTable -- ancestor type, not meant to be used directly
 GraphicsCoordinate = new Type of GraphicsAncestor
 GraphicsObject = new Type of GraphicsAncestor
-gParse GraphicsObject := g -> ( -- GraphicsObject used as coordinate
-    new GraphicsCoordinate from {
+gParse GraphicsObject := g -> new GraphicsCoordinate from g -- GraphicsObject used as coordinate
+new GraphicsCoordinate from GraphicsObject := (T,g) -> hashTable { -- don't need to call directly, conversion is automatic anyway
 	symbol RefPointFunc => cmat -> g.cache.CurrentMatrix_3, -- closure
 	symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
-    }
-)
+	symbol formation => hold if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else "a "|toString class g
+    	}
 gParse GraphicsCoordinate := identity
 
+globalAssignment GraphicsAncestor
+scan({net,toString}, f -> f GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then f getAttribute(g,ReverseDictionary) else (lookup(f,HashTable)) g)
+expression GraphicsAncestor := hold
+-- TODO improve: keep track as e.g. direct sum. expressionify.
+toString GraphicsCoordinate := toString @@ expression
+net GraphicsCoordinate := net @@ expression
+html GraphicsCoordinate := html @@ expression
+expression GraphicsCoordinate := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else g.formation -- "a graphics coordinate"
 
 GraphicsObject ++ List := (opts1, opts2) -> (
     opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
@@ -189,16 +197,20 @@ gList = true >> opts -> x -> (
 )
 -- lists with preferred coordinate
 gNode = true >> opts -> x -> (
-    x = deepSplice x;
+    x = nonnull toList deepSplice if instance(x,List) then toSequence x else sequence x;
     ctr := x#0;
-    cnt := nonnull toList drop(x,1);
+    cnt := drop(x,1);
     if any(cnt,y->not instance(y,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
+    -- minor optimization: if exactly one content, we don't encapsulate it in a GraphicsList
     (if #cnt === 1 then if #opts === 0 then cnt#0 else new class cnt#0 from merge(cnt#0,opts,last) else GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
     )
-Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
+Number * GraphicsAncestor := (x,v) -> (
+    v = gParse v;
+    new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> x*compute(v,cmat),
-    symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")"
-    }
+    symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")",
+    symbol formation => Product{expression x,expression v}
+    })
 --Array + GraphicsAncestor := -- too messy to include Arrays in complex coordinate operations
 --GraphicsAncestor + Array :=
 Vector + GraphicsAncestor :=
@@ -208,7 +220,8 @@ GraphicsAncestor + GraphicsAncestor := (v,w) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> compute(v,cmat)+compute(w,cmat),
-    symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")"
+    symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")",
+    symbol formation => Sum{expression v,expression w}
     })
 - GraphicsAncestor := v -> (-1)*v
 Vector - GraphicsAncestor :=
@@ -225,7 +238,8 @@ place (GraphicsAncestor,GraphicsAncestor,Number,Number) := (v,w,a,b) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> place(compute(v,cmat),compute(w,cmat),a,b),
-    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
+    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")",
+    symbol formation => FunctionApplication{place,(expression v,expression w)}
     })
 place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
     v = gParse v;
@@ -261,7 +275,8 @@ crossing t := true >> o -> (v1,v2,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> crossing(compute(v1,cmat),compute(v2,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
+    symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")",
+    symbol formation => FunctionApplication{crossing,(expression v1,expression v2,expression w1,expression w2)}
     }))
 
 bisector = method()
@@ -282,7 +297,8 @@ bisector t := (v,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> bisector(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol JsFunc => () -> "gBisect("|jsString v|","|jsString w1|","|jsString w2|")"
+    symbol JsFunc => () -> "gBisect("|jsString v|","|jsString w1|","|jsString w2|")",
+    symbol formation => FunctionApplication{bisector,(expression v,expression w1,expression w2)}
     })
 )
 
@@ -305,7 +321,8 @@ projection t := (v,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> projection(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol JsFunc => () -> "gProject("|jsString v|","|jsString w1|","|jsString w2|")"
+    symbol JsFunc => () -> "gProject("|jsString v|","|jsString w1|","|jsString w2|")",
+    symbol formation => FunctionApplication{projection,(expression v,expression w1,expression w2)}
     })
 )
 
@@ -577,16 +594,11 @@ svg = g -> (
     svg2(g,one)
     )
 
-globalAssignment GraphicsAncestor
-toString GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
-net GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
-expression GraphicsAncestor := hold
-
 shortSize := 3.8
-short GraphicsObject := g -> (
-    if not g.?Size then return hold(g++{Size=>shortSize});
+short GraphicsObject := g -> hold (
+    if not g.?Size then return g++{Size=>shortSize};
     s := if instance(g.Size,Vector) then sqrt(g.Size_0^2+g.Size_1^2) else g.Size;
-    if s<shortSize then hold g else hold(g++{Size=>shortSize})
+    if s<shortSize then g else g++{Size=>shortSize}
     )
 
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
@@ -695,7 +707,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	sizex := rr_0*min(0.5,1.5/g.cache.Size_0); sizey := rr_1*min(0.5,1.5/g.cache.Size_1); -- can't be larger than half the pic; default = 1.5em
 	ss = append(ss,
 	(svgElement GraphicsList) {
-	    "transform" => "translate("|toString(r#0_0)|" "|toString(-r#1_1)|") scale("|toString sizex|" "|toString sizey|")",
+	    "transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
 	    "class" => "gfxauto",
 	    "onclick" => "gfxToggleRotation(event)",
 	    (svgElement Circle) { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
@@ -707,7 +719,8 @@ new SVG from GraphicsObject := (S,g) -> (
     ss
     )
 
-html GraphicsObject := g -> html SVG g;
+hypertext GraphicsObject := g -> SVG g
+html GraphicsObject := html @@ hypertext
 
 -- tex output
 tikzscale := 1; -- not thread-safe
@@ -803,7 +816,7 @@ tex svgElement GraphicsHtml :=
 tex svgElement GraphicsText := x -> concatenate(
     (op,ct,st) := ovr x;
     col := null;
-     -- TODO intepret options correctly (stroke vs fill)
+     -- TODO interpret options correctly (stroke vs fill)
     st = apply(st, s -> if substring(s,0,4) == "fill" or substring(s,0,4) == "draw" then if substring(s,5) != "none" then substring(s,5) else "" else s);
     "\\node",
     if #st>0 then "["|demark(",",st)|"]",
@@ -876,7 +889,7 @@ rotation = args -> (
     args = sequence args;
     if #args>3 then error("Too many arguments");
     angle := args#0;
-    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Sequence) and #args#1 === 3 )));
+    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Array) and #args#1 === 3 )));
     axis := promote(if threeD then if instance(args#1,Vector) then args#1 else vector toList args#1 else vector {0,0,1},RR);
     invr := 1/sqrt(axis_0^2+axis_1^2+axis_2^2);
     axis = invr*axis;
@@ -1051,7 +1064,7 @@ plot2d = true >> o -> (P,r) -> ( -- #r == 2, P should be a polynomial or nonempt
     flag := all(r,x->instance(x,Number)); -- only first coord specified
     explicit := numgens R === 1; -- no solving, just plotting
     rx := if flag then r else ( r = gParse r; apply(r,x->x_0) );
-    ymin := 1000; ymax := -1000; -- TODO beter
+    ymin := 1000; ymax := -1000; -- TODO better
     val := transpose apply(n+1, i -> (
 	    x := i*(rx#1-rx#0)/n+rx#0;
 	    yy := if explicit then apply(P, p -> sub (p,R_0=>x)) else sort apply(sS append(P, R_0 -x), p -> p#Crd#1); -- there are subtle issues with sorting solutions depending on real/complex...
@@ -1282,10 +1295,21 @@ multidoc ///
    Text
     A type that is used to describe (possibly dynamic) coordinates. Internally all coordinates are in $\RR^4$ (projective coordinates).
     Any @TO {GraphicsObject}@ can be turned into a @BOLD "GraphicsCoordinate"@ corresponding to the reference point $(0,0,0,1)$ in its local coordinate system.
-    It can then be manipulated using various operations such as addition, multiplication by scalar, etc
+    @BOLD "GraphicsCoodinate"@s can also be manipulated using various operations such as addition, multiplication by scalar, etc.
+    Though you can perform the conversion from @TO {GraphicsObject}@ to @BOLD "GraphicsCoodinate"@s explicitly using "new... from...",
+    you do not ever need to do so since this conversion is performed automatically
+    if you use a @TO {GraphicsObject}@ as coordinate inside another object, or apply arithmetic operations to it.
+    A convenient way to define @BOLD "GraphicsCoodinate"@s is via @TO {gNode}@.
    Example
     a=gNode([0,0],Circle{Radius=>1}); b=gNode([1,1],Circle{Radius=>1}); mid=a+b
     gList(a,b,Circle{mid,Radius=>1-1/sqrt 2})
+   Text
+    Note that any object that the @BOLD "GraphicsCoodinate"@ depends on must be provided explicitly as part of the picture, even
+    if that object happens to be "invisible". In the example that follows, @TT "a"@ is an empty graphical object, yet it must
+    be included in the @TO {gList}@ for the animation to work correctly.
+   Example
+    a=gNode([0,1],AnimMatrix=>rotation 0.1);
+    gList(a,Circle{Radius=>1},Polygon{{a,[-1,0],[1,0]}})
  Node
   Key
    Ellipse
@@ -1431,7 +1455,7 @@ multidoc ///
    Set the size of a picture
   Description
    Text
-    An option to fix the size of the @ TO {GraphicsObject} @ in line width units.
+    An option to fix the size of the @ TO {GraphicsObject} @ in HTML em units (1em = font size = width of one line of text).
     Only has an effect if in the outermost @ TO {GraphicsObject} @.
     Can be either a vector { width, height } or a number (diagonal).
  Node
@@ -1729,7 +1753,9 @@ undocumented {
     Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY, Frame,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsAncestor), (html,GraphicsObject), (net,GraphicsAncestor), (toString,GraphicsAncestor), (short,GraphicsObject),
-    (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
+    (tex, SVG), (texMath, SVG), (tex, GraphicsObject), (texMath, GraphicsObject), 
+    (expression, GraphicsCoordinate), (net, GraphicsCoordinate), (html, GraphicsCoordinate), (toString, GraphicsCoordinate),
+    (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject), (NewFromMethod,GraphicsCoordinate,GraphicsObject)
 }
 
 end
@@ -1831,7 +1857,7 @@ gList(sph, apply(toSequence cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},R
 
 -- explicit plot
 R=RR[x,y]; P=0.1*(x^2-y^2);
-gList(plot(P,{{-10,10},{-10,10}},Mesh=>15,"stroke-width"=>0.05,"fill"=>"gray"),Light{[200,0,-500],Specular=>10,"fill"=>"rgb(180,0,100)"},Light{[-200,100,-500],Specular=>10,"fill"=>"rgb(0,180,100)"},Size=>50,Axes=>false)
+gList(plot3d(P,{{-10,-10},{10,10}},Mesh=>15,"stroke-width"=>0.05,"fill"=>"gray"),Light{[200,0,-500],Specular=>10,"fill"=>"rgb(180,0,100)"},Light{[-200,100,-500],Specular=>10,"fill"=>"rgb(0,180,100)"},Size=>50,Axes=>false)
 
 -- implicit plot
 R=RR[x,y];

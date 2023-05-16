@@ -10,6 +10,7 @@ regex.m2
 profile.m2
 debugging.m2
 remember.m2
+iterators.m2
 files.m2
 
 set.m2
@@ -43,10 +44,10 @@ reals.m2
 intervals.m2
 quotient.m2
 powers.m2
-orderedmonoidrings.m2
 variables.m2
 indeterminates.m2
-ofcm.m2
+monoids.m2
+polyrings.m2
 dotdot.m2
 
 modules.m2
@@ -56,7 +57,6 @@ mutablemat.m2
 localring.m2
 quotring.m2
 freealgebras.m2
-multilin.m2
 flint.m2
 modules2.m2
 hilbert.m2
@@ -67,6 +67,7 @@ ringmap.m2
 newring.m2
 basis.m2
 genmat.m2
+multilin.m2
 pushforward.m2
 ext.m2
 tor.m2

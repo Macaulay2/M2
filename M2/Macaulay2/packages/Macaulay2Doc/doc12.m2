@@ -283,15 +283,11 @@ document {
 
 undocumented {
     (symbol -, Thing, Minus),
-    (symbol +, Sum, ZeroExpression),
-    (symbol +, Holder, ZeroExpression),
     (symbol +, Sum, Sum),
     (symbol +, Sum, Holder),
     (symbol +, Holder, Sum),
     (symbol +, ZeroExpression, Expression),
     (symbol +, Expression, ZeroExpression),
-    (symbol +, Expression, Sum),
-    (symbol +, Sum, Expression),
     }
 
 expressionMethodKeys := flatten apply(toList core "expressionBinaryOperators", op -> {
@@ -373,7 +369,7 @@ document {
      }
 
 document {
-     Key => {MatrixExpression, CompactMatrix, BlockMatrix},
+     Key => MatrixExpression,
      Headline => "the class of all matrix expressions",
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
@@ -381,27 +377,9 @@ document {
      EXAMPLE {
 	 ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
 	 ///R=QQ[x,y];///,
-         ///MatrixExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}}}///,
+         ///MatrixExpression append(applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}})///,
 	 ///value oo///
 	 },
-     PARA {
-	  "The optional argument ", TO "CompactMatrix", " may be used with ", TT "new MatrixExpression", " to specify
-	  whether the matrix should be displayed compactly."
-	  },
-     EXAMPLE lines ///
-     R = QQ[x];
-     f = {{x^2,x^3}}
-     new MatrixExpression from {f, CompactMatrix => false}
-     new MatrixExpression from {f, CompactMatrix => true}
-     ///,
-     PARA {
-	  "The optional argument ", TO "BlockMatrix", " may be used with ", TT "new MatrixExpression", " to specify
-	  the numbers of rows and columns to use when displaying the matrix as a block matrix."
-	  },
-     EXAMPLE lines ///
-     g = apply(4,i -> apply(4,j -> 10*i+j+10))
-     new MatrixExpression from { g, BlockMatrix => {{1,2},{3,1}}}
-     ///,
      SeeAlso => {"Table"}
      }
 
@@ -447,12 +425,14 @@ document {
      "This is a unary operator."
      }
 
+-*
 document {
      Key => NonAssociativeProduct,
      Headline => "the class of all nonassociative product expressions",
      TT "NonAssociativeProduct", " is a type of ", TO "Expression", " representing
      a nonassociative product."
      }
+*-
 
 document {
      Key => Power,

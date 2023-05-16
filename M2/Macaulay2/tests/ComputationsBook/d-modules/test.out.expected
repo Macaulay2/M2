@@ -5,7 +5,7 @@ i2 : D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 
 o2 = D
 
-o2 : PolynomialRing, 3 differential variables
+o2 : PolynomialRing, 3 differential variable(s)
 
 i3 : Delta = ideal(Dx,Dy,Dz)
 
@@ -23,6 +23,8 @@ o4 : D
 i5 : options D
 
 o5 = OptionTable{Constants => false                              }
+                                  1
+                 DegreeGroup => ZZ
                  DegreeLift => null
                  DegreeMap => null
                  DegreeRank => 1
@@ -37,7 +39,7 @@ o5 = OptionTable{Constants => false                              }
                                   {Position => Up               }
                  SkewCommutative => {}
                  Variables => {x, y, z, Dx, Dy, Dz}
-                 WeylAlgebra => {x => Dx, y => Dy, z => Dz}
+                 WeylAlgebra => {{x, Dx}, {y, Dy}, {z, Dz}}
 
 o5 : OptionTable
 
@@ -132,7 +134,7 @@ i21 : use D
 
 o21 = D
 
-o21 : PolynomialRing, 4 differential variables
+o21 : PolynomialRing, 4 differential variable(s)
 
 i22 : R = (D^1/ideal(Dx,Dy,Dz,Dw))
 
@@ -363,7 +365,7 @@ i63 : D = ring JH3
 
 o63 = D
 
-o63 : PolynomialRing, 6 differential variables
+o63 : PolynomialRing, 6 differential variable(s)
 
 i64 : findSocle(JH3,1_D)
 

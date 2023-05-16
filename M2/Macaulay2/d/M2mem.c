@@ -204,6 +204,56 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      return p;
      }
 
+/* Valgrind helper functions */
+#ifndef NVALGRIND
+
+void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc)(size_t s){
+    long result;
+    OrigFn fn;
+    VALGRIND_GET_ORIG_FN(fn);
+    CALL_FN_W_W(result,fn,s);
+    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
+    return (void*)result;
+}
+
+void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_atomic)(size_t s){
+    long result;
+    OrigFn fn;
+    VALGRIND_GET_ORIG_FN(fn);
+    CALL_FN_W_W(result,fn,s);
+    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
+    return (void*)result;
+}
+
+void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_ignore_off_page)(size_t s){
+    long result;
+    OrigFn fn;
+    VALGRIND_GET_ORIG_FN(fn);
+    CALL_FN_W_W(result,fn,s);
+    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
+    return (void*)result;
+}
+
+void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_atomic_ignore_off_page)(size_t s){
+    long result;
+    OrigFn fn;
+    VALGRIND_GET_ORIG_FN(fn);
+    CALL_FN_W_W(result,fn,s);
+    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
+    return (void*)result;
+}
+
+void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_realloc)(void *p, size_t s){
+    long result;
+    OrigFn fn;
+    VALGRIND_GET_ORIG_FN(fn);
+    CALL_FN_W_WW(result,fn,(long)p,s);
+    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
+    return (void*)result;
+}
+
+#endif /* NVALGRIND */
+
 /*
  Local Variables:
  compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "

@@ -3,11 +3,9 @@
 -- html output
 -----------------------------------------------------------------------------
 
-needs "debugging.m2" -- for Descent
 needs "format.m2"
-needs "gb.m2" -- for for GroebnerBasis
-needs "packages.m2" -- for Package
 needs "system.m2" -- for getViewer
+needs "monoids.m2" -- for Monoid
 
 getStyleFile := fn -> locateCorePackageFileRelative("Style",
     layout -> replace("PKG", "Style", layout#"package") | fn,
@@ -58,7 +56,7 @@ defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "tex
 defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX(),
     SCRIPT {
 	"type" => "text/javascript",
-	"src" => getStyleFile "highlight.js",
+	"src" => getStyleFile "prism.js",
 	""
 	}
     }
@@ -86,22 +84,25 @@ popIndentLevel  = (n, s) -> (indentLevel = indentLevel - n; s)
 
 -- This method applies to all types that inherit from Hypertext
 -- Most MarkUpTypes automatically work recursively
-html1 := x -> (if class x === String then htmlLiteral else html) x -- slightly annoying workaround for the ambiguous role of strings in/out of Hypertext
+html1 = method(Dispatch=>Thing)
+html1 String := htmlLiteral -- slightly annoying workaround for the ambiguous role of strings in/out of Hypertext
+html1 Thing := html
+html1 Nothing := x -> ""
 
+scan(methods hypertext, (h,t) -> html t := html @@ hypertext)
 html Hypertext := x -> (
     T := class x;
     qname := T.qname;
     attr := "";
     cont := if T.?Options then (
-	(op, ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
-	    "unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
+	(op, ct) := override(options T, toSequence x);
 	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);
 	sequence ct) else x;
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (
 	if instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
 	if instance(x, HypertextParagraph) then (concatenate(indentLevel:"  "), "", "", newline) else ("","","",""));
-    popIndentLevel(1, if #cont == 0
+    popIndentLevel(1, if instance(x, HypertextVoid)
 	then concatenate(head, "<", qname, attr, "/>", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
 	    apply(cont, html1), suffix, "</", qname, ">", tail)))
@@ -149,6 +150,8 @@ html HREF := x -> (
 
 html MENU := x -> html redoMENU x
 
+html INDENT := x -> html DIV append(toList x, "class"=>"indent")
+
 html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
 html TO2  := x -> (
     tag := getPrimaryTag fixup x#0;
@@ -164,42 +167,12 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
-html Nothing := x -> ""
+html Nothing := x -> "null"
 
--- text stuff: we use html instead of tex, much faster (and better spacing)
-html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
-    toString(if #n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
-    apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
-html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
-    if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
-    "</pre>")
-html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:left\">\n", apply(sortByName pairs x,
-     (k,v) -> (
-	  if #v === 0
-	  then html k
-	  else html k | " : " | html v
-	  ) | "<br/>"), "</span>")
-html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
--- a few types are just strings
-html Command :=
-html File :=
-html IndeterminateNumber :=
-html GroebnerBasis :=
-html Package :=
-html Boolean :=
-html Function :=
-html FilePosition :=
-html Manipulator :=
-html Dictionary :=
-html Type := html @@ toString
--- except not these descendants
 html Monoid :=
 html RingFamily :=
-html Ring := lookup(html,Thing)
-
---html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
---html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)
+html Ring :=
+html Thing := x -> "$" | htmlLiteral texMath x | "$" -- by default, we use math mode tex (as opposed to actual html)
 
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser

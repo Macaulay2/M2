@@ -24,7 +24,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZpFlint : public RingInterface
+class ARingZZpFlint : public SimpleARing<ARingZZpFlint>
 {
   // Integers mod p, implemented as
   // residues in 0..p-1, where
@@ -80,7 +80,7 @@ class ARingZZpFlint : public RingInterface
 
   void init(ElementType &result) const { result = 0; }
   void init_set(ElementType &result, ElementType a) const { result = a; }
-  void clear(ElementType &result) const { /* nothing */}
+  static void clear(ElementType &result) { /* nothing */}
 
   void set(ElementType &result, ElementType a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0; }
@@ -259,6 +259,11 @@ class ARingZZpFlint : public RingInterface
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
     result = static_cast<mp_limb_t>(a.get_long());
+  }
+
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return static_cast<mp_limb_t>(a.get_long());
   }
 
  private:

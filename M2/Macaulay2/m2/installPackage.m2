@@ -152,7 +152,7 @@ makeTree := (parent, graph, visits, node) -> (
     new TreeNode from {node, tree})
 
 -- pre-compute the list of orphan nodes in a graph, with parent
--- node (typcally topDocumentTag) appearing in the beginning
+-- node (typically topDocumentTag) appearing in the beginning
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
     if not nonLeaves#?parent and signalDocumentationWarning parent then printerr("warning: top node ", parent, " not a root");
@@ -240,6 +240,7 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 topNodeButton  := (htmlDirectory, topFileName)   -> HREF {htmlDirectory | topFileName,   "top" };
 indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexFileName, "index"};
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
+pkgButton      := TO2 {"packages provided with Macaulay2", "packages"};
 homeButton     := HREF {"http://macaulay2.com/", "Macaulay2 website"};
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
@@ -252,7 +253,7 @@ topButton      := tag -> if tag =!= topDocumentTag then topNodeButton(htmlDirect
 -- TODO: revamp this using Bootstrap
 buttonBar := tag -> TABLE { "class" => "buttons", TR { TD { DIV splice between_" | " {
 		nextButton tag, prevButton tag, forwardButton tag, backwardButton tag, upButton tag, topButton tag,
-		indexButton(htmlDirectory, indexFileName), tocButton(htmlDirectory, tocFileName), homeButton}}}}
+		indexButton(htmlDirectory, indexFileName), tocButton(htmlDirectory, tocFileName), pkgButton, homeButton}}}}
 
 -----------------------------------------------------------------------------
 -- makePackageIndex
@@ -387,7 +388,7 @@ makeSortedIndex := (nodes, verboseLog) -> (
      fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY nonnull {
-	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", tocButton(htmlDirectory, tocFileName), -* " | ", directoryButton, *- " | ", homeButton },
+	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", tocButton(htmlDirectory, tocFileName), " | ", pkgButton, " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})),
@@ -405,7 +406,7 @@ makeTableOfContents := (pkg, verboseLog) -> (
      fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY {
-	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", indexButton(htmlDirectory, indexFileName), -* " | ", directoryButton, *- " | ", homeButton },
+	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", indexButton(htmlDirectory, indexFileName), " | ", pkgButton, " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       toDoc unbag pkg#"table of contents"
@@ -743,7 +744,7 @@ installPackage Package := opts -> pkg -> (
 
 	-- should this be here, or farther up? Note: assembleTree resets the counters, so stay above that.
 	if chkdoc and hadDocumentationError then error(
-	    toString numDocumentationErrors, " errors(s) occurred in processing documentation for package ", toString pkg);
+	    toString numDocumentationErrors, " error(s) occurred in processing documentation for package ", toString pkg);
 
 	if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB;
 
@@ -786,7 +787,7 @@ installPackage Package := opts -> pkg -> (
 			))));
 
 	if chkdoc and hadDocumentationError then error(
-	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
+	    toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
 	-- ~60 -> ~70s for Macaulay2Doc
