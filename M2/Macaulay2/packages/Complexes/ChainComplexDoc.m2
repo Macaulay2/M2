@@ -945,7 +945,6 @@ doc ///
         [freeResolution, PairLimit]
         [freeResolution, SortStrategy]
         [freeResolution, StopBeforeComputation]
-        [freeResolution, Strategy]
         [freeResolution, SyzygyLimit]
     Headline
         optional arguments for freeResolution
@@ -968,7 +967,7 @@ doc ///
     Inputs
         M:Module
         I:Ideal
-            in the ring $R$, treated as the quotient module {\tt R^1/I}
+            in the ring $R$, treated as the quotient module $R^1/I$
         LengthLimit => ZZ
             this is used to limit somehow the computation where resolutions might be too long or infinite
         DegreeLimit => List
@@ -994,8 +993,8 @@ doc ///
             certain number of syzygies have computed
     Outputs
         :Complex
-            a free resolution of the module {\tt M} or of the
-            quotient module {\tt R^1/I}
+            a free resolution of the module $M$ or of the
+            quotient module $R^1/I$
     Description
         Text
             A free resolution of a module $M$ is a complex
@@ -1004,10 +1003,9 @@ doc ///
             F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
             $
 
-            of free modules.  The homology of a resolution is
-            concentrated in homological degree zero and is isomorphic
-            to the module $M$.
-            Equivalently, the augmented complex 
+            of free modules, whose homology is concentrated in
+            homological degree zero and is isomorphic to the module
+            $M$.  Equivalently, the augmented complex
 
             $\phantom{WWWW}
             0 \leftarrow M \leftarrow F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
@@ -1048,6 +1046,14 @@ doc ///
         Example
             assert(freeResolution I == C)
             assert(resolution complex M == freeResolution M)
+        Text
+            We obtain the resolution of the module $I$, rather than the comodule $R^1/I$,
+            as follows.
+        Example
+            C' = freeResolution module I
+            assert isWellDefined C'
+            assert(C' != C)
+            assert(betti naiveTruncation(C, 1, infinity) == betti C'[-1])
         Text
             Over a quotient ring, free resolutions are typically infinite.
             To specify a finite part of the resolution, one needs to use
@@ -1093,6 +1099,117 @@ doc ///
         (betti, Complex)
 ///
 
+doc ///
+    Key
+        "Strategies for free resolutions"
+        [freeResolution, Strategy]
+    Headline
+        overview of the different algorithms for computing free resolutions
+    Description
+        Text
+            There are several distinct algorithms for computing free
+            resolutions in {\it Macaulay2}.  They make different
+            assumptions about the module or unerlying ring.
+        Text
+    	    @UL {
+                TO "freeResolution(..., Strategy => ModuleOverField)",
+                TO "freeResolution(..., Strategy => ModuleOverZZ)",
+                TO "freeResolution(..., Strategy => Engine)",
+                TO "freeResolution(..., Strategy => 1)",
+                TO "freeResolution(..., Strategy => 3)",
+                TO "freeResolution(..., Strategy => 2)",
+                TO "freeResolution(..., Strategy => 0)",
+                TO "freeResolution(..., Strategy => Homogenization)",
+                TO "freeResolution(..., Strategy => Syzygies)",
+                TO "freeResolution(..., Strategy => FastNonminimal)"
+            }@
+        Text
+            One can always access the full list of possible strategies
+            in {\it Macaulay2} as follows.
+        Example
+            hooks freeResolution
+    SeeAlso
+        (freeResolution, Module)
+        hooks
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions over a field"
+        "freeResolution(..., Strategy => ModuleOverField)"
+    Headline
+        algorithm for computing free resolutions over a field
+    Usage
+        freeResolution M
+        freeResolution(M, Strategy => "Field")
+    Inputs
+        M:Module
+            over a field
+    Outputs
+        :Complex
+            a free resolution of the module $M$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            Every module over a field is free.  Therefore a
+            minimal free resolution is determined by choosing a basis.
+            This is the default strategy when the
+            underlying ring is a field, so in practice it never
+            needs to be specified.
+        Text
+            Our first examples are over finite fields.  Notice that
+            the most interesting feature is the augmentation map.
+        Example
+            kk = ZZ/32003;
+            M = coker random(kk^3, kk^2)
+            F = freeResolution M
+            assert(F === freeResolution(M, Strategy => "Field"))
+            assert isWellDefined F
+            g = augmentationMap F
+            assert isWellDefined g
+            assert(source g == F)
+            assert(target g == complex M)
+            assert(coker g == 0 and ker g == 0)
+        Text
+            Finding a minimal free resolution for a module
+            over a field is equivalent to finding a @TO2((minimalPresentation, Module), "minimal Presentation")@.
+        Example
+            N = ker random(kk^3, kk^2) ++ M
+            F = freeResolution N
+            g = augmentationMap F
+            PN = minimalPresentation N
+            assert(g_0 == PN.cache.pruningMap)
+        Example
+            kk = GF(3^10);
+            M = coker random(kk^3, kk^2)
+            F = freeResolution M
+            g = augmentationMap F
+        Text
+            This also works over the rationals, number fields, and
+            fraction fields.
+        Example
+            kk = QQ;
+            M = coker random(kk^3, kk^2, Height => 10000)
+            F = freeResolution M
+            g = augmentationMap F
+        Example
+            S = QQ[a]/(a^3-a-1);
+            kk = toField S;
+            M = coker sub(random(S^3, S^{-2,-2}) + random(S^3, S^{-1,-1}) + random(S^3, S^2), kk)
+            F = freeResolution M
+            g = augmentationMap F
+        Example
+            S = ZZ/101[a,b,c,d];
+            kk = frac S;
+            M = coker sub(random(S^3, S^{-1,-1}), kk)
+            F = freeResolution M
+            g = augmentationMap F
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
 
 doc ///
    Key
