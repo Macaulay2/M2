@@ -13,7 +13,7 @@ newPackage(
 	     HomePage => "https://sites.google.com/view/oclarke-homepage/"},
 	    {Name => "Timothy Duff",
 	     Email => "timduff@uw.edu",
-	     HomePage => "https://timduff35.github.io/timduff35/"},
+nnnn	     HomePage => "https://timduff35.github.io/timduff35/"},
 	    {Name => "Jackson Leaman",
 		 Email => "jacksonleaman@gmail.com"},
 	    {Name => "Nathan Nichols", 
@@ -24,8 +24,7 @@ newPackage(
 	    {Name => "Legacy author: Mike Stillman",
 	     Email => "mike@math.cornell.edu",
 	     HomePage => "http://www.math.cornell.edu/~mike/"},
-	    {Name => "Legacy author: Harrison Tsai"},
-            {Name => "We thank the following contributors from the 2020 Macaulay2 workshops at Cleveland State University and University of Warwick: Aaron Dall, Alessio D'Alì, Alicia Tocino, Ayah Almousa, Dharm Veer, Dipak Kumar Pradhan, Emil Sköldberg, Eriola Hoxhaj, Kriti Goel, Liđan Edin, Peter Phelan, Ritika Nair, Ilir Dema"}
+	    {Name => "Legacy author: Harrison Tsai"}
 	    },
     	Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files

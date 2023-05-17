@@ -33,6 +33,10 @@ doc ///
       "B. Sturmfels, Groebner bases and Convex Polytopes, Univ. Lecture
       Series 8, Amer Math Soc, Providence, 1996"
       }@
+    Text
+       @SUBSECTION "Contributors"@
+    Text
+       We thank the following contributors from the 2020 Macaulay2 workshops at Cleveland State University and University of Warwick: Aaron Dall, Alessio D'Alì, Alicia Tocino, Ayah Almousa, Dharm Veer, Dipak Kumar Pradhan, Emil Sköldberg, Eriola Hoxhaj, Kriti Goel, Liđan Edin, Peter Phelan, Ritika Nair, Ilir Dema.
   SeeAlso
     "Example: Translation and rotation sub-actions of the adjoint action of SE(3)"
 ///

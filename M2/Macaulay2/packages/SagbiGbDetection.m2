@@ -117,7 +117,7 @@ doc ///
     Key
       SagbiGbDetection
     Headline
-      A package for finding term orders for which the given generators of an ideal/algebra form a Gröbner/SAGBI basis (resp.)
+      Finding term orders for which the generators of an ideal/algebra form a Gröbner/SAGBI basis.
     Description
      Text
        The main functions of this package implement the detection algorithms for Gröbner bases of ideals and SAGBI 
@@ -243,9 +243,10 @@ capture examples weightVectorsRealizingSAGBI
 
 
 restart
+installPackage("SagbiGbDetection", MakeDocumentation => true, DebugLevel => 1)
 needsPackage "SagbiGbDetection"
 uninstallPackage "SagbiGbDetection"
-installPackage("SagbiGbDetection", MakeDocumentation => true)
+
 
 check "SagbiGbDetection"
 viewHelp "SagbiGbDetection"
