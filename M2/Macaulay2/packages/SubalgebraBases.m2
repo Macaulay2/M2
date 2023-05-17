@@ -13,7 +13,7 @@ newPackage(
 	     HomePage => "https://sites.google.com/view/oclarke-homepage/"},
 	    {Name => "Timothy Duff",
 	     Email => "timduff@uw.edu",
-nnnn	     HomePage => "https://timduff35.github.io/timduff35/"},
+	     HomePage => "https://timduff35.github.io/timduff35/"},
 	    {Name => "Jackson Leaman",
 		 Email => "jacksonleaman@gmail.com"},
 	    {Name => "Nathan Nichols", 
