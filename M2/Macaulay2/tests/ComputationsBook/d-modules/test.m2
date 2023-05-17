@@ -1,4 +1,4 @@
-needsPackage "Dmodules";
+needsPackage "BernsteinSato";
 D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 Delta = ideal(Dx,Dy,Dz)
 (Dx * x)^2

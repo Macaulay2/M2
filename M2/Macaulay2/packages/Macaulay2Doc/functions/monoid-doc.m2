@@ -474,6 +474,7 @@ Node
 Node
   Key
     [monoid, WeylAlgebra]
+    WeylAlgebra
   Headline
     specify differential operators in the ring
   Usage
@@ -496,10 +497,16 @@ Node
       this option, but the differential variable always has to come to the right
       of the corresponding algebra variable.
     Example
---      QQ[a,b,x,dx,y,dy, WeylAlgebra => { {2,   3}, {4,   5} }]
---      QQ[a,b,x,dx,y,dy, WeylAlgebra => { {2 => 3}, {4 => 5} }]
+      QQ[a,b,x,dx,y,dy, WeylAlgebra => { {2,   3}, {4,   5} }]
+      QQ[a,b,x,dx,y,dy, WeylAlgebra => {  2 => 3,   4 => 5  }]
       QQ[a,b,x,dx,y,dy, WeylAlgebra => {  x => dx,  y => dy }]
       QQ[a,b,x,dx,y,dy, WeylAlgebra => { (x, y) => (dx, dy) }]
+    Text
+      The package @TO "Dmodules::Dmodules"@ contains further methods for creating
+      and manipulating Weyl algebras.
+    Example
+      needsPackage "Dmodules"
+      makeWA(QQ[x,y])
     Text
       Lastly, if a single variable is provided at the end, it is used as a homogenizing
       variable.
@@ -517,6 +524,7 @@ Node
     newRing
     (tensor, Ring, Ring)
     symmetricAlgebra
+    "Dmodules::makeWeylAlgebra"
 
 Node
   Key

@@ -1453,7 +1453,7 @@ assert( (symbolicPowerCurveIdeal(J,-1)) == ideal 1_R )
 ///
 
 TEST ///
-needsPackage"Dmodules";
+needsPackage"BernsteinSato";
 needsPackage"MultiplierIdeals";
 debug MultiplierIdeals;
 
@@ -1463,7 +1463,7 @@ assert( (multiplierIdeal(R,{2,3,4},7/6)) == ideal 1_R )
 assert( (multiplierIdeal(R,{2,3,4},20/7)) == ideal(y^2*z-x*z^2,x^2*z-z^2,y^3-x*y*z,x*y^2-z^2,x^2*y-y*z,x^3-x*z) )
 assert( (multiplierIdeal(R,{3,4,5},11/5)) == ideal(y^2-x*z,x^2*y-z^2,x^3-y*z) )
 I = affineMonomialCurveIdeal(R,{2,3,4})
-assert(multiplierIdeal(R,{2,3,4},3/2) == Dmodules$multiplierIdeal(I,3/2))
+assert(multiplierIdeal(R,{2,3,4},3/2) == BernsteinSato$multiplierIdeal(I,3/2))
 ///
 
 TEST ///
@@ -1696,7 +1696,7 @@ document {
   },
   PARA {
     "The package ",
-    EM "Dmodules",
+    EM "BernsteinSato",
     " provides computations of multiplier ideals,
     log canonical thresholds, and jumping numbers of arbitrary ideals
     using general algorithms."

@@ -6,7 +6,7 @@ newPackage(
                   Email => "", 
                   HomePage => ""}},
         Headline => "an interface to the Risa/Asir website and system",
-        PackageExports => {"Dmodules"},
+        PackageExports => {"BernsteinSato"},
         DebuggingMode => false
         )
 
