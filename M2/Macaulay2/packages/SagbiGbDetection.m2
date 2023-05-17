@@ -36,7 +36,7 @@ reducedSpairs = GS -> apply(subsets(#GS, 2), Si -> (
 --      f, a polynomial.
 --      G, a list of polynomials (not necessarily forming a Groebner basis.)
 --  OUT: The "remainder" of f upon division by leading terms of G
--- Note: This is not always the same as % in general, which would compute the actual normal form moduluo the ideal <G>
+-- Note: This is not always the same as % in general, which would compute the actual normal form modulo the ideal <G>
 division = (f, G) -> (
     S := ring f;
     p := f;
@@ -126,17 +126,22 @@ doc ///
        form a Gröbner basis or a SAGBI basis, respectively. If no weight vectors are returned, the given generators do not form a 
        Gröbner/SAGBI basis for any order.
      Text
-        See documentation nodes for the main functions @TO weightVectorsRealizingGB@ and @TO weightVectorsRealizingSAGBI@ for typical usage of this package.
-	Some references describing the algorithms:
-	@UL {
-      	"Gritzmann, Peter, and Bernd Sturmfels. Minkowski addition of polytopes: computational complexity and applications to Gröbner bases. SIAM Journal on Discrete Mathematics 6.2 (1993): 246-269.",
-	"Sturmfels, Bernd. Grobner bases and convex polytopes. Vol. 8. American Mathematical Soc., 1996."
-	}@
+        Documentation nodes for the main functions @TO "weightVectorsRealizingGB"@ and @TO "weightVectorsRealizingSAGBI"@ illustrate typical usage of this package.
+    Subnodes
+      weightVectorsRealizingSAGBI
+      weightVectorsRealizingGB
+    References	
+      @UL {
+      {"Gritzmann, Peter, and Bernd Sturmfels. Minkowski addition of polytopes: computational complexity and applications to Gröbner bases. SIAM Journal on Discrete Mathematics 6.2 (1993): 246-269."},
+      {"Sturmfels, Bernd. Grobner bases and convex polytopes. Vol. 8. American Mathematical Soc., 1996."}
+      }@
 ///
 
 doc ///
     Key
       weightVectorsRealizingGB
+      (weightVectorsRealizingGB, List)
+      (weightVectorsRealizingGB, Matrix)
     Headline
       The main function for detecting Gröbner bases
     Usage
@@ -163,7 +168,7 @@ doc ///
        G3 = {x^2-z, x*y-z^2, x*z-y, w-z^2, y^2-z^3}
        weightVectorsRealizingGB G3
      Text
-       Here are three examples of generating sets which are not Gröbner bases:
+       Here are two examples of generating sets which are not Gröbner bases:
      Example 
        R4 = QQ[x,y, MonomialOrder=>Lex];
        G4 = {x^2+y^2-1, 2*x*y-1};
@@ -172,15 +177,13 @@ doc ///
        R5 = QQ[x,y,z, MonomialOrder=>Lex];
        G5 = {x*y^2-x*z+y, x*y-z^2, x-y*z^4};
        weightVectorsRealizingGB G5
-
-       R6 = QQ[x,y,z, MonomialOrder=>Lex];
-       G6 = {x^5+y^3+z^3-1, x^2+y^2+z-1, x^6+y^5+z^3-1};
-       weightVectorsRealizingGB G6
 ///
 
 doc ///
     Key
       weightVectorsRealizingSAGBI
+      (weightVectorsRealizingSAGBI, List)
+      (weightVectorsRealizingSAGBI, Matrix)
     Headline
       The main function for detecting SAGBI bases
     Usage
@@ -241,11 +244,20 @@ check "SagbiGbDetection"
 capture examples weightVectorsRealizingGB
 capture examples weightVectorsRealizingSAGBI
 
-
+uninstallPackage "SubalgebraBases"
 restart
-needsPackage "SagbiGbDetection"
+installPackage("SubalgebraBases", FileName => "./SubalgebraBases.m2")
+viewHelp "SubalgebraBases"
+
 uninstallPackage "SagbiGbDetection"
+restart
 installPackage("SagbiGbDetection", MakeDocumentation => true)
+viewHelp "SagbiGbDetection"
+viewHelp "SubalgebraBases"
+
+
+uninstallPackage "SagbiGbDetection"
+
 
 check "SagbiGbDetection"
 viewHelp "SagbiGbDetection"
