@@ -43,8 +43,6 @@ TEST String := opts -> teststring -> (
         (minimizeFilename currentFileName, currentRowNumber(), teststring);
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
-TEST(String, String) := (title, teststring) -> (
-    n := currentPackage#"test number"; () -> check(n - 1, currentPackage))
 
 -----------------------------------------------------------------------------
 -- check
