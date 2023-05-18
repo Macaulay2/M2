@@ -217,6 +217,7 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-mpfi`:	[MPFI] a multiple precision interval arithmetic library based on MPFR
   - `build-mpir`:	[MPIR] Multiple Precision Integers & Rationals library (optional replacement for GMP)
   - `build-mpsolve`: [MPSolve] library for solving multiprecision polynomials
+  - `build-msolve`:	[MSolve] library for solving multivariate polynomials
   - `build-ntl`:	[NTL] library for doing number theory
 
 [Boehm-Demers-Weiser]: https://www.hboehm.info/gc/
@@ -236,6 +237,7 @@ Macaulay2 uses several external libraries and programs, which can be built using
 [MPFI]: http://perso.ens-lyon.fr/nathalie.revol/software.html
 [MPIR]: http://mpir.org/
 [MPSolve]: https://github.com/robol/MPSolve
+[MSolve]: https://msolve.lip6.fr/
 [NTL]: https://www.shoup.net/ntl/
 
 - `build-programs`: build all programs
