@@ -6,7 +6,7 @@ pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.5",
-    Date => "May 13, 2023",
+    Date => "May 18, 2023",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -27,8 +27,10 @@ newPackage("Python",
 
 -*
 
-0.5 (2023-05-13, M2 1.22)
+0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
+* switch member -> isMember
+* add keyword
 
 0.4 (2022-10-31, M2 1.21)
 * fix bug involving hash codes for unhashtable types
