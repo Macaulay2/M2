@@ -3,7 +3,7 @@
 newPackage(
     "CellularResolutions",
     Version => "1.0",
-    Date => "May 14, 2023",
+    Date => "May 17, 2023",
     Authors => {
         {Name => "Jay Yang", Email => "jayy@wustl.edu"},
         {Name => "Aleksandra Sobieska", Email => "asobieska@math.wisc.edu"}
@@ -663,7 +663,7 @@ scarfComplex = method(TypicalValue=>CellComplex)
 scarfComplex(MonomialIdeal) := (I) -> (
     gensI := I_*;
     r := #gensI;
-    if r == 0 then error "scarftComplex expects a non-zero monomialIdeal";
+    if r == 0 then error "scarfComplex expects a non-zero monomialIdeal";
     cells := new MutableHashTable;
     dupLabels := new MutableHashTable;
     for i to r-1 do cells#(gensI#i) = newSimplexCell({},gensI#i);
@@ -672,24 +672,28 @@ scarfComplex(MonomialIdeal) := (I) -> (
         for s in subsets(r,k) do (
             --boundary cell via the labels
             bdLabels := for t in subsets(s,k-1) list lcm(gensI_t);
-            incompleteBoundary := false;
-            bd := for label in bdLabels list (
-                if cells#?label then cells#label else (incompleteBoundary = true; break;));
-            if incompleteBoundary then continue;
             --compute the label of the cell
             m := lcm(gensI_s);
             --figure out if we have a duplicate label, if we do remove any cells with
             --the same label, otherwise add the cell
             if not dupLabels#?m
-            then if cells#?m
+            then (if cells#?m
                  then (
                      dupLabels#m = true;
                      remove(cells,m))
                  else (
+                     incompleteBoundary := false;
+                     bd := for label in bdLabels list (
+                         if cells#?label then cells#label else (incompleteBoundary = true; break;));
+                     if incompleteBoundary then{
+                         dupLabels#m = true;
+                         continue
+                         };
                      hasCells = true;
-                     cells#m = newSimplexCell(bd, m));
+                     cells#m = newSimplexCell(bd, m)));
             );
         --if there are no cells at dimension k, there won't be any of higher dimension
+        --as well as no new labels
         if not hasCells then break;
         );
     cellComplex(ring I, values cells)
