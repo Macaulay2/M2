@@ -100,8 +100,8 @@ for m in {
     } do installMethod(m, PythonObject, Thing, err)
 
 -- others
-member(Thing, PythonObject) :=
-member(PythonObject, PythonObject) :=
+isMember(Thing, PythonObject) :=
+isMember(PythonObject, PythonObject) :=
 quotientRemainder(PythonObject, PythonObject) :=
 quotientRemainder(Thing, PythonObject) :=
 round(ZZ, PythonObject) :=

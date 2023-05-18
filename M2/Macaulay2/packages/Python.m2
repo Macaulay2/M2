@@ -6,7 +6,7 @@ pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.5",
-    Date => "May 13, 2023",
+    Date => "May 18, 2023",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -15,6 +15,7 @@ newPackage("Python",
 	{Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+    Keywords => {"Interfaces"},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
     OptionalComponentsPresent => pythonPresent
@@ -26,8 +27,10 @@ newPackage("Python",
 
 -*
 
-0.5 (2023-05-13, M2 1.22)
+0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
+* switch member -> isMember
+* add keyword
 
 0.4 (2022-10-31, M2 1.21)
 * fix bug involving hash codes for unhashtable types
@@ -200,7 +203,7 @@ addPyToM2Function(String, Function, String) := (type, f, desc) ->
     addPyToM2Function({type}, f, desc)
 addPyToM2Function(List, Function, String) := (types, f, desc) ->
     addHook((value, PythonObject),
-	x -> if member(toString (objectType x)@@"__name__", types) then f x,
+	x -> if isMember(toString (objectType x)@@"__name__", types) then f x,
 	Strategy => desc)
 
 addHook((value, PythonObject),
@@ -320,8 +323,8 @@ setattr(PythonObject, String, Thing) := (x, y, e) ->
     pythonObjectSetAttrString(x, y, toPython e)
 PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
 
-member(Thing,        PythonObject) := (x, y) -> false
-member(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
+isMember(Thing,        PythonObject) := (x, y) -> false
+isMember(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
 
 quotientRemainder(PythonObject, PythonObject) := (x, y) -> (
     qr := x@@"__divmod__" y;
@@ -555,7 +558,7 @@ TEST ///
 -- issue #2315
 rand = import "random"
 L = toPython {1, 2, 3}
-assert member(value rand@@choice L, {1, 2, 3})
+assert isMember(value rand@@choice L, {1, 2, 3})
 assert Equation(L + L, toPython {1, 2, 3, 1, 2, 3})
 ///
 
@@ -592,9 +595,9 @@ assert Equation(abs toPython(-3), 3)
 assert Equation((toPython 5)~, -6)
 
 -- __contains__
-assert member(toPython 3, toPython {1, 2, 3})
-assert not member(toPython 4, toPython {1, 2, 3})
-assert not member(3, toPython {1, 2, 3})
+assert isMember(toPython 3, toPython {1, 2, 3})
+assert not isMember(toPython 4, toPython {1, 2, 3})
+assert not isMember(3, toPython {1, 2, 3})
 
 -- divmod
 assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))
