@@ -2,13 +2,13 @@
 # Net usage:  ~200MB
 # Disk usage: <800MB docker image
 
-FROM ubuntu:focal
+FROM ubuntu:latest
 
 # Setting up Macaulay2 repository
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends software-properties-common apt-transport-https && \
-    add-apt-repository ppa:macaulay2/macaulay2 && add-apt-repository ppa:macaulay2/macaulay2 && \
-    apt-get update && apt-get clean
+    add-apt-repository ppa:macaulay2/macaulay2 && apt-get update && apt-get clean
 
 # Install Macaulay2
 RUN apt-get install -y --no-install-recommends macaulay2 && apt-get clean
