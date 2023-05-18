@@ -390,13 +390,34 @@ for i in {-1,0,2,4} do assert(HH_i C == 0);
 for i in {1,3} do assert(prune HH_i C == cokernel matrix {{2}});
 ///
 
--- Scarf complex Test
+-- Scarf complex Test 1
 TEST ///
 R = QQ[w,x,y,z];
 I = monomialIdeal {w*x,x*y,y*z,w*z}
 C = scarfComplex I
 assert(dim C == 1);
 assert(prune HH_1 C != 0);
+///
+
+-- Scarf complex Test 2
+TEST ///
+R = QQ[x_0,x_1,x_2,y_0,y_1]
+I = monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_0,x_0*y_1,y_0)
+B = intersect(ideal(x_0,x_1,x_2),ideal(y_0,y_1))
+C =scarfComplex I;
+assert(#cells_0 C == 5)
+assert(#cells_1 C == 6)
+assert(#cells_2 C == 2)
+///
+
+-- Scarf complex Test 3
+TEST ///
+R = QQ[u,w,x,y,z];
+I = monomialIdeal(w*x,y*z,x*y,u);
+C = scarfComplex I;
+assert(#cells_0 C == 4)
+assert(#cells_1 C == 5)
+assert(#cells_2 C == 2)
 ///
 
 TEST ///
