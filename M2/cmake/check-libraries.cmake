@@ -138,6 +138,7 @@ endforeach()
 #   factory	Multivariate Polynomal Package		(needs gmp, mpfr, ntl, flint)
 #   frobby	Computations With Monomial Ideals	(needs gmp)
 #   cddlib	Double Description Method of Motzkin	(needs gmp)
+#   msolve	Multivariate polynomial system solver	(needs gmp, mpfr, flint)
 #   mpsolve	Multiprecision Polynomial SOLVEr	(needs gmp, mpfr)
 #   googletest	C++ unit-testing library
 #   glpk	GNU Linear Programming Kit              (needs gmp)
@@ -153,6 +154,7 @@ find_package(Flint	2.6.0)
 find_package(Factory	4.2.0)
 find_package(MPSolve	3.2.0)
 # TODO: add minimum version checks
+find_package(MSolve	0.4.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)
