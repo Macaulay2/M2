@@ -76,15 +76,13 @@ doc ///
         Text
             Blackbox monodromy solver for a square polynomial system without parameters.
             The example below finds all six intersection of a generic cubic F with its quadratic polar curve P.
-        Text
-    
         Example
             setRandomSeed 2021;
             R=CC[x,y,z];
             F=random(3,R);
             P=sum apply(gens R,g->diff(g,F)*random CC);
             PS = polySystem {F,P,random(1,R)-1};
-            sols = sparseMonodromySolve(PS, Verbose=>true)
+            sols = sparseMonodromySolve PS;
     	    length points sols
             for i from 0 to 5 list norm evaluate(PS, sols#i)
         Text
@@ -101,7 +99,7 @@ doc ///
         a solver for parametric families with simple output
     Usage
         (p, sols) = solveFamily PS
-        (p, sols) = solveFamily(P, p)
+        (p, sols) = solveFamily(p, P)
     Inputs 
         PS:System
            : a parametric polynomial system, represented as either a @TO PolySystem@ whose underlying coefficient ring itself a polynomial ring in the parameters, or a @TO GateSystem@ with parameters.
@@ -122,6 +120,8 @@ doc ///
             q  = a*x^2+b*y+c;
             l = d*x+e*y+f;
             (sys, sols) = solveFamily(polySystem{q,l}, NumberOfNodes=>3)
+    Caveat
+        This function is somewhat less flexible than @TO monodromySolve @.
     ///
 
 doc ///
@@ -159,7 +159,7 @@ doc ///
 	    Most solvers rely on the manual seeding function @TO createSeedPair @. The example below demonstrates how one might
 	    seed manually when some equations don't have parameters---ie. the projection map onto the variables is non-dominant.
         Example
-                setRandomSeed 0;
+            setRandomSeed 0;
             S = CC[a,b,c];
             R = S[x,w];
             (h, f) = (a*x+b*w+c, 3*x^2 - w + 1);
@@ -178,8 +178,8 @@ doc ///
         Example
             R = CC[a,b,c,d][A,B]
             polys = polySystem {A^2*a+B^2*b,A*B*c+d}  
-                setRandomSeed 0;
-                        (V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
+            setRandomSeed 0;
+            (V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
             peek V
     /// 
     
