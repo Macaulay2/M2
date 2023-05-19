@@ -42,6 +42,40 @@ document {
      }
 
 document {
+     Key => "changes, 1.22",
+     UL {
+	  LI { "functionality added:",
+	       UL {
+		    LI { "A ", TO RingMap, " object may now be raised to the 0th power if its ", TO source, " and ", TO target, " agree." },
+		    LI { "Matrices may now be joined with any type of number (not just integers) using ", TO2((symbol |, Matrix, Matrix), "|"), " and ",
+			 TO2((symbol ||, Matrix, Matrix), "||"), "."},
+		    LI { "The html documentation now syntax highlights Macaulay2 code by default using ", HREF{"https://prismjs.com/", "Prism"}, "."},
+		    LI { "Some improvements have been made to ", TO findProgram, " and ", TO runProgram, "."},
+		    LI { "A specific test from a package may now be specified using ", TO (tests, ZZ, Package), "."}
+	       }
+	  },
+	  LI { "functionality changed in a way that could break code:",
+	       UL {
+		    LI { "The functions ", TT "member", " and ", TT "mutable", " have been renamed to ", TO isMember, " and ", TO isMutable, ", respectively.  ",
+			 "The old names still exist as synonyms, but they may be removed in a future release." },
+		    LI { "Raising a matrix to the 0th power will now raise an error if the ", TO source, " and ", TO target, " do not agree."},
+		    LI { "The value of a class's ", TT "1", " key (used internally for getting multiplicative identities) should now be a function that takes ",
+			 "an instance of the class and returns the multiplicative identity rather than the multiplicative identity itself."}
+	       }
+	  },
+	  LI { "emacs updates:",
+	       UL {
+		    LI { "Several new functions have been added to for sending code to an M2 process, and the code that is sent is now highlighted briefly as a ",
+			 "visual indicator.  Refer to the \"Macaulay2\" dropdown menu in Emacs for more."},
+		    LI { "File locations that appear in Macaulay2 Interaction buffers are now handled using ",
+			  HREF{"https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html", "Compilation mode"}, "."},
+		    LI { "Macaulay2 is now supported in Org Mode using ", HREF{"https://github.com/d-torrance/ob-M2", "ob-M2"}, "."}
+	       }
+	  }
+     }
+}
+
+document {
      Key => "changes, 1.21",
      UL {
 	  LI { "new packages:",
