@@ -78,6 +78,14 @@ dl.element {
   margin: 0px;
 }
 
+ol li::marker {
+  content: counter(element) ". ";
+}
+
+ol li {
+  counter-increment: element;
+}
+
 /*
 
  Local Variables:
