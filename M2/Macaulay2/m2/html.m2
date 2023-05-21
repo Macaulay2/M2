@@ -96,15 +96,7 @@ html Hypertext := x -> (
     attr := "";
     cont := if T.?Options then (
 	(op, ct) := override(options T, toSequence x);
-	scanPairs(op, (key, val) -> (
-		-- workaround for "start" attribute not being valid XHTML 1.1
-		if T === OL and key == "start"
-		then (
-		    element := toString(changeBase(val, 10) - 1);
-		    attr = concatenate(" style=\"counter-reset: element ",
-			element, ";\"", attr))
-		else if val =!= null
-		then attr = " " | key | "=" | format val | attr));
+	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);
 	sequence ct) else x;
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (
