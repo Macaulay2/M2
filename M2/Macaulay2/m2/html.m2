@@ -128,8 +128,11 @@ fixNewLines Option := identity
 fixNewLines Thing := x -> replace("\r\n","\n",toString x)
 -- non HTML types should *not* be KaTeX-ified inside these tags:
 html PRE :=
-html TT :=
 html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
+
+-- hack for HTML5 validation
+-- ideally, TT should be removed and replaced with CODE, KBD, SAMP, and/or VAR
+html TT := x -> html SPAN prepend("class" => "tt", toList x)
 
 html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
 html COMMENT := x -> if match("--", concatenate x) then

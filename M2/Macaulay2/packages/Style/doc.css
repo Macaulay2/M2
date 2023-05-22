@@ -78,6 +78,10 @@ dl.element {
   margin: 0px;
 }
 
+span.tt {
+  font-family: monospace;
+}
+
 /*
 
  Local Variables:
