@@ -331,7 +331,8 @@ scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
 addAttribute(META,  htmlGlobalAttr | {"name", "content", "http-equiv"})
 addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
-addAttribute(SCRIPT, htmlGlobalAttr | {"src", "type"})
+addAttribute(SCRIPT, htmlGlobalAttr | {"async", "crossorigin", "defer",
+	"integrity", "nomodule", "referrerpolicy", "src", "type"})
 
 -- html global and event attributes
 htmlAttr = htmlGlobalAttr | {
