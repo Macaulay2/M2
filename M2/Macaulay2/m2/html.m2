@@ -118,9 +118,8 @@ html LITERAL := x -> concatenate x
 html TEX     := x -> concatenate apply(x, html1) -- TODO: retire this
 
 html HTML := x -> demark(newline, {
-    	///<?xml version="1.0" encoding="utf-8" ?>///,
-    	///<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">///,
-    	///<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">///,
+    	///<!DOCTYPE html>///,
+    	///<html lang="en">///,
     	popIndentLevel(pushIndentLevel 1, apply(x, html)),
 	///</html>///})
 
