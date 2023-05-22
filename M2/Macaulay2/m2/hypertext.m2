@@ -141,6 +141,9 @@ STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
+KBD        = new MarkUpType of Hypertext
+SAMP       = new MarkUpType of Hypertext
+VAR        = new MarkUpType of Hypertext
 
 -- Lists
 OL         = new MarkUpType of HypertextContainer
