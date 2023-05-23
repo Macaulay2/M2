@@ -123,7 +123,7 @@ doc ///
     the class of all maps between chain complexes
   Description
     Text
-      @LITERAL ////<script type="text/javascript"> macros["\\Hom"] = "\\operatorname{Hom}" </script>////@
+      @LITERAL ////<script> macros["\\Hom"] = "\\operatorname{Hom}" </script>////@
 
       A map of chain complexes $f \colon C \rightarrow D$ of degree $d$ is a
       sequence of maps $f_i \colon C_i \rightarrow D_{d+i}$.  
