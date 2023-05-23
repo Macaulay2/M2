@@ -60,7 +60,6 @@ defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStyle
 -- Local utilities
 -----------------------------------------------------------------------------
 
--- TODO: urlEncode
 htmlLiteral = s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
      s = replace("&", "&amp;", s); -- this one must come first
      s = replace("<", "&lt;", s);
@@ -189,3 +188,22 @@ show URL := url -> (
         stderr << "exec failed: " << toExternalString cmd << endl;
         exit 1);
     sleep 1;) -- let the browser print errors before the next M2 prompt
+
+-----------------------------------------------------------------------------
+-- urlEncode (originally in OnlineLookup)
+-----------------------------------------------------------------------------
+
+percentEncoding =  new MutableHashTable from toList apply(
+    -- unreserved characters from RFC 3986
+    -- ALPHA / DIGIT / "-" / "." / "_" / "~"
+    -- we also add "/" and ":" since they're standard URL characters
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-._~/:",
+    c -> (c, c))
+    -- everything else will be percent encoded and added to the hash table
+    -- as needed
+
+urlEncode = method()
+urlEncode Nothing := identity
+urlEncode String := s -> concatenate apply(s, c -> (
+	if percentEncoding#?c then percentEncoding#c
+	else percentEncoding#c = "%" | toUpper changeBase(first ascii c, 16)))
