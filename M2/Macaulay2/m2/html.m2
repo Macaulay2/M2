@@ -15,10 +15,10 @@ getStyleFile := fn -> locateCorePackageFileRelative("Style",
 KaTeX := () -> (
     katexPath := getStyleFile "katex";
     katexTemplate := ///
-    <link rel="stylesheet" href="%PATH%/katex.min.css" />
-    <script defer="defer" type="text/javascript" src="%PATH%/katex.min.js"></script>
-    <script defer="defer" type="text/javascript" src="%PATH%/contrib/auto-render.min.js"></script>
-    <script defer="defer" type="text/javascript">
+    <link rel="stylesheet" href="%PATH%/katex.min.css">
+    <script defer="defer" src="%PATH%/katex.min.js"></script>
+    <script defer="defer" src="%PATH%/contrib/auto-render.min.js"></script>
+    <script>
       var macros = {
           "\\break": "\\\\",
           "\\ZZ": "\\mathbb{Z}",
@@ -37,10 +37,10 @@ KaTeX := () -> (
         renderMathInElement(document.body, { delimiters: delimiters, macros: macros, ignoredTags: ignoredTags, trust: true });
       });
     </script>
-    <style type="text/css">.katex { font-size: 1em; }</style>
-    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css" />
-    <script defer="defer" type="text/javascript" src="%PATH%/contrib/copy-tex.min.js"></script>
-    <script defer="defer" type="text/javascript" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
+    <style>.katex { font-size: 1em; }</style>
+    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css">
+    <script defer="defer" src="%PATH%/contrib/copy-tex.min.js"></script>
+    <script defer="defer" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
     LITERAL replace("%PATH%", katexPath, katexTemplate | newline))
 
 -- The default stylesheet for documentation
