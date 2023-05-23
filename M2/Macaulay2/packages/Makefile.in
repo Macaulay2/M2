@@ -120,6 +120,20 @@ Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
 	rm -f Makefile
 
+# requires html5validator:
+# python3 -m pip install html5validator
+validate-html:
+	@ INVALID_PACKAGES="";                                       \
+	for PACKAGE in $(PACKAGES);                                  \
+	do echo "validating $$PACKAGE documentation ...";            \
+	   html5validator --show-warnings                            \
+		--root @pre_prefix@/@tail_htmldir@/$$PACKAGE/html || \
+		INVALID_PACKAGES="$$INVALID_PACKAGES $$PACKAGE";     \
+	done;                                                        \
+	if test $$INVALID_PACKAGES;                                  \
+	then echo "invalid packages:$$INVALID_PACKAGES";  exit 1;    \
+	fi
+
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
 .NOTPARALLEL:
