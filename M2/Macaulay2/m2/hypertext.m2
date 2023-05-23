@@ -48,7 +48,7 @@ isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 -- TODO: phase this one out eventually
 toURL = method()
 toURL String := pth -> (
-     if isAbsolutePath pth then concatenate(rootURI,
+     urlEncode if isAbsolutePath pth then concatenate(rootURI,
 	  if fileExists pth then realpath pth
 	  else (
 	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
@@ -74,7 +74,7 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  stderr << "--                      prefix        = " << prefix << endl;
 	  stderr << "--                      result        = " << r << endl;
 	  );
-     r)
+     urlEncode r)
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations
