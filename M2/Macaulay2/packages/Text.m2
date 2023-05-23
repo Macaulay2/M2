@@ -605,6 +605,39 @@ document {
      }
 
 document {
+    Key => KBD,
+    Headline => "hypertext KBD item",
+    Usage => "KBD x",
+    Inputs => {"x" => Thing => {}},
+    Outputs => {KBD => {}},
+    PARA "This HTML tag is used to define keyboard input.",
+    EXAMPLE "html KBD \"F11\"",
+    PARA {"This is rendered in the browser as ", KBD "F11", "."},
+    SeeAlso => {SAMP, VAR}}
+
+document {
+    Key => SAMP,
+    Headline => "hypertext SAMP item",
+    Usage => "SAMP x",
+    Inputs => {"x" => Thing => {}},
+    Outputs => {SAMP => {}},
+    PARA "This HTML tag is used for sample output from a program",
+    EXAMPLE "html SAMP \"ideal x\"",
+    PARA {"This is rendered in the browser as ", SAMP "ideal x", "."},
+    SeeAlso => {KBD, VAR}}
+
+document {
+    Key => VAR,
+    Headline => "hypertext VAR item",
+    Usage => "VAR x",
+    Inputs => {"x" => Thing => {}},
+    Outputs => {VAR => {}},
+    PARA "This HTML tag is used to represent a variable.",
+    EXAMPLE "html VAR \"x\"",
+    PARA {"This is rendered in the browser as ", VAR "x", "."},
+    SeeAlso => {KBD, SAMP}}
+
+document {
      Key => EM,
      Headline => "hypertext EM item",
 	Usage => "EM x",
