@@ -9,7 +9,7 @@
 -- 3.
 --    Each strategy has a page.
 --    The reason for this version.  Example: what it does well, what it can't handle.
--- 4. compare and constrast strategies.
+-- 4. compare and contrast strategies.
 --    when to use each one?
 --    What if you want to keep the first matrix fixed?
 --    What if you want it to give a minimal first matrix?
