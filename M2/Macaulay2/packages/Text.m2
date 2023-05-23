@@ -562,7 +562,7 @@ document {
 	 "Lastly, new macros can be defined using script tags. For instance, inserting the following ",
 	 TO LITERAL, " item in the documentation defines the structure sheaf:" },
      (
-	 s := ///LITERAL ////<script type="text/javascript"> macros["\\OO"] = "\\mathcal{O}" </script>//// ///;
+	 s := ///LITERAL ////<script> macros["\\OO"] = "\\mathcal{O}" </script>//// ///;
 	 ( BLOCKQUOTE PRE s, value s )),
      PARA {
 	 TEX ///The macro can be used at any point after:
