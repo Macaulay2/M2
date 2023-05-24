@@ -55,12 +55,13 @@ freeResolution Module := Complex => opts -> M -> (
     -- LengthLimit prescribes the length of the computed complex.
     -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
     local C;
-    if opts.LengthLimit < 0 then (
+    if opts.LengthLimit < 0 or M == 0 then (
         C = complex (ring M)^0;
         C.cache.Nonminimal = false;
         C.cache.LengthLimit = opts.LengthLimit;
         C.cache.DegreeLimit = infinity;
         C.cache.Module = M;
+        M.cache.Resolution = C;
         return C;
         );
     if M.cache.?Resolution then (
