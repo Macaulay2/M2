@@ -14,3 +14,5 @@ debug Core
 str = ///A{\it {\bf B}{\tt C\url{D}{\em E}}F}G///
 assert(///A<i><b>B</b><span class="tt">C<a href="D">D</a><em>E</em></span>F</i>G/// === html new TEX from str)
 assert(///<span class="tt">A<em>B</em>C</span>/// === html TEX{"{\\tt A", EM{"B"}, "C}"})
+assert Equation(urlEncode "https://en.wikipedia.org/wiki/Gröbner basis",
+    "https://en.wikipedia.org/wiki/Gr%C3%B6bner%20basis")
