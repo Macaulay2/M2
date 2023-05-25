@@ -130,7 +130,7 @@ validate-html:
 		--root @pre_prefix@/@tail_htmldir@/$$PACKAGE/html || \
 		INVALID_PACKAGES="$$INVALID_PACKAGES $$PACKAGE";     \
 	done;                                                        \
-	if test $$INVALID_PACKAGES;                                  \
+	if test "$$INVALID_PACKAGES";                                \
 	then echo "invalid packages:$$INVALID_PACKAGES";  exit 1;    \
 	fi
 

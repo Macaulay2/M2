@@ -196,6 +196,27 @@ jobs:
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
 
+      - name: Validate HTML documentation
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux'
+        run: |
+          python3 -m pip install html5validator
+          if test ${{ github.event_name }} = pull_request
+          then
+            git fetch --depth=1 origin development
+            # validate everything if any changes to Core
+            if test "$(git diff --stat origin/development HEAD -- ../../Macaulay2/m2)"
+            then
+              make validate-html
+            else
+            # otherwise, just validate HTML docs for packages that have been updated
+              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq)
+              make validate-html PACKAGES="$PACKAGES"
+            fi
+          else
+            # if not a pull request (scheduled or pre-master builds), then validate everything
+            make validate-html
+          fi
+
 # ----------------------
 #   Upload build artifacts
 # ----------------------
