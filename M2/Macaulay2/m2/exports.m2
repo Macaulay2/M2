@@ -1210,6 +1210,7 @@ export {
 	"unique",
 	"unsequence",
 	"unstack",
+	"urlEncode",
 	"use",
 	"userSymbols",
 	"utf8",

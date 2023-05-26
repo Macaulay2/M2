@@ -177,6 +177,9 @@ validContent#"code" =
 validContent#"em" =
 -- <!ENTITY % tt.content "( #PCDATA | %Inline.mix; )*" >
 validContent#"tt" = 
+validContent#"kbd" =
+validContent#"samp" =
+validContent#"var" =
 -- <!ENTITY % i.content "( #PCDATA | %Inline.mix; )*" >
 validContent#"i" = 
 -- <!ENTITY % b.content "( #PCDATA | %Inline.mix; )*" >

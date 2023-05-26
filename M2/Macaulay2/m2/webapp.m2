@@ -104,7 +104,7 @@ if topLevelMode === WebApp then (
     editURL := f -> "#editor:"|toString f;
     editMethod String :=
     editMethod FilePosition := f -> show editURL f;
-    hypertext FilePosition := f -> TT HREF {editURL f,toString f};
+    hypertext FilePosition := f -> SAMP HREF {editURL f,toString f};
     -- redefine htmlLiteral to exclude codes
     htmlLiteral = removeWebAppTags @@ htmlLiteral;
     )
