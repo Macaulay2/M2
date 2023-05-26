@@ -20,8 +20,8 @@ o6 = {y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}
 
 i7 : ring ideal convertedSys
 
-o7 = QQ {x, y, z, w }
-                   0
+o7 = QQ {x..z, w }
+                0
 
 o7 : PolynomialRing
 

@@ -2,10 +2,10 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 
-undocumented (hypertext, Hypertext)
+undocumented methods hypertext
 
 document {
-     Key => {hypertext,(hypertext, List),(hypertext, Sequence)},
+     Key => hypertext,
      Headline => "prepare hypertext for display",
      Usage => "hypertext x",
      Inputs => {
@@ -50,96 +50,6 @@ document {
      other operations that we feel need to be implemented directly for
      efficiency reasons.",
      }
-
-document {
-     Key => "component example",
-     "The following simple example illustrates the use of 
-     ", TO "removeLowestDimension", ",", TO "topComponents", ",", TO "radical",
-     ", and ", TO "minimalPrimes", ".",
-     EXAMPLE {
-	  "R = ZZ/32003[a..d];",
-      	  "I = monomialCurveIdeal(R,{1,3,4})",
-      	  "J = ideal(a^3,b^3,c^3-d^3)",
-      	  "I = intersect(I,J)",
-      	  "removeLowestDimension I",
-      	  "topComponents I",
-      	  "radical I",
-      	  "minimalPrimes I"
-	  },
-     }
-
-TEST "
-    R = ZZ/32003[a..d]
-    I = monomialCurveIdeal(R,{1,3,4})
-    J = ideal(a^3,b^3,c^3-d^3)
-    I = intersect(I,J)
-    removeLowestDimension I
-    topComponents I
-    radical I
-    minimalPrimes I
-"
-TEST "
-    -- test of removeLowestDimension
-    R = ZZ/32003[a,b,c]
-    I = ideal(a^2,b^2)
-    J = ideal(a^3,b^3,c^3)
-    I = intersect(I,J)
-    time (I1 = removeLowestDimension I)
-    time topComponents I
-    time radical I
-"
-
-     
-TEST "
-    -- examples of use of: radical, UnmixedRadical, 
-    -- topComponents, removeLowestDimension
-
-    -- example 1: a simple monomial ideal
-    R = ZZ/101[a..d]
-    I = intersect(ideal(a^2,b^2,c), ideal(a,b^3,c^2))
-    time (Irad = radical(I,Unmixed=>true))
-
-    -- example 2: 
-    R = ZZ/101[a..d]
-    I = intersect(ideal(a^2,b^2,c), ideal(a,d^4), ideal(b^2,c^2,d^2))
-    time (Itop = topComponents I)
-    time (I1 = removeLowestDimension I)
-    time (Irad = radical I)
-"
-
-TEST "
-R = ZZ/101[symbol a..symbol d]
-I = monomialCurveIdeal(R,{1,2,3})
-I^2
-removeLowestDimension(I^2)
-assert(I == 
-     radical(I^2)
-     )
-assert(I == 
-     radical(I^2, Unmixed=>true)
-     )
-assert(
-     topComponents (I^2) == I^2
-     )
-S = R/(a^3, b^3)
-I = ideal(0_S)
-J = I^2
-J1 = topComponents J
-J1 == J   
-time (radical I)
-
--- 3 by 3 nilpotent matrices
-R = ZZ/101[vars(0..8)]
-M = genericMatrix(R,a,3,3)
-I = ideal (M^3)
-I1 = ideal(I_0,I_1,I_2)
-codim I1
-radical(I, CompleteIntersection=>I1)
--- radical(I,Unmixed=>true)
--- I1 = removeLowestDimension I
--- I2 = removeLowestDimension I1
-"
-
 
 document {
      Key => "diff and contract",
@@ -355,7 +265,7 @@ document {
      projective resolution of ", TT "M", ", then it can be installed
      with ", TT "M.cache.resolution = C", ".",
      PARA{},
-     "There are various optional arguments associated with ", TO "res", "
+     "There are various optional arguments associated with ", TO2(resolution, "res"), "
      which allow detailed control over the progress of the computation."
      }
 
@@ -379,7 +289,7 @@ document { Key => "the debugger",
      "You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
      As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
      EXAMPLE "listLocalSymbols",
-     "We see the the value of ", TT "x", " is 0, and that explains the error message about division by zero.
+     "We see that the value of ", TT "x", " is 0, and that explains the error message about division by zero.
      The other local symbols are the ones defined in the body of the function ", TT "f", ", whose
      code can now be displayed with ", TO "code", ".",
      EXAMPLE "code f",

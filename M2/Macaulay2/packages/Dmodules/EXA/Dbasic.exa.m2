@@ -1,5 +1,19 @@
-path = join(path, {"../"})
-load "Dloadfile.m2"
+-- 0. Service routines 
+R = QQ[x,y,z]
+W = makeWA R
+
+-- fill an m-by-n  matrix with elements of W 
+-- that have monomials up to degree d  
+randomMatrix = (m,n,d,W) -> (
+    RW := (coefficientRing W) (monoid [gens W]); 
+    toW := map(W,RW,gens W);
+    matrix apply(m, i->apply(n,j->(
+		sum(d+1, e->toW random(e,RW))
+		)))
+    )
+M = randomMatrix(2,3,1,W)
+M = randomMatrix(3,2,1,W)
+Dprune M == prune M
 
 -- 1. Basic invariants
 -- GKZ of the twisted quartic
@@ -7,7 +21,7 @@ A = matrix{{1,1,1,1},{0,1,3,4}}
 b = {1,2}
 I = gkz(A,b,Vars=>Local)
 
-Ddim I -- check it's holoomic
+Ddim I -- check it's holonomic
 holonomicRank I  -- holonomic rank
 singLocus I -- singular locus
 charIdeal I -- characteristic ideal

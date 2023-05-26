@@ -7,7 +7,7 @@ NTL::mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 {
   // Creates the TRANSPOSE of M
 
-  // We asume or check that the ring is ZZ
+  // We assume or check that the ring is ZZ
 
   //  const SparseMutableMatrix *A = M->cast_to_SparseMutableMatrix();
   const MutableMatrix *A = M;
@@ -47,7 +47,7 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const NTL::mat_ZZ *A)
             B->set_entry(j, i, ring_elem(a));
           }
       }
-
+  mpz_clear(a);
   return B;
 }
 
@@ -235,6 +235,7 @@ bool ntl_LLL(MutableMatrix *M,
             U->set_entry(i, j, b);
           }
     }
+  mpz_clear(a);
   delete A;
   if (V) delete V;
   return true;

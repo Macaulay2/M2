@@ -80,6 +80,7 @@ Headline => "singularities in positive characteristic",
 Keywords => {"Commutative Algebra"},
 AuxiliaryFiles=>true,
 PackageExports=>{"Depth"},
+PackageImports => {"MinimalPrimes"},
 Certification => {
      "journal name" => "The Journal of Software for Algebra and Geometry",
      "journal URI" => "http://j-sag.org/",

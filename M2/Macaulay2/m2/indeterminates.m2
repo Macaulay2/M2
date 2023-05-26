@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-indeterminates =  new MutableHashTable
+needs "expressions.m2"
+needs "methods.m2"
 
 varIndices := new MutableHashTable
 
@@ -12,11 +13,9 @@ varName := i -> (
      else "x" | toString(i-52))
 
 vars ZZ := i -> (
-     if indeterminates#?i then indeterminates#i else (
-	  x := getSymbol varName i;
-	  indeterminates#i = x;
-	  varIndices#x = i;
-	  x))
+    x := getSymbol varName i;
+    varIndices#x = i;
+    x)
 
 vars List := vars Sequence := args -> apply(flatten splice args, j -> vars j)
 
@@ -41,7 +40,7 @@ for i from 0 to 50 do succS#(varName i) = varName(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
-    #x === #y and all(#x-1,i-> x#i === y#i) and x#(#x-1)+1 === y#(#x-1)
+    #x === #y and all(#x-1,i-> x#i === y#i) and succ(last x,last y)
 )
 succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === symbol .. and (
     succ (x#2,y#1) or (
@@ -57,10 +56,12 @@ succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === 
 	    if #d === 0 then d=y#2#0 else d=new Subscript from {y#2#0,unsequence d};
 	    a===b and c===d and succ(a,c)
 	)))
+succ(Holder,Thing) := (x,y) -> succ(x#0,y)
+succ(Thing,Holder) := (x,y) -> succ(x,y#0)
 succ(Symbol,Symbol) := (x,y) -> (
      (s,t) := (toString x, toString y);
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
-succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(expressionValue x#1,expressionValue y#1)
+succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
 succ(Thing,Thing) := x -> false
 runLengthEncode = method(Dispatch => Thing)
 runLengthEncode VisibleList := x -> (
@@ -90,6 +91,12 @@ runLengthEncode0 = x -> (
 		    if m === 1 then hold oi else if dupin === true then hold m : expression oi else (if instance(i0,BinaryOperation) then i0#1 else expression i0) .. (if instance(oi,BinaryOperation) then oi#2 else expression oi),
 		    (dupin = null; oi = i; m = 1))));
      x)
+
+rle = method(Dispatch => Thing)
+rle VisibleList := x -> apply(runLengthEncode x, rle)
+rle Holder := x -> rle x#0
+rle Option := x -> x#0 => rle x#1
+rle Thing := identity
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

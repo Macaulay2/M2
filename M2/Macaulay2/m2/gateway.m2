@@ -1,5 +1,8 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "methods.m2"
+
 ScriptedFunctor = new Type of MutableHashTable
 ScriptedFunctor.synonym = "scripted functor"
 globalAssignment ScriptedFunctor
@@ -76,16 +79,8 @@ HH = new ScriptedFunctor from {
 	  )
      }
 
-f :=
-  ---- the following line seems not to be used, so we try commenting it out:
-  -- homology(Nothing,Sequence) := 
   homology(ZZ,Sequence) := opts -> (i,X) -> homology prepend(i,X)
-
-g :=
 cohomology(ZZ,Sequence) := opts -> (i,X) -> cohomology(prepend(i,X), opts)
-
-ck := f -> ( assert( f =!= null ); assert( instance(f, Function) ); f)
-dispatcherFunctions = join(dispatcherFunctions, {ck f, ck g})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -198,7 +198,7 @@ coarseMultigradedRegularity = method(Options =>
                {Strategy =>"MinimalResolution"})
 
 -*coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     el := length F;
     r := degreeLength ring F;
     D := apply((min F..max F), i-> degrees F_i);
@@ -240,14 +240,15 @@ LL (ZZ,List) := (d,n) -> (
     )
 
 coarseMultigradedRegularity ChainComplex := o-> F -> (
-    --we assume F starts in homol degree 0.
+    --we assume F starts in homological degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
-    degsF := apply(range,i -> degrees (F_i));
-    lowerbounds := flatten flatten apply(range, i->(
-	    apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
-	    ));
-    apply(t, i-> max apply(lowerbounds, ell->ell_i))
+    degsF := flatten apply(range,i -> degrees (F_i));
+    --lowerbounds := flatten flatten apply(range, i->(
+    --	  apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
+    --	  ));
+    --only changes degsF if t=1
+    apply(t, i-> max apply(degsF, ell->ell_i))
     )
 
 coarseMultigradedRegularity Module := o-> M-> (
@@ -610,7 +611,7 @@ outsideBeilinsonRange(Matrix) :=  m -> (
      t:=#unique degrees E;
      n:=apply(unique degrees E,d-> (#select( degrees  E, e-> e==d)-1));
      d:=0;
-	  --source indices not in the Beilison window
+	  --source indices not in the Beilinson window
      sourcem := select(rank source m,i-> (d=degree (source m)_i;#select(#d,i->d_i<0 or d_i>n_i)>0));
      m_sourcem)
 
@@ -641,7 +642,7 @@ cornerComplex(ChainComplex,List) := (C,c) ->(
 
 cornerComplex1=method()
 cornerComplex1(ChainComplex,List) := (C,c) -> (
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     t:= numFactors ring C; -- list from 0 to the number of factors -1.
@@ -815,7 +816,7 @@ firstQuadrantComplex(ChainComplex,List) := (C,c) -> (
 firstQuadrantComplex1=method()
 firstQuadrantComplex1(ChainComplex,List) := (C,c) -> (
     -- c index of upper corner of the complementary last quadrant
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     s:=min C;
@@ -862,7 +863,7 @@ lastQuadrantComplex(ChainComplex,List) := (C,c) -> (
 lastQuadrantComplex1=method()
 lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
      -- c index of the upper corner of the last quadrant
-     -- addded this line to make the function  work for the zero complex
+     -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     s:=min C;
@@ -874,7 +875,7 @@ lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
 
 cornerMap=method()
 cornerMap(ChainComplex,List,ZZ) := (C,c,d) -> (
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     E := ring C;
@@ -1059,7 +1060,7 @@ chainComplexMap=method(
 )
 chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    --- the code commented out should also work, and is in some sense
-   --- more desireable as it uses map in the code.  However, something squirly
+   --- more desirable as it uses map in the code.  However, something squirly
    --- happens in the map code.
    ---    startDeg := min C;
    ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
@@ -1466,14 +1467,6 @@ beilinson = method(Options=>{BundleType=>PrunedQuotient}) -- other options: Quot
      beilinson(E^{{-1,-1}})
      beilinson random(E^{{-1,0}}, E^{{-2,-1}})
 *-
-
--- The following function should be moved to the Macaulay2 Core.
-tensor(Matrix,Matrix) := opts -> (A,B) -> A ** B
-tensor List := opts -> (L) -> (
-    result := L#0;
-    for i from 1 to #L-1 do result = tensor(result,L#i,opts);
-    result
-    )
 
 -- The following functions are here to facilitate the construction
 -- of the beilinson functor.  In particular, they make sure that the
@@ -2307,7 +2300,7 @@ bgg Module := o -> P -> (
     Ds = sort apply(D, d->(sum d,d));
     minP := min(Ds/first);
     maxP := max(Ds/first);
-    if o.LengthLimit != null then maxP=min(maxP,minP+1+o.LengthLimit);
+    if o.LengthLimit =!= null then maxP=min(maxP,minP+1+o.LengthLimit);
     freeModuleDegs := hashTable apply(toList(minP..maxP), i->
 	    (-i=>select(Ds,d-> d_0 == i)/last)
 	    );
@@ -3180,7 +3173,7 @@ isLinearizable=method()
 isLinearizable(Matrix):=M->(
     -- Input : M, a matrix presenting a graded module homomorphism
     -- If the original matrix and its linearized matrix induces the same Hilbert series
-    -- then this method retunrs true.
+    -- then this method returns true.
     
     R:=ring M;
     n:=(# gens R)-1;
@@ -3484,7 +3477,7 @@ isIsomorphic(truncate(3, R0), truncate(3,dual dual R0))
 
 R1=prune HH^1 source AA#1#0
 degree R1, rank R1, ann R1
--- R1 is a skyscrapper sheaf at the the images of P and Q (indeed, P and Q map to the same point of P^1)
+-- R1 is a skyscrapper sheaf at the images of P and Q (indeed, P and Q map to the same point of P^1)
 --------------------------------
 
 
@@ -3645,7 +3638,7 @@ composedFunctions = () -> (
      --Text
      -- The additional entry h in the zero position of the cohomology matrix of uQ
      -- indicates that we can recover
-     -- the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+     -- the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
      -- in this specific case.
      --Example
       uQ.dd_(-1)
@@ -3663,7 +3656,7 @@ composedFunctions = () -> (
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      --Text
-     -- Hence both Lp and RMc are azyclic.
+     -- Hence both Lp and RMc are acyclic.
      --Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -3692,7 +3685,7 @@ composedFunctions = () -> (
       comT=cohomologyMatrix(T,low,high)
       assert(sub(comT',vars ring comT)==comT)
      --Text
-     -- Finally we illustate how shifting the Beilinson window works.
+     -- Finally we illustrate how shifting the Beilinson window works.
      --Example
       cohomologyMatrix(T,low,high)
       cohomologyMatrix(beilinsonWindow T,low, high)
@@ -3784,7 +3777,7 @@ betti M1,betti M
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
 isIsomorphic(M,M1')
--- we comclude: It works for various P=kerC.dd_p
+-- we conclude: It works for various P=kerC.dd_p
 
 
 RM=bgg M
@@ -4024,7 +4017,7 @@ doc ///
      Text
       The additional entry h in the zero position of the cohomology matrix of uQ
       indicates that we can recover
-      the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+      the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
       in this specific case.
      Example
       uQ.dd_(-1)
@@ -4042,7 +4035,7 @@ doc ///
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      Text
-      Hence both Lp and RMc are azyclic.
+      Hence both Lp and RMc are acyclic.
      Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -4122,19 +4115,16 @@ doc ///
     R = coarseMultigradedRegularity M
    Inputs
     M:Module
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     M:ChainComplex
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     Strategy => String
    Outputs
     R:List
      degree such that truncate(R,M) has linear resolution
    Description
     Text
-     Uses a free resolution and takes the maximum degree of a term
-     minus the homological position in each component. Then adjusts
-     so that the sum of the degrees is at least the ordinary
-     regularity.
+     Uses a free resolution and takes the maximum degree of the terms.
     Example
      (S,E) = productOfProjectiveSpaces{1,1,2}
      I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
@@ -4142,8 +4132,9 @@ doc ///
      N = truncate(R,S^1/I);
      betti res N
      netList toList tallyDegrees res N
-   Caveat
-    We haven't yet proven that this is right.
+    Text
+     See the proof of Proposition 2.7 in
+       @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
    SeeAlso
     productOfProjectiveSpaces
     tallyDegrees
@@ -4184,7 +4175,7 @@ doc ///
       The degrees of the variables for the i-th projective space are indexed
       x_(i,0),..,x_(i,n_i-1), and have degree (0..0,1,0,..0) with a 1 in the i-th place.
       The script also caches some values in S.TateData and
-      E.TateData, so that S and E can subsequently find eachother
+      E.TateData, so that S and E can subsequently find each other
       and also their cohomology ring.
      Example
         (S,E)=productOfProjectiveSpaces{1,2}
@@ -4588,7 +4579,7 @@ doc ///
        where a is a multi-index, low<=a<=high in the partial order
        (thus the value is 0 when i is not in the range 0..sum n.)
        In case T is a Tate resolution corresponding to an object F in D^b(P^n), then
-       the values returned are the polyomials of the hypercohomology groups of twists of F, and
+       the values returned are the polynomials of the hypercohomology groups of twists of F, and
        the values can be nonzero in a wider range.
 
        In case the number of factors t is 2, the output of @ TO cohomologyMatrix @ is
@@ -5013,7 +5004,7 @@ doc ///
         We compute the strand of T as defined in @
         HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
 	Theorem 0.4. If T is (part of) the Tate resolution of a sheaf $F$, then the I-strand of $T$ through $c$
-	correponds to the Tate resolution $R{\pi_J}_*(F(c))$ where $J =\{0,\ldots,t-1\} - I$ is the complement and $\pi_J: \mathbb PP \to \prod_{j \in J} \mathbb P^{n_j}$
+	corresponds to the Tate resolution $R{\pi_J}_*(F(c))$ where $J =\{0,\ldots,t-1\} - I$ is the complement and $\pi_J: \mathbb PP \to \prod_{j \in J} \mathbb P^{n_j}$
 	denotes the projection.
      Example
         n={1,1};
@@ -5170,7 +5161,7 @@ doc ///
 	T=tateResolution( S^{{1,1}},low, high);
 	cohomologyMatrix(T,low,high)
      Text
-        The complex contains some trailing terms and superflous terms in a wider range, which can be removed
+        The complex contains some trailing terms and superfluous terms in a wider range, which can be removed
 	using trivial homological truncation.
      Example
 	cohomologyMatrix(T,2*low,2*high)
@@ -5390,12 +5381,12 @@ doc ///
        a corner complex of the corresponding Tate resolution
   Description
      Text
-       Every object F in in the derived category D^d(P)
+       Every object F in the derived category D^d(P)
        of coherent sheaves on a product P=P^{n_1}x..xP^{n_t} of t projective space is of the
        form U(W) with W a complex with terms in the
        Beilinson range only. The function computes with the algorithm (not!) described in section 4 of
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
-       computes part of a suitable choosen corner complex of the Tate resolution T(F).
+       computes part of a suitable chosen corner complex of the Tate resolution T(F).
 
      Example
         n={1,1};
@@ -5440,14 +5431,14 @@ doc ///
        a non-minimal version of the quadrant complex ?!? qT_{\le 0} of the Tate resolution T=T(W) ?
   Description
      Text
-       Every object F in in the derived category D^d(P)
+       Every object F in the derived category D^d(P)
        of coherent sheaves on a product P=P^{n_1}x..xP^{n_t} of t projective space is of the
        form U(W) with W a complex with terms in the
        Beilinson range only.
        This function is the first step in our computation of the algorithm
         (not!) described in section 4 of
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
-       that computes part of a suitable choosen corner complex of the Tate resolution T(F).
+       that computes part of a suitable chosen corner complex of the Tate resolution T(F).
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
@@ -5482,7 +5473,7 @@ doc ///
     apply the beilinson functor
   Usage
     M=beilinson F
-    phi=beilison psi
+    phi=beilinson psi
     C=beilinson T
   Inputs
     F: Module
@@ -5511,11 +5502,11 @@ doc ///
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @.
 
        In the function we compute from a complex of free E-modules the corresponding complex of graded S-modules, whose
-       sheafifications are the corresponding sheaves. The corresponding graded S-module are choosen as quotients of
+       sheafifications are the corresponding sheaves. The corresponding graded S-module are chosen as quotients of
        free S-modules in case of the default option BundleType=>PrunedQuotient, or as submodules of free S-modules.
        The true Beilinson functor is obtained by the sheafication of resulting the complex.
 
-       The Beilinson monad of a coherent sheaf $\mathcal F$ is the the sheafication of
+       The Beilinson monad of a coherent sheaf $\mathcal F$ is the sheafication of
        beilinson( T($\mathcal F$)) of its Tate resolution T($\mathcal F$).
      Example
         (S,E) = productOfProjectiveSpaces {2,1}
@@ -5654,7 +5645,7 @@ doc ///
     value for the option BundleType in beilinson
   Description
      Text
-      The Beilinson bundlse U^a will be represented by subbundles.
+      The Beilinson bundles U^a will be represented by subbundles.
   SeeAlso
     beilinson
     BundleType
@@ -5946,22 +5937,22 @@ doc ///
       When n is quite big compared to r, it is not very efficient to deal with Beilinson bundles on P^n since they have 
       huge rank and presentation matrices. In particular, the method directImageComplex becomes slow down.
       
-      The following is an example of direct images of the structure sheaf on a twisted cubic.
+      The following is an example of direct images of the structure sheaf on a rational normal curve of degree $d$.
   Example
-      kk=ZZ/101; d=6;
+      kk=ZZ/101; d=4;
       needsPackage "Resultants";
       vd=veronese(1,d,kk);
       R=target vd; S=source vd;
       
       M=R^{1:-1}; I=ann M; J=ker vd;
       
-      RM=time directImageComplex(I,M,matrix vd);
+      RM=directImageComplex(I,M,matrix vd);
       
       for i from min RM to max RM list (rank RM_i)
   Text
-      RM looks complicated since it is consisted of universal bundles on P^6, which are of high rank.
+      RM looks complicated since it is consisted of universal bundles on $P^4$, which are of high rank.
   Example
-      retTable=time actionOnDirectImage(I,M,matrix vd);
+      retTable=actionOnDirectImage(I,M,matrix vd);
       keys retTable
   Text
       We see that 0 is the only key, in other words, there is no other R^i vd_{*} except i=0.
@@ -7082,7 +7073,7 @@ netList cornerCohomologyTablesOfUa({1,2})
 restart
 needsPackage "TateOnProducts"
 
--- experiment with the old dual: Question can the wrong dual produce a resolution with wrong betti numbers?
+-- experiment with the old dual: Question can the wrong dual produce a resolution with wrong Betti numbers?
 
         kk=ZZ/101;n=4;
 	E=kk[e_0..e_n,SkewCommutative =>true]

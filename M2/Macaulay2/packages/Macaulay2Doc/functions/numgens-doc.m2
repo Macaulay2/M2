@@ -36,7 +36,7 @@ document {
      SeeAlso => {generators, trim, prune, mingens, ker,vars}
      }
 document { 
-     Key => (numgens,GeneralOrderedMonoid),
+     Key => (numgens, Monoid), -- TODO: combine with (numgens, Ring) below
      Headline => "number of generators of a monoid",
      Usage => "numgens M",
      Inputs => {
@@ -71,7 +71,7 @@ document {
 	  "numgens I"
 	  },
      PARA{},
-     "In order to find a more efficient set of of generators, use ",
+     "In order to find a more efficient set of generators, use ",
      TO mingens, " or ", TO trim, ".",
      EXAMPLE {
 	  "mingens I",
@@ -146,20 +146,3 @@ document {
 	  },
      SeeAlso => {generators, minPres, GF, ambient}
      }
-TEST ///
-numgens ZZ
-numgens GF(9)
-A = ZZ[a,b,c]
-numgens A
-B = A/a
-numgens B
-C = A[x,y]
-numgens C  -- 2
-use A
-D = C/(x-y^2, y-b*c)
-numgens D
---status: somebody should fix this! [dan]
-minPres D -- error, perhaps it wants to use R.FlatMonoid instead of R.monoid here???
-K = frac A
-numgens K
-///

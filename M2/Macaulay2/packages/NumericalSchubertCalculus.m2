@@ -1,40 +1,50 @@
+phcPresent := run ("type phc >/dev/null 2>&1") === 0
+phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
+phcVersionNeeded := "2.3.80"
+phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
+
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "1.11", 
-    Date => "Nov 2017",
+    Version => "1.17", 
+    Date => "Sep 2020",
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
-	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
+	    HomePage => "https://antonleykin.math.gatech.edu"},
 	{Name => "Abraham Martin del Campo", 
 	    Email => "abraham.mc@cimat.mx", 
 	    HomePage => "http://www.cimat.mx/~abraham.mc"},
 	{Name => "Frank Sottile", 
 	    Email => "sottile@math.tamu.edu", 
 	    HomePage => "http://www.math.tamu.edu/~sottile"},
+	{Name => "Ravi Vakil",
+		Email => "vakil@math.stanford.edu",
+		HomePage => "http://math.stanford.edu/~vakil"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
+    Keywords => {"Flag Varieties", "Numerical Algebraic Geometry"},
     Headline => "numerical methods in Schubert Calculus",
-    Keywords => {"Numerical Algebraic Geometry"},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",
-	"MonodromySolver"
+	"MonodromySolver",
+        "Schubert2"
 	},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
+    OptionalComponentsPresent => phcPresentAndModern,
     DebuggingMode => false
     )
 debug NumericalAlgebraicGeometry
 export { 
-   "changeFlags", -- "bigCellLocalCoordinates", 
+   "changeFlags",
+   "resetStatistics",
    "printStatistics",
    "setVerboseLevel", 
    "solveSchubertProblem",
-   "oneHomotopy"-- symbol?
-   --   changeFlags  -- better name?
+   "OneHomotopy"
    }
 protect Board
 protect IsResolved
@@ -94,10 +104,10 @@ installMethod(setDebugOptions, o -> () -> scan(keys o, k->if o#k=!=null then
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
-load "NumericalSchubertCalculus/galois.m2"
+--load "NumericalSchubertCalculus/UnderDevelopment/galois.m2"
 
 --------------------------------------
--- produces a matrix that parmeterizes
+-- produces a matrix that parametrizes
 -- the "big cell" of Gr(k,n)
 ------------------------------
 bigCellLocalCoordinates = method()
@@ -176,7 +186,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     critdiag := 0;
     g:=2; -- g answers where is the red checker in the critical row
     r:=2; -- r answers where is the red checker in the critical diagonal
-    -- r,g is the coordinate of the moving situaion in the 3x3 table of moves
+    -- r,g is the coordinate of the moving situation in the 3x3 table of moves
     indx := new List;
     redpos := new MutableList from redposition;
     -- find the critical row, and how the red checkers sit with respect to it
@@ -264,7 +274,7 @@ moveCheckers Array := blackred -> (
      blackup1 := position(blackposition, x-> x == 1+blackposition#blackdown1);
      -- Determine the rows of the pair of black checkers that will be sorted.  They are row r and 
      --    r+1 in the paper with r the critical row of the falling checker.
-     --  n-blackdown1 is one more thatn the number of checkers in the upper right corner 
+     --  n-blackdown1 is one more than the number of checkers in the upper right corner 
      --     (region A in paper)
      --  blackup1 is the number of checkers above and to the left of rising checker (as we are 0-based)
      --  Their sum is one more than the number of checkers above the moving pair = row of rising checker
@@ -289,7 +299,7 @@ moveCheckers Array := blackred -> (
 ---------------
 -- this function displays some information about
 -- the type of moves that are performed in each
--- checkerboard game. These are the redcheker moves
+-- checkerboard game. These are the redchecker moves
 -- encoded in the 9x9 table in the paper, where we
 -- denote them by a triplet {i,j,k} where i is the
 -- row (0,1, or 2), j is the column (0,1,2) and
@@ -307,13 +317,14 @@ moveCheckers Array := blackred -> (
 --        function solveSchubertProblem twice, the function 
 --        will report the information of both Tournaments,
 --        to avoid that, you need to export the following:
---            resetStats()
+--            resetStatistics()
 ---------------------------------
-stats = new MutableHashTable;
-resetStats = () -> stats =  new MutableHashTable from 
-flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
-{ "tracking time" => 0 }  
-resetStats()
+resetStatistics = () -> (
+    stats =  new MutableHashTable from 
+    flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
+    { "tracking time" => 0 };
+    )  
+resetStatistics()
 
 statsIncrementMove = m -> stats#m = stats#m + 1;
 statsIncrementTrackingTime = t -> stats#"tracking time" = stats#"tracking time" + t
@@ -523,8 +534,10 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 ---------------
 solveSchubertProblem = method(Options=>{LinearAlgebra=>true})
 solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
-    -- SchPblm is a list of sequences with two entries
-    -- a partition and a flag
+    -- SchPblm is a list of sequences with two entries  a condition and a flag
+    -- Check that it does indeed form a Schubert problem, and convert the conditions to partitions (if they were brackets)
+    SchPblm = ensurePartitions(SchPblm,k,n);
+
     twoconds := take(SchPblm,2);
     remaining'conditions'flags := drop(SchPblm,2);
     -- take the first two conditions
@@ -614,7 +627,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    	print(flgM*newDag.Solutions);
 	    	);
 	    changeFlags(flgM*newDag.Solutions, -- these are matrices in absolute coordinates
-	    	(conds, LocalFlags2, LocalFlags1), oneHomotopy=>false
+	    	(conds, LocalFlags2, LocalFlags1), OneHomotopy=>false
 		)
 	    ) --
 	)
@@ -637,7 +650,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 ---------------------------------
 -- takes a solution matrix in global coordinates
 -- and converts it into local coordinates to know
--- what the values of the variables of the loocal 
+-- what the values of the variables of the local 
 -- coordinates are, i.e., 
 -- writes a solution Matrix in terms 
 -- of the chart MX  (as a list of values 
@@ -694,14 +707,14 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
 -- toRawSolutions
 --
 -- Function that takes solutions (in local coordinates) as nxk matrices
--- and writes them into a list of values cooresponding to
+-- and writes them into a list of values corresponding to
 -- the variables in the local coordinates coordX of the 
 -- checkerboard variety 
 --
 -- !! This functions is used to express the solutions from
 -- matrix form to list form when using homotopies !!
 --------------------------
--- Inut:
+-- Input:
 --    coordX -- matrix of 0s,1s, and variables representing
 --              the local coordinates of the checkerboard variety
 --    X -- an nxk matrix that is a solution of the current incidence problem
@@ -798,7 +811,7 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
      red := delete(NC,last father.Board);
      redSorted := sort red; -- numbers of the rows where red checkers are
      apply(#redSorted, r->( -- column r is to be reduced 
---	 -- find the redcheckers bellow that can see the current redChecker
+--	 -- find the redcheckers below that can see the current redChecker
 --	 witnessReds:=select(drop(red,r), i->i>red#r);
 --	 j:={};
 --         scan(witnessReds, i-> j=append(j,position(redSorted, l-> l==i)));
@@ -831,7 +844,7 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
 --    	      	    assumes the matrix lives in the Schubert cell for l with
 --                  the standard flag, but not all pivots are 1.
 --    	      b -- the bracket corresponding to the standard flag
---    	      	    this is just a list of the parts of the flag that are afected by a partition lambda
+--    	      	    this is just a list of the parts of the flag that are affected by a partition lambda
 --    	      	    (equivalent to a partition with k parts of size <= n-k)
 --            (the default bracket is  
 -- output:  Sred  --matrix reduced
@@ -840,7 +853,7 @@ columnReduce=method(TypicalValue=> Matrix )
 columnReduce(Matrix,List) := (S,b)->(
     k := numColumns S;
     n := numRows S;
-    -- we use the bracket insted of the partition
+    -- we use the bracket instead of the partition
     -- b := output2bracket (redcheckers);
     -- b := partition2bracket(l,k,n);
     M:= S;
@@ -988,9 +1001,6 @@ load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 TEST ///
 load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
---TEST ///
---load "NumericalSchubertCalculus/TST/changeFlags-4lines-double-point.m2"
---///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------

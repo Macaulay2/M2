@@ -2,15 +2,20 @@
 
 -- this file should be mentioned *last* in dumpseq
 
+needs "engine.m2"
+needs "methods.m2"
+needs "nets.m2"
+needs "monoids.m2"
+needs "packages.m2"
+needs "robust.m2"
+needs "varieties.m2"
+
 recursionLimit = 300
 
+-- initialize the trivial monoid, see rawMonoid()
 degreesRing 0;
 
 setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
-
-(addStartFunction if member("--no-randomize",commandLine) 
-   then (() -> setRandomSeed 0)
-   else (() -> setRandomSeed((currentTime() << 16) + processID())))
 
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
@@ -27,8 +32,6 @@ QQ.Wrap = x -> wr("=",x)
 ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
 mentionQ := p -> not ignoreP#?(toString p)
 
-Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
-
 addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
@@ -36,7 +39,7 @@ addStartFunction(
 	       newPackage("User",
 		   Headline       => "default package for interpreter interactions",
 		   DebuggingMode  => true,
-		   PackageImports => if member("--no-preload", commandLine) then {} else Core#"pre-installed packages");
+		   PackageImports => if isMember("--no-preload", commandLine) then {} else Core#"pre-installed packages");
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
@@ -62,10 +65,6 @@ addStartFunction( () -> (
 
 addStartFunction( () -> tallyInstalledPackages() )
 
-userpath' := userpath = {
-	  applicationDirectory() | "code/",
-	  applicationDirectory() | "local/" | Layout#1#"packages"
-	  }
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory
 	  dir := applicationDirectory() | "local/";
@@ -77,18 +76,14 @@ addStartFunction( () -> if not noinitfile then (
 		    ));
 	  ))
 
-addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
+addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our shareable library is not being found" )
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
-noinitfile' := noinitfile
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
      if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === X then removeAttribute(x,ReverseDictionary);
      )
 waterMark = serialNumber symbol waterMark      -- used by Serialization package
-endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
 
-if not noinitfile' then path = join(userpath',path)
-if #OutputDictionary > 0 then error("symbols entered into OutputDictionary during startup phase: ",toString keys OutputDictionary)
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

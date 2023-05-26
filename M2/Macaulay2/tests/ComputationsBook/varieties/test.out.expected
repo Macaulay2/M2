@@ -72,8 +72,8 @@ o13 : Ideal of R
 
 i14 : theirunion = intersect(curve,surface)
 
-              6 2      7      2 5    5    5    5      2       5 5    10    5 5    9    4 5    4 5    5    4   10    5 5    5 5    5 3    8    3 5    5    3
-o14 = ideal (x y  + x*y  + x*y z  - x  - y  - z  - x*y  + 1, x y  + y   + y z  - x  - x y  - x z  - y  + x , x   + x y  + x z  - x y  - y  - y z  - x  + y )
+              6 2      7      2 5    5    5    5      2       5 5    10    5 5    9    4 5    4 5    5    4   10    10    5 5    5 5    9    4 5    4 5    5 3    8    3 5    5    5    4    3
+o14 = ideal (x y  + x*y  + x*y z  - x  - y  - z  - x*y  + 1, x y  + y   + y z  - x  - x y  - x z  - y  + x , x   - y   + x z  - y z  + x  + x y  + x z  - x y  - y  - y z  - x  + y  - x  + y )
 
 o14 : Ideal of R
 
@@ -156,39 +156,39 @@ o29 : Ideal of R'
 
 i30 : decompose ourpoints'
 
-                                                                                                                                                                   6      5     4      3     2               5     4      3     2                   5      4      3      2                          6      5     4      3     2               5     4      3     2                     5      4      3      2                          6      5     4      3     2               5     4      3     2                  5      4      3    2                          6      5     4      3     2               5     4      3     2                     5      4     3     2                          6      5     4      3     2               5     4      3     2                  5      4      3      2                             3    2     2                                3      2            2                     2           3    3     2                          4      3     2                       5    5    4
-o30 = {ideal (x - 1, y - 1, z + 1), ideal (x - 1, y - 1, z - 14), ideal (x - 1, y - 1, z - 6), ideal (x - 1, y - 1, z - 17), ideal (x - 1, y - 1, z + 36), ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, 50x  - 44x  + 45x  + 17x  + 41x + z - 43), ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, - 42x  + 41x  + 43x  + 14x  + 10x + z + 24), ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, 3x  - 39x  + 33x  - x  - 44x + z - 45), ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, - 18x  + 32x  + 4x  + 6x  - 39x + z - 33), ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, 7x  + 10x  - 24x  - 36x  + 32x + z - 4), ideal (- 16x  + x y + x  - 15x*y + 16x - 15y + 17, - 15x  - 17x  - 16x*y + y  + 17x - 15y - 1, x*y  - 1, - 17x  + y  + 2x  + 2x*y - x - 16y + 18, 6x  - 12x  + 7x  + x*y - x - 5y + 12, x  + z  + x  - 1)}
+                                                                                                                                                                                   2                          2             2                                         2                          2              2                                                2                          2              2                                       2                          2             2                                                 2                          2              2                                        2                          2              2                                                 2                         2              2                                         2                          2              2                                                2                          2              2                                       2                          2              2                                 3      2              2                    2       2       2              2                  3      2              2                  5      2             2
+o30 = {ideal (z - 6, y - 1, x - 1), ideal (z - 14, y - 1, x - 1), ideal (z - 17, y - 1, x - 1), ideal (z + 36, y - 1, x - 1), ideal (z + 1, y - 1, x - 1), ideal (x*z - 44y*z - 22z  - 22x - 23y + 32z - 44, y  + 2y*z - 38z  + 13x + 14y - 47z - 4, x*y + 36y*z + 31z  + 18x - 31y - 13z + 11, x  - 24y*z + 32z  + 39x - 2y - 8z - 30), ideal (x*z - 44y*z - 30z  + 31x + 37y + 32z - 39, y  - 34y*z + 27z  + 13x + 14y - 9z - 4, x*y - 6y*z - 30z  + 18x - 31y + 19z + 11, x  + 4y*z - 44z  + 39x - 2y + 35z - 30), ideal (x*z - 44y*z + 31z  - 30x - 13y + 32z + 41, y  - 12y*z + 46z  + 13x + 14y - 21z - 4, x*y - 14y*z + 5z  + 18x - 31y - 23z + 11, x  + 43y*z + 41z  + 39x - 2y + 48z - 30), ideal (x*z - 44y*z + 16z  + 5x + 19y + 32z + 10, y  - 29y*z + 40z  + 13x + 14y + 25z - 4, x*y - 17y*z - 22z  + 18x - 31y + 37z + 11, x  + 45y*z - 39z  + 39x - 2y + 15z - 30), ideal (x*z - 44y*z + 5z  + 16x - 20y + 32z + 32, y  - 28y*z + 26z  + 13x + 14y - 49z - 4, x*y + y*z + 16z  + 18x - 31y - 20z + 11, x  + 33y*z + 10z  + 39x - 2y + 11z - 30), ideal (y  + 28x  - 27x*y + 46y  - 27x + y - 28, x*y  - 1, x y - 28x  + 29x*y - 28y  + 45x + y + 45, x  - 46x  + 28x*y - 27y  + 46x + y + 27, z  + 46x  - 46x*y + 8y  - 48x - 19y - 29)}
 
 o30 : List
 
 i31 : oo / (x -> <<endl) @@ print;
-ideal (x - 1, y - 1, z + 1)
+ideal (z - 6, y - 1, x - 1)
 
-ideal (x - 1, y - 1, z - 14)
+ideal (z - 14, y - 1, x - 1)
 
-ideal (x - 1, y - 1, z - 6)
+ideal (z - 17, y - 1, x - 1)
 
-ideal (x - 1, y - 1, z - 17)
+ideal (z + 36, y - 1, x - 1)
 
-ideal (x - 1, y - 1, z + 36)
+ideal (z + 1, y - 1, x - 1)
 
-        6      5     4      3     2               5     4      3     2                   5      4      3      2
-ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, 50x  - 44x  + 45x  + 17x  + 41x + z - 43)
+                        2                          2             2                                         2                          2              2
+ideal (x*z - 44y*z - 22z  - 22x - 23y + 32z - 44, y  + 2y*z - 38z  + 13x + 14y - 47z - 4, x*y + 36y*z + 31z  + 18x - 31y - 13z + 11, x  - 24y*z + 32z  + 39x - 2y - 8z - 30)
 
-        6      5     4      3     2               5     4      3     2                     5      4      3      2
-ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, - 42x  + 41x  + 43x  + 14x  + 10x + z + 24)
+                        2                          2              2                                       2                          2             2
+ideal (x*z - 44y*z - 30z  + 31x + 37y + 32z - 39, y  - 34y*z + 27z  + 13x + 14y - 9z - 4, x*y - 6y*z - 30z  + 18x - 31y + 19z + 11, x  + 4y*z - 44z  + 39x - 2y + 35z - 30)
 
-        6      5     4      3     2               5     4      3     2                  5      4      3    2
-ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, 3x  - 39x  + 33x  - x  - 44x + z - 45)
+                        2                          2              2                                        2                          2              2
+ideal (x*z - 44y*z + 31z  - 30x - 13y + 32z + 41, y  - 12y*z + 46z  + 13x + 14y - 21z - 4, x*y - 14y*z + 5z  + 18x - 31y - 23z + 11, x  + 43y*z + 41z  + 39x - 2y + 48z - 30)
 
-        6      5     4      3     2               5     4      3     2                     5      4     3     2
-ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, - 18x  + 32x  + 4x  + 6x  - 39x + z - 33)
+                        2                         2              2                                         2                          2              2
+ideal (x*z - 44y*z + 16z  + 5x + 19y + 32z + 10, y  - 29y*z + 40z  + 13x + 14y + 25z - 4, x*y - 17y*z - 22z  + 18x - 31y + 37z + 11, x  + 45y*z - 39z  + 39x - 2y + 15z - 30)
 
-        6      5     4      3     2               5     4      3     2                  5      4      3      2
-ideal (x  + 18x  + 2x  + 17x  + 2x  + 18x + 1, 18x  + 2x  + 17x  + 2x  + 18x + y + 1, 7x  + 10x  - 24x  - 36x  + 32x + z - 4)
+                       2                          2              2                                       2                          2              2
+ideal (x*z - 44y*z + 5z  + 16x - 20y + 32z + 32, y  - 28y*z + 26z  + 13x + 14y - 49z - 4, x*y + y*z + 16z  + 18x - 31y - 20z + 11, x  + 33y*z + 10z  + 39x - 2y + 11z - 30)
 
-            3    2     2                                3      2            2                     2           3    3     2                          4      3     2                       5    5    4
-ideal (- 16x  + x y + x  - 15x*y + 16x - 15y + 17, - 15x  - 17x  - 16x*y + y  + 17x - 15y - 1, x*y  - 1, - 17x  + y  + 2x  + 2x*y - x - 16y + 18, 6x  - 12x  + 7x  + x*y - x - 5y + 12, x  + z  + x  - 1)
+        3      2              2                    2       2       2              2                  3      2              2                  5      2             2
+ideal (y  + 28x  - 27x*y + 46y  - 27x + y - 28, x*y  - 1, x y - 28x  + 29x*y - 28y  + 45x + y + 45, x  - 46x  + 28x*y - 27y  + 46x + y + 27, z  + 46x  - 46x*y + 8y  - 48x - 19y - 29)
 
 
 i32 : ooo / degree

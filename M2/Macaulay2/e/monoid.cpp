@@ -1,13 +1,22 @@
 // Copyright 1996 Michael E. Stillman
 
 #include <ctype.h>
+#include "util.hpp"
 #include "text-io.hpp"
 #include "monoid.hpp"
-#include "varpower.hpp"
-#include "ntuple.hpp"
-#include "polyring.hpp"
+
+#include <assert.h>
+#include <string.h>
+
+#include "ExponentList.hpp"
+#include "ExponentVector.hpp"
+#include "buffer.hpp"
+#include "error.h"
 #include "exceptions.hpp"
+#include "interface/monomial-ordering.h"
 #include "overflow.hpp"
+#include "polyring.hpp"
+#include "util.hpp"
 
 Monoid *Monoid::trivial_monoid = 0;
 
@@ -21,13 +30,14 @@ void Monoid::set_trivial_monoid_degree_ring(const PolynomialRing *DR)
 
 Monoid::Monoid()
     : nvars_(0),
-      varnames_(0),
-      degvals_(0),
-      heftvals_(0),
-      degree_ring_(0),    // will be set later
-      degree_monoid_(0),  // will be set later
-      mo_(0),
-      monorder_(0),
+      varnames_(nullptr),
+      degvals_(nullptr),
+      heftvals_(nullptr),
+      heft_degree_of_var_(nullptr),
+      degree_ring_(nullptr),    // will be set later
+      degree_monoid_(nullptr),  // will be set later
+      mo_(nullptr),
+      monorder_(nullptr),
       overflow(0),
       exp_size(0),
       monomial_size_(0),
@@ -36,7 +46,8 @@ Monoid::Monoid()
       n_before_component_(0),
       n_after_component_(0),
       component_up_(true),
-      local_vars(0)
+      local_vars(nullptr),
+      first_weights_slot_(-1)
 {
 }
 
@@ -71,6 +82,20 @@ Monoid *Monoid::create(const MonomialOrdering *mo,
   return new Monoid(mo, names, deg_ring, degs, hefts);
 }
 
+Monoid *Monoid::create(const MonomialOrdering *mo,
+                        const std::vector<std::string>& names,
+                        const PolynomialRing *DR, /* degree ring */
+                        const std::vector<int>& degs,
+                        const std::vector<int>& hefts)
+{
+  
+  return create(mo,
+                stdvector_to_M2_ArrayString(names),
+                DR,
+                stdvector_to_M2_arrayint(degs),
+                stdvector_to_M2_arrayint(hefts));
+}
+
 Monoid::Monoid(const MonomialOrdering *mo,
                M2_ArrayString names,
                const PolynomialRing *deg_ring,
@@ -80,9 +105,22 @@ Monoid::Monoid(const MonomialOrdering *mo,
       varnames_(names),
       degvals_(degs),
       heftvals_(hefts),
+      heft_degree_of_var_(nullptr), // set below, except in the trivial case.
       degree_ring_(deg_ring),
       degree_monoid_(deg_ring->getMonoid()),
-      mo_(mo)
+      mo_(mo),
+      monorder_(nullptr), // set below
+      overflow(0),
+      exp_size(0), // set below
+      monomial_size_(0), // set below
+      monomial_bound_(0),
+      n_invertible_vars_(0), // set below
+      n_before_component_(0), // set below
+      n_after_component_(0), // set below
+      component_up_(true), // set below
+      local_vars(nullptr), // set below
+      first_weights_slot_(-1) // set below
+      // nslots: set below
 {
   monorder_ = monomialOrderMake(mo);
 
@@ -140,6 +178,12 @@ Monoid::Monoid(const MonomialOrdering *mo,
 
   local_vars = rawNonTermOrderVariables(mo);
 
+  for (int i=0; i<n_vars(); ++i)
+    {
+      bool isLaurent = isLaurentVariable(i);
+      mLaurentVariablesPredicate.push_back(isLaurent);
+    }
+
   // Debugging only:
   //  fprintf(stderr, "%d variables < 1\n", local_vars->len);
   //  if (local_vars->len > 0)
@@ -177,12 +221,18 @@ void Monoid::set_degrees()
         monomial m = degree_monoid_->make_one();
         degree_monoid_->from_expvector(t, m);
         degree_of_var_.push_back(m);
-        heft_degree_of_var_->array[i] = ntuple::weight(degvars, t, heftvals_);
+        heft_degree_of_var_->array[i] = exponents::weight(degvars, t, heftvals_);
         t += degvars;
       }
   else
     {
-      for (int i = 0; i < nvars_; i++) heft_degree_of_var_->array[i] = 1;
+      for (int i = 0; i < nvars_; i++)
+        {
+          monomial m = degree_monoid_->make_one();
+          degree_monoid_->from_expvector(t, m);
+          degree_of_var_.push_back(m);
+          heft_degree_of_var_->array[i] = 1;
+        }
     }
   degree_of_var_.push_back(degree_monoid_->make_one());
 }
@@ -349,7 +399,7 @@ M2_arrayint Monoid::to_arrayint(const_monomial monom) const
   return result;
 }
 
-void Monoid::to_expvector(const_monomial m, exponents result_exp) const
+void Monoid::to_expvector(const_monomial m, exponents_t result_exp) const
 {
   monomialOrderDecodeToActualExponents(monorder_, m, result_exp);
 }
@@ -376,23 +426,6 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
       }
 }
 
-#if 0
-// mult is called:
-//   respoly2.cpp
-//   res2.cpp
-//   res.cpp
-//   respoly.cpp
-//   schorder.cpp
-//   freemod.cpp
-//   gbring.cpp
-//   matrix.cpp
-//   polyring.cpp
-//   ringmap.cpp
-//   skewpoly.cpp
-//   weylalg.cpp
-//   mat-kbasis.cpp
-//   freemod2.cpp
-#endif
 int Monoid::num_parts() const { return monorder_->nblocks; }
 int Monoid::n_slots(int nparts) const
 {
@@ -473,7 +506,7 @@ monomial Monoid::make_one() const
 void Monoid::remove(monomial d) const
 {
 #if 0
-//   deletearray(d);
+//   freemem(d);
 #endif
 }
 
@@ -487,26 +520,44 @@ void Monoid::copy(const_monomial m, monomial result) const
   memcpy(result, m, monomial_size() * sizeof(int));
 }
 
+bool Monoid::divides_partial_order(const_monomial m, const_monomial n) const
+// Is each exponent m_i <= n_i, for all i=0..nvars-1?
+{
+  if (nvars_ == 0) return true;
+
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  // can we speed this up by not unpacking ??
+  to_expvector(m, EXP1);
+  to_expvector(n, EXP2);
+  return exponents::divides(nvars_, EXP1, EXP2);
+}
+
 bool Monoid::divides(const_monomial m, const_monomial n) const
 // Does m divide n?
 {
   if (nvars_ == 0) return true;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
   // can we speed this up by not unpacking ??
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
-  return ntuple::divides(nvars_, EXP1, EXP2);
+  if (numInvertibleVariables() == 0)
+    return exponents::divides(nvars_, EXP1, EXP2);
+  for (int i=0; i < nvars_; ++i)
+    if (not mLaurentVariablesPredicate[i] and EXP1[i] > EXP2[i])
+      return false;
+  return true;
 }
 
 void Monoid::power(const_monomial m, int n, monomial result) const
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  ntuple::power(nvars_, EXP1, n, EXP1);
+  exponents::power(nvars_, EXP1, n, EXP1);
   from_expvector(EXP1, result);
 }
 
@@ -517,8 +568,8 @@ void Monoid::monsyz(const_monomial m,
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
@@ -541,12 +592,12 @@ void Monoid::gcd(const_monomial m, const_monomial n, monomial p) const
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
-  ntuple::gcd(nvars_, EXP1, EXP2, EXP1);
+  exponents::gcd(nvars_, EXP1, EXP2, EXP1);
   from_expvector(EXP1, p);
 }
 
@@ -554,28 +605,72 @@ void Monoid::lcm(const_monomial m, const_monomial n, monomial p) const
 {
   if (nvars_ == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
 
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
-  ntuple::lcm(nvars_, EXP1, EXP2, EXP1);
+  exponents::lcm(nvars_, EXP1, EXP2, EXP1);
   from_expvector(EXP1, p);
 }
 
+// TODO: replace buffer and use standard IO
 void Monoid::elem_text_out(buffer &o, const_monomial m, bool p_one) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  ntuple::elem_text_out(o, nvars_, EXP1, varnames_, p_one);
+//   elem_text_out(o, EXP1, p_one);
+// }
+// void Monoid::elem_text_out(buffer &o, const_exponents EXP1, bool p_one) const
+// {
+  int len_ = 0;
+  for (unsigned int v = 0; v < nvars_; v++)
+    if (EXP1[v] != 0)
+      {
+        len_++;
+        if (varnames_->len < v)
+          o << ".";
+        else
+          o << varnames_->array[v];
+        int e = EXP1[v];
+        int single = (varnames_->array[v]->len == 1);
+        if (e > 1 && single)
+          o << e;
+        else if (e > 1)
+          o << "^" << e;
+        else if (e < 0)
+          o << "^(" << e << ")";
+      }
+  if (len_ == 0 && p_one) o << "1";
 }
+
+// void Monoid::elem_text_out(buffer &o, const_varpower m, bool p_one) const
+// {
+//   index_varpower i = m;
+//   if (!i.valid() and p_one) o << "1";
+//   for (; i.valid(); ++i)
+//     {
+//       int v = i.var();
+//       int e = i.exponent();
+//       if (mVariableNames.size() < v)
+//         o << ".";
+//       else
+//         o << mVariableNames[v];
+//       int single = (mVariableNames[v].size() == 1);
+//       if (e > 1 && single)
+//         o << e;
+//       else if (e > 1)
+//         o << "^" << e;
+//       else if (e < 0)
+//         o << "^(" << e << ")";
+//     }
+// }
 
 void Monoid::multi_degree(const_monomial m, monomial result) const
 {
   if (degree_monoid()->n_vars() == 0) return;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
   degree_monoid()->one(result);
   if (nvars_ == 0) return;
@@ -619,19 +714,35 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
 {
   if (nvars_ == 0) return 0;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   int sz = (wts->len < nvars_ ? wts->len : nvars_);
-  return ntuple::weight(sz, EXP1, wts);
+  return exponents::weight(sz, EXP1, wts);
 }
+
+template<typename T>
+T Monoid::degree_weights(const_monomial m, const std::vector<T>& wts) const
+{
+  if (nvars_ == 0) return 0;
+
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  to_expvector(m, EXP1);
+  int sz = (wts.size() < nvars_ ? wts.size() : nvars_);
+  T wt = 0;
+  for (int i=0; i<sz; i++)
+    wt += EXP1[i] * wts[i];
+  return wt;
+}
+
+template int Monoid::degree_weights<int>(const_monomial m, const std::vector<int>& wts) const;
 
 int Monoid::simple_degree(const_monomial m) const
 {
   if (nvars_ == 0) return 0;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  return ntuple::degree(nvars_, EXP1);
+  return exponents::simple_degree(nvars_, EXP1);
 }
 
 bool Monoid::is_one(const_monomial m) const
@@ -651,7 +762,7 @@ bool Monoid::is_invertible(const_monomial m) const
       return is_one(m);
     }
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
   for (int i = 0; i < nvars_; i++)
     if (!monorder_->is_laurent[i] && EXP1[i] > 0) return false;
@@ -660,16 +771,16 @@ bool Monoid::is_invertible(const_monomial m) const
 
 void Monoid::from_varpower(const_varpower vp, monomial result) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  varpower::to_ntuple(nvars_, vp, EXP1);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  varpower::to_expvector(nvars_, vp, EXP1);
   from_expvector(EXP1, result);
 }
 
-void Monoid::to_varpower(const_monomial m, intarray &result_vp) const
+void Monoid::to_varpower(const_monomial m, gc_vector<int>& result) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
   to_expvector(m, EXP1);
-  varpower::from_ntuple(nvars_, EXP1, result_vp);
+  varpower::from_expvector(nvars_, EXP1, result);
 }
 
 // Local Variables:

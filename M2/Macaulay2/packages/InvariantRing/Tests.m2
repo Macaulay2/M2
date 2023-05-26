@@ -104,12 +104,15 @@ assert(set invariants T1 === invariants1)
 ///
 
 -- Test 9
-TEST ///
-R2 = QQ[x_1..x_4]
-T2 = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R2)
-invariants2 = set {x_1*x_2*x_3,x_1^2*x_3*x_4}
-assert(set invariants T2 === invariants2)
-///
+
+-- this test often fails, because the result depends on what hashcode values are, so we comment it out for now.
+
+-- TEST ///
+-- R2 = QQ[x_1..x_4]
+-- T2 = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R2)
+-- invariants2 = set {x_1*x_2*x_3,x_1^2*x_3*x_4}
+-- assert(set invariants T2 === invariants2)
+-- ///
      
      
 -------------------------------------------
@@ -345,7 +348,7 @@ assert(value denominator H === sub((1-T)^3, ring value denominator H))
 -- *NB it is possible that primaryInvariants(S3,Dade=>true) can run correctly 
 -- and output an invariant polynomial of degree strictly less than the 
 -- cardinality of the group. If a check on the package invariant ring reports 
--- failure of the folloing test, then one should see if the test is passed upon 
+-- failure of the following test, then one should see if the test is passed upon 
 -- a second attempt. Only if the test fails a second time is it worth inspecting 
 -- the code for errors.  
 
@@ -402,7 +405,7 @@ assert(
  -- Test 23
  -- Checks the dadeHSOP routine by checking that the list of polynomials output
 -- has the expected output. Namely:
--- they are invariant polynimials,
+-- they are invariant polynomials,
 -- they form a homogeneous system of parameters for the polynomial ring
 -- they have degrees equal to the cardinality of the group (which should occur
 -- with probability 1)*

@@ -96,8 +96,9 @@ recognize(file:PosFile):(null or Word) := (
 	  );
      when last
      is null do (
-	  printErrorMessage(position(file),"invalid character" );
+	  p := position(file);
 	  getc(file);
+	  printErrorMessage(p,"invalid character" );
 	  (null or Word)(NULL))
      is word:Word do ( 
 	  for length(word.name) do getc(file); 
@@ -111,7 +112,6 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
      pos := position(o);
-     hadnewline := false;
      tokenbuf << '\"';					    -- "
      while true do (
 	  ch := getc(o);
@@ -141,8 +141,6 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
 	  && peek(o,1) == int('/') then break;
 	  if ch == int('\"') || ch == int('\\') then tokenbuf << '\\';
      	  tokenbuf << char(ch);
-	  if ch == int('\n') && hadnewline && isatty(o) then return NULL; -- user gets out with an extra NEWLINE
-	  hadnewline = ch == int('\n')
 	  );
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
@@ -150,6 +148,8 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
 
+isbindigit(c:int):bool := c == int('0') || c == int('1');
+isoctdigit(c:int):bool := c >= int('0') && c <= int('7');
 ishexdigit(c:int):bool := (
      c >= int('0') && c <= int('9') ||
      c >= int('a') && c <= int('f') ||
@@ -160,7 +160,6 @@ getstring(o:PosFile):(null or Word) := (
      line := o.line;
      column := o.column;
      delimiter := getc(o);
-     hadnewline := false;
      escaped := false;
      tokenbuf << char(delimiter);
      hexcoming := 0;
@@ -213,8 +212,6 @@ getstring(o:PosFile):(null or Word) := (
 	       )
 	  else if ch == delimiter then break
 	  else if ch == int('\\') then escaped = true;
-	  if ch == int('\n') && hadnewline && isatty(o) then return NULL;	-- user gets out with an extra NEWLINE
-	  hadnewline = ch == int('\n');
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
@@ -262,18 +259,9 @@ skipwhite(file:PosFile):int := (
 	  else if c == int('-') && peek(file,1) == int('*') then (
 	       -- block comment: -* ... *-
 	       getc(file); getc(file);
-	       hadnewline := false;
 	       until (
 		    c = peek(file);
 		    if c == ERROR || c == EOF then return c;
-		    if c == int('\n') then (
-			 if hadnewline && isatty(file) then (
-			      getc(file);
-			      return ERROR; -- user gets out with an extra NEWLINE
-			      );
-			 hadnewline = true;
-			 )
-		    else hadnewline = false;
 		    c == int('*') && (
 			 getc(file);
 			 c = peek(file);
@@ -319,17 +307,41 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,
 		    file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
-	  else if isalpha(ch) && ch != int('\'') then (
+	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode except 226) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
-	       while isdigit(peek(file)) do (
-		    tokenbuf << char(getc(file))
-		    );
+	       decimal := true;
+	       if ch == int('0') then (
+		    tokenbuf << char(getc(file));
+		    c := peek(file);
+		    if (c == int('b') || c == int('B')) &&
+			isbindigit(peek(file,1)) then (
+			 decimal = false;
+			 tokenbuf << char(getc(file));
+			 while isbindigit(peek(file)) do
+			      tokenbuf << char(getc(file)))
+		    else if (c == int('o') || c == int('O')) &&
+			     isoctdigit(peek(file,1)) then (
+			 decimal = false;
+			 tokenbuf << char(getc(file));
+			 while isoctdigit(peek(file)) do
+			      tokenbuf << char(getc(file)))
+		    else if (c == int('x') || c == int('X')) &&
+			     ishexdigit(peek(file,1)) then (
+			 decimal = false;
+			 tokenbuf << char(getc(file));
+			 while ishexdigit(peek(file)) do
+			      tokenbuf << char(getc(file)))
+		    else while isdigit(peek(file)) do
+			      tokenbuf << char(getc(file))
+		   )
+	       else while isdigit(peek(file)) do
+		    tokenbuf << char(getc(file));
 	       c := peek(file);
-	       if c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')
+	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')) || c == int('E')
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
@@ -350,9 +362,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			      )
 			 );
 	       	    c = peek(file);
-		    if c == int('e') then (
+		    if c == int('e') || c == int('E') then (
 			 tokenbuf << char(getc(file));
-			 if ( peek(file) == int('-') && isdigit(peek(file,1)) || isdigit(peek(file)) )
+			 if ( peek(file) == int('-') && isdigit(peek(file,1)) ||
+			      peek(file) == int('+') && isdigit(peek(file,1)) ||
+			      isdigit(peek(file)) )
 			 then (
 			      tokenbuf << char(getc(file));
 			      while isdigit(peek(file)) do tokenbuf << char(getc(file));
@@ -384,6 +398,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    return errorToken
 		    )
 	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	  else if ch == 226 then ( -- unicode math symbols
+	       tokenbuf << char(getc(file));
+	       tokenbuf << char(getc(file));
+	       tokenbuf << char(getc(file));
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else (
 	       when recognize(file)
 	       is null do (

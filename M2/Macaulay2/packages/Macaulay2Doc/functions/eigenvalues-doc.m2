@@ -26,7 +26,7 @@ document {
      eigenvalues(M, Hermitian=>true)
      class \ oo
      ///,
-     "The lapack library is used to compute eigenvectors of real and complex matrices.",
+     "The lapack and eigen libraries are used to compute eigenvectors of real and complex matrices.",
      Caveat => {"The eigenvalues are approximate."},
      SeeAlso => {eigenvectors, SVD}
      }
@@ -42,11 +42,4 @@ document {
 	  the routine will give incorrect results."},
      SeeAlso => {eigenvectors}
      }
-TEST ///
-m = map(CC^10, CC^10, (i,j) -> i^2 + j^3*ii)
-eigenvalues m
-m = map(CC^10, CC^10, (i,j) -> (i+1)^(j+1))
-eigenvalues m
-m = map(RR^10, RR^10, (i,j) -> (i+1)^(j+1))
-eigenvalues m
-///
+

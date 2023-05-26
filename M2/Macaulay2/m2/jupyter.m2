@@ -1,3 +1,8 @@
+needs "monideal.m2"
+needs "expressions.m2"
+needs "reals.m2"
+needs "varieties.m2"
+
 lastprompt := "";
 
 ZZ#{Jupyter,InputPrompt} = lineno -> concatenate(concatenate("[INP]",newline,"[INP]"), lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));

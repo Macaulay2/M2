@@ -1,6 +1,10 @@
 --		Copyright 2006 by Daniel R. Grayson
 -- validate and fix Hypertext objects
 
+needs "content.m2"
+needs "hypertext.m2"
+needs "methods.m2"
+
 -- TODO: make this local
 currentHelpTag = null
 
@@ -24,7 +28,7 @@ noqname := (tag, x) -> (
 -- see content.m2
 chk := (p, x) -> (
     c := class x;
-    if c === Option or c === LITERAL then return;
+    if c === Option or c === OptionTable or c === LITERAL then return;
     if not c.?qname then return noqname(c, x);
     if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
     then flagError("element of type ", toString p, " may not contain an element of type ", toString c))
@@ -69,7 +73,7 @@ validate HREF       := identity -- TODO
 validate TO         :=
 validate TOH        :=
 validate TO2        := x -> (
-    tag := x#0;
+    tag := fixup x#0;
     if isUndocumented tag and signalDocumentationWarning tag then printerr("warning: undocumented node " | format tag | " cited by " | format currentDocumentTag) else
     if isMissingDoc   tag and signalDocumentationWarning tag then printerr("warning: missing node: "     | format tag | " cited by " | format currentDocumentTag);
     apply(splice x, validate))
@@ -113,12 +117,6 @@ fixup LITERAL     :=
 fixup TO          :=
 fixup TO2         :=
 fixup TOH         := identity
-
--- TODO: move this
-hypertext = method(Dispatch => Thing)
-hypertext Hypertext := fixup
-hypertext Sequence  :=
-hypertext List      := x -> fixup DIV x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

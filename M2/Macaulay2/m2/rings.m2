@@ -1,15 +1,23 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
+-----------------------------------------------------------------------------
+-- Ring
+-----------------------------------------------------------------------------
+
+Ring.synonym = "ring"
+
 Ring == ZZ := (R,i) -> (
      if i === 0 then 1_R == 0
      else error "comparison of ring with nonzero integer encountered"
      )
 
+options Ring := x -> null
+
 use Ring := x -> ( if x.?use then x.use x; x)
 
 ZZ == Ring := (i,R) -> R == i
-
-poincare Ring := R -> poincare module R
 
 dim Ring := R -> (
      if R.?dim then R.dim
@@ -53,16 +61,12 @@ isSkewCommutative = method(TypicalValue => Boolean)
 isSkewCommutative Ring := R -> false
 
 isWeylAlgebra = method(TypicalValue => Boolean)
-isWeylAlgebra Ring := R -> (
-    not isCommutative R and 
-    isPolynomialRing R and 
-    R.monoid.Options.?WeylAlgebra and 
-    #R.monoid.Options.WeylAlgebra > 0
-    )
+isWeylAlgebra Ring := R -> false
 
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
+RRi.isCommutative = true
 
 isRing = method(TypicalValue => Boolean)
 isRing Thing := R -> false
@@ -74,9 +78,30 @@ isHomogeneous Ring := R -> (
      degreeLength R == 0 
      )
 
-promote = method(Dispatch=>{Thing,Type,Type})
-lift = method(Dispatch=>{Thing,Type,Type}, Options => {Verify => true})
-liftable  = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
+-----------------------------------------------------------------------------
+-- promote, lift, liftable, and isConstant
+-----------------------------------------------------------------------------
+
+-- some remnants from lift and promote, version 2
+liftable = method(TypicalValue => Boolean, Dispatch => {Thing, Type, Type})
+liftable(Number,      Number)      :=
+liftable(Number,      RingElement) :=
+liftable(Constant,    Number)      :=
+liftable(Constant,    RingElement) :=
+liftable(RingElement, Number)      :=
+liftable(RingElement, RingElement) := (f, R) -> null =!= lift(f, R, Verify => false)
+
+isConstant = method(TypicalValue => Boolean)
+isConstant RingElement := r -> liftable(r, coefficientRing ring r)
+
+lift = method(Dispatch => {Thing, Type, Type}, Options => {Verify => true})
+Number   ^ Ring :=
+Constant ^ Ring := lift
+
+promote = method(Dispatch => {Thing, Type, Type})
+Number   _ Ring :=
+Constant _ Ring := promote
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

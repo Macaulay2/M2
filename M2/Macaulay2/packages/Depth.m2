@@ -46,7 +46,7 @@ export{
         
 --=========================================================================--
 
--- Depreciated Code (Branden Stone)
+-- Deprecated Code (Branden Stone)
 -- All this does is check where the ext modules don't vanish.
 --depth(Ideal,Module) := ZZ => (I,M) -> (
 --     AI := (ring I)^1/I;
@@ -169,7 +169,7 @@ time depth(ideal vars S, S^1)
 
 depth(Module) := ZZ => M -> (
     --depth of a module with respect to the max ideal, via finite proj dim
-    --gives error if the ultimate coeficient ring of R = ring M is not a field.
+    --gives error if the ultimate coefficient ring of R = ring M is not a field.
     R := ring M;
     if isHomogeneous M === false then print "-- Warning: This module is not homogeneous, computation may be incorrect.";
     if not isCommutative R then error"depth undefined for noncommutative rings";
@@ -215,7 +215,7 @@ depth(Ideal,Ideal) := ZZ => (I,A) -> (
 
 -----------------------------------------------------------------------------
 
--- Depreciated Code (Branden Stone)
+-- Deprecated Code (Branden Stone)
 --depth(Ideal,PolynomialRing) := ZZ => (I,A) -> (
 --     if isField coefficientRing A then codim I else depth(I,module A)
 --     ) -- if we can compute dimensions over ZZ, then we can remove this if-then statement
@@ -550,7 +550,7 @@ doc ///
      K = koszul vars S
      apply(numgens S, i-> depth coker K.dd_(i+1))
     Text
-     and here is one computing systems of paramters. The "Density" (a number between
+     and here is one computing systems of parameters. The "Density" (a number between
      0 and 1) is a measure of the sparseness sought, and "Attempts" bounds
      the number of probabilistic attempts.
     Example
@@ -727,8 +727,8 @@ document {
           "Given a list ", TT "X", ", the function ", TT "isRegularSequence", 
 	  " tells if ", TT "X", " forms a regular sequence. If ", TT "X", 
 	  " consists of homogeneous elements, it does this by comparing 
-	  the hilbert series of ", TT "A", "
-	  and the hilbert series of ", TT "A/XA", ". Otherwise it checks 
+	  the Hilbert series of ", TT "A", "
+	  and the Hilbert series of ", TT "A/XA", ". Otherwise it checks 
 	  the injectivity of the maps defined by multiplication
 	  by the elements of ", TT "X", " and also checks if ", TT "XA
 	  = A", ".",

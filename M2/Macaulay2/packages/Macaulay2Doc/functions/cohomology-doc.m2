@@ -3,7 +3,21 @@
 --- notes: 
 
 undocumented {(cohomology,ZZ,Sequence)}
-
+-*
+-- this is the old version
+document {
+     Key => {cohomology,[cohomology,Degree]},
+     Headline => "general cohomology functor",
+     TT "cohomology", " -- a method name available for computing expressions
+     of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
+     PARA{},
+     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", ", TT "M", " be of
+     class ", TT "A", ", and ", TT "N", " be of 
+     class ", TT "B", ", then the method can be installed with ",
+     PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
+     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
+     }
+*-
 document { 
      Key => cohomology,
      Headline => "general cohomology functor",
@@ -105,7 +119,7 @@ document {
       the", TT "i", "-th cohomology group of ", TT "F(n)", ".",
      PARA{},
      "To discard the part of the module M of degree less than d, 
-     use ", TT "truncate(d,M)", ".",
+     use the ", TO "Truncations::truncate(ZZ,Module)", " command as ", TT "truncate(d,M)", ".",
      PARA{},
      "Use ", TT "HH^i(F(>d))", " to request the twists strictly greater than n.",
      PARA{},
@@ -178,25 +192,17 @@ document {
      SeeAlso => {"GradedModule", "HH"}
      }
 
-TEST ///
-needsPackage "SimplicialComplexes"
-R = QQ[a..d]
-D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
-C = chainComplex D
-assert ( rank HH_2 C == 1 )
-///
-
 document { 
-     Key => {(cohomology,ZZ,CoherentSheaf)},
+     Key => {(cohomology,ZZ,ProjectiveVariety,CoherentSheaf),(cohomology,ZZ,CoherentSheaf)},
      Headline => "cohomology of a coherent sheaf on a projective variety",
-     Usage => "HH^i F\ncohomology(i,F)",
-     Inputs => {"i"=> ZZ, "F" => CoherentSheaf =>{"on a projective variety ", TT "X"} },
+     Usage => "HH^i(X,F)\nHH^i F\ncohomology(i,X,F)\ncohomology(i,F)",
+     Inputs => {"i"=> ZZ, "X" => ProjectiveVariety, "F" => CoherentSheaf =>{"on the projective variety ", TT "X"} },
      Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "F", " as a vector space 
 	       over the coefficient field of ", TT "X"} 
 	  },
      "The command computes the ", TT "i", "-th cohomology group of ", TT "F", 
      " as a vector space over the coefficient field of ", TT "X",".  For i>0 this
-     is currently done via local duality, while for i=0 it is computed as a limmit of Homs.
+     is currently done via local duality, while for i=0 it is computed as a limit of Homs.
      Eventually there will exist an alternative option for computing sheaf cohomology
      via the Bernstein-Gelfand-Gelfand correspondence",
      PARA{},
@@ -260,7 +266,7 @@ document {
 	  "II'Z = sheaf module ideal Z"
 	  },
      PARA{
-	  TEX "The defect of W (that is, $h^{1,1}(W)-1$) can be computed from the 
+	  TEX "The defect of $W$ (that is, $h^{1,1}(W)-1$) can be computed from the
      	  cohomology of the ideal sheaf of the singular locus Z of V twisted by 5 
      	  (see Werner's thesis):"},
      EXAMPLE {          
@@ -268,8 +274,8 @@ document {
 	  "h11 = defect + 1"
 	  },
      PARA{
-     	  TEX "The number $h^{2,1}(W)$ (the dimension of the moduli space of W) can be computed (Clemens-Griffiths, Werner) 
-     	  as $dim H^0({\\bf I}_Z(5))/JacobianIdeal(V)_5$."},
+	  TEX "The number $h^{2,1}(W)$ (the dimension of the moduli space of $W$) can be computed (Clemens-Griffiths, Werner)
+	  as $\\dim H^0({\\mathbf I}_Z(5))/JacobianIdeal(V)_5$."},
      EXAMPLE {
 	  "quinticsJac = numgens source basis(5,ideal Z)", 
           "h21 = rank HH^0(II'Z(5)) - quinticsJac"

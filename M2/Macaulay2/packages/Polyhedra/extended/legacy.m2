@@ -147,7 +147,7 @@ sublatticeBasis Matrix := M -> (
 --     	     to the file. But keep in mind that this works only for such objects assigned to a Symbol! The session 
 -- 	     can be reovered by calling
 --     	     load F
--- 	     It is not neccessary to load Polyhedra before loading the saved session, because if not yet loaded it will
+-- 	     It is not necessary to load Polyhedra before loading the saved session, because if not yet loaded it will
 --     	     load Polyhedra. Also if PPDivisor was loaded when the session has been saved it will also be loaded.
 saveSession = method()
 saveSession String := F -> (

@@ -3,7 +3,9 @@
 #ifndef _aring_CCC_hpp_
 #define _aring_CCC_hpp_
 
-#include <iostream>
+#include "interface/gmp-util.h"  // for mpfr_reallocate_limbs, moveTo_gmpCC
+#include "interface/random.h"    // for randomMpfr
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -17,7 +19,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingCCC : public RingInterface
+class ARingCCC : public SimpleARing<ARingCCC>
 {
   // complex numbers represented as pairs of MPFRs.
 
@@ -41,8 +43,8 @@ class ARingCCC : public RingInterface
   const RealRingType& real_ring() const { return mRRR; }
   unsigned int computeHashValue(const ElementType& a) const
   {
-    double a1 = mpfr_get_d(&a.re, GMP_RNDN);
-    double b1 = mpfr_get_d(&a.im, GMP_RNDN);
+    double a1 = mpfr_get_d(&a.re, MPFR_RNDN);
+    double b1 = mpfr_get_d(&a.im, MPFR_RNDN);
     return static_cast<unsigned int>(12347. * a1 + 865800. * b1);
   }
 
@@ -90,6 +92,11 @@ class ARingCCC : public RingInterface
     set(result, *a.get_cc());
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_cc();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType& result) const
@@ -101,23 +108,23 @@ class ARingCCC : public RingInterface
   void init_set(ElementType& result, const ElementType& a) const
   {
     init(result);
-    mpfr_set(&result.re, &a.re, GMP_RNDN);
-    mpfr_set(&result.im, &a.im, GMP_RNDN);
+    mpfr_set(&result.re, &a.re, MPFR_RNDN);
+    mpfr_set(&result.im, &a.im, MPFR_RNDN);
   }
 
   void set(ElementType& result, const ElementType& a) const
   {
-    mpfr_set(&result.re, &a.re, GMP_RNDN);
-    mpfr_set(&result.im, &a.im, GMP_RNDN);
+    mpfr_set(&result.re, &a.re, MPFR_RNDN);
+    mpfr_set(&result.im, &a.im, MPFR_RNDN);
   }
 
   void set_zero(ElementType& result) const
   {
-    mpfr_set_si(&result.re, 0, GMP_RNDN);
-    mpfr_set_si(&result.im, 0, GMP_RNDN);
+    mpfr_set_si(&result.re, 0, MPFR_RNDN);
+    mpfr_set_si(&result.im, 0, MPFR_RNDN);
   }
 
-  void clear(ElementType& result) const
+  static void clear(ElementType& result)
   {
     mpfr_clear(&result.re);
     mpfr_clear(&result.im);
@@ -126,60 +133,60 @@ class ARingCCC : public RingInterface
   void copy(ElementType& result, const ElementType& a) const { set(result, a); }
   void set_from_long(ElementType& result, long a) const
   {
-    mpfr_set_si(&result.re, a, GMP_RNDN);
-    mpfr_set_si(&result.im, 0, GMP_RNDN);
+    mpfr_set_si(&result.re, a, MPFR_RNDN);
+    mpfr_set_si(&result.im, 0, MPFR_RNDN);
   }
 
   void set_var(ElementType& result, int v) const { set_from_long(result, 1); }
   void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
-    mpfr_set_z(&result.re, a, GMP_RNDN);
-    mpfr_set_si(&result.im, 0, GMP_RNDN);
+    mpfr_set_z(&result.re, a, MPFR_RNDN);
+    mpfr_set_si(&result.im, 0, MPFR_RNDN);
   }
 
   bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
-    mpfr_set_q(&result.re, a, GMP_RNDN);
-    mpfr_set_si(&result.im, 0, GMP_RNDN);
+    mpfr_set_q(&result.re, a, MPFR_RNDN);
+    mpfr_set_si(&result.im, 0, MPFR_RNDN);
     return true;
   }
 
   bool set_from_BigReal(ElementType& result, gmp_RR a) const
   {
-    mpfr_set(&result.re, a, GMP_RNDN);
-    mpfr_set_si(&result.im, 0, GMP_RNDN);
+    mpfr_set(&result.re, a, MPFR_RNDN);
+    mpfr_set_si(&result.im, 0, MPFR_RNDN);
     return true;
   }
   bool set_from_BigComplex(ElementType& result, gmp_CC a) const
   {  //???
-    mpfr_set(&result.re, a->re, GMP_RNDN);
-    mpfr_set(&result.im, a->im, GMP_RNDN);
+    mpfr_set(&result.re, a->re, MPFR_RNDN);
+    mpfr_set(&result.im, a->im, MPFR_RNDN);
     return true;
   }
   bool set_from_double(ElementType& result, double a) const
   {
-    mpfr_set_d(&result.re, a, GMP_RNDN);
-    mpfr_set_si(&result.im, 0, GMP_RNDN);
+    mpfr_set_d(&result.re, a, MPFR_RNDN);
+    mpfr_set_si(&result.im, 0, MPFR_RNDN);
     return true;
   }
   bool set_from_complex_double(ElementType& result, double re, double im) const
   {
-    mpfr_set_d(&result.re, re, GMP_RNDN);
-    mpfr_set_d(&result.im, im, GMP_RNDN);
+    mpfr_set_d(&result.re, re, MPFR_RNDN);
+    mpfr_set_d(&result.im, im, MPFR_RNDN);
     return true;
   }
   bool set_from_complex_mpfr(ElementType& result, mpfr_srcptr re, const mpfr_srcptr im) const
   {
-    mpfr_set(&result.re, re, GMP_RNDN);
-    mpfr_set(&result.im, im, GMP_RNDN);
+    mpfr_set(&result.re, re, MPFR_RNDN);
+    mpfr_set(&result.im, im, MPFR_RNDN);
     return true;
   }
 
   // arithmetic
   void negate(ElementType& result, const ElementType& a) const
   {
-    mpfr_neg(&result.re, &a.re, GMP_RNDN);
-    mpfr_neg(&result.im, &a.im, GMP_RNDN);
+    mpfr_neg(&result.re, &a.re, MPFR_RNDN);
+    mpfr_neg(&result.im, &a.im, MPFR_RNDN);
   }
 
   void invert(ElementType& result, const ElementType& a) const
@@ -196,12 +203,12 @@ class ARingCCC : public RingInterface
         // &result.re = 1.0/denom;
         // &result.im = - p/denom;
 
-        mpfr_div(p, &a.im, &a.re, GMP_RNDN);
-        mpfr_mul(denom, p, &a.im, GMP_RNDN);
-        mpfr_add(denom, denom, &a.re, GMP_RNDN);
-        mpfr_si_div(&result.re, 1, denom, GMP_RNDN);
-        mpfr_div(&result.im, p, denom, GMP_RNDN);
-        mpfr_neg(&result.im, &result.im, GMP_RNDN);
+        mpfr_div(p, &a.im, &a.re, MPFR_RNDN);
+        mpfr_mul(denom, p, &a.im, MPFR_RNDN);
+        mpfr_add(denom, denom, &a.re, MPFR_RNDN);
+        mpfr_si_div(&result.re, 1, denom, MPFR_RNDN);
+        mpfr_div(&result.im, p, denom, MPFR_RNDN);
+        mpfr_neg(&result.im, &result.im, MPFR_RNDN);
       }
     else
       {
@@ -210,12 +217,12 @@ class ARingCCC : public RingInterface
         // &result.re = p/denom;
         // &result.im = -1.0/denom;
 
-        mpfr_div(p, &a.re, &a.im, GMP_RNDN);
-        mpfr_mul(denom, p, &a.re, GMP_RNDN);
-        mpfr_add(denom, denom, &a.im, GMP_RNDN);
-        mpfr_si_div(&result.im, 1, denom, GMP_RNDN);
-        mpfr_neg(&result.im, &result.im, GMP_RNDN);
-        mpfr_div(&result.re, p, denom, GMP_RNDN);
+        mpfr_div(p, &a.re, &a.im, MPFR_RNDN);
+        mpfr_mul(denom, p, &a.re, MPFR_RNDN);
+        mpfr_add(denom, denom, &a.im, MPFR_RNDN);
+        mpfr_si_div(&result.im, 1, denom, MPFR_RNDN);
+        mpfr_neg(&result.im, &result.im, MPFR_RNDN);
+        mpfr_div(&result.re, p, denom, MPFR_RNDN);
       }
 
     mpfr_clear(p);
@@ -226,8 +233,8 @@ class ARingCCC : public RingInterface
            const ElementType& a,
            const ElementType& b) const
   {
-    mpfr_add(&result.re, &a.re, &b.re, GMP_RNDN);
-    mpfr_add(&result.im, &a.im, &b.im, GMP_RNDN);
+    mpfr_add(&result.re, &a.re, &b.re, MPFR_RNDN);
+    mpfr_add(&result.im, &a.im, &b.im, MPFR_RNDN);
   }
 
   void addMultipleTo(ElementType& result,
@@ -242,19 +249,17 @@ class ARingCCC : public RingInterface
                      const ElementType& a,
                      const ElementType& b) const
   {
-    ElementType ab;
-    init(ab);
+    Element ab(*this);
     mult(ab, a, b);
     add(result, result, ab);
-    clear(ab);
   }
 
   void subtract(ElementType& result,
                 const ElementType& a,
                 const ElementType& b) const
   {
-    mpfr_sub(&result.re, &a.re, &b.re, GMP_RNDN);
-    mpfr_sub(&result.im, &a.im, &b.im, GMP_RNDN);
+    mpfr_sub(&result.re, &a.re, &b.re, MPFR_RNDN);
+    mpfr_sub(&result.im, &a.im, &b.im, MPFR_RNDN);
   }
 
   void subtract_multiple(ElementType& result,
@@ -262,11 +267,9 @@ class ARingCCC : public RingInterface
                          const ElementType& b) const
   {
     // result -= a*b
-    ElementType ab;
-    init(ab);
+    Element ab(*this);
     mult(ab, a, b);
     subtract(result, result, ab);
-    clear(ab);
   }
 
   void mult(ElementType& res,
@@ -274,44 +277,40 @@ class ARingCCC : public RingInterface
             const RealElementType& b) const
   {
     mpfr_t tmp;
-    ElementType result;
-    init(result);
+    Element result(*this);
     mpfr_init2(tmp, get_precision());
 
     // &result.re = &a.re*&b;
-    mpfr_mul(tmp, &a.re, &b, GMP_RNDN);
-    mpfr_set(&result.re, tmp, GMP_RNDN);
+    mpfr_mul(tmp, &a.re, &b, MPFR_RNDN);
+    mpfr_set(&result.value().re, tmp, MPFR_RNDN);
 
     // &result.im = &a.im*&b;
-    mpfr_mul(tmp, &a.im, &b, GMP_RNDN);
-    mpfr_set(&result.im, tmp, GMP_RNDN);
+    mpfr_mul(tmp, &a.im, &b, MPFR_RNDN);
+    mpfr_set(&result.value().im, tmp, MPFR_RNDN);
 
     set(res, result);
-    clear(result);
     mpfr_clear(tmp);
   }
 
   void mult(ElementType& res, const ElementType& a, const ElementType& b) const
   {
     mpfr_t tmp;
-    ElementType result;
-    init(result);
+    Element result(*this);
     mpfr_init2(tmp, get_precision());
 
     // &result.re = &a.re*&b.re - &a.im*&b.im;
-    mpfr_mul(tmp, &a.re, &b.re, GMP_RNDN);
-    mpfr_set(&result.re, tmp, GMP_RNDN);
-    mpfr_mul(tmp, &a.im, &b.im, GMP_RNDN);
-    mpfr_sub(&result.re, &result.re, tmp, GMP_RNDN);
+    mpfr_mul(tmp, &a.re, &b.re, MPFR_RNDN);
+    mpfr_set(&result.value().re, tmp, MPFR_RNDN);
+    mpfr_mul(tmp, &a.im, &b.im, MPFR_RNDN);
+    mpfr_sub(&result.value().re, &result.value().re, tmp, MPFR_RNDN);
 
     // &result.im = &a.re*&b.im + &a.im*&b.re;
-    mpfr_mul(tmp, &a.re, &b.im, GMP_RNDN);
-    mpfr_set(&result.im, tmp, GMP_RNDN);
-    mpfr_mul(tmp, &a.im, &b.re, GMP_RNDN);
-    mpfr_add(&result.im, &result.im, tmp, GMP_RNDN);
+    mpfr_mul(tmp, &a.re, &b.im, MPFR_RNDN);
+    mpfr_set(&result.value().im, tmp, MPFR_RNDN);
+    mpfr_mul(tmp, &a.im, &b.re, MPFR_RNDN);
+    mpfr_add(&result.value().im, &result.value().im, tmp, MPFR_RNDN);
 
     set(res, result);
-    clear(result);
     mpfr_clear(tmp);
   }
 
@@ -320,18 +319,16 @@ class ARingCCC : public RingInterface
               const RealElementType& b) const
   {
     mpfr_t tmp;
-    ElementType result;
-    init(result);
+    Element result(*this);
     mpfr_init2(tmp, get_precision());
 
-    mpfr_div(tmp, &a.re, &b, GMP_RNDN);
-    mpfr_set(&result.re, tmp, GMP_RNDN);
+    mpfr_div(tmp, &a.re, &b, MPFR_RNDN);
+    mpfr_set(&result.value().re, tmp, MPFR_RNDN);
 
-    mpfr_div(tmp, &a.im, &b, GMP_RNDN);
-    mpfr_set(&result.im, tmp, GMP_RNDN);
+    mpfr_div(tmp, &a.im, &b, MPFR_RNDN);
+    mpfr_set(&result.value().im, tmp, MPFR_RNDN);
 
     set(res, result);
-    clear(result);
     mpfr_clear(tmp);
   }
 
@@ -342,8 +339,7 @@ class ARingCCC : public RingInterface
     mpfr_t p, denom;
     mpfr_init2(p, get_precision());
     mpfr_init2(denom, get_precision());
-    ElementType result;
-    init(result);
+    Element result(*this);
 
     if (mpfr_cmpabs(&b.re, &b.im) >= 0)
       {
@@ -357,18 +353,18 @@ class ARingCCC : public RingInterface
         // result.re = (u.re + p*u.im)/denom;
         // result.im = (u.im - p*u.re)/denom;
 
-        mpfr_div(p, &b.im, &b.re, GMP_RNDN);
-        mpfr_mul(denom, p, &b.im, GMP_RNDN);
-        mpfr_add(denom, denom, &b.re, GMP_RNDN);
+        mpfr_div(p, &b.im, &b.re, MPFR_RNDN);
+        mpfr_mul(denom, p, &b.im, MPFR_RNDN);
+        mpfr_add(denom, denom, &b.re, MPFR_RNDN);
 
-        mpfr_mul(&result.re, p, &a.im, GMP_RNDN);
-        mpfr_add(&result.re, &result.re, &a.re, GMP_RNDN);
-        mpfr_div(&result.re, &result.re, denom, GMP_RNDN);
+        mpfr_mul(&result.value().re, p, &a.im, MPFR_RNDN);
+        mpfr_add(&result.value().re, &result.value().re, &a.re, MPFR_RNDN);
+        mpfr_div(&result.value().re, &result.value().re, denom, MPFR_RNDN);
 
-        mpfr_mul(&result.im, p, &a.re, GMP_RNDN);
-        mpfr_neg(&result.im, &result.im, GMP_RNDN);
-        mpfr_add(&result.im, &result.im, &a.im, GMP_RNDN);
-        mpfr_div(&result.im, &result.im, denom, GMP_RNDN);
+        mpfr_mul(&result.value().im, p, &a.re, MPFR_RNDN);
+        mpfr_neg(&result.value().im, &result.value().im, MPFR_RNDN);
+        mpfr_add(&result.value().im, &result.value().im, &a.im, MPFR_RNDN);
+        mpfr_div(&result.value().im, &result.value().im, denom, MPFR_RNDN);
       }
     else
       {
@@ -377,38 +373,35 @@ class ARingCCC : public RingInterface
         // result.re = (u.re * p + u.im)/denom;
         // result.im = (-u.re + p * u.im)/denom;
 
-        mpfr_div(p, &b.re, &b.im, GMP_RNDN);
-        mpfr_mul(denom, p, &b.re, GMP_RNDN);
-        mpfr_add(denom, denom, &b.im, GMP_RNDN);
+        mpfr_div(p, &b.re, &b.im, MPFR_RNDN);
+        mpfr_mul(denom, p, &b.re, MPFR_RNDN);
+        mpfr_add(denom, denom, &b.im, MPFR_RNDN);
 
-        mpfr_mul(&result.re, p, &a.re, GMP_RNDN);
-        mpfr_add(&result.re, &result.re, &a.im, GMP_RNDN);
-        mpfr_div(&result.re, &result.re, denom, GMP_RNDN);
+        mpfr_mul(&result.value().re, p, &a.re, MPFR_RNDN);
+        mpfr_add(&result.value().re, &result.value().re, &a.im, MPFR_RNDN);
+        mpfr_div(&result.value().re, &result.value().re, denom, MPFR_RNDN);
 
-        mpfr_mul(&result.im, p, &a.im, GMP_RNDN);
-        mpfr_sub(&result.im, &result.im, &a.re, GMP_RNDN);
-        mpfr_div(&result.im, &result.im, denom, GMP_RNDN);
+        mpfr_mul(&result.value().im, p, &a.im, MPFR_RNDN);
+        mpfr_sub(&result.value().im, &result.value().im, &a.re, MPFR_RNDN);
+        mpfr_div(&result.value().im, &result.value().im, denom, MPFR_RNDN);
       }
     mpfr_clear(p);
     mpfr_clear(denom);
     set(res, result);
-    clear(result);
   }
 
   void abs_squared(ARingRRR::ElementType& result, const ElementType& a) const
   {
     mRRR.mult(result, realPartReference(a), realPartReference(a));
-    ARingRRR::ElementType s;
-    mRRR.init(s);
+    ARingRRR::Element s(mRRR);
     mRRR.mult(s, imaginaryPartReference(a), imaginaryPartReference(a));
     mRRR.add(result, result, s);
-    mRRR.clear(s);
   }
 
   void abs(ARingRRR::ElementType& result, const ElementType& a) const
   {
     abs_squared(result, a);
-    mpfr_sqrt(&result, &result, GMP_RNDN);  // should we have ARingRRR::sqrt ???
+    mpfr_sqrt(&result, &result, MPFR_RNDN);  // should we have ARingRRR::sqrt ???
   }
 
   void power(ElementType& result, const ElementType& a, int n) const
@@ -506,15 +499,15 @@ class ARingCCC : public RingInterface
     result->im = getmemstructtype(gmp_RRmutable);
     mpfr_init2(result->re, get_precision());
     mpfr_init2(result->im, get_precision());
-    mpfr_set(result->re, &a.re, GMP_RNDN);
-    mpfr_set(result->im, &a.im, GMP_RNDN);
+    mpfr_set(result->re, &a.re, MPFR_RNDN);
+    mpfr_set(result->im, &a.im, MPFR_RNDN);
     return moveTo_gmpCC(result);
   }
 
   bool set_from_RRR(ElementType& result, const ARingRRR::ElementType& a) const
   {
-    mpfr_set(&result.re, &a, GMP_RNDN);
-    mpfr_set_si(&result.im, 0, GMP_RNDN);
+    mpfr_set(&result.re, &a, MPFR_RNDN);
+    mpfr_set_si(&result.im, 0, MPFR_RNDN);
     return true;
   }
 
@@ -529,16 +522,16 @@ class ARingCCC : public RingInterface
   }
   void set_real_part(ElementType& c, ARingRRR::ElementType& a) const
   {
-    mpfr_set(&c.re, &a, GMP_RNDN);
+    mpfr_set(&c.re, &a, MPFR_RNDN);
   }
   void set_imaginary_part(ElementType& c, ARingRRR::ElementType& a) const
   {
-    mpfr_set(&c.im, &a, GMP_RNDN);
+    mpfr_set(&c.im, &a, MPFR_RNDN);
   }
   void set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) const
   {
-    mpfr_set(&result.re, re, GMP_RNDN);
-    mpfr_set(&result.im, im, GMP_RNDN);
+    mpfr_set(&result.re, re, MPFR_RNDN);
+    mpfr_set(&result.im, im, MPFR_RNDN);
   }
   void set_from_doubles(ElementType& result, double re, double im) const
   {
@@ -553,11 +546,9 @@ class ARingCCC : public RingInterface
   }
   void increase_norm(gmp_RRmutable norm, const ElementType& a) const
   {
-    ARingRRR::ElementType n;
-    mRRR.init(n);
+    ARingRRR::Element n(mRRR);
     abs(n, a);
-    if (mpfr_cmp(&n, norm) > 0) mRRR.set(*norm, n);
-    mRRR.clear(n);
+    if (mpfr_cmp(&n.value(), norm) > 0) mRRR.set(*norm, n);
   }
 };
 

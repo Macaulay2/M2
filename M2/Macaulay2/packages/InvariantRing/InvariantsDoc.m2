@@ -269,7 +269,7 @@ document {
 		},
 
     	PARA {
-	    "Here is an example of a diagoanl action by the product of
+	    "Here is an example of a diagonal action by the product of
 	     a two-dimensional torus with a cyclic group of order 3 
 	    acting on a two-dimensional vector space:"
 	},
@@ -871,7 +871,7 @@ document {
 	
 	Inputs => {
 	    	"S" => RingOfInvariants,
-		Variable => "name of the varibles in the polynomial ring."
+		Variable => "name of the variables in the polynomial ring."
 		},
 	    
 	Outputs => {
@@ -953,7 +953,7 @@ document {
 	"This function is provided by the package ", TO InvariantRing,". ",
 	
 	PARA {
-	    "This method computes the hilbert series of the ring of invariants."
+	    "This method computes the Hilbert series of the ring of invariants."
 	    },
     	
 	EXAMPLE {

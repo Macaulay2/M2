@@ -5,18 +5,37 @@
 #ifndef _nag_
 #define _nag_
 
-#include "buffer.hpp"
-#include "matrix.hpp"
-#include "aring-CC.hpp"
-#include "complex.h"
-#include "style.hpp"
-#include "aring-glue.hpp"
-#include "SLP.hpp"
+#include "engine-includes.hpp"
 
-#include <memory>
+#include <algorithm>
+#include <assert.h>
 #include <map>
+#include <math.h>
+#include <memory>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <utility>
+#include <vector>
 
+#include "interface/NAG.h"
+#include "matrix.hpp"
+#include "SLP.hpp"
+#include "aring-CC.hpp"
+#include "aring-glue.hpp"
+#include "aring.hpp"
+#include "buffer.hpp"
+#include "error.h"
+#include "hash.hpp"
+#include "newdelete.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+
+class Matrix;
 class PointArray;
+class PolyRing;
+class SLProgram;
 
 class M2PointArray : public MutableEngineObject
 {
@@ -120,22 +139,18 @@ inline const CCC* cast_to_CCC(const Ring* R)
 
 inline ring_elem from_doubles(const CCC* C, double re, double im)
 {
-  CCC::ElementType a;
-  C->ring().init(a);
+  M2::ARingCC::Element a(C->ring());
   C->ring().set_from_doubles(a, re, im);
   ring_elem result;
   C->ring().to_ring_elem(result, a);
-  C->ring().clear(a);
   return result;
 }
 
 inline gmp_CC toBigComplex(const CCC* C, ring_elem a)
 {
-  CCC::ElementType b;
-  C->ring().init(b);
+  M2::ARingCC::Element b(C->ring());
   C->ring().from_ring_elem(b, a);
   gmp_CC result = C->ring().toBigComplex(b);
-  C->ring().clear(b);
   return result;
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -165,7 +180,7 @@ class complex
   double getimaginary() const;
   bool operator==(complex);
   void operator=(complex);
-  void sprint(char*);
+  void snprint(char*, int);
 };
 
 //                                        CONSTRUCTOR
@@ -191,8 +206,8 @@ inline complex::complex(const complex& c)
 
 inline complex::complex(gmp_CC mpfrCC)
 {
-  real = mpfr_get_d(mpfrCC->re, GMP_RNDN);
-  imag = mpfr_get_d(mpfrCC->im, GMP_RNDN);
+  real = mpfr_get_d(mpfrCC->re, MPFR_RNDN);
+  imag = mpfr_get_d(mpfrCC->im, MPFR_RNDN);
 }
 
 inline void complex::operator=(complex c)
@@ -286,9 +301,9 @@ inline bool complex::operator==(complex c)
   return (real == c.real) && (imag == c.imag) ? 1 : 0;
 }
 
-inline void complex::sprint(char* s)
+inline void complex::snprint(char* s, int N)
 {
-  sprintf(s, "(%lf) + i*(%lf)", real, imag);
+  snprintf(s, N, "(%lf) + i*(%lf)", real, imag);
 }
 
 
@@ -379,7 +394,7 @@ double norm2_complex_array(int n,
 #define MAX_NUM_PATH_TRACKERS 10
 
 /* Conventions in relative_position SLPs:
-   nodes are refered via negative integers;
+   nodes are referred via negative integers;
    i-th input --> i;
    i-th constant --> i + CONST_OFFSET. */
 
@@ -410,8 +425,8 @@ class SLP : public MutableEngineObject
   bool is_relative_position;  // can use relative or absolute addressing
   M2_arrayint program;        // std::vector???
   element_type* nodes;        // array of CCs
-  intarray node_index;  // points to position in program (rel. to start) of
-                        // operation correspoding to a node
+  gc_vector<int> node_index;  // points to position in program (rel. to start)
+                              // of operation corresponding to a node
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
   void* handle;  // dynamic library handle
@@ -423,15 +438,15 @@ class SLP : public MutableEngineObject
 
   static void make_nodes(element_type*&, int size);
   int poly_to_horner_slp(int n,
-                         intarray& prog,
-                         VECTOR(element_type) & consts,
+                         gc_vector<int>& prog,
+                         gc_vector<element_type>& consts,
                          Nterm*& f);  // used by make
 
-  int diffNodeInput(int n, int v, intarray& prog);  // used by jacobian
+  int diffNodeInput(int n, int v, gc_vector<int>& prog);  // used by jacobian
   int diffPartReference(int n,
                         int ref,
                         int v,
-                        intarray& prog);  // used by diffNodeInput
+                        gc_vector<int>& prog);  // used by diffNodeInput
 
   /* obsolete!!!
   void predictor(); // evaluates a predictor
@@ -526,8 +541,8 @@ struct Solution
   ~Solution() { release(); }
   void release()
   {
-    deletearray(x);
-    deletearray(start_x);
+    freemem(x);
+    freemem(start_x);
   }
 };
 
@@ -580,8 +595,8 @@ class PathTracker : public MutableEngineObject
             *(Hxt + i * n + j) = tt;
           }
         *(Hxt + n * n + n - 1) = complex(0.);  // last row and column
-        deletearray(SxS);
-        deletearray(TxT);
+        freemem(SxS);
+        freemem(TxT);
       }
     else
       slpHxt->evaluate(n + 1, x0t0, Hxt);

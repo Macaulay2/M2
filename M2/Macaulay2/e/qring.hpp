@@ -27,7 +27,7 @@ class QRingInfo : public our_new_delete
   const PolyRing *R;
   bool overZZ_;  // really: base is basic, ZZ, or frac ring
 
-  size_t exp_size;    // byte size of temp exponents
+  size_t exp_size;    // byte size of temp exponents_t
   size_t monom_size;  // and monomials, to be allocated on stack
 
   void appendQuotientElement(Nterm *f, gbvector *g);

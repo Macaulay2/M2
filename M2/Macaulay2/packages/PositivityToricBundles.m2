@@ -735,7 +735,7 @@ circularOrder (List) := p -> (
 
 -- MAIN METHOD: drawParliament2Dtikz -----------------------------------------
 
--- PURPOSE: Draw a two-dimensional parliamant of polytopes using tikz
+-- PURPOSE: Draw a two-dimensional parliament of polytopes using tikz
 --   INPUT: 'tvb', toric vector bundle,
 --          'parliament', parliament of 2-dim polytopes
 --          'file', string with file name
@@ -850,7 +850,7 @@ document {
   },
   "Additionally, ", TT "PositivityToricBundles", " can compute the toric Chern character of a toric vector bundle as introduced by Sam Payne.",
   PARA{},
-  "For the computational purposes, ", TT "PositivityToricBundles", " uses the description of a toric vector bundles by filtrations developped by Alexander Klyachko, ",
+  "For the computational purposes, ", TT "PositivityToricBundles", " uses the description of a toric vector bundles by filtrations developed by Alexander Klyachko, ",
   "and relies on its implementation via the ", TO ToricVectorBundles, " package by René Birkner, Nathan Ilten and Lars Petersen. ",
   BR{},
   "To check nefness and ampleness, ", TT "PositivityToricBundles", " uses a result of Milena Hering, Mircea Mustaţă and Sam Payne, ",
@@ -859,7 +859,7 @@ document {
   BR{},
   "For global generation and very ampleness, ", TT "PositivityToricBundles", " uses results of Sandra Di Rocco, Kelly Jabbusch and Gregory Smith, ",
   "who describe these properties in terms of the so-called parliament of polytopes of a toric vector bundle. ",
-  "From the parliament of polytopes one can extract the information up to which order jets are separated by the vector bundle. Globally generated or very ample toric vector bundles are those that separete 0-jets or 1-jets, respectively. ",
+  "From the parliament of polytopes one can extract the information up to which order jets are separated by the vector bundle. Globally generated or very ample toric vector bundles are those that separate 0-jets or 1-jets, respectively. ",
   "Here, the central method is ", TO separatesJets, "; built on it are ", TT "isGloballyGenerated", " and ", TT "isVeryAmple", ".",
   PARA{},
   "For the mathematical background see ",
@@ -925,7 +925,7 @@ document {
   Given a toric vector bundle $\mathcal E$ in Klyachko's description on a toric variety $X = TV(\Sigma)$, 
   it is encoded by increasing filtrations $E^{\rho}(j)$  for each ray $\rho \in \Sigma(1)$.
   To these filtrations we can associated the set $L(\mathcal E)$ of intersections $\cap_{\rho} E^{\rho} (j_{\rho})$, where $(j_{\rho})_\rho$ runs over all tuples in $\mathbb Z^{\Sigma(1)}$.
-  This set $L(\mathcal E)$ is ordered by inclusion and there is a unique matriod $M(\mathcal E)$ associated to it, see [RJS, Proposition 3.1].
+  This set $L(\mathcal E)$ is ordered by inclusion and there is a unique matroid $M(\mathcal E)$ associated to it, see [RJS, Proposition 3.1].
   ///,
   TT "groundSet", " computes the ground set (i.e. building blocks) of this matroid.",
   
@@ -961,7 +961,7 @@ document {
   },
 
   "If the toric variety is two-dimensional, then the result can be visualised using ", TO drawParliament2Dtikz, ". ",
-  TT "parliament", " calles internally the method ", TO groundSet, ".",
+  TT "parliament", " calls internally the method ", TO groundSet, ".",
 
   SeeAlso => {"ToricVectorBundles::ToricVectorBundleKlyachko", groundSet, drawParliament2Dtikz}
   }
@@ -1005,7 +1005,7 @@ document {
 
   "Given a toric vector bundle in Klyachko's description, ", TT "compatibleBases", " computes for each maximal cone of the underlying toric variety a compatible basis of the filtrations, see [RJS, Section 3] for details.",
   BR{},
-  TT "compatibleBases", " calles internally the method ", TO groundSet, ".",
+  TT "compatibleBases", " calls internally the method ", TO groundSet, ".",
   PARA{},
   "The compatible bases serve as input for the computation of the toric Chern character by ", TO toricChernCharacter, ".",
 
@@ -1026,7 +1026,7 @@ document {
 
   "Given a toric vector bundle in Klyachko's description, ", TT "toricChernCharacter", " computes its toric Chern character as introduced in [P]. ",
   BR{},
-  TT "toricChernCharacter", " calles internally the method ", TO compatibleBases, ".",
+  TT "toricChernCharacter", " calls internally the method ", TO compatibleBases, ".",
 
   EXAMPLE {
    "E = tangentBundle(projectiveSpaceFan 2)",
@@ -1105,7 +1105,7 @@ document {
   Consequences => { {"The result of ", TT "restrictToInvCurves", " will be stored as a ", TO cacheValue, " in ", TT "E.cache#restrictionsToInvCurves", ". It will be used by other methods."}
    },
 
-  "Given a toric vector bundle in Klyachko's description, ", TT "restrictToInvCurves", " computes its restrictions to the torus invariant curves, which are isomorphich to a direct sum of line bundles ", TEX ///$\mathbb P^1$///, ". ",
+  "Given a toric vector bundle in Klyachko's description, ", TT "restrictToInvCurves", " computes its restrictions to the torus invariant curves, which are isomorphic to a direct sum of line bundles ", TEX ///$\mathbb P^1$///, ". ",
   "Recall that on ", TEX ///$\mathbb P^1$///, " any vector bundle splits into ", TEX ///$\oplus_i O_{\mathbb P^1}(a_i)$///, ". Therefore ", TT "restrictToInvCurves", " returns a hash table with keys the invariant curves and as values lists with the integers ", TEX ///$a_i$///, ". ",
   BR{},
   "By [HMP, Theorem 2.1], if all these integers", TEX ///$a_i$///, " are non-negative or positive, the original toric vector bundle is nef or ample. ",
@@ -1147,7 +1147,7 @@ document {
 
 TEST ///
 -- This is [RJS, Example 3.7]
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(3,hirzebruchFan 0);
 rays V
 -- output:
@@ -1185,7 +1185,7 @@ assert(
 
 TEST ///
 -- This is [RJS, Example 3.8] for d=2
--- auxillary methods
+-- auxiliary methods
 V = tangentBundle(projectiveSpaceFan 2);
 
 
@@ -1214,7 +1214,7 @@ assert(isAmple V);
 
 TEST ///
 -- This is [RJS, Example 4.2] 
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(3, projectiveSpaceFan 2);
 rays V
 --     {| -1 |, | 0 |, | 1 |}
@@ -1261,7 +1261,7 @@ assert(isAmple V);
 
 TEST ///
 -- This is [RJS, Example 4.4] 
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(2, hirzebruchFan 1);
 rays V
 -- {| 0  |, | -1 |, | 0 |, | 1 |}
@@ -1306,7 +1306,7 @@ assert(isAmple V);
 
 TEST ///
 -- This is [RJS, Example 6.4] 
--- auxillary methods
+-- auxiliary methods
 V = toricVectorBundle(3, projectiveSpaceFan 2);
 rays V
 --     {| -1 |, | 0 |, | 1 |}

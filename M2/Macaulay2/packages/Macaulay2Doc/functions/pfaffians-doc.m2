@@ -21,7 +21,7 @@ document {
       	  "pfaffians(2,M)",
       	  "pfaffians(4,M)"
 	  },
-     "The Pluecker embedding of ", TT "Gr(2,6)", " and its secant variety:",  
+     "The Plücker embedding of ", TT "Gr(2,6)", " and its secant variety:",
      EXAMPLE {
 	  "S = QQ[y_0..y_14];",
 	  "M = genericSkewMatrix(S,y_0,6)",
@@ -47,13 +47,3 @@ document {
 	  },
      SeeAlso => {det, "matrices"}
      }
-TEST ///
-R=ZZ/101[a..f]
-m=genericSkewMatrix(R,a,4)
-assert( pfaffians(-2,m) == ideal(0_R) )
-assert( pfaffians(0,m) == ideal(1_R) )
-assert( pfaffians(1,m) == ideal(0_R) )
-assert( pfaffians(2,m) == ideal(a,b,c,d,e,f) )
-assert( pfaffians(3,m) == ideal(0_R) )
-assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
-///

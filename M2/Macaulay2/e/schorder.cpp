@@ -15,10 +15,12 @@ SchreyerOrder *SchreyerOrder::create(const Monoid *M)
   return S;
 }
 
-void SchreyerOrder::remove() { _order.remove(); }
-void SchreyerOrder::append(int compare_num0, const int *baseMonom)
+void SchreyerOrder::remove() { _order.clear(); _order.shrink_to_fit(); }
+void SchreyerOrder::append(int compare_num0, const_monomial baseMonom)
 {
-  int *me = _order.alloc(_nslots);
+  auto end = _order.size();
+  _order.resize(end + _nslots);
+  int *me = _order.data() + end;
   *me++ = compare_num0;
   for (int i = 1; i < _nslots; i++) *me++ = *baseMonom++;
   _rank++;
@@ -38,7 +40,7 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   SchreyerOrder *result = new SchreyerOrder(M);
   int rk = m->n_cols();
   if (rk == 0) return result;
-  int *base = M->make_one();
+  monomial base = M->make_one();
   int *tiebreaks = newarray_atomic(int, rk);
   int *ties = newarray_atomic(int, rk);
   for (i = 0; i < rk; i++)
@@ -70,8 +72,8 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
 
   intern_SchreyerOrder(result);
   M->remove(base);
-  deletearray(tiebreaks);
-  deletearray(ties);
+  freemem(tiebreaks);
+  freemem(ties);
   return result;
 }
 
@@ -90,7 +92,7 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
   int rk = INTSIZE(m->elems);
   if (rk == 0) return result;
 
-  int *base = M->make_one();
+  monomial base = M->make_one();
   int *tiebreaks = newarray_atomic(int, rk);
   int *ties = newarray_atomic(int, rk);
   for (i = 0; i < rk; i++)
@@ -123,8 +125,8 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
 
   intern_SchreyerOrder(result);
   M->remove(base);
-  deletearray(tiebreaks);
-  deletearray(ties);
+  freemem(tiebreaks);
+  freemem(ties);
   return result;
 }
 
@@ -173,7 +175,7 @@ SchreyerOrder *SchreyerOrder::sub_space(M2_arrayint a) const
     else
       {
         ERROR("schreyer order subspace: index out of bounds");
-        deleteitem(result);
+        freemem(result);
         return NULL;
       }
   return result;
@@ -200,7 +202,7 @@ SchreyerOrder *SchreyerOrder::tensor(const SchreyerOrder *G) const
   // we assume that 'this', 'G' have the same monoid 'M'.
 
   SchreyerOrder *result = new SchreyerOrder(M);
-  int *base = M->make_one();
+  monomial base = M->make_one();
 
   int next = 0;
   for (int i = 0; i < rank(); i++)
@@ -229,7 +231,7 @@ SchreyerOrder *SchreyerOrder::exterior(int pp) const
   Subset a(p, 0);
   for (size_t i = 0; i < p; i++) a[i] = i;
 
-  int *base = M->make_one();
+  monomial base = M->make_one();
   int next = 0;
   do
     {
@@ -252,7 +254,7 @@ struct SchreyerOrder_symm
   const Monoid *M;
 
   SchreyerOrder *symm1_result;  // what is being computed
-  int *symm1_base;              // used in recursion
+  monomial symm1_base;          // used in recursion
   int symm1_next;               // used in recursion
 
   void symm1(int lastn,  // can use lastn..rank()-1 in product
@@ -319,13 +321,13 @@ void SchreyerOrder::text_out(buffer &o) const
     }
 }
 
-int SchreyerOrder::schreyer_compare(const int *m,
+int SchreyerOrder::schreyer_compare(const_monomial m,
                                     int m_comp,
-                                    const int *n,
+                                    const_monomial n,
                                     int n_comp) const
 {
-  const int *ms = base_monom(m_comp);
-  const int *ns = base_monom(n_comp);
+  const_monomial ms = base_monom(m_comp);
+  const_monomial ns = base_monom(n_comp);
   for (int i = M->monomial_size(); i > 0; --i)
     {
       int cmp = *ms++ + *m++ - *ns++ - *n++;
@@ -338,9 +340,9 @@ int SchreyerOrder::schreyer_compare(const int *m,
   return EQ;
 }
 
-int SchreyerOrder::schreyer_compare_encoded(const int *m,
+int SchreyerOrder::schreyer_compare_encoded(const_monomial m,
                                             int m_comp,
-                                            const int *n,
+                                            const_monomial n,
                                             int n_comp) const
 {
   int cmp = M->compare(m, n);

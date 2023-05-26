@@ -118,7 +118,7 @@ document {
 
 document {
      Key => "normal forms",
-     TEX ///Let R = k[x_1, ..., x_n] be a polynomial ring over a field k,
+     TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field k,
 	and let $I \subset{} R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Groebner
 	basis for $I$. For any $f \in{} R$, there is a unique `remainder' $r \in{} R$ such
 	that no term of $r$ is divisible by the leading term of any $g_i$ and such
@@ -223,10 +223,10 @@ document {
 	will then describe Groebner bases of submodules, and over more general
 	rings.", 
 	PARA{},
-     TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field k,
-	and let $I \subset{} R$ be an ideal.  A {\it monomial order}
-	on R is a total order, $>$,  on the monomials of R, which satisfies two
-	conditions: (1) $m > 1$, for every monomial m \neq 1, and (2) the order is
+     TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field $k$,
+	and let $I \subset R$ be an ideal.  A {\it monomial order}
+	on $R$ is a total order, $>$,  on the monomials of $R$, which satisfies two
+	conditions: (1) $m > 1$, for every monomial $m \neq 1$, and (2) the order is
 	multiplicative: $m > n$ implies that $mp > np$, for all monomials $m$, $n$, $p$.///,
      PARA{},
 	"In Macaulay2, each ring has a monomial order (also called a term order) 
@@ -375,7 +375,7 @@ document {
      is continued by re-issuing the same command.  Alternatively, the
      command can be issued with the option ", TT "StopBeforeComputation => true", ".
      It will stop immediately, and return a Groebner basis object that can
-     be inspected with ", TO "gens", " or ", TO "syz", ".
+     be inspected with ", TO2(generators, "gens"), " or ", TO "syz", ".
      The computation can be continued later.",
 	EXAMPLE {
 		   "R = ZZ/1277[x..z];",
@@ -411,7 +411,7 @@ document {
 	  },
      "Now we provide the hint and compute the Groebner basis anew.",
      EXAMPLE {
-      	  "(cokernel f).cache.poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)",
+	  "poincare cokernel f = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6) -- cache poincare",
       	  "time betti gb f"
 	  },
      "The computation turns out to be substantially faster."

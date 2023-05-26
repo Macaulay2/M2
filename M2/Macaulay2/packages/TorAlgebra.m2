@@ -10,7 +10,7 @@ newPackage ( "TorAlgebra",
 	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "classification of local rings based on multiplication in homology",
-    Keywords => {"Commutative Algebra"},
+    Keywords => {"Homological Algebra"},
     PackageImports => {"LocalRings"},
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -86,8 +86,7 @@ if version#"VERSION" == "1.6" then ( complete GradedModule := (M) -> M );
 -- PoincareSeries: rational function, Poincare series in closed form
 -- BassSeries: rational function, Bass series in closed form
 
-T := degreesRing 1;
-T = newRing(T, Degrees => {1});
+T := degreesRing {1};
 t := T_0;
 
 toralgdata = R -> (
@@ -650,7 +649,7 @@ isGorenstein( QuotientRing) := R -> (
     (torAlgData R)#"isGorenstein"
     )
 
-isGorenstein( Ideal ) := I -> isCI((ring I)/I)
+isGorenstein( Ideal ) := I -> isGorenstein((ring I)/I)
 
 ----------------------------------------------------------------------------
 -- isGolod

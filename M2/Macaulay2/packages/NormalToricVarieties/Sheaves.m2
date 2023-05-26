@@ -7,13 +7,12 @@ ring NormalToricVariety := PolynomialRing => (
     	if isDegenerate X then 
       	    error "-- not yet implemented for degenerate varieties";
     	if not isFreeModule classGroup X then 
-      	    error "-- gradings by torsion groups not yet implemented";
+	    printerr "Warning: computations over Cox rings with torsion grading groups are experimental";
     	-- constructing ring
     	K := X.cache.CoefficientRing;	  
     	x := X.cache.Variable;	  
     	n := #rays X;
-    	deg := entries transpose matrix fromWDivToCl X;
-    	S := K (monoid [x_0..x_(n-1), Degrees => deg]);
+	S := K (monoid [x_0..x_(n-1), Degrees => fromWDivToCl X]);
     	S.variety = X;
     	S 
 	)
@@ -126,10 +125,16 @@ cotangentSheaf NormalToricVariety := CoherentSheaf => opts -> (
 cotangentSheaf(ZZ,NormalToricVariety) := CoherentSheaf => opts -> (i,X) -> 
   exteriorPower (i, cotangentSheaf (X,opts)) 
 
+cotangentSheaf(List, NormalToricVariety) := CoherentSheaf => opts -> (a, X) -> (
+    assert(#a == #(Xs := components X));
+    if X#?(cotangentSheaf, a)
+    then X#(cotangentSheaf, a)
+    else X#(cotangentSheaf, a) = tensor apply(#a, i -> pullback(X^[i], cotangentSheaf(a#i, Xs#i))))
+
 
 -- THIS FUNCTION IS NOT EXPORTED.  Given a normal toric variety, this function
 -- creates a HashTable describing the cohomology of all twists of the
--- structure sheaf.  For more information, see Propositon~3.2 in
+-- structure sheaf.  For more information, see Proposition~3.2 in
 -- Maclagan-Smith "Multigraded regularity"
 setupHHOO = X -> (
     X.cache.emsBound = new MutableHashTable;
@@ -204,6 +209,7 @@ cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) 
     else (
     	if not X.cache.?rawHHOO then setupHHOO X;
     	M := module F;
+	if M == 0 then kk^0 else
     	if isFreeModule M then kk^(
       	    sum apply (degrees M, deg -> sum apply(X.cache.rawHHOO#i,
 	  	    t -> rank source basis (-deg-t#0,(t#1)^(t#3))

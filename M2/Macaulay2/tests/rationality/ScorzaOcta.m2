@@ -29,7 +29,7 @@ Clebsch = (L) -> (
 -- L = {(c_0,l_0),...} List of coefficients and linear forms
 -- calculates  
 --   S_d(\sum c_i l_i^d)  
--- using multilineariy
+-- using multilinearity
 Scorza = (n,L) -> (
      sum apply(subsets(L,4),CL -> (
 	       c = apply(CL,cl -> cl#0);
@@ -42,7 +42,7 @@ Scorza = (n,L) -> (
 -- L = {(c_0,l_0),...} List of coefficients and linear forms
 -- calculates
 --   T_d(\sum c_i l_i^d) 
--- using multilineariy
+-- using multilinearity
 Octa = (n,L) -> (
      sum apply(subsets(L,4),CL -> (
 	       c = apply(CL,cl -> cl#0);
@@ -108,13 +108,13 @@ coeffMatrixR = (MQ,d,Fprec) -> (
      sub(MR,Fprec)
      )     
 
--- Coefficent Matrix of the R_i for Scorza
+-- Coefficient Matrix of the R_i for Scorza
 ScorzaR = (n,CD,g,Fprec) -> (
      MQ := coeffMatrixQ(PolyScorza(n,CD,g),4);
      coeffMatrixR(MQ,3*n+1,Fprec)
      )
      
--- Coefficent Matrix of the R_i for Octa
+-- Coefficient Matrix of the R_i for Octa
 OctaR = (n,CD,g,Fprec) -> (
      MQ := coeffMatrixQ(PolyOcta(n,CD,g),8);
      coeffMatrixR(MQ,3*n+2,Fprec)

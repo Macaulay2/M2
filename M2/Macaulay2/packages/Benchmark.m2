@@ -86,7 +86,8 @@ benchmarks = new HashTable from {
 	  setRandomSeed();
 	  I := ideal random(R^1, R^{-3,-4,-4,-5});
 	  J := ideal (R_0^3,R_1^4,R_2^4,R_3^5);
-	  installHilbertFunction(I, poincare J);
+	  -- cache poincare
+	  poincare I = poincare J;
 	  (ti,re) := toSequence timing gens gb(I);
 	  assert( tally degrees source re === new Tally from { {12} => 3, {13} => 1, {3} => 1, {4} => 2, {5} => 3, {6} => 5, {7} => 6, {8} => 8, {9} => 10, {10} => 9, {11} => 6} );
 	  ti),
@@ -701,7 +702,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.17 seconds, Macaulay 2 version 0.8.50, compiled with gcc 2.8.1
 
------ with SHAREDLIBS, including interpeter but not engine:
+----- with SHAREDLIBS, including interpreter but not engine:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.27 seconds, Macaulay 2 version 0.8.50
 
@@ -718,7 +719,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
 -- 4.38 seconds, Macaulay 2 0.8.53, compiled with gcc 2.91
 
------ with SHAREDLIBS, including engine and interpeter:
+----- with SHAREDLIBS, including engine and interpreter:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.81 seconds, Macaulay 2 version 0.8.50
 

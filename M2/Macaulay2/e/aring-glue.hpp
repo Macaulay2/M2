@@ -20,15 +20,22 @@ namespace M2 {
 template <class RingType>
 class ConcreteRing : public Ring
 {
-  const RingType *R;
+  std::unique_ptr<RingType> R;
 
  protected:
-  ConcreteRing(const RingType *R0) : R(R0) {}
-  virtual ~ConcreteRing() {}
- public:
-  typedef typename RingType::ElementType ElementType;
+  explicit ConcreteRing(std::unique_ptr<RingType> R0) : R(std::move(R0)) {}
+  virtual ~ConcreteRing() = default;
 
-  static ConcreteRing<RingType> *create(const RingType *R);
+ public:
+  // explicitly delete the copy constructor
+  ConcreteRing(const ConcreteRing &ring) = delete;
+  typedef typename RingType::ElementType ElementType;
+  typedef typename RingType::Element Element;
+
+  static ConcreteRing<RingType> *create(std::unique_ptr<RingType> R);
+
+  template <class... Args>
+  static ConcreteRing<RingType> *create(Args &&...args);
 
   virtual M2::RingID ringID() const { return RingType::ringID; }
   const RingType &ring() const { return *R; }
@@ -37,10 +44,15 @@ class ConcreteRing : public Ring
                                            size_t ncols,
                                            bool dense) const
   {
+    // JY: The use of get here on R is safe because MutableMat will always keep
+    // a reference to this so long as it has a reference to R, and this is in
+    // the gc heap, so that reference keeps R alive. Really, the MutableMat
+    // constructor should probably be calling ring(), but ring() is not virtual
+    // and not every Ring is an instance of ConcreteRing.
     if (dense)
-      return new MutableMat<DMat<RingType> >(this, R, nrows, ncols);
+      return new MutableMat<DMat<RingType> >(this, R.get(), nrows, ncols);
     else
-      return new MutableMat<SMat<RingType> >(this, R, nrows, ncols);
+      return new MutableMat<SMat<RingType> >(this, R.get(), nrows, ncols);
   }
 
   bool isFinitePrimeField() const
@@ -51,7 +63,7 @@ class ConcreteRing : public Ring
 
   bool isGaloisField() const
   {
-    return ringID() == ring_GF or ringID() == ring_GFGivaro or
+    return ringID() == ring_GFM2  or
            ringID() == ring_GFFlintBig or ringID() == ring_GFFlintZech;
   }
 
@@ -74,12 +86,8 @@ class ConcreteRing : public Ring
   ////////////////////////////
   virtual unsigned int computeHashValue(ring_elem a) const
   {
-    ElementType b;
-    ring().init(b);
-    ring().from_ring_elem(b, a);
-    unsigned int result = ring().computeHashValue(b);
-    ring().clear(b);
-    return result;
+    const ElementType &b = ring().from_ring_elem_const(a);
+    return ring().computeHashValue(b);
   }
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const
@@ -93,11 +101,9 @@ class ConcreteRing : public Ring
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling from_long\n");
     ring_elem result;
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     R->set_from_long(a, n);
     R->to_ring_elem(result, a);
-    R->clear(a);
     return result;
   }
 
@@ -105,59 +111,56 @@ class ConcreteRing : public Ring
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling from_int(mpz)\n");
     ring_elem result;
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     R->set_from_mpz(a, n);
     R->to_ring_elem(result, a);
-    R->clear(a);
     return result;
   }
   virtual bool from_rational(mpq_srcptr q, ring_elem &result) const
   {
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     bool ret = R->set_from_mpq(a, q);
     if (ret) R->to_ring_elem(result, a);
-    R->clear(a);
     return ret;
   }
   virtual bool from_BigReal(gmp_RR q, ring_elem &result) const
   {
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     bool ret = get_from_BigReal(*R, a, q);
     if (ret) R->to_ring_elem(result, a);
-    R->clear(a);
     return ret;
   }
+
+  virtual bool from_Interval(gmp_RRi q, ring_elem &result) const
+  {
+    Element a(*R);
+    bool ret = get_from_Interval(*R, a, q);
+    if (ret) R->to_ring_elem(result, a);
+    return ret;
+  }
+
   virtual bool from_BigComplex(gmp_CC q, ring_elem &result) const
   {
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     //      bool ret = R->set_from_BigComplex(a,q);
     bool ret = get_from_BigComplex(*R, a, q);
     if (ret) R->to_ring_elem(result, a);
-    R->clear(a);
     return ret;
   }
   virtual bool from_double(double q, ring_elem &result) const
   {
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     bool ret = get_from_double(*R, a, q);
     if (ret) R->to_ring_elem(result, a);
-    R->clear(a);
     return ret;
   }
   virtual bool from_complex_double(double re,
                                    double im,
                                    ring_elem &result) const
   {
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     bool ret = get_from_complex_double(*R, a, re, im);
     if (ret) R->to_ring_elem(result, a);
-    R->clear(a);
     return ret;
   }
 
@@ -165,11 +168,9 @@ class ConcreteRing : public Ring
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling var\n");
     ring_elem result;
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     R->set_var(a, v);
     R->to_ring_elem(result, a);
-    R->clear(a);
     return result;
   }
 
@@ -210,65 +211,45 @@ class ConcreteRing : public Ring
   virtual bool is_unit(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling is_unit\n");
-    ElementType a;
-    R->init(a);
-    R->from_ring_elem(a, f);
+    const ElementType &a = R->from_ring_elem_const(f);
     bool ret = R->is_unit(a);
-    R->clear(a);
     return ret;
   }
 
   virtual bool is_zero(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling is_zero\n");
-    ElementType a;
-    R->init(a);
-    R->from_ring_elem(a, f);
+    const ElementType &a = R->from_ring_elem_const(f);
     bool ret = R->is_zero(a);
-    R->clear(a);
     return ret;
   }
 
   virtual bool is_equal(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling is_equal\n");
-    ElementType a, b;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
     bool ret = R->is_equal(a, b);
-    R->clear(a);
-    R->clear(b);
     return ret;
   }
 
   virtual int compare_elems(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling compare_elems\n");
-    ElementType a, b;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
     int ret = R->compare_elems(a, b);
-    R->clear(a);
-    R->clear(b);
     return ret;
   }
 
   virtual ring_elem copy(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling copy\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    Element b(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
     R->set(b, a);
     R->to_ring_elem(result, b);
-    R->clear(a);
-    R->clear(b);
     return result;
   }
 
@@ -281,132 +262,92 @@ class ConcreteRing : public Ring
   virtual ring_elem negate(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling negate\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    Element b(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
     R->negate(b, a);
     R->to_ring_elem(result, b);
-    R->clear(a);
-    R->clear(b);
     return result;
   }
 
   virtual ring_elem add(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling add\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    Element c(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->add(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
-    R->clear(c);
     return result;
   }
 
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling subtract\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    Element c(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->subtract(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
-    R->clear(c);
     return result;
   }
 
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling mult\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    Element c(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->mult(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
-    R->clear(c);
     return result;
   }
 
   virtual ring_elem power(const ring_elem f, mpz_srcptr n) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling power mpz\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    Element b(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
     R->power_mpz(b, a, n);
     R->to_ring_elem(result, b);
-    R->clear(a);
-    R->clear(b);
     return result;
   }
 
   virtual ring_elem power(const ring_elem f, int n) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling power int\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    Element b(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
     R->power(b, a, n);
     R->to_ring_elem(result, b);
-    R->clear(a);
-    R->clear(b);
     return result;
   }
 
   virtual ring_elem invert(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling invert\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    Element b(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
     R->invert(b, a);
     R->to_ring_elem(result, b);
-    R->clear(a);
-    R->clear(b);
     return result;
   }
 
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling divide\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    Element c(*R);
     ring_elem result;
-    R->init(a);
-    R->init(b);
-    R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->divide(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
-    R->clear(c);
     return result;
   }
 
@@ -416,31 +357,21 @@ class ConcreteRing : public Ring
                       ring_elem &y) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling syzygy\n");
-    ElementType a, b, xe, ye;
-    R->init(a);
-    R->init(b);
-    R->init(xe);
-    R->init(ye);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    Element xe(*R), ye(*R);
     R->syzygy(a, b, xe, ye);
     R->to_ring_elem(x, xe);
     R->to_ring_elem(y, ye);
-    R->clear(a);
-    R->clear(b);
-    R->clear(xe);
-    R->clear(ye);
   }
 
   virtual ring_elem random() const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling random\n");
     ring_elem result;
-    ElementType a;
-    R->init(a);
+    Element a(*R);
     R->random(a);
     R->to_ring_elem(result, a);
-    R->clear(a);
     return result;
   }
 
@@ -451,11 +382,8 @@ class ConcreteRing : public Ring
                              bool p_parens = false) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling elem_text_out\n");
-    ElementType a;
-    R->init(a);
-    R->from_ring_elem(a, f);
+    const ElementType &a = R->from_ring_elem_const(f);
     R->elem_text_out(o, a, p_one, p_plus, p_parens);
-    R->clear(a);
   }
 
   // map : this = R --> S, f in R
@@ -465,12 +393,13 @@ class ConcreteRing : public Ring
                          const ring_elem f,
                          int first_var) const
   {
-    ElementType a;
+    // TODO we shouldn't have to use a non-const element type,
+    // but lots of ARing instances use a non-const reference for the input
+    // this should be fixable, but will require checking
+    Element a(*R);
     ring_elem result;
-    R->init(a);
     R->from_ring_elem(a, f);
     R->eval(map, a, first_var, result);
-    R->clear(a);
     return result;
   }
 
@@ -486,14 +415,18 @@ class ConcreteRing : public Ring
 class RingQQ : public ConcreteRing<ARingQQ>
 {
  public:
-  RingQQ(const ARingQQ *R0) : ConcreteRing<ARingQQ>(R0) {}
-  virtual ~RingQQ() {}
+  explicit RingQQ(std::unique_ptr<ARingQQ> R0)
+      : ConcreteRing<ARingQQ>(std::move(R0))
+  {
+  }
   bool is_QQ() const { return true; }
   CoefficientType coefficient_type() const { return COEFF_QQ; }
-  static RingQQ *create(const ARingQQ *R0)
+  static RingQQ *create()
   {
-    RingQQ *result = new RingQQ(R0);
-    result->initialize_ring(R0->characteristic());
+    auto R0 = std::make_unique<ARingQQ>();
+    auto characteristic = R0->characteristic();
+    RingQQ *result = new RingQQ(std::move(R0));
+    result->initialize_ring(characteristic);
     result->declare_field();
 
     result->zeroV = result->from_long(0);
@@ -512,6 +445,8 @@ class RingQQ : public ConcreteRing<ARingQQ>
     mpz_set(mpq_numref(b), numer);
     mpz_set(mpq_denref(b), denom);
     mpq_canonicalize(b);
+    mpz_reallocate_limbs(mpq_numref(b));
+    mpz_reallocate_limbs(mpq_denref(b));
     return ring_elem(b);
   }
 
@@ -545,6 +480,8 @@ class RingQQ : public ConcreteRing<ARingQQ>
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
     mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
     if (s != mpq_sgn(result)) mpq_neg(result, result);
+    mpz_reallocate_limbs(mpq_numref(result));
+    mpz_reallocate_limbs(mpq_denref(result));
     f = ring_elem(result);
     return true;  // the answer could become lower, if a newer g has a larger
                   // denom
@@ -566,15 +503,19 @@ class RingQQ : public ConcreteRing<ARingQQ>
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
     mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
     if (sa != mpq_sgn(result)) mpq_neg(result, result);
+    mpz_reallocate_limbs(mpq_numref(result));
+    mpz_reallocate_limbs(mpq_denref(result));
     c = ring_elem(result);
   }
 };
 
 template <class RingType>
-ConcreteRing<RingType> *ConcreteRing<RingType>::create(const RingType *R)
+ConcreteRing<RingType> *ConcreteRing<RingType>::create(
+    std::unique_ptr<RingType> R)
 {
-  ConcreteRing<RingType> *result = new ConcreteRing<RingType>(R);
-  result->initialize_ring(R->characteristic());
+  auto characteristic = R->characteristic();
+  ConcreteRing<RingType> *result = new ConcreteRing<RingType>(std::move(R));
+  result->initialize_ring(characteristic);
   result->declare_field();
 
   result->zeroV = result->from_long(0);
@@ -582,6 +523,14 @@ ConcreteRing<RingType> *ConcreteRing<RingType>::create(const RingType *R)
   result->minus_oneV = result->from_long(-1);
 
   return result;
+}
+
+template <class RingType>
+template <class... Args>
+ConcreteRing<RingType> *ConcreteRing<RingType>::create(Args &&...args)
+{
+  return ConcreteRing<RingType>::create(
+      std::make_unique<RingType>(std::forward<Args>(args)...));
 }
 
 //////////////////////
@@ -604,16 +553,12 @@ namespace RingPromoter {
     const TargetRing &S1 =
         dynamic_cast<const ConcreteRing<TargetRing> *>(S)->ring();
 
-    typename SourceRing::ElementType fR1;
-    typename TargetRing::ElementType gS1;
+    typename SourceRing::Element fR1(R1);
+    typename TargetRing::Element gS1(S1);
 
-    R1.init(fR1);
-    S1.init(gS1);
     R1.from_ring_elem(fR1, fR);
     bool retval = mypromote(R1, S1, fR1, gS1);
     if (retval) S1.to_ring_elem(resultS, gS1);
-    R1.clear(fR1);
-    S1.clear(gS1);
     return retval;
   }
 
@@ -630,16 +575,12 @@ namespace RingPromoter {
     const TargetRing &S1 =
         dynamic_cast<const ConcreteRing<TargetRing> *>(S)->ring();
 
-    typename SourceRing::ElementType fR1;
-    typename TargetRing::ElementType gS1;
+    typename SourceRing::Element fR1(R1);
+    typename TargetRing::Element gS1(S1);
 
-    R1.init(fR1);
-    S1.init(gS1);
     S1.from_ring_elem(gS1, gS);
     bool retval = mylift(R1, S1, fR1, gS1);  // sets fR1.
     if (retval) R1.to_ring_elem(result_gR, fR1);
-    R1.clear(fR1);
-    S1.clear(gS1);
     return retval;
   }
 };
@@ -669,36 +610,17 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
           {
             case M2::ring_ZZp:
               return false;
-            case M2::ring_GFGivaro:
-              return RP::promoter<ARingZZp, ARingGFGivaro>(R, S, fR, resultS);
             case M2::ring_ZZpFfpack:
               return RP::promoter<ARingZZp, ARingZZpFFPACK>(R, S, fR, resultS);
             default:
               return false;
           }
         break;
-      case M2::ring_GFGivaro:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return RP::promoter<ARingGFGivaro, ARingZZp>(R, S, fR, resultS);
-            case M2::ring_GFGivaro:
-              return RP::promoter<ARingGFGivaro, ARingGFGivaro>(
-                  R, S, fR, resultS);
-            case M2::ring_ZZpFfpack:
-              return RP::promoter<ARingGFGivaro, ARingZZpFFPACK>(
-                  R, S, fR, resultS);
-            default:
-              return false;
-          }
       case M2::ring_ZZpFfpack:
         switch (S->ringID())
           {
             case M2::ring_ZZp:
               return RP::promoter<ARingZZpFFPACK, ARingZZp>(R, S, fR, resultS);
-            case M2::ring_GFGivaro:
-              return RP::promoter<ARingZZpFFPACK, ARingGFGivaro>(
-                  R, S, fR, resultS);
             case M2::ring_ZZpFfpack:
               return RP::promoter<ARingZZpFFPACK, ARingZZpFFPACK>(
                   R, S, fR, resultS);
@@ -712,6 +634,8 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
               return RP::promoter<ARingQQ, ARingRR>(R, S, fR, resultS);
             case M2::ring_RRR:
               return RP::promoter<ARingQQ, ARingRRR>(R, S, fR, resultS);
+            case M2::ring_RRi:
+              return RP::promoter<ARingQQ, ARingRRi>(R, S, fR, resultS);
             case M2::ring_CC:
               return RP::promoter<ARingQQ, ARingCC>(R, S, fR, resultS);
             case M2::ring_CCC:
@@ -726,6 +650,8 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
               return RP::promoter<ARingRR, ARingRR>(R, S, fR, resultS);
             case M2::ring_RRR:
               return RP::promoter<ARingRR, ARingRRR>(R, S, fR, resultS);
+            case M2::ring_RRi:
+              return RP::promoter<ARingRR, ARingRRi>(R, S, fR, resultS);
             case M2::ring_CC:
               return RP::promoter<ARingRR, ARingCC>(R, S, fR, resultS);
             case M2::ring_CCC:
@@ -740,12 +666,26 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
               return RP::promoter<ARingRRR, ARingRR>(R, S, fR, resultS);
             case M2::ring_RRR:
               return RP::promoter<ARingRRR, ARingRRR>(R, S, fR, resultS);
+            case M2::ring_RRi:
+              return RP::promoter<ARingRRR, ARingRRi>(R, S, fR, resultS);
             case M2::ring_CC:
               return RP::promoter<ARingRRR, ARingCC>(R, S, fR, resultS);
             case M2::ring_CCC:
               return RP::promoter<ARingRRR, ARingCCC>(R, S, fR, resultS);
             default:
               return false;
+          }
+      case M2::ring_RRi:
+        switch (S->ringID())
+           {
+              case M2::ring_RR:
+                return RP::promoter<ARingRRi, ARingRR>(R, S, fR, resultS);
+              case M2::ring_RRR:
+                return RP::promoter<ARingRRi, ARingRRR>(R, S, fR, resultS);
+              case M2::ring_RRi:
+                return RP::promoter<ARingRRi, ARingRRi>(R, S, fR, resultS);
+              default:
+                 return false;
           }
       case M2::ring_CC:
         switch (S->ringID())
@@ -802,36 +742,17 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
           {
             case M2::ring_ZZp:
               return false;
-            case M2::ring_GFGivaro:
-              return RP::lifter<ARingZZp, ARingGFGivaro>(R, S, result_gR, gS);
             case M2::ring_ZZpFfpack:
               return RP::lifter<ARingZZp, ARingZZpFFPACK>(R, S, result_gR, gS);
             default:
               return false;
           }
         break;
-      case M2::ring_GFGivaro:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return RP::lifter<ARingGFGivaro, ARingZZp>(R, S, result_gR, gS);
-            case M2::ring_GFGivaro:
-              return RP::lifter<ARingGFGivaro, ARingGFGivaro>(
-                  R, S, result_gR, gS);
-            case M2::ring_ZZpFfpack:
-              return RP::lifter<ARingGFGivaro, ARingZZpFFPACK>(
-                  R, S, result_gR, gS);
-            default:
-              return false;
-          }
       case M2::ring_ZZpFfpack:
         switch (S->ringID())
           {
             case M2::ring_ZZp:
               return RP::lifter<ARingZZpFFPACK, ARingZZp>(R, S, result_gR, gS);
-            case M2::ring_GFGivaro:
-              return RP::lifter<ARingZZpFFPACK, ARingGFGivaro>(
-                  R, S, result_gR, gS);
             case M2::ring_ZZpFfpack:
               return RP::lifter<ARingZZpFFPACK, ARingZZpFFPACK>(
                   R, S, result_gR, gS);
@@ -845,6 +766,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
               return RP::lifter<ARingRR, ARingRR>(R, S, result_gR, gS);
             case M2::ring_RRR:
               return RP::lifter<ARingRR, ARingRRR>(R, S, result_gR, gS);
+            case M2::ring_RRi:
+              return RP::lifter<ARingRR, ARingRRi>(R, S, result_gR, gS);
             case M2::ring_CC:
               return RP::lifter<ARingRR, ARingCC>(R, S, result_gR, gS);
             case M2::ring_CCC:
@@ -859,6 +782,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
               return RP::lifter<ARingRRR, ARingRR>(R, S, result_gR, gS);
             case M2::ring_RRR:
               return RP::lifter<ARingRRR, ARingRRR>(R, S, result_gR, gS);
+            case M2::ring_RRi:
+              return RP::lifter<ARingRRR, ARingRRi>(R, S, result_gR, gS);
             case M2::ring_CC:
               return RP::lifter<ARingRRR, ARingCC>(R, S, result_gR, gS);
             case M2::ring_CCC:
@@ -910,11 +835,9 @@ bool liftToInt(const RingType &R,
 {
   if (Rg == globalZZ)
     {
-      typename RingType::ElementType a;
-      R.init(a);
+      typename RingType::Element a(R);
       R.from_ring_elem(a, f);
       result = Rg->from_long(R.coerceToLongInteger(a));
-      R.clear(a);
       return true;
     }
   return false;
@@ -977,11 +900,9 @@ inline bool ConcreteRing<ARingGFFlintBig>::promote(const Ring *Rf,
                                                    const ring_elem f,
                                                    ring_elem &result) const
 {
-  ElementType a;
-  ring().init(a);
+  Element a(ring());
   bool retval = ring().promote(Rf, f, a);
   ring().to_ring_elem(result, a);
-  ring().clear(a);
   return retval;
 }
 
@@ -990,11 +911,9 @@ inline bool ConcreteRing<ARingGFFlintBig>::lift(const Ring *Rg,
                                                 const ring_elem f,
                                                 ring_elem &result) const
 {
-  ElementType a;
-  ring().init(a);
+  Element a(ring());
   ring().from_ring_elem(a, f);
   bool retval = ring().lift(Rg, a, result);
-  ring().clear(a);
   return retval;
 }
 
@@ -1003,11 +922,9 @@ inline bool ConcreteRing<ARingGFFlint>::promote(const Ring *Rf,
                                                 const ring_elem f,
                                                 ring_elem &result) const
 {
-  ElementType a;
-  ring().init(a);
+  Element a(ring());
   bool retval = ring().promote(Rf, f, a);
   ring().to_ring_elem(result, a);
-  ring().clear(a);
   return retval;
 }
 
@@ -1016,43 +933,9 @@ inline bool ConcreteRing<ARingGFFlint>::lift(const Ring *Rg,
                                              const ring_elem f,
                                              ring_elem &result) const
 {
-  ElementType a;
-  ring().init(a);
+  Element a(ring());
   ring().from_ring_elem(a, f);
   bool retval = ring().lift(Rg, a, result);
-  ring().clear(a);
-  return retval;
-}
-
-template <>
-inline bool ConcreteRing<ARingGFGivaro>::promote(const Ring *Rf,
-                                                 const ring_elem f,
-                                                 ring_elem &result) const
-{
-  // Rf = Z/p[x]/F(x) ---> GF(p,n)
-  // promotion: need to be able to know the value of 'x'.
-  // lift: need to compute (primite_element)^e
-
-  ElementType a;
-  bool retval = R->promote(Rf, f, a);
-  R->to_ring_elem(result, a);
-  return retval;
-}
-
-template <>
-inline bool ConcreteRing<ARingGFGivaro>::lift(const Ring *Rg,
-                                              const ring_elem f,
-                                              ring_elem &result) const
-{
-  // Rf = Z/p[x]/F(x) ---> GF(p,n)
-  // promotion: need to be able to know the value of 'x'.
-  // lift: need to compute (primite_element)^e
-
-  ElementType a;
-  R->init(a);
-  R->from_ring_elem(a, f);
-  bool retval = R->lift(Rg, a, result);
-  R->clear(a);
   return retval;
 }
 
@@ -1066,8 +949,7 @@ inline bool ConcreteRing<ARingQQ>::lift(const Ring *Rg,
       mpz_t b;
       mpz_init(b);
 
-      ElementType a;
-      R->init(a);
+      Element a(*R);
       R->from_ring_elem(a, f);
 
       bool retval = R->lift_to_mpz(b, a);
@@ -1076,7 +958,6 @@ inline bool ConcreteRing<ARingQQ>::lift(const Ring *Rg,
           result = globalZZ->from_int(b);
         }
       mpz_clear(b);
-      R->clear(a);
       return retval;
     }
   return false;
@@ -1100,13 +981,11 @@ template <>
 inline ring_elem ConcreteRing<ARingRR>::zeroize_tiny(gmp_RR epsilon,
                                                      const ring_elem f) const
 {
-  ElementType a;
-  R->init(a);
+  Element a(*R);
   R->from_ring_elem(a, f);
   R->zeroize_tiny(epsilon, a);
   ring_elem result;
   R->to_ring_elem(result, a);
-  R->clear(a);
   return result;
 }
 
@@ -1114,13 +993,11 @@ template <>
 inline ring_elem ConcreteRing<ARingCC>::zeroize_tiny(gmp_RR epsilon,
                                                      const ring_elem f) const
 {
-  ElementType a;
-  R->init(a);
+  Element a(*R);
   R->from_ring_elem(a, f);
   R->zeroize_tiny(epsilon, a);
   ring_elem result;
   R->to_ring_elem(result, a);
-  R->clear(a);
   return result;
 }
 
@@ -1128,13 +1005,11 @@ template <>
 inline ring_elem ConcreteRing<ARingRRR>::zeroize_tiny(gmp_RR epsilon,
                                                       const ring_elem f) const
 {
-  ElementType a;
-  R->init(a);
+  Element a(*R);
   R->from_ring_elem(a, f);
   R->zeroize_tiny(epsilon, a);
   ring_elem result;
   R->to_ring_elem(result, a);
-  R->clear(a);
   return result;
 }
 
@@ -1142,13 +1017,11 @@ template <>
 inline ring_elem ConcreteRing<ARingCCC>::zeroize_tiny(gmp_RR epsilon,
                                                       const ring_elem f) const
 {
-  ElementType a;
-  R->init(a);
+  Element a(*R);
   R->from_ring_elem(a, f);
   R->zeroize_tiny(epsilon, a);
   ring_elem result;
   R->to_ring_elem(result, a);
-  R->clear(a);
   return result;
 }
 
@@ -1156,15 +1029,10 @@ template <>
 inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
-  ARingRR::ElementType a;
-  ElementType b;
-  R->init(a);  // will be the norm
-  R->init(b);
-  R->from_ring_elem(b, f);
+  ARingRR::Element a(*R);  // will be the norm
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
-  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, GMP_RNDN);
-  R->clear(b);
-  R->clear(a);
+  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
 }
 
 template <>
@@ -1172,30 +1040,20 @@ inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
   const ARingRR &realR = R->real_ring();
-  ARingRR::ElementType a;
-  ElementType b;
-  realR.init(a);
-  R->init(b);
-  R->from_ring_elem(b, f);
+  ARingRR::Element a(realR);
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
-  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, GMP_RNDN);
-  R->clear(b);
-  realR.clear(a);
+  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
 }
 
 template <>
 inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
-  ARingRRR::ElementType a;
-  ElementType b;
-  R->init(a);  // will be the norm
-  R->init(b);
-  R->from_ring_elem(b, f);
+  ARingRRR::Element a(*R);  // will be the norm
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
-  if (mpfr_cmp(&a, norm) > 0) mpfr_set(norm, &a, GMP_RNDN);
-  R->clear(b);
-  R->clear(a);
+  if (mpfr_cmp(&a.value(), norm) > 0) mpfr_set(norm, &a.value(), MPFR_RNDN);
 }
 
 template <>
@@ -1203,15 +1061,10 @@ inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
   const ARingRRR &realR = R->real_ring();
-  ARingRRR::ElementType a;
-  ElementType b;
-  realR.init(a);
-  R->init(b);
-  R->from_ring_elem(b, f);
+  ARingRRR::Element a(realR);
+  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
-  if (mpfr_cmp(&a, norm) > 0) mpfr_set(norm, &a, GMP_RNDN);
-  R->clear(b);
-  realR.clear(a);
+  if (mpfr_cmp(&a.value(), norm) > 0) mpfr_set(norm, &a.value(), MPFR_RNDN);
 }
 
 template <typename RingType>
@@ -1237,6 +1090,12 @@ inline unsigned long ConcreteRing<ARingRRR>::get_precision() const
 {
   return R->get_precision();
 }
+    
+template <>
+inline unsigned long ConcreteRing<ARingRRi>::get_precision() const
+{
+  return R->get_precision();
+}
 
 template <>
 inline unsigned long ConcreteRing<ARingCCC>::get_precision() const
@@ -1247,11 +1106,8 @@ inline unsigned long ConcreteRing<ARingCCC>::get_precision() const
 template <typename RT>
 std::pair<bool, long> coerceToLongIntegerFcn(const RT &ring, ring_elem a)
 {
-  typename RT::ElementType b;
-  ring.init(b);
-  ring.from_ring_elem(b, a);
+  const typename RT::ElementType &b = ring.from_ring_elem_const(a);
   long result = ring.coerceToLongInteger(b);
-  ring.clear(b);
   return std::pair<bool, long>(true, result);
 }
 
@@ -1309,13 +1165,6 @@ inline const RingElement *ConcreteRing<ARingGFM2>::getMinimalPolynomial() const
 }
 
 template <>
-inline const RingElement *ConcreteRing<ARingGFGivaro>::getMinimalPolynomial()
-    const
-{
-  return findMinimalPolynomial(ring().originalRing());
-}
-
-template <>
 inline const RingElement *ConcreteRing<ARingGFFlintBig>::getMinimalPolynomial()
     const
 {
@@ -1334,12 +1183,10 @@ inline const RingElement *getLiftedRepresentation(const RT &R,
                                                   const ring_elem &a)
 // R should be a Galois Field
 {
-  ring_elem c;                 // in originalRing()
-  typename RT::ElementType b;  // in ring()
-  R.init(b);
+  ring_elem c;                // in originalRing()
+  typename RT::Element b(R);  // in ring()
   R.from_ring_elem(b, a);
   R.lift_to_original_ring(c, b);
-  R.clear(b);
   return RingElement::make_raw(&R.originalRing(), c);
 }
 
@@ -1348,13 +1195,6 @@ inline const RingElement *ConcreteRing<ARingGFM2>::getRepresentation(
     const ring_elem &a) const
 {
   return getLiftedRepresentation<ARingGFM2>(ring(), a);
-}
-
-template <>
-inline const RingElement *ConcreteRing<ARingGFGivaro>::getRepresentation(
-    const ring_elem &a) const
-{
-  return getLiftedRepresentation<ARingGFGivaro>(ring(), a);
 }
 
 template <>
@@ -1374,12 +1214,10 @@ template <typename ConcreteRT>
 inline const RingElement *getGen(const ConcreteRT &R)
 // R should be a Galois Field
 {
-  typename ConcreteRT::ElementType a;
+  typename ConcreteRT::Element a(R.ring());
   ring_elem b;
-  R.ring().init(a);
   R.ring().getGenerator(a);
   R.ring().to_ring_elem(b, a);
-  R.ring().clear(a);
   return RingElement::make_raw(&R, b);
 }
 
@@ -1392,11 +1230,6 @@ template <>
 inline const RingElement *ConcreteRing<ARingGFM2>::getGenerator() const
 {
   return getGen<ConcreteRing<ARingGFM2> >(*this);
-}
-template <>
-inline const RingElement *ConcreteRing<ARingGFGivaro>::getGenerator() const
-{
-  return getGen<ConcreteRing<ARingGFGivaro> >(*this);
 }
 template <>
 inline const RingElement *ConcreteRing<ARingGFFlint>::getGenerator() const
@@ -1412,11 +1245,8 @@ inline const RingElement *ConcreteRing<ARingGFFlintBig>::getGenerator() const
 template <>
 inline long ConcreteRing<ARingZZpFlint>::discreteLog(const ring_elem &a1) const
 {
-  ElementType a;
-  ring().init(a);
-  ring().from_ring_elem(a, a1);
+  const ElementType &a = ring().from_ring_elem_const(a1);
   long result = ring().discreteLog(a);
-  ring().clear(a);
   return result;
 }
 

@@ -4,9 +4,11 @@
 #define _polyring_hpp_
 
 #include "ringelem.hpp"
-#include "engine.h"
-#include "skew.hpp"
+
 #include <vector>
+
+#include "interface/computation.h"
+#include "skew.hpp"
 
 class buffer;
 class Monoid;
@@ -266,8 +268,8 @@ class PolynomialRing : public Ring
   virtual M2_arrayint support(const ring_elem a) const = 0;
 
   virtual bool is_homogeneous(const ring_elem f) const = 0;
-  virtual void degree(const ring_elem f, int *d) const = 0;
-  virtual bool multi_degree(const ring_elem f, int *d) const = 0;
+  virtual void degree(const ring_elem f, monomial d) const = 0;
+  virtual bool multi_degree(const ring_elem f, monomial d) const = 0;
   virtual void degree_weights(const ring_elem f,
                               M2_arrayint wts,
                               int &lo,
@@ -282,7 +284,7 @@ class PolynomialRing : public Ring
 
   virtual ring_elem mult_by_term(const ring_elem f,
                                  const ring_elem c,
-                                 const int *m) const = 0;
+                                 const_monomial m) const = 0;
 
   virtual int n_flat_terms(const ring_elem f) const = 0;
   virtual int n_logical_terms(int nvars0, const ring_elem f) const = 0;
@@ -302,11 +304,11 @@ class PolynomialRing : public Ring
   int n_terms(const ring_elem f) const { return n_flat_terms(f); }
   // This is here mainly because geopoly requires n_terms.
 
-  virtual ring_elem make_flat_term(const ring_elem a, const int *m) const = 0;
+  virtual ring_elem make_flat_term(const ring_elem a, const_monomial m) const = 0;
   virtual ring_elem make_logical_term(const Ring *coeffR,
                                       const ring_elem a,
-                                      const int *exp) const = 0;
-  //  virtual ring_elem term(const ring_elem a, const int *m) const = 0;
+                                      const_exponents exp) const = 0;
+  //  virtual ring_elem term(const ring_elem a, const_monomial m) const = 0;
 
   virtual ring_elem lead_flat_coeff(const ring_elem f) const = 0;
   virtual ring_elem lead_logical_coeff(const Ring *coeffR,
@@ -314,7 +316,7 @@ class PolynomialRing : public Ring
 
   virtual ring_elem get_coeff(const Ring *coeffR,
                               const ring_elem f,
-                              const int *vp) const = 0;
+                              const_varpower vp) const = 0;
   // vp is a varpower monomial, in the logical monoid.
   // The result will be an element in the logical coefficient ring.
 
@@ -326,15 +328,15 @@ class PolynomialRing : public Ring
   // from
   // the end.  get_terms(--,f,0,0) is the logical lead term of f.
 
-  virtual const int *lead_flat_monomial(const ring_elem f) const = 0;
+  virtual const_monomial lead_flat_monomial(const ring_elem f) const = 0;
   virtual void lead_logical_exponents(int nvars0,
                                       const ring_elem f,
-                                      int *result_exp) const = 0;
+                                      exponents_t result_exp) const = 0;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const = 0;
   virtual void divide_coeff_to(ring_elem &f, ring_elem a) const = 0;
 
-  virtual void monomial_divisor(const ring_elem a, int *exp) const = 0;
+  virtual void monomial_divisor(const ring_elem a, exponents_t exp) const = 0;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const = 0;
   virtual bool in_subring(int nslots, const ring_elem a) const = 0;
   virtual void degree_of_var(int n,
@@ -342,7 +344,7 @@ class PolynomialRing : public Ring
                              int &lo,
                              int &hi) const = 0;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const = 0;
-  virtual ring_elem divide_by_expvector(const int *exp,
+  virtual ring_elem divide_by_expvector(const_exponents exp,
                                         const ring_elem a) const = 0;
 
   virtual Nterm *numerator(ring_elem f) const = 0;

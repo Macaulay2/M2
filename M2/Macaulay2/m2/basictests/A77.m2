@@ -99,6 +99,7 @@ assert( relativizeFilename ( "/a/b/c/d/e/" , "/a/b/c/f/g/" ) === "../../f/g/" )
 
 assert( realpath "." == currentDirectory () )
 assert( realpath ".." == toAbsolutePath "../" )
+assert( realpath "/" == "/" )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/basictests A77.okay"

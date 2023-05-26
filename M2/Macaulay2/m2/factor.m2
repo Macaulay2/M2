@@ -1,5 +1,12 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+needs "integers.m2"
+needs "lists.m2"
+needs "matrix1.m2"
+needs "structure.m2" -- for position
+
+-----------------------------------------------------------------------------
+
 monic := t -> (
      c := leadCoefficient t;
      c' := 1 // c;
@@ -12,10 +19,14 @@ gcd(RingElement,ZZ) := (r,s) -> gcd(promote(s,ring r),r)
 gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      R := ring r;
      if ring s =!= R then error "gcd: expected elements in the same ring";
+     if instance(R,QuotientRing) then error "gcd: unimplemented for this ring";
      if isField R then if r == 0 and s == 0 then 0_R else 1_R
      else if factoryAlmostGood R then (
 	  if (options R).Inverses then (r,s) = (numerator r, numerator s);
  	  new ring r from rawGCD(raw r, raw s))
+     else (
+	 (R1,f,g) := flattenRing(R,Result=>3);
+	 if factoryAlmostGood R1 then g gcd(f r,f s)
      else if instance(R,PolynomialRing) and numgens R == 1 and isField coefficientRing R then monic (
 	  -- does this depend on the monomial order in R, too?
 	  -- would this code work for more than one variable?
@@ -26,7 +37,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
 	       a := (syz( matrix{{r,s}}, SyzygyLimit => 1 ))_(0,0);
 	       if s%a != 0 then error "can't find gcd in this ring";
 	       s // a))
-     else notImplemented())
+     else notImplemented()))
 
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
@@ -40,11 +51,98 @@ lcm(ZZ,RingElement) := (r,s) -> lcm(promote(abs r,ring s),s)
 lcm(RingElement,ZZ) := (r,s) -> lcm(promote(abs s,ring r),r)
 lcm(RingElement,RingElement) := (f,g) -> f * (g // gcd(f,g))
 
+-----------------------------------------------------------------------------
+
+isSimpleNumberField := F -> ( isField F
+    and instance(R := baseRing F, QuotientRing)
+    and coefficientRing R === QQ
+    and numgens ideal R == 1
+    and numgens R == 1 )
+
+leadCoeff := x -> ( R := ring x; -- iterated leadCoefficient
+    if instance(R, PolynomialRing) then leadCoeff leadCoefficient x  else
+    if instance(R, QuotientRing)
+    or instance(R, GaloisField)    then leadCoeff lift(x, ambient R) else x )
+
+isUnit RingElement := f -> if (o := options ring f).?Inverses and o.Inverses then (
+    size f === 1 and isUnit leadCoefficient f) else 1 % ideal f == 0
+
+isPrime RingElement := {} >> o -> f -> (
+    -- =0 means invertible element; =1 prime element; >1 composite element.
+    1 == sum(toList factor f, x -> if isUnit x#0 then 0 else x#1))
+
+factor RingElement := opts -> f -> (
+    RM := ring f;
+    R := coefficientRing RM;
+    c := 1_R;
+    -- get rid of monomial in factor if f Laurent polynomial
+    if (options RM).Inverses then (
+	minexps := toList last rawPairs(raw RM.BaseRing, raw f);
+	minexps  = min \ transpose apply(minexps, exponents_(RM.numallvars));
+	f = RM_(-minexps) * f;
+	c = RM_minexps);
+    -- the actual computation occurs here
+    (facs, exps) := if (ret := runHooks((factor, RingElement), (opts, f))) =!= null
+    then ret else error "factor: no method implemented for this type of element";
+    -- TODO: simplify this
+    facs = apply(facs, exps, (f, e) -> if leadCoeff(p := new RM from f) >= 0 then p else (if odd e then c = -c; -p));
+    if liftable(facs#0, RM.BaseRing) then (
+	-- factory returns the possible constant factor in front
+	assert(exps#0 == 1);
+	c = c * facs#0;
+	facs = drop(facs, 1);
+	exps = drop(exps, 1);
+	);
+    if 0 < #facs then (facs, exps) = toSequence transpose sort transpose {toList facs, toList exps};
+    if c != 1 then (
+	-- we put the possible constant (and monomial for Laurent polynomials) at the end
+	facs = append(facs, c);
+	exps = append(exps, 1);
+	);
+    --
+    new Product from apply(facs, exps, (f, e) -> new Power from {f, e}))
+
+-- This is a map from method keys to strategy hash tables
+algorithms := new MutableHashTable from {}
+algorithms#(factor, RingElement) = new MutableHashTable from {
+    -- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+    Default => (opts, f) -> rawFactor raw f,
+
+    "NumberField" => (opts, f) -> (
+	R := coefficientRing(RM := ring f);
+	if not isSimpleNumberField R
+	then return null;
+	(RM', toRM') := flattenRing(RM, CoefficientRing => QQ);
+	toRM := map(RM, RM', generators RM | {R_0});
+	minp := (ideal RM')_0; -- minimal polynomial of the number field
+	func := (fs, es) -> (for f in fs list raw toRM new RM' from f, es);
+	func rawFactor(raw toRM' f, raw minp)), -- apply rawFactor, but the factors need to be converted back to RM
+
+    FractionField => (opts, f) -> (
+	R := coefficientRing(RM := ring f);
+	if not instance(R, FractionField)
+	then return null;
+	RM' := (baseRing R) RM.monoid;
+	toRM := map(RM, RM', generators RM);
+	toRM' := map(RM', RM, generators RM');
+	denom := lcm apply(listForm f, t -> denominator t_1);
+	func := (fs, es) -> (for i to #fs - 1 list raw((toRM new RM' from fs_i) * (if i == 0 then 1/denom else 1)), es);
+	func rawFactor raw toRM'(denom * f)), -- similar: convert back to RM, and put denom back into the leadCoefficient
+    }
+
+-- Installing hooks for factor RingElement
+scan({Default, FractionField, "NumberField"}, strategy ->
+    addHook(key := (factor, RingElement), algorithms#key#strategy, Strategy => strategy))
+
+-----------------------------------------------------------------------------
+
 pseudoRemainder = method()
 pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
      new R from rawPseudoRemainder(raw f, raw g));
+
+-----------------------------------------------------------------------------
 
 inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
 
@@ -56,8 +154,7 @@ gfdirs = ( if isAbsolutePath currentLayout#"factory gftables"
 	   else {prefixDirectory | currentLayout#"factory gftables"} )
 i := position(gfdirs, gfdir -> fileExists(gfdir | "gftables/961")) -- 961==31^2
 if i === null
-then error ("sample Factory finite field addition table file missing, needed for factorization: ",
-    prefixDirectory, currentLayout#"factory gftables")
+then error ("sample Factory finite field addition table file missing, needed for factorization: ", concatenate between_", " gfdirs)
 setFactoryGFtableDirectory gfdirs_i
 
 irreducibleCharacteristicSeries = method()
@@ -81,6 +178,8 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      TtoR.cache.inverse = RtoT;
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
+-----------------------------------------------------------------------------
+
 factor ZZ := opts -> n -> (
     if n === 0 then Product { Power{0,1} }
     else (
@@ -92,7 +191,9 @@ factor ZZ := opts -> n -> (
     )
  
 factor QQ := opts -> (r) -> factor numerator r / factor denominator r
+
 -----------------------------------------------------------------------------
+
 topCoefficients = method()
 topCoefficients Matrix := f -> (
      R := ring f;
@@ -103,60 +204,6 @@ topCoefficients RingElement := f -> (
      else (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
-
-minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
-     (I) -> (
-	  R := ring I;
-	  (I',F) := flattenRing I; -- F is not needed
-	  A := ring I';
-	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
-     	  --I = trim I';
-	  I = I';
-	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
-	  if not isCommutative A then
-	    error "expected commutative polynomial ring";
-	  kk := coefficientRing A;
-	  if kk =!= QQ and not instance(kk,QuotientRing) then
-	    error "expected base field to be QQ or ZZ/p";
-	  if I == 0 then return {if A === R then I else ideal map(R^1,R^0,0)};
-	  if debugLevel > 0 then homog := isHomogeneous I;
-	  ics := irreducibleCharacteristicSeries I;
-	  if debugLevel > 0 and homog then (
-	       if not all(ics#0, isHomogeneous) then error "minimalPrimes: irreducibleCharacteristicSeries destroyed homogeneity";
-	       );
-	  -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
-	  ngens := numgens I;
-	  ics0 := select(ics#0, CS -> numgens source CS <= ngens);
-	  Psi := apply(ics0, CS -> (
-		    chk := topCoefficients CS;
-		    chk = chk#1;  -- just keep the coefficients
-		    chk = first entries chk;
-		    iniCS := select(chk, i -> # support i > 0); -- this is bad if degrees are 0: degree i =!= {0});
-		    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
-		    CS = ideal CS;
-		    --<< "saturating " << CS << " with respect to " << iniCS << endl;
-		    -- warning: over ZZ saturate does unexpected things.
-		    scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
-     --	       scan(iniCS, a -> CS = saturate(CS, a));
-		    --<< "result is " << CS << endl;
-		    CS));
-	  Psi = select(Psi, I -> I != 1);
-	  Psi = new MutableList from Psi;
-	  p := #Psi;
-	  scan(0 .. p-1, i -> if Psi#i =!= null then
-	       scan(i+1 .. p-1, j ->
-		    if Psi#i =!= null and Psi#j =!= null then
-		    if isSubset(Psi#i, Psi#j) then Psi#j = null else
-		    if isSubset(Psi#j, Psi#i) then Psi#i = null));
-	  Psi = toList select(Psi,i -> i =!= null);
-	  components := apply(Psi, p -> ics#1 p);
-	  if A =!= R then (
-	       components = apply(components, P -> trim(G P));
-	       );
-	  components
-	  ))
-
-isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
 
 roots = method(Options => true);
 roots RingElement := {Precision => -1, Unique => false} >> o -> p ->

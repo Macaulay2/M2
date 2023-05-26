@@ -11,8 +11,8 @@
 
 newPackage select((
     "Posets",
-        Version => "1.1.2",
-        Date => "07. August 2014",
+        Version => "1.1.3",
+        Date => "May 15, 2021",
         Authors => {
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
@@ -21,7 +21,6 @@ newPackage select((
         Headline => "partially ordered sets (posets)",
 	Keywords => {"Combinatorics"},
         Configuration => {
-            "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true
             },
@@ -37,9 +36,9 @@ newPackage select((
 	     "article title" => "Partially ordered sets in Macaulay2",
 	     "acceptance date" => "5 June 2015",
 	     "published article URI" => "http://msp.org/jsag/2015/7-1/p02.xhtml",
-	     "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.9-15",
+	     "published article DOI" => "https://dx.doi.org/10.2140/jsag.2015.7.9-15",
 	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
 	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
 	     "version at publication" => "1.1.2",
 	     "volume number" => "7",
@@ -48,7 +47,6 @@ newPackage select((
         ), x -> x =!= null)
 
 -- Load configurations
-posets'PDFViewer = if instance((options Posets).Configuration#"DefaultPDFViewer", String) then (options Posets).Configuration#"DefaultPDFViewer" else "open";
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
 posets'SuppressLabels = if instance((options Posets).Configuration#"DefaultSuppressLabels", Boolean) then (options Posets).Configuration#"DefaultSuppressLabels" else true;
 
@@ -64,7 +62,6 @@ export {
     "transitiveClosure",
     --
     -- Set default configurations
-    "setPDFViewer",
     "setPrecompute",
         "Precompute",
     "setSuppressLabels",
@@ -138,7 +135,6 @@ export {
     "outputTexPoset",
     "texPoset",
         "Jitter",
-        "PDFViewer",
         "SuppressLabels",
     --
     -- Vertices & vertex properties
@@ -177,6 +173,7 @@ export {
     "fPolynomial",
     "greeneKleitmanPartition",
     "hPolynomial",
+    "magnitude",
     "moebiusFunction",
   --"poincare",
     "poincarePolynomial",
@@ -184,6 +181,8 @@ export {
     "realRegions",
     "tuttePolynomial",
     "zetaPolynomial",
+    "coxeterPolynomial",
+    "degreePolynomial",
     --
     -- Properties
     "dilworthNumber",
@@ -286,13 +285,6 @@ transitiveClosure (List, List) := Matrix => (G, R) -> (
 ------------------------------------------
 -- Set default configurations
 ------------------------------------------
-
-setPDFViewer = method()
-setPDFViewer String := String => viewer -> (
-    alt := posets'PDFViewer;
-    posets'PDFViewer = viewer;
-    alt
-    )
 
 setPrecompute = method()
 setPrecompute Boolean := Boolean => pc -> (
@@ -787,7 +779,7 @@ dominanceLattice ZZ := Poset => n -> (
 
 facePoset = method()
 facePoset SimplicialComplex := Poset => D -> (
-    faceList := apply(toList(-1..dim D), i -> support \ toList flatten entries faces(i, D));
+    faceList := apply(toList(-1..dim D), i -> support \ faces(i, D));
     P := poset(flatten faceList, isSubset, AntisymmetryStrategy => "none");
     if posets'Precompute then (
         idx := hashTable apply(#P.GroundSet, i -> P_i => i);
@@ -838,7 +830,6 @@ lcmLattice Ideal := Poset => opts -> I -> (
     )
 
 -- non-exported
-protect next
 lcmLatticeRecursive = G -> (
     if #G === 0 then return {{}}; -- empty set has 1 as a divisor.
     n := numgens ring first G;
@@ -867,7 +858,7 @@ lcmLatticeRecursive = G -> (
     )
 
 -- Portions of code for generating NCPartitions contributed by Andrew Hoefel.
--- New Type for Noncrossing Partitions to improve diplay of results.
+-- New Type for Noncrossing Partitions to improve display of results.
 NCPartition = new Type of List
 
 ncPartition = L -> new NCPartition from toList \ L
@@ -1111,17 +1102,16 @@ youngSubposet ZZ := Poset => n -> (
 -- TeX & GAP
 ------------------------------------------
 
-displayPoset = method(Options => { symbol PDFDirectory => "", symbol SuppressLabels => posets'SuppressLabels, symbol PDFViewer => posets'PDFViewer, symbol Jitter => false })
+displayPoset = method(Options => { symbol PDFDirectory => "", symbol SuppressLabels => posets'SuppressLabels, symbol Jitter => false })
 displayPoset Poset := opts -> P -> (
     if not instance(opts.PDFDirectory, String) then error "The option PDFDirectory must be a string.";
-    if not instance(opts.PDFViewer, String) then error "The option PDFViewer must be a string.";
     if not instance(opts.SuppressLabels, Boolean) then error "The option SuppressLabels must be a Boolean.";
     if not instance(opts.Jitter, Boolean) then error "The option Jitter must be a Boolean.";
     name := temporaryFileName();
     if opts.PDFDirectory != "" then name = opts.PDFDirectory | first lines get openIn concatenate("!basename ", name);
     outputTexPoset(P, concatenate(name, ".tex"), symbol SuppressLabels => opts.SuppressLabels, symbol Jitter => opts.Jitter);
     run concatenate("pdflatex -output-directory `dirname ", name, ".tex` ", name, " 1>/dev/null");
-    run concatenate(opts.PDFViewer, " ", name,".pdf &");
+    show URL("file://" | toAbsolutePath(name | ".pdf"));
     )
 
 gapConvertPoset = method()
@@ -1320,10 +1310,11 @@ rankFunction Poset := List => P -> (
     if not P.cache.?coveringRelations then coveringRelations P;
     for r in P.cache.coveringRelations do (
         tmp := last rk#(r#1) - last rk#(r#0) - 1;
-        if tmp == 0 then continue;
         u := first rk#(r#0);
         v := first rk#(r#1);
-        if u == v then return P.cache.rankFunction = null;
+        if u == v then (
+	    if tmp == 0 then continue else return P.cache.rankFunction = null;
+	);
         rk = if tmp > 0 then apply(rk, g -> if first g == u then {v, last g + tmp} else g) else
                               apply(rk, g -> if first g == v then {u, last g - tmp} else g);
         );
@@ -1488,7 +1479,7 @@ fPolynomial Poset := RingElement => opts -> P -> (
     oP := orderComplex P;
     fV := fVector oP;
     R := ZZ(monoid [opts.VariableName]);
-    sum(-1..dim oP, i -> fV#i * R_0^(i + 1))
+    sum(-1..dim oP, i -> fV#(i+1) * R_0^(i + 1))
     )
 
 greeneKleitmanPartition = method(Options => {symbol Strategy => "antichains"})
@@ -1524,6 +1515,13 @@ moebiusFunction Poset := HashTable => P -> (
         for j to #P.GroundSet-1 do mu#(j, i) = if i === j then 1 else if not member(j, gtp) then 0 else -sum(gtp, z -> if mu#?(j, z) then mu#(j, z) else 0);
         );
     applyKeys(new HashTable from mu, (i, j) -> (F_i, F_j))
+    )
+
+-- following Tom Leinster's definition in Documenta Math.
+magnitude = method()
+magnitude Poset := ZZ => P -> (
+    mu := moebiusFunction P;
+    sum(#P.GroundSet, i -> sum(principalOrderIdeal'(P, i), j -> mu#(P.GroundSet_j, P.GroundSet_i)))
     )
 
 poincare Poset := RingElement => P -> poincarePolynomial P
@@ -1567,8 +1565,29 @@ zetaPolynomial Poset := RingElement => opts -> P -> (
     fV := fVector oP;
     R := QQ(monoid [opts.VariableName]);
     X := toList(2..dim oP+2);
-    Y := apply(X, n -> sum(2..n, i -> fV#(i-2) * binomial(n-2, i-2)));
+    Y := apply(X, n -> sum(2..n, i -> fV#(i-1) * binomial(n-2, i-2)));
     sum(#X, i -> Y_i * product(drop(X, {i,i}), xj -> (R_0 - xj)/(X_i-xj)))
+    )
+
+coxeterPolynomial = method(Options => {symbol VariableName => getSymbol "t"})
+coxeterPolynomial Poset := RingElement => opts -> P -> (
+    R := ZZ(monoid [opts.VariableName]);
+    M := P.RelationMatrix;
+    n := numrows M;
+    C := -M * inverse transpose M;
+    det (R_0 * id_(R^n) - C)
+    )
+
+degreePolynomial = method()
+degreePolynomial Poset := RingElement => P -> (
+    R := ZZ(monoid [getSymbol "x", getSymbol "y"]);
+    cr := P.cache.coveringRelations;
+    if #cr == 0 then cr = {{}};
+    covering := tally apply(cr, last);
+    covered := tally apply(cr, first);
+    sum(#P.GroundSet, i -> (indegree := if covering#?i then covering#i else 0;
+                            outdegree := if covered#?i then covered#i else 0;
+                            (R_0)^indegree * (R_1)^outdegree))
     )
 
 ------------------------------------------
@@ -2121,7 +2140,7 @@ doc ///
             with entries $(i,j)$ equal to 1 if $G_j \leq G_i$ and 0 otherwise
     Description
         Text
-            This method uses the @TO "descendents"@ method from the @TO "Graphs"@ package
+            This method uses the @TO "descendants"@ method from the @TO "Graphs"@ package
             to compute the @TO "RelationMatrix"@ from the relations $R$.
         Example
             G = {1,2,3,4,5};
@@ -2134,30 +2153,6 @@ doc ///
 ------------------------------------------
 -- Set default options
 ------------------------------------------
-
--- setPDFViewer
-doc ///
-    Key
-        setPDFViewer
-        (setPDFViewer,String)
-    Headline
-        sets the default PDFViewer option
-    Usage
-        alt = setPDFViewer viewer
-    Inputs
-        viewer:String
-            the new setting
-    Outputs
-        alt:String
-            the old setting
-    Description
-        Text
-            This method sets the default PDFViewer option.
-        Example
-            setPDFViewer "evince"
-    SeeAlso
-        PDFViewer
-///
 
 -- setPrecompute
 doc ///
@@ -2473,6 +2468,7 @@ doc ///
         pPartitionRing
         (pPartitionRing,Poset)
         [pPartitionRing,CoefficientRing]
+        [pPartitionRing,Strategy]
     Headline
         produces the p-partition ring of a poset
     Usage
@@ -3735,7 +3731,7 @@ doc ///
         plueckerPoset
         (plueckerPoset,ZZ)
     Headline
-        computes a poset associated to the Pluecker relations
+        computes a poset associated to the Plücker relations
     Usage
         P = plueckerPoset n
     Inputs
@@ -3745,10 +3741,10 @@ doc ///
         P:Poset
     Description
         Text
-            The ideal of Pluecker relations has a quadratic Groebner
+            The ideal of Plücker relations has a quadratic Groebner
             basis.  Under a suitable term order, the incomparable pairs
             of the poset $P$ generate the initial ideal of the ideal of
-            Pluecker relations.
+            Plücker relations.
 
             Given two subsets $S$ and $T$ of ${0,\ldots,n-1}$, we partially
             order $S \leq T$ if $\#S \geq \#T$ and $S_i \leq T_i$ for all
@@ -4009,25 +4005,20 @@ doc ///
         displayPoset
         (displayPoset,Poset)
         [displayPoset,SuppressLabels]
-        [displayPoset,PDFViewer]
         [displayPoset,Jitter]
         [displayPoset,PDFDirectory]
         PDFDirectory
-        PDFViewer
     Headline
         generates a PDF representation of a poset and attempts to display it
     Usage
         displayPoset P
         displayPoset(P, SuppressLabels => Boolean)
-        displayPoset(P, PDFViewer => String)
         displayPoset(P, PDFDirectory => String)
         displayPoset(P, Jitter => Boolean)
     Inputs
         P:Poset
         SuppressLabels=>Boolean
             whether to display or suppress the labels of the poset
-        PDFViewer=>String
-            which gives the calling path of a PDF-viewer
         Jitter=>Boolean
             whether to randomly jitter the poset vertices
         PDFDirectory=>String
@@ -4035,18 +4026,14 @@ doc ///
     Description
         Text
             This method generates a PDF of the Hasse Diagram of the Poset view LaTeX code which
-            uses TikZ.  The method attempts to display the PDF via the
-            specified PDFViewer.  See @TO "texPoset"@ for more about the
-            representation.
+            uses TikZ.  The method attempts to display the PDF using @TO "show"@.
+            See @TO "texPoset"@ for more about the representation.
 
             Normally, the vertices of the Poset are placed at regular intervals along
             horizontal lines.  However, this can sometimes cause edges to appear in the
             Hasse diagram that are not truly there.  The Jitter option can be used to randomly
             shift the positions of the vertices horizontally, which can often cause the
             edges to be more clear.
-
-            Note that @TT "PDFViewer"@ option's default value can be set in
-            the "~/.Macaulay2/init-Posets.m2" file.
     SeeAlso
         outputTexPoset
         texPoset
@@ -4097,7 +4084,7 @@ doc ///
             P = gapConvertPoset S
             P == augmentPoset booleanLattice 3
         Text
-            When convering to GAP format, the method automatically augments the poset.  In this example,
+            When converting to GAP format, the method automatically augments the poset.  In this example,
             the $3$ chain becomes a $5$ chain in GAP format.
         Example
             gapConvertPoset chain 3
@@ -5203,7 +5190,7 @@ doc ///
         [poincarePolynomial,VariableName]
         (poincare, Poset)
     Headline
-        computes the Poincare polynomial of a ranked poset with a unique minimal element
+        computes the Poincaré polynomial of a ranked poset with a unique minimal element
     Usage
         p = poincarePolynomial P
         p = poincarePolynomial(P, VariableName => symbol)
@@ -5214,18 +5201,18 @@ doc ///
         VariableName=>Symbol
     Outputs
         p:RingElement
-            the Poincare polynomial of $P$
+            the Poincaré polynomial of $P$
     Description
         Text
-            The Poincare polynomial of $P$ is the polynomial in a single variable
+            The Poincaré polynomial of $P$ is the polynomial in a single variable
             $t$ derived from the @TO "rankFunction"@ and the @TO "moebiusFunction"@ of $P$.
 
-            The Poincare polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
+            The Poincaré polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
         Example
             n = 5;
             factor poincarePolynomial booleanLattice n
         Text
-            The Poincare polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
+            The Poincaré polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
         Example
             R = QQ[x,y,z];
             A = {x,y,z,x+y,x+z,y+z,x-y,x-z,y-z};
@@ -5322,12 +5309,13 @@ doc ///
             the Tutte polynomial of $P$
     Description
         Text
-            The Tutte polynomial of $P$ is the polynomial $f$ such that
+            The Tutte polynomial of $P$ is a polynomial $f$ in two variables
+            obtained by a summation over antichains.
         Example
             B = booleanLattice 3;
             f = tuttePolynomial B
         Text
-            The Tutte polynomial evaluates at $t = 1$ and $z = 1$ is always
+            The Tutte polynomial evaluated at $t = 1$ and $z = 1$ is always
             the number of subsets of the groundset of $P$.
         Example
             R = ring f;
@@ -5372,7 +5360,86 @@ doc ///
     SeeAlso
         chains
 ///
+-- coxeterPolynomial
+doc ///
+    Key
+        coxeterPolynomial
+        (coxeterPolynomial,Poset)
+        [coxeterPolynomial,VariableName]
+    Headline
+        computes the Coxeter polynomial of a poset
+    Usage
+        z = coxeterPolynomial P
+        z = coxeterPolynomial(P, VariableName => symbol)
+    Inputs
+        P:Poset
+        VariableName=>Symbol
+    Outputs
+        z:RingElement
+            the Coxeter polynomial of $P$
+    Description
+        Text
+            The Coxeter polynomial of $P$ is the
+            characteristic polynomial of the Coxeter
+            transformation matrix $ -M M^{-t}$, where $M$
+            is the relation matrix. This depends only on
+            the derived category of modules over
+            the incidence algebra.
+        Example
+            B = booleanLattice 3;
+            z = coxeterPolynomial B
+///
+-- degreePolynomial
+doc ///
+    Key
+        degreePolynomial
+        (degreePolynomial,Poset)
+    Headline
+        computes the degree polynomial of a poset
+    Usage
+        z = degreePolynomial P
+    Inputs
+        P:Poset
+    Outputs
+        z:RingElement
+            the degree polynomial of $P$
+    Description
+        Text
+            The degree polynomial of $P$ is the sum over elements $v$ of
+            $x^{\operatorname{in}(v)} y^{\operatorname{out}(v)}$,
+            when the exponents are the incoming and outgoing valences of $v$
+            in the Hasse diagram.
 
+            This polynomial is multiplicative for Cartesian product of posets.
+        Example
+            B = booleanLattice 3;
+            z = factor degreePolynomial B
+///
+-- magnitude
+doc ///
+    Key
+        magnitude
+        (magnitude,Poset)
+    Headline
+        computes the magnitude of a poset
+    Usage
+        z = magnitude P
+    Inputs
+        P:Poset
+    Outputs
+        z:ZZ
+            the magnitude of $P$
+    Description
+        Text
+            The magnitude of $P$ is the sum over all relations $v \leq w$ of
+            the Möbius number $\mu(v,w)$.
+
+            This integer is multiplicative for Cartesian product of posets,
+            and additive for disjoint union.
+        Example
+            B = booleanLattice 3;
+            z = magnitude B
+///
 ------------------------------------------
 -- Properties
 ------------------------------------------
@@ -6287,7 +6354,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_4*v_6*v_7,v_0*v_2*v_6*v_7,v_0*v_4*v_5*v_7,v_0*v_1*v_5*v_7,v_0*v_2*v_3*v_7,v_0*v_1*v_3*v_7),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_4*v_6*v_7,v_0*v_2*v_6*v_7,v_0*v_4*v_5*v_7,v_0*v_1*v_5*v_7,v_0*v_2*v_3*v_7,v_0*v_1*v_3*v_7),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2, v_1*v_4, v_2*v_4, v_3*v_4, v_2*v_5, v_3*v_5, v_1*v_6, v_3*v_6, v_5*v_6),R))
 assert(closedInterval(B, "001","111") == booleanLattice 2)
 assert(openInterval(B, "001","111") == poset({a,b},{}))
@@ -6372,6 +6439,9 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
       ("100","111") => 1, ("111","100") => 0, ("011","101") => 0, ("101","011") => 0, ("111","101") => 0})
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
+assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
+assert(toString degreePolynomial B == "x^3+3*x^2*y+3*x*y^2+y^3")
+assert(toString magnitude B == "1")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)
@@ -6399,7 +6469,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_1*v_2*v_3*v_4),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_1*v_2*v_3*v_4),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(),R))
 assert(closedInterval(B,1,4) == chain 4)
 assert(openInterval(B,1,4) == chain 2)
@@ -6472,6 +6542,7 @@ assert(moebiusFunction B === new HashTable from {(5,2) => 0, (4,3) => 0, (2,5) =
        (3,3) => 1})
 assert(toString rankGeneratingFunction B === "q^4+q^3+q^2+q+1")
 assert(toString zetaPolynomial B == "(1/24)*q^4+(1/4)*q^3+(11/24)*q^2+(1/4)*q")
+assert(toString coxeterPolynomial B == "t^5+t^4+t^3+t^2+t+1")
 assert(dilworthNumber B === 1)
 assert(isAtomic B == false)
 assert(isBounded B == true)
@@ -6492,10 +6563,6 @@ assert(isUpperSemimodular B == true)
 
 ///
 
-
-
-
-
 --Tests for divisorPoset(ZZ)
 
 TEST ///
@@ -6506,7 +6573,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_2*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_9*v_11),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_2*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_9*v_11),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_5*v_6,v_2*v_7,v_4*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_9*v_10),R))
 assert(closedInterval(B,2,24) == poset({{2, 4}, {2, 6}, {2, 8}, {2, 12}, {2, 24}, {4, 8}, {4, 12}, {4,24}, {6, 12}, {6, 24}, {8, 24}, {12, 24}}))
 assert(openInterval(B,2,24) == poset({{4, 8}, {4, 12}, {6, 12}}))
@@ -6620,7 +6687,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 S=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_3*v_7*v_10*v_11,v_0*v_3*v_6*v_10*v_11,v_0*v_2*v_6*v_10*v_11,v_0*v_3*v_7*v_9*v_11,v_0*v_3*v_5*v_9*v_11,v_0*v_1*v_5*v_9*v_11,v_0*v_3*v_6*v_8*v_11,v_0*v_2*v_6*v_8*v_11,v_0*v_3*v_5*v_8*v_11,v_0*v_1*v_5*v_8*v_11,v_0*v_2*v_4*v_8*v_11,v_0*v_1*v_4*v_8*v_11),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_3*v_7*v_10*v_11,v_0*v_3*v_6*v_10*v_11,v_0*v_2*v_6*v_10*v_11,v_0*v_3*v_7*v_9*v_11,v_0*v_3*v_5*v_9*v_11,v_0*v_1*v_5*v_9*v_11,v_0*v_3*v_6*v_8*v_11,v_0*v_2*v_6*v_8*v_11,v_0*v_3*v_5*v_8*v_11,v_0*v_1*v_5*v_8*v_11,v_0*v_2*v_4*v_8*v_11,v_0*v_1*v_4*v_8*v_11),R))
 assert(sub(ideal(orderComplex B),S) == sub(ideal(v_1*v_2,v_1*v_3,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_1*v_6,v_4*v_6,v_5*v_6,v_1*v_7,v_2*v_7,v_4*v_7,v_5*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_1*v_10,v_4*v_10,v_5*v_10,v_8*v_10,v_9*v_10),S))
 assert(closedInterval(B,y*z,x^2*y*z) == poset({{y*z, x*y*z}, {x*y*z, x^2*y*z}}))
 assert(openInterval(B,sub(1,R),x^2*y*z) == poset({{z, x*z}, {z, y*z}, {y, x*y}, {y, y*z}, {x, x*z}, {x, x*y}, {x, x^2}, {y*z, x*y*z}, {x*z, x^2*z}, {x*z, x*y*z}, {x*y, x^2*y}, {x*y, x*y*z}, {x^2, x^2*z}, {x^2, x^2*y}}))
@@ -6650,6 +6717,14 @@ assert(r == toList(0..#r-1))
 assert(adjoinMin(flagPoset(B,{1,2,3,4})) == B)
 assert(adjoinMax(flagPoset(B,{0,1,2,3})) == B)
 assert(augmentPoset(flagPoset(B,{1,2,3})) == B)
+///
+
+
+--Tests for isRanked
+
+TEST ///
+P = poset({0,1,2,3,4},{{0,2},{2,3},{1,4},{0,4},{1,3}})
+assert(isRanked P == false)
 ///
 
 end;

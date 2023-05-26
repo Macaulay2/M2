@@ -89,7 +89,7 @@ doc ///
 	    Cox-Little-Schenck.
         Text
 	    To specify a map of normal toric varieties, the target and source
-	    normal toric varieties need to be specificied as well as a matrix
+	    normal toric varieties need to be specified as well as a matrix
 	    which maps from $N_X$ to $N_Y$.
 	Text
 	    The primary constructor of a toric map is
@@ -410,7 +410,7 @@ doc ///
 	    assert (isWellDefined g and source g === X and
 		target g === Z and matrix g === 2*id_(ZZ^(dim X)))	    
     	Text
-	    Setting {\tt m = 1} is a easy way to construct the canoncal
+	    Setting {\tt m = 1} is a easy way to construct the canonical
 	    @TO2((symbol ^, NormalToricVariety, Array), "projection")@
 	    associated to a @TO2(toricBlowup, "blow-up")@ or the 
 	    @TO2((id, NormalToricVariety), "identity map")@.	    
@@ -860,7 +860,7 @@ doc ///
         Text
 	    Given a positive integer {\tt m} and a normal toric variety {\tt
 	    X}, the diagonal morphism is the toric map from {\tt X} to the
-	    {\tt m}-ary Cartersion product of {\tt X} such that it composes to
+	    {\tt m}-ary Cartesian product of {\tt X} such that it composes to
 	    the identity with the {\tt i}-th 
 	    @TO2((symbol ^, NormalToricVariety, Array), "projection map")@, 
 	    for all {\tt i} in {\tt A}, and compose to the zero map with the
@@ -1169,7 +1169,7 @@ doc ///
 	    Given a toric map $f : X \to Y$ where $Y$ a smooth toric variety,
             this method returns the induced map of abelian groups from the
             group of torus-invariant Weil divisors on $Y$ to the group of
-            torus-invariant Weil divisors on $X$.  For arbitary normal toric
+            torus-invariant Weil divisors on $X$.  For arbitrary normal toric
             varieties, the @TO weilDivisorGroup@ is not a functor.  However,
             @TO weilDivisorGroup@ is a contravariant functor on the category
             of @TO2(isSmooth, "smooth")@ normal toric varieties.
@@ -1228,7 +1228,7 @@ doc ///
         Text
 	    Given a toric map $f : X \to Y$ where $Y$ a smooth toric variety,
             this method returns the induced map of abelian groups from the
-            class group of $Y$ to the class group of $X$.  For arbitary normal
+            class group of $Y$ to the class group of $X$.  For arbitrary normal
             toric varieties, the @TO classGroup@ is not a functor.  However,
             @TO classGroup@ is a contravariant functor on the category of
             @TO2(isSmooth, "smooth")@ normal toric varieties.
@@ -1569,7 +1569,7 @@ doc ///
 	    Given a toric map $f : X \to Y$ where $Y$ is smooth, this method
 	    returns the induced map from the total coordinate ring $S$ of $Y$
 	    to the total coordinate ring $R$ of $X$.  Since $f$ is
-	    torus-equivarient, each variable in the polynomial ring $S$ maps
+	    torus-equivariant, each variable in the polynomial ring $S$ maps
 	    to a monomial in $R$.  
 	Text
 	    As a first example, we compute the map on the total coordinate

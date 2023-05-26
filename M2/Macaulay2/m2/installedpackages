@@ -2,10 +2,13 @@ Elimination
 LLLBases
 IntegralClosure
 PrimaryDecomposition
+MinimalPrimes
+Saturation
 Classic
 TangentCone
 ReesAlgebra
 ConwayPolynomials
 InverseSystems
 SimpleDoc
-Truncations
+OnlineLookup
+Isomorphism

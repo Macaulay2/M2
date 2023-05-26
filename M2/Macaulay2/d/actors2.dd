@@ -27,14 +27,14 @@ setupfun("reorganize",dbmreorganize);
 dbmopenin(e:Expr):Expr := (
      when e
      is a:stringCell do (
-	  if notify then stderr << "--opening database " << a.v << endl;
+	  if notify then stderr << " -- opening database " << minimizeFilename(a.v) << endl;
 	  dbmopenin(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabase",dbmopenin);
 dbmopenout(e:Expr):Expr := (
      when e
      is a:stringCell do (
-	  if notify then stderr << "--opening database for output " << a.v << endl;
+	  if notify then stderr << " -- opening database for output " << minimizeFilename(a.v) << endl;
 	  dbmopenout(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabaseOut",dbmopenout);
@@ -62,8 +62,9 @@ toList(e:Expr):Expr := (
 	       	    List(listClass, if b.Mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
-     else WrongArg("list, sequence, or set"));
-setupfun("toList",toList);
+     is s:stringCell do list(strtoseq(s))
+     else WrongArg("list, sequence, set, or string"));
+setupfun("toList1",toList);
 values(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
@@ -367,6 +368,8 @@ NewOfFromFun = newoffromfun;
 
 export stdioS  := setupconst("stdio", Expr(stdIO));
 export stderrS := setupconst("stderr",Expr(stdError));
+export setStdIO   (f:file):void := ( stdIO    = f; setGlobalVariable(stdioS,  Expr(stdIO)));
+export setStdError(f:file):void := ( stdError = f; setGlobalVariable(stderrS, Expr(stdError)));
 
 openfilesfun(e:Expr):Expr := (
      n := 0;
@@ -484,7 +487,7 @@ close(g:Expr):Expr := (
 	  g)
      is f:file do when close(f) is m:errmsg do buildErrorPacket(m.message) else g
      is x:Database do (
-	  if notify then stderr << "--closing database " << x.filename << endl;
+	  if notify then stderr << " -- closing database " << minimizeFilename(x.filename) << endl;
 	  dbmclose(x))
      else buildErrorPacket("expected a file or database"));
 setupfun("close",close).Protected = false;
@@ -537,12 +540,6 @@ flagSymbol(e:Expr):Expr := (
      else WrongArg("a symbol"));
 setupfun("flagLookup",flagSymbol);
 
-export chars := new array(Expr) len 256 do (
-     i := 0;
-     while i<256 do (
-	  provide Expr(stringCell(string(char(i))));
-	  i = i+1;
-	  ));
 getcfun(e:Expr):Expr := (
      when e
      is f:file do (
@@ -569,6 +566,12 @@ leftshiftfun(e:Expr):Expr := (
 			 then toExpr(x.v << toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
+	       is x:RRicell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v)
+			 then toExpr(x.v << toLong(y.v))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
 	       is x:CCcell do (
 		    when a.1 is y:ZZcell do (
 			 if isLong(y.v) 
@@ -582,6 +585,9 @@ installMethod(Expr(LessLessS),ZZClass,ZZClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
 installMethod(Expr(LessLessS),RRClass,ZZClass,
+     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     );
+installMethod(Expr(LessLessS),RRiClass,ZZClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
 installMethod(Expr(LessLessS),CCClass,ZZClass,
@@ -605,6 +611,12 @@ rightshiftfun(e:Expr):Expr := (
 			 then toExpr(x.v >> toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
+           is x:RRicell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v)
+			 then toExpr(x.v >> toLong(y.v))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
 	       is x:CCcell do (
 		    when a.1 is y:ZZcell do (
 			 if isLong(y.v) 
@@ -618,6 +630,9 @@ installMethod(Expr(GreaterGreaterS),ZZClass,ZZClass,
      Expr(CompiledFunction(rightshiftfun,nextHash()))
      );
 installMethod(Expr(GreaterGreaterS),RRClass,ZZClass,
+     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     );
+installMethod(Expr(GreaterGreaterS),RRiClass,ZZClass,
      Expr(CompiledFunction(rightshiftfun,nextHash()))
      );
 installMethod(Expr(GreaterGreaterS),CCClass,ZZClass,
@@ -675,6 +690,7 @@ exponent(e:Expr):Expr := (
      when e
      is x:ZZcell do toExpr(exponent(x.v))	      -- # typical value: size2, ZZ, ZZ
      is x:RRcell do toExpr(exponent(x.v))	      -- # typical value: size2, RR, ZZ
+     is x:RRicell do toExpr(exponent(x.v))	      -- # typical value: size2, RRi, ZZ
      is z:CCcell do toExpr(exponent(z.v))	      -- # typical value: size2, CC, ZZ
      else WrongArg("a number"));
 setupfun("size2",exponent);
@@ -683,6 +699,7 @@ realPart(e:Expr):Expr := (
      when e
      is ZZcell do e
      is RRcell do e
+     is RRicell do e
      is z:CCcell do toExpr(realPart(z.v))
      is QQcell do e
      else WrongArg("a number"));
@@ -692,6 +709,7 @@ imaginaryPart(e:Expr):Expr := (
      when e
      is ZZcell do zeroE
      is RRcell do zeroE
+     is RRicell do zeroE
      is z:CCcell do toExpr(imaginaryPart(z.v))
      is QQcell do zeroE
      else WrongArg("a number"));
@@ -715,7 +733,7 @@ registerFinalizer(e:Expr):Expr := (
 	       toExpr(finalizerCount))
      	  else WrongArgString(2))
      else WrongNumArgs(2));
-setupfun("registerFinalizer",registerFinalizer);
+setupfun("registerFinalizer",registerFinalizer).Protected=false;
 
 header "extern \"C\" void do_nothing();";
 

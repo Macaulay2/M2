@@ -2,7 +2,6 @@
 #define matrixcon_hpp_
 
 #include <vector>
-#include "engine.h"
 #include "ring.hpp"
 #include <utility>
 
@@ -25,7 +24,7 @@ class MatrixConstructor
   // the beginning via the constructor, and that free module is
   // immutable, then no more changes are allowed.
 
-  const int *deg;
+  const_monomial deg;
 
   void compute_column_degree(int i);
 
@@ -34,21 +33,21 @@ class MatrixConstructor
   MatrixConstructor(const FreeModule *target, int ncols);
   MatrixConstructor(const FreeModule *target,
                     const FreeModule *source,
-                    const int *deg = 0);
+                    const_monomial deg = 0);
 
   // The copy constructor just does the default thing: copy over all items.
 
   void append(vec v);
-  void append(vec v, const int *deg);
+  void append(vec v, const_monomial deg);
 
   void set_entry(int r, int c, ring_elem a);
   void set_column(int c, vec v);
 
-  void compute_column_degrees(); /* Takes into acount the matrix degree */
+  void compute_column_degrees(); /* Takes into account the matrix degree */
 
-  void set_column_degree(int i, const int *deg);
+  void set_column_degree(int i, const_monomial deg);
 
-  void set_matrix_degree(const int *deg);
+  void set_matrix_degree(const_monomial deg);
 
   Matrix *to_matrix();
 

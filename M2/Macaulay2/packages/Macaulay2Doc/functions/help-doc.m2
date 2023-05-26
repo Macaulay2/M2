@@ -3,8 +3,6 @@
 --- notes: functions below are all defined in help.m2
 --- FIXME: help "Macaulay2" doesn't do what this page ways
 
-undocumented {"Body"} -- about
-
 doc ///
   Key
      help
@@ -68,6 +66,7 @@ doc ///
      viewHelp
     (viewHelp, Thing)
     (viewHelp, String)
+    (viewHelp, DocumentTag)
   Headline
     view online documentation in a web browser
   Usage
@@ -78,15 +77,12 @@ doc ///
       a descriptor for a documentation node (see below for examples)
   Consequences
     Item
-      The given documentation page is displayed in your default web browser, as determined
-      by either @TT "open"@ on macOS or @TT "xdg-open"@ on Linux distributions.
-      As backup for when neither @TT "open"@ nor @TT "xdg-open"@ is available,
-      the environmental variable @TT "WWWBROWSER"@ or @TT "firefox"@ is used.
-
-     If no argument is given to @TT "viewHelp"@ then the top page of your local html
-     documentation is displayed.
+      The given documentation page is displayed using the function @TO show@
+      which opens the page in the default web browser.
   Description
     Text
+      If no argument is given to @TT "viewHelp"@ then the top page of your local html documentation is displayed.
+
       Some example uses:
 
       @UL {
@@ -113,9 +109,12 @@ doc ///
 doc ///
   Key
     infoHelp
+    (infoHelp, Thing)
+    (infoHelp, DocumentTag)
   Headline
     view documentation in Info format
   Usage
+    infoHelp
     infoHelp X
   Inputs
     X:Thing
@@ -123,6 +122,8 @@ doc ///
   Consequences
     Item
       The given documentation page is displayed using info, if you are running Macaulay2 in a terminal window.
+      If you are running Macaulay2 in Emacs, then the page is opened in another window using Info mode.
+      If no argument is given to @TT "infoHelp"@, then the top node of the Macaulay2 documentation is displayed.
   Description
     Text
       Some example uses:
@@ -144,7 +145,7 @@ doc ///
           (TT "?", " -- display information about all of the possible keystrokes"),
           (TT "q", " -- quit info, return to Macaulay2"),
           (TT "n", " -- go to the next documentation node"),
-          (TT "p", " -- go to the revious node"),
+          (TT "p", " -- go to the previous node"),
           (TT "m", " -- follow the menu link"),
           (TT "r", " -- follow a cross-reference"),
           (TT "l", " -- go to the last node visited"),
@@ -156,10 +157,10 @@ doc ///
 
     @HEADER2 "Viewing Info files in Emacs"@
 
-    Reading the info form of the documentation in Emacs is perhaps better than using @TO "infoHelp"@,
-    as the preferred way of running Macaulay2 is in Emacs. If you do so, we recommend configuring
+    If you read the info form of the documentation in Emacs, we recommend configuring
     the value of the Emacs variable @TT "Info-hide-note-references"@ to @TT "hide"@ in order to
     prevent Emacs from inserting a superfluous @TT "See"@ or @TT "see"@ in front of the hyperlinks.
+    This is done automatically for you by running @TO setup@ or @TO setupEmacs@.
   SeeAlso
     viewHelp
     help
@@ -192,6 +193,8 @@ Node
           (TT "? HH",       " -- displays brief information about ways to use the scripted functor ", TT "HH", ".")
           }@
 
+      If the object is defined by the user, brief information about the object and its class are printed.
+
       When using Macaulay2 in Emacs, moving the cursor to each line of the output beginning with
       @TT "*"@ and pressing Enter results in showing the full documentation node corresponding to that line.
 
@@ -209,6 +212,8 @@ Node
      about
     [about, Body]
     (help, ZZ)
+    (viewHelp, ZZ)
+    (infoHelp, ZZ)
     (about, Function)
     (about, String)
     (about, Symbol)
@@ -230,7 +235,8 @@ Node
       The documentation corresponding to the keys in the list returned can be displayed by applying the function
       @TO "help"@ to it. To see the documentation corresponding to just one or some of the keys, give @TO "help"@
       an integer or a list of integers to be used as indices in the list returned by the most recent application
-      of @TO "about"@.
+      of @TO "about"@. The functions @TO "viewHelp"@ and @TO "infoHelp"@ can also be given an integer for viewing
+      the documentation.
 
       The packages searched are the loaded packages and the packages installed under one of the prefixes listed
       in @TO "prefixPath"@. The first search will take a few seconds while it reads all the documentation keys
@@ -244,9 +250,41 @@ Node
     Since @TT "s"@ is taken as a regular expression, parentheses serve
     for grouping subexpressions, rather than matching themselves.
   SeeAlso
-    help
+    (help, ZZ)
     (symbol?, Symbol)
     apropos
+    findSynonyms
+    "regular expressions"
+
+Node
+  Key
+     apropos
+    (apropos, String)
+  Headline
+    symbols matching a pattern
+  Usage
+    apropos pattern
+  Inputs
+    pattern:String
+      a regular expression pattern to match
+  Outputs
+    :List
+      of global symbols matching the given pattern
+  Description
+    Text
+      In the simplest case, the list of symbols containing the given string is returned.
+    Example
+      apropos "atrix"
+    Text
+      @TO2 {"regular expressions", "Regular expressions"}@ allow for more complicated requests.
+      For example, to find all functions that start with @TT "mat"@ or @TT "Mat"@:
+    Example
+      apropos "^[mM]at"
+  SeeAlso
+    help
+    about
+    findSynonyms
+    "regular expressions"
 ///
 
 -- the node displayed by the help command by default

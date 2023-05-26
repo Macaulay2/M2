@@ -1,11 +1,12 @@
 // Copyright 1998  Michael E. Stillman
 
 #include "LLL.hpp"
+
 #include "relem.hpp"
 #include "matrix.hpp"
-#include "frac.hpp"
 #include "text-io.hpp"
 #include "interrupted.hpp"
+
 bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 {
   // Makes sure that 1/4 < num/den <= 1
@@ -361,7 +362,7 @@ bool LLLoperations::LLL(MutableMatrix *A,
   int ret = doLLL(A, Achange, LLLstate);
   if (ret != COMP_DONE)
     {
-      deleteitem(LLLstate);
+      freemem(LLLstate);
       return false;
     }
   return true;

@@ -1,5 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
+-- TODO: make Tree entries automatically join the Subnodes
 newPackage(
     "SimpleDoc",
     Version => "1.2",
@@ -10,7 +11,7 @@ newPackage(
 	{ Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/" },
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
 	},
-    Keywords => {"Miscellaneous"},
+    Keywords => {"Documentation"},
     PackageImports => { "Text" },
     DebuggingMode => false,
     AuxiliaryFiles => true
@@ -21,14 +22,20 @@ export {"doc", "multidoc", "packageTemplate", -- functions
     "docTemplate", "docExample", "testExample", "simpleDocFrob" -- templates and examples
     }
 
+importFrom_Core { "currentDocumentTag" }
+
 -- The class of processed documentation nodes
 Node = new IntermediateMarkUpType of Hypertext
 Node.synonym = "processed documentation node"
+
+topLinenum = 0 -- for debugging
 
 -- Primary functions
 doc = method()
 doc String := str -> (
     docstring := if fileExists str then get str else str;
+    -- hopefully the "doc" line, but may be off by one
+    topLinenum = if fileExists str then 0 else currentRowNumber() - #lines docstring - 2;
     parsed := toDoc(NodeFunctions, docstring);
     document \ (
 	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)
@@ -54,7 +61,7 @@ toDoc = (functionTable, text) -> (
 applySplit = (functionTable, textlines) -> apply(splitByIndent(textlines, false), (s, e) -> (
 	key := getText textlines#s;
 	if not functionTable#?key then error(
-	    "unrecognized keyword, line ", toString getLinenum textlines#s, " of string: ", format key, "; ",
+	    "unrecognized keyword on line #", getLinenum textlines#s, ": ", format key, "; ",
 	    "expected: ", demark_", " sort keys functionTable);
 	functionTable#key(textlines_{s+1..e}, getLinenum textlines#s)))
 
@@ -112,7 +119,7 @@ ConsequencesFuntions = new HashTable from {
 -- We use these access functions uniformly:
 getText = textline -> textline#0
 getIndent = textline -> textline#1
-getLinenum = textline -> textline#2
+getLinenum = textline -> topLinenum + textline#2
 getNonempty = textlines -> select(getText \ textlines, text -> 0 < length text)
 -- We use this creation function:
 makeTextline = (line, linenum) -> (
@@ -130,7 +137,7 @@ getIndentLevel = str -> (
 	else return level);
     infinity)
 
--- return list of intervals such that the start of all intervals has the same, minimum intentation
+-- return list of intervals such that the start of all intervals has the same, minimum indentation
 -- if empties is true then empty lines split intervals
 splitByIndent = (textlines, empties) -> (
     indents := for n in getIndent \ textlines list (if empties and n === infinity then -1 else n);
@@ -151,7 +158,7 @@ render = (text, keylinenum) -> (
 	-- No @ were found
 	if offset == tail then (if m#1#1 == 0 then continue else continue pre);
 	-- An unmatched @ was found
-	if m#4#0 == tail then error("unmatched @ near line ", toString keylinenum, ":\n\t", substring(m#3, text));
+	if m#4#0 == tail then error("unmatched @ near line #", keylinenum, ":\n\t", substring(m#3, text));
 	-- A pair of @ were found
 	block := concatenate("(", replace(///\\@///, "@", substring(m#3, text)), ")"); offset = m#4#0 + 1;
 	if m#1#1 == 0 then continue safevalue block else continue (pre, safevalue block));
@@ -170,24 +177,26 @@ markup = (textlines, keylinenum) -> (
 
 singleString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
-       error("line ", toString keylinenum, " of string: expected single indented line after ", toString key)
-     else if #textlines > 1 then
-       error("line ", toString getLinenum textlines#1, " of string: expected single indented line after ", toString key);
+       error("line #", keylinenum, ": expected single indented line after ", toString key)
+     else if #textlines > 1 and 0 < #getNonempty drop(textlines, 1) then
+       error("line #", getLinenum textlines#1, ": expected single indented line after ", toString key);
      getText textlines#0)
 
 -- originally written by Andrew Hoefel
 multiString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
-       error("line ", toString keylinenum, " of string: expected at least one indented line after ", toString key);
+       error("line #", keylinenum, ": expected at least one indented line after ", toString key);
      concatenate between(newline, getText \ textlines))
 
 -- used for inputs, outputs, and options
 items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e) -> (
 	line := getText textlines#s;
 	ps := separate("[[:space:]]*(:|=>)[[:space:]]*", line); -- split by ":" or "=>"
-	if #ps =!= 2 then error("line ", toString getLinenum textlines#s, " of string: expected line containing a colon or a double arrow");
-	text := demark(" ", getText \ textlines_{s+1..e});
-	result := if s === e then "" else render(text, getLinenum textlines#s);
+	if #ps =!= 2 then error("line #", getLinenum textlines#s, ": expected line containing a colon or a double arrow");
+	abbr := separate("[[:space:]]*(--)[[:space:]]*", ps#1); -- split by "--"
+	abbr  = if #abbr < 2 then "" else abbr#1 | "; ";
+	desc := demark(" ", getText \ textlines_{s+1..e});
+	result := render(if s === e then abbr else abbr | desc, getLinenum textlines#s);
 	if ps#1 != "" then result = (
 	    type := value ps#1;
 	    if instance(type, List)   then between_", " {ofClass type, result} else
@@ -234,8 +243,8 @@ reassemble = (indent, textlines) -> concatenate between(newline,
 
 getKeys = (textlines, keylinenum) -> (
     keyList := apply(getNonempty textlines, value);
-    if #keyList == 0 then error("Key (line ", toString keylinenum, " of string): expected at least one key");
-    Core#"private dictionary"#"currentDocumentTag" <- makeDocumentTag(keyList#0, Package => currentPackage); -- for debugging purposes
+    if #keyList == 0 then error("line #", keylinenum, ": expected at least one key");
+    currentDocumentTag = makeDocumentTag(keyList#0, Package => currentPackage); -- for debugging purposes
     keyList)
 
 getCode = (textlines, keylinenum) -> (
@@ -251,14 +260,14 @@ getExample = (textlines, keylinenum, canned) -> (
 nodeCheck = (processed, keylinenum) -> (
     -- TODO: add more checks
     if any(processed, i -> member(first i, {Inputs, Outputs})) and not any(processed, i -> first i === Usage)
-    then error("line ", toString keylinenum, " of documentation string: Inputs or Outputs specified, but Usage not provided")
+    then error("line #", keylinenum, ": Inputs or Outputs specified, but Usage not provided")
     -- TODO: attempt to fix some of the errors
     else processed)
 
 -- helper functions for writing documentation
 load("./SimpleDoc/helpers.m2")
 
--- docstring and package templetes
+-- docstring and package templates
 load("./SimpleDoc/templates.m2")
 
 -- an example that can also be used as a test

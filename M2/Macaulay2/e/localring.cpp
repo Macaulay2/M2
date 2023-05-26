@@ -1,6 +1,9 @@
 /* Copyright 2017 Mahrud Sayrafi and Michael E. Stillman
    Mahrud Sayrafi's code in this file is in the public domain. */
 
+#include "localring.hpp"
+
+#include "interface/factory.h"
 #include "text-io.hpp"
 #include "ringmap.hpp"
 #include "monoid.hpp"
@@ -9,8 +12,8 @@
 #include "debug.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
-#include "localring.hpp"
 #include "mutablecomplex.hpp"
+#include "exceptions.hpp"
 
 LocalRing *LocalRing::create(const PolyRing *R, GBComputation *P)
 {
@@ -236,6 +239,7 @@ void LocalRing::lift_up(const Ring *R, const Matrix *m, Matrix *&result) const
           b = RingElement::make_raw(mRing, f->denom);
           d = rawGCDRingElement(a, b, NULL, false);
 #if 0 // FIXME: GCD(8,2)=1 apparently ...
+          // see https://github.com/Macaulay2/M2/issues/1958
           drelem(a);
           std::cout<<" ";
           drelem(b);
@@ -403,21 +407,21 @@ bool LocalRing::is_homogeneous(const ring_elem a) const
   return true;
 }
 
-void LocalRing::degree(const ring_elem a, int *d) const
+void LocalRing::degree(const ring_elem a, monomial d) const
 {
   const local_elem *f = a.get_local_elem();
   mRing->degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   mRing->degree(f->denom, e);
   degree_monoid()->divide(d, e, d);
   degree_monoid()->remove(e);
 }
 
-bool LocalRing::multi_degree(const ring_elem a, int *d) const
+bool LocalRing::multi_degree(const ring_elem a, monomial d) const
 {
   const local_elem *f = a.get_local_elem();
   bool tophom = mRing->multi_degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   bool bottomhom = mRing->multi_degree(f->denom, e);
   degree_monoid()->divide(d, e, d);
   degree_monoid()->remove(e);
@@ -563,8 +567,7 @@ ring_elem LocalRing::power(const ring_elem a, int n) const
         }
       else
         {
-          ERROR("attempt to divide by non-unit");
-          return zero();
+          throw exc::engine_error("attempt to divide by a non-unit");
         }
 
       if (mRing->is_zero(bottom)) return set_non_unit_frac(f->numer);
@@ -587,17 +590,12 @@ ring_elem LocalRing::power(const ring_elem a, mpz_srcptr n) const
       mpz_t negative_n;
       mpz_init(negative_n);
       mpz_neg(negative_n, n);
-      if (is_unit(a))
+      if (not is_unit(a))
         {
-          top = mRing->power(f->denom, negative_n);
-          bottom = mRing->power(f->numer, negative_n);
+          throw exc::engine_error("attempt to divide by a non-unit");
         }
-      else
-        {
-          ERROR("attempt to divide by non-unit");
-          mpz_clear(negative_n);
-          return zero();
-        }
+      top = mRing->power(f->denom, negative_n);
+      bottom = mRing->power(f->numer, negative_n);
       mpz_clear(negative_n);
 
       if (mRing->is_zero(bottom)) return set_non_unit_frac(f->numer);
@@ -610,8 +608,7 @@ ring_elem LocalRing::invert(const ring_elem a) const
   const local_elem *f = a.get_local_elem();
   if (mRing->is_zero(f->numer) || !is_unit(a))
     {
-      ERROR("attempt to invert a non-unit");
-      return zero();
+      throw exc::engine_error("attempt to invert a non-unit");
     }
   ring_elem top = mRing->copy(f->denom);
   ring_elem bottom = mRing->copy(f->numer);
@@ -630,8 +627,7 @@ ring_elem LocalRing::divide(const ring_elem a, const ring_elem b) const
     }
   else
     {
-      ERROR("attempt to divide by non-unit");
-      return zero();
+      throw exc::engine_error("attempt to divide by a non-unit");
     }
   return ring_elem(make_elem(top, bottom));
 }
@@ -672,9 +668,7 @@ ring_elem LocalRing::eval(const RingMap *map,
     result = S->divide(top, bottom);
   else
     {
-      if (not error())  // FIXME: keep this?
-        ERROR("attempt to divide by non-unit");
-      result = S->from_long(0);
+      throw exc::engine_error("attempt to divide by a non-unit");
     }
   S->remove(top);
   S->remove(bottom);
@@ -740,6 +734,8 @@ unsigned int LocalRing::computeHashValue(const ring_elem f) const
 /*                               Global functions */
 /********************************************************************************/
 
+extern "C" { // TODO: remove when this function is in e/interface
+
 Matrix *rawLiftLocalMatrix(const Ring *R, const Matrix *f)
 {
   const LocalRing *L = f->get_ring()->cast_to_LocalRing();
@@ -769,6 +765,8 @@ M2_bool rawIsLocalUnit(const RingElement *f)
     }
   return L->is_unit(f->get_value());
 }
+
+} // TODO: remove when this function is in e/interface
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

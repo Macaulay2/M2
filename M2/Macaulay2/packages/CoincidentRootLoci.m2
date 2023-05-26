@@ -3,17 +3,16 @@ if version#"VERSION" < "1.15" then error "this package requires Macaulay2 versio
 
 newPackage(
        "CoincidentRootLoci",
-	Version => "0.1.2", 
-        Date => "June 22, 2020",
+	Version => "0.1.3", 
+        Date => "January 30, 2021",
     	Headline => "coincident root loci",
-        Authors => {{Name => "Maria Chiara Brambilla", Email => "brambilla@dipmat.univpm.it"},
-                    {Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+        Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
 	Keywords => {"Real Algebraic Geometry", "Interfaces"},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
         OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
-        CacheExampleOutput => true,
+        CacheExampleOutput => false,
         Reload => false
 )
 
@@ -32,7 +31,7 @@ export{"apolar",
        "randomInCoisotropic",
        "generic",
        "projectiveJoin",
-       "tangentSpace",
+       "projectiveTangentSpace",
        "polarDegrees"
 }
 
@@ -50,6 +49,8 @@ KK = QQ;
 CRLOCUS := local CRLOCUS;
 
 CoincidentRootLocus = new Type of MutableHashTable;
+
+CoincidentRootLocus.synonym = "coincident root locus";
 
 coincidentRootLocus = method(TypicalValue => CoincidentRootLocus, Dispatch => Thing, Options => {Variable => VAR});
 
@@ -96,7 +97,7 @@ CRL = coincidentRootLocus;
 
 JoinOfCoincidentRootLoci = new Type of MutableHashTable;
 
-dualOfCoincidentRootLocus = method(TypicalValue => JoinOfCoincidentRootLoci);
+dualOfCoincidentRootLocus = method();
 
 dualOfCoincidentRootLocus (CoincidentRootLocus) := (X) -> ( 
    l := partition X;
@@ -131,7 +132,19 @@ expression JoinOfCoincidentRootLoci := (Z) -> (
 
 net CoincidentRootLocus := (X) -> net expression X;
 
+CoincidentRootLocus#{WebApp,AfterPrint} = CoincidentRootLocus#{WebApp,AfterNoPrint} = 
+CoincidentRootLocus#{Standard,AfterPrint} = CoincidentRootLocus#{Standard,AfterNoPrint} = X -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Coincident root locus" << endl;
+);
+
 net JoinOfCoincidentRootLoci := (Z) -> net expression Z;
+
+JoinOfCoincidentRootLoci#{WebApp,AfterPrint} = JoinOfCoincidentRootLoci#{WebApp,AfterNoPrint} = 
+JoinOfCoincidentRootLoci#{Standard,AfterPrint} = JoinOfCoincidentRootLoci#{Standard,AfterNoPrint} = X -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Join of ", << #(X#"listCRloci") <<" coincident root loci" << endl;
+);
+
+texMath JoinOfCoincidentRootLoci := texMath CoincidentRootLocus := texMath @@ net;
 
 toString CoincidentRootLocus := (X) -> "CRL("|toString partition X|","|toString coefficientRing X|","|"Variable=>"|toString X#"variable"|")"; 
 
@@ -192,7 +205,7 @@ singularLocus (CoincidentRootLocus) := (X) -> ( -- Chipalkatti - On equations de
    X#"singularLocus"
 );
 
-dual (CoincidentRootLocus) := JoinOfCoincidentRootLoci => {} >> o -> X -> (
+dual (CoincidentRootLocus) := {} >> o -> X -> (
    if X#"dual" === null then X#"dual" = dualOfCoincidentRootLocus X;
    X#"dual"
 );
@@ -409,23 +422,14 @@ CoincidentRootLocus + CoincidentRootLocus := (X,Y) -> ( -- intersection, undocum
    if #E == 1 then first E else E
 );
 
-tangentSpace = method() -- undocumented
-tangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
+projectiveTangentSpace = method()
+projectiveTangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
    checkBinaryForm F;
    if first degree F =!= X#"ambient" then error("expected a binary form of degree "|toString(X#"ambient"));
    if coefficientRing ring F =!= coefficientRing X then error("expected a binary form over "|toString(coefficientRing X));
    if not member(F,X) then error("expected a binary form belonging to "|toString net X);
    J := sub(jacobian ideal X,apply(gens ring X,switch1 F,(x,s) -> x => s));
    sub(switch2 ideal((vars ring X) * J),vars ring F)
-);
-tangentSpace (Ideal,Ideal) := (I,p) -> (
-   if ring p =!= ring I then error "common ring not found";
-   if not isPolynomialRing ring I then error "expected a polynomial ring";
-   if not (isHomogeneous I and isHomogeneous p) then error "expected homogeneous ideals";
-   if not (dim p == 1 and degree p == 1 and unique degrees p == {{1}}) then error "expected second argument to be the ideal of a point";
-   if not isSubset(I,p) then error "expected a point of the variety";
-   subs := apply(gens ring I,flatten entries coefficients parametrize p,(x,s) -> x => s);
-   trim ideal((vars ring I) * sub(jacobian I,subs))
 );
 
 --================================================================
@@ -645,7 +649,7 @@ isSomeLinearCombinationRealRooted (Matrix) := o -> (F) -> (
        if not(isPolynomialRing K and coefficientRing K === QQ and numgens K <= 1) then error "expected coefficient ring of the form QQ or QQ[e]";
        Fe = sub(F,frac(coefficientRing K)[gens Txy]);
    );
-   if not isHomogeneous ideal Fe then error "expected a homogeneus matrix";
+   if not isHomogeneous ideal Fe then error "expected a homogeneous matrix";
    d := unique apply(flatten entries Fe,degree);
    if #d > 1 then error "expected forms of the same degree" else d = first d;
    if #d > 1 then error "expected a standard graded polynomial ring" else d = first d;
@@ -700,7 +704,7 @@ isRealRootedViaQEPCAD (RingElement) := o -> (F) -> (
    (dir|"-input") << S << close;
    C := "qepcad +N"|toString(first o.QepcadOptions)|" +L"|toString(last o.QepcadOptions)|" < '"|dir|"-input'";
    if o.Verbose then << "--running " << C << endl;
-   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occured while executing QEPCAD. Please make sure that it is installed and configured correctly.";
+   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occurred while executing QEPCAD. Please make sure that it is installed and configured correctly.";
    jj := toList first regex("An equivalent quantifier-free formula:"|newline|newline,Out);
    V := substring(Out,sum jj,5);
    if V === "TRUE"|newline then return true else if V === "FALSE" then return false else (
@@ -773,16 +777,17 @@ complexrank (RingElement) := o -> (F) -> (
    g1 := first select(J_*,g -> first degree g == e1);
    g2 := first select(J_*,g -> first degree g == e2);
    if discriminant g1 != 0 then return e1;
-   if discriminant g2 != 0 then return e2;
-   K := coefficientRing ring F;
-   local I; local g;
-   for j from e2 to d-1 do (
-      if j >= o.Limit then return (j..d);
-      I = Jl_j;
-      g = (gens I * random(K^(numgens I),K^1))_(0,0);
-      if discriminant g != 0 then return j else continue;
-   );
-   return d;
+   return e2; -- It follows from Terracini's Lemma.
+--   if discriminant g2 != 0 then return e2;
+--   K := coefficientRing ring F;
+--   local I; local g;
+--   for j from e2 to d-1 do (
+--      if j >= o.Limit then return (j..d);
+--      I = Jl_j;
+--      g = (gens I * random(K^(numgens I),K^1))_(0,0);
+--      if discriminant g != 0 then return j else continue;
+--   );
+--   return d;
 );
 
 matriceCompagna = method(TypicalValue => Matrix)
@@ -825,7 +830,7 @@ realroots (RingElement) := o -> (F) -> (
    F = sub(F,vars R);
    f := sub(sub(F,y => 1),K[x]);
    ro := toList(((first degree F) - (first degree f)) : [1.0,0.0]);
-   ro = ro | apply(select(roots f,a -> a == realPart a),r -> [realPart r,1.0]);
+   ro = ro | apply(select(roots f,a -> abs(imaginaryPart a) < 0.0000001),r -> [realPart r,1.0]);
    if o.Verbose then (
       <<"number real roots: "<<#ro<<endl;
       <<"number distinct real roots: "<<#unique ro<<endl;
@@ -920,7 +925,7 @@ joinOfAffineParameterizations (Thing) := o -> U -> (
     trim sub(sub(ideal selectInSubring(1,gens gb(W,SubringLimit=>o.SubringLimit)),K[z_0..z_N]),vars ringPN)
 );
 
-joinOfHooks = method(TypicalValue => JoinOfCoincidentRootLoci, Dispatch => Thing);
+joinOfHooks = method(Dispatch => Thing);
 joinOfHooks (Thing) := U -> (
     U = sequence U;
     r := #U-1;

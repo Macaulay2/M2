@@ -124,7 +124,7 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      makeEntry(word,position,dictionary,false,false));
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
      entry := makeEntry(word,position,dictionary,thread,locallyCreated);
-     if dictionary.frameID == 0 && isalnum(word.name) && !thread
+     if dictionary.frameID == 0 && isvalidsymbol(word.name) && !thread
      then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
      entry);
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
@@ -249,6 +249,8 @@ bumpPrecedence();
 bumpPrecedence();
      export orS := makeKeyword(binaryrightword("or"));
 bumpPrecedence();
+     export xorS := makeKeyword(binaryrightword("xor"));
+bumpPrecedence();
      export andS := makeKeyword(binaryrightword("and"));
 bumpPrecedence();
      export notS := makeKeyword(unaryword("not"));
@@ -287,6 +289,7 @@ bumpPrecedence();
 bumpPrecedence();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
+     export leftAngleBar := parens("<|","|>",precBracket, precRightParen, precRightParen);
 bumpPrecedence();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
      export StarS := makeKeyword(unarybinaryleft("*"));	    -- also binary
@@ -355,7 +358,9 @@ export LeftArrowE := Expr(LeftArrowS);
 
 export EqualEqualE := Expr(EqualEqualS);
 export LessE := Expr(LessS);
+export LessEqualE := Expr(LessEqualS);
 export GreaterE := Expr(GreaterS);
+export GreaterEqualE := Expr(GreaterEqualS);
 export incomparableE := Expr(incomparableS);
 
 export NewS := makeProtectedSymbolClosure("NewMethod");
@@ -372,6 +377,10 @@ export NewOfFromE := Expr(NewOfFromS);
 
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
+
+export StopIterationS := makeProtectedSymbolClosure("StopIteration");
+export StopIterationE := Expr(StopIterationS);
+
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
      e := makeSymbol(t.word,position(t),t.dictionary);
@@ -466,7 +475,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS);
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, 
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
@@ -663,7 +672,6 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  "left hand side of assignment inappropriate"));
 export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
-     is s:StartDictionary do bind(s.body,dictionary)
      is i:IfThen do (
 	  bind(i.predicate,dictionary);
 	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);

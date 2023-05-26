@@ -3,7 +3,8 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
 all: @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/README @pre_docdir@/LAYOUT
-SUBDIRS = util c d e system bin m2 man packages editors html-check-links tests
+SUBDIRS = util c d e system bin m2 man packages editors \
+	$(if $(filter html, @DOCUMENTATION@), html-check-links) tests
 
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),

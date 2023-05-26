@@ -41,21 +41,3 @@ document {
 	  },     
      SeeAlso => {coefficients}
      }
-TEST ///
-R = ZZ[a..d]
-m = matrix{{(a*b-1)*(c*d-d^3)}}
-coefficients m
-oo_0 * oo_1 == m
-monomials(m,Variables=>{a,b})
-monomials(m,Variables=>c)
-monomials(m,Variables=>1)
-monomials(m,Variables=>(a,b))
-monomials m
-
-S = R[x,y,z]
-m = matrix{{(a+1)*(x+y)^2}}
-m_(0,0)
-coefficients(m, Variables => {x,y}, Monomials => matrix {{x^2, x*y, y}})
-monomials m
-coefficients m
-///

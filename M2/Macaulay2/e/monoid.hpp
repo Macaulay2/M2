@@ -3,30 +3,27 @@
 #ifndef _monoid_hpp_
 #define _monoid_hpp_
 
-#include "hash.hpp"
-#include "engine-includes.hpp"
-#include "monordering.h"
-#include "newdelete.hpp"
-
-#include "intarray.hpp"
-#include "imonorder.hpp"
-
 #include <vector>
 
+#include "engine-includes.hpp"
+
+#include "ExponentList.hpp"
+#include "ExponentVector.hpp"
+#include "hash.hpp"
+#include "imonorder.hpp"
+#include "newdelete.hpp"
+#include "style.hpp"
+
 class PolynomialRing;
+class buffer;
+struct MonomialOrdering;
 
-typedef int *exponents;
-typedef int *graded_exponents;
-typedef int *partial_sums;
+// monomial is an encoded array of size monomial_size()
 typedef int *monomial;
-
-typedef const int *const_exponents;
-typedef const int *const_graded_exponents;
-typedef const int *const_partial_sums;
 typedef const int *const_monomial;
-typedef const int *const_varpower;
 
-#define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents>(alloca(byte_len))
+
+#define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents_t>(alloca(byte_len))
 #define EXPONENT_BYTE_SIZE(nvars) static_cast<int>((sizeof(int) * (nvars)))
 
 #define ALLOCATE_MONOMIAL(byte_len) static_cast<monomial>(alloca(byte_len))
@@ -68,6 +65,9 @@ class Monoid : public MutableEngineObject
   int first_weights_slot_;  // < 0 if none, otherwise the location of the first
                             // weight vec value
                             // in each monomial
+
+  std::vector<bool> mLaurentVariablesPredicate;
+  
   VECTOR(int) nslots_;
 
   void set_degrees();
@@ -90,6 +90,12 @@ class Monoid : public MutableEngineObject
                         M2_arrayint degs,
                         M2_arrayint hefts);
 
+  static Monoid *create(const MonomialOrdering *mo,
+                        const std::vector<std::string>& names,
+                        const PolynomialRing *DR, /* degree ring */
+                        const std::vector<int>& degs,
+                        const std::vector<int>& hefts);
+  
   ~Monoid();
 
   static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);
@@ -124,6 +130,14 @@ class Monoid : public MutableEngineObject
 
   std::vector<int> getPrimaryDegreeVector() const;
 
+  bool isLaurentVariable(int i) const {
+    return monorder_->is_laurent[i];
+  }
+
+  std::vector<bool> laurentVariables() const {
+    return mLaurentVariablesPredicate;
+  }
+
   void text_out(buffer &o) const;
 
   int n_vars() const { return nvars_; }
@@ -138,10 +152,10 @@ class Monoid : public MutableEngineObject
   // Monomial arithmetic //
   /////////////////////////
   void from_varpower(const_varpower vp, monomial result) const;
-  void to_varpower(const_monomial m, intarray &result_vp) const;
+  void to_varpower(const_monomial m, gc_vector<int>& result_vp) const;
 
   void from_expvector(const_exponents exp, monomial result) const;
-  void to_expvector(const_monomial m, exponents result_exp) const;
+  void to_expvector(const_monomial m, exponents_t result_exp) const;
 
   M2_arrayint to_arrayint(
       const_monomial monom) const; /* Returns an exponent vector representation
@@ -186,7 +200,10 @@ class Monoid : public MutableEngineObject
   }
   int partial_compare(int num, const_monomial m, const_monomial n) const;
   int compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const;
-  bool divides(const_monomial m, const_monomial n) const;
+  bool is_equal(const_monomial m1, const_monomial m2) const { return compare(m1, m2) == EQ; }
+
+  bool divides_partial_order(const_monomial m, const_monomial n) const; // s.t. n/m only has >= exponents.
+  bool divides(const_monomial m, const_monomial n) const; // s.t. n/m might have negative exponents, for Laurent variables.
   void divide(const_monomial m, const_monomial n, monomial result) const;
   void lcm(const_monomial m, const_monomial n, monomial result) const;
   void gcd(const_monomial m, const_monomial n, monomial result) const;
@@ -195,11 +212,18 @@ class Monoid : public MutableEngineObject
               monomial result_sm,
               monomial result_sn) const;
 
+  // TODO: define all three
   void elem_text_out(buffer &o, const_monomial m, bool p_one = true) const;
+  //void elem_text_out(buffer &o, const_exponents m, bool p_one = true) const;
+  //void elem_text_out(buffer &o, const_varpower m, bool p_one = true) const;
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
   int degree_weights(const_monomial m, M2_arrayint wts) const;
+
+  template<typename T>
+  T degree_weights(const_monomial m, const std::vector<T>& wts) const;
+  
   int simple_degree(const_monomial m) const;  // simply sum of exponents
   void degree_of_varpower(const_varpower vp, monomial result) const;
 

@@ -7,7 +7,7 @@
 extern void testSPolynomial();
 extern void gb(IntermediateBasis &F, int n);
 
-brMonomial exponentsToLong(int nvars, const exponents exp)
+brMonomial exponentsToLong(int nvars, const_exponents exp)
 {
   brMonomial result = 0;
   for (int i = 0; i < nvars; i++)
@@ -20,7 +20,7 @@ brMonomial exponentsToLong(int nvars, const exponents exp)
   return result;
 }
 
-void longToExponents(int nvars, brMonomial mono, exponents exp)
+void longToExponents(int nvars, brMonomial mono, exponents_t exp)
 {
   //    cout << "longToExponents " << mono << endl;
   for (int i = 0; i < nvars; i++)
@@ -44,22 +44,22 @@ IntermediateBasis BRPSfromMatrix(const Matrix *m)
   assert(P != 0);  // TODO: change this.
   const Monoid *M = P->getMonoid();
   int n = P->n_vars();
-  exponents exp = newarray_atomic(int, n);
+  exponents_t exp = newarray_atomic(int, n);
   IntermediateBasis F;
   for (int i = 0; i < m->n_cols(); i++)
     {
       vec v = m->elem(i);
       if (v == 0) continue;
       BRP temp;
-      for (Nterm *f = v->coeff; f != 0; f = f->next)
+      for (Nterm& f : v->coeff)
         {
-          M->to_expvector(f->monom, exp);
+          M->to_expvector(f.monom, exp);
           brMonomial mono = exponentsToLong(n, exp);
           temp = temp + BRP(mono);
         }
       F[i] = temp;
     }
-  deletearray(exp);
+  freemem(exp);
   return F;
 }
 
@@ -69,7 +69,7 @@ const Matrix *BRPStoMatrix(const PolynomialRing *P, const IntermediateBasis &F)
   const Monoid *M = P->getMonoid();
   const Ring *K = P->getCoefficients();
   int n = P->n_vars();
-  exponents exp = newarray_atomic(int, n);
+  exponents_t exp = newarray_atomic(int, n);
   monomial mon = M->make_one();
   for (IntermediateBasis::const_iterator it = F.begin(); it != F.end(); ++it)
     {
@@ -93,7 +93,7 @@ const Matrix *BRPStoMatrix(const PolynomialRing *P, const IntermediateBasis &F)
       C.append(P->make_vec(0, f));
     }
 
-  deletearray(exp);
+  freemem(exp);
   return C.to_matrix();
 }
 

@@ -1,11 +1,14 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
-undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
+undocumented {
+    Vertices, 
+    (pointArray,List), 
+    saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,AbstractPoint,List), RandomPointFunction, 
      Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect,
-     isAffineLinearFunction, (symbol <<, File, PointArray), (position, Point, PointArray, FunctionClosure), (toExternalString, PointArray), PartialSolBins, LinearSegment, FirstDirectedEdge
+     isAffineLinearFunction, (symbol <<, File, PointArray), (position, AbstractPoint, PointArray, FunctionClosure), (toExternalString, PointArray), PartialSolBins, LinearSegment, FirstDirectedEdge
      }
     --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
-undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
+undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,AbstractPoint,PointArray), 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
 
 doc ///
     Key
@@ -14,39 +17,45 @@ doc ///
         solve polynomial systems via homotopy continuation and monodromy
     Description
         Text
-	    This package provides randomized numerical methods for finding complex solutions to systems of polynomial equations.
-            The main methods implemented in this package find solutions to polynomial systems of equations over the 
-            complex numbers. As described in @HREF("https://arxiv.org/abs/1609.08722","\"Solving polynomial systems
-            via homotopy continuation and monodromy\" (2016)")@, these methods pair numerical homotopy continuation with the 
-            transitive monodromy action of a suitable covering map.
-        Text
-	    It includes several blackbox functions based on these methods.
+	    This packages provides randomized methods for numerically solving polynomial systems of equations that occur in parametric families, by exploiting the transitive action of an associated monodromy group.
+            The package implements the graph-based framework described in the third reference below.
+	    There are three main functions that may be used to solve a system of a family of systems:
         Code
                 UL {
 		    TO solveFamily,
-                   TO sparseMonodromySolve,
-                   TO monodromySolve
-                      } 
+                    TO sparseMonodromySolve,
+                    TO monodromySolve
+		    } 
         Text
-            @TO solveFamily@ is blackbox solver that can work with @TO SLPexpressions@ or the @TO PolySystem@ type. Here is an example illustrating how to solve a parametric family for specific parameter values.
+            @TO monodromySolve@ is the core function, whose input may be @ofClass PolySystem@ or $ofClass GateSystem$.
+	    As an additional input, a seed pair consisting of initial parameter and solution values may be provided.
+	    @TO solveFamily@ is a wrapper function that returns specific solutions and parameter values.
+	    @TO sparseMonodromySolve@ is a blackbox solver for systems without parameters, that calls the core function.
+	    These functions have many options in common, which are summarized in @TO MonodromySolverOptions@.
+	    Here is an example illustrating how to solve a parametric family for specific parameter values.
         Example
-    	    setRandomSeed 0
-	    declareVariable \ {A,B,C,D,X,Y}
-	    PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
-	    solveFamily(point{{1,1,1,1}}, PS)
-	    R=CC[a,b,c,d][x,y]
-	    F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
-	    solveFamily(point{{1,1,1,1}}, F)
-	Text
-	    @TO monodromySolve@ is the core function called by @TO solveFamily@. Its default setting are less conservative and may be faster at the expense of reliability: see @TO MonodromySolverOptions@. For non-parametric systems, the solver @TO sparseMonodromySolve@ essentially calls @TO solveFamily @ assuming the genericity conditions of the Bernstein-Kurhnirenko theorem are satisfied.
+            setRandomSeed 0;
+            declareVariable \ {A,B,C,D,X,Y};
+            F = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}});
+            p0 = point{{1,1,1,1}};
+            sols = solveFamily(p0, F, NumberOfNodes=>3);
+            for i from 0 to 3 list norm(evaluate(F, p0, sols#i))
         Text
             Each solver works by assembling randomly generated systems within a @TO HomotopyGraph@ and tracking paths between
             them. They are also equipped with a number of options, which may be useful for speeding up computation or 
             increasing the probability of success.
         Text
-            In the example above, the underlying graph is "seeded" automatically. The current seeding implementation will fail,
-            for instance, in cases where there are equations without parameters. In such a case, the user may find a seed pair
-            themselves (see @TO (monodromySolve, System, Point, List) @ for an example.)
+            In the example above, the system is linear in parameters, allowing for the seed pair to be computed automatically. 
+	    The current seeding implementation will report failure in other cases.
+	    Depending on the problem of interest, there may still be a natural way to generate the seed pair, as in @TO (monodromySolve, System, AbstractPoint, List) @.
+	Text
+            Some references for numerical monodromy methods:
+    	    
+	    Sommese, Andrew J., Jan Verschelde, and Charles W. Wampler. "Numerical decomposition of the solution sets of polynomial systems into irreducible components." {\it SIAM Journal on Numerical Analysis} 38.6 (2001): 2022-2046.
+	    
+	    del Campo, Abraham Martin, and Jose Israel Rodriguez. "Critical points via monodromy and local methods." {\it Journal of Symbolic Computation} 79 (2017): 559-574.
+	    
+	    Duff, Timothy, Cvetelina Hill, Anders Jensen, Kisun Lee, Anton Leykin, and Jeff Sommars. "Solving polynomial systems via homotopy continuation and monodromy." {\it IMA Journal of Numerical Analysis} 39.3 (2019): 1421-1446.
     ///
 
 doc ///
@@ -66,16 +75,16 @@ doc ///
     Description
         Text
             Blackbox monodromy solver for a square polynomial system without parameters.
-            The example below finds all six intersection of a generic cubic with its quadratic polar curve.
-	    Note: this method requires PHCpack.
-        Text
-    
+            The example below finds all six intersection of a generic cubic F with its quadratic polar curve P.
         Example
-            setRandomSeed 0;
+            setRandomSeed 2021;
             R=CC[x,y,z];
             F=random(3,R);
             P=sum apply(gens R,g->diff(g,F)*random CC);
-            sparseMonodromySolve polySystem {F,P,random(1,R)-1}
+            PS = polySystem {F,P,random(1,R)-1};
+            sols = sparseMonodromySolve PS;
+    	    length points sols
+            for i from 0 to 5 list norm evaluate(PS, sols#i)
         Text
             For systems with dense support such as the above, the total number of paths tracked is generally not optimal, though timings may 
             be comparable.
@@ -85,16 +94,16 @@ doc ///
     Key
         solveFamily
         (solveFamily,System)
-        (solveFamily,Point,System)
+        (solveFamily,AbstractPoint,System)
     Headline
         a solver for parametric families with simple output
     Usage
         (p, sols) = solveFamily PS
-        (p, sols) = solveFamily(P, p)
+        (p, sols) = solveFamily(p, P)
     Inputs 
         PS:System
            : a parametric polynomial system, represented as either a @TO PolySystem@ whose underlying coefficient ring itself a polynomial ring in the parameters, or a @TO GateSystem@ with parameters.
-        p:Point
+        p:AbstractPoint
            consisting of target parameter values (optional.)
     Outputs
         p:Point
@@ -104,12 +113,15 @@ doc ///
     Description
         Text
             The output of @TO monodromySolve @ is opaque. This method is intended for users uninterested in the underlying
-            @TO HomotopyGraph @ and its satellite data. If 
+            @TO HomotopyGraph @ and its satellite data. When the number of solutions is small, it can help to increase options like @TO NumberOfNodes@ or @TO NumberOfEdges@ above their default value, as shown here:
         Example
+            setRandomSeed 0
             R = CC[a,b,c,d,e,f][x,y];
             q  = a*x^2+b*y+c;
             l = d*x+e*y+f;
-            (sys, sols) = solveFamily polySystem {q,l}
+            (sys, sols) = solveFamily(polySystem{q,l}, NumberOfNodes=>3)
+    Caveat
+        This function is somewhat less flexible than @TO monodromySolve @.
     ///
 
 doc ///
@@ -121,23 +133,23 @@ doc ///
         Code
 	    HEADER3 "Ways to use:",
 	    UL {
-		TO (monodromySolve, System, Point, List),             
+		TO (monodromySolve, System, AbstractPoint, List),             
                 TO (monodromySolve, System)
                 }
        ///       
 
 doc ///
     Key
-        (monodromySolve, System, Point, List)
+        (monodromySolve, System, AbstractPoint, List)
     Usage
             (N, npaths) = monodromySolve(PS,p0,L)
     Inputs
         PS:System
 	    with parametric coefficients
-        p0:Point
+        p0:AbstractPoint
             representing a parametrized system
         L:List
-            containing solutions associated to p0, each represented as a @TO Point @.
+            containing solutions associated to p0, each represented as a @TO AbstractPoint @.
     Outputs
         N:HomotopyNode
         npaths:ZZ
@@ -147,7 +159,7 @@ doc ///
 	    Most solvers rely on the manual seeding function @TO createSeedPair @. The example below demonstrates how one might
 	    seed manually when some equations don't have parameters---ie. the projection map onto the variables is non-dominant.
         Example
-                setRandomSeed 0;
+            setRandomSeed 0;
             S = CC[a,b,c];
             R = S[x,w];
             (h, f) = (a*x+b*w+c, 3*x^2 - w + 1);
@@ -166,26 +178,26 @@ doc ///
         Example
             R = CC[a,b,c,d][A,B]
             polys = polySystem {A^2*a+B^2*b,A*B*c+d}  
-                setRandomSeed 0;
-                        (V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
+            setRandomSeed 0;
+            (V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
             peek V
     /// 
     
 doc ///
     Key
         specializeSystem
-	(specializeSystem, Point, PolySystem)
-	(specializeSystem, Point, Matrix)
+	(specializeSystem, AbstractPoint, PolySystem)
+	(specializeSystem, AbstractPoint, Matrix)
     Usage
         equations = specializeSystem(p0, PS)
     Inputs
-        p0:Point
+        p0:AbstractPoint
 	    in parameter space
         PS:System
 	    with parameters as coefficients
     Outputs
         equations:List
-            containing equtaions of system with parameters specialized at p0
+            containing equations of system with parameters specialized at p0
     Headline
             specialize parametric system at a point in the parameter space.///
     
@@ -193,7 +205,7 @@ doc ///
     Key
         createSeedPair
         (createSeedPair, System)
-        (createSeedPair, System, Point)
+        (createSeedPair, System, AbstractPoint)
     Headline
         create initial seed for the homotopy continuation
     Usage
@@ -202,7 +214,7 @@ doc ///
     Inputs
         PS:System
 	    a parametric polynomial system
-	x0:Point
+	x0:AbstractPoint
 	    an initial solution for some system
     Outputs
         p0:Point
@@ -223,7 +235,7 @@ doc ///
             -- line below checks that the system defined by p0 nearly vanishes at x0
             apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
    SeeAlso
-       (monodromySolve,System,Point,List)
+       (monodromySolve,System,AbstractPoint,List)
     ///
 
 doc ///
@@ -306,6 +318,7 @@ doc ///
         [monodromySolve,NumberOfRepeats]
         [solveFamily,NumberOfRepeats]
         [sparseMonodromySolve,NumberOfRepeats]
+	PointArrayTol
         Potential
         [monodromySolve,Potential]
         [solveFamily,Potential]
@@ -352,19 +365,22 @@ doc ///
                     }},
                 "BatchSize: maximum number of solutions tracked across an edge",
                 "EdgesSaturated: fills correspondence tables after stopping criteria satisfied",
+		"Equivalencer: a numeric function of solutions (default (x -> x) that divides partial solutions into equivalence classes",
+		"FilterCondition: boolean function (default (p, x) -> false)) that evaluates true when we don't want to collect x (useful when x is an extraneous solution produced by path-jumping)",
                 {"GraphInitFunction: the underlying graph topology, see ", TO completeGraphInit, " and ", TO flowerGraphInit},
                 "NumberOfEdges: number of edges in underlying graph",
                 "NumberOfNodes: number of nodes in underlying graph",
                 "NumberOfRepeats: argument for StoppingCriterion",
+		{"PointArrayTol: tolerance used for comparing elements contained in", ofClass PointArray},
                 {"Potential: a function that assigns a number to each edge in each iteration, indicating its
                 potential for producing new solutions. Current supported potential functions are ", TO potentialE , " and ", 
                 TO potentialLowerBound},
+	        "Randomizer: a function of the parameters that randomizes the homotopies' endpoints. Defaults to the", TO gamma," trick when linear in parameters, otherwise no randomization (p -> p)",
                 {"SelectEdgeAndDirection: accepts either ", TO selectBestEdgeAndDirection, " or ",
-                 TO selectRandomEdgeAndDirection, ". Tthe former also requires setting a potential. Default is an internal function that selects the first available edge." },
+                 TO selectRandomEdgeAndDirection, ". The former also requires setting a potential. Default is an internal function that selects the first available edge." },
                 "StoppingCriterion: eg. stop if no progress has been made",
                 "TargetSolutionCount: expected/desired number of solutions (overrides StoppingCriterion)",
-                "Verbose: reports progress in each iteration",
-                "experimental options: Equivalencer, FilterCondition, Randomizer."
+                "Verbose: reports progress in each iteration"
                 }
     ///
 
@@ -417,7 +433,7 @@ doc ///
             This is an option for the Potential option for @TO "monodromySolve" @ when we use
             @TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
             observes discovered and undiscovered points first, and then follows the homotopy which
-            has the minimal number of new points quaranteed to be found.
+            has the minimal number of new points guaranteed to be found.
         Example
             R = CC[a,b,c,d][x,y];
             polys = polySystem {a*x+b*y^2,c*x*y+d};
@@ -453,7 +469,7 @@ doc ///
         computeMixedVolume
         (computeMixedVolume, List)
     Headline
-        compute mixed volume via PHCpack
+        compute mixed volume via Gfan
     Usage
         d = computeMixedVolume polys
     Inputs
@@ -463,8 +479,8 @@ doc ///
         d:ZZ
     Description
         Text
-            Computes mixed volume of a polynomial system. For generic systems of a given support set, this is the generic
-            root count. Note: This method assumes the user has installed PHCpack.
+            Computes mixed volume of a polynomial system using the package {TO gfanInterface}. For generic systems of a given support set, this is the generic
+            root count.
         Example
 	   setRandomSeed 0;
             R = CC[x,y];
@@ -567,8 +583,8 @@ doc ///
     Inputs
         M:Matrix
             defining polynomial system
-        p0:Point
-            assoiated to a specialized system
+        p0:AbstractPoint
+            associated to a specialized system
         L:List
             containing partial solutions associated to p0
     Outputs
@@ -588,14 +604,14 @@ doc ///
 doc ///
     Key
         appendPoint
-        (appendPoint, PointArray, Point)
+        (appendPoint, PointArray, AbstractPoint)
     Headline
         append a point at the end of a PointArray
     Usage
         appendPoint(A,p)
     Inputs
         A:PointArray
-        p:Point
+        p:AbstractPoint
     ///
 
 doc ///
@@ -637,7 +653,7 @@ doc ///
         Text
             This is an option for the Potential option for @TO "monodromySolve" @ when we use
             @TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
-            computes the expected number of new points obtained by tracking points (under suitable randomness asumptions
+            computes the expected number of new points obtained by tracking points (under suitable randomness assumptions
             about the permutations generated by the underlying graph.) The expected value is computed by the ratio of unmatched
 	    points and the difference between the total solution count and the number of the known points.
         Example
@@ -668,7 +684,7 @@ doc ///
         A = pointArray L
     Inputs
         L:List
-            containing objects of type @TO Point@
+            containing objects of type @TO AbstractPoint@
     Outputs
         A:PointArray
     ///
@@ -681,7 +697,7 @@ doc ///
     Description
         Text
             PointArray is a data structure that organizes the solutions found
-            by a solver. Each @TO HomotopyNode @ object V has an assocaciated
+            by a solver. Each @TO HomotopyNode @ object V has an associated
             PointArray accessed via V.PartialSols. A "fingerprinting"
             scheme allows for equality of points to be checked quickly.        
     ///
@@ -728,30 +744,77 @@ doc ///
 
 doc ///
     Key
-        (member, Point, PointArray)
+        (member, AbstractPoint, PointArray)
     Headline
-        test Point membership in a PointArray
+        test point membership in a PointArray
     Usage
         member(p,A)
     Inputs
-        p:Point
+        p:AbstractPoint
         A:PointArray
     SeeAlso
         "member"
     ///
 
+
+doc ///
+    Key
+        monodromyGroup
+        (monodromyGroup, System)
+        (monodromyGroup, System, AbstractPoint, List)
+    Headline
+        compute the group of permutations implicitly defined by a homotopy graph
+    Usage
+        monodromyGroup S
+        monodromyGroup(S, p0, x0s)
+    Inputs
+        S:System
+        p0:AbstractPoint
+            a basepoint for the monodromy group in the parameter space for S
+        x0s:List
+            points in the fiber over S        
+        FileName=>String
+            a name for an output file suitable for reading by GAP. Default value is null.
+    Description
+        Text
+            If the monodromy group is full symmetric and the degree is large, then the default settings have a good chance of generating the whole group. However, you will need to use a bigger graph than the default settings to fully generate imprimitive groups, as in the following example of a Euclidean distance degree calculation.
+        Example
+            setRandomSeed 100;
+            declareVariable \ {t_1,t_2,u_0,u_1,u_2,u_3};
+            paramMatrix = gateMatrix{{u_0,u_1,u_2,u_3}};
+            varMatrix = gateMatrix{{t_1,t_2}};
+            phi = transpose gateMatrix{{t_1^3, t_1^2*t_2, t_1*t_2^2, t_2^3}};
+            loss = sum for i from 0 to 3 list (u_i - phi_(i,0))^2;
+            dLoss = diff(varMatrix, gateMatrix{{loss}});
+            G = gateSystem(paramMatrix,varMatrix,transpose dLoss);
+            monodromyGroup(G,"msOptions" => {NumberOfEdges=>10})
+    Caveat
+        This is still somewhat experimental.
+    ///
+    
+end
+restart
+needs "ed-gal.m2"
+monodromyGroup(G,FileName=>"eddGG","msOptions" => {Verbose=>true,NumberOfEdges=>10})
+
+    SeeAlso
+        "member"
+    ///
+
+
+
 -*
 doc ///
     Key
         seedTest
-	(seedTest, System, Point, Point)
+	(seedTest, System, AbstractPoint, AbstractPoint)
     Headline
         test initial seed
     Usage
         H = seedTest(P,p0,L)
     Inputs
         P:System
-        p0:Point
+        p0:AbstractPoint
 	L:List
     Outputs
         H:MutableHashTable

@@ -178,7 +178,6 @@ tensorProduct Sequence := args -> (
     S := meth args;
     if y =!= null then y#key = S;
     S))
-tensor(Matrix, Matrix) := Matrix => options -> (f,g) -> f**g;
 
 LabeledModule.tensorProduct = T -> (
   L := toList T;
@@ -194,7 +193,7 @@ LabeledModule.tensorProduct = T -> (
       symbol basisList => productList apply(L, l -> basisList l),
       symbol cache => new CacheTable}))
 LabeledModule ** LabeledModule := tensorProduct
-tensor(LabeledModule, LabeledModule) := LabeledModule => o -> (F,E) -> F ** E
+tensor(LabeledModule, LabeledModule) := LabeledModule => {} >> o -> (F,E) -> F ** E
 
 LabeledModuleMap = new Type of HashTable
 LabeledModuleMap.synonym = "map of labeled modules"
@@ -249,8 +248,8 @@ LabeledModule#id = E -> map(E,E,1)
 LabeledModuleMap * LabeledModuleMap := LabeledModuleMap => (f,g) -> 
 map(target f, source g, matrix f * matrix g)
 
-tensor(LabeledModuleMap,LabeledModuleMap) := LabeledModuleMap => o -> (m,n) -> 
-map((target m)**(target n), (source m)**(source n), (matrix m)**(matrix n))
+tensor(LabeledModuleMap, LabeledModuleMap) := LabeledModuleMap => {} >> o -> (m, n) -> (
+    map((target m)**(target n), (source m)**(source n), (matrix m)**(matrix n)))
 LabeledModuleMap ** LabeledModuleMap := LabeledModuleMap => (f,g) -> tensor(f,g)
 
 LabeledModuleMap.tensorProduct = T -> fold(tensor, T)
@@ -366,14 +365,14 @@ The input to the code is a map of labeled free modules
 Based on f and w, we could define 
 a degree sequence d via the formula for d'(w) given in Notation 5.2 of the BEKS paper.  However,
 since we only need d1 in the construction, we only define that number in the code.
-The output map will go from a module F1 enerated in degree d1 to a module F0 generated in
+The output map will go from a module F1 generated in degree d1 to a module F0 generated in
 degree 0.
 
 We also define r0 and r1 following the formulas given in Notation 5.2 of BEKS.  By
 construction r0 is always 0.  Our restriction on w essentially amounts to the condition
 that r1 must equal 1 or 2.  The code thus gives an error message when r1<1 or r1>2.
 
-The desired map will be constructued as a composite g5 * g4 * g3 * g2 * g1 * g0 from
+The desired map will be constructed as a composite g5 * g4 * g3 * g2 * g1 * g0 from
 F1->G1->G2->G3->G4->G5->F0.  This follows the construction outlined in Section 4 of BEKS.
 
 The modules are defined as follows.  The definition of F1 and F0 can be found in Theorem 5.3
@@ -413,7 +412,7 @@ Now we discuss the various maps gi.  Note that all maps are degree 0 maps, excep
 
 g0: we define a trace map 
     trMap: S--> [\otimes_{j=r1}^n S^d1 B_j] ** [\otimes_{j=r1}^n S^d1 B_j]^*
-    then we degine g0=trMap**id_(F1).
+    then we define g0=trMap**id_(F1).
 
 g1: is given by an identity matrix, as the only difference between G1 and G2 is how we
     label the bases.
@@ -530,7 +529,7 @@ tensorComplex1 (LabeledModuleMap,List) := LabeledModuleMap => (f,w) -> (
 tensorComplex1 LabeledModuleMap := LabeledModuleMap => f -> (
   -- The output is the first map F0 <- F1 of the balanced tensor complex.
   -- If f is not balanced this outputs an error.  
-  -- If f is balanced, then this computes the appopriate weight w, and calls the other
+  -- If f is balanced, then this computes the appropriate weight w, and calls the other
   -- version of this method.
   if not isBalanced f then error "The map f is not a balanced tensor. Need to add a weight vector as a second input.";
   S := ring f;
@@ -933,7 +932,7 @@ doc ///
       Section 14.3 of the book ``Discriminants, resultants, and multidimensional
       determinants '' by Gelfand-Kapranov-Zelevinsky.)
       
-      The following constructs the generic hyperdetermiant of format $3\times 2\times 2$,
+      The following constructs the generic hyperdeterminant of format $3\times 2\times 2$,
       which is a polynomial of degree 6 consisting of 66 monomials.
     
     Example
@@ -1112,7 +1111,7 @@ doc ///
      : LabeledModuleMap
    Description
     Text
-      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbtirary characteristic, 
+      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbitrary characteristic, 
       this produces the first map of pure resolution of type d as constructed by
       Eisenbud and Schreyer in Section 5 of ``Betti numbers of graded modules and cohomology 
       of vector bundles''.  The cokernel of this map is a module of finite of length over a
@@ -1177,7 +1176,7 @@ doc ///
      : LabeledModuleMap
    Description
     Text
-      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbtirary characteristic, 
+      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbitrary characteristic, 
       this produces the first map of a balanced tensor complex with a 
       pure resolution of type d, as constructed in Section 3
       of the paper ``Tensor Complexes: Multilinear free resolutions constructed from higher tensors
@@ -1668,7 +1667,7 @@ doc ///
    Description
     Text
       This function allows one to move from the labels of the basis
-      elements of a labeled free module of rank $r$ to the the integers
+      elements of a labeled free module of rank $r$ to the integers
       $\{0,1, \dots, r-1\}$.
       More specifically, if $F$ is a labeled free module where we have labeled the
       basis with the list $L$, then this function an element  $l\in L$

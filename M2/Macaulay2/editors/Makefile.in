@@ -1,6 +1,5 @@
 # @configure_input@
 include ../../include/config.Makefile
-VPATH = @srcdir@
 ARGS = --script
 .NOTPARALLEL:
 
@@ -9,17 +8,75 @@ SRCFILES = M2-init.el M2-mode.el M2.el README.md
 
 all: @pre_emacsdir@ $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
 verify: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES)) $(addprefix emacs/, $(SRCFILES) $(MADEFILES)); ls -lrt $^
-Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
+Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
 
 @pre_emacsdir@ :; @INSTALL@ -d "$@"
 @pre_emacsdir@/% : $(addprefix emacs/, %) ; @INSTALL_DATA@ $^ @pre_emacsdir@
 
-emacs/M2-symbols.el : make-M2-symbols.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
-	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/make-M2-symbols.m2 -e 'exit 0'
+emacs/M2-symbols.el prism/macaulay2.js highlightjs/macaulay2.js: \
+	@srcdir@/make-M2-symbols.m2 @srcdir@/../m2/exports.m2    \
+	@pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
+	@pre_exec_prefix@/bin/M2 $(ARGS) $< -e 'exit 0'
 emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) @abs_srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
 
-clean::; rm -rf @pre_emacsdir@/* atom emacs prism vim
+# copy files to build directory for out-of-tree builds
+ifneq (@srcdir@,.)
+emacs prism highlightjs:
+	$(MKDIR_P) $@
+
+emacs/%: @srcdir@/emacs/% emacs
+	cp $< $@
+
+prism/%: @srcdir@/prism/% prism
+	cp $< $@
+
+highlightjs/%: @srcdir@/highlightjs/% highlightjs
+	cp $< $@
+
+clean:
+	rm -rf @pre_emacsdir@/* atom emacs highlightjs prism pygments vim
+
+else
+clean:
+	rm -rf @pre_emacsdir@/* $(addprefix emacs/, $(MADEFILES)) \
+		atom/macaulay2.cson pygments/macaulay2.py         \
+		$(PRISM_MADEFILES) $(HIGHLIGHTJS_MADEFILES)
+endif
+
+%/node_modules: %/package.json
+	cd $* && npm install
+
+PRISM_MADEFILES = $(addprefix prism/, node_modules package-lock.json \
+	prism.js prism.js.LICENSE.txt macaulay2.js)
+
+prism/prism.js: prism/macaulay2.js        \
+	prism/package.json      \
+	prism/node_modules      \
+	prism/webpack.config.js \
+	prism/index.js          \
+	prism/prism-M2.css
+	cd $(@D) && npm run build
+
+HIGHLIGHTJS_MADEFILES = $(addprefix highlightjs/, node_modules \
+	package-lock.json highlight.js macaulay2.js)
+
+highlightjs/highlight.js: highlightjs/macaulay2.js \
+	highlightjs/package.json      \
+	highlightjs/node_modules      \
+	highlightjs/webpack.config.js \
+	highlightjs/index.js          \
+	highlightjs/highlight-override.css
+	cd $(@D) && npm run build
+
+update-syntax-highlighting: prism/prism.js
+	cp $< @top_srcdir@/Macaulay2/packages/Style
+	cp $<.LICENSE.txt @top_srcdir@/Macaulay2/packages/Style
+	git add @top_srcdir@/Macaulay2/packages/Style/prism.js*
+	git commit -m "Update prism.js symbols for version @PACKAGE_VERSION@."
+
+.PHONY: update-syntax-highlighting
+
 distclean:: clean; rm -f Makefile
 
 # Local Variables:

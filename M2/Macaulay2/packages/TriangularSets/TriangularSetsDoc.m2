@@ -109,7 +109,7 @@ doc /// --triaSystem
     Consequences
     Description
       Text
-        By default $H$ is chosen to be the set of @TO2 {initial,"initals"}@ of $F$.
+        By default $H$ is chosen to be the set of @TO2 {initial,"initials"}@ of $F$.
       Example
         R = QQ[a,b,c,d,e,f,g,h, MonomialOrder=>Lex];
         F = {a*d - b*c, c*f - d*e, e*h - f*g};
@@ -273,9 +273,9 @@ doc /// --triangularizeBatch
           either "Maple" or "Epsilon"
         R:Ring
         F:HashTable
-          whose values are polynmial sets
+          whose values are polynomial sets
         H:HashTable
-          whose values are polynmial sets
+          whose values are polynomial sets
     Outputs
         :HashTable
           containing triangular decompositions of each system
@@ -443,7 +443,7 @@ doc /// --initial
     Description
       Text
         Returns the initial of a polynomial.
-        The initial of a polynomial $f$ is the the leading coefficient of $f$ viewed as a univariate polynomial in its @TO2 {mvar,"main variable"}@.
+        The initial of a polynomial $f$ is the leading coefficient of $f$ viewed as a univariate polynomial in its @TO2 {mvar,"main variable"}@.
       Example
         R = QQ[x_0..x_3, MonomialOrder=>Lex];
         f = x_1^2*(x_2*x_3+2*x_3) + x_1*(x_2^2-1) + (x_2-x_3)

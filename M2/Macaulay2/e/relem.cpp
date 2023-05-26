@@ -6,6 +6,7 @@
 #include "frac.hpp"
 #include "localring.hpp"
 #include "polyring.hpp"
+#include "M2FreeAlgebra.hpp"
 
 #include "aring-glue.hpp"
 
@@ -24,12 +25,18 @@ RingElement *RingElement::make_raw(const Ring *R, ring_elem f)
 int RingElement::n_terms(int nvars) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (is_zero()) return 0;
+  if (P != nullptr)
     {
-      if (is_zero()) return 0;
-      return 1;
+      return P->n_logical_terms(nvars, val);
     }
-  return P->n_logical_terms(nvars, val);
+  auto Q = dynamic_cast<const M2FreeAlgebra *>(R);
+  if (Q != nullptr)
+    {
+      return Q->n_terms(val);
+    }
+  
+  return 1;
 }
 
 RingElement *RingElement::operator-() const
@@ -132,37 +139,51 @@ RingElement *RingElement::random(const Ring *R)
   return new RingElement(R, R->random());
 }
 
-void RingElement::text_out(buffer &o) const { R->elem_text_out(o, val); }
+void RingElement::text_out(buffer &o) const
+{
+  R->elem_text_out(o, val);
+}
+
 RingElement /* or null */ *RingElement::get_terms(int nvars,
                                                   int lo,
                                                   int hi) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P != nullptr)
     {
-      ERROR("expected polynomial ring");
-      return 0;
+      return new RingElement(P, P->get_terms(nvars, val, lo, hi));
     }
-  return new RingElement(P, P->get_terms(nvars, val, lo, hi));
+  const M2FreeAlgebra* A = dynamic_cast<const M2FreeAlgebra*>(R);
+  if (A != nullptr)
+    {
+      return new RingElement(A, A->get_terms(val, lo, hi));
+    }
+  ERROR("expected polynomial ring");
+  return nullptr;
 }
 
 RingElement /* or null */ *RingElement::lead_coeff(const Ring *coeffR) const
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
   if (is_zero())
     {
       return new RingElement(coeffR, coeffR->zero());
     }
-  return new RingElement(coeffR, P->lead_logical_coeff(coeffR, val));
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P != nullptr)
+    {
+      return new RingElement(coeffR, P->lead_logical_coeff(coeffR, val));
+    }
+  const M2FreeAlgebra* A = dynamic_cast<const M2FreeAlgebra*>(R);
+  if (A != nullptr)
+    {
+      return new RingElement(coeffR, A->lead_coefficient(coeffR, val));
+    }
+  ERROR("expected polynomial ring");
+  return nullptr;
 }
 
 RingElement /* or null */ *RingElement::get_coeff(const Ring *coeffR,
-                                                  const Monomial *m) const
+                                                  const EngineMonomial *m) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -173,27 +194,32 @@ RingElement /* or null */ *RingElement::get_coeff(const Ring *coeffR,
   return new RingElement(coeffR, P->get_coeff(coeffR, get_value(), m->ints()));
 }
 
-Monomial *RingElement::lead_monom(int nvars) const
+EngineMonomial *RingElement::lead_monom(int nvars) const
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
   if (is_zero())
     {
-      ERROR("zero polynomial has no lead monomial");
-      return 0;
+      ERROR("the zero element has no lead monomial");
+      return nullptr;
     }
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P != nullptr)
+    {
+      gc_vector<int> resultvp;
+      Nterm *t = get_value();
 
-  intarray resultvp;
-  Nterm *t = get_value();
-
-  int *exp = newarray_atomic(int, nvars);
-  P->lead_logical_exponents(nvars, t, exp);
-  varpower::from_ntuple(nvars, exp, resultvp);
-  return Monomial::make(resultvp.raw());
+      exponents_t exp = newarray_atomic(int, nvars);
+      P->lead_logical_exponents(nvars, t, exp);
+      varpower::from_expvector(nvars, exp, resultvp);
+      return EngineMonomial::make(resultvp.data());
+    }
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(R);
+  if (Q != nullptr)
+    {
+      ERROR("not implemented yet");
+      return nullptr;
+    }
+  ERROR("expected polynomial ring");
+  return nullptr;
 }
 
 bool RingElement::is_homogeneous() const { return R->is_homogeneous(val); }
@@ -214,7 +240,7 @@ bool RingElement::is_homogeneous() const { return R->is_homogeneous(val); }
 //       R->degree_monoid()->to_expvector(mon, d);
 //     }
 //
-//   deletearray(mon);
+//   freemem(mon);
 //   return result;
 // }
 #endif
@@ -247,7 +273,7 @@ M2_arrayint RingElement::multi_degree() const
   R->degree(get_value(), mon);
   M2_arrayint result = R->degree_monoid()->to_arrayint(mon);
 
-  deletearray(mon);
+  freemem(mon);
   return result;
 }
 
@@ -395,6 +421,9 @@ RingElement *RingElement::denominator() const
 RingElement *RingElement::fraction(const Ring *K,
                                    const RingElement *bottom) const
 {
+  if (bottom->is_zero())
+    throw exc::division_by_zero_error();
+      
   if (K == globalQQ)
     return new RingElement(globalQQ,
                            globalQQ->fraction(val, bottom->get_value()));
@@ -426,6 +455,7 @@ bool RingElement::getSmallIntegerCoefficients(
     std::vector<long> &result_coeffs) const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
+  const Ring *K = R->getCoefficientRing();
   if (R == 0 || R->n_vars() != 1)
     {
       throw exc::engine_error(
@@ -443,10 +473,9 @@ bool RingElement::getSmallIntegerCoefficients(
   result_coeffs.resize(deg + 1);
   for (int i = 0; i <= deg; i++) result_coeffs[i] = 0;
   int exp[1];
-  for (Nterm *t = get_value(); t != NULL; t = t->next)
+  for (Nterm& t : get_value())
     {
-      std::pair<bool, long> res =
-          R->getCoefficientRing()->coerceToLongInteger(t->coeff);
+      std::pair<bool, long> res = K->coerceToLongInteger(t.coeff);
       if (not res.first)
         {
           // At this point, the answer is meaningless
@@ -455,7 +484,7 @@ bool RingElement::getSmallIntegerCoefficients(
         }
       long coeff = res.second;
 
-      R->getMonoid()->to_expvector(t->monom, exp);
+      R->getMonoid()->to_expvector(t.monom, exp);
       assert(exp[0] >= 0);
       assert(exp[0] <= deg);
       result_coeffs[exp[0]] = coeff;

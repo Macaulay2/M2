@@ -253,7 +253,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%-- We set AffVariableGroup and HomVariableGroup. If the user does not specify these groups then AffVariableGroup is taken to be the generators of the ring the first element of myPol.
   myAVG:= o.AffVariableGroup;
   myHVG:= o.HomVariableGroup;
---%%-- If the user does not specifiy variable groups then myAVG is set to the generators of the ring of the first polynomial.
+--%%-- If the user does not specify variable groups then myAVG is set to the generators of the ring of the first polynomial.
   if myAVG==={} and myHVG==={}
   then (
     if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
@@ -271,7 +271,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%%%--The first is in BertiniInputConfiguration where we just list the configurations.
   myConfigs:=(o.BertiniInputConfiguration);
   if o.UseRegeneration===1 then myConfigs=myConfigs|{"UseRegeneration"=>1};
---  TODO: Regeneraetion test R=QQ[x]; length(bertiniZeroDimSolve({x^2}))==1;  bertiniZeroDimSolve({x^2},UseRegeneration=>1)=={}
+--  TODO: Regeneration test R=QQ[x]; length(bertiniZeroDimSolve({x^2}))==1;  bertiniZeroDimSolve({x^2},UseRegeneration=>1)=={}
 --  print myConfigs;
 --%%-- We use the makeB'InputFile method to write a Bertini file.
   makeB'InputFile(myTopDir,
@@ -327,10 +327,10 @@ bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false,
 bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
   --W is a witness set
   -- n is the number of points to sample
-  L := {runType=>3,dimen=>dim W, compnum => W.ComponentNumber,numpts => n, WitnessData=>W.WitnessDataFileName};
+  L := {runType=>3,dimen=>dim W, compnum => W.cache.ComponentNumber,numpts => n, WitnessData=>W.cache.WitnessDataFileName};
   o2 := new OptionTable from L;
   o3 := o ++ o2 ;
-  bertiniSolve(flatten entries gens (W.Equations),o3)
+  bertiniSolve(equations W,o3)
   )
 
 
@@ -470,7 +470,7 @@ bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
 bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
     --myPol are your polynomial system that you want to solve.
     --myParams are your parameters.
-    --myParValues are the values the parametres will take.
+    --myParValues are the values the parameters will take.
 --%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini.
 --%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files.
 --%%%%--To change the default directory, set the TopDirectory option to the directory you would like.
@@ -595,7 +595,7 @@ makeBertiniInput = method(TypicalValue=>Nothing,Options=>{
 	dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 makeBertiniInput List := o -> T -> ( -- T=polynomials
     startS1:=apply(o.StartSolutions,
-	p->(if class(p)===Point then coordinates(p) else p));
+	p->(if instance(p,AbstractPoint) then coordinates p else p));
     t:=o.PathVariable;
     gamma:=random(CC);
     params:=o.Parameters;
@@ -705,7 +705,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
       f << endl << "END;" << endl << endl;
       close f;
 
-      --Now we build auxilary files for various sorts of runs:
+      --Now we build auxiliary files for various sorts of runs:
 
       if member(o.runType,{1,6}) then ( -- writing out start file in the case of a param run
 	  f = openOut (dir|"/start"); -- the only name for Bertini's start solutions file
@@ -902,40 +902,39 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     wList := {}; --list of witness sets
     pts:={};
     while solNum > -1 do ( -- -1 in solNum position (top of solution block)
-	     --is key to end of solutions.
-       maxPrec := value(first l);
-      l = drop(l,1);
-      coords = {};
+	--is key to end of solutions.
+       	maxPrec := value(first l);
+      	l = drop(l,1);
+      	coords = {};
     	for j from 1 to numVars do ( -- grab each coordinate
     	    -- use regexp to get the two numbers from the string
     	    coord = select("[0-9.e+-]+", cleanupOutput(first l));
     	    coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});
     	    -- NOTE: we convert to a 53 bit floating point complex type
     	    -- beware that we might be losing data here!!!
-                l = drop(l,1);
-    	 );
+	    l = drop(l,1);
+	    );
         -- now we dehomogenize, assuming the first variable is the hom coord:
     	dehomCoords = {};
     	if o.IsProjective==-1
-      then for j from 1 to numVars-1 do (
-    	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
-                  )
-      else for j from 0 to numVars-1 do (
-    	      dehomCoords = join(dehomCoords, {coords#j });
-                  );
-     	pt = new Point;
-            pt.MaximumPrecision=maxPrec;
-    	pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
-            pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
-            pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
-            pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
-            pt.CycleNumber = value(first l); l=drop(l,1);
-            if(value(first l)=!=1) then pt.SolutionStatus=FailedPath else pt.SolutionStatus=null;
-    	l = drop(l,1);
-      pt.SolutionNumber = value(first l);
-      solNum = pt.SolutionNumber;
-      l = drop(l,1);
-      pt.Coordinates = dehomCoords; --we want to output these
+      	then for j from 1 to numVars-1 do (
+	    dehomCoords = join(dehomCoords, {coords#j / coords#0});
+	    )	       	
+	else for j from 0 to numVars-1 do (
+	    dehomCoords = join(dehomCoords, {coords#j });
+	    );
+      	pt = point {dehomCoords}; --we want to output these
+      	pt.cache.MaximumPrecision=maxPrec;
+      	pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
+      	pt.cache.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
+      	pt.cache.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
+      	pt.cache.LastT = value(cleanupOutput(first l)); l=drop(l,3);
+      	pt.cache.CycleNumber = value(first l); l=drop(l,1);
+      	if(value(first l)=!=1) then pt.cache.SolutionStatus=FailedPath else pt.cache.SolutionStatus=null;
+      	l = drop(l,1);
+      	pt.cache.SolutionNumber = value(first l);
+      	solNum = pt.cache.SolutionNumber;
+      	l = drop(l,1);
     	pts = join(pts,{pt});
     	);
       pts = solutionsWithMultiplicity(pts, Tolerance=>o.MultiplicityTol);
@@ -945,10 +944,10 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
       checkMultiplicity(pts);
       checkConditionNumber(pts, 1e10);--TODO: 1e10 specifies a condition number tolerance that should be an option.
       for i in pts do (
-        if (i.SolutionStatus=!=Singular
-          and i.SolutionStatus=!=FailedPath
-      	  and i.SolutionStatus=!=RefinementFailure)
-        then i.SolutionStatus=Regular);
+        if (i.cache.SolutionStatus=!=Singular
+          and i.cache.SolutionStatus=!=FailedPath
+      	  and i.cache.SolutionStatus=!=RefinementFailure)
+        then i.cache.SolutionStatus=Regular);
     	return pts
     	   )
   else if (o.runType == 1 or o.runType==6 or o.runType==5) then (
@@ -983,30 +982,29 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     	    -- use regexp to get the two numbers from the string
     	    coord = select("[0-9.e+-]+", cleanupOutput(first l));
     	    if (o.runType==1 or o.runType==6)
-          then (
-    		      coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))
-    	        -- NOTE: we convert to a 53 bit floating point complex type
-    		      -- beware that we might be losing data here!!!
+            then (
+		coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))
+	    -- NOTE: we convert to a 53 bit floating point complex type
+	    -- beware that we might be losing data here!!!
     	    else (coords = join(coords,
-    			     {toCC(bitPrec, prec'value(bitPrec,coord#0), prec'value(bitPrec,coord#1))}
-    		        ));
-          l = drop(l,1);
-    	    );
-    	pt = new Point;
-      pt.MaximumPrecision=maxPrec;
-    	pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
-            pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
-            pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
-            pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
-            pt.CycleNumber = value(first l); l=drop(l,1);
+		    {toCC(bitPrec, prec'value(bitPrec,coord#0), prec'value(bitPrec,coord#1))}
+		    ));
+            l = drop(l,1);
+    	    );	  
+    	pt = point{coords}; --we want to output these
+      	pt.cache.MaximumPrecision=maxPrec;
+    	pt.cache.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
+	pt.cache.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
+	pt.cache.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
+	pt.cache.LastT = value(cleanupOutput(first l)); l=drop(l,3);
+	pt.cache.CycleNumber = value(first l); l=drop(l,1);
     	if(value(first l)=!=1) and o.runType==5
-      then pt.SolutionStatus=RefinementFailure else pt.SolutionStatus=null;
-    	if(value(first l)=!=1) and o.runType=!=5 then  pt.SolutionStatus=FailedPath;
+      	then pt.cache.SolutionStatus=RefinementFailure else pt.cache.SolutionStatus=null;
+    	if(value(first l)=!=1) and o.runType=!=5 then  pt.cache.SolutionStatus=FailedPath;
     	l=drop(l,1);
-      pt.SolutionNumber = value(first l);
-     	solNum=pt.SolutionNumber;
-      l = drop(l,1);
-      pt.Coordinates = coords; --we want to output these
+      	pt.cache.SolutionNumber = value(first l);
+     	solNum=pt.cache.SolutionNumber;
+      	l = drop(l,1);
     	pts=join(pts,{pt})
       );
     pts=solutionsWithMultiplicity(pts, Tolerance => o.MultiplicityTol);
@@ -1016,10 +1014,10 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     checkMultiplicity(pts);
     checkConditionNumber(pts, 1e10);--TODO: 1e10 specifies a condition number tolerance that should be an option.
     for i in pts do (
-      if (i.SolutionStatus=!=Singular
-        and i.SolutionStatus=!=FailedPath
-        and i.SolutionStatus=!=RefinementFailure)
-      then i.SolutionStatus=Regular);
+      if (i.cache.SolutionStatus=!=Singular
+        and i.cache.SolutionStatus=!=FailedPath
+        and i.cache.SolutionStatus=!=RefinementFailure)
+      then i.cache.SolutionStatus=Regular);
     return pts ) else
   --if PosDim, we read in the output from witness_data
    if (o.runType == 2) then (
@@ -1085,8 +1083,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
             ptMult = value(first l); l=drop(l,1);
             compNum = value(first l); l=drop(l,1);
             numDeflations = value(first l); l=drop(l,1);
-            pt = new Point;
-            pt.Coordinates = dehomCoords;
+            pt = point {dehomCoords};
             pts = join(pts,{pt});
             compNums = join(compNums,{compNum});
             if (compNum > maxCompNum) then maxCompNum=compNum;
@@ -1102,14 +1099,13 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
   	    N = map(CC^0,CC^numVars,0); -- this is a dummy, will grab slice data later
   	    ws = if o.IsProjective===1 then ( 
 		W := projectiveWitnessSet(ideal F, N -* fake affine chart *-, N, ptsInWS); 
-		W.AffineChart = null; -- !!! this is a hack
 		W
 		) else witnessSet(ideal F, N, ptsInWS);
-	    ws.IsIrreducible = true;
+	    ws.cache.IsIrreducible = true;
 	    --turn these points into a witness set
 	    -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
-            ws.ComponentNumber=j;
-	    ws.WitnessDataFileName=dir|"/witness_data";
+            ws.cache.ComponentNumber=j;
+	    ws.cache.WitnessDataFileName=dir|"/witness_data";
 	    wList = join(wList, {ws}); --add witness set to list
 	    listOfCodims = join(listOfCodims, {codimen});
 	    );
@@ -1124,7 +1120,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     --number of random numbers we want to skip next
     l = drop(l,numRands+1);   -- includes blank line after rands
     -- next we have the same number of integers
-    --(degrees needed ot keep homogenization right)
+    --(degrees needed to keep homogenization right)
     l = drop(l,numRands);
     -- next we have an integer and a list of row vectors
     --(the number of which is the initial integer).  Again related to
@@ -1166,7 +1162,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     -- a subsequent codim 2 set would have a
     -- 1x4 matrix of slice data consists of the second (not first)
     -- line of the codim 1 slice data.
-    for codimNum from 0 to length listOfCodims - 1 do (
+    wList = for codimNum from 0 to length listOfCodims - 1 list (
 	--We store the cols of M needed for this particular codimNum in coeffList,
 	--then turn it into a matrix and store it the witness set.
 	colsToSkip = listOfCodims#codimNum - listOfCodims#0;
@@ -1175,9 +1171,12 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	-- rearrange columns so slice from NAGtypes
 	--returns the correct linear functional
 	firstCol:=N_{0};
-	N=(submatrix'(N, ,{0})|firstCol);
-	(wList#codimNum).Slice = N;
-        );
+	N=submatrix'(N, ,{0})|firstCol;
+	W := wList#codimNum;
+	W' := witnessSet(W.Equations, N, W.Points);
+        for k in keys W.cache do W'.cache#k = W.cache#k;
+	W' 
+	);
     nv = numericalVariety wList;
     nv.WitnessDataFileName=dir|"/witness_data";
     nv.Equations=F;
@@ -1216,8 +1215,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
               l = drop(l,1);
 	      );
 
-            pt = new Point;
-            pt.Coordinates = coords; --we want to output these
+            pt = point{coords}; --we want to output these
 	    pts=join(pts,{pt})
             );
 
@@ -1256,7 +1254,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	    --grabs witness sets in this component
            possWitSets := NV#(numVars-coDims_j_0);
 	   --select witness sets with positive result
-	   witSets := select(possWitSets, k->member(k.ComponentNumber, compNums));
+	   witSets := select(possWitSets, k->member(k.cache.ComponentNumber, compNums));
     	   witSets'forOnePoint = witSets'forOnePoint | witSets;
 	   testVector=drop(testVector, coDims_j_1);
 	   );
@@ -1356,11 +1354,9 @@ parseWitnessDataFile (MutableHashTable,String,String) := (PWD,dir,name) -> (
     	    print"numPoints#ic loop";
 --
             scan(numPoints#ic,
-		ptNum->(
-            	    pt := new Point;
-	    	    maxPrec := value(first l);
+		ptNum->( -- !!! none of the tests/examples seem to reach this part !!! 
+		    maxPrec := value(first l);
             	    l = drop(l,1);
-	    	    pt#"MaxPrecisionBits"=maxPrec;
             	    coords := new MutableList from for i to numVars-1 list null;
     	    	    print"numVars loop";
             	    scan(numVars,
@@ -1373,26 +1369,29 @@ parseWitnessDataFile (MutableHashTable,String,String) := (PWD,dir,name) -> (
               		    )
 			);
     	    	    --If we have an affine variety, we homogenize by the first coordinate. 
-    	    	    pt#"ProjectiveCoordinates"=coords;
             	    l = drop(l,numVars+1);  -- don't need second copy of point or extra copy of maxPrec
-	    	    if PWD.IsProjective===1 
-		    then pt.Coordinates = toList coords 
-            	    -- If we have an affine variety we dehomogenize, assuming the first variable is the hom coord:
-	    	    else pt.Coordinates =(1/coords#0)*toList drop(coords,1);    	    
+	    	    pt := point (
+			if PWD.IsProjective===1 
+		    	then toList coords 
+            	    	-- If we have an affine variety we dehomogenize, assuming the first variable is the hom coord:
+	    	    	else (1/coords#0)*toList drop(coords,1)
+			);    	    
+    	    	    pt.cache#"ProjectiveCoordinates"=coords;
+	    	    pt.cache#"MaxPrecisionBits"=maxPrec;
 	    	    condNum := value(cleanupOutput(first l)); 
-	    	    pt#"ConditionNumber"=condNum;
+	    	    pt.cache#"ConditionNumber"=condNum;
 	    	    l=drop(l,4);
     	    	    --What is type?
             	    ptType := value(first l); l=drop(l,1);
-	    	    pt#"PointType"=ptType;
+	    	    pt.cache#"PointType"=ptType;
             	    ptMult := value(first l); l=drop(l,1);
-            	    pt#"Multiplicity"=ptMult;
+            	    pt.cache#"Multiplicity"=ptMult;
     	    	    compNum := value(first l); l=drop(l,1);
-	    	    pt#"ComponentNumber"=compNum;
+	    	    pt.cache#"ComponentNumber"=compNum;
             	    numDeflations := value(first l); l=drop(l,1);
-    	    	    pt#"NumDeflations"=numDeflations;
+    	    	    pt.cache#"NumDeflations"=numDeflations;
     	    	    --Append pt to pts
-    	    	    print pt.Coordinates;
+    	    	    print coordinates pt;
             	    pts#ptNum = pt;
     	    	    print (componentIndex#ic);
             	    if not member(compNum,componentIndex#ic)
@@ -1483,17 +1482,17 @@ cleanupOutput String := s -> (
 
 checkConditionNumber=(listOfPoints, tolerance)->(
     for i in listOfPoints do (
-      if i.ConditionNumber>tolerance
-	  and i.SolutionStatus=!=FailedPath
-          and i.SolutionStatus=!=RefinementFailure
-          then i.SolutionStatus=Singular)
+      if i.cache.ConditionNumber>tolerance
+	  and i.cache.SolutionStatus=!=FailedPath
+          and i.cache.SolutionStatus=!=RefinementFailure
+          then i.cache.SolutionStatus=Singular)
       )
 
 checkMultiplicity=(listOfPoints)->(
     for i in listOfPoints do
-      if i.Multiplicity>1 and i.SolutionStatus=!=FailedPath
-        and i.SolutionStatus=!=RefinementFailure
-        then i.SolutionStatus=Singular)
+      if i.cache.Multiplicity>1 and i.cache.SolutionStatus=!=FailedPath
+        and i.cache.SolutionStatus=!=RefinementFailure
+        then i.cache.SolutionStatus=Singular)
 
 ---- November 2014 additions
 --FUNCTION 1: makeB'InputFile
@@ -1540,7 +1539,7 @@ makeB'InputFile(String) := o ->(IFD)->(
      else filesGoHere=IFD;
      openedInputFile:= openOut(filesGoHere|o.NameB'InputFile);
      openedInputFile <<  endl  << "% This input file was written with the Bertini.m2 Macaulay2 package." << endl<<endl;
---The first part of a Bertini input file is the configurations.  We write the configuratiosn followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file.
+--The first part of a Bertini input file is the configurations.  We write the configurations followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file.
      openedInputFile << "CONFIG" << endl << endl;
      for oneConfig in o.BertiniInputConfiguration do (
        if class oneConfig===Option
@@ -1728,9 +1727,9 @@ makeSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(
     then error"SpecifyComponent option must be set to a point or a list {dimension,component number}.";
     if  class o.SpecifyComponent===List     then (
       theDim:=(o.SpecifyComponent)_0;
-      theComponent:=(o.SpecifyComponent)_1) else if class o.SpecifyComponent===Point then(
-      theDim=(o.SpecifyComponent)#Dimension;
-      theComponent=(o.SpecifyComponent)#ComponentNumber);
+      theComponent:=(o.SpecifyComponent)_1) else if instance(o.SpecifyComponent,AbstractPoint) then(
+      theDim=(o.SpecifyComponent).cache.Dimension;
+      theComponent=(o.SpecifyComponent).cache.ComponentNumber);
     if theNumberOfPoints<1 then error" The number of sample points should be positive. ";
     if not fileExists(filesGoHere|"witness_data") then error"witness_data file does not exist. ";
     s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 2; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
@@ -1867,52 +1866,51 @@ importMainDataFile(String) := o->(aString)->(
     theListOfPoints:={};
     while #select("Solution",allInfo_0)=!=0 do(
       if o.Verbose then print "win";
-      aNewPoint:=new Point;
-      --Sol. Number and path number
-      theLine0:=separate(" ",allInfo_0);
-      aNewPoint.SolutionNumber=value (theLine0_1);
-      if o.Verbose then print theLine0;
-      aNewPoint.PathNumber=value replace("\\)","",(theLine0_4));
-      --Estimated condition number
-      theLine1:=separate(":",allInfo_1);
-      aNewPoint.ConditionNumber=valueBM2(theLine1_1);
-      --FunctionResidual
-      theLine2:=separate(":",allInfo_2);
-      aNewPoint.FunctionResidual=valueBM2(theLine2_1);
-      --NewtonResidual
-      theLine3:=separate(":",allInfo_3);
-      aNewPoint.NewtonResidual=valueBM2(theLine3_1);
-      --FinalTvalue
-      theLine4:=separate(":",allInfo_4);
-      aNewPoint.FinalTValue=valueBM2(theLine4_1);
-      --MaxPrecisionUtilized
-      theLine5:=separate(":",allInfo_5);
-      aNewPoint.MaxPrecisionUtilized=valueBM2(theLine5_1);
-      --PrecisionIncreased
-      theLine6:=separate(":",allInfo_6);
-      aNewPoint.PrecisionIncreased=valueBM2(theLine6_1);
-      --Accuracy Estimate1
-      theLine7:=separate(":",allInfo_7);
-      aNewPoint.AccuracyEstInternal=valueBM2(theLine7_1);
-      --Accuracy Estimate2
-      theLine8:=separate(":",allInfo_8);
-      if theLine8_1===replace("infinity","",theLine8_1)
-      then aNewPoint.AccuracyEst=valueBM2(theLine8_1)
-      else aNewPoint.AccuracyEst= infinity;
-      --CycleNumber
-      theLine9:=separate(":",allInfo_9);
-      aNewPoint.CycleNumber=valueBM2(theLine9_1);
-      --coordinaes
+      --coordinates
       theCoords:={};
       for i to theNumberOfVariables-1 do(
 	  theCoords=append(theCoords,valueBM2(allInfo_(i+10),M2Precision=>o.M2Precision) ) );
-      aNewPoint.Coordinates=theCoords;
+      aNewPoint:=point{theCoords};
+      --Sol. Number and path number
+      theLine0:=separate(" ",allInfo_0);
+      aNewPoint.cache.SolutionNumber=value (theLine0_1);
+      if o.Verbose then print theLine0;
+      aNewPoint.cache.PathNumber=value replace("\\)","",(theLine0_4));
+      --Estimated condition number
+      theLine1:=separate(":",allInfo_1);
+      aNewPoint.cache.ConditionNumber=valueBM2(theLine1_1);
+      --FunctionResidual
+      theLine2:=separate(":",allInfo_2);
+      aNewPoint.cache.FunctionResidual=valueBM2(theLine2_1);
+      --NewtonResidual
+      theLine3:=separate(":",allInfo_3);
+      aNewPoint.cache.NewtonResidual=valueBM2(theLine3_1);
+      --FinalTvalue
+      theLine4:=separate(":",allInfo_4);
+      aNewPoint.cache.FinalTValue=valueBM2(theLine4_1);
+      --MaxPrecisionUtilized
+      theLine5:=separate(":",allInfo_5);
+      aNewPoint.cache.MaxPrecisionUtilized=valueBM2(theLine5_1);
+      --PrecisionIncreased
+      theLine6:=separate(":",allInfo_6);
+      aNewPoint.cache.PrecisionIncreased=valueBM2(theLine6_1);
+      --Accuracy Estimate1
+      theLine7:=separate(":",allInfo_7);
+      aNewPoint.cache.AccuracyEstInternal=valueBM2(theLine7_1);
+      --Accuracy Estimate2
+      theLine8:=separate(":",allInfo_8);
+      if theLine8_1===replace("infinity","",theLine8_1)
+      then aNewPoint.cache.AccuracyEst=valueBM2(theLine8_1)
+      else aNewPoint.cache.AccuracyEst= infinity;
+      --CycleNumber
+      theLine9:=separate(":",allInfo_9);
+      aNewPoint.cache.CycleNumber=valueBM2(theLine9_1);
       --paths with same endpoint
       theLineX:=separate(":",allInfo_(10+theNumberOfVariables));
-      aNewPoint.PathsWithSameEndpoint=drop(drop(separate("  ",theLineX_1),1),-1);--Why the double space? --Do we want all paths or other paths????
+      aNewPoint.cache.PathsWithSameEndpoint=drop(drop(separate("  ",theLineX_1),1),-1);--Why the double space? --Do we want all paths or other paths????
       --multiplicity
       theLineY:=separate(":",allInfo_(10+theNumberOfVariables+1));
-      aNewPoint.Multiplicity=value(theLineY_1);
+      aNewPoint.cache.Multiplicity=value(theLineY_1);
       theListOfPoints=append(theListOfPoints,aNewPoint);
       if o.Verbose then   print linesPerSolutions;
       allInfo=drop(allInfo,linesPerSolutions);
@@ -1961,25 +1959,24 @@ importMainDataFile(String) := o->(aString)->(
       then (
 	if dimFlag
 	then (
-	aNewPoint=new Point;
-	aNewPoint.Dimension=theDim;
-	aNewPoint.SolutionType=theSolutionType;
-	aNewPoint.PathNumber=value ((separate(":",allInfo_1))_1);
---
-	if solUnclassified===0
-	then  aNewPoint.ComponentNumber=value ((separate(":",allInfo_2))_1)
-        else aNewPoint.ComponentNumber=-1;
-	aNewPoint.ConditionNumber=valueBM2((separate(":",allInfo_(3-solUnclassified)))_1);
-      	theCoords={};
-      	for i to theNumberOfVariables-1 do(
-	  theCoords=append(theCoords,valueBM2(allInfo_(i+4-solUnclassified)) ) );
-        aNewPoint.Coordinates=theCoords;
-      --multiplicity
-        aNewPoint.Multiplicity=value( (separate(":",allInfo_(4+theNumberOfVariables-solUnclassified)))_1);
-        aNewPoint.DeflationsNeeded=value( (separate(":",allInfo_(4+theNumberOfVariables+1-solUnclassified)))_1);
-      	theListOfPoints=append(theListOfPoints,aNewPoint);
-      	--print linesPerSolutions;
-      	allInfo=drop(allInfo,linesPerSolutions-solUnclassified))
+	    theCoords={};
+      	    for i to theNumberOfVariables-1 do(
+	  	theCoords=append(theCoords,valueBM2(allInfo_(i+4-solUnclassified)) ) );
+            aNewPoint = point{theCoords};
+	    aNewPoint.cache.Dimension=theDim;
+	    aNewPoint.cache.SolutionType=theSolutionType;
+	    aNewPoint.cache.PathNumber=value ((separate(":",allInfo_1))_1);
+	    --
+	    if solUnclassified===0
+	    then  aNewPoint.cache.ComponentNumber=value ((separate(":",allInfo_2))_1)
+            else aNewPoint.cache.ComponentNumber=-1;
+	    aNewPoint.cache.ConditionNumber=valueBM2((separate(":",allInfo_(3-solUnclassified)))_1);
+      	    --multiplicity
+            aNewPoint.cache.Multiplicity=value( (separate(":",allInfo_(4+theNumberOfVariables-solUnclassified)))_1);
+            aNewPoint.cache.DeflationsNeeded=value( (separate(":",allInfo_(4+theNumberOfVariables+1-solUnclassified)))_1);
+      	    theListOfPoints=append(theListOfPoints,aNewPoint);
+      	    --print linesPerSolutions;
+      	    allInfo=drop(allInfo,linesPerSolutions-solUnclassified))
         else (allInfo=drop(allInfo,linesPerSolutions); print "1"	))
       else allInfo=drop(allInfo,1));
     return theListOfPoints
@@ -2109,7 +2106,7 @@ writeStartFile = method(TypicalValue=>Nothing,Options=>{
     	StorageFolder=>null
 	})
 writeStartFile(String,List) := o ->(IFD,listOfListCoords) ->(
-     if class first listOfListCoords ===Point then listOfListCoords=listOfListCoords/coordinates;
+     if instance(first listOfListCoords,AbstractPoint) then listOfListCoords=listOfListCoords/coordinates;
      IFD=addSlash(IFD);
      if o.StorageFolder=!=null
      then (
@@ -2382,8 +2379,8 @@ sortMainDataComponents(List) := o ->(importedMD)->(
       firstPoint:=importedMD_0;
       oneComponent:={};
       for onePoint in importedMD do(
-	if (firstPoint#Dimension)==(onePoint#Dimension) and
-	(firstPoint#ComponentNumber==onePoint#ComponentNumber) then (
+	if (firstPoint.cache.Dimension)==(onePoint.cache.Dimension) and
+	(firstPoint.cache.ComponentNumber==onePoint.cache.ComponentNumber) then (
 	  oneComponent=append(oneComponent,onePoint);
           importedMD=delete(onePoint,importedMD)));
       organizedData=append(organizedData,oneComponent));
@@ -2399,9 +2396,9 @@ subPoint = method(TypicalValue=>List,Options=>{
 subPoint(Thing,List,Thing) := o ->(polyOrMatrix,listVars,aPoint)->(
     if o.SubIntoCC===true and o.SpecifyVariables=!=false then (
       if #o.SpecifyVariables=!=listVars then print"Warning: SubIntoCC may set unassigned variables to be zero." );
-    if class aPoint===Point then coords:=aPoint#Coordinates else
-    if class aPoint===Matrix then coords=flatten entries aPoint else
-    if class aPoint===List then coords=aPoint else print "class of "|toString aPoint|" is not recognized.";
+    if instance(aPoint, AbstractPoint) then coords:=coordinates aPoint else
+    if instance(aPoint, Matrix) then coords=flatten entries aPoint else
+    if instance(aPoint, List) then coords=aPoint else print "class of "|toString aPoint|" is not recognized.";
     if false=== o.SpecifyVariables then selectedVars:=listVars else selectedVars=o.SpecifyVariables;
     afterSub:=sub(polyOrMatrix,flatten for i to #listVars-1 list
       if member(listVars_i,selectedVars) then listVars_i=>coords_i else {}
@@ -2554,7 +2551,7 @@ doc ///
       @HREF"http://bertini.nd.edu/"@. {\tt Bertini} is under ongoing development by
       D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
-      The user may place the executable program {\tt bertini} in the executation path.
+      The user may place the executable program {\tt bertini} in the execution path.
       Alternatively, the path to the executable needs to be specified, for instance,
     Example
       needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
@@ -2979,7 +2976,7 @@ doc ///
     Text
       This function writes a Bertini input file.
       The user can specify CONFIGS for the file using the BertiniInputConfiguration option.
-      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogenous variable group) option.
+      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogeneous variable group) option.
       The user should specify the polynomial system they want to solve with the  B'Polynomials option or B'Functions option.
       If B'Polynomials is not used then the user should use the  NamePolynomials option.
     Example
@@ -3144,7 +3141,7 @@ doc ///
      After running makeMembershipFile Bertini produces an incidence_matrix file.
      The incidence_matrix says which points belong to which components.
      Our incidence matrix is flattened to a list.
-     The number of elemenets in theIM is equal to the number of points in the solutions file.
+     The number of elements in theIM is equal to the number of points in the solutions file.
      Each element of theIM is a list of sequences of 2 elements (codim,component Number).
      Note that we follow the Bertini convention and switch from (dimension,component number) indexing to (codimension,component number) indexing.
    Text

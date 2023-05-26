@@ -82,3 +82,22 @@ document {
      },
      SeeAlso => {numerator, denominator, liftable, lift}
      }
+
+doc ///
+Node
+  Key
+    fraction
+   (fraction, RingElement, RingElement)
+  Usage
+    fraction(f, g)
+  Inputs
+  Outputs
+    :RingElement
+      the fraction @TT "f/g"@
+  Description
+    Text
+      The output will be in the fraction field of the ring containing @TT "f"@ and @TT "g"@,
+      without reducing it to lowest terms.
+  SeeAlso
+    frac
+///

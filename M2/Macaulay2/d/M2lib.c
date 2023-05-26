@@ -80,20 +80,6 @@ int system_hasException(int fd) {
   return ret;
 }
 
-#include "../e/rand.h"
-
-int system_randomint(void) {
-#if 0
-     extern long random();
-     return random();
-#elif 0
-     extern long random00();
-     return random00();
-#else
-     return rawRandomInt((int32_t)~0>>1);
-#endif
-     }
-
 extern void M2_stack_trace();
 
 extern void fatal(const char *s, ...);
@@ -117,9 +103,9 @@ static char *M2_completion_generator(const char *text, int state) {
     if (v != NULL) free(v);
     s = M2_tostring(text);
     ret = expr_completions(s);
-    GC_FREE(s);
+    freemem(s);
     v = M2_tocharstarstarmalloc(ret); /* readline will use free() to free these strings */
-    GC_FREE(ret);
+    freemem(ret);
   }
   p = v[i];
   if (p != NULL) i++;
@@ -177,8 +163,8 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   char *p = M2_tocharstar(prompt);
   int r;
   if (offset < 0 || (int)buffer->len - offset < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
-  r = read_via_readline(buffer->array + offset,len,p);
-  GC_FREE(p);
+  r = read_via_readline((char *)buffer->array + offset,len,p);
+  freemem(p);
   return r;
 }
 

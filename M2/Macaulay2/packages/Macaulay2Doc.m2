@@ -11,7 +11,8 @@ newPackage ("Macaulay2Doc",
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
-     Keywords => {"Miscellaneous"},
+     Keywords => {"Documentation"},
+     PackageExports => Core#"pre-installed packages",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
@@ -22,7 +23,10 @@ scan(pairs Core#"raw documentation", (k,v) -> (
 
 beginDocumentation()
 
+-- a local way to use private global symbols from Core
+core = nm -> value Core#"private dictionary"#nm
 load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
+erase symbol core
 
 if keys Macaulay2Doc#"private dictionary" =!= {} 
 then error splice (

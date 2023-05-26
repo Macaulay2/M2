@@ -1,12 +1,30 @@
 ###############################################################################
 ## This directory contains the rules for building M2-engine and M2-unit-tests
-## - run unit tests:  ctest -R unit-tests
+## memtailor, mathic, and mathicgb are also imported as subdirectories here
+## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
+
+set(with_tbb ${WITH_TBB}) # for mathicgb
+
+add_subdirectory(memtailor)
+add_subdirectory(mathic)
+add_subdirectory(mathicgb)
+
+target_compile_options(mathicgb PRIVATE
+  -Wall -Wextra -Wno-unused-parameter -Wno-unused-value -Wno-unused-variable -Wno-sign-compare
+  -Wno-deprecated-declarations
+  )
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
+  add_compile_definitions(MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+endif()
+
+###############################################################################
+## M2-engine sources
 
 # TODO: determine the fate of these files
 set(UNDETERMINED
   dmat-ffpack.cpp
   franzi-brp-test.cpp
-  gb-trace.hpp
   overflow-test.cpp
   test.dd
   aring-wrap # both cpp and hpp
@@ -15,11 +33,11 @@ set(UNDETERMINED
 
 # c files
 # TODO: convert to cpp or simplify if not needed
+# MES TODO:   monordering.c removed this, is that correct?
 set(CFILES
   complex.c
   error.c
   exptable.c
-  monordering.c
   table.c
   )
 # h files
@@ -27,10 +45,7 @@ set(HFILES
   complex.h
   error.h
   exptable.h
-  monordering.h
-  rand.h
   table.h
-  gmp-util.h
   engine.h
   defgroups.h
   mpreal.h
@@ -38,7 +53,9 @@ set(HFILES
 
 # these files are include only.
 set(HPPONLYFILES
-  newdelete.hpp
+  MemoryBlock.hpp
+  NCAlgebras/Range.hpp
+  VectorArithmetic.hpp
   timing.hpp
   SLP-defs.hpp
   SLP-imp.hpp
@@ -62,7 +79,6 @@ set(HPPONLYFILES
   geopoly.hpp
   geovec.hpp
   hash.hpp
-  index.hpp
   mat-arith.hpp
   mat-elem-ops.hpp
   mat-linalg.hpp
@@ -71,24 +87,24 @@ set(HPPONLYFILES
   mutablemat-imp.hpp
   mutablemat.hpp
   newdelete.hpp
-  queue.hpp
+  ExponentVector.hpp
   res-a0-pair.hpp
-  ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
-  stdinc-m2.hpp
-  stop.hpp
+  util.hpp
   style.hpp
-  f4/moninfo2.hpp
-  f4/res-memblock.hpp
-  f4/res-monomial-types.hpp
-  f4/res-schreyer-order.hpp
+  f4/f4-types.hpp
+  f4/memblock.hpp
+  f4/ntuple-monomial.hpp
+  f4/varpower-monomial.hpp
+  schreyer-resolution/res-memblock.hpp
+  schreyer-resolution/res-monomial-types.hpp
+  schreyer-resolution/res-schreyer-order.hpp
   )
 
 # these files have .cpp file, but NOT .hpp file
 set(CPPONLYFILES
-  engine.cpp
-  flint.cpp
+  engine.cpp # TODO: find a new home for the contents
   franzi-gb.cpp
   franzi-interface.cpp
   matrix-kbasis.cpp
@@ -96,38 +112,76 @@ set(CPPONLYFILES
   matrix-symm.cpp
   ntl-debugio.cpp
   ntl-internal.cpp
-  rand.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-  x-aring.cpp
-  x-factor.cpp
-  x-factor.hpp
-  x-free.cpp
-  x-gb.cpp
-  x-mat.cpp
-  x-monideal.cpp
-  x-monoid.cpp
-  x-mutablemat.cpp
-  x-relem.cpp
-  x-ringmap.cpp
+  interface/aring.cpp
+  interface/aring.h
+  interface/computation.h # no .cpp yet
+  interface/cra.cpp
+  interface/cra.h
+  interface/factory.cpp
+  interface/factory.h
+  interface/flint.cpp
+  interface/flint.h
+  interface/freemodule.cpp # TODO: .h
+  interface/gmp-util.h # only has inline definitions
+  interface/groebner.cpp
+  interface/groebner.h
+  interface/matrix.cpp
+  interface/matrix.h
+  interface/monoid.cpp
+  interface/monoid.h
+  interface/monomial-ideal.cpp
+  interface/monomial-ideal.h
+  interface/monomial-ordering.cpp
+  interface/monomial-ordering.h
+  interface/mutable-matrix.cpp
+  interface/mutable-matrix.h
+  interface/polyroots.cpp # the declarations are in factory.h
+  interface/random.cpp
+  interface/random.h
+  interface/ring.cpp
+  interface/ring.h
+  interface/ringelement.cpp
+  interface/ringelement.h
+  interface/ringmap.cpp
+  interface/ringmap.h
   )
 
 # these files all have .hpp and .cpp files
+# MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+  myalloc
+  matrix-ncbasis
+  M2FreeAlgebraQuotient
+  M2FreeAlgebra
+  NCAlgebras/Word
+  NCAlgebras/NCReduction
+  NCAlgebras/FreeAlgebraQuotient
+  NCAlgebras/FreeAlgebra
+  NCAlgebras/FreeMonoid
+  NCAlgebras/WordTable
+  NCAlgebras/SuffixTree
+  NCAlgebras/NCGroebner
+  NCAlgebras/NCF4
+  NCAlgebras/OverlapTable
+  NCResolutions/nc-res-computation
+  Polynomial
+  monomial-collection
   Eschreyer
   GF
   LLL
-  NAG
+  NAG # TODO: move raw* functions to e/interface
   SLP
   ZZ
   ZZp
+  aring-RRi
   aring-CC
   aring-CCC
   aring-RR
   aring-RRR
   aring-gf-flint-big
   aring-gf-flint
-  aring-gf-givaro
   aring-m2-gf
   aring-qq-flint
   aring-qq-gmp
@@ -164,7 +218,6 @@ set(SRCLIST
   gb-default
   gb-homog2
   gb-sugarless
-  gb-test1
   gb-toric
   gb-walk
   gbring
@@ -173,7 +226,6 @@ set(SRCLIST
   hilb
   imonorder
   int-bag
-  intarray
   interreduce
   interrupted
   lapack
@@ -189,17 +241,16 @@ set(SRCLIST
   monoid
   monomial-sets
   monomial
+  monsort
   montable
   montableZZ
   mutablecomplex
   ntl-interface
-  ntuple
   overflow
   pfaff
   poly
   polyquotient
   polyring
-  polyroots
   qring
   reader
   reducedgb-ZZ
@@ -214,6 +265,7 @@ set(SRCLIST
   res-a1
   res-a2
   ring
+  ringelem
   ringmap
   sagbi
   schorder
@@ -225,9 +277,8 @@ set(SRCLIST
   solvable
   spair
   text-io
-  tower
-  util
-  varpower
+  tower # TODO: move rawTowerTranslatePoly to e/interface
+  ExponentList
   weylalg
   # Faugère's F4 Algorithm
   f4/f4-computation
@@ -235,32 +286,26 @@ set(SRCLIST
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
-  f4/f4-syz
-  f4/f4-types
   f4/f4
   f4/gausser
   f4/hilb-fcn
-  f4/memblock
   f4/monhashtable
   f4/moninfo
-  f4/monsort
-  f4/ntuple-monomial
-  f4/res-f4-computation
-  f4/res-f4-m2-interface
-  f4/res-f4-monlookup
-  f4/res-f4
-  f4/res-gausser-QQ-hybrid
-  f4/res-gausser-QQ
-  f4/res-gausser-ZZp
-  f4/res-gausser
-  f4/res-moninfo-dense
-  f4/res-moninfo-sparse
-  f4/res-moninfo
-  f4/res-monomial-sorter
-  f4/res-poly-ring
-  f4/res-schreyer-frame
-  f4/res-varpower-monomial
-  f4/varpower-monomial
+  # Schreyer resolution a la Linear algebra (F4 Faugere style)
+  schreyer-resolution/res-f4-computation
+  schreyer-resolution/res-f4-m2-interface
+  schreyer-resolution/res-f4-monlookup
+  schreyer-resolution/res-f4
+  schreyer-resolution/res-gausser-QQ-hybrid
+  schreyer-resolution/res-gausser-QQ
+  schreyer-resolution/res-gausser-ZZp
+  schreyer-resolution/res-gausser
+  schreyer-resolution/res-moninfo-dense
+  schreyer-resolution/res-moninfo-sparse
+  schreyer-resolution/res-moninfo
+  schreyer-resolution/res-monomial-sorter
+  schreyer-resolution/res-poly-ring
+  schreyer-resolution/res-schreyer-frame
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -308,7 +353,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC M2-interpreter)
+target_link_libraries(M2-engine PUBLIC M2-interpreter memtailor mathic mathicgb)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -331,9 +376,9 @@ target_compile_options(M2-engine PRIVATE
   >
 
   $<$<COMPILE_LANG_AND_ID:CXX,GNU>:
-  -Wno-deprecated-copy -Wno-unknown-pragmas # caused by Givaro and fflas_ffpack
+  -Wno-deprecated-copy #-Wno-unknown-pragmas # caused by Givaro and fflas_ffpack
   -Wno-ignored-qualifiers # FIXME: caused by bibasis/tset.hpp:44:9
-  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-test1.cpp, gb-walk.cpp, hermite.cpp, etc.
+  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-walk.cpp, hermite.cpp, etc.
   >
 
   # Intel TODO: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
@@ -343,7 +388,7 @@ target_compile_options(M2-engine PRIVATE
 ## Export the target
 
 # TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
-install(TARGETS M2-engine EXPORT Macaulay2
+install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
@@ -353,7 +398,7 @@ install(TARGETS M2-engine EXPORT Macaulay2
 ## Add source linting and formatting checks for this target, see cmake/prechecks.cmake
 
 if(LINTING)
-  _ADD_PRECHECKS(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
+  _ADD_PRECHECKS(M2-engine "IWYU" "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
 endif()
 
 _ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
@@ -372,16 +417,19 @@ if(BUILD_TESTING)
     unit-tests/M2mem-replacement.c
     unit-tests/M2mem-replacement.h
 
+    unit-tests/MonoidTest.cpp
+
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
+#    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
     unit-tests/ARingCCTest.cpp
     unit-tests/ARingRRRTest.cpp
     unit-tests/ARingCCCTest.cpp
+    unit-tests/NCGroebnerTest.cpp
 
     unit-tests/RingTest.hpp
     unit-tests/RingZZTest.cpp
@@ -414,7 +462,6 @@ if(BUILD_TESTING)
   ## Link with Googletest
   if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
-  target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
   endif()
 
   target_compile_options(M2-unit-tests PRIVATE
@@ -423,9 +470,4 @@ if(BUILD_TESTING)
     $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
     )
 
-  ###############################################################################
-  ## GivaroTest.cpp has a main function and does not use gtest
-  #add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
-  #target_link_libraries(M2-unit-tests-givaro M2-engine)
-  #add_test(NAME unit-tests:GivaroTest WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests-givaro)
 endif()

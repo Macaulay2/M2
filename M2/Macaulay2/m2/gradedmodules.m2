@@ -1,5 +1,8 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
+needs "modules.m2"
+needs "ringmap.m2"
+
 GradedModule = new Type of MutableHashTable
 GradedModule.synonym = "graded module"
 ring GradedModule := (M) -> M.ring
@@ -38,7 +41,7 @@ net GradedModule := C -> (
 	  printWidth = savePW;
 	  res))
   
-texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
+texUnder = (x,y) -> "\\underset{\\vphantom{\\Big|}"|y|"}{"|x|"}"
 
 texMath GradedModule := C -> (
      s := sort spots C;
@@ -75,7 +78,7 @@ net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are ess
 texMath GradedModuleMap := f -> (
      d := f.degree;
      s := sort intersection(spots f.source, spots f.target / (i -> i - d));
-     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> RowExpression {i+d, ":", MapExpression { target f_i, source f_i, f_i }, ":", i})
+     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> expression(i+d) : MapExpression { target f_i, source f_i, f_i } : expression i)
 )
 
 
@@ -357,7 +360,7 @@ gradedModuleMap Sequence := gradedModuleMap List := GradedModuleMap => maps -> (
      f.target = gradedModule(target \ maps);
      f.degree = 0;
      f)
-gradedModuleMap ModuleMap := GradedModuleMap => M -> gradedModuleMap (1:M)
+gradedModuleMap Matrix := GradedModuleMap => M -> gradedModuleMap (1:M)
 
 single := (v) -> (
      if not same v 

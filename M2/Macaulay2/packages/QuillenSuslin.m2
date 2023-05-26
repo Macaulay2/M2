@@ -37,6 +37,7 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "http://j-sag.org/Volume5/"
 	     },
+	PackageImports => {"MinimalPrimes"},
     	DebuggingMode => false
     	)
 
@@ -70,7 +71,7 @@ export {
 -- Method: coeffVarFF
 -- Input: (RingElement,RingElement) -- (rational function, variable)
 -- Output: List -- list of {coeff,degree} where f is treated as a polynomial
---     	   in var with coefficients in the the rational function field of the
+--     	   in var with coefficients in the rational function field of the
 --     	   other variables.
 -- Description:
 -- As long as the denominator of f does not involve var, this method
@@ -379,7 +380,7 @@ laurentNormalize(Matrix,RingElement) := (f,var) -> (
      subs1 = matrix{subList};
      invSubs1 = matrix{invSubList};
      f2 = sub(f,subs1); -- Now each term of f2_(0,0) has a unique power of var.
-     minCoeff = (laurentCoeffList(f2_(0,0),var))#0; -- Get the smallest power of var occuring in f2_(0,0) and also its coefficient.
+     minCoeff = (laurentCoeffList(f2_(0,0),var))#0; -- Get the smallest power of var occurring in f2_(0,0) and also its coefficient.
      D = mutableIdentity(ring f,numcols f);
      -- Need numcols f >= 2 here.
      phiD = map(S, ring minCoeff#1); 
@@ -1998,7 +1999,7 @@ document {
      },
      
      PARA{}, "Notice that after multiplying ", TT "U", " by the unimodular matrix ", TT "A", " and applying the
-     change of variables ", TT "B", " (using the ", TO "sub", " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
+     change of variables ", TT "B", " (using the ", TO2(substitute, "sub"), " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
      
      PARA{}, "The order of the variables given in the list matter, as changeVar 
      will construct a change of variable so that the new unimodular row is monic in the ", EM "last",

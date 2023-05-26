@@ -15,7 +15,9 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
                                              const FreeModule *F0,
                                              const FreeModule *Fsyz0,
                                              const GBWeight *wt0)
-    : ReducedGB_Field(R0, originalR0, F0, Fsyz0), T1(0), wt(wt0)
+    : ReducedGB_Field(R0, originalR0, F0, Fsyz0),
+      T1(nullptr),
+      wt(wt0)
 {
   // fprintf(stderr, "creating GB with local order\n");
   if (wt == 0) wt = new GBWeight(F0, 0);
@@ -37,7 +39,6 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
 }
 
 struct ReducedGB_Field_Local_sorter
-    : public std::binary_function<int, int, bool>
 {
   GBRing *R;
   const FreeModule *F;
@@ -97,7 +98,7 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) & polys0,
     {
       Bag *not_used;
       gbvector *f = polys0[*i].f;
-      exponents e = R->exponents_make();
+      exponents_t e = R->exponents_make();
       R->gbvector_get_lead_exponents(F, f, e);
       if ((!Rideal || !Rideal->search_expvector(e, not_used)) &&
           T->find_divisors(1, e, f->comp) == 0)
@@ -166,7 +167,7 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
 #endif
 
 bool ReducedGB_Field_Local::find_good_divisor(
-    exponents h_exp,
+    exponents_t h_exp,
     int h_comp,
     int h_deg,
     int &h_alpha,         // result value
@@ -462,7 +463,7 @@ void ReducedGB_Field_Local::reset_table()
 }
 
 void ReducedGB_Field_Local::store_in_table(const POLY &h,
-                                           exponents h_exp,
+                                           exponents_t h_exp,
                                            int h_comp,
                                            int h_alpha)
 {
@@ -489,7 +490,7 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents h_exp = R->exponents_make();
+  exponents_t h_exp = R->exponents_make();
   int h_alpha, g_alpha;
   int h_deg = wt->gbvector_weight(f.f);
   while (!R->gbvector_is_zero(h.f))
@@ -528,7 +529,7 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
               if (head.next != 0)
                 {
                   // In this case, we can't reduce the tail without
-                  // risking an infinite loop.  So we delcare ourselves done
+                  // risking an infinite loop.  So we declare ourselves done
                   // Attach the rest of h.f to frem
                   frem->next = h.f;
                   break;
@@ -573,7 +574,7 @@ void ReducedGB_Field_Local::remainder(gbvector *&f,
   POLY h;
   h.f = f;
   h.fsyz = NULL;
-  exponents h_exp = R->exponents_make();
+  exponents_t h_exp = R->exponents_make();
   int h_alpha, g_alpha;
   int h_deg = wt->gbvector_weight(f);
   while (!R->gbvector_is_zero(h.f))
@@ -612,7 +613,7 @@ void ReducedGB_Field_Local::remainder(gbvector *&f,
               if (head.next != 0)
                 {
                   // In this case, we can't reduce the tail without
-                  // risking an infinite loop.  So we delcare ourselves done
+                  // risking an infinite loop.  So we declare ourselves done
                   // Attach the rest of h.f to frem
                   frem->next = h.f;
                   break;

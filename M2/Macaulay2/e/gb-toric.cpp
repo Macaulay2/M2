@@ -1,7 +1,8 @@
 // Copyright 1997 Michael E. Stillman
 
 #include "gb-toric.hpp"
-#include "ntuple.hpp"
+
+#include "ExponentVector.hpp"
 #include "text-io.hpp"
 
 #include "matrix-con.hpp"
@@ -45,9 +46,9 @@ binomial_ring::binomial_ring(const PolynomialRing * /* RR */)
 
 binomial_ring::~binomial_ring()
 {
-  deletearray(degrees);
-  deletearray(weights);
-  deleteitem(monstash);
+  freemem(degrees);
+  freemem(weights);
+  freemem(monstash);
 }
 
 void binomial_ring::remove_monomial(monomial &m) const
@@ -83,7 +84,7 @@ void binomial_ring::set_weights(monomial m) const
     }
 }
 
-monomial binomial_ring::make_monomial(int *exp) const
+monomial binomial_ring::make_monomial(const_exponents exp) const
 // Make a monomial from an exponent vector
 {
   monomial result = new_monomial();
@@ -113,9 +114,9 @@ int binomial_ring::weight(monomial m) const
 }
 
 int binomial_ring::degree(monomial m) const { return -m[nvars]; }
-unsigned int binomial_ring::mask(monomial m) const
+unsigned int binomial_ring::mask(const_exponents m) const
 {
-  return ntuple::mask(nvars, m);
+  return exponents::mask(nvars, m);
 }
 
 bool binomial_ring::divides(monomial m, monomial n) const
@@ -415,13 +416,13 @@ bool binomial_ring::calc_s_pair(binomial_s_pair &s, binomial &result) const
   return normalize(result);
 }
 
-void binomial_ring::monomial_out(buffer &o, const monomial m) const
+void binomial_ring::monomial_out(buffer &o, const_exponents m) const
 {
   if (m == NULL) return;
-  intarray vp;
-  varpower::from_ntuple(nvars, m, vp);
-  int *n = R->getMonoid()->make_one();
-  R->getMonoid()->from_varpower(vp.raw(), n);
+  gc_vector<int> vp;
+  varpower::from_expvector(nvars, m, vp);
+  monomial n = R->getMonoid()->make_one();
+  R->getMonoid()->from_varpower(vp.data(), n);
   R->getMonoid()->elem_text_out(o, n);
   R->getMonoid()->remove(n);
 }
@@ -441,8 +442,8 @@ binomial_s_pair_set::binomial_s_pair_set(const binomial_ring *RR)
     : R(RR), _prev_lcm(NULL), _n_elems(0), _max_degree(0)
 {
   _pairs = new s_pair_degree_list;  // list header
-  _npairs.append(0);
-  _npairs.append(0);
+  _npairs.push_back(0);
+  _npairs.push_back(0);
 }
 
 void binomial_s_pair_set::enlarge(const binomial_ring *newR)
@@ -465,10 +466,10 @@ void binomial_s_pair_set::remove_lcm_list(s_pair_lcm_list *p)
     {
       s_pair_elem *thispair = p->pairs;
       p->pairs = thispair->next;
-      deleteitem(thispair);
+      freemem(thispair);
     }
   R->remove_monomial(p->lcm);
-  deleteitem(p);
+  freemem(p);
 }
 void binomial_s_pair_set::remove_pair_list(s_pair_degree_list *p)
 {
@@ -478,7 +479,7 @@ void binomial_s_pair_set::remove_pair_list(s_pair_degree_list *p)
       p->pairs = thislcm->next;
       remove_lcm_list(thislcm);
     }
-  deleteitem(p);
+  freemem(p);
 }
 binomial_s_pair_set::~binomial_s_pair_set()
 {
@@ -538,7 +539,7 @@ void binomial_s_pair_set::insert(binomial_s_pair s)
   if (deg > _max_degree)
     {
       // Extend _npairs:
-      for (int i = 2 * _max_degree + 2; i < 2 * deg + 2; i++) _npairs.append(0);
+      for (int i = 2 * _max_degree + 2; i < 2 * deg + 2; i++) _npairs.push_back(0);
       _max_degree = deg;
     }
   _npairs[2 * deg]++;
@@ -594,17 +595,17 @@ bool binomial_s_pair_set::next(const int *d,
       R->remove_monomial(_prev_lcm);
       _prev_lcm = thislcm->lcm;
       thislcm->lcm = NULL;
-      deleteitem(thislcm);
+      freemem(thislcm);
 
       if (thisdeg->pairs == NULL)
         {
           // Now we must remove this larger degree list
           _pairs->next = thisdeg->next;
-          deleteitem(thisdeg);
+          freemem(thisdeg);
         }
     }
 
-  deleteitem(s);
+  freemem(s);
   return true;
 }
 
@@ -759,14 +760,14 @@ binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
             if (find_divisor(result, p->m))
               {
                 R->remove_monomial(p->m);
-                deleteitem(p->tag);  // There is only one element at this point
-                deleteitem(p);
+                freemem(p->tag);  // There is only one element at this point
+                freemem(p);
               }
             else if ((r = find_divisor(currentresult, p->m)))
               {
                 gbmin_elem *p1 = new gbmin_elem(p->tag->elem, p->mask);
                 R->remove_monomial(p->m);
-                deleteitem(p);
+                freemem(p);
                 p1->next = r->tag;
                 r->tag = p1;
               }
@@ -787,7 +788,7 @@ binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
           }
         currentresult = NULL;
       }
-  deletearray(deglist);
+  freemem(deglist);
   return result;
 }
 
@@ -838,7 +839,7 @@ void binomialGB::remove_monomial_list(monomial_list *mm) const
       R->remove_monomial(mm->m);
       monomial_list *tmp = mm;
       mm = mm->next;
-      deleteitem(tmp);
+      freemem(tmp);
     }
 }
 
@@ -948,7 +949,7 @@ int binomialGB::n_masks() const
       if (!found) masks[nmasks++] = p->mask;
     }
   emit(o.str());
-  deleteitem(masks);
+  freemem(masks);
   return nmasks;
 }
 void binomialGB::debug_display() const
@@ -1015,16 +1016,16 @@ binomialGB_comp *binomialGB_comp::create(const Matrix *m,
 void binomialGB_comp::remove_gb()
 {
   int i;
-  deleteitem(Gmin);
-  deleteitem(Pairs);
+  freemem(Gmin);
+  freemem(Pairs);
   // remove each element of Gens
-  for (i = 0; i < Gens.size(); i++) deleteitem(Gens[i]);
+  for (i = 0; i < Gens.size(); i++) freemem(Gens[i]);
   // remove each element of G
-  for (i = 0; i < G.size(); i++) deleteitem(G[i]);
+  for (i = 0; i < G.size(); i++) freemem(G[i]);
   // The following is just to ease garbage collection
   for (i = 0; i < mingens.size(); i++) mingens[i] = NULL;
   for (i = 0; i < mingens_subring.size(); i++) mingens_subring[i] = NULL;
-  deleteitem(R);
+  freemem(R);
 }
 
 binomialGB_comp::~binomialGB_comp() { remove_gb(); }
@@ -1045,7 +1046,7 @@ void binomialGB_comp::enlarge(const PolynomialRing *newR, int *wts)
     R->translate_binomial(old_ring, Gens[i]->f);
   for (i = 0; i < G.size(); i++) R->translate_binomial(old_ring, G[i]->f);
 
-  deleteitem(old_ring);
+  freemem(old_ring);
 }
 
 void binomialGB_comp::add_generators(const Matrix *m)

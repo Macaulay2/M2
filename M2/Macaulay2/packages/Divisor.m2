@@ -5,7 +5,7 @@ newPackage( "Divisor",
      Date => "May 30th, 2018",
      Authors => {
 	  {Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede"},
-     	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com", HomePage => "http://sites.psu.edu/zhaoningyang"}},
+     	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com"}},
      Headline => "Weil divisors",
      Keywords => {"Commutative Algebra"},
      PackageImports => { "IntegralClosure", "RationalMaps" },
@@ -614,7 +614,7 @@ applyToCoefficients( BasicDivisor, Function) := BasicDivisor => o -> (D, hhh) ->
 
 	tempDiv := cleanSupport(new myClass from applyValues(D, x -> (if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then new CacheTable from {symbol ideals => x#(symbol ideals)} else {hhh(x#0)} )) );
 	if (o.Safe == true) then (
-		if (not (isWellDefined(tempDiv))) then (error "applyToCoefficients: the ouput of this function is not a valid divisor, did you set the CoefficientType option properly?";);
+		if (not (isWellDefined(tempDiv))) then (error "applyToCoefficients: the output of this function is not a valid divisor, did you set the CoefficientType option properly?";);
 	);
 	tempDiv	
 );
@@ -875,7 +875,7 @@ installMethod( symbol SPACE, OO, RWeilDivisor, (OO, D1) ->(divisorToModule(D1)) 
 
 --Given a divisor D, 
 --ideal D 
---produces an ideal isomorphic to to the sheaf O(-D).  If D is effective, this will be the honest ideal corresponding to O(-D), 
+--produces an ideal isomorphic to the sheaf O(-D).  If D is effective, this will be the honest ideal corresponding to O(-D), 
 --otherwise it will just produce some ideal abstractly isomorphic to O(-D) (as a module)
 
 
@@ -1198,7 +1198,7 @@ isEffective(BasicDivisor) :=  Boolean => (D) -> (
 
 --Given a divisor D, we want to know is this divisor is prime or not.
 
-isPrime(BasicDivisor) := (D1) -> (
+isPrime(BasicDivisor) := {} >> o -> (D1) -> (
 	(coefficients (cleanSupport D1) ) == {1} 
 );
 
@@ -1555,7 +1555,9 @@ isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (
         D1#cache#isVeryAmple = false;
         false)
     else (
-        flag := isEmbedding(mapFromD1, Verbose=>o.Verbose);
+        val := 0;
+        if (o.Verbose) then val = 2;
+        flag := isEmbedding(mapFromD1, Verbosity=>val);
         D1#cache#isVeryAmple = flag;
         flag
     )
@@ -2018,7 +2020,7 @@ doc ///
 	 an option used to tell functions whether not to do checks.
 	Description
 	 Text
-	  If set to {\tt true}, then certain functions will perform checks to make sure the user didn't pass something unreasonable.  You can use {\tt isWellDefined} to ensure that a constructed divisor is contructed correctly.
+	  If set to {\tt true}, then certain functions will perform checks to make sure the user didn't pass something unreasonable.  You can use {\tt isWellDefined} to ensure that a constructed divisor is constructed correctly.
 	SeeAlso
 	 isWellDefined
 ///
@@ -3656,7 +3658,7 @@ doc ///
 	 : WeilDivisor
 	Description
 	 Text
-	  Compute the ramification (relevative canonical) divisor corresponding the finite inclusion of normal domains.  If you pass it a non-finite map, it will compute the divisorial part of the locus where the map is not smooth.  If {\tt IsGraded} is set to {\tt false} (the default value), then the coefficient ring of both the source and target of $f$ must be equal.  
+	  Compute the ramification (relative canonical) divisor corresponding the finite inclusion of normal domains.  If you pass it a non-finite map, it will compute the divisorial part of the locus where the map is not smooth.  If {\tt IsGraded} is set to {\tt false} (the default value), then the coefficient ring of both the source and target of $f$ must be equal.  
 	 Example
 	  R = QQ[x];
 	  S = QQ[y];
@@ -3728,7 +3730,7 @@ doc ///
 		: Boolean
 	Description
 	 Text
-	  This funciton returns {\tt true} if the divisor is effective (all coefficients nonnegative), otherwise it returns {\tt false}.
+	  This function returns {\tt true} if the divisor is effective (all coefficients nonnegative), otherwise it returns {\tt false}.
 	 Example
 	  R = ZZ/31[x, y, u, v] / ideal(x * y - u * v);
 	  D1 = divisor({1, -2, 3, -4}, {ideal(x, u), ideal(x, v), ideal(y, u), ideal(y, v)})
@@ -3882,7 +3884,7 @@ doc ///
 	Inputs
 	 D: WeilDivisor
 	 IsGraded => Boolean
-	   specify that we are computing this locus on a projective varietys
+	   specify that we are computing this locus on a projective variety
 	Outputs
 	 : Ideal
 	Description
@@ -4908,14 +4910,14 @@ end
 ------------          CoeffType -> CoefficientType (throughout)
 ------------          Changed isQLinearEquivalent to take an index for which to check Q-linear equivalence up to.
 ------------          Added the ideal names/generators to the cache
-------------          Added nonCartierLocus to the cache and added checking (updated documention to list this as being cached)
-------------          Added isPrincipal to the cache and added checking (updated documention to list this as being cached)
-------------          Added ideal(Divisor) to the cache and added checking (updated documention to list this as being cached)
-------------          Added OO(Divisor) to the cache and added checking (updated documention to list this as being cached)
-------------          Added isCartier to the cache and added checking (updated documention to list this as being cached)
-------------          Added isQCartier to the cache and added checking (updated documention to list this as being cached)
-------------          Added isSNC to the cache and added checking (updated documention to list this as being cached)
-------------          Added isVeryAmple to the cache and added checking (updated documention to list this as being cached)
+------------          Added nonCartierLocus to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isPrincipal to the cache and added checking (updated documentation to list this as being cached)
+------------          Added ideal(Divisor) to the cache and added checking (updated documentation to list this as being cached)
+------------          Added OO(Divisor) to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isCartier to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isQCartier to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isSNC to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isVeryAmple to the cache and added checking (updated documentation to list this as being cached)
 ------------          The Unsafe option has been changed to Safe
 ------------          Numerous improvements to the documentation.
 ------------          The internal structure of the divisor has changed.

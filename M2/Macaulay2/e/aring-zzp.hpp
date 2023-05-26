@@ -3,10 +3,11 @@
 #ifndef _aring_zzp_hpp_
 #define _aring_zzp_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include "rand.h"
+#include "exceptions.hpp"
 
 class Z_mod;
 class RingMap;
@@ -15,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZp : public RingInterface
+class ARingZZp : public SimpleARing<ARingZZp>
 {
   // Integers mod p, implemented as
   // exponents of a primitive element a
@@ -32,6 +33,7 @@ class ARingZZp : public RingInterface
   typedef Z_mod ring_type;
   typedef int ElementType;
   typedef int elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingZZp(size_t prime);
 
@@ -94,10 +96,20 @@ class ARingZZp : public RingInterface
       result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    if (a.get_int() == 0)
+      return p1;
+    else if (a.get_int() == p1)
+      return 0;
+    else
+      return a.get_int();
+  }
+
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
+  static void clear(elem &result) { /* nothing */}
 
   void set_zero(elem &result) const { result = 0; }
   void set_from_long(elem &result, long a) const
@@ -138,8 +150,8 @@ class ARingZZp : public RingInterface
   }
 
   void invert(elem &result, elem a) const
-  // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
+    if (is_zero(a)) throw exc::division_by_zero_error();
     result = p1 - a;
     if (result == 0) result = p1;
   }
@@ -162,14 +174,33 @@ class ARingZZp : public RingInterface
     result = log_table[n];
   }
 
+  inline int modulus_add(int a, int b, int p) const
+  {
+    int t = a + b;
+    return (t <= p ? t : t - p);
+  }
+
+  inline int modulus_sub(int a, int b, int p) const
+  {
+    int t = a - b;
+    return (t < 0 ? t + p : t);
+  }
+
   void subtract_multiple(elem &result, elem a, elem b) const
   {
     // we assume: a, b are NONZERO!!
     // result -= a*b
-    int ab = a + b;
-    if (ab > p1) ab -= p1;
-    int n = exp_table[result] - exp_table[ab];
-    if (n < 0) n += p;
+    
+    // the change in code below mimics that of coeffrings.cpp which was 15-20% faster in
+    // testing for some reason (in small characteristics).  The assembly generated is much more
+    // clean than it was previously.
+
+    //int ab = a + b;
+    //if (ab > p1) ab -= p1;
+    int ab = modulus_add(a,b,p1);
+    //int n = exp_table[result] - exp_table[ab];
+    //if (n < 0) n += p;
+    int n = modulus_sub(exp_table[result],exp_table[ab],p);
     result = log_table[n];
   }
 
@@ -187,8 +218,9 @@ class ARingZZp : public RingInterface
 
   void divide(elem &result, elem a, elem b) const
   {
-    assert(b != 0);
-    if (a != 0 && b != 0)
+    if (b == 0)
+      throw exc::division_by_zero_error();
+    if (a != 0)
       {
         int c = a - b;
         if (c <= 0) c += p1;
@@ -206,13 +238,27 @@ class ARingZZp : public RingInterface
         if (result <= 0) result += p1;
       }
     else
-      result = 0;
+      {
+        // a == 0
+        if (n == 0) result = p1; // the element 1 in this ring.
+        else if (n > 0) result = 0;
+        else throw exc::division_by_zero_error();
+      }
   }
 
   void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
-    int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
-    power(result, a, n1);
+    if (a != 0)
+      {
+        int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
+        power(result, a, n1);
+      }
+    else
+      {
+        if (mpz_sgn(n) == 0) result = p1; // the element 1 in this ring.
+        else if (mpz_sgn(n) < 0) throw exc::division_by_zero_error();
+        else result = 0; // result is 0 in the ring.
+      }
   }
 
   void swap(ElementType &a, ElementType &b) const

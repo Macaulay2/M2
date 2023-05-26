@@ -1,6 +1,10 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 -- rewritten by P. Zinn-Justin 2018
 
+needs "max.m2"
+needs "methods.m2"
+needs "nets.m2"
+
 Constant = new Type of BasicList
 globalAssignment Constant
 
@@ -14,6 +18,7 @@ uprec = strength1 = x -> (getParsing x)#2
 EmptyName := symbol EmptyName
 unit := symbol unit
 operator := symbol operator
+-*
 letters := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 digits := set characters "0123456789"
 endsWithIdentifier := s -> (
@@ -24,7 +29,7 @@ endsWithIdentifier := s -> (
 	  n > 0 and digits#?c
 	  ) do n = n - 1;
      letters#?c)
-
+*-
 -----------------------------------------------------------------------------
 bigParenthesize = n -> (
      h := height n;
@@ -34,6 +39,55 @@ bigParenthesize = n -> (
      (stack("/",h+d-2:"|","\\"))^(h-1) | n | (stack("\\",h+d-2:"|","/"))^(h-1)
      )
 -----------------------------------------------------------------------------
+
+operatorFunctions := new HashTable from {
+     symbol * => ((x,y) -> x*y),
+     symbol + => ((x,y) -> x+y),
+     symbol - => ((x,y) -> x-y),
+     symbol / => ((x,y) -> x/y),
+     symbol // => ((x,y) -> x//y),
+     symbol ^ => ((x,y) -> x^y),
+     symbol == => ((x,y) -> x==y),
+     symbol .. => ((x,y) -> x..y),
+     symbol ..< => ((x,y) -> x..<y),
+     symbol % => ((x,y) -> x%y),
+     symbol @ => ((x,y) -> x@y),
+     symbol ==> => ((x,y) -> x==>y),
+     symbol ===> => ((x,y) -> x===>y),
+     symbol <== => ((x,y) -> x<==y),
+     symbol <=== => ((x,y) -> x<===y),
+     symbol <==> => ((x,y) -> x<==>y),
+     symbol |- => ((x,y) -> x|-y),
+     symbol \ => ((x,y) -> x\y),
+     symbol @@ => ((x,y) -> x@@y),
+     symbol & => ((x,y) -> x&y),
+     symbol ? => ((x,y) -> x?y),
+     symbol | => ((x,y) -> x|y),
+     symbol => => ((x,y) -> x=>y),
+     symbol || => ((x,y) -> x||y),
+     symbol << => ((x,y) -> x<<y),
+     symbol >> => ((x,y) -> x>>y),
+     symbol : => ((x,y) -> x:y),
+     symbol ++ => ((x,y) -> x++y),
+     symbol ** => ((x,y) -> x**y),
+     symbol _ => ((x,y) -> x_y),
+     symbol SPACE => ((x,y) -> x y),
+     symbol != => ((x,y) -> x != y),
+     symbol and => ((x,y) -> x and y),
+     symbol or => ((x,y) -> x or y),
+     symbol xor => ((x,y) -> x xor y),
+     symbol ^** => ((x,y) -> x^**y),
+     symbol === => ((x,y) -> x === y),
+     symbol =!= => ((x,y) -> x =!= y),
+     symbol < => ((x,y) -> x < y),
+     symbol <= => ((x,y) -> x <= y),
+     symbol > => ((x,y) -> x > y),
+     symbol >= => ((x,y) -> x >= y),
+     symbol ^^ => ((x,y) -> x ^^ y)
+     }
+
+spacedOps := set { symbol =>, symbol and, symbol or, symbol xor, symbol ++, symbol == } -- some operators need extra space around them
+spacedToString := s -> if spacedOps#?s then " "|toString s|" " else toString s
 
 HeaderType = new Type of Type
 HeaderType.synonym = "header type"
@@ -52,7 +106,6 @@ Expression = new Type of BasicList
 Expression.synonym = "expression"
 expression = method(Dispatch => Thing, TypicalValue => Expression)
 expression Expression := identity
-Expression#operator = ""
 
 expressionValue = method(Dispatch => Thing)
 expressionValue VisibleList := x -> apply(x,expressionValue)
@@ -64,6 +117,14 @@ expressionValue Symbol := value
 
 value Expression := expressionValue
 
+assert Expression := v -> (
+    val := value v;
+    if not instance(val, Boolean) then error "assert: expected true or false";
+    if not val then error toString("assertion failed:" || net v | " is false")
+)
+
+nullf = x -> null
+
 --Holder2 = new WrapperType of Expression			    -- Holder{ printable form, value form }
 --Holder2.synonym = "holder"
 --Holder = new WrapperType of Holder2			    -- Holder{ printable form, value form }, with printable form === value form
@@ -74,7 +135,7 @@ Describe = new WrapperType of Holder
 Describe.synonym = "description"
 describe = method(Dispatch => Thing)
 describe Thing := x -> new Describe from { unhold expression x }
-Describe#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
+Describe#AfterPrint = nullf -- all this to suppress "o##: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
 --      assert( #x === 2 );
@@ -94,12 +155,17 @@ unhold Expression := identity
 
 AssociativeExpression = new Type of Expression
 AssociativeExpression.synonym = "associative expression"
+AssociativeExpression#operator = ""
+AssociativeExpression#EmptyName = ""
+AssociativeExpression#unit = Nothing
+
 --new AssociativeExpression from Sequence := 
 --new AssociativeExpression from List := (type,v) -> (
 --     toList splice apply(v, 
 --	  term -> if class term === type then toSequence term else term
 --	  )
 --     )
+
 
 lookupi := x -> (
      r := lookup x;
@@ -115,7 +181,7 @@ toExternalFormat Thing := toExternalString
 toExternalFormat Expression := v -> toString'(toExternalFormat,v)
 toExternalFormat Symbol := toExternalFormat Sequence := toString
 
-toString'(Function, Expression) := (fmt,v) -> (
+toString'(Function, AssociativeExpression) := (fmt,v) -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
@@ -124,13 +190,20 @@ toString'(Function, Expression) := (fmt,v) -> (
 	       else fmt term
 	       )
 	  );
-     if # v === 0 then op#EmptyName
-     else demark(op#operator,names)
+     if # v === 0 then fmt lookup(EmptyName,op)
+     else demark(spacedToString lookup(operator,op),names)
+     )
+net AssociativeExpression := v -> (
+     op := class v;
+     p := precedence v;
+     names := apply(toList v,term -> (
+	       if precedence term <= p
+	       then bigParenthesize net term
+	       else net term));
+     if # v === 0 then net lookup(EmptyName,op)
+     else horizontalJoin between(spacedToString lookup(operator,op),names)
      )
 
---texMath Holder2 := v -> "{" | texMath v#0 | "}"
---html Holder2 := v -> html v#0
---net Holder2 := v -> net v#0
 
 texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
@@ -144,7 +217,7 @@ remove(Sequence,expression)
 Minus = new WrapperType of Expression		  -- unary minus
 Minus.synonym = "minus expression"
 
-Minus#operator = "-"
+Minus#operator = symbol -
 expressionValue Minus := v -> minus apply(toSequence v,expressionValue)
 toString'(Function, Minus) := (fmt,v) -> (
      term := v#0;
@@ -155,7 +228,7 @@ toString'(Function, Minus) := (fmt,v) -> (
 
 Equation = new HeaderType of AssociativeExpression
 Equation.synonym = "equation expression"
-Equation#operator = "=="
+Equation#operator = symbol ==
 expressionValue Equation := (v) -> (
      v = apply(toSequence v,expressionValue);
      if # v === 2
@@ -168,6 +241,7 @@ expressionValue Equation := (v) -> (
      	  all(w,y->x==y)
      	  )
      )
+-*
 net Equation := v -> (
      n := # v;
      if n === 0 then "Equation{}"
@@ -184,6 +258,7 @@ toString'(Function, Equation) := (fmt,v) -> (
 	  p := precedence v;
 	  demark(" == ", 
 	       apply(toList v, e -> if precedence e <= p then ("(", fmt e, ")") else fmt e))))
+*-
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
@@ -195,19 +270,16 @@ OneExpression.synonym = "one expression"
 ONE = new OneExpression from {1}
 unhold OneExpression := identity
 -----------------------------------------------------------------------------
-Parenthesize = new WrapperType of Expression
+Parenthesize = new WrapperType of Holder
 Parenthesize.synonym = "possibly parenthesized expression"
-net Parenthesize := net @@ first
-toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
-expressionValue Parenthesize := first
-texMath Parenthesize := x -> texMath x#0
+unhold Parenthesize := identity
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
 
-Sum#unit = ZERO
-Sum#EmptyName = "0"
-Sum#operator = "+"
+Sum#unit = ZeroExpression
+Sum#EmptyName = ZERO
+Sum#operator = symbol +
 expressionValue Sum := v -> plus apply(toSequence v,expressionValue)
 
 toString'(Function, Sum) := (fmt,v) -> (
@@ -230,9 +302,9 @@ toString'(Function, Sum) := (fmt,v) -> (
 Product = new WrapperType of AssociativeExpression
 Product.synonym = "product expression"
 
-Product#unit = ONE
-Product#EmptyName = "1"
-Product#operator = "*"
+Product#unit = OneExpression
+Product#EmptyName = ONE
+Product#operator = symbol *
 expressionValue Product := v -> times apply(toSequence v,expressionValue)
 
 toString'(Function, Product) := (fmt,v) -> (
@@ -251,6 +323,23 @@ toString'(Function, Product) := (fmt,v) -> (
 	  )
      )
 
+DirectSum = new WrapperType of AssociativeExpression
+DirectSum.synonym = "direct sum expression"
+
+DirectSum#unit = ZeroExpression
+DirectSum#EmptyName = ZERO
+DirectSum#operator = symbol ++
+expressionValue DirectSum := v -> directSum apply(toSequence v,expressionValue)
+
+TensorProduct = new WrapperType of AssociativeExpression
+TensorProduct.synonym = "tensor product expression"
+
+TensorProduct#unit = OneExpression
+TensorProduct#EmptyName = ONE
+TensorProduct#operator = symbol **
+expressionValue TensorProduct := v -> tensor apply(toSequence v,expressionValue)
+
+-*
 NonAssociativeProduct = new WrapperType of Expression
 NonAssociativeProduct.synonym = "nonassociative product expression"
 
@@ -285,36 +374,38 @@ toString'(Function, NonAssociativeProduct) := (fmt,v) -> (
 	  concatenate mingle ( seps, names )
 	  )
      )
+*-
 
 Divide = new HeaderType of Expression
 Divide.synonym = "divide expression"
-Divide#operator = "/"
+Divide#operator = symbol /
 expressionValue Divide := (x) -> (expressionValue x#0) / (expressionValue x#1)
 numerator Divide := x -> x#0
 denominator Divide := x -> x#1
 
 Power = new HeaderType of Expression
 Power.synonym = "power expression"
-Power#operator = "^"
+Power#operator = symbol ^
 expressionValue Power := (x) -> (expressionValue x#0) ^ (expressionValue x#1)
 
 Subscript = new HeaderType of Expression
 Subscript.synonym = "subscript expression"
-Subscript#operator = "_"
+Subscript#operator = symbol _
 expressionValue Subscript := (x) -> (expressionValue x#0)_(expressionValue x#1)
 
 Superscript = new HeaderType of Expression
 Superscript.synonym = "superscript expression"
-Superscript#operator = "^"
+Superscript#operator = symbol ^
 expressionValue Superscript := (x) -> (expressionValue x#0)^(expressionValue x#1)
 
+toString'(Function, Divide) :=
 toString'(Function, Subscript) := toString'(Function, Superscript) := (fmt,v) -> (
      x := fmt v#0;
      y := fmt v#1;
      p := precedence v;
      if precedence v#0 <  p then x = "(" | x | ")";
      if precedence v#1 <= p then y = "(" | y | ")";
-     concatenate(x,(class v)#operator,y))
+     concatenate(x,fmt (class v)#operator,y))
 
 toString'(Function, Power) := (fmt,v) -> (
      x := v#0;
@@ -325,13 +416,14 @@ toString'(Function, Power) := (fmt,v) -> (
 	  y = fmt y;
 	  if precedence v#0 <  prec symbol ^  then x = "(" | x | ")";
 	  if precedence v#1 <= prec symbol ^  then y = "(" | y | ")";
-	  concatenate(x,(class v)#operator,y)))
+	  concatenate(x,fmt (class v)#operator,y)))
 
 -----------------------------------------------------------------------------
 RowExpression = new HeaderType of Expression
 RowExpression.synonym = "row expression"
 net RowExpression := w -> horizontalJoin apply(toList w,net)
 html RowExpression := w -> concatenate apply(w,html)
+tex RowExpression := w -> concatenate apply(w,tex)
 texMath RowExpression := w -> concatenate apply(w,texMath)
 toString'(Function, RowExpression) := (fmt,w) -> concatenate apply(w,fmt)
 -----------------------------------------------------------------------------
@@ -339,67 +431,36 @@ Adjacent = new HeaderType of Expression
 Adjacent.synonym = "adjacent expression"
 expressionValue Adjacent := x -> (expressionValue x#0) (expressionValue x#1)
 -----------------------------------------------------------------------------
-prepend0 := (e,x) -> prepend(e#0, x)
-append0 := (x,e) -> append(x, e#0)
-Equation == Equation        := join
-Equation == Expression      := append
-Equation == Holder          := append0
-Expression == Equation      := prepend
-Holder     == Equation      := prepend0
-Expression == Expression    := Equation => (x,y) -> new Equation from {x,y}
-Holder     == Holder        := (x,y) -> new Equation from {x#0,y#0}
-Expression == Thing         := (x,y) -> x == expression y
-Thing == Expression         := (x,y) -> expression x == y
-ZeroExpression + Expression := (x,y) -> y
-Sum + ZeroExpression     :=
-Holder + ZeroExpression     :=
-Expression + ZeroExpression := (x,y) -> x
-Sum + Sum                   := join
-Sum + Expression            := append
-Sum + Holder                := append0
-Expression + Sum            := prepend
-Holder     + Sum            := prepend0
-Expression + Expression     := Sum => (x,y) -> new Sum from {x,y}
+prepend0 := (e,x) -> prepend(unhold e, x)
+append0 := (x,e) -> append(x, unhold e)
+assocList := {Sum,Product,DirectSum,TensorProduct,Equation} -- populate automatically?
+scan(assocList, opClass -> (
+	installMethod(opClass#operator,opClass,opClass,join);
+	installMethod(opClass#operator,opClass,Expression,append);
+	installMethod(opClass#operator,opClass,Holder,append0);
+	installMethod(opClass#operator,Expression,opClass,prepend);
+	installMethod(opClass#operator,Holder,opClass,prepend0);
+	installMethod(opClass#operator,Expression,Expression,(x,y)-> new opClass from {unhold x,unhold y});
+	installMethod(opClass#operator,Expression,Thing,(x,y)-> operatorFunctions#(opClass#operator)(x,expression y));
+	installMethod(opClass#operator,Thing,Expression,(x,y)-> operatorFunctions#(opClass#operator)(expression x,y));
+	if opClass#?unit then (
+	    installMethod(opClass#operator,Expression,opClass#unit,(x,y) -> x);
+	    installMethod(opClass#operator,opClass#unit,Expression,(x,y) -> y);
+	    )
+))
        - ZeroExpression     := identity
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
-           - Holder         := x -> new Minus from {x#0}
+           - Holder         := x -> new Minus from {unhold x}
 Expression - Expression     := Sum => (x,y) -> x + Minus y
 Thing - Minus               := Sum => (x,y) -> expression x + y#0
-Product    * OneExpression  :=
-Expression * OneExpression  :=
-Holder     * OneExpression  := (x,y) -> x
-OneExpression * Expression  := (x,y) -> y
-Holder     * ZeroExpression :=
-Product    * ZeroExpression :=
-Expression * ZeroExpression := (x,y) -> y
-ZeroExpression * Holder     :=
-ZeroExpression * Expression := (x,y) -> x
-Product * Product           := join
-Product * Expression        := append
-Product * Holder            := append0
-Expression * Product        := prepend
-Holder     * Product        := prepend0
-Expression * Expression := Product => (x,y) -> new Product from {x,y}
 Expression * Minus := (x,y) -> -(x * y#0)
 Minus * Expression := (x,y) -> -(x#0 * y)
 Minus * Minus := (x,y) -> expression x#0 * expression y#0
-Expression * Thing      := (x,y) -> x * (expression y)
-     Thing * Expression := (x,y) -> (expression x) * y
-Holder     ** OneExpression :=
-Expression ** OneExpression := (x,y) -> x
-OneExpression ** Holder     :=
-OneExpression ** Expression := (x,y) -> y
-NonAssociativeProduct ** NonAssociativeProduct := join
-NonAssociativeProduct ** Expression := append
-NonAssociativeProduct ** Holder     := append0
 Expression Expression := Adjacent => (x,y) -> new Adjacent from {x,y}
      -- are lists expressions, too???
 Expression Thing      := (x,y) -> x (expression y)
      Thing Expression := (x,y) -> (expression x) y
-Expression ** NonAssociativeProduct := prepend
-Holder     ** NonAssociativeProduct := prepend0
-Expression ** Expression := NonAssociativeProduct => (x,y) -> new NonAssociativeProduct from {x,y}
 Holder     / OneExpression :=
 Expression / OneExpression := (x,y) -> x
 Expression / Expression := Divide => (x,y) -> new Divide from {x,y}
@@ -435,58 +496,21 @@ ZZ             ..< InfiniteNumber := (x,y) -> if x < y then (
      -- BinaryOperation{symbol ..<,x,y}
      ) else ()
 
-binaryOperatorFunctions := new HashTable from {
-     symbol * => ((x,y) -> x*y),
-     symbol + => ((x,y) -> x+y),
-     symbol - => ((x,y) -> x-y),
-     symbol / => ((x,y) -> x/y),
-     symbol // => ((x,y) -> x//y),
-     symbol ^ => ((x,y) -> x^y),
-     symbol == => ((x,y) -> x==y),
-     symbol .. => ((x,y) -> x..y),
-     symbol ..< => ((x,y) -> x..<y),
-     symbol % => ((x,y) -> x%y),
-     symbol @ => ((x,y) -> x@y),
-     symbol ==> => ((x,y) -> x==>y),
-     symbol ===> => ((x,y) -> x===>y),
-     symbol <== => ((x,y) -> x<==y),
-     symbol <=== => ((x,y) -> x<===y),
-     symbol <==> => ((x,y) -> x<==>y),
-     symbol |- => ((x,y) -> x|-y),
-     symbol \ => ((x,y) -> x\y),
-     symbol @@ => ((x,y) -> x@@y),
-     symbol & => ((x,y) -> x&y),
-     symbol ? => ((x,y) -> x?y),
-     symbol | => ((x,y) -> x|y),
-     symbol => => ((x,y) -> x=>y),
-     symbol || => ((x,y) -> x||y),
-     symbol << => ((x,y) -> x<<y),
-     symbol >> => ((x,y) -> x>>y),
-     symbol : => ((x,y) -> x:y),
-     symbol ++ => ((x,y) -> x++y),
-     symbol ** => ((x,y) -> x**y),
-     symbol _ => ((x,y) -> x_y),
-     symbol SPACE => ((x,y) -> x y),
-     symbol != => ((x,y) -> x != y),
-     symbol and => ((x,y) -> x and y),
-     symbol or => ((x,y) -> x or y),
-     symbol ^** => ((x,y) -> x^**y)
-     }
-
 expressionBinaryOperators =
 {symbol and, symbol <==, symbol ^**, symbol ^, symbol ==>, symbol _,
-    symbol ==, symbol ++, symbol <===, symbol <==>, symbol or,
-    symbol %, symbol SPACE, symbol &, symbol *, symbol +,
+--    symbol ==, symbol ++, symbol **, symbol *, symbol +, -- these are associative operations, they've already been dealt with
+    symbol <===, symbol <==>, symbol or, symbol xor,
+    symbol %, symbol SPACE, symbol &,
     symbol -, symbol |-, symbol :, symbol !=, symbol |, symbol ..<,
-    symbol @@, symbol @, symbol **, symbol .., symbol ^^,
+    symbol @@, symbol @, symbol .., symbol ^^,
     symbol ||, symbol ===>, symbol /}
 
 scan(expressionBinaryOperators, op -> (
     f := try Expression#(op,Expression,Expression) else installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y});
-    installMethod(op,Expression,Holder,(x,y) -> f(x,y#0));
-    installMethod(op,Holder,Expression,(x,y) -> f(x#0,y));
-    installMethod(op,Holder,Holder,(x,y) -> f(x#0,y#0));
-    g := try binaryOperatorFunctions#op else f; -- subtly different
+    installMethod(op,Expression,Holder,(x,y) -> f(x,unhold y));
+    installMethod(op,Holder,Expression,(x,y) -> f(unhold x,y));
+    installMethod(op,Holder,Holder,(x,y) -> f(unhold x,unhold y));
+    g := try operatorFunctions#op else f; -- subtly different
     installMethod(op,Expression,Thing,(x,y) ->  g(x,expression y));
     installMethod(op,Thing,Expression,(x,y) ->  g(expression x,y));
     ))
@@ -521,22 +545,24 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-expressionValue MatrixExpression := x -> matrix applyTable(toList x,expressionValue)
-toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
-     "matrix {",
-     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
-     "}" )
-MatrixDegreeExpression = new HeaderType of Expression
-MatrixDegreeExpression.synonym = "matrix with degrees expression"
-expressionValue MatrixDegreeExpression := x -> (
-    m := expressionValue MatrixExpression x#0;
-    R := ring m;
-    n := degreeLength R;
-    if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
-    then map(R^(-x#1),R^(-x#2),entries m)
-    else m
+matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
+matrixOpts := m -> ( -- helper function
+    (opts,x) := override(matrixOpts1,toSequence m);
+    (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
     )
-toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,MatrixExpression x#0)
+expressionValue MatrixExpression := x -> (
+    (opts,m) := matrixOpts x;
+    m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+    -- TODO: keep track of blocks too
+    if opts.Degrees === null then m else (
+    R := ring m;
+    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
+    ))
+toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
+    (opts,m) := matrixOpts x;
+    if opts.MutableMatrix then "mutableMatrix {" else "matrix {",
+    between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
+    "}" )
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -555,9 +581,8 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 
-spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
-
-keywordTexMath := new HashTable from { -- both unary and binary keywords
+-- TODO: move this to latex.m2
+keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",
     symbol .. => "\\,{.}{.}\\, ",
     symbol ..< => "\\,{.}{.}{<}\\, ",
@@ -570,7 +595,6 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol ** => "\\otimes ",
     symbol ++ => "\\oplus ",
     symbol != => "\\ne ",
-    symbol = => "=",
     symbol -> => "\\rightarrow ",
     symbol <- => "\\leftarrow ",
     symbol ===> => "{\\large\\Longrightarrow}",
@@ -578,36 +602,35 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol << => "\\ll ",
     symbol >> => "\\gg ",
     symbol ~ => "\\sim ",
-    symbol ^** => "^{\\otimes}",
+    symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol _ => "\\_ ",
-    symbol | => "|",
-    symbol || => "||",
-    symbol * => "*",
-    symbol + => "+",
-    symbol - => "-",
-    symbol / => "/",
-    symbol // => "//",
     symbol { => "\\{ ",
     symbol } => "\\} ",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
-    symbol : => ":",
-    symbol ; => ";"
+    symbol # => "\\#",
+    symbol #? => "\\#?",
+    symbol % => "\\%",
+    symbol & => "\\&",
+    symbol ^ => "\\wedge",
+    symbol ^^ => "\\wedge\\wedge",
+    symbol <| => "\\langle",
+    symbol |> => "\\rangle",
+    symbol _* => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+    symbol ^* => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     }
-
-texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
 expressionValue BinaryOperation := (m) -> (
-     if binaryOperatorFunctions#?(m#0) then binaryOperatorFunctions#(m#0) (expressionValue m#1,expressionValue m#2) else m
+     if operatorFunctions#?(m#0) then operatorFunctions#(m#0) (expressionValue m#1,expressionValue m#2) else m
      )
 net BinaryOperation := m -> (
      x := net m#1;
      y := net m#2;
      if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
      if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
-     if spacedOps#?(m#0) then horizontalJoin( x, " ", toString m#0, " ", y ) else horizontalJoin( x, toString m#0, y )
+     horizontalJoin( x, spacedToString m#0, y )
      )
 
 texMath BinaryOperation := m -> (
@@ -623,7 +646,7 @@ toString'(Function, BinaryOperation) := (fmt,m) -> (
      y := fmt m#2;
      if rightPrecedence m#1 < lprec m#0 then x = ("(",x,")");
      if precedence m#2 <= rprec m#0 then y = ("(",y,")");
-     if spacedOps#?(m#0) then concatenate( x, " ", toString m#0, " ", y ) else concatenate( x, toString m#0, y )
+     concatenate( x, spacedToString m#0, y )
      )
 
 -----------------------------------------------------------------------------
@@ -666,15 +689,16 @@ net Adjacent := net FunctionApplication := m -> (
      then horizontalJoin (netfun, bigParenthesize netargs)
      else horizontalJoin (bigParenthesize netfun, bigParenthesize netargs)
      )
-texMath Adjacent := texMath FunctionApplication := m -> (
+texMath Adjacent := texMath FunctionApplication := m -> if m#0 === sqrt then "\\sqrt{"| texMath m#1 |"}" else (
      p := precedence m;
      fun := m#0;
      args := m#1;
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      -- we can finesse further the amount of space than in net
-     if div or instance(args,Array) then sep:=""
-     else if instance(args,VisibleList) then sep="\\,"
+     -- see also https://tex.stackexchange.com/questions/2607/spacing-around-left-and-right
+     if div or instance(args,Array) then sep:="\\mathopen{}"
+     else if instance(args,VisibleList) then sep="{}"
      else sep = "\\ ";
      if precedence args > p
      then if pfun >= p
@@ -695,7 +719,9 @@ returns = t -> x -> t
 		 precedence Thing := returns 0
 		   precedence Sum := returns prec symbol +
 	       precedence Product := returns prec symbol *
- precedence NonAssociativeProduct := returns prec symbol **
+	       precedence DirectSum := returns prec symbol ++
+	       precedence TensorProduct := returns prec symbol **
+-- precedence NonAssociativeProduct := returns prec symbol **
 		 precedence Minus := returns strength1 symbol -
    precedence FunctionApplication := returns prec symbol SPACE
               precedence Adjacent := returns prec symbol SPACE
@@ -704,19 +730,21 @@ returns = t -> x -> t
 	   precedence Superscript := returns prec symbol ^
 		 precedence Power := x -> if x#1 === 1 then precedence x#0 else prec symbol ^
 		    precedence ZZ := x -> if x>=0 then strength1 symbol symbol else prec symbol -
+	       precedence Nothing :=
+	precedence InfiniteNumber :=
 		    precedence RR :=
 	      precedence Function :=
 	          precedence Type :=
 	       precedence Boolean :=
 		  precedence List :=
 		 precedence Array :=
+	  precedence AngleBarList :=
 	      precedence Constant :=
 		precedence Symbol :=
 		   precedence Net :=
 		precedence String :=
 	    precedence Expression := returns strength1 symbol symbol
 	        precedence Holder := x -> precedence x#0
-	      precedence Describe := x -> precedence x#0
 --	       precedence Holder2 := x -> precedence x#0
        precedence BinaryOperation := x -> lprec x#0
   rightPrecedence BinaryOperation := x -> rprec x#0
@@ -793,15 +821,15 @@ net Sum := v -> (
      if n === 0 then "0"
      else (
 	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->" + "));
-	  seps#0 = seps#n = "";
+	  seps := newClass(MutableList, apply(n, i->" + "));
+	  seps#0 = "";
 	  v = apply(n, i -> (
 		    if class v#i === Minus
 		    then (
 			 seps#i = if i == 0 then "- " else " - ";
 			 v#i#0)
 		    else v#i));
-	  horizontalJoin splice mingle(seps,
+	  horizontalJoin mingle(seps,
 	       apply(n, i ->
 		    if precedence v#i <= p
 		    then bigParenthesize net v#i
@@ -810,10 +838,10 @@ net Sum := v -> (
 isNumber = method(TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
-isNumber QQ :=
-isNumber Divide := -- QQ never appears in an expression, so we take care of it this way
+isNumber QQ := -- QQ never appears in an expression...
 isNumber ZZ := i -> true
 isNumber Holder := i -> isNumber i#0
+isNumber Divide := d -> isNumber d#0 and isNumber d#1 -- .. so we take care of it this way
 
 startsWithSymbol = method(TypicalValue => Boolean)
 startsWithSymbol Thing := i -> false
@@ -846,23 +874,6 @@ net Product := v -> (
 			 seps#(i+1) = "";
 			 );
 	       	    nterm));
-	  horizontalJoin splice mingle (seps, boxes)
-	  )
-     )
-net NonAssociativeProduct := v -> (
-     n := # v;
-     if n === 0 then "1"
-     else (
-     	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i -> "**"));
-	  seps#0 = seps#n = "";
-     	  boxes := apply(#v,
-	       i -> (
-		    term := v#i;
-	       	    if precedence term <= p then bigParenthesize net term
-	       	    else net term
-	       	    )
-	       );
 	  horizontalJoin splice mingle (seps, boxes)
 	  )
      )
@@ -933,19 +944,17 @@ toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x
 toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
-    if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
-    else (
-	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
-	netList(x,Boxes=>{false,{0,#x#0}},matrixDisplayOptions#compactMatrixForm)
-     ))
---html MatrixExpression := x -> html TABLE toList x
+    (opts,m) := matrixOpts x;
+    blk := opts.Blocks =!= null; -- whether to display blocks
+    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
+    net1 := if compactMatrixForm then toCompactString else net;
+    vbox0 := if opts.Degrees === null then 0 else 1;
+    (hbox,vbox) := if blk then (drop(accumulate(plus,0,opts.Blocks#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.Blocks#1))) else (false,{vbox0,vbox0+#m#0});
+    m = if opts.Degrees =!= null then apply(#m,i->apply(prepend(opts.Degrees#0#i,m#i),net1)) else applyTable(m,net1);
+    netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#compactMatrixForm)
+    )
 
-net MatrixDegreeExpression := x -> (
-    if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
-    else (
-	x=apply(#x#0,i->apply(prepend(x#1#i,x#0#i),if compactMatrixForm then toCompactString else net));
-	netList(x,Boxes=>{false,{1,#x#0}},matrixDisplayOptions#compactMatrixForm)
-     ))
+--html MatrixExpression := x -> html TABLE toList x
 
 net VectorExpression := x -> (
     if all(x,i->class i===ZeroExpression) then "0"
@@ -958,43 +967,17 @@ net VectorExpression := x -> (
 -----------------------------------------------------------------------------
 -- tex stuff
 
-texMath Expression := v -> (
+texMath AssociativeExpression := v -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
 	       if precedence term <= p
 	       then ("{\\left(", texMath term, "\\right)}")
 	       else ("{", texMath term, "}") ) );
-     if # v === 0 then (
-	  if op#?EmptyName then op#EmptyName
-	  else error("no method for texMath ", op)
-	  )
-     else (
-	  if op#?operator then demark(op#operator,names)
-	  else error("no method for texMath ", op)
-	  )
+     if # v === 0 then texMath lookup(EmptyName,op)
+     else demark(texMath lookup(operator,op),names)
      )
 
---html Thing := toString
--*
-html Expression := v -> (
-     op := class v;
-     p := precedence v;
-     names := apply(toList v,term -> (
-	       if precedence term <= p
-	       then ("(", html term, ")")
-	       else html term));
-     if # v === 0
-     then (
-	  if op#?EmptyName then op#EmptyName
-	  else error("no method for html ", op)
-	  )
-     else (
-	  if op#?operator then demark(op#operator,names)
-	  else error("no method for html ", op)
-	  )
-     )
-*-
 texMath Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
@@ -1057,22 +1040,26 @@ html Sum := v -> (
 *-
 
 texMath Product := v -> (
-     n := # v;
-     if n === 0 then "1"
-     else (
-     	  p := precedence v;
-	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and (x#1 === 1 or x#1 === ONE)));
-	  seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot " else if nums#i or class v#i === Symbol or (class v#i === Power and class v#i#0 === Symbol and (v#i#1 === 1 or v#i#1 === ONE)) then "\\," else "");
-     	  boxes := apply(v,
-		    term -> (
-			 if precedence term <= p and class expression term =!= Divide
-			 then "\\left(" | texMath term | "\\right)"
-			 else texMath term
-			 )
-		    );
-	  concatenate splice mingle (boxes,seps)
-	  )
-      )
+    n := # v;
+    if n === 0 then "1"
+    else (
+	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
+	p := precedence v;
+	nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0));
+	precs := apply(v, x -> precedence x <= p);
+	seps := apply (n-1, i-> if nums#(i+1) then "\\times "
+	    else if class v#i =!= Power and class v#i =!= Subscript and not precs#i and not precs#(i+1) then
+	    if nums#i or class v#i === Symbol then "\\," else "\\ "
+	    else "");
+	boxes := apply(n, i -> (
+		if precs#i and class v#i =!= Divide
+		then "\\left(" | texMath v#i | "\\right)"
+		else texMath v#i
+		)
+	    );
+	concatenate splice mingle (boxes,seps)
+	)
+    )
 -*
 html Product := v -> (
      n := # v;
@@ -1096,7 +1083,7 @@ texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
     concatenate(x,"^{",y,"}") -- no braces around x
     )
 
@@ -1104,16 +1091,16 @@ texMath Superscript := v -> if v#1 === moduleZERO then "0" else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
     concatenate(x,"^{",y,"}") -- no braces around x
     )
 
 texMath Subscript := v -> (
      p := precedence v;
      x := texMath v#0;
-     if class v#1 === Sequence then y:=demark(",", apply(v#1,texMath)) else y = texMath v#1; -- no parentheses
-     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
-     concatenate("{",x,"}_{",y,"}")
+     y := if class v#1 === Sequence then demark(",", apply(v#1,texMath)) else texMath v#1; -- no () for sequences
+     if precedence v#0 <  p or class v#0 === Subscript then x = "\\left(" | x | "\\right)"; -- precedence or double subscript
+     concatenate(x,"_{",y,"}") -- no braces around x
      )
 
 -*
@@ -1155,106 +1142,91 @@ texMath SparseMonomialVectorExpression := v -> (
 	  hold concatenate("<",toString i,">"))
      )
 
-texMath VerticalList := s -> concatenate(
-    "\\left\\{\\begin{aligned}",
-    between("\\\\",apply(toList s,x->"&"|texMath x))
-    ,"\\end{aligned}\\right\\}"
-    )
-
-texMath NumberedVerticalList := s -> concatenate(
-    "\\left\\{\\begin{aligned}",
-    between("\\\\",apply(#s,i->i|".\\quad&"|texMath s#i))
-    ,"\\end{aligned}\\right\\}"
-    )
-
 texMath Table := m -> (
     if m#?0 then concatenate(
-	"{\\begin{array}{", #m#0: "c", "}", newline,
-	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
-	"\\end{array}}")
+	"\\begin{array}{", #m#0: "c", "}", newline,
+	between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
+	newline, "\\end{array}")
+    else "{}"
+    )
+
+texMath MatrixExpression := x -> (
+    (opts,m) := matrixOpts x;
+    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
+    blk := opts.Blocks =!= null; -- whether to display blocks
+    if blk then ( j := 0; h := 0; );
+    m = applyTable(m,texMath);
+    concatenate(
+	if opts.Degrees =!= null then (
+	    degs := apply(opts.Degrees#0,texMath);
+	    "\\begin{array}{l}",
+	    apply(#m, i -> concatenate(degs#i,"\\vphantom{",m#i, "}", if i<#m-1 then "\\\\")),
+	    "\\end{array}"
+	    ),
+	"\\left(",
+	"\\!\\begin{array}{",
+	if blk then demark("|",apply(opts.Blocks#1,i->i:"c")) else #m#0:"c",
+	"}",
+	newline,
+	apply(#m, i -> concatenate(
+		if opts.Degrees =!= null then "\\vphantom{"| degs#i | "}",
+		 between("&",m#i),
+		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
+		 newline,
+		 if blk then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
+		 )),
+	"\\end{array}\\!",
+	"\\right)"
+	)
 )
 
-texMath MatrixExpression := m -> (
-    if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
-    else if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
-     else concatenate(
-      	      "\\begin{pmatrix}" | newline,
-     	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
-	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
-	      )
-	  )
-texMath MatrixDegreeExpression := x -> texMath MatrixExpression x#0 -- degrees not displayed atm
-
 texMath VectorExpression := v -> (
-     concatenate(
-	 "\\begin{pmatrix}" | newline,
-	 between(///\\///,apply(toList v,texMath)),
-	 "\\end{pmatrix}"
-	 )
-     )
-
-ctr := 0
-showTex = method()
-showTex Thing := x -> (
-    dir := temporaryFileName();
-    makeDirectory dir;
-    f := dir | "/show";
-    f | ".tex"
-    << ///\documentclass{article}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\begin{document}
-///
-     << tex x <<
-///
-\end{document}
-///
-     << close;
-     if 0 =!= chkrun("set -x ; cd "|dir|"; latex " | f)
-     then error ("latex failed on input file "|f|".tex");
-     if 0 =!= chkrun("(xdvi "|f|".dvi && rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
-     then error ("xdvi failed on input file "|f|".tex");
-     )
-show TEX := showTex
-
------------------------------------------------------------------------------
-print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
------------------------------------------------------------------------------
-texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
-texMath ZZ := toString
-tex Thing := x -> concatenate("$",texMath x,"$")
-texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
-
-bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
-suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
-suffixesRegExp := "("|demark("|",suffixes)|")\\'";
-texVariable := x -> (
-    if x === "" then return "";
-    xx := separate("\\$",x); if #xx > 1 then return concatenate between("{\\char36}",texVariable\xx); -- avoid the use of "$" in tex output
-    if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
-    if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
-    r := regex(suffixesRegExp,x); if r =!= null then (
-	r = first r;
-	return "\\"|substring(r,x)|"{"|texVariable substring(x,0,r#0)|"}"
-	);
-    if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
+    concatenate(
+	"\\left(",
+	"\\!\\begin{array}{c}",
+	newline,
+	between(///\\///,apply(toList v,texMath)),
+	"\\end{array}\\!",
+	"\\right)"
+	)
     )
-texMath Symbol := x -> texVariable toString x;
 
+-----------------------------------------------------------------------------
+print =  x -> (
+    c := class x;
+    while not c#?{topLevelMode,print} do (
+	if c === Thing then (<< net x << endl; return); -- default
+	c = parent c;
+	);
+    c#{topLevelMode,print} x
+    )
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
-List << Thing := List => (files,x) -> apply(files, o -> o << x)
 
 o := () -> concatenate(interpreterDepth:"o")
 
-Thing#{Standard,AfterPrint} = x -> (
+stdAfterPrint = x -> (
      << endl;				  -- double space
-     << o() << lineNumber;
-     y := class x;
-     << " : " << y;
+     << o() << lineNumber << " : ";
+     scan(deepSplice sequence x, y -> if y =!= null then << y);
      << endl;
      )
+
+Thing#{Standard,AfterPrint} = x -> (
+    l:=lookup(AfterPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then stdAfterPrint s
+    )
+Thing#{Standard,AfterNoPrint} = x -> (
+    l:=lookup(AfterNoPrint,class x);
+    if l === null then return;
+    s:=l x;
+    if s =!= null then stdAfterPrint s
+    )
+
+Thing#AfterPrint = class
 
 -* TODO: add an option to re-enable these two
 Type#{Standard,AfterPrint} = x -> (
@@ -1272,10 +1244,7 @@ Function#{Standard,AfterPrint} = x -> (
      )
 *-
 
-Expression#{Standard,AfterPrint} = x -> (
-     << endl;				  -- double space
-     << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
-     )
+Expression#AfterPrint = x ->  (Expression," of class ",class x)
 
 -----------------------------------------------------------------------------
 
@@ -1288,19 +1257,15 @@ expression Type := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 
-Nothing#{Standard,AfterPrint} = identity
-ZZ#{Standard,AfterPrint} = identity
-Boolean#{Standard,AfterPrint} = identity
-
-FilePosition = new Type of BasicList
-FilePosition.synonym = "file position"
-toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1,":",toString i#2)
-net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
+Net#AfterPrint =
+Nothing#AfterPrint =
+ZZ#AfterPrint =
+Boolean#AfterPrint = nullf
 
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
 net Option := net @@ expression
-texMath Option := x -> texMath expression x
+texMath Option := texMath @@ expression
 toString Option := toString @@ expression
 
 SheafExpression = new WrapperType of Expression;
@@ -1311,7 +1276,7 @@ expressionValue SheafExpression := x -> sheaf expressionValue x#0
 
 moduleZERO = new ZeroExpression from { 0, Module }
 
--- little used at the moment. note that one can't have a symbol <---
+-- note that one can't have a symbol <---
 MapExpression = new HeaderType of Expression;
 toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { map, toSequence x })
 lineOnTop := (s) -> concatenate(width s : "-") || s
@@ -1325,55 +1290,55 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
-texMath Set := x -> texMath expression x
+texMath Set := texMath @@ expression
 
--- some texMath that got stranded
-texMath BasicList := s -> concatenate(
-     if class s =!= List then texMath class s,
-    "\\left\\{",
-    between(",\\,",apply(toList s,texMath))
-    ,"\\right\\}"
-    )
-texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
-texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath HashTable := x -> if x.?texMath then x.texMath else
-if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
-concatenate flatten (
-    texMath class x,
-    "\\left\\{",
-    if mutable x then if #x>0 then {"\\ldots",texMath(#x),"\\ldots"} else "" else
-    between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
-    "\\right\\}"
-    )
-texMath Function := x -> texMath toString x
-texMath MutableList := x -> concatenate (
-    texMath class x,
-    "\\left\\{",
-    if #x > 0 then "\\ldots "|#x|"\\ldots ",
-    ,"\\right\\}"
-    )
+-- shortening expressions
+Dots = new Type of Symbol
+cdots=new Dots from symbol cdots
+ddots=new Dots from symbol ddots
+vdots=new Dots from symbol vdots
+ldots=new Dots from symbol ldots
+texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
+toString Dots := x -> "..."
+net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
--- strings -- uses texLiteral from latex.m2
-texMath String := s -> "\\texttt{" | texLiteral s | "}"
--- this truncates very big nets
-maxlen := 3000; -- randomly chosen
-texMath Net := n -> (
-    dep := depth n; hgt := height n;
-    s:="";
-    len:=0; i:=0;
-    scan(unstack n, x->(
-	    i=i+1;
-	    len=len+#x;
-	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\";
-		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
-		break
-		);
-	    s=s|"&\\vphantom{\\big|}" | texMath x | "\n";
-	    if i<#n then s=s|"\\\\[-1mm]";
-	    ));
-    "\\begin{aligned}" | s | "\\end{aligned}"
+-- used e.g. in chaincomplexes.m2
+shortLength := 8
+shortStringLength := 3*shortLength
+short = method(Dispatch => Thing, TypicalValue => Expression)
+short Thing := x -> short expression x
+short Holder := identity -- to avoid infinite loops
+short MatrixExpression :=
+short Table := x ->  (
+    (opts,m) := matrixOpts x;
+    shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
+    new class x from
+	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
+	    else m,shortRow)
     )
+short VisibleList :=
+short Expression := x -> apply(if #x>shortLength then new class x from {
+	first x,
+	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
+	last x
+	}
+    else x,short)
+short BinaryOperation := b -> BinaryOperation {b#0,short b#1,short b#2}
+short String := s -> if #s > shortStringLength then substring(s,0,shortStringLength) | "..." | last s else s -- too radical, keep shortLength chars
+short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
+short HashTable := H -> hold ( if #H <= shortLength then H else (
+    s := sortByName pairs H;
+    new class H from append(take(s,shortLength),s#shortLength#0=>cdots)
+    ))
+short MutableHashTable := expression
+short Set := H -> hold ( if #H <= shortLength then H else (
+	s := sort keys H;
+	new class H from append(take(s,shortLength),RowExpression{s#shortLength,ldots})
+	))
+
+Abbreviate = new WrapperType of Holder -- only used once, for listSymbols
+net Abbreviate := y -> silentRobustNet(55,4,3,y#0)
+html Abbreviate := y -> html short y#0
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

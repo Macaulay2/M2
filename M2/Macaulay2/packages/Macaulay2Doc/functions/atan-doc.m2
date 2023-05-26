@@ -1,24 +1,16 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: 
+--- notes:
 
 document { 
-     Key => atan,
-     Headline => "compute the arctangent",
-     Usage => "atan x"
-     }
-
-document { 
-     Key => {(atan2,RR,RR),atan2,
-	  (atan2, ZZ, ZZ),(atan2, QQ, ZZ),(atan2, ZZ, QQ),
-	  (atan2, QQ, QQ),(atan2, RR, ZZ),(atan2, ZZ, RR),(atan2, QQ, RR),
-	  (atan2, RR, QQ)
+     Key => {atan2,(atan2,RR,RR),(atan2, RRi, RRi)
 	  },
      Headline => "compute an angle of a certain triangle",
-     Usage => "atan2(y,x)",
-     Inputs => { "y" => RR, "x" => RR },
+     Usage => "atan2(y,x)\natan2(y,I)\natan2(J,x)\natan2(J,I)",
+     Inputs => { "y" => RR, "x" => RR, "J" => RRi, "I" => RRi},
      Outputs => { 
-	  RR => { "the angle (in radians) formed with the x-axis by the ray from the origin to the point ", TT "(x,y)" } 
+	  RR => { "the angle (in radians) formed with the x-axis by the ray from the origin to the point ", TT "(x,y)" },
+      RR => { "an interval containing the angles (in radians) formed with the x-axis by the rays from the origin to the points of ", TT "(I,y),(x,J),(I,J)" }
 	  },
      EXAMPLE {
 	  "atan2(1,0)",
@@ -29,12 +21,13 @@ document {
      }
 
 document { 
-     Key => {(atan,RR),(atan,ZZ),(atan,CC),(atan, QQ)},
+     Key => {atan,(atan,RR),(atan,CC),(atan, RRi)},
      Headline => "compute the arctangent of a number ",
-     Usage => "atan x",
-     Inputs => { "x" => RR },
+     Usage => "atan x\natan I",
+     Inputs => { "x" => RR, "I" => RRi},
      Outputs => {
-	  RR => {"the arctangent (in radians) of ", TT "x"} 
+	  RR => {"the arctangent (in radians) of ", TT "x"},
+      RRi => { "an interval containing the arctangents of the points of ", TT "I" }
 	  },
      EXAMPLE {
      	  "atan 1",
@@ -55,3 +48,34 @@ document {
      	  "acot 2",
 	  }
      }
+
+document {
+     Key => {atanh, (atanh,Number), (atanh,Constant)},
+     Headline => "compute the hyperbolic arctangent of a number",
+     Usage => "atanh x",
+     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Outputs => {
+	  Number => { "the hyperbolic arctangent of ", TT "x" }
+	  },
+     EXAMPLE {
+	  "atanh .4",
+	  "atanh 4."
+	  }
+     }
+
+document {
+     Key => {acoth, (acoth,Number), (acoth,Constant)},
+     Headline => "compute the hyperbolic arctangent of a number",
+     Usage => "acoth x",
+     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Outputs => {
+	  Number => { "the hyperbolic arccotangent of ", TT "x" }
+	  },
+     EXAMPLE {
+	  "acoth .4",
+	  "acoth 4."
+	  }
+     }
+
+     
+     

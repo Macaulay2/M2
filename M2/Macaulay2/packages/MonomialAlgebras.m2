@@ -414,7 +414,7 @@ rem=method()
 rem(List,Set):=(L,I)->(
   while #I>0 do (
     m:=max(toList I);
-    L=remove(L,m);
+    L=drop(L,{m,m});
     I=I - set {m};
   );
   L)
@@ -730,7 +730,7 @@ randomSemigroup(ZZ,ZZ,ZZ):=opt->(a,d,c)->(
        j:=random(#E);
        if #E==0 then error("Codimension too large");
        B=append(B,E#j);
-       E=remove(E,j);
+       E=drop(E,{j,j});
      );
    ) else (
      dPB:=-1;
@@ -741,7 +741,7 @@ randomSemigroup(ZZ,ZZ,ZZ):=opt->(a,d,c)->(
          j=random(#E);
          if #E==0 then error("Codimension too large");
          B=append(B,E#j);
-         E=remove(E,j);
+         E=drop(E,{j,j});
        );
        PB:=posHull transpose matrix B;
        dPB=dim PB;
@@ -946,7 +946,7 @@ doc ///
     Text
       {\bf Overview:}
 
-      Consider a monoid B in \mathbb{N}^m and a submonid A \subseteq B (both finitely generated)
+      Consider a monoid B in \mathbb{N}^m and a submonoid A \subseteq B (both finitely generated)
       such that K[B] is a finitely generated K[A]-module (with the module structure
       given by inclusion, and K being a field).
 
@@ -1032,7 +1032,7 @@ doc ///
 
       {\bf Tests:}
 
-      The following files contain the tuples (regularity, degree, codim) for every semigroup B in \mathbb{N}^d with fixed {\bf d} and fixed coodinate sum {\bf a}.
+      The following files contain the tuples (regularity, degree, codim) for every semigroup B in \mathbb{N}^d with fixed {\bf d} and fixed coordinate sum {\bf a}.
       Using this data we have verified the Eisenbud-Goto conjecture in these cases.
 
       {\bf d = 3:}
@@ -1259,7 +1259,7 @@ doc ///
      - a multigraded polynomial ring R with @TO Degrees@ R = B.
 
 
-     Specifing B:
+     Specifying B:
 
    Example
      B = {{1,2},{3,0},{0,4},{0,5}}
@@ -1341,7 +1341,7 @@ doc ///
     :Net
   Description
    Text
-      Pretty print for monomial algebras. Prints the assocated polynomial ring of M.
+      Pretty print for monomial algebras. Prints the associated polynomial ring of M.
 
    Example
      M = monomialAlgebra {1,4,8,9,11}
@@ -1858,7 +1858,7 @@ doc ///
 
      Note that this condition does not depend on K.
 
-     For the defintion of Buchsbaum see:
+     For the definition of Buchsbaum see:
 
      J. Stueckrad, W. Vogel: Castelnuovo Bounds for Certain Subvarieties in \mathbb{P}^n, Math. Ann. 276 (1987), 341-352.
 
@@ -2318,7 +2318,7 @@ doc ///
     randomMonomialAlgebra
     (randomMonomialAlgebra,ZZ,ZZ,ZZ)
   Headline
-    Generate random monoimal algebra.
+    Generate random monomial algebra.
   Usage
     randomMonomialAlgebra(a,d,c)
   Inputs

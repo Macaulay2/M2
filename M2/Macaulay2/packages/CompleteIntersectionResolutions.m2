@@ -776,7 +776,7 @@ matrixFactorization(Matrix, Module) := opts -> (ff, M) -> (
     h := new MutableHashTable;
     A := new MutableHashTable;
     A1 := new MutableHashTable;
-    --A1#p is A#p substituteed into R#(p-1)
+    --A1#p is A#p substituted into R#(p-1)
     B1 := new MutableHashTable;
     --B1#p would be B#p over R#(p-1) (there is no B)
     BS := new MutableHashTable; --same over S
@@ -1430,7 +1430,7 @@ exteriorTorModule(Matrix,Module,Module) := (ff,M,N) ->(
     --ff is a sequence of elements in S that annihilate M and N;
     --The script defines a new ring
     --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
-    --with with degree e_j = degree f_j.
+    --with degree e_j = degree f_j.
     --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
     --
     --the script returns Tor^S(M,N) as an SE-module with structure induced
@@ -1455,7 +1455,7 @@ exteriorExtModule(Matrix, Module, Module) := (ff, M,N)->(
     --ff is a sequence of elements in S that annihilate M and N;
     --The script defines a new ring
     --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
-    --with with degree e_j = degree f_j.
+    --with degree e_j = degree f_j.
     --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
     --
     --the script returns Ext_S(M,N) as an SE-module with structure induced
@@ -1639,7 +1639,7 @@ insertT (Matrix, List) := (phi,Ti) -> (
     	--phi is a matrix of linear forms in vars x_1..x_c.
     	--Ti is a list of lists, each a
 	--1-rowed matrix of scalars over R
-	--corresonding to one of the x_i.
+	--corresponding to one of the x_i.
 	--replace each entry of phi by the 
 	--appropriate linear combination of these matrices 
 	--and the output is a matrix of scalars over R.
@@ -1682,7 +1682,7 @@ moduleAsExt(Module,Ring) := (M,R) ->(
 	    map(K_i,
 		R^{d}**K_(i+2), 
 		T1_i_j)));
-    --T_i_j: is the matrix of of the CI map K_(2+i) \to K_i
+    --T_i_j: is the matrix of the CI map K_(2+i) \to K_i
     --corresponding to ff_j.
     V := apply(m+1, i->R^(rank F_i));
     tar := directSum apply(m+1, i->(
@@ -2417,7 +2417,7 @@ Description
   module Ext_R(M,k). TateResolution returns 
   a specified part of the Tate resolution of a 
   maximal Cohen-Macaulay module M
-  first calling the routine cosysyzy.
+  first calling the routine cosyzygy.
   
   The routines moduleAsExt and hfModuleAsExt give
   partial converse constructions (following Avramov-Jorgensen)
@@ -3079,7 +3079,7 @@ Description
   hfModuleAsExt(12,MM,3)
 Caveat
   The elements f_1..f_c must be homogeneous of the same degree.
-  The script could be rewritten to accomodate different degrees,
+  The script could be rewritten to accommodate different degrees,
   but only by going to the local category
 SeeAlso
   ExtModule
@@ -3524,7 +3524,7 @@ doc ///
      
      The degrees of the targets of the T_j are
      changed by the degrees of the f_j to make the T_j
-     homogeneneous.
+     homogeneous.
     Example
      S = ZZ/101[x,y,z];
      ff = matrix"x3,y3,z3";
@@ -3842,7 +3842,7 @@ Description
   At one time DE hoped that, if M were a module over the complete intersection R with
   residue field k,
   then the natural map from "complete" Ext module "(widehat Ext)_R(M,k)"
-  to the the S2-ification of Ext_R(M,k) would be surjective; equivalently, if
+  to the S2-ification of Ext_R(M,k) would be surjective; equivalently, if
   N were a sufficiently negative syzygy of M, then the first local cohomology module
   of Ext_R(M,k) would be zero. This is false, as shown by the following example:
  Example
@@ -4659,12 +4659,12 @@ doc ///
    Description
     Text
      A possible obstruction to the commutativity of the CI operators in codim c,
-     even assymptotically,
+     even asymptotically,
      would be the non-triviality of the map
      M_{(k+4)} --> M_k \otimes \wedge^2(S^c)
      in the stable category of maximal Cohen-Macaulay modules.
     
-     In thw following example, studied in the paper 
+     In the following example, studied in the paper 
      "Tor as a module over an exterior algebra" of
      Eisenbud, Peeva and Schreyer,
      the map is non-trivial...but it is stably trivial.
@@ -4908,7 +4908,7 @@ doc ///
    Description
     Text
      Computes the Hilbert polynomials pe(z), po(z) of evenExtModule and oddExtModule.
-     It returns pe(z/2), and compares to see whethe this is equal to po(z/2-1/2).
+     It returns pe(z/2), and compares to see whether this is equal to po(z/2-1/2).
      Avramov, Seceleanu and Zheng have proven that if the ideal of quadratic leading
      forms of a complete intersection of codimension c generate an ideal of codimension
      at least c-1, then the betti numbers of any module grow, eventually, as a 
@@ -4938,7 +4938,7 @@ doc///
     D = layeredMFaug (ff,M)
    Inputs
     ff:Matrix
-     1 x c matrix containing a regular sequence in a polynomomial ring S
+     1 x c matrix containing a regular sequence in a polynomial ring S
     M:Module
      MCM module over S/(ideal ff)
     Check:Boolean
@@ -5028,7 +5028,7 @@ doc///
     D = layeredMFaug (ff,M)
    Inputs
     ff:Matrix
-     1 x c matrix containing a regular sequence in a polynomomial ring S
+     1 x c matrix containing a regular sequence in a polynomial ring S
     M:Module
      MCM module over S/(ideal ff)
     Check:Boolean
@@ -5038,7 +5038,7 @@ doc///
      D = (d,h)
    Description
     Text
-     Constructs the layered resolution with auxilliary maps. 
+     Constructs the layered resolution with auxiliary maps. 
 ///
 *-
      doc ///
@@ -5062,7 +5062,7 @@ doc///
         Description
          Text
 	  The form expo(c,N) returns partitions of N with c non-negative parts.
-	  The form expo(c, L) returns partitions with non-negaive parts that are
+	  The form expo(c, L) returns partitions with non-negative parts that are
 	  componentwise <= L (and any sum <= sum L).
 	  
 	  The list expo(c,N)  may be thought of as the list of exponent vectors of the 
@@ -5070,7 +5070,7 @@ doc///
 	  Eisenbud-Shamash resolution.
 	  
 	  The list expo(c, L), on the other hand, may be thought of as the list of divisors
-	  of e^L = e_0^{L_0} ... e_c^{L_c}. This is used in the contruction of the higher
+	  of e^L = e_0^{L_0} ... e_c^{L_c}. This is used in the construction of the higher
 	  homotopies on a complex.
          Example
 	  expo(3,5)
@@ -5130,7 +5130,7 @@ doc ///
      Grading =>2}
      
      If Grading =>1, then a singly graded result is returned (just forgetting the
-     honological grading.)
+     homological grading.)
 
     Example
      n = 3
@@ -5167,7 +5167,7 @@ doc ///
 TEST///
 --An example where the built-n global Ext is hard to compare directly
 --with our method of computation: I *guess* that the sign choices in the built-in
---amount essentiall to a change of variable
+--amount essentially to a change of variable
 --in the new variables, an spoil an easy comparison. 
 --But for example the bi-graded betti numbers are equal.
 --this seems to start with c=3.

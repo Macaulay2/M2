@@ -157,14 +157,16 @@ doc///
 
 doc///
  Key
-  keys
+   keys
+  (keys, Database)
+  (keys, Dictionary)
   (keys, HashTable)
  Headline
-  keys used in a hash table
+  keys used in a hash table, dictionary, or database
  Usage
   keys t
  Inputs
-  t:HashTable
+  t:{HashTable,Dictionary,Database}
  Outputs
   :List
    the keys occurring in the hash table {\tt t}
@@ -184,12 +186,12 @@ doc///
 
 doc ///
  Key
-  mutable
-  (mutable, Thing)
+  isMutable
+  (isMutable, Thing)
  Headline
   whether something may be modified
  Usage
-  mutable x
+  isMutable x
  Inputs
   x:Thing
  Outputs
@@ -203,15 +205,17 @@ doc ///
    If {\tt x} is a symbol, then it's mutable if a value can be 
    assigned to it; i.e., if it is not @TO protect@ed.
    
-   If {\tt x} is anything else, {\tt mutable x} will return {\bf false}.
+   If {\tt x} is anything else, {\tt isMutable x} will return {\bf false}.
   Example
    T = new MutableList from (a, b, c)
-   mutable T
+   isMutable T
    V = new List from (a, b, c)
-   mutable V
-   mutable join(T, V)
-   mutable a
-   mutable "a"  
+   isMutable V
+   isMutable join(T, V)
+   isMutable a
+   isMutable "a"  
+  Text
+   This function may also be called using the synonym @TT "mutable"@.
  Caveat
   The (changeable) contents of a mutable hash table or list 
   do not participate in strong comparison with @TO "==="@
@@ -280,14 +284,17 @@ doc ///
  Key
   remove
   (remove, HashTable, Thing)
+  (remove, MutableList, ZZ)
+  (remove, Database, String)
  Headline
-  remove an entry from a mutable hash table
+  remove an entry from a mutable hash table, list, or database
  Usage
   remove(T, k)
  Inputs
-  T:HashTable
+  T:{HashTable, MutableList, Database}
   k:
-   key
+    the key to remove (must be @ofClass ZZ@ if @TT "T"@ is a mutable list or
+    @ofClass String@ if it is a database)
  Outputs
   :Nothing
  Description
@@ -305,6 +312,22 @@ doc ///
   Example
    T = new HashTable from {a => 1, b => 2, c => 3}
    T = applyPairs(T, (k, v) -> if k =!= a then (k, v))
+  Text
+   @TT "remove"@ works similarly when @TT "T"@ is a database.  See @TO Database@
+   for more information.
+  Text
+    If @TT "T"@ is a mutable list, then @TT "k"@ gives the index of the element
+    to be removed.
+  Example
+    T = new MutableList from {1, 2, 3, 4}; peek T
+    remove(T, 0)
+    peek T
+  Text
+    If @TT "k"@ is negative, then the index is determined by counting backwards
+    from the end of @TT "T"@.
+  Example
+    remove(T, -1)
+    peek T
   Text
    The {\tt remove} command does not return any output.
  SeeAlso

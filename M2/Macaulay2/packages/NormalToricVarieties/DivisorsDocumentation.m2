@@ -255,7 +255,7 @@ doc ///
     Description
         Text	    
 	    The group of torus-invariant Cartier divisors on $X$ is the
-            subgroup of all locally principal torus-invarient Weil divisors.
+            subgroup of all locally principal torus-invariant Weil divisors.
             On a normal toric variety, the group of torus-invariant Cartier
             divisors can be computed as an inverse limit.  More precisely, if
             $M$ denotes the lattice of characters on $X$ and the maximal cones
@@ -1414,7 +1414,7 @@ doc ///
     Outputs
         : Boolean
 	    that is @TO true@ if the underlying varieties are equal and lists
-	    of coefficents are equal
+	    of coefficients are equal
     Description
         Text
 	    Two torus-invariant Weil divisors are equal when their underlying
@@ -1462,13 +1462,13 @@ doc ///
 	m : ZZ
     Outputs 
         : ToricDivisor
-	    that is obtain via the specific operation
+	    that is obtained via the specific operation
     Description
         Text	    
             The set of torus-invariant Weil divisors forms an abelian group
             under addition.  The basic operations arising from this structure,
-            including addition, substraction, negation, and scalar
-            multplication by integers, are available.
+            including addition, subtraction, negation, and scalar
+            multiplication by integers, are available.
 	Text
 	    We illustrate a few of the possibilities on one variety.
       	Example
@@ -1864,7 +1864,7 @@ doc ///
             @UL {
     		{"the divisor is a very ample divisor;"},
     		{"for every vertex of the associated lattice polytope
-    		  associated to the divsor, the corresponding semigroup is
+    		  associated to the divisor, the corresponding semigroup is
     		  saturated in the group characters."}
 	    }@
         Text    

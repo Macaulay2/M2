@@ -5,6 +5,7 @@ MultiSlicingVariety.synonym = "multi-affine slice"
 multiSlicingVariety = method()
 multiSlicingVariety(Ambient,List) := (A,MM) -> new MultiSlicingVariety from {"ambient"=>A, "maps"=>MM}
 codim MultiSlicingVariety :=  {} >> o -> S -> rank@@target\S#"maps"
+texMath MultiSlicingVariety := x -> texMath net x
 net MultiSlicingVariety := S -> net "slice of codim " | net codim S
 map MultiSlicingVariety := o -> S -> transpose matrix{S#"maps"/transpose}
 
@@ -89,7 +90,7 @@ addWSet (WCollection, List, MultiSlicingVariety, List) := (W,H,S,pts) -> W#"witn
 	    apply(#H, i->rationalMap transpose matrix {flatten entries S#"maps"#i | {H#i}})), 
 	pts)
 
-toChart(WCollection,Point,List) := (W,p,H) -> (
+toChart(WCollection,AbstractPoint,List) := (W,p,H) -> (
     N := dim ambient W;
     assert(#N==#H);
     A := for h in H list sub(h,matrix p);
@@ -109,7 +110,6 @@ toChart(WCollection,Point,List) := (W,p,H) -> (
     
 TEST ///
 debug needsPackage "NAGtypes"
-debug needsPackage "NumericalAlgebraicGeometry"
 errorDepth = 2
 A = multiProjectiveSpace(CC_53,{1,1},x)
 use ring A 

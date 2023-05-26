@@ -9,7 +9,7 @@ doc ///
      This package is mostly concerned with computations in the {\em Weyl algebra},
      the ring of differential operators over affine space (over a field of characteristic zero).
      Most algorithms in this package can be found in the book
-     {\em Gr\"obner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
+     {\em Gröbner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
      hereafter referred to as [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@].
      This is also the best place to learn about computational D-module theory. The book
      {\em Computational Algebraic Geometry with Macaulay2} has a chapter on D-modules and local cohomology.
@@ -58,35 +58,35 @@ doc ///
     Text
      A-Hypergeometric systems, also known as GKZ systems (see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4]) are implemented.
 
-
     Example
+--     needsPackage "HolonomicSystems"
      use D4
      A = matrix{{1,1,1,1},{0,1,3,4}}
      b = {1,2}
-     H = sub(gkz(A,b), vars D4) -- change this when GKZ is modified
+--     H = gkz(A,b, D4)
 
     Text
      Holonomic D-ideals are analogous to zero-dimensional ideals in polynomial rings (see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4]).
      Let us confirm that our GKZ systems are holonomic.
 
-    Example
-     isHolonomic H
+--    Example
+--     isHolonomic H
 
     Text
      Once we know our ideal is holonomic, we can compute its holonomic rank. The above is a famous
      GKZ example because the holonomic rank may change when the parameter vector $b$ is changed.
 
-    Example
-     holonomicRank H
-     holonomicRank sub(gkz(A,{1,0}), vars D4)
+--    Example
+--     holonomicRank H
+--     holonomicRank sub(gkz(A,{1,0}), vars D4)
 
     Text
      We can compute the characteristic ideal and singular locus of a D-ideal [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4]. Note that the output of charIdeal
      belongs to a commutative ring, the associated graded ring of $D_n$ with respect to the order filtration.
 
-    Example
-     charIdeal H
-     singLocus H
+--    Example
+--     charIdeal H
+--     singLocus H
 
     Text
      The singular locus of a GKZ system is the zero set of a polynomial called the Principal A-determinant,
@@ -96,8 +96,8 @@ doc ///
 
     Example
      A1 = matrix{{1,1,1,1},{0,1,2,3}}, b1={0,0}
-     H1 = sub(gkz(A1,b1),vars D4)
-     factor (singLocus H1)_0
+--     H1 = sub(gkz(A1,b1),vars D4)
+--     factor (singLocus H1)_0
 
   SeeAlso
    Dmodules

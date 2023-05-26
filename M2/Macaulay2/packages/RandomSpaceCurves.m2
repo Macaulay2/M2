@@ -49,7 +49,7 @@ export{"randomSpaceCurve",
 -- t = the variable to be used in the numerator
 hilbertNumerator=method()
 hilbertNumerator(List,ZZ,RingElement):=(L,r,t)->(
-     -- the beginning of the hilbert series
+     -- the beginning of the Hilbert series
      p:=sum(#L,i->L#i*t^i);
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
@@ -68,7 +68,7 @@ TEST ///
 
 
 -----------------------------
--- Expected Betti Tableaus --
+-- Expected Betti Tableaux --
 -----------------------------
 
 -- convert c*t^d to (c,({d},d))
@@ -76,13 +76,13 @@ TEST ///
 -- ring of t must be over ZZ or QQ
 -- and singly graded
 --
--- this funciton is needed to construct
+-- this function is needed to construct
 -- expected betti tables from
--- a HilberNumerator
+-- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
      c := lift((last coefficients mon)_0_0,ZZ);
-     -- the degree of the monmial
+     -- the degree of the monomial
      d := sum degree mon;
      (c,({d},d))
      )
@@ -98,17 +98,17 @@ expectedBetti=method()
 
 
 -- calculates the expected betti tableau
--- from a hilbert Numerator
+-- from a Hilbert Numerator
 --
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
--- sign switches that occur in the hilbert numerator befor this monomial
+-- sign switches that occur in the Hilbert numerator before this monomial
 --
--- the ring of the hilbert numerator is expected to singly graded
+-- the ring of the Hilbert numerator is expected to singly graded
 -- and contain only one variable
 expectedBetti(RingElement):= (hilbNum) ->(
-     -- find terms of hilbert Numerator
+     -- find terms of Hilbert Numerator
      -- smallest degree first
      termsHilbNum := reverse terms hilbNum;
      -- convert terms into pairs (coefficient, ({d},d))
@@ -121,7 +121,7 @@ expectedBetti(RingElement):= (hilbNum) ->(
      -- step through all keys and calculate which step a
      -- given entry must go based on the number of sign-changes
      L := for b in bettiKeys list (
-	  -- has a sign change occured?
+	  -- has a sign change occurred?
      	  if (b#0*previousCoefficient) < 0 then (
 	       -- sign change => next step in the resolution
 	       j = j+1;
@@ -150,7 +150,7 @@ TEST ///
 
 
 -- calculate the expected betti tableau
--- from a given hilbert function.
+-- from a given Hilbert function.
 -- hilb = {h0,...,h_(d+r+1)}
 -- where d is the regularity of the variety described
 -- and r is the dimension of the ambient space
@@ -202,7 +202,7 @@ TEST ///
 
 
 -- given a betti Table b and a Ring R make a chainComplex
--- with zero maps over R  that has betti diagramm b.
+-- with zero maps over R  that has betti diagram b.
 --
 -- negative entries are ignored
 -- rational entries produce an error
@@ -261,21 +261,21 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
      -- construct a chain complex with expected betti tableau
      -- and 0 differentials
      --
-     -- calculate the expectd betti diagramm to find out wether linear syzygies
-     -- are requried (this is the difficult part in the construction)
+     -- calculate the expected betti diagram to find out whether linear syzygies
+     -- are required (this is the difficult part in the construction)
      e := expectedBetti(HRao|{0,0,0,0},3);
      F := R^e;
      -- find betti Numbers of the linear strand
      linearStrand := for i from 0 list (if e#?(i,{i},i) then e#(i,{i},i) else break);
-     -- construction depends on lenth of linear strand.
-     if #linearStrand == 0 then error"linear Stand has lenght 0. This should never happen";
+     -- construction depends on length of linear strand.
+     if #linearStrand == 0 then error"linear Stand has length 0. This should never happen";
      if #linearStrand == 1 then (
 	  -- first matrix can neither have nor be required to have linear syzygies
 	  -- choose first matrix randomly
      	  return coker random (F_0,F_1)
 	  );
      if #linearStrand == 2 then (
-	  -- no linear syzygies of the first matrix are requried
+	  -- no linear syzygies of the first matrix are required
 	  -- check if first matrix always has unwanted syzygies
 	  if expectedLinearSyzygies(linearStrand#0,linearStrand#1,R) <= 0 then (
 	       -- no unwanted syzygies
@@ -338,20 +338,20 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R)->(
 
 -- Try to construct a random Hartshorne-Rau module of
 -- length 2. Here the only problem is, that the
--- generic module may not have expected syzgies
+-- generic module may not have expected syzygies
 --
 -- HRau = {h1,h2} the Hilbertfunction of the desired module
 -- R the ring where the module should live. It is assumed, that
 -- this ring has 4 variables and is singly graded.
 randomHartshorneRaoModuleDiameter2 = (HRao,R)->(
      if #HRao != 2 then error"Hilbert function has to have length 2";
-     -- some special cases with non expected resoluton
+     -- some special cases with non expected resolution
      --
      --if HRao == {1,1} then return coker random(R^{0},R^{3:-1,1:-2});
      --if HRao == {1,2} then return coker random(R^{0},R^{2:-1,3:-2});
      --if HRao == {2,1} then return coker random(R^{2:0},R^{7:-1});
      --
-     -- the standart construction still works since the unexpected
+     -- the standard construction still works since the unexpected
      -- part is not in the first 2 steps.
      --
      -- now assume expected resolution
@@ -362,7 +362,7 @@ randomHartshorneRaoModuleDiameter2 = (HRao,R)->(
      )
 
 -- Construct a random Hartshorne-Rau module of
--- length 1. This allways works
+-- length 1. This always works
 --
 -- HRau = {h1} the Hilbertfunction of the desired module
 -- R the ring where the module should live. It is assumed, that
@@ -378,7 +378,7 @@ constructHartshorneRaoModule=method(Options=>{Certify=>false})
 constructHartshorneRaoModule(ZZ,List,PolynomialRing):=opt->(e,HRao,R)->(
      if dim R != 4 then error "expected a polynomial ring in 4 variables";
      if degrees R !={{1}, {1}, {1}, {1}} then error "polynomial ring is not standard graded";
-     if #HRao > 3 then error "no method implemented for Hartshorne Rao modue of diameter >3";
+     if #HRao > 3 then error "no method implemented for Hartshorne Rao module of diameter >3";
      M := null;
      if #HRao == 1 then M = randomHartshorneRaoModuleDiameter1(HRao,R);
      if #HRao == 2 then M = randomHartshorneRaoModuleDiameter2(HRao,R);
@@ -410,7 +410,7 @@ hartshorneRaoModule = new RandomObject from {
 -- the cokernel of the transpose of the last map
 -- in a minimal free resolution of a curve
 --
--- conversly one can construct a curve, by first
+-- conversely one can construct a curve, by first
 -- constructing the Harshorne Rao Module an therefore
 -- the last matrix in the minimal free resolution of
 -- the curve
@@ -423,7 +423,7 @@ randomSpaceCurve(ZZ,ZZ,PolynomialRing) := opt->(d,g,R)->(
      h1 := for i from 0 when ((i<4) or(d*i+1-g)>binomial(i+3,3)) list max(d*i+1-g-binomial(3+i,3),0);
      -- calculate offset (i.e. number of leading 0's in h1)
      e := 0; for i in h1 when i==0 do e=e+1;
-     -- calculate support of Hartshorne Rao Moduole
+     -- calculate support of Hartshorne Rao Module
      HRao := select(h1,i->i!=0);
      -- if the Hartshorne Rao Module is zero, the curve is ACM
      -- and it can be defined by the minors of an appropriate
@@ -529,7 +529,7 @@ doc ///
      dimension and the constructed curve is smooth and actually has the desired degree d and genus g
 
    Text
-     There are 63 possible families satifying the four conditions above.
+     There are 63 possible families satisfying the four conditions above.
      Our method can provide random curves in 60 of these families, simultaneously proving the unirationality of each of these 60 components of the
      Hilbert scheme.
 
@@ -684,7 +684,7 @@ doc ///
        assuming that each sign change in the coefficients of q corresponds to a step
   Description
     Text
-      calculates the expected betti table  from a given hilbert Numerator.
+      calculates the expected betti table  from a given Hilbert Numerator.
 
     Example
       T=ZZ[t]
@@ -723,7 +723,7 @@ doc ///
   B=expectedBetti(h,r)
  Inputs
   h: List
-      values of the hilbert function
+      values of the Hilbert function
   r: ZZ
        dimension of ambient protective space
  Outputs
@@ -733,7 +733,7 @@ doc ///
   Example
     betti expectedBetti({0,0,4,6,3,0,0,0,0},3)
  Caveat
-  The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
+  The Hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
 ///
 
 
@@ -747,7 +747,7 @@ doc ///
    p=hilbertNumerator(L,r,t)
  Inputs
    L: List
-   	values of the hilbert function
+   	values of the Hilbert function
    r: ZZ
        dimension of ambient projective space
    t: RingElement
@@ -757,7 +757,7 @@ doc ///
     T=QQ[t];
     hilbertNumerator({0,0,4,6,3,0,0,0,0},3,t)
  Caveat
-  The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
+  The Hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
 
 ///
 

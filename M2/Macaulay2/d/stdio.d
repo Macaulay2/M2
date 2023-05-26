@@ -155,6 +155,13 @@ init():void := (
 	       stdIO.outisatty = false;
 	       )
 	  else
+	  if arg === "--webapp" then (
+	       stdIO.echo = true; -- so echo comes from M2 (need to disable it at level of tty with stty -echo)
+	       stdIO.readline = false; -- don't go thru readline
+	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
+	       stdIO.outisatty = true; -- not so important?
+	  )
+	  else
 	  if arg === "--read-only-files" then (
 	       readonlyfiles = true;
 	       )
@@ -361,6 +368,8 @@ export openListener(filename:string):(file or errmsg) := (
      then opensocket(filename,false,false,true)
      else (file or errmsg)(errmsg("openListener: expected file name starting with '$'")));
 export flushinput(o:file):void := (
+     o.echoindex = o.echoindex - o.insize;
+     if o.echoindex < 0 then o.echoindex = 0;
      o.inindex = 0;
      o.insize = 0;
      o.bol = true;
@@ -445,6 +454,7 @@ flushnets(o:file):int := (
 export flush(o:file):int := (
      foss := getFileFOSS(o);
      if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
+     foss.outbol = foss.outindex;
      releaseFileFOSS(o);
      simpleflush(o));
 
@@ -638,11 +648,11 @@ export present(x:string):string := (
 	       ))
      else x);
 
-export presentn(x:string):string := ( -- fix newlines, also
+export presentn(x:string):string := ( -- fix newlines and other special chars, also
      fixesneeded := 0;
      foreach cc in x do (
 	  c := cc; 
-	  if c == char(0) || c == '\t' || c == '\b' || c == '\r' || c == '\"' || c == '\\' || c == '\n' 
+	  if c < char(32) || c == '\"' || c == '\\'
 	  then fixesneeded = fixesneeded + 1 
 	  );
      if fixesneeded != 0 then (
@@ -653,6 +663,7 @@ export presentn(x:string):string := ( -- fix newlines, also
 	       else if c == '\n' then (provide '\\'; provide 'n';)
 	       else if c == '\b' then (provide '\\'; provide 'b';)
 	       else if c == '\t' then (provide '\\'; provide 't';)
+	       else if c < char(32) then (provide '\\'; provide '?';)
 	       else (
 		    if c == '\"' || c == '\\' then provide '\\';
 	       	    provide c;

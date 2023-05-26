@@ -328,7 +328,7 @@ splineMatrix(List,List,List,ZZ) := Matrix => opts -> (V,F,E,r) -> (
 		#F, j-> if (
 		    j === first i) then 1 else if (
 		    j===last i) then -1 else 0));
-	--List of forms definining interior codim one faces (raised to (r+1) power)
+	--List of forms defining interior codim one faces (raised to (r+1) power)
 	flist := formsList(V,E,r,opts);
 	T := diagonalMatrix(flist);
 	splineM := BM|T;
@@ -863,7 +863,7 @@ stanleyReisnerPresentation(List,List,ZZ):=Matrix=>opts->(V,F,r)->(
     --add variables under diagonal embedding to ring generators of M--
     GCR = join(apply(gens S,v->(ident)*matrix{{v}}),GCR);
     dg := apply(GCR,f->(degrees f)_1_0_0);
-    --create stanley reisner ring
+    --create Stanley Reisner ring
     phi := stanleyReisner(V,F,BaseRing=>S,InputType=>opts.InputType,Homogenize=>opts.Homogenize,VariableName=>opts.VariableName,CoefficientRing=>opts.CoefficientRing);
     T := source phi;
     I := ker phi;
@@ -1808,7 +1808,7 @@ doc ///
         postulationNumber
 	(postulationNumber,Module)
     Headline
-        computes the largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+        computes the largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
     Usage
         v = postulationNumber(M)
     Inputs
@@ -1816,11 +1816,11 @@ doc ///
 	    graded module
     Outputs
         v:ZZ
-	    largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+	    largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
     Description
         Text
 	    This function computes the postulation number of M which is defined as the
-	    largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+	    largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
 	Example
 	    V = {{0,0},{1,0},{1,1},{0,1}};
 	    F = {{0,1,2},{0,2,3}};
@@ -1873,11 +1873,11 @@ doc ///
 	    M' = splineModule(V',F,1);
 	    hilbertPolynomial(M',Projective=>false)
 	    hilbertComparisonTable(0,4,M)
-	    postulationNumber(M) --final integer for which hilbert function and polynomial disagree
+	    postulationNumber(M) --final integer for which Hilbert function and polynomial disagree
 	    hilbertComparisonTable(0,4,M')
 	    postulationNumber(M')
     	Text
-	    In the following example, we compare the hilbert polynomial and hilbert function of splines over a centrally triangulated
+	    In the following example, we compare the Hilbert polynomial and Hilbert function of splines over a centrally triangulated
 	    octahedron; the behavior is very similar to the Morgan-Scot partition, except there is an extra degree of symmetry 
 	    available which alters the Hilbert polynomials.  Notice the use of the option Homogenize=>false to consider splines 
 	    of degree precisely d instead of splines of degree at most d.
@@ -1893,7 +1893,7 @@ doc ///
 	    M''=splineModule(V'',F,1,Homogenize=>false);
 	    hilbertPolynomial(M'',Projective=>false)
 	    hilbertComparisonTable(0,6,M)
-	    postulationNumber(M) --largest integer for which hilbert function and polynomial disagree
+	    postulationNumber(M) --largest integer for which Hilbert function and polynomial disagree
 	    hilbertComparisonTable(0,6,M')
 	    postulationNumber(M')
 	    hilbertComparisonTable(0,6,M'')
@@ -2214,7 +2214,7 @@ doc ///
 	    phi=stanleyReisner(V,F,BaseRing=>R,Homogenize=>false)
 	    ker phi--decone of simplicial complex is a three-cycle
 	Text
-	    The Stanley Reisner ring of a simpicial complex is obtained using the function @TO ringStructure@, where the
+	    The Stanley Reisner ring of a simplicial complex is obtained using the function @TO ringStructure@, where the
 	    ring generators are chosen to be the Courant functions.
 	Example
 	    V={{0,0},{0,1},{-1,-1},{1,0}};
@@ -2286,7 +2286,7 @@ doc ///
 	    describe T --direct sum of two copies of R, one for each face; e_i corresponds to the face F_i    
 	Text
 	    As above, write $e$ for the identity of $R^k$.  Then the generators for $M$ as a sub-ring of $R^k$ are the generators of $M$ as an $R$-module (other than $e$), together with 
-	    the generators $x_0e,x_1e,\ldots,x_ne$.  The source of the map created by ringStructure(M) is a polynomial ring in variables $Y_0,\ldots,Y_n,Y_{n+1},\cdots,Y_m$, where $Y_0,\cdots,Y_n$ corresond to the 
+	    the generators $x_0e,x_1e,\ldots,x_ne$.  The source of the map created by ringStructure(M) is a polynomial ring in variables $Y_0,\ldots,Y_n,Y_{n+1},\cdots,Y_m$, where $Y_0,\cdots,Y_n$ correspond to the 
 	    generators $x_0e,\ldots,x_ne$ and $Y_{n+1},\cdots,Y_m$ correspond to the usual generators of M (except for e, if it happens to be a generator of M).
 	Example
 	    H=source phi;
@@ -2390,7 +2390,7 @@ doc ///
 	    R=QQ[x,y];
 	    phi=stanleyReisnerPresentation(V,F,1,Homogenize=>false,BaseRing=>R)
 	    H=source phi;
-	    scan(gens H, g->print phi(g))--see the expression of each generator in the stanley reisner ring
+	    scan(gens H, g->print phi(g))--see the expression of each generator in the Stanley Reisner ring
     	Text
 	    The kernel of the map is the same as the kernel of the map returned by @TO ringStructure@, but the generators
 	    are expressed differently.

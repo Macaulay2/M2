@@ -3,6 +3,7 @@
 #ifndef _mat_linalg_hpp_
 #define _mat_linalg_hpp_
 
+
 /**
  * \ingroup matrices
  */
@@ -193,7 +194,7 @@ bool solveInvertible(const Mat& A, const Mat& B, Mat& X)
 /// the column profile is computed.
 ///
 /// The return value is an ascending sequence of non-negative integers
-/// with an entry a occuring iff the submatrix of A of the first
+/// with an entry a occurring iff the submatrix of A of the first
 /// (a-1) rows (resp columns) has lower rank than the submatrix of the
 /// first a rows (resp columns).
 ///
@@ -208,7 +209,7 @@ M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
 
 /// @brief Set C += A*B
 ///
-/// Throws an exception if not yet implementd for this ring/matrix type.
+/// Throws an exception if not yet implemented for this ring/matrix type.
 /// The sizes of C,A,B must be compatible.  These are checked only via
 /// assertions.
 template <typename Mat>
@@ -221,7 +222,7 @@ void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
 
 /// @brief Set C -= A*B
 ///
-/// Throws an exception if not yet implementd for this ring/matrix type.
+/// Throws an exception if not yet implemented for this ring/matrix type.
 /// The sizes of C,A,B must be compatible.  These are checked only via
 /// assertions.
 template <typename Mat>
@@ -335,8 +336,7 @@ void mult(const DMat<RT>& A, const DMat<RT>& B, DMat<RT>& result_product)
 
   ElementType* result = result_product.array();
 
-  ElementType tmp;
-  A.ring().init(tmp);
+  typename RT::Element tmp(A.ring());
   // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
@@ -354,7 +354,6 @@ void mult(const DMat<RT>& A, const DMat<RT>& B, DMat<RT>& result_product)
           }
         result++;
       }
-  A.ring().clear(tmp);
 }
 
 template <typename RT>
@@ -377,8 +376,7 @@ void subtractMultipleTo(DMat<RT>& C, const DMat<RT>& A, const DMat<RT>& B)
 
   ElementType* result = C.array();
 
-  ElementType tmp;
-  A.ring().init(tmp);
+  typename RT::Element tmp(A.ring());
   // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
@@ -396,7 +394,6 @@ void subtractMultipleTo(DMat<RT>& C, const DMat<RT>& A, const DMat<RT>& B)
           }
         result++;
       }
-  A.ring().clear(tmp);
 }
 
 // Note: this default version only works for fields.  Any other rings
@@ -712,11 +709,9 @@ inline void determinant(const DMatZZ& A, M2::ARingZZ::ElementType& result_det)
 
 inline bool inverse(const DMatZZ& A, DMatZZ& result_inv)
 {
-  DMatZZ::ElementType den;
-  A.ring().init(den);
-  bool result = fmpz_mat_inv(result_inv.fmpz_mat(), &den, A.fmpz_mat());
-  if (!fmpz_is_pm1(&den)) result = false;
-  A.ring().clear(den);
+  M2::ARingZZ::Element den(A.ring());
+  bool result = fmpz_mat_inv(result_inv.fmpz_mat(), &den.value(), A.fmpz_mat());
+  if (!fmpz_is_pm1(&den.value())) result = false;
   return result;
 }
 
@@ -736,11 +731,9 @@ inline size_t nullSpace(const DMatZZ& A, DMatZZ& result_nullspace)
 
 inline bool solveLinear(const DMatZZ& A, const DMatZZ& B, DMatZZ& X)
 {
-  DMatZZ::ElementType den;
-  A.ring().init(den);
-  bool result = fmpz_mat_solve(X.fmpz_mat(), &den, B.fmpz_mat(), A.fmpz_mat());
-  if (!fmpz_is_pm1(&den)) result = false;
-  A.ring().clear(den);
+  M2::ARingZZ::Element den(A.ring());
+  bool result = fmpz_mat_solve(X.fmpz_mat(), &den.value(), B.fmpz_mat(), A.fmpz_mat());
+  if (!fmpz_is_pm1(&den.value())) result = false;
   return result;
 }
 
@@ -1092,45 +1085,73 @@ inline void mult(const DMatQQFlint& A,
 ////////
 inline bool eigenvaluesHermitian(const DMatRR& A, DMatRR& eigenvals)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvalues_symmetric(&A, &eigenvals);
+#else
+  return EigenM2::eigenvalues_hermitian(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvalues(const DMatRR& A, DMatCC& eigenvals)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvalues(&A, &eigenvals);
+#else
+  return EigenM2::eigenvalues(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvectorsHermitian(const DMatRR& A,
-                                  DMatRR& eigenvals,
-                                  DMatRR& eigenvecs)
+  DMatRR& eigenvals,
+  DMatRR& eigenvecs)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvectors_symmetric(&A, &eigenvals, &eigenvecs);
+#else
+  return EigenM2::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool eigenvectors(const DMatRR& A, DMatCC& eigenvals, DMatCC& eigenvecs)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+#else
+  return EigenM2::eigenvectors(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool leastSquares(const DMatRR& A,
-                         const DMatRR& B,
-                         DMatRR& X,
-                         bool assume_full_rank)
+  const DMatRR& B,
+  DMatRR& X,
+  bool assume_full_rank)
 {
+#ifndef NO_LAPACK
   if (assume_full_rank)
     return Lapack::least_squares(&A, &B, &X);
   else
     return Lapack::least_squares_deficient(&A, &B, &X);
+#else
+  // place eigen code here
+  return EigenM2::least_squares(&A, &B, &X);
+  // throw exc::engine_error( "not implemented!!!");
+  // return false; // indicates error
+#endif
 }
 
 inline bool SVD(const DMatRR& A,
-                DMatRR& Sigma,
-                DMatRR& U,
-                DMatRR& Vt,
-                int strategy)
+  DMatRR& Sigma,
+  DMatRR& U,
+  DMatRR& Vt,
+  int strategy)
 {
+#ifndef NO_LAPACK
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return Lapack::SVD(&A, &Sigma, &U, &Vt);
+#else
+  if (strategy == 1) return EigenM2::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
+  return EigenM2::SVD(&A, &Sigma, &U, &Vt);
+#endif
 }
 
 inline bool QR(const DMatRR& A, DMatRR& Q, DMatRR& R, bool return_QR)
@@ -1162,45 +1183,70 @@ inline void increase_norm(gmp_RRmutable norm, const DMatRR& mat)
 ////////
 inline bool eigenvaluesHermitian(const DMatCC& A, DMatRR& eigenvals)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvalues_hermitian(&A, &eigenvals);
+#else
+  return EigenM2::eigenvalues_hermitian(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvalues(const DMatCC& A, DMatCC& eigenvals)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvalues(&A, &eigenvals);
+#else
+  return EigenM2::eigenvalues(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvectorsHermitian(const DMatCC& A,
-                                  DMatRR& eigenvals,
-                                  DMatCC& eigenvecs)
+  DMatRR& eigenvals,
+  DMatCC& eigenvecs)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+#else
+  return EigenM2::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool eigenvectors(const DMatCC& A, DMatCC& eigenvals, DMatCC& eigenvecs)
 {
+#ifndef NO_LAPACK
   return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+#else
+  return EigenM2::eigenvectors(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool leastSquares(const DMatCC& A,
-                         const DMatCC& B,
-                         DMatCC& X,
-                         bool assume_full_rank)
+  const DMatCC& B,
+  DMatCC& X,
+  bool assume_full_rank)
 {
+#ifndef NO_LAPACK
   if (assume_full_rank)
     return Lapack::least_squares(&A, &B, &X);
   else
     return Lapack::least_squares_deficient(&A, &B, &X);
+#else
+  return EigenM2::least_squares(&A, &B, &X);
+#endif
 }
 
 inline bool SVD(const DMatCC& A,
-                DMatRR& Sigma,
-                DMatCC& U,
-                DMatCC& Vt,
-                int strategy)
+  DMatRR& Sigma,
+  DMatCC& U,
+  DMatCC& Vt,
+  int strategy)
 {
+#ifndef NO_LAPACK
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return Lapack::SVD(&A, &Sigma, &U, &Vt);
+#else
+  if (strategy == 1) return EigenM2::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
+  return EigenM2::SVD(&A, &Sigma, &U, &Vt);
+#endif
 }
 
 inline void clean(gmp_RR epsilon, DMatCC& mat)
@@ -1223,51 +1269,44 @@ inline void increase_norm(gmp_RRmutable norm, const DMatCC& mat)
 
 inline bool eigenvaluesHermitian(const DMatRRR& A, DMatRRR& eigenvals)
 {
-  return Lapack::eigenvalues_symmetric(&A, &eigenvals);
+  return EigenM2::eigenvalues_hermitian(&A, &eigenvals);
 }
 
 inline bool eigenvalues(const DMatRRR& A, DMatCCC& eigenvals)
 {
-  return Lapack::eigenvalues(&A, &eigenvals);
+  return EigenM2::eigenvalues(&A, &eigenvals);
 }
 
 inline bool eigenvectorsHermitian(const DMatRRR& A,
-                                  DMatRRR& eigenvals,
-                                  DMatRRR& eigenvecs)
+  DMatRRR& eigenvals,
+  DMatRRR& eigenvecs)
 {
-  return Lapack::eigenvectors_symmetric(&A, &eigenvals, &eigenvecs);
+  return EigenM2::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
 }
 
 inline bool eigenvectors(const DMatRRR& A,
-                         DMatCCC& eigenvals,
-                         DMatCCC& eigenvecs)
+  DMatCCC& eigenvals,
+  DMatCCC& eigenvecs)
 {
-  return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+  return EigenM2::eigenvectors(&A, &eigenvals, &eigenvecs);
 }
 
 inline bool leastSquares(const DMatRRR& A,
-                         const DMatRRR& B,
-                         DMatRRR& X,
-                         bool assume_full_rank)
+  const DMatRRR& B,
+  DMatRRR& X,
+  bool assume_full_rank)
 {
-  if (assume_full_rank)
-    return Lapack::least_squares(&A, &B, &X);
-  else
-    return Lapack::least_squares_deficient(&A, &B, &X);
+  return EigenM2::least_squares(&A, &B, &X);
 }
 
-
 inline bool SVD(const DMatRRR& A,
-                DMatRRR& Sigma,
-                DMatRRR& U,
-                DMatRRR& Vt,
-                int strategy)
+  DMatRRR& Sigma,
+  DMatRRR& U,
+  DMatRRR& Vt,
+  int strategy)
 {
+  if (strategy == 1) return EigenM2::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return EigenM2::SVD(&A, &Sigma, &U, &Vt);
-#if 0  
-  if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
-  return Lapack::SVD(&A, &Sigma, &U, &Vt);
-#endif  
 }
 
 inline void clean(gmp_RR epsilon, DMatRRR& mat)
@@ -1290,50 +1329,44 @@ inline void increase_norm(gmp_RRmutable norm, const DMatRRR& mat)
 
 inline bool eigenvaluesHermitian(const DMatCCC& A, DMatRRR& eigenvals)
 {
-  return Lapack::eigenvalues_hermitian(&A, &eigenvals);
+  return EigenM2::eigenvalues_hermitian(&A, &eigenvals);
 }
 
 inline bool eigenvalues(const DMatCCC& A, DMatCCC& eigenvals)
 {
-  return Lapack::eigenvalues(&A, &eigenvals);
+  return EigenM2::eigenvalues(&A, &eigenvals);
 }
 
 inline bool eigenvectorsHermitian(const DMatCCC& A,
-                                  DMatRRR& eigenvals,
-                                  DMatCCC& eigenvecs)
+  DMatRRR& eigenvals,
+  DMatCCC& eigenvecs)
 {
-  return Lapack::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+  return EigenM2::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
 }
 
 inline bool eigenvectors(const DMatCCC& A,
-                         DMatCCC& eigenvals,
-                         DMatCCC& eigenvecs)
+  DMatCCC& eigenvals,
+  DMatCCC& eigenvecs)
 {
-  return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+  return EigenM2::eigenvectors(&A, &eigenvals, &eigenvecs);
 }
 
 inline bool leastSquares(const DMatCCC& A,
-                         const DMatCCC& B,
-                         DMatCCC& X,
-                         bool assume_full_rank)
+  const DMatCCC& B,
+  DMatCCC& X,
+  bool assume_full_rank)
 {
-  if (assume_full_rank)
-    return Lapack::least_squares(&A, &B, &X);
-  else
-    return Lapack::least_squares_deficient(&A, &B, &X);
+  return EigenM2::least_squares(&A, &B, &X);
 }
 
 inline bool SVD(const DMatCCC& A,
-                DMatRRR& Sigma,
-                DMatCCC& U,
-                DMatCCC& Vt,
-                int strategy)
+  DMatRRR& Sigma,
+  DMatCCC& U,
+  DMatCCC& Vt,
+  int strategy)
 {
+  if (strategy == 1) return EigenM2::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return EigenM2::SVD(&A, &Sigma, &U, &Vt);
-#if 0
-  if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
-  return Lapack::SVD(&A, &Sigma, &U, &Vt);
-#endif
 }
 
 inline void clean(gmp_RR epsilon, DMatCCC& mat)

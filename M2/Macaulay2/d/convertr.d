@@ -133,11 +133,6 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
 
 export convert(e:ParseTree):Code := (
      when e
-     is s:StartDictionary do (
-	  if s.dictionary.framesize != 0
-	  then Code(newLocalFrameCode(s.dictionary.frameID,s.dictionary.framesize,convert(s.body)))
-	  else convert(s.body)
-	  )
      is w:For do Code(
 	  forCode(
 	       convert(w.inClause), convert(w.fromClause), convert(w.toClause),
@@ -186,6 +181,7 @@ export convert(e:ParseTree):Code := (
 	  if p.left.word == leftparen then Code(sequenceCode(CodeSequence(),treePosition(e)))
 	  else if p.left.word == leftbrace then Code(listCode(CodeSequence(),treePosition(e)))
 	  else if p.left.word == leftbracket then Code(arrayCode(CodeSequence(),treePosition(e)))
+	  else if p.left.word == leftAngleBar then Code(angleBarListCode(CodeSequence(),treePosition(e)))
 	  else dummyCode			  -- should not happen
 	  )
      is p:Parentheses do (
@@ -195,6 +191,9 @@ export convert(e:ParseTree):Code := (
 	  else 
 	  if p.left.word == leftbracket 
 	  then Code(arrayCode(makeCodeSequence(p.contents,CommaW),treePosition(e)))
+	  else 
+	  if p.left.word == leftAngleBar
+	  then Code(angleBarListCode(makeCodeSequence(p.contents,CommaW),treePosition(e)))
 	  else 
 	  dummyCode			  -- should not happen
 	  )

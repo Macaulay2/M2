@@ -322,7 +322,7 @@ canonicalCarpet = method(Options=>{Characteristic=>32003,FineGrading => false,Sc
 canonicalCarpet(ZZ,ZZ) := opts -> (gen,cliff) -> 
      carpet(gen-cliff-1, cliff,Characteristic => opts.Characteristic, FineGrading => opts.FineGrading,Scrolls=>opts.Scrolls)
 
---Here's a structural approach that instead takes the kernel of the unique map of mainimal degree
+--Here's a structural approach that instead takes the kernel of the unique map of minimal degree
 --from the ideal of the scroll to the canonical module of the scroll. This code produces
 --Gorenstein double structures on ACM varieties more generally. 
 --computationally, the bare hands approach of carpet is much faster.
@@ -515,7 +515,7 @@ minimalBetti oo
 ///
 
 -*
----possible rewrite for speed, currently imcomplete.
+---possible rewrite for speed, currently incomplete.
 Scrolls := apply(#scroll, i->hankelMatrix(T, y_(i,0), 2, scroll_i));
 J0 := sum(#scroll, i->minors(2, Scrolls_i));
 --
@@ -990,10 +990,10 @@ $$
    "The hyperplane section of a K3 carpet is a canonical ribbon indexed by genus g=a+b+1 and clifford index b.
    ",
     PARA{},
-    "The K3 carpets generalize to a family of degenerate K3 surfaces which are unoins of two scrolls,
+    "The K3 carpets generalize to a family of degenerate K3 surfaces which are unions of two scrolls,
     whose hyperplane sections are reducible canonical curves consisting of two rational normal curves of degree
     g-1 intersecting in g+1 points. The functions in this package explore the syzygies of these surfaces
-    for fields of arbitrary characteristic. Inparticular, the functions in the package allow for g <= 15 a computational proof of the following
+    for fields of arbitrary characteristic. In particular, the functions in the package allow for g <= 15 a computational proof of the following
     conjecture.",
     PARA{},
      HREF("http://arxiv.org","Conjecture 0.1") ,
@@ -1280,7 +1280,7 @@ doc ///
       a complex over S, the same as F but now with homogeneous with respect to all gradings of S   
    Description
     Text
-     Given a resolution F of an ideal, with carries additional homogenity with respect
+     Given a resolution F of an ideal, with carries additional homogeneity with respect
      to the finer graded ring S, we compute the grading.
     Example
      a=3,b=3
@@ -1411,7 +1411,7 @@ doc ///
        Betti tables of the degenerate K3 for various characteristics of the ground field  
    Description
     Text
-     We compute the equation and nonminimal resolution F of the degeneate K3 of type (a,b,e)
+     We compute the equation and nonminimal resolution F of the degenerate K3 of type (a,b,e)
      where $a \ge b$ over a large finite prime field, lift the complex to the integers,
      which is possible if the coefficients are small. Finally we study the nonminimal
      strands over ZZ by computing the Smith normal form. The resulting data allow us
@@ -1434,7 +1434,7 @@ doc ///
    Caveat
      Already for (e_1,e_2) fairly small, the algorithm might give wrong answers
      since the lift to characteristic zero  might be incorrect. A correction is easy to implement as soon
-     res(.,FastNonminimal=>true) allows QQ (or ZZ) as coefficient ring. Another possibily
+     res(.,FastNonminimal=>true) allows QQ (or ZZ) as coefficient ring. Another possibility
      would be to use the Chinese remainder for lifting to ZZ.
    SeeAlso
     carpetBettiTable
@@ -1517,7 +1517,7 @@ doc ///
      of names
    Description
     Text
-     We name the generators of the syzygies by the list ofthe  monomial parts 
+     We name the generators of the syzygies by the list of the monomial parts 
      of the leadTerm with position m recursively:
      
      schreyerName(F,i,n) = append(schreyerName(F,i-1,m),mon)
@@ -1783,7 +1783,7 @@ doc ///
      ST = (flattenRing(T**S))_0
      irrel = irrelevantIdeal ST;
     Text
-     Here the irrelevant ideal is the intersection of the 4 ideals of coordinats
+     Here the irrelevant ideal is the intersection of the 4 ideals of coordinates
      (P^2 and the three copies of P^1).
      Next, define the pairs of sections on the curve giving the three projections:
     Example
@@ -2059,7 +2059,7 @@ doc ///
    Description
     Text 
      We compute the twists of the relative resolution in the resonance scroll of a degenerate K3 
-     X_e(a,b) in case of k resonance after re-embedding the resonace scroll with |H+jR|
+     X_e(a,b) in case of k resonance after re-embedding the resonance scroll with |H+jR|
      for j=am-a_0=bm-b_0 where $\{a_i\}|\{b_j\}$ is the splitting type of the resonance scroll. 
     Example
      F = relativeResolution(5,4,3);
@@ -2087,7 +2087,7 @@ doc ///
     b:ZZ
      type of the degenerate K3
     k:ZZ
-     the resonace
+     the resonance
    Outputs
     as:List
     bs:List
@@ -2219,7 +2219,7 @@ lineCorrespondence(List,List) := (scroll,correspondence) ->(
     --what should one do in the case one of the scroll sizes is < the correspondence size?
     --when the scroll size is 1, it's easy -- just take the corresponding secant matrix to
     --be a column using the correspondence-size monomials. But in general??
-    n := #scroll; -- dimension of the scroll -- note that in this contruction the line corr is bigger
+    n := #scroll; -- dimension of the scroll -- note that in this construction the line corr is bigger
     p := reverse sort apply(n, i->{scroll_i,correspondence_i}); -- put biggest scrolls first
     sscroll := p/(i->i_0); -- sorted scroll sizes
     scorr :=  p/(i->i_1); -- sorted correspondence degrees

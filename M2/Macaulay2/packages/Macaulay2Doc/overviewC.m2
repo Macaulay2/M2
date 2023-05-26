@@ -22,6 +22,12 @@ document {
       	  "1.234e-20",
       	  "123+4*ii",
 	  },
+     "Integers may be entered in bases 2, 8, or 16 using particular prefixes.",
+     EXAMPLE {
+	  "0b10011010010 -- binary",
+	  "0o2322 -- octal",
+	  "0x4d2 -- hexadecimal",
+	  },
      "The usual arithmetic operations are available.",
      EXAMPLE {
 	  "4/5 + 2/3",
@@ -93,7 +99,7 @@ document {
 	  TO2 {"integers modulo a prime", "ZZ/p"},
 	  TT "GF(p^n)"
 	  },
-     "Create a finite field with q = p^n elements using",
+     "Create a finite field with $q = p^n$ elements using",
      EXAMPLE "F = GF(81,Variable=>a)",
      "This creates the ring of characteristic 3, having 3^4 = 81 elements.  The elements
      of this ring are 0, a, a^2, a^3, ..., a^80.",
@@ -149,7 +155,7 @@ document {
 	  },
      "If you have a quotient ring that you know is a finite field, then you can
      convert it to ring that is known by the system to be a finite field.",
-     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T)",
+     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T) -* no-capture-flag *-",
      "You may also provide your own choice of primitive element.  Internally,
      elements of the finite field are stored as powers of the primitive element.
      First we assign our quotient ring to a global variable to ensure that
@@ -210,8 +216,8 @@ document {
      "The functions ", TO "lift", " and ", TO "substitute", " can be used to transfer
      elements between the polynomial ring and its quotient ring.",
      EXAMPLE {
-	  ///lift(U_"r",T)///,
-      	  ///substitute(T_"r",U)///,
+	  ///lift("r"_U,T)///,
+	  ///substitute("r"_T,U)///,
 	  },
      "A random element of degree ", TT "n", " can be obtained with ", TO "random", ".",
      EXAMPLE "random(2,S)",
@@ -411,13 +417,6 @@ document {
      EXAMPLE "f ? g",
      }
 
-TEST ///
-A = ZZ[a..d]
-B = A[r,s,t]
-C = B[x,y,z]
-
-///
-
 document {
      Key => "factoring polynomials",
      "Polynomials can be factored with ", TO "factor", ".  Factorization
@@ -613,7 +612,7 @@ document {
      }
 
 document {
-     Key => "Weyl algebras",
+     Key => {"Weyl algebras", isWeylAlgebra},
      "A Weyl algebra is the non-commutative algebra of algebraic differential 
      operators on a polynomial ring.  To each variable ", TT "x", " corresponds 
      the operator ", TT "dx", " that differentiates with respect to that 
@@ -635,9 +634,20 @@ document {
 	  "dx*x",
 	  "matrix{{dx}} * matrix{{x}}"
 	  },
-     "All Gröbner basis and related computations work over this ring.  For an extensive
-     collection of D-module routines (A D-module is a module over a Weyl algebra), see ",
-     TO "Dmodules::Dmodules", "."
+     PARA {
+	  "All Gröbner basis and related computations work over this ring.  For an extensive
+	  collection of D-module routines (A D-module is a module over a Weyl algebra), see ",
+	  TO "Dmodules::Dmodules", "."
+	  },
+     PARA {
+	  "The function ", TT "isWeylAlgebra", " can be used to determine whether a polynomial ring has been
+	  constructed as a Weyl algebra."
+	  },
+     EXAMPLE lines ///
+     isWeylAlgebra R
+     S = QQ[x,y]
+     isWeylAlgebra S
+     ///
      }
 
 document {
@@ -722,22 +732,13 @@ Plan for the next node:
 --   computing up to a given degree
 ///
 
-TEST ///
+///
 -- document these routines DO THIS
 -- schreyerMatrix F -- DO THIS
 
 -*
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
-*-
-     
--*
-installHilbertFunction = method()
-installHilbertFunction(Module,RingElement) := (M,hf) -> (
-     -- we need to place hf into the degree ring of M.
-     hf = substitute(hf,degreesRing M);
-     M.cache.poincare = hf;
-     )
 *-
 
 -*

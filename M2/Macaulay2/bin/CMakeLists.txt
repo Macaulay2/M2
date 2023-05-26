@@ -45,12 +45,21 @@ add_custom_target(man COMMAND zcat ${MAN} | groff -man -Tascii DEPENDS ${MAN})
 
 add_executable(M2-binary timestamp.cpp main.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/startup.c ${TAGS} ${MAN})
-target_link_libraries(M2-binary
-  Boost::${Boost_stacktrace}
-  M2-engine M2-interpreter M2-supervisor ${CMAKE_DL_LIBS})
 
-# Force using libboost_stacktrace library
-target_compile_definitions(M2-binary PUBLIC BOOST_STACKTRACE_LINK)
+target_compile_options(M2-binary PRIVATE
+  $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:
+  -Wno-mismatched-tags # FIXME: caused by scc1
+  >
+  )
+
+target_link_libraries(M2-binary
+  ${Boost_stacktrace_lib}
+  M2-supervisor M2-engine M2-interpreter ${CMAKE_DL_LIBS})
+
+#if we have a usable link time stacktrace library, force boost to use it
+if(NOT Boost_stacktrace_header_only)
+  target_compile_definitions(M2-binary PUBLIC BOOST_STACKTRACE_LINK)
+endif()
 
 # Set where the executable should be store and get its RPATH
 set_target_properties(M2-binary PROPERTIES
@@ -94,7 +103,7 @@ else()
   set(EXPORT_STRING   [[LD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$LD_LIBRARY_PATH]])
 endif()
 
-string(CONFIGURE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"" M2_CONTENT @ONLY)
+string(CONFIGURE "#!/bin/sh\n${EXPORT_STRING} exec `dirname \"$0\"`/M2@EXE@ \"$@\"" M2_CONTENT @ONLY)
 file(MAKE_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 execute_process(
   COMMAND ${CMAKE_COMMAND} -E echo "${M2_CONTENT}"

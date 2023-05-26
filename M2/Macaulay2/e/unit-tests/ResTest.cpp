@@ -6,7 +6,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "f4/res-moninfo.hpp"
+#include "schreyer-resolution/res-moninfo.hpp"
 
 TEST(ResMonoidDense, create)
 {
@@ -47,11 +47,11 @@ TEST(ResMonoidDense, encodeDecode)
         exp[j]++;
         int mon[]{0, 0, 0, 0, 0, 0, 0, 0};
         // first encode
-        M.from_exponent_vector(exp, 3, mon);
+        M.from_expvector(exp, 3, mon);
         // now decode
         component_index comp;
         int exp2[]{0, 0, 0, 0};
-        M.to_exponent_vector(mon, exp2, comp);
+        M.to_expvector(mon, exp2, comp);
         EXPECT_EQ(3, comp);
         for (int k = 0; k < M.n_vars(); k++) EXPECT_EQ(exp[k], exp2[k]);
         std::cout << "i=" << i << " j=" << j << " mon = ";
@@ -81,13 +81,13 @@ TEST(ResMonoidSparse, encodeDecode)
         exp[i]++;
         exp[j]++;
         // first encode
-        M.from_exponent_vector(exp, 3, mon);
+        M.from_expvector(exp, 3, mon);
         // now decode
-        M.to_exponent_vector(mon, exp2, comp);
+        M.to_expvector(mon, exp2, comp);
         EXPECT_EQ(3, comp);
         for (int k = 0; k < M.n_vars(); k++) EXPECT_EQ(exp[k], exp2[k]);
         // now re-encode
-        M.from_exponent_vector(exp2, 3, mon2);
+        M.from_expvector(exp2, 3, mon2);
         EXPECT_TRUE(M.is_equal(mon, mon2));
         // now display
         std::cout << "i=" << i << " j=" << j << " mon = ";
@@ -111,10 +111,10 @@ TEST(ResMonoidDense, mult)
   int mon3[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
   int mon[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
   int comp;
-  M.from_exponent_vector(exp1, 0, mon1);
-  M.from_exponent_vector(exp2, 0, mon2);
+  M.from_expvector(exp1, 0, mon1);
+  M.from_expvector(exp2, 0, mon2);
   M.mult(mon1, mon2, mon);
-  M.to_exponent_vector(mon, exp3, comp);
+  M.to_expvector(mon, exp3, comp);
   EXPECT_EQ(6, M.monomial_size(mon1));
   EXPECT_EQ(6, M.monomial_size(mon2));
   EXPECT_EQ(6, M.monomial_size(mon));
@@ -128,12 +128,12 @@ TEST(ResMonoidDense, mult)
           exp1[j]++;
           int exp2[]{0, 0, 0, 0};
           exp2[k]++;
-          M.from_exponent_vector(exp1, 0, mon1);
-          M.from_exponent_vector(exp2, 0, mon2);
+          M.from_expvector(exp1, 0, mon1);
+          M.from_expvector(exp2, 0, mon2);
           M.mult(mon1, mon2, mon);
           M.mult(mon1, mon2, mon3);
           EXPECT_TRUE(M.is_equal(mon, mon3));
-          M.to_exponent_vector(mon, exp3, comp);
+          M.to_expvector(mon, exp3, comp);
           int exp3a[]{0, 0, 0, 0};
           exp3a[i]++;
           exp3a[j]++;
@@ -160,10 +160,10 @@ TEST(ResMonoidSparse, mult)
   int mon3[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
   int mon[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
   int comp;
-  M.from_exponent_vector(exp1, 0, mon1);
-  M.from_exponent_vector(exp2, 0, mon2);
+  M.from_expvector(exp1, 0, mon1);
+  M.from_expvector(exp2, 0, mon2);
   M.mult(mon1, mon2, mon);
-  M.to_exponent_vector(mon, exp3, comp);
+  M.to_expvector(mon, exp3, comp);
   EXPECT_EQ(3, M.monomial_size(mon1));
   EXPECT_EQ(7, M.monomial_size(mon2));
   EXPECT_EQ(7, M.monomial_size(mon));
@@ -177,12 +177,12 @@ TEST(ResMonoidSparse, mult)
           exp1[j]++;
           int exp2[]{0, 0, 0, 0};
           exp2[k]++;
-          M.from_exponent_vector(exp1, 0, mon1);
-          M.from_exponent_vector(exp2, 0, mon2);
+          M.from_expvector(exp1, 0, mon1);
+          M.from_expvector(exp2, 0, mon2);
           M.mult(mon1, mon2, mon);
           M.mult(mon1, mon2, mon3);
           EXPECT_TRUE(M.is_equal(mon, mon3));
-          M.to_exponent_vector(mon, exp3, comp);
+          M.to_expvector(mon, exp3, comp);
           int exp3a[]{0, 0, 0, 0};
           exp3a[i]++;
           exp3a[j]++;

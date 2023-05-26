@@ -11,11 +11,11 @@ document {
      SeeAlso => {"applyKeys", "applyPairs", "applyValues", "applyTable", "lists and sequences"}
      }
 document { 
-     Key => (apply,BasicList,Function),
+     Key => {(apply,BasicList,Function), (apply,String,Function)},
      Headline => "apply a function to each element of a list",
      Usage => "apply(L,f)",
      Inputs => {
-	  "L" => BasicList,
+	  "L" => Nothing => ofClass{BasicList,String},
 	  "f" => Function => "with one argument",
 	  },
      Outputs => {
@@ -28,15 +28,20 @@ document {
 	  "apply([1,3,5,7], i -> i^2)",
 	  "apply((1,3,5,7), i -> i^2)"
      	  },
+     "The exception is that for strings, the result will be a sequence.",
+     EXAMPLE {///apply("foo", identity)///},
      SeeAlso => {(symbol /, VisibleList, Function), (symbol \,Function,VisibleList)}
      }
 document { 
-     Key => (apply,BasicList,BasicList,Function),
+     Key => {(apply,BasicList,BasicList,Function),
+	 (apply,BasicList,String,Function),
+	 (apply,String,BasicList,Function),
+	 (apply,String,String,Function)},
      Headline => "apply a function to pairs of elements, one from each list",
      Usage => "apply(L1,L2,f)",
      Inputs => {
-	  "L1" => BasicList,
-	  "L2" => BasicList => {"of the same length as ", TT "L1"},
+	  "L1" => Nothing => ofClass{BasicList,String},
+	  "L2" => Nothing => {ofClass{BasicList,String}, " of the same length as ", TT "L1"},
 	  "f" => Function => "with two arguments",
 	  },
      Outputs => {
@@ -49,6 +54,8 @@ document {
      	  "apply([1,2,3], [100,200,300], (i,j) -> i+j)",
 	  "apply((1,2,3), (100,200,300), (i,j) -> i+j)"	  
      	  },
+     "The exception is that for strings, the result will be a sequence.",
+     EXAMPLE {///apply("foo", "bar", concatenate)///},
      }
 document { 
      Key => (apply,ZZ,Function),
@@ -67,3 +74,35 @@ document {
      	  },
      }
 
+doc ///
+  Key
+    (apply, Thing, Function)
+  Headline
+    apply a function to an object with an iterator
+  Usage
+    apply(x, f)
+  Inputs
+    x:Thing -- an instance of a class with the @TO iterator@ method installed
+    f:Function
+  Outputs
+    :Iterator
+  Description
+    Text
+      Suppose @TT "x"@ is an instance of a class with the @TO iterator@ method
+      installed and suppose @TT "iter"@ is the output of
+      @TT "iterator x"@.  Then a new @TO Iterator@ object is returned whose
+      @TO next@ method returns @TT "f next iter"@  until @TT "next iter"@
+      returns @TO StopIteration@, in which case this new iterator does the same.
+    Example
+      applyiter = apply(iterator "foo", toUpper)
+      next applyiter
+      next applyiter
+      next applyiter
+      next applyiter
+  SeeAlso
+    iterator
+    Iterator
+    next
+    StopIteration
+    (select, Thing, Function)
+///

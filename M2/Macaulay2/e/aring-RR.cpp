@@ -12,7 +12,7 @@ void ARingRR::elem_text_out(buffer &o,
   ElementType &ap1 = const_cast<ElementType &>(ap);
   mpfr_t a;
   mpfr_init(a);
-  mpfr_set_d(a, ap1, GMP_RNDN);
+  mpfr_set_d(a, ap1, MPFR_RNDN);
   M2_string s = (*gmp_tostringRRpointer)(a);
   mpfr_clear(a);
   bool prepend_plus = p_plus && (s->array[0] != '-');
@@ -22,9 +22,9 @@ void ARingRR::elem_text_out(buffer &o,
 
   if (prepend_plus) o << "+";
   if (strip_last)
-    o.put(s->array, s->len - 1);
+    o.put((char *)s->array, s->len - 1);
   else
-    o.put(s->array, s->len);
+    o.put((char *)s->array, s->len);
 }
 
 };  // end namespace M2

@@ -13,7 +13,7 @@ doc ///
   Headline
     evaluate a regular expression search
   Usage
-    regex(re, start)
+    regex(re, str)
     regex(re, start, str)
     regex(re, start, range, str)
   Inputs
@@ -159,7 +159,7 @@ doc ///
            @TT "[A-C]"@	-- match any character from @TT "A"@ through @TT "C"@
           @TT "[^...]"@	-- match non-listed characters, ranges, or classes
         :Character classes
-          @TT "[:alnum:]"@	-- any alpha-numeric character
+          @TT "[:alnum:]"@	-- any alphanumeric character
           @TT "[:alpha:]"@	-- any alphabetic character
           @TT "[:blank:]"@	-- any whitespace or tab character
           @TT "[:cntrl:]"@	-- any control character

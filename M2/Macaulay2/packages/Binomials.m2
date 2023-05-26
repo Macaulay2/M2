@@ -31,7 +31,7 @@ newPackage(
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "specialized routines for binomial ideals",
 	Keywords => {"Commutative Algebra"},
-	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "Elimination"},
+	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "http://j-sag.org/",
@@ -76,7 +76,7 @@ export {
      "BPD",
      "BCD",
      "BUD",
-     -- auxillary functions:
+     -- auxiliary functions:
      "partialCharacter",
      "idealFromCharacter",  -- should be renamed to ideal once M2 supports this
      "randomBinomialIdeal",
@@ -200,7 +200,7 @@ isCellular Ideal := Ideal => o -> I -> (
 
 cellVars = method (Options => {CellVariables => null})
 cellVars Ideal := Ideal => o -> I -> (
-     -- This function compotes the cell variables for a cellular ideal if necessary.
+     -- This function computes the cell variables for a cellular ideal if necessary.
      if o#CellVariables === null then (
 	  cv := {};
 	  for i in gens ring I do if saturate (I,i) != substitute(ideal(1), ring I) then cv=cv|{i};
@@ -290,8 +290,8 @@ partialCharacter Ideal := Ideal => o -> I -> (
 randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (	 
      -- Generate 'random' ideals for testing purposes. The distribution is completely heuristic and designed to serve
      -- internal purposes 
-     -- Inputs: a ring R, the number of generators numgen, the maximal degree of each variable maxded,
-     -- the maximal number of variables appearing in binomial, wether the output should be homogeneous
+     -- Inputs: a ring R, the number of generators numgen, the maximal degree of each variable maxdeg,
+     -- the maximal number of variables appearing in binomial, whether the output should be homogeneous
      
      -- Caveat: The result might simply be not homogeneous or of the given degree 
      -- due to deps between the random generators     
@@ -507,7 +507,7 @@ binomialRadical = I -> (
 	  return cellularBinomialRadical (I,CellVariables=>cv)
 	  );
      -- In the general case
-     print "Input not cellular, computing minimial primes ...";
+     print "Input not cellular, computing minimal primes ...";
      mp := binomialMinimalPrimes I;
      ideal mingens intersect mp)
 
@@ -623,7 +623,7 @@ binomialIsPrime Ideal := Ideal => o -> I -> (
      -- Output: true if the ideal is a prime ideal, false otherwise
      
      -- test for cellularity:
-     -- if cellular variables are given then we belive that I is cellular
+     -- if cellular variables are given then we believe that I is cellular
      cv := null;
      if o#CellVariables === null then (
 	  cv = isCellular (I, ReturnCellVars=>true);
@@ -820,7 +820,7 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
 	       primes = primes | sat;
 	       )
 	  );
-     -- We need to remove duplicate elements and join all associated primes in an apropriate new ring that contains all
+     -- We need to remove duplicate elements and join all associated primes in an appropriate new ring that contains all
      -- their coefficients.
      primes = joinCyclotomic primes;
      M := sub (ideal ncv, ring primes#0);
@@ -931,7 +931,7 @@ cellularEmbeddedLatticeWitnesses Ideal := Ideal => o -> I -> (
 minimalPrimaryComponent = method (Options => {CellVariables => null})
 minimalPrimaryComponent Ideal := Ideal => o -> I -> (
      -- Input a cellular binomial ideal whose radical is prime.
-     -- Ouptut, generators for Hull(I)
+     -- Output, generators for Hull(I)
 
      cv := cellVars(I, CellVariables=>o#CellVariables);
      if cv === false then error "Input to minimalPrimaryComponent was not cellular!";
@@ -1064,7 +1064,7 @@ cellularBinomialUnmixedDecomposition Ideal := Ideal => o -> I -> (
      b := sub(makeBinomial(CoeffR(monoid [cv]), L2cols#i, l2#1#i), R);
      
      -- We can't follow Section 4.1 of Ojeda/Sanchez because there is no 
-     -- effictive criterion to decide that mb^[e] will never lie in I, no
+     -- effective criterion to decide that mb^[e] will never lie in I, no
      -- matter how divisible e is.
     
      -- We take the approach of computing e_b by actually coloning.
@@ -1149,9 +1149,9 @@ extractInclusionMinimalIdeals List := List => o -> l -> (
      if o#Verbose then << #l-#result << " redundant ideals removed. Computing mingens of result.";
      for i in result list ideal mingens i#0)
 
--- The remaining code implements the solver for zero-dim'l unital
+-- The remaining code implements the solver for zero-dimensional unital
 -- binomial ideals . We solve unital binomial equations using
--- modulo 1 arithmetics. The basic task is to solve a^n = 1^{k/m},
+-- modulo 1 arithmetic. The basic task is to solve a^n = 1^{k/m},
 -- whose solutions are the equivalence classes of: k/nm, 1/n +
 -- k/m, 2/n + k/nm,... , (n-1)/n + k/nm
           
@@ -1246,7 +1246,7 @@ SolveMore = (binom,psol) -> (
 		if not zeroflag then q = sum q;
 		);
 
-       	   -- now everthing is set for the Rooter:
+       	   -- now everything is set for the Rooter:
        	   roots = roots | Rooter (n,q);
        	   extensions := for r in roots list (
 	    	for i in 0..#onesol-1 list if i==ind then r else onesol#i
@@ -1286,7 +1286,7 @@ binomialSolve = I -> (
 	  );
      
      expo := q -> (
-     -- This auxiallary function maps a quotient from QQ to its
+     -- This auxiliary function maps a quotient from QQ to its
      -- element in S
      if q === null then return 0_C;
      if q == 0 or q == 1 then return 1_C;
@@ -1303,7 +1303,7 @@ binomialSolve = I -> (
 
 cellularBinomialExponentSolve = (I,cv) -> (
      -- Solves a zero dimensional cellular unital binomial ideal
-     -- by constructing the apropriate cyclotomic field
+     -- by constructing the appropriate cyclotomic field
      
      -- Input: a unital zero-dim'l binomial ideal and its list of
      -- cell variables
@@ -1327,7 +1327,7 @@ cellularBinomialExponentSolve = (I,cv) -> (
 
      -- For each variable we check if it is a nilpotent variable, i.e.
      -- each solution of the ideal has coordinate zero there
-     -- We alse check how often we have to duplicate each solution in the
+     -- We also check how often we have to duplicate each solution in the
      -- end to account for monomials of higher order 
      dupnum := 1;     
      psols := {};
@@ -1623,7 +1623,7 @@ document {
      Outputs => {
           {"the list of points in the zero locus of I in QQ[ww]"} },
      "The solutions of a set of unital binomial equations exist in a cyclotomic field. This function
-     will compute the variety of a unital binomial ideal and construct an apropriate cyclotomic 
+     will compute the variety of a unital binomial ideal and construct an appropriate cyclotomic 
      field containing the entire variety (as a subset of the algebraic closure of QQ).",
      EXAMPLE {
 	  "R = QQ[x,y,z,w]",
@@ -1695,7 +1695,7 @@ document {
      Usage => "latticeBasisIdeal (R,L)",
      Inputs => {
           "R" => {"a ring"},
-	  "L" => {"an interger matrix whose columns span the lattice."}},
+	  "L" => {"an integer matrix whose columns span the lattice."}},
      Outputs => {
           {"The unital lattice basis ideal in R, defined by L"} },
      "This function is only a very simple wrapper around ", TO makeBinomial,
@@ -1732,7 +1732,7 @@ document {
      Inputs => {
           "I" => {"a cellular binomial ideal"}},
      Outputs => {
-          {"a binoimal primary decomposition of I"}},
+          {"a binomial primary decomposition of I"}},
      "If the cell variables are known, they can be given via the option ", 
      TO CellVariables, " otherwise they are computed.",
      EXAMPLE {
@@ -1911,7 +1911,7 @@ document {
      "In ", TO Binomials , " the partial character of a cellular binomial ideal is represented 
      as an object of class ", TO PartialCharacter,".  It contains the following three data:",
      UL { {"J -- the cellular variables"},
-	  {"L -- a matrix whose colmns are generators for the lattice"},
+	  {"L -- a matrix whose columns are generators for the lattice"},
 	  {"c -- the list of values the character takes on the generators"}}}
 
 ----- TESTS -----

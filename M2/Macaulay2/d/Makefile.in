@@ -78,9 +78,6 @@ M2lib.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o
 
 pthread-tmp.c : SCCFLAGS += -noline
 
-## the problem with this is that it can make "make" think the targets were made:
-# actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
-
 version.o : ../../include/M2/config.h distributed-packages.h
 distributed-packages.h: @srcdir@/../packages/?distributed-packages Makefile
 	echo '#define DISTRIBUTED_PACKAGES "'`cat $<`'"' >$@
@@ -90,7 +87,10 @@ clean::; rm -f distributed-packages.h
 actors4.o actors2.o : ../../include/M2/config.h
 
 ifeq "$(DEPENDS)" "yes"
-include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(shell ../util/echoout -r $(M2_DFILES))))
+# We include all the files twice, once in reverse order.  Example: "include a b c d d c b a"
+# The reason for this is that some versions of gnu make build the needed files in reverse order, and some build in forward order.
+# (Compare version 4.3 to version 4.4)
+include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(M2_DFILES) $(shell ../util/echoout -r $(M2_DFILES))))
 endif
 
 .SUFFIXES: .d .sig .dep .res .test .m2
@@ -186,6 +186,7 @@ CXXFLAGS += -Wunused-function
 CFLAGS   += -Wfatal-errors
 CXXFLAGS += -Wfatal-errors
 
+version.o : CPPFLAGS += -I@srcdir@/../e/memtailor -I@srcdir@/../e/mathic -I@srcdir@/../e/mathicgb
 version.o : CXXFLAGS += -Wno-unused-local-typedefs
 
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
@@ -218,7 +219,7 @@ startup.c: startup-header.h ../m2/startup.m2 @srcdir@/../m2/basictests/*.m2 Make
 	@(\
 	 cat @srcdir@/startup-header.h; \
 	 echo 'cached_file startupFile = {' ; \
-	     echo Macaulay2/Core/startup.m2.in | sed $(BSTRING) ; \
+	     echo @abs_top_srcdir@/Macaulay2/m2/startup.m2.in | sed $(BSTRING) ; \
 	     echo  ',' ; \
 	     cat ../m2/startup.m2 | sed $(SSTRING) ; \
 	 echo  '};' ; \

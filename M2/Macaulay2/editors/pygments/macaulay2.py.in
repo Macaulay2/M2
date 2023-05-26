@@ -1,0 +1,71 @@
+"""
+    pygments.lexers.macaulay2
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Lexer for Macaulay2.
+
+    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
+"""
+
+from pygments.lexer import RegexLexer, words
+from pygments.token import Comment, Keyword, Name, String, Text
+
+__all__ = ['Macaulay2Lexer']
+
+@M2BANNER@
+
+M2KEYWORDS = (
+    @M2KEYWORDS@
+    )
+
+M2DATATYPES = (
+    @M2DATATYPES@
+    )
+
+M2FUNCTIONS = (
+    @M2FUNCTIONS@
+    )
+
+M2CONSTANTS = (
+    @M2CONSTANTS@
+    )
+
+class Macaulay2Lexer(RegexLexer):
+    """Lexer for Macaulay2, a software system for research in algebraic geometry."""
+
+    name = 'Macaulay2'
+    url = 'https://faculty.math.illinois.edu/Macaulay2/'
+    aliases = ['macaulay2']
+    filenames = ['*.m2']
+
+    tokens = {
+        'root': [
+            (r'--.*$', Comment.Single),
+            (r'-\*', Comment.Multiline, 'block comment'),
+            (r'"', String, 'quote string'),
+            (r'///', String, 'slash string'),
+            (words(M2KEYWORDS, prefix=r'\b', suffix=r'\b'), Keyword),
+            (words(M2DATATYPES, prefix=r'\b', suffix=r'\b'), Name.Builtin),
+            (words(M2FUNCTIONS, prefix=r'\b', suffix=r'\b'), Name.Function),
+            (words(M2CONSTANTS, prefix=r'\b', suffix=r'\b'), Name.Constant),
+            (r'\s+', Text.Whitespace),
+            (r'.', Text)
+        ],
+        'block comment' : [
+            (r'[^*-]+', Comment.Multiline),
+            (r'\*-', Comment.Multiline, '#pop'),
+            (r'[*-]', Comment.Multiline)
+        ],
+        'quote string' : [
+            (r'[^\\"]+', String),
+            (r'"', String, '#pop'),
+            (r'\\"?', String),
+        ],
+        'slash string' : [
+            (r'[^/]+', String),
+            (r'(//)+(?!/)', String),
+            (r'/(//)+(?!/)', String, '#pop'),
+            (r'/', String)
+        ]
+    }

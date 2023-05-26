@@ -1,42 +1,5 @@
-document {
-     Key => (symbol **, RingMap, Module),
-     Headline => "tensor product of a module via a ring map",
-     Usage => "f ** M",
-     Inputs => {
-	  "f" => { "a ring map from ", TT "R", " to ", TT "S" },
-	  "M" => { "an ", TT "R", "-module" }
-	  },
-     Outputs => {
-	  { "the tensor product of ", TT "M", " with ", TT "S", " over ", TT "R" }
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y];
-	  S = QQ[t];
-	  f = map(S,R,{t^2,t^3})
-	  f ** coker vars R
-	  f ** image vars R
-	  ///,
-     SeeAlso => { (symbol SPACE, RingMap, Module) }
-     }
-
-document {
-     Key => (symbol **, RingMap, Matrix),
-     Headline => "tensor product of a module map via a ring map",
-     Usage => "f ** g",
-     Inputs => {
-	  "f" => { "from ", TT "R", " to ", TT "S" },
-	  "g" => { "a map of ", TT "R", "-modules" }
-	  },
-     Outputs => {
-	  { "the tensor product of ", TT "g", " with ", TT "S", " over ", TT "R" }
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y];
-	  S = QQ[t];
-	  f = map(S,R,{t^2,t^3})
-	  f ** vars R
-	  ///,
-     SeeAlso => { (symbol SPACE, RingMap, Module) }
+undocumented {
+     (symbol SPACE, RingMap, Number)
      }
 
 document {
@@ -328,30 +291,10 @@ document {
 --      "The default is for the code to select the best strategy heuristically."
 --      }
 
-document {
-     Key => PushforwardComputation,
-     Headline => "a type of list used internally",
-     TT "PushforwardComputation", " -- a type of list used internally by ", TO "pushForward", " and ", TO "kernel", "."
-     }
-
 -- document {
 --      Key => EliminationOrder,
---      Headline => "use the natural elmination order in a pushForward1 computation",
+--      Headline => "use the natural elimination order in a pushForward1 computation",
 --      TT "EliminationOrder", " -- a value for the ", TO "MonomialOrder", "
 --      option to ", TO "pushForward1", " which specifies the natural elimination
 --      order be used."
 --      }
-
-
-TEST "
-    R = ZZ/101[a,b]
-    S = ZZ/101[a,b,c]
-    M = cokernel matrix{{c^3}}
-    f = map(S,R)
-    assert( R^{0,-1,-2} == pushForward(f,M) )
-"
-
-document {
-     Key => UseHilbertFunction,
-     TT "UseHilbertFunction", " -- an option for ", TO "pushForward", "."
-     }

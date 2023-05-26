@@ -310,7 +310,7 @@ document {
 	Usage => "permutationMatrix s, permutationMatrix(n , c)",
 	Inputs => {
 	    	"s" => String =>  {"an array or a list of arrays giving a one-line notation or cyclic notation of a permutation"},
-		"n" => ZZ => {"giving the number of intergers getting permuted"},
+		"n" => ZZ => {"giving the number of integers getting permuted"},
 		"c" => List => {"of arrays giving a cyclic notation of a permutation"}
 		},
 	Outputs => {
@@ -357,7 +357,7 @@ document {
 	"This function is provided by the package ", TO InvariantRing,". ",
 
     	PARA {
-	    "Use this function to get the relations among elements of a group. Each element is represented by a word of minimal length in the Coxter generators. And each relation is represented by a list of two words that equates the group element represented by those two words."
+	    "Use this function to get the relations among elements of a group. Each element is represented by a word of minimal length in the Coxeter generators. And each relation is represented by a list of two words that equates the group element represented by those two words."
 	},
     
     	PARA { "The following example defines the permutation action

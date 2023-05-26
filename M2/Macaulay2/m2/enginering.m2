@@ -1,5 +1,10 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+-- TODO: some functions seems to depend on other files
+needs "expressions.m2"
+needs "remember.m2"
+needs "rings.m2"
+
 RingElement.synonym = "ring element"
 value RingElement := identity
 raw RingElement := f -> f#0
@@ -24,12 +29,6 @@ promote(QQ,RingElement) := (r,S) -> (
      b := promote(denominator r,S);
      if a % b == 0 then a // b
      else error ("promotion of this rational number to the ring ", toString S, " not possible"))
-
--- some remnants from lift and promote, version 2
-liftable(RingElement,RingElement) := 
-liftable(Number,RingElement) := 
-liftable(RingElement,Number) := 
-liftable(Number,Number) := (f,R) -> null =!= lift(f,R,Verify=>false)
 
 --- new lift and promote, version 3
 basicLift = opts -> (r,Brawring,Bclass) -> (
@@ -244,7 +243,8 @@ toString EngineRing := toString @@ expression
 net EngineRing := net @@ expression
 
 ZZ _ EngineRing := 
-RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
+RR _ EngineRing :=
+RRi _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
 
 new RingElement from RawRingElement := (R, f) -> (
      -- this might take too much time:
@@ -299,7 +299,9 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if not factoryGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
      R.frac = F := new FractionField from rawFractionRing R.RawRing;
      F.frac = F;
+     F.isCommutative = true;
      F.baseRings = append(R.baseRings,R);
+     F.isHomogeneous = isHomogeneous R and all (degrees R, deg -> all (deg, i -> i === 0));
      commonEngineRingInitializations F;
      factor F := options -> f -> factor numerator f / factor denominator f;
      toString F := x -> toString expression x;
@@ -469,10 +471,10 @@ quotientRemainder(RingElement,RingElement) := (f,g) -> (
      S := ring g;
      m := quotientRemainder(R,S) := (
 	  if R === S then divmod R
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> divmod(promote(x,S), y)
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> divmod(x, promote(y,R))
 	       )
 	  else error "expected pair to have a method for quotientRemainder"
@@ -495,10 +497,10 @@ RingElement % RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x % raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) % y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x % promote(y,R)
 	       )
 	  else error "expected pair to have a method for '%'"
@@ -518,10 +520,10 @@ RingElement // RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x // raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x // promote(y,R)
 	       )
 	  else error "expected pair to have a method for '//'"
@@ -539,10 +541,10 @@ RingElement - RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x - raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) - y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x - promote(y,R)
 	       )
 	  else error "expected pair to have a method for '-'"
@@ -560,10 +562,10 @@ RingElement * RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x * raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) * y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x * promote(y,R)
 	       )
 	  else error "expected pair to have a method for '*'"
@@ -581,10 +583,10 @@ RingElement + RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x + raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) + y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x + promote(y,R)
 	       )
 	  else error "expected pair to have a method for '+'"
@@ -606,10 +608,10 @@ RingElement == RingElement := (f,g) -> (
 	  if R === S then (
 	       (x,y) -> raw x === raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) == y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x == promote(y,R)
 	       )
 	  else error "expected pair to have a method for '=='"
@@ -625,10 +627,10 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	       frac R; 
 	       (r,s) -> fraction (r,s)
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) / y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x / promote(y,R)
 	       )
 	  else error "expected pair to have a method for '/'"
@@ -650,17 +652,8 @@ fraction(RingElement,RingElement) := (r,s) -> (
      fraction(r,s))
 -----------------------------------------------------------------------------
 
-isUnit(RingElement) := (f) -> (
-    if (options ring f).?Inverses and (options ring f).Inverses then 
-      size f === 1 and isUnit leadCoefficient f
-    else
-      1 % ideal f == 0
-    )
-
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
-
-isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

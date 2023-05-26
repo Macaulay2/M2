@@ -10,12 +10,12 @@ ifeq "@DEBUG@" "yes"
 M2_OBJECTS += debug.o
 endif
 M2_CFILES += gmp_aux.c 
-M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c
+M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c memdebug.c
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_CCFILES := boost-regex.cpp main.cpp
 M2_OBJECTS += $(M2_CCFILES:.cpp=.o)
-M2_HFILES := getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h
+M2_HFILES := getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h memdebug.h
 
 M2_DFILES :=
 M2_DFILES += arithmetic.d
@@ -63,9 +63,9 @@ M2_DFILES += buckets.dd
 M2_DFILES += equality.dd
 M2_DFILES += hashtables.dd
 M2_DFILES += regex.dd
+M2_DFILES += evaluate.d
 M2_DFILES += sets.dd
 M2_DFILES += version.dd
-M2_DFILES += evaluate.d
 ifeq (@MYSQL@,yes)
 M2_DFILES += mysql.d
 M2_SRCFILES += mysqldummy.d
@@ -96,17 +96,22 @@ M2_SRCFILES += python-c.c python.d
 endif
 M2_DFILES += interface.dd interface2.d
 M2_DFILES += texmacs.d
+M2_DFILES += boostmath.dd
+ifneq (@LIBFFI@,no)
+M2_DFILES += ffi.d
+else
+M2_SRCFILES += ffi.d
+endif
 # this one is last, because it contains the top level interpreter
 M2_DFILES += interp.dd
 
 # should automate these dependencies
 actors5.o : @srcdir@/startup-header.h
-actors5.o basic.o :				\
-	@srcdir@/../e/engine.h			\
-	@srcdir@/../e/rand.h			\
-	@srcdir@/../e/newdelete.hpp		\
-	@srcdir@/../d/M2mem.h			\
-	@srcdir@/../d/debug.h			\
+actors5.o basic.o : \
+	@srcdir@/../e/engine.h \
+	@srcdir@/../e/newdelete.hpp \
+	@srcdir@/../d/M2mem.h \
+	@srcdir@/../d/debug.h \
 	../../include/M2/config.h
 
 interface2.o :						\
@@ -119,8 +124,7 @@ interface2.o :						\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
 	@srcdir@/../d/M2mem.h				\
-	@srcdir@/../d/debug.h				\
-	@srcdir@/../e/rand.h
+	@srcdir@/../d/debug.h
 
 interface.o :						\
 	../../include/M2/config.h			\
@@ -132,17 +136,13 @@ interface.o :						\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
-	@srcdir@/../e/rand.h				\
 	@srcdir@/../e/ZZp.hpp				\
 	@srcdir@/../e/ring.hpp				\
 	@srcdir@/../e/hash.hpp				\
 	@srcdir@/../e/newdelete.hpp			\
 	@srcdir@/../e/error.h				\
 	@srcdir@/../e/ringelem.hpp			\
-	@srcdir@/../e/gmp-util.h			\
 	@srcdir@/../e/monoid.hpp			\
-	@srcdir@/../e/monordering.h			\
-	@srcdir@/../e/intarray.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/buffer.hpp			\
 	@srcdir@/../e/mem.hpp				\
@@ -153,7 +153,6 @@ interface.o :						\
 	@srcdir@/../e/ZZ.hpp				\
 	@srcdir@/../e/coeffrings.hpp			\
 	@srcdir@/../e/monomial.hpp			\
-	@srcdir@/../e/varpower.hpp			\
 	@srcdir@/../e/exceptions.hpp			\
 	@srcdir@/../e/relem.hpp				\
 	@srcdir@/../e/engine.h				\
@@ -173,7 +172,6 @@ interface.o :						\
 	@srcdir@/../e/aring-qq-flint.hpp		\
 	@srcdir@/../e/aring-qq-gmp.hpp			\
 	@srcdir@/../e/aring-m2-gf.hpp			\
-	@srcdir@/../e/rand.h				\
 	@srcdir@/../e/aring-gf-givaro.hpp		\
 	@srcdir@/../e/polyring.hpp			\
 	@srcdir@/../e/skew.hpp				\
@@ -214,6 +212,46 @@ interface.o :						\
 	@srcdir@/../e/timing.hpp			\
 	@srcdir@/../e/aring-zzp.hpp			\
 	@srcdir@/../e/memory-status.hpp
+
+engine.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../../include/M2/math-include.h	\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../../include/M2/gc-include.h		\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../d/debug.h				\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/error.h				\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/hash.hpp				\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/buffer.hpp			\
+	@srcdir@/../e/style.hpp				\
+	@srcdir@/../e/mem.hpp				\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/ring.hpp				\
+	@srcdir@/../e/aring.hpp				\
+	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/interface/gmp-util.h		\
+	@srcdir@/../e/ZZ.hpp				\
+	@srcdir@/../e/matrix.hpp			\
+	@srcdir@/../e/monoid.hpp			\
+	@srcdir@/../e/imonorder.hpp			\
+	@srcdir@/../e/interface/monomial-ordering.h	\
+	@srcdir@/../e/freemod.hpp			\
+	@srcdir@/../e/schorder.hpp			\
+	@srcdir@/../e/monideal.hpp			\
+	@srcdir@/../e/int-bag.hpp			\
+	@srcdir@/../e/polyring.hpp			\
+	@srcdir@/../e/interface/computation.h		\
+	@srcdir@/../e/skew.hpp				\
+	@srcdir@/../e/qring.hpp				\
+	@srcdir@/../e/mat.hpp				
 
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))

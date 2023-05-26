@@ -46,7 +46,7 @@ export{"isSmoothCurve",
 --Bug-report
 -- running the code for g=14 and p=2 multiple times, it can happen that an M2 error occurs
 -- because M2 can no longer compute the genus of some ideal (even the irrelevant ideal) 
--- for genus 15 this might aswell happen, but we catch this cases by using the "try" command
+-- for genus 15 this might as well happen, but we catch this cases by using the "try" command
 
 -- NOTE:
 -- The option "Details" for the genus 14 and 15 construction is only for testing / tweaking the construction:
@@ -208,7 +208,7 @@ smoothLimit :=20 ;
 -- t = the variable to be used in the numerator
 hilbertNumerator = method()
 hilbertNumerator (List,ZZ,RingElement) := (L,r,t) -> (
-     -- the beginning of the hilbert series
+     -- the beginning of the Hilbert series
      p := sum(#L,i -> L#i*t^i); 
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
@@ -218,7 +218,7 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 ----------------------------------------------------------------------------------------------------------------------------   
 
 -----------------------------
--- Expected Betti Tableaus --
+-- Expected Betti Tableaux --
 -----------------------------
 
 -- convert c*t^d to (c,({d},d))
@@ -226,13 +226,13 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 -- ring of t must be over ZZ or QQ
 -- and singly graded
 --
--- this funciton is needed to construct 
--- expected betti tables from
--- a HilberNumerator
+-- this function is needed to construct 
+-- expected Betti tables from
+-- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
      c := lift((last coefficients mon)_0_0,ZZ);
-     -- the degree of the monmial
+     -- the degree of the monomial
      d := sum degree mon;
      (c,({d},d))
      );
@@ -245,17 +245,17 @@ expectedBetti = method()
 
 
 -- calculates the expected betti tableau
--- from a hilbert Numerator
+-- from a Hilbert Numerator
 --
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
--- sign switches that occur in the hilbert numerator befor this monomial  
+-- sign switches that occur in the Hilbert numerator before this monomial  
 --
--- the ring of the hilbert numerator is expected to singly graded 
+-- the ring of the Hilbert numerator is expected to singly graded 
 -- and contain only one variable
 expectedBetti (RingElement) := (hilbNum) -> (
-     -- find terms of hilbert Numerator
+     -- find terms of Hilbert Numerator
      -- smallest degree first
      termsHilbNum := reverse terms hilbNum;
      -- convert terms into pairs (coefficient, ({d},d))
@@ -268,7 +268,7 @@ expectedBetti (RingElement) := (hilbNum) -> (
      -- step through all keys and calculate which step a
      -- given entry must go based on the number of sign-changes
      L := for b in bettiKeys list (
-	  -- has a sign change occured?
+	  -- has a sign change occurred?
      	  if (b#0*previousCoefficient) < 0 then (
 	       -- sign change => next step in the resolution
 	       j = j+1;
@@ -284,7 +284,7 @@ expectedBetti (RingElement) := (hilbNum) -> (
 
 
 -- calculate the expected betti tableau
--- from a given hilbert function.
+-- from a given Hilbert function.
 -- hilb = {h0,...,h_(d+r+1)} 
 -- where d is the regularity of the variety described 
 -- and r is the dimension of the ambient space
@@ -311,7 +311,7 @@ undocumented { expectedBetti, (expectedBetti,RingElement), (expectedBetti, List,
 ----------------------------------------------------------------------------------------------------------------------------
 
 -- given a betti Table b and a Ring R make a chainComplex 
--- with zero maps over R  that has betti diagramm b. 
+-- with zero maps over R  that has betti diagram b. 
 --
 -- negative entries are ignored
 -- rational entries produce an error
@@ -361,21 +361,21 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
      -- construct a chain complex with expected betti tableau
      -- and 0 differentials
      -- 
-     -- calculate the expectd betti diagramm to find out wether linear syzygies 
-     -- are requried (this is the difficult part in the construction)
+     -- calculate the expected betti diagram to find out whether linear syzygies 
+     -- are required (this is the difficult part in the construction)
      e := expectedBetti(HRao|{0,0,0,0},3);
      F := R^e;
      -- find betti Numbers of the linear strand
      linearStrand := for i from 0 list (if e#?(i,{i},i) then e#(i,{i},i) else break);
-     -- construction depends on lenth of linear strand.
-     if #linearStrand == 0 then error"linear Stand has lenght 0. This should never happen";
+     -- construction depends on length of linear strand.
+     if #linearStrand == 0 then error"linear Stand has length 0. This should never happen";
      if #linearStrand == 1 then (
 	  -- first matrix can neither have nor be required to have linear syzygies
 	  -- choose first matrix randomly
      	  return coker random (F_0,F_1)
 	  );
      if #linearStrand == 2 then (
-	  -- no linear syzygies of the first matrix are requried
+	  -- no linear syzygies of the first matrix are required
 	  -- check if first matrix always has unwanted syzygies
 	  if expectedLinearSyzygies(linearStrand#0,linearStrand#1,R) <= 0 then (
 	       -- no unwanted syzygies
@@ -443,20 +443,20 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R) -> (
 -- for g=11,12,13 we will only need the diameter 3 part, but we also include the functions for diameter 1 and 2:
 -- Try to construct a random Hartshorne-Rau module of
 -- length 2. Here the only problem is, that the
--- generic module may not have expected syzgies
+-- generic module may not have expected syzygies
 --
 -- HRau = {h1,h2} the Hilbertfunction of the desired module 
 -- R the ring where the module should live. It is assumed, that 
 -- this ring has 4 variables and is singly graded.
 randomHartshorneRaoModuleDiameter2 = (HRao,R) -> (
      if #HRao != 2 then error"Hilbert function has to have length 2";
-     -- some special cases with non expected resoluton
+     -- some special cases with non expected resolution
      --
      --if HRao == {1,1} then return coker random(R^{0},R^{3:-1,1:-2});
      --if HRao == {1,2} then return coker random(R^{0},R^{2:-1,3:-2});
      --if HRao == {2,1} then return coker random(R^{2:0},R^{7:-1});
      --
-     -- the standart construction still works since the unexpected
+     -- the standard construction still works since the unexpected
      -- part is not in the first 2 steps.
      --
      -- now assume expected resolution
@@ -469,7 +469,7 @@ randomHartshorneRaoModuleDiameter2 = (HRao,R) -> (
 ----------------------------------------------------------------------------------------------------------------------------
 
 -- Construct a random Hartshorne-Rau module of
--- length 1. This allways works
+-- length 1. This always works
 --
 -- HRau = {h1} the Hilbertfunction of the desired module 
 -- R the ring where the module should live. It is assumed, that 
@@ -485,7 +485,7 @@ randomHartshorneRaoModule = method()
 randomHartshorneRaoModule (ZZ,List,PolynomialRing) := (e,HRao,R) -> (
      if dim R != 4 then error "expected a polynomial ring in 4 variables";
      if degrees R !={{1}, {1}, {1}, {1}} then error "polynomial ring is not standard graded";
-     if #HRao > 3 then error "no method implemented for Hartshorne Rao modue of diameter >3";
+     if #HRao > 3 then error "no method implemented for Hartshorne Rao module of diameter >3";
      M := null;
      while(
      if #HRao == 1 then M = randomHartshorneRaoModuleDiameter1(HRao,R);
@@ -504,7 +504,7 @@ smoothCanonicalCurveViaSpaceModel = method(Options => {Printing => false})
 smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
   kk := ZZ/p;
   if isPrime(p) == false then error "p is not prime";
--- costruction of space model of degree d and genus g
+-- construction of space model of degree d and genus g
 -- therefore we first construct the HR-module
   d := g+4-floor(g/3);
   if opt.Printing then  (print("--> computing space curve of genus "|toString(g)|" and degree "|toString(d)));
@@ -513,7 +513,7 @@ smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
 -- calculate values of h^1 that are forced by the maximal rank assumption
   h1 := for i from 0 when ((i < 4) or(d*i+1-g) > binomial(i+3,3)) list max(d*i+1-g-binomial(3+i,3),0);
   e := 0; for i in h1 when i == 0 do e = e+1;
--- calculate support of Hartshorne Rao Moduole
+-- calculate support of Hartshorne Rao Module
   HRao := select(h1,i->i!=0);  
   expBettiHR := expectedBetti(HRao|{0,0,0,0},3);  
   emptyResHR := R^expBettiHR;
@@ -556,7 +556,7 @@ if opt.Printing then  (print("--> testing smoothness"));
   not(dim I == 2)) do();  --maybe it is enough to rerun just a part of this function
   not (isSmoothCurve(I))) do() ; 
 --(dim I, genus I, degree I, betti res I)==(2,g,d, expBettiC)
--- now we embedd the space curve caninically
+-- now we embed the space curve canonically
   t := getSymbol"t";
   T := kk[t_0..t_(g-1)];
 if opt.Printing then  (print("--> computing canonical embedding"));  
@@ -583,7 +583,7 @@ if opt.Printing then  (print("--> computing canonical embedding"));
 --        together with a list of ideals of 8 points
 --Method: Mukai's structure theorem on genus 8 curves.
 --  Note that the curves  have general Clifford index.
--- This function is similar to the funtion "randomCanonicalCurveGenus8with8Points" 
+-- This function is similar to the function "randomCanonicalCurveGenus8with8Points" 
 --  from the Macaulay2-Package "RandomGenus14Curves.m2"
 --  For more information about this function see the Macaulay2-Package "RandomGenus14Curves.m2"
 randomCanonicalCurveGenus8with8Points = method()
@@ -592,7 +592,7 @@ randomCanonicalCurveGenus8with8Points (ZZ) := p -> (
      x := symbol x;
      R := kk[x_0..x_7];
      q := symbol q;
-     -- coordinate ring of the Plucker space:
+     -- coordinate ring of the Plücker space:
      P := kk[flatten apply(6,j->apply(j,i->q_(i,j)))];
      skewMatrix := matrix table(6,6,
 	  (i,j) -> (
@@ -630,7 +630,7 @@ undocumented { randomCanonicalCurveGenus8with8Points, (randomCanonicalCurveGenus
 
 -- Input:  the characteristic
 -- Output: ideal of a genus 8 degree 14 curve in P^6
--- This function is similar to the funtion "randomCurveGenus8Degree14inP6" 
+-- This function is similar to the function "randomCurveGenus8Degree14inP6" 
 --  from the Macaulay2-Package "RandomGenus14Curves.m2"
 --  For more information about this function see the Macaulay2-Package "RandomGenus14Curves.m2"
 
@@ -682,7 +682,7 @@ undocumented { randomCurveGenus8Degree14inP6, (randomCurveGenus8Degree14inP6,ZZ)
 -- Output: ideal of a curve of genus 14
 -- Method: Verra's proof of the unirationality of M_14
 
---  This function is similar to the funtion "randomCurveGenus14Degree18inP6" 
+--  This function is similar to the function "randomCurveGenus14Degree18inP6" 
 --  from the Macaulay2-Package "RandomGenus14Curves.m2"
 --  For more information about this function see the Macaulay2-Package "RandomGenus14Curves.m2"
 randomCurveGenus14Degree18inP6 = method(Options => {Details => false, Printing => false})
@@ -756,7 +756,7 @@ hasFactor (RingElement,ZZ) := (f,n) -> (
      
 hasFactor (Ideal,ZZ) := (I,n) -> (
      -- check whether a homogeneous principal ideal I in two variables over finite ground field FF
-     -- is square-free and has a factor of degee n defined over FF. 
+     -- is square-free and has a factor of degree n defined over FF. 
      R := ring I;
      if not class R === PolynomialRing and dim R !=2 then error "expected a polynomial in P^1";
      cp := decompose I; -- decompose I in its irreducible factors
@@ -784,7 +784,7 @@ selectFactor (Ideal,ZZ) := (J,n) -> (
      J1 := sub(J,S1);
      f := sub(selectInSubring(1,gens gb  J1),S2);
      cp := decompose ideal f;
-     t := tally apply(cp,c -> degree c); -- frequences in which a factor occurs
+     t := tally apply(cp,c -> degree c); -- frequencies in which a factor occurs
      dc := unique select(apply(cp,c->degree c),d -> d <= n);
      L := {{0,{{0,0}}}}; 
      Ld:=0;
@@ -880,7 +880,7 @@ getModuleN (Ideal,Ideal) := opt -> (E,pts) -> (
      phi := map(RE,S,sub(H,RE));
      IE := ker phi;
      if (isHomogeneous(IE) == false) then (if opt.Details then print"data IE"; return N);-- error which might occurs if char(kk) small / maybe running the few line above again will fix this error
-     if (not((dim IE, degree IE, genus IE) == (2,14,11))) then (if opt.Details then print"--<< data IE"; return N); -- if genus (or data) is wrong start with new auxilary curve
+     if (not((dim IE, degree IE, genus IE) == (2,14,11))) then (if opt.Details then print"--<< data IE"; return N); -- if genus (or data) is wrong start with new auxiliary curve
      betti (L1 := presentation omegaE|random(target presentation omegaE,R^{1}));
      D := saturate annihilator coker L1;
      RD := R/D;
@@ -1095,12 +1095,12 @@ doc ///
               the ideal of a (smooth) canonical curve of genus g over a field with characteristic p                      
   Description
      Text
-       Computes a smooth canonical curve of genus g<=15 over a field of characteristc p.
+       Computes a smooth canonical curve of genus g<=15 over a field of characteristic p.
        For genus g<=14 are based on the unirationality of M_g for g<=14 and the  RandomCurves-package.
        A unirational parametrization of M_g is only a rational map and bad choices of parameters 
        (which are quite likely over small fields) might end up in the indeterminacy locus or some
        other undesired subloci.
-       In this constructions we catch the steps which do not work out for
+       In this construction, we catch the steps which do not work out for
        very small characteristic by catching all possible missteps. 
        
        For g<=10 the curves are constructed via plane models.

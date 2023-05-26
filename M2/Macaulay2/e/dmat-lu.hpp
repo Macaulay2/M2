@@ -3,7 +3,6 @@
 #ifndef _dmat_lu_hpp_
 #define _dmat_lu_hpp_
 
-#include "engine.h"
 #include "dmat.hpp"
 #include "mat-elem-ops.hpp"
 #include "mat-util.hpp"
@@ -135,7 +134,7 @@ void DMatLinAlg<RingType>::computeLU()
   auto array = mLU.rowMajorArray();
 
   // The following 3 arrays are used to point to the places we need: A is the location we are working on
-  // B is the part from 'L', C is the part from 'U' (and the orginal matrix)
+  // B is the part from 'L', C is the part from 'U' (and the original matrix)
   auto A = array; // mLU[row, col+1]
   auto B = array; // mLU[row,0]
   auto C = array; // mLU[0,col]
@@ -328,17 +327,12 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   const std::vector<size_t>& perm = mLUObject.permutation();
   size_t rk = pivotColumns.size();
 
-  ElementType tmp, tmp2;
-  ring().init(tmp);
-  ring().init(tmp2);
+  typename RingType::Element tmp(ring()), tmp2(ring());
 
-  ElementType* b = newarray(ElementType, LU.numRows());
-  ElementType* y = newarray(ElementType, rk);
-  ElementType* x = newarray(ElementType, LU.numColumns());
-
-  for (size_t i = 0; i < LU.numRows(); i++) ring().init(b[i]);
-  for (size_t i = 0; i < rk; i++) ring().init(y[i]);
-  for (size_t i = 0; i < LU.numColumns(); i++) ring().init(x[i]);
+  typedef typename RingType::ElementArray ElementArray;
+  ElementArray b(ring(), LU.numRows());
+  ElementArray y(ring(), rk);
+  ElementArray x(ring(), LU.numColumns());
 
   X.resize(LU.numColumns(), B.numColumns());
 
@@ -380,12 +374,6 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
             }
           if (!ring().is_zero(tmp))
             {
-              // Cleanup, and return false
-              deletearray(b);
-              deletearray(y);
-              deletearray(x);
-              ring().clear(tmp);
-              ring().clear(tmp2);
               // printf("returning false\n");
               return false;
             }
@@ -419,15 +407,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
       /// displayMat(o, X);
       /// printf("%s\n", o.str());
     }
-  ring().clear(tmp);
-  ring().clear(tmp2);
 
-  for (size_t i = 0; i < LU.numRows(); i++) ring().clear(b[i]);
-  for (size_t i = 0; i < rk; i++) ring().clear(y[i]);
-  for (size_t i = 0; i < LU.numColumns(); i++) ring().clear(x[i]);
-  deletearray(b);
-  deletearray(y);
-  deletearray(x);
   return true;  // The system seems to have been consistent
 }
 
@@ -566,10 +546,7 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
   const Mat& LU = mLUObject.LUinPlace();
   const std::vector<size_t>& pivotColumns = mLUObject.pivotColumns();
 
-  // THIS SHOULD NOT BE SO PAINFUL!!
-  ElementType tmp, tmp2;
-  ring().init(tmp);
-  ring().init(tmp2);
+  typename RingType::Element tmp(ring()), tmp2(ring());
 
   // First, let's set X to be the correct size:
   X.resize(LU.numColumns(), LU.numColumns() - pivotColumns.size());
@@ -611,9 +588,6 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
       colX++;
       col++;
     }
-
-  ring().clear(tmp);
-  ring().clear(tmp2);
   return X.numColumns();
 }
 

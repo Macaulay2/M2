@@ -37,6 +37,14 @@ r = apply(3, i -> schedule (() -> (
 c = currentTime()
 while not all(r,isReady) do (sleep 1; print tally values h)
 print (currentTime()-c)
+
+-- If this test fails, it could indicate that the order of *.o files on the linker command line
+-- is wrong.  That affects the order of running the static initializers: in system/supervisor.cpp
+-- there is a static initializer for maxNumThreads, and in d/actors5.d there is a call to 
+-- getMaxAllowableThreads, which uses the value of maxNumThreads.  So we want the files system/*.o 
+-- to come before the files d/*.o on the linker command line.
+assert ( maxAllowableThreads != 0 )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
 -- End:

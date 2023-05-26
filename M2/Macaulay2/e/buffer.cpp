@@ -10,7 +10,7 @@ void buffer::expand(int newcap)
   char *newbuf = newarray_atomic(char, n);
   _capacity = n;
   memcpy(newbuf, _buf, _size);
-  deletearray(_buf);
+  freemem(_buf);
   _buf = newbuf;
 }
 
@@ -32,71 +32,81 @@ void buffer::put(const char *s, long len)
 void buffer::put(const char *s) { put(s, strlen(s)); }
 void buffer::put(int n)
 {
-  char s[100];
-  sprintf(s, "%d", n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%d", n);
   put(s, strlen(s));
 }
 
 void buffer::put(int n, int width)
 {
-  char s[100];
-  sprintf(s, "%*d", width, n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%*d", width, n);
   put(s, strlen(s));
 }
 
 void buffer::put(long n)
 {
-  char s[100];
-  sprintf(s, "%ld", n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%ld", n);
   put(s, strlen(s));
 }
 
 void buffer::put(double n)
 {
-  char s[100];
-  sprintf(s, "%lf", n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%lf", n);
   put(s, strlen(s));
 }
 
 void buffer::put(long n, int width)
 {
-  char s[100];
-  sprintf(s, "%*ld", width, n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%*ld", width, n);
   put(s, strlen(s));
 }
 
 void buffer::put(unsigned int n)
 {
-  char s[100];
-  sprintf(s, "%u", n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%u", n);
   put(s, strlen(s));
 }
 
 void buffer::put(unsigned long n)
 {
-  char s[100];
-  sprintf(s, "%lu", n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%lu", n);
   put(s, strlen(s));
 }
 
 void buffer::put(unsigned long long n)
 {
-  char s[100];
-  sprintf(s, "%llu", n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%llu", n);
   put(s, strlen(s));
 }
 
 void buffer::put(unsigned int n, int width)
 {
-  char s[100];
-  sprintf(s, "%*u", width, n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%*u", width, n);
   put(s, strlen(s));
 }
 
 void buffer::put(unsigned long n, int width)
 {
-  char s[100];
-  sprintf(s, "%*lu", width, n);
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%*lu", width, n);
   put(s, strlen(s));
 }
 

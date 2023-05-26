@@ -25,10 +25,9 @@ peek loadedFiles
 			   Email => "kim@math.uni-sb.de",
 			   HomePage => "https://sites.google.com/view/yeongrak"}
 		   },
-	               PackageExports => {"CompleteIntersectionResolutions"},
+	     PackageExports => {"CompleteIntersectionResolutions"},
              Headline => "Clifford Algebra of a pencil of quadratic forms",
-	     Keywords => {"Commutative Algebra"},
-             DebuggingMode => true
+	     Keywords => {"Commutative Algebra"}
              )
 
      export {
@@ -165,7 +164,7 @@ randomNicePencil(Ring,ZZ) := (kk,g) -> (
     X -- is the irrelevant ideal of PP^(2g+1)
     Y -- Y is the coefficient vector of qq written as a linear combination of X
     assert(X*transpose Y==qq)
-    u -- are the linear equations defining a maximal isotropic saubspace
+    u -- are the linear equations defining a maximal isotropic subspace
     betti M1, betti M2 -- is the matrix factorization of qq   
     --  corresponding to the resolution of kk
     betti Mu1, betti Mu2  -- is the matrix factorization of qq 
@@ -1339,7 +1338,7 @@ ExtIntoK(Ideal, Module) := (I,M) -> (
 	  -- algebra over 
 	  --a polynomial subring T (eg R = k[s,t][x_0...x_n]/s*q1(x)+t*q2(x))
           --and I is an ideal such that T = R/I,
-	  --the scritp returns 
+	  --the script returns 
           --Ext^*(M,R/I)
           --graded in POSITIVE degrees
           --as a module over T[X_0...X_c]
@@ -1451,7 +1450,7 @@ doc ///
     X:Matrix
      row matrix of linear forms with constant coefficients
     Y:Matrix
-     row matrix of linear forms with linear coefficents of same length as X
+     row matrix of linear forms with linear coefficients of same length as X
    Outputs
     M1:Matrix
     M2:Matrix
@@ -1627,11 +1626,11 @@ doc ///
      The variables of S that are entries of X:= matrix \{\{x_0..y_{(g-1)},z_1,z_2\}\} 
      \, represent coordinates on PP_R^{2g+1}.
      
-     M1, M2 are consecutive high syzygy matrices in the miminal (periodic) resolution
+     M1, M2 are consecutive high syzygy matrices in the minimal (periodic) resolution
      of kk[s,t] = S/(ideal X) as a module over S/qq. These are used to construct the
      Clifford algebra of qq.
 
-     Mu1, Mu2 are consecutive high syzygy matrices in the miminal (periodic) resolution
+     Mu1, Mu2 are consecutive high syzygy matrices in the minimal (periodic) resolution
      of S/(ideal u) as a module over S/qq. These are used to construct a Morita bundle
      between the even Clifford algebra of qq and the hyperelliptic curve
      branched over the degeneracy locus of the pencil,
@@ -1708,7 +1707,7 @@ doc ///
      polynomial ring of the form kk[U], 
      where U are parameter variables
     M1:Matrix
-     over an auxilliary ring S = kk[X,Y,Z,U]
+     over an auxiliary ring S = kk[X,Y,Z,U]
     M2:Matrix
      M1, M2 a matrix factorization: M1*M2- qq*id = 0 for a quadratic form qq on S
    Outputs
@@ -1727,7 +1726,7 @@ doc ///
      
      We have eOdd_i*eEv_j+eOdd_j*eEv_i = B(e_i,e_j), where
      the e_i form a basis of the space on which qq acts and B is the bilinear form associated to 2qq
-     thus the the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
+     thus the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
      --If qq is nonsingular over the generic point of R, then C is an Azumaya algebra over R, and this implies that the representation is faithful.
      
      In the following we construct the generic symmetric
@@ -2045,7 +2044,7 @@ doc ///
 	    polynomial ring kk[s,t]
     Description
     	Text
-	     The base ring kk[s,t] which is the coordnate ring of PP^1.  
+	     The base ring kk[s,t] which is the coordinate ring of PP^1.  
 	Example
 	    kk=ZZ/101;
 	    g=1;
@@ -2475,7 +2474,7 @@ doc ///
     Text
      A vector bundle on a hyperelliptic curve E with
      equation y^2 - (-1)^g * f
-     can be represeted by it's pushforward V to PP^1,
+     can be represented by it's pushforward V to PP^1,
      under the degree 2 map, 
      which will be a vector bundle of twice the rank,
      together with a matrix 

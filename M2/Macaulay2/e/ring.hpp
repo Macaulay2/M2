@@ -1,34 +1,43 @@
 // Copyright 1995 Michael E. Stillman
 
 #ifndef _ring_hh_
-#define _ring_hh_
+#  define _ring_hh_
 
-#include "hash.hpp"
-#include "error.h"
-#include "ringelem.hpp"
-#include "monoid.hpp"
-#include "aring.hpp"
-#include "exceptions.hpp"
-///// Ring Hierarchy ///////////////////////////////////
+#  include <utility>  // for pair
 
-class RingZZ;
-class RRR;
+#  include "aring.hpp"       // for RingID, ring_old
+#  include "error.h"         // for ERROR
+#  include "exceptions.hpp"  // for engine_error
+#  include "hash.hpp"        // for MutableEngineObject
+#  include "monoid.hpp"
+#  include "newdelete.hpp"   // for our_new_delete
+#  include "ringelem.hpp"    // for ring_elem, vec, vecterm (ptr only), Nter...
+
+class ARing;
 class CCC;
-class Z_mod;
-class GF;
-class Tower;
+class CoefficientRingR;
 class FractionField;
+class FreeModule;
+class GF;
 class LocalRing;
-class PolynomialRing;
+class Monoid;
+class MutableMatrix;
+class PolyQQ;
 class PolyRing;
 class PolyRingFlat;
-class PolyQQ;
-class SkewPolynomialRing;
-class SchurRing;
+class PolynomialRing;
+class RRR;
+class RRi;
+class RingMap;
+class RingZZ;
 class SchurRing2;
+class SchurRing;
 class SchurSnRing;
-class WeylAlgebra;
+class SkewPolynomialRing;
 class SolvableAlgebra;
+class M2FreeAlgebra;
+class M2FreeAlgebraQuotient;
+class M2FreeAlgebraOrQuotient;
 
 class FreeModule;
 class RingMap;
@@ -38,11 +47,12 @@ class gbvector;
 class buffer;
 
 class SumCollector;
-
-class ARing;
-class MutableMatrix;
-
-class CoefficientRingR;
+class Tower;
+class WeylAlgebra;
+class Z_mod;
+class buffer;
+struct Matrix;
+struct RingElement;
 
 /**
     @ingroup rings
@@ -86,7 +96,20 @@ class Ring : public MutableEngineObject
   void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
                        const M2_arrayint heft_vec = 0);
-  Ring() : heft_vector(0) {}
+  Ring()
+      : mCharacteristic(0),
+        degree_ring(nullptr),
+        heft_vector(nullptr),
+        AR(nullptr),
+        cR(nullptr),
+        _non_unit(),
+        _isfield(0),
+        zeroV(),
+        oneV(),
+        minus_oneV()
+  {
+  }
+
  public:
   virtual ~Ring();
 
@@ -114,6 +137,7 @@ class Ring : public MutableEngineObject
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
+  virtual bool is_RRi() const { return false; }
   virtual bool is_CCC() const { return false; }
   virtual bool is_fraction_field() const { return false; }
   virtual bool is_fraction_poly_ring() const { return false; }
@@ -195,6 +219,25 @@ class Ring : public MutableEngineObject
   virtual const LocalRing *cast_to_LocalRing() const { return 0; }
   virtual LocalRing *cast_to_LocalRing() { return 0; }
 
+  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return nullptr; }
+  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return nullptr; }
+  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const
+  {
+    return nullptr;
+  }
+  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient()
+  {
+    return nullptr;
+  }
+  virtual const M2FreeAlgebraOrQuotient *cast_to_M2FreeAlgebraOrQuotient() const
+  {
+    return nullptr;
+  }
+  virtual M2FreeAlgebraOrQuotient *cast_to_M2FreeAlgebraOrQuotient()
+  {
+    return nullptr;
+  }
+
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }
   virtual const SchurRing2 *cast_to_SchurRing2() const { return 0; }
@@ -211,6 +254,8 @@ class Ring : public MutableEngineObject
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
   virtual RRR *cast_to_RRR() { return 0; }
   virtual const RRR *cast_to_RRR() const { return 0; }
+  virtual RRi *cast_to_RRi() { return 0; }
+  virtual const RRi *cast_to_RRi() const { return 0; }
   virtual CCC *cast_to_CCC() { return 0; }
   virtual const CCC *cast_to_CCC() const { return 0; }
   // Galois Field routines.  These three routines only return non-NULL values
@@ -283,6 +328,8 @@ class Ring : public MutableEngineObject
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
   // The default version calls from_long(0) and returns false.
+  virtual bool from_Interval(gmp_RRi a, ring_elem &result) const;
+  // The default version calls from_long(0) and returns false.
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   // Returns false if this ring cannot coerce a double to an element in this
   // ring
@@ -331,8 +378,8 @@ class Ring : public MutableEngineObject
   virtual void remove(ring_elem &f) const = 0;
 
   void negate_to(ring_elem &f) const;
-  void add_to(ring_elem &f, ring_elem &g) const;
-  void subtract_to(ring_elem &f, ring_elem &g) const;
+  void add_to(ring_elem &f, const ring_elem &g) const;
+  void subtract_to(ring_elem &f, const ring_elem &g) const;
   void mult_to(ring_elem &f, const ring_elem g) const;
   virtual ring_elem negate(const ring_elem f) const = 0;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const = 0;
@@ -390,12 +437,12 @@ class Ring : public MutableEngineObject
   virtual int index_of_var(const ring_elem a) const;
   virtual M2_arrayint support(const ring_elem a) const;
 
-  virtual void monomial_divisor(const ring_elem a, int *exp) const;
+  virtual void monomial_divisor(const ring_elem a, exponents_t exp) const;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
-  virtual ring_elem divide_by_expvector(const int *exp,
+  virtual ring_elem divide_by_expvector(const_exponents exp,
                                         const ring_elem a) const;
 
   virtual ring_elem homogenize(const ring_elem f,
@@ -407,8 +454,8 @@ class Ring : public MutableEngineObject
   // Routines expecting a grading.  The default implementation
   // is that the only degree is 0.
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual bool multi_degree(const ring_elem f, int *d) const;
+  virtual void degree(const ring_elem f, monomial d) const;
+  virtual bool multi_degree(const ring_elem f, monomial d) const;
   // returns true iff f is homogeneous
   virtual void degree_weights(const ring_elem f,
                               M2_arrayint wts,
@@ -513,17 +560,16 @@ class Ring : public MutableEngineObject
   int vec_in_subring(int n, const vec v) const;
   void vec_degree_of_var(int n, const vec v, int &lo, int &hi) const;
   vec vec_divide_by_var(int n, int d, const vec v) const;
-  vec vec_divide_by_expvector(const int *exp, const vec v) const;
+  vec vec_divide_by_expvector(const_exponents exp, const vec v) const;
 
   // Some divisibility routines
   bool vec_is_scalar_multiple(vec f, vec g)
       const;  // is cf = dg, some scalars c,d? (not both zero).
   vec vec_remove_monomial_factors(vec f, bool make_squarefree_only) const;
 
-  bool vec_multi_degree(const FreeModule *F, const vec f, int *degf) const;
+  bool vec_multi_degree(const FreeModule *F, const vec f, monomial degf) const;
   // returns true iff f is homogeneous
 
-  void vec_degree(const FreeModule *F, const vec f, int *d) const;
   void vec_degree_weights(const FreeModule *F,
                           const vec f,
                           M2_arrayint wts,
@@ -565,9 +611,9 @@ class SumCollector : public our_new_delete
   virtual ring_elem getValue() = 0;
 };
 
-#define ZERO_RINGELEM (ring_elem(static_cast<Nterm *>(0)))
+#  define ZERO_RINGELEM (ring_elem(static_cast<Nterm *>(0)))
 
-#include "ZZ.hpp"
+#  include "ZZ.hpp"
 extern RingZZ *globalZZ;
 extern RingZZ *makeIntegerRing();
 

@@ -130,7 +130,7 @@ void GB_comp::remove_pair(s_pair *&p)
   p->second = NULL;
   p->next = NULL;
   _M->remove(p->lcm);
-  deleteitem(p);
+  freemem(p);
   p = NULL;
 }
 
@@ -265,12 +265,11 @@ void GB_comp::find_pairs(gb_elem *p)
 // (includes cases m * lead(p) = 0).
 // Returns a list of new s_pair's.
 {
-  queue<Bag *> elems;
-  Index<MonomialIdeal> j;
-  intarray vplcm;
-  int *find_pairs_m = _M->make_one();
-  int *f_m = _M->make_one();
-  int *find_pairs_exp = newarray_atomic(int, _M->n_vars());
+  gc_vector<Bag*> elems;
+  gc_vector<int> vplcm;
+  monomial find_pairs_m = _M->make_one();
+  monomial f_m = _M->make_one();
+  exponents_t find_pairs_exp = newarray_atomic(int, _M->n_vars());
   int *find_pairs_lcm = newarray_atomic(int, _M->n_vars());
 
   _GR->gbvector_get_lead_monomial(_F, p->f, f_m);
@@ -287,10 +286,10 @@ void GB_comp::find_pairs(gb_elem *p)
           _M->from_expvector(find_pairs_exp, find_pairs_lcm);
           find_pairs_exp[w]--;
 
-          vplcm.shrink(0);
+          vplcm.resize(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_var_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
 
@@ -302,47 +301,46 @@ void GB_comp::find_pairs(gb_elem *p)
         {
           const gbvector *f = originalR->quotient_gbvector(i);
           _M->lcm(f->monom, f_m, find_pairs_lcm);
-          vplcm.shrink(0);
+          vplcm.resize(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = _monideals[p->f->comp]->mi;
-  for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
+  for (Bag& a : *mi1)
     {
-      _M->from_varpower((*mi1)[i]->monom().raw(), find_pairs_m);
+      _M->from_varpower(a.monom().data(), find_pairs_m);
       _M->lcm(find_pairs_m, f_m, find_pairs_lcm);
-      vplcm.shrink(0);
+      vplcm.resize(0);
       _M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q =
           new_s_pair(p,
-                     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()),
+                     reinterpret_cast<gb_elem *>(a.basis_ptr()),
                      find_pairs_lcm);
-      elems.insert(new Bag(q, vplcm));
+      elems.push_back(new Bag(q, vplcm));
     }
 
   // Add 'p' to the correct monideal
-  intarray vp;
+  gc_vector<int> vp;
   _M->to_varpower(f_m, vp);
   mi1->insert(new Bag(p, vp));
 
   // Now minimalize these elements, and insert them into
   // the proper degree.
 
-  queue<Bag *> rejects;
-  Bag *b;
+  VECTOR(Bag *) rejects;
   MonomialIdeal mi(originalR, elems, rejects);
-  while (rejects.remove(b))
+  for (auto& b : rejects)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
       delete b;
     }
-  for (j = mi.first(); j.valid(); j++)
+  for (Bag& a : mi)
     {
-      s_pair *q = reinterpret_cast<s_pair *>(mi[j]->basis_ptr());
+      s_pair *q = reinterpret_cast<s_pair *>(a.basis_ptr());
       if (_is_ideal && q->syz_type == SPAIR_PAIR)
         {
           _M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_m);
@@ -368,15 +366,15 @@ void GB_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   _M->remove(find_pairs_m);
   _M->remove(f_m);
-  deletearray(find_pairs_exp);
-  deletearray(find_pairs_lcm);
+  freemem(find_pairs_exp);
+  freemem(find_pairs_lcm);
 }
 
 void GB_comp::compute_s_pair(s_pair *p)
 {
   if (p->f == NULL)
     {
-      int *s = _M->make_one();
+      monomial s = _M->make_one();
       _M->divide(p->lcm, p->first->f->monom, s);
 
       _GR->gbvector_mult_by_term(
@@ -399,7 +397,7 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, _M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, _M->n_vars());
   int count = 0;
   if (M2_gbTrace == 10)
     {
@@ -457,7 +455,7 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
       emit_wrapped(o.str());
     }
   f = head.next;
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
@@ -466,7 +464,7 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, _M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, _M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(_GR, _F);
@@ -526,7 +524,7 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void GB_comp::flush_pairs(int deg)
@@ -558,7 +556,7 @@ void GB_comp::flush_pairs(int deg)
 
 void GB_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 {
-  int *f_m = _M->make_one();
+  monomial f_m = _M->make_one();
   gb_elem *p = new gb_elem(f, fsyz, ismin);
 
   _GR->gbvector_get_lead_monomial(_F, p->f, f_m);
@@ -571,7 +569,7 @@ void GB_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 
   if (_M->in_subring(1, f_m)) _n_subring++;
   // insert into p->f->comp->mi_search
-  intarray vp;
+  gc_vector<int> vp;
   _M->to_varpower(f_m, vp);
   _monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   _n_gb++;

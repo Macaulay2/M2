@@ -124,13 +124,13 @@ res2term *res2_poly::ring_mult_by_term(const ring_elem f,
 {
   res2term head;
   res2term *result = &head;
-  for (const Nterm *tm = f; tm != NULL; tm = tm->next)
+  for (Nterm& tm : f)
     {
       result->next = new_term();
       result = result->next;
       result->comp = x;
-      result->coeff = K->mult(c, tm->coeff);
-      M->mult(tm->monom, m, result->monom);
+      result->coeff = K->mult(c, tm.coeff);
+      M->mult(tm.monom, m, result->monom);
     }
   result->next = NULL;
   return head.next;
@@ -277,7 +277,7 @@ vec res2_poly::to_vector(const res2term *f,
                          int /*to_minimal*/) const
 {
   vecHeap H(F);
-  int *mon = M->make_one();
+  monomial mon = M->make_one();
   for (const res2term *tm = f; tm != NULL; tm = tm->next)
     {
       //    int x = (to_minimal ? tm->comp->minimal_me : tm->comp->me);
@@ -299,13 +299,13 @@ res2term *res2_poly::from_vector(const VECTOR(res2_pair *)& base,
   res2term *result = &head;
 
   for (vecterm *w = v; w != NULL; w = w->next)
-    for (Nterm *t = w->coeff; t != 0; t = t->next)
+    for (Nterm& t : w->coeff)
       {
         result->next = new_term();
         result = result->next;
         result->comp = base[w->comp];
-        result->coeff = t->coeff;
-        M->copy(t->monom, result->monom);
+        result->coeff = t.coeff;
+        M->copy(t.monom, result->monom);
         M->mult(result->monom, result->comp->syz->monom, result->monom);
       }
   result->next = NULL;

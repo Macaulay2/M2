@@ -12,15 +12,23 @@ PACKAGES = $(ALL_PACKAGES)
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests
 
+MakeDocumentation ?= $(if @DOCUMENTATION@,true,false)
+MakeHTML ?= $(if $(filter html, @DOCUMENTATION@),true,false)
+MakeInfo ?= $(if $(filter info, @DOCUMENTATION@),true,false)
+MakePDF  ?= $(if $(filter pdf , @DOCUMENTATION@),true,false)
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
-Verbose ?= false
+Verbose := $(if $(VERBOSE),true,false)
 RerunExamples ?= false
 debugLevel ?= 0
-errorDepth ?= 3
+errorDepth ?= 0
 
-ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
+ARGS := MakeDocumentation => $(MakeDocumentation),		\
+	MakeHTML => $(MakeHTML),				\
+	MakeInfo => $(MakeInfo),				\
+	MakePDF => $(MakePDF),					\
+	RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
 	CheckDocumentation => $(CheckDocumentation),		\
@@ -36,13 +44,17 @@ ARGS := $(ARGS), $(IARGS)
 endif
 
 STOP = --stop --silent
+ArgumentMode = defaultMode
+m2-need-template = "needsPackage(\"$(1)\",LoadDocumentation=>true,DebuggingMode=>true)"
+m2-check-template = "check($(1),UserMode=>false,Verbose=>$(Verbose)); exit 0"
 $(foreach i,\
 	$(sort $(ALL_PACKAGES) $(DEVEL)),\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
-		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2 -q --no-preload $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false,Verbose=>$(Verbose)); exit 0" ;\
-		fi ))
+		@pre_bindir@/M2 -q --no-preload $(STOP)                 \
+			-e $(call m2-need-template,$i)                  \
+			-e "debug Core; argumentMode = $(ArgumentMode)" \
+			-e $(call m2-check-template,$i)))
 info-dir: @pre_infodir@/dir
 @pre_infodir@/dir:|@pre_infodir@
 	@INSTALL_DATA@ @abs_top_srcdir@/files/info-dir-template $@
@@ -78,7 +90,8 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
 	ls -l $1-temporary
 	rm -rf $1-temporary
-	install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info
+	if [ -e @pre_infodir@/$1.info ]; then \
+		install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info; fi
 	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
 @pre_infodir@/$1.info.errors: @pre_infodir@/$1.info
@@ -106,6 +119,20 @@ big-check:
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
 	rm -f Makefile
+
+# requires html5validator:
+# python3 -m pip install html5validator
+validate-html:
+	@ INVALID_PACKAGES="";                                       \
+	for PACKAGE in $(PACKAGES);                                  \
+	do echo "validating $$PACKAGE documentation ...";            \
+	   html5validator --show-warnings                            \
+		--root @pre_prefix@/@tail_htmldir@/$$PACKAGE/html || \
+		INVALID_PACKAGES="$$INVALID_PACKAGES $$PACKAGE";     \
+	done;                                                        \
+	if test "$$INVALID_PACKAGES";                                \
+	then echo "invalid packages:$$INVALID_PACKAGES";  exit 1;    \
+	fi
 
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@

@@ -3,12 +3,15 @@
 #ifndef _aring_gf_m2_hpp_
 #define _aring_gf_m2_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <rand.h>
+#include "exceptions.hpp" // for exc::division_by_zero_error, exc::internal_error
+#include <iostream>
 
-//#include "aring-glue.hpp"
+#include "polyring.hpp"
+class RingMap;
 
 class GF;
 class PolynomialRing;
@@ -71,13 +74,13 @@ class GaloisFieldTable
 \ingroup rings
 */
 
-class ARingGFM2 : public RingInterface
+class ARingGFM2 : public SimpleARing<ARingGFM2>
 {
  public:
-  static const RingID ringID = ring_GF;
+  static const RingID ringID = ring_GFM2;
   typedef int ElementType;
   typedef int elem;
-
+  typedef std::vector<elem> ElementContainerType;
   /// a is a polynomial in a ring R = ZZ/p[x]/(f(x))
   /// where
   ///  (a) f(x) is irreducible of degree n
@@ -118,8 +121,7 @@ class ARingGFM2 : public RingInterface
   void getGenerator(elem &result_gen) const { result_gen = 1; }
   int get_repr(elem f) const
   { /*TODO: WRITE WRITE ;*/
-    assert(false);
-    return 0;
+    throw exc::internal_error("get_repr not written");
   }
 
   void to_ring_elem(ring_elem &result, const ElementType &a) const
@@ -130,6 +132,11 @@ class ARingGFM2 : public RingInterface
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
     result = a.get_int();
+  }
+
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_int();
   }
 
   bool is_unit(ElementType f) const { return f != 0; }
@@ -147,7 +154,7 @@ class ARingGFM2 : public RingInterface
   void init_set(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
+  static void clear(elem &result) { /* nothing */}
 
   void set_from_long(elem &result, long a) const
   {
@@ -183,9 +190,9 @@ class ARingGFM2 : public RingInterface
   }
 
   void invert(elem &result, elem a) const
-  // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
-    assert(a != 0);
+    if (a == 0)
+      throw exc::division_by_zero_error();
     result = (a == mGF.one() ? mGF.one() : mGF.orderMinusOne() - a);
   }
 
@@ -233,13 +240,9 @@ class ARingGFM2 : public RingInterface
 
   void subtract_multiple(elem &result, elem a, elem b) const
   {
-    // result -= a*b
-    assert(a != 0);
-    assert(b != 0);
-
-    int ab = a + b;
-    if (ab > mGF.minusOne()) ab -= mGF.orderMinusOne();
-    subtract(result, ab, result);
+    elem ab;
+    mult(ab, a, b);
+    subtract(result, result, ab);
   }
 
   void mult(elem &result, elem a, elem b) const
@@ -256,7 +259,8 @@ class ARingGFM2 : public RingInterface
 
   void divide(elem &result, elem a, elem b) const
   {
-    assert(b != 0);
+    if (b == 0)
+      throw exc::division_by_zero_error();
     if (a != 0)
       {
         int c = a - b;
@@ -276,13 +280,34 @@ class ARingGFM2 : public RingInterface
         if (result <= 0) result += mGF.orderMinusOne();
       }
     else
-      result = 0;
+      {
+        // a is the zero element
+        if (n > 0)
+          result = 0;
+        else if (n == 0)
+          result = mGF.one();
+        else
+          throw exc::division_by_zero_error();
+      }
   }
 
   void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
-    long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
-    power(result, a, n1);
+    if (a != 0)
+      {
+        long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
+        power(result, a, n1);
+      }
+    else
+      {
+        // a is the zero element
+        if (mpz_sgn(n) > 0)
+          result = 0;
+        else if (mpz_sgn(n) == 0)
+          result = mGF.one();
+        else
+          throw exc::division_by_zero_error();
+      }
   }
 
   void swap(ElementType &a, ElementType &b) const

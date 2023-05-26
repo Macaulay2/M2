@@ -22,7 +22,7 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols)
 
 MatrixConstructor::MatrixConstructor(const FreeModule *target,
                                      const FreeModule *source,
-                                     const int *deg0)
+                                     const_monomial deg0)
     : R(target->get_ring()), rows(target), cols(source), cols_frozen(true)
 {
   entries.reserve(source->rank());
@@ -35,12 +35,12 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target,
 void MatrixConstructor::append(vec v)
 {
   assert(!cols_frozen);
-  int *d = R->degree_monoid()->make_one();
-  if (v != 0) R->vec_degree(rows, v, d);
+  monomial d = R->degree_monoid()->make_one();
+  if (v != 0) R->vec_multi_degree(rows, v, d);
   append(v, d);
   R->degree_monoid()->remove(d);
 }
-void MatrixConstructor::append(vec v, const int *deg0)
+void MatrixConstructor::append(vec v, const_monomial deg0)
 {
   if (cols_frozen)
     {
@@ -57,7 +57,7 @@ void MatrixConstructor::set_entry(int r, int c, ring_elem a)
 }
 void MatrixConstructor::set_column(int c, vec v) { entries[c] = v; }
 void MatrixConstructor::compute_column_degrees()
-/* Takes into acount the matrix degree */
+/* Takes into account the matrix degree */
 {
   if (cols_frozen)
     {
@@ -66,7 +66,7 @@ void MatrixConstructor::compute_column_degrees()
   for (int i = 0; i < cols->rank(); i++) compute_column_degree(i);
 }
 
-void MatrixConstructor::set_column_degree(int i, const int *deg0)
+void MatrixConstructor::set_column_degree(int i, const_monomial deg0)
 {
   if (cols_frozen)
     {
@@ -82,15 +82,15 @@ void MatrixConstructor::compute_column_degree(int i)
     {
       INTERNAL_ERROR("trying to append to an immutable free module.");
     }
-  int *d = R->degree_monoid()->make_one();
+  monomial d = R->degree_monoid()->make_one();
   const vec v = entries[i];
-  if (v != 0) R->vec_degree(rows, v, d);
+  if (v != 0) R->vec_multi_degree(rows, v, d);
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->change_degree(i, d);
   R->degree_monoid()->remove(d);
 }
 
-void MatrixConstructor::set_matrix_degree(const int *deg0) { deg = deg0; }
+void MatrixConstructor::set_matrix_degree(const_monomial deg0) { deg = deg0; }
 Matrix *MatrixConstructor::to_matrix()
 {
   //  if (!will_be_mutable && !cols->is_frozen)

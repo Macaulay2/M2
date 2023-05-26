@@ -1,4 +1,4 @@
-# - Try to find readline include dirs and libraries 
+# Try to find readline include dirs and libraries
 #
 # Usage of this module as follows:
 #
@@ -23,7 +23,7 @@
 
 find_path(READLINE_ROOT_DIR
     NAMES include/readline/readline.h
-    PATHS /usr/local/opt/readline/ /opt/local/ /usr/local/ /usr/
+    PATHS ${HOMEBREW_PREFIX}/opt/readline /opt/local /usr/local /usr
     NO_DEFAULT_PATH
 )
 

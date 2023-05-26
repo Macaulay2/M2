@@ -33,7 +33,7 @@ If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
 Then automatically the package "OldPolyhedra" is used,
-but that is several magnitues slower compared to maple/convex.
+but that is several magnitudes slower compared to maple/convex.
 
 "OldPolyhedra" relies on the package "FourierMotzkin".
 
@@ -1181,7 +1181,7 @@ Cl==C
 To save memory the goal is to store face of complexes and their 
 subcomplexes only once. If (e.g. by boundaryOfPolytope, idealToCoComplex,...) 
 a complex C1 is computed which is a subcomplex of C and is a face of C1
-then then F.ofComplex returns still C.
+then F.ofComplex returns still C.
 This e.g. allows us to dualize F if C was a polytope
 *-
 
@@ -2499,7 +2499,7 @@ I)
 -- this is the Stanley-Reisner complex
 -- but the cocomplex is always dual to a complex in the polytope
 -- which is the true geometric strata of the vanishing locus of the ideal
--- in the Cox ring of the toric varietey)
+-- in the Cox ring of the toric variety)
 
 ---------------------------------------------------------
 -- cocomplexes:
@@ -3890,7 +3890,7 @@ doc ///
 
         {\it Oct 6, 2009 (Version 0.48)}
 
-           Resolved a compatiblity issue with the new version of the M2 package {\it OldPolyhedra}.
+           Resolved a compatibility issue with the new version of the M2 package {\it OldPolyhedra}.
 
 
         {\it Oct 3, 2009 (Version 0.47)}
@@ -3969,7 +3969,7 @@ doc ///
 
       This package has to be installed first, see its documentation for this.
 
-      It calls the Maple package Convex and is faster than OldPolyhedra, hence the perferable choice.
+      It calls the Maple package Convex and is faster than OldPolyhedra, hence the preferable choice.
       If you want to do non-trivial examples you have to go for it.
 
       To use it type
@@ -4661,7 +4661,7 @@ doc ///
     :Boolean
   Description
    Text
-        Checks whether a deformation f is homogeneous with respect to the small torus gradin, i.e., the grading added to R = @TO simplexRing@ f by @TO addCokerGrading@.
+        Checks whether a deformation f is homogeneous with respect to the small torus grading, i.e., the grading added to R = @TO simplexRing@ f by @TO addCokerGrading@.
    Example
         R=QQ[x_0..x_4];
         addCokerGrading(R);
@@ -5119,7 +5119,7 @@ doc ///
        If L is specified then the grading of a weighted projective space is added.
        
        This command does not change the behaviour of R with respect to the standard
-       Macaualy2 image grading, which we want to use independently.
+       Macaulay2 image grading, which we want to use independently.
 
    Example
         R=QQ[x_0..x_4];
@@ -5185,7 +5185,7 @@ doc ///
         
         {\bf The data stored in a face F:}
         
-        {\it F.vert}, a list with the vertices of F, which are variables of a @TO PolynomialRing@ R. We use a list to prevent Macaualy from reordering sets or monomials.
+        {\it F.vert}, a list with the vertices of F, which are variables of a @TO PolynomialRing@ R. We use a list to prevent Macaulay from reordering sets or monomials.
         
         {\it F.ofComplex}, a list with the @TO Complex@es and @TO CoComplex@es of which F is a face (optional).
         
@@ -5957,7 +5957,7 @@ doc ///
         If R does not have a coker grading then the standard projective space fan rays are added, see @TO addCokerGrading@
         and @TO raysPPn@.
         
-        The Option computeFaces=>false suppresses the computaton of all faces.
+        The Option computeFaces=>false suppresses the computation of all faces.
         
         If Rdual is specified it is used for the vertices of the dual simplex, if not a new polynomial ring is created.
         It is graded by the coordinates of the vertices of the dual simplex.
@@ -6013,7 +6013,7 @@ doc ///
      isPolytope
      facets
   Caveat
-     This just returns C.dualComplex.grading. If this data has not beed computed use @TO verticesDualPolytope@.
+     This just returns C.dualComplex.grading. If this data has not been computed use @TO verticesDualPolytope@.
      Integrate into this verticesDualPolytope.
 ///
 

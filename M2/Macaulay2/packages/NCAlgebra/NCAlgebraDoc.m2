@@ -299,7 +299,7 @@ doc ///
 	 set is not a Groebner basis, then you will get incorrect results upon calls to functions like @ TO (basis, ZZ, NCRing) @.
 	 
 	 The alternative is to use the built in commands @ TO skewPolynomialRing @ and @ TO oreExtension @ which
-	 has the same effect as above occuring behind the scenes.  Just be careful using these commands to create your
+	 has the same effect as above occurring behind the scenes.  Just be careful using these commands to create your
 	 ring if your base ring is not a field Bergman can work with, as the generating sets created may not be a Groebner
 	 basis for the defining ideal (this is more often a problem for @ TO oreExtension @ than @ TO skewPolynomialRing @).
       Example
@@ -2864,9 +2864,9 @@ doc ///
    Description
       Text 
          This method converts a list of ring elements to coordinate vectors - returned
-	 as a matrix - relative to a list of monomilas. If the user does not 
+	 as a matrix - relative to a list of monomials. If the user does not 
 	 supply a monomial list, the list is taken to be the monomials 
-	 occuring in the elements of the list (with repetition).
+	 occurring in the elements of the list (with repetition).
       Example
          A=QQ{a, b, c, d, e, f, g, h}
 	 F = a^2+b^2+c^2+d^2+e^2+f^2+g^2+h^2;
@@ -3448,7 +3448,7 @@ doc ///
    Description
       Text
          This method constructs a three dimensional Sklyanin algebra with parameters from
-	 the params list, and variables from varList (see @ HREF{"http:////arxiv.org//abs//1107.2953","here"} @).
+	 the params list, and variables from varList (see @ arXiv("1107.2953","here") @).
 	 If either list is not length three, then an error is thrown.  The generic 
 	 such algebra does not have a finite Groebner basis, so the optional parameter
 	 DegreeLimit has been defaulted to 5.  If only one list is provided, it is used
@@ -3659,7 +3659,7 @@ doc ///
       b : Boolean
    Description
       Text
-         This flag is set ot true if a given element of an NCRing (considered 
+         This flag is set to true if a given element of an NCRing (considered 
 	 as an element of an appropriate NCPolynomialRing) is in normal form 
          relative to a Groebner basis.
       Example
@@ -3734,7 +3734,7 @@ doc ///
       Text 
          The NCAlgebra package contains a number of methods for studying noncommutative
 	 rings - primarily graded rings. The following three extended examples 
-	 highlight the capabilites of the package. For a detailed account of the
+	 highlight the capabilities of the package. For a detailed account of the
 	 Groebner basis calculations underlying nearly all of these methods, see
 	 @ TO "Using the Bergman interface" @.
       Text
@@ -3878,7 +3878,7 @@ doc ///
          basis(2,D)	 
       Text
          The output of normalElements tells us that in order for a degree 2 element of D
-	 to be normal, it must be an expresison in powers of the generators. The coefficients
+	 to be normal, it must be an expression in powers of the generators. The coefficients
 	 of these powers must satisfy the six equations listed.
       Example
          isNormal (x^2+z^2-y^2-w^2)	 
@@ -3929,7 +3929,7 @@ doc ///
       Text
          The endomorphism ring is computed using @ TO endomorphismRing @. This method
 	 computes a presentation, but the presentation is typically not minimal. We
-	 see from the following calcuation that X_3 = X_0X_2.
+	 see from the following calculation that X_3 = X_0X_2.
       Example
          B = endomorphismRing(M,X); 
 	 gensI = gens ideal B
@@ -3957,8 +3957,8 @@ doc ///
          Bergman is a software package for computing Groebner bases 
 	 for ideals in both commutative and noncommutative polynomial 
 	 rings with coefficients in Q or Z/p. Bergman was created by 
-	 J. Backelin (U. of Stockholm) and its capabilites were extended 
-	 by V. Ufnarovski, S. Cojacaru, and A. Podoplelov.
+	 J. Backelin (U. of Stockholm) and its capabilities were extended 
+	 by V. Ufnarovski, S. Cojocaru, and A. Podoplelov.
       Text
          Though Bergman is limited in terms of the coefficients it can 
 	 handle and the choice of orderings it offers, it is a very 
@@ -3998,7 +3998,7 @@ doc ///
 	 runs Bergman to compute a noncommutative Groebner basis to a certain degree.
 	 The user will recall that unlike the commutative case, noncommutative 
 	 Groebner bases need not be finite, and may grow rapidly. For unfamiliar
-	 examples, we recommend initially setting a relatively low degree threshhold 
+	 examples, we recommend initially setting a relatively low degree threshold 
 	 (say, n=5). In our example, we know from experience the Groebner basis is finite
 	 so we do not specify a degree limit.
       Example
@@ -4020,7 +4020,7 @@ doc ///
          Igb2 = ncGroebnerBasis(I,InstallGB=>true) 
       Text
          As mentioned above, noncommutative Groebner bases can grow rapidly both in the
-	 number and size of the terms. In some cases, it takes days to calcuate a 
+	 number and size of the terms. In some cases, it takes days to calculate a 
 	 Groebner basis to the desired degree. So as not to repeat this calculation 
 	 more than once, users might have a Groebner basis saved in a file. The method
 	 @ TO gbFromOutputFile @ enables the user to load the Groebner basis from a file.

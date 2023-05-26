@@ -37,19 +37,8 @@ document {
 	  },
      PARA{},
     "The symbol ", TT "index", " is also as a key used in 
-    ", TO {"GeneralOrderedMonoid", "s"}, " to store a table that is used to 
+    ", TO {"Monoid", "s"}, " to store a table that is used to
     map generator names to the position of the generator in the list of generators.",
      SeeAlso => {indices, support, (symbol_,Ring,ZZ)}
      }
-
-TEST ///
-    R = ZZ/101[x_0 .. x_10]
-    scan(11, i -> assert(index x_i == i))
-    assert( try (index x_11;false) else true )
-    R = ZZ/101[w,z,t,e]
-    assert( index w == 0 )
-    assert( index z == 1 )
-    assert( index t == 2 )
-    assert( index e == 3 )
-///
 

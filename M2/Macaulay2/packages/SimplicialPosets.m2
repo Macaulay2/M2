@@ -36,7 +36,6 @@ newPackage(
 export {
     "stanleyPosetIdeal",
     "fromFVector",
-    "isSimplicial",
     "isBoolean",
     "getFVector",
     "testFVector"
@@ -117,7 +116,7 @@ isBoolean Poset := Boolean => P -> (
     );
 
 -- Returns true if P is simplicial and false otherwise.
-isSimplicial = method()
+-- the 'isSimplicial' methods is defined in 'Polyhedra'
 isSimplicial Poset := Boolean => P -> (
     
     -- Not sure if doing this correctly (did we ever write to the cache?)
@@ -489,6 +488,7 @@ assert(getFVector(B) == {1,4,6,4,1})
 
 -- stanleyPosetIdeal test
 TEST ///
+needsPackage "EdgeIdeals"
 -- Number of tests
 N = 50;
 -- Erdős–Rényi graph parameters 

@@ -93,7 +93,7 @@ RingMap::~RingMap()
       if (!_elem[i].monom_is_one) M->remove(_elem[i].monom);
       R->remove(_elem[i].bigelem);
     }
-  deletearray(_elem);
+  freemem(_elem);
   K = NULL;
   M = NULL;
 }
@@ -137,9 +137,9 @@ void RingMap::text_out(buffer &o) const
   o << ")";
 }
 
-ring_elem RingMap::eval_term(const Ring *sourceK,
-                             const ring_elem a,
-                             const int *vp,
+ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
+                             const ring_elem a,  // coefficient of term
+                             const_varpower vp,
                              int first_var,
                              int nvars_in_source) const
 {
@@ -156,8 +156,8 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   ring_elem result = sourceK->eval(this, a, first_var + nvars_in_source);
   if (R->is_zero(result)) return result;
 
-  int *result_monom = NULL;
-  int *temp_monom = NULL;
+  monomial result_monom = NULL;
+  monomial temp_monom = NULL;
   ring_elem result_coeff = K->from_long(1);
 
   if (P != 0)

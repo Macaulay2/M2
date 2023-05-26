@@ -128,7 +128,7 @@ document {
 	  init files so the directory containing M2 will the first one searched when
 	  looking for a program.  If you then try to use your account on different
 	  hardware, incorrect programs may be found, namely, those in the same
-	  directory as M2.  Similarly, incorrect sharable libraries may also be found."
+	  directory as M2.  Similarly, incorrect shareable libraries may also be found."
 	  },
      SeeAlso => {
 	  setupEmacs
@@ -362,7 +362,7 @@ document { Key => "teaching emacs how to find M2",
      directory.  Put the following command in your
      .emacs file.",
      PRE ///(setq M2-exe "/foo/bar/bin/M2")///,
-     "The next time you start emacs it wil know how to find M2."
+     "The next time you start emacs it will know how to find M2."
      }
 
 document {
@@ -583,7 +583,7 @@ doc ///
 	viewHelp
 	infoHelp
 	(symbol?, Symbol)
-      :Getting other information from documentaiton
+      :Getting other information from documentation
         examples
 
     Text
@@ -885,8 +885,9 @@ document {
      TT "M2 file1 file2 ... ", " -- starts the program, reading and 
      executing the specified files.",
      PARA{},
-     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
-     EXAMPLE ///run "M2 --help";///,
+     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ".",
+     EXAMPLE ///assert(0 == run (commandLine#0 | " --help"));///,
+     -- In the long run, it would be better if we added the directory containing our M2 to PATH.
      PARA{},
      "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
      ", TO "end", ", or the end of file character.",
@@ -927,7 +928,7 @@ document {
      "There is an ASCII version of this section of the documentation distributed
      in the file ", TT (Layout#1#"emacs" | "M2-emacs-help.txt"), ". It might be useful for you to visit
      that file with emacs now, thereby avoiding having to cut and paste bits of
-     text into emacs buffers for the deomonstrations below.",
+     text into emacs buffers for the demonstrations below.",
      PARA{},
      "If you are a newcomer to emacs, start up emacs with the command 
      ", TT "emacs", " and then start up the emacs tutorial with the keystrokes 

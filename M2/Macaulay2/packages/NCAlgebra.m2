@@ -1285,7 +1285,7 @@ toNCRing Ring := R -> (
    isComm := isCommutative R;
    isExter := isExterior R;
    if not isComm and not isExter then error "Input ring must be either strictly (-1)-skew commutative or commutative.";
-   --- generate the (skew)commutivity relations
+   --- generate the (skew)commutativity relations
    Q := coefficientRing R;
    A := Q (gens R);
    phi := ncMap(A,ambient R,gens A);
@@ -1410,7 +1410,7 @@ writeBergmanInputFile (NCRing,String,String) := opts -> (B,genListString,tempInp
       -- if we don't want to recompute the GB, we need to tell Bergman that there are no
       -- Spairs to work on for twice the max degree of the gens we send it so it
       -- doesn't try to create any more Spairs.
-      fil << "(load (mkbmpathexpand \"$bmload/lap/clisp/unix/hseries.fas\"))" << endl;
+      fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(sethseriesminima" << concatenate(opts#DegreeLimit:" skipcdeg") << ")" << endl;
@@ -1531,7 +1531,7 @@ twoSidedNCGroebnerBasisBergman NCIdeal := opts -> I -> (
                         NumModuleVars=>opts#NumModuleVars);
   writeGBInitFile(tempInit,tempInput,tempOutput);
   stderr << "--Calling Bergman for NCGB calculation." << endl;
-  runCommand("bergman -i " | tempInit | " -on-error exit --silent > " | tempTerminal);
+  runCommand("bergman -on-error exit --silent < " | tempInit | " > " | tempTerminal);
   retVal := gbFromOutputFile(ring I,
                              tempOutput,
                              MakeMonic=>opts#MakeMonic,
@@ -1648,7 +1648,7 @@ normalFormBergman (List, NCGroebnerBasis) := opts -> (fList, ncgb) -> (
    << "Writing bergman init file." << endl;
    writeNFInitFile(tempInit,tempGBInput,tempNFInput,tempOutput);
    stderr << "--Calling Bergman for NF calculation for " << #nonConstantIndices << " elements." << endl;
-   runCommand("bergman -i " | tempInit | " -on-error exit --silent > " | tempTerminal);
+   runCommand("bergman -on-error exit --silent < " | tempInit | " > " | tempTerminal);
    -- these are now the nfs of the nonzero entries.  Need to splice back in
    -- the zeros where they were.
    nfList := nfFromTerminalFile(A,tempTerminal);
@@ -1672,7 +1672,7 @@ writeHSInitFile := (tempInit,
 		    tempPBOutput,
 		    tempHSOutput) -> (
    fil := openOut tempInit;
-   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload/lap/clisp/unix\"))" << endl;
+   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload\"))" << endl;
    fil << "(ncpbhgroebner " 
        << "\"" << tempInput << "\" "
        << "\"" << tempGBOutput << "\" "
@@ -1720,7 +1720,7 @@ hilbertBergman NCQuotientRing := opts -> B -> (
 			DegreeLimit=>opts#DegreeLimit);
   writeHSInitFile(tempInit,tempInput,tempGBOutput,tempPBOutput,tempHSOutput);
   stderr << "--Calling bergman for HS computation." << endl;
-  runCommand("bergman -i " | tempInit | " -on-error exit --silent > " | tempTerminal);
+  runCommand("bergman -on-error exit --silent < " | tempInit | " > " | tempTerminal);
   I.cache#gb = gbFromOutputFile(ring I,tempGBOutput);
   hsFromOutputFiles(B,tempHSOutput,tempTerminal)
 )
@@ -3182,8 +3182,8 @@ assignDegrees (NCMatrix, List, List) := (M,targetDeg,sourceDeg) -> (
    -- this means an input matrix may not have "source" and "target" keys
    -- but it will if it's a map to the zero module
    if (#(targetDeg) != #(entries M)) then error "Target degree list does not match number of rows of matrix";
-   if #(entries M) !=0 and (#(sourceDeg) != #(first entries M)) then error "Source degree list does not match number of columns of matriix";   
-   if #(entries M) == 0 and (#(sourceDeg) != #(M.source)) then error "Source degree list does not match number of columns of matriix";
+   if #(entries M) !=0 and (#(sourceDeg) != #(first entries M)) then error "Source degree list does not match number of columns of matrix";   
+   if #(entries M) == 0 and (#(sourceDeg) != #(M.source)) then error "Source degree list does not match number of columns of matrix";
    M#(symbol source) = sourceDeg;
    M#(symbol target) = targetDeg;
    -- set the isHomogeneous flag.

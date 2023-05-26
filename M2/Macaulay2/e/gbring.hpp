@@ -19,11 +19,26 @@
 //   [polyring,skew,weyl,solvable]
 //   quotient ideal
 
-#include "ring.hpp"
-#include "skew.hpp"
-// #include "ntuple.hpp"
-#include "coeffrings.hpp"
+#include <M2/math-include.h>
+#include "engine-includes.hpp"
+
 #include <iostream>
+#include <string>
+
+#include "buffer.hpp"
+#include "monoid.hpp"
+#include "newdelete.hpp"
+#include "ringelem.hpp"
+#include "skew.hpp"
+#include "style.hpp"
+
+class CoefficientRingZZp;
+class FreeModule;
+class Ring;
+class SolvableAlgebra;
+class WeylAlgebra;
+class gbvectorHeap;
+class stash;
 
 struct gbvector
 {
@@ -39,10 +54,7 @@ struct POLY
   gbvector *fsyz;
 };
 
-class TermIdeal;
 typedef int *monomial;
-
-class gbvectorHeap;
 
 class GBRing : public our_new_delete
 {
@@ -179,9 +191,9 @@ class GBRing : public our_new_delete
   // exponents support //
   //////////////////////
 
-  exponents exponents_make();
+  exponents_t exponents_make();
 
-  void exponents_delete(exponents e);
+  void exponents_delete(exponents_t e);
 
   size_t exponent_byte_size() const { return exp_size; }
   // use ALLOCATE_EXPONENTS(R->exponent_byte_size())
@@ -410,7 +422,7 @@ class GBRing : public our_new_delete
       const FreeModule *F,
       const FreeModule *Fsyz,
       const gbvector *fcurrent_lead,
-      const int *exponents,  // exponents of fcurrent_lead
+      const_exponents exp,  // exponents of fcurrent_lead
       gbvector *flead,
       gbvectorHeap &f,
       gbvectorHeap &fsyz,
@@ -421,7 +433,7 @@ class GBRing : public our_new_delete
       const FreeModule *F,
       const FreeModule *Fsyz,
       const gbvector *fcurrent_lead,
-      const int *exponents,  // exponents of fcurrent_lead
+      const_exponents exp,  // exponents of fcurrent_lead
       gbvector *flead,
       gbvectorHeap &f,
       gbvectorHeap &fsyz,

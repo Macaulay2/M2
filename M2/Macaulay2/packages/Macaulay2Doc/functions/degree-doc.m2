@@ -2,6 +2,13 @@
 --- author(s): M. Stillman
 --- notes: 
 
+-*
+-- TODO
+degree(ChainComplexMap)
+degree(GradedModuleMap)
+degree(Matrix)
+*-
+
 document {
      Key => Parenthesize,
      "This class is used internally to implement the parentheses inserted by ", TO "parts", "."
@@ -71,7 +78,7 @@ document {
 	  "f" => {"usually returned via ", TO "hilbertPolynomial"}
 	  },
      Outputs => {
-	  ZZ => "the degree of any graded module having this hilbert polynomial"
+	  ZZ => "the degree of any graded module having this Hilbert polynomial"
 	  },
      "This degree is obtained from the Hilbert polynomial ", TT "f", " as follows:
      if ", TT "f = d z^e/e! + lower terms in z", ", then ", TT "d", " is returned.
@@ -130,7 +137,7 @@ document {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
      "We assume that ", TT "M", " is a graded (homogeneous) module over a 
-     polynomal ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
+     polynomial ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
      over a field ", TT "k", ".",
      PARA{
 	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
@@ -150,7 +157,7 @@ document {
 	  as often as possible, then evaluates it at ", TT "T=1", ".
 	  When the module has finite length,                                                           
  	  the result is the Hilbert series evaluated
- 	  at 1, that is the dimension over the ground field, which for a graded (homogenous)
+ 	  at 1, that is the dimension over the ground field, which for a graded (homogeneous)
 	  is the same as the length."
 	  },
      Caveat => {
@@ -177,7 +184,7 @@ Outputs
     the length of M
 Description
   Text
-    If M is a graded module over a singly graded polynomal ring or a quotient of a
+    If M is a graded module over a singly graded polynomial ring or a quotient of a
     polynomial ring over a field k then length is the same as the degree.
 
     If M is over a local ring then length is computed by summing the output of
@@ -221,7 +228,7 @@ document {
 	  List => {"the degree or multidegree of ", TT "f"}
 	  },
      "In Macaulay2, the degree of a polynomial is a list of integers.
-     This is to accomodate polynomial rings having multigradings.  The 
+     This is to accommodate polynomial rings having multigradings.  The 
      usual situation is when the ring has the usual grading: each variable has
      length 1.",
      EXAMPLE {

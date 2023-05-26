@@ -65,6 +65,7 @@ TEST(ARingQQGMP, display)
   EXPECT_EQ(R.cardinality(), static_cast<size_t>(-1));
   EXPECT_EQ(R.characteristic(), 0);
   R.clear(a);
+  R.clear(b);
 }
 
 TEST(ARingQQGMP, arithmetic)

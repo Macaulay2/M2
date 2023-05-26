@@ -1,5 +1,15 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
+needs "ext.m2"
+needs "gateway.m2"
+needs "hilbert.m2"
+needs "local.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "monideal.m2"
+needs "multilin.m2"
+needs "betti.m2"
+
 Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
 Variety.GlobalAssignHook = globalAssignFunction
@@ -85,23 +95,22 @@ net CoherentSheaf := (F) -> net expression F
 texMath CoherentSheaf := (F) -> texMath expression F
 toString CoherentSheaf := (F) -> toString expression F
 
-CoherentSheaf#{Standard,AfterPrint} = F -> (
+CoherentSheaf#AfterPrint = F -> (
      X := variety F;
      M := module F;
-     << endl;				  -- double space
      n := rank ambient F;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : coherent sheaf on " << X;
+     ("coherent sheaf on ",X,
      if M.?generators then
-     if M.?relations then << ", subquotient of " << ambient F
-     else << ", subsheaf of " << ambient F
-     else if M.?relations then << ", quotient of " << ambient F
+     if M.?relations then (", subquotient of ", ambient F)
+     else (", subsheaf of ", ambient F)
+     else if M.?relations then (", quotient of ", ambient F)
      else if n > 0 then (
-	  << ", free";
+	  ", free"
 	  -- if not all(degrees M, d -> all(d, zero))
 	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
-	  );
-     << endl;
+	  )
      )
+ )
 
 sheaf(Variety,Module) :=  CoherentSheaf => (X,M) -> if M.cache#?(sheaf,X) then M.cache#(sheaf,X) else M.cache#(sheaf,X) = (
      if ring M =!= ring X then error "expected module and variety to have the same ring";
@@ -133,6 +142,8 @@ module CoherentSheaf := Module => F -> F.module
 module SheafOfRings  := Module => F -> module F.ring
 Ideal * CoherentSheaf := (I,F) -> sheaf(F.variety, I * module F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ++ G.module)
+CoherentSheaf.directSum = args -> sheaf((first args).variety,directSum apply(args, F -> F.module))
+directSum CoherentSheaf := directSum @@ sequence
 CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ** G.module)
 CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(variety F, F.module ** (ring F)^{n})
 SheafOfRings ZZ := CoherentSheaf => (O,n) -> O^1(n)
@@ -202,8 +213,8 @@ CoherentSheaf(*) := F -> F(>=-infinity)
 SumOfTwists = new Type of BasicList
 CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
 SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
-net SumOfTwists := S -> net S#0 | if S#1#0 === neginfinity then "(*)" else "(>=" | net S#1#0 | ")"
-texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
+net SumOfTwists := S -> net S#0 | if S#1#0 === -infinity then "(*)" else "(>=" | net S#1#0 | ")"
+texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === -infinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
 
 cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
      F := S#0;
@@ -225,6 +236,7 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       n := numgens A;
 	       M := cokernel lift(presentation module F,A) ** cokernel p;
 	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
+cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> cohomology(i,F,opts)
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
@@ -355,6 +367,9 @@ binaryPower := (W,n,times,unit,inverse) -> (
      do W = times(W, W);
      Z)
 
+-- TODO: find a better home for these and binaryPower
+Monoid        ^** ZZ := (M,n) -> binaryPower(M,n,tensor,() -> monoid [], x -> error "Monoid ^** ZZ: expected non-negative integer")
+Ring          ^** ZZ := (R,n) -> binaryPower(R,n,tensor,() -> coefficientRing R, x -> error "Ring ^** ZZ: expected non-negative integer")
 Module        ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> (ring F)^1, dual)
 CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, dual)
 
@@ -398,8 +413,8 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -----------------------------------------------------------------------------
 
 Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
+     -- depends on truncate methods
      needsPackage "Truncations";
-     truncate := value getGlobalSymbol "truncate";
      G := G'#0;
      e := G'#1#0;
      if variety G =!= variety F
@@ -481,7 +496,7 @@ randomKRationalPoint Ideal := I -> (
      R:=ring I;
      if char R == 0 then error "expected a finite ground field";
      if not class R === PolynomialRing then error "expected an ideal in a polynomial ring";
-     if not isHomogeneous I then error "expected a homogenous ideal";
+     if not isHomogeneous I then error "expected a homogeneous ideal";
      n:=dim I;
      if n<=1 then error "expected a positive dimensional scheme";
      c:=codim I;

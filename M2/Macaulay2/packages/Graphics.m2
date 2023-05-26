@@ -1,16 +1,16 @@
--- -*- coding: utf-8 -*-
--- licensed under GPL, any version
+--- -*- coding: utf-8 -*-
+--- licensed under GPL, any version
 newPackage(
 	"Graphics",
-	Version => "0.2",
-	Date => "February 26, 2010",
+	Version => "0.3",
+	Date => "June 4, 2013",
 	Authors => {
-		{Name => "Baptiste Calmès",
-		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
+		{Name => "Baptiste Calmes",
+		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "create graphics",
-	Keywords => {"Miscellaneous"},
+	Keywords => {"Graphics"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users
@@ -116,7 +116,7 @@ textTag(Point2D,String) := (p,s) -> new TextTag from {p,s}
 
 textTag(Point3D,String) := (p,s) -> new TextTag from {p,s} 
 
---Turning a GraphicPrimitive object into a formated one by specifying options. These options will be passed to the different methods to create pictures in different formats (ex: SVG, etc.) so they are not constrained here because I don't know what graphic formats will be supported in the future. 
+--Turning a GraphicPrimitive object into a formatted one by specifying options. These options will be passed to the different methods to create pictures in different formats (ex: SVG, etc.) so they are not constrained here because I don't know what graphic formats will be supported in the future. 
 formatGraphicPrimitives = method()
 formatGraphicPrimitives(BasicList,HashTable) := (gplist, h) ->
 	(
@@ -305,7 +305,7 @@ svgObject(Point2D,HashTable) := (mypt,opts) ->
 	(
 	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#Point2D,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#Point2D);
 	"<circle "
-	|///cx="///|toString(mypt#0)|///" cy="///|toString(mypt#1)|/// r="///|defaultSVGValues#Point2D#("r")|///" ///
+	|///cx="///|toString(mypt#0)|///" cy="///|toString(mypt#1)|///" r="///|defaultSVGValues#Point2D#("r")|///" ///
 	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
 	|"/>"
 	)
@@ -937,7 +937,7 @@ doc ///
 	Key
 		(formatGraphicPrimitives,BasicList,HashTable)
 	Headline
-		create a formated graphic primitive object
+		create a formatted graphic primitive object
 	Usage
 		textTag(gplist,h)	
 	Inputs

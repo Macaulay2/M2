@@ -18,7 +18,7 @@ doc ///
 		Text
 			A GKM variety is a variety $X$, often assumed to be smooth and complete, with an 
 			action of an algebraic torus $T$ satisfying the following conditions:
-			(i) $X$ is equivariantly formal with respect to the the action of $T$,
+			(i) $X$ is equivariantly formal with respect to the action of $T$,
 			(ii) $X$ has finitely many $T$-fixed points, and (iii) $X$ has finitely
 			many one-dimensional $T$-orbits.  The data of the zero and one dimensional
 			$T$-orbits of $X$ define the moment graph of $X$, with which one can carry out
@@ -110,7 +110,7 @@ doc ///
 			with the highest weight $a_1w_1 + \cdots a_nw_n$.
 			These generalized flag varieties can be created as a @TO "GKMVariety"@ using the method 
 			@TO generalizedFlagVariety@.  For instance, the Grassmannian $Gr(2,4)$ of
-			2-dimensional subspaces in $\mathbb C^4$, embedded in $\mathbb P^5$ by the usual Plucker embedding, 
+			2-dimensional subspaces in $\mathbb C^4$, embedded in $\mathbb P^5$ by the usual Plücker embedding,
 			can be created as follows.
 
 		Example
@@ -125,13 +125,13 @@ doc ///
 			underlyingGraph G
 
 		Text
-			The line bundle $O(1)$ on $Gr(2,4)$, corresponding to its Plucker embedding, can be accessed by @TO (ampleKClass, GKMVariety)@.
+			The line bundle $O(1)$ on $Gr(2,4)$, corresponding to its Plücker embedding, can be accessed by @TO (ampleKClass, GKMVariety)@.
 			The method @TO (euler, KClass)@ computes its Lefschetz trace (a.k.a. equivariant Euler characteristic),
 			which in this case is the Laurent polynomial in the character ring of the torus $T$ 
 			whose terms correspond to be weights of the second exterior power of the standard representation of $GL_4$.
 
 		Example
-			O1 = ampleKClass Gr24 --the O(1) bundle on Gr24 via its Plucker embedding
+			O1 = ampleKClass Gr24 --the O(1) bundle on Gr24 via its Plücker embedding
 			euler O1
 
 		Text
@@ -217,7 +217,7 @@ doc ///
 			SOGr48even.points
 
 	Caveat
-		Does not check for low-dimensional isogeneis.  For instance, always use type $D_n$ with $n\geq 4$ to be safe.
+		Does not check for low-dimensional isogenies.  For instance, always use type $D_n$ with $n\geq 4$ to be safe.
 
 	SeeAlso
 		generalizedFlagVariety
@@ -443,7 +443,7 @@ doc ///
 			peek SpFl4
 		
 		Text
-			The following example produces the Orthogonal Grassmaninnian $SOGr(2,5)$ from its
+			The following example produces the Orthogonal Grassmannian $SOGr(2,5)$ from its
 			moment graph.
 
 		Example
@@ -978,7 +978,7 @@ doc ///
 		flagMap
 		(flagMap, GKMVariety, GKMVariety)
 	Headline
-		creates equivariant maps bewteen generalized flag varieties
+		creates equivariant maps between generalized flag varieties
 	Usage
 		f = flagMap(X,Y)
 	Inputs
@@ -1186,7 +1186,7 @@ doc ///
 
 	Caveat
 		Functionalities concerning intersection cohomology of sheaves on moment graphs, which had been 
-		implemenented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
+		implemented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
 		have not been imported into this package yet.
 
 	SeeAlso
@@ -1362,7 +1362,7 @@ doc ///
 			the line bundle. If no such line bundle is defined, it allows the user to construct one.
 		Text
 			The following example describes the ample line bundle on the Lagrangian Grassmannian $SpGr(2,4)$. The line bundle
-			is precisely the pullback of O(1) under the Plucker embedding $SpGr(2,4) \to \mathbb P^4$.
+			is precisely the pullback of O(1) under the Plücker embedding $SpGr(2,4) \to \mathbb P^4$.
 		Example
 			SpGr24 = generalizedFlagVariety("C",2,{2})
 			O1 = ampleKClass SpGr24
@@ -1394,7 +1394,7 @@ doc ///
 			Let $X$ be a generalized flag variety parameterizing flags of linear subspaces of dimensions $\{r_1, ... , r_k\}$ 
 			in $\mathbb C^n$ with $1 <= r_1 < \cdots < r_k$. Then a point $p$ of $X$ can be identified with a matrix $M$ of 
 			size  $r_k \times n$ such that the first $r_i$ rows of $M$ spans a subspace of dimension $r_i$. Given $X$ and
-			such a matrix $M$ representing the point $p$, this method computes the equivariant K-class of the closue of
+			such a matrix $M$ representing the point $p$, this method computes the equivariant K-class of the closure of
 			the torus orbit of $p$. 
 		
 
@@ -1775,7 +1775,7 @@ doc ///
 		trivialKClass
 		(trivialKClass, GKMVariety)
 	Headline
-		the equivariant K-class of the stucture sheaf
+		the equivariant K-class of the structure sheaf
 	Usage
 		trivialKClass X
 	Inputs
@@ -1850,7 +1850,7 @@ doc ///
 		Text
 			For $A$ an $r\times n$ matrix over a field and $L = \{r_1, \ldots, r_k}$ a list of integers,
 			let $M_i$ be the @TO Matroid@ defined by the columns of the matrix obtained by the first $r_i$ rows of $A$.
-			Theses matroids form a flag matroid $\mathbf M = \{M_1, \ldots, M_k\}$.
+			These matroids form a flag matroid $\mathbf M = \{M_1, \ldots, M_k\}$.
 			This method creates this @TO FlagMatroid@.
 		Example
 			A = random(QQ^2,QQ^4)

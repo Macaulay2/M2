@@ -2,7 +2,7 @@
 use actors;
 use actors2;
 
-header "#include \"../e/engine.h\"";
+header "#include <interface/random.h>";
 
 getParsing(e:Expr):Expr := (
      when e
@@ -242,7 +242,7 @@ header "
 
 WindowWidth(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
    #else
@@ -251,7 +251,7 @@ WindowWidth(fd:int):int := Ccode(returns,"
 ");
 WindowHeight(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
    #else
@@ -482,6 +482,34 @@ numparms(e:Expr):Expr := (
      else WrongArg("a function"));
 setupfun("numparms",numparms);
 
+utf8substrfun(e:Expr):Expr := (
+     when e is args:Sequence do
+	  if length(args) != 3 then WrongNumArgs(3) else
+	       when args.0 is s:stringCell do
+		   when args.1 is start:ZZcell do
+		       when args.2 is width:ZZcell do
+		       toExpr(utf8substr(s.v,toInt(start),toInt(width)))
+		       else WrongArgSmallInteger(3)
+		   else WrongArgSmallInteger(2)
+	       else WrongArg(1,"a string")
+     else WrongNumArgs(3)
+);
+setupfun("utf8substring",utf8substrfun);
+
+utf8charactersfun(e:Expr):Expr := (
+     when e
+     is s:stringCell do toExpr(utf8characters(s.v))
+     else WrongArg("a string"));
+setupfun("characters",utf8charactersfun);
+
+
+
+stringWidth(e:Expr):Expr := (
+     when e
+     is s:stringCell do toExpr(utf8width(s.v))
+     else WrongArg("a string"));
+setupfun("stringWidth",stringWidth);
+
 netWidth(e:Expr):Expr := (
      when e
      is n:Net do toExpr(n.width)
@@ -524,21 +552,15 @@ endlfun(e:Expr):Expr := (
 setupfun("endl",endlfun).Protected = false;
 setupconst("newline", toExpr(newline));
 
-remove(x:Sequence,i:int):Sequence := (
-     n := length(x);
-     if i < 0 then i = i + n;
-     if 0 <= i && i < n then (
-	  new Sequence len n-1 do foreach y at j in x do if i != j then provide y
-	  )
-     else x
-     );
-
-remove(x:List,i:int):List := (
-     v := remove(x.v,i);
-     if v == x.v then return x;
-     r := List(x.Class, v, 0, x.Mutable);
-     r.hash = hash(r);
-     r);
+remove(x:List,i:int):Expr:= (
+     n := length(x.v);
+     if !x.Mutable then buildErrorPacket("expected a mutable list")
+     else if i >= n || i < -n then ArrayIndexOutOfBounds(i, n - 1)
+     else (
+	  if i < 0 then i = n + i;
+	  for j from i to n - 2 do x.v.j = x.v.(j + 1);
+	  Ccode(void, x.v, "->len = ", n - 1);
+	  nullE));
 
 removefun(e:Expr):Expr := (
      when e
@@ -549,11 +571,7 @@ removefun(e:Expr):Expr := (
 	       when args.0
 	       is x:List do (
 		    when args.1 is i:ZZcell do
-		     if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
-		    else WrongArgZZ(2))
-	       is x:Sequence do (
-		    when args.1 is i:ZZcell do
-		    if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
+		    if isInt(i) then remove(x,toInt(i)) else WrongArgSmallInteger(2)
 		    else WrongArgZZ(2))
 	       is f:Database do (
 		    when args.1 is key:stringCell do (
@@ -1061,7 +1079,39 @@ take(e:Expr):Expr := (
 	       	    list(x.Class,v,x.Mutable))
 	       else vv)
 	  is v:Sequence do take(v,args.1)
-	  else WrongArg(1,"a list or sequence"))
+	  else (
+	      iter := getIterator(args.0);
+	      if iter == nullE
+	      then return WrongArg(1, "a list, sequence, or iterable object");
+	      nextfunc := getNextFunction(iter);
+	      if nextfunc == nullE
+	      then return buildErrorPacket(
+		  "no method for applying next to iterator");
+	      when args.1
+	      is n:ZZcell do (
+		  if !isInt(n) then return WrongArgSmallInteger(2);
+		  m := toInt(n);
+		  if m < 0 then return WrongArg(2, "a positive integer");
+		  if m == 0 then return Expr(emptyList);
+		  r := new Sequence len m do provide nullE;
+		  j := 0;
+		  y := nullE;
+		  while (
+		      y = applyEE(nextfunc, iter);
+		      when y
+		      is Error do return returnFromFunction(y)
+		      else nothing;
+		      y != StopIterationE)
+		  do (
+		      r.j = y;
+		      j = j + 1;
+		      if j == m then break);
+		  Expr(list(
+			  if j == 0 then emptySequence
+			  else if j == m then r
+			  else new Sequence len j do (
+			      foreach x in r do provide x))))
+	      else WrongArgZZ(2)))
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("take",take);
@@ -1453,6 +1503,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
+          if !isvalidsymbol(s) then return buildErrorPacket("invalid symbol");
 	  if d.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
 	  t := makeSymbol(w,dummyPosition,d);
 	  globalFrame.values.(t.frameindex)));
@@ -1565,17 +1616,17 @@ dictionaryPath(e:Expr):Expr := (
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
-	  if n == 0 then return WrongArg("expected a nonempty list of dictionaries");
+	  if n == 0 then return WrongArg("a nonempty list of dictionaries");
           sawUnprotected := false;
 	  foreach x in s do 
 	  when x is dc:DictionaryClosure do (
 	       d := dc.dictionary;
 	       if !d.Protected then sawUnprotected = true;
-	       if d.frameID != 0 || d.transient then return WrongArg("expected a list of global dictionaries")
+	       if d.frameID != 0 || d.transient then return WrongArg("a list of global dictionaries")
 	       )
-	  else return WrongArg("expected a list of dictionaries");
-	  for i from 0 to n-2 do for j from i+1 to n-1 do if s.i == s.j then return WrongArg("expected a list of dictionaries with no duplicate entries");
-          if !sawUnprotected then return WrongArg("expected a list of dictionaries, not all protected");
+	  else return WrongArg("a list of dictionaries");
+	  for i from 0 to n-2 do for j from i+1 to n-1 do if s.i == s.j then return WrongArg("a list of dictionaries with no duplicate entries");
+          if !sawUnprotected then return WrongArg("a list of dictionaries, not all protected");
      	  a := new array(Dictionary) len n do foreach x in s do when x is d:DictionaryClosure do provide d.dictionary else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);
      	  for i from 0 to n-2 do a.i.outerDictionary = a.(i+1);
@@ -1611,6 +1662,7 @@ engineDebugLevelS := dummySymbol;
 debuggingModeS := dummySymbol;
 errorDepthS := dummySymbol;
 gbTraceS := dummySymbol;
+numTBBThreadsS := dummySymbol;
 numericalAlgebraicGeometryTraceS := dummySymbol;
 debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
@@ -1643,7 +1695,10 @@ topLevelModeS := dummySymbol;
 initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
-setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));
+maxAllowableThreadsS := setupvar("maxAllowableThreads",toExpr(0)); -- the value returned by getMaxAllowableThreads may not be initialized yet
+export setMaxAllowableThreads():void := (
+     setGlobalVariable(maxAllowableThreadsS, toExpr(Ccode(int, "getMaxAllowableThreads()")));
+     );
 
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
@@ -1652,7 +1707,8 @@ syms := SymbolSequence(
      (  debuggingModeS = setupvarThread("debuggingMode",toExpr(debuggingMode));  debuggingModeS  ),
      (  defaultPrecisionS = setupvar("defaultPrecision",toExpr(defaultPrecision));  defaultPrecisionS  ),
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
-     (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
+     (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ), 
+     (  numTBBThreadsS = setupvar("numTBBThreads",toExpr(numTBBThreads));  numTBBThreadsS  ),
      (  numericalAlgebraicGeometryTraceS = setupvar("numericalAlgebraicGeometryTrace",toExpr(numericalAlgebraicGeometryTrace));  numericalAlgebraicGeometryTraceS  ),
      (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
@@ -1768,6 +1824,10 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
 		    else if sym === recursionLimitS then (recursionLimit = n; e)
 		    else if sym === lineNumberS then (lineNumber = n; e)
+		    else if sym === numTBBThreadsS then (
+			 if n < 0 then return buildErrorPacket("numTBBThreads cannot be set to negative value");
+             numTBBThreads = n;
+             e)
 		    else if sym === allowableThreadsS then (
 			 if n < 1 || n > Ccode( int, " getMaxAllowableThreads() " ) 
 			 then return buildErrorPacket("allowableThreads: expected integer in range 1 .. " + tostring(Ccode( int, " getMaxAllowableThreads() " )));
@@ -1797,6 +1857,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    || sym === printingLeadLimitS
 		    || sym === printingTrailLimitS
 		    || sym === gbTraceS
+            || sym === numTBBThreadsS
 		    || sym === numericalAlgebraicGeometryTraceS
 		    || sym === printWidthS
 		    then (when sym is s:SymbolClosure do s.symbol.word.name else "") + ": expected a small integer"
@@ -1922,6 +1983,7 @@ setupfun("dumpNodes",dumpNodes);
 toExternalString(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(toExternalString(x.v))
+     is x:RRicell do toExpr(toExternalString(x.v))
      is x:CCcell do toExpr(toExternalString(x.v))
      else WrongArg("a real or complex number")
      );

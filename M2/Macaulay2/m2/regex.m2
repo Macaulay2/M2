@@ -3,6 +3,8 @@
 -- See RegexFlags defined in Macaulay2/d/regex.dd for a list of available flags.
 -- More flags can be added there.
 
+needs "methods.m2"
+
 regexSpecialChars = concatenate(
     "([", apply({"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}, c -> "\\" | c), "])")
 
@@ -89,7 +91,7 @@ protect symbol select
 lastMatch = null
 match = method(TypicalValue => Boolean, Options => options regex ++ {Strategy => any})
 match(List,   String) := opts -> (rs, str) -> (
-    if member(opts.Strategy, {any, all}) then (opts.Strategy)(rs, re -> match(re, str, opts))
+    if isMember(opts.Strategy, {any, all}) then (opts.Strategy)(rs, re -> match(re, str, opts))
     else error concatenate("unknown quantifier for match: ", toString opts.Strategy))
 match(String, String) := opts -> (re, str) ->
     null =!= (lastMatch = regex'(re, 0, length str, str, setRegexFlags opts, setMatchFlags opts))

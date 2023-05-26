@@ -235,12 +235,12 @@ doc ///
    Description
     Text
       We implement two methods to create a random @TO "ChainComplex"@ over the integers.
-      The first method (@TO randomChainComplex@) builds the complex from products of randomly choosen matrices of desired rank.
+      The first method (@TO randomChainComplex@) builds the complex from products of randomly chosen matrices of desired rank.
       The limitation of this method to produce large complexes over the integers with
       moderate Height is the use of the LLL algorithm to improve the presentation of
       syzygy matrices.
 
-      The second method (@TO "randomSimplicialComplex"@) uses Stanley-Reisner rings from randomly choosen monomial ideals.
+      The second method (@TO "randomSimplicialComplex"@) uses Stanley-Reisner rings from randomly chosen monomial ideals.
    Caveat
       Some functionality here should be moved elsewhere, e.g. 
         @TO "disturb"@, @TO "histogram"@, @TO "maximalEntry"@, and @TO "normalize"@.
@@ -387,6 +387,7 @@ doc ///
    Key
      disturb
      (disturb,ChainComplex,RR)
+     [disturb, Strategy]
    Headline
      disturb the matrices of a chain complex over RR
    Usage
@@ -437,11 +438,11 @@ doc ///
        the number of subintervals to be considered.  
    Outputs
      h:List
-       of n integers, the number of entries in the L in i-th equidistant
+       of n integers, the number of entries in L in i-th equidistant
        subdivision of the interval from min L to max L
    Description
     Text
-       We combute h_i th number to elemnts in the i-th equidistant subdivision
+       We compute h_i the number to elements in the i-th equidistant subdivision
        of the interval [min L, max L] into n parts 
     Example
        M=(randomChainComplex({20,20},{20},ZeroMean=>true)).dd_1;
@@ -458,6 +459,7 @@ doc ///
    Key
      testTimeForLLLonSyzygies
      (testTimeForLLLonSyzygies,ZZ,ZZ)
+     [testTimeForLLLonSyzygies, Height]
    Headline
      test timing for LLL on syzygies 
    Usage
@@ -495,7 +497,7 @@ doc ///
     Option for randomComplex
    Description
     Text
-     If ZeroMean=>true then the integer of given Height values are randomly choosen with a zero mean
+     If ZeroMean=>true then the integer of given Height values are randomly chosen with a zero mean
 ///
 
 doc ///
@@ -505,7 +507,7 @@ doc ///
     Option for randomComplex
    Description
     Text
-     If WithLLL=>true then syzygy matrices of the randomly choosen matrices
+     If WithLLL=>true then syzygy matrices of the randomly chosen matrices
      are improved for their Height by applying the LLL algorithm.
 ///
 

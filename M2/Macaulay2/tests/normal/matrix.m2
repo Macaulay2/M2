@@ -333,6 +333,30 @@ g = map(M,M, { (0,0) => x^2 } )
 assert (g == 0)
 assert isWellDefined g
 
+-- concatenation w/ ring elements
+A = matrix {{1, 2}, {2, 3}}
+assert Equation(A | 5, matrix {{1, 2, 5, 0}, {2, 3, 0, 5}})
+assert Equation(A | 1/2, matrix {{1, 2, 1/2, 0}, {2, 3, 0, 1/2}})
+assert Equation(A | 1.5, matrix {{1, 2, 1.5, 0}, {2, 3, 0, 1.5}})
+assert Equation(A | 1 + ii, matrix {{1, 2, 1 + ii, 0}, {2, 3, 0, 1 + ii}})
+assert Equation(A | x, matrix {{1, 2, x, 0}, {2, 3, 0, x}})
+assert Equation(5 | A, matrix {{5, 0, 1, 2}, {0, 5, 2, 3}})
+assert Equation(1/2 | A, matrix {{1/2, 0, 1, 2}, {0, 1/2, 2, 3}})
+assert Equation(1.5 | A, matrix {{1.5, 0, 1, 2}, {0, 1.5, 2, 3}})
+assert Equation(1 + ii | A, matrix {{1 + ii, 0, 1, 2}, {0, 1 + ii, 2, 3}})
+assert Equation(x | A, matrix {{x, 0, 1, 2}, {0, x, 2, 3}})
+assert Equation(A || 5, matrix {{1, 2}, {2, 3}, {5, 0}, {0, 5}})
+assert Equation(A || 1/2, matrix {{1, 2}, {2, 3}, {1/2, 0}, {0, 1/2}})
+assert Equation(A || 1.5, matrix {{1, 2}, {2, 3}, {1.5, 0}, {0, 1.5}})
+assert Equation(A || 1 + ii, matrix {{1, 2}, {2, 3}, {1 + ii, 0}, {0, 1 + ii}})
+assert Equation(A || x, map(R^4, R^2, matrix {{1, 2}, {2, 3}, {x, 0}, {0, x}}))
+assert Equation(5 || A, matrix {{5, 0}, {0, 5}, {1, 2}, {2, 3}})
+assert Equation(1/2 || A, matrix {{1/2, 0}, {0, 1/2}, {1, 2}, {2, 3}})
+assert Equation(1.5 || A, matrix {{1.5, 0}, {0, 1.5}, {1, 2}, {2, 3}})
+assert Equation(1 + ii || A, matrix {{1 + ii, 0}, {0, 1 + ii}, {1, 2}, {2, 3}})
+assert Equation(x || A, map(R^4, R^{{-1}, {-1}},
+	matrix {{x, 0}, {0, x}, {1, 2}, {2, 3}}))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"
 -- End:

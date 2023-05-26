@@ -1,9 +1,10 @@
 // Copyright 2013 Michael E. Stillman
 
 #include "aring-qq-gmp.hpp"
+
+#include "interface/random.h"
 #include "ringmap.hpp"
 
-#include <iostream>
 namespace M2 {
 
 ARingQQGMP::ARingQQGMP()
@@ -23,8 +24,7 @@ void ARingQQGMP::eval(const RingMap* map,
   if (!ok)
     {
       // if there is already an error message don't add in another
-      if (not error()) ERROR("cannot map rational to this ring");
-      result = map->get_ring()->from_long(0);
+      throw exc::engine_error("cannot map rational to this ring");
     }
 }
 
@@ -56,7 +56,7 @@ void ARingQQGMP::elem_text_out(buffer& o,
       str = mpq_get_str(allocstr, 10, &a);
       o << str;
     }
-  if (size > 1000) deletearray(allocstr);
+  if (size > 1000) freemem(allocstr);
 }
 
 void ARingQQGMP::syzygy(const ElementType& a,

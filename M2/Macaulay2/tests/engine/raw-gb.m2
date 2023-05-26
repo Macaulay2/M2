@@ -57,7 +57,7 @@ Gcomp = rawGB(G,true,-1,{},false,0,0,0,10)
 rawStartComputation Gcomp
 m = rawGBSyzygies Gcomp
 m = rawGBGetMatrix Gcomp
-RawStatusCodes#(rawStatus1 Gcomp)
+assert isComputationDone rawStatus1 Gcomp
 rawStatus2 Gcomp -- last degree something was computed in
 
 assert(rawGBMatrixRemainder(Gcomp,mat{{x*y}}) === mat{{y^2}})
@@ -317,7 +317,7 @@ rawStartComputation G
 rawGBGetLeadTerms(G,10)
 << "DO A MORE SUBSTANTIAL Schreyer order GB" << endl;
 --------------------------------------------
--- Gröbner bases using hilbert functions --
+-- Gröbner bases using Hilbert functions --
 --------------------------------------------
 needs "raw-util.m2"
 gbTrace = 3
@@ -438,7 +438,7 @@ m = mat{{x^2+y^2, z^2+w^2}}
 A = rawQuotientRing(R,m)
 P = mat{{rawPromote(A,x), rawPromote(A,y), rawPromote(A,z), rawPromote(A,w)}}
 P1 = rawsyz P
-P2 = rawsyz P1 -- (One problem: syzygyies are not reduced mod ideal)
+P2 = rawsyz P1 -- (One problem: syzygies are not reduced mod ideal)
 print "ERROR: syzygies are not reduced modulo the quotient ideal"
 P3 = rawsyz P2
 P * P1

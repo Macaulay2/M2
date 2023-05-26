@@ -326,7 +326,7 @@ i70 : J = blowUpIdeal(I)
                            2         2
 o70 = ideal (y*b - x*c, x*b  - a*c, x b - y*a)
 
-o70 : Ideal of QQ[x, y, a, b, c]
+o70 : Ideal of QQ[x..y, a..c]
 
 i71 : saturate(J + minors(2, jacobian J)) == 1
 
@@ -344,7 +344,7 @@ o75 : Ideal of S
 
 i76 : phi = map(PP4, S, matrix{{0_PP4, 0_PP4, 0_PP4}} | vars PP4)
 
-o76 = map(PP4,S,{0, 0, 0, a, b, c, d, e})
+o76 = map (PP4, S, {0, 0, 0, a, b, c, d, e})
 
 o76 : RingMap PP4 <--- S
 
@@ -387,7 +387,7 @@ o85 : Ideal of PP5
 
 i86 : projection = map(PP4, PP5, matrix{{a, c, d, c, b, e}})
 
-o86 = map(PP4,PP5,{a, c, d, c, b, e})
+o86 = map (PP4, PP5, {a, c, d, c, b, e})
 
 o86 : RingMap PP4 <--- PP5
 

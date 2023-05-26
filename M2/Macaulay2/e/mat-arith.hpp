@@ -140,8 +140,7 @@ void normSquared(SubMatrix<MatType> M,
 {
   const auto& C = M.matrix.ring();
   const auto& R = C.real_ring();
-  typename MatType::CoeffRing::RealElementType c;
-  R.init(c);
+  typename MatType::CoeffRing::RealRingType::Element c(R);
   R.set_zero(result);
   for (long rA = M.begin_row; rA < M.end_row; ++rA)
     for (long cA = M.begin_column; cA < M.end_column; ++cA)
@@ -149,7 +148,6 @@ void normSquared(SubMatrix<MatType> M,
         C.abs_squared(c, M.matrix.entry(rA, cA));
         R.add(result, result, c);
       }
-  R.clear(c);
 }
 
 template <typename MatType>
@@ -315,8 +313,7 @@ void addMultipleTo(DMat<RT>& A,
                    MatrixWindow wB)
 {
   assert(wA.sameSize(wB));
-  typename RT::ElementType tmp;
-  A.ring().init(tmp);
+  typename RT::Element tmp(A.ring());
   long rA = wA.begin_row;
   long rB = wB.begin_row;
   for (; rA < wA.end_row; ++rA, ++rB)
@@ -330,7 +327,6 @@ void addMultipleTo(DMat<RT>& A,
           A.ring().add(a, a, tmp);
         }
     }
-  A.ring().clear(tmp);
 }
 
 // wA = c * wB
@@ -432,7 +428,7 @@ void transpose(const SMat<RT>& A, SMat<RT>& result)
   assert(result.numRows() == A.numColumns());
   assert(result.numColumns() == A.numRows());
   throw exc::engine_error(
-      "'transpose' not writtten for sparse mutable matrices");
+      "'transpose' not written for sparse mutable matrices");
   // TODO: MES: write this!!
 }
 };

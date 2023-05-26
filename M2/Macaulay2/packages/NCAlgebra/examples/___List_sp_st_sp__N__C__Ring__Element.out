@@ -22,8 +22,11 @@ o3 : List
 
 i4 : bas*f
 
-       3 2  5    2 2   4      2    3   2  2  2 3   2 3  2  2     3     2    4   2 2   5  3 2
-o4 = {x y +x , yx y +yx , xyxy +xyx , y xy +y x , x y +x yx , yxy +yxyx , xy +xy x , y +y x }
+       3 2  5    2 2   4      2    3   2  2  2 3   2 3  2  2     3     2 
+o4 = {x y +x , yx y +yx , xyxy +xyx , y xy +y x , x y +x yx , yxy +yxyx ,
+     ------------------------------------------------------------------------
+       4   2 2   5  3 2
+     xy +xy x , y +y x }
 
 o4 : List
 

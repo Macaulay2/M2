@@ -5,19 +5,22 @@ doc///
  Key
   toList
   (toList, BasicList)
-  (toList, Set)  
+  (toList, Set)
+  (toList, String)
+  (toList, Thing)
  Headline
   create a list
  Usage
   toList A
  Inputs
-  A:
-   a @TO Set@, or a @TO BasicList@ such as a @TO Sequence@
+  A:{Set,String,BasicList,ZZ}
+   or an instance of a class with the @TO iterator@ method installed
  Outputs
   L:List
    a list whose elements are the elements of {\tt A}
  Description
   Example
+   toList "foo"
    A = set(3,7,9,6)
    toList A
   Text

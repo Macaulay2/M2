@@ -39,11 +39,11 @@ ring_elem SkewPolynomialRing::antipode(const ring_elem f) const
   Nterm head;
   Nterm *inresult = &head;
 
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
-  for (Nterm *s = f; s != NULL; s = s->next)
+  for (Nterm& s : f)
     {
-      M_->to_expvector(s->monom, EXP);
+      M_->to_expvector(s.monom, EXP);
       int deg = skew_.skew_degree(EXP);
       // sign is (-1)^ (binomial(deg,2))
       // deg = 0: sign is 1
@@ -55,8 +55,8 @@ ring_elem SkewPolynomialRing::antipode(const ring_elem f) const
       int sign = sign4[mod4];
       Nterm *t = new_term();
       t->next = 0;
-      t->coeff = (sign == 1 ? s->coeff : K_->negate(s->coeff));
-      M_->copy(s->monom, t->monom);
+      t->coeff = (sign == 1 ? s.coeff : K_->negate(s.coeff));
+      M_->copy(s.monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }
@@ -72,22 +72,22 @@ ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
   Nterm head;
   Nterm *inresult = &head;
 
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
-  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP2 = ALLOCATE_EXPONENTS(exp_size);
   M_->to_expvector(m, EXP1);
 
-  for (Nterm *s = f; s != NULL; s = s->next)
+  for (Nterm& s : f)
     {
-      M_->to_expvector(s->monom, EXP2);
+      M_->to_expvector(s.monom, EXP2);
       int sign = skew_.mult_sign(EXP1, EXP2);
       if (sign == 0) continue;
 
       Nterm *t = new_term();
       t->next = 0;
-      t->coeff = K_->mult(c, s->coeff);
+      t->coeff = K_->mult(c, s.coeff);
       if (sign < 0) K_->negate_to(t->coeff);
 
-      M_->mult(m, s->monom, t->monom);
+      M_->mult(m, s.monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }

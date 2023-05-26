@@ -178,7 +178,7 @@ constantStrands ChainComplex := (C) -> constantStrands(C, coefficientRing ring C
 
 getNonminimalRes = method()
 getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
-    -- if C was created using FastNonminimal=>true, then returns the nonmimal complex.
+    -- if C was created using FastNonminimal=>true, then returns the nonminimal complex.
     -- if ring C is not QQ, this should be exactly C (with C.dd set).
     -- if ring C is QQ, then R must be either RR_53 (monoid ring C), or (ZZ/p)(monoid ring C), where p is the prime used to
     --  construct the resolution (later, there might be several such primes, and also we can
@@ -346,7 +346,7 @@ doc ///
        a chain complex over {\tt kk}, consisting of the submatrices of {\tt C} of degree {\tt deg}
    Description
     Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
       as in the example below.  But it should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example
@@ -404,7 +404,7 @@ doc ///
       the list of chain complex over {\tt kk}, which for each degree degree {\tt deg}, consisting of the submatrices of {\tt C} of degree {\tt deg}
    Description
     Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
       as in the example below.  But it should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example
@@ -443,7 +443,7 @@ doc ///
        the betti table of the minimal resolution using SVD of complexes and the numerical data
    Description
     Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
       as in the example below.  But it should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example

@@ -1,12 +1,15 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "frac.hpp"
+
+#include "interface/factory.h"
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
 #include "relem.hpp"
 #include "polyring.hpp"
+#include "exceptions.hpp"
 
 #define FRAC_VAL(f) (reinterpret_cast<frac_elem *>((f).poly_val))
 #define FRAC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
@@ -532,8 +535,7 @@ ring_elem FractionField::power(const ring_elem a, int n) const
     {
       if (R_->is_zero(f->numer))
         {
-          ERROR("attempt to divide by zero");
-          return zero();
+          throw exc::division_by_zero_error();
         }
       top = R_->power(f->denom, -n);
       bottom = R_->power(f->numer, -n);
@@ -558,8 +560,7 @@ ring_elem FractionField::power(const ring_elem a, mpz_srcptr n) const
     {
       if (R_->is_zero(f->numer))
         {
-          ERROR("attempt to divide by zero");
-          return zero();
+          throw exc::division_by_zero_error();
         }
       mpz_t abs_n;
       mpz_init(abs_n);
@@ -617,7 +618,7 @@ ring_elem FractionField::eval(const RingMap *map,
   ring_elem bottom = R_->eval(map, f->denom, first_var);
   if (S->is_zero(bottom))
     {
-      if (not error()) ERROR("division by zero!");
+      throw exc::division_by_zero_error();
       S->remove(bottom);
       top = S->from_long(0);
       bottom = S->from_long(1);
@@ -637,21 +638,21 @@ bool FractionField::is_homogeneous(const ring_elem a) const
   return true;
 }
 
-void FractionField::degree(const ring_elem a, int *d) const
+void FractionField::degree(const ring_elem a, monomial d) const
 {
   const frac_elem *f = FRAC_VAL(a);
   R_->degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   R_->degree(f->denom, e);
   degree_monoid()->divide(d, e, d);
   degree_monoid()->remove(e);
 }
 
-bool FractionField::multi_degree(const ring_elem a, int *d) const
+bool FractionField::multi_degree(const ring_elem a, monomial d) const
 {
   const frac_elem *f = FRAC_VAL(a);
   bool tophom = R_->multi_degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   bool bottomhom = R_->multi_degree(f->denom, e);
   degree_monoid()->divide(d, e, d);
   degree_monoid()->remove(e);
@@ -706,12 +707,12 @@ ring_elem FractionField::homogenize(const ring_elem a,
 }
 
 int FractionField::n_terms(const ring_elem) const { return 1; }
-ring_elem FractionField::term(const ring_elem a, const int *) const
+ring_elem FractionField::term(const ring_elem a, const_monomial) const
 {
   return copy(a);
 }
 ring_elem FractionField::lead_coeff(const ring_elem f) const { return f; }
-ring_elem FractionField::get_coeff(const ring_elem f, const int *) const
+ring_elem FractionField::get_coeff(const ring_elem f, const_monomial) const
 {
   return f;
 }

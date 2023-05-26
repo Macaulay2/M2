@@ -439,14 +439,14 @@ i85 : R.ideal
              3
 o85 = ideal(x  - y)
 
-o85 : Ideal of QQ[x, y, z]
+o85 : Ideal of QQ[x..z]
 
 i86 : ideal R
 
              3
 o86 = ideal(x  - y)
 
-o86 : Ideal of QQ[x, y, z]
+o86 : Ideal of QQ[x..z]
 
 i87 : code demark
 
@@ -457,11 +457,7 @@ i88 : code(symbol **, RingMap, Module)
 
 o88 = -- code for method: RingMap ** Module
       /home/dan/src/M2/1.2/Macaulay2/m2/ringmap.m2:384:38-388:30: --source code:
-      RingMap ** Module := Module => (f,M) -> (
-           R := source f;
-           S := target f;
-           if R =!= ring M then error "expected module over source ring";
-           cokernel f presentation M);
+      RingMap ** Module := Module => (f, M) -> tensor(f, M)
 
 i89 : code(ideal, QuotientRing)
 

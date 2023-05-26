@@ -1,8 +1,9 @@
 ###############################################################################
 ## This directory contains the rules for generating grammar files for editors
-## and syntax highlighing engines as well as the M2-mode package for Emacs.
+## and syntax highlighting engines as well as the M2-mode package for Emacs.
 ## - M2-editors generates grammar files
 ## - M2-emacs   generates the M2-mode package for Emacs
+## - M2-highlightjs   generates syntax highlighting library for javascript
 
 # TODO: generate vim grammar
 # TODO: generate textmate grammar
@@ -15,7 +16,9 @@ set(M2_ARGS --script)
 ## To add to the M2-editors target, add grammar filenames here and in .gitignore.
 set(GRAMMAR_FILES
   atom/macaulay2.cson
+  highlightjs/macaulay2.js
   prism/macaulay2.js
+  pygments/macaulay2.py
 #  rouge/macaulay2.rb
   vim/m2.vim.syntax
   vim/m2.vim.dict
@@ -33,9 +36,14 @@ add_custom_command(OUTPUT ${GRAMMAR_FILES}
 ###############################################################################
 ## Generating the M2-mode package for Emacs
 
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
+  message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping M2-emacs target")
+  return()
+endif()
+
 # TODO: only the emacs target is installed in usr-dist by default
 set(M2_INSTALL_EMACSDIR
-  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/Macaulay2)
+  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/macaulay2)
 file(COPY emacs/ DESTINATION ${M2_INSTALL_EMACSDIR}
   FILES_MATCHING PATTERN "M2*" PATTERN "*.in" EXCLUDE)
 
@@ -52,3 +60,31 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
   DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)
+
+################################################################################
+## Generating prism.js/highlight.js for syntax highlighting in the html
+## documentation
+
+set(PRISM_DIR ${CMAKE_CURRENT_BINARY_DIR}/prism)
+file(MAKE_DIRECTORY PRISM_DIR)
+file(COPY prism/ DESTINATION ${PRISM_DIR}
+  FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
+
+add_custom_target(M2-prism ALL DEPENDS prism/prism.js)
+add_custom_command(OUTPUT prism/prism.js
+  COMMENT "Generating prism.js syntax file"
+  COMMAND ${NPM} install && ${NPM} run build
+  WORKING_DIRECTORY ${PRISM_DIR}
+  DEPENDS prism/macaulay2.js)
+
+set(HIGHLIGHTJS_DIR ${CMAKE_CURRENT_BINARY_DIR}/highlightjs)
+file(MAKE_DIRECTORY HIGHLIGHTJS_DIR)
+file(COPY highlightjs/ DESTINATION ${HIGHLIGHTJS_DIR}
+  FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
+
+add_custom_target(M2-highlightjs ALL DEPENDS highlightjs/highlight.js)
+add_custom_command(OUTPUT highlightjs/highlight.js
+  COMMENT "Generating highlight.js syntax file"
+  COMMAND ${NPM} install && ${NPM} run build
+  WORKING_DIRECTORY ${HIGHLIGHTJS_DIR}
+  DEPENDS highlightjs/macaulay2.js)

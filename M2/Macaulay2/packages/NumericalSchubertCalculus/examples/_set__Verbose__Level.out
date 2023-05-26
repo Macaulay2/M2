@@ -1,41 +1,36 @@
--- -*- M2-comint -*- hash: 303501410
--- COMPILE TIME: Sep  9 2017, 07:55:04
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
---loading configuration for package "NumericalAlgebraicGeometry" from file /Users/leykin/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
---loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 8865797
 
-i1 : -- The problem of 4 lines w.r.t. random flags
-     SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)
+i1 : SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)
 
-o1 = {({1}, | .781262-.624203i  -.462954-.886382i -.272832+.962062i
-            | .9868+.161945i    -.219207-.975678i .778029-.628229i 
-            | -.971549+.236839i .157598-.987503i  .841103-.540875i 
-            | .893324+.449414i  .360485-.932765i  -.651048+.759036i
+o1 = {({1}, | .781262-.624203ii  -.462954-.886382ii -.272832+.962062ii
+            | .9868+.161945ii    -.219207-.975678ii .778029-.628229ii 
+            | -.971549+.236839ii .157598-.987503ii  .841103-.540875ii 
+            | .893324+.449414ii  .360485-.932765ii  -.651048+.759036ii
      ------------------------------------------------------------------------
-     -.670948-.741504i |), ({1}, | .696205+.717843i  -.028156+.999604i
-     .118767+.992922i  |         | -.58234+.812945i  -.924052-.382267i
-     -.396553+.918012i |         | .486335-.873772i  -.970803-.23988i 
-     -.272372-.962192i |         | -.783999-.620762i .577597-.816322i 
+     -.670948-.741504ii |), ({1}, | .696205+.717843ii  -.0281556+.999604ii
+     .118767+.992922ii  |         | -.58234+.812945ii  -.924052-.382267ii 
+     -.396553+.918012ii |         | .486335-.873772ii  -.970803-.23988ii  
+     -.272372-.962192ii |         | -.783999-.620762ii .577597-.816322ii  
      ------------------------------------------------------------------------
-     -.056229-.998418i .776937+.629579i  |), ({1}, | -.746312-.665596i
-     .023444+.999725i  .570649+.821194i  |         | -.936289-.351232i
-     .701149-.713015i  -.863646+.504099i |         | -.164243+.98642i 
-     .357971+.933733i  -.820726+.571321i |         | .85817-.513365i  
+     -.0562287-.998418ii .776937+.629579ii  |), ({1}, | -.746312-.665596ii
+     .023444+.999725ii   .570649+.821194ii  |         | -.936289-.351232ii
+     .701149-.713015ii   -.863646+.504099ii |         | -.164243+.98642ii 
+     .357971+.933733ii   -.820726+.571321ii |         | .85817-.513365ii  
      ------------------------------------------------------------------------
-     .995687+.092774i .168661+.985674i  -.765803+.643076i |), ({1}, |
-     .701342-.712825i -.286823-.957983i -.415126-.909764i |         |
-     -.78761-.616174i .976163-.21704i   -.416188-.909278i |         |
-     .759918-.650019i .482783+.87574i   .975922-.218119i  |         |
+     .995687+.092774ii .168661+.985674ii  -.765803+.643076ii |), ({1}, |
+     .701342-.712825ii -.286823-.957983ii -.415126-.909764ii |         |
+     -.78761-.616174ii .976163-.21704ii   -.416188-.909278ii |         |
+     .759918-.650019ii .482783+.87574ii   .975922-.218119ii  |         |
      ------------------------------------------------------------------------
-     .918399+.395655i  .719639-.694348i  .9772+.212322i   -.998741-.050173i
-     .58629+.810101i   -.554833-.831962i .454813+.890587i -.698649-.715464i
-     -.590887+.806754i -.726792+.686857i .080013+.996794i .742918+.669382i 
-     -.939129+.343564i -.616052-.787706i .339065+.940763i -.99319-.116506i 
+     .918399+.395655ii  .719639-.694348ii  .9772+.212322ii   
+     .58629+.810101ii   -.554833-.831962ii .454813+.890587ii 
+     -.590887+.806754ii -.726792+.686857ii .0800129+.996794ii
+     -.939129+.343564ii -.616052-.787706ii .339065+.940763ii 
      ------------------------------------------------------------------------
-     |)}
-     |
-     |
-     |
+     -.998741-.0501734ii |)}
+     -.698649-.715464ii  |
+     .742918+.669382ii   |
+     -.99319-.116506ii   |
 
 o1 : List
 
@@ -43,15 +38,15 @@ i2 : setVerboseLevel 0;
 
 i3 : S = solveSchubertProblem(SchPblm,2,4)
 
-o3 = {| -1.65573-.600637i .0201935+.0437095i   |, | -.154703+.175591i
-      | -1.23037-1.66989i -.0308057-.00120618i |  | -.801221-.035430i
-      | 1.35971-.743988i  -.0713133-.049047i   |  | .325581-2.08048i 
-      | -.397038-1.8974i  .0102261-.024397i    |  | -.475895-.209388i
+o3 = {| -1.65573-.600637ii .0201935+.0437095ii   |, | -.154703+.175591ii 
+      | -1.23037-1.66989ii -.0308057-.00120618ii |  | -.801221-.0354303ii
+      | 1.35971-.743988ii  -.0713133-.049047ii   |  | .325581-2.08048ii  
+      | -.397038-1.8974ii  .0102261-.024397ii    |  | -.475895-.209388ii 
      ------------------------------------------------------------------------
-     .0376857+.0683239i   |}
-     -.00368075+.0317504i |
-     -.0350432-.250817i   |
-     -.0336427+.0141017i  |
+     .0376857+.0683239ii   |}
+     -.00368075+.0317504ii |
+     -.0350432-.250817ii   |
+     -.0336427+.0141017ii  |
 
 o3 : List
 
@@ -61,94 +56,94 @@ i5 : setVerboseLevel 1;
 
 i6 : S = solveSchubertProblem(SchPblm,2,4)
 -- playCheckers
--- cpu time = .00444563
+-- cpu time = .00494953
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .00298556
+-- cpu time = .00228437
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .00036088
+-- cpu time = .000274343
 resolveNode reached node of no remaining conditions
--- time to make equations: .00423633
+-- time to make equations: .00390117
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00502517 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .0263976
--- time of performing one checker move: .00194072
--- time of performing one checker move: .00191634
--- time to make equations: .00691576
+ -- trackHomotopy time = .0136096 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .0196087
+-- time of performing one checker move: .0010252
+-- time of performing one checker move: .00101623
+-- time to make equations: .00493436
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00541846 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .0180838
--- time to make equations: .00434917
+ -- trackHomotopy time = .00615856 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .0152368
+-- time to make equations: .00436537
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00518994 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .0131455
--- time to make equations: .00428665
+ -- trackHomotopy time = .00607117 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .0145254
+-- time to make equations: .0044331
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00513116 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
--- time of performing one checker move: .0130334
--- time to make equations: .00933076
+ -- trackHomotopy time = .0143777 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
+-- time of performing one checker move: .0221031
+-- time to make equations: .0105845
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00615368 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
--- time of performing one checker move: .0194103
--- time to make equations: .0114141
+ -- trackHomotopy time = .00788359 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
+-- time of performing one checker move: .0230352
+-- time to make equations: .0101357
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00588126 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
--- time of performing one checker move: .0217524
--- time of performing one checker move: .000863915
--- time of performing one checker move: .000837405
--- time to make equations: .00941556
+ -- trackHomotopy time = .00744606 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
+-- time of performing one checker move: .0221374
+-- time of performing one checker move: .000947422
+-- time of performing one checker move: .000955539
+-- time to make equations: .0102118
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0108702 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
--- time of performing one checker move: .0256253
+ -- trackHomotopy time = .00708272 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
+-- time of performing one checker move: .0291536
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .00240793
+-- cpu time = .00277507
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .000329419
+-- cpu time = .000321946
 resolveNode reached node of no remaining conditions
--- time to make equations: .0214603
+-- time to make equations: .00393774
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00788464 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .0341
--- time of performing one checker move: .00102287
--- time to make equations: .00440113
+ -- trackHomotopy time = .00502202 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .0123765
+-- time of performing one checker move: .000840275
+-- time to make equations: .0113042
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00531406 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
--- time of performing one checker move: .013452
--- time of performing one checker move: .000905502
--- time of performing one checker move: .00071193
--- time of performing one checker move: .000876476
--- time of performing one checker move: .000985118
--- time of performing one checker move: .000721485
--- time of performing one checker move: .000961845
--- time of performing one checker move: .000989488
--- time to make equations: .00955909
+ -- trackHomotopy time = .00574352 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
+-- time of performing one checker move: .021032
+-- time of performing one checker move: .000887347
+-- time of performing one checker move: .000689267
+-- time of performing one checker move: .000872269
+-- time of performing one checker move: .000953705
+-- time of performing one checker move: .000664042
+-- time of performing one checker move: .000883894
+-- time of performing one checker move: .000898403
+-- time to make equations: .0085071
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00629973 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
--- time of performing one checker move: .0200008
--- time of performing one checker move: .00152608
+ -- trackHomotopy time = .00610873 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
+-- time of performing one checker move: .0182445
+-- time of performing one checker move: .00130729
 
-o6 = {| -1.65573-.600637i .0201935+.0437095i   |, | -.154703+.175591i
-      | -1.23037-1.66989i -.0308057-.00120618i |  | -.801221-.035430i
-      | 1.35971-.743988i  -.0713133-.049047i   |  | .325581-2.08048i 
-      | -.397038-1.8974i  .0102261-.024397i    |  | -.475895-.209388i
+o6 = {| -1.65573-.600637ii .0201935+.0437095ii   |, | -.154703+.175591ii 
+      | -1.23037-1.66989ii -.0308057-.00120618ii |  | -.801221-.0354303ii
+      | 1.35971-.743988ii  -.0713133-.049047ii   |  | .325581-2.08048ii  
+      | -.397038-1.8974ii  .0102261-.024397ii    |  | -.475895-.209388ii 
      ------------------------------------------------------------------------
-     .0376857+.0683239i   |}
-     -.00368075+.0317504i |
-     -.0350432-.250817i   |
-     -.0336427+.0141017i  |
+     .0376857+.0683239ii   |}
+     -.00368075+.0317504ii |
+     -.0350432-.250817ii   |
+     -.0336427+.0141017ii  |
 
 o6 : List
 

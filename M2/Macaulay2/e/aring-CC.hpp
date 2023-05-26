@@ -3,6 +3,9 @@
 #ifndef _aring_CC_hpp_
 #define _aring_CC_hpp_
 
+#include "interface/gmp-util.h"  // for moveTo_gmpCC
+#include "interface/random.h"    // for randomDouble
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -17,7 +20,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingCC : public RingInterface
+class ARingCC : public SimpleARing<ARingCC>
 {
   // approximate real numbers, implemented as doubles.
 
@@ -89,6 +92,11 @@ class ARingCC : public RingInterface
     result = * a.get_cc_doubles();
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_cc_doubles();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType& result) const
@@ -105,7 +113,7 @@ class ARingCC : public RingInterface
     result.im = 0.0;
   }
 
-  void clear(ElementType& result) const
+  static void clear(ElementType& result)
   {
     // do nothing
   }
@@ -133,20 +141,20 @@ class ARingCC : public RingInterface
 
   bool set_from_BigReal(ElementType& result, gmp_RR a) const
   {
-    result.re = mpfr_get_d(a, GMP_RNDN);
+    result.re = mpfr_get_d(a, MPFR_RNDN);
     result.im = 0.0;
     return true;
   }
   bool set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) const
   {
-    result.re = mpfr_get_d(re, GMP_RNDN);
-    result.im = mpfr_get_d(im, GMP_RNDN);
+    result.re = mpfr_get_d(re, MPFR_RNDN);
+    result.im = mpfr_get_d(im, MPFR_RNDN);
     return true;
   }
   bool set_from_BigComplex(ElementType& result, gmp_CC a) const
   {
-    result.re = mpfr_get_d(a->re, GMP_RNDN);
-    result.im = mpfr_get_d(a->im, GMP_RNDN);
+    result.re = mpfr_get_d(a->re, MPFR_RNDN);
+    result.im = mpfr_get_d(a->im, MPFR_RNDN);
     return true;
   }
   bool set_from_double(ElementType& result, double a) const
@@ -384,8 +392,8 @@ class ARingCC : public RingInterface
     result->im = getmemstructtype(mpfr_ptr);
     mpfr_init2(result->re, get_precision());
     mpfr_init2(result->im, get_precision());
-    mpfr_set_d(result->re, a.re, GMP_RNDN);
-    mpfr_set_d(result->im, a.im, GMP_RNDN);
+    mpfr_set_d(result->re, a.re, MPFR_RNDN);
+    mpfr_set_d(result->im, a.im, MPFR_RNDN);
     return moveTo_gmpCC(result);
   }
 
@@ -405,7 +413,7 @@ class ARingCC : public RingInterface
   {
     double d;
     abs(d, a);
-    if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, GMP_RNDN);
+    if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, MPFR_RNDN);
   }
 };
 

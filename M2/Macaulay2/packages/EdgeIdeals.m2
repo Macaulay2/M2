@@ -13,7 +13,7 @@ newPackage(
 	Version => "1.0.2",
 	Date => "March 30, 2011",
 	PackageExports => {"SimplicialComplexes"},
-	PackageImports => {"GenericInitialIdeal"},
+	PackageImports => {"GenericInitialIdeal","PrimaryDecomposition"},
 	Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 		"journal URI" => "http://j-sag.org/",
@@ -66,7 +66,6 @@ export {
 	"complementGraph",
 	"completeGraph",
 	"completeMultiPartite",
-	"connectedComponents",
 	"connectedGraphComponents",
 	"cycle",
 	"degreeVertex",
@@ -386,7 +385,7 @@ cliqueNumber Graph := G -> (
 ---------------------------------------------------------------
 -- complementGraph
 -- returns the complement of a graph or hypergraph
--- NOTE:  does something different for graphs vs hyerpergraphs
+-- NOTE:  does something different for graphs vs hypergraphs
 --------------------------------------------------------------
 
 complementGraph = method();
@@ -459,7 +458,7 @@ completeMultiPartite (Ring, List) := Graph =>(R, L) -> (
 -- returns all the connected components of a hypergraph
 ----------------------------------------------------------------------
 
-connectedComponents = method();
+-- the 'connectedComponents' method is defined in 'SimplicialComplexes'
 connectedComponents HyperGraph := H -> (
      V := select(H#"vertices", v-> any(H#"edges", e -> member(v,e)));
      while #V > 0 list (
@@ -1098,7 +1097,7 @@ ring HyperGraph := H -> H#"ring"
 simplicialComplexToHyperGraph = method()
 
 simplicialComplexToHyperGraph SimplicialComplex := D -> (
-	  hyperGraph flatten entries facets D
+	  hyperGraph facets D
 	  )
 
 ------------------------------------------------------
@@ -1116,7 +1115,7 @@ smallestCycleSize Graph := G -> (
      -- the first non-linear syzygy tells us the smallest induced
      -- cycle has length >= 4.  This is based upon 
      -- the paper of Eisenbud-Green-Hulek-Popescu,
-     -- "Restricting linear syzygyies: algebra and geometry"
+     -- "Restricting linear syzygies: algebra and geometry"
      while  ((smallestCycle == 0) and (i <= pdim betti R)) do (
 	  A := R_i;
           B := flatten degrees A     ;
@@ -1248,7 +1247,7 @@ document {
 	SUBSECTION "Basic Constructors",
 	PARA { 
 		"The main way of constructing ", TO "Graph", " and " , TO "HyperGraph", " objects is to use the ",
-		TO "graph", " and ", TO "hyperGraph", " methods. These methods are overriden to provide many ways ",
+		TO "graph", " and ", TO "hyperGraph", " methods. These methods are overridden to provide many ways ",
 		"of specifying edges." },
 	PARA { "For the purposes of the EdgeIdeals package, every graph and hypergraph is associated to a ring ",
 		"whose variables correspond to the vertices of the (hyper)graph. Thus, the most explicit way to ",
@@ -1522,12 +1521,12 @@ doc ///
 		Text 
 			The function {\tt hyperGraph} is a constructor for @TO HyperGraph @.  The user
 			can input a hypergraph in a number of different ways, which we describe below.
-			The information decribing the hypergraph is stored in a hash table. We require that
+			The information describing the hypergraph is stored in a hash table. We require that
 			there be no inclusion relations between the edges of a hypergraph; that is, that it
 			be a clutter. The reason is that this package is designed for edge ideals, which would
 			lose any information about edges that are supersets of other edges.
 
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifies the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 			R = QQ[a..f]
@@ -1616,7 +1615,7 @@ doc ///
 			can input a graph in a number of different ways, which we describe below.  The information
 			describing the graph is stored in a hash table.
 			
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifies the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f];
@@ -1953,7 +1952,7 @@ doc ///
 		     S = QQ[a..f];
 		     c4 = cycle(S,4) -- 4-cycle; chromatic number = 2
 		     c5 = cycle(S,5) -- 5-cycle; chromatic number = 3
-		     k6 = completeGraph S  -- complete graph on 6 vertices; chormatic number = 6
+		     k6 = completeGraph S  -- complete graph on 6 vertices; chromatic number = 6
 		     chromaticNumber c4
 		     chromaticNumber c5
 		     chromaticNumber k6
@@ -2917,7 +2916,7 @@ doc ///
 		       g = graph {a*b,b*c,a*c,d*e,a*e}
 		       Delta1 = independenceComplex g 
 		       Delta2 = simplicialComplex edgeIdeal g
-                       Delta1 == Delta2
+                       Delta1 === Delta2
 	SeeAlso
 	         independenceNumber       	  
 ///
@@ -2955,7 +2954,6 @@ doc ///
 		       independenceNumber c4 
 		       independenceNumber c5 
 		       dim independenceComplex c4 + 1 == independenceNumber c4
-		       
         SeeAlso
 	        independenceComplex
 ///
@@ -3447,7 +3445,7 @@ doc ///
 		  An edge in a graph is a leaf if it contains a vertex of degree one.
 		  An edge {\tt E} in a hypergraph is a leaf if there is another edge {\tt B} with the
 	          property that for all edges {\tt F} (other than {\tt E}), the intersection of {\tt F} 
-		  with {\tt E} is contained in the interesection of {\tt B} with {\tt E}.
+		  with {\tt E} is contained in the intersection of {\tt B} with {\tt E}.
 
 		  A vertex of a graph is a leaf if it has degree one.
 		  A vertex of a hypergraph is a leaf if it is contained in precisely one
@@ -3603,7 +3601,7 @@ doc ///
 	     Text
 	     	  The line graph {\tt L} of a hypergraph {\tt H} has a vertex for each edge in {\tt H}. 
 		  Two vertices in {\tt L} are adjacent if their edges in {\tt H} share a vertex.
-		  The order of the vertices in {\tt L} are determined by the implict order 
+		  The order of the vertices in {\tt L} are determined by the implicit order 
 		  on the edges of {\tt H}. See @TO edges@.
 	     Example
      	       	  R = QQ[a..e];
@@ -4558,7 +4556,7 @@ R=QQ[w,x,y,z]
 e = graph {w*x,w*y,x*y,y*z}  -- clique on {w,x,y} and {y,z}
 Delta1 = cliqueComplex e  -- max facets {w,x,y} and {y,z}
 Delta2 = simplicialComplex {w*x*y,y*z}
-assert(Delta1 == Delta2)
+assert(Delta1 === Delta2)
 assert(cliqueNumber e -1 == dim Delta1)
 ///
 
@@ -4797,7 +4795,7 @@ TEST///
 R = QQ[a..e]
 c5 = graph {a*b,b*c,c*d,d*e,e*a}
 D = simplicialComplex monomialIdeal (a*b,b*c,c*d,d*e,e*a)
-assert(D == independenceComplex c5)
+assert(D === independenceComplex c5)
 ///
 
 

@@ -604,7 +604,7 @@ witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
   local c;
   for p in pts do (
     found := false;
-    if instance(p,Point)
+    if instance(p,AbstractPoint)
      then c = p
      else c = point{p};
     for w in witsets when (not found) do (
@@ -710,7 +710,7 @@ cascade (List) := o -> (system) -> (
         ) else (
           supsols := points(supwit);
           genpts := witnessSuperSetsFilter(result,supsols);
-	  g := toList(apply(genpts,x->if class x === Point then x else point{x}));
+	  g := toList(apply(genpts,x->if instance(x,AbstractPoint) then point x else point{x}));
           ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
           if #g!=0 then result = append(result,(i,ws));
         );
@@ -839,7 +839,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
     name = PHCinputFile | "_f" | toString(count+1);
   );
   stdio << "found " << count << " irreducible factors " << endl;
-  for ws in result do ws#IsIrreducible=true;
+  for ws in result do ws.cache.IsIrreducible=true;
   return numericalVariety(toList(result));
 )
 
@@ -848,7 +848,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
 ------------------------
 
 isCoordinateZero = method(TypicalValue => Boolean)
-isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
+isCoordinateZero (AbstractPoint,ZZ,RR) := (sol,k,tol) -> (
   -- IN: sol, a solution of a polynomial system;
   --     k, index to a coordinate must be within range;
   --     tol, tolerance for the absolute value of the k-th coordinate.
@@ -863,7 +863,7 @@ isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
 ---------------------------
 
 isWitnessSetMember = method(TypicalValue => Boolean, Options => {Verbose => false})
-isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
+isWitnessSetMember (WitnessSet,AbstractPoint) := o-> (witset,testpoint) -> (
   -- IN: witset, a witness set for a positive dimensional solution set,
   --     testpoint, does it belong to the solution set?
   -- OUT: true if testpoint is a member of the solution set,
@@ -1112,7 +1112,7 @@ solveSystem = method(TypicalValue => List,
   Options => {Verbose => false, numThreads=>0, randomSeed => -1, 
               computingPrecision => 1})
 solveSystem List := List =>  o->system -> (
-  -- IN:  system = list of polynomials with complex coeffiecients, 
+  -- IN:  system = list of polynomials with complex coefficients,
   -- i.e. the system to solved 
   -- OUT: solutions to the system, a list of Points
   -- fixed removing of nonzero slack variables
@@ -1194,7 +1194,7 @@ solveSystem List := List =>  o->system -> (
     if o.Verbose then
       stdio << "after filtering nonsolutions : "
             << #result << " solutions left" << endl;
-    scan(result, (sol -> sol#Coordinates = take(sol#Coordinates, numgens R)));
+    result = apply(result, sol -> point(take(coordinates sol, numgens R), sol.cache));
     newR = (coefficientRing R)(gens R) -- put variables back in original ring
   );
   result
@@ -1206,7 +1206,7 @@ solveSystem List := List =>  o->system -> (
 
 solveRationalSystem = method(TypicalValue => List, Options => {Verbose => false})
 solveRationalSystem  List :=  o-> system -> (
-  -- IN:  system = list of rational equations with complex coeffiecients, 
+  -- IN:  system = list of rational equations with complex coefficients,
   -- i.e. the system to solved
   -- OUT: solutions to the system, a list of Points
   
@@ -1338,7 +1338,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   -- IN: T, target system to be solved;
   --     S, start system with solutions in Ssols;
   --     Ssols, solutions at the start of the paths.
-  -- OPT INTPUTS: gamma, constant for gamma trick
+  -- OPT INPUTS: gamma, constant for gamma trick
   --     tDegree, degree of continuation parameter      
   -- OUT: Tsols, solutions at the end of the paths.
   
@@ -1476,8 +1476,8 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     ));
     totalN := #result;
     scan(result, s->(
-      if s#1#"mult">1 then error "mutiple root encountered";
-      if s#1#"mult"<0 then error "negative mutiplicity";
+      if s#1#"mult">1 then error "multiple root encountered";
+      if s#1#"mult"<0 then error "negative multiplicity";
     ));			 
     result = select(result, 
       s-> 
@@ -2119,7 +2119,7 @@ system = (sub(ideal rationalSystem, CC[var1]))_*
 V = numericalIrreducibleDecomposition system
 WitSets = V#5;
 w = first WitSets
-w#IsIrreducible
+w.cache.IsIrreducible
 
 R = ring rationalSystem_0
 PD = primaryDecomposition ideal rationalSystem

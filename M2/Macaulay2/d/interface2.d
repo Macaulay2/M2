@@ -7,8 +7,8 @@ use common;
 use hashtables;
 use util;
 use struct;
-header "#include <engine.h>";
 
+header "#include <engine.h>"; -- required for rawBIBasis, rawGbBoolean, NAG routines
 
 -- rawPointArray
 export rawPointArray(e:Expr):Expr := (
@@ -237,6 +237,31 @@ export rawSLEvaluatorEvaluate(e:Expr):Expr := (
      else WrongNumArgs(3)
      );
 setupfun("rawSLEvaluatorEvaluate",rawSLEvaluatorEvaluate);
+
+export rawCompiledSLEvaluator(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 4 then WrongNumArgs(4)
+     else when s.0 is libName:stringCell do (
+     	  when s.1 is nInputs:ZZcell do 
+	  when s.2 is nOutputs:ZZcell do 
+	  when s.3 is M:RawMutableMatrixCell do (
+	      toExpr(Ccode(RawSLEvaluatorOrNull,
+		      "rawCompiledSLEvaluator(",
+		      libName.v, ",",
+		      toInt(nInputs), ",",
+		      toInt(nOutputs), ",",
+		      M.p,
+		      ")"
+		      ))
+	      )
+	  else WrongArg(4, "a raw mutable matrix")
+	  else WrongArgZZ(3)
+	  else WrongArgZZ(2)
+	  )
+     else WrongArg(1,"a string")
+     else WrongNumArgs(4)
+     );
+setupfun("rawCompiledSLEvaluator",rawCompiledSLEvaluator);
 
 -- Homotopy
 

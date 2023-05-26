@@ -13,7 +13,7 @@ document {
 document {
      Key => IndeterminateNumber,
      Headline => "the class of all indeterminate numbers",
-     "Indeterminate numbers result, for exmaple, from multiplying 0 by infinity.
+     "Indeterminate numbers result, for example, from multiplying 0 by infinity.
      There is only one instance of this class."
      }
 
@@ -23,30 +23,6 @@ document {
      TT "indeterminate", " -- a representation of an indeterminate number,
      such as might result from multiplying 0 by infinity.",
      }
-
-TEST "
-stream = (action,state) -> () -> stream(action, action state)
-fib = stream( (i,j) -> (j,i+j), (0,1))
-scan(1 .. 22, i -> fib = fib())
-"
-
-document {
-     Key => {ultimate,(ultimate, Function, Thing)},
-     Headline => "ultimate value for an iteration",
-     TT "ultimate(f,x)", " -- yields the value ultimately obtained by
-     applying the function ", TT "f", " to ", TT "x", ".",
-     PARA{},
-     "Iteration ceases when an error occurs during application of the
-     function, or the result is the same.  Errors are not reported.",
-     PARA{},
-     "It's a bad idea to use this function, because unexpected errors will
-     produce unexpected results silently."
-     }
-
-TEST "
-assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
-assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )
-"
 
 document {
      Key => (symbol -, List),
@@ -276,7 +252,7 @@ document {
      Key => Holder,
      Headline => "the class of all holder expressions",
      PARA{},
-     "This type of expresssion is a container for a single, arbitrary, thing that
+     "This type of expression is a container for a single, arbitrary, thing that
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
      not be basic enough for this purpose, since as a member of a sum, it would
@@ -305,11 +281,25 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
-undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
+undocumented {
+    (symbol -, Thing, Minus),
+    (symbol +, Sum, Sum),
+    (symbol +, Sum, Holder),
+    (symbol +, Holder, Sum),
+    (symbol +, ZeroExpression, Expression),
+    (symbol +, Expression, ZeroExpression),
+    }
+
+expressionMethodKeys := flatten apply(toList core "expressionBinaryOperators", op -> {
+	(op, Expression, Expression),
+	(op, Expression, Holder),
+	(op, Expression, Thing),
+	(op, Holder, Expression),
+	(op, Holder, Holder),
+	(op, Thing, Expression)})
 
 document {
-     Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
-	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),
+     Key => join({Expression, (value, Expression), (symbol -, Expression)}, expressionMethodKeys),
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
      as well as enough information to print the expression nicely.  In Macaulay2 expressions have two main functions: they are an intermediate phase in
@@ -384,23 +374,13 @@ document {
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
      PARA{},
-     EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
-     SeeAlso => {"Table"}
-     }
-
-document {
-     Key => MatrixDegreeExpression,
-     Headline => "the class of all matrix expressions with prescribed degrees",
-     TT "MatrixDegreeExpression", " is a type of ", TO "Expression", " representing
-     a matrix with specified degrees of sources and targets, i.e., a general map between
-     free modules.",
-     PARA{},
      EXAMPLE {
+	 ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
 	 ///R=QQ[x,y];///,
-         ///MatrixDegreeExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),{{-2},{-3}},{{0},{0}}}///,
-	 ///value oo///,
+         ///MatrixExpression append(applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}})///,
+	 ///value oo///
 	 },
-     SeeAlso => {"MatrixExpression"}
+     SeeAlso => {"Table"}
      }
 
 document {
@@ -445,12 +425,14 @@ document {
      "This is a unary operator."
      }
 
+-*
 document {
      Key => NonAssociativeProduct,
      Headline => "the class of all nonassociative product expressions",
      TT "NonAssociativeProduct", " is a type of ", TO "Expression", " representing
      a nonassociative product."
      }
+*-
 
 document {
      Key => Power,
@@ -548,6 +530,32 @@ document {
      "The return value is ", TO "null", "."
      }
 
+doc ///
+  Key
+    printerr
+  Headline
+    print something to stderr
+  Usage
+    printerr x
+  Inputs
+    x:{String,Net,BasicList}
+  Description
+    Text
+      Print @TT "x"@, each line prepended with @TT "--"@, to @TO
+      stderr@.  This is useful for displaying warning messages and
+      verbose logs.
+    Example
+      printerr "Hello, world!"
+      printerr("foo" || "bar")
+    Text
+      If @TT "x"@ is @ofClass BasicList@, then its elements are first
+      joined with @TO horizontalJoin@.
+    Example
+      printerr("foo", "bar")
+///
+
+undocumented methods hold
+
 document {
      Key => hold,
      Headline => "hold something in a holder expression",
@@ -557,6 +565,8 @@ document {
 	       already an expression, in which case ", TT "x", " is returned." }},
      EXAMPLE "(hold 2)^5 * (hold 3)^3",
      }
+
+undocumented methods expression
 
 document {
      Key => expression,
@@ -574,16 +584,32 @@ document {
      	  }
      }
 
-document {
-     Key => {pad,(pad, String, ZZ),(pad, ZZ, String)},
-     Headline => "pad a string with spaces",
-     TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the right.",
-     BR{},
- 
-     TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the left."
-     }
+doc ///
+  Key
+    pad
+    (pad, String, ZZ)
+    (pad, ZZ, String)
+    (pad, Net, ZZ)
+    (pad, ZZ, Net)
+  Headline
+    pad a string or net with spaces
+  Usage
+    pad(s,n)
+    pad(n,s)
+  Inputs
+    s:Net
+    n:ZZ
+  Description
+    Text
+      @TT "pad(s,n)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the right.
+
+      @TT "pad(n,s)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the left.
+    Example
+      pad(6, "foo")
+      pad("foo", 6) | "bar"
+///
 
 document {
      Key => columnate,
@@ -633,17 +659,6 @@ document {
      returns a scripted functor that accepts the arguments.",
      SeeAlso => "ScriptedFunctor"
      }
-
-TEST ("
-     R=ZZ/101[a..d]
-     C=resolution cokernel vars R
-     D = C ++ C[1] ++ C[2]
-     betti D
-     assert( degree HH_1 D === 0 )
-     assert( degree HH_0 D === 1 )
-     assert( degree HH_-1 D === 1 )
-     assert( degree HH_-2 D === 1 )
-     ")
 
 document {
      Key => {(sheafExt,ZZ,CoherentSheaf,CoherentSheaf),

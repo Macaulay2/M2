@@ -12,6 +12,10 @@
   MarkUpType, and therefore need to be rendered.
 *-
 
+needs "document.m2"
+needs "hypertext.m2"
+needs "nets.m2"
+
 -----------------------------------------------------------------------------
 -- Common utilities for formatting documentation nodes
 -----------------------------------------------------------------------------
@@ -22,7 +26,7 @@
 -- of individual subtypes.
 setupRenderer = (parser, joiner, T) -> (
     parser T := node -> joiner apply(node,
-	subnode -> if class subnode =!= Option then parser subnode))
+	subnode -> if class subnode =!= Option and class subnode =!= OptionTable then parser subnode))
 
 -- Default joiners: (TODO: move to string.m2?)
 -- concatenate
@@ -34,7 +38,7 @@ wrapHorizontalJoin := x -> wrap horizontalJoin x
 -- MarkUpType > IntermediateMarkUpType
 
 -- skip Options; TODO: define parser Option := null instead
-noopts := x -> select(x,e -> class e =!= Option)
+noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 -----------------------------------------------------------------------------
 -- Setup uniform rendering
@@ -45,11 +49,6 @@ scan({net, html, markdown, tex}, parser ->
     parser TOH := node -> parser SPAN nonnull { new TO from toList node, commentize headline node#0 } )
 scan({net, info, html, markdown, tex}, parser ->
     parser LATER := node -> parser node#0() )
-
--- TODO: move somewhere else
--- Rendering by concatenation of inputs
-scan({mathML, tex, texMath},
-    parser -> setupRenderer(parser, concatenate, Hypertext))
 
 -- Rendering by horizontal join of inputs
 scan({net, info},
@@ -67,7 +66,9 @@ info TITLE :=
 net  COMMENT :=
 info COMMENT :=
 net  LITERAL :=
-info LITERAL := x -> ""
+info LITERAL :=
+net  SCRIPT  :=
+info SCRIPT  := x -> ""
 
 info String  := identity
 info Nothing := net
@@ -124,10 +125,16 @@ scan({net, info},
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
 	-- rendering for special types
 	parser' String := identity;
-	parser' Option := x -> ();
+	parser' COMMENT :=
+	parser' LITERAL :=
+	parser' Option  :=
+	parser' OptionTable  :=
+	parser' Nothing := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
+	parser' PRE := -- HACK -- might need to rethink
+	parser' INDENT :=
 	parser' TABLE :=
 	parser' MENU :=
 	parser' DL :=
@@ -143,12 +150,15 @@ scan({net, info},
 	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
-		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+		SPBKs -> if isMember(SP,SPBKs) then (BK,"",BK) else BK);
 	    x = splice sublists(x, i -> i =!= BK,
 		x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x,
 		BK -> ());
 	    -- Stack the pieces vertically
 	    stack x);
+	parser INDENT := x -> ( -- INDENT is like DIV but with extra |s on the left. sadly, can't be absorbed into DIV because of non-recursivity of this parser
+	    n := parser DIV toList x;
+	    "| "^(height n, depth n) | n )
 	))
 
 Hop := (op,filler) -> x -> (
@@ -165,14 +175,20 @@ info HEADER3 := Hop(info,"-")
 net  HR :=
 info HR := x -> concatenate(printWidth:"-")
 
-net  TT :=
-info TT := x -> concatenate toSequence noopts x   -- should just be strings here
+net  PRE  :=
+net   TT  :=
+net CODE  :=
+net SAMP  :=
+net  KBD  :=
+info TT   :=
+info SAMP :=
+info  KBD :=
+info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
-net  PRE := x -> net concatenate x
-info PRE := x -> wrap(printWidth, "-", net concatenate noopts x)
+info PRE  := x ->
+    wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
 
-net  CODE :=
-info CODE := x -> stack lines concatenate noopts x
+net TH := Hop(net, "-")
 
 ULop := op -> x -> (
      s := "  * ";
@@ -184,10 +200,11 @@ info UL := ULop info
 net  UL := ULop net
 
 OLop := op -> x -> (
+     (o, ct) := override(options class x, toSequence x);
+     shft := try value o#"start" else 1;
      s := "000. ";
      printWidth = printWidth - #s;
-     x = toList noopts x;
-     r := stack apply(#x, i -> pad(3,toString (i+1)) | ". " | op x#i); -- html starts counting from 1!
+     r := stack apply(#ct, i -> pad(3,toString (i+shft)) | ". " | op ct#i);
      printWidth = printWidth + #s;
      r)
 info OL := OLop info
@@ -216,19 +233,23 @@ info HREF := x -> (
      if #x === 1 then x#0
      else if match ("^mailto:",x#0) then toString x#1
      -- x#0 is sometimes the relative path to the file, but not from the current directory
-     else toString x#1 | " (see " | x#0 | " )")
+     else (
+	  r := horizontalJoin \\ net \ toList splice drop(x, 1);
+	  r | " (see " | x#0 | " )"
+	  )
+     )
 
 net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", toList \ toList ag);
+     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, noopts \ toList \ toList sequence ag);
      printWidth = save;
      r)
 info TABLE := x -> (
      s := printWidth;
      if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netList(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
+     ret := netList(Boxes=>true, applyTable(noopts \ toList \ noopts \\ toList x,info));
      printWidth = s;
      ret)
 
@@ -254,7 +275,7 @@ infoTagConvert = method()
 infoTagConvert String      := tagConvert
 infoTagConvert DocumentTag := tag -> (
     tag = getPrimaryTag tag;
-    (pkgname, fkey) := (package tag, format tag);
+    (pkgname, fkey) := (tag.Package, format tag);
     fkey  = tagConvert if pkgname === fkey then "Top" else fkey;
     if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
 
@@ -262,7 +283,7 @@ infoTagConvert DocumentTag := tag -> (
 -- checking if doc is missing can be very slow if node is from another package
 info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
 info TO2 := x -> (
-     tag := x#0;
+     tag := fixup x#0;
      if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")
      else concatenate("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ","))
 info TOH := x -> (
@@ -279,7 +300,7 @@ net TO  := x -> (
      then concatenate( "\"", format x#0, "\"", if x#?1 then x#1)
      else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
-net TO2 := x -> x#1
+net TO2 := x -> format x#1
 
 -- TODO: move this back from help.m2
 net  MENU := x -> net redoMENU x

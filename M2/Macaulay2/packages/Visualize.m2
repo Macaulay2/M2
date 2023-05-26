@@ -24,14 +24,15 @@ newPackage(
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelpi.edu/~bstone/"},
-	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"}
+	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"},
+	     {Name => "Doug Torrance", Email => "dtorrance@piedmont.edu", HomePage => "https://webwork.piedmont.edu/~dtorrance"}
 -- Contributing Author	     {Name => "Ata Firat Pir", Email => "atafirat@math.tamu.edu"},	     
 -- Contributing Author	     {Name => "Elliot Korte", Email => "ek2872@bard.edu"},	     
 -- Contributing Author	     {Name => "Will Smith", Email => "smithw12321@gmail.com"},		
 -- Contributing Author	     {Name => "Julio Urenda", Email => "jcurenda@nmsu.edu"},	     
 	     },
     	Headline => "interactive visualization and manipulation of combinatorial objects in a browser",
-	Keywords => {"Miscellaneous"},
+	Keywords => {"Graphics"},
 	PackageExports => {"Graphs", "Posets", "SimplicialComplexes"},
 	AuxiliaryFiles => true,
 	Configuration => {"DefaultPath" => null } 
@@ -439,9 +440,9 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
 
     openPortTest();
         
-    vertexSet = flatten entries faces(0,D);
-    edgeSet = flatten entries faces(1,D);
-    face2Set = flatten entries faces(2,D);
+    vertexSet = faces(0,D);
+    edgeSet = faces(1,D);
+    face2Set = faces(2,D);
     vertexList = apply(vertexSet, v -> apply(new List from factor v, i -> i#0));
     edgeList = apply(edgeSet, e -> apply(new List from factor e, i -> i#0));
     face2List = apply(face2Set, f -> apply(new List from factor f, i -> i#0));
@@ -475,7 +476,7 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
         
     if dim D>2 then (
 	error "3-dimensional simplicial complexes not implemented yet.";
-	face3Set = flatten entries faces(3,D);
+	face3Set = faces(3,D);
 	face3List = apply(face3Set, f -> apply(new List from factor f, i -> i#0));
        	face3String = toString new Array from apply(#face3List, i -> {"\"v1\": "|toString(position(vertexSet, j -> j == face3List#i#3))|",\"v2\": "|toString(position(vertexSet, j -> j == face3List#i#2))|",\"v3\": "|toString(position(vertexSet, j -> j == face3List#i#1))|",\"v4\": "|toString(position(vertexSet, j -> j == face3List#i#0))});
 	searchReplace("vis3Faces",face3String, visTemp); -- Replace vis3Faces in the visSimplicialComplex html file by the list of faces. 
@@ -490,7 +491,7 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
 
 -*
 --input: A parameterized surface in RR^3
---output: The surface in the browswer
+--output: The surface in the browser
 --
 visualize(List) := {VisPath => defaultPath, VisTemplate => basePath | "Visualize/templates/visSurface/Graphulus-Surface.html", Warning => true} >> opts -> P -> (
     local visTemp; local stringList;
@@ -525,75 +526,35 @@ visualize(List) := {VisPath => defaultPath, VisTemplate => basePath | "Visualize
 --        current files and cannot be undone.
 copyJS = method(Options => {Warning => true})
 copyJS(String) := opts -> dst -> (
-    local jsdir; local ans; local quest;
-    local cssdir; local fontdir; local imagedir;
-    local JS; local CSS; local FONT; local IMAGE;
-        
-    JS = "";
-    CSS = "";
-    FONT = "";
-    IMAGE = "";
-            
-    -- get list of filenames in js/
-    jsdir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/js/")
-	    ));
+    if not match("/$", dst) then dst = dst | "/";
+    if not fileExists dst then makeDirectory dst;
 
-    -- get list of filenames in css/
-    cssdir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/css/")
-	    ));
+    dirs := {"js", "css", "fonts", "images"};
+    existingDirs := select(dirs, dir -> fileExists concatenate(dst, dir));
 
-    -- get list of filenames in fonts/
-    fontdir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/fonts/")
-	    ));
-
-    -- get list of filenames in images/    
-    imagedir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/images/")
-	    ));
-
-    if opts.Warning == true
-    then (
-	scan(jsdir, j -> if fileExists(concatenate(dst,"js/",j)) then (JS = "js/"; break)); -- Tests existence of js files
-	scan(cssdir, j -> if fileExists(concatenate(dst,"css/",j)) then (CSS = "css/"; break)); -- Tests existence of css files
-	scan(fontdir, j -> if fileExists(concatenate(dst,"fonts/",j)) then (FONT ="fonts/"; break)); -- Tests existence of font files
-	scan(imagedir, j -> if fileExists(concatenate(dst,"images/",j)) then (IMAGE ="images/"; break)); -- Tests existence of images files
-	
-	-- test to see if files exist in target
-	if (
-	    JS == "js/"
-	    or CSS == "css/"
-	    or FONT == "fonts/"
-	    or IMAGE == "images/"
-	    )
-	then (
-		quest = concatenate(
-		    " -- Note: You can suppress this message with the 'Warning => false' option.\n",
-		    " -- The following folders on the path ",dst," have some files that will be overwritten: ",
-		    JS, ", ",
-		    CSS, ", ",
-		    FONT, ", ",
-		    IMAGE,". \n",
-		    " -- This action cannot be undone. \n"
-		    );
-		print quest;
-		ans = read " Would you like to continue? (y or n):  ";
-		while (ans != "y" and ans != "n") do (
-		    ans = read " Would you like to continue? (y or n):  ";
-		    );
-		if ans == "n" then (
-		    error "Process was aborted.";
-		    );
-		);
+    if #existingDirs > 0 and opts.Warning == true then (
+	print concatenate(
+	    " -- Note: You can suppress this message with the 'Warning => false' option.\n",
+	    " -- The following folders on the path ",dst," have some files that will be overwritten: ",
+	    demark(", ", existingDirs), newline,
+	    " -- This action cannot be undone.", newline);
+	ans := read " Would you like to continue? (y or n):  ";
+	while (ans != "y" and ans != "n") do (
+	    ans = read " Would you like to continue? (y or n):  ";
+	    );
+	if ans == "n" then (
+	    error "Process was aborted.";
+	    );
 	);
-    
-    copyDirectory(basePath|"Visualize/js/",dst|"js/");
-    copyDirectory(basePath|"Visualize/css/",dst|"css/");
-    copyDirectory(basePath|"Visualize/fonts/",dst|"fonts/");
-    copyDirectory(basePath|"Visualize/images/",dst|"images/");
-    
+
+    for dir in dirs do (
+	makeDirectory(dst | dir);
+	for file in readDirectory(basePath | "Visualize/" | dir) do (
+	    if not member(file, {".", ".."}) then (
+		copyFile(realpath(basePath | "Visualize/" | dir | "/" | file),
+		    dst | dir | "/" | file)))
+    );
+
     return "Created directories at "|dst;
 )
 
@@ -648,7 +609,7 @@ installMethod(closePort, () -> (
 )
 
 -- Input: none
--- Output: Error is user trys to run 'visualize' without first opening a port.
+-- Output: Error is user trying to run 'visualize' without first opening a port.
 --
 openPortTest = method()
 installMethod(openPortTest, () -> (
@@ -674,7 +635,7 @@ server = () -> (
     stderr << "-- Visualizing. Your browser should open automatically." << endl <<  "-- Click 'End Session' in the browser when finished." << endl;
     while true do (
         wait {listener};
-        g := openInOut listener; -- this should be interruptable! (Dan's Comment, not sure what it means)
+        g := openInOut listener; -- this should be interruptible! (Dan's Comment, not sure what it means)
         r := read g;
         if opts.Verbose then stderr << "request: " << stack lines r << endl << endl;
         r = lines r;

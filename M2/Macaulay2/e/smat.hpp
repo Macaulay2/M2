@@ -22,7 +22,7 @@ class SMat : public our_new_delete
   typedef typename CoeffRing::elem ElementType;
   typedef ElementType
       elem;  // same as ElementType.  Will possibly remove 'elem' later.
-
+  typedef typename CoeffRing::Element Element;
   //  typedef SMat<EigenvalueRing> EigenvalueMatrixType;
 
  private:
@@ -57,6 +57,12 @@ class SMat : public our_new_delete
        size_t ncols);  // Makes a zero matrix, same ring.
 
   SMat(const SMat<ACoeffRing> &M);  // Copies (clones) M
+
+  virtual ~SMat()
+  {
+    for (size_t c = 0; c < ncols_; c++) { vec_remove(columns_[c]); }
+    freemem(columns_);
+  }
 
   void grab(SMat *M);  // swaps M and this.
 
@@ -198,7 +204,7 @@ class SMat : public our_new_delete
       *coeffR;  // Same as R, optimized for speed.  R->get_CoeffRing()
   size_t nrows_;
   size_t ncols_;
-  sparsevec **columns_;  // array has length nrows*ncols
+  sparsevec **columns_;  // array has length ncols
                          // columns stored one after another
 
   ////////////////////////
@@ -253,7 +259,8 @@ typename SMat<CoeffRing>::sparsevec *SMat<CoeffRing>::vec_new() const
 template <typename CoeffRing>
 void SMat<CoeffRing>::vec_remove_node(sparsevec *&v) const
 {
-  deleteitem(v);
+  ring().clear(v->coeff);
+  delete v;
 }
 
 template <typename CoeffRing>
@@ -303,7 +310,7 @@ bool SMat<CoeffRing>::vec_get_entry(const sparsevec *v,
       break;
     else if (p->row == r)
       {
-        ring().init_set(result, p->coeff);
+        ring().set(result, p->coeff);
         return true;
       }
   return false;
@@ -592,12 +599,13 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v,
         break;
       }
   if (vec2 == 0) return;
-  elem c;
-  ring().init(c);
+  typename CoeffRing::Element c(ring());
   ring().set_zero(c);
   ring().mult(c, vec2->coeff, a);
-  if (ring().is_zero(c)) return;  // nothing to change
-
+  if (ring().is_zero(c))
+    {
+      return;  // nothing to change
+    }
   // Now add c to the r1'th row of v
   sparsevec head;
   head.next = v;
@@ -623,7 +631,6 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v,
         }
     }
   v = head.next;
-  ring().clear(c);
 }
 
 template <typename CoeffRing>
@@ -640,14 +647,9 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
 {
   // v[row r1] = a1 * v[r1] + a2 * v[r2]
   // v[row r2] = b1 * v[r1] + b2 * v[r2]
-  elem e1, e2, c1, c2, c3, c4;
+  Element e1(ring()), e2(ring()), c1(ring()), c2(ring()), c3(ring()),
+      c4(ring());
 
-  ring().init(c1);
-  ring().init(c2);
-  ring().init(c3);
-  ring().init(c4);
-  ring().init(e1);
-  ring().init(e2);
   ring().set_zero(c1);
   ring().set_zero(c2);
   ring().set_zero(c3);
@@ -656,8 +658,10 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   ring().set_zero(e2);
   bool r1_nonzero = vec_get_entry(v, r1, e1);
   bool r2_nonzero = vec_get_entry(v, r2, e2);
-  if (!r1_nonzero && !r2_nonzero) return;
-
+  if (!r1_nonzero && !r2_nonzero)
+    {
+      return;
+    }
   if (r1_nonzero)
     {
       ring().mult(c1, a1, e1);
@@ -673,12 +677,6 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   ring().add(c3, c3, c4);
   vec_set_entry(v, r1, c1);
   vec_set_entry(v, r2, c3);
-  ring().clear(c1);
-  ring().clear(c2);
-  ring().clear(c3);
-  ring().clear(c4);
-  ring().clear(e1);
-  ring().clear(e2);
 }
 
 template <typename CoeffRing>
@@ -697,13 +695,12 @@ void SMat<CoeffRing>::vec_dot_product(sparsevec *v,
                                       sparsevec *w,
                                       elem &result) const
 {
-  elem a;
-  ring().init(a);
+  Element a(ring());
   ring().set_zero(a);
   ring().set_zero(result);
   while (true)
     {
-      if (v == 0 || w == 0) return;
+      if (v == 0 || w == 0) break;
       if (v->row > w->row)
         v = v->next;
       else if (v->row < w->row)
@@ -716,7 +713,6 @@ void SMat<CoeffRing>::vec_dot_product(sparsevec *v,
           w = w->next;
         }
     }
-  ring().clear(a);
 }
 
 template <typename CoeffRing>
@@ -759,7 +755,7 @@ void SMat<CoeffRing>::vec_permute(sparsevec *&v,
     if (w->row >= start_row && w->row < end_row)
       w->row = start_row + perminv[w->row - start_row];
   vec_sort(v);
-  deletearray(perminv);
+  freemem(perminv);
 }
 
 template <typename CoeffRing>
@@ -871,7 +867,7 @@ size_t SMat<CoeffRing>::lead_row(size_t col, elem &result) const
 template <typename CoeffRing>
 bool SMat<CoeffRing>::get_entry(size_t r, size_t c, elem &result) const
 // Returns false if (r,c) is out of range or if result is 0.  No error
-// is returned. result <-- this(r,c), and is set to zero if false is returned.
+// is returned. result <-- this(r,c), and does not change result if false is returned.
 {
   return vec_get_entry(columns_[c], r, result);
 }
@@ -996,7 +992,7 @@ bool SMat<CoeffRing>::row_permute(size_t start_row, M2_arrayint perm)
       if (!done[j])
         {
           ERROR("expected permutation");
-          deletearray(done);
+          freemem(done);
           return false;
         }
       done[j] = false;
@@ -1018,7 +1014,7 @@ bool SMat<CoeffRing>::column_permute(size_t start_col, M2_arrayint perm)
       if (!done[j])
         {
           ERROR("expected permutation");
-          deletearray(done);
+          freemem(done);
           return false;
         }
       done[j] = false;
@@ -1027,8 +1023,8 @@ bool SMat<CoeffRing>::column_permute(size_t start_col, M2_arrayint perm)
     tmpvecs[i] = columns_[start_col + perm->array[i]];
   for (size_t i = 0; i < ncols_to_permute; i++)
     columns_[start_col + i] = tmpvecs[i];
-  deletearray(tmpvecs);
-  deletearray(done);
+  freemem(tmpvecs);
+  freemem(done);
   return true;
 }
 
@@ -1044,7 +1040,7 @@ void SMat<CoeffRing>::insert_columns(size_t i, size_t n_to_add)
   for (size_t c = 0; c < i; c++) columns_[c] = tmp[c];
   for (size_t c = i; c < orig_ncols; c++) columns_[c + n_to_add] = tmp[c];
 
-  deletearray(tmp);
+  freemem(tmp);
 }
 
 template <typename CoeffRing>
@@ -1069,7 +1065,7 @@ void SMat<CoeffRing>::delete_columns(size_t i, size_t j)
   for (size_t c = 0; c < i; c++) columns_[c] = tmp[c];
   for (size_t c = j + 1; c < orig_ncols; c++) columns_[c - ndeleted] = tmp[c];
 
-  deletearray(tmp);
+  freemem(tmp);
 }
 
 template <typename CoeffRing>
@@ -1110,12 +1106,11 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A,
 {
   coeffR = A.coeffR;
   initialize(rows->len, cols->len, NULL);
-
+  typename CoeffRing::Element f(*coeffR);
   for (size_t r = 0; r < rows->len; r++)
     for (size_t c = 0; c < cols->len; c++)
       {
-        elem f;
-        coeffR->init(f);
+        coeffR->set_zero(f);
         A.get_entry(rows->array[r], cols->array[c], f);
         set_entry(r, c, f);
       }
@@ -1126,12 +1121,11 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
 {
   coeffR = A.coeffR;
   initialize(A.numRows(), cols->len, NULL);
+  typename CoeffRing::Element f(*coeffR);
   for (size_t r = 0; r < nrows_; r++)
     for (size_t c = 0; c < cols->len; c++)
       {
-        elem f;
-        coeffR->init(f);
-        //        coeffR->init(f);
+        coeffR->set_zero(f);
         A.get_entry(r, cols->array[c], f);
         set_entry(r, c, f);
       }

@@ -1,0 +1,43 @@
+/*
+Language: Macaulay2
+Author: Doug Torrance <dtorrance@piedmont.edu>
+Description: Macaulay2 is a software system devoted to supporting research in algebraic geometry and commutative algebra
+Website: https://faculty.math.illinois.edu/Macaulay2/
+Category: scientific
+*/
+
+export default function(hljs) {
+  return {
+    name: "Macaulay2",
+    contains: [
+      hljs.NUMBER_MODE,
+      hljs.QUOTE_STRING_MODE,
+      {
+	scope: "string",
+	begin: "///",
+	end: "(?<!/)/(//)+(?!/)"
+      },
+      hljs.COMMENT("--", "$"),
+      hljs.COMMENT("-\\*", "\\*-")
+    ],
+
+    // @M2BANNER@
+    // see M2/Macaulay2/editors/make-M2-symbols.m2 in the Macaulay2 source
+    // https://github.com/Macaulay2/M2
+
+    keywords: {
+      keyword: [
+	@M2KEYWORDS@
+      ],
+      type: [
+	@M2DATATYPES@
+      ],
+      built_in: [
+	@M2FUNCTIONS@
+      ],
+      literal: [
+	@M2CONSTANTS@
+      ]
+    }
+  }
+}

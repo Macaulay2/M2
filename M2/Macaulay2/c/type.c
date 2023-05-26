@@ -220,7 +220,10 @@ node type(node e){		/* assume e is checked previously */
 			 assert(FALSE);
 		    	 return caddr(ht);
 			 }
-		    else assert(FALSE); return NULL;
+		    else {
+			 assert(FALSE);
+			 return NULL;
+			 }
 		    }
 	       assert(FALSE); return NULL;
 	       }
@@ -458,7 +461,10 @@ node ExpandType(node t, node *f) {
 		    *f = cons(newN,*f);
 		    return newN;
 		    }
-	       else assert(FALSE); return NULL;
+	       else {
+		    assert(FALSE);
+		    return NULL;
+		    }
 	       }
 	  default: assert(FALSE); return NULL;
 	  }
@@ -519,12 +525,13 @@ void totypesRec(node e) {
 	       uval = u -> body.type.definition;
 	       assertpos(tval != NULL,t);
 	       assertpos(uval != NULL,u);
-	       if (equal(tval,uval)) continue;
 	       assertpos(iscons(tval),t);
 	       assertpos(iscons(uval),u);
 	       assert(! dd->distinguishable );
 	       th = car(tval);
 	       uh = car(uval);
+	       if (th == tagged_object_K || th == tarray_K) goto differ;
+	       if (equal(tval,uval)) continue;
 	       tval = cdr(tval);
 	       uval = cdr(uval);
 	       if (th != uh) goto differ;
@@ -542,7 +549,7 @@ void totypesRec(node e) {
 			 }
 		    if (tval != NULL || uval != NULL) goto differ;
 		    }
-	       else if (th == object__K || th == tagged_object_K) {
+	       else if (th == object__K) {
 		    for (;tval != NULL && uval != NULL;
 			 tval = cdr(tval), uval = cdr(uval)) {
 			 node tmem = car(tval);
@@ -559,7 +566,7 @@ void totypesRec(node e) {
 			 }
 		    if (tval != NULL || uval != NULL) goto differ;
 		    }
-	       else if (th == array_K || th == tarray_K) {
+	       else if (th == array_K) {
 		    node tt,uu;
 		    int ii = typeseqno(tt=typeforward(car(tval)));
 		    int jj = typeseqno(uu=typeforward(car(uval)));

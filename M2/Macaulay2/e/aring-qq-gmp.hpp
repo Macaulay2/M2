@@ -3,6 +3,9 @@
 #ifndef _aring_QQ_gmp_hpp_
 #define _aring_QQ_gmp_hpp_
 
+#include "interface/gmp-util.h"  // for mpz_reallocate_limbs
+#include "interface/random.h"    // for rawSetRandomQQ
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -19,13 +22,14 @@ namespace M2 {
    @brief wrapper for the gmp mpq_t integer representation
 */
 
-class ARingQQGMP : public RingInterface
+class ARingQQGMP : public SimpleARing<ARingQQGMP>
 {
  public:
   static const RingID ringID = ring_QQ;
 
   typedef __mpq_struct ElementType;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingQQGMP();
   ~ARingQQGMP();
@@ -81,7 +85,7 @@ class ARingQQGMP : public RingInterface
   }
 
   void init(ElementType& result) const { mpq_init(&result); }
-  void clear(ElementType& result) const { mpq_clear(&result); }
+  static void clear(ElementType& result) { mpq_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     mpq_set(&result, &a);
@@ -170,29 +174,27 @@ class ARingQQGMP : public RingInterface
   }
 
   ///@brief test doc
-  bool divide(ElementType& result,
+  void divide(ElementType& result,
               const ElementType& a,
               const ElementType& b) const
   {
-    if (is_zero(b)) return false;
+    if (is_zero(b)) throw exc::division_by_zero_error();
     mpq_div(&result, &a, &b);
-    return true;
   }
 
   void power(ElementType& result, const ElementType& a, long n) const
   {
-    assert(n >= 0);
-    if (n >= 0)
+    bool n_is_negative = false;
+    if (n < 0)
       {
-        mpz_pow_ui(mpq_numref(&result), mpq_numref(&a), n);
-        mpz_pow_ui(mpq_denref(&result), mpq_denref(&a), n);
-      }
-    else
-      {
+        if (is_zero(a)) throw exc::division_by_zero_error();
+        n_is_negative = true;
         n = -n;
-        mpz_pow_ui(mpq_numref(&result), mpq_denref(&a), n);
-        mpz_pow_ui(mpq_denref(&result), mpq_numref(&a), n);
       }
+    mpz_pow_ui(mpq_numref(&result), mpq_numref(&a), n);
+    mpz_pow_ui(mpq_denref(&result), mpq_denref(&a), n);
+    if (n_is_negative)
+      mpq_inv(&result, &result);
   }
 
   void power_mpz(ElementType& result,
@@ -257,6 +259,11 @@ class ARingQQGMP : public RingInterface
     // Currently, until QQ becomes a ConcreteRing, elements of QQ are gmp_QQ
     // (aka mpq_t)
     mpq_set(&result, a.get_mpq());
+  }
+
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_mpq();
   }
 
 /** @} */

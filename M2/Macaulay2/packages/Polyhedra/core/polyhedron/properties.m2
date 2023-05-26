@@ -49,8 +49,11 @@ compute#Polyhedron#rays Polyhedron := P -> (
 
 compute#Polyhedron#computedDimension = method()
 compute#Polyhedron#computedDimension Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
-   dim C - 1
+   if isEmpty P then
+      return -1
+   else
+      C := getProperty(P, underlyingCone);
+      dim C - 1
 )
 
 

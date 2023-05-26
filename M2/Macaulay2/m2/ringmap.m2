@@ -1,33 +1,69 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
-RingMap = new Type of HashTable
+-- TODO: needs "newring.m2" for flattenRing
+needs "galois.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "modules2.m2"
+needs "mutablemat.m2"
 
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+-- should do something about the degree map here
+degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
+
+workable = f -> try (f(); true) else false
+
+-----------------------------------------------------------------------------
+-- RingMap type declarations and basic methods
+-----------------------------------------------------------------------------
+
+RingMap = new Type of HashTable
 RingMap.synonym = "ring map"
+
 matrix RingMap := opts -> f -> f.matrix
 source RingMap := f -> f.source
 target RingMap := f -> f.target
 raw RingMap := f -> f.RawRingMap
 
+ZZ == RingMap := (n, f) -> f == n
+RingMap == ZZ := (f, n) -> (
+    if n == 1 then (source f === target f and f === id_(source f)) else
+    error "encountered integer other than 1 in comparison with a ring map")
+
+-- printing helpers
+describe   RingMap := f -> Describe expression f
 expression RingMap := f -> (expression map) (expression (target f, source f, first entries matrix f))
-toString RingMap := f -> toString expression f
---net RingMap := f -> net expression f -- can't do that because of annoying spacing issue
-net RingMap := f -> horizontalJoin(
-     "map(", net target f, ",", net source f, ",", net first entries matrix f, ")"
-     )
-texMath RingMap := x -> texMath expression x
 
-describe RingMap := f -> Describe expression f
-toExternalString RingMap := f -> toString describe f
--- should do something about the degree map here
+toExternalString RingMap := toString @@ describe
+toString RingMap := toString @@ expression
+net      RingMap :=      net @@ expression
+texMath  RingMap :=  texMath @@ expression
 
-degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
+RingMap#AfterPrint =
+RingMap#AfterNoPrint = f -> (
+    -- class f, " ", target f, " <--- ", source f)
+    class f, " ", new MapExpression from {target f, source f})
 
-map(RingFamily,Thing,Thing) := RingMap => opts -> (R,S,m) -> map(default R,S,m,opts)
-map(Thing,RingFamily,Thing) := RingMap => opts -> (R,S,m) -> map(R,default S,m,opts)
+-----------------------------------------------------------------------------
+-- RingMap constructors
+-----------------------------------------------------------------------------
 
-workable = f -> try (f(); true) else false
+Ring#id = R -> map(R, R, vars R)
 
-map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
+map(RingFamily, Thing, Thing) := RingMap => opts -> (R, S, m) -> map(default R, S, m, opts)
+map(Thing, RingFamily, Thing) := RingMap => opts -> (R, S, m) -> map(R, default S, m, opts)
+
+map(Ring, Ring)          := RingMap => opts -> (R, S   ) -> map(R, S, matrix(R, {{}}), opts)
+map(Ring, Ring, RingMap) := RingMap => opts -> (R, S, f) -> map(R, S, matrix f,        opts)
+map(Ring, Ring, List)    := RingMap => opts -> (R, S, m) -> (
+    if m#?0 and instance(m#0, Option) then sub2(R, S, m) -- TODO: deprecate this?
+    else map(R, S, matrix(R, {m}), opts))
+
+map(Ring,       Matrix)  := RingMap => opts -> (   S, m) -> map(ring m, S, m,   opts)
+map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
      if not isFreeModule target m or not isFreeModule source m
      then error "expected a homomorphism between free modules";
      if ring m === (try coefficientRing R) and ring m === (try coefficientRing S)
@@ -89,7 +125,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
-		    if A === R or member(A, R.baseRings) then (
+		    if A === R or isMember(A, R.baseRings) then (
 			 -- we can promote
 			 mE = mE | promote(vars A, R);
 			 if instance(A,GaloisField) and A.rawGaloisField then (
@@ -126,17 +162,9 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  }
      )
 
-map(Ring,Matrix) := RingMap => opts -> (S,m) -> map(ring m,S,m)
-
-map(Ring,Ring) := RingMap => opts -> (S,R) -> map(S,R,{},opts)
-
-Ring#id = (R) -> map(R,R,vars R)
-
-RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : " << class f;
-     << " " << target f << " <--- " << source f << endl;
-     )
+-----------------------------------------------------------------------------
+-- evaluation of ring maps
+-----------------------------------------------------------------------------
 
 RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;
@@ -151,8 +179,9 @@ RingMap Number := (p,m) -> fff(p, promote(m,source p))
 RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
      S := target p;
-     if R =!= ring m 
-     then error "expected source of ring map to be the same as ring of matrix";
+     if R =!= ring m then (
+	  m = try promote(m,R) else error "ring of matrix not source of ring map, and not promotable to it";
+	  );
      F := p target m;
      E := p source m;
      map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)), Degree => p.cache.DegreeMap degree m))
@@ -168,24 +197,56 @@ RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
      new target f from f)
 
+RingMap Ideal  := Ideal  => (f, I) -> ideal f module I
+RingMap Module := Module => (f, M) -> (
+    (S, R) := (target f, source f);
+    if R =!= ring M then error "expected module over source ring";
+    if M.?relations then error "ring map applied to module with relations: use '**' or 'tensor' instead";
+    if M.?generators then image f M.generators
+    else ( -- M is a free module
+	d := degrees M;
+	e := f.cache.DegreeMap \ d;
+	-- use the same module if we can
+	if R === S and d === e then M else S^-e)
+    )
+
+-- misc
+tensor(RingMap, Module) := Module => {} >> opts -> (f, M) -> (
+    if source f =!= ring M then error "expected module over source ring";
+    cokernel f presentation M);
+RingMap ** Module := Module => (f, M) -> tensor(f, M)
+
+tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> (
+    if source f =!= ring m then error "expected matrix over source ring";
+    map(f ** target m, f ** source m, f cover m))
+RingMap ** Matrix := Matrix => (f, m) -> tensor(f, m)
+
+List / RingMap := List => (v,f) -> apply(v,x -> f x)
+RingMap \ List := List => (f,v) -> apply(v,x -> f x)
+
+-----------------------------------------------------------------------------
+-- kernel
+-----------------------------------------------------------------------------
+
 kernel = method(Options => { SubringLimit => infinity })
-kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
-     (f) -> (
-	  R := source f;
-	  n2 := numgens R;
-	  F := target f;
-	  n1 := numgens F;
-	  if 0_F == 1_F then return ideal(1_R);
-	  if class F === FractionField then (
-	       C := last F.baseRings;
-	       if not (
-		    (isPolynomialRing C or isQuotientOf(PolynomialRing,C))
-		    and
-		    (isPolynomialRing R or isQuotientOf(PolynomialRing,R))
-		    and
-		    coefficientRing R === coefficientRing C
-		    ) then error "kernel: not implemented yet";
-	       k := coefficientRing R;
+kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (f -> (
+    (F, R) := (target f, source f);
+    if 0_F == 1_F then return ideal 1_R;
+    -- the actual computation occurs here
+    I := runHooks((kernel, RingMap), (opts, f));
+    if I =!= null then I else error "kernel: no method implemented for this type of ring map"))
+
+-- This is a map from method keys to strategy hash tables
+algorithms := new MutableHashTable from {}
+algorithms#(kernel, RingMap) = new MutableHashTable from {
+    FractionField => (opts, f) -> (
+	(F, R) := (target f, source f);
+	C := last F.baseRings;
+	if not instance(F, FractionField)
+	or not coefficientRing R === (k := coefficientRing C)
+	or not(isPolynomialRing C or isQuotientOf(PolynomialRing, C))
+	or not(isPolynomialRing R or isQuotientOf(PolynomialRing, R))
+	then return null;
 	       prs := presentation C;
 	       B := ring prs;
 	       images := apply(generators R, x -> (
@@ -214,11 +275,10 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	       h := symbol h;
 	       x := symbol x;
 	       y := symbol y;
+	(n1, n2) := (numgens F, numgens R);
 	       S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
 		    MonomialOrder => Eliminate (n1 + 1),
-		    Degrees => join(
-			 apply(generators C, degree), {{1}}, 
-			 apply(generators R, degree), {{1}})];
+		    Degrees => join(degrees C, {{1}}, degrees R, {{1}})];
 	       in1 := map(S,C,matrix {take (generators S, n1)});
 	       in2 := map(S,B,matrix {take (generators S, n1)});
 	       in3 := map(S,R,matrix {take (generators S, {n1 + 1, n1 + n2})});
@@ -230,30 +290,39 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 			      in3 vars source in3 - d * in1 matrix {apply(images, first)}
 			      | d * in1 commonDenominator - 1,
 			      h),
-			 Strategy => LongPolynomial, opts)))
-	  else if (
-	       isAffineRing R and instance(ambient R, PolynomialRing) and isField coefficientRing R
-	       and isAffineRing F and instance(ambient F, PolynomialRing)
-	       and coefficientRing R === coefficientRing F
-	       ) 
-	  then (
+			 Strategy => LongPolynomial, opts))
+	),
+
+    "AffineRing" => (opts, f) -> (
+	(F, R) := (target f, source f);
+	if not isAffineRing R
+	or not isAffineRing F
+	or not instance(ambient R, PolynomialRing)
+	or not instance(ambient F, PolynomialRing)
+	or not isField coefficientRing R
+	or not coefficientRing R === coefficientRing F
+	then return null;
 	       graph := generators graphIdeal f;
 	       assert( not isHomogeneous f or isHomogeneous graph );
 	       SS := ring graph;
 	       chh := checkHilbertHint graph;
 	       if chh then (
-		   hf := poincare (target f)^1;
-		   T := (ring hf)_0;
-		   degs := degrees source graph;
-		   hf = hf * product(numgens source graph, i -> 1 - T^(degs#i#0));
-		   (cokernel graph).cache.poincare = hf;
+		   -- compare with pushNonLinear
+		   hf := poincare module target f;
+		   T := degreesRing SS;
+		   hf = hf * product(degrees source graph, d -> 1 - T_d);
+		   -- cache poincare
+		   poincare cokernel graph = hf;
 		   );
+	n1 := numgens F;
 	       mapback := map(R, ring graph, map(R^1, R^n1, 0) | vars R);
 	       G := gb(graph,opts);
 	       assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
 	       ideal mapback selectInSubring(1,generators G)
-	       )
-	  else (
+	),
+
+    Default => (opts, f) -> (
+	(F, R) := (target f, source f);
 	       numsame := 0;
 	       while (
 		    R.baseRings#?numsame and
@@ -267,13 +336,37 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 		    F.baseRings#(numsame-1).?isBasic
 		    )
 	       do numsame = numsame - 1;
-	       k = F.baseRings#(numsame-1);
+	       k := F.baseRings#(numsame-1);
 	       (R',p) := flattenRing(R, CoefficientRing => k);
 	       (F',r) := flattenRing(F, CoefficientRing => k);
-	       if R' === R and F' === F then error "kernel Ringmap: not implemented yet";
-	       p^-1 kernel (r * f * p^-1))))
+	if R' === R and F' === F then return null;
+	p^-1 kernel (r * f * p^-1)
+	),
+    }
+
+-- Installing hooks for kernel RingMap
+scan({Default, "AffineRing", FractionField}, strategy ->
+    addHook(key := (kernel, RingMap), algorithms#key#strategy, Strategy => strategy))
+
+-----------------------------------------------------------------------------
+
+preimage = method()
+preimage(RingMap, Ideal) := Ideal => (f, J) -> (
+    R := ring J;
+    kernel( map(R/J, R) * f ))
+
+preimage(Matrix, Module) := (f, M) -> (
+    T := target f;
+    g := map(T/M, T);
+    kernel(g * f))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f
+
+isInjective RingMap := f -> kernel f == 0
+
+-----------------------------------------------------------------------------
+-- composition of ring maps
+-----------------------------------------------------------------------------
 
 RingMap * RingMap := RingMap => (g,f) -> (
      if source g =!= target f then error "ring maps not composable";
@@ -291,6 +384,14 @@ RingMap * RingMap := RingMap => (g,f) -> (
 	  }
      )
 
+RingMap#1 = f -> (
+    if source f =!= target f then error "expected source and target to agree"
+    else id_(target f))
+RingMap ^ ZZ := BinaryPowerMethod
+
+-----------------------------------------------------------------------------
+
+-- TODO: should also check consistency with the degree groups
 isHomogeneous RingMap := (f) -> (
      R := f.source;
      S := f.target;
@@ -299,6 +400,10 @@ isHomogeneous RingMap := (f) -> (
 	       s := f r;
 	       s == 0 or isHomogeneous s and degree s === f.cache.DegreeMap degree r
 	       )))
+
+-----------------------------------------------------------------------------
+-- substitute
+-----------------------------------------------------------------------------
 
 substitute(Power,Thing) := (v,s) -> Power{substitute(v#0,s),v#1}
 substitute(Divide,Thing) := (v,s) -> Divide{substitute(v#0,s),substitute(v#1,s)}
@@ -340,7 +445,7 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
      local dummy;
      g := generators R;
      A := R;
-     while try (A = coefficientRing A; true) else false
+     while try (A = if instance(A,FractionField) then frac coefficientRing A else coefficientRing A; true) else false
      do g = join(g, generators A);
      h := new MutableHashTable;
      for i from 0 to #g-1 do h#(g#i) = if h#?(g#i) then (h#(g#i),i) else 1:i;
@@ -350,11 +455,12 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	  if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
 	  x := opt#0;
 	  y := opt#1;
+	  if instance(y, Constant) then y = numeric y;
 	  if not instance(y,RingElement) and not instance(y,Number) then error "expected substitution values to be ring elements or numbers";
 	  if S === null
 	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
 	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
-	  if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
+	  if not h#?x and ((try x=promote(x,R))===null or not h#?x) then error( "expected ", toString x, " to be a generator of ", toString R );
 	  for i in h#x do (
 	       if m#i =!= symbol dummy and m#i =!= y then error "multiple destinations specified for a generator";
 	       m#i = y;
@@ -371,7 +477,9 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	       try commonzero = commonzero + 0_A
 	       else error "expected substitution values and omitted generators to be in compatible rings";
 	       );
-	  for i from 0 to #m-1 do m#i = promote(m#i, ring commonzero);
+	  S = ring commonzero;
+	  if instance(R,FractionField) then S=frac S;
+	  for i from 0 to #m-1 do m#i = promote(m#i, S);
 	  )
      else if R === S and S === ring commonzero then (
      	  -- if source==target, then the default is to leave generators alone
@@ -382,11 +490,6 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	  );
      f := if S === null then matrix{toList m} else matrix(S,{toList m});
      map(ring f,R,f))
-
-map(Ring,Ring,List) := RingMap => opts -> (S,R,m) -> (
-     if #m>0 and all(m, o -> class o === Option) then sub2(S,R,m)
-     else map(S,R,matrix(S,{m}),opts)
-     )
 
 substitute(Matrix,List) := Matrix => (f,v) -> (sub2(,ring f,v)) f
 substitute(Module,List) := Module => (M,v) -> (sub2(,ring M,v)) M
@@ -402,59 +505,9 @@ substitute(RingElement,Option) := (f,v) -> (sub2(,ring f,{v})) f
 
 RingElement Array := (r,v) -> substitute(r,matrix {toList v})
 
-RingMap Ideal := Ideal => (f,I) -> ideal f module I
-
-fixup := (f) -> if isHomogeneous f then f else map(target f,,f)
-
-RingMap Module := Module => (f,M) -> (
-     R := source f;
-     S := target f;
-     if R =!= ring M then error "expected module over source ring";
-     if M.?relations then error "ring map applied to module with relations: use '**' or 'tensor' instead";
-     if M.?generators then image f M.generators
-     else (
-	  d := degrees M;
-	  e := f.cache.DegreeMap \ d;
-	  if R === S and d === e
-	  then M -- use the same module if we can
-     	  else S^-e
-	  )
-     )
-
-RingMap ** Module := Module => (f,M) -> (
-     R := source f;
-     S := target f;
-     if R =!= ring M then error "expected module over source ring";
-     cokernel f presentation M);
-
-RingMap ** Matrix := Matrix => (f,m) -> (
-     if source f =!= ring m then error "expected matrix over source ring";
-     map(f ** target m, f ** source m, f cover m))
-
-tensor(Ring,RingMap,Module) := opts -> (S,f,M) -> (
-     if S =!= target f then error "tensor: expected ring and target of ring map to be the same";
-     f ** M)
-
-tensor(Ring,RingMap,Matrix) := opts -> (S,f,m) -> (
-     if S =!= target f then error "tensor: expected ring and target of ring map to be the same";
-     f ** m)
-
-tensor(RingMap,Module) := Module => opts -> (f,M) -> f ** M
-
-tensor(RingMap,Matrix) := Matrix => opts -> (f,m) -> f ** m
-
-isInjective RingMap := (f) -> kernel f == 0
-
-preimage(RingMap,Ideal) := (f,J) -> (
-     R := ring J;
-     kernel ( map(R/J,R) * f ))
-
-List / RingMap := List => (v,f) -> apply(v,x -> f x)
-RingMap \ List := List => (f,v) -> apply(v,x -> f x)
-RingMap == ZZ := (f,n) -> (
-     if n == 1 then (source f === target f and f === id_(source f))
-     else error "encountered integer other than 1 in comparison with a ring map")
-ZZ == RingMap := (n,f) -> f == n
+-----------------------------------------------------------------------------
+-- inverse
+-----------------------------------------------------------------------------
 
 inverse RingMap := RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> (
 	  R := target f;
@@ -468,11 +521,10 @@ inverse RingMap := RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> (
 	  then map(S,R,mapback m)
 	  else error "ring map not invertible"))
 
-RingMap ^ ZZ := BinaryPowerMethod
-
-map(Ring,Ring,RingMap) := RingMap => opts -> (R,S,f) -> map(R,S,matrix f,opts)
-
+-----------------------------------------------------------------------------
 -- module maps over ring maps:
+-----------------------------------------------------------------------------
+
 map(Module,Module,Nothing,RawMatrix) := opts -> (M,N,p,f) -> map(M,N,f)
 map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
      (R,S) := (ring M,ring N);

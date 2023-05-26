@@ -108,7 +108,7 @@ Data = local Data
 
 model = method(TypicalValue => Model)
 model(List,FunctionClosure,String):=(p,f,name)->(
-    -- p = parametr list
+    -- p = parameter list
     -- f = random generator from the model (predefined fn!)
     new Model from { 
 	Name => name,
@@ -223,7 +223,7 @@ writeSample (Sample, String) := (s, dirname) -> (
 	    mkdir dirname;
 	    );
     	if isDirectory dirname then (
-	    stderr << "warning: udpating name of directory:" << endl;
+	    stderr << "warning: updating name of directory:" << endl;
 	    dirname = dirname |"New";
     	    stderr << dirname << endl; 
 	    mkdir dirname;
@@ -636,7 +636,7 @@ mingenStats (List) := Sequence => o -> (ideals) -> (
     if o.ShowTally then return (numAvg, numStdDev, tally numgensHist, comAvg, comStdDev, tally complexityHist);
     if o.Verbose then (
         stdio <<"There are "<<N<<" ideals in this sample. Of those, " << numberOfZeroIdeals << " are the zero ideal." << endl;
-	if numberOfZeroIdeals>0 then stdio <<"The statistics returned (mean and standard deviation of # of min gens and mean and standard deviation of degree comlexity) do NOT include those for the zero ideals."<< endl
+	if numberOfZeroIdeals>0 then stdio <<"The statistics returned (mean and standard deviation of # of min gens and mean and standard deviation of degree complexity) do NOT include those for the zero ideals."<< endl
 	);
     (numAvg, numStdDev, comAvg, comStdDev)
     )
@@ -1613,7 +1613,7 @@ doc ///
   Description
    Text 
     A sample of algebraic objects is a set of data collected by a random generating process, necessarily captured
-    by a formal statistical model. The type Sample defined here stores a set of data generated using an objet
+    by a formal statistical model. The type Sample defined here stores a set of data generated using an object
     of type Model. This allows for a streamlined way to sample random objects, store the data as a proper statistical sample,
     and study their algebraic properties under the probabilistic regime. 
     
@@ -1761,7 +1761,7 @@ doc ///
     name of the model used to generate a given sample
   Description
     Text 
-      An object of type Sample contians several pieces of information about the random sample, namely: 
+      An object of type Sample contains several pieces of information about the random sample, namely: 
       the name of the model used to generate the sample,
       values of the model's parameters used to generate the sample, 
       the size of the sample (that is, the number of data points in it), and the data itself. 
@@ -1779,7 +1779,7 @@ doc ///
     values of the model parameters that were used to generate a given sample
   Description
     Text 
-      An object of type Sample contians several pieces of information about the random sample, namely: 
+      An object of type Sample contains several pieces of information about the random sample, namely: 
       the name of the model used to generate the sample,
       values of the model's parameters used to generate the sample, 
       the size of the sample (that is, the number of data points in it), and the data itself. 
@@ -1815,7 +1815,7 @@ doc ///
     size of the random sample
   Description
     Text 
-      An object of type Sample contians several pieces of information about the random sample, namely: 
+      An object of type Sample contains several pieces of information about the random sample, namely: 
       the name of the model used to generate the sample,
       values of the model's parameters used to generate the sample, 
       the size of the sample (that is, the number of data points in it), and the data itself. 
@@ -1845,7 +1845,7 @@ doc ///
       Write a random sample to a directory on disk. This function creates 
       a directory in which the model and data are stored: one text file contains the information 
       about the model used to generate the sample, and another text file contains the 
-      infromation about the sample itself. 
+      information about the sample itself. 
     Example
       writeSample(sample(ER(2,3,0.1),5), "testDirectory")
       mySample = sample("testDirectory")
@@ -1872,7 +1872,7 @@ doc ///
       of all samples in object
   Description
     Text 
-      An object of type Sample contians several pieces of information about the random sample, namely: 
+      An object of type Sample contains several pieces of information about the random sample, namely: 
       the name of the model used to generate the sample,
       values of the model's parameters used to generate the sample, 
       the size of the sample (that is, the number of data points in it), and the data itself. 
@@ -2022,7 +2022,7 @@ doc ///
     D: ZZ
       maximum degree
     L: List 
-      of real numbers whose i-th entry is the probability of selecing a monomial of degree i, 
+      of real numbers whose i-th entry is the probability of selecting a monomial of degree i, 
       or of integers whose i-th entry is the number of monomials of degree i in each set
   Outputs
     : Model
@@ -2052,7 +2052,7 @@ doc ///
     D: ZZ
       maximum degree
     L: List 
-      of real numbers whose i-th entry is the probability of selecing a monomial of degree i, 
+      of real numbers whose i-th entry is the probability of selecting a monomial of degree i, 
       or of integers whose i-th entry is the number of monomials of degree i in each set
   Outputs
     : Model

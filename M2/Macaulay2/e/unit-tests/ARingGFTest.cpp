@@ -9,7 +9,7 @@
 #include <mpfr.h>
 
 #include "debug.hpp"
-#include "aring-gf-givaro.hpp"
+#include "aring-gf-flint.hpp"
 #include "ARingTest.hpp"
 
 static const int nelements = 200;
@@ -45,11 +45,11 @@ static int randomVals[nelements] = {
     43372313, 24240507, 96790882, 99639739};
 
 template <>
-void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
+void getElement<M2::ARingGFFlint>(const M2::ARingGFFlint& R,
                                    int index,
                                    M2::ARingGFGivaro::ElementType& result)
 {
-  M2::ARingGFGivaro::ElementType gen;
+  M2::ARingGFFlint::ElementType gen;
   R.init(gen);
   R.getGenerator(gen);
   if (index >= nelements)
@@ -59,11 +59,11 @@ void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
   R.clear(gen);
 }
 
-TEST(ARingGFGivaroGivaro, create)
+TEST(ARingGFFlint, create)
 {
-  M2::ARingGFGivaro R(5, 3);
+  M2::ARingGFFlint R(5, 3);
 
-  EXPECT_EQ(ringName(R), "GF(5,3,Givaro)");
+  EXPECT_EQ(ringName(R), "GF(5,3,Flint)");
   EXPECT_EQ(R.cardinality(), 125);
   EXPECT_EQ(R.characteristic(), 5);
 
@@ -78,7 +78,7 @@ TEST(ARingGFGivaroGivaro, create)
   std::cout << std::endl;
 
   // Check what values integers go to
-  M2::ARingGFGivaro::ElementType a;
+  M2::ARingGFFlint::ElementType a;
   R.init(a);
   //    for (int i=-5; i<R.characteristic(); i++)
   for (int i = -130; i < 130; i++)
@@ -99,10 +99,10 @@ TEST(ARingGFGivaroGivaro, create)
   testSomeMore(R);
 }
 
-TEST(ARingGFGivaroGivaro, random)
+TEST(ARingGFFlint, random)
 {
-  M2::ARingGFGivaro R(7, 2);
-  M2::ARingGFGivaro::ElementType a;
+  M2::ARingGFFlint R(7, 2);
+  M2::ARingGFFlint::ElementType a;
   R.init(a);
   int counts[49];
   for (int i = 0; i < 49; i++) counts[i] = 0;
@@ -134,9 +134,9 @@ TEST(ARingGFGivaroGivaro, random)
   R.clear(a);
 }
 
-TEST(ARingGFGivaroGivaro, arithmetic)
+TEST(ARingGFFlint, arithmetic)
 {
-  M2::ARingGFGivaro R(5, 3);
+  M2::ARingGFFlint R(5, 3);
   testFiniteField(R, ntrials);
 }
 

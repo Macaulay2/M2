@@ -104,7 +104,7 @@ positionVariableChildren(Sequence,List,List,List):=(kn,l,m,v)->(
 -----------------------
 precookPieriHomotopy = method(TypicalValue=>List)
 precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
-     -- k and n are the integers defining the Grassmanian G(k,n)
+     -- k and n are the integers defining the Grassmannian G(k,n)
      -- l and m are partitions of n
      (k,n) := kn;
      l = verifyLength(l, k);
@@ -116,7 +116,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      d := (k*(n-k)-sum(l)-sum(m));
      S := FFF[vars(53..d+52)];
      T:= apply(#m, i->n-k+i-m#i);
-     -- P is a list with the indeces where the special flag has ones
+     -- P is a list with the indices where the special flag has ones
      P:=toList(set toList(0..n-1)-T);
      G:=mutableMatrix(S,n-k,n);
      apply(#P, j->G_(j,P#j)=1);
@@ -203,14 +203,18 @@ solveInternalSimple(Sequence,List,List,List) := (kn,l,m,G)->(
 -------------------------
 solveSimpleSchubert = method(TypicalValue=>List)
 solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
+   -- SchPblm is a an instance of a Schubert problem, which is a list of pairs (c,F) with c a Schubert conditions and F a flag
+   -- Check that it does indeed form a Schubert problem, and convert the conditions to partitions (if they were brackets)
+   SchPblm = ensurePartitions(SchPblm,k,n);
+   -- set aside the first two conditions
    twoconds := take(SchPblm,2);
-   remaining'conditons'flags := drop (SchPblm,2);
+   remaining'conditions'flags := drop (SchPblm,2);
    l1 := verifyLength(first first twoconds, k);
    l2 := verifyLength(first last twoconds, k); 
    F1:= promote(last first twoconds, FFF);
    F2:= promote(last last twoconds, FFF);
-   simplConds := remaining'conditons'flags/first;
-   remaining'flags := remaining'conditons'flags/last;   
+   simplConds := remaining'conditions'flags/first;
+   remaining'flags := remaining'conditions'flags/last;   
    --Slns:={};
    -- checks if it is a valid Simple Schubert problem
    checkSimpleSchubertProblem({l1,l2}|simplConds, k,n);

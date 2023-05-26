@@ -145,7 +145,7 @@ toZZ List := List => L -> (
 fourierMotzkin = method();
 
 --   INPUT : 'Z' a matrix; the columns are the rays generating the cone
---	     'H' a matrix; the columns are the rays generaing the linear 
+--	     'H' a matrix; the columns are the rays generating the linear 
 --               space in the cone.  
 --  OUTPUT : a sequence (A,E) :
 --           'A' a matrix; the columns are the rays generating the polar 
@@ -220,7 +220,7 @@ fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
 	       A = apply(D#0, e -> primitive e);
 	       V = D#1;
 	       ));
-     -- output formating
+     -- output formatting
      --A = apply(A, e -> primitive e);
      if (A === {}) then A = map(ZZ^d, ZZ^0, 0)
      else A = transpose matrix A;

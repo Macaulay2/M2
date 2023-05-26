@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 positions = method()
 positions(MutableList,Function) := 
 positions(VisibleList,Function) := (v,f) -> for i from 0 to #v-1 list if f v#i then i else continue
@@ -17,7 +19,8 @@ position(VisibleList,VisibleList,Function) := o -> (v,w,f) -> (
      else (for i to #v-1 do if f(v#i,w#i) then return i)
      )
 
-delete = (x,v) -> select(v, i -> i =!= x)
+delete = method()
+delete(Thing, BasicList) := (x,v) -> select(v, i -> i =!= x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

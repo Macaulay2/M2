@@ -104,7 +104,7 @@ doc ///
 	    many additional methods for constructing other specific types of
 	    normal toric varieties.
     	Text
-    	    @SUBSECTION "Constuctors for normal toric varieties"@
+    	    @SUBSECTION "Constructors for normal toric varieties"@
 	Text
     	    @UL {
                 TO (normalToricVariety, List, List),
@@ -1181,7 +1181,7 @@ doc ///
 
 
 ------------------------------------------------------------------------------
--- Methods that inferface with the 'Polyhedra' package 
+-- Methods that interface with the 'Polyhedra' package 
 ------------------------------------------------------------------------------
 doc ///
     Key
@@ -1427,7 +1427,7 @@ doc ///
             rays X
             weilDivisorGroup X
     	Text
-             When the normal toric variety is nondegerenate, the number of
+             When the normal toric variety is nondegenerate, the number of
              rays equals the number of variables in the total coordinate ring.
     	Example  
              #rays X == numgens ring X
@@ -1879,7 +1879,7 @@ doc ///
             $\{0,\dots,n\}$; the entries index the rays that generate the
             cone.
         Text	    
-            The rojective plane has three fixed points and three fixed curves
+            The projective plane has three fixed points and three fixed curves
             (under the action of its torus), and projective $3$-space has four
             fixed points, six fixed curves, and four divisors.  More
             generally, the orbits of projective $(n-1)$-space are enumerated
@@ -2028,7 +2028,7 @@ doc ///
     Headline 
         make a birational simplicial toric variety
     Usage 
-        makeSimplical X
+        makeSimplicial X
     Inputs
         X : NormalToricVariety
         Strategy => ZZ

@@ -84,7 +84,7 @@ document {
 	  TO columnMult,
 	  },
      HEADER3 "matrix arithmetic",
-     "Many matrix arithmetic routines are only available for immutabie 
+     "Many matrix arithmetic routines are only available for immutable 
      matrices, not
      mutable matrices.  It is necessary to use ", TO matrix, " to make
      an immutable matrix first.",
@@ -275,32 +275,47 @@ document {
      SeeAlso => {"mutable matrices", "row and column operations"} 
      }
 
-TEST ///
-debug Core
-M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>false)
-rawInsertColumns(raw M,3,4)
-M
-rawDeleteColumns(raw M,8,9)
-M
+document {
+     Key => { nullSpace, (nullSpace, MutableMatrix) },
+     Headline => "find the null space of a mutable matrix",
+     Usage => "nullSpace m",
+     Inputs => {
+	  "m" => MutableMatrix => { "over ", TO "RR", " or ", TO "CC" }
+	  },
+     Outputs => {
+	  MutableMatrix => {"a mutable matrix whose columns span the null space of ", TT "m"}
+	  },
+     EXAMPLE {
+	  "m = mutableMatrix {{1.p500,1},{-2,-2}}",
+	  "nullSpace m",
+	  "precision oo"
+	  }
+     }
 
-rawInsertRows(raw M,5,6)
-M
-rawDeleteRows(raw M,1,1)
-M
+document {
+     Key => { rowRankProfile, (rowRankProfile, MutableMatrix)},
+     Headline => "find the row rank profile of a mutable matrix",
+     Usage => "rowRankProfile m",
+     Inputs => {
+	  "m" => MutableMatrix => { "over ", TO "RR", " or ", TO "CC" }
+	  },
+     Outputs => {
+	  List => {"the lexicographically smallest list of indices of linearly independent rows generating the row space of ", TT "m"}
+	  },
+     EXAMPLE "rowRankProfile mutableMatrix {{1,2,3}, {0,0,0.}, {3,4,5} }",
+     SeeAlso => { columnRankProfile }
+     }
 
-M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>true)
-rawInsertColumns(raw M,3,4)
-M
-rawDeleteColumns(raw M,8,9)
-M
-
-rawInsertRows(raw M,5,6)
-M
-rawDeleteRows(raw M,1,1)
-M
-
-rawDeleteColumns(raw M,3,6)
-M
-rawDeleteRows(raw M,4,9)
-M
-///
+document {
+     Key => { columnRankProfile, (columnRankProfile, MutableMatrix)},
+     Headline => "find the column rank profile of a mutable matrix",
+     Usage => "columnRankProfile m",
+     Inputs => {
+	  "m" => MutableMatrix => { "over ", TO "RR", " or ", TO "CC" }
+	  },
+     Outputs => {
+	  List => {"the lexicographically smallest list of indices of linearly independent columns generating the column space of ", TT "m"}
+	  },
+     EXAMPLE "columnRankProfile transpose mutableMatrix {{1,2,3}, {0,0,0.}, {3,4,5} }",
+     SeeAlso => { rowRankProfile }
+     }

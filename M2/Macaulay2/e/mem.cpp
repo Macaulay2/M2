@@ -69,8 +69,9 @@ void stash::chop_slab()
 void stash::text_out(buffer &o) const
 // Display statistics about this stash.
 {
-  char s[200];
-  sprintf(s,
+  const int N = 200;
+  char s[N];
+  snprintf(s, N,
           "%16s %9dk %9dk %10zd %10zu %10zu %10zu %10zu%s",
           name,
           static_cast<int>((element_size * highwater + 1023) / 1024),
@@ -99,8 +100,9 @@ void stash::stats(buffer &o)
 
   if (n > 0)
     {
-      char s[200];
-      sprintf(s,
+      const int N = 200;
+      char s[N];
+      snprintf(s, N,
               "%16s %10s %10s %10s %10s %10s %10s %10s%s",
               "stash",
               "k total",
@@ -134,7 +136,7 @@ doubling_stash::~doubling_stash()
     {
       if (doubles[i] != NULL)
         emit("internal warning -- deleting a double stash");
-      deleteitem(doubles[i]);
+      freemem(doubles[i]);
     }
 }
 

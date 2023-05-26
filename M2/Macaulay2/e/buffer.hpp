@@ -30,7 +30,7 @@ class buffer : public our_new_delete
         _buf(newarray_atomic(char, BUFFER_INITIAL_CAPACITY))
   {
   }
-  ~buffer() { deletearray(_buf); }
+  ~buffer() { freemem(_buf); }
   void reset() { _size = 0; }
   int size() { return _size; }
   int capacity() { return _capacity; }
@@ -82,7 +82,7 @@ class buffer : public our_new_delete
   }
   buffer &operator<<(M2_string s)
   {
-    put(s->array, s->len);
+    put((char *)s->array, s->len);
     return *this;
   }
   buffer &operator<<(std::string s)

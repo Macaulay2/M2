@@ -281,20 +281,9 @@ TEST ///
 
 testGF = (strategy) -> (
     R := null;
-    assert(strategy===null or strategy==="Old" or strategy==="Givaro" or strategy==="CompleteGivaro");
+    assert(strategy===null or strategy==="Old" or strategy==="Flint" or strategy==="FlintBig" or strategy==="New");
     low := 1;
     hi := i -> 20;
-    -- This upper bound for CompleteGivaro is made to match the default SizeLimit of 10000.
-    if strategy === "CompleteGivaro" then (
-        low = 2; -- this is an ERROR: it should be able to handle low==1. 
-        hi = p -> if p == 2 then 13 
-        else if p == 3 then 10 
-        else if p == 5 then 5 
-        else if p == 7 then 4
-        else if p < 23 then 3
-        else if p < 100 then 2
-        else 1;
-        );
     for i from low to hi 2 do (
         << "doing " <<  (2,i) << endl;
         R = GF(2^i, Strategy=>strategy);
@@ -317,9 +306,9 @@ testGF = (strategy) -> (
 TEST ///
   testGF null
   testGF "Old"  
-  if hasFFPACK then testGF "Givaro"
---  testGF "CompleteGivaro" -- this one fails, since it doesn't fall back to a different representation if
-    -- the size is too big
+  testGF "New"  
+  testGF "Flint"
+  testGF "FlintBig"
 ///
 
 TEST ///

@@ -10,25 +10,15 @@
 
 #include "RingTest.hpp"
 #include "tower.hpp"
+#include "../util.hpp"
 
-// First: we need a routne to read a polynomial from a string.
+// First: we need a routine to read a polynomial from a string.
 // Format:  variables are a..zA..Z, and then [1], [2], ...
 // Need both input and output routines for reading/writing polynomials in this
 // format.
 // coefficients: (+ or - or nothing) (number) (optional: . or /, followed by
 // another (number)
 // for GF, do we mix the a^r in?
-
-M2_ArrayString toM2ArrayString(std::vector<std::string>& strs)
-{
-  int n = static_cast<int>(
-      strs.size());  // needed since M2_ArrayString len field is int
-  int i;
-  M2_ArrayString a = getmemarraytype(M2_ArrayString, n);
-  a->len = n;
-  for (i = 0; i < n; i++) a->array[i] = M2_tostring(strs[i].c_str());
-  return a;
-}
 
 template <>
 ring_elem getElement<Tower>(const Tower& R, int index)
@@ -40,7 +30,7 @@ ring_elem getElement<Tower>(const Tower& R, int index)
 TEST(RingTower, create)
 {
   std::vector<std::string> vars = {"a", "b"};
-  M2_ArrayString varnames = toM2ArrayString(vars);
+  M2_ArrayString varnames = stdvector_to_M2_ArrayString(vars);
   const Tower* R = Tower::create(101, varnames);
   EXPECT_TRUE(R != 0);
   EXPECT_EQ(ringName(*R), "Tower[ZZ/101[a,b]]");
@@ -58,7 +48,7 @@ TEST(RingTower, create)
 TEST(RingTower, elems)
 {
   std::vector<std::string> vars = {"a", "b"};
-  M2_ArrayString varnames = toM2ArrayString(vars);
+  M2_ArrayString varnames = stdvector_to_M2_ArrayString(vars);
   const Tower* R = Tower::create(101, varnames);
 
   ring_elem a = R->var(0);
