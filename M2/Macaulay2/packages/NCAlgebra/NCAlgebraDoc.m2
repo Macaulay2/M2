@@ -3448,7 +3448,7 @@ doc ///
    Description
       Text
          This method constructs a three dimensional Sklyanin algebra with parameters from
-	 the params list, and variables from varList (see @ HREF{"http:////arxiv.org//abs//1107.2953","here"} @).
+	 the params list, and variables from varList (see @ arXiv("1107.2953","here") @).
 	 If either list is not length three, then an error is thrown.  The generic 
 	 such algebra does not have a finite Groebner basis, so the optional parameter
 	 DegreeLimit has been defaulted to 5.  If only one list is provided, it is used
