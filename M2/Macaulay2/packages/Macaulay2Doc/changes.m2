@@ -51,7 +51,8 @@ document {
 			 TO2((symbol ||, Matrix, Matrix), "||"), "."},
 		    LI { "The html documentation now syntax highlights Macaulay2 code by default using ", HREF{"https://prismjs.com/", "Prism"}, "."},
 		    LI { "Some improvements have been made to ", TO findProgram, " and ", TO runProgram, "."},
-		    LI { "A specific test from a package may now be specified using ", TO (tests, ZZ, Package), "."}
+		    LI { "A specific test from a package may now be specified using ", TO (tests, ZZ, Package), "."},
+		    LI { "The html documentation now uses the HTML5 specification."}
 	       }
 	  },
 	  LI { "functionality changed in a way that could break code:",
@@ -60,7 +61,9 @@ document {
 			 "The old names still exist as synonyms, but they may be removed in a future release." },
 		    LI { "Raising a matrix to the 0th power will now raise an error if the ", TO source, " and ", TO target, " do not agree."},
 		    LI { "The value of a class's ", TT "1", " key (used internally for getting multiplicative identities) should now be a function that takes ",
-			 "an instance of the class and returns the multiplicative identity rather than the multiplicative identity itself."}
+			 "an instance of the class and returns the multiplicative identity rather than the multiplicative identity itself."},
+		    LI { "The function ", TO urlEncode, " has been moved from the ", TO OnlineLookup, " package to ", TO Core, ", and its behavior has been ",
+			 "slightly modified."}
 	       }
 	  },
 	  LI { "emacs updates:",
