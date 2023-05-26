@@ -1421,21 +1421,21 @@ blockDiff (DGAlgebra, ZZ) := (A,d) -> (
 )
 
 displayBlockDiff (DGAlgebra, Array, Array) := Matrix => (A, sour, tar) -> (
-    --tar: a list of mulit-indices occuring in the (i-1)-th step of the complex associated to A
-    --sour: a list of mulit-indices occuring in the (i)-th step of the complex associated to A
+    --tar: a list of mulit-indices occurring in the (i-1)-th step of the complex associated to A
+    --sour: a list of mulit-indices occurring in the (i)-th step of the complex associated to A
     i := sum sour_0;
     X := blockDiff(A,i);
     X_sour^tar
     )
 displayBlockDiff (DGAlgebra, List, List) := Matrix => (A, sour, tar) -> (
-    --tar: a  mulit-index occuring in the (i-1)-th step of the complex associated to A
-    --sour: a index occuring in the (i)-th step of the complex associated to A
+    --tar: a  mulit-index occurring in the (i-1)-th step of the complex associated to A
+    --sour: a index occurring in the (i)-th step of the complex associated to A
     i := sum sour;
     X := blockDiff(A,i);
     X_[sour]^[tar]
     )
 displayBlockDiff (DGAlgebra,  VisibleList) := Matrix => (A, tar) -> (
-    --tar: a  mulit-index occuring in the (i-1)-th step of the complex associated to A
+    --tar: a  mulit-index occurring in the (i-1)-th step of the complex associated to A
     --let i = 1+ sum tar, and d = C.dd_i the i-th differential in the complex C = toComplex(A, i).
     --this returns all the blocks in d whose target is the summand corresponding to tar.
     t := tar;
