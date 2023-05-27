@@ -623,7 +623,8 @@ document {
       	  ///x|"x"|x///,
 	  },
      "If one of the two arguments is an integer, it is converted to a string first.",
-     EXAMPLE ///"t = " | 333///
+     EXAMPLE ///"t = " | 333///,
+     SeeAlso => {horizontalJoin}
      }
 
 document {

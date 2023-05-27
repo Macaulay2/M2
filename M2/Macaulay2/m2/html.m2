@@ -120,20 +120,21 @@ html HTML := x -> demark(newline, {
 treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
-fixNewLines := method()
-fixNewLines Hypertext :=
-fixNewLines Nothing :=
-fixNewLines Option := identity
-fixNewLines Thing := x -> replace("\r\n","\n",toString x) -- toString prevents LaTeX being inserted...
+toStringMaybe := method()
+toStringMaybe Hypertext :=
+toStringMaybe Nothing :=
+toStringMaybe OptionTable :=
+toStringMaybe Option := identity
+toStringMaybe Thing := x -> replace("\r\n","\n",toString x) -- toString prevents LaTeX being inserted...
 -- ... since non HTML types should *not* be KaTeX-ified inside these tags:
 html PRE :=
 html SAMP :=
 html KBD :=
-html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
+html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,toStringMaybe))
 
 -- hack for HTML5 validation
 -- ideally, TT should be removed and replaced with CODE, KBD, SAMP, and/or VAR
-html TT := x -> html SPAN prepend("class" => "tt", toList x)
+html TT := x -> html SPAN prepend("class" => "tt", apply(toList x,toStringMaybe))
 
 html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
 html COMMENT := x -> if match("--", concatenate x) then
