@@ -107,12 +107,14 @@ complex List := Complex => opts -> L -> (
 complex Module := Complex => opts -> (M) -> (
     if not instance(opts.Base, ZZ) then
       error "complex: expected base to be an integer";
+    if M.cache.?Complex and opts.Base === 0 then return M.cache.Complex;
     C := new Complex from {
            symbol ring => ring M,
            symbol concentration => (opts.Base,opts.Base),
            symbol module => hashTable {opts.Base => M},
            symbol cache => new CacheTable
            };
+    if opts.Base === 0 then M.cache.Complex = C;
     C.dd = map(C,C,0,Degree=>-1);
     C
     )

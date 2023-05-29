@@ -1645,47 +1645,6 @@ TEST ///
   assert(f == yonedaExtension' yonedaExtension f)
 ///
 
-TEST ///
-  -- of length limits and free resolutions
-  R = ZZ/32003[a..d]/(a^2-b*c)
-  M = coker vars R;
-  C1 = freeResolution(M, LengthLimit => 4);
-  assert(M.cache.?Resolution)
-  assert(M.cache.Resolution === C1)
-  assert(M.cache.Resolution.cache.LengthLimit === length C1)
-  assert(C1.cache.Module === M)
-  C2 = freeResolution(M, LengthLimit=>10)
-  assert(length C2 == 10)
-  assert(M.cache.?Resolution)
-  assert(M.cache.Resolution === C2)
-  assert(M.cache.Resolution.cache.LengthLimit === length C2)
-  assert(C2.cache.Module === M)
-  C3 = freeResolution(M, LengthLimit=>9)
-  assert(M.cache.?Resolution)
-  assert(M.cache.Resolution === C2)
-  assert(M.cache.Resolution =!= C3)
-  assert(M.cache.Resolution.cache.LengthLimit === length C2)
-  assert(length C3 == 9)
-  assert(C3.cache.Module === M)
-  C4 = freeResolution(M, LengthLimit => 1)
-  assert(M.cache.?Resolution)
-  assert(M.cache.Resolution === C2)
-  assert(M.cache.Resolution.cache.LengthLimit === length C2)
-  assert(length C4 == 1)
-  assert(C4.cache.Module === M)
-  C5 = freeResolution(M, LengthLimit => 0)
-  assert(M.cache.?Resolution)
-  assert(M.cache.Resolution === C2)
-  assert(M.cache.Resolution.cache.LengthLimit === length C2)
-  assert(length C5 == 0) 
-  assert(C5.cache.Module === M)
-  -- TODO? What behavior do we want here?
-  --assert try (C6 = freeResolution(M, LengthLimit => -1); false) else true  -- this one?
-  assert (C6 = freeResolution(M, LengthLimit => -1) == 0) -- or this one?
-  assert(M.cache.?Resolution)
-  assert(M.cache.Resolution === C2)
-  assert(M.cache.Resolution.cache.LengthLimit === length C2)
-///
 
 TEST ///
 -*

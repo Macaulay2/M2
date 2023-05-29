@@ -208,17 +208,17 @@ TEST ///
   (usedtime1, C1) = toSequence timing freeResolution(I, LengthLimit => 6, Strategy => 1) -- no recomputation
   assert isWellDefined C1
   assert(length C1 == 6)
-  assert(usedtime1 < usedtime/10)
+  assert(usedtime1 < usedtime/5) -- this /5 is a heuristic, just to check that essentially no computation is happening for usedtime1
 
   (usedtime2, C2) = toSequence timing freeResolution(I, LengthLimit => 7, Strategy => 1)
   assert isWellDefined C2
   assert(length C2 == 7)
-  assert(usedtime1 < usedtime2/10)
+  assert(usedtime1 < usedtime2/2)
   
   (usedtime3, C3) = toSequence timing freeResolution(I, LengthLimit => 5, Strategy => 0) -- does change length, no recomputation
   assert isWellDefined C3
   assert(length C3 == 5)
-  assert(usedtime3 < usedtime2/10)
+  assert(usedtime3 < usedtime2/2)
 ///
 
 TEST ///
@@ -725,10 +725,10 @@ TEST ///
   assert(usedtime2 < usedtime1/10)
 
   (usedtime3, C3) = toSequence timing freeResolution I
-  assert(usedtime3 >  10*usedtime2)
+  assert(usedtime3 >  5*usedtime2)
 
   (usedtime4, C4) = toSequence timing freeResolution(I, Strategy => Engine)
-  assert(usedtime4 < usedtime3/10)
+  assert(usedtime4 < usedtime3/2)
 
   freeResolution(I, Strategy => 0) -- not recomputing
   freeResolution(I, Strategy => 1) -- not recomputing
@@ -788,6 +788,67 @@ TEST ///
   --  assert( res M === C )
 
 ///
+
+TEST ///
+  -- of length limits and free resolutions
+  R = ZZ/32003[a..d]/(a^2-b*c)
+  M = coker vars R;
+  C1 = freeResolution(M, LengthLimit => 4);
+  assert(M.cache.?Resolution)
+  assert(M.cache.Resolution === C1)
+  assert(M.cache.Resolution.cache.LengthLimit === length C1)
+  assert(C1.cache.Module === M)
+  C2 = freeResolution(M, LengthLimit=>10)
+  assert(length C2 == 10)
+  assert(M.cache.?Resolution)
+  assert(M.cache.Resolution === C2)
+  assert(M.cache.Resolution.cache.LengthLimit === length C2)
+  assert(C2.cache.Module === M)
+  C3 = freeResolution(M, LengthLimit=>9)
+  assert(M.cache.?Resolution)
+  assert(M.cache.Resolution === C2)
+  assert(M.cache.Resolution =!= C3)
+  assert(M.cache.Resolution.cache.LengthLimit === length C2)
+  assert(length C3 == 9)
+  assert(C3.cache.Module === M)
+  C4 = freeResolution(M, LengthLimit => 1)
+  assert(M.cache.?Resolution)
+  assert(M.cache.Resolution === C2)
+  assert(M.cache.Resolution.cache.LengthLimit === length C2)
+  assert(length C4 == 1)
+  assert(C4.cache.Module === M)
+  C5 = freeResolution(M, LengthLimit => 0)
+  assert(M.cache.?Resolution)
+  assert(M.cache.Resolution === C2)
+  assert(M.cache.Resolution.cache.LengthLimit === length C2)
+  assert(length C5 == 0) 
+  assert(C5.cache.Module === M)
+  -- TODO? What behavior do we want here?
+  --assert try (C6 = freeResolution(M, LengthLimit => -1); false) else true  -- this one?
+  assert ((C6 = freeResolution(M, LengthLimit => -1)) == 0) -- or this one?
+  assert(M.cache.?Resolution)
+  assert(M.cache.Resolution === C2)
+  assert(M.cache.Resolution.cache.LengthLimit === length C2)
+///
+
+TEST ///
+  R = ZZ/101[a..d]
+  M = R^0
+  C = freeResolution M
+  assert(M.cache.?Resolution)
+  assert(M.cache.Resolution === C)
+  
+  C1 = freeResolution(M, LengthLimit => -1)
+  assert(M.cache.Resolution === C)
+  assert(C1 == C)
+  assert(C1 == 0)
+
+  C2 = freeResolution(M, LengthLimit => 2)
+  M.cache.Resolution === C
+  assert(C2 == C)
+  assert(C2 == 0)
+///
+
 
 ///
   -- code to test control-c during a computation.

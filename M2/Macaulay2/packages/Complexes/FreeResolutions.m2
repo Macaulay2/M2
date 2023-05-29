@@ -54,14 +54,13 @@ freeResolution Module := Complex => opts -> M -> (
     -- Nonminimal: true if the computation is constructed using the Nonminimal strategy.
     -- LengthLimit prescribes the length of the computed complex.
     -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
+    R := ring M;
     local C;
-    if opts.LengthLimit < 0 or M == 0 then (
-        C = complex (ring M)^0;
-        C.cache.Nonminimal = false;
-        C.cache.LengthLimit = opts.LengthLimit;
-        C.cache.DegreeLimit = infinity;
-        C.cache.Module = M;
-        M.cache.Resolution = C;
+    if M === R^0 or opts.LengthLimit < 0
+    then (
+        C = complex R^0;
+        if not M.cache.?Resolution then 
+            M.cache.Resolution = C;
         return C;
         );
     if M.cache.?Resolution then (
@@ -194,6 +193,7 @@ resolutionObjectInEngine = (opts, M, matM) -> (
             i = i+1;
             F
             );
+        if #modules === 0 then return complex R^0;
         if #modules === 1 then return complex(modules#0, Base => 0);
         maps := hashTable for i from 1 to #modules-1 list (
             i => map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i))
