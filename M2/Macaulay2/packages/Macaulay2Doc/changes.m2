@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.22",
 	  TO "changes, 1.21",
 	  TO "changes, 1.20",
 	  TO "changes, 1.19.1",
