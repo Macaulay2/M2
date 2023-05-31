@@ -23,6 +23,7 @@ newPackage(
         },
     Keywords => { "Commutative Algebra" },
     PackageImports => { "Polyhedra", "NormalToricVarieties" },
+    PackageExports => { "Complexes" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
@@ -253,6 +254,22 @@ truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     F := truncate(degs, source f, opts);
     G := truncate(degs, target f, opts);
     map(G, F, (f * gens F) // gens G))
+
+truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
+    (lo, hi) := concentration C;
+    if lo === hi then return complex truncate(e, C_lo);
+    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
+    )
+truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
+
+truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
+    C := truncate(e, source f);
+    D := truncate(e, target f);
+    d := degree f;
+    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
+    )
+truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
+
 
 --------------------------------------------------------------------
 -- basis using basisPolyhedron (experimental)

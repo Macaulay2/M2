@@ -135,7 +135,7 @@ TEST ///
   S = ZZ/101[a..f]
   m = genericSymmetricMatrix(S, 3)
   I = trim minors(2, m)
-  M = prune truncate(1, S^1/I)
+  M = prune subquotient(vars S, gens I) -- basically `M = prune truncate(1, S^1/I)`
   elapsedTime Tor_2(M,M);
   elapsedTime f1 = torSymmetry(2,M,M);
   elapsedTime f2 = torSymmetry(2,M,M);

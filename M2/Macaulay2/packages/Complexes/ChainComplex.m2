@@ -107,12 +107,14 @@ complex List := Complex => opts -> L -> (
 complex Module := Complex => opts -> (M) -> (
     if not instance(opts.Base, ZZ) then
       error "complex: expected base to be an integer";
+    if M.cache.?Complex and opts.Base === 0 then return M.cache.Complex;
     C := new Complex from {
            symbol ring => ring M,
            symbol concentration => (opts.Base,opts.Base),
            symbol module => hashTable {opts.Base => M},
            symbol cache => new CacheTable
            };
+    if opts.Base === 0 then M.cache.Complex = C;
     C.dd = map(C,C,0,Degree=>-1);
     C
     )
@@ -420,7 +422,7 @@ net Complex := C -> (
                  stack (net C_i, " ", net i))
      )
 
-texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
+texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
 
 -- NOTE: there are hardcoded constant values (8, 10) 
 -- in the next function.
@@ -493,7 +495,7 @@ freeResolution = method(Options => {
 	}
     )
 
-load "./ResolutionObject.m2"
+--load "./ResolutionObject.m2"
 
 -- freeResolution Module := Complex => opts -> M -> (
 --     if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
@@ -696,13 +698,6 @@ part(List, Complex) := Complex => (deg, C) -> (
         )
     )
 part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
-
-truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
-    (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(e, C_lo);
-    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
-    )
-truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
@@ -974,7 +969,6 @@ augmentationMap Complex := ComplexMap =>
 
 -- TODO: get this to work over fields, poly rings, quotients, and also the local case.
 --       improve the performance of this function
-minimize = method ()
 minimize Complex := C -> (
     if not isFree C then error "expected a complex of free modules";
     (lo,hi) := concentration C;

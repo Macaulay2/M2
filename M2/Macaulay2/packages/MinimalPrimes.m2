@@ -253,7 +253,8 @@ strat0 = ({Linear, DecomposeMonomials}, infinity)
 strat1 = ({Linear, DecomposeMonomials, (Factorization, 3)}, infinity)
 BirationalStrat = ({strat1, (Birational, infinity)}, infinity)
 NoBirationalStrat = strat1
-stratEnd = {(IndependentSet, infinity), SplitTower, CharacteristicSets}
+--stratEnd = {(IndependentSet, infinity), SplitTower, CharacteristicSets}
+stratEnd = {(IndependentSet, infinity), CharacteristicSets}
 
 algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
     "Legacy" => (opts, I) -> (

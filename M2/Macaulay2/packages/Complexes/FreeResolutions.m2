@@ -1,40 +1,44 @@
--- todo for April 11, 2022:
---   we just had finished resolutionBySyzygies, although maybe some more testing is in order.
---   e.g.: interrupts, Weyl algebra.
---   need: Strategy => OverZZ.
---   need: Strategy => Inhomogeneous.
---   . take our example collection and make into a robust set of tests.
+-- todo: (for 24 April 2023, 1 May 2023)
+--  create doc node(s) for freeResolution
+--
+-- 1. landing page for freeResolution: just the basics.
+--    (doesn't discuss any options), the basics. links to Complexes.
+--    projectiveResolution, semifreeResolution need to be keywords, or mentioned.
+--    injectiveResolution over exterior algebra?
+-- 2. basic useful options: LengthLimit, DegreeLimit (partial computation)
+-- 3.
+--    Each strategy has a page.
+--    The reason for this version.  Example: what it does well, what it can't handle.
+-- 4. compare and contrast strategies.
+--    when to use each one?
+--    What if you want to keep the first matrix fixed?
+--    What if you want it to give a minimal first matrix?
+-- n. less used options.
+--
+--
+--  make another pass through all of our code: enough tests, doc is good.  Add in Weyl algebra examples too, etc.
+--  after that: start getting it to work with other packages.
+
+-- Some things to keep in mind.
 --   . write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
---   . nonminimal resolutions
 --   . revisit augmentationMap, in case when the resolution 
 --          messes with the module generators.
 
--- "BUGS" found in M2:
---  1. Issue #2405
---   M === N maybe should check equality by pointer first:
---   caused a problem in constructing the augmentation map for resolutions
---   over a field (when field is inexact).
--*
-     R = RR_53
-     M = coker matrix{{1.3, 1.4}, {1.1, 1.5}, {.3, .6}}
-     assert(M === M) -- this is good
-     assert(not(M == M)) -- M===M but M != M...
-*-
-
-importFrom_Core { "RawComputation", "raw" }
-importFrom_Core { "degreeToHeft", 
+importFrom_Core { 
+    "RawComputation", 
+    "raw",
+    "degreeToHeft", 
     "rawBetti", 
     "rawStartComputation", 
     "rawGBSetStop", 
     "rawStatus1", 
-    "rawGBBetti", "rawResolution",
-    "rawResolutionGetFree", "rawResolutionGetMatrix"
+    "rawGBBetti", 
+    "rawResolution",
+    "rawResolutionGetFree", 
+    "rawResolutionGetMatrix",
+    "hasNoQuotients",
+    "Computation"
     }
-
-hasNoQuotients = method()
-hasNoQuotients QuotientRing := (R) -> isField R
-hasNoQuotients PolynomialRing := (R) -> hasNoQuotients coefficientRing R
-hasNoQuotients Ring := (R) -> true
 
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
@@ -47,37 +51,43 @@ freeResolution Module := Complex => opts -> M -> (
     -- This handles caching, hooks for different methods of computing 
     -- resolutions or over different rings which require different algorithms.
     --
-    -- LengthLimit prescribes the length of the computed complex
+    -- Nonminimal: true if the computation is constructed using the Nonminimal strategy.
+    -- LengthLimit prescribes the length of the computed complex.
     -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
+    R := ring M;
     local C;
-    if opts.LengthLimit < 0 then (
-        C = complex (ring M)^0;
-        C.cache.LengthLimit = opts.LengthLimit;
-        C.cache.DegreeLimit = infinity;
-        C.cache.Module = M;
+    if M === R^0 or opts.LengthLimit < 0
+    then (
+        C = complex R^0;
+        if not M.cache.?Resolution then 
+            M.cache.Resolution = C;
         return C;
         );
     if M.cache.?Resolution then (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
             error "internal error: Resolution should have both a LengthLimit and DegreeLimit";
-        if C.cache.LengthLimit >= opts.LengthLimit and C.cache.DegreeLimit >= opts.DegreeLimit then (
-            C' := naiveTruncation(C, -infinity, opts.LengthLimit);
-            C'.cache.LengthLimit = opts.LengthLimit;
-            C'.cache.DegreeLimit = C.cache.DegreeLimit;
-            C'.cache.Module = C.cache.Module;
-            return C';
-            );
+        if C.cache.Nonminimal === (opts.Strategy === "Nonminimal") and
+           C.cache.LengthLimit >= opts.LengthLimit and 
+           C.cache.DegreeLimit >= opts.DegreeLimit then (
+               C' := naiveTruncation(C, -infinity, opts.LengthLimit);
+               C'.cache.LengthLimit = opts.LengthLimit;
+               C'.cache.DegreeLimit = C.cache.DegreeLimit;
+               C'.cache.Module = C.cache.Module;
+               return C';
+               );
         remove(M.cache, symbol Resolution); -- will be replaced below
         );
     if M.cache.?ResolutionObject then (
         RO := M.cache.ResolutionObject;
-        if opts.Strategy === null or opts.Strategy === RO.Strategy
+        if (opts.Strategy === null and RO.Strategy =!= 4) or --4 is the magic number for "Nonminimal".  In this case, we need to recompute the resolution.
+            opts.Strategy === RO.Strategy
         then (
             if RO.isComputable(opts.LengthLimit, opts.DegreeLimit) -- this is informational: does not change RO.
             then (
                 RO.compute(opts.LengthLimit, opts.DegreeLimit); -- it is possible to interrupt this and then the following lines do not happen.
                 C = RO.complex(opts.LengthLimit);
+                C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means "Nonminimal" to the engine...
                 C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
                 C.cache.DegreeLimit = opts.DegreeLimit;
                 C.cache.Module = M;
@@ -97,12 +107,12 @@ freeResolution Module := Complex => opts -> M -> (
         };
     M.cache.ResolutionObject = RO;
 
-    -- the following will return a complex (or error), 
-    -- and perhaps modify M.cache.ResolutionObject, M.Resolution?    
+    -- the following will return a complex (or null), 
     C = runHooks((freeResolution, Module), (opts, M), Strategy => opts.Strategy);
     
     if C =!= null then (
         assert(instance(C, Complex));
+        C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means "Nonminimal" to the engine...
         C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
         C.cache.DegreeLimit = opts.DegreeLimit;
         C.cache.Module = M;
@@ -110,17 +120,10 @@ freeResolution Module := Complex => opts -> M -> (
         return C;
         );    
     
-    
-    -- each hook must do the following:
-    -- set Strategy.
-    -- create any data it needs (in the RO object).
-    -- place functions RO.isComputable, RO.compute, RO.complex into RO. (or have some other way of doing that).
-    -- or, perhaps, make a ResolutionObjectHook type, and have each hook create methods on that.
-    -- either way, each hook has to create these functions...
-
-    -- Question: where is the actual computation happening? In the hook!
-    
-    error("no method implemented to handle this ring and module");
+    remove(M.cache, symbol ResolutionObject);
+    if opts.Strategy === null then     
+        error("no method implemented to handle this ring and module");
+    error "provided Strategy does not handle this ring and module";        
     );
 
 resolutionObjectInEngine = (opts, M, matM) -> (
@@ -190,6 +193,7 @@ resolutionObjectInEngine = (opts, M, matM) -> (
             i = i+1;
             F
             );
+        if #modules === 0 then return complex R^0;
         if #modules === 1 then return complex(modules#0, Base => 0);
         maps := hashTable for i from 1 to #modules-1 list (
             i => map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i))
@@ -312,11 +316,42 @@ resolutionInEngine3 = (opts, M) -> (
     resolutionObjectInEngine(opts, M, matM)
     )
 
+resolutionInEngine4 = (opts, M) -> (
+    -- opts are the options from resolution.  Includes Strategy, LengthLimit, DegreeLimit.
+    -- M is a Module.
+    
+    -- first determine if this method applies.  
+    -- Return null if not, as quickly as possible
+    R := ring M;
+    if not (
+        R.?Engine and
+        heft R =!= null and
+        (isSkewCommutative R or isCommutative R) and (
+            A := ultimate(coefficientRing, R);
+            A =!= R and isField A
+        ))
+    then return null;
+
+    if gbTrace > 0 then
+      << "[Doing freeResolution Strategy => 4 (Nonminima)]" << endl;
+    RO := M.cache.ResolutionObject;  -- this exists already
+    if RO.Strategy === null then RO.Strategy = 4
+    else if RO.Strategy === "Nonminimal" then RO.Strategy = 4
+    else error "our internal logic is flawed";
+
+    gbM := gens gb presentation M;
+    resolutionObjectInEngine(opts, M, gbM)
+    )
+
 resolutionInEngine = (opts, M) -> (
     R := ring M;
     if isQuotientRing R or isSkewCommutative R then (
         M.cache.ResolutionObject.Strategy = 2;
         resolutionInEngine2(opts ++ {Strategy => 2}, M)
+        )
+    else if isWeylAlgebra R and isHomogeneous M then (
+        M.cache.ResolutionObject.Strategy = 3;
+        resolutionInEngine3(opts ++ {Strategy => 3}, M)
         )
     else (
         M.cache.ResolutionObject.Strategy = 1;
@@ -330,14 +365,36 @@ resolutionOverField = (opts, M) -> (
     RO := M.cache.ResolutionObject;
     
     RO.compute = (lengthlimit, degreelimit) -> (
-        RO.FieldComputation = minimalPresentation M;
+        RO.Computation = minimalPresentation M;
         );
 
     RO.isComputable = (lengthlimit, degreelimit) -> true;
 
     RO.complex = (lengthlimit) -> (
-        N := RO.FieldComputation;
+        N := RO.Computation;
         C := complex N;
+        C.cache.augmentationMap = map(complex M, C, i -> 
+            if i === 0 then map(M, C_0, matrix N.cache.pruningMap));
+        C);
+    
+    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+    RO.complex(opts.LengthLimit)
+    )
+
+resolutionOverZZ = (opts, M) -> (
+    R := ring M;
+    if R =!= ZZ then return null;
+    RO := M.cache.ResolutionObject;
+    
+    RO.compute = (lengthlimit, degreelimit) -> (
+        RO.Computation = minimalPresentation M;
+        );
+
+    RO.isComputable = (lengthlimit, degreelimit) -> true;
+
+    RO.complex = (lengthlimit) -> (
+        N := RO.Computation;
+        C := complex {presentation N};
         C.cache.augmentationMap = map(complex M, C, i -> 
             if i === 0 then map(M, C_0, matrix N.cache.pruningMap));
         C);
@@ -375,12 +432,15 @@ resolutionBySyzygies = (opts, M) -> (
                 lengthlimit = # gens(R, CoefficientRing => K);
                 if K === ZZ then lengthlimit = lengthlimit + 1;
                 )
-            else if hasNoQuotients R then (
+            else if hasNoQuotients R and not isSkewCommutative R then (
                 K = ultimate(coefficientRing, R);
                 lengthlimit = # gens(R, CoefficientRing => K);
-                if K === ZZ then lengthlimit = lengthlimit + 1;
+                if K === ZZ then lengthlimit = lengthlimit + 2; -- +1 if we can change the first matrix.
                 )
-            else error "require LengthLimit to be finite";
+            else (
+                remove(M.cache, symbol ResolutionObject);
+                error "require LengthLimit to be finite";
+                );
             );
         m := RO.SyzygyList#(#RO.SyzygyList-1);
         for i from #RO.SyzygyList to lengthlimit-1 do (
@@ -408,18 +468,78 @@ resolutionBySyzygies = (opts, M) -> (
     RO.complex(opts.LengthLimit)
     )
 
+protect HomogenizedModule
+protect DehomogenizationMap
+protect HomogenizedModuleResolution
+protect Nonminimal
+
+resolutionByHomogenization = (opts, M) -> (
+    R := ring M;
+    if isHomogeneous M or 
+        not isCommutative R or 
+        not degreeLength R === 1 
+    then return null;
+
+    RO := M.cache.ResolutionObject;
+
+    f    := presentation M;
+    p    := presentation R;
+    A    := ring p;
+    k    := coefficientRing A;
+    if not isHomogeneous k then return null;
+    n    := numgens A;
+    X    := local X;
+    N    := monoid [X_0 .. X_n, MonomialOrder => GRevLex, Join => false];
+    A'   := k N;
+    toA' := map(A',A,(vars A')_{0 .. n-1});
+    p'   := toA' p;
+    R'   := A'/(ideal p');
+    toR' := map(R',R,(vars R')_{0 .. n-1});
+    f'   := toR' f;
+    pH   := homogenize(generators gb p', A'_n); 
+    forceGB pH;
+    RH   := A' / ideal pH;
+    toRH := map(RH, R', vars RH);
+    fH   := homogenize(toRH generators gb f',RH_n);
+    forceGB fH;
+    MH   := cokernel fH;
+    if not isHomogeneous MH then 
+        error "oops, our logic involving homogenization is incorrect";
+    toR  := map(R, RH, vars R | 1);
+    RO.HomogenizedModule = MH;
+    RO.DehomogenizationMap = toR;
+
+    RO.compute = (lengthlimit, degreelimit) -> (
+        RO.HomogenizedModuleResolution = freeResolution(RO.HomogenizedModule, LengthLimit => lengthlimit, DegreeLimit => degreelimit);
+        );
+
+    RO.isComputable = (lengthlimit, degreelimit) -> true;
+
+    RO.complex = (lengthlimit) -> (
+        C := RO.DehomogenizationMap RO.HomogenizedModuleResolution;
+        C.cache.augmentationMap = map(complex M, C, i -> map(M, target presentation M, 1)); -- TODO: might need some work to determine this?
+        C);
+    
+    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+    RO.complex(opts.LengthLimit)
+    )
+
+addHook((freeResolution, Module), resolutionInEngine4, Strategy => "Nonminimal")
 addHook((freeResolution, Module), resolutionBySyzygies, Strategy => "Syzygies")
+addHook((freeResolution, Module), resolutionByHomogenization, Strategy => "Homogenization")
 addHook((freeResolution, Module), resolutionInEngine0, Strategy => 0)
 addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
 addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
 addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
+addHook((freeResolution, Module), resolutionOverZZ, Strategy => "ZZ")
 addHook((freeResolution, Module), resolutionOverField, Strategy => "Field")
+
 
 debug Core
 cechComplex = method()
 cechComplex MonomialIdeal := Complex => B -> (
-    if radical B != B then error "expected squarefree monomial ideal";
+    if not isSquareFree B then error "expected squarefree monomial ideal";
     R := ring B;
     n := numgens R;
     g := gens R;
@@ -450,372 +570,115 @@ cechComplex MonomialIdeal := Complex => B -> (
     complex(maps, Base => lo)
     )
 
-end--
-restart
-debug loadPackage("Complexes", FileName => "../Complexes.m2")
-load "ResolutionObject.m2"
-gbTrace=1
-S = ZZ/101[a..d]
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
---F = freeResolution(M, Strategy => Engine)
-F = freeResolution(M)
+///
+-- once cechComplex has been thought through, we can make a test from
+-- this
+  restart
+  debug needsPackage("Complexes")
 
-M = S^1/I
-freeResolution(M, LengthLimit => 0)
+  R = ZZ/101[x,y,z]
+  cechComplex monomialIdeal(x,y,z)
 
-M = S^1/I
-freeResolution(M, LengthLimit => 1)
+  R = ZZ/101[a..d]
+  C = cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
+  prune HH C
 
-M = S^1/I
-freeResolution(M, LengthLimit => -1)
+  R = ZZ/101[s_0,s_1,t_0,t_1]
+  I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
+  C = cechComplex I
+  prune HH C
+///
+
+-- This local function comes from m2/betti.m2.
+heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
+
+truncate(BettiTally, ZZ, ZZ) := 
+truncate(BettiTally, ZZ, InfiniteNumber) := 
+truncate(BettiTally, InfiniteNumber, ZZ) :=
+truncate(BettiTally, InfiniteNumber, InfiniteNumber) := BettiTally => {} >> opts -> (B, degreelimit, lengthlimit) -> (
+    new BettiTally from for k in keys B list 
+        if k#0 <= lengthlimit and 
+           k#2 - k#0 <= degreelimit 
+        then k => B#k 
+        else continue
+    )
+
+minimalBetti Module := BettiTally => opts -> M -> (
+    R := ring M;
+    degreelimit := opts.DegreeLimit;
+    if degreelimit === null then degreelimit = infinity;
+    lengthlimit := opts.LengthLimit;
+    if M.cache.?Resolution then (
+        -- check to see if we can use this cached resolution
+        C := M.cache.Resolution;
+        if not C.cache.Nonminimal and
+           degreelimit <= C.cache.DegreeLimit and
+           lengthlimit <= C.cache.LengthLimit 
+        then (
+            return truncate(betti(C, Weights => opts.Weights), degreelimit, lengthlimit);
+            );
+        );
+
+    if not (
+        R.?Engine and
+        heft R =!= null and
+        (isSkewCommutative R or isCommutative R) and (
+            A := ultimate(coefficientRing, R);
+            A =!= R and isField A
+        ))
+    then betti freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
+
+    C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1, Strategy => "Nonminimal");
+    rC := M.cache.ResolutionObject.RawComputation;
+    B := unpackEngineBetti rawMinimalBetti(rC,
+        if opts.DegreeLimit === infinity then {} else
+	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
+	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
+    betti(B, Weights => heftvec(opts.Weights, heft R))
+    )
+
+minimalBetti(Module, Thing) := BettiTally => opts -> (M, junk) -> (
+    R := ring M;
+    degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
+    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
+    -- check to see if a cached resolution is sufficient
+    cacheKey := ResolutionContext{};
+    if M.cache#?cacheKey and isComputationDone(C := M.cache#cacheKey,
+	DegreeLimit => degreelimit, LengthLimit => lengthlimit)
+    then return betti(C.Result.Resolution, Weights => opts.Weights);
+    -- if not, compute a fast non-minimal resolution
+    -- the following line is because we need to make sure we have the resolution
+    -- either complete, or one more than the desired minimal betti numbers.
     
-remove(M.cache, symbol Resolution)
-peek M.cache
-assert isWellDefined F
-F2 = freeResolution(M, LengthLimit => 2)
-dd^F2
-betti F2
-F3 = freeResolution(M, LengthLimit => 3)
-F3 = freeResolution(M, LengthLimit => 10)
+    -- We see if we can now compute a non-minimal resolution.
+    -- If not, we compute a usual resolution.
+    -- TODO: this isn't quite correct.
+    useFastNonminimal := not isQuotientRing R and
+      char R > 0 and char R < (1<<15);
 
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-F3 = freeResolution(M, Strategy => 2)
-assert(dd^F3_1 == gens I)
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-F3 = freeResolution(M, Strategy => 3)
-assert(dd^F3_1 == gens I)
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-F1 = freeResolution(M, LengthLimit => 2)
-F2 = freeResolution(M, LengthLimit => 3)
-F3 = freeResolution(M, LengthLimit => 5)
-
-restart
-debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-gbTrace=1
-S = ZZ/101[vars(0..20)]
-I = ideal for i from 1 to numgens S list S_(i-1)^i
-M = S^1/I
-F = freeResolution(M, Strategy => Engine)
--- control-c in the middle, look at M.cache.ResolutionObject
-peek M.cache.ResolutionObject
-F = freeResolution(M, LengthLimit => 4)
-assert isWellDefined F
-F2 = freeResolution(M, LengthLimit => 2)
-
--- exterior algebra example
-restart
-debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-E = ZZ/101[a..d, SkewCommutative => true]
-I = ideal"ab, acd"
-C = freeResolution(I) -- gives an error
-break
-C = freeResolution(I, LengthLimit => 5)
-
-I = ideal"ab, acd"
-C = freeResolution(I, Strategy => 2, LengthLimit => 7)
-
-I = ideal"ab, acd"
-C2 = freeResolution(I, Strategy => 3, LengthLimit => 7)
-assert(betti C === betti C2)
-
--- module over a quotient ring (old res.m2 version)
-restart
-R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
-I = ideal"ab, acd"
-res(R^1/I, Strategy => "Syzygies")
-
--- module over a quotient ring
-restart
-debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
-I = ideal"ab, acd"
-C0 = freeResolution(I, LengthLimit => 6, Strategy => 0)
-
-I = ideal"ab, acd"
-C1 = freeResolution(I, LengthLimit => 6, Strategy => 1)
-
-I = ideal"ab, acd"
-C2 = freeResolution(I, LengthLimit => 6, Strategy => 2)
-
-I = ideal"ab, acd"
-C3 = freeResolution(I, LengthLimit => 6, Strategy => 3)
-
-C0 == C1
-C0 == C2
-C0 == C3
-
-C = freeResolution(I, LengthLimit => 6, Strategy => 0)
-C = freeResolution(I, LengthLimit => 6, Strategy => 1)
-C = freeResolution(I, LengthLimit => 7, Strategy => 1)
-C = freeResolution(I, LengthLimit => 5, Strategy => 0)
-
-I = ideal"ab, acd"
-
--- inhomogeneous example
-restart
-debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-R = ZZ/101[a..d]
-I = ideal"a3-b2, abc-d, a3-d"
-freeResolution(I, Strategy=>2)
-
-prune HH C
-C = freeResolution(I, LengthLimit => 6)
-methods res
---
-
--- Over the rationals
-restart
-S = QQ[a..d]
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-res M
---F = freeResolution(M, Strategy => Engine)
-F = freeResolution(M)
-
--- Weyl algebra
-restart
-S = QQ[x,y,Dx,Dy,h, WeylAlgebra => {{x,Dx}, {y,Dy}, h}]
-M = coker matrix{{x*Dx, y*Dx}}
-isHomogeneous M
-gbTrace=1
-res(M, Strategy => 2)
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-res M
---F = freeResolution(M, Strategy => Engine)
-F = freeResolution(M)
-
--- Over a field
-restart
-debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-gbTrace=1
-kk = ZZ/32003
-M = coker random(kk^3, kk^2)
-F = freeResolution M
-g = augmentationMap F
-source g == F
-target g == complex M
-isWellDefined g
-coker g == 0
-ker g == 0 -- since this is an isomorphism
-
-res M -- BUG: this is wrong. 
+    if not useFastNonminimal then 
+        return betti resolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
+    -- At this point, we think we are good to use the faster algorithm.        
+    -- First, we need to comppute the non-minimal resolution to one further step.
+    if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
+    C = resolution(M,
+	StopBeforeComputation => true, FastNonminimal => true,
+	DegreeLimit => degreelimit, LengthLimit => lengthlimit);
+    rC := if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation
+    -- TODO: when can this error happen?
+    else error "cannot use 'minimalBetti' with this input. Input must be an ideal or module in a
+    polynomial ring or skew commutative polynomial ring over a finite field, which is singly graded.
+    These restrictions might be removed in the future.";
+    --
+    B := unpackEngineBetti rawMinimalBetti(rC,
+	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
+	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
+    betti(B, Weights => heftvec(opts.Weights, heft R))
+    )
+minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
+    if I.cache.?quotient then I.cache.quotient
+    else I.cache.quotient = cokernel generators I, opts
+    )
 
 
-
--- Over an inexact field
-restart
-debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-gbTrace=1
-kk = RR_53
-kk = ZZ/101
-M = coker random(kk^3, kk^2)
-F = freeResolution M
-g = augmentationMap F
-source g == F
-target g == complex M
-isWellDefined g
-coker g == 0
-ker g == 0 -- since this is an isomorphism
-
-res M
-
-
-restart
-debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-gbTrace=1
-kk = ZZ/101
-A = kk[a,b,c]
-B = A/(a^2, b^3-c^3)
-C = B[d, Join => false]
-I = ideal(c^2*d, a*b^2-c^2*d)
-M = comodule I
-freeResolution(M, LengthLimit => 10)
-freeResolution(M, LengthLimit => 5, DegreeLimit => 4)
-freeResolution(M, LengthLimit => 4)
-freeResolution(M, LengthLimit => 6, DegreeLimit => 1)
-M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 2)
-assert isWellDefined F
-
-M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 0)
-assert isWellDefined F
-
-M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 3)
-assert isWellDefined F
-
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(I, Strategy => 4) -- nonminimal...
-assert isWellDefined F
-
-I = ideal I_*
-F = freeResolution(I, DegreeLimit => 3, LengthLimit => 2)
-F = freeResolution(I, DegreeLimit => 2, LengthLimit => 2)
-F = freeResolution I
--- change strategy
--- degree limit, changing degree limit
--- hooks
--- ComputationContext stuff...
-
-
-use S
-R = S/(a^2, b^2, c^2, d^2)
-I = ideal(a,b,c,d)
-F = freeResolution I
-betti F
-assert isWellDefined F
-
-I = ideal(a,b,c,d)
-F = freeResolution(I, LengthLimit => 3)
-F = freeResolution(I, LengthLimit => 4)
-F = freeResolution(I, LengthLimit => 6)
-F = freeResolution(I, LengthLimit => 4)
-
-W = resolutionObject(gens I, Strategy => 4)
-compute W
-F = complex W
-assert isWellDefined F
-assert(prune HH F == complex comodule I)
-
-raw W
-peek W
-raw W
-
-restart
-R = ZZ/101[a..d]
-M = coker vars R
-C = res M
-C.cache
-debug Core
-peek M.cache#(new ResolutionContext)
-
--- Resolution by syzygies
--- #1 Over ZZ needs separate hook.
-  restart
-  needsPackage "Complexes"
-  load "Complexes/ResolutionObject.m2"
-  
-  m = matrix{{2,3,7},{7,14,21}}
-  M = coker m
-  -- new code:
-  C = freeResolution(M, Strategy => "Syzygies")
-
-  gbTrace=2
-  syz m
-  C = res M
-  C.dd
-  res(M, Strategy => "Syzygies")
-  presentation M
-  minimalPresentation M
-
--- Example 2
-  restart
-  needsPackage "Complexes"
-  load "Complexes/ResolutionObject.m2"
-  S = ZZ/101[a..d]
-  R = S/(a^2, b^2, c^2, d^2)
-  I = ideal(a,b,c,d)
-  m = syz gens I
-  schreyerOrder source m
-  debug Core
-  raw source m
-  n = schreyerOrder m
-  schreyerOrder source n
-  n2 = syz n
-  raw target n2
-  raw source n2
-  F = freeResolution(I, LengthLimit => 7, Strategy => "Syzygies")
-  isWellDefined F
-  prune HH F
-
-  -- Weyl algebra example
-  -- Exterior algebra example
-  -- inhomog example
-  -- Orlik-Solomon algebra
-  needsPackage "HyperplaneArrangements"
-  A = typeA 3
-  E = ZZ/101[e_1..e_6, SkewCommutative => true]
-  I = orlikSolomon(A, E)
-  F = freeResolution(E^1/I, LengthLimit => 7, Strategy => "Syzygies")
-  isWellDefined F
-  -- TODO: write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
-  for i from 0 to length F - 1 list i => prune HH_i F
-  betti F
-
-D = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x => dx, y => dy, z => dz}, Degrees => {{1},{1},{1},{-1},{-1},{-1}}];
-degree (x*dx)
-isHomogeneous (x*dx)
-
--- Cech complex on P^2
-restart
-needsPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-R = ZZ/101[x,y,z]
-F = dual freeResolution module ideal vars R
-dd^F
-
-
-
-D = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x => dx, y => dy, z => dz}, Degrees => {
-        {1,0,0},{0,1,0},{0,0,1},
-        {-1,0,0},{0,-1,0},{0,0,-1}}]
-I = ideal(x,y,z)
-FI = freeResolution module I
-F = dual FI
-Fx = D^{{1,0,0}}/(x*dx+1, dy, dz)
-Fy = D^{{0,1,0}}/(dx, y*dy+1, dz)
-Fz = D^{{0,0,1}}/(dx, dy, z*dz+1)
-Fxy = D^{{1,1,0}}/(x*dx+1, y*dy+1, dz)
-Fxz = D^{{1,0,1}}/(x*dx+1, dy, z*dz+1)
-Fyz = D^{{0,1,1}}/(dx, y*dy+1, z*dz+1)
-Fxyz = D^{{1,1,1}}/(x*dx+1, y*dy+1, z*dz+1)
-
-phi = map(D, R)
-FD = phi F
-d1 = map(Fxyz, Fxy ++ Fxz ++ Fyz, dd^FD_-1)
-isWellDefined d1
-d0 = map(source d1, Fx ++ Fy ++ Fz, dd^FD_0)
-isWellDefined d0
-d1 * d0
-C = complex({d1, d0}, Base => -2)
-isWellDefined C
-prune HH C
-prune HH^2 C
-prune Hom(C, D^1/(dx,dy,dz))
-Hom(D^1, D^1/(dx,dy,dz))
-
-restart
-needsPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-
-R = ZZ/101[x,y,z]
-cechComplex monomialIdeal(x,y,z)
-
-R = ZZ/101[a..d]
-C = cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
-prune HH C
-
-R = ZZ/101[s_0,s_1,t_0,t_1]
-I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
-C = cechComplex I
-prune HH C
-
-prune HH C
-n = 3
-entries (id_(ZZ^n) || - id_(ZZ^n))
+end--
