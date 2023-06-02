@@ -73,6 +73,8 @@ foreach(lang IN ITEMS C CXX)
     string(REGEX REPLACE "^lib" "" _lib "${_lib}")
     set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -Wl,-rpath,${_libdir} -l${_lib}")
   endforeach()
+  # TODO: remove when this is merged: https://gitlab.kitware.com/cmake/cmake/-/issues/24966
+  set_property(TARGET OpenMP::OpenMP_${lang} PROPERTY INTERFACE_LINK_OPTIONS "SHELL: ${OpenMP_${lang}_FLAGS}")
 endforeach()
 
 if(WITH_TBB)
