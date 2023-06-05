@@ -1,6 +1,7 @@
 .PHONY: always
 always:
 
+SHELL:=/bin/bash
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 
 #######################
@@ -27,6 +28,21 @@ auto-ubuntu-debug:
                 --enable-download \
 		--enable-debug \
 		--disable-optimize
+cmake-fedora:
+	module load mpi/mpich
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/$@
+	cd builds.tmp/$@; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+		-DCMAKE_C_COMPILER=mpicc \
+		-DCMAKE_CXX_COMPILER=mpic++ \
+		-DWITH_MPI=ON\
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
 cmake-ubuntu:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/$@
