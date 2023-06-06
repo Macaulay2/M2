@@ -85,6 +85,9 @@ export parseString(s:string):string := (
 	       else if c == 'u' then (
 		    i = i+4;
 		    utf8(v, ((hexvalue(s.(i-3)) * 16 + hexvalue(s.(i-2))) * 16 + hexvalue(s.(i-1))) * 16 + hexvalue(s.i)))
+	       else if c == 'x' then (
+		    i = i + 2;
+		    v << char(hexvalue(s.(i - 1)) * 16 + hexvalue(s.i)))
 	       else if '0' <= c && c < '8' then (
 		    j := c - '0';
 		    c = s.(i+1);
