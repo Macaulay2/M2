@@ -503,7 +503,12 @@ substitute(Ideal,Option) := (I,v) -> (sub2(,ring I,{v})) I
 substitute(Vector,Option) := (f,v) -> (sub2(,ring f,{v})) f
 substitute(RingElement,Option) := (f,v) -> (sub2(,ring f,{v})) f
 
-RingElement Array := (r,v) -> substitute(r,matrix {toList v})
+RingElement Array := (r,v) -> (
+    R := ring r;
+    n := #generators R;
+    if #v !=n
+    then error("encountered values for ", #v, " variables, but expected ", n)
+    else substitute(r, apply(n, i -> R_i => v#i)))
 
 -----------------------------------------------------------------------------
 -- inverse
