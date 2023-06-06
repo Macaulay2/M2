@@ -74,9 +74,13 @@ export parseString(s:string):string := (
 	       if c == 'n' then v << '\n'
 	       else if c == '"' then v << '"'
 	       else if c == 'r' then v << '\r'
+	       else if c == 'a' then v << char(7)
 	       else if c == 'b' then v << '\b'
 	       else if c == 't' then v << '\t'
+	       else if c == 'v' then v << char(11)
 	       else if c == 'f' then v << '\f'
+	       else if c == 'e' then v << char(27)
+	       else if c == 'E' then v << char(27)
 	       else if c == '\\' then v << '\\'
 	       else if c == 'u' then (
 		    i = i+4;
