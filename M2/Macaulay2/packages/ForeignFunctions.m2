@@ -382,17 +382,20 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
 	Address => ffiPointerAddress(address T,
 	    append(apply(x, y -> address T y), address voidstar nullPointer))};
     value S := x -> for y in x list value y;
-    S_ZZ := (x, i) -> (
+    getptr := (x, i) -> (
 	len := 0;
 	ptr := ffiPointerValue address x;
 	while ffiPointerValue ptr =!= nullPointer
 	do (
-	    if len == i then return dereference_T ptr;
-	    len = len + 1;
-	    ptr = ptr + sz);
+	    if len == i then return ptr
+	    else (
+		len = len + 1;
+		ptr = ptr + sz));
 	if i >= 0 or i < -len then error(
 	    "array index ", i, " out of bounds 0 .. ", len - 1)
-	else dereference_T(ptr + sz * i));
+	else ptr + sz * i);
+    S_ZZ := dereference_T @@ getptr;
+    S_ZZ = (x, i, val) -> *getptr(x, i) = T val;
     iterator S := x -> Iterator(
 	ptr := ffiPointerValue address x;
 	() -> (
