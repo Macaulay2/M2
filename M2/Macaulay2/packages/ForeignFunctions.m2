@@ -440,6 +440,7 @@ foreignStructType(String, VisibleList) := (name, x) -> (
 	applyPairs(types, (mbr, type) ->
 	    (mbr, value dereference_type(ptr' + offsets#mbr))));
     T_String := (y, mbr) -> dereference_(types#mbr)(address y + offsets#mbr);
+    T_String = (y, mbr, val) -> *(address y + offsets#mbr) = types#mbr val;
     T)
 
 ForeignStructType VisibleList := (T, x) -> new T from x
