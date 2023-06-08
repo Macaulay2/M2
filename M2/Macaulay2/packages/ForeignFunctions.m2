@@ -336,6 +336,9 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
     value S := x -> for y in x list value y;
     S_ZZ := (x, i) -> dereference_T(
 	ffiPointerValue address x + size T * checkarraybounds(n, i));
+    S_ZZ = (x, i, val) -> (
+	ptr := ffiPointerValue address x + size T * checkarraybounds(n, i);
+	*ptr = T val);
     iterator S := x -> Iterator(
 	ptr := ffiPointerValue address x;
 	i := 0;
