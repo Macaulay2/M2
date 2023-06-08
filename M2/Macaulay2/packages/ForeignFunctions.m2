@@ -469,6 +469,7 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
 	ptr := address y;
 	applyPairs(types, (mbr, type) -> (mbr, value dereference_type ptr)));
     T_String := (y, mbr) -> dereference_(types#mbr) address y;
+    T_String = (y, mbr, val) -> *address y = types#mbr val;
     T)
 
 ForeignUnionType Thing := (T, x) -> new T from {Address =>
