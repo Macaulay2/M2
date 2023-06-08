@@ -1029,6 +1029,11 @@ doc ///
        next i
        next i
        for y in x list value y + 1
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_0 = 9
+      x
 ///
 
 doc ///
@@ -1100,6 +1105,8 @@ doc ///
     voidstarstar
     (symbol _, charstarstar, ZZ)
     (symbol _, voidstarstar, ZZ)
+    ((symbol _, symbol =), charstarstar, ZZ)
+    ((symbol _, symbol =), voidstarstar, ZZ)
     (length, charstarstar)
     (length, voidstarstar)
     (iterator, charstarstar)
@@ -1135,6 +1142,11 @@ doc ///
        next i
        next i
        scan(x, print)
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_0 = "qux"
+      x
 ///
 
 doc ///
@@ -1254,6 +1266,11 @@ doc ///
     Example
       x_"foo"
       x_"bar"
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_"foo" = 6
+      x
 ///
 
 doc ///
@@ -1297,6 +1314,11 @@ doc ///
       x = myunion (4 * char') append(ascii "hi!", 0)
       x_"foo"
       x_"bar"
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_"bar" = "ho!"
+      x
 ///
 
 doc ///
