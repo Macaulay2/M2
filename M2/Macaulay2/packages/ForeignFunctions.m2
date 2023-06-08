@@ -626,9 +626,10 @@ getMemory ForeignVoidType := o -> T -> error "can't allocate a void"
 
 memcpy = foreignFunction("memcpy", voidstar, {voidstar, voidstar, ulong})
 * voidstar = (ptr, val) -> (
-    if not instance(val, ForeignObject) then val = foreignObject val;
-    memcpy(ptr, address val, size class val))
-* Pointer = (ptr, val) -> value (*voidstar ptr = val)
+    val = foreignObject val;
+    memcpy(ptr, address val, size class val);
+    val)
+* Pointer = (ptr, val) -> *voidstar ptr = val
 
 ForeignType * voidstar := (T, ptr) -> T value ptr
 
