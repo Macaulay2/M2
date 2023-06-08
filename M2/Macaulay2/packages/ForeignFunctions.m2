@@ -1890,25 +1890,35 @@ ptr = address x
 assert Equation(value intarray3 ptr, {1, 2, 3})
 assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
+x_0 = 5
+assert Equation(value x, {5, 2, 3})
 ptrarray = 3 * voidstar
 x = ptrarray {address int 1, address int 2, address int 3}
 assert Equation(for ptr in x list value (int * ptr), {1, 2, 3})
+x_0 = address int 5
+assert Equation(for ptr in x list value (int * ptr), {5, 2, 3})
 x = charstarstar {"foo", "bar", "baz"}
 assert Equation(length x, 3)
 assert Equation(value x, {"foo", "bar", "baz"})
 assert Equation(value x_0, "foo")
 assert Equation(value x_(-1), "baz")
+x_0 = "qux"
+assert Equation(value x, {"qux", "bar", "baz"})
 x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
 assert Equation(length x, 4)
 assert Equation(value \ for ptr in x list (int * ptr), {1, 2, 3, 4})
 assert Equation(value (int * x_0), 1)
 assert Equation(value (int * x_(-1)), 4)
+x_0 = address int 5
+assert Equation(value \ for ptr in x list (int * ptr), {5, 2, 3, 4})
 int3star = foreignPointerArrayType(3 * int)
 x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
 assert Equation(length x, 4)
 assert Equation(value x, {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
 assert Equation(value x_0, {1, 2, 3})
 assert Equation(value x_(-1), {10, 11, 12})
+x_0 = {13, 14, 15}
+assert Equation(value x, {{13, 14, 15}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
 
 -- struct types
 teststructtype = foreignStructType("foo",
@@ -1919,6 +1929,8 @@ assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 2.0)
 assert Equation(value x_"c", "foo")
 assert Equation(value (int * x_"d"), 4)
+x_"a" = 5
+assert Equation(value x_"a", 5)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
@@ -1926,6 +1938,10 @@ x = testuniontype float 1
 assert instance(value x, HashTable)
 assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 0x3f800000)
+x_"a" = 2
+assert Equation(value x_"a", 2)
+x_"b" = 3
+assert Equation(value x_"b", 3)
 y = testuniontype uint32 0xc0000000
 assert Equation(value y_"a", -2)
 assert Equation(value y_"b", 0xc0000000)
