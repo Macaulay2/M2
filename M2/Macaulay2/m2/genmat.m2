@@ -39,7 +39,10 @@ genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
 genericSymmetricMatrix = method(TypicalValue => Matrix)
 genericSymmetricMatrix(Ring,ZZ) := (R,n) -> genericSymmetricMatrix(R,R_0,n)
 genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n + 1, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, i -> scan(i..n-1, j -> (
