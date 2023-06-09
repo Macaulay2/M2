@@ -27,7 +27,7 @@ export {
 ---TO DO: make this a method to allow user to pick coefficient field
 roosTable = (S = QQ[x,y,z,u];
 L= {
-sub(ideal "0",S),
+ideal(0_S),
 ideal "x2",
 ideal "x2, y2",
 ideal "x2, xy",
@@ -395,14 +395,14 @@ assert(depth (S/I) == 1)
 
 TEST///
 I=roosIsotopes#"59va"
-F=res (ideal vars ((ring I)/I), LengthLimit => 6);
+F=res (ideal vars ((ring I)/I), LengthLimit => 6)
 assert(betti F == new BettiTally from {(0,{0},0) => 1, (1,{1},1) => 4, (2,{2},2) => 12, (3,{3},3) => 33, (4,{4},4) => 87, (5,{5},5) => 225, (6,{6},6) => 576, (6,{7},7) => 1})
 ///
 
 
 TEST///
    R = almostKoszul(ZZ/32003, 2)
-   F = res (coker vars R, LengthLimit =>3)
+   F = res (coker vars R, LengthLimit =>4)
    assert( betti F === new BettiTally from {(0,{0},0) => 1, (1,{1},1) => 6, (2,{2},2) => 26, (3,{3},3) => 104, (3,{4},4) => 1,
       (4,{4},4) => 404, (4,{5},5) => 10})
 ///
@@ -412,3 +412,6 @@ end--
 uninstallPackage "QuadraticIdealExamplesByRoos"
 restart
 installPackage "QuadraticIdealExamplesByRoos"
+
+
+check QuadraticIdealExamplesByRoos
