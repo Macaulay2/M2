@@ -22,7 +22,10 @@ genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
 genericSkewMatrix = method(TypicalValue => Matrix)
 genericSkewMatrix(Ring,ZZ) := (R,n) -> genericSkewMatrix(R,R_0,n)
 genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, 
