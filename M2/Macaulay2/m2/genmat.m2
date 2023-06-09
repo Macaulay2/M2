@@ -13,8 +13,8 @@ genericMatrix = method(TypicalValue => Matrix)
 genericMatrix(Ring,ZZ,ZZ) := (R,nrows,ncols) -> genericMatrix(R,R_0,nrows,ncols)
 genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
      first = getIndex(R,first);
-     if not instance(nrows,ZZ) or not instance(ncols,ZZ) or nrows < 0 or ncols < 0
-     then error "expected nonnegative integers";
+     if nrows < 1 or ncols < 1
+     then error "expected positive integers";
      if first + nrows * ncols > numgens R
      then error "not enough variables in this ring";
      matrix table(nrows, ncols, (i,j)->R_(first + i + nrows*j)))
