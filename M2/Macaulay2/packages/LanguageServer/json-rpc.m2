@@ -82,10 +82,10 @@ JSONRPCMethod = new SelfInitializingType of HashTable
 
 addMethod = method()
 addMethod(JSONRPCServer, String, Function) := (server, name, f) -> (
-    server#name = JSONRPCMethod {"function" => f})
+    server#name = JSONRPCMethod {"function" => f};)
 addMethod(JSONRPCServer, String, List, Function) := (
     server, name, params, f) -> (
-    server#name = JSONRPCMethod {"params" => params, "function" => f})
+    server#name = JSONRPCMethod {"params" => params, "function" => f};)
 
 callMethod = method()
 callMethod(JSONRPCMethod, List) := (
