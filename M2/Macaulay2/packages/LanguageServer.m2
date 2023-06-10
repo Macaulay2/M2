@@ -83,6 +83,10 @@ installMethod(runLanguageServer, () ->
 
 load "./LanguageServer/tests.m2"
 
+beginDocumentation()
+
+load "./LanguageServer/json-rpc-doc.m2"
+
 end
 
 restart
