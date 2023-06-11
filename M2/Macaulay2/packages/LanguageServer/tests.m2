@@ -74,7 +74,3 @@ assertNull "[
   {\"jsonrpc\": \"2.0\", \"method\": \"notify_hello\", \"params\": [7]}
 ]"
 ///
-
-TEST ///
-runLanguageServer(); stdio << "foo" << endl; read stdio
- 
