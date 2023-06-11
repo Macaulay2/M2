@@ -67,14 +67,23 @@ removeHeader = (((n, s) -> substring(s, 0, n)) % (headerP @ contentP) :
 -- run language server --
 -------------------------
 
+verboseLog = (header, msg) -> if debugLevel > 0 then (
+    stderr << stack(netList {header}, msg) << newline << endl)
+
 runLanguageServer = method()
 runLanguageServer LSPServer := server -> (
     g := if isListener server.File then openInOut server.File else server.File;
     while true do (
 	wait g;
-	-- we send the string "error" to trigger a JSON parsing error
-	request := try removeHeader read g else "error";
-	g << addHeader handleRequest(server.JSONRPCServer, request) << flush))
+	request := read g;
+	if #request == 0 then continue; -- why is this needed?
+	verboseLog("client request", request);
+	response := addHeader handleRequest(
+	    server.JSONRPCServer,
+	    -- we send the string "error" to trigger a JSON parsing error
+	    try removeHeader request else "error");
+	verboseLog("server response", response);
+	g << response << flush))
 
 runLanguageServer ZZ := port -> runLanguageServer(
     createLanguageServer openListener("$:" | toString port))
