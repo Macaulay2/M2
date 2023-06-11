@@ -1,5 +1,0 @@
-#!/usr/bin/env -S M2-binary --silent --srcdir ~/src/macaulay2/M2/M2
-
-debug needsPackage "LanguageServer"
-
-while true do print respond fromLSP read()
