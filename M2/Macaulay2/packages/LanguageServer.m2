@@ -104,7 +104,24 @@ loadPackage("LanguageServer", Reload => true)
 runLanguageServer()
 
 -*
+(require 'eglot)
+
+; stdio
 (add-to-list 'eglot-server-programs
-    '(M2-mode "M2"  "--srcdir" "/home/profzoom/src/macaulay2/M2/M2"
-	"-e" "needsPackage(\"LanguageServer\"); runLanguageServer()"))
+    '(M2-mode "/home/profzoom/src/macaulay2/M2/M2/Macaulay2/packages/LanguageServer/M2-language-server" "-v"))
+
+; port
+(add-to-list 'eglot-server-programs
+    '(M2-mode "/home/profzoom/src/macaulay2/M2/M2/Macaulay2/packages/LanguageServer/M2-language-server" "-v" "-p" :autoport))
+
+(lsp-register-client
+    (make-lsp-client :new-connection (lsp-stdio-connection
+	    '("/home/profzoom/src/macaulay2/M2/M2/Macaulay2/packages/LanguageServer/M2-language-server" "-v"))
+	:activation-fn (lsp-activate-on "M2")
+	:server-id 'M2))
+
+(add-to-list 'lsp-language-id-configuration
+    '(M2-mode . "M2"))
 *-
+
+-- to test socket, run "nc localhost xxxx" (xxxx = port number)
