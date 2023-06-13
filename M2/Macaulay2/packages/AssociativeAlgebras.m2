@@ -1408,7 +1408,7 @@ ncMatrixMult (Matrix, Matrix) := (A,B) -> (
    matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
 )
 
-rightKernel = method(Options=>{DegreeLimit=>10})
+rightKernel = method(Options=>{DegreeLimit=>10,Strategy=>"F4"})
 rightKernel Matrix := opts -> M -> (
    -- this function computes the right kernel of a map between free
    -- modules over a noncommutative ring.
@@ -1435,11 +1435,11 @@ rightKernel Matrix := opts -> M -> (
    outputs := matrix {(entries transpose ncMatrixMult(diagMat,phi liftM)) / sum};
    inputs := matrix {colVars};
    IM := phi I + ideal (inputs - outputs);
-   IMgb := NCGB(IM, opts#DegreeLimit);
+   IMgb := NCGB(IM, opts#DegreeLimit, Strategy => opts#Strategy);
    kerGens := ideal select(flatten entries IMgb, f -> isSubset(support f,gensAVars | colVars) and not isSubset(support f, gensAVars));
    if kerGens == 0 then return map(source M, (ring M)^0,0);
    mkerGens := phi I + sum apply(gensAVars, v -> kerGens*v);
-   mkerGensGB := NCGB(mkerGens,opts#DegreeLimit);
+   mkerGensGB := NCGB(mkerGens,opts#DegreeLimit, Strategy => opts#Strategy);
    minKerGens := compress NCReductionTwoSided(gens kerGens,mkerGensGB);
    (minKerMons, minKerCoeffs) := coefficients minKerGens;
    linIndepKer := mingens image sub(minKerCoeffs,coefficientRing A);
