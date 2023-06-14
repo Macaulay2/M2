@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.22",
 	  TO "changes, 1.21",
 	  TO "changes, 1.20",
 	  TO "changes, 1.19.1",
@@ -44,6 +45,45 @@ document {
 document {
      Key => "changes, 1.22",
      UL {
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "GraphicalModelsMLE::GraphicalModelsMLE", ", a package by 
+			 Carlos Amendola, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova, 
+			 Harshit J Motwani, Elina Robeva, and David Swinarski, for maximum likelihood
+			 estimates for graphical statistical models, has been published." },
+		    LI { star, " ", TO "LinearTruncations::LinearTruncations", ", a package by Lauren Cranton Heller,
+			  David Eisenbud, and Navid Nemati for finding multigraded truncations that give linear resolutions, 
+			  has been published."
+			  },
+	     	    LI { star, " ", TO "RationalMaps::RationalMaps", ", a package by Karl Schwede,
+			  Daniel Smolkin, S. Hamid Hassanzadeh, and C. J. Bott, for working with rational maps, has been published." },
+		    LI { star, " ", TO "PseudomonomialPrimaryDecomposition::PseudomonomialPrimaryDecomposition", ", a package by Alan 
+			 A. Veliz-Cuba for primary decomposition of square free pseudomonomial ideals, has been published."},
+		    LI { star, " ", TO "NoetherianOperators::NoetherianOperators", ", a package by Robert Krone, Justin Chen,
+			  Marc Harkonen, Yairon Cid-Ruiz, and Anton Leykin, for numerically computing local dual spaces, 
+			  Hilbert functions, and Noetherian operators, has been published." },
+		    LI { star, " ", TO "Jets::Jets", ", a package by Federico Galetto and 
+			 Nicholas Iammarino, for computing jets of various algebraic, geometric and combinatorial objects, has been published." }
+	     	    }
+	       },
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "HolonomicSystems::HolonomicSystems", ", a package by Mahrud Sayrafi, Christine Berkesch, Anton Leykin, and 
+			 Harrison Tsai for holonomic systems, has been added.  The code was originally in the Dmodules package." },
+		    LI { TO "BernsteinSato::BernsteinSato", ", a package by Anton Leykin and Harrison Tsai for Bernstein-Sato, 
+			 has been added.  The code was originally in the Dmodules package." },
+		    LI { TO "PolyominoIdeals::PolyominoIdeals", ", a package by Carmelo Cisto, Francesco Navarra, and Rizwan Jahangir for 
+			 binomial ideals of collections of cells, has been added." },
+		    LI { TO "MatchingFields::MatchingFields", ", a package by Oliver Clarke for matching fields, has been added." },
+		    LI { TO "CellularResolutions::CellularResolutions", ", a package by Jay Yang and Aleksandra Sobieska for 
+			 cellular resolutions of monomial ideals, has been added." },
+		    LI { TO "SagbiGbDetection::SagbiGbDetection", ", a package by Viktoriia Borovik, Timothy Duff, and Elima Shehu for verifying
+			  whether the given generators of an ideal form the Gr\"obner basis or whether the given generators of a finitely 
+			  generated subalgebra of a polynomial ring are the SAGBI basis, has been added." }
+		    }
+	       },
 	  LI { "functionality added:",
 	       UL {
 		    LI { "A ", TO RingMap, " object may now be raised to the 0th power if its ", TO source, " and ", TO target, " agree." },

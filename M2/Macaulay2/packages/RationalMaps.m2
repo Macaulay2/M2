@@ -18,7 +18,21 @@ newPackage( "RationalMaps",
     }, --this file is in the public domain
     Keywords => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 
-    PackageExports => {"FastMinors"}    
+    PackageExports => {"FastMinors"},
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "RationalMaps, a package for Macaulay2",
+	 "acceptance date" => "17 July 2022",
+	 "published article URI" => "https://msp.org/jsag/2022/12-1/p03.xhtml",
+	 "published article DOI" => "10.2140/jsag.2022.12.17",
+	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x03-RationalMaps.m2",
+	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RationalMaps.m2",
+	 "release at publication" => "0cee3a5ae1e3fbd3dfa8407a4c8d6ad6a13dffd3",	    -- git commit number in hex
+	 "version at publication" => "1.0",
+	 "volume number" => "12",
+	 "volume URI" => "https://msp.org/jsag/2022/12-1/"
+	 }
 )
 --Hassanzadeh was supported by CNPq-bolsa de Produtividade and by the MathAmSud project ``ALGEO''
 --Schwede was supported in part by the NSF FRG Grant DMS \#1265261/1501115, NSF CAREER Grant DMS \#1252860/1501102, NSF Grants DMS \#1840190 and DMS \#2101800.

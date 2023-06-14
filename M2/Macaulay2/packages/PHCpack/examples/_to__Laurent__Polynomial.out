@@ -6,9 +6,7 @@ i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 
 i3 : describe ring ideal sys
 
-o3 = frac/QQ[x..z, Degrees => {3:1}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 1]\
-         |                                                         {GRevLex => {3:1}  }                  |
-         \                                                         {Position => Up    }                  /
+o3 = frac(QQ[x..z, Degrees => {3:1}, Heft => {1}])
 
 i4 : convertedSys = toLaurentPolynomial(sys,w);
 
@@ -27,7 +25,7 @@ o7 : PolynomialRing
 
 i8 : describe oo
 
-o8 = QQ {x..z, w , Degrees => {4:1}, MonomialOrder => {Weights => {4:-1} }, DegreeRank => 1, Inverses => true, Global => false}
+o8 = QQ {x..z, w , Degrees => {4:1}, MonomialOrder => {Weights => {4:-1} }, Inverses => true, Local => true, Global => false}
                 0                                     {MonomialSize => 32}
                                                       {GroupRevLex => 4  }
                                                       {Position => Up    }
