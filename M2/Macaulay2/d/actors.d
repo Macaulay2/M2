@@ -510,7 +510,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       if onex == nullE then (
 		    return buildErrorPacket("missing unit element")
 		    )
-	       else return onex;
+	       else return applyEE(onex, x);
 	       );
 	  if i < 0 then (
 	       i = -i;
@@ -550,7 +550,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       onex := lookup(Class(x),oneE);
 	       if onex == nullE
 	       then return buildErrorPacket("missing unit element")
-	       else return onex;
+	       else return applyEE(onex, x);
 	       );
 	  if i <= 0 then (
 	       i = -i;

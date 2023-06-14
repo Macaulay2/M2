@@ -120,7 +120,7 @@ texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0
 
 texMath HashTable := H -> if H.?texMath then H.texMath else (
     if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
-    else if mutable H then texMathMutable H
+    else if isMutable H then texMathMutable H
     else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
 
 texMath Function := f -> texMath toString f
@@ -183,7 +183,10 @@ tex DL := x -> concatenate(apply(noopts x, tex))
 tex DT := x -> concatenate(newpara, apply(x, tex))
 tex DD := x -> concatenate(newpara, apply(x, tex))
 
+tex    KBD := tex SAMP := tex VAR :=
 tex     TT := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBATIM )
+
+texMath KBD := texMath SAMP := texMath VAR :=
 texMath TT := x -> concatenate apply(x, texMath) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
 
 tex     TABLE := x -> concatenate applyTable(noopts x, tex)

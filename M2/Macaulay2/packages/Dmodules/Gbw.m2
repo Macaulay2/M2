@@ -1,5 +1,16 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
+----------------------------------------------------------------------------------
+-- Homogenization switch
+-- determines whether homogenized Weyl algebra is used in certain algorithms
+----------------------------------------------------------------------------------
+HOMOGENIZATION := true
+
+setHomSwitch = method ()
+setHomSwitch Boolean := Boolean => s -> (t := HOMOGENIZATION; HOMOGENIZATION = s; t)
+getHomSwitch = () -> HOMOGENIZATION
+
+----------------------------------------------------------------------------------
 
 -- this routine computes an initial basis of an ideal or matrix with respect
 -- a weight vector w.
@@ -11,16 +22,8 @@ inw (RingElement, List) := (L, w) -> (
      mw := max apply(lf,t->sum(#w,i->t#0#i*w#i));
      part(mw,w,L)
      )
-
-inw (Ideal, List) := (I, w) -> (
-     ideal inw(gens I, w)
-     )
-
-protect WAtoHWA								    -- used as a key
-protect HWAtoWA
-protect HomWeylAlgebra
-
-inw (Matrix, List) := (m, w) -> (
+inw(Ideal,  List) := (I, w) -> ideal inw(gens I, w)
+inw(Matrix, List) := (m, w) -> (
      -- preprocessing
      W := ring m;
      -- error checking
@@ -33,9 +36,7 @@ inw (Matrix, List) := (m, w) -> (
      createDpairs W;
      
      -- case 1: weight vector w=(u,v) has u+v > 0.
-     if all(toList(0..(#W.dpairInds#0)-1), i ->
-	  w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) > 0)
-     then (
+     if all(w_(W.dpairInds#0) + w_(W.dpairInds#1), x -> x > 0) then (
 	  if not W.?CommAlgebra then createCommAlgebra W;
 	  tempW := (coefficientRing W)(monoid [(entries vars W)#0,
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
@@ -66,8 +67,7 @@ inw (Matrix, List) := (m, w) -> (
 
      -- case 2: use V-homogenization if u+v = 0 
      --	    and HOMOGENIZATION is turned off
-     else if not getHomSwitch() and all(toList(0..(#W.dpairInds#0)-1), 
-	       i -> w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) == 0) then (
+     else if not getHomSwitch() and w_(W.dpairInds#0) == -w_(W.dpairInds#1) then (
     	  if numrows m > 1 then 
 	  error "some functions are not implemented for noncyclic D-modules (matrix with one row expected)"; 
 	  -- Make the homogenizing Weyl algebra
@@ -100,8 +100,7 @@ inw (Matrix, List) := (m, w) -> (
 	  wt := toList(numgens Wh:1);
 	  tempm = homogenize(WtoWh m, Wh_(numgens Wh - 1), wt);
 	  gbtempm = gb tempm;
-	  nonCommInds := positions(toList(0..#W.dpairInds#0-1), i ->
-	       w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) == 0);
+	  nonCommInds := positions(w_(W.dpairInds#0) + w_(W.dpairInds#1), x -> x == 0);
 	  -- if some components of (u+v) equal 0, others are greater than 0,
 	  -- then associated graded is half commutative, half non-commutative
 	  if #nonCommInds != #W.dpairInds#0 then (
@@ -116,15 +115,13 @@ inw (Matrix, List) := (m, w) -> (
      inm
      )
 
+----------------------------------------------------------------------------------
 
 -- this routine computes a grobner basis of an ideal or matrix with respect
 -- a weight vector w.
-gbw = method()
-gbw (Ideal, List) := (I, w) -> (
-     ideal gbw(gens I, w)
-     )
-
-gbw (Matrix, List) := (m, w) -> (
+gbw = method(Options => { Strategy => null })
+gbw(Ideal,  List) := opts -> (I, w) -> ideal gbw(gens I, w, opts)
+gbw(Matrix, List) := opts -> (m, w) -> (
      -- preprocessing
      W := ring m;
      -- error checking
@@ -137,9 +134,7 @@ gbw (Matrix, List) := (m, w) -> (
      createDpairs W;
      
      -- case 1: weight vector w=(u,v) has u+v > 0.
-     if all(toList(0..(#W.dpairInds#0)-1), i ->
-	  w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) > 0)
-     then (
+     if all(w_(W.dpairInds#0) + w_(W.dpairInds#1), x -> x > 0) then (
 	  if not W.?CommAlgebra then createCommAlgebra W;
 	  tempW := (coefficientRing W)(monoid [gens W,
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
@@ -153,8 +148,8 @@ gbw (Matrix, List) := (m, w) -> (
 
      -- case 2: use V-homogenization if u+v = 0 
      --	    and HOMOGENIZATION is turned off
-     else if not getHomSwitch() and all(toList(0..(#W.dpairInds#0)-1), 
-	       i -> w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) == 0) then (
+     else if not (opts.Strategy === homogenize or getHomSwitch())
+     and w_(W.dpairInds#0) == -w_(W.dpairInds#1) then (
 	  -- Make the homogenizing Weyl algebra
      	  if not W.?HomWeylAlgebra then
      	  createHomWeylAlgebra (ring m);
@@ -188,93 +183,53 @@ gbw (Matrix, List) := (m, w) -> (
      gbm
      )
 
--- These routines are the old names of inw. They will eventually be eliminated.
-inW1 = method()
-inW1 (Ideal, List) := (I, w) -> (
-     setHomSwitch(false);
-     inw(I, w)
-     )
-gbW1 = method()
-gbW1 (Ideal, List) := (I, w) -> (
-     setHomSwitch(false);
-     gbw(I, w)
-     )
-inW2 = method()
-inW2 (Ideal, List) := (I, w) -> (
-     setHomSwitch(true);
-     inw(I, w)
-     )
-gbW2 = method()
-gbW2 (Ideal, List) := (I, w) -> (
-     setHomSwitch(true);
-     gbw(I, w)
-     )
+--------------------------------------------------------------------------------
 
-TEST///
-x = symbol x;
-dx = symbol dx;
-y = symbol y;
-dy = symbol dy;
--- Tests finding Grobner basis in case when u+v>0
-W = QQ[x,y,dx,dy, WeylAlgebra => {x=>dx,y=>dy}]
-I = ideal(x^2+y^3, x*y);
-J = ideal(x+dy,x*dx+y*dy);
-K = ideal(y*dx, x*dx+y);
-assert (entries gens gbw(I,{2,1,0,0}) == entries matrix {{x*y,x^2+y^3,y^4}});
-assert (entries gens gbw(I,{1,2,0,0}) == entries matrix {{x*y,x^3,x^2+y^3}});
-assert (entries gens gbw(J,{4,3,2,1}) == entries matrix{{1}});
-assert (entries gens gbw(K,{2,1,0,0}) == entries matrix {{y*dx, x*dx+y, y^2}});
-assert (entries gens gbw(K,{1,2,0,0}) == entries matrix {{x*dx^2+dx, x*dx+y}});
-assert (sub(inw(I,{2,1,0,0}),W) == ideal(x*y,x^2,y^4));
-assert (sub(inw(J,{3,2,3,1}),W) == W);
-assert (sub(inw(K,{1,2,0,0}),W) == ideal(x*dx^2,y));
--- Testing when u+v = 0
-assert (entries gens gbw(K,{2,3,-2,-3}) == entries matrix {{y*dx, x*dx+y,x*dx^2+dx}});
-assert (entries gens gbw(K,{3,2,-3,-2})==entries matrix {{y*dx, x*dx+y,x*dx^2+dx}});
-assert (entries gens gbw(K,{0,0,0,0}) == entries matrix {{y*dx, x*dx+y, y^2}});
-assert (sub(inw(K,{2,3,-2,-3}),W) == ideal(y,x*dx^2+dx));
-///
+-- This routine computes the characteristic ideal of a D-module
+characteristicIdeal = method()
+characteristicIdeal Ideal := I -> (
+    if not isWeylAlgebra(W := ring I) then error "expected an ideal in a Weyl algebra";
+    createDpairs W;
+    w := apply( toList(0..numgens W - 1),
+	i -> if member(i, W.dpairInds#1) then 1 else 0 );
+    ideal mingens inw (I, w)
+    )
 
+characteristicIdeal Module := M -> (
+    if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
+    m := presentation M;
+    createDpairs W;
+    w := apply( toList(0..numgens W - 1),
+	i -> if member(i, W.dpairInds#1) then 1 else 0 );
+    ideal mingens ann cokernel inw (m, w)
+    )
 
-TEST///
-x = symbol x;
-dx = symbol dx;
-y = symbol y;
-dy = symbol dy;
-z = symbol z;
-dz = symbol dz;
--- Initial ideals and gb's in the same Grobner cone
-W = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x=>dx,y=>dy,z=>dz}]
-A = matrix{{1,1,1},{0,2,7}};
-b = {1,5};
-I = gkz(A,b);
+--------------------------------------------------------------------------------
 
--- weight vector of the form (-u,u)
-w1 = {-1,-10,-30,1,10,30};
-w2 = {-1,-10,-31,1,10,31};
-I1 = inw(I, w1);
-G1 = gbw(I, w1);
-assert(I1 == inw(I, w2));
-assert(G1 == gbw(I, w2));
-setHomSwitch false;
-I1' = inw(I, w1);
-G1' = gbw(I, w1);
-assert(I1' == I1);
-assert(G1' == G1);
-assert(I1' == inw(I, w2));
-assert(G1' == gbw(I, w2));
-setHomSwitch true;
-
--- weight vector (u,v) with u+v > 0
-w1 = {0,1,2,3,4,100};
-w2 = {0,1,2,3,4,101};
-assert(inw(I,w1) == inw(I, w2));
-assert(gbw(I,w1) == gbw(I, w2));
-
--- weight vector (u,v) with some comp's of u+v > 0, others equal to 0.
-w1 = {1,-3,107,-1,4,-5};
-w2 = {1,-3,108,-1,4,-5};
-I1 = inw(I, w1);
-assert(I1 == substitute(inw(I, w2), ring I1));
-assert(gbw(I, w1) == gbw(I, w2));
-///
+-- This routine computes the singular locus of a D-ideal
+-- SHOULD IT BE CHANGED SO THAT OUTPUT IS IN POLY SUBRING?
+DsingularLocus = method()
+DsingularLocus Ideal  := I -> DsingularLocus comodule I
+DsingularLocus Module := M -> (
+    if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
+    createDpairs W;
+    if not W.?CommAlgebra then createCommAlgebra W;
+    I1 := characteristicIdeal M;
+    I2 := W.WAtoCA ideal W.dpairVars#1;
+    -- do the saturation
+    SatI := saturate(I1, I2);
+    -- set up an auxiliary ring to perform intersection
+    tempCA := (coefficientRing W)(monoid [W.dpairVars#1, W.dpairVars#0,
+            MonomialOrder => Eliminate (#W.dpairInds#1)]);
+    newInds := inversePermutation join(W.dpairInds#1, W.dpairInds#0);
+    CAtotempCA := map(tempCA, W.CommAlgebra,
+	matrix {apply(newInds, i -> tempCA_i)});
+    tempCAtoCA := map(W.CommAlgebra, tempCA, matrix{ join (
+		apply(W.dpairVars#1, i -> W.WAtoCA i),
+		apply(W.dpairVars#0, i -> W.WAtoCA i) ) } );
+    -- do the intersection
+    gbSatI := gb CAtotempCA SatI;
+    I3 := ideal compress tempCAtoCA selectInSubring(1, gens gbSatI);
+    if I3 == ideal 1_(W.CommAlgebra) then W.CAtoWA I3
+    else W.CAtoWA radical I3
+    )

@@ -185,7 +185,7 @@ TEST /// -- test of truncations in singly graded poly ring case
 
   -- test of truncation of modules
   -- 1. coker module
-  M = Ext^2(comodule I, S)
+  M = prune Ext^2(comodule I, S)
   assert not M.?generators
   assert(truncate(-3, M) == M)
   assert(truncate(-4, M) == M)

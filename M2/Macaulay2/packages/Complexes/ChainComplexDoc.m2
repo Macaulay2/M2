@@ -78,7 +78,7 @@ doc ///
                 TO (minimize, Complex),
                 TO (gradedModule, Complex),
                 TO (part, List, Complex),
-                TO (truncate, List, Complex),
+                TO "Truncations :: truncate(List,Complex)",
                 TO (yonedaExtension, Matrix)
             }@
     	Text
@@ -938,10 +938,6 @@ doc ///
 
 doc ///
     Key
-        freeResolution
-        (freeResolution, Module)
-        (freeResolution, Ideal)
-        (freeResolution, MonomialIdeal)
         [freeResolution, LengthLimit]
         [freeResolution, DegreeLimit]
         [freeResolution, FastNonminimal]
@@ -949,15 +945,29 @@ doc ///
         [freeResolution, PairLimit]
         [freeResolution, SortStrategy]
         [freeResolution, StopBeforeComputation]
-        [freeResolution, Strategy]
         [freeResolution, SyzygyLimit]
+    Headline
+        optional arguments for freeResolution
+    Description
+        Text
+            We would dearly love to not have this in the main node!
+///
+
+doc ///
+    Key
+        freeResolution
+        (freeResolution, Module)
+        (freeResolution, Ideal)
+        (freeResolution, MonomialIdeal)
     Headline
         compute a free resolution of a module or ideal
     Usage
         freeResolution M
+        freeResolution I
     Inputs
         M:Module
-            or @ofClass Ideal@ or @ofClass MonomialIdeal@, an ideal {\tt I} in a ring {\tt R}
+        I:Ideal
+            in the ring $R$, treated as the quotient module $R^1/I$
         LengthLimit => ZZ
             this is used to limit somehow the computation where resolutions might be too long or infinite
         DegreeLimit => List
@@ -983,47 +993,223 @@ doc ///
             certain number of syzygies have computed
     Outputs
         :Complex
-            a free resolution of the module {\tt M} or of the
-            quotient module {\tt R^1/I}
+            a free resolution of the module $M$ or of the
+            quotient module $R^1/I$
     Description
         Text
             A free resolution of a module $M$ is a complex
-            $ F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \ldots$
-            of free modules, which is acyclic: the cokernel of the map
-            to $F_0$ is $M$ and the complex is exact at all other 
-            locations.
+
+            $\phantom{WWWW}
+            F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
+            $
+
+            of free modules, whose homology is concentrated in
+            homological degree zero and is isomorphic to the module
+            $M$.  Equivalently, the augmented complex
+
+            $\phantom{WWWW}
+            0 \leftarrow M \leftarrow F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
+            $
+
+            is exact.
+            
+            This function lies at the heart of many computations in commutative algebra
+            and algebraic geometry.  As a consequence, this is one of the most used
+            functions in {\em Macaulay2}.
+        Text
+            As a first example, we construct the free resolution of the twisted cubic curve,
+            and extract its basic numerical invariants via @TO (length, Complex)@ and
+            @TO (betti,Complex)@.
         Example
-            R = QQ[a..d]
+            R = QQ[a..d];
             I = ideal(c^2-b*d, b*c-a*d, b^2-a*c)
             M = R^1/I
             C = freeResolution M
-            betti C
             length C
+            betti C
             dd^C
             assert isWellDefined C
+        Text
+            We verify in two ways that $C$ is a free resolution of $M$.
+        Example
             assert(prune HH C == complex M)
+            assert(length HH C == 0)
+            f = augmentationMap C
+            assert isWellDefined f
+            assert(source f === C)
+            assert(target f == complex M)
+            aC = cone f
+            assert(HH aC == 0)
         Text
             Giving an ideal as the input produces a free resolution
-            not of the module {\tt I}, but of the module {\tt R^1/I}.
+            not of the module $I$, but of the comodule $R^1/I$.
         Example
             assert(freeResolution I == C)
-            resolution complex M == freeResolution M
+            assert(resolution complex M == freeResolution M)
         Text
-            Over a quotient ring, free resolutions are often infinite.
-            Use the optional argument {\tt LengthLimit} to obtain
-            part of the resolution.
+            We obtain the resolution of the module $I$, rather than the comodule $R^1/I$,
+            as follows.
         Example
-            S = ZZ/101[a,b]
-            R = S/(a^3+b^3)
+            C' = freeResolution module I
+            assert isWellDefined C'
+            assert(C' != C)
+            assert(betti naiveTruncation(C, 1, infinity) == betti C'[-1])
+        Text
+            Over a quotient ring, free resolutions are typically infinite.
+            To specify a finite part of the resolution, one needs to use
+            the optional argument {\tt LengthLimit}.
+        Example
+            S = ZZ/101[a,b];
+            R = S/(a^3+b^3);
             C = freeResolution (coker vars R, LengthLimit => 7)
+            length C
+            betti C
             dd^C
+        Text
+            Over an exterior algebra, free resolutions are again typically
+            infinite, so one needs to specify the {\tt LengthLimit}.
+        Example
+            E = ZZ/101[e_1..e_6, SkewCommutative => true];
+            I = ideal(e_4*e_5-e_4*e_6+e_5*e_6,
+                e_2*e_3-e_2*e_6+e_3*e_6,
+                e_1*e_3-e_1*e_5+e_3*e_5,
+                e_1*e_2-e_1*e_4+e_2*e_4)
+            F = freeResolution(I, LengthLimit => 5)
+            assert isWellDefined F
+            assert isHomogeneous F
+            betti F
+        Text
+            Over a Weyl algebra, free resolutions have finite length,
+            so one does not need to specific the {\tt LengthLimit}.
+        Example
+            S = QQ[x,y,Dx,Dy, WeylAlgebra => {{x,Dx}, {y,Dy}}];
+            I = ideal(x*Dy, y*Dx)
+            F = freeResolution comodule I
+            assert isWellDefined F
+            dd^F
+        Text
+            Todo: we will add pointers to more advanced nodes and usage information
+            (e.g. Strategies, Optional arguments, and seeing partial results).
     SeeAlso
         "Making chain complexes"
+        (augmentationMap, Complex)
+        (cone, ComplexMap)
         (resolution, Complex)
         (resolutionMap, Complex)
         (betti, Complex)
 ///
 
+doc ///
+    Key
+        "Strategies for free resolutions"
+        [freeResolution, Strategy]
+    Headline
+        overview of the different algorithms for computing free resolutions
+    Description
+        Text
+            There are several distinct algorithms for computing free
+            resolutions in {\it Macaulay2}.  They make different
+            assumptions about the module or unerlying ring.
+        Text
+    	    @UL {
+                TO "freeResolution(..., Strategy => ModuleOverField)",
+                TO "freeResolution(..., Strategy => ModuleOverZZ)",
+                TO "freeResolution(..., Strategy => Engine)",
+                TO "freeResolution(..., Strategy => 1)",
+                TO "freeResolution(..., Strategy => 3)",
+                TO "freeResolution(..., Strategy => 2)",
+                TO "freeResolution(..., Strategy => 0)",
+                TO "freeResolution(..., Strategy => Homogenization)",
+                TO "freeResolution(..., Strategy => Syzygies)",
+                TO "freeResolution(..., Strategy => FastNonminimal)"
+            }@
+        Text
+            One can always access the full list of possible strategies
+            in {\it Macaulay2} as follows.
+        Example
+            hooks freeResolution
+    SeeAlso
+        (freeResolution, Module)
+        hooks
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions over a field"
+        "freeResolution(..., Strategy => ModuleOverField)"
+    Headline
+        algorithm for computing free resolutions over a field
+    Usage
+        freeResolution M
+        freeResolution(M, Strategy => "Field")
+    Inputs
+        M:Module
+            over a field
+    Outputs
+        :Complex
+            a free resolution of the module $M$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            Every module over a field is free.  Therefore a
+            minimal free resolution is determined by choosing a basis.
+            This is the default strategy when the
+            underlying ring is a field, so in practice it never
+            needs to be specified.
+        Text
+            Our first examples are over finite fields.  Notice that
+            the most interesting feature is the augmentation map.
+        Example
+            kk = ZZ/32003;
+            M = coker random(kk^3, kk^2)
+            F = freeResolution M
+            assert(F === freeResolution(M, Strategy => "Field"))
+            assert isWellDefined F
+            g = augmentationMap F
+            assert isWellDefined g
+            assert(source g == F)
+            assert(target g == complex M)
+            assert(coker g == 0 and ker g == 0)
+        Text
+            Finding a minimal free resolution for a module
+            over a field is equivalent to finding a @TO2((minimalPresentation, Module), "minimal Presentation")@.
+        Example
+            N = ker random(kk^3, kk^2) ++ M
+            F = freeResolution N
+            g = augmentationMap F
+            PN = minimalPresentation N
+            assert(g_0 == PN.cache.pruningMap)
+        Example
+            kk = GF(3^10);
+            M = coker random(kk^3, kk^2)
+            F = freeResolution M
+            g = augmentationMap F
+        Text
+            This also works over the rationals, number fields, and
+            fraction fields.
+        Example
+            kk = QQ;
+            M = coker random(kk^3, kk^2, Height => 10000)
+            F = freeResolution M
+            g = augmentationMap F
+        Example
+            S = QQ[a]/(a^3-a-1);
+            kk = toField S;
+            M = coker sub(random(S^3, S^{-2,-2}) + random(S^3, S^{-1,-1}) + random(S^3, S^2), kk)
+            F = freeResolution M
+            g = augmentationMap F
+        Example
+            S = ZZ/101[a,b,c,d];
+            kk = frac S;
+            M = coker sub(random(S^3, S^{-1,-1}), kk)
+            F = freeResolution M
+            g = augmentationMap F
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
 
 doc ///
    Key
@@ -1892,8 +2078,8 @@ doc ///
     SeeAlso
         "Making chain complexes"
         (part, List, ComplexMap)
-        (truncate, List, Complex)
-        (truncate, List, ComplexMap)
+        "Truncations :: truncate(List,Complex)"
+        "Truncations :: truncate(List,ComplexMap)"
         (canonicalTruncation, Complex, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
 ///
@@ -1937,72 +2123,12 @@ doc ///
     SeeAlso
         "Making maps between chain complexes"
         (part, List, Complex)
-        (truncate, List, Complex)
-        (truncate, List, ComplexMap)
+        "Truncations :: truncate(List,Complex)"
+        "Truncations :: truncate(List,ComplexMap)"
         (naiveTruncation, Complex, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
 ///
 
-doc ///
-    Key
-        (truncate, List, Complex)
-        (truncate, ZZ, Complex)
-    Headline
-        truncation of a complex at a specified degree or set of degrees
-    Usage
-        truncate(d, C)
-    Inputs
-        d:List
-            or @TO "ZZ"@, if the underlying ring $R$ is singly graded.
-        C:Complex
-            that is homogeneous over $R$
-    Outputs
-        :Complex
-          a complex whose terms consist of all elements of component-wise degree at least {\tt d}.
-    Description
-        Text
-            Truncation of homogeneous (graded) modules induces a natural
-            operation on chain complexes.
-        Text
-            In the singly graded case, the truncation of a homogeneous
-            module $M$ at degree $d$ is generated by all homogeneous
-            elements of degree at least $d$ in $M$.  This method applies
-            this operation to each term in a chain complex.  
-        Example
-            R = QQ[a,b,c];
-            I = ideal(a*b, a*c, b*c)
-            C = freeResolution I
-            D = truncate(3,C)
-            assert isWellDefined D
-            prune HH D
-        Text
-            Truncating at a degree less than the minimal generators
-            is the identity operation.
-        Example
-            assert(C == truncate(0, C))
-        Text
-            In the multi-graded case, the truncation of a homogeneous module at 
-            a list of degrees is generated by all homogeneous elements of degree
-            that are component-wise greater than or equal to at least one
-            of the degrees.
-        Example
-            A = ZZ/101[x_0, x_1, y_0, y_1, y_2, Degrees => {2:{1,0}, 3:{0,1}}];
-            I = intersect(ideal(x_0, x_1), ideal(y_0, y_1, y_2))
-            C = freeResolution I
-            D1 = prune truncate({{1,1}}, C)
-            D2 = truncate({{1,0}}, C)
-            D3 = truncate({{0,1}}, C)
-            D4 = truncate({{1,0},{0,1}}, C)
-            D5 = truncate({{2,2}}, C)
-            assert all({D1,D2,D3,D4,D5}, isWellDefined)
-    SeeAlso
-        "Making chain complexes"
-        (truncate, List, Module)
-        (truncate, List, ComplexMap)
-        (canonicalTruncation, Complex, Sequence)
-        (naiveTruncation, Complex, ZZ, ZZ)
-        (part, List, Complex)
-///
 
 -- TODO Obtain the implicit equation of a surface by using this method
 --      on a resolution over Rees algebra Mike and/or Greg thinks
@@ -2071,7 +2197,7 @@ doc ///
         (naiveTruncation, ComplexMap, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
         (canonicalTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, Complex)
+        "Truncations :: truncate(List,Complex)"
 ///
 
 doc ///
@@ -2155,7 +2281,7 @@ doc ///
         (canonicalTruncation, ComplexMap, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
         (naiveTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, Complex)
+        "Truncations :: truncate(List,Complex)"
 ///
 
 doc ///
@@ -2738,7 +2864,7 @@ doc ///
             Fitting ideals.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image vars R
             f = basis(0, Ext^1(M, R^1))
             C = yonedaExtension f
             assert isWellDefined C
@@ -2813,7 +2939,7 @@ doc ///
             on the elliptic curve.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image matrix {{z,y,x}}
             N = R^1;
             E = coker map(R^{3:-1} ++ R^1,,{
                     {y, x, 0, 0}, 
@@ -2826,7 +2952,7 @@ doc ///
             C = complex{d1,d2}
             assert isWellDefined C
             assert isHomogeneous C
-            assert(HH C == 0)
+            assert isShortExactSequence C
             f = yonedaExtension' C
         Text
             Although the complex representing $f$ is only defined up
@@ -2915,7 +3041,7 @@ doc ///
             argument {\tt LengthLimit}.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image vars R
             prune Ext^3(M, M)
             B = basis(-4, Ext^3(M, M))
             f = B_{2}
@@ -2990,7 +3116,7 @@ doc ///
             to @TO yonedaMap@.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image vars R
             B = basis(-4, Ext^3(M, M))
             f0 = B_{2}
             g = yonedaMap(f0, LengthLimit => 8)

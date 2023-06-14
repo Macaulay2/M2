@@ -34,7 +34,21 @@ newPackage(
      Headline => "compute jets of various algebraic, geometric and combinatorial objects",
      PackageImports => {"SimpleDoc","EdgeIdeals"},
      PackageExports => {"EdgeIdeals"},
-     DebuggingMode => false
+     DebuggingMode => false,
+     Certification => {
+	  "journal name" => "The Journal of Software for Algebra and Geometry",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Computing with jets",
+	  "acceptance date" => "20 October 2022",
+	  "published article URI" => "https://msp.org/jsag/2022/12-1/p06.xhtml",
+	  "published article DOI" => "10.2140/jsag.2022.12.43",
+	  "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x06-Jets.m2",
+	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Jets.m2",
+	  "release at publication" => "b0d482205848caeda2616f4ed58be2a6783e88a2",	    -- git commit number in hex
+	  "version at publication" => "1.1",
+	  "volume number" => "12",
+	  "volume URI" => "https://msp.org/jsag/2022/12-1/"
+	  }
      )
 
 

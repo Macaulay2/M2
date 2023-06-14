@@ -332,7 +332,7 @@ i45 : E' = QQ[x,y,z,w,SkewCommutative=>true]
 
 o45 = E'
 
-o45 : PolynomialRing, 4 skew commutative variables
+o45 : PolynomialRing, 4 skew commutative variable(s)
 
 i46 : E = toNCRing E'
 --Calling Bergman for NCGB calculation.
@@ -387,7 +387,7 @@ i54 : C'' = toM2Ring(C,SkewCommutative=>true)
 
 o54 = C''
 
-o54 : PolynomialRing, 4 skew commutative variables
+o54 : PolynomialRing, 4 skew commutative variable(s)
 
 i55 : y*x
 

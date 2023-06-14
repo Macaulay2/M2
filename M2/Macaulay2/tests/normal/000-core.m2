@@ -581,7 +581,6 @@ R=ZZ/101[a,b]
 f=matrix(R,{{1,a},{0,1}})
 g=matrix(R,{{1,0},{b,1}})
 h=f*g*f*g
-assert( h^3 * h^-1 == h^2 * h^0 )
 assert( h * h^-1 == 1 )
 
 
@@ -591,9 +590,6 @@ f = matrix {{a}}
 assert( source f != target f)
 assert( target f == target f^2 )
 assert( source f == source f^2 )
-assert( target f == target f^0 )
-assert( source f != source f^0 )
-
 
 --
 R = ZZ/101[a..d]

@@ -265,7 +265,7 @@ setupMethods := (args, symbols) -> (
 
 setupMethods((), { 
 	  entries, baseName, borel, gcdCoefficients, singularLocus,
-	  Hom, diff, diff', contract, contract', member,
+	  Hom, diff, diff', contract, contract', isMember,
 	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
@@ -277,7 +277,8 @@ setupMethods((), {
 	  presentation, dismiss, precision, 
 	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
-      isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
+      isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile,
+      minimize
 	  })
 
 assert = method()

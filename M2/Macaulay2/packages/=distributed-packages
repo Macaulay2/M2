@@ -12,6 +12,8 @@ Saturation
 PrimaryDecomposition
 FourierMotzkin
 Dmodules
+HolonomicSystems
+BernsteinSato
 Depth
 Elimination
 GenericInitialIdeal
@@ -251,3 +253,6 @@ ForeignFunctions
 GeometricDecomposability
 PseudomonomialPrimaryDecomposition
 PolyominoIdeals
+MatchingFields
+CellularResolutions
+SagbiGbDetection

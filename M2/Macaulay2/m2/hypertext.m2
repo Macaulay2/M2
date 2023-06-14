@@ -48,7 +48,7 @@ isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 -- TODO: phase this one out eventually
 toURL = method()
 toURL String := pth -> (
-     if isAbsolutePath pth then concatenate(rootURI,
+     urlEncode if isAbsolutePath pth then concatenate(rootURI,
 	  if fileExists pth then realpath pth
 	  else (
 	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
@@ -74,7 +74,7 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  stderr << "--                      prefix        = " << prefix << endl;
 	  stderr << "--                      result        = " << r << endl;
 	  );
-     r)
+     urlEncode r)
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations
@@ -115,7 +115,7 @@ META       = new MarkUpType of HypertextVoid
 LINK       = new MarkUpType of HypertextVoid
 TITLE      = new MarkUpType of HypertextParagraph
 BODY       = new MarkUpType of HypertextContainer
-STYLE      = new MarkUpType of Hypertext
+STYLE      = new MarkUpType of HypertextParagraph
 SPAN       = new MarkUpType of Hypertext
 PARA       = new MarkUpType of HypertextParagraph -- double spacing inside
 DIV        = new MarkUpType of HypertextContainer
@@ -140,7 +140,11 @@ BOLD       = new MarkUpType of Hypertext
 STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
-TT         = new MarkUpType of Hypertext
+TT         = new MarkUpType of Hypertext -- not supported in HMTL5
+-- TT replacements
+SAMP        = new MarkUpType of Hypertext
+KBD         = new MarkUpType of Hypertext
+VAR         = new MarkUpType of Hypertext
 
 -- Lists
 OL         = new MarkUpType of HypertextContainer
@@ -331,7 +335,8 @@ scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
 addAttribute(META,  htmlGlobalAttr | {"name", "content", "http-equiv"})
 addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
-addAttribute(SCRIPT, htmlGlobalAttr | {"src", "type"})
+addAttribute(SCRIPT, htmlGlobalAttr | {"async", "crossorigin", "defer",
+	"integrity", "nomodule", "referrerpolicy", "src", "type"})
 
 -- html global and event attributes
 htmlAttr = htmlGlobalAttr | {
@@ -347,7 +352,7 @@ htmlAttr = htmlGlobalAttr | {
     }
 
 scan({BR, HR, PARA, PRE, HEADER1, HEADER2, HEADER3, HEADER4, HEADER5, HEADER6,
-	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, LI, CODE,
+	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, SAMP, KBD, VAR, LI, CODE,
 	DL, DT, DD, OL, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
 addAttribute(LABEL,  htmlAttr | {"for", "from"})
 addAttribute(ANCHOR, htmlAttr | {"href", "rel", "target", "type"})
@@ -390,12 +395,12 @@ hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-al
 	  else (k, " : ", v)
 	  , BR{})))
 hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
-TTc = c -> x -> TT {toString x,"class"=>"token "|c}
+SAMPc = c -> x -> SAMP {toString x,"class"=>"token "|c}
 hypertext Pseudocode :=
-hypertext CompiledFunctionBody := TTc "function"
+hypertext CompiledFunctionBody := SAMPc "function"
 hypertext Command :=
 hypertext FunctionBody :=
-hypertext Function := f -> TT deepSplice {
+hypertext Function := f -> SAMP deepSplice {
     if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
 	t := locate if instance(f,Command) then f#0 else f;
 	"-*",
@@ -408,11 +413,11 @@ hypertext Function := f -> TT deepSplice {
 hypertext File :=
 hypertext IndeterminateNumber :=
 hypertext Manipulator :=
-hypertext Boolean := TTc "constant"
+hypertext Boolean := SAMPc "constant"
 hypertext Type :=
 hypertext FilePosition :=
-hypertext Dictionary := TTc "class-name"
-hypertext String := TTc "string"
+hypertext Dictionary := SAMPc "class-name"
+hypertext String := SAMPc "string"
 hypertext Net := n -> PRE { toString n, BR{}, "class"=>"token string", "style" => "display:inline-table;vertical-align:"|toString(if #n>0 then 100*(height n-1) else 0)|"%" }
 --hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
 --hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)

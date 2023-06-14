@@ -1,5 +1,13 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
+-- All internal functions
+
+-- used as a key
+protect WAtoHWA
+protect HWAtoWA
+protect HomWeylAlgebra
+protect IntRing
+
 -- this function associates to a Weyl algebra W
 -- the Weyl algebra W[h], where h is used for homogenizing purposes
 createHomWeylAlgebra = method()
@@ -74,8 +82,8 @@ protect isGeneric
 protect WtoT
 protect ThetaRing
 createThetaRing = method()
-createThetaRing(PolynomialRing) := W -> (
-     createDpairs (W);
+createThetaRing PolynomialRing := W -> (
+     createDpairs W;
      dpV := W.dpairVars;
      dpI := W.dpairInds;
      
@@ -122,5 +130,5 @@ createThetaRing(PolynomialRing) := W -> (
 	       ); 
 	  t
 	  );
-     );
+    W.ThetaRing, W.WtoT)
 

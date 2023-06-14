@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.4",
-    Date => "October 31, 2022",
+    Version => "0.5",
+    Date => "May 18, 2023",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -15,10 +15,44 @@ newPackage("Python",
 	{Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+    Keywords => {"Interfaces"},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
     OptionalComponentsPresent => pythonPresent
     )
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.5 (2023-05-18, M2 1.22)
+* improvements for displaying python objects in webapp mode
+* switch member -> isMember
+* add keyword
+
+0.4 (2022-10-31, M2 1.21)
+* fix bug involving hash codes for unhashtable types
+* allow subclassing of PythonObject
+* add support for more operators and builtin functions
+* add support for M2 iteration
+* improve integer conversion
+* convert M2 functions to python functions
+* add support for numpy scalars
+
+0.3 (2022-05-04, M2 1.20)
+* improve handling of lists
+* add support for collections module types
+* add support for unary operators
+* rename rs -> pythonValue
+
+0.2 (2021-11-06, M2 1.19)
+* initial release
+
+0.1 (unofficial, not distributed)
+
+*-
 
 verboseLog = if debugLevel > 0 then printerr else identity
 
@@ -169,7 +203,7 @@ addPyToM2Function(String, Function, String) := (type, f, desc) ->
     addPyToM2Function({type}, f, desc)
 addPyToM2Function(List, Function, String) := (types, f, desc) ->
     addHook((value, PythonObject),
-	x -> if member(toString (objectType x)@@"__name__", types) then f x,
+	x -> if isMember(toString (objectType x)@@"__name__", types) then f x,
 	Strategy => desc)
 
 addHook((value, PythonObject),
@@ -289,8 +323,8 @@ setattr(PythonObject, String, Thing) := (x, y, e) ->
     pythonObjectSetAttrString(x, y, toPython e)
 PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
 
-member(Thing,        PythonObject) := (x, y) -> false
-member(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
+isMember(Thing,        PythonObject) := (x, y) -> false
+isMember(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
 
 quotientRemainder(PythonObject, PythonObject) := (x, y) -> (
     qr := x@@"__divmod__" y;
@@ -524,7 +558,7 @@ TEST ///
 -- issue #2315
 rand = import "random"
 L = toPython {1, 2, 3}
-assert member(value rand@@choice L, {1, 2, 3})
+assert isMember(value rand@@choice L, {1, 2, 3})
 assert Equation(L + L, toPython {1, 2, 3, 1, 2, 3})
 ///
 
@@ -561,9 +595,9 @@ assert Equation(abs toPython(-3), 3)
 assert Equation((toPython 5)~, -6)
 
 -- __contains__
-assert member(toPython 3, toPython {1, 2, 3})
-assert not member(toPython 4, toPython {1, 2, 3})
-assert not member(3, toPython {1, 2, 3})
+assert isMember(toPython 3, toPython {1, 2, 3})
+assert not isMember(toPython 4, toPython {1, 2, 3})
+assert not isMember(3, toPython {1, 2, 3})
 
 -- divmod
 assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))

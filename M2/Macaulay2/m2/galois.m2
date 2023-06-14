@@ -123,7 +123,7 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
 GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
-     if n == 1 and member(opts.Strategy, {"Old", "Aring"})
+     if n == 1 and isMember(opts.Strategy, {"Old", "Aring"})
        then return ZZp(p, Strategy => opts.Strategy);
      x := opts.Variable;
      primelem := findGalois(p,n,opts);

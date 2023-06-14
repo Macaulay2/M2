@@ -78,6 +78,24 @@ dl.element {
   margin: 0px;
 }
 
+div.indent {
+    border-left:3px solid;
+    padding:10px;
+}
+
+span.tt {
+  font-family: monospace;
+}
+
+kbd {
+  font-family: monospace;
+  padding: 3px 5px;
+  vertical-align: middle;
+  border: solid 1px;
+  border-radius: 6px;
+  box-shadow: inset 0 -1px 0;
+}
+
 /*
 
  Local Variables:

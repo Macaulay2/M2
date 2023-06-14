@@ -62,7 +62,7 @@ jobs:
       VERBOSE: 1
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
 # ----------------------
 #   Install missing tools and libraries for macOS
@@ -73,7 +73,7 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
-          brew install automake boost tbb ccache ctags llvm make ninja yasm libffi
+          brew install automake boost tbb ccache ctags llvm@14 make ninja yasm libffi
           brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
@@ -106,13 +106,13 @@ jobs:
                echo "/usr/lib/ccache"                     >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
-               echo `brew --prefix llvm`/bin              >> $GITHUB_PATH
-               PATH=`brew --prefix llvm`/bin:$PATH
+               echo `brew --prefix llvm@14`/bin              >> $GITHUB_PATH
+               PATH=`brew --prefix llvm@14`/bin:$PATH
           fi
           # Necessary for clang to find the right libomp
           echo "LIBRARY_PATH=`llvm-config --libdir`" >> $GITHUB_ENV
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         if: matrix.build-system == 'cmake'
         id: restore-cache
         with:
@@ -196,13 +196,34 @@ jobs:
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
 
+      - name: Validate HTML documentation
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux'
+        run: |
+          python3 -m pip install html5validator
+          if test ${{ github.event_name }} = pull_request
+          then
+            git fetch --depth=1 origin development
+            # validate everything if any changes to Core
+            if test "$(git diff --stat origin/development HEAD -- ../../Macaulay2/m2)"
+            then
+              make validate-html
+            else
+            # otherwise, just validate HTML docs for packages that have been updated
+              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq)
+              make validate-html PACKAGES="$PACKAGES"
+            fi
+          else
+            # if not a pull request (scheduled or pre-master builds), then validate everything
+            make validate-html
+          fi
+
 # ----------------------
 #   Upload build artifacts
 # ----------------------
 
       - name: Upload build logs
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
            name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
            path: |
@@ -225,7 +246,7 @@ jobs:
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
         if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-14' && success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
           path: |

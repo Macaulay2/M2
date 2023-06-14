@@ -190,7 +190,9 @@ net HashTable := x -> (
      	  net class x,
 	  "{", 
 	  -- the first line prints the parts vertically, second: horizontally
- 	  stack (horizontalJoin \ apply(sortByName pairs x,(k,v) -> (net k, " => ", net v))),
+ 	  stack (horizontalJoin \ apply(sortByName pairs x,(k,v) -> (
+		      (if instance(k, String) then format else net) k,
+		      " => ", net v))),
 	  -- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
 	  "}" 
      	  ))
@@ -256,19 +258,19 @@ netList VisibleList := o -> (x) -> (
      x = apply(x, row -> apply(n, i -> algn#i(colwids#i,row#i)));
      x = apply(#x, i -> (
 	     h := max(height \ x#i);
-	     if member(i,bxrows) then h = h + vs;
+	     if isMember(i,bxrows) then h = h + vs;
 	     d := max(depth \ x#i);
-	     if member(i+1,bxrows) or i<#x-1 then d = d + vs;
+	     if isMember(i+1,bxrows) or i<#x-1 then d = d + vs;
 	     sep := "|"^(h,d);
 	     nosep := ""^(h,d);
 	     hsep := (spaces hs)^(h,d);
-	     (if member(0,bxcols) then sep | hsep else nosep)
-	     | (horizontalJoin mingle(x#i,apply(1..#colwids-1,j->if member(j,bxcols) then hsep|sep|hsep else hsep)))
-	     | (if member(#colwids,bxcols) then hsep | sep else nosep)
+	     (if isMember(0,bxcols) then sep | hsep else nosep)
+	     | (horizontalJoin mingle(x#i,apply(1..#colwids-1,j->if isMember(j,bxcols) then hsep|sep|hsep else hsep)))
+	     | (if isMember(#colwids,bxcols) then hsep | sep else nosep)
 	     ));
-     colwids = apply(#colwids, i -> colwids#i+hs*(if member(i,bxcols) then 2 else if i<#colwids-1 or member(#colwids,bxcols) then 1 else 0));
-     hbar := concatenate mingle(apply(#colwids+1,i->if member(i,bxcols) then "+" else ""),apply(colwids,wid -> wid:"-"));
-     x = mingle(apply(#x+1,i->if member(i,bxrows) then hbar else net000),x);
+     colwids = apply(#colwids, i -> colwids#i+hs*(if isMember(i,bxcols) then 2 else if i<#colwids-1 or isMember(#colwids,bxcols) then 1 else 0));
+     hbar := concatenate mingle(apply(#colwids+1,i->if isMember(i,bxcols) then "+" else ""),apply(colwids,wid -> wid:"-"));
+     x = mingle(apply(#x+1,i->if isMember(i,bxrows) then hbar else net000),x);
      br = 2*br + 1;
      (stack x)^(
 	  sum(0 .. br-1, i -> depth x#i)

@@ -209,7 +209,6 @@ new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 -- arithmetic operations
 
 CC.InverseMethod = y -> conjugate y / y^2
-CC ^ ZZ := BinaryPowerMethod
 
 scan((QQ,RR,CC), F -> (
 	  F // F := (x,y) -> if y == 0 then 0_F else x/y;

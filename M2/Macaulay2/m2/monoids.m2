@@ -335,7 +335,7 @@ texMath  Monoid :=  texMath @@ expression
 Monoid#AfterPrint = M -> (
     class M,
     if not isFreeModule degreeGroup M
-    then ", with torsion degree group";
+    then ", with torsion degree group"
     -- TODO: print whether M is ordered, a free algebra, etc.
     )
 
@@ -417,8 +417,9 @@ findHeft List := opts -> degs -> (
 -----------------------------------------------------------------------------
 
 processHeft = (degrk, degs, group, heftvec, inverses) -> (
-     if inverses then return null;
+    if inverses then return null;
     if heftvec =!= null then (
+	heftvec = splice heftvec;
 	if not isListOfIntegers heftvec then error "expected Heft option to be a list of integers";
 	if #heftvec > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	if #heftvec < degrk then heftvec = join(heftvec, degrk - #heftvec : 0));
@@ -487,7 +488,7 @@ findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
     -- varlist is a list or sequence of items we wish to use for variable names.
     -- these may be: Symbol's, RingElement's (which are variables in a ring) or lists or sequences of such.
     -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
-    (i, var) -> try checkSymbol baseName' var else error concatenate(
+    (i, var) -> try ( if class var === ZZ then var else checkSymbol baseName' var ) else error concatenate(
 	"encountered object not usable as variable at position ", toString i, " in list:",
 	newline, 8, silentRobustNetWithClass(max(printWidth, 80) - 8, 5, 3, var)))
 
@@ -509,7 +510,7 @@ processWeyl := weylvars -> (
     (xvars, dvars, hvar) := ({}, {}, {});
     scan(flatten {weylvars},
 	x -> if instance(x, VisibleList) or instance(x, Option) then (
-	    if #x == 2 then (xvars, dvars) = (join(xvars, processVars x#0), join(dvars, processVars x#1))
+	    if #x == 2 then (xvars, dvars) = (join(xvars, processVars splice {x#0}), join(dvars, processVars splice {x#1}))
 	    else error "WeylAlgebra: expected option formats {{x,dx},...}, {x=>dx,...}, or {(x,...)=>(dx,...)}")
 	else hvar = join(hvar, processVars x));
     if #dvars =!= #xvars              then error "WeylAlgebra: unexpected number of differential variables";
@@ -534,7 +535,7 @@ setMonoidOptions = opts -> (
     opts.DegreeGroup = group;
     if showTorsionWarning and instance(group, Module) and not isFreeModule group
     then ( showTorsionWarning = false; printerr "Warning: computations over rings with torsion grading groups are experimental" );
-    if not member(opts.Join, {null, true, false}) then error "expected Join option to be true, false, or null";
+    if not isMember(opts.Join, {null, true, false}) then error "expected Join option to be true, false, or null";
     -- if opts.Join =!= false then (
     --	if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
     --	if opts.DegreeLift =!= null then error "DegreeLift option provided without Join=>false";

@@ -351,7 +351,7 @@ document {
 document {
      Key => Print,
      Headline => "top level method for printing results",
-     Usage => "X#{Standard,Print} = f",
+     Usage => "X#{topLevelMode,Print} = f",
      Inputs => {
 	  "X" => Type,
 	  "f" => Function => { " that can print something of type ", TT "X"}
@@ -365,7 +365,7 @@ document {
 document {
      Key => NoPrint,
      Headline => "top level method for non-printing results",
-     Usage => "X#{Standard,NoPrint} = f",
+     Usage => "X#{topLevelMode,NoPrint} = f",
      Inputs => {
 	  "X" => Type,
 	  "f" => Function => { " that can accept something of type ", TT "X"}
@@ -379,7 +379,7 @@ document {
 document {
      Key => BeforePrint,
      Headline => "top level method applied before printing results",
-     Usage => "X#{Standard,BeforePrint} = f",
+     Usage => "X#{topLevelMode,BeforePrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied before printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." },
 	  },
@@ -401,7 +401,7 @@ document {
 document {
      Key => AfterPrint,
      Headline => "top level method applied after printing",
-     Usage => "X#{Standard,AfterPrint} = f",
+     Usage => "X#{topLevelMode,AfterPrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied after printing a top-level evaluation result ", TT "r", " of type ", TT "X", "."}
 	  },
@@ -414,14 +414,14 @@ document {
 	  },
      "We could suppress that output for a single type as follows.",
      EXAMPLE {
-	  "QQ#{Standard,AfterPrint} = r -> r;",
+	  "QQ#{topLevelMode,AfterPrint} = r -> r;",
 	  "3/4"
 	  }
      }
 document {
      Key => AfterNoPrint,
      Headline => "top level method applied after not printing",
-     Usage => "X#{Standard,AfterNoPrint} = f",
+     Usage => "X#{topLevelMode,AfterNoPrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied after not printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." }
 	  },
@@ -440,7 +440,7 @@ document {
      Headline => "the current top level mode",
      Usage => "topLevelMode = x",
      Inputs => {
-	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard"}
+	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard", " or ", TO "WebApp", " or ", TO "Jupyter"}
 	  },
      Consequences => {
 	  {"the interpreter will produce input and output prompts appropriate for the mode, and will

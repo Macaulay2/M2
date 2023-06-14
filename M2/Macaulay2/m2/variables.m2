@@ -73,7 +73,7 @@ IndexedVariable ..< IndexedVariable := Sequence => (v,w) -> apply(toSequence v .
 baseName Thing := R -> (
     if not hasAttribute(R, ReverseDictionary) then error "baseName: no base name available";
     x := getAttribute(R, ReverseDictionary);
-    if mutable x then x else error("baseName: base name ", toString x,
+    if isMutable x then x else error("baseName: base name ", toString x,
 	" is not mutable, hence not available for use as a variable"))
 baseName Symbol :=
 baseName IndexedVariable := identity

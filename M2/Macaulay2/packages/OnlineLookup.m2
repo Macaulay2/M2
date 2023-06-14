@@ -14,17 +14,7 @@ newPackage(
 	PackageImports => {"Text"}
         )
 
-export {"oeis","urlEncode","isc"}
-
-percentEncoding = hashTable transpose {
-    {"␣", "!", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "/", ":", ";", "=", "?", "@", "[", "]"},
-    {"%20", "%21", "%23", "%24", "%25", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%2F", "%3A", "%3B", "%3D", "%3F", "%40", "%5B", "%5D"}
-    }
-
--- TODO: use in/move to html.m2
-urlEncode = method()
-urlEncode Nothing := identity
-urlEncode String := s -> concatenate toList apply(s, c -> if percentEncoding#?c then percentEncoding#c else c)
+export {"oeis", "isc"}
 
 oeisHTTPS := "https://oeis.org";
 
@@ -163,12 +153,4 @@ multidoc ///
     (@HREF "http://wayback.cecm.sfu.ca/projects/ISC/"@).
    Example
     isc (sqrt 2*pi)
- Node
-  Key
-   urlEncode
-  Headline
-   URL encoding
-  Description
-   Text
-    This function provides a minimal encoding of a string in order to be used as part of a URL.
 ///

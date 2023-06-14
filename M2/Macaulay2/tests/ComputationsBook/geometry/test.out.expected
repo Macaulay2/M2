@@ -497,7 +497,7 @@ o66 = {{0}}
 
 o66 : List
 
-i67 : omegaX = Ext^(codim idealX)(ringP3^1/idealX, ringP3^{-4})
+i67 : omegaX = prune Ext^(codim idealX)(ringP3^1/idealX, ringP3^{-4})
 
 o67 = cokernel {-1} | x_1^2-1702x_2x_3 x_0x_3-2553x_2x_3 x_0x_1-8086x_1x_2 x_1x_2^2-11925x_3^3             x_0^2x_2-15006x_0x_2^2+8248x_2^3+3876x_1x_3^2 x_0^3+13548x_0x_2^2+4124x_2^3-6356x_1x_3^2 |
                {0}  | 2552x_1          12014x_1          2626x_0           13438x_0^2-8515x_0x_2-6719x_2^2 11524x_3^2                                    5762x_3^2                                  |
@@ -589,7 +589,7 @@ i78 : codim singularLocus idealS
 
 o78 = 6
 
-i79 : omegaS = Ext^(codim idealS)(ringP5^1/idealS, ringP5^{-6})
+i79 : omegaS = prune Ext^(codim idealS)(ringP5^1/idealS, ringP5^{-6})
 
 o79 = cokernel {2} | -5836x_4 0           x_0+15871x_5 x_2-2813x_5 x_1+4039x_4 0                     -11252x_5   0               |
                {2} | x_3      x_1+4039x_4 5287x_4      -8190x_4    0           x_0-14179x_2-15399x_5 16062x_4    13145x_2-110x_5 |

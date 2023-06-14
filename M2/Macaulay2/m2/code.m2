@@ -142,8 +142,8 @@ thingMethods := (T, F) -> nonnull apply(pairs T, (key, func) -> if instance(func
     -- TODO: unary methods are installed as T#f, change it to T#(f, T), then simplify this
     if key === F                                               then (key, T) else -- unary method, e.g quotient
     -- TODO: unary assignments operators are installed as T#(s, symbol=), change it to T#((s, symbol=), T), then simplify this
-    if isUnaryAssignmentOperator key and member(F,        key) then (key, T) else -- unary assignment method, e.g symbol=
-    if instance(key, Sequence)       and member(F, splice key) then  key)
+    if isUnaryAssignmentOperator key and isMember(F,        key) then (key, T) else -- unary assignment method, e.g symbol=
+    if instance(key, Sequence)       and isMember(F, splice key) then  key)
 
 sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if instance(func, Function) then
     if isBinaryAssignmentOperator key and tallyF <= tally splice  key     then  key     else -- e.g T#((symbol SPACE, symbol=), T, T)

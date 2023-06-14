@@ -82,7 +82,9 @@ RingElement * Matrix := (r,m) -> (
     if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
      map(target m, source m, reduce(target m, raw r * raw m)))
 Matrix * Number :=
-Matrix * RingElement := (m,r) -> r*m
+Matrix * RingElement := (m,r) -> (
+    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
+     map(target m, source m, reduce(target m, raw m * raw r)))
 
 toSameRing = (m,n) -> (
      if ring m =!= ring n then (
@@ -190,9 +192,10 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  then map(M,N,n.RingMap,f)
 	  else map(M,N,f)))
 
-Matrix ^ ZZ := Matrix => (f,n) -> (
-     if n === 0 then id_(target f)
-     else SimplePowerMethod (f,n))
+Matrix#1 = f -> (
+    if source f =!= target f then error "expected source and target to agree"
+    else id_(target f))
+Matrix ^ ZZ := Matrix => BinaryPowerMethod
 
 transpose Matrix := Matrix => (cacheValue symbol transpose) (
      (m) -> (
@@ -384,15 +387,15 @@ concatRows = mats -> (
 Matrix | Matrix := Matrix => (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)
 Matrix | RingElement := (f,g) -> concatCols(f,g**id_(target f))
-ZZ | Matrix := (f,g) -> concatCols(f*id_(target g),g)
-Matrix | ZZ := (f,g) -> concatCols(f,g*id_(target f))
+Number | Matrix := (f,g) -> concatCols(f*id_(target g),g)
+Matrix | Number := (f,g) -> concatCols(f,g*id_(target f))
 
 Matrix || Matrix := Matrix => (f,g) -> concatRows(f,g)
 RingElement || Matrix := (f,g) -> concatRows(f**id_(source g),g)
      -- we would prefer for f**id_(source g) to have the exact same source as g does
 Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
-ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
-Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
+Number || Matrix := (f,g) -> concatRows(f*id_(source g),g)
+Matrix || Number := (f,g) -> concatRows(f,g*id_(source f))
 
 -----------------------------------------------------------------------------
 -- submatrix, submatrixByDegrees

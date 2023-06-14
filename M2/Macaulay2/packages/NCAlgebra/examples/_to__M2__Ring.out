@@ -44,7 +44,7 @@ i7 : C = toM2Ring(A,SkewCommutative=>true)
 
 o7 = C
 
-o7 : PolynomialRing, 4 skew commutative variables
+o7 : PolynomialRing, 4 skew commutative variable(s)
 
 i8 : x*y-y*x
 
