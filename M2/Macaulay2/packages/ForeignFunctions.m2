@@ -542,7 +542,7 @@ net SharedLibrary := lib -> lib#1
 -- dlopen fails
 importFrom_Core {"isAbsolutePath"}
 if (version#"operating system" == "Darwin" and
-    member(version#"architecture", {"aarch64", "arm64"}))
+    isMember(version#"architecture", {"aarch64", "arm", "arm64"}))
 then (
     brewPrefix := replace("\\s+$", "", get "!brew --prefix");
     dlopen' = filename -> (
