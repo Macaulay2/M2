@@ -23,6 +23,7 @@ export {
     "chainQuiver",
     "coneSystem",
     "flowPolytope",
+    "getWeights",
     "incInverse",
     "isAcyclic",
     "isClosedUnderArrows",
@@ -47,7 +48,6 @@ export {
     "subquivers",
     "threeVertexQuiver",
     "wallType",
-    "getWeights",
 -- Options
     "AsSubquiver",
     "Flow",
@@ -170,6 +170,9 @@ toricQuiver(Graph, List) := ToricQuiver => opts -> (G, F) -> (
 )
 -- subquiver of a ToricQuiver by taking a subset of the arrows, represented as a "child" of the original quiver
 ToricQuiver ^ List := ToricQuiver => (TQ, L) -> (
+    if any(L, x -> (x < 0) or (x >= #TQ.Q1)) then {
+      error "invalid range for subsetting quiver edges";
+    };
     newFlow := TQ.flow;
     Lc := asList(set(0..#TQ.flow - 1) - set(L));
     for i in Lc do(newFlow = replaceInList(i, 0, newFlow));
@@ -177,6 +180,9 @@ ToricQuiver ^ List := ToricQuiver => (TQ, L) -> (
 )
 -- subquiver of a ToricQuiver by removing all vertices/arrows not in the subquiver
 ToricQuiver _ List := ToricQuiver => (TQ, L) -> (
+    if any(L, x -> (x < 0) or (x >= #TQ.Q1)) then {
+      error "invalid range for subsetting quiver edges";
+    };
     M := matrix(for x in entries(TQ.IncidenceMatrix_L) list(if any(x, y-> y != 0) then (x) else (continue;)));
     toricQuiver(M)
 )
