@@ -61,18 +61,18 @@ Matrix* StraightLineProgram::evaluate(const Matrix* vals)
 template <class Field>
 SLP<Field>::SLP()
 {
-  C = NULL;
-  handle = NULL;
+  C = nullptr;
+  handle = nullptr;
   eval_time = 0;
   n_calls = 0;
-  nodes = NULL;
+  nodes = nullptr;
 }
 
 template <class Field>
 SLP<Field>::~SLP()
 {
   freemem(nodes);
-  if (handle != NULL)
+  if (handle != nullptr)
     {
       printf("closing library\n");
       dlclose(handle);
@@ -93,12 +93,12 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
   if (num_slps > MAX_NUM_SLPs)
     {
       ERROR("max number of slps exceeded");
-      res = NULL;
+      res = nullptr;
     }
   else if (program->len < 3)
     {
       ERROR("invalid SLP");
-      res = NULL;
+      res = nullptr;
     }
   else
     {
@@ -131,10 +131,10 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
               const char* funname = "slpFN";
               printf("loading slpFN from %s\n", libname);
               res->handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
-              if (res->handle == NULL) ERROR("can't load library %s", libname);
+              if (res->handle == nullptr) ERROR("can't load library %s", libname);
               res->compiled_fn = (void (*)(element_type*, element_type*))dlsym(
                   res->handle, funname);
-              if (res->compiled_fn == NULL)
+              if (res->compiled_fn == nullptr)
                 ERROR(
                     "can't link function %s from library %s", funname, libname);
             }
@@ -193,10 +193,10 @@ Nterm* extract_divisible_by_x(Nterm*& ff, int i)  // auxiliary
   /* Extracts into fx the terms divisible by the (n-1-i)-th variable "x"
      and divides them by x. (exponent vectors are assumed to be reversed)
      Note: terms in fx may not be in monomial order. */
-  Nterm* fx = NULL;
+  Nterm* fx = nullptr;
   Nterm* f = ff;
-  Nterm* prev_f = NULL;
-  while (f != NULL)
+  Nterm* prev_f = nullptr;
+  while (f != nullptr)
     {
       if (f->monom[i] == 0)
         {
@@ -206,7 +206,7 @@ Nterm* extract_divisible_by_x(Nterm*& ff, int i)  // auxiliary
       else
         {
           f->monom[i]--;  // divide by x
-          if (prev_f != NULL)
+          if (prev_f != nullptr)
             {
               prev_f->next = f->next;  // extract
             }
@@ -216,7 +216,7 @@ Nterm* extract_divisible_by_x(Nterm*& ff, int i)  // auxiliary
             }
           f->next = fx;  // prepend to fx
           fx = f;
-          f = (prev_f == NULL) ? ff : prev_f->next;
+          f = (prev_f == nullptr) ? ff : prev_f->next;
         }
     }
   return fx;
@@ -244,7 +244,7 @@ int SLP<Field>::poly_to_horner_slp(int n,
   for (int i = 0; i < n; i++)
     {
       Nterm* fx = extract_divisible_by_x(f, i);
-      if (fx == NULL)
+      if (fx == nullptr)
         part_pos[i] = ZERO_CONST;
       else
         {
@@ -258,7 +258,7 @@ int SLP<Field>::poly_to_horner_slp(int n,
         }
     }
   int c = 0;  // count nonzeros
-  if (f != NULL) c++;
+  if (f != nullptr) c++;
   for (int i = 0; i < n; i++)
     if (part_pos[i] != ZERO_CONST) c++;
   if (c == 0) return ZERO_CONST;
@@ -268,7 +268,7 @@ int SLP<Field>::poly_to_horner_slp(int n,
   node_index.push_back(prog.size());
   prog.push_back(slpMULTIsum);
   prog.push_back(c);
-  if (f != NULL)
+  if (f != nullptr)
     prog.push_back(CONST_OFFSET +
                 add_constant_get_position<Field>(
                     consts, element_type(toBigComplex(C, f->coeff))));
@@ -281,7 +281,7 @@ int SLP<Field>::poly_to_horner_slp(int n,
 void monomials_to_conventional_expvectors(int n, Nterm* f)  // auxiliary
 /* "unpack" monomials */
 {
-  for (; f != NULL; f = f->next)
+  for (; f != nullptr; f = f->next)
     for (int i = 0; i < n - 1; i++) f->monom[i] -= f->monom[i + 1];
 }
 
@@ -293,7 +293,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const PolyRing* R, ring_elem e)
   if (num_slps > MAX_NUM_SLPs)
     {
       ERROR("max number of slps exceeded");
-      res = NULL;
+      res = nullptr;
     }
   else
     {
@@ -356,7 +356,7 @@ SLP<Field> /* or null */* SLP<Field>::concatenate(const SLP<Field>* slp)
       num_inputs != slp->num_inputs || rows_out != slp->rows_out)
     {
       ERROR("slps unstackable");
-      return NULL;
+      return nullptr;
     }
   int num_outputs = rows_out * cols_out;
   int* end_program = program->array + program->len - num_outputs;
@@ -619,7 +619,7 @@ SLP<Field> /* or null */* SLP<Field>::jacobian(bool makeHxH,
   if (rows_out != 1)
     {
       ERROR("1-row slp expected");
-      return NULL;
+      return nullptr;
     };
 
   int num_outputs = rows_out * cols_out;
@@ -714,7 +714,7 @@ void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
 {
   if (n != num_inputs) ERROR("wrong number of inputs");
 
-  element_type* out = NULL;   // used by compiledSLP
+  element_type* out = nullptr;   // used by compiledSLP
   int out_entries_shift = 0;  // position of "out matrix"
 
   int cur_node = num_consts;
@@ -804,7 +804,7 @@ void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
 template <class Field>
 Matrix* SLP<Field>::evaluate(const Matrix* values)
 {
-  element_type* out = NULL;   // used by compiledSLP
+  element_type* out = nullptr;   // used by compiledSLP
   int out_entries_shift = 0;  // position of "out matrix" in slp->program
 
   int cur_node = num_consts;
@@ -856,7 +856,7 @@ Matrix* SLP<Field>::evaluate(const Matrix* values)
                   break;
                 default:
                   ERROR("unknown SLP operation");
-                  return NULL;
+                  return nullptr;
               }
           }
         out_entries_shift = i + 1;
@@ -1417,9 +1417,9 @@ PathTracker* PathTracker::catalog[MAX_NUM_PATH_TRACKERS];
 
 PathTracker::PathTracker()
 {
-  raw_solutions = NULL;
-  solutions = NULL;
-  DMforPN = NULL;
+  raw_solutions = nullptr;
+  solutions = nullptr;
+  DMforPN = nullptr;
 }
 
 PathTracker::~PathTracker()
@@ -1440,14 +1440,14 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   if (S->n_rows() != 1 || T->n_rows() != 1)
     {
       ERROR("1-row matrices expected");
-      return NULL;
+      return nullptr;
     };
   PathTracker* p = new PathTracker;
   const PolyRing* R = p->homotopy_R = S->get_ring()->cast_to_PolyRing();
-  if (R == NULL)
+  if (R == nullptr)
     {
       ERROR("polynomial ring expected");
-      return NULL;
+      return nullptr;
     }
   p->C = cast_to_CCC(R->getCoefficients());
   // const Ring* K = R->getCoefficients();
@@ -1455,7 +1455,7 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   if (!p->C)
     {
       ERROR("complex coefficients expected");
-      return NULL;
+      return nullptr;
     }
   p->productST = mpfr_get_d(productST, MPFR_RNDN);
   // p->bigT = asin(sqrt(1-p->productST*p->productST));
@@ -1469,14 +1469,14 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   p->DMforPN = newarray_atomic(double, n);
   p->DMforPN[n - 1] = 1;
   p->S = S;
-  p->slpS = NULL;
+  p->slpS = nullptr;
   for (int i = 0; i < n - 1; i++)
     {
       int d = degree_ring_elem(R, S->elem(0, i));
       if (d > p->maxDegreeTo3halves) p->maxDegreeTo3halves = d;
       p->DMforPN[i] = 1 / sqrt(d);
       StraightLineProgram* slp = StraightLineProgram::make(R, S->elem(0, i));
-      if (p->slpS == NULL)
+      if (p->slpS == nullptr)
         p->slpS = slp;
       else
         {
@@ -1490,11 +1490,11 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   p->maxDegreeTo3halves = p->maxDegreeTo3halves * sqrt(p->maxDegreeTo3halves);
 
   p->T = T;
-  p->slpT = NULL;
+  p->slpT = nullptr;
   for (int i = 0; i < T->n_cols(); i++)
     {
       StraightLineProgram* slp = StraightLineProgram::make(R, T->elem(0, i));
-      if (p->slpT == NULL)
+      if (p->slpT == nullptr)
         p->slpT = slp;
       else
         {
@@ -1518,30 +1518,30 @@ PathTracker /* or null */* PathTracker::make(const Matrix* HH)
   if (HH->n_rows() != 1)
     {
       ERROR("1-row matrix expected");
-      return NULL;
+      return nullptr;
     };
 
   PathTracker* p = new PathTracker;
   const PolyRing* R = p->homotopy_R = HH->get_ring()->cast_to_PolyRing();
-  if (R == NULL)
+  if (R == nullptr)
     {
       ERROR("polynomial ring expected");
-      return NULL;
+      return nullptr;
     }
   const Ring* K = R->getCoefficients();
   p->C = cast_to_CCC(K);  // cast to ConcreteRing<ARingCCC> for now
   if (!p->C)
     {
       ERROR("complex coefficients expected");
-      return NULL;
+      return nullptr;
     }
 
   p->H = HH;
-  p->slpH = NULL;
+  p->slpH = nullptr;
   for (int i = 0; i < HH->n_cols(); i++)
     {
       StraightLineProgram* slp = StraightLineProgram::make(R, HH->elem(0, i));
-      if (p->slpH == NULL)
+      if (p->slpH == nullptr)
         p->slpH = slp;
       else
         {
@@ -1560,11 +1560,11 @@ PathTracker /* or null */* PathTracker::make(StraightLineProgram* slp_pred,
                                              StraightLineProgram* slp_corr)
 {
   PathTracker* p = new PathTracker;
-  p->H = NULL;
-  p->slpH = NULL;
+  p->H = nullptr;
+  p->slpH = nullptr;
   p->slpHxt = p->slpHxtH = slp_pred;
   p->slpHxH = slp_corr;
-  p->C = NULL;
+  p->C = nullptr;
   return p;
 }
 
@@ -1650,7 +1650,7 @@ int PathTracker::track(const Matrix* start_sols)
   infinity_threshold2 *= infinity_threshold2;
   double end_zone_factor_dbl = mpfr_get_d(end_zone_factor, MPFR_RNDN);
 
-  if (C == NULL)
+  if (C == nullptr)
     C = cast_to_CCC(
         start_sols->get_ring());  // fixes the problem for PrecookedSLPs
 
@@ -1985,12 +1985,12 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   if (!cast_to_CCC(sols->get_ring()))
     {
       ERROR("complex coordinates expected");
-      return NULL;
+      return nullptr;
     }
   if (sols->n_cols() != n)
     {
       ERROR("incorrect number of coordinates");
-      return NULL;
+      return nullptr;
     }
   n_sols = sols->n_rows();
 
@@ -2073,7 +2073,7 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
 
 Matrix /* or null */* PathTracker::getSolution(int solN)
 {
-  if (solN < 0 || solN >= n_sols) return NULL;
+  if (solN < 0 || solN >= n_sols) return nullptr;
   // construct output
   FreeModule* SS = C->make_FreeModule(n_coords);
   FreeModule* TT = C->make_FreeModule(1);
@@ -2139,7 +2139,7 @@ int PathTracker::getSolutionSteps(int solN)
 
 gmp_RRorNull PathTracker::getSolutionLastT(int solN)
 {
-  if (solN < 0 || solN >= n_sols) return NULL;
+  if (solN < 0 || solN >= n_sols) return nullptr;
   gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].t, MPFR_RNDN);
@@ -2148,7 +2148,7 @@ gmp_RRorNull PathTracker::getSolutionLastT(int solN)
 
 gmp_RRorNull PathTracker::getSolutionRcond(int solN)
 {
-  if (solN < 0 || solN >= n_sols) return NULL;
+  if (solN < 0 || solN >= n_sols) return nullptr;
   gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].cond, MPFR_RNDN);

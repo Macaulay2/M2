@@ -80,7 +80,7 @@ void LocalRing::simplify(local_elem *f) const
       x = f->numer;
       const RingElement *a = RingElement::make_raw(mRing, x);
       const RingElement *b = RingElement::make_raw(mRing, y);
-      const RingElement *c = rawGCDRingElement(a, b, NULL, false);
+      const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
 
 #if 0
       // Debugging code
@@ -237,7 +237,7 @@ void LocalRing::lift_up(const Ring *R, const Matrix *m, Matrix *&result) const
         {
           const local_elem * f = ((*i)->coeff).get_local_elem();
           b = RingElement::make_raw(mRing, f->denom);
-          d = rawGCDRingElement(a, b, NULL, false);
+          d = rawGCDRingElement(a, b, nullptr, false);
 #if 0 // FIXME: GCD(8,2)=1 apparently ...
           // see https://github.com/Macaulay2/M2/issues/1958
           drelem(a);
@@ -385,9 +385,9 @@ void LocalRing::lower_content(ring_elem &c, const ring_elem g) const
   const RingElement *g1 = RingElement::make_raw(mRing, gf->numer);
   const RingElement *g2 = RingElement::make_raw(mRing, gf->denom);
 
-  c1 = rawGCDRingElement(c1, g1, NULL, false);
+  c1 = rawGCDRingElement(c1, g1, nullptr, false);
 
-  const RingElement *cc2 = rawGCDRingElement(c2, g2, NULL, false);
+  const RingElement *cc2 = rawGCDRingElement(c2, g2, nullptr, false);
   const RingElement *cc3 = (*c2) * (*g2);
   const RingElement *cc4 = (*cc3) / (*cc2);
 
@@ -739,7 +739,7 @@ extern "C" { // TODO: remove when this function is in e/interface
 Matrix *rawLiftLocalMatrix(const Ring *R, const Matrix *f)
 {
   const LocalRing *L = f->get_ring()->cast_to_LocalRing();
-  if (L == 0)
+  if (L == nullptr)
     {
       ERROR("expected an object over a local ring");
       return nullptr;
@@ -758,7 +758,7 @@ Matrix *rawLiftLocalMatrix(const Ring *R, const Matrix *f)
 M2_bool rawIsLocalUnit(const RingElement *f)
 {
   const LocalRing *L = f->get_ring()->cast_to_LocalRing();
-  if (L == 0)
+  if (L == nullptr)
     {
       ERROR("expected an object over a local ring");
       return false;

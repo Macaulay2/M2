@@ -52,7 +52,7 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0) : F_(F)
       for (int j = 0; j < F->rank(); j++) Fdegs_[j + 1] = F->primary_degree(j);
     }
   else
-    Fdegs_ = 0;
+    Fdegs_ = nullptr;
 }
 
 int GBWeight::exponents_weight(const_exponents e, int comp) const
@@ -64,7 +64,7 @@ int GBWeight::exponents_weight(const_exponents e, int comp) const
 
 int GBWeight::gbvector_term_weight(const gbvector *f) const
 {
-  if (f == 0) return 0;
+  if (f == nullptr) return 0;
   exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
   R_->gbvector_get_lead_exponents(F_, f, EXP);
   return exponents_weight(EXP, f->comp);
@@ -74,14 +74,14 @@ int GBWeight::gbvector_weight(const gbvector *f, int &initial_term_weight) const
 {
   /* Return the maximum degree of any term of f */
 
-  if (f == 0)
+  if (f == nullptr)
     {
       initial_term_weight = 0;
       return 0;
     }
   int deg = gbvector_term_weight(f);
   initial_term_weight = deg;
-  for (const gbvector *t = f->next; t != 0; t = t->next)
+  for (const gbvector *t = f->next; t != nullptr; t = t->next)
     {
       int tdeg = gbvector_term_weight(t);
       if (tdeg > deg) deg = tdeg;

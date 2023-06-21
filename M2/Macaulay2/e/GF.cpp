@@ -127,7 +127,7 @@ GF::~GF() {}
 GF *GF::create(const RingElement *prim)
 {
   GF *result = new GF;
-  if (!result->initialize_GF(prim)) return 0;
+  if (!result->initialize_GF(prim)) return nullptr;
 
   return result;
 }

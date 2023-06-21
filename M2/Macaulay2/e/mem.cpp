@@ -11,12 +11,12 @@ int slab::n_slabs = 0;
 // Array of stashes of 2^n powers.
 // This looks thread unsafe, but is actually thread safe because it is only
 // initialized once when the engine is setup.
-doubling_stash *doubles = NULL;
+doubling_stash *doubles = nullptr;
 
 stash::stash(const char *s, size_t len)
     : name(s),
-      slabs(NULL),
-      free_list(NULL),
+      slabs(nullptr),
+      free_list(nullptr),
       n_allocs(0),
       n_inuse(0),
       highwater(0),
@@ -35,7 +35,7 @@ stash::stash(const char *s, size_t len)
 stash::~stash()
 {
   acquireSpinLock(&list_spinlock);
-  while (slabs != NULL)
+  while (slabs != nullptr)
     {
       slab *p = slabs;
       slabs = slabs->next;
@@ -55,7 +55,7 @@ void stash::chop_slab()
 
   // Time to chop it up.
 
-  char *prev = NULL;
+  char *prev = nullptr;
   char *current = slabs->s;
   for (int i = 0; i < n_per_slab; i++)
     {
@@ -134,7 +134,7 @@ doubling_stash::~doubling_stash()
 {
   for (int i = 0; i < NDOUBLES; i++)
     {
-      if (doubles[i] != NULL)
+      if (doubles[i] != nullptr)
         emit("internal warning -- deleting a double stash");
       freemem(doubles[i]);
     }
@@ -155,7 +155,7 @@ void *doubling_stash::new_elem(size_t size)
 
 void doubling_stash::delete_elem(void *p)
 {
-  if (p == NULL) return;
+  if (p == nullptr) return;
   int *q = (int *)p;
   q--;
   doubles[*q]->delete_elem(q);

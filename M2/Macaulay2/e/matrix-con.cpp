@@ -5,17 +5,17 @@
 #include <iostream>
 
 MatrixConstructor::MatrixConstructor()
-    : R(0), rows(0), cols(0), cols_frozen(false), deg(0)
+    : R(nullptr), rows(nullptr), cols(nullptr), cols_frozen(false), deg(nullptr)
 {
 }
 
 MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols)
-    : R(target->get_ring()), rows(target), cols(0), cols_frozen(false), deg(0)
+    : R(target->get_ring()), rows(target), cols(nullptr), cols_frozen(false), deg(nullptr)
 {
   cols = R->make_FreeModule(ncols);
 
   entries.reserve(ncols);
-  for (int i = 0; i < ncols; i++) entries.push_back(0);
+  for (int i = 0; i < ncols; i++) entries.push_back(nullptr);
 
   deg = R->degree_monoid()->make_one();
 }
@@ -26,9 +26,9 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target,
     : R(target->get_ring()), rows(target), cols(source), cols_frozen(true)
 {
   entries.reserve(source->rank());
-  for (int i = 0; i < source->rank(); i++) entries.push_back(0);
+  for (int i = 0; i < source->rank(); i++) entries.push_back(nullptr);
 
-  deg = (deg0 == 0 ? R->degree_monoid()->make_one()
+  deg = (deg0 == nullptr ? R->degree_monoid()->make_one()
                    : R->degree_monoid()->make_new(deg0));
 }
 
@@ -36,7 +36,7 @@ void MatrixConstructor::append(vec v)
 {
   assert(!cols_frozen);
   monomial d = R->degree_monoid()->make_one();
-  if (v != 0) R->vec_multi_degree(rows, v, d);
+  if (v != nullptr) R->vec_multi_degree(rows, v, d);
   append(v, d);
   R->degree_monoid()->remove(d);
 }
@@ -84,7 +84,7 @@ void MatrixConstructor::compute_column_degree(int i)
     }
   monomial d = R->degree_monoid()->make_one();
   const vec v = entries[i];
-  if (v != 0) R->vec_multi_degree(rows, v, d);
+  if (v != nullptr) R->vec_multi_degree(rows, v, d);
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->change_degree(i, d);
   R->degree_monoid()->remove(d);

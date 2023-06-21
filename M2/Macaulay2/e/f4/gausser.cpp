@@ -9,8 +9,8 @@
 Gausser *Gausser::newGausser(const Ring *K, F4Mem *Mem0)
 {
   const Z_mod *Kp = K->cast_to_Z_mod();
-  if (Kp != 0) return new Gausser(Kp, Mem0);
-  return 0;
+  if (Kp != nullptr) return new Gausser(Kp, Mem0);
+  return nullptr;
 }
 
 Gausser::Gausser(const Z_mod *K0, F4Mem *Mem0)
@@ -33,7 +33,7 @@ F4CoefficientArray Gausser::from_ringelem_array(int len, ring_elem *elems) const
         for (i = 0; i < len; i++) result[i] = elems[i].get_int();
         return result;
     };
-  return 0;
+  return nullptr;
 }
 
 void Gausser::to_ringelem_array(int len,
@@ -61,7 +61,7 @@ F4CoefficientArray Gausser::copy_F4CoefficientArray(int len,
         for (i = 0; i < len; i++) result[i] = elems[i];
         return result;
     };
-  return 0;
+  return nullptr;
 }
 
 void Gausser::deallocate_F4CCoefficientArray(F4CoefficientArray &F,
@@ -72,7 +72,7 @@ void Gausser::deallocate_F4CCoefficientArray(F4CoefficientArray &F,
     {
       case ZZp:
         Mem->coefficients.deallocate(elems);
-        F = 0;
+        F = nullptr;
     };
 }
 /////////////////////////////////////////////////////////////////////

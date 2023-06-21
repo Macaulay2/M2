@@ -20,14 +20,14 @@ static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type,
   result = getmemstructtype(mon_part);
   result->type = type;
   result->nvars = nvars;
-  if (wts != 0)
+  if (wts != nullptr)
     {
       int i;
       result->wts = getmematomicvectortype(int, nvars);
       for (i = 0; i < nvars; i++) result->wts[i] = wts[i];
     }
   else
-    result->wts = 0;
+    result->wts = nullptr;
   return result;
 }
 
@@ -38,7 +38,7 @@ static MonomialOrdering *make_mon_order(int n)
   z->len = n;
   z->_hash = next_hash++;
   int i;
-  for (i = 0; i < n; i++) z->array[i] = NULL;
+  for (i = 0; i < n; i++) z->array[i] = nullptr;
   return z;
 }
 
@@ -53,7 +53,7 @@ static MonomialOrdering *M2_mo_offset(const MonomialOrdering *mo, int offset)
         result->array[i] = mo_make(p->type, p->nvars, p->wts);
       else
         {
-          mon_part q = mo_make(MO_WEIGHTS, offset + p->nvars, NULL);
+          mon_part q = mo_make(MO_WEIGHTS, offset + p->nvars, nullptr);
           q->wts = getmemvectortype(int, q->nvars);
           for (j = 0; j < offset; j++) q->wts[j] = 0;
           for (; j < q->nvars; j++) q->wts[j] = p->wts[j - offset];
@@ -232,7 +232,7 @@ MonomialOrdering *MonomialOrderings::join(
           else
             {
               /* Shift the weights over by nvars_so_far */
-              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, NULL);
+              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, nullptr);
               q->wts = getmemvectortype(int, q->nvars);
               for (j = 0; j < nvars_so_far; j++) q->wts[j] = 0;
               for (; j < q->nvars; j++) q->wts[j] = p->wts[j - nvars_so_far];
@@ -358,7 +358,7 @@ std::string MonomialOrderings::toString(const MonomialOrdering *mo)
             o << "UNKNOWN";
             break;
         }
-      if (p->wts != NULL) { ::toString(o, p->nvars, p->wts); }
+      if (p->wts != nullptr) { ::toString(o, p->nvars, p->wts); }
       else if (p_ones)
         {
           ::ones(o, p->nvars);
@@ -439,7 +439,7 @@ M2_arrayint moGetWeightValues(const MonomialOrdering *mo)
 {
   int nvars = rawNumberOfVariables(mo);
   // grab the first weight vector
-  if (mo->len == 0) return 0;
+  if (mo->len == 0) return nullptr;
   if (mo->array[0]->type == MO_WEIGHTS)
     {
       int i;
@@ -449,7 +449,7 @@ M2_arrayint moGetWeightValues(const MonomialOrdering *mo)
       for (; i < nvars; i++) result->array[i] = 0;
       return result;
     }
-  return 0;
+  return nullptr;
 }
 
 int rawNumberOfInvertibleVariables(const MonomialOrdering *mo)
@@ -542,7 +542,7 @@ MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing)
   else
     typ = MO_LEX;
 
-  p = mo_make(typ, nvars, NULL);
+  p = mo_make(typ, nvars, nullptr);
   result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -561,7 +561,7 @@ MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs,
     if (degs->array[i] <= 0)
       {
         ERROR("grevlex: expected all degrees to be positive");
-        return NULL;
+        return nullptr;
       }
     else if (degs->array[i] > 1)
       all_one = 0;
@@ -574,7 +574,7 @@ MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs,
         typ = MO_GREVLEX4;
       else
         typ = MO_GREVLEX;
-      wts = 0;
+      wts = nullptr;
     }
   else
     {
@@ -595,7 +595,7 @@ MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs,
 
 MonomialOrdering *rawRevLexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_REVLEX, nvars, NULL);
+  mon_part p = mo_make(MO_REVLEX, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -610,21 +610,21 @@ MonomialOrdering *rawWeightsMonomialOrdering(M2_arrayint wts)
 }
 MonomialOrdering *rawGroupLexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_LAURENT, nvars, 0);
+  mon_part p = mo_make(MO_LAURENT, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
 }
 MonomialOrdering *rawGroupRevLexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_LAURENT_REVLEX, nvars, 0);
+  mon_part p = mo_make(MO_LAURENT_REVLEX, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
 }
 MonomialOrdering *rawNClexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_NC_LEX, nvars, 0);
+  mon_part p = mo_make(MO_NC_LEX, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -632,7 +632,7 @@ MonomialOrdering *rawNClexMonomialOrdering(int nvars)
 MonomialOrdering *rawPositionMonomialOrdering(M2_bool up_or_down)
 {
   mon_part p =
-      mo_make((up_or_down ? MO_POSITION_UP : MO_POSITION_DOWN), 0, NULL);
+      mo_make((up_or_down ? MO_POSITION_UP : MO_POSITION_DOWN), 0, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -671,7 +671,7 @@ MonomialOrdering *rawJoinMonomialOrdering(engine_RawMonomialOrderingArray M)
           else
             {
               /* Shift the weights over by nvars_so_far */
-              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, NULL);
+              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, nullptr);
               q->wts = getmemvectortype(int, q->nvars);
               for (j = 0; j < nvars_so_far; j++) q->wts[j] = 0;
               for (; j < q->nvars; j++) q->wts[j] = p->wts[j - nvars_so_far];
@@ -815,7 +815,7 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
             break;
         }
       result = M2_join(result, M2_tostring(s));
-      if (p->wts != NULL)
+      if (p->wts != nullptr)
         result = M2_join(result, intarray_to_string(p->nvars, p->wts));
       else if (p_ones)
         result = M2_join(result, ones_to_string(p->nvars));

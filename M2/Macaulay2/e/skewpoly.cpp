@@ -19,7 +19,7 @@ SkewPolynomialRing *SkewPolynomialRing::create(const Ring *K,
   SkewPolynomialRing *result = new SkewPolynomialRing;
 
   result->initialize_poly_ring(K, M);
-  if (!result->initialize_skew(skewvars)) return 0;
+  if (!result->initialize_skew(skewvars)) return nullptr;
   result->gb_ring_ = GBRing::create_SkewPolynomialRing(K, M, result->skew_);
   return result;
 }
@@ -54,13 +54,13 @@ ring_elem SkewPolynomialRing::antipode(const ring_elem f) const
       int mod4 = deg % 4;
       int sign = sign4[mod4];
       Nterm *t = new_term();
-      t->next = 0;
+      t->next = nullptr;
       t->coeff = (sign == 1 ? s.coeff : K_->negate(s.coeff));
       M_->copy(s.monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }
-  inresult->next = 0;
+  inresult->next = nullptr;
   return head.next;
 }
 
@@ -83,7 +83,7 @@ ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
       if (sign == 0) continue;
 
       Nterm *t = new_term();
-      t->next = 0;
+      t->next = nullptr;
       t->coeff = K_->mult(c, s.coeff);
       if (sign < 0) K_->negate_to(t->coeff);
 
@@ -91,7 +91,7 @@ ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
       inresult->next = t;
       inresult = inresult->next;
     }
-  inresult->next = 0;
+  inresult->next = nullptr;
   return head.next;
 }
 

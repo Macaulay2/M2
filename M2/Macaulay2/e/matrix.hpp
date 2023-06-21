@@ -245,14 +245,14 @@ class Matrix : public EngineObject
    public:
     //    iterator(const Matrix *M0, int col0=0) : M(M0), col(col0),
     //    v(M0->elem(col0)) {}
-    iterator(const Matrix *M0) : M(M0), col(-1), v(0) {}
+    iterator(const Matrix *M0) : M(M0), col(-1), v(nullptr) {}
     void set(int newcol)
     {
       col = newcol;
       v = M->elem(col);
     }
     void next() { v = v->next; }
-    bool valid() { return v != 0; }
+    bool valid() { return v != nullptr; }
     int row() { return v->comp; }
     ring_elem entry() { return v->coeff; }
   };

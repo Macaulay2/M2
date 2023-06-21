@@ -44,7 +44,7 @@ const RingElement /* or null */ *IM2_RingMap_eval_ringelem(const RingMap *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -55,7 +55,7 @@ const Matrix /* or null */ *IM2_RingMap_eval_matrix(const RingMap *F,
   if (newTarget->rank() < M->n_rows())
     {
       ERROR("expected FreeModule of rank at least %d", M->n_rows());
-      return NULL;
+      return nullptr;
     }
   try
     {
@@ -63,7 +63,7 @@ const Matrix /* or null */ *IM2_RingMap_eval_matrix(const RingMap *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -78,7 +78,7 @@ MutableMatrix /* or null */ *rawRingMapEvalMutableMatrix(const RingMap *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 

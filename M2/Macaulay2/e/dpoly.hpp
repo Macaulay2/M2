@@ -91,8 +91,8 @@ class DPoly
 
   static void increase_size_0(int newdeg, TowerPolynomial &f);
   static void increase_size_n(int newdeg, TowerPolynomial &f);
-  static TowerPolynomial alloc_poly_n(int deg, TowerPolynomial *elems = 0);
-  static TowerPolynomial alloc_poly_0(int deg, long *elems = 0);
+  static TowerPolynomial alloc_poly_n(int deg, TowerPolynomial *elems = nullptr);
+  static TowerPolynomial alloc_poly_0(int deg, long *elems = nullptr);
   static void dealloc_poly(TowerPolynomial &f);
 
   static void display_poly(FILE *fil, int level, const TowerPolynomial f);
@@ -107,7 +107,7 @@ class DPoly
 
   static TowerPolynomial from_long(int level, long c);  // c should be reduced mod p
 
-  static bool is_zero(TowerPolynomial f) { return f == 0; }
+  static bool is_zero(TowerPolynomial f) { return f == nullptr; }
   void remove(int level, TowerPolynomial &f);
 
   int compare(int level, const TowerPolynomial f, const TowerPolynomial g);  // this is a total order
@@ -178,7 +178,7 @@ class DPoly
 
   // DPoly management
   ~DPoly() {}
-  DPoly(long p, int nvars0, const TowerPolynomial* extensions = 0);
+  DPoly(long p, int nvars0, const TowerPolynomial* extensions = nullptr);
 };
 
 /**
@@ -201,29 +201,29 @@ class DRing : public our_new_delete
   // ext0 should be an array of poly's of level 'nvars0'? 0..nvars0-1
 
   void init_set(elem &result, elem a) const { result = a; }
-  void set_zero(elem &result) const { result = 0; }
+  void set_zero(elem &result) const { result = nullptr; }
   void set(elem &result, elem a) const
   {
     D.remove(level, result);
     result = a;
   }
 
-  bool is_zero(elem result) const { return result == 0; }
+  bool is_zero(elem result) const { return result == nullptr; }
   bool invert(elem &result, elem a) const
   // returns true if invertible.  Returns true if not, and then result is set to
   // 0.
   {
     result = D.invert(level, a);
-    return result != 0;
+    return result != nullptr;
   }
 
   void add_term(elem &result, long coeff, exponents_t exp) const;
 
   void add(elem &result, elem a, elem b) const
   {
-    if (a == 0)
+    if (a == nullptr)
       result = b;
-    else if (b == 0)
+    else if (b == nullptr)
       result = a;
     else
       {
@@ -242,35 +242,35 @@ class DRing : public our_new_delete
 
   void subtract_multiple(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0) return;
+    if (a == nullptr || b == nullptr) return;
     elem ab = D.mult(level, a, b, true);
     D.subtract_in_place(level, result, ab);
   }
 
   void mult(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0)
-      result = 0;
+    if (a == nullptr || b == nullptr)
+      result = nullptr;
     else
       result = D.mult(level, a, b, true);
   }
 
   void divide(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0)
-      result = 0;
+    if (a == nullptr || b == nullptr)
+      result = nullptr;
     else
       {
         elem a1 = D.copy(level, a);
-        if (!D.division_in_place(level, a1, b, result)) result = 0;
+        if (!D.division_in_place(level, a1, b, result)) result = nullptr;
         D.dealloc_poly(a1);
       }
   }
 
   void remainder(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0)
-      result = 0;
+    if (a == nullptr || b == nullptr)
+      result = nullptr;
     else
       {
         result = D.copy(level, a);

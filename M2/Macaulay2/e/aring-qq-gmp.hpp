@@ -219,7 +219,7 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
   void swap(ElementType& a, ElementType& b) const { mpq_swap(&a, &b); }
   void random(ElementType& result) const
   {
-    rawSetRandomQQ(&result, 0);
+    rawSetRandomQQ(&result, nullptr);
 #if 0
       mpz_urandomb(mpq_numref(&result), mRandomState, mMaxHeight);
       mpz_urandomb(mpq_denref(&result), mRandomState, mMaxHeight);

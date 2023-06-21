@@ -23,7 +23,7 @@ s_pair_heap::s_pair_heap(const Monoid *MM) : M(MM), top_of_heap(-1), nelems(0)
   int i;
   for (i = 0; i < NHEAP; i++)
     {
-      heap[i] = NULL;
+      heap[i] = nullptr;
       n_in_heap[i] = 0;
     }
 }
@@ -36,7 +36,7 @@ s_pair *s_pair_heap::grab_remaining_pairs()
     if (heap[i])
       {
         inresult->next = heap[i];
-        while (inresult->next != 0) inresult = inresult->next;
+        while (inresult->next != nullptr) inresult = inresult->next;
       }
   return head.next;
 }
@@ -78,7 +78,7 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
         if (cmp != 0)
           return cmp;  // MES: changed cmp to -cmp, to try out different order
                        // 2/21/00.
-        if (f->first == NULL || g->first == NULL) return 0;
+        if (f->first == nullptr || g->first == nullptr) return 0;
         cmp = f->first->me - g->first->me;
         if (cmp > 0) return 1;
         if (cmp < 0) return -1;
@@ -88,19 +88,19 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
         if (cmp != 0)
           return -cmp;  // MES: changed cmp to -cmp, to try out different order
                         // 2/21/00.
-        if (f->first == NULL || g->first == NULL) return 0;
+        if (f->first == nullptr || g->first == nullptr) return 0;
         cmp = f->first->me - g->first->me;
         if (cmp > 0) return 1;
         if (cmp < 0) return -1;
         break;
       case 2:
-        if (f->first != NULL && g->first != NULL)
+        if (f->first != nullptr && g->first != nullptr)
           {
             cmp = f->first->me - g->first->me;
             if (cmp < 0) return -1;
             if (cmp > 0) return 1;
           }
-        if (f->second != NULL && g->second != NULL)
+        if (f->second != nullptr && g->second != nullptr)
           {
             cmp = f->second->me - g->second->me;
             if (cmp < 0) return -1;
@@ -108,7 +108,7 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
           }
         cmp = M->compare(f->lcm, g->lcm);
         if (cmp != 0) return cmp;
-        if (f->first == NULL || g->first == NULL) return 0;
+        if (f->first == nullptr || g->first == nullptr) return 0;
         cmp = f->first->me - g->first->me;
         if (cmp > 0) return 1;
         if (cmp < 0) return -1;
@@ -123,8 +123,8 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
 s_pair *s_pair_heap::merge(s_pair *f, s_pair *g) const
 {
   // Sort in ascending degree order, then ascending monomial order
-  if (g == NULL) return f;
-  if (f == NULL) return g;
+  if (g == nullptr) return f;
+  if (f == nullptr) return g;
   s_pair head;
   s_pair *result = &head;
   while (1) switch (compare(f, g))
@@ -133,7 +133,7 @@ s_pair *s_pair_heap::merge(s_pair *f, s_pair *g) const
           result->next = g;
           result = result->next;
           g = g->next;
-          if (g == NULL)
+          if (g == nullptr)
             {
               result->next = f;
               return head.next;
@@ -144,7 +144,7 @@ s_pair *s_pair_heap::merge(s_pair *f, s_pair *g) const
           result->next = f;
           result = result->next;
           f = f->next;
-          if (f == NULL)
+          if (f == nullptr)
             {
               result->next = g;
               return head.next;
@@ -155,17 +155,17 @@ s_pair *s_pair_heap::merge(s_pair *f, s_pair *g) const
 
 void s_pair_heap::sort_list(s_pair *&p) const
 {
-  if (p == NULL || p->next == NULL) return;
-  s_pair *p1 = NULL;
-  s_pair *p2 = NULL;
-  while (p != NULL)
+  if (p == nullptr || p->next == nullptr) return;
+  s_pair *p1 = nullptr;
+  s_pair *p2 = nullptr;
+  while (p != nullptr)
     {
       s_pair *tmp = p;
       p = p->next;
       tmp->next = p1;
       p1 = tmp;
 
-      if (p == NULL) break;
+      if (p == nullptr) break;
       tmp = p;
       p = p->next;
       tmp->next = p2;
@@ -181,7 +181,7 @@ void s_pair_heap::insert(s_pair *&p)
 {
   heap[0] = merge(p, heap[0]);
   n_in_heap[0]++;
-  p = NULL;
+  p = nullptr;
   int i = 0;
   while (n_in_heap[i] >= spair_heap_size[i])
     {
@@ -195,7 +195,7 @@ void s_pair_heap::insert(s_pair *&p)
         }
       heap[i] = merge(heap[i - 1], heap[i]);
       n_in_heap[i] += n_in_heap[i - 1];
-      heap[i - 1] = NULL;
+      heap[i - 1] = nullptr;
       n_in_heap[i - 1] = 0;
     }
   if (i > top_of_heap) top_of_heap = i;
@@ -209,13 +209,13 @@ void s_pair_heap::insert(s_pair *p, int len)
   heap[i] = merge(p, heap[i]);
   n_in_heap[i] += len;
   //  std::cerr << "n_in_heap[" << i << "]=" << n_in_heap[i] << std::endl;
-  p = NULL;
+  p = nullptr;
   while (n_in_heap[i] >= spair_heap_size[i])
     {
       i++;
       heap[i] = merge(heap[i - 1], heap[i]);
       n_in_heap[i] += n_in_heap[i - 1];
-      heap[i - 1] = NULL;
+      heap[i - 1] = nullptr;
       n_in_heap[i - 1] = 0;
     }
   if (i > top_of_heap) top_of_heap = i;
@@ -225,7 +225,7 @@ void s_pair_heap::insert(s_pair *p, int len)
 s_pair *s_pair_heap::remove()
 {
   // Find a non-zero element
-  if (nelems == 0) return NULL;
+  if (nelems == 0) return nullptr;
   int i, first;
   for (first = 0; first <= top_of_heap; first++)
     if (n_in_heap[first] > 0) break;
@@ -234,7 +234,7 @@ s_pair *s_pair_heap::remove()
   // Now find the smallest one
   for (i = first + 1; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       int cmp = compare(smallest, heap[i]);
       if (cmp > 0)
         {
@@ -245,7 +245,7 @@ s_pair *s_pair_heap::remove()
 
   // Now remove this element and return it:
   heap[first] = smallest->next;
-  smallest->next = NULL;
+  smallest->next = nullptr;
   nelems--;
 
   n_in_heap[first]--;
@@ -263,7 +263,7 @@ s_pair *s_pair_heap::remove()
 void s_pair_heap::put_back(s_pair *&p)
 {
   insert(p);
-  p = NULL;
+  p = nullptr;
 }
 
 void s_pair_heap::stats() const {}

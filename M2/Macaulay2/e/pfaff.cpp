@@ -5,7 +5,7 @@
 #include "interrupted.hpp"
 
 PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
-    : R(M0->get_ring()), M(M0), p(p0), done(false), row_set(0)
+    : R(M0->get_ring()), M(M0), p(p0), done(false), row_set(nullptr)
 {
   pfaffs = MatrixConstructor(R->make_FreeModule(1), 0);
   if (p == 0)
@@ -98,7 +98,7 @@ Matrix *Matrix::pfaffians(int p) const
   if (get_ring()->get_precision() > 0)
     {
       ERROR("pfaffian computations over RR or CC not yet implemented");
-      return 0;
+      return nullptr;
     }
   PfaffianComputation d {this, p};
   d.calc();

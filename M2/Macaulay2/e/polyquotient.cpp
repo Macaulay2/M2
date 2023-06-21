@@ -125,7 +125,7 @@ bool PolyRingQuotient::lift(const Ring *Rg,
 // f is an element of 'this'.  Rg is the desired ring.
 {
   const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
-  if (Rg == numerR_ || (Rg1 != 0 && Rg1->getAmbientRing() == numerR_))
+  if (Rg == numerR_ || (Rg1 != nullptr && Rg1->getAmbientRing() == numerR_))
     {
       result = f;
       return true;
@@ -139,7 +139,7 @@ bool PolyRingQuotient::promote(const Ring *Rf,
 // f is an element of Rf.  result will be an element in 'this'.
 {
   const PolynomialRing *R1 = Rf->cast_to_PolynomialRing();
-  if (Rf == numerR_ || (R1 != 0 && numerR_ == R1->getAmbientRing()))
+  if (Rf == numerR_ || (R1 != nullptr && numerR_ == R1->getAmbientRing()))
     {
       result = copy(f);
       normal_form(result);

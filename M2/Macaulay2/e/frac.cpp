@@ -115,7 +115,7 @@ void FractionField::simplify(frac_elem *f) const
       x = f->numer;
       const RingElement *a = RingElement::make_raw(R_, x);
       const RingElement *b = RingElement::make_raw(R_, y);
-      const RingElement *c = rawGCDRingElement(a, b, NULL, false);
+      const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
 
 #if 0
       // Debugging code
@@ -203,9 +203,9 @@ void FractionField::lower_content(ring_elem &c, const ring_elem g) const
   const RingElement *g1 = RingElement::make_raw(R_, gf->numer);
   const RingElement *g2 = RingElement::make_raw(R_, gf->denom);
 
-  c1 = rawGCDRingElement(c1, g1, NULL, false);
+  c1 = rawGCDRingElement(c1, g1, nullptr, false);
 
-  const RingElement *cc2 = rawGCDRingElement(c2, g2, NULL, false);
+  const RingElement *cc2 = rawGCDRingElement(c2, g2, nullptr, false);
   const RingElement *cc3 = (*c2) * (*g2);
   const RingElement *cc4 = (*cc3) / (*cc2);
 

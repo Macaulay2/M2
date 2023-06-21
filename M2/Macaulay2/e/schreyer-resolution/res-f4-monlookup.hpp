@@ -77,7 +77,7 @@ class ResF4MonomialLookupTableT : public our_new_delete
   void insert1(mi_node *&p, const_varpower_monomial m, Key k);
 
  public:
-  ResF4MonomialLookupTableT(int nvars, stash *mi_stash = 0);
+  ResF4MonomialLookupTableT(int nvars, stash *mi_stash = nullptr);
   ~ResF4MonomialLookupTableT();
 
   //  // Should we write these two routines?
@@ -135,7 +135,7 @@ class ResF4MonomialLookupTableT : public our_new_delete
 void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
                                            elems,
                                        VECTOR(int) & result_minimals,
-                                       stash *mi_stash = 0);
+                                       stash *mi_stash = nullptr);
 
 #endif
 

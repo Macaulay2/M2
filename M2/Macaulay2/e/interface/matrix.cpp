@@ -57,14 +57,14 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
       if (r < 0 || r >= M->n_rows())
         {
           ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows() - 1);
-          return 0;
+          return nullptr;
         }
       if (c < 0 || c >= M->n_cols())
         {
           ERROR("matrix column index %d out of range 0 .. %d",
                 c,
                 M->n_cols() - 1);
-          return 0;
+          return nullptr;
         }
       ring_elem result;
       result = M->elem(r, c);
@@ -72,7 +72,7 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -189,7 +189,7 @@ const Matrix /* or null */ *IM2_Matrix_remake1(const FreeModule *target,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -235,7 +235,7 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
       if (n == 0)
         {
           ERROR("matrix concat: expects at least one matrix");
-          return 0;
+          return nullptr;
         }
       const FreeModule *F = Ms->array[0]->rows();
       const Ring *R = F->get_ring();
@@ -247,12 +247,12 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
           if (F->get_ring() != M->get_ring())
             {
               ERROR("matrix concat: different base rings");
-              return 0;
+              return nullptr;
             }
           if (F->rank() != M->n_rows())
             {
               ERROR("matrix concat: row sizes are not equal");
-              return 0;
+              return nullptr;
             }
           for (int j = 0; j < M->n_cols(); j++)
             {
@@ -264,7 +264,7 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -279,7 +279,7 @@ const Matrix /* or null */ *IM2_Matrix_direct_sum(
       if (n == 0)
         {
           ERROR("matrix direct sum: expects at least one matrix");
-          return 0;
+          return nullptr;
         }
       const Matrix *result = Ms->array[0];
       const Ring *R = result->get_ring();
@@ -287,7 +287,7 @@ const Matrix /* or null */ *IM2_Matrix_direct_sum(
         if (R != Ms->array[i]->get_ring())
           {
             ERROR("matrix direct sum: different base rings");
-            return 0;
+            return nullptr;
           }
       for (unsigned int i = 1; i < n; i++)
         result = result->direct_sum(Ms->array[i]);
@@ -296,7 +296,7 @@ const Matrix /* or null */ *IM2_Matrix_direct_sum(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -308,7 +308,7 @@ const Matrix /* or null */ *IM2_Matrix_tensor(const Matrix *M, const Matrix *N)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -320,7 +320,7 @@ const Matrix /* or null */ *rawModuleTensor(const Matrix *M, const Matrix *N)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -332,7 +332,7 @@ const Matrix /* or null */ *IM2_Matrix_transpose(const Matrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -346,7 +346,7 @@ const Matrix /* or null */ *IM2_Matrix_reshape(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -359,7 +359,7 @@ const Matrix /* or null */ *IM2_Matrix_flip(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -374,7 +374,7 @@ const Matrix /* or null */ *rawWedgeProduct(int p, int q, const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -388,7 +388,7 @@ const Matrix /* or null */ *IM2_Matrix_submatrix(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -401,7 +401,7 @@ const Matrix /* or null */ *IM2_Matrix_submatrix1(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -413,7 +413,7 @@ const Matrix /* or null */ *IM2_Matrix_koszul(int p, const Matrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -429,13 +429,13 @@ const Matrix /* or null */ *rawKoszulMonomials(int nskew,
       if (M->get_ring() != N->get_ring())
         {
           ERROR("expected same ring");
-          return 0;
+          return nullptr;
         }
       return Matrix::koszul_monomials(nskew, M, N);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -447,7 +447,7 @@ const Matrix /* or null */ *IM2_Matrix_symm(int p, const Matrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -590,7 +590,7 @@ engine_RawMatrixPairOrNull rawTopCoefficients(const Matrix *M)
   Matrix *coeffs;
   Matrix *monoms;
   coeffs = M->top_coefficients(monoms);
-  if (coeffs == NULL) return NULL;
+  if (coeffs == nullptr) return nullptr;
   engine_RawMatrixPair result = new engine_RawMatrixPair_struct;
   result->a = monoms;
   result->b = coeffs;
@@ -654,7 +654,7 @@ const Matrix /* or null */ *IM2_Matrix_remove_content(const Matrix *M)
 #warning \
     "const Matrix /* or null */ * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"
 #endif
-  return NULL;
+  return nullptr;
 }
 
 const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget,
@@ -674,14 +674,14 @@ const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget,
           else
             {
               ERROR("cannot promote given matrix");
-              return 0;
+              return nullptr;
             }
       mat.compute_column_degrees();
       return mat.to_matrix();
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -703,7 +703,7 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
           else
             {
               // ERROR("cannot lift given matrix");
-              return 0;
+              return nullptr;
             }
       mat.compute_column_degrees();
       *success_return = 1;
@@ -711,7 +711,7 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 

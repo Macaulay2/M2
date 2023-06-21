@@ -443,7 +443,7 @@ bool SchurRing2::promote(const Ring *Rf,
   else
     {
       const SchurRing2 *Sf = Rf->cast_to_SchurRing2();
-      if (Sf != 0)
+      if (Sf != nullptr)
         {
           if (coefficientRing == Sf->getCoefficientRing())
             {
@@ -473,7 +473,7 @@ bool SchurRing2::lift(const Ring *Rg,
   else
     {
       const SchurRing2 *Sg = Rg->cast_to_SchurRing2();
-      if (Sg != 0)
+      if (Sg != nullptr)
         {
           if (coefficientRing == Sg->getCoefficientRing())
             {
@@ -678,7 +678,7 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
   if (coeffR != coefficientRing)
     {
       ERROR("expected coefficient ring of Schur ring");
-      return 0;
+      return nullptr;
     }
   const schur_poly *f1 = f.get_schur_poly();
   int n = static_cast<int>(f1->size());  // this is here because the lengths of

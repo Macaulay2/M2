@@ -36,7 +36,7 @@ void ARingZZGMP::elem_text_out(buffer& o,
     }
   else
     {
-      str = mpz_get_str(static_cast<char*>(0), 10, &a);
+      str = mpz_get_str(static_cast<char*>(nullptr), 10, &a);
       o << str;
       delete str;
     }

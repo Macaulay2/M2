@@ -15,11 +15,11 @@ ring_elem sagbi::subduct(int numslots,
   Nterm *result = &head;
   MatrixConstructor mat(R->make_FreeModule(1), 1);
 
-  while (f != NULL)
+  while (f != nullptr)
     {
       Nterm *g = f;
       f = f->next;
-      g->next = NULL;
+      g->next = nullptr;
 
       mat.set_entry(0, 0, g);
       Matrix *m = mat.to_matrix();
@@ -45,7 +45,7 @@ ring_elem sagbi::subduct(int numslots,
         }
     }
 
-  result->next = NULL;
+  result->next = nullptr;
   return head.next;
 }
 
@@ -53,10 +53,10 @@ Matrix *sagbi::subduct(int numparts, const Matrix *m, const RingMap *phi, GBComp
 {
   MatrixConstructor result(m->rows(), m->cols());
   const PolyRing *R = m->get_ring()->cast_to_PolyRing();
-  if (R == 0)
+  if (R == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   int nslots = R->getMonoid()->n_slots(numparts);
   for (int i = 0; i < m->n_cols(); i++)
@@ -84,7 +84,7 @@ ring_elem sagbi::subduct1(int numslots,
     MatrixConstructor matS(S->make_FreeModule(1), 1);
     bool breakFlag = false;
     
-    while ((f != NULL) && (breakFlag == false))
+    while ((f != nullptr) && (breakFlag == false))
     {
         // tensorRingg = S#"inclusionAmbient" liftg
         // tesnorRingg = gInT
@@ -92,12 +92,12 @@ ring_elem sagbi::subduct1(int numslots,
 
         // This might be the wrong way to deal with this issue.
         // I don't know what to do, however.
-        if(gInT != NULL)
+        if(gInT != nullptr)
           {
               // tensorRingLTg = leadTerm tensorRingg
               // tensorRingLTg = LTgInT
               Nterm *LTgInT = gInT;
-              LTgInT->next = NULL;
+              LTgInT->next = nullptr;
         
             // h = tensorRingLTg % (inAIdeal)
             // h = h1
@@ -110,7 +110,7 @@ ring_elem sagbi::subduct1(int numslots,
 
             ring_elem projectionh = T->eval(substitutionInclusion,h1,0);
             
-            if(projectionh != NULL)
+            if(projectionh != nullptr)
             {
                 // hSub = (S#"fullSubstitution" h) % I
                 ring_elem hInS = T->eval(fullSubstitution,h1,0);
@@ -147,10 +147,10 @@ Matrix *sagbi::subduct1(int numparts,
     MatrixConstructor result(m->rows(), m->cols());
     const PolyRing *T = rawT->cast_to_PolyRing();
     const PolyRing *S = rawS->cast_to_PolyRing();
-    if ((T == 0) || (S == 0))
+    if ((T == nullptr) || (S == nullptr))
     {
         ERROR("expected polynomial ring");
-        return 0;
+        return nullptr;
     }
     int nslots = T->getMonoid()->n_slots(numparts);
     for (int i = 0; i < m->n_cols(); i++)

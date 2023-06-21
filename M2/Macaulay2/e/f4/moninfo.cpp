@@ -29,7 +29,7 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
   ncalls_quotient_as_vp = 0;
 
   nweights = 0;
-  weight_vectors = 0;
+  weight_vectors = nullptr;
   if (moIsLex(mo))
     {
       compare = &MonomialInfo::compare_lex;

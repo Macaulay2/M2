@@ -63,7 +63,7 @@ ARingGFFlint::~ARingGFFlint()
 {
   fq_zech_ctx_clear(mContext);
   fq_nmod_ctx_clear(mBigContext);
-  mPrimitiveElement = 0;
+  mPrimitiveElement = nullptr;
   freemem(mPPowers);
   flint_randclear(mRandomState);
 

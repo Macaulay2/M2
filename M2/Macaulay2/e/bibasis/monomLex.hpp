@@ -62,13 +62,13 @@ namespace BIBasis
 
     inline MonomLex::MonomLex()
         : Monom()
-        , Next(0)
+        , Next(nullptr)
     {
     }
 
     inline MonomLex::MonomLex(const MonomLex& anotherMonom)
         : Monom()
-        , Next(0)
+        , Next(nullptr)
     {
         if (!anotherMonom.ListHead)
         {
@@ -109,7 +109,7 @@ namespace BIBasis
     {
         if (!ListHead || ListHead->Value > var)
         {
-            return 0;
+            return nullptr;
         }
 
         VarsListNode* position = ListHead;
@@ -168,7 +168,7 @@ namespace BIBasis
             if (*iterator)
             {
                 VarsListNode *nodeToDelete = (*iterator)->Next;
-                *iterator = 0;
+                *iterator = nullptr;
                 while (nodeToDelete)
                 {
                     iteratorAnother = nodeToDelete;

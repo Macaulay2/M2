@@ -15,11 +15,11 @@ DetComputation::DetComputation(const Matrix *M0,
       p(p0),
       do_exterior(do_exterior0),
       strategy(strategy0),
-      row_set(NULL),
-      col_set(NULL),
+      row_set(nullptr),
+      col_set(nullptr),
       this_row(0),
       this_col(0),
-      D(0),
+      D(nullptr),
       dynamic_cache(0)
 {
   if (do_exterior)
@@ -258,12 +258,12 @@ void DetComputation::clear()
 void DetComputation::set_next_minor(const int *rows, const int *cols)
 {
   if (do_exterior) return;
-  if (rows != NULL && Subsets::isValid(M->n_rows(), p, rows))
+  if (rows != nullptr && Subsets::isValid(M->n_rows(), p, rows))
     for (size_t i = 0; i < p; i++) row_set[i] = rows[i];
   else
     for (size_t i = 0; i < p; i++) row_set[i] = i;
 
-  if (cols != NULL && Subsets::isValid(M->n_cols(), p, cols))
+  if (cols != nullptr && Subsets::isValid(M->n_cols(), p, cols))
     for (size_t i = 0; i < p; i++) col_set[i] = cols[i];
   else
     for (size_t i = 0; i < p; i++) col_set[i] = i;
@@ -428,7 +428,7 @@ Matrix /* or null */ *Matrix::exterior(int p, int strategy) const
     {
       ERROR(
           "determinant computations over RR or CC requires Strategy=>Cofactor");
-      return 0;
+      return nullptr;
     }
   DetComputation *d = new DetComputation(this, p, 1, strategy);
   d->calc(-1);
@@ -443,7 +443,7 @@ Matrix /* or null */ *Matrix::minors(int p, int strategy) const
     {
       ERROR(
           "determinant computations over RR or CC requires Strategy=>Cofactor");
-      return 0;
+      return nullptr;
     }
   DetComputation *d = new DetComputation(this, p, 0, strategy);
   d->calc(-1);
@@ -464,24 +464,24 @@ Matrix /* or null */ *Matrix::minors(
     {
       ERROR(
           "determinant computations over RR or CC requires Strategy=>Cofactor");
-      return 0;
+      return nullptr;
     }
-  if (first_row != 0 || first_col != 0)
+  if (first_row != nullptr || first_col != nullptr)
     {
       // Make sure these are the correct size, and both are given
-      if (first_row == 0 || first_row->len != p)
+      if (first_row == nullptr || first_row->len != p)
         {
           ERROR("row index set inappropriate");
-          return 0;
+          return nullptr;
         }
-      if (first_col == 0 || first_col->len != p)
+      if (first_col == nullptr || first_col->len != p)
         {
           ERROR("column index set inappropriate");
-          return 0;
+          return nullptr;
         }
     }
   DetComputation *d = new DetComputation(this, p, 0, strategy);
-  if (first_row != 0 && first_col != 0)
+  if (first_row != nullptr && first_col != nullptr)
     d->set_next_minor(first_row->array, first_col->array);
   d->calc(n_to_compute);
   Matrix *result = d->determinants();

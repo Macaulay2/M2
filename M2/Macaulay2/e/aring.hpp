@@ -165,13 +165,13 @@ class DummyRing : public SimpleARing<DummyRing>
     return static_cast<unsigned int>(a);
   }
 
-  M2_arrayint getModPolynomialCoeffs() const { return 0; }
-  M2_arrayint getGeneratorCoeffs() const { return 0; }
+  M2_arrayint getModPolynomialCoeffs() const { return nullptr; }
+  M2_arrayint getGeneratorCoeffs() const { return nullptr; }
   void getGenerator(elem &result) const { result = 0; }
   const PolynomialRing &originalRing() const { return *mOriginalRing; }
   long coerceToLongInteger(ElementType a) const { return a; }
   void lift_to_original_ring(ring_elem &result, const ElementType &f) const {}
-  M2_arrayint fieldElementToM2Array(ElementType el) const { return 0; }
+  M2_arrayint fieldElementToM2Array(ElementType el) const { return nullptr; }
   void to_ring_elem(ring_elem &result, const ElementType &a) const {}
   void from_ring_elem(ElementType &result, const ring_elem &a) const {}
   bool promote(const Ring *Rf, const ring_elem f, ElementType &result) const

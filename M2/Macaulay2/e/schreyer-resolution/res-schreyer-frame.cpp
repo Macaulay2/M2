@@ -401,7 +401,7 @@ M2_arrayint SchreyerFrame::getBetti(int type)
   if (type == 5) return mComputationStatus.getBetti();
 
   ERROR("betti display not implemented yet");
-  return 0;
+  return nullptr;
 }
 
 void SchreyerFrame::endLevel()

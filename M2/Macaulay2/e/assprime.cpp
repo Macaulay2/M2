@@ -10,7 +10,7 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal *const &I)
       ass_primes(new MonomialIdeal(I->get_ring()))
 {
   exps = newarray(int *, nvars + 2);
-  for (int i = 0; i <= nvars + 1; i++) exps[i] = 0;
+  for (int i = 0; i <= nvars + 1; i++) exps[i] = nullptr;
 }
 
 AssociatedPrimes::AssociatedPrimes(const MonomialIdeal *const &I, int cod)
@@ -21,12 +21,12 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal *const &I, int cod)
       ass_primes(new MonomialIdeal(I->get_ring()))
 {
   exps = newarray(int *, nvars + 2);
-  for (int i = 0; i <= nvars + 1; i++) exps[i] = 0;
+  for (int i = 0; i <= nvars + 1; i++) exps[i] = nullptr;
 }
 AssociatedPrimes::~AssociatedPrimes()
 {
   for (int i = 0; i <= nvars + 1; i++)
-    if (exps[i] != 0) freemem(exps[i]);
+    if (exps[i] != nullptr) freemem(exps[i]);
   freemem(exps);
 }
 
@@ -51,7 +51,7 @@ MonomialIdeal *AssociatedPrimes::associated_primes(int count)
     }
   minprime_limit = count;
   n_minprimes = 0;
-  if (exps[0] == 0) exps[0] = newarray_atomic_clear(int, nvars);
+  if (exps[0] == nullptr) exps[0] = newarray_atomic_clear(int, nvars);
   ass_prime_generator(mi->first_node(), 0);
   return ass_primes;
 }
@@ -89,12 +89,12 @@ static void to_prime_ideal(int n, int *exp)
 void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 {
   int i = codim + 1;
-  if (exps[i] == 0) exps[i] = newarray_atomic(int, nvars);
+  if (exps[i] == nullptr) exps[i] = newarray_atomic(int, nvars);
   exponents_t exp = exps[i];
   for (int j = 0; j < nvars; j++) exp[j] = exps[codim][j];
   for (;;)
     {
-      if (p == NULL)
+      if (p == nullptr)
         {
           if (state == do_codim)
             {
