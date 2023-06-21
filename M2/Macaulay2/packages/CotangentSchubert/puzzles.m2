@@ -22,13 +22,14 @@ myget = memoize(x -> first(
 	))
 
 puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Labels => true, Paths => false, Separation => null};
-export {"Steps", "Ktheory'", "Length", "Labels", "Paths", "Separation"}; -- move to main file
+export {"Steps", "Ktheory'", "Length", "Labels", "Paths"};
 -- lots of global variables, not thread-safe!
 upTriangles=downTriangles=rhombi={};
 apply({rhombusStyle,downTriStyle,upTriStyle},protect);
 
 myload "basic.m2"
-myload "kogan.m2";
+myload "sepdesc.m2";
+myload "almostsepdesc.m2";
 myload "K.m2";
 myload "equiv.m2";
 myload "generic.m2";
@@ -42,13 +43,15 @@ tiles := o -> (
     newPuzzleOpts := apply(keys puzzleOpts, k -> o#k);
     if newPuzzleOpts === curPuzzleOpts then return;
     if debugLevel>0 then << "rebuilding tiles" << newline;
-    curPuzzleOpts = newPuzzleOpts;
     d := o.Steps;
     if o#Separation =!= null then (
-        (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Ktheory,o.Ktheory',o.Generic,o.Equivariant);
-        return;
-        );
-    if o#Generic then (
+	-- for ordinary (resp. almost) sep desc, k is a half-integer (resp. integer)
+        (upTriangles,downTriangles,rhombi) = if instance(o#Separation,QQ) then
+	sepdesc(d,lift(o.Separation-1/2,ZZ),o.Ktheory,o.Ktheory',o.Generic,o.Equivariant)
+	else
+	almostsepdesc(d,o.Separation,o.Ktheory,o.Ktheory',o.Generic,o.Equivariant);
+        )
+    else if o#Generic then (
         upTriangles = downTriangles = allTriangles d;
         rhombi = if o#Equivariant then allRhombi d else {};
         ) else (
@@ -64,7 +67,8 @@ tiles := o -> (
             downTriangles = downTriangles | apply(KUp, x -> append(x,Kstyle));
             );
         rhombi = if o#Equivariant then apply(equivRhombi d, x -> append(x,equivstyle)) else {};
-        )
+        );
+    curPuzzleOpts = newPuzzleOpts;
     )
 
 new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k->p#(i,j,k))));
@@ -100,7 +104,7 @@ net Puzzle := p -> (
 
 puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
 
-vgFontSize := n -> 1.7/(4.+n)
+vgFontSize = n -> 1.7/(4.+n)
 vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => vgFontSize (width s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
 vgOpts := k -> { Size => k*puzzleSize, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
@@ -193,7 +197,7 @@ html Puzzle := p -> html vg p
 tex Puzzle := texMath Puzzle := p -> tex vg p
 
 digit := s -> #s==1 -- should be enough
-valid := (x,y) -> x === y or (x === "#" and digit y) or x === "*" or x === "**";
+valid := (x,y) -> x === y or (x === "#" and digit y) or x#0 === "*";
 
 Puzzle ++ HashTable := (opts1, opts2) -> merge(opts1,opts2,last)
 Puzzle ++ List := (opts1, opts2) -> opts1 ++ new class opts1 from opts2 -- cf similar method for OptionTable
@@ -208,12 +212,20 @@ initPuzzle = true >> o -> args -> (
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
     new Puzzle from pairs o | { Length=>n,
-	if o.Separation === null and any(join args, s -> s==="_") then Separation => 1 + max digitvals(args#1),
-        if o.Steps === null then Steps => max(max digitvals(join args),1) -- d>=1
+	if o.Separation === null and any(join args, s -> s==="_") then (
+	    -- determine whether sep desc or almost sep desc
+	    m := apply(2,i->(d:=digitvals(args#i); min d,max d));
+	    if m#0#0 > m#1#1 then
+	    Separation => 1/2 + m#1#1 -- sep desc
+	    else if m#0#1 <= m#1#0 then
+	    Separation => m#0#1 -- almost sep desc
+	    else error "invalid arguments"
+	    ),
+        if o.Steps === null then Steps => max digitvals(join args)
         } | flatten flatten apply(n, i ->
         apply(n-i, j -> {
-                (i,j,0) => if i==0 then args#1#j else "**",
-                (i,j,1) => if j==0 then args#0#(n-1-i) else "**",
+                (i,j,0) => if i==0 then args#1#j else "*",
+                (i,j,1) => if j==0 then args#0#(n-1-i) else "*",
                 (i,j,2) => if i+j==n-1 then if #args == 3 then args#2#j else "*" else "**" -- ** means even nothing (rhombus diagonal)
                 }
             )
@@ -228,7 +240,6 @@ puzzle = puzzleOpts >> o -> args -> (
     if d<0 then error "Please specify Steps or at least one digit";
     tiles puz0;
     lst := new MutableList;
-
     recurse := (i,j,o,p) -> ( -- o=0/1: up/down triangle needs filling
         if i == n then (
             lst#(#lst)=p;
@@ -250,7 +261,7 @@ puzzle = puzzleOpts >> o -> args -> (
                     recurse(i,j+1,0,p++{(i+1,j,0)=>x#0,(i,j+1,1)=>x#1,(i,j,2)=>x#2,if #x>3 then (i,j,downTriStyle)=>x#3});
                     )));
         );
-
+    
     if debugLevel>0 then << "computing puzzles" << newline;
     recurse(0,0,0, puz0);
     new List from lst
