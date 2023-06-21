@@ -1,8 +1,8 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.63",
-    Date => "6 Jul 2022", -- "22 Mar 2021",
+    Version => "0.64",
+    Date => "21 Jun 2023", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -17,7 +17,7 @@ newPackage(
 if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
 opts = new OptionTable from {Ktheory => false, Equivariant => true} -- common options
-export {"Ktheory", "Equivariant" };
+export {"Ktheory", "Equivariant", "Separation", "LabelList" };
 
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
