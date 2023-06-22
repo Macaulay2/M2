@@ -1212,6 +1212,79 @@ doc ///
 ///
 
 doc ///
+    Key
+        "Strategy for free resolutions over the integers"
+        "freeResolution(..., Strategy => ModuleOverZZ)"
+    Headline
+        algorithm for computing free resolutions of ZZ-modules
+    Usage
+        freeResolution M
+        freeResolution(M, Strategy => "ModuleOverZZ")
+    Inputs
+        M:Module
+            over the ring of integers
+    Outputs
+        :Complex
+            a free resolution of the module $M$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            Every module over the integers has projective dimension at
+            most one.  This is the default strategy when the
+            underlying ring is the integers, so in practice it never
+            needs to be specified.
+        Text
+            Our first example is the cokernel of a $3 \times 3$
+            matrix with positive small integer entries.
+        Example
+            M = coker matrix{{8,4,9},{7,3,7},{6,9,5}}
+            F = freeResolution M
+            assert(F === freeResolution(M, Strategy => "ModuleOverZZ"))
+            assert isWellDefined F
+            dd^F
+            g = augmentationMap F
+            assert isWellDefined g
+            assert(source g == F)
+            assert(target g == complex M)
+            assert isQuasiIsomorphism g
+        Text
+            The next example shows that the projective dimension
+            can be less than one.  In other words, a free module
+            can have a non-trivial presentation.
+        Example
+            G = freeResolution coker matrix {{20, 15, 19}, {7, 3, 7}, {6, 9, 5}}
+            length G
+            G_0
+            g = augmentationMap G
+            assert isWellDefined g
+            assert isQuasiIsomorphism g
+        Text
+            The final example involves a slightly larger matrix.  
+            The first matrix of the free resolution is the minimal
+            presentation of the module.
+        Example
+            n = random(ZZ^5, ZZ^3) * matrix{{21,3,0},{0,3,1},{0,0,7}} * random(ZZ^3, ZZ^10)
+            F = freeResolution coker n
+            dd^F_1
+            minimalPresentation coker n
+            smithNormalForm(n, ChangeMatrix => {false,false})
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+        (minimalPresentation, Module)
+        (smithNormalForm, Matrix)
+///
+
+///
+  P = matrix{{0,0,0},{0,1,0},{0,0,1}}
+  U = matrix {{1, 2, 1}, {0, 1, 0}, {0, 0, 1}}
+  V1 = matrix {{2, 1, 2}, {7, 3, 7}, {6, 9, 5}}
+  U * P * V1
+///
+
+doc ///
    Key
      (homology, Complex)
    Headline

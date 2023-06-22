@@ -850,6 +850,21 @@ TEST ///
 ///
 
 
+TEST ///
+-- XXX
+-*
+restart
+needsPackage "Complexes"
+*-
+  needsPackage "InverseSystems"
+  R = ZZ/101[a..e]
+  F = a^4 + b^4 + c^4 +d^4 + e^4 + (a+b+c+d+e)^4
+  I = inverseSystem F
+  bt1 = betti res I
+  bt2 = minimalBetti I
+  assert(bt1 == bt2)
+///
+
 ///
   -- code to test control-c during a computation.
   -- We don't know how to make this into a proper test.

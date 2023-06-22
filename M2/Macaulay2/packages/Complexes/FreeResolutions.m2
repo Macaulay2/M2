@@ -618,16 +618,20 @@ minimalBetti Module := BettiTally => opts -> M -> (
             return truncate(betti(C, Weights => opts.Weights), degreelimit, lengthlimit);
             );
         );
-
+    A := ultimate(coefficientRing, R);
     if not (
         R.?Engine and
         heft R =!= null and
         (isSkewCommutative R or isCommutative R) and (
-            A := ultimate(coefficientRing, R);
             A =!= R and isField A
         ))
     then betti freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
 
+    if lengthlimit === infinity then (
+        -- reset lengthlimit
+	nvars := # generators(R, CoefficientRing => A);
+	lengthlimit = nvars + if A === ZZ then 1 else 0;
+        );
     C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1, Strategy => "Nonminimal");
     rC := M.cache.ResolutionObject.RawComputation;
     B := unpackEngineBetti rawMinimalBetti(rC,
@@ -679,6 +683,5 @@ minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
     if I.cache.?quotient then I.cache.quotient
     else I.cache.quotient = cokernel generators I, opts
     )
-
 
 end--
