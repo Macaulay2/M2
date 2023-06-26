@@ -69,7 +69,6 @@ exportFrom_Core {
     "objectType"}
 
 importFrom_Core {
-    "getPythonNone",
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
@@ -81,6 +80,7 @@ importFrom_Core {
     "pythonLongFromLong",
     "pythonFloatAsDouble",
     "pythonFloatFromDouble",
+    "pythonNone",
     "pythonObjectGetAttrString",
     "pythonObjectHasAttrString",
     "pythonObjectRichCompareBool",
@@ -119,8 +119,6 @@ PythonObject#AfterPrint = x -> (
      t := toString objectType x;
      t = replace("<([a-z]+) '(.*)'>"," of \\1 \\2",t);
      (PythonObject, t))
-
-pythonNone = getPythonNone()
 
 pythonValue = method(Dispatch => Thing)
 pythonValue String := s -> (
