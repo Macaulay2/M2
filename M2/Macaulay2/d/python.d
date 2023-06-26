@@ -430,8 +430,8 @@ setupfun("pythonWrapM2Function", PyWrapM2Function);
 -- none --
 ----------
 
-PyNone(e:Expr):Expr := toExpr(Ccode(pythonObjectOrNull, "Py_None"));
-setupfun("getPythonNone", PyNone);
+setupconst("pythonNone",
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_None"), 0xFCA86420)));
 
 ---------------
 -- importing --
