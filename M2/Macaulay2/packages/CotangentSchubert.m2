@@ -41,7 +41,8 @@ multidoc ///
     @HREF{"http://arxiv.org/abs/1706.10019","arXiv:1706.10019"}@. @BR{}@
     [2] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability II: multiplying motivic Segre classes,
     @HREF{"http://arxiv.org/abs/2102.00563","arXiv:2102.00563"}@. @BR{}@
-    [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents, in preparation.
+    [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents,
+    @HREF{"http://arxiv.org/abs/2306.13855","arXiv:2306.13855"}@.
  Node
   Key
    setupCotangent
