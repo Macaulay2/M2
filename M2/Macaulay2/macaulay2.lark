@@ -1,0 +1,183 @@
+// this entry point is for a file input
+start: (_NEWLINE | expr)*
+
+SYMBOL: WORD
+
+COMMENT: /--[^\n]*/
+       | /--.*\n/
+       | /-\*.*\*-/
+
+FUNCTION: "sin" | "cos" | "tan" | "abs" | "acos"
+        | "agm" | "asin" | "atan" | "atan2"
+        | "zeta" | "tanh" | "sqrt" | "sec" | "sech"
+        | "erf" | "erfc" | "coth" | "csc" | "eint"
+
+BOOLEAN: "true" | "false"
+
+expr: SYMBOL
+    | STRING
+    | SIGNED_NUMBER
+    | operator_exp
+    | command
+    | assignment
+    | lists_and_sequences
+    | hash_table
+    | branching
+    | bool
+    | symbols
+    | make_function
+    | function_call
+    | function_def
+    | table_access
+
+mapping: expr "=>" expr
+hash_table: "{" mapping ("," mapping)* "}"
+
+// functions
+typing: ":=" expr "=>" expr
+function_call: (SYMBOL | FUNCTION) "(" expr ("," expr)* ")"
+	     | SYMBOL expr
+function_def: function_call typing? "->" expr
+make_function: (lists_and_sequences|SYMBOL) typing? "->" expr
+
+command: "newPackage"
+       | "select"
+       | "position(" expr ("," expr) ")"
+       | "needs" STRING
+       | "method" "(" ")"
+
+// operators
+
+unary_pre_op: "-" | "+"
+
+unary_post_op: "(*)"
+             | "^*" | "^!"
+             | "_*" | "_!"
+             | "~"
+             | "!"
+
+binary_op: "+" | "-"
+         | "*" | "/" | "//"
+         | "**" | "++"
+         | "^" | "^^" | "^**"
+         | "<<" | ">>"
+         | "<==>"
+         | "<==" | "<==="
+         | "==>" | "===>"
+         | "@" | "@@"
+         | "&" | "%"
+         | "|" | "|-" | "||"
+         | ".." | "..<" | ":" | "_"
+         | "."
+
+operator_exp: unary_pre_op expr
+            | expr unary_post_op
+            | expr binary_op expr
+
+// boolean and comparison tests
+
+bool: bool "and" bool
+    | bool "or" bool
+    | "not" bool
+    | BOOLEAN
+    | comparison
+
+comparison: expr "==" expr
+          | expr "!=" expr
+          | expr "===" expr
+          | expr "=!=" expr
+          | expr "<" expr
+          | expr "<=" expr
+          | expr ">" expr
+          | expr ">=" expr
+
+// new and symbols
+
+// new: "new" hash_table ["of" hash_table] "from" hash_table ":=" (A,B,c) "->" ...
+
+symbols: "global" SYMBOL
+       | "local" SYMBOL
+       | "symbol" SYMBOL
+       | "protect" STRING
+       | "threadVariable" SYMBOL
+
+// assignment
+
+assignment: expr "=" expr
+          | expr ":=" expr
+          | expr "<-" expr
+
+comparison_operator: "?"
+
+
+// subscripting and object access
+
+accessing: "_" expr -> subscript
+         | "." expr -> access_via_key
+         | ".?" expr -> check_for_key
+         | "#" expr? -> length_or_access
+         | "#?" -> check_value
+ 
+table_access: expr accessing
+
+// branching
+
+branching: "if" bool "then" expr ["else" expr]
+         | "while" bool ["list" expr] ["do" expr]
+         | "for" expr ["from" expr] ["to" expr] ["when" bool] ["list" expr] ["do" expr]
+         | "break" expr?
+         | "continue" expr?
+         | "return" expr?
+
+// exceptions and errors
+
+exception: "error" expr
+         | "try" expr ["then" expr] ["else" expr]
+         | "catch" expr
+         | "throw" expr
+         | "shield" expr
+
+// timing and alarms
+
+alarm: "alarm" NN
+time: "time" expr
+timing: "timing" expr
+sleep: "sleep" NN
+nanosleep: "nanosleep" NN
+elapsed_time: "elapsedTime" expr
+elapsed_timing: "elapsedTiming" expr
+
+// lists, sets, sequences, arrays
+
+set_core: "{" expr ("," expr)* "}" | "{" "}"
+
+lists_and_sequences: set_core
+                   | "(" expr ("," expr)* ")"
+                   | "[" expr ("," expr)* "]"
+                   | "<|" expr ("," expr)* "|>"
+		   | "set" set_core
+
+// mapping over hash tables
+
+// apply_values: "applyValues(" hash_table "," Y ")"
+// apply_keys: "applyKeys(" hash_table "," Y ")"
+// apply_pairs: "applyPairs(" hash_table "," Y ")"
+// scan_values: "scanValues(" hash_table "," Y ")"
+// scan_keys: "scanKeys(" hash_table "," Y ")"
+// scan_pairs: "scanPairs(" hash_table "," Y ")"
+// merge: "merge(" A B C ")"
+// combine: "combine(" A B C D E")"
+
+_NEWLINE: ( /\r?\n[\t ;]*/ | COMMENT )+
+
+%import common.ESCAPED_STRING -> STRING
+%import common.SIGNED_NUMBER
+%import common.WORD
+%import common.LETTER
+%import common.NEWLINE
+%import common.INT -> NN
+%import common.SIGNED_INT -> ZZ
+%import common.SIGNED_FLOAT -> RR
+%import common.WS
+%ignore WS
+%ignore COMMENT
