@@ -13,8 +13,6 @@ FUNCTION: "sin" | "cos" | "tan" | "abs" | "acos"
         | "zeta" | "tanh" | "sqrt" | "sec" | "sech"
         | "erf" | "erfc" | "coth" | "csc" | "eint"
 
-BOOLEAN: "true" | "false"
-
 expr: SYMBOL
     | string
     | SIGNED_NUMBER
@@ -85,21 +83,24 @@ operator_exp: unary_pre_op expr
 
 // boolean and comparison tests
 
+BOOLEAN: "true" | "false"
+
+comparison: expr "==" expr -> equal
+          | expr "!=" expr -> unequal
+          | expr "===" expr -> strict_equal
+          | expr "=!=" expr -> strict_unequal
+          | expr "<" expr -> less
+          | expr "<=" expr -> less_or_equal
+          | expr ">" expr
+          | expr ">=" expr
+
 bool: bool "and" bool
     | bool "or" bool
+    | bool "xor" bool
     | "not" bool
     | BOOLEAN
     | comparison
     | "all" "(" expr "," expr")"
-
-comparison: expr "==" expr
-          | expr "!=" expr
-          | expr "===" expr
-          | expr "=!=" expr
-          | expr "<" expr
-          | expr "<=" expr
-          | expr ">" expr
-          | expr ">=" expr
 
 // new and symbols
 
