@@ -6,6 +6,7 @@ SYMBOL: WORD
 COMMENT: /--[^\n]*/
        | /--.*\n/
        | /-\*.*\*-/
+       | ";"
 
 FUNCTION: "sin" | "cos" | "tan" | "abs" | "acos"
         | "agm" | "asin" | "atan" | "atan2"
@@ -15,10 +16,11 @@ FUNCTION: "sin" | "cos" | "tan" | "abs" | "acos"
 BOOLEAN: "true" | "false"
 
 expr: SYMBOL
-    | STRING
+    | string
     | SIGNED_NUMBER
     | operator_exp
     | command
+    | timing
     | assignment
     | lists_and_sequences
     | hash_table
@@ -30,11 +32,14 @@ expr: SYMBOL
     | function_def
     | table_access
 
+string: STRING
+      | "toString" expr
+      | (string "|")+ string
+
 mapping: expr "=>" expr
-hash_table: "{" mapping ("," mapping)* "}"
 
 // functions
-typing: ":=" expr "=>" expr
+typing: ":=" mapping
 function_call: (SYMBOL | FUNCTION) "(" expr ("," expr)* ")"
 	     | SYMBOL expr
 function_def: function_call typing? "->" expr
@@ -43,12 +48,16 @@ make_function: (lists_and_sequences|SYMBOL) typing? "->" expr
 command: "newPackage"
        | "select"
        | "position(" expr ("," expr) ")"
-       | "needs" STRING
-       | "method" "(" ")"
+       | "needs" string -> needs_package
+       | "method" "(" mapping? ")"
+       | "instance" "(" expr "," SYMBOL ")"
+       | "class" expr
 
 // operators
 
-unary_pre_op: "-" | "+"
+unary_pre_op: "-"
+            | "+"
+	    | "#" -> cardinality
 
 unary_post_op: "(*)"
              | "^*" | "^!"
@@ -81,6 +90,7 @@ bool: bool "and" bool
     | "not" bool
     | BOOLEAN
     | comparison
+    | "all" "(" expr "," expr")"
 
 comparison: expr "==" expr
           | expr "!=" expr
@@ -93,12 +103,12 @@ comparison: expr "==" expr
 
 // new and symbols
 
-// new: "new" hash_table ["of" hash_table] "from" hash_table ":=" (A,B,c) "->" ...
+// new: "new" hash_table ["of" hash_table] "from" hash_table ":=" (A,B,c) "->" expr
 
 symbols: "global" SYMBOL
        | "local" SYMBOL
        | "symbol" SYMBOL
-       | "protect" STRING
+       | "protect" SYMBOL
        | "threadVariable" SYMBOL
 
 // assignment
@@ -114,8 +124,8 @@ comparison_operator: "?"
 
 accessing: "_" expr -> subscript
          | "." expr -> access_via_key
-         | ".?" expr -> check_for_key
          | "#" expr? -> length_or_access
+         | ".?" expr -> check_for_key
          | "#?" -> check_value
  
 table_access: expr accessing
@@ -131,7 +141,7 @@ branching: "if" bool "then" expr ["else" expr]
 
 // exceptions and errors
 
-exception: "error" expr
+exception: "error" string
          | "try" expr ["then" expr] ["else" expr]
          | "catch" expr
          | "throw" expr
@@ -139,13 +149,13 @@ exception: "error" expr
 
 // timing and alarms
 
-alarm: "alarm" NN
-time: "time" expr
-timing: "timing" expr
-sleep: "sleep" NN
-nanosleep: "nanosleep" NN
-elapsed_time: "elapsedTime" expr
-elapsed_timing: "elapsedTiming" expr
+timing: "alarm" NN
+      | "time" expr
+      | "timing" expr
+      | "sleep" NN
+      | "nanosleep" NN
+      | "elapsedTime" expr
+      | "elapsedTiming" expr
 
 // lists, sets, sequences, arrays
 
@@ -159,16 +169,21 @@ lists_and_sequences: set_core
 
 // mapping over hash tables
 
-// apply_values: "applyValues(" hash_table "," Y ")"
-// apply_keys: "applyKeys(" hash_table "," Y ")"
-// apply_pairs: "applyPairs(" hash_table "," Y ")"
-// scan_values: "scanValues(" hash_table "," Y ")"
-// scan_keys: "scanKeys(" hash_table "," Y ")"
-// scan_pairs: "scanPairs(" hash_table "," Y ")"
-// merge: "merge(" A B C ")"
+
+hash_table: "{" mapping ("," mapping)* "}"
+
+hash_table_operation: "applyValues(" hash_table "," expr ")"
+        | "applyKeys(" hash_table "," expr ")"
+        | "applyPairs(" hash_table "," expr ")"
+        | "scanValues(" hash_table "," expr ")"
+        | "scanKeys(" hash_table "," expr ")"
+        | "scanPairs(" hash_table "," expr ")"
+        | "scan(" hash_table "," expr ")"
+
+// "merge(" A B C ")"
 // combine: "combine(" A B C D E")"
 
-_NEWLINE: ( /\r?\n[\t ;]*/ | COMMENT )+
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
 
 %import common.ESCAPED_STRING -> STRING
 %import common.SIGNED_NUMBER
