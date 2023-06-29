@@ -1,0 +1,48 @@
+For week of June 12, 2023:
+    a. MonomialHashTable
+    b. Mike: do (first versino of) the translation from M2 matrices to a Basis/list of polynomials/vectrs
+       Basis (at least a simple version)
+    c. Monomial lookup table
+    d. SPairs
+    e. Macaulay Matrix build
+    f. Macaulay Matrix reduction
+
+github copilot
+CLion        
+        
+To be done for GB F4 parallel.
+
+[ ] MonomialHashTable for ring monomials for repesenting a single monomial in
+    a polynomial or a column of a macaulay matrix
+    (but in either case, we need the component)
+[ ] Monomial lookup table for divisibility
+    this is used in Macaulay Matrix Build
+    should this build directly the quotient monomial?
+    What is the right data structure for cache friendly divisibility structure?
+[ ] SPairs
+    set of spairs
+    spair removal criteria (*)
+    choice of next set of spairs
+    pre-spairs: minimize, then get spairs.
+[ ] Macaulay Matrix build (uses monomial hash table)
+    a hash table (component, monomial index) --> (column, which row reduces it)
+    this should be usable for different primes
+[ ] CRA of integers, rational reconstruction
+[ ] Macaulay Matrix reduction (over a single prime) PARALLEL
+[ ] Basis of polynomials (uses monomial hash table)
+    enum class for type of a basis element
+    never remove an index.  If a GB element becomes non-minimal, retire it.
+    
+Handle:
+    inhomogeneity
+    quotient rings, exterior algebra:
+      spair handling/creation
+    Hilbert function use (homogeneous case)
+    lifting to QQ and hopefully also to QQ(alpha) number fields. PARALLEL
+    Weyl algebra case should work.
+    handle sparse monomials
+    handle partial output (up to a given degree or degrees)
+
+Should be as parallel as possible    
+
+    
