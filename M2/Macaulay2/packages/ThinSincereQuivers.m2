@@ -2801,6 +2801,7 @@ TEST ///
         assert isStable({1, 2, 3, 4}, Q)
         assert (stableTrees(th, Q) === {{0, 1, 2, 5}, {0, 1, 2, 4}, {0, 1, 2, 3}})
         assert (maxCodimensionUnstable(Q) == 6)
+        assert (wallType({0,2,3}, Q) == (1, 2))
 
         M = maximalUnstableSubquivers(Q);
         for v in values M do (
