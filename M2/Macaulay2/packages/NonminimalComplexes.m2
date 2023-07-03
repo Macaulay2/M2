@@ -192,7 +192,8 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
     chainComplex toList result
     )
 
-TEST ///
+"TEST"
+///
 -- TODO for constantStrand, constantStrands:
 --  a. make it work for complexes constructed in different manners, not just for FastNonminimal
 --  b. allow a single multi-degree
@@ -206,6 +207,7 @@ TEST ///
   R = QQ[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
   C = res(ideal gens gb I, Strategy=>4.1)
+  C = res(ideal gens gb I, Strategy=>5.1)
   betti C
   constantStrand(C, RR_53, 4)
   constantStrand(C, RR_53, 5)
@@ -241,7 +243,8 @@ TEST ///
   *-
 ///
 
-TEST ///
+"TEST"
+///
 -*  
   restart
   needsPackage "NonminimalComplexes"
@@ -335,7 +338,7 @@ doc ///
      Cd = constantStrand(C, kk, deg)
    Inputs
      C:ChainComplex
-       a chain complex created using {\tt res(I, Strategy=>4.1)}
+       a chain complex created using (the unsupported) {\tt res(I, Strategy=>4.1)}
      kk:Ring
        if the coefficient ring of the ring of C is QQ, then this should be either:
        RR_{53}, RR_{1000},ZZ/32003, or ZZ/1073741909.  
@@ -464,14 +467,15 @@ doc ///
 ///
 
 
-TEST ///
+"TEST"
+ ///
   R = QQ[a..d]
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
   C = res(ideal gens gb I,Strategy=>4.1)
   betti C
   betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
   CR = constantStrand(C, RR_53, 8)
-  CR2 = constantStrand(C, RR_1000, 8)
+  CR2 = constantStrand(C, RR_1000, 8) -- crash
 
   kk1 = ZZ/32003
   kk2 = ZZ/1073741909
@@ -492,19 +496,39 @@ TEST ///
 
 
 
-TEST ///
+"TEST"
+///
   kk = QQ
   R = kk[a..d]
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
   C = res(ideal gens gb I, Strategy=>4.1)
   betti C
   constantStrand(C, RR_53, 8)
-   -- fails, as it doesn't even make it to that code
+///
+
+"TEST"
+///
+  kk = QQ
+  R = kk[a..d]
+  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+  gbI = flatten entries gens gb I
+  gbI = for g in gbI list (1/(leadCoefficient g)) * g
+  gbI = matrix{gbI}
+  
+  R1 = RR_53[a..d]
+  gbI1 = sub(gbI, R1)
+  forceGB (gbI1)
+  I1 = ideal gbI1
+  gbTrace=3
+  gens gb I1
+  --C = res(I1, Strategy=>5) -- refuses to try it
+  C = res(ideal gens gb I, Strategy=>5.1)
+  betti C
+  constantStrand(C, RR_53, 8)
 ///
 
 TEST ///
 -- Test of computing non-minimal resolutions, modules
-  -- XXX
 -*  
   restart
 *-  

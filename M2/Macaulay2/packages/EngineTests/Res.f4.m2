@@ -168,6 +168,21 @@ TEST ///
 
 TEST ///
   -- nonminimal resolution.
+  -- test linear ideal in exterior algebra
+  R = ZZ/101[a..d, SkewCommutative=>true]
+  I = ideal(a-d, b+13*a)
+  B1 = betti res I
+  C = res(ideal(I_*), FastNonminimal => true, LengthLimit => 5)
+  C.dd^2
+  assert(B1 == betti C)
+  B1 = betti res (ideal(I_*), LengthLimit=>7)
+  B2 = betti res(ideal(I_*), FastNonminimal => true, LengthLimit=>7)
+  assert(B1 == B2)
+  assert(C.dd^2 == 0)
+///
+
+TEST ///
+  -- nonminimal resolution.
   -- test ideal in non-standard grading
   R = ZZ/101[a..d, Degrees=>{1,2,3,4}]
   I = ideal(a^4-a*c-d, b^3-c^2, a^8-d^2)

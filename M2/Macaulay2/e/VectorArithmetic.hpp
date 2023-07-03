@@ -207,6 +207,12 @@ public:
     mRing->init(b);
     mRing->set(b, dvec[comps[0]]);
 
+    FieldElement one;
+    mRing->init(one);
+    mRing->set_from_long(one, 1);
+    if (not mRing->is_equal(svec[0], one))  // should be minus_one
+      mRing->negate(b, b);
+
     for (int i=1; i < comps.size(); ++i)
       {
         mRing->subtract_multiple(dvec[comps[i]], b, svec[i]);
@@ -215,7 +221,7 @@ public:
     mRing->set_zero(dvec[comps[0]]);
 
     mRing->negate(b, b);
-    mults.push_back(b); // this grabs b.
+    mults.push_back(b); // this transfers ownership of b.
   }
 
   int denseNextNonzero(ElementArray& dense,
