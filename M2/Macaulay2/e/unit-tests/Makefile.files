@@ -2,7 +2,8 @@ SHARED_UNITTEST_CCFILES := \
   testMain \
     M2-cpp-replacement \
     basics-test \
-    fromStream
+    fromStream \
+    util-polyring-creation
 
 UNITTEST_CCFILES := \
     $(SHARED_UNITTEST_CCFILES) \
@@ -23,7 +24,10 @@ UNITTEST_CCFILES := \
     RingTowerTest \
     DMatZZpTest \
     ResTest \
-    SubsetTest  
+    SubsetTest \
+    PolyRingTest \
+    NewF4Test \
+    MonoidTest
 
 #    RingRRRTest \
 #    RingCCCTest \
