@@ -3,53 +3,21 @@
 #pragma once
 
 #include "../MemoryBlock.hpp"
+#include "MonomialView.hpp"
 #include <vector>
 
 namespace newf4 {
   using MonomialIndex = uint32_t;  // 0 means undefined.  Valid values are > 0.
+  //using MonomialInt = uint32_t;
   using ComponentIndex = int;
   using HashInt = uint64_t;
 
-  class Monomial {
-  private:
-    int32_t* mData; // We do not own the data pointed to
-  public:
-    Monomial(int32_t* data) : mData(data) {}
-    Monomial(std::vector<int32_t>& data) : mData(data.data()) {}
-    Monomial(std::vector<int32_t> data, MemoryBlock& block)
-    {
-      Monomial m(data.data());
-      auto rng = block.allocateArray<int32_t>(m.size());
-      mData = rng.first;
-      std::copy(m.begin(), m.end(), mData);
-    }
-    Monomial(const Monomial&m, MemoryBlock& block)
-    {
-      auto rng = block.allocateArray<int32_t>(m.size());
-      mData = rng.first;
-      std::copy(m.begin(), m.end(), mData);
-    }
-
-    size_t size() const { return mData[0]; }
-    bool operator==(const Monomial& monom) const {
-      if (size() != monom.size()) return false;
-      for (auto i=1; i < size(); ++i)
-        if (mData[i] != monom.mData[i]) return false;
-      return true;
-    }
-
-    auto begin() const -> decltype(mData) { return mData; }
-    auto end() const -> decltype(mData) { return mData + size(); }
-    auto begin() -> decltype(mData) { return mData; }
-    auto end() -> decltype(mData) { return mData + size(); }
-  };
-
-  // Monomial: varpower type monomial (as in NC) (i.e. stored sparsely, length of a monomial is not constant.)
+  // MonomialView: varpower type monomial (as in NC) (i.e. stored sparsely, length of a monomial is not constant.)
   // MonomialIndex: some int type.
   // HashTable.
   //  usual ops: creation, reset, findOrInsert (returns MonomialIndex)
-  //  hashvalue(Monomial).
-  //  monomialAtIndex(MonomialIndex, HashTable) -> (range of Monomial)
+  //  hashvalue(MonomialView).
+  //  monomialAtIndex(MonomialIndex, HashTable) -> (range of MonomialView)
   //  iterator/range(MonomialIndex, HashTable)
   //  
   // hashtable for monomials in all polynomials in the GB basis.
@@ -67,10 +35,10 @@ namespace newf4 {
   //  MonomialHashTable()
   //  reset()
   //  std::pair<value result, bool> findOrInsert(value m)
-  //  monomialAtIndex(idx) // returns Monomial, or range...
+  //  monomialAtIndex(idx) // returns MonomialView, or range...
   // Requires:
-  //   hashFunction(Monomial).
-  //   monomialSize(Monomial).
+  //   hashFunction(MonomialView).
+  //   monomialSize(MonomialView).
   // Question: where to store hash value?
 
   // This doesn't work.  What changes are needed for that?
@@ -101,7 +69,7 @@ namespace newf4 {
     void dump() const;
   };
 
-  // This class depends on properties of Monomial's.
+  // This class depends on properties of MonomialView's.
   // monom.size()
   // monom == monom2
 
@@ -121,12 +89,14 @@ namespace newf4 {
     void reset();
 
     /// Essentially the previous case when monomial(n) = monomial 1.
-    auto find(const Monomial& m, HashInt mhash) -> MonomialIndex;
+    auto find(const MonomialView& m, HashInt mhash) -> MonomialIndex;
 
     /// Simple function which returns the monomial data pointed to at index m.
     /// If m is out of range: throws an error.
-    auto monomialAt(MonomialIndex m) const -> Monomial {
-      return static_cast<const Monomial>(Monomial{mMonomialPointers[m]});
+    auto monomialAt(MonomialIndex m) const -> MonomialView
+    {
+      return static_cast<const MonomialView>(
+          MonomialView {mMonomialPointers[m]});
     }
 
     /// The actual number of monomials in the table
@@ -141,7 +111,7 @@ namespace newf4 {
   private:
     // Backing storage
     MemoryBlock mMonomialSpace;
-    std::vector<Monomial> mMonomialPointers; // First element is ignored.
+    std::vector<MonomialView> mMonomialPointers; // First element is ignored.
     std::vector<HashInt> mHashValues;
 
     // hash table itself.

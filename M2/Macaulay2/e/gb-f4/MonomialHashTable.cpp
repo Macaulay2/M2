@@ -58,7 +58,7 @@ namespace newf4 {
     mThreshold((1<<log2size)  >> 4), // ouch
     mBuckets(1<<log2size, 0) // set to a vector of 2^log2size 0's.
   {
-    mMonomialPointers.push_back(Monomial(nullptr));
+    mMonomialPointers.push_back(MonomialView(nullptr));
     mHashValues.push_back(0);
   }
 
@@ -80,7 +80,7 @@ namespace newf4 {
   }
 
   /// Essentially the previous case when monomial(n) = monomial 1.
-  auto MonomialHashTable::find(const Monomial& m, HashInt mhash) -> MonomialIndex
+  auto MonomialHashTable::find(const MonomialView& m, HashInt mhash) -> MonomialIndex
   {
     mStats.n_calls_find++;
     if (mMonomialPointers.size() >= mThreshold) grow();
@@ -93,7 +93,7 @@ namespace newf4 {
           {
             // likely a match.  But need to check equality first
             mStats.monequal_count++;
-            if (m == mMonomialPointers[current])  // this == is a required Monomial method!
+            if (m == mMonomialPointers[current])  // this == is a required MonomialView method!
               {
                 // Already in the table
                 if (run > mStats.max_run_length) mStats.max_run_length = run;

@@ -281,8 +281,10 @@ set(SRCLIST
   ExponentList
   weylalg
   # Faugère's F4 Algorithm
-  gb-f4/MonomialHashTable
   gb-f4/Basis
+  gb-f4/MonomialHashTable
+  gb-f4/MonomialLookupTable
+  gb-f4/MonomialView
   f4/f4-computation
   f4/f4-m2-interface
   f4/f4-mem
