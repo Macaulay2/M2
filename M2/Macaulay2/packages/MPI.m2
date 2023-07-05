@@ -15,6 +15,17 @@ newPackage(
 exportFrom_Core {"sendString", "receiveString", "numberOfProcesses", "myProcessNumber"}
 --exportMutable {}
 
+-- TO DO: implement these in the kernel
+export {"broadcastSend", "broadcastReceive"}
+
+broadcastSend = method()
+broadcastSend String := s -> for i from 1 to numberOfProcesses()-1 do sendString(s,i)
+
+broadcastReceive = method()
+installMethod(broadcastReceive, 
+    () -> for i from 1 to numberOfProcesses()-1 list receiveString i)
+
+
 -* 
 *** PARADIGM ***
 
