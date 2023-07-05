@@ -1,0 +1,22 @@
+# run in the root dir of repo
+brew tap macaulay2/tap
+brew install $(brew deps --1 --include-build macaulay2/tap/M2)
+deps=$(brew deps --1 --include-optional macaulay2/tap/M2 | tr '\n' ';')
+paths=$HOMEBREW_PREFIX/opt/${deps//;/;$HOMEBREW_PREFIX/opt/}
+
+cmake -GNinja -S ./M2 -B ./M2/BUILD/build \
+      -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+      -DCMAKE_C_COMPILER=mpicc \
+      -DCMAKE_CXX_COMPILER=mpic++ \
+      -DWITH_MPI=ON \
+      -DBUILD_NATIVE=OFF \
+      -DCMAKE_PREFIX_PATH=$paths \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr
+
+cd ./M2/BUILD/build
+ninja build-libraries
+ninja build-programs
+ninja
+
+# CC=`brew --prefix llvm`/bin/clang CXX=`brew --prefix llvm`/bin/clang++ cmake -GNinja -S ../.. -B . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" 
