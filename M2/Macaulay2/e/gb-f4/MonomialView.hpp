@@ -8,20 +8,20 @@ namespace newf4 {
 class MonomialView
 {
  private:
-  int32_t* mData;  // We do not own the data pointed to
+  MonomialInt* mData;  // We do not own the data pointed to
  public:
-  explicit MonomialView(int32_t* data) : mData(data) {}
-  explicit MonomialView(std::vector<int32_t>& data) : mData(data.data()) {}
-  MonomialView(std::vector<int32_t> data, MemoryBlock& block)
+  explicit MonomialView(MonomialInt* data) : mData(data) {}
+  explicit MonomialView(std::vector<MonomialInt>& data) : mData(data.data()) {}
+  MonomialView(std::vector<MonomialInt> data, MemoryBlock& block)
   {
     MonomialView m(data.data());
-    auto rng = block.allocateArray<int32_t>(m.size());
+    auto rng = block.allocateArray<MonomialInt>(m.size());
     mData = rng.first;
     std::copy(m.begin(), m.end(), mData);
   }
   MonomialView(const MonomialView& m, MemoryBlock& block)
   {
-    auto rng = block.allocateArray<int32_t>(m.size());
+    auto rng = block.allocateArray<MonomialInt>(m.size());
     mData = rng.first;
     std::copy(m.begin(), m.end(), mData);
   }

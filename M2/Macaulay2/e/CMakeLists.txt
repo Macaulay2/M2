@@ -97,6 +97,7 @@ set(HPPONLYFILES
   f4/memblock.hpp
   f4/ntuple-monomial.hpp
   f4/varpower-monomial.hpp
+  gb-f4/MonomialTypes.hpp
   schreyer-resolution/res-memblock.hpp
   schreyer-resolution/res-monomial-types.hpp
   schreyer-resolution/res-schreyer-order.hpp
@@ -285,6 +286,7 @@ set(SRCLIST
   gb-f4/MonomialHashTable
   gb-f4/MonomialLookupTable
   gb-f4/MonomialView
+  gb-f4/SPairs
   f4/f4-computation
   f4/f4-m2-interface
   f4/f4-mem

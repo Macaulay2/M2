@@ -2,15 +2,12 @@
 
 #pragma once
 
+#include "MonomialTypes.hpp"
 #include "../MemoryBlock.hpp"
 #include "MonomialView.hpp"
 #include <vector>
 
 namespace newf4 {
-  using MonomialIndex = uint32_t;  // 0 means undefined.  Valid values are > 0.
-  //using MonomialInt = uint32_t;
-  using ComponentIndex = int;
-  using HashInt = uint64_t;
 
   // MonomialView: varpower type monomial (as in NC) (i.e. stored sparsely, length of a monomial is not constant.)
   // MonomialIndex: some int type.

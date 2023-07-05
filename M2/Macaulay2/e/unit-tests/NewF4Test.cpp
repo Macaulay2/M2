@@ -14,7 +14,7 @@ TEST(NewF4, hashstats)
   stats.dump();
 }
 
-newf4::HashInt hashFunction(const newf4::Monomial& m)
+newf4::HashInt hashFunction(const newf4::MonomialView& m)
 {
   newf4::HashInt hash = 0;
   for (auto a : m) { hash += a; }
@@ -34,12 +34,12 @@ TEST(NewF4, hashtable)
   MemoryBlock B;
   for (auto i=0; i<100000; ++i)
     {
-      newf4::Monomial m({5, 1, 2, i, 3}, B);
+      newf4::MonomialView m({5, 1, 2, i, 3}, B);
       newf4::MonomialIndex m1 = hashtab.find(m, hashFunction(m));
     }
   for (auto i=0; i<10000; ++i)
     {
-      newf4::Monomial m({5, 1, 2, i, 3}, B);
+      newf4::MonomialView m({5, 1, 2, i, 3}, B);
       newf4::MonomialIndex m1 = hashtab.find(m, hashFunction(m));
     }
   std::cout << std::endl;

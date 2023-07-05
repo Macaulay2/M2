@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "MonomialTypes.hpp"
 #include "MonomialView.hpp"
 #include <vector>
 #include <iostream>
@@ -14,7 +15,7 @@ class MonomialInfo {
  public:
   bool mIsUsed;
   int mSimpleDegree;
-  uint64_t mMask;
+  MonomialMask mMask;
   int mMonomialIndex;
   int mOffset;
 };

@@ -1,5 +1,9 @@
 #pragma once
 
+#include "MonomialTypes.hpp"
+#include "MonomialView.hpp"
+#include "Basis.hpp"
+
 // Each spair's monomials will be included in a special "hash table".
 // What about "pre-spairs"?  Are they in their own, or not yet inserted?
 // Maybe try both?
@@ -29,38 +33,32 @@
 //       allow quotient rings
 //       of course allow modules
 
-using Index = int32_t;
+namespace newf4 {
 
-enum class SPairType
-  {
-    Ring,
-    Skew,
-    SPair,
-    Gen
-  };
+enum class SPairType { Ring, Skew, SPair, Gen };
 
 class SPair
 {
-private:
+ private:
   SPairType mType;
-  Index mFirst;            // later in gb indexing.
+  Index mFirst;  // later in gb indexing.
   Index mLast;
   MonomialIndex mLCM;
-  MonomialInt mComponent;  // component of the SPair
-  MonomialInt mDegree;     // degree of the LCM
-  MonomialIndex mQuotient; // we might not need
+  ComponentIndex mComponent;  // component of the SPair
+  MonomialInt mDegree;        // degree of the LCM
+  MonomialIndex mQuotient;    // we might not need
 };
 
 class SPairSet
 {
   /// What needs to be input here?
   SPairSet();
-  
+
   /// updatePairs: takes an element of the GB
   /// and computes all spairs needed with previous elements
   /// in the basis (and ring elements, and skew pairs too),
   /// and adds them to 'this'.
-  void updatePairs(const Basis& B, index which);
+  void updatePairs(const Basis& B, Index which);
 
   // If we keep them sorted in increasing degree, we can
   // grab the next set pretty easily.  How to remove them?
@@ -69,10 +67,12 @@ class SPairSet
 
   // sort in increasing degree, SPairType::Ring and SPairType::Skew
   // before SPairType::SPair before SPairType::Gen and in each degree by LCM?
-  
-private:
+
+ private:
   std::vector<SPair> mSPairs;
 };
+
+} // end namespace newf4
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
