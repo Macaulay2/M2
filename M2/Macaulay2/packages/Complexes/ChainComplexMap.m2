@@ -1206,7 +1206,9 @@ tensorAssociativity(Complex, Complex, Complex) := ComplexMap => (A,B,C) -> (
 isQuasiIsomorphism = method(Options => {Concentration => (-infinity,infinity)})
 -- TODO: check this function for correctness, in the case when Concentration is given
 isQuasiIsomorphism ComplexMap := Boolean => opts -> f -> (
-    (lof,hif) := concentration f;
+    (loSrc,hiSrc) := concentration source f;
+    (loTar,hiTar) := concentration target f;
+    (lof,hif) := (min(loTar, loSrc), max(hiTar, hiSrc));
     (loO,hiO) := opts.Concentration;
     all(max(lof,loO)..min(hif,hiO),
         i -> HH_(i+1) cone f == 0

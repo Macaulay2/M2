@@ -67,7 +67,7 @@ freeResolution Module := Complex => opts -> M -> (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
             error "internal error: Resolution should have both a LengthLimit and DegreeLimit";
-        if C.cache.Nonminimal === (opts.Strategy === "Nonminimal") and
+        if C.cache.Nonminimal === (opts.Strategy === Nonminimal) and
            C.cache.LengthLimit >= opts.LengthLimit and 
            C.cache.DegreeLimit >= opts.DegreeLimit then (
                C' := naiveTruncation(C, -infinity, opts.LengthLimit);
@@ -80,14 +80,14 @@ freeResolution Module := Complex => opts -> M -> (
         );
     if M.cache.?ResolutionObject then (
         RO := M.cache.ResolutionObject;
-        if (opts.Strategy === null and RO.Strategy =!= 4) or --4 is the magic number for "Nonminimal".  In this case, we need to recompute the resolution.
+        if (opts.Strategy === null and RO.Strategy =!= 4) or --4 is the magic number for Nonminimal.  In this case, we need to recompute the resolution.
             opts.Strategy === RO.Strategy
         then (
             if RO.isComputable(opts.LengthLimit, opts.DegreeLimit) -- this is informational: does not change RO.
             then (
                 RO.compute(opts.LengthLimit, opts.DegreeLimit); -- it is possible to interrupt this and then the following lines do not happen.
                 C = RO.complex(opts.LengthLimit);
-                C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means "Nonminimal" to the engine...
+                C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means Nonminimal to the engine...
                 C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
                 C.cache.DegreeLimit = opts.DegreeLimit;
                 C.cache.Module = M;
@@ -112,7 +112,7 @@ freeResolution Module := Complex => opts -> M -> (
     
     if C =!= null then (
         assert(instance(C, Complex));
-        C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means "Nonminimal" to the engine...
+        C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means Nonminimal to the engine...
         C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
         C.cache.DegreeLimit = opts.DegreeLimit;
         C.cache.Module = M;
@@ -336,7 +336,7 @@ resolutionInEngine4 = (opts, M) -> (
       << "[Doing freeResolution Strategy => 4 (Nonminima)]" << endl;
     RO := M.cache.ResolutionObject;  -- this exists already
     if RO.Strategy === null then RO.Strategy = 4
-    else if RO.Strategy === "Nonminimal" then RO.Strategy = 4
+    else if RO.Strategy === Nonminimal then RO.Strategy = 4
     else error "our internal logic is flawed";
 
     gbM := gens gb presentation M;
@@ -345,13 +345,10 @@ resolutionInEngine4 = (opts, M) -> (
 
 resolutionInEngine = (opts, M) -> (
     R := ring M;
-    if isQuotientRing R or isSkewCommutative R then (
+    if isQuotientRing R or isSkewCommutative R 
+         or (isWeylAlgebra R and isHomogeneous M) then (
         M.cache.ResolutionObject.Strategy = 2;
         resolutionInEngine2(opts ++ {Strategy => 2}, M)
-        )
-    else if isWeylAlgebra R and isHomogeneous M then (
-        M.cache.ResolutionObject.Strategy = 3;
-        resolutionInEngine3(opts ++ {Strategy => 3}, M)
         )
     else (
         M.cache.ResolutionObject.Strategy = 1;
@@ -524,16 +521,16 @@ resolutionByHomogenization = (opts, M) -> (
     RO.complex(opts.LengthLimit)
     )
 
-addHook((freeResolution, Module), resolutionInEngine4, Strategy => "Nonminimal")
-addHook((freeResolution, Module), resolutionBySyzygies, Strategy => "Syzygies")
-addHook((freeResolution, Module), resolutionByHomogenization, Strategy => "Homogenization")
+addHook((freeResolution, Module), resolutionInEngine4, Strategy => Nonminimal)
+addHook((freeResolution, Module), resolutionBySyzygies, Strategy => Syzygies)
+addHook((freeResolution, Module), resolutionByHomogenization, Strategy => Homogenization)
 addHook((freeResolution, Module), resolutionInEngine0, Strategy => 0)
 addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
 addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
 addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
-addHook((freeResolution, Module), resolutionOverZZ, Strategy => "ZZ")
-addHook((freeResolution, Module), resolutionOverField, Strategy => "Field")
+addHook((freeResolution, Module), resolutionOverZZ, Strategy => OverZZ)
+addHook((freeResolution, Module), resolutionOverField, Strategy => OverField)
 
 
 debug Core
@@ -632,7 +629,7 @@ minimalBetti Module := BettiTally => opts -> M -> (
 	nvars := # generators(R, CoefficientRing => A);
 	lengthlimit = nvars + if A === ZZ then 1 else 0;
         );
-    C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1, Strategy => "Nonminimal");
+    C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1, Strategy => Nonminimal);
     rC := M.cache.ResolutionObject.RawComputation;
     B := unpackEngineBetti rawMinimalBetti(rC,
         if opts.DegreeLimit === infinity then {} else
