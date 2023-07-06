@@ -1133,6 +1133,20 @@ doc ///
         hooks
 ///
 
+-- To use in the doc of the Engine strategy, perhaps...
+///
+        Text
+            Since this strategy 
+        Example
+            m = map(S^1 ++ S^{1},, {{1, b, b-c}, {b, d*e, e^2}})
+            assert isHomogeneous m
+            C = freeResolution(coker m, Strategy => 2)
+            dd^C
+            M = prune coker m
+            C' = freeResolution M
+            dd^C'
+///
+
 doc ///
     Key
         "Strategy for free resolutions over a field"
@@ -1277,11 +1291,330 @@ doc ///
         (smithNormalForm, Matrix)
 ///
 
+doc ///
+    Key
+        "Strategy for free resolutions via Schreyer-Lascala"
+        "freeResolution(..., Strategy => 0)"
+    Headline
+        algorithm for computing free resolutions exploiting the Schreyer frame
+    Usage
+        freeResolution(M, Strategy => 0)
+        freeResolution(I, Strategy => 0)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms in the engine of {\it Macaulay2}
+            for computing minimal free resolutions.  This particular
+            variant requires that the ring $S$ be commutative,
+            and homogeneous over a base field.
+        Text
+            This first example computes a minimal free resolution
+            of the twisted cubic curve in projective $3$-space.
+        Example
+            kk = ZZ/32003;
+            S = kk[a..d];
+            I = ideal(b^2-a*c, b*c - a*d, c^2-b*d)
+            M = S^1/I
+            F = freeResolution(M, Strategy => 0)
+            dd^F
+            betti F
+            assert isWellDefined F
+            assert(isQuasiIsomorphism augmentationMap F)
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $S^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, Strategy => 0)
+            assert(F1 == F)
+            F2 = freeResolution(module I, Strategy => 0)
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            a homogeneous quotient.
+        Example
+            R = S/(a^3, b^3, c^3, d^3);
+            J = ideal(b^2-a*c, b*c - a*d, c^2-b*d + (b^2-a*c))
+            M = R^1/J
+            C = freeResolution(M, Strategy => 0, LengthLimit => 8)
+            assert isWellDefined C
+            betti C
+        Text
+            The first map in the resulting complex is
+            not necessarily given by the generators of the
+            ideal or the relations of the module.
+        Example
+            dd^C_1
+            gens J
+            relations M
+        Text
+            This strategy is an implementation of the algorithm
+            in Roberto La Scala and Mike Stillman,
+            {\it Strategies for computing minimal free resolutions}
+            J. Symbolic Comput. {\bf 26} (1998), no.4, 409-431.
+            
+            It uses the Schreyer algorithm for free resolutions,
+            including using induced (Schreyer) monomial orders
+            on the free modules in the resolution, together with
+            a method to minimize the resolution appearing in the above paper.
+            
+            Both strategies 0 and 1 are implementations of this algorithm,
+            however they use slightly different internal data structures.
+            Moreover, strategy 0 precomputes a Groebner basis for the presentation
+            of the module.  In contrast, strategy 1 obtains the Groebner basis
+            as part of the algorithm.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
 ///
-  P = matrix{{0,0,0},{0,1,0},{0,0,1}}
-  U = matrix {{1, 2, 1}, {0, 1, 0}, {0, 0, 1}}
-  V1 = matrix {{2, 1, 2}, {7, 3, 7}, {6, 9, 5}}
-  U * P * V1
+
+doc ///
+    Key
+        "Default strategy for free resolutions of homogeneous modules"
+        "freeResolution(..., Strategy => 1)"
+    Headline
+        algorithm for computing free resolutions exploiting the Schreyer frame
+    Usage
+        freeResolution M
+        freeResolution I
+        freeResolution(M, Strategy => 1)
+        freeResolution(I, Strategy => 1)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is a primary algorithm in the engine of {\it
+            Macaulay2} for computing minimal free resolutions. This is
+            the default variant when the ring $S$ is commutative and
+            homogeneous over a base field.
+        Text
+            This first example computes a minimal free resolution
+            of the twisted cubic curve in projective $3$-space.
+        Example
+            kk = ZZ/32003;
+            S = kk[a..d];
+            I = ideal(b^2-a*c, b*c - a*d, c^2-b*d)
+            M = S^1/I
+            F = freeResolution M
+            dd^F
+            betti F
+            assert isWellDefined F
+            assert(isQuasiIsomorphism augmentationMap F)
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $S^1/I$ is returned.
+        Example
+            F1 = freeResolution I
+            assert(F1 == F)
+            F2 = freeResolution module I
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            a homogeneous quotient.
+        Example
+            R = S/(a^3, b^3, c^3, d^3);
+            J = ideal(b^2-a*c, b*c - a*d, c^2-b*d + (b^2-a*c))
+            M = R^1/J
+            C = freeResolution(M, LengthLimit => 8)
+            assert isWellDefined C
+            betti C
+        Text
+            This strategy is an implementation of the algorithm
+            in Roberto La Scala and Mike Stillman,
+            {\it Strategies for computing minimal free resolutions}
+            J. Symbolic Comput. {\bf 26} (1998), no.4, 409-431.
+
+            It uses the Schreyer algorithm for free resolutions,
+            including using induced (Schreyer) monomial orders
+            on the free modules in the resolution, together with
+            a method to minimize the resolution appearing in the above paper.
+            
+            Both strategies 0 and 1 are implementations of this algorithm,
+            however they use slightly different internal data structures.
+            Moreover, strategy 0 precomputes a Groebner basis for the presentation
+            of the module.  In contrast, strategy 1 obtains the Groebner basis
+            as part of the algorithm.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions of homogeneous modules via successive syzygies"
+        "freeResolution(..., Strategy => 2)"
+    Headline
+        algorithm for computing free resolutions step by step
+    Usage
+        freeResolution(M, Strategy => 2)
+        freeResolution(I, Strategy => 2)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms in the engine of {\it Macaulay2} for
+            computing minimal free resolutions. This is the default
+            variant when the ring $S$ is a homogeneous quotient of a
+            commutative polynomial ring over a base field.
+        Text
+            This first example computes part of the minimal free
+            resolution of the ground field over a hypersurface ring.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..d]/(a^2+b^2+c^2+d^2);
+            I = ideal(a,b,c,d)
+            M = R^1/I
+            F = freeResolution(M, LengthLimit => 5)
+            dd^F
+            assert isWellDefined F
+            assert(isQuasiIsomorphism augmentationMap F)
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, LengthLimit => 5)
+            assert(F1 == F)
+            F2 = freeResolution(module I, LengthLimit => 5)
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            simply a polynomial ring, but is often slower than
+            Strategy 1. However, unlike Strategy 1, 
+            this strategy preserves the given presentation of the module,
+            which can be desirable.
+        Example
+            S = kk[a..e]
+            J = ideal(a^3-e^3, a*b^2-c*e^2, a*b*c, a*b*c + a^3 - e^3)
+            assert isHomogeneous J
+            C2 = freeResolution(J, Strategy => 2)
+            C1 = freeResolution ideal J_*
+            assert isWellDefined C2
+            betti C2
+            betti C1
+            assert(dd^C2_1 == gens J)
+            assert(dd^C1_1 != gens J)
+        Text
+            This strategy works degree by degree.  Within each degree,
+            it first computes the syzygies of the presentation matrix,
+            and then computes the second syzygies, and so on.  This
+            strategy uses Schreyer orders on the free modules in the
+            resolution which often improves efficiency.
+
+            Although similar to Strategy 3, this strategy does not use
+            Hilbert functions to aid the computation.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+-- XXX We are not done with this one yet!
+-- Also place multigraded examples somewhere!
+doc ///
+    Key
+        "Strategy for free resolutions of homogeneous modules aided by Hilbert functions"
+        "freeResolution(..., Strategy => 3)"
+    Headline
+        algorithm for computing free resolutions step by step aided by Hilbert functions
+    Usage
+        freeResolution(M, Strategy => 3)
+        freeResolution(I, Strategy => 3)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms in the engine of {\it Macaulay2} for
+            computing minimal free resolutions. This is the default
+            variant when the ring $S$ is a homogeneous quotient of a
+            commutative polynomial ring over a base field.
+        Text
+            This first example computes part of the minimal free
+            resolution of the ground field over a hypersurface ring.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..d]/(a^2+b^2+c^2+d^2);
+            I = ideal(a,b,c,d)
+            M = R^1/I
+            F = freeResolution(M, LengthLimit => 5)
+            dd^F
+            assert isWellDefined F
+            assert(isQuasiIsomorphism augmentationMap F)
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, LengthLimit => 5)
+            assert(F1 == F)
+            F2 = freeResolution(module I, LengthLimit => 5)
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            simply a polynomial ring, but is often slower than
+            Strategy 1. However, unlike Strategy 1, 
+            this strategy preserves the given presentation of the module,
+            which can be desirable.
+        Example
+            S = kk[a..e]
+            J = ideal(a^3-e^3, a*b^2-c*e^2, a*b*c, a*b*c + a^3 - e^3)
+            assert isHomogeneous J
+            C2 = freeResolution(J, Strategy => 2)
+            C1 = freeResolution ideal J_*
+            assert isWellDefined C2
+            betti C2
+            betti C1
+            assert(dd^C2_1 == gens J)
+            assert(dd^C1_1 != gens J)
+        Text
+            This strategy works degree by degree.  Within each degree,
+            it first computes the syzygies of the presentation matrix,
+            and then computes the second syzygies, and so on.  This
+            strategy uses Schreyer orders on the free modules in the
+            resolution which often improves efficiency.
+
+            Although similar to Strategy 3, this strategy does not use
+            Hilbert functions to aid the computation.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
 ///
 
 doc ///
