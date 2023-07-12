@@ -45,14 +45,6 @@ class MacaulayMatrix
 private:
 };
 
-class SPair
-{
-};
-
-class SPairTable
-{
-};
-
 struct Column
 {
 };

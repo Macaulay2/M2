@@ -35,7 +35,12 @@
 
 namespace newf4 {
 
-enum class SPairType { Ring, Skew, SPair, Gen };
+// SPairType::Ring means between a ring element and GB element
+// SPairType::Exterior corresponds to the fact that variable * lead monomial = 0
+// SPairType::SPair means an SPair between 2 GB elements
+// SPairType::Gen means this SPair is one of the initial generators
+
+enum class SPairType { Ring, Exterior, SPair, Gen };
 
 class SPair
 {
@@ -56,16 +61,21 @@ class SPairSet
 
   /// updatePairs: takes an element of the GB
   /// and computes all spairs needed with previous elements
-  /// in the basis (and ring elements, and skew pairs too),
+  /// in the basis (and ring elements, and exterior pairs too),
   /// and adds them to 'this'.
   void updatePairs(const Basis& B, Index which);
 
   // If we keep them sorted in increasing degree, we can
   // grab the next set pretty easily.  How to remove them?
-  auto getNextDegree() -> std::pair<Index, std::vector<SPair>>;
+  auto getNextDegree() -> std::pair<MonomialInt, std::vector<SPair>>;
   // or maybe have an iterator for it?
+  // we should make sure we don't "lose" those returned in case of interruption
+  // should be an iterator to avoid this and make it easier to loop over.
+  // also pass in a maximum number to return in a "chunk"
 
-  // sort in increasing degree, SPairType::Ring and SPairType::Skew
+  class SPairIterator {};
+
+  // sort in increasing degree, SPairType::Ring and SPairType::Exterior
   // before SPairType::SPair before SPairType::Gen and in each degree by LCM?
 
  private:
