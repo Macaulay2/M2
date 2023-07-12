@@ -46,7 +46,7 @@ class SPair
 {
  private:
   SPairType mType;
-  Index mFirst;  // later in gb indexing.
+  Index mFirst;               // index in Basis itself. later in gb indexing.
   Index mLast;
   MonomialIndex mLCM;
   ComponentIndex mComponent;  // component of the SPair
@@ -56,13 +56,13 @@ class SPair
 
 class SPairSet
 {
-  /// What needs to be input here?
+  // What needs to be input here?
   SPairSet();
 
   /// updatePairs: takes an element of the GB
   /// and computes all spairs needed with previous elements
   /// in the basis (and ring elements, and exterior pairs too),
-  /// and adds them to 'this'.
+  /// and adds them to 'this.mSPairs'.
   void updatePairs(const Basis& B, Index which);
 
   // If we keep them sorted in increasing degree, we can
@@ -80,6 +80,8 @@ class SPairSet
 
  private:
   std::vector<SPair> mSPairs;
+  // std::vector<std::vector<SPair>> mSPairsByDegree; ??
+
 };
 
 } // end namespace newf4

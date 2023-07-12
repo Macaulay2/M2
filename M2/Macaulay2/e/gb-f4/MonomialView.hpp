@@ -42,3 +42,7 @@ class MonomialView
 };
 
 } // end namespace newf4
+
+// Local Variables:
+// indent-tabs-mode: nil
+// End:
