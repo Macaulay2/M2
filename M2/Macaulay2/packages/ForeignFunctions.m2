@@ -1890,6 +1890,7 @@ longexp = 8 * version#"pointer size"
 assert Equation(value ulong(2^longexp - 1), 2^longexp - 1)
 assert Equation(value long(2^(longexp - 1) - 1), 2^(longexp - 1) - 1)
 assert Equation(value long(-2^(longexp - 1)), -2^(longexp - 1))
+assert Equation(value mpzT 10^100, 10^100)
 
 -- real types
 assert Equation(value float 3.14159, 3.14159p24)
