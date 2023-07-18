@@ -8,10 +8,11 @@ namespace newf4 {
 
 class Polynomial
 {
- private:
+  friend class PolynomialListStream;
+private:
   ElementArray mCoefficients;
   std::vector<ComponentIndex> mComponents;
-  std::vector<MonomialIndex> mMonomials;
+  std::vector<MonomialIndex> mMonomials; // each monomial is an index into a vector of polynomials.
 
  public:
   // creation (output iterator?)
@@ -25,7 +26,7 @@ class PolynomialList
 {
  private:
   const VectorArithmetic& mVectorArithmetic;
-  const MonomialHashTable mHashTable;
+  MonomialHashTable mHashTable;
   std::vector<Polynomial> mPolynomials;
 
  public:
@@ -33,6 +34,14 @@ class PolynomialList
       : mVectorArithmetic(VA), mHashTable(monHash)
   {
   }
+
+  const MonomialHashTable& monomialHashTable() const { return mHashTable; }
+  MonomialHashTable& monomialHashTable() { return mHashTable; }
+
+  Polynomial& operator[](int index) { return mPolynomials[index]; }
+  const Polynomial& operator[](int index) const { return mPolynomials[index]; }
+
+  size_t size() const { return mPolynomials.size(); }
 };
 
 } // end namespace newf4

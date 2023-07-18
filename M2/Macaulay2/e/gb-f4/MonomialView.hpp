@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../MemoryBlock.hpp"
+#include "MonomialTypes.hpp"
 #include <vector>
 
 namespace newf4 {

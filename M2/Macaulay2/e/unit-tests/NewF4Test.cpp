@@ -46,3 +46,15 @@ TEST(NewF4, hashtable)
   hashtab.dump();
 
 }
+
+TEST(NewF4, matrixstream)
+{
+  // Start with a string of polynomials.
+  // Read it in with the parsing functions (this is probably to be cherry picked from read-msolve?)
+  // Use PolynomialListStream to get it to this code.
+
+  // What tests to make here?
+
+  // Write it out to a Matrix.
+  // Read it from a Matrix.
+}
