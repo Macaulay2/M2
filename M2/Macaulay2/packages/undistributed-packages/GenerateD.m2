@@ -40,6 +40,11 @@ celltype = new HashTable from {
             "a small integer"
             )
         },
+    "string" => hashTable {
+        DType => "stringCell",
+        Synonym => "a string", 
+        Suffix => ".v"
+        },
     "long" => hashTable {
         DType => "ZZCell",
         Synonym => "a small integer", 
@@ -726,3 +731,9 @@ Node
     return name1->homogenize(name2, name3);
 *-
 
+str (genFunctionCall(
+        "rawMatrixReadMsolveString",
+        "MatrixOrNull",
+        ("a"=>"Ring", "b"=>"string")
+        ))
+print oo

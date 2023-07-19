@@ -21,6 +21,9 @@
 #include "relem.hpp"
 #include "ring.hpp"
 #include "ringelem.hpp"
+#include "BasicPolyList.hpp"
+#include "BasicPolyListParser.hpp"
+//#include "matrix-io.hpp"
 
 namespace M2 { class ARingCC; }
 
@@ -205,6 +208,34 @@ const Matrix /* or null */ *IM2_Matrix_random(
 #warning preference not yet used
 #endif
   return Matrix::random(R, r, c, fraction_non_zero, special_type);
+}
+
+const Matrix* /* or null */ rawMatrixReadMsolveString(const Ring* R, M2_string contents)
+{
+  try
+    {
+      std::string str = string_M2_to_std(contents);// TODO: this does a full copy.  Perhaps we just have readMsolveIdealContents take a string_view?
+      auto Fs = parseMsolveFromString(str);
+      return toMatrix(R->make_FreeModule(1), Fs);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+}
+
+const Matrix* /* or null */ rawMatrixReadMsolveFile(const Ring* R, M2_string filename)
+{
+  try
+    {
+      std::string str = string_M2_to_std(filename);
+      auto Fs = parseMsolveFile(str);
+      return toMatrix(R->make_FreeModule(1), Fs);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////

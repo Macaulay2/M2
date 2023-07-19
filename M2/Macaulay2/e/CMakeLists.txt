@@ -152,6 +152,8 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+  BasicPolyList
+  BasicPolyListParser
   myalloc
   matrix-ncbasis
   M2FreeAlgebraQuotient
@@ -456,6 +458,7 @@ if(BUILD_TESTING)
     unit-tests/SubsetTest.cpp
     unit-tests/basics-test.cpp
 
+    unit-tests/MatrixIOTest.cpp
     unit-tests/fromStream.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
     )

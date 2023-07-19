@@ -27,7 +27,8 @@ UNITTEST_CCFILES := \
     SubsetTest \
     PolyRingTest \
     NewF4Test \
-    MonoidTest
+    MonoidTest \
+    MatrixIOTest
 
 #    RingRRRTest \
 #    RingCCCTest \

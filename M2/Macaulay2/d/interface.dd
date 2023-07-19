@@ -2262,6 +2262,40 @@ export rawSparseMatrix2(e:Expr):Expr := (
      else WrongNumArgs(7));
 setupfun("rawSparseMatrix2",rawSparseMatrix2);
 
+export rawMatrixReadMsolveString(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawRingCell do (a := wa.p;
+  when s.1 is wb:stringCell do (b := wb.v;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawMatrixReadMsolveString(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArg(1,"a string")
+  ) else WrongArg(0,"a raw ring")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawMatrixReadMsolveString",rawMatrixReadMsolveString);
+
+export rawMatrixReadMsolveFile(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawRingCell do (a := wa.p;
+  when s.1 is wb:stringCell do (b := wb.v;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawMatrixReadMsolveFile(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArg(1,"a string")
+  ) else WrongArg(0,"a raw ring")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawMatrixReadMsolveFile",rawMatrixReadMsolveFile);
+
 export rawConcat(e:Expr):Expr := (
      if isSequenceOfMatrices(e) then
      toExpr(Ccode(RawMatrixOrNull, 

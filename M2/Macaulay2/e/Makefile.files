@@ -10,6 +10,8 @@ INTERFACE2 = interrupted
 
 INTERFACE = \
 	myalloc \
+	BasicPolyList \
+	BasicPolyListParser \
 	matrix-ncbasis \
 	M2FreeAlgebraQuotient \
 	M2FreeAlgebra \
@@ -64,6 +66,7 @@ INTERFACE = \
 	ZZ \
 	ZZp \
 	reader \
+	matrix-io \
 	matrix-stream \
 	cra \
 	aring-zz-gmp \
