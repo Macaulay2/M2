@@ -34,11 +34,12 @@ using BasicPolyList = std::vector<BasicPoly>;
 
 class BasicPolyListStreamCollector
 {
+public:
   using Coefficient = int32_t;
   using VarIndex = int32_t; // TODO: these must match BasicPoly above.
   using Exponent = int32_t;
   using Component = int32_t;
- private:
+private:
   BasicPolyList mValue;
 
   // We store these, as we need to be able to respond to what they are,
@@ -63,6 +64,8 @@ public:
     return mValue;
   }
 
+  // Fields required for the general stream interface (see mathicgb::mathicgb.h)
+  
   Coefficient modulus() const { return mModulus; }
   VarIndex varCount() const { return mVarCount; }
   Component comCount() const { return mComCount; }

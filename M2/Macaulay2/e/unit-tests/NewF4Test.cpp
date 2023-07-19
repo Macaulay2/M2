@@ -8,6 +8,9 @@
 #include "polyring.hpp"
 #include "util-polyring-creation.hpp"
 #include "gb-f4/MonomialHashTable.hpp"
+#include "VectorArithmetic.hpp"
+#include "BasicPolyListParser.hpp"
+#include "gb-f4/PolynomialList.hpp"
 
 TEST(NewF4, hashstats)
 {
@@ -34,12 +37,12 @@ TEST(NewF4, hashtable)
   // EXPECT_EQ(m1, m2);
 
   MemoryBlock B;
-  for (unsigned int i=0; i<100000; ++i)
+  for (int i=0; i<100000; ++i)
     {
       newf4::MonomialView m({5, 1, 2, i, 3}, B);
       newf4::MonomialIndex m1 = hashtab.find(m, hashFunction(m));
     }
-  for (unsigned int i=0; i<10000; ++i)
+  for (int i=0; i<10000; ++i)
     {
       newf4::MonomialView m({5, 1, 2, i, 3}, B);
       newf4::MonomialIndex m1 = hashtab.find(m, hashFunction(m));
@@ -58,6 +61,16 @@ y^2+988761941*z^2+741571456*y^1+494380971*z^1
 1*z^3+924021576*z^2+700373042*y^1+653289140*z^1
 )";
 
+
+  const Ring *K = R->getCoefficients();
+  auto VA = new VectorArithmetic(K);
+
+  BasicPolyList B = parseBasicPolyListFromString(polys, {"x", "y", "z"});
+  newf4::PolynomialList L(*VA);
+  newf4::PolynomialListStreamCollector S(1235952427, 3, 1, L);
+  toStream(B, S);
+  std::cout << "Number of monomials: " << L.monomialHashTable().size() << std::endl;
+  L.monomialHashTable().dump();
 // TODO: need a function to get variable names from a PolynomialRing, Monoid (as a std::vector...)
 // TODO: need readMatrix(PolynomialRing, PolyList) -> const Matrix*
 // TODO: need a polynomialListFromStream function.

@@ -1,5 +1,6 @@
 #include "GBF4Interface.hpp"
 
+#if 0
 #include "../matrix-stream.hpp"
 #include "PolynomialList.hpp"
 
@@ -19,14 +20,14 @@ void polynomialListToStream(const PolynomialList& Fs, Stream& stream)
   
 }
 
-void PolynomialListStream::idealBegin(size_t polyCount)
+void PolynomialListStreamCollector::idealBegin(size_t polyCount)
 {
   //  mValue.clear();
   mCurrentPoly = -1;
   //  mValue.resize(polyCount);
 }
 
-void PolynomialListStream::appendPolynomialBegin(size_t termCount)
+void PolynomialListStreamCollector::appendPolynomialBegin(size_t termCount)
 {
   mCurrentPoly++;
   mCurrentTerm = -1;
@@ -35,14 +36,14 @@ void PolynomialListStream::appendPolynomialBegin(size_t termCount)
   mValue[mCurrentPoly].mMonomials.resize(termCount);
 }
 
-void PolynomialListStream::appendTermBegin(Component com)
+void PolynomialListStreamCollector::appendTermBegin(Component com)
 {
   mCurrentTerm++;
   mValue[mCurrentPoly].mComponents[mCurrentTerm] = com;
   mSparseMonomial.push_back(1);
 }
 
-void PolynomialListStream::appendExponent(VarIndex index, Exponent exponent)
+void PolynomialListStreamCollector::appendExponent(VarIndex index, Exponent exponent)
 {
   // These need to go into an auxilliary std::vector.
   mSparseMonomial.push_back(index);
@@ -50,8 +51,9 @@ void PolynomialListStream::appendExponent(VarIndex index, Exponent exponent)
   mSparseMonomial[0] += 2; // length field.
 }
 
-void PolynomialListStream::appendTermDone(Coefficient coefficient)
+void PolynomialListStreamCollector::appendTermDone(Coefficient coefficient)
 {
+#if 0  
   auto monomindex = mValue.monomialHashTable().find(MonomialView(mSparseMonomial.data()), 0);
   // TODO
   mCoefficients.push_back(coefficient); // FIXME
@@ -59,21 +61,23 @@ void PolynomialListStream::appendTermDone(Coefficient coefficient)
   mValue[mCurrentPoly].mMonomials.push_back(monomindex);
   mSparseMonomial.clear();
   mSparseMonomial.push_back(1);
+#endif  
 }
 
-void PolynomialListStream::appendPolynomialDone()
+void PolynomialListStreamCollector::appendPolynomialDone()
 {
   if (mCurrentTerm != mValue[mCurrentPoly].mComponents.size() - 1)
     throw exc::engine_error("internal error: building PolyList from stream has incorrect number of terms in a polynomial");
 }
 
-void PolynomialListStream::idealDone()
+void PolynomialListStreamCollector::idealDone()
 {
   if (mCurrentPoly != mValue.size() - 1)
     throw exc::engine_error("internal error: building PolyList from stream has incorrect number of polynomials");
 }
 
 }; // namespace newf4
+#endif
 
 // Local Variables:
 // indent-tabs-mode: nil

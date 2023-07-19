@@ -9,6 +9,35 @@
 
 namespace newf4 {
 
+  class MonomialHashFunction {
+  private:
+    std::vector<HashInt> mHashValues;
+  public:
+    MonomialHashFunction()
+      : mHashValues({
+        12550986463692465404ul, 3911555212215091238ul, 15090669942851505316ul,
+        16174113364685515424ul, 18172793978567602378ul, 4970727551569665824ul,
+        15244287395755336378ul, 3641586221293608170ul, 5697307520845005385ul,
+        17982501052917221133ul, 4205210476184990958ul, 3995014217224167515ul,
+        10391875845945764299ul, 17483720614571824287ul, 1115562083531405255ul,
+        7842315096810324507ul, 673864007402015535ul, 15878473700446701422ul,
+        15632675738063166334ul, 17700395182034373329ul
+        })
+    {
+    }
+
+    auto hashValue(const MonomialView& w) -> HashInt
+    {
+      HashInt val = 0;
+      for (auto i = w.begin() + 1; i != w.end(); i += 2)
+        // TODO: check that the variables are in range in mHashValues.
+        //  if not, increase the size by adding in new HashInt's (uint64_t).
+        val += mHashValues[*i] * (*(i+1));
+      return val;
+    }
+  };
+
+
   // MonomialView: varpower type monomial (as in NC) (i.e. stored sparsely, length of a monomial is not constant.)
   // MonomialIndex: some int type.
   // HashTable.
@@ -73,7 +102,7 @@ namespace newf4 {
   class MonomialHashTable
   {
   public:
-    MonomialHashTable(int log2size = 16);
+    MonomialHashTable(int log2size = 17); // use 16??
 
     /// Frees all space from the table, including the the monomials
     /// themselves.  Tough shit if you are pointing to any of these
@@ -87,6 +116,10 @@ namespace newf4 {
 
     /// Essentially the previous case when monomial(n) = monomial 1.
     auto find(const MonomialView& m, HashInt mhash) -> MonomialIndex;
+    auto find(const MonomialView& m) -> MonomialIndex
+    {
+      return find(m, mHashFunction.hashValue(m));
+    }
 
     /// Simple function which returns the monomial data pointed to at index m.
     /// If m is out of range: throws an error.
@@ -111,6 +144,9 @@ namespace newf4 {
     std::vector<MonomialView> mMonomialPointers; // First element is ignored.
     std::vector<HashInt> mHashValues;
 
+    // Hash function
+    MonomialHashFunction mHashFunction;
+    
     // hash table itself.
     unsigned int mLog2Size; // size of table is 2^mLog2Size
     unsigned long mHashMask; // 2^mLog2Size - 1: mask with this to get the 

@@ -363,12 +363,23 @@ public:
   template<typename Container>
   ElementArray elementArrayFromContainer(const Container& c) const
   {
-    ElementArray sparse = allocateElementArray(c.size());
+    ElementArray sparse = allocateElementArray(c.size()); // initializes all elements
     auto& svec = * elementArray(sparse);
     for (auto i = 0; i < c.size(); ++i)
     {
-      mRing->init(svec[i]);
       mRing->from_ring_elem(svec[i], c[i]);
+    }
+    return sparse;
+  }
+
+  template<typename Container>
+  ElementArray elementArrayFromContainerOfLongs(const Container& c) const
+  {
+    ElementArray sparse = allocateElementArray(c.size()); // initializes all elements
+    auto& svec = * elementArray(sparse); 
+    for (auto i = 0; i < c.size(); ++i)
+    {
+      mRing->set_from_long(svec[i], c[i]);
     }
     return sparse;
   }
@@ -439,7 +450,7 @@ public:
     return o;
   }
 
-  long to_modp_long(ElementArray& coeffs, size_t loc) const
+  long to_modp_long(const ElementArray& coeffs, size_t loc) const
   {
     return 0; // DANGER WILL ROBINSON!
   }
@@ -505,21 +516,21 @@ public:
 };
 
 template<>
-inline long ConcreteVectorArithmetic<M2::ARingZZpFlint>::to_modp_long(ElementArray& coeffs, size_t loc) const
+inline long ConcreteVectorArithmetic<M2::ARingZZpFlint>::to_modp_long(const ElementArray& coeffs, size_t loc) const
 {
   auto& svec = * elementArray(coeffs);
   return mRing->coerceToLongInteger(svec[loc]);
 }
 
 template<>
-inline long ConcreteVectorArithmetic<M2::ARingZZp>::to_modp_long(ElementArray& coeffs, size_t loc) const
+inline long ConcreteVectorArithmetic<M2::ARingZZp>::to_modp_long(const ElementArray& coeffs, size_t loc) const
 {
   auto& svec = * elementArray(coeffs);
   return mRing->coerceToLongInteger(svec[loc]);
 }
 
 template<>
-inline long ConcreteVectorArithmetic<M2::ARingZZpFFPACK>::to_modp_long(ElementArray& coeffs, size_t loc) const
+inline long ConcreteVectorArithmetic<M2::ARingZZpFFPACK>::to_modp_long(const ElementArray& coeffs, size_t loc) const
 {
   auto& svec = * elementArray(coeffs);
   return mRing->coerceToLongInteger(svec[loc]);
@@ -745,6 +756,11 @@ public:
     return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainer<Container>(c); }, mConcreteVector);
   }
 
+  template<class Container>
+  ElementArray elementArrayFromContainerOfLongs(const Container& c) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainerOfLongs<Container>(c); }, mConcreteVector);
+  }
+  
   ring_elem ringElemFromElementArray(const ElementArray& coeffs,
                                      int index) const {
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);
@@ -778,7 +794,7 @@ public:
     return std::visit([&](auto& arg) -> long { return arg->mStats.numAdditions(); }, mConcreteVector);
   }
 
-  long to_modp_long(ElementArray& coeffs, size_t loc) const
+  long to_modp_long(const ElementArray& coeffs, size_t loc) const
   {
     return std::visit([&](auto& arg) -> long { return arg->to_modp_long(coeffs, loc); }, mConcreteVector);
   }

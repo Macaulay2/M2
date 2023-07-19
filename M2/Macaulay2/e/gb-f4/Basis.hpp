@@ -20,8 +20,9 @@ private:
   const PolynomialList& getPolynomialList() const { return mPolynomialList; }
 
  public:
-  Basis(const VectorArithmetic& VA,
-        const MonomialHashTable& monHash) : mPolynomialList(VA,monHash) {}
+  // Basis(const VectorArithmetic& VA,
+  //       const MonomialHashTable& monHash) : mPolynomialList(VA,monHash) {}
+  Basis(const VectorArithmetic& VA) : mPolynomialList(VA) {}
   ~Basis() = default;
 
   // const VectorArithmetic& vectorArithmetic() const { return mVectorArithmetic; }

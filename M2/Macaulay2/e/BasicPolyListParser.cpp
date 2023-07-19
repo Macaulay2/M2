@@ -50,7 +50,7 @@ public:
       {
         mMap[std::string_view(mAllocatedStrings[i])] = i;
       }
-    std::cout << "hash size is " << mMap.size() << std::endl;    
+    std::cout << "#variables is " << mMap.size() << std::endl;    
   }
 
   auto find(std::string_view s) const -> int
