@@ -2285,6 +2285,8 @@ multidoc ///
             Example
                 isSemistable ({0, 1}, bipartiteQuiver(2, 3))
             Example
+                isSemistable ({0, 1, 3, 4, 5}, bipartiteQuiver(2, 3))
+            Example
                 Q = bipartiteQuiver(2, 3);
                 S = first(subquivers(Q, Format => "quiver", AsSubquiver => true))
                 isSemistable (S, Q)
@@ -2596,8 +2598,11 @@ multidoc ///
                 of arrow indices corresponding to the primitive arrows in {\tt Q}
         Description
             Text
+                This method returns a list of the arrows in the provided quiver that are primitive.
                 An arrow {\tt a=(v0,v1)} in the quiver {\tt Q} is primitive if there exists an 
-                oriented path from {\tt v0} to {\tt v1} in {\tt Q}. 
+                oriented non-empty path from {\tt v0} to {\tt v1} in {\tt Q} that is distinct from {\tt a}. 
+                Thus, if the arrow {\tt a} is primitive, then removing it from the quiver results in a quiver 
+                that still contains a path between its endpoints {\tt v0} and {\tt v1}.
             Example
                 primitiveArrows toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}}
         SeeAlso
@@ -2691,6 +2696,9 @@ multidoc ///
             L: List
                 of weights
         Description
+            Text
+                This method uses the {\tt interiorVector} method for a Cone from the {\tt Polyhedra}
+                package to generate a single internal poin for each of the cones in the input list {\tt QCS}.
             Example
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
                 CS = coneSystem Q;
@@ -2752,6 +2760,7 @@ multidoc ///
             subquivers
             (subquivers, Matrix)
             (subquivers, ToricQuiver)
+            [subquivers, Format]
             [subquivers, AsSubquiver]
         Headline
             return all possible subquivers of a given quiver
