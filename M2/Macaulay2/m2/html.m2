@@ -200,7 +200,8 @@ percentEncoding =  new MutableHashTable from toList apply(
     -- unreserved characters from RFC 3986
     -- ALPHA / DIGIT / "-" / "." / "_" / "~"
     -- we also add "/" and ":" since they're standard URL characters
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-._~/:",
+    -- also "#" for named anchors
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-._~/:#",
     c -> (c, c))
     -- everything else will be percent encoded and added to the hash table
     -- as needed
