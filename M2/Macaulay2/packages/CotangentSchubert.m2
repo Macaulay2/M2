@@ -1,8 +1,8 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.64",
-    Date => "21 Jun 2023", -- "22 Mar 2021",
+    Version => "0.71",
+    Date => "25 Jul 2023", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -358,12 +358,37 @@ multidoc ///
     (A,B,FF,I)=setupCotangent(2,4,Presentation=>Borel,Ktheory=>true,Equivariant=>false)
     basis A
     basisCoeffs(x_(1,{1,2})^2)
+ Node
+  Key
+   doublePuzzle
+   DoublePuzzle
+  Headline
+   Produces a rhombus puzzle
+  Usage
+   doublePuzzle (a,b,c,d)
+  Inputs
+   a : String
+   b : String
+   c : String
+   d : String
+  Description
+   Text
+    Given 4 strings, computes the number of pairs of puzzles glued together to form a rhombus with boundaries
+    a,b,c,d in clockwise order.
+
+    In WebApp mode, the output is interactive and allows to test associativity of puzzles.
+   Example
+    doublePuzzle("0101","0101","0101","0101",Equivariant=>false)
+  Caveat
+   At the moment, the interactive part only works on nonequivariant puzzles.
 ///
 undocumented {
     Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory', Separation,
     (restrict,Matrix),(restrict,Matrix,RingElement),
-    (inversion,String)
+    (inversion,String),
+    (html,Puzzle),(net,Puzzle),(tex,Puzzle),(texMath,Puzzle),
+    (html,DoublePuzzle),(net,DoublePuzzle)
     }
 
 TEST ///
