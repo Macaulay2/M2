@@ -16,16 +16,16 @@ private:
   std::vector<GBPolyStatus> mGBStatusList;
   PolynomialList mPolynomialList;
 
- public:
-  const PolynomialList& getPolynomialList() const { return mPolynomialList; }
+public:
+  Basis(const VectorArithmetic& VA,
+        MonomialHashTable& monHashTable)
+    : mPolynomialList(VA, monHashTable)
+  {}
 
- public:
-  // Basis(const VectorArithmetic& VA,
-  //       const MonomialHashTable& monHash) : mPolynomialList(VA,monHash) {}
-  Basis(const VectorArithmetic& VA) : mPolynomialList(VA) {}
   ~Basis() = default;
 
-  // const VectorArithmetic& vectorArithmetic() const { return mVectorArithmetic; }
+  const PolynomialList& getPolynomialList() const { return mPolynomialList; }
+  const VectorArithmetic& vectorArithmetic() const { return mPolynomialList.vectorArithmetic(); }
 
   // What functionality do we need here?
   // wipe out a poly from basis

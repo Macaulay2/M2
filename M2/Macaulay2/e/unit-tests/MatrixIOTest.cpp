@@ -49,11 +49,12 @@ TEST(MatrixIO, readMsolveBig1)
 
   const Ring *K = R->getCoefficients();
   auto VA = new VectorArithmetic(K);
-  newf4::PolynomialList L(*VA);
+  newf4::MonomialHashTable monHashTable;
+  newf4::PolynomialList L(*VA, monHashTable);
   newf4::PolynomialListStreamCollector S(65537, 17, 1, L);
   toStream(B, S);
-  std::cout << "Number of monomials: " << L.monomialHashTable().size() << std::endl;
-  L.monomialHashTable().dump();
+  std::cout << "Number of monomials: " << monHashTable.size() << std::endl;
+  monHashTable.dump();
   
   // const Matrix* M = toMatrix(R->make_FreeModule(1), result);
   // EXPECT_TRUE(M->n_rows() == 1);
@@ -72,16 +73,46 @@ TEST(MatrixIO, readMsolveBig2)
 
   const Ring *K = R->getCoefficients();
   auto VA = new VectorArithmetic(K);
-  newf4::PolynomialList L(*VA);
+  newf4::MonomialHashTable monHashTable;
+  newf4::PolynomialList L(*VA, monHashTable);
   newf4::PolynomialListStreamCollector S(65537, 17, 1, L);
   toStream(B, S);
-  std::cout << "Number of monomials: " << L.monomialHashTable().size() << std::endl;
-  L.monomialHashTable().dump();
+  std::cout << "Number of monomials: " << monHashTable.size() << std::endl;
+  monHashTable.dump();
   
 
   // const Matrix* M = toMatrix(R->make_FreeModule(1), B);
   // EXPECT_TRUE(M->n_rows() == 1);
   // EXPECT_TRUE(M->n_cols() == 1391);
+}
+
+TEST(MatrixIO, readMsolveBig3)
+{
+  std::string filename { "/Users/mike/src/git-from-others/msolve/MES-examples/eg2-gb.ms" };
+  auto B = parseMsolveFile(filename);
+  EXPECT_TRUE(B.size() == 4761);
+
+  // TODO: parseMsolveFile should also return: modulus, varnames, monorder.
+  std::vector<std::string> varnames {
+    "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+    "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+    "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V"
+  };
+  const PolynomialRing* R = simplePolynomialRing(101, varnames);
+
+  const Ring *K = R->getCoefficients();
+  auto VA = new VectorArithmetic(K);
+  newf4::MonomialHashTable monHashTable;
+  newf4::PolynomialList L(*VA, monHashTable);
+  newf4::PolynomialListStreamCollector S(101, 48, 1, L);
+  toStream(B, S);
+  std::cout << "Number of monomials: " << monHashTable.size() << std::endl;
+  monHashTable.dump();
+  
+  // const Matrix* M = toMatrix(R->make_FreeModule(1), result);
+  // EXPECT_TRUE(M->n_rows() == 1);
+  // EXPECT_TRUE(M->n_cols() == 1019);
 }
 
 #endif

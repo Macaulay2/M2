@@ -55,7 +55,7 @@ namespace newf4 {
   MonomialHashTable::MonomialHashTable(int log2size)
   : mLog2Size(log2size),
     mHashMask((1<<log2size)-1),
-    mThreshold((1<<log2size)  >> 4), // ouch
+    mThreshold((1<<log2size)  >> 2), // ouch
     mBuckets(1<<log2size, 0) // set to a vector of 2^log2size 0's.
   {
     mMonomialPointers.push_back(MonomialView(nullptr));

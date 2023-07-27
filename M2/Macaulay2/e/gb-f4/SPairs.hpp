@@ -56,6 +56,7 @@ class SPair
 
 class SPairSet
 {
+ public:
   // What needs to be input here?
   SPairSet();
 

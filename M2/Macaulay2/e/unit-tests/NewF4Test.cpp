@@ -66,12 +66,14 @@ y^2+988761941*z^2+741571456*y^1+494380971*z^1
   auto VA = new VectorArithmetic(K);
 
   BasicPolyList B = parseBasicPolyListFromString(polys, {"x", "y", "z"});
-  newf4::PolynomialList L(*VA);
+  newf4::MonomialHashTable monHashTable;
+  newf4::PolynomialList L(*VA, monHashTable);
   newf4::PolynomialListStreamCollector S(1235952427, 3, 1, L);
   toStream(B, S);
-  std::cout << "Number of monomials: " << L.monomialHashTable().size() << std::endl;
-  L.monomialHashTable().dump();
-// TODO: need a function to get variable names from a PolynomialRing, Monoid (as a std::vector...)
+  std::cout << "Number of monomials: " << monHashTable.size() << std::endl;
+  monHashTable.dump();
+
+  // TODO: need a function to get variable names from a PolynomialRing, Monoid (as a std::vector...)
 // TODO: need readMatrix(PolynomialRing, PolyList) -> const Matrix*
 // TODO: need a polynomialListFromStream function.
 // TODO: maybe even a (String, MatrixStream) -> PolyList, PolynomialList.

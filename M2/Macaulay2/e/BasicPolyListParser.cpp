@@ -256,10 +256,21 @@ BasicPolyList parseMsolveFromString(std::string contents)
 
 BasicPolyList parseMsolveFile(std::string filename)
 {
-  // Read in file
-  // Read in enough of the header to get identifiers
-
   std::string fileContents { readEntireFile(filename) };
   return parseMsolveFromString(fileContents);
 }
 
+// TODO:
+//   readMSolveHeader: returns vector of strings, characteristic, and monomial order, and number of polynomials.
+//     input format: first line is list of variables
+//                   second line is characteristic
+//                   what about monomial order? (is that done in file or on command line?)
+//   parsing: should give errors, not infinite loops!
+
+// BasicPolyList: should have a memoryUsed function.
+// Monoid: should return std::vector<std::string> of variable names.
+// 
+
+// Local Variables:
+// indent-tabs-mode: nil
+// End:

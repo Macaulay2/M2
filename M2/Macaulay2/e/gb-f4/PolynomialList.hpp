@@ -27,12 +27,12 @@ class PolynomialList
 {
  private:
   const VectorArithmetic& mVectorArithmetic;
-  MonomialHashTable mHashTable;
+  MonomialHashTable& mHashTable;
   std::vector<Polynomial> mPolynomials;
 
  public:
-  PolynomialList(const VectorArithmetic& VA)
-      : mVectorArithmetic(VA), mHashTable()
+  PolynomialList(const VectorArithmetic& VA, MonomialHashTable& hashTable)
+      : mVectorArithmetic(VA), mHashTable(hashTable)
   {
   }
   
