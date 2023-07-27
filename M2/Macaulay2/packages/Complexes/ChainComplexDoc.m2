@@ -940,7 +940,6 @@ doc ///
     Key
         [freeResolution, LengthLimit]
         [freeResolution, DegreeLimit]
-        [freeResolution, FastNonminimal]
         [freeResolution, HardDegreeLimit]
         [freeResolution, PairLimit]
         [freeResolution, SortStrategy]
@@ -973,8 +972,6 @@ doc ///
         DegreeLimit => List
             or @ofClass ZZ@, an option that specifies that the computation stops at the given
             (slanted) degree 
-        FastNonminimal => Boolean
-            unused (TODO: probably used)
         HardDegreeLimit => List
             unused (TODO: used?)
         PairLimit => ZZ
@@ -1151,6 +1148,7 @@ doc ///
     Key
         "Strategy for free resolutions over a field"
         "freeResolution(..., Strategy => OverField)"
+        OverField
     Headline
         algorithm for computing free resolutions over a field
     Usage
@@ -1228,6 +1226,7 @@ doc ///
     Key
         "Strategy for free resolutions over the integers"
         "freeResolution(..., Strategy => OverZZ)"
+        OverZZ
     Headline
         algorithm for computing free resolutions of ZZ-modules
     Usage
@@ -1548,8 +1547,6 @@ doc ///
         (augmentationMap, Complex)
 ///
 
--- XXX We are not done with this one yet!
--- Also place multigraded examples somewhere!
 doc ///
     Key
         "Strategy for free resolutions of homogeneous modules aided by Hilbert functions"
@@ -1623,6 +1620,89 @@ doc ///
             I = ideal(a*b-c*d, a*b*c*d)
             M = E^1/I
             F = freeResolution(M, Strategy => 3, LengthLimit => 4)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,3))
+        Text
+            This strategy works degree by degree.  Within each degree,
+            it first computes the syzygies of the presentation matrix,
+            and then computes the second syzygies, and so on.  This
+            strategy uses Schreyer orders on the free modules in the
+            resolution which often improves efficiency.
+
+            Although similar to Strategy 2, this strategy does use
+            Hilbert functions to aid the computation.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+-- TODO: add Syzygies key here, when it is no longer in the Core.
+-- XXX: Start here 27 July 2023.
+doc ///
+    Key
+        "Strategy for free resolutions via syzygies"
+        "freeResolution(..., Strategy => Syzygies)"
+    Headline
+        algorithm for computing free resolutions step by step using syzygies
+    Usage
+        freeResolution(M, Strategy => Syzygies)
+        freeResolution(I, Strategy => Syzygies)
+    Inputs
+        M:Module
+            a module over a ring $R$
+        I:Ideal
+            an ideal in $R$
+    Outputs
+        :Complex
+            a free resolution of $M$ or $R^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms written at top level of {\it
+            Macaulay2} for computing free resolutions, although
+            it uses engine code to compute syzygies. This
+            variant works over most rings in {\it Macaulay2},
+            including Weyl algebras and exterior algebras.
+        Text
+            This first example computes part of the free
+            resolution of the ground field over a inhomogeneous $E_8$ singularity.
+        Example
+            kk = ZZ/32003;
+            R = kk[a,b,c]/(a^2+b^3+c^5);
+            I = ideal(a,b,c)
+            M = R^1/I
+            F = freeResolution(M, Strategy => Syzygies, LengthLimit => 5)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, Strategy => Syzygies, LengthLimit => 3)
+            assert(F1 == naiveTruncation(F,0,3))
+            F2 = freeResolution(module I, Strategy => Syzygies, LengthLimit => 3)
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is a Weyl algebra.
+        Example
+            S = kk[x,y,z,dx,dy,dz,WeylAlgebra => {x => dx, y => dy, z => dz}]
+            J = ideal(x*dz-y^2*dx, x+dy+dz^2)
+            C = freeResolution(J, Strategy => Syzygies)
+            minimize C -- WRONG
+            dd^C
+        Text
+            For completeness, we present an example over an
+            exterior algebra.
+        Example
+            E = kk[a..d, SkewCommutative => true]
+            I = ideal(a*b-c*d, a*b*c*d)
+            M = E^1/I
+            F = freeResolution(M, Strategy => Syzygies, LengthLimit => 4)
             dd^F
             assert isWellDefined F
             assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,3))
@@ -2869,8 +2949,6 @@ doc ///
           this is used to limit somehow the computation where resolutions might be too long or infinite
         DegreeLimit =>
           unused
-        FastNonminimal =>
-          unused
         HardDegreeLimit =>
           unused
         PairLimit =>
@@ -3040,7 +3118,7 @@ doc ///
         Example
             S = ZZ/32003[a,b];
             I = ideal(a^2-b^2, a*b)
-            C = freeResolution(I, FastNonminimal=>true)
+            C = freeResolution(I, Strategy => Nonminimal)
             betti C
             D = minimize C
             assert(isWellDefined D and isHomogeneous D)

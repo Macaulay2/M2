@@ -1641,7 +1641,6 @@ doc ///
         (resolutionMap, Complex)
         [resolutionMap, LengthLimit]
         [resolutionMap, DegreeLimit]
-        [resolutionMap, FastNonminimal]
         [resolutionMap, HardDegreeLimit]
         [resolutionMap, PairLimit]
         [resolutionMap, SortStrategy]
@@ -1657,8 +1656,6 @@ doc ///
         LengthLimit => ZZ
           this is used to limit somehow the computation where resolutions might be too long or infinite
         DegreeLimit =>
-          unused
-        FastNonminimal =>
           unused
         HardDegreeLimit =>
           unused
@@ -3363,8 +3360,6 @@ doc ///
         DegreeLimit => List
             or @ofClass ZZ@, an option that specifies that the computation stops at the given
             (slanted) degree 
-        FastNonminimal => Boolean
-            unused (TODO: probably used)
         HardDegreeLimit => List
             unused (TODO: used?)
         PairLimit => ZZ

@@ -490,8 +490,7 @@ freeResolution = method(Options => {
 	PairLimit		=> infinity,	-- number of pairs computed
 	HardDegreeLimit		=> {},		-- throw out information in degrees above this one
 	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
-	Strategy		=> null,	-- algorithm to use, usually 1, but sometimes 2
-	FastNonminimal		=> false
+	Strategy		=> null     	-- algorithm to use, usually 1, but sometimes 2
 	}
     )
 
@@ -956,7 +955,11 @@ resolutionMap Complex := ComplexMap => opts -> C -> (
     else fC
     )
 
-resolution Complex := opts -> C -> source resolutionMap(C, opts)
+resolution Complex := opts -> C -> (
+    -- TODO: remove this hack once resolution doesn't have FastNonminimal anymore and is defined in Complexes).
+    opts1 := new OptionTable from for k in keys opts list if k === FastNonminimal then continue else k => opts#k;
+    source resolutionMap(C, opts1)
+    )
 
 augmentationMap = method()
 augmentationMap Complex := ComplexMap => 

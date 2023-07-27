@@ -660,10 +660,10 @@ minimalBetti(Module, Thing) := BettiTally => opts -> (M, junk) -> (
     if not useFastNonminimal then 
         return betti resolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
     -- At this point, we think we are good to use the faster algorithm.        
-    -- First, we need to comppute the non-minimal resolution to one further step.
+    -- First, we need to compute the non-minimal resolution to one further step.
     if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
     C = resolution(M,
-	StopBeforeComputation => true, FastNonminimal => true,
+	StopBeforeComputation => true, Strategy => Nonminimal,
 	DegreeLimit => degreelimit, LengthLimit => lengthlimit);
     rC := if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation
     -- TODO: when can this error happen?
