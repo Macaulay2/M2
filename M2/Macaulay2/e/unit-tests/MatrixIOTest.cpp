@@ -10,11 +10,12 @@
 // These are more benchmark examples, and the files to be read are quite large
 // So we can't run these by default.
 
-// TODO: the first one can be added in
+// #define EXAMPLE_DIR "/Users/mike/src/git-from-others/msolve/MES-examples/"
+#define EXAMPLE_DIR "/Users/moorewf/Dropbox/NCEngine/GB examples/"
 
 TEST(MatrixIO, readMsolve)
 {
-  std::string filename { "/Users/mike/src/git-from-others/msolve/MES-examples/eg2-gb.ms" };
+  std::string filename { EXAMPLE_DIR"eg2-gb.ms" };
   std::string contents = R"(#Reduced Groebner basis for input in characteristic 1235952427
 #for variable order x, y, z
 #w.r.t. grevlex monomial ordering
@@ -38,7 +39,7 @@ TEST(MatrixIO, readMsolve)
 #if 1
 TEST(MatrixIO, readMsolveBig1)
 {
-  std::string filename { "/Users/mike/src/git-from-others/msolve/MES-examples/6pts-a-gb.ms" };
+  std::string filename { EXAMPLE_DIR"6pts-a-gb.ms" };
   auto B = parseMsolveFile(filename);
   EXPECT_TRUE(B.size() == 1019);
 
@@ -63,7 +64,7 @@ TEST(MatrixIO, readMsolveBig1)
 
 TEST(MatrixIO, readMsolveBig2)
 {
-  std::string filename { "/Users/mike/src/git-from-others/msolve/MES-examples/6pts-b-gb.ms" };
+  std::string filename { EXAMPLE_DIR"6pts-b-gb.ms" };
   auto B = parseMsolveFile(filename);
   EXPECT_TRUE(B.size() == 1391);
 
@@ -88,7 +89,7 @@ TEST(MatrixIO, readMsolveBig2)
 
 TEST(MatrixIO, readMsolveBig3)
 {
-  std::string filename { "/Users/mike/src/git-from-others/msolve/MES-examples/eg2-gb.ms" };
+  std::string filename { EXAMPLE_DIR"eg2-gb.ms" };
   auto B = parseMsolveFile(filename);
   EXPECT_TRUE(B.size() == 4761);
 

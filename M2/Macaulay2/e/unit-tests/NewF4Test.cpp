@@ -22,7 +22,8 @@ TEST(NewF4, hashstats)
 newf4::HashInt hashFunction(const newf4::MonomialView& m)
 {
   newf4::HashInt hash = 0;
-  for (auto a : m) { hash += a; }
+  //for (auto a = m.cbegin(); a != m.cend(); ++a) { hash += (a.var() + a.power()); }
+  for (auto a : m) { hash += a.first + a.second; } 
   return hash;
 }
 

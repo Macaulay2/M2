@@ -10,9 +10,9 @@
 namespace newf4 {
 
 auto createGBF4Interface(
-                    const Matrix *inputMatrix,
-                    const std::vector<int>& variableWeights, // what is this, do we need it?
-                    Strategy strategy // do we need this?
+                         const Matrix *inputMatrix,
+                         const std::vector<int>& variableWeights, // what is this, do we need it?
+                         Strategy strategy // do we need this?
                          ) -> GBComputation*
 {
   const PolynomialRing* R = inputMatrix->get_ring()->cast_to_PolynomialRing();
@@ -25,11 +25,11 @@ auto createGBF4Interface(
                              strategy);
 }
 
-  GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
-                               const Matrix* inputMatrix,
-                               const std::vector<int>& variableWeights,
-                               Strategy strategy
-                               )
+GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
+                             const Matrix* inputMatrix,
+                             const std::vector<int>& variableWeights,
+                             Strategy strategy
+                             )
     : mOriginalRing(originalRing),
       mFreeModule(inputMatrix->rows()),
       mVectorArithmetic(std::make_unique<VectorArithmetic>(mOriginalRing->getCoefficients())),
@@ -40,17 +40,16 @@ auto createGBF4Interface(
     // call the 
   }
   
-  void populateComputation(const Matrix* M, GBF4Computation& C)
-  {
-  }
+void populateComputation(const Matrix* M, GBF4Computation& C)
+{
+}
 
-  const Matrix* toMatrix(const FreeModule *target, const PolynomialList& Fs)
+const Matrix* toMatrix(const FreeModule *target, const PolynomialList& Fs)
 {
   MatrixStream S(target);
   toStream(Fs, S);
   return S.value();
 }
-
 
 }; // namespace newf4
 

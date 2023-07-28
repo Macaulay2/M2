@@ -41,10 +41,11 @@ namespace newf4 {
     auto hashValue(const MonomialView& w) -> HashInt
     {
       HashInt val = 0;
-      for (auto i = w.begin() + 1; i != w.end(); i += 2)
+      for (auto i = w.begin(); i != w.end(); ++i)
         // TODO: check that the variables are in range in mHashValues.
         //  if not, increase the size by adding in new HashInt's (uint64_t).
-        val += mHashValues[(*i)%64] * (*(i+1));
+        // val += mHashValues[(*i)%64] * (*(i+1));
+        val += mHashValues[i.var() % 64] * i.power();
       return val;
     }
   };

@@ -123,9 +123,9 @@ void toStream(const PolynomialList& Fs, Stream &S)
           else
             S.appendTermBegin(F.mComponents[i]);
           MonomialView monom = Fs.monomialHashTable().monomialAt(F.mMonomials[i]);
-          for (auto ve = monom.begin() + 1; ve != monom.end(); ve += 2)
+          for (auto ve = monom.begin(); ve != monom.end(); ++ve)
             {
-              S.appendExponent(*ve, *(ve+1));
+              S.appendExponent(ve.var(), ve.power());
             }
           long val = Fs.vectorArithmetic().to_modp_long(static_cast<ElementArray>(F.mCoefficients), i);
           S.appendTermDone(val);
