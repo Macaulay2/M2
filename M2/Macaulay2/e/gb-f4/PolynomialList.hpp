@@ -106,33 +106,33 @@ public:
   void idealDone();
 };
 
-template<typename Stream>
-void toStream(const PolynomialList& Fs, Stream &S)
+template<PolynomialStream S>
+void toStream(const PolynomialList& Fs, S &str)
 {
-  S.idealBegin(Fs.size());
+  str.idealBegin(Fs.size());
   for (auto i=0; i<Fs.size(); ++i)
     {
       auto& F = Fs[i];
-      S.appendPolynomialBegin(F.mMonomials.size());
+      str.appendPolynomialBegin(F.mMonomials.size());
       for (auto i=0; i<F.mMonomials.size(); ++i)
         {
           // get monomial
           // write it out here using appendTermBegin, appendExponent, appendTermDone.
           if (F.mComponents.empty())
-            S.appendTermBegin(0);
+            str.appendTermBegin(0);
           else
-            S.appendTermBegin(F.mComponents[i]);
+            str.appendTermBegin(F.mComponents[i]);
           MonomialView monom = Fs.monomialHashTable().monomialAt(F.mMonomials[i]);
           for (auto ve = monom.begin(); ve != monom.end(); ++ve)
             {
-              S.appendExponent(ve.var(), ve.power());
+              str.appendExponent(ve.var(), ve.power());
             }
           long val = Fs.vectorArithmetic().to_modp_long(static_cast<ElementArray>(F.mCoefficients), i);
-          S.appendTermDone(val);
+          str.appendTermDone(val);
         }
-      S.appendPolynomialDone();
+      str.appendPolynomialDone();
     }
-  S.idealDone();
+  str.idealDone();
 }
 
 } // end namespace newf4
