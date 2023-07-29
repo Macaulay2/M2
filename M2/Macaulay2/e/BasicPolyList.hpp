@@ -12,6 +12,8 @@
 #include <vector>
 #include <iostream>
 
+#include "PolynomialStream.hpp"
+
 class FreeModule;
 class Matrix;
 
@@ -79,29 +81,29 @@ public:
   void idealDone();
 };
 
-template<typename Stream>
-void toStream(const BasicPolyList& Fs, Stream &S)
+template<newf4::PolynomialStream S>
+void toStream(const BasicPolyList& Fs, S &str)
 {
-  S.idealBegin(Fs.size());
+  str.idealBegin(Fs.size());
   for (auto& F : Fs)
     {
-      S.appendPolynomialBegin(F.mCoefficients.size());
+      str.appendPolynomialBegin(F.mCoefficients.size());
       int monomStart = 0;
       for (auto i=0; i<F.mCoefficients.size(); ++i)
         {
           auto monomEnd = monomStart + F.mMonomials[monomStart];
           if (F.mComponents.empty())
-            S.appendTermBegin(0);
+            str.appendTermBegin(0);
           else
-            S.appendTermBegin(F.mComponents[i]);
+            str.appendTermBegin(F.mComponents[i]);
           for (auto j=monomStart+1; j<monomEnd; j += 2)
-            S.appendExponent(F.mMonomials[j], F.mMonomials[j+1]);
-          S.appendTermDone(F.mCoefficients[i]);
+            str.appendExponent(F.mMonomials[j], F.mMonomials[j+1]);
+          str.appendTermDone(F.mCoefficients[i]);
           monomStart = monomEnd;
         }
-      S.appendPolynomialDone();
+      str.appendPolynomialDone();
     }
-  S.idealDone();
+  str.idealDone();
 }
 
 const Matrix* toMatrix(const FreeModule *target, const BasicPolyList& Fs);

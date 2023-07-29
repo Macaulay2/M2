@@ -98,6 +98,7 @@ set(HPPONLYFILES
   f4/ntuple-monomial.hpp
   f4/varpower-monomial.hpp
   gb-f4/MonomialTypes.hpp
+  PolynomialStream.hpp
   schreyer-resolution/res-memblock.hpp
   schreyer-resolution/res-monomial-types.hpp
   schreyer-resolution/res-schreyer-order.hpp

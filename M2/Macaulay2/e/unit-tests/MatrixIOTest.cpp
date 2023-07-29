@@ -112,11 +112,11 @@ TEST(MatrixIO, readMsolveBig3)
  
   // BasicPolyList version
   newf4::GBF4Interface gbInterface(R,
-				   R->make_FreeModule(1),
-				   B,
-				   {},
-				   newf4::Strategy::Normal);
-
+  				   R->make_FreeModule(1),
+  				   B,
+  				   {},
+  				   newf4::Strategy::Normal);
+  
   gbInterface.computation().dumpBasisMonomials();
 
   //const Ring *K = R->getCoefficients();
