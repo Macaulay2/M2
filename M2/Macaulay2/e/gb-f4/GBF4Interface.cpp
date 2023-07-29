@@ -9,8 +9,7 @@
 
 namespace newf4 {
 
-auto createGBF4Interface(
-                         const Matrix *inputMatrix,
+auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?
                          Strategy strategy // do we need this?
                          ) -> GBComputation*
@@ -33,16 +32,37 @@ GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
     : mOriginalRing(originalRing),
       mFreeModule(inputMatrix->rows()),
       mVectorArithmetic(std::make_unique<VectorArithmetic>(mOriginalRing->getCoefficients())),
-      mComputation(std::make_unique<GBF4Computation>(*mVectorArithmetic, variableWeights, strategy))
-  {
-    // populate the input in mComputation
-    // make matrix stream from inputMatrix
-    // call the 
-  }
-  
-void populateComputation(const Matrix* M, GBF4Computation& C)
+      mComputation(std::make_unique<GBF4Computation>(*mVectorArithmetic,
+                                                     variableWeights,
+                                                     strategy))
 {
+    mComputation->initializeWithMatrix(inputMatrix);
 }
+
+GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
+                             const FreeModule* freeModule,
+                             const BasicPolyList& basicPolyList,
+                             const std::vector<int>& variableWeights,
+                             Strategy strategy
+                             )
+    : mOriginalRing(originalRing),
+      mFreeModule(freeModule),
+      mVectorArithmetic(std::make_unique<VectorArithmetic>(mOriginalRing->getCoefficients())),
+      mComputation(std::make_unique<GBF4Computation>(*mVectorArithmetic,
+                                                     variableWeights,
+                                                     strategy))
+{
+    mComputation->initializeWithBasicPolyList(basicPolyList);
+}
+
+
+
+GBF4Interface::~GBF4Interface()
+{
+  // TODO: Clean up properly
+}
+
+
 
 const Matrix* toMatrix(const FreeModule *target, const PolynomialList& Fs)
 {

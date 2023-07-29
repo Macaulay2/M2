@@ -26,6 +26,8 @@ class GBF4Computation
   const VectorArithmetic& mVectorArithmetic;
   MacaulayMatrix mMacaulayMatrix;
 
+  std::vector<int> mVariableWeights;
+
   // Support Data:
   // GB of base ring (for GBs over a quotient)
   // Hilbert function hint information
@@ -34,6 +36,11 @@ public:
   GBF4Computation(const VectorArithmetic& vectorArithmetic,
                   const std::vector<int>& variableWeights,
                   Strategy strategy);
+
+  void initializeWithMatrix(const Matrix* M);
+  void initializeWithBasicPolyList(const BasicPolyList& basicPolyList);
+
+  void dumpBasisMonomials() const;
 };
 
   // Steps:

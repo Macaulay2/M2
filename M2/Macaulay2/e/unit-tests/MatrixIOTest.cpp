@@ -6,6 +6,7 @@
 #include "matrix.hpp"
 #include "BasicPolyListParser.hpp"
 #include "gb-f4/PolynomialList.hpp"
+#include "gb-f4/GBF4Interface.hpp"
 #include "VectorArithmetic.hpp"
 // These are more benchmark examples, and the files to be read are quite large
 // So we can't run these by default.
@@ -102,14 +103,30 @@ TEST(MatrixIO, readMsolveBig3)
   };
   const PolynomialRing* R = simplePolynomialRing(101, varnames);
 
-  const Ring *K = R->getCoefficients();
-  auto VA = new VectorArithmetic(K);
-  newf4::MonomialHashTable monHashTable;
-  newf4::PolynomialList L(*VA, monHashTable);
-  newf4::PolynomialListStreamCollector S(101, 48, 1, L);
-  toStream(B, S);
-  std::cout << "Number of monomials: " << monHashTable.size() << std::endl;
-  monHashTable.dump();
+  // Matrix version
+  //const Matrix* M = toMatrix(R->make_FreeModule(1), B);
+  //newf4::GBF4Interface gbInterface(R,
+  //                                 M,
+  //                                 {},
+  //                                 newf4::Strategy::Normal);
+ 
+  // BasicPolyList version
+  newf4::GBF4Interface gbInterface(R,
+				   R->make_FreeModule(1),
+				   B,
+				   {},
+				   newf4::Strategy::Normal);
+
+  gbInterface.computation().dumpBasisMonomials();
+
+  //const Ring *K = R->getCoefficients();
+  //auto VA = new VectorArithmetic(K);
+  //newf4::MonomialHashTable monHashTable;
+  //newf4::PolynomialList L(*VA, monHashTable);
+  //newf4::PolynomialListStreamCollector S(101, 48, 1, L);
+  //toStream(B, S);
+  //std::cout << "Number of monomials: " << monHashTable.size() << std::endl;
+  //monHashTable.dump();
   
   // const Matrix* M = toMatrix(R->make_FreeModule(1), result);
   // EXPECT_TRUE(M->n_rows() == 1);

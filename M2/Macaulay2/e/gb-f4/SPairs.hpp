@@ -58,7 +58,7 @@ class SPairSet
 {
  public:
   // What needs to be input here?
-  SPairSet();
+  SPairSet() = default;
 
   /// updatePairs: takes an element of the GB
   /// and computes all spairs needed with previous elements
