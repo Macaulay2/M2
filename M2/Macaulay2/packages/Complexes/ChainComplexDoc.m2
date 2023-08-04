@@ -983,7 +983,8 @@ doc ///
             whether to start the computation. This can be useful when you want to obtain the 
             partially computed resolution contained in an interrupted computation.
         Strategy => ZZ
-            TODO: perhaps needs its own page
+            one of the integers 0,1,2,3, one of the symbols Engine,
+            Homogenization, Syzygies, Nonminimal, OverField, OverZZ, or null
         SyzygyLimit => ZZ
             or @TO infinity@, 
             an internal option which specifies that the computation should stop after a 
@@ -1106,7 +1107,7 @@ doc ///
         Text
             There are several distinct algorithms for computing free
             resolutions in {\it Macaulay2}.  They make different
-            assumptions about the module or unerlying ring.
+            assumptions about the module or underlying ring.
         Text
     	    @UL {
                 TO "freeResolution(..., Strategy => OverField)",
@@ -1651,7 +1652,6 @@ doc ///
 --            C0 = dehom C
 --            isWellDefined C0
 --            prune HH C0
--- XXX: Start here 27 July 2023.
 doc ///
     Key
         "Strategy for free resolutions via syzygies"
@@ -1711,9 +1711,9 @@ doc ///
             assert isWellDefined F
             assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,3))
         Text
-            This strategy works with one homological degree
+            This strategy works one homological degree
             at a time.
-            it first computes the syzygies of the presentation matrix,
+            It first computes the syzygies of the presentation matrix,
             and then computes the second syzygies, and so on.  This
             strategy uses Schreyer orders on the free modules in the
             resolution which often improves efficiency.
@@ -1785,7 +1785,7 @@ doc ///
             dd^F1
             dd^F2
         Text
-            This strategy also works over 
+            This strategy also works over quotient rings.
         Example
             R = S/(a^4-a*d, b^3-a*d)
             I = ideal(a^3-b^2-a*c, a*b*c-d*a, a^3+d^2)
@@ -1794,17 +1794,154 @@ doc ///
             assert isWellDefined F
             dd^F_2
         Text
-            This strategy works with one homological degree
-            at a time.
-            it first computes the syzygies of the presentation matrix,
-            and then computes the second syzygies, and so on.  This
-            strategy uses Schreyer orders on the free modules in the
-            resolution which often improves efficiency.
+            This strategy homogenizes the ideal or module as well
+            as the underlying ring, calls an engine routine
+            to compute the resolution, and finally dehomogenizes the
+            result.
     SeeAlso
         "Strategies for free resolutions"
         (freeResolution, Module)
         (augmentationMap, Complex)
         (minimize, Complex)
+///
+
+doc ///
+    Key
+        "freeResolution(..., Strategy => Engine)"
+    Headline
+        algorithm for computing a free resolution
+    Usage
+        freeResolution(M, Strategy => Engine)
+        freeResolution(I, Strategy => Engine)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This strategy chooses, depending on the ring type, an appropriate
+            algorithm in the engine for computing free resolutions of homogeneous
+            modules and ideals.
+            This particular strategy is not intended for users, rather it is
+            used internally to select an appropriate algorithm when no strategy
+            is specified by the user.
+        Text
+            This first example computes part of the minimal free
+            resolution of the ground field over a hypersurface ring.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..f];
+            I = ideal(a^3-b^2*c, a^3*d - c*b^3, a*e^2-c*f^2)
+            M = R^1/I
+            F = freeResolution(M, Strategy => Engine)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, Strategy => Engine)
+            assert(F1 == naiveTruncation(F,0,3))
+            F2 = freeResolution(module I, Strategy => Engine)
+            dd^F1
+            dd^F2
+        Text
+            The following code shows how this method chooses
+            between strategies 1 and 2.
+        Example
+            code (freeResolution, Module, Strategy => Engine)
+    SeeAlso
+        "Strategies for free resolutions"
+        "freeResolution(..., Strategy => 1)"
+        "freeResolution(..., Strategy => 2)"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Strategy for nonminimal free resolutions"
+        "freeResolution(..., Strategy => Nonminimal)"
+        Nonminimal
+    Headline
+        algorithm for computing nonminimal free resolutions
+    Usage
+        freeResolution(M, Strategy => Nonminimal)
+        freeResolution(I, Strategy => Nonminimal)
+    Inputs
+        M:Module
+            a module over a ring $R$
+        I:Ideal
+            an ideal in $R$
+    Outputs
+        :Complex
+            a free resolution of $M$ or $R^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is the main the algorithm in the engine of {\it
+            Macaulay2} for computing {\it nonminimal} free resolutions
+            of possibly inhomogeneous modules and ideals over a
+            polynomial ring or exterior algebra defined over a finite
+            field.  For homogeneous ideals and modules over such
+            rings, this variant generally computes a non-minimal
+            resolution much faster than engine routines that return a
+            minimal free resolution. In particular, this algorithm is
+            used by @TO "minimalBetti"@ for faster computation of
+            Betti tables.
+        Text
+            This first example computes part of the free
+            resolution of the ground field over a inhomogeneous $E_8$ singularity.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..f];
+            I = ideal(a*b*c-d*e*f, a*b*f-c*d*e, a*b*d-c^3)
+            F = freeResolution(I, Strategy => Nonminimal)
+            dd^F
+            betti F
+            minimalBetti I
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F)
+        Text
+            We also present an inhomogeneous example over a polynomial ring.
+        Example
+            I = ideal(a*b*c-d*e*f, a^2*b*f-c*d*e, a*b*d-c^2)
+            F = freeResolution(I, Strategy => Nonminimal)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism augmentationMap F
+            minimize F
+            freeResolution I
+        Text
+            We also present an example over an
+            exterior algebra.
+        Example
+            E = kk[a..d, SkewCommutative => true]
+            I = ideal(a*b-c*d, a*b*c*d)
+            F = freeResolution(I, Strategy => Nonminimal, LengthLimit => 4)
+            dd^F
+            betti F
+            minimalBetti I
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,3))
+        Text
+            This strategy implements an algorithm of Frank Schreyer.
+            It first computes lead terms of all of the syzygy modules
+            of the ideal or module, and then determines each syzygy
+            using a linear algebra approach together with a
+            number of optimizations.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
 ///
 
 doc ///
