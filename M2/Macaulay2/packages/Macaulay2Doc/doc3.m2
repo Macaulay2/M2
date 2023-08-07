@@ -139,8 +139,8 @@ document {
      }
 
 document {
-     Key => { (symbol /,Ideal,Function),
-	  (symbol \,Function,Ideal)},
+     Key => { (symbol /,LeftIdeal,Function),
+	  (symbol \,Function,LeftIdeal)},
      Headline => "apply a function to generators of an ideal",
      Usage => "I/f\nf\\I",
      Inputs => { "I","f"},

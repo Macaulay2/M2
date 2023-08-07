@@ -8,9 +8,9 @@ document {
      SeeAlso => {genera, euler}
      }
 document { 
-     Key => {(genus,CoherentSheaf),(genus,Module),(genus, Ideal)},
+     Key => {(genus,CoherentSheaf),(genus,Module),(genus, LeftIdeal)},
      Usage => "genus F",
-     Inputs => {"F" => {ofClass{CoherentSheaf,Module,Ideal} }},
+     Inputs => {"F" => {ofClass{CoherentSheaf,Module,LeftIdeal} }},
      Outputs => {ZZ },
      "Computes the arithmetic genus of the coherent sheaf ", TT "F", " that is (-1)^dim-support * (chi(F) - 1)).  If ", TT "F", " is a module
      over a ring, then the genus of ", TT "F~", " is computed.  If ", TT "I", " is an ideal in a ring ", TT "R", " then the genus of ", TT "(R/I)~", " is

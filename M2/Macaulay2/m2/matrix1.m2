@@ -418,52 +418,54 @@ cokernel Matrix := Module => m -> (
 cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}
 
-Ideal = new Type of HashTable
+LeftIdeal = new Type of HashTable
+Ideal = new Type of LeftIdeal 
 Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
-expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
-net Ideal := (I) -> net expression I
-toString Ideal := (I) -> toString expression I
-toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
-texMath Ideal := (I) -> texMath expression I
+expression LeftIdeal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
+net LeftIdeal := (I) -> net expression I
+toString LeftIdeal := (I) -> toString expression I
+toExternalString LeftIdeal := (I) -> "ideal " | toExternalString generators I
+texMath LeftIdeal := (I) -> texMath expression I
 
-isIdeal Ideal := I -> true
-isHomogeneous Ideal := (I) -> isHomogeneous generators I
+isIdeal LeftIdeal := I -> true
+isHomogeneous LeftIdeal := (I) -> isHomogeneous generators I
 
-degrees Ideal := I -> degrees source generators I
+degrees LeftIdeal := I -> degrees source generators I
 -- TODO: deprecate these
-degreeLength Ideal := I -> degreeLength ring I
-degreesRing Ideal := I -> degreesRing ring I
+degreeLength LeftIdeal := I -> degreeLength ring I
+degreesRing LeftIdeal := I -> degreesRing ring I
 
-promote(Ideal,Number) := 
-promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
+promote(LeftIdeal,Number) :=  
+promote(LeftIdeal,RingElement) := (I,R) -> ideal promote(generators I, R)
 
 comodule Module := Module => M -> cokernel super map(M,M,1)
 quotient Module := Module => opts -> M -> comodule M
-comodule Ideal := Module => I -> cokernel generators I
-quotient Ideal := Module => opts -> I -> (ring I) / I
-module   Ideal := Module => (cacheValue symbol module) (I -> image generators I)
+comodule LeftIdeal := Module => I -> cokernel generators I
+quotient LeftIdeal := Module => opts -> I -> (ring I) / I
+module   LeftIdeal := Module => (cacheValue symbol module) (I -> image generators I)
 
-genera Ideal := (I) -> genera ((ring I)^1/I)
-genus Ideal := (I) -> genus ((ring I)^1/I)
+genera LeftIdeal := I -> genera ((ring I)^1/I)
+genus LeftIdeal := I -> genus ((ring I)^1/I)
 
-eulers(Ideal) := (I) -> eulers((ring I)^1/I)
-euler(Ideal) := (I) -> euler((ring I)^1/I)
+eulers LeftIdeal := I -> eulers((ring I)^1/I)
+euler LeftIdeal := I -> euler((ring I)^1/I)
 
+-- two-sided ideal expected
 RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 Ideal * RingElement := Ideal => (I,r) -> ideal ((generators I)**r)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
 Ideal * ZZ := (I,r) -> ideal (r * generators I)
 
-generators Ideal := Matrix => opts -> (I) -> I.generators
-Ideal_* := I -> first entries generators I
-Ideal / Function := List => (I,f) -> apply(flatten entries generators I, f)
-Function \ Ideal := List => (f,I) -> apply(flatten entries generators I, f)
+generators LeftIdeal := Matrix => opts -> (I) -> I.generators
+LeftIdeal_* := I -> first entries generators I
+LeftIdeal / Function := List => (I,f) -> apply(flatten entries generators I, f)
+Function \ LeftIdeal := List => (f,I) -> apply(flatten entries generators I, f)
 
 generator = method()
-generator Ideal := RingElement => (I) -> (
+generator LeftIdeal := RingElement => I -> (
      if I.cache.?trim then I = I.cache.trim;
      R := ring I;
      n := numgens I;
@@ -485,18 +487,34 @@ generator Module := RingElement => (M) -> (
      if n == 1 then return M_0;
      error "expected ideal to have a single generator")
 
-Ideal / Ideal := Module => (I,J) -> module I / module J
+LeftIdeal / LeftIdeal := Module => (I,J) -> module I / module J
+
+-- two-sided ideal expected
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
-Ideal#AfterPrint = Ideal#AfterNoPrint = (I) ->  (Ideal," of ",ring I)
+LeftIdeal#AfterPrint = LeftIdeal#AfterNoPrint = I ->  (LeftIdeal," of ",ring I)
+Ideal#AfterPrint = Ideal#AfterNoPrint = I ->  (Ideal," of ",ring I)
 
+-- two-sided ideal expected
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
 Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ samering
-Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
-Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
-RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
-Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
+
+LeftIdeal + LeftIdeal := LeftIdeal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
+-- Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
+LeftIdeal + RingElement := LeftIdeal + Number := ((I,r) -> I + ideal r) @@ tosamering
+RingElement + LeftIdeal := Number + LeftIdeal := ((r,I) -> ideal r + I) @@ tosamering
+LeftIdeal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
+
+
+Matrix % LeftIdeal := Matrix => ((f,I) -> 
+     if numRows f === 1
+     then f % gb I
+     else 
+     error "not implemented (defined for two-sided ideals; see `code (symbol %, Matrix, Ideal)`)"
+     ) @@ samering
+
+-- two-sided ideal expected (note: R/I is a problem !!!)
 Matrix % Ideal := Matrix => ((f,I) -> 
      if numRows f === 1
      then f % gb I
@@ -506,23 +524,28 @@ Matrix % Ideal := Matrix => ((f,I) ->
 	  S := R/I;
 	  lift(promote(f,S),R))
      ) @@ samering
-Vector % Ideal := (v,I) -> new class v from {v#0%I}
-numgens Ideal := (I) -> numgens source generators I
-leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
-leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
-jacobian Ideal := Matrix => (I) -> jacobian generators I
-Ideal _ List := (I,w) -> (module I)_w
 
-ring Ideal := (I) -> I.ring
+Vector % LeftIdeal := (v,I) -> new class v from {v#0%I}
 
-Ideal == Ring := (I,R) -> (
+numgens LeftIdeal := I -> numgens source generators I
+leadTerm LeftIdeal := Matrix => I -> leadTerm generators gb I
+leadTerm(ZZ,LeftIdeal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
+
+-- two-sided ideal expected (unless defined for non-polynomial rings!!!)
+jacobian Ideal := Matrix => I -> jacobian generators I
+
+LeftIdeal _ List := (I,w) -> (module I)_w
+
+ring LeftIdeal := I -> I.ring
+
+LeftIdeal == Ring := (I,R) -> (
      if ring I =!= R
      then error "expected ideal in the given ring";
      1_R % I == 0)
 
-Ring == Ideal := (R,I) -> I == R
+Ring == LeftIdeal := (R,I) -> I == R
 
-Ideal == Ideal := (I,J) -> (
+LeftIdeal == LeftIdeal := (I,J) -> (
      samering(I,J);
      ( generators I == generators J or 
 	  -- if isHomogeneous I and isHomogeneous J  -- can be removed later
@@ -531,10 +554,10 @@ Ideal == Ideal := (I,J) -> (
 	  isSubset(I,J) and isSubset(J,I)	  -- can be removed later
 	  ))
 
-Ideal == Module := (I,M) -> module I == M
-Module == Ideal := (M,I) -> M == module I
+LeftIdeal == Module := (I,M) -> module I == M
+Module == LeftIdeal := (M,I) -> M == module I
 
-ideal Matrix := Ideal => (f) -> (
+ideal Matrix := LeftIdeal => f -> (
      R := ring f;
      if not isFreeModule target f or not isFreeModule source f 
      then error "expected map between free modules";
@@ -547,9 +570,13 @@ ideal Matrix := Ideal => (f) -> (
      	  g := map(R^1,,f);			  -- in case the degrees are wrong
      	  if isHomogeneous g then f = g;
 	  );
-     new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
+     new (
+	 -- Ideal == two-sided ideal
+	 if isCommutative R or isSkewCommutative R then Ideal 
+	 else LeftIdeal
+	 ) from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
-ideal Module := Ideal => (M) -> (
+ideal Module := LeftIdeal => M -> (
      F := ambient M;
      if isSubmodule M and rank F === 1 then ideal generators M
      else error "expected a submodule of a free module of rank 1"
@@ -558,13 +585,14 @@ idealPrepare = method()
 idealPrepare RingElement := 
 idealPrepare Number := identity
 idealPrepare Matrix := m -> flatten entries m
-idealPrepare Ideal := I -> I_*
+idealPrepare LeftIdeal := I -> I_*
 idealPrepare Thing := x -> error "expected a list of numbers, matrices, ring elements or ideals"
-ideal List := ideal Sequence := Ideal => v -> ideal matrix {flatten apply(toList splice v,idealPrepare)}
-ideal RingElement := ideal Number := Ideal => v -> ideal {v}
+ideal List := ideal Sequence := LeftIdeal => v -> ideal matrix {flatten apply(toList splice v,idealPrepare)}
+ideal RingElement := ideal Number := LeftIdeal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
-Ideal ^ Array := (I, e) -> (
+-- not well-defined (mathwise!!!)
+Ideal ^ Array := (I, e) -> ( 
    R := ring I;
    n := numgens R;
    -- Error if input is not correct.
@@ -640,7 +668,7 @@ degree Matrix := List => (f) -> (
      if N.?generators then d = d + getshift N.generators;
      d)
 
-super(Matrix) := Matrix => (f) -> (
+super Matrix := Matrix => (f) -> (
      M := target f;
      if M.?generators then map(super M, M, M.generators) * f
      else f
@@ -649,18 +677,19 @@ super(Matrix) := Matrix => (f) -> (
 isInjective Matrix := (f) -> kernel f == 0
 isSurjective Matrix := (f) -> cokernel f == 0
 
+-- two-sided ideal expected
 scan({ZZ,QQ}, S -> (
 	  lift(Ideal,S) := opts -> (I,S) -> (
 	       -- this will be pretty slow
 	       if ring I === S then I
 	       else (ideal lift(generators I,S,opts)) + ideal (presentation ring I ** S))));
 
-content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
-content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
+content RingElement := LeftIdeal => f -> ideal \\ last \ listForm f
+content(RingElement, RingElement) := LeftIdeal => (f,x) -> ideal last coefficients(f, Variables => {x})
 
-cover(Matrix) := Matrix => (f) -> matrix f
+cover Matrix := Matrix => f -> matrix f
 
-rank Matrix := (f) -> (
+rank Matrix := f -> (
     if hasEngineLinearAlgebra ring f and isBasicMatrix f 
     then basicRank f 
     else rank image f

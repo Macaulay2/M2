@@ -124,7 +124,7 @@ document {
      SeeAlso => {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 document {
-     Key => (leadTerm, Ideal),
+     Key => (leadTerm, LeftIdeal),
      Headline => "get the ideal of greatest terms",
      Usage => "leadTerm I",
      Inputs => {"I"},
@@ -183,7 +183,7 @@ document {
      SeeAlso => { "selectInSubring" }
      }
 document {
-     Key => (leadTerm, ZZ, Ideal),
+     Key => (leadTerm, ZZ, LeftIdeal),
      Headline => "get the ideal of lead polynomials",
      Usage => "leadTerm(n,I)",
      Inputs => {"n", "I"},

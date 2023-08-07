@@ -43,7 +43,7 @@ document {
      }
 
 document {
-     Key => (symbol /, Ideal, Ideal),
+     Key => (symbol /, LeftIdeal, LeftIdeal),
      Headline => "quotient module",
      Usage => "I/J",
      Inputs => { "I", "J" => {"in the same ring as ", TT "I"}},

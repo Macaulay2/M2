@@ -35,10 +35,10 @@ document {
      }
 
 document {
-     Key => {generator,(generator,Ideal),(generator,Module)},
+     Key => {generator,(generator,LeftIdeal),(generator,Module)},
      Headline => "provide a single generator",
      Usage => "generator I",
-     Inputs => { "I" => {ofClass{Ideal,Module}}},
+     Inputs => { "I" => {ofClass{LeftIdeal,Module}}},
      Outputs => {{"the single generator of ", TT "I", ", if it has just one"}},
      PARA {"If the number of apparent generators is greater than 1, then ", TO "trim", " will be called."},
      EXAMPLE lines ///
@@ -112,7 +112,7 @@ document {
      SeeAlso => {monoid}
      }
 document {
-     Key => {(generators, Ideal),
+     Key => {(generators, LeftIdeal),
 	  (generators, MonomialIdeal)},
      Headline => "the generator matrix of an ideal",
      Usage => "generators I\ngens I",

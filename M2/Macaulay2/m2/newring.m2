@@ -75,7 +75,8 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
                      -- is an error!! MES
-     AB/image fg)
+     if isPolynomialRing A and isPolynomialRing B then AB else AB/image fg
+     )
 
 -------------------------
 -- Graph of a ring map --

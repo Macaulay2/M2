@@ -11,7 +11,7 @@ document {
     	 (degrees, FractionField),
 	 (degrees, Module),
 	 (degrees, Monoid),
-	 (degrees, Ideal),
+	 (degrees, LeftIdeal),
 	 (degrees, CoherentSheaf)},
      Headline => "degrees of generators",
      Usage => "degrees A",

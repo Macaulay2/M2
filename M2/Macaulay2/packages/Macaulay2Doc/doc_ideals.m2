@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 document {
-     Key => (symbol _*,Ideal),
+     Key => (symbol _*,LeftIdeal),
      Headline => "get the list of generators of an ideal",
      Usage => "I_*",
      Inputs => {"I"},
@@ -15,7 +15,13 @@ document {
 
 document {
      Key => Ideal,
-     Headline => "the class of all ideals",
+     Headline => "the class of two-sided ideals",
+     SeeAlso => {"LeftIdeal", "ideals"}
+     }
+ 
+document {
+     Key => LeftIdeal,
+     Headline => "the class of left ideals",
      SeeAlso => "ideals",
      "For basic information about ideals in ", EM "Macaulay2", ", see ",
      TO "ideals", ".",
@@ -32,16 +38,16 @@ document {
   	  },
      "Common ways to get information about an ideal:",
      UL {
-	  TO (generators, Ideal),
-	  TO (symbol _*,Ideal),
+	  TO (generators, LeftIdeal),
+	  TO (symbol _*,LeftIdeal),
 	  TO (isSubset, Ideal, Ideal),
 	  TO "MinimalPrimes :: isPrime(Ideal)"
 	  },
      "Common operations on ideals:",
      UL {
-	  TO (symbol +,Ideal,Ideal),
+	  TO (symbol +,LeftIdeal,LeftIdeal),
 	  TO (symbol *,Ideal,Ideal),
-	  TO (symbol ==,Ideal,Ideal),
+	  TO (symbol ==,LeftIdeal,LeftIdeal),
 	  TO (symbol ==,Ideal,ZZ),
 	  TO (symbol ^,Ideal,ZZ),
 	  TO (trim, Ideal)
@@ -114,7 +120,7 @@ document {
      SeeAlso => {"ideals"}
      }
 document {
-     Key => {(symbol +,Ideal,Ideal),
+     Key => {(symbol +,LeftIdeal,LeftIdeal),
 	  (symbol +,Ideal,MonomialIdeal),
 	  (symbol +,MonomialIdeal,Ideal)
 	  },
