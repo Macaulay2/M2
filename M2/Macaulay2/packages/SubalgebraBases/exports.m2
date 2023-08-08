@@ -35,7 +35,10 @@ export {
     "groebnerMembershipTest",
     "groebnerSubductionQuotient",
     "subringIntersection",
-    "UseSubringGens"
+    "UseSubringGens",
+    "IntersectedSubring",
+    "isFullIntersection",
+    "originalSubringGens"
     }
 
 protect symbol quotientRing
@@ -46,7 +49,6 @@ protect symbol SAGBIideals
 protect symbol SAGBIdata
 protect symbol SAGBIpending
 protect symbol SAGBIoptions
-
 
 -- From Core:
 importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});

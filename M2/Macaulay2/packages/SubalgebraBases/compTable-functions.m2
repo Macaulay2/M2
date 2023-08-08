@@ -113,13 +113,13 @@ compSubduction = method(
 	StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- Top or Engine
-    	Limit => 100,
+    	Limit => 20,
 	AutoSubduceOnPartialCompletion => false,
     	PrintLevel => 0,
 	Recompute => false,
 	RenewOptions => false
     	}
-);
+    );
 
 compSubduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
     new MutableMatrix from compSubduction(compTable, matrix M)
@@ -151,7 +151,7 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 	    ) else if compTable#SAGBIoptions#SubductionMethod == "Engine" then (
     	    subductedPart = subductionEngineLevelLeadTerm(compTable, liftedM);
 	    ) else (
-	    error ("Unknown subduction type " | toString compTable#SAGBIoptions#SubductionMethod); 
+	    error ("unknown SubductionMethod " | toString compTable#SAGBIoptions#SubductionMethod | ", expected \"Top\" or \"Engine\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'"); 
 	    );
 	leadTermSubductedPart = leadTerm subductedPart;
 	result = result + leadTermSubductedPart;
@@ -160,7 +160,7 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 	if compTable#SAGBIoptions#PrintLevel > 5 then(
 	    print("-- [compSubduction] result so far:");
 	    print(transpose result);
-	    print("--[compSubduction] remaining to subduct:");
+	    print("-- [compSubduction] remaining to subduct:");
 	    print(transpose liftedM);
 	    );
 	);
@@ -222,8 +222,7 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
 		i
 		)
 	    )}
-);
-
+    );
 
 -- Engine Subduction of the lead term
 -- perform the same function as subductionTopLevelLeadTerm except
@@ -251,13 +250,12 @@ subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
     -- Use the same pres ring as much as possible.
     -- M2 will automatically cache the gb calculation
     -- as long as the pres ring is not reconstructed.
-    elapsedTime gbI := gb compTable#SAGBIideals#"I";
-    elapsedTime gbReductionIdeal := gb compTable#SAGBIideals#"reductionIdeal";
+    gbI := gb compTable#SAGBIideals#"I";
+    gbReductionIdeal := gb compTable#SAGBIideals#"reductionIdeal";
     F := compTable#SAGBImaps#"substitution";
     N := monoid ambR;
     numblocks := rawMonoidNumberOfBlocks raw N;
-    print "timing raw subduction";
-    elapsedTime result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#SAGBImaps#"inclusionLifted", raw compTable#SAGBImaps#"fullSubstitution", raw (compTable#SAGBImaps#"substitution" * compTable#SAGBImaps#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
+    result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#SAGBImaps#"inclusionLifted", raw compTable#SAGBImaps#"fullSubstitution", raw (compTable#SAGBImaps#"substitution" * compTable#SAGBImaps#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
     result = matrix{apply(first entries result,i->promote(i,ambR))}
     );
 
@@ -319,17 +317,14 @@ autosubduceSagbi (HashTable) := (compTable) -> (
 
 updateComputation = method();
 updateComputation(HashTable) := (compTable) -> (
-    
     if compTable#SAGBIoptions#Strategy == "Master" then (
 	updateComputationMaster(compTable);
-	);
-    
-    if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
+	) else if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
 	updateComputationDegreeByDegree(compTable);
-	);
-    
-    if compTable#SAGBIoptions#Strategy == "Incremental" then (
+	) else if compTable#SAGBIoptions#Strategy == "Incremental" then (
 	updateComputationIncremental(compTable);
+	) else (
+	error("unknown Strategy, expected \"Master\", \"DegreeByDegree\", or \"Incremental\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'");
 	);
     )
 

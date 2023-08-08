@@ -11,7 +11,7 @@ subalgebraBasis = method(
 	StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
-    	Limit => 100,
+    	Limit => 20,
 	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
     	PrintLevel => 0,
 	Recompute => false,
@@ -57,8 +57,7 @@ subalgebraBasis(Subring) := opts -> S -> (
 --        then the computation will be started from new **
 --   if both are true or both are false then it does what is expected
 --
--- ** the only way this happens is if the SAGBIBasis object was
---    created from a isSAGBI call. In this case we MUST recompute
+-- ** this should never happen
 --
 
 sagbi = method(
@@ -69,7 +68,7 @@ sagbi = method(
 	StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
-    	Limit => 100,
+    	Limit => 20,
 	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
     	PrintLevel => 0,
 	Recompute => false, -- restart the computation (ignored by RenewOptions)
@@ -150,7 +149,7 @@ subduction = method(
 	StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- Top or Engine
-    	Limit => 100,
+    	Limit => 20,
 	AutoSubduceOnPartialCompletion => false,
     	PrintLevel => 0,
 	Recompute => false,
