@@ -2,7 +2,7 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.8",
+    Version => "0.81",
     Date => "Jan 22, 2023",
     Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
@@ -51,7 +51,7 @@ export {
     "subLieAlgebra",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
-    "irreducibleLieAlgebraModule", "LL",
+    "irreducibleLieAlgebraModule", "LL", "ω",
 --    "isIsomorphic",
     "casimirScalar",
     "weightDiagram",
@@ -402,7 +402,7 @@ LieAlgebra#AfterPrint = g -> (
 LieAlgebraModule = new Type of HashTable 
 LieAlgebraModule.GlobalAssignHook = globalAssignFunction
 LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
-LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(try toList w else {w},g) }
+LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(g,w) }
 LL.texMath = ///{\mathcal L}///
 
 describe LieAlgebraModule := M -> Describe (
@@ -512,16 +512,24 @@ LieAlgebraModule.directSum = args -> (
 )
 LieAlgebraModule ++ LieAlgebraModule := directSum
 
+ωsub := i -> Subscript{symbol ω,i};
+ω=new ScriptedFunctor from { subscript => ωsub }
 irreducibleLieAlgebraModule = method(
     TypicalValue => LieAlgebraModule
     )
-irreducibleLieAlgebraModule(List,LieAlgebra) := (v,g) -> (
+irreducibleLieAlgebraModule(LieAlgebra,List) := (g,v) -> (
     v = deepSplice v;
-    if #v != rank g or not all(v, a -> class a === ZZ) then error "wrong highest weight";
+    if #v != rank g or not all(v, a -> class a === ZZ) then error "invalid highest weight";
     new LieAlgebraModule from (g,{v => 1})
     )
-irreducibleLieAlgebraModule(Vector,LieAlgebra) := (v,g) -> irreducibleLieAlgebraModule(entries v,g)
-irreducibleLieAlgebraModule(LieAlgebra,List) := irreducibleLieAlgebraModule(LieAlgebra,Vector) := (g,v) -> irreducibleLieAlgebraModule(v,g)
+irreducibleLieAlgebraModule(LieAlgebra,VisibleList) := (g,v) -> irreducibleLieAlgebraModule(g,toList v)
+irreducibleLieAlgebraModule(LieAlgebra,Vector) := (g,v) -> irreducibleLieAlgebraModule(g,entries v)
+irreducibleLieAlgebraModule(LieAlgebra,ZZ) := (g,v) -> irreducibleLieAlgebraModule(g,{v})
+irreducibleLieAlgebraModule(LieAlgebra,Expression) := (g,v) -> (
+        ω.subscript = i -> apply(rank g,j->if j+1==i then 1 else 0 );
+        irreducibleLieAlgebraModule(g,first(value v,ω.subscript=ωsub))
+    )
+irreducibleLieAlgebraModule(Thing,LieAlgebra) := (v,g) -> irreducibleLieAlgebraModule(g,v)
 
 -*-----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
@@ -1437,8 +1445,11 @@ doc ///
             the simple Lie algebra with the given rank and type	        
     Description
         Text
-            The classification of simple Lie algebras over the complex numbers is well known.  There are four infinite families (types A, B, C, D) corresponding to the Lie algebras $sl(n+1,\mathbb{C})$, $so(2n+1,\mathbb{C})$, $sp(2n,\mathbb{C})$, $so(2n,\mathbb{C})$ respectively, and five exceptional simple Lie algebras, E6, E7, E8, F4, G2.  
-	    	   
+            The classification of simple Lie algebras over the complex numbers is well known.
+	    There are four infinite families (types $\mathfrak{a}_n$, $\mathfrak{b}_n$, $\mathfrak{c}_n$, $\mathfrak{d}_n$) corresponding to the Lie algebras
+	    $\mathfrak{sl}(n+1,\mathbb{C})$, $\mathfrak{so}(2n+1,\mathbb{C})$, $\mathfrak{sp}(2n,\mathbb{C})$, $\mathfrak{so}(2n,\mathbb{C})$ respectively,
+	    and five exceptional simple Lie algebras, $\mathfrak{e}_6$, $\mathfrak{e}_7$, $\mathfrak{e}_8$, $\mathfrak{f}_4$, $\mathfrak{g}_2$.
+
         Example
             --simpleLieAlgebra(sl_2)
 	    simpleLieAlgebra("A",1)
@@ -1695,23 +1706,26 @@ doc ///
         class for Lie algebra modules
     Description
         Text 
-    	    This class represents Lie algebra modules.  Currently only modules over simple Lie algebras over the complex numbers are supported.  An object of type LieAlgebraModule is a hash table recording the Lie algebra and the decomposition of the module into irreducible Lie algebra modules, which are indexed by their highest weights. 
+    	    This class represents Lie algebra modules.  Currently only modules over semi-simple Lie algebras over the complex numbers are supported.
+	    An object of type LieAlgebraModule is a hash table recording the Lie algebra and the decomposition of the module into irreducible Lie algebra modules, which are indexed by their highest weights.
 	    
 	Example
 	    g=simpleLieAlgebra("A",2)
-	    M=irreducibleLieAlgebraModule({1,1},g)                   
+	    M=irreducibleLieAlgebraModule(g,{1,1})
 ///
 
 doc ///
     Key
         irreducibleLieAlgebraModule
-	(irreducibleLieAlgebraModule,List,LieAlgebra)
-	(irreducibleLieAlgebraModule,Vector,LieAlgebra)
+	(irreducibleLieAlgebraModule,LieAlgebra,List)
+	(irreducibleLieAlgebraModule,LieAlgebra,Vector)
 	LL
+	ω
     Headline
         construct the irreducible Lie algebra module with given highest weight
     Usage
         irreducibleLieAlgebraModule(w,g)
+        irreducibleLieAlgebraModule(g,w)
     Inputs
         w:List
 	    the highest weight of the desired module
@@ -1723,11 +1737,14 @@ doc ///
             This function creates the irreducible Lie algebra module with a given highest weight.
 	Example
 	    g=simpleLieAlgebra("A",2)
-            irreducibleLieAlgebraModule({1,1},g)
+            irreducibleLieAlgebraModule(g,{1,1})
         Text
 	    One can also use the shorthand LL:
 	Example
             LL_(1,1) (g)
+	Text
+	    as well as the shorthand ω:
+	    LL_(ω_2) (g)
 ///
 
 TEST ///
@@ -2459,7 +2476,7 @@ undocumented ( {
     (symbol ==,LieAlgebraModule,LieAlgebraModule), (symbol ==,LieAlgebraModule,ZZ),
     (NewFromMethod,LieAlgebraModule,Sequence),
     (symbol ^,LieAlgebraModule,QQ),
-    (irreducibleLieAlgebraModule,LieAlgebra,Vector), (irreducibleLieAlgebraModule,LieAlgebra,List),
+    (irreducibleLieAlgebraModule,LieAlgebra,ZZ), (irreducibleLieAlgebraModule,LieAlgebra,VisibleList), (irreducibleLieAlgebraModule,LieAlgebra,Expression), (irreducibleLieAlgebraModule,Thing,LieAlgebra),
     (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(cartanMatrix,Sequence,Sequence),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
     (dim,LieAlgebra),(rank,LieAlgebra),
     (character,String,ZZ,List),(character,Sequence,Sequence,List),
