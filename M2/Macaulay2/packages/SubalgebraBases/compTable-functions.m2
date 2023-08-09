@@ -13,7 +13,8 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
     pending := new MutableHashTable from S#SAGBIpending;
     if opts.RenewOptions then (
 	optionTable = new MutableHashTable from opts;
-	) else (
+	) 
+    else (
 	optionTable = new MutableHashTable from S#SAGBIoptions;
 	);
     
@@ -148,16 +149,18 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
     while not (zero(liftedM)) do (
 	if compTable#SAGBIoptions#SubductionMethod == "Top" then (
             subductedPart = subductionTopLevelLeadTerm(compTable, liftedM);
-	    ) else if compTable#SAGBIoptions#SubductionMethod == "Engine" then (
+	    ) 
+	else if compTable#SAGBIoptions#SubductionMethod == "Engine" then (
     	    subductedPart = subductionEngineLevelLeadTerm(compTable, liftedM);
-	    ) else (
+	    ) 
+	else (
 	    error ("unknown SubductionMethod " | toString compTable#SAGBIoptions#SubductionMethod | ", expected \"Top\" or \"Engine\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'"); 
 	    );
 	leadTermSubductedPart = leadTerm subductedPart;
 	result = result + leadTermSubductedPart;
 	liftedM = (subductedPart - leadTermSubductedPart) % compTable#SAGBIideals#"I";
 	
-	if compTable#SAGBIoptions#PrintLevel > 5 then(
+	if compTable#SAGBIoptions#PrintLevel > 5 then (
 	    print("-- [compSubduction] result so far:");
 	    print(transpose result);
 	    print("-- [compSubduction] remaining to subduct:");
@@ -218,7 +221,8 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
 	    i -> 
 	    if (not (i == 0_(compTable#SAGBIrings#"liftedRing"))) and (degree(i))_0 == 0 then (
 		0_(compTable#SAGBIrings#"liftedRing")
-		) else (
+		) 
+	    else (
 		i
 		)
 	    )}
@@ -239,7 +243,8 @@ subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
     ambR := source compTable#SAGBImaps#"inclusionLifted";
     if ring M === tense then (
 	M = (compTable#SAGBImaps#"fullSubstitution")(M);
-	)else if ring M =!= ambR then (
+	) 
+    else if ring M =!= ambR then (
 	error "M must be from ambR or tensorRing.";
 	);
     -- It is possible for ring f === ambient to be true but f is still from a different ring
@@ -319,11 +324,14 @@ updateComputation = method();
 updateComputation(HashTable) := (compTable) -> (
     if compTable#SAGBIoptions#Strategy == "Master" then (
 	updateComputationMaster(compTable);
-	) else if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
+	) 
+    else if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
 	updateComputationDegreeByDegree(compTable);
-	) else if compTable#SAGBIoptions#Strategy == "Incremental" then (
+	) 
+    else if compTable#SAGBIoptions#Strategy == "Incremental" then (
 	updateComputationIncremental(compTable);
-	) else (
+	) 
+    else (
 	error("unknown Strategy, expected \"Master\", \"DegreeByDegree\", or \"Incremental\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'");
 	);
     )
@@ -351,14 +359,16 @@ updateComputationMaster(HashTable) := (compTable) -> (
 		print("-- [updateComputationMaster] Detected few new generators; using Incremental Strategy");
 		);
 	    updateComputationIncremental(compTable);
-	    ) else (
+	    ) 
+	else (
 	    if compTable#SAGBIoptions#PrintLevel > 4 then (
 		print("-- [updateComputationMaster] Detected many or low-degree new generators; using DegreeByDegree Strategy");
 		);
 	    updateComputationDegreeByDegree(compTable);
 	    );
 	 
-	) else (
+	) 
+    else (
 	if compTable#SAGBIoptions#PrintLevel > 4 then (
 	    print("-- [updateComputationMaster] Defaulting to DegreeByDegree Strategy");
 	    );
@@ -557,7 +567,8 @@ processPending (HashTable) := compTable -> (
 	    );
 	if compTable#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
 	    reducedGenerators = triangularBasis matrix{toList compTable#SAGBIpending#currentLowest};
-	    ) else (
+	    ) 
+	else (
 	    reducedGenerators = matrix{toList compTable#SAGBIpending#currentLowest};
 	    );
 	
@@ -613,7 +624,8 @@ insertPending (HashTable,Matrix) := (compTable, candidates) -> (
         level := (degree candidate)_0;
         if compTable#SAGBIpending#?level then(
             compTable#SAGBIpending#level = append(compTable#SAGBIpending#level, candidate)
-        ) else (
+        ) 
+    else (
 	        compTable#SAGBIpending#level = new MutableList from {candidate}
 	    );
     );
@@ -697,7 +709,8 @@ updatePending(HashTable, Matrix) := (compTable, SPairs) -> (
     
     if numcols SPairs != 0 then (
 	newGens = compress (SPairs);
-	) else (
+	) 
+    else (
 	newGens = SPairs;
 	);
     
@@ -783,7 +796,8 @@ checkTermination(HashTable) := (compTable) -> (
 	if compTable#SAGBIoptions#PrintLevel > 0 then (
 	    print("-- Computation complete. Finite sagbi basis found!")
 	    );
-	) else (
+	) 
+    else (
 	if (compTable#SAGBIoptions#AutoSubduceOnPartialCompletion) and (not compTable#SAGBIdata#"autoSubductedSagbiGenerators") then (
 	    -- apply autosubduction to the sagbiGenerators
 	    compTable#SAGBIdata#"sagbiGenerators" = autosubduceSagbi(compTable);

@@ -162,11 +162,13 @@ isSAGBI SAGBIBasis := opts -> SB -> (
     local S;
     if SB#SAGBIdata#"sagbiDone" or (not opts.Compute) then (
         SB#SAGBIdata#"sagbiDone"
-	) else (
+	) 
+    else (
 	if zero SB#SAGBIdata#"sagbiGenerators" then ( 
 	    -- if there are not sagbi generators then assume we should check the subalgebra generators
 	    SB' = internalIsSAGBI(SB, opts, UseSubringGens => true);
-	    ) else (
+	    ) 
+	else (
 	    SB' = internalIsSAGBI(SB, opts);
 	    );
 	if SB'#SAGBIdata#"sagbiDone" then ( -- If SB' is a SAGBIBasis then store SB' in the Subring
@@ -198,10 +200,10 @@ isSAGBI Subring := opts -> S -> (
 	forceSB subringLTgensSB;
 	if zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS) then (
 	    isSAGBI(SB, opts)
-	    ) else (
-	    false
-	    )
-	) else (
+	    ) 
+	else false
+	) 
+    else (
 	if opts.Compute then (
 	    trimmedOptionKeys := delete(Compute, keys opts);
 	    trimmedOptionKeys = delete(UseSubringGens, trimmedOptionKeys);
@@ -209,9 +211,8 @@ isSAGBI Subring := opts -> S -> (
 	    SB = sagbiBasis(S, trimmedOptionTable); -- basic SAGBIBasis object that is compatible with future sagbi computations
 	    SB = internalIsSAGBI(SB, opts, UseSubringGens => true);
 	    SB#SAGBIdata#"sagbiDone"
-	    ) else ( 
-	    null -- S has no SAGBIBasis cached and Compute is set to false
-	    )
+	    ) 
+	else null -- S has no SAGBIBasis cached and Compute is set to false
 	)
     )    
 
@@ -319,7 +320,8 @@ Matrix % Subring := (M, S) -> (
 	-- S has a complete sagbi basis so use subduction
 	SB := S#cache#SAGBIBasis;
 	result = subduction(SB, M);	
-	) else (
+	) 
+    else (
 	-- extrinsic subduction
 	subringGens := gens S;
 	Q := ring subringGens;
@@ -441,7 +443,8 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     -- SB := subalgebraBasis S
     if opts#"SAGBILimitType" == "Fixed" then (
 	limit = opts.Limit;
-	) else if opts#"SAGBILimitType" == "Function" then (
+	) 
+    else if opts#"SAGBILimitType" == "Function" then (
 	limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
 	);
     SB := sagbi(S, 

@@ -104,7 +104,8 @@ sagbi(SAGBIBasis) := opts -> SB -> (
     if opts.Recompute or SB#SAGBIoptions#Recompute then (
 	remove(SBSubring.cache, SAGBIBasis);
 	S = sagbiBasis(SBSubring, opts); 
-	) else (
+	) 
+    else (
 	S = SB;
 	);
     

@@ -12,7 +12,8 @@ subring = method(Options => {GeneratorSymbol => null})
 subring Matrix := opts -> M -> (
     if M.cache#?Subring then (
 	M.cache#Subring
-	) else (
+	) 
+    else (
 	R := ring M;
 	coeffRing := coefficientRing R;
 	local subductionRing;
@@ -244,12 +245,13 @@ net SAGBIBasis := S -> (
     local description;
     if S#SAGBIdata#"sagbiDone" then (
     	description = "SAGBIBasis Computation Object with "
-    ) else (
+    	) 
+    else (
     	description = "Partial SAGBIBasis Computation Object with "
-    );
+    	);
     description | toString(numcols S#SAGBIdata#"sagbiGenerators") |
-    		" generators, Limit = " | toString(S#SAGBIdata#"limit") | "."
-)
+    " generators, Limit = " | toString(S#SAGBIdata#"limit") | "."
+    )
 
 -- gens(SAGBIBasis) returns the current list of sagbi generators.
 -- This might not generate the entire algebra if the computation is
@@ -260,25 +262,26 @@ net SAGBIBasis := S -> (
 gens SAGBIBasis := opts -> S -> (
     if numColumns S#SAGBIdata#"sagbiGenerators" == 0 then (
         S#SAGBImaps#"quotient" matrix(S#SAGBIrings#"liftedRing",{{}})
-    	) else (
+    	) 
+    else (
     	S#SAGBImaps#"quotient" S#SAGBIdata#"sagbiGenerators"
 	)
-)
+    )
 
 -- Returns the lifted ring
 ring SAGBIBasis := S -> (
     S#SAGBIrings#"liftedRing"
-)
+    )
 
 -- Returns the quotient ring
 ambient SAGBIBasis := S -> (
     S#SAGBIrings.quotientRing
-)
+    )
 
 -- Returns the subring that a SAGBIBasis points to
 subring SAGBIBasis := opts -> S -> (
     S#SAGBIdata#subring
-)
+    )
 
 -- current degree of the computation
 sagbiDegree = method()
@@ -302,7 +305,8 @@ sagbiStatus SAGBIBasis := SB -> (
 status SAGBIBasis := opts -> SB -> (
     "status: " | if sagbiStatus SB then (
 	"done; sagbiGenerators encountered up to degree " | toString max first entries SB#SAGBIdata#"sagbiDegrees"
-	) else (
+	) 
+    else (
 	"DegreeLimit; current degree " | toString sagbiDegree SB
 	)
     )
