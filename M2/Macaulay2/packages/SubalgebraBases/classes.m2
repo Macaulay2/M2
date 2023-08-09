@@ -18,7 +18,7 @@ subring Matrix := opts -> M -> (
 	coeffRing := coefficientRing R;
 	local subductionRing;
 	if instance(opts.GeneratorSymbol,Nothing) then
-	     subductionRing = coeffRing[Variables => numcols M]
+	     subductionRing = coeffRing(monoid[Variables => numcols M])
 	else if instance(opts.GeneratorSymbol,Symbol) then
 	     subductionRing = coeffRing[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
 	else error("Invalid GeneratorSymbol option");

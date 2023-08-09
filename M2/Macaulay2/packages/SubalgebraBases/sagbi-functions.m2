@@ -242,7 +242,7 @@ groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
     subringGensLiftedToR := lift(subringGens, R);
     -- construct the tensor ring
     tensorRingNumVars := (numgens R) + (numcols subringGens);
-    tensorRing := QQ[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens R)}];    
+    tensorRing := QQ(monoid[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens R)}]);    
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     fInTensorRing := liftToTensorRing fLifedToR;
     subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
@@ -270,7 +270,7 @@ groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
     tensorRingNumVars := (numgens R) + (numcols subringGens);
     oldOrder := (options R).MonomialOrder;
     newOrder := prepend(Eliminate(numgens R), oldOrder);
-    tensorRing := FF[Variables => tensorRingNumVars, MonomialOrder => oldOrder];
+    tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => oldOrder]);
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     fInTensorRing := liftToTensorRing fLifedToR;
     subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
@@ -334,7 +334,7 @@ Matrix % Subring := (M, S) -> (
 	tensorRingNumVars := (numgens R) + (numcols subringGens);
     	oldOrder := (options R).MonomialOrder;
     	newOrder := prepend(Eliminate(numgens R), oldOrder);
-    	tensorRing := FF[Variables => tensorRingNumVars, MonomialOrder => oldOrder];
+    	tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => oldOrder]);
 	liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     	MInTensorRing := liftToTensorRing MLiftedToR;
     	subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
@@ -463,7 +463,7 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     result := new IntersectedSubring from {
 	"ambientRing" => Q,
 	"generators" => intersectionGens,
-	"subductionQuotientRing" => (coefficientRing Q)[Variables => numcols intersectionGens],
+	"subductionQuotientRing" => (coefficientRing Q) (monoid[Variables => numcols intersectionGens]),
 	cache => new CacheTable from {},
 	"originalSubrings" => {S1, S2},
 	"compositeSubring" => S
