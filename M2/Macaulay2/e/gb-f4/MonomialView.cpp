@@ -7,7 +7,7 @@ MonomialView MonomialView::combine(const MonomialView& left,
 				   const MonomialView& right,
 				   bool useLeft,
 				   bool useRight,	
-				   std::function<int(int,int)> bothFunc,
+				   std::function<MonomialInt(MonomialInt,MonomialInt)> bothFunc,
 				   MemoryBlock &block)
 {
     auto rng = block.allocateArray<MonomialInt>(left.size() + right.size() - 1);
@@ -82,7 +82,7 @@ MonomialView MonomialView::lcm(const MonomialView& left,
 			       right,
 			       true,
 			       true,
-			       [](int l, int r) -> int { return std::max(l,r); },
+			       [](MonomialInt l, MonomialInt r) -> MonomialInt { return std::max(l,r); },
 			       block);
 }
   
@@ -94,7 +94,7 @@ MonomialView MonomialView::product(const MonomialView& left,
 			       right,
 			       true,
 			       true,
-			       [](int l, int r) -> int { return l+r; },
+			       [](MonomialInt l, MonomialInt r) -> MonomialInt { return l+r; },
 			       block);
 }
   
@@ -108,7 +108,7 @@ MonomialView MonomialView::quotient(const MonomialView& left,
 			       right,
 			       true,
 			       false,
-			       [](int l, int r) -> int { return std::max(0,l-r); },
+			       [](MonomialInt l, MonomialInt r) -> MonomialInt { return std::max(0,l-r); },
 			       block);
 }
 
