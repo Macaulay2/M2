@@ -5,4 +5,5 @@
 #include "MonomialLookupTable.hpp"
 
 namespace newf4 {
+
 }  // namespace newf4

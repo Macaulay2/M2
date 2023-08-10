@@ -3,6 +3,7 @@
 #include "../MemoryBlock.hpp"
 #include "MonomialTypes.hpp"
 #include <vector>
+#include <functional>
 
 namespace newf4 {
 
@@ -10,6 +11,7 @@ class MonomialView
 {
  private:
   MonomialInt* mData;  // We do not own the data pointed to
+
  public:
   explicit MonomialView(MonomialInt* data) : mData(data) {}
   explicit MonomialView(std::vector<MonomialInt>& data) : mData(data.data()) {}
@@ -44,31 +46,89 @@ class MonomialView
                                            sizeof(MonomialInt)*(size()-1)) == 0)));
   }
 
+  inline static bool monomialDivides(const MonomialView& divisor,
+                                     const MonomialView& divisee)
+  {
+    if (divisor.size() > divisee.size()) return false;
+    auto divisorIt = divisor.begin();
+    auto diviseeIt = divisee.begin();
+    auto divisorEnd = divisor.end();
+    auto diviseeEnd = divisee.end();
+    while (divisorIt != divisorEnd)
+    {
+      auto divisorVar = divisorIt.var();
+      while (true)
+      {
+        if (diviseeIt == diviseeEnd) return false;
+        if (diviseeIt.var() > divisorVar) return false;
+        if (diviseeIt.var() == divisorVar) break;
+        ++diviseeIt;
+      }
+      // at this point, both diviseeIt.var() and divisorIt.var() are equal
+      if (divisorIt.power() > diviseeIt.power()) return false;
+      ++divisorIt;
+      ++diviseeIt;
+    }
+    return true;
+  }
+  
+  // simple degree of a monomial view
+
+  static MonomialView combine(const MonomialView& left,
+                              const MonomialView& right,
+                              bool copyLeft,
+                              bool copyRight,
+                              std::function<int(int,int)>,
+                              MemoryBlock &block);
+  
+  static MonomialView lcm(const MonomialView& left,
+                          const MonomialView& right,
+                          MemoryBlock &block);
+  
+  static MonomialView product(const MonomialView& left,
+                              const MonomialView& right,
+                              MemoryBlock &block);
+  
+
+  // returns left : right
+  static MonomialView quotient(const MonomialView& left,
+                               const MonomialView& right,
+                               MemoryBlock &block);
+
   template< bool Const = false >
   class MonomialIterator 
   {
-  public:
+   public:
     using iterator_category = std::forward_iterator_tag;
     using reference = typename std::conditional_t< Const, MonomialInt const &, MonomialInt & >;
     using pointer = typename std::conditional_t< Const, MonomialInt const *, MonomialInt * >;    
 
+   private:
+    // points to the var part of a var,power sequence in a MonomialView
+    pointer mCurLoc;  
+    
+   public:
     // constructor
     MonomialIterator(MonomialInt* curLoc) : mCurLoc(reinterpret_cast<pointer>(curLoc)) {}
     
     // iteration functions
-    MonomialIterator & operator++()
+    MonomialIterator& operator++()
     {
       // prefix ++ operator
-      stepIterator();
+      mCurLoc += 2;
       return *this;
     }
     // left out postfix operator to encourage prefix use
+    MonomialIterator& operator+=(int offset)
+    {
+      mCurLoc += 2*offset;
+      return *this;
+    }
 
     // accessor functions 
 
     // SFINAE enables the const dereference operator or the non 
     // const variant depending on bool Const parameter
-
     // const version
     template< bool _Const = Const >
     std::enable_if_t< _Const, reference >
@@ -100,17 +160,12 @@ class MonomialView
     // not sure how to make this const/non-const as pairs can't hold references
     std::pair<MonomialInt, MonomialInt> operator*() const { return std::make_pair(var(), power()); }
 
-    MonomialInt* loc() const { return mCurLoc; }
+    pointer loc() const { return mCurLoc; }
 
     // (in)equality checks
-    bool operator==(const MonomialIterator& rhs) const { return (this->mCurLoc == rhs.mCurLoc); }
-    bool operator!=(const MonomialIterator& rhs) const { return (this->mCurLoc != rhs.mCurLoc); }
+    bool operator==(const MonomialIterator& rhs) const { return (mCurLoc == rhs.mCurLoc); }
+    bool operator!=(const MonomialIterator& rhs) const { return (mCurLoc != rhs.mCurLoc); }
 
-  private:
-    // points to the var part of a var,power sequence in a MonomialView
-    pointer mCurLoc;  
-    
-    void stepIterator () { mCurLoc += 2; }
   };
 
   auto begin() const -> MonomialIterator<true> { return MonomialIterator<true>(mData + 1); }

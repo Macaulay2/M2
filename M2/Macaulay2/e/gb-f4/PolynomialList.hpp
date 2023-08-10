@@ -4,22 +4,11 @@
 #include "../BasicPolyList.hpp"
 #include "MonomialHashTable.hpp"
 #include "MonomialTypes.hpp"
+#include "PolynomialStream.hpp"
 
 namespace newf4 {
 
-class Polynomial
-{
-  friend class PolynomialListStream;
-public: // TODO: change back to private
-  ElementArray mCoefficients;
-  std::vector<ComponentIndex> mComponents;
-  std::vector<MonomialIndex> mMonomials; // each monomial is an index into a vector of polynomials.
-
- public:
-  // creation (output iterator?)
-  // iteration (for a const one) (similar to NC Poly)
-  // access
-};
+class Polynomial;
 
 // This class will store the input to the GB commands, as well as
 // any intermediate polynomials encountered along the way.
@@ -47,6 +36,167 @@ class PolynomialList
   size_t size() const { return mPolynomials.size(); }
 
   void push_back(const Polynomial& F)  { mPolynomials.push_back(F); }
+};
+
+class Polynomial
+{
+  friend class PolynomialListStream;
+  //friend class PolynomialList;
+
+public: // TODO: change back to private
+  ElementArray                mCoefficients;
+  std::vector<MonomialIndex>  mMonomials; // each monomial is an index into a vector of polynomials.
+  std::vector<ComponentIndex> mComponents;
+  PolynomialList&             mPolynomialList;
+
+public:
+
+  Polynomial(PolynomialList& polynomialList) :
+     mPolynomialList(polynomialList)
+  {
+  }
+
+  template< bool Const = false >
+  class PolynomialIterator
+  {
+  public:
+    using iterator_category = std::forward_iterator_tag;
+
+    using ElementType = long; // not sure what to put here...
+
+    // is ElementArray always just std::vector<ElementType>?
+
+    //using CoeffIterator = typename std::conditional_t< Const,
+    //                                                   std::vector<ElementType>::const_iterator,
+    //                                                   std::vector<ElementType>::iterator>;
+
+    // we will be using the VectorArithmetic object to access the data
+    using CoeffIterator = typename std::size_t;
+
+    using MonomIterator = typename std::conditional_t< Const,
+                                                       std::vector<MonomialIndex>::const_iterator,
+                                                       std::vector<MonomialIndex>::iterator>;
+    
+    using ComponentIterator = typename std::conditional_t< Const,
+                                                           std::vector<ComponentIndex>::const_iterator,
+                                                           std::vector<ComponentIndex>::iterator>;
+
+    //using CoeffReference = typename std::conditional_t< Const, ElementType const &, ElementType & >;
+    //using CoeffPointer = typename std::conditional_t< Const, ElementType const *, ElementType * >;    
+
+    using MonViewReference = typename std::conditional_t< Const, MonomialView const &, MonomialView & >;
+    using MonViewPointer = typename std::conditional_t< Const, MonomialView const *, MonomialView * >;    
+
+    using MonIndexReference = typename std::conditional_t< Const, MonomialIndex const &, MonomialIndex & >;
+    using MonIndexPointer = typename std::conditional_t< Const, MonomialIndex const *, MonomialIndex * >;    
+
+    using CompReference = typename std::conditional_t< Const, ComponentIndex const &, ComponentIndex & >;
+    using CompPointer = typename std::conditional_t< Const, ComponentIndex const *, ComponentIndex * >;    
+
+    //using MonomIterator = MonomialView::MonomialIterator<Const>;
+    // need to figure out a way to know the type of element array of polynomial type here.
+    // probably will require another template parameter of the ring.
+
+  private:
+    CoeffIterator      mCoeffIterator;
+    MonomIterator      mMonomIterator;
+    ComponentIterator  mCompIterator;
+    const Polynomial&  mPolynomial;
+
+  public:
+
+    PolynomialIterator(CoeffIterator coeffIterator,
+                       MonomIterator monomIterator,
+                       ComponentIterator compIterator,
+                       const Polynomial& polynomial) :
+      mCoeffIterator(coeffIterator),
+      mMonomIterator(monomIterator),
+      mCompIterator(compIterator),
+      mPolynomial(polynomial)
+    {
+    }
+
+    // SFINAE enables the const dereference operator or the non 
+    // const variant depending on bool Const parameter
+    // const version
+#if 0    
+    template< bool _Const = Const >
+    std::enable_if_t< _Const, CoeffReference >
+    coeff() const {
+       return *mCoeffIterator;
+    }
+    
+    // non-const version
+    template< bool _Const = Const >
+    std::enable_if_t< !_Const, CoeffReference >
+    coeff() {
+       return *mCoeffIterator;
+    }
+#endif
+
+    // TODO: this is horrid, but I don't yet know how to make a coeff iterator through the vector arithmetic object
+    ElementType coeff() const { return mPolynomial.polynomialList().vectorArithmetic().to_modp_long(mPolynomial.mCoefficients, mCoeffIterator); }
+
+    // const version
+    template< bool _Const = Const >
+    std::enable_if_t< _Const, MonViewReference >
+    monom() const {
+       return mPolynomial.polynomialList().monomialHashTable().monomialAt(*mMonomIterator);
+    }
+
+    // non-const version
+    template< bool _Const = Const >
+    std::enable_if_t< !_Const, MonViewReference >
+    monom() {
+       return mPolynomial.polynomialList().monomialHashTable().monomialAt(*mMonomIterator);
+    }
+
+    // const version
+    template< bool _Const = Const >
+    std::enable_if_t< _Const, CompReference >
+    comp() const {
+       return *mCompIterator;
+    }
+
+    // non-const version
+    template< bool _Const = Const >
+    std::enable_if_t< !_Const, CompReference >
+    comp() {
+       return *mCompIterator;
+    }
+    
+    bool operator==(const PolynomialIterator& rhs) const { return mMonomIterator == rhs.mMonomIterator; }
+    bool operator!=(const PolynomialIterator& rhs) const { return mMonomIterator != rhs.mMonomIterator; }
+
+  private:
+    void stepIterators() { ++mMonomIterator; ++mCompIterator; ++mCoeffIterator; }
+  };
+
+ public:
+
+  auto begin() const -> PolynomialIterator<true> { return PolynomialIterator<true>(0,
+                                                                                   mMonomials.begin(),
+                                                                                   mComponents.begin(),
+                                                                                   *this); }
+  auto end() const -> PolynomialIterator<true> { return PolynomialIterator<true>(mPolynomialList.vectorArithmetic().size(mCoefficients),
+                                                                                 mMonomials.end(),
+                                                                                 mComponents.end(),
+                                                                                 *this); }
+  auto begin() -> PolynomialIterator<false> { return PolynomialIterator<false>(0,
+                                                                               mMonomials.begin(),
+                                                                               mComponents.begin(),
+                                                                               *this); }
+  auto end() -> PolynomialIterator<false> { return PolynomialIterator<false>(mPolynomialList.vectorArithmetic().size(mCoefficients),
+                                                                             mMonomials.end(),
+                                                                             mComponents.end(),
+                                                                             *this); }
+
+  auto polynomialList() const -> const PolynomialList& { return mPolynomialList; }
+  auto polynomialList() -> PolynomialList& { return mPolynomialList; }
+
+  // creation (output iterator?)
+  // iteration (for a const one) (similar to NC Poly)
+  // access
 };
 
 /// implements the stream functions for creating a PolynomialList from a stream
@@ -127,7 +277,7 @@ void toStream(const PolynomialList& Fs, S &str)
             {
               str.appendExponent(ve.var(), ve.power());
             }
-          long val = Fs.vectorArithmetic().to_modp_long(static_cast<ElementArray>(F.mCoefficients), i);
+          long val = Fs.vectorArithmetic().to_modp_long(F.mCoefficients, i);
           str.appendTermDone(val);
         }
       str.appendPolynomialDone();

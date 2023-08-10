@@ -4,6 +4,8 @@
 #include "MonomialView.hpp"
 #include "Basis.hpp"
 
+#include <map>
+
 // Each spair's monomials will be included in a special "hash table".
 // What about "pre-spairs"?  Are they in their own, or not yet inserted?
 // Maybe try both?
@@ -42,14 +44,13 @@ namespace newf4 {
 
 enum class SPairType { Ring, Exterior, SPair, Gen };
 
-class SPair
+struct SPair
 {
- private:
   SPairType mType;
   Index mFirst;               // index in Basis itself. later in gb indexing.
   Index mLast;
   MonomialIndex mLCM;
-  ComponentIndex mComponent;  // component of the SPair
+  // ComponentIndex mComponent;  // component of the SPair (may not need this, as it matches comp of mLast/mFirst)
   MonomialInt mDegree;        // degree of the LCM
   MonomialIndex mQuotient;    // we might not need
 };
@@ -80,9 +81,11 @@ class SPairSet
   // before SPairType::SPair before SPairType::Gen and in each degree by LCM?
 
  private:
-  std::vector<SPair> mSPairs;
+  // std::vector<SPair> mSPairs;
   // std::vector<std::vector<SPair>> mSPairsByDegree; ??
 
+  // the long here may not be actual degree, but a "sugar" degree
+  std::map<std::pair<long,SPairType>,std::vector<SPair>> mSPairsByDegree;
 };
 
 } // end namespace newf4

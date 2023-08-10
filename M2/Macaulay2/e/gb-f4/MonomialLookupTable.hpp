@@ -11,25 +11,39 @@
 
 namespace newf4 {
 
-class MonomialInfo {
- public:
-  bool mIsUsed;
-  int mSimpleDegree;
-  MonomialMask mMask;
-  int mMonomialIndex;
-  int mOffset;
+struct MonomialInfo {
+  bool mIsUsed;            // whether to use for divisibility checks
+  int mSimpleDegree;       // simple degree
+  MonomialMask mMask;      // divisibility mask
+  int mOffset;             // offset where monomial starts
+  int mValue;              // index of polynomial associated to this MonomialInfo
 };
 
 class MonomialLookupTable
 {
   friend class MonomialLookupIterator;
  private:
-  std::vector<int> mMonomialSpace;
+  std::vector<MonomialInt> mMonomialSpace;
   std::vector<MonomialInfo> mMonomialInfo;
 
   // statistics info
 
  public:
+
+  inline static MonomialMask createMask(const MonomialView& monView)
+  {
+    MonomialMask result = 0;
+    for (const auto vp : monView)
+      result |= 1 << (vp.first & (sizeof(MonomialMask)*8 - 1));
+    return result;
+  }
+
+  inline static bool maskDivides(MonomialMask divisor, MonomialMask divisee)
+  {
+    auto result = divisor & (~divisee);
+    return (result == 0);
+  }
+
   class MonomialLookupIterator
   {
     using IterType = decltype(mMonomialInfo.cbegin());
@@ -50,7 +64,7 @@ class MonomialLookupTable
     bool isUsed() { return mIter->mIsUsed; }
     int simpleDegree() { return mIter->mSimpleDegree; }
     uint64_t mask() { return mIter->mMask; }
-    int monomialIndex() { return mIter->mMonomialIndex; }
+    int value() { return mIter->mValue; }
     int offset() { return mIter->mOffset; }
   };
   // insert monomial(s) into table
@@ -86,7 +100,6 @@ class MonomialLookupTable
   long memoryUsed() const;
 
  private:
-  // mask creation
   // mask comparison
   // monomial divisibility
 };

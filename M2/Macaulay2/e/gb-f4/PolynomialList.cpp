@@ -13,7 +13,7 @@ void PolynomialListStreamCollector::appendPolynomialBegin(size_t termCount)
 {
   mCurrentPoly++;
   mCurrentTerm = -1;
-  Polynomial F;
+  Polynomial F(mValue);
   mValue.push_back(F);
   mCoefficients.resize(termCount);
   mValue[mCurrentPoly].mMonomials.resize(termCount);
