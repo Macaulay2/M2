@@ -38,7 +38,8 @@ class MonomialLookupTable
     return result;
   }
 
-  inline static bool maskDivides(MonomialMask divisor, MonomialMask divisee)
+  inline static bool maskDivides(MonomialMask divisor,
+				 MonomialMask divisee)
   {
     auto result = divisor & (~divisee);
     return (result == 0);
@@ -67,26 +68,27 @@ class MonomialLookupTable
     int value() { return mIter->mValue; }
     int offset() { return mIter->mOffset; }
   };
+
   // insert monomial(s) into table
   void insertMonomial(const MonomialView monView, int index);
 
   // compactify
-  void compactify() {}
+  void compactify();
 
   // begin and end (both const and not)
   MonomialLookupIterator begin() const { return MonomialLookupIterator(*this,mMonomialInfo.begin()); }
   MonomialLookupIterator end() const { return MonomialLookupIterator(*this,mMonomialInfo.end()); }
 
   // find divisor
-  int findDivisor(const MonomialView monView);
+  int findDivisor(const MonomialView monView) const;
 
   // find divisors
-  std::vector<int> findAllDivisors(const MonomialView monView);
-  void findAllDivisors(const MonomialView monView, std::vector<int>& result);
+  std::vector<int> findAllDivisors(const MonomialView monView) const;
+  void findAllDivisors(const MonomialView monView, std::vector<int>& result) const;
 
   // find divisees
-  std::vector<int> findAllDivisees(const MonomialView monView);
-  void findAllDivisees(const MonomialView monView, std::vector<int>& result);
+  std::vector<int> findAllDivisees(const MonomialView monView) const;
+  void findAllDivisees(const MonomialView monView, std::vector<int>& result) const;
 
   // retire monomial(s)
   void retire(int monIndex) { mMonomialInfo[monIndex].mIsUsed = false; }
@@ -98,10 +100,6 @@ class MonomialLookupTable
 
   // memoryUsed
   long memoryUsed() const;
-
- private:
-  // mask comparison
-  // monomial divisibility
 };
 
 }  // namespace newf4
