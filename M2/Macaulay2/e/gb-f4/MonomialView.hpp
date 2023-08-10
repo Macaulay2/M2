@@ -73,6 +73,13 @@ class MonomialView
   }
   
   // simple degree of a monomial view
+  inline MonomialInt simpleDegree() const
+  {
+    MonomialInt result = 0;
+    for (auto i = begin(); i != end(); ++i)
+      result += i.power();
+    return result;
+  }
 
   static MonomialView combine(const MonomialView& left,
                               const MonomialView& right,

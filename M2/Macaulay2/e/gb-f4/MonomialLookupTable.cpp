@@ -9,6 +9,14 @@ namespace newf4 {
 // insert monomial(s) into table
 void MonomialLookupTable::insertMonomial(const MonomialView monView, int index)
 {
+  MonomialInfo newMonomialInfo;
+  newMonomialInfo.mIsUsed = true;
+  newMonomialInfo.mSimpleDegree = monView.simpleDegree();
+  newMonomialInfo.mMask = createMask(monView);
+  newMonomialInfo.mOffset = mMonomialSpace.size();
+  mMonomialSpace.insert(mMonomialSpace.end(), monView.dataBegin(), monView.dataEnd());
+  newMonomialInfo.mValue = index;
+  mMonomialInfo.push_back(newMonomialInfo);
 }
 
 // compactify
@@ -33,17 +41,20 @@ std::vector<int> MonomialLookupTable::findAllDivisors(const MonomialView monView
 }
 
 // adds all divisors to the end of result.
-void MonomialLookupTable::findAllDivisors(const MonomialView monView, std::vector<int>& result, bool stopAtOne = false) const
+void MonomialLookupTable::findAllDivisors(const MonomialView monView,
+					  std::vector<int>& result,
+					  bool stopAtOne) const
 {
   int curIndex = 0;
   MonomialMask mask = createMask(monView);
   for (; curIndex < mMonomialInfo.size(); ++curIndex)
   {
     auto m = mMonomialInfo[curIndex];
-    if (m.mIsUsed && maskDivides(m.mMask,m))
+    if (m.mIsUsed && maskDivides(m.mMask,mask))
     {
-       MonomialView mvDivisor(mMonomialSpace.data() + m.mOffset);
-       if ((MonomialView::simpleDegree(monView) >= m.mSimpleDegree) &&
+       // ugh with the const_cast, but MonomialInt doesn't store const pointers
+       MonomialView mvDivisor(const_cast<MonomialInt*>(mMonomialSpace.data() + m.mOffset));
+       if ((monView.simpleDegree() >= m.mSimpleDegree) &&
 	   (MonomialView::monomialDivides(mvDivisor, monView)))
        {
 	  result.push_back(curIndex);
@@ -51,7 +62,6 @@ void MonomialLookupTable::findAllDivisors(const MonomialView monView, std::vecto
        }
     }
   }
-  return result;
 }
 
 // find divisees
@@ -71,16 +81,15 @@ void MonomialLookupTable::findAllDivisees(const MonomialView monView, std::vecto
     auto m = mMonomialInfo[curIndex];
     if (m.mIsUsed && maskDivides(mask,m.mMask))
     {
-       MonomialView mvDivisee(mMonomialSpace.data() + m.mOffset);
-       if ((MonomialView::simpleDegree(monView) <= m.mSimpleDegree) &&
+       // ugh with the const_cast, but MonomialInt doesn't store const pointers
+       MonomialView mvDivisee(const_cast<MonomialInt*>(mMonomialSpace.data() + m.mOffset));
+       if ((monView.simpleDegree() <= m.mSimpleDegree) &&
 	   (MonomialView::monomialDivides(monView, mvDivisee)))
        {
 	  result.push_back(curIndex);
-	  if (stopAtOne) break;
        }
     }
   }
-  return result;
 }
 
 // retire monomial(s)
@@ -94,7 +103,7 @@ std::vector<int> MonomialLookupTable::retireAllDivisees(const MonomialView monVi
 void MonomialLookupTable::retireAllDivisees(const MonomialView monView, std::vector<int>& result)
 {
   findAllDivisees(monView,result);
-  for (auto m : result) mMonomialInfo[m].mIsUsed = false;
+  for (auto m : result) retire(m);
 }
 
 // display

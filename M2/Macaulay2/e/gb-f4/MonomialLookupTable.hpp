@@ -84,16 +84,20 @@ class MonomialLookupTable
 
   // find divisors
   std::vector<int> findAllDivisors(const MonomialView monView) const;
-  void findAllDivisors(const MonomialView monView, std::vector<int>& result) const;
+  void findAllDivisors(const MonomialView monView, 
+		       std::vector<int>& result,
+		       bool stopAtOne = false) const;
 
   // find divisees
   std::vector<int> findAllDivisees(const MonomialView monView) const;
-  void findAllDivisees(const MonomialView monView, std::vector<int>& result) const;
+  void findAllDivisees(const MonomialView monView,
+		       std::vector<int>& result) const;
 
   // retire monomial(s)
   void retire(int monIndex) { mMonomialInfo[monIndex].mIsUsed = false; }
   std::vector<int> retireAllDivisees(const MonomialView monView);
-  void retireAllDivisees(const MonomialView monView, std::vector<int>& result);
+  void retireAllDivisees(const MonomialView monView,
+			 std::vector<int>& result);
 
   // display
   std::ostream& display(std::ostream& ostr) const;
