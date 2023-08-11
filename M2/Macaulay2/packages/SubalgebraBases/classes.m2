@@ -27,7 +27,7 @@ subring Matrix := opts -> M -> (
             "ambientRing" => R,
             "generators" => M,
 	    "subductionQuotientRing" => subductionRing,
-            cache => new CacheTable from M.cache
+            cache => new CacheTable from {if M.cache#?Subring then M.cache#Subring}
     	    };
     	M.cache#Subring = S
 	)
