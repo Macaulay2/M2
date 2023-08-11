@@ -30,7 +30,6 @@ newPackage(
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
   	DebuggingMode => true -- set to true only during development
         )
-exportMutable {}
 
 needs "./SubalgebraBases/exports.m2"
 needs "./SubalgebraBases/classes.m2"
