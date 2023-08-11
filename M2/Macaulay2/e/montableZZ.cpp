@@ -229,7 +229,7 @@ bool MonomialTableZZ::is_weak_member(mpz_srcptr c, exponents_t exp, int comp) co
         else
           mpz_gcd(g, g, t->_coeff);
         /* g is set */
-        if (mpz_divisible_p(c, t->_coeff))
+        if (mpz_divisible_p(c, g))
           {
             mpz_clear(g);
             return true;
