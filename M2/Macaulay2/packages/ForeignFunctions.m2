@@ -336,6 +336,9 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
     value S := x -> for y in x list value y;
     S_ZZ := (x, i) -> dereference_T(
 	ffiPointerValue address x + size T * checkarraybounds(n, i));
+    S_ZZ = (x, i, val) -> (
+	ptr := ffiPointerValue address x + size T * checkarraybounds(n, i);
+	*ptr = T val);
     iterator S := x -> Iterator(
 	ptr := ffiPointerValue address x;
 	i := 0;
@@ -379,17 +382,20 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
 	Address => ffiPointerAddress(address T,
 	    append(apply(x, y -> address T y), address voidstar nullPointer))};
     value S := x -> for y in x list value y;
-    S_ZZ := (x, i) -> (
+    getptr := (x, i) -> (
 	len := 0;
 	ptr := ffiPointerValue address x;
 	while ffiPointerValue ptr =!= nullPointer
 	do (
-	    if len == i then return dereference_T ptr;
-	    len = len + 1;
-	    ptr = ptr + sz);
+	    if len == i then return ptr
+	    else (
+		len = len + 1;
+		ptr = ptr + sz));
 	if i >= 0 or i < -len then error(
 	    "array index ", i, " out of bounds 0 .. ", len - 1)
-	else dereference_T(ptr + sz * i));
+	else ptr + sz * i);
+    S_ZZ := dereference_T @@ getptr;
+    S_ZZ = (x, i, val) -> *getptr(x, i) = T val;
     iterator S := x -> Iterator(
 	ptr := ffiPointerValue address x;
 	() -> (
@@ -434,6 +440,7 @@ foreignStructType(String, VisibleList) := (name, x) -> (
 	applyPairs(types, (mbr, type) ->
 	    (mbr, value dereference_type(ptr' + offsets#mbr))));
     T_String := (y, mbr) -> dereference_(types#mbr)(address y + offsets#mbr);
+    T_String = (y, mbr, val) -> *(address y + offsets#mbr) = types#mbr val;
     T)
 
 ForeignStructType VisibleList := (T, x) -> new T from x
@@ -462,6 +469,7 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
 	ptr := address y;
 	applyPairs(types, (mbr, type) -> (mbr, value dereference_type ptr)));
     T_String := (y, mbr) -> dereference_(types#mbr) address y;
+    T_String = (y, mbr, val) -> *address y = types#mbr val;
     T)
 
 ForeignUnionType Thing := (T, x) -> new T from {Address =>
@@ -626,9 +634,10 @@ getMemory ForeignVoidType := o -> T -> error "can't allocate a void"
 
 memcpy = foreignFunction("memcpy", voidstar, {voidstar, voidstar, ulong})
 * voidstar = (ptr, val) -> (
-    if not instance(val, ForeignObject) then val = foreignObject val;
-    memcpy(ptr, address val, size class val))
-* Pointer = (ptr, val) -> value (*voidstar ptr = val)
+    val = foreignObject val;
+    memcpy(ptr, address val, size class val);
+    val)
+* Pointer = (ptr, val) -> *voidstar ptr = val
 
 ForeignType * voidstar := (T, ptr) -> T value ptr
 
@@ -1020,6 +1029,11 @@ doc ///
        next i
        next i
        for y in x list value y + 1
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_0 = 9
+      x
 ///
 
 doc ///
@@ -1091,6 +1105,8 @@ doc ///
     voidstarstar
     (symbol _, charstarstar, ZZ)
     (symbol _, voidstarstar, ZZ)
+    ((symbol _, symbol =), charstarstar, ZZ)
+    ((symbol _, symbol =), voidstarstar, ZZ)
     (length, charstarstar)
     (length, voidstarstar)
     (iterator, charstarstar)
@@ -1126,6 +1142,11 @@ doc ///
        next i
        next i
        scan(x, print)
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_0 = "qux"
+      x
 ///
 
 doc ///
@@ -1245,6 +1266,11 @@ doc ///
     Example
       x_"foo"
       x_"bar"
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_"foo" = 6
+      x
 ///
 
 doc ///
@@ -1288,6 +1314,11 @@ doc ///
       x = myunion (4 * char') append(ascii "hi!", 0)
       x_"foo"
       x_"bar"
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_"bar" = "ho!"
+      x
 ///
 
 doc ///
@@ -1881,25 +1912,35 @@ ptr = address x
 assert Equation(value intarray3 ptr, {1, 2, 3})
 assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
+x_0 = 5
+assert Equation(value x, {5, 2, 3})
 ptrarray = 3 * voidstar
 x = ptrarray {address int 1, address int 2, address int 3}
 assert Equation(for ptr in x list value (int * ptr), {1, 2, 3})
+x_0 = address int 5
+assert Equation(for ptr in x list value (int * ptr), {5, 2, 3})
 x = charstarstar {"foo", "bar", "baz"}
 assert Equation(length x, 3)
 assert Equation(value x, {"foo", "bar", "baz"})
 assert Equation(value x_0, "foo")
 assert Equation(value x_(-1), "baz")
+x_0 = "qux"
+assert Equation(value x, {"qux", "bar", "baz"})
 x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
 assert Equation(length x, 4)
 assert Equation(value \ for ptr in x list (int * ptr), {1, 2, 3, 4})
 assert Equation(value (int * x_0), 1)
 assert Equation(value (int * x_(-1)), 4)
+x_0 = address int 5
+assert Equation(value \ for ptr in x list (int * ptr), {5, 2, 3, 4})
 int3star = foreignPointerArrayType(3 * int)
 x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
 assert Equation(length x, 4)
 assert Equation(value x, {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
 assert Equation(value x_0, {1, 2, 3})
 assert Equation(value x_(-1), {10, 11, 12})
+x_0 = {13, 14, 15}
+assert Equation(value x, {{13, 14, 15}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
 
 -- struct types
 teststructtype = foreignStructType("foo",
@@ -1910,6 +1951,8 @@ assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 2.0)
 assert Equation(value x_"c", "foo")
 assert Equation(value (int * x_"d"), 4)
+x_"a" = 5
+assert Equation(value x_"a", 5)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
@@ -1917,6 +1960,10 @@ x = testuniontype float 1
 assert instance(value x, HashTable)
 assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 0x3f800000)
+x_"a" = 2
+assert Equation(value x_"a", 2)
+x_"b" = 3
+assert Equation(value x_"b", 3)
 y = testuniontype uint32 0xc0000000
 assert Equation(value y_"a", -2)
 assert Equation(value y_"b", 0xc0000000)
