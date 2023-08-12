@@ -54,7 +54,10 @@ defaultStylesheet := () -> LINK {
 defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
 
 defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX(),
-    SCRIPT {"src" => getStyleFile "prism.js", ""}}
+    SCRIPT {"src" => getStyleFile "prism.js", ""},
+    LINK {
+	"rel" => "icon", "type" => "image/x-icon",
+	"href" => getStyleFile "icon.gif"}}
 
 -----------------------------------------------------------------------------
 -- Local utilities
