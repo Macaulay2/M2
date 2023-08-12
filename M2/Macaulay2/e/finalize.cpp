@@ -62,7 +62,7 @@ void intern_monideal(MonomialIdeal *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_monideal, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(G,                    remove_monideal, 0, 0, 0);
+  GC_REGISTER_FINALIZER(G,                    remove_monideal, nullptr, nullptr, nullptr);
 #endif
   AO_t nfinalized = AO_fetch_and_add1(&monideals_nfinalized);
   if (M2_gbTrace >= 3)
@@ -88,7 +88,7 @@ void intern_polyring(const PolynomialRing *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer(const_cast<PolynomialRing *>(G)), remove_polyring, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER_IGNORE_SELF(                  const_cast<PolynomialRing *>(G) , remove_polyring, 0, 0, 0);
+  GC_REGISTER_FINALIZER_IGNORE_SELF(                  const_cast<PolynomialRing *>(G) , remove_polyring, nullptr, nullptr, nullptr);
 #endif
   AO_t nfinalized = AO_fetch_and_add1(&polyrings_nfinalized);
   if (M2_gbTrace >= 3)
@@ -114,7 +114,7 @@ void intern_GB(GBComputation *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer(G), remove_gb, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER_IGNORE_SELF(                  G , remove_gb, 0, 0, 0);
+  GC_REGISTER_FINALIZER_IGNORE_SELF(                  G , remove_gb, nullptr, nullptr, nullptr);
 #endif
   AO_t nfinalized = AO_fetch_and_add1(&gbs_nfinalized);
   if (M2_gbTrace >= 3)
@@ -144,7 +144,7 @@ void intern_res(ResolutionComputation *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_res, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(                  G , remove_res, 0, 0, 0);
+  GC_REGISTER_FINALIZER(                  G , remove_res, nullptr, nullptr, nullptr);
 #endif
   AO_t nfinalized = AO_fetch_and_add1(&res_nfinalized);
   if (M2_gbTrace >= 3)
@@ -168,7 +168,7 @@ void intern_SchreyerOrder(SchreyerOrder *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_SchreyerOrder, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(                  G , remove_SchreyerOrder, 0, 0, 0);
+  GC_REGISTER_FINALIZER(                  G , remove_SchreyerOrder, nullptr, nullptr, nullptr);
 #endif
   AO_t nfinalized = AO_fetch_and_add1(&schorder_nfinalized);
   if (M2_gbTrace >= 3)
@@ -192,11 +192,11 @@ extern "C" void remove_MutableMatrix(void *p, void *cd)
 }
 MutableMatrix *internMutableMatrix(MutableMatrix *G)
 {
-  if (G == 0) return 0;
+  if (G == nullptr) return nullptr;
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_MutableMatrix, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(                  G,  remove_MutableMatrix, 0, 0, 0);
+  GC_REGISTER_FINALIZER(                  G,  remove_MutableMatrix, nullptr, nullptr, nullptr);
 #endif
   AO_t nfinalized = AO_fetch_and_add1(&mutablematrices_nfinalized);
   if (M2_gbTrace >= 3)

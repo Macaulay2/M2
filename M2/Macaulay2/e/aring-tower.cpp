@@ -34,7 +34,7 @@ ARingTower::ARingTower(const BaseRingType &baseRing,
           // mExtensions.push_back(mRing.copy(i, extensions[i]));
         }
       else
-        mExtensions.push_back(static_cast<ElementType>(NULL));
+        mExtensions.push_back(static_cast<ElementType>(nullptr));
     }
 }
 
@@ -49,7 +49,7 @@ ARingTower *ARingTower::create(const ARingTower &R,
                                const std::vector<std::string> &new_names)
 {
   // TODO: write
-  return 0;
+  return nullptr;
 }
 
 ARingTower *ARingTower::create(const ARingTower &R,
@@ -72,7 +72,7 @@ ARingPolynomial ARingTower::alloc_poly_n(int deg) const
   result->polys = new ARingPolynomial[deg + 1];
   result->deg = deg;
   result->len = deg + 1;
-  for (int i = 0; i <= deg; i++) result->polys[i] = 0;
+  for (int i = 0; i <= deg; i++) result->polys[i] = nullptr;
   return result;
 }
 
@@ -89,16 +89,16 @@ ARingPolynomial ARingTower::alloc_poly_0(int deg) const
 void ARingTower::dealloc_poly(ARingPolynomial &f) const
 // only f is freed, not any pointers in the array of f
 {
-  if (f == 0) return;
+  if (f == nullptr) return;
   delete[] f->polys;
   delete f;
-  f = 0;
+  f = nullptr;
 }
 
 void ARingTower::clear(int level, ARingPolynomial &f) const
 // free all space associated to f, set f to 0.
 {
-  if (f == 0) return;
+  if (f == nullptr) return;
   if (level == 0)
     {
       for (int i = 0; i <= f->deg; i++) mBaseRing.clear(f->coeffs[i]);
@@ -110,15 +110,15 @@ void ARingTower::clear(int level, ARingPolynomial &f) const
       delete[] f->polys;
     }
   delete f;
-  f = 0;
+  f = nullptr;
 }
 
 void ARingTower::reset_degree(ARingPolynomial &f) const
 {
-  if (f == 0) return;
+  if (f == nullptr) return;
   int fdeg = f->deg;
   for (int j = fdeg; j >= 0; --j)
-    if (f->polys[j] != 0)
+    if (f->polys[j] != nullptr)
       {
         f->deg = j;
         return;
@@ -129,7 +129,7 @@ void ARingTower::reset_degree(ARingPolynomial &f) const
 
 ARingPolynomial ARingTower::copy(int level, const ARingPolynomial f) const
 {
-  if (f == 0) return 0;
+  if (f == nullptr) return nullptr;
   ARingPolynomial result = alloc_poly_n(f->deg);
   if (level == 0)
     for (int i = 0; i <= f->deg; i++) result->coeffs[i] = f->coeffs[i];
@@ -148,7 +148,7 @@ void ARingTower::increase_capacity(int newdeg, ARingPolynomial &f) const
       ARingPolynomial *newelems = newarray(ARingPolynomial, newdeg + 1);
       ARingPolynomial *fp = f->polys;
       for (int i = 0; i <= f->deg; i++) newelems[i] = fp[i];
-      for (int i = f->deg + 1; i < newdeg + 1; i++) newelems[i] = 0;
+      for (int i = f->deg + 1; i < newdeg + 1; i++) newelems[i] = nullptr;
       delete[] fp;
       f->polys = newelems;
       f->len = newdeg + 1;
@@ -173,7 +173,7 @@ void ARingTower::extensions_text_out(buffer &o) const
 {
   for (int i = 0; i < mExtensions.size(); i++)
     {
-      if (mExtensions[i] != 0)
+      if (mExtensions[i] != nullptr)
         {
           o << newline << "    ";
           elem_text_out(o, i, mExtensions[i], true, false, false);
@@ -184,7 +184,7 @@ void ARingTower::extensions_text_out(buffer &o) const
 namespace {
   int n_nonzero_terms(int level, ARingPolynomial f)
   {
-    if (f == 0) return 0;
+    if (f == nullptr) return 0;
     int nterms = 0;
     if (level == 0)
       {
@@ -194,7 +194,7 @@ namespace {
     else
       {
         for (int i = 0; i <= f->deg; i++)
-          if (f->polys[i] != 0) nterms++;
+          if (f->polys[i] != nullptr) nterms++;
       }
     return nterms;
   }
@@ -202,7 +202,7 @@ namespace {
 
 bool ARingTower::is_one(int level, const ARingPolynomial f) const
 {
-  if (f == 0) return false;
+  if (f == nullptr) return false;
   if (f->deg != 0) return false;
   if (level == 0)
     return 1 == f->coeffs[0];
@@ -218,7 +218,7 @@ void ARingTower::elem_text_out(buffer &o,
                                bool p_parens) const
 {
   // o << to_string(level, f);
-  if (f == 0)
+  if (f == nullptr)
     {
       o << "0";
       return;
@@ -264,7 +264,7 @@ void ARingTower::elem_text_out(buffer &o,
     {
       bool firstterm = true;
       for (int i = f->deg; i >= 0; i--)
-        if (f->polys[i] != 0)
+        if (f->polys[i] != nullptr)
           {
             bool this_p_parens = p_parens || (i > 0);
 
@@ -289,7 +289,7 @@ void ARingTower::elem_text_out(buffer &o,
 ARingPolynomial ARingTower::var(int level, int v) const
 // make the variable v (but at level 'level')
 {
-  if (v > level) return 0;
+  if (v > level) return nullptr;
   int which = (v == 0 ? 1 : 0);
   ARingPolynomial result =
       alloc_poly_0(which);  // TODO: check that this initializes elements to 0
@@ -306,12 +306,12 @@ ARingPolynomial ARingTower::var(int level, int v) const
 
 bool ARingTower::is_equal(int level, const ARingPolynomial f, const ARingPolynomial g) const
 {
-  if (f == 0)
+  if (f == nullptr)
     {
-      if (g == 0) return true;
+      if (g == nullptr) return true;
       return false;
     }
-  if (g == 0 || f->deg != g->deg) return false;
+  if (g == nullptr || f->deg != g->deg) return false;
   if (level == 0)
     {
       BaseCoefficientType *fp = f->coeffs;
@@ -330,8 +330,8 @@ bool ARingTower::is_equal(int level, const ARingPolynomial f, const ARingPolynom
 
 void ARingTower::add_in_place(int level, ARingPolynomial &f, const ARingPolynomial g) const
 {
-  if (g == 0) return;
-  if (f == 0)
+  if (g == nullptr) return;
+  if (f == nullptr)
     {
       f = copy(level, g);
       return;
@@ -355,7 +355,7 @@ void ARingTower::add_in_place(int level, ARingPolynomial &f, const ARingPolynomi
 
 void ARingTower::negate_in_place(int level, ARingPolynomial &f) const
 {
-  if (f == 0) return;
+  if (f == nullptr) return;
   int deg = f->deg;
   if (level == 0)
     {
@@ -365,14 +365,14 @@ void ARingTower::negate_in_place(int level, ARingPolynomial &f) const
   else
     {
       for (int i = 0; i <= deg; i++)
-        if (f->polys[i] != 0) negate_in_place(level - 1, f->polys[i]);
+        if (f->polys[i] != nullptr) negate_in_place(level - 1, f->polys[i]);
     }
 }
 
 void ARingTower::subtract_in_place(int level, ARingPolynomial &f, const ARingPolynomial g) const
 {
-  if (g == 0) return;
-  if (f == 0)
+  if (g == nullptr) return;
+  if (f == nullptr)
     {
       f = copy(level, g);
       negate_in_place(level, f);
@@ -400,7 +400,7 @@ void ARingTower::mult_by_coeff(int level,
                                const BaseCoefficientType &b) const
 {
   assert(!mBaseRing.is_zero(b));
-  if (f == 0) return;
+  if (f == nullptr) return;
 
   long deg = f->deg;
   if (level == 0)
@@ -411,13 +411,13 @@ void ARingTower::mult_by_coeff(int level,
   else
     {
       for (int i = 0; i <= deg; i++)
-        if (f->polys[i] != 0) mult_by_coeff(level - 1, f->polys[i], b);
+        if (f->polys[i] != nullptr) mult_by_coeff(level - 1, f->polys[i], b);
     }
 }
 
 void ARingTower::mult_by_coeff(ARingPolynomial &f, const BaseCoefficientType &b) const
 {
-  if (f == 0) return;
+  if (f == nullptr) return;
   if (mBaseRing.is_zero(b))
     {
       clear(f);
