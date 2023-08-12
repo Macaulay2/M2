@@ -68,6 +68,7 @@ export {
     "uint",
     "long",
     "ulong",
+    "mpzT",
     "float",
     "double",
     "voidstar",
@@ -247,10 +248,16 @@ if version#"pointer size" == 4 then (
     long = int64;
     ulong = uint64)
 
+mpzT = new ForeignIntegerType;
+mpzT.Name = "mpz_t";
+mpzT.Address = ffiPointerType
+new mpzT from ZZ := (T, n) -> new T from {Address => ffiIntegerAddress n}
+value mpzT := ffiIntegerValue @@ address
+
 ForeignIntegerType Number :=
 ForeignIntegerType Constant := (T, x) -> new T from truncate x
 
-isAtomic ForeignIntegerType := T -> true
+isAtomic ForeignIntegerType := T -> if T === mpzT then false else true
 
 -----------------------
 -- foreign real type --
@@ -853,6 +860,8 @@ doc ///
       uint
       long
       ulong
+  SeeAlso
+    mpzT
 ///
 
 doc ///
@@ -884,6 +893,28 @@ doc ///
       int 12
       ulong pi
       short(-2.71828)
+///
+
+doc ///
+  Key
+    mpzT
+    (NewFromMethod, mpzT, ZZ)
+    (value, mpzT)
+  Headline
+    GMP arbitrary-precision integer type
+  Description
+    Text
+      Macaulay2's native @TO ZZ@ integer type wraps around @TT "mpz_t"@ from
+      @HREF{"https://gmplib.org/", "GMP"}@.  This type (which is an instance
+      of @TO ForeignIntegerType@) allows for conversion between Macaulay2
+      integers and GMP integers without loss of precision.
+    Example
+      mpzT 2^100
+      value oo
+      mpzAdd = foreignFunction("__gmpz_add", void, {mpzT, mpzT, mpzT})
+      x = mpzT 0
+      mpzAdd(x, 2, 3)
+      x
 ///
 
 doc ///
@@ -1890,6 +1921,7 @@ longexp = 8 * version#"pointer size"
 assert Equation(value ulong(2^longexp - 1), 2^longexp - 1)
 assert Equation(value long(2^(longexp - 1) - 1), 2^(longexp - 1) - 1)
 assert Equation(value long(-2^(longexp - 1)), -2^(longexp - 1))
+assert Equation(value mpzT 10^100, 10^100)
 
 -- real types
 assert Equation(value float 3.14159, 3.14159p24)
