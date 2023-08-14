@@ -36,6 +36,7 @@ export {
     "groebnerSubductionQuotient",
     "subringIntersection",
     "UseSubringGens",
+    "SAGBILimitType",
     "IntersectedSubring",
     "isFullIntersection",
     "originalSubringGens"

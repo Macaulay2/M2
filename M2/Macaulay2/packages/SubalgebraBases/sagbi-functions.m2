@@ -269,7 +269,7 @@ groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
     tensorRingNumVars := (numgens R) + (numcols subringGens);
     oldOrder := (options R).MonomialOrder;
     newOrder := prepend(Eliminate(numgens R), oldOrder);
-    tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => oldOrder]);
+    tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => newOrder]);
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     fInTensorRing := liftToTensorRing fLifedToR;
     subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
@@ -313,12 +313,11 @@ RingElement % SAGBIBasis := (f, SB) -> (
     );
 
 Matrix % Subring := (M, S) -> (
-    local result;
     assert(ring M === ambient S); 
     if (S#cache#?SAGBIBasis) and (S#cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
 	-- S has a complete sagbi basis so use subduction
 	SB := S#cache#SAGBIBasis;
-	result = subduction(SB, M);	
+	subduction(SB, M)	
 	) 
     else (
 	-- extrinsic subduction
@@ -333,7 +332,7 @@ Matrix % Subring := (M, S) -> (
 	tensorRingNumVars := (numgens R) + (numcols subringGens);
     	oldOrder := (options R).MonomialOrder;
     	newOrder := prepend(Eliminate(numgens R), oldOrder);
-    	tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => oldOrder]);
+    	tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => newOrder]);
 	liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     	MInTensorRing := liftToTensorRing MLiftedToR;
     	subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
@@ -341,9 +340,8 @@ Matrix % Subring := (M, S) -> (
     	I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
     	MNormalForm := MInTensorRing % (I + JInTensorRing);
 	projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | subringGens);
-        result = M - (projectToQ MNormalForm);
-	);    
-    result
+        M - (projectToQ MNormalForm)
+	)
     );
 
 RingElement % Subring := (f, S) -> (
@@ -385,7 +383,7 @@ subringIntersection = method(
     Options => {
 	Strategy => "Master",
 	SubductionMethod => "Top",
-	"SAGBILimitType" => "Fixed", -- "Fixed" or "Function"
+	SAGBILimitType => "Fixed", -- "Fixed" or "Function"
 	Limit => 20,
 	PrintLevel => 0
 	}
@@ -440,10 +438,10 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     --------------
     -- Compute a sagbi basis for S (take care of options supplied by user)
     -- SB := subalgebraBasis S
-    if opts#"SAGBILimitType" == "Fixed" then (
+    if opts.SAGBILimitType == "Fixed" then (
 	limit = opts.Limit;
 	) 
-    else if opts#"SAGBILimitType" == "Function" then (
+    else if opts.SAGBILimitType == "Function" then (
 	limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
 	);
     SB := sagbi(S, 

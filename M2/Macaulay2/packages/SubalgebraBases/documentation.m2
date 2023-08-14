@@ -913,6 +913,7 @@ doc ///
      [subringIntersection, SubductionMethod]
      [subringIntersection, Limit]
      [subringIntersection, PrintLevel]
+     SAGBILimitType
    Headline
      Intersection of subrings
    Usage
@@ -925,7 +926,7 @@ doc ///
        The strategy \"Master\" is a hybrid that combines the other two; starting with \"DegreeByDegree\" for low degrees and switching to \"Incremental\". (See: @TO "Strategy"@)
      SubductionMethod=>String
        the method used for subduction either: \"Top\" or \"Engine\". (See: @TO "SubductionMethod"@)
-     "SAGBILimitType"=>String
+     SAGBILimitType=>String
        Either \"Fixed\" or \"Function\". Determines the stopping criterion for the sagbi computation. If \"Fixed\" then the @TO "Limit"@ is used,
        otherwise if \"Function\" is selected then the maximum degree of the input generators is used as the degree limit.
      Limit=>ZZ
