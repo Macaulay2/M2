@@ -222,8 +222,7 @@ isSAGBI Matrix := opts -> M -> (
     )
 
 isSAGBI List := opts -> L -> (
-    local S;
-    S = subring L;
+    S := subring L;
     isSAGBI(opts, S)
     )
 
@@ -237,12 +236,13 @@ groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
     subringGens := gens S;
     Q := ring subringGens;
     R := ambient Q;
+    FF := coefficientRing R;
     J := ideal Q;
     fLifedToR := lift(f, R);
     subringGensLiftedToR := lift(subringGens, R);
     -- construct the tensor ring
     tensorRingNumVars := (numgens R) + (numcols subringGens);
-    tensorRing := QQ(monoid[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens R)}]);    
+    tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens R)}]);    
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     fInTensorRing := liftToTensorRing fLifedToR;
     subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
@@ -258,7 +258,6 @@ groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
 -- output: h in K[y1 .. ys] such that (f - f%S) = h(g_1 .. g_s)
 groebnerSubductionQuotient = method() 
 groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
-    local outputRing;
     subringGens := gens S;
     Q := ring subringGens;
     R := ambient Q;
@@ -278,7 +277,7 @@ groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
     I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
     fNormalForm := fInTensorRing % (I + JInTensorRing);
     -- output fNormalForm in the subductionQuotientRing
-    outputRing = subductionQuotientRing S;
+    outputRing := subductionQuotientRing S;
     outputMap := map(outputRing, tensorRing, matrix {toList((numgens R):0)} | vars outputRing);
     outputMap fNormalForm
     )
