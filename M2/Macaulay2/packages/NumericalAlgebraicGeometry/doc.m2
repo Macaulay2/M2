@@ -959,6 +959,7 @@ doc ///
 	(gateSystem,Matrix)
 	(gateSystem,PolySystem)
 	(gateSystem,PolySystem,List)
+	(gateSystem,BasicList,BasicList,GateMatrix)
     Headline
         a constructor for GateSystem
     Usage
@@ -972,6 +973,7 @@ doc ///
     	Text 
             @TO GateMatrix@ {\tt M} is expected to have 1 column.
     	    Matrices {\tt params} and {\tt variables} are expected to have 1 row.
+	    (Later addition: TO DO say something about less restritive syntax.) 
         Example
             variables = declareVariable \ {x,y}
     	    F = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2}})
