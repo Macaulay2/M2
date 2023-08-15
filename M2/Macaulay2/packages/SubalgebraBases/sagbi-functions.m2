@@ -391,13 +391,10 @@ subringIntersection = method(
 
 subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     local limit;
-    local t;
     -------------
     -- check that both subring are subrings of the same ambient ring
-    Q1 := ambient S1;
-    Q2 := ambient S2;
-    assert(Q1 === Q2);
-    Q := Q1;
+    Q := ambient S1;
+    assert(Q === ambient S2);
     I := ideal(Q);
     R := ambient(Q);
     ------------
@@ -418,13 +415,13 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
 	MonomialOrder => newMonomialOrder
 	];
     TAmb := (coefficientRing Q) M;
-    t = (vars TAmb)_(0,0);
+    t := (vars TAmb)_(0,0);
     RtoTAmb := map(TAmb, R, (vars TAmb)_{1 .. numgens Q});
     J := (RtoTAmb I) + ideal(t^2 - t); -- I + (t^2 - t)
     T := TAmb / J; -- tensor product of Q and K[t]/(t^2-t)
     QtoT := map(T, Q, (vars T)_{1 .. numgens Q});
     TtoQ := map(Q, T, matrix{{0_Q}} | vars Q);
-    t = (gens T)_0;
+    tinT := (gens T)_0;
     --------------
     -- Notation:
     -- Gi := generators of Si lifted to T, for each i in {1, 2}
@@ -432,8 +429,8 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     -- S := K[t*G1, (1-t)*G2]
     G1 := QtoT gens S1;
     G2 := QtoT gens S2;
-    use T; -- Dev note: T contains no user variables
-    G := t*G1 | (1-t)*G2;
+    -- use T; -- Dev note: T contains no user variables
+    G := tinT*G1 | (1-tinT)*G2;
     S := subring G;
     --------------
     -- Compute a sagbi basis for S (take care of options supplied by user)
@@ -468,3 +465,13 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     if isSAGBI SB then forceSB result;
     result
     );
+
+
+-- trying to override intersect to use instead of subringIntersection [currently not working]
+intersect(Subring, Subring) := {
+    Strategy => "Master",
+    SubductionMethod => "Top",
+    SAGBILimitType => "Fixed", -- "Fixed" or "Function"
+    Limit => 20,
+    PrintLevel => 0
+    } >> opts -> (S1, S2) -> subringIntersection(S1, S2, opts);
