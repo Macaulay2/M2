@@ -34,7 +34,6 @@ export {
     "isSAGBI",
     "groebnerMembershipTest",
     "groebnerSubductionQuotient",
-    "subringIntersection",
     "UseSubringGens",
     "SAGBILimitType",
     "IntersectedSubring",

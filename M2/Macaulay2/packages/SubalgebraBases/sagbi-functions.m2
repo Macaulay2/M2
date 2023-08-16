@@ -468,7 +468,7 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
 
 
 -- trying to override intersect to use instead of subringIntersection [currently not working]
-intersect(Subring, Subring) := Subring => {
+intersect(Subring, Subring) := IntersectedSubring => {
     Strategy => "Master",
     SubductionMethod => "Top",
     SAGBILimitType => "Fixed", -- "Fixed" or "Function"
