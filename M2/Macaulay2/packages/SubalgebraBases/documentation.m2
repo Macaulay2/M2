@@ -1348,7 +1348,6 @@ doc ///
    Key
      sagbiBasis
      (sagbiBasis,Subring)
-     (sagbiBasis,HashTable)
      [sagbiBasis,AutoSubduce]
      [sagbiBasis,ReduceNewGenerators]
      [sagbiBasis,StorePending]

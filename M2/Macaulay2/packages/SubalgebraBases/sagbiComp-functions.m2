@@ -1,10 +1,10 @@
--- initializeCompTable: produces a compTable
+-- initializesagbiComputation: produces a SAGBIComputation
 --   a mutable version of a SAGBIBasis object, to be used for sagbi computation 
 -- This function should be called at the beginning of sagbi computation
--- the options for the compTable are taken from SAGBIBasis except 
+-- the options for the sagbiComputation are taken from SAGBIBasis except 
 --   if RenewOptions is true then only the specified options are used
-initializeCompTable = method();
-initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
+initializeSagbiComputation = method();
+initializeSagbiComputation (SAGBIBasis, HashTable):= (S, opts) -> (
     local optionTable;
     rings := new MutableHashTable from S#SAGBIrings;
     maps := new MutableHashTable from S#SAGBImaps;
@@ -24,7 +24,7 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
     optionTable#Recompute = false;
     apply(keys pending, i -> pending#i = new MutableList from pending#i);
 
-    new HashTable from {
+    new SAGBIComputation from {
         SAGBIrings => rings,
         SAGBImaps => maps,
         SAGBIideals => ideals,
@@ -34,27 +34,27 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
     }
 )
 
--- limitedCompTable: construct a small compTable with enough data for use in autoSubduction
-limitedCompTable = method();
-limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
+-- limitedSagbiComputation: construct a small sagbiComputation with enough data for use in autoSubduction
+limitedSagbiComputation = method();
+limitedSagbiComputation (SAGBIComputation, Matrix) := (sagbiComputation,M) -> (
     -- Construct the monoid of a ring with variables corresponding
     --    to generators of the ambient ring and the subalgebra.
     -- Has an elimination order that eliminates the generators of the ambient ring.
     -- The degrees of generators are set so that the SyzygyIdeal is homogeneous.
-    numberVariables := numgens compTable#SAGBIrings#"liftedRing";
+    numberVariables := numgens sagbiComputation#SAGBIrings#"liftedRing";
     numberGenerators := numColumns M;
-    newMonomialOrder := append((monoid compTable#SAGBIrings#"liftedRing").Options.MonomialOrder,
+    newMonomialOrder := append((monoid sagbiComputation#SAGBIrings#"liftedRing").Options.MonomialOrder,
     		     Eliminate numberVariables);
     tensorVariables := monoid[
         Variables => numberVariables + numberGenerators,
         Degrees => first entries (matrix{
-		flatten degrees source vars compTable#SAGBIrings#"liftedRing"}|
+		flatten degrees source vars sagbiComputation#SAGBIrings#"liftedRing"}|
 		matrix{flatten degrees source M}),
         MonomialOrder => newMonomialOrder];
-    tensorRing := (coefficientRing compTable#SAGBIrings#"liftedRing") tensorVariables;
+    tensorRing := (coefficientRing sagbiComputation#SAGBIrings#"liftedRing") tensorVariables;
     rings := new MutableHashTable from {
-        quotientRing => compTable#SAGBIrings.quotientRing,
-        "liftedRing" => compTable#SAGBIrings#"liftedRing",
+        quotientRing => sagbiComputation#SAGBIrings.quotientRing,
+        "liftedRing" => sagbiComputation#SAGBIrings#"liftedRing",
         global tensorRing => tensorRing
     };
 
@@ -75,22 +75,22 @@ limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
         "sagbiInclusion" => sagbiInclusion,
         "substitution" => substitution,
         "fullSubstitution" => projectionLifted * substitution,
-        "quotient" => compTable#SAGBImaps#"quotient"
+        "quotient" => sagbiComputation#SAGBImaps#"quotient"
     };
     
     -- Ideals:
     generatingVariables := (vars rings.tensorRing)_{numberVariables..numberVariables + numberGenerators - 1};
     SIdeal := ideal(generatingVariables - maps#"inclusionLifted"(leadTerm M));
     ideals := new MutableHashTable from {
-        "I" => compTable#SAGBIideals#"I",
+        "I" => sagbiComputation#SAGBIideals#"I",
         "SIdeal" => SIdeal,
-        "leadTermsI" => compTable#SAGBIideals#"leadTermsI",
-        "reductionIdeal" => maps#"inclusionLifted" compTable#SAGBIideals#"leadTermsI" + SIdeal
+        "leadTermsI" => sagbiComputation#SAGBIideals#"leadTermsI",
+        "reductionIdeal" => maps#"inclusionLifted" sagbiComputation#SAGBIideals#"leadTermsI" + SIdeal
     };
-    optionTable := new MutableHashTable from compTable#SAGBIoptions;
+    optionTable := new MutableHashTable from sagbiComputation#SAGBIoptions;
     data := null;
     pending := null;
-    new HashTable from {
+    new SAGBIComputation from {
         SAGBIrings => rings,
         SAGBImaps => maps,
         SAGBIideals => ideals,
@@ -103,8 +103,8 @@ limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
 
 -- compSubduction is an internal (unexported) version of subduction for use in sagbi
 -- the user-friendly version is subduction
--- compSubduction takes a compTable and 1-row matrix M
---     with entries in the quotientRing and subducts the elements of M against compTable
+-- compSubduction takes a sagbiComputation and 1-row matrix M
+--     with entries in the quotientRing and subducts the elements of M against sagbiComputation
 
 compSubduction = method( 
     TypicalValue => HashTable,
@@ -122,55 +122,55 @@ compSubduction = method(
     	}
     );
 
-compSubduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
-    new MutableMatrix from compSubduction(compTable, matrix M)
+compSubduction(SAGBIComputation, MutableMatrix) := opts -> (sagbiComputation, M) -> (
+    new MutableMatrix from compSubduction(sagbiComputation, matrix M)
     )
 
-compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
+compSubduction(SAGBIComputation, Matrix) := opts -> (sagbiComputation, M) -> (
     local result;
     local liftedM;
-    if compTable#SAGBIoptions#PrintLevel > 3 then (    
+    if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (    
 	print("-- subduction input:");
 	print(M);
 	);
     
     if zero(M) then return M;
-    result = matrix {toList(numcols(M):0_(compTable#SAGBIrings#"liftedRing"))};
+    result = matrix {toList(numcols(M):0_(sagbiComputation#SAGBIrings#"liftedRing"))};
     liftedM = matrix {
-	for m in first entries M list sub(m, compTable#SAGBIrings#"liftedRing")
+	for m in first entries M list sub(m, sagbiComputation#SAGBIrings#"liftedRing")
 	};
     local subductedPart;
     local leadTermSubductedPart;    
-    if compTable#SAGBIoptions#PrintLevel > 5 then(
+    if sagbiComputation#SAGBIoptions#PrintLevel > 5 then(
 	print("-- [compSubduction] elements to subduct:");
 	print(transpose liftedM);
 	);
     
     while not (zero(liftedM)) do (
-	if compTable#SAGBIoptions#SubductionMethod == "Top" then (
-            subductedPart = subductionTopLevelLeadTerm(compTable, liftedM);
+	if sagbiComputation#SAGBIoptions#SubductionMethod == "Top" then (
+            subductedPart = subductionTopLevelLeadTerm(sagbiComputation, liftedM);
 	    ) 
-	else if compTable#SAGBIoptions#SubductionMethod == "Engine" then (
-    	    subductedPart = subductionEngineLevelLeadTerm(compTable, liftedM);
+	else if sagbiComputation#SAGBIoptions#SubductionMethod == "Engine" then (
+    	    subductedPart = subductionEngineLevelLeadTerm(sagbiComputation, liftedM);
 	    ) 
 	else (
-	    error ("unknown SubductionMethod " | toString compTable#SAGBIoptions#SubductionMethod | ", expected \"Top\" or \"Engine\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'"); 
+	    error ("unknown SubductionMethod " | toString sagbiComputation#SAGBIoptions#SubductionMethod | ", expected \"Top\" or \"Engine\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'"); 
 	    );
 	leadTermSubductedPart = leadTerm subductedPart;
 	result = result + leadTermSubductedPart;
-	liftedM = (subductedPart - leadTermSubductedPart) % compTable#SAGBIideals#"I";
+	liftedM = (subductedPart - leadTermSubductedPart) % sagbiComputation#SAGBIideals#"I";
 	
-	if compTable#SAGBIoptions#PrintLevel > 5 then (
+	if sagbiComputation#SAGBIoptions#PrintLevel > 5 then (
 	    print("-- [compSubduction] result so far:");
 	    print(transpose result);
 	    print("-- [compSubduction] remaining to subduct:");
 	    print(transpose liftedM);
 	    );
 	);
-    result = result % compTable#SAGBIideals#"I";
+    result = result % sagbiComputation#SAGBIideals#"I";
     
-    if compTable#SAGBIoptions#PrintLevel > 3 then (    
-	print("-- subduction result using "| compTable#SAGBIoptions#SubductionMethod |" strategy:");
+    if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (    
+	print("-- subduction result using "| sagbiComputation#SAGBIoptions#SubductionMethod |" strategy:");
 	print(result);
 	);
     result
@@ -181,15 +181,15 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 -- performs subduction only until the lead term cannot be subducted further
 -- NB this method assumes M is reduced mod I
 subductionTopLevelLeadTerm = method();
-subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
+subductionTopLevelLeadTerm (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
     liftg := M;
     while not (zero liftg) do ( 
-        tensorRingLiftg := compTable#SAGBImaps#"inclusionLifted" liftg;
+        tensorRingLiftg := sagbiComputation#SAGBImaps#"inclusionLifted" liftg;
 	tensorRingLeadTermg := leadTerm tensorRingLiftg;
-	h := tensorRingLeadTermg % (compTable#SAGBIideals#"reductionIdeal"); -- do partial % based on compTable option
-	projectionh := compTable#SAGBImaps#"fullSubstitution" compTable#SAGBImaps#"sagbiInclusion" h;
+	h := tensorRingLeadTermg % (sagbiComputation#SAGBIideals#"reductionIdeal"); -- do partial % based on sagbiComputation option
+	projectionh := sagbiComputation#SAGBImaps#"fullSubstitution" sagbiComputation#SAGBImaps#"sagbiInclusion" h;
 
-    	if compTable#SAGBIoptions#PrintLevel > 6 then (
+    	if sagbiComputation#SAGBIoptions#PrintLevel > 6 then (
 	    print("-- [subductionTopLevelLeadTerm] --");
 	    print("-- lift g:");
 	    print(transpose liftg);
@@ -209,7 +209,7 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
 	if zero(projectionh) then break;
 
 	-- if I is nonzero then reduce projectionh modulo I:
-	if not zero compTable#SAGBIideals#"I" then (projectionh = projectionh % compTable#SAGBIideals#"I"); 
+	if not zero sagbiComputation#SAGBIideals#"I" then (projectionh = projectionh % sagbiComputation#SAGBIideals#"I"); 
  	
 	--update g
 	liftg = liftg - projectionh;
@@ -219,8 +219,8 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
     matrix {apply(
 	    first entries liftg,
 	    i -> 
-	    if (not (i == 0_(compTable#SAGBIrings#"liftedRing"))) and (degree(i))_0 == 0 then (
-		0_(compTable#SAGBIrings#"liftedRing")
+	    if (not (i == 0_(sagbiComputation#SAGBIrings#"liftedRing"))) and (degree(i))_0 == 0 then (
+		0_(sagbiComputation#SAGBIrings#"liftedRing")
 		) 
 	    else (
 		i
@@ -232,17 +232,17 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
 -- perform the same function as subductionTopLevelLeadTerm except
 -- with engine-level code.
 subductionEngineLevelLeadTerm = method();
-subductionEngineLevelLeadTerm(HashTable, RingElement) := (compTable, g) -> (
-    (subductionEngineLevelLeadTerm(compTable, matrix {{g}}))_(0,0) 
+subductionEngineLevelLeadTerm(SAGBIComputation, RingElement) := (sagbiComputation, g) -> (
+    (subductionEngineLevelLeadTerm(sagbiComputation, matrix {{g}}))_(0,0) 
     );
 
-subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
+subductionEngineLevelLeadTerm(SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
     local result;
-    tense := compTable#SAGBIrings.tensorRing;
+    tense := sagbiComputation#SAGBIrings.tensorRing;
     	    
-    ambR := source compTable#SAGBImaps#"inclusionLifted";
+    ambR := source sagbiComputation#SAGBImaps#"inclusionLifted";
     if ring M === tense then (
-	M = (compTable#SAGBImaps#"fullSubstitution")(M);
+	M = (sagbiComputation#SAGBImaps#"fullSubstitution")(M);
 	) 
     else if ring M =!= ambR then (
 	error "M must be from ambR or tensorRing.";
@@ -255,33 +255,33 @@ subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
     -- Use the same pres ring as much as possible.
     -- M2 will automatically cache the gb calculation
     -- as long as the pres ring is not reconstructed.
-    gbI := gb compTable#SAGBIideals#"I";
-    gbReductionIdeal := gb compTable#SAGBIideals#"reductionIdeal";
-    F := compTable#SAGBImaps#"substitution";
+    gbI := gb sagbiComputation#SAGBIideals#"I";
+    gbReductionIdeal := gb sagbiComputation#SAGBIideals#"reductionIdeal";
+    F := sagbiComputation#SAGBImaps#"substitution";
     N := monoid ambR;
     numblocks := rawMonoidNumberOfBlocks raw N;
-    result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#SAGBImaps#"inclusionLifted", raw compTable#SAGBImaps#"fullSubstitution", raw (compTable#SAGBImaps#"substitution" * compTable#SAGBImaps#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
+    result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw sagbiComputation#SAGBImaps#"inclusionLifted", raw sagbiComputation#SAGBImaps#"fullSubstitution", raw (sagbiComputation#SAGBImaps#"substitution" * sagbiComputation#SAGBImaps#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
     result = matrix{apply(first entries result,i->promote(i,ambR))}
     );
 
 ---------------
--- AutoSubduce: (compTable)
+-- AutoSubduce: (sagbiComputation)
 ---------------
 -- for each subalgebraGenerator subduct it against the rest of the subalgebraGenerators
--- for each such generator we produce a temporary compTable object that contains
+-- for each such generator we produce a temporary sagbiComputation object that contains
 -- enough data to perform subduction with
 --
 
 autosubduce = method();
-autosubduce (HashTable) := (compTable) -> (
+autosubduce SAGBIComputation := sagbiComputation -> (
     
-    local tempCompTable;
+    local tempsagbiComputation;
     local M;
-    generatorMatrix := new MutableMatrix from compTable#SAGBIdata#"subalgebraGenerators";
+    generatorMatrix := new MutableMatrix from sagbiComputation#SAGBIdata#"subalgebraGenerators";
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = new Matrix from generatorMatrix_(toList join(0..(i-1),(i+1)..((numColumns generatorMatrix)-1)));
-            tempCompTable = limitedCompTable(compTable,lift(M,compTable#SAGBIrings#"liftedRing"));
-	    generatorMatrix_(0,i) = (compSubduction(tempCompTable,generatorMatrix_{i}))_(0,0);
+            tempsagbiComputation = limitedSagbiComputation(sagbiComputation,lift(M,sagbiComputation#SAGBIrings#"liftedRing"));
+	    generatorMatrix_(0,i) = (compSubduction(tempsagbiComputation,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
     );
@@ -289,26 +289,26 @@ autosubduce (HashTable) := (compTable) -> (
 )
 
 ---------------------------------
--- AutoSubduceSagbi: (compTable)
+-- AutoSubduceSagbi: (sagbiComputation)
 ---------------------------------
 -- for each sagbiGenerator subduct it against the rest of the sagbiGenerators
--- for each such generator we produce a temporary compTable object that contains
+-- for each such generator we produce a temporary sagbiComputation object that contains
 -- enough data to perform subduction with
 
 autosubduceSagbi = method();
-autosubduceSagbi (HashTable) := (compTable) -> (
+autosubduceSagbi SAGBIComputation := sagbiComputation -> (
     
-    if compTable#SAGBIoptions#PrintLevel > 0 then (
+    if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
 	print("-- AutoSubducting Sagbi Generators ...");
 	);	
     
-    local tempCompTable;
+    local tempsagbiComputation;
     local M;
-    generatorMatrix := new MutableMatrix from compTable#SAGBImaps#"quotient" compTable#SAGBIdata#"sagbiGenerators";
+    generatorMatrix := new MutableMatrix from sagbiComputation#SAGBImaps#"quotient" sagbiComputation#SAGBIdata#"sagbiGenerators";
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = new Matrix from generatorMatrix_(toList join(0..(i-1),(i+1)..((numColumns generatorMatrix)-1)));
-            tempCompTable = limitedCompTable(compTable,lift(M,compTable#SAGBIrings#"liftedRing"));
-	    generatorMatrix_(0,i) = (compSubduction(tempCompTable,generatorMatrix_{i}))_(0,0);
+            tempsagbiComputation = limitedSagbiComputation(sagbiComputation,lift(M,sagbiComputation#SAGBIrings#"liftedRing"));
+	    generatorMatrix_(0,i) = (compSubduction(tempsagbiComputation,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
     );
@@ -321,15 +321,15 @@ autosubduceSagbi (HashTable) := (compTable) -> (
 -- NB if there are no new sagbiGenerators, then this function is not called
 
 updateComputation = method();
-updateComputation(HashTable) := (compTable) -> (
-    if compTable#SAGBIoptions#Strategy == "Master" then (
-	updateComputationMaster(compTable);
+updateComputation SAGBIComputation := sagbiComputation -> (
+    if sagbiComputation#SAGBIoptions#Strategy == "Master" then (
+	updateComputationMaster(sagbiComputation);
 	) 
-    else if compTable#SAGBIoptions#Strategy == "DegreeByDegree" then (
-	updateComputationDegreeByDegree(compTable);
+    else if sagbiComputation#SAGBIoptions#Strategy == "DegreeByDegree" then (
+	updateComputationDegreeByDegree(sagbiComputation);
 	) 
-    else if compTable#SAGBIoptions#Strategy == "Incremental" then (
-	updateComputationIncremental(compTable);
+    else if sagbiComputation#SAGBIoptions#Strategy == "Incremental" then (
+	updateComputationIncremental(sagbiComputation);
 	) 
     else (
 	error("unknown Strategy, expected \"Master\", \"DegreeByDegree\", or \"Incremental\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'");
@@ -347,32 +347,32 @@ updateComputation(HashTable) := (compTable) -> (
 -- otherwise use DegreeByDegree
 
 updateComputationMaster = method();
-updateComputationMaster(HashTable) := (compTable) -> (
+updateComputationMaster SAGBIComputation := sagbiComputation -> (
     
-    if (compTable#SAGBIdata#?"numberOfNewGenerators") and (numColumns compTable#SAGBIdata#"sagbiGenerators" > 0) then (
-	numNewGens := compTable#SAGBIdata#"numberOfNewGenerators";
-	lastSagbiGenDegree := last first entries compTable#SAGBIdata#"sagbiDegrees";
+    if (sagbiComputation#SAGBIdata#?"numberOfNewGenerators") and (numColumns sagbiComputation#SAGBIdata#"sagbiGenerators" > 0) then (
+	numNewGens := sagbiComputation#SAGBIdata#"numberOfNewGenerators";
+	lastSagbiGenDegree := last first entries sagbiComputation#SAGBIdata#"sagbiDegrees";
 	-- compare the number of new generators with the total number of generators
 	-- e.g. if you're adding less than 2-3% of the total number of generators
 	if (numNewGens == 0 or numNewGens == 1) and (lastSagbiGenDegree > 8) then (
-	    if compTable#SAGBIoptions#PrintLevel > 4 then (
+	    if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
 		print("-- [updateComputationMaster] Detected few new generators; using Incremental Strategy");
 		);
-	    updateComputationIncremental(compTable);
+	    updateComputationIncremental(sagbiComputation);
 	    ) 
 	else (
-	    if compTable#SAGBIoptions#PrintLevel > 4 then (
+	    if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
 		print("-- [updateComputationMaster] Detected many or low-degree new generators; using DegreeByDegree Strategy");
 		);
-	    updateComputationDegreeByDegree(compTable);
+	    updateComputationDegreeByDegree(sagbiComputation);
 	    );
 	 
 	) 
     else (
-	if compTable#SAGBIoptions#PrintLevel > 4 then (
+	if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
 	    print("-- [updateComputationMaster] Defaulting to DegreeByDegree Strategy");
 	    );
-	updateComputationDegreeByDegree(compTable);
+	updateComputationDegreeByDegree(sagbiComputation);
 	);
     );
 
@@ -383,17 +383,17 @@ updateComputationMaster(HashTable) := (compTable) -> (
 -- The gb computation is only necessary up to a certain degree
 
 updateComputationDegreeByDegree = method();
-updateComputationDegreeByDegree(HashTable) := (compTable) -> (
+updateComputationDegreeByDegree SAGBIComputation := sagbiComputation -> (
         
-    sagbiGens := compTable#SAGBIdata#"sagbiGenerators";
+    sagbiGens := sagbiComputation#SAGBIdata#"sagbiGenerators";
     
     -- Changes to the rings:
     -- quotientRing (unchanged)
     -- liftedRing   (unchanged)
     -- tensorRing   (modified)
-    liftedRing := compTable#SAGBIrings#"liftedRing";
+    liftedRing := sagbiComputation#SAGBIrings#"liftedRing";
     
-    numberVariables := numgens compTable#SAGBIrings#"liftedRing";
+    numberVariables := numgens sagbiComputation#SAGBIrings#"liftedRing";
     numberGenerators := numColumns sagbiGens;
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
@@ -401,7 +401,7 @@ updateComputationDegreeByDegree(HashTable) := (compTable) -> (
         Degrees => degrees source vars liftedRing | degrees source sagbiGens,
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
-    compTable#SAGBIrings.tensorRing = tensorRing;
+    sagbiComputation#SAGBIrings.tensorRing = tensorRing;
     
     -- Changes to the maps:
     -- inclusionLifted  (modified)
@@ -416,11 +416,11 @@ updateComputationDegreeByDegree(HashTable) := (compTable) -> (
     projectionLifted := map(liftedRing, tensorRing, vars liftedRing | matrix {toList(numberGenerators:0_(liftedRing))});
     sagbiInclusion := map(tensorRing, tensorRing, matrix {toList (numberVariables:0_(tensorRing))} | (vars tensorRing)_{numberVariables .. numberVariables + numberGenerators - 1});
     
-    compTable#SAGBImaps#"inclusionLifted"  = inclusionLifted;
-    compTable#SAGBImaps#"substitution"     = substitution;
-    compTable#SAGBImaps#"projectionLifted" = projectionLifted;
-    compTable#SAGBImaps#"sagbiInclusion"   = sagbiInclusion;
-    compTable#SAGBImaps#"fullSubstitution" = projectionLifted * substitution,
+    sagbiComputation#SAGBImaps#"inclusionLifted"  = inclusionLifted;
+    sagbiComputation#SAGBImaps#"substitution"     = substitution;
+    sagbiComputation#SAGBImaps#"projectionLifted" = projectionLifted;
+    sagbiComputation#SAGBImaps#"sagbiInclusion"   = sagbiInclusion;
+    sagbiComputation#SAGBImaps#"fullSubstitution" = projectionLifted * substitution,
     
     -- Changes to the ideals:
     -- I              (unchanged)
@@ -430,8 +430,8 @@ updateComputationDegreeByDegree(HashTable) := (compTable) -> (
     
     generatingVariables := (vars tensorRing)_{numberVariables..numberVariables + numberGenerators - 1};
     SIdeal := ideal(generatingVariables - inclusionLifted(sub(leadTerm sagbiGens, liftedRing)));
-    compTable#SAGBIideals#"SIdeal" = SIdeal;
-    compTable#SAGBIideals#"reductionIdeal" = inclusionLifted compTable#SAGBIideals#"leadTermsI" + SIdeal;    
+    sagbiComputation#SAGBIideals#"SIdeal" = SIdeal;
+    sagbiComputation#SAGBIideals#"reductionIdeal" = inclusionLifted sagbiComputation#SAGBIideals#"leadTermsI" + SIdeal;    
     );
 
 ----------------------------------------------------------
@@ -447,16 +447,16 @@ updateComputationDegreeByDegree(HashTable) := (compTable) -> (
 -- because we already have a GB for the oldReductionIdeal. 
 
 updateComputationIncremental = method();
-updateComputationIncremental(HashTable) := (compTable) -> (
-    sagbiGens := compTable#SAGBIdata#"sagbiGenerators";
+updateComputationIncremental SAGBIComputation := sagbiComputation -> (
+    sagbiGens := sagbiComputation#SAGBIdata#"sagbiGenerators";
     
     -- Changes to the rings:
     -- quotientRing (unchanged)
     -- liftedRing   (unchanged)
     -- tensorRing   (modified)
-    liftedRing := compTable#SAGBIrings#"liftedRing";
+    liftedRing := sagbiComputation#SAGBIrings#"liftedRing";
     
-    numberVariables := numgens compTable#SAGBIrings#"liftedRing";
+    numberVariables := numgens sagbiComputation#SAGBIrings#"liftedRing";
     numberGenerators := numColumns sagbiGens;
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
@@ -464,7 +464,7 @@ updateComputationIncremental(HashTable) := (compTable) -> (
         Degrees => degrees source vars liftedRing | degrees source sagbiGens,
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
-    oldTensorRing := compTable#SAGBIrings.tensorRing;
+    oldTensorRing := sagbiComputation#SAGBIrings.tensorRing;
     
     -- Changes to the maps:
     -- inclusionLifted  (modified)
@@ -500,7 +500,7 @@ updateComputationIncremental(HashTable) := (compTable) -> (
     tensorRingInclusion := map(tensorRing, oldTensorRing, (vars tensorRing)_{0 .. numberVariables + numberGenerators - numberOfNewGenerators - 1});
     
     -- (2)
-    oldReductionIdealGB := tensorRingInclusion gens gb compTable#SAGBIideals#"reductionIdeal";
+    oldReductionIdealGB := tensorRingInclusion gens gb sagbiComputation#SAGBIideals#"reductionIdeal";
     forceGB oldReductionIdealGB;
     
     -- (3) 
@@ -515,38 +515,38 @@ updateComputationIncremental(HashTable) := (compTable) -> (
     forceGB newReductionGB;
     
     
-    -- Update the compTable:
-    compTable#SAGBIrings.tensorRing = tensorRing;            
-    compTable#SAGBImaps#"inclusionLifted"  = inclusionLifted;
-    compTable#SAGBImaps#"substitution"     = substitution;
-    compTable#SAGBImaps#"projectionLifted" = projectionLifted;
-    compTable#SAGBImaps#"sagbiInclusion"   = sagbiInclusion;
-    compTable#SAGBImaps#"fullSubstitution" = projectionLifted * substitution,
-    compTable#SAGBIideals#"SIdeal" = ideal newSIdealGens;
-    compTable#SAGBIideals#"reductionIdeal" = ideal newReductionGB;    
+    -- Update the sagbiComputation:
+    sagbiComputation#SAGBIrings.tensorRing = tensorRing;            
+    sagbiComputation#SAGBImaps#"inclusionLifted"  = inclusionLifted;
+    sagbiComputation#SAGBImaps#"substitution"     = substitution;
+    sagbiComputation#SAGBImaps#"projectionLifted" = projectionLifted;
+    sagbiComputation#SAGBImaps#"sagbiInclusion"   = sagbiInclusion;
+    sagbiComputation#SAGBImaps#"fullSubstitution" = projectionLifted * substitution,
+    sagbiComputation#SAGBIideals#"SIdeal" = ideal newSIdealGens;
+    sagbiComputation#SAGBIideals#"reductionIdeal" = ideal newReductionGB;    
     );
 
 
 -- Finds the lowest list in Pending
 lowestDegree = method()
-lowestDegree HashTable := compTable -> (
-    min keys compTable#SAGBIpending
+lowestDegree SAGBIComputation := sagbiComputation -> (
+    min keys sagbiComputation#SAGBIpending
 )
 
--- Adds newGens to compTable#SAGBIdata#"sagbiGenerators" 
+-- Adds newGens to sagbiComputation#SAGBIdata#"sagbiGenerators" 
 --   newGens is a 1-row matrix of generators to be added
 -- updates the sagbiDegrees with the degrees of the generators added
 -- saves the number of sagbiGenerators that were just added
 --
 appendToBasis = method()
-appendToBasis (HashTable, Matrix) := (compTable, newGenerators) -> (
-    compTable#SAGBIdata#"sagbiDegrees" = compTable#SAGBIdata#"sagbiDegrees" | matrix{flatten degrees source newGenerators};
-    compTable#SAGBIdata#"sagbiGenerators" = compTable#SAGBIdata#"sagbiGenerators" | newGenerators;
-    compTable#SAGBIdata#"numberOfNewGenerators" = numColumns newGenerators;
+appendToBasis (SAGBIComputation, Matrix) := (sagbiComputation, newGenerators) -> (
+    sagbiComputation#SAGBIdata#"sagbiDegrees" = sagbiComputation#SAGBIdata#"sagbiDegrees" | matrix{flatten degrees source newGenerators};
+    sagbiComputation#SAGBIdata#"sagbiGenerators" = sagbiComputation#SAGBIdata#"sagbiGenerators" | newGenerators;
+    sagbiComputation#SAGBIdata#"numberOfNewGenerators" = numColumns newGenerators;
 )
 
 --------------------------------------------------
--- Process Pending: (compTable) -> currentDegree
+-- Process Pending: (sagbiComputation) -> currentDegree
 --------------------------------------------------
 -- 1) Reduces the elements of lowest degree in the pending list (triangularBasis)
 -- 2) Adds these elements to the SAGBI basis (insertPending)
@@ -557,41 +557,41 @@ appendToBasis (HashTable, Matrix) := (compTable, newGenerators) -> (
 --
           
 processPending = method();
-processPending (HashTable) := compTable -> (
+processPending SAGBIComputation := sagbiComputation -> (
     local reducedGenerators; 
-    currentLowest := lowestDegree(compTable);
+    currentLowest := lowestDegree(sagbiComputation);
     if currentLowest < infinity then (
-	if compTable#SAGBIoptions#PrintLevel > 4 then (
+	if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
 	    print("-- [processPending] generators before reduction:");
-	    print(transpose matrix{toList compTable#SAGBIpending#currentLowest});
+	    print(transpose matrix{toList sagbiComputation#SAGBIpending#currentLowest});
 	    );
-	if compTable#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
-	    reducedGenerators = triangularBasis matrix{toList compTable#SAGBIpending#currentLowest};
+	if sagbiComputation#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
+	    reducedGenerators = triangularBasis matrix{toList sagbiComputation#SAGBIpending#currentLowest};
 	    reducedGenerators = matrix {select((entries reducedGenerators)_0, i->(degree i)_0>0)}; -- remove elements of degree zero
 	    ) 
 	else (
-	    reducedGenerators = matrix{toList compTable#SAGBIpending#currentLowest};
+	    reducedGenerators = matrix{toList sagbiComputation#SAGBIpending#currentLowest};
 	    );
 	
-	if compTable#SAGBIoptions#PrintLevel > 4 then (
+	if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
 	    print("-- [process pending]: reduced generators:");
 	    print(transpose reducedGenerators);
 	    );
 	
-	remove(compTable#SAGBIpending, currentLowest);
-        insertPending(compTable, reducedGenerators);
+	remove(sagbiComputation#SAGBIpending, currentLowest);
+        insertPending(sagbiComputation, reducedGenerators);
 
-        currentLowest = lowestDegree(compTable);
+        currentLowest = lowestDegree(sagbiComputation);
         if currentLowest < infinity then (
 	    
-	    if compTable#SAGBIoptions#PrintLevel > 4 then (
+	    if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
 		print("-- [processPending]: new sagbi generators being added:");
-		print(transpose matrix{toList compTable#SAGBIpending#currentLowest});
+		print(transpose matrix{toList sagbiComputation#SAGBIpending#currentLowest});
 		);    
 	    
-            appendToBasis(compTable, matrix{toList compTable#SAGBIpending#currentLowest});
-            updateComputation(compTable);
-            remove(compTable#SAGBIpending, currentLowest);
+            appendToBasis(sagbiComputation, matrix{toList sagbiComputation#SAGBIpending#currentLowest});
+            updateComputation(sagbiComputation);
+            remove(sagbiComputation#SAGBIpending, currentLowest);
             );
     	);
     currentLowest
@@ -619,34 +619,34 @@ triangularBasis(Matrix) := M -> (
 
 
 insertPending = method();
-insertPending (HashTable,Matrix) := (compTable, candidates) -> (
+insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
     for candidate in first entries candidates do(
         -- get the entry of the column and its degree
         level := (degree candidate)_0;
-        if compTable#SAGBIpending#?level then(
-            compTable#SAGBIpending#level = append(compTable#SAGBIpending#level, candidate)
+        if sagbiComputation#SAGBIpending#?level then(
+            sagbiComputation#SAGBIpending#level = append(sagbiComputation#SAGBIpending#level, candidate)
         ) 
     else (
-	        compTable#SAGBIpending#level = new MutableList from {candidate}
+	        sagbiComputation#SAGBIpending#level = new MutableList from {candidate}
 	    );
     );
 )
 
 processFirstStep = method();
-processFirstStep HashTable := (compTable) -> (
-    if compTable#SAGBIoptions#AutoSubduce then (
-        if compTable#SAGBIoptions#PrintLevel > 0 then
+processFirstStep SAGBIComputation := sagbiComputation -> (
+    if sagbiComputation#SAGBIoptions#AutoSubduce then (
+        if sagbiComputation#SAGBIoptions#PrintLevel > 0 then
             print("-- Performing initial autosubduction...");
-	compTable#SAGBIdata#"subalgebraGenerators" = autosubduce compTable;
-    	compTable#SAGBIoptions#AutoSubduce = false; -- autosubduction may now be skipped if the computation is resumed
+	sagbiComputation#SAGBIdata#"subalgebraGenerators" = autosubduce sagbiComputation;
+    	sagbiComputation#SAGBIoptions#AutoSubduce = false; -- autosubduction may now be skipped if the computation is resumed
     );
     
-    if (numcols compTable#SAGBIdata#"sagbiGenerators" == 0) then (
-        liftedGenerators := lift(compTable#SAGBIdata#"subalgebraGenerators",compTable#SAGBIrings#"liftedRing");
-        insertPending(compTable, liftedGenerators);
+    if (numcols sagbiComputation#SAGBIdata#"sagbiGenerators" == 0) then (
+        liftedGenerators := lift(sagbiComputation#SAGBIdata#"subalgebraGenerators",sagbiComputation#SAGBIrings#"liftedRing");
+        insertPending(sagbiComputation, liftedGenerators);
         -- Remove elements of the underlying field
-        remove(compTable#SAGBIpending, 0);
-        compTable#SAGBIdata#degree = processPending(compTable) + 1;
+        remove(sagbiComputation#SAGBIpending, 0);
+        sagbiComputation#SAGBIdata#degree = processPending(sagbiComputation) + 1;
     );
 )
 
@@ -660,35 +660,35 @@ submatrixByDegree (Matrix,ZZ) := (inputMatrix, selectedDegree) -> (
 )
 
 collectSPairs = method();
-collectSPairs (HashTable) := (compTable) -> (
+collectSPairs SAGBIComputation := sagbiComputation -> (
     
-    if compTable#SAGBIoptions#PrintLevel > 0 then (
+    if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
 	    print("---------------------------------------");
-	    print("-- Current degree:"|toString(compTable#SAGBIdata#degree));
+	    print("-- Current degree:"|toString(sagbiComputation#SAGBIdata#degree));
 	    print("---------------------------------------");
 	    print("-- Computing the tete-a-tete's...");
     );
-    sagbiGB := gb(compTable#SAGBIideals#"reductionIdeal", DegreeLimit => compTable#SAGBIdata#degree);
-    k := rawMonoidNumberOfBlocks(raw monoid (compTable#SAGBIrings.tensorRing)) - 2;
-    zeroGens := submatrixByDegree(selectInSubring(k, gens sagbiGB), compTable#SAGBIdata#degree);
-    SPairs := compTable#SAGBImaps#"fullSubstitution"(zeroGens) % compTable#SAGBIideals#"I";
+    sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal", DegreeLimit => sagbiComputation#SAGBIdata#degree);
+    k := rawMonoidNumberOfBlocks(raw monoid (sagbiComputation#SAGBIrings.tensorRing)) - 2;
+    zeroGens := submatrixByDegree(selectInSubring(k, gens sagbiGB), sagbiComputation#SAGBIdata#degree);
+    SPairs := sagbiComputation#SAGBImaps#"fullSubstitution"(zeroGens) % sagbiComputation#SAGBIideals#"I";
     
-    if compTable#SAGBIpending#?(compTable#SAGBIdata#degree) then (
-        SPairs = SPairs | matrix{toList compTable#SAGBIpending#(compTable#SAGBIdata#degree)};
-	remove(compTable#SAGBIpending, compTable#SAGBIdata#degree);
+    if sagbiComputation#SAGBIpending#?(sagbiComputation#SAGBIdata#degree) then (
+        SPairs = SPairs | matrix{toList sagbiComputation#SAGBIpending#(sagbiComputation#SAGBIdata#degree)};
+	remove(sagbiComputation#SAGBIpending, sagbiComputation#SAGBIdata#degree);
     );
     
-    if compTable#SAGBIoptions#PrintLevel > 2 then ( -- extra information
+    if sagbiComputation#SAGBIoptions#PrintLevel > 2 then ( -- extra information
 	print("-- GB for reductionIdeal:");
 	print(sagbiGB);
 	print(gens sagbiGB);
 	print("-- zeroGens:");
 	print(zeroGens);
 	);
-    if compTable#SAGBIoptions#PrintLevel > 0 then (
+    if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
 	print("-- Num. S-polys before subduction: "| toString(numcols SPairs));
 	);
-    if compTable#SAGBIoptions#PrintLevel > 1 then (
+    if sagbiComputation#SAGBIoptions#PrintLevel > 1 then (
 	print("-- S-polys:");
 	print(SPairs);
 	);
@@ -697,12 +697,12 @@ collectSPairs (HashTable) := (compTable) -> (
 )
 
 -- sagbi -> updatePending -> insertPending/processPending
--- updatePending(compTable, Spairs)
+-- updatePending(sagbiComputation, Spairs)
 -- Takes the already subducted SPairs and removes any 0's from the matrix
 -- Returns true if new generators are added
 --
 updatePending = method();
-updatePending(HashTable, Matrix) := (compTable, SPairs) -> (
+updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
     
     local newGens;
     local currentLowestDegree;
@@ -715,11 +715,11 @@ updatePending(HashTable, Matrix) := (compTable, SPairs) -> (
 	newGens = SPairs;
 	);
     
-    if compTable#SAGBIoptions#PrintLevel > 0 then(
+    if sagbiComputation#SAGBIoptions#PrintLevel > 0 then(
 	print("-- Num. S-polys after subduction: " | toString(numcols newGens));
 	);
     
-    if compTable#SAGBIoptions#PrintLevel > 1 then(
+    if sagbiComputation#SAGBIoptions#PrintLevel > 1 then(
 	print("-- New generators:");
 	if (numcols newGens == 0) then(
 	    -- It has to treat this as a special case because zero matrices are special.
@@ -731,13 +731,13 @@ updatePending(HashTable, Matrix) := (compTable, SPairs) -> (
     
     -- add the newGens to the pending list
     if numcols newGens > 0 then (
-	insertPending(compTable, newGens);
-	currentLowestDegree = processPending(compTable);
+	insertPending(sagbiComputation, newGens);
+	currentLowestDegree = processPending(sagbiComputation);
 	if not currentLowestDegree == infinity then ( 
-	    compTable#SAGBIdata#degree = currentLowestDegree;
+	    sagbiComputation#SAGBIdata#degree = currentLowestDegree;
 	    );
 	addedGenerators = true;
-	compTable#SAGBIdata#"autoSubductedSagbiGenerators" = false; -- need to autoSubduct new generators (see compTable option: AutoSubductOnPartialCompletion)
+	sagbiComputation#SAGBIdata#"autoSubductedSagbiGenerators" = false; -- need to autoSubduct new generators (see sagbiComputation option: AutoSubductOnPartialCompletion)
 	);
     
     addedGenerators
@@ -758,14 +758,14 @@ updatePending(HashTable, Matrix) := (compTable, SPairs) -> (
 -- 3) the degree of the computation > the maximum degree of gb for reductionIdeal
 --   - if not: it may be possible to get lower degree generators
 
--- if the computation should terminate then set compTable#SAGBIdata#"sagbiDone" to true
+-- if the computation should terminate then set sagbiComputation#SAGBIdata#"sagbiDone" to true
 -- if the computation should not terminate then:
 --   if AutoSubductOnPartialCompletion and (not autoSubductedSagbiGenerators) then:
---     autosubduceSagbi(compTable)
+--     autosubduceSagbi(sagbiComputation)
 
 
 checkTermination = method();
-checkTermination(HashTable) := (compTable) -> (
+checkTermination SAGBIComputation := (sagbiComputation) -> (
     
     local terminationCondition0;
     local terminationCondition1;
@@ -774,17 +774,17 @@ checkTermination(HashTable) := (compTable) -> (
     
     -- NB sagbGB's gb should be computed in processPending -> updateComputation (for incremental) or collectSpairs (for DegreeByDegree)
     -- that computation depends on the option: "DegreeByDegree" or "Incremental" 
-    sagbiGB := gb(compTable#SAGBIideals#"reductionIdeal", DegreeLimit => compTable#SAGBIdata#degree);
-    terminationCondition0 = #(compTable#SAGBIpending) == 0;
+    sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal", DegreeLimit => sagbiComputation#SAGBIdata#degree);
+    terminationCondition0 = #(sagbiComputation#SAGBIpending) == 0;
     terminationCondition1 = rawStatus1 raw sagbiGB == 6; -- is the GB computation completed?
     
     -- check if there are still generators of higher degree to add to the sagbiGenerators
-    terminationCondition2 = compTable#SAGBIdata#degree > max flatten (degrees compTable#SAGBIdata#"sagbiGenerators")_1;
+    terminationCondition2 = sagbiComputation#SAGBIdata#degree > max flatten (degrees sagbiComputation#SAGBIdata#"sagbiGenerators")_1;
     
     -- check to make sure it is not possible to get lower degree sagbiGenerators
     -- by taking them modulo the reductionIdeal
-    terminationCondition3 = compTable#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1; 
-    if compTable#SAGBIoptions#PrintLevel > 0 then(
+    terminationCondition3 = sagbiComputation#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1; 
+    if sagbiComputation#SAGBIoptions#PrintLevel > 0 then(
 	print("-- Stopping conditions:");
 	print("--    No higher degree candidates: "|toString(terminationCondition0));
 	print("--    S-poly ideal GB completed:   "|toString(terminationCondition1));
@@ -793,16 +793,16 @@ checkTermination(HashTable) := (compTable) -> (
 	);
     
     if terminationCondition0 and terminationCondition1 and terminationCondition2 and terminationCondition3 then (
-	compTable#SAGBIdata#"sagbiDone" = true;
-	if compTable#SAGBIoptions#PrintLevel > 0 then (
+	sagbiComputation#SAGBIdata#"sagbiDone" = true;
+	if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
 	    print("-- Computation complete. Finite sagbi basis found!")
 	    );
 	) 
     else (
-	if (compTable#SAGBIoptions#AutoSubduceOnPartialCompletion) and (not compTable#SAGBIdata#"autoSubductedSagbiGenerators") then (
+	if (sagbiComputation#SAGBIoptions#AutoSubduceOnPartialCompletion) and (not sagbiComputation#SAGBIdata#"autoSubductedSagbiGenerators") then (
 	    -- apply autosubduction to the sagbiGenerators
-	    compTable#SAGBIdata#"sagbiGenerators" = autosubduceSagbi(compTable);
-	    compTable#SAGBIdata#"autoSubductedSagbiGenerators" = true;
+	    sagbiComputation#SAGBIdata#"sagbiGenerators" = autosubduceSagbi(sagbiComputation);
+	    sagbiComputation#SAGBIdata#"autoSubductedSagbiGenerators" = true;
 	    ); 
 	);        
     )

@@ -34,7 +34,7 @@ newPackage(
 needs "./SubalgebraBases/exports.m2"
 needs "./SubalgebraBases/classes.m2"
 needs "./SubalgebraBases/sagbi-functions.m2"
-needs "./SubalgebraBases/compTable-functions.m2"
+needs "./SubalgebraBases/sagbiComp-functions.m2"
 needs "./SubalgebraBases/tests.m2"
 needs "./SubalgebraBases/sagbi-main.m2"
 

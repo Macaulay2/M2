@@ -115,35 +115,35 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 	);
     
     if (S#SAGBIdata#"limit" > opts.Limit) or S#SAGBIdata#"sagbiDone" then return S;
-    compTable := initializeCompTable(S,opts);
-    processFirstStep(compTable);
+    sagbiComputation := initializeSagbiComputation(S,opts);
+    processFirstStep(sagbiComputation);
     
     local SPairs;
 
-    while (compTable#SAGBIdata#degree <= opts.Limit) and
-          (not compTable#SAGBIdata#"sagbiDone") do (
+    while (sagbiComputation#SAGBIdata#degree <= opts.Limit) and
+          (not sagbiComputation#SAGBIdata#"sagbiDone") do (
     		
-        SPairs = collectSPairs(compTable);
-	SPairs = compSubduction(compTable, SPairs);
+        SPairs = collectSPairs(sagbiComputation);
+	SPairs = compSubduction(sagbiComputation, SPairs);
 	
 	-- update and process the new sagbi generators
 	-- update pending returns true if new sagbiGenerators were added and false otherwise
 	-- if new sagbiGenerators were added then updatePending
-	--    sets the compTable#SAGBIdata#degree to the lowest degree of a new generator
+	--    sets the sagbiComputation#SAGBIdata#degree to the lowest degree of a new generator
 	-- if no new sagbiGenerators were added then check for termination conditions
-	if not updatePending(compTable, SPairs) then (
-	    checkTermination(compTable);
+	if not updatePending(sagbiComputation, SPairs) then (
+	    checkTermination(sagbiComputation);
 	    );
 
 	-- move on to the next degree
-	compTable#SAGBIdata#degree = compTable#SAGBIdata#degree + 1;
+	sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;
 	
-	if compTable#SAGBIoptions#PrintLevel > 2 then(
+	if sagbiComputation#SAGBIoptions#PrintLevel > 2 then(
 	    print("-- [main] sagbiGenerators are currently: ");
-	    print(transpose compTable#SAGBIdata#"sagbiGenerators");
+	    print(transpose sagbiComputation#SAGBIdata#"sagbiGenerators");
 	    );	
     );
-    sagbiBasis compTable
+    sagbiBasis sagbiComputation
 )
 
 -- the user subduction methods:
@@ -165,17 +165,17 @@ subduction = method(
 
 
 subduction(SAGBIBasis, Matrix) := opts -> (S, M) -> (
-    compTable := initializeCompTable(S, opts);
-    compSubduction(opts, compTable, M)
+    sagbiComputation := initializeSagbiComputation(S, opts);
+    compSubduction(opts, sagbiComputation, M)
     )
 
 subduction(SAGBIBasis, RingElement) := opts -> (S, m) -> (
-    compTable := initializeCompTable(S, opts);
-    first first entries compSubduction(opts, compTable, matrix {{m}})
+    sagbiComputation := initializeSagbiComputation(S, opts);
+    first first entries compSubduction(opts, sagbiComputation, matrix {{m}})
     )
 
 subduction(Matrix, Matrix) := opts -> (F, M) -> (
-    S := initializeCompTable(sagbiBasis(subring F, opts), opts);
+    S := initializeSagbiComputation(sagbiBasis(subring F, opts), opts);
     S#SAGBIdata#"sagbiGenerators" = F;
     updateComputation(S);
     compSubduction(opts, S, M)

@@ -58,6 +58,7 @@ net Subring := S -> (
 
 SAGBIBasis = new Type of HashTable
 
+
 -- Options:
 -- > AutoSubduce is a boolean that determines whether the generators should be subducted against each other
 --   at the beginning of the sagbi computation.
@@ -222,26 +223,6 @@ sagbiBasis Subring := opts -> S -> (
     S.cache#SAGBIBasis = newSAGBIBasis
 )
 
-sagbiBasis HashTable := opts -> H -> (
-    rings := new HashTable from H#SAGBIrings;
-    maps := new HashTable from H#SAGBImaps;
-    ideals := new HashTable from H#SAGBIideals;
-    data := new HashTable from H#SAGBIdata;
-    -- pending := applyValues(H#SAGBIpending, l -> new List from l); -- proposed change to the following line  
-    pending := new HashTable from apply(keys H#SAGBIpending,i-> i => new List from (H#SAGBIpending#i));
-    optionTable := new HashTable from H#SAGBIoptions;
-    newSAGBIBasis := new SAGBIBasis from {
-        SAGBIrings => rings, -- rings -> SAGBIRings + protect
-        SAGBImaps => maps,
-        SAGBIideals => ideals,
-        SAGBIdata => data,
-        SAGBIpending => pending,
-        SAGBIoptions => optionTable
-    };
-    
-    newSAGBIBasis#SAGBIdata#subring.cache#SAGBIBasis = newSAGBIBasis
-)
-
 net SAGBIBasis := S -> (
     local description;
     if S#SAGBIdata#"sagbiDone" then (
@@ -314,5 +295,33 @@ status SAGBIBasis := opts -> SB -> (
 
 
 numgens SAGBIBasis := S -> numcols gens S
+
+-- SAGBIComputation is an internal type used for SAGBI computation
+-- it is a SAGBIBasis where the hash tables, such as rings, maps, ideals, are mutable
+SAGBIComputation = new Type of HashTable
+
+-- once a SAGBI computation has finished then the resulting SAGBIComputation object
+-- is de-converted into a SAGBIBasis
+sagbiBasis SAGBIComputation := opts -> H -> (
+    rings := new HashTable from H#SAGBIrings;
+    maps := new HashTable from H#SAGBImaps;
+    ideals := new HashTable from H#SAGBIideals;
+    data := new HashTable from H#SAGBIdata;
+    -- pending := applyValues(H#SAGBIpending, l -> new List from l); -- proposed change to the following line  
+    pending := new HashTable from apply(keys H#SAGBIpending,i-> i => new List from (H#SAGBIpending#i));
+    optionTable := new HashTable from H#SAGBIoptions;
+    newSAGBIBasis := new SAGBIBasis from {
+        SAGBIrings => rings, -- rings -> SAGBIRings + protect
+        SAGBImaps => maps,
+        SAGBIideals => ideals,
+        SAGBIdata => data,
+        SAGBIpending => pending,
+        SAGBIoptions => optionTable
+    };
+    
+    newSAGBIBasis#SAGBIdata#subring.cache#SAGBIBasis = newSAGBIBasis
+)
+
+
 
 end--
