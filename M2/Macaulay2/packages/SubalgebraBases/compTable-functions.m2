@@ -567,6 +567,7 @@ processPending (HashTable) := compTable -> (
 	    );
 	if compTable#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
 	    reducedGenerators = triangularBasis matrix{toList compTable#SAGBIpending#currentLowest};
+	    reducedGenerators = matrix {select((entries reducedGenerators)_0, i->(degree i)_0>0)}; -- remove elements of degree zero
 	    ) 
 	else (
 	    reducedGenerators = matrix{toList compTable#SAGBIpending#currentLowest};

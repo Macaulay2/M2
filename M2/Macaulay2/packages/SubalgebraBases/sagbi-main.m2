@@ -97,9 +97,14 @@ sagbi(Subring) := opts -> S -> (
     newSB
 );
 
+
+-- TODO: throw an error if the ambient ring has a multigrading
+
 sagbi(SAGBIBasis) := opts -> SB -> (
     local S;
     SBSubring := subring SB;
+    if degreeLength ambient SBSubring > 1 then error "sagbi is not implemented for rings with multi-degrees";
+    for deg in flatten degrees ambient SBSubring do if not deg > 0 then error "expected ring with positive degrees";
     -- if Recomputing then create a new SAGBIBasis object
     if opts.Recompute or SB#SAGBIoptions#Recompute then (
 	remove(SBSubring.cache, SAGBIBasis);
