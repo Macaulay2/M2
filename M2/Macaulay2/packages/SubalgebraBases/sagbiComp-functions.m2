@@ -5,24 +5,20 @@
 --   if RenewOptions is true then only the specified options are used
 initializeSagbiComputation = method();
 initializeSagbiComputation (SAGBIBasis, HashTable):= (S, opts) -> (
-    local optionTable;
     rings := new MutableHashTable from S#SAGBIrings;
     maps := new MutableHashTable from S#SAGBImaps;
     ideals := new MutableHashTable from S#SAGBIideals;
     data := new MutableHashTable from S#SAGBIdata;
-    pending := new MutableHashTable from S#SAGBIpending;
-    if opts.RenewOptions then (
-	optionTable = new MutableHashTable from opts;
-	) 
-    else (
-	optionTable = new MutableHashTable from S#SAGBIoptions;
+    pending := new MutableHashTable from applyValues(S#SAGBIpending, l -> new MutableList from l);
+    optionTable := new MutableHashTable from (
+	if opts.RenewOptions then opts else S#SAGBIoptions
 	);
     
     data#"limit" = opts.Limit;
     optionTable#PrintLevel = opts.PrintLevel;
     optionTable#RenewOptions = false;
     optionTable#Recompute = false;
-    apply(keys pending, i -> pending#i = new MutableList from pending#i);
+    --apply(keys pending, i -> pending#i = new MutableList from pending#i);
 
     new SAGBIComputation from {
         SAGBIrings => rings,
@@ -36,7 +32,7 @@ initializeSagbiComputation (SAGBIBasis, HashTable):= (S, opts) -> (
 
 -- limitedSagbiComputation: construct a small sagbiComputation with enough data for use in autoSubduction
 limitedSagbiComputation = method();
-limitedSagbiComputation (SAGBIComputation, Matrix) := (sagbiComputation,M) -> (
+limitedSagbiComputation (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
     -- Construct the monoid of a ring with variables corresponding
     --    to generators of the ambient ring and the subalgebra.
     -- Has an elimination order that eliminates the generators of the ambient ring.
@@ -127,25 +123,21 @@ compSubduction(SAGBIComputation, MutableMatrix) := opts -> (sagbiComputation, M)
     )
 
 compSubduction(SAGBIComputation, Matrix) := opts -> (sagbiComputation, M) -> (
-    local result;
-    local liftedM;
     if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (    
 	print("-- subduction input:");
 	print(M);
-	);
-    
+	);    
     if zero(M) then return M;
-    result = matrix {toList(numcols(M):0_(sagbiComputation#SAGBIrings#"liftedRing"))};
-    liftedM = matrix {
+    result := matrix {toList(numcols(M):0_(sagbiComputation#SAGBIrings#"liftedRing"))};
+    liftedM := matrix {
 	for m in first entries M list sub(m, sagbiComputation#SAGBIrings#"liftedRing")
 	};
-    local subductedPart;
-    local leadTermSubductedPart;    
-    if sagbiComputation#SAGBIoptions#PrintLevel > 5 then(
+    if sagbiComputation#SAGBIoptions#PrintLevel > 5 then (
 	print("-- [compSubduction] elements to subduct:");
 	print(transpose liftedM);
 	);
-    
+    local subductedPart;
+    local leadTermSubductedPart;
     while not (zero(liftedM)) do (
 	if sagbiComputation#SAGBIoptions#SubductionMethod == "Top" then (
             subductedPart = subductionTopLevelLeadTerm(sagbiComputation, liftedM);
@@ -280,8 +272,8 @@ autosubduce SAGBIComputation := sagbiComputation -> (
     generatorMatrix := new MutableMatrix from sagbiComputation#SAGBIdata#"subalgebraGenerators";
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = new Matrix from generatorMatrix_(toList join(0..(i-1),(i+1)..((numColumns generatorMatrix)-1)));
-            tempsagbiComputation = limitedSagbiComputation(sagbiComputation,lift(M,sagbiComputation#SAGBIrings#"liftedRing"));
-	    generatorMatrix_(0,i) = (compSubduction(tempsagbiComputation,generatorMatrix_{i}))_(0,0);
+            tempSagbiComputation = limitedSagbiComputation(sagbiComputation,lift(M,sagbiComputation#SAGBIrings#"liftedRing"));
+	    generatorMatrix_(0,i) = (compSubduction(tempSagbiComputation,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
     );
