@@ -989,7 +989,7 @@ inline size_t rank(const DMatQQFlint& A)
   // that matrix.
   fmpz_mat_t m1;
   fmpz_mat_init(m1, A.numRows(), A.numColumns());
-  fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A.fmpq_mat());
+  fmpq_mat_get_fmpz_mat_rowwise(m1, nullptr, A.fmpq_mat());
   // fmpz_mat_print_pretty(m1);
   size_t rk = fmpz_mat_rank(m1);
   fmpz_mat_clear(m1);
@@ -1019,7 +1019,7 @@ inline size_t nullSpace(const DMatQQFlint& A, DMatQQFlint& result_nullspace)
   fmpz_mat_t m2;
   fmpz_mat_init(m1, A.numRows(), A.numColumns());
   fmpz_mat_init(m2, A.numColumns(), A.numColumns());
-  fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A.fmpq_mat());
+  fmpq_mat_get_fmpz_mat_rowwise(m1, nullptr, A.fmpq_mat());
   // fmpz_mat_print_pretty(m1);
   size_t nullity = fmpz_mat_nullspace(m2, m1);
   // now copy the first 'nullity' columns into result_nullspace
