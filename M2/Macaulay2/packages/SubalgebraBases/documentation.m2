@@ -1,7 +1,3 @@
--- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
-undocumented {
-    }
-
 Subring.synonym = "subring"
 SAGBIBasis.synonym = "SAGBIBasis"
 IntersectedSubring.synonym = "intersected subring"
@@ -74,25 +70,26 @@ doc ///
      AutoSubduce=>Boolean
        a flag indicating when to perform autosubduction on the generators before performing the Sagbi basis computation (See: @TO "AutoSubduce"@)
      ReduceNewGenerators=>Boolean
-       a flag indicating whether to apply gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
+       a flag indicating whether to apply Gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
      StorePending=>Boolean
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
-       the update strategy at the beginning of each loop: \"DegreeByDegree\", \"Incremental\", and \"Master\".
-       The strategy \"Master\" is a hybrid that combines the other two; starting with \"DegreeByDegree\" for low degrees and switching to \"Incremental\". (See: @TO "Strategy"@)
+       the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
      SubductionMethod=>String
-       the method used for subduction either: \"Top\" or \"Engine\". (See: @TO "SubductionMethod"@)
+       the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      AutoSubduceOnPartialCompletion=>Boolean
-       apply autosubduction to the sagbi generators the first time no new generators are added.
+       a flag that indicates whether autosubduction is applied to the sagbi generators the first time no new generators are added.
        Use this only if very few new sagbi generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
      PrintLevel=>ZZ
+       an option to produce additional output.
        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
      Recompute=>Boolean
-       if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
+       a flag that indicates if the computation will resume on subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
-       if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
+       a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
        (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:Matrix
@@ -148,25 +145,26 @@ doc ///
      AutoSubduce=>Boolean
        a flag indicating when to perform autosubduction on the generators before performing the sagbi basis computation (See: @TO "AutoSubduce"@)
      ReduceNewGenerators=>Boolean
-       a flag indicating whether to apply gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
+       a flag indicating whether to apply Gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
      StorePending=>Boolean
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
-       the update strategy at the beginning of each loop: \"DegreeByDegree\", \"Incremental\", and \"Master\".
-       The strategy \"Master\" is a hybrid that combines the other two; starting with \"DegreeByDegree\" for low degrees and switching to \"Incremental\". (See: @TO "Strategy"@)
+       the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
      SubductionMethod=>String
-       the method used for subduction either: \"Top\" or \"Engine\". (See: @TO "SubductionMethod"@)
+       the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      AutoSubduceOnPartialCompletion=>Boolean
-       apply autosubduction to the sagbi generators the first time no new generators are added.
+       a flag that indicates whether autosubduction is applied to the sagbi generators the first time no new generators are added.
        Use this only if very few new sagbi generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
      PrintLevel=>ZZ
-       When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
+        an option to produce additional output.
+        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
      Recompute=>Boolean
-       if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
+       a flag that indicates if the computation will resume in subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
-       if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
+       a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
        (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:SAGBIBasis
@@ -242,7 +240,7 @@ doc ///
      Text
        The function @TO "sagbi"@ computes a subalgebra basis by subducting {\it S-pairs}.
        Any resulting non-zero polynomials are added to the list of sagbi generators.
-       However if ReduceNewGenerators is set to @ TT "true" @ (by default) then the new generators are reduced using gaussian elimination against the other new generators.
+       However if ReduceNewGenerators is set to @ TT "true" @ (by default) then the new generators are reduced using Gaussian elimination against the other new generators.
        This process is quick (as fast as computing a groebner basis for a linear ideal) and ensures that duplicate generators are not added to the list of sagbi generators.
    SeeAlso
      sagbi
@@ -292,14 +290,14 @@ doc ///
    Description
      Text
        At the beginning of each loop inside of @TO "sagbi"@, the main @TO "SAGBIBasis"@ computation object is updated.
-       There are two types of update procedure; they are selected by setting Strategy to either \"DegreeByDegree\" or \"Incremental\".
-       The \"DegreeByDegree\" strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
-       The \"Incremental\" strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new sagbi generators.
-       The \"DegreeByDegree\" strategy is better when many new generators are added during each loop of the Sagbi algorithm.
-       The \"Incremental\" strategy is better when there is little change to the number of sagbi generators.
+       There are two types of update procedure; they are selected by setting Strategy to either "DegreeByDegree" or "Incremental".
+       The "DegreeByDegree" strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
+       The "Incremental" strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new sagbi generators.
+       The "DegreeByDegree" strategy is better when many new generators are added during each loop of the Sagbi algorithm.
+       The "Incremental" strategy is better when there is little change to the number of sagbi generators.
        For many examples, it is observed that many new generators are added at the beginning of sagbi basis computations.
        Then towards the end of the computation, there are very few new generators that are added.
-       By setting Strategy to \"Master\" (default), the \"DegreeByDegree\" strategy is used at the beginning and the strategy switches to \"Incremental\" part of the way through the algorithm.
+       By setting Strategy to "Master" (default), the "DegreeByDegree" strategy is used at the beginning and the strategy switches to "Incremental" part of the way through the algorithm.
    SeeAlso
      sagbi
      AutoSubduce
@@ -320,7 +318,7 @@ doc ///
      Subduction method for the Sagbi algorithm
    Description
      Text
-       To subduct the {\it S-pairs} in @TO "sagbi"@, one can either use \"Top\" or \"Engine\".
+       To subduct the {\it S-pairs} in @TO "sagbi"@, one can either use "Top" or "Engine".
        Engine level subduction is generally faster.
        To view each subduction taking place inside the Sagbi algorithm, use a high value for @TO PrintLevel@ together with top-level subduction.
    SeeAlso
@@ -369,8 +367,8 @@ doc ///
      Text
        During the main loop in @TO "sagbi"@ if no new sagbi generators are added and the @TO "AutoSubduceOnPartialCompletion"@ flag
        is @ TT "true" @ then all sagbi generators are subducted against each other.
-       This a significant time investment, however if no new sagbi generators are to be added then the subduction of the sagbi
-       generators will speed up the computation of the groebner basis of the {\it reduction ideal} and {\it S-pairs}.
+       This is a significant time investment, however if no new sagbi generators are to be added then the subduction of the sagbi
+       generators will speed up the computation of the Groebner basis of the {\it reduction ideal} and {\it S-pairs}.
    SeeAlso
      sagbi
      AutoSubduce
@@ -514,14 +512,14 @@ doc ///
      AutoSubduce=>Boolean
        a flag indicating when to perform autosubduction on the generators before performing the Sagbi basis computation (See: @TO "AutoSubduce"@)
      ReduceNewGenerators=>Boolean
-       a flag indicating whether to apply gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
+       a flag indicating whether to apply Gaussian elimination to new sagbi generators before adding them to the current sagbi basis (See: @TO "ReduceNewGenerators"@)
      StorePending=>Boolean
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
-       the update strategy at the beginning of each loop: \"DegreeByDegree\", \"Incremental\", and \"Master\".
-       The strategy \"Master\" is a hybrid that combines the other two; starting with \"DegreeByDegree\" for low degrees and switching to \"Incremental\". (See: @TO "Strategy"@)
+       the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
      SubductionMethod=>String
-       the method used for subduction either: \"Top\" or \"Engine\". (See: @TO "SubductionMethod"@)
+       the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      AutoSubduceOnPartialCompletion=>Boolean
@@ -618,11 +616,6 @@ doc ///
      Text
        If @TT "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ then the generators of the associated subring can be checked for being
        a sagbi basis by setting @TO "UseSubringGens"@ to @ TT "true" @.
-       
-       A note of caution. Excessive use of @TT "isSAGBI"@ may impact performance.
-       The inputs and outputs of @TT "isSAGBI"@ are stored and never deleted. Since
-       the inputs and outputs include pointers objects such as @TO "SAGBIBasis"@ computation objects, these
-       objects will not be garbage collected.
    SeeAlso
      SAGBIBasis
      (gens, SAGBIBasis)
@@ -630,6 +623,11 @@ doc ///
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
      sagbi
+   Caveat
+       A note of caution. Excessive use of @TT "isSAGBI"@ may impact performance.
+       The inputs and outputs of @TT "isSAGBI"@ are stored and never deleted. Since
+       the inputs and outputs include pointers objects such as @TO "SAGBIBasis"@ computation objects, these
+       objects will not be garbage collected.
 ///
 doc ///
    Key
@@ -655,10 +653,10 @@ doc ///
    Description
      Text
        When @TO "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ $SB$, then this flag determines
-       whether the sagbi generators or the subring generators are checked for being a subalgebra basis.
-       Explicitly, if the flag is set to @ TT "false" @ then the sagbi generators of $SB$ are checked for being
-       a subalgebra basis. Otherwise, if the flag is set to @ TT "true" @ then the generators of the underlying
-       subring associated to $SB$ are checked for being a subalgebra basis.
+       whether the provided generators or the subring generators form a subalgebra basis.
+       Explicitly, if the flag is set to false then the check is aplied to the sagbi generators of $SB$.
+       Otherwise, if the flag is set to true, then the check is applied to the generators of the underlying subring associated to $SB$.
+
    SeeAlso
      isSAGBI
 
@@ -759,26 +757,16 @@ doc ///
 doc ///
    Key
      (symbol %, RingElement, Subring)
-     --(symbol %, Matrix, Subring)
-     --(symbol %, RingElement, SAGBIBasis)
-     --(symbol %, Matrix, SAGBIBasis)
    Headline
      Remainder modulo a subring
    Usage
      r = f % S
-     --R = M % S
-     --r = f % SB
-     --R = M % SB
    Inputs
      f:RingElement
-     --M:Matrix
      S:Subring
-     --SB:SAGBIBasis
    Outputs
      r:RingElement
        the normal form of f modulo the subring
-     --R:Matrix
-     --  the normal form of entries of M modulo the subring
    Description
      Text
        The result is zero if and only if the input belongs to the subring.
@@ -792,7 +780,6 @@ doc ///
        g = x1^2*x2 + x2^2*x3 + x3^2*x1
        g % S
    SeeAlso
-     (symbol %, RingElement, Subring)
      (symbol %, Matrix, Subring)
      (symbol %, RingElement, SAGBIBasis)
      (symbol %, Matrix, SAGBIBasis)
@@ -802,25 +789,15 @@ doc ///
 ///
 doc ///
    Key
-     --(symbol %, RingElement, Subring)
      (symbol %, Matrix, Subring)
-     --(symbol %, RingElement, SAGBIBasis)
-     --(symbol %, Matrix, SAGBIBasis)
    Headline
      Remainder modulo a subring
    Usage
-     --r = f % S
      R = M % S
-     --r = f % SB
-     --R = M % SB
    Inputs
-     --f:RingElement
      M:Matrix
      S:Subring
-     --SB:SAGBIBasis
    Outputs
-     --r:RingElement
-     --  the normal form of f modulo the subring
      R:Matrix
        the normal form of entries of M modulo the subring
    Description
@@ -828,7 +805,6 @@ doc ///
        Applies @TO "RingElement % Subring"@ entry-wise to @TT "M"@.
    SeeAlso
      (symbol %, RingElement, Subring)
-     (symbol %, Matrix, Subring)
      (symbol %, RingElement, SAGBIBasis)
      (symbol %, Matrix, SAGBIBasis)
      Subring
@@ -837,34 +813,23 @@ doc ///
 ///
 doc ///
    Key
-     --(symbol %, RingElement, Subring)
-     --(symbol %, Matrix, Subring)
      (symbol %, RingElement, SAGBIBasis)
-     --(symbol %, Matrix, SAGBIBasis)
    Headline
      Remainder modulo a subring
    Usage
-     --r = f % S
-     --R = M % S
      r = f % SB
-     --R = M % SB
    Inputs
      f:RingElement
-     --M:Matrix
-     --S:Subring
      SB:SAGBIBasis
    Outputs
      r:RingElement
        the normal form of f modulo the subring
-     --R:Matrix
-     --  the normal form of entries of M modulo the subring
    Description
      Text
        Subducts @TT "f"@ against the sagbi generators of @TT "SB"@.
    SeeAlso
      (symbol %, RingElement, Subring)
      (symbol %, Matrix, Subring)
-     (symbol %, RingElement, SAGBIBasis)
      (symbol %, Matrix, SAGBIBasis)
      Subring
      SAGBIBasis
@@ -872,25 +837,15 @@ doc ///
 ///
 doc ///
    Key
-     --(symbol %, RingElement, Subring)
-     --(symbol %, Matrix, Subring)
-     --(symbol %, RingElement, SAGBIBasis)
      (symbol %, Matrix, SAGBIBasis)
    Headline
      Remainder modulo a subring
    Usage
-     --r = f % S
-     --R = M % S
-     --r = f % SB
      R = M % SB
    Inputs
-     --f:RingElement
      M:Matrix
-     --S:Subring
      SB:SAGBIBasis
    Outputs
-     --r:RingElement
-     --  the normal form of f modulo the subring
      R:Matrix
        the normal form of entries of M modulo the subring
    Description
@@ -900,7 +855,6 @@ doc ///
      (symbol %, RingElement, Subring)
      (symbol %, Matrix, Subring)
      (symbol %, RingElement, SAGBIBasis)
-     (symbol %, Matrix, SAGBIBasis)
      Subring
      SAGBIBasis
      groebnerMembershipTest
@@ -922,13 +876,13 @@ doc ///
      S1:Subring
      S2:Subring
      Strategy=>String
-       the update strategy at the beginning of each loop: \"DegreeByDegree\", \"Incremental\", and \"Master\".
-       The strategy \"Master\" is a hybrid that combines the other two; starting with \"DegreeByDegree\" for low degrees and switching to \"Incremental\". (See: @TO "Strategy"@)
+       the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
      SubductionMethod=>String
-       the method used for subduction either: \"Top\" or \"Engine\". (See: @TO "SubductionMethod"@)
+       the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      SAGBILimitType=>String
-       Either \"Fixed\" or \"Function\". Determines the stopping criterion for the sagbi computation. If \"Fixed\" then the @TO "Limit"@ is used,
-       otherwise if \"Function\" is selected then the maximum degree of the input generators is used as the degree limit.
+       Either "Fixed" or "Function". Determines the stopping criterion for the sagbi computation. If "Fixed" then the @TO "Limit"@ is used,
+       otherwise if "Function" is selected then the maximum degree of the input generators is used as the degree limit.
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      PrintLevel=>ZZ
@@ -1112,9 +1066,9 @@ doc ///
      A = subring S
    Inputs
      M:Matrix
-       a one-row matrix whose entries are the generators for the constructed @TO "Subring"@.
+       whose entries are the generators for the constructed @TO "Subring"@.
      L:List
-       a list of generators for the constructed @TO "Subring"@.
+       containing generators for the constructed @TO "Subring"@.
      S:SAGBIBasis
      GeneratorSymbol=>Symbol
        a symbol to be used for the variables of the subductionQuotientRing.
@@ -1164,7 +1118,6 @@ doc ///
    SeeAlso
      Subring
      subring
-     (gens, Subring)
      (ambient, Subring)
      (numgens, Subring)
      (net, Subring)
@@ -1197,7 +1150,6 @@ doc ///
      Subring
      subring
      (gens, Subring)
-     (ambient, Subring)
      (numgens, Subring)
      (net, Subring)
 ///
@@ -1226,7 +1178,6 @@ doc ///
      subring
      (gens, Subring)
      (ambient, Subring)
-     (numgens, Subring)
      (numgens, SAGBIBasis)
      (net, Subring)
 ///
@@ -1280,7 +1231,6 @@ doc ///
      (gens, Subring)
      (ambient, Subring)
      (numgens, Subring)
-     (net, Subring)
 ///
 
 doc ///

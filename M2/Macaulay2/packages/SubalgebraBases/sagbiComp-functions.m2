@@ -267,7 +267,7 @@ subductionEngineLevelLeadTerm(SAGBIComputation, Matrix) := (sagbiComputation, M)
 autosubduce = method();
 autosubduce SAGBIComputation := sagbiComputation -> (
     
-    local tempsagbiComputation;
+    local tempSagbiComputation;
     local M;
     generatorMatrix := new MutableMatrix from sagbiComputation#SAGBIdata#"subalgebraGenerators";
     for i from 0 to (numColumns generatorMatrix) - 1 do (
