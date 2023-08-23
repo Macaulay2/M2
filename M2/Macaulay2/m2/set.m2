@@ -40,7 +40,7 @@ Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -
 VirtualTally ? VirtualTally := (x,y) -> (
     flag:=symbol ==;
     for k in keys x|keys y do
-    if ((cmp := x_k?y_k) =!= symbol ==) and (cmp === incomparable or (flag =!= cmp and first(flag =!= symbol ==,flag = cmp))) then return incomparable;
+    if ((cmp := x_k?y_k) =!= symbol ==) and flag =!= cmp and first(flag =!= symbol ==,flag = cmp) then return incomparable;
     flag
     )
 
@@ -62,6 +62,7 @@ ZZ ? Tally := (i,x) -> toTally i ? x
 *-
 
 RingElement * VirtualTally := Number * VirtualTally := (i,v) -> if i==0 then new class v from {} else applyValues(v,y->y*i)
+RingElement * Tally := (i,v) -> lift(i,ZZ) * v
 Number * Tally := (i,v) -> if i<=0 then new class v from {} else applyValues(v,y->y*i)
      
 sum VirtualTally := (w) -> sum(pairs w, (k,v) -> v * k)
