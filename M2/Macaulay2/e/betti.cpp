@@ -5,7 +5,7 @@
 BettiDisplay::BettiDisplay()
     : mLoDegree(0), mHiDegree(0), mHiLength(0), mNLevels(0)
 {
-  mValues = 0;
+  mValues = nullptr;
 }
 
 BettiDisplay::BettiDisplay(int lodegree, int hidegree, int hilen)
@@ -52,7 +52,7 @@ BettiDisplay& BettiDisplay::operator=(const BettiDisplay& B)
 BettiDisplay::~BettiDisplay()
 {
   delete[] mValues;
-  mValues = 0;
+  mValues = nullptr;
 }
 
 void BettiDisplay::resize(int new_lo_degree, int new_hi_degree, int new_length)

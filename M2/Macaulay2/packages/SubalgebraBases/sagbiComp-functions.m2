@@ -560,15 +560,15 @@ processPending SAGBIComputation := sagbiComputation -> (
 	if sagbiComputation#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
 	    reducedGenerators = triangularBasis matrix{toList sagbiComputation#SAGBIpending#currentLowest};
 	    reducedGenerators = matrix {select((entries reducedGenerators)_0, i->(degree i)_0>0)}; -- remove elements of degree zero
+	    if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
+	    	print("-- [process pending]: reduced generators:");
+	    	print(transpose reducedGenerators);
+	    	);
 	    ) 
 	else (
 	    reducedGenerators = matrix{toList sagbiComputation#SAGBIpending#currentLowest};
 	    );
 	
-	if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
-	    print("-- [process pending]: reduced generators:");
-	    print(transpose reducedGenerators);
-	    );
 	
 	remove(sagbiComputation#SAGBIpending, currentLowest);
         insertPending(sagbiComputation, reducedGenerators);
@@ -647,7 +647,7 @@ processFirstStep SAGBIComputation := sagbiComputation -> (
 submatrixByDegree = method()
 submatrixByDegree (Matrix,ZZ) := (inputMatrix, selectedDegree) -> (
     matrixDegrees := degrees source inputMatrix;
-    selectedEntries := positions(0..numcols inputMatrix - 1, i-> (matrixDegrees)_i === {selectedDegree});
+    selectedEntries := positions(matrixDegrees, d -> d === {selectedDegree});
     inputMatrix_selectedEntries
 )
 

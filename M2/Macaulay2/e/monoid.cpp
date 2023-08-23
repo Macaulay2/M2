@@ -18,7 +18,7 @@
 #include "polyring.hpp"
 #include "util.hpp"
 
-Monoid *Monoid::trivial_monoid = 0;
+Monoid *Monoid::trivial_monoid = nullptr;
 
 // ONLY to be called by PolyRing::get_trivial_poly_ring()
 void Monoid::set_trivial_monoid_degree_ring(const PolynomialRing *DR)
@@ -38,7 +38,7 @@ Monoid::Monoid()
       degree_monoid_(nullptr),  // will be set later
       mo_(nullptr),
       monorder_(nullptr),
-      overflow(0),
+      overflow(nullptr),
       exp_size(0),
       monomial_size_(0),
       monomial_bound_(0),
@@ -54,7 +54,7 @@ Monoid::Monoid()
 Monoid::~Monoid() {}
 Monoid *Monoid::get_trivial_monoid()
 {
-  if (trivial_monoid == 0) trivial_monoid = new Monoid;
+  if (trivial_monoid == nullptr) trivial_monoid = new Monoid;
 
   return trivial_monoid;
 }
@@ -71,12 +71,12 @@ Monoid *Monoid::create(const MonomialOrdering *mo,
   if (degs->len != nvars * eachdeg)
     {
       ERROR("degree list should be of length %d", nvars * eachdeg);
-      return 0;
+      return nullptr;
     }
   if (nvars != names->len)
     {
       ERROR("expected %d variable names", nvars);
-      return 0;
+      return nullptr;
     }
 
   return new Monoid(mo, names, deg_ring, degs, hefts);
@@ -110,7 +110,7 @@ Monoid::Monoid(const MonomialOrdering *mo,
       degree_monoid_(deg_ring->getMonoid()),
       mo_(mo),
       monorder_(nullptr), // set below
-      overflow(0),
+      overflow(nullptr),
       exp_size(0), // set below
       monomial_size_(0), // set below
       monomial_bound_(0),
@@ -197,9 +197,9 @@ Monoid::Monoid(const MonomialOrdering *mo,
 
 void Monoid::set_degrees()
 {
-  if (degree_monoid_ == NULL)
+  if (degree_monoid_ == nullptr)
     {
-      degree_of_var_.push_back(static_cast<const_monomial>(NULL));
+      degree_of_var_.push_back(static_cast<const_monomial>(nullptr));
       return;
     }
 
@@ -353,7 +353,7 @@ void Monoid::text_out(buffer &o) const
     }
   o << "}";
 
-  if (heftvals_ != NULL)
+  if (heftvals_ != nullptr)
     {
       o << "," << newline << "  Heft => {";
       for (i = 0; i < heftvals_->len; i++)
@@ -364,7 +364,7 @@ void Monoid::text_out(buffer &o) const
       o << "}";
     }
 
-  if (mo_ != 0)
+  if (mo_ != nullptr)
     {
       o << "," << newline << "  ";
       o << IM2_MonomialOrdering_to_string(mo_);
@@ -491,14 +491,14 @@ int Monoid::compare(const_monomial m,
 
 monomial Monoid::make_new(const_monomial d) const
 {
-  if (nvars_ == 0) return NULL;
+  if (nvars_ == 0) return nullptr;
   monomial result = newarray_atomic(int, monomial_size());
   copy(d, result);
   return result;
 }
 monomial Monoid::make_one() const
 {
-  if (nvars_ == 0) return NULL;
+  if (nvars_ == 0) return nullptr;
   monomial result = newarray_atomic(int, monomial_size());
   one(result);
   return result;
