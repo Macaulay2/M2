@@ -103,7 +103,6 @@ limitedSagbiComputation (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
 --     with entries in the quotientRing and subducts the elements of M against sagbiComputation
 
 compSubduction = method( 
-    TypicalValue => HashTable,
     Options => {
 	AutoSubduce => true,
         ReduceNewGenerators => true,
@@ -118,11 +117,11 @@ compSubduction = method(
     	}
     );
 
-compSubduction(SAGBIComputation, MutableMatrix) := opts -> (sagbiComputation, M) -> (
+compSubduction(SAGBIComputation, MutableMatrix) := MutableMatrix => opts -> (sagbiComputation, M) -> (
     new MutableMatrix from compSubduction(sagbiComputation, matrix M)
     )
 
-compSubduction(SAGBIComputation, Matrix) := opts -> (sagbiComputation, M) -> (
+compSubduction(SAGBIComputation, Matrix) := Matrix => opts -> (sagbiComputation, M) -> (
     if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (    
 	print("-- subduction input:");
 	print(M);

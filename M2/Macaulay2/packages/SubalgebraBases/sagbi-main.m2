@@ -61,7 +61,7 @@ subalgebraBasis(Subring) := opts -> S -> (
 --
 
 sagbi = method(
-    TypicalValue => Subring,
+    TypicalValue => SAGBIBasis,
     Options => {
 	AutoSubduce => true,
         ReduceNewGenerators => true, -- applies gaussian elimination to sagbiGens before adding them
@@ -148,7 +148,6 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 
 -- the user subduction methods:
 subduction = method( 
-    TypicalValue => Matrix,
     Options => { -- These options are only used when the user wants to use subduction for their own purposes
 	AutoSubduce => true,
         ReduceNewGenerators => true,
@@ -164,42 +163,42 @@ subduction = method(
 );
 
 
-subduction(SAGBIBasis, Matrix) := opts -> (S, M) -> (
+subduction(SAGBIBasis, Matrix) := Matrix => opts -> (S, M) -> (
     sagbiComputation := initializeSagbiComputation(S, opts);
     compSubduction(opts, sagbiComputation, M)
     )
 
-subduction(SAGBIBasis, RingElement) := opts -> (S, m) -> (
+subduction(SAGBIBasis, RingElement) := RingElement => opts -> (S, m) -> (
     sagbiComputation := initializeSagbiComputation(S, opts);
     first first entries compSubduction(opts, sagbiComputation, matrix {{m}})
     )
 
-subduction(Matrix, Matrix) := opts -> (F, M) -> (
+subduction(Matrix, Matrix) := Matrix => opts -> (F, M) -> (
     S := initializeSagbiComputation(sagbiBasis(subring F, opts), opts);
     S#SAGBIdata#"sagbiGenerators" = F;
     updateComputation(S);
     compSubduction(opts, S, M)
     )
 
-subduction(Matrix, RingElement) := opts -> (F, m) -> (
+subduction(Matrix, RingElement) := RingElement => opts -> (F, m) -> (
     first first entries subduction(opts, F, matrix {{m}})
     )
 
-subduction(Subring, Matrix) := opts -> (S, M) -> (
+subduction(Subring, Matrix) := Matrix => opts -> (S, M) -> (
     F := gens S;
     subduction(opts, F, M)
     )
 
-subduction(Subring, RingElement) := opts -> (S, m) -> (
+subduction(Subring, RingElement) := RingElement => opts -> (S, m) -> (
     F := gens S;
     first first entries subduction(opts, F, matrix {{m}})
     )
 
-subduction(List, List) := opts -> (FList, MList) -> (
+subduction(List, List) := List => opts -> (FList, MList) -> (
     first entries subduction(opts, matrix {FList}, matrix {MList})
     )
 
-subduction(List, RingElement) := opts -> (FList, m) -> (
+subduction(List, RingElement) := RingElement => opts -> (FList, m) -> (
     first first entries subduction(opts, matrix {FList}, matrix {{m}})
     )
 

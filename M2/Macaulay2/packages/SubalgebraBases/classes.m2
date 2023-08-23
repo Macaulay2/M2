@@ -80,7 +80,7 @@ SAGBIBasis = new Type of HashTable
 --- Note, the sagbiBasis object stores all the options used for the sagbi basis computation
 
 sagbiBasis = method(
-    TypicalValue => Subring,
+    TypicalValue => SAGBIBasis,
     Options => {
     	AutoSubduce => true,
         ReduceNewGenerators => true,

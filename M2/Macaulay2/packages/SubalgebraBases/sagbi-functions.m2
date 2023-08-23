@@ -144,7 +144,7 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
 --   otherwise we output null
 
 isSAGBI = method(
-    TypicalValue => SAGBIBasis,
+    TypicalValue => Boolean,
     Options => {
 	Compute => true,
 	Strategy => "Master",
@@ -232,7 +232,7 @@ isSAGBI List := opts -> L -> (
 -- S a subring of a polynomial ring (or quotient ring)
 --
 groebnerMembershipTest = method() 
-groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
+groebnerMembershipTest(RingElement, Subring) := Boolean => (f, S) -> (
     subringGens := gens S;
     Q := ring subringGens;
     R := ambient Q;
@@ -257,7 +257,7 @@ groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
 -- setup: gens S = {g_1 .. g_s} in Q = K[x_1 .. x_n]/I and f in Q 
 -- output: h in K[y1 .. ys] such that (f - f%S) = h(g_1 .. g_s)
 groebnerSubductionQuotient = method() 
-groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
+groebnerSubductionQuotient(RingElement, Subring) := RingElement => (f, S) -> (
     subringGens := gens S;
     Q := ring subringGens;
     R := ambient Q;
@@ -287,7 +287,7 @@ groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
 -- returns the subduction quotient
 --
 
-RingElement // Subring := (f, S) -> (
+RingElement // Subring := RingElement => (f, S) -> (
     groebnerSubductionQuotient(f, S)    
     )
 
@@ -302,17 +302,17 @@ RingElement // Subring := (f, S) -> (
 -- Note: we construct the tensor ring with a monomial order lifted from the ambient ring
 --
 
-Matrix % SAGBIBasis := (M, SB) -> (
+Matrix % SAGBIBasis := Matrix => (M, SB) -> (
     assert(ambient SB === ring M);
     subduction(SB, M)
     );
 
-RingElement % SAGBIBasis := (f, SB) -> (
+RingElement % SAGBIBasis := RingElement => (f, SB) -> (
     assert(ambient SB === ring f);
     first first entries subduction(SB, matrix{{f}})
     );
 
-Matrix % Subring := (M, S) -> (
+Matrix % Subring := Matrix => (M, S) -> (
     assert(ring M === ambient S); 
     if (S#cache#?SAGBIBasis) and (S#cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
 	-- S has a complete sagbi basis so use subduction
@@ -344,7 +344,7 @@ Matrix % Subring := (M, S) -> (
 	)
     );
 
-RingElement % Subring := (f, S) -> (
+RingElement % Subring := RingElement => (f, S) -> (
     first first entries (matrix{{f}} % S)
     );
 
@@ -371,7 +371,7 @@ originalSubringGens(IntersectedSubring) := S -> (
 -- note that if the function returns false, then the generators of the intersectedSubring may generate the intersection 
 --  but it is not guaranteed
 isFullIntersection = method()
-isFullIntersection(IntersectedSubring) := S -> (
+isFullIntersection(IntersectedSubring) := Boolean => S -> (
     S#"compositeSubring".cache#SAGBIBasis.SAGBIdata#"sagbiDone"
     )
 
@@ -389,7 +389,7 @@ subringIntersection = method(
 	}
     )
 
-subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
+subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) -> (
     local limit;
     -------------
     -- check that both subring are subrings of the same ambient ring
@@ -467,7 +467,7 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     );
 
 
--- trying to override intersect to use instead of subringIntersection [currently not working]
+-- trying to override intersect to use instead of subringIntersection
 intersect(Subring, Subring) := IntersectedSubring => {
     Strategy => "Master",
     SubductionMethod => "Top",
