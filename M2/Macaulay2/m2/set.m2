@@ -38,25 +38,31 @@ Tally + Tally := Tally => (x,y) -> merge(x,y,plus) -- no need to check for zero
 Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0) -- sadly, can't use continueIfNonPositive
 
 VirtualTally ? VirtualTally := (x,y) -> (
-     w := values ((new VirtualTally from x) - (new VirtualTally from y));
-     if #w === 0 then symbol ==
-     else if all(w,i -> i>0) then symbol >
-     else if all(w,i -> i<0) then symbol <
-     else incomparable)
+    flag:=symbol ==;
+    for k in keys x|keys y do
+    if ((cmp := x_k?y_k) =!= symbol ==) and (cmp === incomparable or (flag =!= cmp and first(flag =!= symbol ==,flag = cmp))) then return incomparable;
+    flag
+    )
 
 zeroVirtualTally := new VirtualTally from {}
 toVirtualTally := i -> if i === 0 then zeroVirtualTally else error "comparison of a virtual tally with a nonzero integer"
-VirtualTally == ZZ := (x,i) -> x === toVirtualTally i
-ZZ == VirtualTally := (i,x) -> toVirtualTally i === x
+VirtualTally == ZZ := (x,i) -> x == toVirtualTally i
+ZZ == VirtualTally := (i,x) -> toVirtualTally i == x
 VirtualTally ? ZZ := (x,i) -> x ? toVirtualTally i
 ZZ ? VirtualTally := (i,x) -> toVirtualTally i ? x
+VirtualTally == VirtualTally := (x,y) -> (x ? y) === symbol ==
 
+-*
 zeroTally := new Tally from {}
 toTally := i -> if i === 0 then zeroTally else error "comparison of a tally with a nonzero integer"
-Tally == ZZ := (x,i) -> x === toTally i
-ZZ == Tally := (i,x) -> toTally i === x
+Tally == ZZ := (x,i) -> x == toTally i
+ZZ == Tally := (i,x) -> toTally i == x
 Tally ? ZZ := (x,i) -> x ? toTally i
 ZZ ? Tally := (i,x) -> toTally i ? x
+*-
+
+RingElement * VirtualTally := Number * VirtualTally := (i,v) -> if i==0 then new class v from {} else applyValues(v,y->y*i)
+Number * Tally := (i,v) -> if i<=0 then new class v from {} else applyValues(v,y->y*i)
      
 sum VirtualTally := (w) -> sum(pairs w, (k,v) -> v * k)
 product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
