@@ -17,23 +17,23 @@ subalgebraBasis = method(
 	Recompute => false,
 	RenewOptions => false
 	}
-);
+    )
 
 subalgebraBasis(Matrix) := opts -> M -> (
     S := subring M;
     SB := sagbi(opts, S);
     gens SB
-    );
+    )
 
 subalgebraBasis(List) := opts -> L -> (
     SB := sagbi(opts, L);
     gens SB
-    );
+    )
 
 subalgebraBasis(Subring) := opts -> S -> (
     SB := sagbi(opts, S);
     gens SB
-    );
+    )
 
 -- sagbi returns a computation object of a given subring, matrix, or list
 -- Since the return type is a computation object, the computation can pick up where it left off.
@@ -74,28 +74,27 @@ sagbi = method(
 	Recompute => false, -- restart the computation (ignored by RenewOptions)
 	RenewOptions => false -- use only the supplied options
     	}
-);
+    ) 
 
 sagbi(Matrix) := opts -> M -> (
     B := sagbi(opts, subring M);
     M.cache#Subring = B#SAGBIdata#subring;
     B
-);
+    )
 
 sagbi(List) := opts -> L -> (
     sagbi(opts, subring L)
-);--
+    )
 
 sagbi(Subring) := opts -> S -> (
-    local SB;
     if opts.Recompute then ( -- forget about the previous computation object
 	remove(S.cache, SAGBIBasis);
 	);
-    SB = sagbiBasis(S, opts);
+    SB := sagbiBasis(S, opts);
     newSB := sagbi(opts, SB);
     S.cache#SAGBIBasis = newSB;
     newSB
-);
+    )
 
 
 -- TODO: throw an error if the ambient ring has a multigrading
@@ -144,7 +143,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 	    );	
     );
     sagbiBasis sagbiComputation
-)
+    )
 
 -- the user subduction methods:
 subduction = method( 
@@ -160,7 +159,7 @@ subduction = method(
 	Recompute => false,
 	RenewOptions => false
     	}
-);
+    )
 
 
 subduction(SAGBIBasis, Matrix) := Matrix => opts -> (S, M) -> (
