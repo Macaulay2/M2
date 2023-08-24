@@ -6,17 +6,17 @@
 subalgebraBasis = method(
     TypicalValue => Matrix,
     Options => {
-	AutoSubduce => true,
+        AutoSubduce => true,
         ReduceNewGenerators => true, -- applies gaussian elimination to sagbiGens before adding them
-	StorePending => true,
+        StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
-    	Limit => 20,
-	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
-    	PrintLevel => 0,
-	Recompute => false,
-	RenewOptions => false
-	}
+        Limit => 20,
+        AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false
+        }
     )
 
 subalgebraBasis(Matrix) := opts -> M -> (
@@ -63,18 +63,18 @@ subalgebraBasis(Subring) := opts -> S -> (
 sagbi = method(
     TypicalValue => SAGBIBasis,
     Options => {
-	AutoSubduce => true,
+        AutoSubduce => true,
         ReduceNewGenerators => true, -- applies gaussian elimination to sagbiGens before adding them
-	StorePending => true,
+        StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
-    	Limit => 20,
-	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
-    	PrintLevel => 0,
-	Recompute => false, -- restart the computation (ignored by RenewOptions)
-	RenewOptions => false -- use only the supplied options
-    	}
-    ) 
+        Limit => 20,
+        AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
+        PrintLevel => 0,
+        Recompute => false, -- restart the computation (ignored by RenewOptions)
+        RenewOptions => false -- use only the supplied options
+        }
+    )
 
 sagbi(Matrix) := opts -> M -> (
     B := sagbi(opts, subring M);
@@ -88,8 +88,8 @@ sagbi(List) := opts -> L -> (
 
 sagbi(Subring) := opts -> S -> (
     if opts.Recompute then ( -- forget about the previous computation object
-	remove(S.cache, SAGBIBasis);
-	);
+        remove(S.cache, SAGBIBasis);
+        );
     SB := sagbiBasis(S, opts);
     newSB := sagbi(opts, SB);
     S.cache#SAGBIBasis = newSB;
@@ -106,59 +106,57 @@ sagbi(SAGBIBasis) := opts -> SB -> (
     for deg in flatten degrees ambient SBSubring do if not deg > 0 then error "expected ring with positive degrees";
     -- if Recomputing then create a new SAGBIBasis object
     if opts.Recompute or SB#SAGBIoptions#Recompute then (
-	remove(SBSubring.cache, SAGBIBasis);
-	S = sagbiBasis(SBSubring, opts); 
-	) 
+        remove(SBSubring.cache, SAGBIBasis);
+        S = sagbiBasis(SBSubring, opts);
+        )
     else (
-	S = SB;
-	);
-    
+        S = SB;
+        );
+
     if (S#SAGBIdata#"limit" > opts.Limit) or S#SAGBIdata#"sagbiDone" then return S;
     sagbiComputation := initializeSagbiComputation(S,opts);
     processFirstStep(sagbiComputation);
-    
+
     local SPairs;
 
     while (sagbiComputation#SAGBIdata#degree <= opts.Limit) and
           (not sagbiComputation#SAGBIdata#"sagbiDone") do (
-    		
         SPairs = collectSPairs(sagbiComputation);
-	SPairs = compSubduction(sagbiComputation, SPairs);
-	
-	-- update and process the new sagbi generators
-	-- update pending returns true if new sagbiGenerators were added and false otherwise
-	-- if new sagbiGenerators were added then updatePending
-	--    sets the sagbiComputation#SAGBIdata#degree to the lowest degree of a new generator
-	-- if no new sagbiGenerators were added then check for termination conditions
-	if not updatePending(sagbiComputation, SPairs) then (
-	    checkTermination(sagbiComputation);
-	    );
+        SPairs = compSubduction(sagbiComputation, SPairs);
+        -- update and process the new sagbi generators
+        -- update pending returns true if new sagbiGenerators were added and false otherwise
+        -- if new sagbiGenerators were added then updatePending
+        --    sets the sagbiComputation#SAGBIdata#degree to the lowest degree of a new generator
+        -- if no new sagbiGenerators were added then check for termination conditions
+        if not updatePending(sagbiComputation, SPairs) then (
+            checkTermination(sagbiComputation);
+            );
 
-	-- move on to the next degree
-	sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;
-	
-	if sagbiComputation#SAGBIoptions#PrintLevel > 2 then(
-	    print("-- [main] sagbiGenerators are currently: ");
-	    print(transpose sagbiComputation#SAGBIdata#"sagbiGenerators");
-	    );	
+        -- move on to the next degree
+        sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;
+
+        if sagbiComputation#SAGBIoptions#PrintLevel > 2 then(
+            print("-- [main] sagbiGenerators are currently: ");
+            print(transpose sagbiComputation#SAGBIdata#"sagbiGenerators");
+            );
     );
     sagbiBasis sagbiComputation
     )
 
 -- the user subduction methods:
-subduction = method( 
+subduction = method(
     Options => { -- These options are only used when the user wants to use subduction for their own purposes
-	AutoSubduce => true,
+        AutoSubduce => true,
         ReduceNewGenerators => true,
-	StorePending => true,
+        StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- Top or Engine
-    	Limit => 20,
-	AutoSubduceOnPartialCompletion => false,
-    	PrintLevel => 0,
-	Recompute => false,
-	RenewOptions => false
-    	}
+        Limit => 20,
+        AutoSubduceOnPartialCompletion => false,
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false
+        }
     )
 
 
