@@ -113,14 +113,14 @@ sagbi(SAGBIBasis) := opts -> SB -> (
         S = SB;
         );
 
-    if (S#SAGBIdata#"limit" > opts.Limit) or S#SAGBIdata#"sagbiDone" then return S;
+    if (S#SAGBIdata#"limit" > opts.Limit) or S#SAGBIdata#"sagbiStatus" == 1 then return S;
     sagbiComputation := initializeSagbiComputation(S,opts);
     processFirstStep(sagbiComputation);
 
     local SPairs;
 
     while (sagbiComputation#SAGBIdata#degree <= opts.Limit) and
-          (not sagbiComputation#SAGBIdata#"sagbiDone") do (
+          (not sagbiComputation#SAGBIdata#"sagbiStatus" == 1) do (
         SPairs = collectSPairs(sagbiComputation);
         SPairs = compSubduction(sagbiComputation, SPairs);
         -- update and process the new sagbi generators

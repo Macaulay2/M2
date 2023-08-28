@@ -227,6 +227,206 @@ isSAGBI List := opts -> L -> (
     )
 
 
+-------------------------------------
+-- isSAGBI2 new version of isSAGBI --
+-------------------------------------
+
+
+-- isSAGBI2internal is a subprocess of isSAGBI for a SAGBIBasis a object SB
+-- it returns a modified SAGBIBasis object with the SB#SAGBIdata#"sagbiStatus" set correctly
+--
+-- UseSubringGens => true    : initialise the SAGBIBasis with the subring generators 
+--                             and does not update SAGBIBasis associated to the subring
+-- ModifySAGBIBasis => false : keeps the original SAGBIBasis of the subring  
+
+isSAGBI2internal = method(
+    TypicalValue => SAGBIBasis,
+    Options => {
+        Compute => true,
+        Strategy => "Master",
+        SubductionMethod => "Top",
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => false,
+        ModifySAGBIBasis => true
+        }
+    );
+
+isSAGBI2internal SAGBIBasis := opts -> SB -> (
+    sagbiComputation := initializeSagbiComputation(SB, opts ++ {Limit => SB#SAGBIdata#"limit"}); -- leave the limit alone
+    if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", 
+            sagbiComputation#SAGBIrings#"liftedRing"); --put into the correct ring (lifted ring)
+        updateComputation(sagbiComputation);
+        );
+    -- Get the SPairs
+    sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal");
+    k := rawMonoidNumberOfBlocks(raw monoid (sagbiComputation#SAGBIrings.tensorRing)) - 2;
+    zeroGens := selectInSubring(k, gens sagbiGB);
+    SPairs := sagbiComputation#SAGBImaps#"fullSubstitution"(zeroGens) % sagbiComputation#SAGBIideals#"I";
+    if not opts.UseSubringGens then ( 
+        -- add the subring generators to the SPairs to check that sagbiGenerators really generate the subring
+        SPairs = SPairs | sagbiComputation#SAGBIdata#"subalgebraGenerators";
+        );
+    -- Reduce the SPairs and subring generators
+    reducedSPairs := compSubduction(sagbiComputation, SPairs);
+    -- if all the reduced SPairs are zero then we have a sagbiBasis
+    if zero(reducedSPairs) then (
+        sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
+        )
+    else (
+        sagbiComputation#SAGBIdata#"sagbiStatus" = 2;
+        );
+    SB' := sagbiBasis sagbiComputation; -- note that this operation caches SB' in the subring
+    if opts.UseSubringGens or (not opts.ModifySAGBIBasis) then ( -- return the cache of the subring to SB
+        SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
+        );
+    SB'
+    );
+
+
+
+-- Compute => true          : perform only necessary computations
+-- Recompute => false       : perform all computations (only applies if Compute == true)
+-- UseSubringGens => false  : use the generators of the associated Subring object
+-- ModifySAGBIBasis => true : update the SAGBIBasis cached in the associated Subring 
+
+isSAGBI2 = method(
+    TypicalValue => Boolean,
+    Options => true
+    );
+
+-- isSAGBI SAGBIBasis
+-- Determines if the sagbiGenerators form a sagbi basis
+-- Sets the sagbiStatus of the SAGBIBasis
+-- Options:
+-- > Compute => false       : the result is just the sagbiStatus (0 : null, 1 : true, 2 : false)
+-- > Recompute => true      : performs a computation to verify the sagbiStatus  
+-- > RenewOptions => true   : sets the options of the SAGBIBasis to the ones supplied
+-- > UseSubringGens => true : uses generators of subring instead of sagbiGenerators
+
+-- Control flow:
+-- Compute => false : return the sagbiStatus of the given SAGBIBasis 
+-- Compute => true : if computation is not necessary then read off the result
+-- (Recompute => false and sagbiStatus == 0) or (Recompute => true) : computation is necessary                  
+
+isSAGBI2 SAGBIBasis := {
+        Compute => true,
+        Strategy => "Master",
+        SubductionMethod => "Top",
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => false,
+        ModifySAGBIBasis => true
+        } >> opts -> SB -> (
+    if opts.UseSubringGens then isSAGBI2(subring SB, opts)
+    else (
+        SB' := (
+            if not opts.Compute then SB
+            else if (not opts.Recompute) and SB#SAGBIdata#"sagbiStatus" > 0 then SB
+            else isSAGBI2internal(SB, opts)
+            );
+        if SB'#SAGBIdata#"sagbiStatus" == 0 then null
+        else if SB'#SAGBIdata#"sagbiStatus" == 1 then true 
+        else if SB'#SAGBIdata#"sagbiStatus" == 2 then false
+        else error("-- unknown sagbiStatus: " | toString SB'#SAGBIdata#"sagbiStatus")
+        )
+    )
+   
+-- isSAGBI Subring
+-- Determines if the sagbiGenerators of the cached SAGBIBasis are a sagbiBasis
+-- Options:
+-- > Compute => false        : the result is just the sagbiStatus (0 : null, 1 : true, 2 : false)
+-- > Recompute => true       : performs a computation to verify the sagbiStatus  
+-- > RenewOptions => true    : sets the options of the SAGBIBasis to the ones supplied
+-- > UseSubringGens => false : uses generators of SAGBIBasis instead of the subring generators
+
+-- isSAGBI Subring stores computation results in S.cache#"isSAGBIResults" [OptionTable -> Boolean]
+
+-- Control flow: 
+-- (UseSubringGens => true) & (Recompute => false) : avoid using SAGBIBasis, try sanitise options and check if it appears in isSAGBIResults
+-- (UseSubringGens => true) & (Recompute => true)  : compute the result and cache the answer
+-- (UseSubringGens => false)                       : isSAGBI SAGBIBasis
+
+
+isSAGBI2 Subring := {
+    Compute => true,
+    Strategy => "Master",
+    SubductionMethod => "Top",
+    PrintLevel => 0,
+    Recompute => false,
+    RenewOptions => false,
+    UseSubringGens => true,
+    ModifySAGBIBasis => true
+    } >> opts -> S -> (
+    result := null;
+    computationRequired := false;
+    if opts.UseSubringGens then (
+        cleanOptions := new OptionTable from {-- sanitise options for storing
+            Strategy => opts.Strategy,
+            SubductionMethod => opts.SubductionMethod,
+            RenewOptions => opts.RenewOptions
+            };
+        if not S.cache#?"isSAGBIResults" then S.cache#"isSAGBIResults" = new MutableHashTable;
+        if not opts.Recompute then (
+            -- check isSAGBIResults
+            if S.cache#"isSAGBIResults"#?cleanOptions then result = S.cache#"isSAGBIResults"#cleanOptions
+            else computationRequired = true;
+            );
+        if opts.Compute and (opts.Recompute or computationRequired) then (
+            hasSAGBIBasis := S.cache#?SAGBIBasis;
+            SB := sagbiBasis S;
+            SB' := isSAGBI2internal(SB, opts);
+            if SB'#SAGBIdata#"sagbiStatus" == 1 then result = true
+            else if SB'#SAGBIdata#"sagbiStatus" == 2 then result = false
+            else error("-- unknown sagbiStatus: " | toString SB'#SAGBIdata#"sagbiStatus");
+            S.cache#"isSAGBIResults"#cleanOptions = result;
+            if not hasSAGBIBasis then remove(S.cache, SAGBIBasis);
+            );
+        result
+        )
+    else (
+        -- UseSubringGens => false
+        if S.cache#?SAGBIBasis then result = isSAGBI2(S.cache#SAGBIBasis, opts);
+        result
+        )
+    )
+
+isSAGBI2 Matrix := {
+        Compute => true,
+        Strategy => "Master",
+        SubductionMethod => "Top",
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => true,
+        ModifySAGBIBasis => true
+        } >> opts -> M -> (
+    S := subring M;
+    isSAGBI2(S, opts)
+    )
+
+isSAGBI2 List := {
+        Compute => true,
+        Strategy => "Master",
+        SubductionMethod => "Top",
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => true,
+        ModifySAGBIBasis => true
+        } >> opts -> L -> (
+    S := subring L;
+    isSAGBI2(S, opts)
+    )
+
+----------------------------------------
+
+
+
+
 -- groebnerMembershipTest(f, S) = (f lies in S)
 -- f an element of the ambient ring of S
 -- S a subring of a polynomial ring (or quotient ring)

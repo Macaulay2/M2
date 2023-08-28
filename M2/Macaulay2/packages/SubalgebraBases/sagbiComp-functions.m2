@@ -582,6 +582,8 @@ processPending SAGBIComputation := sagbiComputation -> (
             appendToBasis(sagbiComputation, matrix{toList sagbiComputation#SAGBIpending#currentLowest});
             updateComputation(sagbiComputation);
             remove(sagbiComputation#SAGBIpending, currentLowest);
+            
+            sagbiComputation#SAGBIdata#"sagbiStatus" = 0; -- new sagbiGenerators added, isSAGBI status is unknown
             );
         );
     currentLowest
@@ -615,12 +617,12 @@ insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
         level := (degree candidate)_0;
         if sagbiComputation#SAGBIpending#?level then(
             sagbiComputation#SAGBIpending#level = append(sagbiComputation#SAGBIpending#level, candidate)
-        )
-    else (
-                sagbiComputation#SAGBIpending#level = new MutableList from {candidate}
+            )
+        else (
+            sagbiComputation#SAGBIpending#level = new MutableList from {candidate}
             );
-    );
-)
+        );
+    )
 
 processFirstStep = method();
 processFirstStep SAGBIComputation := sagbiComputation -> (
@@ -748,7 +750,7 @@ updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
 -- 3) the degree of the computation > the maximum degree of gb for reductionIdeal
 --   - if not: it may be possible to get lower degree generators
 
--- if the computation should terminate then set sagbiComputation#SAGBIdata#"sagbiDone" to true
+-- if the computation should terminate then set sagbiComputation#SAGBIdata#"sagbiStatus" to 1
 -- if the computation should not terminate then:
 --   if AutoSubductOnPartialCompletion and (not autoSubductedSagbiGenerators) then:
 --     autosubduceSagbi(sagbiComputation)
@@ -784,7 +786,8 @@ checkTermination SAGBIComputation := (sagbiComputation) -> (
     
     if terminationCondition0 and terminationCondition1 and terminationCondition2 and terminationCondition3 then (
         sagbiComputation#SAGBIdata#"sagbiDone" = true;
-        if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
+	sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
+	if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
             print("-- Computation complete. Finite sagbi basis found!")
             );
         )

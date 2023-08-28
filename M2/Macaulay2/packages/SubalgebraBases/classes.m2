@@ -184,6 +184,10 @@ sagbiBasis Subring := opts -> S -> (
     --   it is initially empty.
     -- > sagbiDone is set to be true if the sagbiGenerators form
     --   a finite sagbi basis.  It is initially false.
+    -- > sagbiStatus is an integer that stores the current status of the computation:
+    --   >> 0 no result - the computation has terminated but cannot guarantee a sagbi basis or non sagbi basis
+    --   >> 1 result - the sagbi generators form a sagbi basis
+    --   >> 2 result - the sagbi generators do not form a sagbi basis
     -- > degree is the current degree under consideration by
     --   the algorithm.  It is initially -1 to indicate that no
     --   computation has occurred.
@@ -199,6 +203,7 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiGenerators" => matrix(rings#"liftedRing",{{}}),
         "sagbiDegrees" => matrix(ZZ,{{}}),
         "sagbiDone" => false,
+        "sagbiStatus" => 0,
         degree => -1,
         "limit" => -1,
         "autoSubductedSagbiGenerators" => false, 
@@ -225,7 +230,7 @@ sagbiBasis Subring := opts -> S -> (
 
 net SAGBIBasis := S -> (
     local description;
-    if S#SAGBIdata#"sagbiDone" then (
+    if S#SAGBIdata#"sagbiDone" or S#SAGBIdata#"sagbiStatus" == 1 then (
         description = "SAGBIBasis Computation Object with "
         )
     else (
@@ -280,7 +285,7 @@ sagbiLimit SAGBIBasis := SB -> (
 -- is the computation finished (sagbiDone)
 sagbiStatus = method()
 sagbiStatus SAGBIBasis := SB -> (
-    SB#SAGBIdata#"sagbiDone"
+    SB#SAGBIdata#"sagbiStatus" == 1
     )
 
 -- status of the computation
