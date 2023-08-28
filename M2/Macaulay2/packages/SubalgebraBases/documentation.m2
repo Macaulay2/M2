@@ -21,13 +21,13 @@ doc ///
      "Kapur, D., Madlener, K. (1989). A completion procedure for computing a canonical basis of a $k$-subalgebra.
      Proceedings of Computers and Mathematics 89 (eds. Kaltofen and Watt), MIT, Cambridge, June 1989",
      "Robbiano, L., Sweedler, M. (1990). Subalgebra bases,
-     in W.~Bruns, A.~Simis (eds.): Commutative Algebra,
-     Springer Lecture Notes in Mathematics 1430, pp.~61--87",
+     in W. Bruns, A. Simis (eds.): Commutative Algebra,
+     Springer Lecture Notes in Mathematics 1430, pp. 61-87",
      "F. Ollivier, Canonical Bases: Relations with Standard bases, finiteness
      conditions and applications to tame automorphisms, in Effective Methods
      in Algebraic Geometry, Castiglioncello 1990, pp. 379-400,
      Progress in Math. 94 Birkhauser, Boston (1991)",
-     "Stillman, Michael, and Harrison Tsai. Using SAGBI bases to compute invariants. J. Pure and Appl. Alg., 1999, pp.~285--302.",
+     "Stillman, Michael, and Harrison Tsai. Using SAGBI bases to compute invariants. J. Pure and Appl. Alg., 1999, pp. 285-302.",
      "B. Sturmfels, Groebner bases and Convex Polytopes, Univ. Lecture
      Series 8, Amer Math Soc, Providence, 1996"
      }@
@@ -229,22 +229,18 @@ doc ///
        An {\it autosubduction} is when a collection of ring elements (usually a set of generators or subalgebra generators) are
        subducted against each other, one at a time. The result of each subduction replaces the original element that was subducted.
        If any element subducts to zero, then it is removed from the collection.
-        
-       By default, the function @TO "sagbi"@ performs autosubduction on the generators of the given @ TO Subring @
-       before starting the main algorithm. This step is required to guarantee correctness of the result.
-       However, the output of the @TO "sagbi"@ algorithm is often correct even when this step is skipped.
-       Setting this flag to @TT "false"@ may result in a performance improvement, albeit with a risk of errors.
+        By default, the function @TO "sagbi"@ performs autosubduction on the generators of the given @ TO Subring @
+       before starting the main algorithm.
+       Setting this flag to @TT "false"@ sometimes results in a performance improvement, but with a risk of including nonreduced or redundant generators.
    SeeAlso
      sagbi
-     AutoSubduce
      ReduceNewGenerators
-     StorePending
-     Strategy
+     subduction
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
+     ReduceNewGenerators
      RenewOptions
 ///
 doc ///
@@ -383,19 +379,17 @@ doc ///
      Text
        During the main loop in @TO "sagbi"@ if no new sagbi generators are added and the @TO "AutoSubduceOnPartialCompletion"@ flag
        is @ TT "true" @ then all sagbi generators are subducted against each other.
-       This is a significant time investment, however if no new sagbi generators are to be added then the subduction of the sagbi
-       generators will speed up the computation of the Groebner basis of the {\it reduction ideal} and {\it S-pairs}.
+       The autosubduction can be a significant time investment, but it can speed up subsequent computations by removing redundant generators.
    SeeAlso
      sagbi
      AutoSubduce
      ReduceNewGenerators
-     StorePending
      Strategy
+     subduction
      SubductionMethod
-     Limit
-     AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
+     ReduceNewGenerators
      RenewOptions
 ///
 doc ///
@@ -649,17 +643,29 @@ doc ///
    Key
      Compute
    Headline
-     Flag for performing computations while checking a sagbi basis
+     Flag for performing computations while checking the completeness of a sagbi basis
    Description
      Text
-       A flag that determines whether computations should be performed for
-       verifying the correctness of a sagbi basis. When the flag is set to
-       @ TT "false" @ then the function being called will only use the results of
-       previous computations, if they exist. When previous computations have
-       not been performed and the flag is set to @ TT "false" @, then the function will
-       usually return @ TT "null" @.
+       A flag that determines whether additional computations
+       may be performed for
+       verifying the completeness of a sagbi basis.  When the flag is set
+       to @TT "false"@, the function being called only uses the results
+       of prior computations, if they have been stored.  When previous
+       computations have not been peformed, the function usually returns
+       @TT "null"@.
+       
+       When the flag is set to @TT "true"@, additional computations will
+       be performed if the prior computations are insufficient.
+     Example
+       R = QQ[x,y];
+       S = subring{x+y,x*y};
+       isSAGBI(S,Compute=>false)
+       isSAGBI(S,Compute=>true)
+       sagbi S;
+       isSAGBI(S,Compute=>false)
    SeeAlso
-     isSAGBI
+     Recompute
+     RenewOptions
 ///
 doc ///
    Key
@@ -1088,7 +1094,7 @@ doc ///
      result:Ring
    Description
      Text
-       Returns the ambient ring of the generating set of the @TO "Subring"@. This may be a PolynomialRing or QuotientRing.
+       Returns the ambient ring of the generating set of the @TO "Subring"@. This may be a @TO "PolynomialRing"@ or @TO "QuotientRing"@.
      Example
        R = QQ[x,y,z];
        S = subring({x^2, y^2, z^2});
@@ -1101,8 +1107,7 @@ doc ///
      Subring
      subring
      (gens, Subring)
-     (numgens, Subring)
-     (net, Subring)
+     (ambient, SAGBIBasis)
 ///
 
 
@@ -1362,7 +1367,7 @@ doc ///
      result:Ring
    Description
      Text
-       Returns the ambient ring of @ ofClass SAGBIBasis @. This may be a PolynomialRing or QuotientRing.
+       Returns the ambient ring of @ ofClass SAGBIBasis @. This may be a @TO "PolynomialRing"@ or @TO "QuotientRing"@.
      Example
        R = QQ[x,y,z];
        S = sagbi {x^2, y^2, z^2}
@@ -1373,13 +1378,11 @@ doc ///
 
    SeeAlso
      SAGBIBasis
+     sagbiBasis
      (gens, SAGBIBasis)
-     (ambient, SAGBIBasis)
+     (ambient, Subring)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
-     (status, SAGBIBasis)
-     sagbiDegree
-     sagbiLimit
      sagbi
 ///
 
@@ -1532,7 +1535,7 @@ doc ///
      [forceSB, RenewOptions]
      [forceSB, PrintLevel]
    Headline
-     declare the generators of @ ofClass {Subring, SAGBIBasis} @ to be a complete sagbi basis
+     declare the generators to be a complete sagbi basis
    Usage
      forceSB S
      forceSB SB
@@ -1554,6 +1557,19 @@ doc ///
        
        Note, if the generators supplied to @ TT "forceSB" @ do not form a sagbi basis, then it
        may cause unexpected behaviour.
+       
+     Example
+       R = QQ[x,y];
+       S = subring{x+y,x*y,x*y^2}
+       forceSB S;
+       isSAGBI S
+       sagbi(S,Recompute=>true)
+       isSAGBI
+     Text
+       In this example forceSB causes isSAGBI to return true even though
+       the generators of $S$ do not form a subalgebra basis.
+       Recomputing the sagbi basis exposes that the generators do not
+       form a subalgebra basis.
    SeeAlso
      Subring
      SAGBIBasis
@@ -1607,26 +1623,32 @@ doc ///
         "Example: Translation and rotation sub-actions of the adjoint action of SE(3)"
     Description
         Text
-            The following example shows how to use this package to calculate the invariants of the translation sub-action of
-            the adjoint action of $SE(3)$, as considered in the preprint @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@
-        Example
-            gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
-            translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
-            sag := sagbi transpose translation;
-            netList first entries gens sag
+	    The following example shows how to use this package to calculate the invariants of the translation sub-action of
+	    the adjoint action of $SE(3)$, as studied by Crook and Donelan
+        from the preprint @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@.
+    	Example
+	    gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
+	    translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
+	    sag := sagbi transpose translation;
+	    netList first entries gens sag
         Text
-            The above is precisely the 5 invariants Crook and Donelan give in equation (9), plus the additional 6th invariant.
-            
-            The generators computed below verify Theorem 2 of Crook and Donelan, describing rotational invariants in the case where m=3.
+    	    The generators above are the 5 invariants Crook and Donelan give in Equation (9), plus the additional 6th invariant.
+            The computation below verifies Theorem 2 of Crook and Donelan, describing rotational invariants in the case where m=3.
         Example
-                R = QQ[x_1..x_9, MonomialOrder => Lex];
-                eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6, x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
-                         x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9, x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
-                         x_7^2+x_8^2+x_9^2-1, x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
-                sag1 = subring sagbi eqns;
-                SB = sagbi(sag1, Limit => 100);
-                isSAGBI SB
-                netList first entries gens SB
+    		R = QQ[x_1..x_9, MonomialOrder => Lex];
+    		eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6, x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
+		         x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9, x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
+      			 x_7^2+x_8^2+x_9^2-1, x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
+    		sag1 = subring sagbi eqns;
+		SB = sagbi(sag1, Limit => 100);
+		isSAGBI SB
+		netList first entries gens SB
+    SeeAlso
+      sagbi
+      (gens, SAGBIBasis)
+      (isSAGBI)
+    References
+      @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@
 ///
 
 end --
