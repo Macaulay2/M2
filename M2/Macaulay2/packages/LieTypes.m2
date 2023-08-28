@@ -1361,6 +1361,7 @@ subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(Z
 *-
 
 subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
+    if ring M =!= ZZ then try M=lift(M,ZZ) else error "matrix must be integer";
     -- in the simply laced case it'd be simply transpose M * cartanMatrix g * M. in general have to work harder
     if numRows M != rank g then error "wrong size of coroots";
     G := transpose M * inverse quadraticFormMatrix g * M; -- new inverse quadratic form <coroot_i|coroot_j>
