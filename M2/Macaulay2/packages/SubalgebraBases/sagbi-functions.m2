@@ -5,22 +5,22 @@
 
 forceSB = method(
     Options => {
-	AutoSubduce => true,
+        AutoSubduce => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Engine", -- top or engine
-	Limit => 20,
-	RenewOptions => false,
-	PrintLevel => 0 -- see print level for sagbi
-    	}
+        Limit => 20,
+        RenewOptions => false,
+        PrintLevel => 0 -- see print level for sagbi
+        }
     )
 forceSB SAGBIBasis := opts -> SB -> (
     sagbiComputation := initializeSagbiComputation(SB, opts);
     if zero sagbiComputation#SAGBIdata#"sagbiGenerators" then (
-	sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing");
-	);
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing");
+        );
     if opts#AutoSubduce then (
-	sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(autosubduceSagbi sagbiComputation, sagbiComputation#SAGBIrings#"liftedRing");
-	);
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(autosubduceSagbi sagbiComputation, sagbiComputation#SAGBIrings#"liftedRing");
+        );
     updateComputation(sagbiComputation);
     sagbiComputation#SAGBIdata#"sagbiDone" = true;
     newSB := sagbiBasis sagbiComputation;
@@ -47,23 +47,23 @@ forceSB Subring := opts -> S -> (
 internalIsSAGBIProcess = method(
     TypicalValue => SAGBIBasis,
     Options => {
-	Compute => true,
-	Strategy => "Master",
+        Compute => true,
+        Strategy => "Master",
         SubductionMethod => "Top",
-	Limit => 20,
-	PrintLevel => 0,
-    	Recompute => false,
-	RenewOptions => false,
-	UseSubringGens => false
-	}
+        Limit => 20,
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => false
+        }
     );
 
 internalIsSAGBIProcess SAGBIBasis := opts -> SB -> (
     sagbiComputation := initializeSagbiComputation(SB, opts);    
     if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
-	sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing"); --put into the correct ring (lifted ring)
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing"); --put into the correct ring (lifted ring)
         updateComputation(sagbiComputation);
-	);
+        );
     -- Get the SPairs
     sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal");
     k := rawMonoidNumberOfBlocks(raw monoid (sagbiComputation#SAGBIrings.tensorRing)) - 2;
@@ -77,8 +77,8 @@ internalIsSAGBIProcess SAGBIBasis := opts -> SB -> (
     sagbiComputation#SAGBIdata#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
     SB' := sagbiBasis sagbiComputation; -- note that this operation caches SB' in the subring
     if opts.UseSubringGens then ( -- return the cache of the subring to SB
-	SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
-	);
+        SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
+        );
     SB'
     );
 
@@ -94,15 +94,15 @@ memoizeInternalIsSAGBIProcess = memoize internalIsSAGBIProcess;
 isInMemoizeInternalIsSAGBIValues = method(
     TypicalValue => SAGBIBasis,
     Options => {
-	Compute => true,
-	Strategy => "Master",
+        Compute => true,
+        Strategy => "Master",
         SubductionMethod => "Top",
-	Limit => 20,
-	PrintLevel => 0,
-    	Recompute => false,
-	RenewOptions => false,
-	UseSubringGens => false
-	}
+        Limit => 20,
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => false
+        }
     );
 
 isInMemoizeInternalIsSAGBIValues(SAGBIBasis) := opts -> SB -> (
@@ -117,15 +117,15 @@ isInMemoizeInternalIsSAGBIValues(SAGBIBasis) := opts -> SB -> (
 internalIsSAGBI = method(
     TypicalValue => SAGBIBasis,
     Options => {
-	Compute => true,
-	Strategy => "Master",
+        Compute => true,
+        Strategy => "Master",
         SubductionMethod => "Top",
-	Limit => 20,
-	PrintLevel => 0,
-    	Recompute => false,
-	RenewOptions => false,
-	UseSubringGens => false
-	}
+        Limit => 20,
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => false
+        }
     );
 
 internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
@@ -146,15 +146,15 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
 isSAGBI = method(
     TypicalValue => Boolean,
     Options => {
-	Compute => true,
-	Strategy => "Master",
-	SubductionMethod => "Top",
-	Limit => 20, 
-	PrintLevel => 0,
-	Recompute => false,
-	RenewOptions => false,
-	UseSubringGens => false -- when performing internalIsSAGBI on a 
-	}
+        Compute => true,
+        Strategy => "Master",
+        SubductionMethod => "Top",
+        Limit => 20, 
+        PrintLevel => 0,
+        Recompute => false,
+        RenewOptions => false,
+        UseSubringGens => false -- when performing internalIsSAGBI on a 
+        }
     );
 
 isSAGBI SAGBIBasis := opts -> SB -> (
@@ -162,58 +162,58 @@ isSAGBI SAGBIBasis := opts -> SB -> (
     local S;
     if SB#SAGBIdata#"sagbiDone" or (not opts.Compute) then (
         SB#SAGBIdata#"sagbiDone"
-	) 
+        ) 
     else (
-	if zero SB#SAGBIdata#"sagbiGenerators" then ( 
-	    -- if there are not sagbi generators then assume we should check the subalgebra generators
-	    SB' = internalIsSAGBI(SB, opts, UseSubringGens => true);
-	    ) 
-	else (
-	    SB' = internalIsSAGBI(SB, opts);
-	    );
-	if SB'#SAGBIdata#"sagbiDone" then ( -- If SB' is a SAGBIBasis then store SB' in the Subring
-	    S = SB#SAGBIdata#subring;
-	    S.cache#SAGBIBasis = SB';
-	    );
-	SB'#SAGBIdata#"sagbiDone"
-	)
+        if zero SB#SAGBIdata#"sagbiGenerators" then ( 
+            -- if there are not sagbi generators then assume we should check the subalgebra generators
+            SB' = internalIsSAGBI(SB, opts, UseSubringGens => true);
+            ) 
+        else (
+            SB' = internalIsSAGBI(SB, opts);
+            );
+        if SB'#SAGBIdata#"sagbiDone" then ( -- If SB' is a SAGBIBasis then store SB' in the Subring
+            S = SB#SAGBIdata#subring;
+            S.cache#SAGBIBasis = SB';
+            );
+        SB'#SAGBIdata#"sagbiDone"
+        )
     )
 
 isSAGBI Subring := opts -> S -> (
     local SB;
     local sagbiComputation;
     if S.cache#?SAGBIBasis then (
-	SB = S.cache#SAGBIBasis;
-	-- if SB has no sagbiGenerators then it is possible that internalIsSAGBI was already
-	-- called on SB previously.  
-    	if (zero SB#SAGBIdata#"sagbiGenerators") and isInMemoizeInternalIsSAGBIValues(SB, opts, UseSubringGens => true) then (
-	    return (internalIsSAGBI(SB, opts, UseSubringGens => true))#SAGBIdata#"sagbiDone";
-	    );
-	
-	sagbi(S, Limit => max flatten (degrees gens S)_1); -- ensures that gens SB generate S
-	SB = S.cache#SAGBIBasis;
-	LTgensS := leadTerm gens S;
-	LTgensSB := leadTerm gens SB;
-	subringLTgensS := subring LTgensS;
-	subringLTgensSB := subring LTgensSB;
-	forceSB subringLTgensS;
-	forceSB subringLTgensSB;
-	if zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS) then (
-	    isSAGBI(SB, opts)
-	    ) 
-	else false
-	) 
+        SB = S.cache#SAGBIBasis;
+        -- if SB has no sagbiGenerators then it is possible that internalIsSAGBI was already
+        -- called on SB previously.  
+        if (zero SB#SAGBIdata#"sagbiGenerators") and isInMemoizeInternalIsSAGBIValues(SB, opts, UseSubringGens => true) then (
+            return (internalIsSAGBI(SB, opts, UseSubringGens => true))#SAGBIdata#"sagbiDone";
+            );
+        
+        sagbi(S, Limit => max flatten (degrees gens S)_1); -- ensures that gens SB generate S
+        SB = S.cache#SAGBIBasis;
+        LTgensS := leadTerm gens S;
+        LTgensSB := leadTerm gens SB;
+        subringLTgensS := subring LTgensS;
+        subringLTgensSB := subring LTgensSB;
+        forceSB subringLTgensS;
+        forceSB subringLTgensSB;
+        if zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS) then (
+            isSAGBI(SB, opts)
+            ) 
+        else false
+        ) 
     else (
-	if opts.Compute then (
-	    trimmedOptionKeys := delete(Compute, keys opts);
-	    trimmedOptionKeys = delete(UseSubringGens, trimmedOptionKeys);
-    	    trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
-	    SB = sagbiBasis(S, trimmedOptionTable); -- basic SAGBIBasis object that is compatible with future sagbi computations
-	    SB = internalIsSAGBI(SB, opts, UseSubringGens => true);
-	    SB#SAGBIdata#"sagbiDone"
-	    ) 
-	else null -- S has no SAGBIBasis cached and Compute is set to false
-	)
+        if opts.Compute then (
+            trimmedOptionKeys := delete(Compute, keys opts);
+            trimmedOptionKeys = delete(UseSubringGens, trimmedOptionKeys);
+            trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
+            SB = sagbiBasis(S, trimmedOptionTable); -- basic SAGBIBasis object that is compatible with future sagbi computations
+            SB = internalIsSAGBI(SB, opts, UseSubringGens => true);
+            SB#SAGBIdata#"sagbiDone"
+            ) 
+        else null -- S has no SAGBIBasis cached and Compute is set to false
+        )
     )    
 
 isSAGBI Matrix := opts -> M -> (
@@ -315,33 +315,33 @@ RingElement % SAGBIBasis := RingElement => (f, SB) -> (
 Matrix % Subring := Matrix => (M, S) -> (
     assert(ring M === ambient S); 
     if (S#cache#?SAGBIBasis) and (S#cache#SAGBIBasis#SAGBIdata#"sagbiDone") then (
-	-- S has a complete sagbi basis so use subduction
-	SB := S#cache#SAGBIBasis;
-	subduction(SB, M)	
-	) 
+        -- S has a complete sagbi basis so use subduction
+        SB := S#cache#SAGBIBasis;
+        subduction(SB, M)	
+        ) 
     else (
-	-- extrinsic subduction
-	subringGens := gens S;
-	Q := ring subringGens;
-    	R := ambient Q;
-    	J := ideal Q;
-    	FF := coefficientRing R;
-    	MLiftedToR := lift(M, R);
-    	subringGensLiftedToR := lift(subringGens, R);
-    	-- construct the tensor ring
-	tensorRingNumVars := (numgens R) + (numcols subringGens);
-    	oldOrder := (options R).MonomialOrder;
-    	newOrder := prepend(Eliminate(numgens R), oldOrder);
-    	tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => newOrder]);
-	liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
-    	MInTensorRing := liftToTensorRing MLiftedToR;
-    	subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
-    	JInTensorRing := liftToTensorRing J;
-    	I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
-    	MNormalForm := MInTensorRing % (I + JInTensorRing);
-	projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | subringGens);
+        -- extrinsic subduction
+        subringGens := gens S;
+        Q := ring subringGens;
+        R := ambient Q;
+        J := ideal Q;
+        FF := coefficientRing R;
+        MLiftedToR := lift(M, R);
+        subringGensLiftedToR := lift(subringGens, R);
+        -- construct the tensor ring
+        tensorRingNumVars := (numgens R) + (numcols subringGens);
+        oldOrder := (options R).MonomialOrder;
+        newOrder := prepend(Eliminate(numgens R), oldOrder);
+        tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => newOrder]);
+        liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
+        MInTensorRing := liftToTensorRing MLiftedToR;
+        subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
+        JInTensorRing := liftToTensorRing J;
+        I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
+        MNormalForm := MInTensorRing % (I + JInTensorRing);
+        projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | subringGens);
         M - (projectToQ MNormalForm)
-	)
+        )
     );
 
 RingElement % Subring := RingElement => (f, S) -> (
@@ -381,12 +381,12 @@ isFullIntersection(IntersectedSubring) := Boolean => S -> (
 
 subringIntersection = method(
     Options => {
-	Strategy => "Master",
-	SubductionMethod => "Top",
-	SAGBILimitType => "Fixed", -- "Fixed" or "Function"
-	Limit => 20,
-	PrintLevel => 0
-	}
+        Strategy => "Master",
+        SubductionMethod => "Top",
+        SAGBILimitType => "Fixed", -- "Fixed" or "Function"
+        Limit => 20,
+        PrintLevel => 0
+        }
     )
 
 subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) -> (
@@ -411,9 +411,9 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- T := TAmb / J
     newMonomialOrder := prepend(GRevLex => 1, (monoid Q).Options.MonomialOrder); -- product order with p_0 in a different subring
     M := monoid [
-	Variables => (numgens Q + 1), 
-	MonomialOrder => newMonomialOrder
-	];
+        Variables => (numgens Q + 1), 
+        MonomialOrder => newMonomialOrder
+        ];
     TAmb := (coefficientRing Q) M;
     t := (vars TAmb)_(0,0);
     RtoTAmb := map(TAmb, R, (vars TAmb)_{1 .. numgens Q});
@@ -436,17 +436,17 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- Compute a sagbi basis for S (take care of options supplied by user)
     -- SB := subalgebraBasis S
     if opts.SAGBILimitType == "Fixed" then (
-	limit = opts.Limit;
-	) 
+        limit = opts.Limit;
+        ) 
     else if opts.SAGBILimitType == "Function" then (
-	limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
-	);
+        limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
+        );
     SB := sagbi(S, 
-	Strategy => opts.Strategy,
-	SubductionMethod => opts.SubductionMethod,
-	Limit => limit,
-	PrintLevel => opts.PrintLevel
-	);
+        Strategy => opts.Strategy,
+        SubductionMethod => opts.SubductionMethod,
+        Limit => limit,
+        PrintLevel => opts.PrintLevel
+        );
     ------------
     -- The intersection of S1 and S2 is generated by the elements SB|_Q of SB that do not contain t := p_0
     -- If SB is a finite sagbi basis then the intersection computation is verrified to be correct!
@@ -455,13 +455,13 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- that S has a finite sagbi basis.
     intersectionGens := TtoQ selectInSubring(1, gens SB);
     result := new IntersectedSubring from {
-	"ambientRing" => Q,
-	"generators" => intersectionGens,
-	"subductionQuotientRing" => (coefficientRing Q) (monoid[Variables => numcols intersectionGens]),
-	cache => new CacheTable from {},
-	"originalSubrings" => {S1, S2},
-	"compositeSubring" => S
-	}; 
+        "ambientRing" => Q,
+        "generators" => intersectionGens,
+        "subductionQuotientRing" => (coefficientRing Q) (monoid[Variables => numcols intersectionGens]),
+        cache => new CacheTable from {},
+        "originalSubrings" => {S1, S2},
+        "compositeSubring" => S
+        }; 
     if isSAGBI SB then forceSB result;
     result
     );

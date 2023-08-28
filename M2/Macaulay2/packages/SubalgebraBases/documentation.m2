@@ -189,13 +189,13 @@ doc ///
     Text
         The output of this function is a partial subalgebra basis stored in a computation object.
     Example
-    	R = QQ[t_(1,1)..t_(3,3),MonomialOrder=>Lex];
-	M = genericMatrix(R,3,3);
-    	A = subring gens minors(2, M);
+        R = QQ[t_(1,1)..t_(3,3),MonomialOrder=>Lex];
+        M = genericMatrix(R,3,3);
+        A = subring gens minors(2, M);
         isSAGBI A
-	S = sagbi A;
-    	gS = gens S
-	isSAGBI gS
+        S = sagbi A;
+        gS = gens S
+        isSAGBI gS
     Text
         Partial subalgebra bases are unavoidable since a subalgebra of a polynomial ring, endowed with some polynomial order, need not have a finite subalgebra basis.  Here is a quintessential example of this phenomenon:
     Example
@@ -854,8 +854,8 @@ doc ///
        R = QQ[x,y];
        I = ideal(x^3 + x*y^2 + y^3);
        Q = R/I;
-       S1 = subring {x^2, x*y};		   
-       S2 = subring {x, y^2};	
+       S1 = subring {x^2, x*y};
+       S2 = subring {x, y^2};
        S = intersect(S1, S2);
        gens S
        isFullIntersection S
@@ -887,9 +887,9 @@ doc ///
        The additional keys are as follows:
        
        @UL {
-	    {BOLD {"originalSubrings"}, ": The list of two subrings used in the intersection."},
-	    {BOLD {"compositeSubring"}, ": A Subring constructed during the intersection computation."}
-	   }@
+            {BOLD {"originalSubrings"}, ": The list of two subrings used in the intersection."},
+            {BOLD {"compositeSubring"}, ": A Subring constructed during the intersection computation."}
+           }@
        
        The function @TO "intersect"@ may be considered to be the constructor for @TT "IntersectedSubring"@.
        Each instance $S$ of @TT "IntersectedSubring"@ admits the usage of the function @TO "isFullIntersection"@ for checking whether
@@ -923,8 +923,8 @@ doc ///
        R = QQ[x,y];
        I = ideal(x^3 + x*y^2 + y^3);
        Q = R/I;
-       S1 = subring {x^2, x*y};		   
-       S2 = subring {x, y^2};	
+       S1 = subring {x^2, x*y};
+       S2 = subring {x, y^2};
        S = intersect(S1, S2);
        isFullIntersection S
      Text
@@ -962,8 +962,8 @@ doc ///
        R = QQ[x,y];
        I = ideal(x^3 + x*y^2 + y^3);
        Q = R/I;
-       S1 = subring {x^2, x*y};		   
-       S2 = subring {x, y^2};	
+       S1 = subring {x^2, x*y};
+       S2 = subring {x, y^2};
        S = intersect(S1, S2);
        originalSubringGens S
    SeeAlso
@@ -986,16 +986,16 @@ doc ///
      Text
        
         @TT "Subring"@ is a type that stores information associated to a subring of a polynomial ring, such as a set of subring generators and a reference to the polynomial ring it is contained in.
-	An instance of a @TT "Subring"@ is constructed with the function @TO "subring"@.
+        An instance of a @TT "Subring"@ is constructed with the function @TO "subring"@.
        
        Every instance of @TT "Subring"@ is guaranteed to have the following keys:
        
        @UL {
-	    {BOLD {"ambientRing"}, ": The polynomial or quotient ring that contains the subring instance's generators."},
-	    {BOLD {"generators"}, ": A one-row matrix, the generators of the subring."},
-	    {BOLD {"cache"}, ": Contains unspecified information. The contents of the cache may effect performance, but should never effect the result of a computation."},
-	    {BOLD {"subductionQuotientRing"}, ": the polynomial ring with one variable for each generator of the subring"}
-	   }@
+            {BOLD {"ambientRing"}, ": The polynomial or quotient ring that contains the subring instance's generators."},
+            {BOLD {"generators"}, ": A one-row matrix, the generators of the subring."},
+            {BOLD {"cache"}, ": Contains unspecified information. The contents of the cache may effect performance, but should never effect the result of a computation."},
+            {BOLD {"subductionQuotientRing"}, ": the polynomial ring with one variable for each generator of the subring"}
+           }@
 
    SeeAlso
        subring
@@ -1217,27 +1217,27 @@ doc ///
    Description
      Text
         This is a computation object for sagbi bases.
-	It stores a partial sagbi computation for picking up a computation where it left off.
-	To create @ ofClass SAGBIBasis @, use the function @TO "sagbiBasis"@.
-	The @TT "SAGBIBasis" @ type is the main output type of the function @TO "sagbi"@.
+        It stores a partial sagbi computation for picking up a computation where it left off.
+        To create @ ofClass SAGBIBasis @, use the function @TO "sagbiBasis"@.
+        The @TT "SAGBIBasis" @ type is the main output type of the function @TO "sagbi"@.
 
         Every instance of @TT "SAGBIBasis"@ contains the following hashtables:
-	
+        
         @UL {
         {BOLD {"SAGBIdata"}, ": contains parameters for the sagbi computation"},
-	    {"  degree: current degree of the S-pairs in the sagbi algorithm."},
-	    {"  limit: degree limit of the computation."},
-	    {"  sagbiGenerators: generators in the sagbi basis (default none)"},
-	    {"  subalgebraGenerators: original generating set of the subring."},
+            {"  degree: current degree of the S-pairs in the sagbi algorithm."},
+            {"  limit: degree limit of the computation."},
+            {"  sagbiGenerators: generators in the sagbi basis (default none)"},
+            {"  subalgebraGenerators: original generating set of the subring."},
         {BOLD {"SAGBIideals"}},
-	    {"  I: the ideal defining the ambient ring = liftedRing / I"},
-	    {"  leadTermsI: initial ideal of I"},
-	    {"  reductionIdeal: SIdeal+I lifted to the tensorRing"},
-	    {"  SIdeal: ideal generated by (SagbiGenerators - TagVariables)"},
+            {"  I: the ideal defining the ambient ring = liftedRing / I"},
+            {"  leadTermsI: initial ideal of I"},
+            {"  reductionIdeal: SIdeal+I lifted to the tensorRing"},
+            {"  SIdeal: ideal generated by (SagbiGenerators - TagVariables)"},
         {BOLD {"SAGBIrings"}},
-	    {"  liftedRing: the polynomial ring of the quotient ring"},
-	    {"  quotientRing: ambient ring of the underlying subring"},
-	    {"  tensorRing: tensor product of the liftedRing with a polynomial ring that has one variable for each sagbi generator"},
+            {"  liftedRing: the polynomial ring of the quotient ring"},
+            {"  quotientRing: ambient ring of the underlying subring"},
+            {"  tensorRing: tensor product of the liftedRing with a polynomial ring that has one variable for each sagbi generator"},
         {BOLD {"SAGBImaps"}, ": a collection of useful maps between the 'rings'"},
         {BOLD {"SAGBIoptions"}, ": supplied options for the sagbi computation"},
         {BOLD {"SAGBIpending"}, ": newly computed sagbi generators before they are added to the sagbiGenerators in 'data'"}
@@ -1306,16 +1306,16 @@ doc ///
    Description
      Text
         Returns the current list of sagbiGenerators of the underlying @TO "Subring"@.
-	If sagbi generators of @ ofClass SAGBIBasis @ is not a complete sagbi basis (for example it is obtained from a partial computation)
-	then the generators obtained from this command may not be a generating set for the original subring.
+        If sagbi generators of @ ofClass SAGBIBasis @ is not a complete sagbi basis (for example it is obtained from a partial computation)
+        then the generators obtained from this command may not be a generating set for the original subring.
      Example
         R = QQ[x,y];
-	S = subring {x*y, x^2*y, x^3*y};
-	gens S
-	SB = sagbi(S, Limit => 3);
-	gens SB
+        S = subring {x*y, x^2*y, x^3*y};
+        gens S
+        SB = sagbi(S, Limit => 3);
+        gens SB
         isSAGBI S
-	isSAGBI SB
+        isSAGBI SB
      
    SeeAlso
      SAGBIBasis
@@ -1624,7 +1624,8 @@ doc ///
     Description
         Text
 	    The following example shows how to use this package to calculate the invariants of the translation sub-action of
-	    the adjoint action of $SE(3)$, as studied by Crook and Donelan.
+	    the adjoint action of $SE(3)$, as studied by Crook and Donelan
+        from the preprint @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@.
     	Example
 	    gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
 	    translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
