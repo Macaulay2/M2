@@ -2096,12 +2096,12 @@ multidoc ///
                 whose rows are the basis vectors.
         Description
             Text
-            For a generic weight, theta, in {C(Q)}, the flow polytope has the same dimension as the kernel of the inc map, 
-            which is $|Q_0| - |Q_1| + 1$. Moreover, given a spanning kernel of the quiver, there exists a natural basis 
-            for the kernel constructed from the combinatorics of the quiver. Therefore, we can translate the flow polytope 
-            to this kernel and express the polytope based on the mentioned basis, making it a full-dimensional polytope. 
-            With basisForFlowPolytope, we calculate the basis for a given polytope and a spanning tree of it. 
-            If none is provided, then one is randomly chosen.
+                For a generic weight, theta, in $C(Q)$, the flow polytope has the same dimension as the kernel of the inc map, 
+                which is $|Q_0| - |Q_1| + 1$. Moreover, given a spanning kernel of the quiver, there exists a natural basis 
+                for the kernel constructed from the combinatorics of the quiver. Therefore, we can translate the flow polytope 
+                to this kernel and express the polytope based on the mentioned basis, making it a full-dimensional polytope. 
+                With basisForFlowPolytope, we calculate the basis for a given polytope and a spanning tree of it. 
+                If none is provided, then one is randomly chosen.
 
  
             Example
