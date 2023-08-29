@@ -2096,11 +2096,14 @@ multidoc ///
                 whose rows are the basis vectors.
         Description
             Text
-                The polytope associated to a toric quiver is defined in terms of the 
-                stable spanning trees for that given quiver, and hence its vertices 
-                are in a lower-dimensional subspace of the space with dimension 
-                $|Q_1|$. Thus a lower dimensional basis is useful for viewing 
-                polytopes in the appropriate dimension.
+            For a generic weight, theta, in {C(Q)}, the flow polytope has the same dimension as the kernel of the inc map, 
+            which is $|Q_0| - |Q_1| + 1$. Moreover, given a spanning kernel of the quiver, there exists a natural basis 
+            for the kernel constructed from the combinatorics of the quiver. Therefore, we can translate the flow polytope 
+            to this kernel and express the polytope based on the mentioned basis, making it a full-dimensional polytope. 
+            With basisForFlowPolytope, we calculate the basis for a given polytope and a spanning tree of it. 
+            If none is provided, then one is randomly chosen.
+
+ 
             Example
                 basisForFlowPolytope bipartiteQuiver(2,3)
             Example
