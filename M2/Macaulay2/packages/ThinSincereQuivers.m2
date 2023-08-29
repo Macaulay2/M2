@@ -1049,7 +1049,7 @@ referenceThetas(List) := List => QCS -> (
 
 ------------------------------------------------------------
 -- this function checks if the weights theta1 and theta2 
--- produce the same flow polytope up to isomorphism
+-- belong to the same polytope in the wall chamber decomposition for Q
 samePolytope = method()
 samePolytope(List, List, ToricQuiver) := Boolean => (theta1, theta2, Q) -> (
     treesTheta1 := stableTrees(theta1, Q);
