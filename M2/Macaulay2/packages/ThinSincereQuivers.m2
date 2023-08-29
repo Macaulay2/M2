@@ -22,7 +22,7 @@ export {
     "bipartiteQuiver",
     "chainQuiver",
     "coneSystem",
-    "flowPolytope",
+    "flowPolytopeVertices",
     "getWeights",
     "incInverse",
     "isAcyclic",
@@ -420,8 +420,8 @@ coneSystem = Q -> (
 
 
 ------------------------------------------------------------
-flowPolytope = method(Options => {Format => "SimplifiedBasis"})
-flowPolytope(List, ToricQuiver) := opts -> (th, Q) -> (
+flowPolytopeVertices = method(Options => {Format => "SimplifiedBasis"})
+flowPolytopeVertices(List, ToricQuiver) := opts -> (th, Q) -> (
     if #th != numRows Q.IncidenceMatrix then (
         print("error: the provided weight is in incorrect dimension");
         return {};
@@ -468,8 +468,8 @@ flowPolytope(List, ToricQuiver) := opts -> (th, Q) -> (
         )
     )
 )
-flowPolytope ToricQuiver := opts -> Q -> (
-    flowPolytope(Q.weights, Q, Format => opts.Format)
+flowPolytopeVertices ToricQuiver := opts -> Q -> (
+    flowPolytopeVertices(Q.weights, Q, Format => opts.Format)
 )
 ------------------------------------------------------------
 
@@ -1065,8 +1065,8 @@ samePolytope(List, List, ToricQuiver) := Boolean => (theta1, theta2, Q) -> (
     ) else if all(0..#treesTheta1 - 1, x -> treesTheta1#x == treesTheta2#x) then (
         return true
     ) else (
-        p1 := flowPolytope(theta1, Q);
-        p2 := flowPolytope(theta2, Q);
+        p1 := flowPolytopeVertices(theta1, Q);
+        p2 := flowPolytopeVertices(theta2, Q);
         if areIsomorphic(convexHull transpose matrix p1, convexHull transpose matrix p2) then (
             return true
         ) else (
@@ -2109,7 +2109,7 @@ multidoc ///
             Example
                 basisForFlowPolytope ({0,1,4,5},  bipartiteQuiver(2,3))
         SeeAlso
-            flowPolytope
+            flowPolytopeVertices
     Node
         Key
             coneSystem
@@ -2132,18 +2132,18 @@ multidoc ///
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
                 CS = coneSystem Q
         SeeAlso
-            flowPolytope
+            flowPolytopeVertices
     Node
         Key
-            flowPolytope
-            (flowPolytope, ToricQuiver)
-            (flowPolytope, List, ToricQuiver)
-            [flowPolytope, Format]
+            flowPolytopeVertices
+            (flowPolytopeVertices, ToricQuiver)
+            (flowPolytopeVertices, List, ToricQuiver)
+            [flowPolytopeVertices, Format]
         Headline
             generate the polytope associated to a toric quiver
         Usage
-            flowPolytope Q
-            flowPolytope(W, Q)
+            flowPolytopeVertices Q
+            flowPolytopeVertices(W, Q)
         Inputs
             Q: ToricQuiver
             W: List
@@ -2160,8 +2160,8 @@ multidoc ///
                 Associated to every acyclic toric quiver and weight pair is a flow polytope. 
                 For full-dimensional representation of the vertices, use {\tt Format => "FullBasis"}. 
             Example
-                flowPolytope(bipartiteQuiver(2, 3))
-                flowPolytope({-3,-3,2,2,2}, bipartiteQuiver(2, 3))
+                flowPolytopeVertices(bipartiteQuiver(2, 3))
+                flowPolytopeVertices({-3,-3,2,2,2}, bipartiteQuiver(2, 3))
         SeeAlso
             basisForFlowPolytope
     Node
@@ -2368,7 +2368,7 @@ multidoc ///
             Example
                 isTight (bipartiteQuiver(2, 3), {2,1,2,3,2,3})
             Example
-                isTight ({2,1,2,3,2,3}, bipartiteQuiver(2, 3))
+                isTight ({0,0,0,0,0,1}, bipartiteQuiver(2, 3))
         SeeAlso
     Node
         Key
@@ -2735,7 +2735,7 @@ multidoc ///
                 samePolytope({-3,2,-1,2},{-2,1,-2,3}, Q)    
         SeeAlso
             toricQuiver
-            flowPolytope
+            flowPolytopeVertices
         Caveat
             This operation is computationally expensive, and may not perform well for quivers whose chamber systems are comprised of many subchambers.
     Node
@@ -2919,6 +2919,8 @@ TEST ///
         EdgeSubsets = subsets(#quiverEdges(Q));
         assert (#AllSubquivers == #EdgeSubsets - 2);
     )
+    Q = threeVertexQuiver {1,2,3};
+    testQuiverConstruction(Q)
 
     Q = bipartiteQuiver(2, 2);
     testQuiverConstruction(Q);
@@ -2936,7 +2938,7 @@ TEST ///
     assert (#potentialWalls(Q) == 11)
     assert isTight Q
     assert (getWeights Q === {-3, -3, 2, 2, 2})
-    assert (flowPolytope Q == {{-1, 1}, {-1, 0}, {1, -1}, {0, -1}, {1, 0}, {0, 1}})
+    assert (flowPolytopeVertices Q == {{-1, 1}, {-1, 0}, {1, -1}, {0, -1}, {1, 0}, {0, 1}})
     assert (entries basisForFlowPolytope Q === {{-1, 0}, {0, -1}, {1, 1}, {1, 0}, {0, 1}, {-1, -1}})
     QConeSystem = coneSystem Q;
     th = {-5, -1, 2, 2, 2};
