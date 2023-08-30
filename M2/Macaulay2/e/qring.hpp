@@ -34,7 +34,7 @@ class QRingInfo : public our_new_delete
   QRingInfo(const PolyRing *R);
 
  public:
-  QRingInfo() : R(0), overZZ_(false), exp_size(0), monom_size(0) {}
+  QRingInfo() : R(nullptr), overZZ_(false), exp_size(0), monom_size(0) {}
   virtual void destroy(GBRing *GR);
   virtual ~QRingInfo();
 
@@ -55,15 +55,15 @@ class QRingInfo : public our_new_delete
     gbvector_normal_form(F, f);
   }
 
-  virtual const MonomialIdeal *get_quotient_monomials() const { return 0; }
+  virtual const MonomialIdeal *get_quotient_monomials() const { return nullptr; }
   // Each bag value is an "Nterm *".
 
-  virtual MonomialTable *get_quotient_MonomialTable() const { return 0; }
+  virtual MonomialTable *get_quotient_MonomialTable() const { return nullptr; }
   // Each id is an index into quotient_ideal_
 
   virtual const MonomialTableZZ *get_quotient_MonomialTableZZ() const
   {
-    return 0;
+    return nullptr;
   }
   // Each id is an index into quotient_ideal_
 };

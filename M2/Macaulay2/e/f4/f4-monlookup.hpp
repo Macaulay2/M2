@@ -66,7 +66,7 @@ class F4MonomialLookupTableT : public our_new_delete
   void insert1(mi_node *&p, const_varpower_monomial m, Key k);
 
  public:
-  F4MonomialLookupTableT(int nvars, stash *mi_stash = 0);
+  F4MonomialLookupTableT(int nvars, stash *mi_stash = nullptr);
   ~F4MonomialLookupTableT();
 
   //  // Should we write these two routines?
@@ -123,7 +123,7 @@ class F4MonomialLookupTableT : public our_new_delete
 
 void minimalize_varpower_monomials(const VECTOR(varpower_monomial) & elems,
                                    VECTOR(int) & result_minimals,
-                                   stash *mi_stash = 0);
+                                   stash *mi_stash = nullptr);
 
 #endif
 

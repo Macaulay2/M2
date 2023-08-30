@@ -463,7 +463,7 @@ Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
 {
   const FreeModule *F = rows()->sub_space(r);
   const FreeModule *G = cols()->sub_space(c);
-  if (F == NULL || G == NULL) return nullptr;
+  if (F == nullptr || G == nullptr) return nullptr;
 
   int *minrow = newarray_atomic(int, n_rows());
   int *maxrow = newarray_atomic(int, n_rows());
@@ -484,7 +484,7 @@ Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
   for (size_t j = 0; j < c->len; j++)
     {
       vec v = elem(c->array[j]);
-      for (; v != NULL; v = v->next)
+      for (; v != nullptr; v = v->next)
         for (int i = minrow[v->comp]; i <= maxrow[v->comp]; i++)
           if (v->comp == r->array[i])
             mat.set_entry(i, j, v->coeff);
@@ -497,7 +497,7 @@ Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
 Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint c) const
 {
   const FreeModule *G = cols()->sub_space(c);
-  if (G == NULL) return nullptr;
+  if (G == nullptr) return nullptr;
 
   MatrixConstructor mat(rows(), G, degree_shift());
   for (unsigned int i = 0; i < c->len; i++)
@@ -524,7 +524,7 @@ Matrix /* or null */ *Matrix::reshape(const FreeModule *F,
   // EFFICIENCY: might be better to sort columns at end?
   MatrixConstructor mat(F, G, degree_shift());
   for (int c = 0; c < n_cols(); c++)
-    for (vecterm *p = elem(c); p != NULL; p = p->next)
+    for (vecterm *p = elem(c); p != nullptr; p = p->next)
       {
         // Determine new component
         int loc = c * n_rows() + p->comp;
@@ -760,7 +760,7 @@ Matrix *Matrix::tensor(const Matrix *m) const
   if (get_ring() != m->get_ring())
     {
       ERROR("matrix tensor: different base rings");
-      return 0;
+      return nullptr;
     }
 
   const FreeModule *F = rows()->tensor(m->rows());
@@ -1044,7 +1044,7 @@ Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
   maxdivided = 0;
   for (int i = 0; i < n_cols(); i++)
     {
-      if (elem(i) != NULL)
+      if (elem(i) != nullptr)
         {
           int lo, hi;
           P->vec_degree_of_var(n, elem(i), lo, hi);
@@ -1202,7 +1202,7 @@ Matrix /* or null */ *Matrix::koszul(const Matrix *r, const Matrix *c)
   const FreeModule *F = r->cols();
 
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
-  if (P == NULL) return nullptr;
+  if (P == nullptr) return nullptr;
   const Ring *K = P->getCoefficients();
   const Monoid *M = P->getMonoid();
 
@@ -1413,12 +1413,12 @@ Matrix *Matrix::remove_scalar_multiples() const
   for (int i = 0; i < n_cols(); i++)
     {
       vec f = elem(i);
-      if (f == NULL) continue;
+      if (f == nullptr) continue;
       keep = true;
       for (int j = i + 1; j < n_cols(); j++)
         {
           vec g = elem(j);
-          if (g == NULL) continue;
+          if (g == nullptr) continue;
           if (get_ring()->vec_is_scalar_multiple(f, g))
             {
               keep = false;
@@ -1734,7 +1734,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   MatrixConstructor mat(rows(), 0);
   const void **monoms = exponent_table_to_array(E);
   for (int i = 0; i < nvars; i++) exp[i] = 0;
-  for (int i = 0; monoms[i] != 0; i += 2)
+  for (int i = 0; monoms[i] != nullptr; i += 2)
     {
       const_exponents exp1 = reinterpret_cast<const_exponents>(monoms[i]);
       for (unsigned int j = 0; j < vars->len; j++)
@@ -1784,7 +1784,7 @@ static vec coeffs_of_vec(exponent_table *E,
 #warning "coeffs_of_vec should maybe be in PolynomialRing"
 #endif
 {
-  if (f == NULL) return nullptr;
+  if (f == nullptr) return nullptr;
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
   if (P == nullptr) return nullptr;
   const Monoid *M = P->getMonoid();
