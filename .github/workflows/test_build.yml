@@ -210,7 +210,7 @@ jobs:
             else
             # otherwise, just validate HTML docs for packages that have been updated
               PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq)
-              make validate-html PACKAGES="$PACKAGES"
+              make validate-html PACKAGES=$PACKAGES
             fi
           else
             # if not a pull request (scheduled or pre-master builds), then validate everything
