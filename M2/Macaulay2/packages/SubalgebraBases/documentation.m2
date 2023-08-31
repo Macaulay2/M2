@@ -1528,12 +1528,20 @@ doc ///
       forceSB
      (forceSB, SAGBIBasis)
      (forceSB, Subring)
-     [forceSB, AutoSubduce]
-     [forceSB, Strategy]
-     [forceSB, SubductionMethod]
-     [forceSB, Limit]
-     [forceSB, RenewOptions]
-     [forceSB, PrintLevel]
+     [(forceSB, SAGBIBasis), AutoSubduce]
+     [(forceSB, SAGBIBasis), Strategy]
+     [(forceSB, SAGBIBasis), SubductionMethod]
+     [(forceSB, SAGBIBasis), Limit]
+     [(forceSB, SAGBIBasis), RenewOptions]
+     [(forceSB, SAGBIBasis), PrintLevel]
+     [(forceSB, SAGBIBasis), UseSubringGens]
+     [(forceSB, Subring), AutoSubduce]
+     [(forceSB, Subring), Strategy]
+     [(forceSB, Subring), SubductionMethod]
+     [(forceSB, Subring), Limit]
+     [(forceSB, Subring), RenewOptions]
+     [(forceSB, Subring), PrintLevel]
+     [(forceSB, Subring), UseSubringGens]
    Headline
      declare the generators to be a complete sagbi basis
    Usage
@@ -1542,8 +1550,6 @@ doc ///
    Inputs
      S:Subring
      SB:SAGBIBasis
-     AutoSubduce=>Boolean
-       subduct the generators against themselves
    Description
      Text
        If forceSB is supplied @ ofClass SAGBIBasis @ $SB$, then the function performs
@@ -1623,26 +1629,26 @@ doc ///
         "Example: Translation and rotation sub-actions of the adjoint action of SE(3)"
     Description
         Text
-	    The following example shows how to use this package to calculate the invariants of the translation sub-action of
-	    the adjoint action of $SE(3)$, as studied by Crook and Donelan
-        from the preprint @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@.
-    	Example
-	    gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
-	    translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
-	    sag := sagbi transpose translation;
-	    netList first entries gens sag
+            The following example shows how to use this package to calculate the invariants of the translation sub-action of
+            the adjoint action of $SE(3)$, as studied by Crook and Donelan
+            from the preprint @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@.
+        Example
+            gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
+            translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
+            sag := sagbi transpose translation;
+            netList first entries gens sag
         Text
-    	    The generators above are the 5 invariants Crook and Donelan give in Equation (9), plus the additional 6th invariant.
+            The generators above are the 5 invariants Crook and Donelan give in Equation (9), plus the additional 6th invariant.
             The computation below verifies Theorem 2 of Crook and Donelan, describing rotational invariants in the case where m=3.
         Example
-    		R = QQ[x_1..x_9, MonomialOrder => Lex];
-    		eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6, x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
-		         x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9, x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
-      			 x_7^2+x_8^2+x_9^2-1, x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
-    		sag1 = subring sagbi eqns;
-		SB = sagbi(sag1, Limit => 100);
-		isSAGBI SB
-		netList first entries gens SB
+                R = QQ[x_1..x_9, MonomialOrder => Lex];
+                eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6, x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
+                         x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9, x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
+                         x_7^2+x_8^2+x_9^2-1, x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
+                sag1 = subring sagbi eqns;
+                SB = sagbi(sag1, Limit => 100);
+                isSAGBI SB
+                netList first entries gens SB
     SeeAlso
       sagbi
       (gens, SAGBIBasis)
