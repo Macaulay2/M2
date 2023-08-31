@@ -785,8 +785,7 @@ checkTermination SAGBIComputation := (sagbiComputation) -> (
         );
     
     if terminationCondition0 and terminationCondition1 and terminationCondition2 and terminationCondition3 then (
-        sagbiComputation#SAGBIdata#"sagbiDone" = true;
-	sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
+        sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
 	if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
             print("-- Computation complete. Finite sagbi basis found!")
             );
