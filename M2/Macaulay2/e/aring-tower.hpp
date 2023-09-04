@@ -143,7 +143,7 @@ class ARingTower : public RingInterface
   /////////////////////////////////
 
   bool is_unit(ElementType f) const { return false; }  // TODO: write this
-  bool is_zero(ElementType f) const { return f == nullptr; }
+  bool is_zero(ElementType f) const { return f == NULL; }
   bool is_equal(ElementType f, ElementType g) const
   {
     return is_equal(mStartLevel, f, g);
@@ -183,9 +183,9 @@ class ARingTower : public RingInterface
 
   // 'init', 'init_set' functions
 
-  void init(elem &result) const { result = nullptr; }
+  void init(elem &result) const { result = NULL; }
   void clear(elem &f) const { clear(mStartLevel, f); }
-  void set_zero(elem &result) const { result = nullptr; }
+  void set_zero(elem &result) const { result = NULL; }
   void copy(elem &result, elem a) const { result = copy(mStartLevel, a); }
   void set_from_long(elem &result, long a) const
   {  // TODO: write this
@@ -216,9 +216,9 @@ class ARingTower : public RingInterface
   void invert(elem &result, elem a) const {}  // TODO: write this
   void add(elem &result, elem a, elem b) const
   {
-    if (a == nullptr)
+    if (a == 0)
       result = b;
-    else if (b == nullptr)
+    else if (b == 0)
       result = a;
     else
       {

@@ -29,7 +29,7 @@ MutableMatrix *IM2_MutableMatrix_identity(const Ring *R,
   if (n < 0)
     {
       ERROR("expected non-negative integer");
-      return nullptr;
+      return 0;
     }
   size_t nrows = static_cast<size_t>(n);
   return internMutableMatrix(MutableMatrix::identity(R, nrows, is_dense));
@@ -181,12 +181,12 @@ IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
   if (r < 0 || r >= M->n_rows())
     {
       ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows() - 1);
-      return nullptr;
+      return 0;
     }
   if (c < 0 || c >= M->n_cols())
     {
       ERROR("matrix column index %d out of range 0 .. %d", c, M->n_cols() - 1);
-      return nullptr;
+      return 0;
     }
   ring_elem result;
   M->get_entry(r, c, result);
@@ -487,7 +487,7 @@ MutableMatrix /* or null */ *rawMutableMatrixTranspose(MutableMatrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -598,7 +598,7 @@ M2_arrayintOrNull rawLU(const MutableMatrix *A,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -615,7 +615,7 @@ M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -779,7 +779,7 @@ const RingElement *rawLinAlgDeterminant(MutableMatrix *A)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -788,12 +788,12 @@ MutableMatrix *rawLinAlgInverse(MutableMatrix *A)
   try
     {
       MutableMatrix *B = A->invert();
-      if (B==nullptr) ERROR("matrix not invertible");
+      if (B==0) ERROR("matrix not invertible");
       return internMutableMatrix(B);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -805,7 +805,7 @@ MutableMatrix *rawLinAlgRREF(MutableMatrix *A)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -817,7 +817,7 @@ M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix *A, M2_bool row_profile)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -829,7 +829,7 @@ MutableMatrix *rawLinAlgNullSpace(MutableMatrix *A)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -841,19 +841,19 @@ MutableMatrix *rawLinAlgSolve(const MutableMatrix *A,
     {
       *success = 1;
       MutableMatrix *result = A->solveLinear(B);
-      if (result != nullptr)
+      if (result != NULL)
         {
           return internMutableMatrix(result);
         }
       else
         {
-          return nullptr;
+          return NULL;
         }
   } catch (const exc::engine_error& e)
     {
       *success = 0;
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -865,19 +865,19 @@ MutableMatrix *rawLinAlgSolveInvertible(const MutableMatrix *A,
     {
       *success = 1;
       MutableMatrix *result = A->solveInvertible(B);
-      if (result != nullptr)
+      if (result != NULL)
         {
           return internMutableMatrix(result);
         }
       else
         {
-          return nullptr;
+          return NULL;
         }
   } catch (const exc::engine_error& e)
     {
       *success = 0;
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -923,7 +923,7 @@ MutableMatrix * /* or null */ rawLinAlgMult(const MutableMatrix *A,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -1030,7 +1030,7 @@ const Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const Matrix *M)
       if (M->get_ring()->get_precision() == 0)
         {
           ERROR("expected ring over an RR or CC");
-          return nullptr;
+          return 0;
         }
       return M->clean(epsilon);
   } catch (const exc::engine_error& e)
@@ -1046,7 +1046,7 @@ const RingElement /* or null */ *rawRingElementClean(gmp_RR epsilon,
   if (R->get_precision() == 0)
     {
       ERROR("expected ring over an RR or CC");
-      return nullptr;
+      return 0;
     }
   return RingElement::make_raw(R, R->zeroize_tiny(epsilon, f->get_value()));
 }
@@ -1059,7 +1059,7 @@ MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon,
       if (M->get_ring()->get_precision() == 0)
         {
           ERROR("expected ring over an RR or CC");
-          return nullptr;
+          return 0;
         }
       M->clean(epsilon);
       return M;
@@ -1075,7 +1075,7 @@ static gmp_RRmutable get_norm_start(gmp_RR p, const Ring *R)
   if (R->get_precision() == 0)
     {
       ERROR("expected ring over an RR or CC");
-      return nullptr;
+      return 0;
     }
   gmp_RRmutable norm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(norm, mpfr_get_prec(p));
@@ -1084,7 +1084,7 @@ static gmp_RRmutable get_norm_start(gmp_RR p, const Ring *R)
     {
       ERROR("Lp norm only implemented for p = infinity");
       mpfr_clear(norm);
-      return nullptr;
+      return 0;
     }
   return norm;
 }
@@ -1093,7 +1093,7 @@ gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M) { return M->norm(p); }
 gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 {
   gmp_RRmutable norm = get_norm_start(p, f->get_ring());
-  if (!norm) return nullptr;  // error already given.
+  if (!norm) return 0;  // error already given.
   f->get_ring()->increase_maxnorm(norm, f->get_value());
   return moveTo_gmpRR(norm);
 }

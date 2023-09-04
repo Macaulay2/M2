@@ -104,7 +104,7 @@ GBMatrix *GBKernelComputation::get_syzygies()
   for (int i = 0; i < syzygies.size(); i++)
     {
       result->append(syzygies[i]);
-      syzygies[i] = nullptr;
+      syzygies[i] = 0;
     }
   return result;
 }
@@ -132,20 +132,20 @@ void GBKernelComputation::strip_gb(const GBMatrix *m)
   int i;
   int *components = newarray_atomic_clear(int, F->rank());
   for (i = 0; i < g.size(); i++)
-    if (g[i] != nullptr) components[g[i]->comp - 1]++;
+    if (g[i] != 0) components[g[i]->comp - 1]++;
 
   for (i = 0; i < g.size(); i++)
     {
       gbvector head;
       gbvector *last = &head;
-      for (gbvector *v = g[i]; v != nullptr; v = v->next)
+      for (gbvector *v = g[i]; v != 0; v = v->next)
         if (components[v->comp - 1] > 0)
           {
             gbvector *t = GR->gbvector_copy_term(v);
             last->next = t;
             last = t;
           }
-      last->next = nullptr;
+      last->next = 0;
       gb.push_back(head.next);
     }
   for (i = 0; i < F->rank(); i++) mi.push_back(new MonomialIdeal(R));
@@ -182,7 +182,7 @@ void GBKernelComputation::new_pairs(int i)
           {
             thisvp.resize(0);
             varpower::var(w, 1, thisvp);
-            Bag *b = new Bag(static_cast<void *>(nullptr), thisvp);
+            Bag *b = new Bag(static_cast<void *>(0), thisvp);
             elems.push_back(b);
           }
 
@@ -203,7 +203,7 @@ void GBKernelComputation::new_pairs(int i)
           varpower::quotient(a.monom().data(), vp.data(), thisvp);
           if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
-          Bag *b = new Bag(static_cast<void *>(nullptr), thisvp);
+          Bag *b = new Bag(static_cast<void *>(0), thisvp);
           elems.push_back(b);
         }
     }
@@ -297,9 +297,9 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
 
 gbvector *GBKernelComputation::s_pair(gbvector *gsyz)
 {
-  gbvector *result = nullptr;
+  gbvector *result = NULL;
   monomial si = M->make_one();
-  for (gbvector *f = gsyz; f != nullptr; f = f->next)
+  for (gbvector *f = gsyz; f != 0; f = f->next)
     {
       SG->schreyer_down(f->monom, f->comp - 1, si);
       gbvector *h = GR->mult_by_term(F, gb[f->comp - 1], f->coeff, si, 0);
@@ -318,7 +318,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
   // int nterms = 1;
   // int nsaved = 0;
   gbvector *g = f;
-  while (g->next != nullptr)
+  while (g->next != 0)
     {
       // First check to see if the term g->next is in the monideal
       // nterms++;
@@ -335,7 +335,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector *&f)
           // nsaved++;
           gbvector *tmp = g->next;
           g->next = tmp->next;
-          tmp->next = nullptr;
+          tmp->next = 0;
           GR->gbvector_remove(tmp);
         }
     }
@@ -367,7 +367,7 @@ void GBKernelComputation::reduce(gbvector *&f, gbvector *&fsyz)
   int count = 0;
   if (M2_gbTrace >= 4) emit_wrapped(",");
 
-  while (f != nullptr)
+  while (f != NULL)
     {
       if (SF)
         {
@@ -452,14 +452,14 @@ void GBKernelComputation::geo_reduce(gbvector *&f, gbvector *&fsyz)
   const gbvector *r;
   gbvectorHeap fb(GR, F);
   fb.add(f);
-  f = nullptr;
+  f = NULL;
   const gbvector *lead;
   int q;
 
   int count = 0;
   if (M2_gbTrace >= 4) emit_wrapped(",");
 
-  while ((lead = fb.get_lead_term()) != nullptr)
+  while ((lead = fb.get_lead_term()) != NULL)
     {
       if (SF)
         {
