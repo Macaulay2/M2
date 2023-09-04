@@ -95,7 +95,7 @@ void dvec(const Ring *R, const vec v)
 void dgbvec(const GBRing *R, gbvector *v)
 {
   buffer o;
-  const FreeModule *F = nullptr;
+  const FreeModule *F = 0;
   R->gbvector_text_out(o, F, v);
   emit(o.str());
 }

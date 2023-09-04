@@ -27,7 +27,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
   const Ring *R = p->get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   const Monoid *M = P->getMonoid();
-  if (P == nullptr) {
+  if (P == 0) {
     ERROR("expected a polynomial ring");
     return nullptr;
   }

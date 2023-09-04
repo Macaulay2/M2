@@ -47,12 +47,12 @@ class F4Vec
   }
 
   F4Vec(const char *name0) : name(name0) { reset(); }
-  ~F4Vec() { name = nullptr; }
+  ~F4Vec() { name = 0; }
   int size(f4vec a) { return (SIZE_MASK & (a[-1])); }
   int alloc_stash(f4vec a) { return (a[-1]) >> STASH_SHIFT; }
   f4vec allocate(int alloc_sz)
   {
-    if (alloc_sz == 0) return nullptr;
+    if (alloc_sz == 0) return 0;
     int s = find_alloc_size(alloc_sz);
     int nextlen = doublesize[s];
     nallocs[s]++;
@@ -65,12 +65,12 @@ class F4Vec
 
   void deallocate(f4vec &a)
   {
-    if (a == nullptr) return;
+    if (a == 0) return;
     int s = alloc_stash(a);
     ndeallocs[s]++;
     current[s]--;
     freemem(a - 1);
-    a = nullptr;
+    a = 0;
   }
 
   void clear(f4vec &a)
@@ -128,7 +128,7 @@ class F4Mem : public our_new_delete
 
   monomial_word *allocate_monomial_array(int len)
   {
-    if (len == 0) return nullptr;
+    if (len == 0) return 0;
     monom_alloc++;
     monom_total += len;
     monom_current += len;
@@ -144,7 +144,7 @@ class F4Mem : public our_new_delete
     monom_freed += len;
     monom_current -= len;
     freemem(a);
-    a = nullptr;
+    a = 0;
   }
 
   void show();

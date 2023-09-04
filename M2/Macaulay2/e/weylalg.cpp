@@ -105,7 +105,7 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K,
   WeylAlgebra *result = new WeylAlgebra;
 
   result->initialize_poly_ring(K, M);
-  if (!result->initialize_weyl(derivs, comms, homog_var)) return nullptr;
+  if (!result->initialize_weyl(derivs, comms, homog_var)) return 0;
 #ifdef DEVELOPMENT
 #warning "hack for ZZ and QQ coeffs in Weyl algebra: clean it up?"
 #endif
@@ -169,12 +169,12 @@ void WeylAlgebra::text_out(buffer &o) const
 /////////////////
 int WeylAlgebra::binomtop = 15;
 int WeylAlgebra::diffcoeffstop = 10;
-int **WeylAlgebra::binomtable = nullptr;
-int **WeylAlgebra::diffcoeffstable = nullptr;
+int **WeylAlgebra::binomtable = 0;
+int **WeylAlgebra::diffcoeffstable = 0;
 
 void WeylAlgebra::initialize1()
 {
-  if (binomtable == nullptr)
+  if (binomtable == 0)
     {
       int i, j;
 
@@ -351,7 +351,7 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
   // monoid.
 
   Nterm head;
-  head.next = nullptr;
+  head.next = 0;
   Nterm *result = &head;
 
   int i;
@@ -413,7 +413,7 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
     }
   freemem(exp);
   freemem(result_exp);
-  result->next = nullptr;
+  result->next = 0;
   return head.next;
 }
 
@@ -473,7 +473,7 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
   // monoid.
 
   gbvector head;
-  head.next = nullptr;
+  head.next = 0;
   gbvector *result = &head;
 
   int i;
@@ -498,7 +498,7 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
         deriv_exp[_commutative[i]] = derivatives[i];
       }
 
-  for (const gbvector *t = g; t != nullptr; t = t->next)
+  for (const gbvector *t = g; t != 0; t = t->next)
     {
       // This first part checks whether the x-part of t->monom is divisible by
       // 'derivatives'.  If so, true is returned, and the resulting monomial is
@@ -534,7 +534,7 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
     }
   freemem(exp);
   freemem(result_exp);
-  result->next = nullptr;
+  result->next = 0;
   return head.next;
 }
 

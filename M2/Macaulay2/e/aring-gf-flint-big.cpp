@@ -64,7 +64,7 @@ ARingGFFlintBig::ARingGFFlintBig(const PolynomialRing& R, const ring_elem a)
 ARingGFFlintBig::~ARingGFFlintBig()
 {
   fq_nmod_ctx_clear(mContext);
-  mPrimitiveElement = nullptr;
+  mPrimitiveElement = 0;
   freemem(mPPowers);
   flint_randclear(mRandomState);
 
