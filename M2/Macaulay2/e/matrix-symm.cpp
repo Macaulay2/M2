@@ -9,7 +9,7 @@ class SymmMatrix
     if (m0->n_rows() != 1)
       {
         ERROR("expected one row");
-        return nullptr;
+        return 0;
       }
 
     SymmMatrix s(m0, p);

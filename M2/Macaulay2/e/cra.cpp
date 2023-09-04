@@ -203,7 +203,7 @@ vec ChineseRemainder::CRA(const PolyRing *R,
             }
           break;
         }
-      if (f == nullptr)
+      if (f == NULL)
         {
           // mult each term of g by n:
           for (; g != nullptr; g = g->next)

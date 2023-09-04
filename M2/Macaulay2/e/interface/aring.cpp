@@ -42,7 +42,7 @@ const Ring /* or null */ *rawARingZZp(unsigned long p)
   if (p <= 1 || p >= 32750)
     {
       ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
-      return nullptr;
+      return 0;
     }
   return M2::ConcreteRing<M2::ARingZZp>::create(p);
 }
@@ -58,66 +58,66 @@ static const PolynomialRing * /* or null */ checkGaloisFieldInput(
   // Check that f is monic
   // If any of these fail, then return 0.
   const PolynomialRing *R = f->get_ring()->cast_to_PolynomialRing();
-  if (R == nullptr)
+  if (R == 0)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
-      return nullptr;
+      return 0;
     }
   if (R->n_vars() != 1)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
-      return nullptr;
+      return 0;
     }
   if (R->n_quotients() != 1)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
-      return nullptr;
+      return 0;
     }
   if (R->characteristic() == 0)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
-      return nullptr;
+      return 0;
     }
   return R;
 }
 const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
 {
   const PolynomialRing *R = checkGaloisFieldInput(f);
-  if (R == nullptr) return nullptr;  // error message has already been logged
+  if (R == 0) return 0;  // error message has already been logged
   try
     {
       return M2::ConcreteRing<M2::ARingGFM2>::create(*R, f->get_value());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *f)
 {
   const PolynomialRing *R = checkGaloisFieldInput(f);
-  if (R == nullptr) return nullptr;  // error message has already been logged
+  if (R == 0) return 0;  // error message has already been logged
   try
     {
       return M2::ConcreteRing<M2::ARingGFFlintBig>::create(*R, f->get_value());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
 const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *f)
 {
   const PolynomialRing *R = checkGaloisFieldInput(f);
-  if (R == nullptr) return nullptr;  // error message has already been logged
+  if (R == 0) return 0;  // error message has already been logged
   try
     {
       return M2::ConcreteRing<M2::ARingGFFlint>::create(*R, f->get_value());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -138,7 +138,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
   if (dimension < 0)
     {
       ERROR(" givaroGF/FFPACK: help, dimension is negative ! ");
-      return nullptr;
+      return 0;
     }
   try
     {
@@ -147,7 +147,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
       if (prime <= 1)
         {
           ERROR("givaroGF/FFPACK: expected a prime number p ");
-          return nullptr;
+          return 0;
         }
 
       //-- NEED_POLYNOMIAL_REPRESENTATION is not usable(namespace problems) and
@@ -168,7 +168,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
       if (dimension == 1)
         {
           ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
-          return nullptr;
+          return 0;
         }
       #if 0
       return M2::ConcreteRing<M2::ARingGFGivaro>::create(prime, dimension);
@@ -182,7 +182,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -297,10 +297,10 @@ const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
     {
       const M2::ConcreteRing<M2::ARingZZpFFPACK> *Kp =
           dynamic_cast<const M2::ConcreteRing<M2::ARingZZpFFPACK> *>(K);
-      if (Kp == nullptr)
+      if (Kp == 0)
         {
           ERROR("expected a base ring ZZ/p");
-          return nullptr;
+          return NULL;
         }
       const M2::ARingZZpFFPACK &A = Kp->ring();
 
@@ -312,7 +312,7 @@ const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -323,10 +323,10 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1,
     {
       const M2::ConcreteRing<M2::ARingTower> *K =
           dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(R1);
-      if (K == nullptr)
+      if (K == 0)
         {
           ERROR("expected a tower ring");
-          return nullptr;
+          return NULL;
         }
       const M2::ARingTower &A = K->ring();
 
@@ -337,7 +337,7 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -348,10 +348,10 @@ const Ring /* or null */ *rawARingTower3(const Ring *R1,
     {
       const M2::ConcreteRing<M2::ARingTower> *K =
           dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(R1);
-      if (K == nullptr)
+      if (K == 0)
         {
           ERROR("expected a tower ring");
-          return nullptr;
+          return NULL;
         }
       const M2::ARingTower &A = K->ring();
 
@@ -364,7 +364,7 @@ const Ring /* or null */ *rawARingTower3(const Ring *R1,
           if (f->get_ring() != R1)
             {
               ERROR("extension element has incorrect base ring");
-              return nullptr;
+              return 0;
             }
           A.from_ring_elem(f1, f->get_value());
           extensions.push_back(f1);
@@ -375,7 +375,7 @@ const Ring /* or null */ *rawARingTower3(const Ring *R1,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return 0;
   }
 }
 

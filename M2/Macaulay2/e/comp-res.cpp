@@ -241,7 +241,7 @@ MutableMatrix /* or null */ *ResolutionComputation::get_matrix(int level,
 {
   // the default version gives an error that it isn't defined
   ERROR("this function not defined for this resolution type");
-  return nullptr;
+  return 0;
 }
 
 // Local Variables:
