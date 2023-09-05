@@ -696,11 +696,11 @@ doc ///
      S:Subring
    Outputs
      result:Boolean
-       @TT "f"@ belongs to @TT "S"@.
+       $f$ belongs to $S$.
    Description
      Text
        Uses the extrinsic method to test membership of a polynomial in a subring.
-       Note that @TT "S"@ must be a subring of a polynomial ring.
+       Note that $S$ must be a subring of a polynomial ring.
      Example
        R = QQ[x,y];
        S = subring {x^2 - x*y, x^4};
@@ -709,7 +709,7 @@ doc ///
        f2 = x^10;
        groebnerMembershipTest(f2, S)
      Text
-       If a sagbi basis is known for @TT "S"@ then it is recommended to use @TO "RingElement % Subring"@.
+       If a sagbi basis is known for $S$ then it is recommended to use @TO "RingElement % Subring"@.
    SeeAlso
      Subring
      (symbol %, RingElement, Subring)
@@ -744,9 +744,11 @@ doc ///
        h = groebnerSubductionQuotient(f, S)
    SeeAlso
      Subring
+     subring
      (symbol %, RingElement, Subring)
      (symbol //, RingElement, Subring)
      sagbi
+     groebnerMembershipTest
 ///
 doc ///
    Key
@@ -836,20 +838,20 @@ doc ///
        the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
      SubductionMethod=>String
-       the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
+       the method used for subduction.  @TO "SubductionMethod"@ can be either "Top" or "Engine".
      SAGBILimitType=>String
        Either "Fixed" or "Function". Determines the stopping criterion for the sagbi computation. If "Fixed" then the @TO "Limit"@ is used,
        otherwise if "Function" is selected then the maximum degree of the input generators is used as the degree limit.
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      PrintLevel=>ZZ
-       When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@).
+       which determines how much information is printed about the progress of the computation.  Larger positive values of @TO "PrintLevel"@ result in more output.
    Outputs
      result:IntersectedSubring
    Description
      Text
-       Computes the intersection of subrings "S_1" and "S_2". These subrings must be subrings of the same
-       ambient ring. The ambient ring is allowed to be a polynomial ring or the quotient of a polynomial ring.
+       Computes the intersection of subrings $S1$ and $S2$. These subrings must be subrings of the same
+       ambient ring.
      Example
        R = QQ[x,y];
        I = ideal(x^3 + x*y^2 + y^3);
@@ -861,13 +863,14 @@ doc ///
        isFullIntersection S
        isSAGBI S
      Text
+       The generators of the resulting @TO "IntersectedSubring"@ may form a partial subalgebra basis for the computed intersection.
        To check whether the generators of the resulting @TO "IntersectedSubring"@ generate the intersection of the given subrings,
        use the function @TO "isFullIntersection"@. If the function @TO "isFullIntersection"@ returns @TT "true"@, then the generators of
        the @TO "IntersectedSubring"@ are guaranteed to be a subalgebra basis for the intersection.
        
        Note that, even if the function @TO "isFullIntersection"@ returns @TT "false"@, the generators of the given instance of 
-       @TO "IntersectedSubring"@ may generate the full intersection. In general, the generators of an instance of @TO "IntersectedSubring"@
-       are guaranteed to lie in each of the subrings that were intersected to produce it.
+       @TO "IntersectedSubring"@ may generate the full intersection. The generators of an instance of @TO "IntersectedSubring"@
+       are guaranteed to lie in both $S1$ and $S2$.
    SeeAlso
      Subring
      IntersectedSubring
@@ -1075,9 +1078,7 @@ doc ///
    SeeAlso
      Subring
      subring
-     (ambient, Subring)
-     (numgens, Subring)
-     (net, Subring)
+     (gens,SAGBIBasis)
 ///
 
 
@@ -1204,10 +1205,6 @@ doc ///
    SeeAlso
      Subring
      subring
-     (gens, Subring)
-     (ambient, Subring)
-     (numgens, Subring)
-     (net, Subring)
 ///
 doc ///
    Key
@@ -1293,7 +1290,7 @@ doc ///
    Key
      (gens,SAGBIBasis)
    Headline
-     Returns a partial sagbi generating set
+     Returns generators of a SAGBIBasis computation object
    Usage
      result = gens S
    Inputs
@@ -1305,8 +1302,9 @@ doc ///
      result:Matrix
    Description
      Text
-        Returns the current list of sagbiGenerators of the underlying @TO "Subring"@.
-        If sagbi generators of @ ofClass SAGBIBasis @ is not a complete sagbi basis (for example it is obtained from a partial computation)
+        Returns the list of sagbiGenerators of the underlying @TO "Subring"@.
+        If the subalgebra generators do not form a complete subalgebra basis
+        (for example if they were obtained from a partial computation),
         then the generators obtained from this command may not be a generating set for the original subring.
      Example
         R = QQ[x,y];
@@ -1319,13 +1317,7 @@ doc ///
      
    SeeAlso
      SAGBIBasis
-     (gens, SAGBIBasis)
-     (ambient, SAGBIBasis)
-     (ring, SAGBIBasis)
-     (net, SAGBIBasis)
-     (status, SAGBIBasis)
-     sagbiDegree
-     sagbiLimit
+     (gens,Subring)
      sagbi
 ///
 
@@ -1546,17 +1538,21 @@ doc ///
        subduct the generators against themselves
    Description
      Text
-       If forceSB is supplied @ ofClass SAGBIBasis @ $SB$, then the function performs
-       autosubduction on the sagbiGenerators of $SB$. The sagbiDone flag is then
-       set to @ TT "true" @ without checking whether the generators form a sagbi basis.
+       If forceSB is called on a @ ofClass SAGBIBasis @ $SB$, then the function performs
+       autosubduction on the sagbiGenerators of $SB$. The completion flag is then
+       set to complete without checking whether the generators form a sagbi basis.
        
-       If forceSB is supplied @ ofClass Subring @ $S$, then the function checks whether a
-       @TO "SAGBIBasis"@ $SB$ has been created for $S$. If $SB$ exists, then @ TT "forceSB" @
-       is applied to $SB$ as described above. Otherwise, $SB$ is created from $S$ and
-       has its @ TT "sagbiDone" @ flag set to @ TT "true" @.
+       If forceSB is called on a @ ofClass Subring @ $S$, then the function performs autosubduction
+       on the generators of $S$.  The completion flag is then
+       set to complete without checking whether the generators form a sagbi basis.
        
-       Note, if the generators supplied to @ TT "forceSB" @ do not form a sagbi basis, then it
-       may cause unexpected behaviour.
+       In each case above, the option UseSubringGens can be toggled between true and false to
+       operate on the subring generators in the case where the input is a @ ofClass SAGBIBasis @,
+       and operate on any partial subalgebra basis created for $S$ when the the input is a
+       @ ofClass Subring @.
+       
+       Note, that if the generators supplied to @ TT "forceSB" @ do not form a sagbi basis,
+       then the resulting behavior may be unexpected.
        
      Example
        R = QQ[x,y];
@@ -1564,7 +1560,7 @@ doc ///
        forceSB S;
        isSAGBI S
        sagbi(S,Recompute=>true)
-       isSAGBI
+       isSAGBI S
      Text
        In this example forceSB causes isSAGBI to return true even though
        the generators of $S$ do not form a subalgebra basis.
@@ -1573,6 +1569,7 @@ doc ///
    SeeAlso
      Subring
      SAGBIBasis
+     isSAGBI
 ///
 doc ///
    Key
@@ -1624,8 +1621,7 @@ doc ///
     Description
         Text
 	    The following example shows how to use this package to calculate the invariants of the translation sub-action of
-	    the adjoint action of $SE(3)$, as studied by Crook and Donelan
-        from the preprint @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@.
+	    the adjoint action of $SE(3)$, as studied by Crook and Donelan.
     	Example
 	    gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
 	    translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
