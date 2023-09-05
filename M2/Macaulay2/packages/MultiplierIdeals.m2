@@ -1630,6 +1630,8 @@ TEST ///
 --------------------------------------------------------------------------------
 
 TEST /// -- Example 3.9 of [Johnson, 2003] (thesis)
+-- no-check-flag
+-- uses too much memory; see https://github.com/Macaulay2/M2/issues/2923
   needsPackage "MultiplierIdeals";
   debug MultiplierIdeals;
   I = X -> genericDeterminantalSymbolicPower(X,3,4);
