@@ -40,7 +40,8 @@ export {
     "SAGBILimitType",
     "IntersectedSubring",
     "isFullIntersection",
-    "originalSubringGens"
+    "originalSubringGens",
+    "CheckFullIntersection"
     }
 
 protect symbol quotientRing

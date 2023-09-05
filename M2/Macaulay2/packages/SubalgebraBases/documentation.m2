@@ -934,7 +934,7 @@ doc ///
        R = QQ[x,y];
        S1 = subring {x^3, x^2*y};
        S2 = subring {x^4, y};
-       S = intersect(S1, S2, Limit => 15);
+       S = intersect(S1, S2, Limit => 15, CheckFullIntersection => false);
        gens S
        isFullIntersection S
    SeeAlso

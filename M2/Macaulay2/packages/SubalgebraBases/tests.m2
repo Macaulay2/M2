@@ -541,7 +541,7 @@ TEST ///
 R = QQ[x,y];
 S1 = subring {x^2, x*y};
 S2 = subring {x^3, y};
-S12 = intersect(S1, S2, Limit => 8);
+S12 = intersect(S1, S2, Limit => 8, CheckFullIntersection => false);
 assert(gens S12 == matrix {{x^3*y, x^3*y^3, x^6}})
 ///
 
