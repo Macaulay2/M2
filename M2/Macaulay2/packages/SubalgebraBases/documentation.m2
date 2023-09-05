@@ -1520,12 +1520,20 @@ doc ///
       forceSB
      (forceSB, SAGBIBasis)
      (forceSB, Subring)
-     [forceSB, AutoSubduce]
-     [forceSB, Strategy]
-     [forceSB, SubductionMethod]
-     [forceSB, Limit]
-     [forceSB, RenewOptions]
-     [forceSB, PrintLevel]
+     [(forceSB, SAGBIBasis), AutoSubduce]
+     [(forceSB, SAGBIBasis), Strategy]
+     [(forceSB, SAGBIBasis), SubductionMethod]
+     [(forceSB, SAGBIBasis), Limit]
+     [(forceSB, SAGBIBasis), RenewOptions]
+     [(forceSB, SAGBIBasis), PrintLevel]
+     [(forceSB, SAGBIBasis), UseSubringGens]
+     [(forceSB, Subring), AutoSubduce]
+     [(forceSB, Subring), Strategy]
+     [(forceSB, Subring), SubductionMethod]
+     [(forceSB, Subring), Limit]
+     [(forceSB, Subring), RenewOptions]
+     [(forceSB, Subring), PrintLevel]
+     [(forceSB, Subring), UseSubringGens]
    Headline
      declare the generators to be a complete sagbi basis
    Usage
@@ -1534,8 +1542,6 @@ doc ///
    Inputs
      S:Subring
      SB:SAGBIBasis
-     AutoSubduce=>Boolean
-       subduct the generators against themselves
    Description
      Text
        If forceSB is called on a @ ofClass SAGBIBasis @ $SB$, then the function performs
@@ -1628,17 +1634,17 @@ doc ///
 	    sag := sagbi transpose translation;
 	    netList first entries gens sag
         Text
-    	    The generators above are the 5 invariants Crook and Donelan give in Equation (9), plus the additional 6th invariant.
+            The generators above are the 5 invariants Crook and Donelan give in Equation (9), plus the additional 6th invariant.
             The computation below verifies Theorem 2 of Crook and Donelan, describing rotational invariants in the case where m=3.
         Example
-    		R = QQ[x_1..x_9, MonomialOrder => Lex];
-    		eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6, x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
-		         x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9, x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
-      			 x_7^2+x_8^2+x_9^2-1, x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
-    		sag1 = subring sagbi eqns;
-		SB = sagbi(sag1, Limit => 100);
-		isSAGBI SB
-		netList first entries gens SB
+                R = QQ[x_1..x_9, MonomialOrder => Lex];
+                eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6, x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
+                         x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9, x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
+                         x_7^2+x_8^2+x_9^2-1, x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
+                sag1 = subring sagbi eqns;
+                SB = sagbi(sag1, Limit => 100);
+                isSAGBI SB
+                netList first entries gens SB
     SeeAlso
       sagbi
       (gens, SAGBIBasis)

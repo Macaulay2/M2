@@ -175,15 +175,13 @@ sagbiBasis Subring := opts -> S -> (
         "reductionIdeal" => maps#"inclusionLifted" leadTermsI + SIdeal,
     };
     
-    -- Data: subalgebraGenerators, sagbiGenerators, sagbiDegrees, sagbiDone, 
+    -- Data: subalgebraGenerators, sagbiGenerators, sagbiDegrees, sagbiStatus, 
     --       degree, limit, autoSubductedSagbiGenerators, subring
     -- > subalgebraGenerators is a matrix with the original generators of the subring
     -- > sagbiGenerators is a matrix of all the sagbi elements
     --   that we have found so far in the liftedRing. It is initially empty.
     -- > sagbiDegrees are the degrees of the sagbiGenerators,
     --   it is initially empty.
-    -- > sagbiDone is set to be true if the sagbiGenerators form
-    --   a finite sagbi basis.  It is initially false.
     -- > sagbiStatus is an integer that stores the current status of the computation:
     --   >> 0 no result - the computation has terminated but cannot guarantee a sagbi basis or non sagbi basis
     --   >> 1 result - the sagbi generators form a sagbi basis
@@ -202,7 +200,6 @@ sagbiBasis Subring := opts -> S -> (
         "subalgebraGenerators" => S#"generators",
         "sagbiGenerators" => matrix(rings#"liftedRing",{{}}),
         "sagbiDegrees" => matrix(ZZ,{{}}),
-        "sagbiDone" => false,
         "sagbiStatus" => 0,
         degree => -1,
         "limit" => -1,
@@ -230,7 +227,7 @@ sagbiBasis Subring := opts -> S -> (
 
 net SAGBIBasis := S -> (
     local description;
-    if S#SAGBIdata#"sagbiDone" or S#SAGBIdata#"sagbiStatus" == 1 then (
+    if S#SAGBIdata#"sagbiStatus" == 1 then (
         description = "SAGBIBasis Computation Object with "
         )
     else (
@@ -282,7 +279,7 @@ sagbiLimit SAGBIBasis := SB -> (
     SB#SAGBIdata#"limit"
     )
 
--- is the computation finished (sagbiDone)
+-- is the computation finished
 sagbiStatus = method()
 sagbiStatus SAGBIBasis := SB -> (
     SB#SAGBIdata#"sagbiStatus" == 1
