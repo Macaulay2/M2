@@ -273,11 +273,13 @@ gateSystem PolySystem := GateSystem => F -> if F#?GateSystem then F#GateSystem e
   F#GateSystem = gateSystem(F,parameters F)
 gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> ( 
     R := ring F; 
-    if not isSubset(P, gens R) then "some parameters are not among generators of the ring";
-    X := getVarGates R;
-    variables := gateMatrix {X_(positions(gens R, x->not member(x,P)))};  
-    parameters := gateMatrix {X_(positions(gens R, x->member(x,P)))};
-    gateSystem(parameters, variables, gatePolynomial F.PolyMap)
+    (S, R2S) := flattenRing R;
+    params := R2S \ P;
+    if not isSubset(params, gens S) then error"some parameters are not among generators of the ring";
+    X := getVarGates S;
+    variables := gateMatrix {X_(positions(gens S, x->not member(x,params)))};  
+    parameters := gateMatrix {X_(positions(gens S, x->member(x,params)))};
+    gateSystem(parameters, variables, gatePolynomial R2S F.PolyMap)
     ) 
  
 -- !!! a general problem: some methods need PolySystem to be changed to GateSystem
