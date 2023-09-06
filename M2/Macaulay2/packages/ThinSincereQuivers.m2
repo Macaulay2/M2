@@ -1864,11 +1864,13 @@ multidoc ///
             "Creating subquiver representations"
         Description
             Text
-                There are many ways to take a subset $R=(R_0,R_1)$ of a quiver $Q=(Q_0,Q_1)$. 
-                This is because we can consider $R_0\subset Q_0$ and $R_1\subset Q_1$. 
-                Alternatively, $R$ is itself a quiver, with $|R_1|$ arrows and $|R_0|$ 
-                vertices. Thus we can also consider $R$ independently of the arrow/vertex labeling of $Q$. 
-
+                A subquiver is a subgraph of a quiver. Specifically, it's formed by selecting a subset $I$ 
+                of the arrows from the original quiver, ensuring that the tails and heads of the chosen arrows 
+                align with the selected vertices. In this context, there are two ways to approach a subquiver. 
+                One approach is to recall the original quiver and represent the subquiver as a subset of its arrows 
+                and vertices, denoted as $Q^I$. The flow of the resultant quiver will be zero along the arrows not in $I$. 
+                Alternatively, we can disregard the original quiver and focus solely on the arrows and vertices of the new subquiver, represented as $Q_I$. 
+                The weight of the new quiver $Q_I$ is derived from the flows of the original quiver $Q$.  
             Text
                 The two methods corresponding to these ideas are referenced in the examples below. 
             Example
@@ -2098,7 +2100,13 @@ multidoc ///
             Text
                 For a generic weight, theta, in $C(Q)$, the flow polytope has the same dimension as the kernel of the inc map, 
                 which is $|Q_0| - |Q_1| + 1$. Moreover, given a spanning tree of the quiver, there exists a natural basis 
-                for the kernel of the inc map constructed from the combinatorics of the quiver. Therefore, we can translate the flow polytope 
+                for the kernel of the inc map constructed from the combinatorics of the quiver, 
+                see 
+                HREF{
+                "https://www.etd.ceu.edu/2015/joo_daniel.pdf", 
+                "Dániel Joó, Toric Quiver Varieties, Ph.D thesis, 
+                2015"}. 
+                Therefore, we can translate the flow polytope 
                 to this kernel and express the polytope on such basis. 
                 With basisForFlowPolytope Q, we calculate the basis for inc map from a spanning tree of it. 
                 If none is provided, then one is randomly chosen.
@@ -2127,7 +2135,10 @@ multidoc ///
                 The set of weights {\tt th} for which the polytope {\tt (Q,th)} is 
                 nonempty lies in a fan {\tt CQ}. This fan is partitioned into cones by the 
                 walls of the toric quiver {\tt Q}, and for each partition there exists 
-                a unique flow polytope. 
+                a unique flow polytope. For a detailed discussion see
+                {"Lutz Hille, ", HREF{"https://doi.org/10.1016/S0024-3795(02)00406-8", EM "Quivers, cones and polytopes, "}, "
+                Linear algebra and its applications 365 (2003): 215-237."},
+
             Example
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
                 CS = coneSystem Q
@@ -2154,11 +2165,13 @@ multidoc ///
                 necessary for polytope dimension. 
         Outputs
             : Matrix
-                giving the coordinates of the vertices defining the flow polytope
+                giving the coordinates of the vertices defining the flow polytope. 
+                If the flow polytope does not exist for the given weight. Then, it returns an empty list.
         Description
             Text
-                Associated to every acyclic toric quiver and weight pair is a flow polytope. 
-                For full-dimensional representation of the vertices, use {\tt Format => "FullBasis"}. 
+                Associated with every acyclic toric quiver and weight pair is a flow polytope. This polytope can be translated to the kernel of the inc map, 
+                so it is full dimensional. By default, the output lists the vertices within this vector space. To obtain the presentation in the original fiber, 
+                use {\tt Format => "FullBasis"}.    
             Example
                 flowPolytopeVertices(bipartiteQuiver(2, 3))
                 flowPolytopeVertices({-3,-3,2,2,2}, bipartiteQuiver(2, 3))
@@ -2180,6 +2193,18 @@ multidoc ///
             F: List
                 giving a flow in the preimage of the input weight.
         Description
+            Text
+                Every integral flow induces a weight on the vertices $Q_0$ as follows: Let $a \in Q_1$ be an arrow. 
+                The symbol  $a^{+} \in Q_0$ denotes its head and the symbol $a^{-} \in Q_0$ denotes its tail. 
+                The so called incidence map generates a weight from the flow $\mathbf{w}$ by
+                $$
+                \text{inc}(\mathbf{w})(i) 
+                := \sum_{a\in Q_1 \atop a^{+} = i} \mathbf{w}(a)  
+                - \sum_{a\in Q_1 \atop a^{-} = i} 
+                \mathbf{w}(a) \quad \text{ for all } i \in Q_0.
+                $$
+                The function incInverse calculates a vector in the preimage of such a map.    
+            
             Example
                 Q = toricQuiver(bipartiteQuiver(2,3));
                 th = {-5,-1,2,2,2};
@@ -2407,6 +2432,12 @@ multidoc ///
             Q: ToricQuiver
                 that is tight with respect to the flow on the input, and which has the same flow polytope as the input.
         Description
+            Text
+                Let $\theta$ be an integral weight assigned to the vertices of a quiver $Q$. The quiver $Q$ is called $\theta$-tight if for every arrow $\alpha$, 
+                the subquiver $Q\setminus \alpha$ is $\theta$-stable. Every quiver can be tightened by contraction of certain arrows in Q and changing the weight accordingly, 
+                see Section 4 at
+                \HREF{https://link.springer.com/article/10.1007/s00229-009-0255-6, 
+                Altmann, Klaus, and Duco van Straten. "Smoothing of quiver varieties." manuscripta mathematica 129 (2009): 211-230.}
             Example
                 Q = bipartiteQuiver(2,3)
                 w = {-5,-1,2,2,2}
@@ -2426,9 +2457,14 @@ multidoc ///
             : ZZ
         Description
             Text
-                computes the maximal codimension of the unstable loci a given quiver {\tt Q}
+                It computes the maximal codimension of the unstable loci a given quiver {\tt Q}
             Example
                 maxCodimensionUnstable bipartiteQuiver(2, 3)
+            Text     
+                We note that this value can range from $|Q_1|$, as is the case with the quiver associated 
+                with the projective space, to 1 when the quiver is not tight."
+            Example 
+                maxCodimensionUnstable toricQuiver({{0,1},{0,1},{0,1}})
         SeeAlso
     Node
         Key
@@ -2785,15 +2821,18 @@ multidoc ///
                 of either quiver objects, or arrow indices
         Description
             Text 
-                This method returns the subquivers of a given quiver. 
-                There are 3 main ways to represent a subquiver: 
-            Text
-                @UL{
-                    {"as a list of arrow indices,"}, 
-                    {"as a subset of rows and columns of the original incidence matrix, and"},
-                    {"as a copy of the original incidence matrix with certain rows and columns zeroed out. "}
+                A subquiver is a subgraph of a quiver. Specifically, it's formed by selecting a subset of the arrows 
+                from the original quiver, ensuring that the tails and heads of the chosen arrows correspond to the selected vertices. 
+                There are several ways to represent a subquiver:
+            Text      
+                @UL {
+                    {"Using a list of arrow indices to indicate the selected arrows. "}, 
+                    {"Selecting a subset of rows and columns from the original incidence matrix. Here, we leverage the fact that columns 
+                      in the incidence matrix correspond to arrows in the quiver."},
                 }@
-
+            Text
+                subquivers Q list all possible subquivers of Q.
+            
             Example
                 Q = chainQuiver {2}
                 subquivers Q
