@@ -2102,10 +2102,10 @@ multidoc ///
                 which is $|Q_0| - |Q_1| + 1$. Moreover, given a spanning tree of the quiver, there exists a natural basis 
                 for the kernel of the inc map constructed from the combinatorics of the quiver, 
                 see 
-                HREF{
+                @{HREF{
                 "https://www.etd.ceu.edu/2015/joo_daniel.pdf", 
                 "Dániel Joó, Toric Quiver Varieties, Ph.D thesis, 
-                2015"}. 
+                2015."}}@
                 Therefore, we can translate the flow polytope 
                 to this kernel and express the polytope on such basis. 
                 With basisForFlowPolytope Q, we calculate the basis for inc map from a spanning tree of it. 
@@ -2136,8 +2136,11 @@ multidoc ///
                 nonempty lies in a fan {\tt CQ}. This fan is partitioned into cones by the 
                 walls of the toric quiver {\tt Q}, and for each partition there exists 
                 a unique flow polytope. For a detailed discussion see
-                {"Lutz Hille, ", HREF{"https://doi.org/10.1016/S0024-3795(02)00406-8", EM "Quivers, cones and polytopes, "}, "
-                Linear algebra and its applications 365 (2003): 215-237."},
+                Lutz Hille  
+                @{HREF{
+                "https://doi.org/10.1016/S0024-3795(02)00406-8",
+                "\"Quivers, cones and polytopes\", Linear algebra and its applications 365 (2003): 215-237."
+                }}@ 
 
             Example
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
@@ -2436,8 +2439,8 @@ multidoc ///
                 Let $\theta$ be an integral weight assigned to the vertices of a quiver $Q$. The quiver $Q$ is called $\theta$-tight if for every arrow $\alpha$, 
                 the subquiver $Q\setminus \alpha$ is $\theta$-stable. Every quiver can be tightened by contraction of certain arrows in Q and changing the weight accordingly, 
                 see Section 4 at
-                \HREF{https://link.springer.com/article/10.1007/s00229-009-0255-6, 
-                Altmann, Klaus, and Duco van Straten. "Smoothing of quiver varieties." manuscripta mathematica 129 (2009): 211-230.}
+                @{HREF{"https://link.springer.com/article/10.1007/s00229-009-0255-6", 
+                "Altmann, Klaus, and Duco van Straten. \"Smoothing of quiver varieties.\" manuscripta mathematica 129 (2009): 211-230."}}@ 
             Example
                 Q = bipartiteQuiver(2,3)
                 w = {-5,-1,2,2,2}
