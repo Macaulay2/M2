@@ -2903,7 +2903,7 @@ multidoc ///
                 of integers, corresponding to the image of the flow of the provided toric quiver under the $Inc$ map
         Description
             Text
-                This method returns the image of the $Inc$ map 
+                This method returns the weight of the quiver. This vector is the image of its flow under the $Inc$ map. 
             Example
                 Q = bipartiteQuiver(2, 3, Flow => "Random")
                 getWeights Q
