@@ -2904,11 +2904,19 @@ multidoc ///
                 of integers, corresponding to the image of the flow of the provided toric quiver under the $Inc$ map
         Description
             Text
-                This method returns the weight of the quiver. This vector is the image of its flow under the $Inc$ map. 
+                This method returns the weight of the quiver. This vector is the image of its flow under the $inc$ map, which is defined as
+                $$
+                \text{inc}(\mathbf{w})(i) 
+                := \sum_{a\in Q_1 \atop a^{+} = i} \mathbf{w}(a)  
+                - \sum_{a\in Q_1 \atop a^{-} = i} 
+                \mathbf{w}(a) \quad \text{ for all } i \in Q_0.
+                $$
+                where for any arrow $a\in Q_1$, we denote its head as $a^{+} \in Q_0$ and its tail as $a^{-} \in Q_0$.
             Example
                 Q = bipartiteQuiver(2, 3, Flow => "Random")
                 getWeights Q
         SeeAlso
+            incInverse
 -- documentation for symbols
     Node
         Key
