@@ -2662,6 +2662,12 @@ multidoc ///
         Outputs
             M: Matrix
                 that is the incidence matrix for the graph of the toric quiver
+        Description
+            Text
+                This method returns the incidence matrix that is stored in the quiver.
+            Example
+                Q = bipartiteQuiver(2, 3);
+                quiverIncidenceMatrix Q
         SeeAlso
             ToricQuiver
     Node
@@ -2677,6 +2683,12 @@ multidoc ///
         Outputs
             E: List
                 of edges, each of which is a pair of vertices.
+        Description
+            Text
+                This method returns the list of edges that are in the graph of the provided toric quiver.
+            Example
+                Q = bipartiteQuiver(2, 3);
+                quiverEdges Q
         SeeAlso
             ToricQuiver
     Node
@@ -2692,8 +2704,15 @@ multidoc ///
         Outputs
             F: List
                 the flow for the toric quiver
+        Description
+            Text
+                This method returns the flow of the provided toric quiver, which is a list of numeric values.
+            Example
+                Q = bipartiteQuiver(2, 3, Flow=> {1, 2, 3, 4, 5, 6});
+                quiverFlow Q
         SeeAlso
             ToricQuiver
+            incInverse
     Node
         Key
             quiverVertices
@@ -2707,6 +2726,12 @@ multidoc ///
         Outputs
             V: List
                 of the vertices in the quiver
+        Description
+            Text
+                This method returns the vertices that are in the provided toric quiver.
+            Example
+                Q = bipartiteQuiver(2, 3);
+                quiverVertices Q
         SeeAlso
             ToricQuiver
     Node
@@ -2722,8 +2747,23 @@ multidoc ///
         Outputs
             W: List
                 of the weights induced by the flow on the quiver
+        Description
+            Text
+                This method returns the weights of the provided toric quiver.
+                The weights are the image of the quiver flow under the inc map, which is defined as
+                $$
+                \text{inc}(\mathbf{w})(i) 
+                := \sum_{a\in Q_1 \atop a^{+} = i} \mathbf{w}(a)  
+                - \sum_{a\in Q_1 \atop a^{-} = i} 
+                \mathbf{w}(a) \quad \text{ for all } i \in Q_0.
+                $$
+                where for any arrow $a\in Q_1$, we denote its head as $a^{+} \in Q_0$ and its tail as $a^{-} \in Q_0$.
+            Example
+                Q = bipartiteQuiver(2, 3);
+                quiverWeights Q
         SeeAlso
             ToricQuiver
+            incInverse
     Node
         Key
             referenceThetas
@@ -2904,7 +2944,8 @@ multidoc ///
                 of integers, corresponding to the image of the flow of the provided toric quiver under the $Inc$ map
         Description
             Text
-                This method returns the weight of the quiver. This vector is the image of its flow under the $inc$ map, which is defined as
+                This method returns the weight of the quiver.
+                This vector is the image of its flow under the $inc$ map, which is defined as
                 $$
                 \text{inc}(\mathbf{w})(i) 
                 := \sum_{a\in Q_1 \atop a^{+} = i} \mathbf{w}(a)  
