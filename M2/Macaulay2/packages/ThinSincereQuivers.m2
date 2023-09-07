@@ -2167,7 +2167,8 @@ multidoc ///
                 returns the polytope in a basis giving the minimal degree 
                 necessary for polytope dimension. 
         Outputs
-            : Matrix
+            : 
+                Depending on the option for Format, this method returns a Matrix or List of Lists
                 giving the coordinates of the vertices defining the flow polytope. 
                 If the flow polytope does not exist for the given weight. Then, it returns an empty list.
         Description
