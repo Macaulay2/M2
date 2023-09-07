@@ -2178,7 +2178,14 @@ multidoc ///
                 use {\tt Format => "FullBasis"}.    
             Example
                 flowPolytopeVertices(bipartiteQuiver(2, 3))
+            Text 
+                We can vary the weight of the quiver to define the flow polytope
+            Example
                 flowPolytopeVertices({-3,-3,2,2,2}, bipartiteQuiver(2, 3))
+            Text 
+                The user can also recover the polytope $\Delta(Q,\theta)$ within the inverse of the corresponding inc map, that is within $inc^{-1}(\theta)$. 
+            Example
+                flowPolytopeVertices( bipartiteQuiver(2, 3), Format => "FullBasis")
         SeeAlso
             basisForFlowPolytope
     Node
