@@ -67,7 +67,7 @@ const Matrix /* or null */ *ReducedGB::get_mingens()
 #ifdef DEVELOPMENT
 #warning "mingens?"
 #endif
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *ReducedGB::get_syzygies()
@@ -75,7 +75,7 @@ const Matrix /* or null */ *ReducedGB::get_syzygies()
 #ifdef DEVELOPMENT
 #warning "syzygies?"
 #endif
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *ReducedGB::get_change()
@@ -129,13 +129,13 @@ const Matrix /* or null */ *ReducedGB::matrix_remainder(const Matrix *m)
   if (m->get_ring() != originalR)
     {
       ERROR("expected matrix over the same ring");
-      return 0;
+      return nullptr;
     }
 
   if (m->n_rows() != F->rank())
     {
       ERROR("expected matrices to have same number of rows");
-      return 0;
+      return nullptr;
     }
 
   MatrixConstructor red(m->rows(), m->cols(), m->degree_shift());
@@ -160,20 +160,20 @@ M2_bool ReducedGB::matrix_lift(const Matrix *m,
   if (m->get_ring() != originalR)
     {
       ERROR("expected matrix over the same ring");
-      *result_remainder = 0;
-      *result_quotient = 0;
+      *result_remainder = nullptr;
+      *result_quotient = nullptr;
       return false;
     }
   if (m->n_rows() != F->rank())
     {
       ERROR("expected matrices to have same number of rows");
-      *result_remainder = 0;
-      *result_quotient = 0;
+      *result_remainder = nullptr;
+      *result_quotient = nullptr;
       return false;
     }
 
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
-  MatrixConstructor mat_quotient(Fsyz, m->cols(), 0);
+  MatrixConstructor mat_quotient(Fsyz, m->cols(), nullptr);
 
 #ifdef DEVELOPMENT
 #warning "K should be the denominator ring?"
@@ -188,7 +188,7 @@ M2_bool ReducedGB::matrix_lift(const Matrix *m,
       g.fsyz = R->gbvector_zero();
 
       remainder(g, true, denom);
-      if (g.f != 0) all_zeroes = false;
+      if (g.f != nullptr) all_zeroes = false;
 
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       K->negate_to(denom);
@@ -221,7 +221,7 @@ int ReducedGB::contains(const Matrix *m)
 
       remainder(g, false, denom);
 
-      if (g != NULL)
+      if (g != nullptr)
         {
           R->gbvector_remove(g);
           return i;

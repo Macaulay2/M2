@@ -52,6 +52,7 @@ setupconst("nullPointer", toExpr(nullPointer()));
 
 getMem(n:int):voidPointer := Ccode(voidPointer, "getmem(", n, ")");
 getMemAtomic(n:int):voidPointer := Ccode(voidPointer, "getmem_atomic(", n, ")");
+pointerSize := Ccode(int, "sizeof(void *)");
 
 dlerror0():Expr:= buildErrorPacket(tostring(Ccode(charstar, "dlerror()")));
 
@@ -244,6 +245,14 @@ setupfun("ffiIntegerType", ffiIntegerType);
 
 ffiIntegerAddress(e:Expr):Expr := (
     when e
+    is x:ZZcell do (
+	y := newZZmutable();
+	set(y, x.v);
+	ptr := getMem(pointerSize);
+	Ccode(void, "*(void **)", ptr, " = ", y);
+	Ccode(void, "GC_REGISTER_FINALIZER(", ptr,
+	    ", (GC_finalization_proc)mpz_clear, ", y, ", 0, 0)");
+	toExpr(ptr))
     is a:Sequence do (
 	if length(a) == 3 then (
 	    when a.0
@@ -295,6 +304,7 @@ setupfun("ffiIntegerAddress", ffiIntegerAddress);
 
 ffiIntegerValue(e:Expr):Expr := (
     when e
+    is x:pointerCell do toExpr(moveToZZ(Ccode(ZZmutable, "*(mpz_ptr*)", x.v)))
     is a:Sequence do (
 	if length(a) == 3 then (
 	    when a.0
@@ -396,8 +406,6 @@ setupfun("ffiRealValue", ffiRealValue);
 -------------------
 -- pointer types --
 -------------------
-
-pointerSize := Ccode(int, "sizeof(void *)");
 
 setupconst("ffiPointerType", toExpr(Ccode(voidPointer, "&ffi_type_pointer")));
 

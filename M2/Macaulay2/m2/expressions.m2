@@ -446,6 +446,8 @@ scan(assocList, opClass -> (
 	if opClass#?unit then (
 	    installMethod(opClass#operator,Expression,opClass#unit,(x,y) -> x);
 	    installMethod(opClass#operator,opClass#unit,Expression,(x,y) -> y);
+	    installMethod(opClass#operator,opClass,opClass#unit,(x,y) -> x);
+	    installMethod(opClass#operator,opClass#unit,opClass,(x,y) -> y);
 	    )
 ))
        - ZeroExpression     := identity
@@ -552,6 +554,7 @@ matrixOpts := m -> ( -- helper function
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
+    if #m === 0 then return map(ZZ^0,ZZ^0,0); -- not great but best one can do
     m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
     -- TODO: keep track of blocks too
     if opts.Degrees === null then m else (
@@ -566,7 +569,7 @@ toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
-expressionValue VectorExpression := x -> vector apply(toList x,expressionValue)
+expressionValue VectorExpression := x -> if #x===0 then vector(map(ZZ^0,ZZ^1,0)) else vector apply(toList x,expressionValue)
 toString'(Function,VectorExpression) := (fmt,v) -> concatenate(
      "vector {",
      between(", ",apply(toList v,fmt)),
@@ -612,10 +615,10 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol #? => "\\#?",
     symbol % => "\\%",
     symbol & => "\\&",
-    symbol ^ => "\\wedge",
-    symbol ^^ => "\\wedge\\wedge",
-    symbol <| => "\\langle",
-    symbol |> => "\\rangle",
+    symbol ^ => "\\wedge ",
+    symbol ^^ => "\\wedge\\wedge ",
+    symbol <| => "\\langle ",
+    symbol |> => "\\rangle ",
     symbol _* => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol ^* => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     }

@@ -55,7 +55,7 @@ MonomialTableZZ::mon_term *MonomialTableZZ::make_list_head()
   mon_term *t = new mon_term;
   t->_next = t->_prev = t;
   t->_val = -1;
-  t->_lead = 0;
+  t->_lead = nullptr;
   t->_coeff = nullptr;
   return t;
 }
@@ -68,7 +68,7 @@ MonomialTableZZ *MonomialTableZZ::make(int nvars)
   result->_count = 0;
   /* The first entry is a dummy entry.  Components
      will always start at 1. */
-  result->_head.push_back(0);
+  result->_head.push_back(nullptr);
 
   return result;
 }
@@ -173,7 +173,7 @@ int MonomialTableZZ::find_term_divisors(int max,
         if (is_div && mpz_divisible_p(coeff, t->_coeff))
           {
             nmatches++;
-            if (result != 0) result->push_back(t);
+            if (result != nullptr) result->push_back(t);
             if (max >= 0 && nmatches >= max) break;
           }
       }
@@ -183,7 +183,7 @@ int MonomialTableZZ::find_term_divisors(int max,
       o << "find_term_divisors called on ";
       show_mon_term(o, coeff, exp, comp);
       o << " #matches=" << nmatches << newline;
-      if (result != 0)
+      if (result != nullptr)
         for (int i = 0; i < result->size(); i++) show_mon_term(o, (*result)[i]);
       o << newline;
     }
@@ -241,7 +241,7 @@ bool MonomialTableZZ::is_weak_member(mpz_srcptr c, exponents_t exp, int comp) co
 
 bool MonomialTableZZ::is_strong_member(mpz_srcptr c, exponents_t exp, int comp) const
 {
-  return (find_term_divisors(1, c, exp, comp, 0) > 0);
+  return (find_term_divisors(1, c, exp, comp, nullptr) > 0);
 }
 
 int MonomialTableZZ::find_smallest_coeff_divisor(exponents_t exp, int comp) const
@@ -304,7 +304,7 @@ int MonomialTableZZ::find_monomial_divisors(int max,
         if (is_div)
           {
             nmatches++;
-            if (result != 0) result->push_back(t);
+            if (result != nullptr) result->push_back(t);
             if (max >= 0 && nmatches >= max) break;
           }
       }
@@ -315,7 +315,7 @@ int MonomialTableZZ::find_monomial_divisors(int max,
       o << "find_monomial_divisors called on ";
       show_mon_term(o, nullptr, exp, comp);
       o << " #matches=" << nmatches << newline;
-      if (result != 0)
+      if (result != nullptr)
         for (int i = 0; i < result->size(); i++) show_mon_term(o, (*result)[i]);
       o << newline;
     }
@@ -326,7 +326,7 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact(mpz_srcptr coeff,
                                                        exponents_t exp,
                                                        int comp) const
 {
-  if (comp >= static_cast<int>(_head.size())) return 0;
+  if (comp >= static_cast<int>(_head.size())) return nullptr;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -345,7 +345,7 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact(mpz_srcptr coeff,
             }
         if (is_eq && !mpz_cmp(coeff, t->_coeff)) return t;
       }
-  return 0;
+  return nullptr;
 }
 
 MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(
@@ -353,12 +353,12 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(
     int comp,
     int first_val) const
 {
-  if (comp >= static_cast<int>(_head.size())) return 0;
+  if (comp >= static_cast<int>(_head.size())) return nullptr;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
 
-  mon_term *result = 0;
+  mon_term *result = nullptr;
   int neqs = 0;
 
   unsigned long expmask = monomial_mask(_nvars, exp);
@@ -377,7 +377,7 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(
               }
           if (is_eq)
             {
-              if (result == 0) result = t;
+              if (result == nullptr) result = t;
               neqs++;
             }
         }

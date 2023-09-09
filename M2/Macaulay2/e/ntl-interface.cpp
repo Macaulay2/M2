@@ -82,7 +82,7 @@ bool ntl_LLL(MutableMatrix *M,
 
   if (M2_gbTrace >= 10) printf("LLL: using strategy %d\n", strategy);
   NTL::mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
-  NTL::mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : 0);
+  NTL::mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : nullptr);
 
   switch (strategy)
     {
