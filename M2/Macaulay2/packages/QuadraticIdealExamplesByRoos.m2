@@ -12,6 +12,7 @@ newPackage(
 	    {Name => "Jacob Zoromski", Email => "jzoromsk@nd.edu"} },
 	Headline => "Examples of Quadratic Ideals with Embedding Dimension Four by Jan-Erik Roos",
 	PackageExports => {"Depth"},
+	PackageImports => {"Classic"},
 	DebuggingMode => true)
 export {
  "roosTable", 
