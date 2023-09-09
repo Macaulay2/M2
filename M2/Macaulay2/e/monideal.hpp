@@ -100,7 +100,7 @@ class MonomialIdeal : public EngineObject
   virtual unsigned int computeHashValue() const;
 
  public:
-  MonomialIdeal(const PolynomialRing *RR, stash *mi_stash = 0);
+  MonomialIdeal(const PolynomialRing *RR, stash *mi_stash = nullptr);
   virtual ~MonomialIdeal() { remove_MonomialIdeal(); }
 
   MonomialIdeal(const PolynomialRing *R0,
@@ -120,7 +120,7 @@ class MonomialIdeal : public EngineObject
 
   // Informational
   int size() const { return count / 2; }
-  int topvar() const { return (mi == NULL ? -1 : mi->var); }
+  int topvar() const { return (mi == nullptr ? -1 : mi->var); }
   void text_out(buffer &o) const;
 
   const PolynomialRing *get_ring() const { return R; }
@@ -208,7 +208,7 @@ class MonomialIdeal : public EngineObject
   Iterator end() const { return Iterator(*this, 1); }
   void *next(void *p) const;
   void *prev(void *p) const;
-  int valid(void *p) const { return (p != NULL); }
+  int valid(void *p) const { return (p != nullptr); }
   void debug_out(int disp = 1) const;
   void debug_check() const;
 

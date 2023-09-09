@@ -49,7 +49,7 @@ void ARingZZ::elem_text_out(buffer& o,
     }
   else
     {
-      str = fmpz_get_str(static_cast<char*>(0), 10, &a);
+      str = fmpz_get_str(static_cast<char*>(nullptr), 10, &a);
       o << str;
     }
 }

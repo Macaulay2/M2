@@ -1640,7 +1640,7 @@ gfanInitialForms (MarkedPolynomialList, List) := opts -> (L,W) -> (
 )
 
 gfanInitialForms (Ideal, List) := opts -> (I,L) -> (
-	gfanInitialForms(flatten entries gens I, List, opts)
+	gfanInitialForms(flatten entries gens I, L, opts)
 )
 
 --------------------------------------------------------

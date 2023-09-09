@@ -340,17 +340,18 @@ setNCGBStrategy := stratStr -> (
    else error "Unknown NCGB strategy provided."
 )
 
-NCGB = method(Options => {Strategy=>"F4"})
+NCGB = method(Options => {Strategy=>"F4Parallel"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
-	f4ParallelAllowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
-	if not isHomogeneous I or (not f4ParallelAllowed and (strat == "F4Parallel")) then (
+	f4Allowed := (possField === (coefficientRing ring I)); -- or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
+	if not isHomogeneous I or (not f4Allowed and (strat == "F4" or strat == "F4Parallel")) then (
 	   -- need to change to naive algorithm if I is not homogeneous at this point.
-	   << "Warning:  Parallel F4 Algorithm not available over current coefficient ring." << endl;
-           if isHomogeneous I then strat = "F4" else strat = "Naive";
+	   << "Warning:  F4 Algorithm not available over current coefficient ring or inhomogeneous ideal." << endl;
+           -- if isHomogeneous I then strat = "F4" else strat = "Naive";
+	   strat = "Naive";
 	   << "Converting to " << strat << " algorithm." << endl;
 	);
     	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
@@ -760,6 +761,8 @@ skewPolynomialRing (Ring,Matrix,List) := (R,skewMatrix,varList) -> (
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p -> 
             (gensA_(p#0))*(gensA_(p#1)) - (skewMatrix_(p#0)_(p#1))*(gensA_(p#1))*(gensA_(p#0)));
+   -- this will be a GB for any coefficient ring, so we should tell the system that.
+   I.cache.NCGB = {infinity,gens I};
    B := A/I;
    B
 )
@@ -1405,7 +1408,7 @@ ncMatrixMult (Matrix, Matrix) := (A,B) -> (
    matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
 )
 
-rightKernel = method(Options=>{DegreeLimit=>10})
+rightKernel = method(Options=>{DegreeLimit=>10,Strategy=>"F4"})
 rightKernel Matrix := opts -> M -> (
    -- this function computes the right kernel of a map between free
    -- modules over a noncommutative ring.
@@ -1432,11 +1435,11 @@ rightKernel Matrix := opts -> M -> (
    outputs := matrix {(entries transpose ncMatrixMult(diagMat,phi liftM)) / sum};
    inputs := matrix {colVars};
    IM := phi I + ideal (inputs - outputs);
-   IMgb := NCGB(IM, opts#DegreeLimit);
+   IMgb := NCGB(IM, opts#DegreeLimit, Strategy => opts#Strategy);
    kerGens := ideal select(flatten entries IMgb, f -> isSubset(support f,gensAVars | colVars) and not isSubset(support f, gensAVars));
    if kerGens == 0 then return map(source M, (ring M)^0,0);
    mkerGens := phi I + sum apply(gensAVars, v -> kerGens*v);
-   mkerGensGB := NCGB(mkerGens,opts#DegreeLimit);
+   mkerGensGB := NCGB(mkerGens,opts#DegreeLimit, Strategy => opts#Strategy);
    minKerGens := compress NCReductionTwoSided(gens kerGens,mkerGensGB);
    (minKerMons, minKerCoeffs) := coefficients minKerGens;
    linIndepKer := mingens image sub(minKerCoeffs,coefficientRing A);

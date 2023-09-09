@@ -13,8 +13,8 @@ genericMatrix = method(TypicalValue => Matrix)
 genericMatrix(Ring,ZZ,ZZ) := (R,nrows,ncols) -> genericMatrix(R,R_0,nrows,ncols)
 genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
      first = getIndex(R,first);
-     if not instance(nrows,ZZ) or not instance(ncols,ZZ) or nrows < 0 or ncols < 0
-     then error "expected nonnegative integers";
+     if nrows < 1 or ncols < 1
+     then error "expected positive integers";
      if first + nrows * ncols > numgens R
      then error "not enough variables in this ring";
      matrix table(nrows, ncols, (i,j)->R_(first + i + nrows*j)))
@@ -22,7 +22,10 @@ genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
 genericSkewMatrix = method(TypicalValue => Matrix)
 genericSkewMatrix(Ring,ZZ) := (R,n) -> genericSkewMatrix(R,R_0,n)
 genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, 
@@ -36,7 +39,10 @@ genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
 genericSymmetricMatrix = method(TypicalValue => Matrix)
 genericSymmetricMatrix(Ring,ZZ) := (R,n) -> genericSymmetricMatrix(R,R_0,n)
 genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n + 1, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, i -> scan(i..n-1, j -> (
