@@ -373,7 +373,7 @@ ernary(n:int):string := (
      else if n == 1 then "unary"
      else tostring(n)+"-ary");
 
-export typicalValues := newHashTable(mutableHashTableClass,nothingClass);
+export typicalValues := newHashTableWithHash(mutableHashTableClass,nothingClass);
 messx := "expected method to be a function or TYPE => function'";
 installIt(numtypes:int,assgnmt:bool,h:HashTable,key:Expr,value:Expr):Expr := (
      when value
@@ -399,7 +399,7 @@ installIt(numtypes:int,assgnmt:bool,h:HashTable,key:Expr,value:Expr):Expr := (
      else buildErrorPacket(messx));
 -----------------------------------------------------------------------------
 -- nullary methods
-export NullaryMethods := newHashTable(mutableHashTableClass,nothingClass);
+export NullaryMethods := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("nullaryMethods",Expr(NullaryMethods));
 export lookup(e:Expr):Expr := (
      r := lookup1(NullaryMethods,Expr(Sequence(e)));

@@ -164,11 +164,15 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in hashtable.dd that the number of buckets
 	  -- (here four) is a power of two
-	  Class,parent,0,nextHash(),
+	  Class,parent,0,0,
 	  true,				  -- mutable by default; careful: other routines depend on this
 	  false,
 	  uninitializedSpinLock
 	  ); init(ht.mutex); ht);
+export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
+       ht:=newHashTable(Class,parent);
+       ht.hash=nextHash();
+       ht);
 
 export newCompiledFunction(fn:fun):CompiledFunction := (
     cf := CompiledFunction(fn, 0);
@@ -244,14 +248,14 @@ export thingClass := (
           true,false, uninitializedSpinLock);
 	  init(ht.mutex); ht);
 
-export hashTableClass := newHashTable(thingClass,thingClass);
-export mutableHashTableClass := newHashTable(thingClass,hashTableClass);
-export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
+export hashTableClass := newHashTableWithHash(thingClass,thingClass);
+export mutableHashTableClass := newHashTableWithHash(thingClass,hashTableClass);
+export typeClass := newHashTableWithHash(mutableHashTableClass,mutableHashTableClass);
        thingClass.Class = typeClass;
        typeClass.Class = typeClass;
        mutableHashTableClass.Class = typeClass;
        hashTableClass.Class = typeClass;
-       newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+       newtypeof(parent:HashTable):HashTable := newHashTableWithHash(typeClass,parent);
        newbasictype():HashTable := newtypeof(thingClass);
 export cacheTableClass := newtypeof(mutableHashTableClass);
 export basicListClass := newbasictype();
@@ -294,13 +298,13 @@ export ringElementClass := newtypeof(basicListClass);
 export numberClass := newtypeof(thingClass);
 export inexactNumberClass := newtypeof(numberClass);
 
-       newnumbertype():HashTable := newHashTable(ringClass,numberClass);
+       newnumbertype():HashTable := newHashTableWithHash(ringClass,numberClass);
 export ZZClass := newnumbertype();
 export QQClass := newnumbertype();
 
 export ringFamilyClass := newtypeof(typeClass);
 export inexactNumberTypeClass := newtypeof(ringFamilyClass);
-       newbignumbertype():HashTable := newHashTable(inexactNumberTypeClass,inexactNumberClass);
+       newbignumbertype():HashTable := newHashTableWithHash(inexactNumberTypeClass,inexactNumberClass);
 export RRClass := newbignumbertype();
 export CCClass := newbignumbertype();
 

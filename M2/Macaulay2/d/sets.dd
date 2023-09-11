@@ -2,7 +2,7 @@
 use hashtables;
 use evaluate;
 
-newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+newtypeof(parent:HashTable):HashTable := newHashTableWithHash(typeClass,parent);
 export VirtualTally := newtypeof(hashTableClass);
 setupconst("VirtualTally",Expr(VirtualTally));
 export Tally := newtypeof(VirtualTally);
