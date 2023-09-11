@@ -178,7 +178,7 @@ isSAGBI = method(
         Compute => true,
         Strategy => "Master",
         SubductionMethod => "Top",
-        Limit => 20, 
+        Limit => 20,
         PrintLevel => 0,
         Recompute => false,
         RenewOptions => false,
@@ -191,12 +191,12 @@ isSAGBI SAGBIBasis := opts -> SB -> (
     local S;
     if SB#SAGBIdata#"sagbiStatus" == 1 or (not opts.Compute) then (
         SB#SAGBIdata#"sagbiStatus" == 1
-        ) 
+        )
     else (
-        if zero SB#SAGBIdata#"sagbiGenerators" then ( 
+        if zero SB#SAGBIdata#"sagbiGenerators" then (
             -- if there are no sagbi generators then assume we should check the subalgebra generators
             SB' = internalIsSAGBI(SB, opts, UseSubringGens => true);
-            ) 
+            )
         else (
             SB' = internalIsSAGBI(SB, opts);
             );
@@ -214,11 +214,11 @@ isSAGBI Subring := opts -> S -> (
     if S.cache#?SAGBIBasis then (
         SB = S.cache#SAGBIBasis;
         -- if SB has no sagbiGenerators then it is possible that internalIsSAGBI was already
-        -- called on SB previously.  
+        -- called on SB previously.
         if (zero SB#SAGBIdata#"sagbiGenerators") and isInMemoizeInternalIsSAGBIValues(SB, opts, UseSubringGens => true) then (
             return (internalIsSAGBI(SB, opts, UseSubringGens => true))#SAGBIdata#"sagbiStatus" == 1;
             );
-        
+
         sagbi(S, Limit => max flatten (degrees gens S)_1); -- ensures that gens SB generate S
         SB = S.cache#SAGBIBasis;
         LTgensS := leadTerm gens S;
@@ -229,9 +229,9 @@ isSAGBI Subring := opts -> S -> (
         forceSB subringLTgensSB;
         if zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS) then (
             isSAGBI(SB, opts)
-            ) 
+            )
         else false
-        ) 
+        )
     else (
         if opts.Compute then (
             trimmedOptionKeys := delete(Compute, keys opts);
@@ -240,10 +240,10 @@ isSAGBI Subring := opts -> S -> (
             SB = sagbiBasis(S, trimmedOptionTable); -- basic SAGBIBasis object that is compatible with future sagbi computations
             SB = internalIsSAGBI(SB, opts, UseSubringGens => true);
             SB#SAGBIdata#"sagbiStatus" == 1
-            ) 
+            )
         else null -- S has no SAGBIBasis cached and Compute is set to false
         )
-    )    
+    )
 
 isSAGBI Matrix := opts -> M -> (
     S := subring M;
@@ -294,13 +294,13 @@ isSAGBI2internal SAGBIBasis := opts -> SB -> (
     k := rawMonoidNumberOfBlocks(raw monoid (sagbiComputation#SAGBIrings.tensorRing)) - 2;
     zeroGens := selectInSubring(k, gens sagbiGB);
     SPairs := sagbiComputation#SAGBImaps#"fullSubstitution"(zeroGens) % sagbiComputation#SAGBIideals#"I";
-    if not opts.UseSubringGens then (  
+    if not opts.UseSubringGens then (
         -- add the subring generators to the SPairs to check that sagbiGenerators really generate the subring
         -- add only the generators of degree above the computation degree limit 
-	--   (otherwise the original generators have already been processed)
-	subringGens := sagbiComputation#SAGBIdata#"subalgebraGenerators";
-	limit := sagbiComputation#SAGBIdata#"limit";
-	SPairs = SPairs | matrix {for gen in first entries subringGens list if max degree gen > limit then gen else continue};
+        --   (otherwise the original generators have already been processed)
+        subringGens := sagbiComputation#SAGBIdata#"subalgebraGenerators";
+        limit := sagbiComputation#SAGBIdata#"limit";
+        SPairs = SPairs | matrix {for gen in first entries subringGens list if max degree gen > limit then gen else continue};
         );
     -- Reduce the SPairs and subring generators
     reducedSPairs := compSubduction(sagbiComputation, SPairs);
@@ -316,7 +316,7 @@ isSAGBI2internal SAGBIBasis := opts -> SB -> (
     -- 1. UseSubringGens => true and the generators are not a sagbi basis
     -- 2. ModifySAGBIBasis => false 
     if (opts.UseSubringGens and sagbiComputation#SAGBIdata#"sagbiStatus" == 2) or (not opts.ModifySAGBIBasis) then ( 
-	SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
+        SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
         );
     SB'
     );
@@ -370,7 +370,7 @@ isSAGBI2 SAGBIBasis := {
         else error("-- unknown sagbiStatus: " | toString SB'#SAGBIdata#"sagbiStatus")
         )
     )
-   
+
 -- isSAGBI Subring
 -- Determines if the sagbiGenerators of the cached SAGBIBasis are a sagbiBasis
 -- Options:
@@ -415,7 +415,7 @@ isSAGBI2 Subring := {
             hasSAGBIBasis := S.cache#?SAGBIBasis;
             SB := sagbiBasis S;
             -- We can use the cached SAGBIBasis if all of these hold:
-            -- 1. subring has a sagbi basis 
+            -- 1. subring has a sagbi basis
             -- 2. the sagbi generators are not zero
             -- 3. the generators of the subring (of a higher degree than the computation limit) subduct to zero against the sagbiGenerators
             -- 4. the leading terms of the sagbi generators are 'the same' as the leading terms of the subring, i.e.,
@@ -425,8 +425,18 @@ isSAGBI2 Subring := {
                     (zero highDegreeGens) or (zero (highDegreeGens % SB))
                     )
                 and (
-                    LTgensS := leadTerm gens S;
-                    LTgensSB := leadTerm gens SB;
+                    -- the initial algebra lies in the quotient by the initial ideal
+                    LTAmbient := if isQuotientRing ambient S then (
+                        Q := S;
+                        R := ambient Q;
+                        I := ideal Q;
+                        R / ideal leadTerm I
+                        ) else (
+                        ambient S
+                        );
+                    liftMap := map(LTAmbient, ambient S, gens LTAmbient);
+                    LTgensS := liftMap leadTerm gens S;
+                    LTgensSB := liftMap leadTerm gens SB;
                     subringLTgensS := subring LTgensS;
                     subringLTgensSB := subring LTgensSB;
                     forceSB subringLTgensS;
@@ -497,7 +507,7 @@ isSAGBI2 List := {
 -- f an element of the ambient ring of S
 -- S a subring of a polynomial ring (or quotient ring)
 --
-groebnerMembershipTest = method() 
+groebnerMembershipTest = method()
 groebnerMembershipTest(RingElement, Subring) := Boolean => (f, S) -> (
     subringGens := gens S;
     Q := ring subringGens;
@@ -549,12 +559,12 @@ groebnerSubductionQuotient(RingElement, Subring) := RingElement => (f, S) -> (
     )
 
 
--- RingElement // Subring 
+-- RingElement // Subring
 -- returns the subduction quotient
 --
 
 RingElement // Subring := RingElement => (f, S) -> (
-    groebnerSubductionQuotient(f, S)    
+    groebnerSubductionQuotient(f, S)
     )
 
 
@@ -579,12 +589,12 @@ RingElement % SAGBIBasis := RingElement => (f, SB) -> (
     );
 
 Matrix % Subring := Matrix => (M, S) -> (
-    assert(ring M === ambient S); 
+    assert(ring M === ambient S);
     if (S#cache#?SAGBIBasis) and (S#cache#SAGBIBasis#SAGBIdata#"sagbiStatus" == 1) then (
         -- S has a complete sagbi basis so use subduction
         SB := S#cache#SAGBIBasis;
-        subduction(SB, M)	
-        ) 
+        subduction(SB, M)
+        )
     else (
         -- extrinsic subduction
         subringGens := gens S;
@@ -656,7 +666,7 @@ subringIntersection = method(
         SAGBILimitType => "Fixed", -- "Fixed" or "Function"
         Limit => 20,
         PrintLevel => 0,
-	CheckFullIntersection => true
+        CheckFullIntersection => true
         }
     )
 
@@ -664,15 +674,15 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     local limit;
     -- If either of S1 or S2 is an intersectedSubring then give a warning
     if not subringIntersectionLimitWarning then (
-	print "-- Warning! The computation of the intersection is affected by the value of the Limit option";
-	print "--          Check the result with 'isFullIntersection'";
-	subringIntersectionLimitWarning = true;
-	);
+        print "-- Warning! The computation of the intersection is affected by the value of the Limit option";
+        print "--          Check the result with 'isFullIntersection'";
+        subringIntersectionLimitWarning = true;
+        );
     if (class S1 === IntersectedSubring or class S2 === IntersectedSubring) and not subringIntersectionWarningGiven then (
-	print "-- Warning! The input contains an IntersectedSubring whose generators may not generate the entire subring";
-	subringIntersectionWarningGiven = true;
-	);
-    
+        print "-- Warning! The input contains an IntersectedSubring whose generators may not generate the entire subring";
+        subringIntersectionWarningGiven = true;
+        );
+
     -------------
     -- check that both subring are subrings of the same ambient ring
     Q := ambient S1;
@@ -719,11 +729,11 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- SB := subalgebraBasis S
     if opts.SAGBILimitType == "Fixed" then (
         limit = opts.Limit;
-        ) 
+        )
     else if opts.SAGBILimitType == "Function" then (
         limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
         );
-    SB := sagbi(S, 
+    SB := sagbi(S,
         Strategy => opts.Strategy,
         SubductionMethod => opts.SubductionMethod,
         Limit => limit,
