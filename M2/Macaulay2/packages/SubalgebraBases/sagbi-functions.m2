@@ -58,217 +58,18 @@ forceSB Subring := {
     forceSB(SB, opts); -- cache of S is updated    
     )
 
--- internalIsSAGBI is a version of isSAGBI for a SAGBIBasis a object SB
--- it returns a modified SAGBIBasis object with the SB#SAGBIdata#"sagbiDone" flag correctly set
--- it is used as an intermediate step for isSAGBI when it is passed something
---   that does not have a cached SAGBIBasis object
+----------
+-- isSAGBI
+----------
 
--- the function is split up into 
--- '...Process' which is the core function
--- 'memoize...Process' a memoized form of '...Process'
--- 'internalIsSAGBI' sanitises the input and calls memoize using a consistent option table
-
-internalIsSAGBIProcess = method(
-    TypicalValue => SAGBIBasis,
-    Options => {
-        Compute => true,
-        Strategy => "Master",
-        SubductionMethod => "Top",
-        Limit => 20,
-        PrintLevel => 0,
-        Recompute => false,
-        RenewOptions => false,
-        UseSubringGens => false
-        }
-    );
-
-internalIsSAGBIProcess SAGBIBasis := opts -> SB -> (
-    sagbiComputation := initializeSagbiComputation(SB, opts);    
-    if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
-        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing"); --put into the correct ring (lifted ring)
-        updateComputation(sagbiComputation);
-        );
-    -- Get the SPairs
-    sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal");
-    k := rawMonoidNumberOfBlocks(raw monoid (sagbiComputation#SAGBIrings.tensorRing)) - 2;
-    zeroGens := selectInSubring(k, gens sagbiGB);
-    SPairs := sagbiComputation#SAGBImaps#"fullSubstitution"(zeroGens) % sagbiComputation#SAGBIideals#"I";
-    -- Reduce the SPairs
-    reducedSPairs := compSubduction(sagbiComputation, SPairs);
-    -- check the sagbi gens are high enough degree (i.e. higher than the subring generators)
-    highEnoughDegree := max flatten (degrees sagbiComputation#SAGBIdata#"subalgebraGenerators")_1 <= max flatten (degrees sagbiComputation#SAGBIdata#"sagbiGenerators")_1;
-    -- if all the reduced SPairs are zero then we have a sagbiBasis
-    if zero(reducedSPairs) and highEnoughDegree then (
-	sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
-	)
-    else (
-	sagbiComputation#SAGBIdata#"sagbiStatus" = 2;
-	);
-    SB' := sagbiBasis sagbiComputation; -- note that this operation caches SB' in the subring
-    if opts.UseSubringGens then ( -- return the cache of the subring to SB
-        SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
-        );
-    SB'
-    );
-
--- memoize is used to recall the result of internalIsSAGBI calls when
---  the generating set is NOT a sagbi basis. When isSAGBI is run a second
---  time on a SAGBIBasis, the groebner basis and subductions are not performed
---  again.
-
-memoizeInternalIsSAGBIProcess = memoize internalIsSAGBIProcess;
-
--- isInMemoizeInternalIsSAGBIValues: a way to check if an internalIsSAGBI computation was already performed
-
-isInMemoizeInternalIsSAGBIValues = method(
-    TypicalValue => SAGBIBasis,
-    Options => {
-        Compute => true,
-        Strategy => "Master",
-        SubductionMethod => "Top",
-        Limit => 20,
-        PrintLevel => 0,
-        Recompute => false,
-        RenewOptions => false,
-        UseSubringGens => false
-        }
-    );
-
-isInMemoizeInternalIsSAGBIValues(SAGBIBasis) := opts -> SB -> (
-    (memoizeValues memoizeInternalIsSAGBIProcess)#?(SB, opts) 
-    )
-
-
--- internalIsSAGBI is a wrapper for the memoized version of internalIsSAGBIProcess
---  it makes the input of the wrapper uniform: i.e. it passes the SAGBIBasis + Option Table in that order
---  so the memoize value table does not increase in size unnecessarily
-
-internalIsSAGBI = method(
-    TypicalValue => SAGBIBasis,
-    Options => {
-        Compute => true,
-        Strategy => "Master",
-        SubductionMethod => "Top",
-        Limit => 20,
-        PrintLevel => 0,
-        Recompute => false,
-        RenewOptions => false,
-        UseSubringGens => false
-        }
-    );
-
-internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
-    memoizeInternalIsSAGBIProcess(SB, opts)
-    );
-
-
--- isSAGBI determines / checks if the generators of an objects form a sagbi basis
--- isSAGBI SAGBIBasis checks the flag of the SAGBIBasis
--- isSAGBI Subring checks the generators of the subring
--- if an object has a cached SAGBIBasis, then it checks the flag of that cached object: 
---   e.g. Matrix that comes from gens SAGBIBasis
--- if an object that does not have a cached SAGBIBasis object is passed then 
---   if Compute == true then we perform 1-step of the sagbi algorithm to check
---      whether all the S-polys subduct to 0
---   otherwise we output null
-
-isSAGBI = method(
-    TypicalValue => Boolean,
-    Options => {
-        Compute => true,
-        Strategy => "Master",
-        SubductionMethod => "Top",
-        Limit => 20,
-        PrintLevel => 0,
-        Recompute => false,
-        RenewOptions => false,
-        UseSubringGens => false -- when performing internalIsSAGBI on a 
-        }
-    );
-
-isSAGBI SAGBIBasis := opts -> SB -> (
-    local SB';
-    local S;
-    if SB#SAGBIdata#"sagbiStatus" == 1 or (not opts.Compute) then (
-        SB#SAGBIdata#"sagbiStatus" == 1
-        )
-    else (
-        if zero SB#SAGBIdata#"sagbiGenerators" then (
-            -- if there are no sagbi generators then assume we should check the subalgebra generators
-            SB' = internalIsSAGBI(SB, opts, UseSubringGens => true);
-            )
-        else (
-            SB' = internalIsSAGBI(SB, opts);
-            );
-        if SB'#SAGBIdata#"sagbiStatus" == 1 then ( -- If SB' is a SAGBIBasis then store SB' in the Subring
-            S = SB#SAGBIdata#subring;
-            S.cache#SAGBIBasis = SB';
-            );
-        SB'#SAGBIdata#"sagbiStatus" == 1
-        )
-    )
-
-isSAGBI Subring := opts -> S -> (
-    local SB;
-    local sagbiComputation;
-    if S.cache#?SAGBIBasis then (
-        SB = S.cache#SAGBIBasis;
-        -- if SB has no sagbiGenerators then it is possible that internalIsSAGBI was already
-        -- called on SB previously.
-        if (zero SB#SAGBIdata#"sagbiGenerators") and isInMemoizeInternalIsSAGBIValues(SB, opts, UseSubringGens => true) then (
-            return (internalIsSAGBI(SB, opts, UseSubringGens => true))#SAGBIdata#"sagbiStatus" == 1;
-            );
-
-        sagbi(S, Limit => max flatten (degrees gens S)_1); -- ensures that gens SB generate S
-        SB = S.cache#SAGBIBasis;
-        LTgensS := leadTerm gens S;
-        LTgensSB := leadTerm gens SB;
-        subringLTgensS := subring LTgensS;
-        subringLTgensSB := subring LTgensSB;
-        forceSB subringLTgensS;
-        forceSB subringLTgensSB;
-        if zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS) then (
-            isSAGBI(SB, opts)
-            )
-        else false
-        )
-    else (
-        if opts.Compute then (
-            trimmedOptionKeys := delete(Compute, keys opts);
-            trimmedOptionKeys = delete(UseSubringGens, trimmedOptionKeys);
-            trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
-            SB = sagbiBasis(S, trimmedOptionTable); -- basic SAGBIBasis object that is compatible with future sagbi computations
-            SB = internalIsSAGBI(SB, opts, UseSubringGens => true);
-            SB#SAGBIdata#"sagbiStatus" == 1
-            )
-        else null -- S has no SAGBIBasis cached and Compute is set to false
-        )
-    )
-
-isSAGBI Matrix := opts -> M -> (
-    S := subring M;
-    isSAGBI(opts, S)
-    )
-
-isSAGBI List := opts -> L -> (
-    S := subring L;
-    isSAGBI(opts, S)
-    )
-
-
--------------------------------------
--- isSAGBI2 new version of isSAGBI --
--------------------------------------
-
-
--- isSAGBI2internal is a subprocess of isSAGBI for a SAGBIBasis a object SB
+-- isSAGBIinternal is a subprocess of isSAGBI for a SAGBIBasis a object SB
 -- it returns a modified SAGBIBasis object with the SB#SAGBIdata#"sagbiStatus" set correctly
 --
 -- UseSubringGens => true    : initialise the SAGBIBasis with the subring generators 
 --                             and does not update SAGBIBasis associated to the subring
 -- ModifySAGBIBasis => false : keeps the original SAGBIBasis of the subring  
 
-isSAGBI2internal = method(
+isSAGBIinternal = method(
     TypicalValue => SAGBIBasis,
     Options => {
         Compute => true,
@@ -282,7 +83,7 @@ isSAGBI2internal = method(
         }
     );
 
-isSAGBI2internal SAGBIBasis := opts -> SB -> (
+isSAGBIinternal SAGBIBasis := opts -> SB -> (
     sagbiComputation := initializeSagbiComputation(SB, opts ++ {Limit => SB#SAGBIdata#"limit"}); -- leave the limit alone
     if opts.UseSubringGens then ( -- replace the sagbiGens with the subring gens
         sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", 
@@ -328,7 +129,7 @@ isSAGBI2internal SAGBIBasis := opts -> SB -> (
 -- UseSubringGens => false  : use the generators of the associated Subring object
 -- ModifySAGBIBasis => true : update the SAGBIBasis cached in the associated Subring 
 
-isSAGBI2 = method(
+isSAGBI = method(
     TypicalValue => Boolean,
     Options => true
     );
@@ -347,7 +148,7 @@ isSAGBI2 = method(
 -- Compute => true : if computation is not necessary then read off the result
 -- (Recompute => false and sagbiStatus == 0) or (Recompute => true) : computation is necessary                  
 
-isSAGBI2 SAGBIBasis := {
+isSAGBI SAGBIBasis := {
         Compute => true,
         Strategy => "Master",
         SubductionMethod => "Top",
@@ -357,12 +158,12 @@ isSAGBI2 SAGBIBasis := {
         UseSubringGens => false,
         ModifySAGBIBasis => true
         } >> opts -> SB -> (
-    if opts.UseSubringGens then isSAGBI2(subring SB, opts)
+    if opts.UseSubringGens then isSAGBI(subring SB, opts)
     else (
         SB' := (
             if not opts.Compute then SB
             else if (not opts.Recompute) and SB#SAGBIdata#"sagbiStatus" > 0 then SB
-            else isSAGBI2internal(SB, opts)
+            else isSAGBIinternal(SB, opts)
             );
         if SB'#SAGBIdata#"sagbiStatus" == 0 then null
         else if SB'#SAGBIdata#"sagbiStatus" == 1 then true 
@@ -387,7 +188,7 @@ isSAGBI2 SAGBIBasis := {
 -- (UseSubringGens => true) & (Recompute => true)  : compute the result and cache the answer
 -- (UseSubringGens => false)                       : isSAGBI SAGBIBasis
 
-isSAGBI2 Subring := {
+isSAGBI Subring := {
         Compute => true,
         Strategy => "Master",
         SubductionMethod => "Top",
@@ -403,7 +204,8 @@ isSAGBI2 Subring := {
         cleanOptions := new OptionTable from {-- sanitise options for storing results
             Strategy => opts.Strategy,
             SubductionMethod => opts.SubductionMethod,
-            RenewOptions => opts.RenewOptions
+            RenewOptions => opts.RenewOptions,
+	    ModifySAGBIBasis => opts.ModifySAGBIBasis
             };
         if not S.cache#?"isSAGBIResults" then S.cache#"isSAGBIResults" = new MutableHashTable;
         if not opts.Recompute then (
@@ -427,7 +229,7 @@ isSAGBI2 Subring := {
                 and (
                     -- the initial algebra lies in the quotient by the initial ideal
                     LTAmbient := if isQuotientRing ambient S then (
-                        Q := S;
+                        Q := ambient S;
                         R := ambient Q;
                         I := ideal Q;
                         R / ideal leadTerm I
@@ -449,9 +251,9 @@ isSAGBI2 Subring := {
                 if SB#SAGBIdata#"sagbiStatus" == 1 or SB#SAGBIdata#"sagbiStatus" == 2 then SB
                 else (
                     newOptions := applyPairs(opts, (k,v) -> if k == UseSubringGens then (UseSubringGens, false) else (k,v));
-                    isSAGBI2internal(SB, newOptions);
+                    isSAGBIinternal(SB, newOptions);
                     ))
-            else isSAGBI2internal(SB, opts); -- definition of SB' if we cannot use the cached SAGBIBasis
+            else isSAGBIinternal(SB, opts); -- definition of SB' if we cannot use the cached SAGBIBasis
             if SB'#SAGBIdata#"sagbiStatus" == 1 then result = true
             else if SB'#SAGBIdata#"sagbiStatus" == 2 then result = false
             else error("-- unknown sagbiStatus: " | toString SB'#SAGBIdata#"sagbiStatus");
@@ -465,12 +267,12 @@ isSAGBI2 Subring := {
         )
     else (
         -- UseSubringGens => false
-        if S.cache#?SAGBIBasis then result = isSAGBI2(S.cache#SAGBIBasis, opts);
+        if S.cache#?SAGBIBasis then result = isSAGBI(S.cache#SAGBIBasis, opts);
         result
         )
     )
 
-isSAGBI2 Matrix := {
+isSAGBI Matrix := {
         Compute => true,
         Strategy => "Master",
         SubductionMethod => "Top",
@@ -481,10 +283,10 @@ isSAGBI2 Matrix := {
         ModifySAGBIBasis => true
         } >> opts -> M -> (
     S := subring M;
-    isSAGBI2(S, opts)
+    isSAGBI(S, opts)
     )
 
-isSAGBI2 List := {
+isSAGBI List := {
         Compute => true,
         Strategy => "Master",
         SubductionMethod => "Top",
@@ -495,7 +297,7 @@ isSAGBI2 List := {
         ModifySAGBIBasis => true
         } >> opts -> L -> (
     S := subring L;
-    isSAGBI2(S, opts)
+    isSAGBI(S, opts)
     )
 
 ----------------------------------------
