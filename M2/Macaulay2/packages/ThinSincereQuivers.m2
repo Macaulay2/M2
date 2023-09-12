@@ -1705,6 +1705,50 @@ multidoc ///
                     {TO "Creating toric quivers"},
                     {TO "Creating subquiver representations"},
                 }@
+        Subnodes
+            ToricQuiver
+            "Creating toric quivers"
+            "Creating subquiver representations"
+            toricQuiver
+            (symbol _, ToricQuiver, List)
+            (symbol ^, ToricQuiver, List)
+            (symbol ==, ToricQuiver, ToricQuiver)
+            bipartiteQuiver
+            chainQuiver
+            threeVertexQuiver
+            allSpanningTrees
+            basisForFlowPolytope
+            coneSystem
+            flowPolytopeVertices
+            incInverse
+            isAcyclic
+            isClosedUnderArrows
+            isSemistable
+            isStable
+            isTight
+            isWellDefined
+            makeTight
+            maxCodimensionUnstable
+            maximalNonstableSubquivers
+            maximalUnstableSubquivers
+            mergeOnArrow
+            mergeOnVertex
+            potentialWalls
+            primitiveArrows
+            quiverIncidenceMatrix
+            quiverEdges
+            quiverFlow
+            quiverVertices
+            quiverWeights
+            referenceThetas
+            samePolytope
+            stableTrees
+            subquivers
+            wallType
+            getWeights
+            AsSubquiver
+            Flow
+            ReturnSingletons
     Node
         Key
             ToricQuiver
@@ -1864,7 +1908,7 @@ multidoc ///
             "Creating subquiver representations"
         Description
             Text
-                A subquiver is a subgraph of a quiver. Specifically, it's formed by selecting a subset $I$ 
+                A subquiver is a subgraph of a quiver. Specifically, it is formed by selecting a subset $I$
                 of the arrows from the original quiver, ensuring that the tails and heads of the chosen arrows 
                 align with the selected vertices. In this context, there are two ways to approach a subquiver. 
                 One approach is to recall the original quiver and represent the subquiver as a subset of its arrows 
@@ -2473,7 +2517,7 @@ multidoc ///
                 maxCodimensionUnstable bipartiteQuiver(2, 3)
             Text     
                 We note that this value can range from $|Q_1|$, as is the case with the quiver associated 
-                with the projective space, to 1 when the quiver is not tight."
+                with the projective space, to 1 when the quiver is not tight.
             Example 
                 maxCodimensionUnstable toricQuiver({{0,1},{0,1},{0,1}})
         SeeAlso
@@ -2872,7 +2916,7 @@ multidoc ///
                 of either quiver objects, or arrow indices
         Description
             Text 
-                A subquiver is a subgraph of a quiver. Specifically, it's formed by selecting a subset of the arrows 
+                A subquiver is a subgraph of a quiver. Specifically, it is formed by selecting a subset of the arrows
                 from the original quiver, ensuring that the tails and heads of the chosen arrows correspond to the selected vertices. 
                 There are several ways to represent a subquiver:
             Text      
