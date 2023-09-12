@@ -583,14 +583,38 @@ doc ///
      (isSAGBI, SAGBIBasis)
      (isSAGBI, Matrix)
      (isSAGBI, List)
-    [isSAGBI, Compute]
-    [isSAGBI, Strategy]
-    [isSAGBI, SubductionMethod]
-    [isSAGBI, Limit]
-    [isSAGBI, PrintLevel]
-    [isSAGBI, Recompute]
-    [isSAGBI, RenewOptions]
-    [isSAGBI, UseSubringGens]
+    [(isSAGBI, Subring), Compute]
+    [(isSAGBI, SAGBIBasis), Compute]
+    [(isSAGBI, Matrix), Compute]
+    [(isSAGBI, List), Compute]
+    [(isSAGBI, Subring), Strategy]
+    [(isSAGBI, SAGBIBasis), Strategy]
+    [(isSAGBI, Matrix), Strategy]
+    [(isSAGBI, List), Strategy]
+    [(isSAGBI, Subring), SubductionMethod]
+    [(isSAGBI, SAGBIBasis), SubductionMethod]
+    [(isSAGBI, Matrix), SubductionMethod]
+    [(isSAGBI, List), SubductionMethod]
+    [(isSAGBI, Subring), PrintLevel]
+    [(isSAGBI, SAGBIBasis), PrintLevel]
+    [(isSAGBI, Matrix), PrintLevel]
+    [(isSAGBI, List), PrintLevel]
+    [(isSAGBI, Subring), Recompute]
+    [(isSAGBI, SAGBIBasis), Recompute]
+    [(isSAGBI, Matrix), Recompute]
+    [(isSAGBI, List), Recompute]
+    [(isSAGBI, Subring), RenewOptions]
+    [(isSAGBI, SAGBIBasis), RenewOptions]
+    [(isSAGBI, Matrix), RenewOptions]
+    [(isSAGBI, List), RenewOptions]
+    [(isSAGBI, Subring), UseSubringGens]
+    [(isSAGBI, SAGBIBasis), UseSubringGens]
+    [(isSAGBI, Matrix), UseSubringGens]
+    [(isSAGBI, List), UseSubringGens]
+    [(isSAGBI, Subring), ModifySAGBIBasis]
+    [(isSAGBI, SAGBIBasis), ModifySAGBIBasis]
+    [(isSAGBI, Matrix), ModifySAGBIBasis]
+    [(isSAGBI, List), ModifySAGBIBasis]
    Headline
      Check if the generators are a sagbi basis
    Usage
@@ -608,7 +632,8 @@ doc ///
    Description
      Text
        This checks whether the generators of @ ofClass Subring @ or the sagbi generators of @ ofClass SAGBIBasis @ form a sagbi basis.
-       After running @ TO "sagbi" @ on @ ofClass Subring @, the result of the computation is stored in the @ TT "cache" @ of that subring as @ ofClass SAGBIBasis @.
+       After running @ TO "sagbi" @ on @ ofClass Subring @, the result of the computation is stored in the @ TT "cache" @ of that subring as @ ofClass SAGBIBasis @
+       unless the option @ TO "ModifySAGBIBasis" @ is set to @ TT "false"@.
        If new sagbi generators need to be added to $S$ to make it a sagbi basis then @TT "isSAGBI"@ will return @ TT "false" @.
        If @TT "isSAGBI"@ is run on a ring for which no sagbi computation has been performed, then @TT "isSAGBI"@ will perform
        a test to see if the generators form a sagbi basis. This test can be skipped by setting @TO "Compute"@ to @ TT "false" @, and, in that
@@ -678,7 +703,28 @@ doc ///
        whether the provided generators or the subring generators form a subalgebra basis.
        Explicitly, if the flag is set to false then the check is aplied to the sagbi generators of $SB$.
        Otherwise, if the flag is set to true, then the check is applied to the generators of the underlying subring associated to $SB$.
+   SeeAlso
+     isSAGBI
 
+///
+doc ///
+   Key
+     ModifySAGBIBasis
+   Headline
+     Flag for allowing the cached computation object to be modified
+   Description
+     Text
+       When @TO "isSAGBI"@ is supplied @ ofClass Subring @ $S$, then this flag determines
+       whether the cached @ ofClass SAGBIBasis @ may be modified.
+     Example
+       R = QQ[x,y];
+       S = subring {x^2, y^3};
+       SB = sagbi(S, Limit => 2);
+       S.cache#SAGBIBasis === SB
+       isSAGBI(S, ModifySAGBIBasis => false)
+       S.cache#SAGBIBasis === SB
+       isSAGBI(S, ModifySAGBIBasis => true)
+       S.cache#SAGBIBasis === SB
    SeeAlso
      isSAGBI
 
@@ -784,6 +830,7 @@ doc ///
      (symbol %, RingElement, Subring)
      (symbol %, Matrix, Subring)
      (symbol %, RingElement, SAGBIBasis)
+     (symbol %, Matrix, SAGBIBasis)
    Headline
      Remainder modulo a subring
    Usage
@@ -826,7 +873,9 @@ doc ///
      [(intersect, Subring, Subring), Limit]
      [(intersect, Subring, Subring), PrintLevel]
      [(intersect, Subring, Subring), SAGBILimitType]
+     [(intersect, Subring, Subring), CheckFullIntersection]
      SAGBILimitType
+     CheckFullIntersection
    Headline
      Intersection of subrings
    Usage

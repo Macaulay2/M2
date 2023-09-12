@@ -32,7 +32,6 @@ export {
 export {
     "forceSB",
     "isSAGBI",
-    "isSAGBI2",
     "ModifySAGBIBasis",
     "groebnerMembershipTest",
     "groebnerSubductionQuotient",
