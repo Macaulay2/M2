@@ -895,34 +895,37 @@ doc ///
        a degree limit for the binomial S-pairs that are computed internally.
      PrintLevel=>ZZ
        which determines how much information is printed about the progress of the computation.  Larger positive values of @TO "PrintLevel"@ result in more output.
-     CheckFullIntersection => Boolean
-       determines if the output is guaranteed to generate the full intersection
+     CheckFullIntersection=>Boolean
+        which determines if @TO "isFullIntersection"@ is run on the output @TO "IntersectedSubring"@.
    Outputs
      result:IntersectedSubring
    Description
      Text
-       Computes the intersection of subrings $S1$ and $S2$. These subrings must be subrings of the same
-       ambient ring.
+       Computes the intersection of input subrings of the same ambient ring.
      Example
        R = QQ[x,y];
        I = ideal(x^3 + x*y^2 + y^3);
        Q = R/I;
        S1 = subring {x^2, x*y};
        S2 = subring {x, y^2};
+       gens intersect(S1, S2, Limit=>5)
        S = intersect(S1, S2);
        gens S
        isFullIntersection S
        isSAGBI S
      Text
-       If the option @ TO "CheckFullIntersection" @ is set to @ TT "false"@, then the generators of 
-       the resulting @TO "IntersectedSubring"@ may generate a strict subset of the intersection.
-       To check whether the generators of the resulting @TO "IntersectedSubring"@ generate the intersection of the given subrings,
-       use the function @TO "isFullIntersection"@. If the function @TO "isFullIntersection"@ returns @TT "true"@, then the generators of
-       the @TO "IntersectedSubring"@ are guaranteed to be a subalgebra basis for the intersection.
+       The generators of the resulting @TO "IntersectedSubring"@ form a partial subalgebra basis for the computed intersection.
+       When @TO "CheckFullIntersection"@ is true, the function automatically checks if the generators of the resulting @TO "IntersectedSubring"@ generate the intersection of the given subrings.
+       The generators of an instance of @TO "IntersectedSubring"@
+       are guaranteed to lie in both input algebras.
        
-       Note that, even if the function @TO "isFullIntersection"@ returns @TT "false"@, the generators of the given instance of 
-       @TO "IntersectedSubring"@ may generate the full intersection. The generators of an instance of @TO "IntersectedSubring"@
-       are guaranteed to lie in both $S1$ and $S2$.
+       This function can also be run on a sequence containing both @TO "Subring"@ and @TO "IntersectedSubring"@ types.  When @TO "CheckFullIntersection"@ is true, all intermediate intersections are checked for completeness.
+     Example
+       R = QQ[x,y];
+       S1 = subring{x^2,y^3};
+       S2 = subring{x,y^2};
+       S3 = subring{x^4,y};
+       gens intersect(S1,S2,S3)
    SeeAlso
      Subring
      IntersectedSubring
