@@ -1082,7 +1082,7 @@ samePolytope(List, List, ToricQuiver) := Boolean => (theta1, theta2, Q) -> (
 -- such that T admits a regular flow in the preimage of weight th
 stableTrees = (th, TQ) -> (
     allTrees := allSpanningTrees(TQ);
-    for x in allTrees list(if all(incInverse(th, TQ_x), y -> y > 0) then (x) else continue )
+    for x in allTrees list(if all(incInverse(th, TQ_x), y -> y > 0) then sort(x) else continue )
 )
 ------------------------------------------------------------
 
