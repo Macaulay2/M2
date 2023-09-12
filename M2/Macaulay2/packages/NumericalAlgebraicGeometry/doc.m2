@@ -672,7 +672,9 @@ isOn(point {{sqrt 5*ii,sqrt 3}},W)
     }
 
 document {
-    Key => {newton, (newton,PolySystem,Matrix), (newton,PolySystem,AbstractPoint)},
+    Key => {newton, 
+	-*(newton,System,Matrix),*- 
+	(newton,System,AbstractPoint)},
     Headline => "Newton-Raphson method",
     "Performs one step of the Newton-Raphson method.",
     Caveat=>{"Works for a regular square or overdetermined system."}
@@ -1147,12 +1149,14 @@ doc ///
 	It is related to @TO GateHomotopy@. 
 ///
 
+-*
 doc ///
 Key 
   (specialize,GateParameterHomotopy,MutableMatrix)
 Headline
   specialize parameters in a (gate) parameter homotopy 
 ///
+*-
 
 doc ///
 Key

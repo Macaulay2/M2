@@ -192,6 +192,11 @@ rowSelector (AbstractPoint, AbstractPoint, GateSystem) := o -> (y0, c0, GS) -> (
 squareDown = method(Options=>{"BlockSize"=>1, Verbose=>false})
 squareDown (AbstractPoint, AbstractPoint, GateSystem) := o -> (y0, c0, F) -> F^(rowSelector(y0, c0, F, "BlockSize" => o#"BlockSize", Verbose=>o.Verbose))
 
+-* squareDown --> squareUp: write 
+squareUp(AbstractPoint, AbstractPoint, GateSystem)
+squareUp(AbstractPoint, GateSystem)
+*-
+
 --TEST 
 /// -- package Serialization
 restart
@@ -311,7 +316,7 @@ evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> 
 evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
 evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
-specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
+-*specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
     if numcols M != 1 then error "1-column matrix expected"; 
     if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
@@ -320,6 +325,7 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
     SPH.Parameters = M;                                                                                                                                       
     SPH                                                                                                                                                       
     ) 
+*-
 
 -- !!! replaces makeGateMatrix
 gateSystem PolySystem := GateSystem => F -> if F#?GateSystem then F#GateSystem else 
