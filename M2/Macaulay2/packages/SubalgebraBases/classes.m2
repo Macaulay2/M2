@@ -26,7 +26,7 @@ subring Matrix := opts -> M -> (
         S := new Subring from{
             "ambientRing" => R,
             "generators" => M,
-            "subductionQuotientRing" => subductionRing,
+            "presentationRing" => subductionRing,
             cache => new CacheTable from {if M.cache#?Subring then M.cache#Subring}
             };
         M.cache#Subring = S
@@ -39,11 +39,11 @@ subring List := opts -> L -> subring(matrix{L}, opts)
 ambient Subring := S -> S#"ambientRing"
 gens Subring := opts -> S -> S#"generators"
 numgens Subring := S -> numcols gens S
-subductionQuotientRing = method()
-subductionQuotientRing Subring := S -> S#"subductionQuotientRing"
+presentationRing = method()
+presentationRing Subring := S -> S#"presentationRing"
 net Subring := S -> (
     R := ambient S;
-    A := subductionQuotientRing S;    
+    A := presentationRing S;    
     toString(A) | ", subring of " | toString(R)
     )
 

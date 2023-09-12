@@ -22,7 +22,7 @@ export {
     "Compute",
     "sagbiBasis",
     "GeneratorSymbol",
-    "subductionQuotientRing",
+    "presentationRing",
     "sagbiStatus",
     "sagbiLimit",
     "sagbiDegree"

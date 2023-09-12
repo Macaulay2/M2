@@ -354,8 +354,8 @@ groebnerSubductionQuotient(RingElement, Subring) := RingElement => (f, S) -> (
     JInTensorRing := liftToTensorRing J;
     I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
     fNormalForm := fInTensorRing % (I + JInTensorRing);
-    -- output fNormalForm in the subductionQuotientRing
-    outputRing := subductionQuotientRing S;
+    -- output fNormalForm in the presentationRing
+    outputRing := presentationRing S;
     outputMap := map(outputRing, tensorRing, matrix {toList((numgens R):0)} | vars outputRing);
     outputMap fNormalForm
     )
@@ -551,7 +551,7 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     result := new IntersectedSubring from {
         "ambientRing" => Q,
         "generators" => intersectionGens,
-        "subductionQuotientRing" => (coefficientRing Q) (monoid[Variables => numcols intersectionGens]),
+        "presentationRing" => (coefficientRing Q) (monoid[Variables => numcols intersectionGens]),
         cache => new CacheTable from {},
         "originalSubrings" => {S1, S2},
         "compositeSubring" => S

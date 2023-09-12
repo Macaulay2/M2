@@ -779,7 +779,7 @@ doc ///
    Description
      Text
        Uses the extrinsic method to compute a subduction quotient of $f$ by the
-       generators of $S$. A subduction quotient is an element of the @TT "subductionQuotientRing"@.
+       generators of $S$. A subduction quotient is an element of the @TT "presentationRing"@.
        The variables of this ring correspond to the generators of $S$. A subduction
        quotient is a polynomial representation of $f - f\%S$ in terms of the generators of $S$.
      Example
@@ -800,7 +800,7 @@ doc ///
    Key
      (symbol //, RingElement, Subring)
    Headline
-     subductionQuotient with respect to a subring
+     Subduction quotient with respect to a subring
    Usage
      r = f // S
    Inputs
@@ -808,10 +808,10 @@ doc ///
      S:Subring
    Outputs
      r:RingElement
-       a subductionQuotient of f with respect to the subring
+       a subduction quotient of f with respect to the subring
    Description
      Text
-       The result is a ring element that lies in the @TT "subductionQuotientRing"@ that has one variable for
+       The result is a ring element that lies in the @TT "presentationRing"@ that has one variable for each
        generator of the subring $S$. A subduction quotient can be thought of as an expression of $f - (f\%S) \in S$
        in terms of the generators of $S$. This function is equivalent to @TO "groebnerSubductionQuotient"@.
    SeeAlso
@@ -1048,8 +1048,8 @@ doc ///
        @UL {
             {BOLD {"ambientRing"}, ": The polynomial or quotient ring that contains the subring instance's generators."},
             {BOLD {"generators"}, ": A one-row matrix, the generators of the subring."},
-            {BOLD {"cache"}, ": Contains unspecified information. The contents of the cache may effect performance, but should never effect the result of a computation."},
-            {BOLD {"subductionQuotientRing"}, ": the polynomial ring with one variable for each generator of the subring"}
+            {BOLD {"cache"}, ": Contains unspecified information. The contents of the cache may affect performance, but should never affect the result of a computation."},
+            {BOLD {"presentationRing"}, ": the polynomial ring with one variable for each generator of the subring"}
            }@
 
    SeeAlso
@@ -1058,7 +1058,7 @@ doc ///
        (ambient, Subring)
        (numgens, Subring)
        (net, Subring)
-       (subductionQuotientRing, Subring)
+       (presentationRing, Subring)
        sagbi
        SAGBIBasis
 ///
@@ -1083,7 +1083,7 @@ doc ///
        containing generators for the constructed @TO "Subring"@.
      S:SAGBIBasis
      GeneratorSymbol=>Symbol
-       a symbol to be used for the variables of the subductionQuotientRing.
+       a symbol to be used for the variables of the @ TT "presentationRing" @.
    Outputs
      A:Subring
    Description
@@ -1246,10 +1246,10 @@ doc ///
    Key
      GeneratorSymbol
    Headline
-     variables for the subductionQuotientRing
+     variables for the presentationRing
    Description
      Text
-       A symbol to be used for variables of the subductionQuotientRing
+       A symbol to be used for variables of the @ TT "presentationRing" @.
      Example
        R = QQ[x,y];
        S = subring({x^2, y^2, x*y}, GeneratorSymbol => f)
@@ -1443,7 +1443,7 @@ doc ///
      result:Ring
    Description
      Text
-       Returns the lifted ring of @ ofClass SAGBIBasis @. This is always a PolynomialRing.
+       Returns the lifted ring of @ ofClass SAGBIBasis @. This is always @ ofClass PolynomialRing @.
      Example
        R = QQ[x,y,z];
        S = sagbi {x^2, y^2, z^2}
@@ -1600,12 +1600,12 @@ doc ///
        autosubduction on the sagbiGenerators of $SB$. The completion flag is then
        set to complete without checking whether the generators form a sagbi basis.
        
-       If forceSB is called on a @ ofClass Subring @ $S$, then the function performs autosubduction
+       If forceSB is called on @ ofClass Subring @ $S$, then the function performs autosubduction
        on the generators of $S$.  The completion flag is then
        set to complete without checking whether the generators form a sagbi basis.
        
        In each case above, the option UseSubringGens can be toggled between true and false to
-       operate on the subring generators in the case where the input is a @ ofClass SAGBIBasis @,
+       operate on the subring generators in the case where the input is @ ofClass SAGBIBasis @,
        and operate on any partial subalgebra basis created for $S$ when the the input is a
        @ ofClass Subring @.
        
@@ -1631,26 +1631,28 @@ doc ///
 ///
 doc ///
    Key
-      subductionQuotientRing
-     (subductionQuotientRing, Subring)
+      presentationRing
+     (presentationRing, Subring)
    Headline
-     returns the subduction quotient ring of a subring
+     returns the presentation ring of a subring
    Usage
-     subQuotRing = subductionQuotientRing S
+     presRing = presentationRing S
    Inputs
      S:Subring
    Outputs
-     subQuotRing:PolynomialRing
+     presRing:PolynomialRing
    Description
      Text
-       Given a subring S of a quotient ring Q is a polynomial ring with same coefficient ring as Q
-       and has one variable for each generator of S. There is a natural map from the subduction quotient ring
-       to S that sends each variable to its corresponding generator of S. Elements of the subduction quotient ring
+       Given @ ofClass Subring @ $S$ of @ ofClass QuotientRing @ $Q$, the @ TT "presentationRing" @ $P$ is a 
+       polynomial ring with the same coefficient ring as Q and with one variable for each generator of S. 
+       There is a natural map from $P$
+       to $S$ that sends each variable to its corresponding generator. Elements of the @ TT "presentationRing" @
        represent polynomial combinations of generators. Evaluating a combination of generators is equal to
-       applying the aforementioned map.
+       applying the aforementioned map. In this way, we have that $S$ is naturally isomorphic to the quotient of $P$ by the
+       kernel of the this map.
        
-       The subduction quotient ring naturally arises when using @TO (symbol //, RingElement, Subring)@, which takes
-       an element of a subring and expresses it as a polynomial combination of its generators.
+       The @ TT "presentationRing" @ naturally arises when using @TO (symbol //, RingElement, Subring)@, which takes
+       an element of @ ofClass Subring @ and expresses it as a polynomial combination of its generators.
      Example
        R = ZZ/2[x,y];
        Q = R / ideal(x + y^5);
@@ -1658,12 +1660,13 @@ doc ///
        f = x^2*y^3 + x^4 + y^4;
        f % S
        g = f // S
-       M = map(Q, subductionQuotientRing S, gens S);
+       M = map(Q, presentationRing S, gens S);
        M g == f
        
    SeeAlso
      Subring
      (symbol //, RingElement, Subring)
+     groebnerSubductionQuotient
 ///
 
 
