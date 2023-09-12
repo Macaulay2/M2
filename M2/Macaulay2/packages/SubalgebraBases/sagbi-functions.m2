@@ -648,7 +648,6 @@ isFullIntersection(IntersectedSubring) := Boolean => S -> (
 subringIntersectionWarningGiven := false;
 subringIntersectionLimitWarning := false;
 
-
 subringIntersection = method(
     Options => {
         Strategy => "Master",
@@ -745,7 +744,7 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
         "compositeSubring" => S
         }; 
     if isSAGBI SB then forceSB result;
-    if opts.CheckFullIntersection and not isFullIntersection result then error("-- result is not a full intersection");
+    if opts.CheckFullIntersection and not isFullIntersection result then print "-- Warning! Result is not a full intersection";
     result
     );
 
