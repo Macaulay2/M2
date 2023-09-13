@@ -914,12 +914,37 @@ doc ///
        isFullIntersection S
        isSAGBI S
      Text
-       The generators of the resulting @TO "IntersectedSubring"@ form a partial subalgebra basis for the computed intersection.
-       When @TO "CheckFullIntersection"@ is true, the function automatically checks if the generators of the resulting @TO "IntersectedSubring"@ generate the intersection of the given subrings.
+       The generators of the resulting @TO "IntersectedSubring"@ form a partial subalgebra basis 
+       for the computed intersection.
+       When @TO "CheckFullIntersection"@ is true, the function automatically checks if the 
+       generators of the resulting @TO "IntersectedSubring"@ are guaranteed to generate the 
+       intersection of the given subrings.
        The generators of an instance of @TO "IntersectedSubring"@
        are guaranteed to lie in both input algebras.
+       However, if the function cannot guarantee that the generators of the resulting @TO "IntersectedSubring"@
+       generate the full intersection then a warning is given.
        
-       This function can also be run on a sequence containing both @TO "Subring"@ and @TO "IntersectedSubring"@ types.  When @TO "CheckFullIntersection"@ is true, all intermediate intersections are checked for completeness.
+       The function works by creating a {\it composite subring} $S$ from the input algebras 
+       and attempts to compute a subalgebra basis for $S$. If a subalgebra basis $G$ for $S$ 
+       is found then a certain subset of $G$ forms a subalgebra basis of the intersection of 
+       the input algebras. Whenever this happens, the output is guaranteed to
+       be the full intersection of the input algebras and, furthermore, form a subalgebra 
+       basis for the intersection. The function @TO "isFullIntersection"@
+       checks whether this is the case, i.e., a finite subalgebra basis for $S$ was found. 
+       If the function @TO "isFullIntersection"@ returns @TT "false"@
+       then there are a few different possibilities. Firstly, the composite subring $S$ may 
+       have a finite subalgebra basis that could be found by setting a higher @TO "Limit"@ option. 
+       Secondly, $S$ may not have a finite subalgebra basis but the intersection does have a 
+       finite subalgebra basis. In this case, the output may be a generating set for the full 
+       intersection but cannot be verified by the algorithm. Thirdly, the intersection of the 
+       input algebras may not have a finite subalgebra basis and so the composite subring does 
+       not have a finite subalgebra basis. Similarly to the previous possibility, the computed 
+       generators may be a full generating set for the intersection but the algorithm cannot 
+       guarantee it.
+       
+       This function can also be run on a sequence containing both @TO "Subring"@ and 
+       @TO "IntersectedSubring"@ types. When @TO "CheckFullIntersection"@ is true, all 
+       intermediate intersections are checked for completeness.
      Example
        R = QQ[x,y];
        S1 = subring{x^2,y^3};
