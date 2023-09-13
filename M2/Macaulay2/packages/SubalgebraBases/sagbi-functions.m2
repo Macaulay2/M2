@@ -457,7 +457,6 @@ isFullIntersection(IntersectedSubring) := Boolean => S -> (
 -- subringIntersection(Subring, Subring)
 -- intersects the subrings using a method analogous to the GB method
 
-subringIntersectionWarningGiven := false;
 subringIntersectionLimitWarning := false;
 
 subringIntersection = method(
@@ -479,9 +478,8 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
         print "--          Check the result with 'isFullIntersection'";
         subringIntersectionLimitWarning = true;
         );
-    if (class S1 === IntersectedSubring or class S2 === IntersectedSubring) and not subringIntersectionWarningGiven then (
+    if ((class S1 === IntersectedSubring and isFullIntersection S1) or (class S2 === IntersectedSubring and isFullIntersection S1)) and not subringIntersectionWarningGiven then (
         print "-- Warning! The input contains an IntersectedSubring whose generators may not generate the entire subring";
-        subringIntersectionWarningGiven = true;
         );
 
     -------------
