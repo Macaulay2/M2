@@ -35,7 +35,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   // null is returned.
   const PolynomialRing* origR =
       groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
-  if (origR == nullptr)
+  if (origR == 0)
     {
       ERROR("expected polynomial ring");
       return nullptr;
@@ -78,7 +78,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
 
   const Ring* K = origR->getCoefficients();
   ResGausser* KK = ResGausser::newResGausser(K);
-  if (KK == nullptr)
+  if (KK == 0)
     {
       ERROR(
           "cannot use res(...,FastNonminimal=>true) with this type of "

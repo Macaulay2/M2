@@ -8,7 +8,7 @@
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
 
 gb_emitter::gb_emitter(const Matrix *m)
-    : gens(m), g(nullptr), n_left(m->n_cols()), n_i(0)
+    : gens(m), g(NULL), n_left(m->n_cols()), n_i(0)
 {
   originalR = m->get_ring()->cast_to_PolynomialRing();
   assert(originalR != 0);
@@ -22,7 +22,7 @@ gb_emitter::~gb_emitter() { freemem(these); }
 RingElement *gb_emitter::hilbertNumerator()
 {
   assert(0);  // This routine should NEVER be called
-  return nullptr;
+  return 0;
 }
 enum ComputationStatusCode gb_emitter::calc_gb(int degree)
 {
@@ -36,7 +36,7 @@ enum ComputationStatusCode gb_emitter::calc_gb(int degree)
     {
       if (system_interrupted()) return COMP_INTERRUPTED;
       if (n_i >= n_gens) return COMP_DONE;
-      if (g != nullptr)
+      if (g != NULL)
         {
           ring_elem denom;
           gbvector *v = originalR->translate_gbvector_from_vec(
@@ -80,7 +80,7 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
 {
   int i;
   originalR = m->get_ring()->cast_to_PolynomialRing();
-  if (originalR == nullptr) assert(0);
+  if (originalR == NULL) assert(0);
   GR = originalR->get_gb_ring();
   mi_stash = new stash("res mi nodes", sizeof(Nmi_node));
 
@@ -101,7 +101,7 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
       const int *mon;
       for (i = 0; i < origsyz; i++)
         {
-          if ((*m)[i] == nullptr)
+          if ((*m)[i] == NULL)
             mon = one;
           else
             {
@@ -126,7 +126,7 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
   if (n_nodes == 2)
     {
       // Don't compute syzygies at all.
-      nodes[1]->set_output(nullptr);
+      nodes[1]->set_output(NULL);
     }
   else if (n_nodes >= 3)
     {
@@ -144,7 +144,7 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
       FreeModule *F = originalR->make_Schreyer_FreeModule();
       nodes[n_nodes - 1] = new gb2_comp(
           F, mi_stash, nodes[n_nodes - 2], deg++, 0, n_nodes - 1, strategy);
-      nodes[n_nodes - 1]->set_output(nullptr);
+      nodes[n_nodes - 1]->set_output(NULL);
     }
   strategy_flags = strategy;
 }
@@ -169,7 +169,7 @@ gbres_comp::~gbres_comp()
 {
   for (int i = 0; i < n_nodes; i++)
     {
-      nodes[i]->set_output(nullptr);
+      nodes[i]->set_output(NULL);
       delete nodes[i];
     }
 
@@ -180,7 +180,7 @@ gbres_comp::~gbres_comp()
 
 bool gbres_comp::stop_conditions_ok()
 {
-  if (stop_.length_limit != nullptr && stop_.length_limit->len > 0)
+  if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
     {
       ERROR("cannot change length of resolution using this algorithm");
       return false;
@@ -242,10 +242,10 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
   if (m->n_rows() != F->rank())
     {
       ERROR("expected matrices to have same number of rows");
-      return nullptr;
+      return 0;
     }
   MatrixConstructor mat_red(m->rows(), m->cols(), m->degree_shift());
-  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols(), nullptr);
+  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols(), 0);
 
   for (int i = 0; i < m->n_cols(); i++)
     {
@@ -383,11 +383,11 @@ M2_arrayint gbres_comp::get_betti(int type) const
       ERROR(
           "cannot use Minimize=>true unless res(...,FastNonminimal=>true) was "
           "used");
-      return nullptr;
+      return 0;
     }
 
   ERROR("received unsupported betti type for this algorithm");
-  return nullptr;
+  return 0;
 }
 
 // Local Variables:

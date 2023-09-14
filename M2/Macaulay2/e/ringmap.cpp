@@ -9,9 +9,9 @@
 #include <iostream>
 RingMap::RingMap(const Matrix *m) : R(m->get_ring())
 {
-  M = nullptr;
+  M = 0;
   P = R->cast_to_PolynomialRing();
-  if (P != nullptr)
+  if (P != 0)
     {
       M = P->getMonoid();
       K = P->getCoefficientRing();
@@ -35,14 +35,14 @@ RingMap::RingMap(const Matrix *m) : R(m->get_ring())
       _elem[i].monom_is_one = true;
       _elem[i].bigelem_is_one = true;
       _elem[i].coeff = ZERO_RINGELEM;
-      _elem[i].monom = nullptr;
+      _elem[i].monom = NULL;
 
       ring_elem f = m->elem(0, i);  // This does a copy.
       _elem[i].bigelem = f;
 
       if (R->is_zero(f))
         _elem[i].is_zero = true;
-      else if (P == nullptr)
+      else if (P == 0)
         {
           // Not a polynomial ring, so put everything into coeff
           if (!K->is_equal(f, one))
@@ -58,7 +58,7 @@ RingMap::RingMap(const Matrix *m) : R(m->get_ring())
 #warning "also handle fraction rings"
 #endif
           Nterm *t = f;
-          if (t->next == nullptr)
+          if (t->next == NULL)
             {
               // This is a single term
               if (!K->is_equal(t->coeff, one))
@@ -94,8 +94,8 @@ RingMap::~RingMap()
       R->remove(_elem[i].bigelem);
     }
   freemem(_elem);
-  K = nullptr;
-  M = nullptr;
+  K = NULL;
+  M = NULL;
 }
 
 unsigned int RingMap::computeHashValue() const
@@ -156,11 +156,11 @@ ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
   ring_elem result = sourceK->eval(this, a, first_var + nvars_in_source);
   if (R->is_zero(result)) return result;
 
-  monomial result_monom = nullptr;
-  monomial temp_monom = nullptr;
+  monomial result_monom = NULL;
+  monomial temp_monom = NULL;
   ring_elem result_coeff = K->from_long(1);
 
-  if (P != nullptr)
+  if (P != 0)
     {
       result_monom = M->make_one();
       temp_monom = M->make_one();
@@ -216,7 +216,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
               if (R->is_zero(result)) break;
             }
         }
-      if (P != nullptr)
+      if (P != 0)
         {
           ring_elem temp = P->make_flat_term(result_coeff, result_monom);
           K->remove(result_coeff);

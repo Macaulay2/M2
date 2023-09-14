@@ -66,7 +66,7 @@ namespace BIBasis
 
     inline Monom::VarsListNode::VarsListNode()
         : Value(0)
-        , Next(nullptr)
+        , Next(0)
     {
     }
 
@@ -85,7 +85,7 @@ namespace BIBasis
     }
 
     inline Monom::Monom()
-        : ListHead(nullptr)
+        : ListHead(0)
         , TotalDegree(0)
     {
     }

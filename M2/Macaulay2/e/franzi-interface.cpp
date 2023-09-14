@@ -49,7 +49,7 @@ IntermediateBasis BRPSfromMatrix(const Matrix *m)
   for (int i = 0; i < m->n_cols(); i++)
     {
       vec v = m->elem(i);
-      if (v == nullptr) continue;
+      if (v == 0) continue;
       BRP temp;
       for (Nterm& f : v->coeff)
         {
@@ -103,26 +103,26 @@ extern "C" const Matrix *rawGbBoolean(const Matrix *m)
   // cout << "first BRP in F " << F.begin()->second << endl;
   const Ring *R = m->get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == nullptr)
+  if (P == 0)
     {
       ERROR("expected a polynomial ring");
-      return nullptr;
+      return 0;
     }
   if (P->characteristic() != 2)
     {
       ERROR("expected coefficient ring ZZ/2");
-      return nullptr;
+      return 0;
     }
   if (not P->getCoefficientRing()->isFinitePrimeField())
     {
       ERROR("expected coefficient ring ZZ/2");
-      return nullptr;
+      return 0;
     }
   int n = P->n_vars();
   if (n > 64)
     {
       ERROR("Cannot handle more than 64 variables yet");
-      return nullptr;
+      return 0;
     }
   gb(F, n);
   // cout << "first BRP in F after gb() " << F.begin()->second << endl;

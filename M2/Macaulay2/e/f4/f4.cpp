@@ -955,7 +955,7 @@ void F4GB::show_row_info() const
   for (int i = 0; i < mat->rows.size(); i++)
     {
       fprintf(stderr, "%4d ", mat->rows[i].elem);
-      if (mat->rows[i].monom == nullptr)
+      if (mat->rows[i].monom == 0)
         fprintf(stderr, "generator");
       else
         M->show(mat->rows[i].monom);
