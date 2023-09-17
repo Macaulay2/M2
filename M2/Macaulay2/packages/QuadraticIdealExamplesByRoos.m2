@@ -336,7 +336,7 @@ Description
   Text
     This outputs the examples in Tables B,C,D of Roos' quadratic "isotopes" (see Main Theorem in  "Homological properties of the homology
     algebra of the Koszul complex of a local ring: Examples and questions", Journal of Algebra 
-    465 (2016) 399-436). The key is the alpha-numeric
+    465 (2016) 399-436). The key is the alphanumeric
     name provided by Roos.  While these have the same bigraded Poincar\'e series as their corresponding example in
     Tables 3-7, they have different homology algebra (called "HKR" in Roos). These all have depth zero. The coefficient field is QQ.
   Example
