@@ -183,7 +183,7 @@ export setupfun(name:string,fun:unop):Symbol := (
 export setupfun(name:string,value:fun):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
-     globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
+     globalFrame.values.(entry.frameindex) = Expr(newCompiledFunction(value));
      entry.Protected = true;
      entry);
 export setupvar(name:string,value:Expr,thread:bool):Symbol := (

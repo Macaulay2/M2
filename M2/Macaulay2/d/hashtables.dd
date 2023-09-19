@@ -444,10 +444,10 @@ export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
 	  value));
 
 export installMethod(s:SymbolClosure,X:HashTable,f:fun):Expr := (
-     installMethod(Expr(s),X,Expr(CompiledFunction(f,nextHash())))
+     installMethod(Expr(s),X,Expr(newCompiledFunction(f)))
      );
 export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
-     installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
+     installMethod(Expr(s),X,Y,Expr(newCompiledFunction(f)))
      );
 
 threadLocal Key2 := Sequence(nullE,nullE,nullE);

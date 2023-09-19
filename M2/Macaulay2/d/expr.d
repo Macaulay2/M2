@@ -170,6 +170,10 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  uninitializedSpinLock
 	  ); init(ht.mutex); ht);
 
+export newCompiledFunction(fn:fun):CompiledFunction := (
+    cf := CompiledFunction(fn, 0);
+    cf.hash = hashFromAddress(Expr(cf));
+    cf);
 
 --More dummy declarations
 
