@@ -32,6 +32,10 @@ export nextHash():int := (
      then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
      HashCounter);
 
+-- Knuth, Art of Computer Programming, Section 6.4
+export fibonacciHash(k:int,p:int):int := (
+    Ccode(int, "(2654435769 * ",k,") >> (32 - ",p,")"));
+
 export NULL ::= null();
 
 -- scopes
