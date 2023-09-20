@@ -36,6 +36,9 @@ export nextHash():int := (
 export fibonacciHash(k:int,p:int):int := (
     Ccode(int, "(2654435769 * ",k,") >> (32 - ",p,")"));
 
+-- hash codes for mutable objects that don't use nextHash
+export hashFromAddress(e:Expr):int := fibonacciHash(Ccode(int, "(long)",e), 9);
+
 export NULL ::= null();
 
 -- scopes
