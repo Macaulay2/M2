@@ -246,20 +246,17 @@ setupfun("hash",hashfun);
 export dbmcheck(ret:int):Expr := (
      if ret == -1 then buildErrorPacket(dbmstrerror())
      else Expr(ZZcell(toInteger(ret))));
-export dbmopenin(filename:string):Expr := (
-     mutable := false;
-     filename = expandFileName(filename);
-     handle := dbmopen(filename,mutable);
-     if handle == -1 
-     then buildErrorPacket(dbmstrerror() + " : " + filename)
-     else Expr(Database(filename,nextHash(),handle,true,mutable)));
-export dbmopenout(filename:string):Expr := (
-     mutable := true;
-     filename = expandFileName(filename);
-     handle := dbmopen(filename,mutable);
-     if handle == -1 
-     then buildErrorPacket(dbmstrerror() + " : " + filename)
-     else Expr(Database(filename,nextHash(),handle,true,mutable)));
+dbmopenhelper(filename:string,is_mutable:bool):Expr := (
+    filename = expandFileName(filename);
+    handle := dbmopen(filename,is_mutable);
+    if handle == -1
+    then buildErrorPacket(dbmstrerror() + " : " + filename)
+    else (
+	db := Database(filename,0,handle,true,is_mutable);
+	db.hash = hashFromAddress(Expr(db));
+	Expr(db)));
+export dbmopenin(filename:string):Expr := dbmopenhelper(filename, false);
+export dbmopenout(filename:string):Expr := dbmopenhelper(filename, true);
 export dbmclose(f:Database):Expr := (
      if !f.isopen then return buildErrorPacket("database already closed");
      dbmclose(f.handle);
