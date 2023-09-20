@@ -269,8 +269,12 @@ buttonBar := tag -> DIV {
 	    else if tag === "toc"
 	    then HREF {htmlDirectory | tocFileName, "Table of Contents"}
 	    else TO tag)},
-    prepend("class" => "right",
-	DIV splice between_" | " {
+    DIV join({"class" => "right",
+	    LITERAL ///<form method="get" action="https://www.google.com/search">
+  <input placeholder="Search" type="text" name="q" value="">
+  <input type="hidden" name="q" value="site:macaulay2.com/doc">
+</form>///},
+	splice between_" | " {
 	    nextButton tag,
 	    prevButton tag,
 	    forwardButton tag,
