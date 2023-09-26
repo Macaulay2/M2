@@ -118,9 +118,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -211,9 +209,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -259,9 +255,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -286,38 +280,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
-     AutoSubduceOnPartialCompletion
-     PrintLevel
-     Recompute
-     RenewOptions
-///
-doc ///
-   Key
-     Strategy
-   Headline
-     Update procedure for the Sagbi algorithm
-   Description
-     Text
-       At the beginning of each loop inside of @TO "sagbi"@, the main @TO "SAGBIBasis"@ computation object is updated.
-       There are two types of update procedure; they are selected by setting Strategy to either "DegreeByDegree" or "Incremental".
-       The "DegreeByDegree" strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
-       The "Incremental" strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new sagbi generators.
-       The "DegreeByDegree" strategy is better when many new generators are added during each loop of the Sagbi algorithm.
-       The "Incremental" strategy is better when there is little change to the number of sagbi generators.
-       For many examples, it is observed that many new generators are added at the beginning of sagbi basis computations.
-       Then towards the end of the computation, there are very few new generators that are added.
-       By setting Strategy to "Master" (default), the "DegreeByDegree" strategy is used at the beginning and the strategy switches to "Incremental" part of the way through the algorithm.
-   SeeAlso
-     sagbi
-     AutoSubduce
-     ReduceNewGenerators
-     StorePending
-     Strategy
-     SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -338,33 +301,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
-     AutoSubduceOnPartialCompletion
-     PrintLevel
-     Recompute
-     RenewOptions
-///
-doc ///
-   Key
-     Limit
-   Headline
-     Degree limit for the Sagbi algorithm
-   Description
-     Text
-       The stopping criteria for the main loop in @TO "sagbi"@ are: a finite sagbi basis is computed, or the smallest degree of an {\it S-pair} exceeds the @TO Limit@.
-       In general, the initial terms of generators of a partial computation do not generate the initial algebra up to the degree limit.
-       It is possible that, with a higher degree limit, sagbi generators of lower degree will be added.
-       One can guarantee that all sagbi generators up to a certain degree are found by using a graded term-order such as GRevLex and working with @ ofClass Subring @ of @ ofClass PolynomialRing @ (and not @ ofClass QuotientRing @).
-   SeeAlso
-     sagbi
-     AutoSubduce
-     ReduceNewGenerators
-     StorePending
-     Strategy
-     SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -384,7 +321,6 @@ doc ///
      sagbi
      AutoSubduce
      ReduceNewGenerators
-     Strategy
      subduction
      SubductionMethod
      PrintLevel
@@ -415,9 +351,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -439,9 +373,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      RenewOptions
@@ -464,9 +396,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -564,9 +494,7 @@ doc ///
      AutoSubduce
      ReduceNewGenerators
      StorePending
-     Strategy
      SubductionMethod
-     Limit
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
@@ -917,28 +845,30 @@ doc ///
        The generators of the resulting @TO "IntersectedSubring"@ form a partial subalgebra basis 
        for the computed intersection.
        When @TO "CheckFullIntersection"@ is true, the function automatically checks if the 
-       generators of the resulting @TO "IntersectedSubring"@ are guaranteed to generate the 
+       generators of the resulting @TO "IntersectedSubring"@ generate the
        intersection of the given subrings.
        The generators of an instance of @TO "IntersectedSubring"@
-       are guaranteed to lie in both input algebras.
+       lie in both input algebras.
        However, if the function cannot guarantee that the generators of the resulting @TO "IntersectedSubring"@
        generate the full intersection then a warning is given.
        
        The function works by creating a {\it composite subring} $S$ from the input algebras 
        and attempts to compute a subalgebra basis for $S$. If a subalgebra basis $G$ for $S$ 
-       is found then a certain subset of $G$ forms a subalgebra basis of the intersection of 
+       is found then a subset of $G$ forms a subalgebra basis of the intersection of
        the input algebras. Whenever this happens, the output is guaranteed to
        be the full intersection of the input algebras and, furthermore, form a subalgebra 
        basis for the intersection. The function @TO "isFullIntersection"@
-       checks whether this is the case, i.e., a finite subalgebra basis for $S$ was found. 
+       checks whether this is the case, i.e., whether a finite subalgebra
+           basis for $S$ was found.
        If the function @TO "isFullIntersection"@ returns @TT "false"@
-       then there are a few different possibilities. Firstly, the composite subring $S$ may 
+       then there are a few different possibilities. First, the composite subring $S$ may
        have a finite subalgebra basis that could be found by setting a higher @TO "Limit"@ option. 
-       Secondly, $S$ may not have a finite subalgebra basis but the intersection does have a 
+       Second, $S$ may not have a finite subalgebra basis but the intersection does have a
        finite subalgebra basis. In this case, the output may be a generating set for the full 
-       intersection but cannot be verified by the algorithm. Thirdly, the intersection of the 
+       intersection but cannot be verified by the algorithm. Third, the intersection of the
        input algebras may not have a finite subalgebra basis and so the composite subring does 
-       not have a finite subalgebra basis. Similarly to the previous possibility, the computed 
+       not have a finite subalgebra basis. Similar to the previous case,
+           the computed
        generators may be a full generating set for the intersection but the algorithm cannot 
        guarantee it.
        
@@ -1542,7 +1472,6 @@ doc ///
      (status, SAGBIBasis)
      sagbiDegree
      sagbi
-     Limit
 ///
 doc ///
    Key
@@ -1738,3 +1667,31 @@ doc ///
 
 end --
 
+doc ///
+   Key
+     Strategy
+   Headline
+     Update procedure for the Sagbi algorithm
+   Description
+     Text
+       At the beginning of each loop inside of @TO "sagbi"@, the main @TO "SAGBIBasis"@ computation object is updated.
+       There are two types of update procedure; they are selected by setting Strategy to either "DegreeByDegree" or "Incremental".
+       The "DegreeByDegree" strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
+       The "Incremental" strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new sagbi generators.
+       The "DegreeByDegree" strategy is better when many new generators are added during each loop of the Sagbi algorithm.
+       The "Incremental" strategy is better when there is little change to the number of sagbi generators.
+       For many examples, it is observed that many new generators are added at the beginning of sagbi basis computations.
+       Then towards the end of the computation, there are very few new generators that are added.
+       By setting Strategy to "Master" (default), the "DegreeByDegree" strategy is used at the beginning and the strategy switches to "Incremental" part of the way through the algorithm.
+   SeeAlso
+     sagbi
+     AutoSubduce
+     ReduceNewGenerators
+     StorePending
+     Strategy
+     SubductionMethod
+     AutoSubduceOnPartialCompletion
+     PrintLevel
+     Recompute
+     RenewOptions
+///
