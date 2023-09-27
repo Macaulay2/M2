@@ -56,6 +56,19 @@ Here is the procedure:
 	      architectures are available downstream
 	 - using the common *.deb file on the web site, update the documentation and
 	   version number there
+	 - add the new version number to the versions.json file on the website
+	      This is a file that should exist on the webserver in the
+	      same directory as the various Macaulay2-X.Y
+	      subdirectories containing the documentation.  It should
+	      contain a JSON object whose elements are key-value pairs
+	      corresponding to all of the Macaulay2 versions that have
+	      documentation available on the website in decreasing
+	      order.  The keys contain how each version will appear in
+	      the dropdown version selection menu, and the values
+	      contain the corresponding version numbers, e.g.,
+	      {"latest release (1.22)": "1.22", "1.21": "1.21", "1.20": "1.20"}
+	      This is used by version-select.js in the Style package
+	      to create the dropdown menu.
        - on the development branch:
 	 - merge the new release branch into development
 	      git checkout development
