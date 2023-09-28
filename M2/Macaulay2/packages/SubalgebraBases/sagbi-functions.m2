@@ -457,7 +457,7 @@ isFullIntersection(IntersectedSubring) := Boolean => S -> (
 -- subringIntersection(Subring, Subring)
 -- intersects the subrings using a method analogous to the GB method
 
-subringIntersectionLimitWarning := false;
+-- subringIntersectionLimitWarning := false;
 
 subringIntersection = method(
     Options => {
@@ -466,19 +466,20 @@ subringIntersection = method(
         SAGBILimitType => "Fixed", -- "Fixed" or "Function"
         Limit => 20,
         PrintLevel => 0,
-        CheckFullIntersection => true
+        CheckFullIntersection => true,
+        Compute => true
         }
     )
 
 subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) -> (
     local limit;
     -- If either of S1 or S2 is an intersectedSubring then give a warning
-    if not subringIntersectionLimitWarning then (
-        print "-- Warning! The computation of the intersection is affected by the value of the Limit option";
-        print "--          Check the result with 'isFullIntersection'";
-        subringIntersectionLimitWarning = true;
-        );
-    if ((class S1 === IntersectedSubring and not isFullIntersection S1) or (class S2 === IntersectedSubring and  not isFullIntersection S1)) then (
+--    if not subringIntersectionLimitWarning then (
+--        print "-- Warning! The computation of the intersection is affected by the value of the Limit option";
+--        print "--          Check the result with 'isFullIntersection'";
+--        subringIntersectionLimitWarning = true;
+--        );
+    if opts.CheckFullIntersection and ((class S1 === IntersectedSubring and not isFullIntersection S1) or (class S2 === IntersectedSubring and  not isFullIntersection S1)) then (
         print "-- Warning! The input contains an IntersectedSubring whose generators may not generate the entire subring";
         );
 
@@ -553,8 +554,8 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
         "originalSubrings" => {S1, S2},
         "compositeSubring" => S
         }; 
-    if isSAGBI SB then forceSB result;
-    if opts.CheckFullIntersection and not isFullIntersection result then print "-- Warning! Result is not a full intersection";
+    if opts.Compute and isSAGBI SB then forceSB result;
+    if opts.CheckFullIntersection and not isFullIntersection result then print "-- Warning! Result is not a full intersection.  Try increasing Limit.";
     result
     );
 
@@ -566,5 +567,6 @@ intersect(Subring, Subring) := IntersectedSubring => {
     SAGBILimitType => "Fixed", -- "Fixed" or "Function"
     Limit => 20,
     PrintLevel => 0,
-    CheckFullIntersection => true
+    CheckFullIntersection => true,
+    Compute => true
     } >> opts -> (S1, S2) -> subringIntersection(S1, S2, opts);

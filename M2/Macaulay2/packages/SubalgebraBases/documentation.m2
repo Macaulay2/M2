@@ -91,7 +91,7 @@ doc ///
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
        the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
      SubductionMethod=>String
        the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
@@ -106,7 +106,7 @@ doc ///
        a flag that indicates if the computation will resume on subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
        a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:Matrix
        whose entries form a partial subalgebra basis
@@ -164,7 +164,7 @@ doc ///
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
        the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
      SubductionMethod=>String
        the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
@@ -179,7 +179,7 @@ doc ///
        a flag that indicates if the computation will resume in subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
        a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:SAGBIBasis
        a computation object holding the state of the sagbi basis computation
@@ -271,7 +271,7 @@ doc ///
        The function @TO "sagbi"@ produces @ ofClass SAGBIBasis @ computation object.
        If the @ TT "StorePending" @ flag is @ TT "true" @ then the output will contain a copy of the pending list.
        The pending list contains all {\it S-pairs} grouped by their degrees.
-       If the sagbi algorithm terminates without producing a complete sagbi basis, for example due to @TO "Limit"@, then the computation may be resumed by calling @TO "sagbi"@ on the resulting computation object with new options.
+       If the sagbi algorithm terminates without producing a complete sagbi basis, for example due to @TT "Limit"@, then the computation may be resumed by calling @TO "sagbi"@ on the resulting computation object with new options.
        The resumed computation will use the pending list stored in the @TO "SAGBIBasis"@ computation object.
        If there is no pending list in the computation object then one will be created.
        Depending on the computation, the pending list may be very large and it may not be convenient to save all the data.
@@ -388,7 +388,7 @@ doc ///
        When a sagbi computation is initialized (for the first time), the options of that computation
        are stored in the computation object. Whenever the computation is resumed,
        the same options will apply to the computation, with the exception of
-       @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@.
+       @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@.
        To change the other options in the computation, set this flag to @ TT "true" @.
        The new options will be used and stored in the computation object.
    SeeAlso
@@ -457,7 +457,7 @@ doc ///
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
        the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
      SubductionMethod=>String
        the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
@@ -471,7 +471,7 @@ doc ///
        if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
      RenewOptions=>Boolean
        if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:Matrix
        entries of $M$ after subduction
@@ -544,7 +544,7 @@ doc ///
     [(isSAGBI, Matrix), ModifySAGBIBasis]
     [(isSAGBI, List), ModifySAGBIBasis]
    Headline
-     Check if the generators are a sagbi basis
+     Check if the generators are a subalgebra basis
    Usage
      result = isSAGBI S
      result = isSAGBI SB
@@ -564,7 +564,7 @@ doc ///
        unless the option @ TO "ModifySAGBIBasis" @ is set to @ TT "false"@.
        If new sagbi generators need to be added to $S$ to make it a sagbi basis then @TT "isSAGBI"@ will return @ TT "false" @.
        If @TT "isSAGBI"@ is run on a ring for which no sagbi computation has been performed, then @TT "isSAGBI"@ will perform
-       a test to see if the generators form a sagbi basis. This test can be skipped by setting @TO "Compute"@ to @ TT "false" @, and, in that
+       a test to see if the generators form a sagbi basis. This test can be skipped by setting the option @TO "Compute"@ to @ TT "false" @, and, in that
        case, @TT "isSAGBI"@ will return @ TT "null" @.
      Example
        R = QQ[x,y,z];
@@ -583,14 +583,12 @@ doc ///
      SAGBIBasis
      (gens, SAGBIBasis)
      (ambient, SAGBIBasis)
-     (ring, SAGBIBasis)
-     (net, SAGBIBasis)
      sagbi
-   Caveat
-       A note of caution. Excessive use of @TT "isSAGBI"@ may impact performance.
-       The inputs and outputs of @TT "isSAGBI"@ are stored and never deleted. Since
-       the inputs and outputs include pointers objects such as @TO "SAGBIBasis"@ computation objects, these
-       objects will not be garbage collected.
+ --  Caveat
+ --      A note of caution. Excessive use of @TT "isSAGBI"@ may impact performance.
+ --      The inputs and outputs of @TT "isSAGBI"@ are stored and never deleted. Since
+ --      the inputs and outputs include pointers objects such as @TO "SAGBIBasis"@ computation objects, these
+ --      objects will not be garbage collected.
 ///
 doc ///
    Key
@@ -642,7 +640,7 @@ doc ///
      Flag for allowing the cached computation object to be modified
    Description
      Text
-       When @TO "isSAGBI"@ is supplied @ ofClass Subring @ $S$, then this flag determines
+       When @TO "isSAGBI"@ is supplied @ ofClass Subring @ $S$, then this option determines
        whether the cached @ ofClass SAGBIBasis @ may be modified.
      Example
        R = QQ[x,y];
@@ -802,6 +800,7 @@ doc ///
      [(intersect, Subring, Subring), PrintLevel]
      [(intersect, Subring, Subring), SAGBILimitType]
      [(intersect, Subring, Subring), CheckFullIntersection]
+     [(intersect, Subring, Subring), Compute]
      SAGBILimitType
      CheckFullIntersection
    Headline
@@ -813,11 +812,11 @@ doc ///
      S2:Subring
      Strategy=>String
        the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
      SubductionMethod=>String
        the method used for subduction.  @TO "SubductionMethod"@ can be either "Top" or "Engine".
      SAGBILimitType=>String
-       Either "Fixed" or "Function". Determines the stopping criterion for the sagbi computation. If "Fixed" then the @TO "Limit"@ is used,
+       Either "Fixed" or "Function". Determines the stopping criterion for the sagbi computation. If "Fixed" then the @TT "Limit"@ is used,
        otherwise if "Function" is selected then the maximum degree of the input generators is used as the degree limit.
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
@@ -825,6 +824,8 @@ doc ///
        which determines how much information is printed about the progress of the computation.  Larger positive values of @TO "PrintLevel"@ result in more output.
      CheckFullIntersection=>Boolean
         which determines if @TO "isFullIntersection"@ is run on the output @TO "IntersectedSubring"@.
+     Compute=>Boolean
+        which determines if the check to see if the computed generators form a subalgebra basis of the ring they generate is performed.
    Outputs
      result:IntersectedSubring
    Description
@@ -862,7 +863,7 @@ doc ///
            basis for $S$ was found.
        If the function @TO "isFullIntersection"@ returns @TT "false"@
        then there are a few different possibilities. First, the composite subring $S$ may
-       have a finite subalgebra basis that could be found by setting a higher @TO "Limit"@ option. 
+       have a finite subalgebra basis that could be found by setting a higher @TT "Limit"@ option.
        Second, $S$ may not have a finite subalgebra basis but the intersection does have a
        finite subalgebra basis. In this case, the output may be a generating set for the full 
        intersection but cannot be verified by the algorithm. Third, the intersection of the
@@ -896,24 +897,28 @@ doc ///
    Description
      Text
         @TT "IntersectedSubring"@ is a type of @TO "Subring"@ produced by intersecting two subrings using the function @TO "intersect"@.
-       Every instance of @TT "IntersectedSubring"@ has additional keys to those found in @ ofClass Subring@.
-       The additional keys are as follows:
-       
-       @UL {
-            {BOLD {"originalSubrings"}, ": The list of two subrings used in the intersection."},
-            {BOLD {"compositeSubring"}, ": A Subring constructed during the intersection computation."}
-           }@
-       
-       The function @TO "intersect"@ may be considered to be the constructor for @TT "IntersectedSubring"@.
-       Each instance $S$ of @TT "IntersectedSubring"@ admits the usage of the function @TO "isFullIntersection"@ for checking whether
-       the generators of $S$ are guaranteed to generate the intersection of the original subrings.
-       
+        The function @TO "intersect"@ may be considered to be the constructor for @TT "IntersectedSubring"@.
+        Each instance $S$ of @TT "IntersectedSubring"@ admits the usage of the function @TO "isFullIntersection"@ for checking whether
+        the generators of $S$ are guaranteed to generate the intersection of the original subrings.
+        
+     Example
+        R = QQ[x,y];
+        S1 = subring{x^3,y};
+        S2 = subring{x^2,y^2};
+        S = intersect(S1,S2)
+        S#"originalSubrings"
+        
+     Text
+        The @TT "OriginalSubrings"@ field lists the two subrings
+            which were used to generate the intersection.
+    
    SeeAlso
        Subring
        (intersect, Subring, Subring)
        isFullIntersection
        originalSubringGens
 ///
+
 doc ///
    Key
       isFullIntersection
@@ -926,12 +931,12 @@ doc ///
      S:IntersectedSubring
    Outputs
      result:Boolean
-       returns @TT "true"@ if the generators of $S$ are guaranteed to generate the intersection of the original subrings
+       returns @TT "true"@ to indicate that the generators of $S$ generate the intersection of the original subrings
    Description
      Text
        Checks if the algorithm for computing the intersection of two subrings in the function @TO "intersect"@
-       terminated resulting in a complete subalgebra basis. If the computation terminated in this way, then the generators
-       of the given subring are guranteed to generate the intersection of the originally suppied subrings.
+       produced a subalgebra basis for the intersection.
+       
      Example
        R = QQ[x,y];
        I = ideal(x^3 + x*y^2 + y^3);
@@ -940,9 +945,10 @@ doc ///
        S2 = subring {x, y^2};
        S = intersect(S1, S2);
        isFullIntersection S
+       
      Text
-       On the other hand, even if the function @TO "isFullIntersection"@ returns @ TT "false" @, the generators of the given subring
-       may generate the intersection.
+       This test is one-sided: if the function @TO "isFullIntersection"@ returns @ TT "false" @, the generators of the given subring
+       may generate the intersection as a subalgebra basis.
      Example
        R = QQ[x,y];
        S1 = subring {x^3, x^2*y};
@@ -950,6 +956,19 @@ doc ///
        S = intersect(S1, S2, Limit => 15, CheckFullIntersection => false);
        gens S
        isFullIntersection S
+       isSAGBI S
+     Text
+       If the function @TT "isFullIntersection"@ returns @TT "false"@
+       then there are a few different possibilities. First, the composite subring $S$ may
+       have a finite subalgebra basis that could be found by setting a higher @TT "Limit"@ option in @TO "intersect"@.
+       Second, $S$ may not have a finite subalgebra basis but the intersection does have a
+       finite subalgebra basis. In this case, the output may be a generating set for the full
+       intersection but cannot be verified by the algorithm. Third, the intersection of the
+       input algebras may not have a finite subalgebra basis and so the composite subring does
+       not have a finite subalgebra basis. Similar to the previous case,
+         the computed
+       generators may be a full generating set for the intersection but the algorithm cannot
+       guarantee it.
    SeeAlso
      (intersect, Subring, Subring)
      Subring
@@ -1191,13 +1210,17 @@ doc ///
      S:Subring
    Description
      Text
-        Displays the ambient ring and number of generators of a @TO "Subring"@.
+        Displays the presentation and ambient rings of a @TO "Subring"@.
+     Example
+        R = QQ[x,y];
+        S = subring{x^2,x*y^2,y^4}
    SeeAlso
      Subring
      subring
      (gens, Subring)
      (ambient, Subring)
      (numgens, Subring)
+     (net, SAGBIBasis)
 ///
 
 doc ///
@@ -1344,14 +1367,17 @@ doc ///
    Description
      Text
         Displays the number of sagbi generators of @ ofClass SAGBIBasis @ along with the degree limit.
+     Example
+        R = QQ[x,y];
+        S = subring{x^2,x*y^2,y^4};
+        sagbi S
    SeeAlso
      SAGBIBasis
      (gens, SAGBIBasis)
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
-     (net, SAGBIBasis)
+     (net, Subring)
      (status, SAGBIBasis)
-     sagbiDegree
      sagbiLimit
      sagbi
 ///
