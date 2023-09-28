@@ -387,7 +387,7 @@ localCohomOT(Ideal, Ideal) := (I, J) -> (
      if not J.?quotient then J.quotient = (ring J)^1/J;
      localCohomOT(I, J.quotient)
      )
-localCohomOT(Ideal, Module) := (I, M) -> computeLocalCohomOT(I, M, 0, min(numgens I, (dim ring I)//2)
+localCohomOT(Ideal, Module) := (I, M) -> computeLocalCohomOT(I, M, 0, min(numgens I, (dim ring I)//2))
 
 localCohomOT(List, Ideal, Module) := (l, I, M) -> (
      locOut := computeLocalCohomOT(I, M, min l, max l);
