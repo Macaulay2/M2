@@ -71,9 +71,16 @@ globalBFunctionIdeal RingElement := RingElement => o -> f -> (
 -- REDUCED global b-function: b(s)/(s+1)
 ------------------------------------------------------------------
 globalRB := method()
+globalRBAnnFs = method()
+
 globalRB (RingElement,Boolean) := RingElement => (f,isRed) -> (
      W := ring f;
      AnnI := AnnFs f;
+     globalRBAnnFs(f, AnnI, isRed);
+)
+
+globalRBAnnFs (RingElement,Ideal,Boolean) := RingElement => (f,AnnI,isRed) -> (
+     W := ring f;
      Ws := ring AnnI;
      ns := numgens Ws;
      createDpairs W;

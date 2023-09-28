@@ -49,18 +49,20 @@ localCohomUli = (l, I) -> (
 	 L = select(L, x -> x >= 0 and x <= min(r, n)); -- cohomological degrees
 	 Lmaps = select(Lmaps, x -> x >= 0 and x < min(r, n)); -- source degrees
 
+
 	 subISets := new HashTable from apply(L, x -> x => subsets(toList (0..r-1), x));
-	 
+
      -- Step1.
      -- Calculate J^/delta( (F_/theta)^s ) and b^/delta_(F_/theta)(s)   for all /theta
      pInfo(1, "localCohom: Computing b-functions and annihilators...");
 	 prodS := new HashTable from apply(flatten values subISets, theta -> theta => (product(theta, i -> f#i))_W);
-	 J := applyValues(prodS, AnnFs);
-	 bF := applyValues(prodS, globalBFunction);
+	 J := applyValues(prodS, f -> (f, AnnFs f, true));
+	 bF := applyValues(J, globalRBAnnFs);
+	 J = applyValues(J, x -> x#1); -- Now J is a hash table of annihilators
 
      -- Step 2.
      -- a = min integer root of all bF-s
-	 a := min flatten ((values bF) / getIntRoots);
+	 a := min append(flatten ((values bF) / getIntRoots), -1);
      if a == infinity then a = 0;
      pInfo(666, {"BEST POWER = " , a});
 
