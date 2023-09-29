@@ -36,7 +36,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
 	  F = apply(F, f->sub(f,D));
 	  );
      r := #F; 
-     I0 := AnnFs F;
+     I0 := MalgrangeIdeal F;
      DY := ring I0;
      K := coefficientRing DY;
      n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
@@ -163,7 +163,7 @@ lct Ideal := RingElement => o -> I -> (
      F := (sub(I,W))_*;
      if o.Strategy === ViaBFunction then (
      	  w := toList (numgens ring I:0) | toList(#F:1); 
-     	  b := bFunction(AnnFs F, w);
+     	  b := bFunction(MalgrangeIdeal F, w);
      	  S := ring b;
      	  r := numgens I;
      	  -- lct(I) = min root of b(s-r)

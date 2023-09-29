@@ -27,42 +27,41 @@ AnnFs RingElement := Ideal => f -> (
      AnnIFs(ideal dpV#1, f)
      );
 
--- This function is incomplete, it claims it computes AnnFs for a tuple of polynomials but
--- just computes the Malgrange ideal an extra elimination step is required.
+-- This function used to be called AnnFs but was incomplete, it only computes the Malgrange ideal.
 
--- AnnFs List := Ideal => F -> (
--- -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables
--- --                             (f_i has to be an element of A_n, the Weyl algebra).
--- -- Output:  Ann f_1^{s_1}...f_r^{s_r}, an ideal in A_n<t_1,..., t_r,dt_1,...,dt_r>.	
---      W := ring first F;
---      createDpairs W;
---      dpI := W.dpairInds;
---      dpV := W.dpairVars;
---      
---      -- sanity check
---      if #(W.dpairInds#2) != 0 then
---      error "expected no central variables in Weyl algebra";
---      if any(F, f->any(listForm f, m -> any(dpI#1, i -> m#0#i != 0))) then
---      error "expected no differentials in f";
---      --
---      n := #dpV#0; -- number of x_i
---      r := #F;     -- number of t_i     
---      t := symbol t;
---      dt := symbol dt;
---      WAopts := W.monoid.Options.WeylAlgebra | apply(r, i->t_i=>dt_i);
---      WT := (coefficientRing W) ( monoid [ 
--- 	       dpV#0, apply(r, i->t_i), dpV#1, apply(r, i->dt_i),  
--- 	       WeylAlgebra => WAopts,
--- 	       Degrees=>toList(n:0)|toList(r:-1)|toList(n:0)|toList(r:1)
--- 	       ] );
---      ideal apply(r, 
--- 	  i->WT_(n+i) - sub(F#i,WT) -- t_i - f_i
--- 	  ) + ideal apply(n,j->(
--- 	       DXj := dpV#1#j;
--- 	       -- dx_j + sum(r, i->(d/dx_j)f_i * dt_i)
--- 	       sub(DXj,WT) + sum(r, i->sub(DXj*F#i-F#i*DXj,WT)*WT_(i+r+2*n) ) 
--- 	       )) 	  
---      );
+MalgrangeIdeal List := Ideal => F -> (
+-- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables
+--                             (f_i has to be an element of A_n, the Weyl algebra).
+-- Output:  Ann f_1^{s_1}...f_r^{s_r}, an ideal in A_n<t_1,..., t_r,dt_1,...,dt_r>.	
+     W := ring first F;
+     createDpairs W;
+     dpI := W.dpairInds;
+     dpV := W.dpairVars;
+     
+     -- sanity check
+     if #(W.dpairInds#2) != 0 then
+     error "expected no central variables in Weyl algebra";
+     if any(F, f->any(listForm f, m -> any(dpI#1, i -> m#0#i != 0))) then
+     error "expected no differentials in f";
+     --
+     n := #dpV#0; -- number of x_i
+     r := #F;     -- number of t_i     
+     t := symbol t;
+     dt := symbol dt;
+     WAopts := W.monoid.Options.WeylAlgebra | apply(r, i->t_i=>dt_i);
+     WT := (coefficientRing W) ( monoid [ 
+	       dpV#0, apply(r, i->t_i), dpV#1, apply(r, i->dt_i),  
+	       WeylAlgebra => WAopts,
+	       Degrees=>toList(n:0)|toList(r:-1)|toList(n:0)|toList(r:1)
+	       ] );
+     ideal apply(r, 
+	  i->WT_(n+i) - sub(F#i,WT) -- t_i - f_i
+	  ) + ideal apply(n,j->(
+	       DXj := dpV#1#j;
+	       -- dx_j + sum(r, i->(d/dx_j)f_i * dt_i)
+	       sub(DXj,WT) + sum(r, i->sub(DXj*F#i-F#i*DXj,WT)*WT_(i+r+2*n) ) 
+	       )) 	  
+     );
 
 ------------------------------------------------------------------------------
 --This needs documentation.
