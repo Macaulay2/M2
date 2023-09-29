@@ -248,9 +248,9 @@ minimalPresentation SheafMap :=
 prune SheafMap := SheafMap => opts -> f -> (
     (G, F) := (target f, source f);
     prune G; prune F; -- these are pruned just to populate cached data
-    -- F.module.cache.TorsionFree = F/H^0_B(F)
-    g := inducedMap(G.module.cache.TorsionFree, F.module.cache.TorsionFree, matrix f);
-    p := max(G.module.cache.GlobalSectionLimit, F.module.cache.GlobalSectionLimit);
+    -- F.cache.TorsionFree = M/H^0_B(M)
+    g := inducedMap(G.cache.TorsionFree, F.cache.TorsionFree, matrix f);
+    p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit);
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
     nlift sheafMap prune Hom(Bp, g))
@@ -326,10 +326,9 @@ twistedGlobalSectionsModule = (F, bound) -> (
         else 1 - first min degrees E1 - bound);
     -- this can only happen if bound = -infinity, e.g. from calling H^0(F(>=(-infinity))
     if p === infinity then error "the global sections module is not finitely generated";
-    -- caching these to be used for SaturationMap and later in prune SheafMap
-    -- TODO: cache in the sheaf instead
-    F.module.cache.TorsionFree = N;
-    F.module.cache.GlobalSectionLimit = max(0, p);
+    -- caching these to be used later in prune SheafMap
+    F.cache.TorsionFree = N;
+    F.cache.GlobalSectionLimit = max(0, p);
     -- this is the module Gamma_* F
     G := minimalPresentation if p <= 0 then N else target(
         -- TODO: substitute with appropriate irrelevant ideal here
@@ -346,8 +345,8 @@ twistedGlobalSectionsModule = (F, bound) -> (
     -- 0 -> HH^0_B(M) -> M -> Gamma_* F -> HH^1_B(M) -> 0
     iota := inverse G.cache.pruningMap; -- map from Gamma_* F to its minimal presentation
     quot := inducedMap(N, M);           -- map from M to N = M/HH^0_B(M)
-    -- TODO: cache in the sheaf instead
-    F.module.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
+    -- TODO: cache in G instead? or maybe both?
+    F.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
     G)
 
 -- HH^p(X, F(>=b))
@@ -410,13 +409,13 @@ TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
   -- cotangent bundle
   Omega = sheaf ker vars S;
   pOmega = prune Omega
-  sMap = Omega.module.cache.SaturationMap
+  sMap = Omega.cache.SaturationMap
   assert(source sMap === module Omega)
   assert(target sMap === module pOmega)
 
   F = sheaf comodule intersect(ideal(x_1,x_2,x_3), ideal(x_3,x_4))
   pF = prune F
-  sMap = F.module.cache.SaturationMap
+  sMap = F.cache.SaturationMap
   assert(source sMap === module F)
   assert(target sMap === module pF)
 ///
@@ -430,13 +429,13 @@ TEST ///
   pF = prune F
   F = sheaf S^{5} / intersect(ideal(x_1,x_2,x_3), ideal(x_3,x_4))
   pF = prune F
-  sMap = F.module.cache.SaturationMap
+  sMap = F.cache.SaturationMap
   shsMap = sheafMap sMap
   -- TODO: this fails for Mahrud
   -- FIXME: nlift shsMap
   F = sheaf comodule intersect(ideal(x_1,x_2), ideal(x_3,x_4))
   pF = prune F
-  sMap = F.module.cache.SaturationMap
+  sMap = F.cache.SaturationMap
   pF.module.cache.pruningMap
   peek F.module.cache
   -- TODO: fails for Mahrud
