@@ -29,6 +29,7 @@ AnnFs RingElement := Ideal => f -> (
 
 -- This function used to be called AnnFs but was incomplete, it only computes the Malgrange ideal.
 
+MalgrangeIdeal = method()
 MalgrangeIdeal List := Ideal => F -> (
 -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables
 --                             (f_i has to be an element of A_n, the Weyl algebra).
