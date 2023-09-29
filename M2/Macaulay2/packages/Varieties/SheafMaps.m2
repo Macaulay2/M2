@@ -7,12 +7,17 @@ newPackage(
     Headline => "methods for working with morphisms of sheaves",
     Keywords => {"algebraic geometry"},
     PackageExports => {"Truncations"},
+    PackageImports => {"NormalToricVarieties"},
     DebuggingMode => true
     )
 
 export {"sheafMap",
     "SheafMap",
-    "isLiftable"}
+    "isLiftable",
+    "nlift",
+    "SaturationMap",
+    "TorsionFree",
+    "GlobalSectionLimit"}
 
 SheafMap = new Type of HashTable
 
@@ -182,7 +187,7 @@ SheafMap ++ SheafMap := SheafMap => (phi,psi) -> directSum(phi,psi)
 --this tensor command is a little too naive at the moment
 tensor(SheafMap,SheafMap) := SheafMap => (phi,psi) -> (
     --m := max(degree phi, degree psi);
-    map((target phi)**(target psi),(source phi)**(target psi),(matrix phi)**(matrix psi))
+    map((target phi)**(target psi),(source phi)**(source psi),(matrix phi)**(matrix psi))
     )
 
 SheafMap ** SheafMap := SheafMap => (phi,psi) -> tensor(phi,psi)
@@ -192,6 +197,7 @@ SheafMap ** SheafOfRings := SheafMap => (phi,O) -> phi**(O^1)
 SheafOfRings ** SheafMap := SheafMap => (O,phi) -> (O^1)**phi
 
 --twist notation
+SheafMap (ZZ) := SheafMap => (phi,d) -> phi**OO_(variety phi)^1(d)
 
 sdual = method();
 sdual(SheafMap) := SheafMap => phi -> map(dual source phi, dual target phi, dual matrix phi)
@@ -199,12 +205,14 @@ sdual(SheafMap) := SheafMap => phi -> map(dual source phi, dual target phi, dual
 --this code refused to work, must have to do with overloading dual
 --dual(SheafMap) := SheafMap => opts -> phi -> map(dual source phi, dual target phi, dual matrix phi)
 
---once the degree issue with tensor is fixed, I think this code should work for free
 sheafHom(SheafMap,SheafMap) := SheafMap => (phi,psi) -> (sdual phi)**psi
 sheafHom(SheafMap,CoherentSheaf) := SheafMap => (phi,F) -> sheafHom(phi,id_F)
 sheafHom(CoherentSheaf,SheafMap) := SheafMap => (F,phi) -> sheafHom(id_F,phi)
 sheafHom(SheafMap,SheafOfRings) := SheafMap => (phi,O) -> sheafHom(phi,O^1)
 sheafHom(SheafOfRings,SheafMap) := SheafMap => (O,phi) -> sheafHom(O^1,phi)
+
+
+
 
 --Some questions:
 --Should prune automatically use the nlift command to find the 
@@ -232,12 +240,87 @@ e:=0;
           l := min(dim N1, m);
           P := resolution(cokernel lift(presentation N1,S) ** cokernel f);
           p := length P;
-          if p < n-l then(print p; E = Ext^m(truncate(0,M), matrix A))
+          if p < n-l then(print p; E := Ext^m(truncate(0,M), matrix A))
 --truncating M at 0 here seems wrong and gives the wrong results
           else (
                     a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
                     r := a-e-m+1;
                     E = basis(0,Ext^m(truncate(r,M), matrix A))))
+
+globalSectionsModule = (G,bound) -> (
+     -- compute global sections
+     if degreeLength ring G =!= 1 then error "expected degree length 1";
+     M := module G;
+     A := ring G;
+     --M = cokernel presentation M;
+     S := saturate image map(M,A^0,0);
+     if S != 0 then M = M/S;
+     G.module.cache.TorsionFree = M;
+     F := presentation A;
+     R := ring F;
+     N := cokernel lift(presentation M,R) ** cokernel F;
+     r := numgens R;
+     wR := R^{-r};
+     p := 0;
+     if bound < infinity and pdim N >= r-1 then (
+	  E1 := Ext^(r-1)(N,wR);
+	  p = (
+	       if dim E1 <= 0
+	       then max degreeList E1 - min degreeList E1 + 1
+	       else 1 - first min degrees E1 - bound
+	       );
+	  if p === infinity then error "global sections module not finitely generated, can't compute it all";
+	  if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
+	  );
+      G.module.cache.GlobalSectionLimit = max(0,p);
+      minimalPresentation M)
+
+degreeList = (M) -> (
+     if dim M > 0 then error "expected module of finite length";
+     H := poincare M;
+     T := (ring H)_0;
+     H = H // (1-T)^(numgens ring M);
+     exponents H / first)
+
+
+
+cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
+     F := S#0;
+     M := module F;
+     R := ring F;
+     if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
+     b := first S#1;
+     if i === 0 then (
+	 H := globalSectionsModule(F,b);
+	 p := F.module.cache.GlobalSectionLimit;
+	 iota := inverse H.cache.pruningMap;
+	 N := F.module.cache.TorsionFree;
+	 quot := inducedMap(N, M);
+	 F.module.cache.SaturationMap = if p == 0 then iota*quot
+	 else (
+	     homMap := Hom(inducedMap(R^1,image matrix {apply(numgens R, j -> R_j^p)}),N);
+	     iota * homMap * inducedMap(Hom(R^1, N), N) * quot);
+	 H
+	 )
+     else HH^(i+1)(M,Degree => b)
+     )
+
+
+minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> sheaf HH^0 F(>=0)
+
+minimalPresentation SheafMap := 
+prune SheafMap := SheafMap => opts -> f -> (
+    F := source f;
+    G := target f;
+    prune F; --these are pruned just to build cache data
+    prune G;
+    tfF := F.module.cache.TorsionFree;
+    tfG := G.module.cache.TorsionFree;
+    f' := inducedMap(tfG,tfF,matrix f);
+    p := max(F.module.cache.GlobalSectionLimit,G.module.cache.GlobalSectionLimit);
+    B := ideal vars ring module F;
+    Bp := module B^[p];
+    nlift sheafMap prune Hom(Bp,f'))
 
 
 
@@ -325,3 +408,55 @@ mapOnExt(1,OO_X^1,shphi**OO_X(-3))
 hphi = prune mapOnExt(2,OO_X^1,shphi**OO_X(-3)) --I think this is correct actually
 target hphi
 source hphi
+ZERO = sheaf coker vars S
+prune ZERO
+F = sheaf truncate(4,S^1)
+prune F
+oo.module.cache.pruningMap
+S = QQ[x_1..x_4];
+F = sheaf(comodule (ideal(x_1,x_2)*ideal(x_3,x_4)))
+pF = prune F
+sMap = F.module.cache.SaturationMap
+pF.module.cache.pruningMap
+peek F.module.cache
+shsMap = sheafMap(sMap,4)
+nlift shsMap
+F = sheaf comodule (ideal(x_1,x_2)*ideal(x_3,x_4))
+prune F
+Omega = sheaf ker vars S;
+pOmega = prune Omega
+sMap = Omega.module.cache.SaturationMap
+assert(source sMap === module Omega)
+assert(target sMap === module pOmega)
+peek Omega.module.cache 
+sMap = Omega.module.cache.SaturationMap
+source sMap
+target sMap
+F = sheaf comodule (ideal(x_1,x_2,x_3)*ideal(x_3,x_4))
+pF = prune F
+sMap = F.module.cache.SaturationMap
+assert(source sMap === module F)
+assert(target sMap ===  module pF)
+target pMap
+F = sheaf S^{5}/((ideal(x_1,x_2)*ideal(x_3,x_4)))
+pF = prune F
+pMap = pF.module.cache.pruningMap
+F = sheaf S^{5}/((ideal(x_1,x_2,x_3)*ideal(x_3,x_4)))
+pF = prune F
+sMap = F.module.cache.SaturationMap
+shsMap = sheafMap sMap
+nlift shsMap
+
+--TODO: check if things have already been pruned
+S = QQ[x_1..x_3];
+X = Proj S
+f = sheafMap(truncate(2,vars S))
+
+prune f
+
+K = ker vars S
+f = sheafMap dual wedgeProduct(1,1,K)
+prune f
+
+cohomology(ZZ,SheafMap) := Matrix => opts -> (p,f) -> (if p==0 then basis(0,matrix prune f) else error "not yet"
+    )
