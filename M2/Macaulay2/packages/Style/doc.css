@@ -97,7 +97,7 @@ kbd {
 }
 
 div#buttons {display: flex;}
-div#buttons div {flex-grow: 1;}
+div#buttons div {flex-grow: 1; align-self: flex-end;}
 .right {text-align: right;}
 
 /*
