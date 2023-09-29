@@ -218,8 +218,11 @@ moveToField = f -> (
 -- computes the pushforward via S/I <-- S
 flattenMorphism = f -> (
     g := presentation ring f;
+    S:=ring g;
     -- TODO: sometimes lifting to ring g is enough, how can we detect this?
-    lift(f, ring g) ** cokernel g)
+--    lift(f, ring g) ** cokernel g
+    map(target f ** S, source f ** S, lift (cover f,S)) ** cokernel g
+)
 
 flattenModule = f -> cokernel flattenMorphism presentation f
 
@@ -244,33 +247,35 @@ cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
 --simplest possible representative? I think this fits with the intent of prune,
 --but maybe the user should be the one to decide whether they want the
 --simplest representative
-
 --this is code that Devlin wrote based on some discussions
 --that he and I had regarding computing the maps on cohomology
-mapOnExt = method()
-mapOnExt(ZZ, CoherentSheaf, SheafMap) := (m, F, A) -> (
-    e:=0;
+Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
+    e := 0; -- this is a sum of twists bound
     if not instance(variety F, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
     M := module F;
-    N1 := module source A;
-    N2 := module target A;
+    N1 := module source f;
+    N2 := module target f;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
-    f := presentation R;
-    S := ring f;
-    n := numgens S -1;
---Is N1 the right one to use in the next lines here, vs N2?
-    l := min(dim N1, m);
-    P := resolution(cokernel lift(presentation N1,S) ** cokernel f);
-    p := length P;
-    if p < n-l then(print p; E := Ext^m(truncate(0,M), matrix A))
---truncating M at 0 here seems wrong and gives the wrong results
-    else (
-	a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
-	r := a-e-m+1;
-	E = basis(0,Ext^m(truncate(r,M), matrix A))))
+    l := max(
+	l1 := min(dim N1, m),
+	l2 := min(dim N2, m));
+    P1 := resolution flattenModule N1;
+    P2 := resolution flattenModule N2;
+    p := max(
+	p1 := length P1,
+	p2 := length P2);
+    n := dim ring P1 - 1;
+    -- in the first case the spectral sequence degenerates
+    if p >= n-l then (
+	-- the "regularity" between n-l and p indices
+	a1 := max apply(n - l1 .. p1, j -> (max degrees P1_j)#0 - j);
+	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
+	r := max(a1, a2) - e - m + 1;
+	M = truncate(r, M));
+    moveToField basis(0, Ext^m(M, matrix f)))
 
 -----------------------------------------------------------------------------
 -- Prune
@@ -394,6 +399,17 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> (
     G)
 
 -----------------------------------------------------------------------------
+-- fix for Truncations.m2
+-----------------------------------------------------------------------------
+
+truncate(List, Matrix) := Matrix => options(truncate, List, Matrix)  >> opts -> (degs, f) -> (
+    F := truncate(degs, source f, opts);
+    G := truncate(degs, target f, opts);
+    -- FIXME, what is right?
+    fgenF := (f * inducedMap(source f, F) * inducedMap(F, source gens F, gens F));
+    map(G, F, inducedMap(G, source fgenF, fgenF) // inducedMap(G, source gens G, gens G)))
+
+-----------------------------------------------------------------------------
 -- Tests
 -----------------------------------------------------------------------------
 
@@ -437,9 +453,15 @@ TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
   -- structure sheaf
   F = sheaf truncate(4,S^1)
   assert(F == OO_X^1)
+  G = prune F
+  -- TODO: isIsomorphism
+  assert(prune G.cache.pruningMap === id_G)
   -- cotangent bundle
   Omega = sheaf ker vars S;
   pOmega = prune Omega
+  pMap = pOmega.cache.pruningMap
+  assert(source pMap === Omega)
+  assert(target pMap === pOmega)
   sMap = Omega.cache.SaturationMap
   assert(source sMap === module Omega)
   assert(target sMap === module pOmega)
@@ -478,6 +500,13 @@ TEST ///
   --TODO: check if things have already been pruned
   f = sheafMap(truncate(2,vars S))
   prune f
+  assert all(4, i -> HH^i(f) == Ext^i(OO_X^1, f))
+  assert all(4, i -> HH^i(f(1)) == Ext^i(OO_X^1(-1), f))
+  
+  F = sheaf coker (vars S)_{0,2}
+  assert(Ext^2(F, f) == matrix(QQ, {{0, 1, 0}}))
+  assert(source Ext^2(F, f) == Ext^2(F, source f))
+  assert(target Ext^2(F, f) == Ext^2(F, target f))
 
   f = sheafMap vars S ** OO_X(1)
   assert(HH^0 f == id_(QQ^3))
@@ -508,13 +537,31 @@ TEST ///
   assert(HH^2 f == 1)
   assert(HH^3 f == 0)
 
-  --restart
-  --needsPackage "SheafMaps"
   S = QQ[x_0..x_3]
   R = S/ideal(x_0*x_1 - x_2*x_3)
   X = Proj R
   f = sheafMap vars R ** OO_X(2)
   HH^0 f
+///
+
+TEST ///
+  kk = ZZ/17
+  S = kk[x_0..x_3]
+  j = inducedMap (ambient ker vars S, ker vars S)
+  I = ideal random(3, S)
+  R = quotient I; X = Proj R;
+  F = sheaf coker (vars R)_{1,3} -- skyscraper sheaf
+  phi = jacobian R;
+  psi = sheafMap( phi // (j**R))
+  OmegaX = coker psi;
+  OmegaPX = target psi;
+  a = inducedMap(OmegaX, OmegaPX)
+  b = dual a
+  HH^1(b)
+  rank HH^2(psi)
+  apply(3, i -> Ext^i(F, psi))
+  Ext^2(F, psi)
+  HH^2(psi)
 ///
 
 /// -- TODO: re-enable
@@ -554,6 +601,7 @@ uninstallPackage "SheafMaps"
 restart
 debug needsPackage "SheafMaps"
 check SheafMaps
+
 
 S = QQ[x_1..x_3];
 X = Proj S;
