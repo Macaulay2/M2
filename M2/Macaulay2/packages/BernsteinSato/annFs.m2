@@ -1,5 +1,7 @@
 -- Copyright 1999-2008 by Anton Leykin and Harrison Tsai
 
+-- AnnFs uses the algorithm of Oaku-Takayama which involves adding 4 extra variables to the Weyl algebra and performing two eliminations. TODO: Implement the Briancon-Maisonobe algorithm. This would require support for working with Ore algebras (for instance [dt, s] = s) in the Macaulay2 core.
+
 ---------------------------------------------------------------------------------
 AnnFs = method()
 AnnFs RingElement := Ideal => f -> (
