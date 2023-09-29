@@ -28,6 +28,7 @@ export {
 SheafMap = new Type of HashTable
 SheafMap.synonym = "Morphism of Sheaves"
 
+-- TODO: if over affine variety, dehomogenize the maps
 map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> (
     if variety G =!= variety F then error "Expected sheaves over the same variety";
     if instance(variety F, NormalToricVariety) then error "Maps of sheaves not yet implemented on normal toric varieties";
@@ -41,12 +42,15 @@ map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> 
         }
     )
 
--- TODO: what's the point of this constructor?
+-- when phi is constructed by truncation >= d
 map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi, d) -> (
     newPhi := inducedMap(module G, target phi) * phi;
     map(G, F, newPhi, Degree => d))
 
 CoherentSheaf#id = F -> map(F, F, id_(module F))
+CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> module prune F == module prune G
+CoherentSheaf == ZZ            := Boolean => (F, z) -> module prune F == z
+ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
 
 sheafMap = method()
 sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
@@ -113,7 +117,7 @@ isLiftable(SheafMap, ZZ) := (shphi, d) -> (
     eta := inducedMap(truncate(d, M), source phi);
     isLiftable(phi, eta))
 
--- TODO: why the name nlift?
+-- TODO: change back to lift
 --if phi is in the image of Hom(eta,target phi), this code
 --computes the actual lift
 nlift = method()
@@ -151,7 +155,7 @@ nlift(SheafMap) := SheafMap => shphi -> (
     newPhi//Hom(eta,target phi)
     )*-
 
--- TODO: this needs to be improved: there are some subtleties to discuss
+-- TODO: this needs to be improved: there are more inducedMap methods to add
 inducedMap(CoherentSheaf, CoherentSheaf) := SheafMap => opts -> (G, F) -> map(G, F, inducedMap(module G, module F))
 
 -----------------------------------------------------------------------------
@@ -177,9 +181,8 @@ components SheafMap := List => phi -> if phi.cache.?components then phi.cache.co
 -----------------------------------------------------------------------------
 -- Tensors
 -----------------------------------------------------------------------------
--- TODO: this tensor command is a little too naive at the moment
+-- TODO: take care of the case when the rings are different
 tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
-    --m := max(degree phi, degree psi);
     map(target phi ** target psi,
 	source phi ** source psi,
 	matrix phi ** matrix psi))
@@ -204,8 +207,34 @@ sheafHom(SheafMap, SheafOfRings)  := SheafMap => (phi, O) -> sheafHom(phi, O^1)
 sheafHom(SheafOfRings, SheafMap)  := SheafMap => (O, phi) -> sheafHom(O^1, phi)
 
 -----------------------------------------------------------------------------
---
+-- Prune
 -----------------------------------------------------------------------------
+
+-- TODO: is there a better way to do this?
+moveToField = f -> (
+    kk := coefficientRing ring f;
+    map(kk^(numrows f), kk^(numcols f), sub(cover f, kk)))
+
+flattenMorphism := f -> (
+    g := presentation ring f;
+    lift(f, ring g) ** cokernel g)
+
+cohomology(ZZ,                    SheafMap) := Matrix => opts -> (p,    f) -> cohomology(p, variety f, f, opts)
+cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
+    -- TODO: need to base change to the base field
+    if p == 0 then moveToField basis(0, matrix prune f) else (
+	-- pushforward F to a projective space first
+	g := flattenMorphism matrix f;
+	A := ring g;
+	-- TODO: both n and w need to be adjusted for the multigraded case
+	n := dim A;
+	w := A^{-n};
+	-- using Serre duality for coherent sheaves on schemes with mild
+	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
+	-- TODO: check that X is proper (or at least finite type)
+	transpose moveToField basis(0, Ext^(n-1-p)(g, w)))
+    )
+
 --Some questions:
 --Should prune automatically use the nlift command to find the
 --simplest possible representative? I think this fits with the intent of prune,
@@ -259,7 +288,7 @@ prune SheafMap := SheafMap => opts -> f -> (
 -- Functions redefined from varieties.m2
 -----------------------------------------------------------------------------
 
-sheaf Module := Module ~     := CoherentSheaf =>     M  -> sheaf(Proj ring M, M)
+sheaf Module := Module ~         := CoherentSheaf =>     M  -> sheaf(Proj ring M, M)
 sheaf(ProjectiveVariety, Module) := CoherentSheaf => (X, M) -> (
     if ring M =!= ring X then error "sheaf: expected module and variety to have the same ring";
     if not isHomogeneous M then error "sheaf: expected a homogeneous module";
@@ -278,6 +307,7 @@ checkVariety := (X, F) -> (
     )
 
 -- computes the pushforward via S/I <-- S
+-- TODO: use flattenMorhpism
 flattenModule := M -> (
     f := presentation M;
     g := presentation ring M;
@@ -308,7 +338,8 @@ twistedGlobalSectionsModule = (F, bound) -> (
     A := ring F;
     M := module F;
     if degreeLength A =!= 1 then error "expected degree length 1";
-    -- quotient by H_m^0(M) to kill the torsion
+    -- quotient by HH^0_m(M) to kill the torsion
+    -- TODO: pass the appropriate irrelevant ideal
     N := killH0 M;
     -- pushforward to the projective space
     N' := flattenModule N;
@@ -316,7 +347,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
     -- TODO: both n and w need to be adjusted for the multigraded case
     n := dim S;
     w := S^{-n}; -- canonical sheaf on P^n
-    -- Note: bound=infinity signals that H_m^1(M) = 0, ie. M is saturated
+    -- Note: bound=infinity signals that HH^1_m(M) = 0, ie. M is saturated
     -- in other words, don't search for global sections not already in M
     -- TODO: what would pdim N' < n-1, hence E1 = 0, imply?
     p := if bound === infinity or pdim N' < n-1 then 0 else (
@@ -324,7 +355,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
         if dim E1 <= 0 -- 0-module or 0-dim module (i.e. finite length)
         then 1 + max degreeList E1 - min degreeList E1
         else 1 - first min degrees E1 - bound);
-    -- this can only happen if bound = -infinity, e.g. from calling H^0(F(>=(-infinity))
+    -- this can only happen if bound=-infinity, e.g. from calling H^0(F(*)) = H^0(F(>=(-infinity))
     if p === infinity then error "the global sections module is not finitely generated";
     -- caching these to be used later in prune SheafMap
     F.cache.TorsionFree = N;
@@ -345,7 +376,6 @@ twistedGlobalSectionsModule = (F, bound) -> (
     -- 0 -> HH^0_B(M) -> M -> Gamma_* F -> HH^1_B(M) -> 0
     iota := inverse G.cache.pruningMap; -- map from Gamma_* F to its minimal presentation
     quot := inducedMap(N, M);           -- map from M to N = M/HH^0_B(M)
-    -- TODO: cache in G instead? or maybe both?
     F.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
     G)
 
@@ -360,7 +390,10 @@ cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) ->
 
 -- This is an approximation of Gamma_* F, at least with an inclusion from Gamma_>=0 F
 -- Note: HH^0 F(>=0) is cached above, so this doesn't need caching
-minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> sheaf HH^0 F(>=0)
+minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> (
+    G := sheaf HH^0 F(>=0);
+    G.cache.pruningMap = sheafMap F.cache.SaturationMap;
+    G)
 
 -----------------------------------------------------------------------------
 -- Tests
@@ -402,10 +435,10 @@ TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
   X = Proj S
   -- zero sheaf
   N = sheaf coker vars S
-  assert(module prune N == 0) -- TODO: add CoherentSheaf == ZZ?
+  assert(N == 0)
   -- structure sheaf
   F = sheaf truncate(4,S^1)
-  assert(prune F === OO_X^1) -- TODO: add CoherentSheaf == CoherentSheaf?
+  assert(F == OO_X^1)
   -- cotangent bundle
   Omega = sheaf ker vars S;
   pOmega = prune Omega
@@ -431,29 +464,68 @@ TEST ///
   pF = prune F
   sMap = F.cache.SaturationMap
   shsMap = sheafMap sMap
-  -- TODO: this fails for Mahrud
-  -- FIXME: nlift shsMap
+  nlift shsMap
   F = sheaf comodule intersect(ideal(x_1,x_2), ideal(x_3,x_4))
   pF = prune F
   sMap = F.cache.SaturationMap
   pF.module.cache.pruningMap
   peek F.module.cache
-  -- TODO: fails for Mahrud
-  --shsMap = sheafMap(sMap,4)
-  --nlift shsMap
+  shsMap = sheafMap(sMap,4)
+  nlift shsMap
 ///
 
 TEST ///
-  --TODO: check if things have already been pruned
-  S = QQ[x_1..x_3];
+  S = QQ[x_0..x_2];
   X = Proj S
+  --TODO: check if things have already been pruned
   f = sheafMap(truncate(2,vars S))
   prune f
 
+  f = sheafMap vars S ** OO_X(1)
+  assert(HH^0 f == id_(QQ^3))
+  f = sheafMap vars S ** OO_X(-2)
+  assert(source HH^2 f == HH^2 source f)
+  assert(target HH^2 f == HH^2 target f)
+  f = sheafMap vars S ** OO_X(-3)
+  assert(source HH^2 f == HH^2 source f)
+  assert(target HH^2 f == HH^2 target f)
+
+  kk = ZZ/101
+  S = kk[x_0..x_3]
+  X = Proj S
+  K = dual ker vars S
+  f = prune sheafMap dual wedgeProduct(1,1,K)
+  --needsPackage "BGG"
+  --cohomologyTable(source f, -5,5)
+  assert(source HH^2 f == HH^2 source f)
+  assert(target HH^2 f == HH^2 target f)
+  assert(HH^2 f == matrix(kk, {{2}}))
+  assert(HH^3 f == 0)
+  
+  kk = ZZ/2
+  S = kk[x_0..x_2]
+  X = Proj S
   K = ker vars S
-  f = sheafMap dual wedgeProduct(1,1,K)
-  -- TODO: this fails for Mahrud
-  -- FIXME: prune f
+  f = prune sheafMap wedgeProduct(1,1,K)
+  assert(HH^2 f == 1)
+  assert(HH^3 f == 0)
+
+  --restart
+  --needsPackage "SheafMaps"
+  S = QQ[x_0..x_3]
+  R = S/ideal(x_0*x_1 - x_2*x_3)
+  X = Proj R
+  f = sheafMap vars R ** OO_X(2)
+  HH^0 f
+///
+
+/// -- TODO: re-enable
+  S = kk[x,y,z]
+  R = S/ideal(x)
+  f = vars R
+  f' = flattenMorphism f
+  target f' == flattenModule target f
+  source f' == flattenModule source f
 ///
 
 -----------------------------------------------------------------------------
@@ -516,9 +588,3 @@ mapOnExt(1,OO_X^1,shphi**OO_X(-3))
 hphi = prune mapOnExt(2,OO_X^1,shphi**OO_X(-3)) --I think this is correct actually
 target hphi
 source hphi
-
-
-cohomology(ZZ, SheafMap) := Matrix => opts -> (p, f) -> (
-    if p == 0
-    then basis(0, matrix prune f) -- need to base change to the base field
-    else error notImplemented())
