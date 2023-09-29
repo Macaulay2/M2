@@ -8,17 +8,17 @@ document {
        UL {
             {BOLD "LocStrategy => null", 
                  " -- used only for ", TT "localCohom(...Ideal...)", 
-                 ", localizations are done by straitforward computation of 
+                 ", localizations are done by straigthforward computation of 
                  annihilators and b-polynomials as described in [1]."},
             {BOLD "LocStrategy => OaTaWa", 
-                 " -- localizations are done following Oaku-Takayama-Walther method."},
+                 " -- localizations are done following Oaku-Takayama-Walther method [2]."},
             {BOLD "LocStrategy => Oaku", 
                  " -- localizations are done following Oaku's algorithm."},
        },
 	  {BOLD "OaTa", " -- restriction from the graph embedding is used, 
 	       which is due to T. Oaku and N. Takayama [3]. See ", TO "Drestriction", "."}   
 	  },
-          Caveat => {"LocStrategy 'OataWa' and 'Oaku' compute presentations for all the terms in the Cech complex regardless of the requested homological degrees. All strategies use the given generators of the ideal; the user is advised to call ", TO "mingens", " before calling localCohom."}
+          Caveat => {"localCohom(...Ideal, Module...) with the default strategy computes presentations for all the terms in the Cech complex regardless of the requested homological degrees. All strategies use the given generators of the ideal; the user is advised to call ", TO "mingens", " before calling localCohom."}
           --Caveat => {"When OaTaWa strategy is used the error 'Bad luck!' 
           --may appear. This means your are not a lucky individual...
 	  --The glitch is due to the fact that the localizations are iterated 
@@ -32,10 +32,10 @@ document {
 	       modules and the local cohomological dimension of algebraic 
 	       varieties (JPAA (139), 1999.)"
 	       },
-       {BOLD "[2] ", "Oaku, Takayama, Walther",
+       {BOLD "[2] ", "Oaku, Takayama, Walther, ",
             EM "A Localization Algorithm for D-modules (J. Symbolic Computation (29), 2000.)"
             },
-	  {BOLD "[3] ", "Oaku, Takayama", 
+	  {BOLD "[3] ", "Oaku, Takayama, ", 
 	       EM "Algorithms for D-modules -- restriction, tensor product, localization, and local cohomology groups (JPAA (156), 2001.)"
 	       }
 	  }    	      
