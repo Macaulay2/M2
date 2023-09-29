@@ -259,6 +259,18 @@ prune SheafMap := SheafMap => opts -> f -> (
 -- Functions redefined from varieties.m2
 -----------------------------------------------------------------------------
 
+sheaf Module := Module ~     := CoherentSheaf =>     M  -> sheaf(Proj ring M, M)
+sheaf(ProjectiveVariety, Module) := CoherentSheaf => (X, M) -> (
+    if ring M =!= ring X then error "sheaf: expected module and variety to have the same ring";
+    if not isHomogeneous M then error "sheaf: expected a homogeneous module";
+    if M.cache#?(sheaf, X) then M.cache#(sheaf, X)
+    else M.cache#(sheaf, X) = new CoherentSheaf from {
+	symbol variety => X,
+	symbol module => M,
+	symbol cache => new CacheTable
+	}
+    )
+
 -- TODO: should this also check that the variety is finite type over the field?
 checkVariety := (X, F) -> (
     if not X === variety F     then error "expected coherent sheaf over the same variety";
@@ -294,61 +306,58 @@ killH0 := -*(cacheValue symbol TorsionFree)*- (M -> if (H0 := saturate(0*M)) == 
 twistedGlobalSectionsModule = (F, bound) -> (
     -- compute global sections module Gamma_(d >= bound)(X, F(d))
     A := ring F;
+    M := module F;
     if degreeLength A =!= 1 then error "expected degree length 1";
     -- quotient by H_m^0(M) to kill the torsion
-    M := killH0 module F;
+    N := killH0 M;
     -- pushforward to the projective space
-    N := flattenModule M;
-    S := ring N;
+    N' := flattenModule N;
+    S := ring N';
     -- TODO: both n and w need to be adjusted for the multigraded case
     n := dim S;
     w := S^{-n}; -- canonical sheaf on P^n
     -- Note: bound=infinity signals that H_m^1(M) = 0, ie. M is saturated
     -- in other words, don't search for global sections not already in M
-    -- TODO: what would pdim N < n-1, hence E1 = 0, imply?
-    p := if bound === infinity or pdim N < n-1 then 0 else (
-	E1 := Ext^(n-1)(N, w); -- the top Ext
-	if dim E1 <= 0 -- 0-module or 0-dim module (i.e. finite length)
-	then 1 + max degreeList E1 - min degreeList E1
-	else 1 - first min degrees E1 - bound);
+    -- TODO: what would pdim N' < n-1, hence E1 = 0, imply?
+    p := if bound === infinity or pdim N' < n-1 then 0 else (
+        E1 := Ext^(n-1)(N', w); -- the top Ext
+        if dim E1 <= 0 -- 0-module or 0-dim module (i.e. finite length)
+        then 1 + max degreeList E1 - min degreeList E1
+        else 1 - first min degrees E1 - bound);
     -- this can only happen if bound = -infinity, e.g. from calling H^0(F(>=(-infinity))
     if p === infinity then error "the global sections module is not finitely generated";
     -- caching these to be used for SaturationMap and later in prune SheafMap
     -- TODO: cache in the sheaf instead
-    F.module.cache.TorsionFree = M;
+    F.module.cache.TorsionFree = N;
     F.module.cache.GlobalSectionLimit = max(0, p);
-    if p > 0 then (
-	-- TODO: substitute with appropriate irrelevant ideal here
-	Bp := (ideal vars A)^[p];
-        -- this line computes Gamma_* sheaf M as a limit
-        -- compare with the limit from minimalPresentation hook
+    -- this is the module Gamma_* F
+    G := minimalPresentation if p <= 0 then N else target(
+        -- TODO: substitute with appropriate irrelevant ideal here
+        Bp := (ideal vars A)^[p];
+	-- consider the sequence 0 -> B^[p] -> A -> A/B^[p] -> 0
+	inc := inducedMap(module A, module Bp);
+	iso := inducedMap(Hom(module A, N), N);
+        -- we compute the map N -> Gamma_* F as a limit by
+	-- applying Hom(-,N) to the sequence above
+        -- c.f. the limit from minimalPresentation hook
         -- and emsbound in NormalToricVarieties/Sheaves.m2
-	M = Hom(module Bp, M));
-    minimalPresentation M)
+        phi := Hom(inc, N) * iso);
+    -- now we compute the center map in the sequence
+    -- 0 -> HH^0_B(M) -> M -> Gamma_* F -> HH^1_B(M) -> 0
+    iota := inverse G.cache.pruningMap; -- map from Gamma_* F to its minimal presentation
+    quot := inducedMap(N, M);           -- map from M to N = M/HH^0_B(M)
+    -- TODO: cache in the sheaf instead
+    F.module.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
+    G)
 
 -- HH^p(X, F(>=b))
 cohomology(ZZ,                    SumOfTwists) := Module => opts -> (p,    S) -> cohomology(p, variety S, S, opts)
 cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) -> (
-    R := ring X;
     checkVariety(X, S);
     (F, b) := (S#0, S#1#0);
     if not F.cache.?HH    then F.cache.HH = new MutableHashTable;
     if F.cache.HH#?(p, b) then F.cache.HH#(p, b) else F.cache.HH#(p, b) =
-    if 0 < p then HH^(p+1)(module F, Degree => b) else (
-	G := twistedGlobalSectionsModule(F, b); -- Gamma_* sheaf M
-	N := F.module.cache.TorsionFree; -- M/HH^0_B(M)
-	p := F.module.cache.GlobalSectionLimit;
-	iota := inverse G.cache.pruningMap;
-	quot := inducedMap(N, module F);
-	-- this is the center map in the sequence
-	-- 0 -> HH^0_B(M) -> M -> Gamma_* sheaf M -> HH^1_B(M) -> 0
-	F.module.cache.SaturationMap = if p == 0 then iota*quot else (
-	    -- TODO: substitute with appropriate irrelevant ideal
-	    Bp := (ideal vars R)^[p];
-	    homMap := Hom(inducedMap(module R, module Bp), N);
-	    iota * homMap * inducedMap(Hom(R^1, N), N) * quot);
-	G)
-    )
+    if p == 0 then twistedGlobalSectionsModule(F, b) else HH^(p+1)(module F, Degree => b))
 
 -- This is an approximation of Gamma_* F, at least with an inclusion from Gamma_>=0 F
 -- Note: HH^0 F(>=0) is cached above, so this doesn't need caching
