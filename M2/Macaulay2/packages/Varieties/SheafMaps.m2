@@ -215,9 +215,13 @@ moveToField = f -> (
     kk := coefficientRing ring f;
     map(kk^(numrows f), kk^(numcols f), sub(cover f, kk)))
 
-flattenMorphism := f -> (
+-- computes the pushforward via S/I <-- S
+flattenMorphism = f -> (
     g := presentation ring f;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
     lift(f, ring g) ** cokernel g)
+
+flattenModule = f -> cokernel flattenMorphism presentation f
 
 cohomology(ZZ,                    SheafMap) := Matrix => opts -> (p,    f) -> cohomology(p, variety f, f, opts)
 cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
@@ -306,14 +310,6 @@ checkVariety := (X, F) -> (
     if not isAffineRing ring X then error "expected a variety defined over a field";
     )
 
--- computes the pushforward via S/I <-- S
--- TODO: use flattenMorhpism
-flattenModule := M -> (
-    f := presentation M;
-    g := presentation ring M;
-    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
-    cokernel lift(f, ring g) ** cokernel g)
-
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
 degreeList := M -> (
@@ -378,6 +374,8 @@ twistedGlobalSectionsModule = (F, bound) -> (
     quot := inducedMap(N, M);           -- map from M to N = M/HH^0_B(M)
     F.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
     G)
+
+variety SumOfTwists := S -> variety S#0
 
 -- HH^p(X, F(>=b))
 cohomology(ZZ,                    SumOfTwists) := Module => opts -> (p,    S) -> cohomology(p, variety S, S, opts)
