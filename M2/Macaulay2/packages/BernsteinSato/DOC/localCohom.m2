@@ -18,7 +18,7 @@ document {
 	  {BOLD "OaTa", " -- restriction from the graph embedding is used, 
 	       which is due to T. Oaku and N. Takayama [3]. See ", TO "Drestriction", "."}   
 	  },
-          Caveat => {"localCohom(...Ideal, Module...) with the default strategy computes presentations for all the terms in the Cech complex regardless of the requested homological degrees. All strategies use the given generators of the ideal; the user is advised to call ", TO "mingens", " before calling localCohom."}
+          Caveat => {"localCohom(...Ideal, Module...) with the default strategy computes presentations for all the terms in the Cech complex regardless of the requested homological degrees. All strategies use the given generators of the ideal; the user is advised to call ", TO "mingens", " before calling localCohom."},
           --Caveat => {"When OaTaWa strategy is used the error 'Bad luck!' 
           --may appear. This means your are not a lucky individual...
 	  --The glitch is due to the fact that the localizations are iterated 
