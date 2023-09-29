@@ -200,7 +200,7 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
 	  g = sub(g,D);
 	  );
      r := #F; 
-     AnnI := AnnFs F;
+     AnnI := MalgrangeIdeal F;
      DY := ring AnnI;
      K := coefficientRing DY;
      n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
@@ -265,7 +265,7 @@ generalBideal (List, RingElement) := RingElement => o->(F,g) -> (
 --          g, a polynomial
 -- Output:  the generalized B-S ideal, an ideal of QQ[s_1..s_r]
      r := #F; 
-     AnnI := AnnFs F;
+     AnnI := MalgrangeIdeal F;
      DY := ring AnnI;
      K := coefficientRing DY;
      n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
