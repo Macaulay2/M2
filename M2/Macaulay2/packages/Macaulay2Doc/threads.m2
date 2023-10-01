@@ -272,6 +272,13 @@ Node
   Item
    the task {\tt t} will be scheduled for execution, but execution will not begin until the
    task {\tt u} finishes
+ Description
+   Example
+     for i to 5 do t_i = createTask(() -> i)
+     for i from 1 to 5 do addDependencyTask(t_i, t_(i - 1))
+     schedule t_0
+     while not isReady t_5 do nanosleep 1000000
+     taskResult t_5
 Node
  Key
   (addStartTask, Task, Task)
