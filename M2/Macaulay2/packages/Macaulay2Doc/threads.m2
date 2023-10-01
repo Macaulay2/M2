@@ -248,7 +248,7 @@ Node
   x:Thing
  Outputs
   :Task
-   a task, which when scheduled, will apply the function {\tt f} to the argument {\tt x}.  In the
+   which when scheduled, will apply the function {\tt f} to the argument {\tt x}.  In the
    second form, where {\tt x} is not specified, it is take to be {\tt ()}.
  Description
   Example
