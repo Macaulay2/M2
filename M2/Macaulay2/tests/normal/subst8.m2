@@ -36,3 +36,7 @@ assert( (sub(f, {T_0 => S_0})) === w_2*x^3+w_1*x^2+x );
 K = frac((ZZ/32749)[a..c]/c)
 S = K[s]
 substitute(s^2, { s => -s - 1 })
+---
+needsPackage "AssociativeAlgebras"
+R = QQ<|e_0..e_2,t|>
+sub(t, {t => 1})

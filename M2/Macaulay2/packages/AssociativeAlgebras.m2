@@ -126,7 +126,7 @@ importFrom_Core {"findSymbols","ReverseDictionary","makepromoter",
 importFrom_Core{"raw","rawPairs","rawQuotientRing","rawGetTerms",
     "rawSparseListFormMonomial","rawNCFreeAlgebra",
     "rawNCBasis","rawNCReductionTwoSided","rawNCGroebnerBasisTwoSided",
-    "RawRingElement"}
+    "RawRingElement","rawPromote"}
 
 --- debugging/benchmark tools
 BUG = str -> ()
@@ -231,10 +231,6 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
    rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs, flatten wtvecs, heftvec);
    R := new FreeAlgebra from {
        RawRing => rawR,
-       generatorSymbols => varSymbols,
-       --(symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
-       generatorExpressions => for v in varSymbols list if instance(v,Symbol) then v else expression v,
-       (symbol generators) => {},
        (symbol degreesRing) => degreesRing degrk,
        (symbol degreeLength) => degrk,
        (symbol degrees) => degs,
@@ -247,6 +243,15 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
        (symbol baseRings) => append(A.baseRings,A)
        };
    R.generators = for i from 0 to #varSymbols-1 list new R from R#RawRing_i;
+   R.generatorSymbols     = varSymbols;
+   R.generatorExpressions = apply(varSymbols, v -> if instance(v, Symbol) then v else expression v);
+   R.index        = hashTable apply(R.generatorSymbols, 0 ..< #varSymbols, identity);
+   R.indexSymbols = hashTable join(
+       apply(if A.?indexSymbols then pairs A.indexSymbols else {},
+	   (sym, x) -> sym => new R from rawPromote(raw R, raw x)),
+       apply(R.generatorSymbols, R.generators, identity)
+       );
+   try R.indexStrings = applyKeys(R.indexSymbols, toString);
    R#promoteDegree = makepromoter degreeLength R;
    R#liftDegree = makepromoter degreeLength R;
    commonEngineRingInitializations R;
@@ -405,6 +410,7 @@ freeAlgebraQuotient (FreeAlgebra, Ideal, Matrix) := FreeAlgebraQuotient => (R,I,
      if R#?generatorExpressions then S#generatorExpressions = (
 	  R#generatorExpressions
 	  );
+     if R#?index        then S#index = R#index;
      if R#?indexStrings then S#indexStrings = applyValues(R#indexStrings, x -> promote(x,S));
      if R#?indexSymbols then S#indexSymbols = applyValues(R#indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);
