@@ -152,20 +152,6 @@ document {
      SeeAlso => "polynomial rings"}
 
 document {
-     Key => (symbol SPACE, RingElement, Array),
-     Headline => "substitution of variables",
-     Usage => "f[a,b,c]",
-     Inputs => { "f", Nothing => { TT "[a,b,c]", ", an array of ring elements" } },
-     Outputs => {
-	  "r" => { "the result of replacing the variables in ", TT "f", " by the ring elements provided in brackets." } } ,
-     EXAMPLE {
-	  "R = QQ[x,y];",
-	  "f = x^3 + 99*y;",
-	  "f[1000,3]"
-	  }
-     }
-
-document {
     Key => IndexedVariable,
     Headline => "the class of all indexed variables",
     "Indexed variables provide the possibility of producing
