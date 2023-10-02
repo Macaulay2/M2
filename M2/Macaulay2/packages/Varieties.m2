@@ -464,12 +464,11 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 -- Module of twisted global sections Γ_*(F)
 -----------------------------------------------------------------------------
 
--- TODO: optimize caching here
+-- TODO: optimize caching: if HH^0(F>=b) is cached above, does this need to be cached?
 -- TODO: should F>=0 be hardcoded?
 minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
     cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
-	-- this is the default algorithm
-	(opts, F) -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts))))
+	(opts, F) -> sheaf(F.variety, HH^0 F(>=0)))) -- this is the default algorithm
 
 -----------------------------------------------------------------------------
 -- cotangentSheaf, tangentSheaf, and canonicalBundle
@@ -587,12 +586,13 @@ Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
      local E;
      if dim M === 0 or m < 0 then E = R^0
      else (
-          f := presentation R;
-          S := ring f;
-          n := numgens S -1;
           l := min(dim N, m);
-	  P := resolution(cokernel lift(presentation N,S) ** cokernel f);
+	  P := resolution flattenModule N;
 	  p := length P;
+	  n := dim ring P - 1;
+	  -- global Ext is composition of sheaf Ext and cohomology
+	  -- so we compute it as a Grothendieck spectral sequence
+	  -- in this case, it degenerates
 	  if p < n-l then E = Ext^m(M, N, opts)
 	  else (
 	       a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
