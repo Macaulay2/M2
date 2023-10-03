@@ -788,7 +788,7 @@ document {
     }
 
 document {
-    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem,ZZ), (squareUp,PolySystem, Matrix), 
+    Key => {squareUp, (squareUp,System), (squareUp,System,ZZ), (squareUp,System, Matrix), 
 	SquaredUpSystem, SquareUpMatrix
 	},
     Headline => "square up a polynomial system",
