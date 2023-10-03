@@ -138,11 +138,11 @@ ambient     AffineVariety :=     AffineVariety => X -> Spec ambient ring X
 ambient ProjectiveVariety := ProjectiveVariety => X -> Proj ambient ring X
 
 -- arithmetic ops
--- TODO: uncomment the projective ones when Proj works with multigraded rings
--- TODO: use ** instead of * to match NormalToricVarieties, etc.
-AffineVariety     *      AffineVariety :=     AffineVariety => (X, Y) -> Spec(ring X ** ring Y)
---ProjectiveVariety *  ProjectiveVariety := ProjectiveVariety => (X, Y) -> Proj(ring X ** ring Y)
-AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X * Spec R
+-- TODO: document
+AffineVariety     **     AffineVariety :=     AffineVariety => (X, Y) -> Spec(ring X ** ring Y)
+AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X ** Spec R
+-- TODO: uncomment when Proj works with multigraded rings
+--ProjectiveVariety ** ProjectiveVariety := ProjectiveVariety => (X, Y) -> Proj(ring X ** ring Y)
 --ProjectiveVariety ** Ring              := ProjectiveVariety => (X, R) -> X ** Proj R
 
 -- property checks

@@ -90,7 +90,6 @@ document {
     (symbol*,  RingElement, MutableMatrix),
     (symbol*,  Ring, MonomialIdeal),
     (symbol*,  MonomialIdeal, Module),
-    (symbol*,  AffineVariety, AffineVariety),
     (symbol*,  MonomialIdeal, MonomialIdeal),
     (symbol*,  RingElement, Ideal),
     (symbol*,  Matrix, Vector),
