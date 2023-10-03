@@ -136,7 +136,7 @@ complement Matrix := Matrix => (f) -> (
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
 -- the method is declared in gb.m2
-mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
+mingens LeftIdeal  := Matrix => opts -> I -> mingens(module I, opts)
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
         c := runHooks((mingens, Module), (opts, M));
         if c =!= null then c else error "mingens: no method implemented for this type of module"))
@@ -175,7 +175,7 @@ trim QuotientRing := opts -> (R) -> (
      A/(trim(ideal f,opts)))
 
 -- TODO: why is the caching key an Option?
-trim Ideal  := Ideal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
+trim LeftIdeal  := LeftIdeal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 trim Module := Module => opts -> (cacheValue symbol trim) (M -> (
 	if isFreeModule M then return M;
 	c := runHooks((trim, Module), (opts, M));
@@ -405,12 +405,12 @@ RingElement % Matrix := (r,f) -> (
      else error "expected target of matrix to be free, and of rank 1"
      )
 
-RingElement % Ideal := (r,I) -> (
+RingElement % LeftIdeal := (r,I) -> (
      R := ring I;
      if ring r =!= R then error "expected ring element and ideal for the same ring";
      if r == 0 then return r;
      r % if isHomogeneous I and heft R =!= null then gb(I, DegreeLimit => degree r) else gb I)
-Number % Ideal := (r,I) -> (
+Number % LeftIdeal := (r,I) -> (
      R := ring I;
      r = promote(r,R);
      if r == 0 then return r;
@@ -441,7 +441,7 @@ support = method()
 support RingElement := support Matrix := (f) -> (
      x := rawIndices raw f;
      apply(x, i -> (ring f)_i))
-support Ideal := (I) -> rsort toList sum apply(flatten entries generators I, f -> set support f)
+support LeftIdeal := (I) -> rsort toList sum apply(flatten entries generators I, f -> set support f)
 --------------------
 -- homogenization --
 --------------------
@@ -489,7 +489,7 @@ homogenize(Module,RingElement) := Module => (M,z) -> (
 	  if M.?generators then homogenize(generators gb M.generators,z),
 	  if M.?relations then homogenize(generators gb M.relations,z)))
 
-homogenize(Ideal,RingElement) := Ideal => (I,z) -> ideal homogenize(module I, z)
+homogenize(LeftIdeal,RingElement) := LeftIdeal => (I,z) -> ideal homogenize(module I, z)
 
 homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
      if isFreeModule M then M

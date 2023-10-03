@@ -62,7 +62,13 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
-tensor(PolynomialRing, PolynomialRing) :=
+tensor(PolynomialRing, PolynomialRing) := monoidTensorDefaults >> optns -> (R, S) -> (
+     k := coefficientRing R;
+     if k =!= coefficientRing S 
+     then error "expected rings to have the same coefficient ring";
+     k tensor(monoid R, monoid S, optns)
+     )
+
 tensor(QuotientRing,   PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
 tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) -> (
@@ -71,11 +77,11 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      then error "expected rings to have the same coefficient ring";
      f := presentation R; A := ring f; M := monoid A; m := numgens M;
      g := presentation S; B := ring g; N := monoid B; n := numgens N;
-     AB := k tensor(M, N, optns);
-     fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
+     MN := k tensor(M, N, optns);
+     fg := substitute(f,(vars MN)_{0 .. m-1}) | substitute(g,(vars MN)_{m .. m+n-1});
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
                      -- is an error!! MES
-     if isPolynomialRing A and isPolynomialRing B then AB else AB/image fg
+     MN/image fg
      )
 
 -------------------------

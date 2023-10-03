@@ -63,7 +63,7 @@ kerGB := m -> (
 --------------------------------------------------------------------------------
 
 Dresolution = method( Options => {Strategy => Schreyer, LengthLimit => infinity} )
-Dresolution Ideal  := options -> I -> Dresolution(comodule I, options)
+Dresolution LeftIdeal  := options -> I -> Dresolution(comodule I, options)
 Dresolution Module := options -> M -> (
 
      pInfo (1, "ENTERING Dresolution ... ");
@@ -100,9 +100,7 @@ Dresolution Module := options -> M -> (
      M.cache.resolution
      )
 
-Dresolution (Ideal, List) := options -> (I, w) -> (
-     Dresolution ((ring I)^1/I, w, options)
-     )
+Dresolution (LeftIdeal, List) := options -> (I, w) -> Dresolution ((ring I)^1/I, w, options)
 
 Dresolution (Module, List) := options -> (M, w) -> (
 

@@ -24,8 +24,8 @@ document {
      }
 
 document {
-     Key => {Dresolution, (Dresolution,Module), (Dresolution,Ideal,List), 
-	  (Dresolution,Module,List), (Dresolution,Ideal)},
+     Key => {Dresolution, (Dresolution,Module), (Dresolution,LeftIdeal,List), 
+	  (Dresolution,Module,List), (Dresolution,LeftIdeal)},
      Headline => "resolution of a D-module",
      Usage => "Dresolution M, Dresolution I, Dresolution(M,w), Dresolution(I,w)",
      Inputs => {
