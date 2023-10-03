@@ -114,8 +114,8 @@ issub := (f, g) -> (
 -- TODO: we can do better in the homogeneous case!
 addHook(ContainmentHooks, Strategy => Inhomogeneous, (f, g) -> -1 === rawGBContains(raw gb g, raw f))
 
-ZZ == Ideal := (n,I) -> I == n
-Ideal == ZZ := (I,n) -> (
+ZZ == LeftIdeal := (n,I) -> I == n
+LeftIdeal == ZZ := (I,n) -> (
      if n === 0
      then I.generators == 0
      else if n === 1
@@ -439,9 +439,9 @@ isSubset(Module,Module) := (M,N) -> (
 	  false
 	  )
      )
-isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)
-isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
-isSubset(Ideal,Module) := (I,N) -> isSubset(module I, N)
+isSubset(LeftIdeal,LeftIdeal) := (I,J) -> isSubset(module I, module J)
+isSubset(Module,LeftIdeal) := (M,J) -> isSubset(M, module J)
+isSubset(LeftIdeal,Module) := (I,N) -> isSubset(module I, N)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

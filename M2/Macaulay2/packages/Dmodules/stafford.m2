@@ -326,7 +326,7 @@ mainStep = (a,b,c) -> (
      )
 
 stafford = method();
-stafford Ideal := I -> (
+stafford LeftIdeal := I -> (
      g := first entries gens I;
      while #g>2 do g = mainStep(g#0,g#1,g#2) | drop(g,3);
      ideal g
@@ -607,7 +607,7 @@ isAll (ZZ,Matrix) := (k,M) -> (
      t := target M;
      all(toList(0..numgens t - 1), i->reduceInCalR(k,t_{i},M)==0)
      )
-isAll (ZZ, Ideal) := (k,I) -> (
+isAll (ZZ, LeftIdeal) := (k,I) -> (
      return isAll(k, gens gb I);
      R := ring I;
      n := numgens R // 2;

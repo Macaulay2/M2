@@ -211,7 +211,7 @@ assert (singLocus h.AnnG == singLocus cokernel M)
 -- R^1 / dx^3  
 -------------------------
 use R
-M = presentation image map( R^1/ideal dx^3, R^3, matrix{{1, x, x^2}} )
+M = presentation image map( cokernel matrix{{dx^3}}, R^3, matrix{{1, x, x^2}} )
 h = makeCyclic M 
 b1 = bFunction(ideal dx^3, {1})
 b2 = bFunction(cokernel M, {1}, {0,-1,-2})

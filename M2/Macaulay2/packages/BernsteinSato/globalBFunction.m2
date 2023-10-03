@@ -20,7 +20,7 @@ makeMonic := f -> ( if coefficientRing ring f === QQ
 
 -- also used in multiplierIdeals.m2
 star = method()
-star (Ideal,List) := (I,vw) -> (
+star (LeftIdeal,List) := (I,vw) -> (
      W := ring I;
      n := numgens W;
      u := symbol u;
@@ -109,7 +109,7 @@ globalRB (RingElement,Boolean) := RingElement => (f,isRed) -> (
 --------------------------------------------------------------------------------
 globalB = method()
 
-globalB(Ideal, RingElement) := HashTable => (I, f) -> (
+globalB(LeftIdeal, RingElement) := HashTable => (I, f) -> (
      W := ring I;
      AnnI := AnnIFs (I,f);
      Ws := ring AnnI;
@@ -203,10 +203,10 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
 	  inw(intersect(AnnI, ideal sub(g, DY)), -w|w)
 	  ) 
      else if m===null and o.Strategy===StarIdeal then (
-	  star(AnnI,-w|w) + sub(g*ideal F,DY)
+	  star(AnnI,-w|w) + sub(ideal(g*F),DY)
 	  )
      else if m=!=null then (
-	  star(AnnI,-w|w) + (sub(ideal F, DY))^m
+	  star(AnnI,-w|w) + ideal symmetricPower(m, gens sub(ideal F, DY))
 	  )
      else error "uknwnown Strategy";
      
