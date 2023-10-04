@@ -854,22 +854,24 @@ readE(f:file):Expr := (
      is e:errmsg do buildErrorPacket(e.message)
      is s:stringCell do Expr(s));
 
+readIO(msg:string):Expr := (
+     readprompt = msg;
+     oldprompt := stdIO.prompt;
+     stdIO.prompt = readpromptfun;
+     r := getLine(stdIO);
+     stdIO.prompt = oldprompt;
+     when r
+     is e:errmsg do buildErrorPacket(e.message)
+     is s:stringCell do Expr(s)
+);
+
 readfun(e:Expr):Expr := (
      when e
      is f:file do readE(f)
-     is p:stringCell do (
-	  readprompt = p.v;
-	  oldprompt := stdIO.prompt;
-	  stdIO.prompt = readpromptfun;
-	  r := getLine(stdIO);
-	  stdIO.prompt = oldprompt;
-	  when r
-	  is e:errmsg do buildErrorPacket(e.message)
-	  is s:stringCell do Expr(s)
-	  )
+     is p:stringCell do readIO(p.v)
      is s:Sequence do (
 	  if length(s) == 0
-	  then readE(stdIO)
+	  then readIO("")
 	  else if length(s) == 2
 	  then (
 	       when s.0
