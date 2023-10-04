@@ -218,11 +218,10 @@ moveToField = f -> (
 -- computes the pushforward via S/I <-- S
 flattenMorphism = f -> (
     g := presentation ring f;
-    S:=ring g;
+    S := ring g;
     -- TODO: sometimes lifting to ring g is enough, how can we detect this?
---    lift(f, ring g) ** cokernel g
-    map(target f ** S, source f ** S, lift (cover f,S)) ** cokernel g
-)
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
 
 flattenModule = f -> cokernel flattenMorphism presentation f
 
@@ -234,12 +233,12 @@ cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
 	g := flattenMorphism matrix f;
 	A := ring g;
 	-- TODO: both n and w need to be adjusted for the multigraded case
-	n := dim A;
-	w := A^{-n};
+	n := dim A-1;
+	w := A^{-n-1};
 	-- using Serre duality for coherent sheaves on schemes with mild
 	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
 	-- TODO: check that X is proper (or at least finite type)
-	transpose moveToField basis(0, Ext^(n-1-p)(g, w)))
+	transpose moveToField basis(0, Ext^(n-p)(g, w)))
     )
 
 --Some questions:
@@ -346,13 +345,13 @@ twistedGlobalSectionsModule = (F, bound) -> (
     N' := flattenModule N;
     S := ring N';
     -- TODO: both n and w need to be adjusted for the multigraded case
-    n := dim S;
-    w := S^{-n}; -- canonical sheaf on P^n
+    n := dim S-1;
+    w := S^{-n-1}; -- canonical sheaf on P^n
     -- Note: bound=infinity signals that HH^1_m(M) = 0, ie. M is saturated
     -- in other words, don't search for global sections not already in M
-    -- TODO: what would pdim N' < n-1, hence E1 = 0, imply?
-    p := if bound === infinity or pdim N' < n-1 then 0 else (
-        E1 := Ext^(n-1)(N', w); -- the top Ext
+    -- TODO: what would pdim N' < n, hence E1 = 0, imply?
+    p := if bound === infinity or pdim N' < n then 0 else (
+        E1 := Ext^n(N', w); -- the top Ext
         if dim E1 <= 0 -- 0-module or 0-dim module (i.e. finite length)
         then 1 + max degreeList E1 - min degreeList E1
         else 1 - first min degrees E1 - bound);
