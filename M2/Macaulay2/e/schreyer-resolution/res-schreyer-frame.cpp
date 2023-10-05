@@ -62,6 +62,9 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
       mComputer(new F4Res(*this))
+#if defined(WITH_TBB)
+    , mDepGraph(this)
+#endif      
 {
   mFrame.mLevels.resize(max_level + 1);
   mMaxVPSize = 2 * monoid().n_vars() + 1;

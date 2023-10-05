@@ -462,70 +462,47 @@ void F4Res::makeMatrix()
 
 //#define DEBUG_GAUSS
 
-void F4Res::gaussReduce()
-{
-  bool onlyConstantMaps = false;
-  std::vector<bool> track(mReducers.size());
-  if (onlyConstantMaps)  // and not exterior algebra?
-    {
-      for (auto i = 0; i < mReducers.size(); i++)
-        {
-          track[i] = monoid().is_divisible_by_var_in_range(
-              mReducers[i].mLeadTerm,
-              monoid().n_vars() - mThisLevel + 1,
-              monoid().n_vars() - 1);
-        }
-    }
+void F4Res::gaussReduceRow(int index,
+                            ElementArray& gauss_row,
+                            bool onlyConstantMaps,
+                            const std::vector<bool>& track)
+{   
+  int i = index;
 
-  // Reduce to zero every spair. Recording creates the
-  // corresponding syzygy, which is auto-reduced and correctly ordered.
-
-  // allocate a dense row, of correct size
-  ElementArray gauss_row = mRing.vectorArithmetic().allocateElementArray(
-      static_cast<ComponentIndex>(mColumns.size()));
-  //  std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null")
-  //  << std::endl;
-  //  std::cout << "gauss_row size: " << mRing.vectorArithmetic().size(gauss_row) <<
-  //  std::endl;
-
-  for (long i = 0; i < mSPairs.size(); i++)
-    {
 #ifdef DEBUG_GAUSS
       std::cout << "reducing row " << i << std::endl;
 #endif
-      // Reduce spair #i
-      // fill in dense row with this element.
 
-      ResPolynomialConstructor result(mRing);
+  // Reduce spair #i
+  // fill in dense row with this element.
 
-      Row& r = mSPairs[i];  // row to be reduced.
-      long comp = mSPairComponents[i];
-      result.appendMonicTerm(mFrame.level(mThisLevel)[comp].mMonom);
+  ResPolynomialConstructor result(mRing);
 
-      auto& syz = mFrame.level(mThisLevel)[comp]
-                      .mSyzygy;  // this is the element we will fill out
+  Row& r = mSPairs[i];  // row to be reduced.
+  long comp = mSPairComponents[i];
+  result.appendMonicTerm(mFrame.level(mThisLevel)[comp].mMonom);
 
-      // Note: in the polynomial ring case, the row r is non-zero.
-      // BUT: for skew commuting variables, it can happen that r is zero
-      // (e.g. a.(acd<0>) = 0).  In this case we have nothing to reduce.
-      if (!r.mComponents.empty())
-        {
-          ComponentIndex firstcol = r.mComponents[0];
-          ComponentIndex lastcol = static_cast<ComponentIndex>(
-              mColumns.size() -
-              1);  // maybe: r.mComponents[r.mComponents.size()-1];
+  auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy;  // this is the element we will fill out
+
+  // Note: in the polynomial ring case, the row r is non-zero.
+  // BUT: for skew commuting variables, it can happen that r is zero
+  // (e.g. a.(acd<0>) = 0).  In this case we have nothing to reduce.
+  if (!r.mComponents.empty())
+    {
+      ComponentIndex firstcol = r.mComponents[0];
+      ComponentIndex lastcol = static_cast<ComponentIndex>(mColumns.size() - 1);  // maybe: r.mComponents[r.mComponents.size()-1];
 
 #ifdef DEBUG_GAUSS
           std::cout << "about to fill from sparse " << i << std::endl;
 #endif
 
-          mRing.vectorArithmetic().fillDenseArray(
-              gauss_row,
-              r.mCoeffs,
-              Range(&r.mComponents[0], &r.mComponents[0] + static_cast<ComponentIndex>(r.mComponents.size())));
+      mRing.vectorArithmetic().fillDenseArray(gauss_row,
+                                              r.mCoeffs,
+                                              Range(&r.mComponents[0],
+                                                    &r.mComponents[0] + static_cast<ComponentIndex>(r.mComponents.size())));
 
-          while (firstcol <= lastcol)
-            {
+      while (firstcol <= lastcol)
+        {
 #ifdef DEBUG_GAUSS
               std::cout << "about to reduce with col " << firstcol << std::endl;
               std::cout << "gauss_row: "
@@ -550,24 +527,22 @@ void F4Res::gaussReduce()
               std::cout << std::endl;
 #endif
 
-              if (onlyConstantMaps and not track[firstcol])
-                {
-                  mRing.vectorArithmetic().denseCancelFromSparse(
-                      gauss_row,
-                      mReducers[firstcol].mCoeffs,
-                      Range(mReducers[firstcol].mComponents.data(),
-                            mReducers[firstcol].mComponents.data() +
-                            mRing.vectorArithmetic().size(mReducers[firstcol].mCoeffs)));
-                }
-              else
-                {
-                  mRing.vectorArithmetic().denseCancelFromSparse(
-                      gauss_row,
-                      mReducers[firstcol].mCoeffs,
-                      Range(mReducers[firstcol].mComponents.data(),
-                            mReducers[firstcol].mComponents.data() +
-                            mRing.vectorArithmetic().size(mReducers[firstcol].mCoeffs)),
-                      result.coefficientInserter());
+          if (onlyConstantMaps and not track[firstcol])
+            {
+              mRing.vectorArithmetic().denseCancelFromSparse(gauss_row,
+                                                             mReducers[firstcol].mCoeffs,
+                                                             Range(mReducers[firstcol].mComponents.data(),
+                                                                   mReducers[firstcol].mComponents.data() +
+                                                                   mRing.vectorArithmetic().size(mReducers[firstcol].mCoeffs)));
+            }
+          else
+            {
+              mRing.vectorArithmetic().denseCancelFromSparse(gauss_row,
+                                                             mReducers[firstcol].mCoeffs,
+                                                             Range(mReducers[firstcol].mComponents.data(),
+                                                                   mReducers[firstcol].mComponents.data() +
+                                                                   mRing.vectorArithmetic().size(mReducers[firstcol].mCoeffs)),
+                                                             result.coefficientInserter());
 
 #ifdef DEBUG_GAUSS
                   std::cout << "  done with sparseCancel" << std::endl;
@@ -581,17 +556,17 @@ void F4Res::gaussReduce()
                       << std::endl;
                   std::cout << "  about to push back term" << std::endl;
 #endif
-
-                  result.pushBackTerm(mReducers[firstcol].mLeadTerm);
+              
+              result.pushBackTerm(mReducers[firstcol].mLeadTerm);
 
 #ifdef DEBUG_GAUSS
                   std::cout << "done with col " << firstcol << std::endl;
 #endif
-                }
-              firstcol = mRing.vectorArithmetic().denseNextNonzero(
-                  gauss_row, firstcol + 1, lastcol);
             }
+          firstcol = mRing.vectorArithmetic().denseNextNonzero(gauss_row, firstcol + 1, lastcol);
         }
+    }
+
 #ifdef DEBUG_GAUSS
       std::cout << "about to set syz" << std::endl;
 #endif
@@ -599,8 +574,63 @@ void F4Res::gaussReduce()
 #ifdef DEBUG_GAUSS
       std::cout << "just set syz" << std::endl;
 #endif
+}
+
+void F4Res::gaussReduce()
+{
+  bool onlyConstantMaps = false;
+  std::vector<bool> track(mReducers.size());
+
+#if defined(WITH_TBB)
+  using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
+  // create a dense array for each thread
+  threadLocalDense_t threadLocalDense([&]() { 
+    return mRing.vectorArithmetic().allocateElementArray(static_cast<ComponentIndex>(mColumns.size()));
+  });
+#endif
+  
+  if (onlyConstantMaps)  // and not exterior algebra?
+    {
+      for (auto i = 0; i < mReducers.size(); i++)
+        {
+          track[i] = monoid().is_divisible_by_var_in_range(
+              mReducers[i].mLeadTerm,
+              monoid().n_vars() - mThisLevel + 1,
+              monoid().n_vars() - 1);
+        }
+    }
+
+  // Reduce to zero every spair. Recording creates the
+  // corresponding syzygy, which is auto-reduced and correctly ordered.
+
+  // allocate a dense row, of correct size
+  ElementArray gauss_row = mRing.vectorArithmetic().allocateElementArray(
+      static_cast<ComponentIndex>(mColumns.size()));
+  //  std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null")
+  //  << std::endl;
+  //  std::cout << "gauss_row size: " << mRing.vectorArithmetic().size(gauss_row) <<
+  //  std::endl;
+
+#if defined(WITH_TBB)
+  size_t chunk_size = std::max(mSPairs.size() / (100*tbb::info::default_concurrency()), (size_t) 1);
+  mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size(),chunk_size},
+                    [&](const mtbb::blocked_range<int>& r)
+                    {
+                      //std::cout << "gauss reduce, " << r.begin() << "..<" << r.end() << " total: " << mSPairs.size() << std::endl;
+                      threadLocalDense_t::reference my_dense = threadLocalDense.local();
+                      for (auto i = r.begin(); i != r.end(); ++i) {
+                        gaussReduceRow(i, my_dense, onlyConstantMaps, track);
+                      }
+                    });
+  for (auto tlDense : threadLocalDense)
+    mRing.vectorArithmetic().deallocateElementArray(tlDense);
+#else  
+  for (long i = 0; i < mSPairs.size(); i++)
+    {
+      gaussReduceRow(i, gaussRow, onlyConstantMaps, track);
     }
   mRing.vectorArithmetic().deallocateElementArray(gauss_row);
+#endif  
 }
 
 void F4Res::construct(int lev, int degree)

@@ -27,6 +27,7 @@
 #include "schreyer-resolution/res-monomial-types.hpp"  // for component_index
 #include "schreyer-resolution/res-poly-ring.hpp"       // for ResPolyRing, ResPolynomial
 #include "schreyer-resolution/res-schreyer-order.hpp"  // for ResSchreyerOrder
+#include "schreyer-resolution/res-dep-graph.hpp"       // for DependencyGraph
 
 #include <utility>                                     // for pair
 #include <vector>                                      // for vector
@@ -70,6 +71,10 @@ class SchreyerFrame
 {
  public:
   friend class F4Res;
+#if defined(WITH_TBB)
+  friend class DependencyGraph;
+#endif  
+  
   typedef SchreyerFrameTypes::FrameElement FrameElement;
   typedef SchreyerFrameTypes::PreElement PreElement;
 
@@ -268,6 +273,10 @@ class SchreyerFrame
   // this is a separate class because there could be several of these, running
   // in parallel.
 
+#if defined(WITH_TBB)  
+  DependencyGraph mDepGraph;
+#endif
+  
  public:
   // To allow res-f4.cpp to add to timings.
   double timeMakeMatrix;

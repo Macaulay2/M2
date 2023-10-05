@@ -64,6 +64,10 @@ class F4Res
   void reorderColumns();
   void makeMatrix();
   void gaussReduce();
+  void gaussReduceRow(int index,
+                       ElementArray &dense,
+                       bool onlyConstantMaps,
+                       const std::vector<bool>& track);
 
   void debugOutputReducers();
   void debugOutputColumns();
