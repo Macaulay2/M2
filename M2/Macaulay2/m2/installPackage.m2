@@ -240,8 +240,8 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 topNodeButton  := (htmlDirectory, topFileName)   -> HREF {htmlDirectory | topFileName,   "top" };
 indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexFileName, "index"};
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
-pkgButton      := TO2 {"packages provided with Macaulay2", "packages"};
-homeButton     := HREF {"http://macaulay2.com/", "Macaulay2 website"};
+pkgButton      := TO2 {"packages provided with Macaulay2", "Packages"};
+homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
 prevButton     := tag -> if PREV#?tag then HREF { htmlFilename PREV#tag, "previous" } else "previous"
@@ -250,10 +250,38 @@ backwardButton := tag -> ( b := BACKWARD tag; if b =!= null then HREF { htmlFile
 upButton       := tag -> if   UP#?tag then HREF { htmlFilename   UP#tag, "up" } else "up"
 topButton      := tag -> if tag =!= topDocumentTag then topNodeButton(htmlDirectory, topFileName) else "top"
 
+upAncestors := tag -> reverse(
+    n := 0; prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
+
 -- TODO: revamp this using Bootstrap
-buttonBar := tag -> TABLE { "class" => "buttons", TR { TD { DIV splice between_" | " {
-		nextButton tag, prevButton tag, forwardButton tag, backwardButton tag, upButton tag, topButton tag,
-		indexButton(htmlDirectory, indexFileName), tocButton(htmlDirectory, tocFileName), pkgButton, homeButton}}}}
+buttonBar := tag -> DIV {
+    "id" => "buttons",
+    DIV {
+	homeButton, " ", SPAN {"id" => "version-select-container", ""},
+	" » ", TO2 {"Macaulay2Doc", "Documentation "}, " ",
+	BR {},
+	pkgButton, " » ",
+	SPAN if UP#?tag
+	then between(" > ", apply(upAncestors tag, i -> TO i))
+	else (TO topDocumentTag, " :: ",
+	    if tag === "index"
+	    then HREF {htmlDirectory | indexFileName, "Index"}
+	    else if tag === "toc"
+	    then HREF {htmlDirectory | tocFileName, "Table of Contents"}
+	    else TO tag)},
+    DIV join({"class" => "right",
+	    LITERAL ///<form method="get" action="https://www.google.com/search">
+  <input placeholder="Search" type="text" name="q" value="">
+  <input type="hidden" name="q" value="site:macaulay2.com/doc">
+</form>///},
+	splice between_" | " {
+	    nextButton tag,
+	    prevButton tag,
+	    forwardButton tag,
+	    backwardButton tag,
+	    upButton tag,
+	    indexButton(htmlDirectory, indexFileName),
+	    tocButton(htmlDirectory, tocFileName)})}
 
 -----------------------------------------------------------------------------
 -- makePackageIndex
@@ -377,9 +405,6 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
 -- install HTML documentation for package
 -----------------------------------------------------------------------------
 
-upAncestors := tag -> reverse(
-    n := 0; prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
-
 makeSortedIndex := (nodes, verboseLog) -> (
      numAnchorsMade = 0;
      fn := installPrefix | htmlDirectory | indexFileName;
@@ -388,7 +413,7 @@ makeSortedIndex := (nodes, verboseLog) -> (
      fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY nonnull {
-	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", tocButton(htmlDirectory, tocFileName), " | ", pkgButton, " | ", homeButton },
+	       buttonBar "index",
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})),
@@ -406,7 +431,7 @@ makeTableOfContents := (pkg, verboseLog) -> (
      fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY {
-	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", indexButton(htmlDirectory, indexFileName), " | ", pkgButton, " | ", homeButton },
+	       buttonBar "toc",
 	       HR{},
 	       HEADER1 title,
 	       toDoc unbag pkg#"table of contents"
@@ -441,9 +466,6 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 		defaultHEAD {fkey, commentize headline fkey},
 		BODY {
 		    buttonBar tag,
-		    if UP#?tag
-		    then DIV between(" > ", apply(upAncestors tag, i -> TO i))
-		    else DIV (TO topDocumentTag, " :: ", TO tag),
 		    HR{},
 		    fetchProcessedDocumentation(pkg, fkey)
 		    }

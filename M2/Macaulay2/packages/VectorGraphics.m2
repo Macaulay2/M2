@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "1.0",
+        Version => "1.01",
         Date => "October 4, 2022", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
@@ -22,7 +22,8 @@ export{"GraphicsType", "GraphicsObject", "GraphicsCoordinate", "GraphicsPoly",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
     "gNode", "place", "bisector", "projection", "crossing",
-    "showGraph"
+    "showGraph",
+    "Animate", "AnimStart"
     }
 
 protect Filter
@@ -62,24 +63,25 @@ gParse OptionTable := h -> applyValues(h,gParse)
 gParse Thing := identity
 
 GraphicsAncestor = new Type of HashTable -- ancestor type, not meant to be used directly
-GraphicsCoordinate = new Type of GraphicsAncestor
+GraphicsCoordinate = new SelfInitializingType of GraphicsAncestor
 GraphicsObject = new Type of GraphicsAncestor
 gParse GraphicsObject := g -> new GraphicsCoordinate from g -- GraphicsObject used as coordinate
 new GraphicsCoordinate from GraphicsObject := (T,g) -> hashTable { -- don't need to call directly, conversion is automatic anyway
 	symbol RefPointFunc => cmat -> g.cache.CurrentMatrix_3, -- closure
 	symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
-	symbol formation => hold if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else "a "|toString class g
+	symbol formation => FunctionApplication{GraphicsCoordinate,if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else short g}
     	}
 gParse GraphicsCoordinate := identity
 
 globalAssignment GraphicsAncestor
 scan({net,toString}, f -> f GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then f getAttribute(g,ReverseDictionary) else (lookup(f,HashTable)) g)
 expression GraphicsAncestor := hold
--- TODO improve: keep track as e.g. direct sum. expressionify.
+precedence GraphicsObject := x -> strength1 symbol symbol
+
 toString GraphicsCoordinate := toString @@ expression
 net GraphicsCoordinate := net @@ expression
 html GraphicsCoordinate := html @@ expression
-expression GraphicsCoordinate := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else g.formation -- "a graphics coordinate"
+expression GraphicsCoordinate := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else g.formation
 
 GraphicsObject ++ List := (opts1, opts2) -> (
     opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
@@ -146,7 +148,7 @@ project3d := (x,g) -> (
     )
 
 graphicsIdCount := 0;
-graphicsId := () -> (
+graphicsId = () -> (
     graphicsIdCount=graphicsIdCount+1;
     "gfx_" | toString processID() | "_" | toString graphicsIdCount
     )
@@ -346,8 +348,8 @@ Light = new GraphicsType of Circle from ( "circle",
 
 --
 animated := method()
-animated GraphicsObject := x -> x.?AnimMatrix
-animated GraphicsList := x -> x.?AnimMatrix or any(x.Contents,animated)
+animated GraphicsObject := x -> x.?AnimMatrix or x.?Animate -- TODO merge the two
+animated GraphicsList := x -> x.?AnimMatrix or x.?Animate or any(x.Contents,animated)
 
 draggable := method()
 draggable GraphicsObject := x -> x.?Draggable and x.Draggable
@@ -397,7 +399,7 @@ is3d Matrix := m -> m^{2,3} != matrix {{0,0,1.,0},{0,0,0,1.}} or m_2 != vector {
 -- a bit messy: a 2d translation / rotation looks like {{c,-s,0,x},{s,c,0,y},{0,0,1,0},{0,0,1,0}}
 is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
-is3d GraphicsObject := g -> g.cache.Is3d = is3d'
+is3d GraphicsObject := g -> g.cache.Is3d = is3d' g
 is3d Ellipse := g -> g.cache.Is3d = is3d' g or is3d g.Center
 is3d Circle := g -> g.cache.Is3d = is3d' g or is3d g.Center or is3d g.Radius
 is3d GraphicsText := g -> g.cache.Is3d = is3d' g or is3d g.RefPoint
@@ -526,7 +528,7 @@ svg1 GraphicsText := g -> (
 svg1 GraphicsList := g -> (
     x:=g.Contents;
     g.cache.Contents = if is3d g then (
-	scan(x, y -> y.cache.svgElement = svg2(y,g.cache.CurrentMatrix));
+	scan(x, y -> svg2(y,g.cache.CurrentMatrix));
 	-- distance
 	g.cache.Distance = if #(g.Contents) === 0 then 0_RR else sum(x, y->y.cache.Distance) / #x;
 	-- sorting
@@ -572,6 +574,22 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	);
     )
 
+-- defs
+animateAttr = {
+    "begin", "dur", "end", "min", "max", "restart", "repeatCount", "repeatDur", "fill",
+    "calcMode", "values", "keyTimes", "keySplines", "from", "to", "by",
+    "attributeType", "attributeName", "additive", "accumulate",
+    "onbegin", "onend", "onrepeat"
+    };
+
+animate = new MarkUpType of HypertextParagraph
+animate.qname="animate"
+addAttribute(animate,svgAttr|animateAttr)
+animateTransform = new MarkUpType of HypertextParagraph
+animateTransform.qname="animateTransform"
+addAttribute(animateTransform,svgAttr|animateAttr|{"type"})
+
+
 svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     s := try svgElement class g else return; -- what is the else for?
     updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
@@ -581,7 +599,16 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
-    style(s args,new OptionTable from g.style)
+    if g.?Animate then args = args | apply(if all(g.Animate,u->instance(u,List)) then g.Animate else {g.Animate}, anim -> (
+	anim = applyValues(new OptionTable from anim, s -> ( -- <animate/> only has options
+		while ((r:=regex(///`([^`]*)`///,s))=!=null) do
+		s=substring(0,r#0#0,s) | (try (value substring(r#1,s)).cache.Options#"id" else g.cache.Options#"id") | substring(r#0#0+r#0#1,s);
+--		s=substring(0,r#0#0,s) | (value substring(r#1,s)).cache.Options#"id" | substring(r#0#0+r#0#1,s);
+		s
+		));
+	(if anim#?"attributeName" and anim#"attributeName" == "transform" then animateTransform else animate) anim
+	));
+    g.cache.svgElement = style(s args,new OptionTable from g.style)
     )
 
 -- produces SVG element hypertext
@@ -596,9 +623,10 @@ svg = g -> (
 
 shortSize := 3.8
 short GraphicsObject := g -> hold (
-    if not g.?Size then return g++{Size=>shortSize};
-    s := if instance(g.Size,Vector) then sqrt(g.Size_0^2+g.Size_1^2) else g.Size;
-    if s<shortSize then g else g++{Size=>shortSize}
+    if not g.?Size then g++{Size=>shortSize} else (
+    	s := if instance(g.Size,Vector) then sqrt(g.Size_0^2+g.Size_1^2) else g.Size;
+    	if s<shortSize then g else g++{Size=>shortSize}
+    	)
     )
 
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
@@ -713,7 +741,8 @@ new SVG from GraphicsObject := (S,g) -> (
 	    (svgElement Circle) { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
 	    (svgElement Polygon) { "class" => "gfxautoplay", "points" => "0.3,0.25 0.8,0.5 0.3,0.75", "style" => "stroke:none; fill:black" },
 	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.3", "y1" => "0.25", "x2" => "0.3", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
-	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" }
+	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
+	    animate {"onbegin"=>"gfxToggleRotation(event, "| toString(not g.?AnimStart or g.AnimStart)|")"} -- start animation unless AnimStart false
 	    }
 	));
     ss

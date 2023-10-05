@@ -178,7 +178,7 @@ Inputs => {
 "phi" => RationalMap => {"a birational map"}}, 
 Outputs => { 
 RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html","invertBirationalMap"}, " in the package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/Parametrization/html","Parametrization"}, ". Note that in this case, the analogous method ",HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/RationalMaps/html/_inverse__Of__Map.html","inverseOfMap"}," in the package ",HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/RationalMaps/html/index.html","RationalMaps"}," generally turns out to be faster."},
+PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", TO "Parametrization::invertBirationalMap", " in the package ", TO "Parametrization", ". Note that in this case, the analogous method ", TO "RationalMaps::inverseOfMap", " in the package ", TO "RationalMaps"," generally turns out to be faster."},
 EXAMPLE { 
 "-- A Cremona transformation of P^20 
 phi = rationalMap map quadroQuadricCremonaTransformation(20,1)", 
@@ -348,7 +348,7 @@ Headline => "the class of all rational maps between absolutely irreducible proje
 PARA{"An object of the class ",EM "RationalMap", " can be basically replaced by a homogeneous ring map of quotients of polynomial rings by homogeneous ideals. One main advantage to using this class is that things computed using non-probabilistic algorithms are stored internally (or partially stored)."},
 PARA{"The constructor for the class is ",TO "rationalMap",", which works quite similar to ",TO "toMap",". 
 See in particular the methods: ",TO (rationalMap,RingMap),", ",TO (rationalMap,Ideal,ZZ,ZZ),", ",TO (rationalMap,Tally),", and ",TO (rationalMap,PolynomialRing,List),"."},
-PARA{"In the package ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/index.html","MultiprojectiveVarieties"},", this class has been extended to provide support to rational maps between multi-projective varieties, see ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/___Multirational__Map.html", TT "MultirationalMap"},"."}}
+PARA{"In the package ", TO "MultiprojectiveVarieties",", this class has been extended to provide support to rational maps between multi-projective varieties, see ", TO "MultiprojectiveVarieties::MultirationalMap", "."}}
 
 document { 
 Key => {(symbol ^**,RationalMap,Ideal),(symbol ^*,RationalMap)}, 
@@ -681,7 +681,7 @@ SeeAlso => {(image,RationalMap),(image,RationalMap,ZZ),groebnerBasis}}
 
 document {Key => {parametrize}, 
 Headline => "parametrization of a rational projective variety", 
-PARA{"See ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/_parametrize_lp__Multiprojective__Variety_rp.html", TT "parametrize(MultiprojectiveVariety)"},
+PARA{"See ", TO "MultiprojectiveVarieties::parametrize(MultiprojectiveVariety)",
 " and ",TO2{(parametrize,QuotientRing),"parametrize(QuotientRing)"},"."}}
 
 document { 
@@ -692,7 +692,7 @@ Inputs => {
 "I" => Ideal => {"the ideal of a linear variety or of a hyperquadric"}}, 
 Outputs => { 
 RationalMap => {"a birational map ",TT"phi"," such that ",TT"I == image phi"}},
-PARA{"This function has been improved and extended in the package ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/index.html","MultiprojectiveVarieties"},", see ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/_parametrize_lp__Multiprojective__Variety_rp.html", TT "parametrize(MultiprojectiveVariety)"},"."},
+PARA{"This function has been improved and extended in the package ", TO "MultiprojectiveVarieties", ", see ", TO "MultiprojectiveVarieties::parametrize(MultiprojectiveVariety)", "."},
 EXAMPLE {
 "P9 := ZZ/10000019[x_0..x_9]",
  "L = trim ideal(random(1,P9),random(1,P9),random(1,P9),random(1,P9))",
@@ -1012,7 +1012,7 @@ SeeAlso => {(image,RationalMap),forceInverseMap}}
 
 document {Key => {point}, 
 Headline => "pick a random rational point on a projective variety", 
-PARA{"See ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/_point_lp__Multiprojective__Variety_rp.html","point(MultiprojectiveVarieties)"},
+PARA{"See ", TO "MultiprojectiveVarieties::point(MultiprojectiveVarieties)",
 " and ",TO2{(point,QuotientRing),"point(QuotientRing)"},"."}}
 
 undocumented {(point,Ideal),(point,Ideal,Boolean)}
@@ -1024,7 +1024,7 @@ Inputs => {
 QuotientRing => "R" => {"the homogeneous coordinate ring of a closed subscheme ",TEX///$X\subseteq\mathbb{P}^n$///," over a finite ground field"}}, 
 Outputs => { 
 Ideal => {"an ideal in ",TT "R"," defining a point on ",TEX///$X$///}}, 
-PARA{"This function is a variant of the ",TO randomKRationalPoint," function, which has been further improved and extended in the package ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/index.html","MultiprojectiveVarieties"},", see ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/_point_lp__Multiprojective__Variety_rp.html", TT "point(MultiprojectiveVariety)"},"."},
+PARA{"This function is a variant of the ",TO randomKRationalPoint," function, which has been further improved and extended in the package ", TO "MultiprojectiveVarieties", ", see ", TO "MultiprojectiveVarieties::point(MultiprojectiveVariety)", "."},
 PARA{"Below we verify the birationality of a rational map."},
 EXAMPLE { 
 "f = inverseMap specialQuadraticTransformation(9,ZZ/33331);",
