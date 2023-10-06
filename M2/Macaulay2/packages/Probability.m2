@@ -332,7 +332,7 @@ chiSquaredDistribution Constant := n -> (
 	x -> 1/(2^(n/2) * Gamma(n/2)) * x^(n/2 - 1) * exp(-x / 2),
 	DistributionFunction => x -> 1 - regularizedGamma(n / 2, x / 2),
 	QuantileFunction => p -> 2 * inverseRegularizedGamma(n / 2, 1 - p),
-	Description => "χ²(" | toString n | ")"))
+	Description => "chi2(" | toString n | ")"))
 
 tDistribution = method()
 tDistribution Number :=
