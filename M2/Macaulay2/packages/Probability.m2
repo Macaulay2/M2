@@ -760,6 +760,10 @@ doc ///
 	  DistributionFunction => x -> x / 6,
 	  QuantileFunction => p -> 6 * p,
 	  Description => "six-sided die")
+  Caveat
+    When defining a probability mass function, the user must be careful that
+    it satisfies the definition, i.e., it must be nonnegative and its values
+    must sum to 1 on its support.
 ///
 
 doc ///
@@ -824,6 +828,10 @@ doc ///
 	  DistributionFunction => x -> x^2,
 	  QuantileFunction => p -> sqrt p,
 	  Description => "triangular distribution")
+  Caveat
+    When defining a probability density function, the user must be careful that
+    it satisfies the definition, i.e., it must be nonnegative and it must
+    integrate to 1 on its support.
 ///
 
 doc ///
