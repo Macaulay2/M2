@@ -1,11 +1,30 @@
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.2",
-    Date => "October 31, 2022",
+    Version => "0.3",
+    Date => "October 6, 2023",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.3 (2023-10-06, M2 1.23)
+* add Caveats to docs warning user to ensure that pdf's are well-defined
+* use ASCII characters for chi-squared distribution
+
+0.2 (2022-10-31, M2 1.21)
+* fix typos
+* adjust some tests after MPFR support added for Boost special functions
+
+0.1 (2022-05-04, M2 1.20)
+* initial release
+
+*-
 
 export {
 -- classes
