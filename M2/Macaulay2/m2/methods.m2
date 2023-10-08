@@ -691,17 +691,6 @@ info = method(Dispatch => Thing, TypicalValue => String)
 
 show = method()
 
--- values of functions by lookup
-lookupfuns = new MutableHashTable
-storefuns = new MutableHashTable
-lookupfuns#toString = x -> f -> if hasAttribute(x,PrintNames) then getAttribute(x,PrintNames) else f x
-storefuns #toString = (x,e) -> (
-     if not instance(e,String) then error "expected a string";
-     setAttribute(x,PrintNames,e))
-Function Thing = (f,x,e) -> (
-     if not storefuns#?f then error("no method for storing values of function ", toString f);
-     storefuns#f (x,e))
-
 -- registerFinalizer
 registerFinalizer' = registerFinalizer
 registerFinalizer = method()
