@@ -614,7 +614,6 @@ ring_elem FractionField::eval(const RingMap *map,
   const Ring *S = map->get_ring();
   const frac_elem *f = FRAC_VAL(a);
   ring_elem top = R_->eval(map, f->numer, first_var);
-  if (S->is_zero(top)) return top;
   ring_elem bottom = R_->eval(map, f->denom, first_var);
   if (S->is_zero(bottom))
     {
