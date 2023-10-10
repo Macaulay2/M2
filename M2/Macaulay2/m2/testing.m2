@@ -6,9 +6,9 @@ needs "run.m2"
 -- Local utilities
 -----------------------------------------------------------------------------
 
-sourceFileStamp = (filename, linenum) -> concatenate(
+sourceFileStamp = (filename, linenum) -> toString commentize(
     pos := new FilePosition from (toAbsolutePath filename, linenum, 1);
-    concatenate("--", toString pos, ": location of test code"));
+    toString pos, ": location of test code")
 
 -----------------------------------------------------------------------------
 -- TestInput
