@@ -2540,17 +2540,9 @@ gfanFunctions = hashTable {
 	gfanTropicalWeilDivisor => "gfan _tropicalweildivisor" -- v0.4
 }
 
---gfanHelp = hashTable apply(keys gfanFunctions, fn ->
---	gfanFunctions#fn => apply( lines runGfanCommandCaptureError(gfanFunctions#fn, {"--help"}, {true}, ") , l->PARA {l})
---)
---WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
-gfanHelp = (functionStr) -> (
-	if gfanProgram === null then gfanProgram = findProgram("gfan",
-	    "gfan --help", RaiseError => false);
-	if gfanProgram === null then {}
-	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
-)
-
+gfanHelp = functionStr -> PRE TT(
+    if gfanProgram === null then gfanProgram = findProgram("gfan", "gfan --help", RaiseError => false);
+    if gfanProgram =!= null then runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") else {})
 
 doc ///
 	Key
@@ -2860,6 +2852,7 @@ doc ///
 			gfan(markedPolynomialList {{y^5, x*y^2, x^2},{y^5-y^2,x*y^2 - y^4, x^2 -y^4}}, "g" => true)
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan"@
 ///
 
@@ -2948,8 +2941,8 @@ doc ///
 			markedPolynomialList transpose  apply(flatten entries G, g-> {leadTerm g, g})
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _buchberger"@
 ///
 
@@ -2990,8 +2983,8 @@ doc ///
 			isSubset(ideal(y*z), ideal(x*y - y, x*z +z))
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _doesidealcontain"@
 ///
 
@@ -3032,8 +3025,8 @@ doc ///
 			--G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}}
 			--gfanFanCommonRefinement(F,G)
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _fancommonrefinement"@
 ///
 
@@ -3066,8 +3059,8 @@ doc ///
  			--gfanFanLink(Q, {1,1}, "star" =>true)
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _fanlink"@
 ///
 
@@ -3100,6 +3093,7 @@ doc ///
 
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _fanproduct"@
 ///
 
@@ -3180,6 +3174,7 @@ doc ///
 			two marked Groebner bases are given.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _groebnercone"@
 ///
 
@@ -3214,8 +3209,8 @@ doc ///
 			gfanHomogeneitySpace {x+y^2, y+z^2}
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _homogeneityspace"@
 ///
 
@@ -3270,8 +3265,8 @@ doc ///
 			gfanHomogenize(L, symbol z,  "w" => {2,3})
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _homogenize"@
 ///
 
@@ -3314,8 +3309,8 @@ doc ///
 			gfanInitialForms({x*y+z, x*z + y}, {1,1,1}, "ideal"=>true)
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _initialforms"@
 ///
 
@@ -3329,6 +3324,7 @@ doc ///
 			This method is not implemented.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _interactive"@
 ///
 
@@ -3362,8 +3358,8 @@ doc ///
 			gfanIsMarkedGroebnerBasis({x^2+y, y^3+z})
 			gfanIsMarkedGroebnerBasis markedPolynomialList {{y,y^3}, {x^2+y, y^3+z}}
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _ismarkedgroebnerbasis"@
 ///
 
@@ -3402,6 +3398,7 @@ doc ///
 			dim ideal L
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _krulldimension"@
 ///
 
@@ -3431,6 +3428,7 @@ doc ///
 			$ \mathbf{x}^{\alpha^+} - \mathbf{x}^{\alpha^-}$ for $\alpha =\alpha^+ - \alpha^- \in L$.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _latticeideal"@
 ///
 
@@ -3468,8 +3466,8 @@ doc ///
 			gfanLeadingTerms({M,L}, "m" => true)
 			{M,L} / first
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _leadingterms"@
 ///
 
@@ -3499,8 +3497,8 @@ doc ///
 			QQ[x,y,z];
 			gfanMarkPolynomialSet({x + y + z, x^10 + y^4 + z^2, x^2*z + y^2}, {1, 3, 5})
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _markpolynomialset"@
 ///
 
@@ -3532,6 +3530,7 @@ doc ///
 
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _minkowskisum"@
 ///
 
@@ -3560,8 +3559,8 @@ doc ///
 		Example
 			gfanMinors(2,3,3)
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _minors"@
 ///
 
@@ -3589,8 +3588,8 @@ doc ///
 			QQ[x1,x2,x3]
 			gfanMixedVolume({x1+x2+x3,x1*x2+x2*x3+x3*x1,x1*x2*x3-1})
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _mixedvolume"@
 ///
 
@@ -3637,6 +3636,7 @@ doc ///
 
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _polynomialsetunion"@
 ///
 
@@ -3665,6 +3665,7 @@ doc ///
 			and display. It may also eventually output file names in a list.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _render"@
 ///
 
@@ -3698,6 +3699,7 @@ doc ///
 			and display. It may also eventually output file names in a list.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _renderstaircase"@
 ///
 
@@ -3717,6 +3719,7 @@ doc ///
 			This method computes the tropical variety of a sparse (toric) resultant variety.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _resultantfan"@
 ///
 
@@ -3745,6 +3748,7 @@ doc ///
 			gfanSaturation I
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _saturation"@
 ///
 
@@ -3769,6 +3773,7 @@ doc ///
 			gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,2}}
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _secondaryfan"@
 ///
 
@@ -3796,8 +3801,8 @@ doc ///
 			gfanStats L
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _stats"@
 ///
 
@@ -3844,8 +3849,8 @@ doc ///
 			f L
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _substitute"@
 ///
 
@@ -3877,6 +3882,7 @@ doc ///
 			gfanToLatex({{x,z}, {x+y, x+z}}, "polynomialset" => true)
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tolatex"@
 ///
 
@@ -3917,8 +3923,8 @@ doc ///
 			L = markedPolynomialList {{y},{x+y}}
 			F = gfanToPolyhedralFan { M, L }
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _topolyhedralfan"@
 ///
 
@@ -3944,8 +3950,8 @@ doc ///
 			gfanTropicalBasis ideal {x^2+y^2, x^2-x*y}
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalbasis"@
 ///
 
@@ -3974,8 +3980,8 @@ doc ///
 			gfanTropicalBruteForce gfanBuchberger ideal "bf-ah-ce, bg-ai-de, cg-aj-df, ci-bj-dh, fi-ej-gh"
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalbruteforce"@
 ///
 
@@ -4004,8 +4010,8 @@ doc ///
 			gfanTropicalEvaluation(x*y+z^2, {{1,1,0}, {0,0,3}, {1,1,3} })
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalevaluation"@
 	SeeAlso
 		gfanTropicalFunction
@@ -4040,6 +4046,7 @@ doc ///
 			For instance the point $p = (1, 7, 13)$ can be written as $3(-1,-1,2) + 2(2,0,1) + 5(0,2,1)$. The values on the these rays are $4, 2$ and $2$ respectively. Thus the tropical function evaluated at $p$ is $3*4 + 2*2 + 5*2 = 26$.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalfunction"@
 	SeeAlso
 		gfanTropicalEvaluation
@@ -4068,8 +4075,8 @@ doc ///
 			gfanTropicalHyperSurface(x^2 + x*y)
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalhypersurface"@
 	SeeAlso
 		gfanTropicalBruteForce
@@ -4100,8 +4107,8 @@ doc ///
 			gfanTropicalIntersection {x+y, x+y+1}
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalintersection"@
 	SeeAlso
 		gfanTropicalBruteForce
@@ -4118,6 +4125,7 @@ doc ///
 			This method is not implemented.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicallifting"@
 ///
 
@@ -4154,8 +4162,8 @@ doc ///
 			S
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicallinearspace"@
 ///
 
@@ -4178,6 +4186,7 @@ doc ///
 			its initial ideal.
 
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalmultiplicity"@
 ///
 
@@ -4208,8 +4217,8 @@ doc ///
 			S
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalrank"@
 ///
 
@@ -4244,6 +4253,7 @@ doc ///
 
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalstartingcone"@
 	SeeAlso
 		gfanTropicalTraverse
@@ -4277,8 +4287,8 @@ doc ///
 			gfanTropicalTraverse P
 
 		Text
-
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicaltraverse"@
 ///
 
@@ -4311,6 +4321,7 @@ doc ///
 
 		Text
 			@STRONG "gfan Documentation"@
+
 			@gfanHelp "gfan _tropicalweildivisor"@
 ///
 
@@ -4358,6 +4369,7 @@ doc ///
 		    H=gfanOverIntegers(I,{1,0},"initialIdeal"=>true)
 		Text
 		    @STRONG "gfan Documentation"@
+
 		    @gfanHelp "gfan _overintegers"@
 ///
 

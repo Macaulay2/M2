@@ -51,7 +51,7 @@ TEST(String, String) := (title, teststring) -> (
 -----------------------------------------------------------------------------
 
 checkmsg := (verb, desc) ->
-    stderr << commentize pad(pad(verb, 10) | desc, 72) << flush;
+    stderr << commentize pad(pad(verb, 10) | desc, printWidth - 36) << flush;
 
 captureTestResult := (desc, teststring, pkg, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
