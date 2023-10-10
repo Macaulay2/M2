@@ -131,16 +131,16 @@ doc ///
      (sagbi, Matrix)
      (sagbi, List)
      (sagbi,SAGBIBasis)
-     [sagbi,AutoSubduce]
-     [sagbi,ReduceNewGenerators]
-     [sagbi,StorePending]
-     [sagbi,Strategy]
-     [sagbi,SubductionMethod]
-     [sagbi,Limit]
-     [sagbi,AutoSubduceOnPartialCompletion]
-     [sagbi,PrintLevel]
-     [sagbi,Recompute]
-     [sagbi,RenewOptions]
+--     [sagbi,AutoSubduce]
+--     [sagbi,ReduceNewGenerators]
+--     [sagbi,StorePending]
+--     [sagbi,Strategy]
+--     [sagbi,SubductionMethod]
+--     [sagbi,Limit]
+--     [sagbi,AutoSubduceOnPartialCompletion]
+--     [sagbi,PrintLevel]
+--     [sagbi,Recompute]
+--     [sagbi,RenewOptions]
    Headline
      Compute a subalgebra basis (sagbi basis)
    Usage
@@ -507,42 +507,6 @@ doc ///
 doc ///
    Key
      isSAGBI
-     (isSAGBI, Subring)
-     (isSAGBI, SAGBIBasis)
-     (isSAGBI, Matrix)
-     (isSAGBI, List)
-    [(isSAGBI, Subring), Compute]
-    [(isSAGBI, SAGBIBasis), Compute]
-    [(isSAGBI, Matrix), Compute]
-    [(isSAGBI, List), Compute]
-    [(isSAGBI, Subring), Strategy]
-    [(isSAGBI, SAGBIBasis), Strategy]
-    [(isSAGBI, Matrix), Strategy]
-    [(isSAGBI, List), Strategy]
-    [(isSAGBI, Subring), SubductionMethod]
-    [(isSAGBI, SAGBIBasis), SubductionMethod]
-    [(isSAGBI, Matrix), SubductionMethod]
-    [(isSAGBI, List), SubductionMethod]
-    [(isSAGBI, Subring), PrintLevel]
-    [(isSAGBI, SAGBIBasis), PrintLevel]
-    [(isSAGBI, Matrix), PrintLevel]
-    [(isSAGBI, List), PrintLevel]
-    [(isSAGBI, Subring), Recompute]
-    [(isSAGBI, SAGBIBasis), Recompute]
-    [(isSAGBI, Matrix), Recompute]
-    [(isSAGBI, List), Recompute]
-    [(isSAGBI, Subring), RenewOptions]
-    [(isSAGBI, SAGBIBasis), RenewOptions]
-    [(isSAGBI, Matrix), RenewOptions]
-    [(isSAGBI, List), RenewOptions]
-    [(isSAGBI, Subring), UseSubringGens]
-    [(isSAGBI, SAGBIBasis), UseSubringGens]
-    [(isSAGBI, Matrix), UseSubringGens]
-    [(isSAGBI, List), UseSubringGens]
-    [(isSAGBI, Subring), ModifySAGBIBasis]
-    [(isSAGBI, SAGBIBasis), ModifySAGBIBasis]
-    [(isSAGBI, Matrix), ModifySAGBIBasis]
-    [(isSAGBI, List), ModifySAGBIBasis]
    Headline
      Check if the generators are a subalgebra basis
    Usage
@@ -570,15 +534,15 @@ doc ///
        R = QQ[x,y,z];
        S = subring {x+y+z,x*y+x*z+y*z, x*y*z, (x-y)*(x-z)*(y-z)};
        isSAGBI S
-       sagbi(S, Limit => 5)
-       isSAGBI S
-       S' = subring {x+y+z,x*y+x*z+y*z, x*y*z};
+       isSAGBI sagbi(S, Limit => 5)
+       S' = subring {x+y,x*y,x*y^2,x*y^4-y};
        isSAGBI S'
-       sagbi(S', Limit => 5)
-       isSAGBI S'
+       isSAGBI sagbi(S', Limit => 10)
      Text
        If @TT "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ then the generators of the associated subring can be checked for being
-       a sagbi basis by setting @TO "UseSubringGens"@ to @ TT "true" @.
+            a subalgebra basis by setting @TO "UseSubringGens"@ to @ TT "true" @.
+       If @TT "isSAGBI"@ is supplied @ ofClass Subring @ then the generators of
+            a partial subalgebra basis can be checked for being a subalgebra basis by setting @TO "UseSubringGens"@ to @ TT "false" @.
    SeeAlso
      SAGBIBasis
      (gens, SAGBIBasis)
@@ -590,6 +554,19 @@ doc ///
  --      the inputs and outputs include pointers objects such as @TO "SAGBIBasis"@ computation objects, these
  --      objects will not be garbage collected.
 ///
+
+doc ///
+   Key
+     (isSAGBI, Subring)
+     (isSAGBI, Matrix)
+     (isSAGBI, List)
+///
+
+doc ///
+    Key
+        (isSAGBI, SAGBIBasis)
+///
+
 doc ///
    Key
      Compute
@@ -1555,14 +1532,14 @@ doc ///
       forceSB
      (forceSB, SAGBIBasis)
      (forceSB, Subring)
-     [(forceSB, SAGBIBasis), AutoSubduce]
+  --   [(forceSB, SAGBIBasis), AutoSubduce]
      [(forceSB, SAGBIBasis), Strategy]
      [(forceSB, SAGBIBasis), SubductionMethod]
      [(forceSB, SAGBIBasis), Limit]
      [(forceSB, SAGBIBasis), RenewOptions]
      [(forceSB, SAGBIBasis), PrintLevel]
      [(forceSB, SAGBIBasis), UseSubringGens]
-     [(forceSB, Subring), AutoSubduce]
+  --   [(forceSB, Subring), AutoSubduce]
      [(forceSB, Subring), Strategy]
      [(forceSB, Subring), SubductionMethod]
      [(forceSB, Subring), Limit]
