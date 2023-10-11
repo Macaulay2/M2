@@ -3,7 +3,6 @@
 needs "expressions.m2"
 needs "matrix1.m2"
 needs "monideal.m2"
-needs "varieties.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text

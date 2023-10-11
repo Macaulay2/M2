@@ -1271,12 +1271,6 @@ net Option := net @@ expression
 texMath Option := texMath @@ expression
 toString Option := toString @@ expression
 
-SheafExpression = new WrapperType of Expression;
-toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
-net SheafExpression := x -> net x#0
-texMath SheafExpression := x -> texMath x#0
-expressionValue SheafExpression := x -> sheaf expressionValue x#0
-
 moduleZERO = new ZeroExpression from { 0, Module }
 
 -- note that one can't have a symbol <---

@@ -1,14 +1,51 @@
---		Copyright 1993-1998 by Daniel R. Grayson
+newPackage(
+    "Varieties",
+    Date     => "11 Oct 2023",
+    Version  => "0.1",
+    Keywords => {"Algebraic Geometry"},
+    Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
+    Authors  => {},
+    PackageExports => {},
+    PackageImports => {-*"Truncations"*-}, -- FIXME: need this for Ext
+    AuxiliaryFiles => true,
+    DebuggingMode  => false
+    )
 
-needs "ext.m2"
-needs "gateway.m2"
-needs "hilbert.m2"
-needs "local.m2"
-needs "matrix1.m2"
-needs "modules.m2"
-needs "monideal.m2"
-needs "multilin.m2"
-needs "betti.m2"
+export {
+    -- Types
+    "Variety",
+    "AffineVariety",
+    "ProjectiveVariety",
+    "CoherentSheaf",
+    "SheafExpression",
+    "SheafOfRings",
+    "SumOfTwists",
+    "LowerBound",
+    -- Methods
+    "variety",
+    "Proj",
+    "Spec",
+    "sheaf",
+    "sheafExt",
+    "sheafHom",
+    "tangentSheaf",
+    "cotangentSheaf",
+    -- Functors
+    "hh", -- TODO: should this be defined in Core?
+    "OO",
+    }
+
+importFrom_Core {
+    "getAttribute", "hasAttribute", "ReverseDictionary",
+    "toString'", "expressionValue", "unhold", -- TODO: prune these
+    }
+
+-----------------------------------------------------------------------------
+-- Utilities to be added to Core
+-----------------------------------------------------------------------------
+
+applyMethod = (key, X) -> (
+    if (F := lookup key) =!= null then F X else error "no method available") -- expand this error message later
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -110,6 +147,9 @@ texMath          Variety :=  texMath @@ expression
 toString         Variety := toString @@ expression
 toExternalString Variety := toString @@ describe
 
+-- used to be in m2/mathml.m2
+mathML Variety := lookup(mathML, Thing)
+
 describe     AffineVariety := X -> Describe (expression Spec) (expression X.ring)
 describe ProjectiveVariety := X -> Describe (expression Proj) (expression X.ring)
 
@@ -154,9 +194,6 @@ sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
 
 -- TODO: consider adding IdealSheaf or SheafOfIdeals type
 -- sheaf Ideal := Ideal ~ := CoherentSheaf => I -> sheaf(Proj ring M, I)
-
-applyMethod = (key, X) -> (
-    if (F := lookup key) =!= null then F X else error "no method available") -- expand this error message later
 
 OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,     OO, class X), (OO, X)),
@@ -236,6 +273,10 @@ net      CoherentSheaf :=      net @@ expression
 texMath  CoherentSheaf :=  texMath @@ expression
 toString CoherentSheaf := toString @@ expression
 
+-- used to be in m2/mathml.m2
+mathML SheafOfRings :=
+mathML CoherentSheaf := lookup(mathML, Thing)
+
 CoherentSheaf#AfterPrint = F -> (
      X := variety F;
      M := module F;
@@ -251,6 +292,17 @@ CoherentSheaf#AfterPrint = F -> (
 	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
 	  )
       )
+
+-- used to be in m2/jupyter.m2
+CoherentSheaf#{Jupyter, AfterPrint} = F -> (
+    << "[CLS]" << endl; CoherentSheaf#{Standard,AfterPrint}(F) )
+
+-- used to be in m2/expressions.m2
+SheafExpression = new WrapperType of Expression;
+toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
+net SheafExpression := x -> net x#0
+texMath SheafExpression := x -> texMath x#0
+expressionValue SheafExpression := x -> sheaf expressionValue x#0
 
 -----------------------------------------------------------------------------
 -- SumOfTwists type declarations and basic constructors
@@ -558,6 +610,27 @@ euler ProjectiveVariety := X -> (
      d := dim X;
      sum(0 .. d, j -> hh^(j,j) X + 2 * sum(0 .. j-1, i -> (-1)^(i+j) * hh^(i,j) X)))
 
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:
+-----------------------------------------------------------------------------
+-- Tests
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+-- Documentation
+-----------------------------------------------------------------------------
+
+beginDocumentation()
+
+-----------------------------------------------------------------------------
+-- Development
+-----------------------------------------------------------------------------
+
+end--
+
+uninstallPackage "Varieties"
+restart
+installPackage "Varieties"
+viewHelp "Varieties"
+
+restart
+debug needsPackage "Varieties"
+check "Varieties"
