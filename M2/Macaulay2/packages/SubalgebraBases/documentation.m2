@@ -361,14 +361,19 @@ doc ///
    Key
      Recompute
    Headline
-     Flag for restarting a sagbi computation
+     Flag for restarting a sagbi or isSAGBI computation
    Description
      Text
        If the flag is set to @ TT "true" @, then the sagbi computation will start from scratch.
        This process constructs, from scratch, @ ofClass SAGBIBasis @ and uses the computation options
        from the previous computation.
+       
+       If the flag is set to @TT "true"@, the cached results of @TO "isSAGBI"@ are ignored and a
+       computation is performed to check whether the generators of @ofClass Subring@ or sagbi generators
+       of @ofClass SAGBIBasis@ are a sagbi basis.  
    SeeAlso
      sagbi
+     isSAGBI
      subalgebraBasis
      AutoSubduce
      ReduceNewGenerators
@@ -524,12 +529,11 @@ doc ///
    Description
      Text
        This checks whether the generators of @ ofClass Subring @ or the sagbi generators of @ ofClass SAGBIBasis @ form a sagbi basis.
-       After running @ TO "sagbi" @ on @ ofClass Subring @, the result of the computation is stored in the @ TT "cache" @ of that subring as @ ofClass SAGBIBasis @
-       unless the option @ TO "ModifySAGBIBasis" @ is set to @ TT "false"@.
-       If new sagbi generators need to be added to $S$ to make it a sagbi basis then @TT "isSAGBI"@ will return @ TT "false" @.
-       If @TT "isSAGBI"@ is run on a ring for which no sagbi computation has been performed, then @TT "isSAGBI"@ will perform
-       a test to see if the generators form a sagbi basis. This test can be skipped by setting the option @TO "Compute"@ to @ TT "false" @, and, in that
-       case, @TT "isSAGBI"@ will return @ TT "null" @.
+       For further details of their respective uses see: @ TO (isSAGBI, Subring) @ and @ TO (isSAGBI, SAGBIBasis) @.
+       
+       The result of @ TT "isSagbi" @ is stored in the cache of @ ofClass Subring @ or the sagbiStatus of 
+       a @ ofClass SAGBIBasis @. If @ TT "isSagbi" @ is called again, then the result is looked up, unless
+       the option @TO "Recompute"@ is set to @TT "true"@.
      Example
        R = QQ[x,y,z];
        S = subring {x+y+z,x*y+x*z+y*z, x*y*z, (x-y)*(x-z)*(y-z)};
@@ -539,20 +543,17 @@ doc ///
        isSAGBI S'
        isSAGBI sagbi(S', Limit => 10)
      Text
-       If @TT "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ then the generators of the associated subring can be checked for being
-            a subalgebra basis by setting @TO "UseSubringGens"@ to @ TT "true" @.
+       If @TT "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ then the generators of its subring can be checked for being
+       a subalgebra basis by setting @TO "UseSubringGens"@ to @ TT "true" @.
        If @TT "isSAGBI"@ is supplied @ ofClass Subring @ then the generators of
-            a partial subalgebra basis can be checked for being a subalgebra basis by setting @TO "UseSubringGens"@ to @ TT "false" @.
+       a partial subalgebra basis can be checked for being a subalgebra basis by setting @TO "UseSubringGens"@ to @ TT "false" @.
    SeeAlso
+     (isSAGBI, Subring)
+     (isSAGBI, SAGBIBasis)
      SAGBIBasis
      (gens, SAGBIBasis)
      (ambient, SAGBIBasis)
      sagbi
- --  Caveat
- --      A note of caution. Excessive use of @TT "isSAGBI"@ may impact performance.
- --      The inputs and outputs of @TT "isSAGBI"@ are stored and never deleted. Since
- --      the inputs and outputs include pointers objects such as @TO "SAGBIBasis"@ computation objects, these
- --      objects will not be garbage collected.
 ///
 
 doc ///
@@ -560,11 +561,138 @@ doc ///
      (isSAGBI, Subring)
      (isSAGBI, Matrix)
      (isSAGBI, List)
+   Headline
+     Check if the generators are a subalgebra basis
+   Usage
+     result = isSAGBI S
+     result = isSAGBI M
+     result = isSAGBI L
+   Inputs
+     S:Subring
+--     M:Matrix
+--     L:List
+     Compute=>Boolean
+       a flag indicating whether to perform computation (See: @TO "Compute"@)
+     Recompute=>Boolean
+       if @ TT "true" @ then cached results are ignored and a computation is performed to verify 
+       if the generators are a sagbi basis. (See @TO "Recompute"@)
+     Strategy=>String
+       the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" 
+       for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+     SubductionMethod=>String
+       the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
+     PrintLevel=>ZZ
+       When this is greater than zero, information is printed about the progress of the computation. (See: @TO "PrintLevel"@)
+     RenewOptions=>Boolean
+       if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+     UseSubringGens=>Boolean
+       a flag indicating whether to use the generators of the subring.
+       If @ TT "false"@ then the method uses the sagbi generators of the partial sagbi basis. (See: @TO "UseSubringGens"@)
+     ModifySAGBIBasis=>Boolean
+       a flag indicating whether to modify the partial sagbi basis cached in the subring. (See: @TO "ModifySAGBIBasis"@)
+   Outputs
+     result:Boolean
+   Description
+     Text
+       This checks whether the generators of @ ofClass Subring @ $S$ form a sagbi basis.
+       The result of the computation is stored in the @ TT "cache" @ of the ring.
+       Subsequent calls of @TT "isSAGBI"@ on $S$ with the same options will lookup the
+       cached result unless the option @ TO "Recompute"@ is set to @TT "true"@.
+       If the option @TO "Compute"@ is set to @TT "false"@ then @TT "isSAGBI"@ will 
+       attempt to find a previously cached result. If @TT "isSAGBI"@ cannot determine
+       a result without computation and the option @TO "Compute"@ is set to @TT "false"@,
+       then @TT "isSAGBI"@ will return @ TT "null" @.
+       
+       If the generators of $S$ form a sagbi basis, then the sagbi generators of the 
+       cached partial sagbi basis are updated to match the ring 
+       generators, unless the option @ TO "ModifySAGBIBasis" @ is set to @ TT "false"@.
+       If the option @TO "UseSubringGens"@ is set to @TT "false"@, then the generators
+       of the partial sagbi basis are used instead of the generators of the subring.
+     Example
+       R = QQ[x,y,z];
+       S = subring {x+y+z,x*y+x*z+y*z, x*y*z, (x-y)*(x-z)*(y-z)};
+       isSAGBI S
+       S' = subring {x+y+z,x*y+x*z+y*z, x*y*z};
+       isSAGBI S'
+     Text
+       The options @TT "Strategy"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
+       only used when performing a sagbi computation.
+   SeeAlso
+     isSAGBI
+     (isSAGBI, SAGBIBasis)
+     Subring
+     sagbi
 ///
 
 doc ///
     Key
-        (isSAGBI, SAGBIBasis)
+     (isSAGBI, SAGBIBasis)
+    Headline
+     Check if the generators are a subalgebra basis
+   Usage
+     result = isSAGBI SB
+   Inputs
+     SB:SAGBIBasis
+     Compute=>Boolean
+       a flag indicating whether to perform computation (See: @TO "Compute"@)
+     Recompute=>Boolean
+       if @ TT "true" @ then sagbiStatus is ignored and a computation is performed to verify 
+       if the sagbi generators are a sagbi basis (See @TO "Recompute"@)
+     Strategy=>String
+       the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" 
+       for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+     SubductionMethod=>String
+       the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
+     PrintLevel=>ZZ
+       When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
+     RenewOptions=>Boolean
+       if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+     UseSubringGens=>Boolean
+       a flag indicating whether to use the generators of the subring of the partial sagbi basis.
+       If @ TT "false"@ then the method uses the sagbi generators of the partial sagbi basis (See: @TO "UseSubringGens"@)
+     ModifySAGBIBasis=>Boolean
+       a flag indicating whether to modify the partial sagbi basis cached in the subring (See: @TO "ModifySAGBIBasis"@)
+   Outputs
+     result:Boolean
+   Description
+     Text
+       This checks whether the sagbi generators of @ ofClass SAGBIBasis @ $SB$ form a sagbi basis.
+       The result of the computation is stored in the sagbiStatus of $SB$.
+       Subsequent calls of @TT "isSAGBI"@ on $SB$ will lookup the
+       result of the sagbiStatus unless the option @ TO "Recompute"@ is set to @TT "true"@.
+       If the option @TO "Compute"@ is set to @TT "false"@ then @TT "isSAGBI"@ will 
+       attempt to find a previously cached result. If @TT "isSAGBI"@ cannot determine
+       a result without computation and the option @TO "Compute"@ is set to @TT "false"@,
+       then @TT "isSAGBI"@ will return @ TT "null" @.
+       
+       If the sagbi generators of $SB$ form a sagbi basis, then the partial sagbi basis is
+       updated, unless @ TO "ModifySAGBIBasis" @ is set to @ TT "false"@.
+       If the option @TO "UseSubringGens"@ is set to @TT "true"@, then the generators
+       of the subring of $SB$ are used instead of the sagbi generators of the subring.
+     Example
+       R = QQ[x,y,z];
+       S = subring {x+y+z,x*y+x*z+y*z, x*y*z, (x-y)*(x-z)*(y-z)};
+       isSAGBI S
+       isSAGBI sagbi(S, Limit => 5)
+       S' = subring {x+y,x*y,x*y^2,x*y^7-y};
+       isSAGBI S'
+       isSAGBI sagbi(S', Limit => 5)
+       isSAGBI sagbi(S', Limit => 10)
+     Text
+       The options @TT "Strategy"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
+       only used when performing a sagbi computation.
+   SeeAlso
+     isSAGBI
+     (isSAGBI, Subring)
+     SAGBIBasis
+     (gens, SAGBIBasis)
+     (ambient, SAGBIBasis)
+     (sagbiStatus, SAGBIBasis)
+     sagbi
 ///
 
 doc ///
@@ -605,10 +733,9 @@ doc ///
        When @TO "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ $SB$, then this flag determines
        whether the provided generators or the subring generators form a subalgebra basis.
        Explicitly, if the flag is set to false then the check is aplied to the sagbi generators of $SB$.
-       Otherwise, if the flag is set to true, then the check is applied to the generators of the underlying subring associated to $SB$.
+       Otherwise, if the flag is set to true, then the check is applied to the generators of the subring of $SB$.
    SeeAlso
      isSAGBI
-
 ///
 doc ///
    Key
