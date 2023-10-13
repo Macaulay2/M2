@@ -16,7 +16,7 @@ document {
      }
 
 document {
-     Key => {(cover,Module),(cover, CoherentSheaf),(cover, GradedModule)},
+     Key => {(cover, Module), (cover, GradedModule)},
      Usage => "F = cover M",
      Inputs => {"M"},
      Outputs => {"F" => {"the free module whose basis elements correspond to the generators of ", TT "M", "."}},

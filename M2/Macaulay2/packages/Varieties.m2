@@ -614,11 +614,35 @@ euler ProjectiveVariety := X -> (
 -- Tests
 -----------------------------------------------------------------------------
 
+-- needs "./Varieties/tests.m2"
+
 -----------------------------------------------------------------------------
 -- Documentation
 -----------------------------------------------------------------------------
 
 beginDocumentation()
+
+-- TODO: move "Tutorial: Fano varieties" and "Tutorial: Divisors" here
+-- TODO: "fibers of a map between varieties"
+-- TODO: update the node "varieties" in overviewA.m2 and "coherent sheaves" in overview2.m2
+-- TODO: eventually move local cohomology as well?
+
+doc ///
+Node
+  Key
+    Varieties
+  Headline
+    affine and projective algebraic geometry
+///
+
+needs "./Varieties/doc-varieties.m2"
+needs "./Varieties/doc-sheaves.m2"
+needs "./Varieties/doc-functors.m2"
+needs "./Varieties/euler-doc.m2"
+needs "./Varieties/genus-doc.m2"
+needs "./Varieties/genera-doc.m2"
+needs "./Varieties/tangentSheaf-doc.m2"
+needs "./Varieties/cotangentSheaf-doc.m2"
 
 -----------------------------------------------------------------------------
 -- Development

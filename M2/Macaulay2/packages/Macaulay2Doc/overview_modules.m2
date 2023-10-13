@@ -65,7 +65,7 @@ document {
 	  TO basis,
 	  TO "Truncations::truncate(ZZ,Module)",
 	  TO (degree, Module),
-	  TO (genera, Module),
+	  TO "Varieties::genera(Module)",
 	  TO (hilbertSeries, Module),
 	  TO (hilbertFunction, ZZ, Module),
 	  TO (poincare, Module),
@@ -615,7 +615,7 @@ document {
      graded.",
      EXAMPLE "isHomogeneous M",
      SUBSECTION "codimension, degree, and sectional arithmetic genera",
-     "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO (genera,Module), " for some basic 
+     "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO "Varieties::genera(Module)", " for some basic 
      numeric information about a module.",
      EXAMPLE {
 	  "codim M",
@@ -670,7 +670,7 @@ document {
 	 TO isHomogeneous,
 	 TO (codim, Module),
 	 TO (degree, Module),
-	 TO (genera, Module),
+	 TO "Varieties::genera(Module)",
 	 TO (hilbertSeries, Module),
 	 TO poincare,
 	 TO poincareN,

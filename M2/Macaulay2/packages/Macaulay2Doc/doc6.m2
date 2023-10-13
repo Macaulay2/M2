@@ -70,48 +70,6 @@ document {
      }
 
 document {
-     Key => (symbol ^, SheafOfRings, List),
-     Headline => "make a graded free coherent sheaf",
-     Usage => "M = R^{i,j,k,...}",
-     Inputs => {"R", 
-	  Nothing => {TT "{i,j,k, ...}", ", ", ofClass List, ", of integers or lists of integers"}},
-     Outputs => {
-          CoherentSheaf => {
-	       {", a graded free coherent sheaf whose generators have degrees ", TT "-i", ", ", TT "-j", ", ", TT "-k", ", ..."}}},
-     EXAMPLE lines ///
-     	  R = QQ[a..d]/(a*b*c*d)
-	  X = Proj R
-	  OO_X^{-1,-2,3}
-     	  ///,
-     PARA{},
-     "If ", TT "i", ", ", TT "j", ", ... are lists of integers, then
-     they represent multi-degrees, as in ", TO "graded and multigraded polynomial rings", ".",
-     EXAMPLE lines ///
-     	  Y = Proj (QQ[x,y,z,Degrees=>{{1,0},{1,-1},{1,-2}}])
-	  OO_Y^{{1,2},{-1,3}}
-	  degrees oo
-     	  ///,
-     SeeAlso => {OO, Proj, degrees, "graded and multigraded polynomial rings"}}
-document {
-     Key => {
-	  (symbol ^, CoherentSheaf, ZZ),
-	  (symbol ^, SheafOfRings, ZZ)},
-     Headline => "direct sum",
-     Usage => "F^n",
-     Inputs => {"F" => {", or a ", ofClass SheafOfRings}, "n"},
-     Outputs => {
-	  CoherentSheaf => {"the direct sum of ", TT "n", " copies of ", TT "F"},
-	  },
-     EXAMPLE lines ///
-     	  R = QQ[a..d]/(a*d-b*c)
-	  Q = Proj R
-	  OO_Q^5
-	  IL = sheaf module ideal(a,b)
-	  IL^3
-     	  ///,
-     SeeAlso => {Proj, sheaf}
-     }
-document {
      Key => (symbol ^, RingElement, ZZ),
      Headline => "power",
      Usage => "f^n",

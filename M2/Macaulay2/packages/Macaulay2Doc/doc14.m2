@@ -585,17 +585,6 @@ document {
      SeeAlso => {(max,GradedModule)}
      }
 
-document { Key => {(symbol **,AffineVariety,Ring)},
-     Usage => "X ** R",
-     Inputs => {"X","R"},
-     Outputs => {{"the tensor product of ", TT "X", " with ", TT "R"}},
-     EXAMPLE lines ///
-     X = Spec(QQ[x,y])
-     Y = X ** (QQ[t])
-     describe Y
-     ///
-     }
-
 document { Key => (symbol **,GradedModule,GradedModule),
      Usage => "C ** D",
      Inputs => {"C","D"},

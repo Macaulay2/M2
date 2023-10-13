@@ -10,8 +10,7 @@ document {
 
 document { 
      Key => {[(codim,Ideal), Generic],[(codim,Module), Generic],
-	  [(codim,CoherentSheaf), Generic],
-	  [(codim,PolynomialRing), Generic],[(codim,Variety), Generic],
+	  [(codim,PolynomialRing), Generic],
 	  [(codim,QuotientRing), Generic]},
      Usage => "codim(...,Generic=>true)",
      Consequences => {
@@ -60,29 +59,6 @@ document {
      SeeAlso => {(dim,Module)}
      }
 
-document { 
-     Key => {(codim,CoherentSheaf)},
-     Headline =>"codimension of the support of a coherent sheaf on a projective variety",
-     Usage => "codim F",
-     Inputs => {"F" => {"a coherent sheaf over a ", TO "ProjectiveVariety", TT " X"}
-	  },
-     Outputs => {ZZ
-	  },
-     "Computes the codimension of the support of ", TT "F", " as given by ", TT "dim(R) - dim(M)",
-     " where ", TT "M", " is the module representing ", TT "F", " over the homogeneous coordinate ring ",
-     TT "R", " of ", TT "X", ".",
-     EXAMPLE {
-	  "R = ZZ/31991[a,b,c,d];",
-          "I = monomialCurveIdeal(R,{1,3,5})",
-          "projplane = Proj(R)",
-          "II = sheaf module I",
-          "can = sheafExt^1(II,OO_projplane^1(-4))",
-          "codim can"
-	  },
-     Caveat => {"The returned value is the usual codimension if ", TT "R", 
-	  " is an integral domain or, more generally, equidimensional."},
-     SeeAlso => {(dim,Module)}
-     }
 
 document { 
      Key => {(codim,MonomialIdeal)},
@@ -120,22 +96,3 @@ document {
 	  },
      SeeAlso => {(dim,Ideal),(dim,MonomialIdeal),(codim,MonomialIdeal)}
      }
-
-document { 
-     Key => (codim,Variety),
-     Headline => "codimension of a variety",
-     Usage => "codim V",
-     Inputs => {"V"},
-     Outputs => {ZZ},
-     "Computes the codimension of a variety ", TT "V", ".",
-     EXAMPLE {
-	  "R = ZZ/101[x_0..x_3];",
-	  "M = matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}}",
-	  "V = Proj(R/minors(2,M));",
-	  "codim V"
-	  },
-     Caveat => {"The returned value is the usual codimension if the base ring
-	  is an integral domain or, more generally, equidimensional."},
-     SeeAlso => {(codim,QuotientRing)}
-     }
-
