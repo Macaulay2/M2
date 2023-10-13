@@ -15,6 +15,7 @@ newPackage(
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
         AuxiliaryFiles => true,
+	PackageImports => {"Varieties"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

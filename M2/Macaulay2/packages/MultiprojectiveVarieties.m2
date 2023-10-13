@@ -17,7 +17,7 @@ newPackage(
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
     PackageImports => {"PrimaryDecomposition","TangentCone"},
-    PackageExports => {"Cremona","SparseResultants"},
+    PackageExports => {"Cremona","SparseResultants","Varieties"},
     DebuggingMode => false,
     Reload => false,
     Certification => {
