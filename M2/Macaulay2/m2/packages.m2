@@ -436,6 +436,7 @@ importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
 importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> if not currentPackage#"private dictionary"#?s then currentPackage#"private dictionary"#s = P#"private dictionary"#s)
 
 exportFrom = method()
+exportFrom(String,  List) := (P, x) -> exportFrom(getpkg P, x)
 exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 
 ---------------------------------------------------------------------
