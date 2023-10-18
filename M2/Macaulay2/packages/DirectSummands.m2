@@ -20,7 +20,8 @@ newPackage(
 export {
     "summands",
     "Indecomposable",
-    "ExtendGroundField"
+    "ExtendGroundField",
+    "findIdem"
     }
 
 -----------------------------------------------------------------------------
