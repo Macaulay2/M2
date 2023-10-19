@@ -512,6 +512,8 @@ doc ///
 doc ///
    Key
      isSAGBI
+     (isSAGBI, Matrix)
+     (isSAGBI, List)
    Headline
      Check if the generators are a subalgebra basis
    Usage
@@ -529,6 +531,8 @@ doc ///
    Description
      Text
        This checks whether the generators of @ ofClass Subring @ or the sagbi generators of @ ofClass SAGBIBasis @ form a sagbi basis.
+       Note, if @TT "isSAGBI"@ is supplied @ofClass Matrix@ or @ofClass List@ @TT "A"@, then the command
+       @TT "isSAGBI"@ @TT "A"@ is equivalent to @TT "isSAGBI"@ @TO "subring"@ @TT "A"@.
        For further details of their respective uses see: @ TO (isSAGBI, Subring) @ and @ TO (isSAGBI, SAGBIBasis) @.
        
        The result of @ TT "isSagbi" @ is stored in the cache of @ ofClass Subring @ or the sagbiStatus of 
@@ -559,18 +563,12 @@ doc ///
 doc ///
    Key
      (isSAGBI, Subring)
-     (isSAGBI, Matrix)
-     (isSAGBI, List)
    Headline
      Check if the generators are a subalgebra basis
    Usage
      result = isSAGBI S
-     result = isSAGBI M
-     result = isSAGBI L
    Inputs
      S:Subring
---     M:Matrix
---     L:List
      Compute=>Boolean
        a flag indicating whether to perform computation (See: @TO "Compute"@)
      Recompute=>Boolean
