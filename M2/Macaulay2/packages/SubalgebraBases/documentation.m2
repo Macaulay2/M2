@@ -1657,22 +1657,6 @@ doc ///
 doc ///
    Key
       forceSB
-     (forceSB, SAGBIBasis)
-     (forceSB, Subring)
-  --   [(forceSB, SAGBIBasis), AutoSubduce]
-     [(forceSB, SAGBIBasis), Strategy]
-     [(forceSB, SAGBIBasis), SubductionMethod]
-     [(forceSB, SAGBIBasis), Limit]
-     [(forceSB, SAGBIBasis), RenewOptions]
-     [(forceSB, SAGBIBasis), PrintLevel]
-     [(forceSB, SAGBIBasis), UseSubringGens]
-  --   [(forceSB, Subring), AutoSubduce]
-     [(forceSB, Subring), Strategy]
-     [(forceSB, Subring), SubductionMethod]
-     [(forceSB, Subring), Limit]
-     [(forceSB, Subring), RenewOptions]
-     [(forceSB, Subring), PrintLevel]
-     [(forceSB, Subring), UseSubringGens]
    Headline
      declare the generators to be a complete sagbi basis
    Usage
@@ -1715,6 +1699,87 @@ doc ///
      Subring
      SAGBIBasis
      isSAGBI
+///
+doc ///
+   Key
+     (forceSB, SAGBIBasis)
+   Headline
+     declare the generators to be a complete sagbi basis
+   Usage
+     forceSB SB
+   Inputs
+     SB:SAGBIBasis
+   Description
+     Text
+       When forceSB is called on a @ ofClass SAGBIBasis @ $SB$, then the function performs
+       autosubduction on the sagbiGenerators of $SB$. The completion flag is then
+       set to complete without checking whether the generators form a sagbi basis.
+       
+       The option UseSubringGens can be toggled between true and false to
+       operate on the subring generators in the case where the input is @ ofClass SAGBIBasis @.
+       
+       Note, that if the generators supplied to @ TT "forceSB" @ do not form a sagbi basis,
+       then the resulting behavior may be unexpected.
+       
+     Example
+       R = QQ[x,y];
+       S = sagbi(subring{x+y,x*y,x*y^2},Limit=>10)
+       forceSB S;
+       isSAGBI S
+       sagbi(S,Recompute=>true)
+       isSAGBI S
+     Text
+       In this example forceSB causes isSAGBI to return true even though
+       the generators of $S$ do not form a subalgebra basis.
+       Recomputing the sagbi basis exposes that the generators do not
+       form a subalgebra basis.
+   SeeAlso
+     Subring
+     SAGBIBasis
+     isSAGBI
+     forceSB
+     (forceSB, Subring)
+///
+doc ///
+   Key
+     (forceSB, Subring)
+   Headline
+     declare the generators to be a complete sagbi basis
+   Usage
+     forceSB S
+   Inputs
+     S:Subring
+   Description
+     Text
+       When forceSB is called on @ ofClass Subring @ $S$, then the function performs autosubduction
+       on the generators of $S$.  The completion flag is then
+       set to complete without checking whether the generators form a sagbi basis.
+       
+       The option UseSubringGens can be toggled between true and false to
+       operate on any partial subalgebra basis created for $S$ when the the input is a
+       @ ofClass Subring @.
+       
+       Note, that if the generators supplied to @ TT "forceSB" @ do not form a sagbi basis,
+       then the resulting behavior may be unexpected.
+       
+     Example
+       R = QQ[x,y];
+       S = subring{x+y,x*y,x*y^2}
+       forceSB S;
+       isSAGBI S
+       sagbi(S,Recompute=>true)
+       isSAGBI S
+     Text
+       In this example forceSB causes isSAGBI to return true even though
+       the generators of $S$ do not form a subalgebra basis.
+       Recomputing the sagbi basis exposes that the generators do not
+       form a subalgebra basis.
+   SeeAlso
+     Subring
+     SAGBIBasis
+     isSAGBI
+     forceSB
+     (forceSB, SAGBIBasis)
 ///
 doc ///
    Key
