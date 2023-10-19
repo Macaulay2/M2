@@ -1,3 +1,4 @@
+################### This file is made obsolete by the PR 2968 #######################
 # Attempts to discover ffi library with a linkable ffi_call function.
 #
 # Example usage:

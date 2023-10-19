@@ -80,9 +80,11 @@ if(WITH_TBB)
 endif()
 
 if(WITH_FFI)
-  find_package(FFI REQUIRED QUIET)
-  execute_process(COMMAND pkg-config --modversion libffi
-    OUTPUT_VARIABLE LIBFFI_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  # find_package(FFI REQUIRED QUIET) # obsoleted by PR 2689
+  # execute_process(COMMAND pkg-config --modversion libffi
+  #         OUTPUT_VARIABLE LIBFFI_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  pkg_check_modules(FFI REQUIRED IMPORTED_TARGET libffi)
+  set(LIBFFI_VERSION ${FFI_VERSION})
 else()
   set(LIBFFI_VERSION "not present")
 endif()

@@ -144,8 +144,9 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
+target_include_directories(M2-interpreter PUBLIC ${FFI_INCLUDE_DIRS})
 target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb
-  $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
+	$<$<BOOL:${WITH_FFI}>:PkgConfig::FFI>)
 
 # TODO: c.f. https://github.com/Macaulay2/M2/issues/2682
 if(NOT APPLE)
