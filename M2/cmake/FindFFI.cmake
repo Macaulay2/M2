@@ -1,4 +1,6 @@
 ################### This file is made obsolete by the PR 2968 #######################
+# This is public domain code
+#
 # Attempts to discover ffi library with a linkable ffi_call function.
 #
 # Example usage:
