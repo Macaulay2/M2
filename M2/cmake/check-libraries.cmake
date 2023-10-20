@@ -80,6 +80,7 @@ if(WITH_TBB)
 endif()
 
 if(WITH_FFI)
+  pkg_get_variable(FFI_INCLUDE_DIR libffi includedir)
   find_package(FFI REQUIRED QUIET)
   execute_process(COMMAND pkg-config --modversion libffi
     OUTPUT_VARIABLE LIBFFI_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
