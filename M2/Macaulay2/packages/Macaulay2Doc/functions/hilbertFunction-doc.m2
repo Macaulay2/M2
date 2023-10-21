@@ -15,6 +15,9 @@ doc ///
     (hilbertFunction,ZZ,ProjectiveVariety)
     (hilbertFunction,List,CoherentSheaf)
     (hilbertFunction,ZZ,CoherentSheaf)
+    (hilbertFunction,Ring)
+    (hilbertFunction,Module)
+    (hilbertFunction,Ideal)
   Headline
     the Hilbert function
   Usage
@@ -64,6 +67,15 @@ doc ///
       hilbertFunction({2,2}, I)
       S = R/I;
       basis({2,2},S)
+    Text
+      If @SAMP "d"@ is not given, then a function is returned that will accept
+      different values of @SAMP "d"@.
+    Example
+      R = QQ[a..d];
+      I = monomialCurveIdeal(R, {1,2,3});
+      h = hilbertFunction I
+      h 1
+      h 2
   Caveat
     It can be much faster to compute a basis for the desired degree,
     because hilbertFunction works by expanding the Hilbert series to a
