@@ -82,8 +82,11 @@ endif()
 if(WITH_FFI)
   pkg_get_variable(FFI_INCLUDE_DIR libffi includedir)
   find_package(FFI REQUIRED QUIET)
-  execute_process(COMMAND pkg-config --modversion libffi
-    OUTPUT_VARIABLE LIBFFI_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(NOT DEFINED LIBFFI_VERSION)
+    execute_process(COMMAND pkg-config --modversion libffi
+      OUTPUT_VARIABLE LIBFFI_VERSION_ OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(LIBFFI_VERSION ${LIBFFI_VERSION_} CACHE STRING "FFI version")
+  endif()
 else()
   set(LIBFFI_VERSION "not present")
 endif()
