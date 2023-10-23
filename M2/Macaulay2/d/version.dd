@@ -201,7 +201,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
-   "flint version" => Ccode(constcharstar,"flint_version"),
+   "flint version" => Ccode(constcharstar,"FLINT_VERSION"),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP
 	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)
