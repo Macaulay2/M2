@@ -1,5 +1,13 @@
 // This file should only be included once, by what?
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#include <flint/nmod_mat.h>  // for nmod_mat_lu, nmod_mat_rank, nmod_mat_det
+#pragma GCC diagnostic pop
+
 //////////////////////
 // ZZpFlint //////////
 //////////////////////
