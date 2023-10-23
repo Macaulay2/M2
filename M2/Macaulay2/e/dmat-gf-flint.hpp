@@ -3,19 +3,17 @@
 #ifndef _dmat_gf_flint__hpp_
 #define _dmat_gf_flint__hpp_
 
+#include <utility>                // for swap
+#include "aring-gf-flint.hpp"     // for ARingGFFlint
+
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/arith.h>
-#include <flint/nmod_mat.h>
-#include <flint/fmpq_mat.h>
-#include <flint/fq_nmod_mat.h>
-#include <flint/fq_zech_mat.h>
+#include <flint/fq_nmod_mat.h>  // for fq_zech_mat_entry, fq_zech_mat_clear
+#include <flint/fq_zech_mat.h>  // for fq_zech_mat_t
 #pragma GCC diagnostic pop
-
-#include "aring-gf-flint.hpp"
 
 template <typename ACoeffRing>
 class DMat;
