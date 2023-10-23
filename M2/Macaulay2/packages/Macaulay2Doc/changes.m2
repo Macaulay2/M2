@@ -751,7 +751,7 @@ document {
                     LI { "The ", TO "FLINT", " library, and several others, no longer need to be patched while building Macaulay2.
 			 This involved a reorganization of the way memory management is done in the engine and the interpreter.
 		      	 As a result, we can use versions of several basic libraries as provided by the operating system, including ", 
-		      	 TO "GNU MP", ",", TO "MPIR", ",", TO "MPFR", ", and the ", TO "NTL library", "." 
+			 TO "GNU MP", ",", TT "MPIR", ",", TO "MPFR", ", and the ", TO "NTL library", "."
 			 },
 		    LI {
 			 TEX {
