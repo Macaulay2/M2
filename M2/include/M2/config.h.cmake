@@ -61,7 +61,7 @@
 #cmakedefine HAVE_FFI_GET_STRUCT_OFFSETS 1
 
 /* libffi version */
-#define LIBFFI_VERSION "${LIBFFI_VERSION}"
+#define FFI_VERSION "${FFI_VERSION}"
 
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* whether getaddrinfo can handle numeric service (port) numbers */
