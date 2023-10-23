@@ -14,7 +14,6 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
-option(USING_MPIR	"Use MPIR instead of GMP"		OFF)
 option(DEVELOPMENT	"Set the DEVELOPMENT macro in config.h"	OFF)
 option(EXPERIMENT	"Set the EXPERIMENT macro in config.h"	OFF)
 option(LINTING		"Enable linting source files"		OFF)
@@ -41,11 +40,6 @@ set(PARALLEL_JOBS 4
   CACHE STRING "Number of parallel jobs for libraries and programs")
 set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
 set(SLOW_TESTS "eigen;ntl;flint"    CACHE STRING "Slow tests to skip")
-
-# TODO: hopefully make these automatic
-if(USING_MPIR)
-  list(APPEND BUILD_LIBRARIES "MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro")
-endif()
 
 # TODO: deprecate these variables
 set(M2SUFFIX "")

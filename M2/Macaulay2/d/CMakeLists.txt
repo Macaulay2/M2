@@ -20,7 +20,7 @@ set(CLIST
   memdebug.c memdebug.h
   debug.c debug.h
   getpagesize.h M2mem.h
-  gmp_aux.c gmp_aux.h # TODO: needed with mpir?
+  gmp_aux.c gmp_aux.h
   gdbm_interface.c
   )
 

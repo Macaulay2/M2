@@ -173,20 +173,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "gdbm version" => gdbmversion(),
-   "gmp version" => Ccode(constcharstar,"
-	  #if USING_MPIR
-	       \"not present\"
-	  #else
-	       __gmp_version
-	  #endif
-	  "),
-   "mpir version" => Ccode(constcharstar,"
-	#if USING_MPIR
-	     __mpir_version
-	#else
-	     \"not present\"
-	#endif
-	"),
+   "gmp version" => Ccode(constcharstar,"__gmp_version"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
    "flint version" => Ccode(constcharstar,"FLINT_VERSION"),

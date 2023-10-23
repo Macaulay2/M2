@@ -69,7 +69,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
   set(strip_setting --strip)
 endif()
 
-# Wrap configure and make commands so they find mpir, mpfr, etc.
+# Wrap configure and make commands so they find mpfr, etc.
 if(APPLE)
   set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib:$ENV{DYLD_LIBRARY_PATH})
 elseif(UNIX)
@@ -90,12 +90,9 @@ set(CONFIGURE_CACHE ${M2_HOST_PREFIX}/share/config.site)
 ## Helper functions for adding dependencies between components
 
 # Ensure that _dependency is found before _name is configured
-# _name:       lowercase name of a library or program; e.g. mp, flint, cohomcalg
+# _name:       lowercase name of a library or program; e.g. gmp, flint, cohomcalg
 # _dependency: lowercase name of the library or program that ${_name} should depend on
 FUNCTION (_ADD_STEP_DEPENDENCY _name _dependency)
-  if(${_dependency} STREQUAL mp)
-    string(TOLOWER ${MP_LIBRARY} _dependency)
-  endif()
   string(TOUPPER "${_dependency}" _condition)
   if(NOT ${_condition}_FOUND AND NOT ${_condition})
     ExternalProject_Add_StepDependencies(build-${_name} configure build-${_dependency}-install)
@@ -104,8 +101,8 @@ ENDFUNCTION (_ADD_STEP_DEPENDENCY)
 
 # If not _found_condition, add _name to the build-_component target
 # _component:       either "libraries" or "programs"
-# _name             lowercase name of a library or program; e.g. mp, flint, cohomcalg
-# _dependencies:    list of lowercase library names; e.g. "mp mpfr"
+# _name             lowercase name of a library or program; e.g. gmp, flint, cohomcalg
+# _dependencies:    list of lowercase library names; e.g. "gmp mpfr"
 # _found_condition: add dependency only if ${_found_condition} evaluates to false
 FUNCTION (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
   if(NOT ${_found_condition})
@@ -210,59 +207,6 @@ ExternalProject_Add(build-bdwgc
 _ADD_COMPONENT_DEPENDENCY(libraries bdwgc "" BDWGC_FOUND)
 
 
-# https://github.com/wbhart/mpir
-ExternalProject_Add(build-mpir
-  URL               ${M2_SOURCE_URL}/mpir-3.0.0.tar.bz2
-  URL_HASH          SHA256=52f63459cf3f9478859de29e00357f004050ead70b45913f2c2269d9708675bb
-  PREFIX            libraries/mpir
-  SOURCE_DIR        libraries/mpir/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/mpir/patch-3.0.0
-  CONFIGURE_COMMAND autoreconf -vif
-            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
-                      #-C --cache-file=${CONFIGURE_CACHE}
-                      --enable-gmpcompat
-                      --enable-cxx
-                      ${shared_setting}
-                      ${assert_setting}
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpir
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README INSTALL COPYING COPYING.LIB ${M2_INSTALL_LICENSESDIR}/mpir
-  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
-  EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON
-  STEP_TARGETS      install test
-  )
-# Alias
-if(NOT MP_FOUND)
-  if(MP_LIBRARY STREQUAL GMP)
-    # gmp is a prerequisite
-    message(WARNING "gmp integer package specified, but not found")
-  elseif(MP_LIBRARY STREQUAL MPIR)
-    # Add this to the libraries target
-    _ADD_COMPONENT_DEPENDENCY(libraries mpir "" MPIR_FOUND)
-  endif()
-endif()
-if(NOT MP_ROOT)
-  set(MP_ROOT ${M2_HOST_PREFIX})
-  set(MP_LIBRARY_DIRS ${MP_ROOT}/lib)
-  set(MP_INCLUDE_DIRS ${MP_ROOT}/include)
-endif()
-set(MP_INCLUDE_DIR ${${MP_LIBRARY}_INCLUDE_DIRS})
-
-
 # https://www.mpfr.org/
 # NOTE: mpfr puts pointers to gmp numbers in thread local variables, unless
 # specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
@@ -275,7 +219,7 @@ ExternalProject_Add(build-mpfr
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --with-gmp=${MP_ROOT}
+                      --with-gmp=${GMP_ROOT}
                       --disable-thread-safe
                       ${shared_setting}
                       ${assert_setting}
@@ -302,7 +246,7 @@ if(NOT MPFR_ROOT)
   set(MPFR_ROOT ${M2_HOST_PREFIX})
 endif()
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
-_ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries mpfr gmp MPFR_FOUND)
 
 
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
@@ -316,7 +260,7 @@ ExternalProject_Add(build-mpfi
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --with-gmp=${MP_ROOT}
+                      --with-gmp=${GMP_ROOT}
                       --with-mpfr=${MPFR_ROOT}
                       ${shared_setting}
                       CC=${CMAKE_C_COMPILER}
@@ -332,7 +276,7 @@ ExternalProject_Add(build-mpfi
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries mpfi "mp;mpfr" MPFI_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries mpfi "gmp;mpfr" MPFI_FOUND)
 
 
 # http://shoup.net/ntl
@@ -348,7 +292,7 @@ ExternalProject_Add(build-ntl
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic
                       NATIVE=off
-                      GMP_PREFIX=${MP_ROOT}
+                      GMP_PREFIX=${GMP_ROOT}
                       SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
@@ -372,7 +316,7 @@ ExternalProject_Add_Step(build-ntl wizard
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=auto
                       NATIVE=on
-                      GMP_PREFIX=${MP_ROOT}
+                      GMP_PREFIX=${GMP_ROOT}
                       SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
@@ -392,7 +336,7 @@ endif()
 if(AUTOTUNE)
   add_dependencies(build-ntl-install build-ntl-wizard)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries ntl gmp NTL_FOUND)
 
 
 # https://github.com/Macaulay2/flint2
@@ -425,7 +369,7 @@ ExternalProject_Add(build-flint
 if(NOT FLINT_ROOT)
   set(FLINT_ROOT ${M2_HOST_PREFIX})
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries flint "gmp;mpfr;ntl" FLINT_FOUND)
 
 
 # https://github.com/Singular/Sources/tree/spielwiese/factory
@@ -448,7 +392,7 @@ ExternalProject_Add(build-factory
                       ${assertions_setting}
                       --enable-streamio
                       --without-Singular
-                      --with-gmp=${MP_ROOT}
+                      --with-gmp=${GMP_ROOT}
                       --with-ntl=${NTL_ROOT}
                       --with-flint=${FLINT_ROOT}
                       CPPFLAGS=${CPPFLAGS}
@@ -475,7 +419,7 @@ if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/facto
   file(COPY ${GFTABLESDIR}/gftables
     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory FOLLOW_SYMLINK_CHAIN)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;ntl;flint" FACTORY_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries factory "gmp;ntl;flint" FACTORY_FOUND)
 
 
 # https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)
@@ -495,7 +439,7 @@ ExternalProject_Add(build-frobby
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries frobby mp FROBBY_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries frobby gmp FROBBY_FOUND)
 
 
 # https://github.com/cddlib/cddlib
@@ -511,10 +455,10 @@ ExternalProject_Add(build-cddlib
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
-                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS}"
+                      "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      "LDFLAGS=${LDFLAGS} -L${MP_LIBRARY_DIRS}"
+                      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -535,7 +479,7 @@ if(NOT CDDLIB_ROOT)
   set(CDDLIB_LIBRARY_DIR ${CDDLIB_ROOT}/lib)
   set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include/cddlib)
 endif()
-#_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries cddlib gmp CDDLIB_FOUND)
 
 
 # https://github.com/algebraic-solving/msolve
@@ -551,9 +495,9 @@ ExternalProject_Add(build-msolve
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
                       $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
-                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS} -I${MPFR_INCLUDE_DIRS} -I${FLINT_INCLUDE_DIR}"
+                      "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS} -I${MPFR_INCLUDE_DIRS} -I${FLINT_INCLUDE_DIR}"
                       CFLAGS=${CFLAGS}
-                      "LDFLAGS=${LDFLAGS} -L${MP_LIBRARY_DIRS} ${MPFR_LIBRARIES} ${FLINT_LIBRARIES}"
+                      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} ${MPFR_LIBRARIES} ${FLINT_LIBRARIES}"
                       CC=${CMAKE_C_COMPILER}
 		      "OPENMP_CFLAGS=${OpenMP_C_FLAGS} ${OpenMP_C_LDLIBS}"
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
@@ -565,7 +509,7 @@ ExternalProject_Add(build-msolve
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-#_ADD_COMPONENT_DEPENDENCY(libraries msolve "mp;mpfr;flint" MSOLVE_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries msolve "gmp;mpfr;flint" MSOLVE_FOUND)
 
 
 # https://numpi.dm.unipi.it/software/mpsolve
@@ -586,8 +530,8 @@ ExternalProject_Add(build-mpsolve
                       --disable-examples
                       --disable-ui
                       --disable-documentation
-                      GMP_CFLAGS=-I${MP_INCLUDE_DIRS}
-                      GMP_LDFLAGS=-L${MP_LIBRARY_DIRS}
+                      GMP_CFLAGS=-I${GMP_INCLUDE_DIRS}
+                      GMP_LDFLAGS=-L${GMP_LIBRARY_DIRS}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -605,7 +549,7 @@ ExternalProject_Add(build-mpsolve
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries mpsolve "gmp;mpfr" MPSOLVE_FOUND)
 
 
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
@@ -621,7 +565,7 @@ ExternalProject_Add(build-givaro
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
-                      --with-gmp=${MP_ROOT}
+                      --with-gmp=${GMP_ROOT}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -642,7 +586,7 @@ ExternalProject_Add(build-givaro
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries givaro gmp GIVARO_FOUND)
 
 
 # https://linbox-team.github.io/fflas-ffpack/
@@ -695,7 +639,7 @@ if(NOT FFLAS_FFPACK_FOUND AND (NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4
   # FIXME: the requirement on Givaro version is for fflas_ffpack 2.3.2
   _ADD_STEP_DEPENDENCY(fflas_ffpack givaro)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack mp FFLAS_FFPACK_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack gmp FFLAS_FFPACK_FOUND)
 
 
 # https://www.gnu.org/software/glpk/
@@ -725,7 +669,7 @@ ExternalProject_Add(build-glpk
 if(NOT GLPK_ROOT)
   set(GLPK_ROOT ${M2_HOST_PREFIX})
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries glpk mp GLPK_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries glpk gmp GLPK_FOUND)
 
 
 # https://github.com/google/googletest
@@ -832,10 +776,10 @@ ExternalProject_Add(build-4ti2
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-glpk=${GLPK_ROOT}
-                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS}"
+                      "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      "LDFLAGS=${LDFLAGS}  -L${MP_LIBRARY_DIRS}"
+                      "LDFLAGS=${LDFLAGS}  -L${GMP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -853,7 +797,7 @@ ExternalProject_Add(build-4ti2
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs 4ti2 "mp;glpk" 4TI2)
+_ADD_COMPONENT_DEPENDENCY(programs 4ti2 "gmp;glpk" 4TI2)
 
 
 # https://github.com/BenjaminJurke/cohomCalg
@@ -899,8 +843,8 @@ ExternalProject_Add(build-gfan
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       cddnoprefix=yes
-                      "GMP_LINKOPTIONS=-L${MP_LIBRARY_DIRS} -lgmp"
-                      "GMP_INCLUDEOPTIONS=-I${MP_INCLUDE_DIRS}"
+                      "GMP_LINKOPTIONS=-L${GMP_LIBRARY_DIRS} -lgmp"
+                      "GMP_INCLUDEOPTIONS=-I${GMP_INCLUDE_DIRS}"
                       "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -I${CDDLIB_INCLUDE_DIR}"
                       "CCLINKER=${CMAKE_CXX_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
                       "CXX=${CMAKE_CXX_COMPILER}"
@@ -913,7 +857,7 @@ ExternalProject_Add(build-gfan
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib" GFAN)
+_ADD_COMPONENT_DEPENDENCY(programs gfan "gmp;cddlib" GFAN)
 
 
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
@@ -928,8 +872,8 @@ ExternalProject_Add(build-lrslib
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/lrslib/patch-071
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs # all-shared
-                      INCLUDEDIR=${MP_INCLUDE_DIRS}
-                      LIBDIR=${MP_LIBRARY_DIRS}
+                      INCLUDEDIR=${GMP_INCLUDE_DIRS}
+                      LIBDIR=${GMP_LIBRARY_DIRS}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
@@ -945,7 +889,7 @@ ExternalProject_Add(build-lrslib
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs lrslib mp LRSLIB)
+_ADD_COMPONENT_DEPENDENCY(programs lrslib gmp LRSLIB)
 
 
 # https://github.com/coin-or/Csdp
@@ -1033,10 +977,10 @@ ExternalProject_Add(build-normaliz
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared # TODO: for polymake --enable-shared
                       --without-flint # ${FLINT_ROOT}
-                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS}"
+                      "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      "LDFLAGS=${LDFLAGS}  -L${MP_LIBRARY_DIRS}"
+                      "LDFLAGS=${LDFLAGS}  -L${GMP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -1055,7 +999,7 @@ ExternalProject_Add(build-normaliz
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
+_ADD_COMPONENT_DEPENDENCY(programs normaliz "gmp;nauty" NORMALIZ)
 
 
 # https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
@@ -1082,10 +1026,10 @@ ExternalProject_Add(build-topcom
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS} -I${CDDLIB_INCLUDE_DIR}"
+                      "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS} -I${CDDLIB_INCLUDE_DIR}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      "LDFLAGS=${LDFLAGS} -L${MP_LIBRARY_DIRS} -L${CDDLIB_LIBRARY_DIR}"
+                      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} -L${CDDLIB_LIBRARY_DIR}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
   BUILD_COMMAND     ${MAKE} -j1 # topcom doesn't like parallel builds
@@ -1119,7 +1063,7 @@ ExternalProject_Add(build-polymake
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --with-gmp=${MP_ROOT}
+                      --with-gmp=${GMP_ROOT}
                       --with-cdd=${CDDLIB_ROOT}
                       --with-flint=${FLINT_ROOT}
 #                      --with-libnormaliz=${M2_HOST_PREFIX}
@@ -1153,7 +1097,7 @@ ExternalProject_Add(build-polymake
   STEP_TARGETS      install test
   USES_TERMINAL_BUILD ON
   )
-#_ADD_COMPONENT_DEPENDENCY(programs polymake "mp;mpfr;cddlib;flint;normaliz;lrslib;nauty" POLYMAKE)
+#_ADD_COMPONENT_DEPENDENCY(programs polymake "gmp;mpfr;cddlib;flint;normaliz;lrslib;nauty" POLYMAKE)
 
 
 # http://homepages.math.uic.edu/~jan/download.html
@@ -1211,7 +1155,7 @@ ExternalProject_Add(build-bertini
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-#_ADD_COMPONENT_DEPENDENCY(libraries bertini "mp;mpfr" BERTINI)
+#_ADD_COMPONENT_DEPENDENCY(libraries bertini "gmp;mpfr" BERTINI)
 
 
 ###############################################################################
@@ -1296,7 +1240,7 @@ message("## External components
 
 message("\n## Library information
      Linear Algebra    = ${LAPACK_LIBRARIES}
-     MP Arithmetic     = ${MP_LIBRARIES}")
+     GMP Arithmetic    = ${GMP_LIBRARIES}")
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "     Optional libs     =")
 foreach(_opt IN ITEMS OMP TBB FFI MPI XML PYTHON MYSQL)

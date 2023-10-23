@@ -99,16 +99,6 @@ licenseInfo = hashTable {
 	      "The GNU MPFR Library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version."
 	      }
         },
-    "mpir version" => hashTable {
-	 "2.7.2" => VerticalList {
-	      "free",
-	      "Copying and distribution of this file, with or without modification, are permitted in any medium without royalty provided the copyright notice and this notice are preserved."
-	      },
-	 "3.0.0" => VerticalList {
-	      "LGPL 2.1 or later",
-	      "The MPIR Library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version."
-	      }
-        },
     "mpsolve version" => hashTable {
         "3.1.8" => VerticalList {
               "GPL 3",
