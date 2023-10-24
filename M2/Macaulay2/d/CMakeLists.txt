@@ -169,6 +169,8 @@ target_include_directories(M2-interpreter
     $<INSTALL_INTERFACE:include/Macaulay2>
     $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
+    # Note: this shouldn't be necessary since FFI::ffi is linked above
+    $<$<BOOL:${WITH_FFI}>:$<BUILD_INTERFACE:${FFI_INCLUDE_DIRS}>>
     ${SQLite3_INCLUDE_DIRS}
   )
 
