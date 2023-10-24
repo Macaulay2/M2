@@ -102,8 +102,10 @@ jobs:
           echo "CC=${{  matrix.cc  }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
-          then alias llvm-config="llvm-config-14"
+          then shopt -s expand_aliases
+               alias llvm-config="/usr/bin/llvm-config-14"
                echo "/usr/lib/ccache"                     >> $GITHUB_PATH
+               echo "/home/linuxbrew/.linuxbrew/bin"      >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
                echo `brew --prefix llvm@14`/bin              >> $GITHUB_PATH
