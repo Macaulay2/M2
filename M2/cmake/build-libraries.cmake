@@ -10,7 +10,7 @@
 cmake_policy(SET CMP0135 NEW)
 
 include(ExternalProject) # configure, patch, build, install, or test at build time
-set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
+set(M2_SOURCE_URL https://macaulay2.com/Downloads/OtherSourceCode)
 
 ## This target builds external libraries that M2 relies on, then reruns cmake
 add_custom_target(build-libraries COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR} USES_TERMINAL)
