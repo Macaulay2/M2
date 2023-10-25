@@ -13,52 +13,44 @@ generalEndomorphism Module := M -> (
     homomorphism(B * random(ZZ^(rank source B),ZZ^1)))
 generalEndomorphism CoherentSheaf := M -> generalEndomorphism module M
 
-charMatrix = A -> (
-    R := ring A;
-    m := ideal gens R;
-    k := coefficientRing R;
-    local t;
-    T := k[t];
-    AT := sub(cover A, T);
-    n := rank source AT;
-    AT-t*id_(T^n)
-    )
+-- TODO: this needs improvement to work over RR, QQ, GF, FractionField, etc.
+-- e.g. given a tower such as K[x][y]/I, returns K
+baseField = method()
+baseField GaloisField := identity
+baseField FractionField := identity -- FIXME: does this always work?
+baseField Ring := R -> try ( coefficientRing first flattenRing R ) else R
+
+-- e.g. given a field isomorphic to GF(p,e), returns e
+fieldExponent = R -> (
+    L := baseField R;
+    (p, e) := (char L, 1);
+    if p == 0 then return e;
+    a := L_0; -- primitive element of L
+    while a^(p^e) != a do (e = e + 1);
+    e)
+
+-- finds the characteristic polynomial of a matrix
+char Matrix := A -> (
+    if numRows A != numColumns A then error "expected a square matrix";
+    T := (baseField ring A)(monoid[vars 0]);
+    B := sub(cover A, T);
+    I := id_(source B);
+    det(B - T_0 * I))
 
 protect Tries
-findIdem = method(Options => { Tries => 50 })
-findIdem Module      := opts ->  M     -> findIdem(M, fieldExponent coefficientRing ring M)
-findIdem(Module, ZZ) := opts -> (M, e) -> (
-    L := coefficientRing ring M;
-    p := char L;
-    tries:=0;
-    r:=numgens M;
-    er:=max(for i from 1 to r do if p^i>r then break i , e);
+findIdempotent = method(Options => { Tries => 50 })
+findIdempotent Module      := opts ->  M     -> findIdempotent(M, fieldExponent ring M)
+findIdempotent(Module, ZZ) := opts -> (M, e) -> (
+    p := char ring M;
+    K := quotient ideal gens ring M;
+    l := if p == 0 then e else max(e, ceiling log_p numgens M);
     for i to opts.Tries - 1 do (
-        tries =tries +1;
         f := generalEndomorphism M;
-        eigen := flatten rationalPoints ideal det charMatrix(f);
-        opers := flatten for i in eigen list if p == 0 then (f-i*id_M) else for j from 0 to e list (((f-i*id_M)^(p^er))^(p^(j+1)-1));
-        idem := position(opers, g -> isIdempotent( g**(quotient ideal gens ring g)) and g != id_M and g != 0);
+        eigen := flatten rationalPoints ideal char f;
+        opers := flatten for i in eigen list if p == 0 then (f - i*id_M) else for j from 0 to e list (((f-i*id_M)^(p^l))^(p^(j+1)-1));
+        idem := position(opers, g -> isIdempotent(K ** g) and g != id_M and K ** g != 0);
         if idem =!= null then (
-            print ("it took "|tries|" tries");
-	    break opers_idem)))
-findIdem CoherentSheaf := opts -> M -> findIdem module M
-
-testSplitting = (L, M0)->(
-    B := smartBasis(0, module sheafHom(L, M0));
-    b := rank source B;
-    C := smartBasis(0, module sheafHom(M0, L));
-    c := rank source C;
-    isSplitting := (i,j) -> reduceScalar(homomorphism C_{j} * homomorphism B_{i}) == id_(module L);
-    l := if (P := position'(0..b-1, 0..c-1, isSplitting)) === null then return else first P;
-    sheaf coker homomorphism B_{l}
-    )
-
-fieldExponent = L -> (
-    p := char L;
-    if p == 0 then return 1 else (
-	a := L_0;
-	e := 1;
-	while a^(p^e) != a do (e = e + 1);
-	e)
-    )
+	    if 1 < debugLevel then printerr("found idempotent after ", toString i, " attempts.");
+	    return opers_idem));
+    error("no idempotent found after ", toString opts.Tries, " attempts. Try extending the base field."))
+findIdempotent CoherentSheaf := opts -> M -> findIdempotent module M

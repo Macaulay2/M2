@@ -1,35 +1,50 @@
+---------------------------------------------------------------------------
+-- PURPOSE : to compute direct summands of modules and coherent sheaves
+--
+-- UPDATE HISTORY : created Oct 2023
+--
+-- TODO :
+-- 1. implement over Dmodules and other non-commutative rings
+-- 2. try to find all irreducible idempotents from End M using representation theory
+---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
     Version => "0.1",
-    Date => "",
-    Headline => "",
+    Date => "25 Oct 2023",
+    Headline => "direct summands of modules and coherent sheaves",
     Authors => {
 	{ Name => "Devlin Mallory", Email => "malloryd@math.utah.edu", HomePage => "https://math.utah.edu/~malloryd/"},
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",         HomePage => "https://math.umn.edu/~mahrud/"}
 	},
     PackageImports => {
-	"RationalPoints2", -- for rationalPoints in findIdem
-	-- "PushForward", -- only for frobenius.m2
+	"RationalPoints2", -- for rationalPoints in findIdempotent
+	"PushForward", -- only for frobenius.m2
 	"Polyhedra", -- for coneFromVData and coneComp
 	"Truncations", -- for effGenerators
+	-- "Varieties",
 	},
     AuxiliaryFiles => false,
     DebuggingMode => true
     )
 
 export {
-    "summands",
+    "directSummands",
     "Indecomposable",
     "ExtendGroundField",
-    "findIdem"
+    "findIdempotent",
+    -- aliases
+    "summands" => "directSummands",
+    "findIdem" => "findIdempotent",
     }
 
 -----------------------------------------------------------------------------
 -* Code section *-
 -----------------------------------------------------------------------------
 
---needs "helpers.m2"
---needs "frobenius.m2"
+-- helpers for computing Frobenius pushforwards of modules and sheaves
+-- TODO: move to PushForward package?
+needs "./DirectSummands/frobenius.m2"
+-- helpers for finding random idempotents of a module
 needs "./DirectSummands/idempotents.m2"
 
 -----------------------------------------------------------------------------
@@ -76,7 +91,8 @@ PolynomialRing ** GaloisField := (R, L) -> (
 changeBaseField = (L, M) -> (
     S := first flattenRing(ring M, CoefficientRing => null);
     R := quotient sub(ideal S, L monoid S);
-    coker sub(presentation M, R))
+    directSum apply(components M,
+	N -> coker sub(presentation N, R)))
 
 nonzero = x -> select(x, i -> i != 0)
 
@@ -115,27 +131,36 @@ smartBasis = (deg, M) -> (
 reduceScalar = m -> m // scan(unique flatten entries m | {1}, x -> if isConstant x and not zero x then break x)
 isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
 
+-- TODO: can we return cached summands from the closest field extension?
+-- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
+cachedSummands = M -> if M.cache#?(symbol summands => null) then M.cache#(symbol summands => null) else {M}
+
 -- Note: M may need to be extended to a field extensions
+-- TODO: when splitting over a field extension, use cached splitting over summands
 -- TODO: cache the inclusion maps
 -- Strategies:
 -- 1 => use expanded hom
-summands = method(Options => { Verbose => true, Strategy => 1, ExtendGroundField => null })
-summands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> sort(
+directSummands = method(Options => { Verbose => true, Strategy => 1, ExtendGroundField => null })
+directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> sort(
     -- Note: rank does weird stuff if R is not a domain
+    -- Note: End does not work for WeylAlgebras or AssociativeAlgebras yet, nor does basis
+    R := ring M;
+    if not isCommutative R and not isWeylAlgebra R then error "expected a commutative base ring";
     if 0 < debugLevel then printerr("splitting module of rank: ", toString rank M);
+    if isFreeModule M then return apply(-degrees M, d -> R^{d});
+    if 1 < #components M then return flatten apply(components M, directSummands_opts); -- TODO: parallelize
     if opts.ExtendGroundField =!= null then (
 	L := opts.ExtendGroundField;
-	L  = if instance(L, ZZ)   then GF(char ring M, L)
+	L  = if instance(L, ZZ)   then GF(char R, L)
 	else if instance(L, Ring) then L else error "expected an integer or a ground field";
-	M = changeBaseField(L, M));
-    if 1 < #components M then return flatten apply(components M, summands);
-    zdeg := degree 1_(ring M);
+	M = changeBaseField(L, directSum cachedSummands M);
+	R = ring M);
+    K := coker vars R;
+    zdeg := toList(degreeLength R : 0);
     --TODO: make "elapsedTime" contingent on verbosity
     A := if opts.Strategy == 1 then Hom(M, M, zdeg) else End M; -- most time consuming step
     B := smartBasis(zdeg, A);
-    K := coker vars ring M;
     -- FIXME: this currently does not find _all_ idempotents
-    -- FIXME: why is B_{0} so slow for the Horrocks-Mumford example?!
     flag := true; -- whether all homomorphisms are zero mod m;
     idem := position(numcols B, c -> (
 	    h := homomorphism B_{c};
@@ -144,30 +169,39 @@ summands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGr
 		isIdempotent h))
 	);
     -- check if M is certifiably indecomposable
-    -- TODO: is homomorphism cached?
     if flag then (
-	-- this is the same as checking:
-	-- all(numcols B, i -> homomorphism B_{i} == id_M or K ** homomorphism B_{i} == 0)
 	if 0 < debugLevel then printerr("\t... certified indecomposable!");
-	M.cache.Indecomposable = true; {M} );
+	M.cache.Indecomposable = true; return {M} );
     -- TODO: parallelize
-    h := if idem =!= null then homomorphism B_{idem} else try findIdem M;
+    h := if idem =!= null then homomorphism B_{idem} else try findIdempotent M;
     if h === null then {M} else nonzero flatten join(
-        -- TODO: restrict End M to each summand and pass it on
+	-- TODO: restrict End M to each summand and pass it on
 	M1 := prune image h;
 	M2 := prune coker h;
 	-- Projection maps to the summands
 	--p1 := inverse M1.cache.pruningMap * map(image h, M, h);
 	--p2 := inverse M2.cache.pruningMap * map(coker h, M, h);
 	--B1.cache.homomorphism = f -> map(M1, M1, adjoint'(p1 * f * inverse p1, M1, M1), Degree => first degrees source f + degree f);
-	summands(M1, opts),
-	summands(M2, opts))
+	directSummands(M1, opts),
+	directSummands(M2, opts))
     ))
 
 -- TODO: if ExtendGroundField is given, change variety
-summands CoherentSheaf := List => opts -> F -> apply(summands(module F, opts), N -> sheaf(-*variety F,*- N))
---summands Matrix  := List => opts -> f -> () -- TODO: should be functorial
---summands Complex := List => opts -> C -> () -- TODO: should be functorial
+directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module F, opts), N -> sheaf(-*variety F,*- N))
+--directSummands Matrix  := List => opts -> f -> () -- TODO: should be functorial
+--directSummands Complex := List => opts -> C -> () -- TODO: should be functorial
+
+-- TODO: export and document
+-- given sheaves L and M0, tests whether L is a summand of M0
+testSplitting = (L, M0)->(
+    B := smartBasis(0, module sheafHom(L, M0));
+    b := rank source B;
+    C := smartBasis(0, module sheafHom(M0, L));
+    c := rank source C;
+    isSplitting := (i,j) -> reduceScalar(homomorphism C_{j} * homomorphism B_{i}) == id_(module L);
+    l := if (P := position'(0..b-1, 0..c-1, isSplitting)) === null then return else first P;
+    sheaf coker homomorphism B_{l}
+    )
 
 isDefinitelyIndecomposable = method()
 isDefinitelyIndecomposable Module := M -> M.cache.?Indecomposable
@@ -249,16 +283,16 @@ Node
 doc ///
 Node
   Key
-    summands
+    directSummands
   Headline
-    summands of a module or coherent sheaf
+    direct summands of a module or coherent sheaf
   Usage
     summands M
   Inputs
     M:{Module,CoherentSheaf}
   Outputs
     :List
-      containing modules or coherent sheaves which are summands of $M$
+      containing modules or coherent sheaves which are direct summands of $M$
   Description
     Text
       This function attempts to find the indecomposable summands of a module or coherent sheaf $M$.
@@ -268,7 +302,7 @@ Node
       L = summands M
       assert isIsomorphic(M, directSum L)
   SeeAlso
-    findIdem
+    findIdempotent
 ///
 
 -- Template:
@@ -298,7 +332,7 @@ Node
 -* Test section *-
 -----------------------------------------------------------------------------
 
-TEST /// -* [insert short title for this test] *-
+TEST /// -- basic test
   S = QQ[x,y]
   M = coker matrix{{1,0},{1,y}}
   A = summands M
@@ -307,12 +341,47 @@ TEST /// -* [insert short title for this test] *-
   assert same({prune M}, A, B, prune \ C)
 ///
 
-TEST /// -- Direct Summands of a ring
-  S = kk[x,y,z]
-  R = kk[x,y,z,w]/(x^3+y^3+z^3+w^3)
+TEST /// -- direct summands of a free module
+  R = ZZ/2[x_0..x_5]
+  M = R^{100:-2,100:0,100:2}
+  A = summands M;
+  B = summands(M, ExtendGroundField => 2);
+  C = summands(M, ExtendGroundField => 4);
+  D = summands(M, ExtendGroundField => ZZ/101);
+  E = summands(M, ExtendGroundField => GF(2,2));
+  assert same(M, directSum A)
+  assert same(A, B, C, D, E)
+///
+
+TEST /// -- direct summands of a multigraded free module
+  R = QQ[x,y,z] ** QQ[a,b,c]
+  M = R^{{0,0},{0,1},{1,0},{-1,0},{0,-1},{1,-1},{-1,1}}
+  assert same(M, directSum summands M)
+  --assert first isIsomorphic(directSum elapsedTime summands M, M)
+///
+
+TEST /// -- direct summands of a ring
+  S = ZZ/3[x,y,z]
+  R = ZZ/3[x,y,z,w]/(x^3+y^3+z^3+w^3)
   f = map(R, S)
   M = pushForward(f, module R)
   assert(M == S^{0,-1,-2})
+///
+
+TEST /// -- direct summands over field extensions
+  debug needsPackage "DirectSummands"
+  R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
+  X = Proj R;
+  M = module frobeniusPushforward(OO_X, 1);
+  -* is smartBasis useful? yes!
+  elapsedTime A = End M; -- ~0.65s
+  elapsedTime B = basis({0}, A); -- ~0.23s
+  elapsedTime B = smartBasis({0}, A); -- ~0.03s
+  *-
+  elapsedTime assert({1, 2, 2, 2} == rank \ summands M) -- 2.28s
+  elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF 7)) -- 2.87s -> 2.05
+  elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF(7, 3))) -- 3.77s -> 2.6
+  elapsedTime assert(toList(7:1)  == rank \ summands(M, ExtendGroundField => GF(7, 2))) -- 2.18s -> 0.47
 ///
 
 end--
@@ -334,56 +403,24 @@ end--
 restart
 needsPackage "DirectSummands"
 
--- basic free module test
-R = ZZ/2[x_0..x_5]
-M = R^{2:-2,2:0,2:2}
-debugLevel=1
-elapsedTime summands M
-elapsedTime summands(M, ExtendGroundField => 2)
-elapsedTime summands(M, ExtendGroundField => 4)
-
-summands(M, ExtendGroundField => ZZ/101)
-summands(M, ExtendGroundField => GF(2,2))
-
--- basic multigraded test
-R = kk[x,y,z] ** kk[a,b,c]
-M = R^{{0,0},{0,1},{1,0},{-1,0},{0,-1},{1,-1},{-1,1}}
-assert isIsomorphic(directSum elapsedTime summands M, M)
-
+-- TODO: turn into documentation
 -- presentation of the Horrocks-Mumford bundle
 restart
 needsPackage "DirectSummands"
 needsPackage "BGG"
 S = ZZ/32003[x_0..x_4];
 E = ZZ/32003[e_0..e_4,SkewCommutative=>true];
-alphad = matrix{{e_4*e_1, e_2*e_3},{e_0*e_2, e_3*e_4},
-                {e_1*e_3, e_4*e_0},{e_2*e_4, e_0*e_1},
-                {e_3*e_0, e_1*e_2}};
-alphad=map(E^5,E^{-2,-2},alphad)
-alpha=syz alphad
-alphad=beilinson(alphad,S);
-alpha=beilinson(alpha,S);
-
-M = FHM = prune homology(alphad,alpha);
+alphad = map(E^5, E^{-2,-2}, transpose matrix{
+	{ e_1*e_4, -e_0*e_2, -e_1*e_3, -e_2*e_4,  e_0*e_3},
+	{-e_2*e_3, -e_3*e_4,  e_0*e_4, -e_0*e_1, -e_1*e_2}})
+alpha = syz alphad
+alphad = beilinson(alphad, S);
+alpha = beilinson(alpha, S);
+FHM = prune homology(alphad, alpha);
 assert(rank FHM == 2)
-elapsedTime assert(summands FHM == {FHM}) -- ~30s for End(FHM), ~110s for basis; ~35s in ZZ/2; now down to ~11
+elapsedTime assert(summands FHM == {FHM}) -- ~30s for End(FHM), ~110s for basis; ~35s in ZZ/2; now down to ~1s
 
--- is smartBasis useful? yes!
-restart
-needsPackage "DirectSummands"
-R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
-X = Proj R;
-M = frobeniusPushforward(OO_X,1);
-A = End M;
--- 0.39809 seconds elapsed
-elapsedTime basis({3}, A);
--- 0.171702 seconds elapsed
-elapsedTime smartBasis({3}, A);
 
-assert({1, 2, 2, 2} == rank \ summands M)
-assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF 7))
-assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF(7, 3)))
-assert(toList(7:1) == rank \ summands(M, ExtendGroundField => GF(7, 2)))
 
 restart
 needsPackage "DirectSummands"
