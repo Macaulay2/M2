@@ -3,7 +3,7 @@
 generalEndomorphism = method()
 generalEndomorphism Module := M -> (
     R := ring M;
-    EndM := Hom(M, M, degree 1_R);
+    EndM := Hom(M, M, 0);
     --EndM := End(M);
     B := smartBasis(0, EndM);
     --r := rank source B;

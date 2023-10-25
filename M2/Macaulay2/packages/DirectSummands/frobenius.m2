@@ -93,8 +93,8 @@ frobeniusPullback(ZZ, CoherentSheaf) := (e, F) -> sheaf frobeniusPullback(e, mod
 
 end--
 restart
-needs "frobenius.m2"
-needs "splitting.m2"
+needsPackage "DirectSummands"
+needsPackage "NormalToricVarieties"
 
 -- Two cubics on P^2_(ZZ/2)
 X = toricProjectiveSpace(2, CoefficientRing => ZZ/2)

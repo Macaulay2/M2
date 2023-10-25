@@ -29,9 +29,15 @@ newPackage(
 
 export {
     "directSummands",
+    "findIdempotent",
+    --
     "Indecomposable",
     "ExtendGroundField",
-    "findIdempotent",
+    --
+    "frobeniusMap",
+    "frobeniusRing",
+    "frobeniusPullback",
+    "frobeniusPushforward",
     -- aliases
     "summands" => "directSummands",
     "findIdem" => "findIdempotent",
@@ -95,6 +101,7 @@ changeBaseField = (L, M) -> (
 	N -> coker sub(presentation N, R)))
 
 nonzero = x -> select(x, i -> i != 0)
+nonnull = x -> select(x, i -> i =!= null)
 
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
@@ -238,7 +245,7 @@ diagonalize = M -> (
 --     H.cache.formation = FunctionApplication { Hom, (M, N) };
 --     Y#(Hom, M, N) = H) -- a hack: we really want to type "Hom(M, N) = ..."
 -- finds submodule of Hom containing at least the homomorphisms of degree e
-Hom(Module, Module, ZZ)   := Module => (M, N, e) -> Hom(M, N, {e})
+Hom(Module, Module, ZZ)   := Module => (M, N, e) -> Hom(M, N, if e == 0 then degree 1_(ring M) else {e})
 Hom(Module, Module, List) := Module => (M, N, e) -> (
     Y := youngest(M.cache.cache, N.cache.cache);
     if Y#?(Hom, M, N, e) then return Y#(Hom, M, N, e);
@@ -255,6 +262,11 @@ Hom(Module, Module, List) := Module => (M, N, e) -> (
     HMN.cache.formation = FunctionApplication { Hom, (M, N, e) };
     HMN)
 
+sameVariety := Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
+
+-- TODO: confirm this; also: can sheafHom be improved?
+Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
+    sameVariety(F, G); HH^0 sheaf(variety F, Hom(module F, module G, 0)))
 
 -----------------------------------------------------------------------------
 -* Documentation section *-
