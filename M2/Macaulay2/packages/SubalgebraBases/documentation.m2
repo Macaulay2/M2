@@ -1391,7 +1391,10 @@ doc ///
    Description
      Text
         This is a computation object for sagbi bases.
-        It stores a partial sagbi computation for picking up a computation where it left off.
+	It stores a partial sagbi computation for picking up a computation where it left off.
+	For many uses, it is superior to use @ ofClass Subring@, as the user experience
+	is more streamlined.
+	
         To create @ ofClass SAGBIBasis @, use the function @TO "sagbiBasis"@.
         The @TT "SAGBIBasis" @ type is the main output type of the function @TO "sagbi"@.
 
