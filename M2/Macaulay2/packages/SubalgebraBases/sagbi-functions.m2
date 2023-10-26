@@ -25,11 +25,11 @@ forceSB SAGBIBasis := {
     -- When should the sagbiGenerators be replaced with the subring generators:
     -- 1. UseSubringGens => true
     -- 2. there are no sagbiGenerators
-    if opts.UseSubringGens or (zero sagbiComputation#SAGBIdata#"sagbiGenerators") then (
+    if opts.UseSubringGens or zero sagbiComputation#SAGBIdata#"sagbiGenerators" then (
         sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing");
         );
     if opts#AutoSubduce then (
-        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(autosubduceSagbi sagbiComputation, sagbiComputation#SAGBIrings#"liftedRing");
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(autosubduce(sagbiComputation, UseSubringGens => true), sagbiComputation#SAGBIrings#"liftedRing");
         );
     updateComputation(sagbiComputation);
     sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
@@ -62,7 +62,7 @@ forceSB Subring := {
 -- isSAGBI
 ----------
 
--- isSAGBIinternal is a subprocess of isSAGBI for a SAGBIBasis a object SB
+-- isSAGBIinternal is a subprocess of isSAGBI for a SAGBIBasis SB
 -- it returns a modified SAGBIBasis object with the SB#SAGBIdata#"sagbiStatus" set correctly
 --
 -- UseSubringGens => true    : initialise the SAGBIBasis with the subring generators 
@@ -94,7 +94,7 @@ isSAGBIinternal SAGBIBasis := opts -> SB -> (
     sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal");
     k := rawMonoidNumberOfBlocks(raw monoid (sagbiComputation#SAGBIrings.tensorRing)) - 2;
     zeroGens := selectInSubring(k, gens sagbiGB);
-    SPairs := sagbiComputation#SAGBImaps#"fullSubstitution"(zeroGens) % sagbiComputation#SAGBIideals#"I";
+    SPairs := sagbiComputation#SAGBImaps#"fullSubstitution" zeroGens % sagbiComputation#SAGBIideals#"I";
     if not opts.UseSubringGens then (
         -- add the subring generators to the SPairs to check that sagbiGenerators really generate the subring
         -- add only the generators of degree above the computation degree limit 
@@ -106,17 +106,14 @@ isSAGBIinternal SAGBIBasis := opts -> SB -> (
     -- Reduce the SPairs and subring generators
     reducedSPairs := compSubduction(sagbiComputation, SPairs);
     -- if all the reduced SPairs are zero then we have a sagbiBasis
-    if zero(reducedSPairs) then (
-        sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
-        )
-    else (
-        sagbiComputation#SAGBIdata#"sagbiStatus" = 2;
-        );
+    if zero reducedSPairs then sagbiComputation#SAGBIdata#"sagbiStatus" = 1
+    else sagbiComputation#SAGBIdata#"sagbiStatus" = 2;
+    
     SB' := sagbiBasis sagbiComputation; -- note that this operation caches SB' in the subring
     -- When to restore the subring cache back to the previous SAGBIBasis:
     -- 1. UseSubringGens => true and the generators are not a sagbi basis
     -- 2. ModifySAGBIBasis => false 
-    if (opts.UseSubringGens and sagbiComputation#SAGBIdata#"sagbiStatus" == 2) or (not opts.ModifySAGBIBasis) then ( 
+    if (opts.UseSubringGens and sagbiComputation#SAGBIdata#"sagbiStatus" == 2) or not opts.ModifySAGBIBasis then ( 
         SB#SAGBIdata#subring.cache#SAGBIBasis = SB;
         );
     SB'
@@ -162,7 +159,7 @@ isSAGBI SAGBIBasis := {
     else (
         SB' := (
             if not opts.Compute then SB
-            else if (not opts.Recompute) and SB#SAGBIdata#"sagbiStatus" > 0 then SB
+            else if not opts.Recompute and SB#SAGBIdata#"sagbiStatus" > 0 then SB
             else isSAGBIinternal(SB, opts)
             );
         if SB'#SAGBIdata#"sagbiStatus" == 0 then null
@@ -222,20 +219,19 @@ isSAGBI Subring := {
             -- 3. the generators of the subring (of a higher degree than the computation limit) subduct to zero against the sagbiGenerators
             -- 4. the leading terms of the sagbi generators are 'the same' as the leading terms of the subring, i.e.,
             --    they generate the same algebra
-            SB' := if (hasSAGBIBasis and (not zero SB#SAGBIdata#"sagbiGenerators") and (
+            SB' := if (hasSAGBIBasis and not zero SB#SAGBIdata#"sagbiGenerators" and (
                     highDegreeGens := matrix {for gen in first entries gens S list if max degree gen > SB#SAGBIdata#"limit" then gen else continue};
-                    (zero highDegreeGens) or (zero (highDegreeGens % SB))
+                    zero highDegreeGens or zero (highDegreeGens % SB)
                     )
                 and (
                     -- the initial algebra lies in the quotient by the initial ideal
-                    LTAmbient := if isQuotientRing ambient S then (
-                        Q := ambient S;
-                        R := ambient Q;
-                        I := ideal Q;
-                        R / ideal leadTerm I
-                        ) else (
-                        ambient S
-                        );
+                    LTAmbient := (if isQuotientRing ambient S then (
+                            Q := ambient S;
+                            R := ambient Q;
+                            I := ideal Q;
+                            R / ideal leadTerm I) 
+		       	else ambient S);
+		    
                     liftMap := map(LTAmbient, ambient S, gens LTAmbient);
                     LTgensS := liftMap leadTerm gens S;
                     LTgensSB := liftMap leadTerm gens SB;
@@ -261,7 +257,7 @@ isSAGBI Subring := {
 	    -- remove the SAGBIBasis from the cache if both:
 	    -- 1. the subring generators are not a sagbi basis (not useful for subduction etc.)
 	    -- 2. the subring had no SAGBIBasis to start with  (user may want to start computations with different options)
-            if (SB'#SAGBIdata#"sagbiStatus" == 2) and (not hasSAGBIBasis) then remove(S.cache, SAGBIBasis);
+            if SB'#SAGBIdata#"sagbiStatus" == 2 and not hasSAGBIBasis then remove(S.cache, SAGBIBasis);
             );
         result
         )
@@ -319,8 +315,8 @@ groebnerMembershipTest(RingElement, Subring) := Boolean => (f, S) -> (
     fLifedToR := lift(f, R);
     subringGensLiftedToR := lift(subringGens, R);
     -- construct the tensor ring
-    tensorRingNumVars := (numgens R) + (numcols subringGens);
-    tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens R)}]);    
+    tensorRingNumVars := numgens R + numcols subringGens;
+    tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => {Eliminate numgens R}]);    
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     fInTensorRing := liftToTensorRing fLifedToR;
     subringGensInTensorRing := liftToTensorRing subringGensLiftedToR;
@@ -344,9 +340,9 @@ groebnerSubductionQuotient(RingElement, Subring) := RingElement => (f, S) -> (
     fLifedToR := lift(f, R);
     subringGensLiftedToR := lift(subringGens, R);
     -- construct the tensor ring
-    tensorRingNumVars := (numgens R) + (numcols subringGens);
+    tensorRingNumVars := numgens R + numcols subringGens;
     oldOrder := (options R).MonomialOrder;
-    newOrder := prepend(Eliminate(numgens R), oldOrder);
+    newOrder := prepend(Eliminate numgens R, oldOrder);
     tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => newOrder]);
     liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
     fInTensorRing := liftToTensorRing fLifedToR;
@@ -392,7 +388,7 @@ RingElement % SAGBIBasis := RingElement => (f, SB) -> (
 
 Matrix % Subring := Matrix => (M, S) -> (
     assert(ring M === ambient S);
-    if (S#cache#?SAGBIBasis) and (S#cache#SAGBIBasis#SAGBIdata#"sagbiStatus" == 1) then (
+    if S#cache#?SAGBIBasis and S#cache#SAGBIBasis#SAGBIdata#"sagbiStatus" == 1 then (
         -- S has a complete sagbi basis so use subduction
         SB := S#cache#SAGBIBasis;
         subduction(SB, M)
@@ -409,7 +405,7 @@ Matrix % Subring := Matrix => (M, S) -> (
         -- construct the tensor ring
         tensorRingNumVars := (numgens R) + (numcols subringGens);
         oldOrder := (options R).MonomialOrder;
-        newOrder := prepend(Eliminate(numgens R), oldOrder);
+        newOrder := prepend(Eliminate numgens R, oldOrder);
         tensorRing := FF(monoid[Variables => tensorRingNumVars, MonomialOrder => newOrder]);
         liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
         MInTensorRing := liftToTensorRing MLiftedToR;
@@ -418,7 +414,7 @@ Matrix % Subring := Matrix => (M, S) -> (
         I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
         MNormalForm := MInTensorRing % (I + JInTensorRing);
         projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | subringGens);
-        M - (projectToQ MNormalForm)
+        M - projectToQ MNormalForm
         )
     );
 
@@ -439,7 +435,7 @@ IntersectedSubring = new Type of Subring
 -- originalSubringGens 
 -- returns the generators of the original subrings used in the intersection computation
 originalSubringGens = method()
-originalSubringGens(IntersectedSubring) := S -> (
+originalSubringGens IntersectedSubring := S -> (
     gens \ S#"originalSubrings"
     )
 
@@ -449,7 +445,7 @@ originalSubringGens(IntersectedSubring) := S -> (
 -- note that if the function returns false, then the generators of the intersectedSubring may generate the intersection 
 --  but it is not guaranteed
 isFullIntersection = method()
-isFullIntersection(IntersectedSubring) := Boolean => S -> (
+isFullIntersection IntersectedSubring := Boolean => S -> (
     S#"compositeSubring".cache#SAGBIBasis.SAGBIdata#"sagbiStatus" == 1
     )
 
@@ -479,7 +475,9 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
 --        print "--          Check the result with 'isFullIntersection'";
 --        subringIntersectionLimitWarning = true;
 --        );
-    if opts.CheckFullIntersection and ((class S1 === IntersectedSubring and not isFullIntersection S1) or (class S2 === IntersectedSubring and  not isFullIntersection S1)) then (
+    if opts.CheckFullIntersection and (
+	(class S1 === IntersectedSubring and not isFullIntersection S1) or 
+	(class S2 === IntersectedSubring and  not isFullIntersection S1)) then (
         print "-- Warning! The input contains an IntersectedSubring whose generators may not generate the entire subring";
         );
 
@@ -487,8 +485,8 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- check that both subring are subrings of the same ambient ring
     Q := ambient S1;
     assert(Q === ambient S2);
-    I := ideal(Q);
-    R := ambient(Q);
+    I := ideal Q;
+    R := ambient Q;
     ------------
     -- For notation:
     -- R = K[p_1 .. p_n]
@@ -509,7 +507,7 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     TAmb := (coefficientRing Q) M;
     t := (vars TAmb)_(0,0);
     RtoTAmb := map(TAmb, R, (vars TAmb)_{1 .. numgens Q});
-    J := (RtoTAmb I) + ideal(t^2 - t); -- I + (t^2 - t)
+    J := RtoTAmb I + ideal(t^2 - t); -- I + (t^2 - t)
     T := TAmb / J; -- tensor product of Q and K[t]/(t^2-t)
     QtoT := map(T, Q, (vars T)_{1 .. numgens Q});
     TtoQ := map(Q, T, matrix{{0_Q}} | vars Q);

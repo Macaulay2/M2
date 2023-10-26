@@ -19,18 +19,18 @@ subalgebraBasis = method(
         }
     )
 
-subalgebraBasis(Matrix) := opts -> M -> (
+subalgebraBasis Matrix := opts -> M -> (
     S := subring M;
     SB := sagbi(opts, S);
     gens SB
     )
 
-subalgebraBasis(List) := opts -> L -> (
+subalgebraBasis List := opts -> L -> (
     SB := sagbi(opts, L);
     gens SB
     )
 
-subalgebraBasis(Subring) := opts -> S -> (
+subalgebraBasis Subring := opts -> S -> (
     SB := sagbi(opts, S);
     gens SB
     )
@@ -76,17 +76,17 @@ sagbi = method(
         }
     )
 
-sagbi(Matrix) := opts -> M -> (
+sagbi Matrix := opts -> M -> (
     B := sagbi(opts, subring M);
     M.cache#Subring = B#SAGBIdata#subring;
     B
     )
 
-sagbi(List) := opts -> L -> (
+sagbi List := opts -> L -> (
     sagbi(opts, subring L)
     )
 
-sagbi(Subring) := opts -> S -> (
+sagbi Subring := opts -> S -> (
     if opts.Recompute then ( -- forget about the previous computation object
         remove(S.cache, SAGBIBasis);
         );
@@ -99,7 +99,7 @@ sagbi(Subring) := opts -> S -> (
 
 -- TODO: throw an error if the ambient ring has a multigrading
 
-sagbi(SAGBIBasis) := opts -> SB -> (
+sagbi SAGBIBasis := opts -> SB -> (
     local S;
     SBSubring := subring SB;
     if degreeLength ambient SBSubring > 1 then error "sagbi is not implemented for rings with multi-degrees";
@@ -109,19 +109,17 @@ sagbi(SAGBIBasis) := opts -> SB -> (
         remove(SBSubring.cache, SAGBIBasis);
         S = sagbiBasis(SBSubring, opts);
         )
-    else (
-        S = SB;
-        );
+    else S = SB;
 
     if (S#SAGBIdata#"limit" > opts.Limit) or S#SAGBIdata#"sagbiStatus" == 1 then return S;
     sagbiComputation := initializeSagbiComputation(S,opts);
-    processFirstStep(sagbiComputation);
+    processFirstStep sagbiComputation;
 
     local SPairs;
 
-    while (sagbiComputation#SAGBIdata#degree <= opts.Limit) and
-          (not sagbiComputation#SAGBIdata#"sagbiStatus" == 1) do (
-        SPairs = collectSPairs(sagbiComputation);
+    while sagbiComputation#SAGBIdata#degree <= opts.Limit and
+          not sagbiComputation#SAGBIdata#"sagbiStatus" == 1 do (
+        SPairs = collectSPairs sagbiComputation;
         SPairs = compSubduction(sagbiComputation, SPairs);
         -- update and process the new sagbi generators
         -- update pending returns true if new sagbiGenerators were added and false otherwise
@@ -129,15 +127,15 @@ sagbi(SAGBIBasis) := opts -> SB -> (
         --    sets the sagbiComputation#SAGBIdata#degree to the lowest degree of a new generator
         -- if no new sagbiGenerators were added then check for termination conditions
         if not updatePending(sagbiComputation, SPairs) then (
-            checkTermination(sagbiComputation);
+            checkTermination sagbiComputation;
             );
 
         -- move on to the next degree
         sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;
 
         if sagbiComputation#SAGBIoptions#PrintLevel > 2 then(
-            print("-- [main] sagbiGenerators are currently: ");
-            print(transpose sagbiComputation#SAGBIdata#"sagbiGenerators");
+            print "-- [main] sagbiGenerators are currently:";
+            print transpose sagbiComputation#SAGBIdata#"sagbiGenerators";
             );
     );
     sagbiBasis sagbiComputation
@@ -173,7 +171,7 @@ subduction(SAGBIBasis, RingElement) := RingElement => opts -> (S, m) -> (
 subduction(Matrix, Matrix) := Matrix => opts -> (F, M) -> (
     S := initializeSagbiComputation(sagbiBasis(subring F, opts), opts);
     S#SAGBIdata#"sagbiGenerators" = F;
-    updateComputation(S);
+    updateComputation S;
     compSubduction(opts, S, M)
     )
 

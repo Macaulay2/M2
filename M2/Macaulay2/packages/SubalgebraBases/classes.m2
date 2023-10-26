@@ -158,7 +158,7 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiInclusion" => sagbiInclusion,
         "substitution" => substitution,
         "fullSubstitution" => projectionLifted * substitution, 
-        "quotient" => map(rings.quotientRing,liftedRing,vars rings.quotientRing)
+        "quotient" => map(rings.quotientRing,liftedRing, vars rings.quotientRing)
     };
     
     -- Ideals:
@@ -310,10 +310,10 @@ sagbiBasis SAGBIComputation := opts -> H -> (
     ideals := new HashTable from H#SAGBIideals;
     data := new HashTable from H#SAGBIdata;
     -- pending := applyValues(H#SAGBIpending, l -> new List from l); -- proposed change to the following line  
-    pending := new HashTable from apply(keys H#SAGBIpending,i-> i => new List from (H#SAGBIpending#i));
+    pending := new HashTable from apply(keys H#SAGBIpending,i-> i => new List from H#SAGBIpending#i);
     optionTable := new HashTable from H#SAGBIoptions;
     newSAGBIBasis := new SAGBIBasis from {
-        SAGBIrings => rings, -- rings -> SAGBIRings + protect
+        SAGBIrings => rings,
         SAGBImaps => maps,
         SAGBIideals => ideals,
         SAGBIdata => data,

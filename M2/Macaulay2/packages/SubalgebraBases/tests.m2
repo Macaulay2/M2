@@ -39,7 +39,7 @@
 ------------------------------
 
 ---------------------------------------------
--- Previously located bween tests 7 and 8
+-- Previously located between tests 7 and 8
 ---------------------------------------------
 -- Commented out: takes too long right now --
 -- with Autosubduce ~30 seconds
@@ -108,7 +108,7 @@ S = QQ[e1, e2, e3, y];
 f = map(R, S, {x1 + x2 + x3, x1*x2 + x1*x3 + x2*x3, x1*x2*x3,
 (x1 - x2)*(x1 - x3)*(x2 - x3)});
 A = subring matrix f;
-assert(not (isSAGBI A))
+assert(not isSAGBI A)
 ///
 ---------------------
 
@@ -430,7 +430,7 @@ ans = matrix {{x_4, t*x_4+x_3, t^2*x_4+2*t*x_3+2*x_2, x_2*x_4+50*x_3^2, t^3*x_4+
       t^3*x_1*x_4^2-t^3*x_2*x_3*x_4+34*t^3*x_3^3+3*t^2*x_1*x_3*x_4-4*t^2*x_2^2*x_4+t^2*x_2*x_3^2-6*t*x_1*x_2*x_4+6*t*x_1*x_3^2-2*t*x_2^2*x_3-6*x_1^2*x_4+6*x_1*x_2*x_3+31*x_2^3,
       x_1^2*x_4^2-2*x_1*x_2*x_3*x_4-33*x_1*x_3^3-44*x_2^3*x_4-34*x_2^2*x_3^2}}
 assert(
-    time (subalgebraBasis(F,Limit=>30))
+    time subalgebraBasis(F,Limit=>30)
     ==
     ans)
 ///
