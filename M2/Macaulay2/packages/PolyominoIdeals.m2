@@ -1,7 +1,7 @@
 newPackage(
 	"PolyominoIdeals",
-	Version => "1.0",
-	Date => "December 22, 2022",
+	Version => "1.1",
+	Date => "October 18, 2023",
 	
 	Authors => {
 		{
@@ -19,7 +19,7 @@ newPackage(
 			}
 	},
 	Headline => "binomial ideals of collections of cells",
-	Keywords => {"Binomial Ideals", "Inner 2-minor Ideals", "Polyomino Ideals"},
+	Keywords => {"Combinatorial Commutative Algebra"},
 	DebuggingMode => false,
 	Reload => true
 )
