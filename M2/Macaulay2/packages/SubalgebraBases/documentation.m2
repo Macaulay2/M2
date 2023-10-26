@@ -332,6 +332,7 @@ doc ///
 doc ///
    Key
      PrintLevel
+     [(intersect, Subring, Subring), PrintLevel]
    Headline
      Levels of information displayed during Sagbi algorithm
    Description
@@ -730,6 +731,7 @@ doc ///
    Key
      Compute
      [(isSAGBI,SAGBIBasis),Compute]
+     [(intersect, Subring, Subring), Compute]
    Headline
      Flag for performing computations while checking the completeness of a sagbi basis
    Description
@@ -941,12 +943,19 @@ doc ///
 ///
 doc ///
    Key
+     CheckFullIntersection
+     [(intersect, Subring, Subring), CheckFullIntersection]
+   Headline
+     Flag for deciding if isFullIntersection is called
+   Description
+     Text
+       Flag which determines if @TO "isFullIntersection"@ is run on the output @TO "IntersectedSubring"@.
+///
+
+doc ///
+   Key
      (intersect, Subring, Subring)
      [(intersect, Subring, Subring), Limit]
-     [(intersect, Subring, Subring), PrintLevel]
-     [(intersect, Subring, Subring), CheckFullIntersection]
-     [(intersect, Subring, Subring), Compute]
-     CheckFullIntersection
    Headline
      Intersection of subrings
    Usage
@@ -1948,36 +1957,6 @@ doc ///
       (isSAGBI)
     References
       @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@
-///
-
-doc ///
-   Key
-     "Subduction strategies"
-     [(intersect, Subring, Subring), Strategy]
-   Headline
-     Update procedure for the Sagbi algorithm
-   Description
-     Text
-       At the beginning of each loop inside of @TO "sagbi"@, the main @TO "SAGBIBasis"@ computation object is updated.
-       There are two types of update procedure; they are selected by setting Strategy to either "DegreeByDegree" or "Incremental".
-       The "DegreeByDegree" strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
-       The "Incremental" strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new sagbi generators.
-       The "DegreeByDegree" strategy is better when many new generators are added during each loop of the Sagbi algorithm.
-       The "Incremental" strategy is better when there is little change to the number of sagbi generators.
-       For many examples, it is observed that many new generators are added at the beginning of sagbi basis computations.
-       Then towards the end of the computation, there are very few new generators that are added.
-       By setting Strategy to "Master" (default), the "DegreeByDegree" strategy is used at the beginning and the strategy switches to "Incremental" part of the way through the algorithm.
-   SeeAlso
-     sagbi
-     AutoSubduce
-     ReduceNewGenerators
-     StorePending
-     Strategy
-     SubductionMethod
-     AutoSubduceOnPartialCompletion
-     PrintLevel
-     Recompute
-     RenewOptions
 ///
 
 doc ///
