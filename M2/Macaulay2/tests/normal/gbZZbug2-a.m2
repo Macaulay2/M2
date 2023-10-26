@@ -15,7 +15,7 @@ f0=ff*f1*f2*f3;
 
 I = ideal(4, f1^3, f2^3, f3^3)
 gens gb I;
-assert( f0 % I == 0 )
+assert isMember(f0, I)
 
 end
 -- is there a test here?
