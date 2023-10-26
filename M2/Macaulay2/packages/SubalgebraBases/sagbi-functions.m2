@@ -29,9 +29,9 @@ forceSB SAGBIBasis := {
         sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing");
         );
     if opts#AutoSubduce then (
-        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(autosubduce(sagbiComputation, UseSubringGens => true), sagbiComputation#SAGBIrings#"liftedRing");
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(autosubduce(sagbiComputation, UseSubringGens => opts.UseSubringGens), sagbiComputation#SAGBIrings#"liftedRing");
         );
-    updateComputation(sagbiComputation);
+    updateComputation sagbiComputation;
     sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
     newSB := sagbiBasis sagbiComputation;
     S := newSB#SAGBIdata#subring;
