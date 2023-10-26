@@ -346,37 +346,52 @@ flattenMorphism = f -> (
     -- TODO: why doesn't lift(f, ring g) do this automatically?
     map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
 
-degreeList = (M) -> (
+-- TODO: this is called twice
+-- TODO: implement for multigraded ring
+degreeList := M -> (
+    -- gives the exponents of the numerator of reduced Hilbert series of M
      if dim M > 0 then error "expected module of finite length";
      H := poincare M;
      T := (ring H)_0;
      H = H // (1-T)^(numgens ring M);
      exponents H / first)
 
-twistedGlobalSectionsModule = (G,bound) -> (
-     -- compute global sections
-     if degreeLength ring G =!= 1 then error "expected degree length 1";
-     M := module G;
-     A := ring G;
-     M = cokernel presentation M;
-     S := saturate image map(M,A^0,0);
-     if S != 0 then M = M/S;
-     F := presentation A;
-     R := ring F;
-     N := cokernel lift(presentation M,R) ** cokernel F;
-     r := numgens R;
-     wR := R^{-r};
-     if bound < infinity and pdim N >= r-1 then (
-	  E1 := Ext^(r-1)(N,wR);
-	  p := (
-	       if dim E1 <= 0
-	       then max degreeList E1 - min degreeList E1 + 1
-	       else 1 - first min degrees E1 - bound
-	       );
-	  if p === infinity then error "global sections module not finitely generated, can't compute it all";
-	  if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
-	  );
-     minimalPresentation M)
+-- quotienting by local H_m^0(M) to "saturate" M
+-- TODO: use irrelevant ideal here
+killH0 := M -> if (H0 := saturate(0*M)) == 0 then M else M / H0
+
+-- TODO: add tests:
+-- - global sections of sheafHom are Hom
+-- TODO: implement for multigraded ring
+-- TODO: this can change F.module to the result!
+twistedGlobalSectionsModule = (F, bound) -> (
+    -- compute global sections module Gamma_(d >= bound)(X, F(d))
+    A := ring F;
+    if degreeLength A =!= 1 then error "expected degree length 1";
+    -- quotient by H_m^0(M)
+    M := killH0 cokernel presentation module F;
+    -- pushforward to the projective space
+    -- TODO: both n and w need to be adjusted for the multigraded case
+    N := flattenModule M;
+    S := ring N;
+    n := dim S-1;
+    w := S^{-n-1}; -- canonical sheaf on P^n
+    -- Note: bound=infinity signals that H_m^1(M) = 0, ie. M is saturated
+    -- in other words, don't search for global sections not already in M
+    -- TODO: what would pdim N < n, hence E1 = 0, imply?
+    if bound < infinity and pdim N >= n then (
+	E1 := Ext^n(N, w); -- the top Ext
+	p := (
+	    if dim E1 <= 0 -- 0-module or 0-dim module
+	    then 1 + max degreeList E1 - min degreeList E1
+	    else 1 - first min degrees E1 - bound);
+	if p === infinity then error "the global sections module is not finitely generated";
+	-- does this compute a limit?
+	-- compare with the limit from minimalPresentation hook
+	-- and emsbound in NormalToricVarieties/Sheaves.m2
+	if p > 0 then M = Hom(image matrix {apply(generators A, g -> g^p)}, M);
+	);
+    minimalPresentation M)
 
 -----------------------------------------------------------------------------
 -- cohomology
