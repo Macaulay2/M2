@@ -91,7 +91,7 @@ doc ///
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
        the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      SubductionMethod=>String
        the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
@@ -164,7 +164,7 @@ doc ///
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
        the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      SubductionMethod=>String
        the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
@@ -289,6 +289,7 @@ doc ///
 doc ///
    Key
      SubductionMethod
+     [(intersect, Subring, Subring), SubductionMethod]
    Headline
      Subduction method for the Sagbi algorithm
    Description
@@ -462,7 +463,7 @@ doc ///
        a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
      Strategy=>String
        the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      SubductionMethod=>String
        the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      Limit=>ZZ
@@ -601,7 +602,7 @@ doc ///
      Strategy=>String
        the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" 
-       for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      SubductionMethod=>String
        the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      PrintLevel=>ZZ
@@ -639,7 +640,7 @@ doc ///
        S' = subring {x+y+z,x*y+x*z+y*z, x*y*z};
        isSAGBI S'
      Text
-       The options @TT "Strategy"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
+       The options @TO "Subduction strategies"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
        only used when performing a sagbi computation.
    SeeAlso
      isSAGBI
@@ -651,7 +652,7 @@ doc ///
 doc ///
     Key
      (isSAGBI, SAGBIBasis)
-     [(isSAGBI,SAGBIBasis),Compute]
+     --[(isSAGBI,SAGBIBasis),Compute]
      [(isSAGBI,SAGBIBasis),Recompute]
      [(isSAGBI,SAGBIBasis),Strategy]
      [(isSAGBI,SAGBIBasis),SubductionMethod]
@@ -673,7 +674,7 @@ doc ///
      Strategy=>String
        the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" 
-       for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      SubductionMethod=>String
        the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
      PrintLevel=>ZZ
@@ -713,7 +714,7 @@ doc ///
        isSAGBI sagbi(S', Limit => 5)
        isSAGBI sagbi(S', Limit => 10)
      Text
-       The options @TT "Strategy"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
+       The options @TO "Subduction strategies"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
        only used when performing a sagbi computation.
    SeeAlso
      isSAGBI
@@ -728,6 +729,7 @@ doc ///
 doc ///
    Key
      Compute
+     [(isSAGBI,SAGBIBasis),Compute]
    Headline
      Flag for performing computations while checking the completeness of a sagbi basis
    Description
@@ -927,15 +929,23 @@ doc ///
 ///
 doc ///
    Key
+     SAGBILimitType
+     [(intersect, Subring, Subring), SAGBILimitType]
+   Headline
+     Flag for calculating degree limit in intersections
+   Description
+     Text
+        Either "Fixed" or "Function". Determines the stopping criterion for the sagbi computation.
+        If "Fixed" then the @TT "Limit"@ is used, otherwise if "Function" is selected then the
+        maximum degree of the input generators is used as the degree limit.
+///
+doc ///
+   Key
      (intersect, Subring, Subring)
-     [(intersect, Subring, Subring), Strategy]
-     [(intersect, Subring, Subring), SubductionMethod]
      [(intersect, Subring, Subring), Limit]
      [(intersect, Subring, Subring), PrintLevel]
-     [(intersect, Subring, Subring), SAGBILimitType]
      [(intersect, Subring, Subring), CheckFullIntersection]
      [(intersect, Subring, Subring), Compute]
-     SAGBILimitType
      CheckFullIntersection
    Headline
      Intersection of subrings
@@ -946,7 +956,7 @@ doc ///
      S2:Subring
      Strategy=>String
        the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      SubductionMethod=>String
        the method used for subduction.  @TO "SubductionMethod"@ can be either "Top" or "Engine".
      SAGBILimitType=>String
@@ -1755,7 +1765,7 @@ doc ///
      Strategy=>String
        the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree"
-       for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      UseSubringGens=>Boolean
        a flag indicating whether to use the generators of the subring.
        If @ TT "false"@ then the method uses the sagbi generators of the partial sagbi basis. (See: @TO "UseSubringGens"@)
@@ -1820,7 +1830,7 @@ doc ///
      Strategy=>String
        the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid that combines the other two; starting with "DegreeByDegree"
-       for low degrees and switching to "Incremental". (See: @TT "Strategy"@)
+       for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
      UseSubringGens=>Boolean
        a flag indicating whether to use the generators of the subring.
        If @ TT "false"@ then the method uses the sagbi generators of the partial sagbi basis. (See: @TO "UseSubringGens"@)
@@ -1937,11 +1947,10 @@ doc ///
       @HREF("https://arxiv.org/abs/2001.05417", "Polynomial invariants and SAGBI bases for multi-screws.")@
 ///
 
-end --
-
 doc ///
    Key
-     Strategy
+     "Subduction strategies"
+     [(intersect, Subring, Subring), Strategy]
    Headline
      Update procedure for the Sagbi algorithm
    Description
@@ -1967,3 +1976,36 @@ doc ///
      Recompute
      RenewOptions
 ///
+
+doc ///
+   Key
+     "Subduction strategies"
+     [(intersect, Subring, Subring), Strategy]
+   Headline
+     Update procedure for the Sagbi algorithm
+   Description
+     Text
+       At the beginning of each loop inside of @TO "sagbi"@, the main @TO "SAGBIBasis"@ computation object is updated.
+       There are two types of update procedure; they are selected by setting Strategy to either "DegreeByDegree" or "Incremental".
+       The "DegreeByDegree" strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
+       The "Incremental" strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new sagbi generators.
+       The "DegreeByDegree" strategy is better when many new generators are added during each loop of the Sagbi algorithm.
+       The "Incremental" strategy is better when there is little change to the number of sagbi generators.
+       For many examples, it is observed that many new generators are added at the beginning of sagbi basis computations.
+       Then towards the end of the computation, there are very few new generators that are added.
+       By setting Strategy to "Master" (default), the "DegreeByDegree" strategy is used at the beginning and the strategy switches to "Incremental" part of the way through the algorithm.
+   SeeAlso
+     sagbi
+     AutoSubduce
+     ReduceNewGenerators
+     StorePending
+     Strategy
+     SubductionMethod
+     AutoSubduceOnPartialCompletion
+     PrintLevel
+     Recompute
+     RenewOptions
+///
+
+
+end --
