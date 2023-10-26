@@ -331,6 +331,21 @@ toString   SumOfTwists := toString @@ expression
 -- helpers for sheaf cohomology
 -----------------------------------------------------------------------------
 
+-- TODO: should this also check that the variety is finite type over the field?
+checkVariety := (X, F) -> (
+    if not X === variety F     then error "expected coherent sheaf over the same variety";
+    if not isAffineRing ring X then error "expected a variety defined over a field";
+    )
+
+-- pushforward the module to PP^n via S/I <-- S
+flattenModule   = M -> cokernel flattenMorphism presentation M
+flattenMorphism = f -> (
+    g := presentation ring f;
+    S := ring g;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+
 degreeList = (M) -> (
      if dim M > 0 then error "expected module of finite length";
      H := poincare M;
@@ -338,7 +353,7 @@ degreeList = (M) -> (
      H = H // (1-T)^(numgens ring M);
      exponents H / first)
 
-globalSectionsModule = (G,bound) -> (
+twistedGlobalSectionsModule = (G,bound) -> (
      -- compute global sections
      if degreeLength ring G =!= 1 then error "expected degree length 1";
      M := module G;
@@ -363,29 +378,45 @@ globalSectionsModule = (G,bound) -> (
 	  );
      minimalPresentation M)
 
-cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
-     F := S#0;
-     R := ring F;
-     if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
-     b := first S#1;
-     if i == 0 then globalSectionsModule(F,b) else HH^(i+1)(module F,Degree => b))
+-----------------------------------------------------------------------------
+-- cohomology
+-----------------------------------------------------------------------------
+-- TODO: add hooks for X not finite type over k?
+-- TODO: improve caching until HH^0 F(>=0) is cached
 
-cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
-     R := ring F;
-     if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
-     k := coefficientRing R;
-     k^(
-	  if i === 0
-	  then rank source basis(0, HH^i F(>=0))
-	  else (
-	       p := presentation R;
-	       A := ring p;
-	       n := numgens A;
-	       M := cokernel lift(presentation module F,A) ** cokernel p;
-	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
-cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> cohomology(i,F,opts)
+-- HH^p(X, OO_X)
+cohomology(ZZ,          SheafOfRings) := Module => opts -> (p,    O) -> cohomology(p, variety O, O^1, opts)
+cohomology(ZZ, Variety, SheafOfRings) := Module => opts -> (p, X, O) -> cohomology(p,         X, O^1, opts)
 
-cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
+-- HH^p(X, F(>=b))
+cohomology(ZZ,                    SumOfTwists) := Module => opts -> (p,    S) -> cohomology(p, variety S, S, opts)
+cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) -> (
+    checkVariety(X, S);
+    (F, b) := (S#0, S#1#0);
+    if p == 0 then twistedGlobalSectionsModule(F, b) else HH^(p+1)(module F, Degree => b))
+
+-- HH^p(X, F)
+cohomology(ZZ,                    CoherentSheaf) := Module => opts -> (p,    F) -> cohomology(p, variety F, F, opts)
+cohomology(ZZ,     AffineVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
+    checkVariety(X, F);
+    if p == 0 then module F else (ring F)^0)
+cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
+    checkVariety(X, F);
+    -- TODO: only need basis(0, G) in the end, is this too much computation?
+    G := if p == 0 then twistedGlobalSectionsModule(F, 0) -- HH^0 F(>=0)
+    else (
+	-- pushforward F to PP^n
+	M := flattenModule module F;
+	S := ring M;
+	-- TODO: both n and w need to be adjusted for the multigraded case
+	n := dim S-1;
+	w := S^{-n-1};
+	-- using Serre duality for coherent sheaves on schemes with mild
+	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
+	-- TODO: check that X is proper (or at least finite type)
+	Ext^(n-p)(M, w));
+    k := coefficientRing ring F;
+    k^(rank source basis(0, G)))
 
 -----------------------------------------------------------------------------
 -- Module of twisted global sections Γ_*(F)
