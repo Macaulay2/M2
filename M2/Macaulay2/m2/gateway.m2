@@ -27,6 +27,16 @@ applyMethod'' = (F, X) -> (
     key := prepend(F, delete(Option, apply(X, class)));
     applyMethod'(key, toString F, X))
 
+-- TODO: combine for all functors
+applyMethodWithOpts' = (key, desc, X, opts) -> (
+    if (F := lookup key) =!= null then (F opts) X
+    else error("no method for ", desc, " applied to ", X))
+
+applyMethodWithOpts'' = (F, X, opts) -> (
+    -- TODO: write a variation of lookup to do this
+    key := prepend(F, apply(X, class));
+    applyMethodWithOpts'(key, toString F, X, opts))
+
 -----------------------------------------------------------------------------
 -- Functor and ScriptedFunctor type declarations
 -----------------------------------------------------------------------------
