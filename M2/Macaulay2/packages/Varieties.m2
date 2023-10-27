@@ -39,16 +39,10 @@ export {
 
 importFrom_Core {
     "getAttribute", "hasAttribute", "ReverseDictionary",
+    "applyMethod", "applyMethod''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "tryHooks", "cacheHooks",
     }
-
------------------------------------------------------------------------------
--- Utilities to be added to Core
------------------------------------------------------------------------------
-
-applyMethod = (key, X) -> (
-    if (F := lookup key) =!= null then F X else error "no method available") -- expand this error message later
 
 -----------------------------------------------------------------------------
 -- Local utilities
