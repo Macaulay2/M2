@@ -196,7 +196,7 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 
 -- TODO: if ExtendGroundField is given, change variety
 directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module F, opts), N -> sheaf(-*variety F,*- N))
---directSummands Matrix  := List => opts -> f -> () -- TODO: should be functorial
+--directSummands Matrix        := List => opts -> f -> apply(directSummands(coker f,  opts), presentation)
 --directSummands Complex := List => opts -> C -> () -- TODO: should be functorial
 
 -- TODO: export and document
