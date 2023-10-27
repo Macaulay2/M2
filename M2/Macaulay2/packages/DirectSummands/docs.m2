@@ -3,10 +3,10 @@ Node
   Key
     DirectSummands
   Headline
-    computing direct summands of modules and coherent sheaves
+    decompositions of graded modules and coherent sheaves
   Description
     Text
-      As an example, we prove the indecomposability of the @wikipedia "Horrocks–Mumford bundle"@ on $\PP4$.
+      As an example, we prove the indecomposability of the @wikipedia "Horrocks–Mumford bundle"@ on $\PP^4$.
     Example
       needsPackage "BGG"
       S = ZZ/32003[x_0..x_4];
@@ -19,15 +19,12 @@ Node
       alpha = beilinson(alpha, S);
       FHM = prune homology(alphad, alpha)
       assert(2 == rank FHM)
-      assert({FHM} == summands FHM) -- ~30s for End(FHM), ~110s for basis; ~35s in ZZ/2; now down to ~1s
+      -- initially ~30s for End(FHM), ~110s for basis; ~35s in ZZ/2; now down to ~1s total!
+      assert({FHM} == summands FHM)
       assert FHM.cache.Indecomposable
---    Tree
---    CannedExample
---  Acknowledgement
---  Contributors
---  References
---  Caveat
---  SeeAlso
+  Acknowledgement
+    The authors thank the organizers of the @HREF{"https://aimath.org/pastworkshops/macaulay2efie.html",
+	"Macaulay2 workshop at AIM"}@, where significant progress on this package was made.
   Subnodes
     directSummands
 
@@ -37,7 +34,7 @@ Node
     (directSummands, Module)
     (directSummands, CoherentSheaf)
   Headline
-    direct summands of a module or coherent sheaf
+    computes the direct summands of a graded module or coherent sheaf
   Usage
     summands M
   Inputs
@@ -78,4 +75,10 @@ Node
   References
   Caveat
   SeeAlso
+--    Tree
+--    CannedExample
+--  Contributors
+--  References
+--  Caveat
+--  SeeAlso
 ///

@@ -12,11 +12,12 @@ newPackage(
     "DirectSummands",
     Version => "0.1",
     Date => "25 Oct 2023",
-    Headline => "direct summands of modules and coherent sheaves",
+    Headline => "decompositions of modules and coherent sheaves",
     Authors => {
 	{ Name => "Devlin Mallory", Email => "malloryd@math.utah.edu", HomePage => "https://math.utah.edu/~malloryd/"},
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",         HomePage => "https://math.umn.edu/~mahrud/"}
 	},
+    Keywords => { "Commutative Algebra" },
     PackageImports => {
 	"RationalPoints2", -- for rationalPoints in findIdempotent
 	"PushForward", -- only for frobenius.m2
@@ -270,18 +271,18 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
     sameVariety(F, G); HH^0 sheaf(variety F, Hom(module F, module G, 0)))
 
 -----------------------------------------------------------------------------
+-* Test section *-
+-----------------------------------------------------------------------------
+
+needs "./DirectSummands/tests.m2"
+
+-----------------------------------------------------------------------------
 -* Documentation section *-
 -----------------------------------------------------------------------------
 
 beginDocumentation()
 
 needs "./DirectSummands/docs.m2"
-
------------------------------------------------------------------------------
--* Test section *-
------------------------------------------------------------------------------
-
-needs "./DirectSummands/tests.m2"
 
 end--
 
@@ -290,18 +291,17 @@ end--
 -----------------------------------------------------------------------------
 
 restart
-debug needsPackage "DirectSummands"
-check "DirectSummands"
+check needsPackage "DirectSummands"
 
 uninstallPackage "DirectSummands"
 restart
-needsPackage "DirectSummands"
-installPackage "DirectSummands"
-viewHelp DirectSummands
+viewHelp installPackage "DirectSummands"
+viewHelp directSummands
+viewHelp
 
 end--
 restart
-needsPackage "DirectSummands"
+debug needsPackage "DirectSummands"
 
 
 --------
