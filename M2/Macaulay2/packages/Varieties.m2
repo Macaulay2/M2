@@ -666,12 +666,10 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
     assertSameVariety(F, G); sheaf(variety F, Ext^i(module F, module G, opts)))
 
 -----------------------------------------------------------------------------
--- code donated by Greg Smith <ggsmith@math.berkeley.edu>
-
--- The following algorithms and examples appear in Gregory G. Smith,
--- Computing global extension modules, Journal of Symbolic Computation
--- 29 (2000) 729-746.
--- See tests/normal/ext-global.m2 for the examples
+-- The following algorithm appears in:
+-- Gregory G. Smith, Computing global extension modules,
+-- Journal of Symbolic Computation, 29 (2000) 729-746.
+-- See documentation of Ext^ZZ(CoherentSheaf,CoherentSheaf) for examples.
 -----------------------------------------------------------------------------
 
 Ext(ZZ, SheafOfRings,  SumOfTwists) :=
@@ -713,10 +711,6 @@ Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n,F,G) -> (
      E := Ext^n(F,G(>=0),opts);
      k := coefficientRing ring E;
      k^(rank source basis(0,E)))
-
------------------------------------------------------------------------------
--- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>
------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
 -- hh: Hodge decomposition
@@ -765,7 +759,8 @@ TEST ///
   X = Spec ZZ/101[x,y]/(y^2-x^3)
 ///
 
--- needs "./Varieties/tests.m2"
+needs "./Varieties/tests.m2"
+needs "./Varieties/tests-functors.m2"
 
 -----------------------------------------------------------------------------
 -- Documentation
