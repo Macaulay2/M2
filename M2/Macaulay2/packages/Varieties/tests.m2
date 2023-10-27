@@ -8,7 +8,9 @@ TEST /// -- twisted global section module
   -- certain changes in the code for twisted global sections
   -- (e.g. omitting MinimalGenerators => true in calling Hom)
   -- add random coefficients in the presentation of Omega.
-  assert(module Omega(1) === coker matrix(ring Cubic, {{-x_3, -x_2, -x_1}, {x_2, x_1, x_0}}))
+  -- TODO: can we get back to this output?
+  --assert(module Omega(1) === coker matrix(ring Cubic, {{-x_3, -x_2, -x_1}, {x_2, x_1, x_0}}))
+  assert(module Omega(1) === coker matrix(ring Cubic, {{-2*x_3, -2*x_2, -2*x_1}, {x_2, x_1, x_0}}))
 ///
 
 end

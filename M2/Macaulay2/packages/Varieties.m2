@@ -480,6 +480,11 @@ killH0 := -*(cacheValue symbol TorsionFree)*- (M -> if (H0 := saturate(0*M)) == 
 twistedGlobalSectionsModule = (F, bound) -> (
     -- compute global sections module Gamma_(d >= bound)(X, F(d))
     A := ring F;
+    -- FIXME: this line, as opposed to
+    --  cokernel presentation module F
+    -- breaks the test added in 975d780470.
+    -- However, we need to keep the information
+    -- cached in M, for instance if M is a Hom module.
     M := module F;
     if degreeLength A =!= 1 then error "expected degree length 1";
     -- quotient by HH^0_m(M) to kill the torsion
