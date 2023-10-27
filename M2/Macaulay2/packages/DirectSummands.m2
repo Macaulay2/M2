@@ -6,6 +6,7 @@
 -- TODO :
 -- 1. implement over Dmodules and other non-commutative rings
 -- 2. try to find all irreducible idempotents from End M using representation theory
+-- 3. cache maps to the summands
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
@@ -23,7 +24,7 @@ newPackage(
 	"Truncations", -- for effGenerators
 	-- "Varieties",
 	},
-    AuxiliaryFiles => false,
+    AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
@@ -274,127 +275,13 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
 
 beginDocumentation()
 
-///
-Node
-  Key
-    DirectSummands
-  Headline
-  Description
-    Text
-    Tree
-    Example
-    CannedExample
-  Acknowledgement
-  Contributors
-  References
-  Caveat
-  SeeAlso
-  Subnodes
-///
-
-doc ///
-Node
-  Key
-    directSummands
-  Headline
-    direct summands of a module or coherent sheaf
-  Usage
-    summands M
-  Inputs
-    M:{Module,CoherentSheaf}
-  Outputs
-    :List
-      containing modules or coherent sheaves which are direct summands of $M$
-  Description
-    Text
-      This function attempts to find the indecomposable summands of a module or coherent sheaf $M$.
-    Example
-      S = QQ[x,y]
-      M = coker matrix{{x,y},{x,x}}
-      L = summands M
-      assert isIsomorphic(M, directSum L)
-  SeeAlso
-    findIdempotent
-///
-
--- Template:
-///
-Node
-  Key
-  Headline
-  Usage
-  Inputs
-  Outputs
-  Consequences
-    Item
-  Description
-    Text
-    Example
-    CannedExample
-    Code
-    Pre
-  ExampleFiles
-  Contributors
-  References
-  Caveat
-  SeeAlso
-///
+needs "./DirectSummands/docs.m2"
 
 -----------------------------------------------------------------------------
 -* Test section *-
 -----------------------------------------------------------------------------
 
-TEST /// -- basic test
-  S = QQ[x,y]
-  M = coker matrix{{1,0},{1,y}}
-  A = summands M
-  B = summands prune M
-  C = summands trim M
-  assert same({prune M}, A, B, prune \ C)
-///
-
-TEST /// -- direct summands of a free module
-  R = ZZ/2[x_0..x_5]
-  M = R^{100:-2,100:0,100:2}
-  A = summands M;
-  B = summands(M, ExtendGroundField => 2);
-  C = summands(M, ExtendGroundField => 4);
-  D = summands(M, ExtendGroundField => ZZ/101);
-  E = summands(M, ExtendGroundField => GF(2,2));
-  assert same(M, directSum A)
-  assert same(A, B, C, D, E)
-///
-
-TEST /// -- direct summands of a multigraded free module
-  R = QQ[x,y,z] ** QQ[a,b,c]
-  M = R^{{0,0},{0,1},{1,0},{-1,0},{0,-1},{1,-1},{-1,1}}
-  assert same(M, directSum summands M)
-  --assert first isIsomorphic(directSum elapsedTime summands M, M)
-///
-
-TEST /// -- direct summands of a ring
-  S = ZZ/3[x,y,z]
-  R = ZZ/3[x,y,z,w]/(x^3+y^3+z^3+w^3)
-  f = map(R, S)
-  M = pushForward(f, module R)
-  assert(M == S^{0,-1,-2})
-///
-
-TEST /// -- direct summands over field extensions
-  debug needsPackage "DirectSummands"
-  R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
-  X = Proj R;
-  M = module frobeniusPushforward(OO_X, 1);
-  -* is smartBasis useful? yes!
-  elapsedTime A = End M; -- ~0.65s
-  elapsedTime B = basis({0}, A); -- ~0.23s
-  elapsedTime B = smartBasis({0}, A); -- ~0.03s
-  *-
-  elapsedTime assert({1, 2, 2, 2} == rank \ summands M) -- 2.28s
-  elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF 7)) -- 2.87s -> 2.05
-  elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF(7, 3))) -- 3.77s -> 2.6
-  elapsedTime assert(toList(7:1)  == rank \ summands(M, ExtendGroundField => GF(7, 2))) -- 2.18s -> 0.47
-///
+needs "./DirectSummands/tests.m2"
 
 end--
 
@@ -408,32 +295,11 @@ check "DirectSummands"
 
 uninstallPackage "DirectSummands"
 restart
+needsPackage "DirectSummands"
 installPackage "DirectSummands"
-viewHelp "DirectSummands"
+viewHelp DirectSummands
 
 end--
-restart
-needsPackage "DirectSummands"
-
--- TODO: turn into documentation
--- presentation of the Horrocks-Mumford bundle
-restart
-needsPackage "DirectSummands"
-needsPackage "BGG"
-S = ZZ/32003[x_0..x_4];
-E = ZZ/32003[e_0..e_4,SkewCommutative=>true];
-alphad = map(E^5, E^{-2,-2}, transpose matrix{
-	{ e_1*e_4, -e_0*e_2, -e_1*e_3, -e_2*e_4,  e_0*e_3},
-	{-e_2*e_3, -e_3*e_4,  e_0*e_4, -e_0*e_1, -e_1*e_2}})
-alpha = syz alphad
-alphad = beilinson(alphad, S);
-alpha = beilinson(alpha, S);
-FHM = prune homology(alphad, alpha);
-assert(rank FHM == 2)
-elapsedTime assert(summands FHM == {FHM}) -- ~30s for End(FHM), ~110s for basis; ~35s in ZZ/2; now down to ~1s
-
-
-
 restart
 needsPackage "DirectSummands"
 
