@@ -55,6 +55,12 @@ document {
 document {
      Key => intersection,
      Headline => "compute an intersection",
+    PARA{
+	"When a more efficient algorithm is available for computing the intersection of all inputs
+	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
+	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
+	},
+    EXAMPLE ///code lookup(symbol intersect, Module)///,
      SeeAlso => { intersect }
      }
 
@@ -71,12 +77,6 @@ document {
 	For two arguments, this is the same as ", TT "A ** B", " except that options are allowed."
 	},
     EXAMPLE ///tensor(ZZ^2, ZZ^3, ZZ^4)///,
-    PARA{
-	"When a more efficient algorithm is available for computing the intersection of all inputs
-	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
-	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
-	},
-    EXAMPLE ///code lookup(symbol intersect, Module)///,
     SeeAlso => {
 	symbol**
 	-- add references to tensor methods installed in packages _other than Core_ here
