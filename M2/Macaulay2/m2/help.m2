@@ -164,10 +164,10 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- objects of type T
     e := smenu(toString \ select(syms, y -> not isMutable y and class value y === T));
     DIV nonnull splice ( "class" => "waystouse",
-	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, " :"}, b),
-	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, " :"}, a),
-	if #c > 0 then ( SUBSECTION {"Methods that use ",                    indefinite synonym T, " :"}, c),
-	if #e > 0 then ( SUBSECTION {"Protected objects of class ",                 TT toString T, " :"}, e)))
+	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
+	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
+	if #c > 0 then ( SUBSECTION {"Methods that use ",                    indefinite synonym T, ":"}, c),
+	if #e > 0 then ( SUBSECTION {"Protected objects of class ",                 TT toString T, ":"}, e)))
 -- e.g. Macaulay2Doc :: Strategy
 documentationValue(Symbol, Symbol) := (S, S') -> (
     -- return links to all other methods with option name Strategy
@@ -179,7 +179,7 @@ documentationValue(Symbol, Symbol) := (S, S') -> (
     -- the same package? select for package f === package currentHelpTag
     a := smenu apply(select(opts, f -> isDocumentableMethod f), f -> [f, S]);
     if #a > 0 then DIV { -- "class" => "waystouse", -- we want this one to be larger
-	 SUBSECTION {"Functions with optional argument named ", TT toString S, " :"}, a})
+	 SUBSECTION {"Functions with optional argument named ", TT toString S, ":"}, a})
 -- e.g. Macaulay2Doc :: Strategy => Default
 documentationValue(Symbol, Option) := (S, o) -> (
     -- return links to all other methods with option name Strategy
@@ -201,7 +201,7 @@ documentationValue(Symbol, Keyword)         := (S, f) -> (
     -- methods of f
     a := smenu documentableMethods f;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
-	SUBSECTION {"Ways to use ", TT toExternalString f, " :"}, nonnull prepend(c, a)))
+	SUBSECTION {"Ways to use ", TT toExternalString f, ":"}, nonnull prepend(c, a)))
 -- this is the only one not involving a Symbol
 -- e.g. Depth :: depth(Ideal, Ring)
 documentationValue(Nothing, Sequence) := (S, s) -> (
