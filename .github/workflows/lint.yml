@@ -1,7 +1,5 @@
 name: Lint
-on:
-  push: { branches: [ "development" ] }
-  pull_request: { branches: [ "development", "master" ] }
+on: [ push, pull_request ]
 
 jobs:
   codespell:
