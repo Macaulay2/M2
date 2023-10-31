@@ -41,7 +41,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
      if contains(C,coneFromVData p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
