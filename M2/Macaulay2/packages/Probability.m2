@@ -446,6 +446,10 @@ doc ///
       You may also define your own probability distributions using
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@.
+  Caveat
+    As is always the case when working with real numbers in Macaulay2,
+    unexpected results may occur due to the limitations of floating
+    point arithmetic.
 ///
 
 doc ///
