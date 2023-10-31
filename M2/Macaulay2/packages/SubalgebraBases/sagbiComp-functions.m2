@@ -595,10 +595,15 @@ insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
     candidatesByDegree := partition(c -> (degree c)_0, first entries candidates);
     scanPairs(candidatesByDegree, (level, candidates) -> (
             if sagbiComputation#SAGBIpending#?level then (
-                sagbiComputation#SAGBIpending#level = join(sagbiComputation#SAGBIpending#level, candidates)
-                )
+		numberOfCandidates := #candidates;
+		numberOfPending := #sagbiComputation#SAGBIpending#level;
+		sagbiComputation#SAGBIpending#level#(numberOfPending + numberOfCandidates - 1) = null;
+                for i from 0 to numberOfCandidates -1 do (
+		    sagbiComputation#SAGBIpending#level#(numberOfPending + i) = candidates_i;
+		    ); 
+		)
             else (
-                sagbiComputation#SAGBIpending#level = candidates
+                sagbiComputation#SAGBIpending#level = new MutableList from candidates
                 );
             )
         );
