@@ -747,6 +747,7 @@ doc ///
     Support => Sequence
       containing the lower and upper bounds, respectively, of the
       @wikipedia("Support (mathematics)", "support")@ of @TT "X"@.
+      Elements of the support are assumed to be integers.
     Description => String
       describing the probability distribution.
   Outputs
