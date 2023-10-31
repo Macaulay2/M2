@@ -2,7 +2,7 @@
 -- From sagbi-main.m2
 export {
     "subalgebraBasis",
-    "sagbi",    
+    "sagbi",
     "AutoSubduce",
     "ReduceNewGenerators",
     "StorePending",

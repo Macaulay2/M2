@@ -210,7 +210,7 @@ sagbiBasis Subring := opts -> S -> (
     -- Pending: initially an empty hashtable. It is filled with
     -- keys of degrees pointing to lists of potential sagbi generators.
     pending := new HashTable from {};
-    
+
     -- Options: see above description of the options for sagbi computations
     optionTable := new HashTable from opts;
     newSAGBIBasis := new SAGBIBasis from {
@@ -221,7 +221,7 @@ sagbiBasis Subring := opts -> S -> (
         SAGBIpending => pending,
         SAGBIoptions => optionTable
         };
-    
+
     S.cache#SAGBIBasis = newSAGBIBasis
 )
 
@@ -246,7 +246,7 @@ net SAGBIBasis := S -> (
 gens SAGBIBasis := opts -> S -> (
     if numColumns S#SAGBIdata#"sagbiGenerators" == 0 then (
         S#SAGBImaps#"quotient" matrix(S#SAGBIrings#"liftedRing",{{}})
-        ) 
+        )
     else (
         S#SAGBImaps#"quotient" S#SAGBIdata#"sagbiGenerators"
         )
@@ -320,10 +320,8 @@ sagbiBasis SAGBIComputation := opts -> H -> (
         SAGBIpending => pending,
         SAGBIoptions => optionTable
     };
-    
+
     newSAGBIBasis#SAGBIdata#subring.cache#SAGBIBasis = newSAGBIBasis
 )
-
-
 
 end--

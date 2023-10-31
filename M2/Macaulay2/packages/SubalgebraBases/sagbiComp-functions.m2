@@ -101,7 +101,7 @@ limitedSagbiComputation (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
 -- compSubduction takes a sagbiComputation and 1-row matrix M
 --     with entries in the quotientRing and subducts the elements of M against sagbiComputation
 
-compSubduction = method( 
+compSubduction = method(
     Options => {
         AutoSubduce => true,
         ReduceNewGenerators => true,
@@ -121,7 +121,7 @@ compSubduction(SAGBIComputation, MutableMatrix) := MutableMatrix => opts -> (sag
     )
 
 compSubduction(SAGBIComputation, Matrix) := Matrix => opts -> (sagbiComputation, M) -> (
-    if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (    
+    if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (
         print "-- subduction input:";
         print M;
         );
@@ -136,7 +136,7 @@ compSubduction(SAGBIComputation, Matrix) := Matrix => opts -> (sagbiComputation,
         );
     local subductedPart;
     local leadTermSubductedPart;
-    while not  zero liftedM do (
+    while not zero liftedM do (
         if sagbiComputation#SAGBIoptions#SubductionMethod == "Top" then (
             subductedPart = subductionTopLevelLeadTerm(sagbiComputation, liftedM);
             )
@@ -145,7 +145,7 @@ compSubduction(SAGBIComputation, Matrix) := Matrix => opts -> (sagbiComputation,
             )
         else (
             error ("unknown SubductionMethod " | toString sagbiComputation#SAGBIoptions#SubductionMethod | 
-		", expected \"Top\" or \"Engine\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'"); 
+                ", expected \"Top\" or \"Engine\"\nThe next time 'sagbi' or 'subalgebraBases' is used on the same input, run it with the option: 'RenewOptions => true'"); 
             );
         leadTermSubductedPart = leadTerm subductedPart;
         result = result + leadTermSubductedPart;
@@ -160,7 +160,7 @@ compSubduction(SAGBIComputation, Matrix) := Matrix => opts -> (sagbiComputation,
         );
     result = result % sagbiComputation#SAGBIideals#"I";
 
-    if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (    
+    if sagbiComputation#SAGBIoptions#PrintLevel > 3 then (
         print("-- subduction result using "| sagbiComputation#SAGBIoptions#SubductionMethod |" strategy:");
         print result;
         );
@@ -174,7 +174,7 @@ compSubduction(SAGBIComputation, Matrix) := Matrix => opts -> (sagbiComputation,
 subductionTopLevelLeadTerm = method();
 subductionTopLevelLeadTerm (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
     liftg := M;
-    while not zero liftg do ( 
+    while not zero liftg do (
         tensorRingLiftg := sagbiComputation#SAGBImaps#"inclusionLifted" liftg;
         tensorRingLeadTermg := leadTerm tensorRingLiftg;
         h := tensorRingLeadTermg % (sagbiComputation#SAGBIideals#"reductionIdeal"); -- do partial % based on sagbiComputation option
@@ -206,10 +206,10 @@ subductionTopLevelLeadTerm (SAGBIComputation, Matrix) := (sagbiComputation, M) -
         liftg = liftg - projectionh;
         );
 
-    -- check if g is zero or has degree zero 
+    -- check if g is zero or has degree zero
     matrix {apply(
             first entries liftg,
-            i -> 
+            i ->
             if (not (i == 0_(sagbiComputation#SAGBIrings#"liftedRing"))) and (degree i)_0 == 0 then (
                 0_(sagbiComputation#SAGBIrings#"liftedRing")
                 )
@@ -222,7 +222,7 @@ subductionTopLevelLeadTerm (SAGBIComputation, Matrix) := (sagbiComputation, M) -
 -- with engine-level code.
 subductionEngineLevelLeadTerm = method();
 subductionEngineLevelLeadTerm(SAGBIComputation, RingElement) := (sagbiComputation, g) -> (
-    (subductionEngineLevelLeadTerm(sagbiComputation, matrix {{g}}))_(0,0) 
+    (subductionEngineLevelLeadTerm(sagbiComputation, matrix {{g}}))_(0,0)
     );
 
 subductionEngineLevelLeadTerm(SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
@@ -231,7 +231,7 @@ subductionEngineLevelLeadTerm(SAGBIComputation, Matrix) := (sagbiComputation, M)
     ambR := source sagbiComputation#SAGBImaps#"inclusionLifted";
     if ring M === tense then (
         M = sagbiComputation#SAGBImaps#"fullSubstitution" M;
-        ) 
+        )
     else if ring M =!= ambR then (
         error "M must be from ambR or tensorRing.";
         );
@@ -262,26 +262,26 @@ subductionEngineLevelLeadTerm(SAGBIComputation, Matrix) := (sagbiComputation, M)
 
 autosubduce = method(
     Options => {
-	UseSubringGens => true
-	}
+        UseSubringGens => true
+        }
     );
 autosubduce SAGBIComputation := opts -> sagbiComputation -> (
 
     local tempSagbiComputation;
     local M;
     generatorMatrix := if opts.UseSubringGens then (
-     	new MutableMatrix from sagbiComputation#SAGBIdata#"subalgebraGenerators"
-	)
+        new MutableMatrix from sagbiComputation#SAGBIdata#"subalgebraGenerators"
+        )
     else (
-	new MutableMatrix from sagbiComputation#SAGBImaps#"quotient" sagbiComputation#SAGBIdata#"sagbiGenerators"
-	);
+        new MutableMatrix from sagbiComputation#SAGBImaps#"quotient" sagbiComputation#SAGBIdata#"sagbiGenerators"
+        );
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = new Matrix from generatorMatrix_(toList join(0 .. i-1, i+1 .. numColumns generatorMatrix - 1));
             tempSagbiComputation = limitedSagbiComputation(sagbiComputation,lift(M,sagbiComputation#SAGBIrings#"liftedRing"));
             generatorMatrix_(0,i) = (compSubduction(tempSagbiComputation,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
-	    );
+            );
     compress new Matrix from generatorMatrix
     )
 
@@ -329,7 +329,7 @@ updateComputationMaster SAGBIComputation := sagbiComputation -> (
                 print "-- [updateComputationMaster] Detected few new generators; using Incremental Strategy";
                 );
             updateComputationIncremental sagbiComputation;
-            ) 
+            )
         else (
             if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
                 print "-- [updateComputationMaster] Detected many or low-degree new generators; using DegreeByDegree Strategy";
@@ -337,7 +337,7 @@ updateComputationMaster SAGBIComputation := sagbiComputation -> (
             updateComputationDegreeByDegree sagbiComputation;
             );
 
-        ) 
+        )
     else (
         if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
             print "-- [updateComputationMaster] Defaulting to DegreeByDegree Strategy";
@@ -347,8 +347,8 @@ updateComputationMaster SAGBIComputation := sagbiComputation -> (
     );
 
 
--- updateComputation using DegreeByDegree strategy 
--- NB this does not compute a gb for the reductionIdeal 
+-- updateComputation using DegreeByDegree strategy
+-- NB this does not compute a gb for the reductionIdeal
 -- The gb computation next occurs in collectSPairs or during subduction
 -- The gb computation is only necessary up to a certain degree
 
@@ -462,7 +462,7 @@ updateComputationIncremental SAGBIComputation := sagbiComputation -> (
     -- 4) Apply the quotient map to the new generators, compute a gb, and lift
     -- 5) Concatenate the lifted elements with the old gb generators and promise that’s a gb (forceGB)
     
-    -- (1)    
+    -- (1)
     numberOfNewGenerators := numgens tensorRing - numgens oldTensorRing;
     generatingVariables := (vars tensorRing)_{numberVariables + numberGenerators - numberOfNewGenerators ..numberVariables + numberGenerators - 1};
     newSagbiGens := sagbiGens_{numberGenerators - numberOfNewGenerators .. numberGenerators - 1};
@@ -473,7 +473,7 @@ updateComputationIncremental SAGBIComputation := sagbiComputation -> (
     oldReductionIdealGB := tensorRingInclusion gens gb sagbiComputation#SAGBIideals#"reductionIdeal";
     forceGB oldReductionIdealGB;
     
-    -- (3) 
+    -- (3)
     tensorRingQuotientOldReduction := tensorRing / (ideal oldReductionIdealGB);
     quotientMapOldReduction := map(tensorRingQuotientOldReduction, tensorRing, vars tensorRingQuotientOldReduction);
     
@@ -481,19 +481,19 @@ updateComputationIncremental SAGBIComputation := sagbiComputation -> (
     quotientReductionGB := lift(gens gb quotientMapOldReduction newSIdealGens, tensorRing);
     
     -- (5)
-    newReductionGB := oldReductionIdealGB | quotientReductionGB;    
+    newReductionGB := oldReductionIdealGB | quotientReductionGB;
     forceGB newReductionGB;
     
     
     -- Update the sagbiComputation:
-    sagbiComputation#SAGBIrings.tensorRing = tensorRing;            
+    sagbiComputation#SAGBIrings.tensorRing = tensorRing;
     sagbiComputation#SAGBImaps#"inclusionLifted"  = inclusionLifted;
     sagbiComputation#SAGBImaps#"substitution"     = substitution;
     sagbiComputation#SAGBImaps#"projectionLifted" = projectionLifted;
     sagbiComputation#SAGBImaps#"sagbiInclusion"   = sagbiInclusion;
     sagbiComputation#SAGBImaps#"fullSubstitution" = projectionLifted * substitution,
     sagbiComputation#SAGBIideals#"SIdeal" = ideal newSIdealGens;
-    sagbiComputation#SAGBIideals#"reductionIdeal" = ideal newReductionGB;    
+    sagbiComputation#SAGBIideals#"reductionIdeal" = ideal newReductionGB;
     );
 
 
@@ -503,7 +503,7 @@ lowestDegree SAGBIComputation := sagbiComputation -> (
     min keys sagbiComputation#SAGBIpending
 )
 
--- Adds newGens to sagbiComputation#SAGBIdata#"sagbiGenerators" 
+-- Adds newGens to sagbiComputation#SAGBIdata#"sagbiGenerators"
 --   newGens is a 1-row matrix of generators to be added
 -- updates the sagbiDegrees with the degrees of the generators added
 -- saves the number of sagbiGenerators that were just added
@@ -528,7 +528,7 @@ appendToBasis (SAGBIComputation, Matrix) := (sagbiComputation, newGenerators) ->
           
 processPending = method();
 processPending SAGBIComputation := sagbiComputation -> (
-    local reducedGenerators; 
+    local reducedGenerators;
     currentLowest := lowestDegree sagbiComputation;
     if currentLowest < infinity then (
         if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
@@ -553,7 +553,7 @@ processPending SAGBIComputation := sagbiComputation -> (
 
         currentLowest = lowestDegree sagbiComputation;
         if currentLowest < infinity then (
-	    
+            
             if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
                 print "-- [processPending]: new sagbi generators being added:";
                 print transpose matrix{toList sagbiComputation#SAGBIpending#currentLowest};
@@ -592,16 +592,16 @@ triangularBasis Matrix := M -> (
 
 insertPending = method();
 insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
-    for candidate in first entries candidates do(
-        -- get the entry of the column and its degree
-        level := (degree candidate)_0;
-        if sagbiComputation#SAGBIpending#?level then(
-            sagbiComputation#SAGBIpending#level = append(sagbiComputation#SAGBIpending#level, candidate)
+    candidatesByDegree := partition(c -> (degree c)_0, first entries candidates);
+    scanPairs(candidatesByDegree, (level, candidates) -> (
+            if sagbiComputation#SAGBIpending#?level then (
+                sagbiComputation#SAGBIpending#level = join(sagbiComputation#SAGBIpending#level, candidates)
+                )
+            else (
+                sagbiComputation#SAGBIpending#level = candidates
+                );
             )
-        else (
-            sagbiComputation#SAGBIpending#level = {candidate}
-            );
-	);
+        );
     )
 
 processFirstStep = method();
@@ -622,7 +622,7 @@ processFirstStep SAGBIComputation := sagbiComputation -> (
     );
 )
 
---Accepts a 1-row matrix inputMatrix and returns a matrix of columns 
+--Accepts a 1-row matrix inputMatrix and returns a matrix of columns
 -- of inputMatrix where the highest degree entry has total degree equal to selectedDegree
 submatrixByDegree = method()
 submatrixByDegree (Matrix, ZZ) := (inputMatrix, selectedDegree) -> (
@@ -682,7 +682,7 @@ updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
     
     if numcols SPairs != 0 then (
         newGens = compress SPairs;
-        ) 
+        )
     else (
         newGens = SPairs;
         );
@@ -697,7 +697,7 @@ updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
             -- It has to treat this as a special case because zero matrices are special.
             print "| 0 |";
             )
-	else(
+        else(
             print newGens;
             );
         );
@@ -722,13 +722,13 @@ updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
 --------------------------------
 -- check whether the sagbi computation should terminate
 -- criteria for termination:
--- 0) the pending list is empty
+-- 0) [isPendingEmpty] the pending list is empty
 --   - if not: an element of the pending list may be a new sagbiGenerator
--- 1) fully computed the GB for the reductionIdeal (always true for the Incremental strategy)
+-- 1) [isGBReductionIdealComplete] fully computed the GB for the reductionIdeal (always true for the Incremental strategy)
 --   - if not: new elements of GB of the reductionIdeal may give new SPairs and new sagbiGenerators
--- 2) the degree of the computation > the maximum degree of sagbiGenerators
+-- 2) [isDegreeAboveSagbiGens] the degree of the computation > the maximum degree of sagbiGenerators
 --   - if not: there was a drop in computation degree, so the computation degree needs to catch up
--- 3) the degree of the computation > the maximum degree of gb for reductionIdeal
+-- 3) [isDegreeAboveGBDegree] the degree of the computation > the maximum degree of gb for reductionIdeal
 --   - if not: it may be possible to get lower degree generators
 
 -- if the computation should terminate then set sagbiComputation#SAGBIdata#"sagbiStatus" to 1
@@ -740,34 +740,34 @@ updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
 checkTermination = method();
 checkTermination SAGBIComputation := (sagbiComputation) -> (
     
-    local terminationCondition0;
-    local terminationCondition1;
-    local terminationCondition2;
-    local terminationCondition3;
+    local isPendingEmpty;
+    local isGBReductionIdealComplete;
+    local isDegreeAboveSagbiGens;
+    local isDegreeAboveGBDegree;
     
     -- NB sagbGB's gb should be computed in processPending -> updateComputation (for incremental) or collectSpairs (for DegreeByDegree)
     -- that computation depends on the option: "DegreeByDegree" or "Incremental" 
     sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal", DegreeLimit => sagbiComputation#SAGBIdata#degree);
-    terminationCondition0 = # sagbiComputation#SAGBIpending == 0;
-    terminationCondition1 = rawStatus1 raw sagbiGB == 6; -- is the GB computation completed?
+    isPendingEmpty = # sagbiComputation#SAGBIpending == 0;
+    isGBReductionIdealComplete = rawStatus1 raw sagbiGB == 6; -- is the GB computation completed?
     
     -- check if there are still generators of higher degree to add to the sagbiGenerators
-    terminationCondition2 = sagbiComputation#SAGBIdata#degree > max flatten (degrees sagbiComputation#SAGBIdata#"sagbiGenerators")_1;
+    isDegreeAboveSagbiGens = sagbiComputation#SAGBIdata#degree > max flatten (degrees sagbiComputation#SAGBIdata#"sagbiGenerators")_1;
     
     -- check to make sure it is not possible to get lower degree sagbiGenerators
     -- by taking them modulo the reductionIdeal
-    terminationCondition3 = sagbiComputation#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1; 
+    isDegreeAboveGBDegree = sagbiComputation#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1; 
     if sagbiComputation#SAGBIoptions#PrintLevel > 0 then(
         print "-- Stopping conditions:";
-        print("--    No higher degree candidates: "|toString(terminationCondition0));
-        print("--    S-poly ideal GB completed:   "|toString(terminationCondition1));
-        print("--    Degree lower bound:          "|toString(terminationCondition2));
-        print("--    Degree bound by sagbiGB:     "|toString(terminationCondition3));
+        print("--    No higher degree candidates: "|toString(isPendingEmpty));
+        print("--    S-poly ideal GB completed:   "|toString(isGBReductionIdealComplete));
+        print("--    Degree lower bound:          "|toString(isDegreeAboveSagbiGens));
+        print("--    Degree bound by sagbiGB:     "|toString(isDegreeAboveGBDegree));
         );
     
-    if terminationCondition0 and terminationCondition1 and terminationCondition2 and terminationCondition3 then (
+    if isPendingEmpty and isGBReductionIdealComplete and isDegreeAboveSagbiGens and isDegreeAboveGBDegree then (
         sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
-	if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
+        if sagbiComputation#SAGBIoptions#PrintLevel > 0 then (
             print "-- Computation complete. Finite sagbi basis found!"
             );
         )

@@ -1462,10 +1462,10 @@ doc ///
    Description
      Text
         This is a computation object for sagbi bases.
-	It stores a partial sagbi computation for picking up a computation where it left off.
-	For many uses, it is superior to use @ ofClass Subring@, as the user experience
-	is more streamlined.
-	
+        It stores a partial sagbi computation for picking up a computation where it left off.
+        For many uses, it is superior to use @ ofClass Subring@, as the user experience
+        is more streamlined.
+        
         To create @ ofClass SAGBIBasis @, use the function @TO "sagbiBasis"@.
         The @TT "SAGBIBasis" @ type is the main output type of the function @TO "sagbi"@.
 
@@ -1994,13 +1994,13 @@ doc ///
         "Example: Translation and rotation sub-actions of the adjoint action of SE(3)"
     Description
         Text
-	    The following example shows how to use this package to calculate the invariants of the translation sub-action of
-	    the adjoint action of $SE(3)$, as studied by Crook and Donelan.
-    	Example
-	    gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
-	    translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
-	    sag := sagbi transpose translation;
-	    netList first entries gens sag
+            The following example shows how to use this package to calculate the invariants of the translation sub-action of
+            the adjoint action of $SE(3)$, as studied by Crook and Donelan.
+        Example
+            gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
+            translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
+            sag := sagbi transpose translation;
+            netList first entries gens sag
         Text
             The generators above are the 5 invariants Crook and Donelan give in Equation (9), plus the additional 6th invariant.
             The computation below verifies Theorem 2 of Crook and Donelan, describing rotational invariants in the case where m=3.

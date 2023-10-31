@@ -456,8 +456,8 @@ R = kk[symbol a..symbol f]
 F = mingens ((ideal(a,b,c))^2 + (ideal(d,e,f))^2 + (ideal(a+d,b+e,c+f))^2)
 ans = matrix {{f^2, e*f, d*f, c*f, e^2, d*e, c*e+b*f, b*e, d^2, c*d+a*f, b*d+a*e, a*d, c^2, b*c, a*c, b^2, a*b, a^2, b*f^3, a*f^3, a*e*f^2, a*e^2*f, b^3*f, a*b^2*f, a^2*b*f, a^3*f, a*e^3, a^3*e}}
 assert(
-    time subalgebraBasis(F,Limit=>100) 
-    == 
+    time subalgebraBasis(F,Limit=>100)
+    ==
     ans)
 ///
 ----------------------------------------------------
