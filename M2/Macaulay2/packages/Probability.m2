@@ -1,7 +1,7 @@
 newPackage("Probability",
     Headline => "basic probability functions",
     Version => "0.3",
-    Date => "October 6, 2023",
+    Date => "October 31, 2023",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -13,9 +13,12 @@ newPackage("Probability",
 
 -*
 
-0.3 (2023-10-06, M2 1.23)
+0.3 (2023-10-31, M2 1.23)
 * add Caveats to docs warning user to ensure that pdf's are well-defined
 * use ASCII characters for chi-squared distribution
+* clarify in docs that the support of a discrete distribution will be a subset
+  of the integers
+* add Caveat to docs mentioning limitations of floating-point arithmetic
 
 0.2 (2022-10-31, M2 1.21)
 * fix typos
