@@ -733,14 +733,14 @@ opts={allComputations=>false, grading=>{}}
 runIntclMonIdeal(Ideal,String):=opts>>o->(I,nmzMode)->
 (
    -- new variable for Rees algebra
-    alph:="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    alpha:="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     ovars:=gens ring I;
     i:=0;
 
-    while(unique(append(ovars,value alph#i))==ovars and i<52) do i=i+1;
+    while(unique(append(ovars,value alpha#i))==ovars and i<52) do i=i+1;
 
     if(i==52) then error("runIntclMonIdeal: no free letter found for auxiliary variable");
-    t:=value alph#i;
+    t:=value alpha#i;
     nvars:=append(ovars,t);
 --    S:=(coefficientRing ring I)(nvars); --this will effect the variable t of the user
     S:=(coefficientRing ring I)(monoid[nvars]); 
