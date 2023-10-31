@@ -599,9 +599,9 @@ insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
             sagbiComputation#SAGBIpending#level = append(sagbiComputation#SAGBIpending#level, candidate)
             )
         else (
-            sagbiComputation#SAGBIpending#level = new MutableList from {candidate}
+            sagbiComputation#SAGBIpending#level = {candidate}
             );
-        );
+	);
     )
 
 processFirstStep = method();

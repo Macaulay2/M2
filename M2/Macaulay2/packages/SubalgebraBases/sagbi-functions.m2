@@ -529,7 +529,7 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
         limit = opts.Limit;
         )
     else if opts.SAGBILimitType == "Function" then (
-        limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
+        limit = (max flatten (degrees gens S1)_1)*(max flatten (degrees gens S2)_1);
         );
     SB := sagbi(S,
         Strategy => opts.Strategy,

@@ -937,9 +937,33 @@ doc ///
      Flag for calculating degree limit in intersections
    Description
      Text
-        Either "Fixed" or "Function". Determines the stopping criterion for the sagbi computation.
-        If "Fixed" then the @TT "Limit"@ is used, otherwise if "Function" is selected then the
-        maximum degree of the input generators is used as the degree limit.
+       Either @TT "Fixed"@ or @TT "Function"@. Determines the stopping criterion for the subalgebra basis
+       computation performed by the function @TO (intersect, Subring, Subring)@. This function creates 
+       @ofClass Subring@ $S$, called the {\it composite subring}, from the input algebras  
+       and attempts to compute a subalgebra basis for $S$. The @TT "Limit"@ of this subalgebra basis
+       computation is controlled by the two options @TT "SAGBILimitType"@ and @TT "Limit"@.
+        
+       If @TT "SAGBILimitType"@ is set to @TT "Fixed"@ then the @TT "Limit"@ of the 
+       subalgebra basis computation is set to the value of the option @TT "Limit"@.
+       Otherwise if @TT "SAGBILimitType"@ is set to @TT "Function"@, then the @TT "Limit"@ of the 
+       subalgebra basis computation is set to the product of the degrees of the maximum degree generators
+       of the input algebras.
+     Example
+       R = QQ[x,y];
+       I = ideal(x^3 + x*y^2 + y^3);
+       Q = R/I;
+       S1 = subring {x^2, x*y};
+       S2 = subring {x, y^2};
+       gens (S3 = intersect(S1, S2, SAGBILimitType => "Fixed", Limit => 5))
+       gens (S4 = intersect(S1, S2, SAGBILimitType => "Fixed", Limit => 10))
+       gens (S5 = intersect(S1, S2, SAGBILimitType => "Function"))
+     Text
+       By default, the option @TT "SAGBILimitType"@ is set to @TT "Fixed"@ and the default @TT "Limit"@ is $20$.
+       For more information see @TO (intersect, Subring, Subring)@.
+   SeeAlso
+     (intersect, Subring, Subring)
+     IntersectedSubring
+     sagbi
 ///
 doc ///
    Key
@@ -949,7 +973,45 @@ doc ///
      Flag for deciding if isFullIntersection is called
    Description
      Text
-       Flag which determines if @TO "isFullIntersection"@ is run on the output @TO "IntersectedSubring"@.
+       The option @TT "CheckFullIntersection"@ is @ofClass Boolean@; by default @TT "true"@.
+       If the option is set to @TT "true"@ then the function @TO (intersect, Subring, Subring)@ performs
+       two tests. If any of these tests fails then a relevant warning message is displayed. Other than
+       the warning messages, the output of the function @TO (intersect, Subring, Subring)@ is not affected
+       by the value of this option. If the option @TT "CheckFullIntersection"@ is set to @TT "false"@ then
+       no warnings will be produced. 
+       
+       The first test is performed at the beginning of the function call. It 
+       checks whether any of the inputs is @ofClass IntersectedSubring@ and
+       applies @TO "isFullIntersection"@ to each instance. For more details see @TO "isFullIntersection"@.
+       If the function @TO "isFullIntersection"@ returns false, i.e., the generators of the input are not 
+       guaranteed to generate the full intersection, then the a warning is printed.
+     Example
+       R = QQ[x,y];
+       S1 = subring {x^2, y^2};
+       S2 = subring {x*y};
+       gens (S3 = intersect(S1, S2, Limit => 6, CheckFullIntersection => false))
+       isFullIntersection S3
+       gens (S4 = intersect(S3, S2, Limit => 6))
+       isFullIntersection S4
+     Text
+       In the example above, a warning is produced when computing $S4$ because the input algebra $S3$ is
+       not guaranteed to be the full intersection. However, the final line shows that the generators of $S4$ 
+       are guaranteed to generate the full intersection of $S2$ and $S3$.
+       
+       The second test is performed at the end of the function call. It checks if the result is
+       guaranteed to generate the full intersection by calling @TO "isFullIntersection"@ on the result.
+       If the function @TO "isFullIntersection"@ returns @TT "false"@, then a warning printed. For instance,
+       in the example above, the computation of $S3$ would print a warning.
+     Example
+       intersect(S1, S2, Limit => 6)
+     Text
+       If this warning message appears then it is recommended to set the option @TO "SAGBILimitType"@ to its 
+       default value of @TT "Fixed"@ and a higher value be used for the option @TT "Limit"@.
+   SeeAlso
+     (intersect, Subring, Subring)
+     isFullIntersection
+     SAGBILimitType
+     IntersectedSubring
 ///
 
 doc ///
