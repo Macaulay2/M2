@@ -186,7 +186,6 @@ sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
     new SheafOfRings from { symbol variety => X, symbol ring => R } )
 
--- TODO: should sheaves have a cache, or should things be stored in their module?
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
 sheaf Module := Module ~ := CoherentSheaf =>     M  -> sheaf(Proj ring M, M)
@@ -196,8 +195,9 @@ sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
 	if ring M =!= ring X then error "sheaf: expected module and variety to have the same ring";
 	if instance(X, ProjectiveVariety) and not isHomogeneous M then error "sheaf: expected a homogeneous module";
 	new CoherentSheaf from {
+	    symbol variety => X,
 	    symbol module => M,
-	    symbol variety => X
+	    symbol cache => new CacheTable
 	    }
 	))
 
@@ -391,9 +391,9 @@ cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 -- Module of twisted global sections Γ_*(F)
 -----------------------------------------------------------------------------
 
--- TODO: cache this in the sheaf
+-- TODO: optimize caching here
 -- TODO: should F>=0 be hardcoded?
-minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (
+minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (cacheValue symbol minimalPresentation) (
     F -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts)))
 
 -----------------------------------------------------------------------------
