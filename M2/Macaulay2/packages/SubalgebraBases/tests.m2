@@ -463,7 +463,7 @@ assert(
 ----------------------------------------------------
 
 
--- 19) Lex term order simple
+-- 18) Lex term order simple
 --
 -- These generators already form a sagbi basis
 -- The sagbi algorithm should check for S-pairs up and including degree 10
@@ -477,17 +477,17 @@ assert(
     )
 ///
 
--- 20) Lex term order harder
--- Similar generating set to TEST 19
+-- 19) Lex term order harder
+-- Similar generating set to TEST 20
 -- Should test for S-pairs up to degree 23
 TEST ///
 R = QQ[x, y, MonomialOrder => Lex]
 S = subring({x^2,x*y-y,2*x+y^3,y^4})
-ans =  matrix {{x*y-y, 2*x+y^3, y^4, 4*x*y^3+y^6, y^10-4*y^7, x*y^6+y^6-4*y^3, y^9-6*y^6+16*y^3, y^6-4*y^3}}
+ans =  matrix {{x*y-y, x+(1/2)*y^3, y^4, x*y^3+(1/4)*y^6, y^10-4*y^7, x*y^6+y^6-4*y^3, y^9-6*y^6+16*y^3, y^6-4*y^3}}
 assert(time subalgebraBasis(S,PrintLevel=>0,Limit=>30) == ans)
 ///
 
--- 21) GRevLex version of 19
+-- 20) GRevLex version of 18
 TEST ///
 R = QQ[x, y];
 S = subring({x*y-y,2*x+y^3,y^4});
@@ -495,7 +495,7 @@ ans = matrix {{x*y-y, y^3+2*x, y^4, x^4-4*x^3+6*x^2-4*x}}
 assert(time subalgebraBasis(S,PrintLevel=>0,Limit=>30) == ans)
 ///
 
--- 22) GRevLex version of 20
+-- 21) GRevLex version of 19
 TEST ///
 R = QQ[x, y]
 S = subring({x^2,x*y-y,2*x+y^3,y^4})
@@ -503,7 +503,7 @@ ans = matrix {{x*y-y, x^2, y^3+2*x, y^4, x^4*y-y, x*y^6-4*x*y^3-12*x^3-4*x, x^5-
 assert(time subalgebraBasis(S,PrintLevel=>0,Limit=>30) == ans)
 ///
 
--- 23) Test for %
+-- 22) Test for %
 TEST ///
 R = QQ[x, y];
 S = subring({x+y, x*y, x*y^2});
@@ -513,7 +513,7 @@ assert(time (f1 % S)== 0)
 assert(time (f2 % S)== y)
 ///
 
--- 24) Test for groebnerMembershipTest
+-- 23) Test for groebnerMembershipTest
 TEST ///
 R = QQ[x, y];
 S = subring({x+y, x*y, x*y^2});
@@ -523,7 +523,7 @@ assert(time groebnerMembershipTest(f1,S))
 assert(time not groebnerMembershipTest(f2,S))
 ///
 
--- 25) subductionQuotient 
+-- 24) subductionQuotient 
 TEST ///
 R = QQ[x,y];
 S = subring {x+y, x*y, x*y^2};
@@ -536,7 +536,7 @@ assert((m subQuot) == ans)
 assert((m subQuot) + (f % S) == f)
 ///
 
--- 26) subring intersection (infinite sagbi basis)
+-- 25) subring intersection (infinite sagbi basis)
 TEST ///
 R = QQ[x,y];
 S1 = subring {x^2, x*y};
@@ -545,7 +545,7 @@ S12 = intersect(S1, S2, Limit => 8, CheckFullIntersection => false);
 assert(gens S12 == matrix {{x^3*y, x^3*y^3, x^6}})
 ///
 
--- 27) subring intersection in a quotient ring (finite sagbi basis)
+-- 26) subring intersection in a quotient ring (finite sagbi basis)
 TEST ///
 R = QQ[x,y];
 I = ideal(x^3 + x*y^2 + y^3);
@@ -557,31 +557,35 @@ assert(isSAGBI S12)
 assert(gens sagbi S12 == matrix {{x^2, x^2*y^2, y^4, x*y^3, y^6, x*y^5}})
 ///
 
--- 28) Bruns/Conca example 1
+-- 27) Bruns/Conca example 1
 TEST /// 
 R = QQ[x,y,z]
 M = matrix{{x^3+y^3+z^3,   x^4+y^4+z^4,   x^5+y^5+z^5}}
 partialSBSeventeen = gens sagbi(M, Limit => 17);
 assert(partialSBSeventeen == matrix {{x^3+y^3+z^3, x^4+y^4+z^4, x^5+y^5+z^5, x^5*y^3-2*x^4*y^4+x^3*y^5+x^5*z^3+y^5*z^3-2*x^4*z^4-2*y^4*z^4+x^3*z^5+y^3*z^5,
-      3*x^6*y^3-x^5*y^4-x^4*y^5+3*x^3*y^6+3*x^6*z^3+6*x^3*y^3*z^3+3*y^6*z^3-x^5*z^4-y^5*z^4-x^4*z^5-y^4*z^5+3*x^3*z^6+3*y^3*z^6,
-      2*x^7*y^3+x^6*y^4-2*x^5*y^5+x^4*y^6+2*x^3*y^7+2*x^7*z^3+2*x^4*y^3*z^3+2*x^3*y^4*z^3+2*y^7*z^3+x^6*z^4+2*x^3*y^3*z^4+y^6*z^4-2*x^5*z^5-2*y^5
-      *z^5+x^4*z^6+y^4*z^6+2*x^3*z^7+2*y^3*z^7, 5*x^8*y^4-4*x^7*y^5+6*x^6*y^6-4*x^5*y^7+5*x^4*y^8+12*x^6*y^3*z^3-4*x^5*y^4*z^3-4*x^4*y^5*z^3+12*x
-      ^3*y^6*z^3+5*x^8*z^4-4*x^5*y^3*z^4+18*x^4*y^4*z^4-4*x^3*y^5*z^4+5*y^8*z^4-4*x^7*z^5-4*x^4*y^3*z^5-4*x^3*y^4*z^5-4*y^7*z^5+6*x^6*z^6+12*x^3*
-      y^3*z^6+6*y^6*z^6-4*x^5*z^7-4*y^5*z^7+5*x^4*z^8+5*y^4*z^8,
-      5*x^9*y^4-4*x^8*y^5+3*x^7*y^6+3*x^6*y^7-4*x^5*y^8+5*x^4*y^9+6*x^7*y^3*z^3+3*x^6*y^4*z^3-6*x^5*y^5*z^3+3*x^4*y^6*z^3+6*x^3*y^7*z^3+5*x^9*z^4
-      +3*x^6*y^3*z^4+4*x^5*y^4*z^4+4*x^4*y^5*z^4+3*x^3*y^6*z^4+5*y^9*z^4-4*x^8*z^5-6*x^5*y^3*z^5+4*x^4*y^4*z^5-6*x^3*y^5*z^5-4*y^8*z^5+3*x^7*z^6+
-      3*x^4*y^3*z^6+3*x^3*y^4*z^6+3*y^7*z^6+3*x^6*z^7+6*x^3*y^3*z^7+3*y^6*z^7-4*x^5*z^8-4*y^5*z^8+5*x^4*z^9+5*y^4*z^9,
-      5*x^10*y^4-4*x^9*y^5-3*x^8*y^6+12*x^7*y^7-3*x^6*y^8-4*x^5*y^9+5*x^4*y^10-6*x^8*y^3*z^3+12*x^7*y^4*z^3-6*x^6*y^5*z^3-6*x^5*y^6*z^3+12*x^4*y^
-      7*z^3-6*x^3*y^8*z^3+5*x^10*z^4+12*x^7*y^3*z^4+6*x^6*y^4*z^4-2*x^5*y^5*z^4+6*x^4*y^6*z^4+12*x^3*y^7*z^4+5*y^10*z^4-4*x^9*z^5-6*x^6*y^3*z^5-2
-      *x^5*y^4*z^5-2*x^4*y^5*z^5-6*x^3*y^6*z^5-4*y^9*z^5-3*x^8*z^6-6*x^5*y^3*z^6+6*x^4*y^4*z^6-6*x^3*y^5*z^6-3*y^8*z^6+12*x^7*z^7+12*x^4*y^3*z^7+
-      12*x^3*y^4*z^7+12*y^7*z^7-3*x^6*z^8-6*x^3*y^3*z^8-3*y^6*z^8-4*x^5*z^9-4*y^5*z^9+5*x^4*z^10+5*y^4*z^10,
-      7*x^9*y^6-3*x^8*y^7-3*x^7*y^8+7*x^6*y^9+14*x^9*y^3*z^3-3*x^8*y^4*z^3-6*x^7*y^5*z^3+30*x^6*y^6*z^3-6*x^5*y^7*z^3-3*x^4*y^8*z^3+14*x^3*y^9*z^
-      3-3*x^8*y^3*z^4+6*x^7*y^4*z^4-3*x^6*y^5*z^4-3*x^5*y^6*z^4+6*x^4*y^7*z^4-3*x^3*y^8*z^4-6*x^7*y^3*z^5-3*x^6*y^4*z^5+6*x^5*y^5*z^5-3*x^4*y^6*z
-      ^5-6*x^3*y^7*z^5+7*x^9*z^6+30*x^6*y^3*z^6-3*x^5*y^4*z^6-3*x^4*y^5*z^6+30*x^3*y^6*z^6+7*y^9*z^6-3*x^8*z^7-6*x^5*y^3*z^7+6*x^4*y^4*z^7-6*x^3*
-      y^5*z^7-3*y^8*z^7-3*x^7*z^8-3*x^4*y^3*z^8-3*x^3*y^4*z^8-3*y^7*z^8+7*x^6*z^9+14*x^3*y^3*z^9+7*y^6*z^9}})
+      x^6*y^3-(1/3)*x^5*y^4-(1/3)*x^4*y^5+x^3*y^6+x^6*z^3+2*x^3*y^3*z^3+y^6*z^3-(1/3)*x^5*z^4-(1/3)*y^5*z^4-(1/3)*x^4*z^5-(1/3)*y^4*z^5+x^3*z^6+
+      y^3*z^6, x^7*y^3+(1/2)*x^6*y^4-x^5*y^5+(1/2)*x^4*y^6+x^3*y^7+x^7*z^3+x^4*y^3*z^3+x^3*y^4*z^3+y^7*z^3+(1/2)*x^6*z^4+x^3*y^3*z^4+(1/2)*y^6*z
+      ^4-x^5*z^5-y^5*z^5+(1/2)*x^4*z^6+(1/2)*y^4*z^6+x^3*z^7+y^3*z^7,
+      x^8*y^4-(4/5)*x^7*y^5+(6/5)*x^6*y^6-(4/5)*x^5*y^7+x^4*y^8+(12/5)*x^6*y^3*z^3-(4/5)*x^5*y^4*z^3-(4/5)*x^4*y^5*z^3+(12/5)*x^3*y^6*z^3+x^8*z^
+      4-(4/5)*x^5*y^3*z^4+(18/5)*x^4*y^4*z^4-(4/5)*x^3*y^5*z^4+y^8*z^4-(4/5)*x^7*z^5-(4/5)*x^4*y^3*z^5-(4/5)*x^3*y^4*z^5-(4/5)*y^7*z^5+(6/5)*x^6
+      *z^6+(12/5)*x^3*y^3*z^6+(6/5)*y^6*z^6-(4/5)*x^5*z^7-(4/5)*y^5*z^7+x^4*z^8+y^4*z^8,
+      x^9*y^4-(4/5)*x^8*y^5+(3/5)*x^7*y^6+(3/5)*x^6*y^7-(4/5)*x^5*y^8+x^4*y^9+(6/5)*x^7*y^3*z^3+(3/5)*x^6*y^4*z^3-(6/5)*x^5*y^5*z^3+(3/5)*x^4*y^
+      6*z^3+(6/5)*x^3*y^7*z^3+x^9*z^4+(3/5)*x^6*y^3*z^4+(4/5)*x^5*y^4*z^4+(4/5)*x^4*y^5*z^4+(3/5)*x^3*y^6*z^4+y^9*z^4-(4/5)*x^8*z^5-(6/5)*x^5*y^
+      3*z^5+(4/5)*x^4*y^4*z^5-(6/5)*x^3*y^5*z^5-(4/5)*y^8*z^5+(3/5)*x^7*z^6+(3/5)*x^4*y^3*z^6+(3/5)*x^3*y^4*z^6+(3/5)*y^7*z^6+(3/5)*x^6*z^7+(6/5
+      )*x^3*y^3*z^7+(3/5)*y^6*z^7-(4/5)*x^5*z^8-(4/5)*y^5*z^8+x^4*z^9+y^4*z^9,
+      x^10*y^4-(4/5)*x^9*y^5-(3/5)*x^8*y^6+(12/5)*x^7*y^7-(3/5)*x^6*y^8-(4/5)*x^5*y^9+x^4*y^10-(6/5)*x^8*y^3*z^3+(12/5)*x^7*y^4*z^3-(6/5)*x^6*y^
+      5*z^3-(6/5)*x^5*y^6*z^3+(12/5)*x^4*y^7*z^3-(6/5)*x^3*y^8*z^3+x^10*z^4+(12/5)*x^7*y^3*z^4+(6/5)*x^6*y^4*z^4-(2/5)*x^5*y^5*z^4+(6/5)*x^4*y^6
+      *z^4+(12/5)*x^3*y^7*z^4+y^10*z^4-(4/5)*x^9*z^5-(6/5)*x^6*y^3*z^5-(2/5)*x^5*y^4*z^5-(2/5)*x^4*y^5*z^5-(6/5)*x^3*y^6*z^5-(4/5)*y^9*z^5-(3/5
+      )*x^8*z^6-(6/5)*x^5*y^3*z^6+(6/5)*x^4*y^4*z^6-(6/5)*x^3*y^5*z^6-(3/5)*y^8*z^6+(12/5)*x^7*z^7+(12/5)*x^4*y^3*z^7+(12/5)*x^3*y^4*z^7+(12/5)*
+      y^7*z^7-(3/5)*x^6*z^8-(6/5)*x^3*y^3*z^8-(3/5)*y^6*z^8-(4/5)*x^5*z^9-(4/5)*y^5*z^9+x^4*z^10+y^4*z^10,
+      x^9*y^6-(3/7)*x^8*y^7-(3/7)*x^7*y^8+x^6*y^9+2*x^9*y^3*z^3-(3/7)*x^8*y^4*z^3-(6/7)*x^7*y^5*z^3+(30/7)*x^6*y^6*z^3-(6/7)*x^5*y^7*z^3-(3/7)*x
+      ^4*y^8*z^3+2*x^3*y^9*z^3-(3/7)*x^8*y^3*z^4+(6/7)*x^7*y^4*z^4-(3/7)*x^6*y^5*z^4-(3/7)*x^5*y^6*z^4+(6/7)*x^4*y^7*z^4-(3/7)*x^3*y^8*z^4-(6/7
+      )*x^7*y^3*z^5-(3/7)*x^6*y^4*z^5+(6/7)*x^5*y^5*z^5-(3/7)*x^4*y^6*z^5-(6/7)*x^3*y^7*z^5+x^9*z^6+(30/7)*x^6*y^3*z^6-(3/7)*x^5*y^4*z^6-(3/7)*x
+      ^4*y^5*z^6+(30/7)*x^3*y^6*z^6+y^9*z^6-(3/7)*x^8*z^7-(6/7)*x^5*y^3*z^7+(6/7)*x^4*y^4*z^7-(6/7)*x^3*y^5*z^7-(3/7)*y^8*z^7-(3/7)*x^7*z^8-(3/7
+      )*x^4*y^3*z^8-(3/7)*x^3*y^4*z^8-(3/7)*y^7*z^8+x^6*z^9+2*x^3*y^3*z^9+y^6*z^9}})
 ///
 
--- 29) Bruns/Conca 2
+-- 28) Bruns/Conca 2
 TEST ///
 FF = ZZ/2
 R = FF[x,y,z]
