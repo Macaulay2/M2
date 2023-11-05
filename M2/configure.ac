@@ -1002,6 +1002,7 @@ then AC_LANG(C)
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
+      AC_CHECK_HEADERS([flint/nmod.h]) dnl only present in flint >= 2.9.0
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
