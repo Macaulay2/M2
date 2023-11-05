@@ -350,6 +350,13 @@ else()
   unset(FACTORY_STREAMIO CACHE)
 endif()
 
+if(FLINT_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${FLINT_INCLUDE_DIR}")
+  check_include_files(flint/nmod.h HAVE_FLINT_NMOD_H)
+else()
+  unset(HAVE_FLINT_NMOD_H CACHE)
+endif()
+
 if(FROBBY_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR};${MP_INCLUDE_DIRS}")
   # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
