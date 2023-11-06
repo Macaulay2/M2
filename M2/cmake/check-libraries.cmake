@@ -329,6 +329,9 @@ if(CHECK_LIBRARY_COMPATIBILITY)
   unset(LIBRARY_COMPATIBILITY CACHE)
 endif()
 
+unset(CMAKE_REQUIRED_LIBRARIES)
+unset(CMAKE_REQUIRED_INCLUDES)
+
 ###############################################################################
 ## Set four library related definitions
 
