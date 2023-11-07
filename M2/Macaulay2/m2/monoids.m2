@@ -462,9 +462,8 @@ processDegrees = (degs, degrk, group, nvars) -> (
 -----------------------------------------------------------------------------
 
 makeVars = (n, var) -> toList(
-    (a, b) := (0, n-1);
     (name, ind) := if instance(var = baseName' var, IndexedVariable) then toSequence var else (var, null);
-    if ind =!= null then (a, b)  = (append(listSplice ind, 0), append(listSplice ind, n-1));
+    (a, b) := if ind === null then (0, n-1) else (prepend(0, listSplice ind), prepend(n-1, listSplice ind));
     name_a .. name_b)
 
 -- check that the objects serving as variables have an assignment method

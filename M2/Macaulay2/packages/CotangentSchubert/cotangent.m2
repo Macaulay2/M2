@@ -21,12 +21,29 @@ new LabelList from String := (T,s) -> (
     if #l==1 then characters s else select(l,c->c!="")
     )
 new LabelList from List := (T,l) -> apply(l,toString)
-texMath LabelList := s -> concatenate between("\\,",s)
+texMath LabelList := s -> concatenate between("\\,",apply(s,a->if a==="_" then "\\_" else a))
 net LabelList := toString LabelList := s -> concatenate between(" ",s)
+toExternalString LabelList := s -> toExternalString toString s
+-- ordering of labels
+ordTable = hashTable (
+    apply(19,i->toString(i/2) => i/2)
+    | apply(4,i-> (toString (i+1)|toString i)=>i+1/2)
+    | apply(10,i->"↘"|toString i => i)
+    | { "odd" => 10 }
+    | apply(10,i->"↗"|toString i => i+11)
+    )
+ord = s -> try ordTable#s else error "Invalid label"
 -- inversion number of a string
-inversion = method()
-inversion LabelList := p -> sum(#p-1,i->sum(i+1..#p-1,j->if p_i>p_j then 1 else 0))
-inversion String := s -> inversion new LabelList from s
+inversion = method(Options=>{Separation=>null})
+inversion LabelList := o -> p -> (
+    if member("_",p) then (
+	if o.Separation===null then error "need to specify Separation";
+	sep:=toString(o.Separation+if instance(o.Separation,QQ) then 0 else if any(p,a->a!="_" and first ascii a-48<o.Separation) then 1/2 else -1/2);
+	p=apply(p,a->if a=="_" then sep else a);
+	);
+    sum(#p-1,i->sum(i+1..#p-1,j->if ord p_i>ord p_j then 1 else 0))
+    )
+inversion String := o -> s -> inversion (new LabelList from s,o)
 
 -- a simple function that seems like it should already exist
 basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x), (ring x).BaseRing)

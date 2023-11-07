@@ -1,5 +1,7 @@
 -- Copyright 1999-2008 by Anton Leykin and Harrison Tsai
 
+-- AnnFs uses the algorithm of Oaku-Takayama which involves adding 4 extra variables to the Weyl algebra and performing two eliminations. TODO: Implement the Briancon-Maisonobe algorithm. This would require support for working with Ore algebras (for instance [dt, s] = s) in the Macaulay2 core.
+
 ---------------------------------------------------------------------------------
 AnnFs = method()
 AnnFs RingElement := Ideal => f -> (
@@ -24,7 +26,11 @@ AnnFs RingElement := Ideal => f -> (
 
      AnnIFs(ideal dpV#1, f)
      );
-AnnFs List := Ideal => F -> (
+
+-- This function used to be called AnnFs but was incomplete, it only computes the Malgrange ideal.
+
+MalgrangeIdeal = method()
+MalgrangeIdeal List := Ideal => F -> (
 -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables
 --                             (f_i has to be an element of A_n, the Weyl algebra).
 -- Output:  Ann f_1^{s_1}...f_r^{s_r}, an ideal in A_n<t_1,..., t_r,dt_1,...,dt_r>.	
@@ -57,6 +63,7 @@ AnnFs List := Ideal => F -> (
 	       sub(DXj,WT) + sum(r, i->sub(DXj*F#i-F#i*DXj,WT)*WT_(i+r+2*n) ) 
 	       )) 	  
      );
+
 ------------------------------------------------------------------------------
 --This needs documentation.
 AnnIFs = method()

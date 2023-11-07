@@ -1023,6 +1023,7 @@ export {
 	"randomKRationalPoint",
 	"randomMutableMatrix",
 	"rank",
+	"rays",
 	"read",
 	"readDirectory",
 	"readPackage",

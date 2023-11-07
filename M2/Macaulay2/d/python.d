@@ -23,11 +23,13 @@ toExpr(r:pythonObjectOrNull):Expr := (
     when r
     is null do buildPythonErrorPacket()
     is po:pythonObject do (
+	x := pythonObjectCell(po, 0);
 	h := int(Ccode(long, "PyObject_Hash(", po, ")"));
 	if h == -1 then ( -- unhashable object (e.g., a list)
 	    Ccode(void, "PyErr_Clear()");
-	    h = nextHash());
-	Expr(pythonObjectCell(po, h))));
+	    h = hashFromAddress(Expr(x)));
+	x.hash = h;
+	Expr(x)));
 
 import RunSimpleString(s:string):int;
 PyRunSimpleString(e:Expr):Expr := (
@@ -430,8 +432,8 @@ setupfun("pythonWrapM2Function", PyWrapM2Function);
 -- none --
 ----------
 
-PyNone(e:Expr):Expr := toExpr(Ccode(pythonObjectOrNull, "Py_None"));
-setupfun("getPythonNone", PyNone);
+setupconst("pythonNone",
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_None"), 0xFCA86420)));
 
 ---------------
 -- importing --

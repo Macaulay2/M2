@@ -271,7 +271,7 @@ export {
 -- Tests
 --------------------------------------------------------------------------------
 
-load "BernsteinSato/TST/tests.m2"
+load "./BernsteinSato/TST/tests.m2"
 
 --------------------------------------------------------------------------------
 -- Documentation
@@ -279,18 +279,18 @@ load "BernsteinSato/TST/tests.m2"
 
 beginDocumentation()
 
-load "BernsteinSato/DOC/main.m2"
-load "BernsteinSato/DOC/DHom.m2"
-load "BernsteinSato/DOC/Dlocalize.m2"
-load "BernsteinSato/DOC/Drestriction.m2"
-load "BernsteinSato/DOC/WeylClosure.m2"
-load "BernsteinSato/DOC/annFs.m2"
-load "BernsteinSato/DOC/bFunctions.m2"
-load "BernsteinSato/DOC/localCohom.m2"
-load "BernsteinSato/DOC/intersectionCohom.m2"
-load "BernsteinSato/DOC/multiplierIdeals.m2"
-load "BernsteinSato/DOC/paco-anton-paper.m2"
-load "BernsteinSato/DOC/other.m2"
+load "./BernsteinSato/DOC/main.m2"
+load "./BernsteinSato/DOC/DHom.m2"
+load "./BernsteinSato/DOC/Dlocalize.m2"
+load "./BernsteinSato/DOC/Drestriction.m2"
+load "./BernsteinSato/DOC/WeylClosure.m2"
+load "./BernsteinSato/DOC/annFs.m2"
+load "./BernsteinSato/DOC/bFunctions.m2"
+load "./BernsteinSato/DOC/localCohom.m2"
+load "./BernsteinSato/DOC/intersectionCohom.m2"
+load "./BernsteinSato/DOC/multiplierIdeals.m2"
+load "./BernsteinSato/DOC/paco-anton-paper.m2"
+load "./BernsteinSato/DOC/other.m2"
 
 --------------------------------------------------------------------------------
 

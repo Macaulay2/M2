@@ -102,8 +102,10 @@ jobs:
           echo "CC=${{  matrix.cc  }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
-          then alias llvm-config="llvm-config-14"
+          then shopt -s expand_aliases
+               alias llvm-config="/usr/bin/llvm-config-14"
                echo "/usr/lib/ccache"                     >> $GITHUB_PATH
+               echo "/home/linuxbrew/.linuxbrew/bin"      >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
                echo `brew --prefix llvm@14`/bin              >> $GITHUB_PATH
@@ -133,7 +135,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
-            -DWITH_PYTHON=ON \
+            -DWITH_PYTHON=OFF \
             --debug-trycompile
 
       - name: Build libraries using Ninja
@@ -165,7 +167,7 @@ jobs:
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
           export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
             -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
-          ../../configure --enable-download --with-python --with-system-gc
+          ../../configure --enable-download --without-python --with-system-gc
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
@@ -209,7 +211,7 @@ jobs:
               make validate-html
             else
             # otherwise, just validate HTML docs for packages that have been updated
-              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq)
+              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq | xargs)
               make validate-html PACKAGES="$PACKAGES"
             fi
           else

@@ -54,6 +54,9 @@
 /* whether factory was built with --enable-streamio */
 #cmakedefine FACTORY_STREAMIO 1
 
+/* whether we have the flint header file nmod.h */
+#cmakedefine HAVE_FLINT_NMOD_H 1
+
 /* whether frobby has frobby_version >=0.9.4 or constants::version <0.9.4 */
 #cmakedefine HAVE_FROBBY_VERSION 1
 
@@ -61,7 +64,7 @@
 #cmakedefine HAVE_FFI_GET_STRUCT_OFFSETS 1
 
 /* libffi version */
-#define LIBFFI_VERSION "${LIBFFI_VERSION}"
+#define FFI_VERSION "${FFI_VERSION}"
 
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* whether getaddrinfo can handle numeric service (port) numbers */

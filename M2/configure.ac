@@ -1002,6 +1002,7 @@ then AC_LANG(C)
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
+      AC_CHECK_HEADERS([flint/nmod.h]) dnl only present in flint >= 2.9.0
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
@@ -1683,12 +1684,12 @@ AS_IF([test x$with_libffi != xno ],
        AC_SEARCH_LIBS([ffi_call], [ffi], [],
 	   [AC_MSG_ERROR([libffi not found or not linkable])])
        AC_CHECK_FUNCS([ffi_get_struct_offsets])
-       LIBFFI_VERSION=$(pkg-config --modversion libffi)],
+       FFI_VERSION=$(pkg-config --modversion libffi)],
       [AC_MSG_RESULT([no])
        AC_MSG_ERROR([install libffi or use --without-libffi option])])],
-    [LIBFFI_VERSION="not present"])
+    [FFI_VERSION="not present"])
 AC_SUBST([LIBFFI], [$with_libffi])
-AC_DEFINE_UNQUOTED([LIBFFI_VERSION], ["$LIBFFI_VERSION"], [libffi version])
+AC_DEFINE_UNQUOTED([FFI_VERSION], ["$FFI_VERSION"], [libffi version])
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS

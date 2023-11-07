@@ -73,12 +73,13 @@ Node
   Key
      exportFrom
     (exportFrom, Package, List)
+    (exportFrom, String,  List)
   Headline
     export symbols from a package's private dictionary
   Usage
     exportFrom(pkg, {"symbol1", "symbol2"})
   Inputs
-    pkg:Package
+    pkg:{Package,String}
       the package containing the symbols
     :List
       of strings, corresponding to the symbols to export

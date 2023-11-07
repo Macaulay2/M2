@@ -74,13 +74,20 @@ export parseString(s:string):string := (
 	       if c == 'n' then v << '\n'
 	       else if c == '"' then v << '"'
 	       else if c == 'r' then v << '\r'
+	       else if c == 'a' then v << char(7)
 	       else if c == 'b' then v << '\b'
 	       else if c == 't' then v << '\t'
+	       else if c == 'v' then v << char(11)
 	       else if c == 'f' then v << '\f'
+	       else if c == 'e' then v << char(27)
+	       else if c == 'E' then v << char(27)
 	       else if c == '\\' then v << '\\'
 	       else if c == 'u' then (
 		    i = i+4;
 		    utf8(v, ((hexvalue(s.(i-3)) * 16 + hexvalue(s.(i-2))) * 16 + hexvalue(s.(i-1))) * 16 + hexvalue(s.i)))
+	       else if c == 'x' then (
+		    i = i + 2;
+		    v << char(hexvalue(s.(i - 1)) * 16 + hexvalue(s.i)))
 	       else if '0' <= c && c < '8' then (
 		    j := c - '0';
 		    c = s.(i+1);
