@@ -605,7 +605,9 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       if isZero(x.v) && isNegative(y.v)
 	       then return buildErrorPacket("division by zero");
 	       d := denominator(y.v);
-	       if d === 1 then toExpr(x.v^numerator(y.v))
+	       if d === 1 then (
+		    if isNegative(y.v) then toExpr(oneZZ/x.v^(-numerator(y.v)))
+		    else toExpr(x.v^numerator(y.v)))
 	       else if isNegative(x.v)
 	       then if isOdd(d) then (
 		    if isOdd(numerator(y.v))
