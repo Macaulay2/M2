@@ -31,6 +31,16 @@ toExpr(r:pythonObjectOrNull):Expr := (
 	x.hash = h;
 	Expr(x)));
 
+PyInitialize(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then (
+	    Ccode(void, "Py_Initialize()");
+	    nullE)
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("pythonInitialize", PyInitialize);
+
 import RunSimpleString(s:string):int;
 PyRunSimpleString(e:Expr):Expr := (
      when e is s:stringCell do if 0 == RunSimpleString(s.v) then nullE else buildPythonErrorPacket()

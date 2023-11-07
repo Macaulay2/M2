@@ -71,10 +71,6 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
   system_cpuTime_init();
 
-#ifdef WITH_PYTHON
-  Py_Initialize();
-#endif
-
   abort_jmp.is_set = FALSE;
   interrupt_jmp.is_set = FALSE;
 

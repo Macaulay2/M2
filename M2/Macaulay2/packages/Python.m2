@@ -74,6 +74,7 @@ importFrom_Core {
     "pythonDictSetItem",
     "pythonFalse",
     "pythonImportImportModule",
+    "pythonInitialize",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
@@ -109,6 +110,8 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
 }
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
+
+pythonInitialize()
 
 pythonHelp = Command (() -> pythonValue ///help()///)
 
