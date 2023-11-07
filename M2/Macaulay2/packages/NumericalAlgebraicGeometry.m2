@@ -388,85 +388,8 @@ randomOrthonormalCols = method() -- return a random m-by-n matrix with orthonorm
 randomOrthonormalCols(ZZ,ZZ) := (m,n) -> 
 if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
--- helper functions for square down:
--- orthonormal basis for col(L) using SVD
-ONB = L -> (
-    (S,U,Vt) := SVD L;
-    r := # select(S,s->not areEqual(s,0));
-    U_{0..r-1}
-    )
--- orthonormal basis for subspace of col(L) that is perpendicular to col(M)
-perp = (M, L) -> if areEqual(norm L, 0) then M else (
-    Lortho := ONB L;
-    Lperp := M-Lortho*conjugate transpose Lortho * M;
-    ONB Lperp
-    )
--- finding a square subsystem of maximal rank
-rowSelector = method(Options=>{"block size"=>1,"target rank"=>null,Verbose=>false})
-rowSelector (AbstractPoint, AbstractPoint, System) := o -> (y0, c0, GS) -> (
-    (n, m, N) := (numVariables GS, numParameters GS, numFunctions GS);
-    blockSize := o#"block size";
-    numBlocks := ceiling(N/blockSize);
-    numIters := 0;
-    L := matrix{for i from 1 to n list 0_CC}; -- initial "basis" for row space
-    r := 0;
-    goodRows := {};
-    diffIndices := {};
-    while (r < n and numIters < numBlocks) do (
-    	diffIndices = for j from numIters*blockSize to min((numIters+1)*blockSize, N)-1 list j;
-	if o.Verbose then << "processing rows " << first diffIndices << " thru " << last diffIndices << endl;
-    	newRows := evaluateJacobian(GS^diffIndices, y0, c0);
-    	for j from 0 to numrows newRows - 1 do (
-	    tmp := transpose perp(transpose newRows^{j}, transpose L);
-	    if not areEqual(0, norm tmp) then (
-		if o.Verbose then << "added row " << blockSize*numIters+j << endl;
-	    	if areEqual(norm L^{0}, 0) then L = tmp else L = L || tmp;
-	    	goodRows = append(goodRows, blockSize*numIters+j);
-		);
-    	    );
-    	r = numericalRank L;
-    	numIters = numIters+1;
-	);
-    if o.Verbose then << "the rows selected are " << goodRows << endl;
-    goodRows
-    )
 
--- stashes and returns "squared up" subsytem, according to given strategy
-squareUp = method(Options => {Field => null, Strategy => null, "block size"=>1, "target rank" => null, Verbose=>false}) -- squares up a polynomial system (presented as a one-column matrix)
-squareUp System := o -> P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, numVariables P, o)
-squareUp (AbstractPoint, AbstractPoint, GateSystem) := o -> (p0, x0, F) -> (
-    keptRows := rowSelector(p0, x0, F, "block size" => o#"block size", Verbose=>o.Verbose);
-    F.SquaredUpSystem = F^keptRows
-    )
-squareUp (AbstractPoint, GateSystem) := o -> (x0, F) -> squareUp(point{{}}, x0, F, o)
-squareUp (System, ZZ) := o -> (P, n) -> (
-    m := numFunctions P;
-    if m<=n then "expect more equations than second argument";
-    C := if instance(o.Field, Nothing) then (
-	if instance(P, PolySystem) then coefficientRing ring P
-	else default CC
-	) else o.Field;
-    if instance(o.Strategy, Nothing) or o.Strategy == "random matrix" then (
-    	M := if class C === ComplexField then sub(randomOrthonormalRows(n,m), C) else random(C^n,C^m);
-    	squareUp(P,M,o)
-	) 
-    else if o.Strategy == "slack variables" then error "strategy not implemented"
-    else error "strategy not implemented"
-    )
-squareUp(System, Matrix) := o -> (P, M) -> (
-    P.SquareUpMatrix = M;
-    P.SquaredUpSystem = if instance(P, PolySystem) then polySystem (M*P.PolyMap) else gateSystem(parameters P, vars P, M * gateMatrix P)
-    )
--- todo: squareUp(System, ...) not implemented, override w/ PolySystem and GateSystem
-
---- is this ever used???
-squareUpMatrix = method()
-squareUpMatrix System := P -> if P.?SquareUpMatrix then P.SquareUpMatrix else (
-    n := P.NumberOfVariables;
-    C := coefficientRing ring P;
-    map(C^n)
-    )
-
+load "./NumericalAlgebraicGeometry/systems.m2"
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"

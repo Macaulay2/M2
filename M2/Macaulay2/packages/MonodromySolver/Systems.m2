@@ -78,10 +78,6 @@ flatten PolySystem := PS -> sub(PS, first flattenRing ring PS)
 gateSystem (Thing, Thing, Gate) := (X, P, g) -> gateSystem(X, P, gateMatrix{{g}})
 gateSystem (List, Thing) := (X, F) -> gateSystem({}, X, F)
 
--- take some functions from the GateMatrix \ GateSystem
-GateMatrix ^ BasicList := (M, inds) -> M^(toList inds)
-GateSystem ^ BasicList := (P, inds) -> gateSystem(parameters P, vars P, (gateMatrix P)^inds)
-
 -- routines for mixed volume computation (via gfan)
 computeMixedVolume = method()
 computeMixedVolume List := polys -> value gfanMixedVolume(

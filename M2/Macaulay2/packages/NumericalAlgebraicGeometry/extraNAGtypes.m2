@@ -6,8 +6,7 @@
 
 export{ 
     "GateSystem", "gateSystem", 
-    "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "segmentHomotopy", "parametricSegmentHomotopy",
-    "squareDown" -- TO DO: merge with squareUp ??? 
+    "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "segmentHomotopy", "parametricSegmentHomotopy"
     }
 
 debug SLPexpressions

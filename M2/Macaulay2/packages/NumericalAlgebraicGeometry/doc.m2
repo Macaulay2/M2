@@ -789,23 +789,49 @@ document {
 
 document {
     Key => {squareUp, (squareUp,System), (squareUp,System,ZZ), (squareUp,System, Matrix), 
-	SquaredUpSystem, SquareUpMatrix
+	SquaredUpSystem, SquareUpMatrix,
+	(squareUp, AbstractPoint, AbstractPoint, GateSystem), 
+	(squareUp, AbstractPoint, GateSystem)  
 	},
     Headline => "square up a polynomial system",
-    Usage => "G = squareUp F\\nG = squareUp(F,M)\\nsquareUp(F,n)",
+    Usage => "G = squareUp F
+    G = squareUp(F,M)
+    G = squareUp(F,n)
+    G = squareUp(x0,F)
+    G = squareUp(p0,x0,F)
+    ",
     Inputs => { 
-	"F"=>PolySystem,
-	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"},
-	"n"=>ZZ=>{" the number of polynomials to be formed (by default, this equals the number of variables)"}  
+	"F"=>System,
+	"M"=>Matrix=>{" used to square up the system (by default a random matrix is picked)"},
+	"n"=>ZZ=>{" the number of polynomials to be formed (by default, this equals the number of variables)"},
+	"x0"=>Point=>{" used to compute the dimension of the tangent space (approximately)"},
+	"p0"=>Point=>{" parameters specialization (in case of a parametric system)"} 	 
 	},
     Outputs => { "G"=>PolySystem },
-    "Squares up an overdetermined polynomial system. Attaches keys ", 
-    TO SquareUpMatrix, " and ", TO SquaredUpSystem,
-    " to ", TT "F", ".", 
+    PARA {"There are two flavors of this method: both aimed at producing a regular sequence (either global or local)."},
+    PARA {"The first squares up an overdetermined polynomial system (usually assuming that the user is interested in the isolated solutions; i.e., the components of dimension 0) and attaches keys ", 
+    	TO SquareUpMatrix, " and ", TO SquaredUpSystem,
+    	" to ", TT "F", "."}, 
     EXAMPLE lines ///
-    CC[x,y]; F = polySystem {x^2+y^2,x^3+y^3,x^4+y^4}
+    CC[X,Y]; F = polySystem {X^2+Y^2,X^3+Y^3,X^4+Y^4}
     G := squareUp F
     peek F
+    ///,
+    PARA { 
+	"The other computes ", TO "numericalRank", " ", TT "r", 
+	" of the Jacobian of ", TT "F", " and picks out the first ", TT"r", 
+	" polynomials who give the same (approximate) rank at the specified point."   
+	},
+    EXAMPLE ///
+    X = gateMatrix{toList vars(x,y,z)}
+    P = gateMatrix{toList vars(a..d)}
+    F = gateSystem(P,X,gateMatrix{{y^2-x*z},{x^2*y-z^2},{x^3-y*z},{a*x+b*y+c*z+d}})
+    X0 = point{{1,1,1_CC}}
+    P0 = point{{1,1,1,-3_CC}}
+    norm evaluate(F, P0, X0) -- should be small
+    numericalRank evaluateJacobian(F, P0, X0) -- should equal number of variables
+    G = squareUp(P0, X0, F)
+    netList entries gateMatrix G
     ///,
     SeeAlso=>{PolySystem}
     }
