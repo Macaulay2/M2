@@ -122,7 +122,7 @@ globalA1Degree (List) := (GrothendieckWittClass) => (Endo) -> (
     m := numColumns(sBXProm);
 
     -- Now create Bezoutian matrix B for the quadratic form by reading off the coefficients. 
-    -- B is a (m x m) matrix.  Coefficent B_(i,j) is the coefficient of the (ith basis vector x jth basis vector) in tensor product.
+    -- B is a (m x m) matrix.  Coefficient B_(i,j) is the coefficient of the (ith basis vector x jth basis vector) in tensor product.
     -- phi0 maps the coefficient to kk
     B := mutableMatrix id_(kk^m);
     for i from 0 to m - 1 do (
@@ -265,7 +265,7 @@ localA1Degree (List, Ideal) := (GrothendieckWittClass) => (Endo,p) -> (
     m := #sBXProm;
     
     -- Now create Bezoutian matrix B for the quadratic form by reading off the local coefficients. 
-    -- B is a (m x m) matrix.  Coefficent B_(i,j) is the coefficient of the (ith basis vector x jth basis vector) in tensor product.
+    -- B is a (m x m) matrix.  Coefficient B_(i,j) is the coefficient of the (ith basis vector x jth basis vector) in tensor product.
     -- phi0 maps the coefficient to kk    
     B:= mutableMatrix id_(kk^m);
     for i from 0 to m-1 do (
