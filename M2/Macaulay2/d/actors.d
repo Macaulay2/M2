@@ -602,6 +602,8 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    	 then toExpr(newQQCanonical(minusoneZZ,-den))
 		    	 else toExpr(newQQCanonical(     oneZZ, den)))))
 	  is y:QQcell do (
+	       if isZero(x.v) && isNegative(y.v)
+	       then return buildErrorPacket("division by zero");
 	       d := denominator(y.v);
 	       if d === 1 then toExpr(x.v^numerator(y.v))
 	       else if isNegative(x.v)
@@ -631,11 +633,15 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
      is x:QQcell do (
 	  when rhs
 	  is y:ZZcell do (
+	       if isZero(x.v) && isNegative(y.v)
+	       then return buildErrorPacket("division by zero");
 	       if isLong(y.v) 
 	       then toExpr(x.v^y.v)
 	       else buildErrorPacket("expected exponent to be a small integer")
 	       )
 	  is y:QQcell do (
+	       if isZero(x.v) && isNegative(y.v)
+	       then return buildErrorPacket("division by zero");
 	       d := denominator(y.v);
 	       if d === 1 then (
 		    if isLong(numerator(y.v))
