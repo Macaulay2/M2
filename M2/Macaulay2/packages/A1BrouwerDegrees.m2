@@ -39,6 +39,7 @@ newPackage(
 	"RationalPoints2"
 	},
     PackageExports=>{},
+    AuxiliaryFiles=>true,
     DebuggingMode=>true
     )
 
