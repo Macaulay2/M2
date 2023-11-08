@@ -391,19 +391,19 @@ dotemacsFix0 = ///
 (load "M2-init")
 
 ;; this version will not give an error if M2-init.el is not found:
-;(load "M2-init" t)
+;; (load "M2-init" t)
 
-; You may comment out the following line with an initial semicolon if you 
-; want to use your f12 key for something else.  However, this action
-; will be undone the next time you run setup() or setupEmacs().
+;; You may comment out the following line with an initial semicolon if you 
+;; want to use your f12 key for something else.  However, this action
+;; will be undone the next time you run setup() or setupEmacs().
 (global-set-key [ f12 ] 'M2)
 
-; Prevent Emacs from inserting a superfluous "See" or "see" in front
-; of the hyperlinks when reading documentation in Info mode.
+;; Prevent Emacs from inserting a superfluous "See" or "see" in front
+;; of the hyperlinks when reading documentation in Info mode.
 (setq Info-hide-note-references 'hide)
 ///
 
-emacsHeader := ";-*-emacs-lisp-*-\n"
+emacsHeader := ";; -*-emacs-lisp-*-\n"
 shHeader := "#-*-sh-*-\n"
 
 bashtempl := ///
