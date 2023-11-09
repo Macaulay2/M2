@@ -45,13 +45,13 @@ inline Complex sqrt(const Complex &x)
 }
 inline std::complex<Real> operator/(const Complex &lhs, const Complex &rhs)
 {
-  Real a = abs(rhs);
   const Real &lhsr = lhs.real();
   const Real &lhsi = lhs.imag();
   const Real &rhsr = rhs.real();
   const Real &rhsi = rhs.imag();
-  return Complex((lhsr * rhsr + lhsi * rhsi) / a,
-                 (lhsi * rhsr - lhsr * rhsi) / a);
+  Real normrhs = rhsr*rhsr+rhsi*rhsi;
+  return Complex((lhsr * rhsr + lhsi * rhsi) / normrhs,
+                 (lhsi * rhsr - lhsr * rhsi) / normrhs);
 }
 inline std::complex<Real> operator*(const Complex &lhs, const Complex &rhs)
 {
