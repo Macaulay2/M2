@@ -94,7 +94,7 @@ rawBettiTally = v -> (
 rawMultigradedBettiTally = B -> (
     if keys B == {} then return 0;
     N := max apply(pairs B, (key, n) -> ((i,d,h) := key; length d));
-    R := ZZ[vars(0..N-1), MonomialOrder => Lex, Inverses => true];
+    R := ZZ(monoid[vars(0..N-1), MonomialOrder => Lex, Inverses => true]);
     H := new MutableHashTable;
     (rows, cols) := ({}, {});
     scan(pairs B,
