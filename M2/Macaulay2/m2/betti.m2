@@ -83,11 +83,11 @@ rawBettiTally = v -> (
     minrow := min fi;
     maxrow := max fi;
     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
-    leftside := splice {"", "total:", apply(minrow .. maxrow, i -> toString i | ":")};
+    leftside := splice {, "total:", apply(minrow .. maxrow, i -> hold i : "")};
     totals := apply(transpose v, sum);
     v = prepend(totals,v);
-    v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
-    v = prepend(toString \ toList (mincol .. maxcol), v);
+    v = applyTable(v, bt -> if bt === 0 then symbol . else bt);
+    v = prepend(toList (mincol .. maxcol), v);
     v = apply(leftside,v,prepend);
     v)
 
@@ -106,7 +106,7 @@ rawMultigradedBettiTally = B -> (
 		m := n * R_d;
 		if H#?key then H#key = H#key + m else H#key = m;
 		) else (
-		s := toString n | ":" | toString d;
+		s := hold n : d;
 		if H#?i then H#i = H#i | {s} else H#i = {s};
 		);
 	    ));
@@ -115,30 +115,34 @@ rawMultigradedBettiTally = B -> (
 	T := table(toList (0 .. length rows - 1), toList (0 .. length cols - 1),
 	    (i,j) -> if H#?(rows#i,cols#j) then H#(rows#i,cols#j) else 0);
 	-- Making the table
-	xAxis := toString \ cols;
-	yAxis := (i -> toString i | ":") \ rows;
-	T = applyTable(T, n -> if n === 0 then "." else toString raw n);
+	xAxis := cols;
+	yAxis := (i -> hold i:"") \ rows;
+--	T = applyTable(T, n -> if n === 0 then symbol . else raw n);
+	T = applyTable(T, n -> if n === 0 then symbol . else n);
 	T = prepend(xAxis, T);
-	T = apply(prepend("", yAxis), T, prepend);
+	T = apply(prepend(, yAxis), T, prepend);
 	) else (
 	T = table(max((keys H)/(j -> #H#j)), sort keys H,
-	    (i,k) -> if i < #H#k then H#k#i else null);
-	T = prepend(toString \ sort keys H, T);
+	    (i,k) -> if i < #H#k then H#k#i);
+	T = prepend(sort keys H, T);
 	);
     T)
 
+toStringn := x -> if x===null then "" else toString x
 net            BettiTally := B -> netList(rawBettiTally B,            Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
-net MultigradedBettiTally := B -> netList(rawMultigradedBettiTally B, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+net MultigradedBettiTally := B -> netList(applyTable(rawMultigradedBettiTally B,toStringn), Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+
+texMathn := x -> if x===null then "" else texMath x
 
 texMath BettiTally := v -> (
     v = rawBettiTally v;
-    v = join({prepend(2, drop(v#0, 1)), prepend("\\text{total:}\n  ", drop(v#1, 1))}, drop(v, 2));
-    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+--    v = join({prepend("  ", drop(v#0, 1)), prepend("\\text{total:}\n  ", drop(v#1, 1))}, drop(v, 2));
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", apply(row,texMathn))));
     concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
 texMath MultigradedBettiTally := v -> (
     v = rawMultigradedBettiTally v;
-    v = if compactMatrixForm then prepend(prepend(2, drop(v#0, 1)), drop(v, 1)) else v;
-    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+    v = if compactMatrixForm then prepend(prepend(, drop(v#0, 1)), drop(v, 1)) else v;
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", apply(row,texMathn))));
     concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
 
 -----------------------------------------------------------------------------
