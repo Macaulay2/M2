@@ -83,7 +83,7 @@ rawBettiTally = v -> (
     minrow := min fi;
     maxrow := max fi;
     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
-    leftside := splice {, "total:", apply(minrow .. maxrow, i -> hold i : "")};
+    leftside := splice {, "total:", apply(minrow .. maxrow, i -> RowExpression{ i, symbol :} )};
     totals := apply(transpose v, sum);
     v = prepend(totals,v);
     v = applyTable(v, bt -> if bt === 0 then symbol . else bt);
@@ -116,7 +116,7 @@ rawMultigradedBettiTally = B -> (
 	    (i,j) -> if H#?(rows#i,cols#j) then H#(rows#i,cols#j) else 0);
 	-- Making the table
 	xAxis := cols;
-	yAxis := (i -> hold i:"") \ rows;
+	yAxis := (i -> RowExpression{ i, symbol :}) \ rows;
 --	T = applyTable(T, n -> if n === 0 then symbol . else raw n);
 	T = applyTable(T, n -> if n === 0 then symbol . else n);
 	T = prepend(xAxis, T);
@@ -132,7 +132,10 @@ toStringn := x -> if x===null then "" else toString x
 net            BettiTally := B -> netList(rawBettiTally B,            Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
 net MultigradedBettiTally := B -> netList(applyTable(rawMultigradedBettiTally B,toStringn), Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
 
-texMathn := x -> if x===null then "" else texMath x
+texMathn := method()
+texMathn Nothing := x -> ""
+texMathn String := s -> "\\text{"|s|"}" -- minor variation, no tt
+texMathn Thing := texMath
 
 texMath BettiTally := v -> (
     v = rawBettiTally v;
