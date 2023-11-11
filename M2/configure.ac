@@ -96,6 +96,9 @@ then if test -f /usr/bin/sw_vers
      elif test -f /usr/bin/lsb_release
      then ISSUE_FLAVOR=`lsb_release -s --id`
           ISSUE_RELEASE=`lsb_release -s --release`
+	  if test $ISSUE_RELEASE = n/a
+	  then ISSUE_RELEASE=`lsb_release -s --codename`
+	  fi
      elif test -f /etc/os-release
      then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
           ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
