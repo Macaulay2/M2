@@ -231,13 +231,6 @@ fi
 
 AC_SUBST(DOCUMENTATION)
 
-dnl deprecated in 1.22
-dnl TODO: remove this completely after 1.22 is released
-AC_ARG_ENABLE([syntax-highlighting],
-    [AS_HELP_STRING([--enable-syntax-highlighting],
-	[this option is deprecated; syntax highlight is always enabled.])],
-    [AC_MSG_WARN([the --enable-syntax-highlighting option is deprecated; syntax highlighting is always enabled.])])
-
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
