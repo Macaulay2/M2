@@ -1,7 +1,7 @@
 newPackage("Probability",
     Headline => "basic probability functions",
     Version => "0.3",
-    Date => "October 6, 2023",
+    Date => "October 31, 2023",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -13,9 +13,12 @@ newPackage("Probability",
 
 -*
 
-0.3 (2023-10-06, M2 1.23)
+0.3 (2023-10-31, M2 1.23)
 * add Caveats to docs warning user to ensure that pdf's are well-defined
 * use ASCII characters for chi-squared distribution
+* clarify in docs that the support of a discrete distribution will be a subset
+  of the integers
+* add Caveat to docs mentioning limitations of floating-point arithmetic
 
 0.2 (2022-10-31, M2 1.21)
 * fix typos
@@ -446,6 +449,10 @@ doc ///
       You may also define your own probability distributions using
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@.
+  Caveat
+    As is always the case when working with real numbers in Macaulay2,
+    unexpected results may occur due to the limitations of floating
+    point arithmetic.
 ///
 
 doc ///
@@ -747,6 +754,7 @@ doc ///
     Support => Sequence
       containing the lower and upper bounds, respectively, of the
       @wikipedia("Support (mathematics)", "support")@ of @TT "X"@.
+      Elements of the support are assumed to be integers.
     Description => String
       describing the probability distribution.
   Outputs
