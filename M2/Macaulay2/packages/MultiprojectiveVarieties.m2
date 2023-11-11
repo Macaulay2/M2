@@ -847,7 +847,7 @@ MultiprojectiveVariety ? MultiprojectiveVariety := (X,Y) -> (
     return incomparable;
 );
 
-variety EmbeddedProjectiveVariety := (cacheValue "ProjOfRing") (X -> Proj ring X);
+variety EmbeddedProjectiveVariety := ProjectiveVariety => (cacheValue "ProjOfRing") (X -> Proj ring X);
 
 linearSpan = method();
 linearSpan EmbeddedProjectiveVariety := (cacheValue "linearSpan") (X -> (

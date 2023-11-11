@@ -76,7 +76,7 @@ document {
      Inputs => {"R", 
 	  Nothing => {TT "{i,j,k, ...}", ", ", ofClass List, ", of integers or lists of integers"}},
      Outputs => {
-          Module => {
+          CoherentSheaf => {
 	       {", a graded free coherent sheaf whose generators have degrees ", TT "-i", ", ", TT "-j", ", ", TT "-k", ", ..."}}},
      EXAMPLE lines ///
      	  R = QQ[a..d]/(a*b*c*d)
