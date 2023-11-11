@@ -638,8 +638,10 @@ export denominatorRef(x:QQmutable) ::= Ccode( ZZmutable, "mpq_denref(",  x, ")")
 
 export hash(x:QQ):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 
+isZero0    (x:QQ):bool :=  0 == Ccode(int, "mpq_sgn(",x,")");
 isNegative0(x:QQ):bool := -1 == Ccode(int, "mpq_sgn(",x,")");
 
+export isZero    (x:QQ):bool := isZero0(x);
 export isNegative(x:QQ):bool := isNegative0(x);
 
 export newQQCanonical(i:ZZ,j:ZZ):QQ := (
