@@ -235,6 +235,16 @@ darwin64-appleclang : always
 		--enable-download
 #		--enable-build-libraries="cohomcalg"
 
+darwin64-appleclang-mpi : always
+	mkdir -p builds.tmp/darwin64-appleclang-mpi
+	cd builds.tmp/darwin64-appleclang-mpi; ../../../../configure \
+		CC=mpicc CXX=mpic++ \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+# mpirun -np 3 M2
+
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang
 	cd builds.tmp/darwin64-latestclang; ../../../../configure \

@@ -29,6 +29,7 @@ option(AUTOTUNE		"Autotune library parameters"		OFF)
 option(WITH_OMP		"Link with the OpenMP library"		ON)
 option(WITH_TBB		"Link with the TBB library"		ON)
 option(WITH_FFI		"Link with the FFI library"		ON)
+option(WITH_MPI		"Link with an MPI library"		OFF)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
 # TODO: still not operational

@@ -151,6 +151,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `WITH_OMP:BOOL=ON`: link with the OpenMP library
 - `WITH_TBB:BOOL=ON`: link with the TBB library
 - `WITH_FFI:BOOL=ON`: link with the FFI library
+- `WITH_MPI:BOOL=OFF` : link with an MPI library
 - `WITH_PYTHON:BOOL=OFF`: link with the Python library (set to `ON` to use the `Python` package)
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
 - `WITH_XML:BOOL=ON`: link with the libxml2 library
