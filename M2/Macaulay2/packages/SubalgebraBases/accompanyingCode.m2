@@ -7,8 +7,6 @@ R = QQ[x_1..x_3];
 A = subring {x_1+x_2+x_3, x_1^2+x_2^2+x_3^2, x_1^3+x_2^3+x_3^3};
 SB = sagbi A
 isSAGBI SB
-SB = sagbi A
-isSAGBI SB
 A = subring(gens SB, GeneratorSymbol => g);
 f = x_1^4 + x_2^4 + x_3^4;
 q = f // A
@@ -84,7 +82,7 @@ I = ideal(x^3 + x*y^2 + y^3);
 S = R/I;
 A1 = subring {x^2, x*y};
 A2 = subring {x, y^2};
-A = subringIntersection(A1, A2)
+A = intersect(A1, A2)
 gens A
 isFullIntersection A
 
