@@ -43,7 +43,7 @@ inline Complex sqrt(const Complex &x)
   if (xi >= 0) { return Complex(sqrt((a + xr) / 2), sqrt((a - xr) / 2)); }
   else { return Complex(sqrt((a + xr) / 2), -sqrt((a - xr) / 2)); }
 }
-inline std::complex<Real> operator/(const Complex &lhs, const Complex &rhs)
+inline Complex operator/(const Complex &lhs, const Complex &rhs)
 {
   const Real &lhsr = lhs.real();
   const Real &lhsi = lhs.imag();
@@ -53,7 +53,7 @@ inline std::complex<Real> operator/(const Complex &lhs, const Complex &rhs)
   return Complex((lhsr * rhsr + lhsi * rhsi) / normrhs,
                  (lhsi * rhsr - lhsr * rhsi) / normrhs);
 }
-inline std::complex<Real> operator*(const Complex &lhs, const Complex &rhs)
+inline Complex operator*(const Complex &lhs, const Complex &rhs)
 {
   const Real &lhsr = lhs.real();
   const Real &lhsi = lhs.imag();
