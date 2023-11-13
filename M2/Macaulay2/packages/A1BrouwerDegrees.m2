@@ -103,40 +103,40 @@ export{
     }
 
 -- Basic arithmetic, p-adic, and commutative algebra operations we will use
-load "./A1-Brouwer/Code/ArithmeticMethods.m2"
+load "./A1BrouwerDegrees/Code/ArithmeticMethods.m2"
 
 -- Basic manipulations of matrices we will use
-load "./A1-Brouwer/Code/MatrixMethods.m2"
+load "./A1BrouwerDegrees/Code/MatrixMethods.m2"
 
 -- Establishing the GrothendieckWittClass type and some basic manipulations
-load "./A1-Brouwer/Code/GrothendieckWittClasses.m2"
+load "./A1BrouwerDegrees/Code/GrothendieckWittClasses.m2"
 
 -- For building new symmetric bilinear forms
-load "./A1-Brouwer/Code/BuildingForms.m2"
+load "./A1BrouwerDegrees/Code/BuildingForms.m2"
 
 -- For providing simplified representatives of symmetric bilinear forms
-load "./A1-Brouwer/Code/SimplifiedRepresentatives.m2"
+load "./A1BrouwerDegrees/Code/SimplifiedRepresentatives.m2"
 
 -- For Hilbert symbols over p-adic numbers
-load "./A1-Brouwer/Code/HilbertSymbols.m2"
+load "./A1BrouwerDegrees/Code/HilbertSymbols.m2"
 
 -- Invariants of symmetric bilinear forms
-load "./A1-Brouwer/Code/GWInvariants.m2"
+load "./A1BrouwerDegrees/Code/GWInvariants.m2"
     
 -- Local and global A1-brouwer degrees
-load "./A1-Brouwer/Code/LocalGlobalDegrees.m2"
+load "./A1BrouwerDegrees/Code/LocalGlobalDegrees.m2"
 
 -- Checking if forms are isomorphic
-load "./A1-Brouwer/Code/IsomorphismOfForms.m2"
+load "./A1BrouwerDegrees/Code/IsomorphismOfForms.m2"
 
 -- For verifying (an)isotropy
-load "./A1-Brouwer/Code/Isotropy.m2"
+load "./A1BrouwerDegrees/Code/Isotropy.m2"
 
 -- Anisotropic dimension
-load "./A1-Brouwer/Code/AnisotropicDimension.m2"
+load "./A1BrouwerDegrees/Code/AnisotropicDimension.m2"
 
 -- Finally, decomposing forms
-load "./A1-Brouwer/Code/Decomposition.m2"
+load "./A1BrouwerDegrees/Code/Decomposition.m2"
 
 ----------------------------
 ----------------------------
@@ -156,29 +156,29 @@ document{
 undocumented {
     }
 
-load "./A1-Brouwer/Documentation/ArithmeticMethodsDoc.m2"
+load "./A1BrouwerDegrees/Documentation/ArithmeticMethodsDoc.m2"
 
-load "./A1-Brouwer/Documentation/MatrixMethodsDoc.m2"
+load "./A1BrouwerDegrees/Documentation/MatrixMethodsDoc.m2"
 
-load "./A1-Brouwer/Documentation/GrothendieckWittClassesDoc.m2"
+load "./A1BrouwerDegrees/Documentation/GrothendieckWittClassesDoc.m2"
 
-load "./A1-Brouwer/Documentation/BuildingFormsDoc.m2"
+load "./A1BrouwerDegrees/Documentation/BuildingFormsDoc.m2"
 
-load "./A1-Brouwer/Documentation/SimplifiedRepresentativesDoc.m2"
+load "./A1BrouwerDegrees/Documentation/SimplifiedRepresentativesDoc.m2"
 
-load "./A1-Brouwer/Documentation/HilbertSymbolsDoc.m2"
+load "./A1BrouwerDegrees/Documentation/HilbertSymbolsDoc.m2"
 
-load "./A1-Brouwer/Documentation/GWInvariantsDoc.m2"
+load "./A1BrouwerDegrees/Documentation/GWInvariantsDoc.m2"
 
-load "./A1-Brouwer/Documentation/LocalGlobalDegreesDoc.m2"
+load "./A1BrouwerDegrees/Documentation/LocalGlobalDegreesDoc.m2"
 
-load "./A1-Brouwer/Documentation/IsomorphismOfFormsDoc.m2"
+load "./A1BrouwerDegrees/Documentation/IsomorphismOfFormsDoc.m2"
 
-load "./A1-Brouwer/Documentation/IsotropyDoc.m2"
+load "./A1BrouwerDegrees/Documentation/IsotropyDoc.m2"
 
-load "./A1-Brouwer/Documentation/AnisotropicDimensionDoc.m2"
+load "./A1BrouwerDegrees/Documentation/AnisotropicDimensionDoc.m2"
 
-load "./A1-Brouwer/Documentation/DecompositionDoc.m2"
+load "./A1BrouwerDegrees/Documentation/DecompositionDoc.m2"
 
 ----------------------------
 ----------------------------
