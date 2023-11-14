@@ -47,6 +47,9 @@ map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi,
     newPhi := inducedMap(module G, target phi) * phi;
     map(G, F, newPhi, Degree => d))
 
+-- TODO
+isWellDefined SheafMap := g -> notImplemented()
+
 CoherentSheaf#id = F -> map(F, F, id_(module F))
 CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> module prune F == module prune G
 CoherentSheaf == ZZ            := Boolean => (F, z) -> module prune F == z
@@ -69,6 +72,9 @@ ker     SheafMap := CoherentSheaf => opts -> phi -> (sheaf ker matrix phi)
 image   SheafMap := CoherentSheaf => phi -> (sheaf image matrix phi)
 coimage SheafMap := CoherentSheaf => phi -> (sheaf coimage matrix phi)
 coker   SheafMap := CoherentSheaf => phi -> (sheaf coker matrix phi)
+
+SheafMap == ZZ := Boolean => (f, z) -> image f == z
+ZZ == SheafMap := Boolean => (z, f) -> image f == z
 
 -- composition
 SheafMap * SheafMap := SheafMap => (phi, psi) -> (
@@ -156,7 +162,9 @@ nlift(SheafMap) := SheafMap => shphi -> (
     )*-
 
 -- TODO: this needs to be improved: there are more inducedMap methods to add
-inducedMap(CoherentSheaf, CoherentSheaf) := SheafMap => opts -> (G, F) -> map(G, F, inducedMap(module G, module F))
+inducedMap(CoherentSheaf, CoherentSheaf) := SheafMap => opts -> (G, F) -> map(G, F, inducedMap(module G, module F, opts))
+-- TODO: what should this operation be?
+-- inducedMap(CoherentSheaf, CoherentSheaf, SheafMap)
 
 -----------------------------------------------------------------------------
 -- Direct sums and components
@@ -205,6 +213,28 @@ sheafHom(SheafMap, CoherentSheaf) := SheafMap => (phi, F) -> sheafHom(phi, id_F)
 sheafHom(CoherentSheaf, SheafMap) := SheafMap => (F, phi) -> sheafHom(id_F, phi)
 sheafHom(SheafMap, SheafOfRings)  := SheafMap => (phi, O) -> sheafHom(phi, O^1)
 sheafHom(SheafOfRings, SheafMap)  := SheafMap => (O, phi) -> sheafHom(O^1, phi)
+
+-----------------------------------------------------------------------------
+-- homology
+-----------------------------------------------------------------------------
+homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
+    -- Note: these checks prune the image of f and g only
+    -- TODO: should we check matrix g == 0 to avoid pruning?
+    if g == 0 then return cokernel f;
+    if f == 0 then return kernel g;
+    g = nlift g;
+    d := degree g;
+    M := source f;
+    N := target f;
+    P := target g;
+    X := variety f;
+    if variety g =!= X then error "expected sheaf maps on the same variety";
+    -- Note: we use =!= to avoid pruning the sheaves
+    -- we also don't verify g * f == 0 for the same reason
+    if source g =!= N then error "expected sheaf maps to be composable";
+    -- truncate matrix f to match the degree of the source of g
+    f = inducedMap(truncate(d, module N), module M, matrix f);
+    sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
 -- Prune
@@ -570,6 +600,33 @@ TEST ///
   f' = flattenMorphism f
   target f' == flattenModule target f
   source f' == flattenModule source f
+///
+
+TEST ///
+  -- testing homology(SheafMap, SheafMap)
+  S = QQ[x,y,z]
+  g = sheafMap(koszul_2 vars S, 4)
+  g == 0 -- FIXME: this doesn't work with something I did
+  f = sheafMap koszul_3 vars S
+  assert(0 == prune homology(g, f))
+
+  g = sheafMap koszul_1 vars S
+  f = sheafMap koszul_3 vars S * g(-3)
+  assert(0 != prune homology(g(-1), f))
+
+  S = QQ[x,y]
+  g = sheafMap koszul_1 vars S
+  f = sheafMap koszul_2 vars S * g(-2)
+  assert(0 == prune homology(g, f))
+///
+
+TEST ///
+  -- testing SheafMap == ZZ
+  S = QQ[x,y]
+  f = map(coker matrix{{x^2,y^2}}, , {{x}});
+  assert(f != 0)
+  g = sheafMap f;
+  assert(g == 0)
 ///
 
 -----------------------------------------------------------------------------
