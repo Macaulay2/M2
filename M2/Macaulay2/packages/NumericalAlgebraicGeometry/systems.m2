@@ -52,7 +52,7 @@ rowSelector (AbstractPoint, AbstractPoint, System) := o -> (y0, c0, GS) -> (
     goodRows
     )
 
--- stashes and returns "squared up" subsytem, according to given strategy
+-- stashes and returns "squared up" subsystem, according to given strategy
 squareUp = method(Options => {Field => null, Strategy => null, "block size"=>1, "target rank" => null, Verbose=>false}) -- squares up a polynomial system (presented as a one-column matrix)
 squareUp System := o -> P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, numVariables P, o)
 squareUp (System, ZZ) := o -> (P, n) -> (
