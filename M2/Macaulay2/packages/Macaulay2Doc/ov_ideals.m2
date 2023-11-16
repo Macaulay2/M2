@@ -203,7 +203,7 @@ document {
 	    },
 
      SUBSECTION "normal form with respect to a Groebner basis and membership",
-       "The function ", TO (symbol%,RingElement,Ideal), 
+       "The function ", TO (symbol%,RingElement,LeftIdeal), 
        " reduces an element with 
        respect to a Groebner basis of the ideal.", 
        EXAMPLE {
@@ -237,10 +237,10 @@ document {
 	    },
      SeeAlso => {
 	  (symbol==,LeftIdeal,LeftIdeal),
-	  (symbol==,Ideal,ZZ),
+	  (symbol==,LeftIdeal,ZZ),
 	  symbol!=,
-	  (symbol%,RingElement,Ideal),
-	  (isSubset,Ideal,Ideal),
+	  (symbol%,RingElement,LeftIdeal),
+	  (isSubset,LeftIdeal,LeftIdeal),
 	  "MinimalPrimes :: radicalContainment"
 	  }
      }     

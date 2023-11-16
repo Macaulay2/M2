@@ -88,7 +88,7 @@ document {
 	  I = ideal(x-x^2-y,z+x*y,w^2-u^2);
 	  minimalPresentation(I, Exclude=>{1})
           ///,
-     SeeAlso => {(minimalPresentation,Ring), (trim, Ideal)}
+     SeeAlso => {(minimalPresentation,Ring), (trim, LeftIdeal)}
      }
 
 document { 

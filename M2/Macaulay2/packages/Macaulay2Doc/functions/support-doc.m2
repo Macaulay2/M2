@@ -40,7 +40,7 @@ document {
      }
 
 document { 
-     Key => {(support,Ideal)},
+     Key => {(support,LeftIdeal)},
      Headline => "list of variables occurring in the generators of an ideal",
      Usage => "support I",
      Inputs => { "I" => "an ideal in a polynomial ring" },
