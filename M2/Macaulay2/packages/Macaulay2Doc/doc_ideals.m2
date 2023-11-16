@@ -40,7 +40,7 @@ document {
      UL {
 	  TO (generators, LeftIdeal),
 	  TO (symbol _*,LeftIdeal),
-	  TO (isSubset, Ideal, Ideal),
+	  TO (isSubset, LeftIdeal, LeftIdeal),
 	  TO "MinimalPrimes :: isPrime(Ideal)"
 	  },
      "Common operations on ideals:",
@@ -48,9 +48,9 @@ document {
 	  TO (symbol +,LeftIdeal,LeftIdeal),
 	  TO (symbol *,Ideal,Ideal),
 	  TO (symbol ==,LeftIdeal,LeftIdeal),
-	  TO (symbol ==,Ideal,ZZ),
+	  TO (symbol ==,LeftIdeal,ZZ),
 	  TO (symbol ^,Ideal,ZZ),
-	  TO (trim, Ideal)
+	  TO (trim, LeftIdeal)
 	  },
      "Gröbner bases, normal forms, free resolutions",
      UL {
@@ -58,7 +58,7 @@ document {
 	  TO leadTerm,
 	  TO codim,
 	  TO dim,
-	  TO (symbol%,Matrix,Ideal),
+	  TO (symbol%,Matrix,LeftIdeal),
 	  TO resolution,
 	  TO betti
 	  },
@@ -115,7 +115,7 @@ document {
 	  "I = ideal(a,(t+1)*c) * ideal(a^2,b^2)"
 	  },
      "The generators produced are not generally minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
+     TO (trim,LeftIdeal), " or ", TO (mingens,LeftIdeal), " to find a smaller
      generating set.",
      SeeAlso => {"ideals"}
      }
@@ -135,7 +135,7 @@ document {
 	  "I = ideal(a,(t+1)*c) + ideal(a^2,b^2)"
 	  },
      "The generators produced are not generally minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
+     TO (trim,LeftIdeal), " or ", TO (mingens,LeftIdeal), " to find a smaller
      generating set.",
      EXAMPLE {
 	  "trim I"
@@ -156,7 +156,7 @@ document {
 	  "I^3"
 	  },
      "The generators produced are often not minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
+     TO (trim,LeftIdeal), " or ", TO (mingens,LeftIdeal), " to find a smaller
      generating set.",
      EXAMPLE {
 	  "trim I^3"

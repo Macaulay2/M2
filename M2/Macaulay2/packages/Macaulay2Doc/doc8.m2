@@ -269,7 +269,7 @@ document {
 -----------------------------------------------------------------------------
 
 document {
-     Key => {homogenize,(homogenize, Ideal, RingElement),(homogenize, Matrix, RingElement),
+     Key => {homogenize,(homogenize, LeftIdeal, RingElement),(homogenize, Matrix, RingElement),
 	  (homogenize, Matrix, RingElement, List),(homogenize, Module, RingElement),
 	  (homogenize, Module, RingElement, List),(homogenize, RingElement, RingElement),(homogenize, RingElement, RingElement, List),
 	  (homogenize, Vector, RingElement),(homogenize, Vector, RingElement, List)},

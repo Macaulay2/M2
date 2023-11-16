@@ -495,7 +495,7 @@ document {
 	  "K = ideal(f,x^2*y^7+y^14);",
 	  "(gens K) % I"
 	  },
-     "In Macaulay2, inclusion of ideals can be tested using ", TO (isSubset,Ideal,Ideal),
+     "In Macaulay2, inclusion of ideals can be tested using ", TO (isSubset,LeftIdeal,LeftIdeal),
      " and equality can be checked using ", TO (symbol==,LeftIdeal,LeftIdeal), ".  In both cases
      the necessary Groebner bases are computed, if they have not already been computed.",
      EXAMPLE {

@@ -7,7 +7,7 @@ undocumented (NewFromMethod, GroebnerBasis, Sequence)
 
 document { 
      Key => {gb,
-	  (gb,Ideal),
+	  (gb,LeftIdeal),
 	  (gb,Matrix),
 	  (gb,Module),
 	  [gb,Algorithm],
