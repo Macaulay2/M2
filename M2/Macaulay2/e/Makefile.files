@@ -66,7 +66,6 @@ INTERFACE = \
 	ZZ \
 	ZZp \
 	reader \
-	matrix-io \
 	matrix-stream \
 	cra \
 	aring-zz-gmp \
