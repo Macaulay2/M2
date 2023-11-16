@@ -4,10 +4,13 @@
 #include <iostream>
 #include <vector>
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/arith.h>
-#include <flint/fmpz.h>
+#include <flint/fmpz.h>          // for fmpz_t, fmpz, fmpz_clear, fmpz_init...
+#include <flint/fmpz_factor.h>   // for fmpz_factor, fmpz_factor_clear, fmpz...
 #pragma GCC diagnostic pop
 
 #include "error.h"

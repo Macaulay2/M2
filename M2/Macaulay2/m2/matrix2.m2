@@ -395,6 +395,8 @@ Number % Ideal := (r,I) -> (
      r = promote(r,R);
      if r == 0 then return r;
      r % if isHomogeneous I and heft R =!= null then gb(I,DegreeLimit => toList (degreeLength R : 0)) else gb I)
+isMember(RingElement, Ideal) :=
+isMember(Number,      Ideal) := (r, I) -> zero(r % I)
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be sped up: compute gb matrix {{r}} first, tensor with id matrix, force gb, etc
 

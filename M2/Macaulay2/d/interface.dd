@@ -148,7 +148,7 @@ export rawMonomialIsOne(e:Expr):Expr := (
      else WrongArg(1,"a raw monomial")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-installMethod(Expr(EqualEqualS), rawMonomialClass,ZZClass, Expr(CompiledFunction(rawMonomialIsOne,nextHash())));
+installMethod(Expr(EqualEqualS), rawMonomialClass,ZZClass, Expr(newCompiledFunction(rawMonomialIsOne)));
 
 rawCompareMonomial(M:RawMonoid,a:RawMonomial,b:RawMonomial):int := Ccode(returns,"
      try { return a->compare(M,*b); }

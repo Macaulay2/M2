@@ -201,7 +201,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
-   "flint version" => Ccode(constcharstar,"flint_version"),
+   "flint version" => Ccode(constcharstar,"FLINT_VERSION"),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP
 	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)
@@ -229,7 +229,7 @@ setupconst("version", Expr(toHashTable(Sequence(
        stringize(EIGEN_WORLD_VERSION) \".\"
        stringize(EIGEN_MAJOR_VERSION) \".\"
        stringize(EIGEN_MINOR_VERSION)"),
-   "libffi version" => Ccode(constcharstar, "LIBFFI_VERSION"),
+   "libffi version" => Ccode(constcharstar, "FFI_VERSION"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),

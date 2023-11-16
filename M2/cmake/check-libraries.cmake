@@ -81,10 +81,8 @@ endif()
 
 if(WITH_FFI)
   find_package(FFI REQUIRED QUIET)
-  execute_process(COMMAND pkg-config --modversion libffi
-    OUTPUT_VARIABLE LIBFFI_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 else()
-  set(LIBFFI_VERSION "not present")
+  set(FFI_VERSION "not present")
 endif()
 
 ###############################################################################
@@ -331,6 +329,9 @@ if(CHECK_LIBRARY_COMPATIBILITY)
   unset(LIBRARY_COMPATIBILITY CACHE)
 endif()
 
+unset(CMAKE_REQUIRED_LIBRARIES)
+unset(CMAKE_REQUIRED_INCLUDES)
+
 ###############################################################################
 ## Set four library related definitions
 
@@ -350,6 +351,13 @@ if(FACTORY_FOUND)
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
 else()
   unset(FACTORY_STREAMIO CACHE)
+endif()
+
+if(FLINT_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${FLINT_INCLUDE_DIR}")
+  check_include_files(flint/nmod.h HAVE_FLINT_NMOD_H)
+else()
+  unset(HAVE_FLINT_NMOD_H CACHE)
 endif()
 
 if(FROBBY_FOUND)

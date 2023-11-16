@@ -7,6 +7,23 @@ document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncation
 document { Key => chi,          methodstr }
 document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
 
+document { Key => cone,
+    Headline => "mapping cone or polyhedral cone",
+    SeeAlso => {
+	(cone, ChainComplexMap),
+	"Complexes::cone(ComplexMap)",
+	"Polyhedra::cone(Polyhedron)",
+	}
+    }
+document { Key => rays,
+    Headline => "1-dimensional cones of a fan or polyhedral object",
+    SeeAlso => {
+	"FourTiTwo::rays(Matrix)",
+	"NormalToricVarieties::rays(NormalToricVariety)",
+	"Polyhedra::rays(PolyhedralObject)",
+	}
+    }
+
 -- also see functions/intersect-doc.m2
 document {
     Key => { intersect, (intersect, List), (intersect, Sequence) },

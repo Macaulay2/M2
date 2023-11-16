@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.5",
-    Date => "May 18, 2023",
+    Version => "0.6",
+    Date => "November 6, 2023",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -26,6 +26,11 @@ newPackage("Python",
 ---------------
 
 -*
+
+0.6 (2023-11-06, M2 1.23)
+* move initialization of python from M2 startup package load time
+* update int <-> ZZ conversion for python 3.12
+* use a constant hash for None
 
 0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
@@ -74,6 +79,7 @@ importFrom_Core {
     "pythonDictSetItem",
     "pythonFalse",
     "pythonImportImportModule",
+    "pythonInitialize",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
@@ -109,6 +115,8 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
 }
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
+
+pythonInitialize()
 
 pythonHelp = Command (() -> pythonValue ///help()///)
 

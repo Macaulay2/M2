@@ -10,7 +10,7 @@
 cmake_policy(SET CMP0135 NEW)
 
 include(ExternalProject) # configure, patch, build, install, or test at build time
-set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
+set(M2_SOURCE_URL https://macaulay2.com/Downloads/OtherSourceCode)
 
 ## This target builds external libraries that M2 relies on, then reruns cmake
 add_custom_target(build-libraries COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR} USES_TERMINAL)
@@ -343,6 +343,7 @@ ExternalProject_Add(build-ntl
   SOURCE_DIR        libraries/ntl/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/ntl/patch-11.5.1
   CONFIGURE_COMMAND cd src && ${CONFIGURE} PREFIX=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic
@@ -396,9 +397,9 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
 
 # https://github.com/Macaulay2/flint2
 ExternalProject_Add(build-flint
-  PREFIX            libraries/flint2
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint2
-  BINARY_DIR        libraries/flint2/build
+  PREFIX            libraries/flint
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
+  BINARY_DIR        libraries/flint/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
@@ -410,14 +411,10 @@ ExternalProject_Add(build-flint
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DWITH_NTL=ON
-                    -DWITH_MPIR=${USING_MPIR}
-                    # TODO: force SIMD flags off for distribution
-                    #-DHAS_FLAG_MPOPCNT
-                    #-DHAS_FLAG_UNROLL_LOOPS
   INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint2
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint2/README ${M2_INSTALL_LICENSESDIR}/flint2
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint2/LICENSE ${M2_INSTALL_LICENSESDIR}/flint2
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/README.md ${M2_INSTALL_LICENSESDIR}/flint
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/LICENSE ${M2_INSTALL_LICENSESDIR}/flint
   TEST_COMMAND      ${CMAKE_COMMAND} . -DBUILD_TESTING=ON
        COMMAND      ${CMAKE_COMMAND} --build .
        COMMAND      ${CMAKE_COMMAND} --build . --target test
@@ -435,12 +432,13 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 ExternalProject_Add(build-factory
-  URL               https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode/factory-4.2.1.tar.gz
-  URL_HASH          SHA256=3a3135d8d9e89bca512b22c8858f3e03f44b15629df6f0309ce4f7ddedd09a15
+  URL               https://www.singular.uni-kl.de/ftp/pub/Math/Factory/factory-4.3.0.tar.gz
+  URL_HASH          SHA256=f1e25b566a8c06d0e98b9795741c6d12b5a34c5c0c61c078d9346d8bbc82f09f
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.3.0...dcca183
   CONFIGURE_COMMAND autoreconf -vif &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -542,8 +540,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/releases/download/v0.4.9/msolve-0.4.9.tar.gz
-  URL_HASH          SHA256=a9662bfb9f3a4977067a88975f84663e47fabf520cd5eb4ad3cca44fa940153c
+  URL               https://github.com/algebraic-solving/msolve/releases/download/v0.5.0/msolve-0.5.0.tar.gz
+  URL_HASH          SHA256=13ad04757b0ba0bd44cf9a5abcf5aff416d5560b035323e9561ad4d4c020cfe5
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -1024,8 +1022,8 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.9.1/normaliz-3.9.1.tar.gz
-  URL_HASH          SHA256=ad5dbecc3ca3991bcd7b18774ebe2b68dae12ccca33c813ab29891beb85daa20
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.10.1/normaliz-3.10.1.tar.gz
+  URL_HASH          SHA256=365e1d1e2a338dc4df1947a440e606bb66dd261307e617905e8eca64eaafcf6e
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles

@@ -23,11 +23,23 @@ toExpr(r:pythonObjectOrNull):Expr := (
     when r
     is null do buildPythonErrorPacket()
     is po:pythonObject do (
+	x := pythonObjectCell(po, 0);
 	h := int(Ccode(long, "PyObject_Hash(", po, ")"));
 	if h == -1 then ( -- unhashable object (e.g., a list)
 	    Ccode(void, "PyErr_Clear()");
-	    h = nextHash());
-	Expr(pythonObjectCell(po, h))));
+	    h = hashFromAddress(Expr(x)));
+	x.hash = h;
+	Expr(x)));
+
+PyInitialize(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then (
+	    Ccode(void, "Py_Initialize()");
+	    nullE)
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("pythonInitialize", PyInitialize);
 
 import RunSimpleString(s:string):int;
 PyRunSimpleString(e:Expr):Expr := (
@@ -163,7 +175,7 @@ setupconst("pythonFalse",
 -- ints --
 ----------
 
-import LongAsZZ(z:ZZmutable, x:pythonObject):ZZmutable;
+import LongAsZZ(z:ZZmutable, x:pythonObject):void;
 PyLongAsLong(e:Expr):Expr :=
     when e
     is x:pythonObjectCell do (
@@ -174,7 +186,8 @@ PyLongAsLong(e:Expr):Expr :=
 	else if overflow == 0 then toExpr(y)
 	else (
 	    z := newZZmutable();
-	    toExpr(moveToZZandclear(LongAsZZ(z, x.v)))))
+	    LongAsZZ(z, x.v);
+	    toExpr(moveToZZandclear(z))))
     is s:SpecialExpr do PyLongAsLong(s.e)
     else WrongArgPythonObject();
 setupfun("pythonLongAsLong",PyLongAsLong);

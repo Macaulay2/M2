@@ -584,6 +584,7 @@ assert ((target Phi) === (chainComplex D))
 
 ------------------------------------------------------------------------------
 -- Testing (homology, SimplicialMap)
+TEST ///
 S = ZZ/101[a,b,c,d]
 D = simplicialComplex{1_S}
 E = simplicialComplex{0_S}
@@ -597,6 +598,7 @@ I = map(D,D, id_(ring D))
 assert((homology I)_(-1) == 0)
 assert((homology I)_0 == 0)
 assert((prune homology I)_1 == matrix{{1_(coefficientRing D)}})
+///
 
 ------------------------------------------------------------------------------
 -- Testing more chainComplex maps
