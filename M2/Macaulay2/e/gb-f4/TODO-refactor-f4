@@ -1,3 +1,14 @@
+Meeting on 11/2/2023:
+
+[ ] From the front-end: Need an algorithm number/name so that when we give that option
+    to gb, it will call the new code.  This will require adding some lines to choose_gb
+    in /e/comp-gb.cpp.  See the method for selecting the F4 algorithm.
+[ ] Some items we need for GBF4Computation type:  Display the polynomials, return them
+    as a matrix, ask for statistics (how much memory it is taking, etc).
+[ ] Incorporate information on the monomial ordering (both in ring and in free module).
+[ ] Spend a bit of time thinking about how to incorporate the coefficients into the iterator
+    for Polynomials in PolynomialList.hpp
+
 For week of June 12, 2023:
     a. MonomialHashTable
     b. Mike: do (first versino of) the translation from M2 matrices to a Basis/list of polynomials/vectrs
