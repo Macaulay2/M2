@@ -12,7 +12,7 @@
 --Input: J an ideal in a Weyl algebra
 --Output: True if ideal is torus fixed, as in SST Lem. 2.3.1. False if not.
 isTorusFixed = method();
-isTorusFixed(Ideal) := Boolean => (J)->(
+isTorusFixed LeftIdeal := Boolean => J->(
     n := numgens ring J//2;
     J' := ideal flatten apply(J_*,f->( 
 	    apply(apbFactor(f
@@ -66,7 +66,7 @@ distraction = method()
 --Input: torus-fixed left D-ideal J
 --Output: the distraction of J, viewed in ThetaRing
 --Note: this was called thetaIdeal in the past
-distraction(Ideal, Ring) := Ideal => (J, ThetaRing) -> sum(J_*, j -> ideal distraction(j, ThetaRing))
+distraction(LeftIdeal, Ring) := Ideal => (J, ThetaRing) -> sum(J_*, j -> ideal distraction(j, ThetaRing))
 --Input: element in a torus-fixed left D-ideal
 --Output: list of corresponding gens from homogeneous pieces in the distraction, viewed in ThetaRing
 distraction(RingElement, Ring) := List => (f, ThetaRing) -> (
@@ -81,7 +81,7 @@ distraction(RingElement, Ring) := List => (f, ThetaRing) -> (
 --Input: holonomic ideal I, weight w in the form of a List
 --Output: the indicial ideal of I with respect to w
 indicialIdeal = method();
-indicialIdeal(Ideal, List) := Ideal => (I, w) -> distraction(inw(I, -w|w), first createThetaRing ring I)
+indicialIdeal(LeftIdeal, List) := Ideal => (I, w) -> distraction(inw(I, -w|w), first createThetaRing ring I)
 
 --Input: 0-dimensional primary ideal I
 --Output: corresponding point, as a vector
@@ -94,7 +94,7 @@ solveMax Ideal := List => I -> first entries lift(vars ring I % radical I, coeff
 --Output: list of 0-dimensional ideals encoding css exponents and their multiplicities
 -- internal
 beginExptComp = method();
-beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
+beginExptComp(LeftIdeal,List,ZZ,Ring) := List => (H,w,n,S)->(
     	if not isHolonomic(H) then error "ideal is not holonomic";
 	if #w != n then error "weight vector has wrong length";
 	J := inw(H,(-w)|w);
@@ -105,7 +105,7 @@ beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
 --Input: holonomic D-ideal H, weight vector w as List
 --Output: list of starting monomial exponents for H wrt w
 cssExpts = method();
-cssExpts(Ideal,List) := List => (H,w)->(
+cssExpts(LeftIdeal,List) := List => (H,w)->(
 	n:= (numgens ring H)//2;
 	t := symbol t;
 	S := QQ(monoid [t_1..t_n]);
@@ -116,7 +116,7 @@ cssExpts(Ideal,List) := List => (H,w)->(
 --Input: holonomic D-ideal H, weight vector w as List, 
 --Output: list of starting monomial exponents for H wrt w, with multiplicities
 cssExptsMult = method();
-cssExptsMult(Ideal,List) := List => (H,w)->(
+cssExptsMult(LeftIdeal,List) := List => (H,w)->(
 	n:= (numgens ring H)//2;
 	t := symbol t;
 	S := QQ(monoid [t_1..t_n]);
@@ -246,7 +246,7 @@ solveFrobeniusIdeal(Ideal, Ring) := List => (I, W) -> (
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: starting monomials for the css for I for weight w, as a List of ring elements in vars for I and their logs
 cssLeadTerm = method()
-cssLeadTerm(Ideal, List) := List => (I, w) -> solveFrobeniusIdeal(indicialIdeal(I, w), ring I)
+cssLeadTerm(LeftIdeal, List) := List => (I, w) -> solveFrobeniusIdeal(indicialIdeal(I, w), ring I)
 
 --TODO: where should this go?
 --Input: cone C, weight vector k
@@ -261,7 +261,7 @@ truncate(Cone, List, ZZ) := List => {} >> o -> (C, w, k) -> polyhedronFromHData(
 --NOTE: We are assuming that the ideal I is provided with LT of weight 0.
 --We will adjust to this case using nonpositiveWeightGens
 nilssonSupport = method()
-nilssonSupport(Ideal, List) := Cone => (I, w) -> (
+nilssonSupport(LeftIdeal, List) := Cone => (I, w) -> (
     -- See description before SST Thm 2.5.14
     n := length w;
     G := gbw(I, fw := -w|w);
@@ -275,12 +275,12 @@ nilssonSupport(Ideal, List) := Cone => (I, w) -> (
     tailCone polar polyhedronFromHData(concatRows first L, concatRows last L))
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List, weight k
 --Output: lattice points in cone of weight \leq k, as a List of Lists
-nilssonSupport(Ideal, List, ZZ) := List => (I, w, k) -> entries transpose concatCols latticePoints truncate(nilssonSupport(I, w), w, k)
+nilssonSupport(LeftIdeal, List, ZZ) := List => (I, w, k) -> entries transpose concatCols latticePoints truncate(nilssonSupport(I, w), w, k)
 
 --Input: I regular holonomic ideal in a Weyl algebra on n vars, weight vector w in \ZZ^n as a List
 --Output: list of generators of gbw(I) times monomial in variables, so that all inw terms have w-weight zero
 nonpositiveWeightGens = method()
-nonpositiveWeightGens(Ideal, List) := List => (I, w) -> (
+nonpositiveWeightGens(LeftIdeal, List) := List => (I, w) -> (
     W := ring I;
     n := length w;
     G := gbw(I, fw := -w|w);
@@ -293,7 +293,7 @@ nonpositiveWeightGens(Ideal, List) := List => (I, w) -> (
     )
 
 truncatedCanonicalSeries = method()
-truncatedCanonicalSeries(Ideal, List, ZZ) := List => (I, w, k) -> (
+truncatedCanonicalSeries(LeftIdeal, List, ZZ) := List => (I, w, k) -> (
     W := ring I;
     n := numgens W // 2;
     r := holonomicRank I;
