@@ -572,8 +572,8 @@ ideal Matrix := LeftIdeal => f -> (
 	  );
      new (
 	 -- Ideal == two-sided ideal
-	 if isCommutative R or isSkewCommutative R then Ideal 
-	 else LeftIdeal
+	 if isWeylAlgebra R then LeftIdeal 
+	 else Ideal
 	 ) from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
 ideal Module := LeftIdeal => M -> (
