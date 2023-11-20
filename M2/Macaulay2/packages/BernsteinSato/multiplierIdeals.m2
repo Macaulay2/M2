@@ -18,6 +18,18 @@ isInMultiplierIdeal(RingElement, Ideal, QQ) := o -> (g,I,c) -> (
      -c > max roots
      )
 
+-- power of a (left) ideal and
+-- quotient -- LeftIdeal:RingElement
+-- product -- RingElement:LeftIdeal
+--   are _not_ well defined in general in the Weyl algebra, 
+--   ... but are used by some methods below in a limited context (for commuting elements) 
+powerIdealZZ = method()
+powerIdealZZ(LeftIdeal,ZZ) := (I,n) -> ideal symmetricPower(n,generators I)
+quotientInWeylAlgebra = method()
+quotientInWeylAlgebra(LeftIdeal,RingElement) := (I,f) -> (new Ideal from I) : (new Ideal from ideal f)  
+productInWeylAlgebra = method()
+productInWeylAlgebra(RingElement,LeftIdeal) := (f,I) -> f * (new Ideal from ideal I)  
+
 multiplierIdeal = method(Options => {Strategy=>ViaElimination, DegreeLimit=>null})
 multiplierIdeal (Ideal, ZZ) := o -> (a,c) -> multiplierIdeal(a, promote(c,QQ), Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit)
 multiplierIdeal (Ideal, QQ) := o -> (a,c) -> first multiplierIdeal(a, {c}, Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit) 
@@ -51,7 +63,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      	  SXring := K(monoid [SX,MonomialOrder=>Eliminate 1]);
      	  SDYtoSX := map(SXring,SDY, gens SXring | toList(n+2*r:0) );
 	  --
-	  I2' := sub(Istar,SDY) + (sub(a, SDY))^m + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- Istar + a^m + (s-\sigma)
+	  I2' := sub(Istar,SDY) + powerIdealZZ(sub(a, SDY),m) + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- Istar + a^m + (s-\sigma)
      	  if o.Strategy == ViaElimination then I2 := SDYtoSX eliminateWA(I2', notSX);
      	  pInfo(1, "J_I("|toString m|") = "|toString I2);
      	  -- b-function part
@@ -97,7 +109,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      	       	    while d <= o.DegreeLimit do (
 		    	 -- add reductions of all monomials of degree d times b(s)
 			 new'monoms = false;
-    		    	 for f in ((ideal X)^d)_* do (
+    		    	 for f in (powerIdealZZ(ideal X,d))_* do (
 			      -- taking monomials not in the initial ideal of ret 
 			      -- could be optimized more: delete the initial terms discovered on the previous step from monoms and f'b'sigma (MutableList? MutableHashTable?)
 			      if ret === null or sub(f,R) % ideal( (flatten entries gens gb ret)/ leadMonomial ) != 0 
@@ -122,7 +134,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
 	       else if o.Strategy == ViaElimination then
 	       exceptionalLocusB(R,I2,b) -- ring I2 has to eliminate s 
 	       else if o.Strategy == ViaColonIdeal then (
-	  	    I2'' := I2' : ( (map(SDY, ring b, {sigma})) b ); 
+	  	    I2'' := quotientInWeylAlgebra(I2',(map(SDY, ring b, {sigma})) b); 
 		    notX := {SDY_0}|notSX;
      	       	    SDYtoSX eliminateWA(I2'', notX)
 		    )
