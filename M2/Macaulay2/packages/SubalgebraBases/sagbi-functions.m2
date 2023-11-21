@@ -465,12 +465,6 @@ subringIntersection = method(
 
 subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) -> (
     local limit;
-    -- If either of S1 or S2 is an intersectedSubring then give a warning
---    if not subringIntersectionLimitWarning then (
---        print "-- Warning! The computation of the intersection is affected by the value of the Limit option";
---        print "--          Check the result with 'isFullIntersection'";
---        subringIntersectionLimitWarning = true;
---        );
     if opts.CheckFullIntersection and (
         (class S1 === IntersectedSubring and not isFullIntersection S1) or
         (class S2 === IntersectedSubring and  not isFullIntersection S1)) then (
