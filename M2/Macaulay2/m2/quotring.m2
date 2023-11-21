@@ -48,13 +48,13 @@ random QuotientRing := opts -> S -> (
      else notImplemented())
 
 -- printing
-pretty := relns -> (
-     s := toSequence flatten entries relns;
-     if #s === 1 then s = first s;
-     s)
-toExternalString QuotientRing := S -> toString describe S
-expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else new Divide from { unhold expression ambient S, unhold expression pretty S.relations }
-describe QuotientRing := S -> Describe Divide { expression ambient S, expression pretty S.relations }
+printRels := S -> if #(I := toSequence flatten entries S.relations) === 1 then first I else I
+describe   QuotientRing := S -> Describe Divide { expression ambient S, expression printRels S }
+expression QuotientRing := S -> (
+    if hasAttribute(S, ReverseDictionary)
+    then expression getAttribute(S, ReverseDictionary)
+    else new Divide from { unhold expression ambient S, unhold expression printRels S })
+toExternalString QuotientRing := toString @@ describe
 -- TODO: add AfterPrint for QuotientRing
 
 -----------------------------------------------------------------------------
@@ -189,10 +189,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if R.?SkewCommutative then S.SkewCommutative = R.SkewCommutative;
      S.generators = apply(generators S, m -> promote(m,S));
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
-     if R.?generatorExpressions then S.generatorExpressions = (
-	  R.generatorExpressions
-	  -- apply(R.generatorExpressions,S.generators,(e,x) -> new Holder2 from {e#0,x})
-	  );
+     if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
      if R.?index        then S.index = R.index;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
