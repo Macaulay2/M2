@@ -342,6 +342,7 @@ TEST ///
   (G, sols) = truncatedCanonicalSeries(I, w, 4);
   table(G, sols, (g, s) -> (g * s)[0,x,0])
 
+  -- A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
   -- TODO: do SST eq. (1.22)
   -- See SST pp. 26
   A = matrix{{1,0,0,-1},{0,1,0,1},{0,0,1,1}}
@@ -351,7 +352,7 @@ TEST ///
   nilssonSupport(I,w)
   nilssonSupport(I,w,3)
   cssLeadTerm(I, w)
-  (G, sols) = truncatedCanonicalSeries(I, w, 4);
+  --(G, sols) = truncatedCanonicalSeries(I, w, 4);
 ///
 
 TEST ///
