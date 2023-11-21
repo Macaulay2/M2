@@ -1134,6 +1134,8 @@ doc ///
     Text
       An abstract type that of homotopy that involves parameters.
       Can be specialized to produce @TO SpecializedParameterHomotopy@.
+  SeeAlso
+    specialize
 ///	    
 
 doc ///
@@ -1149,6 +1151,24 @@ doc ///
   Headline
     a collection of parameters
 ///
+
+doc ///
+  Key 
+    (specialize, ParameterHomotopy, Matrix)
+    specialize
+  Headline
+    specialize a parameter homotopy
+  Usage
+    Hp = specialize(H,p)
+  Inputs 
+    H: 
+      homotopy
+    p: 
+      values of parameters 
+  Outputs
+    Hp:SpecializedParameterHomotopy
+      specialized homotopy
+///	    
 
 doc ///
   Key
