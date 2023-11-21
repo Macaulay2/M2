@@ -166,7 +166,8 @@ methods Sequence := F -> (
 methods ScriptedFunctor := -- TODO: OO and other scripted functors aren't supported
 methods Symbol :=
 methods Thing  := F -> (
-    if F === HH then return join(methods homology, methods cohomology);
+    if F === HH
+    then return previousMethodsFound = join \\ methods \ (homology, cohomology);
     found := new MutableHashTable;
     -- TODO: either finish or remove nullaryMethods
     if nullaryMethods#?(1:F) then found#(1:F) = true;
