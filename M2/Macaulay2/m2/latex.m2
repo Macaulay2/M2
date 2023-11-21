@@ -89,8 +89,8 @@ texMath Symbol := x -> if keywordTexMath#?x then keywordTexMath#x else texVariab
 
 -----------------------------------------------------------------------------
 
-tex     Nothing :=
-texMath Nothing := x -> ""
+tex     Nothing := tex @@ toString
+texMath Nothing := texMath @@ toString
 
 tex     Thing := x -> concatenate("$", texMath x, "$")
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
