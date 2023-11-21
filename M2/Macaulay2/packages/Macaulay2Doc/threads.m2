@@ -395,10 +395,13 @@ Node
    whether the task {\tt t} has been canceled
  Description
    Example
-     t = schedule(() -> while true do null)
+     n = 0
+     t = schedule(() -> while true do n = n + 1)
+     sleep 1
      isCanceled t
+     sleep 1
      cancelTask t
-     while not isCanceled t do nanosleep 1000000
+     sleep 2
      isCanceled t
  SeeAlso
   "parallel programming with threads and tasks"
