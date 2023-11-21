@@ -265,12 +265,16 @@ doc ///
      Flag for reducing new generators in Sagbi algorithm
    Description
      Text
-       The function @TO "sagbi"@ computes a subalgebra basis by subducting {\it S-pairs}.
+       The function @TO "sagbi"@ computes a subalgebra basis by subducting S-pairs.
        Any resulting non-zero polynomials are added to the list of subalgebra generators.
-       However if ReduceNewGenerators is set to @ TT "true" @ (by default) then the new generators are reduced using Gaussian elimination against the other new generators.
-       This process is quick (as fast as computing a groebner basis for a linear ideal) and ensures that duplicate generators are not added to the list of subalgebra generators.
+       If ReduceNewGenerators is set to @ TT "true" @,
+       then the new generators are reduced using Gaussian elimination against the other new generators.
+       This process is quick and ensures that duplicate generators are not added to the list of subalgebra generators.
    SeeAlso
      sagbi
+     sagbiBasis
+     subalgebraBasis
+     subduction
      AutoSubduce
      ReduceNewGenerators
      StorePending
@@ -368,17 +372,20 @@ doc ///
      Levels of information displayed during Sagbi algorithm
    Description
      Text
-       PrintLevel 0: no output
+       @TT "PrintLevel"@ is an optional input to @TO "sagbi"@ and the methods that call it to
+       control the amount of internal computational data to be displayed for debugging and
+       informational purposes.
+       Higher values for @TT "PrintLevel"@ result in more verbose output (especially Levels 5 and 6).
        
-       PrintLevel 1+: some basic information each loop (no polynomials): computation degree, number of S-pairs, number of new generators, termination conditions.
-       
-       PrintLevel 2+: basic polynomials: S-pairs and new subalgebra generators
-       
-       PrintLevel 3+: extra polynomials: {\it reduction ideal} generators, {\it zeroGens}, current subalgebra generators
-       
-       PrintLevel 4+: show the input and output of each subduction
-       
-       Higher levels exist but may be overly verbose. PrintLevel 5 shows the processPending data and PrintLevel 6 shows the intermediate steps for top-level subduction.
+       @UL{
+       "Level 0: No additional output",
+       "Level 1+: some basic information each computation loop (but no polynomials): computation degree, number of S-pairs, number of new generators, termination conditions.",
+       "Level 2+: basic polynomials: S-pairs and new subalgebra generators.",
+       "Level 3+: extra polynomials: reduction ideal generators, zeroGens, current subalgebra generators",
+       "Level 4+: the input and output of each subduction",
+       "Level 5+: the processPending data",
+       "Level 6+: the intermediate steps for top-level subduction"
+       }@
    SeeAlso
      sagbi
      AutoSubduce
@@ -389,6 +396,13 @@ doc ///
      PrintLevel
      Recompute
      RenewOptions
+     forceSB
+     isSAGBI
+     (intersect,Subring,Subring)
+     sagbi
+     sagbiBasis
+     subalgebraBasis
+     subduction
 ///
 doc ///
    Key
@@ -401,16 +415,17 @@ doc ///
      Flag for restarting a sagbi or isSAGBI computation
    Description
      Text
-       If the flag is set to @ TT "true" @, then the sagbi computation will start from scratch.
-       This process constructs, from scratch, @ ofClass SAGBIBasis @ and uses the computation options
-       from the previous computation.
+       If the flag is set to @ TT "true" @, then the sagbi computation starts from scratch.
+       This process constructs a @ ofClass SAGBIBasis @ and does not use the computation options
+       from the previous computation, i.e., cached results are ignored.
        
-       If the flag is set to @TT "true"@, the cached results of @TO "isSAGBI"@ are ignored and a
-       computation is performed to check whether the generators of @ofClass Subring@ or subalgebra generators
-       of @ofClass SAGBIBasis@ are a subalgebra basis.
+       If the flag is set to @TT "false"@, then previous computations are used to speed up subsequent
+       calculations.
    SeeAlso
      sagbi
      isSAGBI
+     sagbiBasis
+     subduction
      subalgebraBasis
      AutoSubduce
      ReduceNewGenerators
@@ -441,6 +456,11 @@ doc ///
        The new options will be used and stored in the computation object.
    SeeAlso
      sagbi
+     forceSB
+     isSAGBI
+     sagbiBasis
+     subalgebraBasis
+     subduction
      AutoSubduce
      ReduceNewGenerators
      StorePending
@@ -907,9 +927,9 @@ doc ///
        a subduction quotient of f with respect to the subring
    Description
      Text
-       The result is a ring element that lies in the @TT "presentationRing"@ that has one variable for each
-       generator of the subring $S$. A subduction quotient can be thought of as an expression of $f - (f\%S) \in S$
-       in terms of the generators of $S$. This function is equivalent to @TO "groebnerSubductionQuotient"@.
+       The result is a ring element that lies in the @TO "presentationRing"@ that has one variable for each
+       generator of the subring $S$. A subduction quotient is an expression of $f - (f\%S) \in S$
+       in terms of the generators of $S$. This function calls @TO "groebnerSubductionQuotient"@.
    SeeAlso
      groebnerSubductionQuotient
      (symbol %, RingElement, Subring)
@@ -1690,7 +1710,11 @@ doc ///
      result:Ring
    Description
      Text
-       Returns the lifted ring of @ ofClass SAGBIBasis @. This is always @ ofClass PolynomialRing @.
+       Returns the lifted ring of @ ofClass SAGBIBasis @.
+       This is either the @TT "ambient ring"@ or the
+       @TT "ambient ring of the ambient ring"@ when the ambient ring is a
+       quotient ring.
+       This is always @ ofClass PolynomialRing @.
      Example
        R = QQ[x,y,z];
        S = sagbi {x^2, y^2, z^2}
@@ -1701,13 +1725,9 @@ doc ///
 
    SeeAlso
      SAGBIBasis
-     (gens, SAGBIBasis)
      (ambient, SAGBIBasis)
      (ring, SAGBIBasis)
      (net, SAGBIBasis)
-     (status, SAGBIBasis)
-     sagbiDegree
-     sagbiLimit
      sagbi
 ///
 doc ///
@@ -1998,14 +2018,17 @@ doc ///
      S:Subring
    Outputs
      presRing:PolynomialRing
+       the presentation ring of S
    Description
      Text
        Given @ ofClass Subring @ $S$ of @ ofClass QuotientRing @ $Q$, the @ TT "presentationRing" @ $P$ is a 
        polynomial ring with the same coefficient ring as Q and with one variable for each generator of S. 
        There is a natural map from $P$
        to $S$ that sends each variable to its corresponding generator. Elements of the @ TT "presentationRing" @
-       represent polynomial combinations of generators. Evaluating a combination of generators is equal to
-       applying the aforementioned map. In this way, we have that $S$ is naturally isomorphic to the quotient of $P$ by the
+       represent polynomial combinations of generators.
+       Evaluating a polynomial combination of generators is equal to
+       applying this map.
+       Therefore, $S$ is naturally isomorphic to the quotient of $P$ by the
        kernel of the this map.
        
        The @ TT "presentationRing" @ naturally arises when using @TO (symbol //, RingElement, Subring)@, which takes
