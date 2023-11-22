@@ -11,7 +11,7 @@ newPackage(
 	{ Name => "Harrison Tsai" }
 	},
     Keywords => {"D-modules"},
-    PackageExports => { "Dmodules" },
+    PackageExports => { "WeylAlgebras" },
     PackageImports => {
 	"AssociativeAlgebras",
 	"PrimaryDecomposition",
@@ -24,14 +24,14 @@ newPackage(
     DebuggingMode => false
     )
 
--- local symbols defined in Dmodules
-importFrom_"Dmodules" {
+-- local symbols defined in WeylAlgebras
+importFrom_"WeylAlgebras" {
     "pInfo", "createThetaRing", "ThetaRing", "WtoT",
     }
 
 importFrom_"Core" { "nonnull", "concatRows", "concatCols", "isListOfIntegers" }
 
--- symbols exported from Dmodules
+-- symbols exported from WeylAlgebras
 export {
     "createThetaRing", "ThetaRing", "WtoT",
     }
@@ -106,7 +106,7 @@ load "HolonomicSystems/DOC/canonicalSeries.m2"
 end--
 restart
 uninstallPackage "HolonomicSystems"
-installPackage "Dmodules"
+installPackage "WeylAlgebras"
 installPackage "HolonomicSystems"
 installPackage("HolonomicSystems", RerunExamples => true)
 
