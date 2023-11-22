@@ -26,7 +26,7 @@ isInMultiplierIdeal(RingElement, Ideal, QQ) := o -> (g,I,c) -> (
 powerIdealZZ = method()
 powerIdealZZ(LeftIdeal,ZZ) := (I,n) -> ideal symmetricPower(n,generators I)
 quotientInWeylAlgebra = method()
-quotientInWeylAlgebra(LeftIdeal,RingElement) := (I,f) -> (new Ideal from I) : (new Ideal from ideal f)  
+quotientInWeylAlgebra(LeftIdeal,RingElement) := (I,f) -> quotient(I,f)  
 productInWeylAlgebra = method()
 productInWeylAlgebra(RingElement,LeftIdeal) := (f,I) -> f * (new Ideal from ideal I)  
 
