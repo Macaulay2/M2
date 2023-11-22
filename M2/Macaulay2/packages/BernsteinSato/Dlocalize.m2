@@ -110,7 +110,7 @@ computeLocalization = (M, f, output, options) -> (
      	bestPower := min (getIntRoots (bpoly));
         if bestPower == infinity then bestPower = 0;
      	locIdeal := substitute(substitute(AnnI, {Ws_(ns-1) => bestPower}), W);
-     	locModule := W^1/locIdeal;
+     	locModule := coker gens locIdeal;
      	local locMap;
 	
      	if member (LocMap, output) then (
@@ -122,7 +122,7 @@ computeLocalization = (M, f, output, options) -> (
 		       bestPower = 0;
 		       locIdeal = substitute(substitute(AnnI, 
 			    	 {Ws_(ns-1) => bestPower}), W);
-     		       locModule = W^1/locIdeal;
+     		       locModule = coker gens locIdeal;
 		       locMap = map(locModule, M, matrix{{f^(-bestPower)}})
 		       )
 	     	  else locMap = map(locModule, M, matrix{{f^(-bestPower)}});
@@ -315,7 +315,7 @@ computeLocalization = (M, f, output, options) -> (
    )
 
 AnnIFs2 = method()
-AnnIFs2(Ideal, RingElement) := (I, f) -> (
+AnnIFs2(LeftIdeal, RingElement) := (I, f) -> (
      pInfo(1, "computing AnnIFs... ");
      W := ring I;
      n := numgens W;
@@ -402,7 +402,7 @@ u = symbol u; Du = symbol Du;
 n = 4;
 W = QQ[u_1..u_n, Du_1..Du_n, WeylAlgebra => 
      apply(toList(1..n), i -> u_i => Du_i)];
-M = W^1/ideal(Du_1..Du_n);
+M = coker gens ideal(Du_1..Du_n);
 f = sum(toList(1..n), i -> u_i^2);
 assert(Dlocalize(M, f) == Dlocalize(M, f, Strategy => Oaku));
 assert(DlocalizeMap(M, f) == DlocalizeMap(M, f, Strategy => Oaku));

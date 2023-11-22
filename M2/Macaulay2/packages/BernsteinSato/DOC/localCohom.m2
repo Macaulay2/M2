@@ -63,20 +63,20 @@ document {
      Headline => "local cohomology",
      "Local cohomology of a polynomial ring:",
      UL {
-	  {TO (localCohom, Ideal)},
-	  {TO (localCohom, List, Ideal)},
-	  {TO (localCohom, ZZ, Ideal)}
+	  {TO (localCohom, LeftIdeal)},
+	  {TO (localCohom, List, LeftIdeal)},
+	  {TO (localCohom, ZZ, LeftIdeal)}
 	  },
      "Local cohomology of a holonomic module:",
      UL {
-	  {TO (localCohom, Ideal, Module)},
-	  {TO (localCohom, ZZ, Ideal, Module)},
-	  {TO (localCohom, List, Ideal, Module)}
+	  {TO (localCohom, LeftIdeal, Module)},
+	  {TO (localCohom, ZZ, LeftIdeal, Module)},
+	  {TO (localCohom, List, LeftIdeal, Module)}
 	  },
      SeeAlso => {"pruneLocalCohom"} 
      }
 document {
-     Key => (localCohom, Ideal),
+     Key => (localCohom, LeftIdeal),
      Headline => "local cohomology of a polynomial ring",
      Usage => "H = localCohom I", 
      Inputs => {
@@ -103,12 +103,12 @@ document {
      }  
 
 document {
-     Key => (localCohom, List, Ideal),
+     Key => (localCohom, List, LeftIdeal),
      Headline => "local cohomology of a polynomial ring",
      Usage => "localCohom(l,I)",
      Inputs => { "l", "I" },
      Outputs => { { "the local cohomology of ", TT "I", " in the degrees specified by ", EM "l" } },
-     "See ", TO (localCohom, Ideal), " for the full description.",
+     "See ", TO (localCohom, LeftIdeal), " for the full description.",
      EXAMPLE { 
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
@@ -119,12 +119,12 @@ document {
      }
 
 document {
-     Key => (localCohom, ZZ, Ideal),
+     Key => (localCohom, ZZ, LeftIdeal),
      Headline => "local cohomology of a polynomial ring",
      Usage => "localCohom(d,I)",
      Inputs => { "d", "I" },
      Outputs => {{ "the local cohomology of ", TT "I", " in degree ", EM "d" }},
-     "See ", TO (localCohom, Ideal), " for the full description.",
+     "See ", TO (localCohom, LeftIdeal), " for the full description.",
      EXAMPLE { 
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
@@ -135,7 +135,7 @@ document {
      }
 
 document {
-     Key => (localCohom, Ideal, Module),
+     Key => (localCohom, LeftIdeal, Module),
      Headline => "local cohomology of a D-module",
      Usage => "H = localCohom(I,M)", 
      Inputs => {
@@ -157,7 +157,7 @@ document {
      EXAMPLE {
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
-     	  "h = localCohom(I, W^1 / ideal{dX,dY,dZ})",
+     	  "h = localCohom(I, coker gens ideal{dX,dY,dZ})",
      	  "pruneLocalCohom h"
 	  },
      Caveat => {"The modules returned are not simplified, 
@@ -166,7 +166,7 @@ document {
      }
 
 document {
-     Key => (localCohom, ZZ, Ideal, Module),
+     Key => (localCohom, ZZ, LeftIdeal, Module),
      Headline => "local cohomology of a D-module",
      Usage => "localCohom(d,I,M)",
      Inputs => { "d", "I", "M" },
@@ -175,18 +175,18 @@ document {
 	  EM {"H", SUB "I", "(M)"}, " in degree ", EM "d", ", where ", EM "I", 
 	  " is an ideal in a polynomial ring and ", EM "M", " is a D-module"
 	  }},
-     "See ", TO "localCohom(Ideal,Module)", " for the full description.",
+     "See ", TO "localCohom(LeftIdeal,Module)", " for the full description.",
      EXAMPLE {
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
-	  "h = localCohom(2, I, W^1 / ideal{dX,dY,dZ})",
+	  "h = localCohom(2, I, coker gens ideal{dX,dY,dZ})",
 	  "pruneLocalCohom h"
 	  },
      SeeAlso => {"pruneLocalCohom"} 
      }
 
 document {
-     Key => (localCohom, List, Ideal, Module),
+     Key => (localCohom, List, LeftIdeal, Module),
      Headline => "local cohomology of a D-module",
      Usage => "localCohom(l,I,M)",
      Inputs => { "l", "I", "M" },
@@ -196,11 +196,11 @@ document {
 	  ", where ", EM "I", 
 	  " is an ideal in a polynomial ring and ", EM "M", " is a D-module"
 	  }},
-     "See ", TO "localCohom(Ideal,Module)", " for the full description.",
+     "See ", TO "localCohom(LeftIdeal,Module)", " for the full description.",
      EXAMPLE {
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
-	  "h = localCohom({1,2}, I, W^1 / ideal{dX,dY,dZ})",
+	  "h = localCohom({1,2}, I, coker gens ideal{dX,dY,dZ})",
 	  "pruneLocalCohom h"
 	  },
      SeeAlso => {"pruneLocalCohom"} 

@@ -100,7 +100,7 @@ Dresolution Module := options -> M -> (
      M.cache.resolution
      )
 
-Dresolution (LeftIdeal, List) := options -> (I, w) -> Dresolution ((ring I)^1/I, w, options)
+Dresolution (LeftIdeal, List) := options -> (I, w) -> Dresolution (coker gens I, w, options)
 
 Dresolution (Module, List) := options -> (M, w) -> (
 
@@ -250,10 +250,8 @@ I = ideal 0_W;
 J = ideal 1_W;
 w = {-1,1}
 assert( Dres(I) == Dres(I, w) );
-assert( Dres(W^1/I) == Dres(W^1/I, w) );
 assert( Dres(module I) == Dres(module I, w) );
 assert( Dres(J) == Dres(J, w) );
-assert( Dres(W^1/J) == Dres(W^1/J, w) );
 assert( Dres (module J) == Dres(module J, w) );
 
 -- Resolutions in the same res Grobner cone
