@@ -227,6 +227,7 @@ doc ///
      RenewOptions
      Subring
      SAGBIBasis
+     "Subduction strategies"
 ///
 doc ///
    Key
@@ -234,6 +235,7 @@ doc ///
      [(forceSB,Subring),AutoSubduce]
      [(forceSB,SAGBIBasis),AutoSubduce]
      [sagbi,AutoSubduce]
+     [sagbiBasis,AutoSubduce]
    Headline
      Flag for autosubduction before the sagbi algorithm
    Description
@@ -261,6 +263,7 @@ doc ///
    Key
      ReduceNewGenerators
      [sagbi,ReduceNewGenerators]
+     [sagbiBasis,ReduceNewGenerators]
    Headline
      Flag for reducing new generators in Sagbi algorithm
    Description
@@ -288,6 +291,7 @@ doc ///
    Key
      StorePending
      [sagbi,StorePending]
+     [sagbiBasis,StorePending]
    Headline
      Flag for storing the pending list to the result of the Sagbi algorithm
    Description
@@ -321,6 +325,7 @@ doc ///
      [(isSAGBI,SAGBIBasis),SubductionMethod]
      [(isSAGBI,Subring),SubductionMethod]
      [sagbi,SubductionMethod]
+     [sagbiBasis,SubductionMethod]
    Headline
      Subduction method for the Sagbi algorithm
    Description
@@ -343,6 +348,7 @@ doc ///
    Key
      AutoSubduceOnPartialCompletion
      [sagbi,AutoSubduceOnPartialCompletion]
+     [sagbiBasis,AutoSubduceOnPartialCompletion]
    Headline
      Subduct subalgebra generators at the end of the sagbi algorithm
    Description
@@ -372,6 +378,7 @@ doc ///
      [(isSAGBI,Subring),PrintLevel]
      [(isSAGBI,SAGBIBasis),PrintLevel]
      [sagbi,PrintLevel]
+     [sagbiBasis,PrintLevel]
    Headline
      Levels of information displayed during Sagbi algorithm
    Description
@@ -416,13 +423,14 @@ doc ///
      [(isSAGBI,SAGBIBasis),Recompute]
      [(isSAGBI,Subring),Recompute]
      [sagbi,Recompute]
+     [sagbiBasis,Recompute]
    Headline
      Flag for restarting a sagbi or isSAGBI computation
    Description
      Text
        If the flag is set to @ TT "true" @, then the sagbi computation starts from scratch.
-       This process constructs a @ ofClass SAGBIBasis @ and does not use the computation options
-       from the previous computation, i.e., cached results are ignored.
+       This process constructs a @ ofClass SAGBIBasis @ and uses the computation options
+       from the previous computation.
        
        If the flag is set to @TT "false"@, then previous computations are used to speed up subsequent
        calculations.
@@ -450,6 +458,7 @@ doc ///
      [(isSAGBI,Subring),RenewOptions]
      [(isSAGBI,SAGBIBasis),RenewOptions]
      [sagbi,RenewOptions]
+     [sagbiBasis,RenewOptions]
    Headline
      Flag for reselecting the options for a sagbi computation
    Description
@@ -867,7 +876,6 @@ doc ///
      Text
        Uses the extrinsic method (based on Groebner bases)
        to test membership of a polynomial in a subring.
-       Note that $S$ must be a subring of a polynomial ring.
      Example
        R = QQ[x,y];
        S = subring {x^2 - x*y, x^4};
@@ -909,7 +917,7 @@ doc ///
        S = subring {x+y, x*y, x*y^2};
        f = x^3;
        f - (f%S)
-       h = groebnerSubductionQuotient(f, S)
+       groebnerSubductionQuotient(f, S)
    SeeAlso
      Subring
      subring
@@ -936,6 +944,12 @@ doc ///
        The result is a ring element that lies in the @TO "presentationRing"@ that has one variable for each
        generator of the subring $S$. A subduction quotient is an expression of $f - (f\%S) \in S$
        in terms of the generators of $S$. This function calls @TO "groebnerSubductionQuotient"@.
+     Example
+       R = QQ[x,y];
+       S = subring {x+y,x*y,x*y^2};
+       f = x^3;
+       f - (f%S)
+       f // S
    SeeAlso
      groebnerSubductionQuotient
      (symbol %, RingElement, Subring)
@@ -1540,9 +1554,12 @@ doc ///
         is more streamlined.
         To create @ ofClass SAGBIBasis @, use the function @TO "sagbiBasis"@.
         The @TT "SAGBIBasis" @ type is the main output type of the function @TO "sagbi"@.
+        Applying @TO "subring"@ to a @TT "SAGBIBasis"@ returns the original subring that
+        generated the @TT "SAGBIBasis"@.
    SeeAlso
      sagbiBasis
      Subring
+     subring
      sagbi
      (gens,SAGBIBasis)
      (status,SAGBIBasis)
@@ -1555,39 +1572,67 @@ doc ///
    Key
      sagbiBasis
      (sagbiBasis,Subring)
-     [sagbiBasis,AutoSubduce]
-     [sagbiBasis,ReduceNewGenerators]
-     [sagbiBasis,StorePending]
-     [sagbiBasis,Strategy]
-     [sagbiBasis,SubductionMethod]
      [sagbiBasis,Limit]
-     [sagbiBasis,AutoSubduceOnPartialCompletion]
-     [sagbiBasis,PrintLevel]
-     [sagbiBasis,Recompute]
-     [sagbiBasis,RenewOptions]
    Headline
      Constructs a computation object from a subring.
    Usage
      B = sagbiBasis S
    Inputs
      S:Subring
+     AutoSubduce=>Boolean
+       a flag indicating when to perform autosubduction on the generators before performing the subalgebra basis computation (See: @TO "AutoSubduce"@)
+     ReduceNewGenerators=>Boolean
+       a flag indicating whether to apply Gaussian elimination to new subalgebra generators before adding them to the current subalgebra basis (See: @TO "ReduceNewGenerators"@)
+     StorePending=>Boolean
+       a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
+     Strategy=>String
+       the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
+       The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
+     SubductionMethod=>String
+       the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
+     Limit=>ZZ
+       a degree limit for the binomial S-pairs that are computed internally.
+     AutoSubduceOnPartialCompletion=>Boolean
+       a flag that indicates whether autosubduction is applied to the subalgebra generators the first time no new generators are added.
+       Use this only if very few new subalgebra generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
+     PrintLevel=>ZZ
+        an option to produce additional output.
+        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
+     Recompute=>Boolean
+       a flag that indicates if the computation will resume in subsequent runs, otherwise it starts at the beginning
+     RenewOptions=>Boolean
+       a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      B:SAGBIBasis
+       a computation object associated to S
    Description
      Text
        This function serves as the canonical constructor for the @TO "SAGBIBasis"@ type.
        The @TT "SAGBIBasis"@ type is also the output of the function @TO "sagbi"@.
-       A @TO "SAGBIBasis"@ may be cast to @ ofClass Subring @ using @TO "subring"@.
+       The @ ofClass Subring@ used to construct a @TT "SAGBIBasis"@ may be recovered using
+       @TO "subring"@
+     Example
+       R = QQ[x,y];
+       S = subring{x+y,x*y,x*y^2};
+       T = sagbiBasis S
+       sagbi(T,Limit=>20)
+       subring T
    SeeAlso
-     SAGBIBasis
-     (gens, SAGBIBasis)
-     (ambient, SAGBIBasis)
-     (ring, SAGBIBasis)
-     (net, SAGBIBasis)
-     (status, SAGBIBasis)
-     sagbiDegree
-     sagbiLimit
      sagbi
+     subalgebraBasis
+     AutoSubduce
+     ReduceNewGenerators
+     StorePending
+     SubductionMethod
+     AutoSubduceOnPartialCompletion
+     PrintLevel
+     Recompute
+     RenewOptions
+     Subring
+     SAGBIBasis
+     "Subduction strategies"
+     forceSB
 ///
 
 doc ///
@@ -2073,7 +2118,7 @@ doc ///
       (gens, SAGBIBasis)
       (isSAGBI)
     References
-      @HREF("https://arxiv.org/abs/2001.05417", "D. Crook and P. Donelan.  Polynomial invariants and SAGBI bases for multi-screws. arXiv:2001.05417, 2020.")@
+      @HREF("https://arxiv.org/abs/2001.05417", {"D. Crook and P. Donelan.  Polynomial invariants and SAGBI bases for multi-screws. ", EM "arXiv:2001.05417", ", 2020."})@
 ///
 
 doc ///
@@ -2087,6 +2132,7 @@ doc ///
      [(isSAGBI,Subring),Strategy]
      [(isSAGBI,SAGBIBasis),Strategy]
      [sagbi,Strategy]
+     [sagbiBasis,Strategy]
    Headline
      Update procedure for the Sagbi algorithm
    Description
