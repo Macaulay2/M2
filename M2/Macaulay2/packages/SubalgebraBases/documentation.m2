@@ -78,16 +78,7 @@ doc ///
      (subalgebraBasis, Subring)
      (subalgebraBasis, Matrix)
      (subalgebraBasis, List)
-     [subalgebraBasis,AutoSubduce]
-     [subalgebraBasis,ReduceNewGenerators]
-     [subalgebraBasis,StorePending]
-     [subalgebraBasis,Strategy]
-     [subalgebraBasis,SubductionMethod]
      [subalgebraBasis,Limit]
-     [subalgebraBasis,AutoSubduceOnPartialCompletion]
-     [subalgebraBasis,PrintLevel]
-     [subalgebraBasis,Recompute]
-     [subalgebraBasis,RenewOptions]
    Headline
      Compute subalgebra basis generators
    Usage
@@ -132,7 +123,16 @@ doc ///
        whose entries form a partial subalgebra basis
    Description
      Text
-       The command @TO "subalgebraBasis"@ @TT "A"@ is equivalent to the command @TO gens@ @TO "sagbi"@ @TT "A"@.
+       Computes a partial subalgebra basis for its input.
+       This command returns the computed generators and not a computaiton object.
+       If the input is @ ofClass Subring@, then the computation object is stored in the cache of the input.
+     Example
+        R = QQ[t_(1,1)..t_(3,3),MonomialOrder=>Lex];
+        M = genericMatrix(R,3,3);
+        A = subring gens minors(2, M);
+        subalgebraBasis A
+     Text
+       The command @TO "subalgebraBasis"@ @TT "A"@ is equivalent to the command @TO (gens,SAGBIBasis)@ @TO "sagbi"@ @TT "A"@.
    SeeAlso
      sagbi
      AutoSubduce
@@ -143,6 +143,7 @@ doc ///
      PrintLevel
      Recompute
      RenewOptions
+     (gens,SAGBIBasis)
 ///
 doc ///
    Key
@@ -168,24 +169,24 @@ doc ///
      B:SAGBIBasis
         containing a partial computation of a subalgebra basis
      AutoSubduce=>Boolean
-       a flag indicating when to perform autosubduction on the generators before performing the subalgebra basis computation (See: @TO "AutoSubduce"@)
+       a flag indicating when to perform autosubduction on the generators before performing the subalgebra basis computation
      ReduceNewGenerators=>Boolean
-       a flag indicating whether to apply Gaussian elimination to new subalgebra generators before adding them to the current subalgebra basis (See: @TO "ReduceNewGenerators"@)
+       a flag indicating whether to apply Gaussian elimination to new subalgebra generators before adding them to the current subalgebra basis
      StorePending=>Boolean
-       a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
+       a flag that indicates whether the {\it pending list} should be stored in the result.
      Strategy=>String
        the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
+       The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental".
      SubductionMethod=>String
-       the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
+       the name of the method used for subduction either: "Top" or "Engine".
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      AutoSubduceOnPartialCompletion=>Boolean
        a flag that indicates whether autosubduction is applied to the subalgebra generators the first time no new generators are added.
-       Use this only if very few new subalgebra generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
+       Use this only if very few new subalgebra generators are expected.
      PrintLevel=>ZZ
         an option to produce additional output.
-        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
+        When this is greater than zero, information is printed about the progress of the computation
      Recompute=>Boolean
        a flag that indicates if the computation will resume in subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
@@ -236,6 +237,8 @@ doc ///
      [(forceSB,SAGBIBasis),AutoSubduce]
      [sagbi,AutoSubduce]
      [sagbiBasis,AutoSubduce]
+     [subalgebraBasis,AutoSubduce]
+     [subduction,AutoSubduce]
    Headline
      Flag for autosubduction before the sagbi algorithm
    Description
@@ -264,6 +267,8 @@ doc ///
      ReduceNewGenerators
      [sagbi,ReduceNewGenerators]
      [sagbiBasis,ReduceNewGenerators]
+     [subalgebraBasis,ReduceNewGenerators]
+     [subduction,ReduceNewGenerators]
    Headline
      Flag for reducing new generators in Sagbi algorithm
    Description
@@ -292,27 +297,34 @@ doc ///
      StorePending
      [sagbi,StorePending]
      [sagbiBasis,StorePending]
+     [subalgebraBasis,StorePending]
+     [subduction,StorePending]
    Headline
      Flag for storing the pending list to the result of the Sagbi algorithm
    Description
      Text
-       The function @TO "sagbi"@ produces @ ofClass SAGBIBasis @ computation object.
-       If the @ TT "StorePending" @ flag is @ TT "true" @ then the output will contain a copy of the pending list.
-       The pending list contains all {\it S-pairs} grouped by their degrees.
-       If the sagbi algorithm terminates without producing a complete subalgebra basis, for example due to @TT "Limit"@, then the computation may be resumed by calling @TO "sagbi"@ on the resulting computation object with new options.
-       The resumed computation will use the pending list stored in the @TO "SAGBIBasis"@ computation object.
-       If there is no pending list in the computation object then one will be created.
-       Depending on the computation, the pending list may be very large and it may not be convenient to save all the data.
+       If the @ TT "StorePending" @ flag is @ TT "true" @, then the @ ofClass SAGBIBasis @
+       produced by the function @TO "sagbi"@ contains a copy of the pending list.
+       The pending list contains all unprocessed {\it S-pairs} grouped by their degrees.
+       The pending list may be nonempty if the @TO "sagbi"@ algorithm terminates without
+       producing a complete subalgebra basis.
+       The pending list is stored to speed up the computation if it is resumed later.
+
+       If the @TT "StorePending"@ flag is @TT "false"@, then the pending list is not stored.
+       Depending on the computation, the pending list may be very large,
+       and it may not be convenient to save all the data.
    SeeAlso
      sagbi
      AutoSubduce
      ReduceNewGenerators
-     StorePending
      SubductionMethod
      AutoSubduceOnPartialCompletion
      PrintLevel
      Recompute
      RenewOptions
+     sagbiBasis
+     subduction
+     subalgebraBasis
 ///
 doc ///
    Key
@@ -326,13 +338,22 @@ doc ///
      [(isSAGBI,Subring),SubductionMethod]
      [sagbi,SubductionMethod]
      [sagbiBasis,SubductionMethod]
+     [subalgebraBasis,SubductionMethod]
+     [subduction,SubductionMethod]
    Headline
      Subduction method for the Sagbi algorithm
    Description
      Text
-       To subduct the {\it S-pairs} in @TO "sagbi"@, one can either use "Top" or "Engine".
-       Engine level subduction is generally faster.
-       To view each subduction taking place inside the Sagbi algorithm, use a high value for @TO PrintLevel@ together with top-level subduction.
+       There are two possible values for @TT "Strategy"@:
+       @TT "Top"@ and @TT "Engine"@.
+     
+       There are two implementations to subduct the $S$-pairs in the function @TO "sagbi"@.
+       Both implementations follow the same procedure, but are coded in different parts of @TT "Macaulay2"@.
+       Subduction using the @TT "Strategy"@ @TT "Top"@ (default) is generally faster for smaller inputs.
+       Subduction using the @TT "Engine"@ implementation can be faster for larger subalgebra bases.
+       
+       When using the @TT "Top"@ @TT "Strategy"@, the status of the computation using @TO "sagbi"@
+       can be displayed using the @TO "PrintLevel"@ option.
    SeeAlso
      sagbi
      AutoSubduce
@@ -343,12 +364,20 @@ doc ///
      PrintLevel
      Recompute
      RenewOptions
+     intersect
+     forceSB
+     isSAGBI
+     sagbiBasis
+     subalgebraBasis
+     subduction
 ///
 doc ///
    Key
      AutoSubduceOnPartialCompletion
      [sagbi,AutoSubduceOnPartialCompletion]
      [sagbiBasis,AutoSubduceOnPartialCompletion]
+     [subalgebraBasis,AutoSubduceOnPartialCompletion]
+     [subduction,AutoSubduceOnPartialCompletion]
    Headline
      Subduct subalgebra generators at the end of the sagbi algorithm
    Description
@@ -379,6 +408,8 @@ doc ///
      [(isSAGBI,SAGBIBasis),PrintLevel]
      [sagbi,PrintLevel]
      [sagbiBasis,PrintLevel]
+     [subalgebraBasis,PrintLevel]
+     [subduction,PrintLevel]
    Headline
      Levels of information displayed during Sagbi algorithm
    Description
@@ -424,12 +455,14 @@ doc ///
      [(isSAGBI,Subring),Recompute]
      [sagbi,Recompute]
      [sagbiBasis,Recompute]
+     [subalgebraBasis,Recompute]
+     [subduction,Recompute]
    Headline
      Flag for restarting a sagbi or isSAGBI computation
    Description
      Text
-       If the flag is set to @ TT "true" @, then the sagbi computation starts from scratch.
-       This process constructs a @ ofClass SAGBIBasis @ and uses the computation options
+       If the flag is set to @ TT "true" @, then the subalgebra bases computation starts from scratch.
+       This process constructs @ ofClass SAGBIBasis @ and uses the computation options
        from the previous computation.
        
        If the flag is set to @TT "false"@, then previous computations are used to speed up subsequent
@@ -459,11 +492,13 @@ doc ///
      [(isSAGBI,SAGBIBasis),RenewOptions]
      [sagbi,RenewOptions]
      [sagbiBasis,RenewOptions]
+     [subalgebraBasis,RenewOptions]
+     [subduction,RenewOptions]
    Headline
-     Flag for reselecting the options for a sagbi computation
+     Flag for reselecting the options for a subalgebra bases computation
    Description
      Text
-       When a sagbi computation is initialized (for the first time), the options of that computation
+       When a subalgebra bases computation is initialized (for the first time), the options of that computation
        are stored in the computation object. Whenever the computation is resumed,
        the same options will apply to the computation, with the exception of
        @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@.
@@ -496,18 +531,9 @@ doc ///
      (subduction, Subring, RingElement)
      (subduction, List, List)
      (subduction, List, RingElement)
-     [subduction,AutoSubduce]
-     [subduction,ReduceNewGenerators]
-     [subduction,StorePending]
-     [subduction,Strategy]
-     [subduction,SubductionMethod]
      [subduction,Limit]
-     [subduction,AutoSubduceOnPartialCompletion]
-     [subduction,PrintLevel]
-     [subduction,Recompute]
-     [subduction,RenewOptions]
    Headline
-     Subduction of polynomials
+     Subduction against a set elements
    Usage
      N = subduction(SB, M)
      n = subduction(SB, m)
@@ -519,13 +545,13 @@ doc ///
      n = subduction(FList, m)
    Inputs
      SB:SAGBIBasis
-       subduct with respect to the subalgebra generators of $SB$
+        whose subalgebra generators are subducted against
      S:Subring
-       subduct with respect to the generators of $S$
+       whose generators are subducted against
      F:Matrix
-       subduct with respect to the entries of $F$
+       whose entries are subducted against
      FList:List
-       subduct with respect to the entries of $FList$
+       whose entries are subducted against
      M:Matrix
        a 1-row matrix whose entries are to be subducted
      m:RingElement
@@ -533,23 +559,23 @@ doc ///
      mList:List
        a list of elements to be subducted
      AutoSubduce=>Boolean
-       a flag indicating when to perform autosubduction on the generators before performing the Subalgebra basis computation (See: @TO "AutoSubduce"@)
+       a flag indicating when to perform autosubduction on the generators before performing the Subalgebra basis computation
      ReduceNewGenerators=>Boolean
-       a flag indicating whether to apply Gaussian elimination to new subalgebra generators before adding them to the current subalgebra basis (See: @TO "ReduceNewGenerators"@)
+       a flag indicating whether to apply Gaussian elimination to new subalgebra generators before adding them to the current subalgebra basis
      StorePending=>Boolean
-       a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
+       a flag that indicates whether the {\it pending list} should be stored in the result.
      Strategy=>String
        the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
+       The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental".
      SubductionMethod=>String
-       the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
+       the method used for subduction either: "Top" or "Engine".
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      AutoSubduceOnPartialCompletion=>Boolean
        apply autosubduction to the subalgebra generators the first time no new generators are added.
-       Use this only if very few new subalgebra generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
+       Use this only if very few new subalgebra generators are expected.
      PrintLevel=>ZZ
-       When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
+       When this is greater than zero, information is printed about the progress of the computation
      Recompute=>Boolean
        if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
      RenewOptions=>Boolean
@@ -565,14 +591,20 @@ doc ///
    Description
      Text
        Performs subduction on the input with respect to the generating set of the supplied object.
-       The subduction uses the specified @TO "SubductionMethod"@ and @TO "PrintLevel"@.
+       The result of subduction of $f$ by $S$ is an element $g$ such that $f-g$ is in $S$.
+       If the generating set is not a subalgebra basis, then the result of subduction may not be
+       a normal form for the input.
      Example
        R = QQ[x,y];
        S = subring {x+y, x*y, x*y^2};
        f = x^4;
        subduction(S, f)
+       -- sagbi S;
+       -- subduction(S, f)
    SeeAlso
      sagbi
+     Subring
+     SAGBIBasis
      (symbol %, RingElement, Subring)
      AutoSubduce
      ReduceNewGenerators
@@ -582,6 +614,8 @@ doc ///
      PrintLevel
      Recompute
      RenewOptions
+     groebnerSubductionQuotient
+     (symbol //, RingElement, Subring)
 ///
 
 -- #######################################
@@ -615,7 +649,7 @@ doc ///
        For further details of their respective uses see: @ TO (isSAGBI, Subring) @ and @ TO (isSAGBI, SAGBIBasis) @.
        
        The result of @ TT "isSagbi" @ is stored in the cache of @ ofClass Subring @ or the sagbiStatus of 
-       a @ ofClass SAGBIBasis @. If @ TT "isSagbi" @ is called again, then the result is looked up, unless
+       @ ofClass SAGBIBasis @. If @ TT "isSagbi" @ is called again, then the result is looked up, unless
        the option @TO "Recompute"@ is set to @TT "true"@.
      Example
        R = QQ[x,y,z];
@@ -703,7 +737,7 @@ doc ///
        isSAGBI S'
      Text
        The options @TO "Subduction strategies"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
-       only used when performing a sagbi computation.
+       only used when performing a subalgebra bases computation.
    SeeAlso
      isSAGBI
      (isSAGBI, SAGBIBasis)
@@ -728,7 +762,7 @@ doc ///
      Strategy=>String
        the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree"
-       for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
+       for low degrees and switching to "Incremental".
      SubductionMethod=>String
        the method used for subduction either: "Top" or "Engine".
      PrintLevel=>ZZ
@@ -769,7 +803,7 @@ doc ///
        isSAGBI sagbi(S', Limit => 10)
      Text
        The options @TO "Subduction strategies"@, @TO "SubductionMethod"@, @TO "PrintLevel"@, and @TO "RenewOptions"@ are
-       only used when performing a sagbi computation.
+       only used when performing a subalgebra bases computation.
    SeeAlso
      isSAGBI
      (isSAGBI, Subring)
@@ -825,12 +859,17 @@ doc ///
      Flag for using the subring generators when checking a subalgebra basis
    Description
      Text
-       When @TO "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ $SB$, then this flag determines
-       whether the provided generators or the subring generators form a subalgebra basis.
-       Explicitly, if the flag is set to false then the check is aplied to the subalgebra generators of $SB$.
-       Otherwise, if the flag is set to true, then the check is applied to the generators of the subring of $SB$.
+       When @TO "isSAGBI"@ is supplied @ ofClass SAGBIBasis @ or @ ofClass Subring @,
+       there are two generating sets which can be used: either the generators of @ofClass Subring@ or
+       the subalgebra generators of @ofClass SAGBIBasis@ (which may be stored in the cache of
+       @ofClass Subring@).
+       
+       If the flag is set to @TT "false"@, then the check is aplied to the subalgebra generators of $SB$.
+       If the flag is set to @TT "true"@, then the check is applied to the generators of the subring of $SB$.
    SeeAlso
      isSAGBI
+     (isSAGBI,Subring)
+     (isSAGBI,SAGBIBasis)
 ///
 doc ///
    Key
@@ -844,7 +883,7 @@ doc ///
    Description
      Text
        When @TO "isSAGBI"@ is supplied @ ofClass Subring @ $S$, then this option determines
-       whether the cached @ ofClass SAGBIBasis @ may be replaced.
+       whether the cached instance of @ ofClass SAGBIBasis @ may be replaced.
      Example
        R = QQ[x,y];
        S = subring {x^2, y^3};
@@ -856,7 +895,6 @@ doc ///
        S.cache#SAGBIBasis === SB
    SeeAlso
      isSAGBI
-
 ///
 doc ///
    Key
@@ -1009,7 +1047,8 @@ doc ///
      Flag for calculating degree limit in intersections
    Description
      Text
-       Either @TT "Fixed"@ or @TT "Function"@. Determines the stopping criterion for the subalgebra basis
+       There are two possible values for @TT "SAGBILimitType"@: @TT "Fixed"@ or @TT "Function"@.
+       Determines the stopping criterion for the subalgebra basis
        computation performed by the function @TO (intersect, Subring, Subring)@. This function creates 
        @ofClass Subring@ $S$, called the {\it composite subring}, from the input algebras  
        and attempts to compute a subalgebra basis for $S$. The @TT "Limit"@ of this subalgebra basis
@@ -1102,7 +1141,7 @@ doc ///
      SubductionMethod=>String
        the method used for subduction.  @TO "SubductionMethod"@ can be either "Top" or "Engine".
      SAGBILimitType=>String
-       Either "Fixed" or "Function". Determines the stopping criterion for the sagbi computation. If "Fixed" then the @TT "Limit"@ is used,
+       Either "Fixed" or "Function". Determines the stopping criterion for the subalgebra bases computation. If "Fixed" then the @TT "Limit"@ is used,
        otherwise, if "Function" is selected, then the maximum degree of the input generators is used as the degree limit.
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
@@ -1309,16 +1348,22 @@ doc ///
    Description
      Text
        
-        @TT "Subring"@ is a type that stores information associated to a subring of a polynomial ring, such as a set of subring generators and a reference to the polynomial ring it is contained in.
+        @TT "Subring"@ is a type that stores information associated
+        to a subring of a polynomial ring or quotient ring,
+        such as a set of subring generators and a reference to the polynomial ring it is contained in.
         An instance of a @TT "Subring"@ is constructed with the function @TO "subring"@.
+        For many uses, it is suggested to use @ ofClass Subring@, as the computation @TT "SAGBIBases"@
+        are handeled behind the scenes, and
+        the user experience
+        is more streamlined.
        
-       Every instance of @TT "Subring"@ is guaranteed to have the following keys:
+       Every instance of @TT "Subring"@ has the following keys (some of which are strings):
        
        @UL {
-            {BOLD {"ambientRing"}, ": The polynomial or quotient ring that contains the subring instance's generators."},
-            {BOLD {"generators"}, ": A one-row matrix, the generators of the subring."},
-            {BOLD {"cache"}, ": Contains unspecified information. The contents of the cache may affect performance, but should never affect the result of a computation."},
-            {BOLD {"presentationRing"}, ": the polynomial ring with one variable for each generator of the subring"}
+            {TT "ambientRing", ": The polynomial or quotient ring that contains the subring instance's generators."},
+            {TT "generators", ": A one-row matrix, the generators of the subring."},
+            {TT "cache", ": Contains data from previous computations to allow for more efficient computations."},
+            {TT "presentationRing", ": the polynomial ring with one variable for each generator of the subring"}
            }@
 
    SeeAlso
@@ -1330,6 +1375,7 @@ doc ///
        (presentationRing, Subring)
        sagbi
        SAGBIBasis
+       subalgebraBasis
 ///
 
 doc ///
@@ -1355,9 +1401,14 @@ doc ///
        a symbol to be used for the variables of the @ TT "presentationRing" @.
    Outputs
      A:Subring
+       generated by the input generators.
    Description
      Text
        This function serves as the canonical constructor for the @TO "Subring"@ type.
+       For many uses, it is suggested to use @ ofClass Subring@, as the computation @TT "SAGBIBases"@
+       are handeled behind the scenes, and
+       the user experience
+       is more streamlined.
      Example
        R = QQ[x];
        S = subring {x^4+x^3, x^2+x}
@@ -1547,7 +1598,7 @@ doc ///
    Description
      Text
         A computation object for subalgebra bases.
-        It stores a partial sagbi computation for picking up a computation where it left off.
+        It stores a partial subalgebra bases computation for picking up a computation where it left off.
         For many uses, it is superior to use @ ofClass Subring@, as the computation @TT "SAGBIBases"@
         are handeled behind the scenes, and
         the user experience
@@ -1580,24 +1631,24 @@ doc ///
    Inputs
      S:Subring
      AutoSubduce=>Boolean
-       a flag indicating when to perform autosubduction on the generators before performing the subalgebra basis computation (See: @TO "AutoSubduce"@)
+       a flag indicating when to perform autosubduction on the generators before performing the subalgebra basis computation
      ReduceNewGenerators=>Boolean
-       a flag indicating whether to apply Gaussian elimination to new subalgebra generators before adding them to the current subalgebra basis (See: @TO "ReduceNewGenerators"@)
+       a flag indicating whether to apply Gaussian elimination to new subalgebra generators before adding them to the current subalgebra basis
      StorePending=>Boolean
-       a flag that indicates whether the {\it pending list} should be stored in the result. (See: @TO "StorePending"@)
+       a flag that indicates whether the {\it pending list} should be stored in the result.
      Strategy=>String
        the name of the update strategy at the beginning of each loop: "DegreeByDegree", "Incremental", and "Master".
-       The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental". (See: @TO "Subduction strategies"@)
+       The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree" for low degrees and switching to "Incremental".
      SubductionMethod=>String
-       the name of the method used for subduction either: "Top" or "Engine". (See: @TO "SubductionMethod"@)
+       the name of the method used for subduction either: "Top" or "Engine".
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
      AutoSubduceOnPartialCompletion=>Boolean
        a flag that indicates whether autosubduction is applied to the subalgebra generators the first time no new generators are added.
-       Use this only if very few new subalgebra generators are expected. (See: @TO "AutoSubduceOnPartialCompletion"@)
+       Use this only if very few new subalgebra generators are expected.
      PrintLevel=>ZZ
         an option to produce additional output.
-        When this is greater than zero, information is printed about the progress of the computation (See: @TO "PrintLevel"@)
+        When this is greater than zero, information is printed about the progress of the computation
      Recompute=>Boolean
        a flag that indicates if the computation will resume in subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
@@ -1768,23 +1819,32 @@ doc ///
       sagbiDegree
      (sagbiDegree, SAGBIBasis)
    Headline
-     The current degree of the sagbi computation
+     The current degree of the subalgebra bases computation
    Usage
      result = sagbiDegree SB
    Inputs
      SB:SAGBIBasis
    Outputs
      result:ZZ
+       the current degree of computation in SB.
    Description
      Text
-       Returns the current degree of @ ofClass SAGBIBasis @. When the computation is resumed (without restarting)
-       then the algorithm will pick up at this degree. Note that the degree may drop during the computation.
+       Returns the current degree of the computation stored in @ ofClass SAGBIBasis @.
+       When the computation is resumed (without restarting)
+       then the algorithm will pick up at this degree.
+       The degree may drop during the computation.
+     Example
+       R = QQ[x,y];
+       S = subring{x+y,x*y,x*y^2,x*y^5+y};
+       T = sagbiBasis S;
+       sagbiDegree T
+       sagbiDegree sagbi(S,Limit=>5)
+       sagbiDegree sagbi(S,Limit=>20)
+       isSAGBI(S,UseSubringGens=>false)
    SeeAlso
      SAGBIBasis
+     sagbiBasis
      (gens, SAGBIBasis)
-     (ambient, SAGBIBasis)
-     (ring, SAGBIBasis)
-     (net, SAGBIBasis)
      (status, SAGBIBasis)
      sagbiLimit
      sagbi
@@ -1794,23 +1854,30 @@ doc ///
       sagbiLimit
      (sagbiLimit, SAGBIBasis)
    Headline
-     The current limit of the sagbi computation
+     The current limit of the subalgebra bases computation
    Usage
      result = sagbiLimit SB
    Inputs
      SB:SAGBIBasis
    Outputs
      result:ZZ
+       the current upper bound on degree of a subalgebra bases computation
    Description
      Text
-       Returns the current limit of the sagbi computation. When the computation is resumed then
-       this limit will be set to the new specified limit.
+       Returns the current limit of the subalgebra bases computation.
+       When the computation is resumed then
+       this limit may be set to a new specified limit.
+     Example
+       R = QQ[x,y];
+       S = subring{x+y,x*y,x*y^2,x*y^5+y};
+       T = sagbiBasis S;
+       sagbiLimit T
+       sagbiLimit sagbi(S,Limit=>5)
+       sagbiLimit sagbi(S,Limit=>30)
    SeeAlso
      SAGBIBasis
+     sagbiBasis
      (gens, SAGBIBasis)
-     (ambient, SAGBIBasis)
-     (ring, SAGBIBasis)
-     (net, SAGBIBasis)
      (status, SAGBIBasis)
      sagbiDegree
      sagbi
@@ -1820,49 +1887,57 @@ doc ///
       sagbiStatus
      (sagbiStatus, SAGBIBasis)
    Headline
-     returns if the sagbi computation is done
+     checks if the subalgebra bases computation is done
    Usage
      result = sagbiStatus SB
    Inputs
      SB:SAGBIBasis
    Outputs
      result:Boolean
+       is @TT "true"@ if the subalgebra basis computation is complete
    Description
      Text
-       Returns @ TT "true" @ if the sagbi computation is completed otherwise returns @ TT "false" @.
+       Returns @ TT "true" @ if the subalgebra bases computation is completed otherwise returns @ TT "false" @.
+       It is possible that the computed subalgebra basis generators form a subalgebra basis while
+       @TT "sagbiStatus"@ returns @TT "false"@.
+       In this case, additional computation is needed to confirm that the computed generators
+       form a subalgebra basis.
+       For more descriptive output, see @TO (status,SAGBIBasis)@.
+    Example
+      R = QQ[x,y];
+      S = subring {x+y,x*y,x*y^2,x*y^10+y};
+      sagbiStatus sagbi(S,Limit=>10)
+      sagbiStatus sagbi(S,Limit=>20)
    SeeAlso
      SAGBIBasis
-     (gens, SAGBIBasis)
-     (ambient, SAGBIBasis)
-     (ring, SAGBIBasis)
-     (net, SAGBIBasis)
+     sagbiBasis
      (status, SAGBIBasis)
-     sagbiDegree
-     sagbiLimit
      sagbi
 ///
 doc ///
    Key
      (status, SAGBIBasis)
    Headline
-     status of the sagbi computation
+     status of the subalgebra bases computation
    Usage
      result = status SB
    Inputs
      SB:SAGBIBasis
    Outputs
      result:String
+       a desciption of the status of a subalgebra basis computation
    Description
      Text
-       Returns a string with the status of sagbi computation.
+       Returns a string with a human readable description of the status of subalgebra bases computation.
+     Example
+      R = QQ[x,y];
+      S = subring {x+y,x*y,x*y^2,x*y^10+y};
+      status sagbi(S,Limit=>10)
+      status sagbi(S,Limit=>20)
    SeeAlso
      SAGBIBasis
-     (gens, SAGBIBasis)
-     (ambient, SAGBIBasis)
-     (ring, SAGBIBasis)
-     (net, SAGBIBasis)
-     sagbiDegree
-     sagbiLimit
+     sagbiBasis
+     sagbiStatus
      sagbi
 ///
 
@@ -1879,7 +1954,7 @@ doc ///
      SB:SAGBIBasis
    Description
      Text
-       If @TT "forceSB"@ is called on a @ ofClass SAGBIBasis @ $SB$, then the function performs
+       If @TT "forceSB"@ is called on @ ofClass SAGBIBasis @ $SB$, then the function performs
        autosubduction on the subalgebra generators of $SB$. The completion flag is then
        set to complete without checking whether the generators form a subalgebra basis.
        
@@ -1950,7 +2025,7 @@ doc ///
        the name of the method used for subduction either: "Top" or "Engine".
    Description
      Text
-       When @TT "forceSB"@ is called on a @ ofClass SAGBIBasis @ $SB$, the function performs
+       When @TT "forceSB"@ is called on @ ofClass SAGBIBasis @ $SB$, the function performs
        autosubduction on the subalgebra generators of $SB$. The completion flag is then
        set to complete without checking whether the generators form a subalgebra basis.
        
@@ -2133,19 +2208,26 @@ doc ///
      [(isSAGBI,SAGBIBasis),Strategy]
      [sagbi,Strategy]
      [sagbiBasis,Strategy]
+     [subalgebraBasis,Strategy]
+     [subduction,Strategy]
    Headline
      Update procedure for the Sagbi algorithm
    Description
      Text
+       There are three possible values for @TT "Strategy"@:
+       @TT "DegreeByDegree"@, @TT "Incremental"@, or @TT "Master"@.
+     
        At the beginning of each loop inside of @TO "sagbi"@, the main @TO "SAGBIBasis"@ computation object is updated.
-       There are two types of update procedure; they are selected by setting Strategy to either "DegreeByDegree" or "Incremental".
-       The "DegreeByDegree" strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
-       The "Incremental" strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new subalgebra generators.
-       The "DegreeByDegree" strategy is better when many new generators are added during each loop of the Sagbi algorithm.
-       The "Incremental" strategy is better when there is little change to the number of subalgebra generators.
-       For many examples, it is observed that many new generators are added at the beginning of subalgebra basis computations.
-       Then towards the end of the computation, there are very few new generators that are added.
-       By setting Strategy to "Master" (default), the "DegreeByDegree" strategy is used at the beginning and the strategy switches to "Incremental" part of the way through the algorithm.
+       There are two types of update procedure; the update procedure that is used
+       is determined by the value of @TT "Strategy"@.
+       
+       The @TT "DegreeByDegree"@ strategy computes a partial groebner basis of the {\it reduction ideal} from scratch.
+       The @TT "DegreeByDegree"@ strategy is better when many new generators are added during each loop of the @TO "sagbi"@ algorithm.
+       The @TT "Incremental"@ strategy computes a full groebner basis of the {\it reduction ideal} by using the previous full groebner basis together with the data of the new subalgebra generators.
+       The @TT "Incremental"@ strategy is better when there is little change to the number of subalgebra generators.
+
+       For many examples, it is observed that many new generators are added at the beginning of subalgebra basis computations, but, towards the end of the computation, there are very few new generators that are added.
+       By setting Strategy to @TT "Master"@ (default), the @TT "DegreeByDegree"@ strategy is used at the beginning and the strategy switches to @TT "Incremental"@ part-of-the-way through the algorithm.
    SeeAlso
      sagbi
      AutoSubduce
@@ -2157,6 +2239,12 @@ doc ///
      PrintLevel
      Recompute
      RenewOptions
+     intersect
+     forceSB
+     isSAGBI
+     sagbiBasis
+     subalgebraBasis
+     subduction
 ///
 
 
