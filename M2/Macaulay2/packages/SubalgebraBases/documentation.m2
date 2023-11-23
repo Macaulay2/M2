@@ -78,7 +78,6 @@ doc ///
      (subalgebraBasis, Subring)
      (subalgebraBasis, Matrix)
      (subalgebraBasis, List)
-     [subalgebraBasis,Limit]
    Headline
      Compute subalgebra basis generators
    Usage
@@ -117,7 +116,7 @@ doc ///
        a flag that indicates if the computation will resume on subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
        a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:Matrix
        whose entries form a partial subalgebra basis
@@ -140,6 +139,7 @@ doc ///
      StorePending
      SubductionMethod
      AutoSubduceOnPartialCompletion
+     "Subduction computation limit"
      PrintLevel
      Recompute
      RenewOptions
@@ -152,7 +152,6 @@ doc ///
      (sagbi, Matrix)
      (sagbi, List)
      (sagbi,SAGBIBasis)
-     [sagbi,Limit]
    Headline
      Compute a subalgebra basis (sagbi basis)
    Usage
@@ -191,7 +190,7 @@ doc ///
        a flag that indicates if the computation will resume in subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
        a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:SAGBIBasis
        a computation object holding the state of the subalgebra basis computation
@@ -229,6 +228,7 @@ doc ///
      Subring
      SAGBIBasis
      "Subduction strategies"
+     "Subduction computation limit"
 ///
 doc ///
    Key
@@ -501,7 +501,7 @@ doc ///
        When a subalgebra bases computation is initialized (for the first time), the options of that computation
        are stored in the computation object. Whenever the computation is resumed,
        the same options will apply to the computation, with the exception of
-       @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@.
+       @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@.
        To change the other options in the computation, set this flag to @ TT "true" @.
        The new options will be used and stored in the computation object.
    SeeAlso
@@ -516,6 +516,8 @@ doc ///
      StorePending
      SubductionMethod
      AutoSubduceOnPartialCompletion
+     "Subduction computation limit"
+     "Subduction strategies"
      PrintLevel
      Recompute
 ///
@@ -531,7 +533,6 @@ doc ///
      (subduction, Subring, RingElement)
      (subduction, List, List)
      (subduction, List, RingElement)
-     [subduction,Limit]
    Headline
      Subduction against a set elements
    Usage
@@ -580,7 +581,7 @@ doc ///
        if @ TT "true" @ then the computation will resume otherwise it starts at the beginning
      RenewOptions=>Boolean
        if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      N:Matrix
        entries of $M$ after subduction
@@ -614,6 +615,8 @@ doc ///
      PrintLevel
      Recompute
      RenewOptions
+     "Subduction computation limit"
+     "Subduction strategies"
      groebnerSubductionQuotient
      (symbol //, RingElement, Subring)
 ///
@@ -704,7 +707,7 @@ doc ///
        When this is greater than zero, information is printed about the progress of the computation.
      RenewOptions=>Boolean
        if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@)
      UseSubringGens=>Boolean
        a flag indicating whether to use the generators of the subring.
        If @ TT "false"@ then the method uses the subalgebra generators of the partial subalgebra basis.
@@ -743,6 +746,14 @@ doc ///
      (isSAGBI, SAGBIBasis)
      Subring
      sagbi
+     Compute
+     Recompute
+     "Subduction strategies"
+     SubductionMethod
+     PrintLevel
+     RenewOptions
+     UseSubringGens
+     ModifySAGBIBasis
 ///
 
 doc ///
@@ -769,7 +780,7 @@ doc ///
        When this is greater than zero, information is printed about the progress of the computation.
      RenewOptions=>Boolean
        if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@).
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@).
      UseSubringGens=>Boolean
        a flag indicating whether to use the generators of the subring of the partial subalgebra basis.
        If @ TT "false"@ then the method uses the subalgebra generators of the partial subalgebra basis.
@@ -812,6 +823,14 @@ doc ///
      (ambient, SAGBIBasis)
      (sagbiStatus, SAGBIBasis)
      sagbi
+     Compute
+     Recompute
+     "Subduction strategies"
+     SubductionMethod
+     PrintLevel
+     RenewOptions
+     UseSubringGens
+     ModifySAGBIBasis
 ///
 
 doc ///
@@ -1051,12 +1070,12 @@ doc ///
        Determines the stopping criterion for the subalgebra basis
        computation performed by the function @TO (intersect, Subring, Subring)@. This function creates 
        @ofClass Subring@ $S$, called the {\it composite subring}, from the input algebras  
-       and attempts to compute a subalgebra basis for $S$. The @TT "Limit"@ of this subalgebra basis
-       computation is controlled by the two options @TT "SAGBILimitType"@ and @TT "Limit"@.
+       and attempts to compute a subalgebra basis for $S$. The @TO2 {"Subduction computation limit","Limit"}@ of this subalgebra basis
+       computation is controlled by the two options @TT "SAGBILimitType"@ and @TO2 {"Subduction computation limit","Limit"}@.
         
-       If @TT "SAGBILimitType"@ is set to @TT "Fixed"@ then the @TT "Limit"@ of the 
-       subalgebra basis computation is set to the value of the option @TT "Limit"@.
-       Otherwise, if @TT "SAGBILimitType"@ is set to @TT "Function"@, then the @TT "Limit"@ of the
+       If @TT "SAGBILimitType"@ is set to @TT "Fixed"@ then the @TO2 {"Subduction computation limit","Limit"}@ of the
+       subalgebra basis computation is set to the value of the option @TO2 {"Subduction computation limit","Limit"}@.
+       Otherwise, if @TT "SAGBILimitType"@ is set to @TT "Function"@, then the @TO2 {"Subduction computation limit","Limit"}@ of the
        subalgebra basis computation is set to the product of the degrees of the maximum degree generators
        of the input algebras.
      Example
@@ -1069,12 +1088,14 @@ doc ///
        gens (S4 = intersect(S1, S2, SAGBILimitType => "Fixed", Limit => 10))
        gens (S5 = intersect(S1, S2, SAGBILimitType => "Function"))
      Text
-       By default, the option @TT "SAGBILimitType"@ is set to @TT "Fixed"@ and the default @TT "Limit"@ is $20$.
+       By default, the option @TT "SAGBILimitType"@ is set to @TT "Fixed"@ and the default @TO2 {"Subduction computation limit","Limit"}@ is $20$.
        For more information see @TO (intersect, Subring, Subring)@.
    SeeAlso
      (intersect, Subring, Subring)
      IntersectedSubring
      sagbi
+     SAGBILimitType
+     "Subduction computation limit"
 ///
 doc ///
    Key
@@ -1116,18 +1137,18 @@ doc ///
        intersect(S1, S2, Limit => 6)
      Text
        If this warning message appears, then it is recommended to set the option @TO "SAGBILimitType"@ to its
-       default value of @TT "Fixed"@ and to use a higher value for the option @TT "Limit"@.
+       default value of @TT "Fixed"@ and to use a higher value for the option @TO2 {"Subduction computation limit","Limit"}@.
    SeeAlso
      (intersect, Subring, Subring)
      isFullIntersection
      SAGBILimitType
      IntersectedSubring
+     "Subduction computation limit"
 ///
 
 doc ///
    Key
      (intersect, Subring, Subring)
-     [(intersect, Subring, Subring), Limit]
    Headline
      Intersection of subrings
    Usage
@@ -1141,7 +1162,7 @@ doc ///
      SubductionMethod=>String
        the method used for subduction.  @TO "SubductionMethod"@ can be either "Top" or "Engine".
      SAGBILimitType=>String
-       Either "Fixed" or "Function". Determines the stopping criterion for the subalgebra bases computation. If "Fixed" then the @TT "Limit"@ is used,
+       Either "Fixed" or "Function". Determines the stopping criterion for the subalgebra bases computation. If "Fixed" then the @TO2 {"Subduction computation limit","Limit"}@ is used,
        otherwise, if "Function" is selected, then the maximum degree of the input generators is used as the degree limit.
      Limit=>ZZ
        a degree limit for the binomial S-pairs that are computed internally.
@@ -1188,7 +1209,7 @@ doc ///
            basis for $S$ was found.
        If the function @TO "isFullIntersection"@ returns @TT "false"@
        then there are a few different possibilities: First, the composite subring $S$ may
-       have a finite subalgebra basis that could be found by setting a higher @TT "Limit"@ option.
+       have a finite subalgebra basis that could be found by setting a higher @TO2 {"Subduction computation limit","Limit"}@ option.
        Second, $S$ may not have a finite subalgebra basis but the intersection does have a
        finite subalgebra basis. In this case, the output may be a generating set for the full 
        intersection, but cannot be verified by the algorithm. Third, the intersection of the
@@ -1214,6 +1235,7 @@ doc ///
      isFullIntersection
      originalSubringGens
      isSAGBI
+     "Subduction computation limit"
 ///
 doc ///
    Key
@@ -1288,7 +1310,7 @@ doc ///
      Text
        If the function @TT "isFullIntersection"@ returns @TT "false"@
        then, there are a few different possibilities: First, the composite subring $S$ may
-       have a finite subalgebra basis that could be found by setting a higher @TT "Limit"@ option in @TO "intersect"@.
+       have a finite subalgebra basis that could be found by setting a higher @TO2 {"Subduction computation limit","Limit"}@ option in @TO "intersect"@.
        Second, $S$ may not have a finite subalgebra basis but the intersection does have a
        finite subalgebra basis. In this case, the output may be a generating set for the full
        intersection, but cannot be verified by the algorithm. Third, the intersection of the
@@ -1302,6 +1324,7 @@ doc ///
      (intersect, Subring, Subring)
      Subring
      IntersectedSubring
+     "Subduction computation limit"
 ///
 doc ///
    Key
@@ -1623,7 +1646,6 @@ doc ///
    Key
      sagbiBasis
      (sagbiBasis,Subring)
-     [sagbiBasis,Limit]
    Headline
      Constructs a computation object from a subring.
    Usage
@@ -1653,7 +1675,7 @@ doc ///
        a flag that indicates if the computation will resume in subsequent runs, otherwise it starts at the beginning
      RenewOptions=>Boolean
        a flag that indicates if the computation will use the options specified, otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@)
    Outputs
      B:SAGBIBasis
        a computation object associated to S
@@ -1683,6 +1705,7 @@ doc ///
      Subring
      SAGBIBasis
      "Subduction strategies"
+     "Subduction computation limit"
      forceSB
 ///
 
@@ -1985,7 +2008,7 @@ doc ///
        
        Optional inputs for specific uses, see
        @TO (forceSB, SAGBIBasis)@ and @TO (forceSB, Subring)@ include the following:
-       @TO "AutoSubduce"@, @TT "Limit"@, @TO "PrintLevel"@,
+       @TO "AutoSubduce"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "PrintLevel"@,
        @TO "RenewOptions"@, @TO "Subduction strategies"@,
        @TO "UseSubringGens"@, and @TO "SubductionMethod"@.
    SeeAlso
@@ -1994,11 +2017,17 @@ doc ///
      isSAGBI
      (forceSB, SAGBIBasis)
      (forceSB, Subring)
+     AutoSubduce
+     "Subduction computation limit"
+     PrintLevel
+     RenewOptions
+     "Subduction strategies"
+     UseSubringGens
+     SubductionMethod
 ///
 doc ///
    Key
      (forceSB, SAGBIBasis)
-     [(forceSB,SAGBIBasis),Limit]
    Headline
      declare the generators to be a complete subalgebra basis
    Usage
@@ -2013,7 +2042,7 @@ doc ///
        indicating how much additional information should be printed.  When this is greater than zero, information is printed about the progress of the computation.
      RenewOptions=>Boolean
        if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@)
      Strategy=>String
        the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree"
@@ -2053,11 +2082,17 @@ doc ///
      isSAGBI
      forceSB
      (forceSB, Subring)
+     AutoSubduce
+     "Subduction computation limit"
+     PrintLevel
+     RenewOptions
+     "Subduction strategies"
+     UseSubringGens
+     SubductionMethod
 ///
 doc ///
    Key
      (forceSB, Subring)
-     [(forceSB,Subring),Limit]
    Headline
      declare the generators to be a complete subalgebra basis
    Usage
@@ -2072,7 +2107,7 @@ doc ///
        indicating how much additional information should be printed.  When this is greater than zero, information is printed about the progress of the computation.
      RenewOptions=>Boolean
        if @ TT "true" @ then the computation will use the options specified otherwise it will use the previously selected options
-       (except for the following, which may always be specified: @TO "PrintLevel"@, @TT "Limit"@, @TO "Recompute"@, and @TO "RenewOptions"@)
+       (except for the following, which may always be specified: @TO "PrintLevel"@, @TO2 {"Subduction computation limit","Limit"}@, @TO "Recompute"@, and @TO "RenewOptions"@)
      Strategy=>String
        the update strategy used for updating the SAGBIBasis: "DegreeByDegree", "Incremental", and "Master".
        The strategy "Master" is a hybrid method that combines the other two; starting with "DegreeByDegree"
@@ -2113,6 +2148,13 @@ doc ///
      isSAGBI
      forceSB
      (forceSB, SAGBIBasis)
+     AutoSubduce
+     "Subduction computation limit"
+     PrintLevel
+     RenewOptions
+     "Subduction strategies"
+     UseSubringGens
+     SubductionMethod
 ///
 doc ///
    Key
@@ -2228,6 +2270,63 @@ doc ///
 
        For many examples, it is observed that many new generators are added at the beginning of subalgebra basis computations, but, towards the end of the computation, there are very few new generators that are added.
        By setting Strategy to @TT "Master"@ (default), the @TT "DegreeByDegree"@ strategy is used at the beginning and the strategy switches to @TT "Incremental"@ part-of-the-way through the algorithm.
+   SeeAlso
+     sagbi
+     AutoSubduce
+     ReduceNewGenerators
+     StorePending
+     Strategy
+     SubductionMethod
+     AutoSubduceOnPartialCompletion
+     PrintLevel
+     Recompute
+     RenewOptions
+     intersect
+     forceSB
+     isSAGBI
+     sagbiBasis
+     subalgebraBasis
+     subduction
+///
+
+doc ///
+   Key
+     "Subduction computation limit"
+     [subalgebraBasis,Limit]
+     [sagbi,Limit]
+     [(forceSB,Subring),Limit]
+     [(forceSB,SAGBIBasis),Limit]
+     [sagbiBasis,Limit]
+     [subduction,Limit]
+     [(intersect, Subring, Subring), Limit]
+   Headline
+     Bound for subalgebra basis computation
+   Description
+     Text
+       The value of @TT "Limit"@ is used internally within the @TO "sagbi"@ function
+       to stop the computation before a subalgebra basis has been found.
+       Since subalgebra bases may be infinite, such a barrier is needed to prevent
+       endless loops.
+       
+       The @TT "Limit"@ is an upper bound on the degrees of the $S$-pairs considered
+       by the algorithm in the @TO "presentationRing"@.
+       In this ring, the degrees are assigned according to the degrees of the polynomials
+       that the variables represent.
+       
+       Since the @TO "sagbiDegree"@ does not monotonically increase during the
+       computation, there is no guarantee that a computed partial subalgebra basis
+       is complete up to @TT "Limit"@, even when the computation terminates at this bound.
+     Example
+       R = QQ[x,y];
+       S = subring{x+y,x*y,x*y^2,x*y^5+y};
+       T = sagbiBasis S;
+       sagbiDegree T
+       T5 = sagbi(S,Limit=>5)
+       sagbiDegree T5
+       gens T5
+       T20 = sagbi(S,Limit=>20)
+       sagbiDegree T20
+       gens T20
    SeeAlso
      sagbi
      AutoSubduce
