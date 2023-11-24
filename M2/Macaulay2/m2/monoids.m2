@@ -593,8 +593,8 @@ newMonoid = opts -> (
 	M.degreesMonoid = monoid M.degreesRing;
 	rawMonoid(
 	    M.RawMonomialOrdering,
-	    toSequence M.generators / toString,
 	    raw M.degreesRing,
+	    toSequence M.generators / toString,
 	    flatten degs,
 	    flatten heftvec));
     -- TODO: is this necessary?
