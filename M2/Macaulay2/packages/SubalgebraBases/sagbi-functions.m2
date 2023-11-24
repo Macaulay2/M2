@@ -534,10 +534,13 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- Note that, if the intersection of S1 and S2 has a finite sagbi basis, then it is NOT guaranteed
     -- that S has a finite sagbi basis.
     intersectionGens := TtoQ selectInSubring(1, gens SB);
+    subductionRing := (coefficientRing Q) (monoid[Variables => numcols intersectionGens]);
+    presentationMap := map(Q,subductionRing,intersectionGens);
     result := new IntersectedSubring from {
         "ambientRing" => Q,
         "generators" => intersectionGens,
-        "presentationRing" => (coefficientRing Q) (monoid[Variables => numcols intersectionGens]),
+        "presentationRing" => subductionRing,
+        "presentationMap" => presentationMap,
         cache => new CacheTable from {},
         "originalSubrings" => {S1, S2},
         "compositeSubring" => S

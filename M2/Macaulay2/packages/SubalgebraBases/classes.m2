@@ -22,11 +22,13 @@ subring Matrix := opts -> M -> (
         else if instance(opts.GeneratorSymbol,Symbol) then
              subductionRing = coeffRing[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
         else error("Invalid GeneratorSymbol option");
+        presentationMap := map(R,subductionRing,M);
 
         S := new Subring from{
             "ambientRing" => R,
             "generators" => M,
             "presentationRing" => subductionRing,
+            "presentationMap" => presentationMap,
             cache => new CacheTable from {if M.cache#?Subring then M.cache#Subring}
             };
         M.cache#Subring = S

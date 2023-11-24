@@ -1083,12 +1083,15 @@ doc ///
        The variables of this ring correspond to the generators of $S$. A subduction
        quotient is a polynomial representation of
        $f - f\%S$ in terms of the generators of $S$.
+       The value of this element in the @TO (ambient,Subring)@ ring can be recovered using
+       the field @TT "presentationMap"@ of the subring.
      Example
        R = QQ[x,y];
        S = subring {x+y, x*y, x*y^2};
        f = x^3;
        f - (f%S)
-       groebnerSubductionQuotient(f, S)
+       gs = groebnerSubductionQuotient(f, S)
+       S#"presentationMap" gs
    SeeAlso
      Subring
      subring
@@ -1117,13 +1120,17 @@ doc ///
        generator of the subring $S$.
        A subduction quotient is an expression of $f - (f\%S) \in S$
        in terms of the generators of $S$.
-       This function calls @TO "groebnerSubductionQuotient"@.
+       The value of this element in the @TO (ambient,Subring)@ ring can be recovered using
+       the field @TT "presentationMap"@ of the subring.
      Example
        R = QQ[x,y];
        S = subring {x+y,x*y,x*y^2};
        f = x^3;
        f - (f%S)
-       f // S
+       gs = f // S
+       S#"presentationMap" gs
+     Text
+       This function calls @TO "groebnerSubductionQuotient"@.
    SeeAlso
      groebnerSubductionQuotient
      (symbol %, RingElement, Subring)
@@ -1565,7 +1572,9 @@ doc ///
             {TT "cache", ": Contains data from previous
             computations to allow for more efficient computations."},
             {TT "presentationRing", ": the polynomial ring
-            with one variable for each generator of the subring"}
+            with one variable for each generator of the subring."},
+            {TT "presentationMap", ": a map from the presentation
+            ring to the ambient ring of the subring."}
            }@
 
    SeeAlso
@@ -2415,6 +2424,9 @@ doc ///
        @TO (symbol //, RingElement, Subring)@, which takes
        an element of @ ofClass Subring @ and
        expresses it as a polynomial combination of its generators.
+       
+       Subrings include the field @TT "presentationMap"@, which provides
+       a map from the @TT "presentationRing"@ to the @TO (ambient,Subring)@ ring.
      Example
        R = ZZ/2[x,y];
        Q = R / ideal(x + y^5);
@@ -2422,8 +2434,7 @@ doc ///
        f = x^2*y^3 + x^4 + y^4;
        f % S
        g = f // S
-       M = map(Q, presentationRing S, gens S);
-       M g == f
+       S#"presentationMap" g == f
        
    SeeAlso
      Subring
