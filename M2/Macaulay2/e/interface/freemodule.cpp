@@ -86,7 +86,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
 
 M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
 {
-  auto M = F->degree_monoid();
+  auto M = F->get_ring()->degree_monoid();
   auto n = M->n_vars();
   auto r = F->rank();
   M2_arrayint result = M2_makearrayint(r * n);
