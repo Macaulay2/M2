@@ -328,7 +328,6 @@ class res2_comp : public ResolutionComputation
   const Ring *get_ring() const { return P; }
   const Monoid *getMonoid() const { return M; }
   const Ring *getCoefficientRing() const { return K; }
-  const Monoid *degree_monoid() const { return P->degree_monoid(); }
 };
 #endif
 
