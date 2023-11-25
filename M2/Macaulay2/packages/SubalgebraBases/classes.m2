@@ -15,18 +15,24 @@ subring Matrix := opts -> M -> (
         )
     else (
         R := ring M;
-        coeffRing := coefficientRing R;
+        (F,RtoF,FtoR) := flattenRing(R,Result=>3);
+        coeffRing := coefficientRing F;
         local subductionRing;
         if instance(opts.GeneratorSymbol,Nothing) then
              subductionRing = coeffRing(monoid[Variables => numcols M])
         else if instance(opts.GeneratorSymbol,Symbol) then
              subductionRing = coeffRing[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
         else error("Invalid GeneratorSymbol option");
+        presentationMap := map(R,subductionRing,M);
 
         S := new Subring from{
             "ambientRing" => R,
-            "generators" => M,
+            "flattenedRing" => F,
+            "generators" => RtoF M,
             "presentationRing" => subductionRing,
+            "presentationMap" => presentationMap,
+            "flatteningMap" => RtoF,
+            "inverseFlatteningMap" => FtoR,
             cache => new CacheTable from {if M.cache#?Subring then M.cache#Subring}
             };
         M.cache#Subring = S
@@ -37,7 +43,9 @@ subring List := opts -> L -> subring(matrix{L}, opts)
 -- Subring access functions
 -- gens must take an option since gens is defined to be a method function with options
 ambient Subring := S -> S#"ambientRing"
-gens Subring := opts -> S -> S#"generators"
+flattened = method()
+flattened Subring := S -> S#"flattenedRing"
+gens Subring := opts -> S -> S#"inverseFlatteningMap" S#"generators"
 numgens Subring := S -> numcols gens S
 presentationRing = method()
 presentationRing Subring := S -> S#"presentationRing"
@@ -116,7 +124,8 @@ sagbiBasis Subring := opts -> S -> (
     --   of ambientRing and a polynomial for each SAGBI generator.
     -- Initially, the tensorRing is the same as the ambientRing,
     -- but using a different variable name.
-    liftedRing := ambient ambient S;   
+    ambientRing := ambient S;
+    liftedRing := ambient flattened S;
     numberVariables := numgens liftedRing;
     numberGenerators := numColumns gens S;
     newMonomialOrder := (monoid liftedRing).Options.MonomialOrder;
@@ -125,7 +134,8 @@ sagbiBasis Subring := opts -> S -> (
         Degrees => degrees source vars liftedRing,
         MonomialOrder => newMonomialOrder];
     rings := new HashTable from {
-        quotientRing => ambient S,
+        "ambientRing" => ambientRing,
+        quotientRing => flattened S,
         "liftedRing" => liftedRing,
         tensorRing => (coefficientRing liftedRing) tensorVariables
         };
@@ -158,7 +168,10 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiInclusion" => sagbiInclusion,
         "substitution" => substitution,
         "fullSubstitution" => projectionLifted * substitution, 
-        "quotient" => map(rings.quotientRing,liftedRing, vars rings.quotientRing)
+        "quotient" => map(rings.quotientRing,liftedRing, vars rings.quotientRing),
+        "presentationMap" => S#"presentationMap",
+        "flatteningMap" => S#"flatteningMap",
+        "inverseFlatteningMap" => S#"inverseFlatteningMap"
     };
     
     -- Ideals:
@@ -167,9 +180,9 @@ sagbiBasis Subring := opts -> S -> (
     -- > leadTermsI = initial ideal of I
     -- > reductionIdeal = SIdeal + lift(leadTermsI)    
     SIdeal := ideal(0_(rings.tensorRing));
-    leadTermsI := ideal leadTerm ideal ambient S;
+    leadTermsI := ideal leadTerm ideal flattened S;
     ideals := new HashTable from {
-        "I" => ideal ambient S,     -- I --> quotient / presentation ideal 
+        "I" => ideal flattened S,     -- I --> quotient / presentation ideal
         "SIdeal" => SIdeal,         --  
         "leadTermsI" => leadTermsI, -- 
         "reductionIdeal" => maps#"inclusionLifted" leadTermsI + SIdeal,
@@ -245,10 +258,10 @@ net SAGBIBasis := S -> (
 
 gens SAGBIBasis := opts -> S -> (
     if numColumns S#SAGBIdata#"sagbiGenerators" == 0 then (
-        S#SAGBImaps#"quotient" matrix(S#SAGBIrings#"liftedRing",{{}})
+        S#SAGBImaps#"inverseFlatteningMap" S#SAGBImaps#"quotient" matrix(S#SAGBIrings#"liftedRing",{{}})
         )
     else (
-        S#SAGBImaps#"quotient" S#SAGBIdata#"sagbiGenerators"
+        S#SAGBImaps#"inverseFlatteningMap" S#SAGBImaps#"quotient" S#SAGBIdata#"sagbiGenerators"
         )
     )
 
@@ -259,8 +272,13 @@ ring SAGBIBasis := S -> (
 
 -- Returns the quotient ring
 ambient SAGBIBasis := S -> (
-    S#SAGBIrings.quotientRing
+    S#SAGBIrings#"ambientRing"
     )
+    
+-- Returns the flattened ring
+flattened SAGBIBasis := S -> (
+    S#SAGBIrings.quotientRing
+)
 
 -- Returns the subring that a SAGBIBasis points to
 subring SAGBIBasis := opts -> S -> (

@@ -102,8 +102,8 @@ sagbi Subring := opts -> S -> (
 sagbi SAGBIBasis := opts -> SB -> (
     local S;
     SBSubring := subring SB;
-    if degreeLength ambient SBSubring > 1 then error "sagbi is not implemented for rings with multi-degrees";
-    for deg in flatten degrees ambient SBSubring do if not deg > 0 then error "expected ring with positive degrees";
+    if degreeLength flattened SBSubring > 1 then error "sagbi is not implemented for rings with multi-degrees";
+    for deg in flatten degrees flattened SBSubring do if not deg > 0 then error "expected ring with positive degrees";
     -- if Recomputing then create a new SAGBIBasis object
     if opts.Recompute or SB#SAGBIoptions#Recompute then (
         remove(SBSubring.cache, SAGBIBasis);
@@ -160,19 +160,19 @@ subduction = method(
 
 subduction(SAGBIBasis, Matrix) := Matrix => opts -> (S, M) -> (
     sagbiComputation := initializeSagbiComputation(S, opts);
-    compSubduction(opts, sagbiComputation, M)
+    S#SAGBImaps#"inverseFlatteningMap" compSubduction(opts, sagbiComputation, S#SAGBImaps#"flatteningMap" M)
     )
 
 subduction(SAGBIBasis, RingElement) := RingElement => opts -> (S, m) -> (
     sagbiComputation := initializeSagbiComputation(S, opts);
-    first first entries compSubduction(opts, sagbiComputation, matrix {{m}})
+    S#SAGBImaps#"inverseFlatteningMap" first first entries compSubduction(opts, sagbiComputation, S#SAGBImaps#"flatteningMap" matrix {{m}})
     )
 
 subduction(Matrix, Matrix) := Matrix => opts -> (F, M) -> (
     S := initializeSagbiComputation(sagbiBasis(subring F, opts), opts);
     S#SAGBIdata#"sagbiGenerators" = F;
     updateComputation S;
-    compSubduction(opts, S, M)
+    S#SAGBImaps#"inverseFlatteningMap" compSubduction(opts, S, S#SAGBImaps#"flatteningMap" M)
     )
 
 subduction(Matrix, RingElement) := RingElement => opts -> (F, m) -> (

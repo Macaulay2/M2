@@ -225,14 +225,14 @@ isSAGBI Subring := {
                     )
                 and (
                     -- the initial algebra lies in the quotient by the initial ideal
-                    LTAmbient := (if isQuotientRing ambient S then (
-                            Q := ambient S;
+                    LTAmbient := (if isQuotientRing flattened S then (
+                            Q := flattened S;
                             R := ambient Q;
                             I := ideal Q;
                             R / ideal leadTerm I) 
-                                else ambient S);
+                                else flattened S);
                     
-                    liftMap := map(LTAmbient, ambient S, gens LTAmbient);
+                    liftMap := map(LTAmbient, flattened S, gens LTAmbient);
                     LTgensS := liftMap leadTerm gens S;
                     LTgensSB := liftMap leadTerm gens SB;
                     subringLTgensS := subring LTgensS;
@@ -303,12 +303,12 @@ isSAGBI List := {
 --
 groebnerMembershipTest = method()
 groebnerMembershipTest(RingElement, Subring) := Boolean => (f, S) -> (
-    subringGens := gens S;
+    subringGens := S#"flatteningMap" gens S;
     Q := ring subringGens;
     R := ambient Q;
     FF := coefficientRing R;
     J := ideal Q;
-    fLifedToR := lift(f, R);
+    fLifedToR := lift(S#"flatteningMap" f, R);
     subringGensLiftedToR := lift(subringGens, R);
     -- construct the tensor ring
     tensorRingNumVars := numgens R + numcols subringGens;
@@ -328,7 +328,7 @@ groebnerMembershipTest(RingElement, Subring) := Boolean => (f, S) -> (
 -- output: h in K[y1 .. ys] such that (f - f%S) = h(g_1 .. g_s)
 groebnerSubductionQuotient = method() 
 groebnerSubductionQuotient(RingElement, Subring) := RingElement => (f, S) -> (
-    subringGens := gens S;
+    subringGens := S#"flatteningMap" gens S;
     Q := ring subringGens;
     R := ambient Q;
     J := ideal Q;
@@ -374,12 +374,12 @@ RingElement // Subring := RingElement => (f, S) -> (
 
 Matrix % SAGBIBasis := Matrix => (M, SB) -> (
     assert(ambient SB === ring M);
-    subduction(SB, M)
+    SB#SAGBImaps#"inverseFlatteningMap" subduction(SB, M)
     );
 
 RingElement % SAGBIBasis := RingElement => (f, SB) -> (
     assert(ambient SB === ring f);
-    first first entries subduction(SB, matrix{{f}})
+        SB#SAGBImaps#"inverseFlatteningMap" first first entries subduction(SB, matrix{{f}})
     );
 
 Matrix % Subring := Matrix => (M, S) -> (
@@ -387,11 +387,11 @@ Matrix % Subring := Matrix => (M, S) -> (
     if S#cache#?SAGBIBasis and S#cache#SAGBIBasis#SAGBIdata#"sagbiStatus" == 1 then (
         -- S has a complete sagbi basis so use subduction
         SB := S#cache#SAGBIBasis;
-        subduction(SB, M)
+        S#"inverseFlatteningMap" subduction(SB, M)
         )
     else (
         -- extrinsic subduction
-        subringGens := gens S;
+        subringGens := S#"flatteningMap" gens S;
         Q := ring subringGens;
         R := ambient Q;
         J := ideal Q;
@@ -410,12 +410,12 @@ Matrix % Subring := Matrix => (M, S) -> (
         I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - subringGensInTensorRing);
         MNormalForm := MInTensorRing % (I + JInTensorRing);
         projectToQ := map(Q, tensorRing, matrix {toList(numgens Q : 0_Q)} | subringGens);
-        M - projectToQ MNormalForm
+        S#"inverseFlatteningMap" (M - projectToQ MNormalForm)
         )
     );
 
 RingElement % Subring := RingElement => (f, S) -> (
-    first first entries (matrix{{f}} % S)
+        S#"inverseFlatteningMap" first first entries (matrix{{f}} % S)
     );
 
 
@@ -473,8 +473,9 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
 
     -------------
     -- check that both subring are subrings of the same ambient ring
-    Q := ambient S1;
-    assert(Q === ambient S2);
+    A := ambient S1;
+    assert(A === ambient S2);
+    Q := flattened S1;
     I := ideal Q;
     R := ambient Q;
     ------------
@@ -507,8 +508,8 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- Gi := generators of Si lifted to T, for each i in {1, 2}
     -- Form the subring of T given by
     -- S := K[t*G1, (1-t)*G2]
-    G1 := QtoT gens S1;
-    G2 := QtoT gens S2;
+    G1 := QtoT S1#"flatteningMap" gens S1;
+    G2 := QtoT S1#"flatteningMap" gens S2;
     -- use T; -- Dev note: T contains no user variables
     G := tinT*G1 | (1-tinT)*G2;
     S := subring G;
@@ -534,13 +535,19 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- Note that, if the intersection of S1 and S2 has a finite sagbi basis, then it is NOT guaranteed
     -- that S has a finite sagbi basis.
     intersectionGens := TtoQ selectInSubring(1, gens SB);
+    presentationRing := (coefficientRing Q) (monoid[Variables => numcols intersectionGens]);
+    presentationMap := map(A,presentationRing,S1#"inverseFlatteningMap" intersectionGens);
     result := new IntersectedSubring from {
-        "ambientRing" => Q,
+        "ambientRing" => A,
+        "flattenedRing" => Q,
         "generators" => intersectionGens,
-        "presentationRing" => (coefficientRing Q) (monoid[Variables => numcols intersectionGens]),
+        "presentationRing" => presentationRing,
         cache => new CacheTable from {},
         "originalSubrings" => {S1, S2},
-        "compositeSubring" => S
+        "compositeSubring" => S,
+        "presentationMap" => presentationMap,
+        "flatteningMap" => S1#"flatteningMap",
+        "inverseFlatteningMap" => S1#"inverseFlatteningMap"
         };
     if opts.Compute and isSAGBI SB then forceSB result;
     if opts.CheckFullIntersection and not isFullIntersection result then print "-- Warning! Result is not a full intersection.  Try increasing Limit.";
