@@ -118,18 +118,21 @@ sagbiBasis Subring := opts -> S -> (
     --   of ambientRing and a polynomial for each SAGBI generator.
     -- Initially, the tensorRing is the same as the ambientRing,
     -- but using a different variable name.
-    liftedRing := ambient ambient S;   
+    liftedRing := ambient ambient S;
+    if #{heft liftedRing} == 0 then error "expected ring with heft vector";
+    heftVector := transpose matrix {heft liftedRing};
     numberVariables := numgens liftedRing;
     numberGenerators := numColumns gens S;
     newMonomialOrder := (monoid liftedRing).Options.MonomialOrder;
     tensorVariables := monoid[
         Variables => numberVariables,
-        Degrees => degrees source vars liftedRing,
+        Degrees => flatten entries ((matrix degrees source vars liftedRing)*heftVector),
         MonomialOrder => newMonomialOrder];
     rings := new HashTable from {
         quotientRing => ambient S,
         "liftedRing" => liftedRing,
-        tensorRing => (coefficientRing liftedRing) tensorVariables
+        tensorRing => (coefficientRing liftedRing) tensorVariables,
+        "heftVector" => heftVector
         };
     
     -- With the notation:
