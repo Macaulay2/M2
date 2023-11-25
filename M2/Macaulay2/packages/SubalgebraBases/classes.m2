@@ -43,8 +43,8 @@ subring List := opts -> L -> subring(matrix{L}, opts)
 -- Subring access functions
 -- gens must take an option since gens is defined to be a method function with options
 ambient Subring := S -> S#"ambientRing"
-flattened = method()
-flattened Subring := S -> S#"flattenedRing"
+flattenedRing = method()
+flattenedRing Subring := S -> S#"flattenedRing"
 gens Subring := opts -> S -> S#"inverseFlatteningMap" S#"generators"
 numgens Subring := S -> numcols gens S
 presentationRing = method()
@@ -125,19 +125,22 @@ sagbiBasis Subring := opts -> S -> (
     -- Initially, the tensorRing is the same as the ambientRing,
     -- but using a different variable name.
     ambientRing := ambient S;
-    liftedRing := ambient flattened S;
+    liftedRing := ambient flattenedRing S;
+    if #{heft liftedRing} == 0 then error "expected ring with heft vector";
+    heftVector := transpose matrix {heft liftedRing};
     numberVariables := numgens liftedRing;
     numberGenerators := numColumns gens S;
     newMonomialOrder := (monoid liftedRing).Options.MonomialOrder;
     tensorVariables := monoid[
         Variables => numberVariables,
-        Degrees => degrees source vars liftedRing,
+        Degrees => flatten entries ((matrix degrees source vars liftedRing)*heftVector),
         MonomialOrder => newMonomialOrder];
     rings := new HashTable from {
         "ambientRing" => ambientRing,
-        quotientRing => flattened S,
+        quotientRing => flattenedRing S,
         "liftedRing" => liftedRing,
-        tensorRing => (coefficientRing liftedRing) tensorVariables
+        tensorRing => (coefficientRing liftedRing) tensorVariables,
+        "heftVector" => heftVector
         };
     
     -- With the notation:
@@ -180,9 +183,9 @@ sagbiBasis Subring := opts -> S -> (
     -- > leadTermsI = initial ideal of I
     -- > reductionIdeal = SIdeal + lift(leadTermsI)    
     SIdeal := ideal(0_(rings.tensorRing));
-    leadTermsI := ideal leadTerm ideal flattened S;
+    leadTermsI := ideal leadTerm ideal flattenedRing S;
     ideals := new HashTable from {
-        "I" => ideal flattened S,     -- I --> quotient / presentation ideal
+        "I" => ideal flattenedRing S,     -- I --> quotient / presentation ideal
         "SIdeal" => SIdeal,         --  
         "leadTermsI" => leadTermsI, -- 
         "reductionIdeal" => maps#"inclusionLifted" leadTermsI + SIdeal,
@@ -276,7 +279,7 @@ ambient SAGBIBasis := S -> (
     )
     
 -- Returns the flattened ring
-flattened SAGBIBasis := S -> (
+flattenedRing SAGBIBasis := S -> (
     S#SAGBIrings.quotientRing
 )
 

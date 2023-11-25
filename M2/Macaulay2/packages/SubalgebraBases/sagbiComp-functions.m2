@@ -36,16 +36,22 @@ limitedSagbiComputation (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
     --    to generators of the ambient ring and the subalgebra.
     -- Has an elimination order that eliminates the generators of the ambient ring.
     -- The degrees of generators are set so that the SyzygyIdeal is homogeneous.
+    local tensorVariables;
     numberVariables := numgens sagbiComputation#SAGBIrings#"liftedRing";
     numberGenerators := numColumns M;
     newMonomialOrder := append((monoid sagbiComputation#SAGBIrings#"liftedRing").Options.MonomialOrder,
         Eliminate numberVariables);
-    tensorVariables := monoid[
+    if numberGenerators > 0 then
+        (tensorVariables = monoid[
         Variables => numberVariables + numberGenerators,
-        Degrees => first entries (matrix{
-                flatten degrees source vars sagbiComputation#SAGBIrings#"liftedRing"}|
-                matrix{flatten degrees source M}),
-        MonomialOrder => newMonomialOrder];
+        Degrees => flatten entries (((matrix degrees source vars sagbiComputation#SAGBIrings#"liftedRing")||
+                (matrix degrees source M))*sagbiComputation#SAGBIrings#"heftVector"),
+        MonomialOrder => newMonomialOrder];)
+    else
+        (tensorVariables = monoid[
+        Variables => numberVariables + numberGenerators,
+        Degrees => flatten degrees source vars sagbiComputation#SAGBIrings#"liftedRing",
+        MonomialOrder => newMonomialOrder];);
     tensorRing := (coefficientRing sagbiComputation#SAGBIrings#"liftedRing") tensorVariables;
     rings := new MutableHashTable from {
         quotientRing => sagbiComputation#SAGBIrings.quotientRing,
@@ -321,7 +327,7 @@ updateComputationMaster SAGBIComputation := sagbiComputation -> (
     
     if (sagbiComputation#SAGBIdata#?"numberOfNewGenerators") and (numColumns sagbiComputation#SAGBIdata#"sagbiGenerators" > 0) then (
         numNewGens := sagbiComputation#SAGBIdata#"numberOfNewGenerators";
-        lastSagbiGenDegree := last first entries sagbiComputation#SAGBIdata#"sagbiDegrees";
+        lastSagbiGenDegree := last first entries ((transpose sagbiComputation#SAGBIrings#"heftVector")*sagbiComputation#SAGBIdata#"sagbiDegrees");
         -- compare the number of new generators with the total number of generators
         -- e.g. if you're adding less than 2-3% of the total number of generators
         if (numNewGens == 0 or numNewGens == 1) and (lastSagbiGenDegree > 8) then (
@@ -356,6 +362,7 @@ updateComputationDegreeByDegree = method();
 updateComputationDegreeByDegree SAGBIComputation := sagbiComputation -> (
 
     sagbiGens := sagbiComputation#SAGBIdata#"sagbiGenerators";
+    heftVector := sagbiComputation#SAGBIrings#"heftVector";
 
     -- Changes to the rings:
     -- quotientRing (unchanged)
@@ -368,7 +375,8 @@ updateComputationDegreeByDegree SAGBIComputation := sagbiComputation -> (
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
         Variables => numberVariables + numberGenerators,
-        Degrees => degrees source vars liftedRing | degrees source sagbiGens,
+        Degrees => entries ((matrix degrees source vars liftedRing)*heftVector) |
+                   entries ((matrix degrees source sagbiGens)*heftVector),
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
     sagbiComputation#SAGBIrings.tensorRing = tensorRing;
@@ -419,6 +427,7 @@ updateComputationDegreeByDegree SAGBIComputation := sagbiComputation -> (
 updateComputationIncremental = method();
 updateComputationIncremental SAGBIComputation := sagbiComputation -> (
     sagbiGens := sagbiComputation#SAGBIdata#"sagbiGenerators";
+    heftVector := sagbiComputation#SAGBIrings#"heftVector";
     
     -- Changes to the rings:
     -- quotientRing (unchanged)
@@ -431,7 +440,8 @@ updateComputationIncremental SAGBIComputation := sagbiComputation -> (
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
         Variables => numberVariables + numberGenerators,
-        Degrees => degrees source vars liftedRing | degrees source sagbiGens,
+        Degrees => entries ((matrix degrees source vars liftedRing)*heftVector) |
+                   entries ((matrix degrees source sagbiGens)*heftVector),
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
     oldTensorRing := sagbiComputation#SAGBIrings.tensorRing;
@@ -510,7 +520,9 @@ lowestDegree SAGBIComputation := sagbiComputation -> (
 --
 appendToBasis = method()
 appendToBasis (SAGBIComputation, Matrix) := (sagbiComputation, newGenerators) -> (
-    sagbiComputation#SAGBIdata#"sagbiDegrees" = sagbiComputation#SAGBIdata#"sagbiDegrees" | matrix{flatten degrees source newGenerators};
+    if numcols sagbiComputation#SAGBIdata#"sagbiDegrees" > 0 then
+        (sagbiComputation#SAGBIdata#"sagbiDegrees" = sagbiComputation#SAGBIdata#"sagbiDegrees" | transpose matrix degrees source newGenerators;)
+    else (sagbiComputation#SAGBIdata#"sagbiDegrees" = transpose matrix degrees source newGenerators;);
     sagbiComputation#SAGBIdata#"sagbiGenerators" = sagbiComputation#SAGBIdata#"sagbiGenerators" | newGenerators;
     sagbiComputation#SAGBIdata#"numberOfNewGenerators" = numColumns newGenerators;
 )
@@ -537,7 +549,7 @@ processPending SAGBIComputation := sagbiComputation -> (
             );
         if sagbiComputation#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
             reducedGenerators = moduleBasis matrix{toList sagbiComputation#SAGBIpending#currentLowest};
-	    reducedGenerators = matrix {select((entries reducedGenerators)_0, i->(degree i)_0>0)}; -- remove elements of degree zero
+	    reducedGenerators = matrix {select((entries reducedGenerators)_0, i->((matrix {degree i}*sagbiComputation#SAGBIrings#"heftVector"))_(0,0)>0)}; -- remove elements of degree zero
             if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
                 print "-- [process pending]: reduced generators:";
                 print transpose reducedGenerators;
@@ -603,7 +615,8 @@ moduleBasis Matrix := M -> (
     coefficientMatrix = matrix reverse entries coefficientMatrix;
     R := ring M;
     C := coefficientRing R;
-    CModule := image lift(coefficientMatrix, C);
+    --CModule := image lift(coefficientMatrix, C);
+    CModule := image sub(coefficientMatrix, C);
     RModGens := sub(mingens CModule, R);
     monomialMatrix * RModGens
     )
@@ -612,7 +625,7 @@ moduleBasis Matrix := M -> (
 
 insertPending = method();
 insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
-    candidatesByDegree := partition(c -> (degree c)_0, first entries candidates);
+    candidatesByDegree := partition(c -> ((matrix {degree c})*sagbiComputation#SAGBIrings#"heftVector")_(0,0), first entries candidates);
     scanPairs(candidatesByDegree, (level, candidates) -> (
             if sagbiComputation#SAGBIpending#?level then (
                 numberOfCandidates := #candidates;
@@ -777,11 +790,11 @@ checkTermination SAGBIComputation := (sagbiComputation) -> (
     isGBReductionIdealComplete = rawStatus1 raw sagbiGB == 6; -- is the GB computation completed?
     
     -- check if there are still generators of higher degree to add to the sagbiGenerators
-    isDegreeAboveSagbiGens = sagbiComputation#SAGBIdata#degree > max flatten (degrees sagbiComputation#SAGBIdata#"sagbiGenerators")_1;
+    isDegreeAboveSagbiGens = sagbiComputation#SAGBIdata#degree > max flatten entries (matrix(degrees sagbiComputation#SAGBIdata#"sagbiGenerators")_1*sagbiComputation#SAGBIrings#"heftVector");
     
     -- check to make sure it is not possible to get lower degree sagbiGenerators
     -- by taking them modulo the reductionIdeal
-    isDegreeAboveGBDegree = sagbiComputation#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1; 
+    isDegreeAboveGBDegree = sagbiComputation#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1;
     if sagbiComputation#SAGBIoptions#PrintLevel > 0 then(
         print "-- Stopping conditions:";
         print("--    No higher degree candidates: "|toString(isPendingEmpty));

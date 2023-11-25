@@ -225,14 +225,14 @@ isSAGBI Subring := {
                     )
                 and (
                     -- the initial algebra lies in the quotient by the initial ideal
-                    LTAmbient := (if isQuotientRing flattened S then (
-                            Q := flattened S;
+                    LTAmbient := (if isQuotientRing flattenedRing S then (
+                            Q := flattenedRing S;
                             R := ambient Q;
                             I := ideal Q;
                             R / ideal leadTerm I) 
-                                else flattened S);
+                                else flattenedRing S);
                     
-                    liftMap := map(LTAmbient, flattened S, gens LTAmbient);
+                    liftMap := map(LTAmbient, flattenedRing S, gens LTAmbient);
                     LTgensS := liftMap leadTerm gens S;
                     LTgensSB := liftMap leadTerm gens SB;
                     subringLTgensS := subring LTgensS;
@@ -475,7 +475,7 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- check that both subring are subrings of the same ambient ring
     A := ambient S1;
     assert(A === ambient S2);
-    Q := flattened S1;
+    Q := flattenedRing S1;
     I := ideal Q;
     R := ambient Q;
     ------------
@@ -535,13 +535,14 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
     -- Note that, if the intersection of S1 and S2 has a finite sagbi basis, then it is NOT guaranteed
     -- that S has a finite sagbi basis.
     intersectionGens := TtoQ selectInSubring(1, gens SB);
-    presentationRing := (coefficientRing Q) (monoid[Variables => numcols intersectionGens]);
-    presentationMap := map(A,presentationRing,S1#"inverseFlatteningMap" intersectionGens);
+    subductionRing := (coefficientRing Q) (monoid[Variables => numcols intersectionGens]);
+    presentationMap := map(A,subductionRing,S1#"inverseFlatteningMap" intersectionGens);
     result := new IntersectedSubring from {
         "ambientRing" => A,
         "flattenedRing" => Q,
         "generators" => intersectionGens,
-        "presentationRing" => presentationRing,
+        "presentationRing" => subductionRing,
+        "presentationMap" => presentationMap,
         cache => new CacheTable from {},
         "originalSubrings" => {S1, S2},
         "compositeSubring" => S,

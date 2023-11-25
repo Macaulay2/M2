@@ -25,7 +25,8 @@ export {
     "presentationRing",
     "sagbiStatus",
     "sagbiLimit",
-    "sagbiDegree"
+    "sagbiDegree",
+    "flattenedRing"
     }
 
 -- From sagbi-functions.m2
