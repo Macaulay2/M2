@@ -115,6 +115,7 @@ lift(Vector,InexactNumber') :=
 lift(Vector,RingElement) :=
 lift(Vector,Number) := Vector => o -> (v,S) -> vector (lift(v#0,S))
 
++ Vector := Vector => identity
 - Vector := Vector => v -> new class v from {-v#0}
 Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
 Vector * Number := Vector * RingElement := Vector => (v,r) -> vector(v#0 * r)
