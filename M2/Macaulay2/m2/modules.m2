@@ -68,6 +68,7 @@ vector Matrix := f -> (
      new target f from {f}
     )
 vector List := v -> vector matrix apply(splice v, i -> {i});
+vector RingElement := vector Number := x -> vector {x}
 
 -----------------------------------------------------------------------------
 
