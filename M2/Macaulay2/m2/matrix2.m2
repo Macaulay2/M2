@@ -247,6 +247,26 @@ trimHelper = ((opts, M) -> (
 addHook((trim, Module), Strategy => Inhomogeneous, (opts, M) -> trimHelper(opts ++ {Strategy => Inhomogeneous}, M))
 addHook((trim, Module), Strategy => Complement,    (opts, M) -> trimHelper(opts ++ {Strategy => Complement},    M))
 
+trimPID := M -> if M.?relations then (if M.?generators then trimPID image generators M else ambient M) / trimPID image relations M else if not M.?generators then M else (
+    f := presentation M;
+    (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
+    isunit := r -> r != 0 and degree r === {0};
+    rows := select(min(rank source f,rank target f),i->isunit g_(i,i));
+    rows = rows | toList(rank target f..<rank target g); -- temporary fix for #3017
+    ch = submatrix'(ch,rows,);
+    p:=id_(target ch)//ch;
+    q:=generators M*p;
+    d:=diagonalMatrix apply(rank source q,i->lcm apply(entries (q_i),a->if a==0 then 1 else 1/leadCoefficient a));
+    image (q*d)
+    )
+addHook((trim, Module), Strategy => "PID",
+    (opts, M) -> (
+	R := ring M;
+	if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then trimPID M
+	)
+    )
+
+
 syz Matrix := Matrix => opts -> (f) -> (
     c := runHooks((syz, Matrix), (opts, f));
     if c =!= null then return c;
