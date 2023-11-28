@@ -154,6 +154,10 @@ new Module from Sequence := (Module,x) -> (
      	       symbol numgens => rawRank rM
      	       })) x
 
+vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
+vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
+vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
+
 -- TODO: deprecate these
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
 degreesRing Module := PolynomialRing => M -> degreesRing ring M
