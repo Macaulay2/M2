@@ -32,7 +32,7 @@ J = trim I
 assert(I == J)
 assert(numgens J == 1)
 I' = ideal(x^3-1, x^2+1)
-J' = trim I
+J' = trim I'
 assert(J'_* == {1})
 
 -- Local Variables:
