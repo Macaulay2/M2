@@ -234,6 +234,7 @@ document {
 	  (symbol +, InfiniteNumber, Number),
 	  (symbol +, GradedModuleMap, RingElement),
 	  (symbol +, Number, Matrix),
+	  (symbol +, Vector),
 	  (symbol +, Vector, Vector),
 	  (symbol +, Matrix, RingElement),
 	  (symbol +, RingElement, Matrix),
