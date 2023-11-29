@@ -57,7 +57,7 @@ assert( target N.cache.pruningMap === M )
 P = prune N						    -- N is already pruned!
 assert( target P.cache.pruningMap === N )
 
--- trim PID
+-- prune PID
 R=QQ[x]
 M = module ideal(3*x^4-x^3+x^2-x-2,3*x^4+2*x^3+6*x+4)
 N = prune M
