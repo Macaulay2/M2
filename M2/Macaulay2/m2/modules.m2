@@ -81,7 +81,7 @@ expression Vector := v -> VectorExpression apply(flatten entries super v#0,expre
 net Vector := v -> net expression v
 describe Vector := v -> Describe expression FunctionApplication(
     vector, (describe module v, describe \ flatten entries matrix v))
-toExternalString Vector :=
+toExternalString Vector := toString @@ describe
 toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
 --html Vector := v -> html expression v
