@@ -79,6 +79,8 @@ entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
 expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
 net Vector := v -> net expression v
+describe Vector := v -> Describe expression FunctionApplication(
+    vector, (describe module v, describe \ flatten entries matrix v))
 toExternalString Vector :=
 toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
