@@ -18,7 +18,9 @@ export {
     "nlift",
     "SaturationMap",
     "TorsionFree",
-    "GlobalSectionLimit"
+    "GlobalSectionLimit",
+    "pullback", "pullbackMaps",
+    "pushout",  "pushoutMaps",
     }
 
 -----------------------------------------------------------------------------
@@ -206,13 +208,41 @@ SheafOfRings ** SheafMap  := SheafMap => (O, phi) -> (O^1) ** phi
 SheafMap(ZZ) := SheafMap => (phi, d) -> phi ** OO_(variety phi)^1(d)
 
 -----------------------------------------------------------------------------
--- Hom
+-- sheafHom and Hom
 -----------------------------------------------------------------------------
 sheafHom(SheafMap, SheafMap)      := SheafMap => (phi, psi) -> (dual phi) ** psi
 sheafHom(SheafMap, CoherentSheaf) := SheafMap => (phi, F) -> sheafHom(phi, id_F)
 sheafHom(CoherentSheaf, SheafMap) := SheafMap => (F, phi) -> sheafHom(id_F, phi)
 sheafHom(SheafMap, SheafOfRings)  := SheafMap => (phi, O) -> sheafHom(phi, O^1)
 sheafHom(SheafOfRings, SheafMap)  := SheafMap => (O, phi) -> sheafHom(O^1, phi)
+
+-- TODO: bring this from DirectSummands
+-- this uses Hom(Module, Module, ZZ) which is faster in a specific degree
+--Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
+--    sameVariety(F, G); HH^0 sheaf(variety F, Hom(module F, module G, 0)))
+
+-- TODO: inverse SheafMap
+-- See [Hartshorne, Ch. III Exercise 6.1, pp. 237]
+Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
+    H := prune sheafHom(F, G);
+    -- Note: this is only an isomorphism of coherent sheaves,
+    -- but we want the preimage of a map of global sections.
+    f := matrix H.cache.pruningMap;
+    d := regularity coker f + 1;
+    -- so we truncate the target until it is surjective
+    if d > -infinity then
+    f  = inducedMap(truncate(d, target f), , f);
+    -- FIXME: there's still a bug here where truncation
+    -- strangely flips the rows; see the failing test.
+    B := inducedMap(target f, , basis(0, module H));
+    g := inverse f * B;
+    V := source moveToField B;
+    V.cache.homomorphism = h -> sheafMap homomorphism(g * h);
+    V.cache.formation = FunctionApplication { Hom, (F, G) };
+    V)
+
+-- Note: homomorphism(Matrix) is defined to use V.cache.homomorphism
+homomorphism' SheafMap := h -> moveToField basis(0, homomorphism' matrix h)
 
 -----------------------------------------------------------------------------
 -- homology
@@ -428,6 +458,44 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> (
     G)
 
 -----------------------------------------------------------------------------
+-- pullback and pushout
+-----------------------------------------------------------------------------
+
+-- TODO: also for a list of matrices
+pullback(Matrix, Matrix) := Module => (f, g) -> (
+    if target f =!= target g then error "expected maps with the same target";
+    h := f | -g;
+    P := ker h;
+    S := source h;
+    P.cache.pullbackMaps = {
+	map(source f, S, S^[0], Degree => - degree f) * inducedMap(S, P),
+	map(source g, S, S^[1], Degree => - degree g) * inducedMap(S, P)};
+    P)
+
+-- TODO: also for a list of matrices
+pushout = method()
+pushout(Matrix, Matrix) := Module => (f, g) -> (
+    if source f =!= source g then error "expected maps with the same source";
+    h := f || -g;
+    P := coker h;
+    T := target h;
+    P.cache.pushoutMaps = {
+	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
+	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
+    P)
+
+-- TODO:
+-- pullback(SheafMap, SheafMap) := CoherentSheaf => ...
+-- pushout(SheafMap, SheafMap) := CoherentSheaf => ...
+
+TEST ///
+  S = QQ[x,y,z]
+  M = S^1 ++ S^1
+  assert(prune pullback(M_[0], M_[1]) == 0)
+  assert(prune pushout(M^[0], M^[1]) == 0)
+///
+
+-----------------------------------------------------------------------------
 -- fix for Truncations.m2
 -----------------------------------------------------------------------------
 
@@ -627,6 +695,31 @@ TEST ///
   assert(f != 0)
   g = sheafMap f;
   assert(g == 0)
+///
+
+TEST ///
+  -- testing homomorphism and homomorphism'
+  S = QQ[x,y,z]
+  X = Proj S
+  --
+  F = sheaf module truncate(3, S)
+  G = F(1)
+  H = Hom(F, G)
+  v = random(H, QQ^1)
+  h = homomorphism v
+  assert(source h === F)
+  assert(target h === G)
+  assert(homomorphism' h === v)
+  assert(sub(last coefficients matrix prune h, QQ) === v)
+  --
+  F = OO_X^1
+  G = sheaf truncate(0, S^{1})
+  H = Hom(F, G)
+  v = random(H, QQ^1)
+  h = homomorphism v
+  assert(source h === F)
+  assert(target h === G)
+  assert(homomorphism' h === v) -- FIXME: why is the matrix reversed?
 ///
 
 -----------------------------------------------------------------------------
