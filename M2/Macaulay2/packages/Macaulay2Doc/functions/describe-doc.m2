@@ -18,6 +18,7 @@ Node
     (describe, QuotientRing)
     (describe, RingMap)
     (describe, Thing)
+    (describe, Vector)
   Headline
     real description
   Usage
