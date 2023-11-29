@@ -45,7 +45,6 @@ undocumented {
     (symbol*,  ZZ, ChainComplexMap),
     (symbol*,  Expression, OneExpression),
     (symbol*,  OneExpression, Expression),
-    (symbol*,  Number, Vector)
     }
 
      
@@ -110,7 +109,10 @@ document {
     (symbol*,  Thing, List),
     (symbol*,  ZZ, ProjectiveHilbertPolynomial),
     (symbol*,  ProjectiveHilbertPolynomial, ZZ),
-    (symbol*,  RingElement, Vector)
+    (symbol*,  RingElement, Vector),
+    (symbol*,  Number, Vector),
+    (symbol*,  Vector, RingElement),
+    (symbol*,  Vector, Number)
 	  },
      Headline => "a binary operator, usually used for multiplication",
      Usage => "x * y",
