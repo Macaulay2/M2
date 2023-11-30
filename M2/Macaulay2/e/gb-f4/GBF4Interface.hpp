@@ -7,10 +7,16 @@
 
 class Matrix;
 
+  auto createGBF4Interface(const Matrix *inputMatrix,
+                         const std::vector<int>& variableWeights, // what is this, do we need it?
+                         int strategy
+                         ) -> GBComputation*;
+
 namespace newf4 {
 
 class GBF4Computation;
 enum class Strategy { Normal };
+
 
 auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?

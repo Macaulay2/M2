@@ -7,6 +7,14 @@
 // getting polynomials/ideals/submodules to/from this code to M2, files //
 //////////////////////////////////////////////////////////////////////////
 
+auto createGBF4Interface(const Matrix *inputMatrix,
+                         const std::vector<int>& variableWeights, // what is this, do we need it?
+                         int strategy // do we need this?
+                         ) -> GBComputation*
+{
+  return newf4::createGBF4Interface(inputMatrix, variableWeights, newf4::Strategy::Normal);  
+}
+
 namespace newf4 {
 
 auto createGBF4Interface(const Matrix *inputMatrix,
@@ -24,6 +32,7 @@ auto createGBF4Interface(const Matrix *inputMatrix,
                              strategy);
 }
 
+  
 GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
                              const Matrix* inputMatrix,
                              const std::vector<int>& variableWeights,
@@ -37,6 +46,7 @@ GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
                                                      strategy))
 {
     mComputation->initializeWithMatrix(inputMatrix);
+    mComputation->dumpBasisMonomials();
 }
 
 GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,

@@ -310,6 +310,7 @@ export {
 	"PackageImports",
 	"PairLimit",
 	"PairsRemaining",
+    "ParallelF4",
 	"Parenthesize",
 	"Partition",
 	"PolynomialRing",
