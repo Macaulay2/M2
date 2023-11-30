@@ -42,6 +42,7 @@ importFrom_Core {
     "applyMethod", "applyMethod''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "tryHooks", "cacheHooks",
+    "BinaryPowerMethod",
     }
 
 -----------------------------------------------------------------------------
@@ -513,6 +514,7 @@ singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
 -----------------------------------------------------------------------------
 
 -- TODO: simplify using the fact that tensor is a binary method
+-- TODO: improve BinaryPowerMethod from interpreter and use that instead
 binaryPower := (W,n,times,unit,inverse) -> (
      if n === 0 then return unit();
      if n < 0 then (W = inverse W; n = -n);

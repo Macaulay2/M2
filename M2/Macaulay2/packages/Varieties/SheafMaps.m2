@@ -32,8 +32,8 @@ SheafMap.synonym = "Morphism of Sheaves"
 
 -- TODO: if over affine variety, dehomogenize the maps
 map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> (
-    if variety G =!= variety F then error "Expected sheaves over the same variety";
-    if instance(variety F, NormalToricVariety) then error "Maps of sheaves not yet implemented on normal toric varieties";
+    if variety G =!= variety F then error "expected sheaves over the same variety";
+    if instance(variety F, NormalToricVariety) then error "maps of sheaves not yet implemented on normal toric varieties";
     deg := if opts.Degree =!= null then opts.Degree else min flatten degrees source phi;
     new SheafMap from {
         symbol source => F,
@@ -48,12 +48,15 @@ map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> 
 map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi, d) -> (
     newPhi := inducedMap(module G, target phi) * phi;
     map(G, F, newPhi, Degree => d))
+map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
+    if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 
 -- TODO
 isWellDefined SheafMap := g -> notImplemented()
 
 CoherentSheaf#id = F -> map(F, F, id_(module F))
 CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> module prune F == module prune G
+-- TODO: actually prune might be too slow, why not compute hilbert polynomial or truncate to compare with zero?
 CoherentSheaf == ZZ            := Boolean => (F, z) -> module prune F == z
 ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
 
@@ -175,7 +178,7 @@ inducedMap(CoherentSheaf, CoherentSheaf) := SheafMap => opts -> (G, F) -> map(G,
 SheafMap.directSum = args -> (
     assert(#args>0);
     X := variety args#0;
-    if not same apply(args, variety) then error "Expected maps of sheaves over the same variety";
+    if not same apply(args, variety) then error "expected maps of sheaves over the same variety";
     DS := map(
 	directSum apply(args, target),
 	directSum apply(args, source),
@@ -208,6 +211,32 @@ SheafOfRings ** SheafMap  := SheafMap => (O, phi) -> (O^1) ** phi
 SheafMap(ZZ) := SheafMap => (phi, d) -> phi ** OO_(variety phi)^1(d)
 
 -----------------------------------------------------------------------------
+-- inverse
+-----------------------------------------------------------------------------
+inverse SheafMap := SheafMap => f -> SheafMap.InverseMethod f
+SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
+    X := variety f;
+    g := matrix f;
+    -- truncate the underlying map so it is an isomorphism
+    -- TODO: make this more efficient, e.g. look at degrees of ann coker g
+    e := (regularity ker g, regularity coker g);
+    h := inverse inducedMap(
+	truncate(e#1   + 1, target g),
+	truncate(max e + 1, source g), g);
+    -- then invert and sheafify the new map
+    -- We want:
+    -- source f ==  target h
+    -- target f === source h
+    map(source f, sheaf(X, source h),
+	inducedMap(source g, target h) * h, e#1 + 1))
+    )
+
+SheafMap#1 = f -> (
+    if source f === target f then id_(target f)
+    else error "expected source and target to agree")
+SheafMap^ZZ := SheafMap => BinaryPowerMethod
+
+-----------------------------------------------------------------------------
 -- sheafHom and Hom
 -----------------------------------------------------------------------------
 sheafHom(SheafMap, SheafMap)      := SheafMap => (phi, psi) -> (dual phi) ** psi
@@ -221,7 +250,6 @@ sheafHom(SheafOfRings, SheafMap)  := SheafMap => (O, phi) -> sheafHom(O^1, phi)
 --Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
 --    sameVariety(F, G); HH^0 sheaf(variety F, Hom(module F, module G, 0)))
 
--- TODO: inverse SheafMap
 -- See [Hartshorne, Ch. III Exercise 6.1, pp. 237]
 Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
     H := prune sheafHom(F, G);
@@ -230,7 +258,6 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
     f := matrix H.cache.pruningMap;
     d := regularity coker f + 1;
     -- so we truncate the target until it is surjective
-    if d > -infinity then
     f  = inducedMap(truncate(d, target f), , f);
     -- FIXME: there's still a bug here where truncation
     -- strangely flips the rows; see the failing test.
@@ -240,6 +267,18 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
     V.cache.homomorphism = h -> sheafMap homomorphism(g * h);
     V.cache.formation = FunctionApplication { Hom, (F, G) };
     V)
+
+///
+-- here's the core of the bug mentioned above:
+restart
+needsPackage "Truncations"
+S = QQ[x,y,z]
+A = S^{1}
+B = truncate(0, A)
+M = image basis(0, A) -- image {-1} | x y z |
+N = image basis(0, B) -- image {-1} | z y x |
+inducedMap(M, N) -- anti-digonal
+///
 
 -- Note: homomorphism(Matrix) is defined to use V.cache.homomorphism
 homomorphism' SheafMap := h -> moveToField basis(0, homomorphism' matrix h)
@@ -426,7 +465,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
         Bp := (ideal vars A)^[p];
 	-- consider the sequence 0 -> B^[p] -> A -> A/B^[p] -> 0
 	inc := inducedMap(module A, module Bp);
-	iso := inducedMap(Hom(module A, N), N);
+	iso := inducedMap(Hom(A, N), N);
         -- we compute the map N -> Gamma_* F as a limit by
 	-- applying Hom(-,N) to the sequence above
         -- c.f. the limit from minimalPresentation hook
@@ -506,6 +545,9 @@ truncate(List, Matrix) := Matrix => options(truncate, List, Matrix)  >> opts -> 
     fgenF := (f * inducedMap(source f, F) * inducedMap(F, source gens F, gens F));
     map(G, F, inducedMap(G, source fgenF, fgenF) // inducedMap(G, source gens G, gens G)))
 
+truncate(InfiniteNumber, Thing) := {} >> o -> (d, M) -> (
+    if d === -infinity then M else error "unexpected degree for truncation")
+
 -----------------------------------------------------------------------------
 -- Tests
 -----------------------------------------------------------------------------
@@ -551,12 +593,18 @@ TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
   F = sheaf truncate(4,S^1)
   assert(F == OO_X^1)
   G = prune F
+  h = G.cache.pruningMap
+  -- TODO: add assertions
+  inverse h * h
+  h * inverse h
+  -- FIXME: prune inverse h fails
   -- TODO: isIsomorphism
-  assert(prune G.cache.pruningMap === id_G)
+  assert(prune h === id_G)
   -- cotangent bundle
   Omega = sheaf ker vars S;
   pOmega = prune Omega
   pMap = pOmega.cache.pruningMap
+  assert(prune inverse pMap === id_pOmega)
   assert(source pMap === Omega)
   assert(target pMap === pOmega)
   sMap = Omega.cache.SaturationMap
@@ -720,6 +768,14 @@ TEST ///
   assert(source h === F)
   assert(target h === G)
   assert(homomorphism' h === v) -- FIXME: why is the matrix reversed?
+///
+
+TEST ///
+  -- testing inverse
+  S = QQ[x,y,z]
+  X = Proj S
+  f = map(OO_X^1, OO_X^1, truncate(2, id_(S^1)), 2)
+  inverse f
 ///
 
 -----------------------------------------------------------------------------
