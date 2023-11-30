@@ -79,7 +79,7 @@ globalRB (RingElement,Boolean) := RingElement => (f,isRed) -> (
      globalRBAnnFs(f, AnnI, isRed);
 )
 
-globalRBAnnFs (RingElement,Ideal,Boolean) := RingElement => (f,AnnI,isRed) -> (
+globalRBAnnFs (RingElement,LeftIdeal,Boolean) := RingElement => (f,AnnI,isRed) -> (
      W := ring f;
      Ws := ring AnnI;
      ns := numgens Ws;

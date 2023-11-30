@@ -71,7 +71,7 @@ localCohomUli = (l, I) -> (
 	 
      -- Step 3.
      -- Compute the Cech complex 
-	 C := applyValues(subISets, S -> directSum apply(S, theta -> (theta => W^1 / J#theta)));
+	 C := applyValues(subISets, S -> directSum apply(S, theta -> (theta => coker gens J#theta)));
 	 M := new HashTable from apply(Lmaps, k -> k => map (C#(k+1), C#k, (i,j) -> (
 		i0 := (indices C#k)_j;
 		j0 := (indices C#(k+1))_i;
