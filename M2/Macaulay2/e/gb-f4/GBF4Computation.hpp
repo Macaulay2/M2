@@ -8,6 +8,8 @@
 #include "SPairs.hpp"
 #include "../VectorArithmetic.hpp"
 
+class FreeModule;
+
 namespace newf4 {
 
 enum class Strategy;
@@ -19,6 +21,8 @@ class GBF4Computation
   MonomialHashTable mBasisMonomials;     // table for monomials in the basis
   PolynomialList mInput; // as a MonomialHashTable.
   Basis mGBSoFar; // same hash table here.
+  
+  const FreeModule* mFreeModule;  // for debugging information *only*
 
   MonomialLookupTable mMonomialLookup;   // put this in Basis or not?
   MonomialHashTable mSPairMonomials;     // table for the LCMs of spairs
@@ -34,6 +38,7 @@ class GBF4Computation
   // how to get spairs with exterior/skew variables
 public:
   GBF4Computation(const VectorArithmetic& vectorArithmetic,
+                  const FreeModule* freeModule,
                   const std::vector<int>& variableWeights,
                   Strategy strategy);
 
@@ -41,6 +46,15 @@ public:
   void initializeWithBasicPolyList(const BasicPolyList& basicPolyList);
 
   void dumpBasisMonomials() const;
+
+  const PolynomialList& getInput() const { return mInput; }
+
+  // these are all for debugging only -- copies made, etc.
+  void showInput() const;
+  void showGBStatusArray() const;
+  void showMinimalBasis() const;
+  void showFullBasis() const;
+
 };
 
   // Steps:

@@ -1,12 +1,12 @@
 #include "GBF4Interface.hpp"
 
-#include "../matrix-stream.hpp"
 #include "PolynomialList.hpp"
 
 //////////////////////////////////////////////////////////////////////////
 // getting polynomials/ideals/submodules to/from this code to M2, files //
 //////////////////////////////////////////////////////////////////////////
 
+// TODO: Fix int/Strategy discrepancy.  Make a ComputationStrategy type in util.hpp or comp-gb.hpp?
 auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?
                          int strategy // do we need this?
@@ -42,11 +42,13 @@ GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
       mFreeModule(inputMatrix->rows()),
       mVectorArithmetic(std::make_unique<VectorArithmetic>(mOriginalRing->getCoefficients())),
       mComputation(std::make_unique<GBF4Computation>(*mVectorArithmetic,
+                                                     mFreeModule,
                                                      variableWeights,
                                                      strategy))
 {
     mComputation->initializeWithMatrix(inputMatrix);
     mComputation->dumpBasisMonomials();
+    mComputation->showInput();
 }
 
 GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
@@ -59,26 +61,16 @@ GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
       mFreeModule(freeModule),
       mVectorArithmetic(std::make_unique<VectorArithmetic>(mOriginalRing->getCoefficients())),
       mComputation(std::make_unique<GBF4Computation>(*mVectorArithmetic,
+                                                     mFreeModule,
                                                      variableWeights,
                                                      strategy))
 {
     mComputation->initializeWithBasicPolyList(basicPolyList);
 }
 
-
-
 GBF4Interface::~GBF4Interface()
 {
   // TODO: Clean up properly
-}
-
-
-
-const Matrix* toMatrix(const FreeModule *target, const PolynomialList& Fs)
-{
-  MatrixStream S(target);
-  toStream(Fs, S);
-  return S.value();
 }
 
 }; // namespace newf4

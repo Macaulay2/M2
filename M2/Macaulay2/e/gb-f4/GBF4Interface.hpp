@@ -4,10 +4,11 @@
 #include "GBF4Computation.hpp"
 #include "PolynomialList.hpp"
 #include "../e/comp-gb.hpp"
+#include "../matrix-stream.hpp"
 
 class Matrix;
 
-  auto createGBF4Interface(const Matrix *inputMatrix,
+auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?
                          int strategy
                          ) -> GBComputation*;
@@ -31,6 +32,9 @@ private:
   const PolynomialRing *mOriginalRing;
   const FreeModule * mFreeModule;  // determines whether the monomial order is a
   std::unique_ptr<VectorArithmetic> mVectorArithmetic;
+
+  // TODO: Add a MonoidData class and store information about the monoid underlying
+  //        the polynomial ring without all the cruft of the usual Monoid
 
   // F4 computation itself
   std::unique_ptr<GBF4Computation> mComputation;
@@ -93,9 +97,14 @@ public:
   const GBF4Computation& computation() const { return *mComputation; }
 };
 
+// utility function for show functions and returning the result
+inline const Matrix* toMatrix(const FreeModule *target, const PolynomialList& Fs)
+{
+  MatrixStream S(target);
+  toStream(Fs, S);
+  return S.value();
+}
 
-
-  
 } // end namespace newf4
 
 // Local Variables:
