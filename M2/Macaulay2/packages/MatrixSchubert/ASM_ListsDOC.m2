@@ -12,6 +12,8 @@ doc ///
         Text
             For $1 \leq n \leq 7$, outputs the full list of $n \times n$ alternating sign matrices,
 	    including permutation matrices.
+	Example
+	    ASMFullList(3)
 ///
 
 doc ///
@@ -21,13 +23,15 @@ doc ///
     Headline
         lists random ASMs of a fixed size
     Usage
-        ASMFullList(n,m)
+        ASMRandomList(n,m)
     Inputs
         n:ZZ
         m:ZZ
     Description
         Text
             For $1 \leq n \leq 7$, this function lists $m$ random $n\times n$ alternating sign matrices.
+	Example
+	    ASMRandomList(4,3)
 ///
 
 doc ///
@@ -52,6 +56,8 @@ doc ///
 		EM "Flags, Schubert polynomials, degeneracy loci, and determinantal formulas"),
 	    " , Duke Math J. 65 (1992): 381-420."}
 	    }@
+	Example
+	    cohenMacaulayASMsList(4)
 ///
 
 doc ///
@@ -68,6 +74,8 @@ doc ///
         Text
             For $1 \leq n \leq 6$, this function lists all ASMs of size $n$ such that the corresponding ASM variety
 	    is not Cohen-Macaulay.
+	Example
+	    nonCohenMacaulayASMsList(3)
 ///
 
 doc ///
@@ -83,4 +91,6 @@ doc ///
     Description
         Text
             For $3 \leq n \leq 6$, this function lists all antidiagonal initial ideals for ASMs of size $n$.
+	Example
+	    initialIdealsList 3
 ///

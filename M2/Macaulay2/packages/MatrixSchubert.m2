@@ -1,7 +1,7 @@
 newPackage(
     "MatrixSchubert",
     AuxiliaryFiles => true,
-    Version => "0.1", 
+    Version => "1.0", 
     Date => "",
     Authors => {
         {Name => "Ayah Almousa", 
@@ -33,7 +33,7 @@ newPackage(
         "Posets",
         "MinimalPrimes"
     },
-    DebuggingMode => true
+    DebuggingMode => false
 )
 
 export{

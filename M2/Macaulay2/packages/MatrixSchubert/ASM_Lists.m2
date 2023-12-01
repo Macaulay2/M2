@@ -8,7 +8,9 @@
 ASMFullList = method()
 ASMFullList ZZ := List => (n) -> (
     if (n < 1 or n > 7) then error("There is no available list for this n.");
-    filename := concatenate("./MatrixSchubert/ASMData/full/", toString n, ".txt");
+    filename := concatenate(
+	MatrixSchubert#"source directory",
+	"MatrixSchubert/ASMData/full/", toString n, ".txt");
     listOfMatrices := apply(lines get filename, i -> matrix value i);
     listOfMatrices
 );
@@ -34,7 +36,9 @@ ASMRandomList (ZZ,ZZ) := List => (n,m) -> (
 cohenMacaulayASMsList = method()
 cohenMacaulayASMsList ZZ := List => (n) -> (
     if (n < 1 or n > 6) then error("There is no available list for this n.");
-    filename := concatenate("./MatrixSchubert/ASMData/CM/good", toString n, ".txt");
+    filename := concatenate(
+	MatrixSchubert#"source directory",
+	"MatrixSchubert/ASMData/CM/good", toString n, ".txt");
     listOfMatrices := apply(lines get filename, i -> matrix value i);
     listOfMatrices
 );
@@ -47,7 +51,9 @@ nonCohenMacaulayASMsList = method()
 nonCohenMacaulayASMsList ZZ := List => (n) -> (
     if (n < 1 or n > 6) then error("There is no available list for this n.");
     if (n <= 3) then return {};
-    filename := concatenate("./MatrixSchubert/ASMData/notCM/bad", toString n, ".txt");
+    filename := concatenate(
+	MatrixSchubert#"source directory",
+	"MatrixSchubert/ASMData/notCM/bad", toString n, ".txt");
     listOfMatrices := apply(lines get filename, i -> matrix value i);
     listOfMatrices
 );
@@ -60,7 +66,9 @@ nonCohenMacaulayASMsList ZZ := List => (n) -> (
 initialIdealsList = method()
 initialIdealsList ZZ := List => (n) -> (
     if (n < 3 or n > 6) then error("There is no available list for this n.");
-    filename := concatenate("./MatrixSchubert/ASMData/antiDiagIniIdeal/ideals", toString n, ".txt");
+    filename := concatenate(
+	MatrixSchubert#"source directory",
+	"MatrixSchubert/ASMData/antiDiagIniIdeal/ideals", toString n, ".txt");
     z := getSymbol "z";
     S := QQ(monoid[z_(1,1)..z_(n,n)]);
     listOfIdeals := apply(lines get filename, i -> (use S; value i));
