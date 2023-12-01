@@ -83,12 +83,14 @@ toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
 --html Vector := v -> html expression v
 
--- helper for Matrix#AfterPrint
+-- helper for Matrix#AfterPrint and Vector#AfterPrint
 moduleAbbrv = (M, abbrv) -> (
     if isFreeModule M then M
     else if hasAttribute(M, ReverseDictionary)
     then getAttribute(M, ReverseDictionary)
     else abbrv)
+
+Vector#AfterPrint = v -> moduleAbbrv(module v, Vector)
 
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
