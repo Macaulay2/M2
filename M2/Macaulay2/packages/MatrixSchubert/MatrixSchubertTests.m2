@@ -333,9 +333,9 @@ A = matrix{{0,1,0,0,0,0},{0,0,0,1,0,0},{1,-1,1,-1,0,1},{0,0,0,1,0,0},{0,1,0,-1,1
 M = {{}, {2}, {2, 4}, {1, 3, 6}, {1, 3, 4, 6}, {1, 2, 3, 5, 6}, {1, 2, 3, 4, 5, 6}}
 
 assert(ASMToMonotoneTriangle A == M)
-assert(MonotoneTriangleToASM M == A)
-assert(ASMToMonotoneTriangle MonotoneTriangleToASM M == M)    -- inverse operations
-assert(MonotoneTriangleToASM ASMToMonotoneTriangle A == A)    -- inverse operations
+assert(monotoneTriangleToASM M == A)
+assert(ASMToMonotoneTriangle monotoneTriangleToASM M == M)    -- inverse operations
+assert(monotoneTriangleToASM ASMToMonotoneTriangle A == A)    -- inverse operations
 ///
 
 
@@ -452,7 +452,7 @@ assert(toOneLineNotation getASM schubertDeterminantalIdeal I == w );
 assert(ASMToMonotoneTriangle(I) == {{},{1},{1,2},{1,2,3},{1,2,3,4}})
 
 --MonotoneTriangleToASM--
-assert(MonotoneTriangleToASM({{},{1},{1,2},{1,2,3},{1,2,3,4}}) == I)
+assert(monotoneTriangleToASM({{},{1},{1,2},{1,2,3},{1,2,3,4}}) == I)
 
 --pipeDreams--
 assert(pipeDreams w == {{{"/", "/", "/", "/"}, {"/", "/", "/", "/"}, {"/", "/", "/", "/"}, {"/", "/", "/", "/"}}})
