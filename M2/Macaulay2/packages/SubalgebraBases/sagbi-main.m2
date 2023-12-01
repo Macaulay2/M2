@@ -117,7 +117,6 @@ sagbi SAGBIBasis := opts -> SB -> (
     processFirstStep sagbiComputation;
 
     local SPairs;
-
     while sagbiComputation#SAGBIdata#degree <= opts.Limit and
           not sagbiComputation#SAGBIdata#"sagbiStatus" == 1 do (
         SPairs = collectSPairs sagbiComputation;

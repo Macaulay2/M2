@@ -285,7 +285,6 @@ autosubduce SAGBIComputation := opts -> sagbiComputation -> (
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = compress new Matrix from generatorMatrix_(toList join(0 .. i-1, i+1 .. numColumns generatorMatrix - 1));
             tempSagbiComputation = limitedSagbiComputation(sagbiComputation,lift(M,sagbiComputation#SAGBIrings#"liftedRing"));
-           -- 1/0;
             generatorMatrix_(0,i) = (compSubduction(tempSagbiComputation,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
@@ -523,8 +522,8 @@ lowestDegree SAGBIComputation := sagbiComputation -> (
 appendToBasis = method()
 appendToBasis (SAGBIComputation, Matrix) := (sagbiComputation, newGenerators) -> (
     if numcols sagbiComputation#SAGBIdata#"sagbiDegrees" > 0 then
-        (sagbiComputation#SAGBIdata#"sagbiDegrees" = sagbiComputation#SAGBIdata#"sagbiDegrees" | transpose matrix degrees source newGenerators;)
-    else (sagbiComputation#SAGBIdata#"sagbiDegrees" = transpose matrix degrees source newGenerators;);
+        (sagbiComputation#SAGBIdata#"sagbiDegrees" = sagbiComputation#SAGBIdata#"sagbiDegrees" | transpose matrix (degree \ flatten entries leadTerm newGenerators);)
+    else (sagbiComputation#SAGBIdata#"sagbiDegrees" = transpose matrix (degree \ flatten entries leadTerm newGenerators););
     sagbiComputation#SAGBIdata#"sagbiGenerators" = sagbiComputation#SAGBIdata#"sagbiGenerators" | newGenerators;
     sagbiComputation#SAGBIdata#"numberOfNewGenerators" = numColumns newGenerators;
 )
@@ -666,9 +665,13 @@ processFirstStep SAGBIComputation := sagbiComputation -> (
 -- of inputMatrix where the highest degree entry has total degree equal to selectedDegree
 submatrixByDegree = method()
 submatrixByDegree (Matrix, ZZ) := (inputMatrix, selectedDegree) -> (
-    matrixDegrees := degrees source inputMatrix;
-    selectedEntries := positions(matrixDegrees, d -> d === {selectedDegree});
-    inputMatrix_selectedEntries
+    if (numcols inputMatrix > 0) then
+      (
+      matrixDegrees := degree \ flatten entries leadTerm inputMatrix;
+      selectedEntries := positions(matrixDegrees, d -> d === {selectedDegree});
+      inputMatrix_selectedEntries)
+    else
+      matrix(ring inputMatrix,{{}})
 )
 
 collectSPairs = method();
@@ -797,7 +800,8 @@ checkTermination SAGBIComputation := (sagbiComputation) -> (
     
     -- check to make sure it is not possible to get lower degree sagbiGenerators
     -- by taking them modulo the reductionIdeal
-    isDegreeAboveGBDegree = sagbiComputation#SAGBIdata#degree > max flatten (degrees gens sagbiGB)_1;
+    isDegreeAboveGBDegree = sagbiComputation#SAGBIdata#degree > max flatten entries ((matrix(degree \ flatten entries leadTerm gens sagbiGB))*sagbiComputation#SAGBIrings#"heftVector");
+
     if sagbiComputation#SAGBIoptions#PrintLevel > 0 then(
         print "-- Stopping conditions:";
         print("--    No higher degree candidates: "|toString(isPendingEmpty));

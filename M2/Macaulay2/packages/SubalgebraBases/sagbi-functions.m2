@@ -101,7 +101,7 @@ isSAGBIinternal SAGBIBasis := opts -> SB -> (
         --   (otherwise the original generators have already been processed)
         subringGens := sagbiComputation#SAGBIdata#"subalgebraGenerators";
         limit := sagbiComputation#SAGBIdata#"limit";
-        SPairs = SPairs | matrix {for gen in first entries subringGens list if max degree gen > limit then gen else continue};
+        SPairs = SPairs | matrix {for gen in first entries subringGens list if ((matrix{degree leadTerm gen})*sagbiComputation#SAGBIrings#"heftVector")_(0,0) > limit then gen else continue};
         );
     -- Reduce the SPairs and subring generators
     reducedSPairs := compSubduction(sagbiComputation, SPairs);
@@ -220,7 +220,7 @@ isSAGBI Subring := {
             -- 4. the leading terms of the sagbi generators are 'the same' as the leading terms of the subring, i.e.,
             --    they generate the same algebra
             SB' := if (hasSAGBIBasis and not zero SB#SAGBIdata#"sagbiGenerators" and (
-                    highDegreeGens := matrix {for gen in first entries gens S list if max degree gen > SB#SAGBIdata#"limit" then gen else continue};
+                    highDegreeGens := matrix {for gen in first entries gens S list if ((matrix{degree leadTerm gen})*SB#SAGBIrings#"heftVector")_(0,0) > SB#SAGBIdata#"limit" then gen else continue};
                     zero highDegreeGens or zero (highDegreeGens % SB)
                     )
                 and (
@@ -520,7 +520,8 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
         limit = opts.Limit;
         )
     else if opts.SAGBILimitType == "Function" then (
-        limit = (max flatten (degrees gens S1)_1)*(max flatten (degrees gens S2)_1);
+        heftVector := transpose matrix {heft ambient flattenedRing S1};
+        limit = (max flatten entries ((matrix(degree \ flatten entries leadTerm gens S1))*heftVector))*(max flatten entries ((matrix(degree \ flatten entries leadTerm gens S2))*heftVector));
         );
     SB := sagbi(S,
         Strategy => opts.Strategy,
