@@ -551,8 +551,8 @@ ASMToMonotoneTriangle (Matrix) := List => (M) -> (
     apply(selectedSubsets, I -> if #I == 0 then I else I / (i -> i+1)) -- change to 1-index notation
 )
 
-MonotoneTriangleToASM = method()
-MonotoneTriangleToASM (List) := Matrix => (M) -> (
+monotoneTriangleToASM = method()
+monotoneTriangleToASM (List) := Matrix => (M) -> (
     -- calculating pairwise differences of indicator vectors given from the monotone triangle yields the rows of the ASM
     reindexedM := apply(M, I -> if #I == 0 then I else I / (i -> i-1)); -- change to 0-index notation
     indicatorVectors := apply(reindexedM, I -> if #I == 0 then toList(#reindexedM-1:0) else apply(#reindexedM-1, i -> if member(i,I) then 1 else 0));

@@ -34,7 +34,7 @@ newPackage(
         "Posets",
         "MinimalPrimes"
     },
-    DebuggingMode => false
+    DebuggingMode => true
 )
 
 export{
@@ -116,7 +116,7 @@ export{
     "netPD",	    	    	    -- CHECK DOC
     "netPipeDream" => "netPD",
     "ASMToMonotoneTriangle",        --documented ++
-    "MonotoneTriangleToASM",        --documented ++
+    "monotoneTriangleToASM",        --documented ++
 
 --MatrixSchubertInvariants.m2    
     "schubertRegularity",    	                --documented ++

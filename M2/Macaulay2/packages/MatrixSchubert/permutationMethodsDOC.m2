@@ -618,12 +618,12 @@ doc ///
 
 doc ///
     Key 
-        MonotoneTriangleToASM
-        (MonotoneTriangleToASM, List)
+        monotoneTriangleToASM
+        (monotoneTriangleToASM, List)
     Headline
         converts a monotone triangle to an ASM
     Usage
-        MonotoneTriangleToASM M
+        monotoneTriangleToASM M
     Inputs
         M:List
     Outputs
@@ -641,5 +641,5 @@ doc ///
             @UL {{"[HR]: Z. Hamaker and V. Reiner, \"Weak Order and Descents for Monotone Triangles\" (see ", arXiv "1809.10571", ")."},}@
         Example
             M = {{}, {2}, {2, 4}, {1, 3, 6}, {1, 3, 4, 6}, {1, 2, 3, 5, 6}, {1, 2, 3, 4, 5, 6}}
-            MonotoneTriangleToASM M
+            monotoneTriangleToASM M
 ///
