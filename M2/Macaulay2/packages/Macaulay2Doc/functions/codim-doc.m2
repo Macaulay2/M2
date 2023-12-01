@@ -11,7 +11,7 @@ document {
 document { 
      Key => {[(codim,Ideal), Generic],[(codim,Module), Generic],
 	  [(codim,CoherentSheaf), Generic],
-	  [(codim,PolynomialRing), Generic],[(codim,ProjectiveVariety), Generic],
+	  [(codim,PolynomialRing), Generic],[(codim,Variety), Generic],
 	  [(codim,QuotientRing), Generic]},
      Usage => "codim(...,Generic=>true)",
      Consequences => {
@@ -122,21 +122,19 @@ document {
      }
 
 document { 
-     Key => (codim,ProjectiveVariety),
-     Headline => "codimension of the projective variety",
+     Key => (codim,Variety),
+     Headline => "codimension of a variety",
      Usage => "codim V",
-     Inputs => {"V"
-	  },
-     Outputs => {ZZ
-	  },
-     "Computes the codimension of the projective variety ", TT "V", ".",
+     Inputs => {"V"},
+     Outputs => {ZZ},
+     "Computes the codimension of a variety ", TT "V", ".",
      EXAMPLE {
 	  "R = ZZ/101[x_0..x_3];",
 	  "M = matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}}",
 	  "V = Proj(R/minors(2,M));",
 	  "codim V"
 	  },
-     Caveat => {"The returned value is the usual codimension if the base graded ring 
+     Caveat => {"The returned value is the usual codimension if the base ring
 	  is an integral domain or, more generally, equidimensional."},
      SeeAlso => {(codim,QuotientRing)}
      }

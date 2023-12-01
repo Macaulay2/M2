@@ -10,8 +10,11 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/fq_zech.h>
-#include <flint/flint.h>
+#include <flint/flint.h>      // for flint_rand_t, fmpz_t, ulong
+#include <flint/fmpz.h>       // for fmpz_clear_readonly, fmpz_init_set_...
+#include <flint/fq_nmod.h>    // for fq_nmod_clear, fq_nmod_init, fq_nmod_c...
+#include <flint/fq_zech.h>    // for fq_zech_clear, fq_zech_ctx_clear, fq_z...
+#include <flint/nmod_poly.h>  // for nmod_poly_set_coeff_ui, nmod_poly_clear
 #pragma GCC diagnostic pop
 
 #include "interface/random.h"

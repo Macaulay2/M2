@@ -142,10 +142,10 @@ Node
     Example
       R = QQ[a,b,c,d, Degrees => {{1,0},{2,1},{0,1},{-2,1}}];
       heft R
-      b = betti res coker vars R
-      betti(b, Weights => {1,0})
-      betti(b, Weights => {0,1})
-      multigraded b
+      B = betti res coker vars R
+      betti(B, Weights => {1,0})
+      betti(B, Weights => {0,1})
+      multigraded B
   Synopsis
     Heading
       Betti table of a Groebner basis

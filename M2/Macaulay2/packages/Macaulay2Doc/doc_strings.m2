@@ -192,11 +192,16 @@ document {
       \\r             return
       \\\\             \\ 
       \\\"             \"
+      \\a             audible bell
+      \\b             backspace
+      \\e, \\E         escape
       \\t             tab
-      \\xxx           ascii character with octal value xxx
-      \\uxxxx         unicode character with hex value xxxx, encoded with utf-8",
+      \\v             vertical tab
+      \\nnn           ascii character with octal value nnn
+      \\xnn           ascii character with hex value nn
+      \\unnnn         unicode character with hex value nnnn, encoded with utf-8",
      EXAMPLE lines ///
-     x = " \" \f \r \\ \t \013 \u4f60 ";
+     x = " \" \f \r \\ \a\b\e\E\t\v \013 \x0b \u4f60 ";
      ascii x
      utf8 x
      ///,

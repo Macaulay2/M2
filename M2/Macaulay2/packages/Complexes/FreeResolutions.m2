@@ -600,6 +600,7 @@ truncate(BettiTally, InfiniteNumber, InfiniteNumber) := BettiTally => {} >> opts
         else continue
     )
 
+-*
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;
     degreelimit := opts.DegreeLimit;
@@ -680,5 +681,5 @@ minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
     if I.cache.?quotient then I.cache.quotient
     else I.cache.quotient = cokernel generators I, opts
     )
-
+*-
 end--

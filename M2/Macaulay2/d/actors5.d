@@ -1646,7 +1646,7 @@ storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 storeInHashTable(
      globalAssignmentHooks,
      Expr(SymbolBody(dictionaryPathS)),
-     Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
+     Expr(newCompiledFunction(storeGlobalDictionaries)));
 
 getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
      when e is s:Sequence do
@@ -1864,7 +1864,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else msg))
 	  else buildErrorPacket(msg))
      else WrongNumArgs(2));
-storeE := Expr(CompiledFunction(store,nextHash()));
+storeE := Expr(newCompiledFunction(store));
 foreach s in syms do storeInHashTable(
      globalAssignmentHooks,
      Expr(SymbolBody(s)),

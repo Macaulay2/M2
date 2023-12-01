@@ -9,7 +9,7 @@ newPackage(
 	{ Name => "Harrison Tsai" }
 	},
     Keywords => {"D-modules"},
-    PackageExports => { "Dmodules", "HolonomicSystems" },
+    PackageExports => { "WeylAlgebras", "HolonomicSystems" },
     PackageImports => {
 	"PrimaryDecomposition",
 	"ReesAlgebra",
@@ -20,8 +20,8 @@ newPackage(
     DebuggingMode => false
     )
 
--- local symbols defined in Dmodules
-importFrom_"Dmodules" {
+-- local symbols defined in WeylAlgebras
+importFrom_"WeylAlgebras" {
     "raw", "WtoT", "isGeneric",
     "IntRing", "createIntRing", "RtoIR",
     "pInfo", "createThetaRing", "ThetaRing",
@@ -102,7 +102,7 @@ export {
     }
 load "./BernsteinSato/annFs.m2"
 export {
-    -- TODO: AnnG is in Dmodules
+    -- TODO: AnnG is in WeylAlgebras
     "AnnFs",
     "AnnIFs", -- deduplicate
     "polynomialAnnihilator",
@@ -271,7 +271,7 @@ export {
 -- Tests
 --------------------------------------------------------------------------------
 
-load "BernsteinSato/TST/tests.m2"
+load "./BernsteinSato/TST/tests.m2"
 
 --------------------------------------------------------------------------------
 -- Documentation
@@ -279,25 +279,25 @@ load "BernsteinSato/TST/tests.m2"
 
 beginDocumentation()
 
-load "BernsteinSato/DOC/main.m2"
-load "BernsteinSato/DOC/DHom.m2"
-load "BernsteinSato/DOC/Dlocalize.m2"
-load "BernsteinSato/DOC/Drestriction.m2"
-load "BernsteinSato/DOC/WeylClosure.m2"
-load "BernsteinSato/DOC/annFs.m2"
-load "BernsteinSato/DOC/bFunctions.m2"
-load "BernsteinSato/DOC/localCohom.m2"
-load "BernsteinSato/DOC/intersectionCohom.m2"
-load "BernsteinSato/DOC/multiplierIdeals.m2"
-load "BernsteinSato/DOC/paco-anton-paper.m2"
-load "BernsteinSato/DOC/other.m2"
+load "./BernsteinSato/DOC/main.m2"
+load "./BernsteinSato/DOC/DHom.m2"
+load "./BernsteinSato/DOC/Dlocalize.m2"
+load "./BernsteinSato/DOC/Drestriction.m2"
+load "./BernsteinSato/DOC/WeylClosure.m2"
+load "./BernsteinSato/DOC/annFs.m2"
+load "./BernsteinSato/DOC/bFunctions.m2"
+load "./BernsteinSato/DOC/localCohom.m2"
+load "./BernsteinSato/DOC/intersectionCohom.m2"
+load "./BernsteinSato/DOC/multiplierIdeals.m2"
+load "./BernsteinSato/DOC/paco-anton-paper.m2"
+load "./BernsteinSato/DOC/other.m2"
 
 --------------------------------------------------------------------------------
 
 end--
 restart
 uninstallPackage "BernsteinSato"
-installPackage "Dmodules"
+installPackage "WeylAlgebras"
 installPackage "HolonomicSystems"
 installPackage "BernsteinSato"
 installPackage("BernsteinSato", RerunExamples => true)

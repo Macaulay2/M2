@@ -204,7 +204,7 @@ addHook((minimalPresentation, Module), (opts, M) -> (
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
 	       break N)))
 
-addHook((minimalPresentation, Module), (opts, M) -> (
+addHook((minimalPresentation, Module), Strategy => "PID", (opts, M) -> (
      	  R := ring M;
 	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then (
 	       f := presentation M;
@@ -218,6 +218,7 @@ addHook((minimalPresentation, Module), (opts, M) -> (
 	       isunit := r -> r != 0 and degree r === {0};
 	       piv := select(pivots g,ij -> isunit g_ij);
 	       rows := first \ piv;
+    	       rows = rows | toList(rank target f..<rank target g); -- temporary fix for #3017
 	       cols := last \ piv;
 	       (g,ch) = (submatrix'(g,rows,cols),submatrix'(ch,rows,));
 	       (g,ch) = (p' g,p' ch);

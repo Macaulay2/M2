@@ -49,6 +49,7 @@ document {
      Caveat => {"If the rings ", TT "R", " and ", TT "S", " have different degree monoids, then the degrees of the image
         might need to be changed, since Macaulay2 sometimes doesn't have enough information to
 	determine the image degrees of elements of a free module."},
+     SeeAlso => {(symbol SPACE, RingElement, Sequence)}
      }
 
 document { 
@@ -192,8 +193,51 @@ document {
      the corresponding ring homomorphism is well-defined; this may produce
      surprising results, especially if rational coefficients are converted
      to integer coefficients.",
+     Subnodes => TO \ {
+	 (symbol SPACE, RingElement, Sequence)
+	 },
      SeeAlso => {RingMap, hilbertSeries, value, Expression}
      }
+
+undocumented (symbol SPACE, RingElement, Array) -- TODO: eventually deprecate this
+
+doc ///
+Node
+  Key
+    (symbol SPACE, RingElement, Sequence)
+    (symbol SPACE, RingElement, Number)
+    (symbol SPACE, RingElement, RingElement)
+  Headline
+    evaluation of polynomials
+  Usage
+    f(a,b,c)
+  Inputs
+    f:RingElement
+    :Nothing
+      @TT "(a,b,c)"@, a sequence of numbers or ring elements
+  Outputs
+    r:RingElement
+      the result of evaluating @TT "f"@ at the provided values
+  Description
+    Example
+      R = QQ[x,y,z];
+      f = x^3 - y^2 + 999*z;
+      f(10,0,0)
+      f(0,1,0)
+      f(0,0,1)
+      f(10,1,-1)
+      x^3 * f(0,0,1)
+      f(0,0,x+y+z) / 999
+      f(z,y,x)
+      f(x,x,x)
+    Text
+      Note that giving fewer variables results in partial evaluation.
+    Example
+      f(10)
+      f(10,y,z)
+  SeeAlso
+    (symbol SPACE, RingMap, RingElement)
+///
 
 -- document {
 --      Key => NonLinear,

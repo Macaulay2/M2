@@ -13,8 +13,8 @@ genericMatrix = method(TypicalValue => Matrix)
 genericMatrix(Ring,ZZ,ZZ) := (R,nrows,ncols) -> genericMatrix(R,R_0,nrows,ncols)
 genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
      first = getIndex(R,first);
-     if not instance(nrows,ZZ) or not instance(ncols,ZZ) or nrows < 0 or ncols < 0
-     then error "expected nonnegative integers";
+     if nrows < 1 or ncols < 1
+     then error "expected positive integers";
      if first + nrows * ncols > numgens R
      then error "not enough variables in this ring";
      matrix table(nrows, ncols, (i,j)->R_(first + i + nrows*j)))
@@ -22,7 +22,10 @@ genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
 genericSkewMatrix = method(TypicalValue => Matrix)
 genericSkewMatrix(Ring,ZZ) := (R,n) -> genericSkewMatrix(R,R_0,n)
 genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, 
@@ -36,7 +39,10 @@ genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
 genericSymmetricMatrix = method(TypicalValue => Matrix)
 genericSymmetricMatrix(Ring,ZZ) := (R,n) -> genericSymmetricMatrix(R,R_0,n)
 genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n + 1, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, i -> scan(i..n-1, j -> (
@@ -166,6 +172,44 @@ random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (
     if isListOfListsOfIntegers L then     first entries(m * random(source m, (ring I)^(-L), opts))
     else if isListOfIntegers L then first first entries(m * random(source m, (ring I)^{-L}, opts))
     else error("expected a list of integers or a list of lists of integers"))
+
+------------------------------------
+-- Code donated by Frank Schreyer --
+------------------------------------
+
+randomKRationalPoint = method()
+randomKRationalPoint Ideal := I -> (
+     R:=ring I;
+     if char R == 0 then error "expected a finite ground field";
+     if not class R === PolynomialRing then error "expected an ideal in a polynomial ring";
+     if not isHomogeneous I then error "expected a homogeneous ideal";
+     n:=dim I;
+     if n<=1 then error "expected a positive dimensional scheme";
+     c:=codim I;
+     Rs:=R;
+     Re:=R;
+     f:=I;
+     if not c==1 then (
+         -- projection onto a hypersurface
+         parametersystem:=ideal apply(n,i->R_(i+c));
+         if not dim(I+parametersystem)== 0 then return print "make coordinate change";
+         kk:=coefficientRing R;
+         Re=kk(monoid[apply(dim R,i->R_i),MonomialOrder => Eliminate (c-1)]);
+         rs:=(entries selectInSubring(1,vars Re))_0;
+         Rs=kk(monoid[rs]);
+         f=ideal substitute(selectInSubring(1, generators gb substitute(I,Re)),Rs);
+         if not degree I == degree f then return print "make coordinate change"
+         );
+     H:=0;pts:=0;pts1:=0;trial:=1;pt:=0;ok:=false;
+     while (
+         H=ideal random(Rs^1,Rs^{dim Rs-2:-1});
+         pts=decompose (f+H);
+         pts1=select(pts,pt-> degree pt==1 and dim pt ==1);
+         ok=( #pts1>0);
+         if ok then (pt=saturate(substitute(pts1_0,R)+I);ok==(degree pt==1 and dim pt==0));
+         not ok) do (trial=trial+1);
+     pt
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
