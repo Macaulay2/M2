@@ -126,7 +126,7 @@ sagbiBasis Subring := opts -> S -> (
     -- but using a different variable name.
     ambientRing := ambient S;
     liftedRing := ambient flattenedRing S;
-    if #{heft liftedRing} == 0 then error "expected ring with heft vector";
+    if heft liftedRing === null then error "expected ring with heft vector";
     heftVector := transpose matrix {heft liftedRing};
     numberVariables := numgens liftedRing;
     numberGenerators := numColumns gens S;

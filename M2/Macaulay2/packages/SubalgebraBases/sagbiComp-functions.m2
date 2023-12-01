@@ -44,19 +44,20 @@ limitedSagbiComputation (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
     if numberGenerators > 0 then
         (tensorVariables = monoid[
         Variables => numberVariables + numberGenerators,
-        Degrees => flatten entries (((matrix degrees source vars sagbiComputation#SAGBIrings#"liftedRing")||
-                (matrix degrees source M))*sagbiComputation#SAGBIrings#"heftVector"),
+        Degrees => flatten entries (matrix (( degrees source vars sagbiComputation#SAGBIrings#"liftedRing")|
+                ((degree \ flatten entries leadTerm M)))*sagbiComputation#SAGBIrings#"heftVector"),
         MonomialOrder => newMonomialOrder];)
     else
         (tensorVariables = monoid[
         Variables => numberVariables + numberGenerators,
-        Degrees => flatten degrees source vars sagbiComputation#SAGBIrings#"liftedRing",
+        Degrees => flatten entries ((matrix degrees source vars sagbiComputation#SAGBIrings#"liftedRing")*sagbiComputation#SAGBIrings#"heftVector"),
         MonomialOrder => newMonomialOrder];);
     tensorRing := (coefficientRing sagbiComputation#SAGBIrings#"liftedRing") tensorVariables;
     rings := new MutableHashTable from {
         quotientRing => sagbiComputation#SAGBIrings.quotientRing,
         "liftedRing" => sagbiComputation#SAGBIrings#"liftedRing",
-        global tensorRing => tensorRing
+        global tensorRing => tensorRing,
+        "heftVector" => sagbiComputation#SAGBIrings#"heftVector"
         };
 
     -- Maps:
@@ -216,7 +217,7 @@ subductionTopLevelLeadTerm (SAGBIComputation, Matrix) := (sagbiComputation, M) -
     matrix {apply(
             first entries liftg,
             i ->
-            if (not (i == 0_(sagbiComputation#SAGBIrings#"liftedRing"))) and (degree i)_0 == 0 then (
+            if (not (i == 0_(sagbiComputation#SAGBIrings#"liftedRing"))) and ((matrix{degree leadTerm i})*sagbiComputation#SAGBIrings#"heftVector")_(0,0) == 0 then (
                 0_(sagbiComputation#SAGBIrings#"liftedRing")
                 )
             else i
@@ -282,8 +283,9 @@ autosubduce SAGBIComputation := opts -> sagbiComputation -> (
         new MutableMatrix from sagbiComputation#SAGBImaps#"quotient" sagbiComputation#SAGBIdata#"sagbiGenerators"
         );
     for i from 0 to (numColumns generatorMatrix) - 1 do (
-            M = new Matrix from generatorMatrix_(toList join(0 .. i-1, i+1 .. numColumns generatorMatrix - 1));
+            M = compress new Matrix from generatorMatrix_(toList join(0 .. i-1, i+1 .. numColumns generatorMatrix - 1));
             tempSagbiComputation = limitedSagbiComputation(sagbiComputation,lift(M,sagbiComputation#SAGBIrings#"liftedRing"));
+           -- 1/0;
             generatorMatrix_(0,i) = (compSubduction(tempSagbiComputation,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
@@ -375,8 +377,8 @@ updateComputationDegreeByDegree SAGBIComputation := sagbiComputation -> (
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
         Variables => numberVariables + numberGenerators,
-        Degrees => entries ((matrix degrees source vars liftedRing)*heftVector) |
-                   entries ((matrix degrees source sagbiGens)*heftVector),
+        Degrees => entries ((matrix ((degrees source vars liftedRing) |
+                   (degree \ flatten entries leadTerm lift(sagbiGens,liftedRing))))*heftVector),
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
     sagbiComputation#SAGBIrings.tensorRing = tensorRing;
@@ -440,8 +442,8 @@ updateComputationIncremental SAGBIComputation := sagbiComputation -> (
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
         Variables => numberVariables + numberGenerators,
-        Degrees => entries ((matrix degrees source vars liftedRing)*heftVector) |
-                   entries ((matrix degrees source sagbiGens)*heftVector),
+        Degrees => entries ((matrix ((degrees source vars liftedRing) |
+                   (degree \ flatten entries leadTerm lift(sagbiGens,liftedRing))))*heftVector),
         MonomialOrder => newMonomialOrder];
     tensorRing := (coefficientRing liftedRing) tensorVariables;
     oldTensorRing := sagbiComputation#SAGBIrings.tensorRing;
@@ -656,7 +658,7 @@ processFirstStep SAGBIComputation := sagbiComputation -> (
         insertPending(sagbiComputation, liftedGenerators);
         -- Remove elements of the underlying field
         remove(sagbiComputation#SAGBIpending, 0);
-        sagbiComputation#SAGBIdata#degree = processPending sagbiComputation + 1;
+        sagbiComputation#SAGBIdata#degree = processPending sagbiComputation;
     );
 )
 
@@ -744,12 +746,13 @@ updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
     if numcols newGens > 0 then (
         insertPending(sagbiComputation, newGens);
         currentLowestDegree = processPending(sagbiComputation);
-        if not currentLowestDegree == infinity then ( 
-            sagbiComputation#SAGBIdata#degree = currentLowestDegree;
-            );
+        if currentLowestDegree <= sagbiComputation#SAGBIdata#degree then (
+            sagbiComputation#SAGBIdata#degree = currentLowestDegree;)
+        else (sagbiComputation#SAGBIdata#degree + 1;);
         addedGenerators = true;
         sagbiComputation#SAGBIdata#"autoSubductedSagbiGenerators" = false; -- need to autoSubduct new generators (see sagbiComputation option: AutoSubductOnPartialCompletion)
-        );
+        )
+    else (sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;);
     
     addedGenerators
     )
@@ -790,7 +793,7 @@ checkTermination SAGBIComputation := (sagbiComputation) -> (
     isGBReductionIdealComplete = rawStatus1 raw sagbiGB == 6; -- is the GB computation completed?
     
     -- check if there are still generators of higher degree to add to the sagbiGenerators
-    isDegreeAboveSagbiGens = sagbiComputation#SAGBIdata#degree > max flatten entries (matrix(degrees sagbiComputation#SAGBIdata#"sagbiGenerators")_1*sagbiComputation#SAGBIrings#"heftVector");
+    isDegreeAboveSagbiGens = sagbiComputation#SAGBIdata#degree > max flatten entries ((matrix(degree \ flatten entries leadTerm sagbiComputation#SAGBIdata#"sagbiGenerators"))*sagbiComputation#SAGBIrings#"heftVector");
     
     -- check to make sure it is not possible to get lower degree sagbiGenerators
     -- by taking them modulo the reductionIdeal
