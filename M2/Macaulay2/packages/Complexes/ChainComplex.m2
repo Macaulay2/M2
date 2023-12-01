@@ -409,6 +409,7 @@ Complex#id = (C) -> (
     result
     )
 
+importFrom(Core, {"moduleAbbrv"})
 net Complex := C -> (
      (lo,hi) := C.concentration;
      if lo > hi then 
@@ -419,7 +420,7 @@ net Complex := C -> (
      else
          horizontalJoin between(" <-- ", 
              for i from lo to hi list
-                 stack (net C_i, " ", net i))
+                 stack (net moduleAbbrv(C_i, C_i), " ", net i))
      )
 
 texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
