@@ -262,12 +262,15 @@ if(VERBOSE)
      Compiler preprocessor options = ${COMPILE_DEFINITIONS}
      Compiler flags    = ${COMPILE_OPTIONS}
      Linker flags      = ${LINK_OPTIONS}\n")
-  message("## CMake path variables
+endif()
+
+message("## CMake path variables
+     CMAKE_PREFIX_PATH
+       ${CMAKE_PREFIX_PATH}
      CMAKE_SYSTEM_PREFIX_PATH
        ${CMAKE_SYSTEM_PREFIX_PATH}
      CMAKE_C_IMPLICIT_LINK_DIRECTORIES
        ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}\n")
-endif()
 
 ###############################################################################
 ## Detect type sizes and existence of symbols, headers, and functions

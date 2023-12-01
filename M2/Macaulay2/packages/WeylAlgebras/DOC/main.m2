@@ -3,12 +3,12 @@
 doc ///
 Node
   Key
-    Dmodules
+    WeylAlgebras
   Headline
     algorithms for D-modules
   Description
     Text
-      To begin, read the @TO "D-modules tutorial"@.
+      To begin, read the @TO "Dmodules::D-modules tutorial"@.
     Tree
       :How to make Weyl algebras
 	@TOH [monoid, WeylAlgebra]@
@@ -34,7 +34,6 @@ Node
 	--@TOH "createThetaRing"@
 	@TOH "Dtrace"@
   Subnodes
-    "D-modules tutorial"
     "makeWeylAlgebra"
 
     "gbw"
@@ -97,8 +96,8 @@ end
 ------------------------------------------------------------------------------------------------------------
 THE END
 restart
-loadPackage "Dmodules"
-uninstallPackage "Dmodules"
-installPackage("Dmodules")
-installPackage("Dmodules", SeparateExec=>true, RerunExamples=>true)
-check Dmodules
+loadPackage "WeylAlgebras"
+uninstallPackage "WeylAlgebras"
+installPackage("WeylAlgebras")
+installPackage("WeylAlgebras", SeparateExec=>true, RerunExamples=>true)
+check WeylAlgebras

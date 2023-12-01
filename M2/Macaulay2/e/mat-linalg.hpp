@@ -57,7 +57,12 @@ typedef DMat<M2::ARingCC> DMatCC;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/fmpz_mat.h>
+#include <flint/flint.h>        // for fmpq_numref, fmpz_t
+#include <flint/fmpq_mat.h>     // for fmpq_mat_mul, fmpq_mat_add
+#include <flint/fmpz.h>         // for fmpz_is_pm1, fmpz_clear, fmpz...
+#include <flint/fmpz_mat.h>     // for fmpz_mat_t, fmpz_mat_mul, fmpz_mat_clear
+#include <flint/fq_nmod_mat.h>  // for fq_nmod_mat_mul, fq_zech_mat_mul
+#include <flint/nmod_mat.h>     // for nmod_mat_mul, nmod_mat_add
 #pragma GCC diagnostic pop
 
 #include <iostream>

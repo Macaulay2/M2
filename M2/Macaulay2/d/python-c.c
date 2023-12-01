@@ -92,88 +92,91 @@ void python_initspam() {
 /* GMP <-> Python integer conversion routines from gmpy2
  * https://github.com/aleaxit/gmpy
  * Copyright 2000-2009 Alex Martelli
- * Copyright 2008-2022 Case Van Horsen
+ * Copyright 2008-2023 Case Van Horsen
  * LGPL-3.0+ */
 
-mpz_ptr python_LongAsZZ(mpz_ptr z, PyObject *obj)
+/* #define's from src/gmpy2_convert.h */
+#if PY_VERSION_HEX >= 0x030C0000
+#  define TAG_FROM_SIGN_AND_SIZE(is_neg, size) ((is_neg?2:(size==0)) | (((size_t)size) << 3))
+#  define _PyLong_SetSignAndDigitCount(obj, is_neg, size) (obj->long_value.lv_tag = TAG_FROM_SIGN_AND_SIZE(is_neg, size))
+#elif PY_VERSION_HEX >= 0x030900A4
+#  define _PyLong_SetSignAndDigitCount(obj, is_neg, size) (Py_SET_SIZE(obj, (is_neg?-1:1)*Py_SIZE(result)))
+#else
+#  define _PyLong_SetSignAndDigitCount(obj, is_neg, size) (Py_SIZE(obj) = (is_neg?-1:1)*Py_SIZE(result))
+#endif
+
+#if PY_VERSION_HEX >= 0x030C0000
+#  define GET_OB_DIGIT(obj) obj->long_value.ob_digit
+#  define _PyLong_IsNegative(obj) ((obj->long_value.lv_tag & 3) == 2)
+#  define _PyLong_DigitCount(obj) (obj->long_value.lv_tag >> 3)
+#else
+#  define GET_OB_DIGIT(obj) obj->ob_digit
+#  define _PyLong_IsNegative(obj) (Py_SIZE(obj) < 0)
+#  define _PyLong_DigitCount(obj) (_PyLong_IsNegative(obj)? -Py_SIZE(obj):Py_SIZE(obj))
+#endif
+
+/* mpz_set_PyLong from src/gmpy2_convert_gmp.c */
+void python_LongAsZZ(mpz_ptr z, PyObject *obj)
 {
   int negative;
   Py_ssize_t len;
-  PyLongObject *templong;
+  PyLongObject *templong = (PyLongObject*)obj;
 
-  templong = (PyLongObject *)obj;
+  len = _PyLong_DigitCount(templong);
+  negative = _PyLong_IsNegative(templong);
 
-  switch (Py_SIZE(templong)) {
-  case -1:
-    mpz_set_si(z, -(sdigit)templong->ob_digit[0]);
+  switch (len) {
+  case 1:
+    mpz_set_si(z, (sdigit)GET_OB_DIGIT(templong)[0]);
     break;
   case 0:
     mpz_set_si(z, 0);
     break;
-  case 1:
-    mpz_set_si(z, templong->ob_digit[0]);
-    break;
   default:
-    mpz_set_si(z, 0);
-
-    if (Py_SIZE(templong) < 0) {
-      len = -Py_SIZE(templong);
-      negative = 1;
-    } else {
-      len = Py_SIZE(templong);
-      negative = 0;
-    }
-
-    mpz_import(z, len, -1, sizeof(templong->ob_digit[0]), 0,
-	       sizeof(templong->ob_digit[0])*8 - PyLong_SHIFT,
-	       templong->ob_digit);
-
-    if (negative)
-      mpz_neg(z, z);
+    mpz_import(z, len, -1, sizeof(GET_OB_DIGIT(templong)[0]), 0,
+	       sizeof(GET_OB_DIGIT(templong)[0])*8 - PyLong_SHIFT,
+	       GET_OB_DIGIT(templong));
   }
 
-  return z;
+  if (negative) {
+    mpz_neg(z, z);
+  }
+  return;
 }
 
+/* GMPy_PyLong_From_MPZ from src/gmpy2_convert_gmp.c */
+/* replace obj->z with z when updating */
 PyObject *python_LongFromZZ(mpz_srcptr z)
 {
   int negative;
   size_t count, size;
   PyLongObject *result;
 
-  if (mpz_sgn(z) < 0)
-    negative = 1;
-  else
-    negative = 0;
+  /* Assume gmp uses limbs as least as large as the builtin longs do */
 
-  size = (mpz_sizeinbase(z, 2) + PyLong_SHIFT + 1) / PyLong_SHIFT;
-  result = _PyLong_New(size);
-  if (!result)
+  negative = mpz_sgn(z) < 0;
+  size = (mpz_sizeinbase(z, 2) + PyLong_SHIFT - 1) / PyLong_SHIFT;
+
+  if (!(result = _PyLong_New(size))) {
+    /* LCOV_EXCL_START */
     return NULL;
-
-  mpz_export(result->ob_digit, &count, -1, sizeof(result->ob_digit[0]), 0,
-	     sizeof(result->ob_digit[0]) * 8 - PyLong_SHIFT, z);
-
-  if (count == 0)
-    result->ob_digit[0] = 0;
-
-  while ((size > 0) && (result->ob_digit[size - 1] == 0))
-    size--;
-
-#if PY_VERSION_HEX >= 0x030900A4
-  Py_SET_SIZE(result, size);
-#else
-  Py_SIZE(result) = size;
-#endif
-
-  if (negative) {
-#if PY_VERSION_HEX >= 0x030900A4
-    Py_SET_SIZE(result, - Py_SIZE(result));
-#else
-    Py_SIZE(result) = - Py_SIZE(result);
-#endif
+    /* LCOV_EXCL_STOP */
   }
 
+  mpz_export(GET_OB_DIGIT(result), &count, -1, sizeof(GET_OB_DIGIT(result)[0]), 0,
+	     sizeof(GET_OB_DIGIT(result)[0])*8 - PyLong_SHIFT, z);
+
+  if (count == 0) {
+    GET_OB_DIGIT(result)[0] = 0;
+  }
+
+  /* long_normalize() is file-static so we must reimplement it */
+  /* longobjp = long_normalize(longobjp); */
+  while ((size>0) && (GET_OB_DIGIT(result)[size-1] == 0)) {
+    size--;
+  }
+
+  _PyLong_SetSignAndDigitCount(result, negative, size);
   return (PyObject*)result;
 }
 

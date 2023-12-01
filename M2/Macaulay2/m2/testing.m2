@@ -6,9 +6,9 @@ needs "run.m2"
 -- Local utilities
 -----------------------------------------------------------------------------
 
-sourceFileStamp = (filename, linenum) -> concatenate(
+sourceFileStamp = (filename, linenum) -> toString commentize(
     pos := new FilePosition from (toAbsolutePath filename, linenum, 1);
-    concatenate("--", toString pos, ": location of test code"));
+    toString pos, ": location of test code")
 
 -----------------------------------------------------------------------------
 -- TestInput
@@ -51,7 +51,7 @@ TEST(String, String) := (title, teststring) -> (
 -----------------------------------------------------------------------------
 
 checkmsg := (verb, desc) ->
-    stderr << commentize pad(pad(verb, 10) | desc, 72) << flush;
+    stderr << commentize pad(pad(verb, 10) | desc, printWidth - 36) << flush;
 
 captureTestResult := (desc, teststring, pkg, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet

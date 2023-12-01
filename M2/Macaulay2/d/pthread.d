@@ -180,7 +180,7 @@ schedule2(fun:Expr,arg:Expr):Expr := (
 
 schedule1(task:TaskCell):Expr := (
      if taskStarted(task.body.task) then
-     WrongArg("A task that hasn't started")
+     WrongArg("a task that hasn't started")
      else (
      pushTask(task.body.task); 
      Expr(task)

@@ -70,3 +70,8 @@ assert Equation(pack(0, ""), pack("", 0))
 assert BinaryOperation(symbol ===, tally "Hello, world!", new Tally from {
 	" " => 1, "!" => 1, "r" => 1, "d" => 1, "e" => 1, "w" => 1,
 	"H" => 1, "l" => 3, "," => 1, "o" => 2})
+
+-- escape sequences
+assert Equation(ascii "\"\\\a\b\e\E\f\n\r\t\v",
+    {0x22, 0x5c, 0x07, 0x08, 0x1b, 0x1b, 0x0c, 0x0a, 0x0d, 0x09, 0x0b})
+assert Equation("\172\x7a\x7A\u007a\u007A", "zzzzz")

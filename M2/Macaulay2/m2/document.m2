@@ -316,7 +316,9 @@ storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
 	newloc := toString new FilePosition from (
-	    minimizeFilename rawdoc#"filename", rawdoc#"linenum", 0);
+	    minimizeFilename(
+		currentPackage#"source directory" | rawdoc#"filename"),
+ 	    rawdoc#"linenum", 0);
 	rawdoc = currentPackage#rawKey#fkey;
 	oldloc := toString locate rawdoc.DocumentTag;
 	printerr("error: documentation already provided for ", format tag);
@@ -392,7 +394,9 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 -- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
 locate DocumentTag := tag -> new FilePosition from (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
-    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum",0)
+    then (
+	minimizeFilename((package tag)#"source directory" | rawdoc#"filename"),
+	rawdoc#"linenum", 0)
     else (currentFileName, currentRowNumber(), currentColumnNumber()))
 
 -----------------------------------------------------------------------------
@@ -654,7 +658,8 @@ document List := opts -> args -> (
 	    storeRawDocumentation(tag2, new HashTable from {
 		    PrimaryTag => tag, -- tag must be primary
 		    symbol DocumentTag => tag2,
-		    "filename" => currentFileName,
+		    "filename" => relativizeFilename(
+			currentPackage#"source directory", currentFileName),
 		    "linenum" => currentRowNumber()
 		    })));
     -- Check BaseFunction
@@ -673,7 +678,8 @@ document List := opts -> args -> (
     if #out > 0 then o.Outputs = out else remove(o, Outputs);
     if #ino > 0 then o.Options = ino else remove(o, Options);
     -- Set the location of the documentation
-    o#"filename" = currentFileName;
+    o#"filename" = relativizeFilename(
+	currentPackage#"source directory", currentFileName);
     o#"linenum"  = currentRowNumber();
     currentDocumentTag = null;
     storeRawDocumentation(tag, new HashTable from o))
@@ -689,7 +695,8 @@ undocumented Thing := key -> if key =!= null then (
     storeRawDocumentation(tag, new HashTable from {
 	    symbol DocumentTag => tag,
 	    "undocumented"     => true,
-	    "filename"         => currentFileName,
+	    "filename"         => relativizeFilename(
+		currentPackage#"source directory", currentFileName),
 	    "linenum"          => currentRowNumber()
 	    }))
 

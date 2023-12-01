@@ -187,7 +187,8 @@ getstring(o:PosFile):(null or Word) := (
 		    hexcoming = hexcoming - 1;
 		    )
 	       else (
-		    printErrorMessage(o.filename,line,column,"expected hex digit in unicode sequence here");
+		    printErrorMessage(o.filename,line,column,"expected " +
+			tostring(hexcoming) + " more hex digit(s)");
 		    empty(tokenbuf);
 		    while true do (ch2 := getc(o); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then return NULL;);
 		    )
@@ -196,12 +197,17 @@ getstring(o:PosFile):(null or Word) := (
 	  then (
 	       if char(ch) == '"' 				    -- "
 	       || char(ch) == 'r'
+	       || char(ch) == 'a'
 	       || char(ch) == 'b'
 	       || char(ch) == 'n'
 	       || char(ch) == 't'
+	       || char(ch) == 'v'
 	       || char(ch) == 'f'
+	       || char(ch) == 'e'
+	       || char(ch) == 'E'
 	       || char(ch) == '\\'
 	       || (char(ch) == 'u' && (hexcoming = 4; true)) -- allow unicode entry this way : "\u53f7"
+	       || (char(ch) == 'x' && (hexcoming = 2; true))
 	       || int('0') <= ch && ch < int('8')
 	       then escaped = false
 	       else (

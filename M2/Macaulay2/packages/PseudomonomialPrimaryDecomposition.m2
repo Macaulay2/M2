@@ -27,7 +27,7 @@ newPackage(
 	  )
 
 
-export({"isSquarefreePseudomonomialIdeal", "primaryDecompositionPseudomonomial"})
+export({"isSquarefreePseudomonomialIdeal", "primaryDecompositionPseudomonomial","isPseudomonomial"})
 
 
 -------------------------------------------------------------------

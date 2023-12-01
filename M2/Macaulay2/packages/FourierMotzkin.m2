@@ -329,12 +329,12 @@ document {
      halfspaces and spans 3-space.",
      
      EXAMPLE {
-	  "rays = transpose matrix(QQ, {{1,1,6},{1,2,4},{1,2,5},
+	  "raylist = transpose matrix(QQ, {{1,1,6},{1,2,4},{1,2,5},
 	       {1,2,6},{1,3,4},{1,3,5},{1,3,6},{1,4,4},{1,4,5},
 	       {1,4,6},{1,5,4},{1,5,5},{1,5,6},{1,5,7},{1,6,3},
 	       {1,6,4},{1,6,5},{1,6,6},{1,6,7},{1,7,4},{1,7,5},
 	       {1,7,6},{1,7,8},{1,8,4},{1,8,5},{1,8,6}})",
-    	  "halfspaces = fourierMotzkin rays",
+    	  "halfspaces = fourierMotzkin raylist",
 	  "numgens source halfspaces#0",
 	  "extremalRays = fourierMotzkin halfspaces",
 	  "numgens source extremalRays#0"

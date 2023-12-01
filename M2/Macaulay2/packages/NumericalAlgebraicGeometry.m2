@@ -388,27 +388,8 @@ randomOrthonormalCols = method() -- return a random m-by-n matrix with orthonorm
 randomOrthonormalCols(ZZ,ZZ) := (m,n) -> 
 if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
-squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, P.NumberOfVariables)
-squareUp (PolySystem,ZZ) := (P,n) -> (
-    m := P.NumberOfPolys;
-    if m<=n then "overdetermined system expected";
-    C := coefficientRing ring P;
-    M := if class C === ComplexField then sub(randomOrthonormalRows(n,m), C) else random(C^n,C^m);
-    squareUp(P,M)
-    )
-squareUp(PolySystem,Matrix) := (P,M) -> (
-    P.SquareUpMatrix = M;
-    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!!!
-    )
 
-squareUpMatrix = method()
-squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix else (
-    n := P.NumberOfVariables;
-    C := coefficientRing ring P;
-    map(C^n)
-    ) 
-
+load "./NumericalAlgebraicGeometry/systems.m2"
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"
@@ -578,6 +559,7 @@ installPackage("Style")
 installPackage("NumericalAlgebraicGeometry")
 
 installPackage ("NumericalAlgebraicGeometry", MakeDocumentation=>false)
+restart
 check "NumericalAlgebraicGeometry"
 
 -- Local Variables:

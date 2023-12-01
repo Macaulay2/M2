@@ -263,6 +263,7 @@ setupMethods := (args, symbols) -> (
 	  n <- f;
 	  )))
 
+-- TODO: move and set the typical value of cokernel, coimage, comodule, image, module
 setupMethods((), { 
 	  entries, baseName, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', isMember,
@@ -273,7 +274,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, assign, realPart, imaginaryPart, conjugate,
-	  relations, cone, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
+	  relations, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
@@ -689,17 +690,6 @@ info = method(Dispatch => Thing, TypicalValue => String)
 -- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
 
 show = method()
-
--- values of functions by lookup
-lookupfuns = new MutableHashTable
-storefuns = new MutableHashTable
-lookupfuns#toString = x -> f -> if hasAttribute(x,PrintNames) then getAttribute(x,PrintNames) else f x
-storefuns #toString = (x,e) -> (
-     if not instance(e,String) then error "expected a string";
-     setAttribute(x,PrintNames,e))
-Function Thing = (f,x,e) -> (
-     if not storefuns#?f then error("no method for storing values of function ", toString f);
-     storefuns#f (x,e))
 
 -- registerFinalizer
 registerFinalizer' = registerFinalizer

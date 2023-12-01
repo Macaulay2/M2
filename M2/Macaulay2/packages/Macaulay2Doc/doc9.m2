@@ -594,8 +594,6 @@ document {
      SeeAlso => {(symbol _,ChainComplex,ZZ),(symbol _,ChainComplexMap,ZZ),(cone,ChainComplexMap) }
      }
 
-document { Key => cone,
-     Headline => "mapping cone of a chain map" }
 document {
      Key => (cone,ChainComplexMap),
      Usage => "cone f",
