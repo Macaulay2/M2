@@ -28,15 +28,15 @@ i5 : b = vars R
 
 o5 = | x y z |
 
-             1       3
-o5 : Matrix R  <--- R
+             1      3
+o5 : Matrix R  <-- R
 
 i6 : c = matrix {{x^2,y^2,z^2}}
 
 o6 = | x2 y2 z2 |
 
-             1       3
-o6 : Matrix R  <--- R
+             1      3
+o6 : Matrix R  <-- R
 
 i7 : M = coker b
 
