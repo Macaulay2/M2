@@ -2128,3 +2128,30 @@ ptr = getMemory foo
 assert BinaryOperation(symbol ===, value (foo * ptr),
     hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
 ///
+
+TEST ///
+-- describe/toExternalString
+x = int 5
+assert Equation(value value describe x, 5)
+assert Equation(value value toExternalString x, 5)
+x = charstar "foo"
+assert Equation(value value describe x, "foo")
+assert Equation(value value toExternalString x, "foo")
+int3 = 3 * int
+x = int3 {1, 2, 3}
+assert Equation(value value describe x, {1, 2, 3})
+assert Equation(value value toExternalString x, {1, 2, 3})
+x = charstarstar {"foo", "bar", "baz"}
+assert Equation(value value describe x, {"foo", "bar", "baz"})
+assert Equation(value value toExternalString x, {"foo", "bar", "baz"})
+foo = foreignStructType("foo", {"a" => int, "b" => double, "c" => charstar})
+x = foo {"a" => 5, "b" => pi, "c" => "Hello, world!"}
+assert BinaryOperation(symbol ===, value value describe x,
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+assert BinaryOperation(symbol ===, value value toExternalString x,
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+
+mpfi = openSharedLibrary "mpfi"
+assert instance(value describe mpfi, SharedLibrary)
+assert instance(value toExternalString mpfi, SharedLibrary)
+///
