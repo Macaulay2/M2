@@ -522,8 +522,8 @@ lowestDegree SAGBIComputation := sagbiComputation -> (
 appendToBasis = method()
 appendToBasis (SAGBIComputation, Matrix) := (sagbiComputation, newGenerators) -> (
     if numcols sagbiComputation#SAGBIdata#"sagbiDegrees" > 0 then
-        (sagbiComputation#SAGBIdata#"sagbiDegrees" = sagbiComputation#SAGBIdata#"sagbiDegrees" | transpose matrix (degree \ flatten entries leadTerm newGenerators);)
-    else (sagbiComputation#SAGBIdata#"sagbiDegrees" = transpose matrix (degree \ flatten entries leadTerm newGenerators););
+        (sagbiComputation#SAGBIdata#"sagbiDegrees" = sagbiComputation#SAGBIdata#"sagbiDegrees" | transpose matrix (degree \ flatten entries newGenerators);)
+    else (sagbiComputation#SAGBIdata#"sagbiDegrees" = transpose matrix (degree \ flatten entries newGenerators););
     sagbiComputation#SAGBIdata#"sagbiGenerators" = sagbiComputation#SAGBIdata#"sagbiGenerators" | newGenerators;
     sagbiComputation#SAGBIdata#"numberOfNewGenerators" = numColumns newGenerators;
 )
