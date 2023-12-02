@@ -456,12 +456,12 @@ texMath Complex := String => C -> (
     else (
         concatenate for i from lo to hi list (
             if i === lo then 
-                texUnder(texMath C_i,i) 
+                texUnder(texMath moduleAbbrv(C_i, C_i),i) 
             else (
                 "\\,\\xleftarrow{\\scriptsize " 
                 | texMatrixShort dd^C_i 
                 | "}\\," 
-                | texUnder(texMath C_i,i)
+                | texUnder(texMath moduleAbbrv(C_i, C_i),i)
                 )
             )
         )
