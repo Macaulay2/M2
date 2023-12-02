@@ -541,7 +541,10 @@ ForeignFunctionPointerType Function := (T, f) -> new T from f
 
 SharedLibrary = new SelfInitializingType of BasicList
 SharedLibrary.synonym = "shared library"
-net SharedLibrary := lib -> lib#1
+expression SharedLibrary := lib -> expression lib#1
+net SharedLibrary := net @@ expression
+toString SharedLibrary := toString @@ expression
+texMath SharedLibrary := texMath @@ expression
 
 -- on apple silicon machines, shared libraries are often in /opt/homebrew/lib,
 -- but this is not in DYLD_LIBRARY_PATH, so we try there if the first call to
