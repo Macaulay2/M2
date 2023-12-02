@@ -133,7 +133,7 @@ texMath ChainComplex := C -> (
      if # s === 0 then "0" else
      concatenate apply(s,i->(
 	     if i>s#0 then "\\,\\xleftarrow{" | texMath short C.dd_i | "}\\,",
-	     texUnder(texMath C_i,i)
+	     texUnder(texMath moduleAbbrv(C_i, C_i),i)
 	     ))
       )
 
