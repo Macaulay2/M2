@@ -457,6 +457,7 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     T)
 
 ForeignStructType VisibleList := (T, x) -> new T from x
+ForeignStructType HashTable := (T, x) -> T apply(keys x, k -> k => x#k)
 
 isAtomic ForeignStructType := T -> T.Atomic
 
