@@ -546,6 +546,10 @@ net SharedLibrary := net @@ expression
 toString SharedLibrary := toString @@ expression
 texMath SharedLibrary := texMath @@ expression
 
+describe SharedLibrary := lib -> Describe FunctionApplication(
+    openSharedLibrary, lib#1)
+toExternalString SharedLibrary := toExternalFormat @@ describe
+
 -- on apple silicon machines, shared libraries are often in /opt/homebrew/lib,
 -- but this is not in DYLD_LIBRARY_PATH, so we try there if the first call to
 -- dlopen fails
