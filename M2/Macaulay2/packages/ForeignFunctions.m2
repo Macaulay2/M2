@@ -137,8 +137,10 @@ Pointer - ZZ := (ptr, n) -> ptr + -n
 
 ForeignObject = new SelfInitializingType of HashTable
 ForeignObject.synonym = "foreign object"
-net ForeignObject := x -> net value x
-texMath ForeignObject := texMath @@ value
+expression ForeignObject := expression @@ value
+net ForeignObject := net @@ expression
+toString ForeignObject := toString @@ expression
+texMath ForeignObject := texMath @@ expression
 ForeignObject#AfterPrint = x -> (ForeignObject, " of type ", class x)
 
 value ForeignObject := x -> error("no value function exists for ", class x)
@@ -273,7 +275,7 @@ foreignRealType(String, ZZ) := (name, bits) -> (
     T.Address = ffiRealType(bits);
     new T from RR := (T, x) -> new T from {Address => ffiRealAddress(x, bits)};
     value T := x -> ffiRealValue(address x, bits);
-    net T := x -> format(0, value x);
+    expression T := x -> expression format(0, value x);
     T)
 
 float = foreignRealType("float", 32)
@@ -1502,8 +1504,6 @@ doc ///
     (value, voidstar)
     (value, voidstarstar)
     (net, ForeignObject)
-    (net, double)
-    (net, float)
   Headline
     get the value of a foreign object as a Macaulay2 thing
   Usage
