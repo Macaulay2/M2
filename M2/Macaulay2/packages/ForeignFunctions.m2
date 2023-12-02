@@ -117,7 +117,8 @@ importFrom_Core {
     "ffiStructAddress",
     "ffiUnionType",
     "ffiFunctionPointerAddress",
-    "registerFinalizerForPointer"
+    "registerFinalizerForPointer",
+    "toExternalFormat"
     }
 
 
@@ -142,6 +143,9 @@ net ForeignObject := net @@ expression
 toString ForeignObject := toString @@ expression
 texMath ForeignObject := texMath @@ expression
 ForeignObject#AfterPrint = x -> (ForeignObject, " of type ", class x)
+
+describe ForeignObject := x -> Describe FunctionApplication(class x, value x)
+toExternalString ForeignObject := toExternalFormat @@ describe
 
 value ForeignObject := x -> error("no value function exists for ", class x)
 
