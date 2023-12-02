@@ -626,7 +626,7 @@ moduleBasis Matrix := M -> (
 
 insertPending = method();
 insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
-    candidatesByDegree := partition(c -> ((matrix {degree c})*sagbiComputation#SAGBIrings#"heftVector")_(0,0), first entries candidates);
+    candidatesByDegree := partition(c -> ((matrix {degree leadTerm c})*sagbiComputation#SAGBIrings#"heftVector")_(0,0), first entries candidates);
     scanPairs(candidatesByDegree, (level, candidates) -> (
             if sagbiComputation#SAGBIpending#?level then (
                 numberOfCandidates := #candidates;
@@ -749,13 +749,10 @@ updatePending (SAGBIComputation, Matrix) := (sagbiComputation, SPairs) -> (
     if numcols newGens > 0 then (
         insertPending(sagbiComputation, newGens);
         currentLowestDegree = processPending(sagbiComputation);
-        if currentLowestDegree <= sagbiComputation#SAGBIdata#degree then (
-            sagbiComputation#SAGBIdata#degree = currentLowestDegree;)
-        else (sagbiComputation#SAGBIdata#degree + 1;);
+        sagbiComputation#SAGBIdata#degree = currentLowestDegree;
         addedGenerators = true;
         sagbiComputation#SAGBIdata#"autoSubductedSagbiGenerators" = false; -- need to autoSubduct new generators (see sagbiComputation option: AutoSubductOnPartialCompletion)
-        )
-    else (sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;);
+        );
     
     addedGenerators
     )
@@ -800,7 +797,7 @@ checkTermination SAGBIComputation := (sagbiComputation) -> (
     
     -- check to make sure it is not possible to get lower degree sagbiGenerators
     -- by taking them modulo the reductionIdeal
-    isDegreeAboveGBDegree = sagbiComputation#SAGBIdata#degree > max flatten entries ((matrix(degree \ flatten entries leadTerm gens sagbiGB))*sagbiComputation#SAGBIrings#"heftVector");
+    isDegreeAboveGBDegree = sagbiComputation#SAGBIdata#degree > max flatten (degree \ (flatten entries leadTerm gens sagbiGB));
 
     if sagbiComputation#SAGBIoptions#PrintLevel > 0 then(
         print "-- Stopping conditions:";

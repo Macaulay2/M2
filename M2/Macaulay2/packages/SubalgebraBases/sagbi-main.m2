@@ -131,7 +131,7 @@ sagbi SAGBIBasis := opts -> SB -> (
             );
 
         -- move on to the next degree
-        -- sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;
+        sagbiComputation#SAGBIdata#degree = sagbiComputation#SAGBIdata#degree + 1;
 
         if sagbiComputation#SAGBIoptions#PrintLevel > 2 then(
             print "-- [main] sagbiGenerators are currently:";
