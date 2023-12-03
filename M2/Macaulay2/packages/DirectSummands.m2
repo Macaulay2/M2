@@ -7,6 +7,7 @@
 -- 1. implement over Dmodules and other non-commutative rings
 -- 2. try to find all irreducible idempotents from End M using representation theory
 -- 3. cache maps to the summands
+-- 4. rewrite (isDirectSum, Module)
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
@@ -118,7 +119,7 @@ coneComp = (C, u, v) -> (
 -- TODO: add this as a strategy to basis
 smartBasis = (deg, M) -> (
     if instance(deg, ZZ) then deg = {deg};
-    degs := if #deg == 1 then {min(unique degrees M)} else (
+    degs := if #deg == 1 then select(unique degrees M, d -> d <= deg) else (
 	-- FIXME: in the multigraded case sometimes just using basis is faster:
 	return basis(deg, M);
         -- in the multigraded case, coneMin and coneComp can be slow
@@ -127,11 +128,12 @@ smartBasis = (deg, M) -> (
         C := coneFromVData effGenerators ring M;
         --elapsedTime compMin(C, unique degrees M) -- TODO: this is not the right thing
         select(unique degrees M, d -> coneComp(C, d, deg) == symbol <=));
-    if degs === {deg} then map(M, , submatrixByDegrees(gens cover M, (, degs)))
-    -- M_(positions(degrees M, d -> d == deg))
-    -- FIXME: this line forgets the homomorphism information
-    --else basis(deg, image map(M, , submatrixByDegrees(gens cover M, (, degs))))) -- TODO: confirm that this is faster
-    else basis(deg, M)) -- caching this causes issues!
+    if degs === {deg} then return map(M, , submatrixByDegrees(gens cover M, (, degs)));
+    M' := subquotient(ambient M,
+	if M.?generators then submatrixByDegrees(gens M, (, degs)),
+	if M.?relations  then relations M);
+    M'.cache.homomorphism = M.cache.homomorphism;
+    basis(deg, M')) -- caching this globally causes issues!
 
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
@@ -167,8 +169,8 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
     K := coker vars R;
     zdeg := toList(degreeLength R : 0);
     --TODO: make "elapsedTime" contingent on verbosity
-    A := if opts.Strategy == 1 then Hom(M, M, zdeg) else End M; -- most time consuming step
-    B := smartBasis(zdeg, A);
+    elapsedTime A := if opts.Strategy == 1 then Hom(M, M, zdeg) else End M; -- most time consuming step
+    elapsedTime B := smartBasis(zdeg, A);
     -- FIXME: this currently does not find _all_ idempotents
     flag := true; -- whether all homomorphisms are zero mod m;
     idem := position(numcols B, c -> (
@@ -237,15 +239,21 @@ diagonalize = M -> (
 -----------------------------------------------------------------------------
 -- Hom in specific degrees
 -----------------------------------------------------------------------------
--- TODO: add DegreeLimit as an option to Hom instead
 
--- Hom(Module, Module) := Module => (M, N) -> (
---     Y := youngest(M.cache.cache, N.cache.cache);
---     if Y#?(Hom, M, N) then return Y#(Hom, M, N);
---     H := trim kernel (transpose presentation M ** N);
---     H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f);
---     H.cache.formation = FunctionApplication { Hom, (M, N) };
---     Y#(Hom, M, N) = H) -- a hack: we really want to type "Hom(M, N) = ..."
+-- same, but without trim, which seems to be unnecessary if at least M is free!!
+Hom(Module, Module) := Module => (M,N) -> (
+    Y := youngest(M.cache.cache,N.cache.cache);
+    if Y#?(Hom,M,N) then return Y#(Hom,M,N);
+    H := -* trim *- kernel (transpose presentation M ** N);
+    H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
+    Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
+    H.cache.formation = FunctionApplication { Hom, (M,N) };
+    H)
+
+Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N,Verify=>false)
+
+-- TODO: add DegreeLimit as an option to Hom instead
+--Hom = method(Options => { DegreeLimit => null, MinimalGenerators => null })
 -- finds submodule of Hom containing at least the homomorphisms of degree e
 Hom(Module, Module, ZZ)   := Module => (M, N, e) -> Hom(M, N, if e == 0 then degree 1_(ring M) else {e})
 Hom(Module, Module, List) := Module => (M, N, e) -> (
@@ -254,15 +262,18 @@ Hom(Module, Module, List) := Module => (M, N, e) -> (
     A := presentation M;
     B := presentation N;
     (G, F, piM) := (target A, source A, inducedMap(M, G, gens M)); -- not used
-    (K, H, piN) := (target B, source B, inducedMap(N, K, gens N));
+    (L, K, piN) := (target B, source B, inducedMap(N, L, gens N));
+    -- TODO: the trim in Hom(target A, N) takes 2/3 of total time
     Psi := (Hom(A, N) * Hom(G, piN)) // Hom(F, piN);
-    L := syz(Psi | (-Hom(F, B)), DegreeLimit => e);
-    p := map(Hom(G, K), Hom(G, K) ++ Hom(F, H), (id_(Hom(G, K)) | map(Hom(G, K), Hom(F, H), 0)));
-    HMN := trim image(Hom(G, piN) * p * L);
-    HMN.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f);
-    Y#(Hom, M, N, e) = HMN; -- a hack: we really want to type "Hom(M, N) = ..."
-    HMN.cache.formation = FunctionApplication { Hom, (M, N, e) };
-    HMN)
+    p := id_(Hom(G, L)) | map(Hom(G, L), Hom(F, K), 0);
+    r := syz(Psi | -Hom(F, B), DegreeLimit => e);
+    --trim := if opts.MinimalGenerators then trim else identity;
+    Y#(Hom, M, N, e) =
+    -- TODO: trim takes 1/3 of total time here
+    H := -*trim*- image(Hom(G, piN) * p * r);
+    H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f);
+    H.cache.formation = FunctionApplication { Hom, (M, N, e) };
+    H)
 
 sameVariety := Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
 
