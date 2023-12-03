@@ -7,7 +7,6 @@ newPackage(
     Headline => "methods for working with morphisms of sheaves",
     Keywords => {"Algebraic Geometry", "Homological Algebra"},
     PackageExports => {"Truncations"},
-    PackageImports => {"NormalToricVarieties"},
     DebuggingMode => true
     )
 
@@ -32,7 +31,7 @@ SheafMap.synonym = "Morphism of Sheaves"
 -- TODO: if over affine variety, dehomogenize the maps
 map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> (
     if variety G =!= variety F then error "expected sheaves over the same variety";
-    if instance(variety F, NormalToricVariety) then error "maps of sheaves not yet implemented on normal toric varieties";
+    if not instance(variety F, ProjectiveVariety) then error "maps of sheaves not yet implemented on other varieties";
     deg := if opts.Degree =!= null then opts.Degree else min flatten degrees source phi;
     new SheafMap from {
         symbol source => F,
@@ -497,6 +496,7 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> (
 -----------------------------------------------------------------------------
 
 -- TODO: also for a list of matrices
+pullback = method() -- FIXME: will conflict with other packages
 pullback(Matrix, Matrix) := Module => (f, g) -> (
     if target f =!= target g then error "expected maps with the same target";
     h := f | -g;
@@ -524,6 +524,7 @@ pushout(Matrix, Matrix) := Module => (f, g) -> (
 -- pushout(SheafMap, SheafMap) := CoherentSheaf => ...
 
 TEST ///
+  debug SheafMaps
   S = QQ[x,y,z]
   M = S^1 ++ S^1
   assert(prune pullback(M_[0], M_[1]) == 0)
