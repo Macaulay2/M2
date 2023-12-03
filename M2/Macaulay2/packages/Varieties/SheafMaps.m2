@@ -15,7 +15,6 @@ export {
     "sheafMap",
     "SheafMap",
     "isLiftable",
-    "nlift",
     "SaturationMap",
     "TorsionFree",
     "GlobalSectionLimit",
@@ -109,7 +108,7 @@ net SheafMap := Net => f -> (
 -- TODO: texMath, toString, toExternalString
 
 -----------------------------------------------------------------------------
--- isLiftable, nlift
+-- isLiftable, lift
 -----------------------------------------------------------------------------
 --general method: checks whether a map phi is in the image of
 --the map Hom(eta,target phi)
@@ -128,11 +127,10 @@ isLiftable(SheafMap, ZZ) := (shphi, d) -> (
     eta := inducedMap(truncate(d, M), source phi);
     isLiftable(phi, eta))
 
--- TODO: change back to lift
 --if phi is in the image of Hom(eta,target phi), this code
 --computes the actual lift
-nlift = method()
-nlift(Matrix, Matrix) := Matrix => (phi, eta) -> (
+lift' = method()
+lift'(Matrix, Matrix) := Matrix => (phi, eta) -> (
     newPhi := homomorphism' phi;
     homomorphism(newPhi // Hom(eta, target phi))
     )
@@ -141,25 +139,23 @@ nlift(Matrix, Matrix) := Matrix => (phi, eta) -> (
 --phi : M(\geq d) --> N to a map M(\geq e) --> N that represents
 --the same morphism of sheaves, if possible
 --WARNING: this method does not actually verify if the lift is possible
-nlift(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
+lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
     d := degree shphi;
     phi := matrix shphi;
     M := module source shphi;
     eta := inducedMap(truncate(e,M),source phi);
-    sheafMap(nlift(phi,eta),e)
-    )
+    sheafMap(lift'(phi, eta), e))
 
 --lifts a sheaf map shphi represented by a module map
 --phi : M(\geq d) --> N to a map M(\geq e) --> N that represents
 --the same morphism of sheaves, for the smallest possible value of e
 --WARNING: this method does not actually verify if the lift is possible
-nlift(SheafMap) := SheafMap => shphi -> (
+lift SheafMap := SheafMap => o -> shphi -> (
     d := degree shphi;
     M := module source shphi;
     m := min flatten degrees M;
     while isLiftable(shphi,d-1) and d > m do d = d-1;
-    nlift(shphi,d)
-    )
+    lift'(shphi, d))
 
 -*lift(Matrix,Matrix) := Matrix => opts -> (phi,eta) -> (
     newPhi := homomorphism'(phi);
@@ -291,7 +287,7 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     -- TODO: should we check matrix g == 0 to avoid pruning?
     if g == 0 then return cokernel f;
     if f == 0 then return kernel g;
-    g = nlift g;
+    g = lift g;
     d := degree g;
     M := source f;
     N := target f;
@@ -341,7 +337,7 @@ cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
     )
 
 --Some questions:
---Should prune automatically use the nlift command to find the
+--Should prune automatically use the lift command to find the
 --simplest possible representative? I think this fits with the intent of prune,
 --but maybe the user should be the one to decide whether they want the
 --simplest representative
@@ -389,7 +385,7 @@ prune SheafMap := SheafMap => opts -> f -> (
     p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit);
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
-    nlift sheafMap prune Hom(Bp, g))
+    lift sheafMap prune Hom(Bp, g))
 
 -----------------------------------------------------------------------------
 -- Functions redefined from varieties.m2
@@ -629,14 +625,14 @@ TEST ///
   pF = prune F
   sMap = F.cache.SaturationMap
   shsMap = sheafMap sMap
-  nlift shsMap
+  lift shsMap
   F = sheaf comodule intersect(ideal(x_1,x_2), ideal(x_3,x_4))
   pF = prune F
   sMap = F.cache.SaturationMap
   pF.module.cache.pruningMap
   peek F.module.cache
   shsMap = sheafMap(sMap,4)
-  nlift shsMap
+  lift shsMap
 ///
 
 TEST ///
