@@ -158,6 +158,11 @@ Node
 ///
 
 document {
+    Key => End,
+    Headline => "module of endomorphisms",
+    TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."}
+
+document {
      Key => {(compose,Module,Module,Module), compose},
      Headline => "composition as a pairing on Hom-modules",
      Usage => "compose(M,N,P)",

@@ -258,19 +258,24 @@ Module#id = (M) -> map(M,M,1)
 reshape = method()
 reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> map(F,G,rawReshape(raw m, raw cover F, raw cover G))
 
-Hom(Ideal, Ideal) := Module => (I,J) -> Hom(module I, module J)
-Hom(Ideal, Module) := Module => (I,M) -> Hom(module I, M)
-Hom(Module, Ideal) := Module => (M,I) -> Hom(M, module I)
+-----------------------------------------------------------------------------
+-- Hom functor and related methods
+-----------------------------------------------------------------------------
+-- see modules.m2 for the definition
 
-Hom(Module, Ring) := Module => (M,R) -> Hom(M, R^1)
-Hom(Ring, Module) := Module => (R,M) -> Hom(R^1, M)
-Hom(Ideal, Ring) := Module => (I,R) -> Hom(module I, R^1)
-Hom(Ring, Ideal) := Module => (R,I) -> Hom(R^1, module I)
+Hom(Ring,   Ideal)  :=
+Hom(Ideal,  Ring)   :=
+Hom(Ideal,  Ideal)  := Module => opts -> (M, N) -> Hom(module M, module N, opts)
+Hom(Ring,   Module) :=
+Hom(Ideal,  Module) := Module => opts -> (M, N) -> Hom(module M, N, opts)
+Hom(Module, Ring)   :=
+Hom(Module, Ideal)  := Module => opts -> (M, N) -> Hom(M, module N, opts)
 
-Hom(Module, Module) := Module => (M,N) -> (
+Hom(Module, Module) := Module => opts -> (M, N) -> (
      Y := youngest(M.cache.cache,N.cache.cache);
      if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-     H := trim kernel (transpose presentation M ** N);
+     trim' := if opts.MinimalGenerators then trim else identity;
+     H := trim' kernel (transpose presentation M ** N);
      H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
      Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
      H.cache.formation = FunctionApplication { Hom, (M,N) };
@@ -321,6 +326,8 @@ compose(Module, Module, Module) := Matrix => (M,N,P) -> (
      else (
 	  N' := cokernel presentation N;
 	  compose(M,N',P) * (Hom(M,map(N',N,1))**Hom(map(N,N',1),P))))
+
+-----------------------------------------------------------------------------
 
 flatten Matrix := Matrix => m -> (
      R := ring m;

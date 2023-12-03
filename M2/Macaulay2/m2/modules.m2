@@ -400,7 +400,14 @@ super(Module) := Module => (M) -> (
      else M
      )
 
-End = (M) -> Hom(M,M)
+-----------------------------------------------------------------------------
+-- Homomorphisms and Endomorphisms
+-----------------------------------------------------------------------------
+
+Hom = method(Options => { MinimalGenerators => false })
+End = options Hom >> o -> M -> Hom(M, M, o)
+
+-----------------------------------------------------------------------------
 
 Module#AfterPrint = M -> (
     ring M,"-module",

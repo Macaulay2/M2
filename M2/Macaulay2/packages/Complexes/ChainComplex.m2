@@ -722,7 +722,7 @@ component(Module,Thing) := (M,k) -> (
     if not M.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
     (components M)#(M.cache.indexComponents#k)
     )
-Hom(Complex, Complex) := Complex => (C,D) -> (
+Hom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
     -- which agrees with Conrad (Grothendieck duality book)
     Y := youngest(C,D);
@@ -732,7 +732,7 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
     (loC,hiC) := C.concentration;
     (loD,hiD) := D.concentration;
     modules := hashTable for i from loD-hiC to hiD-loC list i => (
-        directSum for j from loC to hiC list {j,j+i} => Hom(C_j, D_(j+i))
+        directSum for j from loC to hiC list {j,j+i} => Hom(C_j, D_(j+i), opts)
         );
     if loC === hiC and loD === hiD then (
         result := complex(modules#(loD-hiC), Base => loD-loC);
@@ -750,8 +750,8 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
                     tar := component(modules#(i-1), j);
                     src := component(modules#i, k);
                     map(tar, src, 
-                        if k-j === {0,1} then (-1)^(k#1-k#0+1) * Hom(C_(k#0),dd^D_(k#1))
-                        else if k-j === { -1,0 } then Hom(dd^C_(j#0),D_(k#1))
+                        if k-j === {0,1} then (-1)^(k#1-k#0+1) * Hom(C_(k#0), dd^D_(k#1), opts)
+                        else if k-j === { -1,0 } then Hom(dd^C_(j#0), D_(k#1), opts)
                         else 0)
                     ))));
     result = complex maps;
@@ -759,10 +759,10 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
     Y.cache#(Hom,C,D) = result;
     result
     )
-Hom(Module, Complex) := Complex => (M,C) -> Hom(complex M, C)
-Hom(Complex, Module) := Complex => (C,M) -> Hom(C, complex M)
-Hom(Complex, Ring) := Complex => (C,R) -> Hom(C, complex R)
-Hom(Ring, Complex) := Complex => (R,C) -> Hom(complex R, C)
+Hom(Module, Complex) := Complex => opts -> (M,C) -> Hom(complex M, C, opts)
+Hom(Complex, Module) := Complex => opts -> (C,M) -> Hom(C, complex M, opts)
+Hom(Complex, Ring) := Complex => opts -> (C,R) -> Hom(C, complex R, opts)
+Hom(Ring, Complex) := Complex => opts -> (R,C) -> Hom(complex R, C, opts)
 
 dual Complex := Complex => {} >> o -> (C) -> Hom(C, (ring C)^1)
 

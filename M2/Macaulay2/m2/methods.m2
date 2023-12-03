@@ -266,7 +266,7 @@ setupMethods := (args, symbols) -> (
 -- TODO: move and set the typical value of cokernel, coimage, comodule, image, module
 setupMethods((), { 
 	  entries, baseName, borel, gcdCoefficients, singularLocus,
-	  Hom, diff, diff', contract, contract', isMember,
+	  diff, diff', contract, contract', isMember,
 	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
