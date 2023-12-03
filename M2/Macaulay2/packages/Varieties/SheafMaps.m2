@@ -89,22 +89,12 @@ SheafMap * SheafMap := SheafMap => (phi, psi) -> (
 
 -- printing
 expression SheafMap := Expression => f -> (
-    d := degree f;
-    s := f.map;
-    if s == 0 then
-        new ZeroExpression from {0}
-    else new VerticalList from
-        RowExpression {MapExpression { target f, source f, s }}
-    )
-lineOnTop := s -> concatenate(width s : "-") || s
-net SheafMap := Net => f -> (
-    if f.map == 0 then net "0" else if f.cache.?map
-    then stack horizontalJoin (
-	net target f, " <--", lineOnTop(net f.cache.map), "-- ", net source f)
-    else stack horizontalJoin (
-	net target f, " <--", lineOnTop(net f.map), "-- ", net source f)
-    )
--- TODO: texMath, toString, toExternalString
+    if (s := f.map) == 0 then expression 0
+    else MapExpression { target f, source f, s })
+net              SheafMap :=      net @@ expression
+texMath          SheafMap :=  texMath @@ expression
+toString         SheafMap := toString @@ expression
+toExternalString SheafMap := toString @@ describe
 
 -----------------------------------------------------------------------------
 -- isLiftable, lift
