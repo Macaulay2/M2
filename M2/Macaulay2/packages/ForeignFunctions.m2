@@ -1287,13 +1287,14 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignStructType, VisibleList)
+    (symbol SPACE, ForeignStructType, HashTable)
   Headline
     cast a hash table to a foreign struct
   Usage
     T x
   Inputs
     T:ForeignStructType
-    x:VisibleList -- whose elements are options
+    x:{HashTable, VisibleList}
   Outputs
     :ForeignObject
   Description
