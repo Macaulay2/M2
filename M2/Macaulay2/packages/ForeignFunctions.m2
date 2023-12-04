@@ -814,6 +814,7 @@ doc ///
  Key
    ForeignVoidType
    "void"
+   (symbol SPACE, ForeignVoidType, Nothing)
  Headline
    foreign void type
  Description
