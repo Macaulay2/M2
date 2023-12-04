@@ -360,9 +360,9 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
           return nullptr;
         }
 
-      auto M = a->get_ring()->degree_monoid();
+      auto D = a->get_ring()->degree_monoid();
       // TODO: do we need to manually free a->degree()?
-      return to_degree_vector(M, a->degree());
+      return to_degree_vector(D, a->degree());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

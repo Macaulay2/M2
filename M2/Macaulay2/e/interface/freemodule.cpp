@@ -44,7 +44,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
 {
   try
     {
-      const Monoid *D = R->degree_monoid();
+      auto D = R->degree_monoid();
       unsigned int eachdeg = D->n_vars();
       if (eachdeg == 0)
         {
@@ -86,12 +86,12 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
 
 M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
 {
-  auto M = F->get_ring()->degree_monoid();
-  auto n = M->n_vars();
+  auto D = F->get_ring()->degree_monoid();
+  auto n = D->n_vars();
   auto r = F->rank();
   M2_arrayint result = M2_makearrayint(r * n);
   for (int i = 0; i < r; i++)
-    M->to_expvector(F->degree(i), result->array + i * n);
+    D->to_expvector(F->degree(i), result->array + i * n);
   return result;
 }
 

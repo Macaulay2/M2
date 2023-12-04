@@ -2037,8 +2037,8 @@ FreeModule *res2_comp::free_of(int i) const
   result = P->make_Schreyer_FreeModule();
   if (i < 0 || i >= resn.size()) return result;
 
-  auto M = get_ring()->degree_monoid();
-  monomial deg = M->make_one();
+  auto D = get_ring()->degree_monoid();
+  monomial deg = D->make_one();
   int n = 0;
   for (res2_pair *p = resn[i]->pairs; p != NULL; p = p->next)
     {
@@ -2046,7 +2046,7 @@ FreeModule *res2_comp::free_of(int i) const
       result->append_schreyer(deg, p->syz->monom, p->compare_num);
       p->me = n++;
     }
-  M->remove(deg);
+  D->remove(deg);
   return result;
 }
 FreeModule *res2_comp::minimal_free_of(int i) const
@@ -2056,8 +2056,8 @@ FreeModule *res2_comp::minimal_free_of(int i) const
   if (i < 0 || i >= resn.size() - 1) return result;
   if (do_by_level > 0) return free_of(i);
 
-  auto M = get_ring()->degree_monoid();
-  monomial deg = M->make_one();
+  auto D = get_ring()->degree_monoid();
+  monomial deg = D->make_one();
   int n = 0;
   for (res2_pair *p = resn[i]->pairs; p != NULL; p = p->next)
     if (p->syz_type == SYZ2_MINIMAL)
@@ -2066,7 +2066,7 @@ FreeModule *res2_comp::minimal_free_of(int i) const
         result->append_schreyer(deg, p->syz->monom, p->compare_num);
         p->me = n++;
       }
-  M->remove(deg);
+  D->remove(deg);
   return result;
 }
 

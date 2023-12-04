@@ -214,9 +214,9 @@ const Matrix /* or null */ *Matrix::make_sparse(
 #warning "check that all rings are correct, give error otherwise"
 #endif
   const Ring *R = target->get_ring();
-  auto M = R->degree_monoid();
-  monomial degshift = M->make_one();
-  M->from_expvector(deg->array, degshift);
+  auto D = R->degree_monoid();
+  monomial degshift = D->make_one();
+  D->from_expvector(deg->array, degshift);
 
   MatrixConstructor mat(target, source, degshift);
   if (!Matrix::make_sparse_vecs(
@@ -235,8 +235,8 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target,
       return nullptr;
     }
   const Ring *R = get_ring();
-  auto M = R->degree_monoid();
-  if (deg->len != M->n_vars())
+  auto D = R->degree_monoid();
+  if (deg->len != D->n_vars())
     {
       ERROR("degree for matrix has the wrong length");
       return nullptr;
@@ -249,8 +249,8 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target,
       return nullptr;
     }
 
-  monomial degshift = M->make_one();
-  M->from_expvector(deg->array, degshift);
+  monomial degshift = D->make_one();
+  D->from_expvector(deg->array, degshift);
   MatrixConstructor mat(target, source, degshift);
   for (int i = 0; i < source->rank(); i++)
     mat.set_column(i, R->copy_vec(mEntries[i]));
@@ -332,27 +332,27 @@ bool Matrix::is_zero() const
 bool Matrix::is_homogeneous() const
 {
   auto R = get_ring();
-  auto M = R->degree_monoid();
+  auto D = R->degree_monoid();
   if (!R->is_graded()) return 0;
-  monomial d = M->make_one();
+  monomial d = D->make_one();
   for (int i = 0; i < n_cols(); i++)
     {
       if (elem(i) == nullptr) continue;
       if (!R->vec_is_homogeneous(rows(), elem(i)))
         {
-          M->remove(d);
+          D->remove(d);
           return 0;
         }
 
       R->vec_multi_degree(rows(), elem(i), d);
-      M->divide(d, degree_shift(), d);
-      if (0 != M->compare(d, cols()->degree(i)))
+      D->divide(d, degree_shift(), d);
+      if (0 != D->compare(d, cols()->degree(i)))
         {
-          M->remove(d);
+          D->remove(d);
           return 0;
         }
     }
-  M->remove(d);
+  D->remove(d);
   return 1;
 }
 
@@ -408,11 +408,11 @@ Matrix *Matrix::operator+(const Matrix &m) const
 
   if (!cols()->is_equal(m.cols())) G = R->make_FreeModule(n_cols());
 
-  auto M = R->degree_monoid();
-  if (EQ == M->compare(degree_shift(), m.degree_shift()))
+  auto D = R->degree_monoid();
+  if (EQ == D->compare(degree_shift(), m.degree_shift()))
     deg = degree_shift();
   else
-    deg = M->make_one();
+    deg = D->make_one();
 
   MatrixConstructor mat(F, G, deg);
   for (int i = 0; i < n_cols(); i++)
@@ -447,11 +447,11 @@ Matrix *Matrix::operator-(const Matrix &m) const
 
   if (!cols()->is_equal(m.cols())) G = R->make_FreeModule(n_cols());
 
-  auto M = R->degree_monoid();
-  if (EQ == M->compare(degree_shift(), m.degree_shift()))
+  auto D = R->degree_monoid();
+  if (EQ == D->compare(degree_shift(), m.degree_shift()))
     deg = degree_shift();
   else
-    deg = M->make_one();
+    deg = D->make_one();
 
   MatrixConstructor mat(F, G, deg);
   for (int i = 0; i < n_cols(); i++)
@@ -588,10 +588,10 @@ Matrix *Matrix::transpose() const
 Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
 {
   auto R = get_ring();
-  auto M = R->degree_monoid();
-  monomial deg = M->make_one();
+  auto D = R->degree_monoid();
+  monomial deg = D->make_one();
   if (!R->is_zero(r)) R->multi_degree(r, deg);
-  M->mult(deg, degree_shift(), deg);
+  D->mult(deg, degree_shift(), deg);
   MatrixConstructor mat(rows(), cols(), deg);
   for (int i = 0; i < n_cols(); i++)
     {
@@ -670,13 +670,13 @@ Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
       return nullptr;
     }
 
-  auto M = R->degree_monoid();
-  monomial deg = M->make_new(degree_shift());
-  M->mult(deg, m->degree_shift(), deg);
+  auto D = R->degree_monoid();
+  monomial deg = D->make_new(degree_shift());
+  D->mult(deg, m->degree_shift(), deg);
 
   MatrixConstructor mat(rows(), m->cols(), deg);
 
-  M->remove(deg);
+  D->remove(deg);
 
   for (int i = 0; i < m->n_cols(); i++)
     mat.set_column(i, R->mult_vec_matrix(this, m->elem(i), opposite_mult));
@@ -779,12 +779,12 @@ Matrix *Matrix::tensor(const Matrix *m) const
   const FreeModule *F = rows()->tensor(m->rows());
   const FreeModule *G = cols()->tensor(m->cols());
 
-  auto M = R->degree_monoid();
-  monomial deg = M->make_new(degree_shift());
-  M->mult(deg, m->degree_shift(), deg);
+  auto D = R->degree_monoid();
+  monomial deg = D->make_new(degree_shift());
+  D->mult(deg, m->degree_shift(), deg);
 
   MatrixConstructor mat(F, G, deg);
-  M->remove(deg);
+  D->remove(deg);
   int i, j, next = 0;
   for (i = 0; i < n_cols(); i++)
     for (j = 0; j < m->n_cols(); j++)
@@ -810,14 +810,14 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   FreeModule *G1 = cols()->transpose();
   const FreeModule *G = G1->tensor(m->cols());
 
-  auto M = P->degree_monoid();
-  monomial deg = M->make_one();
-  M->divide(m->degree_shift(), degree_shift(), deg);
+  auto D = P->degree_monoid();
+  monomial deg = D->make_one();
+  D->divide(m->degree_shift(), degree_shift(), deg);
   freemem(F1);
   freemem(G1);
 
   MatrixConstructor mat(F, G, deg);
-  M->remove(deg);
+  D->remove(deg);
   int i, j, next = 0;
   for (i = 0; i < n_cols(); i++)
     for (j = 0; j < m->n_cols(); j++)
