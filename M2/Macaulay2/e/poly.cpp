@@ -522,15 +522,15 @@ bool PolyRing::is_homogeneous(const ring_elem f) const
 {
   if (!is_graded()) return false;
   if (begin(f) == end(f)) return true;
-  auto DM = degree_monoid();
-  auto degf = DM->make_one();
+  auto D = degree_monoid();
+  auto degf = D->make_one();
   Nterm& t = *begin(f);
   M_->multi_degree(t.monom, degf);
   for (Nterm& t : f)
     {
-      auto e = DM->make_one();
+      auto e = D->make_one();
       M_->multi_degree(t.monom, e);
-      if (EQ != DM->compare(degf, e))
+      if (EQ != D->compare(degf, e))
         return false;
     }
   return true;
@@ -540,10 +540,10 @@ bool PolyRing::is_homogeneous(const ring_elem f) const
 // PolyRing has no M_, but PolynomialRing has no multi_degree implemented
 bool PolyRing::multi_degree(const ring_elem f, monomial degf) const
 {
-  auto DM = degree_monoid();
+  auto D = degree_monoid();
   if (begin(f) == end(f) || M_->n_vars() == 0)
     {
-      DM->one(degf);
+      D->one(degf);
       return true;
     }
   bool result = true;
@@ -551,15 +551,15 @@ bool PolyRing::multi_degree(const ring_elem f, monomial degf) const
   M_->multi_degree(t.monom, degf);
   for (Nterm& t : f)
     {
-      auto e = DM->make_one();
+      auto e = D->make_one();
       M_->multi_degree(t.monom, e);
-      if (EQ != DM->compare(degf, e))
+      if (EQ != D->compare(degf, e))
         {
           result = false;
-          DM->lcm(degf, e, degf);
+          D->lcm(degf, e, degf);
         }
     }
-  // for (int i = 0; i < DM->monomial_size(); i++)
+  // for (int i = 0; i < D->monomial_size(); i++)
   //   std::cout << degf[i] << " , ";
   // std::cout << std::endl;
   return result;
