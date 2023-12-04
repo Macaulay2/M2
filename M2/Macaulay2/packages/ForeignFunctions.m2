@@ -1671,14 +1671,20 @@ doc ///
 doc ///
   Key
     SharedLibrary
+    (describe, SharedLibrary)
+    (expression, SharedLibrary)
     (net, SharedLibrary)
+    (texMath, SharedLibrary)
+    (toExternalString, SharedLibrary)
+    (toString, SharedLibrary)
   Headline
     a shared library
   Description
     Text
       A shared library that could be used to load foreign functions.  Each
       shared library object consists of a pointer to a handle for the library
-      and a string that is used by @TT "net(SharedLibrary)"@.
+      and a string that is used by @TO describe@, @TO expression@, @TO net@,
+      @TO texMath@, @TO toExternalString@, and @TO toString@.
     Example
       mpfr = openSharedLibrary "mpfr"
       peek mpfr
