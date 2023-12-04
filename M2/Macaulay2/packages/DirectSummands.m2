@@ -36,11 +36,14 @@ export {
     --
     "Indecomposable",
     "ExtendGroundField",
+    "Random",
+    "Tries",
     --
     "frobeniusMap",
     "frobeniusRing",
     "frobeniusPullback",
     "frobeniusPushforward",
+    "frobeniusTwist",
     -- aliases
     "summands" => "directSummands",
     "findIdem" => "findIdempotent",
@@ -144,14 +147,14 @@ isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
 
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
-cachedSummands = M -> if M.cache#?(symbol summands => null) then M.cache#(symbol summands => null) else {M}
+cachedSummands = M -> if M.cache#?(symbol summands => null) then M.cache#(symbol summands => null) else components M
 
 -- Note: M may need to be extended to a field extensions
 -- TODO: when splitting over a field extension, use cached splitting over summands
 -- TODO: cache the inclusion maps
 -- Strategies:
 -- 1 => use expanded hom
-directSummands = method(Options => { Verbose => true, Strategy => 1, ExtendGroundField => null })
+directSummands = method(Options => { Tries => 0, Verbose => true, Strategy => 3, ExtendGroundField => null })
 directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> sort(
     -- Note: rank does weird stuff if R is not a domain
     -- Note: End does not work for WeylAlgebras or AssociativeAlgebras yet, nor does basis
@@ -166,17 +169,27 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	else if instance(L, Ring) then L else error "expected an integer or a ground field";
 	M = changeBaseField(L, directSum cachedSummands M);
 	R = ring M);
+    -- Attempt to peel off line bundles by observing the degrees of generators
+    if opts.Strategy & 2 == 2 then (
+	opts = opts ++ { Strategy => opts.Strategy ^^ 2 }; -- so we only try this once
+	if 0 < debugLevel then stderr << " -- peeling off rank 1 summands: " << flush;
+	L = directSummands(apply(-unique degrees M, d -> R^{d}), M, opts);
+	if 0 < debugLevel then stderr << endl << " -- split off " << #L - 1 << " summands!" << endl;
+	if 1 < #L then return join(drop(L, -1), directSummands(last L, opts)));
+    --
     K := coker vars R;
     zdeg := toList(degreeLength R : 0);
     --TODO: make "elapsedTime" contingent on verbosity
-    elapsedTime A := if opts.Strategy == 1 then Hom(M, M, zdeg) else End M; -- most time consuming step
+    elapsedTime A := if opts.Strategy & 1 == 1 then Hom(M, M, zdeg) else End M; -- most time consuming step
     elapsedTime B := smartBasis(zdeg, A);
     -- FIXME: this currently does not find _all_ idempotents
-    flag := true; -- whether all homomorphisms are zero mod m;
+    flag := true; -- whether all non-identity homomorphisms are zero mod m
+    -- TODO: 10k columns for F_*(OO_X) on Gr(2,4) over ZZ/3 take a long time
     idem := position(numcols B, c -> (
 	    h := homomorphism B_{c};
 	    if h == id_M then false else (
-		if flag and K ** h != 0 then flag = false;
+		if flag and K ** h != 0
+		then flag = false;
 		isIdempotent h))
 	);
     -- check if M is certifiably indecomposable
@@ -185,8 +198,12 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	M.cache.Indecomposable = true; return {M} );
     -- TODO: parallelize
     h := if idem =!= null then homomorphism B_{idem} else try findIdempotent M;
+    -- TODO: add this when the maps M_[i] and M^[i] also work
+    -- M.cache.components =
     if h === null then {M} else nonzero flatten join(
 	-- TODO: restrict End M to each summand and pass it on
+	-- TODO: could use 'compose' perhaps
+	-- TODO: can we check if M has multiple copies of M1 or M2 quickly?
 	M1 := prune image h;
 	M2 := prune coker h;
 	-- Projection maps to the summands
@@ -202,17 +219,37 @@ directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module
 --directSummands Matrix        := List => opts -> f -> apply(directSummands(coker f,  opts), presentation)
 --directSummands Complex := List => opts -> C -> () -- TODO: should be functorial
 
--- TODO: export and document
--- given sheaves L and M0, tests whether L is a summand of M0
-testSplitting = (L, M0)->(
-    B := smartBasis(0, module sheafHom(L, M0));
-    b := rank source B;
-    C := smartBasis(0, module sheafHom(M0, L));
-    c := rank source C;
-    isSplitting := (i,j) -> reduceScalar(homomorphism C_{j} * homomorphism B_{i}) == id_(module L);
-    l := if (P := position'(0..b-1, 0..c-1, isSplitting)) === null then return else first P;
-    sheaf coker homomorphism B_{l}
-    )
+random Module := Vector => o -> M -> vector(gens M * random(cover M, module ring M, o))
+homomorphism Vector := v -> homomorphism matrix v
+
+-- tests whether L (perhaps a line bundle) is a summand of M
+-- FIXME: it's not guaranteed to work, e.g. on X_4 over ZZ/2
+directSummands(Module, Module) := List => opts -> (L, M) -> sort(
+    if ring L =!= ring M then error "expected objects over the same ring";
+    if rank L  >= rank M then return {M};
+    zdeg := toList(degreeLength ring L : 0);
+    -- we look for a composition L -> M -> L which is the identity
+    B := smartBasis(zdeg, Hom(L, M, zdeg));
+    C := smartBasis(zdeg, Hom(M, L, zdeg));
+    -- attempt to find a random isomorphism
+    for i to opts.Tries - 1 do (
+	b := homomorphism random image B;
+	c := homomorphism random image C;
+	if c * b != 0 and isIsomorphism(c * b) then
+	return flatten join({L}, directSummands(L, coker b, opts)));
+    -- TODO: is precomputing the homs too memory intensive?
+    Bhoms := apply(numcols B, i -> homomorphism B_{i});
+    Choms := apply(numcols C, i -> homomorphism C_{i});
+    P := position'(Choms, Bhoms, (c, b) -> id_L == reduceScalar(c * b));
+    if P === null then return {M};
+    if 0 < debugLevel then stderr << concatenate(rank L : ".") << flush;
+    -- TODO: can we detect multiple summands of L at once?
+    flatten join({L}, directSummands(L, coker last P, opts)))
+
+-- attempt to peel off summands from a given list of modules
+directSummands(List, Module) := List => opts -> (Ls, M) -> fold(Ls, {M},
+    (L, LL) -> join(drop(LL, -1), directSummands(L, last LL)))
+
 
 isDefinitelyIndecomposable = method()
 isDefinitelyIndecomposable Module := M -> M.cache.?Indecomposable
@@ -259,17 +296,16 @@ Hom(Module, Module, ZZ)   := Module => (M, N, e) -> Hom(M, N, if e == 0 then deg
 Hom(Module, Module, List) := Module => (M, N, e) -> (
     Y := youngest(M.cache.cache, N.cache.cache);
     if Y#?(Hom, M, N, e) then return Y#(Hom, M, N, e);
-    A := presentation M;
-    B := presentation N;
-    (G, F, piM) := (target A, source A, inducedMap(M, G, gens M)); -- not used
-    (L, K, piN) := (target B, source B, inducedMap(N, L, gens N));
-    -- TODO: the trim in Hom(target A, N) takes 2/3 of total time
-    Psi := (Hom(A, N) * Hom(G, piN)) // Hom(F, piN);
+    A := presentation M; (G, F) := (target A, source A); -- M <-- G <-- F
+    B := presentation N; (L, K) := (target B, source B); -- N <-- L <-- K
+    piN := inducedMap(N, L);
+    -- TODO: the trim in Hom(target A, N) used to take 2/3 of total time
+    psi := (Hom(A, N) * Hom(G, piN)) // Hom(F, piN);
     p := id_(Hom(G, L)) | map(Hom(G, L), Hom(F, K), 0);
-    r := syz(Psi | -Hom(F, B), DegreeLimit => e);
+    r := syz(psi | -Hom(F, B), DegreeLimit => e);
     --trim := if opts.MinimalGenerators then trim else identity;
     Y#(Hom, M, N, e) =
-    -- TODO: trim takes 1/3 of total time here
+    -- TODO: trim used to take 1/3 of total time here
     H := -*trim*- image(Hom(G, piN) * p * r);
     H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f);
     H.cache.formation = FunctionApplication { Hom, (M, N, e) };
