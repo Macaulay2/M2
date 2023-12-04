@@ -418,17 +418,22 @@ cokernel Matrix := Module => m -> (
 cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}
 
+-----------------------------------------------------------------------------
+-- Ideal type declaration
+-----------------------------------------------------------------------------
+-- Note: all ideals will be two-sided
+
 Ideal = new Type of HashTable
 Ideal.synonym = "ideal"
 
-ideal = method(Dispatch => Thing, TypicalValue => Ideal)
-
+-- printing
 expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
 net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := (I) -> texMath expression I
 
+-- basic methods
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
@@ -534,8 +539,14 @@ Ideal == Ideal := (I,J) -> (
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
+-----------------------------------------------------------------------------
+-- Primary constructor
+-----------------------------------------------------------------------------
+
+ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
+     if isWeylAlgebra R then error "two-sided ideals over Weyl algebras are not implemented";
      if not isFreeModule target f or not isFreeModule source f 
      then error "expected map between free modules";
      f = flatten f;			  -- in case there is more than one row
@@ -550,19 +561,24 @@ ideal Matrix := Ideal => (f) -> (
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
 ideal Module := Ideal => (M) -> (
+    if isWeylAlgebra ring M then error "two-sided ideals over Weyl algebras are not implemented";
      F := ambient M;
      if isSubmodule M and rank F === 1 then ideal generators M
      else error "expected a submodule of a free module of rank 1"
      )
+
 idealPrepare = method()
 idealPrepare RingElement := 
 idealPrepare Number := identity
 idealPrepare Matrix := m -> flatten entries m
 idealPrepare Ideal := I -> I_*
 idealPrepare Thing := x -> error "expected a list of numbers, matrices, ring elements or ideals"
+
 ideal List := ideal Sequence := Ideal => v -> ideal matrix {flatten apply(toList splice v,idealPrepare)}
 ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
+
+-----------------------------------------------------------------------------
 
 Ideal ^ Array := (I, e) -> (
    R := ring I;
@@ -578,6 +594,8 @@ Ideal ^ Array := (I, e) -> (
    -- apply the ring homomorphism and create the new ideal
    ideal phi generators I
 )
+
+-----------------------------------------------------------------------------
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      if g == 0 then cokernel f
