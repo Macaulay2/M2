@@ -1,7 +1,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.2",
-    Date => "May 13, 2023",
+    Version => "0.3",
+    Date => "December 4, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -14,6 +14,11 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.3 (2023-12-04, M2 1.23)
+* add subscripted assignment for various pointer types
+* add support for GMP integers
+* add support for describe, expression, toExternalString, and toString
 
 0.2 (2023-05-13, M2 1.22)
 * improvements for displaying foreign objects in webapp mode
