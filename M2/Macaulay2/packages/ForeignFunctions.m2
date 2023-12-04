@@ -1515,7 +1515,14 @@ doc ///
     (value, uint64)
     (value, voidstar)
     (value, voidstarstar)
+    (describe, ForeignObject)
+    (expression, ForeignObject)
+    (expression, float)
+    (expression, double)
     (net, ForeignObject)
+    (texMath, ForeignObject)
+    (toExternalString, ForeignObject)
+    (toString, ForeignObject)
   Headline
     get the value of a foreign object as a Macaulay2 thing
   Usage
@@ -1559,7 +1566,8 @@ doc ///
       x = mystruct {"a" => 2, "b" => sqrt 2}
       value x
     Text
-      Note that this function is also used by @TT "net(ForeignObject)"@ for
+      Note that this function is also used by @TO describe@, @TO expression@,
+      @TO net@, @TO texMath@, @TO toExternalString@, and @TO toString@ for
       representing foreign objects.
 ///
 
