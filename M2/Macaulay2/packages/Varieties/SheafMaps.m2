@@ -19,7 +19,10 @@ export {
     "GlobalSectionLimit",
     "pullback", "pullbackMaps",
     "pushout",  "pushoutMaps",
+    "yonedaSheafExtension",
     }
+
+sameVariety := Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
 
 -----------------------------------------------------------------------------
 -- SheafHom type declarations and basic constructors
@@ -88,6 +91,7 @@ SheafMap * SheafMap := SheafMap => (phi, psi) -> (
     )
 
 -- printing
+-- TODO: use abbreviations for source and target
 expression SheafMap := Expression => f -> (
     if (s := f.map) == 0 then expression 0
     else MapExpression { target f, source f, s })
@@ -361,6 +365,59 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
     moveToField basis(0, Ext^m(M, matrix f)))
 
 -----------------------------------------------------------------------------
+-- Yoneda Ext
+-----------------------------------------------------------------------------
+
+yonedaSheafExtension = method()
+-- TODO: should be a complex of sheaf maps
+-- FIXME: should get d, F, G from E := target f = Ext^d(F, G)
+yonedaSheafExtension(List, Complex, Matrix) := List => (L, C, f) -> (
+    -- -f-> -g->
+    E := target f; -- Ext^d(F,G)
+    (d,F,G) := toSequence L; -- E.cache.Ext;
+    X := variety F;
+    assert(d == 1); -- TODO
+    M := module F;
+    --C := freeResolution(M, LengthLimit => d+1);
+    K := sheaf(X, image C.dd_1);
+    i := inducedMap(sheaf(X, C_0), K);
+    -- TODO: need connecting map here
+    c := map(E, Hom(K, G), 1);
+    -- FIXME: cheating here
+    b := homomorphism f;
+    P := pushout(i, b);
+    -- TODO: add this constructor
+    i1 := map(module P, C_0, matrix first P.cache.pushoutMaps);
+    i2 := map(P, G, map(module P, module G, matrix last P.cache.pushoutMaps));
+    p1 := map(F, P, map(module F, module P, transpose cover i1 // transpose cover (augmentationMap C)_0));
+    (p1, i2))
+
+TEST ///
+  S = QQ[x,y,z]
+  X = Proj S
+  d = 1
+  F = tangentSheaf X
+  G = OO_X^1
+  -- TODO: this is what we want
+  --E = Ext^1(F, G)
+  --f = E_{0}
+  -- 0 <-- T_X <-- O_X(1)^3 <-- O_X <-- 0
+  --(p, i) = yonedaSheafExtension f
+  C = freeResolution(module F, LengthLimit => d+1);
+  K = sheaf(X, image C.dd_1);
+  H = Hom(K, G)
+  -- this is what we have:
+  (p, i) = prune \ yonedaSheafExtension({1, F, G}, C, matrix random H)
+  assert(source i === G)
+  assert(target i === source p)
+  assert(target p == F) -- TODO: do we want it to be ===?
+  assert(0 == p * i)
+  assert(0 == homology(p, i))
+  assert(0 == ker i)
+  assert(0 == coker p)
+///
+
+-----------------------------------------------------------------------------
 -- Prune
 -----------------------------------------------------------------------------
 
@@ -375,6 +432,13 @@ prune SheafMap := SheafMap => opts -> f -> (
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
     lift sheafMap prune Hom(Bp, g))
+
+-----------------------------------------------------------------------------
+-- Things to move to the Core
+-----------------------------------------------------------------------------
+
+random Module := Vector => o -> M -> vector(gens M * random(cover M, module ring M, o))
+homomorphism Vector := v -> homomorphism matrix v
 
 -----------------------------------------------------------------------------
 -- Functions redefined from varieties.m2
@@ -485,6 +549,16 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> (
 -- pullback and pushout
 -----------------------------------------------------------------------------
 
+CoherentSheaf.directSum = args -> (
+    sameVariety args;
+    F := sheaf(variety args#0, directSum apply(args, module));
+    F.cache.components = toList args;
+    F)
+directSum CoherentSheaf := CoherentSheaf => F -> directSum(1:F)
+CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F, G) -> directSum(F, G)
+
+components CoherentSheaf := List => F -> if F.cache.?components then F.cache.components else {F}
+
 -- TODO: also for a list of matrices
 pullback = method() -- FIXME: will conflict with other packages
 pullback(Matrix, Matrix) := Module => (f, g) -> (
@@ -495,6 +569,16 @@ pullback(Matrix, Matrix) := Module => (f, g) -> (
     P.cache.pullbackMaps = {
 	map(source f, S, S^[0], Degree => - degree f) * inducedMap(S, P),
 	map(source g, S, S^[1], Degree => - degree g) * inducedMap(S, P)};
+    P)
+pullback(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
+    -- TODO: use != instead
+    if target f =!= target g then error "expected maps with the same target";
+    h := map(target f, source f ++ source g, matrix f | -matrix g);
+    P := ker h;
+    S := source h;
+    P.cache.pullbackMaps = {
+	S^[0] * inducedMap(S, P),
+	S^[1] * inducedMap(S, P)};
     P)
 
 -- TODO: also for a list of matrices
@@ -508,6 +592,47 @@ pushout(Matrix, Matrix) := Module => (f, g) -> (
 	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
 	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
     P)
+pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
+    -- TODO: use != here instead
+    if source matrix f =!= source matrix g then error "expected maps with the same source";
+    h := map(target f ++ target g, source f, matrix f || -matrix g);
+    P := coker h;
+    T := target h;
+    P.cache.pushoutMaps = {
+	inducedMap(P, T) * T_[0],
+	inducedMap(P, T) * T_[1]};
+    P)
+
+trans := (C,v) -> (
+    if C.cache.?indexComponents then (
+	    Ci := C.cache.indexComponents;
+	    apply(v, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
+    else (
+        if not C.cache.?components then error "expected a direct sum of coherent sheaves";
+	    Cc := C.cache.components;
+	    apply(v, i -> if not Cc#?i then error "expected an index of a component of the direct sum");
+	    v)
+    )
+
+CoherentSheaf _ Array := SheafMap => (F, v) -> (
+    v = trans(F,v);
+    G := directSum apply(toList v, j -> F.cache.components#j);
+    map(F, G, (cover module F)_v))
+
+CoherentSheaf ^ Array := SheafMap => (F, v) -> (
+    v = trans(F,v);
+    G := directSum apply(toList v, j -> F.cache.components#j);
+    map(G, F, (cover module F)^v))
+
+- SheafMap := phi -> map(target phi, source phi, -matrix phi)
+
+TEST ///
+  debug SheafMaps
+  X = Proj(QQ[x,y,z])
+  F = OO_X^1 ++ OO_X^1
+  assert(prune pullback(F_[0], F_[1]) == 0)
+  assert(prune pushout(F^[0], F^[1]) == 0)
+///
 
 -- TODO:
 -- pullback(SheafMap, SheafMap) := CoherentSheaf => ...
