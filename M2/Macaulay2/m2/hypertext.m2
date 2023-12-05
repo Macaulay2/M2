@@ -403,10 +403,8 @@ hypertext FunctionBody :=
 hypertext Function := f -> SAMP deepSplice {
     if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
 	t := locate if instance(f,Command) then f#0 else f;
-	"-*",
 	SPAN class f,
-	if t =!= null then ("[", SPAN t, "]"),
-	"*-"
+	"[", if t === null then "" else SPAN t, "]"
 	),
     "class"=>"token function"
     }
