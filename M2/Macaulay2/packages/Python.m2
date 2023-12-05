@@ -120,7 +120,10 @@ pythonInitialize()
 
 pythonHelp = Command (() -> pythonValue ///help()///)
 
-toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
+expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
+toString PythonObject := toString @@ expression
+net PythonObject := net @@ expression
+texMath PythonObject := texMath @@ expression
 
 PythonObject.synonym = "python object"
 PythonObject#AfterPrint = x -> (
