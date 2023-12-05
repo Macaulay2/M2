@@ -41,11 +41,15 @@ code = method(Dispatch => Thing)
 code Nothing    := identity
 code FilePosition := x -> (
     filename := x#0; start := x#1; stop := x#3;
-     if filename =!= "stdio" then (
+     (
 	  wp := set characters " \t\r);";
 	  file := (
 	       if match("startup.m2.in$", filename) then startupString
 	       else if filename === "currentString" then currentString
+	       else if filename === "stdio" then (
+		    start = 1;
+		    stop = x#3 - x#1 + 1;
+		    toString stack apply(x#1..x#3, historyGet))
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
 		    get filename
