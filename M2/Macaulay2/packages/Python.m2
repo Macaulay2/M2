@@ -651,6 +651,38 @@ assert Equation(value pythonValue "10**100", 10^100)
 assert Equation(value pythonValue "-10**100", -10^100)
 ///
 
+TEST ///
+-- describe
+assert instance(describe toPython 5, Describe)
+checkDescribe = x -> assert BinaryOperation(symbol ===,
+    value value describe toPython x, x)
+checkDescribe true
+checkDescribe 5
+checkDescribe 3.14159
+checkDescribe (1 + 2*ii)
+checkDescribe "foo"
+checkDescribe (1, 3, 5, 7, 9)
+checkDescribe {1, 3, 5, 7, 9}
+checkDescribe set {1, 3, 5, 7, 9}
+checkDescribe hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkDescribe null
+
+-- toExternalString
+assert instance(toExternalString toPython 5, String)
+checkToExternalString = x -> assert BinaryOperation(symbol ===,
+    value value toExternalString toPython x, x)
+checkToExternalString true
+checkToExternalString 5
+checkToExternalString 3.14159
+checkToExternalString (1 + 2*ii)
+checkToExternalString "foo"
+checkToExternalString (1, 3, 5, 7, 9)
+checkToExternalString {1, 3, 5, 7, 9}
+checkToExternalString set {1, 3, 5, 7, 9}
+checkToExternalString hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkToExternalString null
+///
+
 
 -- not part of default testsuite since it requires numpy
 ///
