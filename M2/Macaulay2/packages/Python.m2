@@ -99,7 +99,8 @@ importFrom_Core {
     "pythonTupleNew",
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString",
-    "pythonWrapM2Function"
+    "pythonWrapM2Function",
+    "toExternalFormat"
 }
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
@@ -124,6 +125,10 @@ expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
 toString PythonObject := toString @@ expression
 net PythonObject := net @@ expression
 texMath PythonObject := texMath @@ expression
+
+describe PythonObject := x -> Describe FunctionApplication(pythonValue,
+    expression x@@"__repr__"())
+toExternalString PythonObject := toExternalFormat @@ describe
 
 PythonObject.synonym = "python object"
 PythonObject#AfterPrint = x -> (
