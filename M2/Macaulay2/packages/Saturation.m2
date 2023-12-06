@@ -48,6 +48,7 @@ override' := (def, opts) -> nonnull apply(keys def, key -> if opts#?key and opts
 ambient' = method()
 ambient' Module := Module => ambient
 ambient' Ideal  := Ideal  => I -> (if instance(I, MonomialIdeal) then monomialIdeal else ideal) 1_(ring I)
+ambient' LeftIdeal := LeftIdeal => I -> ideal 1_(ring I)
 
 -- TODO: remove this once the Ideal vs. MonomialIdeal dichotomy is resolved
 uniform' := L -> all(L, l -> instance(l, Ideal)) or uniform L
@@ -173,6 +174,7 @@ Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
 quotientHelper = (A, B, key, opts) -> (
     R := ring A;
     if ring B === ZZ then B = sub(B, R);
+    B' := if instance(B, RingElement) then ideal B else B;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
@@ -182,19 +184,18 @@ quotientHelper = (A, B, key, opts) -> (
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
 	if R =!= ring B then error "expected objects in the same ring";
-	if instance(B, RingElement) then B = ideal B;
-	if uniform' {A, B} and ambient' A != ambient' B
+	if uniform' {A, B'} and ambient' A != ambient' B'
 	then error "expected objects to be contained in the same ambient object";
 	-- note: if B \subset A then A:B should be "everything", but computing
 	-- a gb for A can be slow, so isSubset' doesn't compute a gb
-	if isSubset'(B, A) then return if uniform' {A, B} then cast 1_R else ambient' A;
+	if isSubset'(B', A) then return if uniform' {A, B'} then cast 1_R else ambient' A;
 	-- note: ideal(..A..) :         f    = A <==> f is nzd / A
 	-- note: ideal(..A..) : ideal(..B..) = A <==>
 	-- note: module(.A.)  : ideal(..B..) = A <==> B is not contained in any associated primes of A
 	-- TODO: can either of the above be efficiently checked?
 	-- TODO: module(.A.)  : module(.B.)  = ? <==> A \subset B
-	if instance(B, Ideal) then -- see the above TODO item
-	if isSubset'(ambient' A, B) then return A;
+	if instance(B', Ideal) then -- see the above TODO item
+	if isSubset'(ambient' A, B') then return A;
 	-- TODO: add speedup for when isSubset'(A, B), being cautious of (a3):(a3,bc) in kk[abc]/ac
 
 	-- TODO: what would adding {SyzygyLimit => opts.BasisElementLimit, BasisElementLimit => null} do?
@@ -203,7 +204,7 @@ quotientHelper = (A, B, key, opts) -> (
 
     -- this is the logic for caching partial quotient computations. A.cache contains an option:
     --   QuotientContext{ mingens B } => QuotientComputation{ Result }
-    container := fetchComputation(QuotientComputation, A, (A, B, opts), new QuotientContext from (A, B));
+    container := fetchComputation(QuotientComputation, A, (A, B, opts), new QuotientContext from (A, B'));
 
     -- the actual computation of quotient occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -261,6 +262,17 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 -- Installing hooks for Ideal : Ideal
 scan({Quotient, Iterate-*, Linear*-, Monomial}, strategy ->
     addHook(key := (quotient, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
+
+--------------------------------------------------------------------
+-- LeftIdeal
+quotient(LeftIdeal, RingElement) := LeftIdeal => opts -> (I, f) -> quotientHelper(I, f, (quotient, LeftIdeal, RingElement), opts)
+
+-- Installing a hook for LeftIdeal : RingElement
+addHook((quotient, LeftIdeal, RingElement), Strategy => Quotient,
+    (opts, I, f) -> ideal syz gb(matrix{{f}} | gens I, opts,
+	Strategy   => LongPolynomial,
+	Syzygies   => true,
+	SyzygyRows => 1))
 
 --------------------------------------------------------------------
 -- Algorithms for Module : Ideal
