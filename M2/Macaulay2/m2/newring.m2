@@ -129,6 +129,8 @@ coerce(Thing,Thing) := (x,Y) -> if instance(x,Y) then x else error("no method fo
 coerce(Ideal,Ring) := quotient @@ first
 coerce(Thing,Nothing) := (x,Nothing) -> null		    -- avoid using this one, to save time earlier
 coerce(Ring,Ideal) := (R,Ideal) -> ideal R		    -- avoid using this one, to save time earlier
+coerce(LeftIdeal,Ring) := quotient @@ first
+coerce(LeftIdeal,Ideal) := first
 preprocessResultTemplate = (narrowers,r) -> (
      if instance(r,ZZ) then r = r:null;
      r = apply(sequence r,x -> if x === null then Thing else x);

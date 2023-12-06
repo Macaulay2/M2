@@ -440,6 +440,7 @@ indices Matrix := (f) -> rawIndices raw f
 support = method()
 support RingElement :=
 support Matrix      := f -> apply(try rawIndices raw f else {}, i -> (ring f)_i)
+support LeftIdeal   :=
 support Ideal       := I -> support generators I
 --------------------
 -- homogenization --

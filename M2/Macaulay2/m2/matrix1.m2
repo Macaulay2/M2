@@ -433,6 +433,8 @@ toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := (I) -> texMath expression I
 
+Ideal#AfterPrint = Ideal#AfterNoPrint = I -> (class I, " of ", ring I)
+
 -- basic methods
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
@@ -448,7 +450,7 @@ promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
 comodule Module := Module => M -> cokernel super map(M,M,1)
 quotient Module := Module => opts -> M -> comodule M
 comodule Ideal := Module => I -> cokernel generators I
-quotient Ideal := Module => opts -> I -> (ring I) / I
+quotient Ideal := o -> I -> (ring I) / I
 module   Ideal := Module => (cacheValue symbol module) (I -> image generators I)
 
 genera Ideal := (I) -> genera ((ring I)^1/I)
@@ -492,8 +494,6 @@ generator Module := RingElement => (M) -> (
 
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
-
-Ideal#AfterPrint = Ideal#AfterNoPrint = (I) ->  (Ideal," of ",ring I)
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
@@ -540,13 +540,68 @@ Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
 -----------------------------------------------------------------------------
+-- Left ideals
+-----------------------------------------------------------------------------
+
+LeftIdeal = new Type of Module -- or LeftModule, or ImmutableType?
+LeftIdeal.synonym = "left-ideal"
+
+expression LeftIdeal := lookup(expression, Ideal)
+LeftIdeal#AfterPrint   = Ideal#AfterPrint
+LeftIdeal#AfterNoPrint = Ideal#AfterNoPrint
+
+isTwoSidedIdeal = I -> isIdeal I and (
+    -- variables appearing in I
+    sup := index \ support I;
+    -- differential variables in ring of I
+    dxs := last \ (ring I).WeylAlgebra;
+    -- check that they don't have any intersection
+    #sup + #dxs == #unique join(sup, dxs))
+
+comodule LeftIdeal := Module => I -> cokernel generators I
+quotient LeftIdeal := o -> I -> (ring I) / I
+Ring /   LeftIdeal := (R, I) -> (
+    if isTwoSidedIdeal I then R / new Ideal from I else
+    error "Ring / LeftIdeal is not implemented for left ideals")
+
+LeftIdeal * RingElement := LeftIdeal => (I, f) -> (
+    if isTwoSidedIdeal I then (new Ideal from I) * f else
+    error "LeftIdeal * RingElement is not implemented for left ideals")
+LeftIdeal * Module      := Module    => ((I, M) -> subquotient(generators I ** generators M, relations M)) @@ samering
+
+LeftIdeal + LeftIdeal   := LeftIdeal => ((I, J) -> ideal(generators I | generators J)) @@ tosamering
+LeftIdeal + RingElement := LeftIdeal + Number := LeftIdeal => ((I, r) -> I + ideal r) @@ tosamering
+RingElement + LeftIdeal := Number + LeftIdeal := LeftIdeal => ((r, I) -> ideal r + I) @@ tosamering
+
+LeftIdeal == Ring := Boolean => (I, R) -> (
+    if ring I === R then 1_R % I == 0 else error "expected ideal in the given ring")
+
+Number      % LeftIdeal := (r, I) -> promote(r, ring I) % I
+RingElement % LeftIdeal := (r, I) -> (
+    if (R := ring I) =!= ring r then error "expected ring element and ideal for the same ring";
+    if r == 0 then r else if isHomogeneous I and heft R =!= null
+    then r % gb(I, DegreeLimit => degree r) else r % gb I)
+
+Matrix % LeftIdeal := Matrix => ((f,I) -> map(target f, source f, apply(entries f, row -> matrix row % gb I))) @@ samering
+Vector % LeftIdeal := Vector => ((v,I) -> new class v from {v#0%I}) @@ samering
+
+dim     LeftIdeal := I -> dim comodule I
+module  LeftIdeal := I -> new Module from I
+numgens LeftIdeal := I -> numgens source generators I
+
+LeftIdeal_*  := List => I -> first entries generators I
+LeftIdeal_ZZ := RingElement => (I, n) -> (generators I)_(0,n)
+
+leadTerm     LeftIdeal  := Matrix =>     I  -> leadTerm    generators gb I
+leadTerm(ZZ, LeftIdeal) := Matrix => (n, I) -> leadTerm(n, generators gb I)
+
+-----------------------------------------------------------------------------
 -- Primary constructor
 -----------------------------------------------------------------------------
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
-     if isWeylAlgebra R then error "two-sided ideals over Weyl algebras are not implemented";
      if not isFreeModule target f or not isFreeModule source f 
      then error "expected map between free modules";
      f = flatten f;			  -- in case there is more than one row
@@ -558,10 +613,11 @@ ideal Matrix := Ideal => (f) -> (
      	  g := map(R^1,,f);			  -- in case the degrees are wrong
      	  if isHomogeneous g then f = g;
 	  );
+     if isWeylAlgebra R then
+     new LeftIdeal from subquotient(f, null) else
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
 ideal Module := Ideal => (M) -> (
-    if isWeylAlgebra ring M then error "two-sided ideals over Weyl algebras are not implemented";
      F := ambient M;
      if isSubmodule M and rank F === 1 then ideal generators M
      else error "expected a submodule of a free module of rank 1"
