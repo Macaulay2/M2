@@ -62,7 +62,11 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
-tensor(PolynomialRing, PolynomialRing) :=
+tensor(PolynomialRing, PolynomialRing) := monoidTensorDefaults >> optns -> (R, S) -> (
+    if (kk := coefficientRing R) === coefficientRing S
+    then kk tensor(monoid R, monoid S, optns)
+    else error "expected rings to have the same coefficient ring")
+
 tensor(QuotientRing,   PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
 tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) -> (
