@@ -535,7 +535,7 @@ gbWparam(Ideal, List) := (I, w) -> (
 -- computes in_w(I). The result is a WA ideal (as opposed to 
 -- an ideal in the associated commutative ring) 
 inWparam = method()
-inWparam(Ideal,List) := (I, w) -> (
+inWparam(LeftIdeal,List) := (I, w) -> (
      I2 := homGBparam(I, w);
      GB := paramGB (I2);    
      I3 := leadTerm(1, gensGB GB);
@@ -923,8 +923,10 @@ isdivisible := (f,g) -> (
 --        ChangeMatrix=>false: option
 -- output: { Groebner basis generators for I [, changematrix] }
 
-paramGB = I -> (
-    if class I === Ideal then I = gens I;
+paramGB = method()
+paramGB Ideal :=
+paramGB LeftIdeal := I -> paramGB gens I
+paramGB Matrix := I -> (
     R := ring I;
     WAflag := R.monoid.Options.WeylAlgebra =!= {};
     if WAflag then (

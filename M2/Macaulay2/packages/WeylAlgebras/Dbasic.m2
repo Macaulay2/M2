@@ -7,14 +7,14 @@
 -- ring.
 ----------------------------------------------------------------
 makeWeylAlgebra = method(Options => {SetVariables => true})
-makeWeylAlgebra PolynomialRing := opts -> R -> (
+makeWeylAlgebra PolynomialRing := opts -> (cacheValue WeylAlgebra) (R -> (
      coordVars := gens R;
      diffVars := apply(coordVars, i -> value("symbol d" | toString(i)) );
      allVars := join(coordVars, diffVars);
      W := (coefficientRing R)(monoid [allVars, WeylAlgebra =>
 	  apply(coordVars, diffVars, (x,dx) -> x => dx)]);
      if opts.SetVariables then use W;
-     W)
+     W))
 
 -- this function associates to a Weyl algebra W
 -- the key "dpairVars", which consists of the following 3 lists
@@ -121,7 +121,7 @@ createCommAlgebra PolynomialRing := W -> (
 
 -- These routines compute the Fourier transform which is the automorphism
 -- of the Weyl algebra sending x -> -dx, dx -> x.
--- Input: RingElement f, Matrix m, Ideal I, ChainComplex C, or Module M
+-- Input: RingElement f, Matrix m, LeftIdeal I, ChainComplex C, or Module M
 -- Output: Fourier transform of f, m, I, C, or M
 Fourier = method()
 FourierLocal := M -> (
@@ -145,7 +145,7 @@ FourierLocal := M -> (
      FMap M
      )
 Fourier RingElement := M -> (FourierLocal M)
-Fourier Ideal := M -> (FourierLocal M)
+Fourier LeftIdeal :=
 Fourier Matrix := M -> (FourierLocal M)
 Fourier ChainComplex := M -> (FourierLocal M)
 Fourier Module := M -> (cokernel FourierLocal relations prune M)
@@ -172,7 +172,7 @@ FourierInverseLocal := M -> (
      FInvMap M
      )
 FourierInverse RingElement := M -> (FourierInverseLocal M)
-FourierInverse Ideal := M -> (FourierInverseLocal M)
+FourierInverse LeftIdeal :=
 FourierInverse Matrix := M -> (FourierInverseLocal M)
 FourierInverse ChainComplex := M -> (FourierInverseLocal M)
 FourierInverse Module := M -> (cokernel FourierInverseLocal relations prune M)
@@ -199,6 +199,7 @@ Dtransposition RingElement := L -> (
      transL
      )
 
+Dtransposition LeftIdeal := I -> ideal Dtransposition gens I
 Dtransposition Matrix := m -> (
      W := ring m;
      if W.monoid.Options.WeylAlgebra === {} then
@@ -212,10 +213,6 @@ Dtransposition Matrix := m -> (
      else mtrans = matrix apply( entries m, i -> 
 	  (apply (i, j -> Dtransposition j)) );
      mtrans
-     )
-
-Dtransposition Ideal := I -> (
-     ideal Dtransposition gens I
      )
 
 Dtransposition ChainComplex := C -> (
@@ -236,7 +233,7 @@ Dtransposition ChainComplex := C -> (
 
 -- This routine computes the dimension of a D-module
 Ddim = method()
-Ddim Ideal := (cacheValue Ddim) (I -> (
+Ddim LeftIdeal := (cacheValue Ddim) (I -> (
      -- preprocessing
      W := ring I;
      -- error checking
@@ -269,7 +266,7 @@ addHook((codim, Module), Strategy => WeylAlgebra,
 
 -- This routine determines whether a D-module is holonomic
 isHolonomic = method()
-isHolonomic Ideal := I -> (
+isHolonomic LeftIdeal := I -> (
      -- preprocessing
      W := ring I;
      -- error checking
@@ -296,10 +293,7 @@ isHolonomic Module := M -> (
 -- This routine computes the rank of a D-module
 -- QUESTION: this changes the current ring?
 holonomicRank = method()
-holonomicRank Ideal := I -> (
-     holonomicRank ((ring I)^1/I)
-     )
-
+holonomicRank LeftIdeal := I -> holonomicRank comodule I
 holonomicRank Module := M -> (
      W := ring M;
      createDpairs W;

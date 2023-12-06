@@ -8,7 +8,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 WeylClosure = method()
-WeylClosure(Ideal, RingElement) := (I, f) -> (
+WeylClosure(LeftIdeal, RingElement) := (I, f) -> (
      W := ring I;
      if W.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;
@@ -22,7 +22,7 @@ WeylClosure(Ideal, RingElement) := (I, f) -> (
      ideal gens gb J
      )
      
-WeylClosure Ideal := I -> (
+WeylClosure LeftIdeal := I -> (
      W := ring I;
      outputList :={};
      if W.monoid.Options.WeylAlgebra === {} then
