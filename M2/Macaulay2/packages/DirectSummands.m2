@@ -233,9 +233,9 @@ directSummands(Module, Module) := List => opts -> (L, M) -> sort(
     C := smartBasis(zdeg, Hom(M, L, zdeg));
     -- attempt to find a random isomorphism
     for i to opts.Tries - 1 do (
-	b := homomorphism random image B;
-	c := homomorphism random image C;
-	if c * b != 0 and isIsomorphism(c * b) then
+	b := homomorphism(B * random source B);
+	c := homomorphism(C * random source C);
+	if isIsomorphism(c * b) then
 	return flatten join({L}, directSummands(L, coker b, opts)));
     -- TODO: is precomputing the homs too memory intensive?
     Bhoms := apply(numcols B, i -> homomorphism B_{i});
