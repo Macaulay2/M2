@@ -327,7 +327,7 @@ doc ///
 	    one reads off the + tiles from the grid. When there is a + in location $(i,j)$, then $z_{i,j}$ 
 	    is a generator of the associated prime in question.
 	Example
-	    netList ((pipeDreams w)_0)
+	    (pipeDreams w)_0
 	    (decompose inI)_0
 	Text
 	    Initial ideals of Schubert determinantal ideals and ASM ideals under diagonal term orders are must less well understood. 
@@ -431,8 +431,8 @@ doc ///
 	    both reduced and nonreduced pipe dreams of a permutation.
 	Example
 	    decompose antiDiagInit u
-	    apply(pipeDreams u, i -> netList i)	    
-	    apply(pipeDreamsNonReduced u, i-> netList i)
+	    pipeDreams u
+	    pipeDreamsNonReduced u
 	Text
 	    @SUBSECTION "Functions for studying permutations"@
 	Text
@@ -458,7 +458,6 @@ doc ///
 		TO (doubleSchubertPolynomial, List),
 		TO (pipeDreams, List),
 		TO (pipeDreamsNonReduced, List),
-		TO (netPD, List)
 		}@
 ///
 

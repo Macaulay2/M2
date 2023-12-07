@@ -111,10 +111,9 @@ export{
     "doubleSchubertPolynomial",           -- documented ++
     "doubleSchubertPoly" => "doubleSchubertPolynomial",
     "doubleSchubPoly" => "doubleSchubertPolynomial",
+    "PipeDream",
     "pipeDreams",    	     	    -- documented ++
     "pipeDreamsNonReduced",    	    -- documented ++
-    "netPD",	    	    	    -- documented ++
-    "netPipeDream" => "netPD",
     "ASMToMonotoneTriangle",        --documented ++
     "monotoneTriangleToASM",        --documented ++
 
