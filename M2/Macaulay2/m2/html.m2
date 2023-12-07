@@ -171,8 +171,6 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-html Nothing := x -> "null"
-
 html Monoid :=
 html RingFamily :=
 html Ring :=
