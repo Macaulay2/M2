@@ -530,6 +530,35 @@ doc ///
 ///
 *-
 
+undocumented {
+    (symbol==, PipeDream, List),
+    (expression, PipeDream),
+    (describe, PipeDream),
+    (net, PipeDream),
+    -- (texMath, PipeDream),
+    (toString, PipeDream),
+    (toExternalString, PipeDream),
+    }
+
+doc ///
+    Key
+        PipeDream
+    Headline
+        the class representing a pipe dream
+    Description
+        Text
+            A pipe dream is stored as a square array containing "+" and "/" symbols.
+	    The "+" symbols are interpreted as crossing tiles and the "/" are interpreted as bump tiles.
+	    Starting on the left edge, the path starting at row $i$ will end at column $w_i$.
+        Example
+	    L = {{"+", "/", "/"}, {"+", "/", "/"}, {"/", "/", "/"}}
+	    D = PipeDream L
+	    L == toList D
+    Subnodes
+        pipeDreams
+        pipeDreamsNonReduced
+///
+
 doc ///
     Key 
         pipeDreams
@@ -545,7 +574,7 @@ doc ///
             Given a permutation in one line notation, finds the set of reduced pipe dreams. Each element of the output is a square array containing "+" and "/" symbols. The "+" symbols are interpreted as crossing tiles and the "/" are interpreted as bump tiles. Starting on the left edge, the path starting at row $i$ will end at column $w_i$. This function only returns reduced pipe dreams (i.e. pipe dreams for which each pair of pipes crosses at most once).
         Example
             w = {2,1,4,3,6,5};
-            netList (pipeDreams w)_0
+            (pipeDreams w)_0
     SeeAlso
         "pipeDreamsNonReduced"
 ///
@@ -565,29 +594,9 @@ doc ///
             Given a permutation in one line notation, finds the set of  pipe dreams. Each element of the output is a square array containing "+" and "/" symbols. The "+" symbols are interpreted as crossing tiles and the "/" are interpreted as bump tiles. Starting on the left edge, the path starting at row $i$ will end at column $w_i$. This function returns all pipe dreams of w, including those containing pairs of pipes that cross more than once.
         Example
             w = {2,1,4,3,6,5};
-            netList (pipeDreamsNonReduced w)_1
+            (pipeDreamsNonReduced w)_1
     SeeAlso
         "pipeDreams"
-///
-
-doc ///
-    Key 
-        netPD
-        (netPD, List)
-    Headline
-        printing utility for pipe dreams 
-    Usage
-        netPD P
-    Inputs
-        P:List 
-    Outputs
-        :List
-    Description
-        Text
-            Given a pipe dream, print it in a more readable format.
-        Example
-            P = (pipeDreams {1,4,3,2})_0
-            netPD P
 ///
 
 doc ///

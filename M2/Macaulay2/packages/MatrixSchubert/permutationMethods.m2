@@ -457,9 +457,24 @@ polyByDividedDifference (List, PolynomialRing) := opts -> (w, Q) -> (
 ------------------------------------------------
 --Pipe Dreams
 --(Implementation based on code of Allen Knutson)
---Sample Usage:  netPD \ pipeDreams({1,4,3,2})
+--Sample Usage:  pipeDreams({1,4,3,2})
 ------------------------------------------------
 ------------------------------------------------
+
+PipeDream = new SelfInitializingType of BasicList
+PipeDream.synonym = "pipe dream"
+
+-- for testing
+PipeDream == List := (D,L) -> toList D == L
+
+-- for printing
+expression       PipeDream := D -> netList(toList D, Boxes => false)
+describe         PipeDream := D -> Describe (expression PipeDream) (expression toList D)
+net              PipeDream :=      net @@ expression
+-- TODO: texMath PipeDream := ...
+toString         PipeDream := toString @@ expression
+toExternalString PipeDream := toString @@ describe
+
 
 permAfterTopRow = (w, ro) -> (
     neww := w;
@@ -481,22 +496,16 @@ possibleTopRows = w->(n := #w; lw := permLength(w);
     )
 
 pipeDreams = method()
-pipeDreams (List) := List => (w)->( 
+pipeDreams (List) := List => (w) -> PipeDream \ (
     if (w=={1}) 
-        then {{"/"}} 
+        then {{{"/"}}}
 	else flatten apply(possibleTopRows(w), ro->(
 	    wp := permAfterTopRow(w,ro);
 	    wp = apply(#wp-1, i->(wp_(i+1)-1));
 	    apply(pipeDreams(wp), D->
-		flatten {{ro}, apply(D, Dro->flatten {Dro,{"/"}})})
+		prepend(ro, apply(D, Dro -> append(Dro, "/"))))
 	    ))
         )
-
-netPD = method()
-netPD (List) := List => (D)->(result := concatenate(D_0);
-    scan(#D-1, i->(result = result || concatenate(D_(i+1))));
-    result)
-
 
 permsAfterTopRowNonReduced = (w, ro) -> (
     newws := {w};
@@ -514,9 +523,9 @@ permsAfterTopRowNonReduced = (w, ro) -> (
     )
 
 pipeDreamsNonReduced = method()
-pipeDreamsNonReduced (List) := List => w -> (
+pipeDreamsNonReduced (List) := List => w -> PipeDream \ (
     if (w=={1})
-        then {{"/"}}
+        then {{{"/"}}}
 	else flatten apply(possibleTopRows(w), ro->(
 		wps := permsAfterTopRowNonReduced(w, ro);
 		flatten apply(wps, wp ->(
@@ -529,7 +538,7 @@ pipeDreamsNonReduced (List) := List => w -> (
 			
 			if (newp == w) then			
 			      apply(pipeDreamsNonReduced(wp), D-> (
-			            flatten {{ro}, apply(D, Dro->flatten {Dro,{"/"}})} ))
+			            prepend(ro, apply(D, Dro -> append(Dro, "/")))))
 			       else {}
 			) ))) 
        )
