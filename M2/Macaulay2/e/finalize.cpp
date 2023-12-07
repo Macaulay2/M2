@@ -72,30 +72,33 @@ void intern_monideal(MonomialIdeal *G)
             (void *)G);
 }
 //////////////////////////////////////////////////////
-extern "C" void remove_polyring(void *p, void *cd)
-{
-#ifdef MEMDEBUG
-  p = M2_debug_to_inner(p);
-#endif
-  PolynomialRing *G = static_cast<PolynomialRing *>(p);
-  AO_t nremoved = AO_fetch_and_add1(&polyrings_nremoved);
-  if (M2_gbTrace >= 3)
-    fprintf(stderr, "\n -- removing polynomial ring %zd at %p\n", nremoved, G);
-  G->clear();
-}
+// extern "C" void remove_polyring(void *p, void *cd)
+// {
+// #ifdef MEMDEBUG
+//   p = M2_debug_to_inner(p);
+// #endif
+//   PolynomialRing *G = static_cast<PolynomialRing *>(p);
+//   AO_t nremoved = AO_fetch_and_add1(&polyrings_nremoved);
+//   if (M2_gbTrace >= 3)
+//     fprintf(stderr, "\n -- removing polynomial ring %zd at %p\n", nremoved, G);
+//   G->clear();
+// }
 void intern_polyring(const PolynomialRing *G)
 {
-#ifdef MEMDEBUG
-  GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer(const_cast<PolynomialRing *>(G)), remove_polyring, 0, 0, 0);
-#else
-  GC_REGISTER_FINALIZER_IGNORE_SELF(                  const_cast<PolynomialRing *>(G) , remove_polyring, 0, 0, 0);
-#endif
-  AO_t nfinalized = AO_fetch_and_add1(&polyrings_nfinalized);
-  if (M2_gbTrace >= 3)
-    fprintf(stderr,
-            "\n   -- registering polynomial ring %zd at %p\n",
-            nfinalized,
-            (const void *)G);
+  // We are already setting a finalizer for rings in newdelete.hpp,
+  // I believe this one is just unsetting that one.
+  return;
+// #ifdef MEMDEBUG
+//   GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer(const_cast<PolynomialRing *>(G)), remove_polyring, 0, 0, 0);
+// #else
+//   GC_REGISTER_FINALIZER_IGNORE_SELF(                  const_cast<PolynomialRing *>(G) , remove_polyring, 0, 0, 0);
+// #endif
+//   AO_t nfinalized = AO_fetch_and_add1(&polyrings_nfinalized);
+//   if (M2_gbTrace >= 3)
+//     fprintf(stderr,
+//             "\n   -- registering polynomial ring %zd at %p\n",
+//             nfinalized,
+//             (const void *)G);
 }
 //////////////////////////////////////////////////////
 extern "C" void remove_gb(void *p, void *cd)
