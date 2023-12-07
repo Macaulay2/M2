@@ -680,7 +680,7 @@ newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
   ( map(S,R,vars S * toS n), map(R,S,vars R * n^(-1)) )
   )
 
-lift(Ideal,RingElement) := Ideal => opts -> (I,S) -> (
+lift(LeftIdeal,RingElement) := Ideal => opts -> (I,S) -> (
      -- provisional, just for quotient rings
      T := ring I;
      if T === S then I

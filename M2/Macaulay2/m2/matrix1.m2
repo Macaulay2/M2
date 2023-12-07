@@ -674,7 +674,7 @@ isSurjective Matrix := (f) -> cokernel f == 0
 
 -- two-sided ideal expected
 scan({ZZ,QQ}, S -> (
-	  lift(Ideal,S) := opts -> (I,S) -> (
+	  lift(LeftIdeal,S) := opts -> (I,S) -> (
 	       -- this will be pretty slow
 	       if ring I === S then I
 	       else (ideal lift(generators I,S,opts)) + ideal (presentation ring I ** S))));
