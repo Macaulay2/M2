@@ -147,7 +147,7 @@ static int read_via_readline(char *buf,int len,char *prompt) {
     if (p == NULL) return 0;	/* EOF */
     i = 0;
     plen = strlen(p);
-    if (*p) add_history(p);
+    add_history(p);
   }
   r = plen - i;
   if (r > len) r = len;
