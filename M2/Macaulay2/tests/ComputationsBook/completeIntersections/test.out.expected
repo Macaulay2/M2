@@ -12,8 +12,8 @@ i3 : U = matrix {{w,x},{y,z}}
 o3 = | w x |
      | y z |
 
-             2       2
-o3 : Matrix A  <--- A
+             2      2
+o3 : Matrix A  <-- A
 
 i4 : C = chainComplex U
 
@@ -60,8 +60,8 @@ i10 : V = s_0
 o10 = {1} | z  -x |
       {1} | -y w  |
 
-              2       2
-o10 : Matrix A  <--- A
+              2      2
+o10 : Matrix A  <-- A
 
 i11 : A = QQ[x,y,z];
 
@@ -94,8 +94,8 @@ i19 : C = res L;
 
 i20 : U = C.dd_1;
 
-              9       9
-o20 : Matrix A  <--- A
+              9      9
+o20 : Matrix A  <-- A
 
 i21 : print U
 {4} | x2 0  -2yz+5z2 0     y2-5/2yz yz-5/2z2 -5/2yz   0        0      |
@@ -112,8 +112,8 @@ i22 : s = nullhomotopy (-f * id_C);
 
 i23 : V = s_0;
 
-              9       9
-o23 : Matrix A  <--- A
+              9      9
+o23 : Matrix A  <-- A
 
 i24 : print V
 {6} | -x  0  0   -3y2 -2yz+5z2 0         -2y2+5yz 0         0         |
@@ -153,13 +153,13 @@ i28 : time (U,V) = matrixFactorization(B^1/m^3);
 
 i29 : U;
 
-              15       15
-o29 : Matrix A   <--- A
+              15      15
+o29 : Matrix A   <-- A
 
 i30 : V;
 
-              15       15
-o30 : Matrix A   <--- A
+              15      15
+o30 : Matrix A   <-- A
 
 i31 : F.dd_3 - F.dd_5 == 0
 
@@ -287,8 +287,8 @@ o60 = {2, 2}  | X_1 |
       {0, -1} | x   |
       {0, -1} | y   |
 
-              4       1
-o60 : Matrix S  <--- S
+              4      1
+o60 : Matrix S  <-- S
 
 i61 : trim J
 
@@ -451,8 +451,8 @@ o72 = | -28x2-31xy-24y2-4xz-49yz-19z2  -44x2y-4xy2-49y3+30x2z-51xyz+51y2z+23xz2-
       | 47x2-6xy-49y2+9xz+47yz-25z2    16x2y-9xy2-31y3+34x2z-2xyz-16y2z-23xz2+14yz2+50z3   |
       | -36x2-44xy-18y2+11xz-18yz+21z2 -36x2y+28xy2-21y3-x2z-8xyz+6y2z+37xz2+27yz2+43z3    |
 
-              3       2
-o72 : Matrix B  <--- B
+              3      2
+o72 : Matrix B  <-- B
 
 i73 : f_{1}
 
@@ -460,13 +460,13 @@ o73 = | -44x2y-4xy2-49y3+30x2z-51xyz+51y2z+23xz2-19yz2+42z3 |
       | 16x2y-9xy2-31y3+34x2z-2xyz-16y2z-23xz2+14yz2+50z3   |
       | -36x2y+28xy2-21y3-x2z-8xyz+6y2z+37xz2+27yz2+43z3    |
 
-              3       1
-o73 : Matrix B  <--- B
+              3      1
+o73 : Matrix B  <-- B
 
 i74 : M = cokernel f;
 
 i75 : time P = Ext(M,B^1/(x,y,z));
-     -- used 0.196473 seconds
+     -- used 0.332459 seconds
 
 i76 : S = ring P;
 
@@ -479,8 +479,8 @@ o77 = {2, 3}  | X_1 |
       {0, -1} | y   |
       {0, -1} | z   |
 
-              6       1
-o77 : Matrix S  <--- S
+              6      1
+o77 : Matrix S  <-- S
 
 i78 : R = K[X_1..X_3,Degrees => {{-2,-3},{-2,-4},{-2,-5}}];
 
@@ -489,7 +489,7 @@ i79 : phi = map(R,S,{X_1,X_2,X_3,0,0,0})
 o79 = map (R, S, {X , X , X , 0, 0, 0})
                    1   2   3
 
-o79 : RingMap R <--- S
+o79 : RingMap R <-- S
 
 i80 : P = prune (phi ** P);
 
@@ -499,8 +499,8 @@ o81 = {2, 3} | X_1 |
       {2, 4} | X_2 |
       {2, 5} | X_3 |
 
-              3       1
-o81 : Matrix R  <--- R
+              3      1
+o81 : Matrix R  <-- R
 
 i82 : evenPart P
 
@@ -733,7 +733,7 @@ i109 : psi = map(K,B)
 
 o109 = map (K, B, {0, 0, 0})
 
-o109 : RingMap K <--- B
+o109 : RingMap K <-- B
 
 i110 : apply(10, i -> rank (psi ** Ext^i(M,coker vars B)))
 
