@@ -68,6 +68,7 @@ vector Matrix := f -> (
      new target f from {f}
     )
 vector List := v -> vector matrix apply(splice v, i -> {i});
+vector RingElement := vector Number := x -> vector {x}
 
 -----------------------------------------------------------------------------
 
@@ -78,7 +79,9 @@ entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
 expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
 net Vector := v -> net expression v
-toExternalString Vector :=
+describe Vector := v -> Describe expression FunctionApplication(
+    vector, (describe module v, describe \ flatten entries matrix v))
+toExternalString Vector := toString @@ describe
 toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
 --html Vector := v -> html expression v
@@ -115,8 +118,10 @@ lift(Vector,InexactNumber') :=
 lift(Vector,RingElement) :=
 lift(Vector,Number) := Vector => o -> (v,S) -> vector (lift(v#0,S))
 
++ Vector := Vector => identity
 - Vector := Vector => v -> new class v from {-v#0}
 Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
+Vector * Number := Vector * RingElement := Vector => (v,r) -> vector(v#0 * r)
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
 Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
@@ -150,6 +155,10 @@ new Module from Sequence := (Module,x) -> (
      	       symbol ring => R,
      	       symbol numgens => rawRank rM
      	       })) x
+
+vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
+vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
+vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
 
 -- TODO: deprecate these
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
