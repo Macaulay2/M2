@@ -41,10 +41,9 @@ net Command := toString Command := toExternalString Command := f -> (
      )
 
 toExternalString Function := f -> (
-     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
-     t := locate f;
-     if t === null then error "can't convert anonymous function to external string"
-     else error("can't convert anonymous function (",toString t,") to external string")
+     if hasAttribute(f,ReverseDictionary)
+     then toString getAttribute(f,ReverseDictionary)
+     else error("can't convert anonymous function ",net f," to external string")
      )
 
 net Function := toString Function := f -> (
