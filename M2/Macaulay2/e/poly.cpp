@@ -522,31 +522,28 @@ bool PolyRing::is_homogeneous(const ring_elem f) const
 {
   if (!is_graded()) return false;
   if (begin(f) == end(f)) return true;
-  auto DM = degree_monoid();
-  auto degf = DM->make_one();
+  auto D = degree_monoid();
+  auto degf = D->make_one();
   Nterm& t = *begin(f);
   M_->multi_degree(t.monom, degf);
   for (Nterm& t : f)
     {
-      auto e = DM->make_one();
+      auto e = D->make_one();
       M_->multi_degree(t.monom, e);
-      if (EQ != DM->compare(degf, e))
+      if (EQ != D->compare(degf, e))
         return false;
     }
   return true;
 }
 
-void PolyRing::degree(const ring_elem f, monomial degf) const
-{
-  multi_degree(f, degf);
-}
-
+// TODO: what's the relationship between PolyRing and PolynomialRing?
+// PolyRing has no M_, but PolynomialRing has no multi_degree implemented
 bool PolyRing::multi_degree(const ring_elem f, monomial degf) const
 {
-  auto DM = degree_monoid();
+  auto D = degree_monoid();
   if (begin(f) == end(f) || M_->n_vars() == 0)
     {
-      DM->one(degf);
+      D->one(degf);
       return true;
     }
   bool result = true;
@@ -554,22 +551,22 @@ bool PolyRing::multi_degree(const ring_elem f, monomial degf) const
   M_->multi_degree(t.monom, degf);
   for (Nterm& t : f)
     {
-      auto e = DM->make_one();
+      auto e = D->make_one();
       M_->multi_degree(t.monom, e);
-      if (EQ != DM->compare(degf, e))
+      if (EQ != D->compare(degf, e))
         {
           result = false;
-          DM->lcm(degf, e, degf);
+          D->lcm(degf, e, degf);
         }
     }
-  // for (int i = 0; i < DM->monomial_size(); i++)
+  // for (int i = 0; i < D->monomial_size(); i++)
   //   std::cout << degf[i] << " , ";
   // std::cout << std::endl;
   return result;
 }
 
 void PolyRing::degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const
 {
@@ -594,7 +591,7 @@ void PolyRing::degree_weights(const ring_elem f,
 ring_elem PolyRing::homogenize(const ring_elem f,
                                int v,
                                int d,
-                               M2_arrayint wts) const
+                               const std::vector<int> &wts) const
 {
   // assert(wts[v] != 0);
   // If an error occurs, then return 0, and set gError.
@@ -606,7 +603,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
     {
       M_->to_expvector(a.monom, exp);
       auto e = exponents::weight(n_vars(), exp, wts);
-      if (((d - e) % wts->array[v]) != 0)
+      if (((d - e) % wts[v]) != 0)
         {
           // We cannot homogenize, so clean up and exit.
           result->next = NULL;
@@ -614,7 +611,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
           result = NULL;
           return result;
         }
-      exp[v] += (d - e) / wts->array[v];
+      exp[v] += (d - e) / wts[v];
       if (is_skew_ && skew_.is_skew_var(v) && exp[v] > 1) continue;
       result->next = new_term();
       result = result->next;
@@ -628,14 +625,16 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   return head.next;
 }
 
-ring_elem PolyRing::homogenize(const ring_elem f, int v, M2_arrayint wts) const
+ring_elem PolyRing::homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const
 {
   Nterm *result = NULL;
   if (POLY(f) == NULL) return result;
   int lo, hi;
   degree_weights(f, wts, lo, hi);
-  assert(wts->array[v] != 0);
-  int d = (wts->array[v] > 0 ? hi : lo);
+  assert(wts[v] != 0);
+  int d = (wts[v] > 0 ? hi : lo);
   return homogenize(f, v, d, wts);
 }
 
@@ -1824,7 +1823,7 @@ struct part_elem : public our_new_delete
   Nterm *inresult;
 };
 
-ring_elem *PolyRing::get_parts(const M2_arrayint wts,
+ring_elem *PolyRing::get_parts(const std::vector<int> &wts,
                                const ring_elem f,
                                long &result_len) const
 {
@@ -1838,7 +1837,7 @@ ring_elem *PolyRing::get_parts(const M2_arrayint wts,
   return NULL;
 }
 
-ring_elem PolyRing::get_part(const M2_arrayint wts,
+ring_elem PolyRing::get_part(const std::vector<int> &wts,
                              const ring_elem f,
                              bool lobound_given,
                              bool hibound_given,

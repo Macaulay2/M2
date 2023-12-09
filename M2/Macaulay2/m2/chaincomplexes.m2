@@ -124,7 +124,8 @@ net ChainComplex := C -> (
      else (
 	  a := s#0;
 	  b := s#-1;
-	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
+	  horizontalJoin between(" <-- ", apply(a .. b,i ->
+		  stack (net moduleAbbrv(C_i, C_i)," ",net i)))))
 
 texMath ChainComplex := C -> (
      complete C;
@@ -132,7 +133,7 @@ texMath ChainComplex := C -> (
      if # s === 0 then "0" else
      concatenate apply(s,i->(
 	     if i>s#0 then "\\,\\xleftarrow{" | texMath short C.dd_i | "}\\,",
-	     texUnder(texMath C_i,i)
+	     texUnder(texMath moduleAbbrv(C_i, C_i),i)
 	     ))
       )
 

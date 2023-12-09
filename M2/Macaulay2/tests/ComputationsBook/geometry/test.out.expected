@@ -22,7 +22,7 @@ i4 : cubicMap = map(ringP1,ringP3,{s^3, s^2*t, s*t^2, t^3})
                             3   2      2   3
 o4 = map (ringP1, ringP3, {s , s t, s*t , t })
 
-o4 : RingMap ringP1 <--- ringP3
+o4 : RingMap ringP1 <-- ringP3
 
 i5 : idealCubic = kernel cubicMap
 
@@ -45,8 +45,8 @@ i7 : M = matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}}
 o7 = | x_0 x_1 x_2 |
      | x_1 x_2 x_3 |
 
-                  2            3
-o7 : Matrix ringP3  <--- ringP3
+                  2           3
+o7 : Matrix ringP3  <-- ringP3
 
 i8 : idealCubic3 = minors(2, M)
 
@@ -72,8 +72,8 @@ i12 : gens idealCubic
 
 o12 = | x_2^2-x_1x_3 x_1x_2-x_0x_3 x_1^2-x_0x_2 |
 
-                   1            3
-o12 : Matrix ringP3  <--- ringP3
+                   1           3
+o12 : Matrix ringP3  <-- ringP3
 
 i13 : 0 == (gens idealCubic)%(gens idealCubic3)
 
@@ -87,8 +87,8 @@ i15 : f = vars ringP3
 
 o15 = | x_0 x_1 x_2 x_3 |
 
-                   1            4
-o15 : Matrix ringP3  <--- ringP3
+                   1           4
+o15 : Matrix ringP3  <-- ringP3
 
 i16 : OmegaP3 = kernel f
 
@@ -107,8 +107,8 @@ o17 = {1} | -x_1 0    -x_2 0    0    -x_3 |
       {1} | 0    x_1  x_0  -x_3 0    0    |
       {1} | 0    0    0    x_2  x_1  x_0  |
 
-                   4            6
-o17 : Matrix ringP3  <--- ringP3
+                   4           6
+o17 : Matrix ringP3  <-- ringP3
 
 i18 : OmegaP3=image g
 
@@ -129,8 +129,8 @@ o19 = {2} | x_2  0    0    x_3  |
       {2} | 0    -x_2 0    x_0  |
       {2} | 0    0    -x_2 -x_1 |
 
-                   6            4
-o19 : Matrix ringP3  <--- ringP3
+                   6           4
+o19 : Matrix ringP3  <-- ringP3
 
 i20 : G = res coker f
 
@@ -183,8 +183,8 @@ o22 = {1} | -x_1 -x_2 0    -x_3 0    0    |
       {1} | 0    x_0  x_1  0    0    -x_3 |
       {1} | 0    0    0    x_0  x_1  x_2  |
 
-                   4            6
-o22 : Matrix ringP3  <--- ringP3
+                   4           6
+o22 : Matrix ringP3  <-- ringP3
 
 i23 : degrees source G.dd_2
 
@@ -211,8 +211,8 @@ i26 : m = matrix{{x_0^3, x_1^2, x_2,x_3},{x_1^3,x_2^2,x_3,0}}
 o26 = | x_0^3 x_1^2 x_2 x_3 |
       | x_1^3 x_2^2 x_3 0   |
 
-                   2            4
-o26 : Matrix ringP3  <--- ringP3
+                   2           4
+o26 : Matrix ringP3  <-- ringP3
 
 i27 : I = minors(2,m)
 
@@ -268,8 +268,8 @@ o32 = {1} | 0    -x_3 -x_2 |
       {1} | 2x_2 x_1  -x_0 |
       {1} | -x_1 -x_0 0    |
 
-                   4            3
-o32 : Matrix ringP3  <--- ringP3
+                   4           3
+o32 : Matrix ringP3  <-- ringP3
 
 i33 : delta2 = delta1 // (gens OmegaP3res)
 
@@ -283,8 +283,8 @@ o33 = {2} | 0  1  0  |
       {2} | -1 0  0  |
       {2} | 0  -1 0  |
 
-                   9            3
-o33 : Matrix ringP3  <--- ringP3
+                   9           3
+o33 : Matrix ringP3  <-- ringP3
 
 i34 : delta = map(OmegaP3res, module idealCubic, delta2)
 
@@ -657,13 +657,14 @@ i86 : g = homomorphism dualModule_{0}
 
 o86 = | x_0+15871x_5 5836x_4 x_2-2813x_5 |
 
-o86 : Matrix
+o86 : Matrix OS <-- L
 
 i87 : toP2 = g*basis(0,L)
 
 o87 = | x_0+15871x_5 5836x_4 x_2-2813x_5 |
 
-o87 : Matrix
+                          3
+o87 : Matrix OS <-- ringP5
 
 i88 : ringXcan = ringP5/idealXcan
 

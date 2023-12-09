@@ -2195,10 +2195,11 @@ void Solution::make(int m, const complex* s_s)
 
 int degree_ring_elem(const PolyRing* R, ring_elem re)
 {
-  RingElement* RE = RingElement::make_raw(R, re);
-  M2_arrayint d_array = RE->multi_degree();
-  delete RE;
-  return d_array->array[0];
+  auto d = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(1));
+  R->multi_degree(re, d);
+  // for a single graded ring, the first entry in a monomial array
+  // is the negative of the degree, which is the second entry
+  return -d[0];
 }
 
 void print_complex_matrix(int size, const double* A)

@@ -1282,7 +1282,7 @@ toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionAppli
 lineOnTop := (s) -> concatenate(width s : "-") || s
 net MapExpression := x-> if #x>2 then horizontalJoin(net x#0, " <--",
 		    lineOnTop net x#2,
-		    "-- ", net x#1) else net x#0 | " <--- " | net x#1
+		    "-- ", net x#1) else net x#0 | " <-- " | net x#1
 texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 

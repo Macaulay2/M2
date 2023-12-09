@@ -52,13 +52,63 @@ document {
      PARA{},
      SeeAlso => {"generators","subquotient"}}
 
-document {
-     Key => {vector,(vector,List),(vector,Matrix)},
-     Headline => "make a vector",
-     TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",
-     PARA{},
-     "The elements a,b,c,... must be elements of the same ring, or be
-     convertible to elements of the same ring."}
+doc ///
+  Key
+    vector
+    (vector, Module, List)
+    (vector, Module, Matrix)
+    (vector, Module, Number)
+    (vector, Module, RingElement)
+    (vector, List)
+    (vector, Matrix)
+    (vector, Number)
+    (vector, RingElement)
+  Headline
+    make a vector
+  Usage
+    vector(M, x)
+    vector x
+  Inputs
+    M:Module
+    x:{List, Matrix, Number, RingElement}
+  Outputs
+    :Vector
+  Description
+    Text
+      For any $R$-module $M$, there exists an isomorphism between
+      $\operatorname{Hom}(R,M)$ and $M$ given by $f\mapsto f(1)$.
+      Therefore, internally all @TO Vector@ objects representing
+      elements of $M$ correspond to matrices with source $R^1$ and
+      target $M$.  A vector may be constructed from such a matrix using
+      @SAMP "vector"@.
+    Example
+      R = QQ[x,y,z]
+      f = matrix {{x}, {y}, {z}}
+      vector f
+    Text
+      Alternatively, $M$ may be specified if it differs from the target
+      of the matrix.
+    Example
+      g = matrix {{1}, {2}, {3}}
+      vector(R^3, g)
+    Text
+      If the matrix would have only one element, then that element may be
+      given instead.  If the module is not provided, then the result will
+      be an element of the free module of rank one of the ring of the given
+      element.
+    Example
+      vector 2
+      vector x
+      vector(R^1, 2)
+    Text
+      Alternatively, a list of elements may be provided.  If the module is
+      not specified, then the vector will be an element of a free module over
+      a ring containing all the elements of the list.
+    Example
+      vector {1, 2, 3}
+      vector {1, x, y}
+      vector(R^3, {1, 2, 3})
+///
 
 document {
      Key => {super,(super, GradedModule),(super, CoherentSheaf),(super, Matrix),(super, Module),(super,Vector)},

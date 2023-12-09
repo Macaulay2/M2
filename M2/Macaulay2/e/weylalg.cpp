@@ -54,7 +54,7 @@ bool WeylAlgebra::initialize_weyl(M2_arrayint derivs,
   if (_homog_var < 0)
     {
       bool isgraded = true;
-      const Monoid *D = degree_monoid();
+      auto D = degree_monoid();
       monomial degxD = D->make_one();
       for (int j = 0; j < _nderivatives; j++)
         {
@@ -72,7 +72,7 @@ bool WeylAlgebra::initialize_weyl(M2_arrayint derivs,
   else
     {
       this->setIsGraded(true);
-      const Monoid *D = degree_monoid();
+      auto D = degree_monoid();
       const_monomial degh = M_->degree_of_var(_homog_var);
       monomial deg2h = D->make_one();
       monomial degxD = D->make_one();

@@ -83,7 +83,6 @@ class Matrix : public EngineObject
   static const Matrix *make(const MonomialIdeal *mi);
 
   const Ring *get_ring() const { return rows()->get_ring(); }
-  const Monoid *degree_monoid() const { return get_ring()->degree_monoid(); }
   /* The following 5 routines will go away, or change name */
   vec &operator[](int i) { return mEntries[i]; }
   const vec &operator[](int i) const { return mEntries[i]; }
@@ -176,7 +175,7 @@ class Matrix : public EngineObject
 
   // degrees
   bool is_homogeneous() const;
-  Matrix *homogenize(int v, M2_arrayint wts) const;
+  Matrix *homogenize(int v, const std::vector<int> &wts) const;
 
   // Simplification of column set
   Matrix *simplify(int n) const;

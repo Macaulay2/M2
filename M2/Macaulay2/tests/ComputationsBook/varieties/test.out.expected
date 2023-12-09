@@ -113,8 +113,8 @@ i22 : basis T
 
 o22 = | 1 x x2 x3 x4 x4y x4yz x4yz2 x4yz3 x4yz4 x4z x4z2 x4z3 x4z4 x3y x3yz x3yz2 x3yz3 x3yz4 x3z x3z2 x3z3 x3z4 x2y x2yz x2yz2 x2yz3 x2yz4 x2z x2z2 x2z3 x2z4 xy xyz xyz2 xyz3 xyz4 xz xz2 xz3 xz4 y y2 y3 y4 y4z y4z2 y4z3 y4z4 y3z y3z2 y3z3 y3z4 y2z y2z2 y2z3 y2z4 yz yz2 yz3 yz4 z z2 z3 z4 |
 
-              1       65
-o22 : Matrix T  <--- T
+              1      65
+o22 : Matrix T  <-- T
 
 i23 : use R;
 
@@ -214,8 +214,8 @@ i35 : G = gens gb ourpoints''
 
 o35 = | x13-1 y-x6 z5+x5+x4-1 |
 
-              1       3
-o35 : Matrix S  <--- S
+              1      3
+o35 : Matrix S  <-- S
 
 i36 : ideal selectInSubring(1,G)
 
@@ -258,8 +258,8 @@ o39 = {-9}  | x3y6   |
       {-15} | x10y5  |
       {-15} | x15    |
 
-              20       1
-o39 : Matrix R   <--- R
+              20      1
+o39 : Matrix R   <-- R
 
 i40 : degree M
 
@@ -275,8 +275,8 @@ i42 : basis S
 
 o42 = | 1 x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x14y x14yz x14yz2 x14yz3 x14yz4 x14z x14z2 x14z3 x14z4 x13y x13yz x13yz2 x13yz3 x13yz4 x13z x13z2 x13z3 x13z4 x12y x12yz x12yz2 x12yz3 x12yz4 x12z x12z2 x12z3 x12z4 x11y x11yz x11yz2 x11yz3 x11yz4 x11z x11z2 x11z3 x11z4 x10y x10y2 x10y3 x10y3z x10y3z2 x10y3z3 x10y3z4 x10y2z x10y2z2 x10y2z3 x10y2z4 x10yz x10yz2 x10yz3 x10yz4 x10z x10z2 x10z3 x10z4 x9y x9y2 x9y3 x9y3z x9y3z2 x9y3z3 x9y3z4 x9y2z x9y2z2 x9y2z3 x9y2z4 x9yz x9yz2 x9yz3 x9yz4 x9yz5 x9yz6 x9yz7 x9yz8 x9yz9 x9z x9z2 x9z3 x9z4 x9z5 x9z6 x9z7 x9z8 x9z9 x8y x8y2 x8y3 x8y3z x8y3z2 x8y3z3 x8y3z4 x8y2z x8y2z2 x8y2z3 x8y2z4 x8yz x8yz2 x8yz3 x8yz4 x8yz5 x8yz6 x8yz7 x8yz8 x8yz9 x8z x8z2 x8z3 x8z4 x8z5 x8z6 x8z7 x8z8 x8z9 x7y x7y2 x7y3 x7y3z x7y3z2 x7y3z3 x7y3z4 x7y2z x7y2z2 x7y2z3 x7y2z4 x7yz x7yz2 x7yz3 x7yz4 x7yz5 x7yz6 x7yz7 x7yz8 x7yz9 x7z x7z2 x7z3 x7z4 x7z5 x7z6 x7z7 x7z8 x7z9 x6y x6y2 x6y3 x6y4 x6y5 x6y5z x6y5z2 x6y5z3 x6y5z4 x6y4z x6y4z2 x6y4z3 x6y4z4 x6y3z x6y3z2 x6y3z3 x6y3z4 x6y2z x6y2z2 x6y2z3 x6y2z4 x6yz x6yz2 x6yz3 x6yz4 x6yz5 x6yz6 x6yz7 x6yz8 x6yz9 x6z x6z2 x6z3 x6z4 x6z5 x6z6 x6z7 x6z8 x6z9 x5y x5y2 x5y3 x5y4 x5y5 x5y5z x5y5z2 x5y5z3 x5y5z4 x5y4z x5y4z2 x5y4z3 x5y4z4 x5y3z x5y3z2 x5y3z3 x5y3z4 x5y3z5 x5y3z6 x5y3z7 x5y3z8 x5y3z9 x5y2z x5y2z2 x5y2z3 x5y2z4 x5y2z5 x5y2z6 x5y2z7 x5y2z8 x5y2z9 x5yz x5yz2 x5yz3 x5yz4 x5yz5 x5yz6 x5yz7 x5yz8 x5yz9 x5z x5z2 x5z3 x5z4 x5z5 x5z6 x5z7 x5z8 x5z9 x4y x4y2 x4y3 x4y4 x4y5 x4y5z x4y5z2 x4y5z3 x4y5z4 x4y4z x4y4z2 x4y4z3 x4y4z4 x4y3z x4y3z2 x4y3z3 x4y3z4 x4y3z5 x4y3z6 x4y3z7 x4y3z8 x4y3z9 x4y2z x4y2z2 x4y2z3 x4y2z4 x4y2z5 x4y2z6 x4y2z7 x4y2z8 x4y2z9 x4yz x4yz2 x4yz3 x4yz4 x4yz5 x4yz6 x4yz7 x4yz8 x4yz9 x4yz10 x4yz11 x4yz12 x4yz13 x4yz14 x4z x4z2 x4z3 x4z4 x4z5 x4z6 x4z7 x4z8 x4z9 x4z10 x4z11 x4z12 x4z13 x4z14 x3y x3y2 x3y3 x3y4 x3y5 x3y5z x3y5z2 x3y5z3 x3y5z4 x3y4z x3y4z2 x3y4z3 x3y4z4 x3y3z x3y3z2 x3y3z3 x3y3z4 x3y3z5 x3y3z6 x3y3z7 x3y3z8 x3y3z9 x3y2z x3y2z2 x3y2z3 x3y2z4 x3y2z5 x3y2z6 x3y2z7 x3y2z8 x3y2z9 x3yz x3yz2 x3yz3 x3yz4 x3yz5 x3yz6 x3yz7 x3yz8 x3yz9 x3yz10 x3yz11 x3yz12 x3yz13 x3yz14 x3z x3z2 x3z3 x3z4 x3z5 x3z6 x3z7 x3z8 x3z9 x3z10 x3z11 x3z12 x3z13 x3z14 x2y x2y2 x2y3 x2y4 x2y5 x2y6 x2y7 x2y8 x2y8z x2y8z2 x2y8z3 x2y8z4 x2y7z x2y7z2 x2y7z3 x2y7z4 x2y6z x2y6z2 x2y6z3 x2y6z4 x2y5z x2y5z2 x2y5z3 x2y5z4 x2y4z x2y4z2 x2y4z3 x2y4z4 x2y3z x2y3z2 x2y3z3 x2y3z4 x2y3z5 x2y3z6 x2y3z7 x2y3z8 x2y3z9 x2y2z x2y2z2 x2y2z3 x2y2z4 x2y2z5 x2y2z6 x2y2z7 x2y2z8 x2y2z9 x2yz x2yz2 x2yz3 x2yz4 x2yz5 x2yz6 x2yz7 x2yz8 x2yz9 x2yz10 x2yz11 x2yz12 x2yz13 x2yz14 x2z x2z2 x2z3 x2z4 x2z5 x2z6 x2z7 x2z8 x2z9 x2z10 x2z11 x2z12 x2z13 x2z14 xy xy2 xy3 xy4 xy5 xy6 xy7 xy8 xy9 xy10 xy11 xy11z xy11z2 xy11z3 xy11z4 xy10z xy10z2 xy10z3 xy10z4 xy9z xy9z2 xy9z3 xy9z4 xy8z xy8z2 xy8z3 xy8z4 xy7z xy7z2 xy7z3 xy7z4 xy6z xy6z2 xy6z3 xy6z4 xy6z5 xy6z6 xy6z7 xy6z8 xy6z9 xy5z xy5z2 xy5z3 xy5z4 xy5z5 xy5z6 xy5z7 xy5z8 xy5z9 xy4z xy4z2 xy4z3 xy4z4 xy4z5 xy4z6 xy4z7 xy4z8 xy4z9 xy3z xy3z2 xy3z3 xy3z4 xy3z5 xy3z6 xy3z7 xy3z8 xy3z9 xy2z xy2z2 xy2z3 xy2z4 xy2z5 xy2z6 xy2z7 xy2z8 xy2z9 xyz xyz2 xyz3 xyz4 xyz5 xyz6 xyz7 xyz8 xyz9 xyz10 xyz11 xyz12 xyz13 xyz14 xz xz2 xz3 xz4 xz5 xz6 xz7 xz8 xz9 xz10 xz11 xz12 xz13 xz14 y y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13 y14 y14z y14z2 y14z3 y14z4 y13z y13z2 y13z3 y13z4 y12z y12z2 y12z3 y12z4 y11z y11z2 y11z3 y11z4 y10z y10z2 y10z3 y10z4 y9z y9z2 y9z3 y9z4 y9z5 y9z6 y9z7 y9z8 y9z9 y8z y8z2 y8z3 y8z4 y8z5 y8z6 y8z7 y8z8 y8z9 y7z y7z2 y7z3 y7z4 y7z5 y7z6 y7z7 y7z8 y7z9 y6z y6z2 y6z3 y6z4 y6z5 y6z6 y6z7 y6z8 y6z9 y5z y5z2 y5z3 y5z4 y5z5 y5z6 y5z7 y5z8 y5z9 y4z y4z2 y4z3 y4z4 y4z5 y4z6 y4z7 y4z8 y4z9 y4z10 y4z11 y4z12 y4z13 y4z14 y3z y3z2 y3z3 y3z4 y3z5 y3z6 y3z7 y3z8 y3z9 y3z10 y3z11 y3z12 y3z13 y3z14 y2z y2z2 y2z3 y2z4 y2z5 y2z6 y2z7 y2z8 y2z9 y2z10 y2z11 y2z12 y2z13 y2z14 yz yz2 yz3 yz4 yz5 yz6 yz7 yz8 yz9 yz10 yz11 yz12 yz13 yz14 z z2 z3 z4 z5 z6 z7 z8 z9 z10 z11 z12 z13 z14 |
 
-              1       690
-o42 : Matrix S  <--- S
+              1      690
+o42 : Matrix S  <-- S
 
 i43 : tally apply(flatten entries basis(S),degree)
 
@@ -307,8 +307,8 @@ i44 : basis(19,S)
 
 o44 = | x14yz4 x9yz9 x4yz14 |
 
-              1       3
-o44 : Matrix S  <--- S
+              1      3
+o44 : Matrix S  <-- S
 
 i45 : (x+y+z)^19
 
@@ -330,8 +330,8 @@ i47 : C.dd_1
 
 o47 = | x3y6 x7y4 x2y9 x2y4z5 x11y2 xy12 x6y2z5 xy7z5 xy2z10 x15 y15 x10z5 y10z5 x5z10 y5z10 z15 |
 
-              1       16
-o47 : Matrix R  <--- R
+              1      16
+o47 : Matrix R  <-- R
 
 i48 : set flatten entries gens M - set flatten entries C.dd_1
 
@@ -359,8 +359,8 @@ o49 = {9}  | -y3 -x4 0   -z5 0   0   0   0   0   0   0   0   0   0   0   0   0  
       {15} | 0   0   0   0   0   0   0   0   0   0   0   0   x   0   0   0   0   0   0   0   0   0   0   0   y5  0   -z5 |
       {15} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   xy2 0   0   0   0   x5  y5  |
 
-              16       27
-o49 : Matrix R   <--- R
+              16      27
+o49 : Matrix R   <-- R
 
 i50 : C.dd_3
 
@@ -392,8 +392,8 @@ o50 = {12} | z5  0   0   0   0   0   0   0   0   0   0   0   |
       {20} | 0   0   0   0   0   0   0   0   0   0   0   y2  |
       {20} | 0   0   0   0   0   0   0   0   x   0   0   0   |
 
-              27       12
-o50 : Matrix R   <--- R
+              27      12
+o50 : Matrix R   <-- R
 
 i51 : A = {{1, 1, 1, 1},
            {1, 5,10,25}}
@@ -430,8 +430,8 @@ i56 : h = basis({25,219}, R)
 
 o56 = | p14n2d2q7 p9n8d2q6 p9n5d6q5 p9n2d10q4 p4n14d2q5 p4n11d6q4 p4n8d10q3 p4n5d14q2 p4n2d18q |
 
-              1       9
-o56 : Matrix R  <--- R
+              1      9
+o56 : Matrix R  <-- R
 
 i57 : rank source h
 
@@ -476,8 +476,8 @@ o61 = {-6}  | p5q-n6     |
       {-2}  | xd-n2      |
       {-2}  | xy-p       |
 
-              18       1
-o61 : Matrix S   <--- S
+              18      1
+o61 : Matrix S   <-- S
 
 i62 : S' = S/I
 

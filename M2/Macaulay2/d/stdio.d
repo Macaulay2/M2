@@ -6,7 +6,9 @@ use gmp;
 use expr;
 use stdio0;
 
-header "#include \"../system/m2fileinterface.h\"";
+header "#include \"../system/m2fileinterface.h\"
+        #include <readline/history.h>";
+
 --provide a constant representation of default buffer size for a file
 --this must be set the same as the bufsize in stdio0.d
 bufsize ::= 4 * 1024;
@@ -715,7 +717,12 @@ export filbuf(o:file):int := (
 	       r = (
 		    if o.infd == NOFD 
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
-		    else read(o.infd,o.inbuffer,n,o.insize)));
+		    else (
+			ret := read(o.infd,o.inbuffer,n,o.insize);
+			if ret > 0 && o == stdIO then (
+			    buf := tocharstarn(o.inbuffer, ret - 1);
+			    Ccode(void, "add_history(", buf, ")"));
+			ret)));
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
 	       return r;
