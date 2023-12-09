@@ -493,6 +493,11 @@ LeftIdeal / LeftIdeal := Module => (I,J) -> module I / module J
 
 -- two-sided ideal expected
 Module / Ideal := Module => (M,J) -> M / (J * M)
+Module / LeftIdeal := Module => (M,J) -> (
+    if isFreeModule M and rank M == 1 
+    then comodule J
+    else "not defined for a left ideal (in general)" 
+    )
 
 LeftIdeal#AfterPrint = LeftIdeal#AfterNoPrint = I ->  (LeftIdeal," of ",ring I)
 Ideal#AfterPrint = Ideal#AfterNoPrint = I ->  (Ideal," of ",ring I)
@@ -509,12 +514,9 @@ RingElement + LeftIdeal := Number + LeftIdeal := ((r,I) -> ideal r + I) @@ tosam
 LeftIdeal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 
 
-Matrix % LeftIdeal := Matrix => ((f,I) -> 
-     if numRows f === 1
-     then f % gb I
-     else 
-     error "not implemented (defined for two-sided ideals; see `code (symbol %, Matrix, Ideal)`)"
-     ) @@ samering
+-- Matrix % Ideal is a convenience function... and so is Matrix % LeftIdeal 
+-- the result of the latter has even less (natural) meaning as a map (on a one-sided module)
+Matrix % LeftIdeal := Matrix => ((f,I) -> map(target f, source f, apply(entries f, row -> matrix row % gb I))) @@ samering
 
 -- two-sided ideal expected (note: R/I is a problem !!!)
 Matrix % Ideal := Matrix => ((f,I) -> 

@@ -132,6 +132,7 @@ coerce(Thing,Thing) := (x,Y) -> if instance(x,Y) then x else error("no method fo
 coerce(Ideal,Ring) := quotient @@ first
 coerce(Thing,Nothing) := (x,Nothing) -> null		    -- avoid using this one, to save time earlier
 coerce(Ring,Ideal) := (R,Ideal) -> ideal R		    -- avoid using this one, to save time earlier
+coerce(Ring,Ideal) := (R,LeftIdeal) -> ideal R		    -- avoid using this one, to save time earlier
 preprocessResultTemplate = (narrowers,r) -> (
      if instance(r,ZZ) then r = r:null;
      r = apply(sequence r,x -> if x === null then Thing else x);
@@ -192,7 +193,9 @@ triv := R -> (
 flattenRing Ring := opts -> R -> (
      resultTemplate := preprocessResultTemplate(1:Ring, opts.Result);
      k := opts.CoefficientRing;
-     if k === R or k === null and (R.?isBasic or isField R) then flatCoerce(R,resultTemplate,triv R)
+     if k === R or k === null and (R.?isBasic or isField R) and 
+     not isWeylAlgebra R -- for WeylAlgebra flatCoerce doesn't work as is, since R/I is not defined for a left ideal I 
+     then flatCoerce(R,resultTemplate,triv R)
      else unable())
 
 flattenRing GaloisField := opts -> (cacheValue (symbol flattenRing => opts)) (F -> (
