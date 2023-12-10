@@ -2021,6 +2021,7 @@ assert Equation(value x_"c", "foo")
 assert Equation(value (int * x_"d"), 4)
 x_"a" = 5
 assert Equation(value x_"a", 5)
+assert BinaryOperation(symbol ===, teststructtype x, x)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
