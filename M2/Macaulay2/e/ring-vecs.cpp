@@ -814,7 +814,7 @@ bool Ring::vec_is_homogeneous(const FreeModule *F, const vec f) const
 
 void Ring::vec_degree_weights(const FreeModule *F,
                               const vec f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const
 {
@@ -842,12 +842,12 @@ vec Ring::vec_homogenize(const FreeModule *F,
                          const vec f,
                          int v,
                          int d,
-                         M2_arrayint wts) const
+                         const std::vector<int> &wts) const
 // Any terms which can't be homogenized are silently set to 0
 {
   vecterm head;
   vecterm *result = &head;
-  assert(wts->array[v] != 0);
+  assert(wts[v] != 0);
   // If an error occurs, then return 0, and set ERROR
 
   for (vec w = f; w != 0; w = w->next)
@@ -867,14 +867,14 @@ vec Ring::vec_homogenize(const FreeModule *F,
 vec Ring::vec_homogenize(const FreeModule *F,
                          const vec f,
                          int v,
-                         M2_arrayint wts) const
+                         const std::vector<int> &wts) const
 {
   vecterm *result = NULL;
   if (f == NULL) return result;
   int lo, hi;
   vec_degree_weights(F, f, wts, lo, hi);
-  assert(wts->array[v] != 0);
-  int d = (wts->array[v] > 0 ? hi : lo);
+  assert(wts[v] != 0);
+  int d = (wts[v] > 0 ? hi : lo);
   return vec_homogenize(F, f, v, d, wts);
 }
 

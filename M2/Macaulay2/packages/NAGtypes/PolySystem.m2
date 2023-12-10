@@ -106,13 +106,16 @@ toCCpolynomials (Matrix,InexactField) := (F,C) -> (
     )    
 
 -- evaluate = method()
+
 evaluate (Matrix,AbstractPoint) := (M,p) -> evaluate(M, matrix p)
 evaluate (PolySystem,Matrix) := (P,X) -> evaluate(P.PolyMap,X)
 evaluate (Matrix,Matrix) := (M,X) ->  (
     C := coefficientRing ring M;
+    RX := ring X;
+    commonField := commonRing{1_C, 1_RX};--try promote(1_C, RX) then RX else try promote(1_RX, C) then C else error "common field not found";
     -- work around a sub(CC,QQ) bug!!!
     if instance(ring X, InexactField) then 
-	M = toCCpolynomials(M,C=ring X);   
+	M = toCCpolynomials(M,C=commonField);   
     if numColumns X == 1 then X = transpose X;
     if numRows X == 1 then sub(M,sub(X,C))
     else error "expected a row or a column vector"

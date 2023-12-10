@@ -458,9 +458,10 @@ document {
      "Notice that as is usual in Macaulay2, the target comes before the source.",
      PARA{},
      "Macaulay2 doesn't display the source and target, unless they are both free
-     modules.  Use ", TO target, " and ", TO source, " to get them.  The ",
-     TO matrix, " routine recovers the matrix of free modules between the
-     generators of the source and target.",
+     modules or have been assigned to global variables.  Use ", TO target,
+     " and ", TO source, " to get them.  The ", TO matrix,
+     " routine recovers the matrix of free modules between the generators of the
+     source and target.",
      EXAMPLE {
 	  "source F",
 	  "target F == R^1",

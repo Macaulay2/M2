@@ -9,7 +9,7 @@ newPackage(
 	{ Name => "Harrison Tsai" }
 	},
     Keywords => {"D-modules"},
-    PackageExports => { "Dmodules", "HolonomicSystems" },
+    PackageExports => { "WeylAlgebras", "HolonomicSystems" },
     PackageImports => {
 	"PrimaryDecomposition",
 	"ReesAlgebra",
@@ -20,8 +20,8 @@ newPackage(
     DebuggingMode => false
     )
 
--- local symbols defined in Dmodules
-importFrom_"Dmodules" {
+-- local symbols defined in WeylAlgebras
+importFrom_"WeylAlgebras" {
     "raw", "WtoT", "isGeneric",
     "IntRing", "createIntRing", "RtoIR",
     "pInfo", "createThetaRing", "ThetaRing",
@@ -102,7 +102,7 @@ export {
     }
 load "./BernsteinSato/annFs.m2"
 export {
-    -- TODO: AnnG is in Dmodules
+    -- TODO: AnnG is in WeylAlgebras
     "AnnFs",
     "AnnIFs", -- deduplicate
     "polynomialAnnihilator",
@@ -297,7 +297,7 @@ load "./BernsteinSato/DOC/other.m2"
 end--
 restart
 uninstallPackage "BernsteinSato"
-installPackage "Dmodules"
+installPackage "WeylAlgebras"
 installPackage "HolonomicSystems"
 installPackage "BernsteinSato"
 installPackage("BernsteinSato", RerunExamples => true)

@@ -18,8 +18,7 @@ ReducedGB *ReducedGB::create(
   // has local variables, we create a different class.
 
   bool over_ZZ = originalR0->coefficient_type() == Ring::COEFF_ZZ;
-  M2_arrayint local_vars = originalR0->getMonoid()->getNonTermOrderVariables();
-  bool is_local = (local_vars && local_vars->len > 0);
+  bool is_local = originalR0->getMonoid()->numNonTermOrderVariables() > 0;
   GBRing *R = originalR0->get_gb_ring();
 
   if (over_ZZ)

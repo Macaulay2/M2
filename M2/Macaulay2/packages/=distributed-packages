@@ -12,6 +12,7 @@ Saturation
 PrimaryDecomposition
 FourierMotzkin
 Dmodules
+WeylAlgebras
 HolonomicSystems
 BernsteinSato
 Depth
@@ -256,4 +257,7 @@ PolyominoIdeals
 MatchingFields
 CellularResolutions
 SagbiGbDetection
+A1BrouwerDegrees
 QuadraticIdealExamplesByRoos
+TerraciniLoci
+RInterface

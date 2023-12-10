@@ -791,8 +791,8 @@ document {
 
 document {
      Key => Vector,
-     Headline => "the class of all elements of free modules that are handled by the engine",
-     "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a free
+     Headline => "the class of all elements of modules that are handled by the engine",
+     "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA{},
      SeeAlso => {"engine", "Module"}}

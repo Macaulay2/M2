@@ -74,6 +74,12 @@ evaluate (GateSystem,Matrix,Matrix) := (F,p,x) -> (
     evaluate(F#"SLP", matrix p | matrix x)
     )
 
+-- syntactic sugar for creating instances of GateSystem
+gateSystem (BasicList, BasicList, GateMatrix) := (P, X, F) -> (
+    GM := if numcols F == 1 then F else transpose F;
+    gateSystem(gateMatrix{toList P}, gateMatrix{toList X}, GM)
+    )
+
 TEST ///
 -* GateSystem *-
 declareVariable \ {x,y,t}
@@ -258,7 +264,7 @@ evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> 
 evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
 evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
-specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
+-*specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
     if numcols M != 1 then error "1-column matrix expected"; 
     if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
@@ -267,17 +273,20 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
     SPH.Parameters = M;                                                                                                                                       
     SPH                                                                                                                                                       
     ) 
+*-
 
 -- !!! replaces makeGateMatrix
 gateSystem PolySystem := GateSystem => F -> if F#?GateSystem then F#GateSystem else 
   F#GateSystem = gateSystem(F,parameters F)
 gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> ( 
     R := ring F; 
-    if not isSubset(P, gens R) then "some parameters are not among generators of the ring";
-    X := getVarGates R;
-    variables := gateMatrix {X_(positions(gens R, x->not member(x,P)))};  
-    parameters := gateMatrix {X_(positions(gens R, x->member(x,P)))};
-    gateSystem(parameters, variables, gatePolynomial F.PolyMap)
+    (S, R2S) := flattenRing R;
+    params := R2S \ P;
+    if not isSubset(params, gens S) then error"some parameters are not among generators of the ring";
+    X := getVarGates S;
+    variables := gateMatrix {X_(positions(gens S, x->not member(x,params)))};  
+    parameters := gateMatrix {X_(positions(gens S, x->member(x,params)))};
+    gateSystem(parameters, variables, gatePolynomial R2S F.PolyMap)
     ) 
  
 -- !!! a general problem: some methods need PolySystem to be changed to GateSystem

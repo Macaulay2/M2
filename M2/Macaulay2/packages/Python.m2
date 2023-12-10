@@ -6,7 +6,7 @@ pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.6",
-    Date => "November 6, 2023",
+    Date => "December 4, 2023",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -27,7 +27,8 @@ newPackage("Python",
 
 -*
 
-0.6 (2023-11-06, M2 1.23)
+0.6 (2023-12-04, M2 1.23)
+* add expression, net, texMath, describe, and toExternalString methods
 * move initialization of python from M2 startup package load time
 * update int <-> ZZ conversion for python 3.12
 * use a constant hash for None
@@ -99,7 +100,8 @@ importFrom_Core {
     "pythonTupleNew",
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString",
-    "pythonWrapM2Function"
+    "pythonWrapM2Function",
+    "toExternalFormat"
 }
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
@@ -120,7 +122,14 @@ pythonInitialize()
 
 pythonHelp = Command (() -> pythonValue ///help()///)
 
-toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
+expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
+toString PythonObject := toString @@ expression
+net PythonObject := net @@ expression
+texMath PythonObject := texMath @@ expression
+
+describe PythonObject := x -> Describe FunctionApplication(pythonValue,
+    expression x@@"__repr__"())
+toExternalString PythonObject := toExternalFormat @@ describe
 
 PythonObject.synonym = "python object"
 PythonObject#AfterPrint = x -> (
@@ -641,6 +650,38 @@ assert Equation(toPython 10^100, pythonValue "10**100")
 assert Equation(toPython(-10^100), pythonValue "-10**100")
 assert Equation(value pythonValue "10**100", 10^100)
 assert Equation(value pythonValue "-10**100", -10^100)
+///
+
+TEST ///
+-- describe
+assert instance(describe toPython 5, Describe)
+checkDescribe = x -> assert BinaryOperation(symbol ===,
+    value value describe toPython x, x)
+checkDescribe true
+checkDescribe 5
+checkDescribe 3.14159
+checkDescribe (1 + 2*ii)
+checkDescribe "foo"
+checkDescribe (1, 3, 5, 7, 9)
+checkDescribe {1, 3, 5, 7, 9}
+checkDescribe set {1, 3, 5, 7, 9}
+checkDescribe hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkDescribe null
+
+-- toExternalString
+assert instance(toExternalString toPython 5, String)
+checkToExternalString = x -> assert BinaryOperation(symbol ===,
+    value value toExternalString toPython x, x)
+checkToExternalString true
+checkToExternalString 5
+checkToExternalString 3.14159
+checkToExternalString (1 + 2*ii)
+checkToExternalString "foo"
+checkToExternalString (1, 3, 5, 7, 9)
+checkToExternalString {1, 3, 5, 7, 9}
+checkToExternalString set {1, 3, 5, 7, 9}
+checkToExternalString hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkToExternalString null
 ///
 
 

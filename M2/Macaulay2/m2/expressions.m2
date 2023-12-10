@@ -450,6 +450,8 @@ scan(assocList, opClass -> (
 	    installMethod(opClass#operator,opClass#unit,opClass,(x,y) -> y);
 	    )
 ))
+ZeroExpression * Expression := (x,y) -> x
+Expression * ZeroExpression := (x,y) -> y
        - ZeroExpression     := identity
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
@@ -587,8 +589,8 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
 -- TODO: move this to latex.m2
 keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",
-    symbol .. => "\\,{.}{.}\\, ",
-    symbol ..< => "\\,{.}{.}{<}\\, ",
+    symbol .. => "\\,{.}{.}\\,",
+    symbol ..< => "\\,{.}{.}{<}\\,",
     symbol <= => "\\le ",
     symbol >= => "\\ge ",
     symbol => => "\\Rightarrow ",
@@ -606,9 +608,9 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol >> => "\\gg ",
     symbol ~ => "\\sim ",
     symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    symbol _ => "\\_ ",
-    symbol { => "\\{ ",
-    symbol } => "\\} ",
+    symbol _ => "\\_",
+    symbol { => "\\{",
+    symbol } => "\\}",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
     symbol # => "\\#",
@@ -1082,21 +1084,15 @@ html Product := v -> (
      )
 *-
 
-texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
+texMathSuperscript := v -> (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+    if precedence v#0 < p or class v#0 === Superscript or class v#0 === Power then x = "\\left(" | x | "\\right)"; -- precedence of double superscript
     concatenate(x,"^{",y,"}") -- no braces around x
-    )
-
-texMath Superscript := v -> if v#1 === moduleZERO then "0" else (
-    p := precedence v;
-    x := texMath v#0;
-    y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
-    concatenate(x,"^{",y,"}") -- no braces around x
-    )
+)
+texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else texMathSuperscript v
+texMath Superscript := v -> if v#1 === moduleZERO then "0" else texMathSuperscript v
 
 texMath Subscript := v -> (
      p := precedence v;
@@ -1146,6 +1142,7 @@ texMath SparseMonomialVectorExpression := v -> (
      )
 
 texMath Table := m -> (
+    if any(m, x-> not instance(x,VisibleList)) then m = apply(m, x -> {x});
     if m#?0 then concatenate(
 	"\\begin{array}{", #m#0: "c", "}", newline,
 	between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
@@ -1285,7 +1282,7 @@ toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionAppli
 lineOnTop := (s) -> concatenate(width s : "-") || s
 net MapExpression := x-> if #x>2 then horizontalJoin(net x#0, " <--",
 		    lineOnTop net x#2,
-		    "-- ", net x#1) else net x#0 | " <--- " | net x#1
+		    "-- ", net x#1) else net x#0 | " <-- " | net x#1
 texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 

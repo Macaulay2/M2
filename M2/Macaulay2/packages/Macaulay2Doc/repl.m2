@@ -708,6 +708,15 @@ document {
 	  be provided for the argument ", TT "x", "."
 	  },
      PARA{
+	  "Alternatively, values can be provided after defining the memoized function
+	  using the syntax ", TT "f x = v", ". A slightly more efficient implementation of the above would be"
+	  },
+     EXAMPLE lines ///
+     fib = memoize( n -> fib(n-1) + fib(n-2) )
+     fib 0 = fib 1 = 1;
+     fib 28
+     ///,
+     PARA{
 	  "The function ", TT "memoize", " operates by constructing
 	  a ", TO "MutableHashTable", ", in which the arguments are used
 	  as keys for accessing the return value of the function.  This mutable hash table

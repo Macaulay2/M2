@@ -45,8 +45,8 @@ const PolynomialRing* simplePolynomialRing(const Ring* kk,
 
   const Monoid* M = Monoid::create(
                              monorder,
-                             names,
                              degreeRing(1),
+                             names,
                              degs,
                              heft
                              );
