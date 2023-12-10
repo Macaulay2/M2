@@ -1631,6 +1631,7 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignType, ForeignObject)
+    (symbol SPACE, ForeignStructType, ForeignObject)
   Headline
     cast a foreign object to the given foreign type
   Usage
