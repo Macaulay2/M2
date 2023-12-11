@@ -1,7 +1,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
     Version => "0.3",
-    Date => "December 4, 2023",
+    Date => "December 10, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -15,7 +15,7 @@ newPackage("ForeignFunctions",
 
 -*
 
-0.3 (2023-12-04, M2 1.23)
+0.3 (2023-12-10, M2 1.23)
 * add subscripted assignment for various pointer types
 * add support for GMP integers
 * add support for describe, expression, toExternalString, and toString
@@ -463,6 +463,8 @@ foreignStructType(String, VisibleList) := (name, x) -> (
 
 ForeignStructType VisibleList := (T, x) -> new T from x
 ForeignStructType HashTable := (T, x) -> T apply(keys x, k -> k => x#k)
+ForeignStructType ForeignObject := lookup(
+    symbol SPACE, ForeignType, ForeignObject)
 
 isAtomic ForeignStructType := T -> T.Atomic
 
@@ -1629,6 +1631,7 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignType, ForeignObject)
+    (symbol SPACE, ForeignStructType, ForeignObject)
   Headline
     cast a foreign object to the given foreign type
   Usage
@@ -2018,6 +2021,7 @@ assert Equation(value x_"c", "foo")
 assert Equation(value (int * x_"d"), 4)
 x_"a" = 5
 assert Equation(value x_"a", 5)
+assert BinaryOperation(symbol ===, teststructtype x, x)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
