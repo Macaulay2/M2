@@ -271,7 +271,7 @@ Hom(Module, Module) := Module => (M,N) -> (
      Y := youngest(M.cache.cache,N.cache.cache);
      if Y#?(Hom,M,N) then return Y#(Hom,M,N);
      H := trim kernel (transpose presentation M ** N);
-     H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f);
+     H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
      Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
      H.cache.formation = FunctionApplication { Hom, (M,N) };
      H)
