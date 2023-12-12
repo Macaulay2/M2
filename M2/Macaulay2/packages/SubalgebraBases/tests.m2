@@ -483,7 +483,7 @@ assert(
 TEST ///
 R = QQ[x, y, MonomialOrder => Lex]
 S = subring({x^2,x*y-y,2*x+y^3,y^4})
-ans =  matrix {{x*y-y, x+(1/2)*y^3, y^4, x*y^3+(1/4)*y^6, y^10-4*y^7, x*y^6+y^6-4*y^3, y^9-6*y^6+16*y^3, y^6-4*y^3}}
+ans =  matrix {{x+(1/2)*y^3, x*y-y, y^4, x*y^3+(1/4)*y^6, x*y^6+(2/9)*y^9-(1/3)*y^6-(4/9)*y^3, y^6-4*y^3, y^9-8*y^3}}
 assert(time subalgebraBasis(S,PrintLevel=>0,Limit=>30) == ans)
 ///
 
