@@ -465,7 +465,7 @@ oneStepGVD(Ideal, RingElement) := opts -> (I, y) -> (
         lexRing := (cr) monoid([indeterminates, MonomialOrder=>Lex]);
         contractedRing := (cr) monoid([remainingIndets]);
 
-        -- pull everthing into the new rings and get a (reduced) Gröbner basis
+        -- pull everything into the new rings and get a (reduced) Gröbner basis
         J := sub(I, lexRing);
         z := sub(y, lexRing);
         G := if opts.UniversalGB then J_* else first entries gens gb J;
@@ -1654,7 +1654,7 @@ doc///
                         [isWeaklyGVD, AllowSub]
                         [oneStepGVD, AllowSub]
                 Headline
-                        allows for geometric vertex decompositions up to subsitution
+                        allows for geometric vertex decompositions up to substitution
                 Description
                         Text
                                 An optional input for @TO isGVD@, @TO isWeaklyGVD@, @TO oneStepGVD@, and @TO findOneStepGVD@.
@@ -1672,7 +1672,7 @@ doc///
                                 $${\rm in}_y(I) = C_{y,I} \cap ( N_{y,I} + \langle y^d \rangle )$$ for some integer $d > 0$.
 
                                 This is equivalent to requiring that $d_i$ is either $0$ or $d$ for all $i$.
-                                It is also equivalent to the usual definition of @TO oneStepGVD@ after subsituting $y$ for each
+                                It is also equivalent to the usual definition of @TO oneStepGVD@ after substituting $y$ for each
                                 occurrence of $y^d$ in the reduced Gröbner basis, hence the name.
 
                         Example
@@ -1700,7 +1700,7 @@ doc///
                                 isGVD(I, AllowSub=>true)
 
                         Text
-                                The modification for @TO isWeaklyGVD@ allowing substition is completely analogous.
+                                The modification for @TO isWeaklyGVD@ allowing substitution is completely analogous.
 
                         Text
                                 Klein and Rajchgot observed that each geometric vertex decomposition of an unmixed, saturated, and homogeneous ideal
