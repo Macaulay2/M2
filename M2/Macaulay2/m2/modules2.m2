@@ -273,14 +273,35 @@ Hom(Module, Ring)   :=
 Hom(Module, Ideal)  := Module => opts -> (M, N) -> Hom(M, module N, opts)
 
 Hom(Module, Module) := Module => opts -> (M, N) -> (
-     Y := youngest(M.cache.cache,N.cache.cache);
-     if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-     trim' := if opts.MinimalGenerators then trim else identity;
-     H := trim' kernel (transpose presentation M ** N);
-     H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
-     Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
-     H.cache.formation = FunctionApplication { Hom, (M,N) };
-     H)
+    -- TODO: take advantage of cached results with higher e
+    e := opts.DegreeLimit;
+    -- M.cache is a hashless (hence ageless) CacheTable, but
+    -- M.cache.cache is a MutableHashTable, hence has an age.
+    Y := youngest(M.cache.cache, N.cache.cache);
+    if Y#?(Hom, M, N, e) then return Y#(Hom, M, N, e);
+    H := runHooks((Hom, Module, Module), (opts, M, N), Strategy => opts.Strategy);
+    if H === null then error "Hom: no strategy found for the given input";
+    trim' := if opts.MinimalGenerators then trim else identity;
+    -- a hack: we really want to type "Hom(M, N) = ..."
+    H = Y#(Hom, M, N, e) = if opts.MinimalGenerators then trim H else H;
+    H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f + degree f);
+    H.cache.formation = FunctionApplication { Hom, (M, N, DegreeLimit => e) };
+    H)
+
+basicHom = (M, N) -> kernel(transpose presentation M ** N)
+addHook((Hom, Module, Module), Strategy => Default,  (opts, M, N) -> basicHom(M, N))
+addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
+    -- This algorithm accepts DegreeLimit, but is slower in some cases
+    e := opts.DegreeLimit;
+    -- TODO: any other cases which should be excluded?
+    if e === null then return null;
+    A := presentation M; (G, F) := (target A, source A); -- M <-- G <-- F
+    B := presentation N; (L, K) := (target B, source B); -- N <-- L <-- K
+    piN := inducedMap(N, L, generators N);
+    psi := (Hom(A, N) * Hom(G, piN)) // Hom(F, piN);
+    p := id_(basicHom(G, L)) | map(basicHom(G, L), basicHom(F, K), 0);
+    r := syz(psi | -Hom(F, B), DegreeLimit => e);
+    image(Hom(G, piN) * p * r)))
 
 adjoint' = method()
 adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (

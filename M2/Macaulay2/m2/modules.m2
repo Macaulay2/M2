@@ -404,7 +404,7 @@ super(Module) := Module => (M) -> (
 -- Homomorphisms and Endomorphisms
 -----------------------------------------------------------------------------
 
-Hom = method(Options => { MinimalGenerators => false })
+Hom = method(Options => { DegreeLimit => null, MinimalGenerators => false, Strategy => null })
 End = options Hom >> o -> M -> Hom(M, M, o)
 
 -----------------------------------------------------------------------------

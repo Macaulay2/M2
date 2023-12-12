@@ -310,6 +310,14 @@ isHomogeneous phi
 M = coker phi
 Ext^1(M,M)   -- mismatch here, because trimming of result is ignored
 
+-----------------------------------------------------------------------------
+-- tests for giving DegreeLimit
+
+R = QQ[x,y,z]
+elapsedTime Hom(R^100, R^100); -- <0.005s
+elapsedTime Hom(R^{-100}, R^100, DegreeLimit => 0); -- <0.04s
+elapsedTime assert(numcols basis(0, oo) == 515100) -- <0.02s
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test hom.out"
 -- End:
