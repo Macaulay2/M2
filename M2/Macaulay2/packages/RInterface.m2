@@ -1,7 +1,7 @@
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
     Version => "0.1",
-    Date => "November 18, 2023",
+    Date => "December 14, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
