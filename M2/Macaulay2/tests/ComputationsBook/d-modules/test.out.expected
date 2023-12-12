@@ -481,7 +481,7 @@ o89 = ideal (x D  + 2x D  - 5, D  - D )
               1 1     2 2       1    2
 
 o89 : LeftIdeal of QQ[x ..x , D ..D ]
-                   1   2   1   2
+                       1   2   1   2
 
 i90 : PolySols I
 
