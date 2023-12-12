@@ -2,7 +2,7 @@
 newPackage(
 	"SubalgebraBases",
 	AuxiliaryFiles => true,
-    	Version => "1.3",
+    	Version => "1.4",
     	Date => "September 2022",
     	Authors => {
 	    {Name => "Michael Burr",
@@ -10,12 +10,12 @@ newPackage(
 	     HomePage => "https://cecas.clemson.edu/~burr2/"},
 	    {Name => "Oliver Clarke",
 	     Email => "oliver.clarke.crgs@gmail.com",
-	     HomePage => "https://sites.google.com/view/oclarke-homepage/"},
+	     HomePage => "https://www.oliverclarkemath.com/"},
 	    {Name => "Timothy Duff",
 	     Email => "timduff@uw.edu",
 	     HomePage => "https://timduff35.github.io/timduff35/"},
 	    {Name => "Jackson Leaman",
-		 Email => "jacksonleaman@gmail.com"},
+	     Email => "jacksonleaman@gmail.com"},
 	    {Name => "Nathan Nichols", 
 	     Email => "nathannichols454@gmail.com"},
 	    {Name => "Elise Walker",
@@ -28,7 +28,7 @@ newPackage(
 	    },
     	Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-  	DebuggingMode => true -- set to true only during development
+  	DebuggingMode => false -- set to true only during development
         )
 
 needs "./SubalgebraBases/exports.m2"
