@@ -468,11 +468,11 @@ PipeDream.synonym = "pipe dream"
 PipeDream == List := (D,L) -> toList D == L
 
 -- for printing
-expression       PipeDream := D -> netList(toList D, Boxes => false)
+-- for printing
+net       PipeDream := D -> netList(toList D, Boxes => false)
 describe         PipeDream := D -> Describe (expression PipeDream) (expression toList D)
-net              PipeDream :=      net @@ expression
 -- TODO: texMath PipeDream := ...
-toString         PipeDream := toString @@ expression
+toString         PipeDream := toString @@ net
 toExternalString PipeDream := toString @@ describe
 
 

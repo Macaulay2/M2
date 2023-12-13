@@ -532,7 +532,6 @@ doc ///
 
 undocumented {
     (symbol==, PipeDream, List),
-    (expression, PipeDream),
     (describe, PipeDream),
     (net, PipeDream),
     -- (texMath, PipeDream),
