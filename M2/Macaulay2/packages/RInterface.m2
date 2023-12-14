@@ -44,7 +44,7 @@ export {
 --------------------
 -- initialization --
 --------------------
-RHOME = get "!R RHOME | tr -d '\n'"
+RHOME = last lines get "!R RHOME"
 Rlib = openSharedLibrary("R", FileName => RHOME | "/lib/libR." |
     if version#"operating system" == "Darwin" then "dylib" else "so")
 
