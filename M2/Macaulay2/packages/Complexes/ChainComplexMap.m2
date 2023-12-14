@@ -646,7 +646,7 @@ homomorphism ComplexMap := ComplexMap => (h) -> (
     homomorphism(i + degree h, h_i, target h)
     )
 
-homomorphism' ComplexMap := ComplexMap => (f) -> (
+homomorphism' ComplexMap := ComplexMap => opts -> (f) -> (
     R := ring f;
     C := source f;
     D := target f;
@@ -655,7 +655,7 @@ homomorphism' ComplexMap := ComplexMap => (f) -> (
     (lo,hi) := concentration C;
     -- want R^1[0] --> H
     -- TODO: remove this line if the next actually works...: g := map(H_d, R^1, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
-    g := map(H_d,, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
+    g := map(H_d,, matrix(for i from lo to hi list {matrix homomorphism'(f_i, opts)}));
     map(H, complex source g, hashTable {0 => g}, Degree=>d)
     )
 

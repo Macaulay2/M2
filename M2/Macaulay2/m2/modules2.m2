@@ -288,11 +288,11 @@ adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
      F := source m;
      inducedMap(H, F ** G, reshape(super H, F ** G, super m),Verify=>false))
 
-adjoint = method()
-adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
+adjoint = method(Options => options Hom)
+adjoint (Matrix,Module,Module) := Matrix => opts -> (m,F,G) -> (
      -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
      H := target m;
-     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m),Verify=>false))
+     inducedMap(Hom(G,H,opts), F, reshape(Hom(cover G,ambient H,opts), F, super m),Verify=>false))
 
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
@@ -303,13 +303,10 @@ homomorphism Matrix := Matrix => (f) -> (
      or not rank source f == 1 then error "expected source of map to be free of rank 1";
      H.cache.homomorphism f)
 
-homomorphism' = method()
-homomorphism' Matrix := Matrix => (f) -> (
-     -- from a map M-->N produce a map R^1 -> Hom(M,N)
-     R := ring f;
-     M := source f;
-     adjoint(f,R^1,M)
-     )
+homomorphism' = method(Options => options Hom)
+homomorphism' Matrix := Matrix => opts -> f -> (
+    -- from a map M-->N produce a map R^1 -> Hom(M,N)
+    adjoint(f, module ring f, source f, opts))
 
 compose = method()
 compose(Module, Module, Module) := Matrix => (M,N,P) -> (
