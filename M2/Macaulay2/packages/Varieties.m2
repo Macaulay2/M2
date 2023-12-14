@@ -488,13 +488,14 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
 
 -- TODO: this is the slowest part of hh and euler, look into other strategies
 -- TODO: simplify caching here and in minimalPresentation
-cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { Minimize => true })
+cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { MinimalGenerators => true })
 cotangentSheaf ProjectiveVariety := opts -> (cacheValue (symbol cotangentSheaf => opts)) (X -> (
 	R := ring X; checkRing R;
 	S := ring(F := presentation R);
 	(d, e) := (vars S ** R, jacobian F ** R); -- assert(d * e == 0);
-	prune' := if opts.Minimize then prune else identity;
-	prune' sheaf(X, homology(d, e))))
+	om := sheaf(X, homology(d, e));
+	if opts.MinimalGenerators
+	then minimalPresentation om else om))
 cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
