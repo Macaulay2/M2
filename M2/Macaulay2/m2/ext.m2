@@ -105,9 +105,10 @@ Ext(Ideal, Module) :=
 Ext(Module, Ring)   :=
 Ext(Module, Ideal)  := Module => opts -> (M, N) -> Ext(module M, module N, opts)
 Ext(Module, Module) := Module => opts -> (M, N) -> (
-  cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
-  cacheKey := (Ext,M,N);
-  if cacheModule.cache#?cacheKey then return cacheModule.cache#cacheKey;
+    -- c.f. caching in Hom(Module,Module)
+    cacheModule := youngest(M.cache.cache, N.cache.cache);
+    cacheKey := (Ext,M,N);
+    if cacheModule#?cacheKey then return cacheModule#cacheKey;
   B := ring M;
   if B =!= ring N
   then error "expected modules over the same ring";
@@ -117,7 +118,7 @@ Ext(Module, Module) := Module => opts -> (M, N) -> (
   then error "'Ext' received modules over an inhomogeneous ring";
   if not isHomogeneous N or not isHomogeneous M
   then error "'Ext' received an inhomogeneous module";
-  if N == 0 or M == 0 then return cacheModule.cache#cacheKey = B^0;
+  if N == 0 or M == 0 then return cacheModule#cacheKey = B^0;
   p := presentation B;
   A := ring p;
   I := ideal mingens ideal p;
@@ -193,7 +194,7 @@ Ext(Module, Module) := Module => opts -> (M, N) -> (
        );
   -- now compute the total Ext as a single homology module
   prune' := if opts.Prune then prune else identity;
-  cacheModule.cache#cacheKey =
+  cacheModule#cacheKey =
   prune' homology(DeltaBar,DeltaBar))
 
 -- Local Variables:
