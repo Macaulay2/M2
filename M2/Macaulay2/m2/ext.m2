@@ -11,22 +11,16 @@ ExtOptions = new OptionTable from {
      }
 
 Ext = new ScriptedFunctor from {
-     argument => (
-	  (M,N) -> (
+    argument => ExtOptions >> opts -> (M, N) -> (
 	       f := lookup(Ext,class M,class N);
 	       if f === null then noMethod(Ext,(M,N),{false,false});
-	       f(M,N))),	  
-     superscript => (
-	  i -> new ScriptedFunctor from {
-	       argument => (X -> (
-	       	    	 ExtOptions >> opts -> (M,N) -> (
+	(f opts)(M, N)),
+    superscript => i -> new ScriptedFunctor from {
+	argument => ExtOptions >> opts -> (M, N) -> (
 		    	      f := lookup(Ext,class i,class M,class N);
 		    	      if f === null then noMethod(Ext,(i,M,N),{false,false,false});
-		    	      (f opts)(i,M,N))
-	       	    	 ) X
-	       	    )
+	     (f opts)(i, M, N))
 	       }
-	  )
      }
 
 -- TODO: Ext^i(R, S) should work as well
@@ -109,8 +103,8 @@ Ext(Ideal, Ring)   :=
 Ext(Ideal, Ideal)  :=
 Ext(Ideal, Module) :=
 Ext(Module, Ring)   :=
-Ext(Module, Ideal)  := Module => ExtOptions >> opts -> (M, N) -> Ext(module M, module N, opts)
-Ext(Module, Module) := Module => ExtOptions >> opts -> (M, N) -> (
+Ext(Module, Ideal)  := Module => opts -> (M, N) -> Ext(module M, module N, opts)
+Ext(Module, Module) := Module => opts -> (M, N) -> (
   cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
   cacheKey := (Ext,M,N);
   if cacheModule.cache#?cacheKey then return cacheModule.cache#cacheKey;

@@ -10,18 +10,12 @@ TorOptions = new OptionTable from {
 
 
 Tor = new ScriptedFunctor from {
-     subscript => (
-	  i -> new ScriptedFunctor from {
-	       argument => (X -> (
-	       	    	 TorOptions >> opts -> (M,N) -> (
+    subscript => i -> new ScriptedFunctor from {
+	argument => TorOptions >> opts -> (M, N) -> (
 		    	      f := lookup(Tor,class i,class M,class N);
-		    	      if f === null then error "no method available"
-		    	      else (f opts)(i,M,N)
-			      )
-	       	    	 ) X
-	       	    )
+		if f === null then error "no method available";
+	    (f opts)(i, M, N))
 	       }
-	  )
      }
 
 -- see packages/Complexes/Tor.m2 for Tor(ZZ, Module, Matrix) and Tor(ZZ, Matrix, Module)

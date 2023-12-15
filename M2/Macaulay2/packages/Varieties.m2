@@ -553,19 +553,22 @@ sheafHom(SheafOfRings,  CoherentSheaf) := CoherentSheaf => o -> (O, G) -> sheafH
 sheafHom(CoherentSheaf, SheafOfRings)  := CoherentSheaf => o -> (F, O) -> sheafHom(F,   O^1, o)
 sheafHom(SheafOfRings,  SheafOfRings)  := CoherentSheaf => o -> (O, R) -> sheafHom(O^1, R^1, o)
 
+-- see m2/ext.m2
+ExtOptions = options Ext.argument
+
 sheafExt = new ScriptedFunctor from {
-     superscript => (
-	  i -> new ScriptedFunctor from {
-	       argument => (M,N) -> (
-		    f := lookup(sheafExt,class i,class M,class N);
-		    if f === null then error "no method available"
-		    else f(i,M,N)
-		    )
-	       }
-	  )
-     }
-sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (
-     (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G)
+    superscript => (
+	i -> new ScriptedFunctor from {
+	    argument => ExtOptions >> opts -> (M, N) -> (
+		f := lookup(sheafExt,class i,class M,class N);
+		if f === null then error "no method available";
+		(f opts)(i,M,N))
+	    }
+	)
+    }
+
+sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => opts -> (
+     (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G, opts)
      )
 
 sheafExt(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> sheafExt^n(O^1,G)
