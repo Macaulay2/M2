@@ -106,10 +106,10 @@ screwsExample = n -> (
     vs := for i from 1 to n list transpose matrix {{v_(i,1),v_(i,2),v_(i,3)}};
     ws := for i from 1 to n list transpose matrix {{w_(i,1),w_(i,2),w_(i,3)}};
     T := matrix{
-	{0,-t_3,t_2},
-	{t_3,0,-t_1},
-	{-t_2,t_1,0}
-	};
+        {0,-t_3,t_2},
+        {t_3,0,-t_1},
+        {-t_2,t_1,0}
+        };
     cfold := L -> fold(L,(a,b)->a||b);
     ys := cfold for i from 1 to n list cfold {ws#(i-1), T*ws#(i-1)+vs#(i-1)};
     B := sagbi(transpose ys, Limit=>100, SubductionMethod => "Engine");

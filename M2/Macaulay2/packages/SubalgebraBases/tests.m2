@@ -15,7 +15,7 @@
 -- 11) invariants of A3 to degree 15
 -- 12) Invariants of A^1, with a nilpotent action on A^5
 -- 13) Invariants of A^1, with a nilpotent action on A^3
--- 14) invariants of SL_2 on V + V + Sym^2(V) 
+-- 14) invariants of SL_2 on V + V + Sym^2(V)
 -- 15) invariants of A^1, with a nilpotent action of A^4
 -- 16) elimination order on ambient ring
 -- 17) 'symmetric' quadratic artin ideal in 2x3 variables
@@ -26,7 +26,7 @@
 -- 22) GRevLex version of 20 (one more generator than 20)
 -- 23) Test for %
 -- 24) Test for groebnerMembershipTest
--- 25) subductionQuotient 
+-- 25) subductionQuotient
 -- 26) subring intersection (infinite sagbi basis)
 -- 27) subring intersection in a quotient ring (finite sagbi basis)
 -- 28) Bruns/Conca example 1
@@ -116,7 +116,7 @@ assert(not isSAGBI A)
 invariantsSn = (n) -> (
     -- ring of invariants of S_n
     x := getSymbol "x";
-    R := ZZ/101[x_0 .. x_(n-1)]; 
+    R := ZZ/101[x_0 .. x_(n-1)];
     map(R^1, n, (j,i) -> sum apply(toList(x_0 .. x_(n-1)), x->x^(i+1))))
 
 genericminors = (minorsize,rowsize,colsize) -> (
@@ -154,7 +154,7 @@ assert(
 TEST ///
 invariantsSn = (n) -> (
     -- ring of invariants of S_n
-    R = ZZ/101[x_0 .. x_(n-1)]; 
+    R = ZZ/101[x_0 .. x_(n-1)];
     map(R^1, n, (j,i) -> sum apply(toList(x_0 .. x_(n-1)), x->x^(i+1))))
 
 F = invariantsSn 3
@@ -171,13 +171,13 @@ assert(
 TEST ///
 invariantsSn = (n) -> (
     -- ring of invariants of S_n
-    R = ZZ/101[x_0 .. x_(n-1)]; 
+    R = ZZ/101[x_0 .. x_(n-1)];
     map(R^1, n, (j,i) -> sum apply(toList(x_0 .. x_(n-1)), x->x^(i+1))))
 
 F = invariantsSn 4
 ans = matrix {{x_0+x_1+x_2+x_3,
-        x_0*x_1+x_0*x_2+x_1*x_2+x_0*x_3+x_1*x_3+x_2*x_3, 
-        x_0*x_1*x_2+x_0*x_1*x_3+x_0*x_2*x_3+x_1*x_2*x_3, 
+        x_0*x_1+x_0*x_2+x_1*x_2+x_0*x_3+x_1*x_3+x_2*x_3,
+        x_0*x_1*x_2+x_0*x_1*x_3+x_0*x_2*x_3+x_1*x_2*x_3,
         x_0*x_1*x_2*x_3}}
 assert(
      time subalgebraBasis(F,Limit=>10)
@@ -362,9 +362,9 @@ x = symbol x
 kk = ZZ/101
 R = kk[t,x_1..x_5, MonomialOrder=>Lex, Degrees=>{1,5,4,3,2,1}]
 ans = matrix {{x_5, t*x_5+x_4, t^2*x_5+2*t*x_4+2*x_3, x_3*x_5+50*x_4^2, t^3*x_5+3*t^2*x_4+6*t*x_3+6*x_2, t*x_3*x_5+50*t*x_4^2-49*x_2*x_5+50*x_3*x_4, t^4*x_5+4*t^3*x_4+12*t^2*x_3+24*t*x_2+24*x_1, x_2*x_5^2-x_3*x_4*x_5+34*x_4^3, x_1*x_5-x_2*x_4-50*x_3^2, t^2*x_3*x_5+50*t^2*x_4^2+3*t*x_2*x_5-t*x_3*x_4+3*x_2*x_4-2*x_3^2, t*x_2*x_5^2-t*x_3*x_4*x_5+34*t*x_4^3+x_2*x_4*x_5-35*x_3^2*x_5+34*x_3*x_4^2, t^3*x_3*x_5+50*t^3*x_4^2-46*t^2*x_2*x_5+49*t^2*x_3*x_4+6*t*x_1*x_5+3*t*x_2*x_4-3*t*x_3^2+6*x_1*x_4-3*x_2*x_3, t^2*x_2*x_5^2-t^2*x_3*x_4*x_5+34*t^2*x_4^3+2*t*x_2*x_4*x_5+31*t*x_3^2*x_5-33*t*x_3*x_4^2-2*x_2*x_3*x_5+2*x_2*x_4^2+33*x_3^2*x_4, t^4*x_3*x_5+50*t^4*x_4^2+6*t^3*x_2*x_5-2*t^3*x_3*x_4+12*t^2*x_1*x_5+6*t^2*x_2*x_4-6*t^2*x_3^2+24*t*x_1*x_4-12*t*x_2*x_3+24*x_1*x_3-18*x_2^2, x_1*x_3*x_5+50*x_1*x_4^2-26*x_2^2*x_5-50*x_2*x_3*x_4-17*x_3^3, t^3*x_2*x_5^2-t^3*x_3*x_4*x_5+34*t^3*x_4^3+3*t^2*x_2*x_4*x_5-4*t^2*x_3^2*x_5+t^2*x_3*x_4^2-6*t*x_2*x_3*x_5+6*t*x_2*x_4^2-2*t*x_3^2*x_4-6*x_2^2*x_5+6*x_2*x_3*x_4+31*x_3^3, x_2^2*x_5^2-2*x_2*x_3*x_4*x_5-33*x_2*x_4^3-44*x_3^3*x_5-34*x_3^2*x_4^2, t^4*x_2*x_5^2-t^4*x_3*x_4*x_5+34*t^4*x_4^3+4*t^3*x_2*x_4*x_5-39*t^3*x_3^2*x_5+35*t^3*x_3*x_4^2-12*t^2*x_2*x_3*x_5+12*t^2*x_2*x_4^2-4*t^2*x_3^2*x_4-16*t*x_1*x_3*x_5+8*t*x_1*x_4^2-12*t*x_2^2*x_5+16*t*x_2*x_3*x_4-8*t*x_3^3-24*x_1*x_2*x_5+8*x_1*x_3*x_4+12*x_2^2*x_4-8*x_2*x_3^2, t*x_2^2*x_5^2-2*t*x_2*x_3*x_4*x_5-33*t*x_2*x_4^3-44*t*x_3^3*x_5-34*t*x_3^2*x_4^2+2*x_1*x_2*x_5^2-2*x_1*x_3*x_4*x_5-33*x_1*x_4^3-x_2^2*x_4*x_5+x_2*x_3^2*x_5-45*x_3^3*x_4, t^5*x_2*x_5^2-t^5*x_3*x_4*x_5+34*t^5*x_4^3+5*t^4*x_2*x_4*x_5+27*t^4*x_3^2*x_5-32*t^4*x_3*x_4^2-20*t^3*x_2*x_3*x_5+20*t^3*x_2*x_4^2+27*t^3*x_3^2*x_4-40*t^2*x_1*x_3*x_5+20*t^2*x_1*x_4^2-30*t^2*x_2^2*x_5+40*t^2*x_2*x_3*x_4-20*t^2*x_3^3-19*t*x_1*x_2*x_5+40*t*x_1*x_3*x_4-41*t*x_2^2*x_4-40*t*x_2*x_3^2+5*x_1^2*x_5-29*x_1*x_2*x_4-16*x_1*x_3^2-12*x_2^2*x_3, t^2*x_2^2*x_5^2-2*t^2*x_2*x_3*x_4*x_5-33*t^2*x_2*x_4^3-44*t^2*x_3^3*x_5-34*t^2*x_3^2*x_4^2+4*t*x_1*x_2*x_5^2-4*t*x_1*x_3*x_4*x_5+35*t*x_1*x_4^3-2*t*x_2^2*x_4*x_5+2*t*x_2*x_3^2*x_5+11*t*x_3^3*x_4+4*x_1*x_2*x_4*x_5-39*x_1*x_3^2*x_5+35*x_1*x_3*x_4^2+2*x_2^2*x_3*x_5-4*x_2^2*x_4^2+37*x_2*x_3^2*x_4+44*x_3^4, t^6*x_2*x_5^2-t^6*x_3*x_4*x_5+34*t^6*x_4^3+4*t^5*x_1*x_5^2+2*t^5*x_2*x_4*x_5-6*t^5*x_3^2*x_5+2*t^5*x_3*x_4^2+20*t^4*x_1*x_4*x_5-30*t^4*x_2*x_3*x_5+10*t^4*x_2*x_4^2+40*t^3*x_1*x_4^2+41*t^3*x_2^2*x_5-19*t^2*x_1*x_2*x_5+19*t^2*x_1*x_3*x_4+41*t^2*x_2^2*x_4+5*t*x_1^2*x_5-48*t*x_1*x_2*x_4+43*t*x_1*x_3^2+29*t*x_2^2*x_3+5*x_1^2*x_4+43*x_1*x_2*x_3+29*x_2^3, t^3*x_2^2*x_5^2-2*t^3*x_2*x_3*x_4*x_5-33*t^3*x_2*x_4^3-44*t^3*x_3^3*x_5-34*t^3*x_3^2*x_4^2+6*t^2*x_1*x_2*x_5^2-6*t^2*x_1*x_3*x_4*x_5+2*t^2*x_1*x_4^3-3*t^2*x_2^2*x_4*x_5+3*t^2*x_2*x_3^2*x_5-34*t^2*x_3^3*x_4+8*t*x_1^2*x_5^2-4*t*x_1*x_2*x_4*x_5-8*t*x_1*x_3^2*x_5+4*t*x_1*x_3*x_4^2+6*t*x_2^2*x_3*x_5-4*t*x_2^2*x_4^2+2*t*x_2*x_3^2*x_4+33*t*x_3^4+8*x_1^2*x_4*x_5-12*x_1*x_2*x_3*x_5-4*x_1*x_2*x_4^2+4*x_1*x_3^2*x_4+6*x_2^3*x_5+33*x_2*x_3^3, t^4*x_2^2*x_5^2-2*t^4*x_2*x_3*x_4*x_5-33*t^4*x_2*x_4^3-44*t^4*x_3^3*x_5-34*t^4*x_3^2*x_4^2+8*t^3*x_1*x_2*x_5^2-8*t^3*x_1*x_3*x_4*x_5-31*t^3*x_1*x_4^3-4*t^3*x_2^2*x_4*x_5+4*t^3*x_2*x_3^2*x_5+22*t^3*x_3^3*x_4+16*t^2*x_1^2*x_5^2-8*t^2*x_1*x_2*x_4*x_5-16*t^2*x_1*x_3^2*x_5+8*t^2*x_1*x_3*x_4^2+12*t^2*x_2^2*x_3*x_5-8*t^2*x_2^2*x_4^2+4*t^2*x_2*x_3^2*x_4-35*t^2*x_3^4+32*t*x_1^2*x_4*x_5-48*t*x_1*x_2*x_3*x_5-16*t*x_1*x_2*x_4^2+16*t*x_1*x_3^2*x_4+24*t*x_2^3*x_5+31*t*x_2*x_3^3+16*x_1^2*x_4^2-48*x_1*x_2*x_3*x_4-46*x_1*x_3^3+24*x_2^3*x_4-12*x_2^2*x_3^2}}
-F = matrix{{x_5, 
-        t*x_5+x_4, 
-        t^2*x_5+2*t*x_4+2*x_3, 
+F = matrix{{x_5,
+        t*x_5+x_4,
+        t^2*x_5+2*t*x_4+2*x_3,
         t^3*x_5+3*t^2*x_4+6*t*x_3+6*x_2,
         t^4*x_5+4*t^3*x_4+12*t^2*x_3+24*t*x_2+24*x_1}}
 assert(
@@ -383,9 +383,9 @@ kk = ZZ/101
 --R = kk[t,x_1,x_2,x_3, MonomialOrder=>Lex];
 R = kk[t,x_1..x_3, MonomialOrder=>Lex, Degrees=>{1,3,2,1}]
 ans = matrix {{x_3, t*x_3+x_2, t^2*x_3+2*t*x_2+2*x_1, x_1*x_3+50*x_2^2}}
-F = matrix{{x_3, 
-        t*x_3+x_2, 
-        t^2*x_3+2*t*x_2+2*x_1}} 
+F = matrix{{x_3,
+        t*x_3+x_2,
+        t^2*x_3+2*t*x_2+2*x_1}}
 assert(
      time subalgebraBasis(F,Limit=>200)
      ==
@@ -420,9 +420,9 @@ TEST ///
 x = symbol x
 kk = ZZ/101
 R = kk[t,x_1..x_4, MonomialOrder=>Lex, Degrees=>{1,4,3,2,1}]
-F = matrix{{x_4, 
-        t*x_4+x_3, 
-        t^2*x_4+2*t*x_3+2*x_2, 
+F = matrix{{x_4,
+        t*x_4+x_3,
+        t^2*x_4+2*t*x_3+2*x_2,
         t^3*x_4+3*t^2*x_3+6*t*x_2+6*x_1}}
 ans = matrix {{x_4, t*x_4+x_3, t^2*x_4+2*t*x_3+2*x_2, x_2*x_4+50*x_3^2, t^3*x_4+3*t^2*x_3+6*t*x_2+6*x_1, t*x_2*x_4+50*t*x_3^2-49*x_1*x_4+50*x_2*x_3, x_1*x_4^2-x_2*x_3*x_4+34*x_3^3,
       t^2*x_2*x_4+50*t^2*x_3^2+3*t*x_1*x_4-t*x_2*x_3+3*x_1*x_3-2*x_2^2, t*x_1*x_4^2-t*x_2*x_3*x_4+34*t*x_3^3+x_1*x_3*x_4-35*x_2^2*x_4+34*x_2*x_3^2,
@@ -523,7 +523,7 @@ assert(time groebnerMembershipTest(f1,S))
 assert(time not groebnerMembershipTest(f2,S))
 ///
 
--- 24) subductionQuotient 
+-- 24) subductionQuotient
 TEST ///
 R = QQ[x,y];
 S = subring {x+y, x*y, x*y^2};
@@ -558,7 +558,7 @@ assert(gens sagbi S12 == matrix {{x^2, x^2*y^2, y^4, x*y^3, y^6, x*y^5}})
 ///
 
 -- 27) Bruns/Conca example 1
-TEST /// 
+TEST ///
 R = QQ[x,y,z]
 M = matrix{{x^3+y^3+z^3,   x^4+y^4+z^4,   x^5+y^5+z^5}}
 partialSBSeventeen = gens sagbi(M, Limit => 17);

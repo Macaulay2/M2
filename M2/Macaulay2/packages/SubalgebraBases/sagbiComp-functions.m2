@@ -1,7 +1,7 @@
 -- initializesagbiComputation: produces a SAGBIComputation
---   a mutable version of a SAGBIBasis object, to be used for sagbi computation 
+--   a mutable version of a SAGBIBasis object, to be used for sagbi computation
 -- This function should be called at the beginning of sagbi computation
--- the options for the sagbiComputation are taken from SAGBIBasis except 
+-- the options for the sagbiComputation are taken from SAGBIBasis except
 --   if RenewOptions is true then only the specified options are used
 initializeSagbiComputation = method();
 initializeSagbiComputation (SAGBIBasis, HashTable):= (S, opts) -> (
@@ -419,11 +419,11 @@ updateComputationDegreeByDegree SAGBIComputation := sagbiComputation -> (
 -- This method computes a full GB for the reductionIdeal by
 -- using a (potentially previously computed) GB. This is done
 -- by computing a GB in for the following ideal:
---   J = ideal (newTagVariables - newSagbiGenerators) 
+--   J = ideal (newTagVariables - newSagbiGenerators)
 -- which lives in the quotient ring:
 --   oldTensorRing / oldReductionIdeal
 -- Note this GB computation is faster than computing a GB for the new reductionIdeal
--- because we already have a GB for the oldReductionIdeal. 
+-- because we already have a GB for the oldReductionIdeal.
 
 updateComputationIncremental = method();
 updateComputationIncremental SAGBIComputation := sagbiComputation -> (
@@ -538,7 +538,6 @@ appendToBasis (SAGBIComputation, Matrix) := (sagbiComputation, newGenerators) ->
 -- 
 -- returns the lowest degree of a new sagbiGenerator added
 --
-          
 processPending = method();
 processPending SAGBIComputation := sagbiComputation -> (
     local reducedGenerators;
@@ -550,7 +549,7 @@ processPending SAGBIComputation := sagbiComputation -> (
             );
         if sagbiComputation#SAGBIoptions#ReduceNewGenerators then ( --perform gaussian elimination on the new generators
             reducedGenerators = moduleBasis matrix{toList sagbiComputation#SAGBIpending#currentLowest};
-	    reducedGenerators = matrix {select((entries reducedGenerators)_0, i->((matrix {degree i}*sagbiComputation#SAGBIrings#"heftVector"))_(0,0)>0)}; -- remove elements of degree zero
+            reducedGenerators = matrix {select((entries reducedGenerators)_0, i->((matrix {degree i}*sagbiComputation#SAGBIrings#"heftVector"))_(0,0)>0)}; -- remove elements of degree zero
             if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
                 print "-- [process pending]: reduced generators:";
                 print transpose reducedGenerators;
@@ -612,7 +611,7 @@ triangularBasis Matrix := M -> (
 moduleBasis = method();
 moduleBasis Matrix := M -> (
     (monomialMatrix, coefficientMatrix) := coefficients M;
-    monomialMatrix = matrix {reverse first entries monomialMatrix}; 
+    monomialMatrix = matrix {reverse first entries monomialMatrix};
     coefficientMatrix = matrix reverse entries coefficientMatrix;
     R := ring M;
     C := coefficientRing R;
@@ -634,7 +633,7 @@ insertPending (SAGBIComputation, Matrix) := (sagbiComputation, candidates) -> (
                 sagbiComputation#SAGBIpending#level#(numberOfPending + numberOfCandidates - 1) = null;
                 for i from 0 to numberOfCandidates -1 do (
                     sagbiComputation#SAGBIpending#level#(numberOfPending + i) = candidates_i;
-                    ); 
+                    );
                 )
             else (
                 sagbiComputation#SAGBIpending#level = new MutableList from candidates

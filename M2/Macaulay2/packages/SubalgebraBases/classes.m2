@@ -51,7 +51,7 @@ presentationRing = method()
 presentationRing Subring := S -> S#"presentationRing"
 net Subring := S -> (
     R := ambient S;
-    A := presentationRing S;    
+    A := presentationRing S;
     toString(A) | ", subring of " | toString(R)
     )
 
@@ -105,7 +105,7 @@ sagbiBasis = method(
 
 -- SAGBIBasis constructor
 sagbiBasis Subring := opts -> S -> (
-    if S.cache#?SAGBIBasis then return S.cache#SAGBIBasis; 
+    if S.cache#?SAGBIBasis then return S.cache#SAGBIBasis;
     
     -- Keys:
     -- > rings stores the various rings we need in our constructions
@@ -151,12 +151,12 @@ sagbiBasis Subring := opts -> S -> (
     -- NB initially t = 0 i.e. TensorRing is initially a copy of LiftedRing
     --
     -- Maps:
-    -- > inclusionLifted:  LiftedRing -> TensorRing :   z_i -> x_i 
+    -- > inclusionLifted:  LiftedRing -> TensorRing :   z_i -> x_i
     -- > substitution:     TensorRing -> TensorRing:    x_i -> x_i, y_j -> g_j(x_1 .. x_s)
     -- > projectionLifted: TensorRing -> LiftedRing:    x_i -> z_i, y_j -> 0
     -- > sagbiInclusion:   TensorRing -> TensorRing:    x_i -> 0,   y_j -> y_j
     -- > fullSubstitution: TensorRing -> LiftedRing:    x_i -> z_i, y_j -> g_j(z_1 .. z_s)
-    -- > quotientRing:     LiftedRing -> QuotientRing : z_i -> z_i    
+    -- > quotientRing:     LiftedRing -> QuotientRing : z_i -> z_i
     inclusionLifted := map(rings.tensorRing,rings#"liftedRing",
                     (vars rings.tensorRing)_{0..numberVariables-1});
     substitution := map(rings.tensorRing,rings.tensorRing,
@@ -170,7 +170,7 @@ sagbiBasis Subring := opts -> S -> (
         "projectionLifted" => projectionLifted,
         "sagbiInclusion" => sagbiInclusion,
         "substitution" => substitution,
-        "fullSubstitution" => projectionLifted * substitution, 
+        "fullSubstitution" => projectionLifted * substitution,
         "quotient" => map(rings.quotientRing,liftedRing, vars rings.quotientRing),
         "presentationMap" => S#"presentationMap",
         "flatteningMap" => S#"flatteningMap",
@@ -181,17 +181,17 @@ sagbiBasis Subring := opts -> S -> (
     -- > I = the ideal that induces quotientRing
     -- > SIdeal = the ideal of S-polynomials (in the tensorRing)
     -- > leadTermsI = initial ideal of I
-    -- > reductionIdeal = SIdeal + lift(leadTermsI)    
+    -- > reductionIdeal = SIdeal + lift(leadTermsI)
     SIdeal := ideal(0_(rings.tensorRing));
     leadTermsI := ideal leadTerm ideal flattenedRing S;
     ideals := new HashTable from {
         "I" => ideal flattenedRing S,     -- I --> quotient / presentation ideal
-        "SIdeal" => SIdeal,         --  
-        "leadTermsI" => leadTermsI, -- 
+        "SIdeal" => SIdeal,
+        "leadTermsI" => leadTermsI,
         "reductionIdeal" => maps#"inclusionLifted" leadTermsI + SIdeal,
     };
     
-    -- Data: subalgebraGenerators, sagbiGenerators, sagbiDegrees, sagbiStatus, 
+    -- Data: subalgebraGenerators, sagbiGenerators, sagbiDegrees, sagbiStatus,
     --       degree, limit, autoSubductedSagbiGenerators, subring
     -- > subalgebraGenerators is a matrix with the original generators of the subring
     -- > sagbiGenerators is a matrix of all the sagbi elements
@@ -208,7 +208,7 @@ sagbiBasis Subring := opts -> S -> (
     -- > limit is the maximum value of the degree.
     --   It is initially set to -1 to indicate that no limit
     --   is set.
-    -- > autoSubductedSagbiGenerators indicates if the sagbiGenerators 
+    -- > autoSubductedSagbiGenerators indicates if the sagbiGenerators
     --   have been autoSubducted (see sagbi option: AutoSubductOnPartialCompletion).
     -- > subring a pointer back to S, used for updating the pointer from S to a
     --   SAGBIBasis object once a more advanced object has been computed.
@@ -219,7 +219,7 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiStatus" => 0,
         degree => -1,
         "limit" => -1,
-        "autoSubductedSagbiGenerators" => false, 
+        "autoSubductedSagbiGenerators" => false,
         subring => S
     };
 

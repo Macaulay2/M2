@@ -41,7 +41,7 @@ doc ///
      In T. Mora, editor, ",
      EM "Effective Methods in Algebraic Geometry",
      ", pages 379-4000, Birkhaeuser Boston, Boston, MA, 1991."},
-     {"M. Stillman and H. Tsai. Using SAGBI bases to compute invariants. ",
+     {"M. Stillman and H. Tsai. Using SAGBI bases to compute invariants.",
      EM "Journal of Pure and Applied Algebra",
      ", 139(1), pages 285-302, 1999."},
      {"B. Sturmfels.  Groebner bases and Convex Polytopes.
@@ -1250,7 +1250,7 @@ doc ///
        If the option @TT "CheckFullIntersection"@ is set to @TT "false"@ then
        no warnings are produced.
      Text
-       The first test is performed at the beginning of the function call. It 
+       The first test is performed at the beginning of the function call. It
        checks whether any of the inputs is @ofClass IntersectedSubring@ and
        applies @TO "isFullIntersection"@ to each instance.
        For more details see @TO "isFullIntersection"@.

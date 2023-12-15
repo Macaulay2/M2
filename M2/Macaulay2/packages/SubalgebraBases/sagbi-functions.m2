@@ -229,7 +229,7 @@ isSAGBI Subring := {
                             Q := flattenedRing S;
                             R := ambient Q;
                             I := ideal Q;
-                            R / ideal leadTerm I) 
+                            R / ideal leadTerm I)
                                 else flattenedRing S);
                     
                     liftMap := map(LTAmbient, flattenedRing S, gens LTAmbient);
@@ -324,9 +324,9 @@ groebnerMembershipTest(RingElement, Subring) := Boolean => (f, S) -> (
 
 -- groebnerSubductionQuotient(f, S) = h
 -- Computes the subduction quotient of f with respect to the generators of S
--- setup: gens S = {g_1 .. g_s} in Q = K[x_1 .. x_n]/I and f in Q 
+-- setup: gens S = {g_1 .. g_s} in Q = K[x_1 .. x_n]/I and f in Q
 -- output: h in K[y1 .. ys] such that (f - f%S) = h(g_1 .. g_s)
-groebnerSubductionQuotient = method() 
+groebnerSubductionQuotient = method()
 groebnerSubductionQuotient(RingElement, Subring) := RingElement => (f, S) -> (
     subringGens := S#"flatteningMap" gens S;
     Q := ring subringGens;
@@ -421,12 +421,12 @@ RingElement % Subring := RingElement => (f, S) -> (
 
 -- IntersectedSubring
 -- a type for subrings created by intersecting two subrings
--- keys are the usual subring keys plus the keys: 
+-- keys are the usual subring keys plus the keys:
 -- "originalSubrings" = {S1, S2} -- S1 and S2 are the original subrings used for the intersection 
 -- "compositeSubring" = S -- the subring in the tensor ring K[t*S1, (1-t)*S1] (see subringIntersection) 
 -- this type does not support a dedicated constructor since it is created by the function subringIntersection
 
-IntersectedSubring = new Type of Subring 
+IntersectedSubring = new Type of Subring
 
 -- originalSubringGens
 -- returns the generators of the original subrings used in the intersection computation
@@ -435,7 +435,7 @@ originalSubringGens IntersectedSubring := S -> (
     gens \ S#"originalSubrings"
     )
 
--- isFullIntersection 
+-- isFullIntersection
 -- returns true if the intersection of the "originalSubring" is guaranteed to be equal to the generators of intersectedSubring 
 -- note that the composite subring is guaranteed to have a SAGBIBasis stored in its cache
 -- note that if the function returns false, then the generators of the intersectedSubring may generate the intersection 
