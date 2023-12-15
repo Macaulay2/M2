@@ -249,6 +249,7 @@ factor Module := opts -> (M) -> (
 
 -----------------------------------------------------------------------------
 
+-- TODO: compare speed with Hom(M, R^1)
 dual Module := Module => {} >> o -> F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
      if not isFreeModule F then kernel transpose presentation F
      else new Module from (ring F,rawDual raw F))

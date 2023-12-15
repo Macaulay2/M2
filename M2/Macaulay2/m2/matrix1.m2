@@ -607,7 +607,7 @@ Hom(Matrix, Module) := Matrix => o -> (f, N) -> inducedMap(Hom(source f, N, o), 
 Hom(Module, Matrix) := Matrix => o -> (M, g) -> inducedMap(Hom(M, target g, o), Hom(M, source g, o), dual      cover M ** g, Verify => false)
 Hom(Matrix, Matrix) := Matrix => o -> (f, g) -> Hom(source f, g, o) * Hom(f, source g, o)
 
-dual Matrix := Matrix => {} >> o -> f -> Hom(f, module ring f)
+dual Matrix := Matrix => options Hom >> o -> f -> Hom(f, module ring f, o)
 
 -----------------------------------------------------------------------------
 

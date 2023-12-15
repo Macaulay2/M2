@@ -644,9 +644,7 @@ Hom(Module, ChainComplex) := ChainComplex => opts -> (M, C) -> (
 	       ));
      D)
 
-dual ChainComplex := ChainComplex => {} >> o -> (C) -> (
-	  R := ring C;
-	  Hom(C,R^1))
+dual ChainComplex := ChainComplex => options Hom >> o -> C -> Hom(C, module ring C, o)
 
 Hom(ChainComplexMap, Module) := ChainComplexMap => opts -> (f, N) -> (
      complete f;
