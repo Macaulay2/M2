@@ -33,48 +33,51 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
+     -- TODO: rename the optional argument of Ext to match Hom
+     opts = new OptionTable from { MinimalGenerators => opts.Prune };
      if i < 0 then R^0
-     else if i === 0 then Hom(M,N)
+     else if i === 0 then Hom(M, N, opts)
      else (
 	  C := resolution(M,LengthLimit=>i+1);
 	  b := C.dd;
 	  complete b;
-	  minimalPresentation if b#?i then (
-	       if b#?(i+1) 
-	       then homology(Hom(b_(i+1),N), Hom(b_i,N))
-	       else cokernel Hom(b_i,N))
-	  else (
-	       if b#?(i+1) 
-	       then kernel Hom(b_(i+1),N)
-	       else Hom(C_i,N))))
+	prune' := if opts.MinimalGenerators then prune else identity;
+	prune' if b#?i then (
+	    if b#?(i+1)
+	    then homology(Hom(b_(i+1), N, opts), Hom(b_i, N, opts))
+	    else cokernel Hom(b_i,     N, opts))
+	else (
+	    if b#?(i+1)
+	    then kernel Hom(b_(i+1), N, opts)
+	    else Hom(C_i, N, opts))))
 
 Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then map(R^0, R^0, {})
-     else if i === 0 then Hom(f,N)
+     else if i === 0 then Hom(f, N, opts)
      else (
 	  g := resolution(f,LengthLimit=>i+1);
-	  Es := Ext^i(source f, N);
-	  Es':= target Es.cache.pruningMap;	  -- Ext prunes everything, so get the original subquotient
-	  Et := Ext^i(target f, N);
-	  Et':= target Et.cache.pruningMap;
-	  Es.cache.pruningMap^-1 * inducedMap(Es',Et',Hom(g_i,N)) * Et.cache.pruningMap))
+	  Es := Ext^i(source f, N, opts);
+	  Et := Ext^i(target f, N, opts);
+	  psi := if opts.Prune then Es.cache.pruningMap else id_Es;
+	  phi := if opts.Prune then Et.cache.pruningMap else id_Et;
+	  psi^-1 * inducedMap(target psi, target phi, Hom(g_i, N, opts)) * phi))
 
 Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then map(R^0, R^0, {})
-     else if i === 0 then Hom(N,f)
+     else if i === 0 then Hom(N, f, opts)
      else (
 	  C := resolution(N,LengthLimit=>i+1);
-	  Es := Ext^i(N, source f);
-	  Es':= target Es.cache.pruningMap;	  -- Ext prunes everything, so get the original subquotient
-	  Et := Ext^i(N, target f);
-	  Et':= target Et.cache.pruningMap;
-	  Et.cache.pruningMap^-1 * inducedMap(Et',Es',Hom(C_i,f)) * Es.cache.pruningMap))
+	  Es := Ext^i(N, source f, opts);
+	  Et := Ext^i(N, target f, opts);
+	  psi := if opts.Prune then Es.cache.pruningMap else id_Es;
+	  phi := if opts.Prune then Et.cache.pruningMap else id_Et;
+	  phi^-1 * inducedMap(target phi, target psi, Hom(C_i, f, opts)) * psi))
 
 Ext(ZZ, Ideal, Matrix) := opts -> (i,J,f) -> Ext^i(module J,f,opts)
 Ext(ZZ, Matrix, Ring) := opts -> (i,f,R) -> Ext^i(f,R^1,opts)
@@ -92,7 +95,7 @@ Ext(ZZ, Ideal, Module) := opts -> (i,I,N) -> Ext^i(module I,N,opts)
 --  but we also get rid of the fudge factor entirely, depending instead on automatic
 --  computation of the heft vector
 
-Ext(Module,Module) := Module => (M,N) -> (
+Ext(Module, Module) := Module => ExtOptions >> opts -> (M, N) -> (
   cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
   cacheKey := (Ext,M,N);
   if cacheModule.cache#?cacheKey then return cacheModule.cache#cacheKey;
@@ -180,9 +183,9 @@ Ext(Module,Module) := Module => (M,N) -> (
        stderr << toExternalString DeltaBar << endl;
        );
   -- now compute the total Ext as a single homology module
-  tot := minimalPresentation homology(DeltaBar,DeltaBar);
-  cacheModule.cache#cacheKey = tot;
-  tot)
+  prune' := if opts.Prune then prune else identity;
+  cacheModule.cache#cacheKey =
+  prune' homology(DeltaBar,DeltaBar))
 
 Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
 Ext(Module, Ideal) := (M,J) -> Ext(M,module J)

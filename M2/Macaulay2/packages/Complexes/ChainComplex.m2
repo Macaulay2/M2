@@ -1004,22 +1004,22 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
         if R =!= ring N then error "expected modules over the same ring";
         if i < 0 then (
             H = R^0;
-            liftmap = (f) -> map(Hom(R^0,N), source f, 0);
+            liftmap = (f) -> map(Hom(R^0, N, opts), source f, 0);
             invmap = (g) -> map(H, source g, 0);
             )
         else if i === 0 then (
-            H = Hom(M,N);
-            liftmap = (f) -> Hom(map(M, cover M, 1), N) * f;
+            H = Hom(M, N, opts);
+            liftmap = (f) -> Hom(map(M, cover M, 1), N, opts) * f;
             invmap = (g) -> (
-                h := Hom(map(M, cover M, 1), N);
+                h := Hom(map(M, cover M, 1), N, opts);
                 g // h
                 );
             )
         else (
             FM := freeResolution(M, LengthLimit => i+1);
             b := dd^FM;
-            g0 := Hom(b_i, N);
-            g1 := Hom(b_(i+1), N); -- Hom(FM_i, N) is source g1 == target g0.
+            g0 := Hom(b_i, N, opts);
+            g1 := Hom(b_(i+1), N, opts); -- Hom(FM_i, N) is source g1 == target g0.
             kerg1 := ker g1; 
             H = kerg1 / (image g0); 
             -- note: we compute H like this in order to have access to ker g1.
