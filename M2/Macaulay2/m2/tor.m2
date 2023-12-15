@@ -5,7 +5,7 @@ needs "matrix1.m2"
 needs "modules.m2"
 
 TorOptions = new OptionTable from {
-     Prune => true
+    MinimalGenerators => true
      }
 
 

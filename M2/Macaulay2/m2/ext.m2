@@ -7,7 +7,7 @@ needs "modules.m2"
 needs "Hom.m2"
 
 ExtOptions = new OptionTable from {
-     Prune => true
+    MinimalGenerators => true
      }
 
 Ext = new ScriptedFunctor from {
@@ -36,8 +36,6 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
-     -- TODO: rename the optional argument of Ext to match Hom
-     opts = new OptionTable from { MinimalGenerators => opts.Prune };
      if i < 0 then R^0
      else if i === 0 then Hom(M, N, opts)
      else (
@@ -66,8 +64,8 @@ Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
 	  g := resolution(f,LengthLimit=>i+1);
 	  Es := Ext^i(source f, N, opts);
 	  Et := Ext^i(target f, N, opts);
-	  psi := if opts.Prune then Es.cache.pruningMap else id_Es;
-	  phi := if opts.Prune then Et.cache.pruningMap else id_Et;
+	  psi := if opts.MinimalGenerators then Es.cache.pruningMap else id_Es;
+	  phi := if opts.MinimalGenerators then Et.cache.pruningMap else id_Et;
 	  psi^-1 * inducedMap(target psi, target phi, Hom(g_i, N, opts)) * phi))
 
 -- TODO: is this correct?
@@ -84,8 +82,8 @@ Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
 	  C := resolution(N,LengthLimit=>i+1);
 	  Es := Ext^i(N, source f, opts);
 	  Et := Ext^i(N, target f, opts);
-	  psi := if opts.Prune then Es.cache.pruningMap else id_Es;
-	  phi := if opts.Prune then Et.cache.pruningMap else id_Et;
+	  psi := if opts.MinimalGenerators then Es.cache.pruningMap else id_Es;
+	  phi := if opts.MinimalGenerators then Et.cache.pruningMap else id_Et;
 	  phi^-1 * inducedMap(target phi, target psi, Hom(C_i, f, opts)) * psi))
 
 -- total ext over complete intersections
@@ -193,7 +191,7 @@ Ext(Module, Module) := Module => opts -> (M, N) -> (
        stderr << toExternalString DeltaBar << endl;
        );
   -- now compute the total Ext as a single homology module
-  prune' := if opts.Prune then prune else identity;
+  prune' := if opts.MinimalGenerators then prune else identity;
   cacheModule#cacheKey =
   prune' homology(DeltaBar,DeltaBar))
 
