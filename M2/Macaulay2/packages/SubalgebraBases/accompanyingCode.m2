@@ -23,7 +23,7 @@ SB = subalgebraBasis({x_1+x_2, x_1*x_2, x_1*x_2^2}, Limit => 7)
 isSAGBI SB
 
 -*
-Example 2.4
+Example 2.5
 *-
 restart
 needsPackage "SubalgebraBases";
