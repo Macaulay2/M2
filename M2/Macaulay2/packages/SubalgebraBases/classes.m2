@@ -1,6 +1,10 @@
 -- Subring data-type inherits from HashTable
--- Subrings are very light-weight and contain
--- only the defining ring and the generators.
+-- Subrings are very light-weight and contain:
+-- ambient ring,
+-- generators,
+-- presentation data: map and ring,
+-- flattening data: map, inverse map, ring;
+--   for working with rings like (QQ[x])[y]
 -- It also contains in its cache a SAGBIBasis
 -- object which is the 'furthest-advanced'
 -- computation data
@@ -55,7 +59,6 @@ net Subring := S -> (
     toString(A) | ", subring of " | toString(R)
     )
 
-
 -- SAGBIBasis computation object data-type that inherits from a HashTable
 -- A SAGBIBasis represents a partial or complete SAGBI computation.
 -- It contains all the data necessary to continue a computation
@@ -65,7 +68,6 @@ net Subring := S -> (
 -- identical to the sagbi options table.
 
 SAGBIBasis = new Type of HashTable
-
 
 -- Options:
 -- > AutoSubduce is a boolean that determines whether the generators should be subducted against each other
@@ -100,8 +102,8 @@ sagbiBasis = method(
         PrintLevel => 0,
         Recompute => false,
         RenewOptions => false
-    }
-)
+        }
+    )
 
 -- SAGBIBasis constructor
 sagbiBasis Subring := opts -> S -> (
@@ -151,12 +153,12 @@ sagbiBasis Subring := opts -> S -> (
     -- NB initially t = 0 i.e. TensorRing is initially a copy of LiftedRing
     --
     -- Maps:
-    -- > inclusionLifted:  LiftedRing -> TensorRing :   z_i -> x_i
+    -- > inclusionLifted:  LiftedRing -> TensorRing:    z_i -> x_i
     -- > substitution:     TensorRing -> TensorRing:    x_i -> x_i, y_j -> g_j(x_1 .. x_s)
     -- > projectionLifted: TensorRing -> LiftedRing:    x_i -> z_i, y_j -> 0
     -- > sagbiInclusion:   TensorRing -> TensorRing:    x_i -> 0,   y_j -> y_j
     -- > fullSubstitution: TensorRing -> LiftedRing:    x_i -> z_i, y_j -> g_j(z_1 .. z_s)
-    -- > quotientRing:     LiftedRing -> QuotientRing : z_i -> z_i
+    -- > quotientRing:     LiftedRing -> QuotientRing:  z_i -> z_i
     inclusionLifted := map(rings.tensorRing,rings#"liftedRing",
                     (vars rings.tensorRing)_{0..numberVariables-1});
     substitution := map(rings.tensorRing,rings.tensorRing,
@@ -277,7 +279,7 @@ ring SAGBIBasis := S -> (
 ambient SAGBIBasis := S -> (
     S#SAGBIrings#"ambientRing"
     )
-    
+
 -- Returns the flattened ring
 flattenedRing SAGBIBasis := S -> (
     S#SAGBIrings.quotientRing
@@ -316,7 +318,6 @@ status SAGBIBasis := opts -> SB -> (
         )
     )
 
-
 numgens SAGBIBasis := S -> numcols gens S
 
 -- SAGBIComputation is an internal type used for SAGBI computation
@@ -341,7 +342,6 @@ sagbiBasis SAGBIComputation := opts -> H -> (
         SAGBIpending => pending,
         SAGBIoptions => optionTable
     };
-
     newSAGBIBasis#SAGBIdata#subring.cache#SAGBIBasis = newSAGBIBasis
 )
 

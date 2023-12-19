@@ -1,5 +1,5 @@
 -- forceSB(Subring / SAGBIBasis) constructs a SAGBIBasis object, using any
--- existing one as a template, applied autosubduction to the (sagbi)generators,
+-- existing one as a template, applies autosubduction to the (sagbi)generators,
 -- and sets the sagbiStatus to 1 (sagbi basis found) - this function should only be applied to
 -- subrings whose generators are known to be a sagbi basis.
 
@@ -26,10 +26,14 @@ forceSB SAGBIBasis := {
     -- 1. UseSubringGens => true
     -- 2. there are no sagbiGenerators
     if opts.UseSubringGens or zero sagbiComputation#SAGBIdata#"sagbiGenerators" then (
-        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(sagbiComputation#SAGBIdata#"subalgebraGenerators", sagbiComputation#SAGBIrings#"liftedRing");
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(
+            sagbiComputation#SAGBIdata#"subalgebraGenerators",
+            sagbiComputation#SAGBIrings#"liftedRing");
         );
     if opts#AutoSubduce then (
-        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(autosubduce(sagbiComputation, UseSubringGens => opts.UseSubringGens), sagbiComputation#SAGBIrings#"liftedRing");
+        sagbiComputation#SAGBIdata#"sagbiGenerators" = lift(
+            autosubduce(sagbiComputation, UseSubringGens => opts.UseSubringGens),
+            sagbiComputation#SAGBIrings#"liftedRing");
         );
     updateComputation sagbiComputation;
     sagbiComputation#SAGBIdata#"sagbiStatus" = 1;
@@ -119,8 +123,7 @@ isSAGBIinternal SAGBIBasis := opts -> SB -> (
     SB'
     );
 
-
-
+-- isSAGBI
 -- Compute => true          : perform only necessary computations
 -- Recompute => false       : perform all computations (only applies if Compute == true)
 -- UseSubringGens => false  : use the generators of the associated Subring object
