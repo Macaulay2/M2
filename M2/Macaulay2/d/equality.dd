@@ -248,6 +248,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	 when rhs
 	 is y:pointerCell do if x.v == y.v then True else False
 	 else False
+     is atomicIntegerCell do False
      );
 
 -- Local Variables:

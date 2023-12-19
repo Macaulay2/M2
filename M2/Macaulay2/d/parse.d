@@ -19,6 +19,14 @@ extern void err_error(struct M2_string_struct*);
 #endif
 ";
 
+declarations "
+#ifdef __cplusplus
+#include <atomic>
+#define atomicInteger std::atomic<int>
+#else
+#include <stdatomic.h>
+#define atomicInteger atomic_int
+#endif";
 
 use nets;
 use gmp;
@@ -362,6 +370,9 @@ export TaskCell := {+ body:TaskCellBody };
 
 export pointerCell := {+ v:voidPointer };
 
+export atomicInteger := integerType "atomicInteger";
+export atomicIntegerCell := {+ v:atomicInteger };
+
 export Expr := (
      CCcell or
      RRcell or
@@ -416,7 +427,8 @@ export Expr := (
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
      fileOutputSyncState or
-     pointerCell
+     pointerCell or
+     atomicIntegerCell
      );
 export fun := function(Expr):Expr;
 

@@ -70,6 +70,7 @@ export hash(e:Expr):int := (
      is foss:fileOutputSyncState do int(123458)
      -- cast to long first to avoid "different size" compiler warning
      is x:pointerCell do int(long(Ccode(long, x.v)))
+     is atomicIntegerCell do 5
      );
 
 export hash(x:List):int := (

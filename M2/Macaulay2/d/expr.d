@@ -297,6 +297,7 @@ export inexactNumberClass := newtypeof(numberClass);
        newnumbertype():HashTable := newHashTable(ringClass,numberClass);
 export ZZClass := newnumbertype();
 export QQClass := newnumbertype();
+export atomicIntegerClass := newnumbertype();
 
 export ringFamilyClass := newtypeof(typeClass);
 export inexactNumberTypeClass := newtypeof(ringFamilyClass);
