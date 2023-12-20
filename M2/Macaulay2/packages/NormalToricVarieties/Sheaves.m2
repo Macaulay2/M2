@@ -36,16 +36,19 @@ monomialIdeal NormalToricVariety := MonomialIdeal => X ->
 -- sheaves
 ------------------------------------------------------------------------------
 sheaf (NormalToricVariety, Module) := CoherentSheaf => (X,M) -> (
-    if ring M =!= ring X then 
-    	error "-- expected the module and the variety to have the same ring";
-    if not isHomogeneous M then 
-    	error "-- expected a homogeneous module";
-    -- constructing coherent sheaf
-    new CoherentSheaf from {
-    	symbol module  => M,
-    	symbol variety => X
-	}
-    );
+    if M.cache#?(sheaf, X) then return M.cache#(sheaf, X);
+    M.cache#(sheaf, X) = (
+	if ring M =!= ring X then
+	   error "-- expected the module and the variety to have the same ring";
+	if not isHomogeneous M then
+	   error "-- expected a homogeneous module";
+	-- constructing coherent sheaf
+	new CoherentSheaf from {
+	    symbol module  => M,
+	    symbol variety => X,
+	    symbol cache   => new CacheTable
+	    }
+	));
 sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> (
     if ring X =!= R then 
 	error "-- expected the ring of the variety";

@@ -15,7 +15,7 @@ newPackage(
     	Headline => "characteristic classes for varieties without equations",
 	Keywords => {"Intersection Theory"},
         DebuggingMode => false,
-	PackageImports => {"SchurRings","PushForward"}
+	PackageImports => {"SchurRings","PushForward","Varieties"}
     	)
 
 schurVersion = value SchurRings.Options.Version

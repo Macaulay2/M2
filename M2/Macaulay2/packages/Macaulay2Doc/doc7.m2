@@ -433,7 +433,7 @@ document {
      TT "dual f", " -- the dual (transpose) of a homomorphism."
      }
 document {
-     Key => {singularLocus,(singularLocus, ProjectiveVariety),(singularLocus, Ideal),(singularLocus, Ring),(singularLocus, AffineVariety)},
+     Key => {singularLocus, (singularLocus, Ideal), (singularLocus, Ring)},
      Headline => "singular locus",
      TT "singularLocus R", " -- produce the singular locus of a ring, which is assumed to be integral.",
      PARA{},
@@ -801,11 +801,6 @@ document {
      Key => (dual, Module),
      Headline => "dual module",
      TT "dual M", " -- the dual of a module."
-     }
-document {
-     Key => (dual, CoherentSheaf),
-     Headline => "dual coherent sheaf",
-     TT "dual M", " -- the dual of a coherent sheaf."
      }
 
 document {

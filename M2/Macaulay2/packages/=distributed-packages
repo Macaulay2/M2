@@ -33,6 +33,7 @@ SimplicialComplexes
 LLLBases
 TangentCone
 ChainComplexExtras
+Varieties
 Schubert2
 PushForward
 LocalRings

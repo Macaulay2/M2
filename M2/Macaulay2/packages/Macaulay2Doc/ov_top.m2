@@ -28,7 +28,7 @@ Node
       "substitution and maps between rings"
       "modules"
       "chain complexes"
-      "varieties"
+      "Varieties :: Varieties"
       "Gröbner bases"
     :Some Mathematical Computations
       "normal forms"

@@ -3,11 +3,11 @@
 --- notes: 
 
 document { 
-     Key => {ring, (ring,Vector), (ring,SheafOfRings), (ring,RingElement),(ring,GradedModule),
-	  (ring,Variety), (ring,ChainComplexMap),(ring, GradedModuleMap),(ring, GroebnerBasis),(ring, Number),
+     Key => {ring, (ring,Vector), (ring,RingElement), (ring,GradedModule),
+	  (ring,ChainComplexMap),(ring, GradedModuleMap),(ring, GroebnerBasis),(ring, Number),
 	  (ring,Module),(ring,ChainComplex),(ring,Matrix),
 	  (ring,MutableMatrix),(ring,Ideal), (ring,CC),(ring,RR),(ring,RRi),(ring,Resolution),
-	  (ring,CoherentSheaf),(ring,MonomialIdeal)},
+	  (ring,MonomialIdeal)},
      Headline => "get the associated ring of an object",
      Usage => "ring M",
      Inputs => {"M" => "an object with a ring associated to it"},

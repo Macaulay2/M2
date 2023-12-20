@@ -32,7 +32,7 @@ newPackage(
 	     }
 	   },
      Headline => "compute jets of various algebraic, geometric and combinatorial objects",
-     PackageImports => {"SimpleDoc","EdgeIdeals"},
+     PackageImports => {"Varieties"},
      PackageExports => {"EdgeIdeals"},
      DebuggingMode => false,
      Certification => {

@@ -86,7 +86,6 @@ document {
     (symbol *, ZZ, RRi),
     (symbol*,  GradedModuleMap, GradedModuleMap),
     (symbol*,  RingElement, Matrix),
-    (symbol*,  Ideal, CoherentSheaf),
     (symbol*,  RingMap, RingMap),
     (symbol*,  RingElement, MutableMatrix),
     (symbol*,  Ring, MonomialIdeal),

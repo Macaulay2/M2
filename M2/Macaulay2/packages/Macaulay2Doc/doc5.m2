@@ -313,27 +313,6 @@ document {
      }
 
 document {
-     Key => (symbol ^**, CoherentSheaf, ZZ),
-     Headline => "tensor power",
-     Usage => "M^**i",
-     Inputs => {"M" , "i" },
-     Outputs => {CoherentSheaf => { "the ", TT "i", "-th tensor power of ", TT "M"}},
-     "The second symmetric power of the canonical sheaf of the
-     rational quartic:",
-     EXAMPLE lines ///
-         R = QQ[a..d];
-         I = monomialCurveIdeal(R,{1,3,4})
-	 X = variety I
-	 KX = sheaf(Ext^1(I,R^{-4}) ** ring X)
-	 K2 = KX^**2
-	 prune K2
-	 ///,
-     "Notice that the resulting sheaf is not always presented in the most
-     economical manner.  Use ", TO prune, " to improve the presentation.",
-     SeeAlso => {monomialCurveIdeal, Ext, variety, sheaf, prune}
-     }    
-
-document {
      Key => wrap,
      Usage => "wrap(wid,sep,s)",
      Inputs => {

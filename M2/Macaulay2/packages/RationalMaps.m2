@@ -18,7 +18,7 @@ newPackage( "RationalMaps",
     }, --this file is in the public domain
     Keywords => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 
-    PackageExports => {"FastMinors"},
+    PackageExports => {"FastMinors", "Varieties"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
 	 "journal URI" => "http://j-sag.org/",
