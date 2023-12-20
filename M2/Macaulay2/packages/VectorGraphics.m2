@@ -750,6 +750,10 @@ new SVG from GraphicsObject := (S,g) -> (
 
 hypertext GraphicsObject := g -> SVG g
 html GraphicsObject := html @@ hypertext
+show GraphicsObject := g -> (
+    file := temporaryFileName() | ".svg";
+    file << html g << close;
+    show URL("file://" | file))
 
 -- tex output
 tikzscale := 1; -- not thread-safe
