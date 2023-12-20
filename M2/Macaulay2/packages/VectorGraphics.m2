@@ -1781,6 +1781,19 @@ multidoc ///
     needsPackage "Graphs";
     R=QQ[x,y]; b=flatten entries basis(0,3,R)
     digraph select(b**b,a->a#1 % a#0 == 0 and first degree a#1 == first degree a#0 +1)
+ Node
+  Key
+   (show, GraphicsObject)
+  Headline
+   view a graphics object
+  Usage
+   show g
+  Inputs
+   g:GraphicsObject
+  Description
+   Text
+    View a graphics object (as an .svg file) using the default system image
+    viewer.
 ///
 undocumented {
     Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY, Frame,
