@@ -1785,6 +1785,10 @@ doc ///
             R = QQ[x,y];
             S = subring({x^2, y^2, x*y}, GeneratorSymbol => f)
             (x+y)^4 // S
+        Text
+            If a symbol is not specified, then the variables of the 
+            @ TO "presentationRing" @ are indexed from 0 and use the default symbol.
+            Otherwise, if a symbol is specified, then the indices start from 1.
     SeeAlso
         Subring
         subring
