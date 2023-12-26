@@ -179,7 +179,7 @@ compSubduction(SAGBIComputation, Matrix) := Matrix => opts -> (sagbiComputation,
 
 -- subductionTopLevelLeadTerm: expects the matrix M to have entries in liftedRing
 -- performs subduction only until the lead term cannot be subducted further
--- NB this method assumes M is reduced mod I
+-- Note: this method assumes M is reduced mod I
 subductionTopLevelLeadTerm = method();
 subductionTopLevelLeadTerm (SAGBIComputation, Matrix) := (sagbiComputation, M) -> (
     liftg := M;
@@ -302,7 +302,7 @@ autosubduce SAGBIComputation := opts -> sagbiComputation -> (
 
 -- updateComputation: checks the Strategy: DegreeByDegree or Incremental.
 -- passes to a function that recomputed the rings, maps and ideals wrt new sagbiGenerators
--- NB if there are no new sagbiGenerators, then this function is not called
+-- Note: if there are no new sagbiGenerators, then this function is not called
 updateComputation = method();
 updateComputation SAGBIComputation := sagbiComputation -> (
     if sagbiComputation#SAGBIoptions#Strategy == "Master" then (
@@ -363,7 +363,7 @@ updateComputationMaster SAGBIComputation := sagbiComputation -> (
 );
 
 -- updateComputation using DegreeByDegree strategy
--- NB this does not compute a gb for the reductionIdeal
+-- Note: this does not compute a gb for the reductionIdeal
 -- The gb computation next occurs in collectSPairs or during subduction
 -- The gb computation is only necessary up to a certain degree
 updateComputationDegreeByDegree = method();
@@ -529,7 +529,7 @@ appendToBasis (SAGBIComputation, Matrix) := (sagbiComputation, newGenerators) ->
 -- 1) Reduces the elements of lowest degree in the pending list (triangularBasis / moduleBasis)
 -- 2) Adds these elements to the SAGBI basis (insertPending)
 -- 3) Updates all the maps, rings, and ideals (updateComputation)
--- NB Assumes that the pending list has been subducted
+-- Note: Assumes that the pending list has been subducted
 -- returns the lowest degree of a new sagbiGenerator added
 processPending = method();
 processPending SAGBIComputation := sagbiComputation -> (
@@ -769,7 +769,7 @@ checkTermination SAGBIComputation := (sagbiComputation) -> (
     local isGBReductionIdealComplete;
     local isDegreeAboveSagbiGens;
     local isDegreeAboveGBDegree;
-    -- NB sagbGB's gb should be computed in processPending -> updateComputation (for incremental)
+    -- Note: sagbGB's gb should be computed in processPending -> updateComputation (for incremental)
     -- or collectSpairs (for DegreeByDegree)
     -- that computation depends on the option: "DegreeByDegree" or "Incremental" 
     sagbiGB := gb(sagbiComputation#SAGBIideals#"reductionIdeal",
