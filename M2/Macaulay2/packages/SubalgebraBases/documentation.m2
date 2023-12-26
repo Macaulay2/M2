@@ -54,7 +54,7 @@ doc ///
         following attendees of the 2020 Macaulay2 workshops at
         Cleveland State University and
         University of Warwick for their contributions to the package.
-        
+
         @UL {
         {HREF("https://aarondall.com/mathematics/","Aaron Dall")},
         {HREF("https://www.dima.unige.it/~dali/","Alessio D'Alì")},
@@ -93,7 +93,7 @@ doc ///
         L:List
             containing generators for @ ofClass Subring @ of @ ofClass{PolynomialRing} @
         B:SAGBIBasis
-               containing a partial computation of a subalgebra basis
+            containing a partial computation of a subalgebra basis
         AutoSubduce=>Boolean
             a flag indicating when to perform autosubduction
             on the generators before performing the subalgebra basis computation
@@ -140,10 +140,10 @@ doc ///
             If the input is @ ofClass Subring@,
             then the computation object is stored in the cache of the input.
         Example
-               R = QQ[t_(1,1)..t_(3,3),MonomialOrder=>Lex];
-               M = genericMatrix(R,3,3);
-               A = subring gens minors(2, M);
-               subalgebraBasis A
+            R = QQ[t_(1,1)..t_(3,3),MonomialOrder=>Lex];
+            M = genericMatrix(R,3,3);
+            A = subring gens minors(2, M);
+            subalgebraBasis A
         Text
             The command @TO "subalgebraBasis"@ @TT "A"@ is equivalent to
             the command @TO (gens,SAGBIBasis)@ @TO "sagbi"@ @TT "A"@.
@@ -181,7 +181,7 @@ doc ///
         L:List
             containing generators for @ ofClass Subring @ of @ ofClass{PolynomialRing} @
         B:SAGBIBasis
-               containing a partial computation of a subalgebra basis
+            containing a partial computation of a subalgebra basis
         AutoSubduce=>Boolean
             a flag indicating when to perform autosubduction on the generators
             before performing the subalgebra basis computation
@@ -383,7 +383,7 @@ doc ///
         Text
             There are two possible values for @TT "Strategy"@:
             @TT "Top"@ and @TT "Engine"@.
-        
+
             There are two implementations to subduct the $S$-pairs
             in the function @TO "sagbi"@.
             Both implementations follow the same procedure,
@@ -392,7 +392,7 @@ doc ///
             is generally faster for smaller inputs.
             Subduction using the @TT "Engine"@ implementation
             can be faster for larger subalgebra bases.
-            
+
             When using the @TT "Top"@ @TT "Strategy"@,
             the status of the computation using @TO "sagbi"@
             can be displayed using the @TO "PrintLevel"@ option.
@@ -466,7 +466,7 @@ doc ///
             informational purposes.
             Higher values for @TT "PrintLevel"@ result in more verbose output
             (especially Levels 5 and 6).
-            
+
             @UL{
             "Level 0: No additional output",
             "Level 1+: some basic information each computation loop (but no polynomials):
@@ -516,7 +516,7 @@ doc ///
             then the subalgebra bases computation starts from scratch.
             This process constructs @ ofClass SAGBIBasis @ and uses the computation options
             from the previous computation.
-            
+
             If the flag is set to @TT "false"@,
             then previous computations are used
             to speed up subsequent calculations.
@@ -576,7 +576,6 @@ doc ///
         PrintLevel
         Recompute
 ///
-
 doc ///
     Key
         subduction
@@ -669,8 +668,8 @@ doc ///
             S = subring {x+y, x*y, x*y^2};
             f = x^4;
             subduction(S, f)
-            -- sagbi S;
-            -- subduction(S, f)
+            sagbi S;
+            subduction(gens sagbi S, f)
     SeeAlso
         sagbi
         Subring
@@ -689,7 +688,6 @@ doc ///
         groebnerSubductionQuotient
         (symbol //, RingElement, Subring)
 ///
-
 -- #######################################
 -- ##    sagbi-functions.m2 documentation ##
 -- #######################################
@@ -723,7 +721,7 @@ doc ///
             @TT "isSAGBI"@ @TT "A"@ is equivalent to @TT "isSAGBI"@ @TO "subring"@ @TT "A"@.
             For further details of their respective uses see:
             @ TO (isSAGBI, Subring) @ and @ TO (isSAGBI, SAGBIBasis) @.
-            
+
             The result of @ TT "isSagbi" @ is stored in the cache of
             @ ofClass Subring @ or the sagbiStatus of
             @ ofClass SAGBIBasis @. If @ TT "isSagbi" @ is called again,
@@ -744,7 +742,7 @@ doc ///
             If @TT "isSAGBI"@ is supplied @ ofClass Subring @, then the generators of
             a partial subalgebra basis can be checked for being a
             subalgebra basis by setting @TO "UseSubringGens"@ to @ TT "false" @.
-            
+
             Optional inputs for specific uses,
             see @TO (isSAGBI,Subring)@ and @TO (isSAGBI,SAGBIBasis)@,
             include the following: @TO "Compute"@, @TO "Recompute"@,
@@ -760,7 +758,6 @@ doc ///
         (ambient, SAGBIBasis)
         sagbi
 ///
-
 doc ///
     Key
         (isSAGBI, Subring)
@@ -814,7 +811,7 @@ doc ///
             attempts to find a previously cached result. If @TT "isSAGBI"@ cannot determine
             a result without computation and the option @TO "Compute"@ is set to @TT "false"@,
             then @TT "isSAGBI"@ returns @ TT "null" @.
-            
+
             If the generators of $S$ form a subalgebra basis,
             then the subalgebra generators of the
             cached partial subalgebra basis are updated to match the ring
@@ -845,7 +842,6 @@ doc ///
         UseSubringGens
         ModifySAGBIBasis
 ///
-
 doc ///
     Key
         (isSAGBI, SAGBIBasis)
@@ -900,7 +896,7 @@ doc ///
             attempts to find a previously cached result. If @TT "isSAGBI"@ cannot determine
             a result without computation and the option @TO "Compute"@ is set to @TT "false"@,
             then @TT "isSAGBI"@ returns @ TT "null" @.
-            
+
             If the subalgebra generators of $SB$ form a subalgebra basis,
             then the partial subalgebra basis is
             updated, unless @ TO "ModifySAGBIBasis" @ is set to @ TT "false"@.
@@ -937,7 +933,6 @@ doc ///
         UseSubringGens
         ModifySAGBIBasis
 ///
-
 doc ///
     Key
         Compute
@@ -956,7 +951,7 @@ doc ///
             of prior computations, if they have been stored.    When previous
             computations have not been peformed, the function usually returns
             @TT "null"@.
-            
+
             When the flag is set to @TT "true"@, additional computations will
             be performed if the prior computations are insufficient.
         Example
@@ -989,7 +984,7 @@ doc ///
             the subalgebra generators of @ofClass SAGBIBasis@
             (which may be stored in the cache of
             @ofClass Subring@).
-            
+
             If the flag is set to @TT "false"@,
             then the check is aplied to the subalgebra generators of $SB$.
             If the flag is set to @TT "true"@,
@@ -1173,7 +1168,8 @@ doc ///
             then an extrinsic method is used, similar to @TT "groebnerMembershipTest"@.
         Example
             R = QQ[x1, x2, x3];
-            S = subring {x1+x2+x3, x1*x2+x1*x3+x2*x3, x1*x2*x3, (x1-x2)*(x1-x3)*(x2-x3)} --usual invariants of A_3
+            --usual invariants of A_3
+            S = subring {x1+x2+x3, x1*x2+x1*x3+x2*x3, x1*x2*x3, (x1-x2)*(x1-x3)*(x2-x3)}
             f = x1 + x2 + 2*x3
             f % S
             g = x1^2*x2 + x2^2*x3 + x3^2*x1
@@ -1201,7 +1197,7 @@ doc ///
             The @TO2 {"Subduction computation limit","Limit"}@ of this subalgebra basis
             computation is controlled by the two options @TT "SAGBILimitType"@ and
             @TO2 {"Subduction computation limit","Limit"}@.
-            
+
             If @TT "SAGBILimitType"@ is set to @TT "Fixed"@,
             then the @TO2 {"Subduction computation limit","Limit"}@ of the
             subalgebra basis computation is set to the value of
@@ -1270,7 +1266,7 @@ doc ///
             not guaranteed to be the full intersection.
             However, the final line shows that the generators of $S4$
             are guaranteed to generate the full intersection of $S2$ and $S3$.
-            
+
             The second test is performed at the end of the function call.
             It checks if the result is
             guaranteed to generate the full intersection by calling
@@ -1324,11 +1320,11 @@ doc ///
             about the progress of the computation.
             Larger positive values of @TO "PrintLevel"@ result in more output.
         CheckFullIntersection=>Boolean
-               which determines if @TO "isFullIntersection"@
-               is run on the output @TO "IntersectedSubring"@.
+            which determines if @TO "isFullIntersection"@
+            is run on the output @TO "IntersectedSubring"@.
         Compute=>Boolean
-               which determines if the check to see if the computed generators
-               form a subalgebra basis of the ring they generate is performed.
+            which determines if the check to see if the computed generators
+            form a subalgebra basis of the ring they generate is performed.
     Outputs
         result:IntersectedSubring
     Description
@@ -1358,7 +1354,7 @@ doc ///
             However, if the function cannot guarantee that the generators
             of the resulting @TO "IntersectedSubring"@
             generate the full intersection then a warning is given.
-            
+
             The function works by creating a {\it composite subring} $S$
             from the input algebras
             and attempts to compute a subalgebra basis for $S$.
@@ -1420,7 +1416,7 @@ doc ///
             checks whether
             the generators of $S$ are guaranteed to generate the intersection
             of the original subrings.
-            
+
         Example
             R = QQ[x,y];
             S1 = subring{x^3,y};
@@ -1436,7 +1432,6 @@ doc ///
         isFullIntersection
         originalSubringGens
 ///
-
 doc ///
     Key
         isFullIntersection
@@ -1531,12 +1526,9 @@ doc ///
         Subring
         IntersectedSubring
 ///
-
-
 -- ##############################
 -- ## classes.m2 documentation ##
 -- ##############################
-
 doc ///
     Key
         Subring
@@ -1554,22 +1546,22 @@ doc ///
             are handeled behind the scenes, and
             the user experience
             is more streamlined.
-            
+
             Every instance of @TT "Subring"@ has the following keys
             (some of which are strings):
-            
+
             @UL {
-                {TT "ambientRing", ": The polynomial or quotient ring that
-                contains the subring instance's generators."},
-                {TT "generators", ": A one-row matrix,
-                the generators of the subring."},
-                {TT "cache", ": Contains data from previous
-                computations to allow for more efficient computations."},
-                {TT "presentationRing", ": the polynomial ring
-                with one variable for each generator of the subring."},
-                {TT "presentationMap", ": a map from the presentation
-                ring to the ambient ring of the subring."}
-                }@
+            {TT "ambientRing", ": The polynomial or quotient ring that
+            contains the subring instance's generators."},
+            {TT "generators", ": A one-row matrix,
+            the generators of the subring."},
+            {TT "cache", ": Contains data from previous
+            computations to allow for more efficient computations."},
+            {TT "presentationRing", ": the polynomial ring
+            with one variable for each generator of the subring."},
+            {TT "presentationMap", ": a map from the presentation
+            ring to the ambient ring of the subring."}
+            }@
     SeeAlso
         subring
         (gens, Subring)
@@ -1581,7 +1573,6 @@ doc ///
         SAGBIBasis
         subalgebraBasis
 ///
-
 doc ///
     Key
         subring
@@ -1629,7 +1620,6 @@ doc ///
         sagbi
         SAGBIBasis
 ///
-
 doc ///
     Key
         (gens, Subring)
@@ -1655,8 +1645,6 @@ doc ///
         subring
         (gens,SAGBIBasis)
 ///
-
-
 doc ///
     Key
         (ambient, Subring)
@@ -1685,8 +1673,6 @@ doc ///
         (gens, Subring)
         (ambient, SAGBIBasis)
 ///
-
-
 doc ///
     Key
         (numgens, Subring)
@@ -1714,7 +1700,6 @@ doc ///
         (numgens, SAGBIBasis)
         (net, Subring)
 ///
-
 doc ///
     Key
         (numgens, SAGBIBasis)
@@ -1745,7 +1730,6 @@ doc ///
         (numgens, Subring)
         (net, Subring)
 ///
-
 doc ///
     Key
         (net, Subring)
@@ -1772,7 +1756,6 @@ doc ///
         (numgens, Subring)
         (net, SAGBIBasis)
 ///
-
 doc ///
     Key
         GeneratorSymbol
@@ -1822,7 +1805,6 @@ doc ///
         (status,SAGBIBasis)
         (numgens,SAGBIBasis)
 ///
-
 doc ///
     Key
         sagbiBasis
@@ -1900,7 +1882,6 @@ doc ///
         "Subduction computation limit"
         forceSB
 ///
-
 doc ///
     Key
         (gens,SAGBIBasis)
@@ -1935,8 +1916,6 @@ doc ///
         (gens,Subring)
         sagbi
 ///
-
-
 doc ///
     Key
         (net, SAGBIBasis)
@@ -1967,7 +1946,6 @@ doc ///
         sagbiLimit
         sagbi
 ///
-
 doc ///
     Key
         (ambient, SAGBIBasis)
@@ -1996,7 +1974,6 @@ doc ///
         (gens, SAGBIBasis)
         (ambient, Subring)
 ///
-
 doc ///
     Key
         (ring, SAGBIBasis)
@@ -2159,7 +2136,6 @@ doc ///
         sagbiStatus
         sagbi
 ///
-
 doc ///
     Key
            forceSB
@@ -2177,22 +2153,22 @@ doc ///
             then the function performs
             autosubduction on the subalgebra generators of $SB$. The completion flag is then
             set to complete without checking whether the generators form a subalgebra basis.
-            
+
             If @TT "forceSB"@ is called on @ ofClass Subring @ $S$,
             then the function performs autosubduction
             on the generators of $S$.    The completion flag is then
             set to complete without checking whether the generators form a subalgebra basis.
-            
+
             In each case above, the option UseSubringGens can be toggled between
             @TT "true"@ and @TT "false"@ to
             operate on the subring generators in the case where the input is
             @ ofClass SAGBIBasis @,
             and operate on any partial subalgebra basis created for $S$ when the the input is a
             @ ofClass Subring @.
-            
+
             If the generators supplied to @ TT "forceSB" @ do not form a subalgebra basis,
             then the resulting behavior may be unexpected.
-            
+
         Example
             R = QQ[x,y];
             S = subring{x+y,x*y,x*y^2}
@@ -2206,7 +2182,7 @@ doc ///
             the generators of $S$ do not form a subalgebra basis.
             Recomputing the subalgebra basis exposes that the generators do not
             form a subalgebra basis.
-            
+
             Optional inputs for specific uses, see
             @TO (forceSB, SAGBIBasis)@ and @TO (forceSB, Subring)@ include the following:
             @TO "AutoSubduce"@,
@@ -2267,14 +2243,14 @@ doc ///
             When @TT "forceSB"@ is called on @ ofClass SAGBIBasis @ $SB$, the function performs
             autosubduction on the subalgebra generators of $SB$. The completion flag is then
             set to complete without checking whether the generators form a subalgebra basis.
-            
+
             The option UseSubringGens can be toggled between @TT "true"@ and @TT "false"@ to
             operate on the subring generators in the case where the input is
             @ ofClass SAGBIBasis @.
-            
+
             If the generators supplied to @ TT "forceSB" @ do not form a subalgebra basis,
             then the resulting behavior may be unexpected.
-            
+
         Example
             R = QQ[x,y];
             S = sagbi({x+y,x*y,x*y^2},Limit=>10)
@@ -2342,14 +2318,14 @@ doc ///
             the function performs autosubduction
             on the generators of $S$.    The completion flag is then
             set to complete without checking whether the generators form a subalgebra basis.
-            
+
             The option UseSubringGens can be toggled between @TT "true"@ and @TT "false"@ to
             operate on any partial subalgebra basis created for $S$ when the the input is a
             @ ofClass Subring @.
-            
+
             If the generators supplied to @ TT "forceSB" @ do not form a subalgebra basis,
             then the resulting behavior may be unexpected.
-            
+
         Example
             R = QQ[x,y];
             S = subring{x+y,x*y,x*y^2}
@@ -2404,12 +2380,12 @@ doc ///
             applying this map.
             Therefore, $S$ is naturally isomorphic to the quotient of $P$ by the
             kernel of the this map.
-            
+
             The @ TT "presentationRing" @ naturally arises when using
             @TO (symbol //, RingElement, Subring)@, which takes
             an element of @ ofClass Subring @ and
             expresses it as a polynomial combination of its generators.
-            
+
             Subrings include the field @TT "presentationMap"@, which provides
             a map from the @TT "presentationRing"@ to the @TO (ambient,Subring)@ ring.
         Example
@@ -2425,7 +2401,6 @@ doc ///
         (symbol //, RingElement, Subring)
         groebnerSubductionQuotient
 ///
-
 -- #########################################
 -- ## Short Explanation of Screws Example ##
 -- #########################################
@@ -2439,7 +2414,8 @@ doc ///
             the adjoint action of $SE(3)$, as studied by Crook and Donelan.
         Example
             gndR = QQ[(t_1..t_3)|(w_1..w_3)|(v_1..v_3), MonomialOrder => Lex];
-            translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1}, {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
+            translation := matrix {{w_1}, {w_2}, {w_3}, {t_1*w_2+t_2*w_3+v_1},
+                {-t_1*w_1+t_3*w_3+v_2}, {-t_2*w_1-t_3*w_2+v_3}};
             sag := sagbi transpose translation;
             netList first entries gens sag
         Text
@@ -2449,9 +2425,12 @@ doc ///
             describing rotational invariants in the case where m=3.
         Example
             R = QQ[x_1..x_9, MonomialOrder => Lex];
-            eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6, x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
-                x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9, x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
-                x_7^2+x_8^2+x_9^2-1, x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
+            eqns := {x_1^2+x_2^2+x_3^2-1, x_1*x_4+x_2*x_5+x_3*x_6,
+                x_1*x_7+x_2*x_8+x_3*x_9, x_1*x_4+x_2*x_5+x_3*x_6,
+                x_4^2+x_5^2+x_6^2-1, x_4*x_7+x_5*x_8+x_6*x_9,
+                x_1*x_7+x_2*x_8+x_3*x_9, x_4*x_7+x_5*x_8+x_6*x_9,
+                x_7^2+x_8^2+x_9^2-1,
+                x_1*x_5*x_9-x_1*x_6*x_8-x_2*x_4*x_9+x_2*x_6*x_7+x_3*x_4*x_8-x_3*x_5*x_7-1};
             sag1 = subring sagbi eqns;
             SB = sagbi(sag1, Limit => 100);
             isSAGBI SB
@@ -2461,9 +2440,9 @@ doc ///
         (gens, SAGBIBasis)
         (isSAGBI)
     References
-        @HREF("https://arxiv.org/abs/2001.05417", {"D. Crook and P. Donelan.    Polynomial invariants and SAGBI bases for multi-screws. ", EM "arXiv:2001.05417", ", 2020."})@
+        @HREF("https://arxiv.org/abs/2001.05417", {"D. Crook and P. Donelan.    Polynomial ",
+            "invariants and SAGBI bases for multi-screws. ", EM "arXiv:2001.05417", ", 2020."})@
 ///
-
 doc ///
     Key
         "Subduction strategies"
@@ -2484,12 +2463,12 @@ doc ///
         Text
             There are three possible values for @TT "Strategy"@:
             @TT "DegreeByDegree"@, @TT "Incremental"@, or @TT "Master"@.
-        
+
             At the beginning of each loop inside of @TO "sagbi"@,
             the main @TO "SAGBIBasis"@ computation object is updated.
             There are two types of update procedure; the update procedure that is used
             is determined by the value of @TT "Strategy"@.
-            
+
             The @TT "DegreeByDegree"@ strategy computes a partial groebner basis
             of the {\it reduction ideal} from scratch.
             The @TT "DegreeByDegree"@ strategy is better when many new generators
@@ -2526,7 +2505,6 @@ doc ///
         subalgebraBasis
         subduction
 ///
-
 doc ///
     Key
         "Subduction computation limit"
@@ -2545,12 +2523,12 @@ doc ///
             to stop the computation before a subalgebra basis has been found.
             Since subalgebra bases may be infinite, such a barrier is needed to prevent
             endless loops.
-            
+
             The @TT "Limit"@ is an upper bound on the degrees of the $S$-pairs considered
             by the algorithm in the @TO "presentationRing"@.
             In this ring, the degrees are assigned according to the degrees of the polynomials
             that the variables represent.
-            
+
             Since the @TO "sagbiDegree"@ does not monotonically increase during the
             computation, there is no guarantee that a computed partial subalgebra basis
             is complete up to @TT "Limit"@, even when the computation terminates at this bound.
@@ -2583,7 +2561,6 @@ doc ///
         subalgebraBasis
         subduction
 ///
-
 doc ///
     Key
         flattenedRing
@@ -2615,5 +2592,4 @@ doc ///
         sagbiBasis
         (ambient, SAGBIBasis)
 ///
-
 end --
