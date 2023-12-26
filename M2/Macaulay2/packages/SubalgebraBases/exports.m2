@@ -12,7 +12,7 @@ export {
     "Recompute",
     "RenewOptions",
     "subduction"
-    }
+}
 
 -- From classes.m2
 export {
@@ -27,7 +27,7 @@ export {
     "sagbiLimit",
     "sagbiDegree",
     "flattenedRing"
-    }
+}
 
 -- From sagbi-functions.m2
 export {
@@ -42,7 +42,7 @@ export {
     "isFullIntersection",
     "originalSubringGens",
     "CheckFullIntersection"
-    }
+}
 
 protect symbol quotientRing
 protect symbol tensorRing
