@@ -999,7 +999,7 @@ forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
      if Psi#"inverseRationalMap" === null then setKeyValue(Psi,"inverseRationalMap",Phi);
 );
 
-compose (RingMap,RingMap) := (f,g) -> (
+compose (RingMap,RingMap) := RingMap => {} >> o -> (f,g) -> (
     if source f =!= target g then error "rational maps not composable: incompatible target and source";
     L := toMatrix (f * g);
     if L == 0 then error "rational maps may not be composable: got the empty map by composing chosen representatives";
@@ -1012,7 +1012,7 @@ compose (RingMap,RingMap) := (f,g) -> (
 compose (RationalMap,RationalMap) := 
 compose (MultihomogeneousRationalMap,RationalMap) := 
 compose (RationalMap,MultihomogeneousRationalMap) := 
-compose (MultihomogeneousRationalMap,MultihomogeneousRationalMap) := (Phi,Psi) -> (
+compose (MultihomogeneousRationalMap,MultihomogeneousRationalMap) := {} >> o -> (Phi,Psi) -> (
     if target Phi === source Psi then (     
         Eta:=rationalMap(compose(map Phi,map Psi),Dominant=>"notSimplify");
         if Phi#"isDominant" === true then (
@@ -1910,7 +1910,7 @@ target AbstractRationalMap := (Phi) -> Phi#"target";
 
 coefficientRing AbstractRationalMap := (Phi) -> coefficientRing source Phi;
 
-compose (AbstractRationalMap,AbstractRationalMap) := (Phi,Psi) -> (
+compose (AbstractRationalMap,AbstractRationalMap) := AbstractRationalMap => {} >> o -> (Phi,Psi) -> (
    if target Phi =!= source Psi then error "rational maps not composable: incompatible target and source";
    new AbstractRationalMap from {
         "source" => source Phi,

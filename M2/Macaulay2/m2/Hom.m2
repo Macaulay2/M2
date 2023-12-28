@@ -103,18 +103,18 @@ homomorphism' Matrix := Matrix => opts -> f -> (
 
 -----------------------------------------------------------------------------
 
-compose = method()
-compose(Module, Module, Module) := Matrix => (M, N, P) -> (
+compose = method(Options => true)
+compose(Module, Module, Module) := Matrix => options Hom >> opts -> (M, N, P) -> (
+    -- produce the composition map Hom(M, N) ** Hom(N, P) --> Hom(M, P)
+    -- note: see 1f4bfb3 for an older strategy which may be faster in big examples
     R := ring M;
     if not ring N === R or not ring P === R then error "expected modules over the same ring";
     if isQuotientModule N then (
 	-- Now cover N === ambient N
-	inducedMap(Hom(M,P),,
-	    map(dual cover M ** ambient P, Hom(M,N)**Hom(N,P), 
-		(dual cover M ** reshape(R^1, cover N ** dual cover N, id_(cover N)) ** ambient P)
-		*
-		(generators Hom(M,N) ** generators Hom(N,P))),
-	    Verify=>false))
+	f := dual cover M ** reshape(R^1, cover N ** dual cover N, id_(cover N)) ** ambient P;
+	g := generators Hom(M, N, opts) ** generators Hom(N, P, opts);
+	m := map(dual cover M ** ambient P, Hom(M, N, opts) ** Hom(N, P, opts), f * g);
+	inducedMap(Hom(M, P, opts), , m, Verify => false))
     else (
 	N' := cokernel presentation N;
-	compose(M,N',P) * (Hom(M,map(N',N,1))**Hom(map(N,N',1),P))))
+	compose(M, N', P, opts) * (Hom(M, map(N', N, 1), opts) ** Hom(map(N, N', 1), P, opts))))

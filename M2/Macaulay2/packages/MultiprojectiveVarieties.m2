@@ -1414,7 +1414,7 @@ segre MultirationalMap := (cacheValue "compositionWithSegreEmbedding") (Phi -> (
     rationalMap(f * (map s),Dominant=>"notSimplify")
 ));
 
-compose (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
+compose (MultirationalMap,MultirationalMap) := MultirationalMap => {} >> o -> (Phi,Psi) -> (
     if Phi.cache#?("composition",Psi) then return Phi.cache#("composition",Psi);
     if ring ambient target Phi === ring ambient source Psi and target Phi == source Psi then (
         f := toRingMap(Phi,ring source Psi);
