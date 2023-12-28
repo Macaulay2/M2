@@ -30,6 +30,8 @@ export {
     "sheafHom",
     "tangentSheaf",
     "cotangentSheaf",
+    "canonicalBundle",
+    "isProjective",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
@@ -38,6 +40,7 @@ export {
 importFrom_Core {
     "getAttribute", "hasAttribute", "ReverseDictionary",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
+    "tryHooks", "cacheHooks",
     }
 
 -----------------------------------------------------------------------------
@@ -129,17 +132,25 @@ genus  ProjectiveVariety := X -> genus  ring X
 genera ProjectiveVariety := X -> genera ring X
 -- euler ProjectiveVariety is defined further down
 -- TODO: define degrees, eulers
+hilbertPolynomial ProjectiveVariety := opts -> X -> hilbertPolynomial(ring X, opts)
 
 ambient     AffineVariety :=     AffineVariety => X -> Spec ambient ring X
 ambient ProjectiveVariety := ProjectiveVariety => X -> Proj ambient ring X
 
 -- arithmetic ops
--- TODO: uncomment the projective ones when Proj works with multigraded rings
--- TODO: use ** instead of * to match NormalToricVarieties, etc.
-AffineVariety     *      AffineVariety :=     AffineVariety => (X, Y) -> Spec(ring X ** ring Y)
---ProjectiveVariety *  ProjectiveVariety := ProjectiveVariety => (X, Y) -> Proj(ring X ** ring Y)
-AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X * Spec R
+-- TODO: document
+AffineVariety     **     AffineVariety :=     AffineVariety => (X, Y) -> Spec(ring X ** ring Y)
+AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X ** Spec R
+-- TODO: uncomment when Proj works with multigraded rings
+--ProjectiveVariety ** ProjectiveVariety := ProjectiveVariety => (X, Y) -> Proj(ring X ** ring Y)
 --ProjectiveVariety ** Ring              := ProjectiveVariety => (X, R) -> X ** Proj R
+
+-- property checks
+-- TODO: document
+isProjective = method(TypicalValue => Boolean)
+isProjective Variety           := X -> false
+isProjective ProjectiveVariety := X -> true
+-- TODO: isSmooth
 
 -- This method returns either a Variety, an AbstractVariety (from Schubert2),
 -- a NormalToricVariety, or any other variety stashed in R.variety.
@@ -165,6 +176,13 @@ mathML Variety := lookup(mathML, Thing)
 
 describe     AffineVariety := X -> Describe (expression Spec) (expression X.ring)
 describe ProjectiveVariety := X -> Describe (expression Proj) (expression X.ring)
+
+-----------------------------------------------------------------------------
+-- Divisors
+-----------------------------------------------------------------------------
+
+-- used for algorithms that need a non-trivial Picard group
+checkProjective := X -> if not isProjective X then error "expected a coherent sheaf over a projective variety"
 
 -----------------------------------------------------------------------------
 -- SheafOfRings and CoherentSheaf type declarations and basic constructors
@@ -223,7 +241,6 @@ module CoherentSheaf := Module => F -> F.module
 
 codim   CoherentSheaf := options(codim, Module) >> o -> F -> codim(F.module, o)
 rank    CoherentSheaf := F -> rank    F.module
-degrees CoherentSheaf := F -> degrees F.module
 numgens CoherentSheaf := F -> numgens F.module
 betti   CoherentSheaf := o -> F -> betti(F.module, o)
 
@@ -231,13 +248,24 @@ super   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, super   F.module
 ambient CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, ambient F.module)
 cover   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, cover   F.module)
 
+-- TODO: do all need to be hookified? Perhaps prefixing
+-- the variety to the key, like 'euler(X, F)', would be better.
+degree  CoherentSheaf := F -> degree  module F
+degrees CoherentSheaf := F -> degrees module F
+euler   CoherentSheaf := F -> tryHooks((euler, CoherentSheaf), F, euler @@ module)
+eulers  CoherentSheaf := F -> eulers  module F
+genus   CoherentSheaf := F -> genus   module F
+genera  CoherentSheaf := F -> genera  module F
+pdim    CoherentSheaf := F -> pdim    module F
+
+hilbertPolynomial CoherentSheaf := opts -> F -> hilbertPolynomial(module F, opts)
+
 -- twist and powers
--- TODO: check projectivity
--- TODO: https://github.com/Macaulay2/M2/issues/2288
-SheafOfRings(ZZ)   := CoherentSheaf => (O, a) -> O^1(a)
-CoherentSheaf(ZZ)  := CoherentSheaf => (F, a) -> sheaf(F.variety, F.module ** (ring F)^{a})
-SheafOfRings  ^ ZZ := SheafOfRings  ^ List := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring O)^n)
-CoherentSheaf ^ ZZ := CoherentSheaf ^ List := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
+-- TODO: sheaf should dehomogenize modules on Affine varieties
+SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
+CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> sheaf(F.variety, F.module ** (ring F)^{splice{a}})
+SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring O)^n)
+CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
 -- arithmetic ops
@@ -250,8 +278,10 @@ Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I 
 directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.directSum(1 : F)
 
 -- multilinear ops
-exteriorPower (ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(variety F,  exteriorPower(i, module F, o))
-symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(variety F, symmetricPower(i, module F, o))
+-- TODO: document
+determinant        CoherentSheaf  := CoherentSheaf => o ->     F  -> exteriorPower(rank F, F, o)
+exteriorPower (ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(F.variety,  exteriorPower(i, F.module, o))
+symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(F.variety, symmetricPower(i, F.module, o))
 
 annihilator CoherentSheaf := Ideal => o -> F -> annihilator(module F, o)
 
@@ -315,7 +345,7 @@ SumOfTwists.synonym = "sum of twists"
 SheafOfRings(*)  := SumOfTwists => O -> O^1(>=-infinity)
 CoherentSheaf(*) := SumOfTwists => F ->   F(>=-infinity)
 SheafOfRings  LowerBound := SumOfTwists => (O, b) -> O^1(b)
-CoherentSheaf LowerBound := SumOfTwists => (F, b) -> new SumOfTwists from {F, b}
+CoherentSheaf LowerBound := SumOfTwists => (F, b) -> (checkProjective variety F; new SumOfTwists from {F, b})
 
 -- basic methods
 ring    SumOfTwists := S ->    ring S#0
@@ -331,61 +361,110 @@ toString   SumOfTwists := toString @@ expression
 -- helpers for sheaf cohomology
 -----------------------------------------------------------------------------
 
-degreeList = (M) -> (
+-- TODO: should this also check that the variety is finite type over the field?
+checkVariety := (X, F) -> (
+    if not X === variety F     then error "expected coherent sheaf over the same variety";
+    if not isAffineRing ring X then error "expected a variety defined over a field";
+    )
+
+-- pushforward the module to PP^n via S/I <-- S
+flattenModule   = M -> cokernel flattenMorphism presentation M
+flattenMorphism = f -> (
+    g := presentation ring f;
+    S := ring g;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+
+-- TODO: this is called twice
+-- TODO: implement for multigraded ring
+degreeList := M -> (
+    -- gives the exponents of the numerator of reduced Hilbert series of M
      if dim M > 0 then error "expected module of finite length";
      H := poincare M;
      T := (ring H)_0;
      H = H // (1-T)^(numgens ring M);
      exponents H / first)
 
-globalSectionsModule = (G,bound) -> (
-     -- compute global sections
-     if degreeLength ring G =!= 1 then error "expected degree length 1";
-     M := module G;
-     A := ring G;
-     M = cokernel presentation M;
-     S := saturate image map(M,A^0,0);
-     if S != 0 then M = M/S;
-     F := presentation A;
-     R := ring F;
-     N := cokernel lift(presentation M,R) ** cokernel F;
-     r := numgens R;
-     wR := R^{-r};
-     if bound < infinity and pdim N >= r-1 then (
-	  E1 := Ext^(r-1)(N,wR);
-	  p := (
-	       if dim E1 <= 0
-	       then max degreeList E1 - min degreeList E1 + 1
-	       else 1 - first min degrees E1 - bound
-	       );
-	  if p === infinity then error "global sections module not finitely generated, can't compute it all";
-	  if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
-	  );
-     minimalPresentation M)
+-- quotienting by local H_m^0(M) to "saturate" M
+-- TODO: use irrelevant ideal here
+killH0 := M -> if (H0 := saturate(0*M)) == 0 then M else M / H0
 
-cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
-     F := S#0;
-     R := ring F;
-     if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
-     b := first S#1;
-     if i == 0 then globalSectionsModule(F,b) else HH^(i+1)(module F,Degree => b))
+-- TODO: add tests:
+-- - global sections of sheafHom are Hom
+-- TODO: implement for multigraded ring
+-- TODO: this can change F.module to the result!
+twistedGlobalSectionsModule = (F, bound) -> (
+    -- compute global sections module Gamma_(d >= bound)(X, F(d))
+    A := ring F;
+    if degreeLength A =!= 1 then error "expected degree length 1";
+    -- quotient by H_m^0(M)
+    M := killH0 cokernel presentation module F;
+    -- pushforward to the projective space
+    -- TODO: both n and w need to be adjusted for the multigraded case
+    N := flattenModule M;
+    S := ring N;
+    n := dim S-1;
+    w := S^{-n-1}; -- canonical sheaf on P^n
+    -- Note: bound=infinity signals that H_m^1(M) = 0, ie. M is saturated
+    -- in other words, don't search for global sections not already in M
+    -- TODO: what would pdim N < n, hence E1 = 0, imply?
+    if bound < infinity and pdim N >= n then (
+	E1 := Ext^n(N, w); -- the top Ext
+	p := (
+	    if dim E1 <= 0 -- 0-module or 0-dim module
+	    then 1 + max degreeList E1 - min degreeList E1
+	    else 1 - first min degrees E1 - bound);
+	if p === infinity then error "the global sections module is not finitely generated";
+	-- does this compute a limit?
+	-- compare with the limit from minimalPresentation hook
+	-- and emsbound in NormalToricVarieties/Sheaves.m2
+	if p > 0 then M = Hom(image matrix {apply(generators A, g -> g^p)}, M);
+	);
+    minimalPresentation M)
 
-cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
-     R := ring F;
-     if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
-     k := coefficientRing R;
-     k^(
-	  if i === 0
-	  then rank source basis(0, HH^i F(>=0))
-	  else (
-	       p := presentation R;
-	       A := ring p;
-	       n := numgens A;
-	       M := cokernel lift(presentation module F,A) ** cokernel p;
-	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
-cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> cohomology(i,F,opts)
+-----------------------------------------------------------------------------
+-- cohomology
+-----------------------------------------------------------------------------
+-- TODO: add hooks for X not finite type over k?
 
-cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
+-- HH^p(X, OO_X)
+cohomology(ZZ,          SheafOfRings) := Module => opts -> (p,    O) -> cohomology(p, variety O, O^1, opts)
+cohomology(ZZ, Variety, SheafOfRings) := Module => opts -> (p, X, O) -> cohomology(p,         X, O^1, opts)
+
+-- HH^p(X, F(>=b))
+cohomology(ZZ,                    SumOfTwists) := Module => opts -> (p,    S) -> cohomology(p, variety S, S, opts)
+cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) -> (
+    checkVariety(X, S);
+    (F, b) := (S#0, S#1#0);
+    if not F.cache.?HH    then F.cache.HH = new MutableHashTable;
+    if F.cache.HH#?(p, b) then F.cache.HH#(p, b) else F.cache.HH#(p, b) =
+    if p == 0 then twistedGlobalSectionsModule(F, b) else HH^(p+1)(module F, Degree => b))
+
+-- HH^p(X, F)
+cohomology(ZZ,                    CoherentSheaf) := Module => opts -> (p,    F) -> cohomology(p, variety F, F, opts)
+cohomology(ZZ,     AffineVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
+    checkVariety(X, F);
+    if p == 0 then module F else (ring F)^0)
+cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
+    checkVariety(X, F);
+    if not F.cache.?HH then F.cache.HH = new MutableHashTable;
+    if F.cache.HH#?p   then return F.cache.HH#p;
+    -- TODO: only need basis(0, G) in the end, is this too much computation?
+    G := if p == 0 then twistedGlobalSectionsModule(F, 0) -- HH^0 F(>=0)
+    else (
+	-- pushforward F to PP^n
+	M := flattenModule module F;
+	S := ring M;
+	-- TODO: both n and w need to be adjusted for the multigraded case
+	n := dim S-1;
+	w := S^{-n-1};
+	-- using Serre duality for coherent sheaves on schemes with mild
+	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
+	-- TODO: check that X is proper (or at least finite type)
+	Ext^(n-p)(M, w));
+    k := coefficientRing ring F;
+    F.cache.HH#p = k^(rank source basis(0, G)))
 
 -----------------------------------------------------------------------------
 -- Module of twisted global sections Γ_*(F)
@@ -393,38 +472,37 @@ cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
 -- TODO: optimize caching here
 -- TODO: should F>=0 be hardcoded?
-minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (cacheValue symbol minimalPresentation) (
-    F -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts)))
+minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
+    cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
+	-- this is the default algorithm
+	(opts, F) -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts))))
 
 -----------------------------------------------------------------------------
--- cotangentSheaf and tangentSheaf
+-- cotangentSheaf, tangentSheaf, and canonicalBundle
 -----------------------------------------------------------------------------
-
-cotangentSheaf = method(Options => {Minimize => true})
-tangentSheaf = method(Options => {Minimize => true})
-
+-- TODO: make this work for weighted projective spaces, see c564ec04
+-- this would be useful for checking things about mirror symmetry
 -- weightedVars = S -> (
 --      map(S^1, S^-(degrees S), {apply(generators S, flatten degrees S, times)})
 --      )
 
-cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue (symbol cotangentSheaf => opts)) ((X) -> (
-	  R := ring X;
-	  F := presentation R;
-	  S := ring F;
-	  checkRing S;
-	  d := vars S ** R;
-	  e := jacobian F ** R;
-     	  -- assert (d*e == 0);
-	  om := sheaf(X, homology(d,e));
-	  if opts.Minimize then om = minimalPresentation om;
-	  om))
+-- TODO: this is the slowest part of hh and euler, look into other strategies
+-- TODO: simplify caching here and in minimalPresentation
+cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { Minimize => true })
+cotangentSheaf ProjectiveVariety := opts -> (cacheValue (symbol cotangentSheaf => opts)) (X -> (
+	R := ring X; checkRing R;
+	S := ring(F := presentation R);
+	(d, e) := (vars S ** R, jacobian F ** R); -- assert(d * e == 0);
+	prune' := if opts.Minimize then prune else identity;
+	prune' sheaf(X, homology(d, e))))
+cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
-cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => opts -> (i,X) -> (
-     if X#?(cotangentSheaf,i)
-     then X#(cotangentSheaf,i) 
-     else X#(cotangentSheaf,i) = exteriorPower(i,cotangentSheaf(X,opts)))
+tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+tangentSheaf ProjectiveVariety := opts -> X -> dual cotangentSheaf(X, opts)
 
-tangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (X) -> dual cotangentSheaf(X,opts)
+-- TODO: document
+canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+canonicalBundle ProjectiveVariety := opts -> X -> determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 -----------------------------------------------------------------------------
 -- singularLocus
@@ -437,41 +515,6 @@ singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
      A := ring f;
      checkRing A;
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
-
------------------------------------------------------------------------------
-
-eulers CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     eulers module F)
-euler CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     euler module F)
-genera CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     genera module F)
-genus CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     genus module F)
-degree CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     degree F.module)
-pdim CoherentSheaf := F -> pdim module F
-
------------------------------------------------------------------------------
-
-hilbertSeries ProjectiveVariety := opts -> X -> ( notImplemented(); hilbertSeries(ring X,opts) )
-hilbertSeries CoherentSheaf := opts -> F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     notImplemented();
-     hilbertSeries(module F,opts))
-
-hilbertPolynomial ProjectiveVariety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial(ring X, opts)
-hilbertPolynomial CoherentSheaf := opts -> F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     hilbertPolynomial(F.module,opts))
-
-hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> ( notImplemented(); hilbertFunction(d,F.module))
-hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> ( notImplemented(); hilbertFunction(d,ring X))
 
 -----------------------------------------------------------------------------
 

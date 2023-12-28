@@ -11,10 +11,6 @@ doc ///
     (hilbertFunction,ZZ,Module)
     (hilbertFunction,List,Ideal)
     (hilbertFunction,ZZ,Ideal)
-    (hilbertFunction,List,ProjectiveVariety)
-    (hilbertFunction,ZZ,ProjectiveVariety)
-    (hilbertFunction,List,CoherentSheaf)
-    (hilbertFunction,ZZ,CoherentSheaf)
     (hilbertFunction,Ring)
     (hilbertFunction,Module)
     (hilbertFunction,Ideal)
@@ -25,13 +21,11 @@ doc ///
   Inputs
     d:{ZZ,List} -- of integers
       specifying a degree (or multidegree)
-    M:{Ring,Module,Ideal,CoherentSheaf,ProjectiveVariety}
+    M:{Ring,Ideal,Module}
   Outputs
     :ZZ
       the dimension of the degree @SAMP "d"@ part of @SAMP "M"@.  For an
       ideal, the corresponding quotient ring is used.
-      For a projective varieties and coherent sheaves, the
-      functionality is not yet implemented.
   Description
     Text
       In the following example, compare the rank of the source of the basis map

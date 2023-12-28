@@ -1,3 +1,18 @@
+TEST /// -- twisted global section module
+  ringP3 = ZZ/101[x_0..x_3]
+  ringP1 = ZZ/101[s,t]
+  cubicMap = map(ringP1, ringP3, {s^3, s^2*t, s*t^2, t^3})
+  idealCubic = kernel cubicMap
+  Cubic = Proj(ringP3/idealCubic)
+  Omega = cotangentSheaf Cubic
+  -- certain changes in the code for twisted global sections
+  -- (e.g. omitting MinimalGenerators => true in calling Hom)
+  -- add random coefficients in the presentation of Omega.
+  assert(module Omega(1) === coker matrix(ring Cubic, {{-x_3, -x_2, -x_1}, {x_2, x_1, x_0}}))
+///
+
+end
+
 -- multigraded Proj
 restart
 needsPackage "VirtualResolutions"

@@ -59,44 +59,11 @@ sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> (
     );
 sheaf NormalToricVariety := X -> sheaf_X ring X
 
-CoherentSheaf#{Standard,AfterPrint} = F -> (
-    X := variety F;
-    M := module F;
-    << endl;				  -- double space
-    n := rank ambient F;
-    << concatenate(interpreterDepth:"o") << lineNumber << " : coherent sheaf on " << X;
-    if M.?generators then
-    if M.?relations then << ", subquotient of " << ambient F
-    else << ", subsheaf of " << ambient F
-    else if M.?relations then << ", quotient of " << ambient F;
-    << endl;)
-
 installMethod(symbol _, OO, NormalToricVariety, (OO,X) -> sheaf(X, ring X))
 
-CoherentSheaf Sequence := CoherentSheaf => (F,a) -> sheaf(variety F, 
-    F.module ** (ring F)^{toList(a)})
-   
-sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> (
-    sheaf(variety F, Hom(module F, module G)) );
-Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0(variety F, sheafHom(F,G))
-
-CoherentSheaf.directSum = args -> (
-    assert(#args > 0);
-    X := variety args#0;
-    if not all(args, F -> variety F === X) then (
-    	error "-- expected all sheaves to be over the same ring");
-    sheaf(X, directSum apply(args, F -> F.module)) );
-
-SheafOfRings Sequence := CoherentSheaf => (O,a) -> O^1 a
-
-super   CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, super   module F)
-ambient CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, ambient module F)
-cover   CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, cover   module F)
-
-minimalPresentation CoherentSheaf := 
-prune CoherentSheaf := opts -> F -> (
-    X := variety F;
-    if instance(X, NormalToricVariety) then (
+-- Add a new strategy as a hook
+addHook((minimalPresentation, CoherentSheaf), Strategy => symbol NormalToricVarieties, (opts, F) ->
+    if instance(X := variety F, NormalToricVariety) then (
     	M := module F;
     	S := ring M;
     	B := ideal X;
@@ -105,14 +72,14 @@ prune CoherentSheaf := opts -> F -> (
     	C := res M;
     	-- is there a better bound?
     	a := max(1, max flatten flatten apply(length C +1, i -> degrees C#i));
-    	return sheaf(X, minimalPresentation Hom(B^[a], M)) );
-    sheaf minimalPresentation HH^0 F(>=0) );
+	return sheaf(X, minimalPresentation Hom(B^[a], M)) )
+    )
 
 cotangentSheaf NormalToricVariety := CoherentSheaf => opts -> (
     (cacheValue (symbol cotangentSheaf => opts)) (
 	X -> (
       	    if isDegenerate X then 
-		error "-- expect a non-degenerate toric variety";
+		error "-- expected a non-degenerate toric variety";
       	    S := ring X;
       	    d := dim X;
       	    n := numgens S;
@@ -246,9 +213,8 @@ cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) 
 cohomology (ZZ, NormalToricVariety, SheafOfRings) := Module => opts -> 
     (i, X ,O) -> HH^i (X, O^1)
 
-euler CoherentSheaf := F -> (
-    X := variety F;
-    if class variety F === NormalToricVariety then 
-    	return sum (1 + dim X, i -> (-1)^i * (rank HH^i(X,F)) );
-    if class variety F === ProjectiveVariety then return euler module F;
-    error "-- expected a sheaf on a ProjectiveVariety or NormalToricVariety");
+-- Add a new strategy as a hook
+addHook((euler, CoherentSheaf), Strategy => symbol NormalToricVarieties, F ->
+    if instance(X := variety F, NormalToricVariety) then
+	return sum (1 + dim X, i -> (-1)^i * (rank HH^i(X,F)) )
+    )
