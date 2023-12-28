@@ -603,14 +603,6 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 
 -----------------------------------------------------------------------------
 
-Hom(Matrix, Module) := Matrix => o -> (f, N) -> inducedMap(Hom(source f, N, o), Hom(target f, N, o), transpose cover f ** N, Verify => false)
-Hom(Module, Matrix) := Matrix => o -> (M, g) -> inducedMap(Hom(M, target g, o), Hom(M, source g, o), dual      cover M ** g, Verify => false)
-Hom(Matrix, Matrix) := Matrix => o -> (f, g) -> Hom(source f, g, o) * Hom(f, source g, o)
-
-dual Matrix := Matrix => options Hom >> o -> f -> Hom(f, module ring f, o)
-
------------------------------------------------------------------------------
-
      -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't use this code in inverse Matrix to check invertibility:
      -- if i % m != 0 then error "matrix not invertible";
 Matrix.InverseMethod =
