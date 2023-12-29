@@ -525,7 +525,7 @@ Matrix /* or null */ *Matrix::reshape(const FreeModule *F,
     }
   if (n_rows() * n_cols() != F->rank() * G->rank())
     {
-      ERROR("reshape: ranks of freemodules incorrect");
+      ERROR("reshape: ranks of the free modules are incorrect");
       return nullptr;
     }
 
