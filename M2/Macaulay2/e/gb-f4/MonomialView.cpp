@@ -1,5 +1,5 @@
 #include "MonomialView.hpp"
-
+#include "../exceptions.hpp"
 namespace newf4 {
 
 // a general splice command which handles lcm, product and quotient
@@ -112,5 +112,32 @@ MonomialView MonomialView::quotient(const MonomialView& left,
 			       block);
 }
 
+void MonomialView::display(std::ostream& o,
+                           const std::vector<std::string>& varnames,
+                           const newf4::MonomialView& m
+                           )
+{
+  // Note: if the monomial is '1', nothing is printed.
+  // TODO: possibly allow print_one boolean argument, instead of handling it at calling point?
+  bool first = true;
+  for (auto t = m.begin(); t != m.end(); ++t)
+    {
+      auto v = t.var();
+      auto e = t.power();
+      if (v >= varnames.size() or v < 0)
+        {
+          throw exc::engine_error("variable out of range");
+        }
+      if (not first)
+        {
+          o << '*';
+        }
+      first = false;
+      o << varnames[v];
+      if (e != 1)
+        o << '^' << e;
+    }
+}
+  
 } // end namespace f4
 

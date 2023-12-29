@@ -57,8 +57,8 @@ TEST(PolyRing, create1)
   MonomialOrdering* mo = rawGRevLexMonomialOrdering(stdvector_to_M2_arrayint(degs), 32);
   const Monoid* M = Monoid::create(
                              mo,
-                             varnames,
                              degreeRing(1),
+                             varnames,
                              degs,
                              heft
                              );

@@ -4,6 +4,7 @@
 
 #include "util-polyring-creation.hpp"
 #include "matrix.hpp"
+#include "BasicPolyList.hpp"
 #include "BasicPolyListParser.hpp"
 #include "gb-f4/PolynomialList.hpp"
 #include "gb-f4/GBF4Interface.hpp"
@@ -11,8 +12,61 @@
 // These are more benchmark examples, and the files to be read are quite large
 // So we can't run these by default.
 
-// #define EXAMPLE_DIR "/Users/mike/src/git-from-others/msolve/MES-examples/"
-#define EXAMPLE_DIR "/Users/moorewf/Dropbox/NCEngine/GB examples/"
+#define EXAMPLE_DIR "/Users/mike/src/git-from-others/msolve/MES-examples/"
+//#define EXAMPLE_DIR "/Users/moorewf/Dropbox/NCEngine/GB examples/"
+
+// MES: just in process of adding this.
+// TODO: add in function f.ToString(varnames); // f is a BasicPoly
+
+TEST(MatrixIO, readPolynomial)
+{
+  std::string polyStr { "13*x^2*y-x*y-2" };
+  std::vector<std::string> varnames = {"x", "y", "z"};
+  auto result = parseBasicPoly(polyStr, varnames);
+  EXPECT_TRUE(result.termCount() == 3);
+  std::cout << "poly: ";
+  std::cout << result.toString(varnames);
+  std::cout << '\n';
+  EXPECT_TRUE(polyStr == result.toString(varnames));
+
+  polyStr = "-x+y^2-13*x*y*z+1";
+  result = parseBasicPoly(polyStr, varnames);
+  std::cout << "poly: " << result.toString(varnames) << '\n';
+  EXPECT_TRUE(result.toString(varnames) == polyStr);
+  std::cout << "bytes used: " << result.bytesUsed() << '\n';
+  // #bytes: 
+
+  polyStr = "2*x+y^2-13*x*y*z-1";
+  result = parseBasicPoly(polyStr, varnames);
+  std::cout << "poly: " << result.toString(varnames) << '\n';
+  EXPECT_TRUE(result.toString(varnames) == polyStr);
+}
+
+TEST(MatrixIO, readPolynomialErrors)
+{
+  std::vector<std::string> varnames = {"x", "y", "z"};
+  EXPECT_THROW(parseBasicPoly("3*w-2", varnames), parsing_error);
+  try {
+    parseBasicPoly("3*w-2", varnames);
+  } catch (parsing_error& e) {
+    std::cout << "expected parse error: " << e.what() << std::endl;
+  }
+  
+  EXPECT_THROW(parseBasicPoly("3*-2", varnames), parsing_error);
+  try {
+    parseBasicPoly("3*-2", varnames);
+  } catch (parsing_error& e) {
+    std::cout << "expected parse error: " << e.what() << std::endl;
+  }
+  
+  EXPECT_THROW(parseBasicPoly("3*x^*y-2", varnames), parsing_error);
+  try {
+    parseBasicPoly("3*x^*y-2", varnames);
+  } catch (parsing_error& e) {
+    std::cout << "expected parse error: " << e.what() << std::endl;
+  }
+}
+
 
 TEST(MatrixIO, readMsolve)
 {
@@ -28,6 +82,7 @@ TEST(MatrixIO, readMsolve)
 )";
 
   auto result = parseMsolveFromString(contents);
+  std::cout << "bytes used for poly list: " << bytesUsed(result) << '\n';
   EXPECT_TRUE(result.size() == 4);
 
   const PolynomialRing* R = simplePolynomialRing(1235952427, {"x", "y", "z"});
@@ -43,6 +98,7 @@ TEST(MatrixIO, readMsolveBig1)
   std::string filename { EXAMPLE_DIR"6pts-a-gb.ms" };
   auto B = parseMsolveFile(filename);
   EXPECT_TRUE(B.size() == 1019);
+  std::cout << "bytes used for poly list: " << bytesUsed(B) << '\n';
 
   // TODO: parseMsolveFile should also return: modulus, varnames, monorder.
   std::vector<std::string> varnames {"t12", "t13", "t14", "t15", "t16",
@@ -68,6 +124,7 @@ TEST(MatrixIO, readMsolveBig2)
   std::string filename { EXAMPLE_DIR"6pts-b-gb.ms" };
   auto B = parseMsolveFile(filename);
   EXPECT_TRUE(B.size() == 1391);
+  std::cout << "bytes used: " << bytesUsed(B) << '\n';
 
   std::vector<std::string> varnames {"t12", "t13", "t14", "t15", "t16",
     "t23", "t24", "t25", "t26", "t34", "t35", "t36", "t45", "t46", "t56", "z1", "z2"};
@@ -93,6 +150,7 @@ TEST(MatrixIO, readMsolveBig3)
   std::string filename { EXAMPLE_DIR"eg2-gb.ms" };
   auto B = parseMsolveFile(filename);
   EXPECT_TRUE(B.size() == 4761);
+  std::cout << "bytes used: " << bytesUsed(B) << '\n';
 
   // TODO: parseMsolveFile should also return: modulus, varnames, monorder.
   std::vector<std::string> varnames {

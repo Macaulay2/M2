@@ -185,6 +185,10 @@ class MonomialView
   auto dataBegin() const -> MonomialInt* { return mData; }
   auto dataEnd() const -> MonomialInt* { return mData + size(); }
 
+  static void display(std::ostream& o,
+                      const std::vector<std::string>& varnames,
+                      const newf4::MonomialView& m
+                      );
 };
 
 } // end namespace newf4

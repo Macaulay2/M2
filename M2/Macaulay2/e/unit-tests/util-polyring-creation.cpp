@@ -13,8 +13,8 @@ const Monoid* degreeMonoid(const std::vector<std::string>& names)
     });
 
   return Monoid::create(mo,
-                        names,
                         IM2_Ring_trivial_polyring()->cast_to_PolynomialRing(),
+                        names,
                         {},
                         {});
 }

@@ -1,5 +1,5 @@
 // BasicPolyList is a vector of polynomials (with components)
-// which we can easily translate to and from other polynoial and matrix types.
+// which we can easily translate to and from other polynomial and matrix types.
 // This class really doesn't require any ring.
 // Current restriction: the coefficients must be an integral type. TODO: allow infinite precision integers too.
 //   TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
@@ -12,27 +12,15 @@
 #include <vector>
 #include <iostream>
 
+#include "BasicPoly.hpp"
 #include "PolynomialStream.hpp"
 
 class FreeModule;
 class Matrix;
 
-struct parsing_error : public exc::engine_error
-{
-  explicit parsing_error(const std::string &msg) : exc::engine_error(msg) {}
-};
-  
-class BasicPoly
-{
-public:
-  std::vector<int> mCoefficients;
-  std::vector<int> mComponents; // if zero length: all components are 0.
-  std::vector<int> mMonomials; // a concatenated list of varpower monomials.  Each first entry is its length.
-
-  void debug_display(std::ostream& o) const;
-};
-
 using BasicPolyList = std::vector<BasicPoly>;
+
+long bytesUsed(const BasicPolyList& F);
 
 class BasicPolyListStreamCollector
 {
