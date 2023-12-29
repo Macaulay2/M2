@@ -161,7 +161,6 @@ jobs:
       - name: Configure Macaulay2 using Autotools
         if: matrix.build-system == 'autotools'
         run: |
-          make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
           export PYVERSION=`python3 -c "from sys import version_info; \
             print(f'{version_info.major}.{version_info.minor}')"`
