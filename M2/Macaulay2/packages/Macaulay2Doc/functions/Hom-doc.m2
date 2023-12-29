@@ -157,32 +157,6 @@ Node
    the induced map on Hom
 ///
 
-document { 
-     Key => {(Hom,CoherentSheaf,CoherentSheaf),
-	  (Hom, SheafOfRings, SheafOfRings),
-	  (Hom, CoherentSheaf, SheafOfRings),
-	  (Hom, SheafOfRings, CoherentSheaf)},
-     Headline => "global Hom",
-     Usage => "Hom(F,G)",
-     Inputs => {
-	  "F", "G" => {"both should be sheaves on a 
-	               projective variety or scheme ", TT "X = Proj R"},
-	  },
-     Outputs => {
-	  Module => {"over the coefficient field of ", TT "R"}
-	  },
-     PARA{"If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way."},
-     EXAMPLE lines ///
-          R = QQ[a..d];
-	  P3 = Proj R
-	  I = monomialCurveIdeal(R,{1,3,4})
-	  G = sheaf module I
-	  Hom(OO_P3,G(3))
-	  HH^0(G(3))
-          ///,
-     SeeAlso => {sheafHom, Ext, sheafExt}
-     }
-
 document {
      Key => {(compose,Module,Module,Module), compose},
      Headline => "composition as a pairing on Hom-modules",

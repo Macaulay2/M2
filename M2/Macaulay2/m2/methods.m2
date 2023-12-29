@@ -641,6 +641,10 @@ runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -
     error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,
 	"  available strategies are: ", demark_", " \\ toExternalString \ new List from store.HookPriority))
 
+-- helper for hookifying methods
+-- runs the hooks, if none succeed, runs the default algorithm f
+tryHooks = (key, args, f) -> if (c := runHooks(key, args)) =!= null then c else f args
+
 -- and keys
 protect QuotientRingHook
 
@@ -677,6 +681,11 @@ codeHelper#(functionBody (cacheValue null) null) = g -> {
 codeHelper#(functionBody (stashValue null) null) = g -> {
      ("-- function f:", value (first localDictionaries g)#"f")
      }
+
+-- helper for hookifying and caching methods
+-- if a cached value isn't found on X, runs the hooks, if none succeed, runs the default algorithm f
+-- TODO: simplify usage
+cacheHooks = (ckey, X, mkey, args, f) -> ((cacheValue ckey) (X -> tryHooks(mkey, args, f))) X
 
 -----------------------------------------------------------------------------
 -- hypertext conversion

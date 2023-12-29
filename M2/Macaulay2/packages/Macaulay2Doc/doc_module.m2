@@ -28,19 +28,6 @@ document { Key => (module, Vector),
 	  class v
      ///}
 
-document { Key => (module, SheafOfRings),
-     SeeAlso => { Variety, OO },
-     Usage => "module F",
-     Inputs => { "F" },
-     Outputs => { { "the module corresponding to ", TT "F" }},
-     EXAMPLE lines ///
-     	  R = QQ[x..z]
-     	  X = Proj R
-	  OO_X^6
-	  module oo
-     ///
-     }
-
 document {
      Key => {relations,(relations, Module)},
      Headline => "the defining relations",
@@ -111,7 +98,7 @@ doc ///
 ///
 
 document {
-     Key => {super,(super, GradedModule),(super, CoherentSheaf),(super, Matrix),(super, Module),(super,Vector)},
+     Key => {super,(super, GradedModule),(super, Matrix),(super, Module),(super,Vector)},
      Headline => "get the ambient module",
      TT "super M", " -- yields the module that the module ", TT "M", " is a submodule of.",
      BR{},

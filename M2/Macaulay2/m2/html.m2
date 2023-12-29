@@ -95,7 +95,9 @@ html Hypertext := x -> (
     attr := "";
     cont := if T.?Options then (
 	(op, ct) := override(options T, toSequence x);
-	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);
+	scanPairs(op, (key, val) -> (
+		if val =!= null
+		then attr = " " | key | "=" | format toString val | attr));
 	sequence ct) else x;
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (

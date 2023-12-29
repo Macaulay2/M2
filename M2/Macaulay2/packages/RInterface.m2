@@ -1,7 +1,7 @@
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
     Version => "0.1",
-    Date => "November 18, 2023",
+    Date => "December 14, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -44,7 +44,7 @@ export {
 --------------------
 -- initialization --
 --------------------
-RHOME = get "!R RHOME | tr -d '\n'"
+RHOME = last lines get "!R RHOME"
 Rlib = openSharedLibrary("R", FileName => RHOME | "/lib/libR." |
     if version#"operating system" == "Darwin" then "dylib" else "so")
 
@@ -247,16 +247,14 @@ getEltFunctions = hashTable {
     REALSXP => (double, REAL, scalarReal),
     CPLXSXP => (Rcomplex, COMPLEX, scalarComplex)}
 
-iterator RObject := x -> (
-    T := TYPEOF x;
-    runHooks((iterator, RObject), (T, x)))
+iterator RObject := x -> runHooks((iterator, RObject), (x, TYPEOF x))
 
 addHook((iterator, RObject),
-    (T, x) -> if T == NILSXP then Iterator(() -> StopIteration),
+    (x, T) -> if T == NILSXP then Iterator(() -> StopIteration),
     Strategy => "NILSXP")
 
 addHook((iterator, RObject),
-    (T, x) -> if getEltFunctions#?T then Iterator (
+    (x, T) -> if getEltFunctions#?T then Iterator (
 	n := length' x;
 	(ctype, toptr, tosexp) := getEltFunctions#T;
 	ptr := value toptr x;
@@ -271,7 +269,7 @@ addHook((iterator, RObject),
     Strategy => "LGLSXP/INTSXP/REALSXP/CPLXSXP")
 
 addHook((iterator, RObject),
-    (T, x) -> if T == LISTSXP or T == LANGSXP then Iterator (
+    (x, T) -> if T == LISTSXP or T == LANGSXP then Iterator (
 	() -> (
 	    if TYPEOF x == NILSXP then StopIteration
 	    else (
@@ -281,7 +279,7 @@ addHook((iterator, RObject),
     Strategy => "LISTSXP")
 
 addHook((iterator, RObject),
-    (T, x) -> if T == STRSXP then Iterator (
+    (x, T) -> if T == STRSXP then Iterator (
 	n := length' x;
 	i := 0;
 	() -> (
@@ -294,7 +292,7 @@ addHook((iterator, RObject),
     Strategy => "STRSXP")
 
 addHook((iterator, RObject),
-    (T, x) -> if T == VECSXP then Iterator (
+    (x, T) -> if T == VECSXP then Iterator (
 	n := length' x;
 	i := 0;
 	() -> (

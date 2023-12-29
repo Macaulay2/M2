@@ -3,14 +3,6 @@
 --- notes: what should 'ambient Ring' do??
 ---        what about 'ambient Ideal'? ideal 1_R seems suitable (Mahrud)
 
--*
--- TODO
-ambient(AffineVariety)
-ambient(CoherentSheaf)
-ambient(GradedModule)
-ambient(ProjectiveVariety)
-*-
-
 document { 
      Key => ambient,
      Headline => "ambient free module of a subquotient, or ambient ring",
@@ -63,7 +55,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (ambient,Module),
+     Key => {(ambient, Module), (ambient, GradedModule)},
      Headline => "ambient free module",
      Usage => "ambient M",
      Inputs => {

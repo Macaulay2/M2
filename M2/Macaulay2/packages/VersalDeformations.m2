@@ -13,6 +13,7 @@ newPackage("VersalDeformations",
 	  HomePage => "http://www.sfu.ca/~nilten/",
 	  Email => "nilten@sfu.ca"}},
     Configuration => {"DefaultDefParam"=>"t"},
+    PackageImports => {"Varieties"},
     Keywords => {"Deformation Theory"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
