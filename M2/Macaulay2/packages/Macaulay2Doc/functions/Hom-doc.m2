@@ -185,6 +185,9 @@ doc ///
 Node
   Key
     End
+   [End, DegreeLimit]
+   [End, MinimalGenerators]
+   [End, Strategy]
   Headline
     module of endomorphisms
   Usage
@@ -361,6 +364,9 @@ Node
   Key
     homomorphism'
    (homomorphism', Matrix)
+   [homomorphism', DegreeLimit]
+   [homomorphism', MinimalGenerators]
+   [homomorphism', Strategy]
   Headline
     get the element of Hom from a homomorphism
   Usage
@@ -401,8 +407,11 @@ Node
 doc ///
 Node
   Key
-    compose
-   (compose, Module, Module, Module)
+     compose
+    (compose, Module, Module, Module)
+   [(compose, Module, Module, Module), DegreeLimit]
+   [(compose, Module, Module, Module), MinimalGenerators]
+   [(compose, Module, Module, Module), Strategy]
   Headline
     composition as a pairing on Hom-modules
   Usage
@@ -411,12 +420,12 @@ Node
     M:Module
     N:Module
     P:Module
-    DegreeLimit => {ZZ,List}
-      see @TO [Hom, DegreeLimit]@
-    MinimalGenerators => Boolean
-      see @TO [Hom, MinimalGenerators]@
-    Strategy => Thing
-      see @TO [Hom, Strategy]@
+--    DegreeLimit => {ZZ,List}
+--      see @TO [Hom, DegreeLimit]@
+--    MinimalGenerators => Boolean
+--      see @TO [Hom, MinimalGenerators]@
+--    Strategy => Thing
+--      see @TO [Hom, Strategy]@
   Outputs
     :Matrix
       the composition map of homomorphism modules $\mathrm{Hom}(M,N)$ and $\mathrm{Hom}(N,P)$
