@@ -124,9 +124,6 @@ assert (degree f' == {1})
 R=QQ[x,y]
 M=image vars R ++ R^2
 time f = compose(M,M,M);
--- broken by trimming Hom
--- time f' = compose(M,M,M,Strategy=>0);
--- assert ( f === f' )
 H = Hom(M,M);
 assert isHomogeneous H
 for i to numgens H - 1 do for j to numgens H - 1 do (
@@ -157,9 +154,6 @@ B = matrix"a,b;b,c"
 N = subquotient(A,B)
 time com = compose(N,N,N)
 assert isHomogeneous com
--- broken by trimming Hom
--- time com' = compose(N,N,N,Strategy => 0)
--- assert ( com === com' )
 assert( (minimalPresentation com) === 
     map(cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
 	cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
@@ -246,8 +240,7 @@ H = Hom(M,M)
 peek H.cache
 f = id_M
 -- implemented by David:
--- disabled temporarily:
--- Hom(M,f)
+Hom(M,f)
 Hom(f,M)
 
 -- tests for Hom(Matrix,Module) from David:
@@ -274,10 +267,10 @@ f=inducedMap(M',M)
 fh = Hom(M,f)
 assert (target fh == Hom(M, target f))
 assert (source fh == Hom(M, source f))
--- assert( (minimalPresentation Hom(f,M)) === 
---    map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
--- assert( (minimalPresentation Hom(f,f)) === 
---      map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
+assert( (minimalPresentation Hom(f,M)) ===
+   map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{a,b}}) )
+assert( (minimalPresentation Hom(f,f)) ===
+     map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{a,b}}) )
 
 -- bug found by David Treumann:
 
