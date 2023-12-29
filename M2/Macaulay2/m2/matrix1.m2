@@ -383,10 +383,17 @@ tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;
+     if f === id_(R^1) then return g;
+     if g === id_(R^1) then return f;
      map(target f ** target g, 
 	  source f ** source g, 
 	  map(R, f.RawMatrix ** g.RawMatrix),
 	  Degree => degree f + degree g))) @@ toSameRing
+
+Matrix ** Module := Matrix => (f, M) -> tensor(f, id_M)
+Module ** Matrix := Matrix => (M, f) -> tensor(id_M, f)
+tensor(Matrix, Module) := Matrix => {} >> o -> (f, M) -> tensor(f, id_M)
+tensor(Module, Matrix) := Matrix => {} >> o -> (M, f) -> tensor(id_M, f)
 
 Matrix ** Number := (f,r) -> r * f
 Number ** Matrix := (r,f) -> r * f
