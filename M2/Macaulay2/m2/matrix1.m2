@@ -435,9 +435,6 @@ isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
--- TODO: deprecate these
-degreeLength Ideal := I -> degreeLength ring I
-degreesRing Ideal := I -> degreesRing ring I
 
 promote(Ideal,Number) := 
 promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)

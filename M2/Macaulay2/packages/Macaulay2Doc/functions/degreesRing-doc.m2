@@ -3,8 +3,8 @@
 --- notes:  
 
 undocumented {
-    (degreesRing,   PolynomialRing), (degreesRing,   QuotientRing), (degreesRing,   Module), (degreesRing, Ideal),
-    (degreesMonoid, PolynomialRing), (degreesMonoid, QuotientRing), (degreesMonoid, Module),
+    (degreesRing,   PolynomialRing), (degreesRing,   QuotientRing),
+    (degreesMonoid, PolynomialRing), (degreesMonoid, QuotientRing),
     }
 
 doc ///
