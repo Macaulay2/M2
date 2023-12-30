@@ -110,6 +110,7 @@ jobs:
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
                echo `brew --prefix llvm`/bin              >> $GITHUB_PATH
                PATH=`brew --prefix llvm`/bin:$PATH
+               echo `brew --prefix libtool`/libexec/gnubin >> $GITHUB_PATH
           fi
           # Necessary for clang to find the right libomp
           echo "LIBRARY_PATH=`llvm-config --libdir`" >> $GITHUB_ENV
@@ -160,7 +161,6 @@ jobs:
       - name: Configure Macaulay2 using Autotools
         if: matrix.build-system == 'autotools'
         run: |
-          make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
           export PYVERSION=`python3 -c "from sys import version_info; \
             print(f'{version_info.major}.{version_info.minor}')"`
