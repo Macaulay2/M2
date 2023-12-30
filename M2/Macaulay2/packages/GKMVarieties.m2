@@ -605,7 +605,7 @@ EquivariantMap ** EquivariantMap := EquivariantMap => (phi,psi) -> (
 
 
 --composition f o g of two EquivariantMaps g: X --> Y, f: Y --> Z;
-compose(EquivariantMap,EquivariantMap) := EquivariantMap => (f,g) -> (
+compose(EquivariantMap,EquivariantMap) := EquivariantMap => {} >> o -> (f,g) -> (
     Y1 := g.target;
     Y2 := f.source;
     if not Y1.points === Y2.points then (

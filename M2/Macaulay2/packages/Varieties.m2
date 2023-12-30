@@ -419,7 +419,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
 	-- does this compute a limit?
 	-- compare with the limit from minimalPresentation hook
 	-- and emsbound in NormalToricVarieties/Sheaves.m2
-	if p > 0 then M = Hom(image matrix {apply(generators A, g -> g^p)}, M);
+	if p > 0 then M = Hom(image matrix {apply(generators A, g -> g^p)}, M, MinimalGenerators => true);
 	);
     minimalPresentation M)
 
@@ -541,18 +541,17 @@ CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, 
 -- Sheaf Hom and Ext
 -----------------------------------------------------------------------------
 
--- TODO: assert that sheaves are on the same variety
-sheafHom = method(TypicalValue => CoherentSheaf)
-sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf(variety F, Hom(module F, module G))
-Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0(variety F, sheafHom(F, G))
+Hom(CoherentSheaf, CoherentSheaf) := Module => o -> (F, G) -> HH^0(variety F, sheafHom(F, G, o))
+Hom(SheafOfRings,  CoherentSheaf) := Module => o -> (O, G) -> Hom(O^1, G,   o)
+Hom(CoherentSheaf, SheafOfRings)  := Module => o -> (F, O) -> Hom(F,   O^1, o)
+Hom(SheafOfRings,  SheafOfRings)  := Module => o -> (O, R) -> Hom(O^1, R^1, o)
 
-Hom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> Hom(O^1,G)
-Hom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> Hom(F,O^1)
-Hom(SheafOfRings,SheafOfRings) := Module => (O,R) -> Hom(O^1,R^1)
-
-sheafHom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> sheafHom(O^1,G)
-sheafHom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> sheafHom(F,O^1)
-sheafHom(SheafOfRings,SheafOfRings) := Module => (O,R) -> sheafHom(O^1,R^1)
+sheafHom = method(TypicalValue => CoherentSheaf, Options => options Hom)
+-- TODO: should this assert that the sheaves are on the same variety?
+sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => o -> (F, G) -> sheaf(variety F, Hom(module F, module G, o))
+sheafHom(SheafOfRings,  CoherentSheaf) := CoherentSheaf => o -> (O, G) -> sheafHom(O^1, G,   o)
+sheafHom(CoherentSheaf, SheafOfRings)  := CoherentSheaf => o -> (F, O) -> sheafHom(F,   O^1, o)
+sheafHom(SheafOfRings,  SheafOfRings)  := CoherentSheaf => o -> (O, R) -> sheafHom(O^1, R^1, o)
 
 sheafExt = new ScriptedFunctor from {
      superscript => (

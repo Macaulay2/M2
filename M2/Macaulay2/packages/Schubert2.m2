@@ -1578,7 +1578,7 @@ AbstractSheaf * AbstractSheaf := AbstractSheaf => (
 	  else abstractSheaf(X, ChernCharacter => part(0,dim X,f*g)))
      ) @@ coerce
 
-Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => (F,G) -> dual F ** G
+Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => o -> (F,G) -> dual F ** G
 
 det AbstractSheaf := AbstractSheaf => opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
 

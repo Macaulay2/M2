@@ -174,8 +174,11 @@ vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x}
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
 degreesRing Module := PolynomialRing => M -> degreesRing ring M
 degreeLength Module := M -> degreeLength ring M
+
+Module#id = M -> map(M, M, 1)
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring
+module Module := identity
 
 lift(Module,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
 lift(Module,InexactNumber') :=
@@ -400,7 +403,7 @@ super(Module) := Module => (M) -> (
      else M
      )
 
-End = (M) -> Hom(M,M)
+-----------------------------------------------------------------------------
 
 Module#AfterPrint = M -> (
     ring M,"-module",

@@ -106,31 +106,22 @@ cotangentCohomology1=method(TypicalValue=>Matrix,Options=>{SourceRing=>null,Modu
 
 cotangentCohomology1Mod:=(F)->(
      A:=ring F/image F; --quotient ring
-     Hom(ideal F,A)/(image ((transpose substitute(jacobian F,A)))))
+     Hom(ideal F, A, MinimalGenerators => true)/(image transpose substitute(jacobian F,A)))
      
 cotangentCohomology1 Matrix:=opts->F->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
 	g:=map(ambient image F,image F,F);
-	ambient basis(coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	ambient basis(coker Hom(g,coker F, MinimalGenerators => true),SourceRing=>opts#SourceRing));
  	lift(ambient basis(cotangentCohomology1Mod F,SourceRing=>opts#SourceRing), ring F))
-cotangentCohomology1 (ZZ,Matrix):=opts->(deg,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
-	g:=map(ambient image F,image F,F);
-	ambient basis(deg,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
-	lift(ambient basis(deg,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (ZZ,Matrix) :=
 cotangentCohomology1 (List,Matrix):=opts->(deg,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
 	g:=map(ambient image F,image F,F);
-	ambient basis(deg,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	ambient basis(deg,coker Hom(g,coker F, MinimalGenerators => true),SourceRing=>opts#SourceRing));
 	lift(ambient basis(deg,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (InfiniteNumber,ZZ,Matrix) :=
+cotangentCohomology1 (ZZ,InfiniteNumber,Matrix) :=
 cotangentCohomology1 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
 	g:=map(ambient image F,image F,F);
-	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
-	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
-cotangentCohomology1 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
-	g:=map(ambient image F,image F,F);
-	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
-	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
-cotangentCohomology1 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
-	g:=map(ambient image F,image F,F);
-	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	ambient basis(lo,hi,coker Hom(g,coker F, MinimalGenerators => true),SourceRing=>opts#SourceRing));
 	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
 
 cotangentCohomology1 Ideal:=opts->I->lift(ambient basis(cotangentCohomology1Mod gens I,SourceRing=>opts#SourceRing), ring I)
@@ -147,7 +138,7 @@ cotangentCohomology2Mod:=F->(
      A:=ring F/image F;
      R:=gens ker F;
      kos:=koszul(2,F);
-     (Hom((image R/image kos),A)/(image substitute(transpose R,A))))
+     Hom(image R/image kos, A, MinimalGenerators => true)/(image substitute(transpose R,A)))
 
 
 cotangentCohomology2 Matrix:=opts->F->lift(ambient basis(cotangentCohomology2Mod F,opts),ring F)

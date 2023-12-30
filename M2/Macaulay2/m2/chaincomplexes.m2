@@ -619,56 +619,54 @@ ChainComplexMap Array := ChainComplexMap => (f,A) -> (
      scan(spots f, i -> g#(i-n) = f_i);
      g)
 
-Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
+Hom(ChainComplex, Module) := ChainComplex => opts -> (C, N) -> (
      c := C.dd;
      complete c;
      D := new ChainComplex;
      D.ring = ring C;
      b := D.dd;
-     scan(spots C, i -> D#-i = Hom(C_i,N));
+     scan(spots C, i -> D#-i = Hom(C_i, N, opts));
      scan(spots c, i -> (
 	       j := - i + 1;
-	       f := b#j = (-1)^j * Hom(c_i,N);
+	       f := b#j = (-1)^j * Hom(c_i, N, opts);
 	       D#j = source f;
 	       D#(j-1) = target f));
      D)
 
-Hom(Module, ChainComplex) := ChainComplex => (M,C) -> (
+Hom(Module, ChainComplex) := ChainComplex => opts -> (M, C) -> (
      complete C.dd;
      D := new ChainComplex;
      D.ring = ring C;
      scan(spots C.dd, i -> (
-	       f := D.dd#i = Hom(M,C.dd_i);
+	       f := D.dd#i = Hom(M, C.dd_i, opts);
 	       D#i = source f;
 	       D#(i-1) = target f;
 	       ));
      D)
 
-dual ChainComplex := ChainComplex => {} >> o -> (C) -> (
-	  R := ring C;
-	  Hom(C,R^1))
+dual ChainComplex := ChainComplex => options Hom >> o -> C -> Hom(C, module ring C, o)
 
-Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
+Hom(ChainComplexMap, Module) := ChainComplexMap => opts -> (f, N) -> (
      complete f;
      g := new ChainComplexMap;
      g.cache = new CacheTable;
      d := g.degree = f.degree;
-     g.source = Hom(target f, N);
-     g.target = Hom(source f, N);
+     g.source = Hom(target f, N, opts);
+     g.target = Hom(source f, N, opts);
      scan(spots f, i -> (
 	       j := -i-d;
-	       g#j = (-1)^(j*d) * Hom(f#i,N);
+	       g#j = (-1)^(j*d) * Hom(f#i, N, opts);
 	       ));
      g)
 
-Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
+Hom(Module, ChainComplexMap) := ChainComplexMap => opts -> (N, f) -> (
      complete f;
      g := new ChainComplexMap;
      g.cache = new CacheTable;
      d := g.degree = f.degree;
-     g.source = Hom(N, source f);
-     g.target = Hom(N, target f);
-     scan(spots f, i -> g#i = Hom(N,f#i));
+     g.source = Hom(N, source f, opts);
+     g.target = Hom(N, target f, opts);
+     scan(spots f, i -> g#i = Hom(N, f#i, opts));
      g)
 
 transpose ChainComplexMap := f -> dual f

@@ -97,6 +97,26 @@ H = Hom(M,N)
     	 assert ( h === h' )
 	 )
 
+--
+S = ZZ/101[a..d]
+I = monomialCurveIdeal(S, {1,3,4})
+R = S/I
+use R
+J = module ideal(a,d)
+K = module ideal(b^2,c^2)
+JK = Hom(J,K, MinimalGenerators => true)
+f = JK_{0}
+g = homomorphism f
+assert isHomogeneous g
+assert ( source g === J )
+assert ( target g === K )
+f' = homomorphism'(g, MinimalGenerators => true)
+assert (f-f' == 0)
+assert (degrees f' === {{{1}}, {{0}}})
+assert (degrees f === {{{1}}, {{1}}})
+assert (degree f == {0})
+assert (degree f' == {1})
+
 -----------------------------------------------------------------------------
 
 -- test "compose"
@@ -104,9 +124,6 @@ H = Hom(M,N)
 R=QQ[x,y]
 M=image vars R ++ R^2
 time f = compose(M,M,M);
--- broken by trimming Hom
--- time f' = compose(M,M,M,Strategy=>0);
--- assert ( f === f' )
 H = Hom(M,M);
 assert isHomogeneous H
 for i to numgens H - 1 do for j to numgens H - 1 do (
@@ -137,9 +154,6 @@ B = matrix"a,b;b,c"
 N = subquotient(A,B)
 time com = compose(N,N,N)
 assert isHomogeneous com
--- broken by trimming Hom
--- time com' = compose(N,N,N,Strategy => 0)
--- assert ( com === com' )
 assert( (minimalPresentation com) === 
     map(cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
 	cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
@@ -226,8 +240,7 @@ H = Hom(M,M)
 peek H.cache
 f = id_M
 -- implemented by David:
--- disabled temporarily:
--- Hom(M,f)
+Hom(M,f)
 Hom(f,M)
 
 -- tests for Hom(Matrix,Module) from David:
@@ -254,10 +267,10 @@ f=inducedMap(M',M)
 fh = Hom(M,f)
 assert (target fh == Hom(M, target f))
 assert (source fh == Hom(M, source f))
--- assert( (minimalPresentation Hom(f,M)) === 
---    map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
--- assert( (minimalPresentation Hom(f,f)) === 
---      map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
+assert( (minimalPresentation Hom(f,M)) ===
+   map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{a,b}}) )
+assert( (minimalPresentation Hom(f,f)) ===
+     map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{a,b}}) )
 
 -- bug found by David Treumann:
 
@@ -289,6 +302,14 @@ phi = map(E,E**S^{{ -1,0 }}++E**S^{{0,-1}},(x*id_E-Xmatrix) | (y*id_E-Ymatrix));
 isHomogeneous phi
 M = coker phi
 Ext^1(M,M)   -- mismatch here, because trimming of result is ignored
+
+-----------------------------------------------------------------------------
+-- tests for giving DegreeLimit
+
+R = QQ[x,y,z]
+elapsedTime Hom(R^100, R^100); -- <0.005s
+elapsedTime Hom(R^{-100}, R^100, DegreeLimit => 0); -- <0.04s
+elapsedTime assert(numcols basis(0, oo) == 515100) -- <0.02s
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test hom.out"
