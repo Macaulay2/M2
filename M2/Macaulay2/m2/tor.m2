@@ -24,6 +24,21 @@ Tor = new ScriptedFunctor from {
 	  )
      }
 
+-- see packages/Complexes/Tor.m2 for Tor(ZZ, Module, Matrix) and Tor(ZZ, Matrix, Module)
+Tor(ZZ, Ring,  Matrix) :=
+Tor(ZZ, Ideal, Matrix) := opts -> (i,M,f) -> Tor_i(module M, f, opts)
+Tor(ZZ, Matrix, Ring)  :=
+Tor(ZZ, Matrix, Ideal) := opts -> (i,f,N) -> Tor_i(f, module N, opts)
+
+-- TODO: Tor_i(R, S) should work as well
+Tor(ZZ, Ring, Ring)   :=
+Tor(ZZ, Ring, Ideal)  :=
+Tor(ZZ, Ring, Module) :=
+Tor(ZZ, Ideal, Ring)   :=
+Tor(ZZ, Ideal, Ideal)  :=
+Tor(ZZ, Ideal, Module) :=
+Tor(ZZ, Module, Ring)   :=
+Tor(ZZ, Module, Ideal)  := Module => opts -> (i,M,N) -> Tor_i(module M, module N, opts)
 Tor(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      if ring M =!= ring N then error "expected the same ring";
      R := ring M;
@@ -43,16 +58,6 @@ Tor(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
 	       if b#?(i+1) 
 	       then error "internal error"
 	       else C_i ** N)))
-
-
-Tor(ZZ, Ideal, Matrix) := opts -> (i,J,f) -> Tor_i(module J,f,opts)
-Tor(ZZ, Matrix, Ring) := opts -> (i,f,R) -> Tor_i(f,R^1,opts)
-Tor(ZZ, Matrix, Ideal) := opts -> (i,f,J) -> Tor_i(f,module J,opts)
-Tor(ZZ, Module, Ring) := opts -> (i,M,R) -> Tor_i(M,R^1,opts)
-Tor(ZZ, Module, Ideal) := opts -> (i,M,J) -> Tor_i(M,module J,opts)
-Tor(ZZ, Ideal, Ring) := opts -> (i,I,R) -> Tor_i(module I,R^1,opts)
-Tor(ZZ, Ideal, Ideal) := opts -> (i,I,J) -> Tor_i(module I,module J,opts)
-Tor(ZZ, Ideal, Module) := opts -> (i,I,N) -> Tor_i(module I,N,opts)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -28,7 +28,16 @@ Ext = new ScriptedFunctor from {
 	       }
 	  )
      }
-	  
+
+-- TODO: Ext^i(R, S) should work as well
+Ext(ZZ, Ring, Ring)   :=
+Ext(ZZ, Ring, Ideal)  :=
+Ext(ZZ, Ring, Module) :=
+Ext(ZZ, Ideal, Ring)   :=
+Ext(ZZ, Ideal, Ideal)  :=
+Ext(ZZ, Ideal, Module) :=
+Ext(ZZ, Module, Ring)   :=
+Ext(ZZ, Module, Ideal)  := Module => opts -> (i,M,N) -> Ext^i(module M, module N, opts)
 Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
@@ -51,6 +60,8 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
 	    then kernel Hom(b_(i+1), N, opts)
 	    else Hom(C_i, N, opts))))
 
+Ext(ZZ, Matrix, Ring)   :=
+Ext(ZZ, Matrix, Ideal)  := Matrix => opts -> (i,f,N) -> Ext^i(f, module N, opts)
 Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
@@ -65,6 +76,10 @@ Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
 	  phi := if opts.Prune then Et.cache.pruningMap else id_Et;
 	  psi^-1 * inducedMap(target psi, target phi, Hom(g_i, N, opts)) * phi))
 
+-- TODO: is this correct?
+-- c.f. https://github.com/Macaulay2/M2/issues/246
+Ext(ZZ, Ring,   Matrix) :=
+Ext(ZZ, Ideal,  Matrix) := Matrix => opts -> (i,N,f) -> Ext^i(module N, f, opts)
 Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
@@ -79,15 +94,6 @@ Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
 	  phi := if opts.Prune then Et.cache.pruningMap else id_Et;
 	  phi^-1 * inducedMap(target phi, target psi, Hom(C_i, f, opts)) * psi))
 
-Ext(ZZ, Ideal, Matrix) := opts -> (i,J,f) -> Ext^i(module J,f,opts)
-Ext(ZZ, Matrix, Ring) := opts -> (i,f,R) -> Ext^i(f,R^1,opts)
-Ext(ZZ, Matrix, Ideal) := opts -> (i,f,J) -> Ext^i(f,module J,opts)
-Ext(ZZ, Module, Ring) := opts -> (i,M,R) -> Ext^i(M,R^1,opts)
-Ext(ZZ, Module, Ideal) := opts -> (i,M,J) -> Ext^i(M,module J,opts)
-Ext(ZZ, Ideal, Ring) := opts -> (i,I,R) -> Ext^i(module I,R^1,opts)
-Ext(ZZ, Ideal, Ideal) := opts -> (i,I,J) -> Ext^i(module I,module J,opts)
-Ext(ZZ, Ideal, Module) := opts -> (i,I,N) -> Ext^i(module I,N,opts)
-
 -- total ext over complete intersections
 
 -- change 2009/1/12:
@@ -95,6 +101,15 @@ Ext(ZZ, Ideal, Module) := opts -> (i,I,N) -> Ext^i(module I,N,opts)
 --  but we also get rid of the fudge factor entirely, depending instead on automatic
 --  computation of the heft vector
 
+-- TODO: Ext(R, S) should work as well
+Ext(Ring, Ring)   :=
+Ext(Ring, Ideal)  :=
+Ext(Ring, Module) :=
+Ext(Ideal, Ring)   :=
+Ext(Ideal, Ideal)  :=
+Ext(Ideal, Module) :=
+Ext(Module, Ring)   :=
+Ext(Module, Ideal)  := Module => ExtOptions >> opts -> (M, N) -> Ext(module M, module N, opts)
 Ext(Module, Module) := Module => ExtOptions >> opts -> (M, N) -> (
   cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
   cacheKey := (Ext,M,N);
@@ -186,12 +201,6 @@ Ext(Module, Module) := Module => ExtOptions >> opts -> (M, N) -> (
   prune' := if opts.Prune then prune else identity;
   cacheModule.cache#cacheKey =
   prune' homology(DeltaBar,DeltaBar))
-
-Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
-Ext(Module, Ideal) := (M,J) -> Ext(M,module J)
-Ext(Ideal, Ring) := (I,R) -> Ext(module I,R^1)
-Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
-Ext(Ideal, Module) := (I,N) -> Ext(module I,N)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
