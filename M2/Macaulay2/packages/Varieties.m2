@@ -346,7 +346,8 @@ euler   CoherentSheaf := F -> tryHooks((euler, CoherentSheaf), F, euler @@ modul
 eulers  CoherentSheaf := F -> eulers  module F
 genus   CoherentSheaf := F -> genus   module F
 genera  CoherentSheaf := F -> genera  module F
-pdim    CoherentSheaf := F -> pdim    module F
+-- TODO: this is incorrect in higher picard rank
+pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ module)
 
 hilbertPolynomial CoherentSheaf := opts -> F -> hilbertPolynomial(module F, opts)
 
