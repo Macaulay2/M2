@@ -4,6 +4,7 @@ needs "basis.m2"
 needs "gateway.m2" -- for ScriptedFunctor
 needs "matrix1.m2"
 needs "modules.m2"
+needs "Hom.m2"
 
 ExtOptions = new OptionTable from {
      Prune => true
