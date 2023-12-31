@@ -542,17 +542,17 @@ CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, 
 -- Sheaf Hom and Ext
 -----------------------------------------------------------------------------
 
+Hom(SheafOfRings, SheafOfRings)  :=
+Hom(SheafOfRings, CoherentSheaf) :=
+Hom(CoherentSheaf, SheafOfRings)  :=
 Hom(CoherentSheaf, CoherentSheaf) := Module => o -> (F, G) -> HH^0(variety F, sheafHom(F, G, o))
-Hom(SheafOfRings,  CoherentSheaf) := Module => o -> (O, G) -> Hom(O^1, G,   o)
-Hom(CoherentSheaf, SheafOfRings)  := Module => o -> (F, O) -> Hom(F,   O^1, o)
-Hom(SheafOfRings,  SheafOfRings)  := Module => o -> (O, R) -> Hom(O^1, R^1, o)
 
 sheafHom = method(TypicalValue => CoherentSheaf, Options => options Hom)
 -- TODO: should this assert that the sheaves are on the same variety?
+sheafHom(SheafOfRings, SheafOfRings)  :=
+sheafHom(SheafOfRings, CoherentSheaf) :=
+sheafHom(CoherentSheaf, SheafOfRings)  :=
 sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => o -> (F, G) -> sheaf(variety F, Hom(module F, module G, o))
-sheafHom(SheafOfRings,  CoherentSheaf) := CoherentSheaf => o -> (O, G) -> sheafHom(O^1, G,   o)
-sheafHom(CoherentSheaf, SheafOfRings)  := CoherentSheaf => o -> (F, O) -> sheafHom(F,   O^1, o)
-sheafHom(SheafOfRings,  SheafOfRings)  := CoherentSheaf => o -> (O, R) -> sheafHom(O^1, R^1, o)
 
 -- see m2/ext.m2
 ExtOptions = options Ext.argument
@@ -568,13 +568,12 @@ sheafExt = new ScriptedFunctor from {
 	)
     }
 
+sheafExt(ZZ, SheafOfRings, SheafOfRings)  :=
+sheafExt(ZZ, SheafOfRings, CoherentSheaf) :=
+sheafExt(ZZ, CoherentSheaf, SheafOfRings)  :=
 sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => opts -> (
      (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G, opts)
      )
-
-sheafExt(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> sheafExt^n(O^1,G)
-sheafExt(ZZ,CoherentSheaf,SheafOfRings) := Module => (n,F,O) -> sheafExt^n(F,O^1)
-sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^1)
 
 -----------------------------------------------------------------------------
 -- code donated by Greg Smith <ggsmith@math.berkeley.edu>
@@ -585,7 +584,8 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -- See tests/normal/ext-global.m2 for the examples
 -----------------------------------------------------------------------------
 
-Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
+Ext(ZZ, SheafOfRings,  SumOfTwists) :=
+Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
      -- depends on truncate methods
      needsPackage "Truncations";
      G := G'#0;
@@ -617,16 +617,13 @@ Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
      else if (min degrees E)#0 > e then minimalPresentation E
      else minimalPresentation truncate(e,E))
 
-Ext(ZZ,SheafOfRings,SumOfTwists) := Module => opts -> (m,O,G') -> Ext^m(O^1,G',opts)
-
-Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => opts -> (n,F,G) -> (
+Ext(ZZ, SheafOfRings, SheafOfRings)  :=
+Ext(ZZ, SheafOfRings, CoherentSheaf) :=
+Ext(ZZ, CoherentSheaf, SheafOfRings)  :=
+Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n,F,G) -> (
      E := Ext^n(F,G(>=0),opts);
      k := coefficientRing ring E;
      k^(rank source basis(0,E)))
-
-Ext(ZZ,SheafOfRings,CoherentSheaf) := Module => opts -> (n,O,G) -> Ext^n(O^1,G,opts)
-Ext(ZZ,CoherentSheaf,SheafOfRings) := Module => opts -> (n,F,O) -> Ext^n(F,O^1,opts)
-Ext(ZZ,SheafOfRings,SheafOfRings) := Module => opts -> (n,O,R) -> Ext^n(O^1,R^1,opts)
 
 -----------------------------------------------------------------------------
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>
