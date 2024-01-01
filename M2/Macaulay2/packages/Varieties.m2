@@ -1,14 +1,28 @@
+---------------------------------------------------------------------------
+-- PURPOSE : Computations with coherent sheaves and projective varieties
+--
+-- MAJOR UPDATES :
+--  - 1998: Variety and CoherentSheaf are implemented in m2/varieties.m2.
+--  - 2000: SheafOfRings, SumOfTwists are implemented.
+--  - 2001: Global Ext is implemented by Greg Smith (see ae0cef36)
+--  - 2023: SheafMap is implemented at AIM.
+--  - 2024: Varieties is added as a package (see 0f1c1485)
+---------------------------------------------------------------------------
 newPackage(
     "Varieties",
     Date     => "11 Oct 2023",
     Version  => "0.1",
-    Keywords => {"Algebraic Geometry"},
+    Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {},
-    PackageExports => {},
-    PackageImports => {-*"Truncations"*-}, -- FIXME: need this for Ext
+    PackageExports => {
+	"Complexes",
+	},
+    PackageImports => {
+	"Truncations",
+	},
     AuxiliaryFiles => true,
-    DebuggingMode  => false
+    DebuggingMode  => true
     )
 
 export {
@@ -156,7 +170,7 @@ variety Ring        := S -> if S.?variety then S.variety else error "no variety 
 variety Ideal       := I -> Proj(ring I/I) -- TODO: should this be saturated?
 variety RingElement := f -> variety ring f -- TODO: should this be V(f) instead?
 
-sameVariety := Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
+sameVariety = Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
 
 -- printing
 expression       Variety := X -> if hasAttribute(X, ReverseDictionary) then expression getAttribute(X, ReverseDictionary) else (describe X)#0
@@ -188,6 +202,9 @@ SheafOfRings.synonym = "sheaf of rings"
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
+
+-- see Varieties/SheafMaps.m2
+CoherentSheaf#id = F -> map(F, F, id_(module F))
 
 -- constructors
 sheaf = method()
@@ -263,14 +280,25 @@ SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf
 CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
+CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> module prune F == module prune G
+-- TODO: actually prune might be too slow, why not compute hilbert polynomial or truncate to compare with zero?
+CoherentSheaf == ZZ            := Boolean => (F, z) -> module prune F == z
+ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
+
 -- arithmetic ops
-CoherentSheaf.directSum = args -> ( sameVariety args; sheaf(variety args#0, directSum apply(args, module)) )
-CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module ++ G.module)
+CoherentSheaf.directSum = args -> (
+    sameVariety args;
+    F := sheaf(variety args#0, directSum apply(args, module));
+    F.cache.components = toList args;
+    F)
+CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F, G) -> CoherentSheaf.directSum(F, G)
 CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module ** G.module)
 CoherentSheaf  / CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module  / G.module)
 CoherentSheaf  / Ideal         := CoherentSheaf => (F, I) -> sheaf(F.variety, F.module  / I)
 Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I * F.module)
 directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.directSum(1 : F)
+
+components CoherentSheaf := List => F -> if F.cache.?components then F.cache.components else {F}
 
 -- multilinear ops
 -- TODO: document
@@ -383,40 +411,58 @@ degreeList := M -> (
 
 -- quotienting by local H_m^0(M) to "saturate" M
 -- TODO: use irrelevant ideal here
-killH0 := M -> if (H0 := saturate(0*M)) == 0 then M else M / H0
+killH0 := -*(cacheValue symbol TorsionFree)*- (M -> if (H0 := saturate(0*M)) == 0 then M else M / H0)
 
 -- TODO: add tests:
 -- - global sections of sheafHom are Hom
--- TODO: implement for multigraded ring
+-- TODO: implement for multigraded ring using emsbound
 -- TODO: this can change F.module to the result!
+-- NOTE: this may have elements in degrees below bound as well, is that a bug?
 twistedGlobalSectionsModule = (F, bound) -> (
     -- compute global sections module Gamma_(d >= bound)(X, F(d))
     A := ring F;
+    M := module F;
     if degreeLength A =!= 1 then error "expected degree length 1";
-    -- quotient by H_m^0(M)
-    M := killH0 cokernel presentation module F;
+    -- quotient by HH^0_m(M) to kill the torsion
+    -- TODO: pass the appropriate irrelevant ideal
+    N := killH0 M;
     -- pushforward to the projective space
+    N' := flattenModule N;
+    S := ring N';
     -- TODO: both n and w need to be adjusted for the multigraded case
-    N := flattenModule M;
-    S := ring N;
     n := dim S-1;
     w := S^{-n-1}; -- canonical sheaf on P^n
-    -- Note: bound=infinity signals that H_m^1(M) = 0, ie. M is saturated
+    -- Note: bound=infinity signals that HH^1_m(M) = 0, ie. M is saturated
     -- in other words, don't search for global sections not already in M
-    -- TODO: what would pdim N < n, hence E1 = 0, imply?
-    if bound < infinity and pdim N >= n then (
-	E1 := Ext^n(N, w); -- the top Ext
-	p := (
-	    if dim E1 <= 0 -- 0-module or 0-dim module
-	    then 1 + max degreeList E1 - min degreeList E1
-	    else 1 - first min degrees E1 - bound);
-	if p === infinity then error "the global sections module is not finitely generated";
-	-- does this compute a limit?
-	-- compare with the limit from minimalPresentation hook
-	-- and emsbound in NormalToricVarieties/Sheaves.m2
-	if p > 0 then M = Hom(image matrix {apply(generators A, g -> g^p)}, M, MinimalGenerators => true);
-	);
-    minimalPresentation M)
+    -- TODO: what would pdim N' < n, hence E1 = 0, imply?
+    p := if bound === infinity or pdim N' < n then 0 else (
+        E1 := Ext^n(N', w); -- the top Ext
+        if dim E1 <= 0 -- 0-module or 0-dim module (i.e. finite length)
+        then 1 + max degreeList E1 - min degreeList E1
+        else 1 - first min degrees E1 - bound);
+    -- this can only happen if bound=-infinity, e.g. from calling H^0(F(*)) = H^0(F(>=(-infinity))
+    if p === infinity then error "the global sections module is not finitely generated";
+    -- caching these to be used later in prune SheafMap
+    F.cache.TorsionFree = N;
+    F.cache.GlobalSectionLimit = max(0, p);
+    -- this is the module Gamma_* F
+    G := minimalPresentation if p <= 0 then N else target(
+        -- TODO: substitute with appropriate irrelevant ideal here
+        Bp := (ideal vars A)^[p];
+	-- consider the sequence 0 -> B^[p] -> A -> A/B^[p] -> 0
+	inc := inducedMap(module A, module Bp);
+	iso := inducedMap(Hom(A, N), N);
+        -- we compute the map N -> Gamma_* F as a limit by
+	-- applying Hom(-,N) to the sequence above
+        -- c.f. the limit from minimalPresentation hook
+        -- and emsbound in NormalToricVarieties/Sheaves.m2
+        phi := Hom(inc, N, MinimalGenerators => true) * iso);
+    -- now we compute the center map in the sequence
+    -- 0 -> HH^0_B(M) -> M -> Gamma_* F -> HH^1_B(M) -> 0
+    iota := inverse G.cache.pruningMap; -- map from Gamma_* F to its minimal presentation
+    quot := inducedMap(N, M);           -- map from M to N = M/HH^0_B(M)
+    F.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
+    G)
 
 -----------------------------------------------------------------------------
 -- cohomology
@@ -465,11 +511,16 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 -- Module of twisted global sections Γ_*(F)
 -----------------------------------------------------------------------------
 
+-- This is an approximation of Gamma_* F, at least with an inclusion from Gamma_>=0 F
 -- TODO: optimize caching: if HH^0(F>=b) is cached above, does this need to be cached?
 -- TODO: should F>=0 be hardcoded?
 minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
     cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
-	(opts, F) -> sheaf(F.variety, HH^0 F(>=0)))) -- this is the default algorithm
+	(opts, F) -> (
+	    -- this is the default algorithm
+	    G := sheaf(F.variety, HH^0 F(>=0));
+	    G.cache.pruningMap = sheafMap F.cache.SaturationMap;
+	    G)))
 
 -----------------------------------------------------------------------------
 -- cotangentSheaf, tangentSheaf, and canonicalBundle
@@ -648,6 +699,12 @@ hh(Sequence,ProjectiveVariety) := (pq,X) -> if X.cache.?hh and X.cache.hh#?pq th
 euler ProjectiveVariety := X -> (
      d := dim X;
      sum(0 .. d, j -> hh^(j,j) X + 2 * sum(0 .. j-1, i -> (-1)^(i+j) * hh^(i,j) X)))
+
+-----------------------------------------------------------------------------
+-- Subpackages
+-----------------------------------------------------------------------------
+
+load "Varieties/SheafMaps.m2"
 
 -----------------------------------------------------------------------------
 -- Tests

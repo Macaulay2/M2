@@ -250,10 +250,16 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
         gens truncate(degs, image  relations M, MinimalGenerators => false))
     )
 
+--------------------------------------------------------------------
+
 truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     F := truncate(degs, source f, opts);
     G := truncate(degs, target f, opts);
-    map(G, F, (f * gens F) // gens G))
+    -- FIXME, what is right?
+    fgenF := (f * inducedMap(source f, F) * inducedMap(F, source gens F, gens F));
+    map(G, F, inducedMap(G, source fgenF, fgenF) // inducedMap(G, source gens G, gens G)))
+
+--------------------------------------------------------------------
 
 truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
     (lo, hi) := concentration C;
@@ -270,6 +276,10 @@ truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
     )
 truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
 
+--------------------------------------------------------------------
+
+truncate(InfiniteNumber, Thing) := {} >> o -> (d, M) -> (
+    if d === -infinity then M else error "unexpected degree for truncation")
 
 --------------------------------------------------------------------
 -- basis using basisPolyhedron (experimental)
