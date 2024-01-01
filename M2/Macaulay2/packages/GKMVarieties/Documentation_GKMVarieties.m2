@@ -548,7 +548,7 @@ doc ///
 		makeKClass
 		(isWellDefined, KClass)
 		pushforward
-		pullback
+		(pullback, EquivariantMap)
 		(euler, KClass)
 
 ///
@@ -594,7 +594,7 @@ doc ///
 		(isWellDefined, KClass)
 		(symbol *, KClass, KClass)
 		(symbol +, KClass, KClass)
-		pullback
+		(pullback, EquivariantMap)
 		pushforward
 ///
 
@@ -850,7 +850,7 @@ doc ///
 		(compose, EquivariantMap, EquivariantMap)
 		(map, GKMVariety, GKMVariety, List)
 		flagMap
-		pullback
+		(pullback, EquivariantMap)
 		pushforward
 		(euler, KClass)
 ///

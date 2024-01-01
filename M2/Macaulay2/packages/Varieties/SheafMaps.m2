@@ -19,8 +19,6 @@ export {
     "SaturationMap",
     "TorsionFree",
     "GlobalSectionLimit",
-    "pullback", "pullbackMaps",
-    "pushout",  "pushoutMaps",
     "yonedaSheafExtension",
     }
 
@@ -429,17 +427,7 @@ homomorphism Vector := v -> homomorphism matrix v
 -----------------------------------------------------------------------------
 
 -- TODO: also for a list of matrices
-pullback = method() -- FIXME: will conflict with other packages
-pullback(Matrix, Matrix) := Module => (f, g) -> (
-    if target f =!= target g then error "expected maps with the same target";
-    h := f | -g;
-    P := ker h;
-    S := source h;
-    P.cache.pullbackMaps = {
-	map(source f, S, S^[0], Degree => - degree f) * inducedMap(S, P),
-	map(source g, S, S^[1], Degree => - degree g) * inducedMap(S, P)};
-    P)
-pullback(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
+pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> (
     -- TODO: use != instead
     if target f =!= target g then error "expected maps with the same target";
     h := map(target f, source f ++ source g, matrix f | -matrix g);
@@ -451,16 +439,6 @@ pullback(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
     P)
 
 -- TODO: also for a list of matrices
-pushout = method()
-pushout(Matrix, Matrix) := Module => (f, g) -> (
-    if source f =!= source g then error "expected maps with the same source";
-    h := f || -g;
-    P := coker h;
-    T := target h;
-    P.cache.pushoutMaps = {
-	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
-	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
-    P)
 pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
     -- TODO: use != here instead
     if source matrix f =!= source matrix g then error "expected maps with the same source";

@@ -65,7 +65,6 @@ export {
     "normalToricVariety",  
     "orbits",   
     "picardGroup",  
-    "pullback",  
     "toricProjectiveSpace",
     "smallAmpleToricDivisor",  
     "smoothFanoToricVariety",
