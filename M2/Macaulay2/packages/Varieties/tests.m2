@@ -151,8 +151,7 @@ hh^(1,2)(X) == 1
 -----------------------------------------------------------------------------
 -- TODO: is it possible to get this as the adjoint to f_*?
 
-pullback = method(Options => {})
-pullback(RingMap, Module) := Module -> opts -> (f, M) -> notImplemented()
+pullback(RingMap, Module) := Module -> {} >> o -> (f, M) -> notImplemented()
 
 RingMap^* := Functor => f -> new Functor from {
     argument => X -> pullback functorArgs(f, X),

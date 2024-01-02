@@ -222,20 +222,20 @@ SheafMap^ZZ := SheafMap => BinaryPowerMethod
 -----------------------------------------------------------------------------
 -- sheafHom and Hom
 -----------------------------------------------------------------------------
-sheafHom(SheafMap, SheafMap)      := SheafMap => (phi, psi) -> (dual phi) ** psi
-sheafHom(SheafMap, CoherentSheaf) := SheafMap => (phi, F) -> sheafHom(phi, id_F)
-sheafHom(CoherentSheaf, SheafMap) := SheafMap => (F, phi) -> sheafHom(id_F, phi)
-sheafHom(SheafMap, SheafOfRings)  := SheafMap => (phi, O) -> sheafHom(phi, O^1)
-sheafHom(SheafOfRings, SheafMap)  := SheafMap => (O, phi) -> sheafHom(O^1, phi)
+sheafHom(SheafMap, SheafMap)      := SheafMap => o -> (phi, psi) -> (dual phi) ** psi
+sheafHom(SheafMap, CoherentSheaf) := SheafMap => o -> (phi, F) -> sheafHom(phi, id_F)
+sheafHom(CoherentSheaf, SheafMap) := SheafMap => o -> (F, phi) -> sheafHom(id_F, phi)
+sheafHom(SheafMap, SheafOfRings)  := SheafMap => o -> (phi, O) -> sheafHom(phi, id_(O^1))
+sheafHom(SheafOfRings, SheafMap)  := SheafMap => o -> (O, phi) -> sheafHom(id_(O^1), phi)
 
 -- TODO: bring this from DirectSummands
 -- this uses Hom(Module, Module, ZZ) which is faster in a specific degree
---Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
+--Hom(CoherentSheaf, CoherentSheaf) := Module => o -> (F, G) -> (
 --    sameVariety(F, G); HH^0 sheaf(variety F, Hom(module F, module G, 0)))
 
 -- See [Hartshorne, Ch. III Exercise 6.1, pp. 237]
-Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
-    H := prune sheafHom(F, G);
+Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
+    H := prune sheafHom(F, G, opts);
     -- Note: this is only an isomorphism of coherent sheaves,
     -- but we want the preimage of a map of global sections.
     f := matrix H.cache.pruningMap;
@@ -264,7 +264,7 @@ inducedMap(M, N) -- anti-digonal
 ///
 
 -- Note: homomorphism(Matrix) is defined to use V.cache.homomorphism
-homomorphism' SheafMap := h -> moveToField basis(0, homomorphism' matrix h)
+homomorphism' SheafMap := o -> h -> moveToField basis(0, homomorphism'(matrix h, o))
 
 -----------------------------------------------------------------------------
 -- homology
@@ -346,7 +346,7 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
 	r := max(a1, a2) - e - m + 1;
 	M = truncate(r, M));
-    moveToField basis(0, Ext^m(M, matrix f)))
+    moveToField basis(0, Ext^m(M, matrix f, opts)))
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
