@@ -22,15 +22,23 @@ newPackage(
         { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
         },
     Keywords => { "Commutative Algebra" },
-    PackageImports => { "Polyhedra", "NormalToricVarieties", "Varieties" },
+    PackageImports => { "Polyhedra" },
     PackageExports => { "Complexes" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
-importFrom_Core {"concatCols", "raw", "rawSelectByDegrees"}
+importFrom_Core {
+    "concatCols",
+    "raw", "rawSelectByDegrees",
+    "tryHooks",
+    }
 
 -- "truncate" is exported by Core
+export {
+    "effCone", "effGenerators",
+    "nefCone", "nefGenerators",
+    }
 
 protect Exterior
 protect Nef
@@ -66,22 +74,25 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
         then sort L else error("expected a list of multidegrees, each of length " | degrank))
     )
 
--- Helpers for toric varieties
+--------------------------------------------------------------------
+-- Divisorial information
+--------------------------------------------------------------------
 
 -- Generators of effective cone
-effGenerators = method()
-effGenerators Ring := (cacheValue symbol effGenerators) (R -> transpose matrix degrees R)
-effGenerators NormalToricVariety := X -> effGenerators ring X
+effGenerators = method(TypicalValue => Matrix)
+effGenerators Ring := R -> tryHooks((effGenerators, Ring), R, R -> map(degreeGroup R, , transpose matrix degrees R))
 
--- Nef cone of X as a polyhedral object
-nefCone = method()
-nefCone NormalToricVariety := (cacheValue symbol nefCone) (X -> convexHull(matrix{0_(picardGroup X)}, nefGenerators X))
-nefCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then nefCone R.variety
+-- Generators of Nef cone
+nefGenerators = method(TypicalValue => Matrix)
+nefGenerators Ring := R -> null -- will be overriden in Varieties package
 
 -- Effective cone of X as a polyhedral object
-effCone = method()
-effCone NormalToricVariety := (cacheValue symbol effCone) (X -> convexHull(matrix{0_(picardGroup X)}, effGenerators X))
-effCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then effCone R.variety
+effCone = method(TypicalValue => Cone)
+effCone Ring := R -> tryHooks((effCone, Ring), R, R -> convexHull(matrix{0_(degreeGroup R)}, effGenerators R))
+
+-- Nef cone of X as a polyhedral object
+nefCone = method(TypicalValue => Cone)
+nefCone Ring := R -> null -- will be overriden in Varieties package
 
 --------------------------------------------------------------------
 -- Polyhedral algorithms

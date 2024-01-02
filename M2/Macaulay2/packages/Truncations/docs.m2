@@ -51,7 +51,7 @@ Node
       The polyhedral algorithms implemented in this package correctly handle many cases.
       The behavior of @TO "truncate"@ changed as of Macaulay2 version 1.13 to support
       @TO "Macaulay2Doc :: exterior algebras"@, and again in Macaulay2 version 1.19
-      to support Cox rings of simplicial @TO2 {NormalToricVarieties, "normal toric varieties"}@.
+      to support Cox rings of simplicial @TO2 {"NormalToricVarieties::NormalToricVarieties", "normal toric varieties"}@.
   References
     @UL {
         {"[MS04]: Maclagan and Smith, Multigraded Castelnuovo-Mumford Regularity (see ", arXiv "math/0305214", ")."}

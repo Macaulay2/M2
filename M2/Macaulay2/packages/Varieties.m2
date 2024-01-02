@@ -17,9 +17,9 @@ newPackage(
     Authors  => {},
     PackageExports => {
 	"Complexes",
+	"Truncations",
 	},
     PackageImports => {
-	"Truncations",
 	},
     AuxiliaryFiles => true,
     DebuggingMode  => true
@@ -189,6 +189,14 @@ describe ProjectiveVariety := X -> Describe (expression Proj) (expression X.ring
 -----------------------------------------------------------------------------
 -- Divisors
 -----------------------------------------------------------------------------
+
+-- overriding the dummy methods defined in Truncations package
+nefCone       Ring := R -> if R.?variety then nefCone       R.variety
+nefGenerators Ring := R -> if R.?variety then nefGenerators R.variety
+
+-- first attempt is to use the variety, then use the degrees of the ring
+addHook((effGenerators, Ring), Strategy => Default, R -> if R.?variety then effGenerators R.variety)
+addHook((effCone,       Ring), Strategy => Default, R -> if R.?variety then effCone       R.variety)
 
 -- used for algorithms that need a non-trivial Picard group
 checkProjective := X -> if not isProjective X then error "expected a coherent sheaf over a projective variety"
