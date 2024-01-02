@@ -310,11 +310,6 @@ Module.directSum = args -> (
 	  N)
 Module ^ ZZ := Module => (M, i) -> if i > 0 then Module.directSum (i:M) else 0*M
 
-single := v -> (
-     if not same v 
-     then error "incompatible objects in direct sum";
-     v#0)
-
 indices = method()
 indices HashTable := X -> (
      if X.cache.?components then if X.cache.?indices then X.cache.indices else toList ( 0 .. #X.cache.components - 1 )
@@ -323,12 +318,14 @@ indices HashTable := X -> (
 
 directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
-     if #args === 0 then error "expected more than 0 arguments";
-     type := single apply(args, class);
-     meth := lookup(symbol directSum, type);
-     if meth === null then error "no method for direct sum";
-     S := meth args;
-     S)
+    if #args === 0 then error "expected more than 0 arguments";
+    type := if uniform args then class args#0 else error "incompatible objects in direct sum";
+    meth := lookup(symbol directSum, type);
+    if meth === null then error "no method for direct sum";
+    Y := youngest args;
+    key := (directSum, args);
+    if Y === null or not Y.?cache then meth args else
+    if Y.cache#?key then Y.cache#key else Y.cache#key = meth args)
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
@@ -338,9 +335,10 @@ Option.directSum = args -> (
      if #args === 0 then error "expected more than 0 arguments";
      objects := apply(args,last);
      labels  := toList args/first;
-     type := single apply(objects, class);
-     if not type.?directSum then error "no method for direct sum";
-     M := type.directSum objects;
+     type := if uniform objects then class objects#0 else error "incompatible objects in direct sum";
+     meth := lookup(symbol directSum, type);
+     if meth === null then error "no method for direct sum";
+     M := meth objects;
      M.cache.indices = labels;
      ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);
      -- now, in case M is a map (i.e., has a source and target), then label the source and target objects of the sum

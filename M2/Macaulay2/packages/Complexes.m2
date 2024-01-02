@@ -102,24 +102,6 @@ homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
     -- phi -> (ell |-> (m |-> phi(ell ** m)))
     )
 
--- This belongs in M2 Core!!!
--- make this into a git issue.
-single = v -> (
-     if not same v 
-     then error "incompatible objects in direct sum";
-     v#0)
-directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
-    y := youngest args;
-    key := (directSum, args);
-    if y =!= null and y.?cache and y.cache#?key then y.cache#key else (
-        type := single apply(args, class);
-        meth := lookup(symbol directSum, type);
-        if meth === null then error "no method for direct sum";
-        S := meth args;
-        if y =!= null and y.?cache then y.cache#key = S;
-        S))
-
 --------------------------------------------------------------------
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
