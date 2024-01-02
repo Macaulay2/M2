@@ -13,7 +13,7 @@
 # s/^\(   *| \).* |$/\1$$$ |/
 
 # The source code has changed and can change again:
-/^Ext(Module,Module)/,/^$/d
+/^-- code for method: Ext(Module,Module)/,/^$/d
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook/completeIntersections check"

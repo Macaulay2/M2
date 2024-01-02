@@ -5,6 +5,7 @@
 needs "gradedmodules.m2"
 needs "hilbert.m2"
 needs "modules2.m2"
+needs "Hom.m2"
 
 -----------------------------------------------------------------------------
 -- Local utilities

@@ -545,7 +545,7 @@ i84 : changeRing = H -> (
          prune (phi ** H)
          );
 
-i85 : Ext(Module,Ring) := (M,k) -> (
+i85 : Ext(Module,Ring) := o -> (M,k) -> (
          B := ring M;
          if ideal k != ideal vars B
          then error "expected the residue field of the module";
@@ -579,7 +579,7 @@ o90 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
 o90 : K[X ..X ]-module, quotient of (K[X ..X ])
          1   3                          1   3
 
-i91 : Ext(Ring,Module) := (k,M) -> (
+i91 : Ext(Ring,Module) := o -> (k,M) -> (
          B := ring M;
          if ideal k != ideal vars B
          then error "expected the residue field of the module";

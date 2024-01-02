@@ -109,7 +109,7 @@ assert (degree (2*X_0+X_3) === {sum entries (2*X_0+X_3)})
 assert (vertices (2*X_0) == map (ZZ^n,ZZ^1,i -> 0) | 2*id_(ZZ^n))
 assert (degrees ring X === toList (n+1 : {1}))
 assert (ideal X == ideal gens ring X)
-assert (cotangentSheaf (X, Minimize => true) === prune sheaf (X, 
+assert (cotangentSheaf (X, MinimalGenerators => true) === prune sheaf (X,
 	homology (vars ring X,jacobian ring X)))
 assert ({degree (-X_0+3*X_2)} === - degrees OO (-X_0+3*X_2))
 assert (all (5, i -> rank HH^0(X,OO_X(i)) == binomial(n+i,i)))

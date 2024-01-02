@@ -488,13 +488,14 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
 
 -- TODO: this is the slowest part of hh and euler, look into other strategies
 -- TODO: simplify caching here and in minimalPresentation
-cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { Minimize => true })
+cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { MinimalGenerators => true })
 cotangentSheaf ProjectiveVariety := opts -> (cacheValue (symbol cotangentSheaf => opts)) (X -> (
 	R := ring X; checkRing R;
 	S := ring(F := presentation R);
 	(d, e) := (vars S ** R, jacobian F ** R); -- assert(d * e == 0);
-	prune' := if opts.Minimize then prune else identity;
-	prune' sheaf(X, homology(d, e))))
+	om := sheaf(X, homology(d, e));
+	if opts.MinimalGenerators
+	then minimalPresentation om else om))
 cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
@@ -553,19 +554,22 @@ sheafHom(SheafOfRings,  CoherentSheaf) := CoherentSheaf => o -> (O, G) -> sheafH
 sheafHom(CoherentSheaf, SheafOfRings)  := CoherentSheaf => o -> (F, O) -> sheafHom(F,   O^1, o)
 sheafHom(SheafOfRings,  SheafOfRings)  := CoherentSheaf => o -> (O, R) -> sheafHom(O^1, R^1, o)
 
+-- see m2/ext.m2
+ExtOptions = options Ext.argument
+
 sheafExt = new ScriptedFunctor from {
-     superscript => (
-	  i -> new ScriptedFunctor from {
-	       argument => (M,N) -> (
-		    f := lookup(sheafExt,class i,class M,class N);
-		    if f === null then error "no method available"
-		    else f(i,M,N)
-		    )
-	       }
-	  )
-     }
-sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (
-     (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G)
+    superscript => (
+	i -> new ScriptedFunctor from {
+	    argument => ExtOptions >> opts -> (M, N) -> (
+		f := lookup(sheafExt,class i,class M,class N);
+		if f === null then error "no method available";
+		(f opts)(i,M,N))
+	    }
+	)
+    }
+
+sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => opts -> (
+     (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G, opts)
      )
 
 sheafExt(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> sheafExt^n(O^1,G)

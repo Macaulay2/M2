@@ -8,11 +8,11 @@ document {
      SeeAlso => {cotangentSheaf, sheaf,ProjectiveVariety}
      }
 document { 
-     Key => {(tangentSheaf,ProjectiveVariety),[tangentSheaf,Minimize]},
+     Key => {(tangentSheaf,ProjectiveVariety),[tangentSheaf,MinimalGenerators]},
      Usage => "tangentSheaf X",
      Inputs => {
 	  "X",
-	  Minimize => Boolean => {"whether to apply ", TO "minimalPresentation", " to the result before returning it"}
+	  MinimalGenerators => Boolean => {"whether to apply ", TO "minimalPresentation", " to the result before returning it"}
 	  },
      Outputs => {CoherentSheaf
 	  },
