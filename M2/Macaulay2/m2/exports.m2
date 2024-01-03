@@ -64,6 +64,7 @@ export {
 	"AuxiliaryFiles",
 	"Bag",
 	"Bareiss",
+	"Base",
 	"BaseFunction",
 	"BaseRow",
 	"BasicList",

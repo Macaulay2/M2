@@ -63,7 +63,6 @@ export {
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "Base",
     "UseTarget"
     }
 
