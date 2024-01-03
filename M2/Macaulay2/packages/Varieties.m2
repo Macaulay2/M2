@@ -17,6 +17,7 @@ newPackage(
     Authors  => {},
     PackageExports => {
 	"Complexes",
+	"Saturation",
 	"Truncations",
 	},
     PackageImports => {
