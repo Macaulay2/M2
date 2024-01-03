@@ -647,11 +647,6 @@ CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, 
 -- Sheaf Hom and Ext
 -----------------------------------------------------------------------------
 
-Hom(SheafOfRings, SheafOfRings)  :=
-Hom(SheafOfRings, CoherentSheaf) :=
-Hom(CoherentSheaf, SheafOfRings)  :=
-Hom(CoherentSheaf, CoherentSheaf) := Module => o -> (F, G) -> HH^0(variety F, sheafHom(F, G, DegreeLimit => degree 1_(ring F), o))
-
 sheafHom = method(TypicalValue => CoherentSheaf, Options => options Hom)
 sheafHom(SheafOfRings, SheafOfRings)  :=
 sheafHom(SheafOfRings, CoherentSheaf) :=
