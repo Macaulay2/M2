@@ -55,9 +55,10 @@ Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
+     prune' := if opts.MinimalGenerators then prune else identity;
      if i < 0 then map(R^0, R^0, {})
      else if i === 0 then Hom(f, N, opts)
-     else (
+     else prune'(
 	  g := resolution(f,LengthLimit=>i+1);
 	  Es := Ext^i(source f, N, opts);
 	  Et := Ext^i(target f, N, opts);
@@ -73,9 +74,10 @@ Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
+     prune' := if opts.MinimalGenerators then prune else identity;
      if i < 0 then map(R^0, R^0, {})
      else if i === 0 then Hom(N, f, opts)
-     else (
+     else prune'(
 	  C := resolution(N,LengthLimit=>i+1);
 	  Es := Ext^i(N, source f, opts);
 	  Et := Ext^i(N, target f, opts);
