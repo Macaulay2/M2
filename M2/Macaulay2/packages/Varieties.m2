@@ -289,9 +289,13 @@ SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf
 CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
-CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> module prune F == module prune G
--- TODO: actually prune might be too slow, why not compute hilbert polynomial or truncate to compare with zero?
-CoherentSheaf == ZZ            := Boolean => (F, z) -> module prune F == z
+-- There are several equivalent conditions for equality:
+-- 1. Saturation of the underlying modules is the same (i.e. Gamma_* F == Gamma_* G)
+-- 2. Truncation of the underlying modules is the same
+-- Here we use the first, but start with comparing Hilbert polynomials, which may be faster,
+-- TODO: benchmark different strategies
+CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> hilbertPolynomial F === hilbertPolynomial G and module prune F == module prune G
+CoherentSheaf == ZZ            := Boolean => (F, z) -> if z == 0 then dim module F <= 0 else error "attempted to compare sheaf to nonzero integer"
 ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
 
 -- arithmetic ops
