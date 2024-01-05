@@ -602,8 +602,10 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     store.HookAlgorithms#alg = hook)
 
 -- tracking debugInfo
-infoLevel     := -1
-pushInfoLevel :=  n     -> (infoLevel = infoLevel + n; n)
+threadVariable infoLevel
+pushInfoLevel :=  n -> (
+    if infoLevel === null then infoLevel = -1;
+    infoLevel = infoLevel + n; n)
 popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
 
 -- This function is mainly used by runHooks, printing a line like this:
