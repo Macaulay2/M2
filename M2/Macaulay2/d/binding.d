@@ -492,6 +492,46 @@ export fixedPrefixOperators := array(SymbolClosure)(commaS,SharpS);
 -- ";" ","
 export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
 
+------------------------------------
+-- augmented assignment operators --
+------------------------------------
+
+-- same precendence as =
+saveprec := prec;
+prec = EqualW.parse.precedence;
+
+-- create one for most flexible binary operators
+export augmentedAssignmentOperatorTable := newSymbolHashTable();
+offset := 0;
+export augmentedAssignmentOperatorWords := (
+    new array(Word)
+    len length(opsWithBinaryMethod) - 9 at i
+    do (
+	-- to avoid ambiguity and syntax errors, we don't create augmented
+	-- assignment operators for ==, <==, <===, :, SPACE, or, and, xor, ?
+	while (
+	    opsWithBinaryMethod.(i + offset) === EqualEqualS              ||
+	    opsWithBinaryMethod.(i + offset) === LongDoubleLeftArrowS     ||
+	    opsWithBinaryMethod.(i + offset) === LongLongDoubleLeftArrowS ||
+	    opsWithBinaryMethod.(i + offset) === ColonS                   ||
+	    opsWithBinaryMethod.(i + offset) === AdjacentS                ||
+	    opsWithBinaryMethod.(i + offset) === orS                      ||
+	    opsWithBinaryMethod.(i + offset) === andS                     ||
+	    opsWithBinaryMethod.(i + offset) === xorS                     ||
+	    opsWithBinaryMethod.(i + offset) === QuestionS)
+	do offset = offset + 1;
+	bop := opsWithBinaryMethod.(i + offset).symbol;
+	aaop := binaryright(bop.word.name + "=");
+	insert(augmentedAssignmentOperatorTable, aaop, bop);
+	provide aaop));
+prec = saveprec;
+
+export augmentedAssignmentOperators := (
+    new array(SymbolClosure)
+    len length(augmentedAssignmentOperatorWords)
+    do foreach word in augmentedAssignmentOperatorWords
+    do provide makeKeyword(word));
+
 -----------------------------------------------------------------------------
 bind(t:Token,dictionary:Dictionary):void := (
      t.dictionary = dictionary;
