@@ -526,6 +526,11 @@ export augmentedAssignmentOperatorWords := (
 	provide aaop));
 prec = saveprec;
 
+export isAugmentedAssignmentOperatorWord(word:Word):bool := (
+    foreach op in augmentedAssignmentOperatorWords
+    do if op == word then return true;
+    false);
+
 export augmentedAssignmentOperators := (
     new array(SymbolClosure)
     len length(augmentedAssignmentOperatorWords)
