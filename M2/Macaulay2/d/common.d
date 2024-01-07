@@ -6,6 +6,7 @@ use binding;
 export codePosition(c:Code):Position := (
      when c
      is f:adjacentCode do f.position
+     is f:augmentedAssignmentCode do f.position
      is f:arrayCode do f.position
      is f:angleBarListCode do f.position
      is f:binaryCode do f.position
@@ -103,6 +104,12 @@ export tostring(c:Code):string := (
 			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
 			 else provide join("'",x.lhs.i.word.name)),
 		    ") ", tostring(x.rhs), ")" ) ) )
+     is x:augmentedAssignmentCode do concatenate(array(string)(
+	     "(augmented-assign ",
+	     x.oper.word.name, " ",
+	     tostring(x.lhs), " ",
+	     tostring(x.rhs), " ",
+	     x.info.word.name, ")"))
      is x:realCode do tostringRR(x.x)
      is x:sequenceCode do (
 	  concatenate(array(string)(

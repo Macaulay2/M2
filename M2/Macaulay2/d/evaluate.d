@@ -1382,6 +1382,7 @@ export evalraw(c:Code):Expr := (
 	       else localAssignment(x.nestingDepth,x.frameindex,newvalue))
 	  is a:globalAssignmentCode do globalAssignmentFun(a)
 	  is p:parallelAssignmentCode do parallelAssignmentFun(p)
+	  is c:augmentedAssignmentCode do nullE
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
