@@ -58,9 +58,6 @@ jobs:
           - build-system: cmake
             os: macos-12
             compiler: default
-    env:
-      VERBOSE: 1
-
     steps:
       - uses: actions/checkout@v3
 
