@@ -169,7 +169,7 @@ jobs:
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
         run: |
-          make
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 
 # ----------------------
 #   Run tests
