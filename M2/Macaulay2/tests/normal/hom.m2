@@ -268,9 +268,9 @@ fh = Hom(M,f)
 assert (target fh == Hom(M, target f))
 assert (source fh == Hom(M, source f))
 assert( (minimalPresentation Hom(f,M)) ===
-   map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{a,b}}) )
+    map(S^1,cokernel(map(S^{{-1}, {-1}},S^{{-2}},{{a}, {-b}})),{{b, a}}) )
 assert( (minimalPresentation Hom(f,f)) ===
-     map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{a,b}}) )
+    map(S^1,cokernel(map(S^{{-1}, {-1}},S^{{-2}},{{a}, {-b}})),{{b, a}}) )
 
 -- bug found by David Treumann:
 
