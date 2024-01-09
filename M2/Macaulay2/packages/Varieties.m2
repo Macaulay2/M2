@@ -14,7 +14,9 @@ newPackage(
     Version  => "0.1",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
-    Authors  => {},
+    Authors  => {
+	{ Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",  HomePage => "https://math.umn.edu/~mahrud/" },
+	},
     PackageExports => {
 	"Complexes",
 	"Saturation",
