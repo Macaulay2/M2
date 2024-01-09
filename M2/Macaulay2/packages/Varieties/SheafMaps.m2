@@ -1,24 +1,9 @@
--*
-newPackage(
-    "SheafMaps",
-    Version => "0.1",
-    Date => "September 27, 2023",
-    Authors => {
-	{Name => "Keller VandeBogert", Email => "kvandebo@nd.edi", HomePage => "todo"}},
-    Headline => "methods for working with morphisms of sheaves",
-    Keywords => {"Algebraic Geometry", "Homological Algebra"},
-    PackageExports => {"Truncations"},
-    DebuggingMode => true
-    )
-*-
-
 export {
-    "sheafMap",
+    -- Types
     "SheafMap",
+    -- Methods
+    "sheafMap",
     "isLiftable",
-    "SaturationMap",
-    "TorsionFree",
-    "GlobalSectionLimit",
     "yonedaSheafExtension",
     }
 

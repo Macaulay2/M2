@@ -54,6 +54,10 @@ export {
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
+    -- Symbols
+    "GlobalSectionLimit",
+    "SaturationMap",
+    "TorsionFree",
     }
 
 importFrom_Core {
