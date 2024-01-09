@@ -16,6 +16,7 @@ newPackage(
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
 	{ Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",  HomePage => "https://math.umn.edu/~mahrud/" },
+        { Name => "Keller VandeBogert", Email => "kvandebo@nd.edu", HomePage => "https://sites.google.com/view/kellervandebogert/home" },
 	},
     PackageExports => {
 	"Complexes",
