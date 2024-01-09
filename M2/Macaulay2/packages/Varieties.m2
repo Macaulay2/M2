@@ -17,6 +17,7 @@ newPackage(
     Authors  => {
 	{ Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",  HomePage => "https://math.umn.edu/~mahrud/" },
         { Name => "Keller VandeBogert", Email => "kvandebo@nd.edu", HomePage => "https://sites.google.com/view/kellervandebogert/home" },
+	{ Name => "Devlin Mallory",     Email => "malloryd@math.utah.edu", HomePage => "https://www.math.utah.edu/~malloryd/" }
 	},
     PackageExports => {
 	"Complexes",
