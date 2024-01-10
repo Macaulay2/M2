@@ -35,17 +35,47 @@ map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi,
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 
--- TODO
-isWellDefined SheafMap := g -> notImplemented()
-
 sheafMap = method()
 sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
 sheafMap(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi, truncate(d, phi), d)
 
+isWellDefined SheafMap := f -> (
+    (G, F) := (target f, source f);
+    X := variety f;
+    d := degree f;
+    all({ G, F, matrix f }, isWellDefined)
+    -- data type checks
+    and condition(set keys f === set { symbol source, symbol target, symbol degree, symbol map, symbol cache },
+	"the hash table does not have the expected keys")
+    and condition(
+	instance(f.source, CoherentSheaf) and
+	instance(f.target, CoherentSheaf) and
+	instance(f.cache, CacheTable) and
+	instance(f.map, Matrix) and
+	instance(f.degree, ZZ),
+	"the hash table does not have the expected values")
+    -- mathematical checks
+    and condition(ring f === ring X,
+	"underlying matrix and variety do not have the same ring")
+    and condition(same {X, variety F, variety G},
+	"underlying variety does not match that of the source and target")
+    and condition(not isProjective X or isHomogeneous matrix f,
+	"underlying matrix of a map of coherent sheaf on a projective variety should be homogeneous")
+    and condition(G === sheaf(X, target matrix f),
+	"target of the sheaf map does not match the target of the underlying matrix")
+    and condition(F  == sheaf(X, source matrix f),
+	"source of the sheaf map does not match the source of the underlying matrix")
+    and condition(d >= min flatten degrees F, -- maybe not strictly necessary
+	"expected the degree of the sheaf map to be at least as high as the degrees of the source")
+    and condition(try ( isWellDefined map(module G, truncate(d, module F), matrix f) ) else false,
+	"expected the matrix to induce a map between a truncation of the underlying modules")
+    )
+
 -- basic methods
 source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
-variety SheafMap := ProjectiveVariety => f -> f.source.variety
+variety SheafMap := Variety       => f -> f.source.variety
+ring    SheafMap := Ring          => f -> f.map.ring
 matrix  SheafMap := Matrix => opts -> f -> f.map
 degree  SheafMap := ZZ => f -> f.degree
 

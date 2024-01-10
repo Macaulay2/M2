@@ -83,6 +83,9 @@ runLengthEncoding := x -> if #x === 0 then x else (
      p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
      apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
 
+-- prints the message only if bool is false and debugLevel > 0
+condition = (bool, msg) -> bool or ( if debugLevel > 0 then printerr msg; false )
+
 -----------------------------------------------------------------------------
 -- Variety, etc. type declarations and basic constructors
 -----------------------------------------------------------------------------
@@ -132,6 +135,22 @@ Proj Ring := (stashValue symbol Proj) (R ->
 ProjectiveVariety/Thing := ProjectiveVariety => (X, I) -> Proj((ring X)/I) -- TODO: should this be saturated?
     AffineVariety Array :=     AffineVariety => (X, M) -> Spec((ring X) M)
 ProjectiveVariety Array := ProjectiveVariety => (X, M) -> Proj((ring X) M)
+
+-- Note: this can be specialized for other types of varieties.
+isWellDefined Variety := X -> (
+    R := ring X;
+    true -- TODO: isWellDefined R
+    -- data type checks
+    and condition(set keys X === set { symbol ring, symbol cache },
+	"the hash table does not have the expected keys")
+    and condition(
+	instance(X.ring, Ring) and
+	instance(X.cache, CacheTable),
+	"the hash table does not have the expected values")
+    -- mathematical checks
+    and condition(not isProjective X or isHomogeneous R,
+	"coordinate ring of a projective variety should be homogeneous")
+    )
 
 -- basic methods
 ring  Variety := X -> X.ring
@@ -257,6 +276,25 @@ OO = new ScriptedFunctor from {
      }
 OO.texMath = ///{\mathcal O}///
 installMethod(symbol_, OO, Variety, (OO, X) -> sheaf(X, ring X))
+
+isWellDefined CoherentSheaf := F -> (
+    M := module F;
+    X := variety F;
+    true -- TODO: isWellDefined M and isWellDefined X
+    -- data type checks
+    and condition(set keys F === set { symbol variety, symbol module, symbol cache },
+	"the hash table does not have the expected keys")
+    and condition(
+	instance(F.variety, Variety) and
+	instance(F.module, Module)   and
+	instance(F.cache, CacheTable),
+	"the hash table does not have the expected values")
+    -- mathematical checks
+    and condition(ring M === ring X,
+	"underlying module and variety do not have the same ring")
+    and condition(not isProjective X or isHomogeneous M,
+	"underlying module of coherent sheaf on a projective variety should be homogeneous")
+    )
 
 -- basic methods
 variety SheafOfRings  :=
