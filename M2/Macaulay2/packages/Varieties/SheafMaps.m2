@@ -426,7 +426,7 @@ prune SheafMap := SheafMap => opts -> f -> (
     (G, F) := (target f, source f);
     prune G; prune F; -- these are pruned just to populate cached data
     -- F.cache.TorsionFree = M/H^0_B(M)
-    g := inducedMap(G.cache.TorsionFree, F.cache.TorsionFree, matrix f);
+    g := inducedMap(G.cache.TorsionFree, truncate(degree f, F.cache.TorsionFree), matrix f);
     p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit);
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
