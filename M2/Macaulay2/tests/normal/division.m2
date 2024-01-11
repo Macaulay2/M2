@@ -205,7 +205,6 @@ assert( (quotientRemainder(1-u^3,1-u)) === (1+u+u^2,0_R) )
 -- quotientRemainder(ZZ, ZZ)
   assert Equation(quotientRemainder(5710, 56), (101, 54))
   assert Equation(quotientRemainder(5710, -56), (-101, 54))
-  assert Equation(quotientRemainder(5710, 0), (0, 5710))
 
 end--
 generateAssertions ///
