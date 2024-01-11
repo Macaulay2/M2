@@ -1134,7 +1134,6 @@ ring_elem PolyRing::remainder(const ring_elem f, const ring_elem g) const
 {
   ring_elem quot;
   ring_elem rem;
-  if (is_zero(g)) throw exc::internal_error("cannot use division algorithm dividing by zero");
   rem = remainderAndQuotient(f, g, quot);
   return rem;
 }
@@ -1143,7 +1142,6 @@ ring_elem PolyRing::quotient(const ring_elem f, const ring_elem g) const
 {
   ring_elem quot;
   ring_elem rem;
-  if (is_zero(g)) throw exc::internal_error("cannot use division algorithm dividing by zero");
   rem = remainderAndQuotient(f, g, quot);
   return quot;
 }
@@ -1157,6 +1155,7 @@ ring_elem PolyRing::remainderAndQuotient(const ring_elem f,
       throw exc::engine_error(
           "polynomial division not yet implemented for RR or CC coefficients");
     }
+  if (is_zero(g)) throw exc::internal_error("cannot use division algorithm dividing by zero");
   Nterm *q, *r;
   ring_elem rem;
   if (is_zero(f))
