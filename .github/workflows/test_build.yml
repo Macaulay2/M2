@@ -58,9 +58,6 @@ jobs:
           - build-system: cmake
             os: macos-12
             compiler: default
-    env:
-      VERBOSE: 1
-
     steps:
       - uses: actions/checkout@v3
 
@@ -172,7 +169,7 @@ jobs:
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
         run: |
-          make
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 
 # ----------------------
 #   Run tests
