@@ -10,8 +10,8 @@
 ---------------------------------------------------------------------------
 newPackage(
     "Varieties",
-    Date     => "11 Oct 2023",
-    Version  => "0.1",
+    Date     => "12 Jan 2024",
+    Version  => "0.2",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
@@ -792,6 +792,26 @@ Node
     Varieties
   Headline
     affine and projective algebraic geometry
+  Acknowledgement
+    Large portions of this package were originally in @TT "m2/varieties.m2"@.
+    Work on the type @TO SheafMap@ and related algorithms began at a Macaulay2
+    @HREF{"https://aimath.org/pastworkshops/macaulay2efie.html", "workshop"}@ at the
+    @HREF{"https://aimath.org", "American Institute of Mathematics"}@ in September 2023.
+--Contributors
+  SeeAlso
+    "Schubert2::Schubert2"
+    "GKMVarieties::GKMVarieties"
+    "NormalToricVarieties::NormalToricVarieties"
+    "AbstractToricVarieties::AbstractToricVarieties"
+    "MultiprojectiveVarieties::MultiprojectiveVarieties"
+  Subnodes
+    Variety
+    AffineVariety
+    ProjectiveVariety
+    CoherentSheaf
+    SheafOfRings
+    SumOfTwists
+    SheafMap
 ///
 
 needs "./Varieties/doc-varieties.m2"

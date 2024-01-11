@@ -7,16 +7,6 @@ undocumented {
     (symbol SPACE, ProjectiveVariety, Array),
     }
 
-document {
-    Key => "varieties",
-    HEADER2 "An overview",
-    Subnodes => {
-	-- Mike wanted this: TO "algebraic varieties",
-	TO "coherent sheaves",
-	TO "Variety"
-	},
-    }
-
 -----------------------------------------------------------------------------
 -- Types and basic constructors and methods that return a variety
 -----------------------------------------------------------------------------
