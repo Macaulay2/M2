@@ -42,8 +42,6 @@ sheafMap = method()
 sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
 sheafMap(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi, truncate(d, phi), d)
 
-dual SheafMap := SheafMap => {} >> opts -> phi -> map(dual source phi, dual target phi, dual matrix phi)
-
 -- basic methods
 source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
@@ -175,6 +173,10 @@ SheafOfRings ** SheafMap  := SheafMap => (O, phi) -> (O^1) ** phi
 
 -- twist notation
 SheafMap(ZZ) := SheafMap => (phi, d) -> phi ** OO_(variety phi)^1(d)
+
+-- FIXME: this fails if the target is truncated
+-- TODO: would f -> Hom(f, sheaf variety f) work?
+dual  SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(dual source f, dual target f, dual(matrix f, o))
 
 -----------------------------------------------------------------------------
 -- inverse
@@ -498,6 +500,18 @@ TEST ///
   assert(source shphi2 === OO_X^3(-1))
   assert(target shphi2 === OO_X^1)
   assert(degree shphi2 === 3)
+  -- FIXME: the assertion for dual fails!
+  shphi3 = map(sheaf target phi,F,phi,3)
+  assert isWellDefined shphi3
+  --assert isWellDefined dual shphi3
+  assert(degree shphi3 === 3)
+  assert(degree dual shphi3 === 0)
+  -- FIXME: first assertion fails (unless degree 3 is specified)
+  shphi4 = map(G, sheaf source phi, phi)
+  --assert isWellDefined shphi4
+  assert isWellDefined dual shphi4
+  assert(degree shphi4 === 3)
+  assert(degree dual shphi4 === 0)
 ///
 
 TEST ///
