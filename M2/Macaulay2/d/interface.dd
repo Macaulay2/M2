@@ -6,6 +6,7 @@ use engine;
 use common;
 use hashtables;
 use struct;
+use actors;
 
 header "// TODO: break apart this file so each piece includes only one:
 #include <interface/aring.h>
@@ -1174,7 +1175,7 @@ export rawDivMod(e:Expr):Expr := (
      else WrongArg(2,"a raw ring element")
      is x:ZZcell do
      when a.1 is y:ZZcell do (
-	 if isZero(y.v) then return seq(zeroE, Expr(x));
+	 if isZero(y.v) then return DivisionByZero();
 	 q := newZZmutable();
 	 r := newZZmutable();
 	 if isPositive(y.v)
