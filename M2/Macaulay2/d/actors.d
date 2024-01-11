@@ -474,7 +474,7 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol //, ZZ, ZZ, ZZ
 	       if y.v === 0
-	       then zeroE
+	       then DivisionByZero()
 	       else toExpr(x.v//y.v)
 	       )
      	  is Error do rhs
