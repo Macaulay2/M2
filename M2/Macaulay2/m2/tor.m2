@@ -4,21 +4,24 @@ needs "gateway.m2" -- for ScriptedFunctor
 needs "matrix1.m2"
 needs "modules.m2"
 
+-- TODO: should this be fixed for all Tor methods,
+-- or should they each have their own options?
 TorOptions = new OptionTable from {
     MinimalGenerators => true
      }
 
-
 Tor = new ScriptedFunctor from {
     subscript => i -> new ScriptedFunctor from {
-	argument => TorOptions >> opts -> (M, N) -> (
-		    	      f := lookup(Tor,class i,class M,class N);
-		if f === null then error "no method available";
-	    (f opts)(i, M, N))
-	       }
-     }
+	-- Tor_i(F, G)
+	argument => TorOptions >> opts -> X -> applyMethodWithOpts''(Tor, functorArgs(i, X), opts)
+	},
+    argument => TorOptions >> opts -> X -> applyMethodWithOpts''(Tor, X, opts)
+    }
 
 -- see packages/Complexes/Tor.m2 for Tor(ZZ, Module, Matrix) and Tor(ZZ, Matrix, Module)
+Tor(ZZ, Module, Matrix) := Matrix => opts -> (i, J, f) -> notImplemented()
+Tor(ZZ, Matrix, Module) := Matrix => opts -> (i, J, f) -> notImplemented()
+
 Tor(ZZ, Ring,  Matrix) :=
 Tor(ZZ, Ideal, Matrix) := opts -> (i,M,f) -> Tor_i(module M, f, opts)
 Tor(ZZ, Matrix, Ring)  :=

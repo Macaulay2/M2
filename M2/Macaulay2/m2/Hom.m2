@@ -8,7 +8,7 @@ needs "matrix1.m2"
 
 Hom = method(Options => {
 	DegreeLimit       => null,
-	MinimalGenerators => false,
+	MinimalGenerators => true,
 	Strategy          => null,
 	})
 
