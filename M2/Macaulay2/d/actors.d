@@ -10,6 +10,8 @@ export times0():Expr := oneE;
 export plus1(e:Expr) : Expr := e;
 times1 := plus1;
 
+export DivisionByZero():Expr := buildErrorPacket("division by zero");
+
 export (lhs:Expr) + (rhs:Expr) : Expr := (
      when lhs
      is x:ZZcell do (
@@ -370,11 +372,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol /, ZZ, ZZ, ZZ
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / y.v))
      	  is y:QQcell do (					    -- # typical value: symbol /, ZZ, QQ, QQ
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / y.v))
      	  is y:RRcell do (					    -- # typical value: symbol /, ZZ, RR, RR
 	       toExpr(toRR(x.v,precision(y.v)) / y.v))
@@ -387,17 +389,17 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol /, QQ, ZZ, QQ
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / y.v))
      	  is y:QQcell do (					    -- # typical value: symbol /, QQ, QQ, QQ
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / y.v))
      	  is y:RRcell do (					    -- # typical value: symbol /, QQ, RR, RR
 	       toExpr(toRR(x.v,precision(y.v)) / y.v))
           is y:RRicell do (toExpr(x.v / y.v))   -- # typical value: symbol /, QQ, RRi, RRi
      	  is y:CCcell do (					    -- # typical value: symbol /, QQ, CC, CC
-	       if y.v === 0 then buildErrorPacket("division by zero") else
+	       if y.v === 0 then DivisionByZero() else
 	       toExpr(toRR(x.v,precision(y.v.re)) / y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
@@ -405,11 +407,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol /, RR, ZZ, RR
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / y.v))
      	  is y:QQcell do (					    -- # typical value: symbol /, RR, QQ, RR
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / y.v))
      	  is y:RRcell do (					    -- # typical value: symbol /, RR, RR, RR
 	       toExpr(x.v / y.v))
@@ -422,11 +424,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
       when rhs
 	       is y:ZZcell do (                     -- # typical value: symbol /, RRi, ZZ, RRi
 	         if y.v === 0
-	         then buildErrorPacket("division by zero")
+	         then DivisionByZero()
 	         else toExpr(x.v / y.v))
            is y:QQcell do (                      -- # typical value: symbol /, RRi, QQ, RRi
 	         if y.v === 0
-	         then buildErrorPacket("division by zero")
+	         then DivisionByZero()
 	         else toExpr(x.v / y.v))
            is y:RRcell do (toExpr(x.v / y.v))    -- # typical value: symbol /, RRi, RR, RRi
            is y:RRicell do (toExpr(x.v / y.v))   -- # typical value: symbol /, RRi, RRi, RRi
@@ -436,12 +438,12 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol /, CC, ZZ, CC
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / toRR(y.v,precision(x.v.re)))
 	       )
      	  is y:QQcell do (					    -- # typical value: symbol /, CC, QQ, CC
 	       if y.v === 0
-	       then buildErrorPacket("division by zero")
+	       then DivisionByZero()
 	       else toExpr(x.v / toRR(y.v,precision(x.v.re)))
 	       )
      	  is y:RRcell do (					    -- # typical value: symbol /, CC, RR, CC
@@ -594,7 +596,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    if int(y.v%ushort(2)) == 0
 		    then oneE
 		    else minusoneE)
-	       else if isZero(x.v) then buildErrorPacket("division by zero")
+	       else if isZero(x.v) then DivisionByZero()
 	       else (
 		    ex := - y.v;
 		    if !isLong(ex)
@@ -606,7 +608,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    	 else toExpr(newQQCanonical(     oneZZ, den)))))
 	  is y:QQcell do (
 	       if isZero(x.v) && isNegative(y.v)
-	       then return buildErrorPacket("division by zero");
+	       then return DivisionByZero();
 	       d := denominator(y.v);
 	       if d === 1 then (
 		    if isNegative(y.v) then toExpr(oneZZ/x.v^(-numerator(y.v)))
@@ -639,14 +641,14 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:ZZcell do (
 	       if isZero(x.v) && isNegative(y.v)
-	       then return buildErrorPacket("division by zero");
+	       then return DivisionByZero();
 	       if isLong(y.v) 
 	       then toExpr(x.v^y.v)
 	       else buildErrorPacket("expected exponent to be a small integer")
 	       )
 	  is y:QQcell do (
 	       if isZero(x.v) && isNegative(y.v)
-	       then return buildErrorPacket("division by zero");
+	       then return DivisionByZero();
 	       d := denominator(y.v);
 	       if d === 1 then (
 		    if isLong(numerator(y.v))
