@@ -128,7 +128,7 @@ integermod(e:Expr):Expr := (
      if length(a) == 2 then 
      when a.0 is x:ZZcell do 
      when a.1 is y:ZZcell do 
-     if y.v === 0 then a.0
+     if y.v === 0 then DivisionByZero()
      else toExpr(x.v % y.v)
      else WrongArgZZ(2)
      else WrongArgZZ(1)
