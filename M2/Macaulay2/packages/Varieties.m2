@@ -352,6 +352,8 @@ CoherentSheaf.directSum = args -> (
     F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F, G) -> CoherentSheaf.directSum(F, G)
 CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module ** G.module)
+CoherentSheaf^** ZZ            := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module ^** n)
+tensor(CoherentSheaf, CoherentSheaf) := CoherentSheaf => {} >> opts -> (F, G) -> sheaf(F.variety, tensor(F.module, G.module, opts))
 CoherentSheaf  / CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module  / G.module)
 CoherentSheaf  / Ideal         := CoherentSheaf => (F, I) -> sheaf(F.variety, F.module  / I)
 Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I * F.module)
@@ -625,28 +627,6 @@ singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
      A := ring f;
      checkRing A;
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
-
------------------------------------------------------------------------------
-
--- TODO: simplify using the fact that tensor is a binary method
--- TODO: improve BinaryPowerMethod from interpreter and use that instead
-binaryPower := (W,n,times,unit,inverse) -> (
-     if n === 0 then return unit();
-     if n < 0 then (W = inverse W; n = -n);
-     Z := null;
-     while (
-	  if odd n then if Z === null then Z = W else Z = times(Z,W);
-	  n = n // 2;
-	  n =!= 0
-	  )
-     do W = times(W, W);
-     Z)
-
--- TODO: find a better home for these and binaryPower
-Monoid        ^** ZZ := (M,n) -> binaryPower(M,n,tensor,() -> monoid [], x -> error "Monoid ^** ZZ: expected non-negative integer")
-Ring          ^** ZZ := (R,n) -> binaryPower(R,n,tensor,() -> coefficientRing R, x -> error "Ring ^** ZZ: expected non-negative integer")
-Module        ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> (ring F)^1, dual)
-CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, dual)
 
 -----------------------------------------------------------------------------
 -- Sheaf Hom and Ext

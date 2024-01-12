@@ -668,6 +668,8 @@ shiftAndJoin = (n, L, R) -> if R === null then L else join(L,
 -- TODO: do we want to support a syntax this?
 --   'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)'
 Monoid ** Monoid := Monoid => (M, N) -> tensor(M, N)
+Monoid^** ZZ     := Monoid => (M, n) -> BinaryPowerMethod(M, n, tensor, M -> monoid [],
+    M -> error "Monoid ^** ZZ: expected non-negative integer")
 tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      Mopts := M.Options;
      Nopts := N.Options;

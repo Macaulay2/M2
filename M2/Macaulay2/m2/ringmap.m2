@@ -387,7 +387,7 @@ RingMap * RingMap := RingMap => (g,f) -> (
 RingMap#1 = f -> (
     if source f =!= target f then error "expected source and target to agree"
     else id_(target f))
-RingMap ^ ZZ := BinaryPowerMethod
+RingMap ^ ZZ := RingMap => BinaryPowerMethod
 
 -----------------------------------------------------------------------------
 

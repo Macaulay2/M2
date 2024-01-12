@@ -17,7 +17,9 @@ net VirtualTally := t -> peek t
 VirtualTally _ Thing := (a,b) -> if a#?b then a#b else 0
 
 VirtualTally ** VirtualTally := VirtualTally => (x,y) -> combine(x,y,identity,times,)
-
+--VirtualTally^** ZZ           := VirtualTally => (x, n) -> BinaryPowerMethod(x, n, (a, b) -> a ** b, x -> new class x from {},
+--    x -> error "VirtualTally ^** ZZ: expected non-negative integer")
+-- TODO: this is different than the above and some tests rely on it.
 VirtualTally ^** ZZ := VirtualTally => (x,n) -> (
      if n < 0 then error "expected non-negative integer";
      if n == 0 then return new class x from {()};

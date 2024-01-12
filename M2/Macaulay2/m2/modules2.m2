@@ -29,6 +29,7 @@ tensor(Thing, Thing) := true >> opts -> (M, N) -> M ** N
 undocumented' (tensor, Thing, Thing)
 
 Module ** Module := Module => (M, N) -> tensor(M, N)
+Module^** ZZ     := Module => (F, n) -> BinaryPowerMethod(F, n, tensor, module @@ ring, dual)
 tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      (oM,oN) := (M,N);
      Y := youngest(M.cache.cache,N.cache.cache);
