@@ -223,7 +223,8 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     -- truncate the underlying map so it is an isomorphism
     -- TODO: make this more efficient, e.g. look at degrees of ann coker g
     e := (regularity ker g, regularity coker g);
-    h := inverse inducedMap(
+    -- TODO: this is kudgy, but maybe it works?
+    h := try inverse g else inverse inducedMap(
 	truncate(e#1   + 1, target g),
 	truncate(max e + 1, source g), g);
     -- then invert and sheafify the new map
