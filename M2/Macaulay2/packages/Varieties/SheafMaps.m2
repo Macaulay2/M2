@@ -84,6 +84,11 @@ image   SheafMap := CoherentSheaf => phi -> (sheaf image matrix phi)
 coimage SheafMap := CoherentSheaf => phi -> (sheaf coimage matrix phi)
 coker   SheafMap := CoherentSheaf => phi -> (sheaf coker matrix phi)
 
+-- TODO: is sheafMap sufficient here, or should we specify source/target/degree?
+cover   SheafMap := SheafMap => f -> sheafMap cover   matrix f
+ambient SheafMap := SheafMap => f -> sheafMap ambient matrix f
+super   SheafMap := SheafMap => f -> sheafMap super   matrix f
+
 SheafMap == ZZ := Boolean => (f, z) -> image f == z
 ZZ == SheafMap := Boolean => (z, f) -> image f == z
 
@@ -244,9 +249,10 @@ sheafHom(SheafMap, SheafOfRings)  := SheafMap => o -> (phi, O) -> sheafHom(phi, 
 sheafHom(SheafOfRings, SheafMap)  := SheafMap => o -> (O, phi) -> sheafHom(id_(O^1), phi)
 
 -- See [Hartshorne, Ch. III Exercise 6.1, pp. 237]
-Hom(SheafOfRings, SheafOfRings)  :=
-Hom(SheafOfRings, CoherentSheaf) :=
-Hom(CoherentSheaf, SheafOfRings)  :=
+-- TODO: these three calls could be simpler, but F^1 erases cached info of F
+Hom(SheafOfRings, SheafOfRings)  := Module => opts -> (O, O') -> Hom(O^1, O'^1, opts)
+Hom(SheafOfRings, CoherentSheaf) := Module => opts -> (O, G)  -> Hom(O^1, G, opts)
+Hom(CoherentSheaf, SheafOfRings)  := Module => opts -> (F, O) -> Hom(F, O^1, opts)
 Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     -- The previous version simply returned HH^0(X, sheafHom(F, G, DegreeLimit => 0))
     -- but this version also supports homomorphism.

@@ -580,6 +580,7 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 -- This is an approximation of Gamma_* F, at least with an inclusion from Gamma_>=0 F
 -- TODO: optimize caching: if HH^0(F>=b) is cached above, does this need to be cached?
 -- TODO: should F>=0 be hardcoded?
+minimalPresentation SheafOfRings  := prune SheafOfRings  := SheafOfRings  => opts -> identity
 minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
     cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
 	(opts, F) -> (

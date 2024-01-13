@@ -91,7 +91,7 @@ document {
      }
 document { 
      Key => (ambient,Matrix),
-     Headline => "",
+     Headline => "get the map between the ambient free modules",
      Usage => "ambient f",
      Inputs => {
 	  "f" => "M --> N, where M is a free module or quotient of a free module F.",
