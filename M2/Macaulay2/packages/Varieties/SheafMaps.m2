@@ -309,7 +309,7 @@ lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
     phi := matrix shphi;
     M := module source shphi;
     eta := inducedMap(truncate(e, M, MinimalGenerators => false), source phi);
-    sheaf(lift'(phi, eta), e))
+    sheaf(variety shphi, lift'(phi, eta), e))
 
 --lifts a sheaf map shphi represented by a module map
 --phi : M(\geq d) --> N to a map M(\geq e) --> N that represents
