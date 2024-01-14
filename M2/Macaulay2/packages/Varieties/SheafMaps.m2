@@ -34,6 +34,7 @@ map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi,
     map(G, F, newPhi, Degree => d))
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
+-- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
 
 sheafMap = method()
 sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
@@ -89,8 +90,11 @@ cover   SheafMap := SheafMap => f -> sheafMap cover   matrix f
 ambient SheafMap := SheafMap => f -> sheafMap ambient matrix f
 super   SheafMap := SheafMap => f -> sheafMap super   matrix f
 
+-- TODO: add SheafMap == SheafMap
 SheafMap == ZZ := Boolean => (f, z) -> image f == z
 ZZ == SheafMap := Boolean => (z, f) -> image f == z
+
+isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
 -- composition
 SheafMap * SheafMap := SheafMap => (phi, psi) -> (
@@ -610,12 +614,12 @@ TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
   assert(F == OO_X^1)
   G = prune F
   h = G.cache.pruningMap
-  -- TODO: add assertions
-  inverse h * h
-  h * inverse h
-  -- FIXME: prune inverse h fails
-  -- TODO: isIsomorphism
+  assert(inverse h * h === id_F)
+  --assert(h * inverse h === id_G) -- FIXME
+  assert isIsomorphism h
+  assert isIsomorphism inverse h
   assert(prune h === id_G)
+  assert(prune inverse h === id_G)
   -- cotangent bundle
   Omega = sheaf ker vars S;
   pOmega = prune Omega
@@ -761,7 +765,6 @@ TEST ///
   assert(g == 0)
 ///
 
--*
 TEST ///
   -- testing homomorphism and homomorphism'
   S = QQ[x,y,z]
@@ -784,7 +787,7 @@ TEST ///
   h = homomorphism v
   assert(source h === F)
   assert(target h === G)
-  assert(homomorphism' h === v) -- FIXME: why is the matrix reversed?
+  -- assert(homomorphism' h === v) -- FIXME: why is the matrix reversed?
 ///
 
 TEST ///
@@ -792,9 +795,33 @@ TEST ///
   S = QQ[x,y,z]
   X = Proj S
   f = map(OO_X^1, OO_X^1, truncate(2, id_(S^1)), 2)
-  inverse f
+  assert isWellDefined inverse f
+  assert isIsomorphism(f * inverse f)
+  assert isIsomorphism(inverse f * f)
+  -- assert(prune(inverse f * f) === id_(OO_X^1)) -- FIXME
+  assert(prune(f * inverse f) === id_(OO_X^1))
+  --
+  f = map(sheaf truncate(2, S^1), OO_X^1, truncate(2, id_(S^1)), 2)
+  -- assert isWellDefined inverse f -- FIXME
+  assert isIsomorphism(f * inverse f)
+  assert isIsomorphism(inverse f * f)
+  -- assert(prune(inverse f * f) === id_(OO_X^1)) -- FIXME
+  assert(prune(f * inverse f) === id_(OO_X^1))
+  --
+  f = map(OO_X^1, sheaf truncate(2, S^1), truncate(2, id_(S^1)), 2)
+  assert isWellDefined inverse f
+  assert isIsomorphism(f * inverse f)
+  assert isIsomorphism(inverse f * f)
+  assert(prune(inverse f * f) === id_(OO_X^1))
+  assert(prune(f * inverse f) === id_(OO_X^1))
+  --
+  f = map(sheaf truncate(2, S^1), sheaf truncate(2, S^1), truncate(2, id_(S^1)), 2)
+  assert isWellDefined inverse f
+  assert isIsomorphism(f * inverse f)
+  assert isIsomorphism(inverse f * f)
+  assert(prune(inverse f * f) === id_(OO_X^1))
+  assert(prune(f * inverse f) === id_(OO_X^1))
 ///
-*-
 
 -----------------------------------------------------------------------------
 -- Documentation
