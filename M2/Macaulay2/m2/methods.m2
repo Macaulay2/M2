@@ -375,6 +375,11 @@ format String   := String => x -> format' x
 format Sequence := String => s -> format' s
 protect symbol format
 
+-- use /// around strings w/ backslashes
+formatNoEscaping = x -> (
+    if match("\\\\", x) then concatenate("/// ", x, " ///")
+    else format x)
+
 toString = method(Dispatch => Thing, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
 toString String := identity
