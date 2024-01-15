@@ -45,6 +45,12 @@ seeAbout := (f, i) -> (
 --   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
 
+-- we want quotes around elements of the "Ways to use" list so that
+-- "* String" works when running "help" inside Macaulay2, but we don't
+-- need the quotes otherwise
+MaybeQuotedTT = new IntermediateMarkUpType of TT
+net MaybeQuotedTT := x -> formatNoEscaping x#0
+
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
@@ -54,11 +60,11 @@ optTO := key -> (
     if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
-	-- this is to avoid doubling "\" in documentation for symbol \ and symbol \\
-	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
 	-- TODO: figure out how to align the lists using padding
 	-- ref = pad(ref, printWidth // 4);
-	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then TT ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
+	(format ptag, fkey, next(), fixup (
+		if currentHelpTag === ptag then MaybeQuotedTT fkey
+		else SPAN {MaybeQuotedTT fkey, " -- see ", TOH{ptag}})))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
