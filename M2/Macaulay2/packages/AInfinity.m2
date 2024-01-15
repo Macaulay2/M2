@@ -9,7 +9,8 @@ newPackage(
                   Email => "mike@math.cornell.edu", 
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
 	PackageExports => {"Complexes", "DGAlgebras","PushForward","LocalRings"},
-        Headline => "AInfinity structures on free resolutions"
+        Headline => "AInfinity structures on free resolutions",
+	DebuggingMode => true
 	)
 
 export {
@@ -202,8 +203,7 @@ Bt := BBG#t; --labeledTensorComplex (toList(2:B)|{G}, LengthLimit => limit);
 	    if sum k>limit then m#k = map(G_(i-1), Bt_i, 0) 
 	    else (
 	    U := select(mapComponents k, v -> #v_3>1); -- the case #v3 = 1 would be d m#k
-    	    dm := - sum(
-		for v in U list (
+    	    mkTerms := for v in U list (
 		k1 := k_{0..v_1-1};
 		k2 := k_{v_1..v_2};
 		k3 := k_{v_2+1..#k-2};
@@ -211,18 +211,19 @@ Bt := BBG#t; --labeledTensorComplex (toList(2:B)|{G}, LengthLimit => limit);
 		fac1 := tensor(S,apply(k1, ell -> B_ell));
 		fac3 := tensor(S,apply(k3, ell -> B_ell));
 		fac4 := G_k4;
+		--error "err";
 		if v_2 == #k-1 then (
 		   mMap1 := if not m#?(v_3) then map(S^0,tensor (apply(drop(v_3,-1),ell -> B_ell)|{G_(last v_3)}),0) else m#(v_3)_[v_3];
                    mMap2 := if not m#?(k2) then map(S^0,tensor (apply(drop(k2,-1),ell -> B_ell)|{G_(last k2)}),0) else m#(k2)_[k2];
 		   v_0 * mMap1 * (fac1 ** mMap2)
 		)
 		else (
-		   mRmap := if not mR#?k2 then map(S^0,tensor apply(k, ell -> B_ell),0) else mR#k2_[k2];
-                   mMap := if not m#?(v_3) then map(S^0,tensor (apply(drop(v_3,-1),ell -> B_ell)|{G_(last v_3)}),0) else m#(v_3)_[v_3];
+		   mRmap := if not mR#?k2 then map(B_(sum k2 - 1),tensor apply(k2, ell -> B_ell),0) else mR#k2_[k2];
+                   mMap := if not m#?(v_3) then map(G_(sum v_3 - 1),tensor (apply(drop(v_3,-1),ell -> B_ell)|{G_(last v_3)}),0) else m#(v_3)_[v_3];
 		   v_0 * mMap * (fac1 ** mRmap ** fac3 ** fac4)
 	        )
-		)
 	    );
+	    dm := - sum mkTerms;
 	    if o.Check == true then(
     	        if dm%G.dd_(i-1) != 0 then(
   	            <<"i = "<<i<<" k = "<<k<<endl;
@@ -1485,6 +1486,21 @@ assert all(length F -1, i-> prune HH_(i+1)F == 0)
 assert(betti burkeResolution(N,5) == betti res (N, LengthLimit => 5))
 ///
 
+TEST ///
+-- multigraded example
+kk = ZZ/101
+S = kk[x,y,u,v,Degrees => {{1,0},{1,0},{0,1},{0,1}}]
+R = S/ideal"xu-yv"
+mR = aInfinity R
+mG = aInfinity(mR,coker vars R,Check=>true)
+N = coker vars R
+F = burkeResolution(N, 6)
+assert(isHomogeneous F)
+assert(F.dd^2 == 0)
+assert all(length F -1, i-> prune HH_(i+1)F == 0)
+assert(betti burkeResolution(N,6) == betti res (N, LengthLimit => 6))
+///
+
 ///
 restart
 loadPackage("AInfinity", Reload => true)
@@ -1808,3 +1824,4 @@ R = S/gor 3
 elapsedTime burkeResolution(coker vars R, 7)
 elapsedTime res(coker vars R, LengthLimit => 7) 
 picture burkeResolution(coker vars R, 5)
+
