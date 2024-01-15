@@ -211,11 +211,16 @@ Bt := BBG#t; --labeledTensorComplex (toList(2:B)|{G}, LengthLimit => limit);
 		fac1 := tensor(S,apply(k1, ell -> B_ell));
 		fac3 := tensor(S,apply(k3, ell -> B_ell));
 		fac4 := G_k4;
-		if v_2 == #k-1 
-		    then 
-	        v_0 * m#(v_3)_[v_3]*(fac1 ** (m#k2)_[k2])
-		    else
-	        v_0 * m#(v_3)_[v_3]*(fac1 ** (mR#k2)_[k2] ** fac3 ** fac4)
+		if v_2 == #k-1 then (
+		   mMap1 := if not m#?(v_3) then map(S^0,tensor (apply(drop(v_3,-1),ell -> B_ell)|{G_(last v_3)}),0) else m#(v_3)_[v_3];
+                   mMap2 := if not m#?(k2) then map(S^0,tensor (apply(drop(k2,-1),ell -> B_ell)|{G_(last k2)}),0) else m#(k2)_[k2];
+		   v_0 * mMap1 * (fac1 ** mMap2)
+		)
+		else (
+		   mRmap := if not mR#?k2 then map(S^0,tensor apply(k, ell -> B_ell),0) else mR#k2_[k2];
+                   mMap := if not m#?(v_3) then map(S^0,tensor (apply(drop(v_3,-1),ell -> B_ell)|{G_(last v_3)}),0) else m#(v_3)_[v_3];
+		   v_0 * mMap * (fac1 ** mRmap ** fac3 ** fac4)
+	        )
 		)
 	    );
 	    if o.Check == true then(
@@ -1465,6 +1470,19 @@ mG = aInfinity(mA,N);
 assert(betti burkeResolution(N,5) == betti res (N, LengthLimit => 5))
 assert(F.dd^2 == 0)
 assert all(length F -1, i-> prune HH_(i+1)F == 0)
+///
+
+TEST ///
+kk = ZZ/101
+S = kk[x,y]
+R = S/ideal"xy"
+mR = aInfinity R
+mG = aInfinity(mR,coker vars R,Check=>true)
+N = coker vars R
+F = burkeResolution(N, 5)
+assert(F.dd^2 == 0)
+assert all(length F -1, i-> prune HH_(i+1)F == 0)
+assert(betti burkeResolution(N,5) == betti res (N, LengthLimit => 5))
 ///
 
 ///
