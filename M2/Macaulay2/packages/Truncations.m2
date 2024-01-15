@@ -84,7 +84,7 @@ effGenerators Ring := R -> tryHooks((effGenerators, Ring), R, R -> map(degreeGro
 
 -- Generators of Nef cone
 nefGenerators = method(TypicalValue => Matrix)
-nefGenerators Ring := R -> null -- will be overriden in Varieties package
+nefGenerators Ring := R -> null -- will be overridden in Varieties package
 
 -- Effective cone of X as a polyhedral object
 effCone = method(TypicalValue => Cone)
@@ -92,7 +92,7 @@ effCone Ring := R -> tryHooks((effCone, Ring), R, R -> convexHull(matrix{0_(degr
 
 -- Nef cone of X as a polyhedral object
 nefCone = method(TypicalValue => Cone)
-nefCone Ring := R -> null -- will be overriden in Varieties package
+nefCone Ring := R -> null -- will be overridden in Varieties package
 
 --------------------------------------------------------------------
 -- Polyhedral algorithms
