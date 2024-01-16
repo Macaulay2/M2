@@ -20,8 +20,12 @@ export {
     "picture",
     "displayBlocks",
     "extractBlocks",
+    "hasMinimalMult",
+    "isGolodAInf",
+    "burkeDifferential",
     --symbols
-    "Check"
+    "Check",
+    "ShowRanks"
     }
 
 ///
@@ -31,6 +35,26 @@ restart
 installPackage "AInfinity"
 check AInfinity
 ///
+
+-- function to check whether the multiplication
+-- 
+hasMinimalMult = method()
+hasMinimalMult Ideal := I -> hasMinimalMult(quotient I, 2)
+hasMinimalMult (Ideal, ZZ) := (I,n) -> hasMinimalMult(quotient I, n)
+hasMinimalMult Ring := R -> hasMinimalMult(R,2)
+hasMinimalMult (Ring,InfiniteNumber) :=
+hasMinimalMult (Ring,ZZ) := (R,n) -> (
+   I := ideal R;
+   S := ring I;
+   K := S/(ideal vars S);
+   red := map(K,S);
+   mR := aInfinity(R,Order=>n);
+   mults := select(keys mR, k -> class k === List and #k <= n and #k >= 2);
+   all(mults, k -> red(mR#k) == 0)
+)
+
+isGolodAInf = method()
+isGolodAInf Ring := R -> hasMinimalMult(R,infinity)
 
 burkeResolution = method(Options=>{Check => false})
 burkeResolution(Module, ZZ) := Complex => o-> (M,len) ->(
@@ -44,7 +68,7 @@ burkeResolution(Module, ZZ) := Complex => o-> (M,len) ->(
     F
     )
 
-aInfinity = method(Options => {LengthLimit => null, Check => true})
+aInfinity = method(Options => {LengthLimit => null, Order => infinity, Check => true})
 aInfinity Ring := HashTable => o -> R -> (
     --R should be a factor ring of a polynomial ring S
     --An S-free resolution A of R^1 is added to the cache table of R,
@@ -77,6 +101,7 @@ else
 m#"resolution" = B;
 
 limit := 1+max B;
+if o.Order === infinity then order := limit // 2 else order = min(o.Order, limit // 2);
 if o.LengthLimit =!= null then limit = o.LengthLimit;
 
 --if not already present in R, cache the necessary tensor powers of B
@@ -114,7 +139,7 @@ for i from 4 to limit do(
 
 --m#{u_1..u_t}
 --note: limit == max B + 1; 
-for t from 3 to limit//2 do(
+for t from 3 to order do(
     Bt := BB#t;
     con := concentration Bt;
     for i from con_0 to con_1 do(
@@ -133,6 +158,12 @@ for t from 3 to limit//2 do(
 	        v_0 * m#(v_3)*(fac1 ** (m#k2) ** fac3)
 		)
 	    );
+	    if o.Check == true then(
+    	       if dm%B.dd_(i-1) != 0 then(
+  	          <<"i = "<<i<<" k = "<<k<<endl;
+	          error"dm failed to lift in aInfinity(Ring)"
+	       )
+	    );
 	    mk := dm//B.dd_(i-1);
             m#k = map(B_(i-1), target Bt_i^[k], mk)  
     ))));
@@ -146,8 +177,6 @@ aInfinity(HashTable, Module) := HashTable => o -> (mR, M) -> (
     --M an R-module
     --The HashTable returned contains the A-infinity structure on 
     --an S-free resolution of M up to stage n.
-    --CAVEAT: for the moment n = 3, and we compute only
-    --m#{u} for #u = 1,2,3
     
 m := new MutableHashTable;
 m#"module" = M;
@@ -496,6 +525,51 @@ algebraMapComponents List := List => u -> (
     select(L, LL -> all (last LL, p -> p >= 2))
     )
 
+burkeDifferential = method()
+burkeDifferential (HashTable,HashTable, ZZ) := Matrix => (mA,mG,t) -> (
+    R := mA#"ring";
+    S := ring presentation R;
+    B := mA#"resolution";
+    M := mG#"module";
+    G := mG#"resolution";
+    F := burkeData(M,t); -- the list of labeled free modules
+
+	c :=componentsAndIndices F_t;
+	sum flatten apply(#c_0, s-> (
+	    u := c_1_s;
+	--now focus on the maps starting from the u component of F_t
+    	    numRComponents := #u-1;
+    	    vv0 := mapComponents u; -- not all the vv0_i are valid.
+	    (C,K) := componentsAndIndices F_(t-1);	    
+	    vv := select(vv0, v-> member(v_3,K)); 
+	  --for each member v of  vv, the list v_3 is the index of a component
+	  --of F_(t-1) to which the u component maps.
+	  --The rest of v describes the map, as follows:
+    	    for v in vv list (
+		sign := v_0;
+		p := v_1;
+		q := v_2;
+		v_0*map(F_(t-1), F_t, 
+		    (F_(t-1))_[u_{0..p-1}|{-1+sum u_{p..q}}|u_{q+1..numRComponents}]*
+		    (if q<numRComponents 
+		     then 
+		       (tensor (S, for i from 0 to p-1 list B_(u_i))
+			**
+	 		mA#(u_{p..q})
+			**
+	 		tensor(S, for i from q+1 to numRComponents-1 list B_(u_i))
+			**
+	 		G_(u_numRComponents)
+			)
+                     else
+	     		tensor(S, for i from 0 to p-1 list B_(u_i))
+			**
+	     		mG#(u_{p..q})
+		    )*(F_t)^[u]
+		    
+             ))))
+)
+
 mapComponents(HashTable, HashTable, ZZ) := List =>(mA,mG,len) ->(
     --The output is a list D_1..D_len
     --where D_t is a list of  the matrices of maps 
@@ -547,7 +621,8 @@ mapComponents(HashTable, HashTable, ZZ) := List =>(mA,mG,len) ->(
 	     		mG#(u_{p..q})
 		    )*(F_t)^[u]
 		    
-             )))))
+             ))))
+        )
     )
 
 
@@ -621,24 +696,41 @@ if n >= 2 then (
 ))
 
 
-picture = method()
-picture Matrix := (M1) -> (
+picture = method(Options => {ShowRanks => false})
+
+picture Matrix := o -> (M1) -> (
     M := flattenBlocks M1;
     src := indices source M;
     tar := indices target M;
+    R := ring M1;
+    K := R/(ideal vars R);
+    red := map(K,R);
+
+    if o#ShowRanks then (
+       src = apply(src,s -> (s,numcols M_[s]));
+       tar = apply(tar,t -> (t,numrows M^[t]));
+    );
     netList (prepend(
         prepend("", src),
         for t in tar list prepend(t, for s in src list (
-                mts := M^[t]_[s];
-		cont := ideal M^[t]_[s];
-                h := if mts == 0 then "." else if (numrows mts == numcols mts and mts == 1) then "id" else 
-		if cont == ideal(1_(ring mts)) then "u" else "*"
+                t0 := if o#ShowRanks then t_0 else t;
+		s0 := if o#ShowRanks then s_0 else s;
+		mts := M^[t0]_[s0];
+		cont := ideal M^[t0]_[s0];
+                h := if mts == 0 then
+		       "."
+		     else if (numrows mts == numcols mts and mts == 1) then
+		       "id"
+		     else if cont == ideal(1_(ring mts)) then
+		       toString rank(red M1)
+		     else "*"
                 ))
         ), Alignment=>Center)
     )
-picture Module := M -> picture id_M
-picture Complex := C -> netList apply(toList(min C+1..max C), i-> picture C.dd_i)
-picture ChainComplex := C -> netList apply(toList(min C+1..max C), i-> picture C.dd_i)
+
+picture Module := o -> M -> picture(id_M,o)
+picture Complex := o -> C -> netList apply(toList(min C+1..max C), i-> picture(C.dd_i,o))
+picture ChainComplex := o -> C -> netList apply(toList(min C+1..max C), i-> picture(C.dd_i,o))
 
 flattenBlocks = method()
 flattenBlocks Module := (F) -> (
@@ -1041,6 +1133,7 @@ Key
  (aInfinity, HashTable, Module)
  [aInfinity, LengthLimit]
  [aInfinity, Check]
+ [aInfinity, Order]
 Headline
  aInfinity algebra and module structures on free resolutions
 Usage
@@ -1052,7 +1145,11 @@ Inputs
  mR:HashTable
   output of aInfinity R
  LengthLimit => ZZ
+  Construct A-infinity structure to specified homological degree
  Check => Boolean
+  Verifies that the lifts in the construction were successful
+ Order => Boolean
+  Restrict the arity of A-infinity structures produced
 Outputs
  mR:HashTable
   A-infinity algebra structure on res coker presentation R
@@ -1213,6 +1310,7 @@ Key
  (picture, Complex)
  (picture, Matrix)
  (picture, Module)
+ [picture, ShowRanks]
 Headline
  displays information about the blocks of a map or maps between direct sum modules
 Usage
@@ -1232,7 +1330,9 @@ Description
    M is an R = S/I-module, are direct sums
    whose summands are labeled, each by a List of ZZ corresponding
    to a tensor product of components of the S-free resolutions of R and M.
-   
+   If ShowRanks is true, then the rank of the corresponding summand is also
+   displayed.
+      
    The maps in the AInfinity structures are similarly labeled (each one has a source
    that has just one summand.)
    
@@ -1249,7 +1349,9 @@ Description
    
    . if the corresponding matrix is zero
    * if the corresponding matrix is nonzero
-   u if the entries of the corresponding matrix contain a unit.
+   (number) if the entries of the corresponding matrix contain a unit,
+            the rank of the matrix tensored with the residue field is displayed
+   id if the corresponding matrix is the identity matrix 
 SeeAlso
  burkeResolution
  aInfinity
@@ -1372,6 +1474,68 @@ Description
 SeeAlso
    burkeResolution
    picture
+///
+
+doc ///
+Key
+ hasMinimalMult
+ (hasMinimalMult,Ideal)
+ (hasMinimalMult,Ideal,ZZ)
+ (hasMinimalMult,Ring)
+ (hasMinimalMult,Ring,InfiniteNumber)
+ (hasMinimalMult,Ring,ZZ)
+Headline
+ Determines if the A-infinity multiplication is minimal
+Usage
+ hasMinimalMult R
+ hasMinimalMult (R,n)
+ hasMinimalMult I
+ hasMinimalMult (I,n)
+Inputs
+ R : Ring
+ I : Ideal
+ n : ZZ
+   or InfiniteNumber
+Outputs
+ h : Boolean
+   Whether or not the A-infinity multiplication is minimal to the specified order
+Description
+  Text
+   This function computes the A-infinity multiplications up to n, and
+   reduces them modulo the maximal ideal to determine if they are minimal.
+SeeAlso
+   isGolodAInf
+///
+
+doc ///
+Key
+ isGolodAInf
+ (isGolodAInf,Ring)
+Headline
+ Determines if the ring is Golod or not
+Usage
+ h = isGolod R
+Inputs
+ R : Ring
+Outputs
+ h : Boolean
+   Whether or not the ring is Golod
+Description
+  Text
+   This function computes the A-infinity multiplications to all required
+   orders, and reduces them modulo the maximal ideal.  If all reductions
+   are zero, then the ring R is Golod.
+  
+   Below is an example of an artinian ring R (based on an example of Roos
+   and Katthan) which has minimal multiplications of order two, but 
+   is not Golod.
+  Example
+   kk = ZZ/101
+   S = kk[x,y,z,u]
+   I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
+   J = trim (I + (ideal vars S)^6)
+   hasMinimalMult(quotient J, 2)
+   isGolodAInf quotient J
 ///
 
 ///
@@ -1499,6 +1663,18 @@ assert(isHomogeneous F)
 assert(F.dd^2 == 0)
 assert all(length F -1, i-> prune HH_(i+1)F == 0)
 assert(betti burkeResolution(N,6) == betti res (N, LengthLimit => 6))
+///
+
+TEST ///
+kk = ZZ/101
+S = kk[x,y,z,u]
+I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2) -- has the betti nums as in Roos
+R = S/I
+mR = aInfinity(R,Order => 2);
+-- checking that limiting order worked
+assert all(select(keys mR, k -> class k === List), l -> #l <= 2)
+mR = aInfinity(R,Order => 3);
+assert all(select(keys mR, k -> class k === List), l -> #l <= 3)
 ///
 
 ///
@@ -1812,7 +1988,7 @@ picture F'
 
 --Gorenstein, codim 3
 restart
-needsPackage "AInfinity"
+debug needsPackage "AInfinity"
 S = ZZ/101[x_0..x_2]
 gor = n -> (
     m = 2*n+1;
@@ -1824,4 +2000,18 @@ R = S/gor 3
 elapsedTime burkeResolution(coker vars R, 7)
 elapsedTime res(coker vars R, LengthLimit => 7) 
 picture burkeResolution(coker vars R, 5)
+picture(burkeResolution(coker vars R, 5),"ShowRanks"=>true)
 
+mR = aInfinity R
+mG = aInfinity(mR,coker vars R) 
+picture burkeDifferential(mR,mG,4)
+
+restart
+debug needsPackage "AInfinity"
+kk = ZZ/101
+S = kk[x,y,z,u]
+-- Roos's example based on Katthan's example
+I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
+J = trim (I + (ideal vars S)^6)
+hasMinimalMult(quotient J, 2)
+isGolodAInf quotient J
