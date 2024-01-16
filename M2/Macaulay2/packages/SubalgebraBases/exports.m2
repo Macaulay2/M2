@@ -2,7 +2,7 @@
 -- From sagbi-main.m2
 export {
     "subalgebraBasis",
-    "sagbi",    
+    "sagbi",
     "AutoSubduce",
     "ReduceNewGenerators",
     "StorePending",
@@ -12,7 +12,7 @@ export {
     "Recompute",
     "RenewOptions",
     "subduction"
-    }
+}
 
 -- From classes.m2
 export {
@@ -22,25 +22,27 @@ export {
     "Compute",
     "sagbiBasis",
     "GeneratorSymbol",
-    "subductionQuotientRing",
+    "presentationRing",
     "sagbiStatus",
     "sagbiLimit",
-    "sagbiDegree"
-    }
+    "sagbiDegree",
+    "flattenedRing"
+}
 
 -- From sagbi-functions.m2
 export {
     "forceSB",
     "isSAGBI",
+    "ModifySAGBIBasis",
     "groebnerMembershipTest",
     "groebnerSubductionQuotient",
-    "subringIntersection",
     "UseSubringGens",
     "SAGBILimitType",
     "IntersectedSubring",
     "isFullIntersection",
-    "originalSubringGens"
-    }
+    "originalSubringGens",
+    "CheckFullIntersection"
+}
 
 protect symbol quotientRing
 protect symbol tensorRing

@@ -25,10 +25,10 @@ engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering* mo,
                                        M2_arrayint hefts)
 {
   const PolynomialRing* P = deg_ring->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   return Monoid::create(mo, names, P, degs, hefts);
 }
@@ -67,7 +67,7 @@ static void write_weights(std::vector<int>& grading,
 // vector with nwts '1's.
 {
   for (int i = 0; i < firstvar; i++) grading.push_back(0);
-  if (wts == 0)
+  if (wts == nullptr)
     for (int i = 0; i < nwts; i++) grading.push_back(1);
   else
     for (int i = 0; i < nwts; i++) grading.push_back(wts[i]);
@@ -207,7 +207,7 @@ M2_arrayint rawMonomialOrderingToMatrix(const struct MonomialOrdering* mo)
 {
   bool base;
   std::vector<int> mat;
-  M2_arrayint result = 0;
+  M2_arrayint result = nullptr;
   int component_is_before_row = 0;
   int component_direction = 0;
   if (monomialOrderingToMatrix(

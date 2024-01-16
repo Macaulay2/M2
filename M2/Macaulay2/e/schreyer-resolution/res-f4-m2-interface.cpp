@@ -216,7 +216,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   std::vector<res_monomial_word> monoms(n * R.monoid().max_monomial_size());
   n = 0;
   res_monomial_word* nextmonom = monoms.data();
-  for (gbvector* t = f; t != 0; t = t->next)
+  for (gbvector* t = f; t != nullptr; t = t->next)
     {
       R.resGausser().from_ring_elem(
           coeffs, t->coeff, f->coeff);  // note: f->coeff is assumed to be 1 for
@@ -250,8 +250,8 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   Nterm** last = newarray(Nterm*, F->rank());
   for (int i = 0; i < F->rank(); i++)
     {
-      comps[i] = 0;
-      last[i] = 0;
+      comps[i] = nullptr;
+      last[i] = nullptr;
     }
 
   int* exp = new int[M->n_vars()];
@@ -266,8 +266,8 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       ring_elem a =
           R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
       Nterm* g = origR->make_flat_term(a, m1);
-      g->next = 0;
-      if (last[comp] == 0)
+      g->next = nullptr;
+      if (last[comp] == nullptr)
         {
           comps[comp] = g;
           last[comp] = g;
@@ -278,15 +278,15 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
           last[comp] = g;
         }
     }
-  vec result = 0;
+  vec result = nullptr;
   for (int i = 0; i < F->rank(); i++)
     {
-      if (comps[i] != 0)
+      if (comps[i] != nullptr)
         {
           vec v = origR->make_vec(i, comps[i]);
           origR->add_vec_to(result, v);
-          comps[i] = 0;
-          last[i] = 0;
+          comps[i] = nullptr;
+          last[i] = nullptr;
         }
     }
 
@@ -441,8 +441,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
           Nterm* g = RP->make_flat_term(a, m1);
           if (g == nullptr) continue;
-          g->next = 0;
-          if (last[comp] == 0)
+          g->next = nullptr;
+          if (last[comp] == nullptr)
             {
               comps[comp] = g;
               last[comp] = g;
@@ -857,7 +857,7 @@ M2_arrayint rawMinimalBetti(Computation* C,
   try
     {
       F4ResComputation* G = dynamic_cast<F4ResComputation*>(C);
-      if (G != 0)
+      if (G != nullptr)
         return G->minimal_betti(slanted_degree_limit,
                                 length_limit);  // Computes it if needed
       ERROR("expected resolution computed via res(...,FastNonminimal=>true)");

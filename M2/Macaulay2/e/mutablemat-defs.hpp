@@ -510,7 +510,7 @@ class MutableMat : public MutableMatrix
         {
           ERROR(
               "row index %d out of bounds 0..%d", rows->array[r], n_rows() - 1);
-          return 0;
+          return nullptr;
         }
     for (size_t c = 0; c < cols->len; c++)
       if (cols->array[c] < 0 || cols->array[c] >= n_cols())
@@ -518,7 +518,7 @@ class MutableMat : public MutableMatrix
           ERROR("column index %d out of bounds 0..%d",
                 cols->array[c],
                 n_cols() - 1);
-          return 0;
+          return nullptr;
         }
     MutableMat* result =
         new MutableMat(*this);  // zero matrix, over the same ring
@@ -534,7 +534,7 @@ class MutableMat : public MutableMatrix
           ERROR("column index %d out of bounds 0..%d",
                 cols->array[c],
                 n_cols() - 1);
-          return 0;
+          return nullptr;
         }
     MutableMat* result =
         new MutableMat(*this);  // zero matrix, over the same ring
@@ -546,9 +546,9 @@ class MutableMat : public MutableMatrix
   // promote, lift, eval ////////
   ///////////////////////////////
 
-  virtual MutableMatrix* promote(const Ring* S) const { return 0; }
-  virtual MutableMatrix* lift(const Ring* R) const { return 0; }
-  virtual MutableMatrix* eval(const RingMap* F) const { return 0; }
+  virtual MutableMatrix* promote(const Ring* S) const { return nullptr; }
+  virtual MutableMatrix* lift(const Ring* R) const { return nullptr; }
+  virtual MutableMatrix* eval(const RingMap* F) const { return nullptr; }
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////

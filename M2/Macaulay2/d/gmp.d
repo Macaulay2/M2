@@ -270,7 +270,7 @@ export moveToRRiandclear(z:RRimutable):RRi := (
     clear(z);
     w);
      
-set(x:ZZmutable, y:ZZ   ) ::= Ccode( void, "mpz_set   (", x, ",", y, ")" );
+export set(x:ZZmutable, y:ZZ   ) ::= Ccode( void, "mpz_set   (", x, ",", y, ")" );
 set(x:ZZmutable, n:int  ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
 set(x:ZZmutable, n:uint ) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 set(x:ZZmutable, n:long ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );

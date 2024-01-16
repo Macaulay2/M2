@@ -7,13 +7,10 @@ R = QQ[x_1..x_3];
 A = subring {x_1+x_2+x_3, x_1^2+x_2^2+x_3^2, x_1^3+x_2^3+x_3^3};
 SB = sagbi A
 isSAGBI SB
-SB = sagbi A
-isSAGBI SB
 A = subring(gens SB, GeneratorSymbol => g);
 f = x_1^4 + x_2^4 + x_3^4;
 q = f // A
 r = f % A
-
 
 -*
 Example 2.3
@@ -25,7 +22,7 @@ SB = subalgebraBasis({x_1+x_2, x_1*x_2, x_1*x_2^2}, Limit => 7)
 isSAGBI SB
 
 -*
-Example 2.4
+Example 2.5
 *-
 restart
 needsPackage "SubalgebraBases";
@@ -35,7 +32,6 @@ S = R / ideal(a*d - b*c - 1);
 G = flatten for i from 1 to n list {a*u_i + b*v_i, c*u_i + d*v_i};
 SB = subalgebraBasis G
 isSAGBI SB
-
 
 -*
 Example 3.1
@@ -84,7 +80,7 @@ I = ideal(x^3 + x*y^2 + y^3);
 S = R/I;
 A1 = subring {x^2, x*y};
 A2 = subring {x, y^2};
-A = subringIntersection(A1, A2)
+A = intersect(A1, A2)
 gens A
 isFullIntersection A
 
@@ -98,7 +94,6 @@ SB = sagbi {w_1, w_2, w_3, -t_3*w_2+t_2*w_3+v_1, t_3*w_1-t_1*w_3+v_2, -t_2*w_1+t
 isSAGBI SB
 SB' = selectInSubring(1, gens SB)
 
-
 -- multi-screw translational invariants
 screwsExample = n -> (
     t := symbol t;
@@ -108,16 +103,15 @@ screwsExample = n -> (
     vs := for i from 1 to n list transpose matrix {{v_(i,1),v_(i,2),v_(i,3)}};
     ws := for i from 1 to n list transpose matrix {{w_(i,1),w_(i,2),w_(i,3)}};
     T := matrix{
-	{0,-t_3,t_2},
-	{t_3,0,-t_1},
-	{-t_2,t_1,0}
-	};
+        {0,-t_3,t_2},
+        {t_3,0,-t_1},
+        {-t_2,t_1,0}
+    };
     cfold := L -> fold(L,(a,b)->a||b);
     ys := cfold for i from 1 to n list cfold {ws#(i-1), T*ws#(i-1)+vs#(i-1)};
     B := sagbi(transpose ys, Limit=>100, SubductionMethod => "Engine");
     (B, selectInSubring(1, gens B))
-    );
-
+);
 
 -*
 Example 4.2
@@ -135,13 +129,13 @@ M34 = y_1*x_2*x_5*x_6 + x_1*y_2*x_5*x_6 - x_1*x_2*y_5*x_6 + x_1*x_2*x_5*y_6;
 RG = subring {x_1 .. x_6, L124, L135, L236, L456, M16, M25, M34};
 isSAGBI RG
 
-
 -*
 Example 4.3
 *-
 restart
 needsPackage "SubalgebraBases";
-R = QQ[x_(1,1)..x_(3,6), MonomialOrder => {Weights => {0,0,0,0,0,0,0,15,3,12,9,6,0,7,14,21,28,35}}];
+R = QQ[x_(1,1)..x_(3,6),
+    MonomialOrder => {Weights => {0,0,0,0,0,0,0,15,3,12,9,6,0,7,14,21,28,35}}];
 X = transpose genericMatrix(R, 6, 3);
 A = subring for s in subsets(6, 3) list det X_s;
 SB = sagbi(A, Limit => 20, SubductionMethod => "Engine")
