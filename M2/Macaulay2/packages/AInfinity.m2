@@ -525,8 +525,8 @@ algebraMapComponents List := List => u -> (
     select(L, LL -> all (last LL, p -> p >= 2))
     )
 
-burkeDifferential = method()
-burkeDifferential (HashTable,HashTable, ZZ) := Matrix => (mA,mG,t) -> (
+burkeDifferentialList = method()
+burkeDifferentialList (HashTable,HashTable, ZZ) := Matrix => (mA,mG,t) -> (
     R := mA#"ring";
     S := ring presentation R;
     B := mA#"resolution";
@@ -534,60 +534,6 @@ burkeDifferential (HashTable,HashTable, ZZ) := Matrix => (mA,mG,t) -> (
     G := mG#"resolution";
     F := burkeData(M,t); -- the list of labeled free modules
 
-	c :=componentsAndIndices F_t;
-	sum flatten apply(#c_0, s-> (
-	    u := c_1_s;
-	--now focus on the maps starting from the u component of F_t
-    	    numRComponents := #u-1;
-    	    vv0 := mapComponents u; -- not all the vv0_i are valid.
-	    (C,K) := componentsAndIndices F_(t-1);	    
-	    vv := select(vv0, v-> member(v_3,K)); 
-	  --for each member v of  vv, the list v_3 is the index of a component
-	  --of F_(t-1) to which the u component maps.
-	  --The rest of v describes the map, as follows:
-    	    for v in vv list (
-		sign := v_0;
-		p := v_1;
-		q := v_2;
-		v_0*map(F_(t-1), F_t, 
-		    (F_(t-1))_[u_{0..p-1}|{-1+sum u_{p..q}}|u_{q+1..numRComponents}]*
-		    (if q<numRComponents 
-		     then 
-		       (tensor (S, for i from 0 to p-1 list B_(u_i))
-			**
-	 		mA#(u_{p..q})
-			**
-	 		tensor(S, for i from q+1 to numRComponents-1 list B_(u_i))
-			**
-	 		G_(u_numRComponents)
-			)
-                     else
-	     		tensor(S, for i from 0 to p-1 list B_(u_i))
-			**
-	     		mG#(u_{p..q})
-		    )*(F_t)^[u]
-		    
-             ))))
-)
-
-mapComponents(HashTable, HashTable, ZZ) := List =>(mA,mG,len) ->(
-    --The output is a list D_1..D_len
-    --where D_t is a list of  the matrices of maps 
-    --F_t ->comp(u,F_t) -> comp(v, F_(t-1) -> F_(t-1)
-    --where comp(u,F_t) is the component of F_t labeled u
-    --and similarly for v,F_(t-1).
-    --Thus sum D_t will be the map F.dd_t in the Burke resolution.
-    R := mA#"ring";
-    S := ring presentation R;
-    B := mA#"resolution";
-    M := mG#"module";
-    G := mG#"resolution";
-    F := burkeData(M,len); -- the list of labeled free modules
-   --Now form the components of the maps. 
-
-      for t from 1 to len list (
-  
-   --First construct vv, the list of valid maps F_t --> F_(t-1).
 	c :=componentsAndIndices F_t;
 	flatten apply(#c_0, s-> (
 	    u := c_1_s;
@@ -622,8 +568,28 @@ mapComponents(HashTable, HashTable, ZZ) := List =>(mA,mG,len) ->(
 		    )*(F_t)^[u]
 		    
              ))))
-        )
-    )
+)
+
+burkeDifferential = method()
+burkeDifferential (HashTable,HashTable, ZZ) := Matrix => (mA,mG,t) ->
+   sum burkeDifferentialList(mA,mG,t)
+
+mapComponents(HashTable, HashTable, ZZ) := List =>(mA,mG,len) ->(
+   --The output is a list D_1..D_len
+   --where D_t is a list of  the matrices of maps 
+   --F_t ->comp(u,F_t) -> comp(v, F_(t-1) -> F_(t-1)
+   --where comp(u,F_t) is the component of F_t labeled u
+   --and similarly for v,F_(t-1).
+   --Thus sum D_t will be the map F.dd_t in the Burke resolution.
+   R := mA#"ring";
+   S := ring presentation R;
+   B := mA#"resolution";
+   M := mG#"module";
+   G := mG#"resolution";
+   F := burkeData(M,len); -- the list of labeled free modules
+   --Now form the components of the maps. 
+   for t from 1 to len list burkeDifferentialList(mA,mG,t)
+)
 
 
 ///
@@ -1212,6 +1178,8 @@ doc ///
 Key
  burkeResolution
  (burkeResolution, Module, ZZ)
+ burkeDifferential
+ (burkeDifferential, HashTable, HashTable, ZZ)
  [burkeResolution,Check]
 Headline
  compute a resolution from A-infinity structures
@@ -1239,6 +1207,15 @@ Description
    R = S/I
    M = R^1/ideal(x_1..x_3)
    F = burkeResolution(M, 4, Check =>true)
+  Text
+   If one only wants a single differential, use burkeDifferential
+   instead, but one must construct the Ainfinity structures separately.
+   The same syntax also works for burkeResolution.
+  Example
+   mR = aInfinity R
+   mG = aInfinity(mR,M)
+   burkeDifferential(mR,mG,5)
+   burkeResolution(M, 5, Check =>true)
   Text
    the function golodBetti displays the Betti table of the resolution
    that would be constructed by burkeResolution, without actually making the construction.
@@ -1310,6 +1287,7 @@ Key
  (picture, Complex)
  (picture, Matrix)
  (picture, Module)
+ ShowRanks
  [picture, ShowRanks]
 Headline
  displays information about the blocks of a map or maps between direct sum modules
