@@ -269,7 +269,7 @@ matrixTable := opts -> (f) -> (
 matrix(Matrix) := Matrix => opts -> (m) -> (
      if isFreeModule target m and isFreeModule source m and (not opts.Degree =!= null or degree m === opts.Degree or degree m === {opts.Degree} )
      then m
-     else map(cover target m, cover source m, m, Degree => if opts.Degree =!= null then opts.Degree else degree m)
+     else map(cover target m, cover source m, raw m, Degree => if opts.Degree =!= null then opts.Degree else degree m)
      )
 
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
