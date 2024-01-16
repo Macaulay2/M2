@@ -627,3 +627,18 @@ doc ///
     SeeAlso
         "compressing circuits"
 ///
+
+doc /// 
+  Key 
+    (symbol .., InputGate, InputGate)
+  Headline 
+    Passing .. to InputGate names (see code). TO DO: expand this.
+///
+
+doc ///
+  Key 
+    "creating variables as objects of type InputGate"
+    (vars, IndexedVariable)
+    (vars, Symbol)
+    (vars, InputGate) 
+///

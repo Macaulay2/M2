@@ -161,26 +161,3 @@ document {
 	  }, 
      SeeAlso => {(generators,Module), ambient, isSubmodule, isIdeal}
      }
-document { 
-     Key => (ideal,Variety),
-     Headline => "returns the defining ideal",          
-     Usage => "ideal X",
-     Inputs => {
-	  "X"
-	  },
-     Outputs => {
-	  Ideal => {"which is the defining ideal of ", TT "X"}
-	  },
-     "A ", TO2("Variety", "variety"), " is defined by a ", TO2("Ring", "ring"), 
-     ".  This function returns the defining ideal of the ring of ", TT "X", ".",
-     EXAMPLE {
-	  "R = QQ[w,x,y,z];",
- 	  "X = Spec(R/(y^2-x*z,x^2*y-z^2,x^3-y*z))",
-	  "ideal X",
-	  "ring X",
-	  "Y = Proj(R/(x^2-w*y, x*y-w*z, x*z-y^2))",
-	  "ideal Y"
-	  },
-     SeeAlso => {ring, (ideal,Ring), Spec, AffineVariety, Proj, ProjectiveVariety}
-     }
-

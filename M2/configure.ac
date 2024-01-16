@@ -1,4 +1,4 @@
-AC_INIT([Macaulay2],[m4_esyscmd_s([cat VERSION])],[Macaulay2@math.uiuc.edu],[Macaulay2],[http://macaulay2.com/])
+AC_INIT([Macaulay2],[m4_esyscmd_s([cat VERSION])],[https://github.com/Macaulay2/M2/issues],[Macaulay2],[https://macaulay2.com/])
 AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
@@ -96,6 +96,9 @@ then if test -f /usr/bin/sw_vers
      elif test -f /usr/bin/lsb_release
      then ISSUE_FLAVOR=`lsb_release -s --id`
           ISSUE_RELEASE=`lsb_release -s --release`
+	  if test $ISSUE_RELEASE = n/a
+	  then ISSUE_RELEASE=`lsb_release -s --codename`
+	  fi
      elif test -f /etc/os-release
      then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
           ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
@@ -230,13 +233,6 @@ else for DOCTYPE in $DOCUMENTATION
 fi
 
 AC_SUBST(DOCUMENTATION)
-
-dnl deprecated in 1.22
-dnl TODO: remove this completely after 1.22 is released
-AC_ARG_ENABLE([syntax-highlighting],
-    [AS_HELP_STRING([--enable-syntax-highlighting],
-	[this option is deprecated; syntax highlight is always enabled.])],
-    [AC_MSG_WARN([the --enable-syntax-highlighting option is deprecated; syntax highlighting is always enabled.])])
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
@@ -1002,6 +998,7 @@ then AC_LANG(C)
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
+      AC_CHECK_HEADERS([flint/nmod.h]) dnl only present in flint >= 2.9.0
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
@@ -1383,7 +1380,8 @@ fi
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
 
-AC_CHECK_HEADERS([boost/math/special_functions.hpp], [],
+AC_CHECK_HEADERS([boost/math/special_functions.hpp],
+    [AC_CHECK_HEADERS([boost/math/tools/atomic.hpp])],
     [AC_MSG_ERROR([Boost Math Toolkit not available])])
 AC_SEARCH_LIBS([ldexpq], [quadmath])
 
@@ -1683,12 +1681,12 @@ AS_IF([test x$with_libffi != xno ],
        AC_SEARCH_LIBS([ffi_call], [ffi], [],
 	   [AC_MSG_ERROR([libffi not found or not linkable])])
        AC_CHECK_FUNCS([ffi_get_struct_offsets])
-       LIBFFI_VERSION=$(pkg-config --modversion libffi)],
+       FFI_VERSION=$(pkg-config --modversion libffi)],
       [AC_MSG_RESULT([no])
        AC_MSG_ERROR([install libffi or use --without-libffi option])])],
-    [LIBFFI_VERSION="not present"])
+    [FFI_VERSION="not present"])
 AC_SUBST([LIBFFI], [$with_libffi])
-AC_DEFINE_UNQUOTED([LIBFFI_VERSION], ["$LIBFFI_VERSION"], [libffi version])
+AC_DEFINE_UNQUOTED([FFI_VERSION], ["$FFI_VERSION"], [libffi version])
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS

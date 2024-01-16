@@ -1,6 +1,5 @@
 --		Copyright 2007 by Daniel R. Grayson
 
-needs "varieties.m2" -- TODO: remove this dependency
 needs "format.m2"
 needs "html.m2" -- for htmlLiteral
 
@@ -156,7 +155,6 @@ mathML MutableHashTable := x -> if x.?mathML then x.mathML else (
 mathML BettiTally := v -> mtableML rawBettiTally v
 mathML CacheFunction := f -> mathML "-*a cache function*-"
 -- these are all provisional:
-mathML CoherentSheaf :=
 mathML Ideal :=
 mathML ImmutableType :=
 mathML Matrix :=
@@ -165,7 +163,6 @@ mathML MutableMatrix :=
 mathML OptionTable :=
 mathML ProjectiveHilbertPolynomial :=
 mathML RingMap :=
-mathML SheafOfRings :=
 mathML ChainComplexMap :=
 mathML GradedModule :=
 mathML GradedModuleMap :=
@@ -174,7 +171,6 @@ mathML IndexedVariableTable :=
 mathML Package :=
 mathML ScriptedFunctor :=
 mathML Monoid :=
-mathML Variety :=
 mathML Thing := x -> (
      -- maybe "expression" should not just put unknown things in a holder ...
      -- anyway, we have to break the loop somehow here

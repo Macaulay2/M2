@@ -7,7 +7,7 @@ newPackage( "SectionRing",
      	       HomePage => "http://www.math.utah.edu/~bydlon/"
      	       }
 	  },
-     PackageImports => {"Divisor"},
+     PackageImports => {"Divisor", "Varieties"},
      Keywords => {"Commutative Algebra"},
      Headline => "the section ring of a Weil Divisor"
      )

@@ -16,43 +16,45 @@
 void FreeModule::initialize(const Ring *RR)
 {
   R = RR;
-  schreyer = nullptr;
+  schreyer = 0;
 }
 
 unsigned int FreeModule::computeHashValue() const
 {
   unsigned int hashval = 13;
-  if (degree_monoid()->n_vars() == 0)
+  if (R->degree_monoid()->n_vars() == 0)
     hashval += rank();
   else
     for (int i = 0; i < rank(); i++) hashval = 14535 * hashval + degree(i)[0];
   return hashval;
 }
+
 FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
 // Create R^n, with all gradings zero.
 {
   initialize(RR);
 
-  monomial deg = degree_monoid()->make_one();
+  auto D = R->degree_monoid();
+  monomial deg = D->make_one();
   for (int i = 0; i < n; i++) append(deg);
-  degree_monoid()->remove(deg);
+  D->remove(deg);
 
   if (has_schreyer_order)
     {
-      const PolynomialRing *P = RR->cast_to_PolynomialRing();
+      const PolynomialRing *P = R->cast_to_PolynomialRing();
       assert(P != 0);
       assert(n == 0);
       schreyer = SchreyerOrder::create(P->getMonoid());
     }
   else
-    schreyer = nullptr;
+    schreyer = 0;
 }
 
 FreeModule *FreeModule::make_schreyer(const Matrix *m)
 {
   int i;
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
-  if (R == nullptr)
+  if (R == 0)
     {
       ERROR("expected a polynomial ring");
       return nullptr;
@@ -72,7 +74,7 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
 {
   const FreeModule *F = m->get_free_module();
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
-  if (R == nullptr)
+  if (R == 0)
     {
       ERROR("expected a polynomial ring");
       return nullptr;
@@ -81,11 +83,12 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
   int rk = INTSIZE(m->elems);
   if (rk == 0) return G;
 
+  auto D = R->degree_monoid();
   for (int i = 0; i < rk; i++)
     {
-      monomial deg = R->degree_monoid()->make_one();
+      monomial deg = D->make_one();
       gbvector *v = m->elems[i];
-      if (v != nullptr) R->get_gb_ring()->gbvector_multidegree(F, v, deg);
+      if (v != 0) R->get_gb_ring()->gbvector_multidegree(F, v, deg);
       G->append(deg);
     }
 
@@ -97,14 +100,14 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
 Matrix *FreeModule::get_induced_order() const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (!schreyer || P == nullptr) return Matrix::zero(R->make_FreeModule(0), this);
+  if (!schreyer || P == 0) return Matrix::zero(R->make_FreeModule(0), this);
   const SchreyerOrder *S = schreyer;
   int i;
   int maxtie = 0;
   for (i = 0; i < rank(); i++)
     if (S->compare_num(i) > maxtie) maxtie = S->compare_num(i);
   const FreeModule *F = R->make_FreeModule(maxtie + 1);
-  MatrixConstructor mat(F, this, nullptr);
+  MatrixConstructor mat(F, this, 0);
   for (i = 0; i < rank(); i++)
     {
       ring_elem f = P->make_flat_term(P->getCoefficients()->from_long(1),
@@ -127,14 +130,14 @@ FreeModule *FreeModule::new_free() const { return R->make_FreeModule(); }
 void FreeModule::append(const_monomial d)
 {
   assert(schreyer == 0);
-  monomial p = degree_monoid()->make_new(d);
+  monomial p = R->degree_monoid()->make_new(d);
   components.push_back(p);
 }
 
 void FreeModule::append_schreyer(const_monomial d, const_monomial base, int compare_num)
 {
   assert(schreyer != 0);
-  monomial p = degree_monoid()->make_new(d);
+  monomial p = R->degree_monoid()->make_new(d);
   components.push_back(p);
   schreyer->append(compare_num, base);
 }
@@ -145,23 +148,23 @@ void FreeModule::change_degree(int i, const_monomial deg)
   // the construction of a free module (or matrix).
   assert(i >= 0);
   assert(i < rank());
-  degree_monoid()->copy(deg, components[i]);
+  R->degree_monoid()->copy(deg, components[i]);
 }
 
 bool FreeModule::is_equal(const FreeModule *F) const
 {
   int i;
   if (this == F) return true;
-  if (this->get_ring() != F->get_ring()) return false;
+  if (R != F->get_ring()) return false;
   if (rank() != F->rank()) return false;
 
-  const Monoid *D = degree_monoid();
+  auto D = R->degree_monoid();
   if (D->n_vars() > 0)
     for (i = 0; i < rank(); i++)
       if (0 != D->compare(degree(i), F->degree(i))) return false;
 
-  if (schreyer != nullptr) return schreyer->is_equal(F->schreyer);
-  if (F->schreyer != nullptr) return false;
+  if (schreyer != NULL) return schreyer->is_equal(F->schreyer);
+  if (F->schreyer != NULL) return false;
 
   return true;
 }
@@ -173,18 +176,19 @@ bool FreeModule::is_equal(const FreeModule *F) const
 FreeModule *FreeModule::shift(const_monomial d) const
 // Shift degree by d.
 {
+  auto D = R->degree_monoid();
   FreeModule *result = new_free();
-  monomial deg = degree_monoid()->make_one();
+  monomial deg = D->make_one();
 
   for (int i = 0; i < rank(); i++)
     {
-      degree_monoid()->mult(degree(i), d, deg);
+      D->mult(degree(i), d, deg);
       result->append(deg);
     }
 
-  if (schreyer != nullptr) result->schreyer = schreyer->copy();
+  if (schreyer != NULL) result->schreyer = schreyer->copy();
 
-  degree_monoid()->remove(deg);
+  D->remove(deg);
   return result;
 }
 
@@ -193,12 +197,12 @@ FreeModule *FreeModule::sub_space(int n) const
   if (n < 0 || n > rank())
     {
       ERROR("subfreemodule: index out of bounds");
-      return nullptr;
+      return NULL;
     }
   FreeModule *result = new_free();
   for (int i = 0; i < n; i++) result->append(degree(i));
 
-  if (schreyer != nullptr) result->schreyer = schreyer->sub_space(n);
+  if (schreyer != NULL) result->schreyer = schreyer->sub_space(n);
   return result;
 }
 
@@ -212,25 +216,26 @@ FreeModule *FreeModule::sub_space(M2_arrayint a) const
       {
         ERROR("subfreemodule: index out of bounds");
         freemem(result);
-        return nullptr;
+        return NULL;
       }
-  if (schreyer != nullptr) result->schreyer = schreyer->sub_space(a);
+  if (schreyer != NULL) result->schreyer = schreyer->sub_space(a);
   return result;
 }
 
 FreeModule *FreeModule::transpose() const
 {
+  auto D = R->degree_monoid();
   FreeModule *result = new_free();
-  monomial deg = degree_monoid()->make_one();
+  monomial deg = D->make_one();
 
   for (int i = 0; i < rank(); i++)
     {
-      degree_monoid()->power(degree(i), -1, deg);
+      D->power(degree(i), -1, deg);
       result->append(deg);
     }
 
   // result has no schreyer order
-  degree_monoid()->remove(deg);
+  D->remove(deg);
   return result;
 }
 
@@ -238,10 +243,10 @@ FreeModule *FreeModule::direct_sum(const FreeModule *G) const
 // direct sum
 {
   int i;
-  if (get_ring() != G->get_ring())
+  if (R != G->get_ring())
     {
       ERROR("expected free modules over the same ring");
-      return nullptr;
+      return 0;
     }
   FreeModule *result = new_free();
   for (i = 0; i < rank(); i++) result->append(degree(i));
@@ -264,23 +269,24 @@ void FreeModule::direct_sum_to(const FreeModule *G)
 FreeModule *FreeModule::tensor(const FreeModule *G) const
 // tensor product
 {
-  if (get_ring() != G->get_ring())
+  if (R != G->get_ring())
     {
       ERROR("expected free modules over the same ring");
-      return nullptr;
+      return 0;
     }
+  auto D = R->degree_monoid();
   FreeModule *result = new_free();
-  monomial deg = degree_monoid()->make_one();
+  monomial deg = D->make_one();
 
   for (int i = 0; i < rank(); i++)
     for (int j = 0; j < G->rank(); j++)
       {
-        degree_monoid()->mult(degree(i), G->degree(j), deg);
+        D->mult(degree(i), G->degree(j), deg);
         result->append(deg);
       }
 
-  degree_monoid()->remove(deg);
-  if (schreyer != nullptr && G->schreyer != nullptr)
+  D->remove(deg);
+  if (schreyer != NULL && G->schreyer != NULL)
     result->schreyer = schreyer->tensor(G->schreyer);
   return result;
 }
@@ -290,7 +296,7 @@ FreeModule *FreeModule::exterior(int pp) const
 {
   FreeModule *result;
   if (pp == 0)
-    return get_ring()->make_FreeModule(1);
+    return R->make_FreeModule(1);
   else
     result = new_free();
 
@@ -302,21 +308,22 @@ FreeModule *FreeModule::exterior(int pp) const
   Subset a(p, 0);
   for (size_t i = 0; i < p; i++) a[i] = i;
 
-  monomial deg = degree_monoid()->make_one();
+  auto D = R->degree_monoid();
+  monomial deg = D->make_one();
   do
     {
-      degree_monoid()->one(deg);
+      D->one(deg);
 
       for (size_t r = 0; r < p; r++)
-        degree_monoid()->mult(deg, degree(static_cast<int>(a[r])), deg);
+        D->mult(deg, degree(static_cast<int>(a[r])), deg);
 
       result->append(deg);
     }
   while (Subsets::increment(rk, a));
 
-  degree_monoid()->remove(deg);
+  D->remove(deg);
 
-  if (schreyer != nullptr) result->schreyer = schreyer->exterior(pp);
+  if (schreyer != NULL) result->schreyer = schreyer->exterior(pp);
   return result;
 }
 
@@ -350,13 +357,13 @@ struct FreeModule_symm
   }
 
   FreeModule_symm(const FreeModule *F0, int n0)
-      : F(F0), D(F0->degree_monoid()), n(n0), symm1_result(nullptr), symm1_deg(nullptr)
+      : F(F0), D(F0->get_ring()->degree_monoid()), n(n0), symm1_result(nullptr), symm1_deg(nullptr)
   {
   }
 
   FreeModule *value()
   {
-    if (symm1_result == nullptr)
+    if (symm1_result == 0)
       {
         symm1_result = F->get_ring()->make_FreeModule();
         if (n >= 0)
@@ -375,7 +382,7 @@ FreeModule *FreeModule::symm(int n) const
 {
   FreeModule_symm SF(this, n);
   FreeModule *result = SF.value();
-  if (schreyer != nullptr) result->schreyer = schreyer->symm(n);
+  if (schreyer != NULL) result->schreyer = schreyer->symm(n);
   return result;
 }
 
@@ -393,8 +400,7 @@ static bool degree_in_box(int len, const_exponents deg, M2_arrayint lo, M2_array
 M2_arrayintOrNull FreeModule::select_by_degrees(M2_arrayintOrNull lo,
                                                 M2_arrayintOrNull hi) const
 {
-  const Ring *R = get_ring();
-  const Monoid *D = R->degree_monoid();
+  auto D = R->degree_monoid();
   std::vector<size_t> result;
   int ndegrees = D->n_vars();
   exponents_t exp = newarray_atomic(int, ndegrees);
@@ -419,7 +425,7 @@ M2_arrayintOrNull FreeModule::select_by_degrees(M2_arrayintOrNull lo,
 int FreeModule::primary_degree(int i) const
 {
   int result =
-      degree_monoid()->degree_weights(degree(i), get_ring()->get_heft_vector());
+      R->degree_monoid()->degree_weights(degree(i), R->get_heft_vector());
   return result;
 }
 
@@ -452,13 +458,14 @@ void FreeModule::text_out(buffer &o) const
   int i;
   int rk = rank();
   o << "free(rank " << rk << " degrees = {";
+  auto D = R->degree_monoid();
   for (i = 0; i < rk; i++)
     {
       if (i != 0) o << ", ";
-      degree_monoid()->elem_text_out(o, degree(i));
+      D->elem_text_out(o, degree(i));
     }
   o << "}";
-  if (schreyer != nullptr) schreyer->text_out(o);
+  if (schreyer != NULL) schreyer->text_out(o);
   o << ')';
 }
 

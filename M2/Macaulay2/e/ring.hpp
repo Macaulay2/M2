@@ -69,7 +69,7 @@ class Ring : public MutableEngineObject
                          // a long int
   // int P;
   const PolynomialRing *degree_ring;
-  M2_arrayint heft_vector;
+  std::vector<int> mHeftVector;  // FIXME: can't be const because of initialize_ring
   // This vector, if NULL, and if there are any variables in the ring imply that
   // the heft vector should be taken as the default: the first degree should be
   // used
@@ -94,12 +94,12 @@ class Ring : public MutableEngineObject
   ring_elem minus_oneV;
 
   void initialize_ring(long charac,
-                       const PolynomialRing *DR = nullptr,
-                       const M2_arrayint heft_vec = nullptr);
+                       const PolynomialRing *DR = 0,
+                       const std::vector<int> &heft_vec = {});
   Ring()
       : mCharacteristic(0),
         degree_ring(nullptr),
-        heft_vector(nullptr),
+        mHeftVector({}),
         AR(nullptr),
         cR(nullptr),
         _non_unit(),
@@ -122,10 +122,7 @@ class Ring : public MutableEngineObject
   long characteristic() const { return mCharacteristic; }
   const Monoid *degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
-  M2_arrayint get_heft_vector() const
-  {
-    return heft_vector;
-  }  // This CAN BE NULL
+  const std::vector<int> &get_heft_vector() const { return mHeftVector; }
 
   virtual M2::RingID ringID() const { return M2::ring_old; }
   virtual bool is_basic_ring() const
@@ -198,26 +195,26 @@ class Ring : public MutableEngineObject
   ///////////////////////////////////
   // Casting up the ring hierarchy //
   ///////////////////////////////////
-  virtual const RingZZ *cast_to_RingZZ() const { return nullptr; }
-  virtual RingZZ *cast_to_RingZZ() { return nullptr; }
-  virtual const Z_mod *cast_to_Z_mod() const { return nullptr; }
-  virtual Z_mod *cast_to_Z_mod() { return nullptr; }
-  virtual const GF *cast_to_GF() const { return nullptr; }
-  virtual GF *cast_to_GF() { return nullptr; }
-  virtual const Tower *cast_to_Tower() const { return nullptr; }
-  virtual Tower *cast_to_Tower() { return nullptr; }
-  virtual const PolynomialRing *cast_to_PolynomialRing() const { return nullptr; }
-  virtual PolynomialRing *cast_to_PolynomialRing() { return nullptr; }
-  virtual const PolyRing *cast_to_PolyRing() const { return nullptr; }
-  virtual PolyRing *cast_to_PolyRing() { return nullptr; }
-  virtual const PolyQQ *cast_to_PolyQQ() const { return nullptr; }
-  virtual PolyQQ *cast_to_PolyQQ() { return nullptr; }
-  virtual const PolyRingFlat *cast_to_PolyRingFlat() const { return nullptr; }
-  virtual PolyRingFlat *cast_to_PolyRingFlat() { return nullptr; }
-  virtual const FractionField *cast_to_FractionField() const { return nullptr; }
-  virtual FractionField *cast_to_FractionField() { return nullptr; }
-  virtual const LocalRing *cast_to_LocalRing() const { return nullptr; }
-  virtual LocalRing *cast_to_LocalRing() { return nullptr; }
+  virtual const RingZZ *cast_to_RingZZ() const { return 0; }
+  virtual RingZZ *cast_to_RingZZ() { return 0; }
+  virtual const Z_mod *cast_to_Z_mod() const { return 0; }
+  virtual Z_mod *cast_to_Z_mod() { return 0; }
+  virtual const GF *cast_to_GF() const { return 0; }
+  virtual GF *cast_to_GF() { return 0; }
+  virtual const Tower *cast_to_Tower() const { return 0; }
+  virtual Tower *cast_to_Tower() { return 0; }
+  virtual const PolynomialRing *cast_to_PolynomialRing() const { return 0; }
+  virtual PolynomialRing *cast_to_PolynomialRing() { return 0; }
+  virtual const PolyRing *cast_to_PolyRing() const { return 0; }
+  virtual PolyRing *cast_to_PolyRing() { return 0; }
+  virtual const PolyQQ *cast_to_PolyQQ() const { return 0; }
+  virtual PolyQQ *cast_to_PolyQQ() { return 0; }
+  virtual const PolyRingFlat *cast_to_PolyRingFlat() const { return 0; }
+  virtual PolyRingFlat *cast_to_PolyRingFlat() { return 0; }
+  virtual const FractionField *cast_to_FractionField() const { return 0; }
+  virtual FractionField *cast_to_FractionField() { return 0; }
+  virtual const LocalRing *cast_to_LocalRing() const { return 0; }
+  virtual LocalRing *cast_to_LocalRing() { return 0; }
 
   virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return nullptr; }
   virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return nullptr; }
@@ -238,40 +235,40 @@ class Ring : public MutableEngineObject
     return nullptr;
   }
 
-  virtual const SchurRing *cast_to_SchurRing() const { return nullptr; }
-  virtual SchurRing *cast_to_SchurRing() { return nullptr; }
-  virtual const SchurRing2 *cast_to_SchurRing2() const { return nullptr; }
-  virtual SchurRing2 *cast_to_SchurRing2() { return nullptr; }
-  virtual const SchurSnRing *cast_to_SchurSnRing() const { return nullptr; }
-  virtual SchurSnRing *cast_to_SchurSnRing() { return nullptr; }
+  virtual const SchurRing *cast_to_SchurRing() const { return 0; }
+  virtual SchurRing *cast_to_SchurRing() { return 0; }
+  virtual const SchurRing2 *cast_to_SchurRing2() const { return 0; }
+  virtual SchurRing2 *cast_to_SchurRing2() { return 0; }
+  virtual const SchurSnRing *cast_to_SchurSnRing() const { return 0; }
+  virtual SchurSnRing *cast_to_SchurSnRing() { return 0; }
   virtual const SkewPolynomialRing *cast_to_SkewPolynomialRing() const
   {
-    return nullptr;
+    return 0;
   }
-  virtual SkewPolynomialRing *cast_to_SkewPolynomialRing() { return nullptr; }
-  virtual const SolvableAlgebra *cast_to_SolvableAlgebra() const { return nullptr; }
-  virtual SolvableAlgebra *cast_to_SolvableAlgebra() { return nullptr; }
-  virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return nullptr; }
-  virtual RRR *cast_to_RRR() { return nullptr; }
-  virtual const RRR *cast_to_RRR() const { return nullptr; }
-  virtual RRi *cast_to_RRi() { return nullptr; }
-  virtual const RRi *cast_to_RRi() const { return nullptr; }
-  virtual CCC *cast_to_CCC() { return nullptr; }
-  virtual const CCC *cast_to_CCC() const { return nullptr; }
+  virtual SkewPolynomialRing *cast_to_SkewPolynomialRing() { return 0; }
+  virtual const SolvableAlgebra *cast_to_SolvableAlgebra() const { return 0; }
+  virtual SolvableAlgebra *cast_to_SolvableAlgebra() { return 0; }
+  virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
+  virtual RRR *cast_to_RRR() { return 0; }
+  virtual const RRR *cast_to_RRR() const { return 0; }
+  virtual RRi *cast_to_RRi() { return 0; }
+  virtual const RRi *cast_to_RRi() const { return 0; }
+  virtual CCC *cast_to_CCC() { return 0; }
+  virtual const CCC *cast_to_CCC() const { return 0; }
   // Galois Field routines.  These three routines only return non-NULL values
   // if this was created as a Galois field, isom to A = kk[b]/(f(b)), kk = prime
   // field of char p.
 
   // Returns NULL if not a GF.  Returns f(b) in the ring kk[b].  (Variable name
   // might be different)
-  virtual const RingElement *getMinimalPolynomial() const { return nullptr; }
+  virtual const RingElement *getMinimalPolynomial() const { return 0; }
   // Returns NULL if not a GF.  Returns an element of 'this', whose powers give
   // all non-zero elements
   // of the field.
   virtual const RingElement *getGenerator() const
   {
     ERROR("not implemented for this ring");
-    return nullptr;
+    return 0;
   }
 
   // For some finite fields, if a = (getGenerator())^r, return r.
@@ -290,14 +287,14 @@ class Ring : public MutableEngineObject
   // for that call.
   virtual const RingElement *getRepresentation(const ring_elem &a) const
   {
-    return nullptr;
+    return 0;
   }
 
   virtual MutableMatrix *makeMutableMatrix(size_t nrows,
                                            size_t ncols,
                                            bool dense) const
   {
-    return nullptr;
+    return 0;
   }
 
   virtual FreeModule *make_FreeModule() const;
@@ -448,17 +445,24 @@ class Ring : public MutableEngineObject
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
                                int deg,
-                               M2_arrayint wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
+                               const std::vector<int> &wts) const;
+  virtual ring_elem homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const;
 
   // Routines expecting a grading.  The default implementation
   // is that the only degree is 0.
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, monomial d) const;
+  inline const_monomial degree(const ring_elem f) const
+  {
+    auto d = degree_monoid()->make_one();
+    multi_degree(f, d);
+    return d;
+  }
   virtual bool multi_degree(const ring_elem f, monomial d) const;
   // returns true iff f is homogeneous
   virtual void degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const;
 
@@ -572,7 +576,7 @@ class Ring : public MutableEngineObject
 
   void vec_degree_weights(const FreeModule *F,
                           const vec f,
-                          M2_arrayint wts,
+                          const std::vector<int> &wts,
                           int &lo,
                           int &hi) const;
   bool vec_is_homogeneous(const FreeModule *F, const vec f) const;
@@ -580,11 +584,11 @@ class Ring : public MutableEngineObject
                      const vec f,
                      int v,
                      int deg,
-                     M2_arrayint wts) const;
+                     const std::vector<int> &wts) const;
   vec vec_homogenize(const FreeModule *F,
                      const vec f,
                      int v,
-                     M2_arrayint wts) const;
+                     const std::vector<int> &wts) const;
 
   // content of vectors and ring elements, default implementation is for basic
   // fields

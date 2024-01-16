@@ -119,7 +119,7 @@ Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
 Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
 
 Matrix + Matrix := Matrix => (
-     (f,g) -> map(target f, source f, f.RawMatrix + g.RawMatrix)
+     (f,g) -> map(target f, source f, reduce(target f, raw f + raw g))
      ) @@ toSameRing
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
@@ -127,7 +127,7 @@ Number + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
 Matrix + Number := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
 Matrix - Matrix := Matrix => (
-     (f,g) -> map(target f, source f, f.RawMatrix - g.RawMatrix)
+     (f,g) -> map(target f, source f, reduce(target f, raw f - raw g))
      ) @@ toSameRing
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
@@ -138,7 +138,7 @@ Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
      symbol ring => ring f,
      symbol source => source f,
      symbol target => target f,
-     symbol RawMatrix => - f.RawMatrix,
+     symbol RawMatrix => reduce(target f, -raw f),
      symbol cache => new CacheTable
      }
 
@@ -428,9 +428,9 @@ submodule = (M, rows) -> (
 submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
 
-submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(submodule(target m, rows), submodule(source m, cols), submatrixFree(m, rows, cols))
-submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(submodule(target m, rows), source m,                  submatrixFree(m, rows, null))
-submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                  submodule(source m, cols), submatrixFree(m, null, cols))
+submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(submodule(target m, rows), submodule(source m, cols), raw submatrixFree(m, rows, cols))
+submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(submodule(target m, rows), source m,                  raw submatrixFree(m, rows, null))
+submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                  submodule(source m, cols), raw submatrixFree(m, null, cols))
 submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
 submatrix(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
 

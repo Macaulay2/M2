@@ -40,7 +40,6 @@ export {
      "toricCircuits",
      "toricGraver",
      "hilbertBasis",
-     "rays",
      "InputType",
      "toricGraverDegrees"
      }
@@ -176,8 +175,6 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
      getMatrix(filename|".hil")
      ))
 
-
-rays = method()
 rays Matrix := Matrix => (A ->(
      filename := getFilename();
      if debugLevel >= 1 then << "using temporary file name " << filename << endl;
@@ -527,7 +524,6 @@ doc ///
 
 doc ///
      Key
-     	  rays
           (rays, Matrix)
      Headline
      	  calculates the extreme rays of the cone; invokes "rays" from 4ti2

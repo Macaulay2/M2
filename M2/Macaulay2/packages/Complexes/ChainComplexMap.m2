@@ -569,11 +569,11 @@ homology ComplexMap := ComplexMap => opts -> (f) -> (
 --------------------------------------------------------------------
 -- Hom -------------------------------------------------------------
 --------------------------------------------------------------------
-Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
+Hom(ComplexMap, ComplexMap) := ComplexMap => opts -> (f, g) -> (
     df := degree f;
     dg := degree g;
-    src := Hom(target f, source g);
-    tar := Hom(source f, target g);
+    src := Hom(target f, source g, opts);
+    tar := Hom(source f, target g, opts);
     -- for the i-th matrix src_i --> tar_(i+df+dg)
     -- we make a table of matrices, and create a block matrix from that using "matrix" and "map"
     (lo,hi) := src.concentration;
@@ -589,7 +589,7 @@ Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
                    then (
                        sgn := 1; -- function of df, dg, i
                        sgn = (-1)^(df * (i + dg));
-                       sgn * Hom(f_(q#0), g_(p#1)) 
+                       sgn * Hom(f_(q#0), g_(p#1), opts)
                        )
                    else map(component(tar_(i+df+dg), q),
                             component(src_i, p),
@@ -612,20 +612,20 @@ Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
     -- need to premultiply by f_(j-df), postmult by g_(j+i)
     -- Hom(f_(j-df), g_(j+i))
     )
-Hom(Complex, ComplexMap) := ComplexMap => (C,g) -> Hom(id_C, g)
-Hom(ComplexMap, Complex) := ComplexMap => (f,D) -> Hom(f, id_D)
-Hom(Module, ComplexMap) := ComplexMap => (M,g) -> Hom(complex M, g)
-Hom(ComplexMap, Module) := ComplexMap => (f,N) -> Hom(f, complex N)
-Hom(Ring, ComplexMap) := ComplexMap => (R,f) -> Hom(complex R, f)
-Hom(ComplexMap, Ring) := ComplexMap => (f,R) -> Hom(f, complex R)
-Hom(Complex, Matrix) := ComplexMap => (C,g) -> 
-    Hom(C, map(complex target g, complex source g, i -> if i === 0 then g))
-Hom(Matrix, Complex) := ComplexMap => (f,D) -> 
-    Hom(map(complex target f, complex source f, i -> if i === 0 then f), D)
-Hom(ComplexMap, Matrix) := ComplexMap => (f,g) -> 
-    Hom(f, map(complex target g, complex source g, i -> if i === 0 then g))
-Hom(Matrix, ComplexMap) := ComplexMap => (f,g) -> 
-    Hom(map(complex target f, complex source f, i -> if i === 0 then f), g)
+Hom(Complex, ComplexMap) := ComplexMap => opts -> (C,g) -> Hom(id_C, g, opts)
+Hom(ComplexMap, Complex) := ComplexMap => opts -> (f,D) -> Hom(f, id_D, opts)
+Hom(Module, ComplexMap) := ComplexMap => opts -> (M,g) -> Hom(complex M, g, opts)
+Hom(ComplexMap, Module) := ComplexMap => opts -> (f,N) -> Hom(f, complex N, opts)
+Hom(Ring, ComplexMap) := ComplexMap => opts -> (R,f) -> Hom(complex R, f, opts)
+Hom(ComplexMap, Ring) := ComplexMap => opts -> (f,R) -> Hom(f, complex R, opts)
+Hom(Complex, Matrix) := ComplexMap => opts -> (C,g) ->
+    Hom(C, map(complex target g, complex source g, i -> if i === 0 then g), opts)
+Hom(Matrix, Complex) := ComplexMap => opts -> (f,D) ->
+    Hom(map(complex target f, complex source f, i -> if i === 0 then f), D, opts)
+Hom(ComplexMap, Matrix) := ComplexMap => opts -> (f,g) ->
+    Hom(f, map(complex target g, complex source g, i -> if i === 0 then g), opts)
+Hom(Matrix, ComplexMap) := ComplexMap => opts -> (f,g) ->
+    Hom(map(complex target f, complex source f, i -> if i === 0 then f), g, opts)
 
 dual ComplexMap := ComplexMap => {} >> o -> f -> Hom(f, (ring f)^1)
 
@@ -646,7 +646,7 @@ homomorphism ComplexMap := ComplexMap => (h) -> (
     homomorphism(i + degree h, h_i, target h)
     )
 
-homomorphism' ComplexMap := ComplexMap => (f) -> (
+homomorphism' ComplexMap := ComplexMap => opts -> (f) -> (
     R := ring f;
     C := source f;
     D := target f;
@@ -655,7 +655,7 @@ homomorphism' ComplexMap := ComplexMap => (f) -> (
     (lo,hi) := concentration C;
     -- want R^1[0] --> H
     -- TODO: remove this line if the next actually works...: g := map(H_d, R^1, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
-    g := map(H_d,, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
+    g := map(H_d,, matrix(for i from lo to hi list {matrix homomorphism'(f_i, opts)}));
     map(H, complex source g, hashTable {0 => g}, Degree=>d)
     )
 

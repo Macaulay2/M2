@@ -381,3 +381,7 @@ addHook((hilbertFunction, List, Module), Strategy => Default, (L, M) -> (
     f := hilbertSeries(M, Order => 1 + sum(h, L, times));
     U := monoid ring f;
     coefficient(U_L, f)))
+
+hilbertFunction Ring   :=
+hilbertFunction Ideal  :=
+hilbertFunction Module := M -> d -> hilbertFunction(d, M)

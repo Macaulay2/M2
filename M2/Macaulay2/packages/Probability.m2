@@ -1,11 +1,33 @@
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.2",
-    Date => "October 31, 2022",
+    Version => "0.3",
+    Date => "October 31, 2023",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.3 (2023-10-31, M2 1.23)
+* add Caveats to docs warning user to ensure that pdf's are well-defined
+* use ASCII characters for chi-squared distribution
+* clarify in docs that the support of a discrete distribution will be a subset
+  of the integers
+* add Caveat to docs mentioning limitations of floating-point arithmetic
+
+0.2 (2022-10-31, M2 1.21)
+* fix typos
+* adjust some tests after MPFR support added for Boost special functions
+
+0.1 (2022-05-04, M2 1.20)
+* initial release
+
+*-
 
 export {
 -- classes
@@ -332,7 +354,7 @@ chiSquaredDistribution Constant := n -> (
 	x -> 1/(2^(n/2) * Gamma(n/2)) * x^(n/2 - 1) * exp(-x / 2),
 	DistributionFunction => x -> 1 - regularizedGamma(n / 2, x / 2),
 	QuantileFunction => p -> 2 * inverseRegularizedGamma(n / 2, 1 - p),
-	Description => "χ²(" | toString n | ")"))
+	Description => "chi2(" | toString n | ")"))
 
 tDistribution = method()
 tDistribution Number :=
@@ -427,6 +449,10 @@ doc ///
       You may also define your own probability distributions using
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@.
+  Caveat
+    As is always the case when working with real numbers in Macaulay2,
+    unexpected results may occur due to the limitations of floating
+    point arithmetic.
 ///
 
 doc ///
@@ -728,6 +754,7 @@ doc ///
     Support => Sequence
       containing the lower and upper bounds, respectively, of the
       @wikipedia("Support (mathematics)", "support")@ of @TT "X"@.
+      Elements of the support are assumed to be integers.
     Description => String
       describing the probability distribution.
   Outputs
@@ -760,6 +787,10 @@ doc ///
 	  DistributionFunction => x -> x / 6,
 	  QuantileFunction => p -> 6 * p,
 	  Description => "six-sided die")
+  Caveat
+    When defining a probability mass function, the user must be careful that
+    it satisfies the definition, i.e., it must be nonnegative and its values
+    must sum to 1 on its support.
 ///
 
 doc ///
@@ -824,6 +855,10 @@ doc ///
 	  DistributionFunction => x -> x^2,
 	  QuantileFunction => p -> sqrt p,
 	  Description => "triangular distribution")
+  Caveat
+    When defining a probability density function, the user must be careful that
+    it satisfies the definition, i.e., it must be nonnegative and it must
+    integrate to 1 on its support.
 ///
 
 doc ///

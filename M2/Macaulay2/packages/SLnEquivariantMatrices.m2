@@ -18,6 +18,7 @@ newPackage("SLnEquivariantMatrices",
 			       HomePage => "http://www.paololella.it"}
 		      },
 	   Keywords => {"Representation Theory"},
+	   PackageImports => {"Varieties"},
      	   Headline => "file ancillary to the paper \"A construction of equivariant bundles on the space of symmetric forms\""
      	  )
      

@@ -835,11 +835,6 @@ bool FreeAlgebra::is_homogeneous(const Poly& f) const
   return result;
 }
 
-void FreeAlgebra::degree(const Poly& f, monomial d) const
-{
-  multi_degree(f, d);
-}
-
 bool FreeAlgebra::multi_degree(const Poly& f,
                                monomial already_allocated_degree_vector) const
 {

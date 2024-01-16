@@ -4,85 +4,84 @@ needs "basis.m2"
 needs "gateway.m2" -- for ScriptedFunctor
 needs "matrix1.m2"
 needs "modules.m2"
+needs "Hom.m2"
 
+-- TODO: should this be fixed for all Ext methods,
+-- or should they each have their own options?
 ExtOptions = new OptionTable from {
-     Prune => true
+    MinimalGenerators => true
      }
 
 Ext = new ScriptedFunctor from {
-     argument => (
-	  (M,N) -> (
-	       f := lookup(Ext,class M,class N);
-	       if f === null then noMethod(Ext,(M,N),{false,false});
-	       f(M,N))),	  
-     superscript => (
-	  i -> new ScriptedFunctor from {
-	       argument => (X -> (
-	       	    	 ExtOptions >> opts -> (M,N) -> (
-		    	      f := lookup(Ext,class i,class M,class N);
-		    	      if f === null then noMethod(Ext,(i,M,N),{false,false,false});
-		    	      (f opts)(i,M,N))
-	       	    	 ) X
-	       	    )
-	       }
-	  )
-     }
-	  
+    superscript => i -> new ScriptedFunctor from {
+	-- Ext^1(F, G)
+	argument => ExtOptions >> opts -> X -> applyMethodWithOpts''(Ext, functorArgs(i, X), opts)
+	},
+    argument => ExtOptions >> opts -> X -> applyMethodWithOpts''(Ext, X, opts)
+    }
+
+-- TODO: Ext^i(R, S) should work as well
+Ext(ZZ, Ring, Ring)   :=
+Ext(ZZ, Ring, Ideal)  :=
+Ext(ZZ, Ring, Module) :=
+Ext(ZZ, Ideal, Ring)   :=
+Ext(ZZ, Ideal, Ideal)  :=
+Ext(ZZ, Ideal, Module) :=
+Ext(ZZ, Module, Ring)   :=
+Ext(ZZ, Module, Ideal)  := Module => opts -> (i,M,N) -> Ext^i(module M, module N, opts)
 Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then R^0
-     else if i === 0 then Hom(M,N)
+     else if i === 0 then Hom(M, N, opts)
      else (
 	  C := resolution(M,LengthLimit=>i+1);
 	  b := C.dd;
 	  complete b;
-	  minimalPresentation if b#?i then (
-	       if b#?(i+1) 
-	       then homology(Hom(b_(i+1),N), Hom(b_i,N))
-	       else cokernel Hom(b_i,N))
-	  else (
-	       if b#?(i+1) 
-	       then kernel Hom(b_(i+1),N)
-	       else Hom(C_i,N))))
+	prune' := if opts.MinimalGenerators then prune else identity;
+	prune' if b#?i then (
+	    if b#?(i+1)
+	    then homology(Hom(b_(i+1), N, opts), Hom(b_i, N, opts))
+	    else cokernel Hom(b_i,     N, opts))
+	else (
+	    if b#?(i+1)
+	    then kernel Hom(b_(i+1), N, opts)
+	    else Hom(C_i, N, opts))))
 
+Ext(ZZ, Matrix, Ring)   :=
+Ext(ZZ, Matrix, Ideal)  := Matrix => opts -> (i,f,N) -> Ext^i(f, module N, opts)
 Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then map(R^0, R^0, {})
-     else if i === 0 then Hom(f,N)
+     else if i === 0 then Hom(f, N, opts)
      else (
 	  g := resolution(f,LengthLimit=>i+1);
-	  Es := Ext^i(source f, N);
-	  Es':= target Es.cache.pruningMap;	  -- Ext prunes everything, so get the original subquotient
-	  Et := Ext^i(target f, N);
-	  Et':= target Et.cache.pruningMap;
-	  Es.cache.pruningMap^-1 * inducedMap(Es',Et',Hom(g_i,N)) * Et.cache.pruningMap))
+	  Es := Ext^i(source f, N, opts);
+	  Et := Ext^i(target f, N, opts);
+	  psi := if opts.MinimalGenerators then Es.cache.pruningMap else id_Es;
+	  phi := if opts.MinimalGenerators then Et.cache.pruningMap else id_Et;
+	  psi^-1 * inducedMap(target psi, target phi, Hom(g_i, N, opts)) * phi))
 
+-- TODO: is this correct?
+-- c.f. https://github.com/Macaulay2/M2/issues/246
+Ext(ZZ, Ring,   Matrix) :=
+Ext(ZZ, Ideal,  Matrix) := Matrix => opts -> (i,N,f) -> Ext^i(module N, f, opts)
 Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then map(R^0, R^0, {})
-     else if i === 0 then Hom(N,f)
+     else if i === 0 then Hom(N, f, opts)
      else (
 	  C := resolution(N,LengthLimit=>i+1);
-	  Es := Ext^i(N, source f);
-	  Es':= target Es.cache.pruningMap;	  -- Ext prunes everything, so get the original subquotient
-	  Et := Ext^i(N, target f);
-	  Et':= target Et.cache.pruningMap;
-	  Et.cache.pruningMap^-1 * inducedMap(Et',Es',Hom(C_i,f)) * Es.cache.pruningMap))
-
-Ext(ZZ, Ideal, Matrix) := opts -> (i,J,f) -> Ext^i(module J,f,opts)
-Ext(ZZ, Matrix, Ring) := opts -> (i,f,R) -> Ext^i(f,R^1,opts)
-Ext(ZZ, Matrix, Ideal) := opts -> (i,f,J) -> Ext^i(f,module J,opts)
-Ext(ZZ, Module, Ring) := opts -> (i,M,R) -> Ext^i(M,R^1,opts)
-Ext(ZZ, Module, Ideal) := opts -> (i,M,J) -> Ext^i(M,module J,opts)
-Ext(ZZ, Ideal, Ring) := opts -> (i,I,R) -> Ext^i(module I,R^1,opts)
-Ext(ZZ, Ideal, Ideal) := opts -> (i,I,J) -> Ext^i(module I,module J,opts)
-Ext(ZZ, Ideal, Module) := opts -> (i,I,N) -> Ext^i(module I,N,opts)
+	  Es := Ext^i(N, source f, opts);
+	  Et := Ext^i(N, target f, opts);
+	  psi := if opts.MinimalGenerators then Es.cache.pruningMap else id_Es;
+	  phi := if opts.MinimalGenerators then Et.cache.pruningMap else id_Et;
+	  phi^-1 * inducedMap(target phi, target psi, Hom(C_i, f, opts)) * psi))
 
 -- total ext over complete intersections
 
@@ -91,10 +90,20 @@ Ext(ZZ, Ideal, Module) := opts -> (i,I,N) -> Ext^i(module I,N,opts)
 --  but we also get rid of the fudge factor entirely, depending instead on automatic
 --  computation of the heft vector
 
-Ext(Module,Module) := Module => (M,N) -> (
-  cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
-  cacheKey := (Ext,M,N);
-  if cacheModule.cache#?cacheKey then return cacheModule.cache#cacheKey;
+-- TODO: Ext(R, S) should work as well
+Ext(Ring, Ring)   :=
+Ext(Ring, Ideal)  :=
+Ext(Ring, Module) :=
+Ext(Ideal, Ring)   :=
+Ext(Ideal, Ideal)  :=
+Ext(Ideal, Module) :=
+Ext(Module, Ring)   :=
+Ext(Module, Ideal)  := Module => opts -> (M, N) -> Ext(module M, module N, opts)
+Ext(Module, Module) := Module => opts -> (M, N) -> (
+    -- c.f. caching in Hom(Module,Module)
+    cacheModule := youngest(M.cache.cache, N.cache.cache);
+    cacheKey := (Ext,M,N);
+    if cacheModule#?cacheKey then return cacheModule#cacheKey;
   B := ring M;
   if B =!= ring N
   then error "expected modules over the same ring";
@@ -104,7 +113,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   then error "'Ext' received modules over an inhomogeneous ring";
   if not isHomogeneous N or not isHomogeneous M
   then error "'Ext' received an inhomogeneous module";
-  if N == 0 or M == 0 then return cacheModule.cache#cacheKey = B^0;
+  if N == 0 or M == 0 then return cacheModule#cacheKey = B^0;
   p := presentation B;
   A := ring p;
   I := ideal mingens ideal p;
@@ -179,15 +188,9 @@ Ext(Module,Module) := Module => (M,N) -> (
        stderr << toExternalString DeltaBar << endl;
        );
   -- now compute the total Ext as a single homology module
-  tot := minimalPresentation homology(DeltaBar,DeltaBar);
-  cacheModule.cache#cacheKey = tot;
-  tot)
-
-Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
-Ext(Module, Ideal) := (M,J) -> Ext(M,module J)
-Ext(Ideal, Ring) := (I,R) -> Ext(module I,R^1)
-Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
-Ext(Ideal, Module) := (I,N) -> Ext(module I,N)
+  prune' := if opts.MinimalGenerators then prune else identity;
+  cacheModule#cacheKey =
+  prune' homology(DeltaBar,DeltaBar))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -582,16 +582,16 @@ leftshiftfun(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(Expr(LessLessS),ZZClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 installMethod(Expr(LessLessS),RRClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 installMethod(Expr(LessLessS),RRiClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 installMethod(Expr(LessLessS),CCClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 
 rightshiftfun(e:Expr):Expr := (
@@ -627,16 +627,16 @@ rightshiftfun(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(Expr(GreaterGreaterS),ZZClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 installMethod(Expr(GreaterGreaterS),RRClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 installMethod(Expr(GreaterGreaterS),RRiClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 installMethod(Expr(GreaterGreaterS),CCClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 
 unSingleton(e:Expr):Expr := (

@@ -29,13 +29,13 @@ const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank)
       if (rank < 0)
         {
           ERROR("freemodule rank must be non-negative");
-          return nullptr;
+          return 0;
         }
       return R->make_FreeModule(rank);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -44,18 +44,18 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
 {
   try
     {
-      const Monoid *D = R->degree_monoid();
+      auto D = R->degree_monoid();
       unsigned int eachdeg = D->n_vars();
       if (eachdeg == 0)
         {
           ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
-          return nullptr;
+          return NULL;
         }
       unsigned int rank = degs->len / eachdeg;
       if (rank * eachdeg != degs->len)
         {
           ERROR("inappropriate number of degrees");
-          return nullptr;
+          return 0;
         }
       monomial deg = D->make_one();
       FreeModule *F = R->make_FreeModule();
@@ -68,7 +68,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -80,23 +80,18 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
 M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
 {
-  const Ring *R = F->get_ring();
-  const Monoid *D = R->degree_monoid();
-  M2_arrayint result = M2_makearrayint(F->rank() * D->n_vars());
-  int next = 0;
-  exponents_t exp = newarray_atomic(int, D->n_vars());
-  for (int i = 0; i < F->rank(); i++)
-    {
-      D->to_expvector(F->degree(i), exp);
-      for (int j = 0; j < D->n_vars(); j++) result->array[next++] = exp[j];
-    }
-  freemem(exp);
+  auto D = F->get_ring()->degree_monoid();
+  auto n = D->n_vars();
+  auto r = F->rank();
+  M2_arrayint result = M2_makearrayint(r * n);
+  for (int i = 0; i < r; i++)
+    D->to_expvector(F->degree(i), result->array + i * n);
   return result;
 }
 
@@ -128,7 +123,7 @@ const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -140,7 +135,7 @@ const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -152,7 +147,7 @@ const FreeModule *IM2_FreeModule_symm(int n, const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -164,7 +159,7 @@ const FreeModule *IM2_FreeModule_exterior(int n, const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -177,7 +172,7 @@ const FreeModule *IM2_FreeModule_submodule(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 
@@ -191,7 +186,7 @@ M2_arrayintOrNull rawFreeModuleSelectByDegrees(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return nullptr;
+      return NULL;
   }
 }
 

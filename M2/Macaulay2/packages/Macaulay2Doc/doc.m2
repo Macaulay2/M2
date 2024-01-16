@@ -45,7 +45,6 @@ undocumented {
     (symbol*,  ZZ, ChainComplexMap),
     (symbol*,  Expression, OneExpression),
     (symbol*,  OneExpression, Expression),
-    (symbol*,  Number, Vector)
     }
 
      
@@ -87,12 +86,10 @@ document {
     (symbol *, ZZ, RRi),
     (symbol*,  GradedModuleMap, GradedModuleMap),
     (symbol*,  RingElement, Matrix),
-    (symbol*,  Ideal, CoherentSheaf),
     (symbol*,  RingMap, RingMap),
     (symbol*,  RingElement, MutableMatrix),
     (symbol*,  Ring, MonomialIdeal),
     (symbol*,  MonomialIdeal, Module),
-    (symbol*,  AffineVariety, AffineVariety),
     (symbol*,  MonomialIdeal, MonomialIdeal),
     (symbol*,  RingElement, Ideal),
     (symbol*,  Matrix, Vector),
@@ -110,7 +107,10 @@ document {
     (symbol*,  Thing, List),
     (symbol*,  ZZ, ProjectiveHilbertPolynomial),
     (symbol*,  ProjectiveHilbertPolynomial, ZZ),
-    (symbol*,  RingElement, Vector)
+    (symbol*,  RingElement, Vector),
+    (symbol*,  Number, Vector),
+    (symbol*,  Vector, RingElement),
+    (symbol*,  Vector, Number)
 	  },
      Headline => "a binary operator, usually used for multiplication",
      Usage => "x * y",
@@ -234,6 +234,7 @@ document {
 	  (symbol +, InfiniteNumber, Number),
 	  (symbol +, GradedModuleMap, RingElement),
 	  (symbol +, Number, Matrix),
+	  (symbol +, Vector),
 	  (symbol +, Vector, Vector),
 	  (symbol +, Matrix, RingElement),
 	  (symbol +, RingElement, Matrix),

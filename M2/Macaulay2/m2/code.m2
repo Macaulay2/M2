@@ -41,11 +41,18 @@ code = method(Dispatch => Thing)
 code Nothing    := identity
 code FilePosition := x -> (
     filename := x#0; start := x#1; stop := x#3;
-     if filename =!= "stdio" then (
+     (
 	  wp := set characters " \t\r);";
 	  file := (
 	       if match("startup.m2.in$", filename) then startupString
-	       else if filename === "currentString" then currentString
+	       else if filename === "currentString" then (
+		    if currentString === null
+		    then error "code no longer available"
+		    else currentString)
+	       else if filename === "stdio" then (
+		    start = 1;
+		    stop = x#3 - x#1 + 1;
+		    toString stack apply(x#1..x#3, historyGet))
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
 		    get filename
@@ -166,7 +173,8 @@ methods Sequence := F -> (
 methods ScriptedFunctor := -- TODO: OO and other scripted functors aren't supported
 methods Symbol :=
 methods Thing  := F -> (
-    if F === HH then return join(methods homology, methods cohomology);
+    if F === HH
+    then return previousMethodsFound = join \\ methods \ (homology, cohomology);
     found := new MutableHashTable;
     -- TODO: either finish or remove nullaryMethods
     if nullaryMethods#?(1:F) then found#(1:F) = true;

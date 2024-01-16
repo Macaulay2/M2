@@ -263,9 +263,10 @@ setupMethods := (args, symbols) -> (
 	  n <- f;
 	  )))
 
+-- TODO: move and set the typical value of cokernel, coimage, comodule, image, module
 setupMethods((), { 
 	  entries, baseName, borel, gcdCoefficients, singularLocus,
-	  Hom, diff, diff', contract, contract', isMember,
+	  diff, diff', contract, contract', isMember,
 	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
@@ -273,7 +274,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, assign, realPart, imaginaryPart, conjugate,
-	  relations, cone, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
+	  relations, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
@@ -373,6 +374,11 @@ format CC :=
 format String   := String => x -> format' x
 format Sequence := String => s -> format' s
 protect symbol format
+
+-- use /// around strings w/ backslashes
+formatNoEscaping = x -> (
+    if match("\\\\", x) then concatenate("/// ", x, " ///")
+    else format x)
 
 toString = method(Dispatch => Thing, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
@@ -601,13 +607,14 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     store.HookAlgorithms#alg = hook)
 
 -- tracking debugInfo
-infoLevel     := -1
-pushInfoLevel :=  n     -> (infoLevel = infoLevel + n; n)
+threadVariable infoLevel
+pushInfoLevel :=  n -> (
+    if infoLevel === null then infoLevel = -1;
+    infoLevel = infoLevel + n; n)
 popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
 
 -- This function is mainly used by runHooks, printing a line like this:
  -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Saturation.m2:196:30-205:82]*-
--- TODO: the filenames are not emacs clickable, perhaps M2-mode should be improved
 debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
     toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)
 
@@ -639,6 +646,10 @@ runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -
     -- otherwise, give an error with the list of possible strategies
     error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,
 	"  available strategies are: ", demark_", " \\ toExternalString \ new List from store.HookPriority))
+
+-- helper for hookifying methods
+-- runs the hooks, if none succeed, runs the default algorithm f
+tryHooks = (key, args, f) -> if (c := runHooks(key, args)) =!= null then c else f args
 
 -- and keys
 protect QuotientRingHook
@@ -677,6 +688,11 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
      ("-- function f:", value (first localDictionaries g)#"f")
      }
 
+-- helper for hookifying and caching methods
+-- if a cached value isn't found on X, runs the hooks, if none succeed, runs the default algorithm f
+-- TODO: simplify usage
+cacheHooks = (ckey, X, mkey, args, f) -> ((cacheValue ckey) (X -> tryHooks(mkey, args, f))) X
+
 -----------------------------------------------------------------------------
 -- hypertext conversion
 
@@ -689,17 +705,6 @@ info = method(Dispatch => Thing, TypicalValue => String)
 -- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
 
 show = method()
-
--- values of functions by lookup
-lookupfuns = new MutableHashTable
-storefuns = new MutableHashTable
-lookupfuns#toString = x -> f -> if hasAttribute(x,PrintNames) then getAttribute(x,PrintNames) else f x
-storefuns #toString = (x,e) -> (
-     if not instance(e,String) then error "expected a string";
-     setAttribute(x,PrintNames,e))
-Function Thing = (f,x,e) -> (
-     if not storefuns#?f then error("no method for storing values of function ", toString f);
-     storefuns#f (x,e))
 
 -- registerFinalizer
 registerFinalizer' = registerFinalizer

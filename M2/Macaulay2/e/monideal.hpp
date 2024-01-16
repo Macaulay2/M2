@@ -6,7 +6,6 @@
 #include "ExponentVector.hpp"
 #include "ExponentList.hpp"
 #include "int-bag.hpp"
-#include "monoid.hpp"
 #include "ring.hpp"
 #include "polyring.hpp"
 #include "mem.hpp"
@@ -100,7 +99,7 @@ class MonomialIdeal : public EngineObject
   virtual unsigned int computeHashValue() const;
 
  public:
-  MonomialIdeal(const PolynomialRing *RR, stash *mi_stash = nullptr);
+  MonomialIdeal(const PolynomialRing *RR, stash *mi_stash = 0);
   virtual ~MonomialIdeal() { remove_MonomialIdeal(); }
 
   MonomialIdeal(const PolynomialRing *R0,
@@ -120,15 +119,10 @@ class MonomialIdeal : public EngineObject
 
   // Informational
   int size() const { return count / 2; }
-  int topvar() const { return (mi == nullptr ? -1 : mi->var); }
+  int topvar() const { return (mi == NULL ? -1 : mi->var); }
   void text_out(buffer &o) const;
 
   const PolynomialRing *get_ring() const { return R; }
-  const Monoid *degree_monoid() const
-  {
-    const Ring *S = R;
-    return S->degree_monoid();
-  }
 
   // Insertion of new monomials.
   void insert_minimal(Bag *b);
@@ -208,7 +202,7 @@ class MonomialIdeal : public EngineObject
   Iterator end() const { return Iterator(*this, 1); }
   void *next(void *p) const;
   void *prev(void *p) const;
-  int valid(void *p) const { return (p != nullptr); }
+  int valid(void *p) const { return (p != NULL); }
   void debug_out(int disp = 1) const;
   void debug_check() const;
 

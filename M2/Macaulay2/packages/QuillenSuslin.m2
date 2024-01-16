@@ -20,7 +20,7 @@ newPackage(
     	Date => "May 10, 2013",
     	Authors => {
 	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
-	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
+	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
 	Keywords => {"Commutative Algebra"},
@@ -1457,7 +1457,7 @@ monicPolySubs(RingElement,List) := opts -> (f,varList) -> (
 	  print "The element had degree zero in the last variable.";
 	  degZeroSub = mutableMatrix vars R;
 	  degZeroSub = columnSwap(degZeroSub,last usedVarPosition,lastVarPosition);
-	  f = sub(f,degZeroSub); -- Interchange variables so that last varList is involved in f.  Now f has positive degree in last varList.
+	  f = sub(f,matrix degZeroSub); -- Interchange variables so that last varList is involved in f.  Now f has positive degree in last varList.
      );
      
      -- Now we enter the general algorithm.
@@ -1495,7 +1495,7 @@ monicPolySubs(RingElement,List) := opts -> (f,varList) -> (
      if degZeroSub =!= null then (
 	  print("degZeroSub: "|toString(degZeroSub));
 	  tempSub = columnSwap(tempSub,last usedVarPosition,lastVarPosition);
-	  tempInvSub = sub(tempInvSub,degZeroSub);
+	  tempInvSub = sub(matrix tempInvSub,matrix degZeroSub);
      );
      
      return (matrix tempSub,matrix tempInvSub);

@@ -367,9 +367,12 @@ export convert(e:ParseTree):Code := (
 	  else Code(binaryCode(b.Operator.entry.binary,convert(b.lhs),
 	       	    convert(b.rhs),treePosition(e)))
 	  )
-     is a:Arrow do Code(functionCode(
+     is a:Arrow do (
+	  fc := functionCode(
 	       a.Operator,		  -- just for display purposes!
-	       convert(a.rhs),a.desc,nextHash()))
+	       convert(a.rhs),a.desc,0);
+	  fc.hash = hashFromAddress(Expr(fc));
+	  Code(fc))
      is u:Unary do (
 	  if u.Operator.word == CommaW
 	  then Code(sequenceCode(makeCodeSequence(e,CommaW),treePosition(e)))

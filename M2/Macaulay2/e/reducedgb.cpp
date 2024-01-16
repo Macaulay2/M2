@@ -18,8 +18,7 @@ ReducedGB *ReducedGB::create(
   // has local variables, we create a different class.
 
   bool over_ZZ = originalR0->coefficient_type() == Ring::COEFF_ZZ;
-  M2_arrayint local_vars = originalR0->getMonoid()->getNonTermOrderVariables();
-  bool is_local = (local_vars && local_vars->len > 0);
+  bool is_local = originalR0->getMonoid()->numNonTermOrderVariables() > 0;
   GBRing *R = originalR0->get_gb_ring();
 
   if (over_ZZ)
@@ -67,7 +66,7 @@ const Matrix /* or null */ *ReducedGB::get_mingens()
 #ifdef DEVELOPMENT
 #warning "mingens?"
 #endif
-  return nullptr;
+  return 0;
 }
 
 const Matrix /* or null */ *ReducedGB::get_syzygies()
@@ -75,7 +74,7 @@ const Matrix /* or null */ *ReducedGB::get_syzygies()
 #ifdef DEVELOPMENT
 #warning "syzygies?"
 #endif
-  return nullptr;
+  return 0;
 }
 
 const Matrix /* or null */ *ReducedGB::get_change()
@@ -129,13 +128,13 @@ const Matrix /* or null */ *ReducedGB::matrix_remainder(const Matrix *m)
   if (m->get_ring() != originalR)
     {
       ERROR("expected matrix over the same ring");
-      return nullptr;
+      return 0;
     }
 
   if (m->n_rows() != F->rank())
     {
       ERROR("expected matrices to have same number of rows");
-      return nullptr;
+      return 0;
     }
 
   MatrixConstructor red(m->rows(), m->cols(), m->degree_shift());
@@ -160,20 +159,20 @@ M2_bool ReducedGB::matrix_lift(const Matrix *m,
   if (m->get_ring() != originalR)
     {
       ERROR("expected matrix over the same ring");
-      *result_remainder = nullptr;
-      *result_quotient = nullptr;
+      *result_remainder = 0;
+      *result_quotient = 0;
       return false;
     }
   if (m->n_rows() != F->rank())
     {
       ERROR("expected matrices to have same number of rows");
-      *result_remainder = nullptr;
-      *result_quotient = nullptr;
+      *result_remainder = 0;
+      *result_quotient = 0;
       return false;
     }
 
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
-  MatrixConstructor mat_quotient(Fsyz, m->cols(), nullptr);
+  MatrixConstructor mat_quotient(Fsyz, m->cols(), 0);
 
 #ifdef DEVELOPMENT
 #warning "K should be the denominator ring?"
@@ -188,7 +187,7 @@ M2_bool ReducedGB::matrix_lift(const Matrix *m,
       g.fsyz = R->gbvector_zero();
 
       remainder(g, true, denom);
-      if (g.f != nullptr) all_zeroes = false;
+      if (g.f != 0) all_zeroes = false;
 
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       K->negate_to(denom);
@@ -221,7 +220,7 @@ int ReducedGB::contains(const Matrix *m)
 
       remainder(g, false, denom);
 
-      if (g != nullptr)
+      if (g != NULL)
         {
           R->gbvector_remove(g);
           return i;

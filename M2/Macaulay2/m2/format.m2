@@ -297,7 +297,7 @@ info TOH := x -> (
 
 net TO  := x -> (
      if class x#0 === DocumentTag
-     then concatenate( "\"", format x#0, "\"", if x#?1 then x#1)
+     then concatenate(formatNoEscaping format x#0, if x#?1 then x#1)
      else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
 net TO2 := x -> format x#1
