@@ -367,6 +367,12 @@ export convert(e:ParseTree):Code := (
 	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
 	  then (
 	      when b.lhs
+	      is a:Adjacent
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), AdjacentS.symbol, treePosition(e)))
+	      is c:Binary
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), c.Operator.entry, treePosition(e)))
 	      is t:Token
 	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
 		      convert(b.rhs), t.entry, treePosition(e)))

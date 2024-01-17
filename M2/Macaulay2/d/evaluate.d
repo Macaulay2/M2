@@ -1222,6 +1222,18 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    r := s.binary(x.lhs, x.rhs);
 	    when r is e:Error do Expr(e)
 	    else localAssignment(y.nestingDepth, y.frameindex, r))
+	is y:binaryCode do (
+	    r := Code(binaryCode(s.binary, y, x.rhs, dummyPosition));
+	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+	    then AssignElemFun(y.lhs, y.rhs, r)
+	    else InstallValueFun(CodeSequence(Code(
+			globalSymbolClosureCode(x.info, dummyPosition)),
+		    y.lhs, y.rhs, r)))
+	is y:adjacentCode do (
+	    r := Code(binaryCode(s.binary, y, x.rhs, dummyPosition));
+	    InstallValueFun(CodeSequence(Code(globalSymbolClosureCode(
+			    AdjacentS.symbol, dummyPosition)),
+		    y.lhs, y.rhs, r)))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
