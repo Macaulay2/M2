@@ -1234,6 +1234,11 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    InstallValueFun(CodeSequence(Code(globalSymbolClosureCode(
 			    AdjacentS.symbol, dummyPosition)),
 		    y.lhs, y.rhs, r)))
+	is y:unaryCode do (
+	    r := Code(binaryCode(s.binary, y, x.rhs, dummyPosition));
+	    UnaryInstallValueFun(
+		Code(globalSymbolClosureCode(x.info, dummyPosition)),
+		y.rhs, r))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
