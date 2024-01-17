@@ -1222,6 +1222,10 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    r := s.binary(x.lhs, x.rhs);
 	    when r is e:Error do Expr(e)
 	    else localAssignment(y.nestingDepth, y.frameindex, r))
+	is y:threadMemoryReferenceCode do (
+	    r := s.binary(x.lhs, x.rhs);
+	    when r is e:Error do Expr(e)
+	    else globalAssignment(y.frameindex, x.info, r))
 	is y:binaryCode do (
 	    r := Code(binaryCode(s.binary, y, x.rhs, dummyPosition));
 	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
