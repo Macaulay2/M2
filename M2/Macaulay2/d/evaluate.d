@@ -1218,6 +1218,10 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    r := s.binary(x.lhs, x.rhs);
 	    when r is e:Error do Expr(e)
 	    else globalAssignment(y.frameindex, x.info, r))
+	is y:localMemoryReferenceCode do (
+	    r := s.binary(x.lhs, x.rhs);
+	    when r is e:Error do Expr(e)
+	    else localAssignment(y.nestingDepth, y.frameindex, r))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
