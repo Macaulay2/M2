@@ -303,6 +303,25 @@ scan({
 	)
     )
 
+scan({
+	(symbol +=, "iadd"),
+	(symbol -=, "isub"),
+	(symbol *=, "imul"),
+	(symbol @=, "imatmul"),
+	(symbol /=, "itruediv"),
+	(symbol //=, "ifloordiv"),
+	(symbol %=, "imod"),
+	(symbol ^=, "ipow"),
+	(symbol <<=, "ilshift"),
+	(symbol >>=, "irshift"),
+	(symbol &=, "iand"),
+	(symbol |=, "ior"),
+	(symbol ^^=, "ixor")},
+    (op, name) -> installMethod(op, PythonObject, (x, y) -> (
+	    m := "__" | name | "__";
+	    if hasattr(x, m) then x@@m y
+	    else Default)))
+
 -PythonObject := o -> o@@"__neg__"()
 +PythonObject := o -> o@@"__pos__"()
 abs PythonObject := o -> o@@"__abs__"()
