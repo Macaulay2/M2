@@ -86,8 +86,8 @@ cotangentSheaf NormalToricVariety := CoherentSheaf => opts -> (
       	    nu := map (S^n, S^d, (matrix rays X) ** S);
       	    eta := map (directSum apply(n, i -> S^1 / ideal(S_i)), S^n, id_(S^n));
       	    om := sheaf (X, kernel (eta * nu));
-      	    if opts.Minimize then om = minimalPresentation om;
-      	    om 
+	    if opts.MinimalGenerators
+	    then minimalPresentation om else om
 	    )
 	)
     );

@@ -8,11 +8,6 @@ document {
      ring is supported by the ", TO "engine", "."}
 
 document {
-     Key => End,
-     Headline => "module of endomorphisms",
-     TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."}
-
-document {
      Key => {
 	 (symbol ^, Ring,       List),
 	 (symbol ^, RingFamily, List)

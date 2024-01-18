@@ -8,11 +8,11 @@ document {
      SeeAlso => {tangentSheaf, ProjectiveVariety}
      }
 document { 
-     Key => {(cotangentSheaf,ProjectiveVariety),[cotangentSheaf,Minimize]},
+     Key => {(cotangentSheaf,ProjectiveVariety),[cotangentSheaf,MinimalGenerators]},
      Usage => "cotangentSheaf X",
      Inputs => {
 	  "X",
-	  Minimize => Boolean => {"whether to apply ", TO "minimalPresentation", " to the result before returning it"}
+	  MinimalGenerators => Boolean => {"whether to apply ", TO "minimalPresentation", " to the result before returning it"}
 	  },
      Outputs => {CoherentSheaf => "the cotangent sheaf of the projective variety"
 	  },
@@ -33,7 +33,7 @@ document {
      Headline => "exterior powers of the cotangent sheaf of a projective variety",
      Usage => "cotangentSheaf(p,X)",
      Inputs => {"p", "X",
-	  Minimize => Boolean => {"whether to apply ", TO "minimalPresentation", " to the result before returning it"}
+	  MinimalGenerators => Boolean => {"whether to apply ", TO "minimalPresentation", " to the result before returning it"}
 	  },
      Outputs => {CoherentSheaf => {"the ", TT "p", "-th exterior power of
      the cotangent sheaf"}

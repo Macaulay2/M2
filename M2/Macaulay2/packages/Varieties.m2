@@ -39,16 +39,10 @@ export {
 
 importFrom_Core {
     "getAttribute", "hasAttribute", "ReverseDictionary",
+    "applyMethod", "applyMethod''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "tryHooks", "cacheHooks",
     }
-
------------------------------------------------------------------------------
--- Utilities to be added to Core
------------------------------------------------------------------------------
-
-applyMethod = (key, X) -> (
-    if (F := lookup key) =!= null then F X else error "no method available") -- expand this error message later
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -419,7 +413,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
 	-- does this compute a limit?
 	-- compare with the limit from minimalPresentation hook
 	-- and emsbound in NormalToricVarieties/Sheaves.m2
-	if p > 0 then M = Hom(image matrix {apply(generators A, g -> g^p)}, M);
+	if p > 0 then M = Hom(image matrix {apply(generators A, g -> g^p)}, M, MinimalGenerators => true);
 	);
     minimalPresentation M)
 
@@ -470,12 +464,11 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 -- Module of twisted global sections Γ_*(F)
 -----------------------------------------------------------------------------
 
--- TODO: optimize caching here
+-- TODO: optimize caching: if HH^0(F>=b) is cached above, does this need to be cached?
 -- TODO: should F>=0 be hardcoded?
 minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
     cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
-	-- this is the default algorithm
-	(opts, F) -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts))))
+	(opts, F) -> sheaf(F.variety, HH^0 F(>=0)))) -- this is the default algorithm
 
 -----------------------------------------------------------------------------
 -- cotangentSheaf, tangentSheaf, and canonicalBundle
@@ -488,13 +481,14 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
 
 -- TODO: this is the slowest part of hh and euler, look into other strategies
 -- TODO: simplify caching here and in minimalPresentation
-cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { Minimize => true })
+cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { MinimalGenerators => true })
 cotangentSheaf ProjectiveVariety := opts -> (cacheValue (symbol cotangentSheaf => opts)) (X -> (
 	R := ring X; checkRing R;
 	S := ring(F := presentation R);
 	(d, e) := (vars S ** R, jacobian F ** R); -- assert(d * e == 0);
-	prune' := if opts.Minimize then prune else identity;
-	prune' sheaf(X, homology(d, e))))
+	om := sheaf(X, homology(d, e));
+	if opts.MinimalGenerators
+	then minimalPresentation om else om))
 cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
@@ -541,37 +535,31 @@ CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, 
 -- Sheaf Hom and Ext
 -----------------------------------------------------------------------------
 
--- TODO: assert that sheaves are on the same variety
-sheafHom = method(TypicalValue => CoherentSheaf)
-sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf(variety F, Hom(module F, module G))
-Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0(variety F, sheafHom(F, G))
+Hom(SheafOfRings, SheafOfRings)  :=
+Hom(SheafOfRings, CoherentSheaf) :=
+Hom(CoherentSheaf, SheafOfRings)  :=
+Hom(CoherentSheaf, CoherentSheaf) := Module => o -> (F, G) -> HH^0(variety F, sheafHom(F, G, o))
 
-Hom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> Hom(O^1,G)
-Hom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> Hom(F,O^1)
-Hom(SheafOfRings,SheafOfRings) := Module => (O,R) -> Hom(O^1,R^1)
-
-sheafHom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> sheafHom(O^1,G)
-sheafHom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> sheafHom(F,O^1)
-sheafHom(SheafOfRings,SheafOfRings) := Module => (O,R) -> sheafHom(O^1,R^1)
+sheafHom = method(TypicalValue => CoherentSheaf, Options => options Hom)
+sheafHom(SheafOfRings, SheafOfRings)  :=
+sheafHom(SheafOfRings, CoherentSheaf) :=
+sheafHom(CoherentSheaf, SheafOfRings)  :=
+sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => o -> (F, G) -> (
+    sameVariety(F, G); sheaf(variety F, Hom(module F, module G, o)))
 
 sheafExt = new ScriptedFunctor from {
-     superscript => (
-	  i -> new ScriptedFunctor from {
-	       argument => (M,N) -> (
-		    f := lookup(sheafExt,class i,class M,class N);
-		    if f === null then error "no method available"
-		    else f(i,M,N)
-		    )
-	       }
-	  )
-     }
-sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (
-     (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G)
-     )
+    superscript => i -> new ScriptedFunctor from {
+	-- sheafExt^1(F, G)
+	argument => X -> applyMethod''(sheafExt, functorArgs(i, X))
+	},
+    argument => X -> applyMethod''(sheafExt, X)
+    }
 
-sheafExt(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> sheafExt^n(O^1,G)
-sheafExt(ZZ,CoherentSheaf,SheafOfRings) := Module => (n,F,O) -> sheafExt^n(F,O^1)
-sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^1)
+sheafExt(ZZ, SheafOfRings, SheafOfRings)  :=
+sheafExt(ZZ, SheafOfRings, CoherentSheaf) :=
+sheafExt(ZZ, CoherentSheaf, SheafOfRings)  :=
+sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argument >> opts -> (i, F, G) -> (
+    sameVariety(F, G); sheaf(variety F, Ext^i(module F, module G, opts)))
 
 -----------------------------------------------------------------------------
 -- code donated by Greg Smith <ggsmith@math.berkeley.edu>
@@ -582,29 +570,29 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -- See tests/normal/ext-global.m2 for the examples
 -----------------------------------------------------------------------------
 
-Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
+Ext(ZZ, SheafOfRings,  SumOfTwists) :=
+Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
+    sameVariety(F, G');
+    X := variety F;
+    checkProjective X;
+    checkVariety(X, F);
      -- depends on truncate methods
      needsPackage "Truncations";
      G := G'#0;
      e := G'#1#0;
-     if variety G =!= variety F
-     then error "expected sheaves on the same variety";
-     if not instance(variety G,ProjectiveVariety)
-     then error "expected sheaves on a projective variety";
      M := module F;
      N := module G;
      R := ring M;
-     if not isAffineRing R
-     then error "expected sheaves on a variety over a field";
      local E;
      if dim M === 0 or m < 0 then E = R^0
      else (
-          f := presentation R;
-          S := ring f;
-          n := numgens S -1;
           l := min(dim N, m);
-	  P := resolution(cokernel lift(presentation N,S) ** cokernel f);
+	  P := resolution flattenModule N;
 	  p := length P;
+	  n := dim ring P - 1;
+	  -- global Ext is composition of sheaf Ext and cohomology
+	  -- so we compute it as a Grothendieck spectral sequence
+	  -- in this case, it degenerates
 	  if p < n-l then E = Ext^m(M, N, opts)
 	  else (
 	       a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
@@ -614,16 +602,13 @@ Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
      else if (min degrees E)#0 > e then minimalPresentation E
      else minimalPresentation truncate(e,E))
 
-Ext(ZZ,SheafOfRings,SumOfTwists) := Module => opts -> (m,O,G') -> Ext^m(O^1,G',opts)
-
-Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => opts -> (n,F,G) -> (
+Ext(ZZ, SheafOfRings, SheafOfRings)  :=
+Ext(ZZ, SheafOfRings, CoherentSheaf) :=
+Ext(ZZ, CoherentSheaf, SheafOfRings)  :=
+Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n,F,G) -> (
      E := Ext^n(F,G(>=0),opts);
      k := coefficientRing ring E;
      k^(rank source basis(0,E)))
-
-Ext(ZZ,SheafOfRings,CoherentSheaf) := Module => opts -> (n,O,G) -> Ext^n(O^1,G,opts)
-Ext(ZZ,CoherentSheaf,SheafOfRings) := Module => opts -> (n,F,O) -> Ext^n(F,O^1,opts)
-Ext(ZZ,SheafOfRings,SheafOfRings) := Module => opts -> (n,O,R) -> Ext^n(O^1,R^1,opts)
 
 -----------------------------------------------------------------------------
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>

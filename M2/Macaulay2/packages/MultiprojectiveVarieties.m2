@@ -1414,7 +1414,7 @@ segre MultirationalMap := (cacheValue "compositionWithSegreEmbedding") (Phi -> (
     rationalMap(f * (map s),Dominant=>"notSimplify")
 ));
 
-compose (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
+compose (MultirationalMap,MultirationalMap) := MultirationalMap => {} >> o -> (Phi,Psi) -> (
     if Phi.cache#?("composition",Psi) then return Phi.cache#("composition",Psi);
     if ring ambient target Phi === ring ambient source Psi and target Phi == source Psi then (
         f := toRingMap(Phi,ring source Psi);
@@ -2327,14 +2327,14 @@ setSource = (X,F) -> (
 RAT = new Type of HashTable;
 globalAssignment RAT;
 RAT.synonym = "hom-set";
-Hom (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
+Hom (MultiprojectiveVariety, MultiprojectiveVariety) := opts -> (X, Y) -> (
     if coefficientRing X =!= coefficientRing Y then error "different coefficient rings encountered";
     new RAT from {
         symbol source => X,
         symbol target => Y
     }
 );
-Hom (Nothing,MultiprojectiveVariety) := Hom (MultiprojectiveVariety,Nothing) := Hom (Nothing,Nothing) := (X,Y) -> (
+Hom (Nothing,MultiprojectiveVariety) := Hom (MultiprojectiveVariety,Nothing) := Hom (Nothing,Nothing) := opts -> (X,Y) -> (
     new RAT from {
         symbol source => X,
         symbol target => Y
@@ -2348,7 +2348,7 @@ expression RAT := H -> (
     if H.target === null
     then (Y = "*")
     else (Y = if hasAttribute(H.target,ReverseDictionary) then toString getAttribute(H.target,ReverseDictionary) else toString expression H.target);
-    dom := if H.?parent then ",Dominant=>true" else "";
+    dom := if H.?parent then ",Dominant" else "";
     expression("Hom("|X|","|Y|dom|")")
 );
 net RAT := H -> (
@@ -2424,15 +2424,12 @@ member (MultirationalMap,RAT) := (f,H) -> (if H.source =!= null then source f ==
 DomRAT = new Type of RAT;
 globalAssignment DomRAT;
 DomRAT.synonym = "hom-set";
-Hom (MultiprojectiveVariety,Option) := Hom (Nothing,Option) := (X,opt) -> (
-    if first toList opt =!= Dominant then error "Dominant is the only available option for Hom(MultiprojectiveVariety)";
-    if not instance(last opt,Boolean) then error "expected true or false";    
-    H := Hom(X,);
-    if not (last opt) then return H;
+Hom (MultiprojectiveVariety, Symbol) := Hom (Nothing, Symbol) := opts -> (X, s) -> (
+    if s =!= Dominant then error "expected symbol Dominant, or no symbols";
     new DomRAT from {
         symbol source => X,
         symbol target => null,
-        symbol parent => H
+        symbol parent => Hom(X,)
     }
 );
 DomRAT Thing := (H,T) -> rationalMap(H.parent T,Dominant=>true);
@@ -4058,7 +4055,7 @@ Headline => "the hom-sets of rational maps between two multi-projective varietie
 PARA{"Objects of this type are created by ",TO2{(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"Hom"},"."},
 SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(symbol SPACE,RAT,List)}}
 
-document {Key => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(Hom,Nothing,MultiprojectiveVariety),(Hom,MultiprojectiveVariety,Nothing),(Hom,Nothing,Nothing),(Hom,MultiprojectiveVariety,Option),(Hom,Nothing,Option)}, 
+document {Key => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(Hom,Nothing,MultiprojectiveVariety),(Hom,MultiprojectiveVariety,Nothing),(Hom,Nothing,Nothing),(Hom,MultiprojectiveVariety,Symbol),(Hom,Nothing,Symbol)},
 Headline => "get the hom-set of rational maps between two multi-projective varieties", 
 Usage => "Hom(X,Y)", 
 Inputs => {"X" => MultiprojectiveVariety, "Y" => MultiprojectiveVariety},
@@ -4075,8 +4072,8 @@ EXAMPLE {
 "Hom(,)"},
 PARA {"We can also form hom-sets of dominant rational maps."},
 EXAMPLE {
-"Hom(X,Dominant=>true)",
-"Hom(,Dominant=>true)"},
+"Hom(X,Dominant)",
+"Hom(,Dominant)"},
 SeeAlso => {(symbol SPACE,RAT,List)}}
 
 document {Key => {(symbol SPACE,RAT,List)}, 
@@ -4096,7 +4093,7 @@ EXAMPLE {
 PARA{"The following equality is satisfied for every ",TO2{MultirationalMap,"rational map"}," ",TT"f","."},
 EXAMPLE {"assert( f == (Hom(source f,target f)) entries f )"},
 PARA{"Here it is shown how to make a dominant rational map."},
-EXAMPLE {"H' = Hom(PP_(ZZ/3)^{1,2},Dominant=>true);", "H' F", "assert(image oo == target oo)"},
+EXAMPLE {"H' = Hom(PP_(ZZ/3)^{1,2},Dominant);", "H' F", "assert(image oo == target oo)"},
 SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(symbol SPACE,RAT,MultiprojectiveVariety),(symbol SPACE,RAT,Tally),(entries,MultirationalMap)}}
 
 document {Key => {(symbol SPACE,RAT,Tally)},

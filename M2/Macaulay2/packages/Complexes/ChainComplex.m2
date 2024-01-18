@@ -722,7 +722,7 @@ component(Module,Thing) := (M,k) -> (
     if not M.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
     (components M)#(M.cache.indexComponents#k)
     )
-Hom(Complex, Complex) := Complex => (C,D) -> (
+Hom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
     -- which agrees with Conrad (Grothendieck duality book)
     Y := youngest(C,D);
@@ -732,7 +732,7 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
     (loC,hiC) := C.concentration;
     (loD,hiD) := D.concentration;
     modules := hashTable for i from loD-hiC to hiD-loC list i => (
-        directSum for j from loC to hiC list {j,j+i} => Hom(C_j, D_(j+i))
+        directSum for j from loC to hiC list {j,j+i} => Hom(C_j, D_(j+i), opts)
         );
     if loC === hiC and loD === hiD then (
         result := complex(modules#(loD-hiC), Base => loD-loC);
@@ -750,8 +750,8 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
                     tar := component(modules#(i-1), j);
                     src := component(modules#i, k);
                     map(tar, src, 
-                        if k-j === {0,1} then (-1)^(k#1-k#0+1) * Hom(C_(k#0),dd^D_(k#1))
-                        else if k-j === { -1,0 } then Hom(dd^C_(j#0),D_(k#1))
+                        if k-j === {0,1} then (-1)^(k#1-k#0+1) * Hom(C_(k#0), dd^D_(k#1), opts)
+                        else if k-j === { -1,0 } then Hom(dd^C_(j#0), D_(k#1), opts)
                         else 0)
                     ))));
     result = complex maps;
@@ -759,10 +759,10 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
     Y.cache#(Hom,C,D) = result;
     result
     )
-Hom(Module, Complex) := Complex => (M,C) -> Hom(complex M, C)
-Hom(Complex, Module) := Complex => (C,M) -> Hom(C, complex M)
-Hom(Complex, Ring) := Complex => (C,R) -> Hom(C, complex R)
-Hom(Ring, Complex) := Complex => (R,C) -> Hom(complex R, C)
+Hom(Module, Complex) := Complex => opts -> (M,C) -> Hom(complex M, C, opts)
+Hom(Complex, Module) := Complex => opts -> (C,M) -> Hom(C, complex M, opts)
+Hom(Complex, Ring) := Complex => opts -> (C,R) -> Hom(C, complex R, opts)
+Hom(Ring, Complex) := Complex => opts -> (R,C) -> Hom(complex R, C, opts)
 
 dual Complex := Complex => {} >> o -> (C) -> Hom(C, (ring C)^1)
 
@@ -1004,22 +1004,22 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
         if R =!= ring N then error "expected modules over the same ring";
         if i < 0 then (
             H = R^0;
-            liftmap = (f) -> map(Hom(R^0,N), source f, 0);
+            liftmap = (f) -> map(Hom(R^0, N, opts), source f, 0);
             invmap = (g) -> map(H, source g, 0);
             )
         else if i === 0 then (
-            H = Hom(M,N);
-            liftmap = (f) -> Hom(map(M, cover M, 1), N) * f;
+            H = Hom(M, N, opts);
+            liftmap = (f) -> Hom(map(M, cover M, 1), N, opts) * f;
             invmap = (g) -> (
-                h := Hom(map(M, cover M, 1), N);
+                h := Hom(map(M, cover M, 1), N, opts);
                 g // h
                 );
             )
         else (
             FM := freeResolution(M, LengthLimit => i+1);
             b := dd^FM;
-            g0 := Hom(b_i, N);
-            g1 := Hom(b_(i+1), N); -- Hom(FM_i, N) is source g1 == target g0.
+            g0 := Hom(b_i, N, opts);
+            g1 := Hom(b_(i+1), N, opts); -- Hom(FM_i, N) is source g1 == target g0.
             kerg1 := ker g1; 
             H = kerg1 / (image g0); 
             -- note: we compute H like this in order to have access to ker g1.
@@ -1083,8 +1083,8 @@ yonedaExtension Matrix := Complex => f -> (
         )
     )
 
-yonedaExtension' = method()
-yonedaExtension' Complex := Matrix => C -> (
+yonedaExtension' = method(Options => options Ext.argument)
+yonedaExtension' Complex := Matrix => opts -> C -> (
     -- given an exact complex of R-modules of the form
     --  0 <-- M <-- C0 <-- C1 <-- ... <-- C(d-1) <-- N <-- 0
     -- return the corresponding map R^1 --> Ext^d(M,N).
@@ -1097,8 +1097,8 @@ yonedaExtension' Complex := Matrix => C -> (
     g := resolutionMap(M, LengthLimit => hi);
     sinverse := liftMapAlongQuasiIsomorphism(g, s);
     yonedaMap := sinverse_(hi-1);  -- map FM_d --> N
-    extd := Ext^(hi-lo-1)(C_lo, C_hi);
-    extd.cache.yonedaExtension' homomorphism' yonedaMap
+    extd := Ext^(hi-lo-1)(C_lo, C_hi, opts);
+    extd.cache.yonedaExtension' homomorphism'(yonedaMap, opts)
     )
 
 yonedaMap = method(Options => {LengthLimit => infinity})
@@ -1121,7 +1121,7 @@ yonedaMap Matrix := ComplexMap => opts -> f -> (
     extend(FN, FM, g0, (0,d))
     )
 
-yonedaMap' = method(Options => {LengthLimit => infinity})
+yonedaMap' = method(Options => options Ext.argument)
 yonedaMap' ComplexMap := Matrix => opts -> f -> (
     -- given a map f : FM --> FN of degree -d, construct the corresponding element
     -- R^1 --> Ext^d(M,N), which is unique up to homotopy.
@@ -1133,9 +1133,9 @@ yonedaMap' ComplexMap := Matrix => opts -> f -> (
     -- check: FM, FN are free acyclic complexes
     M := if FM.cache.?Module then FM.cache.Module else error "expected a free resolution of a module";
     N := if FN.cache.?Module then FN.cache.Module else error "expected a free resolution of a module";
-    extd := Ext^d(M, N);
+    extd := Ext^d(M, N, opts);
     g := map(N, FM_d, f_d, Degree => degree f_d);
-    extd.cache.yonedaExtension' homomorphism' g
+    extd.cache.yonedaExtension' homomorphism'(g, opts)
     )
 
 yonedaProduct = method()

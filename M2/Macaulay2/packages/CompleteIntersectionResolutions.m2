@@ -5630,7 +5630,7 @@ TEST ///--of S2
 S = ZZ/101[a,b,c];
 M = S^1/intersect(ideal"a,b", ideal"b,c",ideal"c,a");
 --assert( (hf(-7..1,coker S2(-5,M))) === (0, 3, 3, 3, 3, 3, 3, 2, 0))
-assert( (betti prune matrix S2(-5,M)) === new BettiTally from {(0,{-6},-6) => 3, (1,{0},0) => 1} )
+assert( (betti matrix prune S2(-5,M)) === new BettiTally from {(0,{-6},-6) => 3, (1,{0},0) => 1} )
 ///
 
 
