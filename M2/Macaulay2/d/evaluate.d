@@ -1213,6 +1213,17 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
     is null do buildErrorPacket("unknown augmented assignment operator")
     is s:Symbol do (
+	-- first check if user-defined method
+	-- TODO: when there isn't a user-defined method, we end up evaluating
+	-- the left-hand side twice.  is there any way to avoid this?
+	left := eval(x.lhs);
+	when left is e:Error do return Expr(e) else nothing;
+	meth := lookup(Class(left), Expr(SymbolClosure(globalFrame, x.oper)));
+	if meth != nullE then (
+	    right := eval(x.rhs);
+	    when right is e:Error do return Expr(e)
+	    else return applyEEE(meth, left, right));
+	-- if not, use default behavior
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
 	    r := s.binary(x.lhs, x.rhs);
