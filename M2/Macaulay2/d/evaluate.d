@@ -1222,7 +1222,13 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	if meth != nullE then (
 	    right := eval(x.rhs);
 	    when right is e:Error do return Expr(e)
-	    else return applyEEE(meth, left, right));
+	    else (
+		r := applyEEE(meth, left, right);
+		when r
+		is s:SymbolClosure do (
+		    if s.symbol.word.name === "Default" then nothing
+		    else return r)
+		else return r));
 	-- if not, use default behavior
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
