@@ -711,6 +711,11 @@ registerFinalizer' = registerFinalizer
 registerFinalizer = method()
 registerFinalizer(Thing, String) := registerFinalizer'
 
+-- augmented assignment -- syntactic sugar for installing methods
+-- e.g., "T += f" is equivalent to "installMethod(symbol +=, T, f)"
+scan(augmentedAssignmentOperators, op ->
+    installMethod(op, Type, (T, f) -> installMethod(op, T, f)))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
