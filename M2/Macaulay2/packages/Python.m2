@@ -6,7 +6,7 @@ pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.6",
-    Date => "December 4, 2023",
+    Date => "January 24, 2024",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -27,11 +27,12 @@ newPackage("Python",
 
 -*
 
-0.6 (2023-12-04, M2 1.23)
+0.6 (2024-01-24, M2 1.23)
 * add expression, net, texMath, describe, and toExternalString methods
-* move initialization of python from M2 startup package load time
+* move initialization of python from M2 startup to package load time
 * update int <-> ZZ conversion for python 3.12
 * use a constant hash for None
+* add support for augmented assignment
 
 0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
