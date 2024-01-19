@@ -1022,8 +1022,9 @@ export setIOSynchronized(e:Expr):Expr :=(
      is a:Sequence do (
 	  if length(a) == 0
 	  then (setFileThreadState(stdIO,1); setFileThreadState(stdError,1); nullE)
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
+	  else WrongNumArgs(0, 1))
+     is f:file do (setFileThreadState(f, 1); nullE)
+     else WrongArg("a file or ()")
 );
 
 export setIOExclusive(e:Expr):Expr :=(
@@ -1031,8 +1032,9 @@ export setIOExclusive(e:Expr):Expr :=(
      is a:Sequence do (
 	  if length(a) == 0
 	  then (setFileThreadState(stdIO,2); setFileThreadState(stdError,2); nullE)
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
+	  else WrongNumArgs(0, 1))
+     is f:file do (setFileThreadState(f, 2); nullE)
+     else WrongArg("a file or ()")
 );
 
 export setIOUnSynchronized(e:Expr):Expr :=(
@@ -1040,8 +1042,9 @@ export setIOUnSynchronized(e:Expr):Expr :=(
      is a:Sequence do (
 	  if length(a) == 0
 	  then (setFileThreadState(stdIO,0); setFileThreadState(stdError,0); nullE)
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
+	  else WrongNumArgs(0, 1))
+     is f:file do (setFileThreadState(f, 0); nullE)
+     else WrongArg("a file or ()")
 );
 
 export getIOThreadMode(e:Expr):Expr := (
