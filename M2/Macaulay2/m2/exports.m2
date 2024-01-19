@@ -750,6 +750,7 @@ export {
 	"get",
 	"getChangeMatrix",
 	"getGlobalSymbol",
+	"getIOThreadMode",
 	"getNetFile",
 	"getNonUnit",
 	"getPrimeWithRootOfUnity",
