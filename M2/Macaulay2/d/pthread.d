@@ -217,6 +217,7 @@ setupfun("taskResult",taskResult);
 setupfun("setIOSynchronized",setIOSynchronized);
 setupfun("setIOUnSynchronized",setIOUnSynchronized);
 setupfun("setIOExclusive",setIOExclusive);
+setupfun("getIOThreadMode", getIOThreadMode);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "
