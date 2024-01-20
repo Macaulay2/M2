@@ -12,6 +12,7 @@ export codePosition(c:Code):Position := (
      is f:binaryCode do f.position
      is f:catchCode do f.position
      is f:Error do f.position
+     is f:evaluatedCode do f.position
      is f:forCode do f.position
      is f:functionCode do position(f.arrow)
      is f:globalAssignmentCode do f.position
@@ -57,6 +58,10 @@ export tostring(c:Code):string := (
      is x:angleBarListCode do concatenate(array(string)( "(angleBarList ", between(" ",new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))
      is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f)," ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:adjacentCode do concatenate(array(string)("(adjacent ",tostring(x.lhs)," ",tostring(x.rhs),")"))
+     is x:evaluatedCode do concatenate(array(string)(
+	       "(expr ",
+	       tostring(hash(x.expr)),
+	       ")"))
      is x:forCode do concatenate(array(string)(
 	       "(for", 
 	       " in: ",tostring(x.inClause),

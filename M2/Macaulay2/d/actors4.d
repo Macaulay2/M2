@@ -1585,6 +1585,7 @@ locate(e:Code):void := (
      is v:Error do lookat(v.position)
      is v:semiCode do foreach c in v.w do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:evaluatedCode do lookat(v.position)
      is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
      is v:functionCode do (locate(v.arrow);locate(v.body);)
      is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)

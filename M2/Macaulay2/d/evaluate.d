@@ -1483,6 +1483,7 @@ export evalraw(c:Code):Expr := (
 	       x := eval(n.body);
 	       localFrame = localFrame.outerFrame;
 	       x)
+	  is c:evaluatedCode do return c.expr
 	  is c:forCode do return evalForCode(c)
 	  is c:whileListDoCode do evalWhileListDoCode(c)
 	  is c:whileDoCode do evalWhileDoCode(c)
