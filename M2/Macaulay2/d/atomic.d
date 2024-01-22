@@ -6,6 +6,7 @@ declarations "
     #include <atomic>
     using std::atomic_fetch_add;
     using std::atomic_int;
+    using std::atomic_load;
     using std::atomic_signal_fence;
     using std::memory_order_seq_cst;
   #else
@@ -19,15 +20,16 @@ export atomicFieldPointerOrNull := atomicFieldPointer or null;
 export address(x:atomicField) ::= Ccode(atomicFieldPointer,"(&(",x,"))");
 export contents(x:atomicFieldPointer) ::= Ccode(atomicField,"(*(",x,"))");
 export atomicInt := integerType "atomic_int";
+export load(x:atomicInt) ::= Ccode(int, "atomic_load(&", x, ")");
 export load(x:atomicField) ::= Ccode(int, "load_Field(",x,")");
 export test(x:atomicField) ::= (load(x) != 0);
-export store(x:atomicField,y:atomicInt) ::= Ccode(void, "store_Field(",x,",",y,")");
-export store(x:atomicFieldPointer,y:atomicInt) ::= store(contents(x),y);
+export store(x:atomicField,y:atomicInt) ::= store(x, load(y));
+export store(x:atomicFieldPointer,y:atomicInt) ::= store(contents(x), load(y));
 export store(x:atomicFieldPointer,y:bool) ::= store(contents(x),y);
 export store(x:atomicFieldPointer,y:int) ::= store(contents(x),y);
 export toAtomicInt(x:bool) ::= Ccode(atomicInt,"((atomic_int)",x,")");
-export store(x:atomicField,y:bool) ::= store(x,toAtomicInt(y));
-export store(x:atomicField,y:int) ::= store(x,atomicInt(y));
+export store(x:atomicField,y:bool) ::= store(x, Ccode(int, y));
+export store(x:atomicField,y:int) ::= Ccode(void, "store_Field(",x,",",y,")");
 export increment(x:atomicInt) ::= Ccode(atomicInt,"atomic_fetch_add(&(",x,", 1))");
 export compilerBarrier() ::= Ccode(void,"atomic_signal_fence(memory_order_seq_cst)");
 
