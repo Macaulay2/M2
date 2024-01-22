@@ -1,5 +1,6 @@
 #include "supervisor.hpp"
 #include "supervisorinterface.h"
+#include <cassert>
 #include <iostream>
 #include <stdlib.h>
 #include <M2/config.h>

@@ -3,6 +3,8 @@
 use evaluate;
 use struct;
 
+header "#include <assert.h>";
+
 export plus0():Expr := zeroE;
 export times0():Expr := oneE;
 export plus1(e:Expr) : Expr := e;
