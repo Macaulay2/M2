@@ -157,6 +157,7 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
 -- 1 => use degrees of generators as heuristic to peel off line bundles first
 -- 2 => use Hom option DegreeLimit => 0
 -- 4 => use Hom option MinimalGenerators => false
+-- 8 => precompute Homs before looking for idempotents
 directSummands = method(Options => { Recursive => true, Tries => 0, Verbose => true, Strategy => 7, ExtendGroundField => null })
 directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> sort(
     checkRecursionDepth();
@@ -241,9 +242,19 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
 	b := homomorphism(B * random source B);
 	c := homomorphism(C * random source C);
 	if isIsomorphism(c * b) then break b);
-    -- precomputing the Homs can be too memory intensive
-    P := if h === null then position'(numcols C, numcols B, (c, b) -> isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
-    if P =!= null then h = homomorphism B_(last P);
+    if h === null then h = (
+	if opts.Strategy & 8 == 8 then (
+	    -- precomputing the Homs can sometimes be a good strategy
+	    Bhoms := apply(numcols B, i -> homomorphism B_{i});
+	    Choms := apply(numcols C, i -> homomorphism C_{i});
+	    pos := position'(Choms, Bhoms,
+		(c, b) -> isIsomorphism(c * b));
+	    if pos =!= null then last pos)
+	else (
+	    -- and sometimes too memory intensive
+	    ind := position'(numcols C, numcols B,
+		(c, b) -> isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
+	    if ind =!= null then homomorphism B_{last ind}));
     if h === null then return {M};
     if 0 < debugLevel then stderr << concatenate(rank L : ".") << flush;
     -- TODO: can we detect multiple summands of L at once?
