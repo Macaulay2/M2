@@ -47,11 +47,11 @@ public:
   //exclusive recurse count
   size_t exclusiveRecurseCount;
   //Function to wait for exclusive owner to be current thread.
-  void waitExclusiveThread(size_t exclusiveRecurseCounter);
+  void waitExclusiveThread(size_t exclusiveRecurseDelta);
   //Function to wait for syncOrExclOwner to be released and then acquire it
-  void waitThreadAcquire(size_t recurseCoutner); 
+  void waitThreadAcquire(size_t recurseDelta);
   //Function to release recurseCount and if == 0 set syncOrExclOwner to 0
-  void releaseThreadCount(size_t recurseCounter);
+  void releaseThreadCount(size_t recurseDelta);
   //Set new syncOrExclOwner
   void setOwnerThread(pthread_t newOwner, size_t recurseCounter=0);
 };

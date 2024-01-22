@@ -27,7 +27,7 @@ M2File::~M2File()
 }
 
 
-void M2File::waitExclusiveThread(size_t exclusiveRecurseCounter)
+void M2File::waitExclusiveThread(size_t exclusiveRecurseDelta)
 {
   //acquire a lock on the thread map
   m_MapMutex.lock();
@@ -37,7 +37,7 @@ void M2File::waitExclusiveThread(size_t exclusiveRecurseCounter)
       //Note that there is always a current owner in exclusive mode so this works
       if(syncOrExclOwner==pthread_self())
 	{
-	  exclusiveRecurseCount+=exclusiveRecurseCounter;
+	  exclusiveRecurseCount+=exclusiveRecurseDelta;
 	  if(exclusiveRecurseCount==0)
 	    {
 	    pthread_cond_broadcast(&ownerChangeCondition);
@@ -66,7 +66,7 @@ void M2File::waitExclusiveThread(size_t exclusiveRecurseCounter)
   m_MapMutex.unlock();
 }
 
-void M2File::waitThreadAcquire(size_t recurseCounter)
+void M2File::waitThreadAcquire(size_t recurseDelta)
 {
   m_MapMutex.lock();
   while(1)
@@ -78,14 +78,14 @@ void M2File::waitThreadAcquire(size_t recurseCounter)
       else if(syncOrExclOwner==0)//if the exclusive/synchronized owner isn't in use, take ownership of it.
 	{
 	  syncOrExclOwner=pthread_self();
-	  recurseCount=recurseCounter;
+	  recurseCount=recurseDelta;
 	  m_MapMutex.unlock();
 	  pthread_cond_broadcast(&ownerChangeCondition);
 	  return;
 	}
       else if(syncOrExclOwner==pthread_self())//if it is in use, check to make sure it is this thread, otherwise wait
 	{
-	  recurseCount+=recurseCounter;
+	  recurseCount+=recurseDelta;
 	  m_MapMutex.unlock();
 	  return;
 	}
@@ -106,10 +106,10 @@ void M2File::setOwnerThread(pthread_t newOwner, size_t recurseCounter)
   m_MapMutex.unlock();
 }
 
-void M2File::releaseThreadCount(size_t recurseCounter)
+void M2File::releaseThreadCount(size_t recurseDelta)
 {
   m_MapMutex.lock();
-  recurseCount-=recurseCounter;
+  recurseCount-=recurseDelta;
   if(!recurseCount)
     {
       clearThread(syncOrExclOwner);
