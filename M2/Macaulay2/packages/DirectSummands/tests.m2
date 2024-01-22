@@ -44,6 +44,7 @@ TEST /// -- direct summands over field extensions
   elapsedTime B = basis({0}, A); -- ~0.23s
   elapsedTime B = smartBasis({0}, A); -- ~0.03s
   *-
+  -- if this test fails, check if "try findIdempotent M" if hiding any unexpected errors
   elapsedTime assert({1, 2, 2, 2} == rank \ summands M) -- 2.28s
   elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF 7)) -- 2.87s -> 2.05
   elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF(7, 3))) -- 3.77s -> 2.6

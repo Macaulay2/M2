@@ -3,15 +3,11 @@
 generalEndomorphism = method()
 generalEndomorphism Module := M -> (
     R := ring M;
-    zdeg := toList(degreeLength R : 0);
-    EndM := Hom(M, M, zdeg);
-    --EndM := End(M);
-    B := smartBasis(zdeg, EndM);
-    --r := rank source B;
-    --if r == 1 then return "warning: End(M)_0 is 1-dimensional";
-    --rm=length select(for i from 0 to r-1 list( unique apply(flatten entries homomorphism B_{i},j->j% ideal gens R) == {0}) ,k->k==false);
-    --if rm< 2 then return "warning: End(M)_0/maximal ideal is 1-dimensional";
-    homomorphism(B * random(ZZ^(rank source B),ZZ^1)))
+    A := Hom(M, M,
+	DegreeLimit       => zdeg := degree 0_M,
+	MinimalGenerators => false);
+    B := smartBasis(zdeg, A);
+    homomorphism(B * random(source B, R^1)))
 generalEndomorphism CoherentSheaf := M -> generalEndomorphism module M
 
 -- TODO: this needs improvement to work over RR, QQ, GF, FractionField, etc.

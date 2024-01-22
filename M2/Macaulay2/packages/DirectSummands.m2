@@ -8,6 +8,9 @@
 -- 2. try to find all irreducible idempotents from End M using representation theory
 -- 3. cache maps to the summands
 -- 4. rewrite (isDirectSum, Module)
+-- 5. implement diagonalize for matrices (and later, complexes)
+-- 6. restrict and pass End to the summands
+-- 7. check for isomorphic summands
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
@@ -20,11 +23,11 @@ newPackage(
 	},
     Keywords => { "Commutative Algebra" },
     PackageImports => {
+	"Polyhedra",       -- for coneFromVData and coneComp
+	"PushForward",     -- only for frobenius.m2
 	"RationalPoints2", -- for rationalPoints in findIdempotent
-	"PushForward", -- only for frobenius.m2
-	"Polyhedra", -- for coneFromVData and coneComp
-	"Truncations", -- for effGenerators
-	-- "Varieties",
+	"Truncations",     -- for effGenerators
+	"Varieties",
 	},
     AuxiliaryFiles => true,
     DebuggingMode => true
@@ -60,16 +63,6 @@ needs "./DirectSummands/idempotents.m2"
 -----------------------------------------------------------------------------
 -- Things to move to the Core
 -----------------------------------------------------------------------------
-
--* -- FIXME: what was this for?
-importFrom_Core { "raw", "submatrixFree", "listZZ", "rawSubmatrix" };
-try (
-submatrixFree = (m, rows, cols) -> (if rows === null
-    then rawSubmatrix(raw cover m, listZZ cols)
-    else rawSubmatrix(raw cover m, listZZ rows,
-	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
-)
-*-
 
 -- return the submatrix with given degrees of target and source
 submatrixByDegrees(Matrix, Sequence) := (m, degs) -> (
@@ -161,9 +154,10 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
 -- TODO: when splitting over a field extension, use cached splitting over summands
 -- TODO: cache the inclusion maps
 -- Strategies:
--- 1 => use expanded hom
--- 2 => use degrees of generators as heuristic to peel off line bundles first
-directSummands = method(Options => { Recursive => true, Tries => 0, Verbose => true, Strategy => 3, ExtendGroundField => null })
+-- 1 => use degrees of generators as heuristic to peel off line bundles first
+-- 2 => use Hom option DegreeLimit => 0
+-- 4 => use Hom option MinimalGenerators => false
+directSummands = method(Options => { Recursive => true, Tries => 0, Verbose => true, Strategy => 7, ExtendGroundField => null })
 directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> sort(
     checkRecursionDepth();
     -- Note: rank does weird stuff if R is not a domain
@@ -180,8 +174,8 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	M = changeBaseField(L, directSum cachedSummands M);
 	R = ring M);
     -- Attempt to peel off line bundles by observing the degrees of generators
-    if opts.Strategy & 2 == 2 then (
-	opts = opts ++ { Strategy => opts.Strategy ^^ 2 }; -- so we only try this once
+    if opts.Strategy & 1 == 1 then (
+	opts = opts ++ { Strategy => opts.Strategy ^^ 1 }; -- so we only try this once
 	if 0 < debugLevel then stderr << " -- peeling off rank 1 summands: " << flush;
 	L = directSummands(apply(-unique degrees M, d -> R^{d}), M, opts);
 	if 0 < debugLevel then stderr << endl << " -- split off " << #L - 1 << " summands!" << endl;
@@ -190,7 +184,9 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
     K := coker vars R;
     zdeg := degree 0_M;
     -- TODO: make "elapsedTime" contingent on verbosity
-    elapsedTime A := if opts.Strategy & 1 == 1 then Hom(M, M, zdeg) else End M; -- most time consuming step
+    elapsedTime A := Hom(M, M, -- most time consuming step
+	DegreeLimit       => if opts.Strategy & 2 == 2 then zdeg,
+	MinimalGenerators => if opts.Strategy & 4 == 4 then false);
     elapsedTime B := smartBasis(zdeg, A);
     -- FIXME: this currently does not find _all_ idempotents
     flag := true; -- whether all non-identity homomorphisms are zero mod m
@@ -238,8 +234,8 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     if 1 < #cachedSummands M then return sort flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
     zdeg := degree 0_M;
     -- we look for a composition L -> M -> L which is the identity
-    B := smartBasis(zdeg, Hom(L, M, zdeg));
-    C := smartBasis(zdeg, Hom(M, L, zdeg));
+    B := smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
+    C := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
     -- attempt to find a random isomorphism
     h := for i to opts.Tries - 1 do (
 	b := homomorphism(B * random source B);
@@ -289,48 +285,6 @@ diagonalize = M -> (
 --directSummands Complex := List => opts -> C -> () -- TODO: should be functorial
 
 -----------------------------------------------------------------------------
--- Hom in specific degrees
------------------------------------------------------------------------------
-
--- same, but without trim, which seems to be unnecessary if at least M is free!!
-Hom(Module, Module) := Module => (M,N) -> (
-    Y := youngest(M.cache.cache,N.cache.cache);
-    if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-    H := -* trim *- kernel (transpose presentation M ** N);
-    H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
-    Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
-    H.cache.formation = FunctionApplication { Hom, (M,N) };
-    H)
-
--- TODO: add DegreeLimit as an option to Hom instead
---Hom = method(Options => { DegreeLimit => null, MinimalGenerators => null })
--- finds submodule of Hom containing at least the homomorphisms of degree e
-Hom(Module, Module, ZZ)   := Module => (M, N, e) -> Hom(M, N, if e == 0 then degree 1_(ring M) else {e})
-Hom(Module, Module, List) := Module => (M, N, e) -> (
-    Y := youngest(M.cache.cache, N.cache.cache);
-    if Y#?(Hom, M, N, e) then return Y#(Hom, M, N, e);
-    A := presentation M; (G, F) := (target A, source A); -- M <-- G <-- F
-    B := presentation N; (L, K) := (target B, source B); -- N <-- L <-- K
-    piN := inducedMap(N, L, gens N);
-    -- TODO: the trim in Hom(target A, N) used to take 2/3 of total time
-    psi := (Hom(A, N) * Hom(G, piN)) // Hom(F, piN);
-    p := id_(Hom(G, L)) | map(Hom(G, L), Hom(F, K), 0);
-    r := syz(psi | -Hom(F, B), DegreeLimit => e);
-    --trim := if opts.MinimalGenerators then trim else identity;
-    Y#(Hom, M, N, e) =
-    -- TODO: trim used to take 1/3 of total time here
-    H := -*trim*- image(Hom(G, piN) * p * r);
-    H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f);
-    H.cache.formation = FunctionApplication { Hom, (M, N, e) };
-    H)
-
-sameVariety := Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
-
--- TODO: confirm this; also: can sheafHom be improved?
-Hom(CoherentSheaf, CoherentSheaf) := Module => (F, G) -> (
-    sameVariety(F, G); HH^0 sheaf(variety F, Hom(module F, module G, 0)))
-
------------------------------------------------------------------------------
 -* Test section *-
 -----------------------------------------------------------------------------
 
@@ -368,7 +322,7 @@ R = kk[x,y,z];
 n = 1000
 d = {100}
 elapsedTime smartBasis(0, Hom(R^n, R^d));
-elapsedTime smartBasis(0, Hom(R^n, R^d, 0));
+elapsedTime smartBasis(0, Hom(R^n, R^d, DegreeLimit => 0));
 
 
 --------
