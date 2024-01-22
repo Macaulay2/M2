@@ -54,17 +54,17 @@ export newFile(
 	     	       	        -- The text after this point may be combined with
 				-- subsequently printed nets.
         hadNet:bool,		-- whether a Net is present, in which case the
-	     	       	        -- buffer will be empty
+				-- buffer will be empty (actually just outbol == outindex)
 	nets:NetList,	        -- list of nets, to be printed after the outbuffer
         bytesWritten:int,       -- bytes written so far
 	lastCharOut:int,        -- when outbuffer empty, last character written, or -1 if none
         readline:bool,          -- input handled by readline()
-	fileThreadState:int     -- state of thread handling 
+	fileThreadMode:int      -- mode of thread sync handling
 ):file := ( 
 foss := newFileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut,false);
 --foss:= newDefaultFileOutputSyncState();
 m2f := newm2cfile(foss);
-Ccode(void,"M2File_SetThreadMode(",lvalue(m2f),",",fileThreadState,")");
+Ccode(void,"M2File_SetThreadMode(",lvalue(m2f),",",fileThreadMode,")");
 file(nextHash(), filename,pid,error,errorMessage,listener,listenerfd,connection,numconns,input,infd,inisatty,inbuffer,inindex,insize,eof,
 promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,newMutex,m2f)
 
@@ -88,11 +88,11 @@ export startFileOutput(o:file):void := (
 export endFileOutput(o:file):void := (
     Ccode(void,"M2File_EndOutput(",lvalue(o.cfile),")");
 );
-export setFileThreadState(o:file, state:int):void :=
+export setFileThreadMode(o:file, mode:int):void :=
 (
-	Ccode(void,"M2File_SetThreadMode(",lvalue(o.cfile),",state)")
+	Ccode(void,"M2File_SetThreadMode(",lvalue(o.cfile),",mode)")
 );
-export getFileThreadState(o:file):int := (
+export getFileThreadMode(o:file):int := (
     Ccode(int,"M2File_GetThreadMode(", lvalue(o.cfile), ")"));
 
 export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
@@ -416,6 +416,7 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
      endFileOutput(o);
      NOERROR);
 
+-- Add a string to foss.outbuffer, flushing if necessary, and updating outbol for flushnets().
 simpleout(o:file,x:string):int := (
      foss := getFileFOSS(o);
      i := 0;						    -- bytes of x transferred so far
@@ -439,6 +440,7 @@ simpleout(o:file,x:string):int := (
      releaseFileFOSS(o);
      NOERROR);
 
+-- Transfer any foss.nets to outbuffer, flushing as necessary.
 flushnets(o:file):int := (
      foss := getFileFOSS(o);
      if foss.hadNet then (
@@ -1021,9 +1023,9 @@ export setIOSynchronized(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0
-	  then (setFileThreadState(stdIO,1); setFileThreadState(stdError,1); nullE)
+	  then (setFileThreadMode(stdIO,1); setFileThreadMode(stdError,1); nullE)
 	  else WrongNumArgs(0, 1))
-     is f:file do (setFileThreadState(f, 1); nullE)
+     is f:file do (setFileThreadMode(f, 1); nullE)
      else WrongArg("a file or ()")
 );
 
@@ -1031,9 +1033,9 @@ export setIOExclusive(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0
-	  then (setFileThreadState(stdIO,2); setFileThreadState(stdError,2); nullE)
+	  then (setFileThreadMode(stdIO,2); setFileThreadMode(stdError,2); nullE)
 	  else WrongNumArgs(0, 1))
-     is f:file do (setFileThreadState(f, 2); nullE)
+     is f:file do (setFileThreadMode(f, 2); nullE)
      else WrongArg("a file or ()")
 );
 
@@ -1041,9 +1043,9 @@ export setIOUnSynchronized(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0
-	  then (setFileThreadState(stdIO,0); setFileThreadState(stdError,0); nullE)
+	  then (setFileThreadMode(stdIO,0); setFileThreadMode(stdError,0); nullE)
 	  else WrongNumArgs(0, 1))
-     is f:file do (setFileThreadState(f, 0); nullE)
+     is f:file do (setFileThreadMode(f, 0); nullE)
      else WrongArg("a file or ()")
 );
 
@@ -1051,9 +1053,9 @@ export getIOThreadMode(e:Expr):Expr := (
     when e
     is a:Sequence do (
 	if length(a) == 0
-	then toExpr(getFileThreadState(stdIO))
+	then toExpr(getFileThreadMode(stdIO))
 	else WrongNumArgs(0, 1))
-    is f:file do toExpr(getFileThreadState(f))
+    is f:file do toExpr(getFileThreadMode(f))
     else WrongArg("a file or ()"));
 
 -- Local Variables:

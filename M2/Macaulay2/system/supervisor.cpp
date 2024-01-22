@@ -16,7 +16,7 @@ const static int maxNumThreads = (numCores < 4) ? 4 : (16 < numCores ? 16 : numC
 // The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
 // There may be I/O bound threads, such as the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
 // number of cores plus the expected number of I/O bound threads.
-static int currentAllowedThreads = 2;
+static int currentAllowedThreads = 4;
 
 
 // The thread that the interpreter runs in.
