@@ -4,8 +4,7 @@ TEST /// -- basic test
   A = summands M
   B = summands prune M
   C = summands trim M
-  assert(A === {M})
-  assert same({prune M}, B, prune \ C)
+  assert same(A, {prune M}, B, prune \ C)
 ///
 
 TEST /// -- direct summands of a free module

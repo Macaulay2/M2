@@ -3,9 +3,10 @@
 generalEndomorphism = method()
 generalEndomorphism Module := M -> (
     R := ring M;
-    EndM := Hom(M, M, 0);
+    zdeg := toList(degreeLength R : 0);
+    EndM := Hom(M, M, zdeg);
     --EndM := End(M);
-    B := smartBasis(0, EndM);
+    B := smartBasis(zdeg, EndM);
     --r := rank source B;
     --if r == 1 then return "warning: End(M)_0 is 1-dimensional";
     --rm=length select(for i from 0 to r-1 list( unique apply(flatten entries homomorphism B_{i},j->j% ideal gens R) == {0}) ,k->k==false);
