@@ -3,14 +3,7 @@
 #include "finalize.hpp"
 #include "engine-includes.hpp"
 
-#include <atomic_ops.h>
-// AO_fetch_and_add1 is not available on some architectures (e.g., hppa)
-#ifndef AO_HAVE_fetch_and_add1
-  AO_INLINE AO_t AO_fetch_and_add1(volatile AO_t *addr)
-  {
-    return __atomic_fetch_add(addr, 1, __ATOMIC_RELAXED);
-  }
-#endif
+#include <atomic>
 
 #include "monideal.hpp"
 #include "comp-gb.hpp"
@@ -24,26 +17,26 @@
 #include "memdebug.h"
 #endif
 
-static volatile AO_t monideals_nfinalized = 0;
-static volatile AO_t monideals_nremoved = 0;
+static volatile std::atomic<int> monideals_nfinalized = 0;
+static volatile std::atomic<int> monideals_nremoved = 0;
 
-static volatile AO_t mutablematrices_nfinalized = 0;
-static volatile AO_t mutablematrices_nremoved = 0;
+static volatile std::atomic<int> mutablematrices_nfinalized = 0;
+static volatile std::atomic<int> mutablematrices_nremoved = 0;
 
-static volatile AO_t polyrings_nfinalized = 0;
-static volatile AO_t polyrings_nremoved = 0;
+static volatile std::atomic<int> polyrings_nfinalized = 0;
+static volatile std::atomic<int> polyrings_nremoved = 0;
 
-static volatile AO_t gbs_nfinalized = 0;
-static volatile AO_t gbs_nremoved = 0;
+static volatile std::atomic<int> gbs_nfinalized = 0;
+static volatile std::atomic<int> gbs_nremoved = 0;
 
-static volatile AO_t res_nfinalized = 0;
-static volatile AO_t res_nremoved = 0;
+static volatile std::atomic<int> res_nfinalized = 0;
+static volatile std::atomic<int> res_nremoved = 0;
 
-static volatile AO_t comp_nfinalized = 0;
-static volatile AO_t comp_nremoved = 0;
+static volatile std::atomic<int> comp_nfinalized = 0;
+static volatile std::atomic<int> comp_nremoved = 0;
 
-static volatile AO_t schorder_nfinalized = 0;
-static volatile AO_t schorder_nremoved = 0;
+static volatile std::atomic<int> schorder_nfinalized = 0;
+static volatile std::atomic<int> schorder_nremoved = 0;
 
 //////////////////////////////////////////////////////
 extern "C" void remove_monideal(void *p, void *cd)
@@ -52,9 +45,10 @@ extern "C" void remove_monideal(void *p, void *cd)
   p = M2_debug_to_inner(p);
 #endif
   MonomialIdeal *G = static_cast<MonomialIdeal *>(p);
-  AO_t nremoved = AO_fetch_and_add1(&monideals_nremoved);
+  std::atomic<int> nremoved = monideals_nremoved++;
   if (M2_gbTrace >= 3)
-    fprintf(stderr, "\n -- removing monomial ideal %zd at %p\n", nremoved, G);
+    fprintf(stderr, "\n -- removing monomial ideal %d at %p\n", nremoved.load(),
+            G);
   G->remove_MonomialIdeal();
 }
 void intern_monideal(MonomialIdeal *G)
@@ -64,11 +58,11 @@ void intern_monideal(MonomialIdeal *G)
 #else
   GC_REGISTER_FINALIZER(G,                    remove_monideal, 0, 0, 0);
 #endif
-  AO_t nfinalized = AO_fetch_and_add1(&monideals_nfinalized);
+  std::atomic<int> nfinalized = monideals_nfinalized++;
   if (M2_gbTrace >= 3)
     fprintf(stderr,
-            "\n   -- registering monomial ideal %zd at %p\n",
-            nfinalized,
+            "\n   -- registering monomial ideal %d at %p\n",
+            nfinalized.load(),
             (void *)G);
 }
 //////////////////////////////////////////////////////
@@ -107,9 +101,9 @@ extern "C" void remove_gb(void *p, void *cd)
   p = M2_debug_to_inner(p);
 #endif
   GBComputation *G = static_cast<GBComputation *>(p);
-  AO_t nremoved = AO_fetch_and_add1(&gbs_nremoved);
+  std::atomic<int> nremoved = gbs_nremoved++;
   if (M2_gbTrace >= 3)
-    fprintf(stderr, "\n --removing gb %zd at %p\n", nremoved, G);
+    fprintf(stderr, "\n --removing gb %d at %p\n", nremoved.load(), G);
   G->remove_gb();
 }
 void intern_GB(GBComputation *G)
@@ -119,7 +113,7 @@ void intern_GB(GBComputation *G)
 #else
   GC_REGISTER_FINALIZER_IGNORE_SELF(                  G , remove_gb, 0, 0, 0);
 #endif
-  AO_t nfinalized = AO_fetch_and_add1(&gbs_nfinalized);
+  std::atomic<int> nfinalized = gbs_nfinalized++;
   if (M2_gbTrace >= 3)
     {
       // -- there is no gettid under Solaris
@@ -127,7 +121,8 @@ void intern_GB(GBComputation *G)
       // fprintf(stderr, "\n   -- thread %d registering gb %zd at %p\n", tid,
       // nfinalized, (void *)G);
       fprintf(
-          stderr, "\n   -- registering gb %zd at %p\n", nfinalized, (void *)G);
+          stderr, "\n   -- registering gb %d at %p\n", nfinalized.load(),
+          (void *)G);
     }
 }
 //////////////////////////////////////////////////////
@@ -137,9 +132,9 @@ extern "C" void remove_res(void *p, void *cd)
   p = M2_debug_to_inner(p);
 #endif
   ResolutionComputation *G = static_cast<ResolutionComputation *>(p);
-  AO_t nremoved = AO_fetch_and_add1(&res_nremoved);
+  std::atomic<int> nremoved = res_nremoved++;
   if (M2_gbTrace >= 3)
-    fprintf(stderr, "\n -- removing res %zd at %p\n", nremoved, G);
+    fprintf(stderr, "\n -- removing res %d at %p\n", nremoved.load(), G);
   delete G;
 }
 void intern_res(ResolutionComputation *G)
@@ -149,10 +144,11 @@ void intern_res(ResolutionComputation *G)
 #else
   GC_REGISTER_FINALIZER(                  G , remove_res, 0, 0, 0);
 #endif
-  AO_t nfinalized = AO_fetch_and_add1(&res_nfinalized);
+  std::atomic<int> nfinalized = res_nfinalized++;
   if (M2_gbTrace >= 3)
     fprintf(
-        stderr, "\n   -- registering res %zd at %p\n", nfinalized, (void *)G);
+        stderr, "\n   -- registering res %d at %p\n", nfinalized.load(),
+        (void *)G);
 }
 //////////////////////////////////////////////////////
 extern "C" void remove_SchreyerOrder(void *p, void *cd)
@@ -161,9 +157,10 @@ extern "C" void remove_SchreyerOrder(void *p, void *cd)
   p = M2_debug_to_inner(p);
 #endif
   SchreyerOrder *G = static_cast<SchreyerOrder *>(p);
-  AO_t nremoved = AO_fetch_and_add1(&schorder_nremoved);
+  std::atomic<int> nremoved = schorder_nremoved++;
   if (M2_gbTrace >= 3)
-    fprintf(stderr, "\n -- removing SchreyerOrder %zd at %p\n", nremoved, G);
+    fprintf(stderr, "\n -- removing SchreyerOrder %d at %p\n", nremoved.load(),
+            G);
   G->remove();
 }
 void intern_SchreyerOrder(SchreyerOrder *G)
@@ -173,11 +170,11 @@ void intern_SchreyerOrder(SchreyerOrder *G)
 #else
   GC_REGISTER_FINALIZER(                  G , remove_SchreyerOrder, 0, 0, 0);
 #endif
-  AO_t nfinalized = AO_fetch_and_add1(&schorder_nfinalized);
+  std::atomic<int> nfinalized = schorder_nfinalized++;
   if (M2_gbTrace >= 3)
     fprintf(stderr,
-            "\n   -- registering SchreyerOrder %zd at %p\n",
-            nfinalized,
+            "\n   -- registering SchreyerOrder %d at %p\n",
+            nfinalized.load(),
             (void *)G);
 }
 //////////////////////////////////////////////////////
@@ -188,9 +185,10 @@ extern "C" void remove_MutableMatrix(void *p, void *cd)
   p = M2_debug_to_inner(p);
 #endif
   MutableMatrix *G = static_cast<MutableMatrix *>(p);
-  AO_t nremoved = AO_fetch_and_add1(&mutablematrices_nremoved);
+  std::atomic<int> nremoved = mutablematrices_nremoved++;
   if (M2_gbTrace >= 3)
-    fprintf(stderr, "\n -- removing mutable matrix %zd at %p\n", nremoved, G);
+    fprintf(stderr, "\n -- removing mutable matrix %d at %p\n", nremoved.load(),
+            G);
   G->~MutableMatrix();
 }
 MutableMatrix *internMutableMatrix(MutableMatrix *G)
@@ -201,11 +199,11 @@ MutableMatrix *internMutableMatrix(MutableMatrix *G)
 #else
   GC_REGISTER_FINALIZER(                  G,  remove_MutableMatrix, 0, 0, 0);
 #endif
-  AO_t nfinalized = AO_fetch_and_add1(&mutablematrices_nfinalized);
+  std::atomic<int> nfinalized = mutablematrices_nfinalized++;
   if (M2_gbTrace >= 3)
     fprintf(stderr,
-            "\n   -- registering mutable matrix %zd at %p\n",
-            nfinalized,
+            "\n   -- registering mutable matrix %d at %p\n",
+            nfinalized.load(),
             (void *)G);
   return G;
 }
