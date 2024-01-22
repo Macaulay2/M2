@@ -21,7 +21,6 @@ declarations "
   #define store_Field(x,val) AO_store(&(x).field,val)
   #endif
   ";
-export LockValue := atomicType "AO_TS_VAL_t";
 export LockField := atomicType "AO_TS_t";
 export atomicField := Type "struct atomic_field";
 export atomicFieldPointer := Pointer "struct atomic_field *";
@@ -38,11 +37,7 @@ export store(x:atomicFieldPointer,y:int) ::= store(contents(x),y);
 export toAtomicInt(x:bool) ::= Ccode(atomicInt,"((AO_t)",x,")");
 export store(x:atomicField,y:bool) ::= store(x,toAtomicInt(y));
 export store(x:atomicField,y:int) ::= store(x,atomicInt(y));
-export testAndSet(x:LockField) ::= Ccode(LockValue,"AO_test_and_set(&",x,")");
-export testSet() ::= Ccode(LockValue,"AO_TS_SET");
-export testClear() ::= Ccode(LockValue,"AO_TS_CLEAR");
 export newLockField() ::= Ccode(LockField,"AO_TS_INITIALIZER");
-export acquire(t:LockField) ::= while testAndSet(t) == testSet() do nothing;
 export release(t:LockField) ::= Ccode(void,"AO_CLEAR(&",t,")");
 export increment(x:atomicInt) ::= Ccode(atomicInt,"AO_fetch_and_add1(&(",x,"))");
 export compilerBarrier() ::= Ccode(void,"atomic_signal_fence(memory_order_seq_cst)");
