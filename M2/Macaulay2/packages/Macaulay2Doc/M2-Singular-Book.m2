@@ -496,7 +496,7 @@ document {
 	  "(gens K) % I"
 	  },
      "In Macaulay2, inclusion of ideals can be tested using ", TO (isSubset,Ideal,Ideal),
-     " and equality can be checked using ", TO (symbol==,Ideal,Ideal), ".  In both cases
+     " and equality can be checked using ", TO (symbol==,LeftIdeal,LeftIdeal), ".  In both cases
      the necessary Groebner bases are computed, if they have not already been computed.",
      EXAMPLE {
 	  "isSubset(K,I)",

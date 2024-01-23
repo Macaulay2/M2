@@ -86,9 +86,9 @@ document {
      }
 
 document {
-     Key => (euler,Ideal),
+     Key => (euler,LeftIdeal),
      "This needs to be documented.",
-     SeeAlso => {(eulers,Ideal),genus}
+     SeeAlso => {(eulers,LeftIdeal),genus}
      }
 
 document { 
@@ -130,7 +130,7 @@ document {
      SeeAlso => {genera,genus}
      }
 document { 
-     Key => (eulers,Ideal),
+     Key => (eulers,LeftIdeal),
      Usage => "eulers I",
      Inputs => {"I"
 	  },

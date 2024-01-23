@@ -53,7 +53,7 @@ document {
      SeeAlso => {monoid}
      }
 document { 
-     Key => (numgens,Ideal),
+     Key => (numgens,LeftIdeal),
      Headline => "number of generators of an ideal",
      Usage => "numgens I",
      Inputs => {
