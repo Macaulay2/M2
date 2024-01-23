@@ -87,6 +87,7 @@ export {
 	"Array",
 	"Ascending",
 	"AssociativeExpression",
+	"AtomicInt",
 	"Authors",
 	"AuxiliaryFiles",
 	"Bag",
