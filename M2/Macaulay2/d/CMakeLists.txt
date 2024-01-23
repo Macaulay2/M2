@@ -89,6 +89,7 @@ set(DLIST
   monomial_ordering.dd
   texmacs.d
   boostmath.dd
+  atomic2.d
   ffi.d		# removed unless WITH_FFI
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
