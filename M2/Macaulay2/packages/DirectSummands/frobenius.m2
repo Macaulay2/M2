@@ -87,7 +87,7 @@ decomposeFrobeniusPresentation = (e, f) -> (
 
 protect FrobeniusPushforward
 frobeniusPushforward = method()
-frobeniusPushforward(Thing, ZZ)   := (T, e) -> frobeniusPushforward(e, T)
+--frobeniusPushforward(Thing, ZZ)   := (T, e) -> frobeniusPushforward(e, T)
 frobeniusPushforward(ZZ, Ring)    := (e, R) -> frobeniusPushforward(e, module R)
 frobeniusPushforward(ZZ, Ideal)   := (e, I) -> frobeniusPushforward(e, quotient I)
 -- TODO: cache in a way that the second pushforward is the same as applying pushforward twice
@@ -114,6 +114,9 @@ frobeniusPushforward(ZZ, Matrix)  := (e, f) -> (
 
 frobeniusPushforward(ZZ, SheafOfRings)  := (e, N0) -> frobeniusPushforward(e, N0^1) -- TODO: is this cached?
 frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> (
+    if  N.cache#?(FrobeniusPushforward, e)
+    then N.cache#(FrobeniusPushforward, e)
+    else N.cache#(FrobeniusPushforward, e) = (
     R := ring N;
     p := char R;
     FN := first components frobeniusPushforward(e, module N);
@@ -124,10 +127,11 @@ frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> (
     (tardegs, srcdegs) := toSequence(-degrees Fmatrix // p^e);
     -- TODO: how long does this take? is it worth caching?
     sheaf prune coker map(R^tardegs, R^srcdegs, Fmatrix))
+    )
 
 protect FrobeniusPullback
 frobeniusPullback = method()
-frobeniusPullback(Thing, ZZ)  := (T, e) -> frobeniusPullback(e, T)
+--frobeniusPullback(Thing, ZZ)  := (T, e) -> frobeniusPullback(e, T)
 frobeniusPullback(ZZ, Module) := (e, M) -> (
     if  M.cache#?(FrobeniusPullback, e)
     then M.cache#(FrobeniusPullback, e)
