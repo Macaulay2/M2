@@ -12,6 +12,8 @@ using Exponent = int32_t;
 using Component = int32_t;
 
 // this feels more like specifying a base class than a concept...
+// TODO: once we go to c++20, enable the concept PolynomialStream
+#if 0  
 template <typename T>
 concept PolynomialStream = requires (T str,
                                      size_t count,
@@ -29,7 +31,8 @@ concept PolynomialStream = requires (T str,
   // testing to see if concept works
   // { str.dummy() } -> std::convertible_to<void>;
 };
-
+#endif
+  
 } // end namespace newf4
 
 // Local Variables:

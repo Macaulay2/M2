@@ -69,7 +69,8 @@ public:
   void idealDone();
 };
 
-template<newf4::PolynomialStream S>
+//template<newf4::PolynomialStream S>
+template<typename S>
 void toStream(const BasicPolyList& Fs, S &str)
 {
   str.idealBegin(Fs.size());

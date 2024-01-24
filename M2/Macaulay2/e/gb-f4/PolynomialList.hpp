@@ -256,7 +256,9 @@ public:
   void idealDone();
 };
 
-template<PolynomialStream S>
+// TODO: once we go to c++20, enable the concept PolynomialStream
+//template<PolynomialStream S>
+template<typename S>
 void toStream(const PolynomialList& Fs, S &str)
 {
   str.idealBegin(Fs.size());
