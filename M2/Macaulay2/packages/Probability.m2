@@ -18,8 +18,8 @@
 
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.3",
-    Date => "October 31, 2023",
+    Version => "0.4",
+    Date => "January 23, 2024",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -32,7 +32,11 @@ newPackage("Probability",
 
 -*
 
-0.3 (2023-10-31, M2 1.23)
+0.4 (2024-01-23, M2 1.23)
+* release under GPL
+* add keyword
+
+0.3 (2023-10-31, version submitted to JSAG)
 * add Caveats to docs warning user to ensure that pdf's are well-defined
 * use ASCII characters for chi-squared distribution
 * clarify in docs that the support of a discrete distribution will be a subset
