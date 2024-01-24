@@ -3,6 +3,8 @@
 use equality;
 use classes;
 
+header "#include <cassert>";
+
 dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
 export applyEEEpointer := dummyapplyEEE;
 

@@ -676,7 +676,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -690,7 +690,6 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
 # These three lists reflect dependencies, with prerequisites listed first, including the following dependencies:
 #    mathicgb needs mathic and memtailor
 #    mathic needs memtailor
-#    gc needs atomic_ops (and sometimes includes it)
 #    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
 #    libfac has been replaced by code in factory
 #    lapack includes blas, makes both libblas and liblapack
@@ -1393,16 +1392,6 @@ AC_SUBST(ULIMIT_S,yes)
 ( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 ( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
-
-if test $BUILD_atomic_ops = no
-then AC_MSG_CHECKING(whether package atomic_ops is provided)
-     if [ pkg-config --exists atomic_ops ]
-     then AC_MSG_RESULT(yes)
-	  CPPFLAGS="`pkg-config --cflags-only-I atomic_ops | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-     else AC_MSG_RESULT([no, will be built from downloaded sources])
-          BUILD_atomic_ops=yes
-     fi
-fi
 
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no

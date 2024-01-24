@@ -10,7 +10,7 @@ set -e
 xcode-select -p >/dev/null 2>&1 || xcode-select --install
 brew update | cat
 brew upgrade | cat
-brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm | cat
+brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libmpc libomp libtool make mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm | cat
 git describe --dirty --long --always --abbrev=40 --all
 gmake get-libtool
 gmake -f Makefile
