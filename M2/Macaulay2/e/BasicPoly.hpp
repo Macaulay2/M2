@@ -4,9 +4,10 @@
 #pragma once
 
 #include "exceptions.hpp"
-#include <string>
 #include <vector>
 #include <iosfwd>
+#include <string>
+#include <unordered_map>
   
 class BasicPoly
 {
@@ -46,16 +47,45 @@ public:
 // Simple parsing of polynomials //
 ///////////////////////////////////
 
+struct parsing_error : public exc::engine_error
+{
+  explicit parsing_error(const std::string &msg) : exc::engine_error(msg) {}
+};
+
+/// IdentifierHash: used to facilitate parsing of polynomials from strings and files
+class IdentifierHash
+{
+private:
+  std::vector<std::string> mAllocatedStrings;
+  std::unordered_map<std::string_view, int> mMap;
+public:
+  IdentifierHash() = default;
+  IdentifierHash(std::vector<std::string>& idens)
+    : mAllocatedStrings(idens),
+      mMap()
+  {
+    for (int i=0; i<mAllocatedStrings.size(); ++i)
+      {
+        mMap[std::string_view(mAllocatedStrings[i])] = i;
+      }
+  }
+
+  auto find(std::string_view s) const -> int
+  {
+    auto foundloc = mMap.find(s);
+    return (foundloc != mMap.end() ? foundloc->second : -1); // TODO: throw an error if not found?
+  }
+};
+
 // These will throw a parsing_error if there is a parsing error.  The
 // plan is that that will include the location in the string of the
 // error.
 
 BasicPoly parseBasicPoly(std::string poly, std::vector<std::string> varnames);
 
-struct parsing_error : public exc::engine_error
-{
-  explicit parsing_error(const std::string &msg) : exc::engine_error(msg) {}
-};
+/// This version is a potentially faster alternative when reading many polynomials
+void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash, BasicPoly& result);
+
 
 // TODO: we want an iterator type here.
 // TODO: 

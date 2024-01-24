@@ -1,6 +1,5 @@
 #include "BasicPolyListParser.hpp"
 
-#include <unordered_map>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -38,30 +37,6 @@ std::string_view next_line(std::string_view& str)
   return result;
 }
 
-class IdentifierHash
-{
-private:
-  std::vector<std::string> mAllocatedStrings;
-  std::unordered_map<std::string_view, int> mMap;
-public:
-  IdentifierHash() = default;
-  IdentifierHash(std::vector<std::string>& idens)
-    : mAllocatedStrings(idens),
-      mMap()
-  {
-    for (int i=0; i<mAllocatedStrings.size(); ++i)
-      {
-        mMap[std::string_view(mAllocatedStrings[i])] = i;
-      }
-    std::cout << "#variables is " << mMap.size() << std::endl;    
-  }
-
-  auto find(std::string_view s) const -> int
-  {
-    auto foundloc = mMap.find(s);
-    return (foundloc != mMap.end() ? foundloc->second : -1); // TODO: throw an error if not found?
-  }
-};
 
 // TODO: check for overflow
 // TODO: make a readCoefficient function

@@ -12,7 +12,6 @@ BasicPolyList parseMsolveFromString(std::string contents); // requires Msolve he
 BasicPolyList parseMsolveFile(std::string filename);
 
 BasicPolyList parseBasicPolyListFromString(std::string contents, std::vector<std::string> varnames);
-BasicPoly parseBasicPoly(std::string poly, std::vector<std::string> varnames);
 
 // Local Variables:
 // indent-tabs-mode: nil
