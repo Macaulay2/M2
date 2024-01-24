@@ -703,6 +703,15 @@ checkToExternalString hashTable {"a" => 1, "b" => 2, "c" => 3}
 checkToExternalString null
 ///
 
+TEST ///
+-- augmented assignment
+-- if x is a list, then x += y should modify x directly, i.e., its
+-- hash shouldn't change, unlike x = x + y, which would create a new list
+x = toPython {1, 2, 3}
+oldhash = hash x
+x += {4}
+assert Equation(hash x, oldhash)
+///
 
 -- not part of default testsuite since it requires numpy
 ///
