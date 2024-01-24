@@ -23,7 +23,8 @@ newPackage("Probability",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}})
+	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+    Keywords => {"Algebraic Statistics"})
 
 ---------------
 -- ChangeLog --
