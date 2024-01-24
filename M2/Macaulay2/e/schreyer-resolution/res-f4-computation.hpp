@@ -17,12 +17,14 @@ class F4ResComputation : public ResolutionComputation
   F4ResComputation(const PolynomialRing* origR,
                    ResPolyRing* R,
                    const Matrix* gbmatrix,
-                   int max_level);
+                   int max_level,
+                   int numThreads);
 
  public:
   friend ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                             int max_level,
-                                            int strategy);
+                                            int strategy,
+                                            int numThreads);
 
   virtual ~F4ResComputation();
 

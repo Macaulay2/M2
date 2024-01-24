@@ -24,7 +24,8 @@ long nres_destruct = 0;
  */
 ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                    int max_level,
-                                   int strategy)
+                                   int strategy,
+                                   int numThreads)
 {
   // We expect the following to hold:
   // the ring of groebnerBasisMatrix is a PolynomialRing, but not:
@@ -97,7 +98,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     {
       R = new ResPolyRing(K, MI, origR->getMonoid());
     }
-  auto result = new F4ResComputation(origR, R, groebnerBasisMatrix, max_level);
+  auto result = new F4ResComputation(origR, R, groebnerBasisMatrix, max_level, numThreads);
 
   // Set level 0
   // take the columns of the matrix, and insert them into mComp
@@ -171,12 +172,13 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
 F4ResComputation::F4ResComputation(const PolynomialRing* origR,
                                    ResPolyRing* R,
                                    const Matrix* gbmatrix,
-                                   int max_level)
+                                   int max_level,
+                                   int numThreads)
 
     : mOriginalRing(*origR),
       mInputGroebnerBasis(*gbmatrix),
       mRing(R),
-      mComp(new SchreyerFrame(*mRing, max_level))
+      mComp(new SchreyerFrame(*mRing, max_level), numThreads)
 {
   //  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need
   //  gbmatrix->rows() too

@@ -20,7 +20,7 @@ class F4Res
   friend class ResColumnsSorter;
 
  public:
-  F4Res(SchreyerFrame& res);
+  F4Res(SchreyerFrame& res, int numThreads);
 
   ~F4Res();
 
@@ -109,6 +109,9 @@ class F4Res
                                                // (lev,degree) in mColumns and
                                                // the lead terms in Row.
   MonomialMemorySpace mMonomSpace2;
+
+  int mNumThreads;
+  mtbb::task_arena mScheduler;
 };
 
 #endif

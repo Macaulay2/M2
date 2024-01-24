@@ -131,6 +131,13 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
     {
       test_over_RR_or_CC(m->get_ring());
       // Choose the correct computation here.
+      
+      // XXX
+
+      // Grab max number of threads (settable from the front end).
+      int numThreads = M2_numTBBThreads; // settable from front end.
+      //std::cout << "Using numThreads = " << numThreads << std::endl;
+      
       clear_emit_size();
       return ResolutionComputation::choose_res(m,
                                                resolve_cokernel,
@@ -138,7 +145,8 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                                use_max_slanted_degree,
                                                max_slanted_degree,
                                                algorithm,
-                                               strategy);
+                                               strategy,
+                                               numThreads);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

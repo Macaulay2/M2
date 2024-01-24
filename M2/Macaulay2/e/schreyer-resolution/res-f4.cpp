@@ -47,12 +47,17 @@ void testTasks()
 }
 #endif
 
-F4Res::F4Res(SchreyerFrame& res)
+F4Res::F4Res(SchreyerFrame& res, int numThreads)
     : mFrame(res),
       mRing(res.ring()),
       mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
-      mHashTable(mSchreyerRes.get(), 10)
+      mHashTable(mSchreyerRes.get(), 10),
+      mNumThreads(mtbb::numThreads(numThreads)),
+      mScheduler(mNumThreads)
 {
+  std::cout << "hardware tbb threads: " << tbb::info::default_concurrency() << std::endl;
+  std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
+  std::cout << "using " << mNumThreads << " threads" << std::endl;
 #if 0
   std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
   std::cout << "testing thread tasks" << std::endl;
@@ -582,6 +587,7 @@ void F4Res::gaussReduce()
   std::vector<bool> track(mReducers.size());
 
 #if defined(WITH_TBB)
+  std::cout << "about to do parallel gauss_reduce" << std::endl;
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
