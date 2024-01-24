@@ -27,7 +27,8 @@ authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, Ho
 binary   := set flexibleBinaryOperators
 prefix   := set flexiblePrefixOperators
 postfix  := set flexiblePostfixOperators
-operator := binary + prefix + postfix
+augmented := set augmentedAssignmentOperators
+operator := binary + prefix + postfix + augmented
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -305,6 +306,11 @@ getOperator := key -> if operator#?key then (
 	    PARA {"This operator may be used as a postfix unary operator in an expression like ", TT ("x" | op), ". ",
 		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
 	    PRE ("         X "|op|"   := (x) -> ..."),
+	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
+	if augmented#?key then {
+	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
+		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
+	    PRE ("         X "|op|" (x,y) -> ..."),
 	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}}
 	))
 

@@ -527,10 +527,10 @@ installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> (
      if numparms f =!= 2 and numparms f =!= -1 then error "expected assignment method to be a function of 2 arguments";
      installMethod((op,symbol =),Y,f))
 
-binaryOperators   = join(fixedBinaryOperators,    flexibleBinaryOperators)
+binaryOperators   = join(fixedBinaryOperators,    flexibleBinaryOperators, augmentedAssignmentOperators)
 prefixOperators   = join(fixedPrefixOperators,    flexiblePrefixOperators)
 postfixOperators  = join(fixedPostfixOperators,   flexiblePostfixOperators)
-flexibleOperators = join(flexibleBinaryOperators, flexiblePrefixOperators, flexiblePostfixOperators)
+flexibleOperators = join(flexibleBinaryOperators, flexiblePrefixOperators, flexiblePostfixOperators, augmentedAssignmentOperators)
 fixedOperators    = join(fixedBinaryOperators,    fixedPrefixOperators,    fixedPostfixOperators)
 allOperators      = join(fixedOperators, flexibleOperators)
 
@@ -710,6 +710,11 @@ show = method()
 registerFinalizer' = registerFinalizer
 registerFinalizer = method()
 registerFinalizer(Thing, String) := registerFinalizer'
+
+-- augmented assignment -- syntactic sugar for installing methods
+-- e.g., "T += f" is equivalent to "installMethod(symbol +=, T, f)"
+scan(augmentedAssignmentOperators, op ->
+    installMethod(op, Type, (T, f) -> installMethod(op, T, f)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -6,7 +6,7 @@ pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.6",
-    Date => "December 4, 2023",
+    Date => "January 24, 2024",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -27,11 +27,12 @@ newPackage("Python",
 
 -*
 
-0.6 (2023-12-04, M2 1.23)
+0.6 (2024-01-24, M2 1.23)
 * add expression, net, texMath, describe, and toExternalString methods
-* move initialization of python from M2 startup package load time
+* move initialization of python from M2 startup to package load time
 * update int <-> ZZ conversion for python 3.12
 * use a constant hash for None
+* add support for augmented assignment
 
 0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
@@ -302,6 +303,25 @@ scan({
 	    (lookup(op, PythonObject, PythonObject))(toPython x, y))
 	)
     )
+
+scan({
+	(symbol +=, "iadd"),
+	(symbol -=, "isub"),
+	(symbol *=, "imul"),
+	(symbol @=, "imatmul"),
+	(symbol /=, "itruediv"),
+	(symbol //=, "ifloordiv"),
+	(symbol %=, "imod"),
+	(symbol ^=, "ipow"),
+	(symbol <<=, "ilshift"),
+	(symbol >>=, "irshift"),
+	(symbol &=, "iand"),
+	(symbol |=, "ior"),
+	(symbol ^^=, "ixor")},
+    (op, name) -> installMethod(op, PythonObject, (x, y) -> (
+	    m := "__" | name | "__";
+	    if hasattr(x, m) then x@@m y
+	    else Default)))
 
 -PythonObject := o -> o@@"__neg__"()
 +PythonObject := o -> o@@"__pos__"()
@@ -684,6 +704,15 @@ checkToExternalString hashTable {"a" => 1, "b" => 2, "c" => 3}
 checkToExternalString null
 ///
 
+TEST ///
+-- augmented assignment
+-- if x is a list, then x += y should modify x directly, i.e., its
+-- hash shouldn't change, unlike x = x + y, which would create a new list
+x = toPython {1, 2, 3}
+oldhash = hash x
+x += {4}
+assert Equation(hash x, oldhash)
+///
 
 -- not part of default testsuite since it requires numpy
 ///

@@ -359,6 +359,8 @@ assignmentMethodP(meth:Expr):bool := (
 	  sym === LeftArrowS	    	-- symbol <- , which is an assignment operator in its own right  -- this should go away!!!
      	  ||
 	  sym === GlobalAssignS	        -- global assignment, dispatched internally (it's like    GlobalAssignHook X = (X,x) -> ...    )
+	  ||
+	  isAugmentedAssignmentOperatorWord(sym.symbol.word)
 	  )
      else false);
 

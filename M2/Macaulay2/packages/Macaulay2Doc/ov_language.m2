@@ -149,6 +149,7 @@ document {
 	  TO "viewing the symbols defined so far",
 	  TO "subscripted variables",
 	  TO "numbered variables",
+	  TO "augmented assignment"
 	  }
      }
 document {
@@ -1048,6 +1049,7 @@ postfixOperators := core "postfixOperators"
 flexibleBinaryOperators := core "flexibleBinaryOperators"
 flexiblePrefixOperators := core "flexiblePrefixOperators"
 flexiblePostfixOperators := core "flexiblePostfixOperators"
+augmentedAssignmentOperators := core "augmentedAssignmentOperators"
 allOperators := core "allOperators"
 getParsing := core "getParsing"
 
@@ -1066,13 +1068,14 @@ document {
      PARA {
 	  "Of those, the ones for which users may install new methods are ",
 	  "the binary operators ",
-	  between_" " apply(sort toList flexibleBinaryOperators, s -> TO {s}),
+	  between_" " apply(sort toList join(flexibleBinaryOperators,
+		  augmentedAssignmentOperators), s -> TO {s}),
 	  " , the unary prefix operators ",
 	  between_" " apply(sort toList flexiblePrefixOperators, s -> TO {s}),
 	  " , and the unary postfix operators ",
 	  between_" " apply(sort toList flexiblePostfixOperators, s -> TO {s}),
 	  " ."},
-     Subnodes => {
+     Subnodes => splice {
      "assignment",
 	  TO symbol = ,
 	  TO symbol := ,
@@ -1139,6 +1142,9 @@ document {
 	  TO symbol => ,
           TO symbol , ,
           TO symbol ;,
+     "augmented assignment",
+	 toSequence apply(sort toList augmentedAssignmentOperators,
+	     op -> TO op),
      "further information",
           TO "precedence of operators",
 	  TO "operatorAttributes"
