@@ -248,6 +248,7 @@ bumpPrecedence();
      export LongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==")); -- also binary
 bumpPrecedence();
      export orS := makeKeyword(binaryrightword("or"));
+     export QuestionQuestionS := makeKeyword(binaryright("??"));
 bumpPrecedence();
      export xorS := makeKeyword(binaryrightword("xor"));
 bumpPrecedence();
@@ -470,8 +471,8 @@ lookup(t:Token):void := lookup(t,true,false);
 lookuponly(t:Token):void := lookup(t,false,false);
 -----------------------------------------------------------------------------
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, 
-     LongBiDoubleArrowS, DeductionS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS,
+     LongBiDoubleArrowS, DeductionS, QuestionQuestionS,
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
