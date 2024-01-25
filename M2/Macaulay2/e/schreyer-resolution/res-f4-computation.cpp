@@ -178,7 +178,7 @@ F4ResComputation::F4ResComputation(const PolynomialRing* origR,
     : mOriginalRing(*origR),
       mInputGroebnerBasis(*gbmatrix),
       mRing(R),
-      mComp(new SchreyerFrame(*mRing, max_level), numThreads)
+      mComp(new SchreyerFrame(*mRing, max_level, numThreads))
 {
   //  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need
   //  gbmatrix->rows() too

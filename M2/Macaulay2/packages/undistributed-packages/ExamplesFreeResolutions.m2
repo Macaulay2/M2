@@ -1013,3 +1013,18 @@ F.dd
 peek M.cache
 debug Core
 peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
+
+-----------------------------------
+-- Some benchmark examples for testing parallelism of Schreyer res code.
+
+  -- I = Grassmannian(2, 5, CoefficientRing => ZZ/101)
+  -- I = Grassmannian(1, 6, CoefficientRing => ZZ/101)
+
+  I = Grassmannian(1, 7, CoefficientRing => ZZ/101)
+  R = ring I
+  gbTrace=2
+  elapsedTime minimalBetti(I, DegreeLimit => 2)
+  elapsedTime minimalBetti(I)
+  numgens I
+  numgens ring I
+  hilbertSeries I

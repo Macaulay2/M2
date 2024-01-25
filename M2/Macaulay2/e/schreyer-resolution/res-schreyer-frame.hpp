@@ -79,7 +79,7 @@ class SchreyerFrame
   typedef SchreyerFrameTypes::PreElement PreElement;
 
   // Construct an empty frame
-  SchreyerFrame(const ResPolyRing& R, int max_level);
+  SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads);
 
   // Destruct the frame
   ~SchreyerFrame();
@@ -273,7 +273,9 @@ class SchreyerFrame
   // this is a separate class because there could be several of these, running
   // in parallel.
 
+  int mNumThreads;
 #if defined(WITH_TBB)  
+  mtbb::task_arena mScheduler;
   DependencyGraph mDepGraph;
 #endif
   

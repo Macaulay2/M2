@@ -78,7 +78,8 @@ class F4ResComputation : public ResolutionComputation
 
 ResolutionComputation* createF4Res(const Matrix* m,
                                    int max_level,
-                                   int strategy);
+                                   int strategy,
+                                   int numThreads);
 
 #endif
 

@@ -47,17 +47,12 @@ void testTasks()
 }
 #endif
 
-F4Res::F4Res(SchreyerFrame& res, int numThreads)
+F4Res::F4Res(SchreyerFrame& res)
     : mFrame(res),
       mRing(res.ring()),
       mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
-      mHashTable(mSchreyerRes.get(), 10),
-      mNumThreads(mtbb::numThreads(numThreads)),
-      mScheduler(mNumThreads)
+      mHashTable(mSchreyerRes.get(), 10)
 {
-  std::cout << "hardware tbb threads: " << tbb::info::default_concurrency() << std::endl;
-  std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
-  std::cout << "using " << mNumThreads << " threads" << std::endl;
 #if 0
   std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
   std::cout << "testing thread tasks" << std::endl;

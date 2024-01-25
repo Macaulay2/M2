@@ -54,15 +54,17 @@ class PreElementSorter
 long PreElementSorter::ncmps = 0;
 };
 
-SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
+SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads)
     : mRing(R),
       mState(Initializing),
       mCurrentLevel(0),
       mSlantedDegree(0),
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
-      mComputer(new F4Res(*this))
+      mComputer(new F4Res(*this)),
+      mNumThreads(mtbb::numThreads(numThreads))
 #if defined(WITH_TBB)
+    , mScheduler(mNumThreads)
     , mDepGraph(this)
 #endif      
 {
@@ -77,6 +79,10 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
   timeResetHashTable = 0.0;
   timeComputeRanks = 0.0;
   timeComputeSparseRanks = 0.0;
+
+  std::cout << "hardware tbb threads: " << tbb::info::default_concurrency() << std::endl;
+  std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
+  std::cout << "using " << mNumThreads << " threads" << std::endl;
 }
 
 // Destruct the frame
