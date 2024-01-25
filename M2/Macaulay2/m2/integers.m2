@@ -98,6 +98,21 @@ changeBase(String, ZZ)     := ZZ     => changeBase0
 changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
     changeBase(changeBase(s, oldbase), newbase))
 
+-----------------------------------------------------------------------------
+-- AtomicInt
+-----------------------------------------------------------------------------
+
+AtomicInt.synonym = "atomic integer"
+
+store = method()
+store(AtomicInt, ZZ) := atomicStore
+
+exchange = method()
+exchange(AtomicInt, ZZ) := atomicExchange
+
+compareExchange = method()
+compareExchange(AtomicInt, ZZ, ZZ) := atomicCompareExchange
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
