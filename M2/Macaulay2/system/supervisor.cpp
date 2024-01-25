@@ -336,8 +336,8 @@ void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
   task->m_Mutex.lock();
   if(task->m_CurrentThread)
     {
-      atomic_store(&task->m_CurrentThread->m_Interrupt->field,true);
-      atomic_store(&task->m_CurrentThread->m_Exception->field,true);
+      atomic_store(&task->m_CurrentThread->m_Interrupt->field, 1);
+      atomic_store(&task->m_CurrentThread->m_Exception->field, 1);
     }
   task->m_KeepRunning=false;
   task->m_Mutex.unlock();
@@ -432,7 +432,7 @@ void SupervisorThread::threadEntryPoint()
 	  std::this_thread::sleep_for(1s);
 	  continue;
 	}
-      atomic_store(&m_Interrupt->field,false);
+      atomic_store(&m_Interrupt->field, 0);
       struct ThreadTask* task = threadSupervisor->getTask();
       task->run(this);
     }
