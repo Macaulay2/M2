@@ -24,7 +24,8 @@ header "#include <iostream>
 	boost::multiprecision::detail::digits2_2_10(prec));              \\
     return gmp_toRR(boost::math::f(__VA_ARGS__).backend().data(), prec); \\
   } catch (const std::exception& e) {                                    \\
-    std::cout << e.what() << std::endl;                                  \\
+      if (!(*((char*)TS_Get_Local(stdiop_SuppressErrors_id))))           \\
+        std::cout << e.what() << std::endl;                              \\
     return nullptr;                                                      \\
   }";
 
