@@ -604,17 +604,17 @@ void F4Res::gaussReduce()
   // Reduce to zero every spair. Recording creates the
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
-  // allocate a dense row, of correct size
-  ElementArray gauss_row = mRing.vectorArithmetic().allocateElementArray(
-      static_cast<ComponentIndex>(mColumns.size()));
   //  std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null")
   //  << std::endl;
   //  std::cout << "gauss_row size: " << mRing.vectorArithmetic().size(gauss_row) <<
   //  std::endl;
 
 #if defined(WITH_TBB)
-  size_t chunk_size = std::max(mSPairs.size() / (100*tbb::info::default_concurrency()), (size_t) 1);
-  mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size(),chunk_size},
+  //size_t chunk_size = std::max(mSPairs.size() / (100*mFrame.getNumThreads()), (size_t) 1);
+  //mFrame.getScheduler().execute([this,&chunk_size,&onlyConstantMaps,&track,&threadLocalDense] {
+  mFrame.getScheduler().execute([this,&onlyConstantMaps,&track,&threadLocalDense] {
+  //mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size(),chunk_size},
+  mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size()},
                     [&](const mtbb::blocked_range<int>& r)
                     {
                       //std::cout << "gauss reduce, " << r.begin() << "..<" << r.end() << " total: " << mSPairs.size() << std::endl;
@@ -623,9 +623,14 @@ void F4Res::gaussReduce()
                         gaussReduceRow(i, my_dense, onlyConstantMaps, track);
                       }
                     });
+  });
+
   for (auto tlDense : threadLocalDense)
     mRing.vectorArithmetic().deallocateElementArray(tlDense);
 #else  
+  // allocate a dense row, of correct size
+  ElementArray gauss_row = mRing.vectorArithmetic().allocateElementArray(
+      static_cast<ComponentIndex>(mColumns.size()));
   for (long i = 0; i < mSPairs.size(); i++)
     {
       gaussReduceRow(i, gaussRow, onlyConstantMaps, track);

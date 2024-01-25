@@ -277,6 +277,10 @@ class SchreyerFrame
 #if defined(WITH_TBB)  
   mtbb::task_arena mScheduler;
   DependencyGraph mDepGraph;
+
+  mtbb::task_arena& getScheduler() { return mScheduler; }
+  int getNumThreads() { return mNumThreads; }
+
 #endif
   
  public:
