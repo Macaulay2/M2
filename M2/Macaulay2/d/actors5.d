@@ -1873,6 +1873,20 @@ foreach s in syms do storeInHashTable(
 storeE = nullE;
 syms = SymbolSequence();
 
+makeMethodSymbol(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is HashTable do (
+		when a.1
+		is s:stringCell do Expr(makeMethodSymbol(s.v))
+		else WrongArgString(2))
+	    else WrongArg(1, "a hash table"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+installMethod(NewFromS, methodSymbolClass, stringClass, makeMethodSymbol);
+
 export fileDictionaries := newHashTable(mutableHashTableClass,nothingClass);
 setupconst("fileDictionaries",Expr(fileDictionaries));
 
