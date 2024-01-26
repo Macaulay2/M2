@@ -289,7 +289,7 @@ Expressions:
 
 	export a := b				export a variable or function (by declaring it in *.sig)
 	import a				import a variable (used mainly in *.sig files)
-	thread a := b				declare a thread local variable
+	threadLocal a := b			declare a thread local variable
 
 	f(x,y)					function application
 	when e 					examine e

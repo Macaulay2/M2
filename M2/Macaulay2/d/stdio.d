@@ -415,7 +415,7 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
      endFileOutput(o);
      NOERROR);
 
--- Add a string to foss.outbuffer, flushing if necessary, and updating outbol for flushnets().
+-- Add a string to foss.outbuffer, flushing on overflow, and updating outbol for flushnets().
 simpleout(o:file,x:string):int := (
      foss := getFileFOSS(o);
      i := 0;						    -- bytes of x transferred so far
@@ -439,7 +439,7 @@ simpleout(o:file,x:string):int := (
      releaseFileFOSS(o);
      NOERROR);
 
--- Transfer any foss.nets to outbuffer, flushing as necessary.
+-- Transfer any foss.nets to outbuffer, flushing on overflow.
 flushnets(o:file):int := (
      foss := getFileFOSS(o);
      if foss.hadNet then (
