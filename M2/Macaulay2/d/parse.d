@@ -85,7 +85,8 @@ export Symbol := {		    -- symbol table entry for a symbol
      Protected:bool,	            -- whether protected against assignment by the user
      flagLookup:bool,		    -- whether to warn when symbol is used
      thread:bool,		    -- whether to use threadFrame instead of globalFrame
-     serialNumber:int		    -- a counter, used to tell the age for the Serialization package
+     serialNumber:int,		    -- a counter, used to tell the age for the Serialization package
+     Class:HashTable
      };
 export SymbolListCell := {word:Word, entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;

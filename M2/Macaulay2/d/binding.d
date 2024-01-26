@@ -110,7 +110,8 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):
 	       false,				      -- not protected
 	       false,
 	       thread,
-	       nextHash()
+	       nextHash(),
+	       symbolClass
 	       ),
 	  dictionary.symboltable));
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
