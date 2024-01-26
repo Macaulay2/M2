@@ -25,14 +25,14 @@ update(err:Error,prefix:string,f:Code):Error := (
      else printErrorMessage0(f,prefix + ": --backtrace update-- ")
      );
 previousLineNumber := -1;
-
-BeforeEval := makeProtectedSymbolClosure("BeforeEval");
-AfterEval := makeProtectedSymbolClosure("AfterEval");
-BeforePrint := makeProtectedSymbolClosure("BeforePrint");
-Print := makeProtectedSymbolClosure("Print");
-NoPrint := makeProtectedSymbolClosure("NoPrint");
-AfterPrint := makeProtectedSymbolClosure("AfterPrint");
-AfterNoPrint := makeProtectedSymbolClosure("AfterNoPrint");
+ 
+BeforeEval := makeMethodSymbol("BeforeEval");
+AfterEval := makeMethodSymbol("AfterEval");
+BeforePrint := makeMethodSymbol("BeforePrint");
+Print := makeMethodSymbol("Print");
+NoPrint := makeMethodSymbol("NoPrint");
+AfterPrint := makeMethodSymbol("AfterPrint");
+AfterNoPrint := makeMethodSymbol("AfterNoPrint");
 runmethod(methodname:SymbolClosure,g:Expr):Expr := (
      method := lookup(Class(g),methodname);
      if method == nullE then g else applyEE(method,g)
@@ -297,8 +297,8 @@ readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      setGlobalVariable(fileExitHooks,savefe);
      if lastexiterror != dummyError then Expr(lastexiterror) else ret);
 
-InputPrompt := makeProtectedSymbolClosure("InputPrompt");
-InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
+InputPrompt := makeMethodSymbol("InputPrompt");
+InputContinuationPrompt := makeMethodSymbol("InputContinuationPrompt");
 
 promptcount := 0;
 topLevelPrompt():string := (

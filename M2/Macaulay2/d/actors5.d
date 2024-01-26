@@ -1688,7 +1688,7 @@ readonlyfilesS := dummySymbol;
 setupconst("minExponent",toExpr(minExponent));
 setupconst("maxExponent",toExpr(maxExponent));
 
-StandardS := makeProtectedSymbolClosure("Standard");
+StandardS := makeMethodSymbol("Standard");
 export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
 topLevelModeS := dummySymbol;

@@ -4,7 +4,7 @@ use getline;
 use util;
 use evaluate;
 
-TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
+TeXmacsEvaluate := makeMethodSymbol("TeXmacsEvaluate");
 
 export topLevelTeXmacs():int := (
      unsetprompt(stdIO);

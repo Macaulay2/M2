@@ -345,10 +345,10 @@ bumpPrecedence();
      special("threadVariable",unarythread,precSpace,prec);
      special("local",unarylocal,precSpace,prec);
 -----------------------------------------------------------------------------
-export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");
+export GlobalAssignS := makeMethodSymbol("GlobalAssignHook");
 export GlobalAssignE := Expr(GlobalAssignS);
 
-export GlobalReleaseS := makeProtectedSymbolClosure("GlobalReleaseHook");
+export GlobalReleaseS := makeMethodSymbol("GlobalReleaseHook");
 export GlobalReleaseE := Expr(GlobalReleaseS);
 
 export EqualE := Expr(EqualS);
@@ -361,19 +361,19 @@ export GreaterE := Expr(GreaterS);
 export GreaterEqualE := Expr(GreaterEqualS);
 export incomparableE := Expr(incomparableS);
 
-export NewS := makeProtectedSymbolClosure("NewMethod");
+export NewS := makeMethodSymbol("NewMethod");
 export NewE := Expr(NewS);
 
-export NewOfS := makeProtectedSymbolClosure("NewOfMethod");
+export NewOfS := makeMethodSymbol("NewOfMethod");
 export NewOfE := Expr(NewOfS);
 
-export NewFromS := makeProtectedSymbolClosure("NewFromMethod");
+export NewFromS := makeMethodSymbol("NewFromMethod");
 export NewFromE := Expr(NewFromS);
 
-export NewOfFromS := makeProtectedSymbolClosure("NewOfFromMethod");
+export NewOfFromS := makeMethodSymbol("NewOfFromMethod");
 export NewOfFromE := Expr(NewOfFromS);
 
-export InverseS := makeProtectedSymbolClosure("InverseMethod");
+export InverseS := makeMethodSymbol("InverseMethod");
 export InverseE := Expr(InverseS);
 
 export StopIterationS := makeProtectedSymbolClosure("StopIteration");
