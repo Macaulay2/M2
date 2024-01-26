@@ -152,12 +152,23 @@ thingMethods := (T, F) -> nonnull apply(pairs T, (key, func) -> if instance(func
     if isUnaryAssignmentOperator key and isMember(F,        key) then (key, T) else -- unary assignment method, e.g symbol=
     if instance(key, Sequence)       and isMember(F, splice key) then  key)
 
+-- unary methods that are installed using a symbol as a key
+symbolMethods = set {
+    AfterEval,
+    AfterNoPrint,
+    AfterPrint,
+    Format,
+    InverseMethod,
+    NewMethod,
+    Wrap}
+
 sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if instance(func, Function) then
     if isBinaryAssignmentOperator key and tallyF <= tally splice  key     then  key     else -- e.g T#((symbol SPACE, symbol=), T, T)
     if  isUnaryAssignmentOperator key and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol+, symbol=)
     if instance(key, Keyword)         and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol #)
     if instance(key, Function)        and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#resolution
-    if instance(key, Sequence)        and tallyF <= tally         key     then  key)
+    if instance(key, Sequence)        and tallyF <= tally         key     then  key     else
+    if isMember(key, symbolMethods)   and tallyF <= tally splice (key, T) then (key, T))
 
 methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
 methods Manipulator := M -> methods class M

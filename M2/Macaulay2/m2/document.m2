@@ -21,7 +21,8 @@ currentDocumentTag = null
 reservedNodeNames := {"Top", "Table of Contents"}
 
 -- TODO: handle this in methods from code.m2
-methodNames := set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, Ext, Tor}
+methodNames := set {
+    NewFromMethod, NewOfFromMethod, NewOfMethod, id, Ext, Tor} + symbolMethods
 
 -----------------------------------------------------------------------------
 -- Local utilities
