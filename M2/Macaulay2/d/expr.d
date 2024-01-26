@@ -203,28 +203,9 @@ export emptySequence := Sequence();
 
 export emptySequenceE := Expr(emptySequence);
 
-export dummySymbol := Symbol(
-     Word("-*dummy symbol*-",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
-     dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-     Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
-     false,						    -- not protected, so we can use it in parallelAssignmentFun
-     false,
-     false,
-     0
-     );
-dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
-globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
-export dummyToken   := Token(
-     Word("-*dummy token*-",TCnone,0,newParseinfo()),
-     dummyPosition.filename,
-     dummyPosition.line,
-     dummyPosition.column,
-     dummyPosition.loadDepth,
-     Macaulay2Dictionary,dummySymbol,false);
-
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 
 export dummyWord    := Word("-*dummy word*-",TCnone,0,newParseinfo());
@@ -337,6 +318,24 @@ export RRiClass := newbignumbertype();
 export pointerClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
+export dummySymbol := Symbol(
+     Word("-*dummy symbol*-",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
+     dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
+     Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
+     false,						    -- not protected, so we can use it in parallelAssignmentFun
+     false,
+     false,
+     0
+     );
+dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
+globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
+export dummyToken   := Token(
+     Word("-*dummy token*-",TCnone,0,newParseinfo()),
+     dummyPosition.filename,
+     dummyPosition.line,
+     dummyPosition.column,
+     dummyPosition.loadDepth,
+     Macaulay2Dictionary,dummySymbol,false);
 
 --Error Handling 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
