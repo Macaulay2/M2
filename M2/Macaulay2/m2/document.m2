@@ -211,7 +211,7 @@ fixup DocumentTag := DocumentTag => tag -> (
 
 prefix := set flexiblePrefixOperators
 
-fSeq := new HashTable from {
+fSeq := new HashTable from splice {
     (4, NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
     (3, NewFromMethod  ) => s -> ("new ", toString s#1,                       " from ", toString s#2),
     (3, NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
@@ -243,6 +243,8 @@ fSeq := new HashTable from {
     (2, symbol _*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    apply(augmentedAssignmentOperators, op -> (2, op) => s ->
+	(toString s#1, " ", toString op, " Thing")),
 
     -- ScriptedFunctors
     (4, class, ScriptedFunctor, ZZ) => s -> (
