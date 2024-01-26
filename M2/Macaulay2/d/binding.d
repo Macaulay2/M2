@@ -138,6 +138,11 @@ makeKeyword(w:Word):SymbolClosure := (
      globalFrame.values.(entry.frameindex) = Expr(sc);
      sc);
 export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
+export makeMethodSymbol(s:string):SymbolClosure := (
+    sc := makeProtectedSymbolClosure(s);
+    sc.symbol.Class = methodSymbolClass;
+    sc);
+
 -----------------------------------------------------------------------------
 --Counter used for initializing precedence of different things in the parser
 prec := 0;
