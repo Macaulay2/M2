@@ -63,7 +63,7 @@ export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- 
 threadLocal HadError := false;
 
 
-export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
+export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
      while dictionary.Protected do (
 	  if dictionary == dictionary.outerDictionary then (
 	       -- shouldn't occur
@@ -75,13 +75,6 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
 	  );
      frameindex := 0;
      if dictionary.frameID == 0 then (
-
-	  -- if locallyCreated && !dictionary.LocalCreationAllowed then (
-	  --      printErrorMessage(position,"creation of implicitly global symbol in a local scope: " + word.name);
-	  --      HadError = true;
-	  --      -- make it anyway, so we don't get two error messages for the same variable
-	  --      );
-
 	  if thread then (
 	       -- threadFrame grows whenever an assignment occurs, if needed, so we don't enlarge it now
 	       frameindex = threadFramesize;
@@ -121,14 +114,12 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
 	       ),
 	  dictionary.symboltable));
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     makeEntry(word,position,dictionary,false,false));
-export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
-     entry := makeEntry(word,position,dictionary,thread,locallyCreated);
+     makeEntry(word,position,dictionary,false));
+export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
+     entry := makeEntry(word,position,dictionary,thread);
      if dictionary.frameID == 0 && isvalidsymbol(word.name) && !thread
      then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
      entry);
-export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
-     makeSymbol(word,position,dictionary,thread,false));
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      makeSymbol(word,position,dictionary,false));
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
@@ -452,16 +443,8 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  else (
 	       if forcedef
 	       then (
-
-		    -- if t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0 then (
-		    -- 	 printErrorMessage(t,"creation of implicitly global symbol in a local scope: " + t.word.name);
-		    -- 	 HadError = true;
-		    -- 	 -- make it anyway, so we don't get two error messages for the same variable
-		    -- 	 );
-
-		    locallyCreated := t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0;
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
-		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread,locallyCreated);
+		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread);
 		    )
 	       else (
 	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
