@@ -153,6 +153,8 @@ embrace = n -> (
      d := depth n;
      horizontalJoin("{"^(h,d), n, "}"^(h,d)))
 
+new MethodSymbol from "Wrap"
+
 VerticalList = new SelfInitializingType of List
 VerticalList.synonym = "vertical list"
 net VerticalList := x -> if #x === 0 then "{}" else embrace stack apply(x,net)

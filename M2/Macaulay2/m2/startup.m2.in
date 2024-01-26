@@ -451,6 +451,9 @@ replaced := (arg, x) -> (stderr << "error: command line option " << arg << " has
 notyeterr := arg     -> (stderr << "error: command line option " << arg << " has not been re-implemented yet.";   << endl << endl; usage(); exit 1)
 notyet := arg -> if phase == 1 then (stderr << "warning: command line option " << arg << " has not been re-implemented yet." << endl << flush)
 
+new MethodSymbol from "WebApp"
+new MethodSymbol from "TeXmacs"
+
 action := hashTable {
      "-h" => arg -> (usage(); exit 0),
      "-mpwprompt" => notyeterr,
@@ -482,11 +485,11 @@ action := hashTable {
      "--restarted" => arg -> restarted = true,
      "--texmacs" => arg -> (
 	  if phase == 1 then (
-	       topLevelMode = global TeXmacs;
+	       topLevelMode = TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 3 then (
-	       topLevelMode = global TeXmacs;
+	       topLevelMode = TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 4 then (
@@ -501,7 +504,7 @@ action := hashTable {
 	       )
 	  ),
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; ),
-     "--webapp" => arg -> ( printWidth=0; topLevelMode = global WebApp; )
+     "--webapp" => arg -> ( printWidth=0; topLevelMode = WebApp; )
      };
 
 argno := 1

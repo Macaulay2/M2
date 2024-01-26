@@ -32,6 +32,8 @@ truncNet := (wid,ht,s) -> (
 truncString := (wid,s) -> if wid > 0 and width s > wid then concatenate(substring(s,0,wid-1),"$") else s
 checkNet    := n -> if instance(n, Net   ) then n else error "didn't format correctly"
 checkString := n -> if instance(n, String) then n else error "didn't format correctly"
+
+new MethodSymbol from "Format"
 Nothing.Format = toString
 String.Format = format
 silentRobustNet = (wid,ht,sec,y) -> (
@@ -136,7 +138,7 @@ Thing#{Standard,Print} = x -> (
      save := printWidth;
      if printWidth != 0 then printWidth = printWidth - #oprompt;
      z := robustNet x;
-     wrapper := lookup(global Wrap,class x);
+     wrapper := lookup(Wrap,class x);
      if wrapper =!= null then (
 	  fun := () -> z = wrapper z;
 	  try timelimit(printingTimeLimit, fun)
