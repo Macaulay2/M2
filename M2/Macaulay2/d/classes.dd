@@ -139,7 +139,7 @@ export Class(e:Expr):HashTable := (
      is Sequence do sequenceClass
      is CompiledFunction do compiledFunctionClass
      is CompiledFunctionClosure do compiledFunctionClosureClass
-     is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
+     is s:SymbolClosure do s.symbol.Class
      is SymbolBody do symbolBodyClass
      is RRicell do RRiClass
      is RRcell do RRClass

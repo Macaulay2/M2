@@ -133,6 +133,7 @@ makeKeyword(w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
      entry := makeEntry(w,dummyPosition,globalDictionary);
      entry.Protected = true;
+     entry.Class = keywordClass;
      sc := SymbolClosure(globalFrame,entry);
      globalFrame.values.(entry.frameindex) = Expr(sc);
      sc);
