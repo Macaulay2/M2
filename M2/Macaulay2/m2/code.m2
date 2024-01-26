@@ -156,6 +156,7 @@ sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if in
     if isBinaryAssignmentOperator key and tallyF <= tally splice  key     then  key     else -- e.g T#((symbol SPACE, symbol=), T, T)
     if  isUnaryAssignmentOperator key and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol+, symbol=)
     if instance(key, Keyword)         and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol #)
+    if instance(key, MethodSymbol)    and tallyF <= tally splice (key, T) then (key, T) else -- e.g T.NewMethod
     if instance(key, Function)        and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#resolution
     if instance(key, Sequence)        and tallyF <= tally         key     then  key)
 
