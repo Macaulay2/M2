@@ -288,6 +288,7 @@ export {
 	"MethodFunctionBinary",
 	"MethodFunctionSingle",
 	"MethodFunctionWithOptions",
+	"MethodSymbol",
 	"MinimalGenerators",
 	"MinimalMatrix",
 	"Minimize",

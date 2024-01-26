@@ -316,6 +316,7 @@ export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableCom
 export angleBarListClass := newtypeof(visibleListClass);
 export RRiClass := newbignumbertype();
 export pointerClass := newbasictype();
+export methodSymbolClass := newtypeof(symbolClass);
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 export dummySymbol := Symbol(

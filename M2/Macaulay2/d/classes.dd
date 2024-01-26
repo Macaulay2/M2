@@ -61,6 +61,7 @@ setupconst("CompiledFunction",Expr(compiledFunctionClass));
 setupconst("CompiledFunctionClosure",Expr(compiledFunctionClosureClass));
 setupconst("Symbol",Expr(symbolClass));
 setupconst("Keyword",Expr(keywordClass));
+setupconst("MethodSymbol",Expr(methodSymbolClass));
 setupconst("Time",Expr(timeClass));
 setupconst("Option",Expr(optionClass));
 setupconst("OptionTable",Expr(optionTableClass));
