@@ -21,7 +21,7 @@ currentDocumentTag = null
 reservedNodeNames := {"Top", "Table of Contents"}
 
 -- TODO: handle this in methods from code.m2
-methodNames := set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, Ext, Tor}
+methodNames := set {id, Ext, Tor}
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -45,9 +45,9 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
     else if #key == 1 and not instance(key#0, Function)
     then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
     else if #key  > 1
-    and not any({Keyword, Command, Function, ScriptedFunctor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
+    and not any({Keyword, Command, Function, ScriptedFunctor, MethodSymbol}, type -> instance(key#0, type)) and not methodNames#?(key#0)
     and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
-    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, or keyword");
+    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, keyword, or method symbol");
     --
     if  isUnaryAssignmentOperator key           -- e.g., ((?, =), Type), or (?, =)
     or isBinaryAssignmentOperator key then true -- e.g., ((?, =), Type, Type)
