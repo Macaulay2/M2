@@ -22,6 +22,7 @@ String.synonym = "string"
 File.synonym = "file"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
+MethodSymbol.synonym = "method symbol"
 Dictionary.synonym = "dictionary"
 -- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
 Task.synonym = "task"
