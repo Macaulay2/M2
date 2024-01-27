@@ -211,6 +211,12 @@ fixup DocumentTag := DocumentTag => tag -> (
 
 prefix := set flexiblePrefixOperators
 
+typicalValue := k -> (
+    if  typicalValues#?k     then typicalValues#k
+    else if instance(k, Sequence)
+    and typicalValues#?(k#0) then typicalValues#(k#0)
+    else Thing)
+
 fSeq := new HashTable from splice {
     (4, NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
     (3, NewFromMethod  ) => s -> ("new ", toString s#1,                       " from ", toString s#2),
@@ -244,7 +250,7 @@ fSeq := new HashTable from splice {
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     apply(augmentedAssignmentOperators, op -> (2, op) => s ->
-	(toString s#1, " ", toString op, " Thing")),
+	(toString s#1, " ", toString op, " ", toString typicalValue(op, s#1))),
 
     -- ScriptedFunctors
     (4, class, ScriptedFunctor, ZZ) => s -> (
@@ -472,12 +478,6 @@ processSignature := (tag, fn) -> item -> (
     else {TT {toString optsymb, " => ..."}};
     SPAN nonnull deepSplice between_", " nonnull nonempty result)
 
-
-typicalValue := k -> (
-    if  typicalValues#?k     then typicalValues#k
-    else if instance(k, Sequence)
-    and typicalValues#?(k#0) then typicalValues#(k#0)
-    else Thing)
 
 getSignature := method(Dispatch => Thing)
 getSignature Thing    := x -> ({},{})
