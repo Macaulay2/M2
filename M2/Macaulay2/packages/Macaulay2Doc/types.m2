@@ -451,6 +451,37 @@ document {
      SeeAlso => {"precedence of operators"}
      }
 
+doc ///
+  Key
+    MethodSymbol
+    (NewFromMethod, MethodSymbol, String)
+  Headline
+    the class of all method symbols
+  Usage
+    new MethodSymbol from x
+  Inputs
+    x:String
+  Outputs
+    :MethodSymbol
+  Description
+    Text
+      A method symbol is special type of @TO Symbol@ that is used as a
+      key in a @TO Type@ to store a method.  Note that this is not
+      typical, as the keys for methods created by @TO installMethod@
+      are @TO MethodFunction@ objects or sequences containing such
+      objects.  However, there are some exceptions like @TO NewMethod@
+      and @TO AfterPrint@.
+
+      Methods stored using a method symbol will appear when running
+      @TO methods@ on a type.
+    Example
+      X = new Type of HashTable;
+      new MethodSymbol from "foo"
+      X.foo = () -> 1;
+      X.bar = () -> 2;
+      methods X
+///
+
 document { Key => ImmutableType,
      Headline => "the class of immutable types",
      "All types are implemented as hash tables.  Most types are mutable, so that additional methods for handling their instances can be added
