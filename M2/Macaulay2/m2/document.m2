@@ -494,6 +494,8 @@ getSignature Sequence := x -> (
 	-- for "new T from x", T is already known, so we just care about x
 	else if x#0 === NewFromMethod
 	then ( {x#2}         , { typicalValue x } )
+	else if isMember(x#0, augmentedAssignmentOperators)
+	then (append(x', typicalValue x), {typicalValue x})
 	else ( x'            , { typicalValue x } )))
 
 isOption := opt -> instance(opt, Option) and #opt == 2 and instance(opt#0, Symbol);
