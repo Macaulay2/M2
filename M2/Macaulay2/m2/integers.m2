@@ -104,6 +104,9 @@ changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
 
 AtomicInt.synonym = "atomic integer"
 
+scan({symbol +=, symbol -=, symbol &=, symbol |=, symbol ^^=},
+    op -> typicalValues#(op, AtomicInt) = ZZ)
+
 store = method()
 store(AtomicInt, ZZ) := atomicStore
 
