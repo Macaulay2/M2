@@ -285,7 +285,8 @@ fSeq := new HashTable from {
 	    if t#?1 and t#1===Type then "type of ", toString s#2, ")")),
     2 => s -> (
 	t := if methodOptions s#0 =!= null then (methodOptions s#0).Dispatch else {Thing, Thing};
-	(toString s#0, "(",
+	if instance(s#0, MethodSymbol) then (toString s#1, ".", toString s#0)
+	else (toString s#0, "(",
 	    if t===Type or instance(t,List) and t#?0 and t#0===Type then "type of ", toString s#1, ")")),
     1 => s -> (toString s#0, "()"),
     }
