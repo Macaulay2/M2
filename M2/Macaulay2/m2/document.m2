@@ -491,6 +491,9 @@ getSignature Sequence := x -> (
 	and #x#0 === 2 and x#0#1 === symbol=
 	or  #x   === 2 and x#0   === symbol<-
 	then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
+	-- for "new T from x", T is already known, so we just care about x
+	else if x#0 === NewFromMethod
+	then ( {x#2}         , { typicalValue x } )
 	else ( x'            , { typicalValue x } )))
 
 isOption := opt -> instance(opt, Option) and #opt == 2 and instance(opt#0, Symbol);
