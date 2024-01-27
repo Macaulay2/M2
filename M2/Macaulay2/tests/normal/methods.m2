@@ -120,3 +120,9 @@ assert ( chainComplex (new X, FOO => 123 ) === (new OptionTable from {FOO => 123
 assert ( chainComplex (new X) === (new OptionTable from {FOO => BAR},new X from {}) )
 chainComplex X := identity
 assert( chainComplex (new X) === new X )
+
+X = new Type of BasicList
+new MethodSymbol from "foo"
+X.foo = () -> 1
+X.bar = () -> 2
+assert(toList methods X === {(foo, X)})
