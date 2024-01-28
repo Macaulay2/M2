@@ -76,6 +76,8 @@ assert Equation(5 % RObject 2, RObject 1)
 assert Equation(RObject 5 // RObject 2, RObject 2)
 assert Equation(RObject 5 // 2, RObject 2)
 assert Equation(5 // RObject 2, RObject 2)
+assert Equation(RObject 5 ?? RObject 2, RObject 5)
+assert Equation(RObject null ?? RObject 2, RObject 2)
 ///
 
 TEST ///
