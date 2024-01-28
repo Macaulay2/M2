@@ -1246,7 +1246,13 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     is null do buildErrorPacket("unknown augmented assignment operator")
     is s:Symbol do (
 	-- evaluate the left-hand side first
-	left := evaluatedCode(eval(x.lhs), dummyPosition);
+	lexpr := nullE;
+	if s.word.name === "??" -- null coalescion; ignore errors
+	then (
+	    if tryEval(x.lhs, toexprstarstar(tryEvalPointer))
+	    then lexpr = getExpr(tryEvalPointer))
+	else lexpr = eval(x.lhs);
+	left := evaluatedCode(lexpr, dummyPosition);
 	when left.expr is e:Error do return Expr(e) else nothing;
 	-- check if user-defined method exists
 	meth := lookup(Class(left.expr),
