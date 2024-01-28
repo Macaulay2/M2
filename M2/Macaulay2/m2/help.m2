@@ -24,7 +24,7 @@ lastabout := null
 
 authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
 
-binary   := set flexibleBinaryOperators
+binary   := set flexibleBinaryOperators - {symbol ??}
 prefix   := set flexiblePrefixOperators
 postfix  := set flexiblePostfixOperators
 augmented := set augmentedAssignmentOperators
