@@ -779,7 +779,8 @@ Node
     Work on the type @TO SheafMap@ and related algorithms began at a Macaulay2
     @HREF{"https://aimath.org/pastworkshops/macaulay2efie.html", "workshop"}@ at the
     @HREF{"https://aimath.org", "American Institute of Mathematics"}@ in September 2023.
---Contributors
+  Contributors
+    @HREF("https://www3.nd.edu/~craicu/", "Claudiu Raicu")@ contributed to the development of this package.
   SeeAlso
     "Schubert2::Schubert2"
     "GKMVarieties::GKMVarieties"
