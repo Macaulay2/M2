@@ -118,7 +118,7 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      -* line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z); *-
 			      hush = false;
 			      error toString stack(line1,commentGuard line2 -*,commentGuard line3 *- ))));
-	       if not Thing#?op then (
+	       if not Thing#?op and op =!= symbol ?? then (
 		    undocumented' (op, Thing);
 		    installMethod(op, Thing, (x) -> (
 			      line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to object:");
