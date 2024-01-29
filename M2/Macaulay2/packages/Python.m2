@@ -329,7 +329,7 @@ scan({
 abs PythonObject := o -> o@@"__abs__"()
 PythonObject~ := o -> o@@"__invert__"()
 
-installMethod(symbol ??, PythonObject, x -> if x != pythonNone then x)
+?? PythonObject := x -> if x != pythonNone then x
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 

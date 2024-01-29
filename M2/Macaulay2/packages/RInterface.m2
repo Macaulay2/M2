@@ -430,7 +430,7 @@ scan({
 	installMethod(m2f, RObject, Thing, rf);
 	installMethod(m2f, Thing, RObject, rf)))
 
-installMethod(symbol ??, RObject, x -> if TYPEOF x > 0 then x)
+?? RObject := x -> if TYPEOF x > 0 then x
 
 load "./RInterface/test.m2"
 load "./RInterface/doc.m2"
