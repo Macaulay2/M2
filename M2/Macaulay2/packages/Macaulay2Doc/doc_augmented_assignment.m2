@@ -160,11 +160,18 @@ doc ///
       @VAR "x"@ or @TO null@
     Example
       X = new Type of BasicList;
-      installMethod(symbol ??, X, x -> if #x > 0 then x);
+      ?? X := x -> if #x > 0 then x;
       x = new X from {};
       y = new X from {5};
       x ?? y
       y ?? x
+    Text
+      It is also possible to use @VAR "??"@ as a prefix operator to call
+      this method.
+    Example
+      ?? 2
+      ?? x
+      ??(1/0)
   Caveat
     Although this operator is "flexible" in the sense that it possible to
     install a method to determine the behavior on the left-hand side, it
