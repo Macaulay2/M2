@@ -2081,22 +2081,24 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 
 applyEEEpointer = applyEEE;
 
-nullCoalescion(lhs:Code,rhs:Code):Expr := (
-    if tryEval(lhs, toexprstarstar(tryEvalPointer))
+nullify(c:Code):Expr := (
+    if tryEval(c, toexprstarstar(tryEvalPointer))
     then (
 	e := getExpr(tryEvalPointer);
 	when e
-	is Nothing do eval(rhs)
+	is Nothing do e
 	else (
 	    f := lookup(Class(e), QuestionQuestionS);
 	    if f == nullE then e
-	    else (
-		r := applyEE(f, e);
-		when r
-		is Nothing do eval(rhs)
-		else r)))
-    else eval(rhs));
-setup(QuestionQuestionS, nullCoalescion);
+	    else applyEE(f, e)))
+    else nullE);
+
+nullCoalescion(lhs:Code,rhs:Code):Expr := (
+    e := nullify(lhs);
+    when e
+    is Nothing do eval(rhs)
+    else e);
+setup(QuestionQuestionS, nullify, nullCoalescion);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "
