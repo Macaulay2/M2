@@ -10,15 +10,26 @@
 ---------------------------------------------------------------------------
 newPackage(
     "Varieties",
-    Date     => "12 Jan 2024",
+    Date     => "29 Jan 2024",
     Version  => "0.2",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
-	{ Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",  HomePage => "https://math.umn.edu/~mahrud/" },
-        { Name => "Keller VandeBogert", Email => "kvandebo@nd.edu", HomePage => "https://sites.google.com/view/kellervandebogert/home" },
-	{ Name => "Devlin Mallory",     Email => "malloryd@math.utah.edu", HomePage => "https://www.math.utah.edu/~malloryd/" },
-	{ Name => "Ritvik Ramkumar",    Email => "ritvikr@cornell.edu", HomePage => "https://sites.google.com/view/ritvikramkumar/" }
+	{   Name => "Devlin Mallory",
+	    Email => "malloryd@math.utah.edu",
+	    HomePage => "https://www.math.utah.edu/~malloryd/" },
+	{   Name => "Ritvik Ramkumar",
+	    Email => "ritvikr@cornell.edu",
+	    HomePage => "https://sites.google.com/view/ritvikramkumar/" },
+	{   Name => "Mahrud Sayrafi",
+	    Email => "mahrud@umn.edu",
+	    HomePage => "https://math.umn.edu/~mahrud/" },
+	{   Name => "Gregory G. Smith",
+	    Email => "ggsmith@mast.queensu.ca",
+	    HomePage => "https://www.mast.queensu.ca/~ggsmith"},
+	{   Name => "Keller VandeBogert",
+	    Email => "kvandebo@nd.edu",
+	    HomePage => "https://sites.google.com/view/kellervandebogert/home"}
 	},
     PackageExports => {
 	"Complexes",
