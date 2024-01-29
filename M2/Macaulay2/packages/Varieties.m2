@@ -36,6 +36,7 @@ newPackage(
 	"Truncations",
 	},
     PackageImports => {
+	"Isomorphism",
 	},
     AuxiliaryFiles => true
     )
@@ -358,6 +359,7 @@ dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(
 CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> hilbertPolynomial F === hilbertPolynomial G and module prune F == module prune G
 CoherentSheaf == ZZ            := Boolean => (F, z) -> if z == 0 then dim module F <= 0 else error "attempted to compare sheaf to nonzero integer"
 ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
+-- isIsomorphic is defined in SheafMaps.m2 because we return the isomorphism as well
 
 -- arithmetic ops
 CoherentSheaf.directSum = args -> (
