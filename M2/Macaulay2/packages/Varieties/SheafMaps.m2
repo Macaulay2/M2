@@ -93,7 +93,18 @@ cover   SheafMap := SheafMap => f -> sheafMap cover   matrix f
 ambient SheafMap := SheafMap => f -> sheafMap ambient matrix f
 super   SheafMap := SheafMap => f -> sheafMap super   matrix f
 
--- TODO: add SheafMap == SheafMap
+-- TODO: using regularity in places won't suffice in the multigraded case,
+-- and multigradedRegularity may not be optimal. What should this and other
+-- methods that truncate the base module do instead?
+SheafMap == SheafMap := Boolean => (psi, phi) -> (
+    f := if psi.cache.?minimalPresentation then psi.cache.minimalPresentation.map else psi.map;
+    g := if phi.cache.?minimalPresentation then phi.cache.minimalPresentation.map else phi.map;
+    if f == g then return true;
+    r := max(
+	regularity target f, regularity source f,
+	regularity target g, regularity source g);
+    truncate(r, psi.map) == truncate(r, phi.map))
+
 SheafMap == ZZ := Boolean => (f, z) -> image f == z
 ZZ == SheafMap := Boolean => (z, f) -> image f == z
 
@@ -672,8 +683,8 @@ TEST ///
   S = QQ[x_0..x_2];
   X = Proj S
   --TODO: check if things have already been pruned
-  f = sheafMap(truncate(2,vars S))
-  prune f
+  f = sheafMap(truncate(2, vars S))
+  assert(f == prune f)
   assert all(4, i -> HH^i(f) == Ext^i(OO_X^1, f))
   assert all(4, i -> HH^i(f(1)) == Ext^i(OO_X^1(-1), f))
   
@@ -696,6 +707,7 @@ TEST ///
   X = Proj S
   K = dual ker vars S
   f = prune sheafMap dual wedgeProduct(1,1,K)
+  assert(f == prune f)
   --needsPackage "BGG"
   --cohomologyTable(source f, -5,5)
   assert(source HH^2 f == HH^2 source f)
@@ -707,7 +719,8 @@ TEST ///
   S = kk[x_0..x_2]
   X = Proj S
   K = ker vars S
-  f = prune sheafMap wedgeProduct(1,1,K)
+  f = sheafMap wedgeProduct(1,1,K)
+  assert(f == prune f)
   assert(HH^2 f == 1)
   assert(HH^3 f == 0)
 
