@@ -1132,6 +1132,7 @@ document {
           TO symbol || ,
           TO symbol @ ,
           TO symbol ^^ ,
+          TO symbol ?? ,
           TO symbol |- ,
           TO symbol <==> ,
           TO symbol ===> ,
