@@ -404,13 +404,18 @@ Node
   exclusive I/O for the current thread
  Usage
   setIOExclusive()
+  setIOExclusive f
+ Inputs
+  f:File
  Consequences
   Item
-   the current thread becomes the only one permitted to use the files @ TO stdio @ and @ TO stderr @
+   the current thread becomes the only one permitted to use the file @VAR "f"@,
+   or if no file is given, the files @ TO stdio @ and @ TO stderr @.
  SeeAlso
   "parallel programming with threads and tasks"
   setIOUnSynchronized
   setIOSynchronized
+  getIOThreadMode
 Node
  Key
   setIOSynchronized
@@ -418,15 +423,21 @@ Node
   synchronized I/O for threads
  Usage
   setIOSynchronized()
+  setIOSynchronized f
+  getIOThreadMode
+ Inputs
+  f:File
  Consequences
   Item
-   threads are permitted to use the files @ TO stdio @ and @ TO stderr @ to output complete lines only
+   threads are permitted to use the file @VAR "f"@, or if no file is given,
+   @ TO stdio @ and @ TO stderr @, to output complete lines only
  Caveat
    this function is experimental
  SeeAlso
   "parallel programming with threads and tasks"
   setIOUnSynchronized
   setIOExclusive
+  getIOThreadMode
 Node
  Key
   setIOUnSynchronized
@@ -434,11 +445,38 @@ Node
   unsynchronized I/O for threads
  Usage
   setIOUnSynchronized()
+  setIOUnSynchronized f
+  getIOThreadMode
+ Inputs
+  f:File
  Consequences
   Item
-   threads are permitted to use the files @ TO stdio @ and @ TO stderr @ in an unregulated manner
+   threads are permitted to use the file @VAR "f"@, or if no file is given,
+   @ TO stdio @ and @ TO stderr @, in an unregulated manner
  SeeAlso
   "parallel programming with threads and tasks"
+  setIOSynchronized
+  setIOExclusive
+Node
+ Key
+  getIOThreadMode
+ Headline
+  get I/O thread mode
+ Usage
+  getIOThreadMode()
+  getIOThreadMode f
+ Inputs
+  f:File
+ Consequences
+  Item
+   returns the I/O thread mode for the file @VAR "f"@, or if no file is given,
+   @TO stdio@, as an integer:
+   @UL {
+       "0 for unsynchronized",
+       "1 for synchronized",
+       "2 for exclusive"}@
+ SeeAlso
+  setIOUnSynchronized
   setIOSynchronized
   setIOExclusive
 Node
