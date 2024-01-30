@@ -43,6 +43,48 @@ print (currentTime()-c)
 -- to come before the files d/*.o on the linker command line.
 assert ( maxAllowableThreads != 0 )
 
+-- thread modes
+restoremode = i -> (
+    if i == 0 then setIOUnSynchronized()
+    else if i == 1 then setIOSynchronized()
+    else if i == 2 then setIOExclusive()
+    else error "unknown thread mode")
+
+origmode = getIOThreadMode()
+
+setIOExclusive()
+setIOUnSynchronized()
+assert Equation(getIOThreadMode(), 0)
+assert Equation(getIOThreadMode stdio, 0)
+assert Equation(getIOThreadMode stderr, 0)
+
+setIOSynchronized()
+assert Equation(getIOThreadMode(), 1)
+assert Equation(getIOThreadMode stdio, 1)
+assert Equation(getIOThreadMode stderr, 1)
+
+setIOExclusive()
+assert Equation(getIOThreadMode(), 2)
+assert Equation(getIOThreadMode stdio, 2)
+assert Equation(getIOThreadMode stderr, 2)
+
+restoremode origmode
+
+fn = temporaryFileName()
+f = fn << "foo" << close
+
+setIOExclusive f
+setIOUnSynchronized f
+assert Equation(getIOThreadMode f, 0)
+
+setIOSynchronized f
+assert Equation(getIOThreadMode f, 1)
+
+setIOExclusive f
+assert Equation(getIOThreadMode f, 2)
+
+removeFile fn
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
 -- End:
