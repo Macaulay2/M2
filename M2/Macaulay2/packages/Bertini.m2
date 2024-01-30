@@ -200,6 +200,7 @@ export {
 
 DBG = 0 -- debug level (10=keep temp files)
 BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
+BERTINIderandomize = member("--no-randomize",commandLine)
 --needsPackage"NAGtypes"
 needsPackage "SimpleDoc"
      storeBM2Files = temporaryFileName();
@@ -615,7 +616,9 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 
     f << "CONFIG\n\n";-- starting the config section of the input file
 
-    -- for each user-provided option, we write the appropriate config to the file:
+    if BERTINIderandomize then f << "RANDOMSEED: 12345;\n";  
+
+    -- for each user-provided option, we write the appropriate config to the file:    
     scan(o.BertiniInputConfiguration,i->f<<(toString first i) <<": "<<(toString last i)<<" ;\n");
     -- now we handle the various runType options:
 
@@ -1541,6 +1544,7 @@ makeB'InputFile(String) := o ->(IFD)->(
      openedInputFile <<  endl  << "% This input file was written with the Bertini.m2 Macaulay2 package." << endl<<endl;
 --The first part of a Bertini input file is the configurations.  We write the configurations followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file.
      openedInputFile << "CONFIG" << endl << endl;
+     if BERTINIderandomize then f << "RANDOMSEED: 12345;\n";  
      for oneConfig in o.BertiniInputConfiguration do (
        if class oneConfig===Option
        then openedInputFile << toUpper toString((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
