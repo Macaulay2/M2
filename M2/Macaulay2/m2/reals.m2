@@ -242,7 +242,6 @@ truncate Number := {} >> o -> x -> (
     if x >= 0 then floor x
     else if x < 0 then ceiling x
     else 0) -- e.g., RRi's containing 0 as interior pt
-truncate Constant := {} >> o -> truncate @@ numeric
 
 random RR := RR => opts -> x -> x * rawRandomRR precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
@@ -276,7 +275,7 @@ lngamma RR := x -> (
      (y,s) := lgamma x;
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
-lngamma ZZ := lngamma QQ := lngamma Constant := lngamma @@ numeric
+lngamma Number := lngamma @@ numeric
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
@@ -442,27 +441,22 @@ isInfinite InfiniteNumber := x -> true
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
-acosh Constant := acosh @@ numeric
 asinh = method()
 asinh Number := z -> log(z+sqrt(z^2+1))
-asinh Constant := asinh @@ numeric
 atanh = method()
 atanh Number := z -> log((1+z)/(1-z))/2
-atanh Constant := atanh @@ numeric
 acoth = method()
 acoth Number := z -> atanh(1/z)
-acoth Constant := acoth @@ numeric
 acot = method()
 acot Number := z -> atan(1/z)
-acot Constant := acot @@ numeric
 
 BesselJ' = BesselJ
 BesselJ = method()
-BesselJ(ZZ, Number) := BesselJ(ZZ, Constant) := (n, x) -> BesselJ'(n, numeric x)
+BesselJ(ZZ, Number) := (n, x) -> BesselJ'(n, numeric x)
 
 BesselY' = BesselY
 BesselY = method()
-BesselY(ZZ, Number) := BesselY(ZZ, Constant) := (n, x) -> BesselY'(n, numeric x)
+BesselY(ZZ, Number) := (n, x) -> BesselY'(n, numeric x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

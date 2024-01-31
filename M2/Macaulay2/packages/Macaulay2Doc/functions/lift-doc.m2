@@ -44,8 +44,6 @@ document {
       (lift, RRi, ZZ),
 	  (symbol ^, Number, Ring),
 	  (symbol ^, Number, RingFamily),
-	  (symbol ^, Constant, Ring),
-	  (symbol ^, Constant, RingFamily),
       (lift,Matrix,RRi',QQ),
       (lift,Matrix,RRi',RR'),
       (lift,Matrix,RRi',ZZ)
