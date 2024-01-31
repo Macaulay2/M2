@@ -1,5 +1,3 @@
-#if defined(WITH_TBB)
-
 #include "res-dep-graph.hpp"
 #include "res-schreyer-frame.hpp"
 #include "res-f4.hpp"
@@ -70,6 +68,7 @@ TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
                                   //           << sldeg << " sum=" << lev + sldeg << std::endl;
                                   // }
                                   
+				  // commented out for now, will work on this later.
                                   // int rk = mFrame->rank(sldeg,lev);
 
 				  std::lock_guard<std::mutex> guard(mMutex);
@@ -162,4 +161,3 @@ void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, 
           }
       }
 }
-#endif // WITH_TBB

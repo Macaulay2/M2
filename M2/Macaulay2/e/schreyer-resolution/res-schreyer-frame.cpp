@@ -181,6 +181,13 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       // computeFrame()
     }
 
+#if defined(WITH_TBB)
+  // build the dependency graph
+  makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree,true);
+  mDepGraph.startComputation();
+  mDepGraph.waitForCompletion();
+#endif
+
   // What needs to be computed?
   // lodeg..hideg, level: 0..maxlevel.  Note: need to compute at level
   // maxlevel+1 in order to get min betti numbers at
@@ -250,7 +257,14 @@ void SchreyerFrame::start_computation(StopConditions& stop)
   if (stop.stop_after_degree and mHiSlantedDegree > stop.degree_limit->array[0])
     top_slanted_degree = stop.degree_limit->array[0];
 
+#if defined(WITH_TBB)
+  // build the dependency graph
+  makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree,false);
+  mDepGraph.startComputation();
+  mDepGraph.waitForCompletion();
+#else
   computeSyzygies(top_slanted_degree, mMaxLength);
+#endif
 
   if (M2_gbTrace >= 1)
     {
@@ -899,7 +913,13 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
       std::cout << "construct(" << slanted_deg << ", " << lev << ")..."
                 << std::flush;
     }
-  mComputer->construct(lev, slanted_deg + lev);
+
+  // experimenting whether building/destroying local computers
+  // are expensive
+  F4Res thisComputer {*this};
+  thisComputer.construct(lev, slanted_deg + lev);
+  //mComputer->construct(lev, slanted_deg + lev);
+
   status = 2;
 
   if (M2_gbTrace >= 2)
