@@ -144,9 +144,8 @@ toJSON(JSONEncoder, RR)      := o -> (e, x) -> format(0, x)
 toJSON(JSONEncoder, ZZ)      :=
 toJSON(JSONEncoder, Boolean) :=
 toJSON(JSONEncoder, Nothing) := o -> (e, x) -> toString x
-toJSON(JSONEncoder, QQ)       :=
-toJSON(JSONEncoder, Constant) :=  o -> (e, x) -> toJSON(e, numeric x)
-toJSON(JSONEncoder, Symbol) := o -> (e, x) -> (
+toJSON(JSONEncoder, Number)  := o -> (e, x) -> toJSON(e, numeric x)
+toJSON(JSONEncoder, Symbol)  := o -> (e, x) -> (
     if x === nil then "null" else error("unknown symbol"))
 
 maybeNewline = method()
