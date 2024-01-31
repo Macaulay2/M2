@@ -183,9 +183,11 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
 
 #if defined(WITH_TBB)
   // build the dependency graph
-  makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree,true);
-  mDepGraph.startComputation();
-  mDepGraph.waitForCompletion();
+  mScheduler.execute([&] {
+     makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree,true);
+     mDepGraph.startComputation();
+     mDepGraph.waitForCompletion();
+  });
 #endif
 
   // What needs to be computed?
@@ -259,9 +261,11 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 
 #if defined(WITH_TBB)
   // build the dependency graph
-  makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree,false);
-  mDepGraph.startComputation();
-  mDepGraph.waitForCompletion();
+  mScheduler.execute([&] {
+     makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree,false);
+     mDepGraph.startComputation();
+     mDepGraph.waitForCompletion();
+  });
 #else
   computeSyzygies(top_slanted_degree, mMaxLength);
 #endif
