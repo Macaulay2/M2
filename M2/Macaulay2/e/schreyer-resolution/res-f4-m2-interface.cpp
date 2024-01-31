@@ -685,9 +685,9 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
   double nelementsD = static_cast<double>(nelements);
   double frac_nonzero = (nelements > 0 ? nnonzeroD/nelementsD : 1.0);
 
-  if (M2_gbTrace >= 2 and nelements > 0)
+  if (M2_gbTrace >= 2)
     {
-      std::cout << "rank(" << slanted_degree << "," << lev << ") size = "
+      std::cout << "  rank(" << lev << "," << slanted_degree << ") size = "
                 << D.numRows() << " x " << D.numColumns()
                 << " frac non-zero= " << frac_nonzero << std::endl << std::flush;
     }

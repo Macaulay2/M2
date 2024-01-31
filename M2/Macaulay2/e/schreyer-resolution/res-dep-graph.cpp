@@ -46,8 +46,9 @@ TBBNodePtr DependencyGraph::createFillAndReduceNode(int lev, int sldeg)
 				  //mFrame->mComputer->construct(lev,sldeg + lev);
 				  std::lock_guard<std::mutex> guard(mMutex);
 				  
-                                  std::cout << "fill matrix node    lev=" << lev << " sldeg="
-                                            << sldeg << " sum=" << lev + sldeg << std::endl;
+				  std::cout << "We are here." << std::endl;
+                                  //std::cout << "fill matrix node    lev=" << lev << " sldeg="
+                                  //          << sldeg << " sum=" << lev + sldeg << std::endl;
 				  
 				  status = 2;
                                   return msg;

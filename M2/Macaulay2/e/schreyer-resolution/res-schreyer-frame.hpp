@@ -280,7 +280,6 @@ class SchreyerFrame
 
   mtbb::task_arena& getScheduler() { return mScheduler; }
   int getNumThreads() { return mNumThreads; }
-
 #endif
   
  public:

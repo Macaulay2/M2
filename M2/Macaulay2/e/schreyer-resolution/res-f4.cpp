@@ -582,7 +582,7 @@ void F4Res::gaussReduce()
   std::vector<bool> track(mReducers.size());
 
 #if defined(WITH_TBB)
-  std::cout << "about to do parallel gauss_reduce" << std::endl;
+  //std::cout << "about to do parallel gauss_reduce" << std::endl;
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -609,11 +609,10 @@ void F4Res::gaussReduce()
   //  std::cout << "gauss_row size: " << mRing.vectorArithmetic().size(gauss_row) <<
   //  std::endl;
 
-/*
 #if defined(WITH_TBB)
   //size_t chunk_size = std::max(mSPairs.size() / (100*mFrame.getNumThreads()), (size_t) 1);
   //mFrame.getScheduler().execute([this,&chunk_size,&onlyConstantMaps,&track,&threadLocalDense] {
-  mFrame.getScheduler().execute([this,&onlyConstantMaps,&track,&threadLocalDense] {
+  //mFrame.getScheduler().execute([this,&onlyConstantMaps,&track,&threadLocalDense] {
   //mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size(),chunk_size},
   mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size()},
                     [&](const mtbb::blocked_range<int>& r)
@@ -624,12 +623,11 @@ void F4Res::gaussReduce()
                         gaussReduceRow(i, my_dense, onlyConstantMaps, track);
                       }
                     });
-  });
+  //});
 
   for (auto tlDense : threadLocalDense)
     mRing.vectorArithmetic().deallocateElementArray(tlDense);
 #else  
-*/
   // allocate a dense row, of correct size
   ElementArray gauss_row = mRing.vectorArithmetic().allocateElementArray(
       static_cast<ComponentIndex>(mColumns.size()));
@@ -638,7 +636,7 @@ void F4Res::gaussReduce()
       gaussReduceRow(i, gauss_row, onlyConstantMaps, track);
     }
   mRing.vectorArithmetic().deallocateElementArray(gauss_row);
-//#endif  
+#endif  
 }
 
 void F4Res::construct(int lev, int degree)
@@ -646,16 +644,19 @@ void F4Res::construct(int lev, int degree)
   decltype(timer()) timeA, timeB;
 
   resetMatrix(lev, degree);
+ 
+  if (M2_gbTrace >= 2)
+     std::cout << "construct (" << lev << "," << degree-lev << ")" << std::endl;
 
   timeA = timer();
   makeMatrix();
   timeB = timer();
   mFrame.timeMakeMatrix += seconds(timeB - timeA);
 
-  if (M2_gbTrace >= 2) mHashTable.dump();
+  //if (M2_gbTrace >= 2) mHashTable.dump();
 
   if (M2_gbTrace >= 2)
-    std::cout << "  make matrix time: " << seconds(timeB - timeA) << " sec"
+    std::cout << "  make (" << lev << "," << degree-lev << "): " << seconds(timeB - timeA) << " sec"
               << std::endl;
 
 #if 0
@@ -678,13 +679,13 @@ void F4Res::construct(int lev, int degree)
   debugOutputMatrixSparse(mSPairs);
 #endif
 
-  if (M2_gbTrace >= 2)
-    std::cout << "  (degree,level)=(" << (mThisDegree - mThisLevel) << ","
-              << mThisLevel << ") #spairs=" << mSPairs.size()
-              << " reducer= " << mReducers.size() << " x " << mReducers.size()
-              << std::endl;
+//  if (M2_gbTrace >= 2)
+//    std::cout << "  (degree,level)=(" << (mThisDegree - mThisLevel) << ","
+//              << mThisLevel << ") #spairs=" << mSPairs.size()
+//              << " reducer= " << mReducers.size() << " x " << mReducers.size()
+//              << std::endl;
 
-  if (M2_gbTrace >= 2) std::cout << "  gauss reduce matrix" << std::endl;
+//  if (M2_gbTrace >= 2) std::cout << "  gauss reduce matrix" << std::endl;
 
   timeA = timer();
   gaussReduce();
@@ -692,7 +693,9 @@ void F4Res::construct(int lev, int degree)
   mFrame.timeGaussMatrix += seconds(timeB - timeA);
 
   if (M2_gbTrace >= 2)
-    std::cout << "    time: " << seconds(timeB - timeA) << " sec" << std::endl;
+    std::cout << "  gauss (" << lev << "," << degree-lev << "): " << seconds(timeB - timeA) << " sec"
+              << std::endl;
+//    std::cout << "    time: " << seconds(timeB - timeA) << " sec" << std::endl;
   //  mFrame.show(-1);
 
   timeA = timer();

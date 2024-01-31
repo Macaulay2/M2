@@ -381,13 +381,11 @@ void SchreyerFrame::start_computation(StopConditions& stop)
           }
         if (M2_gbTrace >= 2)
           {
-            std::cout << "construct(" << mSlantedDegree << ", " << mCurrentLevel << ")..." << std::flush;
+            std::cout << "construct(" << mSlantedDegree << ", " << mCurrentLevel << ")..." << std::endl;
           }
         mComputer->construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
         if (M2_gbTrace >= 2)
-          {
             std::cout << "done" << std::endl;
-          }
         ///std::cout << "Number of distinct monomials so far = " << mAllMonomials.count() << std::endl;
         mCurrentLevel++;
         break;
@@ -914,8 +912,8 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
 
   if (M2_gbTrace >= 2)
     {
-      std::cout << "construct(" << slanted_deg << ", " << lev << ")..."
-                << std::flush;
+//      std::cout << "construct(" << slanted_deg << ", " << lev << ")"
+//                << std::endl;
     }
 
   // experimenting whether building/destroying local computers
@@ -928,9 +926,9 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
 
   if (M2_gbTrace >= 2)
     {
-      std::cout << "done" << std::endl;
-      std::cout << "#additions so far: " << vectorArithmetic().getNumAdditions()
-                << std::endl;
+      //std::cout << "done" << std::endl;
+      //std::cout << "#additions so far: " << vectorArithmetic().getNumAdditions()
+      //          << std::endl;
     }
 }
 void SchreyerFrame::computeRank(int slanted_degree, int lev)
@@ -941,6 +939,7 @@ void SchreyerFrame::computeRank(int slanted_degree, int lev)
   if (status == 0) return;  // Nothing here
   if (status == 1)
     {
+      std::cout << "We are here." << std::endl;
       fillinSyzygies(slanted_degree, lev);
     }
   if (status == 3) return;  // already done
