@@ -181,14 +181,17 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       // computeFrame()
     }
 
+  std::cout << "In dep graph" << std::endl;
 #if defined(WITH_TBB)
   // build the dependency graph
   mScheduler.execute([&] {
-     makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree,true);
+     makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree+1,true);
      mDepGraph.startComputation();
      mDepGraph.waitForCompletion();
   });
 #endif
+
+  std::cout << "Out dep graph" << std::endl;
 
   // What needs to be computed?
   // lodeg..hideg, level: 0..maxlevel.  Note: need to compute at level
@@ -262,7 +265,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 #if defined(WITH_TBB)
   // build the dependency graph
   mScheduler.execute([&] {
-     makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree,false);
+     makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree + 1,false);
      mDepGraph.startComputation();
      mDepGraph.waitForCompletion();
   });
@@ -939,7 +942,6 @@ void SchreyerFrame::computeRank(int slanted_degree, int lev)
   if (status == 0) return;  // Nothing here
   if (status == 1)
     {
-      std::cout << "We are here." << std::endl;
       fillinSyzygies(slanted_degree, lev);
     }
   if (status == 3) return;  // already done

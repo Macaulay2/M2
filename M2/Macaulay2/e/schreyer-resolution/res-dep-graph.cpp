@@ -46,7 +46,6 @@ TBBNodePtr DependencyGraph::createFillAndReduceNode(int lev, int sldeg)
 				  //mFrame->mComputer->construct(lev,sldeg + lev);
 				  std::lock_guard<std::mutex> guard(mMutex);
 				  
-				  std::cout << "We are here." << std::endl;
                                   //std::cout << "fill matrix node    lev=" << lev << " sldeg="
                                   //          << sldeg << " sum=" << lev + sldeg << std::endl;
 				  
@@ -137,7 +136,7 @@ void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, 
 {
   // Create the nodes
   for (int sldeg=0; sldeg < nslanted_degrees; ++sldeg)
-    for (int lev=0; lev<nlevels; ++lev)
+    for (int lev=0; lev < nlevels; ++lev)
     {
       int newIndex = G.addVertex(lev,sldeg);
       if (newIndex != getIndex(lev,sldeg,nlevels,nslanted_degrees))
@@ -148,7 +147,7 @@ void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, 
       
   // Add the fill matrix edges
   for (int sldeg=0; sldeg < nslanted_degrees; ++sldeg)
-    for (int lev=0; lev<nlevels; ++lev)
+    for (int lev=0; lev < nlevels; ++lev)
       {
         if (lev > 0)
 	  G.addFillMatrixEdge(getIndex(lev-1,sldeg,nlevels,nslanted_degrees),
