@@ -2432,9 +2432,7 @@ document {
 		    TO (symmetricAlgebra,Ring,Nothing,Matrix),
 		    TO (symmetricAlgebra,Ring,Ring,Matrix),
 		    TO (symbol ^, Number, Ring),
-		    TO (symbol ^, Number, RingFamily),
-		    TO (symbol ^, Constant, Ring),
-		    TO (symbol ^, Constant, RingFamily)
+		    TO (symbol ^, Number, RingFamily)
 		    }
 	       },
 	  LI { "new variables:",

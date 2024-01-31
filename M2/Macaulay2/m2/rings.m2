@@ -87,8 +87,6 @@ isHomogeneous Ring := R -> (
 liftable = method(TypicalValue => Boolean, Dispatch => {Thing, Type, Type})
 liftable(Number,      Number)      :=
 liftable(Number,      RingElement) :=
-liftable(Constant,    Number)      :=
-liftable(Constant,    RingElement) :=
 liftable(RingElement, Number)      :=
 liftable(RingElement, RingElement) := (f, R) -> null =!= lift(f, R, Verify => false)
 
@@ -96,12 +94,10 @@ isConstant = method(TypicalValue => Boolean)
 isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 lift = method(Dispatch => {Thing, Type, Type}, Options => {Verify => true})
-Number   ^ Ring :=
-Constant ^ Ring := lift
+Number ^ Ring := lift
 
 promote = method(Dispatch => {Thing, Type, Type})
-Number   _ Ring :=
-Constant _ Ring := promote
+Number _ Ring := promote
 
 
 -- Local Variables:
