@@ -141,8 +141,7 @@ new RObject from ZZ := (T, x) -> T scalarInteger x
 
 scalarReal = foreignFunction(Rlib, "Rf_ScalarReal", SEXP, double)
 new RObject from RR := (T, x) -> T scalarReal x
-new RObject from Constant :=
-new RObject from QQ := (T, x) -> T numeric x
+new RObject from Number := (T, x) -> T numeric x
 
 Rcomplex = foreignStructType("Rcomplex", {"r" => double, "i" => double})
 scalarComplex = foreignFunction(Rlib, "Rf_ScalarComplex", SEXP, Rcomplex)
