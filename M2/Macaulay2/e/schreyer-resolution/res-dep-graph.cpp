@@ -71,9 +71,9 @@ TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
 				  // commented out for now, will work on this later.
                                   // int rk = mFrame->rank(sldeg,lev);
 
-				  std::lock_guard<std::mutex> guard(mMutex);
-                                  std::cout << "rank node           lev=" << lev << " sldeg="
-                                            << sldeg << " sum=" << lev + sldeg << std::endl;
+				  //std::lock_guard<std::mutex> guard(mMutex);
+                                  //std::cout << "rank node           lev=" << lev << " sldeg="
+                                  //          << sldeg << " sum=" << lev + sldeg << std::endl;
                                   // if (rk > 0)
                                   // {
                                   //   mFrame->mBettiMinimal.entry(sldeg, lev) -= rk;
@@ -90,10 +90,10 @@ TBBNodePtr DependencyGraph::createMinimalBettiNode(int lev, int sldeg)
   return std::make_shared<TBBNode>(mTBBGraph,
                                 [lev, sldeg, this](const tbb::flow::continue_msg &msg)
                                 {
-				  std::lock_guard<std::mutex> guard(mMutex);
-                                  std::cout << "minimal betti node  lev=" << lev << " sldeg="
-                                            << sldeg << " sum=" << lev + sldeg << std::endl;
-                                  return msg;
+				  //std::lock_guard<std::mutex> guard(mMutex);
+                                  //std::cout << "minimal betti node  lev=" << lev << " sldeg="
+                                  //          << sldeg << " sum=" << lev + sldeg << std::endl;
+                                  //return msg;
                                 });
 }
 

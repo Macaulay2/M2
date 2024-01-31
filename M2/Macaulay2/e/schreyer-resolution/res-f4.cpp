@@ -609,6 +609,7 @@ void F4Res::gaussReduce()
   //  std::cout << "gauss_row size: " << mRing.vectorArithmetic().size(gauss_row) <<
   //  std::endl;
 
+/*
 #if defined(WITH_TBB)
   //size_t chunk_size = std::max(mSPairs.size() / (100*mFrame.getNumThreads()), (size_t) 1);
   //mFrame.getScheduler().execute([this,&chunk_size,&onlyConstantMaps,&track,&threadLocalDense] {
@@ -628,15 +629,16 @@ void F4Res::gaussReduce()
   for (auto tlDense : threadLocalDense)
     mRing.vectorArithmetic().deallocateElementArray(tlDense);
 #else  
+*/
   // allocate a dense row, of correct size
   ElementArray gauss_row = mRing.vectorArithmetic().allocateElementArray(
       static_cast<ComponentIndex>(mColumns.size()));
   for (long i = 0; i < mSPairs.size(); i++)
     {
-      gaussReduceRow(i, gaussRow, onlyConstantMaps, track);
+      gaussReduceRow(i, gauss_row, onlyConstantMaps, track);
     }
   mRing.vectorArithmetic().deallocateElementArray(gauss_row);
-#endif  
+//#endif  
 }
 
 void F4Res::construct(int lev, int degree)
