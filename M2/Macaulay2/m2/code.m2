@@ -157,7 +157,8 @@ sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if in
     if  isUnaryAssignmentOperator key and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol+, symbol=)
     if instance(key, Keyword)         and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol #)
     if instance(key, Function)        and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#resolution
-    if instance(key, Sequence)        and tallyF <= tally         key     then  key)
+    if instance(key, Sequence)        and tallyF <= tally         key     then  key     else
+    if key === NewMethod              and tallyF <= tally splice (key, T) then (key, T))
 
 methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
 methods Manipulator := M -> methods class M

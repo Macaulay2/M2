@@ -211,6 +211,12 @@ fixup DocumentTag := DocumentTag => tag -> (
 
 prefix := set flexiblePrefixOperators
 
+typicalValue := k -> (
+    if  typicalValues#?k     then typicalValues#k
+    else if instance(k, Sequence)
+    and typicalValues#?(k#0) then typicalValues#(k#0)
+    else Thing)
+
 fSeq := new HashTable from splice {
     (4, NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
     (3, NewFromMethod  ) => s -> ("new ", toString s#1,                       " from ", toString s#2),
@@ -244,7 +250,7 @@ fSeq := new HashTable from splice {
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     apply(augmentedAssignmentOperators, op -> (2, op) => s ->
-	(toString s#1, " ", toString op, " Thing")),
+	(toString s#1, " ", toString op, " ", toString typicalValue(op, s#1))),
 
     -- ScriptedFunctors
     (4, class, ScriptedFunctor, ZZ) => s -> (
@@ -473,12 +479,6 @@ processSignature := (tag, fn) -> item -> (
     SPAN nonnull deepSplice between_", " nonnull nonempty result)
 
 
-typicalValue := k -> (
-    if  typicalValues#?k     then typicalValues#k
-    else if instance(k, Sequence)
-    and typicalValues#?(k#0) then typicalValues#(k#0)
-    else Thing)
-
 getSignature := method(Dispatch => Thing)
 getSignature Thing    := x -> ({},{})
 getSignature Function := x -> ({},{typicalValue x})
@@ -491,6 +491,11 @@ getSignature Sequence := x -> (
 	and #x#0 === 2 and x#0#1 === symbol=
 	or  #x   === 2 and x#0   === symbol<-
 	then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
+	-- for "new T from x", T is already known, so we just care about x
+	else if x#0 === NewFromMethod
+	then ( {x#2}         , { typicalValue x } )
+	else if isMember(x#0, augmentedAssignmentOperators)
+	then (append(x', typicalValue x), {typicalValue x})
 	else ( x'            , { typicalValue x } )))
 
 isOption := opt -> instance(opt, Option) and #opt == 2 and instance(opt#0, Symbol);

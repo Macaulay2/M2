@@ -29,7 +29,7 @@ use strings1;
 use stdio0;
 use stdiop0;
 use pthread0;
-
+use atomic;
 
 export anywhereError(s:string) ::= Ccode(voidPointer,"err_error(",s,")");
 export anywhereAbort(s:string) ::= Ccode(exits,"err_abort(",s,")");
@@ -372,6 +372,8 @@ export TaskCell := {+ body:TaskCellBody };
 
 export pointerCell := {+ v:voidPointer };
 
+export atomicIntCell := {+ v:atomicField, hash:int };
+
 export Expr := (
      CCcell or
      RRcell or
@@ -426,7 +428,8 @@ export Expr := (
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
      fileOutputSyncState or
-     pointerCell
+     pointerCell or
+     atomicIntCell
      );
 export fun := function(Expr):Expr;
 
