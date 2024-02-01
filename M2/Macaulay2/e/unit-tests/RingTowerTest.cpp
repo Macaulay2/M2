@@ -32,7 +32,7 @@ TEST(RingTower, create)
   std::vector<std::string> vars = {"a", "b"};
   M2_ArrayString varnames = stdvector_to_M2_ArrayString(vars);
   const Tower* R = Tower::create(101, varnames);
-  EXPECT_TRUE(R != 0);
+  EXPECT_TRUE(R != nullptr);
   EXPECT_EQ(ringName(*R), "Tower[ZZ/101[a,b]]");
   EXPECT_EQ(R->n_vars(), 2);
   for (int i = 1; i < 1; i++)

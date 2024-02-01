@@ -29,13 +29,13 @@ const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank)
       if (rank < 0)
         {
           ERROR("freemodule rank must be non-negative");
-          return 0;
+          return nullptr;
         }
       return R->make_FreeModule(rank);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -49,13 +49,13 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
       if (eachdeg == 0)
         {
           ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
-          return NULL;
+          return nullptr;
         }
       unsigned int rank = degs->len / eachdeg;
       if (rank * eachdeg != degs->len)
         {
           ERROR("inappropriate number of degrees");
-          return 0;
+          return nullptr;
         }
       monomial deg = D->make_one();
       FreeModule *F = R->make_FreeModule();
@@ -68,7 +68,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -80,7 +80,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -123,7 +123,7 @@ const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -135,7 +135,7 @@ const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -147,7 +147,7 @@ const FreeModule *IM2_FreeModule_symm(int n, const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -159,7 +159,7 @@ const FreeModule *IM2_FreeModule_exterior(int n, const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -172,7 +172,7 @@ const FreeModule *IM2_FreeModule_submodule(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -186,7 +186,7 @@ M2_arrayintOrNull rawFreeModuleSelectByDegrees(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 

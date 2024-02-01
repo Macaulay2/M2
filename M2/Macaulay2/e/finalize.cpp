@@ -56,7 +56,7 @@ void intern_monideal(MonomialIdeal *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_monideal, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(G,                    remove_monideal, 0, 0, 0);
+  GC_REGISTER_FINALIZER(G,                    remove_monideal, nullptr, nullptr, nullptr);
 #endif
   std::atomic<int> nfinalized = monideals_nfinalized++;
   if (M2_gbTrace >= 3)
@@ -111,7 +111,7 @@ void intern_GB(GBComputation *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer(G), remove_gb, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER_IGNORE_SELF(                  G , remove_gb, 0, 0, 0);
+  GC_REGISTER_FINALIZER_IGNORE_SELF(                  G , remove_gb, nullptr, nullptr, nullptr);
 #endif
   std::atomic<int> nfinalized = gbs_nfinalized++;
   if (M2_gbTrace >= 3)
@@ -142,7 +142,7 @@ void intern_res(ResolutionComputation *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_res, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(                  G , remove_res, 0, 0, 0);
+  GC_REGISTER_FINALIZER(                  G , remove_res, nullptr, nullptr, nullptr);
 #endif
   std::atomic<int> nfinalized = res_nfinalized++;
   if (M2_gbTrace >= 3)
@@ -168,7 +168,7 @@ void intern_SchreyerOrder(SchreyerOrder *G)
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_SchreyerOrder, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(                  G , remove_SchreyerOrder, 0, 0, 0);
+  GC_REGISTER_FINALIZER(                  G , remove_SchreyerOrder, nullptr, nullptr, nullptr);
 #endif
   std::atomic<int> nfinalized = schorder_nfinalized++;
   if (M2_gbTrace >= 3)
@@ -193,11 +193,11 @@ extern "C" void remove_MutableMatrix(void *p, void *cd)
 }
 MutableMatrix *internMutableMatrix(MutableMatrix *G)
 {
-  if (G == 0) return 0;
+  if (G == nullptr) return nullptr;
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_MutableMatrix, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER(                  G,  remove_MutableMatrix, 0, 0, 0);
+  GC_REGISTER_FINALIZER(                  G,  remove_MutableMatrix, nullptr, nullptr, nullptr);
 #endif
   std::atomic<int> nfinalized = mutablematrices_nfinalized++;
   if (M2_gbTrace >= 3)

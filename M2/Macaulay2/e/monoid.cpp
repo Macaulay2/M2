@@ -17,7 +17,7 @@
 // TODO: remove this
 #include "interface/monomial-ordering.h"
 
-Monoid *Monoid::trivial_monoid = 0;
+Monoid *Monoid::trivial_monoid = nullptr;
 
 // ONLY to be called by PolyRing::get_trivial_poly_ring()
 void Monoid::set_trivial_monoid_degree_ring(const PolynomialRing *DR)
@@ -53,7 +53,7 @@ Monoid::Monoid()
 Monoid::~Monoid() {}
 Monoid *Monoid::get_trivial_monoid()
 {
-  if (trivial_monoid == 0) trivial_monoid = new Monoid;
+  if (trivial_monoid == nullptr) trivial_monoid = new Monoid;
 
   return trivial_monoid;
 }
@@ -339,7 +339,7 @@ void Monoid::text_out(buffer &o) const
       o << "}";
     }
 
-  if (mo_ != 0)
+  if (mo_ != nullptr)
     {
       o << "," << newline << "  ";
       o << IM2_MonomialOrdering_to_string(mo_);
