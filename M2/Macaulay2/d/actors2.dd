@@ -160,13 +160,13 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
      when e
      is Error do e
      is o:HashTable do (
-	  if basicType == hashTableClass then (
+	  if basicType == hashTableClass || basicType == numberClass then (
 	       if o.Class == classs && o.parent == parent then e
 	       else Expr(copy(o,classs,parent,ancestor(classs,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
-     	  if basicType == basicListClass then (
+     	  if basicType == basicListClass || basicType == numberClass then (
 	       if parent != nothingClass
 	       then buildErrorPacket("expected Nothing as parent for list")
 	       else if o.Class == classs then e
@@ -201,14 +201,14 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
      is Error do e
      is o:HashTable do (
 	  basicType := basictype(classs);
-	  if basicType == hashTableClass then (
+	  if basicType == hashTableClass || basicType == numberClass then (
 	       if o.Class == classs then e
 	       else Expr(copy(o,classs,ancestor(classs,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
 	  basicType := basictype(classs);
-	  if basicType == basicListClass then (
+	  if basicType == basicListClass || basicType == numberClass then (
 	       if o.Class == classs then e
 	       else if classs == sequenceClass then Expr(o.v)
 	       else (
