@@ -290,13 +290,15 @@ getOperator := key -> if operator#?key then (
     op := toString key;
     if match("^[[:alpha:]]*$", op) then op = " " | op | " ";
     fixup DIV (
-	if binary#?key then {
+	if binary#?key and key =!= symbol ?? then {
 	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
 		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",
 	    PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
+	if key === symbol ?? then { -- can't install binary methods
+	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". "}},
 	if prefix#?key then {
 	    PARA {"This operator may be used as a prefix unary operator in an expression like ", TT (op | "y"), ". ",
 		"The user may ", TO2{ "Macaulay2Doc :: installing methods", "install a method" }, " for handling such expressions with code such as"},

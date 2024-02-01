@@ -1209,12 +1209,50 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values")
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
 
+-- helper function used when evaluating tryCode and by null coalescion
+-- returns: true if successfully evaluated or interrupted
+--          false if a non-interrupt error
+-- also modifies the pointer it was passed to point to the result of the
+-- evaluation (use the thread local variable tryEvalPointer to avoid
+-- multiple threads modifying the same ptr)
+exprstarstar := Pointer "parse_Expr **";
+tryEval(c:Code, ptr:exprstarstar):bool := (
+    oldSuppressErrors := SuppressErrors;
+    SuppressErrors = true;
+    p := eval(c);
+    Ccode(void, "*", ptr, " = &", p);
+    if !SuppressErrors then true -- eval could have turned it off
+    else (
+	SuppressErrors = oldSuppressErrors;
+	when p
+	is err:Error do (
+	    if (
+		err.message == breakMessage           ||
+		err.message == returnMessage          ||
+		err.message == continueMessage        ||
+		err.message == continueMessageWithArg ||
+		err.message == unwindMessage          ||
+		err.message == throwMessage)
+	    then true
+	    else false)
+	else true));
+getExpr(p:voidPointer) ::= Ccode(Expr, "*(parse_Expr *)", p);
+toexprstarstar(p:voidPointer) ::= Ccode(
+    exprstarstar, "(parse_Expr **)&", p);
+threadLocal tryEvalPointer := nullPointer();
+
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
     is null do buildErrorPacket("unknown augmented assignment operator")
     is s:Symbol do (
 	-- evaluate the left-hand side first
-	left := evaluatedCode(eval(x.lhs), dummyPosition);
+	lexpr := nullE;
+	if s.word.name === "??" -- null coalescion; ignore errors
+	then (
+	    if tryEval(x.lhs, toexprstarstar(tryEvalPointer))
+	    then lexpr = getExpr(tryEvalPointer))
+	else lexpr = eval(x.lhs);
+	left := evaluatedCode(lexpr, dummyPosition);
 	when left.expr is e:Error do return Expr(e) else nothing;
 	-- check if user-defined method exists
 	meth := lookup(Class(left.expr),
@@ -1442,19 +1480,14 @@ export evalraw(c:Code):Expr := (
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
-	       oldSuppressErrors := SuppressErrors;
-	       SuppressErrors = true;
-	       p := eval(c.code);
-	       if !SuppressErrors then p		  -- eval could have turned it off
+	       if tryEval(c.code, toexprstarstar(tryEvalPointer))
+	       then (
+		   p := getExpr(tryEvalPointer);
+		   when p is Error do p
+		   else if c.thenClause == NullCode then p
+		   else eval(c.thenClause))
 	       else (
-		    SuppressErrors = oldSuppressErrors;
-		    when p is err:Error do (
-			 if err.message == breakMessage || err.message == returnMessage || 
-			 err.message == continueMessage || err.message == continueMessageWithArg || 
-			 err.message == unwindMessage || err.message == throwMessage
-			 then p
-			 else eval(c.elseClause))
-		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
+		   eval(c.elseClause)))
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
@@ -2047,6 +2080,25 @@ AssignQuotedElemFun = assignquotedelemfun;
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
 
 applyEEEpointer = applyEEE;
+
+nullify(c:Code):Expr := (
+    if tryEval(c, toexprstarstar(tryEvalPointer))
+    then (
+	e := getExpr(tryEvalPointer);
+	when e
+	is Nothing do e
+	else (
+	    f := lookup(Class(e), QuestionQuestionS);
+	    if f == nullE then e
+	    else applyEE(f, e)))
+    else nullE);
+
+nullCoalescion(lhs:Code,rhs:Code):Expr := (
+    e := nullify(lhs);
+    when e
+    is Nothing do eval(rhs)
+    else e);
+setup(QuestionQuestionS, nullify, nullCoalescion);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "

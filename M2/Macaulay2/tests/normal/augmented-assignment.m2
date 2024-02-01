@@ -132,3 +132,28 @@ x -= Bar 2
 assert Equation(x#0, 0)
 x -= Bar(-5)
 assert Equation(x#0, 5)
+
+-- null coalescing operator
+x = 5
+assert Equation(?? x, 5)
+assert Equation(x ?? 2, 5)
+x = null
+assert Equation(?? x, null)
+assert Equation(x ?? 2, 2)
+x ??= 2
+assert Equation(x, 2)
+x = new MutableList
+assert Equation(?? x#0, null)
+assert Equation(x#0 ?? 2, 2)
+x#0 ??= 2
+assert Equation(x#0, 2)
+X = new Type of BasicList
+installMethod(symbol ??, X, x -> if #x > 0 then x)
+x = new X from {}
+y = new X from {5}
+assert BinaryOperation(symbol ===, ?? x, null)
+assert BinaryOperation(symbol ===, ?? y, y)
+assert BinaryOperation(symbol ===, y ?? x, y)
+assert BinaryOperation(symbol ===, x ?? y, y)
+x ??= y
+assert BinaryOperation(symbol ===, x, y)

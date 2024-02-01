@@ -6,7 +6,7 @@ pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.6",
-    Date => "January 24, 2024",
+    Date => "January 28, 2024",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -27,12 +27,13 @@ newPackage("Python",
 
 -*
 
-0.6 (2024-01-24, M2 1.23)
+0.6 (2024-01-28, M2 1.23)
 * add expression, net, texMath, describe, and toExternalString methods
 * move initialization of python from M2 startup to package load time
 * update int <-> ZZ conversion for python 3.12
 * use a constant hash for None
 * add support for augmented assignment
+* add support for null coalescing operator
 
 0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
@@ -204,8 +205,8 @@ toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
 	if instance(y, Sequence) then y else 1:y);
-    args := toPython if p#?false then p#false else ();
-    kwargs := toPython hashTable if p#?true then toList p#true else {};
+    args := toPython(p#false ?? ());
+    kwargs := toPython hashTable (toList p#true ?? {});
     if debugLevel > 0 then printerr(
 	"callable: " | toString x    ||
 	"args: "     | toString args ||
@@ -327,6 +328,8 @@ scan({
 +PythonObject := o -> o@@"__pos__"()
 abs PythonObject := o -> o@@"__abs__"()
 PythonObject~ := o -> o@@"__invert__"()
+
+?? PythonObject := x -> if x != pythonNone then x
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 
@@ -712,6 +715,14 @@ x = toPython {1, 2, 3}
 oldhash = hash x
 x += {4}
 assert Equation(hash x, oldhash)
+///
+
+TEST ///
+-- null coalescing operator
+x = toPython null
+y = toPython 2
+assert Equation(x ?? y, y)
+assert Equation(y ?? x, y)
 ///
 
 -- not part of default testsuite since it requires numpy
