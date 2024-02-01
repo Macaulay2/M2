@@ -5,7 +5,7 @@ needs "max.m2"
 needs "methods.m2"
 needs "nets.m2"
 
-Constant = new Type of BasicList
+Constant = new Type of Number
 globalAssignment Constant
 
 precedence = method(Dispatch => Thing)
