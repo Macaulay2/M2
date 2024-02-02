@@ -391,14 +391,14 @@ realRootIsolation (RingElement,A) := List => (f,r)->(
     if not isUnivariatePolynomial(f) then error "Error: Expected univariate polynomial";
     R := ring f;
     
-    f = sub(f/gcd(f,diff(variable f,f)),R);
+    f = sub(f/gcd(f,diff(variable f,f)),R); --makes polynomial squarefree
     
     if (SturmCount(f)>0) then (
 	l := SturmSequence(f);
 	
 	--bound for real roots
-	C := (listForm f)/last;
-    	M := (sum(C,abs))/(leadCoefficient f);
+	C := (listForm ((f-leadTerm(f))/leadCoefficient(f)))/last; --make the polynomial monic, and obtain list of coefficients of non-lead monomials.
+    	M := max(1,sum(C,abs)); --obtains Lagrange bound.
 	
 	L := {{-M,M}};
 	midp := 0;
