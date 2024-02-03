@@ -255,7 +255,7 @@ fSeq := new HashTable from splice {
     (2, symbol <-      ) => s -> (toString s#1, " <- ",
 	toString typicalValue s),
     apply(augmentedAssignmentOperators, op -> (2, op) => s ->
-	(toString s#1, " ", toString op, " ", toString typicalValue(op, s#1))),
+	(toString s#1, " ", toString op, " ", toString typicalValue s)),
 
     -- ScriptedFunctors
     (4, class, ScriptedFunctor, ZZ) => s -> (
