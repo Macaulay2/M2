@@ -236,7 +236,6 @@ fSeq := new HashTable from splice {
     -- infix assignment operator (really a ternary operator!)
     (2, class, Keyword ) => s -> (toString s#0, " ", toString s#1), -- prefix operator
     (3, symbol SPACE   ) => s -> (toString s#1, " ", toString s#2),
-    (2, symbol <-      ) => s -> (toString s#1, " <- Thing"),       -- assignment statement with left hand side evaluated
     (2, symbol (*)     ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol ^*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol _*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
@@ -253,6 +252,8 @@ fSeq := new HashTable from splice {
 	    toString typicalValue s)
 	else (toString s#1, " ", toString op, " ", toString s#0#1, " ",
 	    toString typicalValue s)),
+    (2, symbol <-      ) => s -> (toString s#1, " <- ",
+	toString typicalValue s),
     apply(augmentedAssignmentOperators, op -> (2, op) => s ->
 	(toString s#1, " ", toString op, " ", toString typicalValue(op, s#1))),
 
