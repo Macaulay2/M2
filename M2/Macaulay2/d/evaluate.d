@@ -1210,18 +1210,14 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
 
 -- helper function used when evaluating tryCode and by null coalescion
--- returns: true if successfully evaluated or interrupted
---          false if a non-interrupt error
--- also modifies the pointer it was passed to point to the result of the
--- evaluation (use the thread local variable tryEvalPointer to avoid
--- multiple threads modifying the same ptr)
-exprstarstar := Pointer "parse_Expr **";
-tryEval(c:Code, ptr:exprstarstar):bool := (
+-- tryEvalSuccess is true unless an (non-interrupting) error occurred
+threadLocal tryEvalSuccess := true;
+tryEval(c:Code):Expr := (
     oldSuppressErrors := SuppressErrors;
     SuppressErrors = true;
     p := eval(c);
-    Ccode(void, "*", ptr, " = &", p);
-    if !SuppressErrors then true -- eval could have turned it off
+    if !SuppressErrors then ( -- eval could have turned it off
+	tryEvalSuccess = true)
     else (
 	SuppressErrors = oldSuppressErrors;
 	when p
@@ -1233,13 +1229,10 @@ tryEval(c:Code, ptr:exprstarstar):bool := (
 		err.message == continueMessageWithArg ||
 		err.message == unwindMessage          ||
 		err.message == throwMessage)
-	    then true
-	    else false)
-	else true));
-getExpr(p:voidPointer) ::= Ccode(Expr, "*(parse_Expr *)", p);
-toexprstarstar(p:voidPointer) ::= Ccode(
-    exprstarstar, "(parse_Expr **)&", p);
-threadLocal tryEvalPointer := nullPointer();
+	    then tryEvalSuccess = true
+	    else tryEvalSuccess = false)
+	else tryEvalSuccess = true);
+    p);
 
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
@@ -1249,8 +1242,8 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	lexpr := nullE;
 	if s.word.name === "??" -- null coalescion; ignore errors
 	then (
-	    if tryEval(x.lhs, toexprstarstar(tryEvalPointer))
-	    then lexpr = getExpr(tryEvalPointer))
+	    e := tryEval(x.lhs);
+	    if tryEvalSuccess then lexpr = e)
 	else lexpr = eval(x.lhs);
 	left := evaluatedCode(lexpr, dummyPosition);
 	when left.expr is e:Error do return Expr(e) else nothing;
@@ -1480,9 +1473,9 @@ export evalraw(c:Code):Expr := (
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
-	       if tryEval(c.code, toexprstarstar(tryEvalPointer))
+	       p := tryEval(c.code);
+	       if tryEvalSuccess
 	       then (
-		   p := getExpr(tryEvalPointer);
 		   when p is Error do p
 		   else if c.thenClause == NullCode then p
 		   else eval(c.thenClause))
@@ -2082,9 +2075,9 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 applyEEEpointer = applyEEE;
 
 nullify(c:Code):Expr := (
-    if tryEval(c, toexprstarstar(tryEvalPointer))
+    e := tryEval(c);
+    if tryEvalSuccess
     then (
-	e := getExpr(tryEvalPointer);
 	when e
 	is Nothing do e
 	else (
