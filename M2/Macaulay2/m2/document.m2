@@ -493,16 +493,17 @@ getSignature Sequence := x -> (
     else (
 	-- putting something like OO in the key indicates a fake dispatch
 	x' := select(drop(toList x, 1), T -> not ancestor(Nothing, T));
-	if instance(x#0, Sequence)
-	and #x#0 === 2 and x#0#1 === symbol=
-	or  #x   === 2 and x#0   === symbol<-
-	then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
+	-- assignment methods
+	-- TODO: should we worry about the possibility of the input
+	-- and output types being different?
+	if (instance(x#0, Sequence) and #x#0 === 2 and x#0#1 === symbol=
+	    or #x === 2 and x#0 === symbol<-
+	    or isMember(x#0, augmentedAssignmentOperators))
+	then (append(x', typicalValue x), {typicalValue x})
 	-- for "new T from x", T is already known, so we just care about x
 	else if x#0 === NewFromMethod
-	then ( {x#2}         , { typicalValue x } )
-	else if isMember(x#0, augmentedAssignmentOperators)
-	then (append(x', typicalValue x), {typicalValue x})
-	else ( x'            , { typicalValue x } )))
+	then ( {x#2} , { typicalValue x } )
+	else (  x'   , { typicalValue x } )))
 
 isOption := opt -> instance(opt, Option) and #opt == 2 and instance(opt#0, Symbol);
 
