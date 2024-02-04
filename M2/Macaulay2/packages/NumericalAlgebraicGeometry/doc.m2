@@ -913,6 +913,39 @@ document {
     }
 *-
 
+doc ///
+    Key
+      evaluateHt
+      (evaluateHt,Homotopy,Matrix,Number)
+      (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateHt,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateHt,GateHomotopy,Matrix,Number)
+    Headline
+      evaluates the derivative of the homotopy with respect to the continuation parameter
+///
+
+doc ///
+    Key
+      evaluateHx
+      (evaluateHx,Homotopy,Matrix,Number)
+      (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateHx,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateHx,GateHomotopy,Matrix,Number)
+    Headline
+      evaluates the jacobian of the homotopy 
+///
+
+doc ///
+    Key
+      evaluateH
+      (evaluateH,Homotopy,Matrix,Number)
+      (evaluateH,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateH,GateHomotopy,Matrix,Number)
+    Headline
+      evaluates the homotopy 
+///
+
 document {
     Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),
 	gateHomotopy,
@@ -971,15 +1004,6 @@ document {
     }
 
 doc ///
-Key
-  (evaluateH,GateHomotopy,Matrix,Number)
-  (evaluateHt,GateHomotopy,Matrix,Number)
-  (evaluateHx,GateHomotopy,Matrix,Number)
-Headline
-  evaluate gate homotopy and its derivatives 
-///  
-
-doc ///
     Key
 	gateSystem
 	(gateSystem,GateMatrix,GateMatrix)
@@ -1023,6 +1047,26 @@ doc ///
         GateSystem	
 ///
 
+doc ///
+    Key
+      (specialize, GateSystem, AbstractPoint)
+    Headline
+      specialize parameters in a gate system
+    Usage
+      specialize(G,p)
+    Description
+      Text
+        Returns a @TO GateSystem@ with parameters specialized to the given values.
+      Example
+        variables = declareVariable \ {x,y}
+	params = declareVariable \ {a,b}  
+	Fab = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	F = specialize(Fab, point{{1,2}})
+	p0 = point{{0.1,0.2+ii}}
+        evaluate(F,p0)
+	evaluateJacobian(F,p0)	
+    ///
+    
 undocumented {
     (toExternalString,GateSystem),
     (evaluateJacobian,GateSystem,Matrix),
@@ -1164,6 +1208,45 @@ doc ///
 	  that are considered parameters for the evaluation circuit.  
 ///	 
 
+--- HOMOTOPY ---------------------------------
+doc ///
+  Key
+    Homotopy
+  Headline
+    a homotopy abstract type
+  Description
+    Text
+      A type that inherits from this {\bf abstract} type should supply methods for 
+      evaluating a homotopy.
+///
+
+doc ///
+  Key 
+    ParameterHomotopy
+  Headline
+    a homotopy that involves parameters
+  Description
+    Text
+      An abstract type that of homotopy that involves parameters.
+      Can be specialized to produce @TO SpecializedParameterHomotopy@.
+  SeeAlso
+    specialize
+///	    
+
+doc ///
+  Key 
+     SpecializedParameterHomotopy
+  Headline
+    a homotopy obtained from a parameter homotopy by specializing parameters
+///	    
+
+doc ///
+  Key 
+    Parameters
+  Headline
+    a collection of parameters
+///
+
 doc ///
     Key 
       GateParameterHomotopy
@@ -1175,14 +1258,23 @@ doc ///
 	It is related to @TO GateHomotopy@. 
 ///
 
--*
 doc ///
-Key 
-  (specialize,GateParameterHomotopy,MutableMatrix)
-Headline
-  specialize parameters in a (gate) parameter homotopy 
-///
-*-
+  Key 
+    (specialize, ParameterHomotopy, Matrix)
+    specialize
+  Headline
+    specialize a parameter homotopy
+  Usage
+    Hp = specialize(H,p)
+  Inputs 
+    H: 
+      homotopy
+    p: 
+      values of parameters 
+  Outputs
+    Hp:SpecializedParameterHomotopy
+      specialized homotopy
+///	    
 
 doc ///
 Key

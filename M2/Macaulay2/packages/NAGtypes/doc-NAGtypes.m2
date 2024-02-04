@@ -994,7 +994,7 @@ doc ///
   Description
     Text
       A type that inherits from this {\bf abstract} type should supply methods for 
-      evaluating a map that takes @TO numVariables@ (+ @TO numParameters@ if the sstem is parametric) inputs and 
+      evaluating a map that takes @TO numVariables@ (+ @TO numParameters@ if the system is parametric) inputs and 
       produces @TO numFunctions@ outputs and its jacobian.
       
       Note for developers: it suffices to override the versions of @TO evaluate@ and @TO evaluateJacobian@ 
@@ -1112,63 +1112,6 @@ doc ///
 	    Provides a random element of a (finite dimensional) @TO PolySpace@ or @TO DualSpace@ 
 	    (of the given degree/order {\tt d}).  	
 ///
-
---- HOMOTOPY ---------------------------------
-doc ///
-  Key
-    Homotopy
-  Headline
-    a homotopy abstract type
-  Description
-    Text
-      A type that inherits from this {\bf abstract} type should supply methods for 
-      evaluating a homotopy.
-///
-
-doc ///
-  Key 
-    ParameterHomotopy
-  Headline
-    a homotopy that involves parameters
-  Description
-    Text
-      An abstract type that of homotopy that involves parameters.
-      Can be specialized to produce @TO SpecializedParameterHomotopy@.
-  SeeAlso
-    specialize
-///	    
-
-doc ///
-  Key 
-     SpecializedParameterHomotopy
-  Headline
-    a homotopy obtained from a parameter homotopy by specializing parameters
-///	    
-
-doc ///
-  Key 
-    Parameters
-  Headline
-    a collection of parameters
-///
-
-doc ///
-  Key 
-    (specialize, ParameterHomotopy, Matrix)
-    specialize
-  Headline
-    specialize a parameter homotopy
-  Usage
-    Hp = specialize(H,p)
-  Inputs 
-    H: 
-      homotopy
-    p: 
-      values of parameters 
-  Outputs
-    Hp:SpecializedParameterHomotopy
-      specialized homotopy
-///	    
 
 doc ///
   Key
