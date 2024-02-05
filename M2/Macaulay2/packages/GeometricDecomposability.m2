@@ -3,7 +3,7 @@
 newPackage(
         "GeometricDecomposability",
         Version => "1.4",
-        Date => "December 12, 2023",
+        Date => "February 5, 2024",
         Headline => "A package to check whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
@@ -681,15 +681,18 @@ isValidOneStep(List, RingElement, Boolean) := (G, y, allowingSub) -> (
         -- G is a list, whose elements form a reduced Gröbner basis
 
         -- analyze the powers of y appearing in the Gröbner basis
-        gbTerms := flatten apply(G, f -> terms f);
-        yDegrees := unique apply(gbTerms, m -> degree(y, m));
-        yMaxDegree := max yDegrees;
+        gbTerms := G / terms;
+        yDegreesByTerm := apply(gbTerms, L -> apply(L, m -> degree(y, m)));
 
         if not allowingSub then (
+                yDegrees := unique flatten yDegreesByTerm;
+                yMaxDegree := max yDegrees;
                 return yMaxDegree <= 1;
                 );
 
-        yOtherDegrees := delete(0, delete(yMaxDegree, yDegrees)); -- all degrees of y in the GB that are not 0 and not the highest degree
+        yMaxDegreesByTerm := yDegreesByTerm / max;
+        yMax := max yMaxDegreesByTerm;
+        yOtherDegrees := delete(0, delete(yMax, yMaxDegreesByTerm)); -- all max degrees of y in the GB that are not 0 and not the highest degree
         noOtherYDegrees := (#yOtherDegrees == 0);
         return noOtherYDegrees;
         )
