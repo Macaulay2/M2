@@ -27,6 +27,8 @@ ParameterHomotopy = new Type of MutableHashTable -- abstract type
 evaluateH (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
 evaluateHt (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
 evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+parameters ParameterHomotopy := PH -> PH.Parameters
+numParameters ParameterHomotopy := F -> numcols parameters F
 
 SpecializedParameterHomotopy = new Type of Homotopy
 specialize = method()
@@ -359,6 +361,7 @@ parametricSegmentHomotopy GateSystem := F -> (
     H := sub(gateMatrix F,matrix{W},(1-t)*A+t*B);
     gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
+
 
 TEST /// 
 debug needsPackage "NumericalAlgebraicGeometry"

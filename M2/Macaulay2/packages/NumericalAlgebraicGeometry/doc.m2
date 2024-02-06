@@ -1259,6 +1259,39 @@ doc ///
 ///
 
 doc ///
+    Key
+        (parameters,ParameterHomotopy)
+    Headline
+        the parameters in the parameter homotopy
+    Description
+        Text 
+	  This method returns the 1-row @TO GateMatrix@ that contains @TO InputGate@s 
+	  that are considered parameters in the evaluation circuit for the homotopy, 
+	  excluding the continuation parameter.  
+///	 
+
+doc ///
+    Key
+	(numParameters,ParameterHomotopy)    		
+    Headline
+        the number of parameters in the parameter homotopy
+///
+
+doc ///
+    Key
+	(numVariables,ParameterHomotopy)    		
+    Headline
+        the number of variables in the parameter homotopy
+///
+
+doc ///
+    Key
+	(numVariables,SpecializedParameterHomotopy)    		
+    Headline
+        the number of variables in the parameter homotopy
+///
+
+doc ///
   Key 
     (specialize, ParameterHomotopy, Matrix)
     specialize
@@ -1333,6 +1366,17 @@ doc ///
 	  to the output of @TO segmentHomotopy@. There are {\bf 2 m} parameters in{\tt PH} 
 	  where {\bf m} is the number of parameters in {\tt F}. 
 	  The first {\bf m} parameters correspond to the starting point A in the parameter space.
-	  The last {\bf m} parameters correspond to the end point B in the parameter space.        
+	  The last {\bf m} parameters correspond to the end point B in the parameter space.
+	Example
+	  variables = declareVariable \ {x,y}
+	  params = declareVariable \ {a,b} 
+	  F = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	  PH = parametricSegmentHomotopy F;
+	  parameters PH
+	  (a0,b0) = (1,2); startSolution = point{{1,1}};
+    	  (a1,b1) = (2,1);	  
+	  H01 = specialize(PH, matrix{{a0,b0,a1,b1}});
+	  targetSolution = first trackHomotopy(H01,{startSolution})
+	  assert(norm evaluate(F,matrix{{a1,b1}},matrix targetSolution) < 0.0001)    		  
 ///	 
 
