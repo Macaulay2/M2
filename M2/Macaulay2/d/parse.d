@@ -29,7 +29,7 @@ use strings1;
 use stdio0;
 use stdiop0;
 use pthread0;
-
+use atomic;
 
 export anywhereError(s:string) ::= Ccode(voidPointer,"err_error(",s,")");
 export anywhereAbort(s:string) ::= Ccode(exits,"err_abort(",s,")");
@@ -206,6 +206,16 @@ export parallelAssignmentCode := {+
      rhs:Code,
      position:Position};
 
+export augmentedAssignmentCode := {+
+    oper:Symbol,
+    lhs:Code,
+    rhs:Code,
+    info:Symbol, -- variable name or operator
+    position:Position};
+
+-- code that's already been evaluated; needed for augmented assignment
+export evaluatedCode := {+ expr:Expr, position:Position};
+
 export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
@@ -256,7 +266,7 @@ export Code := (
      or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
      or globalAssignmentCode or localAssignmentCode 
      or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
-     or parallelAssignmentCode 
+     or parallelAssignmentCode or augmentedAssignmentCode or evaluatedCode
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
@@ -362,6 +372,8 @@ export TaskCell := {+ body:TaskCellBody };
 
 export pointerCell := {+ v:voidPointer };
 
+export atomicIntCell := {+ v:atomicField, hash:int };
+
 export Expr := (
      CCcell or
      RRcell or
@@ -416,7 +428,8 @@ export Expr := (
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
      fileOutputSyncState or
-     pointerCell
+     pointerCell or
+     atomicIntCell
      );
 export fun := function(Expr):Expr;
 

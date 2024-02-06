@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include <atomic>
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -222,8 +223,8 @@ void staticThreadLocalInit()
   THREADLOCALINIT(interrupts_interruptedFlag);
   //Make ABSOLUTELY sure that the exception and interrupt flags are not set.
   //This memory should be initialized to zero, but doesn't seem to be on all systems.
-  AO_store(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field,0);
-  AO_store(&THREADLOCAL(interrupts_exceptionFlag,struct atomic_field).field,0);
+  atomic_store(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field,0);
+  atomic_store(&THREADLOCAL(interrupts_exceptionFlag,struct atomic_field).field,0);
 }
 
 
@@ -250,7 +251,7 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   if(pthread_cond_init(&m_TaskWaitingCondition,NULL))
     abort();
   //force everything to get done just in case there is some weird GC issue.
-  AO_compiler_barrier();
+  std::atomic_signal_fence(std::memory_order_seq_cst);
   //once everything is done initialize statics
   staticThreadLocalInit();
 }
@@ -335,8 +336,8 @@ void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
   task->m_Mutex.lock();
   if(task->m_CurrentThread)
     {
-      AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
-      AO_store(&task->m_CurrentThread->m_Exception->field,true);
+      atomic_store(&task->m_CurrentThread->m_Interrupt->field, 1);
+      atomic_store(&task->m_CurrentThread->m_Exception->field, 1);
     }
   task->m_KeepRunning=false;
   task->m_Mutex.unlock();
@@ -397,7 +398,7 @@ void ThreadTask::run(SupervisorThread* thread)
 SupervisorThread::SupervisorThread(int localThreadId):m_KeepRunning(true),m_LocalThreadId(localThreadId)
 {
   m_ThreadLocal = new (GC) void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
-  AO_compiler_barrier();
+  std::atomic_signal_fence(std::memory_order_seq_cst);
 }
 void SupervisorThread::start()
 {
@@ -431,7 +432,7 @@ void SupervisorThread::threadEntryPoint()
 	  std::this_thread::sleep_for(1s);
 	  continue;
 	}
-      AO_store(&m_Interrupt->field,false);
+      atomic_store(&m_Interrupt->field, 0);
       struct ThreadTask* task = threadSupervisor->getTask();
       task->run(this);
     }

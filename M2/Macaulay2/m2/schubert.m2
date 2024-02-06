@@ -22,9 +22,9 @@ signAndShuffle := (a,b) -> (
 	  t := if a#?i then a#i;
 	  u := if b#?j then b#j;
      	  if t === u then return (0,);
-	  if t === null then (j = j+1; u)
-	  else if u === null or t < u then (i = i+1; t)
-     	  else (ct = ct + m-i; j = j+1; u));
+	  if t === null then (j += 1; u)
+	  else if u === null or t < u then (i += 1; t)
+     	  else (ct = ct + m-i; j += 1; u));
      ((-1)^ct, toSequence sh));
 
 signOfShuffle := (a,b) -> (
@@ -33,8 +33,8 @@ signOfShuffle := (a,b) -> (
      j := 0; n := #b;
      while i<m and j<n do (
      	  if a#i == b#j then return 0;
-     	  if a#i < b#j then i = i+1
-     	  else (ct = ct + m-i; j = j+1));
+     	  if a#i < b#j then i += 1
+     	  else (ct = ct + m-i; j += 1));
      (-1)^ct);
 
 fixupw = w -> if instance(w,String) then getSymbol w else w

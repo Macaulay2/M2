@@ -11,7 +11,7 @@
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
-set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
+set(LIBRARY_LIST   READLINE HISTORY GDBM)
 
 message(CHECK_START " Checking for existing libraries and programs")
 
@@ -35,7 +35,6 @@ endif()
 #   TBB 	libtbb-dev	tbb-devel	tbb (Optional)
 #   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
-#   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
 
 # Set this variable to specify the linear algebra library.
 # See `cmake --help-module FindLAPACK` for the list of options
@@ -58,8 +57,6 @@ check_include_files(boost/math/tools/atomic.hpp
 
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
-# TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
-find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 
 if(WITH_OMP)
   find_package(OpenMP REQUIRED)

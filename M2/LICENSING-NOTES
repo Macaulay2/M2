@@ -3,7 +3,6 @@ libraries.
 
 Libraries that may be linked with M2:
 
--latomic_ops    atomic_ops		various permissive licenses
 -lblas		BLAS			public domain
 -lfactory	singular factory	GPL 2 or 3
 -lflint		FLINT	 		GPL 2 or later

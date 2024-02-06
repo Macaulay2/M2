@@ -1,7 +1,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
     Version => "0.3",
-    Date => "December 10, 2023",
+    Date => "January 28, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -15,10 +15,11 @@ newPackage("ForeignFunctions",
 
 -*
 
-0.3 (2023-12-10, M2 1.23)
+0.3 (2024-01-28, M2 1.23)
 * add subscripted assignment for various pointer types
 * add support for GMP integers
 * add support for describe, expression, toExternalString, and toString
+* use null coalescing operator
 
 0.2 (2023-05-13, M2 1.22)
 * improvements for displaying foreign objects in webapp mode
@@ -182,11 +183,10 @@ ForeignType.synonym = "foreign type"
 
 new ForeignType := T -> new ForeignType of ForeignObject
 
-net ForeignType := T -> if T.?Name then T.Name else "<<a foreign type>>"
+net ForeignType := T -> T.Name ?? "<<a foreign type>>"
 
 protect Address
-address ForeignType := T -> if T.?Address then T.Address else error(
-    toString T, " has no address")
+address ForeignType := T -> T.Address ?? error(toString T, " has no address")
 
 size ForeignType := ffiTypeSize @@ address
 

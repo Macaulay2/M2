@@ -3,6 +3,8 @@
 use equality;
 use classes;
 
+header "#include <cassert>";
+
 dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
 export applyEEEpointer := dummyapplyEEE;
 
@@ -359,6 +361,8 @@ assignmentMethodP(meth:Expr):bool := (
 	  sym === LeftArrowS	    	-- symbol <- , which is an assignment operator in its own right  -- this should go away!!!
      	  ||
 	  sym === GlobalAssignS	        -- global assignment, dispatched internally (it's like    GlobalAssignHook X = (X,x) -> ...    )
+	  ||
+	  isAugmentedAssignmentOperatorWord(sym.symbol.word)
 	  )
      else false);
 

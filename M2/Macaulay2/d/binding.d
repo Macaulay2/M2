@@ -248,6 +248,7 @@ bumpPrecedence();
      export LongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==")); -- also binary
 bumpPrecedence();
      export orS := makeKeyword(binaryrightword("or"));
+     export QuestionQuestionS := makeKeyword(unarybinaryright("??"));
 bumpPrecedence();
      export xorS := makeKeyword(binaryrightword("xor"));
 bumpPrecedence();
@@ -470,14 +471,14 @@ lookup(t:Token):void := lookup(t,true,false);
 lookuponly(t:Token):void := lookup(t,false,false);
 -----------------------------------------------------------------------------
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, 
-     LongBiDoubleArrowS, DeductionS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS,
+     LongBiDoubleArrowS, DeductionS, QuestionQuestionS,
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS);
 export opsWithUnaryMethod := array(SymbolClosure)(
-     StarS, MinusS, PlusS, LessLessS, 
+     StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
      notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS ,ExclamationS );
@@ -491,6 +492,51 @@ export fixedPrefixOperators := array(SymbolClosure)(commaS,SharpS);
 
 -- ";" ","
 export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
+
+------------------------------------
+-- augmented assignment operators --
+------------------------------------
+
+-- same precendence as =
+saveprec := prec;
+prec = EqualW.parse.precedence;
+
+-- create one for most flexible binary operators
+export augmentedAssignmentOperatorTable := newSymbolHashTable();
+offset := 0;
+export augmentedAssignmentOperatorWords := (
+    new array(Word)
+    len length(opsWithBinaryMethod) - 9 at i
+    do (
+	-- to avoid ambiguity and syntax errors, we don't create augmented
+	-- assignment operators for ==, <==, <===, :, SPACE, or, and, xor, ?
+	while (
+	    opsWithBinaryMethod.(i + offset) === EqualEqualS              ||
+	    opsWithBinaryMethod.(i + offset) === LongDoubleLeftArrowS     ||
+	    opsWithBinaryMethod.(i + offset) === LongLongDoubleLeftArrowS ||
+	    opsWithBinaryMethod.(i + offset) === ColonS                   ||
+	    opsWithBinaryMethod.(i + offset) === AdjacentS                ||
+	    opsWithBinaryMethod.(i + offset) === orS                      ||
+	    opsWithBinaryMethod.(i + offset) === andS                     ||
+	    opsWithBinaryMethod.(i + offset) === xorS                     ||
+	    opsWithBinaryMethod.(i + offset) === QuestionS)
+	do offset = offset + 1;
+	bop := opsWithBinaryMethod.(i + offset).symbol;
+	aaop := binaryright(bop.word.name + "=");
+	insert(augmentedAssignmentOperatorTable, aaop, bop);
+	provide aaop));
+prec = saveprec;
+
+export isAugmentedAssignmentOperatorWord(word:Word):bool := (
+    foreach op in augmentedAssignmentOperatorWords
+    do if op == word then return true;
+    false);
+
+export augmentedAssignmentOperators := (
+    new array(SymbolClosure)
+    len length(augmentedAssignmentOperatorWords)
+    do foreach word in augmentedAssignmentOperatorWords
+    do provide makeKeyword(word));
 
 -----------------------------------------------------------------------------
 bind(t:Token,dictionary:Dictionary):void := (

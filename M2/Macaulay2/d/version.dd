@@ -80,17 +80,6 @@ gcversion():constcharstar := Ccode(returns,"
      else snprintf(buf,40,\"%d.%d.%d\", major, minor, micro);
      return buf");
 
-header "#include <atomic_ops.h>";
-atomicopsversion():constcharstar := Ccode(returns,"
-#ifdef AO_VERSION_MICRO
-     static char buf[40];
-     snprintf(buf,40,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
-     return buf
-#else
-     return \"version number not available\"
-#endif
-");
-
 header "#include <fflas-ffpack/config.h>";
 ffpackVersion():constcharstar := Ccode(constcharstar,"__FFLASFFPACK_PACKAGE_VERSION");
 
@@ -166,7 +155,6 @@ setupconst("version", Expr(toHashTable(Sequence(
    "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
-   "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if WITH_MYSQL

@@ -1,20 +1,8 @@
 #pragma once
 
-/* this next bit is copied from ../d/atomic.d, but it should be included, instead */
-
-#include <atomic_ops.h>
-#ifndef atomic_field_decl
-#define atomic_field_decl
-  struct atomic_field {
-       AO_t field;
-       };
-
-  #define load_Field(x) AO_load(&(x).field)
-  #define test_Field(x) (load_Field(x) != 0)
-  #define store_Field(x,val) AO_store(&(x).field,val)
-#endif
 #include "mutexclass.hpp"
 #include "gc_std.hpp"
+#include "M2/atomic-field.h"
 #include <M2/gc-include.h>
 #include <set>
 #include <map> 

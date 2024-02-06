@@ -166,7 +166,8 @@ scan((
 scan((
 	  (flexibleBinaryOperators,Binary,Flexible),
 	  (flexiblePrefixOperators,Prefix,Flexible),
-	  (flexiblePostfixOperators,Postfix,Flexible)
+	  (flexiblePostfixOperators,Postfix,Flexible),
+	  (augmentedAssignmentOperators,Binary,Flexible)
 	  ),
      (li,at,fl) -> scan(li, op -> operatorAttributes#op#at#fl = 1))
 operatorAttributes = hashTable apply(pairs operatorAttributes, (op,ats) -> (op, hashTable apply(pairs ats, (at,fls) -> (at, set keys fls))))

@@ -264,10 +264,10 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
 		    j := 0;
 		    while j < i do (
 			 images#j = apply(images#j, s -> s*a);
-			 j = j+1;
+			 j += 1;
 			 );
 		    images#i = apply(images#i, s -> s*b);
-		    i = i+1;
+		    i += 1;
 		    );
 	       images = toList images;
 	       commonDenominator := images#0#1;
