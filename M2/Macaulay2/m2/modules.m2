@@ -93,7 +93,7 @@ moduleAbbrv = (M, abbrv) -> (
     then getAttribute(M, ReverseDictionary)
     else abbrv)
 
-Vector#AfterPrint = v -> moduleAbbrv(module v, Vector)
+Vector#AfterPrint = Vector#AfterNoPrint = v -> moduleAbbrv(module v, Vector)
 
 ring Vector := v -> ring class v
 module Vector := v -> target v#0

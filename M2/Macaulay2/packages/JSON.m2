@@ -2,7 +2,7 @@ newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
     Version => "0.2",
-    Date => "December 13, 2023",
+    Date => "January 28, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -17,8 +17,9 @@ newPackage(
 
 -*
 
-0.2 (2023-12-13, M2 1.23)
+0.2 (2024-01-24, M2 1.23)
 * use single-string version of exportFrom
+* use null coalescing operator in toJSON
 
 0.1 (2022-08-31, M2 1.21)
 * initial release
@@ -126,8 +127,7 @@ jsonEncoder = method()
 jsonEncoder OptionTable := o -> (
     e := JSONEncoder o;
     e.IndentLevel = 0;
-    if e.ValueSeparator === null then e.ValueSeparator = (
-	if e.Indent === null then ", " else ",");
+    e.ValueSeparator ??= if e.Indent === null then ", " else ",";
     e)
 
 toJSON = method(Options => {

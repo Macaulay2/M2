@@ -364,6 +364,26 @@ export convert(e:ParseTree):Code := (
 	       is p:Parentheses do parallelAssignment(e,b,p)
 	       else dummyCode		  -- should not happen
 	       )
+	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
+	  then (
+	      when b.lhs
+	      is a:Adjacent
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), AdjacentS.symbol, treePosition(e)))
+	      is u:Unary
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), u.Operator.entry, treePosition(e)))
+	      is u:Postfix
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), u.Operator.entry, treePosition(e)))
+	      is c:Binary
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), c.Operator.entry, treePosition(e)))
+	      is t:Token
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), t.entry, treePosition(e)))
+	      else Code(augmentedAssignmentCode(b.Operator.entry, dummyCode,
+		      dummyCode, dummySymbol, treePosition(e))))
 	  else Code(binaryCode(b.Operator.entry.binary,convert(b.lhs),
 	       	    convert(b.rhs),treePosition(e)))
 	  )

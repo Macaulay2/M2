@@ -1046,6 +1046,11 @@ tostringfun(e:Expr):Expr := (
 	Ccode(void, "sprintf((char *)", buf, "->array, \"%p\", ", x.v, ")");
 	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
 	toExpr(buf))
+    is x:atomicIntCell do (
+	buf := newstring(20);
+	Ccode(void, "sprintf((char *)", buf, "->array, \"%d\", ", load(x.v), ")");
+	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
+	toExpr(buf))
 );
 setupfun("simpleToString",tostringfun);
 
@@ -1579,11 +1584,13 @@ locate(e:Code):void := (
      when e
      is nullCode do nothing
      is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:augmentedAssignmentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs))
      is v:arrayCode do foreach c in v.z do locate(c)
      is v:angleBarListCode do foreach c in v.t do locate(c)
      is v:Error do lookat(v.position)
      is v:semiCode do foreach c in v.w do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:evaluatedCode do lookat(v.position)
      is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
      is v:functionCode do (locate(v.arrow);locate(v.body);)
      is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)

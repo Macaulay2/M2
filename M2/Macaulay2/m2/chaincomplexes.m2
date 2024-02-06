@@ -143,7 +143,7 @@ texMath ChainComplex := C -> (
 complete ChainComplexMap := f -> (
      complete source f;
      if target f =!= source f then complete target f;
-     if f.?Resolution then ( i := 1; while f_i != 0 do i = i+1; );
+     if f.?Resolution then ( i := 1; while f_i != 0 do i += 1; );
      f)
 
 source ChainComplexMap := f -> f.source
@@ -294,7 +294,7 @@ ChainComplexMap ^ ZZ := ChainComplexMap => (f,n) -> (
 			      false)
 			 ) do (
 			 s = f_(i + j * f.degree) * s;
-			 j = j+1;
+			 j += 1;
 			 )
 		    ));
 	  g))
@@ -905,7 +905,7 @@ eagonNorthcott Matrix := f -> (
                                          l -> not isMember(q#0#l, p#0));
                                     t := first select(toList(0..n-1), l -> vec#l == 1);
                                     (-1)^(s+1)*f_(t,q#0#s)))))};
-		    j=j+1) ;
+		    j += 1) ;
       chainComplex d);
 
 ------ koszul

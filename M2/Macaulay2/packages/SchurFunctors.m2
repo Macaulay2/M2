@@ -115,7 +115,7 @@ isStandard = (T) -> (
      null
      )
 
-exchange = (T, col1, col2, s) -> (
+exchange(Filling, ZZ, ZZ, List) := (T, col1, col2, s) -> (
      -- s should be a list of positions of T#col1, that will be placed into col2
      -- The returned value is {(coeff, T')}
      -- coeff is 1 or -1.  The length of the list is 0 or 1.

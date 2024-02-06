@@ -48,13 +48,13 @@ MonomialTable::mon_term *MonomialTable::make_list_head()
   mon_term *t = reinterpret_cast<mon_term *>(mon_term_stash->new_elem());
   t->_next = t->_prev = t;
   t->_val = -1;
-  t->_lead = 0;
+  t->_lead = nullptr;
   return t;
 }
 
 MonomialTable::MonomialTable()
 {
-  _last_match = NULL;
+  _last_match = nullptr;
   _last_match_comp = -1;
 }
 
@@ -67,7 +67,7 @@ MonomialTable *MonomialTable::make(int nvars)
   result->_count = 0;
   /* The first entry is a dummy entry.  Components
      will always start at 1. */
-  result->_head.push_back(0);
+  result->_head.push_back(nullptr);
 
   return result;
 }
@@ -85,7 +85,7 @@ MonomialTable::~MonomialTable()
           tmp->_next->_prev = t;
           mon_term_stash->delete_elem(tmp);
         }
-      _head[i] = 0;
+      _head[i] = nullptr;
     }
   delete mon_term_stash;
   _count = 0;
@@ -132,7 +132,7 @@ int MonomialTable::find_divisor(exponents_t exp, int comp)
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return -1;
-  if (comp == _last_match_comp && _last_match != NULL &&
+  if (comp == _last_match_comp && _last_match != nullptr &&
       exponents::divides(_nvars, _last_match->_lead, exp))
     return _last_match->_val;
   unsigned long expmask = ~exponents::mask(_nvars, exp);
@@ -157,10 +157,10 @@ int MonomialTable::find_divisors(int max,
   assert(comp >= 1);
   assert(max != 0);
   if (comp >= static_cast<int>(_head.size())) return 0;
-  if (max == 1 && comp == _last_match_comp && _last_match != NULL &&
+  if (max == 1 && comp == _last_match_comp && _last_match != nullptr &&
       exponents::divides(_nvars, _last_match->_lead, exp))
     {
-      if (result != NULL) result->push_back(_last_match);
+      if (result != nullptr) result->push_back(_last_match);
       return 1;
     }
   mon_term *head = _head[comp];
@@ -179,7 +179,7 @@ int MonomialTable::find_divisors(int max,
             _last_match = t;
             _last_match_comp = comp;
             // move_up(t,head);
-            if (result != NULL) result->push_back(t);
+            if (result != nullptr) result->push_back(t);
             if (max >= 0 && nmatches >= max) break;
           }
       }
@@ -193,7 +193,7 @@ int MonomialTable::find_divisors(int max,
 MonomialTable::mon_term *MonomialTable::find_exact(exponents_t exp,
                                                    int comp) const
 {
-  if (comp >= static_cast<int>(_head.size())) return 0;
+  if (comp >= static_cast<int>(_head.size())) return nullptr;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -212,7 +212,7 @@ MonomialTable::mon_term *MonomialTable::find_exact(exponents_t exp,
             }
         if (is_eq) return t;
       }
-  return 0;
+  return nullptr;
 }
 
 void MonomialTable::insert(exponents_t exp, int comp, int id)

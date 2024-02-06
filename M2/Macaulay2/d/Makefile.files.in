@@ -99,6 +99,7 @@ M2_DFILES += texmacs.d
 M2_DFILES += monoid.dd
 M2_DFILES += monomial_ordering.dd
 M2_DFILES += boostmath.dd
+M2_DFILES += atomic2.d
 ifneq (@LIBFFI@,no)
 M2_DFILES += ffi.d
 else

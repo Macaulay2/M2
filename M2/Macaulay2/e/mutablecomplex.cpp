@@ -33,7 +33,7 @@ size_t MutableComplex::complexity(const iterator &i, const size_t flags) const
   mDifferential[n]->get_entry(u.first, u.second, e);
   // Count terms in the column
   int s = 0;
-  if (mLocalRing == 0)
+  if (mLocalRing == nullptr)
     s = mPolynomialRing->n_terms(e);
   else
     s = mLocalRing->n_terms(e);
@@ -42,7 +42,7 @@ size_t MutableComplex::complexity(const iterator &i, const size_t flags) const
       if (r == u.first) continue;
       mDifferential[n]->get_entry(r, u.second, e);
       if (mRing->is_zero(e)) continue;
-      if (mLocalRing == 0)
+      if (mLocalRing == nullptr)
         s += mPolynomialRing->n_terms(e);
       else
         s += mLocalRing->n_terms(e);
@@ -53,7 +53,7 @@ size_t MutableComplex::complexity(const iterator &i, const size_t flags) const
       if (c == u.second) continue;
       mDifferential[n]->get_entry(u.first, c, e);
       if (mRing->is_zero(e)) continue;
-      if (mLocalRing == 0)
+      if (mLocalRing == nullptr)
         s += mPolynomialRing->n_terms(e);
       else
         s += mLocalRing->n_terms(e);

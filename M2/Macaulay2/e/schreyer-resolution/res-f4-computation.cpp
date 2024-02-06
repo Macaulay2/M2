@@ -36,7 +36,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   // null is returned.
   const PolynomialRing* origR =
       groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
-  if (origR == 0)
+  if (origR == nullptr)
     {
       ERROR("expected polynomial ring");
       return nullptr;

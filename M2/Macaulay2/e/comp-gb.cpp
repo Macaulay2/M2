@@ -46,8 +46,9 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 {
   const Ring *R1 = m->get_ring();
   const PolynomialRing *R2 = R1->cast_to_PolynomialRing();
+
   std::vector<int> weights; // used in createParallelF4GB
-  if (R2 == 0)
+  if (R2 == nullptr)
     {
       // Look for the correct computation type here.
       if (R1 == globalZZ)
@@ -62,7 +63,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 #warning "handle non polynomial rings"
 #endif
       ERROR("GB computation for non-polynomial rings not yet re-implemented");
-      return 0;
+      return nullptr;
     }
 
 //  const PolynomialRing *R = R2->get_flattened_ring();
@@ -204,7 +205,7 @@ Computation /* or null */ *GBComputation::set_hilbert_function(
 // used.
 {
   ERROR("Hilbert function use is not implemented for this GB algorithm");
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(
@@ -213,7 +214,7 @@ const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(
   ERROR(
       "Cannot compute parallel lead terms for this kind of Groebner "
       "computation");
-  return 0;
+  return nullptr;
 }
 
 // Local Variables:
