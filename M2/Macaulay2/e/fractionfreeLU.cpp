@@ -28,8 +28,8 @@ FF_LUComputation::~FF_LUComputation()
 {
   R->remove(pivot);
   R->remove(lastpivot);
-  deletearray(col_perm);
-  deletearray(need_div);
+  freemem(col_perm);
+  freemem(need_div);
 }
 
 bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)

@@ -3,7 +3,6 @@
 i1 : R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
 
 i3 : (w,ns) = topWitnessSet(f,1);
-*** variables in the ring : {x, y, z, zz1} ***
 
 i4 : w
 

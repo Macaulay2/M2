@@ -10,6 +10,8 @@ newPackage(
      Authors => {{Name => "Bradford Hovinen",
 	          Email => "hovinen@math.uni-hannover.de"}},
      Headline => "versal deformations of maximal Cohen-Macaulay modules",
+     Keywords => {"Deformation Theory"},
+     PackageImports => { "Truncations" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -17,8 +19,8 @@ newPackage(
 	  "acceptance date" => "2010-04-17",
 	  "published article URI" => "http://j-sag.org/Volume2/jsag-2-2010.pdf",
 	  "published code URI" => "http://j-sag.org/Volume2/ModuleDeformations.m2",
-	  "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/ModuleDeformations.m2",
-	  "release at publication" => 11367,	    -- as an integer
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ModuleDeformations.m2",
+	  "release at publication" => "314a1e7a1a5f612124f23e2161c58eabeb491f46",
 	  "version at publication" => "1.0",
 	  "volume number" => "2",
 	  "volume URI" => "http://j-sag.org/Volume2/"
@@ -519,7 +521,7 @@ document {
      "that the output may have incorrect terms with total exponent greater than ", TEX "$ n $",
      ". If the input is positively ",
      "graded, all deformation parameters have strictly positive degree, and ",
-     TEX "$ n $", " is sufficently large, then no terms of degree greater than ",
+     TEX "$ n $", " is sufficiently large, then no terms of degree greater than ",
      TEX "$ n $", " appear in the output, and the result is versal. In this case, the maximum ",
      "of ", TEX "$ d / deg x $", " where ", TEX "$ d $", " is the degree of the equation of the ",
      "hypersurface and ", TEX "$ x $", " ranges over all variables in the ring of the hypersurface and ",

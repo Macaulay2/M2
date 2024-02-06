@@ -6,7 +6,7 @@ include ../../../../include/config.Makefile
 all: check
 # we depend on "diff" accepting some options that perhaps only GNU diff does
 check: test.out.expected.trim test.out.trim
-	if ! diff -B -b -u test.out.expected.trim test.out.trim ;\
+	@if ! diff -B -b -u test.out.expected.trim test.out.trim ;\
 	then echo 'make[$(MAKELEVEL)]: *''** test failed: [Macaulay2/tests/ComputationsBook/$(shell basename $(chapter_srcdir))]' ;\
 	     false ;\
 	fi
@@ -29,7 +29,7 @@ endif
 
 
 PATHJOIN := 'path = join({"./","$(chapter_srcdir)/"},path)'
-M2CMD := time nice -18 @pre_exec_prefix@/bin/M2 --stop -q -e $(PATHJOIN) --print-width 0
+M2CMD := nice -18 @pre_exec_prefix@/bin/M2 --stop -q -e $(PATHJOIN) --print-width 0 --silent
 EXIT := -e "exit 0"
 INPUT = -e 'input "$<"'
 
@@ -37,14 +37,14 @@ book_patterns := $(chapter_srcdir)/../patterns
 chapter_patterns := $(chapter_srcdir)/patterns
 
 test.out.trim: test.out $(book_patterns) $(chapter_patterns)
-	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
+	@<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out.expected.trim: $(EXPECTED) $(book_patterns) $(chapter_patterns)
-	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
+	@<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out: test.m2 always
-	$(LIMIT) $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp
-	mv test.out.tmp test.out
+	@$(LIMIT) $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp
+	@mv test.out.tmp test.out
 
 clean:; rm -f *.trim
 

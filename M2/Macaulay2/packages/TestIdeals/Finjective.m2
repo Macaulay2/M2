@@ -153,7 +153,7 @@ internalFPureModule ( Number, RingElement, Ideal, List ) := Sequence => o -> ( t
 (
     R1 := ring ff;
     S1 := ambient R1;
-    if ring( u1#0 ) =!= S1 then error "internalFPureModule: Exptected u1 to be in the ambient polynomial ring";
+    if ring( u1#0 ) =!= S1 then error "internalFPureModule: Expected u1 to be in the ambient polynomial ring";
     I1 := ideal R1;
     J1 := sub( canIdeal, S1 );
     pp := char S1;
@@ -275,7 +275,7 @@ isFInjective Ring := Boolean => o-> R1 ->
     flag := true;
     flagPushComputed := false;
 
-    -- F-Injectivity fast to compute on dim(S)-dim(R), so we check there seperately by default
+    -- F-Injectivity fast to compute on dim(S)-dim(R), so we check there separately by default
     if o.CanonicalStrategy === Katzman then
     (
 	-- if F-injectivity fails in top dimension, no need to try any others

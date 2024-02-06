@@ -16,7 +16,7 @@ document {
       {TO "fpt", " computes (or estimates) the ", TEX ///$F$///, "-pure threshold."},
       {TO "isFJumpingExponent", " checks whether a given number is an ", TEX ///$F$///, "-jumping exponent."},
       {TO "compareFPT", " determines whether the given number is greater than, less than, or equal to the ", TEX ///$F$///, "-pure threshold."},
-      {TO "nu", " is a function whose normalized value provides a canonical estimate for the ", TEX ///$F$///, "-pure threshold, ", TEX ///$F$///, "-thresholds, and more."}
+      {TO "frobeniusNu", " is a function whose normalized value provides a canonical estimate for the ", TEX ///$F$///, "-pure threshold, ", TEX ///$F$///, "-thresholds, and more."}
 	},
 	"The following example demonstrates some of the functionality of this package.",
  BR{},BR{},
@@ -27,8 +27,8 @@ document {
     BOLD "Contributors", BR{}, BR{},
     "We sincerely thank the following people, who contributed code to this package.",
        UL {
-        {HREF{"https://www.juniata.edu/academics/departments/mathematics/faculty.php", "Erin Bela"}},
-        {HREF{"https://sst.nu.edu.kz/en/zhibek-kadyrsizova/","Zhibek Kadyrsizova"}},
+        {"Erin Bela"},
+        {HREF{"https://nu.edu.kz/faculty/zhibek-kadyrsizova","Zhibek Kadyrsizova"}},
         {HREF{"http://www.katzman.staff.shef.ac.uk/", "Mordechai Katzman"}},
         {HREF{"https://www.hood.edu/academics/faculty/sara-malec","Sara Malec"}},
         {HREF{"http://www.math.utah.edu/~robinson/", "Marcus Robinson"}}

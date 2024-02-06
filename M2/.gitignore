@@ -1,3 +1,4 @@
+*~
 /M2
 /config.args
 /config.log
@@ -19,13 +20,6 @@
 /distributions/rpm/Makefile
 /distributions/rpm/Macaulay2-body.spec
 /distributions/rpm/Macaulay2-common-body.spec
-/distributions/cygwin/Makefile
-/distributions/cygwin/Macaulay2.README
-/distributions/cygwin/setup.hint-base
-/distributions/cygwin/server/Makefile
-/distributions/cygwin/postinstall.sh
-/distributions/cygwin/preremove.sh
-/distributions/cygwin/server/Macaulay2-icons/setup.hint
 /distributions/freebsd/Makefile
 /distributions/freebsd/post-install
 /distributions/freebsd/post-deinstall
@@ -102,8 +96,7 @@
 /Macaulay2/e/f4/Makefile
 /Macaulay2/e/unit-tests/Makefile
 /Macaulay2/d/distributed-packages.h
-/Macaulay2/emacs/M2-init.el
-/Macaulay2/emacs/Makefile
+/Macaulay2/editors/Makefile
 /Macaulay2/html-check-links/Makefile
 /Macaulay2/packages/Style/Makefile
 /Macaulay2/m2/Makefile

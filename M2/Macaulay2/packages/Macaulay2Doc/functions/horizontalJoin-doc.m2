@@ -52,7 +52,7 @@ doc ///
    horizontalJoin(A,B)
   Text
    Nested sequences in the input are automatically spliced. For instance, in
-   the next example the input is intepreted as {\tt \{A, B, A, B, A\}}. 
+   the next example the input is interpreted as {\tt \{A, B, A, B, A\}}. 
   Example
    horizontalJoin {(A, B), (A, B, (A))}
   Text

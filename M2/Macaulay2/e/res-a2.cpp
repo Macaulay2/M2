@@ -18,7 +18,7 @@ gb_emitter::gb_emitter(const Matrix *m)
   these = newarray_atomic_clear(int, m->n_cols());
 }
 
-gb_emitter::~gb_emitter() { deletearray(these); }
+gb_emitter::~gb_emitter() { freemem(these); }
 RingElement *gb_emitter::hilbertNumerator()
 {
   assert(0);  // This routine should NEVER be called
@@ -97,7 +97,7 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
   if (length > 1 && origsyz > 0)
     {
       if (origsyz > m->n_cols()) origsyz = m->n_cols();
-      int *one = originalR->getMonoid()->make_one();
+      monomial one = originalR->getMonoid()->make_one();
       const int *mon;
       for (i = 0; i < origsyz; i++)
         {
@@ -160,7 +160,7 @@ gbres_comp::gbres_comp(const Matrix *m,
                        const RingElement * /*hf*/,
                        int strategy)
 {
-  // MES: check homogeniety
+  // MES: check homogeneity
   setup(m, length, origsyz, strategy);
   // nodes[0]->set_HF(hf);
 }
@@ -368,7 +368,7 @@ M2_arrayint gbres_comp::betti_minimal() const
         }
     }
   M2_arrayint result = betti_make(lo, hi, len, bettis);
-  deletearray(bettis);
+  freemem(bettis);
   return result;
 }
 

@@ -2,8 +2,6 @@
 --- author(s): L.Gold
 --- note:
 
-undocumented {(hilbertSeries,CoherentSheaf)}
-
 document { 
      Key => hilbertSeries,
      Headline => "compute the Hilbert series",
@@ -72,28 +70,8 @@ document {
 	  }
      }
 
--- NOTE: listed as undocumented above.
--- document { 
---      Key => (hilbertSeries,CoherentSheaf),
---      Headline => "compute the Hilbert series of a coherent sheaf",
---      Usage => "hilbertSeries M",
---      Inputs => {
--- 	  "M"
--- 	  },
---      Outputs => {
--- 	  Divide => "the Hilbert series" },
---      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
---      coherent sheaf.",
---      EXAMPLE {
--- 	  "V = Proj(ZZ/101[x_0..x_2]);",
--- 	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
---       	  "s = hilbertSeries M",
---       	  "numerator s"
--- 	  }
---      }
-
 document { 
-     Key => (hilbertSeries,Ideal),
+     Key => {(hilbertSeries, Ideal)},
      Headline => "compute the Hilbert series of the quotient of the ambient ring by the ideal",
      Usage => "hilbertSeries I",
      Inputs => {
@@ -163,30 +141,6 @@ document {
 }
 
 document { 
-     Key => (hilbertSeries,ProjectiveVariety),
-     Headline => "compute the Hilbert series of a projective variety",
-     Usage => "hilbertSeries V",
-     Inputs => {
-	  "V" =>  ProjectiveVariety
-	  },
-     Outputs => {
-	  Divide =>   "the Hilbert series" },
-     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
-     projective variety, that is, the Hilbert series of the
-     homogeneous coordinate ring of ", TT "V", ". The saturation of
-     the ideal may need to be computed.",
-     PARA {
-	  "This method is not implemented yet."
-	  }
--* temporarily disabled
-     EXAMPLE {
-	  "V = Proj(QQ[x,y])",
-	  "s = hilbertSeries V",
-	  "numerator s"
-	  }
-*-
-     }
-document { 
      Key => [hilbertSeries, Order],
      Headline => "display the truncated power series expansion",
      Usage => "hilbertSeries(..., Order => n)",
@@ -221,16 +175,6 @@ document {
      heft R
      ///,
      }
-
-TEST ///
-R = ZZ/101[x,y]
-M = R^1/x
-T = degreesRing R
-t = T_0
-assert( hilbertSeries (M, Order => 5) == t^4+t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
-///
 
 document {
      Key => [hilbertSeries,Reduce],

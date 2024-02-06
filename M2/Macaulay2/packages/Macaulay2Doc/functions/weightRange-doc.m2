@@ -50,16 +50,3 @@ document {
 	  ),
      SeeAlso => {degree, homogenize, part, index}
      }
-
-TEST ///
-R = QQ[a..d]
-f = a^3*b+c^4+d^2-d
-assert((0,4) == weightRange({1,1,0,0},f))
-S = R[x,y]
-f = a*x+b*y
-assert((1,2) == weightRange({1,2,0,0,0,0},f))
-assert((1,2) == weightRange({1,2},f))
-assert((1,2) == weightRange({1,2,0,0,0,0,231,12312,132,3212,2,123,12123,23},f))
-(34489274,534535353) == weightRange({34489274,534535353},f)
-weightRange({0,0,3,7,1},f)
-///

@@ -26,7 +26,6 @@ isFace(Polyhedron,Polyhedron) := (P,Q) -> (
 -- PURPOSE : Tests if a Polyhedron is empty
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
-isEmpty = method(TypicalValue => Boolean)
 isEmpty Polyhedron := P -> getProperty(P, empty)
 
 
@@ -83,10 +82,10 @@ facets Polyhedron := P -> getProperty(P, facets)
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
 --   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
 --     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
+--  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
    -- Checking for input errors
-   if k <= 0 then error("The factor must be strictly positiv");
+   if k <= 0 then error("The factor must be strictly positive");
    vertP := vertices P;
    vertP = promote(vertP, QQ);
    raysP := promote(rays P, QQ);
@@ -132,5 +131,5 @@ dualFaceRepresentationMap Polyhedron := P -> (
 regularTriangulation = method()
 regularTriangulation Polyhedron := P -> (
    if not isCompact P then error("Triangulation can only be produced for polytopes (i.e. compact polyhedra).");
-   regularFineTriangulation vertices P
+   topcomRegularFineTriangulation vertices P
 )

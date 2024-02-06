@@ -39,7 +39,7 @@ class ReducedGB_Field_Local : public ReducedGB_Field
   VECTOR(int) newpol_alpha;  // These next two are local values...
   VECTOR(POLY) newpol;
 
-  bool find_good_divisor(exponents h_exp,
+  bool find_good_divisor(exponents_t h_exp,
                          int h_comp,
                          int h_deg,
                          int &h_alpha,          // result value
@@ -48,7 +48,7 @@ class ReducedGB_Field_Local : public ReducedGB_Field
 
   void reset_table();
 
-  void store_in_table(const POLY &h, exponents h_exp, int h_comp, int h_alpha);
+  void store_in_table(const POLY &h, exponents_t h_exp, int h_comp, int h_alpha);
 
   ReducedGB_Field_Local(GBRing *R0,
                         const PolynomialRing *originalR0,

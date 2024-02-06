@@ -1,4 +1,4 @@
-# Script for checking which SIMD operations are used in an exetuable file
+# Script for checking which SIMD operations are used in an executable file
 
 list="X86 X64 SSE2 FMA AVX"
 

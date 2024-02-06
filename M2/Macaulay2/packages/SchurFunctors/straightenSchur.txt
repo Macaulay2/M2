@@ -2,7 +2,7 @@
     straighten
     (straighten, Filling, Module)
   Headline
-    Given a tableau of shape lambda express it as a linear combination of SST in the given schur Module 
+    Given a tableau of shape lambda express it as a linear combination of SST in the given Schur module 
   Usage
     straighten(T,M)
   Inputs

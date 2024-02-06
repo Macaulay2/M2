@@ -33,12 +33,12 @@ doc ///
         Text
 	    Given $n\times n$ matrices $A$ and $B$, 
 	    a number $\lambda$ is a {\bf generalized eigenvalue}
-	    if there is a nonzero vecor $v$ such that $A x = \lambda B x$.
+	    if there is a nonzero vector $v$ such that $A x = \lambda B x$.
 	Text
 	    This function creates a square target system representing the problem
 	    for random $A$ and $B$ and a start system representing  
 	    the problem with eigenvalues that
-	    are $n$-th roots of unity and the corresponding eignevectors 
+	    are $n$-th roots of unity and the corresponding eigenvectors 
 	    form the standard basis. 
 	    
 	    This system was solved in May 2020, using @TO track@ in Macaulay2 v1.15

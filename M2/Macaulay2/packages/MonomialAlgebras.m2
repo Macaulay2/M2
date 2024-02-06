@@ -8,13 +8,14 @@ newPackage(
          {Name => "Max Nitsche", Email => "nitsche@mis.mpg.de", HomePage => ""}
          },
     	Headline => "monomial algebras",
+	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
 	     "article title" => "Decomposition of Monomial Algebras: Applications and Algorithms",
 	     "acceptance date" => "2013-04-07",
-	     "published article URI" => "http://j-sag.org/Volume5/jsag-2-2013.pdf",
-	     "published code URI" => "http://j-sag.org/Volume5/MonomialAlgebras.m2",
+	     "published article URI" => "https://msp.org/jsag/2013/5-1/p02.xhtml",
+	     "published code URI" => "https://msp.org/jsag/2013/5-1/jsag-v5-n1-x02-code.zip",
 	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MonomialAlgebras.m2",
 	     "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
 	     "version at publication" => "2.3",
@@ -413,7 +414,7 @@ rem=method()
 rem(List,Set):=(L,I)->(
   while #I>0 do (
     m:=max(toList I);
-    L=remove(L,m);
+    L=drop(L,{m,m});
     I=I - set {m};
   );
   L)
@@ -729,7 +730,7 @@ randomSemigroup(ZZ,ZZ,ZZ):=opt->(a,d,c)->(
        j:=random(#E);
        if #E==0 then error("Codimension too large");
        B=append(B,E#j);
-       E=remove(E,j);
+       E=drop(E,{j,j});
      );
    ) else (
      dPB:=-1;
@@ -740,7 +741,7 @@ randomSemigroup(ZZ,ZZ,ZZ):=opt->(a,d,c)->(
          j=random(#E);
          if #E==0 then error("Codimension too large");
          B=append(B,E#j);
-         E=remove(E,j);
+         E=drop(E,{j,j});
        );
        PB:=posHull transpose matrix B;
        dPB=dim PB;
@@ -945,7 +946,7 @@ doc ///
     Text
       {\bf Overview:}
 
-      Consider a monoid B in \mathbb{N}^m and a submonid A \subseteq B (both finitely generated)
+      Consider a monoid B in \mathbb{N}^m and a submonoid A \subseteq B (both finitely generated)
       such that K[B] is a finitely generated K[A]-module (with the module structure
       given by inclusion, and K being a field).
 
@@ -1031,7 +1032,7 @@ doc ///
 
       {\bf Tests:}
 
-      The following files contain the tuples (regularity, degree, codim) for every semigroup B in \mathbb{N}^d with fixed {\bf d} and fixed coodinate sum {\bf a}.
+      The following files contain the tuples (regularity, degree, codim) for every semigroup B in \mathbb{N}^d with fixed {\bf d} and fixed coordinate sum {\bf a}.
       Using this data we have verified the Eisenbud-Goto conjecture in these cases.
 
       {\bf d = 3:}
@@ -1258,7 +1259,7 @@ doc ///
      - a multigraded polynomial ring R with @TO Degrees@ R = B.
 
 
-     Specifing B:
+     Specifying B:
 
    Example
      B = {{1,2},{3,0},{0,4},{0,5}}
@@ -1340,7 +1341,7 @@ doc ///
     :Net
   Description
    Text
-      Pretty print for monomial algebras. Prints the assocated polynomial ring of M.
+      Pretty print for monomial algebras. Prints the associated polynomial ring of M.
 
    Example
      M = monomialAlgebra {1,4,8,9,11}
@@ -1857,7 +1858,7 @@ doc ///
 
      Note that this condition does not depend on K.
 
-     For the defintion of Buchsbaum see:
+     For the definition of Buchsbaum see:
 
      J. Stueckrad, W. Vogel: Castelnuovo Bounds for Certain Subvarieties in \mathbb{P}^n, Math. Ann. 276 (1987), 341-352.
 
@@ -2317,7 +2318,7 @@ doc ///
     randomMonomialAlgebra
     (randomMonomialAlgebra,ZZ,ZZ,ZZ)
   Headline
-    Generate random monoimal algebra.
+    Generate random monomial algebra.
   Usage
     randomMonomialAlgebra(a,d,c)
   Inputs

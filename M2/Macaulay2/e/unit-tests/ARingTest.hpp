@@ -1,6 +1,8 @@
 #ifndef __ring_test_hpp__
 #define __ring_test_hpp__
 
+#include "interface/random.h"
+
 const int ntrials = 1000;
 // const int ntrials = 1000000; // not good for the ssd - system swaps
 // memory....
@@ -384,7 +386,7 @@ void testPower(const T& R, int ntrials)
       gen.nextElement(b);
 
       R.power(c, a, q);
-      EXPECT_TRUE(R.is_equal(c, a));  // test a^q == q
+      EXPECT_TRUE(R.is_equal(c, a));  // test a^q == a
 
       if (R.is_zero(a)) continue;
 

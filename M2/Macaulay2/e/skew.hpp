@@ -20,7 +20,7 @@ class SkewMultiplication
   int n_skew_vars() const { return _n_skew; }
   bool is_skew_var(int i) const { return _skew_exp[i]; }
   int skew_variable(int i) const { return _skew_list[i]; }
-  // number of variables occuring in 'exp' which are skew variables
+  // number of variables occurring in 'exp' which are skew variables
   int skew_degree(const int *exp) const;
 
   int skew_vars(const int *exp, int *result) const;

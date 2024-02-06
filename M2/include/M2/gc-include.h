@@ -6,6 +6,8 @@
 #ifndef GC_INCLUDED
   #define GC_INCLUDED 1
 
+  // IWYU pragma: begin_exports
+
   #ifdef GC_MALLOC
    #error "gc.h already included"
   #endif
@@ -43,6 +45,16 @@
 
   #if defined(__cplusplus)
     #define GC_NEW_ABORTS_ON_OOM
-    #include <gc/gc_cpp.h>
+    #ifdef __CYGWIN__
+      /* prevent gc from defining global new and delete methods */
+      #undef __CYGWIN__
+      #include <gc/gc_cpp.h>
+      #define __CYGWIN__ 1
+    #else
+      #include <gc/gc_cpp.h>
+    #endif
   #endif
+
+  // IWYU pragma: end_exports
+
 #endif

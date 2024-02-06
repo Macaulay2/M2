@@ -4,8 +4,9 @@
 
 #include <vector>
 #include <string>
-#include "aring-zzp-ffpack.hpp"
 
+#include "ExponentVector.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "style.hpp"
 #include "aring.hpp"
 #include "ringelem.hpp"
@@ -16,9 +17,9 @@ namespace M2 {
 /**
  * \ingroup polynomialrings
  */
-typedef struct poly_struct *poly;
+typedef struct ARingPolynomialStruct *ARingPolynomial;
 
-struct poly_struct
+struct ARingPolynomialStruct
 {
   int deg;
   int len;
@@ -26,11 +27,9 @@ struct poly_struct
   {
     ARingZZpFFPACK::ElementType *coeffs;
     //      long* ints;  // array of integers.  at level == 0
-    poly *polys;  // array of more ptrs to poly structs, at level > 0
+    ARingPolynomial *polys;  // array of more ptrs to poly structs, at level > 0
   };
 };
-
-typedef int *exponents;
 
 class DRing;
 
@@ -47,7 +46,61 @@ class ARingTower : public RingInterface
   typedef BaseRingType::ElementType BaseCoefficientType;
 
   static const RingID ringID = ring_tower_ZZp;
-  typedef poly ElementType;
+  typedef ARingPolynomial ElementType;
+  /**
+   * \brief A wrapper class for ElementType
+   *
+   * This keeps a pointer to the ARingTower object as it's needed to
+   * implement the destructor
+   */
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element &&other) : ElementImpl(other), R(other.R)
+    {
+      other.mValue = NULL;
+    }  // move constructor only,
+    explicit Element(const ARingTower &_R)
+        : ElementImpl(static_cast<ElementType>(nullptr)), R(_R)
+    {
+    }
+    Element(const ARingTower &_R, const ElementType& value)
+        : R(_R)
+    {
+      R.init_set(mValue,value);
+    }
+    ~Element()
+    {
+      if (mValue) R.clear(mValue);
+    }
+
+   private:
+    const ARingTower &R;
+  };
+
+  class ElementArray
+  {
+    const ARingTower &R;
+    const int mSize;
+    const std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARingTower &_R, size_t size)
+        : R(_R), mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < mSize; i++) mData[i] = nullptr;
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) R.clear(mData[i]);
+    }
+    ElementType &operator[](size_t idx) { return mData[idx]; }
+    const ElementType &operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
+
   typedef ElementType elem;
 
   //////////////////////////////
@@ -61,12 +114,12 @@ class ARingTower : public RingInterface
   virtual ~ARingTower();
 
   // TODO: the interface for these three need to change
-  static const ARingTower *create(const BaseRingType &baseRing,
-                                  const std::vector<std::string> &names);
-  static const ARingTower *create(const ARingTower &R,
-                                  const std::vector<std::string> &new_names);
-  static const ARingTower *create(const ARingTower &R,
-                                  const std::vector<ElementType> &extensions);
+  static ARingTower *create(const BaseRingType &baseRing,
+                            const std::vector<std::string> &names);
+  static ARingTower *create(const ARingTower &R,
+                            const std::vector<std::string> &new_names);
+  static ARingTower *create(const ARingTower &R,
+                            const std::vector<ElementType> &extensions);
 
   size_t n_vars() const { return mNumVars; }
   const ARingZZpFFPACK &baseRing() const { return mBaseRing; }
@@ -121,6 +174,13 @@ class ARingTower : public RingInterface
     result = reinterpret_cast<ElementType>(b);
   }
 
+  // There's a strong argument that ElementType shouldn't be a pointer type
+  // it makes this function not particularly safe
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return reinterpret_cast<ElementType>(a.poly_val);
+  }
+
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = NULL; }
@@ -162,7 +222,7 @@ class ARingTower : public RingInterface
       result = a;
     else
       {
-        poly a1 = copy(mStartLevel, a);
+        ARingPolynomial a1 = copy(mStartLevel, a);
         add_in_place(mStartLevel, a1, b);
         result = a1;
       }
@@ -209,7 +269,7 @@ class ARingTower : public RingInterface
   }  // TODO: write this
 
   // f *= b, where b is an element in mBaseRing
-  void mult_by_coeff(poly &f, const BaseCoefficientType &b) const;
+  void mult_by_coeff(ARingPolynomial &f, const BaseCoefficientType &b) const;
 
  private:
   void extensions_text_out(buffer &o) const;  // TODO: write this
@@ -222,40 +282,40 @@ class ARingTower : public RingInterface
                      bool p_parens) const;
 
  private:
-  bool is_one(int level, const poly f) const;  // TODO: write this
-  bool is_equal(int level, const poly f, const poly g) const;
+  bool is_one(int level, const ARingPolynomial f) const;  // TODO: write this
+  bool is_equal(int level, const ARingPolynomial f, const ARingPolynomial g) const;
 
-  poly alloc_poly_n(int deg) const;
-  poly alloc_poly_0(int deg) const;
-  void dealloc_poly(poly &f) const;
+  ARingPolynomial alloc_poly_n(int deg) const;
+  ARingPolynomial alloc_poly_0(int deg) const;
+  void dealloc_poly(ARingPolynomial &f) const;
 
-  poly copy(int level, const poly f) const;
+  ARingPolynomial copy(int level, const ARingPolynomial f) const;
 
-  // possibly increase the capacity of 'f', to accomodate polynomials of degree
+  // possibly increase the capacity of 'f', to accommodate polynomials of degree
   // 'newdeg'
-  void increase_capacity(int newdeg, poly &f) const;
+  void increase_capacity(int newdeg, ARingPolynomial &f) const;
 
   // sets the (top level) degree of f to be correct.  If f is the 0 poly, then f
   // is deallocated
-  void reset_degree(poly &f) const;
+  void reset_degree(ARingPolynomial &f) const;
 
   // Create a polynomial at level 'level', representing the variable 'v'
   // v should be in the range 0..mNumVars-1.  If not, then the 0 elem is
   // returned.
   // ASSUMPTION: level >= v.  If not, 0 is returned.
-  poly var(int level, int v) const;
+  ARingPolynomial var(int level, int v) const;
 
   // f += g.  f and g should both be of level 'level'
-  void add_in_place(int level, poly &f, const poly g) const;
+  void add_in_place(int level, ARingPolynomial &f, const ARingPolynomial g) const;
 
-  void subtract_in_place(int level, poly &f, const poly g) const;
+  void subtract_in_place(int level, ARingPolynomial &f, const ARingPolynomial g) const;
 
-  void negate_in_place(int level, poly &f) const;
+  void negate_in_place(int level, ARingPolynomial &f) const;
 
-  void mult_by_coeff(int level, poly &f, const BaseCoefficientType &b) const;
+  void mult_by_coeff(int level, ARingPolynomial &f, const BaseCoefficientType &b) const;
 
   // free all space associated to f, set f to 0.
-  void clear(int level, poly &f) const;
+  void clear(int level, ARingPolynomial &f) const;
 
  private:
   const ARingZZpFFPACK &mBaseRing;
@@ -372,7 +432,7 @@ class ARingTower : public RingInterface
     
     void from_ring_elem(ElementType &result, const ring_elem &a) const
     {
-      ElementType a1 = TOWER_VAL(a);
+      ElementType a1 = reinterpret_cast<TowerPolynomial>(a.poly_val);
       result = mRing.copy(mStartLevel, a1);
     }
     
@@ -411,61 +471,61 @@ class ARingTower : public RingInterface
     /////////////////////////////////////
     // Predicates ///////////////////////
     /////////////////////////////////////
-    bool is_equal(int level, const poly f, const poly g);
-    bool is_zero(poly f) { return f == 0; }
+    bool is_equal(int level, const ARingPolynomial f, const ARingPolynomial g);
+    bool is_zero(ARingPolynomial f) { return f == 0; }
 
     /////////////////////////////////////
     // Construction of new elements /////
     /////////////////////////////////////
 
-    poly copy(int level, const_poly f);
-    poly var(int level, int v); // make the variable v (but at level 'level')
-    poly from_long(int level, long c);  // c should be reduced mod p
+    ARingPolynomial copy(int level, const_poly f);
+    ARingPolynomial var(int level, int v); // make the variable v (but at level 'level')
+    ARingPolynomial from_long(int level, long c);  // c should be reduced mod p
     
     /////////////////////////////////////
     // Private routines for arithmetic //
     /////////////////////////////////////
-    void reset_degree_0(poly &f); // possibly sets f to 0
-    void reset_degree_n(int level, poly &f); // ditto
+    void reset_degree_0(ARingPolynomial &f); // possibly sets f to 0
+    void reset_degree_n(int level, ARingPolynomial &f); // ditto
 
-    void mult_by_coeff_0(poly &f, long b);
-    void mult_by_coeff_n(int level, poly &f, poly b);
+    void mult_by_coeff_0(ARingPolynomial &f, long b);
+    void mult_by_coeff_n(int level, ARingPolynomial &f, ARingPolynomial b);
     // f *= b.  b should have level 'level-1'.
 
-    void make_monic_0(poly & f, long &result_multiplier);
-    void make_monic_n(int level, poly & f, poly &result_multiplier);
+    void make_monic_0(ARingPolynomial & f, long &result_multiplier);
+    void make_monic_n(int level, ARingPolynomial & f, ARingPolynomial &result_multiplier);
 
-    bool make_monic3(int level, poly & u1, poly &u2, poly &u3);
+    bool make_monic3(int level, ARingPolynomial & u1, ARingPolynomial &u2, ARingPolynomial &u3);
 
 
-    void add_in_place_0(poly &f, const poly g);
-    void add_in_place_n(int level, poly &f, const poly g);
-    void add_in_place(int level, poly &f, const poly g);
+    void add_in_place_0(ARingPolynomial &f, const ARingPolynomial g);
+    void add_in_place_n(int level, ARingPolynomial &f, const ARingPolynomial g);
+    void add_in_place(int level, ARingPolynomial &f, const ARingPolynomial g);
 
-    void subtract_in_place_0(poly &f, const poly g);
-    void subtract_in_place_n(int level, poly &f, const poly g);
-    void subtract_in_place(int level, poly &f, const poly g);
+    void subtract_in_place_0(ARingPolynomial &f, const ARingPolynomial g);
+    void subtract_in_place_n(int level, ARingPolynomial &f, const ARingPolynomial g);
+    void subtract_in_place(int level, ARingPolynomial &f, const ARingPolynomial g);
 
-    poly mult_0(const poly f, const poly g, bool reduce_by_extension);
-    poly mult_n(int level, const poly f, const poly g, bool reduce_by_extension);
-    poly mult(int level, const poly f, const poly g, bool reduce_by_extension);
+    ARingPolynomial mult_0(const ARingPolynomial f, const ARingPolynomial g, bool reduce_by_extension);
+    ARingPolynomial mult_n(int level, const ARingPolynomial f, const ARingPolynomial g, bool reduce_by_extension);
+    ARingPolynomial mult(int level, const ARingPolynomial f, const ARingPolynomial g, bool reduce_by_extension);
 
-    poly random_0(int deg);
-    poly random_n(int level, int deg);
-    poly random(int level, int deg);
-    poly random(int level); // obtains a random element, using only variables which are algebraic over the base
+    ARingPolynomial random_0(int deg);
+    ARingPolynomial random_n(int level, int deg);
+    ARingPolynomial random(int level, int deg);
+    ARingPolynomial random(int level); // obtains a random element, using only variables which are algebraic over the base
 
-    poly diff_0(const poly f);
-    poly diff_n(int level, int whichvar, const poly f);
+    ARingPolynomial diff_0(const ARingPolynomial f);
+    ARingPolynomial diff_n(int level, int whichvar, const ARingPolynomial f);
 
-    poly mult_by_int_0(long c, const poly f);
-    poly mult_by_int_n(int level, long c, const poly f);
-    poly mult_by_int(int level, long c, const poly f);
+    ARingPolynomial mult_by_int_0(long c, const ARingPolynomial f);
+    ARingPolynomial mult_by_int_n(int level, long c, const ARingPolynomial f);
+    ARingPolynomial mult_by_int(int level, long c, const ARingPolynomial f);
 
     /////////////////////////////////////
     // Translation to/from other rings //
     /////////////////////////////////////
-    void add_term(int level, poly &result, long coeff, exponents exp) const; // modifies result.
+    void add_term(int level, ARingPolynomial &result, long coeff, exponents_t exp) const; // modifies result.
 #endif
 
 // Local Variables:

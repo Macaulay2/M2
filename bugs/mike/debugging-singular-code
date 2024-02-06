@@ -98,7 +98,7 @@ Then, in loop#113: the ideal being processed is
   v2-1, (v1-1)(v2-1)(v5-1), PS
 
 The char set it finds, after charseta, is the SAME one as above.  And since it
-is already in 'pi', the 'initalset' is not being added in (the block starting
+is already in 'pi', the 'initialset' is not being added in (the block starting
 at "pi = myUnion(pi, ListCFList(cs));" is not being executed, as the factorset
 is the single polynomial (v1-1)(v3-1)) which for instance means we never add
 v5-1 into the ideal, and consequently, we are missing that part of the

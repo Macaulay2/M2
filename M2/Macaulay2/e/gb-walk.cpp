@@ -1,9 +1,20 @@
 /* Copyright 2007, Michael E. Stillman */
 
 #include "gb-walk.hpp"
-#include "matrix.hpp"
-#include "monordering.h"
+
+#include <assert.h>
+
 #include "comp-gb-declared.hpp"
+#include "error.h"
+#include "gbring.hpp"
+#include "interface/computation.h"
+#include "interface/monomial-ordering.h"
+#include "reducedgb-marked.hpp"
+
+class Computation;
+class Matrix;
+class buffer;
+class RingElement;
 
 class MonomialOrderMatrix
 {

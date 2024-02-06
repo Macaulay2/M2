@@ -28,14 +28,3 @@ document {
      SeeAlso => { cover, image, kernel, coimage, comodule, minimalPresentation, "matrices to and from modules"}
      }
 
-TEST ///
-    R = QQ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover cokernel M_{1} ==  cover M ) )
-///
-

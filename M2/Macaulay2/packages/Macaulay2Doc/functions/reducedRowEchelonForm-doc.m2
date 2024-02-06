@@ -21,7 +21,7 @@ doc ///
             (2) the leading coefficient  (called the pivot) of a nonzero row
             is always strictly to the right of the leading coefficient 
             of the row above it, and (3) the leading coefficient of each nonzero row is
-            1.  See @TO "https://en.wikipedia.org/wiki/Row_echelon_form"@ for more discussion.
+            1.  See @wikipedia "Row echelon form"@ for more discussion.
 
             Given a matrix {\tt A} (over a field), there is a unique matrix {\tt R}
             such that (1) the row spans of {\tt A} and {\tt R} are the same, and 

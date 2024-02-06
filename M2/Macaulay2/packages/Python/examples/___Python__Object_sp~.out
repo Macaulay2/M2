@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- hash: -884777151
+
+i1 : (toPython 5)~
+
+o1 = -6
+
+o1 : PythonObject of class int
+
+i2 : 

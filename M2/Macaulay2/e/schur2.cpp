@@ -8,6 +8,7 @@
 #include "relem.hpp"
 #include "monomial.hpp"
 #include "ringmap.hpp"
+#include "monoid.hpp"
 
 const int SCHUR_MAX_WT = 100;
 const int LARGE_NUMBER = 32000;
@@ -25,8 +26,8 @@ void tableau2::initialize(int nvars, int maxwt0)
 void tableau2::resize(int max_wt)
 {
   if (max_wt <= SCHUR_MAX_WT) return;
-  deletearray(xloc);
-  deletearray(yloc);
+  freemem(xloc);
+  freemem(yloc);
   maxwt = max_wt;
   wt = max_wt;
   xloc = newarray_atomic(int, maxwt + 1);
@@ -502,7 +503,7 @@ ring_elem SchurRing2::negate(const ring_elem f) const
 }
 
 ring_elem SchurRing2::truncate(const ring_elem f) const
-// assumption: f is a schur poly over another schur ring, with the SAME coeff
+// assumption: f is a Schur poly over another Schur ring, with the SAME coeff
 // ring
 //  each term is copied over, if the number of elements in the partition is <=
 //  n_vars()
@@ -637,10 +638,11 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
     }
 }
 
-void toVarpower(const_schur_partition a, intarray &result)
+void to_varpower(const_schur_partition a, gc_vector<int>& result)
 {
   int len = a[0];
-  int *result_vp = result.alloc(2 * len);
+  result.resize(2 * len);
+  int *result_vp = result.data();
   int *orig_result_vp = result_vp;
   result_vp++;
 
@@ -667,7 +669,7 @@ void toVarpower(const_schur_partition a, intarray &result)
 
   int newlen = static_cast<int>(result_vp - orig_result_vp);
   *orig_result_vp = newlen;
-  result.shrink(newlen);
+  result.resize(newlen);
 }
 
 engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
@@ -693,15 +695,15 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
   result->coeffs = coeffs;
 
   // Loop through the terms
-  intarray vp;
+  gc_vector<int> vp;
   schur_poly::iterator i = f1->begin();
   for (int next = 0; next < n; ++i, ++next)
     {
       coeffs->array[next] =
           RingElement::make_raw(coefficientRing, i.getCoefficient());
-      toVarpower(i.getMonomial(), vp);
-      monoms->array[next] = Monomial::make(vp.raw());
-      vp.shrink(0);
+      to_varpower(i.getMonomial(), vp);
+      monoms->array[next] = EngineMonomial::make(vp.data());
+      vp.resize(0);
     }
   return result;
 }

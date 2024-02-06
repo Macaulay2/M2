@@ -1,19 +1,5 @@
 assert = x -> if not x then error "assertion failed "
 
--- test remove on lists
-
-assert( remove( {a} , 0 ) === {} )
-assert( remove( {a,b,c} , 1 ) === {a,c} )
-assert( remove( {a,b,c} , -1 ) === {a,b} )
-assert( remove( {a,b,c} , 6 ) === {a,b,c} )
-
-assert( remove( new BasicList from {a,b,c} , 6 ) === new BasicList from {a,b,c} )
-
-assert( remove( 1 : a , 0 ) === () )
-assert( remove( (a,b,c) , 1 ) === (a,c) )
-assert( remove( (a,b,c) , -1 ) === (a,b) )
-assert( remove( (a,b,c) , 6 ) === (a,b,c) )
-
 -- test drop
 
 assert( drop( {a,b}, 3 ) === {} )

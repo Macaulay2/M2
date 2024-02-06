@@ -118,7 +118,7 @@ inline void stash::delete_elem(void *p)
 // Delete the object 'p', placing it on the free list for this stash.
 {
   if (p == NULL) return;
-  deletearray(p);
+  freemem(p);
   return;
   //  if (trace_bad_deletes)
   //    {
@@ -134,7 +134,7 @@ inline void stash::delete_elem(void *p)
     {
       //      deleted_amount += element_size;
       char *q = reinterpret_cast<char *>(p);
-      deletearray(q);
+      freemem(q);
       return;
     }
   acquireSpinLock(&list_spinlock);

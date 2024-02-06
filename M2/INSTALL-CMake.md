@@ -1,32 +1,40 @@
 Building Macaulay2 from Source using CMake
 ==========================================
 
-## Warning!
-This is not (yet) the official building instructions for Macaulay2. Please let us know of any issues.
+![Build and Test Macaulay2](https://github.com/Macaulay2/M2/workflows/Build%20and%20Test%20Macaulay2/badge.svg?branch=master)
 
 ## Why CMake?
 CMake is a cross-platform system for generating build environments using native tools such as Makefiles and Ninja or IDEs such as Xcode and Visual Studio. See this article on [why the KDE project switched to CMake](https://lwn.net/Articles/188693/) and this list of [cool CMake features](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features).
 
+Also see [this guide](BUILD/docker/README.md) for building and packaging Macaulay2 in a Docker container.
+
 ## Getting started
 [Download](https://cmake.org/download/) the latest CMake for your platform.
+CMake is available through [Homebrew](https://brew.sh/) for both Mac OS X and Linux distributions.
 If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.15.
+This build system is tested on GCC 6+, Clang 6+, and Xcode 9+ compilers.
 
-**NOTE**: This build system is tested on GCC, Clang, and AppleClang compilers. Optionally, install `ccache` for caching compiler artifacts and `ninja-build` (`ninja` on Brew) for optimized parallel builds.
+**TIP**: install `ccache` for caching compiler artifacts and `ninja-build` (`ninja` on Brew) for optimized parallel builds.
 
+#### Requirements
 There are various tools needed to compile Macaulay2 dependencies.
 - On Debian/Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
+- On Fedora/CentOS, install `autoconf automake bison libtool pkg-config yasm`.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
-There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev libatomic-ops-dev`.
-- On Mac OS X, using Homebrew, install `eigen libxml2 readline gdbm boost libatomic_ops`.
+There are 10 libraries that must be found on the system.
+- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev libomp-dev libtbb-dev libffi-dev`.
+- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel libomp-devel tbb-devel libffi-devel`.
+- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libatomic_ops libomp tbb libffi`.
 
-Finally, there are 2 optional libraries that help with building other requirements.
-- On Debian/Ubuntu, install `libomp-dev libtbb-dev`.
-- On Mac OS X, using Homebrew, install `libomp tbb`.
+**TIP**: x86_64 binary packages for all dependencies on Mac OS X 10.15+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
+```
+brew tap Macaulay2/tap
+brew install --only-dependencies macaulay2/tap/M2
+```
+and append `` -DCMAKE_PREFIX_PATH=`brew --prefix` `` to an invocation of CMake prior to starting the build so that CMake can find the dependencies installed through Homebrew. See [FAQ](#faq) for solutions to frequent issues.
 
-**NOTE**: the source directory must not contain any build artifacts from an in-source build. If you have built Macaulay2 in-source before, clean the build artifacts first by running `make clean distclean` in the source directory.
-
+#### Quick build
 A quick build involves the following steps:
 ```
 git clone https://github.com/Macaulay2/M2.git
@@ -37,6 +45,8 @@ cmake --build M2/M2/BUILD/build --target M2-emacs
 cmake --install M2/M2/BUILD/build
 ```
 Each step is explained separately in the next section.
+
+**NOTE**: the source directory must not contain any build artifacts from an in-source build. If you have built Macaulay2 in-source before, clean the build artifacts first by running `make clean distclean` in the source directory.
 
 ### Building Macaulay2
 1. Clone Macaulay2:
@@ -52,8 +62,6 @@ cmake -GNinja -S../.. -B. \
       -DCMAKE_INSTALL_PREFIX=/usr
 ```
 The `-S../..` argument indicates the location of the source and `-B.` indicates the build directory. After those, arguments of type `-DNAME=VALUE` set the `NAME` variable to `VALUE`. For instance, `CMAKE_BUILD_TYPE` determines various compiler flags to be used. Defined options are `Release`, `Debug`, `RelWithDebInfo`, and `RelMinSize`, with `RelWithDebInfo` being the default. The value of `CMAKE_INSTALL_PREFIX` determines the installation prefix.
-
-We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DUSING_MPIR=OFF` instead.
 
 This command generates the `build.ninja` files used by the Ninja build system, which is much more efficient. To generate a `Makefile` instead, remove `-GNinja` and use `make` instead of `ninja` in subsequent commands.
 
@@ -97,6 +105,8 @@ There are unit-tests available within the `Macaulay2/e/unit-tests` and `Macaulay
 - `ctest --rerun-failed -V`: rerun the tests that failed in the last batch and echo the results.
 - `ctest -R check-LocalRings -j4`: run all tests in the LocalRings package, in 4 parallel jobs.
 - `ctest -R check-LocalRings-2 -V`: run the 3rd test in the LocalRings package and echo the result.
+- `ctest -T memcheck -R ARingQQFlint`: run matching tests through Valgrind
+
 
 Note: if the last option does not work, try running `ninja info-packages` and `cmake .` to populate the tests.
 
@@ -117,6 +127,10 @@ cpack -G DEB	# requires dpkg
 cpack -G RPM	# requires rpmbuild
 ```
 
+**TIP**: see [this guide](BUILD/docker/README.md) for packaging Macaulay2 for other Linux distributions using Docker.
+
+**NOTE**: Macaulay2 is packaged for Mac OS X as a Homebrew bottle available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap).
+
 
 ## Advanced cached flags
 Within the build environment, you can:
@@ -133,11 +147,12 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `LINTING:BOOL=OFF`: enable linting C++ sources (see `cmake/prechecks.cmake`)
 - `MEMDEBUG:BOOL=OFF`: enable memory allocation debugging
 - `PROFILING:BOOL=OFF`: enable profiling build flags
-- `USING_MPIR:BOOL=ON`: use MPIR instead of GMP
-- `WITH_OMP:BOOL=OFF`: link with the OpenMP library
-- `WITH_PYTHON:BOOL=OFF`: link with the Python library
+- `USING_MPIR:BOOL=OFF`: use MPIR instead of GMP
+- `WITH_OMP:BOOL=ON`: link with the OpenMP library
+- `WITH_TBB:BOOL=ON`: link with the TBB library
+- `WITH_FFI:BOOL=ON`: link with the FFI library
+- `WITH_PYTHON:BOOL=OFF`: link with the Python library (set to `ON` to use the `Python` package)
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
-- `WITH_TBB:BOOL=OFF`: link with the TBB library
 - `WITH_XML:BOOL=ON`: link with the libxml2 library
 - `BUILD_DOCS:BOOL=OFF`: build internal documentation
 - `BUILD_NATIVE:BOOL=ON`: use native SIMD instructions
@@ -146,8 +161,8 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `BUILD_TESTING:BOOL=ON`: build the testing targets
   - `SKIP_TESTS:STRING="mpsolve;googletest"`: tests to skip
   - `SLOW_TESTS:STRING="eigen;ntl;flint"`: slow tests to skip
-- `BUILD_LIBRARIES:STRING="GTest;MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro"`: build libraries, even if found on the system
-- `BUILD_PROGRAMS:STRING="4ti2;Nauty;TOPCOM"`: build programs, even if found on the system
+- `BUILD_LIBRARIES:STRING=""`: build libraries, even if found on the system
+- `BUILD_PROGRAMS:STRING=""`: build programs, even if found on the system
 - `CMAKE_BUILD_TYPE:STRING=RelWithDebInfo`: valid CMake build types are `Debug` `Release` `RelWithDebInfo` `MinSizeRel`
 - `CMAKE_INSTALL_PREFIX:PATH=/usr`: installation prefix
 - `M2_HOST_PREFIX:PATH=${CMAKE_BINARY_DIR}/usr-host`: host build prefix
@@ -199,8 +214,10 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-mathicgb`: [Mathicgb] library for signature Groebner bases library
   - `build-memtailor`: [Memtailor] library for special purpose memory allocators
   - `build-mpfr`:	[MPFR] GNU Multiple Precision Floating Point library
+  - `build-mpfi`:	[MPFI] a multiple precision interval arithmetic library based on MPFR
   - `build-mpir`:	[MPIR] Multiple Precision Integers & Rationals library (optional replacement for GMP)
   - `build-mpsolve`: [MPSolve] library for solving multiprecision polynomials
+  - `build-msolve`:	[MSolve] library for solving multivariate polynomials
   - `build-ntl`:	[NTL] library for doing number theory
 
 [Boehm-Demers-Weiser]: https://www.hboehm.info/gc/
@@ -217,8 +234,10 @@ Macaulay2 uses several external libraries and programs, which can be built using
 [Mathicgb]: https://github.com/broune/mathicgb
 [Memtailor]: https://github.com/broune/memtailor
 [MPFR]: https://www.mpfr.org/
+[MPFI]: http://perso.ens-lyon.fr/nathalie.revol/software.html
 [MPIR]: http://mpir.org/
 [MPSolve]: https://github.com/robol/MPSolve
+[MSolve]: https://msolve.lip6.fr/
 [NTL]: https://www.shoup.net/ntl/
 
 - `build-programs`: build all programs
@@ -231,14 +250,22 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-normaliz`: [Normaliz] software for computations in affine monoids, lattice polytopes, and rational cones
   - `build-topcom`:	[TOPCOM] software for computing triangulations of point configurations and oriented matroids
 
+Additionally, build targets are available for a few programs which are not built and distributed by default due to time or licensing constraints:
+  - `build-bertini`:	[Bertini] software for numerical algebraic geometry
+  - `build-phcpack`:	[PHCpack] software for solving polynomial systems by homotopy continuation methods
+  - `build-polymake`:	[polymake] software for research in polyhedral geometry
+
 [4ti2]: https://4ti2.github.io/
+[Bertini]: https://bertini.nd.edu/
 [CSDP]: https://github.com/coin-or/Csdp/wiki
 [Gfan]: https://users-math.au.dk/~jensen/software/gfan/gfan.html
 [Normaliz]: https://www.normaliz.uni-osnabrueck.de/
-[TOPCOM]: http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+[TOPCOM]: https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
 [cohomCalg]: https://github.com/BenjaminJurke/cohomCalg
 [lrs]: http://cgm.cs.mcgill.ca/~avis/C/lrs.html
 [nauty]: http://pallini.di.uniroma1.it/
+[phcpack]: https://github.com/janverschelde/PHCpack
+[polymake]: https://polymake.org/
 
 Note that the targets for individual libraries and programs only build the respective component in the `libraries` subdirectory in the build directory, while the `build-libraries` and `build-programs` targets also invoke `build-[LIBRARY or PROGRAM]-install` on each component in order to install the artifacts in the `usr-host` subdirectory.
 
@@ -253,13 +280,14 @@ Note: rerun the corresponding `build-[library]-install` target after the targets
 The main targets for building Macaulay2 are:
 - `M2-engine`: build the `libM2-engine` library
 - `M2-binary`: build the Macaulay2 executable
-- `M2-core`: build (and install) the core
-- `M2-emacs`: build the M2-mode package for Emacs
+- `M2-core`: generate and copy the Core package
+- `M2-emacs`: generate the M2-mode package for Emacs
+- `M2-prism`: generate prism.js (javascript syntax highlighter)
+- `M2-highlightjs`: generate highlight.js (javascript syntax highlighter)
 
 In addition, the following targets are available:
 - `scc1`: build the Safe C Compiler
 - `M2-interpreter`: translate `.d` and `.dd` sources into C and C++ sources
-- `M2-regex`: build the vendored GNU regex library
 - `M2-supervisor`: build the Macaulay2 multithreading supervisor
 - `M2-tests`: build various miscellaneous tests (currently `ComputationsBook`)
 
@@ -276,92 +304,10 @@ For specific packages, the following targets are also available:
 - `all-[PACKAGE]`: install and run the tests for the individual package
 - `uninstall-[PACKAGE]`: uninstall the individual package
 
+### Targets for Generating Macaulay2 Syntax Highlighters
+- `M2-emacs`: generate the [M2.el](https://github.com/Macaulay2/M2-emacs) package for Emacs
+- `M2-editors`: generate various syntax highlighting grammar files, such as [this one](https://github.com/Macaulay2/language-macaulay2)
+
 
 ## FAQ
-Below are a list of common issues and errors. If you run into a problem not listed below, please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
-
-
-<details>
-<summary>CMake is not using the local version of MPIR, Flint, etc.</summary>
-Currently, when CMake is set to use the MPIR library, it compiles MPIR and a number of other libraries from source, including MPFR, NTL, Flint, Factory, Frobby, and Givaro. This is done to avoid linking conflicts caused by the libraries linking instead with the GMP library. Therefore, in order to link with system libraries the `-DUSING_MPIR=OFF` option is required. See this [comment](https://github.com/Macaulay2/M2/issues/1275#issuecomment-644217756) for more details on the reasoning behind this.
-</details>
-
-<details>
-<summary><code>No download info given for 'build-flint' and its source directory</code></summary>
-When building from a downloaded archive (i.e., not a git repository), it is necessary to also download and extract archives of the required submodules in the `M2/submodules` directory.
-
-If a given library is not required on a particular system, CMake might still complain that the submodule directory is empty. One way to prevent this is to create a dummy file in the submodule directory for the libraries that are not required; for instance:
-```
-touch M2/submodules/flint2/empty
-```
-</details>
-
-<details>
-<summary>Detected library incompatibilities; rerun the build-libraries target</summary>
-This message indicates that the build scripts detected an inconsistency between the libraries found on the system, and that those libraries are marked to be compiled from source. Run `ninja build-libraries` (or `make build-libraries`) to build the libraries from source.
-
-If the problem persists, run `cmake --debug-trycompile` and open an issue with the contents of `CMakeFiles/CMakeError.log`.
-</details>
-
-<details>
-<summary>macOS 10.15 Catalina issues with AppleClang</summary>
-After ensuring that you have followed the usual steps from the [INSTALL](INSTALL) manual (e.g. running `xcode-select --install`, consider setting the `CMAKE_OSX_SYSROOT` variable to match the current SDK:
-```
-cmake -DCMAKE_OSX_SYSROOT=`xcrun --show-sdk-path` .
-```
-This would, for instance, tell CMake to look in `/Applications/Xcode.app/Contents/Developer/SDKs/MacOSX.sdk/usr/include` for headers. If problems persist, open an issue.
-</details>
-
-<details>
-<summary><code>M2/include/M2/config.h:75:0: warning: "HAVE_ALARM" redefined</code></summary>
-This error indicates that a previous in-source build has files left in the source tree. Run `make clean distclean` from the source directory or start from a clean clone of Macaulay2.
-</details>
-
-<details>
-<summary><code>engine.h:84:3: error: ‘gmp_arrayZZ’ does not name a type; did you mean ‘gmp_newZZ’?</code></summary>
-Same as above.
-</details>
-
-<details>
-<summary><code>gmp-util.h:96:31: error: ‘gmp_CCmutable’ was not declared in this scope</code></summary>
-Same as above.
-</details>
-
-<details>
-<summary><code>mpirxx.h:3482:13: error: ‘mpir_ui’ has not been declared</code></summary>
-This error indicates that a system version of `gmp.h` was found before `mpir.h`. If this occurs, open an issue.
-</details>
-
-
-<details>
-<summary><code>undefined reference to `GC_malloc`</code></summary>
-This error occurs if the GC library path is not set correctly.
-<pre>
-[  4%] Linking C executable scc1
-CMakeFiles/scc1.dir/scc1.c.o: In function `getmem':
-/home/macaulay/M2/M2/Macaulay2/c/scc1.c:23: undefined reference to `GC_malloc'
-</pre>
-Solution:
-<pre>
-cmake --build . --target build-bdwgc-install
-cmake -U*BDWGC* .
-</pre>
-</details>
-
-
-<details>
-<summary>How to compile with Intel(R) Math Kernel Library</summary>
-[MKL](https://software.intel.com/en-us/mkl) is a linear algebra routines library specifically optimized for Intel(R) processors. To enable linking with MKL, adjust the path and architecture appropriately and run the following before calling `cmake`:
-<pre>
-source /opt/intel/bin/compilervars.sh intel64
-</pre>
-Note that MKL is closed-source but released as a freeware.
-
-See [FindLAPACK](https://cmake.org/cmake/help/latest/module/FindLAPACK.html) for information on specifying the linear algebra library by setting the value of `BLA_VENDOR` in `cmake/check-libraries.cmake`.
-</details>
-
-
-<details>
-<summary>How to compile with AMD(R) Optimizing CPU Libraries</summary>
-TODO: [AOCL](https://developer.amd.com/amd-aocl/) includes AMD BLIS and AMD libFLAME
-</details>
+A list of common issues and errors related to the CMake build is available on the [GitHub Wiki](https://github.com/Macaulay2/M2/wiki/FAQ%3A-CMake-Build-Problems). If you run into a problem not listed there or among the list of issues labeled with [build system](https://github.com/Macaulay2/M2/labels/build%20system), please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.

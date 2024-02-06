@@ -2,7 +2,7 @@ newPackage(
         "SpaceCurves",
         Version => "1.0", 
         Date => "May 26th 2018",
-        Authors => {{Name => "Frank Schreyer", 
+        Authors => {{Name => "Frank-Olaf Schreyer", 
                   Email => "schreyer@math.uni-sb.de", 
                   HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
 	      {Name => "Mike Stillman", 
@@ -13,6 +13,7 @@ newPackage(
                   HomePage => "https://math.berkeley.edu/~myzhang/"}
 	      },
         Headline => "space curves",
+	Keywords => {"Examples and Random Objects"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -278,7 +279,7 @@ isSmooth Ideal := I -> (
     dim(I + minors(c, jacobian I)) == 0
     )
 isSmooth Curve := C -> isSmooth ideal C
-isPrime Curve := C -> isPrime ideal C
+isPrime Curve := {} >> o -> C -> isPrime ideal C
 
 --V.Minimal Curves
 
@@ -387,7 +388,7 @@ minimalCurveBetti Curve := C -> minimalCurveBetti raoModule ideal C
 
 --VI.ACM Curves
 Delta := L-> (
-    --numerical differentiation, auxillary
+    --numerical differentiation, auxiliary
     M := for i from 1 to #L-1 list L#i-L#(i-1);
     {L#0} | M    
 )
@@ -397,7 +398,7 @@ reduce := L -> (
 )
 positiveChars = method()
 positiveChars (ZZ,ZZ) :=  List => (d,s) -> (
-    --Generates all postive characters of degree d and least degree surface s
+    --Generates all positive characters of degree d and least degree surface s
     a := getSymbol "a";
     deg := apply(splice{s..(d-1)},i->{1,i});
     R := (ZZ/2)(monoid[a_s..a_(d-1),Degrees=> deg]);
@@ -411,7 +412,7 @@ positiveChars ZZ := List => d -> (
 )
 bettiToList := B -> (
     --turns a BettiTally into a list of degrees in the free resolution
-    --auxillary
+    --auxiliary
     n := max apply(keys B, k -> first k);
     for i from 0 to n list (
     	b := select(keys B, k -> first k == i);
@@ -420,7 +421,7 @@ bettiToList := B -> (
 )
 listToBetti := L -> (
     --turns a list of degrees in the free resolution into a BettiTally
-    --auxillary
+    --auxiliary
     L = L / tally;
     new BettiTally from 
     flatten apply(#L, i -> flatten apply(keys L#i, j -> (i, {j},j) => L#i#j))    
@@ -578,7 +579,7 @@ curve (ZZ,ZZ) := (d,g) -> (
 dgTable = method()
 dgTable List := L ->(
     --Takes a list of AbstractDivisors or RealizedDivisors
-    --returns a (degree, genus) occurence matrix    
+    --returns a (degree, genus) occurrence matrix    
     Ldg := apply(L, C -> (lift(degree C,ZZ), lift(genus C,ZZ)));
     dmax := max apply(Ldg,dg->first dg);
     dmin := min apply(Ldg,dg->first dg);
@@ -872,7 +873,7 @@ document {
     Headline => "key of Divisor",
     {
     TO "Coordinate", " is a key of ", TO "Divisor", " storing a ",
-    TT "List", " encoding the coordiantes of the divisor class."	
+    TT "List", " encoding the coordinates of the divisor class."	
     }
 }
 document {
@@ -889,7 +890,7 @@ document {
 	(divisor,List,CubicSurface),(divisor,List,QuarticSurfaceRational)},
     Headline => "creates a Divisor",
     {"Creates a ", TO "Divisor", " from a given ", TT "List",
-	" of coordiantes and a surface."
+	" of coordinates and a surface."
     },
     SYNOPSIS (
     	Usage => "D = divisor(L,X)",
@@ -1193,9 +1194,9 @@ document {
     Headline => "prints the table of (degree,genus) pairs",
     {
     TT "dgTable", " prints the table of (degree,genus) pairs, where the horizontal
-    axis is the degree and the vertical is the genus. The input can be a ", TT "List",
-    " of ", TO "Divisor", ", ", TO "Curve", ", ", TO "PostulationChar", " or ",
-    TT "Ideal", "."	
+    axis is the degree and the vertical is the genus. The input can be a ", TO "List",
+    " of ", TO "Divisor", ", ", TO "Curve", ", ", TT "PostulationChar", " or ",
+    TO "Ideal", "."
     } 
 }
 document {
@@ -1327,7 +1328,7 @@ document {
     Headline => "produces a random determinantal ideal",
     {
     	"Given a ring and a degree matrix, we produce a random determinantal ideal
-	with forms in perscribed dergee. Forms of non-positive degrees are taken as
+	with forms in prescribed degree. Forms of non-positive degrees are taken as
 	0 to ensure minimality of presentation."	
     },
     Usage => "I = randomDeterminantalIdeal(R,M)",

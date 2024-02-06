@@ -181,7 +181,7 @@ time G =  gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>toList(numgens ring I:
 -- (c) Different monomial orders
 -- (d) Further: Quotient rings, over QQ, over fraction fields.  HF use, syzygies.
 -- (e) Think through the memory allocation a bit better
--- (f) Pack the mononials better
+-- (f) Pack the monomials better
 -- (g) weights other than 1,1,1...,1.  
 --     These could be handled by changing the exponents at the start, at end.
 -- (h) Skew commuting variables, and Weyl algebra arithmetic

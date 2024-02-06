@@ -123,11 +123,11 @@ RG = intersectionRing G
 Y = flagBundle({1,3,3}) --should be same as P(S)
 g = map(G,Y)
 z = -chern(1,Y.Bundles#0) -- the class of O(1) considering Y as P(S)
-assert(g_* (z^3) == 1_RG) --0th segre class of S, should be 1
-assert(g_* (z^4) == chern(1,Q))--1st segre class of S (=1st chern class of Q)
-assert(g_* (z^5) == chern(2,Q))--2nd segre class of S (=2nd chern class of Q)
+assert(g_* (z^3) == 1_RG) --0th Segre class of S, should be 1
+assert(g_* (z^4) == chern(1,Q))--1st Segre class of S (=1st Chern class of Q)
+assert(g_* (z^5) == chern(2,Q))--2nd Segre class of S (=2nd Chern class of Q)
 assert(g_* (z^6) == chern(3,Q))--etc
---next examples check push-pull for segre class intersections:
+--next examples check push-pull for Segre class intersections:
 assert(g_* (z^3 * (g^* chern(1,S))) == chern(1,S))
 assert(g_* (z^5 * (g^* chern(1,S))) == chern(1,S)*chern(2,Q))
 ///
@@ -141,8 +141,8 @@ Y = flagBundle({1,3,3},A) --should be same as P(S)
 g = map(G,Y)
 z = -chern(1,first bundles Y)*n -- the class of O(n) considering Y as P(S)
 AG = intersectionRing G
-assert(g_* (z^3) == n^3*1_AG) --n^3 times 0th segre class of S, should be n^3
-assert(g_* (z^4) == n^4*chern(1,Q))--n^4 times 1st segre class of S
+assert(g_* (z^3) == n^3*1_AG) --n^3 times 0th Segre class of S, should be n^3
+assert(g_* (z^4) == n^4*chern(1,Q))--n^4 times 1st Segre class of S
 assert(g_* (z^5) == n^5*chern(2,Q))--n^5 times 2nd Segre class of S
 ///
 
@@ -184,12 +184,12 @@ for b in flatten entries basis RY do (
 ----------
 TEST ///
 --Test 1 for map(FlagBundle,AbstractVariety,AbstractSheaf):
---the Plucker embedding of GG(1,3) in PP^5
+--the Plücker embedding of GG(1,3) in PP^5
 X = flagBundle({2,2})
 (S,Q) = X.Bundles
 L = exteriorPower(2,dual S)
 P = flagBundle({1,5})
-f = map(P,X,L) -- Plucker embedding of GG(1,3) in PP^5
+f = map(P,X,L) -- Plücker embedding of GG(1,3) in PP^5
 H = first bundles P --O(-1)
 assert(f^* (chern(1,H)) == -chern(1,Q)) -- neg hyperplane section, should be -sigma_1
 assert(f_* chern(0,S) == -2*chern(1,H)) --expect 2 times hyperplane class since GG(1,3) has degree 2
@@ -197,7 +197,7 @@ assert(f_* chern(0,S) == -2*chern(1,H)) --expect 2 times hyperplane class since 
 
 TEST ///
 --Test 2 for map(FlagBundle,AbstractVariety,AbstractSheaf):
---the Plucker embedding of GG(1,4) in PP^9
+--the Plücker embedding of GG(1,4) in PP^9
 X = flagBundle({2,3})
 (S,Q) = X.Bundles
 L = exteriorPower(2,dual S)

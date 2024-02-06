@@ -337,7 +337,7 @@ checkIncidenceSolution(s1,{({4,2},M),({4,2},(id_(FFF^n))), ({4,2},F1)})
 checkIncidenceSolution(s2,{({4,2},M),({4,2},(id_(FFF^n))), ({4,2},F1)})
 checkIncidenceSolution(s3,{({4,2},M),({4,2},(id_(FFF^n))), ({4,2},F1)})
 
---Thus, our software solve the schubert problem l_1, l_2, l_3
+--Thus, our software solve the Schubert problem l_1, l_2, l_3
 -- with respect to the flags: M, Id, F_1
 
 -------- end of TEST Sept 21 ------------------

@@ -1,9 +1,12 @@
 // Copyright 1996.  Michael E. Stillman
 
-#include "res-a1-poly.hpp"
 #include "res-a1.hpp"
+
+#include "ExponentVector.hpp"
+#include "res-a1-poly.hpp"
 #include "text-io.hpp"
 #include "interrupted.hpp"
+
 //////////////////////////////////////////////
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
@@ -25,7 +28,7 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
   res_pair_stash = new stash("respair", sizeof(res_pair));
   mi_stash = new stash("res minodes", sizeof(Nmi_node));
 
-  for (i = 0; i <= LengthLimit; i++) resn.append(new res_level);
+  for (i = 0; i <= LengthLimit; i++) resn.push_back(new res_level);
 
   max_degree = M->max_degree();
   length_limit = LengthLimit;
@@ -67,8 +70,8 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
       p->mi = new MonomialIdeal(P, mi_stash);
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p;
-      base_components.append(p);
-      search_mi.append(new MonomialIdeal(P, mi_stash));
+      base_components.push_back(p);
+      search_mi.push_back(new MonomialIdeal(P, mi_stash));
 
       int d = mat->rows()->primary_degree(i);
       res_degree *mypairs = make_degree_set(0, d);
@@ -99,7 +102,7 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
         npairs++;
       }
 
-  for (i = 0; i < base_components.length(); i++)
+  for (i = 0; i < base_components.size(); i++)
     {
       res_pair *p = base_components[i];
       p->compare_num = i;
@@ -119,9 +122,9 @@ res_comp::res_comp(const Matrix *m, int LengthLimit, int strategy)
 res_comp::~res_comp()
 {
   int i;
-  for (i = 0; i < resn.length(); i++) remove_res_level(resn[i]);
+  for (i = 0; i < resn.size(); i++) remove_res_level(resn[i]);
 
-  for (i = 0; i < search_mi.length(); i++) delete search_mi[i];
+  for (i = 0; i < search_mi.size(); i++) delete search_mi[i];
 
   delete res_pair_stash;
   delete mi_stash;
@@ -150,19 +153,19 @@ void res_comp::remove_res_degree(res_degree *p)
       p->first = tmp->next;
       remove_res_pair(tmp);
     }
-  deleteitem(p);
+  freemem(p);
 }
 
 void res_comp::remove_res_level(res_level *lev)
 {
   if (lev == NULL) return;
   int i;
-  for (i = 0; i < lev->bin.length(); i++)
+  for (i = 0; i < lev->bin.size(); i++)
     {
       res_degree *mypairs = lev->bin[i];
       remove_res_degree(mypairs);
     }
-  deleteitem(lev);
+  freemem(lev);
 }
 
 //////////////////////////////////////////////
@@ -174,20 +177,20 @@ res_degree *res_comp::make_degree_set(int level, int deg)
 // If not, first create it, and then return it.
 {
   int i;
-  if (level >= resn.length())
+  if (level >= resn.size())
     {
       // Create new res_levels
-      for (i = resn.length(); i <= level; i++) resn.append(new res_level);
+      for (i = resn.size(); i <= level; i++) resn.push_back(new res_level);
     }
   res_level *lev = resn[level];
 
   deg -= lodegree;
   assert(deg >= 0);  // This would be an internal error
-  if (deg >= lev->bin.length())
+  if (deg >= lev->bin.size())
     {
       // Create new res_degrees
-      for (i = lev->bin.length(); i <= deg; i++)
-        lev->bin.append(new res_degree);
+      for (i = lev->bin.size(); i <= deg; i++)
+        lev->bin.push_back(new res_degree);
       if (deg + lodegree > hidegree) hidegree = deg + lodegree;
     }
 
@@ -197,10 +200,10 @@ res_degree *res_comp::make_degree_set(int level, int deg)
 res_degree *res_comp::get_degree_set(int level, int d) const
 // find (level,d) pair set, where 'd' is the slanted degree
 {
-  if (level < 0 || level >= resn.length()) return NULL;
+  if (level < 0 || level >= resn.size()) return NULL;
   res_level *lev = resn[level];
   d -= lodegree;
-  if (d < 0 || d >= lev->bin.length()) return NULL;
+  if (d < 0 || d >= lev->bin.size()) return NULL;
   return lev->bin[d];
 }
 
@@ -274,7 +277,7 @@ int res_comp::degree(const res_pair *p) const
   return result;
 }
 
-void res_comp::multi_degree(const res_pair *p, int *deg) const
+void res_comp::multi_degree(const res_pair *p, monomial deg) const
 {
   // MES: Is this correct?
   M->multi_degree(p->base_monom, deg);
@@ -302,7 +305,7 @@ void res_comp::insert_res_pair(int level, res_pair *p)
     }
   else
     {
-      intarray vp;
+      gc_vector<int> vp;
       M->to_varpower(p->syz->monom, vp);
       search_mi[p->syz->comp->me]->insert_minimal(new Bag(p, vp));
     }
@@ -314,7 +317,7 @@ void res_comp::insert_res_pair(int level, res_pair *p)
 
 int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
 {
-  exponents EXP1, EXP2;
+  exponents_t EXP1, EXP2;
   int cmp, df, dg, i;
   //  if (f->compare_num < g->compare_num) return 1;
   //  if (f->compare_num > g->compare_num) return -1;
@@ -457,13 +460,11 @@ void res_comp::sort_res_pairs(res_pair *&p) const
   p = merge_res_pairs(p1, p2);
 }
 
-int res_comp::sort_value(res_pair *p, const int *sort_order) const
+int res_comp::sort_value(res_pair *p, const std::vector<int> sort_order) const
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   M->to_expvector(p->base_monom, REDUCE_exp);
-  int result = 0;
-  for (int i = 0; i < P->n_vars(); i++) result += REDUCE_exp[i] * sort_order[i];
-  return result;
+  return exponents::weight(P->n_vars(), REDUCE_exp, sort_order);
 }
 
 void res_comp::sort_gens(res_degree *mypairs)
@@ -610,10 +611,9 @@ void res_comp::new_pairs(res_pair *p)
 // and only pairs with elements before this in the sorting order
 // will be considered.
 {
-  Index<MonomialIdeal> j;
-  queue<Bag *> elems;
-  intarray vp;  // This is 'p'.
-  intarray thisvp;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vp;  // This is 'p'.
+  gc_vector<int> thisvp;
 
   monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
 
@@ -631,8 +631,8 @@ void res_comp::new_pairs(res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      int *exp = newarray_atomic(int, M->n_vars());
-      varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
+      exponents_t exp = newarray_atomic(int, M->n_vars());
+      varpower::to_expvector(M->n_vars(), vp.data(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v = 0; v < nskew; v++)
@@ -640,13 +640,13 @@ void res_comp::new_pairs(res_pair *p)
           int w = P->skew_variable(v);
           if (exp[w] > 0)
             {
-              thisvp.shrink(0);
+              thisvp.resize(0);
               varpower::var(w, 1, thisvp);
               Bag *b = new Bag(static_cast<void *>(0), thisvp);
-              elems.insert(b);
+              elems.push_back(b);
             }
         }
-      deletearray(exp);
+      freemem(exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -654,28 +654,28 @@ void res_comp::new_pairs(res_pair *p)
   if (P->is_quotient_ring())
     {
       const MonomialIdeal *Rideal = P->get_quotient_monomials();
-      for (j = Rideal->first(); j.valid(); j++)
+      for (Bag& a : *Rideal)
         {
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
-          thisvp.shrink(0);
-          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+          thisvp.resize(0);
+          varpower::quotient(a.monom().data(), vp.data(), thisvp);
+          if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
-          elems.insert(b);
+          elems.push_back(b);
         }
     }
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res_pair
 
   MonomialIdeal *mi_orig = p->first->mi;
-  for (j = mi_orig->first(); j.valid(); j++)
+  for (Bag& a : *mi_orig)
     {
-      Bag *b = new Bag((*mi_orig)[j]->basis_ptr());
-      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
-      elems.insert(b);
+      Bag *b = new Bag(a.basis_ptr());
+      varpower::quotient(a.monom().data(), vp.data(), b->monom());
+      elems.push_back(b);
     }
 
   // Make this monomial ideal, and then run through each minimal generator
@@ -684,19 +684,19 @@ void res_comp::new_pairs(res_pair *p)
 
   mi_orig->insert_minimal(new Bag(p, vp));
 
-  queue<Bag *> rejects;
-  Bag *b;
+  VECTOR(Bag *) rejects;
   MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects, mi_stash);
-  while (rejects.remove(b)) delete b;
+  for (auto& b : rejects)
+    delete b;
 
   if (M2_gbTrace >= 11) mi->debug_out(1);
 
-  for (j = mi->first(); j.valid(); j++)
+  for (Bag& a : *mi)
     {
-      res_pair *second = reinterpret_cast<res_pair *>((*mi)[j]->basis_ptr());
+      res_pair *second = reinterpret_cast<res_pair *>(a.basis_ptr());
       res_pair *q = new_res_pair(SYZ_S_PAIR, p, second);
       // That set most fields except base_monom:
-      M->from_varpower((*mi)[j]->monom().raw(), q->base_monom);
+      M->from_varpower(a.monom().data(), q->base_monom);
       M->mult(q->base_monom, p->base_monom, q->base_monom);
       insert_res_pair(n_level, q);
     }
@@ -707,7 +707,7 @@ void res_comp::new_pairs(res_pair *p)
 //  S-pairs and reduction ////////////////////
 //////////////////////////////////////////////
 
-int res_comp::find_ring_divisor(const int *exp, ring_elem &result) const
+int res_comp::find_ring_divisor(const_exponents exp, ring_elem &result) const
 // If 'exp' is divisible by a ring lead term, then 1 is returned,
 // and result is set to be that ring element.
 // Otherwise 0 is returned.
@@ -725,7 +725,7 @@ resterm *res_comp::s_pair(res_pair *p) const
 // Care is of course taken with the Schreyer order
 {
   p->syz = R->new_term(K->from_long(1), p->base_monom, p->first);
-  int *si = M->make_one();
+  monomial si = M->make_one();
   M->divide(p->base_monom, p->first->base_monom, si);
   resterm *result = R->mult_by_monomial(p->first->syz, si);
   ring_elem one = K->from_long(1);
@@ -747,7 +747,7 @@ res_pair *res_comp::reduce(resterm *&f, resterm *&fsyz, resterm *&pivot)
 // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -797,7 +797,7 @@ res_pair *res_comp::reduce_level_one(resterm *&f,
                                      resterm *&pivot)
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
@@ -843,7 +843,7 @@ res_pair *res_comp::reduce_level_one(resterm *&f,
 
 void res_comp::reduce_gen(resterm *&f) const
 {
-  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   res_pair *q;
@@ -1110,7 +1110,7 @@ void res_comp::handle_pair(res_pair *p)
 // {
 //   int level, deg;
 //
-//   for (level=1; level < resn.length(); level++)
+//   for (level=1; level < resn.size(); level++)
 //     {
 //       n_level = level+1;
 //       for (deg=0; deg < resn[level]->bin.length(); deg++)
@@ -1173,7 +1173,7 @@ int res_comp::n_monoms(int lev, int d) const
   return result;
 }
 
-int res_comp::max_level() const { return resn.length(); }
+int res_comp::max_level() const { return resn.size(); }
 int res_comp::low_degree() const { return lodegree; }
 int res_comp::high_degree() const { return hidegree; }
 M2_arrayint res_comp::get_betti(int type) const
@@ -1216,7 +1216,7 @@ M2_arrayint res_comp::get_betti(int type) const
       }
 
   M2_arrayint result = betti_make(lo, hi, len, bettis);
-  deletearray(bettis);
+  freemem(bettis);
   return result;
 }
 
@@ -1264,7 +1264,7 @@ void res_comp::text_out(buffer &o, const res_pair *p) const
 #if 0
 //   if (p->mi_exists)
 #endif
-  o << "[mi: " << p->mi->length() << "]";
+  o << "[mi: " << p->mi->size() << "]";
 #if 0
 //   else
 //     {
@@ -1321,10 +1321,10 @@ void res_comp::text_out(buffer &o) const
 
   // If the printlevel is high enough, display each element
   if (M2_gbTrace >= 2)
-    for (int lev = 0; lev < resn.length(); lev++)
+    for (int lev = 0; lev < resn.size(); lev++)
       {
         o << "---- level " << lev << " ----" << newline;
-        for (int i = 0; i < resn[lev]->bin.length(); i++)
+        for (int i = 0; i < resn[lev]->bin.size(); i++)
           {
             res_degree *mypairs = resn[lev]->bin[i];
             if (mypairs == NULL) continue;
@@ -1342,11 +1342,11 @@ const FreeModule *res_comp::free_of(int i) const
 {
   FreeModule *result;
   result = P->make_Schreyer_FreeModule();
-  if (i < 0 || i >= resn.length()) return result;
-  int *deg = P->degree_monoid()->make_one();
+  if (i < 0 || i >= resn.size()) return result;
+  monomial deg = P->degree_monoid()->make_one();
   int n = 0;
   res_level *lev = resn[i];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
@@ -1366,10 +1366,10 @@ const FreeModule *res_comp::minimal_free_of(int i) const
   if (i == 0) return generator_matrix->rows();
   result = P->make_FreeModule();
   if (i < 0 || i > length_limit) return result;
-  int *deg = P->degree_monoid()->make_one();
+  monomial deg = P->degree_monoid()->make_one();
   int nminimals = 0;
   res_level *lev = resn[i];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
@@ -1394,7 +1394,7 @@ Matrix *res_comp::make(int level) const
   int n = 0;
   if (G == 0) return result.to_matrix();
   res_level *lev = resn[level];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
@@ -1409,7 +1409,7 @@ Matrix *res_comp::make(int level) const
 
 void res_comp::reduce_minimal(int x,
                               resterm *&f,
-                              array<res_pair *> &elems) const
+                              VECTOR(res_pair *)& elems) const
 {
   monomial MINIMAL_mon = ALLOCATE_MONOMIAL(monom_size);
 
@@ -1441,15 +1441,15 @@ Matrix *res_comp::make_minimal(int i) const
   const FreeModule *G = minimal_free_of(i);
   MatrixConstructor result(F, G, NULL);
   if (i < 0 || i > length_limit) return result.to_matrix();
-  array<res_pair *> elems;
+  VECTOR(res_pair *) elems;
 
   res_level *lev = resn[i];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     for (res_pair *p = lev->bin[j]->first; p != NULL; p = p->next)
-      elems.append(p);
+      elems.push_back(p);
 
   int thisx = 0;
-  for (int x = 0; x < elems.length(); x++)
+  for (int x = 0; x < elems.size(); x++)
     {
       res_pair *p = elems[x];
       if (p->syz_type == SYZ_MINIMAL)
@@ -1469,40 +1469,37 @@ Matrix *res_comp::make_minimal(int i) const
 // Skeleton construction: test code //
 //////////////////////////////////////
 
-void res_comp::skeleton_init(array<res_pair *> &reslevel)
-{
-  int i;
 
+void res_comp::skeleton_init(VECTOR(res_pair *)& reslevel)
+{
   // Do level 0
   res_pair *pp = NULL;
-  for (i = base_components.length() - 1; i >= 0; i--)
+  for (auto p = base_components.rbegin(); p != base_components.rend(); ++p)
     {
-      res_pair *p = base_components[i];
-      p->next = pp;
-      pp = p;
+      (*p)->next = pp;
+      pp = *p;
     }
-  reslevel.append(pp);
+  reslevel.push_back(pp);
 
   // Do level 1
   pp = NULL;
-  for (i = 0; i < generator_matrix->n_cols(); i++)
+  for (auto i = 0; i < generator_matrix->n_cols(); i++)
     if ((*generator_matrix)[i] != NULL)
       {
         res_pair *p = new_res_pair(i);  // Makes a generator 'pair'
         p->next = pp;
         pp = p;
       }
-  reslevel.append(pp);
+  reslevel.push_back(pp);
 }
 
 void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 // Create and insert all of the pairs which will have lead term 'p'.
 // This also places 'p' into the appropriate monomial ideal
 {
-  Index<MonomialIdeal> j;
-  queue<Bag *> elems;
-  intarray vp;  // This is 'p'.
-  intarray thisvp;
+  gc_vector<Bag*> elems;
+  gc_vector<int> vp;  // This is 'p'.
+  gc_vector<int> thisvp;
 
   monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
 
@@ -1520,8 +1517,9 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      int *exp = newarray_atomic(int, M->n_vars());
-      varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
+
+      exponents_t exp = newarray_atomic(int, M->n_vars());
+      varpower::to_expvector(M->n_vars(), vp.data(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v = 0; v < nskew; v++)
@@ -1529,13 +1527,13 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
           int w = P->skew_variable(v);
           if (exp[w] > 0)
             {
-              thisvp.shrink(0);
+              thisvp.resize(0);
               varpower::var(w, 1, thisvp);
               Bag *b = new Bag(static_cast<void *>(0), thisvp);
-              elems.insert(b);
+              elems.push_back(b);
             }
         }
-      deletearray(exp);
+      freemem(exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1543,17 +1541,17 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   if (P->is_quotient_ring())
     {
       const MonomialIdeal *Rideal = P->get_quotient_monomials();
-      for (j = Rideal->first(); j.valid(); j++)
+      for (Bag& a : *Rideal)
         {
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
-          thisvp.shrink(0);
-          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+          thisvp.resize(0);
+          varpower::quotient(a.monom().data(), vp.data(), thisvp);
+          if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
-          elems.insert(b);
+          elems.push_back(b);
         }
     }
 
@@ -1561,11 +1559,11 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   // The baggage of each of these is their corresponding res_pair
 
   MonomialIdeal *mi_orig = p->first->mi;
-  for (j = mi_orig->first(); j.valid(); j++)
+  for (Bag& a : *mi_orig)
     {
-      Bag *b = new Bag((*mi_orig)[j]->basis_ptr());
-      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
-      elems.insert(b);
+      Bag *b = new Bag(a.basis_ptr());
+      varpower::quotient(a.monom().data(), vp.data(), b->monom());
+      elems.push_back(b);
     }
 
   // Make this monomial ideal, and then run through each minimal generator
@@ -1574,19 +1572,16 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 
   mi_orig->insert_minimal(new Bag(p, vp));
 
-  queue<Bag *> rejects;
-  Bag *b;
-  MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
-  while (rejects.remove(b)) delete b;
+  MonomialIdeal *mi = new MonomialIdeal(P, elems);
 
   if (M2_gbTrace >= 11) mi->debug_out(1);
 
-  for (j = mi->first(); j.valid(); j++)
+  for (Bag& a : *mi)
     {
-      res_pair *second = reinterpret_cast<res_pair *>((*mi)[j]->basis_ptr());
+      res_pair *second = reinterpret_cast<res_pair *>(a.basis_ptr());
       res_pair *q = new_res_pair(SYZ_S_PAIR, p, second);
       // That set most fields except base_monom:
-      M->from_varpower((*mi)[j]->monom().raw(), q->base_monom);
+      M->from_varpower(a.monom().data(), q->base_monom);
       M->mult(q->base_monom, p->base_monom, q->base_monom);
       result->next = q;
       result = q;
@@ -1595,10 +1590,10 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   delete mi;
 }
 
-int res_comp::skeleton_maxdegree(const array<res_pair *> &reslevel)
+int res_comp::skeleton_maxdegree(const VECTOR(res_pair *)& reslevel)
 {
   int result = lodegree;
-  for (int level = 0; level < reslevel.length(); level++)
+  for (int level = 0; level < reslevel.size(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
         {
@@ -1609,14 +1604,14 @@ int res_comp::skeleton_maxdegree(const array<res_pair *> &reslevel)
   return result;
 }
 
-void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
+void res_comp::skeleton_stats(const VECTOR(res_pair *)& reslevel)
 {
   buffer o;
   int level;
-  int maxlevel = reslevel.length() - 1;
+  int maxlevel = reslevel.size() - 1;
   int maxdegree = skeleton_maxdegree(reslevel);  // max slanted degree
   int *bettis = newarray_atomic_clear(int, (maxlevel + 1) * (maxdegree + 1));
-  for (level = 0; level < reslevel.length(); level++)
+  for (level = 0; level < reslevel.size(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
         {
@@ -1644,7 +1639,7 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
       betti->array[next++] = bettis[level + (maxlevel + 1) * d];
 
   betti_display(o, betti);
-  deletearray(bettis);
+  freemem(bettis);
 
   for (level = 0; level <= maxlevel; level++)
     {
@@ -1665,7 +1660,7 @@ void res_comp::skeleton(int strategy)
 // Currently: this is just used for debugging
 {
   int level;
-  array<res_pair *> reslevel;
+  VECTOR(res_pair *) reslevel;
 
   // First, set reslevel[0], reslevel[1].
   skeleton_init(reslevel);
@@ -1673,7 +1668,7 @@ void res_comp::skeleton(int strategy)
   // Now loop through each level, until the length limit is hit,
   // or there are no new pairs
 
-  for (level = 1; level < reslevel.length(); level++)
+  for (level = 1; level < reslevel.size(); level++)
     {
       // Sort the pairs in the current level:
       res_pair *pp = reslevel[level];
@@ -1689,7 +1684,7 @@ void res_comp::skeleton(int strategy)
       head.next = NULL;
       ptrhead = &head;
       for (res_pair *p = pp; p != NULL; p = p->next) skeleton_pairs(ptrhead, p);
-      reslevel.append(head.next);
+      reslevel.push_back(head.next);
     }
 
   // Now display the skeleton and stats on it

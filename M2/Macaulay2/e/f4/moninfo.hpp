@@ -1,12 +1,19 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005-2021  Michael E. Stillman
 
-#ifndef _moninfo_h_
-#define _moninfo_h_
+#ifndef _moninfo_hpp_
+#define _moninfo_hpp_
 
+#include "engine-exports.h"               // for M2_arrayint, M2_arrayint_st...
+#include "f4/ntuple-monomial.hpp"         // for ntuple_word, const_ntuple_m...
+#include "f4/varpower-monomial.hpp"       // for varpower_word, index_varpow...
+#include "interface/monomial-ordering.h"  // for MonomialOrdering
+#include "newdelete.hpp"                  // for our_new_delete
+#include "skew.hpp"                       // for SkewMultiplication
+
+#if 0
+#include <M2/config.h>                    // for HAVE_STDINT_H
 #include <cstdio>
 
-#include <M2/config.h>
-#include <stdio.h>
 #if HAVE_STDINT_H
 #include <stdint.h>
 #elif HAVE_INTTYPES_H
@@ -15,10 +22,7 @@
 #error integer type definitions not available
 #endif
 
-struct MonomialOrdering;
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
-#include "../skew.hpp"
+#endif
 
 // typedef int64_t monomial_word; // Used for all types of monomials.  Is this
 // OK?
@@ -46,7 +50,7 @@ class MonomialInfo : public our_new_delete
 
   int firstvar;  // = 2, if no weight vector, otherwise 2 + nweights
   int nweights;  // number of weight vector values placed.  These should all be
-                 // positve values?
+                 // positive values?
   M2_arrayint weight_vectors;  // array 0..nweights of array 0..nvars-1 of longs
 
   // monomial format: [hashvalue, component, pack1, pack2, ..., packr]
@@ -58,8 +62,8 @@ class MonomialInfo : public our_new_delete
   mutable unsigned long ncalls_compare;
   mutable unsigned long ncalls_mult;
   mutable unsigned long ncalls_get_component;
-  mutable unsigned long ncalls_from_exponent_vector;
-  mutable unsigned long ncalls_to_exponent_vector;
+  mutable unsigned long ncalls_from_expvector;
+  mutable unsigned long ncalls_to_expvector;
   mutable unsigned long ncalls_to_varpower;
   mutable unsigned long ncalls_from_varpower;
   mutable unsigned long ncalls_is_equal;
@@ -103,13 +107,13 @@ class MonomialInfo : public our_new_delete
     return m[1];
   }
 
-  bool from_exponent_vector(const_ntuple_monomial e,
+  bool from_expvector(const_ntuple_monomial e,
                             long comp,
                             packed_monomial result) const
   {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same
     // time.
-    ncalls_from_exponent_vector++;
+    ncalls_from_expvector++;
     result[0] = 0;
     result[1] = comp;
 
@@ -158,12 +162,12 @@ class MonomialInfo : public our_new_delete
     return true;
   }
 
-  bool to_exponent_vector(const_packed_monomial m,
+  bool to_expvector(const_packed_monomial m,
                           ntuple_monomial result,
                           long &result_comp) const
   {
     // Unpack the monomial m.
-    ncalls_to_exponent_vector++;
+    ncalls_to_expvector++;
     result_comp = m[1];
     m += 2 + nweights;
     for (int i = 0; i < nvars; i++) *result++ = *m++;
@@ -177,7 +181,7 @@ class MonomialInfo : public our_new_delete
     // Unpack the monomial m into result, which should already be allocated
     // 0..nvars-1
     // this is to connect with older 'int *' monomials.
-    ncalls_to_exponent_vector++;
+    ncalls_to_expvector++;
     result_comp = static_cast<int>(m[1]);
     m += 2;
     for (int i = 0; i < nvars; i++) *result++ = static_cast<int>(*m++);

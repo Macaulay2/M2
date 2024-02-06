@@ -54,11 +54,11 @@ void gb2_comp::setup(FreeModule *FFsyz,
   // We index into this using gbvector components (which are one greater than
   // the
   // FreeModule components
-  monideals.append(0);
+  monideals.push_back(0);
   for (i = 0; i < F->rank(); i++)
     {
       monideal_pair *p = new monideal_pair(originalR, mi_stash);
-      monideals.append(p);
+      monideals.push_back(p);
     }
 
   use_hilb = 0;
@@ -95,14 +95,14 @@ void gb2_comp::remove_pair(s_pair *&p)
   p->second = NULL;
   p->next = NULL;
   M->remove(p->lcm);
-  deleteitem(p);
+  freemem(p);
   p = NULL;
 }
 
 gb2_comp::~gb2_comp()
 {
   // remove all of the gbvector's in the gb_elems's and spairs.
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     {
       gb_elem *g = gb[i];
       GR->gbvector_remove(g->f);
@@ -197,17 +197,16 @@ void gb2_comp::find_pairs(gb_elem *p)
 // (includes cases m * lead(p) = 0).
 // Returns a list of new s_pair's.
 {
-  queue<Bag *> elems;
-  Index<MonomialIdeal> j;
-  intarray vplcm;
-  int *find_pairs_m = M->make_one();
-  int *f_m = M->make_one();
+  gc_vector<Bag*> elems;
+  gc_vector<int> vplcm;
+  monomial find_pairs_m = M->make_one();
+  monomial f_m = M->make_one();
   int *find_pairs_lcm = newarray_atomic(int, M->n_vars());
 
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
     {
-      int *find_pairs_exp = newarray_atomic(int, M->n_vars());
+      exponents_t find_pairs_exp = newarray_atomic(int, M->n_vars());
       M->to_expvector(f_m, find_pairs_exp);
 
       for (int v = 0; v < GR->n_skew_commutative_vars(); v++)
@@ -219,12 +218,12 @@ void gb2_comp::find_pairs(gb_elem *p)
           M->from_expvector(find_pairs_exp, find_pairs_lcm);
           find_pairs_exp[w]--;
 
-          vplcm.shrink(0);
+          vplcm.resize(0);
           M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
-      deletearray(find_pairs_exp);
+      freemem(find_pairs_exp);
     }
 
   // Add in syzygies arising from a base ring
@@ -235,40 +234,39 @@ void gb2_comp::find_pairs(gb_elem *p)
         {
           const Nterm *f = originalR->quotient_element(i);
           M->lcm(f->monom, f_m, find_pairs_lcm);
-          vplcm.shrink(0);
+          vplcm.resize(0);
           M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
 
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = monideals[p->f->comp]->mi;
-  for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
+  for (Bag& a : *mi1)
     {
-      M->from_varpower((*mi1)[i]->monom().raw(), find_pairs_m);
+      M->from_varpower(a.monom().data(), find_pairs_m);
       M->lcm(find_pairs_m, f_m, find_pairs_lcm);
-      vplcm.shrink(0);
+      vplcm.resize(0);
       M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q =
           new_s_pair(p,
-                     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()),
+                     reinterpret_cast<gb_elem *>(a.basis_ptr()),
                      find_pairs_lcm);
-      elems.insert(new Bag(q, vplcm));
+      elems.push_back(new Bag(q, vplcm));
     }
 
   // Add 'p' to the correct monideal
-  intarray vp;
+  gc_vector<int> vp;
   M->to_varpower(f_m, vp);
   mi1->insert(new Bag(p, vp));
 
   // Now minimalize these elements, and insert them into
   // the proper degree.
 
-  queue<Bag *> rejects;
-  Bag *b;
+  VECTOR(Bag *) rejects;
   MonomialIdeal *mi = new MonomialIdeal(originalR, elems, rejects, mi_stash);
-  while (rejects.remove(b))
+  for (auto& b : rejects)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
@@ -276,10 +274,10 @@ void gb2_comp::find_pairs(gb_elem *p)
     }
 
   int is_ideal2 = (F->rank() == 1 && orig_syz == 0);
-  for (j = mi->first(); j.valid(); j++)
+  for (Bag& a : *mi)
     {
       n_pairs++;
-      s_pair *q = reinterpret_cast<s_pair *>((*mi)[j]->basis_ptr());
+      s_pair *q = reinterpret_cast<s_pair *>(a.basis_ptr());
       if (is_ideal2 && q->syz_type == SPAIR_PAIR)
         {
           // MES: the following line is suspect, for Schreyer orders
@@ -307,14 +305,14 @@ void gb2_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   M->remove(find_pairs_m);
   M->remove(f_m);
-  deletearray(find_pairs_lcm);
+  freemem(find_pairs_lcm);
 }
 
 void gb2_comp::compute_s_pair(s_pair *p)
 {
   if (p->f == NULL)
     {
-      int *s = M->make_one();
+      monomial s = M->make_one();
       GR->gbvector_get_lead_monomial(F, p->first->f, s);
       M->divide(p->lcm, s, s);
 
@@ -338,7 +336,7 @@ void gb2_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, M->n_vars());
   int count = 0;
   if (M2_gbTrace == 10)
     {
@@ -393,7 +391,7 @@ void gb2_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
       emit_wrapped(o.str());
     }
   f = head.next;
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void gb2_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
@@ -402,7 +400,7 @@ void gb2_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray_atomic(int, M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR, F);
@@ -455,7 +453,7 @@ void gb2_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void gb2_comp::reduce(gbvector *&f, gbvector *&fsyz) { gb_reduce(f, fsyz); }
@@ -477,7 +475,7 @@ void gb2_comp::schreyer_append(gbvector *f)
 {
   if (orig_syz < 0)
     {
-      int *d = originalR->degree_monoid()->make_one();
+      monomial d = originalR->degree_monoid()->make_one();
       GR->gbvector_multidegree(F, f, d);
       Fsyz->append_schreyer(d, f->monom, Fsyz->rank());
       originalR->degree_monoid()->remove(d);
@@ -486,7 +484,7 @@ void gb2_comp::schreyer_append(gbvector *f)
 
 void gb2_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 {
-  int *f_m = M->make_one();
+  monomial f_m = M->make_one();
   gbvector *bull = NULL;
   gb_elem *p = new gb_elem(f, fsyz, ismin);
 
@@ -508,10 +506,10 @@ void gb2_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 
   if (M->in_subring(1, f_m)) n_subring++;
   // insert into p->f->comp->mi_search
-  intarray vp;
+  gc_vector<int> vp;
   M->to_varpower(f_m, vp);
   monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
-  gb.append(p);
+  gb.push_back(p);
 
   M->remove(f_m);
 
@@ -552,8 +550,8 @@ int gb2_comp::get_pairs()
 
   slast->next = NULL;
   these_pairs = head.next;
-  total_pairs.append(this_degree);
-  total_pairs.append(n);
+  total_pairs.push_back(this_degree);
+  total_pairs.push_back(n);
   return n;
 }
 bool gb2_comp::s_pair_step()
@@ -618,10 +616,10 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
   bool isgen = false;
   // It is our duty to free 'f'...
 
-  for (int i = monideals.length(); i <= F->rank(); i++)
+  for (int i = monideals.size(); i <= F->rank(); i++)
     {
       monideal_pair *p = new monideal_pair(originalR, mi_stash);
-      monideals.append(p);
+      monideals.push_back(p);
     }
 
   gbvector *fsyz = NULL;
@@ -829,8 +827,8 @@ bool gb2_comp::is_done()
 
 Matrix *gb2_comp::make_lead_term_matrix()
 {
-  MatrixConstructor result(F, gb.length());
-  for (int i = 0; i < gb.length(); i++)
+  MatrixConstructor result(F, gb.size());
+  for (int i = 0; i < gb.size(); i++)
     {
       gb_elem *g = gb[i];
       gbvector *f = g->f;
@@ -869,7 +867,7 @@ Matrix *gb2_comp::min_gens_matrix()
 {
   MatrixConstructor mat(F, Fsyz, 0);
   int j = 0;
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     if (gb[i]->is_min)
       mat.set_column(j++, originalR->translate_gbvector_to_vec(F, gb[i]->f));
   return mat.to_matrix();
@@ -885,7 +883,7 @@ Matrix *gb2_comp::get_matrix()
 Matrix *gb2_comp::initial_matrix(int n)
 {
   MatrixConstructor mat(F, 0);
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     {
       gbvector *tmp = GR->gbvector_lead_term(n, F, gb[i]->f);
       mat.append(originalR->translate_gbvector_to_vec(F, tmp));
@@ -897,7 +895,7 @@ Matrix *gb2_comp::initial_matrix(int n)
 Matrix *gb2_comp::gb_matrix()
 {
   MatrixConstructor mat(F, 0);
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     mat.append(originalR->translate_gbvector_to_vec(F, gb[i]->f));
   return mat.to_matrix();
 }
@@ -905,7 +903,7 @@ Matrix *gb2_comp::gb_matrix()
 Matrix *gb2_comp::change_matrix()
 {
   MatrixConstructor mat(Fsyz, 0);
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     mat.append(originalR->translate_gbvector_to_vec(Fsyz, gb[i]->fsyz));
   return mat.to_matrix();
 }
@@ -942,7 +940,7 @@ void gb2_comp::text_out(buffer &o) const
     {
       int nmonoms = 0;
       int nchange = 0;
-      for (int i = 0; i < gb.length(); i++)
+      for (int i = 0; i < gb.size(); i++)
         {
           nmonoms += GR->gbvector_n_terms(gb[i]->f);
           nchange += GR->gbvector_n_terms(gb[i]->fsyz);
@@ -973,7 +971,7 @@ void gb2_comp::text_out(buffer &o) const
 
   spairs->text_out(o);
   if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
-    for (int i = 0; i < gb.length(); i++)
+    for (int i = 0; i < gb.size(); i++)
       {
         o << i << '\t';
         GR->gbvector_text_out(o, F, gb[i]->f);
@@ -988,7 +986,7 @@ void gb2_comp::stats() const
     {
       int nmonoms = 0;
       int nchange = 0;
-      for (int i = 0; i < gb.length(); i++)
+      for (int i = 0; i < gb.size(); i++)
         {
           nmonoms += GR->gbvector_n_terms(gb[i]->f);
           nchange += GR->gbvector_n_terms(gb[i]->fsyz);
@@ -1025,7 +1023,7 @@ void gb2_comp::stats() const
       o << "free module is ";
       F->text_out(o);
       o << newline;
-      for (int i = 0; i < gb.length(); i++)
+      for (int i = 0; i < gb.size(); i++)
         {
           o.reset();
           o << i << '\t';

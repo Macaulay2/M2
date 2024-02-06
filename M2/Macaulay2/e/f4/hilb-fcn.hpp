@@ -1,13 +1,14 @@
-/* Copyright 2010, Michael E. Stillman */
+/* Copyright 2010-2021, Michael E. Stillman */
 
 #ifndef _hilb_fcn_h_
 #define _hilb_fcn_h_
 
-#include "M2/gc-include.h"
-#include <vector>
+#include "newdelete.hpp"  // for VECTOR
+#include "ringelem.hpp"   // for vec
 
-#include "../matrix-con.hpp"
-
+class FreeModule;
+class Matrix;
+class MatrixConstructor;
 class PolynomialRing;
 class RingElement;
 

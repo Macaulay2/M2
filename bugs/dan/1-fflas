@@ -65,7 +65,7 @@ To: dan@math.uiuc.edu
 
 Hi Dan,
 
-I think that that might be a good idea.  I might also like to  
+I think that this might be a good idea.  I might also like to  
 incorporate cddlib (it does some things much faster than our  
 FourierMotzkin package, and this stuff is very useful).  Perhaps  
 getting the makefile to add these two libraries (experimentally) to  
@@ -76,4 +76,3 @@ actually creating the matrix is what took a long time.  Anyway, it
 sounds like it would be a good test case.
 
 -- Mike
-

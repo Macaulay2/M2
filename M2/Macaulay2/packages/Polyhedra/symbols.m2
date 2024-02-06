@@ -54,7 +54,7 @@ protect computedVeryAmple -- Is the polyhedron very ample?
 protect computedEhrhart -- The Ehrhart polynomial
 
 protect maximalCones   -- Maximal cones of a fan.
-protect inputCones  -- Cones defining a fan. These cones are not neccessarily maximal.
+protect inputCones  -- Cones defining a fan. These cones are not necessarily maximal.
 protect computedPolytope  -- Polytope whose normal fan is the given fan.
 protect generatingObjects 
 protect pure  -- is the fan of pure dimension?

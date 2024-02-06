@@ -57,16 +57,6 @@ document { -- this node is used as an example in the node: Key
 	  },
      }
 
-document {
-     Key => "varieties",
-     HEADER2 "An overview",
-     Subnodes => {
-	  -- Mike wanted this: TO "algebraic varieties",
-	  TO "coherent sheaves",
-	  TO "Variety"
-	  },
-     }
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

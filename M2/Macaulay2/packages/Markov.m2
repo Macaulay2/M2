@@ -1,12 +1,14 @@
 -- -*- coding: utf-8 -*-
 newPackage("Markov",
      Authors => {
-	  {Name => "Luis Garcia"},
+	  {Name => "Luis Garcia-Puente"},
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,
+     Keywords => {"Statistics"},
      Headline => "Markov ideals arising from Bayesian networks in statistics",
-     Version => "1.2",
+     Version => "1.3",
+     Date => "May 15, 2021",
      PackageImports => {"Elimination"}
      )
 
@@ -38,7 +40,7 @@ newPackage("Markov",
 export {"makeGraph", "displayGraph", "localMarkovStmts", "globalMarkovStmts", "pairMarkovStmts",
        "markovRing", "marginMap", "hideMap", "markovMatrices", "markovIdeal", "writeDotFile", "removeRedundants", 
        "gaussRing", "gaussMinors", "gaussIdeal", "gaussTrekIdeal", "Graph"}
-exportMutable {"dotBinary","jpgViewer"}
+exportMutable {"dotBinary"}
 
 -------------------------
 -- Graph visualization --
@@ -69,8 +71,6 @@ makeGraph List := (g) -> (
 
 -- dotBinary = "/sw/bin/dot"
 dotBinary = "dot"
--- jpgViewer = "/usr/bin/open"
-jpgViewer = "open"
 
 writeDotFile = method()
 writeDotFile(String,Graph) := (filename,G) -> (
@@ -104,7 +104,7 @@ displayGraph = method()
 displayGraph(String,String,Graph) := (dotfilename,jpgfilename,G) -> (
      writeDotFile(dotfilename,G);
      runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
-     runcmd(jpgViewer | " " | jpgfilename);
+     show URL("file://" | toAbsolutePath jpgfilename);
      )
 displayGraph(String,Graph) := (dotfilename,G) -> (
      jpgfilename := temporaryFileName() | ".jpg";
@@ -206,7 +206,7 @@ normalizeStmt = (D) -> (
      D1 := toList(D#1);
      {D0#0, D0#1, D1}
      )
-minimize = (Ds) -> (
+minimizeStmts = (Ds) -> (
      -- each element of Ds should be a list {A,B,C}
      answer := {};
      -- step 1: first make the first two elements of each set a set
@@ -237,7 +237,7 @@ removeRedundants = (Ds) -> (
 	       a := Ds_i;
 	       D0 := drop(Ds,{i,i});
 	       all(D0, b -> not test1(a,b))));
-     minimize(Ds_c))
+     minimizeStmts(Ds_c))
 
 --------------------------
 -- Bayes ball algorithm --
@@ -601,7 +601,7 @@ document {
 	  J = gaussIdeal(R,G)
           ///,
      PARA{},
-     "A list of independence statments (as for example returned by globalMarkovStmts)
+     "A list of independence statements (as for example returned by globalMarkovStmts)
      can be provided instead of a graph.",
      PARA{},
      "The ideal corresponding to a conditional independence statement {A,B,C} (where A,B,C,
@@ -716,7 +716,7 @@ res J1
 support J1
 
 globalMarkovStmts G
-minimize oo
+minimizeStmts oo
 
 G = makeGraph{{2,3},{4},{4},{}}
 G1 = makeGraph{{},{1},{1},{2,3}}

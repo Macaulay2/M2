@@ -10,7 +10,7 @@
 // the buffer).
 //
 // Then, it is unfortunately necessary to check whether an error has
-// occured, using 'error'.
+// occurred, using 'error'.
 //
 // Finally, the error flag is cleared upon giving control back to the front end.
 

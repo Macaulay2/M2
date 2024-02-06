@@ -1,11 +1,13 @@
-// Copyright 1994-2002 by Michael E. Stillman
+// Copyright 1994-2020 by Michael E. Stillman
 
-#include "style.hpp"
-#include "mem.hpp"
-#include "hash.hpp"
-#include "poly.hpp"
-
-#include "aring-glue.hpp"
+#include "interface/random.h"
+#include "aring-glue.hpp"    // for initializeRationalRing
+#include "engine-exports.h"  // for M2_tostring, M2_string
+#include "error.h"           // for error_message
+#include "hash.hpp"          // for MutableEngineObject
+#include "mem.hpp"           // for doubles, doubling_stash
+#include "poly.hpp"          // for PolyRing
+#include "style.hpp"         // for GEOHEAP_SIZE
 
 unsigned int MutableEngineObject::mNextMutableHashValue = 13;
 
@@ -34,6 +36,7 @@ static bool initialized = false;
  *  This routine must be called before any other engine routine is called.
  *  May be called multiple times.  The subsequent calls do nothing.
  */
+extern "C" // TODO: remove when this function is in e/interface
 void IM2_initialize()
 {
   if (initialized) return;
@@ -58,6 +61,7 @@ void IM2_initialize()
  */
 
 M2_string IM2_last_error_message() { return M2_tostring(error_message()); }
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

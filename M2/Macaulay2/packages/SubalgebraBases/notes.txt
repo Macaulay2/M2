@@ -1,0 +1,76 @@
+Some notes for how to modify the current code.
+
+Todo list
+---------
+> Remove unnecessary/old code
+
+
+> Remove unnecessary parentheses
+> Separate CompTable modifying functions from service-functions.m2 (see discussion below).
+> Strategy "Markov basis" --- only subduct on generators of the binomial ideal (rather than a GB), which we can compute quickly using FourTiTwo.
+  -- do we have an implementation that would work with just the binomial generators
+> Which subductions to export? Anything without compTable
+   ? Can we export only some methods ?
+
+> Determine what "subduction" and "%" should do with (RingElement, SAGBIBasis)
+  -- currently this "subduction" is not implemented and "%" performs a subduction.
+
+> [DONE - Needs Checking] Implement the correct caching behaviour in subalgebraBasis and sagbi:
+  -- A subring is an immutable object - in its cache we store the 'most computationally advanced' SAGBIBasis object
+  -- When resuming a subalgebraBasis or sagbi computation from a SAGBIBasis object, use the previously selected options
+    * Only adjust the Limit option
+  -- Add another option to sagbi / subalgebraBasis: RenewOptions (default: false)
+    * if RenewOptions == true then set all the options to ones supplied by the user
+    * RenewOptions is false by default because the first priority is to recover the options from the previous computation
+  -- matrices cache a Subring which, in turn, cache the SAGBIBasis
+
+> [DONE] When picking up where a computation left off, if the original set of generators was autosubducted then don't autosubduct again.
+  -- Could be implemented by setting the AutoSubduce option to false once autosubduction is done
+
+> sort out keys for subrings - remove the quotes around the keys
+  ? Can we use unexported symbols for keys in classes ?
+  
+> [DONE - Needs Checking] sagbi and subalgebraBasis always uses the sagbiBasis object of the subring in the cache of the passed in object
+  -- E.g. sagbi M (matrix) --> sagbi M.cache#"Subring".cache."SAGBIBasis" (or something like that)
+  -- In the above example, if the matrix has no subring cached then calling sagbi on a matrix makes a subring
+  -- methodology: have only 1 subring floating around linked with the latest computation object
+
+> [DONE - Needs Checking] groebner membership test for quotients
+  ? Can we just sum the ideal I and the quotienting ideal (lifted to the tensor ring) ?
+
+> Add more asserts!
+
+> [DONE] Add groebnerNormalForm method. It should be a non-exported method that returns an element of the tensor ring
+  -- it can be used by groebnerMembershipTest and %
+  -- this method may also want to return a projection map from the tensorRing to the ambientRing
+
+> [DONE] copy over the intersection of subrings method to classes.
+  -- Add other input options: e.g. intersection(SAGBIBasis, SAGBIBasis), etc.
+
+> [DONE] forceSAGBI - assert that a subring / matrix of generators is a sagbi basis
+
+> intrinsic subductionQuotient
+  the subduction quotient is currently implemented in an extrinsic way that uses % to compute the
+  normal form and a factorised form (in terms of the generators) of a given element f of the ambient ring.
+  Using subduction, we can also construct this factorised form. When a sagbi basis is computed, we must:
+  -- Keep track of the factorisation of the new sagbi generators in terms of the subring generators
+  Then, given an element f of the ambient ring, when we perform subduction on it with respect to a sagbi basis
+  we must keep track of the factorisation of the lead terms that cancel the lead terms of monomials of f
+  
+  
+
+Discussion
+----------
+Ollie: It would be great to have a separate file(s) for subduction/sagbi related functions.
+       Currently, service-functions.m2 is getting very crowded and contains many levels of functions:
+       E.g. updateComputation passes off to one of three different functions.
+       There are at least two ways to solve this:
+       1) Have functions that do similar things in one file, such as the four update-related functions above
+       2) Have functions on a similar level in one file, such as updateComputation in a higher-level file than what it calls
+          We already do this for sagbi, since it sits in one file and calls stuff in service-functions.m2
+
+
+
+
+
+

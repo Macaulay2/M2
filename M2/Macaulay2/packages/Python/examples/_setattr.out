@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- hash: 794021249
+
+i1 : math = import "math"
+
+o1 = <module 'math' (built-in)>
+
+o1 : PythonObject of class module
+
+i2 : setattr(math, "pi", 22/7)
+
+i3 : math@@pi
+
+o3 = 3.142857142857143
+
+o3 : PythonObject of class float
+
+i4 : math@@e = 19/7
+
+i5 : math@@e
+
+o5 = 2.7142857142857144
+
+o5 : PythonObject of class float
+
+i6 : 

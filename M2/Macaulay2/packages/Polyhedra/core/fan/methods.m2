@@ -39,7 +39,7 @@ smoothSubfan Fan := F -> (
 isPolytopal = method(TypicalValue => Boolean)
 isPolytopal Fan := F -> getProperty(F, polytopal)
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
+-- PURPOSE : Giving the k dimensional Cones of the Fan
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)

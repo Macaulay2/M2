@@ -1,5 +1,4 @@
 #include "ringelem.hpp"
-#include "intarray.hpp"
 
 class Matrix;
 class RingElement;
@@ -14,6 +13,8 @@ struct res2term;
 class MutableMatrix;
 class MonomialIdeal;
 
+void showint(mpz_srcptr a);
+
 void dmatrix(const Matrix *M);
 
 void drelem(const RingElement *f);
@@ -21,6 +22,8 @@ void drelem(const RingElement *f);
 void dfree(const FreeModule *F);
 
 extern "C" void dringelem(const Ring *R, const ring_elem f);
+
+extern "C" void dNterm(const Ring *R, const Nterm *f);
 
 extern "C" void dvec(const Ring *R, const vec v);
 
@@ -35,6 +38,12 @@ extern "C" void dmutablemat(MutableMatrix *m);
 extern "C" void dmonideal(MonomialIdeal *m);
 
 extern "C" void dintarray(M2_arrayint a);
+
+template <typename T>
+void dvector(gc_vector<T>& a);
+
+template <typename T>
+void dvector(std::vector<T>& a);
 
 extern "C" void dstash();
 

@@ -25,7 +25,7 @@ doc ///
     	comb3000s
 	(comb3000s,Ring)
     Headline
-    	a combustion chemistry example for a temparature of 3000 degrees
+    	a combustion chemistry example for a temperature of 3000 degrees
     Usage
     	comb3000s(kk)
     Inputs

@@ -1,0 +1,595 @@
+
+TEST ///
+    kk = ZZ/101
+    A = random(kk^23, kk^400)
+    B = random(kk^500, kk^23)
+    M = mutableMatrix(B*A);
+    N = nullSpace M;
+    assert(numRows N == numColumns M)
+    assert(numColumns N == numColumns M - 23)
+    assert((matrix M) * (matrix N) == 0)
+    
+    time N = nullSpace(M, RightSide=>false);
+    assert(numRows N == numRows M - 23)
+    assert(numColumns N == numRows M)
+    assert((matrix N) * (matrix M) == 0)
+///
+
+TEST ///
+    kk = ZZ/101
+    A = random(kk^23, kk^1000);
+    B = random(kk^1000, kk^23);
+    M = mutableMatrix(B*A);
+    N = nullSpace M;
+    assert(numRows N == numColumns M)
+    assert(numColumns N == numColumns M - 23)
+    assert((matrix M) * (matrix N) == 0)
+    
+    time N = nullSpace(M, RightSide=>false);
+    assert(numRows N == numRows M - 23)
+    assert(numColumns N == numRows M)
+    assert((matrix N) * (matrix M) == 0)
+///
+
+TEST ///
+    debug Core
+    kk = ZZp 101
+    M = mutableMatrix(kk,5000,5000);
+    N = mutableMatrix(kk,5000,5000);
+    fillMatrix M;
+    fillMatrix N;
+    time (M+N);	
+
+    A = mutableMatrix(kk,50000,50000, Dense=>false);
+    B = mutableMatrix(kk,50000,50000, Dense=>false);
+    --time fillMatrix(A, Density=>.001);    
+    --time fillMatrix(B, Density=>.001);    
+    time (A+B);
+    time (A*B); -- crashes: tries to grab too much memory: BUG
+
+    A = mutableMatrix(kk,50000,50000, Dense=>true); -- doesn't crash, but it should!!
+    B = mutableMatrix(kk,50000,50000, Dense=>true); 
+
+    A = mutableMatrix(kk,10000,10000, Dense=>true);
+
+///
+
+TEST ///
+ 
+restart
+needsPackage "FastLinearAlgebra"
+kk = ZZ/101
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4, Strategy=>"New")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4, Strategy=>"Flint")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4, Strategy=>"FlintBig")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+ 
+///
+
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^4, kk^4)
+B = mutableMatrix random(kk^4, kk^1)
+X = solveLinear(A,B)
+(matrix A) * (matrix X) - matrix B
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^100, kk^100);
+B = mutableMatrix random(kk^100, kk^5);
+X = solveLinear(A,B) 
+((matrix A) * (matrix X)) - matrix B
+///
+
+
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+A * B
+(matrix A) * (matrix B) == matrix(A*B)
+///
+
+TEST ///
+kk = ZZ/101
+C = mutableMatrix random(kk^3, kk^7);
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+
+C0 = matrix C
+addMultipleToExt(C,A,B,Alpha=>3_kk, Beta=>-1_kk)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleToExt(C,mutableMatrix transpose matrix A, B,Alpha=>3_kk, Beta=>-1_kk, TransposeA=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleToExt(C,A,mutableMatrix transpose matrix B,Alpha=>3_kk, Beta=>-1_kk, TransposeB=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleToExt(C,mutableMatrix transpose matrix A,
+     mutableMatrix transpose matrix B,
+     Alpha=>3_kk, 
+     Beta=>-1_kk, 
+     TransposeB=>true, 
+     TransposeA=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+A * B
+assert((matrix A) * (matrix B) == matrix(A*B))
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^300, kk^400);
+B = mutableMatrix random(kk^400, kk^700);
+time C1 = A * B;
+time C2 = (matrix A) * (matrix B);
+assert(matrix C1 == C2)
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+assert (try (B * A;false) else true)
+time C1 = A * B;
+time C2 = (matrix A) * (matrix B);
+assert(matrix C1 == C2)
+///
+
+
+end
+
+--load "ffpack-test.m2"
+restart
+loadPackage "FastLinearAlgebra"
+kk = ZZ/101
+N = 3
+
+N = 4000
+N = 100
+M = mutableMatrix(kk, N, N, Dense=>true);
+time fillMatrix M;
+--viewHelp fillMatrix
+M
+time det M
+time det matrix M
+rank M
+methods rank
+
+A = random(kk^10, kk^31)
+B = random(kk^45, kk^10)
+C = B*A
+D = mutableMatrix C
+rank D
+rank C
+
+A = random(kk^10, kk^31)
+B = random(kk^31, kk^10)
+C = B*A
+D = mutableMatrix C
+det C
+det D
+
+restart
+loadPackage "FastLinearAlgebra"
+kk = ZZp (ideal 19)
+M = mutableMatrix(kk, 10, 10)
+for i from 0 to 9 do for j from 0 to 9 do M_(i,j) = random kk
+M
+rank M 
+
+M_(0,3) = 2_kk
+M
+random(kk^3, kk^4) -- BUG
+mutableMatrix oo
+3_kk  -- printing is wrong here
+matrix{{3_kk}}
+matrix {for i from 0 to 30 list i_kk}
+1_kk == 1
+1_kk
+0_kk
+oo == ooo
+
+matrix{{1_kk}}
+R = kk[a..d]
+basis(2,R) 
+random(R^1, R^{-2})  
+I = ideal random(R^1, R^{-2,-2,-2})  
+gens gb I;
+
+kk = ZZ/19
+debug Core
+rawDiscreteLog(raw 2_kk)
+rawDiscreteLog(raw 3_kk)
+
+TEST ///
+-- Test that for GF(p,n) (fixed p, various n):
+-- that the polynomials for different n are compatible:
+-- if (p^m-1) | (p^n-1), then
+--   if N = (p^n-1)//(p^m-1),
+--   and Fn(x) = min poly of the generator x
+--   and Fm(y) = min poly of the generator y
+-- then y = x^N
+-- 
+-- Check this: eliminate(x,ideal(Fn(x), y-x^N)).  If we get Fm(y), great, if not, ERROR>
+
+univariateCoefficients = method()
+univariateCoefficients RingElement := (F) -> (
+     R := ring F;
+     n := first degree F;
+     for i from 0 to n list lift(leadCoefficient part(i,F), ZZ)
+     )
+univariatePoly = method()
+univariatePoly(List, RingElement) := (coeffs, x) -> (
+     sum apply(#coeffs, i -> coeffs#i * x^i)
+     )
+
+checkPair = method()
+checkPair(Ring,Ring,Ring) := (R,S,T) -> (
+     -- R should be GF(p,m), S should be GF(p,n).
+     -- T should be ZZ/p[x1,x2] (with some names of vars)
+     -- if N = (p^n-1)/(p^m-1) is not an integer, then just return
+     -- otherwise:
+     -- 
+     Qm := R.order;
+     Qn := S.order;
+     if (Qn-1) % (Qm-1) == 0
+     then (
+	  N := (Qn-1) / (Qm-1);
+	  << "does divide, N=" << N << endl;
+	  Fm := univariateCoefficients (ideal ambient R)_0;
+	  Fn := univariateCoefficients (ideal ambient S)_0;
+	  -- now check result:
+	  ans := univariatePoly(Fm, T_1);
+	  I := ideal(univariatePoly(Fn, T_0), T_0^N-T_1);
+          GB := flatten entries selectInSubring(1, gens gb I);
+     	  if #GB != 1 then << "error: wrong number of elements in GB!!" << endl;
+	  if ideal ans != ideal GB then (
+	       << "Fm = " << ans << endl;
+	       << "Fn = " << univariatePoly(Fn, T_0) << endl;
+	       << "minpoly = " << GB_0 << endl;
+	       );
+	  )
+     )
+
+R = ZZ/2[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 23 list GF(2,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/3[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 15 list GF(3,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/5[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 10 list GF(5,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/7[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 8 list GF(7,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/11[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 7 list GF(11,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/13[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 6 list GF(13,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/17[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 6 list GF(17,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/19[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(19,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/23[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(23,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/29[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(29,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/31[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(31,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = GF(5,6)
+kk = ZZ/5
+phi = map(R,kk)
+phi(1_kk)
+phi(2_kk)
+phi(3_kk)
+phi(4_kk)
+
+factor(5^6-1)
+factor(5^2-1)
+factor(5^3-1)
+R6 = GF(5,6)
+R3 = GF(5,3)
+map(R6,R3)
+a = R6_0
+a
+N = (5^6-1)//(5^3-1)
+a^126
+///
+
+
+
+
+
+/// -- rawFFLU, is this active??
+kk = QQ
+M = random(QQ^5, QQ^3)
+debug Core
+mm = mutableMatrix M
+rawFFLU raw mm  -- doesn't look fraction free!!
+
+kk = ZZ/101
+A = mutableMatrix random(kk^10, kk^15)
+B = mutableMatrix random(kk^10, kk^1)
+x = mutableMatrix(kk, 15, 1)
+debug Core
+rawLinAlgSolve(raw A, raw B)
+x1 = matrix x
+(matrix A)*x1 == matrix B
+
+time A = random(kk^300, kk^300);
+time (A*A);
+time (A+A);
+
+restart
+kk = ZZp 101
+kk = GF(2,4,Strategy=>"Flint")
+random(kk^3, kk^4)
+N = 5
+m = mutableMatrix(kk, N, N)
+m = mutableMatrix random(kk^100, kk^100);
+rank m
+time for i from 0 to N-1 do for j from 0 to N-1 do m_(i,j) = random kk
+time M = matrix m;
+time(ans1 = m * m);
+time(ans2 = M * M);
+assert(ans2 == matrix ans1)
+
+kk = GF(2,4,Strategy=>"Flint")
+M = mutableMatrix random(kk^3, kk^4)
+rank M
+
+debug Core
+
+--kk = ZZp 1049599
+kk = ZZp 101
+N = 5
+M = random(kk^N, kk^N);
+time det M
+m = mutableMatrix M;
+time determinant m
+time rank m
+(matrix invert m) * M
+
+M1 = M_{0} | M_{1} | M_{0} + 2*M_{1} | M_{2} | M_{2} | M_{3}
+m1 = mutableMatrix M1
+rowRankProfile m1 -- WRONG
+columnRankProfile m1 -- WRONG
+m2 = mutableMatrix transpose M1
+rowRankProfile m2 -- WRONG
+columnRankProfile m2 -- WRONG
+
+M = matrix(kk, {{1,1,1,0}, {0,1,0,0}})
+m = mutableMatrix M
+nullSpace m
+m2 = mutableMatrix transpose M
+nullSpace(m2, RightSide=>false)
+B = matrix(kk, {{1,0},{0,1}})
+b = mutableMatrix B
+solveLinear(m, b)
+
+M = matrix(kk, {{1,1,1,0}, {0,1,0,0}})
+m = mutableMatrix M
+nullSpace m
+m2 = mutableMatrix transpose M
+nullSpace(m2, RightSide=>false)
+B = matrix(kk, {{0},{1} })
+b = mutableMatrix B
+x = solveLinear(m, b)
+(matrix m )*(matrix x)
+
+M = random(kk^10, kk^15)
+m = mutableMatrix M
+kerm = matrix nullSpace m
+assert(M * kerm == 0)
+assert(rank kerm == 5)
+m2 = mutableMatrix transpose M
+kerm2 = matrix nullSpace(m2, RightSide=>false)
+assert(kerm2 * (transpose M) == 0)
+assert(rank kerm2 == 5)
+
+kk = GF(3,4,Strategy=>"Flint")
+N = 10
+N = 4
+--M = random(kk^N, kk^N);
+--M= matrix {{-a^3+a^2-a-1, -a^3-a^2-a-1, a-1, a-1}, {-a^2-1, a^3-a^2-a, a^3+a^2, -a^3-a^2+a+1}, {a^3-a^2+1, -a^2-a-1, -a^3-a^2+a, a^3-a^2-a+1}, {0, a^2-a-1, -a^2-1, -a^3+a-1}}
+M=matrix {{a^3+a^2, -a^3+a^2+a-1, a^3-a^2+a, -a^2-a}, {a^3-a-1, a^3-a^2-a-1, -a^3-a^2-a, a^3-a^2-1}, {a^2+a-1, a^2+1, -a^3-a^2, a^2+a+1}, {a^3+a^2-a-1, a^3+a^2-1, -a^2-a, a^3-a^2+a}}
+time det M
+M_(0,0)
+m = mutableMatrix M;
+time determinant m  -- WRONG
+rank m -- WRONG
+rank M
+time minv = invert m; -- NOT IMPLEMENTED for GF
+(matrix minv) * M
+
+for i from 0 to 3 list (
+  Mij := submatrix(M, drop(splice{0..3}, {i,i}), {1..3});
+  det1 := det Mij;
+  det2 := det mutableMatrix Mij;
+  det1-det2)
+
+result1 = 0_(ring M)
+result2 = 0_(ring M)
+for i from 0 to 3 list (
+  Mij := submatrix(M, drop(splice{0..3}, {i,i}), {1..3});
+  result1 = result1 + (-1)^i * M_(i,0) * det Mij;
+  result2 = result2 + (-1)^i * M_(i,0) * det mutableMatrix Mij;
+  )
+result1
+result2
+det M
+det mutableMatrix M -- wrong
+
+det M00
+det mutableMatrix M00
+
+M1 = M_{0} | M_{1} | M_{0} + 2*M_{1} | M_{2} | M_{2} | M_{3}
+rowRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
+columnRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
+
+///
+
+TEST /// -- testing char and min poly
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 101
+M = random(R^10, R^10)
+Rt = R[t]
+characteristicPolynomial(M, Rt)
+M2 = M ++ M
+cp = characteristicPolynomial(M2, Rt)
+mp = minimalPolynomial(M2, Rt)
+assert(cp == mp^2)
+
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 5
+Rt = R[t]
+M = mutableMatrix(R, 5000, 5000);
+fillMatrix M;
+time cp = characteristicPolynomial(M, Rt);
+time mp = minimalPolynomial(M, Rt);
+///
+
+
+/// -- looking into LUdivine
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 101
+M = random(R^3, R^5)
+M1 = matrix(R, {{0,1,0,0,0},
+	        {0,1,0,1,1},
+		{0,1,0,1,0}})
+M2 = transpose M1
+M3 = matrix(R, {{0,0,0,0,0},
+	        {0,0,0,0,1},
+		{0,0,1,0,0}})
+M4 = transpose M3
+
+m = mutableMatrix M1      
+m = mutableMatrix M
+
+debug Core
+m = mutableMatrix M1
+m = mutableMatrix matrix{{1,2},{3,4}}
+(P,Q) = rawLQUPFactorization(raw m)
+
+  -- #P == rank of the matrix U (which columns pivots)
+  -- #Q == #rows of m, or is it rank m?  (ignore 0 rows)
+  -- A=3x5, rank 3:  #P=3, #Q=3
+
+loadPackage "FastLinearAlgebra"
+debug Core  
+debug FastLinearAlgebra
+R = ZZp 101
+M = random(R^3, R^3)
+M2 = M ++ M
+m = mutableMatrix M2
+cp = rawLinAlgCharPoly raw m
+mp = rawLinAlgMinPoly raw m
+
+P = R[t]
+det(t*id_(P^3) - M)
+
+P = ZZ/101[t]
+M = matrix {{41, 41, -29}, {-36, 19, 11}, {31, 15, -23}}
+det(M - t*id_(P^3))
+///
+
+TEST ///
+restart
+debug Core
+R = ZZp(23, "ARing"=>true)
+--R2 = ZZp(23, "ARing"=>false)
+R2 = ZZ/23
+raw R
+raw R2
+hasEngineLinearAlgebra R
+hasEngineLinearAlgebra R2
+
+m = mutableMatrix(R, 15, 15)
+fillMatrix m
+
+m2 = mutableMatrix(R2, 15, 15)
+fillMatrix m2
+
+needsPackage "FastLinearAlgebra"
+solveLinear(m,m)
+solveLinear(m2,m2) -- failed.
+
+det m
+det m2 -- isn't working?
+det matrix m2
+
+
+
+time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
+N = 400
+time m1 = map(ZZ^N, ZZ^N, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2);
+time m = syz m1;
+time LLL(m, Strategy=>fpLLL);
+time LLL(m);
+
+R = GF(2,7)
+ambient R
+S = ZZ/2[x]/(x^7+x+1)
+A = GF(S, PrimitiveElement => x^2)
+B = ZZ/2[y]
+phi = map(B,A,{y})
+phi(x) -- y^128 !! Oh no!!  But mathematically this is OK.
+phi(x^2) 
+phi(x^7)
+phi = map(S,A,{S_0})
+
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
+-- End:

@@ -9,6 +9,7 @@ newPackage(
 		     HomePage => "http://suzuki.bayesnet.org"}
 	},
 	Headline => "arithmetic of Miura curves",
+        Keywords => {"Commutative Algebra"},
 	DebuggingMode => false
 	)
 

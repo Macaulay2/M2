@@ -15,7 +15,7 @@ document {
 	
 	PARA{}, TT "Polyhedra", " uses the ",
    UL {
-      {TO FourierMotzkin, " package by ", HREF("http://www.mast.queensu.ca/~ggsmith", "Gregory G. Smith")},
+      { TO "FourierMotzkin", " package by ", HREF("http://www.mast.queensu.ca/~ggsmith", "Gregory G. Smith")},
       { TO "FourTiTwo", " package by ", HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman"),", ", HREF("http://people.math.gatech.edu/~jyu67/", "Josephine Yu"), ", and ",
       HREF("http://math.iit.edu/~spetrov1/", "Sonja Petrovic")},
       { TO "Topcom", " package by ",  HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman"), "."}

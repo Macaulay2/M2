@@ -2,6 +2,15 @@
 --- author(s): Lily Silverstein
 --- notes: 
 
+-*
+-- TODO
+part(InfiniteNumber,InfiniteNumber,Number)
+part(InfiniteNumber,ZZ,Number)
+part(ZZ,InfiniteNumber,Number)
+part(ZZ,Number)
+part(ZZ,ZZ,Number)
+*-
+
 doc///
  Key
   part

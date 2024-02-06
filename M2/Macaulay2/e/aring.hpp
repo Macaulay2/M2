@@ -3,7 +3,8 @@
 #ifndef _aring_hpp_
 #define _aring_hpp_
 
-#include <assert.h>
+#include <cassert>
+#include <memory>
 #include "ringelem.hpp"
 #include "buffer.hpp"
 
@@ -34,18 +35,16 @@ enum RingID {
   ring_ZZp,
   ring_ZZpFfpack,
   ring_ZZpFlint,
-  ring_GF,
   ring_GFM2,
-  ring_GFGivaro,
   ring_GFFlintBig,
   ring_GFFlintZech,
+  ring_RRi,
   ring_RR,
   ring_CC,
   ring_RRR,
   ring_CCC,
   ring_tower_ZZp,
-  ring_old,      ///< refers to all rings which are not ConcreteRing's.
-  ring_top = 16  ///< used to determine the number of ring types
+  ring_old      ///< refers to all rings which are not ConcreteRing's.
 };
 
 /**
@@ -56,7 +55,101 @@ class RingInterface : public our_new_delete
 };  ///< inherit from this if the class is to be used as a template parameter
     /// for ConcreteRing
 
-class DummyRing : public RingInterface
+/**
+ * \brief A base class for Element
+ *
+ * \tparam ElementType the raw type to be wrapped
+ *
+ * This class template serves as a base class for the Element classes in the various ARing types,
+ * It only implements the functions to convert to an ElementType.
+ * This class has a protected destructor so that users cannot
+ * accidentally try to destroy an Element using an ElementImpl pointer.
+ */
+template <class ElementType>
+class ElementImpl
+{
+ protected:
+  ElementType mValue;
+  ElementImpl() = default;
+  ElementImpl(const ElementType &value) : mValue(value) {}
+  ElementImpl(ElementType &&value) : mValue(value) {}
+  ElementImpl(const ElementImpl &other) noexcept = default;
+  ElementImpl(ElementImpl &&other) noexcept = default;
+  ElementImpl &operator=(const ElementImpl &other) noexcept = default;
+  ElementImpl &operator=(ElementImpl &&other) noexcept = default;
+  ~ElementImpl() noexcept = default;
+
+ public:
+  operator const ElementType &() const { return mValue; }
+  operator ElementType &() { return mValue; }
+  const ElementType &value() const { return mValue; }
+  ElementType &value() { return mValue; }
+};
+
+/**
+ * \ingroup rings
+ *
+ * \brief A base class for simple ARings
+ *
+ * An ARing class inheriting from this should provide the clear method
+ * as a static member function. This class will then provide a simple
+ * implementation of an Element class
+ */
+template <class ARing>
+class SimpleARing : public RingInterface
+{
+ public:
+  /**
+   * \brief A wrapper class for ElementType
+   */
+  class Element : public ElementImpl<typename ARing::ElementType>
+  {
+    typedef typename ARing::ElementType ElementType;
+    typedef ElementImpl<ElementType> Impl;
+
+   public:
+    explicit Element(const ARing &ring)
+    {
+      // without the Impl::, the compiler can't figure out where mValue comes
+      // from
+      ring.init(Impl::mValue);
+    }
+    Element(const ARing &ring, const ElementType& other)
+    {
+      ring.init_set(Impl::mValue,other);
+    }
+    ~Element() { ARing::clear(Impl::mValue); }
+  };
+  /**
+   * \brief A wrapper for an array of ElementType
+   *
+   * This class is intended to replace dynamically allocated arrays of ElementType.
+   * In particular, this will correctly clear the data from the ring upon destruction
+   */
+  class ElementArray
+  {
+    typedef typename ARing::ElementType ElementType;
+    const size_t mSize;
+    std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARing &ring, size_t size)
+        : mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < size; i++) ring.init(mData[i]);
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) ARing::clear(mData[i]);
+    }
+    ElementType &operator[](size_t idx) { return mData[idx]; }
+    const ElementType &operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
+};
+
+class DummyRing : public SimpleARing<DummyRing>
 {
  public:
   const PolynomialRing *mOriginalRing;
@@ -64,6 +157,7 @@ class DummyRing : public RingInterface
   typedef long ElementType;
 
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   int characteristic() const { return 0; }
   unsigned int computeHashValue(const elem &a) const
@@ -123,7 +217,7 @@ class DummyRing : public RingInterface
     return 1;
   }
 
-  void clear(elem &result) const { result = 0; }
+  static void clear(elem &result) { result = 0; }
   void set_zero(elem &result) const { result = 0; }
   void copy(elem &result, const elem a) const { result = a; }
   void negate(elem &result, const elem a) const {};
@@ -166,7 +260,7 @@ class DummyRing : public RingInterface
   void swap(ElementType &a, ElementType &b) const { assert(false); };
 };
 
-#if 0
+#  if 0
 
 /**
 \ingroup rings

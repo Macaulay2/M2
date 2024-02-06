@@ -20,7 +20,7 @@ systems = {
 							       -- M2 goes to precision=100 (with multiprecision)  
      };
 
-softwares = {
+software = {
      M2engine,
      BERTINI,
      PHCPACK
@@ -51,7 +51,7 @@ end ----------------------------------------------------------------------------
 restart
 load "NumericalAlgebraicGeometry/showcase.m2"
 sols = new HashTable from apply(drop(systems,-1), system->( 
-	(system,soft) => apply(softwares, soft->timeSystemSoftware(system,soft)) 
+	(system,soft) => apply(software, soft->timeSystemSoftware(system,soft)) 
 	))
 ---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------

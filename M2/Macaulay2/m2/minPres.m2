@@ -1,5 +1,7 @@
 -- This file written by Amelia Taylor <ataylor@stolaf.edu>
 
+needs "matrix1.m2"
+
 ----- This file was last updated on June 22, 2006
 
 --------------------------------------------------------------
@@ -32,7 +34,7 @@ checkpoly = (f)->(
 finishMap = (A,L,xmap) -> (
      -- 2 Arguments:  A matrix and a new mutable list.
      -- Return:       a map from the ring corresponding to 
-     --               entries in the matix to itself given by 
+     --               entries in the matrix to itself given by 
      --               entries in the matrix which have a linear
      --               term that does not occur elsewhere in the 
      --               polynomial. 
@@ -254,7 +256,7 @@ reductorVariable = (f,excludes,onlyOnes) -> (
      if varList === {} then varList
      else (
      	  termf := terms f;
-     	  s := select(termf, i -> member(leadMonomial i , varList));
+     	  s := select(termf, i -> isMember(leadMonomial i , varList));
      	  coef := s/leadCoefficient;
      	  pos := position(coef, i -> (i == 1) or (i == -1));
 	  -- best to choose linear terms with coefficient 1 or -1 if

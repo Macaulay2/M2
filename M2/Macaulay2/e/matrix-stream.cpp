@@ -12,9 +12,9 @@ MatrixStream::MatrixStream(const FreeModule* F)
 
 MatrixStream::~MatrixStream()
 {
-  deletearray(mCurrentExponents);
-  deletearray(mCurrentColumn);
-  deletearray(mLastTerms);
+  freemem(mCurrentExponents);
+  freemem(mCurrentColumn);
+  freemem(mLastTerms);
 }
 
 void MatrixStream::idealBegin(size_t polyCount)
@@ -35,7 +35,6 @@ void MatrixStream::appendTermBegin(Component com)
 
 void MatrixStream::appendExponent(VarIndex index, Exponent exponent)
 {
-  assert(index >= 0);
   assert(index < mPolyRing->n_vars());
   mCurrentExponents[index] = exponent;
 }

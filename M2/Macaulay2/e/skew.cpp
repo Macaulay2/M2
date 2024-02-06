@@ -90,8 +90,8 @@ int SkewMultiplication::skew_vars(const long *exp, int *result) const
 
 int SkewMultiplication::mult_sign(const int *exp1, const int *exp2) const
 {
-  exponents SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
-  exponents SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);
+  exponents_t SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
+  exponents_t SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);
   int a = skew_vars(exp1, SKEW1);
   int b = skew_vars(exp2, SKEW2);
   return sort_sign(a, SKEW1, b, SKEW2);
@@ -99,8 +99,8 @@ int SkewMultiplication::mult_sign(const int *exp1, const int *exp2) const
 
 int SkewMultiplication::mult_sign(const long *exp1, const long *exp2) const
 {
-  exponents SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
-  exponents SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);
+  exponents_t SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
+  exponents_t SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);
   int a = skew_vars(exp1, SKEW1);
   int b = skew_vars(exp2, SKEW2);
   return sort_sign(a, SKEW1, b, SKEW2);
@@ -118,8 +118,8 @@ int SkewMultiplication::diff(const int *exp1,
       if (cmp < 0) return 0;
       result[i] = cmp;
     }
-  exponents SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
-  exponents SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);
+  exponents_t SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
+  exponents_t SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);
   int a = skew_vars(result, SKEW1);
   int b = skew_vars(exp1, SKEW2);
   int sign = sort_sign(a, SKEW1, b, SKEW2);

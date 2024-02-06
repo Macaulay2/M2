@@ -30,13 +30,14 @@ add_compile_options(
   -Wall -Wextra -Wfatal-errors -Wcast-qual # -Werror
   -Wno-unused-parameter # FIXME: caused by c/chk.c:244:40 and every scc1 generated file
   -Wno-attributes # caused by SIMD unpack functions in fflas-ffpack
+  # caused by unnecessary openmp linker flags due to fflas_ffpack dependency
+  $<$<CXX_COMPILER_ID:AppleClang,Clang>:-Wno-unused-command-line-argument>
   )
 
 ###############################################################################
 ## Call the subdirectories
 
 # TODO: remove util
-add_subdirectory(regex) # use POSIX regex
 add_subdirectory(c) # rename to scc?
 add_subdirectory(d) # rename to interpreter?
 add_subdirectory(e) # rename to engine?
@@ -44,8 +45,7 @@ add_subdirectory(system) # rename to supervisor?
 add_subdirectory(bin) # combine with engine or interpreter?
 add_subdirectory(m2) # rename to Core?
 add_subdirectory(packages)
-add_subdirectory(emacs) # rename to editors and include vim, etc?
-#add_subdirectory(book) # separate repository?
+add_subdirectory(editors)
 
 if(BUILD_TESTING)
   add_subdirectory(tests)
@@ -59,7 +59,7 @@ endif()
 # Add source-based code coverage targets
 if(BUILD_COVERAGE)
   include(coverage)
-  foreach(_target IN ITEMS scc1 M2-regex M2-interpreter M2-supervisor M2-engine M2-unit-tests M2-binary)
+  foreach(_target IN ITEMS scc1 M2-interpreter M2-supervisor M2-engine M2-unit-tests M2-binary)
     _ADD_COVERAGE(${_target})
   endforeach()
 endif()
@@ -142,5 +142,7 @@ install(DIRECTORY
 install(EXPORT Macaulay2 NAMESPACE Macaulay2::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Macaulay2
   COMPONENT devel EXCLUDE_FROM_ALL)
-export(TARGETS M2-binary M2-engine M2-interpreter M2-supervisor M2-regex
+export(TARGETS M2-binary M2-engine M2-interpreter M2-supervisor
   NAMESPACE Macaulay2:: FILE Macaulay2Config.cmake)
+export(TARGETS mathicgb mathic memtailor
+  NAMESPACE MathicGB:: FILE MathicGBConfig.cmake)

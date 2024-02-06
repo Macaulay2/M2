@@ -8,7 +8,7 @@
 
 VERBOSE = yes
 
-all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake check-autoconf check-libtool
+all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake check-autoconf check-libtool fetch-M2-emacs
 
 # libtool 2.4.3 is too old, 2.4.6 is okay, and we provide it
 LIBTOOL_MAJOR = 2
@@ -36,9 +36,11 @@ check-make:
 	@ echo GNU make version okay
 
 make-configure : check-autoconf configure
-configure: configure.ac config/files config/*.m4; autoconf
+configure: configure.ac VERSION config/files config/*.m4
+	rm -rf autom4te.cache
+	autoconf
 
-get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
+get-tools: usr-build/aclocal-path get-m4 get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
 	@ for i in m4 autoconf automake libtool; \
 		do echo $$i: ; which $$i ; $$i --version | head -1 ; done
@@ -50,11 +52,12 @@ usr-build/aclocal-path2:; echo export ACLOCAL_PATH:="`usr-build/bin/aclocal --pr
 get-m4:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.18
 get-autoconf:
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.71
 get-automake:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
 get-libtool:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.6
+get-automake: get-pkg
 get-pkg: usr-build/share/aclocal/pkg.m4
 usr-build/aclocal-path2:get-automake
 usr-build/share/aclocal/pkg.m4: usr-build/pkg.m4
@@ -212,7 +215,7 @@ grep :
 	@false
 else
 grep :
-	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
+	find . \( -name .git -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
 endif
 
 announce:
@@ -237,6 +240,11 @@ check-pre-vardirs:
 # M2/submodules/fflas_ffpack/macros/ltversion.m4. This target will clean that up.
 clean-in-submodules:
 	git submodule foreach git clean -xdfq
+
+# Fetch the M2-emacs submodule
+fetch-M2-emacs: Macaulay2/editors/emacs/M2.el
+Macaulay2/editors/emacs/M2.el:
+	cd .. && git submodule update --init M2/Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile

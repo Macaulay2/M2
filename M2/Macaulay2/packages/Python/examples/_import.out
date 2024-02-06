@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: 651727559
+
+i1 : math = import "math"
+
+o1 = <module 'math' (built-in)>
+
+o1 : PythonObject of class module
+
+i2 : getattr(math, "pi")
+
+o2 = 3.141592653589793
+
+o2 : PythonObject of class float
+
+i3 : math@@sqrt 2
+
+o3 = 1.4142135623730951
+
+o3 : PythonObject of class float
+
+i4 : 

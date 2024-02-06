@@ -44,9 +44,10 @@ prettyPrint = f -> (
          fold( -- separate poly into terms 
             {"+","-"},
             {poly},
-            (delimiter,poly) -> flatten( 
-               post_delimiter \ separate_delimiter \ poly
-               ))));
+            (delimiter,poly) -> (
+		 delimiterEscaped := if delimiter === "+" then "\\+" else delimiter;
+	    	 flatten(post_delimiter \ separate_delimiterEscaped \ poly)
+		 ))));
    print stack strings;  -- stack them vertically, then print
    )
 

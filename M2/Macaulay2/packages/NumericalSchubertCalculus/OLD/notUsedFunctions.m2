@@ -29,8 +29,8 @@ dist(List,List) := (solns1,solns2) -> (
     apply(#solns1, i->(
 	    v1 := solns1#i;
 	    v2 := solns2#i;
-	    if instance(v1,Point) then v1 = coordinates(v1);
-	    if instance(v2,Point) then v2 = coordinates(v2);
+	    if instance(v1,AbstractPoint) then v1 = coordinates(v1);
+	    if instance(v2,AbstractPoint) then v2 = coordinates(v2);
 	    sqrt(sum(apply(v2-v1, i->i^2)))
    ))
 )

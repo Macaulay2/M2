@@ -3,6 +3,7 @@
 #ifndef _aring_RR_hpp_
 #define _aring_RR_hpp_
 
+#include "interface/random.h"
 #include "exceptions.hpp"
 #include "aring.hpp"
 #include "buffer.hpp"
@@ -15,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRR : public RingInterface
+class ARingRR : public SimpleARing<ARingRR>
 {
   // approximate real numbers, implemented as doubles.
  public:
@@ -71,13 +72,18 @@ class ARingRR : public RingInterface
     result = a.get_double();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_double();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { result = 0.0; }
   void init_set(ElementType &result, const ElementType &a) const { result = a; }
   void set(ElementType &result, const ElementType &a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0.0; }
-  void clear(ElementType &result) const
+  static void clear(ElementType &result)
   {
     // do nothing
   }
@@ -102,7 +108,7 @@ class ARingRR : public RingInterface
 
   bool set_from_BigReal(ElementType &result, gmp_RR a) const
   {
-    result = mpfr_get_d(a, GMP_RNDN);
+    result = mpfr_get_d(a, MPFR_RNDN);
     return true;
   }
   bool set_from_double(ElementType &result, double a) const
@@ -235,7 +241,7 @@ class ARingRR : public RingInterface
   void increase_norm(mpfr_ptr norm, const ElementType &a) const
   {
     double d = fabs(a);
-    if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, GMP_RNDN);
+    if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, MPFR_RNDN);
   }
 
   double coerceToDouble(const ElementType &a) const { return a; }

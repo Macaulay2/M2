@@ -1,7 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2009 by Daniel R. Grayson
 
-
 document {
      Key => "COPYING-GPL-2",
      Headline => "GNU General Public License, version 2",
@@ -23,6 +22,11 @@ document {
 	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007, available at ", HREF "http://www.gnu.org/licenses/gpl-3.0.txt", "."}
 	  )
      }
+
+-- TODO: combine these two
+document { Key => "copyright",
+     Headline => "a string containing the copyright notice for Macaulay2",
+     EXAMPLE "copyright" }
 
 document {
      Key => "Copyright and license",
@@ -46,10 +50,10 @@ document {
 	  "libraries",
 	  TO "Singular-Factory",
 	  TO "frobby",
-	  TO "pari",
 	  TO "MPIR",
 	  TO "GNU MP",
 	  TO "MPFR",
+      TO "MPFI",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
@@ -58,7 +62,7 @@ document {
 	  TO "givaro",
 	  TO "fflas-ffpack",
 	  TO "MPSolve",
-	  -- TO "boost", -- we don't link with boost, but normaliz does
+	  TO "Boost",
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
@@ -219,6 +223,18 @@ document {
      }
 
 document {
+     Key => "MPFI",
+     PARA {
+	  "The ", TT "MPFI", " library is used by Macaulay2 for its arbitrary precision real interval arithmetic
+	  and associated transcendental functions.  It is available at ", HREF "https://gforge.inria.fr/projects/mpfi/", ".  The
+	  library is based on the ", TO "MPFR", " library.  The library is remarkable for the care taken to return correctly rounded
+	  results.  It is hoped that this will form a good base for experimentation
+	  with algebraic algorithms that mix symbolic and numeric techniques.
+	  It is licensed under the GNU Lesser General Public License, version 3 or later."
+	  }
+     }
+
+document {
      Key => "GC garbage collector",
      PARA {
 	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
@@ -268,17 +284,7 @@ document {
       sometimes one can just start Macaulay2 by setting the GC_INITIAL_HEAP_SIZE environment variable 
       to some larger value with an environment setting prefix on the M2 command line, e.g., ", TT "GC_INITIAL_HEAP_SIZE=20G M2", ".",
 	  },
-     SeeAlso => { collectGarbage }
-     }
-
-document {
-     Key => collectGarbage,
-     Headline => "collect the garbage in memory",
-     Usage => "collectGarbage()",
-     Consequences => {
-	  {"garbage is collected"}
-	  },
-     SeeAlso => "GC garbage collector"
+     SeeAlso => { collectGarbage, GCstats }
      }
 
 doc /// 
@@ -300,18 +306,27 @@ doc ///
         (roots, RingElement)
 ///
 
-document {
-     Key => "pari",
-     PARA {
-	  "Starting with version 1.2, and up through version 1.15,
-	  Macaulay2 incorporated ", TT "pari", ", a free library for fast
-	  computations in number theory, available at ", HREF "http://pari.math.u-bordeaux.fr/", 
-      ", originally developed by
-	  Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  In the stated versions, it is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", 
-      TT "isPseudoprime", ", and ", TO (isPrime,ZZ), "."
-	  }
-     }
+doc ///
+  Key
+    "Boost"
+  Headline
+    a collection of C++ source libraries
+  Description
+    Text
+      @HREF {"https://www.boost.org/", "Boost"}@ is a collection of free peer-reviewed and
+      portable C++ libraries suitable for eventual standardization.
+
+      Macaulay2 incorporates the following Boost libraries:
+    Tree
+      @HREF {"https://www.boost.org/doc/libs/release/libs/stacktrace/", "Boost.Stacktrace"}@ (since version 1.16)
+        :used internally for printing stack traces
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ (since version 1.17)
+        :used by the @TO regex@ function, as well as other functions using @TO "regular expressions"@.
+
+    Text
+      Note: the program @TO "normaliz"@ utilizes the
+      @HREF {"https://www.boost.org/doc/libs/release/libs/dynamic_bitset/", "Boost dynamic_bitset class"}@.
+///
 
 document {
      Key => "frobby",
@@ -338,7 +353,7 @@ document {
      UL {
 	  TOH "factor",
 	  TOH "gcd",
-	  TOH "minimalPrimes",
+	  TOH "MinimalPrimes :: minimalPrimes",
 	  TOH "irreducibleCharacteristicSeries"
 	  }
      }
@@ -374,7 +389,8 @@ document {
      early support, encouragement and suggestions.  We also acknowledge an
      intellectual debt to Dave Bayer, who, with Michael Stillman,
      wrote Macaulay, a specialized computer algebra system for algebraic
-     geometry and the predecessor of this program."
+     geometry and the predecessor of this program.",
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
 -* -- Mike wanted this: 
@@ -475,7 +491,7 @@ document {
 	  },
      PARA {
 	  "The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
-	  corresponding to the two possible values for the ", TO "SeparateExec", " option used with ", TO "installPackage", ".
+	  corresponding to the two possible values for the ", TO [installPackage, SeparateExec], " option used with ", TO "installPackage", ".
 	  The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
 	  a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
 	  is used otherwise."
@@ -541,7 +557,7 @@ document { Key => "frequently encountered problems",
 
 document {
      Key => "specifying typical values",
-     "For the purpose of construction good documentation automatically, it
+     "For the purpose of constructing good documentation automatically, it
      is useful to specify the type of value typically returned by a function
      or method.  For example, the function ", TO "isModule", " returns a boolean
      value, and this is specified when creating the method function with the
@@ -582,8 +598,8 @@ document {
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman",
      	  "Our co-author for the tutorials, long time supporter and user of Macaulay2, and collaborator on the project since 2007:",
-	  TO "David Eisenbud",
-	  }
+	  TO "David Eisenbud"},
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
 document {
@@ -607,7 +623,7 @@ document {
 	  2006 Eisenbud was elected a Fellow of the American Academy of Arts and
 	  Sciences. Eisenbud is Chair of the Editorial Board of the Algebra and Number
 	  Theory journal, which he helped found in 2006, and serves on the editorial
-	  boards of the Bulletin du Société Mathematique de France, Springer-Verlag's
+	  boards of the Bulletin du Société Mathématique de France, Springer-Verlag's
 	  book series Algorithms and Computation in Mathematics, and the Journal of
 	  Software for Algebraic Geometry."
 	  },
@@ -714,73 +730,6 @@ document {
      }
 
 document {
-     Key => "system facilities",
-     Subnodes => {
-     	  "Loading files:",
-	  TO "autoload",
-	  TO "initialization file",
-	  TO "input",
-	  TO "load",
-	  TO "needs",
-     	  "Echoing characters:",
-	  TO "clearEcho",
-	  TO "setEcho",
-     	  "Dumping and restoring the state of the system:",
-	  TO "restart",
-	  TO "addStartFunction",
-	  TO "addEndFunction",
-     	  "Interface to the operating system:",
-	  TO "top level loop",
-	  TO "alarm",
-	  TO "currentDirectory",
-	  TO "exec",
-	  TO "exit",
-	  TO "fork",
-	  TO "getenv",
-	  TO "processID",
-	  TO "path",
-	  TO "quit",
-	  TO "run",
-	  TO "sleep",
-	  TO "time",
-	  TO "timing",
-	  TO "wait",
-     	  "Variables with information about the state of the current process:",
-	  TO "commandLine",
-	  TO "environment",
-	  TO "version",
-     	  "Dealing with the garbage collector:",
-	  TO "collectGarbage"
-	  }
-     }
-
-document {
-     Key => "initialization file",
-     "The file ", TT "init.m2", " is loaded automatically when the
-     program is started, if it exists.",
-     PARA{
-	  "On most systems the file is sought in the directory ", TT "$HOME/.Macaulay2/", ",
-	  where ", TT "$HOME", " is replaced by the path to the user's home
-	  directory."
-	  },
-     PARA{
-	  "Under Mac OS X, the file is sought instead in the
-	  directory ", TT "$HOME/Library/Application Support/Macaulay2/", "."
-	  },
-     PARA{
-	  "If the user wants a file called, say, ", TT "start.m2", " in the current
-	  directory to be loaded automatically when the program is started, then the
-	  following line of code can be placed in the file ", TT "init.m2", "."
-	  },
-     PRE {
-	  ///if fileExists "start.m2" then load(currentDirectory()|"start.m2")///
-	  },
-     PARA {
-	  "Warning: former versions of the program would also load a file named ", TT "init.m2", " found in the current directory."
-	  }
-     }
-
-document {
      Key => "combinatorial functions",
      UL {
 	  TO "binomial",
@@ -789,23 +738,6 @@ document {
 	  TO "random",
 	  TO "subsets",
 	  TO "tally"
-	  }
-     }
-
-document {
-     Key => "top level loop",
-     "The top level evaluation loop of the interpreter contains hooks so the user can
-     control how printing of the results of evaluation is done.  If the result is 
-     ", TO "null", " then nothing is printed.  Otherwise, the appropriate method
-     associated with the symbol ", TO "Print", " is applied to perform the printing,
-     unless the printing is to be suppressed, as indicated by a semicolon at the end
-     of the statement, in which case the ", TO "NoPrint", " method is applied.",
-     UL {
-	  TO "AfterEval",
-	  TO "AfterPrint",
-	  TO "AfterNoPrint",
-	  TO "NoPrint",
-	  TO "Print",
 	  }
      }
 

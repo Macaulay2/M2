@@ -311,8 +311,8 @@ i32 : time b=randomModule2ForDeg17CY(8,R);
      -- Trial n. 759, k=8
      -- used 12.3878 seconds
 
-              3       16
-o32 : Matrix R  <--- R
+              3      16
+o32 : Matrix R  <-- R
 
 i33 : betti res coker b
 
@@ -343,8 +343,8 @@ o37 = true
 
 i38 : n=finalTest#1;
 
-              16       16
-o38 : Matrix R   <--- R
+              16      16
+o38 : Matrix R   <-- R
 
 i39 : betti (nn=syz n)
 
@@ -358,13 +358,13 @@ o39 : BettiTally
 
 i40 : n2t=transpose submatrix(nn,{0..15},{3});
 
-              1       16
-o40 : Matrix R  <--- R
+              1      16
+o40 : Matrix R  <-- R
 
 i41 : b2:=syz b;
 
-              16       36
-o41 : Matrix R   <--- R
+              16      36
+o41 : Matrix R   <-- R
 
 i42 : j:=ideal mingens ideal flatten(n2t*b2);
 

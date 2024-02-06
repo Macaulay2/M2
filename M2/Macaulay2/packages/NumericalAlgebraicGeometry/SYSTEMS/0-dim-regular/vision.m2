@@ -70,7 +70,7 @@ BC' = matrix{flatten flatten(B'/entries) | flatten flatten(C'/entries)}
 H = specialize (PH, transpose (BC|BC'))
 time sols = trackHomotopy(H,ten'sols);
 assert all(sols,s->norm evaluate(PS,matrix s | BC') < 0.001)
-sols / (s->s.NumberOfSteps)
+sols / (s->s.cache.NumberOfSteps)
 
 -- run 2 (the target is close to start)
 setRandomSeed 2
@@ -81,7 +81,7 @@ BC'' = matrix{flatten flatten(B''/entries) | flatten flatten(C''/entries)}
 H2 = specialize (PH, transpose (BC|BC''))
 time sols2 = trackHomotopy(H2,ten'sols);
 assert all(sols2,s->norm evaluate(PS,matrix s | BC'') < 0.001)
-sols2 / (s->s.NumberOfSteps)
+sols2 / (s->s.cache.NumberOfSteps)
 end --------------------------------------------------------------------------------------
 restart
 load "vision.m2"

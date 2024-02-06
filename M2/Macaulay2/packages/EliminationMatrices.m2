@@ -13,6 +13,7 @@ newPackage("EliminationMatrices",
 	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
    Headline => "resultants",
+   Keywords => {"Commutative Algebra"},
    PackageImports => { "Elimination" },
    DebuggingMode => false
    )
@@ -814,9 +815,9 @@ document {
 
     PARA {}, "[BEM01] ", ITALIC "Laurent Busé, Mohamed Elkadi and Bernard Mourrain",", Resultant over the residual of a complete intersection, Journal of Pure and Applied Algebra 164 (2001), no. 1-2, 35–57.",
 
-    PARA {}, "[Bus01a] ", ITALIC "Laurent Busé",", Residual resultant over the projective plane and the implicitization problem, Internation Symposium on Symbolic and Algebraic Computing (ISSAC), ACM, (2001). Please, see the errata.pdf attached file., pp. 48–55.", 
+    PARA {}, "[Bus01a] ", ITALIC "Laurent Busé",", Residual resultant over the projective plane and the implicitization problem, International Symposium on Symbolic and Algebraic Computing (ISSAC), ACM, (2001). Please, see the errata.pdf attached file., pp. 48–55.", 
 
---    PARA {}, "[Bus01b] ", ITALIC "Laurent Busé",", Étude du resultant sur une variété algébrique. phd thesis. (2001) ", 
+--    PARA {}, "[Bus01b] ", ITALIC "Laurent Busé",", Étude du résultant sur une variété algébrique. phd thesis. (2001) ", 
 
     PARA {}, "[Bus04] ", ITALIC "Laurent Busé",", Resultants of determinantal varieties, J.Pure Appl. Algebra193 (2004), no.1-3, 71–97.", 
 
@@ -848,7 +849,7 @@ document {
 ------------------------ \ degHomPolMap / ------------------------
 document {
      	Key => {degHomPolMap, (degHomPolMap, Matrix, List, List, ZZ), (degHomPolMap, Matrix, List, ZZ)},
-	Headline => "given a subset of variables 'var' of the polynomial ring R, it returns the base of monomials on these variables, and the matrix of coefficients of a morphism of free modules f:R(d1)+...+R(dn)->R_d with respect to these variables",
+	Headline => "return the base of monomials in a subset of variables, and the matrix of coefficients of a morphism of free modules f:R(d1)+...+R(dn)->R_d with respect to these variables",
 	Usage => " coefAndMonomials = degHomPolMap(r, l, v, d)",
 
 	Inputs => {
@@ -937,7 +938,7 @@ document {
 
 document {
      	Key => {minorsComplex, (minorsComplex, ZZ, List, ChainComplex)},
-	Headline => "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
+	Headline => "calculate some minors of the maps of a graded ChainComplex in a subset of variables and fixed degree",
 	Usage => " minorsOfTheComplex = minorsComplex(d,v,C)",
 
 	Inputs => {
@@ -949,7 +950,7 @@ document {
 		List => {"a list of square (full-rank) matrices"}
 	},
 
-	PARA {}, "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
+	PARA {}, "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
 	PARA {}, "The input ChainComplex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
 	PARA {}, "It is recommended not to defines rings as R=QQ[x,y][a,b,c] when the variables to eliminate are '{x,y}'. In this case, see ", TO "flattenRing", " for passing from ", TEX "$R=QQ[x,y][a,b,c]$", " to ", TEX "QQ[x,y,a,b,c].",
 	
@@ -1328,7 +1329,7 @@ document {
 	
 	PARA {}, "This function basically computes the matrix of the first application in the resolution of (I:J) given in the article of Bruns, Kustin and Miller: 'The resolution of the generic residual intersection of a complete intersection', Journal of Algebra 128.",
 	
-	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_n)$", "forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_m)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than ", TT "v", ") surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
+	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_n)$", "forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_m)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than ", TT "v", ") surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
 
 
 	EXAMPLE {" R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z]", 
@@ -1409,7 +1410,7 @@ document {
 	
 	PARA {}, "This function basically computes the matrix of the first application in the resolution of (I:J) given in the article of Bruns, Kustin and Miller: 'The resolution of the generic residual intersection of a complete intersection', Journal of Algebra 128.",
 	
-	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$"," forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_n)$"," such that I is included in J and (I:J) is a residual intersection, one wants to to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
+	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$"," forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_n)$"," such that I is included in J and (I:J) is a residual intersection, one wants to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
 
 
 	EXAMPLE {" R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z]", 
@@ -1585,7 +1586,7 @@ document {
 	    
     Consequences => {"This function basically computes the matrix of the first application in the resolution of (I:J) given in the article of Bruns, Kustin and Miller: 'The resolution of the generic residual intersection of a complete intersection', Journal of Algebra 128."},
 	
-	PARA {"The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$", " forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous  ", TEX "$I=(f_1,..,f_n)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with", TO "maxMinor"}, 
+	PARA {"The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$", " forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous  ", TEX "$I=(f_1,..,f_n)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with", TO "maxMinor"}, 
 	
 }
 
@@ -1624,7 +1625,7 @@ document {
        	},
        
     PARA{}, TT "regularityVar", " computes the Castelnuovo-Mumford regularity of homogeneous ideals in a polynomial ring by computing the shifts and degrees of generators in a minimal free resolution of the homogeneous ideal.",
-    PARA{}, "The list of variables ", TT "l", " contains the variables of the ring having degree 1. Those variables on the ring not in ", TT "l", " have automatically degree 0, as well as the the elements on the coefficient ring",
+    PARA{}, "The list of variables ", TT "l", " contains the variables of the ring having degree 1. Those variables on the ring not in ", TT "l", " have automatically degree 0, as well as the elements on the coefficient ring",
              
     	EXAMPLE {" R=QQ[a..i,x,y,z]",
 	"f1 = a*x+b*y+c*z",

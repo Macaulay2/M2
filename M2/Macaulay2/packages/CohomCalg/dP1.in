@@ -1,0 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Example input file for cohomCalg
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This file contains the geometry data of the del-Pezzo-1 surface, which
+% corresponds to the single blowup of the CP^2 projective space
+%
+
+% The vertices and GLSM charges:
+    vertex u1 = (  1,  1 ) | PIC: H  | GLSM:  ( 1,  0 );
+    vertex u2 = ( -1,  0 )           | GLSM:  ( 1,  0 );
+    vertex u3 = (  0, -1 )           | GLSM:  ( 1,  1 );
+    vertex u4 = (  0,  1 ) | PIC: X  | GLSM:  ( 0,  1 );  
+
+% The Stanley-Reisner ideal:
+    srideal [u1*u2,  u3*u4];
+
+% Computation time for this example is quasi-instantaneous,
+% so turn off intermediate files:
+    monomialfile off;
+
+% And finally the requested line bundle cohomologies:
+    ambientcohom O(-1, -2);
+    ambientcohom O(-2,  0);
+    ambientcohom O(-3, -2);

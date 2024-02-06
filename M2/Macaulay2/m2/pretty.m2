@@ -1,5 +1,8 @@
 --		Copyright 2006 by Daniel R. Grayson
 
+needs "nets.m2"
+needs "hypertext.m2"
+
 pretty = method(Dispatch => Thing)
 pretty2 = method(Dispatch => Thing)
 pretty Thing := x -> stack pretty2 x

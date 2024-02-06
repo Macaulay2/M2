@@ -1,5 +1,5 @@
 -- After changing the choice of gb for 'toField' rings, the
--- folllowing fails:
+-- following fails:
 
 R = ZZ/101[a]
 F = a^2+a+1

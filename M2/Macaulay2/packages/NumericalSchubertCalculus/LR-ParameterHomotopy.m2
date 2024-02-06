@@ -4,22 +4,39 @@
 --  something to look at in the future)
 ----------------------------------------
 
--- experimental monodromy solver
+
 solveSchubertProblemViaMonodromy = method(Options=>{Verbose=>false})
-solveSchubertProblemViaMonodromy (List, ZZ, ZZ) := o -> (conds, k, n) -> (
+solveSchubertProblemViaMonodromy (List, ZZ, ZZ) := o -> (problem, k, n) -> (
+    G := solveRandomSchubertProblemViaMonodromy(problem/first, k, n);
+    -- create a point P in the parameter space corresponding to problem
+    -- augment G with a node P
+    -- complete P
+    -- parse the solutions at P (as Schubert problem solutions)
+    G
+    )
+
+-- subroutine that returns a HomotopyGraph
+solveRandomSchubertProblemViaMonodromy = method(Options=>{Verbose=>false})
+solveRandomSchubertProblemViaMonodromy (List, ZZ, ZZ) := o -> (conds, k, n) -> (
     (X,P,PS) := parametricSchubertProblem(conds,k,n);
+    GS := gateSystem(P,X,PS);
+    -*
     R := FFF[P/(p->p.Name)][X/(x->x.Name)];
     PR := P/(p->R_(p.Name));
     XR := X/(x->R_(x.Name));
     PSR := value(PS,valueHashTable(P|X,PR|XR));
+    *-
     -- get seed solution
     (s0,XX,inverse'flags) := oneSolutionForOneInstance(conds,k,n);
     p0 := point{inverse'flags/entries//flatten//flatten};
-    elapsedTime (V,npaths) := monodromySolve(polySystem PSR, p0, {s0}, 
+    (V,npaths) := monodromySolve(
+	--polySystem PSR, 
+	GS,
+	p0, {s0}, 
 	NumberOfNodes=>4, NumberOfEdges=>1, 
 	--"new tracking routine"=>false, 
 	Verbose=>o.Verbose);
-    (V, npaths, getTrackTime(V.Graph))
+    (V, npaths, getTrackTime(V.Graph)) 
     )
 
 parametricSchubertProblem = method()

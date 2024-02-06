@@ -430,7 +430,7 @@ document {
 document {
      Key => RevLex,
      Headline => "reverse lexicographic ordering",
-     "The reverse lexicographic order is defined by: ", TEX /// x^A > x^B ///, " if
+     "The reverse lexicographic order is defined by: $x^A > x^B$ if
      the FIRST non-zero entry of the vector of integers ", TT "A-B", " is NEGATIVE.
      This is a local order, not a global order.  Therefore Gröbner bases over this
      ring only give generators over the local ring whose fractions are all elements 
@@ -480,8 +480,8 @@ document {
 document {
      Key => Lex,
      Headline => "lexicographical monomial order.",
-     "The lexicographic order is defined by: ", TEX "x^A > x^B", " if the FIRST
-     non-zero entry of the vector of integers ", TEX "A-B", " is POSITIVE.",
+     "The lexicographic order is defined by: $x^A > x^B$ if the FIRST
+     non-zero entry of the vector of integers ", TT "A-B", " is POSITIVE.",
      EXAMPLE {
 	  "R = QQ[a..d, MonomialOrder => Lex];",
 	  "a^3 + a^2*b^2 + b*c"
@@ -715,18 +715,6 @@ document {
      ///
      }
 
-TEST "
-R = QQ[a..d, MonomialOrder => GRevLex]
-a*c + b^2 + a*c^3
-R = QQ[a..d, MonomialOrder => {GRevLex=>2, GRevLex=>2}]
-a*c + b^2 + a*c^3
-R = QQ[a..d, MonomialOrder => {2,2}]
-a*c + b^2 + a*c^3
-R = QQ[a..d, MonomialOrder => RevLex => 4, Global => false]
-1 + a*c + b^2 + a*c^3
-a+a^2
-"
-
 document {
      Key => "graded and multigraded polynomial rings",
      "It is possible to set up a polynomial ring so that the degree of an
@@ -781,7 +769,8 @@ document {
      PARA {
      	  "If the heft vector is not provided, many computations will work (e.g., Gröbner bases and computation of resolutions),
 	  but certain other operations (such as ", TT "basis", " and ", TT "random", ") will raise errors."
-     	  }
+	  },
+     Subnodes => {TO "heft vectors"}
      }
 
 document {

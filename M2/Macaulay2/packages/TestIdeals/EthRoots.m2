@@ -57,7 +57,7 @@ frobeniusRoot ( ZZ, MonomialIdeal ) := MonomialIdeal => opts -> ( e, I ) ->
 frobeniusRoot ( ZZ, List, List ) := Ideal => opts -> ( e, exponentList, idealList ) ->
 (
     --idealList is a list of ideals and/or ring elements.
-    --exponentList is a list of exponents we're taking these ideals/elemetns to
+    --exponentList is a list of exponents we're taking these ideals/elements to
 
     --include the following line to set a break point:
     --error "break here";
@@ -302,7 +302,7 @@ ascendIdeal ( ZZ, List, List, Ideal ) := o -> ( ek, akList,  hkList, Jk ) ->
 
 -----------------------------------------------------------------------------
 --- Extend the Frobenius p^e th roots and star operations to submodules of
---- free modules (over polynomial rings with *prime* coeeficient field)
+--- free modules (over polynomial rings with *prime* coefficient field)
 --- This implements the methods described in
 --- Moty Katzman and Wenliang Zhang's paper
 --- "Annihilators of Artinian modules compatible with a Frobenius map"
@@ -481,7 +481,7 @@ mEthRoot = (e,A) ->(
 )
 *-
 
--- ascendModule is the implementaion of the star closure operation desribed in M Katzman and
+-- ascendModule is the implementation of the star closure operation described in M Katzman and
 -- W. Zhang's "Annihilators of Artinian modules compatible with a Frobenius map"
 -- Inputs:
 --    a positive integer e

@@ -78,9 +78,6 @@ M2lib.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o
 
 pthread-tmp.c : SCCFLAGS += -noline
 
-## the problem with this is that it can make "make" think the targets were made:
-# actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
-
 version.o : ../../include/M2/config.h distributed-packages.h
 distributed-packages.h: @srcdir@/../packages/?distributed-packages Makefile
 	echo '#define DISTRIBUTED_PACKAGES "'`cat $<`'"' >$@
@@ -90,7 +87,10 @@ clean::; rm -f distributed-packages.h
 actors4.o actors2.o : ../../include/M2/config.h
 
 ifeq "$(DEPENDS)" "yes"
-include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(shell ../util/echoout -r $(M2_DFILES))))
+# We include all the files twice, once in reverse order.  Example: "include a b c d d c b a"
+# The reason for this is that some versions of gnu make build the needed files in reverse order, and some build in forward order.
+# (Compare version 4.3 to version 4.4)
+include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(M2_DFILES) $(shell ../util/echoout -r $(M2_DFILES))))
 endif
 
 .SUFFIXES: .d .sig .dep .res .test .m2
@@ -165,9 +165,6 @@ $(M2_LASTCFILES:.c=.o) : CPPFLAGS += -I.
 # to get scc-core.h:
 M2INCLUDES += -I@srcdir@/../c
 
-# we use this to override the regex library in the system
-M2INCLUDES += -I@srcdir@/../regex
-
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 
@@ -189,6 +186,7 @@ CXXFLAGS += -Wunused-function
 CFLAGS   += -Wfatal-errors
 CXXFLAGS += -Wfatal-errors
 
+version.o : CPPFLAGS += -I@srcdir@/../e/memtailor -I@srcdir@/../e/mathic -I@srcdir@/../e/mathicgb
 version.o : CXXFLAGS += -Wno-unused-local-typedefs
 
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
@@ -205,9 +203,6 @@ python-c.o : | python-exports.h.tmp
 ifeq (@HAVE_WFRAME_ADDRESS@,yes)
 M2lib.o : M2_CFLAGS += -Wno-frame-address
 endif
-
-# flags needed to sidestep system regex
-scclib.o : CPPFLAGS += -Dre_compile_fastmap=M2_re_compile_fastmap -Dre_compile_pattern=M2_re_compile_pattern -Dre_match=M2_re_match -Dre_match_2=M2_re_match_2 -Dre_search=M2_re_search -Dre_search_2=M2_re_search_2 -Dre_set_registers=M2_re_set_registers -Dre_set_syntax=M2_re_set_syntax -Dregcomp=M2_regcomp -Dregerror=M2_regerror -Dregexec=M2_regexec -Dregfree=M2_regfree
 
 M2lib.o scclib.o : | interp-exports.h.tmp
 scclib.o : expr-exports.h M2mem.h debug.h types.h ../c/compat.h ../e/engine.h
@@ -230,7 +225,9 @@ startup.c: startup-header.h ../m2/startup.m2 @srcdir@/../m2/basictests/*.m2 Make
 	 echo  '};' ; \
 	 echo 'cached_file testStrings[] = {' ; \
 	 for i in @abs_top_srcdir@/Macaulay2/m2/basictests/*.m2 ; \
-	 do echo '{' ; echo $$i | sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; echo  '},' ; \
+	 do echo '{' ; echo Macaulay2/Core/basictests/`basename $$i` | \
+	     sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; \
+	     echo  '},' ; \
 	 done ; \
 	 echo '};' ; \
 	 cat @srcdir@/startup-trailer.h; \

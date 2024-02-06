@@ -4,13 +4,13 @@ i1 : QQ[x,y,z];
 
 i2 : I = ideal(x^2+y^2+z^2-1);
 
-o2 : Ideal of QQ[x, y, z]
+o2 : Ideal of QQ[x..z]
 
 i3 : T1 = tropicalVariety(I);
 
 i4 : J = ideal(x*y+y*z+x*z+1);
 
-o4 : Ideal of QQ[x, y, z]
+o4 : Ideal of QQ[x..z]
 
 i5 : T2 = tropicalVariety(J);
 

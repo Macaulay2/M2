@@ -7,7 +7,7 @@
 
 //#define DEBBBB false;
 
-// pair of indeces
+// pair of indices
 // negative index -i for field polynomial x_i^2+x_i
 class Pair
 {
@@ -130,7 +130,7 @@ class FunctionPair
 
 // generate list of index pairs for given intermediate basis
 // first insert all pairs with FPs, then insert pairs of all other polynomials
-// the list of indeces was ordered by increasingly
+// the list of indices was ordered by increasingly
 Pairs makeList(const IntermediateBasis &F, int n)
 {
   Pairs B;
@@ -180,14 +180,14 @@ Pairs makeNewPairs(int newIndex, const IntermediateBasis &F, int n)
   return B;
 }
 
-// return true if pair (i,j) is in the list of indeces
+// return true if pair (i,j) is in the list of indices
 bool inList(int i, int j, const Pairs &B, const IntermediateBasis &F)
 {
   Pair p = Pair(i, j, F);
   return B.find(p) != B.end();
 }
 
-// return true if both functions with indeces of pair are in the intermediate
+// return true if both functions with indices of pair are in the intermediate
 // basis and their S polynomial should be computed
 bool isGoodPair(const Pair &pair,
                 const IntermediateBasis &F,

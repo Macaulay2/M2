@@ -5,17 +5,17 @@ newPackage(
      Authors => {
 	  {Name => "Han-Bom Moon",
 	   Email => "hmoon8@fordham.edu"},
-          {Name=> "David Swinarski", 
+          {Name=> "Dave Swinarski", 
 	   Email=> "dswinarski@fordham.edu",
 	   HomePage=>"http://faculty.fordham.edu/dswinarski"}
 	  },
+     Keywords => {"Commutative Algebra"},
      Headline => "calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves"
      )
 export {"CurveClassRepresentativeM0nbar",
 	"DivisorClassRepresentativeM0nbar",
  	"curveClassRepresentativeM0nbar",
 	"divisorClassRepresentativeM0nbar", 
-	"intersection",
 	"negativeSum",
 	"isEffectiveExpression",
         "nonadjacentBasis",
@@ -502,16 +502,13 @@ FdotdeltaI = (C,I) -> (
 
 
 --Overloading intersect method, don't need to export
-intersection = method(
-    TypicalValue=>QQ 
-);
-intersection(CurveClassRepresentativeM0nbar,DivisorClassRepresentativeM0nbar):=(C,D) -> (
+intersection(CurveClassRepresentativeM0nbar,DivisorClassRepresentativeM0nbar) := QQ => {} >> o -> (C,D) -> (
     PC:=pairs(C#"CurveExpression");
     PD:=pairs(D#"DivisorExpression");
     sum apply(#PD, i -> (PD_i_1)*(sum apply(#PC, j -> (PC_j_1)*FdotdeltaI(PC_j_0,PD_i_0))))  
 );
 
-intersection(DivisorClassRepresentativeM0nbar,CurveClassRepresentativeM0nbar):=(D,C) -> (
+intersection(DivisorClassRepresentativeM0nbar,CurveClassRepresentativeM0nbar) := QQ => {} >> o -> (D,C) -> (
     intersection(C,D)     
 );
 

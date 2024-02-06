@@ -1,12 +1,18 @@
 # Using Macaulay2 with Docker
 
-Docker is a containerization program for building, shipping, or running applications on different platforms.
+[Docker](https://docs.docker.com/get-docker/) is a containerization program for building, shipping, or running applications on different platforms.
 
-The `Dockerfile` in this directory creates a container image based on Ubuntu 18.04.4 with Macaulay2 installed from the repository. Each subdirectory contains a `Dockerfile` built for other use cases:
+The `Dockerfile` in this directory creates a container image based on latest Ubuntu distribution with Macaulay2 installed from a [PPA repository](https://launchpad.net/~macaulay2/+archive/ubuntu/macaulay2). Each subdirectory contains a `Dockerfile` designed for other use cases:
 
-- `ubuntu`: Compiling Macaulay2 in a Container
-- `debian`: Packaging Macaulay2 for Debian (.deb)
-- `fedora`: Packaging Macaulay2 for Fedora (.rpm)
+- [`ubuntu`](ubuntu):   Compiling Macaulay2 in a Container
+- [`debian`](debian):   Packaging Macaulay2 for Debian (.deb)
+- [`fedora`](fedora):   Packaging Macaulay2 for Fedora (.rpm)
+- [`testbot`](testbot): Macaulay2 testbot for GitHub Actions
+- [`brew`](brew):       Bottling  Macaulay2 for [Homebrew](https://brew.sh/)
+- [`nightly`](nightly): Testing the Nightly Build of Macaulay2
+- [`actions`](actions): Testing the GitHub Actions Build
+
+**Note**: some of the above may be outdated and require slight modifications before use.
 
 ## Getting Started
 0. Install Docker and start the daemon.

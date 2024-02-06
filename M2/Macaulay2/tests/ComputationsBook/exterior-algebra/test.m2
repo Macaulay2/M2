@@ -1,3 +1,5 @@
+needsPackage "Truncations";
+lineNumber = 0;
 setRandomSeed();
 symExt = (m,E) ->(
      ev := map(E,ring m,vars E);

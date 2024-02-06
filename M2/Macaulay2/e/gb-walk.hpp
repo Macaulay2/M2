@@ -4,8 +4,20 @@
 #define _gb_walk_
 
 #include "comp-gb.hpp"
+#include "engine-includes.hpp"
+#include "interface/monomial-ordering.h"  // for MonomialOrdering
 #include "polyring.hpp"
-#include "reducedgb-marked.hpp"
+
+class Computation;
+class FreeModule;
+class GBRing;
+class MarkedGB;
+class Matrix;
+class RingElement;
+class buffer;
+
+struct POLY;
+struct gbvector;
 
 /**
     @ingroup gb

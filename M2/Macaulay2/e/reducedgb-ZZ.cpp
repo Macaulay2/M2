@@ -15,7 +15,9 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
                            const PolynomialRing *originalR0,
                            const FreeModule *F0,
                            const FreeModule *Fsyz0)
-    : ReducedGB(R0, originalR0, F0, Fsyz0), T(0)
+    : ReducedGB(R0, originalR0, F0, Fsyz0),
+      T(nullptr),
+      ringtableZZ(nullptr)
 {
   T = MonomialTableZZ::make(R0->n_vars());
   if (originalR->is_quotient_ring())
@@ -23,7 +25,7 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
 }
 
 void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0) {}
-struct ReducedGB_ZZ_sorter : public std::binary_function<int, int, bool>
+struct ReducedGB_ZZ_sorter
 {
   GBRing *R;
   const FreeModule *F;
@@ -67,7 +69,7 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
   for (VECTOR(int)::iterator i = positions.begin(); i != positions.end(); i++)
     {
       gbvector *f = polys0[*i].f;
-      exponents e = R->exponents_make();
+      exponents_t e = R->exponents_make();
       R->gbvector_get_lead_exponents(F, f, e);
       if ((!ringtableZZ ||
            !ringtableZZ->find_term_divisors(1, f->coeff.get_mpz(), e, 1)) &&
@@ -97,7 +99,7 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
     }
 }
 
-enum ReducedGB_ZZ::divisor_type ReducedGB_ZZ::find_divisor(exponents exp,
+enum ReducedGB_ZZ::divisor_type ReducedGB_ZZ::find_divisor(exponents_t exp,
                                                            int comp,
                                                            int &result_loc)
 {
@@ -136,7 +138,7 @@ void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   gbvector *r;
   POLY g;
   while (!R->gbvector_is_zero(h.f))
@@ -179,7 +181,7 @@ void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   gbvector *h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
 
   gbvector *r;
   POLY g;

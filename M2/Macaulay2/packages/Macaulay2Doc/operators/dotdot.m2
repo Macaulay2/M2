@@ -123,7 +123,7 @@ document { Key => (symbol ..<, IndexedVariable, IndexedVariable),
      Headline => "sequences of consecutive indexed variables",
      Inputs => {"s","t"},
      Outputs => {
-	  {"the sequence of indexed variables with the same base and with consecutive subscripts, not inculding the endpoint"}
+	  {"the sequence of indexed variables with the same base and with consecutive subscripts, not including the endpoint"}
 	  },
      EXAMPLE lines ///
      x_1

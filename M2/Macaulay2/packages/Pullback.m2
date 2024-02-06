@@ -4,6 +4,7 @@ Version => "1.03",
 Date => "March 8, 2018",
 Authors => {{Name => "Drew Ellingson"},{Name => "Karl Schwede"}},
 Headline => "pullback of rings",
+Keywords => {"Commutative Algebra"},
 DebuggingMode => false,
 PackageImports => {"PushForward"},
 Reload => false
@@ -101,7 +102,7 @@ pullback(RingMap, RingMap) := o -> (f,g) -> (
     AtoBasRmodMap := null;
     RtoBMap := null;
 	
-    RmodJtoRMap := null; -- ill defined, but it doesnt matter
+    RmodJtoRMap := null; -- ill defined, but it does not matter
     RtoRmodJMap := null;
     RmodJtoBMap :=null;
     RmodJPushFwd := null;	

@@ -297,7 +297,7 @@ doc ///
 		 " denotes the divisor class in ", TT "picardGroup X",
 		 " and we identify the Picard group of ", TT "X", " with
 		   the graded component of the intersection ring having
-		   codimenion 1."}
+		   codimension 1."}
 	    }@
 	Text
 	    The {\tt i}-th component of {\tt chern F} is {\tt chern (i, F)},
@@ -643,7 +643,7 @@ doc ///
 	    method computes the Hilbert polynomial of the corresponding
 	    coherent sheaf.  Given an ideal $I$ in the total coordinate ring,
 	    it computes the Hilbert polynomial of the coherent sheaf
-	    assoicated to $S^1/I$.
+	    associated to $S^1/I$.
     	Text
             The cotangent bundle on a smooth surface provides simple examples.
     	Example  

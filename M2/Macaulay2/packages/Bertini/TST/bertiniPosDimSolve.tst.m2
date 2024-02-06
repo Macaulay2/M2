@@ -22,3 +22,30 @@ assert(
     )
 --TODO: We need a test to check if it produces correct slices
 --TODO: We need to check if the witness sets work with the other stuff in NumericalAlgebraicGeometry.
+
+-- affine
+
+R = CC[x,y,z,t]
+I = ideal(x + 3, y+1)
+nv = bertiniPosDimSolve(I_*, Verbose => true)
+w  = first components nv
+assert all(points w, p->norm evaluate(polySystem slice w,p) < 0.0001)
+
+R = CC[x,y,z,t]
+I = ideal(x + 3, y+1, z, t-0.5*ii)
+nv = bertiniPosDimSolve(I_*, Verbose => true)
+w  = first components nv
+assert(slice w == {})
+
+-- projective 
+
+R = CC[x,y,z,t]
+I = ideal(x + z, y+z)
+nv = bertiniPosDimSolve(I_*, Verbose => true, IsProjective=>1)
+w  = first components nv
+assert all(points w, p->norm evaluate(polySystem slice w,p) < 0.0001)
+
+I = ideal(x + z, y+x, z)
+nv = bertiniPosDimSolve(I_*, Verbose => true, IsProjective=>1)
+w  = first components nv
+assert(slice w == {})

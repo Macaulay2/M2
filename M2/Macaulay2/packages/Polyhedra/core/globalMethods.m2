@@ -160,7 +160,4 @@ objectsOfDim = method(TypicalValue => List)
 --     	     of a given polytope
 sublatticeBasis = method(TypicalValue => Matrix)
 
--- PURPOSE : Computing a polyhedron as the intersection of affine half-spaces and hyperplanes
-intersection = method()
-
 latticeVolume = method(TypicalValue => QQ)

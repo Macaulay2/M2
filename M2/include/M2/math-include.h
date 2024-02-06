@@ -3,6 +3,8 @@
 #ifndef M2_MATH_INCLUDE
 #define M2_MATH_INCLUDE
 
+  // IWYU pragma: begin_exports
+
   #ifndef PACKAGE_NAME
   #include <M2/config.h>
   #endif
@@ -28,6 +30,10 @@
   #include <gmp.h>
   #endif
 
+  #define MPFR_USE_NO_MACRO
   #include <mpfr.h>
+  #include <mpfi.h>
+
+  // IWYU pragma: end_exports
 
 #endif

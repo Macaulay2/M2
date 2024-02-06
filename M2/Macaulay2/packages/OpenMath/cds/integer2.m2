@@ -28,7 +28,7 @@ OMSEvaluators#"integer2"#"modulo_relation" = (args, attrs) -> (
 	(x,y) -> (mod(x, m) == mod(y,m))
 )
 OMSEvaluators#"integer2"#"ord" = (args, attrs) -> ( 
-	-- This symbol  denotes a binary function. Its first argument shoud be a prime
+	-- This symbol denotes a binary function. Its first argument should be a prime
 	-- number p, the second an integer n.
 	-- When applied to p and n, it represents the highest power of p occurring in a
 	-- factorization of n.

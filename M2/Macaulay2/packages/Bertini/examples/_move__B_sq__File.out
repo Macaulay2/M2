@@ -1,14 +1,6 @@
--- -*- M2-comint -*- hash: -1300714427
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 854427707
 
-i1 : writeParameterFile(storeBM2Files,{2,3,5,7})
-
-o1 = /tmp/M2-25929-0/0/final_parameters
-
-o1 : File
+i1 : writeParameterFile(storeBM2Files,{2,3,5,7});
 
 i2 : fileExists(storeBM2Files|"/final_parameters")
 
@@ -34,17 +26,11 @@ i8 : fileExists(storeBM2Files|"/backup")
 
 o8 = true
 
-i9 : Dir1 = temporaryFileName()
-
-o9 = /tmp/M2-25929-0/1
+i9 : Dir1 = temporaryFileName();
 
 i10 : makeDirectory Dir1
 
-i11 : writeParameterFile(storeBM2Files,{2,3,5,7})
-
-o11 = /tmp/M2-25929-0/0/final_parameters
-
-o11 : File
+i11 : writeParameterFile(storeBM2Files,{2,3,5,7});
 
 i12 : moveB'File(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
 
@@ -54,11 +40,7 @@ o13 = true
 
 i14 : makeDirectory (storeBM2Files|"/Dir2")
 
-i15 : writeParameterFile(storeBM2Files,{2,3,5,7})
-
-o15 = /tmp/M2-25929-0/0/final_parameters
-
-o15 : File
+i15 : writeParameterFile(storeBM2Files,{2,3,5,7});
 
 i16 : moveB'File(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
 

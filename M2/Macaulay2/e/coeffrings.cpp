@@ -1,5 +1,22 @@
 #include "coeffrings.hpp"
 
+void CoefficientRingZZp::elem_text_out(buffer &o,
+                             ElementType a,
+                             bool p_one,
+                             bool p_plus,
+                             bool p_parens) const
+{
+  long n = coerceToLongInteger(a);
+  if (n < 0)
+    {
+      o << '-';
+      n = -n;
+    }
+  else if (p_plus)
+    o << '+';
+  if (p_one || n != 1) o << n;
+}
+
 void CoefficientRingR::elem_text_out(buffer &o,
                                      ElementType a,
                                      bool p_one,

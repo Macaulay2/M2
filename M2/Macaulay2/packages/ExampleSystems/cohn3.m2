@@ -45,7 +45,7 @@ doc ///
 	    Math. of Comp. 38, pp. 227-236, 1982.
 	    
 	    H. Cohn, J. Deutch.
-	    "An explit modular equation in two variables for Q[sqrt(3)]", 
+	    "An explicit modular equation in two variables for Q[sqrt(3)]", 
 	    Math. of Comp. 50, pp. 557-568, 1988.
 	    
 	    See also: http://homepages.math.uic.edu/~jan/Demo/cohn3.html

@@ -1,44 +1,55 @@
 --- status: Draft
 --- author(s): Giulio 
---- notes: 
+--- notes: updated November 2021
 
-document { 
-     Key => {regularity,(regularity,ChainComplex),(regularity,Ideal),(regularity,Module)},
-     Headline => "compute the Castelnuovo-Mumford regularity",
-     Usage => "regularity C",
-     Inputs => {
-	  "C" => {"a ", TO ChainComplex, ", an  ",TO Ideal, ", or a ", TO Module}
-	  },
-     Outputs => {
-	  ZZ} ,
-     "For a free chain complex C, the regularity r is the smallest number so that 
-      each basis element of C_i has degree at most i+r.  For a module M, the
-      regularity is the regularity of a free minimal resolution of M.",
-     EXAMPLE {
-	  "R=ZZ/32003[a..d];",
-	  "I=ideal(a^20,b^20,a*c^19-b*d^19);",
-	  "regularity I"
-	  },
-     PARA{},
-     "The regularity is the label of the last row in the betti diagram of a chain complex.",
-     EXAMPLE {
-	  "J=ideal(a^3,a^2*b,a*b^6,a^2*c);",
-	  "C=resolution J",
-	  "betti C",
-	  "regularity C"
-	  },
-     SeeAlso => {"resolution","betti"}
-     }
-
-
-
-
---document {
---     Key => regularity,
---     Headline => "compute the regularity",
---     TT "regularity M", " -- computes the regularity of a module or chain complex C.",
---     PARA{},
---     "For a free chain complex C, the regularity r is the smallest number so that 
---     each basis element of C_i has degree at most i+r.  For a module M, the
---     regularity is the regularity of a free minimal resolution of M."
---     }
+doc ///
+Node
+  Key
+     regularity
+    (regularity, Ideal)
+    (regularity, Module)
+    (regularity, ChainComplex)
+    [regularity, Weights]
+  Headline
+    compute the Castelnuovo-Mumford regularity
+  Usage
+    r = regularity C
+    r = regularity(C, Weights => w)
+  Inputs
+    C:{ChainComplex,Ideal,Module}
+    Weights=>List -- a weight vector @TT "w"@, see @TO [betti, Weights]@
+  Outputs
+    r:ZZ
+  Description
+    Text
+      For a free chain complex @TT "C"@, the regularity @TT "r"@ is the smallest number so that each
+      basis element of @TT "C_i"@ has degree at most @TT "i+r"@. For an ideal @TT "I"@, regularity is
+      one plus the regularity of the minimal free resolution of the quotient of the ambient ring by @TT "I"@.
+      For a module @TT "M"@, regularity is the regularity of a minimal free resolution of @TT "M"@.
+    Example
+      R = ZZ/32003[a..d];
+      I = ideal(a^20, b^20, a*c^19-b*d^19);
+      C = resolution I
+      regularity C
+      regularity comodule I
+      regularity I
+      regularity module I
+    Text
+      The regularity is the label of the last row in the @TO2 {betti, "Betti diagram"}@ of a chain complex.
+      However, this depends on the total degree weights in the Betti tally, which are computed based on the
+      @TO2 {"heft vectors", "heft vector"}@ of the underlying ring. To adjust this vector, a vector @TT "w"@
+      whose length is the same as the @TO2 {degreeLength, "degree length"}@ of the ring can be provided using
+      the option @TT "Weights"@. The dot products of @TT "w"@ with the multidegrees in the tally will be used
+      in the resulting computation.
+    Example
+      C = resolution ideal(a^3, a^2*b, a*b^6, a^2*c);
+      betti C
+      regularity C
+      betti(C, Weights => {2})
+      regularity(C, Weights => {2})
+  SeeAlso
+    resolution
+    betti
+    comodule
+    "VirtualResolutions :: multigradedRegularity"
+///

@@ -22,7 +22,7 @@ private:
 			  with relative references to previous steps;
 			  preSLP description in NumericalAlgebraicGeometry/SLP.m2 has details */
   element_type* nodes; // array of evaluated nodes of the program 
-  intarray node_index; // points to position in program (rel. to start) of operation correspoding to a node
+  intarray node_index; // points to position in program (rel. to start) of operation corresponding to a node
   int num_consts, num_inputs, num_operations, num_outputs; /* at the moment outputs are arranged 
 							      in a matrix rather than array */
 public:
@@ -40,7 +40,7 @@ public:
   bool evaluate(const DMat<ARing> input, const DMat<ARing> output); 
 
 private:
-  // in-place routines used by contructors, e.g.,
+  // in-place routines used by constructors, e.g.,
   bool add(int a, int b); // append a node that is a sum of nodes with rel.positions a and b
   bool sin(int a); //...
   bool minor(int r1, int r2, int c1, int c2, intarray pos); /* appends a node containing a minor of

@@ -3,17 +3,17 @@
 #ifndef _dmat_zz_flint_hpp_
 #define _dmat_zz_flint_hpp_
 
+#include <assert.h>            // for assert
+#include <utility>             // for swap
+#include "aring-zz-flint.hpp"  // for ARingZZ
+
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/arith.h>
-#include <flint/nmod_mat.h>
-#include <flint/fmpq_mat.h>
+#include <flint/fmpz_mat.h>  // for fmpz_mat_t, fmpz_mat_entry, fmpz_mat_clear, fmpz_m...
 #pragma GCC diagnostic pop
-
-#include "aring-zz-flint.hpp"
 
 template <typename ACoeffRing>
 class DMat;
@@ -26,6 +26,7 @@ class DMat<M2::ARingZZ>
   typedef ACoeffRing CoeffRing;
   typedef ACoeffRing::ElementType ElementType;
   typedef ElementType elem;
+  typedef ACoeffRing::Element Element;
 
   typedef DMatIterator<ACoeffRing> Iterator;
   typedef DMatConstIterator<ACoeffRing> ConstIterator;

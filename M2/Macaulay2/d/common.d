@@ -7,6 +7,7 @@ export codePosition(c:Code):Position := (
      when c
      is f:adjacentCode do f.position
      is f:arrayCode do f.position
+     is f:angleBarListCode do f.position
      is f:binaryCode do f.position
      is f:catchCode do f.position
      is f:Error do f.position
@@ -52,6 +53,7 @@ export tostring(c:Code):string := (
      is x:Error do concatenate(array(string)( "(error \"", x.message, "\")"))
      is x:semiCode do concatenate(array(string)( "(semi ", between(" ",new array(string) len length(x.w) do foreach s in x.w do provide tostring(s)), ")"))
      is x:arrayCode do concatenate(array(string)( "(array ", between(" ",new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
+     is x:angleBarListCode do concatenate(array(string)( "(angleBarList ", between(" ",new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))
      is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f)," ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:adjacentCode do concatenate(array(string)("(adjacent ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:forCode do concatenate(array(string)(
@@ -181,7 +183,7 @@ export setupfun(name:string,fun:unop):Symbol := (
 export setupfun(name:string,value:fun):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
-     globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
+     globalFrame.values.(entry.frameindex) = Expr(newCompiledFunction(value));
      entry.Protected = true;
      entry);
 export setupvar(name:string,value:Expr,thread:bool):Symbol := (
@@ -244,20 +246,17 @@ setupfun("hash",hashfun);
 export dbmcheck(ret:int):Expr := (
      if ret == -1 then buildErrorPacket(dbmstrerror())
      else Expr(ZZcell(toInteger(ret))));
-export dbmopenin(filename:string):Expr := (
-     mutable := false;
-     filename = expandFileName(filename);
-     handle := dbmopen(filename,mutable);
-     if handle == -1 
-     then buildErrorPacket(dbmstrerror() + " : " + filename)
-     else Expr(Database(filename,nextHash(),handle,true,mutable)));
-export dbmopenout(filename:string):Expr := (
-     mutable := true;
-     filename = expandFileName(filename);
-     handle := dbmopen(filename,mutable);
-     if handle == -1 
-     then buildErrorPacket(dbmstrerror() + " : " + filename)
-     else Expr(Database(filename,nextHash(),handle,true,mutable)));
+dbmopenhelper(filename:string,is_mutable:bool):Expr := (
+    filename = expandFileName(filename);
+    handle := dbmopen(filename,is_mutable);
+    if handle == -1
+    then buildErrorPacket(dbmstrerror() + " : " + filename)
+    else (
+	db := Database(filename,0,handle,true,is_mutable);
+	db.hash = hashFromAddress(Expr(db));
+	Expr(db)));
+export dbmopenin(filename:string):Expr := dbmopenhelper(filename, false);
+export dbmopenout(filename:string):Expr := dbmopenhelper(filename, true);
 export dbmclose(f:Database):Expr := (
      if !f.isopen then return buildErrorPacket("database already closed");
      dbmclose(f.handle);

@@ -1,0 +1,100 @@
+\documentclass[12pt,a4paper]{amsart}
+% for packages that output in tikz:
+\usepackage{tikz}
+% contains listings-package-related stuff incl Macaulay2 language definition:
+\input lst-Macaulay2.tex
+% additional options to modify appearance of code:
+\lstset{
+numbers=none,
+frame=leftline,% comment out if you don't like the blue rectangles
+framerule=1ex,
+framesep=1ex,
+xleftmargin=2ex,
+columns=fixed,
+showstringspaces=false,
+breaklines=false,
+}
+\title{Example file for MergeTeX}
+\author{Paul Zinn-Justin}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+some basic examples:
+\begin{lstlisting}[language=Macaulay2]
+R=QQ[x,y]; factor(x^3-y^3)
+res coker vars R
+OO_(Proj(R/(x^3-y^3)))^{1,2}
+matrix {{1,2},{3,4}}
+\end{lstlisting}
+
+The code can also be inline: \lstinline[language=Macaulay2]!gcd(1300,75)!.
+More:
+\begin{lstlisting}[language=Macaulay2]
+318/46
+exp 3.73767
+\end{lstlisting}
+strings and nets:
+\begin{lstlisting}[language=Macaulay2]
+"hehe"
+( "haha123456789"
+||"hoho!@#$%^&*(")
+{oo,ooo}
+\end{lstlisting}
+printing:
+\begin{lstlisting}[language=Macaulay2]
+for i from 1 to 8 do print((i+ii)^2)
+\end{lstlisting}
+
+\section{Reusing output}
+The output {\tt o5} is \macoutput{5}.
+The nonexistent output {\tt o11} is \macoutput{11}.
+
+\section{Inputting from external file}
+Some more code:
+\lstinputlisting[language=Macaulay2]{ex.m2}
+
+\section{Packages}
+packages that have a {\tt tex} output will work:
+\begin{lstlisting}[language=Macaulay2]
+needsPackage "Posets";
+booleanLattice 3
+needsPackage "VectorGraphics";
+Circle{"fill"=>"red"}
+\end{lstlisting}
+
+\section{Changing key/values}
+\begin{lstlisting}[showstringspaces=true,language=Macaulay2,basewidth={1.5ex}]
+"some weird spacing  and string style"
+\end{lstlisting}
+
+\section{Help}
+\begin{lstlisting}[language=Macaulay2]
+help cohomology
+\end{lstlisting}
+
+\section{Tricky examples}
+\dots for testing purposes only
+\begin{lstlisting}[language=Macaulay2]
+-- some tricky examples
+\end{lstlisting}
+A bunch of complicated cases: a multi-line example
+\begin{lstlisting}[language=Macaulay2]
+f = i -> (
+-- that's dumb
+i+1
+)
+\end{lstlisting}
+and another weirder one:
+\begin{lstlisting}[language=Macaulay2]
+I=ideal 0; f = i -> (
+i+1)
+\end{lstlisting}
+finally:
+\begin{lstlisting}[language=Macaulay2]
+a=1;b=2;
+c=3;
+\end{lstlisting}
+That last one has no output.
+
+\end{document}

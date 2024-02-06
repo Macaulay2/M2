@@ -1,0 +1,27 @@
+-- -*- M2-comint -*- hash: 602351374
+--loading configuration for package "FourTiTwo" from file /home/lily/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "Topcom" from file /home/lily/.Macaulay2/init-Topcom.m2
+--loading configuration for package "MonomialIntegerPrograms" from file /home/lily/.Macaulay2/init-MonomialIntegerPrograms.m2
+Using default executable name "scip".
+To change this, load package using CustomPath option.
+Current value of ScipPrintLevel is 1.
+To set a custom default value, load package using CustomScipPrintLevel option.
+
+i1 : R = QQ[x,y,z,w,v];
+
+i2 : I = monomialIdeal(x*y*w, x*z*v, y*x, y*z*v);
+
+o2 : MonomialIdeal of R
+
+i3 : degreeIP(I, KnownDim => 3)
+Degree files saved in directory: /tmp/M2-8573-0/0
+
+o3 = 5
+
+i4 : degreeIP(I)
+Codim files saved in directory: /tmp/M2-8573-0/1
+Degree files saved in directory: /tmp/M2-8573-0/2
+
+o4 = 5
+
+i5 : 

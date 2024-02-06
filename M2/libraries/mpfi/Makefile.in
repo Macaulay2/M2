@@ -1,0 +1,34 @@
+#############################################################################
+
+VERSION = 1.5.4
+LICENSEFILES = README COPYING.LESSER
+TARFILE = $(LIBNAME)-$(VERSION).tar.gz
+
+#############################################################################
+CONFIGOPTIONS += --disable-thread-safe
+#############################################################################
+
+RELAX = yes
+# shut down Oct, 2021 -- URL = https://gforge.inria.fr/frs/download.php/file/37331
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-assert
+endif
+
+CONFIGOPTIONS += --disable-shared
+
+# ifeq (@SHARED@,no)
+# CONFIGOPTIONS += --disable-shared
+# endif
+
+PRECONFIGURE = autoreconf -i
+include ../Makefile.library
+
+BUILDOPTIONS += CPPFLAGS="$(CPPFLAGS)"
+CHECKOPTIONS += CPPFLAGS="$(CPPFLAGS)"
+
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpfi/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/mpfi "
+# End:

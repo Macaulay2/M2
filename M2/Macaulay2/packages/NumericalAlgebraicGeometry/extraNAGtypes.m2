@@ -13,7 +13,7 @@ debug SLPexpressions
 
 gateSystem = method()
 
-GateSystem = new Type of System -- this essentially is a wrapper for SLProgram
+GateSystem = new Type of System -- this essentially is a wrapper for an SLProgram
 net GateSystem := S -> (
     out := net "gate system: " | net numVariables S | " ---> " | net numFunctions S;
     if numParameters S =!= 0 then out = out || net "(#parameters = " | net numParameters S | ")";
@@ -74,6 +74,12 @@ evaluate (GateSystem,Matrix,Matrix) := (F,p,x) -> (
     evaluate(F#"SLP", matrix p | matrix x)
     )
 
+-- syntactic sugar for creating instances of GateSystem
+gateSystem (BasicList, BasicList, GateMatrix) := (P, X, F) -> (
+    GM := if numcols F == 1 then F else transpose F;
+    gateSystem(gateMatrix{toList P}, gateMatrix{toList X}, GM)
+    )
+
 TEST ///
 -* GateSystem *-
 declareVariable \ {x,y,t}
@@ -112,13 +118,13 @@ jacobian GateSystem := GS -> jacobian(toList(0..numVariables GS-1), GS)
 -- overrides "implementation" for System
 evaluateJacobian (GateSystem, Matrix) := (GS, x0) -> (
     J := jacobian GS;
-    assert(numcols matrix x0 == J#"number of inputs");
-    out := evaluate(jacobian GS,  matrix x0);
+    assert(numcols matrix x0 == numberOfInputs J);
+    out := evaluate(J,  matrix x0);
     matrix(out, numFunctions GS, numVariables GS)
     )
-evaluateJacobian (GateSystem, Point) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
+evaluateJacobian (GateSystem, AbstractPoint) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
 evaluateJacobian (GateSystem, Matrix, Matrix) := (GS, p0, x0) -> evaluateJacobian(GS, p0 | x0)
-evaluateJacobian (GateSystem, Point, Point) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
+evaluateJacobian (GateSystem, AbstractPoint, AbstractPoint) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
 
 
 TEST /// 
@@ -220,7 +226,7 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
         GH#"EHxt" = makeSLProgram(varMat, GH#"Hx"|GH#"Ht");
         GH#"EHxH" = makeSLProgram(varMat, GH#"Hx"|GH#"H");
         )
-    else error "uknown Software option value";
+    else error "unknown Software option value";
     if para then (
         GPH := new GateParameterHomotopy;
         GPH.GateHomotopy = GH;		
@@ -258,7 +264,7 @@ evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> 
 evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
 evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
-specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
+-*specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
     if numcols M != 1 then error "1-column matrix expected"; 
     if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
@@ -267,17 +273,20 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
     SPH.Parameters = M;                                                                                                                                       
     SPH                                                                                                                                                       
     ) 
+*-
 
 -- !!! replaces makeGateMatrix
 gateSystem PolySystem := GateSystem => F -> if F#?GateSystem then F#GateSystem else 
   F#GateSystem = gateSystem(F,parameters F)
 gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> ( 
     R := ring F; 
-    if not isSubset(P, gens R) then "some parameters are not among generators of the ring";
-    X := getVarGates R;
-    variables := gateMatrix {X_(positions(gens R, x->not member(x,P)))};  
-    parameters := gateMatrix {X_(positions(gens R, x->member(x,P)))};
-    gateSystem(parameters, variables, gatePolynomial F.PolyMap)
+    (S, R2S) := flattenRing R;
+    params := R2S \ P;
+    if not isSubset(params, gens S) then error"some parameters are not among generators of the ring";
+    X := getVarGates S;
+    variables := gateMatrix {X_(positions(gens S, x->not member(x,params)))};  
+    parameters := gateMatrix {X_(positions(gens S, x->member(x,params)))};
+    gateSystem(parameters, variables, gatePolynomial R2S F.PolyMap)
     ) 
  
 -- !!! a general problem: some methods need PolySystem to be changed to GateSystem
@@ -345,7 +354,7 @@ segmentHomotopy = method(Options=>{gamma=>1})
 segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
 segmentHomotopy (GateSystem, GateSystem) := o -> (S,T) -> (
     if T.Variables =!= S.Variables 
-    then error "expented systems with the same inputs";  
+    then error "expected systems with the same inputs";  
     if numFunctions T =!= numFunctions S
     then error "expected systems with the same dimension of codomain";
     t := local t;

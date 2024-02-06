@@ -7,8 +7,8 @@
 --
 --  This program is free software; you can redistribute it
 --  and/or modify  it under the terms of the GNU General
---  Public License as   published by  the Free Software Found-
---  ation; either version 2 of the License, or (at  your
+--  Public License as   published by  the Free Software Foundation;
+--  either version 2 of the License, or (at  your
 --  option) any later version.
 --
 --  This program is distributed in the hope that it will be
@@ -37,6 +37,7 @@ newPackage (
         Email => "aaronmdall -at- gmail.com",
         HomePage => "https://www.aarondall.com"}},
     Headline => "citation of Macaulay2 packages",
+    Keywords => {"Miscellaneous"},
     HomePage => "https://github.com/aarondall/PackageCitations-M2"
     )
 
@@ -52,16 +53,16 @@ export {
 -- add symbols as needed
 -- note that the length of a diacritic (as a string in M2) is 2
 texStore = hashTable {
-    ///Macaulay2///     => ///\emph{Macaulay2}///,
-    ///Macaulay 2///     => ///\emph{Macaulay2}///,
+    ///Macaulay2///     => ///\\emph{Macaulay2}///,
+    ///Macaulay 2///     => ///\\emph{Macaulay2}///,
     ///Mbar_\{g,n\}///    => ///$Mbar_{g,n}$///,
-    ///á///             => ///{\'a}///,
-    ///å///             => ///{\aa}///,
-    ///æ///             => ///{\ae}///,
-    ///è///             => ///{\`e}///,
-    ///é///             => ///{\'e}///,
-    ///ò///             => ///{\`o}///,
-    ///ø///             => ///{\o}///,
+    ///á///             => ///{\\'a}///,
+    ///å///             => ///{\\aa}///,
+    ///æ///             => ///{\\ae}///,
+    ///è///             => ///{\\`e}///,
+    ///é///             => ///{\\'e}///,
+    ///ò///             => ///{\\`o}///,
+    ///ø///             => ///{\\o}///,
 }
 
 -- PREPARE THE HEADLINE FOR USE IN THE BIBTEX TITLE
@@ -209,7 +210,7 @@ iCite String := S -> (
             "@misc{M2,\n",
             "  author = {Grayson, Daniel R. and Stillman, Michael E.},\n",
             "  title = {Macaulay2, a software system for research in algebraic geometry},\n",
-            "  howpublished = {Available at ", ///\///, "url{http://www.math.uiuc.edu/Macaulay2/}}\n",
+            "  howpublished = {Available at ", ///\///, "url{https://macaulay2.com/}}\n",
             "}\n",
             ))
     else
@@ -239,7 +240,7 @@ doc ///
           is a package for a powerful open-source mathematical software suite
           but it contains only one method and adds exactly zero computational
           ability to the platform. The one method, called @TO cite@, can be
-          called on any @HREF {"http://www.math.uiuc.edu/Macaulay2/",
+          called on any @HREF {"https://macaulay2.com/",
           "Macaulay2"}@ package and will return a bibtex citation for
           inclusion in a @HREF {"https://www.latex-project.org", "LaTeX"}@
           document. For example, a citation for this package can be obtained
@@ -295,7 +296,7 @@ doc ///
             cite PackageCitations
             cite Text
         Text
-            If @TO cite@ is given a string, then it will will load the package
+            If @TO cite@ is given a string, then it will load the package
             if necessary and issue the corresponding citation. Note that if
             the package is @TO2 {Certification, "certified"}@ then two bibtex
             entries will be produced: one for the article witnessing the

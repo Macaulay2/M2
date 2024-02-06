@@ -1,0 +1,13 @@
+-- -*- M2-comint -*- hash: -633297982
+--loading configuration for package "MonomialIntegerPrograms" from file /home/lily/.Macaulay2/init-MonomialIntegerPrograms.m2
+Using default executable name "scip".
+To change this, load package using CustomPath option.
+Current value of ScipPrintLevel is 0.
+To set a custom default value, load package using CustomScipPrintLevel option.
+
+i1 : loadPackage("MonomialIntegerPrograms", Configuration => {"CustomScipPrintLevel" => "2"}, Reload => true);
+--loading configuration for package "MonomialIntegerPrograms" from file /home/lily/.Macaulay2/init-MonomialIntegerPrograms.m2
+Using default executable name "scip".
+To change this, load package using CustomPath option.
+
+i2 : 

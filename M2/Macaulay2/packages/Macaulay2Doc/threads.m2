@@ -132,7 +132,7 @@ Node
    n
    isReady t
    cancelTask t
-   sleep 1
+   sleep 2
    t
    n
    sleep 1
@@ -157,7 +157,7 @@ Node
  Outputs
   :
    a new task computing the value of the {\tt f(x)}, or, if {\tt x} is not provided, then of {\tt f()}.
-   Alternatively, the task {\tt t}, created previously with @ TO createTask @, is sheduled for execution.
+   Alternatively, the task {\tt t}, created previously with @ TO createTask @, is scheduled for execution.
  Description
   Text
    The computation proceeds in the background, in a thread.  The status of the task can be observed
@@ -248,7 +248,7 @@ Node
   x:Thing
  Outputs
   :Task
-   a task, which when scheduled, will apply the function {\tt f} to the argument {\tt x}.  In the
+   which when scheduled, will apply the function {\tt f} to the argument {\tt x}.  In the
    second form, where {\tt x} is not specified, it is take to be {\tt ()}.
  Description
   Example
@@ -272,6 +272,13 @@ Node
   Item
    the task {\tt t} will be scheduled for execution, but execution will not begin until the
    task {\tt u} finishes
+ Description
+   Example
+     for i to 5 do t_i = createTask(() -> i)
+     for i from 1 to 5 do addDependencyTask(t_i, t_(i - 1))
+     schedule t_0
+     while not isReady t_5 do nanosleep 1000000
+     taskResult t_5
 Node
  Key
   (addStartTask, Task, Task)
@@ -318,7 +325,7 @@ Node
  Key
   "maxAllowableThreads"
  Headline
-  the maximum possibl number of simultaneously running tasks
+  the maximum possible number of simultaneously running tasks
  Usage
   maxAllowableThreads
  Outputs
@@ -386,6 +393,16 @@ Node
  Outputs
   :
    whether the task {\tt t} has been canceled
+ Description
+   Example
+     n = 0
+     t = schedule(() -> while true do n = n + 1)
+     sleep 1
+     isCanceled t
+     sleep 1
+     cancelTask t
+     sleep 2
+     isCanceled t
  SeeAlso
   "parallel programming with threads and tasks"
   cancelTask

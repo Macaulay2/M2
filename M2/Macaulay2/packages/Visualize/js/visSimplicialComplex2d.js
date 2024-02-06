@@ -1137,11 +1137,11 @@ function exportTikz (event){
     tikzDiv.id = "tikzHolder";
     tikzDiv.className = "list-group-item";
     tikzDiv.setAttribute('href','#');
-    var tikzInput = document.createElement("input");
+    var tikzInput = document.createElement("textarea");
     tikzInput.value = "";
     tikzInput.id = "tikzTextBox";
-    tikzInput.size = "15";
-    tikzInput.style = "vertical-align:middle;";
+    tikzInput.rows = 20;
+    tikzInput.style = "vertical-align:middle; width: 100%;";
     var tikzButton = document.createElement("button");
     tikzButton.id = "copyButton";
     tikzButton.style = "vertical-align:middle;";

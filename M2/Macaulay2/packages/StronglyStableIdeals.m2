@@ -6,6 +6,7 @@ newPackage("StronglyStableIdeals",
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}
     	              },
 	   Headline => "studying strongly stable ideals related to Hilbert polynomials",
+	   Keywords => {"Commutative Algebra"},
 	   PackageImports => {"gfanInterface","Truncations"},
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry",
@@ -680,7 +681,7 @@ doc ///
           
           @TO stronglyStableIdeals@ -- Compute the saturated strongly stable ideals with a given Hilbert polynomial.
 	  
-	  @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all mononials of the same degree outside the ideal.
+	  @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all monomials of the same degree outside the ideal.
       
 	  @TO isRegSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to its regularity is a segment. 	                   
 

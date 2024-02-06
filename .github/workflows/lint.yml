@@ -1,0 +1,20 @@
+name: Lint
+on:
+  push: { branches: [ "development" ] }
+  pull_request: { branches: [ "development" ] }
+
+jobs:
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          sudo apt-get install -y codespell
+      - name: Run codespell
+        shell: bash -l {0}
+        run: codespell --ignore-words=.codespell_ignore M2/Macaulay2/packages
+
+env:
+  MAKEFLAGS: -j2

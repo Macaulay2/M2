@@ -18,9 +18,9 @@ void ARingRRR::elem_text_out(buffer &o,
 
   if (prepend_plus) o << "+";
   if (strip_last)
-    o.put(s->array, s->len - 1);
+    o.put((char *)s->array, s->len - 1);
   else
-    o.put(s->array, s->len);
+    o.put((char *)s->array, s->len);
 }
 
 };  // end namespace M2

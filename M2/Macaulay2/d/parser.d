@@ -2,14 +2,6 @@
 use tokens;
 use lex;
 
-export parseInt(s:string):ZZ := (
-     i := zeroZZ;
-     foreach c in s do (
-	  if c == '\"'
-	  then nothing
-	  else i = 10 * i + (c - '0')
-	  );
-     i);
 export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      prec := defaultPrecision;
      ss := new string len length(s) + 1 do (		    -- we add 1 to get at least one null character at the end
@@ -53,6 +45,23 @@ export hexvalue   (c:char ):int  := (
      );
 export hexvalue   (c:int ):int  := hexvalue(char(c));
 
+export parseInt(s:string):ZZ := (
+     i := zeroZZ;
+     n := length(s);
+     if n == 1 then i = toInteger(s.0 - '0')
+     else if s.0 == '0' && (s.1  == 'b' || s.1 == 'B') then
+     	  for j from 2 to n - 1 do i = 2 * i + (s.j - '0')
+     else if s.0 == '0' && (s.1 == 'o' || s.1 == 'O') then
+     	  for j from 2 to n - 1 do i = 8 * i + (s.j - '0')
+     else if s.0 == '0' && (s.1 == 'x' || s.1 == 'X') then
+     	  for j from 2 to n - 1 do i = 16 * i + hexvalue(s.j)
+     else foreach c in s do (
+	  if c == '\"'
+	  then nothing
+	  else i = 10 * i + (c - '0')
+	  );
+     i);
+
 export parseString(s:string):string := (
      parseError = false;
      v := newvarstring(length(s)-2);
@@ -65,13 +74,20 @@ export parseString(s:string):string := (
 	       if c == 'n' then v << '\n'
 	       else if c == '"' then v << '"'
 	       else if c == 'r' then v << '\r'
+	       else if c == 'a' then v << char(7)
 	       else if c == 'b' then v << '\b'
 	       else if c == 't' then v << '\t'
+	       else if c == 'v' then v << char(11)
 	       else if c == 'f' then v << '\f'
+	       else if c == 'e' then v << char(27)
+	       else if c == 'E' then v << char(27)
 	       else if c == '\\' then v << '\\'
 	       else if c == 'u' then (
 		    i = i+4;
 		    utf8(v, ((hexvalue(s.(i-3)) * 16 + hexvalue(s.(i-2))) * 16 + hexvalue(s.(i-1))) * 16 + hexvalue(s.i)))
+	       else if c == 'x' then (
+		    i = i + 2;
+		    v << char(hexvalue(s.(i - 1)) * 16 + hexvalue(s.i)))
 	       else if '0' <= c && c < '8' then (
 		    j := c - '0';
 		    c = s.(i+1);
@@ -137,7 +153,7 @@ export peektoken(file:TokenFile,obeylines:bool):Token := (
      );
 --What is this?   It doesn't appear to be used anywhere
 level := 0;
---Empty Parsetree to reresent error
+--Empty Parsetree to represent error
 export errorTree := ParseTree(dummy(dummyPosition));
 skip(file:TokenFile,prec:int):void := (
      while peektoken(file,false).word.parse.precedence > prec 
@@ -518,7 +534,6 @@ export treePosition(e:ParseTree):Position := (
      	  is w:WhileDo do return position(w.whileToken)
      	  is w:WhileList do return position(w.whileToken)
      	  is w:WhileListDo do return position(w.whileToken)
-     	  is s:StartDictionary do e = s.body
 	  is n:New do return position(n.newtoken)
 	  )
      );
@@ -551,7 +566,6 @@ export size(e:ParseTree):int := (
      is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)
      is x:WhileList do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.listtoken) + size(x.listClause)
      is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause) + size(x.listtoken) + size(x.listClause)
-     is x:StartDictionary do Ccode(int,"sizeof(*",x,")") + size(x.body)
      is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newtoken) + size(x.newclass) + size(x.newparent) + size(x.newinitializer)
      );
 

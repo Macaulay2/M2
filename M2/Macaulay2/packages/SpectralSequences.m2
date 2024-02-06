@@ -46,6 +46,7 @@ newPackage(
       Email => "vqthanh@math.berkeley.edu",
       HomePage => "http://math.berkeley.edu/~thanh"}},
   Headline => "spectral sequences",
+  Keywords => {"Homological Algebra"},
   PackageImports => {"Truncations"},
   PackageExports => {"SimplicialComplexes", "ChainComplexExtras", "PushForward"}
   )
@@ -109,7 +110,7 @@ support ChainComplex := List => (
 
 -- Computes the graded pieces of the total complex of a Hom double complex 
 -- (just as a graded module, so no maps!)
-Hom (GradedModule, GradedModule) := GradedModule => (C,D) -> (
+Hom (GradedModule, GradedModule) := GradedModule => opts -> (C, D) -> (
   R := C.ring;  if R =!= D.ring then error "expected graded modules over the same ring";
   (c,d) := (spots C, spots D);
   pairs := new MutableHashTable;
@@ -122,7 +123,7 @@ Hom (GradedModule, GradedModule) := GradedModule => (C,D) -> (
   E.ring = R;
   scan(keys pairs, k-> (
       p := pairs#k;
-      E#k = directSum(apply(p, v -> v => Hom(C_(v#0), D_(v#1) )));));
+      E#k = directSum(apply(p, v -> v => Hom(C_(v#0), D_(v#1), opts)));));
   E)
 
 
@@ -134,35 +135,36 @@ isWellDefined ChainComplexMap := Boolean => f -> (
 -- Computes the total complex of the Hom double complex of two chain complexes
 -- This code is different from that in ChainComplexExtras.  We need this version
 -- so that the indices are cached.
-Hom (ChainComplex, ChainComplex) := ChainComplex => (C,D) -> (
+Hom (ChainComplex, ChainComplex) := ChainComplex => opts -> (C, D) -> (
   if C.ring =!= D.ring then error "expected chain complexes over the same ring";
-  E := chainComplex (lookup( Hom, GradedModule, GradedModule))(C,D);
+  hom := lookup(Hom, GradedModule, GradedModule);
+  E := chainComplex (hom opts)(C, D);
   scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = 
     map(E#(i-1), E#i, 
       matrix table(
         E#(i-1).cache.indices, E#i.cache.indices, 
 	(j,k) -> map(E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j), 
 	  (E#i).cache.components#((E#i).cache.indexComponents#k),
-	  if j#0 === k#0 and j#1 === k#1-1 then (-1)^(k#0)*Hom(C_(k#0),D.dd_(k#1))
-	  else if j#0 === k#0 + 1 and j#1 === k#1 then Hom(C.dd_(j#0),D_(k#1))
+	  if j#0 === k#0 and j#1 === k#1-1 then (-1)^(k#0)*Hom(C_(k#0), D.dd_(k#1), opts)
+	  else if j#0 === k#0 + 1 and j#1 === k#1 then Hom(C.dd_(j#0), D_(k#1), opts)
 	  else 0))));
   E    	    		    
 )
 
-Hom (ChainComplex, ChainComplexMap) := ChainComplexMap => (C,f) -> (
-  (F,G) := (Hom(C,source f),Hom(C,target f)); 
+Hom (ChainComplex, ChainComplexMap) := ChainComplexMap => opts -> (C, f) -> (
+  (F, G) := (Hom(C, source f, opts), Hom(C, target f, opts));
   map(G,F, i -> map(G_i,F_i, matrix table( G_i.cache.indices,F_i.cache.indices, 
       (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
         F#i.cache.components#(F#i.cache.indexComponents#k),
-	if j === k then Hom(C_(j#0), f_(j#1)) 
+	if j === k then Hom(C_(j#0), f_(j#1), opts)
 	else 0)))))
 
-Hom (ChainComplexMap, ChainComplex) := ChainComplexMap => (f,C) -> (
-  (F,G) := (Hom(target f, C),Hom(source f, C));
+Hom (ChainComplexMap, ChainComplex) := ChainComplexMap => opts -> (f, C) -> (
+  (F, G) := (Hom(target f, C, opts), Hom(source f, C, opts));
   map(G,F, i -> map (G_i,F_i, matrix table(G_i.cache.indices,F_i.cache.indices,
         (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
 	  F#i.cache.components#(F#i.cache.indexComponents#k),
-	  if j === k then Hom(f_(j#0), C_(j#1)) 
+	  if j === k then Hom(f_(j#0), C_(j#1), opts)
 	  else 0)))))
   
 ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
@@ -182,7 +184,7 @@ ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
 	  else 0)))))
 
 -- truncate a chain complex at a given homological degree 
-truncate(ChainComplex,ZZ):= (C,q) ->( 
+truncate(ChainComplex,ZZ):= {} >> o -> (C,q) ->(
      if q == 0 then return C 
      else (
 	  m := min support C;
@@ -215,8 +217,7 @@ pushFwd(RingMap,ChainComplex):=o->(f,C) ->
 
 
 -- New method for tensor that returns the tensor product of a complex via a ring map
-tensor(RingMap,ChainComplex) := ChainComplex => 
- opts -> (f,C) -> (
+tensor(RingMap, ChainComplex) := ChainComplex => {} >> opts -> (f,C) -> (
          k := min C; 
     D := chainComplex(
 	if even(k) then apply(
@@ -277,10 +278,10 @@ net FilteredComplex := K -> (
 -- defining inclusion maps C=F_(n+1)C > F_(n)C > ... > F_0 C 
 -- of subcomplexes of a chain complex (or simplicial complexes) 
 -- and produces a filtered complex with integer keys the
--- corresponing chain complex.
+-- corresponding chain complex.
 -- If F_0C is not zero then by default F_(-1)C is added and is 0.
 -- THIS IS THE CONVENTION WE WANT BY DEFAULT.  SEE 
--- THE HOPF FIBRATION EXAMPLE.  TO GET THE CORRECT INDICIES ON THE E2 PAGE
+-- THE HOPF FIBRATION EXAMPLE.  TO GET THE CORRECT INDICES ON THE E2 PAGE
 -- WE WANT THE ZERO COMPLEX TO HAVE "FILTRATION DEGREE -1".
 
 filteredComplex = method(Options => {
@@ -297,10 +298,10 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
     if opts.ReducedHomology == true then (
     C = chainComplex L#0; -- By default the ambient simplicial complex is the first element of the list
     maps = apply(#L-1, p -> map(C, chainComplex L#(p+1), 
-        i -> sub(contract(transpose faces(i,L#0), faces(i,L#(p+1))), kk))))
+        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
     else (C = truncate(chainComplex L#0,1); -- By default the ambient simplicial complex is the first element of the list
     maps = apply(#L-1, p -> map(C, truncate(chainComplex L#(p+1),1), 
-        i -> sub(contract(transpose faces(i,L#0), faces(i,L#(p+1))), kk))))   
+        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))   
  )
   else (
     maps = L;
@@ -429,24 +430,25 @@ xComplex := (T,n) ->
 	       )
 
 -- produce the "x-filtration" of the Hom complex.
-Hom (FilteredComplex, ChainComplex):= FilteredComplex => (K,D) -> (
+Hom (FilteredComplex, ChainComplex):= FilteredComplex => opts -> (K, D) -> (
     	C := complete D;
     	   supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N := - max support K_infinity;
      P := - min support K_infinity;
-     H := Hom(K_infinity,C);
+     H := Hom(K_infinity, C, opts);
      filteredComplex(reverse for i from N to P - 1 list inducedMap(H, xComplex(H,i)), 
 	 Shift => - N)
      )
  else ( if #supp == 1 then
 	(
 	p := min supp;
-	h := Hom(K_infinity , C);
+	h := Hom(K_infinity, C, opts);
 	filteredComplex( {inducedMap(h, xComplex(h, p))}, Shift =>  p + 1 )
 	)
-    	else( hhh:= Hom(K_infinity , C) ;
+	else(
+	    hhh := Hom(K_infinity, C, opts);
 	    filteredComplex({id_hhh})
 	    )
 	)
@@ -472,24 +474,25 @@ yComplex := (T,n) ->
 	       K
 	       )
 
-  Hom (ChainComplex, FilteredComplex) := FilteredComplex => (D,K) -> (
+Hom (ChainComplex, FilteredComplex) := FilteredComplex => opts -> (D, K) -> (
       C := complete D; 
      supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N :=  max support K_infinity;
      P :=  min support K_infinity;
-     H := Hom(C, K_infinity);
+     H := Hom(C, K_infinity, opts);
      filteredComplex(reverse for i from P to N - 1 list inducedMap(H, yComplex(H,i)), 
 	 Shift => - P)
      )
   else ( if #supp == 1 then
 	(
 	p := min supp;
-	h := Hom(C , K_infinity );
+	h := Hom(C, K_infinity, opts);
 	filteredComplex( {inducedMap(h, yComplex(h, p))}, Shift =>  - p  + 1 )
 	)
-    	else( hhh:= Hom(C, K_infinity) ;
+	else(
+	    hhh := Hom(C, K_infinity, opts);
 	    filteredComplex({id_hhh})
 	    )
 	) 
@@ -752,7 +755,7 @@ SpectralSequencePage _ List := Module => (E,i)-> ( source(E.dd _i) )
 
 SpectralSequencePage ^ List := Module => (E,i)-> (E_(-i))    
 
--- view the modules on a Spectral Sequence Page.  We are refering to these
+-- view the modules on a Spectral Sequence Page.  We are referring to these
 -- as the support of the page.
 
 
@@ -799,7 +802,7 @@ support SpectralSequencePage := E -> (
 -- the formulas below are the homological versions of the ones in I.2.4 of Danilov's 
 -- treatment of spectral sequences in Shafarevich's Encyclopedia of 
 -- Math Algebraic Geometry II.  
--- In any event it is easy enough to prove directly that they satisfy the requirments 
+-- In any event it is easy enough to prove directly that they satisfy the requirements 
 -- for a spectral sequence.
 
 cycles := (K,p,q,r) -> (
@@ -909,7 +912,7 @@ SpectralSequencePageMap _ List := Matrix => (d,i)-> (if (d)#?i then d#i
 SpectralSequencePageMap ^ List := Matrix => (d,i)-> (d_(-i))    
 
 
--- auxlillary spectral sequence stuff.  
+-- auxiliary spectral sequence stuff.  
 
 filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
 chainComplex SpectralSequence := ChainComplex => E -> chainComplex filteredComplex E
@@ -924,7 +927,7 @@ connectingMorphism(ChainComplexMap,ZZ) := (a,n) -> (
     e := spectralSequence K ;
     e^1 .dd_{1, n}
     )
--- here are some needed functions related to hilbert polynomials --
+-- here are some needed functions related to Hilbert polynomials --
 hilbertPolynomial ZZ := ProjectiveHilbertPolynomial => o -> (M) -> ( if M == 0
     then new ProjectiveHilbertPolynomial from {} else
     new ProjectiveHilbertPolynomial from {0 => M}
@@ -1208,7 +1211,7 @@ doc ///
      	  "I-adic filtrations of chain complexes and their spectral sequences"
      Description
      	 Text
-	      By multiplying a chain complex by sucessive powers of an ideal we obtain a filtered complex.  
+	      By multiplying a chain complex by successive powers of an ideal we obtain a filtered complex.  
 	 Example     
 	      B = QQ[a..d]
 	      J = ideal vars B
@@ -1252,7 +1255,7 @@ doc ///
 	      E^infinity    
 	  Text
      	     If we want the homology of the complex to be the non-reduced homology
-     	     of the simpicial complex we set the ReducedHomology option to false:
+     	     of the simplicial complex we set the ReducedHomology option to false:
      	  Example 
 	     k = filteredComplex({F2D, F1D, F0D}, ReducedHomology => false)
 	  Text
@@ -1384,7 +1387,7 @@ doc ///
      Description
      	  Text  
        	    We describe
-	    the most primitative way to create filtered complexes.
+	    the most primitive way to create filtered complexes.
 	    
 	    Let $C$ be a chain complex and consider a list of
 	    chain complex maps $\{\phi_n, \phi_{n - 1}, \dots, \phi_0  \}$ 
@@ -1499,7 +1502,7 @@ doc ///
     Description
     	  Text
 	       Here we give an example of a spectral sequence that takes n+2 steps to degenerate, where
-	       n is the embedding dimesion of the ring.  We present this when n = 2 but the user with 
+	       n is the embedding dimension of the ring.  We present this when n = 2 but the user with 
 	       computational power can easily do a bigger case. 	       
      	  Example
     	       S = ZZ/101[x,y];
@@ -1549,12 +1552,12 @@ doc ///
 	      In this example we compute the spectral sequence arising from
 	      the quotient map
 	      $\mathbb{S}^2 \rightarrow \mathbb{R} \mathbb{P}^2$, 
-	      given by indentifying anti-podal points. 
+	      given by identifying anti-podal points. 
 	      This map can be realized by a simplicial map along the lines of Exercise 27, Section 6.5 of Armstrong's
 	      book {\it Basic Topology}.
 	      In order to give a combinatorial picture of the quotient map
 	      $\mathbb{S}^2 \rightarrow \mathbb{R} \mathbb{P}^2$, 
-	      given by indentifying anti-podal points, we
+	      given by identifying anti-podal points, we
  	      first make an appropriate simplicial realization of $\mathbb{S}^2$.
 	      Note that we have added a few barycentric coordinates.
      	  Example
@@ -1572,13 +1575,13 @@ doc ///
 	      R = ZZ[a,b,c,d,e,f];
 	      realProjectivePlane = simplicialComplex {a*b*c, b*c*d, c*d*e, a*e*d, e*b*a, e*f*b, d*f*b, a*f*d, c*f*e,a*f*c};
 	  Text 
-	      Again we can check that we've entered a simplical complex
+	      Again we can check that we've entered a simplicial complex
        	      whose homology agrees with that of the real projective plane.
 	  Example
 	      B = truncate(chainComplex realProjectivePlane,1)	 
 	      prune HH B
     	  Text
-	      We now compute the fibers of the anti-podal quoitent map
+	      We now compute the fibers of the anti-podal quotient map
  	      $\mathbb{S}^2 \rightarrow  \mathbb{R} \mathbb{P}^2$.
 	      The way this works for example is:
 	      $a = v3 ~ v1, b = v6 ~ v5, d = v36 ~ v15, c = v4 ~ v2, 
@@ -1618,7 +1621,7 @@ doc///
     	 Text
 	      In this example we give a simplicial realization of the fibration 
 	      $\mathbb{S}^1 \rightarrow {\rm Klein Bottle} \rightarrow \mathbb{S}^1$.  
-	      To give a simplicial realization of of this fibration we first make a simplical
+	      To give a simplicial realization of this fibration we first make a simplicial
 	      complex which gives a triangulation of the Klein Bottle.
 	      The triangulation of the Klein Bottle that we use has 18 facets and is, up to relabling, the triangulation of the Klein bottle given
 	      in Figure 6.14 of Armstrong's book {\it Basic Topology}.
@@ -1634,7 +1637,7 @@ doc///
 	      prune HH C
     	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the fibration
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the fibration
 	      $S^1 \rightarrow {\rm Klein Bottle} \rightarrow S^1$.
 	      The subsimplicial complexes of $\Delta$, which arise from the 
 	      the inverse images of the simplicies of $S$, are described below.
@@ -1666,7 +1669,7 @@ doc ///
          Text
 	      In this example we compute the spectral sequence associated to the 
 	      trivial fibration $\mathbb{S}^1 \rightarrow  \mathbb{S}^1 x \mathbb{S}^1 \rightarrow  \mathbb{S}^1$,
-	      where the map is given by one of the projections.  To give a simplicial realization of this fibration we first make a simplical complex
+	      where the map is given by one of the projections.  To give a simplicial realization of this fibration we first make a simplicial complex
 	      which gives a triangulation of $\mathbb{S}^1 \times \mathbb{S}^1$.  The simplicial complex that we construct
 	      is the triangulation of the torus given in Figure 6.4 of Armstrong's book
 	      {\it Basic Topology} and has 18 facets.
@@ -1684,10 +1687,10 @@ doc ///
 	      C = truncate(chainComplex Delta,1)
 	      prune HH C
 	 Text
-	      Let $S$ be the simplical complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the trivial fibration
+	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the trivial fibration
 	      $\mathbb{S}^1 \rightarrow \mathbb{S}^1 \times \mathbb{S}^1 \rightarrow \mathbb{S}^1$.
-	      We now make subsimplical complexes arising from the filtrations of the
+	      We now make subsimplicial complexes arising from the filtrations of the
 	      inverse images of the simplicies.
 	 Example         
 	      F1Delta = Delta;
@@ -1730,7 +1733,7 @@ doc ///
 		-- make the frobenious power of the irrelevant ideal
 		B = B_*/(x -> x^2)//ideal;
 		-- need to take a large enough power. 
-		-- it turns out that that 2 is large enough for this example 
+		-- it turns out that 2 is large enough for this example 
 		G = complete res image gens B;
 		F = koszul gens I;
 		K = Hom(G, filteredComplex(F));
@@ -1778,7 +1781,7 @@ doc ///
 	       $0 \rightarrow G \rightarrow H \rightarrow F \rightarrow 0$ of sheaves
 	       on a smooth toric variety $X$.
 	       
- 	       More specificaly we let $X = \mathbb{P}^1 \times \mathbb{P}^1$ and use multigraded commutative algebra
+ 	       More specifically we let $X = \mathbb{P}^1 \times \mathbb{P}^1$ and use multigraded commutative algebra
 	       together with spectral sequences to compute the connecting
 	       morphism $H^1(C, OO_C(1,0)) \rightarrow H^2(X, OO_X(-2,-3))$ where 
 	       $C$ is a general divisor of type $(3,3)$ on $X$.  This connecting morphism is an
@@ -1824,7 +1827,7 @@ doc ///
 	       the cohomology groups $H^i(X, \mathcal{F})$.  
 	       
 	       Indeed if $B$ is the irrelevant ideal of $X$ then the cohomology group
-	       $H^i(X, \mathcal{F})$ can be relized as the degree zero piece of the multigraded
+	       $H^i(X, \mathcal{F})$ can be realized as the degree zero piece of the multigraded
 	       module
 	       $Ext^i(B^{[l]}, F)$ for sufficiently large $l$; here $B^{[l]}$ denotes
 	       the $l$th Forbenius power of $B$ and $F$ is any multigraded module whose
@@ -1865,7 +1868,7 @@ doc ///
     	  Text
 	       To use hypercohomology to compute the cohomology groups of the 
 	       line bundle $\mathcal{O}_C(1,0)$ on $C$ we twist the
-	       complex $F$ above by a line of rulting and then 
+	       complex $F$ above by a line of ruling and then 
 	       make a filtered complex whose associated spectral
 	       sequence abuts to the desired cohomology groups.
 	  Example     		 		 
@@ -1894,13 +1897,13 @@ doc ///
 		    associated to the Hopf Fibration 
 		    $S^1 \rightarrow S^3 \rightarrow S^2$.
 		    This example is made possible by the minimal
-		    triangualtion of this fibration given in the paper
+		    triangulation of this fibration given in the paper
 		    "A minimal triangulation of the Hopf map and its application"
 		    by K.V. Madahar and K.S Sarkaria. Geom Dedicata, 2000.
      	       Text
-	       	    We first make the relavant simplicial complexes
+	       	    We first make the relevant simplicial complexes
 		    described on page 110 of the paper.  The
-		    simplical complex $S3$ below is a triangualtion of 
+		    simplicial complex $S3$ below is a triangulation of 
 		    $S^3$.  
 	       Example		    
 		    B = QQ[a_0..a_2,b_0..b_2,c_0..c_2,d_0..d_2];
@@ -1911,20 +1914,20 @@ doc ///
 		    l5 = {a_0*b_1*d_0*d_2,a_0*a_1*b_1*d_2,b_1*c_2*d_0*d_2,b_1*b_2*c_2*d_2,a_0*c_2*d_0*d_2,a_0*c_0*c_2*d_2};
 		    S3 = simplicialComplex(join(l1,l2,l3,l4,l5));
 	       Text 
-	            We identify the two sphere $S^2$ with the simplical complex $S2$ defined
+	            We identify the two sphere $S^2$ with the simplicial complex $S2$ defined
 		    by the facets $\{abc, abd, bcd, acd \}$.  The Hopf fibration 
 		    $S^1 \rightarrow S^3 \rightarrow S^2$ is then realized by the simplicial
 		    map $p: S3 \rightarrow S2$ defined by $a_i \mapsto a$, $b_i \mapsto b$, 
 		    $c_i \mapsto c$, and $d_i \mapsto d$.  
 		    		    
 		    We now explain how to construct the filtration of $S3$ obtained by
-		    considering the $k$-sketeltons of this fibration.
+		    considering the $k$-skeletons of this fibration.
 		    
-		    The simplical complex $F1S3$ below
-		    is the subsimplical complex of $S3$ obtained by considering the 
+		    The simplicial complex $F1S3$ below
+		    is the subsimplicial complex of $S3$ obtained by considering the 
 		    inverse images of the
-		    $1$-dimensional faces of the simplical complex $S2$. 
-		    We first describe the simplical complex $F1S3$ in pieces.		    
+		    $1$-dimensional faces of the simplicial complex $S2$. 
+		    We first describe the simplicial complex $F1S3$ in pieces.		    
 		    
 		    For example, to compute $f1l1$ below, we observe that 
 		    the inverse image of $ab$ under $p$ is
@@ -1938,10 +1941,10 @@ doc ///
 		    f1l5 = {a_0*a_1*b_1,b_1*b_2,a_0*c_0*c_2,a_0*a_1,a_0*d_0*d_2,a_0*a_1*d_2,b_1*b_2*c_2,c_0*c_2,b_1*d_0*d_2,b_1*b_2*d_2,c_2*d_0*d_2,c_0*c_2*d_2};
 		    F1S3 = simplicialComplex(join(f1l1,f1l2,f1l3,f1l4,f1l5));
 	       Text
-	            The simplical complex $F0S3$ below is the subsimplical complex of $F1S3$ 
+	            The simplicial complex $F0S3$ below is the subsimplicial complex of $F1S3$ 
 		    obtained by considering the inverse images of
-		    the $0$-dimensional faces of the simplical complex $S2$.  Again we describe 
-		    this simplical complex in pieces.
+		    the $0$-dimensional faces of the simplicial complex $S2$.  Again we describe 
+		    this simplicial complex in pieces.
 	       Example
 		    f0l1 = {a_0*a_1,b_0*b_1,c_0*c_1,d_1*d_2};
 		    f0l2 = {a_1*a_2,b_1*b_2,c_1*c_2,d_1*d_2};
@@ -1950,10 +1953,10 @@ doc ///
 		    f0l5 = {a_0*a_1,b_1*b_2,c_0*c_2,d_0*d_2};
 		    F0S3 = simplicialComplex(join(f0l1,f0l2,f0l3,f0l4,f0l5)); 
 	       Text
-	            The simplical complex $S3$ is obtained by considering the 
+	            The simplicial complex $S3$ is obtained by considering the 
 		    inverse images of the $2$ dimensional faces of $S2$.
 		    
-		    To compute a simplical version of
+		    To compute a simplicial version of
 		    the Serre spectral sequence for the
 		    $S^1 \rightarrow S^3 \rightarrow S^2$ 
 		    correctly, meaning that the spectral sequence takes the form
@@ -1964,7 +1967,7 @@ doc ///
      	       Text		    
 		    We now compute the various pages of the spectral sequence.
 		    To make the output 
-		    intelliagble we prune the spectral sequence.
+		    intelligible we prune the spectral sequence.
      	       Example		     
      	       	    E = prune spectralSequence K;
      	       Example		    		    
@@ -2445,7 +2448,7 @@ doc ///
 	       is an example of a page which is not a spectral sequence page.
 	       
 	      As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	      the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	      the rational quartic space curve by successive powers of the irrelevant ideal.
 	 Example     
 	      B = QQ[a..d];
 	      J = ideal vars B;
@@ -2535,7 +2538,7 @@ doc ///
 	       method {\tt pruningMaps(SpectralSequencePage)} is an example of a {\tt Page} which is not a {\tt SpectralSequencePage}.
 	       
 	       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -2696,7 +2699,7 @@ doc ///
 	       K = filteredComplex(J,C,4);
 	       E = spectralSequence K
 	  Text
-	       To view pages and or maps we proceed, for example, as follows (note we supress the output of the E^0.dd command to prevent excessive output)
+	       To view pages and or maps we proceed, for example, as follows (note we suppress the output of the E^0.dd command to prevent excessive output)
 	  Example
 	       E^0
 	       E^0 .dd;
@@ -2752,7 +2755,7 @@ doc ///
 	    compute the hard truncation of a chain complex   
      Description
      	  Text
-	       Computes the hard trucaton of a chain complex as a specified homological degree.
+	       Computes the hard truncation of a chain complex as a specified homological degree.
 	  Example
 	       B = QQ[a..d];
 	       C = koszul vars B
@@ -2778,7 +2781,7 @@ doc ///
 	       Returns the pruning maps which are cached in the process of pruning the spectral sequence page.
 	       
 	       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -2827,7 +2830,7 @@ doc ///
 	       Returns the pruning maps which are cached in the process of pruning the spectral sequence page.
 	       
 	       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -2861,7 +2864,7 @@ doc ///
      Description
       	  Text  
        	    We can make a filtered complex from a list of chain complex maps as follows.
-	    We first need to load the relavent packages.
+	    We first need to load the relevant packages.
           Example
 	       needsPackage "SpectralSequences"	    
      	  Text
@@ -2915,7 +2918,7 @@ doc ///
 	      K = filteredComplex{D,E,F}
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we can do the following.
+     	     of the simplicial complexes we can do the following.
      	  Example 
 	     filteredComplex({D,E,F}, ReducedHomology => false)
      SeeAlso
@@ -2938,7 +2941,7 @@ doc ///
           K: FilteredComplex
      Description	  
      	  Text
-	     Produces the filtered complex obtained by succesively truncating the complex.
+	     Produces the filtered complex obtained by successively truncating the complex.
 	  Example 
 	    needsPackage "SpectralSequences"
 	    A = QQ[x,y]
@@ -3006,7 +3009,7 @@ doc ///
 	       the function @TO"basis"@ which can be applied to modules, for instance.
 
       	       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3038,7 +3041,7 @@ doc ///
 	       Returns the Hilbert polynomials of all modules of the spectral sequence page
       	       
 	       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3095,10 +3098,10 @@ doc ///
 	       Returns the minimal presentation of a spectral sequence.
 	       
 	       If we fail to prune a spectral sequence then the out-put can be highly
-	       unintelligable.
+	       unintelligible.
 	       
 	       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3137,10 +3140,10 @@ doc ///
 	       Returns a minimal presentation of the spectral sequence page.
 
 	       If we fail to prune a spectral sequence then the out-put can be highly
-	       unintelligable.
+	       unintelligible.
 	       
 	       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3252,7 +3255,7 @@ doc ///
 	       Returns the rth page of the spectral sequence determined by K.
 
                Consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3344,7 +3347,7 @@ doc ///
 	       Returns the kth page of the spectral sequence determined by K.
 
                Consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3385,7 +3388,7 @@ doc ///
 	      $D_{p,q} = D^{-p,-q}$ holds.
 	      
 	      Consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	      the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	      the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example 
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3419,7 +3422,7 @@ doc ///
 	      Returns the p,q th map on an (upper index) spectral sequence page.  The relationship $D^{p,q} = D_{-p,-q}$ holds.    
                
 	       Consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	       the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	       the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example 
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3453,7 +3456,7 @@ doc ///
 	      Returns the kth page of the spectral sequence.
               
 	      Consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-	      the rational quartic space curve by sucessive powers of the irrelevant ideal.
+	      the rational quartic space curve by successive powers of the irrelevant ideal.
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
@@ -3487,7 +3490,7 @@ doc ///
      	  E:SpectralSequence
 	  k:InfiniteNumber
      Outputs
-     	  P:Page
+	  P:SpectralSequencePage
      Description
      	  Text 
 	      Returns the infinity page a spectral sequence.
@@ -3627,7 +3630,7 @@ doc ///
      	  Text 
 	       Returns the chain complex map specifying the inclusion of the i piece 
 	       of the filtered
-	       complex to the ambeint chain complex.
+	       complex to the ambient chain complex.
 	  Example
 	      A = QQ[x,y];
 	      C = koszul vars A;
@@ -3791,7 +3794,7 @@ doc ///
      Description
      	  Text	 	    
 	    To make a filtered complex from a list of simplicial 
-     	    complexes we first need to make some simplical complexes.
+     	    complexes we first need to make some simplicial complexes.
      	  Example
 	      R = QQ[x,y,z,w]; 	     
 	      a = simplicialComplex {x*y*z, x*y, y*z, w*z}
@@ -3799,7 +3802,7 @@ doc ///
 	      c = simplicialComplex {x,w}
 	  Text 
 	     Note that $b$ is a simplicial subcomplex of $a$ and that
-	     $c$ is a simplical subcomplex of $b$.
+	     $c$ is a simplicial subcomplex of $b$.
 	     Let's now create a filtered complex.
 	  Example
 	      K = filteredComplex{a,b,c}	
@@ -3826,7 +3829,7 @@ doc ///
     	       (prune E) ^infinity
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we set the ReducedHomology option
+     	     of the simplicial complexes we set the ReducedHomology option
 	     to false.
      	  Example 
 	     J = filteredComplex({a,b,c}, ReducedHomology => false)           	     
@@ -3898,7 +3901,7 @@ doc ///
          M:Module 
      Description
 	  Text
-	       Computes the assocaited graded homology object determined by the filtered chain complex
+	       Computes the associated graded homology object determined by the filtered chain complex
 ///	       
   	  
 doc ///
@@ -3920,7 +3923,7 @@ doc ///
 	       
 	       Note that the above properties are satisfied if $E$ is the spectral sequence determined by a bounded filtration of a bounded chain complex.
 	       
-	       The following is an easy example, of a spectral sequence which arises from a nested chain of simplical complexes, which illustrates this concept.
+	       The following is an easy example, of a spectral sequence which arises from a nested chain of simplicial complexes, which illustrates this concept.
 	       
 	  Example
 	       A = QQ[a,b,c,d];
@@ -3985,7 +3988,7 @@ doc ///
 	       
 	       Note that the above properties are satisfied if $E$ is the spectral sequence determined by a bounded filtration of a bounded chain complex.
 	       
-	       The following is an easy example, of a spectral sequence which arises from a nested chain of simplical complexes, which illustrates this concept.
+	       The following is an easy example, of a spectral sequence which arises from a nested chain of simplicial complexes, which illustrates this concept.
 	       
 	  Example
 	       A = QQ[a,b,c,d];
@@ -4033,7 +4036,7 @@ doc ///
           K: FilteredComplex
      Description
      	 Text
-	      By multiplying a chain complex by sucessive powers of an ideal we obtain a filtered complex.  
+	      By multiplying a chain complex by successive powers of an ideal we obtain a filtered complex.  
 	 Example     
 	      B = QQ[a..d]
 	      J = ideal vars B
@@ -4060,10 +4063,10 @@ doc ///
      Key
      	  "Example 1"
      Headline
-     	  Easy example of a filtered simpilcial complex	  
+     	  Easy example of a filtered simplicial complex	  
      Description
      	  Text
-	       Here we provide an easy example of a filtered simplical complex and 
+	       Here we provide an easy example of a filtered simplicial complex and 
 	       the resulting spectral sequence.  This example is small enough
 	       that all aspects of it can be explicitly computed by hand.
 	  Example
@@ -4085,7 +4088,7 @@ doc ///
 	  Text
 	       Considering the $E^2$ and $E^3$ pages of the spectral sequence 
 	       we conclude that the map $d^2_{2,-1}$ must have a $1$-dimensional
-	       image and a $1$-dimensinal kernel.  This can be verified easily:
+	       image and a $1$-dimensional kernel.  This can be verified easily:
 	  Example
 	      rank ker E^2 .dd_{2,-1}
 	      rank image E^2 .dd_{2,-1}     
@@ -4099,7 +4102,7 @@ doc ///
      	  Easy example of a filtered simplicial complex
      Description
      	  Text
-	       We provide an easy example of a filtered simplical complex and
+	       We provide an easy example of a filtered simplicial complex and
 	       the resulting spectral sequence.  This example is small enough that
 	       all aspects of it can be explicitly computed by hand.
 	  Example
@@ -4129,11 +4132,11 @@ doc ///
      Key
      	  "Example 3"
      Headline
-     	  Easy example of a filtered simplical complex
+     	  Easy example of a filtered simplicial complex
      Description
      	  Text
-	       We provide an easy example of a filtered simplical complex
-	       and the resuling spectral sequence.  This example is small enough that
+	       We provide an easy example of a filtered simplicial complex
+	       and the resulting spectral sequence.  This example is small enough that
 	       all aspects of it can be explicitly computed by hand.	       
      	  Example
 	       A = QQ[a,b,c]

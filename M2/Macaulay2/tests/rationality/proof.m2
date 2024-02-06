@@ -19,7 +19,7 @@ restart
 prec = 11
 Fprec = ZZ/prec
 
--- calcualte in ZZ/prec^3
+-- calculate in ZZ/prec^3
 RC = ZZ[x_1,x_2,x_3,C,D]/ideal(D^prec,prec^3*D^0)
 
 -- define the covariants & some useful functions
@@ -63,7 +63,7 @@ restart
 prec = 19
 Fprec = ZZ/prec
 
--- calcualte in ZZ/prec^3
+-- calculate in ZZ/prec^3
 RC = ZZ[x_1,x_2,x_3,C,D]/ideal(D^prec,prec^3*D^0)
 
 -- define the covariants and some useful functions

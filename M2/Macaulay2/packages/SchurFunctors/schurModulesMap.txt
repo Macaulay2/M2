@@ -12,7 +12,7 @@
 	Schur module
     F:Function 
         The function should specify, for every SST in the basis of M, 
-	a linear comination of tableaus of the shape specified by N.
+	a linear combination of tableaux of the shape specified by N.
         The output of F should be a sequence of pairs (c,T) where c is a coefficient 
 	in ring(N) and T a tableau (not necessarily semistandard). 
   Outputs

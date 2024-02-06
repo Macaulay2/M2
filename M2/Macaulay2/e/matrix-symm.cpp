@@ -48,7 +48,7 @@ class SymmMatrix
     const FreeModule *Fp = m0->rows()->symm(p);
     const FreeModule *Gp = m0->cols()->symm(p);
 
-    int *dp = R->degree_monoid()->make_new(m->degree_shift());
+    monomial dp = R->degree_monoid()->make_new(m->degree_shift());
     R->degree_monoid()->power(dp, p, dp);
 
     result = MatrixConstructor(Fp, Gp, dp);
@@ -133,7 +133,7 @@ Matrix /* or null */ *Matrix::symm(int n) const
 //   const FreeModule *Fp = m0->rows()->symm(p);
 //   const FreeModule *Gp = m0->cols()->symm(p);
 //
-//   int *dp = R->degree_monoid()->make_new(m->degree_shift());
+//   monomial dp = R->degree_monoid()->make_new(m->degree_shift());
 //   R->degree_monoid()->power(dp, p, dp);
 //
 //   result = MatrixConstructor(Fp,Gp,dp);

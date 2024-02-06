@@ -159,7 +159,7 @@ node gettoken(){
 	       advance();
 	       }
 	  token = newnode(STRING_CONST,string_const_tag);
-	  token->body.unique_string.characters = strnperm(s,cur.text-s); /* observe that escaped character sequences such as \n are not simplified here */
+	  token->body.string_const.characters = strnperm(s,cur.text-s); /* observe that escaped character sequences such as \n are not simplified here */
 	  advance();
 	  return token;
 	  }

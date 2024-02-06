@@ -177,7 +177,7 @@ MonomialIdeal : RingElement now computes horrendous amount.  It
 
      	  -- fixed [ drg ]
 
-hilbert series of a monomial ideal should be using monideal code.
+Hilbert series of a monomial ideal should be using monideal code.
 
      	  -- fixed [ drg ]
 

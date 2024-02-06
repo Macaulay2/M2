@@ -1,0 +1,19 @@
+-- -*- M2-comint -*- hash: 674672945
+
+i1 : isc (sqrt 2*pi)
+
+o1 = {Mixed constants with 5 operations                                 }
+     {4442882938158366 = 2*Pi/sr(2)                                     }
+     {Beta(a,b), a and b elements of F24: GAMMA function                }
+     {4442882938158366 = Beta(1/4,3/4)                                  }
+     {Mixed constants, 2 with elementary transforms.                    }
+     {4442882938158366 = GAM(1/4)*GAM(3/4)                              }
+     {Mixed constants with 5 operations                                 }
+     {4442882938158366 = GAM(1/6)/sr(2)*GAM(5/6)                        }
+     {Dirichlet constants, sums of Digamma function with rat. arguments.}
+     {4442882938158366 = -Psi(1/4)-Psi(3/8)+Psi(5/8)+Psi(3/4)           }
+     {                                                                  }
+
+o1 : VerticalList
+
+i2 : 

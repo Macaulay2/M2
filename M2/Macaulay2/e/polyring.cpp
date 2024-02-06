@@ -203,10 +203,10 @@ unsigned int PolynomialRing::computeHashValue(const ring_elem a) const
   unsigned int hash = 0;
   unsigned int seed1 = 103;
   unsigned int seed2 = 347654;
-  for (const Nterm *t = a.poly_val; t != 0; t = t->next)
+  for (Nterm& t : a.poly_val)
     {
-      unsigned int hash1 = getCoefficientRing()->computeHashValue(t->coeff);
-      unsigned int hash2 = getMonoid()->computeHashValue(t->monom);
+      unsigned int hash1 = getCoefficientRing()->computeHashValue(t.coeff);
+      unsigned int hash2 = getMonoid()->computeHashValue(t.monom);
       hash += seed1 * hash1 + seed2 * hash2;
       seed1 += 463633;
       seed2 += 7858565;

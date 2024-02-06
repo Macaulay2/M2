@@ -208,7 +208,7 @@ void s_pair_heap::insert(s_pair *p, int len)
   while (len >= spair_heap_size[i]) i++;
   heap[i] = merge(p, heap[i]);
   n_in_heap[i] += len;
-  std::cout << "n_in_heap[" << i << "]=" << n_in_heap[i] << std::endl;
+  //  std::cerr << "n_in_heap[" << i << "]=" << n_in_heap[i] << std::endl;
   p = NULL;
   while (n_in_heap[i] >= spair_heap_size[i])
     {

@@ -102,8 +102,9 @@ TEST(RingZZ, multDivide)
   // false, if not exactly divisible
   ring_elem a = globalZZ->from_long(5);
   ring_elem b = globalZZ->from_long(2);
-  ring_elem c = globalZZ->divide(a, b);
-  EXPECT_TRUE(globalZZ->is_equal(c, globalZZ->from_long(2)));
+  EXPECT_THROW(globalZZ->divide(a, b), exc::engine_error);
+  // ring_elem c = globalZZ->divide(a, b);
+  // EXPECT_ANY_THROW(globalZZ->is_equal(c, globalZZ->from_long(2)));
 }
 TEST(RingZZ, axioms) { testRingAxioms(globalZZ, ntrials); }
 TEST(RingZZ, power) { testRingPower(globalZZ, ntrials); }

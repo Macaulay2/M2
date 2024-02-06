@@ -146,10 +146,9 @@ export ArrayParseTree := array(ParseTree);
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
-export StartDictionary := {+dictionary:Dictionary, body:ParseTree};
 export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
+     or EmptyParentheses or IfThen or IfThenElse
      or Quote or GlobalQuote or ThreadQuote or LocalQuote
      or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
@@ -225,13 +224,14 @@ export newFromCode   := {+newClause:Code,fromClause:Code,position:Position};
 export newOfCode     := {+newClause:Code,ofClause:Code,position:Position};
 export newCode       := {+newClause:Code,position:Position};
 
-export CodeSequence := tarray(Code);
-export sequenceCode := {+x:CodeSequence, position:Position};
-export listCode     := {+y:CodeSequence, position:Position};
-export arrayCode    := {+z:CodeSequence, position:Position};
-export semiCode     := {+w:CodeSequence, position:Position};
-export multaryCode := {+f:multop, args:CodeSequence, position:Position};
-export forCode := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
+export CodeSequence     := tarray(Code);
+export sequenceCode     := {+x:CodeSequence, position:Position};
+export listCode         := {+y:CodeSequence, position:Position};
+export arrayCode        := {+z:CodeSequence, position:Position};
+export angleBarListCode := {+t:CodeSequence, position:Position};
+export semiCode         := {+w:CodeSequence, position:Position};
+export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
+export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 
 export newLocalFrameCode := {+
      frameID:int,
@@ -258,7 +258,7 @@ export Code := (
      or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
      or parallelAssignmentCode 
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
-     or sequenceCode or listCode or arrayCode or semiCode
+     or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
      or whileDoCode or whileListCode or whileListDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode
@@ -306,7 +306,7 @@ export DictionaryClosure := {+
      frame:Frame,      -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
      };
-export FunctionClosure := {+ frame:Frame, model:functionCode };
+export FunctionClosure := {+ frame:Frame, model:functionCode, hash:int };
 export SymbolClosure := {+
      frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
      symbol:Symbol
@@ -351,7 +351,7 @@ export MysqlField  := Pointer "struct st_mysql_field *";
 export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 
 export pythonObject := Pointer "struct _object *";
-export pythonObjectCell := {+v:pythonObject};
+export pythonObjectCell := {+v:pythonObject, hash:int};
 
 export TaskCellBody := {+
      hash:int,
@@ -360,10 +360,12 @@ export TaskCellBody := {+
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };
 
+export pointerCell := {+ v:voidPointer };
 
 export Expr := (
      CCcell or
      RRcell or
+     RRicell or
      Boolean or
      CodeClosure or
      CompiledFunction or
@@ -413,7 +415,8 @@ export Expr := (
      pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
-     fileOutputSyncState
+     fileOutputSyncState or
+     pointerCell
      );
 export fun := function(Expr):Expr;
 
@@ -462,7 +465,7 @@ export HashTable := {+
      mutex:SpinLock
      };
 
---This unfortunately needs to be here as it references Hash Tabe which needs expr.  
+--This unfortunately needs to be here as it references Hash Table which needs expr.  
 
 export m2cfile := Pointer "struct M2File*";	
 
@@ -502,7 +505,7 @@ export file := {+
 	outfd:int,		-- file descriptor or -1
         outisatty:bool,
 	unsyncOutputState:fileOutputSyncState, -- default sync state to use for unsync output
-	 -- Mutex for syncronization and for buffering 
+	 -- Mutex for synchronization and for buffering 
 	 -- Lock before output in sync output mode
 	threadSyncMutex:ThreadMutex,
 	-- C structure for this file that provides for thread support

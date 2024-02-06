@@ -49,11 +49,11 @@ class GB_comp : public GBComputation
   s_pair_heap *_spairs;
   s_pair_heap *_gens;
 
-  array<gb_elem *> _gb;
-  array<monideal_pair *> _monideals;  // baggage for each is 'gb_elem *'
+  VECTOR(gb_elem *) _gb;
+  VECTOR(monideal_pair *) _monideals;  // baggage for each is 'gb_elem *'
 
   // Syzygies collected
-  array<gbvector *> _syz;
+  VECTOR(gbvector *) _syz;
 
   // statistics information, much is kept with the s_set
   int _n_gb;

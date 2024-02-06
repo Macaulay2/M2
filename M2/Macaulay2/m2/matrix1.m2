@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "matrix.m2"
+needs "modules.m2"
+needs "quotient.m2"
+
 plurals := hashTable { "matrix" => "matrices" }
 pluralize := s -> if plurals#?s then plurals#s else s|"s"
 pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
@@ -52,6 +56,7 @@ makeRawTable := (R,p) -> (					    -- this is messy
      else applyTable(p,x -> raw promote(x,R)))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
+    -- TODO: why give an error? Compare with map(Module,Nothing,RawMatrix)
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
      samering(M,p);
      R := ring M;
@@ -138,7 +143,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  then error( "expected ", toString numgens M, " by ", toString rankN, " table");
 	  p = toSequence makeRawTable(R,p);
 	  h := (
-	       if class N === Module
+	       if instance(N,Module)
 	       then rawMatrix2(raw cover M, raw cover N, deg, flatten p,0)
 	       else rawMatrix1(raw cover M, rankN, flatten p, 0)
 	       );
@@ -373,7 +378,8 @@ subquotient(Module,Matrix,Nothing) := (F,g,r) -> (
      subquotient(g,r))
 subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
-Matrix ** Matrix := Matrix => ((f,g) -> (
+Matrix ** Matrix := Matrix => (A, B) -> tensor(A, B)
+tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;
@@ -391,14 +397,13 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-Matrix#{Standard,AfterPrint} = 
-Matrix#{Standard,AfterNoPrint} = f -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Matrix";
-     if isFreeModule target f and isFreeModule source f
-     then << " " << target f << " <--- " << source f;
-     << endl;
-     )
+Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (
+    class f,
+    (
+	(tar, src) := apply((target f, source f), M -> moduleAbbrv(M, null));
+	if tar =!= null and src =!= null
+	then (" ", new MapExpression from expression \ {tar, src}))
+    )
 
 -- precedence Matrix := x -> precedence symbol x
 
@@ -430,6 +435,7 @@ isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
+-- TODO: deprecate these
 degreeLength Ideal := I -> degreeLength ring I
 degreesRing Ideal := I -> degreesRing ring I
 
@@ -440,6 +446,7 @@ comodule Module := Module => M -> cokernel super map(M,M,1)
 quotient Module := Module => opts -> M -> comodule M
 comodule Ideal := Module => I -> cokernel generators I
 quotient Ideal := Module => opts -> I -> (ring I) / I
+module   Ideal := Module => (cacheValue symbol module) (I -> image generators I)
 
 genera Ideal := (I) -> genera ((ring I)^1/I)
 genus Ideal := (I) -> genus ((ring I)^1/I)
@@ -480,24 +487,17 @@ generator Module := RingElement => (M) -> (
      if n == 1 then return M_0;
      error "expected ideal to have a single generator")
 
-mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
-Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Ideal of " << ring I << endl;
-     )
+Ideal#AfterPrint = Ideal#AfterNoPrint = (I) ->  (Ideal," of ",ring I)
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
 Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ samering
-dim Ideal := I -> dim cokernel generators I
 Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
 Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
 RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
-degree Ideal := I -> degree cokernel generators I
-trim Ideal := Ideal => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => ((f,I) -> 
      if numRows f === 1
@@ -513,7 +513,6 @@ numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
-poincare Ideal := (I) -> poincare comodule I
 Ideal _ List := (I,w) -> (module I)_w
 
 ring Ideal := (I) -> I.ring
@@ -536,12 +535,6 @@ Ideal == Ideal := (I,J) -> (
 
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
-
-module Ideal := Module => (cacheValue symbol module) (
-     I -> (
-	  M := image generators I;
-	  if I.cache.?poincare then M.cache.poincare = I.cache.poincare;
-	  M))
 
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
@@ -608,14 +601,7 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N,Verify=>false)
-Hom(Module,Matrix) := Matrix => (M,g) -> inducedMap(Hom(M,target g),Hom(M,source g),dual cover M ** g,Verify=>false)
-Hom(Matrix,Matrix) := Matrix => (f,g) -> Hom(source f,g) * Hom(f,source g)
-
-dual(Matrix) := Matrix => {} >> o -> f -> (
-     R := ring f;
-     Hom(f,R^1)
-     )
+-----------------------------------------------------------------------------
 
      -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't use this code in inverse Matrix to check invertibility:
      -- if i % m != 0 then error "matrix not invertible";
@@ -665,6 +651,7 @@ scan({ZZ,QQ}, S -> (
 	       else (ideal lift(generators I,S,opts)) + ideal (presentation ring I ** S))));
 
 content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
+content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
 
 cover(Matrix) := Matrix => (f) -> matrix f
 

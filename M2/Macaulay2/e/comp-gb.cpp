@@ -3,7 +3,6 @@
 #include "comp-gb.hpp"
 
 #include "gb-homog2.hpp"
-#include "gb-test1.hpp"
 #include "gb-sugarless.hpp"
 #include "gb-toric.hpp"
 #include "gauss.hpp"
@@ -13,45 +12,6 @@
 #include "comp-gb-proxy.hpp"
 #include "text-io.hpp"
 #include "finalize.hpp"
-
-/////////////////////////////////////
-// GBBComputation ///////////////////
-/////////////////////////////////////
-GBBComputation *GBBComputation::choose_gb(const Matrix *m,
-                                          M2_bool collect_syz,
-                                          int n_rows_to_keep,
-                                          M2_arrayint gb_weights,
-                                          M2_bool use_max_degree,
-                                          int max_degree,
-                                          int algorithm,
-                                          int strategy,
-                                          int max_reduction_count)
-{
-  return 0;
-}
-
-void GBBComputation::text_out(buffer &o) const
-{
-  o << "-- a raw Groebner basis computation --";
-}
-
-/////////////////////////////////////
-// GroebnerBasis ////////////////////
-/////////////////////////////////////
-const Matrix /* or null */ *GroebnerBasis::get_parallel_lead_terms(
-    M2_arrayint w)
-{
-  ERROR(
-      "Cannot compute parallel lead terms for this kind of Groebner "
-      "computation");
-  return 0;
-}
-
-void GroebnerBasis::text_out(buffer &o) const
-{
-  o << "-- a raw Groebner Basis --";
-}
-/////////////////////////////////////
 
 GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
@@ -149,15 +109,8 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
                                          max_degree);
         break;
       case 8:
-        result = gbB::create(m,
-                             collect_syz,
-                             n_rows_to_keep,
-                             gb_weights,
-                             strategy,
-                             use_max_degree,
-                             max_degree,
-                             max_reduction_count);
-        break;
+        ERROR("Algorithm => Test has been removed from M2");
+        return nullptr;
       default:
         result = gbA::create(m,
                              collect_syz,
@@ -226,7 +179,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 //                                 collect_syz,
 //                                 collect_change,
 //                                 n_rows_to_keep,
-//                                 stategy);
+//                                 strategy);
 //       return 0;
 //     }
 #endif

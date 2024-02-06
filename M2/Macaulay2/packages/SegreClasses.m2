@@ -1,15 +1,16 @@
 newPackage( "SegreClasses",
-    Version =>"1.02",
-    Date => "July 13, 2018",
+    Version =>"1.03",
+    Date => "May 22, 2022",
     Authors => {
         {Name => "Martin Helmer",
-         Email => "m.helmer@math.ku.dk",
+         Email => "mhelmer@ncsu.edu",
          HomePage => "http://martin-helmer.com"},
         {Name => "Corey Harris",
          Email => "Corey.Harris@mis.mpg.de",
          HomePage => "http://coreyharris.name"}
     },
     Headline => "test containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, via a very general Segre class computation",
+    Keywords => {"Intersection Theory"},
     DebuggingMode => false
 );
 
@@ -162,9 +163,9 @@ projectiveDegree(Scheme,Scheme,RingElement) := opts -> (sX,sY,w) -> (
     irrelevantIdeals := values irrelevantIdealsHash / ideal;
     LA := sum(irrelevantIdeals, p -> sub(ideal(1-sum(numgens(p),i->random(kk)*p_i)),R));
     pd := 0;
-    S:=kk(monoid[gens R,getSymbol "t"]);
-    t := last gens S;
-    EqT:=ideal( 1-t*sum((numgens X),j->(random(kk)*substitute(X_j,S))));
+    S:=kk(monoid[gens R,getSymbol "TTT"]);
+    TTT := last gens S;
+    EqT:=ideal( 1-TTT*sum((numgens X),j->(random(kk)*substitute(X_j,S))));
     ZeroDimGB:=groebnerBasis(sub(Y+Ls+G+LA,S)+EqT, Strategy=>"F4");
     pd = numColumns basis(cokernel leadTerm ZeroDimGB);
     return pd;
@@ -390,7 +391,7 @@ makeProductRing (List):=(l)->(
 );
 makeProductRing (Ring, Symbol,List):=(kk,x,l)->(
     if not isField(kk) then (
-        <<"The coefficent ring must be a field, using the default field kk=ZZ/32749"<<endl;
+        <<"The coefficient ring must be a field, using the default field kk=ZZ/32749"<<endl;
         kk=ZZ/32749;
     );
     m:=length(l);
@@ -459,7 +460,7 @@ segre (Ideal,Ideal,QuotientRing) :=opts->(X,Y,A) -> (
     projectiveDegreesList := projectiveDegrees(sX,sY);
     if opts.Verbose then <<"Projective degrees= "<<projectiveDegreesList<<endl;
 
-    --build segre class recursivly from Proj Degs
+    --build Segre class recursively from Proj Degs
     segreClass:=0_A;
     RHS:=sum(0..dim sX,i->alpha^(dim sY-i)*chowClass(sY)) - sum(projectiveDegreesList);
     basisByCodim := partition(i -> sum(flatten exponents i), IA.basis);
@@ -572,7 +573,7 @@ Node
      Key
      	  SegreClasses
      Headline
-     	  Tests containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products - via a very general Segre class computation. The package works for subschemes of products of projective spaces.
+	  Tests containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products - via a very general Segre class computation
      Description
      	  Text
 	      This package tests containment of (irreducible) varieties and computes Segre classes, algebraic multiplicity, and Fulton-MacPherson intersection products. More generally, for subschemes of  \PP^{n_1}x...x\PP^{n_m}, this package tests if a top-dimensional irreducible component of the scheme associated to an ideal is contained in the scheme associated to another ideal. Specialized methods to test the containment of a variety in the singular locus of another are provided, these methods work without computing the ideal of the singular locus and can provide significant speed-ups relative to the standard methods when the singular locus has a complicated structure. The package works for subschemes of products of projective spaces.
@@ -827,7 +828,7 @@ Node
     	isComponentContained
 	(isComponentContained, Ideal,Ideal)
     Headline
-    	This method tests containment of (irreducible) varieties; more generally it tests if a top-dimensional irreducible component of the scheme associated an ideal is contained in the scheme associated to another ideal
+	Tests containment of (irreducible) varieties
     Usage
     	isComponentContained(IX,IY)
     Inputs
@@ -873,7 +874,7 @@ Node
 	    a multi-homogeneous primary ideal defining a closed subscheme of \PP^{n_1}x...x\PP^{n_m}; @TO makeProductRing@ builds the graded coordinate ring of \PP^{n_1}x...x\PP^{n_m}.
    Outputs
         contSingLoc:Boolean
-	    whether or not the variety X associated to IX is contained in the singular locus of the vareity asssociated to the radical of IY 
+	    whether or not the variety X associated to IX is contained in the singular locus of the variety associated to the radical of IY 
    Description
        Text
            For a subvariety X of \PP^{n_1}x...x\PP^{n_m} and an irreducible subscheme Y of \PP^{n_1}x...x\PP^{n_m} this command tests whether X is contained in the singular locus of the reduced scheme of Y (i.e. the singular locus of the variety defined by the radical of the ideal defining Y).
@@ -1034,7 +1035,7 @@ y=(gens(R))_{4..7}
 Qx = ideal (x#0*x#1 - x#2*x#3)
 Qy=sub(Qx,matrix{join(y,for i from 4 to 7 list 0)})
 D = minors(2,matrix{x,y})
-I=ideal(Qx,Qy,D) --Q in the diagional
+I=ideal(Qx,Qy,D) --Q in the diagonal
 Cx=ideal random({1,0},R)
 A = ZZ[a,b,Degrees=>{{1,0},{0,1}}]/(a^4,b^4)
 s=segre(Cx,I,A,Verbose=>true)
@@ -1129,5 +1130,6 @@ assert(isComponentContained(X,Y)==true)
 
 end
 	    
+
 
 

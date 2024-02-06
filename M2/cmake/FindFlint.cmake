@@ -8,6 +8,7 @@
 # Once done this will define
 #
 #  FLINT_FOUND		- system has the FLINT library with correct version
+#  FLINT_ROOT		- the FLINT install prefix
 #  FLINT_INCLUDE_DIR	- the FLINT include directory
 #  FLINT_LIBRARIES	- the FLINT library
 #  FLINT_VERSION	- FLINT version
@@ -86,9 +87,11 @@ if(NOT FLINT_FOUND)
       )
   endif()
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Flint DEFAULT_MSG FLINT_INCLUDE_DIR FLINT_LIBRARIES FLINT_VERSION_OK)
+  string(REGEX REPLACE "/include.*" "" FLINT_ROOT "${FLINT_INCLUDE_DIR}")
 
-  mark_as_advanced(FLINT_INCLUDE_DIR FLINT_LIBRARIES)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(Flint DEFAULT_MSG FLINT_ROOT FLINT_INCLUDE_DIR FLINT_LIBRARIES FLINT_VERSION_OK)
+
+  mark_as_advanced(FLINT_ROOT FLINT_INCLUDE_DIR FLINT_LIBRARIES)
 
 endif()

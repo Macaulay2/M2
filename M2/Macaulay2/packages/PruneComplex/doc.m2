@@ -27,7 +27,7 @@ Description
 Caveat
   Only supports localization at prime ideals.
 SeeAlso
-  "LocalRings"
+  "LocalRings :: LocalRings"
 ///
 
 doc ///

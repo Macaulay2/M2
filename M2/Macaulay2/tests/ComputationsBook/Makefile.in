@@ -8,7 +8,8 @@ all:
 $(CHAPTERS):; $(MKDIR_P) "$@"
 check capture changes :: Makefile.chapter $(CHAPTERS)
 $(foreach d,$(CHAPTERS),											\
-	$(eval capture check ::; + $(MAKE) -C $d -I .. $$@)							\
+	$(eval capture check ::; + @echo "testing: ComputationsBook::$d"; \
+		$(MAKE) --no-print-directory -C $d -I .. $$@) \
 	$(eval changes::; diff -u @srcdir@/$d/chapter.m2 @srcdir@/$d/test.m2 || true)				\
 	$(eval changes::; diff -u @srcdir@/$d/chapter.out.expected @srcdir@/$d/test.out.expected || true))
 clean:; rm -f */*.trim */*.out programming/foo */*.tmp

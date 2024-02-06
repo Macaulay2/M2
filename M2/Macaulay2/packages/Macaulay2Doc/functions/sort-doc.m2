@@ -2,6 +2,8 @@
 --- author(s): 
 --- notes: 
 
+-- TODO: (sort,List,Function)
+
 document { 
      Key => sort,
      Headline => "sort a list or columns of a matrix",

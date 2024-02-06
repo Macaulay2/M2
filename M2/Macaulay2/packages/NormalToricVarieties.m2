@@ -25,7 +25,8 @@ newPackage(
         Email => "ggsmith@mast.queensu.ca", 
         HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
     Headline => "routines for working with normal toric varieties and related objects",
-    PackageExports => {"Polyhedra", "Schubert2"},
+    Keywords => {"Toric Geometry"},
+    PackageExports => {"Polyhedra", "Schubert2", "Varieties"},
     PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
     DebuggingMode => false
     )
@@ -55,7 +56,6 @@ export {
     "isFano", 
     "isFibration",
     "isNef",  
-    "isProjective",
     "isProper", 
     "isQQCartier", 
     "kleinschmidt",

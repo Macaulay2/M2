@@ -9,8 +9,6 @@
 #include "ZZ.hpp"
 #include <vector>
 
-// Note: the following must be allocated with GC_MALLOC_??
-// and freed with GC_FREE.
 struct hm_elem : public our_new_delete
 {
   hm_elem *next;

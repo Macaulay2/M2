@@ -23,7 +23,7 @@
 --- Output:
 ---	A list of all prime ideals P such that
 ---	(a) u P \subseteq P^{[p]}, and
----	(b) the action of uT on the the annihilator of P on the injective hull of the residue field of R 
+---	(b) the action of uT on the annihilator of P on the injective hull of the residue field of R 
 ---	is not the zero Frobenius map.
 
 compatibleIdeals = method( Options => { FrobeniusRootStrategy => Substitution } )

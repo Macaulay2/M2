@@ -4,7 +4,7 @@ for example, under ubuntu 12.04.  Why?
 Part of it is probably the garbling of printed output, since separating
 examples into lines can get confused.
 
-Sometimes tasks run forver, using cpu time.  But they're too simple!
+Sometimes tasks run forever, using cpu time.  But they're too simple!
 
 
 Index: trunk/Macaulay2/packages/Macaulay2Doc/threads.m2

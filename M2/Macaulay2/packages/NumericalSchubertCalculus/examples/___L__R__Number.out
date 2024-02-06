@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: -913431787
+
+i1 : LRNumber({{1},{1},{1},{1}},2,4)
+
+o1 = 2
+
+i2 : LRNumber({{2,4},{2,4},{2,4},{2,4}},2,4)
+
+o2 = 2
+
+i3 : LRNumber({{1},{1},{1},{1}},2,4,Strategy => "phc")
+PHCv2.4.82 released 2020-11-30
+
+
+writing data to file /tmp/M2-32214-0/2PHCinput
+running phc -e, writing output to /tmp/M2-32214-0/3PHCoutput
+opening output file /tmp/M2-32214-0/3PHCoutput
+
+o3 = 2
+
+i4 : 

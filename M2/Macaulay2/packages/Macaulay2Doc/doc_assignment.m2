@@ -242,6 +242,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
+               -* no-capture-flag *-
 	       String * String = peek;
 	       "left" * "right" = "value"
 	  ///,
@@ -467,9 +468,8 @@ document {
 	       ///g = () -> (
      x := local x;
      R := QQ[x];
-     (x+2)^10);
-g()
-	       ///
+     (x+2)^10);///,
+     	       ///g()///
 	       }
 	  ),
      SYNOPSIS {
@@ -517,6 +517,7 @@ g()
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
+              -* no-capture-flag *-
 	       String * String := peek;
 	       "left" * "right"
 	  ///,
@@ -550,10 +551,10 @@ g()
 	       ZZ + ZZ := (x,y) -> x+y+100
 	       3 + 4
 	  ///,
-	  "By contrast, addition of complex numbers is not internal, and can be overridden.",
+	  "By contrast, division with remainder of rational numbers is not internal, and can be overridden.",
 	  EXAMPLE lines ///
-	       CC + CC := (w,z) -> w*z
-	       ii + ii
+	       QQ // QQ := (w,z) -> (numerator w + numerator z)/(denominator w + denominator z)
+	       (3/5) // (6/7)
 	  ///
 	  },
      SYNOPSIS {

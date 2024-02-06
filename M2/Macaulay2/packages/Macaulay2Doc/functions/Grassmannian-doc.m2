@@ -17,7 +17,7 @@ document { Key => {(Grassmannian, ZZ, ZZ),
      "If a polynomial ring ", TT "R", " is given as the third argument, then the resulting ideal is moved to that ring.",
      EXAMPLE lines ///
 	 Grassmannian(1,3)
-	 J = Grassmannian(2,5, CoefficientRing => ZZ/31, Variable => T)
+	 J = Grassmannian(2,5, CoefficientRing => ZZ/31, Variable => T) -* no-capture-flag *-
      ///,
      "The variables of the ring are based on the symbol provided, but assignments
      are not made until the ring or the ideal is assigned to a global variable or is submitted to ", TO "use", ", as follows.",
@@ -37,7 +37,7 @@ document {
 	  Schubert,
 	  [Schubert,CoefficientRing],
 	  [Schubert,Variable]},
-     Headline => "find the Pluecker ideal of a Schubert variety",
+     Headline => "find the Plücker ideal of a Schubert variety",
      Usage => "Schubert(k,n,sigma)",
      Inputs => { 
 	  "k", 

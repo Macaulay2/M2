@@ -40,7 +40,7 @@ struct ThreadTask
   void* m_UserData;
   ///result of task
   void* m_Result;
-  ///Is this a task from the M2 interperter
+  ///Is this a task from the M2 interpreter
   bool m_IsM2Task;
   ///is the task done
   bool m_Done;

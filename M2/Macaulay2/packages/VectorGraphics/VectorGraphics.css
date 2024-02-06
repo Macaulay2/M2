@@ -1,0 +1,80 @@
+/* svg stuff (used by VectorGraphics.m2) */
+
+svg.M2Svg {
+    position: relative;
+    display: inline;
+    stroke-linejoin:round;
+    stroke:black;
+    stroke-opacity:1;
+    fill:none;
+    fill-opacity:1;
+    vertical-align:middle;
+    stroke-width:1%;
+}
+
+/* transferred from interface_common.css */
+svg.M2Svg path { /* because of KaTeX annoying def */
+    stroke: inherit;
+}
+/*
+.katex .M2Html svg text {
+    stroke: none;
+}
+*/
+svg.M2Svg { /* because of KaTeX annoying def */
+    /*
+    display: inherit;
+    position: inherit;
+*/
+    width: inherit;
+    height: inherit;
+}
+
+
+.M2SvgDraggable {
+    cursor: grab;
+}
+
+.M2SvgDraggable.active {
+    cursor: grabbing;
+}
+
+.M2Svg text {
+/*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
+absolute sounds bad but actually it's not really absolute since it's in svg units */
+    font-family: sans-serif;
+}
+
+.M2Svg foreign-object {
+/*    font-size: 14px;*/ /* same. absolute sounds bad but actually it's not really absolute since it's in svg units */
+}
+
+.gfxauto {
+    fill-opacity: 75%;
+    cursor: pointer;
+}
+
+.gfxauto .gfxautoplay {
+    visibility: inherit;
+}
+
+.gfxauto .gfxautostop {
+    visibility: hidden;
+}
+
+.gfxauto.active .gfxautoplay {
+    visibility: hidden;
+}
+
+.gfxauto.active .gfxautostop {
+    visibility: inherit;
+}
+
+
+.M2Svg > .gfxauto {
+    visibility: hidden;
+}
+
+.M2Svg:hover > .gfxauto {
+    visibility: visible;
+}

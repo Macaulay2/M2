@@ -1,6 +1,6 @@
 these tests have been installed, except:
 
-	for res we have never provided a hilbert function hint and I don't know how to do it
+	for res we have never provided a Hilbert function hint and I don't know how to do it
 	IM2_GB_set_hilbert_function seems to be only for gb's, not for res's
 
 	how do I tell whether a matrix is homogeneous with respect to just the first component of the degree?

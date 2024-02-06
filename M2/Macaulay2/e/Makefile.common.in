@@ -66,12 +66,12 @@ COMPILE.cpp = $(COMPILE.cc)
 #	$(WHY)
 	$(SHOW)"MKDEP $*.cpp"
 	$(HIDE)$(MKDIR_P) `dirname "$@"`
-	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
+	$(HIDE)@CXX@ -MT $@ -MT $*.o -MM -MP $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
 %.dep: %.c
 #	$(WHY)
 	$(SHOW)"MKDEP $*.c"
-	$(HIDE)@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
+	$(HIDE)@CC@  -MT $@ -MT $*.o -MM -MP $(CFLAGS)   $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "

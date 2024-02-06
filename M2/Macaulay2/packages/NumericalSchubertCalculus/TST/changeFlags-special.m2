@@ -16,7 +16,7 @@ check'changeFlags = (SchPblm,k,n) -> (
     MX := bigCellLocalCoordinates(k,n);
     conds := SchPblm / first;
     sols = apply(sols1, s->flatten take(entries s,n-k));
-    solsT := changeFlags'oneHomotopy(MX, sols, (conds, Flags1, Flags2));
+    solsT := changeFlags'OneHomotopy(MX, sols, (conds, Flags1, Flags2));
     sols2 := changeFlags(MX, sols, (conds, Flags1, Flags2));
     assert areEqual(sortSolutions sols2, sortSolutions solsT,Tolerance=>1e-4)
     )

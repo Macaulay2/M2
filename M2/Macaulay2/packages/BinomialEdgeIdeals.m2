@@ -6,6 +6,7 @@ newPackage("BinomialEdgeIdeals",
       Email => "windisch@ovgu.de",
       HomePage => "http://www.uni-magdeburg.de/windisch/"}},
    Headline => "binomial edge ideals",
+   Keywords => {"Edge Ideals"},
    PackageImports => {"Graphs","Binomials"}
 	)
 

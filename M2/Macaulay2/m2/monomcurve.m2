@@ -1,6 +1,8 @@
 -- Copyright 1996 Michael E. Stillman
 -- Based on the Macaulay script written by David Eisenbud
 
+needs "newring.m2"
+
 monomialCurveIdeal = (S, a) -> (
     -- check that S is a polynomial ring over a field
     n := # a;
@@ -21,8 +23,6 @@ monomialCurveIdeal = (S, a) -> (
     j := generators kernel map(R1, R2, mm);
     ideal substitute(j, submatrix(vars S, {0..n}))
     )
-
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

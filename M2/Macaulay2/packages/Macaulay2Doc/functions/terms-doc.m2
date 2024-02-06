@@ -18,7 +18,7 @@ document {
 	       "R = QQ[a..d];",
 	       "terms(a+d^2-1+a*b*c)"
 	       },
-	  "In the situtation where the ring is a polynomial ring over another 
+	  "In the situation where the ring is a polynomial ring over another 
 	  polynomial ring, the polynomial is split using the monomials
 	  of the outer ring.",
 	  EXAMPLE {

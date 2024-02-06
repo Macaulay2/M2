@@ -1,8 +1,10 @@
 // Copyright 2005 Michael E. Stillman.
 
-#include "gausser.hpp"
-#include "f4-mem.hpp"
-#include "moninfo.hpp"
+#include "f4/gausser.hpp"
+#include "ZZp.hpp"        // for Z_mod
+#include "f4/f4-mem.hpp"  // for F4Mem, F4Vec
+#include "ring.hpp"       // for Ring
+#include "ringelem.hpp"   // for ring_elem
 
 Gausser *Gausser::newGausser(const Ring *K, F4Mem *Mem0)
 {

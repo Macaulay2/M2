@@ -7,6 +7,7 @@ newPackage(
         Authors => {{Name => "Hiep Dang",
                     Email => "hiepdt_tt@dlu.edu.vn"}},
         Headline => "Enumeration of rational curves via torus actions",
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false
         )
 

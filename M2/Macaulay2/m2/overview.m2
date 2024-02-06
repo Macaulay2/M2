@@ -918,7 +918,7 @@ document { "making generic matrices",
      matrix is one whose entries are independent variables from the ring, subject
      to certain relations.",
      PARA,
-     "We begin by making a ring with enough variables to accomodate all
+     "We begin by making a ring with enough variables to accommodate all
      the examples.",
      EXAMPLE "R = ZZ/101[a..z];",
      "We can make a general generic matrix with ", TO "genericMatrix", ".  We specify
@@ -986,16 +986,17 @@ document { "determinants",
      "One can also compute the exterior power of more general maps between modules.  See ",
      TO "exteriorPower", " for details and an example.",
      PARA,
-     "Macaulay 2 can use two different algorithms to compute determinants:
+     "Macaulay 2 can use three different algorithms to compute determinants:
      the ", TO "Cofactor", " method, which expands a determinant using the standard cofactor
      approach, and ", TO "Bareiss", " which uses a fraction-free variant of Gaussian elimination
-     to compute a determinant.  The algorithm to use may be chosen using the optional ",
+     to compute a determinant. The ", TO "Dynamic", " algorithm implements a version of cofactor
+     expansion, with caching of intermediate results. The algorithm to use may be chosen using the optional ",
      TO "Strategy", " argument:",
      EXAMPLE {
 	  "m = matrix{{0,a,b},{a+b,a,d},{e,f,g}}",
 	  "det(m, Strategy => Cofactor)",
 	  "minors(2,m, Strategy => Bareiss)",
-	  "exteriorPower(2,m, Strategy => Bareiss)",
+	  "exteriorPower(2,m, Strategy => Dynamic)",
 	  },
      "One warning is in order here: the Bareiss algorithm requires division in the base ring,
      and so can yield the INCORRECT answer if the base ring contains zero divisors.  However,
@@ -1003,6 +1004,8 @@ document { "determinants",
      matrix is particularly sparse.  Consequently, the default strategy for rings which are fields or are
      not quotients of polynomial rings is ", TO "Bareiss", ", while the default for quotients of polynomial
      rings that are not (declared to be) fields is ", TO "Cofactor", ".",
+     " The ", TO "Dynamic", " algorithm can sometimes also result in significant speedups compared to ", TO "Cofactor",
+     " and ", TO "Bareiss", ", at the cost of a slight memory overhead."
      PARA,
      "Sometimes finer control is needed when one is computing the ideal of minors of a larger
      matrix.  Compute the ideal of some determinants using ", TO "minors", " with optional

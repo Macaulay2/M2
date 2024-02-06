@@ -1,0 +1,39 @@
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows#manual-events
+# https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#manually-running-a-workflow
+
+name: Package Review Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to install and check'
+        required: true
+        default: 'FirstPackage'
+
+jobs:
+  package-review:
+    runs-on: ubuntu-latest
+    name: ${{ github.event.inputs.package }}@${{ github.event.ref }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run examples and tests
+        uses: Macaulay2/M2/.github/actions/package-review@master
+        id: run_tests
+        with:
+          package: ${{ github.event.inputs.package }}
+
+      - name: Upload errors
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+           name: ${{ github.event.inputs.package }}-errors
+           path: |
+             ${{ github.workspace }}/share/doc/Macaulay2/${{ github.event.inputs.package }}/example-output/*.errors
+#            /tmp/M2-*/*.tmp # TODO: since tests run in a container, I don't know how to access them
+
+      - name: Summary
+        run: |
+          echo "${{ steps.run_tests.outputs.numExampleErrors }} error(s) occured running examples"
+          echo "${{ steps.run_tests.outputs.numTestErrors }} error(s) occured running tests"

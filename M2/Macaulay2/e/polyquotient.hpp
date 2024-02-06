@@ -3,10 +3,19 @@
 #ifndef _polyquotient_hpp_
 #define _polyquotient_hpp_
 
-#include <iostream>
+#include "engine-includes.hpp"
+
 #include "poly.hpp"
-#include "monideal.hpp"
+#include "polyring.hpp"
 #include "qring.hpp"
+#include "ringelem.hpp"
+
+class FreeModule;
+class GBComputation;
+class Ring;
+class buffer;
+class gbvector;
+struct RingMap;
 
 /**
  * \ingroup polynomialrings
@@ -211,18 +220,13 @@ class PolyRingQuotient : public PolyRingFlat
     return is_graded() && numerR_->PolyRing::is_homogeneous(f);
   }
 
-  virtual void degree(const ring_elem f, int *d) const
-  {
-    numerR_->PolyRing::degree(f, d);
-  }
-
-  virtual bool multi_degree(const ring_elem f, int *d) const
+  virtual bool multi_degree(const ring_elem f, monomial d) const
   {
     return numerR_->PolyRing::multi_degree(f, d);
   }
 
   virtual void degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const
   {
@@ -232,14 +236,16 @@ class PolyRingQuotient : public PolyRingFlat
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
                                int deg,
-                               M2_arrayint wts) const
+                               const std::vector<int> &wts) const
   {
     ring_elem result = numerR_->PolyRing::homogenize(f, v, deg, wts);
     normal_form(result);
     return result;
   }
 
-  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const
+  virtual ring_elem homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const
   {
     ring_elem result = numerR_->PolyRing::homogenize(f, v, wts);
     normal_form(result);
@@ -248,7 +254,7 @@ class PolyRingQuotient : public PolyRingFlat
 
   virtual ring_elem mult_by_term(const ring_elem f,
                                  const ring_elem c,
-                                 const int *m) const
+                                 const_monomial m) const
   {
     ring_elem result = numerR_->mult_by_term(f, c, m);
     normal_form(result);
@@ -271,14 +277,14 @@ class PolyRingQuotient : public PolyRingFlat
     return numerR_->PolyRing::list_form(coeffR, f);
   }
 
-  virtual ring_elem *get_parts(const M2_arrayint wts,
+  virtual ring_elem *get_parts(const std::vector<int> &wts,
                                const ring_elem f,
                                long &result_len) const
   {
     return numerR_->PolyRing::get_parts(wts, f, result_len);
   }
 
-  virtual ring_elem get_part(const M2_arrayint wts,
+  virtual ring_elem get_part(const std::vector<int> &wts,
                              const ring_elem f,
                              bool lobound_given,
                              bool hibound_given,
@@ -289,7 +295,7 @@ class PolyRingQuotient : public PolyRingFlat
         wts, f, lobound_given, hibound_given, lobound, hibound);
   }
 
-  virtual ring_elem make_flat_term(const ring_elem a, const int *m) const
+  virtual ring_elem make_flat_term(const ring_elem a, const_monomial m) const
   {
     ring_elem result = numerR_->PolyRing::make_flat_term(a, m);
     normal_form(result);
@@ -298,13 +304,13 @@ class PolyRingQuotient : public PolyRingFlat
 
   virtual ring_elem make_logical_term(const Ring *coeffR,
                                       const ring_elem a,
-                                      const int *exp) const
+                                      const_exponents exp) const
   {
     ring_elem result = numerR_->PolyRing::make_logical_term(coeffR, a, exp);
     normal_form(result);
     return result;
   }
-  //  virtual ring_elem term(const ring_elem a, const int *m) const = 0;
+  //  virtual ring_elem term(const ring_elem a, const_monomial m) const = 0;
 
   virtual ring_elem lead_flat_coeff(const ring_elem f) const
   {
@@ -319,7 +325,7 @@ class PolyRingQuotient : public PolyRingFlat
 
   virtual ring_elem get_coeff(const Ring *coeffR,
                               const ring_elem f,
-                              const int *vp) const
+                              const_varpower vp) const
   {
     return numerR_->PolyRing::get_coeff(coeffR, f, vp);
   }
@@ -337,14 +343,14 @@ class PolyRingQuotient : public PolyRingFlat
   // from
   // the end.  get_terms(--,f,0,0) is the logical lead term of f.
 
-  virtual const int *lead_flat_monomial(const ring_elem f) const
+  virtual const_monomial lead_flat_monomial(const ring_elem f) const
   {
     return numerR_->PolyRing::lead_flat_monomial(f);
   }
 
   virtual void lead_logical_exponents(int nvars0,
                                       const ring_elem f,
-                                      int *result_exp) const
+                                      exponents_t result_exp) const
   {
     numerR_->PolyRing::lead_logical_exponents(nvars0, f, result_exp);
   }
@@ -360,7 +366,7 @@ class PolyRingQuotient : public PolyRingFlat
     // I dont believe that a normal form is required here (MES)
   }
 
-  virtual void monomial_divisor(const ring_elem a, int *exp) const
+  virtual void monomial_divisor(const ring_elem a, exponents_t exp) const
   {
     return numerR_->PolyRing::monomial_divisor(a, exp);
   }
@@ -388,7 +394,7 @@ class PolyRingQuotient : public PolyRingFlat
     return numerR_->PolyRing::divide_by_var(n, d, a);
   }
 
-  virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const
+  virtual ring_elem divide_by_expvector(const_exponents exp, const ring_elem a) const
   {
     return numerR_->PolyRing::divide_by_expvector(exp, a);
   }

@@ -40,7 +40,7 @@ NormalToricVariety#id = X -> map(X,X,1)
 
 -- THIS METHOD IS NOT EXPORTED.
 -- computes and caches the supporting hyperplanes with outer normal vectors
--- fo each cone
+-- of each cone
 outerNormals = method()
 outerNormals (NormalToricVariety, List) := List => (X, sigma) -> (
     if not X.cache.?outerNormals then (

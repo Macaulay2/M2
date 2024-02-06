@@ -4,8 +4,6 @@
 #define _res2_hh_
 
 #include "style.hpp"
-#include "array.hpp"
-#include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "poly.hpp"
@@ -33,7 +31,7 @@ enum {
 };
 
 const int FLAGS_SORT = 7;     // mask for comparison type
-const int FLAGS_DESCEND = 8;  // first 12 bits are for the two comparsion types
+const int FLAGS_DESCEND = 8;  // first 12 bits are for the two comparison types
 const int FLAGS_REVERSE = 16;
 const int FLAGS_DEGREE = 32;
 const int FLAGS_LEVEL = (1 << 13);  // bit 13
@@ -102,10 +100,10 @@ class res2_comp : public ResolutionComputation
   stash *res2_pair_stash;
   stash *mi_stash;
 
-  array<res2_level *> resn;  // The resolution itself
+  VECTOR(res2_level *) resn;  // The resolution itself
 
   // Degree and length limits, monomial size limit
-  array<res2_pair *> base_components;
+  VECTOR(res2_pair *) base_components;
 
   int lodegree;  // Base degree
   int hidegree;  // Highest (slanted) degree appearing (offset from lodegree).
@@ -199,7 +197,7 @@ class res2_comp : public ResolutionComputation
   void handle_pair_by_level(res2_pair *p);
   void handle_pair_by_degree(res2_pair *p);
 
-  int sort_value(res2_pair *p, const int *sort_order) const;
+  int sort_value(res2_pair *p, const std::vector<int> sort_order) const;
   int compare_res2_pairs(res2_pair *f, res2_pair *g) const;
   res2_pair *merge_res2_pairs(res2_pair *f, res2_pair *g) const;
   void sort_res2_pairs(res2_pair *&p) const;
@@ -272,8 +270,8 @@ class res2_comp : public ResolutionComputation
  private:
   void reduce_minimal(int x,
                       res2term *&f,
-                      array<res2_pair *> &elems,
-                      array<res2term *> &stripped) const;
+                      VECTOR(res2_pair *)& elems,
+                      VECTOR(res2term *)& stripped) const;
 
  public:
   FreeModule *free_of(int i) const;
@@ -330,7 +328,6 @@ class res2_comp : public ResolutionComputation
   const Ring *get_ring() const { return P; }
   const Monoid *getMonoid() const { return M; }
   const Ring *getCoefficientRing() const { return K; }
-  const Monoid *degree_monoid() const { return P->degree_monoid(); }
 };
 #endif
 

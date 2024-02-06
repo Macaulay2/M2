@@ -6,19 +6,16 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <iostream>
+
+#include <type_traits> // define bool_constant to fix issue #2347
+#include <utility>
+#include <ratio> //fix compilation errors on some macs
+
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpragmas"
-// The following line, which would be useful, doesn't quiet g++-8 about pragma omp...
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-
-// this fixes a weird problem in the package "openblas" of Arch Linux, which somehow fails to declare this function:
-extern "C" void openblas_set_num_threads(int num_threads);
-
+#define bool_constant givaro_bool_constant
 #include <fflas-ffpack/ffpack/ffpack.h>
+#undef bool_constant
 #pragma GCC diagnostic pop
 
 namespace M2 {
@@ -29,7 +26,7 @@ namespace M2 {
    @brief wrapper for the FFPACK::ModularBalanced<double> field implementation
 */
 
-class ARingZZpFFPACK : public RingInterface
+class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
 {
  public:
   /// @jakob extract Signed_Trait from givaro.  Or use c++11.
@@ -43,6 +40,7 @@ class ARingZZpFFPACK : public RingInterface
 
   typedef FieldType::Element ElementType;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   typedef uint32_t
       UTT;  ////// attention: depends on STT;currently manual update
@@ -125,6 +123,11 @@ class ARingZZpFFPACK : public RingInterface
     result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_int();
+  }
+
   /** @} */
 
   /** @name operators
@@ -141,7 +144,7 @@ class ARingZZpFFPACK : public RingInterface
   void set(ElementType &result, ElementType a) const { result = a; }
   void init(ElementType &result) const;
 
-  void clear(ElementType &result) const;
+  static void clear(ElementType &result) {};
 
   void set_zero(ElementType &result) const;
 

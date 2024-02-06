@@ -9,7 +9,7 @@
 #include "types.h"
 #include "debug.h"
 
-#include "engine.h" /* to get IM2_initialize() : */
+#include <engine.h> /* to get IM2_initialize() : */
 #include "supervisorinterface.h"
 
 #include <gdbm.h>
@@ -70,11 +70,6 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 #endif
 
   system_cpuTime_init();
-
-#ifdef WITH_PYTHON
-  Py_SetProgramName(argv[0]);
-  Py_Initialize();
-#endif
 
   abort_jmp.is_set = FALSE;
   interrupt_jmp.is_set = FALSE;
@@ -193,8 +188,8 @@ void* interpFunc(ArgCell* vargs)
   clean_up();
 
 #ifdef MEMDEBUG
-  fprintf(stderr, "gc: heap size = %d, free space divisor = %ld, collections = %ld\n",
-	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
+  fprintf(stderr, "gc: heap size = %zu, free space divisor = %ld, collections = %ld\n",
+	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no /* -old_collections */);
 #endif
 
   exit(0);

@@ -36,7 +36,7 @@ public:
   
   // if m is the begin part of the last range allocated here, then this pops that.
   // Afterwards, one can pop the next, etc.  If they are popped out of order though,
-  // undedfined behavior results.
+  // undefined behavior results.
   void popLastAlloc(int* m) { mCount--; mArena.freeTop(m); }
 
   // If m is a pointer into the last monomial (i.e. >= a.first <= a.second), this resets the monomial
@@ -191,7 +191,7 @@ public:
 
   // There are two ways to insert monomials.
   // 1. the monomial was just allocated on monomialMemorySpace().
-  // 2. the momomial exists outside of htis memory block.
+  // 2. the momomial exists outside of this memory block.
   // In the latter case, the monomial will be copied to the block.
   //
   // Another way is to insert a monomial via a transformer function.  TODO.
@@ -249,7 +249,7 @@ public:
 
   // There are two ways to insert monomials.
   // 1. the monomial was just allocated on monomialMemorySpace().
-  // 2. the momomial exists outside of htis memory block.
+  // 2. the momomial exists outside of this memory block.
   // In the latter case, the monomial will be copied to the block.
   //
   // Another way is to insert a monomial via a transformer function.  TODO.

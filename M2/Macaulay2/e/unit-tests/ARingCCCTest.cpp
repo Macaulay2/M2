@@ -19,7 +19,7 @@ bool almostEqual(const M2::ARingCCC& C,
 {
   mpfr_t epsilon;
   mpfr_init2(epsilon, C.get_precision());
-  mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);  // should there be exp() ???
+  mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);  // should there be exp() ???
 
   M2::ARingCCC::ElementType c;
   C.init(c);
@@ -240,7 +240,7 @@ TEST(ARingCCC, power_and_invert)
       C.power(c, a, e2);
       C.power(d, a, e1 + e2);
       C.mult(c, b, c);
-      EXPECT_TRUE(almostEqual(C, 90, c, d)); /* exponentiantion gives
+      EXPECT_TRUE(almostEqual(C, 90, c, d)); /* exponentiation gives
                                                 relatively small number
                                                 of correct digits */
 

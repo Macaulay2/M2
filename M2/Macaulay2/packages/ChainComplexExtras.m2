@@ -6,10 +6,11 @@ newPackage(
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
 	  {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
-	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
 	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"}
 	  },
      Headline => "some additional ChainComplex Functions",
+     Keywords => {"Homological Algebra"},
      DebuggingMode =>false
      )
 
@@ -231,7 +232,7 @@ C1=appendZeroMap prependZeroMap C
 removeZeroTrailingTerms C1
 ///
 
-Hom(ChainComplex,ChainComplex) := (F,G)->(
+Hom(ChainComplex, ChainComplex) := opts -> (F,G) -> (
    outputCx := new ChainComplex;
    outputCx.ring = ring F;
    topDegree := max G - min F;
@@ -244,10 +245,10 @@ Hom(ChainComplex,ChainComplex) := (F,G)->(
       myFn := i -> (fold((a,b) -> (a || b),
 		         apply(targetList,
 			       j -> (if (j == i) then 
-			               Hom(F_i,G.dd_(i+index1))
+			               Hom(F_i, G.dd_(i+index1), opts)
 				     else if (j == i+1) then
-				       (-1)^index1*Hom(F.dd_j,G_(i+index1))
-				     else map(Hom(F_j,G_(j+index1-1)),Hom(F_i,G_(i+index1)),0)
+				       (-1)^index1 * Hom(F.dd_j, G_(i+index1), opts)
+				     else map(Hom(F_j, G_(j+index1-1), opts), Hom(F_i, G_(i+index1), opts), 0)
 				     )
 				)
 			   )
@@ -269,7 +270,7 @@ chainComplexMap=method(
 )
 chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    --- the code commented out should also work, and is in some sense
-   --- more desireable as it uses map in the code.  However, something squirly
+   --- more desirable as it uses map in the code.  However, something squirly
    --- happens in the map code.
    ---    startDeg := min C;
    ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;

@@ -20,9 +20,10 @@ newPackage(
     	Date => "May 10, 2013",
     	Authors => {
 	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
-	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
+	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
+	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
@@ -36,6 +37,7 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "http://j-sag.org/Volume5/"
 	     },
+	PackageImports => {"MinimalPrimes"},
     	DebuggingMode => false
     	)
 
@@ -69,7 +71,7 @@ export {
 -- Method: coeffVarFF
 -- Input: (RingElement,RingElement) -- (rational function, variable)
 -- Output: List -- list of {coeff,degree} where f is treated as a polynomial
---     	   in var with coefficients in the the rational function field of the
+--     	   in var with coefficients in the rational function field of the
 --     	   other variables.
 -- Description:
 -- As long as the denominator of f does not involve var, this method
@@ -378,7 +380,7 @@ laurentNormalize(Matrix,RingElement) := (f,var) -> (
      subs1 = matrix{subList};
      invSubs1 = matrix{invSubList};
      f2 = sub(f,subs1); -- Now each term of f2_(0,0) has a unique power of var.
-     minCoeff = (laurentCoeffList(f2_(0,0),var))#0; -- Get the smallest power of var occuring in f2_(0,0) and also its coefficient.
+     minCoeff = (laurentCoeffList(f2_(0,0),var))#0; -- Get the smallest power of var occurring in f2_(0,0) and also its coefficient.
      D = mutableIdentity(ring f,numcols f);
      -- Need numcols f >= 2 here.
      phiD = map(S, ring minCoeff#1); 
@@ -1455,7 +1457,7 @@ monicPolySubs(RingElement,List) := opts -> (f,varList) -> (
 	  print "The element had degree zero in the last variable.";
 	  degZeroSub = mutableMatrix vars R;
 	  degZeroSub = columnSwap(degZeroSub,last usedVarPosition,lastVarPosition);
-	  f = sub(f,degZeroSub); -- Interchange variables so that last varList is involved in f.  Now f has positive degree in last varList.
+	  f = sub(f,matrix degZeroSub); -- Interchange variables so that last varList is involved in f.  Now f has positive degree in last varList.
      );
      
      -- Now we enter the general algorithm.
@@ -1493,7 +1495,7 @@ monicPolySubs(RingElement,List) := opts -> (f,varList) -> (
      if degZeroSub =!= null then (
 	  print("degZeroSub: "|toString(degZeroSub));
 	  tempSub = columnSwap(tempSub,last usedVarPosition,lastVarPosition);
-	  tempInvSub = sub(tempInvSub,degZeroSub);
+	  tempInvSub = sub(matrix tempInvSub,matrix degZeroSub);
      );
      
      return (matrix tempSub,matrix tempInvSub);
@@ -1997,7 +1999,7 @@ document {
      },
      
      PARA{}, "Notice that after multiplying ", TT "U", " by the unimodular matrix ", TT "A", " and applying the
-     change of variables ", TT "B", " (using the ", TO "sub", " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
+     change of variables ", TT "B", " (using the ", TO2(substitute, "sub"), " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
      
      PARA{}, "The order of the variables given in the list matter, as changeVar 
      will construct a change of variable so that the new unimodular row is monic in the ", EM "last",

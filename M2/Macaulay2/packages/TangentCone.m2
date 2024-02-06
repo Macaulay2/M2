@@ -7,6 +7,7 @@ newPackage ("TangentCone",
 	     {Name => "David Eisenbud", Email => "de@msri.org"}
 	     },
     	Headline => "tangent cones",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 

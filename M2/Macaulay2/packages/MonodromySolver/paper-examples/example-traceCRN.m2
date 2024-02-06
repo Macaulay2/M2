@@ -97,7 +97,7 @@ solveFamily
 
 By the way, solveFamily should 
 (1) check if the system is indeed linear in parameters
-(2) implement a dynamic strategy (expanding the graph if nesessary)
+(2) implement a dynamic strategy (expanding the graph if necessary)
 (3) fix documentation: 
  Description
        ===========

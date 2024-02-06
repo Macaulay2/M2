@@ -1,100 +1,158 @@
 -- -*- coding: utf-8 -*-
-newPackage("Dmodules", 
-     Version => "1.4.0.1",
-     Date => "01/28/2011",
-     Headline => "D-modules",
-     HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
-     AuxiliaryFiles => true,
-     Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
-	  {Name => "Harrison Tsai"}
-	  },
-     DebuggingMode => false,
-     PackageImports => {"PrimaryDecomposition","ReesAlgebra","Elimination"}
-     )
-
-export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDiffFs",
-     "localBFunction", "multiplierIdeal", "ViaElimination", "ViaColonIdeal", "ViaLinearAlgebra",
-     "isInMultiplierIdeal", "generalizedBFunction", "mGeneralizedBFunction",
-     "jumpingCoefficients", "hasRationalSing",
-     "bFunctionRoots", "lct", "GeneralBernsteinSato", "ViaBFunction", "generalB", "Exponent", "InitialIdeal", "StarIdeal", 
-     "ExternalProduct","TwistMap","twistMap","twistInvMap","projMap1","projMap2",
-     "bFunction","NonGeneric","TryGeneric","IntRing","LocalizeMap",
-     "globalB","globalBFunction","ViaAnnFs","ReducedB","factorBFunction","getIntRoots","Boperator","Bpolynomial","globalBoperator",
-     "AnnFs","AnnIFs","Dtrace","getDtrace","setHomSwitch","getHomSwitch","localCohom","Walther","OaTa","LocStrategy",
-     "OaTaWa","pruneLocalCohom","paramBpoly","GroundField","makeCyclic","Generator","AnnG","isHolonomic","DHom","DExt","Special",
-     "None","Info","PolySols","Alg","GD","Duality","PolyExt","RatSols","RatExt","createDpairs","dpairInds","extractVarsAlgebra","extractDiffsAlgebra",
-     "dpairVars","Fourier","Dtransposition","singLocus","charIdeal","holonomicRank","Ddim","makeWA"=>"makeWeylAlgebra","makeWeylAlgebra","Ddual","Dlocalize",
-     "Oaku","OTW","Dlocalization","DlocalizationAll","DlocalizeMap","LocModule","GeneratorPower","LocMap","annFS",
-     "DlocalizeAll","IntegrateBfunction","Bfunction","DlocalizationMap","Dresolution","Schreyer","Vhomogenize","Dres",
-     "Drestriction","Drestrict","DrestrictionClasses","DrestrictClasses","DrestrictIdeal","DrestrictAll",
-     "DrestrictionComplex","DrestrictionAll","DrestrictionIdeal","DrestrictComplex","HomologyModules",
-     "GenCycles","Exponents","Cycles","Boundaries","BFunction","VResolution","Explicit","IntegrateComplex","Dintegration",
-     "Dintegrate","DintegrateIdeal","DintegrationIdeal","DintegrationComplex","DintegrateClasses","DintegrateComplex",
-     "DintegrationClasses","DintegrateAll","DintegrationAll","gkz","Vars","AppellF1","PolyAnn",
-     "RatAnn","WeylClosure","deRham","deRhamAll","TransferCycles","CohomologyGroups","PreCycles","OmegaRes",
-     "diffOps","PolyGens","BasisElts","putWeylAlgebra","inw","gbw",
-     "Dprune","pInfo","optGB","FourierInverse","Output","stafford",
-     "BMM","pruneCechComplexCC","populateCechComplexCC",
-     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "thetaIdeal", 
-     "cssExpts", "cssExptsMult", "isTorusFixed"
-     }
-   
-scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
-
-
--- Harry's basic files
-load "./Dmodules/Dbasic.m2" 
-load "./Dmodules/Gbw.m2"
-load "./Dmodules/Dsystems.m2"
-  
--- Anton's basic files
-load "./Dmodules/switch.m2"
-load "./Dmodules/newRings.m2"
-
--- Harry's algorithms
-load "./Dmodules/Dresolution.m2"
-load "./Dmodules/Drestriction.m2"
-load "./Dmodules/Dlocalize.m2"
-load "./Dmodules/WeylClosure.m2"
-load "./Dmodules/Ddual.m2"
-load "./Dmodules/DHom.m2"
-load "./Dmodules/DeRham.m2"
-load "./Dmodules/DiffOps.m2"
-
--- Anton's algorithms
-load "./Dmodules/bFunction.ideal.m2"
-load "./Dmodules/globalBFunction.m2"
-load "./Dmodules/annFs.m2"
-load "./Dmodules/bFunction.module.m2"
-load "./Dmodules/localCohom.m2"
-load "./Dmodules/paramBpoly.m2"
-load "./Dmodules/makeCyclic.m2"
-load "./Dmodules/stafford.m2"
-load "./Dmodules/CC.m2"
-load "./Dmodules/localBFunction.m2"
-load "./Dmodules/multiplierIdeals.m2"
-
--- Christine's algorithms
-load "./Dmodules/canonicalSeries.m2"
-
--- HOOKS
-
-addHook(Module, symbol resolution, (o,M) -> (
-	  R := ring M;
-	  op := options R;
-	  o' := applyPairs(options Dresolution, (key,val) -> (key, o#key));
-	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break Dresolution(o',M)))
-
-addHook(Module, symbol codim, (opts,M) -> (
-	  R := ring M;
-	  op := options R;
-	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break (dim R - Ddim M)))
+newPackage("Dmodules",
+    Version => "1.4.1.1",
+    Date => "February 2023",
+    Headline => "D-modules",
+    HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
+    Authors => {
+	{ Name => "Anton Leykin", Email => "leykin@math.gatech.edu" },
+	{ Name => "Harrison Tsai" }
+	},
+    Keywords => { "D-modules" },
+    PackageExports => {
+	"WeylAlgebras",
+	"HolonomicSystems",
+	"BernsteinSato",
+	}
+    )
 
 beginDocumentation()
-load "./Dmodules/DMODdoc.m2"
 
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Dmodules pre-install"
--- End:
+doc ///
+Node
+  Key
+    Dmodules
+  Headline
+    D-modules package collection
+  Description
+    Text
+      To begin, read the @TO "D-modules tutorial"@.
+    Tree
+      :Packages included in this collection
+	@TOH WeylAlgebras@
+	@TOH HolonomicSystems@
+	@TOH BernsteinSato@
+  Subnodes
+    "D-modules tutorial"
 
+Node
+  Key
+    "D-modules tutorial"
+  Headline
+    Algebraic computations for linear differential equations
+  Description
+    Text
+     D-modules are modules over rings of differential operators over algebraic varieties.
+     This package is mostly concerned with computations in the {\em Weyl algebra},
+     the ring of differential operators over affine space (over a field of characteristic zero).
+     Most algorithms in this package can be found in the book
+     {\em Gröbner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
+     hereafter referred to as [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@].
+     This is also the best place to learn about computational D-module theory. The book
+     {\em Computational Algebraic Geometry with Macaulay2} has a chapter on D-modules and local cohomology.
+     A good introduction to D-module theory is {\em A primer of algebraic D-modules} by Coutinho.
+
+     The Weyl algebra $D_n$ is the free associative algebra in $2n$ variables
+     $x_1,\dots,x_n$, $\partial_1,\dots,\partial_n$, subject to the following relations:
+     the $x$'s commute with each other; the $\partial$'s commute with each other; $x_i$ commutes with $\partial_j$ if $i\neq j$;
+     and finally, $\partial_i x_i = x_i \partial_i +1$ (the Leibniz rule).
+
+
+    Example
+     D1 = QQ[z,dz, WeylAlgebra=>{z=>dz}]
+
+    Text
+     As a reality check, let us confirm that this is not a commutative ring. Here is the Leibniz rule.
+
+    Example
+     dz*z
+
+    Text
+     In order to type less, we can use the shortcuts makeWeylAlgebra or makeWA.
+
+    Example
+     R = QQ[x_1..x_4]
+     D4 = makeWA R
+     describe D4
+
+    Text
+     Elements and ideals are handled in the usual Macaulay2 way. Let us look at the
+     @HREF("https://en.wikipedia.org/wiki/Hypergeometric_function#The_hypergeometric_differential_equation","Gauss hypergeometric equation")@
+     for parameters $a=1, b=2, c=3$.
+
+    Example
+     use D1
+     a = 1, b = 2, c = 3
+     g = z*(1-z)*dz^2 + (c-(a+b+1)*z)*dz -a*b
+     I = ideal g
+
+    Text
+     The holonomicRank function computes the dimension of the solution space of a linear system of differential equations.
+
+    Example
+     holonomicRank I
+
+    Text
+     A-Hypergeometric systems, also known as GKZ systems (see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4]) are implemented.
+
+    Example
+     needsPackage "HolonomicSystems"
+     use D4
+     A = matrix{{1,1,1,1},{0,1,3,4}}
+     b = {1,2}
+     H = gkz(A,b, D4)
+
+    Text
+     Holonomic D-ideals are analogous to zero-dimensional ideals in polynomial rings (see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4]).
+     Let us confirm that our GKZ systems are holonomic.
+
+    Example
+     isHolonomic H
+
+    Text
+     Once we know our ideal is holonomic, we can compute its holonomic rank. The above is a famous
+     GKZ example because the holonomic rank may change when the parameter vector $b$ is changed.
+
+    Example
+     holonomicRank H
+     holonomicRank sub(gkz(A,{1,0}), vars D4)
+
+    Text
+     We can compute the characteristic ideal and singular locus of a D-ideal [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4]. Note that the output of charIdeal
+     belongs to a commutative ring, the associated graded ring of $D_n$ with respect to the order filtration.
+
+    Example
+     charIdeal H
+     singLocus H
+
+    Text
+     The singular locus of a GKZ system is the zero set of a polynomial called the Principal A-determinant,
+     which is a product of discriminants corresponding to faces of the matrix A
+     (see Chapters 8 and 9 of the book {\em Discriminants, Resultants and Multidimensional Determinants}
+     by Gelfand, Kapranov and Zelevinsky). Here is how to find the classic cubic discriminant.
+
+    Example
+     A1 = matrix{{1,1,1,1},{0,1,2,3}}, b1={0,0}
+     H1 = sub(gkz(A1,b1),vars D4)
+     factor (singLocus H1)_0
+
+  SeeAlso
+   Dmodules
+///
+
+end--
+
+uninstallAllPackages()
+restart
+installPackage "WeylAlgebras"
+installPackage "HolonomicSystems"
+installPackage "BernsteinSato"
+
+restart
+uninstallPackage "Dmodules"
+installPackage "Dmodules"
+viewHelp Dmodules
+
+restart
+needsPackage "Dmodules"
+check Dmodules

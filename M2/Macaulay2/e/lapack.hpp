@@ -414,7 +414,7 @@ class Lapack
   static bool solve_triangular(const LMatrixRRR *U, const LMatrixRRR *b, LMatrixRRR *x);
 
   static bool solve(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x);
-  // A and b are not modifed.  The result is placed into x.
+  // A and b are not modified.  The result is placed into x.
   // Returns x s.t. Ax = b
   // A should be non-singular.
 
@@ -462,7 +462,7 @@ class Lapack
 
   // static bool solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x,
   // const unsigned long precision);
-  // A and b are not modifed.  The result is placed into x.
+  // A and b are not modified.  The result is placed into x.
   // Returns x s.t. Ax = b
   // A should be non-singular.
 
@@ -514,7 +514,7 @@ class Lapack
   static M2_arrayintOrNull LU(const LMatrixRR *A, LMatrixRR *L, LMatrixRR *U);
 
   static bool solve(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x);
-  // A and b are not modifed.  The result is placed into x.
+  // A and b are not modified.  The result is placed into x.
   // Returns x s.t. Ax = b
   // A should be non-singular.
 
@@ -565,7 +565,7 @@ class Lapack
 
   // static bool solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x,
   // const unsigned long precision);
-  // A and b are not modifed.  The result is placed into x.
+  // A and b are not modified.  The result is placed into x.
   // Returns x s.t. Ax = b
   // A should be non-singular.
 

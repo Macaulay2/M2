@@ -3,13 +3,17 @@
 --- notes: 
 
 document { 
-     Key => {rank,(rank,CoherentSheaf),(rank,Matrix),(rank,Module),(rank,GradedModule)},
+     Key => {
+	  rank,
+	 (rank, GradedModule),
+	 (rank, Matrix),
+	 (rank, Module),
+	 (rank, MutableMatrix)},
      Headline => "compute the rank",
      Usage => "rank M",
      Inputs => {
 	  "M" => { 
 	       ofClass Module, ", ", 
-	       ofClass CoherentSheaf, ", ", 
 	       ofClass GradedModule, ", ", 
 	       ofClass ChainComplex, ", or ", 
 	       ofClass Matrix

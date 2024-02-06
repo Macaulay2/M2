@@ -1,0 +1,13 @@
+# ubuntu: install with sudo apt install clang
+
+CC  = gcc-9
+CXX = g++-9
+DIRSUFF = -gcc9
+DEBUG = no
+
+include Makefile
+
+# Local Variables:
+# mode: Makefile
+# compile-command: "time make -f Makefile.gcc9 "
+# End:

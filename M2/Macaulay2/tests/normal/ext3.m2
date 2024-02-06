@@ -11,6 +11,6 @@ E' = Ext^1(M,M)
 
 f = map(R,S)
 
-assert( C_0 == tensor(R,f,C'_0) )
-assert( C_1 == tensor(R,f,C'_1) )
-assert( E == tensor(R,f,E') )
+assert( C_0 == tensor(f,C'_0) )
+assert( C_1 == tensor(f,C'_1) )
+assert( E == tensor(f,E') )

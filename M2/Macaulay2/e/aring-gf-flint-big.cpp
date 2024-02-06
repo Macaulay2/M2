@@ -65,7 +65,7 @@ ARingGFFlintBig::~ARingGFFlintBig()
 {
   fq_nmod_ctx_clear(mContext);
   mPrimitiveElement = 0;
-  deletearray(mPPowers);
+  freemem(mPPowers);
   flint_randclear(mRandomState);
 
   if (mGeneratorComputed) fq_nmod_clear(&mCachedGenerator, mContext);

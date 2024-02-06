@@ -1,10 +1,12 @@
-// Copyright 2005-2016  Michael E. Stillman
+// Copyright 2005-2021  Michael E. Stillman
 
 #ifndef _monhashtable_h_
 #define _monhashtable_h_
 
-#include "moninfo.hpp"
-#include "res-moninfo.hpp"
+#include <memory>                                      // for unique_ptr
+#include "f4/moninfo.hpp"                              // for MonomialInfo
+#include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
+#include "schreyer-resolution/res-monomial-types.hpp"  // for res_packed_mon...
 
 class MonomialsWithComponent
 {
@@ -62,8 +64,6 @@ class ResMonomialsIgnoringComponent
  private:
   const ResMonoid& mMonoid;
 };
-
-#include <memory>  // For std::unique_ptr
 
 // ValueType must implement the following:
 // values should have computed hash values stored with them

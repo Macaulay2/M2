@@ -546,7 +546,7 @@ Inputs
   L: LieAlgebra   
 Outputs
   d: ZZ
-     the dimaension of $L$ in first degree $m$.
+     the dimension of $L$ in first degree $m$.
 SeeAlso
     dims
     "basis(ZZ,LieAlgebra)"
@@ -582,7 +582,7 @@ Inputs
   E: ExtAlgebra   
 Outputs
   d: ZZ
-     the dimaension of $E$ in first degree $m$.
+     the dimension of $E$ in first degree $m$.
 SeeAlso
     dims
     "basis(ZZ,ExtAlgebra)"
@@ -620,7 +620,7 @@ Inputs
      an instance of type {\tt VectorSpace} 
 Outputs
   d: ZZ
-     the dimaension of $V$ in first degree $m$.
+     the dimension of $V$ in first degree $m$.
 SeeAlso
     dims
     "basis(ZZ,VectorSpace)"
@@ -661,7 +661,7 @@ Inputs
   L: LieAlgebra   
 Outputs
   d: ZZ
-     the dimaension of $L$ in first degree $m$ and homological degree $n$.
+     the dimension of $L$ in first degree $m$ and homological degree $n$.
 SeeAlso
     dims
     "basis(ZZ,ZZ,LieAlgebra)"
@@ -699,7 +699,7 @@ Inputs
   E: ExtAlgebra   
 Outputs
   d: ZZ
-     the dimaension of $E$ in first degree $m$ and homological degree $n$.
+     the dimension of $E$ in first degree $m$ and homological degree $n$.
 SeeAlso
     dims
     "basis(ZZ,ZZ,ExtAlgebra)"
@@ -778,7 +778,7 @@ Inputs
   L: LieAlgebra   
 Outputs
   d: ZZ
-     the dimaension of $L$ in multi-degree $s$.
+     the dimension of $L$ in multi-degree $s$.
 SeeAlso
     dims
     "basis(List,LieAlgebra)"

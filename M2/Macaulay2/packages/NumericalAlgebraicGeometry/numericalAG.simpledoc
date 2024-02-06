@@ -105,7 +105,7 @@ Description
      Code
          SUBSECTION "Numerical rank and deflation"
      Text
-     	 Newton method applied to an appoximation of a singular isolated solution still converges, 
+     	 Newton method applied to an approximation of a singular isolated solution still converges, 
 	 but not {\em quadratically}. We detect singularity by looking at the Jacobian.
      Example 
          R = CC[x,y,z];
@@ -124,7 +124,7 @@ Description
      Text 
      	 To restore the quadratic convergence we use is {\em deflation}.
      Example
-     	 r = deflate(T,P) -- returns the numerical rank, stores defalted system
+     	 r = deflate(T,P) -- returns the numerical rank, stores deflated system
 	 DF := T.Deflation#r
 	 P' := liftPointToDeflation(P,T,r) 
      Text 
@@ -138,7 +138,7 @@ Description
      Example
          F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2};
 	 P = point {{0.000001, 0.000001*ii,1.000001-0.000001*ii}};
-	 deflateInPlace(P,F)
+	 deflateAndStoreDeflationSequence(P,F)
 	 peek P 
      
      Code

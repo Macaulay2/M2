@@ -57,7 +57,7 @@ doc ///
 			on the axioms, see below. The list of components of the
 			grading except the sign 
 			is called the @TO weight@, and the last component of the 
-			weight is called the homoogical degree. If no differential
+			weight is called the homological degree. If no differential
 			is defined, then the homological degree will be zero for
 			all elements.
 			Each object of type {\tt LieAlgebra} 
@@ -668,7 +668,7 @@ Description
       the given weights to the generators.
       A weight
       is a list of integers of a length 
-      that is the same for all generators, see @TO "degreeLength(Liealgebra)"@. 
+      that is the same for all generators, see @TO "degreeLength(LieAlgebra)"@. 
       The first component (also just called the degree) is positive, 
       see @TO "firstDegree(LieElement)"@. 
       If the option @TO LastWeightHomological@ is {\tt true}, 
@@ -1212,7 +1212,7 @@ Outputs
 SeeAlso
   "image(LieAlgebraMap,LieSubSpace)"
   "image(LieDerivation,LieSubSpace)"
-  "image(LieDerivation"
+  "image(LieDerivation)"
   "kernel(LieAlgebraMap)"
   "inverse(LieAlgebraMap,LieSubSpace)"
   "isSurjective(LieAlgebraMap)"
@@ -1619,12 +1619,12 @@ SeeAlso
 Description
  Text
    If both $A$ and $B$ are instances of {\tt LieIdeal}, 
-   then $S$ is of tyoe  {\tt LieIdeal}.
+   then $S$ is of type  {\tt LieIdeal}.
    If both $A$ and $B$ are instances of {\tt LieSubAlgebra} 
    but not both of {\tt LieIdeal}, 
    then 
-   $S$ is of tyoe  {\tt LieSubAlgebra}. 
-   Otherwise, $S$ is of tyoe  {\tt LieSubSpace}. 
+   $S$ is of type  {\tt LieSubAlgebra}. 
+   Otherwise, $S$ is of type  {\tt LieSubSpace}. 
  Example
   L = lieAlgebra{a,b,c}
   A=lieIdeal{a}

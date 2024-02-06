@@ -9,6 +9,7 @@
 
 #include "aring-zz-gmp.hpp"
 #include <utility>
+#include "exceptions.hpp"
 
 unsigned int computeHashValue_mpz(mpz_srcptr a)
 {
@@ -97,7 +98,7 @@ void RingZZ::elem_text_out(buffer &o,
       str = mpz_get_str(allocstr, 10, a);
       o << str;
     }
-  if (size > 1000) deletearray(allocstr);
+  if (size > 1000) freemem(allocstr);
 }
 
 ring_elem RingZZ::from_long(long n) const
@@ -265,8 +266,13 @@ ring_elem RingZZ::mult(const ring_elem f, const ring_elem g) const
 ring_elem RingZZ::power(const ring_elem f, int n) const
 {
   mpz_ptr result = new_elem();
-  mpz_pow_ui(result, f.get_mpz(), n);
-  mpz_reallocate_limbs(result);
+  if (n<0 && !is_unit(f))
+    throw exc::engine_error("can only raise to a nonnegative power");
+  else
+    {
+      mpz_pow_ui(result, f.get_mpz(), n);
+      mpz_reallocate_limbs(result);
+    }
   return ring_elem(result);
 }
 ring_elem RingZZ::power(const ring_elem f, mpz_srcptr n) const
@@ -282,14 +288,19 @@ ring_elem RingZZ::invert(const ring_elem f) const
 {
   if (RingZZ::is_unit(f))
     return RingZZ::copy(f);
-  else
-    return RingZZ::from_long(0);
+  
+  throw exc::engine_error("division by a non unit attempted");
 }
 
 ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
 {
+  if (is_zero(g)) throw exc::division_by_zero_error();
   mpz_ptr result = new_elem();
-  mpz_fdiv_q(result, f.get_mpz(), g.get_mpz());
+  mpz_t rem;
+  mpz_init(rem);
+  mpz_fdiv_qr(result, rem, f.get_mpz(), g.get_mpz());
+  if (mpz_sgn(rem)) throw exc::engine_error("division not exact");
+  mpz_clear(rem);
   mpz_reallocate_limbs(result);
   return ring_elem(result);
 }

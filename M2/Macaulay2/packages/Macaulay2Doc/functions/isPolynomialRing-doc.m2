@@ -4,7 +4,7 @@
 
 document { 
      Key => {isPolynomialRing, (isPolynomialRing,Thing), (isPolynomialRing,PolynomialRing)},
-     Headline => "whether someting is a polynomial ring",
+     Headline => "whether something is a polynomial ring",
      Usage => "isPolynomialRing R",
      Inputs => {
 	  "R" => Thing

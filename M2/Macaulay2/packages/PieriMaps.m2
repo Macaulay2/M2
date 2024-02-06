@@ -19,8 +19,8 @@ newPackage(
 	       "acceptance date" => "2009-06-27",
 	       "published article URI" => "http://j-sag.org/Volume1/jsag-2-2009.pdf",
 	       "published code URI" => "http://j-sag.org/Volume1/PieriMaps.m2",
-	       "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/PieriMaps.m2",
-	       "release at publication" => 9343,
+	       "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PieriMaps.m2",
+	       "release at publication" => "38e96fec660168d488ad0449f8632e6608cc9ede",
 	       "version at publication" => "1.0",
 	       "volume number" => "1",
 	       "volume URI" => "http://j-sag.org/Volume1/"
@@ -31,6 +31,7 @@ newPackage(
 		    HomePage => "http://math.mit.edu/~ssam/"
 		    }},
 	  Headline => "maps between representations of the general linear group based on the Pieri formulas",
+	  Keywords => {"Representation Theory"},
 	  DebuggingMode => false
 	  )
 
@@ -181,7 +182,7 @@ standardTableaux = method()
 standardTableaux(ZZ, List) := (dim, mu) -> (
      if #mu == 0 then return {{}};
      output := {};
-     otherrows := standardTableaux(dim, remove(mu, 0));
+     otherrows := standardTableaux(dim, drop(mu, 1));
      firstrow := rsort compositions(dim, mu#0);
      for i in firstrow do (
      	  temp := {};
@@ -261,7 +262,7 @@ pieriHelper(List, ZZ, PolynomialRing) := (mu, k, P) -> (
 	       	    for T in keys h do (
 		    	 for b from 0 to #(T_(J_(i+1)))-1 when true do (
 		    	      U := new MutableList from T;
-     	       	    	      U#(J_(i+1)) = remove(U#(J_(i+1)), b);
+     	       	    	      U#(J_(i+1)) = drop(U#(J_(i+1)), {b, b});
 			      U#(J_i) = append(U#(J_i), (T_(J_(i+1)))_b);
 			      temp = append(temp, (new List from U, h#T));
 			      );
@@ -273,7 +274,7 @@ pieriHelper(List, ZZ, PolynomialRing) := (mu, k, P) -> (
      	  H = new MutableHashTable from H;
      	  memo := new MutableHashTable from {};
      	  for T in keys H do (
-	       U := apply(remove(T,0), i->sort(i));
+	       U := apply(drop(T,1), i->sort(i));
 	       coeff := H#T;
 	       remove(H, T);
 	       straighten(U, memo);
@@ -372,7 +373,7 @@ pureFree(List, PolynomialRing) := (d, P) -> (
      lambda := {counter - e#0};
      for i from 1 to #e-1 do
      lambda = append(lambda, lambda#(i-1) - e#i + 1);
-     lambda = prepend(counter, remove(lambda, 0));
+     lambda = prepend(counter, drop(lambda, 1));
      pieri(lambda, toList(e#0 : 1), P) ** P^{-d#0}
      )
 

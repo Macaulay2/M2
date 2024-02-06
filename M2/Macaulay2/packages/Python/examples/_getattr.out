@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: 1790491913
+
+i1 : foo = pythonValue "'Hello, world!'"
+
+o1 = Hello, world!
+
+o1 : PythonObject of class str
+
+i2 : (getattr(foo, "upper"))()
+
+o2 = HELLO, WORLD!
+
+o2 : PythonObject of class str
+
+i3 : foo@@lower()
+
+o3 = hello, world!
+
+o3 : PythonObject of class str
+
+i4 : 

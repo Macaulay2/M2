@@ -34,8 +34,8 @@ Subsets::Subsets(size_t n, size_t p) : mNumElements(n), mMaxSubsetSize(p)
 
 Subsets::~Subsets()
 {
-  for (size_t i = 0; i <= mMaxSubsetSize; i++) deletearray(mTable[i]);
-  deletearray(mTable);
+  for (size_t i = 0; i <= mMaxSubsetSize; i++) freemem(mTable[i]);
+  freemem(mTable);
 }
 
 bool Subsets::isValid(const Subset &a)

@@ -63,9 +63,9 @@ document {
      "Graded modules:",
      UL {
 	  TO basis,
-	  TO "Truncations::truncate",
+	  TO "Truncations::truncate(ZZ,Module)",
 	  TO (degree, Module),
-	  TO (genera, Module),
+	  TO "Varieties::genera(Module)",
 	  TO (hilbertSeries, Module),
 	  TO (hilbertFunction, ZZ, Module),
 	  TO (poincare, Module),
@@ -74,9 +74,9 @@ document {
      "Annihilators, quotients and Gröbner bases:",
      UL {
 	  TO (gb, Module),
-	  TO (symbol :, Module, Ideal),
-	  TO (annihilator, Module),
-	  TO (saturate, Module, Ideal),
+	  TO "Saturation::Ideal : Ideal",
+	  TO "Saturation::annihilator(Module)",
+	  TO "Saturation::saturate(Module,Ideal)",
 	  },
      "Common homological computations:",
      UL {
@@ -118,6 +118,7 @@ document {
 	  -- Mike wanted this: TO "tensor products of modules",
 	  -- Mike wanted this: TO "Hom modules and homomorphisms",
 	  -- Mike wanted this: TO "annihilators and submodule quotients",
+	  TO "Saturation :: module quotients, saturation, and annihilator",
 
 	  "graded modules",
 	  TO "Hilbert functions and free resolutions",
@@ -457,9 +458,10 @@ document {
      "Notice that as is usual in Macaulay2, the target comes before the source.",
      PARA{},
      "Macaulay2 doesn't display the source and target, unless they are both free
-     modules.  Use ", TO target, " and ", TO source, " to get them.  The ",
-     TO matrix, " routine recovers the matrix of free modules between the
-     generators of the source and target.",
+     modules or have been assigned to global variables.  Use ", TO target,
+     " and ", TO source, " to get them.  The ", TO matrix,
+     " routine recovers the matrix of free modules between the generators of the
+     source and target.",
      EXAMPLE {
 	  "source F",
 	  "target F == R^1",
@@ -594,14 +596,6 @@ target f
 *-
 
 
--*
--- Mike wanted this: 
-document {
-     Key => "annihilators and submodule quotients",
-     Headline => "empty",
-     }
-*-
-
 document {
      Key => "Hilbert functions and free resolutions",
      Headline => "including degree and betti numbers",
@@ -622,7 +616,7 @@ document {
      graded.",
      EXAMPLE "isHomogeneous M",
      SUBSECTION "codimension, degree, and sectional arithmetic genera",
-     "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO (genera,Module), " for some basic 
+     "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO "Varieties::genera(Module)", " for some basic 
      numeric information about a module.",
      EXAMPLE {
 	  "codim M",
@@ -653,7 +647,7 @@ document {
 	H := poincare M;
 	t := (ring H)_0;  -- The variable t above
 	while H % (1-t) == 0 do H = H // (1-t);
-	H)",
+	H);",
           "poincare' M",
 	  },
      SUBSECTION "free resolutions",
@@ -672,7 +666,18 @@ document {
      TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),
      is the number of ", TT "j", "-th syzygies in degree ", TT "i+j", ".
      In the above example, there are 15 second syzygies of degree 4, and the entries
-     of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
+     of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear.",
+     Subnodes => {
+	 TO isHomogeneous,
+	 TO (codim, Module),
+	 TO (degree, Module),
+	 TO "Varieties::genera(Module)",
+	 TO (hilbertSeries, Module),
+	 TO poincare,
+	 TO poincareN,
+	 TO reduceHilbert,
+	 TO betti,
+	 }
      }
 
 -*
@@ -820,22 +825,6 @@ document {
 
 -- no links to this node
 document {
-     Key => "annihilator of a module",
-     "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
-     using the ", TO "annihilator", " function.",
-     EXAMPLE {
-	  "R = QQ[a..i];",
-	  "M = cokernel genericMatrix(R,a,3,3)",
-	  "annihilator M"
-	  },
-     "You may also use the abbreviation ", TO "ann",
-     EXAMPLE {
-	  "ann (M/(a*M))"
-	  }
-     }
-
--- no links to this node
-document {
      Key => "information about a map of modules",
      "usual information: source, target, ring.",
      }
@@ -846,20 +835,6 @@ document {
      Key => "kernel, cokernel and image of a map of modules",
      }
 *-
-
--- no links to this node
-document {
-     Key => "what is a subquotient module?",
-     "There are two basic types of modules over a ring R: submodules of R^n
-     and quotients of R^n.  Macaulay2's notion of a module includes both
-     of these.  Macaulay2 represents every module as a quotient image(f)/image(g),
-     where f and g are both homomorphisms from free modules to F: f : F --> G and g : H --> G.
-     The columns of f represent the generators of ", TT "M", ", and the columns of g represent the relations of the module M.",
-     EXAMPLE {
-	  "R = ZZ/32003[a,b,c,d,e];",
-	  },
-     "Include here: generators, relations."
-     }
 
 -* -- Mike wanted this: 
 
@@ -884,4 +859,3 @@ document {
      Key => "Hom module",
      }
 *-
-

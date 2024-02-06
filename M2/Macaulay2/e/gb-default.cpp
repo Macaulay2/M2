@@ -13,7 +13,7 @@
 #include "gbweight.hpp"
 #include "reducedgb.hpp"
 
-#include "f4/monsort.hpp"
+#include "monsort.hpp"
 
 #include "interrupted.hpp"
 
@@ -46,9 +46,9 @@ int gbA::get_resolved_gb_index(int i) const
  * Initialization ********
  *************************/
 
-exponents gbA::exponents_make()
+exponents_t gbA::exponents_make()
 {
-  exponents result = reinterpret_cast<exponents>(lcm_stash->new_elem());
+  exponents_t result = reinterpret_cast<exponents_t>(lcm_stash->new_elem());
   return result;
 }
 
@@ -107,6 +107,10 @@ void gbA::initialize(const Matrix *m,
   // 10 is best so far (125.33 sec, 527 MB virtual).
   // 50 is faster/smaller than 100, and 1000 was awful, on 3-andersbuch
 
+  ringtable = nullptr;
+  ringtableZZ = nullptr;
+  first_gb_element = 0;
+  
   max_reduction_count = max_reduction_count0;
 
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
@@ -154,8 +158,8 @@ void gbA::initialize(const Matrix *m,
   hilb_new_elems = false;
   hilb_n_in_degree = 0;
   n_saved_hilb = 0;
-  hf_orig = 0;
-  hf_diff = 0;
+  hf_orig = nullptr;
+  hf_diff = nullptr;
 
   this_degree = _F->lowest_primary_degree() - 1;
   npairs = 0;
@@ -287,9 +291,9 @@ gbA::~gbA() { remove_gb(); }
 
 static void exponents_lcm(int nvars,
                           int dega,
-                          exponents a,
-                          exponents b,
-                          exponents result,
+                          exponents_t a,
+                          exponents_t b,
+                          exponents_t result,
                           M2_arrayint weights,
                           int &result_degree)
 // can handle the case when a == result or b == result
@@ -310,21 +314,21 @@ static void exponents_lcm(int nvars,
   result_degree = deg;
 }
 
-static bool exponents_equal(int nvars, exponents a, exponents b)
+static bool exponents_equal(int nvars, exponents_t a, exponents_t b)
 {
   for (int i = 0; i < nvars; i++)
     if (a[i] != b[i]) return false;
   return true;
 }
 
-static bool exponents_divide(int nvars, exponents a, exponents b)
+static bool exponents_divide(int nvars, exponents_t a, exponents_t b)
 {
   for (int i = 0; i < nvars; i++)
     if (a[i] > b[i]) return false;
   return true;
 }
 
-static bool exponents_less_than(int nvars, exponents a, exponents b)
+static bool exponents_less_than(int nvars, exponents_t a, exponents_t b)
 {
   for (int i = 0; i < nvars; i++)
     {
@@ -423,6 +427,7 @@ gbA::spair *gbA::spair_node()
 {
   spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
   result->next = 0;
+  result->lead_of_spoly = 0;
   return result;
 }
 
@@ -443,8 +448,8 @@ gbA::spair *gbA::spair_make(int i, int j)
 {
   gbelem *g1 = gb[i];
   gbelem *g2 = gb[j];
-  exponents exp1 = g1->lead;
-  exponents exp2 = g2->lead;
+  exponents_t exp1 = g1->lead;
+  exponents_t exp2 = g2->lead;
   spair *result = spair_node();
   result->next = 0;
   result->type = SPAIR::SPAIR_SPAIR;
@@ -468,7 +473,7 @@ gbA::spair *gbA::spair_make_gcd_ZZ(int i, int j)
 gbA::spair *gbA::spair_make_gen(POLY f)
 {
   assert(f.f != 0);
-  exponents exp1 = exponents_make();
+  exponents_t exp1 = exponents_make();
   R->gbvector_get_lead_exponents(_F, f.f, exp1);
   int deg = weightInfo_->gbvector_weight(f.f);
   spair *result = spair_node();
@@ -486,8 +491,8 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
   spair *result;
   int j;
   gbelem *g1 = gb[i];
-  exponents exp1 = g1->lead;
-  exponents exp2 = exponents_make();
+  exponents_t exp1 = g1->lead;
+  exponents_t exp2 = exponents_make();
   int vvar = R->skew_variable(v);
   for (j = 0; j < _nvars; j++) exp2[j] = 0;
   exp2[vvar] = 2;
@@ -513,31 +518,32 @@ gbA::spair *gbA::spair_make_ring(int i, int j)
 
 void gbA::spair_text_out(buffer &o, spair *p)
 {
-  char s[100];  // enough room for all of the non polynomial cases.
+  const int N = 1000;
+  char s[N];  // enough room for all of the non polynomial cases.
   switch (p->type)
     {
       case SPAIR::SPAIR_GCD_ZZ:
-        sprintf(s, "spairgcd(g%d,g%d)", p->x.pair.j, p->x.pair.i);
+        snprintf(s, N, "spairgcd(g%d,g%d)", p->x.pair.j, p->x.pair.i);
         o << s;
-        sprintf(s, " deg(%d)", p->deg);
+        snprintf(s, N, " deg(%d)", p->deg);
         o << s;
         o << " lcm[";
         for (int i = 0; i < _nvars + 2; i++)
           {
-            sprintf(s, "%d ", p->lcm[i]);
+            snprintf(s, N, "%d ", p->lcm[i]);
             o << s;
           }
         o << "]";
         break;
       case SPAIR::SPAIR_SPAIR:
-        sprintf(s, "spair(g%d,g%d):", p->x.pair.j, p->x.pair.i);
+        snprintf(s, N, "spair(g%d,g%d):", p->x.pair.j, p->x.pair.i);
         o << s;
-        sprintf(s, " deg %d", p->deg);
+        snprintf(s, N, " deg %d", p->deg);
         o << s;
         o << " lcm exponents [";
         for (int i = 0; i < _nvars + 2; i++)
           {
-            sprintf(s, "%d ", p->lcm[i]);
+            snprintf(s, N, "%d ", p->lcm[i]);
             o << s;
           }
         o << "]";
@@ -551,11 +557,11 @@ void gbA::spair_text_out(buffer &o, spair *p)
         R->gbvector_text_out(o, _F, p->f(), 3);
         break;
       case SPAIR::SPAIR_RING:
-        sprintf(s, "rpair(%d,%d)", p->x.pair.i, p->x.pair.j);
+        snprintf(s, N, "rpair(%d,%d)", p->x.pair.i, p->x.pair.j);
         o << s;
         break;
       case SPAIR::SPAIR_SKEW:
-        sprintf(s, "skewpair(g%d,g%d)", p->x.pair.j, p->x.pair.i);
+        snprintf(s, N, "skewpair(g%d,g%d)", p->x.pair.j, p->x.pair.i);
         o << s;
         break;
       default:
@@ -580,7 +586,7 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
    */
   int i, first, second;
   bool firstok;
-  exponents mexp, lcm, p1exp, p2exp;
+  exponents_t mexp, lcm, p1exp, p2exp;
   if (p->type != SPAIR::SPAIR_SPAIR && p->type != SPAIR::SPAIR_RING)
     return false;
   mexp = m->lead;
@@ -649,7 +655,7 @@ void gbA::remove_unneeded_pairs(int id)
 bool gbA::is_gcd_one_pair(spair *p)
 {
   int i, j;
-  exponents e1, e2;
+  exponents_t e1, e2;
   if (p->type != SPAIR::SPAIR_SPAIR) return false;
   i = p->x.pair.i;
   j = p->x.pair.j;
@@ -672,8 +678,8 @@ gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
   return first; /* MES: really do something here... */
 }
 
+namespace {
 struct spair_sorter
-    : public std::binary_function<gbA::spair *, gbA::spair *, bool>
 {
   int nvars;
   spair_sorter(int nv) : nvars(nv) {}
@@ -699,6 +705,7 @@ struct spair_sorter
     return result;
   }
 };
+}; // unnamed namespace
 
 class SPolySorter
 {
@@ -825,7 +832,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
 
   VECTOR(mpz_srcptr) coeffs;
   VECTOR(mpz_srcptr) coeffs2;
-  VECTOR(exponents) exps;
+  VECTOR(exponents_t) exps;
   VECTOR(int) comps;
   VECTOR(int) positions;
 
@@ -1328,7 +1335,7 @@ bool gbA::reduce_kk(spair *p)
   int tmf, wt;
   int count = -1;
 
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
   if (M2_gbTrace == 15)
     {
@@ -1423,7 +1430,7 @@ bool gbA::reduce_ZZ(spair *p)
   int tmf, wt;
   int count = -1;
 
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
   if (M2_gbTrace == 15)
     {
@@ -1569,7 +1576,7 @@ bool gbA::reduceit(spair *p)
  ***********************/
 
 int gbA::find_good_monomial_divisor_ZZ(mpz_srcptr c,
-                                       exponents e,
+                                       exponents_t e,
                                        int x,
                                        int degf,
                                        int &result_gap)
@@ -1619,7 +1626,7 @@ int gbA::find_good_monomial_divisor_ZZ(mpz_srcptr c,
 }
 
 int gbA::find_good_term_divisor_ZZ(mpz_srcptr c,
-                                   exponents e,
+                                   exponents_t e,
                                    int x,
                                    int degf,
                                    int &result_gap)
@@ -1671,7 +1678,7 @@ int gbA::find_good_term_divisor_ZZ(mpz_srcptr c,
   return result;
 }
 
-int gbA::find_good_divisor(exponents e, int x, int degf, int &result_gap)
+int gbA::find_good_divisor(exponents_t e, int x, int degf, int &result_gap)
 // Returns an integer w.
 // if w >=0: gb[w]'s lead term divides [e,x].
 // if w<0: no gb[w] has lead term dividing [e,x].
@@ -1815,7 +1822,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   gbvector head;
   gbvector *frem = &head;
 
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
   frem->next = 0;
   int count = 0;
@@ -1887,7 +1894,7 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
   int count = 0;
   POLY h = f;
 
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
   frem->next = h.f;
   frem = frem->next;
@@ -1982,7 +1989,7 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 //     ANSWER: NO.  Instead, use a routine to make a new GB.
 // (e) Special handling of quotient rings: none needed.
 {
-  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
   gbvector head;
   gbvector *frem = &head;
@@ -2158,9 +2165,10 @@ void gbA::insert_gb(POLY f, gbelem_type minlevel)
     }
   else if (M2_gbTrace >= 5)
     {
-      char s[100];
+      const int N = 100;
+      char s[N];
       buffer o;
-      sprintf(s, "new-inserting element %d (minimal %d): ", me, minlevel);
+      snprintf(s, N, "new-inserting element %d (minimal %d): ", me, minlevel);
       o << s;
       R->gbvector_text_out(o, _F, g->g.f);
       emit_line(o.str());
@@ -2232,9 +2240,10 @@ void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term *t)
     }
   else if (M2_gbTrace >= 5)
     {
-      char s[100];
+      const int N = 100;
+      char s[N];
       buffer o;
-      sprintf(s,
+      snprintf(s, N,
               "replacing-inserting element %d (minimal %d replacing %d): ",
               me,
               g->minlevel,
@@ -2460,7 +2469,7 @@ void gbA::do_computation()
                         hilb_comp::coeff_of(hf_diff, this_degree);
                     if (error())
                       {
-                        // The previous line can give an error, which measn that
+                        // The previous line can give an error, which means that
                         // the Hilbert
                         // function declared was actually incorrect.
                         set_status(COMP_ERROR);

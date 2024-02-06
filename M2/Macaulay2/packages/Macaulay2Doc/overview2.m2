@@ -1,12 +1,5 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-///
-
---this is an old node, apparently
-
-
-///
-
 document {
      Key => "making modules from matrices",
      "Let's make some matrices.",
@@ -140,7 +133,10 @@ document {
      the target of ", TT "f", ".",
      EXAMPLE {
 	  "h = resolution inducedMap(M, m^2/m^4)"
-	  }
+	 },
+     Subnodes => {
+	 TO "computing resolutions",
+	 },
      }
 
 document {
@@ -325,35 +321,6 @@ document {
 	  "C.dd * q == q * C.dd"
 	  }
      }
-
-document {
-     Key => "coherent sheaves",
-     "The main reason to implement algebraic varieties is support the
-     computation of sheaf cohomology of coherent sheaves, which doesn't
-     have an immediate description in terms of graded modules.",
-     PARA{},
-     "In this example, we use ", TO "cotangentSheaf", " to produce
-     the cotangent sheaf on a K3 surface and compute its sheaf
-     cohomology.",
-     EXAMPLE {
-	  "R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);",
-	  "X = Proj R",
-	  "Omega = cotangentSheaf X",
-	  "HH^1(Omega)",
-	  },
-     "Use the function ", TO "sheaf", " to convert a graded module to 
-     a coherent sheaf, and ", TO "module", " to get the graded module
-     back again.",
-     EXAMPLE {
-	  "F = sheaf coker matrix {{a,b}}",
-	  "module F",
-	  },
-     SeeAlso => {
-	  (cohomology, ZZ, CoherentSheaf),
-	  (cohomology, ZZ, SumOfTwists)
-	  }
-     }
-
 
 document {
      Key => "hashing",
@@ -609,15 +576,17 @@ document {
      "The command ", TO "needs", " can be used to load a file only if
      it hasn't already been loaded.",
      EXAMPLE ///needs fn///,
-     "For debugging or display purposes, it is sometimes useful to be able 
-     to simulate entering the lines of a file one by one, so they appear
-     on the screen along with prompts and output lines.  We use
-     ", TO "input", " for
-     this.",
-     EXAMPLE ///input fn///,
-     "There are other ways to manipulate the contents of a file with
-     multiple lines.  First, let's use ", TO "peek", " to observe the 
-     extent of this string returned by ", TO "get", ".",
+     PARA {
+	  "For debugging or display purposes, it is sometimes useful to be able 
+	  to simulate entering the lines of a file one by one, so they appear
+	  on the screen along with prompts and output lines.  One may use
+	  ", TO "input", " for that."
+	  -- we don't illustrate the use of 'input' here, because the documentation example parser can't handle it
+	  },
+     PARA {
+	  "There are other ways to manipulate the contents of a file with
+	  multiple lines.  First, let's use ", TO "peek", " to observe the 
+	  extent of this string returned by ", TO "get", "."},
      EXAMPLE ///peek get fn///,
      "The resulting string has newlines in it; we can use ", TO "lines", "
      to break it apart into a list of strings, with one row in each string.",

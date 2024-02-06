@@ -8,7 +8,11 @@ extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
 };
 
 M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
-  currentThreadMode(0),unsyncState(fileUnsyncState),recurseCount(0),exclusiveRecurseCount(0)
+    currentThreadMode(0),
+    unsyncState(fileUnsyncState),
+    exclusiveChangeCondition(PTHREAD_COND_INITIALIZER),
+    recurseCount(0),
+    exclusiveRecurseCount(0)
 {
   clearThread(exclusiveOwner);
 }
@@ -236,7 +240,7 @@ extern "C"
   }
   void M2File_StartOutput(struct M2File* file)
   {
-    //for any mode besides thread excllusive we may ignore this function call
+    //for any mode besides thread exclusive we may ignore this function call
     if(file->currentThreadMode!=2 && !file->exclusiveRecurseCount)
       return;
     file->waitExclusiveThread(1);

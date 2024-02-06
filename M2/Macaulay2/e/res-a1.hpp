@@ -4,8 +4,6 @@
 #define _res_hh_
 
 #include "style.hpp"
-#include "array.hpp"
-#include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "polyring.hpp"
@@ -55,10 +53,10 @@ class res_level : public our_new_delete
 {
   friend class res_comp;
 
-  array<res_degree *> bin;  // Bins for pairs sorted by (slanted)
+  VECTOR(res_degree *) bin;  // Bins for pairs sorted by (slanted)
                             // degree. So bin[d] refers to elements
                             // of degree low_degree + level + d
-  array<res_pair *> elems;
+  VECTOR(res_pair *) elems;
 
   res_pair *compare_num_list;
   int npairs;
@@ -90,11 +88,11 @@ class res_comp : public ResolutionComputation
   int n_level;   // Current level
   int n_degree;  // Current (slanted) degree
 
-  array<res_level *> resn;  // The resolution itself
+  VECTOR(res_level *) resn;  // The resolution itself
 
   // Degree and length limits, monomial size limit
-  array<res_pair *> base_components;
-  array<MonomialIdeal *> search_mi;  // Used for new generators only...
+  VECTOR(res_pair *) base_components;
+  VECTOR(MonomialIdeal *) search_mi;  // Used for new generators only...
 
   int lodegree;      // Base degree
   int hidegree;      // Highest (slanted) degree appearing
@@ -119,8 +117,8 @@ class res_comp : public ResolutionComputation
   int compare_type;
 
   res_pair *elem(int lev, int n) const { return resn[lev]->elems[n]; }
-  int find_ring_divisor(const int *exp, ring_elem &result) const;
-  int find_divisor(const int *exp, res_pair *&result) const;
+  int find_ring_divisor(const_exponents exp, ring_elem &result) const;
+  int find_divisor(const_exponents exp, res_pair *&result) const;
   res_pair *reduce(resterm *&f, resterm *&fsyz, resterm *&pivot);
   res_pair *reduce_level_one(resterm *&f, resterm *&fsyz, resterm *&pivot);
   void reduce_gen(resterm *&f) const;
@@ -135,7 +133,7 @@ class res_comp : public ResolutionComputation
 
   void new_pairs(res_pair *p);
 
-  int sort_value(res_pair *p, const int *sort_order) const;
+  int sort_value(res_pair *p, const std::vector<int> sort_order) const;
   int compare_res_pairs(res_pair *f, res_pair *g) const;
   res_pair *merge_res_pairs(res_pair *f, res_pair *g) const;
   void sort_res_pairs(res_pair *&p) const;
@@ -148,7 +146,7 @@ class res_comp : public ResolutionComputation
   void set_compare_nums(int level, int deg);
 
   int degree(const res_pair *q) const;
-  void multi_degree(const res_pair *q, int *result) const;
+  void multi_degree(const res_pair *q, monomial result) const;
 
   res_degree *make_degree_set(int level, int deg);
   res_degree *get_degree_set(int level, int d) const;
@@ -181,10 +179,10 @@ class res_comp : public ResolutionComputation
   //  Performing the calculation ///////////////
   //////////////////////////////////////////////
 
-  void skeleton_init(array<res_pair *> &reslevel);
+  void skeleton_init(VECTOR(res_pair *)& reslevel);
   void skeleton_pairs(res_pair *&result, res_pair *p);
-  int skeleton_maxdegree(const array<res_pair *> &reslevel);
-  void skeleton_stats(const array<res_pair *> &reslevel);
+  int skeleton_maxdegree(const VECTOR(res_pair *)& reslevel);
+  void skeleton_stats(const VECTOR(res_pair *)& reslevel);
 
   void skeleton(int strategy);
 
@@ -196,7 +194,7 @@ class res_comp : public ResolutionComputation
   //  Result matrices of the resolution ////////
   //////////////////////////////////////////////
  private:
-  void reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) const;
+  void reduce_minimal(int x, resterm *&f, VECTOR(res_pair *)& elems) const;
 
  public:
   const FreeModule *free_of(int i) const;

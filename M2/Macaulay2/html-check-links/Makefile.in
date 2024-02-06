@@ -60,7 +60,7 @@ run-html-check-links: html-check-links
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Entering directory \`$(NEW)'"
 endif
-	cd $(NEW) && @FIND@ . -name \*.html -o -name \*.xhtml | xargs ls -rt | LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" xargs "$(DIR)"/html-check-links $(CHKARGS)
+	cd $(NEW) && @FIND@ . -name \*.html -o -name \*.xhtml -exec ls -rt {} + | LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" xargs "$(DIR)"/html-check-links $(CHKARGS)
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Leaving directory \`$(NEW)'"
 endif

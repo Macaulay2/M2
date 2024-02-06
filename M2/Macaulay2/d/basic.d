@@ -2,14 +2,7 @@
 
 use expr;
 
-header "
-  #include \"../e/engine.h\"
-  #ifdef WITH_PYTHON
-    #include <Python.h>
-  #else
-    #define PyObject_Hash(o) 0
-  #endif
-";
+header "#include <engine.h>"; -- required for raw hash functions
 
 export hash(e:Expr):int := (
      when e
@@ -29,6 +22,7 @@ export hash(e:Expr):int := (
      is x:DictionaryClosure do x.dictionary.hash -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:QQcell do hash(x.v)
      is x:RRcell do hash(x.v)
+     is x:RRicell do hash(x.v)
      is x:CCcell do hash(x.v)
      is x:Sequence do (
 	  -- the numbers here are the same as in binary lookup() in objects.d!!
@@ -39,7 +33,7 @@ export hash(e:Expr):int := (
      is n:Net do hash(n)
      is n:NetFile do hash(n)
      is x:file do x.hash
-     is f:FunctionClosure do f.model.hash
+     is f:FunctionClosure do f.hash
      is x:Error do (
 	  929+hash(x.message)+12963*(
 	       hash(x.position.filename) 
@@ -69,11 +63,13 @@ export hash(e:Expr):int := (
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
      is f:CompiledFunctionBody do 12347
-     is po:pythonObjectCell do int(Ccode(long, "PyObject_Hash(",po.v,")"))
+     is po:pythonObjectCell do po.hash
      is xmlNodeCell do int(123456)
      is xmlAttrCell do int(123457)
      is t:TaskCell do t.body.hash
      is foss:fileOutputSyncState do int(123458)
+     -- cast to long first to avoid "different size" compiler warning
+     is x:pointerCell do int(long(Ccode(long, x.v)))
      );
 
 export hash(x:List):int := (
@@ -143,6 +139,12 @@ export Array():Expr := emptyArray;
 export Array(e:Expr,f:Expr):Expr := Array(Sequence(e,f));
 export Array(e:Expr,f:Expr,g:Expr):Expr := Array(Sequence(e,f,g));
 export Array(e:Expr,f:Expr,g:Expr,h:Expr):Expr := Array(Sequence(e,f,g,h));
+
+export AngleBarList(a:Sequence):Expr := (
+     r := List(angleBarListClass,a,0,false);
+     r.hash = hash(r);
+     Expr(r));
+export emptyAngleBarList := AngleBarList(Sequence());
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d basic.o "

@@ -1,15 +1,7 @@
--- -*- M2-comint -*- hash: -1513657263
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 1387568654
 
 i1 : makeB'InputFile(storeBM2Files,
-         BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
-
-o1 = /tmp/M2-25743-0/0/input
-
-o1 : File
+         BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    );
 
 i2 : runBertini(storeBM2Files)
 

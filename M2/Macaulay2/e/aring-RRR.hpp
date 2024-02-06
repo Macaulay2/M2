@@ -3,6 +3,9 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
+#include "interface/gmp-util.h"  // for moveTo_gmpRR
+#include "interface/random.h"    // for randomMpfr
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -15,7 +18,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRRR : public RingInterface
+class ARingRRR : public SimpleARing<ARingRRR>
 {
   // Higher precision real numbers
 
@@ -33,7 +36,7 @@ class ARingRRR : public RingInterface
 
   unsigned int computeHashValue(const elem &a) const
   {
-    double d = mpfr_get_d(&a, GMP_RNDN);
+    double d = mpfr_get_d(&a, MPFR_RNDN);
     return static_cast<unsigned int>(d);
   }
 
@@ -67,13 +70,18 @@ class ARingRRR : public RingInterface
   {
     mpfr_ptr res = getmemstructtype(mpfr_ptr);
     mpfr_init2(res, mPrecision);
-    mpfr_set(res, &a, GMP_RNDN);
+    mpfr_set(res, &a, MPFR_RNDN);
     result = ring_elem(moveTo_gmpRR(res));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    mpfr_set(&result, a.get_mpfr(), GMP_RNDN);
+    mpfr_set(&result, a.get_mpfr(), MPFR_RNDN);
+  }
+
+  const ElementType &from_ring_elem_const(const ring_elem &a) const
+  {
+    return *a.get_mpfr();
   }
 
   // 'init', 'init_set' functions
@@ -82,88 +90,88 @@ class ARingRRR : public RingInterface
   void init_set(ElementType &result, const ElementType &a) const
   {
     init(result);
-    mpfr_set(&result, &a, GMP_RNDN);
+    mpfr_set(&result, &a, MPFR_RNDN);
   }
 
   void set(ElementType &result, const ElementType &a) const
   {
-    mpfr_set(&result, &a, GMP_RNDN);
+    mpfr_set(&result, &a, MPFR_RNDN);
   }
 
   void set_zero(ElementType &result) const
   {
-    mpfr_set_si(&result, 0, GMP_RNDN);
+    mpfr_set_si(&result, 0, MPFR_RNDN);
   }
 
-  void clear(ElementType &result) const { mpfr_clear(&result); }
+  static void clear(ElementType &result) { mpfr_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
-    mpfr_set(&result, &a, GMP_RNDN);
+    mpfr_set(&result, &a, MPFR_RNDN);
   }
 
   void set_from_long(ElementType &result, long a) const
   {
-    mpfr_set_si(&result, a, GMP_RNDN);
+    mpfr_set_si(&result, a, MPFR_RNDN);
   }
 
   void set_var(ElementType &result, int v) const
   {
-    mpfr_set_si(&result, 1, GMP_RNDN);
+    mpfr_set_si(&result, 1, MPFR_RNDN);
   }
 
   void set_from_mpz(ElementType &result, mpz_srcptr a) const
   {
-    mpfr_set_z(&result, a, GMP_RNDN);
+    mpfr_set_z(&result, a, MPFR_RNDN);
   }
 
   bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
-    mpfr_set_q(&result, a, GMP_RNDN);
+    mpfr_set_q(&result, a, MPFR_RNDN);
     return true;
   }
 
   bool set_from_double(ElementType &result, double a) const
   {
-    mpfr_set_d(&result, a, GMP_RNDN);
+    mpfr_set_d(&result, a, MPFR_RNDN);
     return true;
   }
   bool set_from_BigReal(ElementType &result, gmp_RR a) const
   {
-    mpfr_set(&result, a, GMP_RNDN);
+    mpfr_set(&result, a, MPFR_RNDN);
     return true;
   }
 
   // arithmetic
   void negate(ElementType &result, const ElementType &a) const
   {
-    mpfr_neg(&result, &a, GMP_RNDN);
+    mpfr_neg(&result, &a, MPFR_RNDN);
   }
 
   void invert(ElementType &result, const ElementType &a) const
   // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
-    mpfr_si_div(&result, 1, &a, GMP_RNDN);
+    mpfr_si_div(&result, 1, &a, MPFR_RNDN);
   }
 
   void add(ElementType &result,
            const ElementType &a,
            const ElementType &b) const
   {
-    mpfr_add(&result, &a, &b, GMP_RNDN);
+    mpfr_add(&result, &a, &b, MPFR_RNDN);
   }
 
   void addMultipleTo(ElementType &result,
                      const ElementType &a,
                      const ElementType &b) const
   {
-    mpfr_fma(&result, &a, &b, &result, GMP_RNDN);
+    mpfr_fma(&result, &a, &b, &result, MPFR_RNDN);
   }
 
   void subtract(ElementType &result,
                 const ElementType &a,
                 const ElementType &b) const
   {
-    mpfr_sub(&result, &a, &b, GMP_RNDN);
+    mpfr_sub(&result, &a, &b, MPFR_RNDN);
   }
 
   void subtract_multiple(ElementType &result,
@@ -182,24 +190,24 @@ class ARingRRR : public RingInterface
             const ElementType &a,
             const ElementType &b) const
   {
-    mpfr_mul(&result, &a, &b, GMP_RNDN);
+    mpfr_mul(&result, &a, &b, MPFR_RNDN);
   }
 
   void divide(ElementType &result,
               const ElementType &a,
               const ElementType &b) const
   {
-    mpfr_div(&result, &a, &b, GMP_RNDN);
+    mpfr_div(&result, &a, &b, MPFR_RNDN);
   }
 
   void power(ElementType &result, const ElementType &a, int n) const
   {
-    mpfr_pow_si(&result, &a, n, GMP_RNDN);
+    mpfr_pow_si(&result, &a, n, MPFR_RNDN);
   }
 
   void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
-    mpfr_pow_z(&result, &a, n, GMP_RNDN);
+    mpfr_pow_z(&result, &a, n, MPFR_RNDN);
   }
 
   void swap(ElementType &a, ElementType &b) const { mpfr_swap(&a, &b); }
@@ -271,7 +279,7 @@ class ARingRRR : public RingInterface
 
   double coerceToDouble(const ElementType &a) const
   {
-    return mpfr_get_d(&a, GMP_RNDN);
+    return mpfr_get_d(&a, MPFR_RNDN);
   }
 
  private:

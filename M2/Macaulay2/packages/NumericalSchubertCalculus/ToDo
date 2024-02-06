@@ -43,4 +43,4 @@ work properly with their examples
  the service function verifyInput verifies all inputs, using breaks to return a 
    useful error message to the user.
 
- First step:  Read the TST and EXA dirctory, as well as the bugs,
+ First step:  Read the TST and EXA directory, as well as the bugs,

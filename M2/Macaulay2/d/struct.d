@@ -1,11 +1,13 @@
 --		Copyright 1994 by Daniel R. Grayson
 use common;
+use util;
 
 reverse(e:Expr):Expr := (
      when e
      is a:Sequence do Expr(reverse(a))
      is a:List do Expr(reverse(a))
-     else WrongArg("a list or sequence"));
+     is s:stringCell do toExpr(reverse(s.v))
+     else WrongArg("a list, sequence, or string"));
 setupfun("reverse",reverse);
 export seq(e:Expr):Expr := Expr(Sequence(e));
 -- setupfun("singleton",seq);

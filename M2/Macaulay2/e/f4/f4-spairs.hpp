@@ -1,11 +1,14 @@
-// Copyright 2004 Michael E. Stillman
+// Copyright 2004-2021 Michael E. Stillman
 
 #ifndef __f4spairs_h_
 #define __f4spairs_h_
 
-#include "memblock.hpp"
-#include "moninfo.hpp"
-#include "f4-types.hpp"
+#include "f4/f4-types.hpp"           // for spair (ptr only), gb_array, pre_...
+#include "f4/memblock.hpp"           // for F4MemoryBlock
+#include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), packed_...
+#include "f4/varpower-monomial.hpp"  // for varpower_word
+#include "newdelete.hpp"             // for our_new_delete
+class stash;
 
 class F4SPairSet : public our_new_delete
 {
@@ -63,8 +66,8 @@ class F4SPairSet : public our_new_delete
   // spair criteria.
 
  private:
-  MemoryBlock<pre_spair> PS;      // passed to constructor routine
-  MemoryBlock<varpower_word> VP;  // used for constructing new pairs
+  F4MemoryBlock<pre_spair> PS;      // passed to constructor routine
+  F4MemoryBlock<varpower_word> VP;  // used for constructing new pairs
   int max_varpower_size;
 
   const MonomialInfo *M;
@@ -81,4 +84,5 @@ class F4SPairSet : public our_new_delete
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+//  indent-tabs-mode: nil
 //  End:

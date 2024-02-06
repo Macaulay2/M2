@@ -7,6 +7,7 @@ newPackage(
         {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
         },
    Headline => "Castelnuovo-Mumford regularity of a homogeneous ideal",
+   Keywords => {"Commutative Algebra"},
    DebuggingMode => false
    )
 --=========================================================================--
@@ -18,7 +19,7 @@ newPackage(
 --         subschemes of P^n using quotients of monomial ideals",
 --         Journal of Pure and Applied Algebra 164/2001
 
-export{"mRegularity"}
+export{"mRegularity", "CM", "MonCurve"}
 
 
 -- ========================================================================
@@ -40,9 +41,9 @@ depthHomogMon = I-> (
 --============================================================================    
     
     
-    
+
 -- RANDOM LINEAR TRANSFORMATIONS
--- this function produces a upper triangular liniar transformation with entries in k[X]
+-- this function produces a upper triangular linear transformation with entries in k[X]
 
 upTRT2 = (k,X,m) -> (
      Trans := {};
@@ -154,9 +155,6 @@ regMonCurve = (I,d) -> (
     return (max apply((entries gens gb (I:m))_0,degree))_0
     )
 
-protect CM
-protect MonCurve
-
 delta = I -> min(flatten apply(flatten entries mingens I,degree))
      
 -- mRegularity
@@ -230,7 +228,7 @@ document {
 }
 
 document {
-     Key => {mRegularity,(mRegularity,Ideal)},
+     Key => {mRegularity,(mRegularity,Ideal), MonCurve},
      Headline => "compute Castelnuovo-Mumford regularity",
      Usage => " mRegularity I",
      Inputs => {"I" => Ideal => {"a homogeneous ", TO Ideal},
@@ -399,7 +397,7 @@ fastReg (Ideal):= opts -> I -> (
 -- regCM
 
 -- INPUT: I = a Cohen-Macaulay ideal in a polynomial ring
--- OUTPUT: the Castelnupovo Mumford regularity of I
+-- OUTPUT: the Castelnuovo Mumford regularity of I
 
 regCM = (I,d) -> (
    R :=ring I;

@@ -17,12 +17,12 @@
 --warning: method has no documentation: NumericalAlgebraicGeometry :: trackHomotopy(Thing,List), key (trackHomotopy,Thing,List), package NumericalAlgebraicGeometry
 --warning: symbol has no documentation: NumericalAlgebraicGeometry :: endGameCauchy, package NumericalAlgebraicGeometry
 --warning: method has no documentation: NumericalAlgebraicGeometry :: endGameCauchy(GateHomotopy,Number,MutableMatrix), key (endGameCauchy,GateHomotopy,Number,MutableMatrix), package NumericalAlgebraicGeometry
---warning: method has no documentation: NumericalAlgebraicGeometry :: endGameCauchy(GateHomotopy,Number,Point), key (endGameCauchy,GateHomotopy,Number,Point), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: endGameCauchy(GateHomotopy,Number,AbstractPoint), key (endGameCauchy,GateHomotopy,Number,AbstractPoint), package NumericalAlgebraicGeometry
 --warning: symbol has no documentation: NumericalAlgebraicGeometry :: Regularity, package NumericalAlgebraicGeometry
 --warning: 19 warning(s) occurred in documentation for package NumericalAlgebraicGeometry
 --making info file in /nethome/aleykin3/.Macaulay2/local/share/info/NumericalAlgebraicGeometry.info.tmp
---warning: tag has no documentation: NumericalAlgebraicGeometry :: evaluate(GateSystem,Point), key (evaluate,GateSystem,Point), package NumericalAlgebraicGeometry
---warning: tag has no documentation: NumericalAlgebraicGeometry :: evaluate(GateSystem,Point,Point), key (evaluate,GateSystem,Point,Point), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: evaluate(GateSystem,AbstractPoint), key (evaluate,GateSystem,AbstractPoint), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: evaluate(GateSystem,AbstractPoint,AbstractPoint), key (evaluate,GateSystem,AbstractPoint,AbstractPoint), package NumericalAlgebraicGeometry
 --warning: tag has no documentation: NumericalAlgebraicGeometry :: gateMatrix(GateSystem), key (gateMatrix,GateSystem), package NumericalAlgebraicGeometry
 --warning: tag has no documentation: NumericalAlgebraicGeometry :: net(GateSystem), key (net,GateSystem), package NumericalAlgebraicGeometry
 --warning: tag has no documentation: NumericalAlgebraicGeometry :: numFunctions(GateSystem), key (numFunctions,GateSystem), package NumericalAlgebraicGeometry

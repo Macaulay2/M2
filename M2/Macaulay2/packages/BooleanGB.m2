@@ -7,6 +7,7 @@ newPackage(
     HomePage => "http://www.math.vt.edu/people/fhinkel/"}, 
     {Name => "Mike Stillman"},
     {Name => "Elizabeth Arnold"}},
+    Keywords => {"Groebner Basis Algorithms"},
     Headline => "Groebner bases for ideals in Boolean polynomial quotient rings",
     DebuggingMode => false
     )

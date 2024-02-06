@@ -5,6 +5,8 @@
 #ifndef __engine_includes_hpp__
 #define __engine_includes_hpp__
 
+// IWYU pragma: begin_exports
+
 #include <M2/config.h>
 
 #if !defined(SAFEC_EXPORTS)
@@ -27,6 +29,8 @@
 #include "../d/M2mem.h"
 #include "../d/debug.h"
 #endif
+
+// IWYU pragma: end_exports
 
 #endif
 

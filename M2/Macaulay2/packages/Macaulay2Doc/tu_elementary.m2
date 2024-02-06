@@ -46,7 +46,7 @@ J = gens gb I
 -- This will be more fun if we work with an
 -- example having some meaning.  We choose
 -- to work with the ideal defining the
--- rational quartic curve in ${\bf P}^3$ given
+-- rational quartic curve in $\PP^3$ given
 -- parametrically in an affine representation
 -- by 
 --        $$t \mapsto{} (t,t^3,t^4).$$
@@ -56,7 +56,7 @@ J = gens gb I
 -- gift from the gods... .)
 -- We obtain the ideal by first making the 
 -- polynomial ring in 4 variables (the
--- homogeneous coordinate ring of ${\bf P}^3$)
+-- homogeneous coordinate ring of $\PP^3$)
 
 R = KK[a..d]
 
@@ -101,7 +101,7 @@ degree M
 
 hilbertPolynomial M
 
--- The term ${\bf P}^i$ represents the Hilbert polynomial of
+-- The term $\PP^i$ represents the Hilbert polynomial of
 -- projective $i$-space.  This formula tells
 -- us that the Hilbert polynomial of $M$ is
 -- $H(m) = 4(m+1) - 3 = 4m + 1$.  Thus the degree
@@ -270,7 +270,7 @@ Tr^6 == I * (Tr^6 // I) + (Tr^6 % I)
 -- D. Elimination Theory
 ----------------------------------------------
 -- Consider the problem of projecting the
--- ``twisted cubic'', a curve in ${\bf P}^3$ defined
+-- ``twisted cubic'', a curve in $\PP^3$ defined
 -- by the three $2 \times 2$ minors of a certain
 -- $2 \times 3$ matrix into the plane.  
 -- Such problems can be solved in a very 
@@ -294,7 +294,7 @@ x = global x
 -- and then set
 
 R = KK[x_0..x_3] 
--- the homogeneous coordinate ring of ${\bf P}^3$
+-- the homogeneous coordinate ring of $\PP^3$
 -- and
 M = map(R^2, 3, (i,j)->x_(i+j))
 I = gens minors(2,M)
@@ -391,7 +391,7 @@ J1 = ker f
 -- be $(b-a^2, c-a^3)$ (where we have taken
 -- $a,b,c$ as the coordinates of affine space).
 -- To find the projective closure of the curve
--- in ${\bf P}^3$, we must homogenize these equations 
+-- in $\PP^3$, we must homogenize these equations
 -- with respect to a new variable d, getting
 -- $db-a^2, d^2c-a^3$.  But these forms do NOT
 -- define the projective closure! In general,

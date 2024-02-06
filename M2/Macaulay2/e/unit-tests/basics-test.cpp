@@ -56,9 +56,9 @@ TEST(Util, m2arrayint_zero)
 
 TEST(Util, m2array2stdvec_big)
 {
-  std::vector<long> a{-1453853049583, 3, 6, 4, -2};
+  std::vector<long long> a{-1453853049583, 3, 6, 4, -2};
   M2_arrayint b = stdvector_to_M2_arrayint(a);
-  std::vector<long> c = M2_arrayint_to_stdvector<long>(b);
+  std::vector<long long> c = M2_arrayint_to_stdvector<long long>(b);
   EXPECT_FALSE(a == c);
 }
 
