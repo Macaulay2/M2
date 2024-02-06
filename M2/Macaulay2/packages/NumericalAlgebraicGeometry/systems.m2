@@ -7,8 +7,7 @@
 -- helper functions for "square down":
 
 -- move these to SLPexpressions???
-GateMatrix ^ BasicList := (M, inds) -> M^(toList inds)
-GateSystem ^ BasicList := (P, inds) -> gateSystem(parameters P, vars P, (gateMatrix P)^inds)
+GateSystem ^ List := (P, inds) -> gateSystem(parameters P, vars P, (gateMatrix P)^inds)
 
 -- orthonormal basis for col(L) using SVD
 ONB = L -> (

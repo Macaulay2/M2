@@ -791,7 +791,9 @@ document {
     Key => {squareUp, (squareUp,System), (squareUp,System,ZZ), (squareUp,System, Matrix), 
 	SquaredUpSystem, SquareUpMatrix,
 	(squareUp, AbstractPoint, AbstractPoint, GateSystem), 
-	(squareUp, AbstractPoint, GateSystem)  
+	(squareUp, AbstractPoint, GateSystem),
+	[squareUp,Strategy],
+	[squareUp,Field]  
 	},
     Headline => "square up a polynomial system",
     Usage => "G = squareUp F
@@ -833,6 +835,16 @@ document {
     G = squareUp(P0, X0, F)
     netList entries gateMatrix G
     ///,
+    PARA {"Optional parameters are:"}, 
+    UL apply({
+	    "block size" => {" (default = 1) How many rows of Jacobian are evaluated at each step when squaring up a system at a specified Point."},
+	    "target rank" => {" (default = full rank) The target rank of the subsystem. "},
+	    Field => {" (default = null). If null, then the coefficient ring is used for PolySystem and CC is used for GateSystem."}, 
+	    Strategy => {" (default = \"random matrix\"). Given an overdetermined system, a random matrix is used to construct as many random linear combinations of the equations as there are variables. ", "(Another option \"slack variables\" has not been implemented yet.)"}		    
+	    }, 
+	item -> {TT "[", TT toExternalString item#0, TT "]: "} | item#1 
+	)
+    ,
     SeeAlso=>{PolySystem}
     }
 
@@ -1134,8 +1146,8 @@ doc ///
         Text
     	    This method implements homotopy continuation: it follows a given list {\tt S} of start solutions along a @TO Homotopy@ {\tt H}.
 	  
-            Option @TO Field@ is unique to this method (the default is @TO CC@, but one can imagine using @TO RR@). 
-	    It specifies which @TO InexactFieldFamily@ to use when adaptive precision is requested via {\tt Precision=>infinity}.
+            Option @TO Field@ (the default is @TO CC@, but one can imagine using @TO RR@) 
+	    specifies which @TO InexactFieldFamily@ to use when adaptive precision is requested via {\tt Precision=>infinity}.
 	    The rest are a subset of @TO "numerical homotopy tracking options"@. 
     Caveat	
             Note for developers: the old implementation @TO track@ eventually will be replaced by a call to @TO trackHomotopy@.
