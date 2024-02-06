@@ -265,8 +265,8 @@ setupMethods := (args, symbols) -> (
 
 -- TODO: move and set the typical value of cokernel, coimage, comodule, image, module
 setupMethods((), { 
-	  entries, baseName, borel, gcdCoefficients, singularLocus,
-	  Hom, diff, diff', contract, contract', isMember,
+	  entries, baseName, borel, gcdCoefficients,
+	  diff, diff', contract, contract', isMember,
 	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
@@ -374,6 +374,11 @@ format CC :=
 format String   := String => x -> format' x
 format Sequence := String => s -> format' s
 protect symbol format
+
+-- use /// around strings w/ backslashes
+formatNoEscaping = x -> (
+    if match("\\\\", x) then concatenate("/// ", x, " ///")
+    else format x)
 
 toString = method(Dispatch => Thing, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
@@ -522,10 +527,10 @@ installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> (
      if numparms f =!= 2 and numparms f =!= -1 then error "expected assignment method to be a function of 2 arguments";
      installMethod((op,symbol =),Y,f))
 
-binaryOperators   = join(fixedBinaryOperators,    flexibleBinaryOperators)
+binaryOperators   = join(fixedBinaryOperators,    flexibleBinaryOperators, augmentedAssignmentOperators)
 prefixOperators   = join(fixedPrefixOperators,    flexiblePrefixOperators)
 postfixOperators  = join(fixedPostfixOperators,   flexiblePostfixOperators)
-flexibleOperators = join(flexibleBinaryOperators, flexiblePrefixOperators, flexiblePostfixOperators)
+flexibleOperators = join(flexibleBinaryOperators, flexiblePrefixOperators, flexiblePostfixOperators, augmentedAssignmentOperators)
 fixedOperators    = join(fixedBinaryOperators,    fixedPrefixOperators,    fixedPostfixOperators)
 allOperators      = join(fixedOperators, flexibleOperators)
 
@@ -602,13 +607,14 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     store.HookAlgorithms#alg = hook)
 
 -- tracking debugInfo
-infoLevel     := -1
-pushInfoLevel :=  n     -> (infoLevel = infoLevel + n; n)
+threadVariable infoLevel
+pushInfoLevel :=  n -> (
+    if infoLevel === null then infoLevel = -1;
+    infoLevel = infoLevel + n; n)
 popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
 
 -- This function is mainly used by runHooks, printing a line like this:
  -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Saturation.m2:196:30-205:82]*-
--- TODO: the filenames are not emacs clickable, perhaps M2-mode should be improved
 debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
     toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)
 
@@ -640,6 +646,10 @@ runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -
     -- otherwise, give an error with the list of possible strategies
     error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,
 	"  available strategies are: ", demark_", " \\ toExternalString \ new List from store.HookPriority))
+
+-- helper for hookifying methods
+-- runs the hooks, if none succeed, runs the default algorithm f
+tryHooks = (key, args, f) -> if (c := runHooks(key, args)) =!= null then c else f args
 
 -- and keys
 protect QuotientRingHook
@@ -678,6 +688,11 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
      ("-- function f:", value (first localDictionaries g)#"f")
      }
 
+-- helper for hookifying and caching methods
+-- if a cached value isn't found on X, runs the hooks, if none succeed, runs the default algorithm f
+-- TODO: simplify usage
+cacheHooks = (ckey, X, mkey, args, f) -> ((cacheValue ckey) (X -> tryHooks(mkey, args, f))) X
+
 -----------------------------------------------------------------------------
 -- hypertext conversion
 
@@ -695,6 +710,11 @@ show = method()
 registerFinalizer' = registerFinalizer
 registerFinalizer = method()
 registerFinalizer(Thing, String) := registerFinalizer'
+
+-- augmented assignment -- syntactic sugar for installing methods
+-- e.g., "T += f" is equivalent to "installMethod(symbol +=, T, f)"
+scan(augmentedAssignmentOperators, op ->
+    installMethod(op, Type, Function => (T, f) -> installMethod(op, T, f)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

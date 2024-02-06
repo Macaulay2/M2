@@ -8,7 +8,6 @@ needs "nets.m2"
 needs "monoids.m2"
 needs "packages.m2"
 needs "robust.m2"
-needs "varieties.m2"
 
 recursionLimit = 300
 

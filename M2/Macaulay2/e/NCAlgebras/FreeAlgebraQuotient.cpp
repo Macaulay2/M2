@@ -1,5 +1,8 @@
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
 
+#include "monoid.hpp"  // for Monoid
+#include "ring.hpp"    // for Ring, SumCollector
+
 SumCollector* FreeAlgebraQuotient::make_SumCollector() const
 {
   return mFreeAlgebra.make_SumCollector();
@@ -156,11 +159,6 @@ void FreeAlgebraQuotient::elem_text_out(buffer &o,
 bool FreeAlgebraQuotient::is_homogeneous(const Poly& f) const
 {
   return mFreeAlgebra.is_homogeneous(f);
-}
-
-void FreeAlgebraQuotient::degree(const Poly& f, monomial d) const
-{
-  multi_degree(f, d);
 }
 
 bool FreeAlgebraQuotient::multi_degree(const Poly& f,

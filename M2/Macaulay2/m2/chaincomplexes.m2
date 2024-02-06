@@ -5,6 +5,7 @@
 needs "gradedmodules.m2"
 needs "hilbert.m2"
 needs "modules2.m2"
+needs "Hom.m2"
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -124,7 +125,8 @@ net ChainComplex := C -> (
      else (
 	  a := s#0;
 	  b := s#-1;
-	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
+	  horizontalJoin between(" <-- ", apply(a .. b,i ->
+		  stack (net moduleAbbrv(C_i, C_i)," ",net i)))))
 
 texMath ChainComplex := C -> (
      complete C;
@@ -132,7 +134,7 @@ texMath ChainComplex := C -> (
      if # s === 0 then "0" else
      concatenate apply(s,i->(
 	     if i>s#0 then "\\,\\xleftarrow{" | texMath short C.dd_i | "}\\,",
-	     texUnder(texMath C_i,i)
+	     texUnder(texMath moduleAbbrv(C_i, C_i),i)
 	     ))
       )
 
@@ -141,7 +143,7 @@ texMath ChainComplex := C -> (
 complete ChainComplexMap := f -> (
      complete source f;
      if target f =!= source f then complete target f;
-     if f.?Resolution then ( i := 1; while f_i != 0 do i = i+1; );
+     if f.?Resolution then ( i := 1; while f_i != 0 do i += 1; );
      f)
 
 source ChainComplexMap := f -> f.source
@@ -292,7 +294,7 @@ ChainComplexMap ^ ZZ := ChainComplexMap => (f,n) -> (
 			      false)
 			 ) do (
 			 s = f_(i + j * f.degree) * s;
-			 j = j+1;
+			 j += 1;
 			 )
 		    ));
 	  g))
@@ -618,56 +620,54 @@ ChainComplexMap Array := ChainComplexMap => (f,A) -> (
      scan(spots f, i -> g#(i-n) = f_i);
      g)
 
-Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
+Hom(ChainComplex, Module) := ChainComplex => opts -> (C, N) -> (
      c := C.dd;
      complete c;
      D := new ChainComplex;
      D.ring = ring C;
      b := D.dd;
-     scan(spots C, i -> D#-i = Hom(C_i,N));
+     scan(spots C, i -> D#-i = Hom(C_i, N, opts));
      scan(spots c, i -> (
 	       j := - i + 1;
-	       f := b#j = (-1)^j * Hom(c_i,N);
+	       f := b#j = (-1)^j * Hom(c_i, N, opts);
 	       D#j = source f;
 	       D#(j-1) = target f));
      D)
 
-Hom(Module, ChainComplex) := ChainComplex => (M,C) -> (
+Hom(Module, ChainComplex) := ChainComplex => opts -> (M, C) -> (
      complete C.dd;
      D := new ChainComplex;
      D.ring = ring C;
      scan(spots C.dd, i -> (
-	       f := D.dd#i = Hom(M,C.dd_i);
+	       f := D.dd#i = Hom(M, C.dd_i, opts);
 	       D#i = source f;
 	       D#(i-1) = target f;
 	       ));
      D)
 
-dual ChainComplex := ChainComplex => {} >> o -> (C) -> (
-	  R := ring C;
-	  Hom(C,R^1))
+dual ChainComplex := ChainComplex => options Hom >> o -> C -> Hom(C, module ring C, o)
 
-Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
+Hom(ChainComplexMap, Module) := ChainComplexMap => opts -> (f, N) -> (
      complete f;
      g := new ChainComplexMap;
      g.cache = new CacheTable;
      d := g.degree = f.degree;
-     g.source = Hom(target f, N);
-     g.target = Hom(source f, N);
+     g.source = Hom(target f, N, opts);
+     g.target = Hom(source f, N, opts);
      scan(spots f, i -> (
 	       j := -i-d;
-	       g#j = (-1)^(j*d) * Hom(f#i,N);
+	       g#j = (-1)^(j*d) * Hom(f#i, N, opts);
 	       ));
      g)
 
-Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
+Hom(Module, ChainComplexMap) := ChainComplexMap => opts -> (N, f) -> (
      complete f;
      g := new ChainComplexMap;
      g.cache = new CacheTable;
      d := g.degree = f.degree;
-     g.source = Hom(N, source f);
-     g.target = Hom(N, target f);
-     scan(spots f, i -> g#i = Hom(N,f#i));
+     g.source = Hom(N, source f, opts);
+     g.target = Hom(N, target f, opts);
+     scan(spots f, i -> g#i = Hom(N, f#i, opts));
      g)
 
 transpose ChainComplexMap := f -> dual f
@@ -905,7 +905,7 @@ eagonNorthcott Matrix := f -> (
                                          l -> not isMember(q#0#l, p#0));
                                     t := first select(toList(0..n-1), l -> vec#l == 1);
                                     (-1)^(s+1)*f_(t,q#0#s)))))};
-		    j=j+1) ;
+		    j += 1) ;
       chainComplex d);
 
 ------ koszul

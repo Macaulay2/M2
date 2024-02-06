@@ -3,11 +3,13 @@
 
 #  include "engine-includes.hpp"
 
-// TODO: fix this
+// TODO: make this unnecessary
 #  if defined(__cplusplus)
+class Ring;
 class Monoid;
 class MonomialOrdering;
 #  else
+typedef struct Ring Ring;
 typedef struct Monoid Monoid;
 typedef struct MonomialOrdering MonomialOrdering;
 #  endif
@@ -20,30 +22,37 @@ typedef struct MonomialOrdering MonomialOrdering;
 extern "C" {
 #  endif
 
-Monoid *IM2_Monoid_trivial();
-/* drg: connected rawMonoid*/
-/* Always returns the same object */
+/* integer types to be used for degrees and exponents */
+typedef int32_t deg_t;
+typedef const deg_t *const_monomial;
 
-engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering *mo,
+/* rawMonoid(): always returns the same object */
+const Monoid *rawTrivialMonoid();
+
+/* rawMonoid(mo, deg_ring, names, degrees, heftvec) */
+const Monoid * /* or Null */ rawMonoid(const MonomialOrdering *mo,
+                                       const Ring *deg_ring,
                                        M2_ArrayString names,
-                                       const Ring *DegreeRing,
-                                       M2_arrayint degs,
-                                       M2_arrayint hefts);
-/* drg: connected rawMonoid*/
+                                       M2_arrayint degrees,
+                                       M2_arrayint heftvec);
+// TODO: this is wrong and needs to be updated
 /* This function will return NULL if the monomial order cannot be handled
    currently, if the first components for each degree are not all
    positive, or under various other "internal" error conditions */
 
+int rawMonoidNumberOfBlocks(const Monoid *M);
+
+/* connected to the interpreter in d/basic.d */
 unsigned int rawMonoidHash(const Monoid *M);
-/* drg: connected hash */
 /* Assigned sequentially */
 
-M2_string IM2_Monoid_to_string(const Monoid *M);
-/* drg: connected */
+/* connected to the interpreter in d/actors4.d */
+M2_string rawMonoidToString(const Monoid *M);
 /* For debugging purposes */
 
-int rawMonoidNumberOfBlocks(const Monoid *M);
-/* connected rawMonoidNumberOfBlocks */
+/* Service routine for converting degree monomials to int arrays.
+   To be used only by other interface routines. */
+M2_arrayint to_degree_vector(const Monoid *M, const_monomial d);
 
 #  if defined(__cplusplus)
 }

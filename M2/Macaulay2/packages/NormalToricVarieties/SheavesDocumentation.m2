@@ -346,7 +346,7 @@ doc ///
         cotangentSheaf X
     Inputs
         X : NormalToricVariety
-        Minimize => Boolean 	
+        MinimalGenerators => Boolean
 	    that specifies whether to apply @TO minimalPresentation@ to the
 	    result before returning it
     Outputs
@@ -374,7 +374,7 @@ doc ///
         Example  
     	    PP3 = toricProjectiveSpace 3;
     	    OmegaPP3 = cotangentSheaf PP3
-	    assert (prune cotangentSheaf PP3 === cotangentSheaf (PP3, Minimize => true))	    
+	    assert (prune cotangentSheaf PP3 === cotangentSheaf (PP3, MinimalGenerators => true))
     	    L = prune exteriorPower (3, OmegaPP3)
     	    assert (L === OO toricDivisor PP3)
 	    assert (L === prune cotangentSheaf (dim PP3, PP3))

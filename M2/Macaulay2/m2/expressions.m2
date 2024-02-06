@@ -1173,7 +1173,7 @@ texMath MatrixExpression := x -> (
 		 between("&",m#i),
 		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
-		 if blk then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
+		 if blk then (j += 1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
 		 )),
 	"\\end{array}\\!",
 	"\\right)"
@@ -1268,12 +1268,6 @@ net Option := net @@ expression
 texMath Option := texMath @@ expression
 toString Option := toString @@ expression
 
-SheafExpression = new WrapperType of Expression;
-toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
-net SheafExpression := x -> net x#0
-texMath SheafExpression := x -> texMath x#0
-expressionValue SheafExpression := x -> sheaf expressionValue x#0
-
 moduleZERO = new ZeroExpression from { 0, Module }
 
 -- note that one can't have a symbol <---
@@ -1282,7 +1276,7 @@ toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionAppli
 lineOnTop := (s) -> concatenate(width s : "-") || s
 net MapExpression := x-> if #x>2 then horizontalJoin(net x#0, " <--",
 		    lineOnTop net x#2,
-		    "-- ", net x#1) else net x#0 | " <--- " | net x#1
+		    "-- ", net x#1) else net x#0 | " <-- " | net x#1
 texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 

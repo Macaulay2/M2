@@ -374,8 +374,8 @@ i51 : A = matrix{{1,1,1,1,1},{1,2,4,5,6}}
 o51 = | 1 1 1 1 1 |
       | 1 2 4 5 6 |
 
-               2        5
-o51 : Matrix ZZ  <--- ZZ
+               2       5
+o51 : Matrix ZZ  <-- ZZ
 
 i52 : w1 = {1,1,1,1,1};
 
@@ -386,44 +386,44 @@ i54 : b1 = transpose matrix{{3,9}}
 o54 = | 3 |
       | 9 |
 
-               2        1
-o54 : Matrix ZZ  <--- ZZ
+               2       1
+o54 : Matrix ZZ  <-- ZZ
 
 i55 : b2 = transpose matrix{{5,16}}
 
 o55 = | 5  |
       | 16 |
 
-               2        1
-o55 : Matrix ZZ  <--- ZZ
+               2       1
+o55 : Matrix ZZ  <-- ZZ
 
 i56 : IP(A, w1, b1)
 
 o56 = | 1 1 0 0 1 |
 
-               1        5
-o56 : Matrix ZZ  <--- ZZ
+               1       5
+o56 : Matrix ZZ  <-- ZZ
 
 i57 : IP(A, w2, b1)
 
 o57 = | 1 0 2 0 0 |
 
-               1        5
-o57 : Matrix ZZ  <--- ZZ
+               1       5
+o57 : Matrix ZZ  <-- ZZ
 
 i58 : IP(A, w1, b2)
 
 o58 = | 2 1 0 0 2 |
 
-               1        5
-o58 : Matrix ZZ  <--- ZZ
+               1       5
+o58 : Matrix ZZ  <-- ZZ
 
 i59 : IP(A, w2, b2)
 
 o59 = | 0 2 3 0 0 |
 
-               1        5
-o59 : Matrix ZZ  <--- ZZ
+               1       5
+o59 : Matrix ZZ  <-- ZZ
 
 i60 : S = QQ[a,b,c,d];
 
@@ -584,8 +584,8 @@ o86 = | x_0 x_1 x_2 |
       | x_1 x_2 x_3 |
       | x_2 x_3 x_4 |
 
-              3       3
-o86 : Matrix S  <--- S
+              3      3
+o86 : Matrix S  <-- S
 
 i87 : rationalQuartic = minors(2, m);
 
@@ -711,8 +711,8 @@ o101 = | 1 1 1 1 1 1 1 |
        | 0 2 0 0 0 1 0 |
        | 2 2 0 2 1 1 1 |
 
-                4        7
-o101 : Matrix ZZ  <--- ZZ
+                4       7
+o101 : Matrix ZZ  <-- ZZ
 
 i102 : IA = toricIdeal(A, {1,1,1,1,1,1,1})
 
@@ -736,7 +736,7 @@ o104 = true
 
 i105 : StoS = map(S, S, {x_1, x_2, x_3, x_3 - x_4, x_5, x_6, x_7});
 
-o105 : RingMap S <--- S
+o105 : RingMap S <-- S
 
 i106 : J = StoS IA
 
@@ -762,8 +762,8 @@ i109 : A = matrix{{2,0,0,1,0,0,2,1,1,3,2,2,2,3,3,3},
                   {0,2,0,0,1,0,1,2,1,2,3,2,3,2,3,3},
                   {0,0,2,0,0,1,1,1,2,2,2,3,3,3,2,3}};
 
-                3        16
-o109 : Matrix ZZ  <--- ZZ
+                3       16
+o109 : Matrix ZZ  <-- ZZ
 
 i110 : D = A^{0}+A^{1}+A^{2} || A
 
@@ -772,8 +772,8 @@ o110 = | 2 2 2 1 1 1 4 4 4 7 7 7 8 8 8 9 |
        | 0 2 0 0 1 0 1 2 1 2 3 2 3 2 3 3 |
        | 0 0 2 0 0 1 1 1 2 2 2 3 3 3 2 3 |
 
-                4        16
-o110 : Matrix ZZ  <--- ZZ
+                4       16
+o110 : Matrix ZZ  <-- ZZ
 
 i111 : D = entries transpose D;
 

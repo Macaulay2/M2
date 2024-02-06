@@ -5,6 +5,7 @@ document {
       (numeric, ZZ, RRi),
         (numeric, CC), (numeric, ZZ, VisibleList),
 	  (numeric, VisibleList), (numeric, ZZ, Constant), (numeric, Constant),
+	  (numeric, InfiniteNumber, Constant),
      	  (numeric, ZZ, Number), (numeric, Number),
 	  (numeric, ZZ, InfiniteNumber),(numeric, InfiniteNumber)},
      Headline => "convert to floating point",

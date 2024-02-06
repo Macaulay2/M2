@@ -109,7 +109,7 @@ changeRing = H -> (
    phi := map(R,S,join(gens R,(numgens S - numgens R):0));
    prune (phi ** H)
    );
-Ext(Module,Ring) := (M,k) -> (
+Ext(Module,Ring) := o -> (M,k) -> (
    B := ring M;
    if ideal k != ideal vars B
    then error "expected the residue field of the module";
@@ -120,7 +120,7 @@ k = B/(x,y,z);
 use B;
 P = Ext(M,k);
 time oddPart P
-Ext(Ring,Module) := (k,M) -> (
+Ext(Ring,Module) := o -> (k,M) -> (
    B := ring M;
    if ideal k != ideal vars B
    then error "expected the residue field of the module";

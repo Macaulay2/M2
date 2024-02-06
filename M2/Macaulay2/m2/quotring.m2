@@ -3,46 +3,61 @@
 needs "enginering.m2"
 needs "matrix1.m2"
 
+-----------------------------------------------------------------------------
+-- QuotientRing type declaration and basic methods
+-----------------------------------------------------------------------------
+
 QuotientRing = new Type of EngineRing
 QuotientRing.synonym = "quotient ring"
-ideal QuotientRing := R -> R.ideal
+
 isQuotientRing = method(TypicalValue => Boolean)
-monoid QuotientRing := o -> R -> R.monoid
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
-coefficientRing QuotientRing := (cacheValue coefficientRing) (R -> coefficientRing ambient R)
-options QuotientRing := R -> options ambient R
-isHomogeneous QuotientRing := R -> isHomogeneous ideal R
+
+isFinitePrimeField = F -> isQuotientRing F and ambient F === ZZ and F.?char
+
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (R,S) -> false
 isQuotientOf(Ring,QuotientRing) := (R,S) -> R === ambient S or isQuotientOf(R,ambient S)
 isQuotientOf(Type,Ring) := (X,S) -> false
 isQuotientOf(Type,QuotientRing) := (X,S) -> instance(ambient S,X) or isQuotientOf(X,ambient S)
+
+isHomogeneous QuotientRing := R -> isHomogeneous ideal R
+isWeylAlgebra QuotientRing := R -> isWeylAlgebra ambient R
+isSkewCommutative QuotientRing := R -> isSkewCommutative ambient R
+
+coefficientRing QuotientRing := (cacheValue coefficientRing) (R -> coefficientRing ambient R)
+ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
+monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
+ideal QuotientRing := R -> R.ideal
+
+degreesRing   QuotientRing := (cacheValue degreesRing)   (S -> degreesRing   ambient S)
+degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid ambient S)
 degreeLength QuotientRing := S -> degreeLength ambient S
 degreeGroup  QuotientRing := S -> degreeGroup  ambient S
+
 vars QuotientRing := (cacheValue vars) (S -> map(S^1,, table (1, numgens S, (i,j) -> S_j)))
+degrees QuotientRing := R -> degrees ambient R
+
+precision QuotientRing := precision @@ ambient
 numgens QuotientRing := (cacheValue numgens) (S -> numgens ambient S)
-pretty := relns -> (
-     s := toSequence flatten entries relns;
-     if #s === 1 then s = first s;
-     s)
-toExternalString QuotientRing := S -> toString describe S
+options QuotientRing := R -> options ambient R
+
 random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
-expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else new Divide from { unhold expression ambient S, unhold expression pretty S.relations }
-describe QuotientRing := S -> Describe Divide { expression ambient S, expression pretty S.relations }
-ambient PolynomialRing := R -> R
-ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
-degrees QuotientRing := R -> degrees ambient R
-precision QuotientRing := precision @@ ambient
-isSkewCommutative QuotientRing := R -> isSkewCommutative ambient R
-isWeylAlgebra     QuotientRing := R -> isWeylAlgebra     ambient R
 
-Ring / Module := QuotientRing => (R,I) -> (
-     if ambient I != R^1 or I.?relations
-     then error ("expected ", toString I, " to be an ideal of ", toString R);
-     R / ideal I)
+-- printing
+printRels := S -> if #(I := toSequence flatten entries S.relations) === 1 then first I else I
+describe   QuotientRing := S -> Describe Divide { expression ambient S, expression printRels S }
+expression QuotientRing := S -> (
+    if hasAttribute(S, ReverseDictionary)
+    then expression getAttribute(S, ReverseDictionary)
+    else new Divide from { unhold expression ambient S, unhold expression printRels S })
+toExternalString QuotientRing := toString @@ describe
+-- TODO: add AfterPrint for QuotientRing
+
+-----------------------------------------------------------------------------
 
 savedQuotients = new MutableHashTable
 
@@ -90,8 +105,6 @@ ZZp Ideal := opts -> (I) -> (
       savedQuotients#(typ, n) = S;
       lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
-
-isFinitePrimeField = F -> isQuotientRing F and ambient F === ZZ and F.?char
 
 initializeEngineLinearAlgebra = method()
 initializeEngineLinearAlgebra Ring := (R) -> (
@@ -141,6 +154,10 @@ basicRank Matrix := (f) -> (
 
 initializeEngineLinearAlgebra QQ
 
+-----------------------------------------------------------------------------
+-- Main quotient ring constructor
+-----------------------------------------------------------------------------
+
 Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";
      if I.cache.?QuotientRing then return I.cache.QuotientRing;
@@ -172,10 +189,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if R.?SkewCommutative then S.SkewCommutative = R.SkewCommutative;
      S.generators = apply(generators S, m -> promote(m,S));
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
-     if R.?generatorExpressions then S.generatorExpressions = (
-	  R.generatorExpressions
-	  -- apply(R.generatorExpressions,S.generators,(e,x) -> new Holder2 from {e#0,x})
-	  );
+     if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
      if R.?index        then S.index = R.index;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
@@ -207,7 +221,14 @@ Ring / RingElement := QuotientRing => (R,f) -> (
      if ring f =!= R then error "expected element of the same ring or promotable to it";
      R / ideal f)
 
+Ring / Module := QuotientRing => (R,I) -> (
+     if ambient I != R^1 or I.?relations
+     then error ("expected ", toString I, " to be an ideal of ", toString R);
+     R / ideal I)
+
 Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, R)
+
+-----------------------------------------------------------------------------
 
 presentation PolynomialRing := Matrix => R -> map(R^1, R^0, 0)
 presentation QuotientRing   := Matrix => R -> (
@@ -234,6 +255,8 @@ presentation(PolynomialRing, PolynomialRing) := (R,S) -> (
 	  );
      v)
 
+-----------------------------------------------------------------------------
+
 dim QuotientRing := (R) -> (
      if isField R then 0
      else if R.?SkewCommutative then notImplemented()
@@ -243,10 +266,6 @@ dim QuotientRing := (R) -> (
 	  if cd === infinity then -1 else dim ring I - codim I
 	  )
      )
-
-monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
-degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid ambient S)
-degreesRing QuotientRing := (cacheValue degreesRing) (S -> degreesRing ambient S)
 
 generators QuotientRing := opts -> (S) -> (
      if opts.CoefficientRing === S then {}
@@ -262,12 +281,16 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      if g == 0 then return char ring g;
      m := g_(0,0);
      if liftable(m,ZZ) then lift(m,ZZ) else 0))
+
+singularLocus = method()
 singularLocus(Ring) := QuotientRing => (R) -> (
      f := presentation R;
      A := ring f;
      A / (ideal f + minors(codim(R,Generic=>true), jacobian presentation R)))
 
 singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
+
+-----------------------------------------------------------------------------
 
 toField = method()
 toField Ring := R -> (

@@ -1,8 +1,8 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.1",
-    Date => "August 31, 2022",
+    Version => "0.2",
+    Date => "January 28, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -10,6 +10,21 @@ newPackage(
     Keywords => {"System"},
     PackageImports => {"Parsing"},
     AuxiliaryFiles => true)
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2024-01-24, M2 1.23)
+* use single-string version of exportFrom
+* use null coalescing operator in toJSON
+
+0.1 (2022-08-31, M2 1.21)
+* initial release
+
+*-
 
 export {
     "toJSON",
@@ -19,7 +34,7 @@ export {
     "ValueSeparator"
     }
 
-exportFrom_Parsing {"nil"}
+exportFrom_Parsing "nil"
 
 ----------------------------------------------------------------
 -- parser based on https://datatracker.ietf.org/doc/html/rfc8259
@@ -112,8 +127,7 @@ jsonEncoder = method()
 jsonEncoder OptionTable := o -> (
     e := JSONEncoder o;
     e.IndentLevel = 0;
-    if e.ValueSeparator === null then e.ValueSeparator = (
-	if e.Indent === null then ", " else ",");
+    e.ValueSeparator ??= if e.Indent === null then ", " else ",";
     e)
 
 toJSON = method(Options => {

@@ -28,6 +28,7 @@ assert( {0,1,2} == taskResult \ r )
 assert( aaa === null )
 
 -- check whether storing into a mutable hash table is thread safe
+setIOSynchronized()
 n = 32
 h = new MutableHashTable from apply(n, j -> j => null)
 r = apply(3, i -> schedule (() -> (

@@ -34,7 +34,7 @@ assert(rawNumberOfInvertibleVariables mo == 2)
 print "ERROR: rawNonTermOrderVariables not connected or tested yet"
 --rawNonTermOrderVariables mo
 
-M = rawMonoid(mo, ("a","b","c","d","e","f"), degring 1, (1,1,1,1,1,1),{1})
+M = rawMonoid(mo, degring 1, ("a","b","c","d","e","f"), (1,1,1,1,1,1),{1})
 a = rawVarMonomial(0,1)
 b = rawVarMonomial(1,1)
 c = rawVarMonomial(2,1)

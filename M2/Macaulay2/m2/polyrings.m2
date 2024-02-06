@@ -37,6 +37,7 @@ Ring _ List :=
 PolynomialRing _ List := RingElement => (R, v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
 
 coefficientRing PolynomialRing := R -> last R.baseRings
+ambient PolynomialRing := identity
 monoid PolynomialRing := o -> R -> R.monoid
 monoid FractionField := o -> monoid @@ baseRing
 monoid Ring := o -> degreesMonoid @@ degreeLength

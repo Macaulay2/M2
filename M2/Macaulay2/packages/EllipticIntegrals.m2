@@ -8,6 +8,7 @@ newPackage(
 		  HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "uniformization of elliptic curves",
 	Keywords => {"Complex Analytic Geometry", "Numerical Algebraic Geometry"},
+	PackageImports => {"Varieties"},
     	DebuggingMode => false
     	)
 

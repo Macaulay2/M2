@@ -13,13 +13,14 @@ header "// required for toString routines
 #include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
 #include <interface/freemodule.h>           // for IM2_FreeModule_to_string
 #include <interface/matrix.h>               // for IM2_Matrix_to_string
-#include <interface/monoid.h>               // for IM2_Monoid_to_string
+#include <interface/monoid.h>               // for rawMonoidToString
 #include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
 #include <interface/mutable-matrix.h>       // for IM2_MutableMatrix_to_string
 #include <interface/random.h>               // for system_randomint
 #include <interface/ring.h>                 // for IM2_Ring_to_string
 #include <interface/ringelement.h>          // for IM2_RingElement_to_string
-#include <interface/ringmap.h>              // for IM2_RingMap_to_string";
+#include <interface/ringmap.h>              // for IM2_RingMap_to_string
+#include <readline/history.h>               // for history_get";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
@@ -1014,7 +1015,7 @@ tostringfun(e:Expr):Expr := (
      -- NAG stuff end
      is x:RawRingMapCell do toExpr(Ccode(string, "IM2_RingMap_to_string(",x.p,")" ))
      is x:RawMonomialOrderingCell do toExpr(Ccode(string, "IM2_MonomialOrdering_to_string(",x.p,")" ))
-     is x:RawMonoidCell do toExpr(Ccode(string, "IM2_Monoid_to_string(",x.p,")" ))
+     is x:RawMonoidCell do toExpr(Ccode(string, "rawMonoidToString(",x.p,")" ))
      is x:RawRingCell do toExpr(Ccode(string, "IM2_Ring_to_string(",x.p,")" ))
      is x:RawRingElementCell do toExpr( Ccode(string, "IM2_RingElement_to_string(",x.p,")" ) )
      is x:RawMonomialIdealCell do toExpr(
@@ -1043,6 +1044,11 @@ tostringfun(e:Expr):Expr := (
     is x:pointerCell do (
 	buf := newstring(20);
 	Ccode(void, "sprintf((char *)", buf, "->array, \"%p\", ", x.v, ")");
+	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
+	toExpr(buf))
+    is x:atomicIntCell do (
+	buf := newstring(20);
+	Ccode(void, "sprintf((char *)", buf, "->array, \"%d\", ", load(x.v), ")");
 	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
 	toExpr(buf))
 );
@@ -1578,11 +1584,13 @@ locate(e:Code):void := (
      when e
      is nullCode do nothing
      is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:augmentedAssignmentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs))
      is v:arrayCode do foreach c in v.z do locate(c)
      is v:angleBarListCode do foreach c in v.t do locate(c)
      is v:Error do lookat(v.position)
      is v:semiCode do foreach c in v.w do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:evaluatedCode do lookat(v.position)
      is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
      is v:functionCode do (locate(v.arrow);locate(v.body);)
      is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
@@ -1670,6 +1678,18 @@ locate(e:Expr):Expr := (
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 
+historyGet(e:Expr):Expr := (
+    when e
+    is n:ZZcell do (
+	if !isInt(n) then WrongArgSmallInteger()
+	else (
+	    entry := Ccode(voidPointer, "history_get(", toInt(n), ")");
+	    if entry == nullPointer()
+	    then buildErrorPacket("no history entry with that offset")
+	    else toExpr(tostring(Ccode(charstar, "((HIST_ENTRY *)", entry,
+			")->line")))))
+    else WrongArgZZ());
+setupfun("historyGet", historyGet);
 
 powermod(e:Expr):Expr := (
      when e is s:Sequence do

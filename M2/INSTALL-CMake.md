@@ -23,9 +23,9 @@ There are various tools needed to compile Macaulay2 dependencies.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 10 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev libomp-dev libtbb-dev libffi-dev`.
-- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel libomp-devel tbb-devel libffi-devel`.
-- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libatomic_ops libomp tbb libffi`.
+- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libomp-dev libtbb-dev libffi-dev`.
+- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libomp-devel tbb-devel libffi-devel`.
+- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libomp tbb libffi`.
 
 **TIP**: x86_64 binary packages for all dependencies on Mac OS X 10.15+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
 ```

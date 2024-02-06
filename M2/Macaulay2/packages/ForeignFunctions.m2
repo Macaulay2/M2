@@ -1,7 +1,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.2",
-    Date => "May 13, 2023",
+    Version => "0.3",
+    Date => "January 28, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -14,6 +14,12 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.3 (2024-01-28, M2 1.23)
+* add subscripted assignment for various pointer types
+* add support for GMP integers
+* add support for describe, expression, toExternalString, and toString
+* use null coalescing operator
 
 0.2 (2023-05-13, M2 1.22)
 * improvements for displaying foreign objects in webapp mode
@@ -117,7 +123,8 @@ importFrom_Core {
     "ffiStructAddress",
     "ffiUnionType",
     "ffiFunctionPointerAddress",
-    "registerFinalizerForPointer"
+    "registerFinalizerForPointer",
+    "toExternalFormat"
     }
 
 
@@ -137,9 +144,14 @@ Pointer - ZZ := (ptr, n) -> ptr + -n
 
 ForeignObject = new SelfInitializingType of HashTable
 ForeignObject.synonym = "foreign object"
-net ForeignObject := x -> net value x
-texMath ForeignObject := texMath @@ value
+expression ForeignObject := expression @@ value
+net ForeignObject := net @@ expression
+toString ForeignObject := toString @@ expression
+texMath ForeignObject := texMath @@ expression
 ForeignObject#AfterPrint = x -> (ForeignObject, " of type ", class x)
+
+describe ForeignObject := x -> Describe FunctionApplication(class x, value x)
+toExternalString ForeignObject := toExternalFormat @@ describe
 
 value ForeignObject := x -> error("no value function exists for ", class x)
 
@@ -171,11 +183,10 @@ ForeignType.synonym = "foreign type"
 
 new ForeignType := T -> new ForeignType of ForeignObject
 
-net ForeignType := T -> if T.?Name then T.Name else "<<a foreign type>>"
+net ForeignType := T -> T.Name ?? "<<a foreign type>>"
 
 protect Address
-address ForeignType := T -> if T.?Address then T.Address else error(
-    toString T, " has no address")
+address ForeignType := T -> T.Address ?? error(toString T, " has no address")
 
 size ForeignType := ffiTypeSize @@ address
 
@@ -273,7 +284,7 @@ foreignRealType(String, ZZ) := (name, bits) -> (
     T.Address = ffiRealType(bits);
     new T from RR := (T, x) -> new T from {Address => ffiRealAddress(x, bits)};
     value T := x -> ffiRealValue(address x, bits);
-    net T := x -> format(0, value x);
+    expression T := x -> expression format(0, value x);
     T)
 
 float = foreignRealType("float", 32)
@@ -451,6 +462,9 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     T)
 
 ForeignStructType VisibleList := (T, x) -> new T from x
+ForeignStructType HashTable := (T, x) -> T apply(keys x, k -> k => x#k)
+ForeignStructType ForeignObject := lookup(
+    symbol SPACE, ForeignType, ForeignObject)
 
 isAtomic ForeignStructType := T -> T.Atomic
 
@@ -535,7 +549,14 @@ ForeignFunctionPointerType Function := (T, f) -> new T from f
 
 SharedLibrary = new SelfInitializingType of BasicList
 SharedLibrary.synonym = "shared library"
-net SharedLibrary := lib -> lib#1
+expression SharedLibrary := lib -> expression lib#1
+net SharedLibrary := net @@ expression
+toString SharedLibrary := toString @@ expression
+texMath SharedLibrary := texMath @@ expression
+
+describe SharedLibrary := lib -> Describe FunctionApplication(
+    openSharedLibrary, lib#1)
+toExternalString SharedLibrary := toExternalFormat @@ describe
 
 -- on apple silicon machines, shared libraries are often in /opt/homebrew/lib,
 -- but this is not in DYLD_LIBRARY_PATH, so we try there if the first call to
@@ -800,6 +821,7 @@ doc ///
  Key
    ForeignVoidType
    "void"
+   (symbol SPACE, ForeignVoidType, Nothing)
  Headline
    foreign void type
  Description
@@ -1273,13 +1295,14 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignStructType, VisibleList)
+    (symbol SPACE, ForeignStructType, HashTable)
   Headline
     cast a hash table to a foreign struct
   Usage
     T x
   Inputs
     T:ForeignStructType
-    x:VisibleList -- whose elements are options
+    x:{HashTable, VisibleList}
   Outputs
     :ForeignObject
   Description
@@ -1501,9 +1524,14 @@ doc ///
     (value, uint64)
     (value, voidstar)
     (value, voidstarstar)
+    (describe, ForeignObject)
+    (expression, ForeignObject)
+    (expression, float)
+    (expression, double)
     (net, ForeignObject)
-    (net, double)
-    (net, float)
+    (texMath, ForeignObject)
+    (toExternalString, ForeignObject)
+    (toString, ForeignObject)
   Headline
     get the value of a foreign object as a Macaulay2 thing
   Usage
@@ -1547,7 +1575,8 @@ doc ///
       x = mystruct {"a" => 2, "b" => sqrt 2}
       value x
     Text
-      Note that this function is also used by @TT "net(ForeignObject)"@ for
+      Note that this function is also used by @TO describe@, @TO expression@,
+      @TO net@, @TO texMath@, @TO toExternalString@, and @TO toString@ for
       representing foreign objects.
 ///
 
@@ -1602,6 +1631,7 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignType, ForeignObject)
+    (symbol SPACE, ForeignStructType, ForeignObject)
   Headline
     cast a foreign object to the given foreign type
   Usage
@@ -1651,14 +1681,20 @@ doc ///
 doc ///
   Key
     SharedLibrary
+    (describe, SharedLibrary)
+    (expression, SharedLibrary)
     (net, SharedLibrary)
+    (texMath, SharedLibrary)
+    (toExternalString, SharedLibrary)
+    (toString, SharedLibrary)
   Headline
     a shared library
   Description
     Text
       A shared library that could be used to load foreign functions.  Each
       shared library object consists of a pointer to a handle for the library
-      and a string that is used by @TT "net(SharedLibrary)"@.
+      and a string that is used by @TO describe@, @TO expression@, @TO net@,
+      @TO texMath@, @TO toExternalString@, and @TO toString@.
     Example
       mpfr = openSharedLibrary "mpfr"
       peek mpfr
@@ -1985,6 +2021,7 @@ assert Equation(value x_"c", "foo")
 assert Equation(value (int * x_"d"), 4)
 x_"a" = 5
 assert Equation(value x_"a", 5)
+assert BinaryOperation(symbol ===, teststructtype x, x)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
@@ -2115,4 +2152,31 @@ ptr = getMemory foo
 *ptr = foo {"a" => 5, "b" => pi, "c" => "Hello, world!"}
 assert BinaryOperation(symbol ===, value (foo * ptr),
     hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+///
+
+TEST ///
+-- describe/toExternalString
+x = int 5
+assert Equation(value value describe x, 5)
+assert Equation(value value toExternalString x, 5)
+x = charstar "foo"
+assert Equation(value value describe x, "foo")
+assert Equation(value value toExternalString x, "foo")
+int3 = 3 * int
+x = int3 {1, 2, 3}
+assert Equation(value value describe x, {1, 2, 3})
+assert Equation(value value toExternalString x, {1, 2, 3})
+x = charstarstar {"foo", "bar", "baz"}
+assert Equation(value value describe x, {"foo", "bar", "baz"})
+assert Equation(value value toExternalString x, {"foo", "bar", "baz"})
+foo = foreignStructType("foo", {"a" => int, "b" => double, "c" => charstar})
+x = foo {"a" => 5, "b" => pi, "c" => "Hello, world!"}
+assert BinaryOperation(symbol ===, value value describe x,
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+assert BinaryOperation(symbol ===, value value toExternalString x,
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+
+mpfi = openSharedLibrary "mpfi"
+assert instance(value describe mpfi, SharedLibrary)
+assert instance(value toExternalString mpfi, SharedLibrary)
 ///

@@ -1260,6 +1260,7 @@ setupconst("flexiblePostfixOperators",Expr(new Sequence len length(opsWithPostfi
 setupconst("fixedBinaryOperators",    Expr(new Sequence len length(fixedBinaryOperators)  do foreach s in fixedBinaryOperators do provide Expr(s)));
 setupconst("fixedPrefixOperators",    Expr(new Sequence len length(fixedPrefixOperators)  do foreach s in fixedPrefixOperators do provide Expr(s)));
 setupconst("fixedPostfixOperators",   Expr(new Sequence len length(fixedPostfixOperators) do foreach s in fixedPostfixOperators do provide Expr(s)));
+setupconst("augmentedAssignmentOperators", Expr(new Sequence len length(augmentedAssignmentOperators) do foreach s in augmentedAssignmentOperators do provide Expr(s)));
 
 fileExists(e:Expr):Expr := (
      when e is name:stringCell do toExpr(fileExists(expandFileName(name.v)))

@@ -2,6 +2,15 @@ use util;
 use common;
 
 header "#include <iostream>
+  #include <boost/config.hpp>
+  #ifdef HAVE_BOOST_MATH_TOOLS_ATOMIC_HPP
+    #include <boost/math/tools/atomic.hpp>
+  #endif
+  #if defined(BOOST_HAS_THREADS) && \\
+     (defined(BOOST_NO_CXX11_HDR_MUTEX) || defined(BOOST_MATH_NO_ATOMIC_INT))
+  #define BOOST_MATH_BERNOULLI_UNTHREADED
+  #endif
+
   #include <boost/multiprecision/mpfr.hpp>
   #include <boost/math/special_functions/beta.hpp>
   #include <boost/math/special_functions/erf.hpp>
@@ -15,7 +24,8 @@ header "#include <iostream>
 	boost::multiprecision::detail::digits2_2_10(prec));              \\
     return gmp_toRR(boost::math::f(__VA_ARGS__).backend().data(), prec); \\
   } catch (const std::exception& e) {                                    \\
-    std::cout << e.what() << std::endl;                                  \\
+      if (!(*((char*)TS_Get_Local(stdiop_SuppressErrors_id))))           \\
+        std::cout << e.what() << std::endl;                              \\
     return nullptr;                                                      \\
   }";
 

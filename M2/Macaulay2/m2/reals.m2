@@ -283,6 +283,7 @@ toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
+numeric(InfiniteNumber, Constant) := (prec, c) -> numeric c
 numericInterval Constant := c -> if #c < 3 then interval(0,-1,Precision=>defaultPrecision) else c#2 defaultPrecision
 numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precision=>prec) else c#2 prec
 

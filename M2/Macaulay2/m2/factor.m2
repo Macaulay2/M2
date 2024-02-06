@@ -49,7 +49,10 @@ gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
 
 lcm(ZZ,RingElement) := (r,s) -> lcm(promote(abs r,ring s),s)
 lcm(RingElement,ZZ) := (r,s) -> lcm(promote(abs s,ring r),r)
-lcm(RingElement,RingElement) := (f,g) -> f * (g // gcd(f,g))
+lcm(RingElement,RingElement) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then d
+    else f * (g // d))
 
 -----------------------------------------------------------------------------
 

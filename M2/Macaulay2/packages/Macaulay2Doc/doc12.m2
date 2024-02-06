@@ -394,14 +394,6 @@ document {
      }
 
 document {
-     Key => SheafExpression,
-     Headline => "the class of sheaf expressions",
-     TT "SheafExpression", " is a type of ", TO "Expression", " representing
-     the sheaf associated to a given ring or module.",
-     PARA{},
-     }
-
-document {
      Key => MapExpression,
      Headline => "the class of map expressions",
      TT "MapExpression", " is a type of ", TO "Expression", " representing
@@ -658,29 +650,6 @@ document {
      stored the function of one variable that accepts the superscript and
      returns a scripted functor that accepts the arguments.",
      SeeAlso => "ScriptedFunctor"
-     }
-
-document {
-     Key => {(sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
-	  sheafExt,
-       	  (sheafExt, ZZ, SheafOfRings, CoherentSheaf),
-       	  (sheafExt, ZZ, CoherentSheaf, SheafOfRings),
-	  (sheafExt, ZZ, SheafOfRings, SheafOfRings)},
-     Headline => "sheaf Ext of coherent sheaves",
-     Usage => "sheafExt^n(F,G)",
-     Inputs => { "n", "F", "G" },
-     Outputs => { CoherentSheaf => { "the n-th sheaf Ext of ", TT "F", " and ", TT "G" } },
-     "If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-     PARA{},
-     TT "F", " and ", TT "G", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
-     PARA{},
-     "The result is the sheaf associated to the graded module ", TT "Ext^n(module M, module N).",
-     EXAMPLE lines ///
-     	  X = Proj(QQ[x,y])
-	  sheafExt^1(OO_X^1(2),OO_X(-11)^1)
-     ///,
-     SeeAlso => {OO, sheafHom, Hom, Ext, HH, (Ext, ZZ, CoherentSheaf, CoherentSheaf)}
-     
      }
 
 -- Local Variables:

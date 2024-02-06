@@ -177,26 +177,6 @@ assert isIsomorphism p^-1
 assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
 
---
-S = ZZ/101[a..d]
-I = monomialCurveIdeal(S, {1,3,4})
-R = S/I
-use R
-J = module ideal(a,d)
-K = module ideal(b^2,c^2)
-JK = Hom(J,K)
-f = JK_{0}
-g = homomorphism f
-assert isHomogeneous g
-assert ( source g === J )
-assert ( target g === K )
-f' = homomorphism' g
-assert (f-f' == 0)
-assert (degrees f' === {{{1}}, {{0}}})
-assert (degrees f === {{{1}}, {{1}}})
-assert (degree f == {0})
-assert (degree f' == {1})
-
 
      --
 	  R = ZZ[x]

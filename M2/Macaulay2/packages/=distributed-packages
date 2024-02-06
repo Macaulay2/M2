@@ -33,6 +33,7 @@ SimplicialComplexes
 LLLBases
 TangentCone
 ChainComplexExtras
+Varieties
 Schubert2
 PushForward
 LocalRings
@@ -260,3 +261,6 @@ SagbiGbDetection
 A1BrouwerDegrees
 QuadraticIdealExamplesByRoos
 TerraciniLoci
+MatrixSchubert
+RInterface
+OIGroebnerBases

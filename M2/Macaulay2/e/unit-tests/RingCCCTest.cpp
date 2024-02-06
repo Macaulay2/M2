@@ -35,10 +35,10 @@ ring_elem getElement<RingCCC>(const RingCCC &R, int index)
 TEST(RingCCC, create)
 {
   RingCCC *R = RingCCC::create(100);
-  EXPECT_TRUE(R != 0);
+  EXPECT_TRUE(R != nullptr);
 
-  EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == 0);
-  EXPECT_TRUE(dynamic_cast<const RingCCC *>(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == nullptr);
+  EXPECT_TRUE(dynamic_cast<const RingCCC *>(R) != nullptr);
   EXPECT_FALSE(R->is_ZZ());
   // FIXME: not implemented: EXPECT_TRUE(R->is_CCC());
   // FIXME: string vs char*: EXPECT_EQ(ringName(*R), "CCC_100");

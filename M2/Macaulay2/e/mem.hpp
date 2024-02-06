@@ -40,7 +40,7 @@ class slab : public our_new_delete
   slab *next;
   char s[slab_size];
 
-  slab() : next(NULL) { n_slabs++; }
+  slab() : next(nullptr) { n_slabs++; }
   ~slab() { n_slabs--; }
 };
 
@@ -96,7 +96,7 @@ inline void *stash::new_elem()
   n_allocs++;
   n_inuse++;
   if (n_inuse > highwater) highwater = n_inuse;
-  if (free_list == NULL)
+  if (free_list == nullptr)
     {
       if (n_per_slab == 0)
         {
@@ -117,7 +117,7 @@ inline void *stash::new_elem()
 inline void stash::delete_elem(void *p)
 // Delete the object 'p', placing it on the free list for this stash.
 {
-  if (p == NULL) return;
+  if (p == nullptr) return;
   freemem(p);
   return;
   //  if (trace_bad_deletes)

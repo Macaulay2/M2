@@ -459,9 +459,9 @@ promoteleftinexact = (f,g) -> (
 promoteleftexact = (f,g) -> (
      f = try promote(f,class g) else oops();
      (f,g))
-exchange = (x,y) -> (y,x)
-promoterightexact   = exchange @@ promoteleftexact   @@ exchange
-promoterightinexact = exchange @@ promoteleftinexact @@ exchange
+swap = (x,y) -> (y,x)
+promoterightexact   = swap @@ promoteleftexact   @@ swap
+promoterightinexact = swap @@ promoteleftinexact @@ swap
 
 divmod := R -> (f,g) -> (
      (q,r) := rawDivMod(raw f, raw g);

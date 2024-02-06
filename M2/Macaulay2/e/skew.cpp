@@ -3,12 +3,12 @@
 #include "monoid.hpp"
 
 SkewMultiplication::SkewMultiplication()
-    : _n_vars(0), _n_skew(0), _skew_list(0), _skew_exp(0), skew_byte_size(0)
+    : _n_vars(0), _n_skew(0), _skew_list(nullptr), _skew_exp(nullptr), skew_byte_size(0)
 {
 }
 
 SkewMultiplication::SkewMultiplication(int nvars, int nskew, int *skew_list)
-    : _n_vars(nvars), _n_skew(nskew), _skew_list(skew_list), _skew_exp(0)
+    : _n_vars(nvars), _n_skew(nskew), _skew_list(skew_list), _skew_exp(nullptr)
 {
   _skew_exp = newarray_atomic_clear(bool, nvars);
   for (int v = 0; v < nskew; v++) _skew_exp[skew_list[v]] = true;

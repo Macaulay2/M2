@@ -24,6 +24,7 @@ newPackage(
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}},
     Keywords => {"Commutative Algebra"},
     PackageExports => { "Elimination" },
+    PackageImports => { "Varieties" },
     AuxiliaryFiles => true,
     DebuggingMode => false
     )

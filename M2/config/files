@@ -28,7 +28,6 @@ distributions/deb/macaulay2/preinst
 libraries/Makefile
 libraries/cohomcalg/Makefile
 libraries/topcom/Makefile
-libraries/atomic_ops/Makefile
 libraries/Makefile.library
 libraries/M2/Makefile
 libraries/gc/Makefile

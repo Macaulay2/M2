@@ -1,11 +1,10 @@
 // Copyright 2004.  Michael E. Stillman
+#pragma once
 
-#ifndef _monoid_hpp_
-#define _monoid_hpp_
-
-#include <vector>
-
-#include "engine-includes.hpp"
+#include <alloca.h>  // for alloca
+#include <stddef.h>  // for size_t
+#include <string>    // for string
+#include <vector>    // for vector
 
 #include "ExponentList.hpp"
 #include "ExponentVector.hpp"
@@ -30,72 +29,87 @@ typedef const int *const_monomial;
 #define MONOMIAL_BYTE_SIZE(mon_size) \
   static_cast<int>((sizeof(int) * (mon_size)))
 
+// TODO: rename and document all variables
+// (e.g. see NCAlgebras/FreeMonoid.hpp and mathicgb/MonoMonoid.hpp)
+// TODO: make sure monoid is deconstructed and not garbage collected
 class Monoid : public MutableEngineObject
 {
-  int nvars_;
-  M2_ArrayString varnames_;
-  M2_arrayint degvals_;
-  M2_arrayint heftvals_;
-  VECTOR(const_monomial)
-      degree_of_var_;  // [0]..[nvars-1] are the multi-degrees of the
-                       // variables, and [nvars] = zero element in the
-                       // degree monoid.
-  M2_arrayint heft_degree_of_var_;
+  const Monoid *mDegreeMonoid;
+  const PolynomialRing *mDegreeRing;
 
-  const PolynomialRing *degree_ring_;
-  const Monoid *degree_monoid_;
-
+  /// the monomial ordering of the variables
   const MonomialOrdering *mo_;
-  MonomialOrder *monorder_;  // Internal version, with encoding information
-  enum overflow_type { OVER, OVER1, OVER2, OVER4 } * overflow;
+  // Internal version, with encoding information
+  MonomialOrder *monorder_;
 
-  size_t exp_size;  // in bytes
+  /// number of variables
+  const int mVariableCount;
+  /// names of variables
+  const std::vector<std::string> mVariableNames;
+  /// length mVariableCount * (length of a single degree vector)
+  const std::vector<int> mDegrees;
+  /// length of a single degree vector
+  const std::vector<int> mHeftVector;
+  /// length mVariableCount
+  // TODO: make this const
+  std::vector<int> mHeftDegrees;
 
+  /// The following two Should be constant after construction
+  /// [0]..[mVariableCount-1] are the multi-degrees of the variables,
+  /// and [mVariableCount] = zero element in the degree monoid.
+  gc_vector<const_monomial> mDegreeOfVar;
+
+  /// sets mHeftDegrees and mDegreeOfVar
+  void set_degrees();
+
+  /// the number bytes in an unpacked exponent vector
+  /// length VariableCount * (number of bytes per exponent)
+  size_t exp_size;
+
+  /// size of an encoded monomial
   int monomial_size_;  // in ints
-  int monomial_bound_;
+  int monomial_bound_; // not yet used
 
+  // TODO: the following should be handled by the monomial order
+  /// the location of the first weight vec value in each monomial
+  /// or < 0 if there is none
+  int first_weights_slot_;
+  /// number of invertible variables
   int n_invertible_vars_;
+  /// indicates where the free module components are in the monomial order
   int n_before_component_;
   int n_after_component_;
+  /// indicates whether free module components are ordered lexicographically
   bool component_up_;
-
-  M2_arrayint local_vars;  // These are the variables which are < 1 in the
-                           // monomial order.
-
-  int first_weights_slot_;  // < 0 if none, otherwise the location of the first
-                            // weight vec value
-                            // in each monomial
-
+  /// These are the variables which are < 1 in the monomial order.
+  std::vector<int> local_vars;
+  /// These are the variables which can have negative exponents
   std::vector<bool> mLaurentVariablesPredicate;
-  
-  VECTOR(int) nslots_;
-
-  void set_degrees();
+  /// number of slots per monomial order block
+  // TODO: why is this one a gc_vector?
+  gc_vector<int> nslots_;
+  /// used for preventing overflows
   void set_overflow_flags();
+  enum overflow_type { OVER, OVER1, OVER2, OVER4 } * overflow;
 
+  /// the trivial monoid
   static Monoid *trivial_monoid;
 
+  /// constructors
   Monoid();
-
   Monoid(const MonomialOrdering *mo,
-         M2_ArrayString names,
          const PolynomialRing *DR, /* degree ring */
-         M2_arrayint degs,
-         M2_arrayint hefts);
+         const std::vector<std::string> names,
+         const std::vector<int> degs,
+         const std::vector<int> hefts);
 
  public:
   static Monoid *create(const MonomialOrdering *mo,
-                        M2_ArrayString names,
                         const PolynomialRing *DR, /* degree ring */
-                        M2_arrayint degs,
-                        M2_arrayint hefts);
+                        const std::vector<std::string> &names,
+                        const std::vector<int> &degs,
+                        const std::vector<int> &hefts);
 
-  static Monoid *create(const MonomialOrdering *mo,
-                        const std::vector<std::string>& names,
-                        const PolynomialRing *DR, /* degree ring */
-                        const std::vector<int>& degs,
-                        const std::vector<int>& hefts);
-  
   ~Monoid();
 
   static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);
@@ -104,26 +118,23 @@ class Monoid : public MutableEngineObject
   static Monoid *get_trivial_monoid();
 
   const MonomialOrdering *getMonomialOrdering() const { return mo_; }
-  M2_arrayint getNonTermOrderVariables() const { return local_vars; }
-  const PolynomialRing *get_degree_ring() const { return degree_ring_; }
-  const Monoid *degree_monoid() const { return degree_monoid_; }
-  const_monomial degree_of_var(int v) const { return degree_of_var_[v]; }
-  int primary_degree_of_var(int v) const
-  {
-    return heft_degree_of_var_->array[v];
-  }
-  M2_arrayint primary_degree_of_vars() const { return heft_degree_of_var_; }
-  M2_arrayint get_heft_vector() const { return heftvals_; }
+  const PolynomialRing *get_degree_ring() const { return mDegreeRing; }
+  const Monoid *degree_monoid() const { return mDegreeMonoid; }
+  const_monomial degree_of_var(int v) const { return mDegreeOfVar[v]; }
+  int primary_degree_of_var(int v) const { return mHeftDegrees[v]; }
+  const std::vector<int> &primary_degree_of_vars() const { return mHeftDegrees; }
+  const std::vector<int> &get_heft_vector() const { return mHeftVector; }
   bool primary_degrees_of_vars_positive() const;
 
-  bool is_group() const { return n_invertible_vars_ == nvars_; }
+  bool is_group() const { return n_invertible_vars_ == mVariableCount; }
+  bool is_local() const { return local_vars.size() > 0; }
   bool has_monomials_lt_one() const
   {
-    return (n_invertible_vars_ > 0 || local_vars->len > 0);
+    return (n_invertible_vars_ > 0 || local_vars.size() > 0);
   }
 
   int numInvertibleVariables() const { return n_invertible_vars_; }
-  int numNonTermOrderVariables() const { return local_vars->len; }
+  int numNonTermOrderVariables() const { return local_vars.size(); }
   // returns an empty vector if the first part of the monomial ordering is
   // not a weight vector
   std::vector<int> getFirstWeightVector() const;
@@ -140,7 +151,7 @@ class Monoid : public MutableEngineObject
 
   void text_out(buffer &o) const;
 
-  int n_vars() const { return nvars_; }
+  int n_vars() const { return mVariableCount; }
   int max_degree() const { return monomial_bound_; }
   int monomial_size() const { return monomial_size_; }
   int n_slots(int nparts) const;
@@ -154,12 +165,10 @@ class Monoid : public MutableEngineObject
   void from_varpower(const_varpower vp, monomial result) const;
   void to_varpower(const_monomial m, gc_vector<int>& result_vp) const;
 
+  // convert to and from the exponent vector representation
   void from_expvector(const_exponents exp, monomial result) const;
   void to_expvector(const_monomial m, exponents_t result_exp) const;
 
-  M2_arrayint to_arrayint(
-      const_monomial monom) const; /* Returns an exponent vector representation
-                                  of the monomial */
   bool in_subring(int nslots, const_monomial m) const;
   inline int compare(int nslots, const_monomial m, const_monomial n) const
   {
@@ -219,10 +228,10 @@ class Monoid : public MutableEngineObject
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
-  int degree_weights(const_monomial m, M2_arrayint wts) const;
 
   template<typename T>
   T degree_weights(const_monomial m, const std::vector<T>& wts) const;
+  int degree_weights(const_monomial m, const std::vector<int> &wts) const;
   
   int simple_degree(const_monomial m) const;  // simply sum of exponents
   void degree_of_varpower(const_varpower vp, monomial result) const;
@@ -230,17 +239,17 @@ class Monoid : public MutableEngineObject
   template<typename T>
   void degree_of_expvector(const T* expvector, monomial result) const
   {
-    degree_monoid()->one(result);
-    monomial mon1 = degree_monoid()->make_one();
+    mDegreeMonoid->one(result);
+    monomial mon1 = mDegreeMonoid->make_one();
     for (int i=0; i<n_vars(); i++)
       {
         if (expvector[i] != 0)
           {
-            degree_monoid()->power(degree_of_var(i), expvector[i], mon1);
-            degree_monoid()->mult(result, mon1, result);
+            mDegreeMonoid->power(mDegreeOfVar[i], expvector[i], mon1);
+            mDegreeMonoid->mult(result, mon1, result);
           }
       }
-    degree_monoid()->remove(mon1);
+    mDegreeMonoid->remove(mon1);
   }
 
   bool weight_value_exists() const { return first_weights_slot_ >= 0; }
@@ -272,8 +281,6 @@ inline void Monoid::divide(const_monomial m,
 {
   for (int i = monomial_size_; i > 0; i--) *result++ = *m++ - *n++;
 }
-
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

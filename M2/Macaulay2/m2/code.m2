@@ -41,11 +41,18 @@ code = method(Dispatch => Thing)
 code Nothing    := identity
 code FilePosition := x -> (
     filename := x#0; start := x#1; stop := x#3;
-     if filename =!= "stdio" then (
+     (
 	  wp := set characters " \t\r);";
 	  file := (
 	       if match("startup.m2.in$", filename) then startupString
-	       else if filename === "currentString" then currentString
+	       else if filename === "currentString" then (
+		    if currentString === null
+		    then error "code no longer available"
+		    else currentString)
+	       else if filename === "stdio" then (
+		    start = 1;
+		    stop = x#3 - x#1 + 1;
+		    toString stack apply(x#1..x#3, historyGet))
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
 		    get filename
@@ -150,7 +157,8 @@ sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if in
     if  isUnaryAssignmentOperator key and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol+, symbol=)
     if instance(key, Keyword)         and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol #)
     if instance(key, Function)        and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#resolution
-    if instance(key, Sequence)        and tallyF <= tally         key     then  key)
+    if instance(key, Sequence)        and tallyF <= tally         key     then  key     else
+    if key === NewMethod              and tallyF <= tally splice (key, T) then (key, T))
 
 methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
 methods Manipulator := M -> methods class M
