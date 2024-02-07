@@ -2150,6 +2150,13 @@ scan(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("scan",scan);
+
+nextPrime(e:Expr):Expr := (
+     when e
+     is x:ZZcell do toExpr(nextPrime(x.v - oneZZ))
+     else WrongArgZZ());
+setupfun("nextPrime0", nextPrime);
+
 gcd(x:Expr,y:Expr):Expr := (
      when x
      is a:ZZcell do (

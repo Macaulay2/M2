@@ -312,14 +312,7 @@ getNonUnit = R -> if R.?Engine and R.Engine then (
 
 -- nextPrime and getPrimeWithRootOfUnity, written by Frank Schreyer.
 nextPrime=method(TypicalValue=>ZZ)
-nextPrime Number := n -> (
-   n0 := ceiling n;
-   if n0 <= 2 then return 2;
-   if even n0 then n0=n0+1;
-   while not isPrime n0 do n0=n0+2;
-   n0
-   )
-
+nextPrime Number := nextPrime0 @@ ceiling
 
 getPrimeWithRootOfUnity = method(Options=>{Range=>(10^4,3*10^4)})
 getPrimeWithRootOfUnity(ZZ,ZZ) := opt-> (n,r1) -> (
