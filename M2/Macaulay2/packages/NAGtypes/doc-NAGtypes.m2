@@ -1135,17 +1135,13 @@ doc ///
     (under construction!) new types and methods needed to generalize WitnessSet
 ///
 
-
-doc ///
-  Key
-    (texMath, PolySpace)
-    (texMath, WitnessSet)
-    (texMath, PolySystem)
-    (texMath, AbstractPoint)
+undocumented{    
+    (texMath, PolySpace),
+    (texMath, WitnessSet),
+    (texMath, PolySystem),
+    (texMath, AbstractPoint),
     (texMath, DualSpace)
-  Headline
-    convert to TeX math format
-///
+}
 
 -* doc template
 doc ///

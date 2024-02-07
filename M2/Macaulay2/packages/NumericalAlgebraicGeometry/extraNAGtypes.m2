@@ -49,10 +49,16 @@ gateSystem = method()
 
 GateSystem = new Type of System -- this essentially is a wrapper for an SLProgram
 net GateSystem := S -> (
-    out := net "gate system: " | net numVariables S | " ---> " | net numFunctions S;
-    if numParameters S =!= 0 then out = out || net "(#parameters = " | net numParameters S | ")";
+    out := net "gate system: " | net numVariables S | " input(s) ---> " | net numFunctions S | " output(s)";
+    if numParameters S =!= 0 then out = out | net " (with " | net numParameters S | " parameters)";
     out
     )
+texMath GateSystem := S -> (
+    out := "\\text{gate system}: " | toString numVariables S | " \\to " | toString numFunctions S;
+    if numParameters S =!= 0 then out = out ||  "\\text{ (with $" | toString numParameters S | "$ parameters)}";
+    out
+    )
+
 -- main constructor
 -- IN: (variables,output) or (parameters,variables,output)
 gateSystem (GateMatrix,GateMatrix) := (I,O) -> gateSystem(gateMatrix{{}},I,O)
@@ -64,6 +70,7 @@ gateSystem (GateMatrix,GateMatrix,GateMatrix) := (P,I,O) -> (
 	"SLP"=>makeSLProgram(P|I,O), cache => new CacheTable from {}}
     )
 
+GateSystem ^ List := (P, inds) -> gateSystem(parameters P, vars P, (gateMatrix P)^inds)
 
 -- serialize
 toExternalString GateSystem := F -> (

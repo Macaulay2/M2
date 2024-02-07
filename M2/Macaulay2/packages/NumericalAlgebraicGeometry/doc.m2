@@ -793,7 +793,8 @@ document {
 	(squareUp, AbstractPoint, AbstractPoint, GateSystem), 
 	(squareUp, AbstractPoint, GateSystem),
 	[squareUp,Strategy],
-	[squareUp,Field]  
+	[squareUp,Field],
+	[squareUp,Verbose]  
 	},
     Headline => "square up a polynomial system",
     Usage => "G = squareUp F
@@ -824,7 +825,7 @@ document {
 	" of the Jacobian of ", TT "F", " and picks out the first ", TT"r", 
 	" polynomials who give the same (approximate) rank at the specified point."   
 	},
-    EXAMPLE ///
+    EXAMPLE lines ///
     X = gateMatrix{toList vars(x,y,z)}
     P = gateMatrix{toList vars(a..d)}
     F = gateSystem(P,X,gateMatrix{{y^2-x*z},{x^2*y-z^2},{x^3-y*z},{a*x+b*y+c*z+d}})
@@ -839,13 +840,16 @@ document {
     UL apply({
 	    "block size" => {" (default = 1) How many rows of Jacobian are evaluated at each step when squaring up a system at a specified Point."},
 	    "target rank" => {" (default = full rank) The target rank of the subsystem. "},
-	    Field => {" (default = null). If null, then the coefficient ring is used for PolySystem and CC is used for GateSystem."}, 
-	    Strategy => {" (default = \"random matrix\"). Given an overdetermined system, a random matrix is used to construct as many random linear combinations of the equations as there are variables. ", "(Another option \"slack variables\" has not been implemented yet.)"}		    
+	    Field => {" (default = null). If null, then the coefficient ring is used for ", TO PolySystem, " and CC is used for ", TO GateSystem, "."}, 
+	    Strategy => {" (default = \"random matrix\"). Given an overdetermined system, a random matrix is used to construct
+		as many random linear combinations of the equations as there are variables. ", 
+		"(Another option \"slack variables\" has not been implemented yet.)"},
+	    Verbose => {" (default = false)."}		    
 	    }, 
 	item -> {TT "[", TT toExternalString item#0, TT "]: "} | item#1 
 	)
     ,
-    SeeAlso=>{PolySystem}
+    SeeAlso=>{PolySystem,GateSystem}
     }
 
 document {
@@ -1078,6 +1082,25 @@ doc ///
         evaluate(F,p0)
 	evaluateJacobian(F,p0)	
     ///
+
+doc ///
+    Key
+      (symbol ^, GateSystem, List)
+    Headline
+      a subsystem with specified equations
+    Usage
+      G^L
+    Inputs
+      G:
+      L:"indices of the equations"
+    Description
+      Example
+        variables = declareVariable \ {x,y}
+	F = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2},{x^2+2*y-3}})
+	gateMatrix F
+	G = F^{0,2}
+    	gateMatrix G	
+    ///
     
 undocumented {
     (toExternalString,GateSystem),
@@ -1094,6 +1117,10 @@ Key
 Headline
   jacobian of a (gate) system
 ///
+
+undocumented{    
+    (texMath, GateSystem)
+}
 
 doc ///
     Key

@@ -5,10 +5,6 @@
 ------------------------------------------------------
 
 -- helper functions for "square down":
-
--- move these to SLPexpressions???
-GateSystem ^ List := (P, inds) -> gateSystem(parameters P, vars P, (gateMatrix P)^inds)
-
 -- orthonormal basis for col(L) using SVD
 ONB = L -> (
     (S,U,Vt) := SVD L;
