@@ -59,6 +59,10 @@ export {
     "yonedaMap'",
     "yonedaProduct",
     -- Option names
+    "OverField",
+    "OverZZ",
+    "Homogenization",
+    "Nonminimal",
     "Concentration",
     "Cycle",
     "Boundary",
