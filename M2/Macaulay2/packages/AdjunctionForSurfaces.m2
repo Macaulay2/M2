@@ -111,7 +111,7 @@ rationalSurface(List,ZZ,List,Symbol) := (points,d,L,x) -> (
 adjointMatrix=method()
 adjointMatrix(Matrix,Symbol) := (D,z) -> (
     --  Input: D, matrix, transposed presentation matrix of omega_X
-    --            where X is the surface defiend by ann coker D
+    --            where X is the surface defined by ann coker D
     --         z, symbol
     --  Output: adj, matrix, presentation matrix of O_X(H) 
     --               as a module over the adjoint surface, X', i.e.,
@@ -371,7 +371,7 @@ document {
 	
     PARA{}, "In case of rational surfaces, repeating the process the process we end in one of the 
     exceptional cases (1),..,(4). Whether we are in case (3) or (4)  can be detect from the presentation
-    matrix of O_X(H+K). If this presentaion matrix is not linear, then a smooth hyperplane section 
+    matrix of O_X(H+K). If this presentation matrix is not linear, then a smooth hyperplane section 
     C in |H| will be a hyperelliptic curves by Green's K_{p,1} theorem and phi is no longer birational, because 
     it induces the canonical system on C which is 2:1. 
     In our function adjunctionProcess we stop with this last surface.",
@@ -643,7 +643,7 @@ doc ///
 	final surface is P2, one can use the list adjList to get a rational 
 	parametrization.
 	
-	In case one ends up with a del Pezzo suface or a conic bunlde, one has to identify the 
+	In case one ends up with a del Pezzo surface or a conic bundle, one has to identify the 
 	exceptional lines, thus one might need an algebraic field extension, 
 	to get a rational parametrization. However, one can always parametrize X in terms of the final
 	surface in the adjunction process.
@@ -694,7 +694,7 @@ doc ///
        parametrization of the rational surface X      
   Description
      Text
-        Let adjList be the list of adjoint matrices comming out of the adjunction
+        Let adjList be the list of adjoint matrices coming out of the adjunction
 	process of a rational surface X. If the final surface is a P2 then
 	the function computes the rational parametrization of X. In other cases the 
 	function returns rational parametrization from the final surface X'' in the adjunction
