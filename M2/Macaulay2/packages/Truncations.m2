@@ -23,7 +23,6 @@ newPackage(
         },
     Keywords => { "Commutative Algebra" },
     PackageImports => { "Polyhedra" },
-    PackageExports => { "Complexes" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
@@ -269,23 +268,6 @@ truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     -- FIXME, what is right?
     fgenF := (f * inducedMap(source f, F) * inducedMap(F, source gens F, gens F));
     map(G, F, inducedMap(G, source fgenF, fgenF) // inducedMap(G, source gens G, gens G)))
-
---------------------------------------------------------------------
-
-truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
-    (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(e, C_lo);
-    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
-    )
-truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
-
-truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
-    C := truncate(e, source f);
-    D := truncate(e, target f);
-    d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
-    )
-truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
 
 --------------------------------------------------------------------
 
