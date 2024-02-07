@@ -4,7 +4,7 @@ export {
     -- Methods
     "sheafMap",
     "isLiftable",
-    "yonedaSheafExtension",
+--    "yonedaSheafExtension",
     }
 
 -----------------------------------------------------------------------------
@@ -411,6 +411,7 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 -- Yoneda Ext
 -----------------------------------------------------------------------------
 
+-*
 yonedaSheafExtension = method()
 -- TODO: should be a complex of sheaf maps
 -- FIXME: should get d, F, G from E := target f = Ext^d(F, G)
@@ -434,6 +435,7 @@ yonedaSheafExtension(List, Complex, Matrix) := List => (L, C, f) -> (
     i2 := map(P, G, map(module P, module G, matrix last P.cache.pushoutMaps));
     p1 := map(F, P, map(module F, module P, transpose cover i1 // transpose cover (augmentationMap C)_0));
     (p1, i2))
+*-
 
 -*
 TEST ///
