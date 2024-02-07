@@ -1,7 +1,10 @@
 #ifndef _res_dep_graph_hpp_
 #define _res_dep_graph_hpp_
 
-#include <tbb/tbb.h>
+#include "m2tbb.hpp"
+
+#ifdef WITH_TBB
+
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -76,4 +79,7 @@ public:
 };
 
 void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, bool doMinimalBetti);
-#endif
+
+#endif // WITH_TBB
+
+#endif // file guard

@@ -612,7 +612,7 @@ void F4Res::gaussReduce()
 #if defined(WITH_TBB)
   //size_t chunk_size = std::max(mSPairs.size() / (100*mFrame.getNumThreads()), (size_t) 1);
   //mFrame.getScheduler().execute([this,&chunk_size,&onlyConstantMaps,&track,&threadLocalDense] {
-  //mFrame.getScheduler().execute([this,&onlyConstantMaps,&track,&threadLocalDense] {
+  mFrame.getScheduler().execute([this,&onlyConstantMaps,&track,&threadLocalDense] {
   //mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size(),chunk_size},
   mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size()},
                     [&](const mtbb::blocked_range<int>& r)
@@ -623,7 +623,7 @@ void F4Res::gaussReduce()
                         gaussReduceRow(i, my_dense, onlyConstantMaps, track);
                       }
                     });
-  //});
+  });
 
   for (auto tlDense : threadLocalDense)
     mRing.vectorArithmetic().deallocateElementArray(tlDense);

@@ -80,9 +80,9 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads
   timeComputeRanks = 0.0;
   timeComputeSparseRanks = 0.0;
 
-  std::cout << "hardware tbb threads: " << tbb::info::default_concurrency() << std::endl;
-  std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
-  std::cout << "using " << mNumThreads << " threads" << std::endl;
+  //std::cout << "hardware tbb threads: " << tbb::info::default_concurrency() << std::endl;
+  //std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
+  //std::cout << "using " << mNumThreads << " threads" << std::endl;
 }
 
 // Destruct the frame
@@ -181,17 +181,19 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       // computeFrame()
     }
 
-  std::cout << "In dep graph" << std::endl;
 #if defined(WITH_TBB)
   // build the dependency graph
-  mScheduler.execute([&] {
-     makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree+1,true);
-     mDepGraph.startComputation();
-     mDepGraph.waitForCompletion();
-  });
+  if (false)
+  {
+     std::cout << "In dep graph" << std::endl;
+     mScheduler.execute([&] {
+        makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree+1,true);
+        mDepGraph.startComputation();
+        mDepGraph.waitForCompletion();
+     });
+     std::cout << "Out dep graph" << std::endl;
+  }
 #endif
-
-  std::cout << "Out dep graph" << std::endl;
 
   // What needs to be computed?
   // lodeg..hideg, level: 0..maxlevel.  Note: need to compute at level

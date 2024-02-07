@@ -1021,6 +1021,8 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
   -- I = Grassmannian(1, 6, CoefficientRing => ZZ/101)
 
   I = Grassmannian(1, 7, CoefficientRing => ZZ/101)
+  debug Core
+  numTBBThreads = 10
   R = ring I
   gbTrace=2
   elapsedTime minimalBetti(I, DegreeLimit => 2)

@@ -2,6 +2,8 @@
 #include "res-schreyer-frame.hpp"
 #include "res-f4.hpp"
 
+#ifdef WITH_TBB
+
 int DependencyGraph::addVertex(int level, int slantedDegree)
 {
    auto fillAndReduceNode = createFillAndReduceNode(level,slantedDegree);
@@ -161,3 +163,5 @@ void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, 
           }
       }
 }
+
+#endif // WITH_TBB

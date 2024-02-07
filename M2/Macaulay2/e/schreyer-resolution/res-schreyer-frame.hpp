@@ -20,6 +20,7 @@
 #ifndef _res_schreyer_frame_hpp_
 #define _res_schreyer_frame_hpp_
 
+#include "m2tbb.hpp"                                   // for TBB headers
 #include "betti.hpp"                                   // for BettiDisplay
 #include "engine-exports.h"                            // for M2_arrayint
 #include "schreyer-resolution/res-memblock.hpp"        // for ResMemoryBlock
