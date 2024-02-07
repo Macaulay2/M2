@@ -9,7 +9,7 @@ newPackage("Matroids",
 	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
 	PackageExports => {"Graphs", "Posets"},
-	DebuggingMode => false,
+	DebuggingMode => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
@@ -150,7 +150,7 @@ matroid (List, List) := Matroid => opts -> (E, L) -> (
 matroid List := Matroid => opts -> L -> matroid(sort unique flatten L, L, opts)
 matroid (ZZ, List) := Matroid => opts -> (n, L) -> matroid(toList(0..<n), L, opts)
 matroid (List, List, ZZ) := Matroid => opts -> (E, N, r) -> ( -- non-spanning circuits
-	if not instance(N#0, Set) then N = N/set;
+	if #N > 0 and not instance(N#0, Set) then N = N/set;
 	spanningCircuits := subsets(E, r+1)/set - set flatten apply(N, c -> apply(subsets(E - c, r+1 - #c)/set, s -> s + c));
 	matroid(E, N | spanningCircuits, EntryMode => "circuits")
 )
