@@ -417,20 +417,20 @@ submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
 	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
 -- given a module, find a part of the ambient module
 -- along with corresponding generators and relations
-submodule = (M, rows) -> (
+sliceModule = (M, rows) -> (
     rows = listZZ rows;
     if rows === toList(0 .. numgens M - 1) then M else
     if isFreeModule M    then (ring M)^((-degrees M)_rows) else
-    if not M.?relations  then image    submatrixFree(generators M, rows, ) else
+    if not M.?relations  then image    submatrixFree(generators M, , rows) else
     if not M.?generators then cokernel submatrixFree(relations  M, rows, ) else
-    subquotient(submatrixFree(generators M, rows, ), submatrixFree(relations M, rows, )))
+    subquotient(submatrixFree(generators M, , rows), submatrixFree(relations M, rows, )))
 
 submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
 
-submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(submodule(target m, rows), submodule(source m, cols), raw submatrixFree(m, rows, cols))
-submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(submodule(target m, rows), source m,                  raw submatrixFree(m, rows, null))
-submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                  submodule(source m, cols), raw submatrixFree(m, null, cols))
+submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(sliceModule(target m, rows), sliceModule(source m, cols), raw submatrixFree(m, rows, cols))
+submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(sliceModule(target m, rows), source m,                    raw submatrixFree(m, rows, null))
+submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                    sliceModule(source m, cols), raw submatrixFree(m, null, cols))
 submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
 submatrix(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
 
