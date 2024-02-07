@@ -2470,6 +2470,11 @@ export factorial(x:ulong):ZZ := (
      Ccode( void, "mpz_fac_ui(", w, ",", x, ")" );
      moveToZZandclear(w));
 
+export binomial(n:ZZ, k:ulong):ZZ := (
+     w := newZZmutable();
+     Ccode(void, "mpz_bin_ui(", w, ", ", n, ", ", k, ")");
+     moveToZZandclear(w));
+
 export log1p(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_log1p(", z, ",", x, ", MPFR_RNDN)" );
