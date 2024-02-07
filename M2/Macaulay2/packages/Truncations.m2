@@ -211,6 +211,8 @@ truncation0 = (deg, M) -> (
     else image basis(deg, deg, M, Truncate => true))
 
 truncation1 = (deg, M) -> (
+    -- short-circuit the computation if no truncation is needed
+    if all(degrees M, d -> deg <= d) then return M;
     -- WARNING: valid for towers of rings with degree length = 1.
     -- uses the engine routines for basis with Truncate => true
     -- deg: a List of integers
@@ -271,7 +273,7 @@ truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
 
 --------------------------------------------------------------------
 
-truncate(InfiniteNumber, Thing) := {} >> o -> (d, M) -> (
+truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
     if d === -infinity then M else error "unexpected degree for truncation")
 
 --------------------------------------------------------------------
