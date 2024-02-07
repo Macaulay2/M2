@@ -185,13 +185,13 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
   // build the dependency graph
   if (false)
   {
-     std::cout << "In dep graph" << std::endl;
+     //std::cout << "In dep graph" << std::endl;
      mScheduler.execute([&] {
         makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree+1,true);
         mDepGraph.startComputation();
         mDepGraph.waitForCompletion();
      });
-     std::cout << "Out dep graph" << std::endl;
+     //std::cout << "Out dep graph" << std::endl;
   }
 #endif
 
@@ -266,11 +266,19 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 
 #if defined(WITH_TBB)
   // build the dependency graph
-  mScheduler.execute([&] {
-     makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree + 1,false);
-     mDepGraph.startComputation();
-     mDepGraph.waitForCompletion();
-  });
+  if (false)
+  {
+     //std::cout << "In dep graph" << std::endl;
+     mScheduler.execute([&] {
+        makeDependencyGraph(mDepGraph,
+                            mMaxLength+1,
+                            top_slanted_degree - mLoSlantedDegree + 1,
+                            false);
+        mDepGraph.startComputation();
+        mDepGraph.waitForCompletion();
+     });
+     //std::cout << "Out dep graph" << std::endl;
+   }
 #else
   computeSyzygies(top_slanted_degree, mMaxLength);
 #endif
