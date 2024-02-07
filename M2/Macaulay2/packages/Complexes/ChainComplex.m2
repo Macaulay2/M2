@@ -1051,6 +1051,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
             );
         H.cache.yonedaExtension = liftmap;
         H.cache.yonedaExtension' = invmap;
+        H.cache.formation = FunctionApplication { Ext, (i, M, N) };
         H.cache.Ext = (i,M,N);
         H
         );
