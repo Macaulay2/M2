@@ -35,6 +35,8 @@ SheafMap = new Type of HashTable
 SheafMap.synonym = "Morphism of Sheaves"
 
 -- TODO: if over affine variety, dehomogenize the maps
+-- TODO: toExternalString doesn't capture the source/target of phi;
+-- should it be inferred from G and F when reconstructing the map?
 map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> (
     if variety G =!= variety F then error "expected sheaves over the same variety";
     if not instance(variety F, ProjectiveVariety) then error "maps of sheaves not yet implemented on other varieties";
