@@ -1,5 +1,3 @@
-restart
-loadPackage("Bertini",Reload=>true)
       R = CC[x,y];
       F = {x^2-2,y^2-2};
       W = bertiniZeroDimSolve (F)
