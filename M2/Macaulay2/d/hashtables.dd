@@ -3,6 +3,8 @@
 use equality;
 use classes;
 
+header "#include <cassert>";
+
 dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
 export applyEEEpointer := dummyapplyEEE;
 
@@ -359,6 +361,8 @@ assignmentMethodP(meth:Expr):bool := (
 	  sym === LeftArrowS	    	-- symbol <- , which is an assignment operator in its own right  -- this should go away!!!
      	  ||
 	  sym === GlobalAssignS	        -- global assignment, dispatched internally (it's like    GlobalAssignHook X = (X,x) -> ...    )
+	  ||
+	  isAugmentedAssignmentOperatorWord(sym.symbol.word)
 	  )
      else false);
 
@@ -444,10 +448,10 @@ export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
 	  value));
 
 export installMethod(s:SymbolClosure,X:HashTable,f:fun):Expr := (
-     installMethod(Expr(s),X,Expr(CompiledFunction(f,nextHash())))
+     installMethod(Expr(s),X,Expr(newCompiledFunction(f)))
      );
 export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
-     installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
+     installMethod(Expr(s),X,Y,Expr(newCompiledFunction(f)))
      );
 
 threadLocal Key2 := Sequence(nullE,nullE,nullE);

@@ -1,8 +1,8 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.63",
-    Date => "6 Jul 2022", -- "22 Mar 2021",
+    Version => "0.71",
+    Date => "25 Jul 2023", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -17,7 +17,7 @@ newPackage(
 if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
 opts = new OptionTable from {Ktheory => false, Equivariant => true} -- common options
-export {"Ktheory", "Equivariant" };
+export {"Ktheory", "Equivariant", "Separation", "LabelList" };
 
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
@@ -41,7 +41,8 @@ multidoc ///
     @HREF{"http://arxiv.org/abs/1706.10019","arXiv:1706.10019"}@. @BR{}@
     [2] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability II: multiplying motivic Segre classes,
     @HREF{"http://arxiv.org/abs/2102.00563","arXiv:2102.00563"}@. @BR{}@
-    [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents, in preparation.
+    [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents,
+    @HREF{"http://arxiv.org/abs/2306.13855","arXiv:2306.13855"}@.
  Node
   Key
    setupCotangent
@@ -357,12 +358,37 @@ multidoc ///
     (A,B,FF,I)=setupCotangent(2,4,Presentation=>Borel,Ktheory=>true,Equivariant=>false)
     basis A
     basisCoeffs(x_(1,{1,2})^2)
+ Node
+  Key
+   doublePuzzle
+   DoublePuzzle
+  Headline
+   Produces a rhombus puzzle
+  Usage
+   doublePuzzle (a,b,c,d)
+  Inputs
+   a : String
+   b : String
+   c : String
+   d : String
+  Description
+   Text
+    Given 4 strings, computes the number of pairs of puzzles glued together to form a rhombus with boundaries
+    a,b,c,d in clockwise order.
+
+    In WebApp mode, the output is interactive and allows to test associativity of puzzles.
+   Example
+    doublePuzzle("0101","0101","0101","0101",Equivariant=>false)
+  Caveat
+   At the moment, the interactive part only works on nonequivariant puzzles.
 ///
 undocumented {
     Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory', Separation,
     (restrict,Matrix),(restrict,Matrix,RingElement),
-    (inversion,String)
+    (inversion,String),
+    (html,Puzzle),(net,Puzzle),(tex,Puzzle),(texMath,Puzzle),
+    (html,DoublePuzzle),(net,DoublePuzzle)
     }
 
 TEST ///

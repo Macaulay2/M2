@@ -314,56 +314,6 @@ document {
     "A boolean", TO Boolean, ", to select whether to return repeated roots or not.",
 }
 
-
-document {
-     Key => Variety,
-     Headline => "the class of all algebraic varieties",
-     SeeAlso => "varieties"
-     }
-document { Key => AffineVariety, Headline => "the class of all affine varieties" }
-document { Key => ProjectiveVariety, Headline => "the class of all projective varieties" }
-document {
-     Key => {(Spec, Ring),Spec},
-     Headline => "make an affine variety",
-     Usage => "Spec R",
-     Inputs => {"R"},
-     Outputs => {{ "the affine variety (or scheme) formed from the ring ", TT "R" }},
-     EXAMPLE lines ///
-     R = QQ[x,y];
-     Spec R
-     ///
-     }
-
-document {
-     Key => {(symbol >=, ZZ),(symbol >=,InfiniteNumber)},
-     Usage => "(>= d)",
-     Inputs => { "d" },
-     Outputs => {{"a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d"}}
-     }
-
-document {
-     Key => {(symbol >, ZZ),(symbol >,InfiniteNumber)},
-     Usage => "(> d)",
-     Inputs => { "d" },
-     Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }
-     }
-
-document {
-     Key => {(symbol _,OO,Variety), OO},
-     Headline => "the structure sheaf",
-     Usage => "OO_X",
-     Inputs => { "X" => "a variety" },
-     Outputs => { { "the structure sheaf of ", TT "X", "." } },
-     EXAMPLE lines ///
-     R = QQ[x,y,z]/(y^2*z-x*(x-z)*(x-37*z));
-     X = Proj R
-     OO_X
-     HH^1(OO_X)
-     HH^0(OO_X(3))
-     ///,
-     SeeAlso => {CoherentSheaf, cohomology}
-     }
-
 document { Key => toRR,
      Headline => "convert to high-precision real number",
      Usage => "toRR(prec,x)",

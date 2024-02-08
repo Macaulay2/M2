@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.5",
-    Date => "May 18, 2023",
+    Version => "0.6",
+    Date => "January 24, 2024",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -26,6 +26,13 @@ newPackage("Python",
 ---------------
 
 -*
+
+0.6 (2024-01-24, M2 1.23)
+* add expression, net, texMath, describe, and toExternalString methods
+* move initialization of python from M2 startup to package load time
+* update int <-> ZZ conversion for python 3.12
+* use a constant hash for None
+* add support for augmented assignment
 
 0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
@@ -69,18 +76,19 @@ exportFrom_Core {
     "objectType"}
 
 importFrom_Core {
-    "getPythonNone",
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonFalse",
     "pythonImportImportModule",
+    "pythonInitialize",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
     "pythonLongFromLong",
     "pythonFloatAsDouble",
     "pythonFloatFromDouble",
+    "pythonNone",
     "pythonObjectGetAttrString",
     "pythonObjectHasAttrString",
     "pythonObjectRichCompareBool",
@@ -93,7 +101,8 @@ importFrom_Core {
     "pythonTupleNew",
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString",
-    "pythonWrapM2Function"
+    "pythonWrapM2Function",
+    "toExternalFormat"
 }
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
@@ -110,17 +119,24 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
 
+pythonInitialize()
+
 pythonHelp = Command (() -> pythonValue ///help()///)
 
-toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
+expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
+toString PythonObject := toString @@ expression
+net PythonObject := net @@ expression
+texMath PythonObject := texMath @@ expression
+
+describe PythonObject := x -> Describe FunctionApplication(pythonValue,
+    expression x@@"__repr__"())
+toExternalString PythonObject := toExternalFormat @@ describe
 
 PythonObject.synonym = "python object"
 PythonObject#AfterPrint = x -> (
      t := toString objectType x;
      t = replace("<([a-z]+) '(.*)'>"," of \\1 \\2",t);
      (PythonObject, t))
-
-pythonNone = getPythonNone()
 
 pythonValue = method(Dispatch => Thing)
 pythonValue String := s -> (
@@ -287,6 +303,25 @@ scan({
 	    (lookup(op, PythonObject, PythonObject))(toPython x, y))
 	)
     )
+
+scan({
+	(symbol +=, "iadd"),
+	(symbol -=, "isub"),
+	(symbol *=, "imul"),
+	(symbol @=, "imatmul"),
+	(symbol /=, "itruediv"),
+	(symbol //=, "ifloordiv"),
+	(symbol %=, "imod"),
+	(symbol ^=, "ipow"),
+	(symbol <<=, "ilshift"),
+	(symbol >>=, "irshift"),
+	(symbol &=, "iand"),
+	(symbol |=, "ior"),
+	(symbol ^^=, "ixor")},
+    (op, name) -> installMethod(op, PythonObject, (x, y) -> (
+	    m := "__" | name | "__";
+	    if hasattr(x, m) then x@@m y
+	    else Default)))
 
 -PythonObject := o -> o@@"__neg__"()
 +PythonObject := o -> o@@"__pos__"()
@@ -637,6 +672,47 @@ assert Equation(value pythonValue "10**100", 10^100)
 assert Equation(value pythonValue "-10**100", -10^100)
 ///
 
+TEST ///
+-- describe
+assert instance(describe toPython 5, Describe)
+checkDescribe = x -> assert BinaryOperation(symbol ===,
+    value value describe toPython x, x)
+checkDescribe true
+checkDescribe 5
+checkDescribe 3.14159
+checkDescribe (1 + 2*ii)
+checkDescribe "foo"
+checkDescribe (1, 3, 5, 7, 9)
+checkDescribe {1, 3, 5, 7, 9}
+checkDescribe set {1, 3, 5, 7, 9}
+checkDescribe hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkDescribe null
+
+-- toExternalString
+assert instance(toExternalString toPython 5, String)
+checkToExternalString = x -> assert BinaryOperation(symbol ===,
+    value value toExternalString toPython x, x)
+checkToExternalString true
+checkToExternalString 5
+checkToExternalString 3.14159
+checkToExternalString (1 + 2*ii)
+checkToExternalString "foo"
+checkToExternalString (1, 3, 5, 7, 9)
+checkToExternalString {1, 3, 5, 7, 9}
+checkToExternalString set {1, 3, 5, 7, 9}
+checkToExternalString hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkToExternalString null
+///
+
+TEST ///
+-- augmented assignment
+-- if x is a list, then x += y should modify x directly, i.e., its
+-- hash shouldn't change, unlike x = x + y, which would create a new list
+x = toPython {1, 2, 3}
+oldhash = hash x
+x += {4}
+assert Equation(hash x, oldhash)
+///
 
 -- not part of default testsuite since it requires numpy
 ///

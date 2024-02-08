@@ -97,7 +97,6 @@ Node
    (betti, Module)
    (betti, GradedModule)
    (betti, ChainComplex)
-   (betti, CoherentSheaf)
    (betti, GroebnerBasis)
    (betti, MonomialIdeal)
   Headline
@@ -142,10 +141,10 @@ Node
     Example
       R = QQ[a,b,c,d, Degrees => {{1,0},{2,1},{0,1},{-2,1}}];
       heft R
-      b = betti res coker vars R
-      betti(b, Weights => {1,0})
-      betti(b, Weights => {0,1})
-      multigraded b
+      B = betti res coker vars R
+      betti(B, Weights => {1,0})
+      betti(B, Weights => {0,1})
+      multigraded B
   Synopsis
     Heading
       Betti table of a Groebner basis
@@ -183,11 +182,11 @@ Node
         betti matrix {{x^3, x*y^2}, {y*x, y^2}}
   Synopsis
     Heading
-      Betti diagram showing the degrees of generators and relations of a homogeneous module or coherent sheaf
+      Betti diagram showing the degrees of generators and relations of a homogeneous module
     Usage
       betti M
     Inputs
-      M:{Module,CoherentSheaf}
+      M:Module
       Weights=>List
     Outputs
       :BettiTally
@@ -199,6 +198,8 @@ Node
         S = ZZ/10007[x,y];
         betti coker matrix{{x^3, x*y^2}, {y*x^2, y^3}}
         betti coker map(S^{0,-1}, , matrix{{x^2, y}, {y^3, x^2}})
+      Text
+        Also see @TO (betti, CoherentSheaf)@.
   Synopsis
     Heading
       Betti diagram showing the degrees of generators of a homogeneous ideal

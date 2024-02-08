@@ -6,7 +6,6 @@
 #include "ExponentVector.hpp"
 #include "ExponentList.hpp"
 #include "int-bag.hpp"
-#include "monoid.hpp"
 #include "ring.hpp"
 #include "polyring.hpp"
 #include "mem.hpp"
@@ -124,11 +123,6 @@ class MonomialIdeal : public EngineObject
   void text_out(buffer &o) const;
 
   const PolynomialRing *get_ring() const { return R; }
-  const Monoid *degree_monoid() const
-  {
-    const Ring *S = R;
-    return S->degree_monoid();
-  }
 
   // Insertion of new monomials.
   void insert_minimal(Bag *b);

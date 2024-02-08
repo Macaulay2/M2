@@ -232,17 +232,6 @@ document { Key => NumberedVerticalList,
      SeeAlso => { VerticalList }
      }
 
-
-document { Key => {LowerBound,(symbol SPACE,CoherentSheaf,LowerBound),(symbol SPACE,SheafOfRings,LowerBound)},
-     Headline => "the class of lower bound objects",
-     "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condition
-     that some other integer, such as the index in a direct sum, should be at least as large.",
-     EXAMPLE {
-	  "LowerBound {4}",
-	  ">= 4",
-	  "> 4"
-	  }}
-
 document { Key => {NetFile,(symbol <<, NetFile, String),(symbol <<, NetFile, Net),(symbol SPACE,Manipulator,NetFile),(symbol <<,NetFile,Manipulator)},
      Headline => "the class of all net files",
      "This class is experimental.  Net files are intended to supplant output files eventually.  Whereas a file is a stream of bytes,
@@ -269,15 +258,6 @@ document { Key => newNetFile,
      Usage => "newNetFile()",
      Outputs => { NetFile },
      "This function is experimental."
-     }
-document { Key => SheafOfRings,
-     SeeAlso => { Variety, OO },
-     Headline => "the class of sheaves of rings",
-     EXAMPLE lines ///
-     	  X = Proj(QQ[x..z])
-	  OO_X
-	  OO_X^6
-     ///
      }
 document { Key => zero,
      Headline => "whether something is zero",

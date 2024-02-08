@@ -69,7 +69,7 @@ class Ring : public MutableEngineObject
                          // a long int
   // int P;
   const PolynomialRing *degree_ring;
-  M2_arrayint heft_vector;
+  std::vector<int> mHeftVector;  // FIXME: can't be const because of initialize_ring
   // This vector, if NULL, and if there are any variables in the ring imply that
   // the heft vector should be taken as the default: the first degree should be
   // used
@@ -95,11 +95,11 @@ class Ring : public MutableEngineObject
 
   void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
-                       const M2_arrayint heft_vec = 0);
+                       const std::vector<int> &heft_vec = {});
   Ring()
       : mCharacteristic(0),
         degree_ring(nullptr),
-        heft_vector(nullptr),
+        mHeftVector({}),
         AR(nullptr),
         cR(nullptr),
         _non_unit(),
@@ -122,10 +122,7 @@ class Ring : public MutableEngineObject
   long characteristic() const { return mCharacteristic; }
   const Monoid *degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
-  M2_arrayint get_heft_vector() const
-  {
-    return heft_vector;
-  }  // This CAN BE NULL
+  const std::vector<int> &get_heft_vector() const { return mHeftVector; }
 
   virtual M2::RingID ringID() const { return M2::ring_old; }
   virtual bool is_basic_ring() const
@@ -448,17 +445,24 @@ class Ring : public MutableEngineObject
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
                                int deg,
-                               M2_arrayint wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
+                               const std::vector<int> &wts) const;
+  virtual ring_elem homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const;
 
   // Routines expecting a grading.  The default implementation
   // is that the only degree is 0.
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, monomial d) const;
+  inline const_monomial degree(const ring_elem f) const
+  {
+    auto d = degree_monoid()->make_one();
+    multi_degree(f, d);
+    return d;
+  }
   virtual bool multi_degree(const ring_elem f, monomial d) const;
   // returns true iff f is homogeneous
   virtual void degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const;
 
@@ -572,7 +576,7 @@ class Ring : public MutableEngineObject
 
   void vec_degree_weights(const FreeModule *F,
                           const vec f,
-                          M2_arrayint wts,
+                          const std::vector<int> &wts,
                           int &lo,
                           int &hi) const;
   bool vec_is_homogeneous(const FreeModule *F, const vec f) const;
@@ -580,11 +584,11 @@ class Ring : public MutableEngineObject
                      const vec f,
                      int v,
                      int deg,
-                     M2_arrayint wts) const;
+                     const std::vector<int> &wts) const;
   vec vec_homogenize(const FreeModule *F,
                      const vec f,
                      int v,
-                     M2_arrayint wts) const;
+                     const std::vector<int> &wts) const;
 
   // content of vectors and ring elements, default implementation is for basic
   // fields

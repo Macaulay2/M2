@@ -243,6 +243,9 @@ evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> err
 SpecializedParameterHomotopy = new Type of Homotopy
 specialize = method()
 specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
+    if numcols M != 1 then M = transpose M;
+    if numcols M != 1 then error "1-row or 1-column matrix expected"; 
+    if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
     SPH := new SpecializedParameterHomotopy;
     SPH.ParameterHomotopy = PH;
     SPH.Parameters = M;
@@ -286,7 +289,7 @@ undocumented {
 
 undocumented {(toExternalString,Point), (toExternalString,PolySystem),
     unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,
-    differencePointSet, (differencePointSet,PointSet,PointSet), specialize, (specialize,ParameterHomotopy,Matrix),
+    differencePointSet, (differencePointSet,PointSet,PointSet), 
     (symbol ==,PointSet,PointSet), (net,PointSet), 
     (symbol +,PointSet,PointSet), (symbol -,PointSet,PointSet),
     }

@@ -144,10 +144,10 @@ if firstTime then (
      re = re | "|\\$";					    -- $www.uiuc.edu:80
      re = re | "|!";					    -- !date
      re = re | "|~";					    -- ~user/foo/bar
-     isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory and get to the same file
+     isAbsolutePathRegexp := "\\`(" | re | ")";             -- whether the path will work from any directory and get to the same file
      re = re | "|\\./";					    -- ./foo/bar
      re = re | "|\\.\\./";				    -- ../foo/bar
-     isStablePathRegexp   := "^(" | re | ")";               -- whether we should search only in the current directory (or current file directory)
+     isStablePathRegexp   := "\\`(" | re | ")";             -- whether we should search only in the current directory (or current file directory)
      -- whether to search the path for an executable, based on execvp(3)
      isFixedExecPath = filename -> match("/", filename);
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);

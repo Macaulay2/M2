@@ -147,29 +147,29 @@ i23 : ann2 = relations Dlocalize(R,f)
 
 o23 = | wDz-zDw wDy-yDw zDy-yDz wDx-xDw zDx-xDz yDx-xDy -xDx-yDy-zDz-wDw-4 |
 
-              1       7
-o23 : Matrix D  <--- D
+              1      7
+o23 : Matrix D  <-- D
 
 i24 : F = matrix{{f}}
 
 o24 = | x2+y2+z2+w2 |
 
-              1       1
-o24 : Matrix D  <--- D
+              1      1
+o24 : Matrix D  <-- D
 
 i25 : ann1 = gens gb modulo(F,ann2)
 
 o25 = {2} | wDz-zDw wDy-yDw zDy-yDz Dx^2+Dy^2+Dz^2+Dw^2 wDx-xDw zDx-xDz yDx-xDy xDx+yDy+zDz+wDw+2 x2Dw+y2Dw+z2Dw+w2Dw+2w x2Dz+y2Dz+z2Dz+zwDw+2z x2Dy+y2Dy+yzDz+ywDw+2y |
 
-              1       11
-o25 : Matrix D  <--- D
+              1      11
+o25 : Matrix D  <-- D
 
 i26 : gens gb((ideal ann2) + (ideal F))
 
 o26 = | w z y x |
 
-              1       4
-o26 : Matrix D  <--- D
+              1      4
+o26 : Matrix D  <-- D
 
 i27 : D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}];
 
@@ -278,8 +278,8 @@ i45 : JH3gb=gens gb JH3
 
 o45 = | w z uDu+vDv+3 xDu+yDv yDy+vDv+3 xDy+uDv uDx+vDy yDx+vDu xDx-vDv v2 uv yv u2 yu+xv xu y2 xy x2 xvDv+2x vDyDu-vDxDv-2Dx |
 
-              1       20
-o45 : Matrix D  <--- D
+              1      20
+o45 : Matrix D  <-- D
 
 i46 : testmTorsion = method();
 
@@ -343,8 +343,8 @@ i60 : IH3gb=gens gb IH3
 
 o60 = | 1 |
 
-              1       1
-o60 : Matrix D  <--- D
+              1      1
+o60 : Matrix D  <-- D
 
 i61 : findSocle = method();
 

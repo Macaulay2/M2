@@ -264,10 +264,10 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
 		    j := 0;
 		    while j < i do (
 			 images#j = apply(images#j, s -> s*a);
-			 j = j+1;
+			 j += 1;
 			 );
 		    images#i = apply(images#i, s -> s*b);
-		    i = i+1;
+		    i += 1;
 		    );
 	       images = toList images;
 	       commonDenominator := images#0#1;
@@ -357,7 +357,7 @@ preimage(RingMap, Ideal) := Ideal => (f, J) -> (
 
 preimage(Matrix, Module) := (f, M) -> (
     T := target f;
-    g := map(T/M, T);
+    g := inducedMap(T/M, T);
     kernel(g * f))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f
@@ -443,24 +443,24 @@ substitute(Matrix,ZZ) := Matrix => (m,i) -> (
 sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning target ring not known yet
      commonzero := if S === null then 0 else 0_S;  -- the 0 element of the target ring
      local dummy;
-     g := generators R;
      A := R;
-     while try (A = if instance(A,FractionField) then frac coefficientRing A else coefficientRing A; true) else false
-     do g = join(g, generators A);
-     h := new MutableHashTable;
-     for i from 0 to #g-1 do h#(g#i) = if h#?(g#i) then (h#(g#i),i) else 1:i;
-     h = new HashTable from apply(pairs h, (x,i) -> (x,deepSplice i));
-     m := new MutableList from (#g:symbol dummy);
+    -- a list, containing variables of R and its base rings
+    (g, gs) := flatten \ toSequence transpose while A =!= ZZ list {generators A, if A.?generatorSymbols then A.generatorSymbols else {}} do try (
+        A = if instance(A, FractionField) then frac coefficientRing A else coefficientRing A) else break;
+    -- a hash table, consisting of pairs (generator symbol) => (indices)
+    h := new MutableHashTable;
+    -- a list, eventually containing the targets of each generator
+    m := new MutableList from apply(pairs gs, (i, x) -> ( h#x = if h#?x then append(h#x, i) else 1:i; symbol dummy ));
      for opt in v do (
 	  if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
-	  x := opt#0;
+	  x := baseName opt#0;
 	  y := opt#1;
 	  if instance(y, Constant) then y = numeric y;
 	  if not instance(y,RingElement) and not instance(y,Number) then error "expected substitution values to be ring elements or numbers";
 	  if S === null
 	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
 	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
-	  if not h#?x and ((try x=promote(x,R))===null or not h#?x) then error( "expected ", toString x, " to be a generator of ", toString R );
+	  try x_R else error( "expected ", toString x, " to be a generator of ", toString R );
 	  for i in h#x do (
 	       if m#i =!= symbol dummy and m#i =!= y then error "multiple destinations specified for a generator";
 	       m#i = y;
@@ -503,7 +503,19 @@ substitute(Ideal,Option) := (I,v) -> (sub2(,ring I,{v})) I
 substitute(Vector,Option) := (f,v) -> (sub2(,ring f,{v})) f
 substitute(RingElement,Option) := (f,v) -> (sub2(,ring f,{v})) f
 
-RingElement Array := (r,v) -> substitute(r,matrix {toList v})
+-----------------------------------------------------------------------------
+-- Syntactic sugar for polynomial evaluation
+-----------------------------------------------------------------------------
+
+RingElement Array := -- TODO: eventually deprecate this
+RingElement Sequence := (f, v) -> (
+    R := ring f;
+    n := if R.?numallvars then R.numallvars else numgens R;
+    if #v > n
+    then error("encountered values for ", #v, " variables, but expected at most ", n)
+    else substitute(f, apply(#v, i -> R_i => v#i)))
+-- this will make f(a) work as expected
+RingElement Number := RingElement RingElement := (f, n) -> f(1:n)
 
 -----------------------------------------------------------------------------
 -- inverse

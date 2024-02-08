@@ -232,7 +232,7 @@ C1=appendZeroMap prependZeroMap C
 removeZeroTrailingTerms C1
 ///
 
-Hom(ChainComplex,ChainComplex) := (F,G)->(
+Hom(ChainComplex, ChainComplex) := opts -> (F,G) -> (
    outputCx := new ChainComplex;
    outputCx.ring = ring F;
    topDegree := max G - min F;
@@ -245,10 +245,10 @@ Hom(ChainComplex,ChainComplex) := (F,G)->(
       myFn := i -> (fold((a,b) -> (a || b),
 		         apply(targetList,
 			       j -> (if (j == i) then 
-			               Hom(F_i,G.dd_(i+index1))
+			               Hom(F_i, G.dd_(i+index1), opts)
 				     else if (j == i+1) then
-				       (-1)^index1*Hom(F.dd_j,G_(i+index1))
-				     else map(Hom(F_j,G_(j+index1-1)),Hom(F_i,G_(i+index1)),0)
+				       (-1)^index1 * Hom(F.dd_j, G_(i+index1), opts)
+				     else map(Hom(F_j, G_(j+index1-1), opts), Hom(F_i, G_(i+index1), opts), 0)
 				     )
 				)
 			   )

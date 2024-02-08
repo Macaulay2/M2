@@ -2907,6 +2907,7 @@ doc ///
     Key
         (yonedaExtension', Complex)
         yonedaExtension'
+        [yonedaExtension', MinimalGenerators]
     Headline
         identifies the element of Ext corresponding to an extension
     Usage
@@ -2914,6 +2915,8 @@ doc ///
     Inputs
         C:Complex
           exact, of length $d$ over a ring $R$
+        MinimalGenerators => Boolean
+            whether to @TO prune@ the Ext module
     Outputs
         f:Matrix
           a map from $R^1$ to $\operatorname{Ext}^d(C_0, C_d)$
@@ -3065,7 +3068,7 @@ doc ///
     Key
         (yonedaMap', ComplexMap)
         yonedaMap'
-        [yonedaMap', LengthLimit]
+        [yonedaMap', MinimalGenerators]
     Headline
         identifies the element of Ext corresponding to a map of free resolutions
     Usage
@@ -3074,8 +3077,8 @@ doc ///
         g:ComplexMap
             of degree $-d$ from the free resolution of $M$ to the free
             resolution of $N$
-        LengthLimit => ZZ
-            an upper bound on the lengths of the free resolutions constructed
+        MinimalGenerators => Boolean
+            whether to @TO prune@ the Ext module
     Outputs
         f:Matrix
             over a ring $R$, from $R^1$ to $\operatorname{Ext}^d_R(M,N)$,

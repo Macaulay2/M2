@@ -101,10 +101,17 @@ doc ///
     Example
       runProgram("normaliz", "--version")
       peek oo
+    Text
+      Internally, this routine uses @TO run@.
+      Another method to interact with programs is @TO get@.
+    Example
+      get "!gfan _version"
   SeeAlso
     ProgramRun
     findProgram
     (status, ProgramRun)
+    run
+    get
 ///
 
 doc ///

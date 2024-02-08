@@ -267,7 +267,9 @@ readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool
       savepf := currentPosFile;
 	setGlobalVariable(currentFileName,toExpr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,toExpr(dirname(file.posFile.file.filename)));
-        currentPosFile = file.posFile;
+	if currentPosFile.file == stdIO && file.posFile.file == stdIO
+	then file.posFile = currentPosFile
+	else currentPosFile = file.posFile;
 	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue,returnIfError);
       setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);

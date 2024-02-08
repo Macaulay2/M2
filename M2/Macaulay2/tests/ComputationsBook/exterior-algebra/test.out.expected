@@ -23,8 +23,8 @@ i5 : M=coker matrix{{x_0^2, x_1^2}};
 
 i6 : m=presentation truncate(regularity M,M);
 
-             4       8
-o6 : Matrix S  <--- S
+             4      8
+o6 : Matrix S  <-- S
 
 i7 : symExt(m,E)
 
@@ -33,8 +33,8 @@ o7 = {-1} | e_2 0   0   0   |
      {-1} | e_0 0   e_2 0   |
      {-1} | 0   e_0 e_1 e_2 |
 
-             4       4
-o7 : Matrix E  <--- E
+             4      4
+o7 : Matrix E  <-- E
 
 i8 : bgg = (i,M,E) ->(
           S :=ring(M);
@@ -56,8 +56,8 @@ o10 = {-2} | e_1 e_0 0   |
       {-2} | e_2 0   e_0 |
       {-2} | 0   e_2 e_1 |
 
-              3       3
-o10 : Matrix E  <--- E
+              3      3
+o10 : Matrix E  <-- E
 
 i11 : tateResolution = (m,E,loDeg,hiDeg)->(
            M := coker m;
@@ -73,8 +73,8 @@ i11 : tateResolution = (m,E,loDeg,hiDeg)->(
 
 i12 : m = matrix{{x_0,x_1}};
 
-              1       2
-o12 : Matrix S  <--- S
+              1      2
+o12 : Matrix S  <-- S
 
 i13 : regularity coker m
 
@@ -101,8 +101,8 @@ i16 : T.dd_1
 
 o16 = {-4} | e_2 |
 
-              1       1
-o16 : Matrix E  <--- E
+              1      1
+o16 : Matrix E  <-- E
 
 i17 : sheafCohomology = (m,E,loDeg,hiDeg)->(
            T := tateResolution(m,E,loDeg,hiDeg);
@@ -118,8 +118,8 @@ i19 : E=ZZ/32003[e_0..e_3,SkewCommutative=>true];
 
 i20 : m=koszul(3,vars S);
 
-              6       4
-o20 : Matrix S  <--- S
+              6      4
+o20 : Matrix S  <-- S
 
 i21 : regularity coker m
 
@@ -166,8 +166,8 @@ o28 = {1} | -x_1 -x_2 0    |
       {1} | x_0  0    -x_2 |
       {1} | 0    x_0  x_1  |
 
-              3       3
-o28 : Matrix S  <--- S
+              3      3
+o28 : Matrix S  <-- S
 
 i29 : alpha = map(U ++ U, S^{-1}, transpose{{0,-1,0,1,0,0}});
 
@@ -204,15 +204,15 @@ o36 = {1} | -x_1 -x_2 0    -x_3 0    0    |
       {1} | 0    x_0  x_1  0    0    -x_3 |
       {1} | 0    0    0    x_0  x_1  x_2  |
 
-              4       6
-o36 : Matrix S  <--- S
+              4      6
+o36 : Matrix S  <-- S
 
 i37 : sortedBasis(2,E)
 
 o37 = | e_0e_1 e_0e_2 e_1e_2 e_0e_3 e_1e_3 e_2e_3 |
 
-              1       6
-o37 : Matrix E  <--- E
+              1      6
+o37 : Matrix E  <-- E
 
 i38 : beilinson1=(e,dege,i,S)->(
            E := ring e;
@@ -237,8 +237,8 @@ o39 = {-3} | 0  |
       {-3} | -1 |
       {-3} | 0  |
 
-              4       1
-o39 : Matrix S  <--- S
+              4      1
+o39 : Matrix S  <-- S
 
 i40 : beilinson1(e_1,1,2,S)
 
@@ -249,15 +249,15 @@ o40 = {-2} | 0 0 0 0  |
       {-2} | 0 0 0 0  |
       {-2} | 0 0 0 -1 |
 
-              6       4
-o40 : Matrix S  <--- S
+              6      4
+o40 : Matrix S  <-- S
 
 i41 : beilinson1(e_1,1,1,S)
 
 o41 = | x_0 0 -x_2 0 -x_3 0 |
 
-              1       6
-o41 : Matrix S  <--- S
+              1      6
+o41 : Matrix S  <-- S
 
 i42 : U = (i,S) -> (
            if i < 0 or i >= numgens S then S^0
@@ -285,16 +285,16 @@ i46 : alphad = map(E^1,E^{-1,-1},{{e_1,e_2}})
 
 o46 = | e_1 e_2 |
 
-              1       2
-o46 : Matrix E  <--- E
+              1      2
+o46 : Matrix E  <-- E
 
 i47 : alpha = map(E^{-1,-1},E^{-2},{{e_1},{e_2}})
 
 o47 = {1} | e_1 |
       {1} | e_2 |
 
-              2       1
-o47 : Matrix E  <--- E
+              2      1
+o47 : Matrix E  <-- E
 
 i48 : alphad=beilinson(alphad,S);
 
@@ -323,16 +323,16 @@ i54 : beta=map(E^1,E^{-2,-1},{{e_0*e_2+e_1*e_3,-e_4}})
 
 o54 = | e_0e_2+e_1e_3 -e_4 |
 
-              1       2
-o54 : Matrix E  <--- E
+              1      2
+o54 : Matrix E  <-- E
 
 i55 : alpha=map(E^{-2,-1},E^{-3},{{e_4},{e_0*e_2+e_1*e_3}})
 
 o55 = {2} | e_4           |
       {1} | e_0e_2+e_1e_3 |
 
-              2       1
-o55 : Matrix E  <--- E
+              2      1
+o55 : Matrix E  <-- E
 
 i56 : beta=beilinson(beta,S);
 
@@ -355,8 +355,8 @@ o59 : BettiTally
 
 i60 : foursect = random(S^4, S^10) * presentation G;
 
-              4       9
-o60 : Matrix S  <--- S
+              4      9
+o60 : Matrix S  <-- S
 
 i61 : IX = trim minors(4,foursect);
 
@@ -378,8 +378,8 @@ i65 : alphad = matrix{{e_4*e_1, e_2*e_3},{e_0*e_2, e_3*e_4},
                       {e_1*e_3, e_4*e_0},{e_2*e_4, e_0*e_1},
                       {e_3*e_0, e_1*e_2}};
 
-              5       2
-o65 : Matrix E  <--- E
+              5      2
+o65 : Matrix E  <-- E
 
 i66 : alphad=map(E^5,E^{-2,-2},alphad)
 
@@ -389,16 +389,16 @@ o66 = | -e_1e_4 e_2e_3  |
       | e_2e_4  e_0e_1  |
       | -e_0e_3 e_1e_2  |
 
-              5       2
-o66 : Matrix E  <--- E
+              5      2
+o66 : Matrix E  <-- E
 
 i67 : alpha=syz alphad
 
 o67 = {2} | e_0e_1  e_2e_3 e_0e_4 e_1e_2 -e_3e_4 |
       {2} | -e_2e_4 e_1e_4 e_1e_3 e_0e_3 e_0e_2  |
 
-              2       5
-o67 : Matrix E  <--- E
+              2      5
+o67 : Matrix E  <-- E
 
 i68 : alphad=beilinson(alphad,S);
 
@@ -442,13 +442,13 @@ i74 : -- presentation FHM has the basis elements in the reverse order now
 
 o74 = | 5576 4983 5586 -2697 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
 
-              1       19
-o74 : Matrix S  <--- S
+              1      19
+o74 : Matrix S  <-- S
 
 i75 : mapcone = sect || transpose presentation FHM;
 
-              36       19
-o75 : Matrix S   <--- S
+              36      19
+o75 : Matrix S   <-- S
 
 i76 : fmapcone = res coker mapcone;
 

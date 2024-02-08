@@ -320,8 +320,8 @@ i64 : vars R
 
 o64 = | x y z |
 
-              1       3
-o64 : Matrix R  <--- R
+              1      3
+o64 : Matrix R  <-- R
 
 i65 : toString vars R
 

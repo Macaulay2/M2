@@ -121,6 +121,11 @@ declareVariable Symbol :=
 declareVariable IndexedVariable := g -> (g <- inputGate g) 
 declareVariable InputGate := g -> g
 declareVariable Thing := g -> error "defined only for a Symbol or an IndexedVariable" 
+-- syntactic sugar for declareVariable \ {symbols}
+vars IndexedVariable := x -> declareVariable x
+vars Symbol := x -> declareVariable x
+vars InputGate := x -> x
+InputGate .. InputGate := (A, B) -> value \ (A.Name .. B.Name)
 
 undeclareVariable = method()
 undeclareVariable InputGate := g -> 

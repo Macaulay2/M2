@@ -89,8 +89,8 @@ texMath Symbol := x -> if keywordTexMath#?x then keywordTexMath#x else texVariab
 
 -----------------------------------------------------------------------------
 
-tex     Nothing :=
-texMath Nothing := x -> ""
+tex     Nothing := tex @@ toString
+texMath Nothing := texMath @@ toString
 
 tex     Thing := x -> concatenate("$", texMath x, "$")
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
@@ -128,7 +128,7 @@ texMath Function := f -> texMath toString f
 texMath ZZ := n -> (
     s := simpleToString n;
     j := 1 - (#s-1) % 3;
-    concatenate for i in s list (if j==2 then (j=0; "\\,",i) else (j=j+1; i))
+    concatenate for i in s list (if j==2 then (j=0; "\\,",i) else (j += 1; i))
     )
 
 --     \rm     Roman
@@ -237,7 +237,7 @@ tex MENU := x -> tex drop(redoMENU x, 1)
 -----------------------------------------------------------------------------
 
 -- TODO: incorporate this with packages/Style/M2book.tex.in
-TeXclass := "\\documentclass{article}"
+TeXclass := "\\documentclass{standalone}"
 TeXpackages := {"amsmath", "amssymb"}
 TeXtemplate := src -> concatenate( TeXclass,                newline,
     apply(TeXpackages, pkg -> "\\usepackage{" | pkg | "}"), newline,

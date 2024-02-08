@@ -58,10 +58,16 @@ abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
 abs Constant := abs @@ numeric
 
 lcm = method(Binary => true)
-lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
-lcm(ZZ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
-lcm(QQ,ZZ) := (f,g) -> abs f * (abs g / gcd(f,g))
-lcm(QQ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
+lcm(ZZ,ZZ) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then 0
+    else abs f * (abs g // d))
+lcm(ZZ,QQ) :=
+lcm(QQ,ZZ) :=
+lcm(QQ,QQ) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then 0_QQ
+    else abs f * (abs g / d))
 
 odd  = x -> 1 === x%2
 even = x -> 0 === x%2

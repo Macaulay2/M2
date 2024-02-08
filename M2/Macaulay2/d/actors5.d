@@ -1260,6 +1260,7 @@ setupconst("flexiblePostfixOperators",Expr(new Sequence len length(opsWithPostfi
 setupconst("fixedBinaryOperators",    Expr(new Sequence len length(fixedBinaryOperators)  do foreach s in fixedBinaryOperators do provide Expr(s)));
 setupconst("fixedPrefixOperators",    Expr(new Sequence len length(fixedPrefixOperators)  do foreach s in fixedPrefixOperators do provide Expr(s)));
 setupconst("fixedPostfixOperators",   Expr(new Sequence len length(fixedPostfixOperators) do foreach s in fixedPostfixOperators do provide Expr(s)));
+setupconst("augmentedAssignmentOperators", Expr(new Sequence len length(augmentedAssignmentOperators) do foreach s in augmentedAssignmentOperators do provide Expr(s)));
 
 fileExists(e:Expr):Expr := (
      when e is name:stringCell do toExpr(fileExists(expandFileName(name.v)))
@@ -1646,7 +1647,7 @@ storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 storeInHashTable(
      globalAssignmentHooks,
      Expr(SymbolBody(dictionaryPathS)),
-     Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
+     Expr(newCompiledFunction(storeGlobalDictionaries)));
 
 getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
      when e is s:Sequence do
@@ -1864,7 +1865,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else msg))
 	  else buildErrorPacket(msg))
      else WrongNumArgs(2));
-storeE := Expr(CompiledFunction(store,nextHash()));
+storeE := Expr(newCompiledFunction(store));
 foreach s in syms do storeInHashTable(
      globalAssignmentHooks,
      Expr(SymbolBody(s)),

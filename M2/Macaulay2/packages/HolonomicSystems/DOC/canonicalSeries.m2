@@ -32,7 +32,6 @@ doc ///
       with respect to w are the roots of the indicial ideal, counted with multiplicities.
 
     Example
-     needsPackage "Dmodules"
      R1 = QQ[z]
      W1 = makeWA R1
      a=1/2

@@ -1209,6 +1209,62 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values")
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
 
+augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
+    when lookup(x.oper.word, augmentedAssignmentOperatorTable)
+    is null do buildErrorPacket("unknown augmented assignment operator")
+    is s:Symbol do (
+	-- evaluate the left-hand side first
+	left := evaluatedCode(eval(x.lhs), dummyPosition);
+	when left.expr is e:Error do return Expr(e) else nothing;
+	-- check if user-defined method exists
+	meth := lookup(Class(left.expr),
+	    Expr(SymbolClosure(globalFrame, x.oper)));
+	if meth != nullE then (
+	    rightexpr := eval(x.rhs);
+	    when rightexpr is e:Error do return(e) else nothing;
+	    r := applyEEE(meth, left.expr, rightexpr);
+	    when r
+	    is s:SymbolClosure do (
+		if s.symbol.word.name === "Default" then nothing
+		else return r)
+	    else return r);
+	-- if not, use default behavior
+	when x.lhs
+	is y:globalMemoryReferenceCode do (
+	    r := s.binary(Code(left), x.rhs);
+	    when r is e:Error do Expr(e)
+	    else globalAssignment(y.frameindex, x.info, r))
+	is y:localMemoryReferenceCode do (
+	    r := s.binary(Code(left), x.rhs);
+	    when r is e:Error do Expr(e)
+	    else localAssignment(y.nestingDepth, y.frameindex, r))
+	is y:threadMemoryReferenceCode do (
+	    r := s.binary(Code(left), x.rhs);
+	    when r is e:Error do Expr(e)
+	    else globalAssignment(y.frameindex, x.info, r))
+	is y:binaryCode do (
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
+		    dummyPosition));
+	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+	    then AssignElemFun(y.lhs, y.rhs, r)
+	    else InstallValueFun(CodeSequence(Code(
+			globalSymbolClosureCode(x.info, dummyPosition)),
+		    y.lhs, y.rhs, r)))
+	is y:adjacentCode do (
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
+		    dummyPosition));
+	    InstallValueFun(CodeSequence(Code(globalSymbolClosureCode(
+			    AdjacentS.symbol, dummyPosition)),
+		    y.lhs, y.rhs, r)))
+	is y:unaryCode do (
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
+		    dummyPosition));
+	    UnaryInstallValueFun(
+		Code(globalSymbolClosureCode(x.info, dummyPosition)),
+		y.rhs, r))
+	else buildErrorPacket(
+	    "augmented assignment not implemented for this code")));
+
 -----------------------------------------------------------------------------
 steppingFurther(c:Code):bool := steppingFlag && (
      p := codePosition(c);
@@ -1355,7 +1411,10 @@ export evalraw(c:Code):Expr := (
      	       	    else binarymethod(left,b.rhs,AdjacentS))
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
-	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m,nextHash()))
+	  is m:functionCode do (
+	       fc := FunctionClosure(noRecycle(localFrame),m,0);
+	       fc.hash = hashFromAddress(Expr(fc));
+	       return Expr(fc))
 	  is r:localMemoryReferenceCode do (
 	       f := localFrame;
 	       nd := r.nestingDepth;
@@ -1379,6 +1438,7 @@ export evalraw(c:Code):Expr := (
 	       else localAssignment(x.nestingDepth,x.frameindex,newvalue))
 	  is a:globalAssignmentCode do globalAssignmentFun(a)
 	  is p:parallelAssignmentCode do parallelAssignmentFun(p)
+	  is c:augmentedAssignmentCode do augmentedAssignmentFun(c)
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
@@ -1425,6 +1485,7 @@ export evalraw(c:Code):Expr := (
 	       x := eval(n.body);
 	       localFrame = localFrame.outerFrame;
 	       x)
+	  is c:evaluatedCode do return c.expr
 	  is c:forCode do return evalForCode(c)
 	  is c:whileListDoCode do evalWhileListDoCode(c)
 	  is c:whileDoCode do evalWhileDoCode(c)

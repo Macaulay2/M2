@@ -11,7 +11,7 @@
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
-set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
+set(LIBRARY_LIST   READLINE HISTORY GDBM)
 
 message(CHECK_START " Checking for existing libraries and programs")
 
@@ -35,7 +35,6 @@ endif()
 #   TBB 	libtbb-dev	tbb-devel	tbb (Optional)
 #   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
-#   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
 
 # Set this variable to specify the linear algebra library.
 # See `cmake --help-module FindLAPACK` for the list of options
@@ -52,11 +51,12 @@ else()
   #fallback to header only mode
   set(Boost_stacktrace_header_only YES)
 endif()
+set(CMAKE_REQUIRED_INCLUDES "${Boost_INCLUDE_DIR}")
+check_include_files(boost/math/tools/atomic.hpp
+  HAVE_BOOST_MATH_TOOLS_ATOMIC_HPP)
 
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
-# TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
-find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 
 if(WITH_OMP)
   find_package(OpenMP REQUIRED)
@@ -81,10 +81,8 @@ endif()
 
 if(WITH_FFI)
   find_package(FFI REQUIRED QUIET)
-  execute_process(COMMAND pkg-config --modversion libffi
-    OUTPUT_VARIABLE LIBFFI_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 else()
-  set(LIBFFI_VERSION "not present")
+  set(FFI_VERSION "not present")
 endif()
 
 ###############################################################################
@@ -331,6 +329,9 @@ if(CHECK_LIBRARY_COMPATIBILITY)
   unset(LIBRARY_COMPATIBILITY CACHE)
 endif()
 
+unset(CMAKE_REQUIRED_LIBRARIES)
+unset(CMAKE_REQUIRED_INCLUDES)
+
 ###############################################################################
 ## Set four library related definitions
 
@@ -350,6 +351,13 @@ if(FACTORY_FOUND)
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
 else()
   unset(FACTORY_STREAMIO CACHE)
+endif()
+
+if(FLINT_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${FLINT_INCLUDE_DIR}")
+  check_include_files(flint/nmod.h HAVE_FLINT_NMOD_H)
+else()
+  unset(HAVE_FLINT_NMOD_H CACHE)
 endif()
 
 if(FROBBY_FOUND)

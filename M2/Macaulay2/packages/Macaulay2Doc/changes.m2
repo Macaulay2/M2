@@ -40,6 +40,17 @@ document {
 
 document {
      Key => "changes made for the next release",
+     UL {
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { "The package ", TO "Dmodules::Dmodules", " is now an umbrella package which, for compatibility with old code, loads ",
+			TO "WeylAlgebras::WeylAlgebras", ", ", TO "HolonomicSystems::HolonomicSystems", ", and ", TO "BernsteinSato::BernsteinSato", ". ",
+			"The new addition ", TO "WeylAlgebras::WeylAlgebras", ", contains basic constructors and methods for working with Weyl algebras
+			which used to be in the ", TO "Dmodules::Dmodules", " package." },
+		    }
+	       },
+	  }
      }
 
 document {

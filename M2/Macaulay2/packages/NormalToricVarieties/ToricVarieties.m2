@@ -484,7 +484,6 @@ isComplete NormalToricVariety := Boolean => (
 	)
     )
 
-isProjective = method ()
 isProjective NormalToricVariety := Boolean => (
     cacheValue symbol isProjective) (
     X -> (

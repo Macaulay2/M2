@@ -223,29 +223,10 @@ EngineMonomial *RingElement::lead_monom(int nvars) const
 }
 
 bool RingElement::is_homogeneous() const { return R->is_homogeneous(val); }
-#if 0
-// intarray RingElement::degree() const
-// {
-//   // This should return an M2_arrayint?
-//   intarray result;
-//
-//   int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
-//   int *d = result.alloc(R->degree_monoid()->n_vars());
-//
-//   if (is_zero())
-//     ERROR("the zero element has no degree");
-//   else
-//     {
-//       R->degree(get_value(), mon);
-//       R->degree_monoid()->to_expvector(mon, d);
-//     }
-//
-//   freemem(mon);
-//   return result;
-// }
-#endif
 
-void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
+void RingElement::degree_weights(const std::vector<int> &wts,
+                                 int &lo,
+                                 int &hi) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (is_zero())
@@ -261,23 +242,7 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
   P->degree_weights(val, wts, lo, hi);
 }
 
-M2_arrayint RingElement::multi_degree() const
-{
-  if (is_zero())
-    {
-      ERROR("the zero element has no degree");
-      return 0;
-    }
-
-  int *mon = newarray_atomic(int, R->degree_monoid()->monomial_size());
-  R->degree(get_value(), mon);
-  M2_arrayint result = R->degree_monoid()->to_arrayint(mon);
-
-  freemem(mon);
-  return result;
-}
-
-RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
+RingElement *RingElement::homogenize(int v, const std::vector<int> &wts) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -290,12 +255,12 @@ RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
       ERROR("homogenization: improper ring variable");
       return 0;
     }
-  if (wts == NULL || wts->len != static_cast<unsigned int>(P->n_vars()))
+  if (wts.size() == 0 || wts.size() != static_cast<unsigned int>(P->n_vars()))
     {
       ERROR("homogenization: improper weight function");
       return 0;
     }
-  if (wts->array[v] == 0)
+  if (wts[v] == 0)
     {
       ERROR("homogenization: variable weight is zero");
       return 0;
@@ -306,7 +271,9 @@ RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
   return result;
 }
 
-RingElement *RingElement::homogenize(int v, int deg, M2_arrayint wts) const
+RingElement *RingElement::homogenize(int v,
+                                     int deg,
+                                     const std::vector<int> &wts) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -319,12 +286,12 @@ RingElement *RingElement::homogenize(int v, int deg, M2_arrayint wts) const
       ERROR("homogenization: improper ring variable");
       return 0;
     }
-  if (wts == NULL || wts->len != static_cast<unsigned int>(P->n_vars()))
+  if (wts.size() == 0 || wts.size() != static_cast<unsigned int>(P->n_vars()))
     {
       ERROR("homogenization: improper weight function");
       return 0;
     }
-  if (wts->array[v] == 0)
+  if (wts[v] == 0)
     {
       ERROR("homogenization: variable weight is zero");
       return 0;

@@ -16,15 +16,13 @@ document {
 
 undocumented {
 	  (degree, MonomialIdeal),
-	  (degree, CoherentSheaf),
 	  (degree, Number)
 	  }
 
 document { 
      Key => degree,
-     "Degree is a common name, meaning different things for different 
-     kinds of mathematical objects.  In Macaulay2, there are currently three
-     related, yet different notions of degree: ",
+     "Degree is a common name, meaning different things for different kinds of mathematical objects.
+     In Macaulay2, there are currently three related, yet different notions of degree: ",
      HEADER3 "Degree of polynomials or vectors of such",
 	  UL {
 	  TO (degree,RingElement),
@@ -48,28 +46,6 @@ document {
      SeeAlso => {degreeLength, degreesRing
 	  -- Mike wanted this: , "multigraded polynomial rings"
 	  }
-     }
-document { 
-     Key => (degree,ProjectiveVariety),
-     Usage => "degree X",
-     Inputs => { "X" },
-     Outputs => {
-	  ZZ => {"the degree of ", TT "X"}
-	  },
-     EXAMPLE {
-	  "S = ZZ/32003[x,y,z];",
-	  "I = ideal(x^4-4*x*y*z^2-z^4-y^4);",
-	  "R = S/I;",
-	  "X = variety I",
-	  "degree X"
-	  },
-     "The degree of a projective variety ", TT "X = V(I) = Proj R", " is the degree
-     of the homogeneous coordinate ring ", TT "R = S/I", " of ", TT "X", ".",
-     EXAMPLE {
-          "degree X == degree I",
-	  "degree X == degree R"
-	  },
-     SeeAlso => {(degree,Ideal),variety, "varieties"}
      }
 document { 
      Key => (degree,ProjectiveHilbertPolynomial),

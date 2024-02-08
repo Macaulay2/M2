@@ -211,7 +211,7 @@ fixup DocumentTag := DocumentTag => tag -> (
 
 prefix := set flexiblePrefixOperators
 
-fSeq := new HashTable from {
+fSeq := new HashTable from splice {
     (4, NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
     (3, NewFromMethod  ) => s -> ("new ", toString s#1,                       " from ", toString s#2),
     (3, NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
@@ -243,6 +243,8 @@ fSeq := new HashTable from {
     (2, symbol _*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    apply(augmentedAssignmentOperators, op -> (2, op) => s ->
+	(toString s#1, " ", toString op, " Thing")),
 
     -- ScriptedFunctors
     (4, class, ScriptedFunctor, ZZ) => s -> (
@@ -316,7 +318,9 @@ storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
 	newloc := toString new FilePosition from (
-	    minimizeFilename rawdoc#"filename", rawdoc#"linenum", 0);
+	    minimizeFilename(
+		currentPackage#"source directory" | rawdoc#"filename"),
+ 	    rawdoc#"linenum", 0);
 	rawdoc = currentPackage#rawKey#fkey;
 	oldloc := toString locate rawdoc.DocumentTag;
 	printerr("error: documentation already provided for ", format tag);
@@ -392,7 +396,9 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 -- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
 locate DocumentTag := tag -> new FilePosition from (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
-    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum",0)
+    then (
+	minimizeFilename((package tag)#"source directory" | rawdoc#"filename"),
+	rawdoc#"linenum", 0)
     else (currentFileName, currentRowNumber(), currentColumnNumber()))
 
 -----------------------------------------------------------------------------
@@ -458,7 +464,7 @@ processSignature := (tag, fn) -> item -> (
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	maybeformat := if instance(opts#optsymb, String) then format else identity;
-	defval := SPAN{"default value ", maybeformat reproduciblePaths replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
+	defval := SPAN{"default value ", maybeformat reproduciblePaths replace("^Function\\[.*\\]", "Function[]", toString opts#optsymb)};
 	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> headline opttag};
 	text = if text =!= null and #text > 0 then (", ", text);
 	-- e.g: Key => an integer, default value 42, the meaning of the universe
@@ -654,7 +660,8 @@ document List := opts -> args -> (
 	    storeRawDocumentation(tag2, new HashTable from {
 		    PrimaryTag => tag, -- tag must be primary
 		    symbol DocumentTag => tag2,
-		    "filename" => currentFileName,
+		    "filename" => relativizeFilename(
+			currentPackage#"source directory", currentFileName),
 		    "linenum" => currentRowNumber()
 		    })));
     -- Check BaseFunction
@@ -673,7 +680,8 @@ document List := opts -> args -> (
     if #out > 0 then o.Outputs = out else remove(o, Outputs);
     if #ino > 0 then o.Options = ino else remove(o, Options);
     -- Set the location of the documentation
-    o#"filename" = currentFileName;
+    o#"filename" = relativizeFilename(
+	currentPackage#"source directory", currentFileName);
     o#"linenum"  = currentRowNumber();
     currentDocumentTag = null;
     storeRawDocumentation(tag, new HashTable from o))
@@ -689,7 +697,8 @@ undocumented Thing := key -> if key =!= null then (
     storeRawDocumentation(tag, new HashTable from {
 	    symbol DocumentTag => tag,
 	    "undocumented"     => true,
-	    "filename"         => currentFileName,
+	    "filename"         => relativizeFilename(
+		currentPackage#"source directory", currentFileName),
 	    "linenum"          => currentRowNumber()
 	    }))
 

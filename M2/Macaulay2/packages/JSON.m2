@@ -1,8 +1,8 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.1",
-    Date => "August 31, 2022",
+    Version => "0.2",
+    Date => "December 13, 2023",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -10,6 +10,20 @@ newPackage(
     Keywords => {"System"},
     PackageImports => {"Parsing"},
     AuxiliaryFiles => true)
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2023-12-13, M2 1.23)
+* use single-string version of exportFrom
+
+0.1 (2022-08-31, M2 1.21)
+* initial release
+
+*-
 
 export {
     "toJSON",
@@ -19,7 +33,7 @@ export {
     "ValueSeparator"
     }
 
-exportFrom_Parsing {"nil"}
+exportFrom_Parsing "nil"
 
 ----------------------------------------------------------------
 -- parser based on https://datatracker.ietf.org/doc/html/rfc8259

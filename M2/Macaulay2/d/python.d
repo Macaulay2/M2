@@ -13,7 +13,7 @@ import ErrOccurred():int;
 buildPythonErrorPacket():Expr := (
     e := ErrOccurred();
     if e == 1 then (
-	Ccode(void, "PyErr_Print()");
+	if !SuppressErrors then Ccode(void, "PyErr_Print()");
 	buildErrorPacket("python error"))
     else if e == -1 then StopIterationE
     else nullE);
@@ -23,11 +23,23 @@ toExpr(r:pythonObjectOrNull):Expr := (
     when r
     is null do buildPythonErrorPacket()
     is po:pythonObject do (
+	x := pythonObjectCell(po, 0);
 	h := int(Ccode(long, "PyObject_Hash(", po, ")"));
 	if h == -1 then ( -- unhashable object (e.g., a list)
 	    Ccode(void, "PyErr_Clear()");
-	    h = nextHash());
-	Expr(pythonObjectCell(po, h))));
+	    h = hashFromAddress(Expr(x)));
+	x.hash = h;
+	Expr(x)));
+
+PyInitialize(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then (
+	    Ccode(void, "Py_Initialize()");
+	    nullE)
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("pythonInitialize", PyInitialize);
 
 import RunSimpleString(s:string):int;
 PyRunSimpleString(e:Expr):Expr := (
@@ -163,7 +175,7 @@ setupconst("pythonFalse",
 -- ints --
 ----------
 
-import LongAsZZ(z:ZZmutable, x:pythonObject):ZZmutable;
+import LongAsZZ(z:ZZmutable, x:pythonObject):void;
 PyLongAsLong(e:Expr):Expr :=
     when e
     is x:pythonObjectCell do (
@@ -174,7 +186,8 @@ PyLongAsLong(e:Expr):Expr :=
 	else if overflow == 0 then toExpr(y)
 	else (
 	    z := newZZmutable();
-	    toExpr(moveToZZandclear(LongAsZZ(z, x.v)))))
+	    LongAsZZ(z, x.v);
+	    toExpr(moveToZZandclear(z))))
     is s:SpecialExpr do PyLongAsLong(s.e)
     else WrongArgPythonObject();
 setupfun("pythonLongAsLong",PyLongAsLong);
@@ -430,8 +443,8 @@ setupfun("pythonWrapM2Function", PyWrapM2Function);
 -- none --
 ----------
 
-PyNone(e:Expr):Expr := toExpr(Ccode(pythonObjectOrNull, "Py_None"));
-setupfun("getPythonNone", PyNone);
+setupconst("pythonNone",
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_None"), 0xFCA86420)));
 
 ---------------
 -- importing --
