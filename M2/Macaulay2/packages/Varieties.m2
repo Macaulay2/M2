@@ -41,6 +41,7 @@ newPackage(
     AuxiliaryFiles => true
     )
 
+-- Note: more symbols are exported in Varieties/SheafMaps.m2
 export {
     -- Types
     "Variety",
@@ -69,6 +70,7 @@ export {
     "GlobalSectionLimit",
     "SaturationMap",
     "TorsionFree",
+    "TruncateDegree",
     }
 
 importFrom_Core {
@@ -678,22 +680,20 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
 -- See documentation of Ext^ZZ(CoherentSheaf,CoherentSheaf) for examples.
 -----------------------------------------------------------------------------
 
+-- TODO: implement Ext with DegreeLimit as an optimization
 Ext(ZZ, SheafOfRings,  SumOfTwists) :=
 Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
     assertSameVariety(F, G');
     X := variety F;
     checkProjective X;
     checkVariety(X, F);
-     -- depends on truncate methods
-     needsPackage "Truncations";
      G := G'#0;
      e := G'#1#0;
      M := module F;
      N := module G;
      R := ring M;
-     local E;
-     if dim M === 0 or m < 0 then E = R^0
-     else (
+    r := -infinity;
+    E := if dim M === 0 or m < 0 then R^0 else (
           l := min(dim N, m);
 	  P := resolution flattenModule N;
 	  p := length P;
@@ -701,14 +701,19 @@ Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
 	  -- global Ext is composition of sheaf Ext and cohomology
 	  -- so we compute it as a Grothendieck spectral sequence
 	  -- in this case, it degenerates
-	  if p < n-l then E = Ext^m(M, N, opts)
-	  else (
+	if p < n-l then Ext^m(M, N, opts) else (
 	       a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
-	       r := a-e-m+1;
-	       E = Ext^m(truncate(r,M), N, opts)));
-     if (min degrees E) === infinity then E
-     else if (min degrees E)#0 > e then minimalPresentation E
-     else minimalPresentation truncate(e,E))
+	    r = a-e-m+1;
+	    Ext^m(truncate(r, M), N, opts)));
+    -- We no longer truncate E above e because the majority of uses
+    -- of this function are for computing Ext of sheaves, in which
+    -- case only basis(0, E) is needed, so truncation is not needed.
+    -- On the other hand, users can always truncate E if necessary.
+    E = if opts.MinimalGenerators then prune E else E;
+    -- This is the degree at which M was truncated, which
+    -- is used later for computing the Yoneda extension.
+    E.cache.TruncateDegree = r;
+    E)
 
 Ext(ZZ, SheafOfRings, SheafOfRings)  :=
 Ext(ZZ, SheafOfRings, CoherentSheaf) :=
@@ -716,7 +721,10 @@ Ext(ZZ, CoherentSheaf, SheafOfRings)  :=
 Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n,F,G) -> (
      E := Ext^n(F,G(>=0),opts);
      k := coefficientRing ring E;
-     k^(rank source basis(0,E)))
+    V := k^(rank source basis(0, E));
+    V.cache.formation = FunctionApplication { Ext, (n, F, G) };
+    V.cache.TruncateDegree = E.cache.TruncateDegree;
+    V)
 
 -----------------------------------------------------------------------------
 -- hh: Hodge decomposition
