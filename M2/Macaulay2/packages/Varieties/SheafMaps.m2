@@ -5,6 +5,7 @@ export {
     "sheafMap",
     "isLiftable",
     "yonedaSheafExtension",
+--  "yonedaSheafExtension'",
     "cotangentSurjection",
     "eulerSequence",
     }
@@ -556,6 +557,27 @@ yonedaSheafExtension Matrix := -* Complex => *- f -> (
     C := yonedaExtension f';
     -- TODO: should return a complex of sheaf maps
     -* complex *- apply(d + 1, i -> sheaf_X C.dd_(i+1)))
+
+--yonedaSheafExtension' = method(Options => options Ext.argument)
+--yonedaSheafExtension' Complex := Matrix => opts -> C -> ()
+
+///
+    C := freeResolution(, LengthLimit => d+1)
+    inducedMap(G, sheaf(X, C_d))
+    -- K := sheaf(X, image C.dd_d);
+    -- i := inducedMap(sheaf(X, C_(d-1)), K);
+    -- TODO: need connecting map here
+    -- c := map(E, Hom(K, G), ); -- ???
+    -- FIXME: cheating here
+    b := homomorphism f;
+    P := pushout(i, b);
+    -- TODO: add this constructor
+    i1 := map-- depends on truncate methods
+    (module P, C_0, matrix first P.cache.pushoutMaps);
+    i2 := map(P, G, matrix last P.cache.pushoutMaps);
+    p1 := map(F, P, transpose cover i1 // transpose cover (augmentationMap C)_0);
+    (p1, i2))
+///
 
 -----------------------------------------------------------------------------
 -- Prune
