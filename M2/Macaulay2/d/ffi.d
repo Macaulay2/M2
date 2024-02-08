@@ -357,6 +357,10 @@ ffiRealType(e:Expr):Expr := (
     else WrongArgZZ());
 setupfun("ffiRealType", ffiRealType);
 
+-- returns pointer to real number object with given value
+-- inputs: (x:RR, y:ZZ)
+-- x = value
+-- y = type (0 = mpfr_t, 32 = float, 64 = double)
 ffiRealAddress(e:Expr):Expr := (
     when e
     is a:Sequence do (
@@ -366,17 +370,23 @@ ffiRealAddress(e:Expr):Expr := (
 		when a.1
 		is y:ZZcell do (
 		    bits := toInt(y);
-		    ptr := getMemAtomic(bits / 8);
-		    if bits == 32
-		    then (
-			z := toFloat(x);
-			Ccode(void, "*(float *)", ptr, " = ", z))
-		    else if bits == 64
-		    then (
-			z := toDouble(x);
-			Ccode(void, "*(double *)", ptr, " = ", z))
-		    else return buildErrorPacket("expected 32 or 64 bits");
-		    toExpr(ptr))
+		    if bits == 0 then (
+			z := moveToRR(Ccode(RRmutable, x.v));
+			ptr := getMem(pointerSize);
+			Ccode(void, "*(void **)", ptr, " = ", z);
+			toExpr(ptr))
+		    else if bits == 32 || bits == 64 then (
+			ptr := getMemAtomic(bits / 8);
+			if bits == 32
+			then (
+			    z := toFloat(x);
+			    Ccode(void, "*(float *)", ptr, " = ", z))
+			else if bits == 64
+			then (
+			    z := toDouble(x);
+			    Ccode(void, "*(double *)", ptr, " = ", z));
+			toExpr(ptr))
+		    else return buildErrorPacket("expected 0, 32, or 64"))
 		else WrongArgZZ(2))
 	    else WrongArgRR(1))
 	else WrongNumArgs(2))
