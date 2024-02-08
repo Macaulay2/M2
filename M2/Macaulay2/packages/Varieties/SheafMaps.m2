@@ -4,7 +4,7 @@ export {
     -- Methods
     "sheafMap",
     "isLiftable",
---    "yonedaSheafExtension",
+    "yonedaSheafExtension",
     }
 
 -----------------------------------------------------------------------------
@@ -437,58 +437,19 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 -- Yoneda Ext
 -----------------------------------------------------------------------------
 
--*
 yonedaSheafExtension = method()
--- TODO: should be a complex of sheaf maps
--- FIXME: should get d, F, G from E := target f = Ext^d(F, G)
-yonedaSheafExtension(List, Complex, Matrix) := List => (L, C, f) -> (
-    -- -f-> -g->
+yonedaSheafExtension Matrix := -* Complex => *- f -> (
     E := target f; -- Ext^d(F,G)
-    (d,F,G) := toSequence L; -- E.cache.Ext;
+    (d, F, G) := if (try first formation E) === Ext then last formation E
+    else error "expected target of map to be an Ext^d(F,G) module";
     X := variety F;
-    assert(d == 1); -- TODO
     M := module F;
-    --C := freeResolution(M, LengthLimit => d+1);
-    K := sheaf(X, image C.dd_1);
-    i := inducedMap(sheaf(X, C_0), K);
-    -- TODO: need connecting map here
-    c := map(E, Hom(K, G), 1);
-    -- FIXME: cheating here
-    b := homomorphism f;
-    P := pushout(i, b);
-    -- TODO: add this constructor
-    i1 := map(module P, C_0, matrix first P.cache.pushoutMaps);
-    i2 := map(P, G, map(module P, module G, matrix last P.cache.pushoutMaps));
-    p1 := map(F, P, map(module F, module P, transpose cover i1 // transpose cover (augmentationMap C)_0));
-    (p1, i2))
-*-
-
--*
-TEST ///
-  S = QQ[x,y,z]
-  X = Proj S
-  d = 1
-  F = tangentSheaf X
-  G = OO_X^1
-  -- TODO: this is what we want
-  --E = Ext^1(F, G)
-  --f = E_{0}
-  -- 0 <-- T_X <-- O_X(1)^3 <-- O_X <-- 0
-  --(p, i) = yonedaSheafExtension f
-  C = freeResolution(module F, LengthLimit => d+1);
-  K = sheaf(X, image C.dd_1);
-  H = Hom(K, G)
-  -- this is what we have:
-  (p, i) = prune \ yonedaSheafExtension({1, F, G}, C, matrix random H)
-  assert(source i === G)
-  assert(target i === source p)
-  assert(target p == F) -- TODO: do we want it to be ===?
-  assert(0 == p * i)
-  assert(0 == homology(p, i))
-  assert(0 == ker i)
-  assert(0 == coker p)
-///
-*-
+    r := E.cache.TruncateDegree;
+    E' := Ext^d(truncate(r, module F, MinimalGenerators => false), module G);
+    f' := basis(0, E') * f;
+    C := yonedaExtension f';
+    -- TODO: should return a complex of sheaf maps
+    -* complex *- apply(d + 1, i -> sheafMap C.dd_(i+1)))
 
 -----------------------------------------------------------------------------
 -- Prune
@@ -846,6 +807,51 @@ TEST ///
   assert isIsomorphism(inverse f * f)
   assert(prune(inverse f * f) === id_(OO_X^1))
   assert(prune(f * inverse f) === id_(OO_X^1))
+///
+
+TEST ///
+  -- testing yonedaSheafExtension
+  S = QQ[x,y]
+  X = Proj S
+  d = 1
+  F = OO_X(2)
+  G = OO_X(0)
+  E = Ext^d(F, G)
+  f = E_{0}
+  (p, i) = toSequence yonedaSheafExtension f
+  assert(source i === G)
+  assert(target i === source p)
+  assert(target p == F) -- FIXME
+  assert(prune p === map(OO_X^1(2),OO_X^2(1), map(S^{2}, , {{x, -y}})))
+  assert(prune i === map(OO_X^2(1),OO_X^1, map(S^{2:1}, , {{y}, {-x}})))
+  assert(coker i == F)
+  assert(image i == ker p)
+  assert(ker p == G)
+  assert(0 == p * i)
+  assert(0 == homology(p, i))
+  -- FIXME: somehow the generators are changed
+  -- assert(0 == homology(prune \ (p, i)))
+  assert(0 == ker i)
+  assert(0 == coker p)
+  --
+  S = QQ[x,y,z]
+  X = Proj S
+  d = 1
+  F = tangentSheaf X
+  G = OO_X^1
+  E = Ext^d(F, G)
+  f = E_{0}
+  -- 0 <-- T_X <-- O_X(1)^3 <-- O_X <-- 0
+  (p, i) = toSequence yonedaSheafExtension f
+  assert(source i === G)
+  assert(target i === source p)
+  assert(source p == OO_X^{3:1})
+  assert(target p === F)
+  assert(0 == p * i)
+  assert(0 == homology(p, i))
+  assert(0 == homology(prune \ (p, i)))
+  assert(0 == ker i)
+  assert(0 == coker p)
 ///
 
 -----------------------------------------------------------------------------

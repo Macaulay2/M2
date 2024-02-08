@@ -32,6 +32,7 @@ newPackage(
 	    HomePage => "https://sites.google.com/view/kellervandebogert/home"}
 	},
     PackageExports => {
+	"Complexes",
 	"Saturation",
 	"Truncations",
 	},
