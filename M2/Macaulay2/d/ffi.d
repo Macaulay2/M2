@@ -393,6 +393,10 @@ ffiRealAddress(e:Expr):Expr := (
     else WrongNumArgs(2));
 setupfun("ffiRealAddress", ffiRealAddress);
 
+-- returns value (as RR) of real number object given its address
+-- inputs: (x:Pointer, y:ZZ)
+-- x = pointer to real number object
+-- y = type (0 = mpfr_t, 32 = float, 64 = double)
 ffiRealValue(e:Expr):Expr := (
     when e
     is a:Sequence do (
@@ -402,11 +406,13 @@ ffiRealValue(e:Expr):Expr := (
 		when a.1
 		is y:ZZcell do (
 		    bits := toInt(y);
-		    if bits == 32
+		    if bits == 0
+		    then toExpr(moveToRR(Ccode(RRmutable, "*(mpfr_ptr*)", x.v)))
+		    else if bits == 32
 		    then toExpr(Ccode(float, "*(float *)", x.v))
 		    else if bits == 64
 		    then toExpr(Ccode(double, "*(double *)", x.v))
-		    else buildErrorPacket("expected 32 or 64 bits"))
+		    else buildErrorPacket("expected 0, 32, or 64"))
 		else WrongArgZZ(2))
 	    else WrongArgPointer(1))
 	else WrongNumArgs(2))
