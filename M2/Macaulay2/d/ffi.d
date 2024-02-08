@@ -347,11 +347,14 @@ setupfun("ffiIntegerValue", ffiIntegerValue);
 -- real types --
 ----------------
 
+-- returns pointer to ffi_type object for given real number type
+-- input: n:ZZ (0 = mpfr_t, 32 = float, 64 = double)
 ffiRealType(e:Expr):Expr := (
     when e
     is n:ZZcell do (
 	bits := toInt(n);
-	if bits == 32 then toExpr(Ccode(voidPointer, "&ffi_type_float"))
+	if bits == 0 then toExpr(Ccode(voidPointer, "&ffi_type_pointer"))
+	else if bits == 32 then toExpr(Ccode(voidPointer, "&ffi_type_float"))
 	else if bits == 64 then toExpr(Ccode(voidPointer, "&ffi_type_double"))
 	else buildErrorPacket("expected 32 or 64 bits"))
     else WrongArgZZ());
