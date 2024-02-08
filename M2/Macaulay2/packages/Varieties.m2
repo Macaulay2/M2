@@ -205,9 +205,8 @@ isProjective ProjectiveVariety := X -> true
 -- TODO: instead of an error, return Proj R when there is no variety,
 -- then replace Proj ring M in code for sheaf with variety ring M
 variety = method(TypicalValue => Variety)
-variety Ring        := S -> if S.?variety then S.variety else error "no variety associated with ring"
-variety Ideal       := I -> Proj(ring I/I) -- TODO: should this be saturated?
-variety RingElement := f -> variety ring f -- TODO: should this be V(f) instead?
+variety Ring  := S -> if S.?variety then S.variety else error "no variety associated with ring"
+variety Ideal := I -> Proj quotient I -- TODO: should this be saturated?
 
 sameVariety = Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
 
