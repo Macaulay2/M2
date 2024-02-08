@@ -77,6 +77,7 @@ export {
     "mpzT",
     "float",
     "double",
+    "mpfrT",
     "voidstar",
     "charstar",
     "voidstarstar",
@@ -289,12 +290,13 @@ foreignRealType(String, ZZ) := (name, bits) -> (
 
 float = foreignRealType("float", 32)
 double = foreignRealType("double", 64)
+mpfrT = foreignRealType("mpfr_t", 0)
 
 ForeignRealType Number :=
 ForeignRealType Constant := (T, x) -> new T from realPart numeric x
 ForeignRealType RRi := (T, x) -> T toRR x
 
-isAtomic ForeignRealType := T -> true
+isAtomic ForeignRealType := T -> if T === mpfrT then false else true
 
 --------------------------
 -- foreign pointer type --
