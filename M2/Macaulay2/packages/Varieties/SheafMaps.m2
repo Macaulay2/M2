@@ -121,11 +121,14 @@ isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(
 
 -- composition
 SheafMap * SheafMap := SheafMap => (phi, psi) -> (
-    d := degree phi; e := degree psi;
+    (d, e) := (degree phi, degree psi);
+    (f, g) := (
+	if d >= e then matrix phi else
+	truncate(d, matrix phi, MinimalGenerators => false),
+	truncate(d, matrix psi, MinimalGenerators => false));
     if d >= e
-    then map(target phi, source psi, matrix phi * truncate(d, matrix psi))
-    else map(target phi, source psi, truncate(d, matrix phi) * truncate(d, matrix psi), d)
-    )
+    then map(target phi, source psi, f * g)
+    else map(target phi, source psi, f * g, d))
 
 -- printing
 -- TODO: use abbreviations for source and target
@@ -154,7 +157,7 @@ isLiftable(Matrix, Matrix) := (phi, eta) -> (
 isLiftable(SheafMap, ZZ) := (shphi, d) -> (
     phi := matrix shphi;
     M := module source shphi;
-    eta := inducedMap(truncate(d, M), source phi);
+    eta := inducedMap(truncate(d, M, MinimalGenerators => false), source phi);
     isLiftable(phi, eta))
 
 --if phi is in the image of Hom(eta,target phi), this code
@@ -162,7 +165,7 @@ isLiftable(SheafMap, ZZ) := (shphi, d) -> (
 lift' = method()
 lift'(Matrix, Matrix) := Matrix => (phi, eta) -> (
     newPhi := homomorphism' phi;
-    homomorphism(newPhi // Hom(eta, target phi))
+    homomorphism(newPhi // Hom(eta, target phi, MinimalGenerators => false))
     )
 
 --lifts a sheaf map shphi represented by a module map
@@ -173,7 +176,7 @@ lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
     d := degree shphi;
     phi := matrix shphi;
     M := module source shphi;
-    eta := inducedMap(truncate(e,M),source phi);
+    eta := inducedMap(truncate(e, M, MinimalGenerators => false), source phi);
     sheafMap(lift'(phi, eta), e))
 
 --lifts a sheaf map shphi represented by a module map
@@ -252,8 +255,8 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     e := (regularity ker g, regularity coker g);
     -- TODO: this is kudgy, but maybe it works?
     h := try inverse g else inverse inducedMap(
-	truncate(e#1   + 1, target g),
-	truncate(max e + 1, source g), g);
+	truncate(e#1   + 1, target g, MinimalGenerators => false),
+	truncate(max e + 1, source g, MinimalGenerators => false), g);
     -- then invert and sheafify the new map
     -- We want:
     -- source f ==  target h
@@ -302,6 +305,7 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     V := source moveToField B;
     V.cache.homomorphism = h -> psi * sheafMap homomorphism(g * h) * phi;
     V.cache.formation = FunctionApplication { Hom, (F, G) };
+    V.cache.Ext = (0, F, G);
     V)
 
 TEST ///
@@ -358,16 +362,15 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     if f == 0 then return kernel g;
     g = lift g;
     d := degree g;
-    M := source f;
-    N := target f;
-    P := target g;
+    M := module source f;
+    N := module target f;
     X := variety f;
     if variety g =!= X then error "expected sheaf maps on the same variety";
     -- Note: we use =!= to avoid pruning the sheaves
     -- we also don't verify g * f == 0 for the same reason
-    if source g =!= N then error "expected sheaf maps to be composable";
+    if module source g =!= N then error "expected sheaf maps to be composable";
     -- truncate matrix f to match the degree of the source of g
-    f = inducedMap(truncate(d, module N), module M, matrix f);
+    f = inducedMap(truncate(d, N, MinimalGenerators => false), M, matrix f);
     sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
