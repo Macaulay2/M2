@@ -2526,7 +2526,7 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniPosDimSolve.ts
 ///
 
 TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefileSols.tst.m2")
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst.m2")
 ///
 
 TEST///
