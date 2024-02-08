@@ -404,7 +404,7 @@ Description
   Text
    A cubic with a node or cusp is also arithmetic genus 1; in the case
    of a node, the smooth points are in correspondence with P^1 minus {0, infinity}
-   and the Jacobian is the multiplicative troup of the field.
+   and the Jacobian is the multiplicative group of the field.
    To allow the program to consider this as a curve of arithmetic genus 1, 
    use the optional argument @TO Conductor@. 
   Example
