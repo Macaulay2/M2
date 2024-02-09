@@ -1,7 +1,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
     Version => "0.3",
-    Date => "January 28, 2023",
+    Date => "February 8, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -15,9 +15,9 @@ newPackage("ForeignFunctions",
 
 -*
 
-0.3 (2024-01-28, M2 1.23)
+0.3 (2024-02-08, M2 1.23)
 * add subscripted assignment for various pointer types
-* add support for GMP integers
+* add support for GMP integers and MPFR reals
 * add support for describe, expression, toExternalString, and toString
 * use null coalescing operator
 
