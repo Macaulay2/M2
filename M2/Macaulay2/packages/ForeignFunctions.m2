@@ -956,6 +956,29 @@ doc ///
 
 doc ///
   Key
+    mpfrT
+    (NewFromMethod, mpfrT, RR)
+    (value, mpfrT)
+  Headline
+    MPFR multiple-precision floating-point type
+  Description
+    Text
+      Macaulay2's native @TO RR@ real number type wraps around @TT
+      "mpfr_t"@ from @HREF{"https://mpfr.org/", "MPFR"}@.  This type
+      (which is an instance of @TO ForeignRealType@) allows for
+      conversion between Macaulay2 reals and MPFR reals without loss
+      of precision.
+    Example
+      mpfrT numeric(100, pi)
+      value oo
+      mpfrAdd = foreignFunction("mpfr_add", void, {mpfrT, mpfrT, mpfrT, int})
+      x = mpfrT 0p100
+      mpfrAdd(x, numeric(100, pi), exp 1p100, 0)
+      x
+///
+
+doc ///
+  Key
     (symbol SPACE, ForeignRealType, Number)
     (symbol SPACE, ForeignRealType, Constant)
     (symbol SPACE, ForeignRealType, RRi)
