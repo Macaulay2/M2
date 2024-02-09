@@ -3,7 +3,7 @@
 --- notes:  
 
 undocumented {
-    (degreesRing,   PolynomialRing), (degreesRing,   QuotientRing), (degreesRing,   Module), (degreesRing, Ideal),
+    (degreesRing,   PolynomialRing), (degreesRing,   QuotientRing), (degreesRing,   Module), (degreesRing, LeftIdeal),
     (degreesMonoid, PolynomialRing), (degreesMonoid, QuotientRing), (degreesMonoid, Module),
     }
 

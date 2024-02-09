@@ -304,7 +304,7 @@ degreeToHeft = (R, d) -> (
 -----------------------------------------------------------------------------
 
 gb = method(TypicalValue => GroebnerBasis, Options => gbDefaults)
-gb Ideal  := GroebnerBasis => opts -> I -> gb (module I, opts)
+gb LeftIdeal  := GroebnerBasis => opts -> I -> gb (module I, opts)
 gb Module := GroebnerBasis => opts -> M -> (
     if M.?relations then (
 	if not M.cache#?"full gens" then M.cache#"full gens" = generators M | relations M;

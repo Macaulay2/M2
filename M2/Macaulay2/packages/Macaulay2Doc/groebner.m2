@@ -134,7 +134,7 @@ document {
        f = x^3+y^3+z^3
        f % I
        ///,
-     SeeAlso => {"Gröbner bases", (symbol %, RingElement, Ideal)},
+     SeeAlso => {"Gröbner bases", (symbol %, RingElement, LeftIdeal)},
      }
 
 -- we should be able to link to the right nodes without this:

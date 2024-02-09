@@ -1,20 +1,20 @@
 doc ///
   Key
     WeylClosure
-    (WeylClosure, Ideal)
-    (WeylClosure, Ideal, RingElement)
+    (WeylClosure, LeftIdeal)
+    (WeylClosure, LeftIdeal, RingElement)
   Headline
     Weyl closure of an ideal
   Usage
     WeylClosure I
     WeylClosure(I,f)
   Inputs
-    I:Ideal
+    I:LeftIdeal
       a left ideal of the Weyl Algebra
     f:RingElement
       a polynomial
   Outputs
-    :Ideal
+    :LeftIdeal
       the Weyl closure (w.r.t. $f$) of $I$
   Description
     Text

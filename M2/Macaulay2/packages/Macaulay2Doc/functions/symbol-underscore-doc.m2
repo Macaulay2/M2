@@ -316,7 +316,7 @@ document {
 
 document { 
      Key => {"generators of ideals and modules",
-	  (symbol _, Ideal, ZZ),
+	  (symbol _, LeftIdeal, ZZ),
 	  (symbol _, MonomialIdeal, ZZ),
 	  (symbol _, Module, ZZ),
 	  (symbol _, Matrix, ZZ)},
@@ -325,7 +325,7 @@ document {
 	  Heading => "Synopsis",
      	  Usage => "L_i",
      	  Inputs => {
-	       "L" => ofClass{Ideal,MonomialIdeal,Module,Matrix},
+	       "L" => ofClass{LeftIdeal,MonomialIdeal,Module,Matrix},
 	       "i" => ZZ
 	       },
      	  Outputs => {
@@ -442,11 +442,11 @@ document {
      }
 
 document {
-     Key => {(symbol _, Module, List), (symbol _, Ideal, List)},
+     Key => {(symbol _, Module, List), (symbol _, LeftIdeal, List)},
      Headline => "map from free module to some generators",
      Usage => "M_p",
      Inputs => {
-	  "M" => {"or ", ofClass Ideal},
+	  "M" => {"or ", ofClass LeftIdeal},
 	  "p" => "of integers"
 	  },
      Outputs => {
@@ -466,7 +466,7 @@ document {
 	  source g
 	  target g
 	  ///,
-     SeeAlso => { (module, Ideal), (symbol _, Module, ZZ) }
+     SeeAlso => { (module, LeftIdeal), (symbol _, Module, ZZ) }
      }
 
 document { 

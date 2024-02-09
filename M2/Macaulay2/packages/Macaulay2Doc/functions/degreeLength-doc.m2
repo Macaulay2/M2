@@ -4,7 +4,7 @@
 
 undocumented {
     (degreeLength, Module),
-    (degreeLength, Ideal),
+    (degreeLength, LeftIdeal),
      (degreeLength, InexactField),
      (degreeLength,PolynomialRing), 
      (degreeLength,QuotientRing),

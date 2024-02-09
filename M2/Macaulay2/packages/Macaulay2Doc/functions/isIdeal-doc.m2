@@ -3,14 +3,14 @@
 --- notes: 
 
 document { 
-     Key => {isIdeal, (isIdeal,Thing), (isIdeal,Module),(isIdeal, Ideal),(isIdeal, MonomialIdeal)},
+     Key => {isIdeal, (isIdeal,Thing), (isIdeal,Module),(isIdeal, LeftIdeal),(isIdeal, MonomialIdeal)},
      Headline => "whether something is an ideal",
      Usage => "isIdeal I",
      Inputs => {
 	  "I" => Thing
 	  },
      Outputs => {
-	  Boolean => {TO "true", " if ", TT "I", " is either an ", TO2("Ideal", "ideal"), 
+	  Boolean => {TO "true", " if ", TT "I", " is either an ", TO2("LeftIdeal", "ideal"), 
 	       ", a ", TO2("MonomialIdeal", "monomial ideal"), " or a ", TO2("Module", "module"), 
 	       " which is a submodule of a free module of rank 1 with generators in degree 0 and ", 
 	       TO "false", " otherwise"}
