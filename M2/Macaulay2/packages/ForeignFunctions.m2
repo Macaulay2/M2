@@ -1959,6 +1959,7 @@ assert Equation(value mpzT 10^100, 10^100)
 -- real types
 assert Equation(value float 3.14159, 3.14159p24)
 assert Equation(value double 3.14159, 3.14159p53)
+assert Equation(value mpfrT 3.14159p100, 3.14159p100)
 
 -- pointer types
 ptr = address int 3
