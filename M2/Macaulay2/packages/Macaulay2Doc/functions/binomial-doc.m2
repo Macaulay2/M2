@@ -8,6 +8,7 @@ doc ///
     (binomial, Constant, Number)
     (binomial, Constant, Constant)
     (binomial, RingElement, ZZ)
+    (binomial, ZZ, ZZ)
   Headline
     binomial coefficient
   Usage

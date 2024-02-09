@@ -50,6 +50,38 @@ document {
 			which used to be in the ", TO "Dmodules::Dmodules", " package." },
 		    }
 	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "Most flexible binary operators now have a corresponding ", TO "augmented assignment", " operator.  For example, ",
+			 SAMP "x += 1", " is equivalent to ", SAMP "x = x + 1", "."},
+		    LI { "A new type, ", TO AtomicInt, ", has been introduced providing atomic operations for use in parallel programs." },
+		    LI { "The null coalescing operator ", TO symbol ??, " has been added to the Macaulay2 language." },
+		    LI { "A polynomial ", SAMP "f", " may now be evaluated at a ring element or sequence of ring elements ", SAMP "x", " using ",
+			SAMP "f(x)", ".  The existing syntax, ", SAMP "f[x]", ", has been deprecated and may be removed in a future release. ",
+			"See ", TO (symbol SPACE, RingElement, Sequence), "." },
+		    LI { "The method ", TO (isMember, RingElement, Ideal), " has been added to test membership in an ideal." },
+		    LI { "When given just a module and no integer, ", TO hilbertFunction, " will now a return a function that accepts integers and ",
+			 "returns the corresponding values of the Hilbert function of the module." },
+		    LI { "Torsion is now taken into account when adding, subtracting, and negating matrices." },
+		    LI { "The source and target modules of a matrix will now be printed when both are free and/or have been assigned to global ",
+			 "variables.  Previously, they were only printed when both were free."},
+		    LI { "If a module in a chain complex has been assigned to a global variable, then that variable will appear when the complex ",
+			 "is printed, unless it is a free module."},
+		    LI { "Several improvements have been made to ", TO vector, " for constructing elements of modules."},
+		    LI { "It is now possible to view the code of a function defined on the standard input using ", TO code, "."},
+		    LI { "The particular subclass of ", TO Function, " is now displayed when a function that has not been assigned to a global ",
+			 "variable is printed." },
+		    LI { "The \"standalone\" class is now used by ", TO showTex, " so that the size of the resulting document will match the size ",
+			 "of the object being viewed." },
+		    LI { "Several new escape sequences have been added for strings:  ", SAMP "\\a", " (for audible bell), ", SAMP "\\e",
+			 " and ", SAMP "\\E", " (for escape), ", SAMP "\\v", " (for vertical tab), and ", SAMP "\\x", " (for indicating a character ",
+			 "using its ASCII encoding in hexadecimal).  See ", TO "\"", "." },
+		    LI { "Both ", TO exportFrom, " and ", TO importFrom, " now accept either a string or ", TO Package, " object as their first argument ",
+			 "and either a string or a list of strings as their second argument." },
+		    LI { TO "FLINT", " version 3 is now supported."},
+		    LI { SAMP "libatomic_ops", " has been dropped as a dependency and has been replaced with C11 and C++11 standard atomic operations." }
+		    }
+	       }
 	  }
      }
 

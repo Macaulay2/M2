@@ -211,6 +211,7 @@ DecomposableSparseSystems
 MixedMultiplicity
 PencilsOfQuadrics
 ThreadedGB
+AdjunctionForSurfaces
 VectorGraphics
 GKMVarieties
 MonomialIntegerPrograms
@@ -264,3 +265,5 @@ TerraciniLoci
 MatrixSchubert
 RInterface
 OIGroebnerBases
+PlaneCurveLinearSeries
+
