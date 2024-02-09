@@ -207,13 +207,18 @@ setupconst("ffiVoidType", toExpr(Ccode(voidPointer, "&ffi_type_void")));
 -- integer types --
 -------------------
 
+-- returns pointer to ffi_type object for given integer type
+-- input: (n:ZZ, signed:Boolean)
+-- n = number of bits (or 0 for mpz_t)
 ffiIntegerType(e:Expr):Expr := (
     when e
     is a:Sequence do (
 	if length(a) == 2 then (
 	    when a.0
 	    is n:ZZcell do (
-		when a.1
+		if isZero(n.v)
+		then toExpr(Ccode(voidPointer, "&ffi_type_pointer"))
+		else when a.1
 		is signed:Boolean do (
 		    bits := toInt(n);
 		    if signed.v then (
@@ -243,23 +248,24 @@ ffiIntegerType(e:Expr):Expr := (
     else WrongNumArgs(2));
 setupfun("ffiIntegerType", ffiIntegerType);
 
+-- returns pointer to integer object with given value
+-- inputs (x:ZZ, y:ZZ, signed:Boolean)
+-- x = value
+-- y = number of bits (or 0 for mpz_t)
 ffiIntegerAddress(e:Expr):Expr := (
     when e
-    is x:ZZcell do (
-	y := newZZmutable();
-	set(y, x.v);
-	ptr := getMem(pointerSize);
-	Ccode(void, "*(void **)", ptr, " = ", y);
-	Ccode(void, "GC_REGISTER_FINALIZER(", ptr,
-	    ", (GC_finalization_proc)mpz_clear, ", y, ", 0, 0)");
-	toExpr(ptr))
     is a:Sequence do (
 	if length(a) == 3 then (
 	    when a.0
 	    is x:ZZcell do (
 		when a.1
 		is y:ZZcell do (
-		    when a.2
+		    if isZero(y.v) then (
+			z := moveToZZ(Ccode(ZZmutable, x.v));
+			ptr := getMem(pointerSize);
+			Ccode(void, "*(void **)", ptr, " = ", z);
+			toExpr(ptr))
+		    else when a.2
 		    is signed:Boolean do (
 			bits := toInt(y);
 			ptr := getMemAtomic(bits / 8);
@@ -302,16 +308,21 @@ ffiIntegerAddress(e:Expr):Expr := (
     else WrongNumArgs(3));
 setupfun("ffiIntegerAddress", ffiIntegerAddress);
 
+-- returns value (as ZZ) of integer object given its address
+-- inputs: (x:Pointer, y:ZZ, signed:ZZ)
+-- x = pointer to integer object
+-- y = number of bits (or 0 for mpz_t)
 ffiIntegerValue(e:Expr):Expr := (
     when e
-    is x:pointerCell do toExpr(moveToZZ(Ccode(ZZmutable, "*(mpz_ptr*)", x.v)))
     is a:Sequence do (
 	if length(a) == 3 then (
 	    when a.0
 	    is x:pointerCell do (
 		when a.1
 		is y:ZZcell do (
-		    when a.2
+		    if isZero(y.v)
+		    then toExpr(moveToZZ(Ccode(ZZmutable, "*(mpz_ptr*)", x.v)))
+		    else when a.2
 		    is signed:Boolean do (
 			bits := toInt(y);
 			if signed.v then (
