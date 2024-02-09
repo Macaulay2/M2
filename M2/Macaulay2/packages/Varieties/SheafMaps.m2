@@ -46,9 +46,9 @@ isWellDefined SheafMap := f -> (
     d := degree f;
     all({ G, F, matrix f }, isWellDefined)
     -- data type checks
-    and condition(set keys f === set { symbol source, symbol target, symbol degree, symbol map, symbol cache },
+    and assert'(set keys f === set { symbol source, symbol target, symbol degree, symbol map, symbol cache },
 	"the hash table does not have the expected keys")
-    and condition(
+    and assert'(
 	instance(f.source, CoherentSheaf) and
 	instance(f.target, CoherentSheaf) and
 	instance(f.cache, CacheTable) and
@@ -56,19 +56,19 @@ isWellDefined SheafMap := f -> (
 	instance(f.degree, ZZ),
 	"the hash table does not have the expected values")
     -- mathematical checks
-    and condition(ring f === ring X,
+    and assert'(ring f === ring X,
 	"underlying matrix and variety do not have the same ring")
-    and condition(same {X, variety F, variety G},
+    and assert'(same {X, variety F, variety G},
 	"underlying variety does not match that of the source and target")
-    and condition(not isProjective X or isHomogeneous matrix f,
+    and assert'(not isProjective X or isHomogeneous matrix f,
 	"underlying matrix of a map of coherent sheaf on a projective variety should be homogeneous")
-    and condition(G === sheaf(X, target matrix f),
+    and assert'(G === sheaf(X, target matrix f),
 	"target of the sheaf map does not match the target of the underlying matrix")
-    and condition(F  == sheaf(X, source matrix f),
+    and assert'(F  == sheaf(X, source matrix f),
 	"source of the sheaf map does not match the source of the underlying matrix")
-    and condition(d >= min flatten degrees F, -- maybe not strictly necessary
+    and assert'(d >= min flatten degrees F, -- maybe not strictly necessary
 	"expected the degree of the sheaf map to be at least as high as the degrees of the source")
-    and condition(try ( isWellDefined map(module G, truncate(d, module F), matrix f) ) else false,
+    and assert'(try ( isWellDefined map(module G, truncate(d, module F), matrix f) ) else false,
 	"expected the matrix to induce a map between a truncation of the underlying modules")
     )
 

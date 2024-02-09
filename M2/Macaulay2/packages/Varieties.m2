@@ -95,7 +95,8 @@ runLengthEncoding := x -> if #x === 0 then x else (
      apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
 
 -- prints the message only if bool is false and debugLevel > 0
-condition = (bool, msg) -> bool or ( if debugLevel > 0 then printerr msg; false )
+-- TODO: eventually turn into a method and move to Core
+assert' = (bool, msg) -> bool or ( if debugLevel > 0 then printerr msg; false )
 
 -----------------------------------------------------------------------------
 -- Variety, etc. type declarations and basic constructors
@@ -152,14 +153,14 @@ isWellDefined Variety := X -> (
     R := ring X;
     true -- TODO: isWellDefined R
     -- data type checks
-    and condition(set keys X === set { symbol ring, symbol cache },
+    and assert'(set keys X === set { symbol ring, symbol cache },
 	"the hash table does not have the expected keys")
-    and condition(
+    and assert'(
 	instance(X.ring, Ring) and
 	instance(X.cache, CacheTable),
 	"the hash table does not have the expected values")
     -- mathematical checks
-    and condition(not isProjective X or isHomogeneous R,
+    and assert'(not isProjective X or isHomogeneous R,
 	"coordinate ring of a projective variety should be homogeneous")
     )
 
@@ -292,17 +293,17 @@ isWellDefined CoherentSheaf := F -> (
     X := variety F;
     true -- TODO: isWellDefined M and isWellDefined X
     -- data type checks
-    and condition(set keys F === set { symbol variety, symbol module, symbol cache },
+    and assert'(set keys F === set { symbol variety, symbol module, symbol cache },
 	"the hash table does not have the expected keys")
-    and condition(
+    and assert'(
 	instance(F.variety, Variety) and
 	instance(F.module, Module)   and
 	instance(F.cache, CacheTable),
 	"the hash table does not have the expected values")
     -- mathematical checks
-    and condition(ring M === ring X,
+    and assert'(ring M === ring X,
 	"underlying module and variety do not have the same ring")
-    and condition(not isProjective X or isHomogeneous M,
+    and assert'(not isProjective X or isHomogeneous M,
 	"underlying module of coherent sheaf on a projective variety should be homogeneous")
     )
 
