@@ -217,6 +217,15 @@ setupfun("taskResult",taskResult);
 setupfun("setIOSynchronized",setIOSynchronized);
 setupfun("setIOUnSynchronized",setIOUnSynchronized);
 setupfun("setIOExclusive",setIOExclusive);
+
+export getIOThreadMode(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0
+	then toExpr(getFileThreadMode(stdIO))
+	else WrongNumArgs(0, 1))
+    is f:file do toExpr(getFileThreadMode(f))
+    else WrongArg("a file or ()"));
 setupfun("getIOThreadMode", getIOThreadMode);
 
 -- Local Variables:

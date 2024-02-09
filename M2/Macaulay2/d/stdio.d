@@ -5,7 +5,6 @@ use errio;
 use gmp;
 use expr;
 use stdio0;
-use util;
 
 header "#include \"../system/m2fileinterface.h\"
         #include <readline/history.h>";
@@ -1048,15 +1047,6 @@ export setIOUnSynchronized(e:Expr):Expr :=(
      is f:file do (setFileThreadMode(f, 0); nullE)
      else WrongArg("a file or ()")
 );
-
-export getIOThreadMode(e:Expr):Expr := (
-    when e
-    is a:Sequence do (
-	if length(a) == 0
-	then toExpr(getFileThreadMode(stdIO))
-	else WrongNumArgs(0, 1))
-    is f:file do toExpr(getFileThreadMode(f))
-    else WrongArg("a file or ()"));
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d stdio.o "
