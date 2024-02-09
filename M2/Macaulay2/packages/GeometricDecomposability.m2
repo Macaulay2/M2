@@ -556,7 +556,7 @@ degeneracyCheck(Ideal, Ideal) := (C, N) -> (
 getQ = method(TypicalValue => RingElement)
 getQ(RingElement, RingElement) := (f, y) -> (
         -- f is of the form q*y^d+r, return q  (where y^d does not divide any term of r and y does not divide any term of q)
-        L := terms f;  -- this preserves the coefficent (and hence sign) of each term
+        L := terms f;  -- this preserves the coefficient (and hence sign) of each term
         yDegrees := L / degree_y;
         q := apply(select(L, m -> degree(y, m) == max yDegrees), n -> sub(n, y=>1));
         return sum q;
