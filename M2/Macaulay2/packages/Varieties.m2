@@ -207,9 +207,9 @@ isProjective ProjectiveVariety := X -> true
 -- then replace Proj ring M in code for sheaf with variety ring M
 variety = method(TypicalValue => Variety)
 variety Ring  := S -> if S.?variety then S.variety else error "no variety associated with ring"
-variety Ideal := I -> Proj quotient I -- TODO: should this be saturated?
+variety Ideal := I -> Proj quotient I -- TODO: should this be Spec or Proj?
 
-sameVariety = Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
+assertSameVariety = Fs -> if not same apply(Fs, variety) then error "expected objects on the same variety"
 
 -- printing
 expression       Variety := X -> if hasAttribute(X, ReverseDictionary) then expression getAttribute(X, ReverseDictionary) else (describe X)#0
@@ -357,7 +357,7 @@ ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
 
 -- arithmetic ops
 CoherentSheaf.directSum = args -> (
-    sameVariety args;
+    assertSameVariety args;
     F := sheaf(variety args#0, directSum apply(args, module));
     F.cache.components = toList args;
     F)
@@ -649,7 +649,7 @@ sheafHom(SheafOfRings, SheafOfRings)  :=
 sheafHom(SheafOfRings, CoherentSheaf) :=
 sheafHom(CoherentSheaf, SheafOfRings)  :=
 sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => o -> (F, G) -> (
-    sameVariety(F, G); sheaf(variety F, Hom(module F, module G, o)))
+    assertSameVariety(F, G); sheaf(variety F, Hom(module F, module G, o)))
 
 sheafExt = new ScriptedFunctor from {
     superscript => i -> new ScriptedFunctor from {
@@ -663,7 +663,7 @@ sheafExt(ZZ, SheafOfRings, SheafOfRings)  :=
 sheafExt(ZZ, SheafOfRings, CoherentSheaf) :=
 sheafExt(ZZ, CoherentSheaf, SheafOfRings)  :=
 sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argument >> opts -> (i, F, G) -> (
-    sameVariety(F, G); sheaf(variety F, Ext^i(module F, module G, opts)))
+    assertSameVariety(F, G); sheaf(variety F, Ext^i(module F, module G, opts)))
 
 -----------------------------------------------------------------------------
 -- code donated by Greg Smith <ggsmith@math.berkeley.edu>
@@ -676,7 +676,7 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
 
 Ext(ZZ, SheafOfRings,  SumOfTwists) :=
 Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
-    sameVariety(F, G');
+    assertSameVariety(F, G');
     X := variety F;
     checkProjective X;
     checkVariety(X, F);
