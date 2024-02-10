@@ -125,7 +125,8 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                         M2_bool use_max_slanted_degree,
                                         int max_slanted_degree,
                                         int algorithm,
-                                        int strategy)
+                                        int strategy,
+                                        M2_bool parallelizeByDegree)
 {
   try
     {
@@ -146,7 +147,8 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                                max_slanted_degree,
                                                algorithm,
                                                strategy,
-                                               numThreads);
+                                               numThreads,
+                                               parallelizeByDegree);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

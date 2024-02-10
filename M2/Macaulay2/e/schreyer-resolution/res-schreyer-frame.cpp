@@ -54,7 +54,7 @@ class PreElementSorter
 long PreElementSorter::ncmps = 0;
 };
 
-SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads)
+SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads, bool parallelizeByDegree)
     : mRing(R),
       mState(Initializing),
       mCurrentLevel(0),
@@ -62,7 +62,8 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
       mComputer(new F4Res(*this)),
-      mNumThreads(mtbb::numThreads(numThreads))
+      mNumThreads(mtbb::numThreads(numThreads)),
+      mParallelizeByDegree(parallelizeByDegree)
 #if defined(WITH_TBB)
     , mScheduler(mNumThreads)
     , mDepGraph(this)
@@ -183,16 +184,17 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
 
 #if defined(WITH_TBB)
   // build the dependency graph
-  if (false)
+  if (mParallelizeByDegree)
   {
-     //std::cout << "In dep graph" << std::endl;
+     std::cout << "In dep graph" << std::endl;
      mScheduler.execute([&] {
         makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree+1,true);
         mDepGraph.startComputation();
         mDepGraph.waitForCompletion();
      });
-     //std::cout << "Out dep graph" << std::endl;
+     std::cout << "Out dep graph" << std::endl;
   }
+  // If this is not run, the 'computeRanks' calls below compute all of these elements
 #endif
 
   // What needs to be computed?
@@ -266,7 +268,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 
 #if defined(WITH_TBB)
   // build the dependency graph
-  if (false)
+  if (mParallelizeByDegree)
   {
      //std::cout << "In dep graph" << std::endl;
      mScheduler.execute([&] {
@@ -279,6 +281,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
      });
      //std::cout << "Out dep graph" << std::endl;
    }
+  else
+    computeSyzygies(top_slanted_degree, mMaxLength);
 #else
   computeSyzygies(top_slanted_degree, mMaxLength);
 #endif

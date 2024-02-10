@@ -233,7 +233,8 @@ Matrix* ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
   int j = 0;
   for (auto i = thislevel.cbegin(); i != thislevel.cend(); ++i, ++j)
     {
-      result.set_column(j, to_M2_vec(C.ring(), i->mSyzygy, tar));
+      vec v = to_M2_vec(C.ring(), i->mSyzygy, tar);
+      result.set_column(j, v);
     }
   return result.to_matrix();
 }

@@ -491,7 +491,8 @@ freeResolution = method(Options => {
 	PairLimit		=> infinity,	-- number of pairs computed
 	HardDegreeLimit		=> {},		-- throw out information in degrees above this one
 	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
-	Strategy		=> null     	-- algorithm to use, usually 1, but sometimes 2
+	Strategy		=> null,     	-- 
+        ParallelizeByDegree     => false        -- currently: only used by Strategy => Nonminimal, gives warning if true and another Strategy selected
 	}
     )
 

@@ -50,13 +50,14 @@ class MonomialLookupTable
     using IterType = decltype(mMonomialInfo.cbegin());
 
    private:
-    const MonomialLookupTable& mTable;
+    //TODO, needs to be added: const MonomialLookupTable& mTable;
     IterType mIter;
 
    public:
     MonomialLookupIterator(const MonomialLookupTable& table,
                            IterType iter)
-        : mTable(table),
+        :
+      //TODO: to be added: mTable(table),
           mIter(iter)
     {
     }

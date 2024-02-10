@@ -43,7 +43,8 @@ class ResolutionComputation : public Computation
                                            int max_slanted_degree,
                                            int algorithm,
                                            int strategy,
-                                           int numThreads);
+                                           int numThreads,
+                                           M2_bool parallelizeByDegree);
   // Values for algorithm and strategy are documented in engine.h
 
   virtual void start_computation() = 0;

@@ -1026,7 +1026,25 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
   R = ring I
   gbTrace=2
   elapsedTime minimalBetti(I, DegreeLimit => 2)
-  elapsedTime minimalBetti(I)
+  elapsedTime minimalBetti(I) -- 353 sec. (10 TBB cores)
+  elapsedTime minimalBetti(I, ParallelizeByDegree => true) -- 271 sec (10 TBB cores)
   numgens I
   numgens ring I
   hilbertSeries I
+
+  restart
+  I = Grassmannian(1, 6, CoefficientRing => ZZ/101)
+  R = ring I
+  elapsedTime res(I, Strategy => FastNonminimal) -- fails??
+
+  elapsedTime (C = res(ideal I_*, Strategy => 4); complete C; true)
+  elapsedTime complete C;
+  C.dd_2
+  C.dd_7
+  
+  elapsedTime res(I, Strategy => 5)
+  
+  needsPackage "Complexes"
+  elapsedTime freeResolution(ideal I_*, Strategy => Nonminimal)
+  elapsedTime C = freeResolution(ideal I_*, Strategy => Nonminimal, ParallelizeByDegree => true)
+

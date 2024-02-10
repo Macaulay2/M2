@@ -18,13 +18,15 @@ class F4ResComputation : public ResolutionComputation
                    ResPolyRing* R,
                    const Matrix* gbmatrix,
                    int max_level,
-                   int numThreads);
+                   int numThreads,
+                   bool parallelizeByDegree);
 
  public:
   friend ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                             int max_level,
                                             int strategy,
-                                            int numThreads);
+                                            int numThreads,
+                                            bool parallelizeByDegree);
 
   virtual ~F4ResComputation();
 
@@ -79,7 +81,8 @@ class F4ResComputation : public ResolutionComputation
 ResolutionComputation* createF4Res(const Matrix* m,
                                    int max_level,
                                    int strategy,
-                                   int numThreads);
+                                   int numThreads,
+                                   bool parallelizeByDegree);
 
 #endif
 

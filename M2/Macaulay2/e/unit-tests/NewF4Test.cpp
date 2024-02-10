@@ -42,12 +42,12 @@ TEST(NewF4, hashtable)
   for (int i=0; i<100000; ++i)
     {
       newf4::MonomialView m({5, 1, 2, i, 3}, B);
-      newf4::MonomialIndex m1 = hashtab.find(m, hashFunction(m));
+      /*newf4::MonomialIndex m1 = */ hashtab.find(m, hashFunction(m));
     }
   for (int i=0; i<10000; ++i)
     {
       newf4::MonomialView m({5, 1, 2, i, 3}, B);
-      newf4::MonomialIndex m1 = hashtab.find(m, hashFunction(m));
+      /*newf4::MonomialIndex m1 = */ hashtab.find(m, hashFunction(m));
     }
   std::cout << std::endl;
   hashtab.dump();

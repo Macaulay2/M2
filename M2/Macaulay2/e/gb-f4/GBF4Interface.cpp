@@ -30,6 +30,7 @@ auto createGBF4Interface(const Matrix *inputMatrix,
                              inputMatrix,
                              variableWeights,
                              strategy);
+  return C;
 }
 
   

@@ -336,6 +336,7 @@ export {
 	"PackageImports",
 	"PairLimit",
 	"PairsRemaining",
+    "ParallelizeByDegree",
     "ParallelF4",
 	"Parenthesize",
 	"Partition",

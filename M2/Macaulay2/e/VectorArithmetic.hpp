@@ -541,11 +541,12 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
                                                                      ring_elem numer,
                                                                      ring_elem denom) const
 {
+  // TODO: this function ignores denom, this is non-intuitive and bug-prone.
     // TODO: this will fail: input is alas ZZ integers... not QQ elements...
     auto& svec = * elementArray(coeffs);
-    ring_elem val = numer;
+    //ring_elem val = numer;
     FieldElement inumer;
-    FieldElement idenom;
+    //FieldElement idenom;
     mRing->init(inumer);
     mRing->from_ring_elem(inumer, numer);
     svec.emplace_back(inumer);
