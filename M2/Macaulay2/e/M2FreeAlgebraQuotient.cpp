@@ -34,7 +34,7 @@ M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
   auto gbElements = copyMatrixToVector(F, GB);
   auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), gbElements, maxdeg));
   M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, std::move(A));
-  result->initialize_ring(F.coefficientRing()->characteristic(), F.degreeRing(), nullptr);
+  result->initialize_ring(F.coefficientRing()->characteristic(), F.degreeRing(), {});
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
   result->minus_oneV = result->from_long(-1);
@@ -248,12 +248,12 @@ ring_elem M2FreeAlgebraQuotient::power(const ring_elem f1, int n) const
 
 ring_elem M2FreeAlgebraQuotient::invert(const ring_elem f) const
 {
-  return f; // TODO: bad return value.
+  return m2FreeAlgebra().invert(f);
 }
 
 ring_elem M2FreeAlgebraQuotient::divide(const ring_elem f, const ring_elem g) const
 {
-  return f; // TODO: bad return value.
+  return m2FreeAlgebra().divide(f, g);
 }
 
 void M2FreeAlgebraQuotient::syzygy(const ring_elem a, const ring_elem b,
@@ -288,15 +288,13 @@ void M2FreeAlgebraQuotient::debug_display(const ring_elem ff) const
   debug_display(f);
 }
 
-void M2FreeAlgebraQuotient::makeTerm(Poly& result, const ring_elem a, const int* monom) const
+void M2FreeAlgebraQuotient::makeTerm(Poly& result, const ring_elem a, const_varpower monom) const
 {
   m2FreeAlgebra().makeTerm(result, a, monom);
   freeAlgebraQuotient().normalizeInPlace(result);
 }
 
-ring_elem M2FreeAlgebraQuotient::makeTerm(const ring_elem a, const int* monom) const
-  // 'monom' is in 'varpower' format
-  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+ring_elem M2FreeAlgebraQuotient::makeTerm(const ring_elem a, const_varpower monom) const
 {
   Poly* f = new Poly;
   makeTerm(*f, a, monom);
@@ -350,20 +348,15 @@ bool M2FreeAlgebraQuotient::is_homogeneous(const Poly* f) const
   return freeAlgebraQuotient().is_homogeneous(*f);
 }
 
-void M2FreeAlgebraQuotient::degree(const ring_elem f, int *d) const
-{
-  multi_degree(f, d);
-}
-
-bool M2FreeAlgebraQuotient::multi_degree(const ring_elem g, int *d) const
+bool M2FreeAlgebraQuotient::multi_degree(const ring_elem g, monomial d) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(g.get_Poly());
   return multi_degree(f, d);
 }
 
-bool M2FreeAlgebraQuotient::multi_degree(const Poly* f, int *result) const
+bool M2FreeAlgebraQuotient::multi_degree(const Poly* f, monomial d) const
 {
-  return freeAlgebraQuotient().multi_degree(*f,result);
+  return freeAlgebraQuotient().multi_degree(*f, d);
 }
 
 SumCollector* M2FreeAlgebraQuotient::make_SumCollector() const

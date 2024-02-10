@@ -5,6 +5,9 @@
 -- TODO: cross references aren't working yet
 -- TODO: exclude ways to use sections for options if possible
 
+needs "latex.m2"
+needs "installPackage.m2"
+
 -----------------------------------------------------------------------------
 -- Local variables
 -----------------------------------------------------------------------------

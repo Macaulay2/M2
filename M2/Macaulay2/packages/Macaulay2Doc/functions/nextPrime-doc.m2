@@ -95,7 +95,7 @@ doc ///
   Description
      Text
        If X has codimension 1, then we intersect X with a randomly chosen
-       line, and hope that the decomposition of the the intersection contains a 
+       line, and hope that the decomposition of the intersection contains a 
        K-rational point. If n=degree X then the probability P that this happens, is the 
        proportion  of permutations in $S_n$ with a fix point on $\{1,\ldots,n \}$,
        i.e. $$P=\sum_{j=1}^n (-1)^{j-1} binomial(n,j)(n-j)!/n! = 1-1/2+1/3! + \ldots $$

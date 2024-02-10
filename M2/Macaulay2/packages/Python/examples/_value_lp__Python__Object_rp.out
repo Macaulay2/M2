@@ -1,0 +1,44 @@
+-- -*- M2-comint -*- hash: 2033858126
+
+i1 : value pythonValue "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
+
+o1 = {1, 3.14159, foo, (1, 2, 3), HashTable{foo => bar}}
+
+o1 : List
+
+i2 : class \ oo
+
+o2 = {ZZ, RR, String, Sequence, HashTable}
+
+o2 : List
+
+i3 : hooks value
+
+o3 = {0 => (value, PythonObject, Strategy => unknown -> PythonObject)    }
+     {1 => (value, PythonObject, Strategy => function -> FunctionClosure)}
+     {2 => (value, PythonObject, Strategy => Counter -> Tally)           }
+     {3 => (value, PythonObject, Strategy => dict -> HashTable)          }
+     {4 => (value, PythonObject, Strategy => set -> Set)                 }
+     {5 => (value, PythonObject, Strategy => list -> List)               }
+     {6 => (value, PythonObject, Strategy => tuple -> Sequence)          }
+     {7 => (value, PythonObject, Strategy => str -> String)              }
+     {8 => (value, PythonObject, Strategy => complex -> CC)              }
+     {9 => (value, PythonObject, Strategy => float -> RR)                }
+     {10 => (value, PythonObject, Strategy => int -> ZZ)                 }
+     {11 => (value, PythonObject, Strategy => bool -> Boolean)           }
+
+o3 : NumberedVerticalList
+
+i4 : pythonValue "int"
+
+o4 = <class 'int'>
+
+o4 : PythonObject of class type
+
+i5 : value oo
+
+o5 = <class 'int'>
+
+o5 : PythonObject of class type
+
+i6 : 

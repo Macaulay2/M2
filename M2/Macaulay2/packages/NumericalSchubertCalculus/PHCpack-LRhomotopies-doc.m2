@@ -267,7 +267,7 @@ doc ///
       the degree of the solution curves producing p-planes
   Outputs
     r:ZZ
-      the number of curves of the degree $q$ in the Grassmannain $Gr(p,m+p)$ which produce $p$-planes
+      the number of curves of the degree $q$ in the Grassmannian $Gr(p,m+p)$ which produce $p$-planes
       that meet $m\cdot p + q\cdot (m+p)$ generic $m$-planes at given general interpolation points.
       This is a quantum intersection number
   Description

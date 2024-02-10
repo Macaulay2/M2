@@ -4,7 +4,8 @@
 #include "interface/matrix.h"
 #include "interface/ringelement.h"
 
-#include <assert.h>
+#include <algorithm>
+#include <cassert>
 #include <cstdio>
 #include <iostream>
 #include <utility>
@@ -31,6 +32,7 @@
 #include "ringelem.hpp"
 #include "text-io.hpp"
 #include "tower.hpp"
+#include "util.hpp"
 
 const bool notInExtension = false;
 
@@ -52,6 +54,11 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P)
   // if (F->cast_to_QQ()) return modeQQ;
   if (F->is_QQ()) return modeQQ;
   if (F->cast_to_RingZZ()) return modeZZ;
+  // factory will abort if the characteristic is too large
+  if (F->characteristic() > 536870909) {
+    ERROR("characteristic is too large (max is 2^29)");
+    return modeError;
+  }
   if (F->isFinitePrimeField()) return modeZn;
   if (F->isGaloisField()) return modeGF;
   ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
@@ -84,13 +91,13 @@ struct enter_factory
   void enter();
   void exit();
 
-  enter_factory() : mode(modeUnknown), Zn(NULL) { enter(); }
+  enter_factory() : mode(modeUnknown), Zn(nullptr) { enter(); }
   enter_factory(const PolynomialRing *P)
       : mode(coeffMode(P)),
         newcharac(mode == modeZn || mode == modeGF
                       ? static_cast<int>(P->characteristic())
                       : 0),
-        Zn(mode == modeZn ? P->getCoefficientRing() : NULL)
+        Zn(mode == modeZn ? P->getCoefficientRing() : nullptr)
   {
     enter();
   }
@@ -173,7 +180,7 @@ static __mpz_struct toInteger(CanonicalForm h)
   //     mpz_set(x,y);
   //     return *x;
   static const unsigned int base = 1 << 16;
-  intarray v;
+  gc_vector<int> vec;
   int sign;
   {
     struct enter_factory foo;
@@ -188,17 +195,17 @@ static __mpz_struct toInteger(CanonicalForm h)
     while (h != 0)
       {
         CanonicalForm k = h % (int)base;
-        v.append(static_cast<int>(k.intval()));
+        vec.push_back(static_cast<int>(k.intval()));
         h = h / (int)base;
       }
     if (RationalMode) On(SW_RATIONAL);
   }
   mpz_t x;
   mpz_init(x);
-  for (int i = v.length() - 1; i >= 0; i--)
+  for (int i = vec.size() - 1; i >= 0; i--)
     {
       mpz_mul_ui(x, x, base);  // x = x * base;
-      mpz_add_ui(x, x, static_cast<unsigned>(v[i]));
+      mpz_add_ui(x, x, static_cast<unsigned>(vec[i]));
     }
   if (sign == -1) mpz_neg(x, x);  // x = -x;
   return x[0];
@@ -388,20 +395,19 @@ static CanonicalForm convertGFToFactory(const ring_elem &q,
 static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use algebraicElement_Fac for converting this galois field element
   const PolynomialRing *A = k->originalR();
   RingElement *g = RingElement::make_raw(A,k->get_rep(q));
-  intarray vp;
+  gc_vector<int> vp;
   const Monoid *M = A->getMonoid();
   const Ring *Zn = k->originalR()->getCoefficientRing();
   CanonicalForm f = 0;
   for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
-    vp.shrink(0);
-    M->to_varpower(t->monom,vp);
+    M->to_varpower(t->monom, vp);
 
     std::pair<bool,long> res = Zn->coerceToLongInteger(t->coeff);
     assert(res.first);
     int coef = static_cast<int>(res.second);
 
     CanonicalForm m = CanonicalForm(coef);
-    for (index_varpower l = vp.raw(); l.valid(); ++l)
+    for (index_varpower l = vp.data(); l.valid(); ++l)
       m *= power( algebraicElement_Fac, l.exponent() );
     f += m;
   }
@@ -413,21 +419,20 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension)
 {
   const Ring *R = g.get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected a polynomial ring");
       return 0;
     }
   const int n = P->n_vars();
   const Monoid *M = P->getMonoid();
-  intarray vp;
+  gc_vector<int> vp;
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
   CanonicalForm f = 0;
-  for (Nterm *t = g.get_value(); t != NULL; t = t->next)
+  for (Nterm *t = g.get_value(); t != nullptr; t = t->next)
     {
       int coef = 0;
-      vp.shrink(0);
       M->to_varpower(t->monom, vp);
       if (foo.mode == modeZn)
         {
@@ -449,7 +454,7 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension)
                                         mpq_denref(MPQ_VAL(t->coeff))))
                                  : CanonicalForm(0)  // shouldn't happen
            );
-      for (index_varpower l = vp.raw(); l.valid(); ++l)
+      for (index_varpower l = vp.data(); l.valid(); ++l)
         {
           int index = 1 +
 #if REVERSE_VARIABLES
@@ -485,27 +490,27 @@ const RingElement /* or null */ *rawGCDRingElement(const RingElement *f,
                                                    const RingElement *mipo,
                                                    const M2_bool inExtension)
 {
-  const RingElement *ret = NULL;
+  const RingElement *ret = nullptr;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
-      if (f->get_ring()->cast_to_Tower() != 0) return towerGCD(f, g);
+      if (f->get_ring()->cast_to_Tower() != nullptr) return towerGCD(f, g);
       // else we really do have an error:
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   if (P != P2)
     {
       ERROR("encountered different rings");
-      return 0;
+      return nullptr;
     }
   {
     struct enter_factory foo(P);
     if (foo.mode == modeError)
       {
-        algebraicElement_M2 = NULL;
-        return 0;
+        algebraicElement_M2 = nullptr;
+        return nullptr;
       }
     if (foo.mode == modeGF)
       {
@@ -531,16 +536,17 @@ const RingElement /* or null */ *rawGCDRingElement(const RingElement *f,
     ret = convertToM2(P, h);
     if (error())
       {
-        algebraicElement_M2 = NULL;
-        return NULL;
+        algebraicElement_M2 = nullptr;
+        return nullptr;
       }
   }
+  if (ret->is_zero()) return ret;
   ring_elem a = P->getNumeratorRing()->preferred_associate_divisor(
       ret->get_value());  // an element in the coeff ring
   ring_elem b = P->getCoefficients()->invert(a);
   ring_elem r = ret->get_value();
   P->mult_coeff_to(b, r);
-  algebraicElement_M2 = NULL;
+  algebraicElement_M2 = nullptr;
   return RingElement::make_raw(P, r);
 }
 
@@ -554,20 +560,20 @@ const RingElement /* or null */ *rawExtendedGCDRingElement(
   const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
-  *A = NULL;
-  *B = NULL;
-  if (P == 0)
+  *A = nullptr;
+  *B = nullptr;
+  if (P == nullptr)
     {
-      if (f->get_ring()->cast_to_Tower() != 0)
+      if (f->get_ring()->cast_to_Tower() != nullptr)
         return towerExtendedGCD(f, g, A, B);
       // else we really do have an error:
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   if (P != P2)
     {
       ERROR("encountered different rings");
-      return 0;
+      return nullptr;
     }
 
   if (f->is_zero())
@@ -585,7 +591,7 @@ const RingElement /* or null */ *rawExtendedGCDRingElement(
     }
 
   struct enter_factory foo(P);
-  if (foo.mode == modeError) return 0;
+  if (foo.mode == modeError) return nullptr;
   if (foo.mode == modeGF)
     {
       set_GF_minimal_poly(P);
@@ -597,22 +603,22 @@ const RingElement /* or null */ *rawExtendedGCDRingElement(
   ret = convertToM2(P, h);
   if (error())
     {
-      algebraicElement_M2 = NULL;
-      return NULL;
+      algebraicElement_M2 = nullptr;
+      return nullptr;
     }
   *A = convertToM2(P, a);
   if (error())
     {
-      algebraicElement_M2 = NULL;
-      return NULL;
+      algebraicElement_M2 = nullptr;
+      return nullptr;
     }
   *B = convertToM2(P, b);
   if (error())
     {
-      algebraicElement_M2 = NULL;
-      return NULL;
+      algebraicElement_M2 = nullptr;
+      return nullptr;
     }
-  algebraicElement_M2 = NULL;
+  algebraicElement_M2 = nullptr;
   return ret;
 }
 
@@ -622,19 +628,19 @@ const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f,
   const bool inExtension = false;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   if (P != P2)
     {
       ERROR("encountered different rings");
-      return 0;
+      return nullptr;
     }
 
   struct enter_factory foo(P);
-  if (foo.mode == modeError) return 0;
+  if (foo.mode == modeError) return nullptr;
   if (foo.mode == modeGF)
     {
       set_GF_minimal_poly(P);
@@ -645,29 +651,29 @@ const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f,
   const RingElement *r = convertToM2(P, h);
   if (error())
     {
-      algebraicElement_M2 = NULL;
-      return NULL;
+      algebraicElement_M2 = nullptr;
+      return nullptr;
     }
-  algebraicElement_M2 = NULL;
+  algebraicElement_M2 = nullptr;
   return r;
 }
 
 void rawFactorBase(const RingElement *g,
                    engine_RawRingElementArrayOrNull *result_factors,
                    M2_arrayintOrNull *result_powers,
-                   const RingElement *mipo = NULL  // minimal polynomial of
+                   const RingElement *mipo = nullptr  // minimal polynomial of
                                                    // generator of field
                                                    // extension, if any;
                                                    // generator is last variable
                    )
 {
-  bool inExtension = mipo != NULL;
+  bool inExtension = mipo != nullptr;
   try
     {
       const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
-      *result_factors = 0;
-      *result_powers = 0;
-      if (P == 0)
+      *result_factors = nullptr;
+      *result_powers = nullptr;
+      if (P == nullptr)
         {
           ERROR("expected polynomial ring");
           return;
@@ -685,7 +691,7 @@ void rawFactorBase(const RingElement *g,
           CanonicalForm h = convertToFactory(*g, notInExtension);
           q = factorize(h, a);
         }
-      else if (mipo != NULL)
+      else if (mipo != nullptr)
         {
           CanonicalForm mipocf = convertToFactory(*mipo, notInExtension);
           Variable a = rootOf(mipocf, 'a');
@@ -703,7 +709,7 @@ void rawFactorBase(const RingElement *g,
           CanonicalForm h = convertToFactory(*g, inExtension);
           // displayCF(P,h);
           q = factorize(h);
-          algebraicElement_M2 = NULL;
+          algebraicElement_M2 = nullptr;
         }
 
       int nfactors = q.length();
@@ -719,8 +725,8 @@ void rawFactorBase(const RingElement *g,
           (*result_factors)->array[next] = convertToM2(P, i.getItem().factor());
           (*result_powers)->array[next++] = i.getItem().exp();
         }
-      algebraicElement_M2 = NULL;
-      if (error()) *result_factors = NULL, *result_powers = NULL;
+      algebraicElement_M2 = nullptr;
+      if (error()) *result_factors = nullptr, *result_powers = nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -750,19 +756,19 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M)
     {
       init_seeds();
       const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("expected polynomial ring");
-          return 0;
+          return nullptr;
         }
       const int N = P->n_vars();
 
       struct enter_factory foo(P);
-      if (foo.mode == modeError) return NULL;
+      if (foo.mode == modeError) return nullptr;
       if (foo.mode == modeGF)
         {
           ERROR("not implemented yet");
-          return NULL;
+          return nullptr;
         }
 
       CFList I;
@@ -782,27 +788,17 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M)
       List<int> t = neworderint(I);
 
       int n = t.length();
-      intarray u(N);
+      gc_vector<int> u(N);
       ListIterator<int> ii(t);
       for (i = 0; ii.hasItem(); ii++, i++)
-        u.append((n - 1) - (ii.getItem() - 1)  // REVERSE!
-                 );
-      if (n > 0)
-        for (i = (n - 1) / 2; i >= 0; i--)
-          {  // REVERSE!
-            int tmp = u[n - 1 - i];
-            u[n - 1 - i] = u[i];
-            u[i] = tmp;
-          }
-      for (i = n; i < N; i++) u.append(i);
-
-      M2_arrayint result = M2_makearrayint(N);
-      for (i = 0; i < N; i++) result->array[i] = u[i];
-      return result;
+        u[i] = (n - 1) - (ii.getItem() - 1);  // REVERSE!
+      std::reverse(u.begin(), u.begin() + n);
+      for (i = n; i < N; i++) u[i] = i;
+      return stdvector_to_M2_arrayint<int>(u);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -812,20 +808,20 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
   try
     {
       const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("expected polynomial ring");
-          return 0;
+          return nullptr;
         }
 
       init_seeds();
 
       struct enter_factory foo(P);
-      if (foo.mode == modeError) return NULL;
+      if (foo.mode == modeError) return nullptr;
       if (foo.mode == modeGF)
         {
           ERROR("not implemented yet");
-          return NULL;
+          return nullptr;
         }
 
       CFList I;
@@ -858,7 +854,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
           for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++)
             {
               result1->array[next1++] = convertToM2(P, j.getItem());
-              if (error()) return NULL;
+              if (error()) return nullptr;
             }
           result->array[next++] =
               IM2_Matrix_make1(M->rows(), u.length(), result1, false);
@@ -868,7 +864,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 

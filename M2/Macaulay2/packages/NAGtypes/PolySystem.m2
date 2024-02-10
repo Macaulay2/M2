@@ -22,15 +22,15 @@ evaluateJacobian (System, Matrix) := Matrix => (S,x) -> if numParameters S != 0
     then error "this is a system with parameters: use, e.g., evaluate(S,p,x)" else 
     evaluateJacobian(S, matrix{{}}, matrix x) 
 -- convenience functions for points
-evaluateJacobian(System, Point, Point) := Matrix => 
+evaluateJacobian(System, AbstractPoint, AbstractPoint) := Matrix => 
   (S,p,x) -> evaluateJacobian(S, matrix p, matrix x)
-evaluate (System, Point, Point) := Matrix => 
+evaluate (System, AbstractPoint, AbstractPoint) := Matrix => 
   (S,p,x) -> evaluate(S, matrix p, matrix x)
--- specialize(System, Point) := System => 
+-- specialize(System, AbstractPoint) := System => 
 --  (S,p) -> specialize(S, matrix p)
-evaluateJacobian(System, Point) := Matrix =>
+evaluateJacobian(System, AbstractPoint) := Matrix =>
   (S,x) -> evaluateJacobian(S, matrix x) 
-evaluate (System, Point) := Matrix => 
+evaluate (System, AbstractPoint) := Matrix => 
   (S,x) -> evaluate(S, matrix x)   
 
 -----------------------------------------------------------------------
@@ -106,13 +106,16 @@ toCCpolynomials (Matrix,InexactField) := (F,C) -> (
     )    
 
 -- evaluate = method()
-evaluate (Matrix,Point) := (M,p) -> evaluate(M, matrix p)
+
+evaluate (Matrix,AbstractPoint) := (M,p) -> evaluate(M, matrix p)
 evaluate (PolySystem,Matrix) := (P,X) -> evaluate(P.PolyMap,X)
 evaluate (Matrix,Matrix) := (M,X) ->  (
     C := coefficientRing ring M;
+    RX := ring X;
+    commonField := commonRing{1_C, 1_RX};--try promote(1_C, RX) then RX else try promote(1_RX, C) then C else error "common field not found";
     -- work around a sub(CC,QQ) bug!!!
     if instance(ring X, InexactField) then 
-	M = toCCpolynomials(M,C=ring X);   
+	M = toCCpolynomials(M,C=commonField);   
     if numColumns X == 1 then X = transpose X;
     if numRows X == 1 then sub(M,sub(X,C))
     else error "expected a row or a column vector"
@@ -122,7 +125,7 @@ jacobian PolySystem := P -> (
     if P.?Jacobian then P.Jacobian
     else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
     )
-evaluateJacobian (PolySystem,Point) := (P,p) -> sub(jacobian P,sub(matrix p,coefficientRing ring P))
+evaluateJacobian (PolySystem,AbstractPoint) := (P,p) -> sub(jacobian P,sub(matrix p,coefficientRing ring P))
 TEST /// 
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}

@@ -86,7 +86,8 @@ benchmarks = new HashTable from {
 	  setRandomSeed();
 	  I := ideal random(R^1, R^{-3,-4,-4,-5});
 	  J := ideal (R_0^3,R_1^4,R_2^4,R_3^5);
-	  installHilbertFunction(I, poincare J);
+	  -- cache poincare
+	  poincare I = poincare J;
 	  (ti,re) := toSequence timing gens gb(I);
 	  assert( tally degrees source re === new Tally from { {12} => 3, {13} => 1, {3} => 1, {4} => 2, {5} => 3, {6} => 5, {7} => 6, {8} => 8, {9} => 10, {10} => 9, {11} => 6} );
 	  ti),

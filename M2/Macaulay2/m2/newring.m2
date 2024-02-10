@@ -1,16 +1,25 @@
 -- Copyright 1996 Michael E. Stillman
 
+needs "galois.m2"
+needs "monoids.m2"
+needs "quotring.m2"
+needs "ringmap.m2"
+needs "rings.m2"
+needs "matrix2.m2" -- for lift
+
 ----------------------------------
 -- new polynomial ring or quotient ring from old --
 ----------------------------------
 
+-- TODO: rewrite this to be easier to manage with degree group
 nothing := symbol nothing
 newRing = method( Options => applyValues(monoidDefaults, x -> nothing), TypicalValue => Ring )
 newRing PolynomialRing := opts -> (R) -> (
      opts = new MutableHashTable from select(new HashTable from opts, v -> v =!= nothing);
      nullify := k -> if not opts#?k then opts#k = monoidDefaults#k;
-     if opts.?DegreeRank then (nullify Degrees;    nullify Heft);
-     if opts.?Degrees and opts.Degrees =!= {} then (nullify DegreeRank; nullify Heft);
+    if opts.?DegreeRank  then nullify \ {Heft, Degrees,    DegreeGroup};
+    if opts.?Degrees     then nullify \ {Heft, DegreeRank, DegreeGroup};
+    if opts.?DegreeGroup then nullify \ {Heft, DegreeRank};
      if opts.?Variables then (
 	  if instance(opts.Variables,List) then (
 	       opts.Variables = splice opts.Variables;
@@ -34,7 +43,7 @@ newRing QuotientRing := opts -> R -> (
 
 -- made a method and documented elsewhere.
 Ring ** Ring := Ring => (R,S) -> tensor(R,S)
-tensor(Ring,Ring) := Ring => opts -> (R,S) -> (
+tensor(Ring, Ring) := Ring => monoidTensorDefaults >> opts -> (R, S) -> (
      if R === (try coefficientRing S) then return S;
      if S === (try coefficientRing R) then return R;
      if R === QQ and ZZ === (try coefficientRing S) then (
@@ -54,9 +63,9 @@ PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
 tensor(PolynomialRing, PolynomialRing) :=
-tensor(QuotientRing, PolynomialRing) :=
+tensor(QuotientRing,   PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
-tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
+tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) -> (
      k := coefficientRing R;
      if k =!= coefficientRing S 
      then error "expected rings to have the same coefficient ring";
@@ -93,6 +102,7 @@ graphIdeal RingMap := Ideal => opts -> (cacheValue (symbol graphIdeal => opts)) 
      if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";
      RS := tensor(R,S, opts, 
 	  MonomialOrder => Eliminate m, 
+	  DegreeGroup => degreeGroup R,
 	  Degrees => join(degrees R, apply(degrees S, f.cache.DegreeMap)),
 	  Heft => heft R);
      v := vars RS;
@@ -104,36 +114,6 @@ graphIdeal RingMap := Ideal => opts -> (cacheValue (symbol graphIdeal => opts)) 
      I))
 
 graphRing RingMap := QuotientRing => opts -> (f) -> ( I := graphIdeal(f,opts); (ring I)/I )
-
------------------------
--- Symmetric Algebra --
------------------------
-
-rep := (meth,opts,args) -> prepend_opts nonnull apply(args, arg -> 
-     if instance(arg,Option) and #arg == 2 and instance(arg#1,Function) then (
-	  if (options meth)#(arg#0) === opts#(arg#0)
-     	  then arg#0 => arg#1()
-	  )
-     else arg)
-
-symmetricAlgebra = method( Options => monoidDefaults )
-symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts)) (M -> (
-	  k := ring M;
-	  N := monoid rep(symmetricAlgebra, opts, [Join => false, Variables => () -> numgens M, Degrees => () -> degrees M / prepend_1]);
-	  S := k N;
-	  S  = S / ideal(vars S * promote(presentation M,S));
-	  S.Module = M;
-	  S))
-symmetricAlgebra(Ring,Ring,Matrix) := RingMap => opts -> (T,S,f) -> (
-     key := (T,S,f) ;
-     if f.cache#?key then f.cache#key else f.cache#key = (
-     	  p := map(T,S,vars T * promote(cover f, T));
-	  if f.cache.?inverse then p.cache.inverse = map(S,T,vars S * promote(cover inverse f, S));
-	  p))
-symmetricAlgebra Matrix := RingMap => opts -> f -> symmetricAlgebra(symmetricAlgebra target f,symmetricAlgebra source f,f)
-symmetricAlgebra(Ring,Nothing,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra(T,symmetricAlgebra source f,f)
-symmetricAlgebra(Nothing,Ring,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra(symmetricAlgebra target f,S,f)
-symmetricAlgebra(Nothing,Nothing,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra f
 
 -----------------------------------------------------------------------------
 -- flattenRing

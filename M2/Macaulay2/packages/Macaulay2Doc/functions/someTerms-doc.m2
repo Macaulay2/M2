@@ -23,7 +23,7 @@ document {
 	  "someTerms(f,-1,1) -- the last term",
 	  "someTerms(f,-2,2) -- the last 2 terms"
 	  },
-     "Here is an example whre the coefficient ring is also a polynomial ring.",
+     "Here is an example where the coefficient ring is also a polynomial ring.",
      EXAMPLE {
 	  "S = R[x,y,z];",
 	  "f = (x*(a-b)+y^2+a-1)^2",

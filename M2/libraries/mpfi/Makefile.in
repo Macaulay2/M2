@@ -1,18 +1,16 @@
 #############################################################################
 
-VERSION = 1.5.3
+VERSION = 1.5.4
 LICENSEFILES = README COPYING.LESSER
-TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
-TAROPTIONS = --bzip2
+TARFILE = $(LIBNAME)-$(VERSION).tar.gz
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe
 #############################################################################
 
 RELAX = yes
-URL = https://gforge.inria.fr/frs/download.php/file/37331
-# mpfi-1.5.3.tar.bz2
-# URL = http://macaulay2.com/Downloads/OtherSourceCode
+# shut down Oct, 2021 -- URL = https://gforge.inria.fr/frs/download.php/file/37331
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
@@ -24,7 +22,7 @@ CONFIGOPTIONS += --disable-shared
 # CONFIGOPTIONS += --disable-shared
 # endif
 
-# PRECONFIGURE = autoreconf -i
+PRECONFIGURE = autoreconf -i
 include ../Makefile.library
 
 BUILDOPTIONS += CPPFLAGS="$(CPPFLAGS)"
@@ -32,5 +30,5 @@ CHECKOPTIONS += CPPFLAGS="$(CPPFLAGS)"
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpfi/Makefile
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/libraries/mpfr "
+# compile-command: "make -C $M2BUILDDIR/libraries/mpfi "
 # End:

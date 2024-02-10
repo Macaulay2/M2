@@ -16,6 +16,15 @@ newPackage(
     AuxiliaryFiles => true
     )
 
+-- TODO for tbb update: (Dec 2021)
+--   configure, cmake: need to set MTBB_VERSION to 2021, 2020, 0, etc.
+--     for 0, maybe we need a configure option --disable-tbb.
+--   testing=on: for cmake build, cannot compile tests at the moment
+--      for both: we commented out tests from mathicgb, need to reinstate them.
+--   run multithreaded tests for NCF4 and mgb to make sure they are actually getting speedups.
+--   add in the arena stuff? Jay's pull request to mathicgb
+--      (We would need to make the same changes for M2 usage, i.e. NCF4).
+-- 
 ---- Warning!!  This package is a current work in progress.
 ---- The interface will change (even basic things like Groebner bases and the basis command)
 ---- and more functionality is expected to be added.
@@ -117,7 +126,7 @@ importFrom_Core {"findSymbols","ReverseDictionary","makepromoter",
 importFrom_Core{"raw","rawPairs","rawQuotientRing","rawGetTerms",
     "rawSparseListFormMonomial","rawNCFreeAlgebra",
     "rawNCBasis","rawNCReductionTwoSided","rawNCGroebnerBasisTwoSided",
-    "RawRingElement"}
+    "RawRingElement","rawPromote"}
 
 --- debugging/benchmark tools
 BUG = str -> ()
@@ -212,7 +221,7 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
        error "expected coefficient ring handled by the engine";
    varSymbols := findSymbols toSequence varList;
    if #varSymbols == 0 then error "Expected at least one variable.";
-   (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length varSymbols);
+   (degs,degrk,group) := processDegrees( opts.Degrees, opts.DegreeRank, null -* opts.DegreeGroup *-, length varSymbols);
    -- now check correctness of weights, flatten them
    wtvecs := combineWeightsAndDegree(#varSymbols, opts.Weights, degs);
    heftvec := if opts.Heft =!= null then opts.Heft
@@ -222,10 +231,6 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
    rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs, flatten wtvecs, heftvec);
    R := new FreeAlgebra from {
        RawRing => rawR,
-       generatorSymbols => varSymbols,
-       --(symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
-       generatorExpressions => for v in varSymbols list if instance(v,Symbol) then v else expression v,
-       (symbol generators) => {},
        (symbol degreesRing) => degreesRing degrk,
        (symbol degreeLength) => degrk,
        (symbol degrees) => degs,
@@ -238,6 +243,15 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
        (symbol baseRings) => append(A.baseRings,A)
        };
    R.generators = for i from 0 to #varSymbols-1 list new R from R#RawRing_i;
+   R.generatorSymbols     = varSymbols;
+   R.generatorExpressions = apply(varSymbols, v -> if instance(v, Symbol) then v else expression v);
+   R.index        = hashTable apply(R.generatorSymbols, 0 ..< #varSymbols, identity);
+   R.indexSymbols = hashTable join(
+       apply(if A.?indexSymbols then pairs A.indexSymbols else {},
+	   (sym, x) -> sym => new R from rawPromote(raw R, raw x)),
+       apply(R.generatorSymbols, R.generators, identity)
+       );
+   try R.indexStrings = applyKeys(R.indexSymbols, toString);
    R#promoteDegree = makepromoter degreeLength R;
    R#liftDegree = makepromoter degreeLength R;
    commonEngineRingInitializations R;
@@ -331,17 +345,18 @@ setNCGBStrategy := stratStr -> (
    else error "Unknown NCGB strategy provided."
 )
 
-NCGB = method(Options => {Strategy=>"F4"})
+NCGB = method(Options => {Strategy=>"F4Parallel"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
-	f4ParallelAllowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
-	if not isHomogeneous I or (not f4ParallelAllowed and (strat == "F4Parallel")) then (
+	f4Allowed := (possField === (coefficientRing ring I)); -- or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
+	if not isHomogeneous I or (not f4Allowed and (strat == "F4" or strat == "F4Parallel")) then (
 	   -- need to change to naive algorithm if I is not homogeneous at this point.
-	   << "Warning:  Parallel F4 Algorithm not available over current coefficient ring." << endl;
-           if isHomogeneous I then strat = "F4" else strat = "Naive";
+	   << "Warning:  F4 Algorithm not available over current coefficient ring or inhomogeneous ideal." << endl;
+           -- if isHomogeneous I then strat = "F4" else strat = "Naive";
+	   strat = "Naive";
 	   << "Converting to " << strat << " algorithm." << endl;
 	);
     	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
@@ -395,6 +410,7 @@ freeAlgebraQuotient (FreeAlgebra, Ideal, Matrix) := FreeAlgebraQuotient => (R,I,
      if R#?generatorExpressions then S#generatorExpressions = (
 	  R#generatorExpressions
 	  );
+     if R#?index        then S#index = R#index;
      if R#?indexStrings then S#indexStrings = applyValues(R#indexStrings, x -> promote(x,S));
      if R#?indexSymbols then S#indexSymbols = applyValues(R#indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);
@@ -685,7 +701,7 @@ isExterior Ring := A -> (
 
 toFreeAlgebraQuotient = method()
 toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
-   --- generate the (skew)commutivity relations
+   --- generate the (skew)commutativity relations
    Q := coefficientRing R;
    gensA := new AngleBarList from ((gens R) / baseName | {Degrees=> degrees R});
    A := Q gensA;
@@ -751,6 +767,8 @@ skewPolynomialRing (Ring,Matrix,List) := (R,skewMatrix,varList) -> (
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p -> 
             (gensA_(p#0))*(gensA_(p#1)) - (skewMatrix_(p#0)_(p#1))*(gensA_(p#1))*(gensA_(p#0)));
+   -- this will be a GB for any coefficient ring, so we should tell the system that.
+   I.cache.NCGB = {infinity,gens I};
    B := A/I;
    B
 )
@@ -1396,7 +1414,7 @@ ncMatrixMult (Matrix, Matrix) := (A,B) -> (
    matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
 )
 
-rightKernel = method(Options=>{DegreeLimit=>10})
+rightKernel = method(Options=>{DegreeLimit=>10,Strategy=>"F4"})
 rightKernel Matrix := opts -> M -> (
    -- this function computes the right kernel of a map between free
    -- modules over a noncommutative ring.
@@ -1423,11 +1441,11 @@ rightKernel Matrix := opts -> M -> (
    outputs := matrix {(entries transpose ncMatrixMult(diagMat,phi liftM)) / sum};
    inputs := matrix {colVars};
    IM := phi I + ideal (inputs - outputs);
-   IMgb := NCGB(IM, opts#DegreeLimit);
+   IMgb := NCGB(IM, opts#DegreeLimit, Strategy => opts#Strategy);
    kerGens := ideal select(flatten entries IMgb, f -> isSubset(support f,gensAVars | colVars) and not isSubset(support f, gensAVars));
    if kerGens == 0 then return map(source M, (ring M)^0,0);
    mkerGens := phi I + sum apply(gensAVars, v -> kerGens*v);
-   mkerGensGB := NCGB(mkerGens,opts#DegreeLimit);
+   mkerGensGB := NCGB(mkerGens,opts#DegreeLimit, Strategy => opts#Strategy);
    minKerGens := compress NCReductionTwoSided(gens kerGens,mkerGensGB);
    (minKerMons, minKerCoeffs) := coefficients minKerGens;
    linIndepKer := mingens image sub(minKerCoeffs,coefficientRing A);

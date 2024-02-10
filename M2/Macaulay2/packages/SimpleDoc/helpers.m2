@@ -1,6 +1,7 @@
 wikipedia = method(TypicalValue => Hypertext)
-wikipedia String          :=       title  -> HREF{ "https://en.wikipedia.org/wiki/" | title, title }
-wikipedia(String, String) := (url, title) -> HREF{ "https://en.wikipedia.org/wiki/" |   url, title }
+wikipedia String          :=       title  -> wikipedia(title, title)
+wikipedia(String, String) := (url, title) ->
+    HREF{"https://en.wikipedia.org/wiki/" | replace(" ", "_", url), title}
 
 arXiv = method(TypicalValue => Hypertext)
 arXiv String          :=  ref         -> HREF{ "https://arxiv.org/abs/" | ref, "arXiv:" | ref }

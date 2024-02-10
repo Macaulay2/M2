@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
-    Version => "0.999",
-    Date => "10 May 2021",
+    Version => "0.999995",
+    Date => "1 May 2023",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -12,9 +12,10 @@ newPackage(
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
     Headline => "development package for beta testing new version of chain complexes",
-    PackageExports => {"Truncations"},
+    Keywords => {"Homological Algebra"},
+    PackageExports => {}, -- {"Truncations"},
     AuxiliaryFiles => true,
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
 export {
@@ -30,9 +31,9 @@ export {
     "concentration",
     "connectingMap",
     "connectingExtMap",
+    "connectingTorMap",
     "cylinder",
     "freeResolution",
-    "homotopic",
     "homotopyMap",
     "horseshoeResolution",
     "koszulComplex",
@@ -45,32 +46,39 @@ export {
     "isNullHomotopyOf",
     "isShortExactSequence",
     "liftMapAlongQuasiIsomorphism",
-    "minimize",
     "minimizingMap",
     "nullHomotopy",
     "naiveTruncation",
     "randomComplexMap",
     "resolutionMap",
     "tensorCommutativity",
+    "torSymmetry",
     "yonedaExtension",
     "yonedaExtension'",
     "yonedaMap",
     "yonedaMap'",
     "yonedaProduct",
     -- Option names
+    "OverField",
+    "OverZZ",
+    "Homogenization",
+    "Nonminimal",
     "Concentration",
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "homotopy",
     "Base",
-    "ResolutionMap",
-    "UseTarget",
-    "HomWithComponents"
+    "UseTarget"
     }
 
 -- keys into the type `Complex`
 protect modules
+
+-- These are keys used in the various ResolutionObject's
+protect SyzygyList
+protect compute
+protect SchreyerOrder
+protect isComputable
 
 --------------------------------------------------------------------
 -- code to be migrated to M2 Core ----------------------------------
@@ -121,9 +129,9 @@ directSum Sequence := args -> (
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
 load "Complexes/ChainComplex.m2"
+load "Complexes/FreeResolutions.m2"
 load "Complexes/ChainComplexMap.m2"
--- load "Complexes/Resolutions.m2"
--- load(currentFileDirectory | "Complexes/res.m2")
+load "Complexes/Tor.m2"
 
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
@@ -142,7 +150,7 @@ complex ChainComplex := Complex => opts -> (cacheValue symbol Complex)(D -> (
     while lo < hi and (D_lo).numgens == 0 do lo = lo+1;
     while lo < hi and (D_hi).numgens == 0 do hi = hi-1;
     if lo === hi then
-        complex D_lo
+        complex(D_lo, Base => lo)
     else 
         complex hashTable for i from lo+1 to hi list i => D.dd_i
     ))
@@ -161,7 +169,6 @@ chainComplex ComplexMap := ChainComplexMap => f -> (
 complex ChainComplexMap := ComplexMap => opts -> g -> (
     map(complex target g, complex source g, i -> g_i, Degree => degree g)
     )
-
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------
@@ -170,6 +177,8 @@ beginDocumentation()
 undocumented{
     (net, Complex),
     (net, ComplexMap),
+    (texMath, Complex),
+    (texMath, ComplexMap),
     (expression, ComplexMap),
     (component,Module,Thing),
     component
@@ -377,6 +386,7 @@ doc ///
 -- package tests ---------------------------------------------------
 --------------------------------------------------------------------
 load "Complexes/ChainComplexTests.m2"
+load "Complexes/FreeResolutionTests.m2"
 
 end------------------------------------------------------------
 
@@ -386,7 +396,6 @@ uninstallPackage "Complexes"
 restart
 installPackage "Complexes"
 check "Complexes"
-
 viewHelp Complexes
 restart
 needsPackage "Complexes"

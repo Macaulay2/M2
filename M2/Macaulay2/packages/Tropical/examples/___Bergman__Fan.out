@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: -1587567648
--- polymake not present
 
 i1 : M=uniformMatroid(2,3);
 

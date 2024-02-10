@@ -3,47 +3,6 @@ undocumented {
      }
 
 document {
-     Key => (symbol **, RingMap, Module),
-     Headline => "tensor product of a module via a ring map",
-     Usage => "f ** M",
-     Inputs => {
-	  "f" => { "a ring map from ", TT "R", " to ", TT "S" },
-	  "M" => { "an ", TT "R", "-module" }
-	  },
-     Outputs => {
-	  { "the tensor product of ", TT "M", " with ", TT "S", " over ", TT "R" }
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y];
-	  S = QQ[t];
-	  f = map(S,R,{t^2,t^3})
-	  f ** coker vars R
-	  f ** image vars R
-	  ///,
-     SeeAlso => { (symbol SPACE, RingMap, Module) }
-     }
-
-document {
-     Key => (symbol **, RingMap, Matrix),
-     Headline => "tensor product of a module map via a ring map",
-     Usage => "f ** g",
-     Inputs => {
-	  "f" => { "from ", TT "R", " to ", TT "S" },
-	  "g" => { "a map of ", TT "R", "-modules" }
-	  },
-     Outputs => {
-	  { "the tensor product of ", TT "g", " with ", TT "S", " over ", TT "R" }
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y];
-	  S = QQ[t];
-	  f = map(S,R,{t^2,t^3})
-	  f ** vars R
-	  ///,
-     SeeAlso => { (symbol SPACE, RingMap, Module) }
-     }
-
-document {
      Key => {"powers",
 	  (symbol ^,RingMap,ZZ)
 	  },
@@ -90,6 +49,7 @@ document {
      Caveat => {"If the rings ", TT "R", " and ", TT "S", " have different degree monoids, then the degrees of the image
         might need to be changed, since Macaulay2 sometimes doesn't have enough information to
 	determine the image degrees of elements of a free module."},
+     SeeAlso => {(symbol SPACE, RingElement, Sequence)}
      }
 
 document { 
@@ -233,8 +193,51 @@ document {
      the corresponding ring homomorphism is well-defined; this may produce
      surprising results, especially if rational coefficients are converted
      to integer coefficients.",
+     Subnodes => TO \ {
+	 (symbol SPACE, RingElement, Sequence)
+	 },
      SeeAlso => {RingMap, hilbertSeries, value, Expression}
      }
+
+undocumented (symbol SPACE, RingElement, Array) -- TODO: eventually deprecate this
+
+doc ///
+Node
+  Key
+    (symbol SPACE, RingElement, Sequence)
+    (symbol SPACE, RingElement, Number)
+    (symbol SPACE, RingElement, RingElement)
+  Headline
+    evaluation of polynomials
+  Usage
+    f(a,b,c)
+  Inputs
+    f:RingElement
+    :Nothing
+      @TT "(a,b,c)"@, a sequence of numbers or ring elements
+  Outputs
+    r:RingElement
+      the result of evaluating @TT "f"@ at the provided values
+  Description
+    Example
+      R = QQ[x,y,z];
+      f = x^3 - y^2 + 999*z;
+      f(10,0,0)
+      f(0,1,0)
+      f(0,0,1)
+      f(10,1,-1)
+      x^3 * f(0,0,1)
+      f(0,0,x+y+z) / 999
+      f(z,y,x)
+      f(x,x,x)
+    Text
+      Note that giving fewer variables results in partial evaluation.
+    Example
+      f(10)
+      f(10,y,z)
+  SeeAlso
+    (symbol SPACE, RingMap, RingElement)
+///
 
 -- document {
 --      Key => NonLinear,
@@ -332,15 +335,9 @@ document {
 --      "The default is for the code to select the best strategy heuristically."
 --      }
 
-document {
-     Key => PushforwardComputation,
-     Headline => "a type of list used internally",
-     TT "PushforwardComputation", " -- a type of list used internally by ", TO "pushForward", " and ", TO "kernel", "."
-     }
-
 -- document {
 --      Key => EliminationOrder,
---      Headline => "use the natural elmination order in a pushForward1 computation",
+--      Headline => "use the natural elimination order in a pushForward1 computation",
 --      TT "EliminationOrder", " -- a value for the ", TO "MonomialOrder", "
 --      option to ", TO "pushForward1", " which specifies the natural elimination
 --      order be used."

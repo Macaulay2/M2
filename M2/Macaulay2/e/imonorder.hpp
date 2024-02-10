@@ -6,15 +6,17 @@
 /* This is the internal form of the monomial ordering */
 /* Used in monomial encoding/decoding/comparison */
 
+#include <vector>
+
 #include "interface/monomial-ordering.h"
 
-typedef int *exponents;
+#include "ExponentVector.hpp"
+
 typedef int *monomial;
 
 typedef int32_t
     deg_t;  // this is the integer type to use for degrees and weights
 
-typedef const int *const_exponents;
 typedef const int *const_monomial;
 
 struct mo_block
@@ -52,8 +54,9 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
                                             monomial b);
 void monomialOrderDecodeToActualExponents(const MonomialOrder *mo,
                                           const_monomial a,
-                                          exponents b);
+                                          exponents_t b);
 
+std::vector<bool> laurentVariables(const MonomialOrder* mo);
 #endif
 
 /*

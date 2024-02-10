@@ -382,7 +382,7 @@ overviewC.m2:  -- leadTerm should call a ggleadterm routine?  DO THIS
 primdecomp-SY.m2:     sendgg(ggPush m, ggPush n, ggsimplify);
 primdecomp-SY.m2:     sendgg(ggPush m, ggPush n, ggissubset);
 primdecomp-fastgb.m2:     sendgg(ggPush m, -- the matrix
-primdecomp-fastgb.m2:     ggPush 0, -- collect syzygyies?
+primdecomp-fastgb.m2:     ggPush 0, -- collect syzygies?
 primdecomp-fastgb.m2:     ggPush 0, -- how many rows
 primdecomp-fastgb.m2:     ggPush 0, -- 0 for now
 primdecomp-fastgb.m2:     gggb);
@@ -394,7 +394,7 @@ primdecomp-fastgb.m2:     sendgg(ggPush g,
 primdecomp-fastgb.m2:       gggetmingens,
 primdecomp-fastgb.m2:            ggdup, ggPush 1, ggPush (-1), ggsortcolumns, ggsubmatrix);
 primdecomp-fastgb.m2:     sendgg(ggPush m, -- the matrix
-primdecomp-fastgb.m2:     ggPush 0, -- collect syzygyies?
+primdecomp-fastgb.m2:     ggPush 0, -- collect syzygies?
 primdecomp-fastgb.m2:     ggPush 0, -- how many rows
 primdecomp-fastgb.m2:     ggPush 0, -- 0 for now
 primdecomp-fastgb.m2:     gggb);

@@ -4,22 +4,20 @@
 
 #include <frobby.h> // TODO: move Frobby routines elsewhere?
 
+#include "ExponentList.hpp"
 #include "assprime.hpp"
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
 #include "finalize.hpp"
 #include "hilb.hpp"
-#include "index.hpp"
 #include "int-bag.hpp"
-#include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal-minprimes.hpp"
 #include "monideal.hpp"
 #include "monomial.hpp"
 #include "newdelete.hpp"
 #include "text-io.hpp"
-#include "varpower.hpp"
 
 class PolynomialRing;
 class RingElement;
@@ -34,7 +32,7 @@ engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -47,7 +45,7 @@ const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -65,7 +63,7 @@ M2_string MonomialIdeal_to_string(const MonomialIdeal *I)
   }
 }
 
-int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I) { return I->length(); }
+int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I) { return I->size(); }
 int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
 // 1 = true, 0 = false, -1 = error
 {
@@ -92,7 +90,7 @@ const MonomialIdeal /* or null */ *rawRadicalMonomialIdeal(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -105,7 +103,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
       if (I->get_ring() != J->get_ring())
         {
           ERROR("expected ideals in the same ring");
-          return 0;
+          return nullptr;
         }
       MonomialIdeal *result = I->intersect(*J);
       intern_monideal(result);
@@ -113,7 +111,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -121,7 +119,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
 
 const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a)
+    const EngineMonomial *a)
 {
   try
     {
@@ -131,7 +129,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -144,7 +142,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
       if (I->get_ring() != J->get_ring())
         {
           ERROR("expected ideals in the same ring");
-          return 0;
+          return nullptr;
         }
       MonomialIdeal *result = I->quotient(*J);
       intern_monideal(result);
@@ -154,13 +152,13 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
 const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a)
+    const EngineMonomial *a)
 {
   try
     {
@@ -170,7 +168,7 @@ const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -183,7 +181,7 @@ const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal2(
       if (I->get_ring() != J->get_ring())
         {
           ERROR("expected ideals in the same ring");
-          return 0;
+          return nullptr;
         }
       MonomialIdeal *result = I->sat(*J);
       intern_monideal(result);
@@ -191,7 +189,7 @@ const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal2(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -206,7 +204,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_borel(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -240,7 +238,7 @@ rawMonomialMinimalPrimes(const MonomialIdeal *I, int codim_limit, int count)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -257,7 +255,7 @@ const MonomialIdeal /* or null */ *rawMaximalIndependentSets(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -273,7 +271,7 @@ const RingElement /* or null */ *IM2_MonomialIdeal_Hilbert(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -286,7 +284,7 @@ M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I) { return I->lcm(); }
 class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
 {
   int nv;  // The size of exponentVector coming from frobby
-  int *exp;
+  exponents_t exp;
   MonomialIdeal *J;
 
  public:
@@ -297,8 +295,8 @@ class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
   }
   ~MyIdealConsumer()
   {
-    deletearray(exp);
-    J = 0;
+    freemem(exp);
+    J = nullptr;
   }
   virtual void consume(mpz_ptr *exponentVector)
   {
@@ -315,7 +313,7 @@ class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
       }
 
     Bag *b = new Bag();
-    varpower::from_ntuple(nv, exp, b->monom());
+    varpower::from_expvector(nv, exp, b->monom());
     J->insert_minimal(b);
   }
   MonomialIdeal *result() { return J; }
@@ -325,12 +323,11 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I,
                                           const mpz_t *topvec)
 {
   int nv = I->topvar() + 1;
-  int *exp = newarray_atomic(int, nv);
+  exponents_t exp = newarray_atomic(int, nv);
   Frobby::Ideal F(nv);
-  for (Index<MonomialIdeal> i = I->first(); i.valid(); i++)
+  for (Bag& b : *I)
     {
-      Bag *b = I->operator[](i);
-      varpower::to_ntuple(nv, b->monom().raw(), exp);
+      varpower::to_expvector(nv, b.monom().data(), exp);
 
       if (M2_gbTrace >= 4) fprintf(stderr, "adding ");
       for (int j = 0; j < nv; j++)
@@ -344,7 +341,7 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I,
   // Now create the consumer object, and call Frobby
   MyIdealConsumer M(I->get_ring(), nv);
   Frobby::alexanderDual(F, topvec, M);
-  deletearray(exp);
+  freemem(exp);
   // Extract the answer as a MonomialIdeal
   return M.result();
 }
@@ -359,10 +356,10 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I,
   if (nv == 0)
     {
       INTERNAL_ERROR("attempting to use frobby with zero variables");
-      return 0;
+      return nullptr;
     }
 
-  mpz_t *topvec = 0;
+  mpz_t *topvec = nullptr;
   if (top->len > 0)
     {
       topvec = newarray(mpz_t, top->len);
@@ -373,10 +370,10 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I,
   MonomialIdeal *result = FrobbyAlexanderDual(I, topvec);
 
   // Clean up
-  if (topvec != 0)
+  if (topvec != nullptr)
     {
       for (int i = 0; i < top->len; i++) mpz_clear(topvec[i]);
-      deletearray(topvec);
+      freemem(topvec);
     }
 
   return result;
@@ -412,7 +409,7 @@ const MonomialIdeal /* or null */ *rawAlexanderDual(const MonomialIdeal *I,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 

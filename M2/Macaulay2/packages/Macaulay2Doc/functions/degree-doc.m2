@@ -16,15 +16,13 @@ document {
 
 undocumented {
 	  (degree, MonomialIdeal),
-	  (degree, CoherentSheaf),
 	  (degree, Number)
 	  }
 
 document { 
      Key => degree,
-     "Degree is a common name, meaning different things for different 
-     kinds of mathematical objects.  In Macaulay2, there are currently three
-     related, yet different notions of degree: ",
+     "Degree is a common name, meaning different things for different kinds of mathematical objects.
+     In Macaulay2, there are currently three related, yet different notions of degree: ",
      HEADER3 "Degree of polynomials or vectors of such",
 	  UL {
 	  TO (degree,RingElement),
@@ -50,35 +48,13 @@ document {
 	  }
      }
 document { 
-     Key => (degree,ProjectiveVariety),
-     Usage => "degree X",
-     Inputs => { "X" },
-     Outputs => {
-	  ZZ => {"the degree of ", TT "X"}
-	  },
-     EXAMPLE {
-	  "S = ZZ/32003[x,y,z];",
-	  "I = ideal(x^4-4*x*y*z^2-z^4-y^4);",
-	  "R = S/I;",
-	  "X = variety I",
-	  "degree X"
-	  },
-     "The degree of a projective variety ", TT "X = V(I) = Proj R", " is the degree
-     of the homogeneous coordinate ring ", TT "R = S/I", " of ", TT "X", ".",
-     EXAMPLE {
-          "degree X == degree I",
-	  "degree X == degree R"
-	  },
-     SeeAlso => {(degree,Ideal),variety, "varieties"}
-     }
-document { 
      Key => (degree,ProjectiveHilbertPolynomial),
      Usage => "degree f",
      Inputs => {
 	  "f" => {"usually returned via ", TO "hilbertPolynomial"}
 	  },
      Outputs => {
-	  ZZ => "the degree of any graded module having this hilbert polynomial"
+	  ZZ => "the degree of any graded module having this Hilbert polynomial"
 	  },
      "This degree is obtained from the Hilbert polynomial ", TT "f", " as follows:
      if ", TT "f = d z^e/e! + lower terms in z", ", then ", TT "d", " is returned.
@@ -137,7 +113,7 @@ document {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
      "We assume that ", TT "M", " is a graded (homogeneous) module over a 
-     polynomal ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
+     polynomial ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
      over a field ", TT "k", ".",
      PARA{
 	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
@@ -184,7 +160,7 @@ Outputs
     the length of M
 Description
   Text
-    If M is a graded module over a singly graded polynomal ring or a quotient of a
+    If M is a graded module over a singly graded polynomial ring or a quotient of a
     polynomial ring over a field k then length is the same as the degree.
 
     If M is over a local ring then length is computed by summing the output of

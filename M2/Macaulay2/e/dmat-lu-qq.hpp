@@ -82,7 +82,7 @@ class DMatLinAlg<M2::ARingQQ>
                   0);  // the 0 means do not abort if rank is not maximal
     P.resize(0);
     for (long i = 0; i < LU.numRows(); i++) P.push_back(perm[i]);
-    deletearray(perm);
+    freemem(perm);
 
     fmpz_mul(den, den, den2);  // total denominator
     // Now we need to set L and U.

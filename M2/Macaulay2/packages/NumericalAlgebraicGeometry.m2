@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.17",
-     Date => "Mar 2021",
+     Version => "1.23",
+     Date => "Feb 2024",
      Headline => "numerical algebraic geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -209,7 +209,7 @@ getDefault Symbol := (s)->DEFAULT#s
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
 -- and a,b,c,... contain extra information, e.g, SolutionStatus=>Regular indicates the solution is regular.
 -- NEW FORMAT:
--- Solutions are of type Point (defined in NAGtypes).
+-- Solutions are of a type derived from AbstractPoint (defined in NAGtypes), e.g. Point.
  
 -- M2 tracker ----------------------------------------
 integratePoly = method(TypicalValue => RingElement)
@@ -258,10 +258,10 @@ multistepPredictor (QQ,List) := List => memoize((c,s) -> (
 
 multistepPredictorLooseEnd = method(TypicalValue => List)
 multistepPredictorLooseEnd (QQ,List) := List => memoize((c,s) -> (
--- coefficients for a multistep predictor with intederminate last step
+-- coefficients for a multistep predictor with indeterminate last step
 -- IN:  c = step adjustment coefficient (in QQ)
 --      s = list of step adjustments (from the initial stepsize h = t_1-t_0)
--- OUT: b = list of polinomials in QQ[a], where a=(last step size)/(next to last stepsize)   
+-- OUT: b = list of polynomials in QQ[a], where a=(last step size)/(next to last stepsize)   
      t := symbol t;
      n := #s + 2; -- t_n is the one for which prediction is being made
      a := symbol a;
@@ -388,27 +388,8 @@ randomOrthonormalCols = method() -- return a random m-by-n matrix with orthonorm
 randomOrthonormalCols(ZZ,ZZ) := (m,n) -> 
 if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
-squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, P.NumberOfVariables)
-squareUp (PolySystem,ZZ) := (P,n) -> (
-    m := P.NumberOfPolys;
-    if m<=n then "overdetermined system expected";
-    C := coefficientRing ring P;
-    M := if class C === ComplexField then sub(randomOrthonormalRows(n,m), C) else random(C^n,C^m);
-    squareUp(P,M)
-    )
-squareUp(PolySystem,Matrix) := (P,M) -> (
-    P.SquareUpMatrix = M;
-    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!!!
-    )
 
-squareUpMatrix = method()
-squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix else (
-    n := P.NumberOfVariables;
-    C := coefficientRing ring P;
-    map(C^n)
-    ) 
-
+load "./NumericalAlgebraicGeometry/systems.m2"
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"
@@ -507,7 +488,7 @@ conditionNumber (List,List) := (F,x) -> (
      )
 
 isSolution = method(Options=>{Tolerance=>null})
-isSolution(Point,PolySystem) := o -> (P,F) -> (
+isSolution(AbstractPoint,PolySystem) := o -> (P,F) -> (
     o = fillInDefaultOptions o;
     -- P = newton(F,P); -- !!! change for non regular
     -- P.ErrorBoundEstimate < o.Tolerance
@@ -523,7 +504,7 @@ undocumented {
     Field, 
     GateParameterHomotopy, 
     GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
-    (endGameCauchy,GateHomotopy,Number,Point),
+    (endGameCauchy,GateHomotopy,Number,AbstractPoint),
     (evaluateH,GateHomotopy,Matrix,Number),
 (evaluateH,GateParameterHomotopy,Matrix,Matrix,Number),
 (evaluateHt,GateHomotopy,Matrix,Number),
@@ -578,6 +559,7 @@ installPackage("Style")
 installPackage("NumericalAlgebraicGeometry")
 
 installPackage ("NumericalAlgebraicGeometry", MakeDocumentation=>false)
+restart
 check "NumericalAlgebraicGeometry"
 
 -- Local Variables:

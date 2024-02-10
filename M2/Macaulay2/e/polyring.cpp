@@ -41,9 +41,9 @@ void PolynomialRing::initialize_PolynomialRing(const Ring *K,
 
   exp_size = EXPONENT_BYTE_SIZE(nvars_);
 
-  if (K->is_QQ() || (K == globalZZ && denomR != 0))
+  if (K->is_QQ() || (K == globalZZ && denomR != nullptr))
     coeff_type_ = Ring::COEFF_QQ;
-  else if (K == globalZZ && denomR == 0)
+  else if (K == globalZZ && denomR == nullptr)
     coeff_type_ = Ring::COEFF_ZZ;
   else
     coeff_type_ = Ring::COEFF_BASIC;
@@ -59,9 +59,9 @@ void PolynomialRing::initialize_PolynomialRing(const Ring *K,
   if (numeratorR != this)
     {
       // We must set the non-commutative settings ourselves at this time
-      if (numeratorR->cast_to_WeylAlgebra() != 0)
+      if (numeratorR->cast_to_WeylAlgebra() != nullptr)
         is_weyl_ = true;
-      else if (numeratorR->cast_to_SolvableAlgebra() != 0)
+      else if (numeratorR->cast_to_SolvableAlgebra() != nullptr)
         is_solvable_ = true;
       else if (numeratorR->is_skew_commutative())
         {
@@ -71,7 +71,7 @@ void PolynomialRing::initialize_PolynomialRing(const Ring *K,
     }
 
   poly_size_ = 0;  // The callee needs to set this later
-  gb_ring_ = 0;    // The callee needs to set this later
+  gb_ring_ = nullptr;    // The callee needs to set this later
 
   // Also: callee should call setIsGraded, and set oneV, minus_oneV, zeroV
 }
@@ -89,10 +89,10 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   // case (1), (2): PolyRingQuotient
   // case (3): PolyQQ
 
-  PolynomialRing *result = NULL;
+  PolynomialRing *result = nullptr;
   Ring::CoefficientType coeff_type = R->coefficient_type();
 
-  QRingInfo *qrinfo = NULL;
+  QRingInfo *qrinfo = nullptr;
   switch (coeff_type)
     {
       case COEFF_BASIC:
@@ -137,7 +137,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   if (M->get_ring() != R)
     {
       ERROR("quotient elements not in the expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   VECTOR(Nterm *) elems;
 
@@ -203,10 +203,10 @@ unsigned int PolynomialRing::computeHashValue(const ring_elem a) const
   unsigned int hash = 0;
   unsigned int seed1 = 103;
   unsigned int seed2 = 347654;
-  for (const Nterm *t = a.poly_val; t != 0; t = t->next)
+  for (Nterm& t : a.poly_val)
     {
-      unsigned int hash1 = getCoefficientRing()->computeHashValue(t->coeff);
-      unsigned int hash2 = getMonoid()->computeHashValue(t->monom);
+      unsigned int hash1 = getCoefficientRing()->computeHashValue(t.coeff);
+      unsigned int hash2 = getMonoid()->computeHashValue(t.monom);
       hash += seed1 * hash1 + seed2 * hash2;
       seed1 += 463633;
       seed2 += 7858565;

@@ -46,7 +46,7 @@ export{
         
 --=========================================================================--
 
--- Depreciated Code (Branden Stone)
+-- Deprecated Code (Branden Stone)
 -- All this does is check where the ext modules don't vanish.
 --depth(Ideal,Module) := ZZ => (I,M) -> (
 --     AI := (ring I)^1/I;
@@ -215,7 +215,7 @@ depth(Ideal,Ideal) := ZZ => (I,A) -> (
 
 -----------------------------------------------------------------------------
 
--- Depreciated Code (Branden Stone)
+-- Deprecated Code (Branden Stone)
 --depth(Ideal,PolynomialRing) := ZZ => (I,A) -> (
 --     if isField coefficientRing A then codim I else depth(I,module A)
 --     ) -- if we can compute dimensions over ZZ, then we can remove this if-then statement
@@ -727,8 +727,8 @@ document {
           "Given a list ", TT "X", ", the function ", TT "isRegularSequence", 
 	  " tells if ", TT "X", " forms a regular sequence. If ", TT "X", 
 	  " consists of homogeneous elements, it does this by comparing 
-	  the hilbert series of ", TT "A", "
-	  and the hilbert series of ", TT "A/XA", ". Otherwise it checks 
+	  the Hilbert series of ", TT "A", "
+	  and the Hilbert series of ", TT "A/XA", ". Otherwise it checks 
 	  the injectivity of the maps defined by multiplication
 	  by the elements of ", TT "X", " and also checks if ", TT "XA
 	  = A", ".",

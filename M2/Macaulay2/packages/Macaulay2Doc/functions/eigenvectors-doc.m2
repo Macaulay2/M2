@@ -15,8 +15,8 @@ document {
 	  "eigvecs" => Matrix => {" or ", ofClass MutableMatrix, ", if ", TT "M", " is one),
 	       whose columns are the corresponding eigenvectors of ", TT "M"}
 	  },
-     "The resulting matrix is over ", TO "CC", ", and contains the eigenvectors of ", TT "M", ".  The lapack
-     library is used to compute eigenvectors of real and complex matrices.",
+     "The resulting matrix is over ", TO "CC", ", and contains the eigenvectors of ", TT "M", ".  The lapack and eigen
+     libraries are used to compute eigenvectors of real and complex matrices.",
      PARA{},
      "Recall that if ", TT "v", " is a non-zero vector such that ", TT "Mv = av", ", for a scalar a, then
      ", TT "v", " is called an eigenvector corresponding to the eigenvalue ", TT "a", ".",

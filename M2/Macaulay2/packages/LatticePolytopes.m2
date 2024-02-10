@@ -1089,7 +1089,7 @@ doc ///
      jetMatrix(A,2,pt)
     
    Text
-    If no point is provided the matrix of k-jets is provided as a matrix over a polynomoial ring.
+    If no point is provided the matrix of k-jets is provided as a matrix over a polynomial ring.
     
    Example
      A=latticePoints(convexHull(matrix{{0,0,2},{0,2,0}}))
@@ -1295,8 +1295,8 @@ document {
  
   document {
      Key => {degreeOfJetSeparation, (degreeOfJetSeparation,Matrix,Matrix),(degreeOfJetSeparation,List,Matrix)},
-     Headline => "computes the degree of jetSeperation at a given point",
-     Usage => " degreeOfJetSeperation(A,pt)",
+     Headline => "computes the degree of jetSeparation at a given point",
+     Usage => " degreeOfJetSeparation(A,pt)",
      Inputs => {
 	  "A" => Matrix => {" or  ", ofClass List," where the columns are lattice points"},
 	  "pt"=>Matrix =>{"a point as a column vector"},
@@ -1326,7 +1326,7 @@ document {
 	  "n"=> ZZ=>{},
 	  },
      Outputs => {
-	  "L"=>List => {"Containin bounds a and b such that a<=epsilon(X_P,L_P;1_P)<=b"},
+	  "L"=>List => {"Containing bounds a and b such that a<=epsilon(X_P,L_P;1_P)<=b"},
       	  },
      
      PARA{}, TT "epsilonBounds", " is a function. It computes bounds for the Seshadri constant at a general point by applying a set of projections. The integer n determines which projections are considered.",

@@ -27,14 +27,14 @@ setupfun("reorganize",dbmreorganize);
 dbmopenin(e:Expr):Expr := (
      when e
      is a:stringCell do (
-	  if notify then stderr << "--opening database " << a.v << endl;
+	  if notify then stderr << " -- opening database " << minimizeFilename(a.v) << endl;
 	  dbmopenin(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabase",dbmopenin);
 dbmopenout(e:Expr):Expr := (
      when e
      is a:stringCell do (
-	  if notify then stderr << "--opening database for output " << a.v << endl;
+	  if notify then stderr << " -- opening database for output " << minimizeFilename(a.v) << endl;
 	  dbmopenout(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabaseOut",dbmopenout);
@@ -64,7 +64,7 @@ toList(e:Expr):Expr := (
 	       	    false)))
      is s:stringCell do list(strtoseq(s))
      else WrongArg("list, sequence, set, or string"));
-setupfun("toList",toList);
+setupfun("toList1",toList);
 values(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
@@ -487,7 +487,7 @@ close(g:Expr):Expr := (
 	  g)
      is f:file do when close(f) is m:errmsg do buildErrorPacket(m.message) else g
      is x:Database do (
-	  if notify then stderr << "--closing database " << x.filename << endl;
+	  if notify then stderr << " -- closing database " << minimizeFilename(x.filename) << endl;
 	  dbmclose(x))
      else buildErrorPacket("expected a file or database"));
 setupfun("close",close).Protected = false;
@@ -540,12 +540,6 @@ flagSymbol(e:Expr):Expr := (
      else WrongArg("a symbol"));
 setupfun("flagLookup",flagSymbol);
 
-export chars := new array(Expr) len 256 do (
-     i := 0;
-     while i<256 do (
-	  provide Expr(stringCell(string(char(i))));
-	  i = i+1;
-	  ));
 getcfun(e:Expr):Expr := (
      when e
      is f:file do (
@@ -588,16 +582,16 @@ leftshiftfun(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(Expr(LessLessS),ZZClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 installMethod(Expr(LessLessS),RRClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 installMethod(Expr(LessLessS),RRiClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 installMethod(Expr(LessLessS),CCClass,ZZClass,
-     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     Expr(newCompiledFunction(leftshiftfun))
      );
 
 rightshiftfun(e:Expr):Expr := (
@@ -633,16 +627,16 @@ rightshiftfun(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(Expr(GreaterGreaterS),ZZClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 installMethod(Expr(GreaterGreaterS),RRClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 installMethod(Expr(GreaterGreaterS),RRiClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 installMethod(Expr(GreaterGreaterS),CCClass,ZZClass,
-     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     Expr(newCompiledFunction(rightshiftfun))
      );
 
 unSingleton(e:Expr):Expr := (
@@ -739,7 +733,7 @@ registerFinalizer(e:Expr):Expr := (
 	       toExpr(finalizerCount))
      	  else WrongArgString(2))
      else WrongNumArgs(2));
-setupfun("registerFinalizer",registerFinalizer);
+setupfun("registerFinalizer",registerFinalizer).Protected=false;
 
 header "extern \"C\" void do_nothing();";
 

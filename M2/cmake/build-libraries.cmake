@@ -6,8 +6,11 @@
 ## - test all:  cmake --build . --target check-components check-components-slow (very slow)
 ## - clean all: cmake --build . --target clean-stamps
 
+## Set the timestamp of the extracted content to the time of extraction
+cmake_policy(SET CMP0135 NEW)
+
 include(ExternalProject) # configure, patch, build, install, or test at build time
-set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
+set(M2_SOURCE_URL https://macaulay2.com/Downloads/OtherSourceCode)
 
 ## This target builds external libraries that M2 relies on, then reruns cmake
 add_custom_target(build-libraries COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR} USES_TERMINAL)
@@ -295,13 +298,17 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+if(NOT MPFR_ROOT)
+  set(MPFR_ROOT ${M2_HOST_PREFIX})
+endif()
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
 _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
+
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
 ExternalProject_Add(build-mpfi
-  URL               https://gforge.inria.fr/frs/download.php/file/38111/mpfi-1.5.4.tgz
-  URL_HASH          SHA256=3b3938595d720af17973deaf727cfc0dd41c8b16c20adc103a970f4a43ae3a56
+  URL               ${M2_SOURCE_URL}/mpfi-1.5.4.tar.gz
+  URL_HASH          SHA256=32e6ad529c97aa5ce03e28d01c921d1bce1a464fb4c57fbc248d7be21e652782
   PREFIX            libraries/mpfi
   SOURCE_DIR        libraries/mpfi/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -312,7 +319,6 @@ ExternalProject_Add(build-mpfi
                       --with-gmp=${MP_ROOT}
                       --with-mpfr=${MPFR_ROOT}
                       ${shared_setting}
-                      ${assert_setting}
                       CC=${CMAKE_C_COMPILER}
                       CFLAGS=${CFLAGS}
                       CPPFLAGS=${CPPFLAGS}
@@ -331,12 +337,13 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpfi "mp;mpfr" MPFI_FOUND)
 
 # http://shoup.net/ntl
 ExternalProject_Add(build-ntl
-  URL               https://www.shoup.net/ntl/ntl-11.4.3.tar.gz
-  URL_HASH          SHA256=b7c1ccdc64840e6a24351eb4a1e68887d29974f03073a1941c906562c0b83ad2
+  URL               https://github.com/libntl/ntl/archive/refs/tags/v11.5.1.tar.gz
+  URL_HASH          SHA256=ef578fa8b6c0c64edd1183c4c303b534468b58dd3eb8df8c9a5633f984888de5
   PREFIX            libraries/ntl
   SOURCE_DIR        libraries/ntl/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/ntl/patch-11.5.1
   CONFIGURE_COMMAND cd src && ${CONFIGURE} PREFIX=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic
@@ -390,9 +397,9 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
 
 # https://github.com/Macaulay2/flint2
 ExternalProject_Add(build-flint
-  PREFIX            libraries/flint2
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint2
-  BINARY_DIR        libraries/flint2/build
+  PREFIX            libraries/flint
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
+  BINARY_DIR        libraries/flint/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
@@ -404,14 +411,10 @@ ExternalProject_Add(build-flint
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DWITH_NTL=ON
-                    -DWITH_MPIR=${USING_MPIR}
-                    # TODO: force SIMD flags off for distribution
-                    #-DHAS_FLAG_MPOPCNT
-                    #-DHAS_FLAG_UNROLL_LOOPS
   INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint2
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint2/README ${M2_INSTALL_LICENSESDIR}/flint2
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint2/LICENSE ${M2_INSTALL_LICENSESDIR}/flint2
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/README.md ${M2_INSTALL_LICENSESDIR}/flint
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/LICENSE ${M2_INSTALL_LICENSESDIR}/flint
   TEST_COMMAND      ${CMAKE_COMMAND} . -DBUILD_TESTING=ON
        COMMAND      ${CMAKE_COMMAND} --build .
        COMMAND      ${CMAKE_COMMAND} --build . --target test
@@ -429,12 +432,13 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 ExternalProject_Add(build-factory
-  URL               https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode/factory-4.2.0.tar.gz
-  URL_HASH          SHA256=b66c4c78847e24b71386a42ea2fb368b721f5cb03966c8c78801f1677c45e6c0
+  URL               https://www.singular.uni-kl.de/ftp/pub/Math/Factory/factory-4.3.0.tar.gz
+  URL_HASH          SHA256=f1e25b566a8c06d0e98b9795741c6d12b5a34c5c0c61c078d9346d8bbc82f09f
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.3.0...dcca183
   CONFIGURE_COMMAND autoreconf -vif &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -531,7 +535,37 @@ if(NOT CDDLIB_ROOT)
   set(CDDLIB_LIBRARY_DIR ${CDDLIB_ROOT}/lib)
   set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include/cddlib)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
+
+
+# https://github.com/algebraic-solving/msolve
+ExternalProject_Add(build-msolve
+  URL               https://github.com/algebraic-solving/msolve/releases/download/v0.5.0/msolve-0.5.0.tar.gz
+  URL_HASH          SHA256=13ad04757b0ba0bd44cf9a5abcf5aff416d5560b035323e9561ad4d4c020cfe5
+  PREFIX            libraries/msolve
+  SOURCE_DIR        libraries/msolve/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
+                      ${shared_setting}
+                      $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
+                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS} -I${MPFR_INCLUDE_DIRS} -I${FLINT_INCLUDE_DIR}"
+                      CFLAGS=${CFLAGS}
+                      "LDFLAGS=${LDFLAGS} -L${MP_LIBRARY_DIRS} ${MPFR_LIBRARIES} ${FLINT_LIBRARIES}"
+                      CC=${CMAKE_C_COMPILER}
+		      "OPENMP_CFLAGS=${OpenMP_C_FLAGS} ${OpenMP_C_LDLIBS}"
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/msolve
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/msolve
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+#_ADD_COMPONENT_DEPENDENCY(libraries msolve "mp;mpfr;flint" MSOLVE_FOUND)
 
 
 # https://numpi.dm.unipi.it/software/mpsolve
@@ -727,7 +761,7 @@ ExternalProject_Add(build-memtailor
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
 
 
 # https://github.com/Macaulay2/mathic
@@ -747,7 +781,7 @@ ExternalProject_Add(build-mathic
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 
 
 # https://github.com/Macaulay2/mathicgb
@@ -765,8 +799,8 @@ ExternalProject_Add(build-mathicgb
                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
+                    -Dwith_tbb=${WITH_TBB}
                     -Denable_mgb=ON
-                    -Dwith_tbb=ON
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -774,7 +808,7 @@ ExternalProject_Add(build-mathicgb
 if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
   execute_process(COMMAND mv ${M2_HOST_PREFIX}/bin/mgb ${M2_INSTALL_PROGRAMSDIR}/)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
 
 #############################################################################
@@ -787,12 +821,13 @@ set(4ti2_PROGRAMS
   qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
-  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_9/4ti2-1.6.9.tar.gz
-  URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
+  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_10/4ti2-1.6.10.tar.gz
+  URL_HASH          SHA256=f7c191beb14246b643e4fd5b18b53d9966693b9e6d3a569441a0e3ca14b1a86b
   PREFIX            libraries/4ti2
   SOURCE_DIR        libraries/4ti2/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     mkdir swig # needed because the tar doesn't have a swig directory but 4ti2's Makefile.am seems to need it
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -987,13 +1022,12 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.9/normaliz-3.8.9.tar.gz
-  URL_HASH          SHA256=a4c3eda39ffe42120adfd3bda9433b01d9965516e3f98e401b62752a54bee5dd
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.10.1/normaliz-3.10.1.tar.gz
+  URL_HASH          SHA256=365e1d1e2a338dc4df1947a440e606bb66dd261307e617905e8eca64eaafcf6e
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-3.8.5
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -1024,7 +1058,7 @@ ExternalProject_Add(build-normaliz
 _ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
 
 
-# http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+# https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
 set(topcom_PROGRAMS
   B_A B_A_center B_D checkregularity cocircuits2facets cross cube cyclic hypersimplex lattice
   chiro2allfinetriangs   chiro2dual              chiro2nallfinetriangs  chiro2placingtriang
@@ -1262,7 +1296,15 @@ message("## External components
 
 message("\n## Library information
      Linear Algebra    = ${LAPACK_LIBRARIES}
-     MP Arithmetic     = ${MP_LIBRARIES}\n")
+     MP Arithmetic     = ${MP_LIBRARIES}")
+
+execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "     Optional libs     =")
+foreach(_opt IN ITEMS OMP TBB FFI MPI XML PYTHON MYSQL)
+  if(WITH_${_opt})
+    execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append " ${_opt}")
+  endif()
+endforeach()
+message("\n")
 
 # Report the default flags, but if verbose
 if(VERBOSE)

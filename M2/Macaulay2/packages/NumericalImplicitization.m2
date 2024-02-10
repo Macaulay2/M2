@@ -434,7 +434,7 @@ myTrack (List, List, List) := List => opts -> (startSystem, targetSystem, startS
     	T := timing targetSolutions = track(startSystem, targetSystem, startSolutions, gamma => randomGamma, Software => opts.Software);
 	if opts.Verbose and T#0 > 1 then print ("     -- used " | toString(T#0) | " seconds");
     );
-    goodSols := select(targetSolutions, p -> p#?SolutionStatus and p#SolutionStatus == Regular);
+    goodSols := select(targetSolutions, p -> p.cache#?SolutionStatus and status p == Regular);
     if opts.Verbose and #goodSols < #startSolutions then print("Paths going to infinity: " | #startSolutions - #goodSols | " out of " | #startSolutions);
     if opts.DoRefinements then goodSols = apply(refine(polySystem targetSystem, goodSols, Bits => precision k), p -> point sub(matrix p, k));
     goodSols

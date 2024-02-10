@@ -133,11 +133,6 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
 
 export convert(e:ParseTree):Code := (
      when e
-     is s:StartDictionary do (
-	  if s.dictionary.framesize != 0
-	  then Code(newLocalFrameCode(s.dictionary.frameID,s.dictionary.framesize,convert(s.body)))
-	  else convert(s.body)
-	  )
      is w:For do Code(
 	  forCode(
 	       convert(w.inClause), convert(w.fromClause), convert(w.toClause),
@@ -369,12 +364,35 @@ export convert(e:ParseTree):Code := (
 	       is p:Parentheses do parallelAssignment(e,b,p)
 	       else dummyCode		  -- should not happen
 	       )
+	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
+	  then (
+	      when b.lhs
+	      is a:Adjacent
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), AdjacentS.symbol, treePosition(e)))
+	      is u:Unary
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), u.Operator.entry, treePosition(e)))
+	      is u:Postfix
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), u.Operator.entry, treePosition(e)))
+	      is c:Binary
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), c.Operator.entry, treePosition(e)))
+	      is t:Token
+	      do Code(augmentedAssignmentCode(b.Operator.entry, convert(b.lhs),
+		      convert(b.rhs), t.entry, treePosition(e)))
+	      else Code(augmentedAssignmentCode(b.Operator.entry, dummyCode,
+		      dummyCode, dummySymbol, treePosition(e))))
 	  else Code(binaryCode(b.Operator.entry.binary,convert(b.lhs),
 	       	    convert(b.rhs),treePosition(e)))
 	  )
-     is a:Arrow do Code(functionCode(
+     is a:Arrow do (
+	  fc := functionCode(
 	       a.Operator,		  -- just for display purposes!
-	       convert(a.rhs),a.desc,nextHash()))
+	       convert(a.rhs),a.desc,0);
+	  fc.hash = hashFromAddress(Expr(fc));
+	  Code(fc))
      is u:Unary do (
 	  if u.Operator.word == CommaW
 	  then Code(sequenceCode(makeCodeSequence(e,CommaW),treePosition(e)))

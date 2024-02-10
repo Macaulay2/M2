@@ -12,7 +12,7 @@ runBertini(storeBM2Files)
 assert(#importMainDataFile(storeBM2Files)==3)
 
 --Next we will make a solutions file using the makeSampleSolutionsFile. 
---This command will rewrite the the tracktype in the input file to tracktype 2, then call Bertini to perform a sample. 
+--This command will rewrite the tracktype in the input file to tracktype 2, then call Bertini to perform a sample. 
 
 makeSampleSolutionsFile(storeBM2Files,5,SpecifyComponent=>{2,0},
     	NameSolutionsFile=>"sample_solutions_file2" --this is the default.

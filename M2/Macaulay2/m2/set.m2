@@ -1,5 +1,7 @@
 -- Copyright 1994 by Daniel R. Grayson
 
+needs "methods.m2"
+
 VirtualTally.synonym = "virtual tally"
 Tally.synonym = "tally"
 Set.synonym = "set"
@@ -36,25 +38,32 @@ Tally + Tally := Tally => (x,y) -> merge(x,y,plus) -- no need to check for zero
 Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0) -- sadly, can't use continueIfNonPositive
 
 VirtualTally ? VirtualTally := (x,y) -> (
-     w := values ((new VirtualTally from x) - (new VirtualTally from y));
-     if #w === 0 then symbol ==
-     else if all(w,i -> i>0) then symbol >
-     else if all(w,i -> i<0) then symbol <
-     else incomparable)
+    flag:=symbol ==;
+    for k in keys x|keys y do
+    if ((cmp := x_k?y_k) =!= symbol ==) and flag =!= cmp and first(flag =!= symbol ==,flag = cmp) then return incomparable;
+    flag
+    )
 
 zeroVirtualTally := new VirtualTally from {}
 toVirtualTally := i -> if i === 0 then zeroVirtualTally else error "comparison of a virtual tally with a nonzero integer"
-VirtualTally == ZZ := (x,i) -> x === toVirtualTally i
-ZZ == VirtualTally := (i,x) -> toVirtualTally i === x
+VirtualTally == ZZ := (x,i) -> x == toVirtualTally i
+ZZ == VirtualTally := (i,x) -> toVirtualTally i == x
 VirtualTally ? ZZ := (x,i) -> x ? toVirtualTally i
 ZZ ? VirtualTally := (i,x) -> toVirtualTally i ? x
+VirtualTally == VirtualTally := (x,y) -> (x ? y) === symbol ==
 
+-*
 zeroTally := new Tally from {}
 toTally := i -> if i === 0 then zeroTally else error "comparison of a tally with a nonzero integer"
-Tally == ZZ := (x,i) -> x === toTally i
-ZZ == Tally := (i,x) -> toTally i === x
+Tally == ZZ := (x,i) -> x == toTally i
+ZZ == Tally := (i,x) -> toTally i == x
 Tally ? ZZ := (x,i) -> x ? toTally i
 ZZ ? Tally := (i,x) -> toTally i ? x
+*-
+
+RingElement * VirtualTally := Number * VirtualTally := (i,v) -> if i==0 then new class v from {} else applyValues(v,y->y*i)
+RingElement * Tally := (i,v) -> lift(i,ZZ) * v
+Number * Tally := (i,v) -> if i<=0 then new class v from {} else applyValues(v,y->y*i)
      
 sum VirtualTally := (w) -> sum(pairs w, (k,v) -> v * k)
 product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
@@ -78,11 +87,13 @@ product Set := s -> product toList s
 
 unique = method(Dispatch => Thing, TypicalValue => List)
 unique Sequence := x -> unique toList x
-unique List := x -> (
+unique VisibleList := x -> (
      -- old faster way: keys set x
      -- new way preserves order:
      seen := new MutableHashTable;
      select(x, i -> if seen#?i then false else seen#i = true))
+
+repeats = L -> #L - #unique L
 
 -- we've been waiting to do this:
 binaryOperators = unique binaryOperators
@@ -98,7 +109,7 @@ isSubset(VisibleList,Set) := Boolean => (S,T) -> all(S, x -> T#?x)
 isSubset(VisibleList,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 isSubset(Set,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 
-member(Thing,Set) := Boolean => (a,s) -> s#?a
+isMember(Thing,Set) := Boolean => (a,s) -> s#?a
 
 VirtualTally / Command  :=
 VirtualTally / Function := VirtualTally => (x,f) -> applyKeys(x,f,plus)
@@ -117,14 +128,23 @@ permutations = method()
 permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten apply(#x, i -> apply(permutations drop(x,{i,i}), t -> prepend(x#i,t)))
 permutations ZZ := List => n -> permutations toList (0 .. n-1)
 
+uniquePermutations = method()
+uniquePermutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else (
+    l := new MutableHashTable;
+    flatten apply(#x,i -> if l#?(x#i) then {} else (
+            l#(x#i)=1;
+            apply(uniquePermutations drop(x,{i,i}), t -> prepend(x#i,t)))
+    ))
+uniquePermutations ZZ := permutations
+
 partition = method()
-partition(Function,VirtualTally) := (f,s) -> partition(f,s,{})
-partition(Function,VirtualTally,VisibleList) := (f,s,i) -> (
+partition(Function,VirtualTally) := HashTable => (f,s) -> partition(f,s,{})
+partition(Function,VirtualTally,VisibleList) := HashTable => (f,s,i) -> (
      p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
      scanPairs(s, (x,n) -> ( y := f x; if p#?y then if p#y#?x then p#y#x = p#y#x + n else p#y#x = n else (p#y = new MutableHashTable)#x = n; ));
      applyValues(new HashTable from p, px -> new class s from px))
-partition(Function,VisibleList) := (f,s) -> partition(f,s,{})
-partition(Function,VisibleList,VisibleList) := (f,s,i) -> (
+partition(Function,VisibleList) := HashTable => (f,s) -> partition(f,s,{})
+partition(Function,VisibleList,VisibleList) := HashTable => (f,s,i) -> (
      p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
      scan(s, x -> ( y := f x; if p#?y then (p#y)#(#p#y) = x else p#y = new MutableHashTable from {(0,x)}));
      p = pairs p;
@@ -146,7 +166,8 @@ scan((
 scan((
 	  (flexibleBinaryOperators,Binary,Flexible),
 	  (flexiblePrefixOperators,Prefix,Flexible),
-	  (flexiblePostfixOperators,Postfix,Flexible)
+	  (flexiblePostfixOperators,Postfix,Flexible),
+	  (augmentedAssignmentOperators,Binary,Flexible)
 	  ),
      (li,at,fl) -> scan(li, op -> operatorAttributes#op#at#fl = 1))
 operatorAttributes = hashTable apply(pairs operatorAttributes, (op,ats) -> (op, hashTable apply(pairs ats, (at,fls) -> (at, set keys fls))))

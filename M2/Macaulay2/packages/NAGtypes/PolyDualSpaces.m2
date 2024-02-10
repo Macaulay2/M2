@@ -29,11 +29,11 @@ DualSpace = new Type of MutableHashTable
 globalAssignment DualSpace
 dualSpace = method()
 dualSpace DualSpace := L -> new DualSpace from L
-dualSpace (PolySpace, Point) := (S,p)-> (
+dualSpace (PolySpace, AbstractPoint) := (S,p)-> (
     assert(numgens ring S.Gens == #coordinates p);
     new DualSpace from {Space=>S,BasePoint=>p}
     )
-dualSpace (Matrix, Point) := (M,p)-> dualSpace(polySpace M,p)
+dualSpace (Matrix, AbstractPoint) := (M,p)-> dualSpace(polySpace M,p)
 -- what other constructors would we have?
 
 gens PolySpace := o -> S -> S.Gens

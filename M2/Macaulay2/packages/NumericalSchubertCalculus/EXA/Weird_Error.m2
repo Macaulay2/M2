@@ -69,7 +69,7 @@ print(#S)
 --
 --  This also does not work
 --
--- setRandomSeed 0,1,2,3  error: a solution does not fit the expected pattern (numerical error occured)
+-- setRandomSeed 0,1,2,3  error: a solution does not fit the expected pattern (numerical error occurred)
 setRandomSeed 3
 SchPblm = {
     ({2}, id_(CC^8)),

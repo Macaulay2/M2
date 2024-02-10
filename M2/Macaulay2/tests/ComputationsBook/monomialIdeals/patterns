@@ -1,4 +1,4 @@
 s/primaryDecomposition MonomialIdeal := .*/primaryDecomposition MonomialIdeal := XXX/
-s/opts   : OptionTable.*//
-s/f      : FunctionClosure.*//
+s/| opts.*//
+s/| f.*//
 s/.*if J == 1 then return.*//

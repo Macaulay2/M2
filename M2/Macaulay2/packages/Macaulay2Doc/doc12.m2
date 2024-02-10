@@ -281,11 +281,25 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
-undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
+undocumented {
+    (symbol -, Thing, Minus),
+    (symbol +, Sum, Sum),
+    (symbol +, Sum, Holder),
+    (symbol +, Holder, Sum),
+    (symbol +, ZeroExpression, Expression),
+    (symbol +, Expression, ZeroExpression),
+    }
+
+expressionMethodKeys := flatten apply(toList core "expressionBinaryOperators", op -> {
+	(op, Expression, Expression),
+	(op, Expression, Holder),
+	(op, Expression, Thing),
+	(op, Holder, Expression),
+	(op, Holder, Holder),
+	(op, Thing, Expression)})
 
 document {
-     Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
-	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),
+     Key => join({Expression, (value, Expression), (symbol -, Expression)}, expressionMethodKeys),
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
      as well as enough information to print the expression nicely.  In Macaulay2 expressions have two main functions: they are an intermediate phase in
@@ -363,7 +377,7 @@ document {
      EXAMPLE {
 	 ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
 	 ///R=QQ[x,y];///,
-         ///MatrixExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}}}///,
+         ///MatrixExpression append(applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}})///,
 	 ///value oo///
 	 },
      SeeAlso => {"Table"}
@@ -377,14 +391,6 @@ document {
      PARA{},
      EXAMPLE ///VectorExpression {a,b,c}///,
      SeeAlso => {"MatrixExpression"}
-     }
-
-document {
-     Key => SheafExpression,
-     Headline => "the class of sheaf expressions",
-     TT "SheafExpression", " is a type of ", TO "Expression", " representing
-     the sheaf associated to a given ring or module.",
-     PARA{},
      }
 
 document {
@@ -411,12 +417,14 @@ document {
      "This is a unary operator."
      }
 
+-*
 document {
      Key => NonAssociativeProduct,
      Headline => "the class of all nonassociative product expressions",
      TT "NonAssociativeProduct", " is a type of ", TO "Expression", " representing
      a nonassociative product."
      }
+*-
 
 document {
      Key => Power,
@@ -538,6 +546,8 @@ doc ///
       printerr("foo", "bar")
 ///
 
+undocumented methods hold
+
 document {
      Key => hold,
      Headline => "hold something in a holder expression",
@@ -547,6 +557,8 @@ document {
 	       already an expression, in which case ", TT "x", " is returned." }},
      EXAMPLE "(hold 2)^5 * (hold 3)^3",
      }
+
+undocumented methods expression
 
 document {
      Key => expression,
@@ -638,29 +650,6 @@ document {
      stored the function of one variable that accepts the superscript and
      returns a scripted functor that accepts the arguments.",
      SeeAlso => "ScriptedFunctor"
-     }
-
-document {
-     Key => {(sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
-	  sheafExt,
-       	  (sheafExt, ZZ, SheafOfRings, CoherentSheaf),
-       	  (sheafExt, ZZ, CoherentSheaf, SheafOfRings),
-	  (sheafExt, ZZ, SheafOfRings, SheafOfRings)},
-     Headline => "sheaf Ext of coherent sheaves",
-     Usage => "sheafExt^n(F,G)",
-     Inputs => { "n", "F", "G" },
-     Outputs => { CoherentSheaf => { "the n-th sheaf Ext of ", TT "F", " and ", TT "G" } },
-     "If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-     PARA{},
-     TT "F", " and ", TT "G", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
-     PARA{},
-     "The result is the sheaf associated to the graded module ", TT "Ext^n(module M, module N).",
-     EXAMPLE lines ///
-     	  X = Proj(QQ[x,y])
-	  sheafExt^1(OO_X^1(2),OO_X(-11)^1)
-     ///,
-     SeeAlso => {OO, sheafHom, Hom, Ext, HH, (Ext, ZZ, CoherentSheaf, CoherentSheaf)}
-     
      }
 
 -- Local Variables:

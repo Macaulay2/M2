@@ -12,6 +12,10 @@
   MarkUpType, and therefore need to be rendered.
 *-
 
+needs "document.m2"
+needs "hypertext.m2"
+needs "nets.m2"
+
 -----------------------------------------------------------------------------
 -- Common utilities for formatting documentation nodes
 -----------------------------------------------------------------------------
@@ -22,7 +26,7 @@
 -- of individual subtypes.
 setupRenderer = (parser, joiner, T) -> (
     parser T := node -> joiner apply(node,
-	subnode -> if class subnode =!= Option then parser subnode))
+	subnode -> if class subnode =!= Option and class subnode =!= OptionTable then parser subnode))
 
 -- Default joiners: (TODO: move to string.m2?)
 -- concatenate
@@ -34,7 +38,7 @@ wrapHorizontalJoin := x -> wrap horizontalJoin x
 -- MarkUpType > IntermediateMarkUpType
 
 -- skip Options; TODO: define parser Option := null instead
-noopts := x -> select(x,e -> class e =!= Option)
+noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 -----------------------------------------------------------------------------
 -- Setup uniform rendering
@@ -62,7 +66,9 @@ info TITLE :=
 net  COMMENT :=
 info COMMENT :=
 net  LITERAL :=
-info LITERAL := x -> ""
+info LITERAL :=
+net  SCRIPT  :=
+info SCRIPT  := x -> ""
 
 info String  := identity
 info Nothing := net
@@ -122,10 +128,13 @@ scan({net, info},
 	parser' COMMENT :=
 	parser' LITERAL :=
 	parser' Option  :=
+	parser' OptionTable  :=
 	parser' Nothing := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
+	parser' PRE := -- HACK -- might need to rethink
+	parser' INDENT :=
 	parser' TABLE :=
 	parser' MENU :=
 	parser' DL :=
@@ -141,12 +150,15 @@ scan({net, info},
 	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
-		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+		SPBKs -> if isMember(SP,SPBKs) then (BK,"",BK) else BK);
 	    x = splice sublists(x, i -> i =!= BK,
 		x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x,
 		BK -> ());
 	    -- Stack the pieces vertically
 	    stack x);
+	parser INDENT := x -> ( -- INDENT is like DIV but with extra |s on the left. sadly, can't be absorbed into DIV because of non-recursivity of this parser
+	    n := parser DIV toList x;
+	    "| "^(height n, depth n) | n )
 	))
 
 Hop := (op,filler) -> x -> (
@@ -166,10 +178,15 @@ info HR := x -> concatenate(printWidth:"-")
 net  PRE  :=
 net   TT  :=
 net CODE  :=
+net SAMP  :=
+net  KBD  :=
 info TT   :=
+info SAMP :=
+info  KBD :=
 info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
-info PRE  := x -> wrap(printWidth, "-", concatenate apply(noopts x,toString))
+info PRE  := x ->
+    wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
 
 net TH := Hop(net, "-")
 
@@ -183,10 +200,11 @@ info UL := ULop info
 net  UL := ULop net
 
 OLop := op -> x -> (
+     (o, ct) := override(options class x, toSequence x);
+     shft := try value o#"start" else 1;
      s := "000. ";
      printWidth = printWidth - #s;
-     x = toList noopts x;
-     r := stack apply(#x, i -> pad(3,toString (i+1)) | ". " | op x#i); -- html starts counting from 1!
+     r := stack apply(#ct, i -> pad(3,toString (i+shft)) | ". " | op ct#i);
      printWidth = printWidth + #s;
      r)
 info OL := OLop info
@@ -279,10 +297,10 @@ info TOH := x -> (
 
 net TO  := x -> (
      if class x#0 === DocumentTag
-     then concatenate( "\"", format x#0, "\"", if x#?1 then x#1)
+     then concatenate(formatNoEscaping format x#0, if x#?1 then x#1)
      else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
-net TO2 := x -> x#1
+net TO2 := x -> format x#1
 
 -- TODO: move this back from help.m2
 net  MENU := x -> net redoMENU x

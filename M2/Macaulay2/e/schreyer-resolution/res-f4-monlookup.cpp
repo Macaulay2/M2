@@ -1,10 +1,11 @@
 // Copyright 1994-2016 Michael E. Stillman
 
 #include "schreyer-resolution/res-f4-monlookup.hpp"
+
 #include "buffer.hpp"                                     // for buffer
 #include "engine-exports.h"                               // for newline
 #include "mem.hpp"                                        // for stash
-#include "schreyer-resolution/res-varpower-monomial.hpp"  // for index_res_v...
+#include "schreyer-resolution/res-monomial-types.hpp"     // for index_res_v...
 #include "style.hpp"                                      // for INTSIZE
 #include "text-io.hpp"                                    // for emit, emit_...
 
@@ -22,9 +23,9 @@ ResF4MonomialLookupTableT<Key>::new_mi_node(varpower_word v,
   mi_node *p = reinterpret_cast<mi_node *>(mi_stash->new_elem());
   p->var = v;
   p->exp = e;
-  p->left = NULL;
-  p->right = NULL;
-  p->header = NULL;
+  p->left = nullptr;
+  p->right = nullptr;
+  p->header = nullptr;
   p->tag = mi_node::node;
   p->val.down = d;
   return p;
@@ -39,9 +40,9 @@ ResF4MonomialLookupTableT<Key>::new_mi_node(varpower_word v,
   mi_node *p = reinterpret_cast<mi_node *>(mi_stash->new_elem());
   p->var = v;
   p->exp = e;
-  p->left = NULL;
-  p->right = NULL;
-  p->header = NULL;
+  p->left = nullptr;
+  p->right = nullptr;
+  p->header = nullptr;
   p->tag = mi_node::leaf;
   p->val.key = k;
   return p;
@@ -50,7 +51,7 @@ ResF4MonomialLookupTableT<Key>::new_mi_node(varpower_word v,
 template <typename Key>
 void ResF4MonomialLookupTableT<Key>::delete_mi_node(mi_node *p)
 {
-  if (p == 0) return;
+  if (p == nullptr) return;
   if (p->right != p->header) delete_mi_node(p->right);
   if (p->tag == mi_node::node)
     {
@@ -65,7 +66,7 @@ ResF4MonomialLookupTableT<Key>::ResF4MonomialLookupTableT(int nvars,
 {
   count = 0;
   mi_stash = mi_stash0;
-  if (mi_stash == 0)
+  if (mi_stash == nullptr)
     {
       count = 1;
       mi_stash = new stash("mi_node", sizeof(mi_node));
@@ -91,7 +92,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
                                              Key k)
 {
   count += 2;
-  mi_node **p = &top, *up = NULL;
+  mi_node **p = &top, *up = nullptr;
   bool one_element = true;
 
   for (index_res_varpower_monomial i = b; i.valid();)
@@ -100,7 +101,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
       varpower_word insert_var = i.var();
       varpower_word insert_exp;
 
-      if (*p == NULL)
+      if (*p == nullptr)
         {
           // make a new header node
           *p = new_mi_node(insert_var, 0, up);
@@ -139,7 +140,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
           if (i.valid())
             {
               insert_node = new_mi_node(
-                  insert_var, insert_exp, reinterpret_cast<mi_node *>(NULL));
+                  insert_var, insert_exp, static_cast<mi_node *>(nullptr));
               q->insert_to_left(insert_node);
               q = insert_node;
             }
@@ -157,7 +158,7 @@ void ResF4MonomialLookupTableT<Key>::insert1(mi_node *&top,
   if (one_element)
     {
       // insert a header node and a var/exp = 0/0 leaf
-      top = new_mi_node(0, 0, reinterpret_cast<mi_node *>(NULL));
+      top = new_mi_node(0, 0, static_cast<mi_node *>(nullptr));
       mi_node *leaf_node = new_mi_node(0, 0, k);
       top->left = top->right = leaf_node;
       top->header = leaf_node->header = leaf_node->left = leaf_node->right =
@@ -172,7 +173,7 @@ bool ResF4MonomialLookupTableT<Key>::find_one_divisor1(
     Key &result_k) const
 // mi is the top: where to start looking
 {
-  if (mi == NULL) return false;
+  if (mi == nullptr) return false;
 
   mi_node *p = mi;
 
@@ -182,13 +183,13 @@ bool ResF4MonomialLookupTableT<Key>::find_one_divisor1(
 
       if (p == p->header)
         {
-          if ((p = p->down()) == NULL) return false;
+          if ((p = p->down()) == nullptr) return false;
           continue;
         }
 
       if (p->exp > exp[p->var])
         {
-          if ((p = p->header->down()) == NULL) return false;
+          if ((p = p->header->down()) == nullptr) return false;
           continue;
         }
 
@@ -216,13 +217,13 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors1(
 
       if (p == p->header)
         {
-          if ((p = p->down()) == NULL) return;
+          if ((p = p->down()) == nullptr) return;
           continue;
         }
 
       if (p->exp > exp[p->var])
         {
-          if ((p = p->header->down()) == NULL) return;
+          if ((p = p->header->down()) == nullptr) return;
           continue;
         }
 
@@ -236,7 +237,7 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors1(
 }
 
 template <typename Key>
-void ResF4MonomialLookupTableT<Key>::update_exponent_vector(
+void ResF4MonomialLookupTableT<Key>::update_expvector(
     int topvar,
     const_varpower_monomial m)
 {
@@ -245,7 +246,7 @@ void ResF4MonomialLookupTableT<Key>::update_exponent_vector(
   if (size_of_exp <= nvars)
     {
       // Increase size of exponent vector
-      deleteitem(exp0);
+      freemem(exp0);
       if (nvars > 2 * size_of_exp)
         size_of_exp = nvars;
       else
@@ -262,7 +263,7 @@ void ResF4MonomialLookupTableT<Key>::update_exponent_vector(
 }
 
 template <typename Key>
-void ResF4MonomialLookupTableT<Key>::reset_exponent_vector(
+void ResF4MonomialLookupTableT<Key>::reset_expvector(
     const_varpower_monomial m)
 {
   int nparts = static_cast<int>(*m++);
@@ -280,12 +281,12 @@ bool ResF4MonomialLookupTableT<Key>::find_one_divisor_vp(
 {
   if (comp >= mis.size()) return false;
   mi_node *mi = mis[comp];
-  if (mi == NULL) return false;
+  if (mi == nullptr) return false;
 
   ResF4MonomialLookupTableT *me = const_cast<ResF4MonomialLookupTableT *>(this);
-  me->update_exponent_vector(static_cast<int>(mi->var), m);
+  me->update_expvector(static_cast<int>(mi->var), m);
   bool result = find_one_divisor1(mi, exp0, result_k);
-  me->reset_exponent_vector(m);
+  me->reset_expvector(m);
   return result;
 }
 
@@ -297,12 +298,12 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors_vp(
 {
   if (comp >= mis.size()) return;
   mi_node *mi = mis[comp];
-  if (mi == NULL) return;
+  if (mi == nullptr) return;
 
   ResF4MonomialLookupTableT *me = const_cast<ResF4MonomialLookupTableT *>(this);
-  me->update_exponent_vector(static_cast<int>(mi->var), m);
+  me->update_expvector(static_cast<int>(mi->var), m);
   find_all_divisors1(mi, exp0, result_k);
-  me->reset_exponent_vector(m);
+  me->reset_expvector(m);
 }
 
 template <typename Key>
@@ -315,8 +316,8 @@ bool ResF4MonomialLookupTableT<Key>::find_one_divisor_packed(
   auto comp = M->get_component(m);
   if (comp >= mis.size()) return false;
   mi_node *mi = mis[comp];
-  if (mi == NULL) return false;
-  M->to_exponent_vector(m, exp0, comp);
+  if (mi == nullptr) return false;
+  M->to_expvector(m, exp0, comp);
   return find_one_divisor1(mi, exp0, result_k);
 }
 
@@ -329,8 +330,8 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors_packed(
   auto comp = M->get_component(m);
   if (comp >= mis.size()) return;
   mi_node *mi = mis[comp];
-  if (mi == NULL) return;
-  M->to_exponent_vector(m, exp0, comp);
+  if (mi == nullptr) return;
+  M->to_expvector(m, exp0, comp);
   find_all_divisors1(mi, exp0, result_k);
 }
 
@@ -342,7 +343,7 @@ void ResF4MonomialLookupTableT<Key>::insert_minimal_vp(
 {
   if (comp >= mis.size())
     {
-      for (long j = comp - mis.size(); j >= 0; j--) mis.push_back(0);
+      for (long j = comp - mis.size(); j >= 0; j--) mis.push_back(nullptr);
     }
   insert1(mis[comp], m, k);
 }
@@ -364,7 +365,7 @@ template <typename Key>
 typename ResF4MonomialLookupTableT<Key>::mi_node *
 ResF4MonomialLookupTableT<Key>::next(mi_node *p) const
 {
-  while (p != NULL)
+  while (p != nullptr)
     {
       p = p->left;
       if (p->tag == mi_node::leaf)
@@ -372,14 +373,14 @@ ResF4MonomialLookupTableT<Key>::next(mi_node *p) const
       else
         p = p->down();
     }
-  return NULL;
+  return nullptr;
 }
 
 template <typename Key>
 typename ResF4MonomialLookupTableT<Key>::mi_node *
 ResF4MonomialLookupTableT<Key>::prev(mi_node *p) const
 {
-  while (p != NULL)
+  while (p != nullptr)
     {
       p = p->right;
       if (p->tag == mi_node::leaf)
@@ -387,7 +388,7 @@ ResF4MonomialLookupTableT<Key>::prev(mi_node *p) const
       else
         p = p->down();
     }
-  return NULL;
+  return nullptr;
 }
 
 static int nlists = 0;
@@ -474,7 +475,7 @@ int ResF4MonomialLookupTableT<Key>::debug_check(mi_node *const p,
   // First check the node 'p' itself
   assert(p != NULL);
   assert(p->var >= 0);
-  if (up != NULL) assert(p->var < up->var);
+  if (up != nullptr) assert(p->var < up->var);
   assert(p->header == p);
   assert(p->tag == mi_node::node);
   assert(p->down() == up);
@@ -513,7 +514,7 @@ void ResF4MonomialLookupTableT<Key>::debug_check() const
        i != mis.end();
        i++)
     {
-      if (*i != NULL) nfound += debug_check(*i, NULL);
+      if (*i != NULL) nfound += debug_check(*i, nullptr);
     }
   assert(count / 2 == nfound);
 }
@@ -528,7 +529,7 @@ void ResF4MonomialLookupTableT<Key>::text_out(buffer &o) const
        i != mis.end();
        i++)
     {
-      for (mi_node *p = *i; p != NULL; p = next(p))
+      for (mi_node *p = *i; p != nullptr; p = next(p))
         {
           if ((++a) % 15 == 0) o << newline;
           o << p->key() << "  ";
@@ -546,8 +547,8 @@ void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
     {
       res_varpower_word d = res_varpower_monomials::simple_degree(elems[j]);
       if (d >= bins.size())
-        for (int i = INTSIZE(bins); i <= d; i++) bins.push_back(NULL);
-      if (bins[d] == NULL) bins[d] = new VECTOR(int);
+        for (int i = INTSIZE(bins); i <= d; i++) bins.push_back(nullptr);
+      if (bins[d] == nullptr) bins[d] = new VECTOR(int);
       bins[d]->push_back(j);
     }
 
@@ -555,7 +556,7 @@ void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
   ResF4MonomialLookupTableT<int> M(
       10, mi_stash);  // The 10 is simply a suggested start value
   for (int i = 0; i < bins.size(); i++)
-    if (bins[i] != NULL)
+    if (bins[i] != nullptr)
       {
         for (VECTOR(int)::iterator j = bins[i]->begin(); j != bins[i]->end();
              j++)
@@ -567,7 +568,7 @@ void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
                 result_minimals.push_back(*j);
               }
           }
-        deleteitem(bins[i]);
+        freemem(bins[i]);
       }
 }
 

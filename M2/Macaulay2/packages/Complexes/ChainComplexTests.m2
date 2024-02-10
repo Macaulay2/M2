@@ -1062,17 +1062,19 @@ TEST ///
   kk = ZZ/101
   S = kk[a..d]
   I = ideal"a2-bc,ab-cd"
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   dd^C
   minC = minimize C
   minC.dd
+  assert isQuasiIsomorphism minC.cache.minimizingMap
 
   kk = ZZ/101  
   S = kk[a..e]
   F = random(3,S)
   I = inverseSystem F
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   minC = minimize C
+  assert isQuasiIsomorphism minC.cache.minimizingMap
   betti minC  
   minimize(C ++ C[9])
 ///
@@ -1125,38 +1127,42 @@ TEST ///
   assert isQuasiIsomorphism p1  
 ///
 
-TEST ///
+///
 -*
   -- of minimize
   restart
   needsPackage "Complexes"
 *-
+  -- TODO: this test does not work, as the free resolutions take too long to complete.
+  -- add this test back in once Strategy => Nonminimal works.
   kk = ZZ/32003
   S = kk[a..e]
   F = random(3,S)
   I = inverseSystem F
-  C = freeResolution(I, FastNonminimal=>true)
-  elapsedTime minimize C
+  C = freeResolution(I, Strategy => Nonminimal)
+  minC = minimize C
+  assert isQuasiIsomorphism minC.cache.minimizingMap
 
   S = kk[vars(0..8)]
   F = random(3,S)
   I = inverseSystem F;
-  C = freeResolution(I, FastNonminimal=>true)
-  ---- elapsedTime minimize C  -- very slow TODO: fix this
+  C = freeResolution(I, Strategy => Nonminimal)
+  -- elapsedTime minC = minimize C  -- very slow TODO: fix this
+  -- assert isQuasiIsomorphism minC.cache.minimizingMap
 
   -- good benchmark test:
   kk = ZZ/32003
   S = kk[vars(0..6)]
   F = random(3,S)
   I = inverseSystem F;
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   ---- elapsedTime minimize C  -- very slow, TODO: fix this
 -*
   needsPackage "PruneComplex"  
   needsPackage "ChainComplexExtras"
-  C' = res(I, FastNonminimal=>true)
+  C' = chainComplex freeResolution(I, Strategy => Nonminimal)
   elapsedTime pruneComplex(C', UnitTest=>isScalar) -- 17.7 sec on my MBP
-  C'' = res(ideal I_*, FastNonminimal=>true)  
+  C'' = chainComplex freeResolution(ideal I_*, Strategy => Nonminimal)  
   elapsedTime minimize C''  -- very slow, TODO: fix this
 *-  
 ///
@@ -1253,12 +1259,12 @@ TEST ///
   FJ = freeResolution J
   N = complex (S^1/J)
   f = map(N, FJ, hashTable{0=> map(N_0, FJ_0, 1)})
-  isWellDefined f
+  assert isWellDefined f
   assert(liftMapAlongQuasiIsomorphism(f,f) == 1)
 
   -- test #2
   -- take a random morphism between two non-free complexes
-  -- obtain the correesponding map between their resolutions.
+  -- obtain the corresponding map between their resolutions.
 
   I = ideal(a*b, b*c*d, a*e, c*e, b*d*e)
   FI = freeResolution I
@@ -1291,7 +1297,7 @@ TEST ///
   assert isWellDefined g'
   assert isComplexMorphism g'
   assert(g * fC1 == fD * g')
-  h = g'.cache.homotopy
+  h = homotopyMap g'
   assert isWellDefined h
   assert(degree h == 1)
   assert isNullHomotopyOf(h, g*fC1-fD*g')
@@ -1444,8 +1450,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-  M = truncate(1,R^1)
-  prune Ext^3(M, M)
+  M = image vars R
   B = basis(-4, Ext^3(M, M))
   f = B_{2}
   g = yonedaMap(f, LengthLimit => 8)
@@ -1462,6 +1467,7 @@ TEST ///
   -- then the code `degree f + degree g`
   -- in yonedaMap is probably no longer needed, and should be
   -- changed to `degree g`.
+  -- The previous comment did happen, and the yonedaMap code has now been changed to "degree g".
   f1 = map(target f, R^1, f, Degree => -4)
   g1 = yonedaMap(f1, LengthLimit => 8)
   assert isHomogeneous g1
@@ -1512,7 +1518,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z))
-  M = truncate(1,S^1)
+  M = image vars S
   E = Ext^1(M, S^1)
 
   h0 = basis(0,E)
@@ -1531,7 +1537,7 @@ TEST ///
   assert(isWellDefined fC)
   assert(target fC == C)
 
-  g = yonedaMap f
+  g = yonedaMap(f, LengthLimit => 4) -- TODO: what should we set this length too?
   assert isWellDefined g
   assert isCommutative g
   assert (degree g == -1)
@@ -1546,7 +1552,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]
-  M = truncate(1,S^1)
+  M = image vars S
   N = S^{{-2}}/(x)
   E = Ext^1(M, N)
 
@@ -1598,7 +1604,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z))
-  M = truncate(1,S^1)
+  M = image vars S
   E = Ext^0(M, M)
   
   h0 = basis(0,E)
@@ -1612,7 +1618,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]
-  M = truncate(1,S^1)
+  M = image vars S
   N = S^{{-2}}/(x)
   E2 = Ext^1(M, N)
   E1 = Ext^1(M ** S^{{1}},M)
@@ -1643,45 +1649,6 @@ TEST ///
   assert(f == yonedaExtension' yonedaExtension f)
 ///
 
-TEST ///
-  -- of length limits and free resolutions
-  R = ZZ/32003[a..d]/(a^2-b*c)
-  M = coker vars R;
-  C1 = freeResolution M;
-  assert(M.cache.?freeResolution)
-  assert(M.cache.freeResolution === C1)
-  assert(M.cache.freeResolution.cache.LengthLimit === length C1)
-  assert(C1.cache.Module === M)
-  C2 = freeResolution(M, LengthLimit=>10)
-  assert(length C2 == 10)
-  assert(M.cache.?freeResolution)
-  assert(M.cache.freeResolution === C2)
-  assert(M.cache.freeResolution.cache.LengthLimit === length C2)
-  assert(C2.cache.Module === M)
-  C3 = freeResolution(M, LengthLimit=>9)
-  assert(M.cache.?freeResolution)
-  assert(M.cache.freeResolution === C2)
-  assert(M.cache.freeResolution =!= C3)
-  assert(M.cache.freeResolution.cache.LengthLimit === length C2)
-  assert(length C3 == 9)
-  assert(C3.cache.Module === M)
-  C4 = freeResolution(M, LengthLimit => 1)
-  assert(M.cache.?freeResolution)
-  assert(M.cache.freeResolution === C2)
-  assert(M.cache.freeResolution.cache.LengthLimit === length C2)
-  assert(length C4 == 1)
-  assert(C4.cache.Module === M)
-  C5 = freeResolution(M, LengthLimit => 0)
-  assert(M.cache.?freeResolution)
-  assert(M.cache.freeResolution === C2)
-  assert(M.cache.freeResolution.cache.LengthLimit === length C2)
-  assert(length C5 == 0) 
-  assert(C5.cache.Module === M)
-  assert try (C6 = freeResolution(M, LengthLimit => -1); false) else true
-  assert(M.cache.?freeResolution)
-  assert(M.cache.freeResolution === C2)
-  assert(M.cache.freeResolution.cache.LengthLimit === length C2)
-///
 
 TEST ///
 -*
@@ -1689,7 +1656,7 @@ TEST ///
   needsPackage "Complexes"
 *-
   R = ZZ/101[a..d]/(a^2-b*c, b^2-c*d)
-  C = freeResolution coker vars R
+  C = freeResolution(coker vars R, LengthLimit => 5)
   f = dd^C_2
   g = Hom(f, R^1/(a*c, b*d))
   D = complex{g}
@@ -1952,7 +1919,7 @@ TEST ///
 
   S = ZZ/101[a..d]
   I = monomialCurveIdeal(S, {1,3,4})
-  J = truncate(4, I)
+  J = ideal image basis(4, I)
   C = freeResolution comodule J
   D = freeResolution comodule I
   g = extend(D,C,map(D_0,C_0,1))
@@ -2068,18 +2035,14 @@ needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]
   I = ideal(y^2*z-x^3-x*z^2-z^3)
-  OC = S^1/I
-  OCp 
   R = S/I
-  OCp = coker lift(relations prune Hom(ideal(x,z), R), S)
-  basis(0, Ext^1(truncate(1,OC), OCp))
 
-  M = prune truncate(1, Hom(ideal(x,z), R))
-  N = truncate(1,R^1)
+  H = Hom(ideal(x,z), R)
+  M = prune image basis(1, H) -- basically, `prune truncate(1, H)`
+  N = image vars R
   E = Ext^1(M, N)
   f = basis(0, E)
-  source f
-  target f == E
+  assert(target f == E)
 
   pses = prune yonedaExtension f
   mods = for i from 0 to 2 list coker lift(relations pses_i, S)

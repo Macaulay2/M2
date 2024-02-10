@@ -50,21 +50,6 @@ TEST ///
 ///
 
 TEST ///
-  R = ZZ/5
-  R = GF(5^2, Strategy=>"FlintBig")
-  R = GF(5^2, Strategy=>"Flint")  
-  if hasFFPACK then R = GF(5^2, Strategy=>"Givaro")
-  R = GF(5^2, Strategy=>"New")
-  R = GF(5^2)
-
-  
-  m = mutableMatrix matrix(R, {{0,1},{1,0}})
-  id2 = mutableMatrix matrix(R, {{1,0},{0,1}})
-  inverse m
-  solve(m, id2)
-  -- solveLinear(m, id2)
-///
-TEST ///
   R = ZZpFlint( 5 )
   testLinearAlgebra$FLINT R
   

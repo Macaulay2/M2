@@ -107,12 +107,14 @@ complex List := Complex => opts -> L -> (
 complex Module := Complex => opts -> (M) -> (
     if not instance(opts.Base, ZZ) then
       error "complex: expected base to be an integer";
+    if M.cache.?Complex and opts.Base === 0 then return M.cache.Complex;
     C := new Complex from {
            symbol ring => ring M,
            symbol concentration => (opts.Base,opts.Base),
            symbol module => hashTable {opts.Base => M},
            symbol cache => new CacheTable
            };
+    if opts.Base === 0 then M.cache.Complex = C;
     C.dd = map(C,C,0,Degree=>-1);
     C
     )
@@ -407,6 +409,7 @@ Complex#id = (C) -> (
     result
     )
 
+importFrom(Core, {"moduleAbbrv"})
 net Complex := C -> (
      (lo,hi) := C.concentration;
      if lo > hi then 
@@ -417,10 +420,10 @@ net Complex := C -> (
      else
          horizontalJoin between(" <-- ", 
              for i from lo to hi list
-                 stack (net C_i, " ", net i))
+                 stack (net moduleAbbrv(C_i, C_i), " ", net i))
      )
 
-texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
+texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
 
 -- NOTE: there are hardcoded constant values (8, 10) 
 -- in the next function.
@@ -453,12 +456,12 @@ texMath Complex := String => C -> (
     else (
         concatenate for i from lo to hi list (
             if i === lo then 
-                texUnder(texMath C_i,i) 
+                texUnder(texMath moduleAbbrv(C_i, C_i),i) 
             else (
                 "\\,\\xleftarrow{\\scriptsize " 
                 | texMatrixShort dd^C_i 
                 | "}\\," 
-                | texUnder(texMath C_i,i)
+                | texUnder(texMath moduleAbbrv(C_i, C_i),i)
                 )
             )
         )
@@ -480,34 +483,54 @@ defaultLengthLimit = (R, baselen, len) -> (
       len
     )
 
-freeResolution = method(Options => options resolution)
-freeResolution Module := opts -> M -> (
-    if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
-    if not M.cache.?freeResolution
-      or M.cache.freeResolution.cache.LengthLimit < opts.LengthLimit
-      then (
-          lengthlimit := defaultLengthLimit(ring M, 0, opts.LengthLimit);
-          -- note: we currently suppress other options of freeResolution available in 'res'.
-          C := res(M,opts,LengthLimit=>lengthlimit);
-          complete C;
-          FC := if length C == 0 then complex C_0
-                else (
-                    maps := for i from 1 to min(length C, opts.LengthLimit) list C.dd_i;
-                    complex maps
-                    );
-          FC.cache.LengthLimit = if length C < lengthlimit then infinity else lengthlimit;
-          FC.cache.Module = M;
-          M.cache.freeResolution = FC;
-         );
-    FM := M.cache.freeResolution;
-    if opts.LengthLimit < length FM
-    then (
-        FM = naiveTruncation(FM, 0, opts.LengthLimit);
-        FM.cache.Module = M;
-        );
-    FM
+freeResolution = method(Options => {
+	StopBeforeComputation	=> false,
+	LengthLimit		=> infinity,	-- (infinity means numgens R)
+	DegreeLimit		=> infinity,	-- slant degree limit
+	SyzygyLimit		=> infinity,	-- number of min syzs found
+	PairLimit		=> infinity,	-- number of pairs computed
+	HardDegreeLimit		=> {},		-- throw out information in degrees above this one
+	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
+	Strategy		=> null     	-- algorithm to use, usually 1, but sometimes 2
+	}
     )
-freeResolution Ideal := opts -> I -> freeResolution(comodule I, opts)
+
+--load "./ResolutionObject.m2"
+
+-- freeResolution Module := Complex => opts -> M -> (
+--     if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
+--     if not M.cache.?freeResolution
+--       or M.cache.freeResolution.cache.LengthLimit < opts.LengthLimit
+--       then (
+--           lengthlimit := defaultLengthLimit(ring M, 0, opts.LengthLimit);
+--           -- note: we currently suppress other options of freeResolution available in 'res'.
+--           C := res(M,opts,LengthLimit=>lengthlimit);
+--           complete C;
+--           FC := if length C == 0 then complex C_0
+--                 else (
+--                     maps := for i from 1 to min(length C, opts.LengthLimit) list C.dd_i;
+--                     complex maps
+--                     );
+--           FC.cache.LengthLimit = if length C < lengthlimit then infinity else lengthlimit;
+--           FC.cache.Module = M;
+--           M.cache.freeResolution = FC;
+--          );
+--     FM := M.cache.freeResolution;
+--     if opts.LengthLimit < length FM
+--     then (
+--         FM = naiveTruncation(FM, 0, opts.LengthLimit);
+--         FM.cache.Module = M;
+--         );
+--     FM
+--     )
+
+freeResolution Ideal := Complex => opts -> I -> freeResolution(comodule I, opts)
+freeResolution MonomialIdeal := Complex => opts -> I -> freeResolution(comodule ideal I, opts)
+freeResolution Matrix := ComplexMap => opts -> f -> extend(
+    freeResolution(target f, opts), 
+    freeResolution(source f, opts),
+    matrix f
+    )
 
 isHomogeneous Complex := (C) -> isHomogeneous dd^C
 
@@ -527,7 +550,13 @@ betti Complex := opts -> C -> (
         )
     )
 
-regularity Complex := opts -> C -> regularity betti(C,opts)
+regularity Complex := opts -> C -> (
+    if numgens degreesRing ring C =!= 1 then 
+        error "expected the underlying ring to be standard graded";
+    if not isFree C then 
+        error "expected a complex whose terms are all free";
+    regularity betti(C,opts)
+    )
 
 poincare Complex := C -> (
     S := degreesRing ring C;
@@ -670,13 +699,6 @@ part(List, Complex) := Complex => (deg, C) -> (
     )
 part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
 
-truncate(List, Complex) := Complex => (e, C) -> (
-    (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(e, C_lo);
-    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
-    )
-truncate(ZZ, Complex) := Complex => (e, C) -> truncate({e}, C)
-
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
 --------------------------------------------------------------------
@@ -699,7 +721,7 @@ component(Module,Thing) := (M,k) -> (
     if not M.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
     (components M)#(M.cache.indexComponents#k)
     )
-Hom(Complex, Complex) := Complex => (C,D) -> (
+Hom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
     -- which agrees with Conrad (Grothendieck duality book)
     Y := youngest(C,D);
@@ -709,7 +731,7 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
     (loC,hiC) := C.concentration;
     (loD,hiD) := D.concentration;
     modules := hashTable for i from loD-hiC to hiD-loC list i => (
-        directSum for j from loC to hiC list {j,j+i} => Hom(C_j, D_(j+i))
+        directSum for j from loC to hiC list {j,j+i} => Hom(C_j, D_(j+i), opts)
         );
     if loC === hiC and loD === hiD then (
         result := complex(modules#(loD-hiC), Base => loD-loC);
@@ -727,8 +749,8 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
                     tar := component(modules#(i-1), j);
                     src := component(modules#i, k);
                     map(tar, src, 
-                        if k-j === {0,1} then (-1)^(k#1-k#0+1) * Hom(C_(k#0),dd^D_(k#1))
-                        else if k-j === { -1,0 } then Hom(dd^C_(j#0),D_(k#1))
+                        if k-j === {0,1} then (-1)^(k#1-k#0+1) * Hom(C_(k#0), dd^D_(k#1), opts)
+                        else if k-j === { -1,0 } then Hom(dd^C_(j#0), D_(k#1), opts)
                         else 0)
                     ))));
     result = complex maps;
@@ -736,10 +758,10 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
     Y.cache#(Hom,C,D) = result;
     result
     )
-Hom(Module, Complex) := Complex => (M,C) -> Hom(complex M, C)
-Hom(Complex, Module) := Complex => (C,M) -> Hom(C, complex M)
-Hom(Complex, Ring) := Complex => (C,R) -> Hom(C, complex R)
-Hom(Ring, Complex) := Complex => (R,C) -> Hom(complex R, C)
+Hom(Module, Complex) := Complex => opts -> (M,C) -> Hom(complex M, C, opts)
+Hom(Complex, Module) := Complex => opts -> (C,M) -> Hom(C, complex M, opts)
+Hom(Complex, Ring) := Complex => opts -> (C,R) -> Hom(C, complex R, opts)
+Hom(Ring, Complex) := Complex => opts -> (R,C) -> Hom(complex R, C, opts)
 
 dual Complex := Complex => {} >> o -> (C) -> Hom(C, (ring C)^1)
 
@@ -772,7 +794,7 @@ homomorphism(ZZ, Matrix, Complex) := ComplexMap => (i, f, E) -> (
 --------------------------------------------------------------------
 -- Tensor products -------------------------------------------------
 --------------------------------------------------------------------
-tensor(Complex, Complex) := Complex => opts -> (C, D) -> (
+tensor(Complex, Complex) := Complex => {} >> opts -> (C, D) -> (
     Y := youngest(C,D);
     if Y.cache#?(tensor,C,D) then return Y.cache#(tensor,C,D);
     R := ring C;
@@ -817,6 +839,19 @@ Complex ** Complex := Complex => (C,D) -> tensor(C,D)
 Module ** Complex := Complex => (M,D) -> (complex M) ** D
 Complex ** Module := Complex => (C,N) -> C ** (complex N)
 
+Complex ** Matrix := ComplexMap => (C, f) -> (
+    if ring C =!= ring f then error "expected Complex and Matrix over the same ring";
+    src := C ** source f;
+    tar := C ** target f;
+    map(tar, src, i -> map(tar_i, src_i, C_i ** f))
+    )
+Matrix ** Complex := ComplexMap => (f, C) -> (
+    if ring C =!= ring f then error "expected Complex and Matrix over the same ring";
+    src := source f ** C;
+    tar := target f ** C;
+    map(tar, src, i -> map(tar_i, src_i, f ** C_i))
+    )
+
 Complex ** Ring := Complex => (C,R) -> (
     (lo,hi) := concentration C;
     moduleHash := hashTable for i from lo to hi list i => C_i ** R;
@@ -838,7 +873,7 @@ RingMap Complex := Complex => (phi,C) -> (
     complex mapHash
     )
 
-tensor(RingMap, Complex) := Complex => opts -> (phi, C) -> (
+tensor(RingMap, Complex) := Complex => {} >> opts -> (phi, C) -> (
     if source phi =!= ring C then error "expected the source of the ring map to be the ring of the complex";
     (lo,hi) := concentration C;
     modules := hashTable for i from lo to hi list i => tensor(phi, C_i);
@@ -848,7 +883,7 @@ tensor(RingMap, Complex) := Complex => opts -> (phi, C) -> (
         map(modules#(i-1), modules#i, tensor(phi, matrix dd^C_i));
     complex maps
     )
-tensor(Complex, RingMap) := Complex => opts -> (C, phi) -> tensor(phi, C)
+tensor(Complex, RingMap) := Complex => {} >> opts -> (C, phi) -> tensor(phi, C)
 
 RingMap ** Complex := Complex => (phi, C) -> tensor(phi, C)
 Complex ** RingMap := Complex => (C, phi) -> tensor(phi, C)
@@ -921,18 +956,23 @@ resolutionMap Complex := ComplexMap => opts -> C -> (
     else fC
     )
 
-resolution Complex := opts -> C -> source resolutionMap(C, opts)
+resolution Complex := opts -> C -> (
+    -- TODO: remove this hack once resolution doesn't have FastNonminimal anymore and is defined in Complexes).
+    opts1 := new OptionTable from for k in keys opts list if k === FastNonminimal then continue else k => opts#k;
+    source resolutionMap(C, opts1)
+    )
 
 augmentationMap = method()
-augmentationMap Complex := ComplexMap => C -> (
-    if not C.cache.?Module then error "expected a free resolution";
-    M := C.cache.Module;
-    map(complex M, C, i -> if i === 0 then map(M, C_0, 1))
-    )
+augmentationMap Complex := ComplexMap => 
+    (cacheValue symbol augmentationMap)(C -> (
+            if not C.cache.?Module then error "expected a free resolution";
+            M := C.cache.Module;
+            map(complex M, C, i -> if i === 0 then map(M, C_0, 1))
+            )
+        )
 
 -- TODO: get this to work over fields, poly rings, quotients, and also the local case.
 --       improve the performance of this function
-minimize = method ()
 minimize Complex := C -> (
     if not isFree C then error "expected a complex of free modules";
     (lo,hi) := concentration C;
@@ -967,22 +1007,22 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
         if R =!= ring N then error "expected modules over the same ring";
         if i < 0 then (
             H = R^0;
-            liftmap = (f) -> map(Hom(R^0,N), source f, 0);
+            liftmap = (f) -> map(Hom(R^0, N, opts), source f, 0);
             invmap = (g) -> map(H, source g, 0);
             )
         else if i === 0 then (
-            H = Hom(M,N);
-            liftmap = (f) -> Hom(map(M, cover M, 1), N) * f;
+            H = Hom(M, N, opts);
+            liftmap = (f) -> Hom(map(M, cover M, 1), N, opts) * f;
             invmap = (g) -> (
-                h := Hom(map(M, cover M, 1), N);
+                h := Hom(map(M, cover M, 1), N, opts);
                 g // h
                 );
             )
         else (
             FM := freeResolution(M, LengthLimit => i+1);
             b := dd^FM;
-            g0 := Hom(b_i, N);
-            g1 := Hom(b_(i+1), N); -- Hom(FM_i, N) is source g1 == target g0.
+            g0 := Hom(b_i, N, opts);
+            g1 := Hom(b_(i+1), N, opts); -- Hom(FM_i, N) is source g1 == target g0.
             kerg1 := ker g1; 
             H = kerg1 / (image g0); 
             -- note: we compute H like this in order to have access to ker g1.
@@ -1024,11 +1064,15 @@ yonedaExtension Matrix := Complex => f -> (
     (d,M,N) := E.cache.Ext;
     FM := freeResolution(M, LengthLimit => d+1); -- WARNING: need it to match computation from Ext^d(M,N)...
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
+    -- if g has a non-zero degree, we must twist the target to preserve homogeneity
+    gdegree := degree g;
+    g = map(N ** (ring g)^gdegree, source g, g);
     if d <= 0 then error "Yoneda extension only defined for Ext^d module for d at least 1";
     h := dd^FM_d || g;
     P := coker h; -- FM_d --> FM_(d-1) ++ N --> P --> 0
     D := target h; -- direct sum
-    delta0 := map(P,D,id_D) * D_[1]; -- N --> P
+    -- notice that the inclusion map into the direct sum may have a non-zero internal degree.
+    delta0 := map(P,D,id_D) * map(D, N, D_[1], Degree => -gdegree); -- N --> P
     if d === 1 then (
         complex {map(M, P, D^[0]), delta0}
         )
@@ -1042,8 +1086,8 @@ yonedaExtension Matrix := Complex => f -> (
         )
     )
 
-yonedaExtension' = method()
-yonedaExtension' Complex := Matrix => C -> (
+yonedaExtension' = method(Options => options Ext.argument)
+yonedaExtension' Complex := Matrix => opts -> C -> (
     -- given an exact complex of R-modules of the form
     --  0 <-- M <-- C0 <-- C1 <-- ... <-- C(d-1) <-- N <-- 0
     -- return the corresponding map R^1 --> Ext^d(M,N).
@@ -1053,11 +1097,11 @@ yonedaExtension' Complex := Matrix => C -> (
     -- notice that D is a shifted complex which changes the sign of the differential
     D := naiveTruncation(C, (lo+1,hi))[1];
     s := map(M,D,i -> if i == lo then dd^C_(lo+1) else map(M_i, D_i, 0));
-    g := resolutionMap M;
+    g := resolutionMap(M, LengthLimit => hi);
     sinverse := liftMapAlongQuasiIsomorphism(g, s);
     yonedaMap := sinverse_(hi-1);  -- map FM_d --> N
-    extd := Ext^(hi-lo-1)(C_lo, C_hi);
-    extd.cache.yonedaExtension' homomorphism' yonedaMap
+    extd := Ext^(hi-lo-1)(C_lo, C_hi, opts);
+    extd.cache.yonedaExtension' homomorphism'(yonedaMap, opts)
     )
 
 yonedaMap = method(Options => {LengthLimit => infinity})
@@ -1075,11 +1119,12 @@ yonedaMap Matrix := ComplexMap => opts -> f -> (
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
     -- the " + degree f" is needed because of the behavior of homomorphism:
     -- that function appears to ignore the degree of the incoming map.
-    g0 := map(FN_0, FM_d, g, Degree => degree f + degree g);
+    --TODO: is changing this line to the next one correct?  g0 := map(FN_0, FM_d, g, Degree => degree f + degree g);
+    g0 := map(FN_0, FM_d, g, Degree => degree g);
     extend(FN, FM, g0, (0,d))
     )
 
-yonedaMap' = method(Options => {LengthLimit => infinity})
+yonedaMap' = method(Options => options Ext.argument)
 yonedaMap' ComplexMap := Matrix => opts -> f -> (
     -- given a map f : FM --> FN of degree -d, construct the corresponding element
     -- R^1 --> Ext^d(M,N), which is unique up to homotopy.
@@ -1091,9 +1136,9 @@ yonedaMap' ComplexMap := Matrix => opts -> f -> (
     -- check: FM, FN are free acyclic complexes
     M := if FM.cache.?Module then FM.cache.Module else error "expected a free resolution of a module";
     N := if FN.cache.?Module then FN.cache.Module else error "expected a free resolution of a module";
-    extd := Ext^d(M, N);
+    extd := Ext^d(M, N, opts);
     g := map(N, FM_d, f_d, Degree => degree f_d);
-    extd.cache.yonedaExtension' homomorphism' g
+    extd.cache.yonedaExtension' homomorphism'(g, opts)
     )
 
 yonedaProduct = method()

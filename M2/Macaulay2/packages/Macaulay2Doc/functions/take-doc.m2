@@ -6,13 +6,16 @@ doc ///
   take
   (take, BasicList, ZZ)
   (take, BasicList, List)
+  (take, Thing, ZZ)
  Headline
   Take some elements from a list or sequence.
  Usage
   take(L, i)
   take(L, {j,k})
+  take(x, i)
  Inputs
   L: BasicList
+  x: Thing
   i: ZZ
   j: ZZ
   k: ZZ
@@ -32,6 +35,15 @@ doc ///
   Example
    take({a,b,c,d,e,f,g}, {3,1})
    take({a,b,c,d,e,f,g}, {4,-1})
+  Text
+   If @TT "x"@ is any object belonging to a class with the @TO iterator@ method
+   installed, then a list containing the first @TT "i"@ objects returned when
+   @TO next@ is called on the output of @M2CODE "iterator x"@ is returned.
+   If fewer then @TT "i"@ objects are returned before the @TO StopIteration@
+   symbol is encountered, then the list will have length less than @TT "i"@.
+  Example
+   take("Hello, world!", 5)
+   take("Hello, world!", 20)
  SeeAlso
   drop
   select

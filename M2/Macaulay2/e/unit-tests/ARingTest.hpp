@@ -386,7 +386,7 @@ void testPower(const T& R, int ntrials)
       gen.nextElement(b);
 
       R.power(c, a, q);
-      EXPECT_TRUE(R.is_equal(c, a));  // test a^q == q
+      EXPECT_TRUE(R.is_equal(c, a));  // test a^q == a
 
       if (R.is_zero(a)) continue;
 

@@ -149,6 +149,7 @@ document {
 	  TO "viewing the symbols defined so far",
 	  TO "subscripted variables",
 	  TO "numbered variables",
+	  TO "augmented assignment"
 	  }
      }
 document {
@@ -860,7 +861,9 @@ document { Key => "for",
 		 }}),
      SYNOPSIS (
 	  Usage => "for i in v when p list x do z",
-	  Inputs => { "v" => ofClass{BasicList, String} },
+	  Inputs => {"v" => {ofClass{BasicList},
+		  " or an instance of a class with the ", TO iterator,
+		  " method installed"}},
 	  Consequences => {{"The variable ", TT "i", " is set to consecutive values of the list ", TT "v", ".  First ", TT "p", " is evaluated.  
 	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated, and its value is saved.  Then
 	       ", TT "z", " is evaluated and its value is discarded.  Then the loop repeats with the next element of ", TT "v", ".  When the value of ", TT "p", " is false,
@@ -909,8 +912,12 @@ document { Key => "for",
      PARA { "If ", TO "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated so far is returned as the value." },
      EXAMPLE "for i from 0 when i < 10 list (if i== 5 then break; i^2)",
      EXAMPLE "for i in 0..3 list i^2",
-     PARA { "You may also iterate over strings." },
-     EXAMPLE ///for c in "foo" do print c///
+     PARA { "If ", TT "v", " is an instance of any class with the ",
+	 TO iterator, " method installed (e.g., a string), then the values of ",
+	  TT "i", " are obtained by repeatedly calling ", TO next,
+	  " on the output of ", TT "iterator v", " until ", TO StopIteration,
+	 " is returned."},
+     EXAMPLE ///for i in "foo" do print i///
      }
 
 document {
@@ -1036,7 +1043,15 @@ document {
 	  }
      }
 
-debug Core
+binaryOperators := core "binaryOperators"
+prefixOperators := core "prefixOperators"
+postfixOperators := core "postfixOperators"
+flexibleBinaryOperators := core "flexibleBinaryOperators"
+flexiblePrefixOperators := core "flexiblePrefixOperators"
+flexiblePostfixOperators := core "flexiblePostfixOperators"
+augmentedAssignmentOperators := core "augmentedAssignmentOperators"
+allOperators := core "allOperators"
+getParsing := core "getParsing"
 
 document {
      Key => "operators",
@@ -1053,13 +1068,14 @@ document {
      PARA {
 	  "Of those, the ones for which users may install new methods are ",
 	  "the binary operators ",
-	  between_" " apply(sort toList flexibleBinaryOperators, s -> TO {s}),
+	  between_" " apply(sort toList join(flexibleBinaryOperators,
+		  augmentedAssignmentOperators), s -> TO {s}),
 	  " , the unary prefix operators ",
 	  between_" " apply(sort toList flexiblePrefixOperators, s -> TO {s}),
 	  " , and the unary postfix operators ",
 	  between_" " apply(sort toList flexiblePostfixOperators, s -> TO {s}),
 	  " ."},
-     Subnodes => {
+     Subnodes => splice {
      "assignment",
 	  TO symbol = ,
 	  TO symbol := ,
@@ -1116,6 +1132,7 @@ document {
           TO symbol || ,
           TO symbol @ ,
           TO symbol ^^ ,
+          TO symbol ?? ,
           TO symbol |- ,
           TO symbol <==> ,
           TO symbol ===> ,
@@ -1126,6 +1143,9 @@ document {
 	  TO symbol => ,
           TO symbol , ,
           TO symbol ;,
+     "augmented assignment",
+	 toSequence apply(sort toList augmentedAssignmentOperators,
+	     op -> TO op),
      "further information",
           TO "precedence of operators",
 	  TO "operatorAttributes"
@@ -1151,12 +1171,10 @@ document {
 	  parsed as though it had been written as ", TT "2+(3*5)", ".  The symbol ", TO "SPACE", " represents the operator that is used when
 	  two things are adjacent in program code."
 	  },
-     TABLE { "class" => "examples",  TR TD PRE net (value Core#"private dictionary"#"seeOperatorPrecedence")() }
+     TABLE { "class" => "examples",  TR TD PRE net (core "seeOperatorPrecedence")() }
      }
 
 sp := seeParsing()
-
-dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
 
 document {
      Key => seeParsing,

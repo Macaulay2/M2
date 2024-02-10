@@ -55,6 +55,7 @@ assert(W.degree == 5)
 -- assert(all(pointList, q -> (tally apply(m, i -> isOnImage(W, q)))#true / m >= 8/10)) -- too slow for test
 ///
 
+-* disabled due to issue 2230
 TEST /// -- random canonical curve of genus 4, under random projection to P^2 by cubics
 setRandomSeed 0
 R = CC[x_0..x_3]
@@ -63,6 +64,7 @@ F = random(R^1,R^{3:-3})
 assert(numericalImageDegree(F,I) == 18)
 assert((numericalHilbertFunction(F,I,18)).hilbertFunctionValue == 1)
 ///
+*-
 
 TEST /// -- Segre + Veronese
 setRandomSeed 0

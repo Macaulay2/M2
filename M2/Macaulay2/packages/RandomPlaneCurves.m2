@@ -68,7 +68,7 @@ constructDistinctPlanePoints(ZZ,PolynomialRing):=opt->(k,R)->(
 
 -- the certification tests that the
 -- scheme of the points is smooth, i.e. that
--- there are no infinitisimally close points
+-- there are no infinitesimally close points
 
 certifyDistinctPlanePoints=method(TypicalValue=>Boolean)
 certifyDistinctPlanePoints(Ideal,ZZ,PolynomialRing):= (I,k,R)->

@@ -34,7 +34,7 @@ trackPHCpack (List,List,List,HashTable) := List => (S,T,sols,o) -> (
      -- Anton: options are not used at the moment
      --trackPaths(S,T,sols,PHCpack$gamma=>o.NAG$gamma,PHCpack$tDegree=>o.NAG$tDegree)     
      (T',S') := toRingXphc (T,S);
-     sols' := sols / (s-> if instance(s,Point) then s else point {s});
+     sols' := sols / (s-> if instance(s,AbstractPoint) then s else point {s});
      trackPaths(T',S',sols',gamma=>o.NumericalAlgebraicGeometry$gamma,tDegree=>o.NumericalAlgebraicGeometry$tDegree,Verbose=>(DBG>0))
      )
 

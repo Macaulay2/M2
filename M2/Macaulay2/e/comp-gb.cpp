@@ -3,7 +3,6 @@
 #include "comp-gb.hpp"
 
 #include "gb-homog2.hpp"
-#include "gb-test1.hpp"
 #include "gb-sugarless.hpp"
 #include "gb-toric.hpp"
 #include "gauss.hpp"
@@ -41,7 +40,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
   const Ring *R1 = m->get_ring();
   const PolynomialRing *R2 = R1->cast_to_PolynomialRing();
 
-  if (R2 == 0)
+  if (R2 == nullptr)
     {
       // Look for the correct computation type here.
       if (R1 == globalZZ)
@@ -56,7 +55,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 #warning "handle non polynomial rings"
 #endif
       ERROR("GB computation for non-polynomial rings not yet re-implemented");
-      return 0;
+      return nullptr;
     }
 
 //  const PolynomialRing *R = R2->get_flattened_ring();
@@ -110,15 +109,8 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
                                          max_degree);
         break;
       case 8:
-        result = gbB::create(m,
-                             collect_syz,
-                             n_rows_to_keep,
-                             gb_weights,
-                             strategy,
-                             use_max_degree,
-                             max_degree,
-                             max_reduction_count);
-        break;
+        ERROR("Algorithm => Test has been removed from M2");
+        return nullptr;
       default:
         result = gbA::create(m,
                              collect_syz,
@@ -131,7 +123,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
         break;
     }
   intern_GB(result);
-  return result != NULL ? new GBProxy(result) : NULL;
+  return result != nullptr ? new GBProxy(result) : nullptr;
 
 #if 0
 //   if (is_graded)
@@ -187,7 +179,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 //                                 collect_syz,
 //                                 collect_change,
 //                                 n_rows_to_keep,
-//                                 stategy);
+//                                 strategy);
 //       return 0;
 //     }
 #endif
@@ -199,7 +191,7 @@ Computation /* or null */ *GBComputation::set_hilbert_function(
 // used.
 {
   ERROR("Hilbert function use is not implemented for this GB algorithm");
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(
@@ -208,7 +200,7 @@ const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(
   ERROR(
       "Cannot compute parallel lead terms for this kind of Groebner "
       "computation");
-  return 0;
+  return nullptr;
 }
 
 // Local Variables:

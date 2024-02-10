@@ -1,6 +1,4 @@
 -- -*- M2-comint -*- hash: -2131607528
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = CC[x,y,z];
 
@@ -45,4 +43,3 @@ o7 : Matrix CC    <--- CC
               53         53
 
 i8 : 
-Bye world from process 0 out of 1 processes

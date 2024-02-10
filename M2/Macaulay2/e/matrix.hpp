@@ -18,8 +18,8 @@ class Matrix : public EngineObject
 {
   FreeModule * mTarget; // _rows;
   FreeModule * mSource; // _cols;
-  int * mDegreeShift; // _degree_shift;  // An element of the degree monoid
-  VECTOR(vec) mEntries; // array<vec> _entries;
+  monomial mDegreeShift; // an element of the degree monoid
+  gc_vector<vec> mEntries;
 
   friend class FreeModule;
 
@@ -27,7 +27,7 @@ class Matrix : public EngineObject
   friend class MatrixConstructor;
   Matrix(const FreeModule *rows,
          const FreeModule *cols,
-         const int *degree_shift,
+         const_monomial degree_shift,
          VECTOR(vec) & entries);
 
   static bool make_sparse_vecs(MatrixConstructor &mat,
@@ -40,11 +40,11 @@ class Matrix : public EngineObject
   // Places the elements into 'mat'.
 
   // These two routines are private to 'coeffs'
-  vec strip_vector(vec &f,
-                   const int *vars,
-                   const FreeModule *F,
-                   vec &vmonom) const;
-  int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
+  // vec strip_vector(vec &f,
+  //                  const int *vars,
+  //                  const FreeModule *F,
+  //                  vec &vmonom) const;
+  // int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
 
  protected:
   virtual unsigned int computeHashValue() const;
@@ -83,7 +83,6 @@ class Matrix : public EngineObject
   static const Matrix *make(const MonomialIdeal *mi);
 
   const Ring *get_ring() const { return rows()->get_ring(); }
-  const Monoid *degree_monoid() const { return get_ring()->degree_monoid(); }
   /* The following 5 routines will go away, or change name */
   vec &operator[](int i) { return mEntries[i]; }
   const vec &operator[](int i) const { return mEntries[i]; }
@@ -98,7 +97,7 @@ class Matrix : public EngineObject
   int n_rows() const { return rows()->rank(); }
   int n_cols() const { return cols()->rank(); }
   // The degree shift
-  const int *degree_shift() const { return mDegreeShift; }
+  const_monomial degree_shift() const { return mDegreeShift; }
   // to/from monideals
   MonomialIdeal *make_monideal(
       int n,
@@ -138,7 +137,7 @@ class Matrix : public EngineObject
 
   Matrix /* or null */ *symm(int n) const;  // in symm.cpp
 
-  Matrix /* or null */ *coeffs(const int *vars, Matrix *&result_monoms) const;
+  // Matrix /* or null */ *coeffs(const int *vars, Matrix *&result_monoms) const;
 
   Matrix /* or null */ *coeffs(M2_arrayint vars, const Matrix *monoms) const;
 
@@ -176,7 +175,7 @@ class Matrix : public EngineObject
 
   // degrees
   bool is_homogeneous() const;
-  Matrix *homogenize(int v, M2_arrayint wts) const;
+  Matrix *homogenize(int v, const std::vector<int> &wts) const;
 
   // Simplification of column set
   Matrix *simplify(int n) const;
@@ -211,10 +210,10 @@ class Matrix : public EngineObject
       const Matrix /* or null */ *&result) const;
 
  private:
-  void minimal_lead_terms_ZZ(intarray &result) const;
+  void minimal_lead_terms_ZZ(gc_vector<int>& result) const;
 
  public:
-  void minimal_lead_terms(intarray &result) const;
+  void minimal_lead_terms(gc_vector<int>& result) const;
 
   M2_arrayint elim_vars(int nparts) const;
   M2_arrayint elim_keep(int nparts) const;
@@ -245,14 +244,14 @@ class Matrix : public EngineObject
    public:
     //    iterator(const Matrix *M0, int col0=0) : M(M0), col(col0),
     //    v(M0->elem(col0)) {}
-    iterator(const Matrix *M0) : M(M0), col(-1), v(0) {}
+    iterator(const Matrix *M0) : M(M0), col(-1), v(nullptr) {}
     void set(int newcol)
     {
       col = newcol;
       v = M->elem(col);
     }
     void next() { v = v->next; }
-    bool valid() { return v != 0; }
+    bool valid() { return v != nullptr; }
     int row() { return v->comp; }
     ring_elem entry() { return v->coeff; }
   };

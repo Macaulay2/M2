@@ -15,7 +15,18 @@ M2SLEvaluator* MutableMat<Mat>::createSLEvaluator(M2SLProgram* P,
     return nullptr;
   } else return new M2SLEvaluator(
     new SLEvaluatorConcrete<typename Mat::CoeffRing> (&(P->value()), constsPos, varsPos, this)
-  );
+    );
+}
+
+template <typename Mat>
+M2SLEvaluator* MutableMat<Mat>::createCompiledSLEvaluator(
+      M2_string libName,
+      int nInputs,
+      int nOutputs) const
+{
+  return new M2SLEvaluator(
+    new SLEvaluatorConcrete<typename Mat::CoeffRing> (libName, nInputs, nOutputs, this)
+    );
 }
 
 template <typename T>
@@ -28,12 +39,10 @@ template <typename T>
 const RingElement* MutableMat<T>::determinant() const
 {
   ring_elem det;
-  elem a;
-  mat.ring().init(a);
+  typename T::Element a(mat.ring());
   MatrixOps::determinant(mat, a);
   //  MatrixOps::BasicLinAlg<MatType>::determinant(mat, a);
   mat.ring().to_ring_elem(det, a);
-  mat.ring().clear(a);
   return RingElement::make_raw(get_ring(), det);
 }
 
@@ -327,7 +336,7 @@ gmp_RRorNull MutableMat<T>::norm() const
 
   gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, get_ring()->get_precision());
-  mpfr_set_si(nm, 0, GMP_RNDN);
+  mpfr_set_si(nm, 0, MPFR_RNDN);
 
   MatrixOps::increase_norm(nm, mat);
   return moveTo_gmpRR(nm);

@@ -1,5 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson, Michael E. Stillman
 
+needs "ext.m2"
+
 -- local cohomology
 
 truncatedDual := (M,e) -> (

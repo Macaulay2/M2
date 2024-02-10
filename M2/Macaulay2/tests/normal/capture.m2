@@ -16,8 +16,8 @@ i2 : A = matrix\"1,2,3,4;1,3,6,10;19,7,11,13\" ** oo\n
 o2 = | 1  2 3  4  |
      | 1  3 6  10 |
      | 19 7 11 13 |\n
-             3       4
-o2 : Matrix K  <--- K\n" | ".*", out))
+             3      4
+o2 : Matrix K  <-- K\n" | ".*", out))
 
 -- printing errors
 (err, out) = capture "1/0"

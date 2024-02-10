@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: -258554283
--- COMPILE TIME: May  9 2021, 16:10:46
 
 i1 : k=4;
 

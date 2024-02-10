@@ -393,7 +393,7 @@ eagonBeta EagonData := List => o-> E -> (
 extractBlocks = method()
 extractBlocks(Matrix, List) := Matrix => (phi, L) -> (
     --the map map(target phi, source phi, phi_[L]*(source phi)^[L], where L is a list
-    --of integers respresenting blocks in source phi.
+    --of integers representing blocks in source phi.
     phi1 := flattenBlocks phi;
     src := source phi1;
     ind := indices src;
@@ -650,7 +650,7 @@ Description
    The command  @TO eagon@ produces a type of hashTable called an @TO EagonData@, defined in the package.
    It contains all the data produced in
    Eagon's construction of the resolution: a double complex Y^n_i, and some internal 
-   maps. The vertical differental is called dVert: Y^n_i -> Y^n_{i+1} and the horizontal
+   maps. The vertical differential is called dVert: Y^n_i -> Y^n_{i+1} and the horizontal
    differential is dHor: Y^n_i -> Y^{n-1}_i. 
 
    Thus for example if $R$ is a factor ring of a polynomial ring S, then
@@ -1056,7 +1056,7 @@ doc///
      beginning of the free resolution of the i-th boundary module of the Koszul complex
    Description
     Text
-     The 0-th strand is a possibly non-minimal resolution of the residuce field.
+     The 0-th strand is a possibly non-minimal resolution of the residue field.
      More generally, the i-th strand resolves the i-th boundary module in the Koszul complex of R. These
      resolutions are
      all minimal iff R is Golod.
@@ -1168,7 +1168,7 @@ doc ///
     B = golodBetti(M,b)    
    Inputs
     F:ChainComplex
-     resolution, typcally of (R = S/I)^1 over S
+     resolution, typically of (R = S/I)^1 over S
     K:ChainComplex
      resolution, typically of an R-module M over S
     M:Module

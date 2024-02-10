@@ -1,6 +1,16 @@
 --------------------------------------------------------------------
 -- documentation for chain complexes -------------------------------
 --------------------------------------------------------------------
+
+-*
+        Text
+            The major change is replacing the @TO ChainComplex@ data type with @TO Complex@.
+            The internal structure of this new data type is somewhat different, but more
+            importantly, it has a richer set of constructors.  Use the functions
+            @TO (complex, ChainComplex)@, @TO (complex, ChainComplexMap)@, @TO (chainComplex, Complex)@, @TO (chainComplex, ComplexMap)@, 
+            to translate between these representations.
+*-
+
 doc ///
     Key
         Complexes
@@ -13,12 +23,6 @@ doc ///
             We are making this available in order to get feedback from users before
             making this change.  Please email the authors with any and all comments or
             suggestions.
-        Text
-            The major change is replacing the @TO ChainComplex@ data type with @TO Complex@.
-            The internal structure of this new data type is somewhat different, but more
-            importantly, it has a richer set of constructors.  Use the functions
-            @TO (complex, ChainComplex)@, @TO (complex, ChainComplexMap)@, @TO (chainComplex, Complex)@, @TO (chainComplex, ComplexMap)@, 
-            to translate between these representations.
         Text
             The overarching goal is to make all of the homological algebra routines functorial.
             For instance, we have @TO2(canonicalMap, "canonical maps")@ associated to kernels,
@@ -74,7 +78,7 @@ doc ///
                 TO (minimize, Complex),
                 TO (gradedModule, Complex),
                 TO (part, List, Complex),
-                TO (truncate, List, Complex),
+                TO "Truncations :: truncate(List,Complex)",
                 TO (yonedaExtension, Matrix)
             }@
     	Text
@@ -203,13 +207,14 @@ doc ///
         Text
     	    @UL {
                 TO (Tor, ZZ, Module, Module),
-                TO "(Tor, ZZ, Module, Matrix), not yet implemented",
-                TO "(Tor, ZZ, Matrix, Module), not yet implemented",
+                TO (Tor, ZZ, Module, Matrix),
+                TO (Tor, ZZ, Matrix, Module),
                 TO (tensor, Complex, Complex),
                 TO (tensor, ComplexMap, ComplexMap),
                 TO (tensorCommutativity, Complex, Complex),
                 TO (tensorAssociativity, Complex, Complex, Complex),
-                TO "symmetry of Tor, not yet implemented"
+                TO (torSymmetry, ZZ, Module, Module),
+                TO connectingTorMap
             }@
     SeeAlso
         "Making chain complexes"
@@ -310,7 +315,7 @@ doc ///
             D_4
         Text
             The function {\tt concentration} does no computation.
-            To eliminate extraneous zeros, use @TO (prune,Complex)@.
+            To eliminate extraneous zeros, use @TO (prune, Complex)@.
         Example
             f1 = a*id_C  
             E = ker f1
@@ -328,6 +333,24 @@ doc ///
         "Basic invariants and properties"
         (symbol _, Complex, ZZ)
         (concentration, ComplexMap)
+///
+
+doc ///
+    Key
+        Concentration
+    Headline
+        optional argument used to specify the concentration
+    Description
+        Text
+            In this package, each complex $C$ has a concentration
+            $(\ell, h)$ such that $\ell \leq h$.  For all $i < \ell$
+            and all $i > h$, the term $C_i$ is zero.  When $\ell \leq
+            i \leq h$, the module $C_i$ may or may not be zero.
+        Text
+            Several methods use this optional argument to specify the 
+            concentration of their outputs.
+    SeeAlso
+        (concentration, Complex)
 ///
 
 doc ///
@@ -576,7 +599,45 @@ doc ///
         (symbol SPACE, Complex, Array)
 ///
 
--- TODO: add in doc for (complex, ComplexMap).
+doc ///
+    Key
+        (complex, ComplexMap)
+    Headline
+        make a complex by specifying the differential
+    Usage
+        C = complex d
+    Inputs
+        d:ComplexMap
+        Base => ZZ
+            unused
+    Outputs
+        C:Complex
+            whose differential is $d$
+    Description
+        Text
+            Given a map $d$ of complexes having degree -1 and whose source 
+            and targets are equal, this method constructs the chain complex
+            whose differential is $d$.  This constructor does not verify that
+            $d^2 = 0$.
+        Example
+            S = ZZ/101[x_1..x_4];
+            F = freeResolution coker vars S
+            d = randomComplexMap(F, F, Cycle => true, InternalDegree => -1, Degree => -1)
+            d^2
+            C = complex d
+            assert isWellDefined C
+            assert all(0..4, i -> dd^C_i == d_i)
+        Example
+            e = randomComplexMap(F, F, InternalDegree => -1, Degree => -1)
+            D = complex e
+            debugLevel = 1
+            assert not isWellDefined D
+    SeeAlso
+        "Making chain complexes"
+        (isWellDefined, Complex)
+        (complex, HashTable)
+        (complex, List)
+///
 
 -- TODO: Add programming details
 doc ///
@@ -877,56 +938,1010 @@ doc ///
 
 doc ///
     Key
+        [freeResolution, LengthLimit]
+        [freeResolution, DegreeLimit]
+        [freeResolution, HardDegreeLimit]
+        [freeResolution, PairLimit]
+        [freeResolution, SortStrategy]
+        [freeResolution, StopBeforeComputation]
+        [freeResolution, SyzygyLimit]
+    Headline
+        optional arguments for freeResolution
+    Description
+        Text
+            We would dearly love to not have this in the main node!
+///
+
+doc ///
+    Key
         freeResolution
         (freeResolution, Module)
         (freeResolution, Ideal)
+        (freeResolution, MonomialIdeal)
     Headline
         compute a free resolution of a module or ideal
     Usage
         freeResolution M
+        freeResolution I
     Inputs
         M:Module
-            or @ofClass Ideal@, an ideal {\tt I} in a ring {\tt R}
+        I:Ideal
+            in the ring $R$, treated as the quotient module $R^1/I$
+        LengthLimit => ZZ
+            this is used to limit somehow the computation where resolutions might be too long or infinite
+        DegreeLimit => List
+            or @ofClass ZZ@, an option that specifies that the computation stops at the given
+            (slanted) degree 
+        HardDegreeLimit => List
+            unused (TODO: used?)
+        PairLimit => ZZ
+            or @TO infinity@, an internal option which specifies that the computation should stop after a 
+            certain number of s-pairs have computed
+        SortStrategy => ZZ
+            an internal option that specifies the strategy to be used for sorting S-pairs
+        StopBeforeComputation => Boolean
+            whether to start the computation. This can be useful when you want to obtain the 
+            partially computed resolution contained in an interrupted computation.
+        Strategy => ZZ
+            one of the integers 0,1,2,3, one of the symbols Engine,
+            Homogenization, Syzygies, Nonminimal, OverField, OverZZ, or null
+        SyzygyLimit => ZZ
+            or @TO infinity@, 
+            an internal option which specifies that the computation should stop after a 
+            certain number of syzygies have computed
     Outputs
         :Complex
-            a free resolution of the module {\tt M} or of the
-            quotient module {\tt R^1/I}
+            a free resolution of the module $M$ or of the
+            quotient module $R^1/I$
     Description
         Text
             A free resolution of a module $M$ is a complex
-            $ F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \ldots$
-            of free modules, which is acyclic: the cokernel of the map
-            to $F_0$ is $M$ and the complex is exact at all other 
-            locations.
+
+            $\phantom{WWWW}
+            F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
+            $
+
+            of free modules, whose homology is concentrated in
+            homological degree zero and is isomorphic to the module
+            $M$.  Equivalently, the augmented complex
+
+            $\phantom{WWWW}
+            0 \leftarrow M \leftarrow F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \dotsb
+            $
+
+            is exact.
+            
+            This function lies at the heart of many computations in commutative algebra
+            and algebraic geometry.  As a consequence, this is one of the most used
+            functions in {\em Macaulay2}.
+        Text
+            As a first example, we construct the free resolution of the twisted cubic curve,
+            and extract its basic numerical invariants via @TO (length, Complex)@ and
+            @TO (betti,Complex)@.
         Example
-            R = QQ[a..d]
+            R = QQ[a..d];
             I = ideal(c^2-b*d, b*c-a*d, b^2-a*c)
             M = R^1/I
             C = freeResolution M
-            betti C
             length C
+            betti C
             dd^C
             assert isWellDefined C
+        Text
+            We verify in two ways that $C$ is a free resolution of $M$.
+        Example
             assert(prune HH C == complex M)
+            assert(length HH C == 0)
+            f = augmentationMap C
+            assert isWellDefined f
+            assert(source f === C)
+            assert(target f == complex M)
+            aC = cone f
+            assert(HH aC == 0)
         Text
             Giving an ideal as the input produces a free resolution
-            not of the module {\tt I}, but of the module {\tt R^1/I}.
+            not of the module $I$, but of the comodule $R^1/I$.
         Example
             assert(freeResolution I == C)
-            resolution complex M == freeResolution M
+            assert(resolution complex M == freeResolution M)
         Text
-            Over a quotient ring, free resolutions are often infinite.
-            Use the optional argument {\tt LengthLimit} to obtain
-            part of the resolution.
+            We obtain the resolution of the module $I$, rather than the comodule $R^1/I$,
+            as follows.
         Example
-            S = ZZ/101[a,b]
-            R = S/(a^3+b^3)
+            C' = freeResolution module I
+            assert isWellDefined C'
+            assert(C' != C)
+            assert(betti naiveTruncation(C, 1, infinity) == betti C'[-1])
+        Text
+            Over a quotient ring, free resolutions are typically infinite.
+            To specify a finite part of the resolution, one needs to use
+            the optional argument {\tt LengthLimit}.
+        Example
+            S = ZZ/101[a,b];
+            R = S/(a^3+b^3);
             C = freeResolution (coker vars R, LengthLimit => 7)
+            length C
+            betti C
             dd^C
+        Text
+            Over an exterior algebra, free resolutions are again typically
+            infinite, so one needs to specify the {\tt LengthLimit}.
+        Example
+            E = ZZ/101[e_1..e_6, SkewCommutative => true];
+            I = ideal(e_4*e_5-e_4*e_6+e_5*e_6,
+                e_2*e_3-e_2*e_6+e_3*e_6,
+                e_1*e_3-e_1*e_5+e_3*e_5,
+                e_1*e_2-e_1*e_4+e_2*e_4)
+            F = freeResolution(I, LengthLimit => 5)
+            assert isWellDefined F
+            assert isHomogeneous F
+            betti F
+        Text
+            Over a Weyl algebra, free resolutions have finite length,
+            so one does not need to specific the {\tt LengthLimit}.
+        Example
+            S = QQ[x,y,Dx,Dy, WeylAlgebra => {{x,Dx}, {y,Dy}}];
+            I = ideal(x*Dy, y*Dx)
+            F = freeResolution comodule I
+            assert isWellDefined F
+            dd^F
+        Text
+            Todo: we will add pointers to more advanced nodes and usage information
+            (e.g. Strategies, Optional arguments, and seeing partial results).
     SeeAlso
+        "Making chain complexes"
+        (augmentationMap, Complex)
+        (cone, ComplexMap)
         (resolution, Complex)
         (resolutionMap, Complex)
         (betti, Complex)
+///
+
+doc ///
+    Key
+        "Strategies for free resolutions"
+        [freeResolution, Strategy]
+    Headline
+        overview of the different algorithms for computing free resolutions
+    Description
+        Text
+            There are several distinct algorithms for computing free
+            resolutions in {\it Macaulay2}.  They make different
+            assumptions about the module or underlying ring.
+        Text
+    	    @UL {
+                TO "freeResolution(..., Strategy => OverField)",
+                TO "freeResolution(..., Strategy => OverZZ)",
+                TO "freeResolution(..., Strategy => Engine)",
+                TO "freeResolution(..., Strategy => 1)",
+                TO "freeResolution(..., Strategy => 3)",
+                TO "freeResolution(..., Strategy => 2)",
+                TO "freeResolution(..., Strategy => 0)",
+                TO "freeResolution(..., Strategy => Homogenization)",
+                TO "freeResolution(..., Strategy => Syzygies)",
+                TO "freeResolution(..., Strategy => Nonminimal)"
+            }@
+        Text
+            One can always access the full list of possible strategies
+            in {\it Macaulay2} as follows.
+        Example
+            hooks freeResolution
+    SeeAlso
+        (freeResolution, Module)
+        hooks
+///
+
+-- To use in the doc of the Engine strategy, perhaps...
+///
+        Text
+            Since this strategy 
+        Example
+            m = map(S^1 ++ S^{1},, {{1, b, b-c}, {b, d*e, e^2}})
+            assert isHomogeneous m
+            C = freeResolution(coker m, Strategy => 2)
+            dd^C
+            M = prune coker m
+            C' = freeResolution M
+            dd^C'
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions over a field"
+        "freeResolution(..., Strategy => OverField)"
+        OverField
+    Headline
+        algorithm for computing free resolutions over a field
+    Usage
+        freeResolution M
+        freeResolution(M, Strategy => OverField)
+    Inputs
+        M:Module
+            over a field
+    Outputs
+        :Complex
+            a free resolution of the module $M$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            Every module over a field is free.  Therefore a
+            minimal free resolution is determined by choosing a basis.
+            This is the default strategy when the
+            underlying ring is a field, so in practice it never
+            needs to be specified.
+        Text
+            Our first examples are over finite fields.  Notice that
+            the most interesting feature is the augmentation map.
+        Example
+            kk = ZZ/32003;
+            M = coker random(kk^3, kk^2)
+            F = freeResolution M -- uses Strategy => OverField
+            assert isWellDefined F
+            g = augmentationMap F
+            assert isWellDefined g
+            assert(source g == F)
+            assert(target g == complex M)
+            assert(coker g == 0 and ker g == 0)
+        Text
+            Finding a minimal free resolution for a module
+            over a field is equivalent to finding a @TO2((minimalPresentation, Module), "minimal Presentation")@.
+        Example
+            N = ker random(kk^3, kk^2) ++ M
+            F = freeResolution N
+            g = augmentationMap F
+            PN = minimalPresentation N
+            assert(g_0 == PN.cache.pruningMap)
+        Example
+            kk = GF(3^10);
+            M = coker random(kk^3, kk^2)
+            F = freeResolution M
+            g = augmentationMap F
+        Text
+            This also works over the rationals, number fields, and
+            fraction fields.
+        Example
+            kk = QQ;
+            M = coker random(kk^3, kk^2, Height => 10000)
+            F = freeResolution M
+            g = augmentationMap F
+        Example
+            S = QQ[a]/(a^3-a-1);
+            kk = toField S;
+            M = coker sub(random(S^3, S^{-2,-2}) + random(S^3, S^{-1,-1}) + random(S^3, S^2), kk)
+            F = freeResolution M
+            g = augmentationMap F
+        Example
+            S = ZZ/101[a,b,c,d];
+            kk = frac S;
+            M = coker sub(random(S^3, S^{-1,-1}), kk)
+            F = freeResolution M
+            g = augmentationMap F
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions over the integers"
+        "freeResolution(..., Strategy => OverZZ)"
+        OverZZ
+    Headline
+        algorithm for computing free resolutions of ZZ-modules
+    Usage
+        freeResolution M
+        freeResolution(M, Strategy => OverZZ)
+    Inputs
+        M:Module
+            over the ring of integers
+    Outputs
+        :Complex
+            a free resolution of the module $M$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            Every module over the integers has projective dimension at
+            most one.  This is the default strategy when the
+            underlying ring is the integers, so in practice it never
+            needs to be specified.
+        Text
+            Our first example is the cokernel of a $3 \times 3$
+            matrix with positive small integer entries.
+        Example
+            M = coker matrix{{8,4,9},{7,3,7},{6,9,5}}
+            F = freeResolution M -- uses Strategy => OverZZ
+            assert isWellDefined F
+            dd^F
+            g = augmentationMap F
+            assert isWellDefined g
+            assert(source g == F)
+            assert(target g == complex M)
+            assert isQuasiIsomorphism g
+        Text
+            The next example shows that the projective dimension
+            can be less than one.  In other words, a free module
+            can have a non-trivial presentation.
+        Example
+            G = freeResolution coker matrix {{20, 15, 19}, {7, 3, 7}, {6, 9, 5}}
+            length G
+            G_0
+            g = augmentationMap G
+            assert isWellDefined g
+            assert isQuasiIsomorphism g
+        Text
+            The final example involves a slightly larger matrix.  
+            The first matrix of the free resolution is the minimal
+            presentation of the module.
+        Example
+            n = random(ZZ^5, ZZ^3) * matrix{{21,3,0},{0,3,1},{0,0,7}} * random(ZZ^3, ZZ^10)
+            F = freeResolution coker n
+            dd^F_1
+            minimalPresentation coker n
+            smithNormalForm(n, ChangeMatrix => {false,false})
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+        (minimalPresentation, Module)
+        (smithNormalForm, Matrix)
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions via Schreyer-Lascala"
+        "freeResolution(..., Strategy => 0)"
+    Headline
+        algorithm for computing free resolutions exploiting the Schreyer frame
+    Usage
+        freeResolution(M, Strategy => 0)
+        freeResolution(I, Strategy => 0)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms in the engine of {\it Macaulay2}
+            for computing minimal free resolutions.  This particular
+            variant requires that the ring $S$ be commutative,
+            and homogeneous over a base field.
+        Text
+            This first example computes a minimal free resolution
+            of the twisted cubic curve in projective $3$-space.
+        Example
+            kk = ZZ/32003;
+            S = kk[a..d];
+            I = ideal(b^2-a*c, b*c - a*d, c^2-b*d)
+            M = S^1/I
+            F = freeResolution(M, Strategy => 0)
+            dd^F
+            betti F
+            assert isWellDefined F
+            assert(isQuasiIsomorphism augmentationMap F)
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $S^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, Strategy => 0)
+            assert(F1 == F)
+            F2 = freeResolution(module I, Strategy => 0)
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            a homogeneous quotient.
+        Example
+            R = S/(a^3, b^3, c^3, d^3);
+            J = ideal(b^2-a*c, b*c - a*d, c^2-b*d + (b^2-a*c))
+            M = R^1/J
+            C = freeResolution(M, Strategy => 0, LengthLimit => 8)
+            assert isWellDefined C
+            betti C
+        Text
+            The first map in the resulting complex is
+            not necessarily given by the generators of the
+            ideal or the relations of the module.
+        Example
+            dd^C_1
+            gens J
+            relations M
+        Text
+            This strategy is an implementation of the algorithm
+            in Roberto La Scala and Mike Stillman,
+            {\it Strategies for computing minimal free resolutions}
+            J. Symbolic Comput. {\bf 26} (1998), no.4, 409-431.
+            
+            It uses the Schreyer algorithm for free resolutions,
+            including using induced (Schreyer) monomial orders
+            on the free modules in the resolution, together with
+            a method to minimize the resolution appearing in the above paper.
+            
+            Both strategies 0 and 1 are implementations of this algorithm,
+            however they use slightly different internal data structures.
+            Moreover, strategy 0 precomputes a Groebner basis for the presentation
+            of the module.  In contrast, strategy 1 obtains the Groebner basis
+            as part of the algorithm.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Default strategy for free resolutions of homogeneous modules"
+        "freeResolution(..., Strategy => 1)"
+    Headline
+        algorithm for computing free resolutions exploiting the Schreyer frame
+    Usage
+        freeResolution M
+        freeResolution I
+        freeResolution(M, Strategy => 1)
+        freeResolution(I, Strategy => 1)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is a primary algorithm in the engine of {\it
+            Macaulay2} for computing minimal free resolutions. This is
+            the default variant when the ring $S$ is a homogeneous commutative
+            polynomial ring over a base field.
+        Text
+            This first example computes a minimal free resolution
+            of the twisted cubic curve in projective $3$-space.
+        Example
+            kk = ZZ/32003;
+            S = kk[a..d];
+            I = ideal(b^2-a*c, b*c - a*d, c^2-b*d)
+            M = S^1/I
+            F = freeResolution M
+            dd^F
+            betti F
+            assert isWellDefined F
+            assert(isQuasiIsomorphism augmentationMap F)
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $S^1/I$ is returned.
+        Example
+            F1 = freeResolution I
+            assert(F1 == F)
+            F2 = freeResolution module I
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            a homogeneous quotient.
+        Example
+            R = S/(a^3, b^3, c^3, d^3);
+            J = ideal(b^2-a*c, b*c - a*d, c^2-b*d + (b^2-a*c))
+            M = R^1/J
+            C = freeResolution(M, LengthLimit => 8)
+            assert isWellDefined C
+            betti C
+        Text
+            This strategy is an implementation of the algorithm
+            in Roberto La Scala and Mike Stillman,
+            {\it Strategies for computing minimal free resolutions}
+            J. Symbolic Comput. {\bf 26} (1998), no.4, 409-431.
+
+            It uses the Schreyer algorithm for free resolutions,
+            including using induced (Schreyer) monomial orders
+            on the free modules in the resolution, together with
+            a method to minimize the resolution appearing in the above paper.
+            
+            Both strategies 0 and 1 are implementations of this algorithm,
+            however they use slightly different internal data structures.
+            Moreover, strategy 0 precomputes a Groebner basis for the presentation
+            of the module.  In contrast, strategy 1 obtains the Groebner basis
+            as part of the algorithm.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions of homogeneous modules via successive syzygies"
+        "freeResolution(..., Strategy => 2)"
+    Headline
+        algorithm for computing free resolutions step by step
+    Usage
+        freeResolution(M, Strategy => 2)
+        freeResolution(I, Strategy => 2)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms in the engine of {\it Macaulay2} for
+            computing minimal free resolutions. This is the default
+            variant when the ring $S$ is a homogeneous quotient of
+            an almost commutative polynomial ring over a base field.
+            In particular, this variant applies to homogeneous modules
+            over a homogenized Weyl algebra or an exterior algebra.            
+        Text
+            This first example computes part of the minimal free
+            resolution of the ground field over a hypersurface ring.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..d]/(a^2+b^2+c^2+d^2);
+            I = ideal(a,b,c,d)
+            M = R^1/I
+            F = freeResolution(M, LengthLimit => 5)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, LengthLimit => 5)
+            assert(F1 == F)
+            F2 = freeResolution(module I, LengthLimit => 5)
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            simply a polynomial ring, but is often slower than
+            Strategy 1. However, unlike Strategy 1, 
+            this strategy preserves the given presentation of the module,
+            which can be desirable.
+        Example
+            S = kk[a..e]
+            J = ideal(a^3-e^3, a*b^2-c*e^2, a*b*c, a*b*c + a^3 - e^3)
+            assert isHomogeneous J
+            C2 = freeResolution(J, Strategy => 2)
+            C1 = freeResolution ideal J_*
+            assert isWellDefined C2
+            betti C2
+            betti C1
+            assert(dd^C2_1 == gens J)
+            assert(dd^C1_1 != gens J)
+        Text
+            For completeness, we present an example over a homogenized
+            Weyl algebra.
+        Example
+            W = kk[x,y,z,dx,dy,dz,h, WeylAlgebra => {x => dx, y => dy, z => dz, h}]
+            I = ideal(x*dy-y*dz, x*y*dy*dz)
+            M = W^1/I
+            F = freeResolution(M, Strategy => 2)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism augmentationMap F
+        Text
+            This strategy works degree by degree.  Within each degree,
+            it first computes the syzygies of the presentation matrix,
+            and then computes the second syzygies, and so on.  This
+            strategy uses Schreyer orders on the free modules in the
+            resolution which often improves efficiency.
+
+            Although similar to Strategy 3, this strategy does not use
+            Hilbert functions to aid the computation.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions of homogeneous modules aided by Hilbert functions"
+        "freeResolution(..., Strategy => 3)"
+    Headline
+        algorithm for computing free resolutions step by step aided by Hilbert functions
+    Usage
+        freeResolution(M, Strategy => 3)
+        freeResolution(I, Strategy => 3)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms in the engine of {\it
+            Macaulay2} for computing minimal free resolutions. This is
+            a variant when the ring $S$ is a homogeneous quotient of
+            an almost commutative polynomial ring over a base field.
+            In particular, this variant applies to homogeneous modules
+            over a homogenized Weyl algebra or an exterior algebra.
+        Text
+            This first example computes part of the minimal free
+            resolution of the ground field over a hypersurface ring.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..d]/(a^2+b^2+c^2+d^2);
+            I = ideal(a,b,c,d)
+            M = R^1/I
+            F = freeResolution(M, Strategy => 3, LengthLimit => 5)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, Strategy => 3, LengthLimit => 3)
+            assert(F1 == naiveTruncation(F,0,3))
+            F2 = freeResolution(module I, Strategy => 3, LengthLimit => 3)
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works when the underlying ring is
+            simply a polynomial ring, but is often slower than
+            Strategy 1. However, unlike Strategy 1, 
+            this strategy preserves the given presentation of the module,
+            which can be desirable.
+        Example
+            S = kk[a..e]
+            J = ideal(a^3-e^3, a*b^2-c*e^2, a*b*c, a*b*c + a^3 - e^3)
+            assert isHomogeneous J
+            C2 = freeResolution(J, Strategy => 3)
+            C1 = freeResolution ideal J_*
+            assert isWellDefined C2
+            betti C2
+            betti C1
+            assert(dd^C2_1 == gens J)
+            assert(dd^C1_1 != gens J)
+        Text
+            For completeness, we present an example over an
+            exterior algebra.
+        Example
+            E = kk[a..d, SkewCommutative => true]
+            I = ideal(a*b-c*d, a*b*c*d)
+            M = E^1/I
+            F = freeResolution(M, Strategy => 3, LengthLimit => 4)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,3))
+        Text
+            This strategy works degree by degree.  Within each degree,
+            it first computes the syzygies of the presentation matrix,
+            and then computes the second syzygies, and so on.  This
+            strategy uses Schreyer orders on the free modules in the
+            resolution which often improves efficiency.
+
+            Although similar to Strategy 2, this strategy does use
+            Hilbert functions to aid the computation.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+-- TODO: add Syzygies key here, when it is no longer in the Core.
+-- TODO: add in a WeylAlgebra example once the code is functioning better.
+--            W = ZZ/11[x,y,z,dx,dy,dz,WeylAlgebra => {x => dx, y => dy, z => dz}, Degrees => {1,1,1,-1,-1,-1}]
+--            J = ideal(x*dz-y*dx, x*dy^2+dz)  -- res J takes quite a while, then quits with a divide by zero error!
+--
+--            Wh = QQ[x,y,z,dx,dy,dz,h,WeylAlgebra => {x => dx, y => dy, z => dz, h}]
+--            J = ideal(x*dz-y*dx, x*dy^2+dz*h^2)
+--            use W
+--            dehom = map(W, Wh, {x,y,z,dx,dy,dz,1})
+--            C = freeResolution(J) -- strategy 
+--            C0 = dehom C
+--            isWellDefined C0
+--            prune HH C0
+doc ///
+    Key
+        "Strategy for free resolutions via syzygies"
+        "freeResolution(..., Strategy => Syzygies)"
+    Headline
+        algorithm for computing free resolutions step by step using syzygies
+    Usage
+        freeResolution(M, Strategy => Syzygies)
+        freeResolution(I, Strategy => Syzygies)
+    Inputs
+        M:Module
+            a module over a ring $R$
+        I:Ideal
+            an ideal in $R$
+    Outputs
+        :Complex
+            a free resolution of $M$ or $R^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms written at top level of {\it
+            Macaulay2} for computing free resolutions, although
+            it uses engine code to compute syzygies. This
+            variant works over most rings in {\it Macaulay2},
+            including Weyl algebras and exterior algebras.
+        Text
+            This first example computes part of the free
+            resolution of the ground field over a inhomogeneous $E_8$ singularity.
+        Example
+            kk = ZZ/32003;
+            R = kk[a,b,c]/(a^2+b^3+c^5);
+            I = ideal(a,b,c)
+            M = R^1/I
+            F = freeResolution(M, Strategy => Syzygies, LengthLimit => 5)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, Strategy => Syzygies, LengthLimit => 3)
+            assert(F1 == naiveTruncation(F,0,3))
+            F2 = freeResolution(module I, Strategy => Syzygies, LengthLimit => 3)
+            dd^F1
+            dd^F2
+        Text
+            For completeness, we present an example over an
+            exterior algebra.
+        Example
+            E = kk[a..d, SkewCommutative => true]
+            I = ideal(a*b-c*d, a*b*c*d)
+            M = E^1/I
+            F = freeResolution(M, Strategy => Syzygies, LengthLimit => 4)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,3))
+        Text
+            This strategy works one homological degree
+            at a time.
+            It first computes the syzygies of the presentation matrix,
+            and then computes the second syzygies, and so on.  This
+            strategy uses Schreyer orders on the free modules in the
+            resolution which often improves efficiency.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Strategy for free resolutions via homogenization"
+        "freeResolution(..., Strategy => Homogenization)"
+        Homogenization
+    Headline
+        algorithm for computing free resolutions by first homogenizing
+    Usage
+        freeResolution(M, Strategy => Homogenization)
+        freeResolution(I, Strategy => Homogenization)
+    Inputs
+        M:Module
+            a module over a ring $R$
+        I:Ideal
+            an ideal in $R$
+    Outputs
+        :Complex
+            a free resolution of $M$ or $R^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is one of the algorithms written at top level of {\it
+            Macaulay2} for computing free resolutions, although
+            it uses engine code to compute free resolutions of the
+            homogenized module or ideal.  This is the default
+            strategy for inhomogeneous ideals or modules over
+            a {\it commutative} ring.
+            The result is rarely a minimal resolution; minimal
+            resolutions are not generally defined in the inhomogeneous
+            case.
+        Text
+            This first example computes a free resolution
+            of an inhomogeneous ideal.
+        Example
+            kk = ZZ/53;
+            S = kk[a,b,c,d];
+            I = ideal(a^3-b^2-a*c, a*b*c-d^2, a^3-d^2)
+            M = S^1/I
+            F = freeResolution M
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
+        Text
+            Even though minimal resolutions are not generally defined,
+            the @TO minimize@ method will often produce a smaller
+            resolution.
+        Example        
+            mF = minimize F
+            dd^mF
+            assert isWellDefined mF
+            prune HH mF
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $S^1/I$ is returned.
+        Example
+            F1 = freeResolution I
+            assert(F1 == F)
+            F2 = freeResolution module I
+            dd^F1
+            dd^F2
+        Text
+            This strategy also works over quotient rings.
+        Example
+            R = S/(a^4-a*d, b^3-a*d)
+            I = ideal(a^3-b^2-a*c, a*b*c-d*a, a^3+d^2)
+            M = R^1/I
+            F = freeResolution(M, Strategy => Homogenization, LengthLimit => 4)
+            assert isWellDefined F
+            dd^F_2
+        Text
+            This strategy homogenizes the ideal or module as well
+            as the underlying ring, calls an engine routine
+            to compute the resolution, and finally dehomogenizes the
+            result.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+        (minimize, Complex)
+///
+
+doc ///
+    Key
+        "freeResolution(..., Strategy => Engine)"
+    Headline
+        algorithm for computing a free resolution
+    Usage
+        freeResolution(M, Strategy => Engine)
+        freeResolution(I, Strategy => Engine)
+    Inputs
+        M:Module
+            a homogeneous module over $S$, a (quotient of a) polynomial ring
+        I:Ideal
+            a homogeneous ideal in $S$
+    Outputs
+        :Complex
+            a minimal free resolution of $M$ or $S^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This strategy chooses, depending on the ring type, an appropriate
+            algorithm in the engine for computing free resolutions of homogeneous
+            modules and ideals.
+            This particular strategy is not intended for users, rather it is
+            used internally to select an appropriate algorithm when no strategy
+            is specified by the user.
+        Text
+            This first example computes part of the minimal free
+            resolution of the ground field over a hypersurface ring.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..f];
+            I = ideal(a^3-b^2*c, a^3*d - c*b^3, a*e^2-c*f^2)
+            M = R^1/I
+            F = freeResolution(M, Strategy => Engine)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
+        Text
+            When the input is an ideal $I$, the free resolution of
+            $R^1/I$ is returned.
+        Example
+            F1 = freeResolution(I, Strategy => Engine)
+            assert(F1 == naiveTruncation(F,0,3))
+            F2 = freeResolution(module I, Strategy => Engine)
+            dd^F1
+            dd^F2
+        Text
+            The following code shows how this method chooses
+            between strategies 1 and 2.
+        Example
+            code (freeResolution, Module, Strategy => Engine)
+    SeeAlso
+        "Strategies for free resolutions"
+        "freeResolution(..., Strategy => 1)"
+        "freeResolution(..., Strategy => 2)"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
+///
+
+doc ///
+    Key
+        "Strategy for nonminimal free resolutions"
+        "freeResolution(..., Strategy => Nonminimal)"
+        Nonminimal
+    Headline
+        algorithm for computing nonminimal free resolutions
+    Usage
+        freeResolution(M, Strategy => Nonminimal)
+        freeResolution(I, Strategy => Nonminimal)
+    Inputs
+        M:Module
+            a module over a ring $R$
+        I:Ideal
+            an ideal in $R$
+    Outputs
+        :Complex
+            a free resolution of $M$ or $R^1/I$
+    Description
+        Text
+            @SUBSECTION "Description"@
+        Text
+            This is the main the algorithm in the engine of {\it
+            Macaulay2} for computing {\it nonminimal} free resolutions
+            of possibly inhomogeneous modules and ideals over a
+            polynomial ring or exterior algebra defined over a finite
+            field.  For homogeneous ideals and modules over such
+            rings, this variant generally computes a non-minimal
+            resolution much faster than engine routines that return a
+            minimal free resolution. In particular, this algorithm is
+            used by @TO "minimalBetti"@ for faster computation of
+            Betti tables.
+        Text
+            This first example computes part of the free
+            resolution of the ground field over a inhomogeneous $E_8$ singularity.
+        Example
+            kk = ZZ/32003;
+            R = kk[a..f];
+            I = ideal(a*b*c-d*e*f, a*b*f-c*d*e, a*b*d-c^3)
+            F = freeResolution(I, Strategy => Nonminimal)
+            dd^F
+            betti F
+            minimalBetti I
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F)
+        Text
+            We also present an inhomogeneous example over a polynomial ring.
+        Example
+            I = ideal(a*b*c-d*e*f, a^2*b*f-c*d*e, a*b*d-c^2)
+            F = freeResolution(I, Strategy => Nonminimal)
+            dd^F
+            assert isWellDefined F
+            assert isQuasiIsomorphism augmentationMap F
+            minimize F
+            freeResolution I
+        Text
+            We also present an example over an
+            exterior algebra.
+        Example
+            E = kk[a..d, SkewCommutative => true]
+            I = ideal(a*b-c*d, a*b*c*d)
+            F = freeResolution(I, Strategy => Nonminimal, LengthLimit => 4)
+            dd^F
+            betti F
+            minimalBetti I
+            assert isWellDefined F
+            assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,3))
+        Text
+            This strategy implements an algorithm of Frank Schreyer.
+            It first computes lead terms of all of the syzygy modules
+            of the ideal or module, and then determines each syzygy
+            using a linear algebra approach together with a
+            number of optimizations.
+    SeeAlso
+        "Strategies for free resolutions"
+        (freeResolution, Module)
+        (augmentationMap, Complex)
 ///
 
 doc ///
@@ -1132,6 +2147,7 @@ doc ///
      (symbol^, Complex, Array)
      (symbol_, Complex, Array)
      (isShortExactSequence, ComplexMap, ComplexMap)
+     (sum, Complex)
 ///
 
 doc ///
@@ -1275,8 +2291,8 @@ doc ///
       prune C6
       concentration prune C6
    SeeAlso
-     (prune,Complex)
-     (concentration,Complex)
+     (prune, Complex)
+     (concentration, Complex)
 ///
 
 doc ///
@@ -1503,7 +2519,9 @@ doc ///
             homomorphism' g1 == f1
             homomorphism' g2 == f1
     SeeAlso
+        "Working with Ext"
         (homomorphism, Matrix)
+        (homomorphism, ZZ, Matrix, Complex)
         (homomorphism', ComplexMap)
         (Hom, Complex, Complex)
         (randomComplexMap, Complex, Complex)
@@ -1551,8 +2569,66 @@ doc ///
             assert(target g === D)
             assert(homomorphism f == g)
     SeeAlso
+        "Working with Ext"
         (homomorphism', Matrix)
         (homomorphism, ComplexMap)
+        (Hom, Complex, Complex)
+        (randomComplexMap, Complex, Complex)
+///
+
+doc ///
+    Key
+        (homomorphism, ZZ, Matrix, Complex)
+    Headline
+        get the homomorphism from an element of Hom
+    Usage
+        g = homomorphism(i, f, E)
+    Inputs
+        i:ZZ
+        f:Matrix
+            a map of the form $f \colon R^1 \to E_i$
+        E:Complex
+            having the form
+            $E = \operatorname{Hom}(C, D)$ for some complexes $C$ and $D$
+    Outputs
+        g:ComplexMap
+            the corresponding map of chain complexes from $C$ to $D$ of degree $i$
+    Description
+        Text
+            An element of the complex $\operatorname{Hom}(C, D)$ corresponds to a map of 
+            complexes from $C$ to $D$.  Given an element in the $i$-th term, this
+            method returns the corresponding map of complexes of degree $i$.
+        Text
+            As a first example, consider two Koszul complexes $C$ and $D$.
+            From a random map $f \colon R^1 \to Hom(C, D)$, we construct 
+            the corresponding map of chain complexes $g \colon C \to D$.
+        Example
+            R = ZZ/101[a,b,c];
+            C = freeResolution ideal"a,b,c"
+            D = freeResolution ideal"a2,b2,c2"
+            E = Hom(C,D)
+            f = random(E_2, R^{-5})
+            g = homomorphism(2, f, E)
+            assert isWellDefined g
+            assert not isCommutative g
+        Text
+            The map $g \colon C \to D$ corresponding to a random map into $Hom(C,D)$
+            does not generally commute with the differentials.  However, if the
+            element of $Hom(C,D)$ is a cycle, then the corresponding map does commute.
+        Example
+            h = randomComplexMap(E, complex R^{-2}, Cycle => true, Degree => -1)
+            f = h_0
+            g = homomorphism(-1, f, E)
+            assert isWellDefined g
+            assert isCommutative g
+            assert(degree g === -1)
+            assert(source g === C)
+            assert(target g === D)
+            assert(homomorphism' g == h)
+    SeeAlso
+        "Working with Ext"
+        (homomorphism, Matrix)
+        (homomorphism', ComplexMap)
         (Hom, Complex, Complex)
         (randomComplexMap, Complex, Complex)
 ///
@@ -1735,8 +2811,8 @@ doc ///
     SeeAlso
         "Making chain complexes"
         (part, List, ComplexMap)
-        (truncate, List, Complex)
-        (truncate, List, ComplexMap)
+        "Truncations :: truncate(List,Complex)"
+        "Truncations :: truncate(List,ComplexMap)"
         (canonicalTruncation, Complex, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
 ///
@@ -1780,73 +2856,12 @@ doc ///
     SeeAlso
         "Making maps between chain complexes"
         (part, List, Complex)
-        (truncate, List, Complex)
-        (truncate, List, ComplexMap)
+        "Truncations :: truncate(List,Complex)"
+        "Truncations :: truncate(List,ComplexMap)"
         (naiveTruncation, Complex, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
 ///
 
--- truncate start
-doc ///
-    Key
-        (truncate, List, Complex)
-        (truncate, ZZ, Complex)
-    Headline
-        truncation of a complex at a specified degree or set of degrees
-    Usage
-        truncate(d, C)
-    Inputs
-        d:List
-            or @TO "ZZ"@, if the underlying ring $R$ is singly graded.
-        C:Complex
-            that is homogeneous over $R$
-    Outputs
-        :Complex
-          a complex whose terms consist of all elements of component-wise degree at least {\tt d}.
-    Description
-        Text
-            Truncation of homogeneous (graded) modules induces a natural
-            operation on chain complexes.
-        Text
-            In the singly graded case, the truncation of a homogeneous
-            module $M$ at degree $d$ is generated by all homogeneous
-            elements of degree at least $d$ in $M$.  This method applies
-            this operation to each term in a chain complex.  
-        Example
-            R = QQ[a,b,c];
-            I = ideal(a*b, a*c, b*c)
-            C = freeResolution I
-            D = truncate(3,C)
-            assert isWellDefined D
-            prune HH D
-        Text
-            Truncating at a degree less than the minimal generators
-            is the identity operation.
-        Example
-            assert(C == truncate(0, C))
-        Text
-            In the multi-graded case, the truncation of a homogeneous module at 
-            a list of degrees is generated by all homogeneous elements of degree
-            that are component-wise greater than or equal to at least one
-            of the degrees.
-        Example
-            A = ZZ/101[x_0, x_1, y_0, y_1, y_2, Degrees => {2:{1,0}, 3:{0,1}}];
-            I = intersect(ideal(x_0, x_1), ideal(y_0, y_1, y_2))
-            C = freeResolution I
-            D1 = prune truncate({{1,1}}, C)
-            D2 = truncate({{1,0}}, C)
-            D3 = truncate({{0,1}}, C)
-            D4 = truncate({{1,0},{0,1}}, C)
-            D5 = truncate({{2,2}}, C)
-            assert all({D1,D2,D3,D4,D5}, isWellDefined)
-    SeeAlso
-        "Making chain complexes"
-        (truncate, List, Module)
-        (truncate, List, ComplexMap)
-        (canonicalTruncation, Complex, Sequence)
-        (naiveTruncation, Complex, ZZ, ZZ)
-        (part, List, Complex)
-///
 
 -- TODO Obtain the implicit equation of a surface by using this method
 --      on a resolution over Rees algebra Mike and/or Greg thinks
@@ -1915,7 +2930,7 @@ doc ///
         (naiveTruncation, ComplexMap, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
         (canonicalTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, Complex)
+        "Truncations :: truncate(List,Complex)"
 ///
 
 doc ///
@@ -1999,7 +3014,7 @@ doc ///
         (canonicalTruncation, ComplexMap, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
         (naiveTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, Complex)
+        "Truncations :: truncate(List,Complex)"
 ///
 
 doc ///
@@ -2064,15 +3079,21 @@ doc ///
     Usage
         phi ** C
         tensor(phi, C)
+        S ** C
+        C ** S
     Inputs
         phi:RingMap
-            whose source is a ring $R$, and whose target is a ring $S$
+            whose source is a ring $R$ and whose target is a ring $S$
         C:Complex
             over the ring $R$
     Outputs
         :Complex
             over the ring $S$
     Description
+        Text
+            These methods implement the base change of rings.  As input, one can either
+            give a ring map $\phi$, or the ring $S$ (when there is a canonical map
+                from $R$ to $S$).
         Text
             We illustrate the tensor product of a complex along a ring map.
         Example
@@ -2151,8 +3172,6 @@ doc ///
           this is used to limit somehow the computation where resolutions might be too long or infinite
         DegreeLimit =>
           unused
-        FastNonminimal =>
-          unused
         HardDegreeLimit =>
           unused
         PairLimit =>
@@ -2213,19 +3232,25 @@ doc ///
     Key
         (minimalPresentation, Complex)
         (prune, Complex)
+        (prune, ComplexMap)
+        (minimalPresentation, ComplexMap)
     Headline
         minimal presentation of all terms in a complex
     Usage
         D = minimalPresentation C
         D = prune C
+        h = minimalPresentation f
+        h = prune f
     Inputs
         C:Complex
+            or $f$ @ofClass ComplexMap@
         Exclude => 
             unused
     Outputs
         D:Complex
             isomorphic to the input, where each term is replaced
-            by a minimally presented model
+            by a minimally presented model, or $h$ @ofClass ComplexMap@
+            where the source and target are minimally presented
     Consequences
         Item
             The isomorphism $g : D \to C$ is available as 
@@ -2234,7 +3259,8 @@ doc ///
     Description
         Text
             This is frequently useful to make the output of certain
-            operations readable or understandable.
+            operations readable or understandable.  This operation
+            is functorial, applying both to complexes and complex maps.
         Text
             In particular, homology often needs to be pruned to
             be understood.  For instance, this is useful 
@@ -2251,8 +3277,8 @@ doc ///
             assert isComplexMorphism g
             assert (target g == C)
             assert (source g == D)
-            h = g^-1
-            assert(g*h == 1 and h*g == 1)
+            g^-1
+            assert(g*g^-1 == 1 and g^-1*g == 1)
         Text
             The image of a map of complexes also becomes more
             understandable via pruning.
@@ -2270,9 +3296,16 @@ doc ///
             assert isComplexMorphism g
             assert (target g == C)
             assert (source g == D)
-            h = g^-1
-            assert(g*h == 1 and h*g == 1)
+            g^-1
+            assert(g*g^-1 == 1 and g^-1*g == 1)
+        Text
+            One can directly prune the map of complexes $f$.
+        Example
+            h = prune f
+            assert(source h === prune source f)
+            assert(target h === prune target f)
    SeeAlso
+       "Making chain complexes"
        (minimize, Complex)
        (minimalPresentation, Module)
        randomComplexMap
@@ -2284,6 +3317,7 @@ doc ///
     Key
         (minimize, Complex)
         minimize
+        minimizingMap
     Headline
         a quasi-isomorphic complex whose terms have minimal rank
     Usage
@@ -2307,7 +3341,7 @@ doc ///
         Example
             S = ZZ/32003[a,b];
             I = ideal(a^2-b^2, a*b)
-            C = freeResolution(I, FastNonminimal=>true)
+            C = freeResolution(I, Strategy => Nonminimal)
             betti C
             D = minimize C
             assert(isWellDefined D and isHomogeneous D)
@@ -2433,6 +3467,49 @@ doc ///
      freeResolution
      prune
 ///
+
+doc ///
+    Key
+        (sum, Complex)
+        (sum, ComplexMap)
+    Headline
+        make the direct sum of all terms
+    Usage
+        sum C
+        sum f
+    Inputs
+        C:Complex
+            or {\tt f}, @ofClass ComplexMap@
+    Outputs
+        :Module
+            or @ofClass Matrix@, if the input is a complex map
+    Description
+        Text
+            This is the forgetful functor from the
+            category of chain complexes to the category of modules.
+            A chain complex $C$ is sent to the direct sum 
+            $\bigoplus_i C_i$ of its terms.
+            A map of chain complexes $f \colon C \to D$ is sent to the
+            direct sum $\bigoplus_i f_i \colon \bigoplus_i C_i \to \bigoplus_i D_i$.
+        Example
+            S = ZZ/101[a,b,c];
+            C = koszulComplex {a,b,c}
+            sum C
+            assert(rank sum C == 2^3)
+        Example
+            f = randomComplexMap(C, C, InternalDegree => 1, Cycle => true)
+            g = sum f
+            assert(g^2 === sum f^2)
+            assert(target g === sum target f)
+            assert(source g === sum source f)
+            h = sum dd^C
+            assert(h^2 == 0)
+    SeeAlso
+        "Basic invariants and properties"
+        (directSum, Complex)
+        koszulComplex
+        randomComplexMap
+///
  
 doc ///
   Key
@@ -2451,7 +3528,7 @@ doc ///
     Text
       This method checks whether the given representation of each
       module $C_i$ is free. To determine whether the complex $C$ is
-      isomorphic to a free complex, use @TO2("(prune,Complex)", "prune")@.
+      isomorphic to a free complex, use @TO2((prune,Complex), "prune")@.
     Text
       The following example demonstrates that the presentation of a module
       might not reveal the property of being free.
@@ -2518,7 +3595,7 @@ doc ///
             Fitting ideals.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image vars R
             f = basis(0, Ext^1(M, R^1))
             C = yonedaExtension f
             assert isWellDefined C
@@ -2561,6 +3638,7 @@ doc ///
     Key
         (yonedaExtension', Complex)
         yonedaExtension'
+        [yonedaExtension', MinimalGenerators]
     Headline
         identifies the element of Ext corresponding to an extension
     Usage
@@ -2568,6 +3646,8 @@ doc ///
     Inputs
         C:Complex
           exact, of length $d$ over a ring $R$
+        MinimalGenerators => Boolean
+            whether to @TO prune@ the Ext module
     Outputs
         f:Matrix
           a map from $R^1$ to $\operatorname{Ext}^d(C_0, C_d)$
@@ -2593,7 +3673,7 @@ doc ///
             on the elliptic curve.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image matrix {{z,y,x}}
             N = R^1;
             E = coker map(R^{3:-1} ++ R^1,,{
                     {y, x, 0, 0}, 
@@ -2606,7 +3686,7 @@ doc ///
             C = complex{d1,d2}
             assert isWellDefined C
             assert isHomogeneous C
-            assert(HH C == 0)
+            assert isShortExactSequence C
             f = yonedaExtension' C
         Text
             Although the complex representing $f$ is only defined up
@@ -2643,6 +3723,7 @@ doc ///
     Key
         (yonedaMap, Matrix)
         yonedaMap
+        [yonedaMap, LengthLimit]
     Headline
         creates a chain complex map representing an extension of modules
     Usage
@@ -2694,7 +3775,7 @@ doc ///
             argument {\tt LengthLimit}.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image vars R
             prune Ext^3(M, M)
             B = basis(-4, Ext^3(M, M))
             f = B_{2}
@@ -2718,6 +3799,7 @@ doc ///
     Key
         (yonedaMap', ComplexMap)
         yonedaMap'
+        [yonedaMap', MinimalGenerators]
     Headline
         identifies the element of Ext corresponding to a map of free resolutions
     Usage
@@ -2726,8 +3808,8 @@ doc ///
         g:ComplexMap
             of degree $-d$ from the free resolution of $M$ to the free
             resolution of $N$
-        LengthLimit => ZZ
-            an upper bound on the lengths of the free resolutions constructed
+        MinimalGenerators => Boolean
+            whether to @TO prune@ the Ext module
     Outputs
         f:Matrix
             over a ring $R$, from $R^1$ to $\operatorname{Ext}^d_R(M,N)$,
@@ -2768,7 +3850,7 @@ doc ///
             to @TO yonedaMap@.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
-            M = truncate(1,R^1)
+            M = image vars R
             B = basis(-4, Ext^3(M, M))
             f0 = B_{2}
             g = yonedaMap(f0, LengthLimit => 8)
@@ -2785,6 +3867,201 @@ doc ///
         (yonedaExtension', Complex)
         (yonedaProduct, Matrix, Matrix)
         (yonedaProduct, Module, Module)
+///
+
+doc ///
+    Key
+        (yonedaProduct, Matrix, Matrix)
+        yonedaProduct
+    Headline
+        make the product of two elements in Ext modules
+    Usage
+        h = yonedaProduct(f,g)
+    Inputs
+        f:Matrix
+            of the form $f \colon R \to \operatorname{Ext}_R^d(L,M)$
+        g:Matrix
+            of the form $g \colon R \to \operatorname{Ext}_R^e(M,N)$
+    Outputs
+        h:Matrix
+            of the form $h \colon R \to \operatorname{Ext}_R^{d+e}(L,N)$
+    Description
+        Text
+            Given a triple $(L, M, N)$ of $R$-modules, the Yoneda product is a pairing between $\operatorname{Ext}$-modules
+            
+            $\phantom{WWWW}
+             \operatorname{Ext}_R^d(L,M) \otimes \operatorname{Ext}_R^e(M,N) \to \operatorname{Ext}_R^{d+e}(L,N).
+            $
+
+
+            For an element of $\operatorname{Ext}_R^{e}(M,N)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow M \leftarrow F_{0} \leftarrow F_{1} \leftarrow \dotsb \leftarrow F_{e-2} \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            and for an element of $\operatorname{Ext}_R^{d}(L,M)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_1 \leftarrow \dotsb \leftarrow G_{d-2} \leftarrow Q \leftarrow M \leftarrow 0,
+            $
+
+            the Yoneda product corresponds to
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_{1} \leftarrow \dotsb \leftarrow Q \leftarrow F_{0}
+             \leftarrow F_{1} \leftarrow \dotsb \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            where the map from $F_0$ to $Q$ factors through $M$.  For more information about extensions,
+            see @TO yonedaExtension@.
+        Text
+            Alternatively, the module $\operatorname{Ext}^d_R(L,M)$ is constructed from
+            a free resolution $G$ of $L$,
+
+            $\phantom{WWWW}
+              0 \leftarrow L \leftarrow G_0 \leftarrow G_1 \leftarrow \dotsb
+              \leftarrow G_d \leftarrow \dotsb,
+            $
+
+            by taking the homology of the complex $\operatorname{Hom}_R(G, M)$.
+            An element of $\operatorname{Ext}^d_R(L,M)$ is represented by
+            an element of $\operatorname{Hom}_R(G_d, M)$.  This map extends to a complex map
+            having degree $-d$ from $G$ to the free resolution $F$ of $M$.
+            The Yoneda product is the composition of the map of chain complexes from 
+            $G$ to $F$ with the map of chain complexes having degree $-e$ from $F$ to 
+            a free resolution of $N$.
+            For more information about these maps, see @TO yonedaMap@.
+        Text
+            As an example, we take two distinct elements of an $\operatorname{Ext}^1$-module
+            to obtain a non-zero element of the $\operatorname{Ext}^2$-module.
+        Example
+            S = ZZ/101[x_0..x_3];
+            I = borel monomialIdeal(x_1*x_2)
+            E1 = Ext^1(S^1/I, S^1/I)
+            (f, g) = (E1_{6}, E1_{9})
+            h = yonedaProduct(f, g)
+            assert isWellDefined h
+            assert(target h == Ext^2(S^1/I, S^1/I))
+            C = yonedaExtension h
+            assert isWellDefined C
+            assert isHomogeneous C
+            assert(HH C == 0)
+            assert(coker yonedaProduct(E1,E1) == 0)
+        Text
+            In our second example, all three modules in the triple are distinct
+            and the image of the Yoneda product is not surjective.
+        Example
+            R = S/(x_0*x_1, x_2*x_3);
+            E1 = Ext^1(R^1/(x_0, x_2), R^1/(x_0, x_2, x_3))
+            E2 = Ext^2(R^1/(x_0, x_2, x_3), R^1/(x_0, x_1, x_2, x_3))
+            E3 = Ext^3(R^1/(x_0, x_2), R^1/(x_0, x_1, x_2, x_3))
+            h = yonedaProduct(E1_{0}, E2_{1})
+            assert isWellDefined h
+            assert(target h == E3)
+            C = yonedaExtension h
+            assert isWellDefined C
+            assert isHomogeneous C
+            assert(HH C == 0)
+            assert(coker yonedaProduct(E1, E2) != 0)
+    SeeAlso
+        "Working with Ext"
+        (yonedaProduct, Module, Module)
+///
+
+doc ///
+    Key
+        (yonedaProduct, Module, Module)
+    Headline
+        make the product map between Ext modules
+    Usage
+        yonedaProduct(D,E)
+    Inputs
+        D:Module
+            having the form $\operatorname{Ext}_R^d(L,M)$
+        E:Module
+            having the form $\operatorname{Ext}_R^e(M,N)$
+    Outputs
+        :Matrix
+            defining a map from $\operatorname{Ext}_R^d(L,M) \otimes_R \operatorname{Ext}_R^e(M,N)$ to 
+            $\operatorname{Ext}_R^{d+e}(L,N)$
+    Description
+        Text
+            For any triple $(L, M, N)$ of $R$-modules, the Yoneda product is a pairing between $\operatorname{Ext}$-modules
+            
+            $\phantom{WWWW}
+             \operatorname{Ext}_R^d(L,M) \otimes \operatorname{Ext}_R^e(M,N) \to \operatorname{Ext}_R^{d+e}(L,N).
+            $
+
+            Given $D = \operatorname{Ext}_R^d(L,M)$ and  $E = \operatorname{Ext}_R^e(M,N)$,
+            this method returns this pairing. To compute the product of a pair of elements, 
+            see @TO (yonedaProduct, Matrix, Matrix)@.
+
+            Specifically, for an element of $\operatorname{Ext}_R^{e}(M,N)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow M \leftarrow F_{0} \leftarrow F_{1} \leftarrow \dotsb \leftarrow F_{e-2} \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            and for an element of $\operatorname{Ext}_R^{d}(L,M)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_1 \leftarrow \dotsb \leftarrow G_{d-2} \leftarrow Q \leftarrow M \leftarrow 0,
+            $
+
+            the Yoneda product corresponds to
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_{1} \leftarrow \dotsb \leftarrow Q \leftarrow F_{0}
+             \leftarrow F_{1} \leftarrow \dotsb \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            where the map from $F_0$ to $Q$ factors through $M$.  For more information about extensions,
+            see @TO yonedaExtension@.
+        Text
+            Alternatively, the module $\operatorname{Ext}^d_R(L,M)$ is constructed from
+            a free resolution $G$ of $L$,
+
+            $\phantom{WWWW}
+              0 \leftarrow L \leftarrow G_0 \leftarrow G_1 \leftarrow \dotsb
+              \leftarrow G_d \leftarrow \dotsb,
+            $
+
+            by taking the homology of the complex $\operatorname{Hom}_R(G, M)$.
+            An element of $\operatorname{Ext}^d_R(L,M)$ is represented by
+            an element of $\operatorname{Hom}_R(G_d, M)$.  This map extends to a complex map
+            having degree $-d$ from $G$ to the free resolution $F$ of $M$.
+            The Yoneda product is the composition of the map of chain complexes from 
+            $G$ to $F$ with the map of chain complexes having degree $-e$ from $F$ to 
+            a free resolution of $N$.
+            For more information about these maps, see @TO yonedaMap@.
+        Text
+            In our first example, the image of the tensor product of 
+            two $\operatorname{Ext}^1$-modules happens to generate the
+            the $\operatorname{Ext}^2$-module.
+        Example
+            S = ZZ/101[x_0..x_3];
+            I = borel monomialIdeal(x_1*x_2)
+            E1 = Ext^1(S^1/I, S^1/I)
+            h = yonedaProduct(E1, E1)
+            assert isWellDefined h
+            assert(target h == Ext^2(S^1/I, S^1/I))
+            coker h == 0
+        Text
+            In our second example, all three modules in the triple are distinct
+            and the image of the Yoneda product is not surjective.
+        Example
+            R = S/(x_0*x_1, x_2*x_3);
+            E1 = Ext^1(R^1/(x_0, x_2), R^1/(x_0, x_2, x_3))
+            E2 = Ext^2(R^1/(x_0, x_2, x_3), R^1/(x_0, x_1, x_2, x_3))
+            E3 = Ext^3(R^1/(x_0, x_2), R^1/(x_0, x_1, x_2, x_3))
+            h = yonedaProduct(E1, E2)
+            assert isWellDefined h
+            assert(target h == E3)
+            prune coker h
+    SeeAlso
+        "Working with Ext"
+        (yonedaProduct, Matrix, Matrix)
 ///
 
 doc ///
@@ -2850,6 +4127,176 @@ doc ///
     SeeAlso
         "Making chain complexes"
         (symbol**, Complex, Complex)
+///
+
+doc ///
+    Key
+        (poincare, Complex)
+    Headline
+        assemble degrees of a chain complex into a polynomial
+    Usage
+        poincare C
+    Inputs
+        C:Complex
+    Outputs
+        :RingElement
+            in the @TO2((degreesRing,Ring), "ring of degrees")@ of the underlying ring of $C$
+    Description
+        Text
+            This method encodes information about the degrees of the generators of each term
+            in a chain complex. It returns an element in the degrees ring, which
+            is the ring of Laurent polynomials whose monomials
+            correspond to the degrees of the monomials in the underlying ring of $C$.
+            When the $i$-th term $C_i$ of the complex $C$ 
+            is generated by elements of degree $d_{i,1}, d_{i,2}, \dotsc$,
+            this Laurent polynomial is 
+            $\sum_i (-1)^i \sum_j T^{d_{i,j}}$,
+            where we use multi-index notation $T^d =
+            T_0^{d_0} T_1^{d_1} \dotsb T_r^{d_r}$.
+        Example
+            R = ZZ/32003[a..f];
+            K = koszulComplex vars R
+            betti K
+            p = poincare K
+            factor p
+        Example
+            C = freeResolution ideal(a*b, b*c*d, c*d*e^2)
+            betti C
+            poincare C
+        Text
+            Since the number of variables in the degrees ring is 
+            equal to the rank of the grading group, the Poincare 
+            polynomial may have more than one variable.
+        Example
+            S = ZZ/101[x,y,z, DegreeRank => 3];
+            L = koszulComplex vars S
+            poincare L
+        Text
+            If the terms in the complex are not free, then
+            this method uses just the degrees of the generators of each term.
+        Example
+            D = C ** coker vars R
+            poincare D
+            betti D
+        Text
+            This is equivalent to computing the Poincare polynomial of the Betti table.
+        Example
+            poincare betti D
+    SeeAlso
+        "Basic invariants and properties"
+        poincare
+        (poincareN, Complex)
+        betti
+///
+
+-- TODO: add in the key poincareN, once Complexes replaces ChainComplexes...
+doc ///
+    Key
+        (poincareN, Complex)
+    Headline
+        assemble degrees of a chain complex into a polynomial
+    Usage
+        poincareN C
+    Inputs
+        C:Complex
+    Outputs
+        :RingElement
+    Description
+        Text
+            This method encodes information about the internal and
+            homological degrees of the generators of each term in a
+            chain complex. It returns an element in the ring of
+            Laurent polynomials whose monomials correspond to the
+            degrees of the monomials in the underlying ring of $C$,
+            together with a variable to record the homological degree.
+            When the $i$-th term $C_i$ of the complex $C$ is generated
+            by elements of degree $d_{i,1}, d_{i,2}, \dotsc$, this
+            Laurent polynomial is $\sum_i (-1)^i \sum_j S^i
+            T^{d_{i,j}}$, where we use multi-index notation $T^d =
+            T_0^{d_0} T_1^{d_1} \dotsb T_r^{d_r}$.
+        Example
+            R = ZZ/32003[a..f];
+            K = koszulComplex vars R
+            betti K
+            p = poincareN K
+            factor p
+        Example
+            C = freeResolution ideal(a*b, b*c*d, c*d*e^2)
+            betti C
+            poincareN C
+        Text
+            Since the number of variables in the degrees ring is 
+            equal to the rank of the grading group, the Poincare 
+            polynomial may have more than one variable.
+        Example
+            S = ZZ/101[x,y,z, DegreeRank => 3];
+            L = koszulComplex vars S
+            poincareN L
+        Text
+            If the terms in the complex are not free, then
+            this method uses just the degrees of the generators of each term.
+        Example
+            D = C ** coker vars R
+            poincareN D
+            betti D
+    SeeAlso
+        "Basic invariants and properties"
+        (poincare, Complex)
+        betti
+///
+
+doc ///
+    Key
+        (regularity, Complex)
+    Headline
+        compute the Castelnuovo-Mumford regularity
+    Usage
+        regularity C
+    Inputs
+        C:Complex
+        Weights => List
+            for more information, see @TO [regularity, Weights]@
+    Outputs
+        :ZZ
+    Description
+        Text
+            Given a free complex $C$ over a standard graded polynomial ring,
+            the regularity $r$ of $C$ is the smallest integer such that
+            each basis element of $C_i$ has degree at most $i + r$.
+        Example
+            R = ZZ/101[a..d];
+            I = ideal(b^2-a*c, b*c-a*d, c^2-b*d)
+            C = freeResolution(R^1/I)
+            betti C
+            regularity C
+            regularity I
+            regularity (R^1/I)
+            assert(regularity C === regularity(R^1/I))
+        Text
+            The regularity is the label of the last row of the Betti table of $C$.
+        Example
+            betti C
+            betti(C[3])
+            regularity(C[3])
+        Text
+            Here is a slightly more complicated example.
+        Example
+            J = ideal(a^3, b^3, c^3, d^3, (a+b+c+d)^3);
+            FJ = freeResolution J
+            betti FJ
+            regularity FJ
+        Text
+            Although Castelnuovo-Mumford regularity is defined
+            in more general settings (e.g. toric varieties with multi-degrees)
+            this method does not currently handle these 
+            extensions.  Similarly, Castelnuovo-Mumford
+            regularity can be defined for non-free complexes,
+            but this method doesn't handle that case either.
+    SeeAlso
+        "Basic invariants and properties"
+        regularity
+        betti
+        freeResolution
 ///
 
 ///

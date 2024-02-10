@@ -2,8 +2,6 @@
 --- author(s): L.Gold
 --- note:
 
-undocumented {(hilbertSeries,CoherentSheaf)}
-
 document { 
      Key => hilbertSeries,
      Headline => "compute the Hilbert series",
@@ -71,26 +69,6 @@ document {
 	  "poincare M"
 	  }
      }
-
--- NOTE: listed as undocumented above.
--- document { 
---      Key => (hilbertSeries,CoherentSheaf),
---      Headline => "compute the Hilbert series of a coherent sheaf",
---      Usage => "hilbertSeries M",
---      Inputs => {
--- 	  "M"
--- 	  },
---      Outputs => {
--- 	  Divide => "the Hilbert series" },
---      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
---      coherent sheaf.",
---      EXAMPLE {
--- 	  "V = Proj(ZZ/101[x_0..x_2]);",
--- 	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
---       	  "s = hilbertSeries M",
---       	  "numerator s"
--- 	  }
---      }
 
 document { 
      Key => {(hilbertSeries, Ideal)},
@@ -162,30 +140,6 @@ document {
      }
 }
 
-document { 
-     Key => (hilbertSeries,ProjectiveVariety),
-     Headline => "compute the Hilbert series of a projective variety",
-     Usage => "hilbertSeries V",
-     Inputs => {
-	  "V" =>  ProjectiveVariety
-	  },
-     Outputs => {
-	  Divide =>   "the Hilbert series" },
-     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
-     projective variety, that is, the Hilbert series of the
-     homogeneous coordinate ring of ", TT "V", ". The saturation of
-     the ideal may need to be computed.",
-     PARA {
-	  "This method is not implemented yet."
-	  }
--* temporarily disabled
-     EXAMPLE {
-	  "V = Proj(QQ[x,y])",
-	  "s = hilbertSeries V",
-	  "numerator s"
-	  }
-*-
-     }
 document { 
      Key => [hilbertSeries, Order],
      Headline => "display the truncated power series expansion",

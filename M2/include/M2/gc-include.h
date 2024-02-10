@@ -6,6 +6,8 @@
 #ifndef GC_INCLUDED
   #define GC_INCLUDED 1
 
+  // IWYU pragma: begin_exports
+
   #ifdef GC_MALLOC
    #error "gc.h already included"
   #endif
@@ -52,4 +54,7 @@
       #include <gc/gc_cpp.h>
     #endif
   #endif
+
+  // IWYU pragma: end_exports
+
 #endif

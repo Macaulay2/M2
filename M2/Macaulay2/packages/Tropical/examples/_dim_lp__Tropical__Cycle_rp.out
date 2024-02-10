@@ -2,13 +2,13 @@
 
 i1 : QQ[x,y,z,w]
 
-o1 = QQ[x, y, z, w]
+o1 = QQ[x..z, w]
 
 o1 : PolynomialRing
 
 i2 : I=ideal(x^2-y*z+w^2,w^3-y^3*x+z^3);
 
-o2 : Ideal of QQ[x, y, z, w]
+o2 : Ideal of QQ[x..z, w]
 
 i3 : T=tropicalVariety I;
 

@@ -36,7 +36,9 @@ check-make:
 	@ echo GNU make version okay
 
 make-configure : check-autoconf configure
-configure: configure.ac VERSION config/files config/*.m4; autoconf
+configure: configure.ac VERSION config/files config/*.m4
+	rm -rf autom4te.cache
+	autoconf
 
 get-tools: usr-build/aclocal-path get-m4 get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:

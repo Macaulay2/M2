@@ -6,7 +6,9 @@ use gmp;
 use expr;
 use stdio0;
 
-header "#include \"../system/m2fileinterface.h\"";
+header "#include \"../system/m2fileinterface.h\"
+        #include <readline/history.h>";
+
 --provide a constant representation of default buffer size for a file
 --this must be set the same as the bufsize in stdio0.d
 bufsize ::= 4 * 1024;
@@ -154,6 +156,13 @@ init():void := (
 	       stdIO.inisatty = false; 
 	       stdIO.outisatty = false;
 	       )
+	  else
+	  if arg === "--webapp" then (
+	       stdIO.echo = true; -- so echo comes from M2 (need to disable it at level of tty with stty -echo)
+	       stdIO.readline = false; -- don't go thru readline
+	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
+	       stdIO.outisatty = true; -- not so important?
+	  )
 	  else
 	  if arg === "--read-only-files" then (
 	       readonlyfiles = true;
@@ -361,6 +370,8 @@ export openListener(filename:string):(file or errmsg) := (
      then opensocket(filename,false,false,true)
      else (file or errmsg)(errmsg("openListener: expected file name starting with '$'")));
 export flushinput(o:file):void := (
+     o.echoindex = o.echoindex - o.insize;
+     if o.echoindex < 0 then o.echoindex = 0;
      o.inindex = 0;
      o.insize = 0;
      o.bol = true;
@@ -639,11 +650,11 @@ export present(x:string):string := (
 	       ))
      else x);
 
-export presentn(x:string):string := ( -- fix newlines, also
+export presentn(x:string):string := ( -- fix newlines and other special chars, also
      fixesneeded := 0;
      foreach cc in x do (
 	  c := cc; 
-	  if c == char(0) || c == '\t' || c == '\b' || c == '\r' || c == '\"' || c == '\\' || c == '\n' 
+	  if c < char(32) || c == '\"' || c == '\\'
 	  then fixesneeded = fixesneeded + 1 
 	  );
      if fixesneeded != 0 then (
@@ -654,6 +665,7 @@ export presentn(x:string):string := ( -- fix newlines, also
 	       else if c == '\n' then (provide '\\'; provide 'n';)
 	       else if c == '\b' then (provide '\\'; provide 'b';)
 	       else if c == '\t' then (provide '\\'; provide 't';)
+	       else if c < char(32) then (provide '\\'; provide '?';)
 	       else (
 		    if c == '\"' || c == '\\' then provide '\\';
 	       	    provide c;
@@ -705,7 +717,12 @@ export filbuf(o:file):int := (
 	       r = (
 		    if o.infd == NOFD 
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
-		    else read(o.infd,o.inbuffer,n,o.insize)));
+		    else (
+			ret := read(o.infd,o.inbuffer,n,o.insize);
+			if ret > 0 && o == stdIO then (
+			    buf := tocharstarn(o.inbuffer, ret - 1);
+			    Ccode(void, "add_history(", buf, ")"));
+			ret)));
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
 	       return r;

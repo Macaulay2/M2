@@ -35,7 +35,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   // null is returned.
   const PolynomialRing* origR =
       groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
-  if (origR == 0)
+  if (origR == nullptr)
     {
       ERROR("expected polynomial ring");
       return nullptr;
@@ -78,7 +78,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
 
   const Ring* K = origR->getCoefficients();
   ResGausser* KK = ResGausser::newResGausser(K);
-  if (KK == 0)
+  if (KK == nullptr)
     {
       ERROR(
           "cannot use res(...,FastNonminimal=>true) with this type of "
@@ -236,7 +236,7 @@ const Matrix /* or null */* F4ResComputation::get_matrix(int level)
   if (mOriginalRing.getCoefficientRing()->is_QQ())
     {
       std::cout << "setting error message, returning null" << std::endl;
-      ERROR("cannot creat differential over this ring");
+      ERROR("cannot create differential over this ring");
       return nullptr;
     }
   const FreeModule* tar = get_free(level - 1);
@@ -248,7 +248,7 @@ MutableMatrix /* or null */* F4ResComputation::get_matrix(int level, int degree)
 {
   if (mOriginalRing.getCoefficientRing()->is_QQ())
     {
-      ERROR("cannot creat differential over this ring");
+      ERROR("cannot create differential over this ring");
       return nullptr;
     }
   return ResF4toM2Interface::to_M2_MutableMatrix(

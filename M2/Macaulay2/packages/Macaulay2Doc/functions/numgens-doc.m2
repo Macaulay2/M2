@@ -36,7 +36,7 @@ document {
      SeeAlso => {generators, trim, prune, mingens, ker,vars}
      }
 document { 
-     Key => (numgens,GeneralOrderedMonoid),
+     Key => (numgens, Monoid), -- TODO: combine with (numgens, Ring) below
      Headline => "number of generators of a monoid",
      Usage => "numgens M",
      Inputs => {
@@ -71,37 +71,13 @@ document {
 	  "numgens I"
 	  },
      PARA{},
-     "In order to find a more efficient set of of generators, use ",
+     "In order to find a more efficient set of generators, use ",
      TO mingens, " or ", TO trim, ".",
      EXAMPLE {
 	  "mingens I",
 	  "numgens trim I"
 	  },
      SeeAlso => {mingens, trim, generators}
-     }
-document { 
-     Key => (numgens,CoherentSheaf),
-     Headline => "the number of generators of the underlying module",
-     Usage => "numgens F",
-     Inputs => {
-	  "F"
-	  },
-     Outputs => {
-	  ZZ => {"number of generators of the underlying module ", TT "M", " of ", TT "F"}
-	  },
-     "In Macaulay2, each coherent sheaf comes equipped with a module over
-     the coordinate ring.  In the homogeneous case, this is not 
-     necessarily the number of generators of the sum of twists ", 
-     TT "H^0(F(d))", ", summed over all d, which in fact could be infinitely
-     generated.",
-     EXAMPLE {
-	  "R = QQ[a..d]/(a^3+b^3+c^3+d^3)",
-	  "X = Proj R;",
-	  "T' = cotangentSheaf X",
-     	  "numgens T'",
-	  "module T'"
-	  },
-     SeeAlso => {(module,CoherentSheaf),tangentSheaf}
      }
 document { 
      Key => {(numgens,Ring),(numgens, EngineRing),(numgens, FractionField),(numgens, MonomialIdeal),(numgens, PolynomialRing),(numgens, QuotientRing)},

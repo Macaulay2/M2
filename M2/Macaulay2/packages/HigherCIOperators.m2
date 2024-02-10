@@ -315,7 +315,7 @@ doc ///
      
      $\mu:L_{n-1}\otimes L_q \to L_{n+q-1}$
      
-     is the multiplcation in
+     is the multiplication in
      the Koszul algebra.
      
      The output $u\{n,p,q\}$ 

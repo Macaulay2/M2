@@ -41,9 +41,9 @@ depthHomogMon = I-> (
 --============================================================================    
     
     
-    
+
 -- RANDOM LINEAR TRANSFORMATIONS
--- this function produces a upper triangular liniar transformation with entries in k[X]
+-- this function produces a upper triangular linear transformation with entries in k[X]
 
 upTRT2 = (k,X,m) -> (
      Trans := {};
@@ -228,7 +228,7 @@ document {
 }
 
 document {
-     Key => {mRegularity,(mRegularity,Ideal)},
+     Key => {mRegularity,(mRegularity,Ideal), MonCurve},
      Headline => "compute Castelnuovo-Mumford regularity",
      Usage => " mRegularity I",
      Inputs => {"I" => Ideal => {"a homogeneous ", TO Ideal},
@@ -397,7 +397,7 @@ fastReg (Ideal):= opts -> I -> (
 -- regCM
 
 -- INPUT: I = a Cohen-Macaulay ideal in a polynomial ring
--- OUTPUT: the Castelnupovo Mumford regularity of I
+-- OUTPUT: the Castelnuovo Mumford regularity of I
 
 regCM = (I,d) -> (
    R :=ring I;

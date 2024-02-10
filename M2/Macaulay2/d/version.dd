@@ -57,9 +57,13 @@ header "
    #include <NTL/version.h>
 
    #undef ASSERT
-   #include <givaro/givinit.h>
-   #include <givaro/givconfig.h>
-   Givaro::GivaroMain givaroMain;";
+
+   #ifdef WITH_TBB
+   #include <tbb/tbb.h>
+   #endif
+
+   #include <Eigen/Core>
+   ";
 
 header "
 #pragma GCC diagnostic push
@@ -72,20 +76,9 @@ gcversion():constcharstar := Ccode(returns,"
      unsigned major = x >> 16;
      unsigned minor = (x >> 8) & 0xff;
      unsigned micro = x & 0xff;
-     if (micro == 0xff) sprintf(buf,\"%d.%d\", major, minor);
-     else sprintf(buf,\"%d.%d.%d\", major, minor, micro);
+     if (micro == 0xff) snprintf(buf,40,\"%d.%d\", major, minor);
+     else snprintf(buf,40,\"%d.%d.%d\", major, minor, micro);
      return buf");
-
-header "#include <atomic_ops.h>";
-atomicopsversion():constcharstar := Ccode(returns,"
-#ifdef AO_VERSION_MICRO
-     static char buf[40];
-     sprintf(buf,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
-     return buf
-#else
-     return \"version number not available\"
-#endif
-");
 
 header "#include <fflas-ffpack/config.h>";
 ffpackVersion():constcharstar := Ccode(constcharstar,"__FFLASFFPACK_PACKAGE_VERSION");
@@ -107,11 +100,19 @@ factoryversion():constcharstar := Ccode(returns,"
 header "#include <readline/readline.h>";
 readlineversion():constcharstar := Ccode(returns,"
      static char buf[8];
-     sprintf(buf, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
+     snprintf(buf, 8, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
      return buf");
 
 header "#include <gdbm.h>";
 gdbmversion():constcharstar := Ccode(returns, "return gdbm_version");
+
+header "extern \"C\" void ilaver_(int *major, int *minor, int *patch);";
+lapackversion():constcharstar := Ccode(returns, "
+    int major, minor, patch;
+    static char buf[40];
+    ilaver_(&major, &minor, &patch);
+    snprintf(buf, 40, \"%d.%d.%d\", major, minor, patch);
+    return buf");
 
 ic := Ccode(int, "
      #if defined(__INTEL_COMPILER)
@@ -154,7 +155,6 @@ setupconst("version", Expr(toHashTable(Sequence(
    "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
-   "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if WITH_MYSQL
@@ -163,7 +163,6 @@ setupconst("version", Expr(toHashTable(Sequence(
 		   \"not present\"
 	  #endif
 	  "),
-   "givaro version" => Ccode(constcharstar, "stringize(GIVARO_MAJOR_VERSION) \".\" stringize(GIVARO_MINOR_VERSION) \".\" stringize(GIVARO_REVISION_VERSION)" ),
    "fflas_ffpack version" => ffpackVersion(),
    "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
@@ -190,7 +189,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
-   "flint version" => Ccode(constcharstar,"flint_version"),
+   "flint version" => Ccode(constcharstar,"FLINT_VERSION"),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP
 	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)
@@ -206,6 +205,19 @@ setupconst("version", Expr(toHashTable(Sequence(
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
+   "tbb version" => Ccode(constcharstar,"
+	 #ifdef WITH_TBB
+	   stringize(TBB_VERSION_MAJOR) \".\" stringize(TBB_VERSION_MINOR)
+	 #else
+	   \"not present\"
+	 #endif
+	 "),
+   "lapack version" => lapackversion(),
+   "eigen version" => Ccode(constcharstar, "
+       stringize(EIGEN_WORLD_VERSION) \".\"
+       stringize(EIGEN_MAJOR_VERSION) \".\"
+       stringize(EIGEN_MINOR_VERSION)"),
+   "libffi version" => Ccode(constcharstar, "FFI_VERSION"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),

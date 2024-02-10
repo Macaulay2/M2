@@ -7,7 +7,7 @@ Reply-to: dan@math.uiuc.edu
 
 
 It seems that our eliminate command is slower than it has to be.  In the
-exmaple below it uses the monomial ordering
+example below it uses the monomial ordering
 
 	R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>{GRevLex => 2, GRevLex => 12}]
 

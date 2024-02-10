@@ -8,14 +8,16 @@
 ReducedGB_ZZ::~ReducedGB_ZZ()
 {
   delete T;
-  ringtableZZ = 0;
+  ringtableZZ = nullptr;
 }
 
 ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
                            const PolynomialRing *originalR0,
                            const FreeModule *F0,
                            const FreeModule *Fsyz0)
-    : ReducedGB(R0, originalR0, F0, Fsyz0), T(0)
+    : ReducedGB(R0, originalR0, F0, Fsyz0),
+      T(nullptr),
+      ringtableZZ(nullptr)
 {
   T = MonomialTableZZ::make(R0->n_vars());
   if (originalR->is_quotient_ring())
@@ -23,7 +25,7 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
 }
 
 void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0) {}
-struct ReducedGB_ZZ_sorter : public std::binary_function<int, int, bool>
+struct ReducedGB_ZZ_sorter
 {
   GBRing *R;
   const FreeModule *F;
@@ -67,7 +69,7 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
   for (VECTOR(int)::iterator i = positions.begin(); i != positions.end(); i++)
     {
       gbvector *f = polys0[*i].f;
-      exponents e = R->exponents_make();
+      exponents_t e = R->exponents_make();
       R->gbvector_get_lead_exponents(F, f, e);
       if ((!ringtableZZ ||
            !ringtableZZ->find_term_divisors(1, f->coeff.get_mpz(), e, 1)) &&
@@ -83,7 +85,7 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
 
           if (auto_reduced) remainder(h, false, junk);  // This auto-reduces h.
 
-          if (h.f != 0 && mpz_sgn(h.f->coeff.get_mpz()) < 0)
+          if (h.f != nullptr && mpz_sgn(h.f->coeff.get_mpz()) < 0)
             {
               R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
               R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
@@ -97,7 +99,7 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
     }
 }
 
-enum ReducedGB_ZZ::divisor_type ReducedGB_ZZ::find_divisor(exponents exp,
+enum ReducedGB_ZZ::divisor_type ReducedGB_ZZ::find_divisor(exponents_t exp,
                                                            int comp,
                                                            int &result_loc)
 {
@@ -131,12 +133,12 @@ enum ReducedGB_ZZ::divisor_type ReducedGB_ZZ::find_divisor(exponents exp,
 
 void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
-  gbvector *zero = 0;
+  gbvector *zero = nullptr;
   gbvector head;
   gbvector *frem = &head;
-  frem->next = 0;
+  frem->next = nullptr;
   POLY h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   gbvector *r;
   POLY g;
   while (!R->gbvector_is_zero(h.f))
@@ -164,7 +166,7 @@ void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
       frem->next = h.f;
       frem = frem->next;
       h.f = h.f->next;
-      frem->next = 0;
+      frem->next = nullptr;
     }
   h.f = head.next;
   f.f = h.f;
@@ -174,12 +176,12 @@ void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
 
 void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
-  gbvector *zero = 0;
+  gbvector *zero = nullptr;
   gbvector head;
   gbvector *frem = &head;
-  frem->next = 0;
+  frem->next = nullptr;
   gbvector *h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
 
   gbvector *r;
   POLY g;
@@ -216,7 +218,7 @@ void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
       frem->next = h;
       frem = frem->next;
       h = h->next;
-      frem->next = 0;
+      frem->next = nullptr;
     }
   h = head.next;
   f = h;

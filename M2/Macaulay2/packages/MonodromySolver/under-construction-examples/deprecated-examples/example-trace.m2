@@ -1,5 +1,5 @@
 -* TODO
-1) bihomegenize
+1) bihomogenize
 2) divide-conquer summation for trace matrix?
 3) more parameters
 4) better abstraction

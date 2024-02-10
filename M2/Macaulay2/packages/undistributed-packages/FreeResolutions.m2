@@ -274,7 +274,7 @@ makeMatrix(ZZ, ZZ, ResolutionData) := (lev, deg, D) -> (
             t := D.Frame#lev#i;
             processRow(t.LeadTerm, lev, D)
             );
-    -- step 2: loop through all elements of RowList, do the same, until at end of liast
+    -- step 2: loop through all elements of RowList, do the same, until at end of list
     r := 0;
     elapsedTime rows := while r < #D.RowList list (
         -- these will have degree 'deg'
@@ -464,7 +464,7 @@ M3 * M4
 for t in D.Frame#2 do processRow(t#LeadTerm, 2, D)
 for r in D.RowList list (
     -- get the row monomials, and coeffs
-    -- apply lookup, set the elemnts of the row as appropriate
+    -- apply lookup, set the elements of the row as appropriate
     )
 spairs = for i from 0 to 13 list Ps#2#i . LeadTerm
 SP = for sp in spairs list getImage(sp, 2, D)

@@ -112,7 +112,7 @@ class GBinhom_comp : public GBComputation
 
   virtual void remove_gb() {}
   // Performing the computation
-  int calc(const int *deg, const intarray &stop_conditions);
+  int calc(const int *deg, const gc_vector<int>& stop_conditions);
 
   // Adding generators
   void add_gens(int lo, int hi, const Matrix *m);

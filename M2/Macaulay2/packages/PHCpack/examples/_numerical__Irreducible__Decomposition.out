@@ -1,6 +1,4 @@
 -- -*- M2-comint -*- hash: -1215191058
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
 
@@ -41,4 +39,3 @@ dim =5  degree=2
 dim =5  degree=4
 
 i11 : 
-Bye world from process 0 out of 1 processes

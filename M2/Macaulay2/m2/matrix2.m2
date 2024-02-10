@@ -1,5 +1,10 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+needs "gb.m2"
+-- TODO: needs "genmat.m2" but would introduce a cycle
+needs "matrix1.m2"
+needs "quotring.m2"
+
 pivots = method()
 
 pivots Matrix := (p) -> (			    -- I wish this could be in the engine
@@ -123,7 +128,7 @@ complement Matrix := Matrix => (f) -> (
 	  submatrix'(id_(ZZ^m),rows') // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
      else if complementOkay R then (
-	  (R',F) := flattenRing R; -- we flatten because otherwise we might get the degree map wrong, spoiling homoeneity
+	  (R',F) := flattenRing R; -- we flatten because otherwise we might get the degree map wrong, spoiling homogeneity
 	  f' := F f;
 	  map(target f,,R ** complement (map(coefficientRing R', R')) f')
 	  )
@@ -242,6 +247,26 @@ trimHelper = ((opts, M) -> (
 addHook((trim, Module), Strategy => Inhomogeneous, (opts, M) -> trimHelper(opts ++ {Strategy => Inhomogeneous}, M))
 addHook((trim, Module), Strategy => Complement,    (opts, M) -> trimHelper(opts ++ {Strategy => Complement},    M))
 
+trimPID := M -> if M.?relations then (if M.?generators then trimPID image generators M else ambient M) / trimPID image relations M else if not M.?generators then M else (
+    f := presentation M;
+    (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
+    isunit := r -> r != 0 and degree r === {0};
+    rows := select(min(rank source g,rank target g),i->isunit g_(i,i));
+    rows = rows | toList(rank target f..<rank target g); -- temporary fix for #3017
+    ch = submatrix'(ch,rows,);
+    p:=id_(target ch)//ch;
+    q:=generators M*p;
+    d:=diagonalMatrix apply(rank source q,i->lcm apply(entries (q_i),a->if a==0 then 1 else 1/leadCoefficient a));
+    image (q*d)
+    )
+addHook((trim, Module), Strategy => "PID",
+    (opts, M) -> (
+	R := ring M;
+	if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then trimPID M
+	)
+    )
+
+
 syz Matrix := Matrix => opts -> (f) -> (
     c := runHooks((syz, Matrix), (opts, f));
     if c =!= null then return c;
@@ -348,17 +373,16 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
 	  Degree => degree f' - degree g'  -- set the degree in the engine instead
 	  )))
 
-RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
-Matrix      \\ RingElement := (f,r) -> r // f
+Number // Matrix :=
+RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
+Matrix \\ Number :=
+Matrix \\ RingElement := (f,r) -> r // f
 
-Number // Matrix := (r,f) -> matrix{{promote(r,ring f)}} // f
-Matrix \\ Number := (f,r) -> r // f
-
-Matrix      // RingElement := (f,r) -> f // (r * id_(target f))
+Matrix // Number :=
+Matrix // RingElement := (f,r) -> f // (r * id_(target f))
+Number \\ Matrix :=
 RingElement \\ Matrix      := (r,f) -> f // r
 
-Matrix // Number := (f,r) -> f // promote(r,ring f)
-Number \\ Matrix := (r,f) -> f // r
 
 remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g
@@ -391,6 +415,8 @@ Number % Ideal := (r,I) -> (
      r = promote(r,R);
      if r == 0 then return r;
      r % if isHomogeneous I and heft R =!= null then gb(I,DegreeLimit => toList (degreeLength R : 0)) else gb I)
+isMember(RingElement, Ideal) :=
+isMember(Number,      Ideal) := (r, I) -> zero(r % I)
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be sped up: compute gb matrix {{r}} first, tensor with id matrix, force gb, etc
 
@@ -499,20 +525,6 @@ listOfVars(Ring,RingElement) := (R,x) -> (
      if class x === R 
      then {index x}
      else error "expected a ring element of the same ring")
-
-coefficient(MonoidElement,RingElement) := (m,f) -> (
-     RM := ring f;
-     R := coefficientRing RM;
-     M := monoid RM;
-     if not instance(m,M) then error "expected monomial from same ring";     
-     new R from rawCoefficient(raw R, raw f, raw m))
-coefficient(RingElement,RingElement) := (m,f) -> (
-     if size m != 1 or leadCoefficient m != 1 then error "expected a monomial";
-     RM := ring f;
-     R := coefficientRing RM;
-     promote(rawCoefficient(raw R, raw f, rawLeadMonomialR m), R))
-RingElement _ MonoidElement := RingElement => (f,m) -> coefficient(m,f)
-RingElement _ RingElement := RingElement => (f,m) -> coefficient(m,f)
 
 coefficients = method(Options => {Variables => null, Monomials => null})
 coefficients(RingElement) := o -> (f) -> coefficients(matrix{{f}},o)

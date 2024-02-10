@@ -9,9 +9,9 @@
 #include <iostream>
 RingMap::RingMap(const Matrix *m) : R(m->get_ring())
 {
-  M = 0;
+  M = nullptr;
   P = R->cast_to_PolynomialRing();
-  if (P != 0)
+  if (P != nullptr)
     {
       M = P->getMonoid();
       K = P->getCoefficientRing();
@@ -35,14 +35,14 @@ RingMap::RingMap(const Matrix *m) : R(m->get_ring())
       _elem[i].monom_is_one = true;
       _elem[i].bigelem_is_one = true;
       _elem[i].coeff = ZERO_RINGELEM;
-      _elem[i].monom = NULL;
+      _elem[i].monom = nullptr;
 
       ring_elem f = m->elem(0, i);  // This does a copy.
       _elem[i].bigelem = f;
 
       if (R->is_zero(f))
         _elem[i].is_zero = true;
-      else if (P == 0)
+      else if (P == nullptr)
         {
           // Not a polynomial ring, so put everything into coeff
           if (!K->is_equal(f, one))
@@ -58,7 +58,7 @@ RingMap::RingMap(const Matrix *m) : R(m->get_ring())
 #warning "also handle fraction rings"
 #endif
           Nterm *t = f;
-          if (t->next == NULL)
+          if (t->next == nullptr)
             {
               // This is a single term
               if (!K->is_equal(t->coeff, one))
@@ -93,9 +93,9 @@ RingMap::~RingMap()
       if (!_elem[i].monom_is_one) M->remove(_elem[i].monom);
       R->remove(_elem[i].bigelem);
     }
-  deletearray(_elem);
-  K = NULL;
-  M = NULL;
+  freemem(_elem);
+  K = nullptr;
+  M = nullptr;
 }
 
 unsigned int RingMap::computeHashValue() const
@@ -139,7 +139,7 @@ void RingMap::text_out(buffer &o) const
 
 ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
                              const ring_elem a,  // coefficient of term
-                             const int *vp, // varpower monomial
+                             const_varpower vp,
                              int first_var,
                              int nvars_in_source) const
 {
@@ -156,11 +156,11 @@ ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
   ring_elem result = sourceK->eval(this, a, first_var + nvars_in_source);
   if (R->is_zero(result)) return result;
 
-  int *result_monom = NULL;
-  int *temp_monom = NULL;
+  monomial result_monom = nullptr;
+  monomial temp_monom = nullptr;
   ring_elem result_coeff = K->from_long(1);
 
-  if (P != 0)
+  if (P != nullptr)
     {
       result_monom = M->make_one();
       temp_monom = M->make_one();
@@ -216,7 +216,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
               if (R->is_zero(result)) break;
             }
         }
-      if (P != 0)
+      if (P != nullptr)
         {
           ring_elem temp = P->make_flat_term(result_coeff, result_monom);
           K->remove(result_coeff);

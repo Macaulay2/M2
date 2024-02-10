@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 printpass := ID -> x -> (stderr << ID << ": " << x << endl; x)
 fold3 := (f,x,v) -> (scan(v, y -> x = f(x,y)); x)
 fold2 := (f,v) -> fold3(f,v#0,drop(v,1))
@@ -7,7 +9,7 @@ mergeopts := x -> fold2((a,b) -> merge(a,b,last), x)
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 searchPath = method()
-searchPath(List,String) := List => (pth,fn) -> select(pth, dir -> fileExists(dir|"/"|fn))
+searchPath(List,String) := List => (pth,fn) -> searchPath'(pth,fn)
 searchPath(String) := List => (fn) -> searchPath(path,fn)
 
 makeDirectory = method()
@@ -270,7 +272,7 @@ tt#"\\"= "_bs"			 -- can't occur in a file name: MS-DOS and sh
 tt#"_" = "_us"					      -- our escape character
 
 -- some OSes are case insensitive:
-apply(characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cap -> tt#cap = concatenate("__", cap))
+for cap in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" do tt#cap = concatenate("__", cap)
 
 toFilename = method()
 toFilename String := s -> (
@@ -281,7 +283,7 @@ toFilename String := s -> (
      -- from occurring in the first position, where it would have a special
      -- meaning to Macaulay2.
      -- We should check which characters are allowed in URLs.
-     s = concatenate("_",apply(characters s, c -> tt#c));
+     s = concatenate("_", for c in s list tt#c);
      s)
 
 regexpString := s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
@@ -389,19 +391,19 @@ dotemacsFix0 = ///
 (load "M2-init")
 
 ;; this version will not give an error if M2-init.el is not found:
-;(load "M2-init" t)
+;; (load "M2-init" t)
 
-; You may comment out the following line with an initial semicolon if you 
-; want to use your f12 key for something else.  However, this action
-; will be undone the next time you run setup() or setupEmacs().
+;; You may comment out the following line with an initial semicolon if you 
+;; want to use your f12 key for something else.  However, this action
+;; will be undone the next time you run setup() or setupEmacs().
 (global-set-key [ f12 ] 'M2)
 
-; Prevent Emacs from inserting a superfluous "See" or "see" in front
-; of the hyperlinks when reading documentation in Info mode.
+;; Prevent Emacs from inserting a superfluous "See" or "see" in front
+;; of the hyperlinks when reading documentation in Info mode.
 (setq Info-hide-note-references 'hide)
 ///
 
-emacsHeader := ";-*-emacs-lisp-*-\n"
+emacsHeader := ";; -*-emacs-lisp-*-\n"
 shHeader := "#-*-sh-*-\n"
 
 bashtempl := ///

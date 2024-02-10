@@ -5,13 +5,17 @@
 
 // Computation of Hilbert functions via Bigatti's (et al) algorithm.
 
-#include "monideal.hpp"
-#include "matrix.hpp"
-#include "polyring.hpp"
+#include "hash.hpp"       // for MutableEngineObject
+#include "monoid.hpp"     // for Monoid, monomial
+#include "newdelete.hpp"  // for gc_vector, our_new_delete
+#include "ringelem.hpp"   // for ring_elem
 
-class RingElement;
+class FreeModule;
 class Matrix;
 class MonomialIdeal;
+class PolynomialRing;
+class RingElement;
+class stash;
 
 class partition_table
 // Partition a monomial ideal into several such that
@@ -20,13 +24,13 @@ class partition_table
 {
   int n_vars;
   int n_sets;
-  intarray adad;
-  intarray aoccurs;
+  gc_vector<int> adad;
+  gc_vector<int> aoccurs;
   int *dad;
   int *occurs;
 
   int merge_in(int x, int y);
-  void merge_in(const int *m);
+  void merge_in(const_varpower m);
   int representative(int x);
 
   stash *mi_stash;  // for all of the nodes in all of the monomial ideals
@@ -35,7 +39,7 @@ class partition_table
   ~partition_table() {}
   void reset(int nvars);
   void partition(MonomialIdeal *&I,
-                 VECTOR(MonomialIdeal *)& result);  // Consumes I.
+                 gc_vector<MonomialIdeal*>& result);  // Consumes I.
 };
 
 struct hilb_step : public our_new_delete
@@ -46,7 +50,7 @@ struct hilb_step : public our_new_delete
   ring_elem h0;  // Hilbert function so far computed 'to the left'
   ring_elem h1;
   int first_sum;  // First monomial ideal which corresponds to the 'sum' part
-  VECTOR(MonomialIdeal *) monids;  // The (partitioned) array of monomial ideals
+  gc_vector<MonomialIdeal*> monids;  // The (partitioned) array of monomial ideals
 };
 
 /**
@@ -87,12 +91,12 @@ class hilb_comp : public MutableEngineObject
 
   // Local variables that are allocated once and for all
   // extreme care is needed for their use!
-  int *LOCAL_deg1;  // An element of the degree monoid
-  intarray LOCAL_vp;
+  monomial LOCAL_deg1;  // An element of the degree monoid
+  gc_vector<int> LOCAL_vp;
   partition_table part_table;
 
   int step();  // Returns 0 when done
-  void recurse(MonomialIdeal *&I, const int *pivot_vp);
+  void recurse(MonomialIdeal *&I, const_varpower pivot_vp);
   void do_ideal(MonomialIdeal *I);
 
  public:
@@ -143,7 +147,7 @@ class hilb_comp : public MutableEngineObject
 //
 //   RingElement /* or null */ *hilbert(const Matrix *M);
 //   // This one is pretty easy: loop through each component,
-//   // make a monomial ideal, and compute its hilbert function,
+//   // make a monomial ideal, and compute its Hilbert function,
 //   // then multiply it by the degree of that row component.
 //
 //
@@ -181,7 +185,7 @@ class hilb_comp : public MutableEngineObject
 //   // Local variables that are allocated once and for all
 //   // extreme care is needed for their use!
 //   int *LOCAL_deg1; // An element of the degree monoid
-//   intarray LOCAL_vp;
+//   gc_vector<int> LOCAL_vp;
 //   partition_table part_table;
 //
 //   int step();                        // Returns 0 when done
@@ -225,19 +229,19 @@ class hilb_comp : public MutableEngineObject
 // {
 // public:
 //   HilbertComputation(const Ring *R,
-//                   VECTOR(int) &comp,
+//                   gc_vector<int> &comp,
 //                   M2_arrayint wts);
 //
 //   insert_generator(const int *m, int comp);
 //
 //   RingElement /* or null */ * multDegreeHilbert(const FreeModule *F);
-//   RingElement /* or null */ * hilbert(VECTOR(int) &comp);
+//   RingElement /* or null */ * hilbert(gc_vector<int> &comp);
 //
 //   // The following routines all use the singly graded degree ring.
 //   static RingElement /* or null */ * hilbert(const Ring *R,
-//                                   VECTOR(exponents) &exps,
-//                                   VECTOR(int) &comps,
-//                                   VECTOR(int) &comp_degs,
+//                                   gc_vector<exponents> &exps,
+//                                   gc_vector<int> &comps,
+//                                   gc_vector<int> &comp_degs,
 //                                   M2_arrayint wts);
 //
 //   static int codimension(const RingElement *hf);
@@ -248,15 +252,15 @@ class hilb_comp : public MutableEngineObject
 //   // returns the codimension, and places hf/(1-t)^codim into result_hf.
 //
 //   static RingElement /* or null */ * multDegreeHilbert(const Ring *R,
-//                                             VECTOR(exponents) &exps,
-//                                             VECTOR(int) &comps,
+//                                             gc_vector<exponents> &exps,
+//                                             gc_vector<int> &comps,
 //                                             const FreeModule *F);
 //
 //   // The following routines all use the singly graded degree ring.
 //   static RingElement /* or null */ * hilbert(const Ring *R,
-//                                   VECTOR(exponents) &exps,
-//                                   VECTOR(int) &comps,
-//                                   VECTOR(int) &comp_degs,
+//                                   gc_vector<exponents> &exps,
+//                                   gc_vector<int> &comps,
+//                                   gc_vector<int> &comp_degs,
 //                                   M2_arrayint wts);
 //
 //   static int codimension(const RingElement *hf);

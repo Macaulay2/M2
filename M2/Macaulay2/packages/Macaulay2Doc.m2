@@ -23,7 +23,10 @@ scan(pairs Core#"raw documentation", (k,v) -> (
 
 beginDocumentation()
 
+-- a local way to use private global symbols from Core
+core = nm -> value Core#"private dictionary"#nm
 load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
+erase symbol core
 
 if keys Macaulay2Doc#"private dictionary" =!= {} 
 then error splice (

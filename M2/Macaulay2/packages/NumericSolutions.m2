@@ -47,11 +47,11 @@ compMatr(Ideal,RingElement) := (I,f) -> (
  -- polynomial f over the ring R. The ideal I needs to be zero dimensional
  -- over the ring R, otherwise the function returns an error.
  
- -- inputs: the ring R where the ideal is defied,
+ -- inputs: the ring R where the ideal is defined,
  --         the ideal I,
  --         the function f,
  
- -- output: the companion matrix associated to associated to the 
+ -- output: the companion matrix associated to the 
  --         function f, of the ideal I over the ring R.
  
  -- find the ring
@@ -636,7 +636,7 @@ enumSolve = (R,I,M,toll) -> (
  --          the companion matrices M of the ideal I
  --          the tolerance toll.
  
- -- output: a list contining the solutions
+ -- output: a list containing the solutions
  
  -- variables employed
  varR :=  gens R;

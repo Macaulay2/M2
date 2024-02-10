@@ -9,7 +9,7 @@ class SymmMatrix
     if (m0->n_rows() != 1)
       {
         ERROR("expected one row");
-        return 0;
+        return nullptr;
       }
 
     SymmMatrix s(m0, p);
@@ -48,7 +48,7 @@ class SymmMatrix
     const FreeModule *Fp = m0->rows()->symm(p);
     const FreeModule *Gp = m0->cols()->symm(p);
 
-    int *dp = R->degree_monoid()->make_new(m->degree_shift());
+    monomial dp = R->degree_monoid()->make_new(m->degree_shift());
     R->degree_monoid()->power(dp, p, dp);
 
     result = MatrixConstructor(Fp, Gp, dp);
@@ -133,7 +133,7 @@ Matrix /* or null */ *Matrix::symm(int n) const
 //   const FreeModule *Fp = m0->rows()->symm(p);
 //   const FreeModule *Gp = m0->cols()->symm(p);
 //
-//   int *dp = R->degree_monoid()->make_new(m->degree_shift());
+//   monomial dp = R->degree_monoid()->make_new(m->degree_shift());
 //   R->degree_monoid()->power(dp, p, dp);
 //
 //   result = MatrixConstructor(Fp,Gp,dp);

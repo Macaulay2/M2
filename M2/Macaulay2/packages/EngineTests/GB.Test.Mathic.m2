@@ -166,9 +166,9 @@ TEST ///
     7w2+5wx+2x2+3wy+9xy-4y2-5wz-7xz-5yz-4z2-5w+4x+6y-9z+2,
     8w2+5wx+5x2-4wy+2xy+7y2+2wz-7xz-8yz+7z2+3w-7x-7y-8z+8"
   time g2 = groebnerBasis(J1, Strategy=>"F4", "MGBOptions"=>{"Log"=>"all"})
-  time g2 = groebnerBasis(J1, Strategy=>"MGB");
-  time g3 = groebnerBasis(J1, Strategy=>"F4");
-  time g1 = gens gb J1;
+  time g2 = groebnerBasis(ideal J1_*, Strategy=>"MGB");
+  time g3 = groebnerBasis(ideal J1_*, Strategy=>"F4");
+  time g1 = gens gb ideal(J1_*);
   assert(g1 == g2)
   assert(g1 == g3)
 
@@ -182,7 +182,7 @@ TEST ///
   time g2 = groebnerBasis(J1, Strategy=>"MGB");
   time g3 = groebnerBasis(J1, Strategy=>"F4");
   --time groebnerBasis(J1, Strategy=>"F4", "MGBOptions"=>{"Log"=>"all"})
-  time g1 = gens gb J1;
+  time g1 = gens gb (ideal J1_*);
   assert(g1 == g2)
   assert(g1 == g3)
   

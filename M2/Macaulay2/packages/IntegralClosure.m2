@@ -685,7 +685,7 @@ isNormal(Ring) := Boolean => (R) -> (
      )
 
 --------------------------------------------------------------------
--- MES TODO: don't require homogeneeous!!
+-- MES TODO: don't require homogeneous!!
 conductor = method()
 conductor RingMap := Ideal => (F) -> (
      --Input:  A ring map where the target is finitely generated as a 
@@ -1103,9 +1103,6 @@ makeS2 (S/intersect(ideal"a,b", ideal"b,c",ideal"c,a"))
 *-
 
 --------------------------------------------------------------------
--- This is used in some examples.  Move to the engine?
-content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
---------------------------------------------------------------------
 TOOSLOW = method()
 TOOSLOW String := (str) -> null
 
@@ -1486,7 +1483,7 @@ doc ///
      {\tt StartWithOneMinor} tells the algorithm to not compute the entire Jacobian ideal, 
      just find one element in it.  This is often a bad choice, unless the ideal is large
      enough that one can't compute the Jacobian ideal.  In the future, we plan on using
-     the @TO "FastLinAlg::FastLinAlg"@ package to compute part of the Jacobian ideal.
+     the @TO "FastMinors::FastMinors"@ package to compute part of the Jacobian ideal.
      
      {\tt SimplifyFractions} changes the fractions to hopefully be simpler.  Sometimes it
      succeeds, yet sometimes it makes the fractions worse.  This is because of the manner
@@ -3068,7 +3065,7 @@ loadPackage("IntegralClosure", Reload=>true)
 
     assert not localIsQuasiHomogeneous f    
 
-    -- now get the rees ideal of the euler ideal
+    -- now get the Rees ideal of the Euler ideal
     I = eulerIdeal f
     J = reesIdeal(I, I_0, Variable => w)
     J = first flattenRing J
@@ -3508,7 +3505,7 @@ elapsedTime assert(gens(If*Ig) % integralClosure(Ifg, Verbosity => 4) == 0)
 elapsedTime integralClosure Ifg
 
 
--- MES: this is me playing around tryiing to find better fractions, cvan be removed.
+-- MES: this is me playing around trying to find better fractions, can be removed.
 use ring ideal R'
 contract(w_(2,0), gens ideal R')
 ideal R'
@@ -3572,7 +3569,7 @@ ConductorElement??
 
 correctness; makeS2; 
 use Normaliz where possible?; 
-FastLinAlg?
+FastMinors?
 *-
 
 --- Should Singh/Swanson be an option to integralClosure or its own

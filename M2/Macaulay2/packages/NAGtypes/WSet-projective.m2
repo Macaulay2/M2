@@ -49,7 +49,7 @@ addPointsToChart (PWSet, List, RingElement) := (PW,pts,H) -> (
     W.Points = W.Points | pts;
     )  
 
-toChart(PWSet,Point,RingElement) := (PW,p,H) -> (
+toChart(PWSet,AbstractPoint,RingElement) := (PW,p,H) -> (
     a := sub(H,matrix p);
     if abs a < PW.cache#Tolerance then infinity else point{ apply(coordinates p,x->x/a) }
     )  

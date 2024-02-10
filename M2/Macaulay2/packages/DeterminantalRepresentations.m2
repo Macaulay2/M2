@@ -1,7 +1,7 @@
 newPackage("DeterminantalRepresentations",
 	AuxiliaryFiles => false,
-	Version => "1.3.0",
-	Date => "October 28, 2019",
+	Version => "1.3.1",
+	Date => "November 8, 2021",
 	Authors => {
 		{Name => "Justin Chen",
 		Email => "jchen646@gatech.edu"},
@@ -22,7 +22,7 @@ newPackage("DeterminantalRepresentations",
 	     "published article URI" => "https://msp.org/jsag/2020/10-1/p02.xhtml",
 	     "published article DOI" => "https://doi.org/10.2140/jsag.2020.10.9",
 	     "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x02-DeterminantalRepresentations.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/DeterminantalRepresentations.m2",
 	     "release at publication" => "f3c4030a3e66ae51f54ec24a89e1d5b1992a82eb",	    -- git commit number in hex
 	     "version at publication" => "1.3.0",
 	     "volume number" => "10",
@@ -474,9 +474,9 @@ cholesky Matrix := Matrix => opts -> A -> (
 
 companionMatrix = method()
 companionMatrix RingElement := Matrix => f -> (
-     (n, k, x) := ((degree f)#0, ultimate(coefficientRing, ring f), (support f)#0);
+     (n, k, x) := ((degree f)#0, coefficientRing ring f, (support f)#0);
      C := sub(last coefficients(f, Monomials => apply(n+1, i -> x^i)), k);
-     (map(k^1,k^(n-1),0) || id_(k^(n-1))) | submatrix'((-1/C_(n,0))*C,{n},)
+     (map(k^1,k^(n-1),0) || id_(k^(n-1))) | (submatrix'(-C, {n}, )*inverse C^{n})
 )
 
 -- Documentation --

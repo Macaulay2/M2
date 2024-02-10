@@ -90,7 +90,7 @@ addWSet (WCollection, List, MultiSlicingVariety, List) := (W,H,S,pts) -> W#"witn
 	    apply(#H, i->rationalMap transpose matrix {flatten entries S#"maps"#i | {H#i}})), 
 	pts)
 
-toChart(WCollection,Point,List) := (W,p,H) -> (
+toChart(WCollection,AbstractPoint,List) := (W,p,H) -> (
     N := dim ambient W;
     assert(#N==#H);
     A := for h in H list sub(h,matrix p);

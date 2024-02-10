@@ -18,7 +18,14 @@ S = K[x]
 assert(toString promote(a,S) == "a")
 raw promote(a,S)  -- now it works
 
-end
+-- git issue 978 FIXED
+  rands = for i from 1 to 10 list toString (
+    k = GF(81);
+    random(k^2, k^2)
+    )
+  assert(# unique rands > 1)
+
+end--
 ------------------------------------
 gives (gave) this:  fixed 11/7/08
 

@@ -12,7 +12,7 @@ void ARingRR::elem_text_out(buffer &o,
   ElementType &ap1 = const_cast<ElementType &>(ap);
   mpfr_t a;
   mpfr_init(a);
-  mpfr_set_d(a, ap1, GMP_RNDN);
+  mpfr_set_d(a, ap1, MPFR_RNDN);
   M2_string s = (*gmp_tostringRRpointer)(a);
   mpfr_clear(a);
   bool prepend_plus = p_plus && (s->array[0] != '-');

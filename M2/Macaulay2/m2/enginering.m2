@@ -1,5 +1,10 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+-- TODO: some functions seems to depend on other files
+needs "expressions.m2"
+needs "remember.m2"
+needs "rings.m2"
+
 RingElement.synonym = "ring element"
 value RingElement := identity
 raw RingElement := f -> f#0
@@ -24,12 +29,6 @@ promote(QQ,RingElement) := (r,S) -> (
      b := promote(denominator r,S);
      if a % b == 0 then a // b
      else error ("promotion of this rational number to the ring ", toString S, " not possible"))
-
--- some remnants from lift and promote, version 2
-liftable(RingElement,RingElement) := 
-liftable(Number,RingElement) := 
-liftable(RingElement,Number) := 
-liftable(Number,Number) := (f,R) -> null =!= lift(f,R,Verify=>false)
 
 --- new lift and promote, version 3
 basicLift = opts -> (r,Brawring,Bclass) -> (
@@ -460,9 +459,9 @@ promoteleftinexact = (f,g) -> (
 promoteleftexact = (f,g) -> (
      f = try promote(f,class g) else oops();
      (f,g))
-exchange = (x,y) -> (y,x)
-promoterightexact   = exchange @@ promoteleftexact   @@ exchange
-promoterightinexact = exchange @@ promoteleftinexact @@ exchange
+swap = (x,y) -> (y,x)
+promoterightexact   = swap @@ promoteleftexact   @@ swap
+promoterightinexact = swap @@ promoteleftinexact @@ swap
 
 divmod := R -> (f,g) -> (
      (q,r) := rawDivMod(raw f, raw g);
@@ -472,10 +471,10 @@ quotientRemainder(RingElement,RingElement) := (f,g) -> (
      S := ring g;
      m := quotientRemainder(R,S) := (
 	  if R === S then divmod R
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> divmod(promote(x,S), y)
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> divmod(x, promote(y,R))
 	       )
 	  else error "expected pair to have a method for quotientRemainder"
@@ -498,10 +497,10 @@ RingElement % RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x % raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) % y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x % promote(y,R)
 	       )
 	  else error "expected pair to have a method for '%'"
@@ -521,10 +520,10 @@ RingElement // RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x // raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x // promote(y,R)
 	       )
 	  else error "expected pair to have a method for '//'"
@@ -542,10 +541,10 @@ RingElement - RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x - raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) - y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x - promote(y,R)
 	       )
 	  else error "expected pair to have a method for '-'"
@@ -563,10 +562,10 @@ RingElement * RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x * raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) * y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x * promote(y,R)
 	       )
 	  else error "expected pair to have a method for '*'"
@@ -584,10 +583,10 @@ RingElement + RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x + raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) + y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x + promote(y,R)
 	       )
 	  else error "expected pair to have a method for '+'"
@@ -609,10 +608,10 @@ RingElement == RingElement := (f,g) -> (
 	  if R === S then (
 	       (x,y) -> raw x === raw y
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) == y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x == promote(y,R)
 	       )
 	  else error "expected pair to have a method for '=='"
@@ -628,10 +627,10 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	       frac R; 
 	       (r,s) -> fraction (r,s)
 	       )
-	  else if member(R,S.baseRings) then (
+	  else if isMember(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) / y
 	       )
-	  else if member(S,R.baseRings) then (
+	  else if isMember(S,R.baseRings) then (
 	       (x,y) -> x / promote(y,R)
 	       )
 	  else error "expected pair to have a method for '/'"
@@ -653,17 +652,8 @@ fraction(RingElement,RingElement) := (r,s) -> (
      fraction(r,s))
 -----------------------------------------------------------------------------
 
-isUnit(RingElement) := (f) -> (
-    if (options ring f).?Inverses and (options ring f).Inverses then 
-      size f === 1 and isUnit leadCoefficient f
-    else
-      1 % ideal f == 0
-    )
-
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
-
-isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -44,7 +44,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       setEcho, symbol profile, symbol NOINDENT, symbol uniform, GroupRevLex, Sort, symbol MonoidElement, symbol NL, symbol match, symbol Holder, symbol ancestor, symbol and, symbol OO,
       symbol ann, symbol leadTerm, symbol OrderedMonoid, symbol any, symbol genus, symbol isSquareFree, Lex, symbol newRing, symbol applyPairs, symbol removeFile, symbol exp, symbol QQ,
       symbol isBorel, symbol coverMap, Bayer, symbol infinity, symbol homogenize, symbol ring, symbol TITLE, symbol FunctionApplication, symbol RR, HardDegreeLimit, symbol topComponents,
-      symbol pushForward, symbol alarm, symbol getWWW, symbol hilbertSeries, symbol characters, symbol quotient, symbol isIsomorphism, symbol TO, symbol PushforwardComputation, symbol TT,
+      symbol pushForward, symbol alarm, symbol getWWW, symbol hilbertSeries, symbol characters, symbol quotient, symbol isIsomorphism, symbol TO, symbol TT,
       symbol run, symbol nextkey, LongPolynomial, symbol STRONG, symbol UL, symbol member, symbol needs, symbol koszul, symbol AssociativeExpression, symbol chainComplex, symbol
       Schubert, symbol depth, symbol hilbertPolynomial, symbol betti, symbol partitions, NewFromMethod, symbol demark, DegreeMap, symbol not, symbol FilePosition, symbol length, Degree,
       Homogeneous, symbol isAffineRing, symbol MutableHashTable, symbol inducesWellDefinedMap, symbol flush, symbol numeric, symbol degrees, symbol while, symbol monoid, symbol ZZ, symbol

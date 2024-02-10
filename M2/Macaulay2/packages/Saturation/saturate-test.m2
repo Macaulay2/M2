@@ -211,3 +211,20 @@ TEST ///
   -- FIXME: running this line stop the debug info from being printed
   assert(numgens symbolicPower(I, 2) == 12)
 ///
+
+TEST ///
+  -- Test of stopping conditions
+  R = QQ[a..d]
+  I = ideal(a^5,b^5,c^5,d^5)
+  -- check that cached results are not inappropriately used
+  debug Saturation; cacheHit SaturateComputation := C -> error 0;
+  elapsedTime assert({1,5,8,22,24,1} == apply({0,10,20,170,200,364}, i -> numgens saturate(I, a+b+c+d, PairLimit => i)))
+  elapsedTime assert({1,5,21,19,23,1} == apply({0,10,30,40,60,94},   i -> numgens saturate(I, a+b+c+d, BasisElementLimit => i)))
+  elapsedTime assert({0,4,9,20,15,1,1} == apply({4,5,9,11,13,18,{}}, i -> numgens saturate(I, a+b+c+d, DegreeLimit => i)))
+  -- TODO: make sure saturation uses DegreeLimit
+  elapsedTime assert all({0,10,20,170,200,364}, i -> try (saturate(I, a+b+c+d, PairLimit         => i); false) else true)
+  elapsedTime assert all({0,10,30,40,60,94},    i -> try (saturate(I, a+b+c+d, BasisElementLimit => i); false) else true)
+  elapsedTime assert all({4,5,9,11,13,18,{}},   i -> try (saturate(I, a+b+c+d, DegreeLimit       => i); false) else true)
+  --
+  cacheHit SaturateComputation := lookup(cacheHit, Computation)
+///

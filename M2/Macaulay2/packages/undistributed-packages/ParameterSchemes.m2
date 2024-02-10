@@ -267,7 +267,7 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      )
 
 prepruneOld = (J,F) -> (
-     -- asumption: J is homogeneous
+     -- assumption: J is homogeneous
      R' := (coefficientRing ring J) [ gens ring J ];
      J' := sub(J,R');
      J0 := trim ideal apply(J'_*, f -> part_1 f);
@@ -288,7 +288,7 @@ prepruneOld = (J,F) -> (
      )
 
 preprune = (J,F) -> (
-     -- asumption: J is homogeneous
+     -- assumption: J is homogeneous
      R' := (coefficientRing ring J) [ gens ring J ];
      J' := sub(J,R');
      J0 := trim ideal apply(J'_*, f -> part_1 f);

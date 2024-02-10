@@ -1,101 +1,173 @@
-document {
-     Key => random,
-     Headline => "get a random element",
-     "This function can be used to get random elements of various sorts.",
-     SeeAlso => {"setRandomSeed"}
-     }
-document {
-     Key => (random, ZZ),
-     Headline => "random integer",
-     Usage => "random n",
-     Inputs => {"n"=> {}},
-     Outputs => {ZZ => {"a random integer in the range ", TT "0 .. n-1"}},
-     EXAMPLE lines ///
-     random 57
-     random 10^50
-     tally apply(100, i -> random 7)
-     ///,
-     SeeAlso => {setRandomSeed, tally}
-     }
+undocumented {
+    (random, GaloisField),
+    (random, QuotientRing),
+    (random, RingFamily),
+    }
 
-document {
-     Key => (random, ZZ,ZZ),
-     Headline => "random integer in a range",
-     Usage => "random(min,max)",
-     Inputs => {"min","max"},
-     Outputs => {ZZ => {"a random integer in the range ", TT "min .. max"}},
-     EXAMPLE lines ///
-     for i to 10 list random(100,200)
-     tally apply(100, i -> random(10,15))
-     ///,
-     SeeAlso => {"setRandomSeed"}
-     }
+doc ///
+Node
+  Key
+    random
+  Headline
+    get a random object
+  Description
+    Text
+      This function can be used to get randomized objects of various sorts.
+  Subnodes
+    (random, ZZ, ZZ)
+    (random, Type)
+    (random, List)
+    (random, ZZ, Ideal)
+    (random, ZZ, Ring)
+    (random, Module, Module)
+  SeeAlso
+    setRandomSeed
 
-document {
-     Key => (random, RR),
-     Headline => "random real number",
-     Usage => "random x",
-     Inputs => {"x"},
-     Outputs => { RR=> {"a random positive real number less than ", TT "x", ", of the same precision"}},
-     EXAMPLE lines ///
-     random 3.14
-     random 3p200
-     ///,
-     SeeAlso => {"setRandomSeed", (random,RR,RR)}
-     }
+Node
+  Key
+    (random, ZZ, ZZ)
+    (random, ZZ)
+    (random, RR, RR)
+    (random, RR)
+  Headline
+    get a random integer or real number
+  Synopsis
+    Usage
+      random(low, high)
+      random high
+    Inputs
+      low:{ZZ,RR}
+      high:{ZZ,RR}
+    Outputs
+      :ZZ
+        a random integer or real number of the same @TO precision@
+  Description
+    Text
+      If only @TT "high"@ is given, the output will be in the range @TT "[0, high)"@.
+    Example
+      random 57
+      random 10^50
+      tally apply(100, i -> random 7)
+      random 3.14
+      random 3p200
+    Text
+      If, in addition, @TT "low"@ is given, the output will be in the range @TT "[low, high]"@
+    Example
+      for i to 10 list random(100,200)
+      tally apply(100, i -> random(10,15))
+      random(10.,20.)
+      random(10p100,20p100)
+  SeeAlso
+    setRandomSeed
 
-document {
-     Key => (random, RR,RR),
-     Headline => "random real number",
-     Usage => "random(x,y)",
-     Inputs => {"x","r"},
-     Outputs => { RR=> {"a random real number between ", TT "x", " and ", TT "y"}},
-     EXAMPLE lines ///
-     random(10.,20.)
-     random(10p100,20p100)
-     ///,
-     SeeAlso => {"setRandomSeed", (random,RR)}
-     }
+Node
+  Key
+    (random, Type)
+  Headline
+    get a random object of a type
+  Usage
+    random T
+  Inputs
+    T:Type
+    Height => ZZ
+  Outputs
+    :Thing
+      a random instance of the type @TT "T"@
+  Description
+    Text
+      If the @TT "Height"@ option specifies a number @TT "h"@ and @TT "T"@
+      is @TO "ZZ"@ then the integers returned are in the range @TT "[0, h)"@;
+      for @TO "QQ"@ the numerator and denominator are in the range @TT "[1, h]"@.
+    Example
+      random RR
+      random CC_100
+      tally for i to 100 list random GF 11
+      random GF(2,40)
+  SeeAlso
+    setRandomSeed
 
-document {
-     Key => {(random, Type),(random, RingFamily),(random, QuotientRing),(random, GaloisField),
-	  (random, ZZ, Ring),(random, List, Ring),[random,Height]
-	  },
-     Headline => "random element of a type",
-     SYNOPSIS (
-	  Usage => "random T",
-	  Inputs => {
-	       "T" => {ofClass Type},
-	       Height => ZZ
-	       },
-	  Outputs => { { "a random instance of the type ", TT "T", ".  If the Height option specifies a number ", TT "h", "
-		    and ", TT "T", " is ", TO "ZZ", " and , then the integers
-		    returned are in the range ", TT "0 .. h-1", "; for ", TO "QQ", "
-		    the numerator and denominator are in the range ", TT "1 .. h", "." } },
-	  EXAMPLE lines ///
-	  random RR
-	  random CC_100
-	  tally for i to 100 list random GF 11
-	  random GF(2,40)
-	  ///
-	  ),
-     SYNOPSIS (
-	  Usage => "random(d,R)",
-	  Inputs => {
-	       "d" => {ofClass{ZZ,List}, ", the degree or multi-degree to use"},
-	       "R" => Ring
-	       },
-	  Outputs => { { "a random homogeneous element of the ring ", TT "R", " of degree ", TT "d" } },
-	  EXAMPLE lines ///
-	  R = ZZ[x,y];
-	  random(5,R)
-	  R = GF(25,Variable=>a)[x,y];
-	  VerticalList for i to 6 list random(3,R)
-	  ///,
-	  "The length of ", TT "d", ", if it's a list, should be the same as ", TT "degreeLength R", ".",
-	  ),
-     SeeAlso => {setRandomSeed}
-     }
+Node
+  Key
+    (random, ZZ,   Ring)
+    (random, List, Ring)
+    [random, Height]
+  Headline
+    get a random homogeneous element from a graded ring
+  Usage
+    random(d, R)
+  Inputs
+    d:{ZZ,List} -- the degree or multi-degree to use
+    R:Ring
+  Outputs
+    :RingElement
+      a random homogeneous element of the ring @TT "R"@ of degree @TT "d"@
+  Description
+    Example
+      R = ZZ[x,y]
+      random(5, R)
+      R = GF(25, Variable => a)[x, y];
+      VerticalList for i to 6 list random(3, R)
+    Text
+      The length of @TT "d"@, if it's a list, should be the same as @TO2 (degreeLength, "degree rank")@ of $R$.
+  SeeAlso
+    setRandomSeed
+
+Node
+  Key
+    (random, ZZ,   Ideal)
+    (random, List, Ideal)
+  Headline
+    get a random homogeneous element from a graded ideal
+  Usage
+    random(d, I)
+    random(L, I)
+  Inputs
+    d:{ZZ,List} -- the degree, multi-degree, or a list of degrees
+    I:Ideal -- in a graded ring
+  Outputs
+    :{RingElement,List} -- homogeneous element(s) with prescribed degrees
+  Description
+    Text
+      This function produces one or more homogeneous elements of an ideal.
+    Example
+      S = ZZ/101[x, y]
+      I = ideal"x2, y2"
+      random(2, I)
+      random({2}, I)
+      random({2, 3}, I)
+      random({{2}, {3}}, I)
+      R = ZZ/101[x, y, z, Degrees => {{1,0}, {-1,1}, {0,1}}]
+      J = ideal"x2, y2, z2"
+      random({2, 2}, J)
+      random({{2, 2}}, J)
+      random(toList(3:{1, 1}), J)
+  Caveat
+    Note that in the single graded case, the input @TT "{d}"@ is treated as a multidegree
+    of length one rather than a list of length one, hence the output is one polynomial,
+    while @TT "{{d}}"@ is treated as a list containing a single multidegree of length one
+    and therefore the output is a list containing a single polynomial.
+  SeeAlso
+    (random, ZZ,   Ring)
+    (random, List, Ring)
+
+Node
+  Key
+    (random, List)
+  Headline
+    shuffle a list randomly
+  Usage
+    random L
+  Inputs
+    L:List
+  Outputs
+    :List
+      a new list containing the elements of @TT "L"@ in a shuffled random order
+  Description
+    Example
+      random toList (0 .. 12)
+  SeeAlso
+    setRandomSeed
+///
 
 document {
      Key => {(random, Module, Module),[random, MaximalRank],[random, Density],[random, UpperTriangular]},
@@ -121,17 +193,6 @@ document {
 	  "Over a polynomial ring, specifying ", TT "MaximalRank=>true", " will yield a non-homogeneous matrix."
 	  },
      SeeAlso => {"setRandomSeed"}
-     }
-
-document {
-     Key => (random,List),
-     Headline => "shuffle a list randomly",
-     Usage => "random x",
-     Inputs => { "x" },
-     Outputs => { List => {"a new list containing the elements of ", TT "x", " in a shuffled random order"} },
-     EXAMPLE lines ///
-	  random toList (0 .. 12)
-     ///
      }
 
 document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),

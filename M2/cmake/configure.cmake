@@ -27,6 +27,8 @@ option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
 option(WITH_OMP		"Link with the OpenMP library"		ON)
+option(WITH_TBB		"Link with the TBB library"		ON)
+option(WITH_FFI		"Link with the FFI library"		ON)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
 # TODO: still not operational
@@ -207,7 +209,7 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
-  add_compile_definitions(GC_DEBUG MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+  add_compile_definitions(GC_DEBUG)
   add_compile_options(-O0)
 else()
   add_compile_definitions(NDEBUG OM_NDEBUG SING_NDEBUG)
@@ -260,12 +262,15 @@ if(VERBOSE)
      Compiler preprocessor options = ${COMPILE_DEFINITIONS}
      Compiler flags    = ${COMPILE_OPTIONS}
      Linker flags      = ${LINK_OPTIONS}\n")
-  message("## CMake path variables
+endif()
+
+message("## CMake path variables
+     CMAKE_PREFIX_PATH
+       ${CMAKE_PREFIX_PATH}
      CMAKE_SYSTEM_PREFIX_PATH
        ${CMAKE_SYSTEM_PREFIX_PATH}
      CMAKE_C_IMPLICIT_LINK_DIRECTORIES
        ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}\n")
-endif()
 
 ###############################################################################
 ## Detect type sizes and existence of symbols, headers, and functions

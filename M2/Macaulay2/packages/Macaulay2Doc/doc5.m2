@@ -129,35 +129,6 @@ document {
      }
 
 document {
-     Key => tally,
-     Headline => "tally the elements of a list or sequence",
-     TT "tally x", " tallies the frequencies of items in a list or sequence x.",
-     SeeAlso => "Tally"
-     }
-
-document {
-	Key => (tally, VisibleList),
-	Headline => "tally the elements of a list, sequence, or array",
-	Usage => "y = tally x",
-	Inputs => {
-		"x" => {}
-		},
-	Outputs => {
-		"y" => "a listing of tallied results"
-		},
-	"It produces an hash table (multiset) ", TT "y", " which tallies the
-     frequencies of occurrences of items in the list ", TT "x", ", i.e.,
-     ", TT "y_i", " is the number of times ", TT "i", " appears in ", TT "x", ", or is ", TT "0", " if
-     ", TT "i", " doesn't appear in the list.",
-     EXAMPLE {
-	  "y = tally {1,2,3,a,b,1,2,a,1,2,{a,b},{a,b},a}",
-       	  "y_2",
-	  "y_5",
-	  "y_{a,b}",
-	  }
-  }
-
-document {
      Key => Set, 
      Headline => "the class of all sets",
      "Elements of sets may be any immutable object, such as integers, ring elements
@@ -168,7 +139,7 @@ document {
 	  "B = set{a^2-b*c,b*d}"
 	  },
      "Set operations, such as ", 
-     TO2((member,Thing,Set),"membership"), ", ",     
+     TO2((isMember,Thing,Set),"membership"), ", ",     
      TO2((symbol+,Set,Set),"union"), ", ",
      TO2((symbol*,Set,Set),"intersection"), ", ",
      TO2((symbol-,Set,Set),"difference"), ", ",
@@ -340,27 +311,6 @@ document {
 	 M^**2
 	 ///
      }
-
-document {
-     Key => (symbol ^**, CoherentSheaf, ZZ),
-     Headline => "tensor power",
-     Usage => "M^**i",
-     Inputs => {"M" , "i" },
-     Outputs => {CoherentSheaf => { "the ", TT "i", "-th tensor power of ", TT "M"}},
-     "The second symmetric power of the canonical sheaf of the
-     rational quartic:",
-     EXAMPLE lines ///
-         R = QQ[a..d];
-         I = monomialCurveIdeal(R,{1,3,4})
-	 X = variety I
-	 KX = sheaf(Ext^1(I,R^{-4}) ** ring X)
-	 K2 = KX^**2
-	 prune K2
-	 ///,
-     "Notice that the resulting sheaf is not always presented in the most
-     economical manner.  Use ", TO prune, " to improve the presentation.",
-     SeeAlso => {monomialCurveIdeal, Ext, variety, sheaf, prune}
-     }    
 
 document {
      Key => wrap,

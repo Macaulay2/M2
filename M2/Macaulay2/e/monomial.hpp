@@ -3,60 +3,59 @@
 #ifndef _monomial_hh_
 #define _monomial_hh_
 
+#include <vector>
+
+#include "ExponentList.hpp"
 #include "hash.hpp"
 #include "engine-includes.hpp"
 #include "buffer.hpp"
-#include "varpower.hpp"
 
-#include <vector>
-
-class Monomial : public EngineObject
+// TODO: can this be combined with varpower using templates?
+class EngineMonomial : public EngineObject
 {
-  // The format of a monomial is from varpower.hpp:
+  // The format of a monomial is from ExponentList.hpp:
   // [2n+1, v1, e1, ..., vn, en]
-  intarray val;
+  gc_vector<int> val;
 
-  Monomial();
-  Monomial(int v, int e);
-  Monomial(const int *vp);
-  Monomial(M2_arrayint a);
+  EngineMonomial();
+  EngineMonomial(int v, int e);
+  EngineMonomial(const int *vp);
+  EngineMonomial(M2_arrayint a);
+  EngineMonomial(const std::vector<int>& vp);
 
-  Monomial(const std::vector<int>& vp);
-  
-  int * ints() { return val.raw(); }
-protected:
+ protected:
   virtual unsigned int computeHashValue() const;
 
  public:
-  static Monomial *make(int v, int e);
-  static Monomial *make(M2_arrayint m);
-  static Monomial *make(const int *vp);
-
+  static EngineMonomial *make(int v, int e);
+  static EngineMonomial *make(M2_arrayint m);
+  static EngineMonomial *make(const int *vp);
+  static EngineMonomial *make(const std::vector<int>& vp);
   // format for this is that of a 'varpower' monomial:
   // [2n+1, v1, e1, v2, e2, ..., vn, en]
   // with each ei != 0.
-  static Monomial * make(const std::vector<int>& monom);
-  
-  const int * ints() const { return val.raw(); }
 
-  Monomial *operator*(const Monomial &b) const;
-  Monomial *operator/(const Monomial &b) const;
-  Monomial *power(int n) const;
-  void monsyz(const Monomial &b, Monomial *&sa, Monomial *&sb) const;
-  Monomial *lcm(const Monomial &b) const;
-  Monomial *gcd(const Monomial &b) const;
+  int * ints() { return val.data(); }
+  const int * ints() const { return val.data(); }
 
-  Monomial *radical() const;
-  Monomial *erase(const Monomial &b) const;
+  EngineMonomial *operator*(const EngineMonomial &b) const;
+  EngineMonomial *operator/(const EngineMonomial &b) const;
+  EngineMonomial *power(int n) const;
+  void monsyz(const EngineMonomial &b, EngineMonomial *&sa, EngineMonomial *&sb) const;
+  EngineMonomial *lcm(const EngineMonomial &b) const;
+  EngineMonomial *gcd(const EngineMonomial &b) const;
+
+  EngineMonomial *radical() const;
+  EngineMonomial *erase(const EngineMonomial &b) const;
 
   bool is_one() const;
-  bool is_equal(const Monomial &b) const;
-  bool divides(const Monoid *M, const Monomial &b) const;
-  int compare(const Monoid *M, const Monomial &b) const;
+  bool is_equal(const EngineMonomial &b) const;
+  bool divides(const Monoid *M, const EngineMonomial &b) const;
+  int compare(const Monoid *M, const EngineMonomial &b) const;
   int simple_degree() const;
 
-  void text_out(buffer &o) const { varpower::elem_text_out(o, val.raw()); }
-  M2_arrayint to_arrayint() const { return varpower::to_arrayint(val.raw()); }
+  void text_out(buffer &o) const { varpower::elem_text_out(o, val.data()); }
+  M2_arrayint to_arrayint() const { return varpower::to_arrayint(val.data()); }
 };
 
 #endif

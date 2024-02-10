@@ -174,7 +174,7 @@ resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
 -- Input: Ideal irr - the irrelevant ideal of the ring
 --       Chain Complex C - proposed virtual resolution
 -- Output: Boolean - true if complex is virtual resolution, false otherwise
--- Note: the Determinatal strategy is based on Theorem 1.3 of [Loper2019].
+-- Note: the Determinantal strategy is based on Theorem 1.3 of [Loper2019].
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- TODO: can this use winnowingMap?

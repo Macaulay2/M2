@@ -29,8 +29,8 @@ doc ///
       
       This is code adapted from the Monomial Ideals chapter, written by Greg Smith and Serkan Hosten, of
       {\bf Computations in algebraic geometry with Macaulay 2}. See @HREF
-      "https://faculty.math.illinois.edu/Macaulay2/Book/ComputationsBook/chapters/monomialIdeals/chapter-wrapper.pdf"@ for
-      the chapter PDF, and @HREF"https://faculty.math.illinois.edu/Macaulay2/Book/"@ for more information
+      "https://macaulay2.com/Book/ComputationsBook/chapters/monomialIdeals/chapter-wrapper.pdf"@ for
+      the chapter PDF, and @HREF"https://macaulay2.com/Book/"@ for more information
       on this book.
     Example
       R = QQ[x,y,z];

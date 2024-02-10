@@ -4,6 +4,7 @@
 doc///
  Key
   delete
+  (delete, Thing, BasicList)
  Headline
   delete some elements of a list
  Usage

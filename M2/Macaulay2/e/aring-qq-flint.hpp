@@ -3,21 +3,21 @@
 #ifndef _aring_QQ_flint_hpp_
 #define _aring_QQ_flint_hpp_
 
-#include <iosfwd>
+#include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-//#include <flint/arith.h>
-#include <flint/fmpq.h>
+#include <flint/flint.h>  // for fmpq_denref, fmpq_numref, fmpq, flin...
+#include <flint/fmpq.h>   // for fmpq_init, fmpq_set, fmpq_set_mpq
+#include <flint/fmpz.h>   // for fmpz_get_ui, fmpz_cmp_si, fmpz_is_one
 #pragma GCC diagnostic pop
 
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-
 #include "exceptions.hpp"
 
 // promote needs ring.hpp.  After moving promote out, remove it here!
@@ -30,7 +30,7 @@ namespace M2 {
    @brief wrapper for the flint fmpq_t integer representation
 */
 
-class ARingQQFlint : public RingInterface
+class ARingQQFlint : public SimpleARing<ARingQQFlint>
 {
  public:
   static const RingID ringID = ring_QQFlint;
@@ -91,7 +91,7 @@ class ARingQQFlint : public RingInterface
   }
 
   void init(ElementType& result) const { fmpq_init(&result); }
-  void clear(ElementType& result) const { fmpq_clear(&result); }
+  static void clear(ElementType& result) { fmpq_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     fmpq_set(&result, &a);
@@ -167,13 +167,12 @@ class ARingQQFlint : public RingInterface
   }
 
   ///@brief test doc
-  bool divide(ElementType& result,
+  void divide(ElementType& result,
               const ElementType& a,
               const ElementType& b) const
   {
-    if (is_zero(b)) return false;
+    if (is_zero(b)) throw exc::division_by_zero_error();
     fmpq_div(&result, &a, &b);
-    return true;
   }
 
   void power(ElementType& result, const ElementType& a, long n) const
@@ -234,6 +233,19 @@ class ARingQQFlint : public RingInterface
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
     fmpq_set_mpq(&result, a.get_mpq());
+  }
+
+  /** @brief returns a read only view into the ring_elem
+   *  The return value of this function should not be modified,
+   *  since the contents point directly into the input ring_elem.
+   */
+  const ElementType from_ring_elem_const(const ring_elem& a) const
+  {
+    mpq_srcptr a1 = a.get_mpq();
+    fmpq result;
+    result.num = PTR_TO_COEFF(mpq_numref(a1));
+    result.den = PTR_TO_COEFF(mpq_denref(a1));
+    return result;
   }
 
   /** @} */

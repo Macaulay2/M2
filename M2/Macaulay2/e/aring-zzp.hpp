@@ -7,6 +7,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
+#include "exceptions.hpp"
 
 class Z_mod;
 class RingMap;
@@ -15,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZp : public RingInterface
+class ARingZZp : public SimpleARing<ARingZZp>
 {
   // Integers mod p, implemented as
   // exponents of a primitive element a
@@ -95,10 +96,20 @@ class ARingZZp : public RingInterface
       result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    if (a.get_int() == 0)
+      return p1;
+    else if (a.get_int() == p1)
+      return 0;
+    else
+      return a.get_int();
+  }
+
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
+  static void clear(elem &result) { /* nothing */}
 
   void set_zero(elem &result) const { result = 0; }
   void set_from_long(elem &result, long a) const
@@ -139,8 +150,8 @@ class ARingZZp : public RingInterface
   }
 
   void invert(elem &result, elem a) const
-  // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
+    if (is_zero(a)) throw exc::division_by_zero_error();
     result = p1 - a;
     if (result == 0) result = p1;
   }
@@ -207,8 +218,9 @@ class ARingZZp : public RingInterface
 
   void divide(elem &result, elem a, elem b) const
   {
-    assert(b != 0);
-    if (a != 0 && b != 0)
+    if (b == 0)
+      throw exc::division_by_zero_error();
+    if (a != 0)
       {
         int c = a - b;
         if (c <= 0) c += p1;
@@ -226,13 +238,27 @@ class ARingZZp : public RingInterface
         if (result <= 0) result += p1;
       }
     else
-      result = 0;
+      {
+        // a == 0
+        if (n == 0) result = p1; // the element 1 in this ring.
+        else if (n > 0) result = 0;
+        else throw exc::division_by_zero_error();
+      }
   }
 
   void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
-    int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
-    power(result, a, n1);
+    if (a != 0)
+      {
+        int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
+        power(result, a, n1);
+      }
+    else
+      {
+        if (mpz_sgn(n) == 0) result = p1; // the element 1 in this ring.
+        else if (mpz_sgn(n) < 0) throw exc::division_by_zero_error();
+        else result = 0; // result is 0 in the ring.
+      }
   }
 
   void swap(ElementType &a, ElementType &b) const

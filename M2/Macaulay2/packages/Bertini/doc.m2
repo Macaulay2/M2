@@ -416,7 +416,7 @@ doc///
    An option to designate the CONFIG part of a Bertini Input file.
  Description
    Text
-     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPType" and and the second element is what the Bertini option will be set to e.g. "2".
+     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPType" and the second element is what the Bertini option will be set to e.g. "2".
    Example
      R=QQ[x0,x1,y0,y1,z]
      makeB'InputFile(storeBM2Files,
@@ -1026,8 +1026,8 @@ doc ///
      an integer stating the desired number of coordinates for each solution.
      When solving a zero-dimensional
      system, Bertini creates several solution files; @TO importPoints@ works
-     with the following Bertini solution files: "finite_solutions", "nonsingluar-solutions",
-     "real_finite_solutions", "singluar_solutions".
+     with the following Bertini solution files: "finite_solutions", "nonsingular-solutions",
+     "real_finite_solutions", "singular_solutions".
 --     The output is a list of points.
      The user can specify which solutions to read from the file using the @TO SpecifyPoints@ option
      or which coordinates to select using the @TO SpecifyCoordinates@ option.

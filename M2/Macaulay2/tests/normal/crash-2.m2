@@ -5,9 +5,9 @@ needsPackage "HyperplaneArrangements"
 
 logComplex = A -> (
      R := ring A; l := (dim R)-(dim coefficientRing R);
-     n := #(tolist A);
+     n := #(toList A);
      V := R^l;
-     Q := product tolist A; J := jacobian ideal Q;
+     Q := product toList A; J := jacobian ideal Q;
      Lambda := apply((l+1),i->exteriorPower(i,V));
      dQ := apply(l, i-> (
 	       In := map(Lambda_i);      -- identity
@@ -25,7 +25,7 @@ logComplex = A -> (
      f := map(S,R);
 -- make partial=omega_a on full exterior algebra, then restrict
      C := f coefficients A;
-     D := f diagonalMatrix((tolist A)/(i->Q//i));  -- 1/alpha times Q
+     D := f diagonalMatrix((toList A)/(i->Q//i));  -- 1/alpha times Q
      P := C*D*transpose (vars S)_{0..n-1};         -- Q.omega_a
      partial := apply(l, i-> (
 	       In := map(f Lambda_i);      -- identity

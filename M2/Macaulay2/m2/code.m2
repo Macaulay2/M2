@@ -1,17 +1,58 @@
 --		Copyright 1993-1999, 2008 by Daniel R. Grayson
 
+-- TODO: needs "document.m2" for formatDocumentTag, but this causes a loop
+needs "debugging.m2" -- for FilePosition
+needs "gateway.m2"
+needs "lists.m2"
+needs "methods.m2"
+needs "nets.m2"
+
 -----------------------------------------------------------------------------
 -- code
 -----------------------------------------------------------------------------
 
-getSourceLines = method(Dispatch => Thing) 
-getSourceLines Nothing := null -> null
-getSourceLines Sequence := x -> (
-     (filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" then (
+limit := 4
+
+codeFunction := (f,depth) -> (
+    if depth <= limit then (
+	l := locate f;
+	if l === null then DIV{"function ", f, ": source code not available"}
+	else (
+	    syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
+	    DIV flatten {
+		code l,
+		if #syms > 0 then INDENT listSymbols syms,
+		if codeHelper#?(functionBody f)
+		then apply(
+		    codeHelper#(functionBody f) f,
+		    (comment,val) -> INDENT {
+			comment, BR{},
+			if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
+			})
+	      	}
+	    )
+      	)
+    )
+
+-- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
+previousMethodsFound = null
+
+code = method(Dispatch => Thing)
+code Nothing    := identity
+code FilePosition := x -> (
+    filename := x#0; start := x#1; stop := x#3;
+     (
 	  wp := set characters " \t\r);";
 	  file := (
 	       if match("startup.m2.in$", filename) then startupString
-	       else if filename === "currentString" then currentString
+	       else if filename === "currentString" then (
+		    if currentString === null
+		    then error "code no longer available"
+		    else currentString)
+	       else if filename === "stdio" then (
+		    start = 1;
+		    stop = x#3 - x#1 + 1;
+		    toString stack apply(x#1..x#3, historyGet))
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
 		    get filename
@@ -27,41 +68,13 @@ getSourceLines Sequence := x -> (
 	       ) do stop = stop + 1;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
-	  stack prepend(
-	       concatenate(filename, ":", 
-		    toString start, ":", toString (startcol+1),
-		    "-",
-		    toString stop, ":", toString (stopcol+1),
-		    ": --source code:"),
-	       apply(start-1 .. stop-1, i -> file#i)
-	       )
-	  )) x
-
-limit := 4
-indent := n -> "| "^(height n, depth n) | n
-
-codeFunction := (f,depth) -> (
-     if depth <= limit then (
-	  if locate f === null then concatenate("function ", toString f, ": source code not available")
-	  else stack(
-	       syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
-	       getSourceLines locate f,
-	       if #syms > 0 then indent listSymbols syms,
-	       if codeHelper#?(functionBody f) 
-	       then toSequence apply(
-		    codeHelper#(functionBody f) f, 
-		    (comment,val) -> indent stack (
-			      comment, 
-			      if instance(val, Function) then codeFunction(val,depth+1) else net val
-			      )))))
-
--- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
-previousMethodsFound = null
-
-code = method(Dispatch => Thing)
-code Nothing    := identity
+	  DIV {
+	      x, ": --source code:",
+	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
+	      }
+	  ))
 code Symbol     :=
-code Pseudocode := s -> getSourceLines locate s
+code Pseudocode := s -> code locate s
 code Sequence   := s -> (
     key := select(s, x -> not instance(x, Option));
     -- handle strategies
@@ -74,50 +87,53 @@ code Sequence   := s -> (
 	    and store#key.HookAlgorithms#?strategy
 	    then store#key.HookAlgorithms#strategy));
     if func =!= null or (func = lookup key) =!= null
-    then "-- code for method: "          | formatDocumentTag key || code func
+    then DIV {"-- code for method: " | formatDocumentTag key, code func }
     else "-- no method function found: " | formatDocumentTag key)
 code Function   := f -> codeFunction(f, 0)
 code Command    := C -> code C#0
-code List       := L -> stack between_"---------------------------------" apply(L, code)
+code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
 
 -----------------------------------------------------------------------------
 -- edit
 -----------------------------------------------------------------------------
+-- TODO: update this
 
-EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
 editMethod = method(Dispatch => Thing)
 editMethod String := filename -> (
-     editor := EDITOR();
+     editor := getViewer("EDITOR", "emacs");
      chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor, " ", filename))
-EDIT = method(Dispatch => Thing)
-EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
-EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
-     editor := EDITOR();
+editMethod Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
+editMethod FilePosition := x -> (
+     filename := x#0; start := x#1;
+     editor := getViewer("EDITOR", "emacs");
      if 0 != chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor,
 	  " +",toString start,
 	  " ",
 	  filename
-	  ) then error "command returned error code")) x
-editMethod Function := args -> EDIT locate args
+	  ) then error "command returned error code")
 editMethod Command := c -> editMethod c#0
+editMethod Function := args -> editMethod locate args
 editMethod Sequence := args -> (
-     editor := EDITOR();
-     if args === () 
-     then chkrun concatenate(
-	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
-	  editor)
-     else EDIT locate args
+    if args === () then (
+	editor := getViewer("EDITOR", "emacs");
+	chkrun concatenate(
+	    if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
+	    editor)
+	)
+    else editMethod locate args
      )
+editMethod ZZ := i -> editMethod previousMethodsFound#i
 edit = Command editMethod
 
 -----------------------------------------------------------------------------
 -- methods
 -----------------------------------------------------------------------------
+-- TODO: https://github.com/Macaulay2/M2/issues/1331
 
 searchAllDictionaries := (T, f) -> (
     seen := new MutableHashTable;
@@ -133,17 +149,19 @@ thingMethods := (T, F) -> nonnull apply(pairs T, (key, func) -> if instance(func
     -- TODO: unary methods are installed as T#f, change it to T#(f, T), then simplify this
     if key === F                                               then (key, T) else -- unary method, e.g quotient
     -- TODO: unary assignments operators are installed as T#(s, symbol=), change it to T#((s, symbol=), T), then simplify this
-    if isUnaryAssignmentOperator key and member(F,        key) then (key, T) else -- unary assignment method, e.g symbol=
-    if instance(key, Sequence)       and member(F, splice key) then  key)
+    if isUnaryAssignmentOperator key and isMember(F,        key) then (key, T) else -- unary assignment method, e.g symbol=
+    if instance(key, Sequence)       and isMember(F, splice key) then  key)
 
 sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if instance(func, Function) then
     if isBinaryAssignmentOperator key and tallyF <= tally splice  key     then  key     else -- e.g T#((symbol SPACE, symbol=), T, T)
     if  isUnaryAssignmentOperator key and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol+, symbol=)
     if instance(key, Keyword)         and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#(symbol #)
     if instance(key, Function)        and tallyF <= tally splice (key, T) then (key, T) else -- e.g T#resolution
-    if instance(key, Sequence)        and tallyF <= tally         key     then  key)
+    if instance(key, Sequence)        and tallyF <= tally         key     then  key     else
+    if key === NewMethod              and tallyF <= tally splice (key, T) then (key, T))
 
 methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
+methods Manipulator := M -> methods class M
 methods Command  := c -> methods c#0
 methods Type     := F -> methods sequence F
 methods Sequence := F -> (
@@ -156,12 +174,17 @@ methods Sequence := F -> (
 methods ScriptedFunctor := -- TODO: OO and other scripted functors aren't supported
 methods Symbol :=
 methods Thing  := F -> (
-    if F === HH then return join(methods homology, methods cohomology);
+    if F === HH
+    then return previousMethodsFound = join \\ methods \ (homology, cohomology);
     found := new MutableHashTable;
     -- TODO: either finish or remove nullaryMethods
     if nullaryMethods#?(1:F) then found#(1:F) = true;
     searchAllDictionaries(Type, T -> scan(thingMethods(T, F), key -> found#key = true));
     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
+
+-- this one is here because it needs previousMethodsFound
+options ZZ := i -> options previousMethodsFound#i
+locate  ZZ := i -> locate  previousMethodsFound#i
 
 -----------------------------------------------------------------------------
 -- hooks
@@ -239,7 +262,7 @@ debuggerHook = entering -> (
      if entering then (
 	  pushvar(symbol inDebugger, true);
 	  c := code current;
-	  if c =!= null then << c << endl;
+	  if c =!= null then print c;
 	  )
      else (
 	  popvar symbol inDebugger;

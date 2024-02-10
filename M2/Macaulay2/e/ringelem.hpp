@@ -3,12 +3,9 @@
 #ifndef _ringelem_hh_
 #define _ringelem_hh_
 
-#include <stddef.h>
-#if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
-#endif
-#include "interface/gmp-util.h"
-#include "newdelete.hpp"
+#include "M2/math-include.h"  // for mpfi_srcptr, mpfr_srcptr, mpq_srcptr
+#include "monoid.hpp"         // for monomial
+#include "newdelete.hpp"      // for our_new_delete
 
 using ZZ = mpz_srcptr;
 using ZZmutable = mpz_ptr;
@@ -94,20 +91,55 @@ union ring_elem
   const schur_poly* get_schur_poly() const { return schur_poly_val; }
 };
 
+/* Implements a linked list of ring monomials along with coefficients */
 struct Nterm
 {
   Nterm *next;
   ring_elem coeff;
+  // TODO: should this have type monomial?
   int monom[1];
 };
 
 typedef struct vecterm *vec;
+/* Implements a linked list of module monomials along with coefficients */
+// TODO: why is this garbage collected?
 struct vecterm : public our_new_delete
 {
   vec next;
   int comp;
   ring_elem coeff;
 };
+
+/* Implements an iterator for linked list-based multi-termed structs
+ *
+ * For example, the functions begin(Nterm*) and end(Nterm*) return
+ * a TermIterator<Nterm> object which makes for(Nterm& t : f) work. */
+template<typename T>
+struct TermIterator
+{
+  T* p;
+
+  TermIterator():              p(nullptr) {}
+  TermIterator(T* ptr):        p(ptr)     {}
+  TermIterator(ring_elem ptr): p(ptr)     {}
+
+  TermIterator& operator++() { p = p->next; return *this; }
+
+  T const& operator*() const  { return *p; }
+  T&       operator*()        { return *p; }
+  T const* operator->() const { return p; }
+  T*       operator->()       { return p; }
+
+  bool operator==(TermIterator const& rhs) const { return p == rhs.p; }
+  bool operator!=(TermIterator const& rhs) const { return p != rhs.p; }
+};
+
+TermIterator<Nterm> begin(Nterm* ptr);
+TermIterator<Nterm> end(Nterm*);
+
+TermIterator<vecterm> begin(vecterm* ptr);
+TermIterator<vecterm> end(vecterm*);
+
 
 #define MPQ_VAL(f) ((f).get_mpq())
 

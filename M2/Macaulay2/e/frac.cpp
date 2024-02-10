@@ -9,6 +9,7 @@
 #include "gbring.hpp"
 #include "relem.hpp"
 #include "polyring.hpp"
+#include "exceptions.hpp"
 
 #define FRAC_VAL(f) (reinterpret_cast<frac_elem *>((f).poly_val))
 #define FRAC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
@@ -38,7 +39,7 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
       R->getCoefficients()
           ->cast_to_FractionField()  // disallowed in x-relem.cpp
       ||
-      R->getMonoid()->getNonTermOrderVariables()->len >
+      R->getMonoid()->numNonTermOrderVariables() >
           0)  // disallowed in x-relem.cpp
     use_gcd_simplify = false;
   else
@@ -114,7 +115,7 @@ void FractionField::simplify(frac_elem *f) const
       x = f->numer;
       const RingElement *a = RingElement::make_raw(R_, x);
       const RingElement *b = RingElement::make_raw(R_, y);
-      const RingElement *c = rawGCDRingElement(a, b, NULL, false);
+      const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
 
 #if 0
       // Debugging code
@@ -202,9 +203,9 @@ void FractionField::lower_content(ring_elem &c, const ring_elem g) const
   const RingElement *g1 = RingElement::make_raw(R_, gf->numer);
   const RingElement *g2 = RingElement::make_raw(R_, gf->denom);
 
-  c1 = rawGCDRingElement(c1, g1, NULL, false);
+  c1 = rawGCDRingElement(c1, g1, nullptr, false);
 
-  const RingElement *cc2 = rawGCDRingElement(c2, g2, NULL, false);
+  const RingElement *cc2 = rawGCDRingElement(c2, g2, nullptr, false);
   const RingElement *cc3 = (*c2) * (*g2);
   const RingElement *cc4 = (*cc3) / (*cc2);
 
@@ -534,8 +535,7 @@ ring_elem FractionField::power(const ring_elem a, int n) const
     {
       if (R_->is_zero(f->numer))
         {
-          ERROR("attempt to divide by zero");
-          return zero();
+          throw exc::division_by_zero_error();
         }
       top = R_->power(f->denom, -n);
       bottom = R_->power(f->numer, -n);
@@ -560,8 +560,7 @@ ring_elem FractionField::power(const ring_elem a, mpz_srcptr n) const
     {
       if (R_->is_zero(f->numer))
         {
-          ERROR("attempt to divide by zero");
-          return zero();
+          throw exc::division_by_zero_error();
         }
       mpz_t abs_n;
       mpz_init(abs_n);
@@ -615,11 +614,10 @@ ring_elem FractionField::eval(const RingMap *map,
   const Ring *S = map->get_ring();
   const frac_elem *f = FRAC_VAL(a);
   ring_elem top = R_->eval(map, f->numer, first_var);
-  if (S->is_zero(top)) return top;
   ring_elem bottom = R_->eval(map, f->denom, first_var);
   if (S->is_zero(bottom))
     {
-      if (not error()) ERROR("division by zero!");
+      throw exc::division_by_zero_error();
       S->remove(bottom);
       top = S->from_long(0);
       bottom = S->from_long(1);
@@ -639,21 +637,11 @@ bool FractionField::is_homogeneous(const ring_elem a) const
   return true;
 }
 
-void FractionField::degree(const ring_elem a, int *d) const
-{
-  const frac_elem *f = FRAC_VAL(a);
-  R_->degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
-  R_->degree(f->denom, e);
-  degree_monoid()->divide(d, e, d);
-  degree_monoid()->remove(e);
-}
-
-bool FractionField::multi_degree(const ring_elem a, int *d) const
+bool FractionField::multi_degree(const ring_elem a, monomial d) const
 {
   const frac_elem *f = FRAC_VAL(a);
   bool tophom = R_->multi_degree(f->numer, d);
-  int *e = degree_monoid()->make_one();
+  monomial e = degree_monoid()->make_one();
   bool bottomhom = R_->multi_degree(f->denom, e);
   degree_monoid()->divide(d, e, d);
   degree_monoid()->remove(e);
@@ -661,7 +649,7 @@ bool FractionField::multi_degree(const ring_elem a, int *d) const
 }
 
 void FractionField::degree_weights(const ring_elem,
-                                   M2_arrayint,
+                                   const std::vector<int> &,
                                    int &lo,
                                    int &hi) const
 {
@@ -673,7 +661,7 @@ void FractionField::degree_weights(const ring_elem,
 ring_elem FractionField::homogenize(const ring_elem a,
                                     int v,
                                     int deg,
-                                    M2_arrayint wts) const
+                                    const std::vector<int> &wts) const
 {
   int d1, d2, lo1, lo2;
   ring_elem top, bottom;
@@ -698,7 +686,7 @@ ring_elem FractionField::homogenize(const ring_elem a,
 
 ring_elem FractionField::homogenize(const ring_elem a,
                                     int v,
-                                    M2_arrayint wts) const
+                                    const std::vector<int> &wts) const
 {
   const frac_elem *f = FRAC_VAL(a);
   ring_elem top = R_->homogenize(f->numer, v, wts);
@@ -708,12 +696,12 @@ ring_elem FractionField::homogenize(const ring_elem a,
 }
 
 int FractionField::n_terms(const ring_elem) const { return 1; }
-ring_elem FractionField::term(const ring_elem a, const int *) const
+ring_elem FractionField::term(const ring_elem a, const_monomial) const
 {
   return copy(a);
 }
 ring_elem FractionField::lead_coeff(const ring_elem f) const { return f; }
-ring_elem FractionField::get_coeff(const ring_elem f, const int *) const
+ring_elem FractionField::get_coeff(const ring_elem f, const_monomial) const
 {
   return f;
 }

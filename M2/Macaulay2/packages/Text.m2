@@ -9,9 +9,9 @@ newPackage("Text",
 
 exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
-     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
-     "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
-     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "validate",
+     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "HypertextVoid", "IMG", "INDENT", "ITALIC", "KBD",
+     "LABEL", "LATER", "LI", "LINK", "LITERAL", "M2CODE", "MENU", "META", "PARA", "PRE", "SAMP", "SCRIPT", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
+     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "VAR", "OL", "INPUT", "BUTTON", "validate",
      "MarkUpType", "IntermediateMarkUpType",
      "style"
      }
@@ -562,7 +562,7 @@ document {
 	 "Lastly, new macros can be defined using script tags. For instance, inserting the following ",
 	 TO LITERAL, " item in the documentation defines the structure sheaf:" },
      (
-	 s := ///LITERAL ////<script type="text/javascript"> macros["\\OO"] = "\\mathcal{O}" </script>//// ///;
+	 s := ///LITERAL ////<script> macros["\\OO"] = "\\mathcal{O}" </script>//// ///;
 	 ( BLOCKQUOTE PRE s, value s )),
      PARA {
 	 TEX ///The macro can be used at any point after:
@@ -603,6 +603,39 @@ document {
      PARA{},
      SeeAlso => "hypertext"
      }
+
+document {
+    Key => KBD,
+    Headline => "hypertext KBD item",
+    Usage => "KBD x",
+    Inputs => {"x" => Thing => {}},
+    Outputs => {KBD => {}},
+    PARA "This HTML tag is used to define keyboard input.",
+    EXAMPLE "html KBD \"F11\"",
+    PARA {"This is rendered in the browser as ", KBD "F11", "."},
+    SeeAlso => {SAMP, VAR}}
+
+document {
+    Key => SAMP,
+    Headline => "hypertext SAMP item",
+    Usage => "SAMP x",
+    Inputs => {"x" => Thing => {}},
+    Outputs => {SAMP => {}},
+    PARA "This HTML tag is used for sample output from a program",
+    EXAMPLE "html SAMP \"ideal x\"",
+    PARA {"This is rendered in the browser as ", SAMP "ideal x", "."},
+    SeeAlso => {KBD, VAR}}
+
+document {
+    Key => VAR,
+    Headline => "hypertext VAR item",
+    Usage => "VAR x",
+    Inputs => {"x" => Thing => {}},
+    Outputs => {VAR => {}},
+    PARA "This HTML tag is used to represent a variable.",
+    EXAMPLE "html VAR \"x\"",
+    PARA {"This is rendered in the browser as ", VAR "x", "."},
+    SeeAlso => {KBD, SAMP}}
 
 document {
      Key => EM,
@@ -705,6 +738,8 @@ document { Key => DD,
      Headline => "hypertext DD element" }
 document { Key => STYLE,
      Headline => "hypertext STYLE element" }
+document { Key => SCRIPT,
+     Headline => "hypertext SCRIPT element" }
 document { Key => COMMENT,
      Headline => "hypertext COMMENT element", EXAMPLE lines ///
      html COMMENT "hi there"
@@ -863,6 +898,21 @@ document { Key => {(style, Hypertext),style},
     ///
     }
 
+document {
+    Key => {
+	M2CODE,
+	(M2CODE, Thing)},
+    Headline => "CODE object with syntax highlighting",
+    Usage => "M2CODE x",
+    Inputs => { "x" => ofClass Thing },
+    Outputs => { ofClass CODE },
+    "Returns a ", M2CODE "CODE", " object with its \"class\" attribute ",
+    "set to \"language-macaulay2\" so that it will appear with syntax ",
+    "highlighting in the html documentation.  For example, ",
+    PRE	M2CODE "M2CODE \"ideal(x*z - y^2, y*w - z^2, x*w - y*z)\"",
+    " will appear as ",
+    PRE M2CODE "ideal(x*z - y^2, y*w - z^2, x*w - y*z)"}
+
 isMissingDoc := value Core#"private dictionary"#"isMissingDoc";
 isUndocumented := value Core#"private dictionary"#"isUndocumented";
 scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMethod, toString, toExternalString, symbol?}, m ->
@@ -873,3 +923,9 @@ undocumented {
     (examples, Hypertext),
     (hypertext, Hypertext)
     }
+
+TEST ///
+foo = M2CODE "foo"
+assert instance(foo, CODE)
+assert member("class" => "language-macaulay2", toList foo)
+///

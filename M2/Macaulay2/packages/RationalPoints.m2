@@ -179,7 +179,7 @@ superCombine = (theinfosubi, zips, els) -> (
 
 newvar := symbol newvar
 
---zeroesByFactoring takes in a polynomioal and an evaluationspace that does not include one of the variables in the
+--zeroesByFactoring takes in a polynomial and an evaluationspace that does not include one of the variables in the
 --polynomial so that the evaluation homomorphism takes values in single variable polynomials which are then factored.
 zeroesByFactoring = (thepoly, evaluationspace, A, k, els, numdeadvars) -> (
      deadvars := apply(numdeadvars, i->0);

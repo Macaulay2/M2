@@ -4,11 +4,14 @@ assert( gcd(1000:2) == 2 )
 assert( gcd splice(1000:2,3) == 1 )
 assert( lcm(2,3,5,7) == 210 )
 assert( lcm(1000:2) == 2 )
+assert( lcm(0, 0) == 0 )
+assert( lcm(0/1, 0/1) == 0 )
 
 R = ZZ/32003[x,y]
 f = (x+y)^3*(x-y^2)
 g = (x+y)^2*(x^3-x*y+y^3)^4
 assert ( gcd(f,g) == (x+y)^2 )
+assert ( lcm(0_R, 0_R) == 0 )
 
 GF 729[x, y, z]
 assert( gcd((x^5+y^3+a+1)*(y-1),(x^5+y^3+a+1)*(z+1)) == x^5+y^3+a+1 )
@@ -68,6 +71,9 @@ w = gcdCoefficients(f,g)
 assert( w#0 == f * w#1 + g * w#2 )
 assert( w#0 % d == 0 ) -- test the two gcd's are associated; the precise (unit) factor varies
 assert( d % w#0 == 0 ) -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
+
+R = QQ[x]; R2=R[t];
+assert ( gcd(t^2-x^2,t^3-x^3) == t-x )
 
 debug Core
 R = QQ[x,y]

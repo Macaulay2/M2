@@ -20,7 +20,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRRi : public RingInterface
+class ARingRRi : public SimpleARing<ARingRRi>
 {
   // Higher precision real intervals
 
@@ -38,7 +38,7 @@ class ARingRRi : public RingInterface
 
   unsigned int computeHashValue(const elem &a) const
   {
-    double d = 12347. * mpfr_get_d(&(a.left), GMP_RNDN) + 865800. * mpfr_get_d(&(a.right), GMP_RNDN);
+    double d = 12347. * mpfr_get_d(&(a.left), MPFR_RNDN) + 865800. * mpfr_get_d(&(a.right), MPFR_RNDN);
     return static_cast<unsigned int>(d);
   }
 
@@ -91,6 +91,10 @@ class ARingRRi : public RingInterface
       mpfi_set(&result, a.get_mpfi());
   }
 
+  const ElementType &from_ring_elem_const(const ring_elem &a) const
+  {
+    return *a.get_mpfi();
+  }
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { mpfi_init2(&result, mPrecision); }
@@ -110,7 +114,7 @@ class ARingRRi : public RingInterface
     mpfi_set_si(&result, 0);
   }
 
-  void clear(ElementType &result) const { mpfi_clear(&result); }
+  static void clear(ElementType &result) { mpfi_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfi_set(&result, &a);
@@ -251,14 +255,14 @@ class ARingRRi : public RingInterface
   {
       if (mpz_cmp_si(n,2)>=0)
       {
-          mpz_ptr r = getmemstructtype(mpz_ptr);
+          mpz_t r;
           mpz_init(r);
           mpz_fdiv_r_ui(r,n,2);
           
           ElementType b;
           init(b);
           
-          mpz_ptr m = getmemstructtype(mpz_ptr);
+          mpz_t m;
           mpz_init(m);
           
           if (mpz_cmp_si(r,0) == 0)
@@ -275,6 +279,8 @@ class ARingRRi : public RingInterface
               power_mpz(b,a,m);
               mult(result,a,b);
           }
+          mpz_clear(r);
+          mpz_clear(m);
       }
       else if (mpz_cmp_si(n,1)==0)
           mpfi_set(&result,&a);
@@ -332,7 +338,7 @@ class ARingRRi : public RingInterface
 
     /* Needs to be redone. */
   void eval(const RingMap *map,
-            ElementType &f,
+            const ElementType &f,
             int first_var,
             ring_elem &result) const
   {

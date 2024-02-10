@@ -58,7 +58,7 @@ doc ///
 
      In addition to the functions highlighted above, the @TT "VirtualResolutions"@ package contains
      a number of other tools for constructing and studying virtual resolutions. In particular,
-     there are functions to construct virtual resolutions for zero dimensionsal subschemes, to
+     there are functions to construct virtual resolutions for zero dimensional subschemes, to
      check whether a complex is a virtual resolution, and to construct curves in $\PP^1\times\PP^2$.
   References
     @UL {
@@ -548,7 +548,7 @@ doc ///
           :@TT "Strategy => \"CohomologySearch\""@
             :This strategy calls the @TO cohomologyHashTable@ method from @TO TateOnProducts@ and checks for the multidegrees where the Hilbert polynomial and Hilbert function match and where the higher sheaf cohomology vanishes.
           :@TT "Strategy => \"TruncationSearch\""@ (default)
-            :This strategy uses @TO isQuasiLinear@ method from @TO LinearTruncations@ to search for the multidegrees where the module is regular by checking the Betti numbers of the truncation of the module. This strategy is much faster.
+            :This strategy uses @TO isQuasiLinear@ method from @TO LinearTruncations@ to search for the multidegrees where the module is regular by checking the Betti numbers of the truncation of the module. See Theorem 4.6 of @arXiv "2110.10705"@. This strategy is much faster.
         Text
           Note that both strategies require the module or ideal to be saturated by the irrelevant ideal of the Cox ring.
 

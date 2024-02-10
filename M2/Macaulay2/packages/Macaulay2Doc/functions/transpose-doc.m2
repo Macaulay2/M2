@@ -27,7 +27,7 @@ document {
 		"T" => List => {"which must be a ", TO "table"}
 	  },
      Outputs => { 
-		{"the tranpose of the table ", TT "T", ""}
+		{"the transpose of the table ", TT "T", ""}
 	  },
      "Here is an example.",
      EXAMPLE {,

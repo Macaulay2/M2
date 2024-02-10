@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: 1577276388
+
+i1 : length pythonValue "'Hello, world!'"
+
+o1 = 13
+
+i2 : length pythonValue "[1,2,3,4,5]"
+
+o2 = 5
+
+i3 : 

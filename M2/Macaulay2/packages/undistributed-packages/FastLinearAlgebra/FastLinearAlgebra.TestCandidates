@@ -55,41 +55,6 @@ TEST ///
 ///
 
 TEST ///
-needsPackage "FastLinearAlgebra"
-debug Core
-
- 
-nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
-fieldHashTable = constructGivaroField( 37,1 );
-testField(fieldHashTable, nrTests);
-
-nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
-fieldHashTable = constructGivaroField( 5,3 );
-testField(fieldHashTable, nrTests);
-
-nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
-fieldHashTable = constructGivaroField( 11,2 );
-testField(fieldHashTable, nrTests);
-fieldHashTable = constructGivaroField( 2,3 );
-testField(fieldHashTable, nrTests);
-
-fieldHashTable = constructMacaulayGF( 5,3 );
-testField(fieldHashTable, nrTests);
-
-fieldHashTable = constructMacaulayZZp(23,1);
-testField(fieldHashTable, nrTests);
-
-fieldHashTable = constructZZpFFPACK(23,1);
-testField(fieldHashTable, nrTests);
-
- R = rawARingGaloisField(2,3)
-
-
-///
-
-
-
-TEST ///
  
 restart
 needsPackage "FastLinearAlgebra"
@@ -101,11 +66,11 @@ kk = GF(2^4, Strategy=>"New")
 A = mutableMatrix random(kk^2, kk^2)
 rank A
 
-kk = GF(2^4, Strategy=>"Givaro")
+kk = GF(2^4, Strategy=>"Flint")
 A = mutableMatrix random(kk^2, kk^2)
 rank A
 
-kk = GF(2^4, Strategy=>"CompleteGivaro")
+kk = GF(2^4, Strategy=>"FlintBig")
 A = mutableMatrix random(kk^2, kk^2)
 rank A
  
@@ -380,212 +345,8 @@ a^126
 ///
 
 
-TEST ///
--- Testing Givaro GF
-debug Core
-R = rawARingGaloisField(2,3)
-rawARingGFPolynomial R
-a = R_0
-rawARingGFCoefficients (a^3)
-
- L = lines get "~/src/M2-trunk/M2-jakob-jan2012/Macaulay2/packages/ConwayPolynomials/ConwayPolynomials.txt";
-L#2 
-L#6
-kk = GF(2,7)
-R = ambient kk
-describe R
-
-debug Core
-R = rawARingGaloisField(2,7)
-rawARingGFPolynomial R
-
-k2 = rawARingGaloisField(2,2)
-rawARingGFPolynomial k2  -- a^2+a+1
-rawARingGFCoefficients (k2_0)
-
-k3 = rawARingGaloisField(2,3)
-rawARingGFPolynomial k3  -- 1+a^2+a^3
-rawARingGFCoefficients (k3_0)
-
-k4 = rawARingGaloisField(2,4)
-rawARingGFPolynomial k4  -- a^4+a+1
-rawARingGFCoefficients (k4_0)
-
-k5 = rawARingGaloisField(2,5)
-rawARingGFPolynomial k5  -- a^5+a^2+1
-rawARingGFCoefficients (k5_0)
-
-k6 = rawARingGaloisField(2,6)
-rawARingGFPolynomial k6  -- a^6+a^4+a^3+a+1
-rawARingGFCoefficients (k6_0)
-
-R = ZZ/2[a,b]
-I = ideal"a6+a4+a3+a+1,b-a21"
-eliminate(a, I)
-
-gf2 = GF(2,2)
-(ideal ambient gf2)_0 -- a2+a+1
-
-gf3 = GF(2,3)
-(ideal ambient gf3)_0 -- a3+a+1
-
-gf4 = GF(2,4)
-(ideal ambient gf4)_0 -- a4+a+1
-
-(map(gf4,gf2))(gf2_0) -- gf2_0 = a^2+a
-R = ZZ/2[a,b]
-I = ideal"a4+a+1,b-a5"
-eliminate(a, I)
-
--- is there a way to lift from gf4 to gf2? Doesn't appear so...
--- is there a way to expand a matrix of gf4 elements to a matrix over ZZ/2 or gf2?
-
-///
-
-TEST ///
-
-debug Core
-R = rawARingGaloisField(2,7)
-rawARingGFPolynomial R
-gen= rawARingGFGenerator R
-S = ZZ/2[x]/(x^7 + x^3 + 1)
-T = rawARingGaloisFieldFromQuotient(raw S_0)
-gen= rawARingGFGenerator T
-
-S = GF(3,4)
-R = ambient S
-T = rawARingGaloisFieldFromQuotient(raw R_0)
-gen= rawARingGFGenerator T
-
-///
 
 
-TEST /// -- Testing M2 ARing GF interface
---restart
---loadPackage "FastLinearAlgebra"
-A = GF(2,4)
-testGFArithmetic A
-
-B = GF(2,4, Strategy=>"New")
-testGFArithmetic B
-
-C = GF(2,4, Strategy=>"Givaro")
-testGFArithmetic C
-
-D = GF(2,4, Strategy=>"CompleteGivaro")
-testGFArithmetic D
-
-///
-
-TEST /// -- Testing M2 ARing GF interface
---restart
---loadPackage "FastLinearAlgebra"
-A = GF(3,3)
-testGFArithmetic A
-
-B = GF(3,3, Strategy=>"New")
-testGFArithmetic B
-
-C = GF(3,3, Strategy=>"Givaro")
-testGFArithmetic C
-
-D = GF(3,3, Strategy=>"CompleteGivaro")
-testGFArithmetic D
-
-///
-
-TEST /// -- of findGalois  (which will be placed into the engine?)
-restart
-loadPackage "FastLinearAlgebra"
-
-R = ZZ/5[b]
-G = (b^(5^4)-b) // (b^(5^2)-b)
-Gfacs = factor  G  -- 150 factors
-apply(Gfacs, fac -> (
-	  f := fac#1;
-	  S := R/f;
-	  S.char = 5;
-	  S.degree = 4;
-	  findPrimitive S
-	  ))
-
-findGalois(5,5)
-findGalois(5,5, Strategy=>"Blah")
-findGalois(5,5, Strategy=>"Givaro")
-findGalois(5,7, Strategy=>"Givaro")
-findGalois(5,8, Strategy=>"Givaro")
-findGalois(5,8)
-
-
-findGalois(5,4)
-findGalois(5,4)
-findGalois(5,3)
-findGalois(5,2)
-findGalois(5,1)
-findGalois(5,5^7, Variable=>getSymbol "c")
-
-debug Core
-rawARingGaloisField(5,2)
-rawARingGaloisField(5,3)
-kk = rawARingGaloisField(5,4)
-rawARingGFPolynomial kk
-rawARingGaloisField(5,5)
-rawARingGaloisField(5,6)
-rawARingGaloisField(5,7)
-
-rawARingGaloisField(5,8)
-
-
-A = GF(2,3)
-B = GF(2,3,Strategy=>"Givaro")  -- fails
-GF(2,3,Strategy=>"CompleteGivaro")  -- fails
-
-
-A = GF(2,3,Strategy=>"New")  -- fails, needs 'promote'
-
-debug Core
-B = ambient A
-B_0
-rawARingGaloisFieldFromQuotient(raw B_0)
-///
-
-TEST /// 
--- Test of rank
--- JAKOB: can you look at the FFPACK rank call in e/dmat.cpp, and see what is wrong?
-restart
-
-mat = {{1, -8, -8, 8, -5, 7, -5, 1}, 
-     {9, 3, -7, -3, -5, 2, 6, -7}, 
-     {5, -7, -9, -2, 0, 8, -2, 4}, 
-     {4, 0, -5, 4, -4, 4, -2, 5}, 
-     {3, 0, -1, 5, 8, -6, 4, 4}, 
-     {-7, 8, -7, -2, 9, 4, 4, 5}, 
-     {0, 9, -6, -3, 7, -3, -4, -5}, 
-     {-8, 1, 6, -2, 5, 6, -9, 7}, 
-     {-5, -5, 0, -6, -2, -5, -5, -6}}
-loadPackage "FastLinearAlgebra"
-debug Core
-debug FastLinearAlgebra
-kk = ZZp (ideal 19)
-
-M = matrix(kk, mat)
-mm = mutableMatrix M
-
-rawFFPackRank raw mm
-rank mm
-
-kk= ZZ/19
-M = matrix(kk, mat)
-mm = mutableMatrix M
-rawFFPackRank raw mm
-rank mm
-assert(5 == rank mm)  -- WRONG!!
-
-R = ZZ/19
-MR = matrix(R, mat)
-assert(5 == rank MR)
-syz MR
-///
 
 /// -- rawFFLU, is this active??
 kk = QQ
@@ -608,11 +369,8 @@ time (A*A);
 time (A+A);
 
 restart
-restart
-debug loadPackage "FastLinearAlgebra"
---kk = ZZ/101
 kk = ZZp 101
-kk = GF(2,4,Strategy=>"Givaro")
+kk = GF(2,4,Strategy=>"Flint")
 random(kk^3, kk^4)
 N = 5
 m = mutableMatrix(kk, N, N)
@@ -624,15 +382,11 @@ time(ans1 = m * m);
 time(ans2 = M * M);
 assert(ans2 == matrix ans1)
 
-kk = GF(2,4,Strategy=>"Givaro")
+kk = GF(2,4,Strategy=>"Flint")
 M = mutableMatrix random(kk^3, kk^4)
-debug FastLinearAlgebra
 rank M
 
-restart
 debug Core
-debug loadPackage "FastLinearAlgebra"
-
 
 --kk = ZZp 1049599
 kk = ZZp 101
@@ -681,8 +435,7 @@ kerm2 = matrix nullSpace(m2, RightSide=>false)
 assert(kerm2 * (transpose M) == 0)
 assert(rank kerm2 == 5)
 
-kk = GF(3,4,Strategy=>"Givaro")
-rawARingGFGenerator raw kk
+kk = GF(3,4,Strategy=>"Flint")
 N = 10
 N = 4
 --M = random(kk^N, kk^N);
@@ -835,79 +588,6 @@ phi(x) -- y^128 !! Oh no!!  But mathematically this is OK.
 phi(x^2) 
 phi(x^7)
 phi = map(S,A,{S_0})
-
-steps:
-1. find f (but with Givaro: this also produces a raw ring
-2. find primitive element
-3. construct GF
-
-findGaloisField(p,n)
-  find quotient poly f (using Conway Polynomials)
-  form R = kk[a]/f
-  find primitive element x
-  return x
-
-findGaloisField(p,n,Givaro=>true)
-findGaloisField(kka,n,Givaro=>true)
-  construct R0 = rawARingGF
-  get quotient poly as array
-  make a poly in one variable out of it (either in kka = kk[a], or in ZZ/p[a])
-  form R = kk[a]/f
-  find primitive element x
-  in R, set R#"RawGivaroRing" = R0
-  return x
-
-findGaloisField(kk[a], n, Givaro=>true/false)
-
-
-GF(p,n,Strategy=>"Givaro")
-
--- checks to make sure size is OK, if not: error.
--- first construct a raw Givaro field.
--- then create a poly ring S in one var matching this.
--- then call GF(S, rawGFRing)
-
-GF(R, Strategy=>"Givaro")
--- calls Givaro with a given poly already
-GF(R, Strategy=>"New")
-
-
-Overall logic:
-Strategy=>null:  current method
-
-Strategy=>"New": 
-  case 1: GF(p,n):  (small rep) as currently done, EXCEPT: call different rawGaloisField routine.
-  case 2: GF a_R: (small rep) as currently done, EXCEPT: call different rawGaloisField routine.
-
-Strategy=>"Givaro":
-  case 1: GF a_R:
-    if size is too big, error
-    do current GF code, except: use different raw routine.
-
-  case 2: (p,n) or p^n:
-    if size is too big, error
-    make rawARingGF?  (Alternate: ?)
-    find f that they use
-    make ZZ/p[a]/(f) ring
-    have a new version of GF which takes an already constructed raw ring
-     but otherwise does exactly what is done now.
-
-
-possible structure for mutable matrices:
-class DMat<RingType>  -- just like now
-class SMat<RingType>  -- just like now
-class MutableMatrix  (virtual calls to everything) -- just like now
-  class ConcreteMutableMatrix<MatType>
-
-question: how to create a new matrix, given a ring?
-answer#1: have, inside the Ring hierarchy.  This seems to be the cleanest solution
-  virtual MutableMatrix* mutableZeroMatrix(size_t nrows, size_t ncols, bool dense)
-answer#2:
-  MutableMatrix has a virtual call:
-  virtual MutableMatrix * mutableZeroMatrix(size_t nrows, size_t ncols)
-  this could be called via... THIS DOESN'T WORK SO WELL!!
-  MatrixFactory: abstract class
-    ConcreteMatrixFactory<RingType>::mutableZeroMatrix
 
 
 -- Local Variables:

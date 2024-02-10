@@ -16,7 +16,7 @@ document {
 	       ", the power of the lowest index variable occurring in f, if f is a ring element,
 	     or the one row matrix of these powers for each column, if f is a matrix."},
 	  "cf" => Nothing => {ofClass RingElement, ", or ", ofClass Matrix, 
-	       ", the cofficient of lf in f, if f is a ring element,
+	       ", the coefficient of lf in f, if f is a ring element,
 	       or the matrix of these coefficients for each column of f"}
 	  },
      EXAMPLE lines ///

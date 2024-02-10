@@ -1,5 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "max.m2"
+needs "methods.m2"
+
 pad = method()
 
 pad(String,ZZ) := String => (s,n) -> concatenate(s,n-# s)

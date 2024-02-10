@@ -17,7 +17,7 @@
 #include "ring.hpp"                // for Ring
 #include "ringelem.hpp"            // for vec
 #include "text-io.hpp"             // for emit
-#include "VectorArithmetic.hpp"    // for VectorArithmetic, CoeffVector
+#include "VectorArithmetic.hpp"    // for VectorArithmetic, ElementArray
 
 class Computation;
 class RingElement;
@@ -123,9 +123,9 @@ const Matrix /* or null */ *F4Computation::get_mingens()
   return nullptr;
 }
 
-const Matrix /* or null */ *F4Computation::get_change() { return 0; }
-const Matrix /* or null */ *F4Computation::get_syzygies() { return 0; }
-const Matrix /* or null */ *F4Computation::get_initial(int nparts) { return 0; }
+const Matrix /* or null */ *F4Computation::get_change() { return nullptr; }
+const Matrix /* or null */ *F4Computation::get_syzygies() { return nullptr; }
+const Matrix /* or null */ *F4Computation::get_initial(int nparts) { return nullptr; }
 const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
   return nullptr;

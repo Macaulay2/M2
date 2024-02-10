@@ -302,7 +302,7 @@ randomElement = L -> (
     )
 
 ----------------------
---Auxilary functions for phyloToricFP
+--Auxiliary functions for phyloToricFP
 ----------------------
 
 --A function that takes an invariant on a small tree and extends it in all possible ways to a big tree.
@@ -1210,7 +1210,7 @@ doc///
         fourierToProbability
 	(fourierToProbability,Ring,Ring,ZZ,Model)
     Headline
-        map from Fourier coordinates to probablity coordinates
+        map from Fourier coordinates to probability coordinates
     Usage
         fourierToProbability(S,R,n,M)
     Inputs
@@ -1223,7 +1223,7 @@ doc///
 	M:Model
     Outputs
         :RingMap
-	    from Fourier coordinates to probablity coordinates
+	    from Fourier coordinates to probability coordinates
     Description
         Text
 	    This function creates a ring map from the ring of Fourier coordinates to the ring of probability coordinates,
@@ -1601,7 +1601,7 @@ doc///
 	    of group elements
     Description
         Text
-            Every group-based phyogenetic model has a finite group associated to it.  This function
+            Every group-based phylogenetic model has a finite group associated to it.  This function
 	    returns the group, represented as a list of elements.
 	Example
 	    M = K3Pmodel
@@ -1626,7 +1626,7 @@ doc///
 	    of lists of group elements
     Description
         Text
-            Every group-based phyogenetic model has a finite group {\tt G} associated to it.  Parameters
+            Every group-based phylogenetic model has a finite group {\tt G} associated to it.  Parameters
 	    for the model are assigned to equivalence classes of group elements, which are orbits
 	    of some subgroup of the automorphism group of {\tt G}.  This function returns the equivalence
 	    classes as a list of list of group elements.
@@ -1667,7 +1667,7 @@ doc///
         Text
             An object of class @TO LeafTree@ is specified by listing its leaves, and for each internal edge, 
 	    the partition the edge induces on the set of leaves.
-	    {\tt L} is the set of leaves, or if an integer {\tt n} is input then the leaves will be be named $0,\ldots,n-1$.
+	    {\tt L} is the set of leaves, or if an integer {\tt n} is input then the leaves will be named $0,\ldots,n-1$.
 	    {\tt E} is a list with one entry for each internal edge.
 	    Each entry is a partition specified as a list or set of the leaves in one side of the partition.
 	    Thus each edge can be specified in two possible ways.
@@ -2296,7 +2296,7 @@ assert(I == J)
 --kernel of the homomorphism defined by the standard parameterization. We check that
 --this ideal matches the ideal defined by phyloToricFP, I == J. We extract the
 --linear generators for the kernel I, and check that these generate the same
---ideal as the generatros given as output for phyloToricLinears, M == Q.
+--ideal as the generators given as output for phyloToricLinears, M == Q.
 --We also check the number of linear generators defined by N and those defined
 --by phyloToricLinears, P. Although these sets are not minimal, we check that
 --each list is 51. This coincides with the fact that there are 13 distinct
@@ -2651,7 +2651,7 @@ TEST ///
 --by computing directly from the parameterization in probability 
 --coordinates and the second is by using phyloToric42 to compute
 --the ideal in Fourier coordinates and then forming an ideal by 
---converting each of the generators into probablity coordinates. 
+--converting each of the generators into probability coordinates. 
 --We assert the two ideals are equal modulo the certain linear invariants
 --that are suppressed when computing in the ring of Fourier coordinates.
 

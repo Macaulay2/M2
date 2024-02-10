@@ -65,7 +65,7 @@ document {
 	  TO basis,
 	  TO "Truncations::truncate(ZZ,Module)",
 	  TO (degree, Module),
-	  TO (genera, Module),
+	  TO "Varieties::genera(Module)",
 	  TO (hilbertSeries, Module),
 	  TO (hilbertFunction, ZZ, Module),
 	  TO (poincare, Module),
@@ -458,9 +458,10 @@ document {
      "Notice that as is usual in Macaulay2, the target comes before the source.",
      PARA{},
      "Macaulay2 doesn't display the source and target, unless they are both free
-     modules.  Use ", TO target, " and ", TO source, " to get them.  The ",
-     TO matrix, " routine recovers the matrix of free modules between the
-     generators of the source and target.",
+     modules or have been assigned to global variables.  Use ", TO target,
+     " and ", TO source, " to get them.  The ", TO matrix,
+     " routine recovers the matrix of free modules between the generators of the
+     source and target.",
      EXAMPLE {
 	  "source F",
 	  "target F == R^1",
@@ -615,7 +616,7 @@ document {
      graded.",
      EXAMPLE "isHomogeneous M",
      SUBSECTION "codimension, degree, and sectional arithmetic genera",
-     "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO (genera,Module), " for some basic 
+     "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO "Varieties::genera(Module)", " for some basic 
      numeric information about a module.",
      EXAMPLE {
 	  "codim M",
@@ -646,7 +647,7 @@ document {
 	H := poincare M;
 	t := (ring H)_0;  -- The variable t above
 	while H % (1-t) == 0 do H = H // (1-t);
-	H)",
+	H);",
           "poincare' M",
 	  },
      SUBSECTION "free resolutions",
@@ -665,7 +666,18 @@ document {
      TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),
      is the number of ", TT "j", "-th syzygies in degree ", TT "i+j", ".
      In the above example, there are 15 second syzygies of degree 4, and the entries
-     of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
+     of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear.",
+     Subnodes => {
+	 TO isHomogeneous,
+	 TO (codim, Module),
+	 TO (degree, Module),
+	 TO "Varieties::genera(Module)",
+	 TO (hilbertSeries, Module),
+	 TO poincare,
+	 TO poincareN,
+	 TO reduceHilbert,
+	 TO betti,
+	 }
      }
 
 -*

@@ -75,7 +75,7 @@ syz matrix makeEquations(Ps, V, 1) -- no solutions, so add new elem to V
 V = append(V, s*(last V))
 syz matrix makeEquations(Ps, V, 1) -- one solution, so modify last elem of V, mult others by z
 V = append(apply(drop(V,-1), p -> z*p), V_2+V_1)
-syz matrix makeEquations(Ps, V, 2) -- no soution so add new elem to V
+syz matrix makeEquations(Ps, V, 2) -- no solution so add new elem to V
 V = append(V, s*(last V))
 syz matrix makeEquations(Ps, V, 2) -- one solution, so modify last elem of V
 V = append(apply(drop(V,-1), p -> z*p), V_3-3*V_1)

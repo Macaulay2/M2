@@ -131,10 +131,17 @@ TEST ///
   -- Test of stopping conditions
   R = QQ[a..d]
   I = ideal(a^5,b^5,c^5,d^5)
-  I : (a+b+c+d)
-  quotient(I, a^2+b^2+c^2+d^2, DegreeLimit=>20)
-  gbTrace=3
-  quotient(I, a+b+c+d, BasisElementLimit=>5, MinimalGenerators=>false)
+  -- check that cached results are not inappropriately used
+  debug Saturation; cacheHit QuotientComputation := C -> error 0;
+  elapsedTime assert({9,4,4,5,6,7,8,8,9} == apply({0,1,2,17,18,19,26,27,28}, i -> numgens quotient(I, a^1+b^1+c^1+d^1, PairLimit         => i)))
+  elapsedTime assert({21,4,4,4,21}       == apply({0,1,5,22,23},             i -> numgens quotient(I, a^2+b^2+c^2+d^2, BasisElementLimit => i)))
+  elapsedTime assert({4,4,6,12,13,13}    == apply({4,5,6,7,8,{}},            i -> numgens quotient(I, a^3+b^3+c^3+d^3, DegreeLimit       => i)))
+  -- check that repeating the above does not perform any more computation
+  elapsedTime assert all({0,1,2,17,18,19,26,27,28},  i -> try (quotient(I, a^1+b^1+c^1+d^1, PairLimit         => i); false) else true)
+  elapsedTime assert all({0,1,5,22,23},              i -> try (quotient(I, a^2+b^2+c^2+d^2, BasisElementLimit => i); false) else true)
+  elapsedTime assert all({4,5,6,7,8,{}},             i -> try (quotient(I, a^3+b^3+c^3+d^3, DegreeLimit       => i); false) else true)
+  --
+  cacheHit QuotientComputation := lookup(cacheHit, Computation)
 ///
 
 TEST ///

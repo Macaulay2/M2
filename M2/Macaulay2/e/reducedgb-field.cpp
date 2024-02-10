@@ -8,11 +8,11 @@
 ReducedGB_Field::~ReducedGB_Field()
 {
   delete T;
-  Rideal = 0;
+  Rideal = nullptr;
 }
 
 void ReducedGB_Field::set_gb(VECTOR(POLY) & polys0) {}
-struct ReducedGB_Field_sorter : public std::binary_function<int, int, bool>
+struct ReducedGB_Field_sorter
 {
   GBRing *R;
   const FreeModule *F;
@@ -35,7 +35,7 @@ ReducedGB_Field::ReducedGB_Field(GBRing *R0,
                                  const PolynomialRing *originalR0,
                                  const FreeModule *F0,
                                  const FreeModule *Fsyz0)
-    : ReducedGB(R0, originalR0, F0, Fsyz0), T(0)
+  : ReducedGB(R0, originalR0, F0, Fsyz0), T(nullptr), Rideal(nullptr)
 {
   T = MonomialTable::make(R0->n_vars());
   if (originalR->is_quotient_ring())
@@ -72,7 +72,7 @@ void ReducedGB_Field::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
     {
       Bag *not_used;
       gbvector *f = polys0[*i].f;
-      exponents e = R->exponents_make();
+      exponents_t e = R->exponents_make();
       R->gbvector_get_lead_exponents(F, f, e);
       if ((!Rideal || !Rideal->search_expvector(e, not_used)) &&
           T->find_divisors(1, e, f->comp) == 0)
@@ -101,19 +101,19 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
   gbvector head;
   gbvector *frem = &head;
-  frem->next = 0;
+  frem->next = nullptr;
   POLY h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while (!R->gbvector_is_zero(h.f))
     {
       R->gbvector_get_lead_exponents(F, h.f, EXP);
       int x = h.f->comp;
       Bag *b;
-      if (Rideal != 0 && Rideal->search_expvector(EXP, b))
+      if (Rideal != nullptr && Rideal->search_expvector(EXP, b))
         {
           const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
           R->gbvector_reduce_lead_term(
-              F, Fsyz, head.next, h.f, h.fsyz, g, 0, use_denom, denom);
+              F, Fsyz, head.next, h.f, h.fsyz, g, nullptr, use_denom, denom);
         }
       else
         {
@@ -136,7 +136,7 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
               frem->next = h.f;
               frem = frem->next;
               h.f = h.f->next;
-              frem->next = 0;
+              frem->next = nullptr;
             }
         }
     }
@@ -150,18 +150,18 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
 
 void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
-  gbvector *zero = 0;
+  gbvector *zero = nullptr;
   gbvector head;
   gbvector *frem = &head;
-  frem->next = 0;
+  frem->next = nullptr;
   gbvector *h = f;
-  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+  exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while (!R->gbvector_is_zero(h))
     {
       R->gbvector_get_lead_exponents(F, h, EXP);
       int x = h->comp;
       Bag *b;
-      if (Rideal != 0 && Rideal->search_expvector(EXP, b))
+      if (Rideal != nullptr && Rideal->search_expvector(EXP, b))
         {
           const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
           R->gbvector_reduce_lead_term(
@@ -175,7 +175,7 @@ void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
               frem->next = h;
               frem = frem->next;
               h = h->next;
-              frem->next = 0;
+              frem->next = nullptr;
             }
           else
             {

@@ -1,11 +1,8 @@
 -- Copyright 1993-1999 by Daniel R. Grayson
 -- Copyright 1996 by Michael E. Stillman
 
--- This definition is used in several places, so it doesn't have
--- a natural home.  It used to be in methods.m2, but
--- 'infinity' isn't defined yet when reading that file.
-
-assert( class infinity === InfiniteNumber )
+needs "max.m2" -- for infinity
+needs "methods.m2"
 
 -- ideal quotient methods moved to packages/Saturation.m2 in July 2020
 quotient = method(

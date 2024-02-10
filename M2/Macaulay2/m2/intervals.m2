@@ -1,3 +1,7 @@
+needs "methods.m2"
+needs "shared.m2"
+needs "reals.m2"
+
 interval = method(Options => {Precision => -1})
 
 for A in {ZZ,QQ,RR} do
@@ -45,20 +49,21 @@ span RRi := {Precision => -1} >> opts -> N -> interval(left N,right N,opts)
 
 span List := span Sequence := {Precision => -1} >> opts -> L -> fold(L, (N, M) -> spanRRi(N, M, opts))
 
-isMember = method()
-
 for A in {ZZ,QQ,RR} do
 isMember(A,RRi) := (N,M) -> subsetRRi(N,M);
 
 isSubset(RRi,RRi) := (N,M) -> subsetRRi(N,M);
 
+-- TODO: now that intersect is a binary method with arbitrary options, we can remove this
 intersection(RRi,RRi) := {Precision => -1} >> opts -> (N,M) -> (
+    intersect(N, M, opts))
+
+-- intersect is an associative binary method, so it works on arbitrary lists and sequences
+intersect RRi       := RRi => { Precision => -1 } >> opts -> identity
+intersect(RRi, RRi) := RRi => { Precision => -1 } >> opts -> (N, M) -> (
     if opts.Precision < 0 then intersectRRi(N,M)
     else intersectRRi(opts.Precision,N,M))
 
-intersect RRi := RRi => { Precision => -1 } >> opts -> identity
-
--- see (intersect, Sequence) in intersect.m2
-RRi.intersect = { Precision => -1 } >> opts -> L -> fold(L, (N, M) -> intersection(N, M, opts))
-
 isEmpty RRi := Boolean => isEmptyRRi
+
+toExternalString RRi:= x -> "interval" | toExternalString (left x, right x)

@@ -6,6 +6,13 @@
 -- TODO: make orphan overview nodes subnodes of the top node
 -- TODO: not reentrant yet, see resetCounters
 
+needs "document.m2"
+needs "examples.m2"
+needs "hypertext.m2"
+needs "packages.m2"
+needs "printing.m2"
+needs "validate.m2"
+
 -----------------------------------------------------------------------------
 -- Generate the html documentation
 -----------------------------------------------------------------------------
@@ -29,8 +36,9 @@ installPrefix   = applicationDirectory() | "local/"  -- default the installation
 installLayout   = Layout#2			     -- the layout of the installPrefix, global for communication to document.m2
 htmlDirectory   = ""	      -- relative path to the html directory, depends on the package
 
-indexFileName  := "master.html"   -- file name for master index of topics in a package
-tocFileName    := "toc.html"      -- file name for the table of contents of a package
+  topFileName   = "index.html"	-- top node's filename, constant
+indexFileName  := "master.html"	-- file name for master index of topics in a package
+  tocFileName  := "toc.html"	-- file name for the table of contents of a package
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -144,7 +152,7 @@ makeTree := (parent, graph, visits, node) -> (
     new TreeNode from {node, tree})
 
 -- pre-compute the list of orphan nodes in a graph, with parent
--- node (typcally topDocumentTag) appearing in the beginning
+-- node (typically topDocumentTag) appearing in the beginning
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
     if not nonLeaves#?parent and signalDocumentationWarning parent then printerr("warning: top node ", parent, " not a root");
@@ -199,7 +207,7 @@ assembleTree := (pkg, nodes) -> (
 	    and pkg#"raw documentation"#fkey.?Subnodes then (
 		subnodes := pkg#"raw documentation"#fkey.Subnodes;
 		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(subnodes, node -> package node === pkg);
+		subnodes  = select(fixup \ subnodes, node -> package node === pkg);
 		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest
@@ -232,7 +240,8 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 topNodeButton  := (htmlDirectory, topFileName)   -> HREF {htmlDirectory | topFileName,   "top" };
 indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexFileName, "index"};
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
-homeButton     := HREF {"http://macaulay2.com/", "Macaulay2 website"};
+pkgButton      := TO2 {"packages provided with Macaulay2", "Packages"};
+homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
 prevButton     := tag -> if PREV#?tag then HREF { htmlFilename PREV#tag, "previous" } else "previous"
@@ -241,10 +250,38 @@ backwardButton := tag -> ( b := BACKWARD tag; if b =!= null then HREF { htmlFile
 upButton       := tag -> if   UP#?tag then HREF { htmlFilename   UP#tag, "up" } else "up"
 topButton      := tag -> if tag =!= topDocumentTag then topNodeButton(htmlDirectory, topFileName) else "top"
 
+upAncestors := tag -> reverse(
+    n := 0; prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
+
 -- TODO: revamp this using Bootstrap
-buttonBar := tag -> TABLE { "class" => "buttons", TR { TD { DIV splice between_" | " {
-		nextButton tag, prevButton tag, forwardButton tag, backwardButton tag, upButton tag, topButton tag,
-		indexButton(htmlDirectory, indexFileName), tocButton(htmlDirectory, tocFileName), homeButton}}}}
+buttonBar := tag -> DIV {
+    "id" => "buttons",
+    DIV {
+	homeButton, " ", SPAN {"id" => "version-select-container", ""},
+	" » ", TO2 {"Macaulay2Doc", "Documentation "}, " ",
+	BR {},
+	pkgButton, " » ",
+	SPAN if UP#?tag
+	then between(" > ", apply(upAncestors tag, i -> TO i))
+	else (TO topDocumentTag, " :: ",
+	    if tag === "index"
+	    then HREF {htmlDirectory | indexFileName, "Index"}
+	    else if tag === "toc"
+	    then HREF {htmlDirectory | tocFileName, "Table of Contents"}
+	    else TO tag)},
+    DIV join({"class" => "right",
+	    LITERAL ///<form method="get" action="https://www.google.com/search">
+  <input placeholder="Search" type="text" name="q" value="">
+  <input type="hidden" name="q" value="site:macaulay2.com/doc">
+</form>///},
+	splice between_" | " {
+	    nextButton tag,
+	    prevButton tag,
+	    forwardButton tag,
+	    backwardButton tag,
+	    upButton tag,
+	    indexButton(htmlDirectory, indexFileName),
+	    tocButton(htmlDirectory, tocFileName)})}
 
 -----------------------------------------------------------------------------
 -- makePackageIndex
@@ -368,9 +405,6 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
 -- install HTML documentation for package
 -----------------------------------------------------------------------------
 
-upAncestors := tag -> reverse(
-    n := 0; prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
-
 makeSortedIndex := (nodes, verboseLog) -> (
      numAnchorsMade = 0;
      fn := installPrefix | htmlDirectory | indexFileName;
@@ -379,7 +413,7 @@ makeSortedIndex := (nodes, verboseLog) -> (
      fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY nonnull {
-	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", tocButton(htmlDirectory, tocFileName), -* " | ", directoryButton, *- " | ", homeButton },
+	       buttonBar "index",
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})),
@@ -397,7 +431,7 @@ makeTableOfContents := (pkg, verboseLog) -> (
      fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY {
-	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", indexButton(htmlDirectory, indexFileName), -* " | ", directoryButton, *- " | ", homeButton },
+	       buttonBar "toc",
 	       HR{},
 	       HEADER1 title,
 	       toDoc unbag pkg#"table of contents"
@@ -432,9 +466,6 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 		defaultHEAD {fkey, commentize headline fkey},
 		BODY {
 		    buttonBar tag,
-		    if UP#?tag
-		    then DIV between(" > ", apply(upAncestors tag, i -> TO i))
-		    else DIV (TO topDocumentTag, " :: ", TO tag),
 		    HR{},
 		    fetchProcessedDocumentation(pkg, fkey)
 		    }
@@ -450,10 +481,6 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 -----------------------------------------------------------------------------
 -- helper functions for installPackage
 -----------------------------------------------------------------------------
-
-dispatcherMethod := m -> m#-1 === Sequence and (
-    f := lookup m;
-    any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
 reproduciblePaths = outstr -> (
      if topSrcdir === null then return outstr;
@@ -534,12 +561,11 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 		verboseLog("using cached " | desc)
 		)
 	    -- run and capture example results
-	    else elapsedTime captureExampleOutput(
+	    else if elapsedTime captureExampleOutput(
 		desc, demark_newline inputs, pkg,
-		possiblyCache(outf, outf', fkey),
 		inpf, outf, errf, data,
 		inputhash, changeFunc fkey,
-		usermode);
+		usermode) then (possiblyCache(outf, outf', fkey))();
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
 
     -- check for obsolete example output files and remove them
@@ -715,11 +741,14 @@ installPackage Package := opts -> pkg -> (
 	(hadError, numErrors) = (false, 0); -- declared in run.m2
 	generateExampleResults(pkg, rawDocumentationCache, exampleDir, exampleOutputDir, verboseLog, pkgopts, opts);
 
-	if not opts.IgnoreExampleErrors and hadError
-	then error("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
+	if hadError then (
+	    errmsg := ("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
 	    if opts.Verbose or debugLevel > 0 then ":" | newline | newline |
 	    concatenate apply(select(readDirectory exampleOutputDir, file -> match("\\.errors$", file)), err ->
 		err | newline |	concatenate(width err : "*") | newline | getErrors(exampleOutputDir | err)) else "");
+	    if opts.IgnoreExampleErrors
+	    then stderr << " -- warning: " << concatenate errmsg << endl
+	    else error errmsg);
 
 	-- if no examples were generated, then remove the directory
 	if length readDirectory exampleOutputDir == 2 then removeDirectory exampleOutputDir;
@@ -737,7 +766,7 @@ installPackage Package := opts -> pkg -> (
 
 	-- should this be here, or farther up? Note: assembleTree resets the counters, so stay above that.
 	if chkdoc and hadDocumentationError then error(
-	    toString numDocumentationErrors, " errors(s) occurred in processing documentation for package ", toString pkg);
+	    toString numDocumentationErrors, " error(s) occurred in processing documentation for package ", toString pkg);
 
 	if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB;
 
@@ -772,7 +801,6 @@ installPackage Package := opts -> pkg -> (
 				tag := makeDocumentTag m;
 				if  not isUndocumented tag
 				and not hasDocumentation tag
-				and not dispatcherMethod m
 				and signalDocumentationWarning tag then printerr(
 				    "warning: method has no documentation: ", toString tag,
 				    ", key ", toExternalString tag.Key,
@@ -781,7 +809,7 @@ installPackage Package := opts -> pkg -> (
 			))));
 
 	if chkdoc and hadDocumentationError then error(
-	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
+	    toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
 	-- ~60 -> ~70s for Macaulay2Doc

@@ -69,8 +69,8 @@ set(DLIST
   equality.dd
   hashtables.dd
   regex.dd
-  sets.dd
   evaluate.d
+  sets.dd
   mysql.d	# removed unless WITH_SQL
   mysqldummy.d	# removed if WITH_SQL
   pthread.d
@@ -85,7 +85,12 @@ set(DLIST
   threads.dd
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d
+  monoid.dd
+  monomial_ordering.dd
   texmacs.d
+  boostmath.dd
+  atomic2.d
+  ffi.d		# removed unless WITH_FFI
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
   )
@@ -101,6 +106,9 @@ else()
 endif()
 if(NOT WITH_PYTHON)
   list(REMOVE_ITEM DLIST python.d)
+endif()
+if(NOT WITH_FFI)
+  list(REMOVE_ITEM DLIST ffi.d)
 endif()
 
 ###############################################################################
@@ -139,7 +147,13 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb
+  $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
+
+# TODO: c.f. https://github.com/Macaulay2/M2/issues/2682
+if(NOT APPLE)
+  target_link_libraries(M2-interpreter PRIVATE quadmath)
+endif()
 
 target_include_directories(M2-interpreter
   PUBLIC
@@ -147,12 +161,20 @@ target_include_directories(M2-interpreter
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e> # need newdelete.hpp
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/c> # need scc-core.h
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Macaulay2/d>
+    # for version.dd to get version numbers
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathic>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/memtailor>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathicgb>
+    # for libraries that the interpreter needs
     $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
+    $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
+    # Note: this shouldn't be necessary since FFI::ffi is linked above
+    $<$<BOOL:${WITH_FFI}>:$<BUILD_INTERFACE:${FFI_INCLUDE_DIRS}>>
     ${SQLite3_INCLUDE_DIRS}
-    ${Python3_INCLUDE_DIRS}
   )
 
 # TODO: Including most of these is only necessary because of version.dd
@@ -185,11 +207,12 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-sign-compare
   -Wno-uninitialized
   -Wno-unused
+  -Wno-array-bounds   # FIXME: caused by scc1's implementation of arrays
 
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags -Wno-parentheses-equality>
-  # FIXME: caused by SIMD macro redefenition in fflas_ffpack
+  # FIXME: caused by SIMD macro redefinition in fflas_ffpack
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-macro-redefined>
 
   # FIXME: __builtin_frame_address M2lib.c:165 causes this:

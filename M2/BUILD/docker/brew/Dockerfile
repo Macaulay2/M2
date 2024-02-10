@@ -2,7 +2,7 @@
 # Net usage:  ~700MB
 # Disk usage: ~1GB
 
-FROM linuxbrew/brew
+FROM homebrew/brew
 
 # Install optional packages
 RUN apt-get update && apt-get install -y -q --no-install-recommends vim mlocate && apt-get clean

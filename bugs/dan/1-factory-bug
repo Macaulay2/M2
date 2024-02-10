@@ -2,6 +2,6 @@ R = ZZ/2[x,y,z,u,v]
 I =  ideal(z^2 + x*y*z + x^2*y + x*y^2, u^2 + x*u + x, v^2 + y*v + y)
 radical I
 
-convertFacCF2NTLGF2X: coefficient not immidiate! : a_7^2*a_6
+convertFacCF2NTLGF2X: coefficient not immediate! : a_7^2*a_6
 Process M2 exited abnormally with code 1
 

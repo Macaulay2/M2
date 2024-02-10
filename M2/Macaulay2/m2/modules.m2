@@ -1,5 +1,8 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "monoids.m2"  -- for degreesMonoid
+needs "reals.m2" -- for inexact number
+
 -----------------------------------------------------------------------------
 -- Matrix
 
@@ -65,6 +68,7 @@ vector Matrix := f -> (
      new target f from {f}
     )
 vector List := v -> vector matrix apply(splice v, i -> {i});
+vector RingElement := vector Number := x -> vector {x}
 
 -----------------------------------------------------------------------------
 
@@ -75,10 +79,22 @@ entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
 expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
 net Vector := v -> net expression v
-toExternalString Vector :=
+describe Vector := v -> Describe expression FunctionApplication(
+    vector, (describe module v, describe \ flatten entries matrix v))
+toExternalString Vector := toString @@ describe
 toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
 --html Vector := v -> html expression v
+
+-- helper for Matrix#AfterPrint and Vector#AfterPrint
+moduleAbbrv = (M, abbrv) -> (
+    if isFreeModule M then M
+    else if hasAttribute(M, ReverseDictionary)
+    then getAttribute(M, ReverseDictionary)
+    else abbrv)
+
+Vector#AfterPrint = Vector#AfterNoPrint = v -> moduleAbbrv(module v, Vector)
+
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
@@ -107,9 +123,15 @@ numeric(ZZ,Vector) := (prec,v) -> (
      if F === ZZ or F === QQ then return promote(v,RR_prec);
      error "expected vector of numbers"
      )
+lift(Vector,InexactNumber) :=
+lift(Vector,InexactNumber') :=
+lift(Vector,RingElement) :=
+lift(Vector,Number) := Vector => o -> (v,S) -> vector (lift(v#0,S))
 
-- Vector := Vector => v -> vector (-v#0)
-Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}
++ Vector := Vector => identity
+- Vector := Vector => v -> new class v from {-v#0}
+Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
+Vector * Number := Vector * RingElement := Vector => (v,r) -> vector(v#0 * r)
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
 Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
@@ -144,11 +166,19 @@ new Module from Sequence := (Module,x) -> (
      	       symbol numgens => rawRank rM
      	       })) x
 
+vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
+vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
+vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
+
+-- TODO: deprecate these
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
 degreesRing Module := PolynomialRing => M -> degreesRing ring M
 degreeLength Module := M -> degreeLength ring M
+
+Module#id = M -> map(M, M, 1)
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring
+module Module := identity
 
 lift(Module,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
 lift(Module,InexactNumber') :=
@@ -179,8 +209,6 @@ isFreeModule Module := M -> not M.?relations and not M.?generators
 isSubmodule = method(TypicalValue => Boolean)
 isSubmodule Thing := x -> false
 isSubmodule Module := M -> not M.?relations
-
-degreeLength Module := M -> degreeLength ring M
 
 isQuotientModule = method(TypicalValue => Boolean)
 isQuotientModule Thing := x -> false
@@ -227,7 +255,7 @@ describe Module := M -> Describe (
      )
 toExternalString Module := M -> toString describe M
 
-Module == Module := (M,N) -> (
+Module == Module := (M,N) -> M === N or (
      -- this code might not be the quickest - Mike should check it
      ring M === ring N
      and degrees ambient M === degrees ambient N
@@ -239,6 +267,8 @@ Module == Module := (M,N) -> (
 	       -- else 
 		    (
 		    -- temporary
+		    M.relations === N.relations
+		    or
 		    isSubset(image M.relations, image N.relations)
 		    and
 		    isSubset(image N.relations, image M.relations)
@@ -286,51 +316,42 @@ Module == Module := (M,N) -> (
 		    isSubset(ambient M, image g))
 	       else true)))
 
-degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees = (
-     if not isFreeModule N then N = cover N;
-     rk := numgens N;
-     R := ring N;
-     nd := degreeLength R;
-     if nd == 0 then toList (rk : {})
-     else pack(nd,rawMultiDegree N.RawFreeModule))
+-- TODO: where is it set before being cached?
+degrees Module := -*(cacheValue symbol degrees) (*-N -> (
+    r := degreeLength(R := ring N);
+    if r == 0 then toList(numgens N : {}) else (
+	degs := pack(r, rawMultiDegree raw cover N);
+	if not (M := monoid R).?degreeGroup
+	or isFreeModule(G := M.degreeGroup) then degs
+	else apply(degs, reduceDegree_G)))
+--    )
 
-Module ^ ZZ := Module => (M,i) -> directSum (i:M)
+-----------------------------------------------------------------------------
+-- free modules and vector spaces
 
-Ring ^ List := Module => (
-     (R,degs) -> (
-	  degs = - splice degs;
-	  if R.?RawRing then (
-	       -- check the args
-	       ndegs := degreeLength R;
-	       if #degs === 0 then ()
-	       else if all(degs,i -> class i === ZZ) then (
-		    if ndegs =!= 1
-	       	    then error ("expected each multidegree to be of length ", toString ndegs))
-	       else if all(degs,v -> class v === List) then (
-		    scan(degs,v -> (
-			      if #v =!= ndegs
-			      then error (
-				   "expected each multidegree to be of length ",
-				   toString ndegs
-				   );
-			      if not all(v,i->class i === ZZ)
-			      then error "expected each multidegree to be a list of integers")))
-	       else error "expected a list of integers or a list of lists of integers";
-	       -- then adjust the args
-	       fdegs := flatten degs;
-	       -- then do it
-	       if # fdegs === 0 
-	       then new Module from (R,rawFreeModule(R.RawRing,#degs))
-	       else new Module from (R,rawFreeModule(R.RawRing,toSequence fdegs))
-	       )
-	  else error "non-engine free modules with degrees not implemented yet"
-	  ))
+Ring ^ ZZ   := Module => (R, n) -> (
+    if not R.?RawRing then error "non-engine free modules with degrees not implemented yet";
+    new Module from (R, rawFreeModule(R.RawRing, n)))
 
-SparseDisplayThreshhold := 15
+Ring ^ List := Module => (R, degs) -> (
+    if not R.?RawRing then error "non-engine free modules with degrees not implemented yet";
+    -- check the args
+    degs = - splice degs;
+    degrk := degreeLength R;
+    if #degs === 0 then ()
+    else if isListOfIntegers degs        then ( if degrk != 1
+	then error("expected each multidegree to be of length ", degrk))
+    else if isListOfListsOfIntegers degs then ( if any(degs, deg -> degrk != #deg)
+	then error("expected each multidegree to be of length ", degrk))
+    else error "expected a list of integers or a list of lists of integers";
+    -- then flatten the args
+    fdegs := toSequence flatten degs;
+    new Module from (R, rawFreeModule(R.RawRing, if #fdegs === 0 then #degs else fdegs)))
 
-Ring ^ ZZ := Module => (R,n) -> if R.?RawRing then new Module from (R, rawFreeModule(R.RawRing,n)) else notImplemented()
+RingFamily ^ ZZ   :=
+RingFamily ^ List := Module => (T, degs) -> (default T)^degs
 
-InexactFieldFamily ^ ZZ := Module => (T,n) -> (default T)^n
+-----------------------------------------------------------------------------
 
 schreyerOrder = method()
 schreyerOrder Module := Matrix => (F) -> (
@@ -342,26 +363,6 @@ schreyerOrder Module := Matrix => (F) -> (
 
 schreyerOrder Matrix := Matrix => (m) -> map(target m, new Module from (ring m, rawSchreyerSource raw m), m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
-
-euler Module := (M) -> euler hilbertPolynomial M
-euler Ring := (R) -> euler R^1
-
-eulers Module := (M) -> (
-     h := hilbertPolynomial M;
-     apply(toList ( 0 .. dim h ), i -> euler diff(h,i) ))
-eulers Ring := (R) -> eulers R^1
-
-genera Module := (M) -> (
-     e := eulers M;
-     d := dim M - 1;
-     apply(#e, i -> (-1)^(i+d) * (e#i - 1)))
-genera Ring := (R) -> genera R^1
-
-genus Module := (M) -> (
-     e := euler M;
-     d := dim M - 1;
-     (-1)^d * (e - 1))
-genus Ring := (R) -> genus R^1
 
 possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
 
@@ -402,25 +403,20 @@ super(Module) := Module => (M) -> (
      else M
      )
 
-End = (M) -> Hom(M,M)
+-----------------------------------------------------------------------------
 
-Module#{Standard,AfterPrint} = M -> (
-     << endl;				  -- double space
-     n := rank ambient M;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : "
-     << ring M
-     << "-module";
-     if M.?generators then
-     if M.?relations then << ", subquotient of " << ambient M
-     else << ", submodule of " << ambient M
-     else if M.?relations then << ", quotient of " << ambient M
-     else if n > 0 then (
-	  << ", free";
-	  if not all(degrees M, d -> all(d, zero)) 
-	  then << ", degrees " << runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M;
-	  );
-     << endl;
-     )
+Module#AfterPrint = M -> (
+    ring M,"-module",
+    if M.?generators then
+    if M.?relations then (", ",subquotient," of ",ambient M)
+    else (", submodule of ",ambient M)
+    else if M.?relations then (", ",quotient," of ",ambient M)
+    else if rank ambient M > 0 then
+    (", free",
+	if not all(degrees M, d -> all(d, zero))
+	then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
+	)
+    )
 
 RingElement * Module := Module => ZZ * Module := (r,M) -> subquotient (r ** generators M, relations M)
 Module * RingElement := Module => Module * ZZ := (M,r) -> subquotient ((generators M) ** r, relations M)

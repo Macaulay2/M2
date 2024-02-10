@@ -16,7 +16,7 @@ p := first M
 coordinates p
 status p
 peek p
--- positive-dimensional example: adjacent 2x2 minors of of 3x4 matrix 
+-- positive-dimensional example: adjacent 2x2 minors of 3x4 matrix 
 R = QQ[x_1..x_12]
 A = genericMatrix(R,4,3)
 I = ideal flatten apply(3,i->apply(2,j->det submatrix(A,{i,i+1},{j,j+1})))

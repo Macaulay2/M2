@@ -17,6 +17,6 @@ given in the index for documentation.  This needs to be fixed.
 I think that res should take users directly to the main node for 
 resolution and on the main page synonyms should be listed.  This 
 is also how I will write the minimalPresentation page, with synonyms 
-prune and minPres - both of these absolutley need links in the index.
+prune and minPres - both of these absolutly need links in the index.
 
 --------------------------------------------------------------------

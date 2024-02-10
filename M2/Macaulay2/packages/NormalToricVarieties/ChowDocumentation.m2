@@ -297,7 +297,7 @@ doc ///
 		 " denotes the divisor class in ", TT "picardGroup X",
 		 " and we identify the Picard group of ", TT "X", " with
 		   the graded component of the intersection ring having
-		   codimenion 1."}
+		   codimension 1."}
 	    }@
 	Text
 	    The {\tt i}-th component of {\tt chern F} is {\tt chern (i, F)},

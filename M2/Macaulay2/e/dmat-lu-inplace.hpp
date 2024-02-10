@@ -9,7 +9,12 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
-#include <flint/perm.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#include <flint/fq_nmod_mat.h>  // for fq_nmod_mat_lu, fq_zech_mat_lu
+#include <flint/perm.h>         // for _perm_parity
+#pragma GCC diagnostic pop
 
 template <typename RT>
 class LUUtil
@@ -85,7 +90,7 @@ inline void DMatLUinPlace<M2::ARingGFFlintBig>::computeLU()
   mPerm.clear();
   for (long i = 0; i < mLU.numRows(); i++) mPerm.push_back(perm[i]);
   mSign = (_perm_parity(perm, mLU.numRows()) == 0);
-  deletearray(perm);
+  freemem(perm);
 
   // Now we set mPivotColumns
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
@@ -104,7 +109,7 @@ inline void DMatLUinPlace<M2::ARingGFFlint>::computeLU()
   mPerm.clear();
   for (long i = 0; i < mLU.numRows(); i++) mPerm.push_back(perm[i]);
   mSign = (_perm_parity(perm, mLU.numRows()) == 0);
-  deletearray(perm);
+  freemem(perm);
 
   // Now we set mPivotColumns
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
@@ -140,14 +145,10 @@ inline size_t DMatLUinPlace<M2::ARingRRR>::findPivot(size_t row, size_t col)
   // Look at elements A[row,col], A[row+1,col], ..., A[nrows-1, col]
   // Return the index r s.y. abs(A[r,col]) is maximum over all of these
 
-  ElementType largest;
-  ElementType abs;
+  M2::ARingRRR::Element largest(ring()), abs(ring());
   size_t best_row_so_far = static_cast<size_t>(-1);
 
-  ring().init(largest);
-  ring().init(abs);
   ring().set_zero(largest);
-
   for (size_t i = row; i < mLU.numRows(); i++)
     {
       ring().abs(abs, mLU.entry(i, col));
@@ -157,8 +158,6 @@ inline size_t DMatLUinPlace<M2::ARingRRR>::findPivot(size_t row, size_t col)
           ring().set(largest, abs);
         }
     }
-  ring().clear(abs);
-  ring().clear(largest);
   return best_row_so_far;
 }
 
@@ -169,12 +168,9 @@ inline size_t DMatLUinPlace<M2::ARingCCC>::findPivot(size_t row, size_t col)
   // Return the index r s.y. abs(A[r,col]) is maximum over all of these
 
   const M2::ARingRRR& RR = ring().real_ring();
-  M2::ARingRRR::ElementType largest;
-  M2::ARingRRR::ElementType abs;
+  M2::ARingRRR::Element largest(RR), abs(RR);
   size_t best_row_so_far = static_cast<size_t>(-1);
 
-  RR.init(largest);
-  RR.init(abs);
   RR.set_zero(largest);
 
   for (size_t i = row; i < mLU.numRows(); i++)
@@ -186,8 +182,6 @@ inline size_t DMatLUinPlace<M2::ARingCCC>::findPivot(size_t row, size_t col)
           RR.set(largest, abs);
         }
     }
-  RR.clear(abs);
-  RR.clear(largest);
   return best_row_so_far;
 }
 
@@ -197,8 +191,7 @@ void DMatLUinPlace<RingType>::computeLU()
   if (mIsDone) return;
 
   //  std::cout << "computing LU decomposition NAIVE version" << std::endl;
-  ElementType tmp;
-  mLU.ring().init(tmp);
+  typename RingType::Element tmp(mLU.ring());
 
   size_t col = 0;  // current column we are working on
   size_t row = 0;  // current row we are working on
@@ -279,7 +272,6 @@ void DMatLUinPlace<RingType>::computeLU()
     }
 
   mIsDone = true;
-  mLU.ring().clear(tmp);
 }
 
 template <>
@@ -339,8 +331,8 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
 
-  deletearray(perm);
-  deletearray(copyA);
+  freemem(perm);
+  freemem(copyA);
 }
 
 template <>
@@ -408,8 +400,8 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
 
-  deletearray(perm);
-  deletearray(copyA);
+  freemem(perm);
+  freemem(copyA);
 }
 
 template <class RingType>

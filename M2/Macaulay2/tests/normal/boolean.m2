@@ -35,3 +35,16 @@ assert Equation(1 ^^ 1 | 1, 1)
 assert Equation(1 | 1 ^^ 1, 1)
 assert Equation(1 ^^ 0 | 1, 1)
 assert Equation(1 | 0 ^^ 1, 1)
+
+
+-----------------
+-- bitwise not --
+-----------------
+assert Equation(1138~, -1139)
+assert Equation((-1139)~, 1138)
+
+-----------------
+-- expressions --
+-----------------
+assert Equation(value BinaryOperation(symbol xor, true, true), false)
+assert Equation(value BinaryOperation(symbol ^^, 1, 1), 0)

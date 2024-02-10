@@ -400,9 +400,9 @@ assert( oo === (hold integral)((1/6)*D^3-(1/4)*D^2*K+(1/12)*D*K^2+(1/12)*D*c_2-(
 ----                                        3
 ---- 
 ---- #-------------------------------------------------------------------------
----- # betti numbers of a product of grassmannians
+---- # Betti numbers of a product of Grassmannians
 ---- > 
----- > grass(2,5,a,bas): grass(3,7,b,bas): # make two grassmannians
+---- > grass(2,5,a,bas): grass(3,7,b,bas): # make two Grassmannians
 ---- > productvariety(W,Ga,Gb):            # their product W
 ---- > betti(W);                           # betti numbers of W
 ----      [1, 2, 5, 9, 15, 21, 29, 34, 39, 40, 39, 34, 29, 21, 15, 9, 5, 2, 1]

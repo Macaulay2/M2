@@ -9,16 +9,56 @@ export{
     "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "segmentHomotopy", "parametricSegmentHomotopy"
     }
 
+-- Homotopy types 
+export { "Homotopy", "ParameterHomotopy", "SpecializedParameterHomotopy", 
+    "evaluateH", "evaluateHt", "evaluateHx", "Parameters", "specialize"}
+
 debug SLPexpressions
+
+Homotopy = new Type of MutableHashTable -- abstract type
+evaluateH = method()
+evaluateH (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHt = method()
+evaluateHt (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHx = method()
+evaluateHx (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+
+ParameterHomotopy = new Type of MutableHashTable -- abstract type
+evaluateH (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHt (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+parameters ParameterHomotopy := PH -> PH.Parameters
+numParameters ParameterHomotopy := F -> numcols parameters F
+
+SpecializedParameterHomotopy = new Type of Homotopy
+specialize = method()
+specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
+    if numcols M != 1 then M = transpose M;
+    if numcols M != 1 then error "1-row or 1-column matrix expected"; 
+    if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
+    SPH := new SpecializedParameterHomotopy;
+    SPH.ParameterHomotopy = PH;
+    SPH.Parameters = M;
+    SPH
+    ) 
+evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,matrix H.Parameters,x,t) 
+evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,matrix H.Parameters,x,t) 
+evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,matrix H.Parameters,x,t) 
 
 gateSystem = method()
 
-GateSystem = new Type of System -- this essentially is a wrapper for SLProgram
+GateSystem = new Type of System -- this essentially is a wrapper for an SLProgram
 net GateSystem := S -> (
-    out := net "gate system: " | net numVariables S | " ---> " | net numFunctions S;
-    if numParameters S =!= 0 then out = out || net "(#parameters = " | net numParameters S | ")";
+    out := net "gate system: " | net numVariables S | " input(s) ---> " | net numFunctions S | " output(s)";
+    if numParameters S =!= 0 then out = out | net " (with " | net numParameters S | " parameters)";
     out
     )
+texMath GateSystem := S -> (
+    out := "\\text{gate system}: " | toString numVariables S | " \\to " | toString numFunctions S;
+    if numParameters S =!= 0 then out = out ||  "\\text{ (with $" | toString numParameters S | "$ parameters)}";
+    out
+    )
+
 -- main constructor
 -- IN: (variables,output) or (parameters,variables,output)
 gateSystem (GateMatrix,GateMatrix) := (I,O) -> gateSystem(gateMatrix{{}},I,O)
@@ -30,6 +70,7 @@ gateSystem (GateMatrix,GateMatrix,GateMatrix) := (P,I,O) -> (
 	"SLP"=>makeSLProgram(P|I,O), cache => new CacheTable from {}}
     )
 
+GateSystem ^ List := (P, inds) -> gateSystem(parameters P, vars P, (gateMatrix P)^inds)
 
 -- serialize
 toExternalString GateSystem := F -> (
@@ -74,6 +115,12 @@ evaluate (GateSystem,Matrix,Matrix) := (F,p,x) -> (
     evaluate(F#"SLP", matrix p | matrix x)
     )
 
+-- syntactic sugar for creating instances of GateSystem
+gateSystem (BasicList, BasicList, GateMatrix) := (P, X, F) -> (
+    GM := if numcols F == 1 then F else transpose F;
+    gateSystem(gateMatrix{toList P}, gateMatrix{toList X}, GM)
+    )
+
 TEST ///
 -* GateSystem *-
 declareVariable \ {x,y,t}
@@ -112,13 +159,13 @@ jacobian GateSystem := GS -> jacobian(toList(0..numVariables GS-1), GS)
 -- overrides "implementation" for System
 evaluateJacobian (GateSystem, Matrix) := (GS, x0) -> (
     J := jacobian GS;
-    assert(numcols matrix x0 == J#"number of inputs");
-    out := evaluate(jacobian GS,  matrix x0);
+    assert(numcols matrix x0 == numberOfInputs J);
+    out := evaluate(J,  matrix x0);
     matrix(out, numFunctions GS, numVariables GS)
     )
-evaluateJacobian (GateSystem, Point) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
+evaluateJacobian (GateSystem, AbstractPoint) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
 evaluateJacobian (GateSystem, Matrix, Matrix) := (GS, p0, x0) -> evaluateJacobian(GS, p0 | x0)
-evaluateJacobian (GateSystem, Point, Point) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
+evaluateJacobian (GateSystem, AbstractPoint, AbstractPoint) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
 
 
 TEST /// 
@@ -157,6 +204,11 @@ errorDepth = 2
 serialize fS
 code x
 ///
+
+specialize (GateSystem, AbstractPoint) := GateSystem => (GS,p) -> (
+    if numParameters GS != #coordinates p then error "wrong number of parameter values"; 
+    gateSystem(vars GS, sub(gateMatrix GS, gateMatrix matrix p, vars GS))
+    )
 
 -- jacobian PolySystem := ??? -- where is this used?
 
@@ -258,7 +310,7 @@ evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> 
 evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
 evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
-specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
+-*specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
     if numcols M != 1 then error "1-column matrix expected"; 
     if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
@@ -267,17 +319,20 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
     SPH.Parameters = M;                                                                                                                                       
     SPH                                                                                                                                                       
     ) 
+*-
 
 -- !!! replaces makeGateMatrix
 gateSystem PolySystem := GateSystem => F -> if F#?GateSystem then F#GateSystem else 
   F#GateSystem = gateSystem(F,parameters F)
 gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> ( 
     R := ring F; 
-    if not isSubset(P, gens R) then "some parameters are not among generators of the ring";
-    X := getVarGates R;
-    variables := gateMatrix {X_(positions(gens R, x->not member(x,P)))};  
-    parameters := gateMatrix {X_(positions(gens R, x->member(x,P)))};
-    gateSystem(parameters, variables, gatePolynomial F.PolyMap)
+    (S, R2S) := flattenRing R;
+    params := R2S \ P;
+    if not isSubset(params, gens S) then error"some parameters are not among generators of the ring";
+    X := getVarGates S;
+    variables := gateMatrix {X_(positions(gens S, x->not member(x,params)))};  
+    parameters := gateMatrix {X_(positions(gens S, x->member(x,params)))};
+    gateSystem(parameters, variables, gatePolynomial R2S F.PolyMap)
     ) 
  
 -- !!! a general problem: some methods need PolySystem to be changed to GateSystem
@@ -314,6 +369,7 @@ parametricSegmentHomotopy GateSystem := F -> (
     gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
 
+
 TEST /// 
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,a]
@@ -345,7 +401,7 @@ segmentHomotopy = method(Options=>{gamma=>1})
 segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
 segmentHomotopy (GateSystem, GateSystem) := o -> (S,T) -> (
     if T.Variables =!= S.Variables 
-    then error "expented systems with the same inputs";  
+    then error "expected systems with the same inputs";  
     if numFunctions T =!= numFunctions S
     then error "expected systems with the same dimension of codomain";
     t := local t;

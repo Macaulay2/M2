@@ -104,7 +104,7 @@ dnl Substrack $SUBPATH from $PATH, and set the resulting suffix
 dnl (or the empty string if $SUBPATH is not a subpath of $PATH)
 dnl to $RESULT.
 dnl
-dnl For instace:
+dnl For instance:
 dnl    first_path=/somewhere/on/my/disk/bin
 dnl    second_path=/somewhere/on
 dnl    adl_COMPUTE_SUFFIX_PATH(first_path, second_path, common_path)

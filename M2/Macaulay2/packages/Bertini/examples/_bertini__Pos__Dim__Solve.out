@@ -21,7 +21,7 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = {{9.83944e-68-8.625e-70*ii, 9.79349e-68+1.82104e-68*ii, .352544-.003583*ii}}
+o4 = {{-1.10806e-63-6.72876e-63*ii, 7.72046e-63-5.95645e-64*ii, .397346+.0700853*ii}}
 
 o4 : VerticalList
 
@@ -33,13 +33,11 @@ o5 : List
 
 i6 : peek oo_0 --then list position
 
-o6 = WitnessSet{ComponentNumber => 0                                                                             }
-                IsIrreducible => true
-                Points => {{9.83944e-68-8.625e-70*ii, 9.79349e-68+1.82104e-68*ii, .352544-.003583*ii}}
-                Slice => | .676227+.312984ii -.430765+.527252ii .795595-.72831ii -.277873+.259612ii |
-                WitnessDataFileName => /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-38830-0/1/witness_data
-                                     3      2      2       2     3      2
-                Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)
+o6 = WitnessSet{cache => CacheTable{...3...}                                                              }
+                Equations => {-3} | x3+xy2+xz2-x |
+                             {-3} | x2y+y3+yz2-y |
+                Points => {{-1.10806e-63-6.72876e-63*ii, 7.72046e-63-5.95645e-64*ii, .397346+.0700853*ii}}
+                Slice => | -1.51179-2.7846ii -.654837-3.31013ii 4.905-1.2379ii -2.03574+.148105ii |
 
 i7 : PD=primaryDecomposition( ideal F)
 

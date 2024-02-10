@@ -12,7 +12,6 @@ newPackage(
 	Keywords => {"Convex Geometry", "Interfaces"},
 	-- DebuggingMode should be true while developing a package, 
 	--   but false after it is done
-	Configuration => {"gfan command" => "gfan"},
     	DebuggingMode => false,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
@@ -29,13 +28,6 @@ export {
      --"maxUGBDegree", 
      "isStable" --documented
      }
-
-if (options StatePolytope)#Configuration#"gfan command" != "gfan" then stderr <<
-    "warning: The \"gfan command\" configuration option has been deprecated." <<
-    endl <<
-    "If gfan is installed in a non-standard location, then specify it by" <<
-    endl <<
-    "setting programPaths#\"gfan\"." << endl
 
 initialIdeals = method(
      TypicalValue => List

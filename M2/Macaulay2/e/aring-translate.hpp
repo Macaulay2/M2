@@ -13,16 +13,17 @@
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-zz-gmp.hpp"
-#include "aring-zz-flint.hpp"
 #include "aring-zzp.hpp"
-#include "aring-zzp-flint.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-qq.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-gf-givaro.hpp"
+#include "aring-tower.hpp"
+
+// include flint headers last to avoid #1674
+#include "aring-zz-flint.hpp"
+#include "aring-zzp-flint.hpp"
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
-#include "aring-tower.hpp"
 
 namespace M2 {
 template <typename RT>
@@ -111,6 +112,13 @@ inline bool get_from_double(const ARingRRR& R,
 {
   return R.set_from_double(a, b);
 }
+  
+inline bool get_from_double(const ARingRRi& R,
+                            ARingRRi::ElementType& a,
+                            double b)
+{
+   return R.set_from_double(a, b);
+}  
     
 inline bool get_from_Interval(const ARingRRi& R,
                               ARingRRi::ElementType& a,
@@ -450,38 +458,35 @@ inline bool mylift(const ARingRR& R,
                     const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
-    ARingRRR::ElementType gT;
-    T.init(gT);
+    ARingRRR::Element gT(T);
     auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
     S.midpoint(gT,gS1);
     bool liftstep = mylift(R,T,result_gR,gT);
     S.diameter(gT,gS1);
     return liftstep && T.is_zero(gT);
 }
-    
+
 inline bool mylift(const ARingRRR& R,
                     const ARingRRi& S,
                     ARingRRR::ElementType& result_gR,
                     const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
-    ARingRRR::ElementType gT;
-    T.init(gT);
+    ARingRRR::Element gT(T);
     auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
     S.midpoint(gT,gS1);
     bool liftstep = mylift(R,T,result_gR,gT);
     S.diameter(gT,gS1);
     return liftstep && T.is_zero(gT);
 }
-    
+
 inline bool mylift(const ARingQQ& R,
                     const ARingRRi& S,
                     ARingQQ::ElementType& result_gR,
                     const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
-    ARingRRR::ElementType gT;
-    T.init(gT);
+    ARingRRR::Element gT(T);
     auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
     S.midpoint(gT,gS1);
     bool liftstep = mylift(R,T,result_gR,gT);

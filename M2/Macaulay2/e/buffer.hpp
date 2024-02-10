@@ -30,7 +30,7 @@ class buffer : public our_new_delete
         _buf(newarray_atomic(char, BUFFER_INITIAL_CAPACITY))
   {
   }
-  ~buffer() { deletearray(_buf); }
+  ~buffer() { freemem(_buf); }
   void reset() { _size = 0; }
   int size() { return _size; }
   int capacity() { return _capacity; }

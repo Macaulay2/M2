@@ -123,7 +123,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 --   permutation list of size n
 --   n x n+1 mutable matrix LU
 --   n x 1 mutable matrix v
---   intger m
+--   integer m
 -- Consequences:
 --   Updates LU according to v
 --   Updates v to r = v % L

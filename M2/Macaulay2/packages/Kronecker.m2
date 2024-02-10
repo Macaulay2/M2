@@ -1196,7 +1196,7 @@ document {
      Outputs => {
 	  "x'" => GradedModuleMap,
 	  "y'" => GradedModuleMap,
-	  "f" => GradedModuleMap => "an isormophism"
+	  "f" => GradedModuleMap => "an isomorphism"
 	  },
      "Given maps ", TT "x", " and ", TT "y", " of degree 1 from a graded ",
      "module ", TT "M", " over a field k to ", TT "M", ", we can think of ",

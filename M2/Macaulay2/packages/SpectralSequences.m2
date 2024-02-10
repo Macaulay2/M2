@@ -110,7 +110,7 @@ support ChainComplex := List => (
 
 -- Computes the graded pieces of the total complex of a Hom double complex 
 -- (just as a graded module, so no maps!)
-Hom (GradedModule, GradedModule) := GradedModule => (C,D) -> (
+Hom (GradedModule, GradedModule) := GradedModule => opts -> (C, D) -> (
   R := C.ring;  if R =!= D.ring then error "expected graded modules over the same ring";
   (c,d) := (spots C, spots D);
   pairs := new MutableHashTable;
@@ -123,7 +123,7 @@ Hom (GradedModule, GradedModule) := GradedModule => (C,D) -> (
   E.ring = R;
   scan(keys pairs, k-> (
       p := pairs#k;
-      E#k = directSum(apply(p, v -> v => Hom(C_(v#0), D_(v#1) )));));
+      E#k = directSum(apply(p, v -> v => Hom(C_(v#0), D_(v#1), opts)));));
   E)
 
 
@@ -135,35 +135,36 @@ isWellDefined ChainComplexMap := Boolean => f -> (
 -- Computes the total complex of the Hom double complex of two chain complexes
 -- This code is different from that in ChainComplexExtras.  We need this version
 -- so that the indices are cached.
-Hom (ChainComplex, ChainComplex) := ChainComplex => (C,D) -> (
+Hom (ChainComplex, ChainComplex) := ChainComplex => opts -> (C, D) -> (
   if C.ring =!= D.ring then error "expected chain complexes over the same ring";
-  E := chainComplex (lookup( Hom, GradedModule, GradedModule))(C,D);
+  hom := lookup(Hom, GradedModule, GradedModule);
+  E := chainComplex (hom opts)(C, D);
   scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = 
     map(E#(i-1), E#i, 
       matrix table(
         E#(i-1).cache.indices, E#i.cache.indices, 
 	(j,k) -> map(E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j), 
 	  (E#i).cache.components#((E#i).cache.indexComponents#k),
-	  if j#0 === k#0 and j#1 === k#1-1 then (-1)^(k#0)*Hom(C_(k#0),D.dd_(k#1))
-	  else if j#0 === k#0 + 1 and j#1 === k#1 then Hom(C.dd_(j#0),D_(k#1))
+	  if j#0 === k#0 and j#1 === k#1-1 then (-1)^(k#0)*Hom(C_(k#0), D.dd_(k#1), opts)
+	  else if j#0 === k#0 + 1 and j#1 === k#1 then Hom(C.dd_(j#0), D_(k#1), opts)
 	  else 0))));
   E    	    		    
 )
 
-Hom (ChainComplex, ChainComplexMap) := ChainComplexMap => (C,f) -> (
-  (F,G) := (Hom(C,source f),Hom(C,target f)); 
+Hom (ChainComplex, ChainComplexMap) := ChainComplexMap => opts -> (C, f) -> (
+  (F, G) := (Hom(C, source f, opts), Hom(C, target f, opts));
   map(G,F, i -> map(G_i,F_i, matrix table( G_i.cache.indices,F_i.cache.indices, 
       (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
         F#i.cache.components#(F#i.cache.indexComponents#k),
-	if j === k then Hom(C_(j#0), f_(j#1)) 
+	if j === k then Hom(C_(j#0), f_(j#1), opts)
 	else 0)))))
 
-Hom (ChainComplexMap, ChainComplex) := ChainComplexMap => (f,C) -> (
-  (F,G) := (Hom(target f, C),Hom(source f, C));
+Hom (ChainComplexMap, ChainComplex) := ChainComplexMap => opts -> (f, C) -> (
+  (F, G) := (Hom(target f, C, opts), Hom(source f, C, opts));
   map(G,F, i -> map (G_i,F_i, matrix table(G_i.cache.indices,F_i.cache.indices,
         (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
 	  F#i.cache.components#(F#i.cache.indexComponents#k),
-	  if j === k then Hom(f_(j#0), C_(j#1)) 
+	  if j === k then Hom(f_(j#0), C_(j#1), opts)
 	  else 0)))))
   
 ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
@@ -183,7 +184,7 @@ ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
 	  else 0)))))
 
 -- truncate a chain complex at a given homological degree 
-truncate(ChainComplex,ZZ):= (C,q) ->( 
+truncate(ChainComplex,ZZ):= {} >> o -> (C,q) ->(
      if q == 0 then return C 
      else (
 	  m := min support C;
@@ -216,8 +217,7 @@ pushFwd(RingMap,ChainComplex):=o->(f,C) ->
 
 
 -- New method for tensor that returns the tensor product of a complex via a ring map
-tensor(RingMap,ChainComplex) := ChainComplex => 
- opts -> (f,C) -> (
+tensor(RingMap, ChainComplex) := ChainComplex => {} >> opts -> (f,C) -> (
          k := min C; 
     D := chainComplex(
 	if even(k) then apply(
@@ -298,10 +298,10 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
     if opts.ReducedHomology == true then (
     C = chainComplex L#0; -- By default the ambient simplicial complex is the first element of the list
     maps = apply(#L-1, p -> map(C, chainComplex L#(p+1), 
-        i -> sub(contract(transpose faces(i,L#0), faces(i,L#(p+1))), kk))))
+        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
     else (C = truncate(chainComplex L#0,1); -- By default the ambient simplicial complex is the first element of the list
     maps = apply(#L-1, p -> map(C, truncate(chainComplex L#(p+1),1), 
-        i -> sub(contract(transpose faces(i,L#0), faces(i,L#(p+1))), kk))))   
+        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))   
  )
   else (
     maps = L;
@@ -430,24 +430,25 @@ xComplex := (T,n) ->
 	       )
 
 -- produce the "x-filtration" of the Hom complex.
-Hom (FilteredComplex, ChainComplex):= FilteredComplex => (K,D) -> (
+Hom (FilteredComplex, ChainComplex):= FilteredComplex => opts -> (K, D) -> (
     	C := complete D;
     	   supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N := - max support K_infinity;
      P := - min support K_infinity;
-     H := Hom(K_infinity,C);
+     H := Hom(K_infinity, C, opts);
      filteredComplex(reverse for i from N to P - 1 list inducedMap(H, xComplex(H,i)), 
 	 Shift => - N)
      )
  else ( if #supp == 1 then
 	(
 	p := min supp;
-	h := Hom(K_infinity , C);
+	h := Hom(K_infinity, C, opts);
 	filteredComplex( {inducedMap(h, xComplex(h, p))}, Shift =>  p + 1 )
 	)
-    	else( hhh:= Hom(K_infinity , C) ;
+	else(
+	    hhh := Hom(K_infinity, C, opts);
 	    filteredComplex({id_hhh})
 	    )
 	)
@@ -473,24 +474,25 @@ yComplex := (T,n) ->
 	       K
 	       )
 
-  Hom (ChainComplex, FilteredComplex) := FilteredComplex => (D,K) -> (
+Hom (ChainComplex, FilteredComplex) := FilteredComplex => opts -> (D, K) -> (
       C := complete D; 
      supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N :=  max support K_infinity;
      P :=  min support K_infinity;
-     H := Hom(C, K_infinity);
+     H := Hom(C, K_infinity, opts);
      filteredComplex(reverse for i from P to N - 1 list inducedMap(H, yComplex(H,i)), 
 	 Shift => - P)
      )
   else ( if #supp == 1 then
 	(
 	p := min supp;
-	h := Hom(C , K_infinity );
+	h := Hom(C, K_infinity, opts);
 	filteredComplex( {inducedMap(h, yComplex(h, p))}, Shift =>  - p  + 1 )
 	)
-    	else( hhh:= Hom(C, K_infinity) ;
+	else(
+	    hhh := Hom(C, K_infinity, opts);
 	    filteredComplex({id_hhh})
 	    )
 	) 
@@ -910,7 +912,7 @@ SpectralSequencePageMap _ List := Matrix => (d,i)-> (if (d)#?i then d#i
 SpectralSequencePageMap ^ List := Matrix => (d,i)-> (d_(-i))    
 
 
--- auxlillary spectral sequence stuff.  
+-- auxiliary spectral sequence stuff.  
 
 filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
 chainComplex SpectralSequence := ChainComplex => E -> chainComplex filteredComplex E
@@ -925,7 +927,7 @@ connectingMorphism(ChainComplexMap,ZZ) := (a,n) -> (
     e := spectralSequence K ;
     e^1 .dd_{1, n}
     )
--- here are some needed functions related to hilbert polynomials --
+-- here are some needed functions related to Hilbert polynomials --
 hilbertPolynomial ZZ := ProjectiveHilbertPolynomial => o -> (M) -> ( if M == 0
     then new ProjectiveHilbertPolynomial from {} else
     new ProjectiveHilbertPolynomial from {0 => M}
@@ -1253,7 +1255,7 @@ doc ///
 	      E^infinity    
 	  Text
      	     If we want the homology of the complex to be the non-reduced homology
-     	     of the simpicial complex we set the ReducedHomology option to false:
+     	     of the simplicial complex we set the ReducedHomology option to false:
      	  Example 
 	     k = filteredComplex({F2D, F1D, F0D}, ReducedHomology => false)
 	  Text
@@ -1385,7 +1387,7 @@ doc ///
      Description
      	  Text  
        	    We describe
-	    the most primitative way to create filtered complexes.
+	    the most primitive way to create filtered complexes.
 	    
 	    Let $C$ be a chain complex and consider a list of
 	    chain complex maps $\{\phi_n, \phi_{n - 1}, \dots, \phi_0  \}$ 
@@ -1500,7 +1502,7 @@ doc ///
     Description
     	  Text
 	       Here we give an example of a spectral sequence that takes n+2 steps to degenerate, where
-	       n is the embedding dimesion of the ring.  We present this when n = 2 but the user with 
+	       n is the embedding dimension of the ring.  We present this when n = 2 but the user with 
 	       computational power can easily do a bigger case. 	       
      	  Example
     	       S = ZZ/101[x,y];
@@ -1579,7 +1581,7 @@ doc ///
 	      B = truncate(chainComplex realProjectivePlane,1)	 
 	      prune HH B
     	  Text
-	      We now compute the fibers of the anti-podal quoitent map
+	      We now compute the fibers of the anti-podal quotient map
  	      $\mathbb{S}^2 \rightarrow  \mathbb{R} \mathbb{P}^2$.
 	      The way this works for example is:
 	      $a = v3 ~ v1, b = v6 ~ v5, d = v36 ~ v15, c = v4 ~ v2, 
@@ -1619,7 +1621,7 @@ doc///
     	 Text
 	      In this example we give a simplicial realization of the fibration 
 	      $\mathbb{S}^1 \rightarrow {\rm Klein Bottle} \rightarrow \mathbb{S}^1$.  
-	      To give a simplicial realization of of this fibration we first make a simplicial
+	      To give a simplicial realization of this fibration we first make a simplicial
 	      complex which gives a triangulation of the Klein Bottle.
 	      The triangulation of the Klein Bottle that we use has 18 facets and is, up to relabling, the triangulation of the Klein bottle given
 	      in Figure 6.14 of Armstrong's book {\it Basic Topology}.
@@ -1635,7 +1637,7 @@ doc///
 	      prune HH C
     	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the fibration
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the fibration
 	      $S^1 \rightarrow {\rm Klein Bottle} \rightarrow S^1$.
 	      The subsimplicial complexes of $\Delta$, which arise from the 
 	      the inverse images of the simplicies of $S$, are described below.
@@ -1686,7 +1688,7 @@ doc ///
 	      prune HH C
 	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the trivial fibration
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the trivial fibration
 	      $\mathbb{S}^1 \rightarrow \mathbb{S}^1 \times \mathbb{S}^1 \rightarrow \mathbb{S}^1$.
 	      We now make subsimplicial complexes arising from the filtrations of the
 	      inverse images of the simplicies.
@@ -1731,7 +1733,7 @@ doc ///
 		-- make the frobenious power of the irrelevant ideal
 		B = B_*/(x -> x^2)//ideal;
 		-- need to take a large enough power. 
-		-- it turns out that that 2 is large enough for this example 
+		-- it turns out that 2 is large enough for this example 
 		G = complete res image gens B;
 		F = koszul gens I;
 		K = Hom(G, filteredComplex(F));
@@ -1866,7 +1868,7 @@ doc ///
     	  Text
 	       To use hypercohomology to compute the cohomology groups of the 
 	       line bundle $\mathcal{O}_C(1,0)$ on $C$ we twist the
-	       complex $F$ above by a line of rulting and then 
+	       complex $F$ above by a line of ruling and then 
 	       make a filtered complex whose associated spectral
 	       sequence abuts to the desired cohomology groups.
 	  Example     		 		 
@@ -1895,7 +1897,7 @@ doc ///
 		    associated to the Hopf Fibration 
 		    $S^1 \rightarrow S^3 \rightarrow S^2$.
 		    This example is made possible by the minimal
-		    triangualtion of this fibration given in the paper
+		    triangulation of this fibration given in the paper
 		    "A minimal triangulation of the Hopf map and its application"
 		    by K.V. Madahar and K.S Sarkaria. Geom Dedicata, 2000.
      	       Text
@@ -1919,7 +1921,7 @@ doc ///
 		    $c_i \mapsto c$, and $d_i \mapsto d$.  
 		    		    
 		    We now explain how to construct the filtration of $S3$ obtained by
-		    considering the $k$-sketeltons of this fibration.
+		    considering the $k$-skeletons of this fibration.
 		    
 		    The simplicial complex $F1S3$ below
 		    is the subsimplicial complex of $S3$ obtained by considering the 
@@ -1965,7 +1967,7 @@ doc ///
      	       Text		    
 		    We now compute the various pages of the spectral sequence.
 		    To make the output 
-		    intelliagble we prune the spectral sequence.
+		    intelligible we prune the spectral sequence.
      	       Example		     
      	       	    E = prune spectralSequence K;
      	       Example		    		    
@@ -2753,7 +2755,7 @@ doc ///
 	    compute the hard truncation of a chain complex   
      Description
      	  Text
-	       Computes the hard trucaton of a chain complex as a specified homological degree.
+	       Computes the hard truncation of a chain complex as a specified homological degree.
 	  Example
 	       B = QQ[a..d];
 	       C = koszul vars B
@@ -2916,7 +2918,7 @@ doc ///
 	      K = filteredComplex{D,E,F}
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we can do the following.
+     	     of the simplicial complexes we can do the following.
      	  Example 
 	     filteredComplex({D,E,F}, ReducedHomology => false)
      SeeAlso
@@ -2939,7 +2941,7 @@ doc ///
           K: FilteredComplex
      Description	  
      	  Text
-	     Produces the filtered complex obtained by succesively truncating the complex.
+	     Produces the filtered complex obtained by successively truncating the complex.
 	  Example 
 	    needsPackage "SpectralSequences"
 	    A = QQ[x,y]
@@ -3628,7 +3630,7 @@ doc ///
      	  Text 
 	       Returns the chain complex map specifying the inclusion of the i piece 
 	       of the filtered
-	       complex to the ambeint chain complex.
+	       complex to the ambient chain complex.
 	  Example
 	      A = QQ[x,y];
 	      C = koszul vars A;
@@ -3827,7 +3829,7 @@ doc ///
     	       (prune E) ^infinity
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we set the ReducedHomology option
+     	     of the simplicial complexes we set the ReducedHomology option
 	     to false.
      	  Example 
 	     J = filteredComplex({a,b,c}, ReducedHomology => false)           	     
@@ -4061,7 +4063,7 @@ doc ///
      Key
      	  "Example 1"
      Headline
-     	  Easy example of a filtered simpilcial complex	  
+     	  Easy example of a filtered simplicial complex	  
      Description
      	  Text
 	       Here we provide an easy example of a filtered simplicial complex and 
@@ -4086,7 +4088,7 @@ doc ///
 	  Text
 	       Considering the $E^2$ and $E^3$ pages of the spectral sequence 
 	       we conclude that the map $d^2_{2,-1}$ must have a $1$-dimensional
-	       image and a $1$-dimensinal kernel.  This can be verified easily:
+	       image and a $1$-dimensional kernel.  This can be verified easily:
 	  Example
 	      rank ker E^2 .dd_{2,-1}
 	      rank image E^2 .dd_{2,-1}     

@@ -466,7 +466,7 @@ length oo -- FIXME this should be n-1=3
 RP = localRing(R, P)
 M = promote(P, RP)
 -- Then R/(X_i-Y_(i-1) : 0<1<n+1)R  \cong k[[X_1..X_n]]/minor(2,({{X1..Xn},{X2..Xn,X1}}))
--- this is a cohen macaulay local ring of dim 1, also almost gorenstein local rings
+-- this is a Cohen-Macaulay local ring of dim 1, also almost Gorenstein local rings
 
 
 -- TODO

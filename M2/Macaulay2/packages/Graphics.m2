@@ -1,12 +1,12 @@
--- -*- coding: utf-8 -*-
--- licensed under GPL, any version
+--- -*- coding: utf-8 -*-
+--- licensed under GPL, any version
 newPackage(
 	"Graphics",
-	Version => "0.2",
-	Date => "February 26, 2010",
+	Version => "0.3",
+	Date => "June 4, 2013",
 	Authors => {
-		{Name => "Baptiste Calmès",
-		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
+		{Name => "Baptiste Calmes",
+		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "create graphics",
@@ -305,7 +305,7 @@ svgObject(Point2D,HashTable) := (mypt,opts) ->
 	(
 	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#Point2D,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#Point2D);
 	"<circle "
-	|///cx="///|toString(mypt#0)|///" cy="///|toString(mypt#1)|/// r="///|defaultSVGValues#Point2D#("r")|///" ///
+	|///cx="///|toString(mypt#0)|///" cy="///|toString(mypt#1)|///" r="///|defaultSVGValues#Point2D#("r")|///" ///
 	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
 	|"/>"
 	)

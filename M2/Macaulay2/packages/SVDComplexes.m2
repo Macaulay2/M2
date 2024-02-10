@@ -784,7 +784,7 @@ TEST ///
 *-
 
   needsPackage "RandomComplexes"
-  -- Simple boundary cases for psuedoInverse.
+  -- Simple boundary cases for pseudoInverse.
   m = matrix id_(QQ^2)
   C = chainComplex {m}
   CRR = chainComplex {m ** RR_53}

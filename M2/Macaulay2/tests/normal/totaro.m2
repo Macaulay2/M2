@@ -1,7 +1,7 @@
 --  From: Burt Totaro <B.J.Totaro@dpmms.cam.ac.uk>
 --  Date: Wed, 15 Jan 2003 19:02:53 +0000
 
---  Here is a more detailed description of Grobner bases for commmutative
+--  Here is a more detailed description of Grobner bases for commutative
 --  Z/p^r-algebras R, in particular how to find a Grobner basis.
 --  This note ends with some programs I wrote, for reducing modulo
 --  such a Grobner basis (with various restrictions).
@@ -220,11 +220,11 @@ liftmap=map(R0,R1,{e_1,e_2,e_3,e_4,e_5});
 -- so we make it an empty sequence () rather than a matrix. Having this
 -- sequence Gmat saves time in our reduction procedures.
 Gmat=();
-  i=B; prev=grob1; len=#grob1; next=(); j=0;
+  i=B; prev=grob1; len=#grob1; nxt=(); j=0;
   while i>=1 do (
-    next=();
-    j=0; while j<len do (next=append(next,(prev#j)%(two#i)); j=j+1);
-    prev=next; Gmat=prepend(matrix {toList prev},Gmat); i=i-1);
+    nxt=();
+    j=0; while j<len do (nxt=append(nxt,(prev#j)%(two#i)); j=j+1);
+    prev=nxt; Gmat=prepend(matrix {toList prev},Gmat); i=i-1);
   Gmat=prepend((),Gmat);
 
 gmat=redmap(Gmat#1);

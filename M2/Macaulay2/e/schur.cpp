@@ -11,8 +11,8 @@ void tableau::initialize(int nvars)
   dim = nvars;
   maxwt = SCHUR_MAX_WT;
   wt = 0;
-  lambda = 0;
-  p = 0;
+  lambda = nullptr;
+  p = nullptr;
   xloc = newarray_atomic(int, SCHUR_MAX_WT + 1);
   yloc = newarray_atomic(int, SCHUR_MAX_WT + 1);
 }
@@ -20,8 +20,8 @@ void tableau::initialize(int nvars)
 void tableau::resize(int max_wt)
 {
   if (max_wt <= SCHUR_MAX_WT) return;
-  deletearray(xloc);
-  deletearray(yloc);
+  freemem(xloc);
+  freemem(yloc);
   maxwt = max_wt;
   wt = max_wt;
   xloc = newarray_atomic(int, maxwt + 1);
@@ -78,7 +78,7 @@ bool SchurRing::initialize_schur()
   _SMfilled.initialize(n_vars());
   _SMcurrent = 0;
   _SMfinalwt = 0;
-  _SMresult = 0;
+  _SMresult = nullptr;
 
   _SMtab.p = newarray_atomic_clear(int, nvars_ + 1);
   return true;
@@ -88,7 +88,7 @@ SchurRing *SchurRing::create(const PolynomialRing *R)
 {
   SchurRing *result = new SchurRing;
   result->initialize_poly_ring(R->getCoefficients(), R->getMonoid());
-  if (!result->initialize_schur()) return 0;
+  if (!result->initialize_schur()) return nullptr;
   // No GBRing
   return result;
 }
@@ -96,13 +96,13 @@ SchurRing *SchurRing::create(const PolynomialRing *R)
 SchurRing *SchurRing::create(const Ring *A, int n)
 {
   ERROR("not implemented yet");
-  return 0;
+  return nullptr;
 }
 
 SchurRing *SchurRing::createInfinite(const Ring *A)
 {
   ERROR("not implemented yet");
-  return 0;
+  return nullptr;
 }
 
 void SchurRing::text_out(buffer &o) const
@@ -117,7 +117,7 @@ void SchurRing::text_out(buffer &o) const
 void SchurRing::to_partition(const int *m, int *exp) const
 // exp[1]..exp[nvars] are set
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
   // remark: exp_size is defined in an ancestor class of SchurRing
   M_->to_expvector(m, EXP1);
   exp[nvars_] = EXP1[nvars_ - 1];
@@ -125,7 +125,7 @@ void SchurRing::to_partition(const int *m, int *exp) const
 }
 void SchurRing::from_partition(const int *exp, int *m) const
 {
-  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
+  exponents_t EXP1 = ALLOCATE_EXPONENTS(exp_size);  // 0..nvars-1
   EXP1[nvars_ - 1] = exp[nvars_];
   for (int i = nvars_ - 1; i > 0; i--) EXP1[i - 1] = exp[i] - exp[i + 1];
   M_->from_expvector(EXP1, m);
@@ -220,10 +220,10 @@ Nterm *SchurRing::skew_schur(int *lambda, int *p)
   _SMtab.resize(_SMfinalwt);
   _SMfilled.resize(_SMfinalwt);
   _SMfilled.fill(lambda, p);
-  _SMresult = NULL;
+  _SMresult = nullptr;
   SM();
   ring_elem result = _SMresult;
-  _SMresult = NULL;
+  _SMresult = nullptr;
   return result;
 }
 
@@ -231,10 +231,10 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
 {
   int i;
 
-  exponents a_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
-  exponents b_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
-  exponents lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
-  exponents p = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
+  exponents_t a_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t b_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
+  exponents_t p = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
 
   // First: obtain the partitions
   to_partition(m, a_part);
@@ -266,14 +266,14 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
 {
   // return c*m*f
   ring_elem result = ZERO_RINGELEM;
-  for (Nterm *t = f; t != NULL; t = t->next)
+  for (Nterm& t : f)
     {
-      ring_elem a = K_->mult(c, t->coeff);
-      ring_elem g = const_cast<SchurRing *>(this)->mult_monomials(t->monom, m);
-      for (Nterm *s = g; s != NULL; s = s->next)
+      ring_elem a = K_->mult(c, t.coeff);
+      ring_elem g = const_cast<SchurRing *>(this)->mult_monomials(t.monom, m);
+      for (Nterm& s : g)
         {
-          ring_elem b = K_->mult(a, s->coeff);
-          s->coeff = b;
+          ring_elem b = K_->mult(a, s.coeff);
+          s.coeff = b;
         }
       Nterm *gt = g;
       sort(gt);
@@ -328,19 +328,20 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
 
 ring_elem SchurRing::dimension(const ring_elem f) const
 {
-  exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
   ring_elem result = K_->from_long(0);
   mpz_t dim;
   mpz_init(dim);
-  for (Nterm *t = f; t != NULL; t = t->next)
+  for (Nterm& t : f)
     {
-      to_partition(t->monom, EXP);
+      to_partition(t.monom, EXP);
       dimension(EXP, dim);
       ring_elem h = K_->from_int(dim);
-      ring_elem h2 = K_->mult(t->coeff, h);
+      ring_elem h2 = K_->mult(t.coeff, h);
       K_->add_to(result, h2);
       K_->remove(h);
     }
+  mpz_clear(dim);
   return result;
 }
 
@@ -350,7 +351,7 @@ void SchurRing::elem_text_out(buffer &o,
                               bool p_plus,
                               bool p_parens) const
 {
-  exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents_t EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
   int n = n_terms(f);
 
   bool needs_parens = p_parens && (n > 1);
@@ -362,12 +363,12 @@ void SchurRing::elem_text_out(buffer &o,
     }
 
   p_one = false;
-  for (Nterm *t = f; t != NULL; t = t->next)
+  for (Nterm& t : f)
     {
-      int isone = M_->is_one(t->monom);
+      int isone = M_->is_one(t.monom);
       p_parens = !isone;
-      K_->elem_text_out(o, t->coeff, p_one, p_plus, p_parens);
-      to_partition(t->monom, EXP);
+      K_->elem_text_out(o, t.coeff, p_one, p_plus, p_parens);
+      to_partition(t.monom, EXP);
       o << "{" << EXP[1];
       for (int i = 2; i <= nvars_ && EXP[i] != 0; i++) o << "," << EXP[i];
       o << "}";

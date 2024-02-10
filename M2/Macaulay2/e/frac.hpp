@@ -2,6 +2,7 @@
 #ifndef _frac_hh_
 #define _frac_hh_
 
+#include "monoid.hpp"
 #include "ring.hpp"
 #include "polyring.hpp"
 
@@ -71,17 +72,18 @@ class FractionField : public Ring
   virtual int compare_elems(const ring_elem f, const ring_elem g) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual bool multi_degree(const ring_elem f, int *d) const;
+  virtual bool multi_degree(const ring_elem f, monomial d) const;
   virtual void degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const;
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
                                int deg,
-                               M2_arrayint wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
+                               const std::vector<int> &wts) const;
+  virtual ring_elem homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
@@ -117,9 +119,9 @@ class FractionField : public Ring
                          int first_var) const;
 
   virtual int n_terms(const ring_elem f) const;
-  virtual ring_elem term(const ring_elem a, const int *m) const;
+  virtual ring_elem term(const ring_elem a, const_monomial m) const;
   virtual ring_elem lead_coeff(const ring_elem f) const;
-  virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
+  virtual ring_elem get_coeff(const ring_elem f, const_monomial m) const;
   virtual ring_elem get_terms(int nvars0,
                               const ring_elem f,
                               int lo,

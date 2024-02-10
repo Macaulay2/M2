@@ -25,7 +25,7 @@ export{"qthConductor",
 --	     over ZZ/q or QQ as qthIntegralClosure and rationalIntegralClosure respectively.
 --          [rationalIntegralClosure calls qthIntegralClosure for several small q.]
 --   INPUT : weight matrix wtR used to generate an appropriate weight-over-grevlex monomial ordering, 
---           multivarite polynomial ring R over ZZ/q or QQ
+--           multivariate polynomial ring R over ZZ/q or QQ
 --          (with Noether normalization, P the subring of the last numRows(wtR) (independent) variables), 
 --	     and generating set for the ideal defining an affine domain 
 --          A=R/ideal(I) that is an integral extension of P 
@@ -988,7 +988,7 @@ document {
 	  The method here allows for more than one independent row of weights
 	  matrix{{5,6,6},{3,6,0}} to be extended to
 	  matrix{{5,6,6},{3,6,0},{1,0,0}}.
-	  Note that the number of rows necessairly matches the number of (free) variables,
+	  Note that the number of rows necessarily matches the number of (free) variables,
 	  those of P, since the rightmost square submatrix defines a monomial ordering on P."
 	  }
      }	
@@ -1181,7 +1181,7 @@ document {
 	  ///,
      PARA {
      	  "Minimization changes the order of the variables
-	  to impicitly change to a new Noether normalization, but doesn't
+	  to implicitly change to a new Noether normalization, but doesn't
 	  actually recompute the integral closure presentation
 	  as a strict affine algebra over the new Noether normalization.
 	  Therefore a second call to an integral closure method is
@@ -1311,7 +1311,7 @@ assert(ic0#3 == matrix{{2,2,2,2,1,1}})
 TEST ///
 ------------------------------------------------------------------------------
 --MAGMA example found in GLS--------------------------------------------------
--- genus 1, but try to figure that out from most pesentations-----------------
+-- genus 1, but try to figure that out from most presentations-----------------
 --(x-y)*x*(y+x^2)^3-y^3*(x^3+x*y-y^2)=0---------------------------------------
 --change of variables gives a type I problem----------------------------------
 ------------------------------------------------------------------------------

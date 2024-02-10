@@ -44,14 +44,14 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
       relem_array.push_back(t->coeff);
       M->to_expvector(t->monom, exp);
       for (int a = 0; a < M->n_vars(); a++) lexp[a] = exp[a];
-      MI->from_exponent_vector(
+      MI->from_expvector(
           lexp,
           t->comp - 1,
           nextmonom);  // gbvector components are shifted up by one
       nextmonom += MI->monomial_size(nextmonom);
       n++;
     }
-  result.coeffs = VA->sparseVectorFromContainer(relem_array);
+  result.coeffs = VA->elementArrayFromContainer(relem_array);
   delete [] exp;
   delete [] lexp;
 }
@@ -101,14 +101,14 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
 
-  int *m1 = M->make_one();
+  monomial m1 = M->make_one();
 
   Nterm **comps = newarray(Nterm *, F->rank());
   Nterm **last = newarray(Nterm *, F->rank());
   for (int i = 0; i < F->rank(); i++)
     {
-      comps[i] = 0;
-      last[i] = 0;
+      comps[i] = nullptr;
+      last[i] = nullptr;
     }
 
   int *exp = newarray_atomic(int, M->n_vars() + 1);
@@ -118,14 +118,14 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   for (int i = 0; i < f.len; i++)
     {
       long comp;
-      MI->to_exponent_vector(w, lexp, comp);
+      MI->to_expvector(w, lexp, comp);
       w = w + MI->monomial_size(w);
       for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
-      ring_elem a = VA->ringElemFromSparseVector(f.coeffs, i);
+      ring_elem a = VA->ringElemFromElementArray(f.coeffs, i);
       Nterm *g = R->make_flat_term(a, m1);
       g->next = nullptr;
-      if (last[comp] == 0)
+      if (last[comp] == nullptr)
         {
           comps[comp] = g;
           last[comp] = g;
@@ -139,12 +139,12 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   vec result = nullptr;
   for (int i = 0; i < F->rank(); i++)
     {
-      if (comps[i] != 0)
+      if (comps[i] != nullptr)
         {
           vec v = R->make_vec(i, comps[i]);
           R->add_vec_to(result, v);
-          comps[i] = 0;
-          last[i] = 0;
+          comps[i] = nullptr;
+          last[i] = nullptr;
         }
     }
 
@@ -174,7 +174,7 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const VectorArithmetic* VA,
   for (int r = 0; r < nrows; r++)
     {
       row_elem &row = mat->rows[r];
-      const CoeffVector* coeffs;
+      const ElementArray* coeffs;
       if (row.coeffs.isNull())
         {
           if (row.monom == nullptr)
@@ -189,7 +189,7 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const VectorArithmetic* VA,
       for (int i = 0; i < row.len; i++)
         {
           int c = row.comps[i];
-          ring_elem a = VA->ringElemFromSparseVector(* coeffs, i);
+          ring_elem a = VA->ringElemFromElementArray(* coeffs, i);
           M->set_entry(r, c, a);
         }
     }

@@ -55,6 +55,7 @@ M2_string (*gmp_tostringRRpointer)(mpfr_srcptr);
 
 char newline[] = "\n";
 
+int M2_numTBBThreads = 0;
 int M2_gbTrace = 0;
 int M2_numericalAlgebraicGeometryTrace = 0;
 

@@ -32,7 +32,7 @@ void GB_comp::initialize0(const Matrix *m,
 {
   int i;
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
-  if (R == NULL)
+  if (R == nullptr)
     {
       ERROR("ring is not a polynomial ring");
       // MES: throw an error here.
@@ -101,7 +101,7 @@ void GB_comp::initialize(const Matrix *m,
       ring_elem denom;
       gbvector *f = originalR->translate_gbvector_from_vec(_F, (*m)[i], denom);
       s_pair *p = new_gen(i, f, denom);
-      if (p != NULL)
+      if (p != nullptr)
         {
           _gens->insert(p);
           _n_gens_left++;
@@ -126,12 +126,12 @@ void GB_comp::remove_pair(s_pair *&p)
 {
   _GR->gbvector_remove(p->f);
   _GR->gbvector_remove(p->fsyz);
-  p->first = NULL;
-  p->second = NULL;
-  p->next = NULL;
+  p->first = nullptr;
+  p->second = nullptr;
+  p->next = nullptr;
   _M->remove(p->lcm);
-  deleteitem(p);
-  p = NULL;
+  freemem(p);
+  p = nullptr;
 }
 
 GB_comp::~GB_comp() {}
@@ -147,16 +147,16 @@ s_pair *GB_comp::new_var_pair(gb_elem *p, const int *lcm)
 s_pair *GB_comp::new_ring_pair(gb_elem *p, const int *lcm)
 {
   s_pair *result = new s_pair;
-  result->next = NULL;
+  result->next = nullptr;
   result->syz_type = SPAIR_RING;
   result->degree = weightInfo_->monomial_weight(
       lcm, p->f->comp);  //_M->primary_degree(lcm) +
                          //_F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
-  result->second = NULL;
-  result->f = NULL;
-  result->fsyz = NULL;
+  result->second = nullptr;
+  result->f = nullptr;
+  result->fsyz = nullptr;
 
   result->lcm = _M->make_new(lcm);
   return result;
@@ -166,7 +166,7 @@ s_pair *GB_comp::new_s_pair(gb_elem *p, gb_elem *q, const int *lcm)
 {
   // p and q should have 'f' field defined.
   s_pair *result = new s_pair;
-  result->next = NULL;
+  result->next = nullptr;
   result->syz_type = SPAIR_PAIR;
   result->degree = weightInfo_->monomial_weight(
       lcm, p->f->comp);  //_M->primary_degree(lcm) +
@@ -174,8 +174,8 @@ s_pair *GB_comp::new_s_pair(gb_elem *p, gb_elem *q, const int *lcm)
   result->compare_num = 0;
   result->first = p;
   result->second = q;
-  result->f = NULL;
-  result->fsyz = NULL;
+  result->f = nullptr;
+  result->fsyz = nullptr;
 
   result->lcm = _M->make_new(lcm);
   return result;
@@ -197,16 +197,16 @@ s_pair *GB_comp::new_gen(int i, gbvector *f, ring_elem denom)
           _syz.push_back(fsyz);
           _n_syz++;
         }
-      return NULL;
+      return nullptr;
     }
 
   s_pair *result = new s_pair;
-  result->next = NULL;
+  result->next = nullptr;
   result->syz_type = SPAIR_GEN;
   result->degree = weightInfo_->gbvector_weight(f);
   result->compare_num = 0;
-  result->first = NULL;
-  result->second = NULL;
+  result->first = nullptr;
+  result->second = nullptr;
   result->f = f; /* NOTE THAT WE GRAB f */
   result->fsyz = fsyz;
 
@@ -265,12 +265,11 @@ void GB_comp::find_pairs(gb_elem *p)
 // (includes cases m * lead(p) = 0).
 // Returns a list of new s_pair's.
 {
-  queue<Bag *> elems;
-  Index<MonomialIdeal> j;
-  intarray vplcm;
-  int *find_pairs_m = _M->make_one();
-  int *f_m = _M->make_one();
-  int *find_pairs_exp = newarray_atomic(int, _M->n_vars());
+  gc_vector<Bag*> elems;
+  gc_vector<int> vplcm;
+  monomial find_pairs_m = _M->make_one();
+  monomial f_m = _M->make_one();
+  exponents_t find_pairs_exp = newarray_atomic(int, _M->n_vars());
   int *find_pairs_lcm = newarray_atomic(int, _M->n_vars());
 
   _GR->gbvector_get_lead_monomial(_F, p->f, f_m);
@@ -287,10 +286,10 @@ void GB_comp::find_pairs(gb_elem *p)
           _M->from_expvector(find_pairs_exp, find_pairs_lcm);
           find_pairs_exp[w]--;
 
-          vplcm.shrink(0);
+          vplcm.resize(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_var_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
 
@@ -302,47 +301,46 @@ void GB_comp::find_pairs(gb_elem *p)
         {
           const gbvector *f = originalR->quotient_gbvector(i);
           _M->lcm(f->monom, f_m, find_pairs_lcm);
-          vplcm.shrink(0);
+          vplcm.resize(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = _monideals[p->f->comp]->mi;
-  for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
+  for (Bag& a : *mi1)
     {
-      _M->from_varpower((*mi1)[i]->monom().raw(), find_pairs_m);
+      _M->from_varpower(a.monom().data(), find_pairs_m);
       _M->lcm(find_pairs_m, f_m, find_pairs_lcm);
-      vplcm.shrink(0);
+      vplcm.resize(0);
       _M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q =
           new_s_pair(p,
-                     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()),
+                     reinterpret_cast<gb_elem *>(a.basis_ptr()),
                      find_pairs_lcm);
-      elems.insert(new Bag(q, vplcm));
+      elems.push_back(new Bag(q, vplcm));
     }
 
   // Add 'p' to the correct monideal
-  intarray vp;
+  gc_vector<int> vp;
   _M->to_varpower(f_m, vp);
   mi1->insert(new Bag(p, vp));
 
   // Now minimalize these elements, and insert them into
   // the proper degree.
 
-  queue<Bag *> rejects;
-  Bag *b;
+  VECTOR(Bag *) rejects;
   MonomialIdeal mi(originalR, elems, rejects);
-  while (rejects.remove(b))
+  for (auto& b : rejects)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
       delete b;
     }
-  for (j = mi.first(); j.valid(); j++)
+  for (Bag& a : mi)
     {
-      s_pair *q = reinterpret_cast<s_pair *>(mi[j]->basis_ptr());
+      s_pair *q = reinterpret_cast<s_pair *>(a.basis_ptr());
       if (_is_ideal && q->syz_type == SPAIR_PAIR)
         {
           _M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_m);
@@ -368,22 +366,22 @@ void GB_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   _M->remove(find_pairs_m);
   _M->remove(f_m);
-  deletearray(find_pairs_exp);
-  deletearray(find_pairs_lcm);
+  freemem(find_pairs_exp);
+  freemem(find_pairs_lcm);
 }
 
 void GB_comp::compute_s_pair(s_pair *p)
 {
-  if (p->f == NULL)
+  if (p->f == nullptr)
     {
-      int *s = _M->make_one();
+      monomial s = _M->make_one();
       _M->divide(p->lcm, p->first->f->monom, s);
 
       _GR->gbvector_mult_by_term(
           _F, _Fsyz, _GR->one(), s, p->first->f, p->first->fsyz, p->f, p->fsyz);
       if (p->syz_type == SPAIR_PAIR)
         _GR->gbvector_reduce_lead_term(
-            _F, _Fsyz, 0, p->f, p->fsyz, p->second->f, p->second->fsyz);
+            _F, _Fsyz, nullptr, p->f, p->fsyz, p->second->f, p->second->fsyz);
       _M->remove(s);
     }
 }
@@ -397,9 +395,9 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
     }
   gbvector head;
   gbvector *result = &head;
-  result->next = 0;
+  result->next = nullptr;
 
-  int *div_totalexp = newarray_atomic(int, _M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, _M->n_vars());
   int count = 0;
   if (M2_gbTrace == 10)
     {
@@ -408,7 +406,7 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
       _GR->gbvector_text_out(o, _F, f);
       emit_line(o.str());
     }
-  while (f != NULL)
+  while (f != nullptr)
     {
       Bag *b;
       _GR->gbvector_get_lead_exponents(_F, f, div_totalexp);
@@ -417,7 +415,7 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
                                                                 b))
         {
           const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
-          _GR->gbvector_reduce_lead_term(_F, _Fsyz, head.next, f, fsyz, g, 0);
+          _GR->gbvector_reduce_lead_term(_F, _Fsyz, head.next, f, fsyz, g, nullptr);
           count++;
           _n_reductions++;
         }
@@ -446,7 +444,7 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
           result->next = f;
           f = f->next;
           result = result->next;
-          result->next = 0;
+          result->next = nullptr;
         }
     }
 
@@ -457,16 +455,16 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
       emit_wrapped(o.str());
     }
   f = head.next;
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
 {
   gbvector head;
   gbvector *result = &head;
-  result->next = 0;
+  result->next = nullptr;
 
-  int *div_totalexp = newarray_atomic(int, _M->n_vars());
+  exponents_t div_totalexp = newarray_atomic(int, _M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(_GR, _F);
@@ -474,7 +472,7 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   fb.add(f);
   fsyzb.add(fsyz);
   const gbvector *lead;
-  while ((lead = fb.get_lead_term()) != NULL)
+  while ((lead = fb.get_lead_term()) != nullptr)
     {
       Bag *b;
       _GR->gbvector_get_lead_exponents(_F, lead, div_totalexp);
@@ -491,7 +489,7 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
                                      fb,
                                      fsyzb,
                                      g,
-                                     0);
+                                     nullptr);
           count++;
         }
       else if (_monideals[lead->comp]->mi_search->search_expvector(div_totalexp,
@@ -513,7 +511,7 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
         {
           result->next = fb.remove_lead_term();
           result = result->next;
-          result->next = 0;
+          result->next = nullptr;
         }
     }
 
@@ -526,13 +524,13 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void GB_comp::flush_pairs(int deg)
 {
   s_pair *p;
-  while ((p = _spairs->remove()) != NULL)
+  while ((p = _spairs->remove()) != nullptr)
     if (p->degree != deg)
       {
         _spairs->put_back(p);
@@ -543,7 +541,7 @@ void GB_comp::flush_pairs(int deg)
         _n_saved_hilb++;
         remove_pair(p);
       }
-  while ((p = _gens->remove()) != NULL)
+  while ((p = _gens->remove()) != nullptr)
     if (p->degree != deg)
       {
         _gens->put_back(p);
@@ -558,7 +556,7 @@ void GB_comp::flush_pairs(int deg)
 
 void GB_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 {
-  int *f_m = _M->make_one();
+  monomial f_m = _M->make_one();
   gb_elem *p = new gb_elem(f, fsyz, ismin);
 
   _GR->gbvector_get_lead_monomial(_F, p->f, f_m);
@@ -571,7 +569,7 @@ void GB_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
 
   if (_M->in_subring(1, f_m)) _n_subring++;
   // insert into p->f->comp->mi_search
-  intarray vp;
+  gc_vector<int> vp;
   _M->to_varpower(f_m, vp);
   _monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   _n_gb++;
@@ -598,7 +596,7 @@ int GB_comp::s_pair_step()
 // values.
 {
   s_pair *p = _spairs->remove();
-  if (p == NULL) return SPAIR_DONE;
+  if (p == nullptr) return SPAIR_DONE;
   if (p->degree != _this_degree)
     {
       _spairs->put_back(p);
@@ -616,8 +614,8 @@ int GB_comp::s_pair_step()
 
   gbvector *f = p->f;
   gbvector *fsyz = p->fsyz;
-  p->f = NULL;
-  p->fsyz = NULL;
+  p->f = nullptr;
+  p->fsyz = nullptr;
   remove_pair(p);
 
   gb_reduce(f, fsyz);
@@ -658,7 +656,7 @@ int GB_comp::gen_step()
 // values.
 {
   s_pair *p = _gens->remove();
-  if (p == NULL) return SPAIR_DONE;
+  if (p == nullptr) return SPAIR_DONE;
   if (p->degree != _this_degree)
     {
       _gens->put_back(p);
@@ -672,8 +670,8 @@ int GB_comp::gen_step()
 
   gbvector *f = p->f;
   gbvector *fsyz = p->fsyz;
-  p->f = NULL;
-  p->fsyz = NULL;
+  p->f = nullptr;
+  p->fsyz = nullptr;
   remove_pair(p);
 
   gb_reduce(f, fsyz);
@@ -765,17 +763,17 @@ int GB_comp::next_degree()
   int result = 0;
   p = _spairs->remove();
   q = _gens->remove();
-  if (p != NULL)
+  if (p != nullptr)
     {
       result = p->degree;
-      if (q != NULL && q->degree < p->degree) result = q->degree;
+      if (q != nullptr && q->degree < p->degree) result = q->degree;
     }
-  else if (q != NULL)
+  else if (q != nullptr)
     result = q->degree;
   else
     assert(0);
-  if (p != NULL) _spairs->put_back(p);
-  if (q != NULL) _gens->put_back(q);
+  if (p != nullptr) _spairs->put_back(p);
+  if (q != nullptr) _gens->put_back(q);
   return result;
 }
 
@@ -788,7 +786,7 @@ RingElement /* or null */ *GB_comp::compute_hilbert_function() const
 #ifdef DEVELOPMENT
 #warning "not implemented yet"
 #endif
-  return NULL;
+  return nullptr;
 }
 
 //---- state machine (roughly) for the computation ----
@@ -831,7 +829,7 @@ void GB_comp::start_computation()
                   {
                     // Recompute h, _hf_diff
                     RingElement *h = compute_hilbert_function();
-                    if (h == 0)
+                    if (h == nullptr)
                       {
                         is_done = COMP_INTERRUPTED;
                         break;
@@ -964,15 +962,15 @@ void GB_comp::start_computation()
 
 void GB_comp::debug_out(s_pair *q) const
 {
-  if (q == NULL) return;
+  if (q == nullptr) return;
   buffer o;
   o << "(" << q->compare_num << " ";
-  if (q->first != NULL)
+  if (q->first != nullptr)
     o << q->first->me;
   else
     o << ".";
   o << " ";
-  if (q->second != NULL)
+  if (q->second != nullptr)
     o << q->second->me;
   else
     o << ".";
@@ -1072,13 +1070,13 @@ const Matrix /* or null */ *GB_comp::matrix_remainder(const Matrix *m)
   if (m->get_ring() != originalR)
     {
       ERROR("expected matrix over the same ring");
-      return 0;
+      return nullptr;
     }
 
   if (m->n_rows() != _F->rank())
     {
       ERROR("expected matrices to have same number of rows");
-      return 0;
+      return nullptr;
     }
   start_computation();
   MatrixConstructor red(m->rows(), m->cols(), m->degree_shift());
@@ -1103,15 +1101,15 @@ M2_bool GB_comp::matrix_lift(const Matrix *m,
   if (m->get_ring() != originalR)
     {
       ERROR("expected matrix over the same ring");
-      *result_remainder = 0;
-      *result_quotient = 0;
+      *result_remainder = nullptr;
+      *result_quotient = nullptr;
       return false;
     }
   if (m->n_rows() != _F->rank())
     {
       ERROR("expected matrices to have same number of rows");
-      *result_remainder = 0;
-      *result_quotient = 0;
+      *result_remainder = nullptr;
+      *result_quotient = nullptr;
       return false;
     }
   start_computation();
@@ -1125,7 +1123,7 @@ M2_bool GB_comp::matrix_lift(const Matrix *m,
       gbvector *fsyz = _GR->gbvector_zero();
 
       gb_reduce(f, fsyz);
-      if (f != 0) all_zeroes = false;
+      if (f != nullptr) all_zeroes = false;
 
       vec fv = originalR->translate_gbvector_to_vec_denom(_F, f, denom);
       _K->negate_to(denom);
@@ -1156,10 +1154,10 @@ int GB_comp::contains(const Matrix *m)
       ring_elem denom;
       gbvector *f = originalR->translate_gbvector_from_vec(_F, (*m)[i], denom);
       _K->remove(denom);
-      gbvector *fsyz = NULL;
+      gbvector *fsyz = nullptr;
       gb_reduce(f, fsyz);
       _GR->gbvector_remove(fsyz);
-      if (f != NULL)
+      if (f != nullptr)
         {
           _GR->gbvector_remove(f);
           return i;

@@ -26,7 +26,6 @@ newPackage(
 load "EngineTests/LinearAlgebra.Test.Base.m2"
 load "EngineTests/LinearAlgebra.Test.EngineGF.m2"
 
---load "EngineTests/LinearAlgebra.Test.Givaro.m2" --ok
 --load "EngineTests/LinearAlgebra.Test.FFPACK.m2" --check fails
 --load "EngineTests/LinearAlgebra.Test.FLINT.m2"  --check fails
 --load "EngineTests/LinearAlgebra.Test.ZZp.m2"    

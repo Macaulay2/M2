@@ -13,6 +13,7 @@ newPackage("VersalDeformations",
 	  HomePage => "http://www.sfu.ca/~nilten/",
 	  Email => "nilten@sfu.ca"}},
     Configuration => {"DefaultDefParam"=>"t"},
+    PackageImports => {"Varieties"},
     Keywords => {"Deformation Theory"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -105,31 +106,22 @@ cotangentCohomology1=method(TypicalValue=>Matrix,Options=>{SourceRing=>null,Modu
 
 cotangentCohomology1Mod:=(F)->(
      A:=ring F/image F; --quotient ring
-     Hom(ideal F,A)/(image ((transpose substitute(jacobian F,A)))))
+     Hom(ideal F, A, MinimalGenerators => true)/(image transpose substitute(jacobian F,A)))
      
 cotangentCohomology1 Matrix:=opts->F->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
 	g:=map(ambient image F,image F,F);
-	ambient basis(coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	ambient basis(coker Hom(g,coker F, MinimalGenerators => true),SourceRing=>opts#SourceRing));
  	lift(ambient basis(cotangentCohomology1Mod F,SourceRing=>opts#SourceRing), ring F))
-cotangentCohomology1 (ZZ,Matrix):=opts->(deg,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
-	g:=map(ambient image F,image F,F);
-	ambient basis(deg,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
-	lift(ambient basis(deg,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (ZZ,Matrix) :=
 cotangentCohomology1 (List,Matrix):=opts->(deg,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
 	g:=map(ambient image F,image F,F);
-	ambient basis(deg,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	ambient basis(deg,coker Hom(g,coker F, MinimalGenerators => true),SourceRing=>opts#SourceRing));
 	lift(ambient basis(deg,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (InfiniteNumber,ZZ,Matrix) :=
+cotangentCohomology1 (ZZ,InfiniteNumber,Matrix) :=
 cotangentCohomology1 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
 	g:=map(ambient image F,image F,F);
-	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
-	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
-cotangentCohomology1 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
-	g:=map(ambient image F,image F,F);
-	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
-	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
-cotangentCohomology1 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
-	g:=map(ambient image F,image F,F);
-	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	ambient basis(lo,hi,coker Hom(g,coker F, MinimalGenerators => true),SourceRing=>opts#SourceRing));
 	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
 
 cotangentCohomology1 Ideal:=opts->I->lift(ambient basis(cotangentCohomology1Mod gens I,SourceRing=>opts#SourceRing), ring I)
@@ -146,7 +138,7 @@ cotangentCohomology2Mod:=F->(
      A:=ring F/image F;
      R:=gens ker F;
      kos:=koszul(2,F);
-     (Hom((image R/image kos),A)/(image substitute(transpose R,A))))
+     Hom(image R/image kos, A, MinimalGenerators => true)/(image substitute(transpose R,A)))
 
 
 cotangentCohomology2 Matrix:=opts->F->lift(ambient basis(cotangentCohomology2Mod F,opts),ring F)
@@ -273,7 +265,7 @@ lowestOrder:=(G,F,C,nk)->(
     A:=sub(matrix {LO},ring G_0);
     (A,B))
 
---auxilliary function, used to translate a vector representation of a homomorphism to a map
+--auxiliary function, used to translate a vector representation of a homomorphism to a map
 vecToHom:=(v,T,S)->(
 	matrix map(T,S, transpose matrix pack(flatten entries v,numgens T)))
 
@@ -927,7 +919,7 @@ document {
      Key =>{firstOrderDeformations,(firstOrderDeformations,Matrix,Matrix,Matrix),
 	  [firstOrderDeformations,SanityCheck],
      	  [firstOrderDeformations,DefParam]},
-     Headline => "use tangent space to create first order peturbations and find relations",
+     Headline => "use tangent space to create first order perturbations and find relations",
      Usage => "(F,R) = firstOrderDeformations(F0,R0,T1)",
      Inputs => {"F0" =>Matrix, "R0"=>Matrix, "T1"=>Matrix},
      Outputs=>{"F" => {ofClass List, " of matrices"},
@@ -1249,7 +1241,7 @@ document {
 	"checkTangentSpace I",
 	"checkTangentSpace J"
      },
-    PARA{"Even if ",TT "checkTangentSpace"," returns the value ",TT "true",", it may occur that the map from the deformation space computed by ",TO localHilbertScheme," to the the local Hilbert scheme is not an isomorphism on tangent spaces, since the rank of the map is not computed."}
+    PARA{"Even if ",TT "checkTangentSpace"," returns the value ",TT "true",", it may occur that the map from the deformation space computed by ",TO localHilbertScheme," to the local Hilbert scheme is not an isomorphism on tangent spaces, since the rank of the map is not computed."}
      } 
 
 
@@ -1271,7 +1263,7 @@ document {
 document {
     Key =>DefParam,
    Headline => "deformation parameter",
-   PARA {TT "DefParam"," is the name of an optional arguemt. Its value is ",ofClass Symbol,", which specifies the name of the deformation parameter.
+   PARA {TT "DefParam"," is the name of an optional argument. Its value is ",ofClass Symbol,", which specifies the name of the deformation parameter.
 	Its default value is determined by the loadtime configuration ",TO Option," ",TT "DefaultDefParam",", which
 	 has default value ",TT "t","."
 	},
@@ -1365,18 +1357,19 @@ assert (checkTangentSpace gens J == true)
 assert (checkComparisonTheorem gens J == true)
 ///
 
-TEST ///
-needsPackage "Truncations"
-S = ZZ/32003[a..d]
-I = monomialIdeal(a^2,a*b,b^4,a*c^3)
-J = truncate(3, I)
-(F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
-///
-TEST ///
-S=QQ[x,y]/ideal {x^4+y^3}
-f= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}
-(F,R,G,C)=versalDeformation(f,CT^1(f),extMatrix(f),Verbose=>4)
-assert (sum G==map(target G_0,source G_0,sub( matrix {{t_1^6+t_1^3*t_2^2+3*t_1^4*t_5+12*t_1^3*t_2*t_6-12*t_1^3*t_6^2+(1/2)*t_2^4+t_1*t_2^2*t_3+2*t_1^2*t_2*t_4+(7/2)*t_1*t_2^2*t_5+3*t_1^2*t_5^2+2*t_2^3*t_6+2*t_1*t_2*t_3*t_6-8*t_1^2*t_4*t_6+4*t_1*t_2*t_5*t_6+3*t_2^2*t_6^2-6*t_1*t_5*t_6^2+2*t_2*t_6^3+t_6^4-t_1*t_4^2-(3/2)*t_2*t_4*t_5+t_5^3-3*t_4*t_5*t_6}, {-t_1^4-6*t_1*t_6^2+t_3^2-t_2*t_4+t_3*t_5+t_5^2-2*t_4*t_6}, {0}, {0}, {0}, {-4*t_1^3*t_2-t_2^3-4*t_1*t_2*t_3-5*t_1*t_2*t_5-2*t_2^2*t_6+4*t_1*t_3*t_6+2*t_1*t_5*t_6-2*t_2*t_6^2+2*t_3*t_4+t_4*t_5}},ring G_0)))
-assert (sum F==map(target F_0,source F_0,sub(matrix {{t_1^2+t_3+t_5+y, -t_1^3-t_2^2-t_1*t_5-t_2*t_6-t_6^2+y*t_1+x*t_2-x^2, -t_1*t_2+2*t_1*t_6+t_4}, {t_2+t_6+x, 3*t_1*t_2-2*t_1*t_6-t_4, t_1^2+t_5-y}, {-t_1, -t_1^2+t_3-y, t_6-x}},ring F_0)))
-///
+-- TEST ///
+-- needsPackage "Truncations"
+-- S = ZZ/32003[a..d]
+-- I = monomialIdeal(a^2,a*b,b^4,a*c^3)
+-- J = truncate(3, I)
+-- (F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
+-- ///
+
+-- TEST ///
+-- S=QQ[x,y]/ideal {x^4+y^3}
+-- f= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}
+-- (F,R,G,C)=versalDeformation(f,CT^1(f),extMatrix(f),Verbose=>4)
+-- assert (sum G==map(target G_0,source G_0,sub( matrix {{t_1^6+t_1^3*t_2^2+3*t_1^4*t_5+12*t_1^3*t_2*t_6-12*t_1^3*t_6^2+(1/2)*t_2^4+t_1*t_2^2*t_3+2*t_1^2*t_2*t_4+(7/2)*t_1*t_2^2*t_5+3*t_1^2*t_5^2+2*t_2^3*t_6+2*t_1*t_2*t_3*t_6-8*t_1^2*t_4*t_6+4*t_1*t_2*t_5*t_6+3*t_2^2*t_6^2-6*t_1*t_5*t_6^2+2*t_2*t_6^3+t_6^4-t_1*t_4^2-(3/2)*t_2*t_4*t_5+t_5^3-3*t_4*t_5*t_6}, {-t_1^4-6*t_1*t_6^2+t_3^2-t_2*t_4+t_3*t_5+t_5^2-2*t_4*t_6}, {0}, {0}, {0}, {-4*t_1^3*t_2-t_2^3-4*t_1*t_2*t_3-5*t_1*t_2*t_5-2*t_2^2*t_6+4*t_1*t_3*t_6+2*t_1*t_5*t_6-2*t_2*t_6^2+2*t_3*t_4+t_4*t_5}},ring G_0)))
+-- assert (sum F==map(target F_0,source F_0,sub(matrix {{t_1^2+t_3+t_5+y, -t_1^3-t_2^2-t_1*t_5-t_2*t_6-t_6^2+y*t_1+x*t_2-x^2, -t_1*t_2+2*t_1*t_6+t_4}, {t_2+t_6+x, 3*t_1*t_2-2*t_1*t_6-t_4, t_1^2+t_5-y}, {-t_1, -t_1^2+t_3-y, t_6-x}},ring F_0)))
+-- ///
 

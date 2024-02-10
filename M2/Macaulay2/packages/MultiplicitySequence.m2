@@ -242,7 +242,7 @@ monAnalyticSpread Ideal := ZZ => I -> (
 )
 
 -- monomial j-multiplicity
--- Dependences: loadPackage "Polyhedra", pryF, isBddFacet, mon2Exp, NP 
+-- Dependencies: loadPackage "Polyhedra", pryF, isBddFacet, mon2Exp, NP 
 monjMult = method()
 monjMult Ideal := ZZ => I -> (
     if I != monomialIdeal I then error "Expected a monomial ideal";

@@ -234,12 +234,15 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core
     )
 
-  # TODO: call a script to this this in build step of info-${package}?
+  # TODO: call a script to do this in build step of info-${package}?
   if(BUILD_TESTING)
     ## Read the number of tests
     if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/info-${package})
       file(READ ${CMAKE_CURRENT_BINARY_DIR}/info-${package} ${package}-testcount)
     else()
+      set(${package}-testcount 0)
+    endif()
+    if(NOT ${package}-testcount MATCHES "^[0-9]+$")
       set(${package}-testcount 0)
     endif()
     ## Add individual tests for package

@@ -213,7 +213,7 @@ Types:
 	malloc(T)			returns a pointer of type T pointing to new memory on the heap
 					the number of bytes allocated is sizeof(*((T)0))
 					if T is a pointer type, the memory is cleared by GC_MALLOC
-					if T an an atomic pointer type, the memory is not cleared by GC_MALLOC_ATOMIC
+					if T is an atomic pointer type, the memory is not cleared by GC_MALLOC_ATOMIC
 					(to improve type safety, we should clear it, anyway)
 					
 	Type "foo"			a new data type, declared as "foo" in the C or C++ code produced, which

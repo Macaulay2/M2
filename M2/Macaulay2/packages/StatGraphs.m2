@@ -1544,7 +1544,7 @@ TEST ///
 	   assert(isCyclic G)      
 ///
 --------------------------------------------
--- Tests for partititionLMG 
+-- Tests for partitionLMG 
 --------------------------------------------
 
 TEST /// 

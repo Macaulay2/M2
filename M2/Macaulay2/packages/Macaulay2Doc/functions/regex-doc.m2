@@ -13,7 +13,7 @@ doc ///
   Headline
     evaluate a regular expression search
   Usage
-    regex(re, start)
+    regex(re, str)
     regex(re, start, str)
     regex(re, start, range, str)
   Inputs

@@ -66,6 +66,8 @@ document {
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
      }
 
+undocumented {(value, RingElement), (value, Nothing), (value, IndexedVariableTable)}
+
 document {
      Key => value,
      Headline => "evaluate"
@@ -349,7 +351,7 @@ document {
 document {
      Key => Print,
      Headline => "top level method for printing results",
-     Usage => "X#{Standard,Print} = f",
+     Usage => "X#{topLevelMode,Print} = f",
      Inputs => {
 	  "X" => Type,
 	  "f" => Function => { " that can print something of type ", TT "X"}
@@ -363,7 +365,7 @@ document {
 document {
      Key => NoPrint,
      Headline => "top level method for non-printing results",
-     Usage => "X#{Standard,NoPrint} = f",
+     Usage => "X#{topLevelMode,NoPrint} = f",
      Inputs => {
 	  "X" => Type,
 	  "f" => Function => { " that can accept something of type ", TT "X"}
@@ -377,7 +379,7 @@ document {
 document {
      Key => BeforePrint,
      Headline => "top level method applied before printing results",
-     Usage => "X#{Standard,BeforePrint} = f",
+     Usage => "X#{topLevelMode,BeforePrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied before printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." },
 	  },
@@ -399,7 +401,7 @@ document {
 document {
      Key => AfterPrint,
      Headline => "top level method applied after printing",
-     Usage => "X#{Standard,AfterPrint} = f",
+     Usage => "X#{topLevelMode,AfterPrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied after printing a top-level evaluation result ", TT "r", " of type ", TT "X", "."}
 	  },
@@ -412,14 +414,14 @@ document {
 	  },
      "We could suppress that output for a single type as follows.",
      EXAMPLE {
-	  "QQ#{Standard,AfterPrint} = r -> r;",
+	  "QQ#{topLevelMode,AfterPrint} = r -> r;",
 	  "3/4"
 	  }
      }
 document {
      Key => AfterNoPrint,
      Headline => "top level method applied after not printing",
-     Usage => "X#{Standard,AfterNoPrint} = f",
+     Usage => "X#{topLevelMode,AfterNoPrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied after not printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." }
 	  },
@@ -438,7 +440,7 @@ document {
      Headline => "the current top level mode",
      Usage => "topLevelMode = x",
      Inputs => {
-	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard"}
+	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard", " or ", TO "WebApp", " or ", TO "Jupyter"}
 	  },
      Consequences => {
 	  {"the interpreter will produce input and output prompts appropriate for the mode, and will
@@ -610,24 +612,6 @@ document {
      SeeAlso => { "oo", "ooo" }
      }
 
-document {
-     Key => {locate,(locate, Pseudocode), (locate, Function), (locate, Sequence), (locate, Symbol), (locate, Nothing)},
-     Headline => "locate source code",
-     TT "locate f", " -- for a symbol interpreted function ", TT "f", "
-     returns a sequence ", TT "(n,i,c,j,d,k,e)", " describing the location of
-     the definition in the source code.  The name of the source file
-     is ", TT "n", " and the code is occupies line ", TT "i", " column ", TT "c", "
-     through line ", TT "j", " column ", TT "d", ", with the central point of interest
-     located at line ", TT "k", " column ", TT "e", ".  If the function ", TT "f", " is compiled,
-     then the location is not available, and ", TO "null", " is returned.",
-     PARA{},
-     "If ", TT "f", " is a sequence, then ", TO "lookup", " is applied
-     first, and then the location of the resulting function is provided.",
-     PARA{},
-     "If ", TT "f", " is ", TO "null", ", then ", TO "null", " is returned."
-     }
-
-
 -- document {
 --      Key => precedence,
 --      Headline => "parsing precedence",
@@ -705,7 +689,7 @@ document {
      }
 
 document {
-     Key => {memoize,(memoize, Function),(memoize, Function, List)},
+     Key => {memoize,(memoize, Function),(memoize, Function, List), memoizeClear, memoizeValues},
      Headline => "record results of function evaluation for future use",
      TT "memoize f", " -- produces, from a function ", TT "f", ", a new function that
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
@@ -718,25 +702,43 @@ document {
      time fib 28
      time fib 28
      ///,
-     PARA{},
-     "The function ", TT "memoize", " operates by constructing
-     a ", TO "MutableHashTable", " in which the argument sequences are used
-     as keys for accessing the return value of the function.",
-     PARA{},
-     "An optional second argument to memoize provides a list of initial values,
-     each of the form ", TT "x => v", ", where ", TT "v", " is the value to
-     be provided for the argument ", TT "x", ".",
-     PARA{},
-     "Warning: when the value returned by ", TT "f", " is ", TO "null", ", it will always be
-     recomputed, even if the same arguments are presented.",
-     PARA{},
-     "Warning: the new function created by ", TT "memoize", " will save
-     references to all arguments and values it encounters, and this will
-     often prevent those arguments and values from being garbage-collected
-     as soon as they might have been.  If the arguments are
-     implemented as mutable hash tables (modules, matrices and rings are
-     implemented this way) then a viable strategy is to stash computed
-     results in the arguments themselves.  See also ", TT "CacheTable", "."
+     PARA{
+	  "An optional second argument to memoize provides a list of initial values,
+	  each of the form ", TT "x => v", ", where ", TT "v", " is the value to
+	  be provided for the argument ", TT "x", "."
+	  },
+     PARA{
+	  "Alternatively, values can be provided after defining the memoized function
+	  using the syntax ", TT "f x = v", ". A slightly more efficient implementation of the above would be"
+	  },
+     EXAMPLE lines ///
+     fib = memoize( n -> fib(n-1) + fib(n-2) )
+     fib 0 = fib 1 = 1;
+     fib 28
+     ///,
+     PARA{
+	  "The function ", TT "memoize", " operates by constructing
+	  a ", TO "MutableHashTable", ", in which the arguments are used
+	  as keys for accessing the return value of the function.  This mutable hash table
+	  can be obtained using the function ", TT "memoizeValues", ", as follows."
+	  },
+     EXAMPLE "peek memoizeValues fib",
+     PARA {
+	  "That hash table can be replaced by an empty one with the function ", TT "memoizeClear", "."
+	  },
+     EXAMPLE lines ///
+     memoizeClear fib
+     peek memoizeValues fib
+     ///,
+     PARA{
+	  "Warning: the new function created by ", TT "memoize", " will save
+	  references to all arguments and values it encounters, and this will
+	  often prevent those arguments and values from being garbage-collected
+	  as soon as they might have been.  If the arguments are
+	  implemented as mutable hash tables (modules, matrices and rings are
+	  implemented this way) then a viable strategy is to stash computed
+	  results in the arguments themselves.  See also ", TT "CacheTable", "."
+	  },
      }
 
 document {
@@ -817,8 +819,27 @@ document {
 	  "f = random(R^{2},R^2)",
 	  "compactMatrixForm = false;",
 	  "f"
+	  },
+      Caveat => {"This flag currently has no effect outside of ", TO "Standard"," output mode."}
+     }
+
+document {
+     Key => symbol blockMatrixForm,
+    Headline => "global flag for block printing",
+	Usage => "blockMatrixForm = x",
+	Consequences => {"changes the display of matrices"},
+     TT "blockMatrixForm", " is a global flag that specifies whether to display
+     blocks in matrices.",
+     PARA{},
+     "The default value is ", TT "false", ".",
+     EXAMPLE {
+	  "M = ZZ^1 ++ ZZ^2 ++ ZZ^3",
+	  "f = random(M,M)",
+	  "blockMatrixForm = true;",
+	  "f"
 	  }
      }
+    
 
 document {
      Key => globalAssign,
@@ -872,24 +893,48 @@ document {
      SeeAlso => { getGlobalSymbol }
      }
 
-document { Key => symbol currentLineNumber,
-     Headline => "current line number of the current input file",
-     Usage => "currentLineNumber()",
-     Outputs => { ZZ => "the current line number of the current input file" },
-     EXAMPLE "currentLineNumber()",
-     SeeAlso => "currentFileName" }
-document { Key => symbol currentFileDirectory,
+document { 
+     Key => currentColumnNumber,
+     Headline => "current column number of the current input file",
+     Usage => "currentColumnNumber()",
+     Outputs => { ZZ => "the current column number of the current input file" },
+     EXAMPLE "currentColumnNumber()",
+     SeeAlso => {"currentRowNumber", "currentFileName" }
+     }
+document { 
+     Key => currentRowNumber,
+     Headline => "current row number of the current input file",
+     Usage => "currentRowNumber()",
+     Outputs => { ZZ => "the current row number of the current input file" },
+     EXAMPLE "currentRowNumber()",
+     SeeAlso => {"currentColumnNumber", "currentFileName", "currentPosition" }
+     }
+document { 
+     Key => symbol currentFileDirectory,
      Headline => "the directory containing the current input file",
      Usage => "currentFileDirectory",
      Outputs => { String => "the directory containing the current input file" },
      EXAMPLE "currentFileDirectory",
      SeeAlso => "currentFileName" }
-document { Key => symbol currentFileName,
+document { 
+     Key => symbol currentFileName,
      Headline => "the current source file",
      Usage => "currentFileName",
      Outputs => { String => "the name of the current source file" },
      EXAMPLE "currentFileName",
-     SeeAlso => "currentLineNumber" }
+     SeeAlso => {"currentRowNumber", "currentColumnNumber", "currentPosition" }
+     }
+document { 
+     Key => currentPosition,
+     Headline => "the current position in the current source file",
+     Usage => "currentPosition()",
+     Outputs => { FilePosition => "the current position in the source file" },
+     EXAMPLE lines ///
+     currentPosition()
+     peek'_2 oo
+     ///,
+     SeeAlso => {"currentRowNumber", "currentColumnNumber" }
+     }
 
 document { Key => functionBody,
      Headline => "get the body of a function",
@@ -931,7 +976,7 @@ document { Key => Pseudocode,
      the internal function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
-     and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudcode step whose execution produced the error.",
+     and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",

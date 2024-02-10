@@ -29,7 +29,7 @@ use strings1;
 use stdio0;
 use stdiop0;
 use pthread0;
-
+use atomic;
 
 export anywhereError(s:string) ::= Ccode(voidPointer,"err_error(",s,")");
 export anywhereAbort(s:string) ::= Ccode(exits,"err_abort(",s,")");
@@ -146,10 +146,9 @@ export ArrayParseTree := array(ParseTree);
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
-export StartDictionary := {+dictionary:Dictionary, body:ParseTree};
 export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
+     or EmptyParentheses or IfThen or IfThenElse
      or Quote or GlobalQuote or ThreadQuote or LocalQuote
      or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
@@ -207,6 +206,16 @@ export parallelAssignmentCode := {+
      rhs:Code,
      position:Position};
 
+export augmentedAssignmentCode := {+
+    oper:Symbol,
+    lhs:Code,
+    rhs:Code,
+    info:Symbol, -- variable name or operator
+    position:Position};
+
+-- code that's already been evaluated; needed for augmented assignment
+export evaluatedCode := {+ expr:Expr, position:Position};
+
 export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
@@ -257,7 +266,7 @@ export Code := (
      or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
      or globalAssignmentCode or localAssignmentCode 
      or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
-     or parallelAssignmentCode 
+     or parallelAssignmentCode or augmentedAssignmentCode or evaluatedCode
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
@@ -307,7 +316,7 @@ export DictionaryClosure := {+
      frame:Frame,      -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
      };
-export FunctionClosure := {+ frame:Frame, model:functionCode };
+export FunctionClosure := {+ frame:Frame, model:functionCode, hash:int };
 export SymbolClosure := {+
      frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
      symbol:Symbol
@@ -352,7 +361,7 @@ export MysqlField  := Pointer "struct st_mysql_field *";
 export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 
 export pythonObject := Pointer "struct _object *";
-export pythonObjectCell := {+v:pythonObject};
+export pythonObjectCell := {+v:pythonObject, hash:int};
 
 export TaskCellBody := {+
      hash:int,
@@ -361,6 +370,9 @@ export TaskCellBody := {+
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };
 
+export pointerCell := {+ v:voidPointer };
+
+export atomicIntCell := {+ v:atomicField, hash:int };
 
 export Expr := (
      CCcell or
@@ -415,7 +427,9 @@ export Expr := (
      pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
-     fileOutputSyncState
+     fileOutputSyncState or
+     pointerCell or
+     atomicIntCell
      );
 export fun := function(Expr):Expr;
 

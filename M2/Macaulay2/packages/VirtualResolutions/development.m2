@@ -10,7 +10,7 @@ isVirtualOfPair(List, Module) := opts -> (d, M) -> (
     F := res M; -- TODO: remove when virtualOfPair for a module gives a winnowingMap
     V := virtualOfPair(F, {l});
     -- For ideals, it is sufficient to check saturate(ann HH^0 F, B) == ann M
-    -- but checking that the winnowing map is an isomophism may be better
+    -- but checking that the winnowing map is an isomorphism may be better
     -- TODO: improve caching here
     if not isVirtual(B, V) then return false;
     if opts.Strategy === "ann"

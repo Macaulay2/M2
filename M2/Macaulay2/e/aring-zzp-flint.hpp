@@ -7,6 +7,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
+#include "exceptions.hpp"    // for division_by_zero_error
 
 class RingMap;
 
@@ -15,15 +16,18 @@ class RingMap;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include "flint/arith.h"
-#include "flint/nmod_vec.h"
+#include <flint/flint.h>  // for fmpz_t, nmod_t, flint_rand_t
+#include <flint/fmpz.h>   // for fmpz_clear, fmpz_fdiv_ui, fmpz_init
+#ifdef HAVE_FLINT_NMOD_H
+  #include <flint/nmod.h>   // for nmod_neg, nmod_add, nmod_div, nmod_mul
+#endif
 #pragma GCC diagnostic pop
 
 namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZpFlint : public RingInterface
+class ARingZZpFlint : public SimpleARing<ARingZZpFlint>
 {
   // Integers mod p, implemented as
   // residues in 0..p-1, where
@@ -79,7 +83,7 @@ class ARingZZpFlint : public RingInterface
 
   void init(ElementType &result) const { result = 0; }
   void init_set(ElementType &result, ElementType a) const { result = a; }
-  void clear(ElementType &result) const { /* nothing */}
+  static void clear(ElementType &result) { /* nothing */}
 
   void set(ElementType &result, ElementType a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0; }
@@ -118,8 +122,9 @@ class ARingZZpFlint : public RingInterface
   }
 
   void invert(ElementType &result, ElementType a) const
-  // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
+    if (is_zero(a)) throw exc::division_by_zero_error();
+    
     result = n_invmod(a, mCharac);
   }
 
@@ -162,19 +167,43 @@ class ARingZZpFlint : public RingInterface
 
   void divide(ElementType &result, ElementType a, ElementType b) const
   {
-    assert(b != 0);
+    if (b == 0)
+      throw exc::division_by_zero_error();
     result = nmod_div(a, b, mModulus);
   }
 
   void power(ElementType &result, ElementType a, long n) const
   {
-    result = n_powmod2_preinv(a, n, mModulus.n, mModulus.ninv);
+    if (a != 0)
+      {
+        result = n_powmod2_preinv(a, n, mModulus.n, mModulus.ninv);
+      }
+    else
+      {
+        // case a == 0
+        if (n < 0) throw exc::division_by_zero_error();
+        if (n == 0) return set_from_long(result, 1);
+        if (n > 0) return set_zero(result);
+      }
   }
 
   void power_mpz(ElementType &result, ElementType a, mpz_srcptr n) const
   {
-    unsigned long nbar = mpz_fdiv_ui(n, mCharac - 1);
-    result = n_powmod2_ui_preinv(a, nbar, mModulus.n, mModulus.ninv);
+    if (a != 0)
+      {
+        unsigned long nbar = mpz_fdiv_ui(n, mCharac - 1);
+        result = n_powmod2_ui_preinv(a, nbar, mModulus.n, mModulus.ninv);
+      }
+    else
+      {
+        // case a == 0
+        if (mpz_sgn(n) == 0)
+          set_from_long(result, 1);
+        else if (mpz_sgn(n) > 0)
+          set_zero(result);
+        else
+          throw exc::division_by_zero_error();
+      }
   }
 
   void swap(ElementType &a, ElementType &b) const
@@ -233,6 +262,11 @@ class ARingZZpFlint : public RingInterface
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
     result = static_cast<mp_limb_t>(a.get_long());
+  }
+
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return static_cast<mp_limb_t>(a.get_long());
   }
 
  private:

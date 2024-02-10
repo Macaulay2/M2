@@ -1,5 +1,9 @@
 --		Copyright 1996-2002 by Daniel R. Grayson
 
+needs "enginering.m2"
+needs "quotring.m2"
+needs "polyrings.m2"
+
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
@@ -113,30 +117,18 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
 	       kk.order = p^n;
 	       findPrimitive kk)
 	  )
-     else if opts.Strategy === "CompleteGivaro" then (
-	  if p^n >= opts.SizeLimit then 
-	      error "increase SizeLimit in order to use Givaro representation for Galois Field";
-	  rawkk := rawARingGaloisField(p,n);
-	  af := rawARingGFPolynomial rawkk;
-	  f = sum(#af, i -> af#i * t^i);
-	  kk = R/f;
-	  kk.char = p;
-	  kk.degree = n;
-	  kk.order = p^n;
-	  kk#"Givaro" = rawkk;
-	  findPrimitive kk
-	  )
      else error (opts.Strategy | " is not a valid argument for' Strategy' option")
      )
 
 GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
-     if n == 1 and member(opts.Strategy, {"Old", "Aring"})
+     if n == 1 and isMember(opts.Strategy, {"Old", "Aring"})
        then return ZZp(p, Strategy => opts.Strategy);
      x := opts.Variable;
      primelem := findGalois(p,n,opts);
-     GF(ring primelem, PrimitiveElement=>primelem, Strategy=>opts.Strategy, SizeLimit=>opts.SizeLimit, Variable=>opts.Variable)
+     GF(ring primelem, PrimitiveElement=>primelem, Strategy=>opts.Strategy, 
+         SizeLimit=>opts.SizeLimit, Variable=>opts.Variable)
      )
 
 --     x = if x === null then getSymbol "a" else baseName x;
@@ -150,11 +142,11 @@ GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
 --	  while ( f = t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
 --	  GF(R/f,Variable => x)))
 
-GF(ZZ) := GaloisField => options -> (q) -> (
+GF(ZZ) := GaloisField => opts -> (q) -> (
      factors := factor q;
      if #factors =!= 1 or factors#0#0 === -1
      then error "expected a power of a prime";
-     GF(factors#0#0,factors#0#1,options))
+     GF(factors#0#0,factors#0#1,opts))
 
 GF(Ring) := GaloisField => opts -> (S) -> (
      (R,p,n,f) := unpack S;
@@ -193,30 +185,17 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  -- three cases: call rawGaloisField, rawARingGaloisField, rawARingGaloisField1
 	  rawF := if typ === "Old" then 
                        rawGaloisField raw primitiveElement
-		  else if typ === "Givaro" then
-		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if typ === "CompleteGivaro" then 
-		       rawARingGaloisFieldFromQuotient raw primitiveElement
 		  else if typ === "New" then
 		      rawARingGaloisField1 raw primitiveElement
                   else if typ === "FlintBig" then
                        rawARingGaloisFieldFlintBig raw S_0 -- we do not pass a primitive element in this case
                   else if typ === "Flint" then
                        rawARingGaloisFieldFlintZech raw primitiveElement
-                  else error(///unknown type of Galois Field requested:///|opts.Strategy|///Possible values include "Flint", "FlintBig", "Givaro", "Old", "New"///);
+                  else error(///unknown type of Galois Field requested:///|opts.Strategy|///Possible values include "Flint", "FlintBig", "Old", "New"///);
 	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;
 	  F.rawGaloisField = true;
 	--  )
--*      
-     else (
-	  -- S' := S;
-	  T := toField(S);
-	  F = new GaloisField from raw T;		    -- this seems to throw out a lot of information about T!
-     	  F.toField = true;
-	  F.rawGaloisField = false;
-	  );
-*-
      F.degreeLength = 0;
      F.PrimitiveElement = primitiveElement;		    -- notice the primitive element is not in F
      F.isBasic = true;
@@ -248,14 +227,6 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.use F;
      F / F := (x,y) -> if y == 0 then error "division by zero" else x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
-     -- if S' =!= null then (
-     -- 	  -- what really want is to modify newRing so when it's called above,
-     -- 	  -- it makes the old ring into one of the base rings of the new ring,
-     -- 	  -- or (?)
-     -- 	  q := map(S,S');
-     -- 	  promote(S',S) := (s,F) -> q s;
-     -- 	  promote(S',F) := (s,F) -> promote(promote(s,S),F);
-     -- 	  );
      F)
 
 random GaloisField := opts -> F -> (
@@ -263,9 +234,9 @@ random GaloisField := opts -> F -> (
      if i === 0 then 0_F else F_0^i
      )
 
-dim GaloisField := R -> 0
+dim GaloisField := ZZ => R -> 0
 
-isField Ring := R -> R.?isField and R.isField
+isField Ring := Boolean => R -> R.?isField and R.isField
 
 isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := isField

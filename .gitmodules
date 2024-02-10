@@ -16,8 +16,8 @@
 [submodule "M2/submodules/mpir"]
 	path = M2/submodules/mpir
 	url = https://github.com/Macaulay2/mpir.git
-[submodule "M2/submodules/flint2"]
-	path = M2/submodules/flint2
+[submodule "M2/submodules/flint"]
+	path = M2/submodules/flint
 	url = https://github.com/Macaulay2/flint2.git
 [submodule "M2/submodules/frobby"]
 	path = M2/submodules/frobby

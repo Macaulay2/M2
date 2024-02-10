@@ -44,7 +44,7 @@ annihilator (x_1*x_3)
 --x_1*x_1 has annihilator m
 annihilator (x_1*x_1)
 
---x_1*x_4 has annihiltor I1+I3.
+--x_1*x_4 has annihilator I1+I3.
 annihilator (x_1*x_4)
 
 end

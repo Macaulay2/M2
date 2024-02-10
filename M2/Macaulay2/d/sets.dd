@@ -1,5 +1,6 @@
 --		Copyright 1994,2010 by Daniel R. Grayson
 use hashtables;
+use evaluate;
 
 newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
 export VirtualTally := newtypeof(hashTableClass);
@@ -45,6 +46,7 @@ makeTally(e:Expr):Expr := (
      is v:Sequence do makeTally(v)
      is w:List do if ancestor(w.Class,visibleListClass) then makeTally(w.v)
      else WrongArg("a visible list")
+     is s:stringCell do makeTally(strtoseq(s))
      else WrongArg("a list or sequence"));
 setupfun("tally",makeTally);
 

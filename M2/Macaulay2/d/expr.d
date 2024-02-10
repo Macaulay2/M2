@@ -24,20 +24,22 @@ threadLocal export recursionLimit := 300;
 
 
 threadCounter := 0;
-threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + (threadCounter-1) * 10000 );
+threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + 3 + (threadCounter-1) * 10000 );
+
 export nextHash():int := (
      HashCounter = HashCounter + 1;
+     if HashCounter < 0 -- check for integer overflow
+     then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
      HashCounter);
 
---STDERR file ash workaround to preserve numbering scheme
-nextHash();
---Dummy file hash workaround to preserve numbering scheme
-nextHash();
---STDIO file hash workaround to preserve numbering scheme
-nextHash();
+-- Knuth, Art of Computer Programming, Section 6.4
+export fibonacciHash(k:int,p:int):int := (
+    Ccode(int, "(2654435769 * ",k,") >> (32 - ",p,")"));
+
+-- hash codes for mutable objects that don't use nextHash
+export hashFromAddress(e:Expr):int := fibonacciHash(Ccode(int, "(long)",e), 9);
 
 export NULL ::= null();
-
 
 -- scopes
 
@@ -168,6 +170,10 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  uninitializedSpinLock
 	  ); init(ht.mutex); ht);
 
+export newCompiledFunction(fn:fun):CompiledFunction := (
+    cf := CompiledFunction(fn, 0);
+    cf.hash = hashFromAddress(Expr(cf));
+    cf);
 
 --More dummy declarations
 
@@ -328,6 +334,8 @@ export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
 export angleBarListClass := newtypeof(visibleListClass);
 export RRiClass := newbignumbertype();
+export pointerClass := newbasictype();
+export atomicIntClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 
@@ -344,6 +352,8 @@ export WrongArgZZ():Expr := WrongArg("an integer");
 export WrongArgZZ(n:int):Expr := WrongArg(n,"an integer");
 export WrongArgRR():Expr := WrongArg("a real number");
 export WrongArgRR(n:int):Expr := WrongArg(n,"a real number");
+export WrongArgRRorRRi():Expr := WrongArg("a real number or interval");
+export WrongArgRRorRRi(n:int):Expr := WrongArg(n,"a real number or interval");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
 export WrongArgSmallUInteger():Expr := WrongArg("a small non-negative integer");

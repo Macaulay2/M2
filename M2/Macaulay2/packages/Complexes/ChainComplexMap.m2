@@ -38,7 +38,7 @@ map(Complex, Complex, HashTable) := ComplexMap => opts -> (tar, src, maps) -> (
         symbol cache => new CacheTable
         }
     )
-map(Complex, Complex, List) := opts -> (tar, src, maps) -> (
+map(Complex, Complex, List) := ComplexMap => opts -> (tar, src, maps) -> (
     -- case 1: maps is a (single) list of matrices (maps between components of the complex)
     -- case 2: maps is a double list of ComplexMap's
     --    in this case, if the maps all commute with differentials, and are diagonal, then
@@ -309,10 +309,6 @@ ComplexMap == ZZ := Boolean => (f,n) -> (
 ZZ == ComplexMap := Boolean => (n,f) -> f == n
 
 RingElement * ComplexMap := (r,f) -> (
-    -- remark: if isInCenter(RingElement) is implemented,
-    -- we could use that here to recognize commutativity
-    -- in that case, replace 'isCommutative ring f' with 'isInCenter r'
-    -- and simplify '- ComplexMap' by removing the cache test and assignment.
     df := degree f;
     (lo,hi) := (source f).concentration;
     maps := hashTable for i from lo to hi list i => (
@@ -325,9 +321,27 @@ RingElement * ComplexMap := (r,f) -> (
     result
     )
 
+ComplexMap * RingElement := (f,r) -> (
+    df := degree f;
+    (lo,hi) := (source f).concentration;
+    maps := hashTable for i from lo to hi list i => (
+        h := f_i * r;
+        if h == 0 then continue else h
+        );
+    result := map(target f, source f, maps, Degree=>df);
+    if isCommutativeCached f and isCommutative ring f then
+        result.cache.isCommutative = true;
+    result
+    )
+
 Number * ComplexMap := (r,f) -> (
     try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
     r * f
+    )
+
+ComplexMap * Number := (f,r) -> (
+    try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
+    f * r
     )
 
 - ComplexMap := (f) -> (
@@ -521,14 +535,6 @@ part(List, ComplexMap) := ComplexMap => (deg, f) -> (
     )
 part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
 
-truncate(List, ComplexMap) := ComplexMap => (e, f) -> (
-    C := truncate(e, source f);
-    D := truncate(e, target f);
-    d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
-    )
-truncate(ZZ, ComplexMap) := ComplexMap => (e, f) -> truncate({e}, f)
-
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
 --------------------------------------------------------------------
@@ -539,7 +545,6 @@ prune ComplexMap := ComplexMap => opts -> f -> (
     D := target f;
     if not D.cache.?pruningMap then f = (minimalPresentation D).cache.pruningMap^-1 * f;
     f
-    --map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f_k)
     )
 
 homology(ZZ,ComplexMap) := Matrix => opts -> (i,f) -> (
@@ -564,11 +569,11 @@ homology ComplexMap := ComplexMap => opts -> (f) -> (
 --------------------------------------------------------------------
 -- Hom -------------------------------------------------------------
 --------------------------------------------------------------------
-Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
+Hom(ComplexMap, ComplexMap) := ComplexMap => opts -> (f, g) -> (
     df := degree f;
     dg := degree g;
-    src := Hom(target f, source g);
-    tar := Hom(source f, target g);
+    src := Hom(target f, source g, opts);
+    tar := Hom(source f, target g, opts);
     -- for the i-th matrix src_i --> tar_(i+df+dg)
     -- we make a table of matrices, and create a block matrix from that using "matrix" and "map"
     (lo,hi) := src.concentration;
@@ -584,7 +589,7 @@ Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
                    then (
                        sgn := 1; -- function of df, dg, i
                        sgn = (-1)^(df * (i + dg));
-                       sgn * Hom(f_(q#0), g_(p#1)) 
+                       sgn * Hom(f_(q#0), g_(p#1), opts)
                        )
                    else map(component(tar_(i+df+dg), q),
                             component(src_i, p),
@@ -607,20 +612,20 @@ Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
     -- need to premultiply by f_(j-df), postmult by g_(j+i)
     -- Hom(f_(j-df), g_(j+i))
     )
-Hom(Complex, ComplexMap) := ComplexMap => (C,g) -> Hom(id_C, g)
-Hom(ComplexMap, Complex) := ComplexMap => (f,D) -> Hom(f, id_D)
-Hom(Module, ComplexMap) := ComplexMap => (M,g) -> Hom(complex M, g)
-Hom(ComplexMap, Module) := ComplexMap => (f,N) -> Hom(f, complex N)
-Hom(Ring, ComplexMap) := ComplexMap => (R,f) -> Hom(complex R, f)
-Hom(ComplexMap, Ring) := ComplexMap => (f,R) -> Hom(f, complex R)
-Hom(Complex, Matrix) := ComplexMap => (C,g) -> 
-    Hom(C, map(complex target g, complex source g, i -> if i === 0 then g))
-Hom(Matrix, Complex) := ComplexMap => (f,D) -> 
-    Hom(map(complex target f, complex source f, i -> if i === 0 then f), D)
-Hom(ComplexMap, Matrix) := ComplexMap => (f,g) -> 
-    Hom(f, map(complex target g, complex source g, i -> if i === 0 then g))
-Hom(Matrix, ComplexMap) := ComplexMap => (f,g) -> 
-    Hom(map(complex target f, complex source f, i -> if i === 0 then f), g)
+Hom(Complex, ComplexMap) := ComplexMap => opts -> (C,g) -> Hom(id_C, g, opts)
+Hom(ComplexMap, Complex) := ComplexMap => opts -> (f,D) -> Hom(f, id_D, opts)
+Hom(Module, ComplexMap) := ComplexMap => opts -> (M,g) -> Hom(complex M, g, opts)
+Hom(ComplexMap, Module) := ComplexMap => opts -> (f,N) -> Hom(f, complex N, opts)
+Hom(Ring, ComplexMap) := ComplexMap => opts -> (R,f) -> Hom(complex R, f, opts)
+Hom(ComplexMap, Ring) := ComplexMap => opts -> (f,R) -> Hom(f, complex R, opts)
+Hom(Complex, Matrix) := ComplexMap => opts -> (C,g) ->
+    Hom(C, map(complex target g, complex source g, i -> if i === 0 then g), opts)
+Hom(Matrix, Complex) := ComplexMap => opts -> (f,D) ->
+    Hom(map(complex target f, complex source f, i -> if i === 0 then f), D, opts)
+Hom(ComplexMap, Matrix) := ComplexMap => opts -> (f,g) ->
+    Hom(f, map(complex target g, complex source g, i -> if i === 0 then g), opts)
+Hom(Matrix, ComplexMap) := ComplexMap => opts -> (f,g) ->
+    Hom(map(complex target f, complex source f, i -> if i === 0 then f), g, opts)
 
 dual ComplexMap := ComplexMap => {} >> o -> f -> Hom(f, (ring f)^1)
 
@@ -641,7 +646,7 @@ homomorphism ComplexMap := ComplexMap => (h) -> (
     homomorphism(i + degree h, h_i, target h)
     )
 
-homomorphism' ComplexMap := ComplexMap => (f) -> (
+homomorphism' ComplexMap := ComplexMap => opts -> (f) -> (
     R := ring f;
     C := source f;
     D := target f;
@@ -650,7 +655,7 @@ homomorphism' ComplexMap := ComplexMap => (f) -> (
     (lo,hi) := concentration C;
     -- want R^1[0] --> H
     -- TODO: remove this line if the next actually works...: g := map(H_d, R^1, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
-    g := map(H_d,, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
+    g := map(H_d,, matrix(for i from lo to hi list {matrix homomorphism'(f_i, opts)}));
     map(H, complex source g, hashTable {0 => g}, Degree=>d)
     )
 
@@ -683,7 +688,7 @@ randomComplexMap(Complex, Complex) := ComplexMap => o -> (D,C) -> (
 --------------------------------------------------------------------
 -- tensor products -------------------------------------------------
 --------------------------------------------------------------------
-tensor(ComplexMap, ComplexMap) := ComplexMap => opts -> (f,g) -> (
+tensor(ComplexMap, ComplexMap) := ComplexMap => {} >> opts -> (f,g) -> (
     -- f : C1 --> C2, g : D1 --> D2
     -- f**g : C1**D1 --> C2**D2
     -- (f**g)_i : sum_j(C1_j ** D1_(i-j) --> C2_(j+df) ** D2_(i-j+dg))
@@ -743,11 +748,11 @@ Ring ** ComplexMap := ComplexMap => (R,f) -> f ** R
 RingMap ComplexMap := ComplexMap => (phi,f) ->
     map(phi target f, phi source f, i -> phi f_i)
 
-tensor(RingMap, ComplexMap) := ComplexMap => opts -> (phi, f) -> (
+tensor(RingMap, ComplexMap) := ComplexMap => {} >> opts -> (phi, f) -> (
     if source phi =!= ring f then error "expected the source of the ring map to be the ring of the complex map";
     map(tensor(phi, target f), tensor(phi, source f), i -> tensor(phi, matrix f_i))
     )
-tensor(ComplexMap, RingMap) := ComplexMap => opts -> (f, phi) -> tensor(phi, f)
+tensor(ComplexMap, RingMap) := ComplexMap => {} >> opts -> (f, phi) -> tensor(phi, f)
 
 RingMap ** ComplexMap := ComplexMap => (phi, f) -> tensor(phi, f)
 ComplexMap ** RingMap := ComplexMap => (f, phi) -> tensor(phi, f)
@@ -1153,7 +1158,7 @@ tensorCommutativity(Complex, Complex) := ComplexMap => (C,D) -> (
               b := ba#0; -- summand D_b ** C_(i-b)
               -- should be the zero map, unless a+b == i
               if a+b === i then 
-                  tensorCommutativity(C_a, D_b)
+                  (-1)^(a*b) * tensorCommutativity(C_a, D_b)
               else map(
                   DC_i.cache.components#(DC_i.cache.indexComponents#ba),
                   CD_i.cache.components#(CD_i.cache.indexComponents#ab),
@@ -1201,7 +1206,9 @@ tensorAssociativity(Complex, Complex, Complex) := ComplexMap => (A,B,C) -> (
 isQuasiIsomorphism = method(Options => {Concentration => (-infinity,infinity)})
 -- TODO: check this function for correctness, in the case when Concentration is given
 isQuasiIsomorphism ComplexMap := Boolean => opts -> f -> (
-    (lof,hif) := concentration f;
+    (loSrc,hiSrc) := concentration source f;
+    (loTar,hiTar) := concentration target f;
+    (lof,hif) := (min(loTar, loSrc), max(hiTar, hiSrc));
     (loO,hiO) := opts.Concentration;
     all(max(lof,loO)..min(hif,hiO),
         i -> HH_(i+1) cone f == 0
@@ -1242,14 +1249,17 @@ liftMapAlongQuasiIsomorphism(ComplexMap, ComplexMap) := (alpha,beta) -> (
     gamma = hashTable for i from loP to hiP list i => gamma#i;
     h = hashTable for i from loP to hiP list i => h#i;
     gamma1 := map(M, P, gamma);
-    gamma1.cache.homotopy = map(N, P, h, Degree => 1);
+    gamma1.cache.homotopyMap = map(N, P, h, Degree => 1);
     gamma1
     )
 ComplexMap // ComplexMap := (alpha, beta) -> liftMapAlongQuasiIsomorphism(alpha, beta)
 quotient(ComplexMap, ComplexMap) := opts -> (alpha, beta) -> liftMapAlongQuasiIsomorphism(alpha, beta)
 
 homotopyMap = method()
-homotopyMap ComplexMap := ComplexMap => f -> f.cache.homotopy
+homotopyMap ComplexMap := ComplexMap => f -> (
+    if not f.cache.?homotopyMap then error "expected a complex map created by 'liftMapAlongQuasiIsomorphism'";
+    f.cache.homotopyMap
+    )
 --------------------------------------------------------------------
 -- short exact sequences -------------------------------------------
 --------------------------------------------------------------------
@@ -1346,8 +1356,8 @@ horseshoeResolution Complex := Sequence => opts -> ses -> (
     N := ses_2;
     -- the following will have correct length, since 
     -- they have been constructed during yonedaMap.
-    FM := freeResolution M;
-    FN := freeResolution N;
+    FM := freeResolution(M, LengthLimit => opts.LengthLimit);
+    FN := freeResolution(N, LengthLimit => opts.LengthLimit);
     HS := complex hashTable for i from 1 to length FM list (
       i => map(FN_(i-1) ++ FM_(i-1), 
              FN_i ++ FM_i, 
@@ -1367,10 +1377,8 @@ connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
     connectingMap(Hom(F, g), Hom(F, f), opts)
     )
 connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
-    (g',f') := horseshoeResolution(g,f);
+    (g', f') := horseshoeResolution(g, f);
     G := freeResolution N;
     -- TODO: the indexing on opts.Concentration needs to be negated
     connectingMap(Hom(f', G), Hom(g', G), opts)
     )
-
-

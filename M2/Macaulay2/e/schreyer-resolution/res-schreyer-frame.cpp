@@ -1,13 +1,14 @@
 // Copyright 2014-2016 Michael E. Stillman
 
 #include "schreyer-resolution/res-schreyer-frame.hpp"
+
 #include "error.h"                                        // for ERROR
 #include "f4/moninfo.hpp"                                 // for monomial_word
 #include "interface/computation.h"                        // for StopConditions
 #include "schreyer-resolution/res-f4.hpp"                 // for F4Res
 #include "schreyer-resolution/res-f4-monlookup.hpp"       // for ResF4Monomi...
 #include "schreyer-resolution/res-gausser.hpp"            // for Coefficient...
-#include "schreyer-resolution/res-varpower-monomial.hpp"  // for res_varpowe...
+#include "schreyer-resolution/res-monomial-types.hpp"     // for res_varpowe...
 #include "style.hpp"                                      // for LT, GT
 #include "timing.hpp"                                     // for timer, seconds
 
@@ -399,8 +400,8 @@ M2_arrayint SchreyerFrame::getBetti(int type)
   if (type == 0 or type == 1) return getBettiFrame();
   if (type == 5) return mComputationStatus.getBetti();
 
-  ERROR("betti display not implemenented yet");
-  return 0;
+  ERROR("betti display not implemented yet");
+  return nullptr;
 }
 
 void SchreyerFrame::endLevel()
@@ -761,6 +762,7 @@ void SchreyerFrame::getBounds(int& loDegree, int& hiDegree, int& length) const
       length = 0;
       return;
     }
+  length = 0;
   auto& lev0 = level(0);
   loDegree = hiDegree = static_cast<int>(lev0[0].mDegree);
   for (int lev = 0; lev < mFrame.mLevels.size(); lev++)

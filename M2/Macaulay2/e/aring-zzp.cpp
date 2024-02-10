@@ -65,11 +65,12 @@ ARingZZp::ARingZZp(size_t p0) : charac(p0), p(static_cast<int>(p0)), p1(p - 1)
 
 ARingZZp::~ARingZZp()
 {
-  deletearray(log_table);
-  deletearray(exp_table);
+  freemem(log_table);
+  freemem(exp_table);
 }
 
 void ARingZZp::text_out(buffer &o) const { o << "AZZ/" << characteristic(); }
+
 void ARingZZp::elem_text_out(buffer &o,
                              ElementType a,
                              bool p_one,

@@ -24,7 +24,8 @@ newPackage(
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelpi.edu/~bstone/"},
-	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"}
+	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"},
+	     {Name => "Doug Torrance", Email => "dtorrance@piedmont.edu", HomePage => "https://webwork.piedmont.edu/~dtorrance"}
 -- Contributing Author	     {Name => "Ata Firat Pir", Email => "atafirat@math.tamu.edu"},	     
 -- Contributing Author	     {Name => "Elliot Korte", Email => "ek2872@bard.edu"},	     
 -- Contributing Author	     {Name => "Will Smith", Email => "smithw12321@gmail.com"},		
@@ -439,9 +440,9 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
 
     openPortTest();
         
-    vertexSet = flatten entries faces(0,D);
-    edgeSet = flatten entries faces(1,D);
-    face2Set = flatten entries faces(2,D);
+    vertexSet = faces(0,D);
+    edgeSet = faces(1,D);
+    face2Set = faces(2,D);
     vertexList = apply(vertexSet, v -> apply(new List from factor v, i -> i#0));
     edgeList = apply(edgeSet, e -> apply(new List from factor e, i -> i#0));
     face2List = apply(face2Set, f -> apply(new List from factor f, i -> i#0));
@@ -475,7 +476,7 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
         
     if dim D>2 then (
 	error "3-dimensional simplicial complexes not implemented yet.";
-	face3Set = flatten entries faces(3,D);
+	face3Set = faces(3,D);
 	face3List = apply(face3Set, f -> apply(new List from factor f, i -> i#0));
        	face3String = toString new Array from apply(#face3List, i -> {"\"v1\": "|toString(position(vertexSet, j -> j == face3List#i#3))|",\"v2\": "|toString(position(vertexSet, j -> j == face3List#i#2))|",\"v3\": "|toString(position(vertexSet, j -> j == face3List#i#1))|",\"v4\": "|toString(position(vertexSet, j -> j == face3List#i#0))});
 	searchReplace("vis3Faces",face3String, visTemp); -- Replace vis3Faces in the visSimplicialComplex html file by the list of faces. 
@@ -546,8 +547,13 @@ copyJS(String) := opts -> dst -> (
 	    );
 	);
 
-    for dir in existingDirs do removeFile concatenate(dst, dir);
-    for dir in dirs do symlinkFile(basePath | "Visualize/" | dir, dst | dir);
+    for dir in dirs do (
+	makeDirectory(dst | dir);
+	for file in readDirectory(basePath | "Visualize/" | dir) do (
+	    if not member(file, {".", ".."}) then (
+		copyFile(realpath(basePath | "Visualize/" | dir | "/" | file),
+		    dst | dir | "/" | file)))
+    );
 
     return "Created directories at "|dst;
 )

@@ -1,4 +1,7 @@
 -- TODO: parallelize testing
+-- TODO: merge with capture.m2?
+
+needs "system.m2"
 
 -- TODO: get rid of these
 (hadError, numErrors) = (false, 0);
@@ -46,7 +49,7 @@ ArgNoDebug     = 1 <<  3 -* add --no-debug *-
 ArgNoPreload   = 1 <<  4 -* add --no-preload *-
 ArgNoRandomize = 1 <<  5 -* add --no-randomize *-
 ArgNoReadline  = 1 <<  6 -* add --no-readline *-
-ArgNoSetup     = 1 <<  7 -* add --no-setup *-
+ArgNoCore      = 1 <<  7 -* add --no-core *-
 ArgNoThreads   = 1 <<  8 -* add --no-threads *-
 ArgNoTTY       = 1 <<  9 -* add --no-tty *-
 ArgNoTValues   = 1 << 10 -* add --no-tvalues *-
@@ -65,7 +68,7 @@ NoCapture      = 1 << 63 -* don't use capture *-
 InvertArgs     = 1 << 64 -* negate the effect of argumentMode *-
 
 -* by default, the following commandline fixtures are used *-
-defaultMode  = (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
+defaultMode  = (SetUlimit + GCMAXHEAP + ArgQ
     + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
     + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
 -* making this global, so it can be edited after entering debug Core *-
@@ -94,10 +97,12 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
      cmd := readmode(SetUlimit, ulimit);
      cmd = cmd | " cd " | rundir | ";";
-     cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
+     cmd = cmd | readmode(GCMAXHEAP,      if match("--enable-debug", version#"configure arguments")
+	       	    	      	   	  then "GC_MAXIMUM_HEAP_SIZE=800M"
+	       	    	      	   	  else "GC_MAXIMUM_HEAP_SIZE=400M");
      cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
      cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
-     cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     cmd = cmd | " " | format(bindir | "M2-binary");
      if argmode =!= defaultMode or not usermode then
      cmd = cmd | readmode(ArgQ,           "-q");
      cmd = cmd | readmode(ArgInt,         "--int");
@@ -107,7 +112,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
      cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
      cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
-     cmd = cmd | readmode(ArgNoSetup,     "--no-setup");
+     cmd = cmd | readmode(ArgNoCore,      "--no-core");
      cmd = cmd | readmode(ArgNoThreads,   "--no-threads");
      cmd = cmd | readmode(ArgNoTTY,       "--no-tty");
      cmd = cmd | readmode(ArgNoTValues,   "--no-tvalues");
@@ -118,7 +123,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
      -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
      needsline := concatenate(" -e 'needsPackage(",format pkgname,",Reload=>true,FileName=>",format pkg#"source file",")'");
-     cmd = cmd | if pkgname != "Macaulay2Doc" and pkgname != "Core" then needsline else "";
+     cmd = cmd | if not isMember(pkgname, {"Macaulay2Doc", "Core", "User"}) then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
      cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
      cmd = cmd | readmode(SetCaptureErr,  "2>&1");
@@ -132,10 +137,14 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
 	  );
      if debugLevel == 0 then stderr << endl;
      stderr << cmd << endl;
-     stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
+     stderr << (new FilePosition from (tmpf, 0, 1)) << ":(" << loadDepth << "):[" << recursionDepth() << "]: (output file) error: Macaulay2 " << describeReturnCode r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
-     stderr << inf  << ":0:1: (input file)" << endl;
-     scan(statusLines get inf, x -> stderr << x << endl);
+     infcontents := get inf;
+     stderr << (new FilePosition from (inf, 0, 1)) << ": (input file)" << endl;
+     scan(statusLines infcontents, x -> stderr << x << endl);
+     m := regex("^--([^\n]+): location of test code", infcontents);
+     if m =!= null then stderr << (
+	 substring(m#1, infcontents)) << ": (location of test code)" << endl;
      if # findFiles rundir == 1
      then removeDirectory rundir
      else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;

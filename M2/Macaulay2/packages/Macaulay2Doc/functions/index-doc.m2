@@ -37,7 +37,7 @@ document {
 	  },
      PARA{},
     "The symbol ", TT "index", " is also as a key used in 
-    ", TO {"GeneralOrderedMonoid", "s"}, " to store a table that is used to 
+    ", TO {"Monoid", "s"}, " to store a table that is used to
     map generator names to the position of the generator in the list of generators.",
      SeeAlso => {indices, support, (symbol_,Ring,ZZ)}
      }

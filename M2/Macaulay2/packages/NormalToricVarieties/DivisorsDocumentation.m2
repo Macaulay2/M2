@@ -255,7 +255,7 @@ doc ///
     Description
         Text	    
 	    The group of torus-invariant Cartier divisors on $X$ is the
-            subgroup of all locally principal torus-invarient Weil divisors.
+            subgroup of all locally principal torus-invariant Weil divisors.
             On a normal toric variety, the group of torus-invariant Cartier
             divisors can be computed as an inverse limit.  More precisely, if
             $M$ denotes the lattice of characters on $X$ and the maximal cones
@@ -1864,7 +1864,7 @@ doc ///
             @UL {
     		{"the divisor is a very ample divisor;"},
     		{"for every vertex of the associated lattice polytope
-    		  associated to the divsor, the corresponding semigroup is
+    		  associated to the divisor, the corresponding semigroup is
     		  saturated in the group characters."}
 	    }@
         Text    

@@ -6,8 +6,8 @@
 
 #include "schreyer-resolution/res-monomial-sorter.hpp"
 
+#include "ExponentVector.hpp"
 #include "monoid.hpp"
-#include "ntuple.hpp"
 #include "memtailor.h"
 #include "text-io.hpp"
 

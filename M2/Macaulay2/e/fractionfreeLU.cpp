@@ -8,7 +8,7 @@
 ////////////////////////////////////////
 
 FF_LUComputation::FF_LUComputation(MutableMatrix *M0)
-    : R(M0->get_ring()), M(M0), col_perm(0), need_div(0)
+    : R(M0->get_ring()), M(M0), col_perm(nullptr), need_div(nullptr)
 {
   int ncols = static_cast<int>(M->n_cols());
   col_perm = newarray_atomic(int, ncols);
@@ -28,8 +28,8 @@ FF_LUComputation::~FF_LUComputation()
 {
   R->remove(pivot);
   R->remove(lastpivot);
-  deletearray(col_perm);
-  deletearray(need_div);
+  freemem(col_perm);
+  freemem(need_div);
 }
 
 bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)
@@ -116,7 +116,7 @@ M2_arrayint FF_LUComputation::get_column_permutation()
 M2_arrayintOrNull FF_LUComputation::DO(MutableMatrix *M)
 {
   FF_LUComputation F(M);
-  if (!F.calc()) return NULL;
+  if (!F.calc()) return nullptr;
   M2_arrayint col_permutation = F.get_column_permutation();
   return col_permutation;
 }

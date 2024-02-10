@@ -20,7 +20,7 @@ random. How to create this and update the ReactionRing?
    variables xx, thus making kk variables as well.)
 
 *  Once the ReactionRing is fixed there should be no more changes that
-   will afftect the examples we use in MonodromySolver. The rest of
+   will affect the examples we use in MonodromySolver. The rest of
    the functions are auxiliary. 
 
 
@@ -52,7 +52,7 @@ Summer 2016
  * Examples of solving CRN eqns (all)
  * Elimination, degeneration
  * High-dimensional solution varieties
- * Examples using mondromy technique, mixed volumes 
+ * Examples using monodromy technique, mixed volumes 
 
 * Operations
  * Removing vs eliminating for rxns/comps/species?

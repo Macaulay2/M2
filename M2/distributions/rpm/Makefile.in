@@ -61,7 +61,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
-# One reason to copy all the files into a new directory is the the rpmbuild command tends to delete them.
+# One reason to copy all the files into a new directory is that the rpmbuild command tends to delete them.
 
 .prepared:
 	rm -rf files

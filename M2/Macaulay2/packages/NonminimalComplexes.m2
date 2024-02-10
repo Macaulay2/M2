@@ -178,7 +178,7 @@ constantStrands ChainComplex := (C) -> constantStrands(C, coefficientRing ring C
 
 getNonminimalRes = method()
 getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
-    -- if C was created using FastNonminimal=>true, then returns the nonmimal complex.
+    -- if C was created using FastNonminimal=>true, then returns the nonminimal complex.
     -- if ring C is not QQ, this should be exactly C (with C.dd set).
     -- if ring C is QQ, then R must be either RR_53 (monoid ring C), or (ZZ/p)(monoid ring C), where p is the prime used to
     --  construct the resolution (later, there might be several such primes, and also we can

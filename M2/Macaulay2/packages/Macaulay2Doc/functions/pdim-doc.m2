@@ -32,19 +32,3 @@ document {
 	  "pdim(module I)"
 	  }
      }
-
-document { 
-     Key => (pdim,CoherentSheaf),
-     Headline => "calculate the projective dimension",
-     Usage => "pdim S",
-     Inputs => {
-	  "S" => CoherentSheaf
-	  },
-     Outputs => {
-	ZZ => "the projective dimension" 
-	},
-     EXAMPLE {
-	  "V = Proj(ZZ/101[x_0..x_2]);",
-	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-	  "pdim S"}
-     }

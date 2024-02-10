@@ -57,7 +57,7 @@ document {
 	       },
 	  Outputs => { RingMap => {"the map between the specified symmetric algebras induced by ", TT "f"} },
 	  PARA {
-	       "This form of funtoriality is needed, because various options are available when computing
+	       "This form of functoriality is needed, because various options are available when computing
 	       symmetric algebras."
 	       },
 	  PARA {

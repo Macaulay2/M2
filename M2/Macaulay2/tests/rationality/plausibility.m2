@@ -174,7 +174,7 @@ M-Mprec
 -- 0 (still the results are the same)
 
 ------------------------
--- Testing priodicity --
+-- Testing periodicity --
 ------------------------
 
 restart

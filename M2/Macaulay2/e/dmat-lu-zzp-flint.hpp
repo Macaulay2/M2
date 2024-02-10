@@ -1,5 +1,13 @@
 // This file should only be included once, by what?
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#include <flint/nmod_mat.h>  // for nmod_mat_lu, nmod_mat_rank, nmod_mat_det
+#pragma GCC diagnostic pop
+
 //////////////////////
 // ZZpFlint //////////
 //////////////////////
@@ -25,7 +33,7 @@ class DMatLinAlg<M2::ARingZZpFlint>
     Mat LU(mMatrix);  // copy
     mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows());
     nmod_mat_lu(perm, LU.nmod_mat(), false);
-    deletearray(perm);
+    freemem(perm);
     LUUtil<RingType>::computePivotColumns(LU, profile);
   }
 
@@ -36,7 +44,7 @@ class DMatLinAlg<M2::ARingZZpFlint>
     nmod_mat_lu(perm, LU.nmod_mat(), false);
     P.resize(0);
     for (long i = 0; i < LU.numRows(); i++) P.push_back(perm[i]);
-    deletearray(perm);
+    freemem(perm);
     LUUtil<RingType>::setUpperLower(LU, L, U);
   }
 

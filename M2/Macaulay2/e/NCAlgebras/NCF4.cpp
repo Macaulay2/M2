@@ -9,21 +9,18 @@
 #include "engine-exports.h"                 // for M2_gbTrace
 #include "ring.hpp"                         // for Ring
 #include "ringelem.hpp"                     // for ring_elem
+#include "../system/supervisorinterface.h"  // for getAllowableThreads
 
 #include <cassert>                          // for assert
 #include <cstdlib>                          // for exit, size_t
 #include <algorithm>                        // for copy
 #include <iostream>                         // for operator<<, basic_ostream
 
-#include <tbb/tick_count.h>                 // for tbb::tick_count
-#include <tbb/enumerable_thread_specific.h> // for tbb::enumerable_thread_specific
-#include <tbb/parallel_sort.h>              // for tbb::parallel_sort
-
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
            int strategy,
-           bool isParallel
+           int numThreads // 0 for tbb::info::default_concurrency(), for now
            )
     : mFreeAlgebra(A),
       mInput(input),
@@ -34,8 +31,11 @@ NCF4::NCF4(const FreeAlgebra& A,
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mVectorArithmetic(new VectorArithmetic(A.coefficientRing())),
-      mIsParallel(isParallel)
+      mNumThreads(mtbb::numThreads(numThreads)), 
+      mIsParallel(mNumThreads != 1),
+      mScheduler(mNumThreads)
 {
+  //  std::cout << "number of processors being used: " << mNumThreads << std::endl;
   if (M2_gbTrace >= 1)
     {
       buffer o;
@@ -74,10 +74,14 @@ void NCF4::compute(int softDegreeLimit)
           o << "{" << degSet.first << "}(" << toBeProcessed->size() << ")";
           emit_wrapped(o.str());
         }
-      process(*toBeProcessed);
+      mScheduler.execute([this,&toBeProcessed]()
+      {
+        process(*toBeProcessed);
+      });
+      
       mOverlapTable.removeLowestDegree(); // TODO: suspect line.
       // we really want to just delete toBeProcessed...
-    }
+      }
 }
 
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
@@ -92,12 +96,12 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 #endif
   
   // build the F4 matrix
-  tbb::tick_count t0 = tbb::tick_count::now();
-  //if (mIsParallel)
-  //  parallelBuildF4Matrix(overlapsToProcess);
-  //else
-  buildF4Matrix(overlapsToProcess);
-  tbb::tick_count t1 = tbb::tick_count::now();
+  mtbb::tick_count t0 = mtbb::tick_count::now();
+  // if (mIsParallel)
+  //   parallelBuildF4Matrix(overlapsToProcess);
+  // else
+    buildF4Matrix(overlapsToProcess);
+  mtbb::tick_count t1 = mtbb::tick_count::now();
   if (M2_gbTrace >= 2) 
     std::cout << "Time spent on build step: " << (t1-t0).seconds() << std::endl;
     
@@ -114,12 +118,12 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
   // reduce the matrix
-  t0 = tbb::tick_count::now();
+  t0 = mtbb::tick_count::now();
   if (mIsParallel)
     parallelReduceF4Matrix();
   else
     reduceF4Matrix();
-  t1 = tbb::tick_count::now();
+  t1 = mtbb::tick_count::now();
   if (M2_gbTrace >= 2) 
     std::cout << "Time spent on reduction step: " << (t1-t0).seconds() << std::endl;
 
@@ -332,7 +336,7 @@ void NCF4::reducedRowToPoly(Poly* result,
   
   //mVectorArithmetic->appendSparseVectorToContainer(rows[i].first,resultCoeffInserter);
   using ContainerType = decltype(resultCoeffInserter);
-  mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].coeffVector,resultCoeffInserter);
+  mVectorArithmetic->appendToContainer<ContainerType>(rows[i].coeffVector,resultCoeffInserter);
   
   for (const auto& col : rows[i].columnIndices)
     freeAlgebra().monoid().monomInsertFromWord(resultMonomInserter,cols[col].word);
@@ -518,8 +522,8 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
     MemoryBlock* memoryBlock;
   };
 
-  tbb::enumerable_thread_specific<ThreadData> threadData([&](){  
-      tbb::queuing_mutex::scoped_lock myColumnLock(mColumnMutex);
+  mtbb::enumerable_thread_specific<ThreadData> threadData([&](){  
+      mtbb::queuing_mutex::scoped_lock myColumnLock(mColumnMutex);
       ThreadData data;
       data.memoryBlock = new MemoryBlock;
       mMemoryBlocks.push_back(data.memoryBlock);
@@ -529,7 +533,8 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // can't do this loop as a range-based for loop since we are adding to it
   // during the for loop
   // process each element in mReducersTodo
-  tbb::parallel_do(mReducersTodo.begin(), mReducersTodo.end(),
+
+  mtbb::parallel_for_each(mReducersTodo.begin(), mReducersTodo.end(),
       [&](const PreRow& prerow, PreRowFeeder& feeder)
       {
         auto& data = threadData.local();
@@ -558,7 +563,7 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   for (auto over : mOverlapsTodo)
     processPreRow(over,mOverlaps);  // this often adds new elements to mReducersTodo
 
-  // this must be a parallel_do
+  // this must (eventually) be a parallel_for_each
   // can't do this loop as a range-based for loop since we are adding
   // to mReducersTodo during the for loop
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
@@ -646,7 +651,7 @@ void NCF4::processPreRow(PreRow r,
   }
 
   // this memory is stored in rowsVector and cleaned up later.
-  CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
+  ElementArray coeffs = mVectorArithmetic->elementArrayFromContainer(elem->getElementArray());
 
   // delete the Poly created for prevReducer case, if necessary.
   if (preRowType == PreviousReducerPreRow)
@@ -847,11 +852,11 @@ void NCF4::labelAndSortF4Matrix()
   // stable sort was here before, but this sort is based on a total ordering
   // with no ties so we can use an unstable (and hence parallel!) sort.
   if (mIsParallel)
-    tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+    mtbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
   else
     std::stable_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
 
-  auto applyLabelingColumns = [&](const tbb::blocked_range<int>& r) {
+  auto applyLabelingColumns = [&](const mtbb::blocked_range<int>& r) {
     for (auto count = r.begin(); count != r.end(); ++count)
       {
         auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
@@ -864,11 +869,11 @@ void NCF4::labelAndSortF4Matrix()
   // apply the sorted labeling to the columns
   mColumns.resize(sz);
   if (mIsParallel)
-    tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz}, applyLabelingColumns);
+    mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)sz}, applyLabelingColumns);
   else
-    applyLabelingColumns(tbb::blocked_range<int>{0,(int)sz});
+    applyLabelingColumns(mtbb::blocked_range<int>{0,(int)sz});
 
-  auto applyLabelingRows = [&](const tbb::blocked_range<int>& r) {
+  auto applyLabelingRows = [&](const mtbb::blocked_range<int>& r) {
     for (auto i = r.begin(); i != r.end(); ++i)
       {
         auto& comps = mRows[i].columnIndices;
@@ -886,9 +891,9 @@ void NCF4::labelAndSortF4Matrix()
 
   // now fix the column labels in the rows and set pivot rows in columns
   if (mIsParallel)
-    tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},applyLabelingRows);
+    mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mRows.size()},applyLabelingRows);
   else
-    applyLabelingRows(tbb::blocked_range<int>{0,(int)mRows.size()});
+    applyLabelingRows(mtbb::blocked_range<int>{0,(int)mRows.size()});
 }
 
 // both reduceF4Row and parallelReduceF4Row call this function
@@ -899,8 +904,8 @@ template<typename LockType>
 void NCF4::generalReduceF4Row(int index,
                               int first,
                               int firstcol,
-                              long& numCancellations,
-                              DenseCoeffVector& dense,
+                              NCF4Stats &ncF4Stats,
+                              ElementArray& dense,
                               bool updateColumnIndex,
                               LockType& lock)
 {
@@ -911,16 +916,16 @@ void NCF4::generalReduceF4Row(int index,
 
   int last = mRows[index].columnIndices[sz-1];
 
-  mVectorArithmetic->sparseRowToDenseRow(dense,
-                                         mRows[index].coeffVector,
-                                         mRows[index].columnIndices);
+  mVectorArithmetic->fillDenseArray(dense,
+                                  mRows[index].coeffVector,
+                                  mRows[index].columnIndices);
 
   do {
     int pivotrow = mColumns[first].pivotRow;
     if (pivotrow >= 0)
       {
-        numCancellations++;
-        mVectorArithmetic->denseRowCancelFromSparse(dense,
+        ncF4Stats.numCancellations++;
+        mVectorArithmetic->denseCancelFromSparse(dense,
                                                     mRows[pivotrow].coeffVector,
                                                     mRows[pivotrow].columnIndices);
         // last component in the row corresponding to pivotrow
@@ -931,12 +936,12 @@ void NCF4::generalReduceF4Row(int index,
       {
         firstcol = first;
       }
-    first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
+    first = mVectorArithmetic->denseNextNonzero(dense, first+1, last);
   } while (first <= last);
 
   // we have to free mRows[index] information because we are about to overwrite it
   // how can I free mRows[index].columnIndices?  it wasn't the last block allocated on mMonomialSpace...
-  mVectorArithmetic->safeDenseRowToSparseRow(dense,
+  mVectorArithmetic->safeDenseToSparse(dense,
                                              mRows[index].coeffVector,
                                              mRows[index].columnIndices,
                                              firstcol,
@@ -945,7 +950,7 @@ void NCF4::generalReduceF4Row(int index,
                                              lock);
   if (mVectorArithmetic->size(mRows[index].coeffVector) > 0)
     {
-      mVectorArithmetic->sparseRowMakeMonic(mRows[index].coeffVector);
+      mVectorArithmetic->makeMonic(mRows[index].coeffVector);
       // don't do this in the parallel version
       if (updateColumnIndex) mColumns[firstcol].pivotRow = index;
     }
@@ -953,40 +958,52 @@ void NCF4::generalReduceF4Row(int index,
 
 void NCF4::parallelReduceF4Matrix()
 {
-  long numCancellations = 0;
-  using threadLocalDense_t = tbb::enumerable_thread_specific<DenseCoeffVector>;
-  using threadLocalLong_t = tbb::enumerable_thread_specific<long>;
+  NCF4Stats ncF4Stats;
+  using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
+  using threadLocalStats_t = mtbb::enumerable_thread_specific<NCF4Stats>;
 
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
-    return mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
+    return mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
   });
-  auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
+  auto denseVector = mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
   
-  threadLocalLong_t numCancellationsLocal;
-  
+  threadLocalStats_t threadLocalStats([&]() {
+    return NCF4Stats();
+  });
+
+  // access the number of allowable threads this way.
+  //std::cout << "M2 Number of Threads: " << getAllowableThreads() << std::endl;
+
   // reduce each overlap row by mRows.
 
-  tbb::queuing_mutex lock;
-  tbb::parallel_for(tbb::blocked_range<int>{mFirstOverlap,(int)mRows.size()},
-                    [&](const tbb::blocked_range<int>& r)
+  mtbb::queuing_mutex lock;
+  mtbb::parallel_for(mtbb::blocked_range<int>{mFirstOverlap,(int)mRows.size()},
+                    [&](const mtbb::blocked_range<int>& r)
                     {
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
-                      threadLocalLong_t::reference my_accum = numCancellationsLocal.local();
-                      for (auto i = r.begin(); i != r.end(); ++i)
+                      threadLocalStats_t::reference my_threadStats = threadLocalStats.local();
+                      for (auto i = r.begin(); i != r.end(); ++i) {
                         parallelReduceF4Row(i,
                                             mRows[i].columnIndices[0],
                                             -1,
-                                            my_accum,
+                                            my_threadStats,
                                             my_dense,
                                             lock);
+                        my_threadStats.numRows++;
+                      }
                     });
   
   int numThreads = 0;
-  for (auto i : numCancellationsLocal)
+  for (auto tlStats : threadLocalStats)
   {
     ++numThreads;
-    numCancellations += i;
+    if (M2_gbTrace >= 2)
+      {
+        std::cout << "numCancellations for this thread: " << tlStats.numCancellations << std::endl;
+        std::cout << "numRows for this thread: " << tlStats.numRows << std::endl;
+      }
+    ncF4Stats.numCancellations += tlStats.numCancellations;
   }
 
   // sequentially perform one more pass to reduce the spair rows down 
@@ -994,7 +1011,7 @@ void NCF4::parallelReduceF4Matrix()
     reduceF4Row(i,
                 mRows[i].columnIndices[0],
                 -1,
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
   // interreduce the matrix with respect to these overlaps.
@@ -1003,29 +1020,32 @@ void NCF4::parallelReduceF4Matrix()
     reduceF4Row(i-1,
                 mRows[i-1].columnIndices[1],
                 mRows[i-1].columnIndices[0],
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
   for (auto tlDense : threadLocalDense)
-    mVectorArithmetic->deallocateCoeffVector(tlDense);
+    mVectorArithmetic->deallocateElementArray(tlDense);
 
-  mVectorArithmetic->deallocateCoeffVector(denseVector);
-  // std::cout << "Number of cancellations: " << numCancellations << std::endl;
-  // std::cout << "Number of threads used: " << numThreads << std::endl;
+  mVectorArithmetic->deallocateElementArray(denseVector);
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "Number of cancellations: " << ncF4Stats.numCancellations << std::endl;
+      std::cout << "Number of threads used: " << numThreads << std::endl;
+    }
 }
 
 void NCF4::reduceF4Matrix()
 {
-  long numCancellations = 0;
+  NCF4Stats ncF4Stats;
 
-  auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
+  auto denseVector = mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
 
   // reduce each overlap row by mRows.
   for (auto i = mFirstOverlap; i < mRows.size(); ++i)
     reduceF4Row(i,
                 mRows[i].columnIndices[0],
                 -1,
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
   // interreduce the matrix with respect to these overlaps.
@@ -1033,12 +1053,12 @@ void NCF4::reduceF4Matrix()
     reduceF4Row(i-1,
                 mRows[i-1].columnIndices[1],
                 mRows[i-1].columnIndices[0],
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
-  mVectorArithmetic->deallocateCoeffVector(denseVector);
+  mVectorArithmetic->deallocateElementArray(denseVector);
 
-  //std::cout << "Number of cancellations: " << numCancellations << std::endl;
+  //std::cout << "Number of cancellations: " << ncF4Stats.numCancellations << std::endl;
 }
 
 void NCF4::displayF4MatrixSize(std::ostream & o) const
@@ -1130,7 +1150,7 @@ void NCF4::displayF4Matrix(std::ostream& o) const
       for (auto i=0; i < mVectorArithmetic->size(mRows[count].coeffVector); ++i)
         {
           buffer b;
-          kk->elem_text_out(b, mVectorArithmetic->ringElemFromSparseVector(mRows[count].coeffVector,i));
+          kk->elem_text_out(b, mVectorArithmetic->ringElemFromElementArray(mRows[count].coeffVector,i));
           o << "[" << mRows[count].columnIndices[i] << "," << b.str() << "] ";
         }
       o << std::endl;
@@ -1176,7 +1196,7 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
           else
             {
               buffer b;
-              kk->elem_text_out(b,mVectorArithmetic->ringElemFromSparseVector(mRows[count].coeffVector,count2));
+              kk->elem_text_out(b,mVectorArithmetic->ringElemFromElementArray(mRows[count].coeffVector,count2));
               o << " " << b.str() << " ";
               count2++;
             }
@@ -1190,7 +1210,7 @@ void NCF4::clearRows(RowsVector& rowsVector)
   for (auto r : rowsVector)
   {
     // the VectorArithmetic object calls clear() on the ring elements in r.coeffVector as well.
-    mVectorArithmetic->deallocateCoeffVector(r.coeffVector);
+    mVectorArithmetic->deallocateElementArray(r.coeffVector);
   }
   rowsVector.clear();
 }

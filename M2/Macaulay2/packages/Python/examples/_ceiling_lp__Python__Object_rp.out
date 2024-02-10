@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: -1024785038
+
+i1 : ceiling toPython 5.8
+
+o1 = 6
+
+o1 : PythonObject of class int
+
+i2 : ceiling toPython(-5.8)
+
+o2 = -5
+
+o2 : PythonObject of class int
+
+i3 : 

@@ -47,7 +47,7 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const NTL::mat_ZZ *A)
             B->set_entry(j, i, ring_elem(a));
           }
       }
-
+  mpz_clear(a);
   return B;
 }
 
@@ -82,7 +82,7 @@ bool ntl_LLL(MutableMatrix *M,
 
   if (M2_gbTrace >= 10) printf("LLL: using strategy %d\n", strategy);
   NTL::mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
-  NTL::mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : 0);
+  NTL::mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : nullptr);
 
   switch (strategy)
     {
@@ -235,6 +235,7 @@ bool ntl_LLL(MutableMatrix *M,
             U->set_entry(i, j, b);
           }
     }
+  mpz_clear(a);
   delete A;
   if (V) delete V;
   return true;

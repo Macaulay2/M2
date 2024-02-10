@@ -331,7 +331,7 @@ slackFromPlucker List := Matrix => opts -> V -> (
     -- OUTPUT: slack matrix filled with Plücker coordinates
     (newV, B) := getFacetBases(V, Object => opts.Object);
 	if opts.Object == "polytope" or opts.Object == "cone" then (
-		<< "\nInput has been reorderd to" << endl << newV << endl;
+		<< "\nInput has been reordered to" << endl << newV << endl;
 	);
     slackFromPlucker(newV, B, Object => opts.Object)
 )
@@ -376,7 +376,7 @@ slackFromGalePlucker (List, List) := Matrix => (B, G) -> (
     -- INPUT: a set B of hyperplane spanning set indices; list of Gale vectors G 
     -- OUTPUT: slack matrix filled with Plücker coordinates
     -- CAVEAT: does not check if B actually spans for given V, does not check orientation of simplices in B\
-	-- CAVEAT: make sure elements of G are listed in the order correspondong to indices in B 
+	-- CAVEAT: make sure elements of G are listed in the order corresponding to indices in B 
     v := #G;
     d := v-1-#(G_0);
     if #(B_0) != d then error "Dimensions do not match.";
@@ -626,7 +626,7 @@ symbolicSlackOfPlucker List := Matrix => opts -> V -> (
     -- OUTPUT: slack matrix filled with Plücker variables
     (newV, B) := getFacetBases(V, Object => opts.Object);
 	if opts.Object == "polytope" or opts.Object == "cone" then (
-		<< "\nInput has been reorderd to" << endl << newV << endl;
+		<< "\nInput has been reordered to" << endl << newV << endl;
 	);
     symbolicSlackOfPlucker(#V, B, CoefficientRing => opts.CoefficientRing)
 )

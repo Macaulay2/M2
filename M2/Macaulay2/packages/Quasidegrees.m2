@@ -876,7 +876,7 @@ for i to #T-1 do assert(holonomicRank(gkz(A,{0,0}))<holonomicRank(gkz(A,entries(
 -- of the associated hypergeometric system is higher than expected.
 
 TEST ///
-needsPackage"Dmodules"
+needsPackage"HolonomicSystems"
 A = matrix{{1,1,1,1},{0,1,5,11}}
 E = exceptionalSet A
 T = {}; for i to #E-1 do T=T|{(E_i)_0}

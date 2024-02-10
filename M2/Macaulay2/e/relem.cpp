@@ -49,7 +49,7 @@ RingElement *RingElement::invert() const
   if (is_zero())
     {
       ERROR("ring division: attempt to divide by zero");
-      return 0;
+      return nullptr;
     }
   return new RingElement(R, R->invert(val));
 }
@@ -59,10 +59,10 @@ RingElement /* or null */ *RingElement::operator+(const RingElement &b) const
   if (R != b.get_ring())
     {
       ERROR("ring addition requires both elements to have the same base ring");
-      return 0;
+      return nullptr;
     }
   ring_elem result = R->add(get_value(), b.get_value());
-  if (error()) return 0;
+  if (error()) return nullptr;
   return new RingElement(R, result);
 }
 
@@ -72,10 +72,10 @@ RingElement /* or null */ *RingElement::operator-(const RingElement &b) const
     {
       ERROR(
           "ring subtraction requires both elements to have the same base ring");
-      return 0;
+      return nullptr;
     }
   ring_elem result = R->subtract(get_value(), b.get_value());
-  if (error()) return 0;
+  if (error()) return nullptr;
   return new RingElement(R, result);
 }
 
@@ -86,10 +86,10 @@ RingElement /* or null */ *RingElement::operator*(const RingElement &b) const
       ERROR(
           "ring multiplication requires both elements to have the same base "
           "ring");
-      return 0;
+      return nullptr;
     }
   ring_elem result = R->mult(get_value(), b.get_value());
-  if (error()) return 0;
+  if (error()) return nullptr;
   return new RingElement(R, result);
 }
 
@@ -107,15 +107,15 @@ RingElement /* or null */ *RingElement::operator/(const RingElement &b) const
   if (R != b.get_ring())
     {
       ERROR("ring division requires both elements to have the same base ring");
-      return 0;
+      return nullptr;
     }
   if (b.is_zero())
     {
       ERROR("ring division: attempt to divide by zero");
-      return 0;
+      return nullptr;
     }
   ring_elem result = R->divide(get_value(), b.get_value());
-  if (error()) return 0;
+  if (error()) return nullptr;
   return new RingElement(R, result);
 }
 
@@ -123,14 +123,14 @@ RingElement /* or null */ *RingElement::power(int n) const
 {
   // n negative is handled.
   ring_elem f = R->power(val, n);
-  if (error()) return 0;
+  if (error()) return nullptr;
   return new RingElement(R, f);
 }
 
 RingElement /* or null */ *RingElement::power(mpz_srcptr n) const
 {
   ring_elem f = R->power(val, n);
-  if (error()) return 0;
+  if (error()) return nullptr;
   return new RingElement(R, f);
 }
 
@@ -183,18 +183,18 @@ RingElement /* or null */ *RingElement::lead_coeff(const Ring *coeffR) const
 }
 
 RingElement /* or null */ *RingElement::get_coeff(const Ring *coeffR,
-                                                  const Monomial *m) const
+                                                  const EngineMonomial *m) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   return new RingElement(coeffR, P->get_coeff(coeffR, get_value(), m->ints()));
 }
 
-Monomial *RingElement::lead_monom(int nvars) const
+EngineMonomial *RingElement::lead_monom(int nvars) const
 {
   if (is_zero())
     {
@@ -204,13 +204,13 @@ Monomial *RingElement::lead_monom(int nvars) const
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P != nullptr)
     {
-      intarray resultvp;
+      gc_vector<int> resultvp;
       Nterm *t = get_value();
 
-      int *exp = newarray_atomic(int, nvars);
+      exponents_t exp = newarray_atomic(int, nvars);
       P->lead_logical_exponents(nvars, t, exp);
-      varpower::from_ntuple(nvars, exp, resultvp);
-      return Monomial::make(resultvp.raw());
+      varpower::from_expvector(nvars, exp, resultvp);
+      return EngineMonomial::make(resultvp.data());
     }
   const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(R);
   if (Q != nullptr)
@@ -223,29 +223,10 @@ Monomial *RingElement::lead_monom(int nvars) const
 }
 
 bool RingElement::is_homogeneous() const { return R->is_homogeneous(val); }
-#if 0
-// intarray RingElement::degree() const
-// {
-//   // This should return an M2_arrayint?
-//   intarray result;
-//
-//   int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
-//   int *d = result.alloc(R->degree_monoid()->n_vars());
-//
-//   if (is_zero())
-//     ERROR("the zero element has no degree");
-//   else
-//     {
-//       R->degree(get_value(), mon);
-//       R->degree_monoid()->to_expvector(mon, d);
-//     }
-//
-//   deletearray(mon);
-//   return result;
-// }
-#endif
 
-void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
+void RingElement::degree_weights(const std::vector<int> &wts,
+                                 int &lo,
+                                 int &hi) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (is_zero())
@@ -253,7 +234,7 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
       ERROR("zero element has no degree");
       return;
     }
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
       return;
@@ -261,77 +242,63 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
   P->degree_weights(val, wts, lo, hi);
 }
 
-M2_arrayint RingElement::multi_degree() const
-{
-  if (is_zero())
-    {
-      ERROR("the zero element has no degree");
-      return 0;
-    }
-
-  int *mon = newarray_atomic(int, R->degree_monoid()->monomial_size());
-  R->degree(get_value(), mon);
-  M2_arrayint result = R->degree_monoid()->to_arrayint(mon);
-
-  deletearray(mon);
-  return result;
-}
-
-RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
+RingElement *RingElement::homogenize(int v, const std::vector<int> &wts) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   if (v < 0 || v >= P->n_vars())
     {
       ERROR("homogenization: improper ring variable");
-      return 0;
+      return nullptr;
     }
-  if (wts == NULL || wts->len != static_cast<unsigned int>(P->n_vars()))
+  if (wts.size() == 0 || wts.size() != static_cast<unsigned int>(P->n_vars()))
     {
       ERROR("homogenization: improper weight function");
-      return 0;
+      return nullptr;
     }
-  if (wts->array[v] == 0)
+  if (wts[v] == 0)
     {
       ERROR("homogenization: variable weight is zero");
-      return 0;
+      return nullptr;
     }
 
   RingElement *result = new RingElement(P, P->homogenize(val, v, wts));
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 
-RingElement *RingElement::homogenize(int v, int deg, M2_arrayint wts) const
+RingElement *RingElement::homogenize(int v,
+                                     int deg,
+                                     const std::vector<int> &wts) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   if (v < 0 || v >= P->n_vars())
     {
       ERROR("homogenization: improper ring variable");
-      return 0;
+      return nullptr;
     }
-  if (wts == NULL || wts->len != static_cast<unsigned int>(P->n_vars()))
+  if (wts.size() == 0 || wts.size() != static_cast<unsigned int>(P->n_vars()))
     {
       ERROR("homogenization: improper weight function");
-      return 0;
+      return nullptr;
     }
-  if (wts->array[v] == 0)
+  if (wts[v] == 0)
     {
       ERROR("homogenization: variable weight is zero");
-      return 0;
+      return nullptr;
     }
 
   RingElement *result = new RingElement(R, P->homogenize(val, v, deg, wts));
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 
@@ -370,7 +337,7 @@ bool RingElement::lift(const Ring *S, const RingElement *&result) const
 const RingElement /* or null */ *RingElement::content() const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
+  const Ring *targetR = (P == nullptr ? R : P->getCoefficients());
 
   return new RingElement(targetR, R->content(val));
 }
@@ -421,6 +388,9 @@ RingElement *RingElement::denominator() const
 RingElement *RingElement::fraction(const Ring *K,
                                    const RingElement *bottom) const
 {
+  if (bottom->is_zero())
+    throw exc::division_by_zero_error();
+      
   if (K == globalQQ)
     return new RingElement(globalQQ,
                            globalQQ->fraction(val, bottom->get_value()));
@@ -452,7 +422,8 @@ bool RingElement::getSmallIntegerCoefficients(
     std::vector<long> &result_coeffs) const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
-  if (R == 0 || R->n_vars() != 1)
+  const Ring *K = R->getCoefficientRing();
+  if (R == nullptr || R->n_vars() != 1)
     {
       throw exc::engine_error(
           "Expected a polynomial in a univariate polynomial ring");
@@ -469,10 +440,9 @@ bool RingElement::getSmallIntegerCoefficients(
   result_coeffs.resize(deg + 1);
   for (int i = 0; i <= deg; i++) result_coeffs[i] = 0;
   int exp[1];
-  for (Nterm *t = get_value(); t != NULL; t = t->next)
+  for (Nterm& t : get_value())
     {
-      std::pair<bool, long> res =
-          R->getCoefficientRing()->coerceToLongInteger(t->coeff);
+      std::pair<bool, long> res = K->coerceToLongInteger(t.coeff);
       if (not res.first)
         {
           // At this point, the answer is meaningless
@@ -481,7 +451,7 @@ bool RingElement::getSmallIntegerCoefficients(
         }
       long coeff = res.second;
 
-      R->getMonoid()->to_expvector(t->monom, exp);
+      R->getMonoid()->to_expvector(t.monom, exp);
       assert(exp[0] >= 0);
       assert(exp[0] <= deg);
       result_coeffs[exp[0]] = coeff;
@@ -492,7 +462,7 @@ bool RingElement::getSmallIntegerCoefficients(
 M2_arrayintOrNull RingElement::getSmallIntegerCoefficients() const
 {
   std::vector<long> coeffs;
-  if (!getSmallIntegerCoefficients(coeffs)) return 0;
+  if (!getSmallIntegerCoefficients(coeffs)) return nullptr;
   return stdvector_to_M2_arrayint(coeffs);
 }
 

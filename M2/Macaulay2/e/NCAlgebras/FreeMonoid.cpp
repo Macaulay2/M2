@@ -37,7 +37,7 @@ FreeMonoid::FreeMonoid(
 
   for (const int* i = mDegrees.data(); i != mDegrees.data() + mDegrees.size(); i += ndegrees)
     {
-      int* deg = degreeMonoid().make_one();
+      monomial deg = degreeMonoid().make_one();
       degreeMonoid().from_expvector(i, deg);
       mDegreeOfVar.push_back(deg);
     }
@@ -335,7 +335,7 @@ void FreeMonoid::setWeights(Monom& m) const
 
 int FreeMonoid::wordWeight(Word& word, const std::vector<int>& weight, int start_index) const
 {
-  assert(start_index < word.size());
+  assert(start_index <= word.size());
   int result = 0;
   for (int j = start_index; j < word.size(); ++j)
     result += weight[word.begin()[j]];

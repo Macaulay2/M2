@@ -87,7 +87,7 @@ LRnumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
 
 ensurePartitions= method()
 ensurePartitions(List,ZZ,ZZ) :=  (conds'flags, k,n) ->(
-    conds := conds'flags/first; -- list of schubert conditions
+    conds := conds'flags/first; -- list of Schubert conditions
     flags := conds'flags/last; -- list of flags
     --- check if these conditions impose a 0-dimensional Schubert Problem
     checkSchubertProblem(conds,k,n);
@@ -97,7 +97,7 @@ ensurePartitions(List,ZZ,ZZ) :=  (conds'flags, k,n) ->(
 	    if not instance(F,Matrix) or numColumns F != numRows F or abs(det F) < ERROR'TOLERANCE  then error(toString F|" should be an invertible square matrix of size "| toString n)	    
 	    ));
     --- Finally, it checks if the conditions are brackets and transforms them into partitions before exporting the instance
-    if (#conds_0  == k and conds_0 == sort unique conds_0) then (  --- conds_0, hence conds are barckets
+    if (#conds_0  == k and conds_0 == sort unique conds_0) then (  --- conds_0, hence conds are brackets
     	   conds = conds/(i-> bracket2partition(i,n));              -- Transform them into partitions
 	);
     apply(#conds, i-> (conds_i, flags_i))
@@ -107,7 +107,7 @@ ensurePartitions(List,ZZ,ZZ) :=  (conds'flags, k,n) ->(
 ------------------------------------------
 --  NSC2phc
 -- converts from numerical Schubert Calculus data for a Schubert problem
---  (partitions or brackets) to input for PHCPack's data (matrix of multiplcities and brackets)
+--  (partitions or brackets) to input for PHCPack's data (matrix of multiplicities and brackets)
 ------------------------------------------
 -- Input: 
 --    conds - list of partitions or brackets 
@@ -570,7 +570,7 @@ notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
 
 skewSchubertVariety = method(TypicalValue=>Matrix, Options=>{Inputs=>53})
 skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
-     -- k and n are the integers defining the Grassmanian G(k,n)
+     -- k and n are the integers defining the Grassmannian G(k,n)
      -- l and m are partitions of n
      (k,n):=kn;
      l = verifyLength(l, k);
@@ -689,7 +689,7 @@ checkSimpleSchubertProblem(List,ZZ,ZZ) := (conds,k,n) ->(
 
 verifyInput = method()
 verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
-    conds := conds'flags/first; -- list of schubert conditions
+    conds := conds'flags/first; -- list of Schubert conditions
     flags := conds'flags/last; -- list of flags
     -- check if these conditions impose a 0-dimensional Schubert Problem
     checkSchubertProblem(conds,k,n);

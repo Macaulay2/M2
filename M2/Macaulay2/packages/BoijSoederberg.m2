@@ -10,7 +10,7 @@ newPackage(
 	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     }, 
-    	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
+    	Headline => "Betti diagram operations useful for investigating the Boij-Soederberg conjectures",
 	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
@@ -380,9 +380,9 @@ isMassEliminate BettiTally :=  B -> (
      )
 
 --  input:  BettiTally of a Cohen-Macaulay Module
---     	    Cohen-Macualay Ideal
+--     	    Cohen-Macaulay Ideal
 -- output:  List, if no mass elimination occurs, a list is given sequencing
---     	    the homological degree of the elimination of betti numbers
+--     	    the homological degree of the elimination of Betti numbers
 -- options: EliminationSequence => Boolean; default is false, thus the output is 
 --     	    a BettiTally.  If true, only the EliminationSequence is returned.
 eliminateBetti = method(Options =>{EliminationSequence => false});
@@ -569,7 +569,7 @@ decompose3 = B -> (
 -- Same as decompose but with options.
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method.
--- We would like to replace 'decompse' with 'decomposeBetti'.
+-- We would like to replace 'decompose' with 'decomposeBetti'.
 decomposeBetti = method(Options => {TableEntries => LeastIntegerEntries})
 decomposeBetti BettiTally := o -> B -> (
     
@@ -1208,7 +1208,7 @@ supportFunctional(ChainComplex, BettiTally):=(E,B)->(
 rkSchur = (n,L) -> (
 --rank of a Schur functor on a module
 --input: a non-neg integer n and a non-increasing sequence of non-neg integers L
---output: the rank of the representation S_L(C^n). Here (11111) represents an exterior power, (k) a symmetrci power.
+--output: the rank of the representation S_L(C^n). Here (11111) represents an exterior power, (k) a symmetric power.
      M:=L;
      if #M<n then M=L|toList(n-#M:0);
      det map(ZZ^n, ZZ^n, (i,j)->binomial(M_i+n-1-i+j, n-1)))
@@ -1273,7 +1273,7 @@ for i from 0 to #W-1 list (W_i/P_0)
 -- Constructions often producing pure resolutions --
 ----------------------------------------------------
 
---Given a strictly increasing degree sequence L and a number of gneerators m,
+--Given a strictly increasing degree sequence L and a number of generators m,
 --this routine produces a "generic" module of finite length with the 
 --m generators and number of socle elements  and regularity corresponding
 --to the pure resolution with degree sequence L. The module is constructed
@@ -1519,7 +1519,7 @@ document { Key => BoijSoederberg,
 	  TO isMassEliminate
 	  },
      SUBSECTION "Three constructions for pure resolutions.  These routines provide the
-     zero-th betti number given a degree sequence.",
+     zero-th Betti number given a degree sequence.",
      UL {
 	  TO pureTwoInvariant,
 	  TO pureWeyman,
@@ -1697,7 +1697,7 @@ document {
 	  TableEntries => String => "proscribes the scaled versions of the entries of the pure diagram; options are LeastIntegerEntries, HerzogKuhl, and RealizationModules."
 	  },
      Outputs => {
-	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defults to the minimal integral Betti numberswhich satisfy the Herzog-Kuhl equations."
+	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defaults to the minimal integral Betti numbers which satisfy the Herzog-Kuhl equations."
 	  },
      "See ", TO "pureBetti", " for a description of the Herzog-Kuhl equations.",
      EXAMPLE lines ///
@@ -1927,13 +1927,13 @@ document {
 document { 
      Key => {pureCharFree,
 	  (pureCharFree,List)},
-     Headline => "first betti number of specific exact complex",
+     Headline => "first Betti number of specific exact complex",
      Usage => "pureCharFree",
      Inputs => {
 	  List => "a strictly increasing sequence of degrees"
 	  },
      Outputs => {
-	  ZZ => "The zero-th betti number of the corresponding pure
+	  ZZ => "The zero-th Betti number of the corresponding pure
 	  resolution construction"
 	  }, 
      TT "pureCharFree", " corresponds to the construction in math.AC/0712.1843v2, \"Betti Numbers of
@@ -1965,13 +1965,13 @@ document {
 document { 
      Key => {pureTwoInvariant,
 	  (pureTwoInvariant,List)},
-     Headline => "first betti number of specific exact complex",
+     Headline => "first Betti number of specific exact complex",
      Usage => "pureTwoInvariant",
      Inputs => {
 	  List => "a strictly increasing sequence of degrees"
 	  },
      Outputs => {
-	  ZZ => "The zero-th betti number of the corresponding pure
+	  ZZ => "The zero-th Betti number of the corresponding pure
 	  resolution construction"
 	  },
      TO "pureTwoInvariant", " corresponds to the construction in math.AC/0709.1529v3 \"The Existence of Pure Free Resolutions\", Section 3.", 
@@ -2002,13 +2002,13 @@ document {
 document { 
      Key => {pureWeyman,
 	  (pureWeyman,List)},
-     Headline => "first betti number of specific exact complex",
+     Headline => "first Betti number of specific exact complex",
      Usage => "pureWeyman L",
      Inputs => {
 	  List => "a strictly increasing sequence of degrees"
 	  },
      Outputs => {
-	  ZZ => "The zero-th betti number of the corresponding pure
+	  ZZ => "The zero-th Betti number of the corresponding pure
 	  resolution construction"
 	  },
      TO "pureWeyman", " corresponds to the construction in math.AC/0709.1529v3 \"The Existence of Pure Free Resolutions\", Section 4.", 
@@ -2041,13 +2041,13 @@ document {
 document { 
      Key => {pureAll,
 	  (pureAll, List)},
-     Headline => "Vector of first betti number of our three specific exact complexes",
+     Headline => "Vector of first Betti number of our three specific exact complexes",
      Usage => "pureAll",
      Inputs => {
 	  List => "a strictly increasing sequence of degrees"
 	  },
      Outputs => {
-	  ZZ => "The vector of zero-th betti numbers of the three corresponding pure
+	  ZZ => "The vector of zero-th Betti numbers of the three corresponding pure
 	  resolution construction."
 	  },
      TO "pureAll", " returns all three numbers at one time.",
@@ -2198,7 +2198,7 @@ document {
 
 document { 
      Key => (bott,List,ZZ,ZZ),
-     Headline => "cohomology table of Schur functor of tautolgical bundle on P^n",
+     Headline => "cohomology table of Schur functor of tautological bundle on P^n",
      Usage => "bott(L,lowDegree,highDegree)",
      Inputs => {
 	  "L" => "a non-increasing sequence of integers",

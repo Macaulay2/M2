@@ -63,7 +63,7 @@ Node
 	      ));
       -- TODO: simplify this when sort takes a SortStrategy
       c := 0;
-      htmlLiteral := value Core#"private dictionary"#"htmlLiteral";
+      htmlLiteral := core "htmlLiteral";
       PARA{between_", \n" (last \ sort apply(pairs authors, (name, entry) -> (
 		      link := ANCHOR{htmlLiteral name,
 			  "href"  => htmlLiteral entry#"href",

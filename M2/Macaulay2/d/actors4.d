@@ -3,6 +3,7 @@
 use getline;
 use actors;
 use actors2;
+use actors3;
 use struct;
 use pthread;
 use regex;
@@ -12,22 +13,14 @@ header "// required for toString routines
 #include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
 #include <interface/freemodule.h>           // for IM2_FreeModule_to_string
 #include <interface/matrix.h>               // for IM2_Matrix_to_string
-#include <interface/monoid.h>               // for IM2_Monoid_to_string
+#include <interface/monoid.h>               // for rawMonoidToString
 #include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
 #include <interface/mutable-matrix.h>       // for IM2_MutableMatrix_to_string
 #include <interface/random.h>               // for system_randomint
 #include <interface/ring.h>                 // for IM2_Ring_to_string
 #include <interface/ringelement.h>          // for IM2_RingElement_to_string
-#include <interface/ringmap.h>              // for IM2_RingMap_to_string";
-
-header "
-#ifndef WITH_PYTHON
-#  define PyObject_Str(o)       0
-#  define PyUnicode_AsUTF8(o)   0
-#  define Py_DECREF(o)          0
-#else
-#  include <Python.h>
-#endif";
+#include <interface/ringmap.h>              // for IM2_RingMap_to_string
+#include <readline/history.h>               // for history_get";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
@@ -105,13 +98,13 @@ setupfun("setGroupID",setpgidfun);
 
 absfun(e:Expr):Expr := (
      when e
-     is i:ZZcell do toExpr(abs(i.v))				    -- # typical value: abs, ZZ, ZZ
-     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)		    -- # typical value: abs, RR, RR
-     is x:RRicell do toExpr(abs(x.v))            -- # typical value: abs, RRi, RRi
-     is x:CCcell do toExpr(abs(x.v))				    -- # typical value: abs, CC, RR
-     is r:QQcell do toExpr(abs(r.v))				    -- # typical value: abs, QQ, RR
+     is i:ZZcell do toExpr(abs(i.v))
+     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)
+     is x:RRicell do toExpr(abs(x.v))
+     is x:CCcell do toExpr(abs(x.v))
+     is r:QQcell do toExpr(abs(r.v))
      else WrongArg("a number, real or complex"));
-setupfun("abs",absfun);
+setupfun("abs0",absfun);
 
 select(a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
@@ -341,14 +334,6 @@ setupfun("any",any);
 --	       else WrongArg(1+1,"a list")))
 --     else WrongNumArgs(2));
 --setupfun("find",find);
-
-characters(e:Expr):Expr := (
-     when e
-     is s:stringCell do list(
-	  new Sequence len length(s.v) do (
-	       foreach c in s.v do provide chars.(int(uchar(c)))))
-     else buildErrorPacket("expects a string"));
-setupfun("characters",characters);
 
 ascii(e:Expr):Expr := (
      if isIntArray(e)
@@ -663,6 +648,14 @@ packlist(v:Sequence,n:int):Expr := (
 		    j := i;
 		    i = i+1;
 	       	    provide v.j))));
+packstring(s:string,n:int):Expr := (
+     d := length(s);
+     i := 0;
+     list(new Sequence len (d + n - 1) / n do
+	  provide stringCell(new string len if n < d - i then n else d - i do (
+	       j := i;
+	       i = i + 1;
+	       provide s.j))));
 packfun(e:Expr):Expr := (
      when e
      is a:Sequence do (
@@ -676,13 +669,15 @@ packfun(e:Expr):Expr := (
 			      when a.1
 			      is x:Sequence do packlist(x,nn)
 			      is x:List do packlist(x.v,nn)
+			      is x:stringCell do packstring(x.v,nn)
 			      else WrongArg(1,"a list or sequence")
 			      )
 			 else if nn == 0 then (
 			      when a.1
 			      is x:Sequence do if length(x) == 0 then emptyList else WrongArg(1,"a positive integer")
 			      is x:List do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      else WrongArg(1,"a list or sequence")
+			      is x:stringCell do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
+			      else WrongArg(1,"a list, sequence, or string")
 			      )
 			 else WrongArg(1,"a positive integer")
 			 )
@@ -696,6 +691,8 @@ packfun(e:Expr):Expr := (
 			      nn := toInt(n);
 			      if nn > 0
 			      then packlist(x,nn)
+			      else if nn == 0 && length(x) == 0
+			      then emptyList
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
@@ -707,10 +704,25 @@ packfun(e:Expr):Expr := (
 			      nn := toInt(n);
 			      if nn > 0
 			      then packlist(x.v,nn)
+			      else if nn == 0 && length(x.v) == 0
+			      then emptyList
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
-	       else WrongArg(1,"a list or sequence"))
+	       is x:stringCell do (
+		    when a.1
+		    is n:ZZcell do (
+			 if isInt(n)
+			 then (
+			      nn := toInt(n);
+			      if nn > 0
+			      then packstring(x.v,nn)
+			      else if nn == 0 && length(x.v) == 0
+			      then emptyList
+			      else WrongArg(2,"a positive integer"))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
+	       else WrongArg(1,"a list, sequence, or string"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("pack", packfun);
@@ -843,22 +855,24 @@ readE(f:file):Expr := (
      is e:errmsg do buildErrorPacket(e.message)
      is s:stringCell do Expr(s));
 
+readIO(msg:string):Expr := (
+     readprompt = msg;
+     oldprompt := stdIO.prompt;
+     stdIO.prompt = readpromptfun;
+     r := getLine(stdIO);
+     stdIO.prompt = oldprompt;
+     when r
+     is e:errmsg do buildErrorPacket(e.message)
+     is s:stringCell do Expr(s)
+);
+
 readfun(e:Expr):Expr := (
      when e
      is f:file do readE(f)
-     is p:stringCell do (
-	  readprompt = p.v;
-	  oldprompt := stdIO.prompt;
-	  stdIO.prompt = readpromptfun;
-	  r := getLine(stdIO);
-	  stdIO.prompt = oldprompt;
-	  when r
-	  is e:errmsg do buildErrorPacket(e.message)
-	  is s:stringCell do Expr(s)
-	  )
+     is p:stringCell do readIO(p.v)
      is s:Sequence do (
 	  if length(s) == 0
-	  then readE(stdIO)
+	  then readIO("")
 	  else if length(s) == 2
 	  then (
 	       when s.0
@@ -1001,7 +1015,7 @@ tostringfun(e:Expr):Expr := (
      -- NAG stuff end
      is x:RawRingMapCell do toExpr(Ccode(string, "IM2_RingMap_to_string(",x.p,")" ))
      is x:RawMonomialOrderingCell do toExpr(Ccode(string, "IM2_MonomialOrdering_to_string(",x.p,")" ))
-     is x:RawMonoidCell do toExpr(Ccode(string, "IM2_Monoid_to_string(",x.p,")" ))
+     is x:RawMonoidCell do toExpr(Ccode(string, "rawMonoidToString(",x.p,")" ))
      is x:RawRingCell do toExpr(Ccode(string, "IM2_Ring_to_string(",x.p,")" ))
      is x:RawRingElementCell do toExpr( Ccode(string, "IM2_RingElement_to_string(",x.p,")" ) )
      is x:RawMonomialIdealCell do toExpr(
@@ -1009,12 +1023,7 @@ tostringfun(e:Expr):Expr := (
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string(",x.p,")" )
 	  )
      is c:RawComputationCell do toExpr(Ccode(string, "IM2_GB_to_string(",c.p,")" ))
-     is po:pythonObjectCell do (
-	  -- Expr("<<a python object>>")
-	  str := Ccode(pythonObject,"PyObject_Str(",po.v,")");
-	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyUnicode_AsUTF8(",str,")")));
-	  Ccode(void,"Py_DECREF(",str,")");
-	  r)
+     is pythonObjectCell do toExpr("<<a python object>>")
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")
      is x:TaskCell do (
@@ -1032,8 +1041,52 @@ tostringfun(e:Expr):Expr := (
 	       + ">>"
 	       ))
     is x:fileOutputSyncState do toExpr("File Output Sync State")
+    is x:pointerCell do (
+	buf := newstring(20);
+	Ccode(void, "sprintf((char *)", buf, "->array, \"%p\", ", x.v, ")");
+	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
+	toExpr(buf))
+    is x:atomicIntCell do (
+	buf := newstring(20);
+	Ccode(void, "sprintf((char *)", buf, "->array, \"%d\", ", load(x.v), ")");
+	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
+	toExpr(buf))
 );
 setupfun("simpleToString",tostringfun);
+
+changeBase(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is x:ZZcell do (
+		when a.1
+		is y:ZZcell do (
+		    if !isInt(y)
+		    then return WrongArgSmallInteger(2);
+		    newbase := toInt(y);
+		    if newbase > 62 || newbase < 2
+		    then buildErrorPacket("expected new base between 2 and 62")
+		    else toExpr(tostring(x.v, newbase)))
+		else WrongArgZZ(2))
+	    is x:stringCell do (
+		when a.1
+		is y:ZZcell do (
+		    if !isInt(y)
+		    then return WrongArgSmallInteger(2);
+		    oldbase := toInt(y);
+		    if oldbase > 62 || oldbase == 1 || oldbase < 0
+		    then return buildErrorPacket(
+			"expected old base to be 0 or between 2 and 62");
+		    r := toInteger(tocharstar(x.v), oldbase);
+		    when r
+		    is null do buildErrorPacket("string is not a valid number")
+		    is n:ZZ do toExpr(n))
+		else WrongArgZZ(2))
+	    else WrongArg(1, "an integer or string"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("changeBase0", changeBase);
 
 connectionCount(e:Expr):Expr := (
      when e is f:file do if f.listener then toExpr(f.numconns)
@@ -1084,31 +1137,48 @@ denfun(e:Expr):Expr := (
      else WrongArg("a rational number"));
 setupfun("denominator",denfun);
 
+join(a:Sequence):Expr := (
+     newlen := 0;
+     foreach x at i in a do (
+	  when x
+	  is b:Sequence do (newlen = newlen + length(b);)
+	  is c:List do (newlen = newlen + length(c.v);)
+	  else (
+	      -- if x is iterable, convert it to a sequence
+	      r := toSequence(x);
+	      when r
+	      is b:Sequence do (
+		  newlen = newlen + length(b);
+		  a.i = b)
+	      is err:Error do return buildErrorPacket(
+		  "while converting argument " + tostring(i + 1) +
+		  " to a sequence, the following error occurred: " +
+		  err.message)
+	      else return buildErrorPacket(
+		  "unknown error converting argument " + tostring(i + 1) +
+		  " to a sequence")));
+     z := new Sequence len newlen do (
+	  foreach x in a do (
+	       when x
+	       is b:Sequence do foreach y in b do provide y
+	       is c:List do foreach y in c.v do provide y
+	       else nothing;
+	       ));
+     when a.0
+     is Sequence do Expr(z)
+     is c:List do list(c.Class,z,c.Mutable)
+     else nullE			    -- shouldn't happen anyway
+     );
+
 join(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  n := length(a);
 	  if n == 0 then return e;
-	  newlen := 0;
-	  foreach x in a do (
-	       when x
-	       is b:Sequence do (newlen = newlen + length(b);)
-	       is c:List do (newlen = newlen + length(c.v);)
-	       else return WrongArg("lists or sequences");
-	       );
-	  z := new Sequence len newlen do (
-	       foreach x in a do (
-		    when x
-		    is b:Sequence do foreach y in b do provide y
-		    is c:List do foreach y in c.v do provide y
-		    else nothing;
-		    );
-	       );
 	  when a.0
-	  is Sequence do Expr(z)
-	  is c:List do list(c.Class,z,c.Mutable)
-	  else nullE			  -- shouldn't happen anyway
-	  )
+	  is Sequence do join(a)
+	  is List do join(a)
+	  else applyEE(getGlobalVariable(joinIteratorsS), e))
      is c:List do if c.Mutable then Expr(copy(c)) else e
      else WrongArg("lists or sequences"));
 setupfun("join",join);
@@ -1514,11 +1584,13 @@ locate(e:Code):void := (
      when e
      is nullCode do nothing
      is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:augmentedAssignmentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs))
      is v:arrayCode do foreach c in v.z do locate(c)
      is v:angleBarListCode do foreach c in v.t do locate(c)
      is v:Error do lookat(v.position)
      is v:semiCode do foreach c in v.w do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:evaluatedCode do lookat(v.position)
      is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
      is v:functionCode do (locate(v.arrow);locate(v.body);)
      is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
@@ -1606,6 +1678,18 @@ locate(e:Expr):Expr := (
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 
+historyGet(e:Expr):Expr := (
+    when e
+    is n:ZZcell do (
+	if !isInt(n) then WrongArgSmallInteger()
+	else (
+	    entry := Ccode(voidPointer, "history_get(", toInt(n), ")");
+	    if entry == nullPointer()
+	    then buildErrorPacket("no history entry with that offset")
+	    else toExpr(tostring(Ccode(charstar, "((HIST_ENTRY *)", entry,
+			")->line")))))
+    else WrongArgZZ());
+setupfun("historyGet", historyGet);
 
 powermod(e:Expr):Expr := (
      when e is s:Sequence do

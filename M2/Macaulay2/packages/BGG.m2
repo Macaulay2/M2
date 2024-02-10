@@ -13,7 +13,7 @@ newPackage(
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
 	Keywords => {"Commutative Algebra"},
 	PackageExports => {"BoijSoederberg"},
-	PackageImports => {"Truncations"},
+	PackageImports => {"Truncations","Varieties"},
     	DebuggingMode => false
     	)
 
@@ -437,7 +437,7 @@ ablock(List, List, Ring) := (La,Lb,S) ->(
      )
 
 --files to produce pure resolutions as direct images of 
---twised Koszul complexes. Both the sparse sop and arbitrary
+--twisted Koszul complexes. Both the sparse sop and arbitrary
 --multilinear sop's are implemented.
 
 

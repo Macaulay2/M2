@@ -40,7 +40,7 @@ needsPackage "Bertini"
     	 B'Functions=>{sliceH},
     	 B'Polynomials=>{"H0+T","H1"}|F)
      runBertini(storeBM2Files,PreparePH2=>true)
-    tt3= b'TraceTestImage(storeBM2Files,StopBeforeTest=>true)--Returns the trace for each parameter homotopy using -gammma, 0, and gamma respectively. 
+    tt3= b'TraceTestImage(storeBM2Files,StopBeforeTest=>true)--Returns the trace for each parameter homotopy using -gamma, 0, and gamma respectively. 
     assert(#tt3==3)
     assert(#(tt3_0)==3)
 

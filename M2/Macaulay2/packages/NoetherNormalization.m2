@@ -205,7 +205,7 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       return (ffinal, ffinverse f I,X_{0..d-1});
 	       );
 	  counter = counter + 1;
-     	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
+     	  ); -- f puts the ideal into Noether normal position. f inverse goes back to the original ring 
      );  
 
 -----------------------------------------------------------------------------

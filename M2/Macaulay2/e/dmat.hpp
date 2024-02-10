@@ -75,11 +75,12 @@ class DMat
   typedef ACoeffRing CoeffRing;
   typedef typename ACoeffRing::ElementType ElementType;
   typedef ElementType elem;
+  typedef typename ACoeffRing::Element Element;
 
   typedef DMatIterator<ACoeffRing> Iterator;
   typedef DMatConstIterator<ACoeffRing> ConstIterator;
 
-  DMat() : mRing(0), mNumRows(0), mNumColumns(0), mArray(nullptr) {}
+  DMat() : mRing(nullptr), mNumRows(0), mNumColumns(0), mArray(nullptr) {}
   DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
       : mRing(&R), mNumRows(nrows), mNumColumns(ncols)
   {
@@ -116,7 +117,7 @@ class DMat
     size_t len = mNumRows * mNumColumns;
     for (size_t i = 0; i < len; i++) ring().clear(mArray[i]);
     //    if (mArray != 0) delete[] mArray;
-    if (mArray != nullptr) GC_FREE(mArray);
+    if (mArray != nullptr) freemem(mArray);
   }
 
   // swap the actual matrices of 'this' and 'M'.

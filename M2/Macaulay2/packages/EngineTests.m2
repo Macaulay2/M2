@@ -25,7 +25,6 @@ export {
    "finitefields",
    "fieldsFFPACK",
    "fieldsFLINT",
-   "fieldsGivaro",
    "fieldsGF",
    "ringsPID",
    "ringsRR",
@@ -53,12 +52,6 @@ fieldsFFPACK = if hasFFPACK and false then{
     "ZZpFFPACK 101",
     "ZZpFFPACK 30000001",
     "ZZpFFPACK maxFFPACKPrime"
-    } else {}
-fieldsGivaro = if hasFFPACK then {
-    ///GF(3,2, Strategy=>"Givaro")///,
-    ///GF(2,7, Strategy=>"Givaro")///,
-    ///GF(3,2, Strategy=>"CompleteGivaro")///,
-    ///GF(2,7, Strategy=>"CompleteGivaro")///
     } else {}
 fieldsGF = {
     "GF(3,2)",
@@ -187,7 +180,6 @@ finitefields = join({
     "ZZp 32719"},
     fieldsFLINT,
     fieldsFFPACK,
-    fieldsGivaro,
     fieldsGF,
     fieldsGFFlint,
     fieldsGFFlintBig
@@ -201,7 +193,6 @@ fields = join({
     "ZZp 32719"},
     fieldsFLINT,
     fieldsFFPACK,
-    fieldsGivaro,
     fieldsGF,
     fieldsGFFlint,
     fieldsGFFlintBig,
@@ -388,7 +379,6 @@ testLinearAlgebraOverField = (R) -> (
     --  ZZ/p (FLINT)
     --  ZZ/p (FFPACK)
     --  GF (internal)
-    --  GF (GIVARO?)
     --  GF (FLINT?)
     --  QQ (internal, GMP)
     --  QQ (FLINT)
@@ -485,4 +475,8 @@ Caveat
 SeeAlso
 ///
 
+end--
 
+restart
+needsPackage "EngineTests"
+check oo

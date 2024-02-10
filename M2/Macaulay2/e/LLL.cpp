@@ -30,7 +30,7 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
                                   MutableMatrix *&LLLstate)
 {
   // First check m: should be a matrix over globalZZ.
-  if (A == 0 || A->get_ring() != globalZZ)
+  if (A == nullptr || A->get_ring() != globalZZ)
     {
       ERROR("LLL only defined for matrices over ZZ");
       return false;
@@ -362,7 +362,7 @@ bool LLLoperations::LLL(MutableMatrix *A,
   int ret = doLLL(A, Achange, LLLstate);
   if (ret != COMP_DONE)
     {
-      deleteitem(LLLstate);
+      freemem(LLLstate);
       return false;
     }
   return true;

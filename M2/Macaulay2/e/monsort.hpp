@@ -277,7 +277,7 @@ void QuickSorter<Sorter>::sortC()
             }
         }
     }
-  deletearray(istack);
+  freemem(istack);
   fprintf(stderr,
           "quicksort: len = %ld ncmps = %ld 2*depth = %d\n",
           len,

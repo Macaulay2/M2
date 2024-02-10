@@ -109,7 +109,7 @@ assert (degree (2*X_0+X_3) === {sum entries (2*X_0+X_3)})
 assert (vertices (2*X_0) == map (ZZ^n,ZZ^1,i -> 0) | 2*id_(ZZ^n))
 assert (degrees ring X === toList (n+1 : {1}))
 assert (ideal X == ideal gens ring X)
-assert (cotangentSheaf (X, Minimize => true) === prune sheaf (X, 
+assert (cotangentSheaf (X, MinimalGenerators => true) === prune sheaf (X,
 	homology (vars ring X,jacobian ring X)))
 assert ({degree (-X_0+3*X_2)} === - degrees OO (-X_0+3*X_2))
 assert (all (5, i -> rank HH^0(X,OO_X(i)) == binomial(n+i,i)))
@@ -160,6 +160,8 @@ S = ring X;
 assert (ideal X == intersect (ideal (S_0,S_2),ideal (S_1,S_3)))
 assert (makeSimplicial X === X)
 assert (makeSmooth X === X)
+M = saturate(image map(S^1/x_0, S^0, 0), ideal X)
+assert(0 == cohomology(0, X, sheaf_X M))
 ///
 
 -- test 4
@@ -284,6 +286,7 @@ assert all (entries transpose ( (fromCDivToWDiv X) * (nefGenerators X // fromCDi
 assert isEffective X_0
 assert not isCartier X_0
 K = toricDivisor X;
+assert(set monomials(-K) === set first entries basis(degree(-K), ring X))
 assert isCartier K
 assert not isNef K
 Y = makeSimplicial X;

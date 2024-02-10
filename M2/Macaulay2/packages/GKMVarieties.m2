@@ -605,7 +605,7 @@ EquivariantMap ** EquivariantMap := EquivariantMap => (phi,psi) -> (
 
 
 --composition f o g of two EquivariantMaps g: X --> Y, f: Y --> Z;
-compose(EquivariantMap,EquivariantMap) := EquivariantMap => (f,g) -> (
+compose(EquivariantMap,EquivariantMap) := EquivariantMap => {} >> o -> (f,g) -> (
     Y1 := g.target;
     Y2 := f.source;
     if not Y1.points === Y2.points then (
@@ -964,7 +964,7 @@ convertToNum = (n,L) -> apply(toList L, v -> if v === unastrsk(v) then v else n 
 
 revMat = M -> matrix apply( reverse entries M, v-> reverse v)
 
--- Takes in a mutable matrix and outputs the RREF with the identitiy block in the beginning
+-- Takes in a mutable matrix and outputs the RREF with the identity block in the beginning
 rowRed = M -> mutableMatrix revMat transpose gens gb image transpose matrix revMat M
 
 

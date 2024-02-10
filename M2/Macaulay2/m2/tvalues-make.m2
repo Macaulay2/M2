@@ -6,7 +6,7 @@
 make = (srcdir) -> (
      outfile = openOut "tvalues.m2";
      srcdir = minimizeFilename srcdir;
-     scan(select(readDirectory srcdir, dir -> match("\\.dd?$",dir)), file -> (
+     scan(sort select(readDirectory srcdir, dir -> match("\\.dd?$",dir)), file -> (
 	       file = srcdir | file;
 	       txt := get file;
 	       if match("-- . typical value: ",txt) then (

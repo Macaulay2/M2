@@ -284,7 +284,7 @@ document {
       sometimes one can just start Macaulay2 by setting the GC_INITIAL_HEAP_SIZE environment variable 
       to some larger value with an environment setting prefix on the M2 command line, e.g., ", TT "GC_INITIAL_HEAP_SIZE=20G M2", ".",
 	  },
-     SeeAlso => { collectGarbage }
+     SeeAlso => { collectGarbage, GCstats }
      }
 
 doc /// 
@@ -623,7 +623,7 @@ document {
 	  2006 Eisenbud was elected a Fellow of the American Academy of Arts and
 	  Sciences. Eisenbud is Chair of the Editorial Board of the Algebra and Number
 	  Theory journal, which he helped found in 2006, and serves on the editorial
-	  boards of the Bulletin du Société Mathematique de France, Springer-Verlag's
+	  boards of the Bulletin du Société Mathématique de France, Springer-Verlag's
 	  book series Algorithms and Computation in Mathematics, and the Journal of
 	  Software for Algebraic Geometry."
 	  },

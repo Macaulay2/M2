@@ -329,7 +329,7 @@ normalizeStmt = (D) -> (
      {D0#0, D0#1, D1}
      )
 
-minimize = (Ds) -> (
+minimizeStmts = (Ds) -> (
      -- each element of Ds should be a list {A,B,C}
      answer := {};
      -- step 1: first make the first two elements of each set a set
@@ -367,7 +367,7 @@ removeRedundants = (Ds) -> (
 	       a := Ds_i;
 	       D0 := drop(Ds,{i,i});
 	       all(D0, b -> not test1(a,b))));
-     minimize(Ds_c))
+     minimizeStmts(Ds_c))
 
 
 

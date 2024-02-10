@@ -23,7 +23,7 @@ E = {
 
 -- It is not true that:  set D === set E
 -- since these do not need to be the same sets, 
--- as they have different generatoring sets.
+-- as they have different generating sets.
 
 Ds = set apply(D, I -> trim I)
 Es = set apply(E, I -> trim I)
