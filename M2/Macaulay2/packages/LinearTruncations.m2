@@ -205,7 +205,7 @@ isLinearComplex ChainComplex := F -> (
 --computation moved to findRegion
 linearTruncations = method(Options =>{Verbose =>false})
 linearTruncations Module := o -> M -> (
-    t := degreeLength M;
+    t := degreeLength ring M;
     F := res prune M;
     r := coarseMultigradedRegularity F;
     d := regularity F;
@@ -280,7 +280,7 @@ linearTruncations(List,Module) := (range,M) -> (
     findRegion(range,M,isLinearTruncation)
     )
 linearTruncations Module := M -> (
-    t := degreeLength M;
+    t := degreeLength ring M;
     r := regularity M;
     range := {compMin degrees prune M, toList(t:r+1)};
     linearTruncations(range,M)

@@ -409,7 +409,7 @@ Module#AfterPrint = M -> (
     else if rank ambient M > 0 then
     (", free",
 	if not all(degrees M, d -> all(d, zero))
-	then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
+	then (", degrees ",runLengthEncode if degreeLength ring M === 1 then flatten degrees M else degrees M)
 	)
     )
 

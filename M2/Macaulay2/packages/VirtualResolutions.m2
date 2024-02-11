@@ -477,7 +477,7 @@ MultigradedRegularityComputation.synonym = "multigraded regularity computation"
 new MultigradedRegularityComputation from Ideal  :=
 new MultigradedRegularityComputation from Module := (C, M) -> (
     if instance(M, Ideal) then M = comodule M;
-    r := degreeLength M;
+    r := degreeLength ring M;
     -- TODO: are there any options that could go in MultigradedRegularityOptions?
     cacheKey := MultigradedRegularityOptions{};
     try M.cache#cacheKey else M.cache#cacheKey = new MultigradedRegularityComputation from {

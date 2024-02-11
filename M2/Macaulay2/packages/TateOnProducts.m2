@@ -489,7 +489,7 @@ cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
        --(b_1,b_2) sits in the north-east corner, the one corresponding to (a_1,a_2) in the south-west
        --corner.
      E:= ring F;
-     if not #unique degrees E==2 then error "works only for two factors";
+     if degreeLength E != 2 then error "cohomologyMatrix works only with a product of two projective spaces";
      L:=flatten apply(toList(min F..max F), k->
 	 apply(degrees F_k, deg->
 	     sum deg-k));
@@ -503,7 +503,7 @@ cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
      C
      )
 cohomologyMatrix(Module, List, List) := (M, low, high) -> (
-    if degreeLength M != 2 then error"this version works only with a product of two projective spaces.";
+    if degreeLength ring M != 2 then error "cohomologyMatrix works only with a product of two projective spaces";
     if #low !=2 or #high !=2 then error"expected degree lists of length 2";
     if not all(#low, i-> low_i<=high_i) then error"low should be less than high";
     C := tateResolution(M, low, high);

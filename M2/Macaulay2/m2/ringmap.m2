@@ -554,7 +554,7 @@ map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Module,Nothing,RingMap,RawMatrix) := Matrix => o -> (M,N,p,f) -> (
-     d := degreeLength M;
+    d := degreeLength ring M;
      degs := pack(d,degrees source f);
      deg := o.Degree;
      if deg =!= null then degs = apply(degs, dg -> dg - deg);
