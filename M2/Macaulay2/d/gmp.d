@@ -203,7 +203,7 @@ clear(x:RRimutable) ::= Ccode( void, "mpfi_clear(",  x, ")" );
 
 clear(z:CCmutable):void := ( clear(z.re); clear(z.im); );
 
-export moveToZZ(z:ZZmutable):ZZ := (
+export copy(z:ZZ):ZZ := (
      y := GCmalloc(ZZmutable);
      Ccode(void, "
 	  int s = z->_mp_size, ss = s>=0 ? s : -s;
@@ -212,6 +212,7 @@ export moveToZZ(z:ZZmutable):ZZ := (
 	  ",y,"->_mp_alloc = ss, ",y,"->_mp_size = s, ",y,"->_mp_d = p;
 	  ");
      Ccode(ZZ,y));
+export moveToZZ(z:ZZmutable):ZZ := copy(Ccode(ZZ, z));
 
 export moveToZZandclear(z:ZZmutable):ZZ := (
      w := moveToZZ(z);
