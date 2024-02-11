@@ -293,11 +293,11 @@ Node
     flip
     (tensor, Module, Module)
     (tensor, Matrix, Module)
-    (tensor, Vector, Vector)
+    --(tensor, Vector, Vector)
 
 Node
   Key
-    (tensor, Vector, Vector)
+    --(tensor, Vector, Vector)
     (symbol**, Vector, Vector)
   Headline
     tensor product
@@ -359,10 +359,10 @@ Node
 
 Node
   Key
-    (tensor, Module, Ring)
-    (tensor, Ideal,  Ring)
-    (tensor, Ring, Ideal)
-    (tensor, Ring, Module)
+    --(tensor, Module, Ring)
+    --(tensor, Ideal,  Ring)
+    --(tensor, Ring, Ideal)
+    --(tensor, Ring, Module)
     (symbol **, Module, Ring)
     (symbol **, Ideal,  Ring)
     (symbol **, Ring, Ideal)
@@ -393,8 +393,8 @@ Node
 
 Node
   Key
-    (tensor, Matrix, Ring)
-    (tensor, Ring, Matrix)
+    --(tensor, Matrix, Ring)
+    --(tensor, Ring, Matrix)
     (symbol **, Matrix, Ring)
     (symbol **, Ring, Matrix)
   Headline
