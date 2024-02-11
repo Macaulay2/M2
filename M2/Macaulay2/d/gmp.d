@@ -219,7 +219,7 @@ export moveToZZandclear(z:ZZmutable):ZZ := (
      clear(z);
      w);
 
-export moveToRR(z:RRmutable):RR := (
+export copy(z:RR):RR := (
      y := GCmalloc(RRmutable);
      Ccode(void, "
   	  int limb_size = (",z,"->_mpfr_prec - 1) / GMP_NUMB_BITS + 1;
@@ -232,6 +232,7 @@ export moveToRR(z:RRmutable):RR := (
 	  ");
     Ccode(RR,y)
    );
+export moveToRR(z:RRmutable):RR := copy(Ccode(RR, z));
 
 export moveToRRi(z:RRimutable):RRi := (
     y := GCmalloc(RRimutable);
