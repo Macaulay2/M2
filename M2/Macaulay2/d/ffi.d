@@ -261,9 +261,9 @@ ffiIntegerAddress(e:Expr):Expr := (
 		when a.1
 		is y:ZZcell do (
 		    if isZero(y.v) then (
-			z := moveToZZ(Ccode(ZZmutable, x.v));
+			z := copy(x.v);
 			ptr := getMem(pointerSize);
-			Ccode(void, "*(void **)", ptr, " = ", z);
+			Ccode(void, "*(mpz_srcptr *)", ptr, " = ", z);
 			toExpr(ptr))
 		    else when a.2
 		    is signed:Boolean do (
@@ -385,9 +385,9 @@ ffiRealAddress(e:Expr):Expr := (
 		is y:ZZcell do (
 		    bits := toInt(y);
 		    if bits == 0 then (
-			z := moveToRR(Ccode(RRmutable, x.v));
+			z := copy(x.v);
 			ptr := getMem(pointerSize);
-			Ccode(void, "*(void **)", ptr, " = ", z);
+			Ccode(void, "*(mpfr_srcptr *)", ptr, " = ", z);
 			toExpr(ptr))
 		    else if bits == 32 || bits == 64 then (
 			ptr := getMemAtomic(bits / 8);
