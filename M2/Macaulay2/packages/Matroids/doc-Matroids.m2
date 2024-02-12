@@ -130,11 +130,12 @@ doc ///
 		matroid
 		(matroid, List, List)
 		(matroid, List)
+		(matroid, ZZ, List)
+		(matroid, List, List, ZZ)
 		(matroid, Matrix)
 		(matroid, Graph)
 		(matroid, Ideal)
 		(matroid, List, MonomialIdeal)
-		(matroid, ZZ, List)
 		Loops
 		[matroid, Loops]
 		ParallelEdges
@@ -144,6 +145,7 @@ doc ///
 	Usage
 		M = matroid(E, B)
 		M = matroid(E, C, EntryMode => "circuits")
+		M = matroid(E, N, r)
 		M = matroid(B)
 		M = matroid(A)
 		M = matroid(G)
@@ -157,6 +159,10 @@ doc ///
 			a list of bases
 		C:List
 			a list of circuits
+		N:List
+			a list of non-spanning circuits
+		r:ZZ
+			the target rank
 		A:Matrix
 			whose column vectors form the ground set
 		G:Graph
@@ -197,8 +203,16 @@ doc ///
 			peek M
 		Text
 		
-			If an integer n is provided, the ground set is taken to be {0, ..., n-1}.
+			If an integer n is the first argument, the ground set is taken to 
+			be {0, ..., n-1}.
 			
+		Text
+		
+			The non-spanning circuits, together with the target rank, may also
+			be specified.
+			
+		Example
+			matroid(toList(0..<8), {{0,1,2,3},{2,3,4,5},{0,1,6,7},{4,5,6,7}}, 4) == swirl 4
 		Text
 
 			If a matrix is provided, then the realizable matroid on the 
@@ -2465,6 +2479,45 @@ doc ///
 
 doc ///
 	Key
+		isoTypes
+		(isoTypes, List)
+	Headline
+		distinct isomorphism classes
+	Usage
+		isoTypes L
+	Inputs
+		L:List
+	Outputs
+		:List
+			of distinct isomorphism classes among elements of L
+	Description
+		Text
+			Given a list of Macaulay2 objects for which 
+			@TO2{(areIsomorphic, Matroid, Matroid), "areIsomorphic"}@
+			makes sense for any pair, this method determines the distinct 
+			isomorphism classes appearing in the list, by performing
+			"upper-triangular" comparisons of pairs.
+			
+			In particular, the output list (of representatives of each 
+			isomorphism class) is always ordered consistently with the order
+			of the original list.
+			
+			If the list has size $n$, and all objects are pairwise 
+			non-isomorphic, then ($n$ choose $2$) comparisons are made, 
+			while if all objects are isomorphic, then only $n-1$ comparisons 
+			are made.
+			
+		Example
+			M = uniformMatroid_3 5
+			L = {M / {0}, uniformMatroid_2 4, matroid random(QQ^2,QQ^4)}
+			isoTypes L
+	SeeAlso
+		(areIsomorphic, Matroid, Matroid)
+		getIsos
+///
+
+doc ///
+	Key
 		(tuttePolynomial, Matroid)
 		(tuttePolynomial, Matroid, Ring)
 	Headline
@@ -3573,9 +3626,10 @@ doc ///
 			to copy the temporary file before exiting M2).
 			
 			The saved matroid can be read back into a later M2 session using
-			the function readFromFile, which takes a filename (as a 
-			@TO String@) and returns the @TO value@ of the contents, as
-			interpreted by M2.
+			the function readFromFile, which is a synonym for the composite
+			of @TO value@ and @TO get@.
+			This takes a filename (as a @TO String@) and returns the 
+			value of its contents, as interpreted by M2.
 			
 		CannedExample
 			i2 : V = specificMatroid "vamos"

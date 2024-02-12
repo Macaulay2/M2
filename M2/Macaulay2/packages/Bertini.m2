@@ -186,7 +186,8 @@ export {
   protect ComponentNumber
   protect NVariety
   protect PathVariable
---  protect Parameters -- used in NAGtypes
+  protect Parameters
+  protect ParameterHomotopy
   protect ParameterValues
   protect CycleNumber
   protect FunctionResidual
