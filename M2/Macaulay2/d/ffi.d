@@ -207,13 +207,18 @@ setupconst("ffiVoidType", toExpr(Ccode(voidPointer, "&ffi_type_void")));
 -- integer types --
 -------------------
 
+-- returns pointer to ffi_type object for given integer type
+-- input: (n:ZZ, signed:Boolean)
+-- n = number of bits (or 0 for mpz_t)
 ffiIntegerType(e:Expr):Expr := (
     when e
     is a:Sequence do (
 	if length(a) == 2 then (
 	    when a.0
 	    is n:ZZcell do (
-		when a.1
+		if isZero(n.v)
+		then toExpr(Ccode(voidPointer, "&ffi_type_pointer"))
+		else when a.1
 		is signed:Boolean do (
 		    bits := toInt(n);
 		    if signed.v then (
@@ -243,23 +248,24 @@ ffiIntegerType(e:Expr):Expr := (
     else WrongNumArgs(2));
 setupfun("ffiIntegerType", ffiIntegerType);
 
+-- returns pointer to integer object with given value
+-- inputs (x:ZZ, y:ZZ, signed:Boolean)
+-- x = value
+-- y = number of bits (or 0 for mpz_t)
 ffiIntegerAddress(e:Expr):Expr := (
     when e
-    is x:ZZcell do (
-	y := newZZmutable();
-	set(y, x.v);
-	ptr := getMem(pointerSize);
-	Ccode(void, "*(void **)", ptr, " = ", y);
-	Ccode(void, "GC_REGISTER_FINALIZER(", ptr,
-	    ", (GC_finalization_proc)mpz_clear, ", y, ", 0, 0)");
-	toExpr(ptr))
     is a:Sequence do (
 	if length(a) == 3 then (
 	    when a.0
 	    is x:ZZcell do (
 		when a.1
 		is y:ZZcell do (
-		    when a.2
+		    if isZero(y.v) then (
+			z := copy(x.v);
+			ptr := getMem(pointerSize);
+			Ccode(void, "*(mpz_srcptr *)", ptr, " = ", z);
+			toExpr(ptr))
+		    else when a.2
 		    is signed:Boolean do (
 			bits := toInt(y);
 			ptr := getMemAtomic(bits / 8);
@@ -302,16 +308,21 @@ ffiIntegerAddress(e:Expr):Expr := (
     else WrongNumArgs(3));
 setupfun("ffiIntegerAddress", ffiIntegerAddress);
 
+-- returns value (as ZZ) of integer object given its address
+-- inputs: (x:Pointer, y:ZZ, signed:ZZ)
+-- x = pointer to integer object
+-- y = number of bits (or 0 for mpz_t)
 ffiIntegerValue(e:Expr):Expr := (
     when e
-    is x:pointerCell do toExpr(moveToZZ(Ccode(ZZmutable, "*(mpz_ptr*)", x.v)))
     is a:Sequence do (
 	if length(a) == 3 then (
 	    when a.0
 	    is x:pointerCell do (
 		when a.1
 		is y:ZZcell do (
-		    when a.2
+		    if isZero(y.v)
+		    then toExpr(moveToZZ(Ccode(ZZmutable, "*(mpz_ptr*)", x.v)))
+		    else when a.2
 		    is signed:Boolean do (
 			bits := toInt(y);
 			if signed.v then (
@@ -347,16 +358,23 @@ setupfun("ffiIntegerValue", ffiIntegerValue);
 -- real types --
 ----------------
 
+-- returns pointer to ffi_type object for given real number type
+-- input: n:ZZ (0 = mpfr_t, 32 = float, 64 = double)
 ffiRealType(e:Expr):Expr := (
     when e
     is n:ZZcell do (
 	bits := toInt(n);
-	if bits == 32 then toExpr(Ccode(voidPointer, "&ffi_type_float"))
+	if bits == 0 then toExpr(Ccode(voidPointer, "&ffi_type_pointer"))
+	else if bits == 32 then toExpr(Ccode(voidPointer, "&ffi_type_float"))
 	else if bits == 64 then toExpr(Ccode(voidPointer, "&ffi_type_double"))
 	else buildErrorPacket("expected 32 or 64 bits"))
     else WrongArgZZ());
 setupfun("ffiRealType", ffiRealType);
 
+-- returns pointer to real number object with given value
+-- inputs: (x:RR, y:ZZ)
+-- x = value
+-- y = type (0 = mpfr_t, 32 = float, 64 = double)
 ffiRealAddress(e:Expr):Expr := (
     when e
     is a:Sequence do (
@@ -366,23 +384,33 @@ ffiRealAddress(e:Expr):Expr := (
 		when a.1
 		is y:ZZcell do (
 		    bits := toInt(y);
-		    ptr := getMemAtomic(bits / 8);
-		    if bits == 32
-		    then (
-			z := toFloat(x);
-			Ccode(void, "*(float *)", ptr, " = ", z))
-		    else if bits == 64
-		    then (
-			z := toDouble(x);
-			Ccode(void, "*(double *)", ptr, " = ", z))
-		    else return buildErrorPacket("expected 32 or 64 bits");
-		    toExpr(ptr))
+		    if bits == 0 then (
+			z := copy(x.v);
+			ptr := getMem(pointerSize);
+			Ccode(void, "*(mpfr_srcptr *)", ptr, " = ", z);
+			toExpr(ptr))
+		    else if bits == 32 || bits == 64 then (
+			ptr := getMemAtomic(bits / 8);
+			if bits == 32
+			then (
+			    z := toFloat(x);
+			    Ccode(void, "*(float *)", ptr, " = ", z))
+			else if bits == 64
+			then (
+			    z := toDouble(x);
+			    Ccode(void, "*(double *)", ptr, " = ", z));
+			toExpr(ptr))
+		    else return buildErrorPacket("expected 0, 32, or 64"))
 		else WrongArgZZ(2))
 	    else WrongArgRR(1))
 	else WrongNumArgs(2))
     else WrongNumArgs(2));
 setupfun("ffiRealAddress", ffiRealAddress);
 
+-- returns value (as RR) of real number object given its address
+-- inputs: (x:Pointer, y:ZZ)
+-- x = pointer to real number object
+-- y = type (0 = mpfr_t, 32 = float, 64 = double)
 ffiRealValue(e:Expr):Expr := (
     when e
     is a:Sequence do (
@@ -392,11 +420,13 @@ ffiRealValue(e:Expr):Expr := (
 		when a.1
 		is y:ZZcell do (
 		    bits := toInt(y);
-		    if bits == 32
+		    if bits == 0
+		    then toExpr(moveToRR(Ccode(RRmutable, "*(mpfr_ptr*)", x.v)))
+		    else if bits == 32
 		    then toExpr(Ccode(float, "*(float *)", x.v))
 		    else if bits == 64
 		    then toExpr(Ccode(double, "*(double *)", x.v))
-		    else buildErrorPacket("expected 32 or 64 bits"))
+		    else buildErrorPacket("expected 0, 32, or 64"))
 		else WrongArgZZ(2))
 	    else WrongArgPointer(1))
 	else WrongNumArgs(2))
