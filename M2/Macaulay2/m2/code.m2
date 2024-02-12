@@ -13,25 +13,24 @@ needs "nets.m2"
 
 limit := 4
 
-codeFunction := (f,depth) -> (
-    if depth <= limit then (
-	l := locate f;
-	if l === null then DIV{"function ", f, ": source code not available"}
-	else (
-	    syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
-	    DIV flatten {
-		code l,
-		if #syms > 0 then INDENT listSymbols syms,
-		if codeHelper#?(functionBody f)
-		then apply(
-		    codeHelper#(functionBody f) f,
-		    (comment,val) -> INDENT {
-			comment, BR{},
-			if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
-			})
-	      	}
-	    )
-      	)
+-- TODO: also show _where_ a method is declared
+codeFunction := (key, func, level) -> if level <= limit then (
+    if locate func === null then DIV{"function ", func, ": source code not available"}
+    else (
+	dicts := localDictionaries func;
+	symbs := flatten apply(#dicts - 1, i -> sortByHash values dicts#i);
+	DIV flatten {
+	    code locate func,
+	    if #symbs > 0 then INDENT listSymbols symbs,
+	    if codeHelper#?(functionBody func) then apply(
+		codeHelper#(functionBody func) func,
+		(comment, val) -> INDENT {
+		    comment, BR{},
+		    if instance(val, Function) then codeFunction(key, val, level+1) else hold val -- hold for OptionTable or Option
+		    }),
+	    if key =!= null then INDENT apply(listHooks(key, null), code)
+	    }
+	)
     )
 
 -- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
@@ -78,7 +77,9 @@ code Pseudocode := s -> code locate s
 code Sequence   := s -> (
     key := select(s, x -> not instance(x, Option));
     -- handle strategies
+    mesg := "-- code for method: ";
     func := if not #key === #s then (
+	mesg = "-- code for strategy: ";
 	opts := new OptionTable from toList select(s, x -> instance(x, Option));
 	if opts.?Strategy then (
 	    strategy := opts.Strategy;
@@ -86,10 +87,11 @@ code Sequence   := s -> (
 	    if store =!= null and store#?key
 	    and store#key.HookAlgorithms#?strategy
 	    then store#key.HookAlgorithms#strategy));
+    -- TODO: say "strategies for method: ..."
     if func =!= null or (func = lookup key) =!= null
-    then DIV {"-- code for method: " | formatDocumentTag key, code func }
+    then DIV {mesg, formatDocumentTag s, codeFunction(s, func, 0) }
     else "-- no method function found: " | formatDocumentTag key)
-code Function   := f -> codeFunction(f, 0)
+code Function   := f -> codeFunction(null, f, 0)
 code Command    := C -> code C#0
 code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
@@ -190,7 +192,7 @@ locate  ZZ := i -> locate  previousMethodsFound#i
 -- hooks
 -----------------------------------------------------------------------------
 
-listHooks := (key, opts) -> (
+listHooks = (key, opts) -> (
     -- list global hooks
     if key === () then return hooks(GlobalHookStore, opts);
     if instance(key#0, MutableHashTable)

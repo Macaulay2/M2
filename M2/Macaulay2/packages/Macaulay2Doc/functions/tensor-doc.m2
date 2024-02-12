@@ -191,7 +191,234 @@ Node
   SeeAlso
     (symbol SPACE, RingMap, Module)
     (symbol SPACE, RingMap, Module)
+///
 
+doc ///
+Node
+  Key
+    (tensor, Module, Module)
+    (symbol**, Module, Module)
+  Headline
+    tensor product of modules
+  Usage
+    M ** N
+    tensor(M, N)
+  Inputs
+    M:Module
+    N:Module
+  Outputs
+     :Module
+       the tensor product of $M$ and $N$
+  Description
+    Text
+      If $M$ has generators $m_1, $m_2, \dots, $m_r$, and $N$ has generators $n_1, n_2, \dots, n_s$,
+      then $M \otimes N$ has generators $m_i\otimes n_j$ for $0<i\leq r$ and $0<j\leq s$.
+    Example
+      R = ZZ[a..d];
+      M = image matrix {{a,b}}
+      N = image matrix {{c,d}}
+      M ** N
+      N ** M
+    Text
+      Use @TO trim@ or @TO minimalPresentation@ if a more compact presentation is desired.
+    Text
+      Use @TO flip@ to produce the isomorphism $M \otimes N \to N \otimes M$.
+    Text
+      To recover the factors from the tensor product, use the function @TO formation@.
+  SeeAlso
+    flip
+    (tensor, Module, Matrix)
+    (tensor, Matrix, Matrix)
+    formation
+
+Node
+  Key
+    (tensor, Matrix, Module)
+    (tensor, Module, Matrix)
+    (symbol **, Matrix, Module)
+    (symbol **, Module, Matrix)
+  Headline
+    tensor product
+  Usage
+    f ** M
+    M ** f
+    tensor(f, M)
+    tensor(M, f)
+  Inputs
+    f:Matrix
+    M:Module
+  Outputs
+     :Matrix
+       formed by tensoring $f$ with the identity map of $M$
+  Description
+    Example
+      R = ZZ/101[x,y];
+      R^2 ** vars R
+      (vars R) ** R^2
+    Text
+      When $N$ is a free module of rank 1 the net effect of the operation is to shift the degrees of $f$.
+    Example
+      R = ZZ/101[t];
+      f = matrix {{t}}
+      degrees source f
+      degrees source (f ** R^{-3})
+  SeeAlso
+    (tensor, Module, Module)
+    (tensor, Matrix, Matrix)
+
+Node
+  Key
+    (tensor, Matrix, Matrix)
+    (symbol**, Matrix, Matrix)
+  Headline
+    tensor product
+  Usage
+    f ** g
+    tensor(f, g)
+  Inputs
+    f:Matrix
+    g:Matrix
+  Outputs
+     :Matrix
+       the tensor product of maps $f$ and $g$
+  Description
+    Text
+      Other names for the tensor product include: the outer product, or the Kronecker product of two matrices.
+    Example
+      R = ZZ[a..d];
+      f = matrix {{a,b}}
+      g = transpose matrix {{c,d}}
+      f ** g
+  SeeAlso
+    flip
+    (tensor, Module, Module)
+    (tensor, Matrix, Module)
+    --(tensor, Vector, Vector)
+
+Node
+  Key
+    --(tensor, Vector, Vector)
+    (symbol**, Vector, Vector)
+  Headline
+    tensor product
+  Usage
+    v ** w
+    tensor(v, w)
+  Inputs
+    v:Vector
+    w:Vector
+  Outputs
+     :Vector
+       the tensor product of $v$ and $w$
+  Description
+    Text
+      If $v$ is in the module $M$ and $w$ is in the module $N$, then $v\otimes w$ is in the module $M\otimes N$.
+    Example
+      R = ZZ[a..d];
+      F = R^3
+      G = coker vars R
+      v = (a-37)*F_1
+      v ** G_0
+  SeeAlso
+    flip
+    (tensor, Module, Module)
+    (tensor, Matrix, Module)
+    (tensor, Matrix, Matrix)
+
+Node
+  Key
+    flip
+   (flip, Module, Module)
+  Headline
+    isomorphism map of commutativity of tensor product
+  Usage
+    flip(F, G)
+  Inputs
+    F:Module
+    G:Module
+  Outputs
+     :Matrix
+       the matrix representing the natural isomorphism $F \otimes G \to G \otimes F$
+  Description
+    Example
+      R = QQ[x,y];
+      F = R^{1,2,3}
+      G = R^{10,20,30}
+      f = flip(F,G)
+      isHomogeneous f
+      target f
+      source f
+      target f === G**F
+      source f === F**G
+      u = x * F_0
+      v = y * G_1
+      u ** v
+      v ** u
+      f * (u ** v)
+      f * (u ** v) === v ** u
+
+Node
+  Key
+    --(tensor, Module, Ring)
+    --(tensor, Ideal,  Ring)
+    --(tensor, Ring, Ideal)
+    --(tensor, Ring, Module)
+    (symbol **, Module, Ring)
+    (symbol **, Ideal,  Ring)
+    (symbol **, Ring, Ideal)
+    (symbol **, Ring, Module)
+  Headline
+    tensor product
+  Usage
+    M ** R
+    R ** M
+    tensor(M, R)
+    tensor(R, M)
+  Inputs
+    M:{Module,Ideal}
+    R:Ring
+  Outputs
+     :Module
+       over $R$, obtained by forming the tensor product of the module $M$ with $R$
+  Description
+    Text
+      If the ring of $M$ is a base ring of $R$ then the matrix presenting
+      the module will be simply promoted (see @TO promote@).
+      Otherwise, a ring map from the ring of @TT "M"@ to @TT "R"@ will be
+      constructed by examining the names of the variables, as described in @TO (map, Ring, Ring)@.
+    Example
+      R = ZZ/101[x,y];
+      M = coker vars R
+      M ** R[t]
+
+Node
+  Key
+    --(tensor, Matrix, Ring)
+    --(tensor, Ring, Matrix)
+    (symbol **, Matrix, Ring)
+    (symbol **, Ring, Matrix)
+  Headline
+    tensor product
+  Usage
+    f ** R
+    R ** f
+  Inputs
+    f:Matrix
+    R:Ring
+  Outputs
+     :Matrix
+       over $R$, obtained by forming the tensor product of the map $f$ with $R$
+  Description
+    Text
+      The ring of $f$ should be a base ring of $R$.  The degree of the map is preserved.
+    Example
+      R = ZZ[a..c];
+      S = R/(a+b+c);
+      f = vars R
+      f ** S
+///
+
+doc ///
 Node
   Key
     (symbol**, List, List)

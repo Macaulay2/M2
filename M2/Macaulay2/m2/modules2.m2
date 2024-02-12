@@ -58,9 +58,6 @@ tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      T.cache.formation = FunctionApplication (tensor, (M,N));
      T)
 
-Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
-Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
-
 -- TODO: this is undocumented and only works correctly in a specific case.
 -- can its goal be accomplished differently?
 Option ** Option := (x,y) -> (

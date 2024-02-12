@@ -4,6 +4,7 @@ needs "engine.m2"
 needs "expressions.m2"
 needs "indeterminates.m2"
 needs "methods.m2"
+needs "remember.m2"
 needs "shared.m2" -- for tensor
 needs "variables.m2"
 

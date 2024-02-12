@@ -27,6 +27,10 @@ M = image vars R ++ coker vars R
 assert(M^{2} == map(R^{-1}, M, {{0, 0, 1, 0, 0}}))
 assert(M_{2} == map(M, R^{-1}, {{0}, {0}, {1}, {0}, {0}}))
 
+R = QQ[x,y,z]
+m = map(image map(R^2, , {{x,y,0}, {0,0,z}}), , {{1},{2},{3}})
+assert(m^{2,0} == map(image map(R^2, , {{0,x},{z,0}}), , {{3},{1}}))
+
 --
 R = ZZ[x_1..x_12,y]
 f = genericMatrix(R,3,4)
