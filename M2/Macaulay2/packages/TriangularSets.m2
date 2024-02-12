@@ -271,13 +271,13 @@ pseudoRemainder(RingElement,TriaSystem) := (f,T) -> (
 )
 RingElement % TriaSystem := (f,T) -> pseudoRemainder(f,T)
 
-resultant(RingElement,TriaSystem) := (f,T) -> (
+resultant(RingElement,TriaSystem) := opts -> (f,T) -> (
     if isConstant f then return f;
     for t in T.gens do(
         if f==0 then return f;
         x := mvar t;
         if mvar f < x then continue;
-        f = resultant(f,t,x);
+        f = resultant(f,t,x,opts);
     );
     return f;
 )

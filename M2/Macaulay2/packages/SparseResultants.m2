@@ -35,7 +35,7 @@ newPackage(
 export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",
        "denseResultant", "denseDiscriminant",
        "exponentsMatrix", "genericLaurentPolynomials", "genericMultihomogeneousPolynomial",
-       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "sylvesterMatrix", "degreeDeterminant", "flattening",
+       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "degreeDeterminant", "flattening",
        "randomMultidimensionalMatrix", "genericMultidimensionalMatrix", "genericSymmetricMultidimensionalMatrix", "genericSkewMultidimensionalMatrix"}
 
 hasAttribute = value Core#"private dictionary"#"hasAttribute";
@@ -871,7 +871,6 @@ det245 = (M) -> ( -- determinant of shape 2x4x5
     sub(W,apply(56,j -> g_j => mm_j))
 );
 
-sylvesterMatrix = method(TypicalValue => Matrix);
 sylvesterMatrix (MultidimensionalMatrix) := (M) -> (
     -- see p. 459 in [Gelfand-Kapranov-Zelevinsky]
     n := shape M;
@@ -1464,14 +1463,14 @@ document {
     Usage => "det M", 
     Inputs => {"M" => MultidimensionalMatrix},
     Outputs => {RingElement => {"the hyperdeterminant of ",TEX///$M$///}},
-    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For matrices of boundary shape, the calculation passes through ",TO sylvesterMatrix,". For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
+    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For matrices of boundary shape, the calculation passes through ",TO (sylvesterMatrix, MultidimensionalMatrix),". For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
     EXAMPLE {
         "M = randomMultidimensionalMatrix(2,2,2,2)",
         "time det M",
         "M = randomMultidimensionalMatrix(2,2,2,2,5)",
         "time det M"
      },
-     SeeAlso => {MultidimensionalMatrix, degreeDeterminant, sparseDiscriminant, sylvesterMatrix}
+     SeeAlso => {MultidimensionalMatrix, degreeDeterminant, sparseDiscriminant, (sylvesterMatrix, MultidimensionalMatrix)}
 }
 
 document { 
@@ -1602,7 +1601,7 @@ document {
 }
 
 document { 
-    Key => {sylvesterMatrix,(sylvesterMatrix,MultidimensionalMatrix)}, 
+    Key => {(sylvesterMatrix,MultidimensionalMatrix)},
     Headline => "Sylvester-type matrix for the hyperdeterminant of a matrix of boundary shape", 
     Usage => "sylvesterMatrix M", 
     Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of boundary shape ",TEX///$(k_1+1)\times\cdots\times (k_n+1)$///," (that is, ",TEX///$2 max\{k_1,\ldots,k_n\} = k_1+\ldots+k_n$///,")."}},

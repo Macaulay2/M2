@@ -50,14 +50,8 @@ addHook((codim, Module), Strategy => Default, (opts, M) -> (
 	  )))
 
 MonomialIdeal#1 = I -> monomialIdeal 1_(ring I)
-MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> (
-     if n < 0 then error "expected nonnegative exponent"
-     else BinaryPowerMethod(I,n)
-     )
-
-MonomialIdeal ^ Array := (I, e) -> (
-   monomialIdeal (ideal I)^e
-)
+MonomialIdeal ^ ZZ    := MonomialIdeal => (I, n) -> monomialIdeal (ideal I)^n
+MonomialIdeal ^ Array := MonomialIdeal => (I, e) -> monomialIdeal (ideal I)^e
 
 Ring / MonomialIdeal := (R,I) -> R / ideal I
 

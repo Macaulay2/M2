@@ -9,6 +9,7 @@ document {
 
 document {
      Key => {(cover,Matrix)},
+     Headline => "get the map between the covering free modules",
      Usage => "cover f",
      Inputs => {"f"},
      Outputs => {{"the corresponding map of free modules between the covers of the source and target of ", TT "f" }},

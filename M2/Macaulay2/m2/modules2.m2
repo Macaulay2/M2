@@ -29,6 +29,7 @@ tensor(Thing, Thing) := true >> opts -> (M, N) -> M ** N
 undocumented' (tensor, Thing, Thing)
 
 Module ** Module := Module => (M, N) -> tensor(M, N)
+Module^** ZZ     := Module => (F, n) -> BinaryPowerMethod(F, n, tensor, module @@ ring, dual)
 tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      (oM,oN) := (M,N);
      Y := youngest(M.cache.cache,N.cache.cache);
@@ -347,6 +348,29 @@ Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symb
 Module ^ List := Matrix => (M, rows) -> submatrix(map(cover M, M, id_M), rows,)
 Module _ List := Matrix => (M, cols) -> submatrix(map(M, cover M, id_M), cols)
 -----------------------------------------------------------------------------
+
+-- TODO: also implement for a longer lists of matrices or other types of map
+pullback = method(Options => true)
+pullback(Matrix, Matrix) := Module => {} >> o -> (f, g) -> (
+    if target f =!= target g then error "expected maps with the same target";
+    h := f | -g;
+    P := kernel h;
+    S := source h;
+    P.cache.pullbackMaps = {
+	map(source f, S, S^[0], Degree => - degree f) * inducedMap(S, P),
+	map(source g, S, S^[1], Degree => - degree g) * inducedMap(S, P)};
+    P)
+
+pushout = method()
+pushout(Matrix, Matrix) := Module => (f, g) -> (
+    if source f =!= source g then error "expected maps with the same source";
+    h := f || -g;
+    P := cokernel h;
+    T := target h;
+    P.cache.pushoutMaps = {
+	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
+	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
+    P)
 
 -----------------------------------------------------------------------------
 isSubset(Module,Module) := (M,N) -> (

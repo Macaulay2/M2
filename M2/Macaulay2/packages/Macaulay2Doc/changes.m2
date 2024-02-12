@@ -48,6 +48,8 @@ document {
 			TO "WeylAlgebras::WeylAlgebras", ", ", TO "HolonomicSystems::HolonomicSystems", ", and ", TO "BernsteinSato::BernsteinSato", ". ",
 			"The new addition ", TO "WeylAlgebras::WeylAlgebras", ", contains basic constructors and methods for working with Weyl algebras
 			which used to be in the ", TO "Dmodules::Dmodules", " package." },
+		    LI { "The package ", TO "Varieties::Varieties", " has been added to encapsulate existing and new functionality for working
+			with affine and projective varieties and coherent sheaves on them. The package adds support for maps of coherent sheaves." },
 		    }
 	       },
 	  LI { "functionality added or improved:",

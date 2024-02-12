@@ -322,17 +322,11 @@ inverse MutableMatrix := (M) -> (
 nullSpace = method()
 nullSpace(MutableMatrix) := (M) -> map(ring M, rawLinAlgNullSpace raw M)
 
-MutableMatrix ^ ZZ := (A, r) -> (
-     if r == 0 then 
-       return mutableIdentity(ring A, numRows A);
-     if r < 0 then (
-	  r = -r;
-	  A = inverse A;
-	  );
-     result := A;
-     if r > 1 then for i from 2 to r do result = result * A;
-     result     
-     )
+MutableMatrix#1 = A -> (
+    if numColumns A === numRows A then mutableIdentity(ring A, numRows A)
+    else error "expected source and target to agree")
+
+MutableMatrix ^ ZZ := MutableMatrix => BinaryPowerMethod
 
 rowRankProfile = method()
 rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)

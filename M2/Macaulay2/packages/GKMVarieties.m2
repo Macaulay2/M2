@@ -536,8 +536,7 @@ map(GKMVariety,GKMVariety,List) := EquivariantMap => opts -> (X,Y,L) -> (
 )
 
 --pullback map of KClasses given a EquivariantMap
---pullback = method(); --from version 1.16 onward "pullback" is a built-in global variable
-pullback(EquivariantMap) := FunctionClosure => phi -> (
+pullback(EquivariantMap) := FunctionClosure => {} >> o -> phi -> (
     X := phi.source; 
     Y := phi.target;
     if not phi.cache.?pullback then phi.cache.pullback = C -> (

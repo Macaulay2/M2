@@ -7,16 +7,6 @@ undocumented {
     (symbol SPACE, ProjectiveVariety, Array),
     }
 
-document {
-    Key => "varieties",
-    HEADER2 "An overview",
-    Subnodes => {
-	-- Mike wanted this: TO "algebraic varieties",
-	TO "coherent sheaves",
-	TO "Variety"
-	},
-    }
-
 -----------------------------------------------------------------------------
 -- Types and basic constructors and methods that return a variety
 -----------------------------------------------------------------------------
@@ -72,18 +62,17 @@ document {
 doc ///
   Key
     (variety, Ring)
-    (variety, RingElement)
   Headline
     the variety previously associated to a given ring
   Usage
-    variety A
+    variety S
   Inputs
-    A:Ring
+    S:Ring
       the intersection ring of a variety $X$, say, or the homogeneous (Cox) ring of a normal toric variety,
       or another ring that has been associated to a variety, or an element in such a ring
   Outputs
-    :
-      $X$, the variety associated with {\tt A}, or with the ring of {\tt A}, if {\tt A} is a @TO "RingElement"@
+    :Variety
+      $X$, the variety associated with {\tt S}
   Description
    Example
      needsPackage "NormalToricVarieties"
@@ -96,13 +85,10 @@ doc ///
      IY = intersectionRing Y
      Y === variety IY
    Text
-     If a @TO RingElement@ is provided, then the variety of its ring is returned.
-   Example
-     variety S_0
-     variety IY_0
-   Text
-     For package developers: All this function does is to look up the symbol {\tt variety} in {\tt A}.  This is currently
-     used in two packages, but can be used in other settings, if desired.
+     For package developers: All this function does is to look up the symbol {\tt variety} in {\tt S}.
+     This is currently used in two packages, but can be used in other settings, if desired.
+  SourceCode
+     (variety, Ring)
   SeeAlso
     "NormalToricVarieties::NormalToricVarieties"
     "Schubert2::Schubert2"

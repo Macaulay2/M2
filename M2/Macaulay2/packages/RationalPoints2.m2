@@ -240,7 +240,7 @@ integers Ring := F -> (
     if not (isField F and char F == 0) then error "expect a number field";
     return if F === QQ then {1_QQ} else first round2Integers F;
 );
-discriminant Ring := F -> (
+discriminant Ring := ZZ => o -> F -> (
     if not (isField F and char F == 0) then error "expect a number field";
     return if F === QQ then 1 else last round2Integers F;
 );

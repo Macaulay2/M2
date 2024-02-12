@@ -138,8 +138,11 @@ fromCDivToPic NormalToricVariety := Matrix => X -> (
     if not X.cache.?fromCDivToPic then picardGroup X;
     X.cache.fromCDivToPic 
     );
-     
-nefGenerators = method ()
+
+effCone NormalToricVariety := (cacheValue symbol effCone) (X -> convexHull(matrix{0_( classGroup X)}, effGenerators X))
+nefCone NormalToricVariety := (cacheValue symbol nefCone) (X -> convexHull(matrix{0_(picardGroup X)}, nefGenerators X))
+
+effGenerators NormalToricVariety := fromWDivToCl
 nefGenerators NormalToricVariety := Matrix => X -> (
     if isDegenerate X then 
 	error "-- not implemented for degenerate varieties";

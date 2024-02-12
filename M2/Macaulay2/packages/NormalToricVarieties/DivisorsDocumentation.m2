@@ -626,7 +626,6 @@ doc ///
 doc ///
     Key
 	(nefGenerators, NormalToricVariety)
-        nefGenerators	
     Headline
         compute generators of the nef cone
     Usage

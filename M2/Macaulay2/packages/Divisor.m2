@@ -49,7 +49,7 @@ export{
 	"toQWeilDivisor", --added checks
 	"toRWeilDivisor", --added checks
     --divisors to modules and functorial properties
-	"pullback", --added checks
+	--"pullback", --added checks
 	"findElementOfDegree", --added checks
 	"getLinearDiophantineSolution",		--added checks --has Safe option
 	"canonicalDivisor", --added checks --has IsGraded option
@@ -932,9 +932,7 @@ ideal( RWeilDivisor ) := Ideal=> (D) ->
 --Give a ring map f: R -> S for which we assume is finite or flat, we want to construct its pullback from Div X to Div Y
 --where Div X = Spec S and Div Y = Spec R.  If the map is neither finite or flat, then this method can produce unexpected results unless the divisor is Cartier (which the function checks for).  
 
-pullback = method(Options => {Strategy => Primes});
-
-pullback(RingMap, RWeilDivisor) := BasicDivisor => o->(f, D) ->
+pullback(RingMap, RWeilDivisor) := BasicDivisor => {Strategy => Primes} >> o -> (f, D) ->
 (		
 	if ( not (ring D === source f) ) then error "(pullback, WeilDivisor): Expected the Divisor and the source of the map to have the same ambient ring.";
 	
@@ -3263,7 +3261,7 @@ doc ///
 	 Text
 	  If {\tt Strategy=>Primes} then the pullback method will pull back each prime individually.
 	SeeAlso
-	 pullback
+	 (pullback, RingMap, RWeilDivisor)
 	 Sheaves
 ///
 
@@ -3276,7 +3274,7 @@ doc ///
 	 Text
 	  If {\tt Strategy => Sheaves} then the pullback method will pull back the sheaf $O(D)$.
 	SeeAlso
-	 pullback
+	 (pullback, RingMap, RWeilDivisor)
 	 Primes
 ///
 
@@ -3460,9 +3458,8 @@ doc ///
 
 doc ///
     Key
-     pullback
      (pullback, RingMap, RWeilDivisor)
-     [pullback, Strategy]
+     [(pullback, RingMap, RWeilDivisor), Strategy]
     Headline
      pullback a divisor under a ring map
     Usage
@@ -3473,7 +3470,7 @@ doc ///
      Strategy => Symbol
        specify the strategy used by pullback
     Outputs
-     : RWeilDivisor
+     : BasicDivisor
     Description
      Text
       This function computes the pullback of a divisor under a ring map.  There are two potential strategies, {\tt Primes} and {\tt Sheaves} ({\tt Primes} is the default strategy).  The {\tt Primes} strategy pulls back each prime individually.  It can be faster, but it only works for ring maps that are either finite or flat (unless each prime is also Cartier).  For more general maps, it can give incorrect results.  The other option for {\tt Strategy} is {\tt Sheaves}.  This can be slower, especially for divisors with large coefficients, but it will successfully pull back any Cartier divisor.  The option {\tt Sheaves} also requires the divisor passed to be a {\tt WeilDivisor}.
