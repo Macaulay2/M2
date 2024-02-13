@@ -299,11 +299,11 @@ TEST ///
 
 changeMultiplier=method()
 changeMultiplier(Matrix,ZZ) := (A,r) -> (
-     	  -- change all multpliers by a factor r
+     	  -- change all multipliers by a factor r
 	  -- in applications r is often a root of unity
 	  matrix apply(2,i->apply(rank source A,j-> if i==0 then A_(i,j) else r*A_(i,j))))
 changeMultiplier(Matrix,ZZ,ZZ) := (A,r,k) -> (
-          -- change k of the multpliers by a factor r
+          -- change k of the multipliers by a factor r
 	  -- in applications r is often a root of unity
 	  matrix apply(2,i->apply(rank source A,j-> 
 		    if i==1 and j<k then r* A_(i,j) else A_(i,j)))
@@ -1035,7 +1035,7 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
   restart
   I = Grassmannian(1, 6, CoefficientRing => ZZ/101)
   R = ring I
-  elapsedTime res(I, Strategy => FastNonminimal) -- fails??
+  elapsedTime res(I, FastNonminimal => true) -- fails??
 
   elapsedTime (C = res(ideal I_*, Strategy => 4); complete C; true)
   elapsedTime complete C;
