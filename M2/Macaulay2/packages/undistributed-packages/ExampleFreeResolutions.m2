@@ -1,5 +1,5 @@
 newPackage(
-    "ExamplesFreeResolutions",
+    "ExampleFreeResolutions",
     Version => "0.1",
     Date => "18 Mar 2022",
     Headline => "examples to benchmark and test free resolution and betti number code",
@@ -286,7 +286,7 @@ linearSeriesFromMultipliers(Sequence,Matrix) := (PQ,A) ->(
      )
 
 TEST ///
-  debug needsPackage "ExamplesFreeResolutions"
+  debug needsPackage "ExampleFreeResolutions"
   S=ZZ/10007[x_0,x_1]
   setRandomSeed("ok")
   g=8
@@ -651,7 +651,7 @@ beginDocumentation()
 
 ///
   Key
-    ExamplesFreeResolutions
+    ExampleFreeResolutions
   Headline
     examples to benchmark and test free resolution and betti number code
   Description
@@ -794,7 +794,7 @@ TEST ///
 -*
   restart
 *-
-  debug needsPackage "ExamplesFreeResolutions"
+  debug needsPackage "ExampleFreeResolutions"
   exampleFileName "cnc-6"
   assert(exampleFileName("cnc-6", Directory => "./") === "./cnc-6.m2")
   assert(exampleFileName("cnc-6", Directory => "Examples/") === "Examples/cnc-6.m2")
@@ -806,20 +806,20 @@ end--
 
 -* Development section *-
 restart
-debug needsPackage "ExamplesFreeResolutions"
-check "ExamplesFreeResolutions"
+debug needsPackage "ExampleFreeResolutions"
+check "ExampleFreeResolutions"
 
-uninstallPackage "ExamplesFreeResolutions"
+uninstallPackage "ExampleFreeResolutions"
 restart
-installPackage "ExamplesFreeResolutions"
-viewHelp "ExamplesFreeResolutions"
+installPackage "ExampleFreeResolutions"
+viewHelp "ExampleFreeResolutions"
 
 ///
   -- Creating example files for CNC (canonical nodal curves) examples, over finite fields
   -- and PCNC (prym canonical nodal curves).
   restart
-  debug needsPackage "ExamplesFreeResolutions"
-  dir = "./ExamplesFreeResolutions/ExamplesAndTimings/"
+  debug needsPackage "ExampleFreeResolutions"
+  dir = "./ExampleFreeResolutions/ExamplesAndTimings/"
 
   elapsedTime for i from 3 to 16 do (   -- 168 seconds, Mac M1 Max, 19 March 2022
       setRandomSeed "resolutions";
@@ -857,9 +857,9 @@ TEST ///
   -- Running and checking all examples ----
   -----------------------------------------
   restart
-  debug needsPackage "ExamplesFreeResolutions"
+  debug needsPackage "ExampleFreeResolutions"
   dir = "./Foo/"
-  dir = "./ExamplesFreeResolutions/ExamplesAndTimings/"
+  dir = "./ExampleFreeResolutions/ExamplesAndTimings/"
   comment = "MES M1 max M2 just pre 1.20 (no builds in background)"
   comment = "MES M1 max M2 1.19.1"
   -- CNC curves
@@ -898,7 +898,7 @@ TEST ///
 ///
   -- This one takes a large amount of memory.
   restart
-  debug needsPackage "ExamplesFreeResolutions"
+  debug needsPackage "ExampleFreeResolutions"
   dir = "./Foo/"
   I = getAGR(6,10,10007, Directory => dir);
   hilbertSeries I  
