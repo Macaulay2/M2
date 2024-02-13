@@ -298,7 +298,7 @@ TEST ///
   assert(multigradedRegularity(S, comodule I) == {{0,4}})
 ///
 
-TEST /// -- test of returning -infinity for irrelevant ideals
+/// -- test of returning -infinity for irrelevant ideals
   debug needsPackage "VirtualResolutions"
   X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
   --X = normalToricVarietyWithTateData X
