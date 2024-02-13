@@ -49,6 +49,7 @@ INTERFACE = \
 	schreyer-resolution/res-poly-ring \
 	schreyer-resolution/res-f4-m2-interface \
 	schreyer-resolution/res-schreyer-frame \
+	schreyer-resolution/res-dep-graph \
 	schreyer-resolution/res-f4 \
 	schreyer-resolution/res-f4-computation \
 	gb-f4/Basis \
