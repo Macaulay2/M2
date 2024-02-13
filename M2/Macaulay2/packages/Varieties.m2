@@ -115,7 +115,7 @@ ProjectiveVariety.synonym = "projective variety"
 -- constructors
 Spec = method(TypicalValue => AffineVariety)
 Spec Ring := (stashValue symbol Spec) (R ->
-    new AffineVariety from {
+    R.variety = new AffineVariety from {
 	symbol ring => R,
 	symbol cache => new CacheTable
 	}
@@ -123,7 +123,7 @@ Spec Ring := (stashValue symbol Spec) (R ->
 
 Proj = method(TypicalValue => ProjectiveVariety)
 Proj Ring := (stashValue symbol Proj) (R ->
-    new ProjectiveVariety from {
+    R.variety = new ProjectiveVariety from {
 	symbol ring => if isHomogeneous R then R else error "Proj: expected a homogeneous ring",
 	symbol cache => new CacheTable
 	}
@@ -256,7 +256,7 @@ CoherentSheaf#id = F -> map(F, F, id_(module F))
 sheaf = method()
 -- TODO: sheaf Ring and sheaf Module should return a sheaf over variety of the ring rather than Proj,
 -- and if a variety doesn't already exist then either Proj or Spec should be defined and cached.
-sheaf Ring := Ring ~ := SheafOfRings =>     R  -> sheaf(Proj R, R)
+sheaf Ring := Ring ~ := SheafOfRings =>     R  -> sheaf(variety R, R)
 sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
 sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
@@ -264,7 +264,7 @@ sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
 
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
-sheaf Module := Module ~ := CoherentSheaf =>     M  -> sheaf(Proj ring M, M)
+sheaf Module := Module ~ := CoherentSheaf =>     M  -> sheaf(variety ring M, M)
 sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
     if M.cache#?(sheaf, X) then return M.cache#(sheaf, X);
     M.cache#(sheaf, X) = (
