@@ -4,6 +4,7 @@
 #include "MonomialTypes.hpp"
 #include <vector>
 #include <functional>
+#include <cstring> // For std::memcmp
 
 namespace newf4 {
 
