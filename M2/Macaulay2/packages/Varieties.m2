@@ -147,6 +147,9 @@ ProjectiveVariety/Thing := ProjectiveVariety => (X, I) -> Proj((ring X)/I) -- TO
     AffineVariety Array :=     AffineVariety => (X, M) -> Spec((ring X) M)
 ProjectiveVariety Array := ProjectiveVariety => (X, M) -> Proj((ring X) M)
 
+-- true for standard graded polynomial rings
+isStandardGraded = R -> unique degrees R === {{1}}
+
 -- Note: this can be specialized for other types of varieties.
 isWellDefined Variety := X -> (
     R := ring X;
@@ -159,8 +162,9 @@ isWellDefined Variety := X -> (
 	instance(X.cache, CacheTable),
 	"the hash table does not have the expected values")
     -- mathematical checks
-    and assert'(not isProjective X or isHomogeneous R,
-	"coordinate ring of a projective variety should be homogeneous")
+    -- TODO: support non-graded rings (e.g. ZZ, QQ, etc.) and nonstandard gradings
+    and assert'(not isProjective X or isStandardGraded R,
+	"coordinate ring of a projective variety should be homogeneous and generated in degree 1")
     )
 
 -- basic methods
@@ -290,7 +294,8 @@ installMethod(symbol_, OO, Variety, (OO, X) -> sheaf(X, ring X))
 isWellDefined CoherentSheaf := F -> (
     M := module F;
     X := variety F;
-    true -- TODO: isWellDefined M and isWellDefined X
+    true -- TODO: isWellDefined M
+    and isWellDefined X
     -- data type checks
     and assert'(set keys F === set { symbol variety, symbol module, symbol cache },
 	"the hash table does not have the expected keys")
