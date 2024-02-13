@@ -216,6 +216,10 @@ variety = method(TypicalValue => Variety)
 variety Ring  := S -> if S.?variety then S.variety else Proj S
 variety Ideal := I -> Proj quotient I -- TODO: should this be Spec or Proj?
 
+-- TODO
+-- subvariety(Variety, Ideal) := (X, I) -> ...
+-- variety Ideal := I -> subvariety(variety ring I, I)
+
 assertSameVariety = Fs -> if not same apply(Fs, variety) then error "expected objects on the same variety"
 
 -- printing
