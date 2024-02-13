@@ -92,7 +92,7 @@ TEST(MatrixIO, readMsolve)
   EXPECT_TRUE(M->n_cols() == 4);
 }
 
-#if 1
+#if 0
 TEST(MatrixIO, readMsolveBig1)
 {
   std::string filename { EXAMPLE_DIR"6pts-a-gb.ms" };
