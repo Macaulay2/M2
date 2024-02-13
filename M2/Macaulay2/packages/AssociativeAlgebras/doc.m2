@@ -1478,6 +1478,10 @@ doc ///
    Inputs
      I : Ideal
      n : ZZ
+     Strategy => String
+       either "F4Parallel", "F4", or "Naive".  Default for finite prime fields with
+       a homogeneous ideal is "F4Parallel", and otherwise deault is "Naive", which
+       uses a standard Buchberger-like algorithm
    Outputs
      Igb : Matrix
    Description
@@ -1490,13 +1494,18 @@ doc ///
        
        The current state of the algorithm requires the FreeAlgebra to be defined over
        a field, and the "F4" or "F4Parallel" strategies require the base ring to be
-       either QQ, ZZ/p or GF(q).
+       a finite prime field $\Z/p$.
+
+       In order to control the number of cores used in the parallel algorithm, see
+       @TO "parallelism in engine computations"@.
      Example
-       A = QQ<|x,y,z|>
+       A = ZZ/101<|x,y,z|>
        I = ideal { x*y + y*x - 2*z^2,
 	           y*z + z*y - 2*x^2,
 		   z*x + x*z - 2*y^2}
        Igb = NCGB(I,10)
+   SeeAlso
+     "parallelism in engine computations"
 ///
 
 doc ///

@@ -23,3 +23,12 @@ elapsedTime for kk in {QQ, ZZ/32831} do (
 	assert try ( res(ideal I_*, FastNonminimal => true, Strategy => strategy); false ) else true;
 	);
     )
+
+-- Here is a simple test for skew commuting vars
+gbTrace=4
+R = ZZ/101[a..d, SkewCommutative=>true]
+I = ideal(a-d)
+C = res(I, FastNonminimal => true, LengthLimit => 2)
+C0 = res(ideal I_*, LengthLimit => 2)
+assert(C.dd_2 _(0,0) == a-d) -- failed with first change from res-gausser to VectorArithmetic.
+assert(C0.dd_2 _(0,0) == a-d) -- ok

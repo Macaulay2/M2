@@ -3,8 +3,8 @@
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
+#include "VectorArithmetic.hpp"                        // for VectorArithmetic
 #include "newdelete.hpp"                               // for our_new_delete
-#include "schreyer-resolution/res-gausser.hpp"         // for CoefficientVector
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for res_monomial_word
 
@@ -27,10 +27,8 @@ class ResPolynomial
   static long npoly_destructor;
   int len;  // in monomials?  This only determines both sizes below
             // in the case of fixed length monomials
-  CoefficientVector coeffs;
-  //  std::unique_ptr<FieldElement[]> coeffs;
+  ElementArray coeffs;
   std::vector<res_monomial_word> monoms;
-  //  std::unique_ptr<res_monomial_word[]> monoms;
 
  public:
   ResPolynomial() : len(0), coeffs() {}
@@ -49,19 +47,27 @@ class ResPolynomial
 class ResPolyRing : public our_new_delete
 {
  public:
-  ResPolyRing(const ResGausser* G, const ResMonoid* M, const Monoid* origM)
-    : mResGausser(G), mMonoid(M), mOriginalMonoid(origM), mSkew(nullptr)
+  ResPolyRing(const Ring* baseRing,
+              const ResMonoid* M,
+              const Monoid* origM)
+    : mVectorArithmetic(baseRing),
+      mMonoid(M),
+      mOriginalMonoid(origM),
+      mSkew(nullptr)
   {
   }
-  ResPolyRing(const ResGausser* G,
+  ResPolyRing(const Ring* baseRing, // usually the underlying base field, although for non-minimal complexes, it does not need to be a field.
               const ResMonoid* M,
               const Monoid* origM,
               const SkewMultiplication* skewInfo)
-    : mResGausser(G), mMonoid(M), mOriginalMonoid(origM), mSkew(skewInfo)
+    : mVectorArithmetic(baseRing),
+      mMonoid(M),
+      mOriginalMonoid(origM),
+      mSkew(skewInfo)
   {
   }
 
-  const ResGausser& resGausser() const { return *mResGausser; }
+  const VectorArithmetic& vectorArithmetic() const { return mVectorArithmetic; }
   const ResMonoid& monoid() const { return *mMonoid; }
   const Monoid& originalMonoid() const { return *mOriginalMonoid; }
   bool isSkewCommutative() const { return mSkew != nullptr; }
@@ -72,7 +78,7 @@ class ResPolyRing : public our_new_delete
                 long& bytes_alloc) const;
 
  private:
-  std::unique_ptr<const ResGausser> mResGausser;
+  VectorArithmetic mVectorArithmetic;
   std::unique_ptr<const ResMonoid> mMonoid;
   const Monoid* mOriginalMonoid;
   const SkewMultiplication* mSkew;
@@ -82,8 +88,7 @@ class ResPolynomialConstructor
 {
  private:
   std::vector<res_packed_monomial> monoms;
-  CoefficientVector coeffs;
-  //  std::vector<FieldElement> coeffs;
+  ElementArray coeffs;
   const ResPolyRing& mRing;
 
  public:
@@ -92,14 +97,16 @@ class ResPolynomialConstructor
 
   ResPolynomialConstructor(const ResPolyRing& R) : mRing(R)
   {
-    coeffs = R.resGausser().allocateCoefficientVector();
+    coeffs = R.vectorArithmetic().allocateElementArray();
   }
 
-  ~ResPolynomialConstructor() { mRing.resGausser().deallocate(coeffs); }
+  ~ResPolynomialConstructor() {
+    mRing.vectorArithmetic().deallocateElementArray(coeffs);
+  }
   void appendMonicTerm(res_packed_monomial monom)
   {
     monoms.push_back(monom);  // a pointer
-    mRing.resGausser().pushBackOne(coeffs);
+    mRing.vectorArithmetic().pushBackOne(coeffs);
   }
 
   void pushBackTerm(res_packed_monomial monom)
@@ -107,11 +114,11 @@ class ResPolynomialConstructor
     monoms.push_back(monom);  // a pointer
   }
 
-  CoefficientVector& coefficientInserter() { return coeffs; }
+  ElementArray& coefficientInserter() { return coeffs; }
   void setPoly(ResPolynomial& result)
   {
     ncalls++;
-    result.len = static_cast<int>(mRing.resGausser().size(coeffs));
+    result.len = static_cast<int>(mRing.vectorArithmetic().size(coeffs));
     std::swap(result.coeffs, coeffs);
     result.monoms.resize(result.len * mRing.monoid().max_monomial_size());
 
@@ -126,7 +133,7 @@ class ResPolynomialConstructor
 
   static void setPolyFromArrays(ResPolynomial& result,
                                 int len,
-                                CoefficientVector& coeffs,
+                                ElementArray& coeffs,
                                 std::vector<res_monomial_word>& monoms)
   {
     ncalls_fromarray++;
@@ -161,7 +168,6 @@ class ResPolynomialIterator
   }
 
   int coefficient_index() const { return static_cast<int>(coeff_index); }
-  //  int coefficient() const { return elem.coeffs[coeff_index]; }
   res_const_packed_monomial monomial() const
   {
     return elem.monoms.data() + monom_index;
@@ -189,7 +195,7 @@ inline void display_poly(std::ostream& o, const ResPolyRing& R, const ResPolynom
   int i = 0;
   for (auto it = ResPolynomialIterator(R, f); it != end; ++it, ++i)
     {
-      R.resGausser().out(o, f.coeffs, i);
+      R.vectorArithmetic().displayElement(o, f.coeffs, i);
       res_const_packed_monomial mon = it.monomial();
       R.monoid().showAlpha(mon);
     }

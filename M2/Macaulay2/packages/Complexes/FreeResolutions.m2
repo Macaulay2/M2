@@ -156,7 +156,8 @@ resolutionObjectInEngine = (opts, M, matM) -> (
         false,            -- useMaxSlantedDegree
         0,                -- maxSlantedDegree (is this the same as harddegreelimit?)
         RO.Strategy,      -- algorithm number, 0, 1, 2 or 3...
-        opts.SortStrategy -- sorting strategy, for advanced use
+        opts.SortStrategy, -- sorting strategy, for advanced use
+        opts.ParallelizeByDegree -- only valid with Nonminimal
         );
     RO.returnCode = rawStatus1 RO.RawComputation; -- do we need this?
 

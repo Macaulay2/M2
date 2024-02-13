@@ -24,7 +24,9 @@ long nres_destruct = 0;
  */
 ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                    int max_level,
-                                   int strategy)
+                                   int strategy,
+                                   int numThreads,
+                                   bool parallelizeByDegree)
 {
   // We expect the following to hold:
   // the ring of groebnerBasisMatrix is a PolynomialRing, but not:
@@ -77,15 +79,6 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //   (a) coefficients are ZZ/p, for p in range.
 
   const Ring* K = origR->getCoefficients();
-  ResGausser* KK = ResGausser::newResGausser(K);
-  if (KK == nullptr)
-    {
-      ERROR(
-          "cannot use res(...,FastNonminimal=>true) with this type of "
-          "coefficient ring");
-      return nullptr;
-    }
-
   auto mo = origR->getMonoid()->getMonomialOrdering();  // mon ordering
   auto motype = MonomialOrderingType::Weights;
   if (moIsLex(mo))
@@ -100,13 +93,13 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
-      R = new ResPolyRing(KK, MI, origR->getMonoid(), &(origR->getSkewInfo()));
+      R = new ResPolyRing(K, MI, origR->getMonoid(), &(origR->getSkewInfo()));
     }
   else
     {
-      R = new ResPolyRing(KK, MI, origR->getMonoid());
+      R = new ResPolyRing(K, MI, origR->getMonoid());
     }
-  auto result = new F4ResComputation(origR, R, groebnerBasisMatrix, max_level);
+  auto result = new F4ResComputation(origR, R, groebnerBasisMatrix, max_level, numThreads, parallelizeByDegree);
 
   // Set level 0
   // take the columns of the matrix, and insert them into mComp
@@ -180,12 +173,14 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
 F4ResComputation::F4ResComputation(const PolynomialRing* origR,
                                    ResPolyRing* R,
                                    const Matrix* gbmatrix,
-                                   int max_level)
+                                   int max_level,
+                                   int numThreads,
+                                   bool parallelizeByDegree)
 
     : mOriginalRing(*origR),
       mInputGroebnerBasis(*gbmatrix),
       mRing(R),
-      mComp(new SchreyerFrame(*mRing, max_level))
+      mComp(new SchreyerFrame(*mRing, max_level, numThreads, parallelizeByDegree))
 {
   //  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need
   //  gbmatrix->rows() too

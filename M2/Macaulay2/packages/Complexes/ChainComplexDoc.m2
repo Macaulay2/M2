@@ -945,6 +945,7 @@ doc ///
         [freeResolution, SortStrategy]
         [freeResolution, StopBeforeComputation]
         [freeResolution, SyzygyLimit]
+        [freeResolution, ParallelizeByDegree]
     Headline
         optional arguments for freeResolution
     Description
@@ -971,9 +972,9 @@ doc ///
             this is used to limit somehow the computation where resolutions might be too long or infinite
         DegreeLimit => List
             or @ofClass ZZ@, an option that specifies that the computation stops at the given
-            (slanted) degree 
+            (slanted) degree
         HardDegreeLimit => List
-            unused (TODO: used?)
+            unused
         PairLimit => ZZ
             or @TO infinity@, an internal option which specifies that the computation should stop after a 
             certain number of s-pairs have computed
@@ -989,6 +990,9 @@ doc ///
             or @TO infinity@, 
             an internal option which specifies that the computation should stop after a 
             certain number of syzygies have computed
+        ParallelizeByDegree => Boolean
+            Use additional parallelism to compute different (homological degree, internal degree) pairs in
+            parallel when possible. To control parallelism, see "parallelism in engine computations"
     Outputs
         :Complex
             a free resolution of the module $M$ or of the

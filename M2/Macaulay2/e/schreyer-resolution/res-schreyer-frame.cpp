@@ -7,7 +7,6 @@
 #include "interface/computation.h"                        // for StopConditions
 #include "schreyer-resolution/res-f4.hpp"                 // for F4Res
 #include "schreyer-resolution/res-f4-monlookup.hpp"       // for ResF4Monomi...
-#include "schreyer-resolution/res-gausser.hpp"            // for Coefficient...
 #include "schreyer-resolution/res-monomial-types.hpp"     // for res_varpowe...
 #include "style.hpp"                                      // for LT, GT
 #include "timing.hpp"                                     // for timer, seconds
@@ -55,14 +54,20 @@ class PreElementSorter
 long PreElementSorter::ncmps = 0;
 };
 
-SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
+SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads, bool parallelizeByDegree)
     : mRing(R),
       mState(Initializing),
       mCurrentLevel(0),
       mSlantedDegree(0),
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
-      mComputer(new F4Res(*this))
+      mComputer(new F4Res(*this)),
+      mNumThreads(mtbb::numThreads(numThreads)),
+      mParallelizeByDegree(parallelizeByDegree)
+#if defined(WITH_TBB)
+    , mScheduler(mNumThreads)
+    , mDepGraph(this)
+#endif      
 {
   mFrame.mLevels.resize(max_level + 1);
   mMaxVPSize = 2 * monoid().n_vars() + 1;
@@ -75,6 +80,10 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
   timeResetHashTable = 0.0;
   timeComputeRanks = 0.0;
   timeComputeSparseRanks = 0.0;
+
+  //std::cout << "hardware tbb threads: " << tbb::info::default_concurrency() << std::endl;
+  //std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
+  //std::cout << "using " << mNumThreads << " threads" << std::endl;
 }
 
 // Destruct the frame
@@ -173,6 +182,21 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       // computeFrame()
     }
 
+#if defined(WITH_TBB)
+  // build the dependency graph
+  if (mParallelizeByDegree)
+  {
+    //std::cout << "In dep graph" << std::endl;
+     mScheduler.execute([&] {
+        makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree+1,true);
+        mDepGraph.startComputation();
+        mDepGraph.waitForCompletion();
+     });
+     //std::cout << "Out dep graph" << std::endl;
+  }
+  // If this is not run, the 'computeRanks' calls below compute all of these elements
+#endif
+
   // What needs to be computed?
   // lodeg..hideg, level: 0..maxlevel.  Note: need to compute at level
   // maxlevel+1 in order to get min betti numbers at
@@ -242,7 +266,26 @@ void SchreyerFrame::start_computation(StopConditions& stop)
   if (stop.stop_after_degree and mHiSlantedDegree > stop.degree_limit->array[0])
     top_slanted_degree = stop.degree_limit->array[0];
 
+#if defined(WITH_TBB)
+  // build the dependency graph
+  if (mParallelizeByDegree)
+  {
+     //std::cout << "In dep graph" << std::endl;
+     mScheduler.execute([&] {
+        makeDependencyGraph(mDepGraph,
+                            mMaxLength+1,
+                            top_slanted_degree - mLoSlantedDegree + 1,
+                            false);
+        mDepGraph.startComputation();
+        mDepGraph.waitForCompletion();
+     });
+     //std::cout << "Out dep graph" << std::endl;
+   }
+  else
+    computeSyzygies(top_slanted_degree, mMaxLength);
+#else
   computeSyzygies(top_slanted_degree, mMaxLength);
+#endif
 
   if (M2_gbTrace >= 1)
     {
@@ -355,13 +398,11 @@ void SchreyerFrame::start_computation(StopConditions& stop)
           }
         if (M2_gbTrace >= 2)
           {
-            std::cout << "construct(" << mSlantedDegree << ", " << mCurrentLevel << ")..." << std::flush;
+            std::cout << "construct(" << mSlantedDegree << ", " << mCurrentLevel << ")..." << std::endl;
           }
         mComputer->construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
         if (M2_gbTrace >= 2)
-          {
             std::cout << "done" << std::endl;
-          }
         ///std::cout << "Number of distinct monomials so far = " << mAllMonomials.count() << std::endl;
         mCurrentLevel++;
         break;
@@ -559,7 +600,7 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom, degree));
   auto& myelem = myframe[idx];
-  myelem.mSyzygy.coeffs = gausser().allocateCoefficientVector();
+  myelem.mSyzygy.coeffs = vectorArithmetic().allocateElementArray();
   // The rest of this code simply sets the total monomial for the Schreyer order
   // and should be moved out of here. (MES 3 Feb 2016)
   auto& myorder = schreyerOrder(lev);
@@ -888,17 +929,23 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
 
   if (M2_gbTrace >= 2)
     {
-      std::cout << "construct(" << slanted_deg << ", " << lev << ")..."
-                << std::flush;
+//      std::cout << "construct(" << slanted_deg << ", " << lev << ")"
+//                << std::endl;
     }
-  mComputer->construct(lev, slanted_deg + lev);
+
+  // experimenting whether building/destroying local computers
+  // are expensive
+  F4Res thisComputer {*this};
+  thisComputer.construct(lev, slanted_deg + lev);
+  //mComputer->construct(lev, slanted_deg + lev);
+
   status = 2;
 
   if (M2_gbTrace >= 2)
     {
-      std::cout << "done" << std::endl;
-      std::cout << "#additions so far: " << gausser().getNumAdditions()
-                << std::endl;
+      //std::cout << "done" << std::endl;
+      //std::cout << "#additions so far: " << vectorArithmetic().getNumAdditions()
+      //          << std::endl;
     }
 }
 void SchreyerFrame::computeRank(int slanted_degree, int lev)

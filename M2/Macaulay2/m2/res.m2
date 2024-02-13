@@ -173,7 +173,8 @@ resolutionInEngine := (opts, M) -> (
 		    false,			-- useMaxSlantedDegree
 		    0,				-- maxSlantedDegree (is this the same as harddegreelimit?)
 		    floor strategy,		-- algorithm (floor converts the experimental value 4.1 to 4, avoiding error message above)
-		    opts.SortStrategy		-- strategy (is this the same as opts.SortStrategy?)
+		    opts.SortStrategy,		-- strategy (is this the same as opts.SortStrategy?)
+                    opts.ParallelizeByDegree
 		    )};
 	  W#"RawComputation log" = Bag {log};
      	  W.RawComputation = value log;
@@ -231,7 +232,8 @@ resolution = method(
 	-- HardLengthLimit	=> infinity,	-- throw out information in lengths above this one
 	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
 	Strategy		=> null,	-- algorithm to use, usually 1, but sometimes 2
-	FastNonminimal		=> false
+	FastNonminimal		=> false,
+        ParallelizeByDegree     => false        -- currently: only used by FastNonminimal, gives warning if true and another Strategy selected
 	}
     )
 
@@ -412,7 +414,8 @@ resolutionNonminimal = (opts, M) -> (
                 false,					    -- useMaxSlantedDegree
                 0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
                 floor strategy,		    -- algorithm (floor converts the experimental value 4.1 to 4, avoiding error message above)
-                opts.SortStrategy			    -- strategy (is this the same as opts.SortStrategy?)
+                opts.SortStrategy,			    -- strategy (is this the same as opts.SortStrategy?)
+                opts.ParallelizeByDegree
                 )};
         W#"RawComputation log" = Bag {log};
         W.RawComputation = value log;
