@@ -8,25 +8,25 @@ TEST ///
   shphi = map(G,F,phi1)
   assert(source shphi === OO_X^3(-1))
   assert(target shphi === OO_X^1)
-  assert(degree shphi === 1)
+  assert(shphi.degree === 1)
   --
   phi = truncate(3,phi1);
   shphi2 = map(G,F,phi,3)
   assert(source shphi2 === OO_X^3(-1))
   assert(target shphi2 === OO_X^1)
-  assert(degree shphi2 === 3)
+  assert(shphi2.degree === 3)
   -- tests for dual
   shphi3 = map(sheaf target phi,F,phi,3)
   assert isWellDefined shphi3
   assert isWellDefined dual shphi3
-  assert(degree shphi3 === 3)
-  assert(degree dual shphi3 === 0)
+  assert(shphi3.degree === 3)
+  assert((dual shphi3).degree === 0)
   --
   shphi4 = map(G, sheaf source phi, phi)
   assert isWellDefined shphi4
   assert isWellDefined dual shphi4
-  assert(degree shphi4 === 3)
-  assert(degree dual shphi4 === 0)
+  assert(shphi4.degree === 3)
+  assert((dual shphi4).degree === 0)
 ///
 
 TEST ///

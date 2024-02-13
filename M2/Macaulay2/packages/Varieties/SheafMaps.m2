@@ -70,7 +70,7 @@ random(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> map(F, G, ran
 isWellDefined SheafMap := f -> (
     (G, F) := (target f, source f);
     X := variety f;
-    d := degree f;
+    d := f.degree;
     all({ G, F, matrix f }, isWellDefined)
     -- data type checks
     and assert'(set keys f === set {
@@ -109,7 +109,8 @@ target  SheafMap := CoherentSheaf => f -> f.target
 variety SheafMap := Variety       => f -> f.variety
 ring    SheafMap := Ring          => f -> f.map.ring
 matrix  SheafMap := Matrix => opts -> f -> f.map
-degree  SheafMap := ZZ => f -> f.degree
+-- TODO: find a better name and keep this
+--degree  SheafMap := ZZ => f -> f.degree
 
 image    SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, image    matrix f)
 kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   matrix f)
@@ -178,7 +179,7 @@ SheafMap - SheafMap := (f, g) -> f + (-g)
 
 -- composition
 SheafMap * SheafMap := SheafMap => (f, g) -> (
-    (d, e) := (degree f, degree g);
+    (d, e) := (f.degree, g.degree);
     (m, n) := (matrix f, matrix g);
     if d < e then
     m = truncate(d, m, MinimalGenerators => false);
@@ -250,7 +251,7 @@ lift'(Matrix, Matrix) := Matrix => (phi, eta) -> (
 --the same morphism of sheaves, if possible
 --WARNING: this method does not actually verify if the lift is possible
 lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
-    d := degree shphi;
+    d := shphi.degree;
     phi := matrix shphi;
     M := module source shphi;
     eta := inducedMap(truncate(e, M, MinimalGenerators => false), source phi);
@@ -261,7 +262,7 @@ lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
 --the same morphism of sheaves, for the smallest possible value of e
 --WARNING: this method does not actually verify if the lift is possible
 lift SheafMap := SheafMap => o -> shphi -> (
-    d := degree shphi;
+    d := shphi.degree;
     M := module source shphi;
     m := min flatten degrees M;
     while isLiftable(shphi,d-1) and d > m do d = d-1;
@@ -310,7 +311,7 @@ tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> sheaf(matrix phi ** matr
 
 --possible fix for ill-definedness of tensor product
 -*tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
-    (F,G,d,e) := (module source phi, module source psi, degree phi, degree psi);
+    (F,G,d,e) := (module source phi, module source psi, phi.degree, psi.degree);
     map(target phi ** target psi,
 	sheaf truncate(d + e, F ** G, MinimalGenerators => false),
 	truncate(d + e, matrix phi ** matrix psi), d + e))*-
@@ -412,7 +413,7 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     if g == 0 then return cokernel f;
     if f == 0 then return kernel g;
     g = lift g;
-    d := degree g;
+    d := g.degree;
     M := module source f;
     N := module target f;
     X := variety f;
@@ -559,9 +560,9 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
     (G, F) := (target f, source f);
     prune G; prune F; -- these are pruned just to populate cached data
     -- F.cache.TorsionFree = M/H^0_B(M)
-    g := inducedMap(G.cache.TorsionFree, truncate(degree f, F.cache.TorsionFree, MinimalGenerators => false), matrix f);
-    p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit) + max(0,degree f);
-    --added degree f in the line above... seems to make prune work in one step
+    g := inducedMap(G.cache.TorsionFree, truncate(f.degree, F.cache.TorsionFree, MinimalGenerators => false), matrix f);
+    -- TODO: verify that f.degree is always sufficient here
+    p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit) + max(0, f.degree);
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
     lift sheaf(f.variety, prune Hom(Bp, g)))
@@ -668,7 +669,7 @@ shphi = map(G,F,phi1)
 peek shphi
 assert(source shphi === OO_X^3(-1))
 assert(target shphi === OO_X^1)
-assert(degree shphi ===1)
+assert(shphi.degree ===1)
 
 S = QQ[x_1..x_3];
 X = Proj S;
