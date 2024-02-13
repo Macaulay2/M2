@@ -1919,7 +1919,7 @@ importMainDataFile(String) := o->(aString)->(
       theLine0:=separate(" ",allInfo_0);
       aNewPoint.cache.SolutionNumber=value (theLine0_1);
       if o.Verbose then print theLine0;
-      isRF:=#select("&",theLine0_4)==1;-- In the case of refine failure we have this strong like "7&paranthesis" where 7 is the path number      
+      isRF:=#select("&",theLine0_4)==1;-- In the case of refine failure we have this strong like "7&parenthesis" where 7 is the path number      
       if isRF then aNewPoint.cache.SolutionStatus=RefinementFailure;
       if #select("&",theLine0_4)>1 then error"Unknown symbol && appears in main_data.";
       aNewPoint.cache.PathNumber=value replace("\\)","",replace("&","",(theLine0_4)));
