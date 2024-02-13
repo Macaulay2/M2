@@ -79,7 +79,9 @@ document {
 		    LI { "Both ", TO exportFrom, " and ", TO importFrom, " now accept either a string or ", TO Package, " object as their first argument ",
 			 "and either a string or a list of strings as their second argument." },
 		    LI { TO "FLINT", " version 3 is now supported."},
-		    LI { SAMP "libatomic_ops", " has been dropped as a dependency and has been replaced with C11 and C++11 standard atomic operations." }
+		    LI { SAMP "libatomic_ops", " has been dropped as a dependency and has been replaced with C11 and C++11 standard atomic operations." },
+            LI { "Some computations in the engine (e.g. minimal betti diagrams and Groebner bases over associative algebras), ",
+                  "can now take advantage of multiple CPU cores, see ", TO "parallelism in engine computations", "."}
 		    }
 	       }
 	  }

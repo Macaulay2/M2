@@ -186,13 +186,13 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
   // build the dependency graph
   if (mParallelizeByDegree)
   {
-     std::cout << "In dep graph" << std::endl;
+    //std::cout << "In dep graph" << std::endl;
      mScheduler.execute([&] {
         makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree+1,true);
         mDepGraph.startComputation();
         mDepGraph.waitForCompletion();
      });
-     std::cout << "Out dep graph" << std::endl;
+     //std::cout << "Out dep graph" << std::endl;
   }
   // If this is not run, the 'computeRanks' calls below compute all of these elements
 #endif
