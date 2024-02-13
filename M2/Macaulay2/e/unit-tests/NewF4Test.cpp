@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <bitset>
 #include <gtest/gtest.h>
 
 #include "polyring.hpp"
