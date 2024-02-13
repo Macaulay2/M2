@@ -3,7 +3,7 @@ bertiniPresent := run ("type bertini >/dev/null 2>&1") === 0
 newPackage(
   "Bertini",
   Version => "2.1.2.3",
-  Date => "July 2020",
+  Date => "Feb 6 2024",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -32,6 +32,9 @@ exportMutable{"storeBM2Files"
   }
 
 export {
+    "AdditionalFiles",
+    "PathList",
+    "MainDataDirectory",
   "SetParameterGroup",
   "bertiniUserHomotopy",
   "ReturnPoints",
@@ -201,6 +204,7 @@ export {
 
 DBG = 0 -- debug level (10=keep temp files)
 BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
+BERTINIderandomize = member("--no-randomize",commandLine)
 --needsPackage"NAGtypes"
 needsPackage "SimpleDoc"
      storeBM2Files = temporaryFileName();
@@ -353,21 +357,58 @@ bertiniComponentMemberTest (List, NumericalVariety) := o -> (pts, NV) -> (
      )
 
 bertiniRefineSols = method(TypicalValue => List, Options=>{Verbose=>false,
-  BertiniInputConfiguration=>{},
+  --BertiniInputConfiguration=>{},
+  NameB'InputFile=>"input",--for the zero dim solve
+  AdditionalFiles=>{},
   IsProjective=>-1
   })
-bertiniRefineSols (ZZ, List, List) := o -> (d, F,p) -> (
-  --d, number of digits
-  --F is the list of polynomials.
-  --p, list of points to sharpen
-   L := {BertiniInputConfiguration=>o.BertiniInputConfiguration,
-     runType=>5,
-     StartSolutions=>p,
-     digits=>d};
-   o2 := new OptionTable from L;
-   o3 := o ++ o2;
-   bertiniSolve(F, o3)
-   )
+bertiniRefineSols (String,ZZ, List,String) := o -> (IFD,d,W,OFD) -> (
+    -- check existence of directories and required bertini files.
+    IFD = addSlash(IFD);
+    OFD = addSlash(OFD);    
+    if not fileExists IFD then print("The input file's directory does not exist: "|IFD);
+    if not fileExists (IFD|o.NameB'InputFile) then error("The input file for the bertiniZeroDimSolve does not exist: "|o.NameB'InputFile);
+    neededBertiniFiles:={o.NameB'InputFile,"raw_data","main_data"};
+    scan(neededBertiniFiles,a->if not fileExists (IFD|a) then error("This file is needed in the input file directory: "|a));
+    --check for the outputfile directory
+    if not fileExists OFD then mkdir OFD;
+    ftc:=neededBertiniFiles|o.AdditionalFiles;
+    scan(ftc,a->if not fileExists(IFD|a) 
+	then error("This file is missing: "|a) 
+	else copyFile(IFD|a,OFD|a)
+	);
+    -- add the line SharpenOnly:1 into the input file
+    s:= run("sed -i -e 's/%%%ENDCONFIG/SharpenOnly : 1; %%%ENDCONFIG/' "|OFD|o.NameB'InputFile);
+    --dir2 = (W_0).cache.MainDataDirectory
+    --- These are the sharpening options that Bertini allows
+    --  1. Sharpen all endpoints
+    --  2. Sharpen endpoints listed in a file
+    --  3. Manually input endpoints to sharpen
+    --  4. Recreate output (i.e., run the post-processor)
+    --  5. Change the number of sharpening digits (currently 14 digits)
+    --  6. Change the sharpening method (currently Newton's method)
+    --  7. Quit
+    ---- writing out file with query responses in case of a refine/sharpen run
+    pn := apply(W, pt->pt.cache.PathNumber);
+    pathnumbers := "path_numbers";
+    ssf := openOut (OFD|"sharpen_script"); 
+    ssf << "5" << endl << d << endl << "2" << endl<<pathnumbers<<endl;
+    close ssf;
+    pnf := openOut (OFD|pathnumbers); 
+    scan(pn,i->pnf <<i<<" "<<endl);
+    close pnf;
+    run("cd "|OFD|"; bertini < sharpen_script >bertini_session.log");
+    bitPrec := ceiling((log 10/log 2)*d);
+    newSols := importMainDataFile(OFD,M2Precision=>bitPrec,PathList=>pn)
+    )
+bertiniRefineSols (ZZ, List,String) := o -> (d,W,OFD) -> (
+    if #W==0 then {} else(
+	IFD:=(first W).cache.MainDataDirectory;
+	bertiniRefineSols(IFD,d,W,OFD,o)
+	))
+bertiniRefineSols (ZZ, List) := o -> (d,W) -> (
+    OFD :=temporaryFileName();
+    bertiniRefineSols(d,W,OFD,o))
 
 
 bertiniTrackHomotopy = method(TypicalValue => List, Options=>{
@@ -616,7 +657,9 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 
     f << "CONFIG\n\n";-- starting the config section of the input file
 
-    -- for each user-provided option, we write the appropriate config to the file:
+    if BERTINIderandomize then f << "RANDOMSEED: 12345;\n";  
+
+    -- for each user-provided option, we write the appropriate config to the file:    
     scan(o.BertiniInputConfiguration,i->f<<(toString first i) <<": "<<(toString last i)<<" ;\n");
     -- now we handle the various runType options:
 
@@ -741,8 +784,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
            --create raw_data in tmp directory
 
 	   f =openOut(dir|"/raw_data");
-  	   f << toString(#v)<<endl;
-	   f << toString(0)<<endl;
+  	   f << toString(#v)<<endl;f << toString(0)<<endl;
 	   for i from 0 to #startS1-1 do(
 	       f << toString(i)<<endl;
 	       f << toString(52)<<endl;
@@ -1542,6 +1584,7 @@ makeB'InputFile(String) := o ->(IFD)->(
      openedInputFile <<  endl  << "% This input file was written with the Bertini.m2 Macaulay2 package." << endl<<endl;
 --The first part of a Bertini input file is the configurations.  We write the configurations followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file.
      openedInputFile << "CONFIG" << endl << endl;
+     if BERTINIderandomize then openedInputFile << "RANDOMSEED: 12345;\n";  
      for oneConfig in o.BertiniInputConfiguration do (
        if class oneConfig===Option
        then openedInputFile << toUpper toString((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
@@ -1844,8 +1887,9 @@ importMainDataFile=method(TypicalValue=>String,Options=>{
 	M2Precision=>53,
 	NameMainDataFile=>"main_data",
 	SpecifyDim=>false,
-	Verbose=>false
-	})
+	Verbose=>false,
+	PathList=>null
+	}) 
 importMainDataFile(String) := o->(aString)->(
     aString=addSlash aString;
     allInfo:=lines get(aString|o.NameMainDataFile);
@@ -1876,7 +1920,10 @@ importMainDataFile(String) := o->(aString)->(
       theLine0:=separate(" ",allInfo_0);
       aNewPoint.cache.SolutionNumber=value (theLine0_1);
       if o.Verbose then print theLine0;
-      aNewPoint.cache.PathNumber=value replace("\\)","",(theLine0_4));
+      isRF:=#select("&",theLine0_4)==1;-- In the case of refine failure we have this strong like "7&parenthesis" where 7 is the path number      
+      if isRF then aNewPoint.cache.SolutionStatus=RefinementFailure;
+      if #select("&",theLine0_4)>1 then error"Unknown symbol && appears in main_data.";
+      aNewPoint.cache.PathNumber=value replace("\\)","",replace("&","",(theLine0_4)));
       --Estimated condition number
       theLine1:=separate(":",allInfo_1);
       aNewPoint.cache.ConditionNumber=valueBM2(theLine1_1);
@@ -1912,7 +1959,12 @@ importMainDataFile(String) := o->(aString)->(
       --multiplicity
       theLineY:=separate(":",allInfo_(10+theNumberOfVariables+1));
       aNewPoint.cache.Multiplicity=value(theLineY_1);
-      theListOfPoints=append(theListOfPoints,aNewPoint);
+      --directory information 
+      aNewPoint.cache.MainDataDirectory = aString;
+      -- if o.PathList is set then we only return those points whose path number are in o.PathList
+      isAppended:=true;
+      if o.PathList =!=null then isAppended=member(aNewPoint.cache.PathNumber,o.PathList); 
+      if isAppended then theListOfPoints=append(theListOfPoints,aNewPoint);
       if o.Verbose then   print linesPerSolutions;
       allInfo=drop(allInfo,linesPerSolutions);
       if o.Verbose then print allInfo
@@ -1975,8 +2027,13 @@ importMainDataFile(String) := o->(aString)->(
       	    --multiplicity
             aNewPoint.cache.Multiplicity=value( (separate(":",allInfo_(4+theNumberOfVariables-solUnclassified)))_1);
             aNewPoint.cache.DeflationsNeeded=value( (separate(":",allInfo_(4+theNumberOfVariables+1-solUnclassified)))_1);
-      	    theListOfPoints=append(theListOfPoints,aNewPoint);
-      	    --print linesPerSolutions;
+     	    --directory information 
+      	    aNewPoint.cache.MainDataDirectory = aString;
+      	    -- if o.PathList is set then we only return those points whose path number are in o.PathList
+      	    isAppended=true;
+      	    if o.PathList =!=null then isAppended=member(aNewPoint.cache.PathNumber,o.PathList); 
+      	    if isAppended then theListOfPoints=append(theListOfPoints,aNewPoint);      	    
+	--print linesPerSolutions;
       	    allInfo=drop(allInfo,linesPerSolutions-solUnclassified))
         else (allInfo=drop(allInfo,linesPerSolutions); print "1"	))
       else allInfo=drop(allInfo,1));
@@ -2445,7 +2502,7 @@ moveB'File(String,String,String) := o ->(storeFiles,originalName,newName)->(
 		 radicalList(List) := o ->(aList)->(
 		     aTolerance:=1e-10;
 		     newList:={aList_0};
-		     for i to #aList-1 do (
+		     for i to #aList-1 do ( 
 		 	appendToList:=true;
 		 	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
 		 	if appendToList then newList=append(newList,aList_i));
@@ -2870,29 +2927,35 @@ doc ///
 doc ///
   Key
     bertiniRefineSols
-    (bertiniRefineSols, ZZ, List, List)
+    (bertiniRefineSols, String, ZZ, List, String)
+    (bertiniRefineSols, ZZ, List, String)
+    (bertiniRefineSols, ZZ, List)
   Headline
     sharpen solutions to a prescribed number of digits
   Usage
-    S = bertiniRefineSols(d, F, l)
+    S = bertiniRefineSols(IFD, d, W, OFD)
+    S = bertiniRefineSols(d, W, OFD)
+    S = bertiniRefineSols(d, W)
   Inputs
+    IFD:String
+      a directory where the input file of a bertiniZeroDim solve is stored along with that runs output files
     d:ZZ
       an integer specifying the number of digits of precision
-    F:List
-      a list of polynomials (system need not be square)
-    l:List
+    W:List
       a list of points to be sharpened
+    OFD:String
+      a directory where the output files of the refinement are stored
   Outputs
     S:List
       a list of solutions of type Point
   Description
     Text
-      This method takes the list l of solutions of F and sharpens them to d digits using the sharpening module of {\tt Bertini}.
+      This method takes the list W of solutions from a bertiniZeroDimSolve and sharpens them to d digits using the sharpening module of {\tt Bertini}. When IFD is omitted the information is pulled from the cache of the first point in W. When OFD is omitted a temporary directory is created.
     Example
       R = CC[x,y];
       F = {x^2-2,y^2-2};
-      sols = bertiniZeroDimSolve (F)
-      S = bertiniRefineSols (100, F, sols)
+      W = bertiniZeroDimSolve (F)
+      S = bertiniRefineSols (100,W)
       coords = coordinates S_0
       coords_0
     Text
