@@ -396,9 +396,14 @@ ffiRealAddress(e:Expr):Expr := (
 		    if !isInt(y) then return WrongArgSmallInteger();
 		    bits := toInt(y);
 		    if bits == 0 then (
-			z := copy(x.v);
+			z := newRRmutable(precision(x.v));
+			Ccode(void, "mpfr_set(", z, ", ", x.v, ", MPFR_RNDN)");
 			ptr := getMem(pointerSize);
-			Ccode(void, "*(mpfr_srcptr *)", ptr, " = ", z);
+			Ccode(void, "*(mpfr_ptr *)", ptr, " = ", z);
+			-- TODO: we get segfaults during garbage collection
+			-- if the following is uncommented
+			-- Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
+			--  "(GC_finalization_proc)mpfr_clear, ", z, ", 0, 0)");
 			toExpr(ptr))
 		    else if bits == 32 || bits == 64 then (
 			ptr := getMemAtomic(bits / 8);
