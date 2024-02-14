@@ -265,9 +265,12 @@ ffiIntegerAddress(e:Expr):Expr := (
 		    if !isInt(y)
 		    then WrongArgSmallInteger(2)
 		    else if isZero(y.v) then (
-			z := copy(x.v);
+			z := newZZmutable();
+			set(z, x.v);
 			ptr := getMem(pointerSize);
-			Ccode(void, "*(mpz_srcptr *)", ptr, " = ", z);
+			Ccode(void, "*(mpz_ptr *)", ptr, " = ", z);
+			Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
+			    "(GC_finalization_proc)mpz_clear, ", z, ", 0, 0)");
 			toExpr(ptr))
 		    else when a.2
 		    is signed:Boolean do (
