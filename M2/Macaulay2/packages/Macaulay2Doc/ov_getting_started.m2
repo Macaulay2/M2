@@ -493,10 +493,7 @@ document {
 	  keys are not operable.  In that case press ", TT "C-c m", " instead. 
        	  Another
           reason may be that you have not installed Macaulay2 properly - the startup
-	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
-	  A third reason may be that you are in Windows-98 and are using anti-virus 
-	  software such as ", TT "Dr. Solomon's", ", which can interfere with emacs 
-	  when it tries to run a subprocess."
+	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path."
 	  },
      PARA {
      	  "You may use ", TT "C-x o", " freely to switch from one window to the other.
