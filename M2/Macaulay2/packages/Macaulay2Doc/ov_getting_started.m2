@@ -509,10 +509,18 @@ document {
     betti C///,
      PARA {     
      "Position the cursor on the first line of code, and press the ", TT "f11", " function 
-	  key repeatedly to present each line to Macaulay2.  If you select several lines 
+	  key (or ", TT "C-<return>", ") repeatedly to present each line to Macaulay2.  If you select several lines 
 	  using the mouse, then pressing f11 will present the entire selection to
 	  Macaulay2.  Try this on some of these lines."
 	  },
+     PARA {"Here are some other useful keybindings:"},
+     UL {
+	 LI {TT "C-c C-j", ": send the current line"},
+	 LI {TT "C-c C-r", ": send the current region"},
+	 LI {TT "C-c C-b", ": send the entire buffer"},
+	 LI {TT "C-c C-<up>", ": send everything before the point"},
+	 LI {TT "C-c C-<down>", ": send everything after the point"},
+	 LI {TT "C-c C-p", ": send the current paragraph"}},
      HR{},
 "Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
 experiment with keyword completion.  Type ", TT "reso", " and then press the 
