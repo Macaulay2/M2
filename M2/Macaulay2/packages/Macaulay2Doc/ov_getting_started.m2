@@ -527,7 +527,7 @@ experiment with keyword completion.  Type ", TT "reso", " and then press the
 ", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
 for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
 and then press the ", TT "TAB", " key.  The possible completions are displayed 
-in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
+in a window.  Switch to it with ", TT "M-x switch-to-completions", ", move to the desired 
 completion, select it with the ", TT "RETURN", " key, and then return to the 
 ", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
 mouse, use the middle button to select the desired completion. (On the mac, hold down the
