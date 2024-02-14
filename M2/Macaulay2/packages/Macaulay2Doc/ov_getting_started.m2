@@ -562,10 +562,10 @@ Notice how the use of
 ", TT "C-e", " to go to the end of the line
 sends the cursor to the dollar sign at the right hand side of the screen;
 that's where the cursor will appear whenever you go to a position off the
-screen to the right.  Then use the ", TT "f2", " function key (or ", TT "C-c .", ") to 
+screen to the right.  Then use the ", TT "f2", " function key (or ", TT "C-S-c .", ") to 
 scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-a", " to 
 move to the beginning of the line and then the ", TT "f2", " function key 
-(or ", TT "C-c .", ") to bring the left margin back into view.",
+(or ", TT "C-S-c .", ") to bring the left margin back into view.",
 PARA{},
 "You may use the ", TT "f5", " function key or (or ", TT "C-c ?", ") to 
 toggle whether long lines are truncated or wrapped; initially they are truncated."
