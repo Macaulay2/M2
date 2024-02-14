@@ -1,9 +1,5 @@
 #pragma once
 
-#if 0
-#include <concepts>
-#endif
-
 namespace newf4
 {
 
