@@ -995,33 +995,6 @@ document {
      PARA{},
      "Notice that the input prompts are not submitted to Macaulay2.",
      PARA{},
-     "Here is a way to conduct a demo of Macaulay2 in which the code to be
-     submitted is not visible on the screen.  Visit a file called ", 
-     TT "foo.m2", " and paste the following text into it.",
-     PARA{},
-     PRE ///20!
-     4 + 5 * 2^20
-     -- that's all folks!///,
-     PARA{},
-     "Press ", TT "M-f11", " with your cursor in this buffer to designate it as
-     the source for the Macaulay2 commands.  (The notation ", TT "M-f11", " means 
-     that while holding the ", TT "Meta", " key down, you should press the ", TT "f11", " 
-     function key.  The Meta key is the Alt key on some keyboards, or it can be simulated by 
-     pressing Escape (just once) and following that with the key you wanted to press 
-     while the meta key was held down.)  Then position your cursor (and thus the 
-     emacs point) within the line containing ", TT "20!", ".  Now press 
-     ", TT "M-x M2-demo", " to open up a new frame called ", TT "DEMO", "
-     for the ", TT "*M2*", " window with a large font suitable for use with
-     a projector, and with your cursor in that frame, press ", TT "f11", "
-     a few times to conduct the demo.  (If the font or frame is the wrong
-     size, you may have to create a copy of the file ", TT "M2.el", " with
-     a version of the function ", TT "M2-demo", " modified to fit your
-     screen.)",
-     PARA{},
-     "One press of ", TT "f11", " brings the next line of code forward into the
-     ", TT "*M2*", " buffer, and the next press executes it.  Use ", TT "C-x 5 0", " 
-     when you want the demo frame to go away.",
-     PARA{},
      "There is a way to send a region of text to Macaulay2: simply select a region
      of text, making sure the mark is active (as described above) and press ", TT "f11", ".
      Try that on the list below; put it into an emacs buffer, move your cursor to the 
