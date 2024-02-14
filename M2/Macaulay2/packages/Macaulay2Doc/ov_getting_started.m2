@@ -505,7 +505,7 @@ document {
 	  important, as it informs emacs to use the Macaulay2 mode).
 	  Paste the following text into a buffer.  If you wish, save the file using C-x C-s."
 	  },
-     PRE ///    R = QQ[x,y,z]
+     PRE M2CODE ///    R = QQ[x,y,z]
     f = symmetricPower(2,vars R)
     M = cokernel f
     C = resolution M
@@ -539,7 +539,7 @@ slightly to change it before pressing return.",
      "Now let's see how we can handle wide and tall Macaulay2 output.  Execute the
      following line of code (put it in your foo.m2 buffer, and then press f11)",
      PARA{},
-     PRE ///printWidth=0; random(R^20,R^{6:-2})///,
+     PRE M2CODE ///printWidth=0; random(R^20,R^{6:-2})///,
      "Setting printWidth to zero removes line wrapping in the buffer, sometimes useful to 
      view large matrices.",
 PARA{},
@@ -987,7 +987,7 @@ document {
      the cursor on the first line of code, and press the ", TT "f11", " function 
      key repeatedly to present each line to Macaulay2.",
      PARA{},
-     PRE ///i1 : R = ZZ/101[x,y,z]
+     PRE M2CODE ///i1 : R = ZZ/101[x,y,z]
      i2 : f = symmetricPower(2,vars R)
      i3 : M = cokernel f
      i4 : C = resolution M
