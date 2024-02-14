@@ -216,7 +216,9 @@ ffiIntegerType(e:Expr):Expr := (
 	if length(a) == 2 then (
 	    when a.0
 	    is n:ZZcell do (
-		if isZero(n.v)
+		if !isInt(n)
+		then WrongArgSmallInteger(1)
+		else if isZero(n.v)
 		then toExpr(Ccode(voidPointer, "&ffi_type_pointer"))
 		else when a.1
 		is signed:Boolean do (
@@ -260,7 +262,9 @@ ffiIntegerAddress(e:Expr):Expr := (
 	    is x:ZZcell do (
 		when a.1
 		is y:ZZcell do (
-		    if isZero(y.v) then (
+		    if !isInt(y)
+		    then WrongArgSmallInteger(2)
+		    else if isZero(y.v) then (
 			z := copy(x.v);
 			ptr := getMem(pointerSize);
 			Ccode(void, "*(mpz_srcptr *)", ptr, " = ", z);
@@ -320,7 +324,9 @@ ffiIntegerValue(e:Expr):Expr := (
 	    is x:pointerCell do (
 		when a.1
 		is y:ZZcell do (
-		    if isZero(y.v)
+		    if !isInt(y)
+		    then WrongArgSmallInteger(2)
+		    else if isZero(y.v)
 		    then toExpr(moveToZZ(Ccode(ZZmutable, "*(mpz_ptr*)", x.v)))
 		    else when a.2
 		    is signed:Boolean do (
@@ -363,6 +369,7 @@ setupfun("ffiIntegerValue", ffiIntegerValue);
 ffiRealType(e:Expr):Expr := (
     when e
     is n:ZZcell do (
+	if !isInt(n) then return WrongArgSmallInteger();
 	bits := toInt(n);
 	if bits == 0 then toExpr(Ccode(voidPointer, "&ffi_type_pointer"))
 	else if bits == 32 then toExpr(Ccode(voidPointer, "&ffi_type_float"))
@@ -383,6 +390,7 @@ ffiRealAddress(e:Expr):Expr := (
 	    is x:RRcell do (
 		when a.1
 		is y:ZZcell do (
+		    if !isInt(y) then return WrongArgSmallInteger();
 		    bits := toInt(y);
 		    if bits == 0 then (
 			z := copy(x.v);
@@ -419,6 +427,7 @@ ffiRealValue(e:Expr):Expr := (
 	    is x:pointerCell do (
 		when a.1
 		is y:ZZcell do (
+		    if !isInt(y) then return WrongArgSmallInteger();
 		    bits := toInt(y);
 		    if bits == 0
 		    then toExpr(moveToRR(Ccode(RRmutable, "*(mpfr_ptr*)", x.v)))
