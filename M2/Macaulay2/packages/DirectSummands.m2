@@ -48,6 +48,8 @@ export {
     "frobeniusPullback",
     "frobeniusPushforward",
     "frobeniusTwist",
+    "potentialExtension",
+    "changeBaseField"
     }
 
 -----------------------------------------------------------------------------
@@ -93,11 +95,22 @@ PolynomialRing ** GaloisField := (R, L) -> (
     A := first flattenRing(R, CoefficientRing => null);
     quotient sub(ideal A, L monoid A))
 
-changeBaseField = (L, M) -> (
+changeBaseField = method()
+changeBaseField(GaloisField, Module) := (L, M) -> (
     S := first flattenRing(ring M, CoefficientRing => null);
-    R := quotient sub(ideal S, L monoid S);
-    directSum apply(components M,
-	N -> coker sub(presentation N, R)))
+    K := coefficientRing S;
+    if class K =!= GaloisField then (
+        R0 := quotient sub(ideal S, L monoid S);
+        return directSum apply(components M,
+	    N -> coker sub(presentation N, R0)));
+    i0 := map(L, K);
+    LS := L(monoid S);
+    i1 := map(LS, ring ideal S, gens LS | { i0 K_0 });
+    R := quotient i1 ideal S;
+    i := map(R, S, i1);
+    directSum apply(components M, N -> i ** N))
+
+changeBaseField(GaloisField, CoherentSheaf) := (L, F) -> changeBaseField(L, module F)
 
 nonzero = x -> select(x, i -> i != 0)
 nonnull = x -> select(x, i -> i =!= null)
@@ -151,6 +164,7 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
     then M.cache#(symbol summands => o.ExtendGroundField) else components M)
 
 -- Note: M may need to be extended to a field extensions
+-- TODO: add option to provide a general endomorphism or idempotent
 -- TODO: when splitting over a field extension, use cached splitting over summands
 -- TODO: cache the inclusion maps
 -- Strategies:
