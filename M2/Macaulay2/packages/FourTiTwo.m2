@@ -49,6 +49,7 @@ if not programPaths#?"4ti2" and FourTiTwo#Options#Configuration#"path" != ""
     then programPaths#"4ti2" = FourTiTwo#Options#Configuration#"path"
 
 fourTiTwo = null
+debugLimit = 5
 
 run4ti2 = (exe, args) -> (
     if fourTiTwo === null then
@@ -110,7 +111,7 @@ toBinomial(Matrix,Ring) := (M,S) -> (
 toricMarkov = method(Options=> {InputType => null})
 toricMarkov Matrix := Matrix => o -> (A) -> (
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      if o.InputType === "lattice" then
      	  F := openOut(filename|".lat")
      else 
@@ -125,7 +126,7 @@ toricMarkov(Matrix,Ring) := o -> (A,S) -> toBinomial(toricMarkov(A,o), S)
 toricGroebner = method(Options=>{Weights=>null})
 toricGroebner Matrix := o -> (A) -> (
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
@@ -141,7 +142,7 @@ toricGroebner(Matrix,Ring) := o -> (A,S) -> toBinomial(toricGroebner(A,o), S)
 toricCircuits = method()
 toricCircuits Matrix := Matrix => (A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
@@ -152,7 +153,7 @@ toricCircuits Matrix := Matrix => (A ->(
 toricGraver = method()
 toricGraver Matrix := Matrix => (A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
@@ -164,7 +165,7 @@ toricGraver (Matrix,Ring) := Ideal => ((A,S)->toBinomial(toricGraver(A),S))
 hilbertBasis = method(Options=> {InputType => null})
 hilbertBasis Matrix := Matrix => o -> (A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      if o.InputType === "lattice" then
      	  F := openOut(filename|".lat")
      else 
@@ -177,7 +178,7 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
 
 rays Matrix := Matrix => (A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
@@ -193,7 +194,7 @@ rays Matrix := Matrix => (A ->(
 toricGraverDegrees = method()
 toricGraverDegrees Matrix := Matrix => (A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;

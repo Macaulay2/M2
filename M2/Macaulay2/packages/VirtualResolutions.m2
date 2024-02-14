@@ -489,8 +489,8 @@ isComputationDone = method(TypicalValue => Boolean, Options => true)
 isComputationDone MultigradedRegularityComputation := Boolean => options multigradedRegularity >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
     instance(container.Result, List)
-    and (opts.LowerLimit === null or container.LowerLimit <= opts.LowerLimit)
-    and (opts.UpperLimit === null or container.UpperLimit >= opts.UpperLimit))
+    and container.LowerLimit <= min \ transpose{container.LowerLimit, opts.LowerLimit}
+    and container.UpperLimit >= max \ transpose{container.UpperLimit, opts.UpperLimit})
 
 cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
@@ -528,8 +528,16 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     else if S.?TateData then X = normalToricVarietyFromTateData S
     -- start from module over multigraded polynomial ring and get module over Cox ring of a product of toricProjectiveSpaces
     else X = normalToricVarietyFromTateData imbueRingWithTateData S;
+    r := regularity M;
+    n := degreeLength ring M;
     -- the multigraded regularity of the zero module is -infinity in every component
-    if M == 0 then return {toList(degreeLength ring X : -infinity)};
+    -- TODO: use Hilbert polynomial to detect irrelevant modules quickly
+    if M == 0 then return {toList(n : -infinity)};
+    opts = opts ++ {
+	-- from Proposition 3.7 of [BCHS22] we know reg M \subset mindegs + Eff X
+	LowerLimit => if opts.LowerLimit =!= null then opts.LowerLimit else compMin degrees M,
+	-- Note: an upper limit that works for all examples isn't known
+	UpperLimit => if opts.UpperLimit =!= null then opts.UpperLimit else compMax join(degrees M, {toList(n : r)})};
     -- store a cached computation object in M
     --   MultigradedRegularityOptions{} => MultigradedRegularityComputation{ LowerLimit, UpperLimit, Result }
     container := new MultigradedRegularityComputation from M;
@@ -543,13 +551,15 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     then error("no applicable strategy for ", toString key)
     else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
 
+-- This is the old strategy for products of projective spaces.
+-- It is based on a direct sheaf cohomology calculation.
+-- See [ABLS20]: https://msp.org/jsag/2020/10-1/p06.xhtml
 multigradedRegularityCohomologySearchStrategy = (X, M, opts) -> (
     S := ring X;
     -- TODO: also check that X and S are indeed a product of
     -- projective spaces and its Cox ring, otherwise return null
     if instance(M, Ideal) then M = comodule M;
     if ring M =!= S then M = map(S, ring M, gens S) ** M;
-    -- This is the default strategy, outlined in https://msp.org/jsag/2020/10-1/p06.xhtml
     debugInfo := if debugLevel < 1 then identity else printerr;
     -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
@@ -566,21 +576,17 @@ multigradedRegularityCohomologySearchStrategy = (X, M, opts) -> (
         "reg M = " | toString r,
         "mindegs = " | toString mindegs};
     H := hilbertPolynomial(X, M);
-    HP := x -> (map(QQ, ring H, x))(H);
     debugInfo \ {
 	"HP M = " | toString H,
 	"degs = " | toString degs};
-    -- TODO: why is this the right upper bound?
-    high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
-    -- TODO: why is mindegs - toList(n:d) the right lower bound?
-    low  := if opts.LowerLimit =!= null then opts.LowerLimit else mindegs - toList(n:d);
-    --
+    (low, high) := (opts.LowerLimit, opts.UpperLimit);
     debugInfo("Computing cohomologyHashTable from ", toString low, " to ", toString high);
     L := pairs cohomologyHashTable(M, low, high);
     --
     gt := new MutableHashTable;
     debugInfo("Beginning search in Picard group");
     -- TODO: rewrite this loop
+    HP := x -> (map(QQ, ring H, x))(H);
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
