@@ -476,7 +476,7 @@ document {
 	  "Working with two buffers",
 	  "Sending lines or selected text to Macaulay2 using the f11 key",
 	  "Command completion with TAB",
-	  "Horizontal scrolling with f3,f4,f5,f6,f7"
+	  "Horizontal scrolling with f3 and f4"
 	  },
      PARA {"Before starting, note that when we say to type M-x M2, what we really mean is: press the x key while holding down the meta key (on Macs this is either
 	  the option key or the apple key, depending on how your emacs is set up); type M2; and then press the return (or enter) key after that.  Similarly, C-c
