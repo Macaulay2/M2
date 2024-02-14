@@ -567,7 +567,7 @@ scroll the text so the cursor appears at the center of the screen.  Use ", TT "C
 move to the beginning of the line and then the ", TT "f2", " function key 
 (or ", TT "C-S-c .", ") to bring the left margin back into view.",
 PARA{},
-"You may use the ", TT "f5", " function key or (or ", TT "C-c ?", ") to 
+"You may use ", TT "C-S-c SPC", " to
 toggle whether long lines are truncated or wrapped; initially they are truncated."
      }
 
