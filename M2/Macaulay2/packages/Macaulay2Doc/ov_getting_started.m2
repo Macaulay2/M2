@@ -552,8 +552,8 @@ PARA{},
 around to the next line, simply disappear off the right side of the screen,
 as indicated by the dollar signs or little arrows in the rightmost column.  Switch to the
 other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
-and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-c <", ") 
-and the function key ", TT "LinearAlgebra", " (or ", TT "C-c >", ").  In modern emacs implementations
+and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-x <", ") 
+and the function key ", TT "F4", " (or ", TT "C-x >", ").  In modern emacs implementations
 where mouse clicking works, click on the arrow to scroll in that direction.  In
 these versions of emacs, typing C-e, or C-a to get at the end or beginning of the line
 also horizontally scrolls the text to that position.  Older emacs tend to need
