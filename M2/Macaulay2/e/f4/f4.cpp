@@ -492,17 +492,39 @@ void F4GB::gauss_reduce(bool diagonalize)
   ElementArray gauss_row { mVectorArithmetic->allocateElementArray(ncols) };
   for (int i = 0; i < nrows; i++)
     {
-      row_elem &r = mat->rows[i];
-      if (r.len == 0) continue;  // could happen once we include syzygies...
+      // TODO: Do we need access to n_newpivots to be thread-safe?
+      if ((not hilbert) or (n_newpivots > 0))
+      {
+         bool newNonzeroReduction = gauss_reduce_row(i, gauss_row);
+         if (not newNonzeroReduction) n_zero_reductions++;
+         if (hilbert && newNonzeroReduction)
+            --n_newpivots;
+      }
+    }
+  mVectorArithmetic->deallocateElementArray(gauss_row);
+
+  if (M2_gbTrace >= 3)
+    fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions);
+
+  if (diagonalize) tail_reduce();
+}
+
+bool F4GB::gauss_reduce_row(int index,
+                            ElementArray& gauss_row)
+{
+   // returns true if the row reduces to a "new" nonzero row
+   // returns false otherwise
+      row_elem &r = mat->rows[index];
+      if (r.len == 0) return false;  // could happen once we include syzygies...
       int pivotcol = r.comps[0];
       int pivotrow = mat->columns[pivotcol].head;
-      if (pivotrow == i) continue;  // this is a pivot row, so leave it alone
+      if (pivotrow == index) return false;  // this is a pivot row, so leave it alone
 
       const ElementArray& rcoeffs = get_coeffs_array(r);
       n_pairs_computed++;
       mVectorArithmetic->fillDenseArray(gauss_row, rcoeffs, Range(r.comps, r.comps + r.len));
 
-      int firstnonzero = ncols;
+      int firstnonzero = -1;
       int first = r.comps[0];
       int last = r.comps[r.len - 1];
       do
@@ -521,11 +543,12 @@ void F4GB::gauss_reduce(bool diagonalize)
               int last1 = pivot_rowelem.comps[pivot_rowelem.len - 1];
               if (last1 > last) last = last1;
             }
-          else if (firstnonzero == ncols)
+          else if (firstnonzero == -1)
             firstnonzero = first;
           first = mVectorArithmetic->denseNextNonzero(gauss_row, first+1, last);
         }
-      while (first <= last);
+      while (first <= last);  // end do
+
       if (not r.coeffs.isNull())
         mVectorArithmetic->deallocateElementArray(r.coeffs);
       Mem->components.deallocate(r.comps);
@@ -548,19 +571,13 @@ void F4GB::gauss_reduce(bool diagonalize)
       if (r.len > 0)
         {
           mVectorArithmetic->makeMonic(r.coeffs);
-          mat->columns[r.comps[0]].head = i;
-          if (--n_newpivots == 0) break;
+          mat->columns[r.comps[0]].head = index;
+          return true;
         }
       else
-        n_zero_reductions++;
-    }
-  mVectorArithmetic->deallocateElementArray(gauss_row);
-
-  if (M2_gbTrace >= 3)
-    fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions);
-
-  if (diagonalize) tail_reduce();
+        return false;
 }
+                            
 
 void F4GB::tail_reduce()
 {

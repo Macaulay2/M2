@@ -169,6 +169,7 @@ class F4GB : public our_new_delete
   // and also to determine if an element (row) needs to be tail reduced
 
   void gauss_reduce(bool diagonalize);
+  bool gauss_reduce_row(int index, ElementArray& gauss_row);
   void tail_reduce();
 
   void row_to_dense_row(int r, int &first, int &last);
