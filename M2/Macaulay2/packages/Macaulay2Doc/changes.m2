@@ -85,6 +85,20 @@ document {
             LI { "Some computations in the engine (e.g. minimal betti diagrams and Groebner bases over associative algebras), ",
                   "can now take advantage of multiple CPU cores, see ", TO "parallelism in engine computations", "."}
 		    }
+	       },
+	  LI { "emacs updates:",
+	       UL {
+	            LI { "Indentation in the Macaulay2 major mode is now more consistent with other Emacs majors modes.  For example, it now respects ",
+			 "the Electric Indent minor mode.  In particular, it is possible to toggle whether code is automatically indented after pressing ",
+			 KBD "Return", " by running ", SAMP "M-x electric-indent-mode", "." },
+		    LI { "The Macaulay2 Interaction major mode now respects the ", SAMP "comint-use-prompt-regexp", " variable.  This controls how ",
+			 "many lines are sent to Macaulay2 when pressing ", KBD "Return", " after scrolling up to previous input.  If the variable is ",
+			 "set to ", SAMP "t", ", then one line will be sent.  If it is set to ", SAMP "nil", " (the default), then the entire input ",
+			 "field will be sent." },
+		    LI { "The function ", SAMP "M2-send-to-program", " (which is bound to ", KBD "F11", " by default), is now only intended to be ",
+			 "called from the Macaulay2 major mode.  A new function, ", SAMP "M2-send-input-or-get-input-from-demo-buffer", " has been ",
+			 "added (and bound to ", KBD "F11", ") for the Macaulay2 Interaction major mode.  The user experience should remain unchanged." }
+		    }
 	       }
 	  }
      }
