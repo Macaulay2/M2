@@ -979,7 +979,7 @@ document {
      TO "teaching emacs how to find M2", ".",
      PARA{},
      "You may wish to bind the emacs function ", TT "M2-send-to-program", "
-     to a global keystroke for ease of use; this is done automatically for
+     to a global keystroke for ease of use; this is done automatically
      in Macaulay2 buffers.  For example, the following emacs code
      will bind it to the function key ", TT "f11", ".",
      PARA{},
