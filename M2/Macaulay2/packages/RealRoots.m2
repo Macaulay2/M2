@@ -2,6 +2,7 @@
 newPackage(
     "RealRoots",
     Version=>"0.1",
+    --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 16/02/2024
     Date=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
@@ -398,7 +399,7 @@ realRootIsolation (RingElement,A) := List => (f,r)->(
 	
 	--bound for real roots
 	C := (listForm ((f-leadTerm(f))/leadCoefficient(f)))/last; --make the polynomial monic, and obtain list of coefficients of non-lead monomials.
-    	M := min(1+max(apply(C,abs)),max(1,sum(C,abs))); --obtains Cauchy or Lagrange bound.
+    	M := min(1+max(0,max(apply(C,abs))),max(1,sum(C,abs))); --obtains Cauchy or Lagrange bound (setting M = 1 if the polynomial is only a single term)
 	
 	L := {{-M,M}};
 	midp := 0;
