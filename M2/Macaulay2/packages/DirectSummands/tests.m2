@@ -50,3 +50,11 @@ TEST /// -- direct summands over field extensions
   elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF(7, 3))) -- 3.77s -> 2.6
   elapsedTime assert(toList(7:1)  == rank \ summands(M, ExtendGroundField => GF(7, 2))) -- 2.18s -> 0.47
 ///
+
+TEST ///
+  R = ZZ/101[x,y,z]/(x^3, x^2*y, x*y^2, y^4, y^3*z)
+  C = res(coker vars R, LengthLimit => 3)
+  D = res(coker transpose C.dd_3, LengthLimit => 3)
+  M = coker D.dd_3
+  summands M
+///
