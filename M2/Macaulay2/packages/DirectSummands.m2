@@ -23,6 +23,7 @@ newPackage(
 	},
     Keywords => { "Commutative Algebra" },
     PackageImports => {
+	"Isomorphism",     -- for isIsomorphic
 	"Polyhedra",       -- for coneFromVData and coneComp
 	"PushForward",     -- only for frobenius.m2
 	"RationalPoints2", -- for rationalPoints in findIdempotent
@@ -120,6 +121,19 @@ homomorphism Vector := v -> homomorphism matrix v
 
 checkRecursionDepth = () -> if recursionDepth() > recursionLimit - 20 then printerr(
     "Warning: the recursion depth limit may need to be extended; use `recursionLimit = N`")
+
+module Module := identity
+-- TODO: speed this up
+-- TODO: implement isIsomorphic for sheaves
+unique' = L -> (
+    L = new MutableList from module \ L;
+    b := new MutableList from #L : true;
+    for k to 5 do -- arbitrary, just to make sure isIsomorphic doesn't fail because of bad randomness
+    for i to #L-2 do for j from i+1 to #L-1 do if b#j then (
+	if isIsomorphic(L#i, L#j) then ( b#j = false; L#j = L#i ));
+    new List from L)
+
+tally' := L -> tally unique' L
 
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
