@@ -58,3 +58,14 @@ TEST ///
   M = coker D.dd_3
   summands M
 ///
+
+TEST ///
+  --tests largepowers
+  K = ZZ/7
+  R = K[x,y,z]/(x^3+y^3+z^3)
+  X = Proj R
+  M1 = summands(frobeniusPushforward(1, OO_X), ExtendGroundField => 2)
+  M2 = frobeniusPushforward(1, M1#1)
+  L = potentialExtension M2
+  findIdem changeBaseField(L, M2)
+///
