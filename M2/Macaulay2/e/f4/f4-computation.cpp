@@ -28,7 +28,8 @@ GBComputation *createF4GB(const Matrix *m,
                           M2_arrayint gb_weights,
                           int strategy,
                           M2_bool use_max_degree,
-                          int max_degree)
+                          int max_degree,
+                          int numThreads)
 {
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
@@ -45,7 +46,8 @@ GBComputation *createF4GB(const Matrix *m,
                         gb_weights,
                         strategy,
                         use_max_degree,
-                        max_degree);
+                        max_degree,
+                        numThreads);
   return G;
 }
 
@@ -57,7 +59,8 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
                              M2_arrayint gb_weights,
                              int strategy,
                              M2_bool use_max_degree,
-                             int max_degree)
+                             int max_degree,
+                             int numThreads)
   : mFreeModule(m->rows()),
     mVectorArithmetic(VA),
     mMemoryBlock(Mem0)
@@ -77,7 +80,8 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
                    gb_weights,
                    strategy,
                    use_max_degree,
-                   max_degree);
+                   max_degree,
+                   numThreads);
 
   F4toM2Interface::from_M2_matrix(mVectorArithmetic, mMonoid, m, gb_weights, mF4GB->get_generators());
   mF4GB->new_generators(0, m->n_cols() - 1);

@@ -20,12 +20,14 @@ GBComputation *createF4GB(const Matrix *m,
                           M2_arrayint gb_weights,
                           int strategy,
                           M2_bool use_max_degree,
-                          int max_degree);
+                          int max_degree,
+                          int numThreads);
 
 // Found in "gb-f4/GBF4Interface.hpp"
 GBComputation *createGBF4Interface(const Matrix *m,
                                   const std::vector<int>& weights,
-                                  int strategy
+                                  int strategy,
+                                  int numThreads
                                   );
 
 GBComputation::~GBComputation() {}
@@ -42,6 +44,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
                                         int max_degree,
                                         int algorithm,
                                         int strategy,
+                                        int numThreads,
                                         int max_reduction_count)
 {
   const Ring *R1 = m->get_ring();
@@ -105,7 +108,8 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
                             gb_weights,
                             strategy,
                             use_max_degree,
-                            max_degree);
+                            max_degree,
+                            numThreads);
         break;
       case 7:
         result = binomialGB_comp::create(m,
@@ -120,10 +124,12 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
         ERROR("Algorithm => Test has been removed from M2");
         return nullptr;
       case 9:
+        // new GBF4 algorithm
         weights = M2_arrayint_to_stdvector<int>(gb_weights);
         result = createGBF4Interface(m,
                             weights,
-                            strategy);
+                            strategy,
+                            numThreads);
         break;
       default:
         result = gbA::create(m,

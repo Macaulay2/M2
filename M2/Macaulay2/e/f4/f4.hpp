@@ -72,6 +72,7 @@
 #include "f4-types.hpp"             // for gb_array, MonomialLookupTable
 #include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
 #include "interface/computation.h"  // for ComputationStatusCode, StopCondit...
+#include "m2tbb.hpp"                // for TBB
 #include "memblock.hpp"             // for F4MemoryBlock
 #include "monhashtable.hpp"         // for MonomialHashTable
 #include "newdelete.hpp"            // for our_new_delete
@@ -134,6 +135,13 @@ class F4GB : public our_new_delete
   clock_t clock_gauss;
   clock_t clock_make_matrix;
 
+#if defined (WITH_TBB)
+  int mNumThreads;
+  mtbb::task_arena mScheduler;
+
+  mtbb::task_arena& getScheduler() { return mScheduler; }
+#endif
+
  private:
   ////////////////////////////////////////////////////////////////////
   void delete_gb_array(gb_array &g);
@@ -191,7 +199,8 @@ class F4GB : public our_new_delete
        M2_arrayint gb_weights,
        int strategy,
        M2_bool use_max_degree,
-       int max_degree);
+       int max_degree,
+       int numThreads);
 
   ~F4GB();
 

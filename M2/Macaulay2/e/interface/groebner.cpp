@@ -103,6 +103,7 @@ Computation /* or null */ *IM2_GB_make(
     {
       test_over_RR_or_CC(m->get_ring());
       clear_emit_size();
+      int numThreads = M2_numTBBThreads; // settable from front end.
       return GBComputation::choose_gb(m,
                                       collect_syz,
                                       n_rows_to_keep,
@@ -111,6 +112,7 @@ Computation /* or null */ *IM2_GB_make(
                                       max_degree,
                                       algorithm,
                                       strategy,
+                                      numThreads,
                                       max_reduction_count);
   } catch (const exc::engine_error& e)
     {
