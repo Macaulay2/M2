@@ -26,6 +26,7 @@
 #include <cstdio>                      // for fprintf, stderr
 #include <algorithm>                   // for stable_sort
 #include <vector>                      // for swap, vector
+#include <atomic>                      // for atomic ints in gauss_reduce
 
 class RingElement;
 
@@ -38,7 +39,8 @@ F4GB::F4GB(const VectorArithmetic* VA,
            M2_arrayint weights0,
            int strategy,
            M2_bool use_max_degree,
-           int max_degree)
+           int max_degree,
+           int numThreads)
     : mVectorArithmetic(VA),
       M(M0),
       F(F0),
@@ -64,14 +66,18 @@ F4GB::F4GB(const VectorArithmetic* VA,
       Mem(Mem0),
       clock_sort_columns(0),
       clock_gauss(0),
-      clock_make_matrix(0)
+      clock_make_matrix(0),
+      mNumThreads(mtbb::numThreads(numThreads))
+#if defined(WITH_TBB)
+    , mScheduler(mNumThreads)
+#endif
 {
   lookup = new MonomialLookupTable(M->n_vars());
   S = new F4SPairSet(M, gb);
   mat = new coefficient_matrix;
 
   // TODO: set status?
-  if (M2_gbTrace >= 2) M->show();
+  if (M2_gbTrace >= 3) M->show();
 }
 
 void F4GB::set_hilbert_function(const RingElement *hf)
@@ -481,14 +487,42 @@ void F4GB::gauss_reduce(bool diagonalize)
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
 
-  int n_newpivots = -1;  // the number of new GB elements in this degree
-  int n_zero_reductions = 0;
+  std::atomic<int> n_newpivots = -1;  // the number of new GB elements in this degree
+  std::atomic<int> n_zero_reductions = 0;
   if (hilbert)
     {
       n_newpivots = hilbert->nRemainingExpected();
       if (n_newpivots == 0) return;
     }
 
+//#if defined(WITH_TBB)
+#if 0
+  using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
+  // create a dense array for each thread
+  threadLocalDense_t threadLocalDense([&]() { 
+    return mVectorArithmetic->allocateElementArray(ncols);
+  });
+  std::cout << "mNumThreads: " << mNumThreads << std::endl;
+  mScheduler.execute([&] {
+    mtbb::parallel_for(mtbb::blocked_range<int>{0,nrows},
+                       [&](const mtbb::blocked_range<int>& r)
+                       {
+                          threadLocalDense_t::reference my_dense = threadLocalDense.local();
+                          for (auto i = r.begin(); i != r.end(); ++i)
+                          {
+                             //if ((not hilbert) or (n_newpivots > 0))
+                             //{
+                                bool newNonzeroReduction = gauss_reduce_row(i, my_dense);
+                             //   if (not newNonzeroReduction) n_zero_reductions++;
+                             //   if (hilbert && newNonzeroReduction)
+                             //     --n_newpivots;
+                             //}
+                          }
+                       });
+  });
+  for (auto tlDense : threadLocalDense)
+    mVectorArithmetic->deallocateElementArray(tlDense);
+#else
   ElementArray gauss_row { mVectorArithmetic->allocateElementArray(ncols) };
   for (int i = 0; i < nrows; i++)
     {
@@ -502,9 +536,10 @@ void F4GB::gauss_reduce(bool diagonalize)
       }
     }
   mVectorArithmetic->deallocateElementArray(gauss_row);
+#endif 
 
   if (M2_gbTrace >= 3)
-    fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions);
+    fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions.load());
 
   if (diagonalize) tail_reduce();
 }
@@ -779,7 +814,7 @@ void F4GB::do_spairs()
   nsecs /= CLOCKS_PER_SEC;
   if (M2_gbTrace >= 2) fprintf(stderr, " make matrix time = %f\n", nsecs);
 
-  if (M2_gbTrace >= 2) H.dump();
+  if (M2_gbTrace >= 3) H.dump();
 
   begin_time = clock();
   gauss_reduce(true);
@@ -937,12 +972,15 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       fprintf(stderr,
               "number of reduction steps           : %ld\n",
               n_reduction_steps);
+      if (M2_gbTrace >= 3)
+      {
+        fprintf(stderr,
+              "number of spairs removed by criterion = %ld\n",
+              S->n_unneeded_pairs());
+        M->show();
+      }
     }
 
-  fprintf(stderr,
-          "number of spairs removed by criterion = %ld\n",
-          S->n_unneeded_pairs());
-  M->show();
   return is_done;
 }
 

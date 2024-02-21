@@ -94,7 +94,8 @@ GBComputation *GBWalker::make_gb(const Matrix *M) const
                                                false,
                                                -1,
                                                0,
-                                               0
+                                               0,
+                                               0 // TBB numThreads
                                                /* , max_reduction_count */
                                                );
   G0->set_stop_conditions(false,

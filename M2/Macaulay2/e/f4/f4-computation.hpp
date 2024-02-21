@@ -40,7 +40,8 @@ class F4Computation : public GBComputation
                 M2_arrayint gb_weights,
                 int strategy,
                 M2_bool use_max_degree,
-                int max_degree);
+                int max_degree,
+                int numThreads);
 
   ~F4Computation() override;
 
@@ -90,7 +91,8 @@ GBComputation *createF4GB(const Matrix *m,
                           M2_arrayint gb_weights,
                           int strategy,
                           M2_bool use_max_degree,
-                          int max_degree);
+                          int max_degree,
+                          int numThreads);
 
 #endif
 
