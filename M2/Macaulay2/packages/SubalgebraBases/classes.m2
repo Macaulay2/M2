@@ -317,8 +317,6 @@ sagbiBasis SAGBIComputation := opts -> H -> (
     maps := new HashTable from H#SAGBImaps;
     ideals := new HashTable from H#SAGBIideals;
     data := new HashTable from H#SAGBIdata;
-    -- pending := applyValues(H#SAGBIpending, l -> new List from l);
-    -- proposed change to the following line
     pending := new HashTable from apply(keys H#SAGBIpending,i-> i => new List from H#SAGBIpending#i);
     optionTable := new HashTable from H#SAGBIoptions;
     newSAGBIBasis := new SAGBIBasis from {

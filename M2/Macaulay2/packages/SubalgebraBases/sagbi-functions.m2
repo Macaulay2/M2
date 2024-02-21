@@ -382,17 +382,17 @@ RingElement // Subring := RingElement => (f, S) -> (
 -- 2) If there is not a complete sagbi basis then use the 'extrinsic method' - see groebnerMembershipTest above
 -- Note: we construct the tensor ring with a monomial order lifted from the ambient ring
 Matrix % SAGBIBasis := Matrix => (M, SB) -> (
-    assert(ambient SB === ring M);
+    if not (ambient SB === ring M) then error "expected rings to be the same";
     SB#SAGBImaps#"inverseFlatteningMap" subduction(SB, M)
 );
 
 RingElement % SAGBIBasis := RingElement => (f, SB) -> (
-    assert(ambient SB === ring f);
+    if not (ambient SB === ring f) then error "expected rings to be the same";
         SB#SAGBImaps#"inverseFlatteningMap" first first entries subduction(SB, matrix{{f}})
     );
 
 Matrix % Subring := Matrix => (M, S) -> (
-    assert(ring M === ambient S);
+    if not (ambient S === ring M) then error "expected rings to be the same";
     if S#cache#?SAGBIBasis and S#cache#SAGBIBasis#SAGBIdata#"sagbiStatus" == 1 then (
         -- S has a complete sagbi basis so use subduction
         SB := S#cache#SAGBIBasis;
