@@ -227,29 +227,8 @@ isSAGBI Subring := {
             -- subduct to zero against the sagbiGenerators
             -- 4. the leading terms of the sagbi generators are 'the same'
             -- as the leading terms of the subring, i.e., they generate the same algebra
-            SB' := if (hasSAGBIBasis and not zero SB#SAGBIdata#"sagbiGenerators" and (
-                highDegreeGens :=
-                matrix {for gen in first entries gens S list if ((
-                matrix{degree leadTerm gen})*SB#SAGBIrings#"heftVector")_(0,0) >
-                SB#SAGBIdata#"limit" then gen else continue};
-                zero highDegreeGens or zero (highDegreeGens % SB)
-                ) and (
-                -- the initial algebra lies in the quotient by the initial ideal
-                LTAmbient := (if isQuotientRing flattenedRing S then (
-                    Q := flattenedRing S;
-                    R := ambient Q;
-                    I := ideal Q;
-                    R / ideal leadTerm I)
-                    else flattenedRing S);
-                liftMap := map(LTAmbient, flattenedRing S, gens LTAmbient);
-                LTgensS := liftMap leadTerm gens S;
-                LTgensSB := liftMap leadTerm gens SB;
-                subringLTgensS := subring LTgensS;
-                subringLTgensSB := subring LTgensSB;
-                forceSB subringLTgensS;
-                forceSB subringLTgensSB;
-                zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS))
-                ) then (
+            SB' := if (hasSAGBIBasis and not zero SB#SAGBIdata#"sagbiGenerators" and
+                isHighDegreeZero(S,SB) and isInitialInQuotient(S,SB)) then (
                 -- we can use the cached SAGBIBasis for the computation
                 -- if the sagbiStatus flag is non-zero then we can use it directly
                 -- otherwise we need to use perform an internal check
@@ -307,6 +286,40 @@ isSAGBI List := {
     } >> opts -> L -> (
     S := subring L;
     isSAGBI(S, opts)
+)
+
+----------------------------------------
+-- isHighDegreeZero(S, SB) = high degree generators (those above the limit) reduce to zero
+-- S a subring of a polynomial ring (or quotient ring)
+-- SB its SAGBI Basis
+isHighDegreeZero = method()
+isHighDegreeZero (Subring, SAGBIBasis) := (S,SB) -> (
+    highDegreeGens := matrix {for gen in first entries gens S list if ((
+        matrix{degree leadTerm gen})*SB#SAGBIrings#"heftVector")_(0,0) >
+        SB#SAGBIdata#"limit" then gen else continue};
+    zero highDegreeGens or zero (highDegreeGens % SB)
+)
+
+----------------------------------------
+-- isInitialInQuotient(S, SB) = the initial algebra lies in the quotient by the initial ideal
+-- S a subring of a polynomial ring (or quotient ring)
+-- SB its SAGBI Basis
+isInitialInQuotient = method()
+isInitialInQuotient (Subring,SAGBIBasis) := (S, SB) -> (
+    LTAmbient := (if isQuotientRing flattenedRing S then (
+        Q := flattenedRing S;
+        R := ambient Q;
+        I := ideal Q;
+        R / ideal leadTerm I)
+    else flattenedRing S);
+    liftMap := map(LTAmbient, flattenedRing S, gens LTAmbient);
+    LTgensS := liftMap leadTerm gens S;
+    LTgensSB := liftMap leadTerm gens SB;
+    subringLTgensS := subring LTgensS;
+    subringLTgensSB := subring LTgensSB;
+    forceSB subringLTgensS;
+    forceSB subringLTgensSB;
+    zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS)
 )
 
 ----------------------------------------
