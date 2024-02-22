@@ -13,9 +13,8 @@ assert(degrees source symmetricPower(2, matrix{{a^2,a*b,b^3}}) ==
 assert(degrees source symmetricPower(3, matrix{{a^2,a*b,b^3}}) ==
      {{6, 0, 0}, {5, 1, 0}, {4, 3, 0}, {4, 2, 0}, {3, 4, 0}, 
       {2, 6, 0}, {3, 3, 0}, {2, 5, 0}, {1, 7, 0}, {0, 9, 0}})
-     
 
-
+--------------------
 R = QQ[a..d]
 f = schreyerOrder vars R
 debug Core
@@ -36,7 +35,6 @@ g = symmetricPower(3,f)
 rawSource raw g
 assert(schreyerOrder source g == diagonalMatrix matrix{(flatten entries g)/leadMonomial})
 
-
 ----- test of schreyer orders with exterior power
 R = QQ[a..d]
 f = schreyerOrder vars R
@@ -51,3 +49,8 @@ raw F2
 F4 = exteriorPower(4,F) 
 schreyerOrder F4
 assert(exteriorPower(5,F) == 0)
+
+----- test of equality of free modules with or without schreyer order
+R = QQ[x,y,z]/(x^2+y^2+z^2)
+M = ambient coker(res coker vars R).dd_2
+assert(M === R^{3:-1})

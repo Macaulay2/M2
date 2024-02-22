@@ -163,8 +163,10 @@ bool FreeModule::is_equal(const FreeModule *F) const
     for (i = 0; i < rank(); i++)
       if (0 != D->compare(degree(i), F->degree(i))) return false;
 
+  /* free modules with same ranks and degrees should be equal
   if (schreyer != nullptr) return schreyer->is_equal(F->schreyer);
   if (F->schreyer != nullptr) return false;
+  */
 
   return true;
 }

@@ -389,7 +389,7 @@ remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual remainder(dual f, dual g))
 remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
-     if target m != target n then error "expected matrices with the same target";
+     if target m =!= target n then error "expected matrices with the same target";
      if not isFreeModule source n or not isFreeModule source m then error "expected maps from free modules";
      if not isQuotientModule target m then error "expected maps to a quotient module";
      c := runHooks((remainder, Matrix, Matrix), (n, m));
