@@ -25,12 +25,11 @@ newPackage(
 export {
     -- These functions should be moved.  Where to?
     "constantStrand", -- documented, tests
-    "constantStrands", -- documented, tests
-    "getNonminimalRes",
-    "degreeZeroMatrix",
-    "minimizeBetti",
-    "SVDBetti",
-    
+    -- "constantStrands", -- documented, tests
+    -- "getNonminimalRes",  -- internal function here...
+    -- "degreeZeroMatrix", -- internal function?
+    -- "minimizeBetti", -- internal function?
+    --"SVDBetti", -- used in commented out code in RandomComplexes.
     "SparseMatrix",
     "newSparseMatrix",
     "sparseMatrix",
@@ -138,20 +137,21 @@ isMadeFromFastNonminimal = (C) -> C.?Resolution and C.Resolution.?RawComputation
 fastNonminimalComputation = (C) -> if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation else null
 
 constantStrand = method()
-constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
-    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
-    comp := fastNonminimalComputation C;
-    if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
-    len := length C;
-    reg := regularity C;
-    chainComplex for lev from 1 to len list (
-        matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
-        )
-    )    
+-- The following was removed in M2 version 1.23.  Its use is based on undocumented and now removed features from M2.
+-- constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
+--     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
+--     comp := fastNonminimalComputation C;
+--     if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
+--     len := length C;
+--     reg := regularity C;
+--     chainComplex for lev from 1 to len list (
+--         matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
+--         )
+--     )    
 
 constantStrand(ChainComplex, ZZ) := (C, deg) -> (
     kk := coefficientRing ring C;
-    if kk === QQ then error "coefficient ring is QQ: need to provide a ring: RR_53, RR_1000, ZZ/1073741891, or ZZ/1073741909, or ZZ";
+    if kk === QQ then error "the base field must be a finite prime field currently";
     comp := fastNonminimalComputation C;
     if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
@@ -160,21 +160,22 @@ constantStrand(ChainComplex, ZZ) := (C, deg) -> (
     chainComplex for lev from 1 to len list (
         matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
         )
-    )    
-
-constantStrands = method()
-constantStrands(ChainComplex, Ring) := (C, kk) -> (
-    -- base ring of C should be QQ
---    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
-    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
-    len := length C;
-    reg := regularity C;
-    hashTable for deg from 0 to len+reg list (
-        D := constantStrand(C,kk,deg);
-        if D == 0 then continue else deg => D
-        )
     )
-constantStrands ChainComplex := (C) -> constantStrands(C, coefficientRing ring C)
+
+-- constantStrands = method()
+-- constantStrands(ChainComplex, Ring) := (C, kk) -> (
+--     if kk =!= coefficientRing ring C then error "use of constantStrands for a ring other than the coefficient ring is no longer supported";
+--     -- base ring of C should be QQ
+-- --    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
+--     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
+--     len := length C;
+--     reg := regularity C;
+--     hashTable for deg from 0 to len+reg list (
+--         D := constantStrand(C,deg);
+--         if D == 0 then continue else deg => D
+--         )
+--     )
+-- constantStrands ChainComplex := (C) -> constantStrands(C, coefficientRing ring C)
 
 getNonminimalRes = method()
 getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
@@ -302,15 +303,15 @@ toBetti(ZZ, HashTable) := (deg, H) -> (
       )
 
 -- How to handle this here??
-SVDBetti = method()
-SVDBetti ChainComplex := (C) -> (
-    if coefficientRing ring C =!= QQ then error "expected FastNonminimal resolution over QQ"; 
-    Ls := constantStrands(C,RR_53);
-    H := hashTable for i in keys Ls list i => SVDHomology Ls#i;
-    H2 := hashTable for i in keys H list i => last H#i;
-    -- << "singular values: " << H2 << endl;
-    sum for i in keys H list toBetti(i, first H#i)
-    )
+-- SVDBetti = method()
+-- SVDBetti ChainComplex := (C) -> (
+--     if coefficientRing ring C =!= QQ then error "expected FastNonminimal resolution over QQ"; 
+--     Ls := constantStrands(C,RR_53);
+--     H := hashTable for i in keys Ls list i => SVDHomology Ls#i;
+--     H2 := hashTable for i in keys H list i => last H#i;
+--     -- << "singular values: " << H2 << endl;
+--     sum for i in keys H list toBetti(i, first H#i)
+--     )
 
 beginDocumentation()
 
@@ -321,210 +322,46 @@ doc ///
      support for computing homology, ranks and SVD complexes, from a chain complex over the real numbers
    Description
     Text
-      Some functionality here should be moved elsewhere.
-      
-      
+       Some functionality here should be moved elsewhere.
    Caveat
-     Currently, this package requires that the Macaulay2 being run is from the res-2107 git branch
+       This package will be removed soon, with {\tt constantStrand}
+       functionality moved elsewhere.  The undocumented features the
+       rest of the package relied on have been removed in M2 version
+       1.23.
 ///
 
 doc ///
    Key
      constantStrand
-     (constantStrand, ChainComplex, Ring, ZZ)
+     (constantStrand, ChainComplex, ZZ)
    Headline
      a constant strand of a chain complex
    Usage
-     Cd = constantStrand(C, kk, deg)
+     Cd = constantStrand(C, deg)
    Inputs
      C:ChainComplex
        a chain complex created using (the unsupported) {\tt res(I, Strategy=>4.1)}
-     kk:Ring
-       if the coefficient ring of the ring of C is QQ, then this should be either:
-       RR_{53}, RR_{1000},ZZ/32003, or ZZ/1073741909.  
      deg:ZZ
-       the degree that one wants to choose.
+       the degree of the strand of the complex
    Outputs
      Cd:ChainComplex
        a chain complex over {\tt kk}, consisting of the submatrices of {\tt C} of degree {\tt deg}
    Description
     Text
-      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
-      as in the example below.  But it should be much more general, handling other rings with grace,
+      Warning! This function is very rough currently.  It works if one
+      uses it in the intended manner, as in the example below.  But it
+      should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example
-      R = QQ[a..d]
+      R = ZZ/101[a..d]
       I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(ideal gens gb I, Strategy=>4.1)
+      C = res(I, Strategy=>4)
       betti C
-      CR = constantStrand(C, RR_53, 3)
+      CR = constantStrand(C, 5)
       CR.dd_2
-      CR2 = constantStrand(C, RR_1000, 3)
-      CR2.dd_2
-      kk1 = ZZ/32003
-      kk2 = ZZ/1073741909
-      Cp1 = constantStrand(C, kk1, 3)
-      Cp2 = constantStrand(C, kk2, 3)
-      netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
-      (clean(1e-14,CR)).dd_4
-      netList {(clean(1e-14,CR)).dd_4}==netList {(clean(1e-299,CR2)).dd_4}
-    Text
-      Setting the input ring to be the integers, although a hack, sets each entry to the 
-      number of multiplications used to create this number.  Warning: the result is almost certainly
-      not a complex!  This part of this function is experimental, and will likely change
-      in later versions.
-    Example
-      CZ = constantStrand(C, ZZ, 8)
-      CZ.dd_4
    Caveat
      This function should be defined for any graded chain complex, not just ones created
-     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
-     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
-     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
-     together with information about how many multiplications were performed to obtain this number.
-   SeeAlso
-     constantStrands
-///
-
-
-
-doc ///
-   Key
-     constantStrands
-     (constantStrands, ChainComplex, Ring)
-   Headline
-     all constant strands of a chain complex
-   Usage
-     Cs = constantStrands(C, kk)
-   Inputs
-     C:ChainComplex
-       A chain complex created using {\tt res(I, Strategy=>4.1)}
-     kk:Ring
-       if the coefficient ring of the ring of C is QQ, then this should be either:
-       RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
-   Outputs
-     Cs:List
-      the list of chain complex over {\tt kk}, which for each degree degree {\tt deg}, consisting of the submatrices of {\tt C} of degree {\tt deg}
-   Description
-    Text
-      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
-      as in the example below.  But it should be much more general, handling other rings with grace,
-      and also it should handle arbitrary (graded) chain complexes.
-    Example
-      R = QQ[a..d]
-      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(ideal gens gb I, Strategy=>4.1)
-      betti C
-      Cs = constantStrands(C, RR_53)
-      CR=Cs#8
-      SVDBetti C, betti C         
-   Caveat
-     This function should be defined for any graded chain complex, not just ones created
-     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
-     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
-     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
-     together with information about how many multiplications were performed to obtain this number.
-   SeeAlso
-     constantStrand
-///
-
-doc ///
-   Key
-     SVDBetti
-     (SVDBetti, ChainComplex)
-   Headline
-     the Betti table computed with SVD methods
-   Usage
-     SVDBetti C
-   Inputs
-     C:ChainComplex
-       A chain complex created using {\tt res(I, Strategy=>4.1)}   
-       if the coefficient ring of the ring of C is QQ, then this should be either:
-       RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
-   Outputs
-      :BettiTally
-       the betti table of the minimal resolution using SVD of complexes and the numerical data
-   Description
-    Text
-      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
-      as in the example below.  But it should be much more general, handling other rings with grace,
-      and also it should handle arbitrary (graded) chain complexes.
-    Example
-      R = QQ[a..d]
-      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(ideal gens gb I, Strategy=>4.1)
-      SVDBetti C, betti C 
-      Rp=ZZ/32003[gens R]
-      betti res sub(I,Rp)        
-   Caveat
-     This function should be defined for any graded chain complex, not just ones created
-     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
-     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
-     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
-     together with information about how many multiplications were performed to obtain this number.
-   SeeAlso
-     constantStrands
-///
-
-
-"TEST"
- ///
-  R = QQ[a..d]
-  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(ideal gens gb I,Strategy=>4.1)
-  betti C
-  betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
-  CR = constantStrand(C, RR_53, 8)
-  CR2 = constantStrand(C, RR_1000, 8) -- crash
-
-  kk1 = ZZ/32003
-  kk2 = ZZ/1073741909
-  Cp1 = constantStrand(C, kk1, 8)
-  Cp2 = constantStrand(C, kk2, 8)
-
-  assert(betti'deg8 == betti CR)
-  assert(betti'deg8 == betti CR2)  
-  assert(betti'deg8 == betti Cp1)
-  assert(betti'deg8 == betti Cp2)
-  
-  (CR.dd_4, CR2.dd_4, Cp1.dd_4, Cp2.dd_4)
-  (clean(1e-14,CR)).dd_4
-  (clean(1e-299,CR2)).dd_4
-///
-
-
-
-
-
-"TEST"
-///
-  kk = QQ
-  R = kk[a..d]
-  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(ideal gens gb I, Strategy=>4.1)
-  betti C
-  constantStrand(C, RR_53, 8)
-///
-
-"TEST"
-///
-  kk = QQ
-  R = kk[a..d]
-  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  gbI = flatten entries gens gb I
-  gbI = for g in gbI list (1/(leadCoefficient g)) * g
-  gbI = matrix{gbI}
-  
-  R1 = RR_53[a..d]
-  gbI1 = sub(gbI, R1)
-  forceGB (gbI1)
-  I1 = ideal gbI1
-  gbTrace=3
-  gens gb I1
-  --C = res(I1, Strategy=>5) -- refuses to try it
-  C = res(ideal gens gb I, Strategy=>5.1)
-  betti C
-  constantStrand(C, RR_53, 8)
+     using {\tt res(I, Strategy=>4)}.
 ///
 
 TEST ///
@@ -641,56 +478,6 @@ TEST ///
   M.cache.resolutionNonminimal.Resolution.RawComputation
 ///  
 
-///
--- Test of computing non-minimal resolutions
-  -- XXX
-  -- Try a non homogeneous ideal:
-  restart
-  debug Core -- for the key resolutionNonminimal
-  kk = ZZ/32003
-  R = kk[a..d]
-
-  hasFastNonminimal = method()
-  hasFastNonminimal Module := M -> M.cache.?resolutionNonminimal
-  hasFastNonminimal Ideal := I -> hasFastNonminimal comodule I
-    
-  I = ideal"ab-1,c2-c-a"
-  M = comodule I
-  C = res(I, Strategy=>5) -- currently gives an error: cannot use res(...,FastNonminimal=>true) with inhomogeneous input
-  assert hasFastNonminimal M
-  assert hasFastNonminimal I
-
-  R = kk[a..d,DegreeRank=>4]  
-  degree a
-  I = ideal(a^2, a*b, b^2)
-  C = res(I, Strategy=>4) -- currently gives an error: expected singly graded with positive degrees for the variables
-
-
-  
-  C = res I
-  C.dd
-  peek C.Resolution
-  debug Core
-  C.Resolution.RawComputation
-
-  J = ideal"ab-cd,a3+c3,a2c+b2c"
-  CJ = res(J, FastNonminimal=>true)
-  CJ.dd
-  peek CJ.Resolution
-  debug Core
-  CJ.Resolution.RawComputation
-  
-  -- where are these stashed?
-  MI = comodule I  
-  MI.cache.resolution === C
-
-  MJ = comodule J
-  MJ.cache.resolution === CJ
-
-gbTrace=3
-  minimalBetti J
-  minimalBetti I
-///
 
 end--
 
@@ -870,7 +657,8 @@ minimalBetti sub(I, R32009)
 
 ///
 
-TEST ///
+"TEST"
+///
   -- warning: this currently requires test code on res2017 branch.
   -- XXXX
 restart
@@ -914,7 +702,8 @@ restart
   oo * 1_kk
 ///
 
-TEST ///
+"TEST"
+///
   -- warning: this currently requires test code on res2017 branch.
 restart
   -- YYYYY
@@ -1044,7 +833,8 @@ maximalEntry D
   C0.dd^2 -- TODO: make it so we can "clean" the results here.
 ///
 
-TEST ///
+"TEST"
+///
 restart
   needsPackage "SVDComplexes"
   needsPackage "AGRExamples"
@@ -1252,4 +1042,196 @@ SeeAlso
 TEST ///
 -- test code and assertions here
 -- may have as many TEST sections as needed
+///
+
+
+
+///
+   Key
+     constantStrands
+     (constantStrands, ChainComplex, Ring)
+   Headline
+     all constant strands of a chain complex
+   Usage
+     Cs = constantStrands(C, kk)
+   Inputs
+     C:ChainComplex
+       A chain complex created using {\tt res(I, Strategy=>4.1)}
+     kk:Ring
+       if the coefficient ring of the ring of C is QQ, then this should be either:
+       RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
+   Outputs
+     Cs:List
+      the list of chain complex over {\tt kk}, which for each degree degree {\tt deg}, consisting of the submatrices of {\tt C} of degree {\tt deg}
+   Description
+    Text
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
+      as in the example below.  But it should be much more general, handling other rings with grace,
+      and also it should handle arbitrary (graded) chain complexes.
+    Example
+      R = QQ[a..d]
+      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+      C = res(ideal gens gb I, Strategy=>4.1)
+      betti C
+      Cs = constantStrands(C, RR_53)
+      CR=Cs#8
+      SVDBetti C, betti C         
+   Caveat
+     This function should be defined for any graded chain complex, not just ones created
+     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
+     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
+     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
+     together with information about how many multiplications were performed to obtain this number.
+   SeeAlso
+     constantStrand
+///
+
+///
+   Key
+     SVDBetti
+     (SVDBetti, ChainComplex)
+   Headline
+     the Betti table computed with SVD methods
+   Usage
+     SVDBetti C
+   Inputs
+     C:ChainComplex
+       A chain complex created using {\tt res(I, Strategy=>4.1)}   
+       if the coefficient ring of the ring of C is QQ, then this should be either:
+       RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
+   Outputs
+      :BettiTally
+       the betti table of the minimal resolution using SVD of complexes and the numerical data
+   Description
+    Text
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
+      as in the example below.  But it should be much more general, handling other rings with grace,
+      and also it should handle arbitrary (graded) chain complexes.
+    Example
+      R = QQ[a..d]
+      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+      C = res(ideal gens gb I, Strategy=>4.1)
+      SVDBetti C, betti C 
+      Rp=ZZ/32003[gens R]
+      betti res sub(I,Rp)        
+   Caveat
+     This function should be defined for any graded chain complex, not just ones created
+     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
+     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
+     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
+     together with information about how many multiplications were performed to obtain this number.
+   SeeAlso
+     constantStrands
+///
+
+
+"TEST"
+ ///
+  R = QQ[a..d]
+  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+  C = res(ideal gens gb I,Strategy=>4.1)
+  betti C
+  betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
+  CR = constantStrand(C, RR_53, 8)
+  CR2 = constantStrand(C, RR_1000, 8) -- crash
+
+  kk1 = ZZ/32003
+  kk2 = ZZ/1073741909
+  Cp1 = constantStrand(C, kk1, 8)
+  Cp2 = constantStrand(C, kk2, 8)
+
+  assert(betti'deg8 == betti CR)
+  assert(betti'deg8 == betti CR2)  
+  assert(betti'deg8 == betti Cp1)
+  assert(betti'deg8 == betti Cp2)
+  
+  (CR.dd_4, CR2.dd_4, Cp1.dd_4, Cp2.dd_4)
+  (clean(1e-14,CR)).dd_4
+  (clean(1e-299,CR2)).dd_4
+///
+
+
+
+
+
+"TEST"
+///
+  kk = QQ
+  R = kk[a..d]
+  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+  C = res(ideal gens gb I, Strategy=>4.1)
+  betti C
+  constantStrand(C, RR_53, 8)
+///
+
+"TEST"
+///
+  kk = QQ
+  R = kk[a..d]
+  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+  gbI = flatten entries gens gb I
+  gbI = for g in gbI list (1/(leadCoefficient g)) * g
+  gbI = matrix{gbI}
+  
+  R1 = RR_53[a..d]
+  gbI1 = sub(gbI, R1)
+  forceGB (gbI1)
+  I1 = ideal gbI1
+  gbTrace=3
+  gens gb I1
+  --C = res(I1, Strategy=>5) -- refuses to try it
+  C = res(ideal gens gb I, Strategy=>5.1)
+  betti C
+  constantStrand(C, RR_53, 8)
+///
+
+///
+-- Test of computing non-minimal resolutions
+  -- XXX
+  -- Try a non homogeneous ideal:
+  restart
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+
+  hasFastNonminimal = method()
+  hasFastNonminimal Module := M -> M.cache.?resolutionNonminimal
+  hasFastNonminimal Ideal := I -> hasFastNonminimal comodule I
+    
+  I = ideal"ab-1,c2-c-a"
+  M = comodule I
+  C = res(I, Strategy=>5) -- currently gives an error: cannot use res(...,FastNonminimal=>true) with inhomogeneous input
+  assert hasFastNonminimal M
+  assert hasFastNonminimal I
+
+  R = kk[a..d,DegreeRank=>4]  
+  degree a
+  I = ideal(a^2, a*b, b^2)
+  C = res(I, Strategy=>4) -- currently gives an error: expected singly graded with positive degrees for the variables
+
+
+  
+  C = res I
+  C.dd
+  peek C.Resolution
+  debug Core
+  C.Resolution.RawComputation
+
+  J = ideal"ab-cd,a3+c3,a2c+b2c"
+  CJ = res(J, FastNonminimal=>true)
+  CJ.dd
+  peek CJ.Resolution
+  debug Core
+  CJ.Resolution.RawComputation
+  
+  -- where are these stashed?
+  MI = comodule I  
+  MI.cache.resolution === C
+
+  MJ = comodule J
+  MJ.cache.resolution === CJ
+
+gbTrace=3
+  minimalBetti J
+  minimalBetti I
 ///
