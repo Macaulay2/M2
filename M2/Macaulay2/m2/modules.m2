@@ -356,7 +356,7 @@ schreyerOrder Module := Matrix => (F) -> (
      tar := new Module from (ring F, rawTarget m);
      map(tar,src,m))
 
-schreyerOrder Matrix := Matrix => (m) -> map(target m, new Module from (ring m, rawSchreyerSource raw m), m)
+schreyerOrder Matrix := Matrix => (m) -> map(ring m, schreyerOrder raw m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
 
 possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
