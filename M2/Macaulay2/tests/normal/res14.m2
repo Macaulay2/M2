@@ -6,7 +6,7 @@ elapsedTime for kk in {-* TODO: QQ, *- ZZ/2, ZZ/32003 -* TODO: ZZ/32831 *-} do (
     -- FIXME: assert(betti C == betti res(ideal I_*, Strategy => FastNonminimal));
     assert(betti C == betti res(ideal I_*, FastNonminimal => true));
     assert(betti C == betti res(ideal I_*, FastNonminimal => true, Strategy => Engine));
-    for strategy in {4, 4.1, -* FIXME: 5, 5.1 *- } do (
+    for strategy in {4, -* 4.1, : 5, 5.1 *- } do (
 	assert(betti C == betti res(ideal I_*, Strategy => strategy));
 	assert(betti C == betti res(ideal I_*, FastNonminimal => true, Strategy => strategy));
 	);
