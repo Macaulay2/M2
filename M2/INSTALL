@@ -33,19 +33,25 @@ command, assuming you have installed "git" on your machine:
     git clone https://github.com/Macaulay2/M2
 
 A directory called M2, which you can move or rename, will be created, and this
-INSTALL file is in the subdirectory "M2" of it.  The "release" branches tend to
-be more stable, and if you compile from one of those, you'll have the same
-functionality as those who download our binary releases.  So, after cloning,
-you can switch to the branch containing version 1.6, for example, with the
-following command:
+INSTALL file is in the subdirectory "M2" of it.  By default, the "master" branch
+of the M2 repository will be checked out.
+
+The "release" tags tend to be more stable, and if you compile from one of
+those, you'll have the same functionality as those who download our binary
+releases.  So, after cloning, you can switch to the tag containing version 1.6,
+for example, with the following command:
 
     git checkout release-1.6
 
 Instead of release-1.6 you should, of course, use the most recent one.
 
-The following command shows the list of release branches:
+The following command shows the list of release tags:
 
-    git branch -a | grep origin/release
+    git tag | grep release
+
+However, if some time has passed since the most recent release and your system
+has newer versions of some of Macaulay2's dependencies than were available at
+the time of the release, you may have more success building the "master" branch.
 
 The following commands, run from the top level of this source tree (the parent
 of the directory this file is in) will download the latest changes to the
@@ -54,6 +60,11 @@ source code:
     git pull
     git submodule sync
     git submodule update
+
+To obtain the latest, but potentially unstable, changes to the Macaulay2 source
+code, switch to the "development" branch:
+
+    git checkout development
 
 ---------
 Libraries
