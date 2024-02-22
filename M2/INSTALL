@@ -61,6 +61,11 @@ source code:
     git submodule sync
     git submodule update
 
+To obtain the latest, but potentially unstable, changes to the Macaulay2 source
+code, switch to the "development" branch:
+
+    git checkout development
+
 ---------
 Libraries
 ---------
