@@ -358,6 +358,7 @@ resolutionNonminimal = (opts, M) -> (
     --    LengthLimit
     --    Strategy (values allowed: strats)
     strats := {4, 4.1, 5, 5.1};
+    if isMember(opts.Strategy, {4.1, 5.1}) then error "nonminimal resolution strategies 4.1 and 5.1 have been removed in M2 1.23.  Please contact the M2 team with any questions";
     strategy := if isMember(opts.Strategy, strats) then opts.Strategy
     else if opts.FastNonminimal then (
 	if opts.Strategy === null then first strats
