@@ -306,11 +306,13 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      then map(L,source f,f)			    -- it can happen that L has a Schreier order, and we want to preserve that exactly
      else f)
 
-quotientRemainder'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if source f != source g then error "expected maps with the same source";
-     if not isFreeModule source f or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
-     (q,r) := quotientRemainder(dual f, dual g);
-     (dual q, dual r))
+quotientRemainder'(Matrix, Matrix) := Matrix => (f, g) -> (
+    L := source f;
+    M := target f;
+    N := target g;
+    if L =!= source g then error "expected maps with the same source";
+    if not all({L, M, N}, isFreeModule) then error "expected maps between free modules";
+    dual \ quotientRemainder(dual f, dual g))
 
 quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      L := source f;					    -- result may not be well defined if L is not free
