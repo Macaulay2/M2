@@ -635,12 +635,12 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      M := source f;
      if ring N' =!= ring M' or ring N' =!= ring f then error "inducedMap: expected modules and map over the same ring";
     if isFreeModule N and isFreeModule M and (
-	N != ambient N' and rank N === rank ambient N' or
-	M != ambient M' and rank M === rank ambient M')
+	N =!= ambient N' and rank N === rank ambient N' or
+	M =!= ambient M' and rank M === rank ambient M')
      then f = map(N = ambient N', M = ambient M', f)
      else (
-	if ambient N' != ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
-	if ambient M' != ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module");
+	if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
+	if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module");
      c := runHooks((inducedMap, Module, Module, Matrix), (opts, N', M', f));
      (f', g, gbN', gbM) := if c =!= null then c else error "inducedMap: no method implemented for this type of input";
      if opts.Verify then (
@@ -666,8 +666,7 @@ addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M'
      (f', g, gbN', gbM)))
 
 inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
-     if ambient M != ambient N 
-     then error "'inducedMap' expected modules with same ambient free module";
+    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
 -- TODO: deprecate this in favor of isWellDefined

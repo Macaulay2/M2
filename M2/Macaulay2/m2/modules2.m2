@@ -12,7 +12,7 @@ Module + Module := Module => (M,N) -> (
      if ring M =!= ring N
      then error "expected modules over the same ring";
      R := ring M;
-     if ambient M != ambient N
+     if ambient M =!= ambient N
      or M.?relations and N.?relations and M.relations != N.relations
      or M.?relations and not N.?relations
      or not M.?relations and N.?relations
@@ -267,7 +267,7 @@ flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;
-     if L != ambient N then error "expected modules with the same ambient module";
+     if L =!= ambient N then error "expected modules with the same ambient module";
      R := ring M;
      if N.?generators
      then (
@@ -375,7 +375,7 @@ pushout(Matrix, Matrix) := Module => (f, g) -> (
 -----------------------------------------------------------------------------
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!
-     ambient M == ambient N and
+     ambient M === ambient N and
      if M.?relations and N.?relations then (
 	  image M.relations == image N.relations
 	  and
