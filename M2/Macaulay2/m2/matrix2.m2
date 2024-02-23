@@ -289,7 +289,7 @@ modulo(Matrix,Nothing) := Matrix => options -> (m,null) -> syz(m,options)
 modulo(Nothing,Matrix) := Matrix => options -> (null,n) -> n
 modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      (P,L) := (target m, source m);
-     if P != target n then error "expected maps with the same target";
+     if P =!= target n then error "expected maps with the same target";
      if not isFreeModule P or not isFreeModule L or not isFreeModule source n
      then error "expected maps between free modules";
      dm := degree m;
@@ -313,11 +313,10 @@ quotientRemainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      (dual q, dual r))
 
 quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
-     if ring g =!= ring f then error "expected maps over the same ring";
      L := source f;					    -- result may not be well defined if L is not free
      M := target f;
      N := source g;
-     if M != target g then error "expected maps with the same target";
+     if M =!= target g then error "expected maps with the same target";
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );

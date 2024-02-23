@@ -54,3 +54,11 @@ assert(exteriorPower(5,F) == 0)
 R = QQ[x,y,z]/(x^2+y^2+z^2)
 M = ambient coker(res coker vars R).dd_2
 assert(M === R^{3:-1})
+
+-- c.f. https://github.com/Macaulay2/M2/issues/2373
+R = QQ[x]/x^2
+C = res coker vars R
+m = map(R^{-1}, , {{x}})
+assert(m === C.dd_2)
+assert(m === schreyerOrder m)
+assert((0 * image C.dd_2):(ideal gens R) === image C.dd_2)

@@ -341,7 +341,7 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
 subquotient(Matrix,Matrix) := (subgens,relns) -> (
      R := ring relns;
      E := target subgens;
-     if E != target relns then error "expected maps with the same target"; -- we used to have =!=, but Schreyer orderings of free modules are discarded by "syz"
+     if E =!= target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
      if n == 0 then new Module from (R,rE)

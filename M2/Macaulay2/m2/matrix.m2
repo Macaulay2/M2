@@ -666,8 +666,7 @@ addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M'
      (f', g, gbN', gbM)))
 
 inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
-     if ambient M != ambient N 
-     then error "'inducedMap' expected modules with same ambient free module";
+    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
 -- TODO: deprecate this in favor of isWellDefined
