@@ -84,8 +84,8 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
 
 	  if thread then (
 	       -- threadFrame grows whenever an assignment occurs, if needed, so we don't enlarge it now
-	       frameindex = threadFramesize;
-	       threadFramesize = threadFramesize + 1;
+	       frameindex = load(threadFramesize);
+	       fetch_add(threadFramesize, 1);
 	       )
 	  else (
 	       -- this allows the global frame to grow

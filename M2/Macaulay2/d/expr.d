@@ -63,7 +63,9 @@ export globalFrame := Frame(self, 0, globalFramesize, true,
 	  nullE						    -- one value for dummySymbol
 	  ));
 export threadFrameID := 0;
-export threadFramesize := 0;
+header "struct atomic_field expr_threadFramesize;";
+import threadFramesize:atomicField;
+store(threadFramesize, 0);
 export threadLocal threadFrame  := Frame(self, threadFrameID, 0, true, Sequence());
 export enlarge(f:Frame):int := (
      n := f.valuesUsed;
@@ -74,8 +76,8 @@ export enlarge(f:Frame):int := (
 	       while true do provide nullE));
      n);
 export enlargeThreadFrame():Frame := (
-     if threadFramesize > length(threadFrame.values) then (
-	  threadFrame.values = new Sequence len 2 * threadFramesize + 1 do (
+     if load(threadFramesize) > length(threadFrame.values) then (
+	  threadFrame.values = new Sequence len 2 * load(threadFramesize) + 1 do (
 	       foreach value in threadFrame.values do provide value;
 	       while true do provide nullE));
      threadFrame);

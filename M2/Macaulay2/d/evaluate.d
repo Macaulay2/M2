@@ -4,8 +4,8 @@ use hashtables;
 use convertr;
 export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
-export evalSequenceHadError := false;
-export evalSequenceErrorMessage := nullE;
+export threadLocal evalSequenceHadError := false;
+export threadLocal evalSequenceErrorMessage := nullE;
 threadLocal errorreturn := nullE;
 --The recycleBin provides essentially a linked list of frames up to size 20 for easy reuse.
 --Questions: Can this lead to excess memory leaks if you create a ton of frames of the same size?

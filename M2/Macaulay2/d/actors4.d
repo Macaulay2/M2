@@ -1193,7 +1193,7 @@ instanceof(e:Expr):Expr := (
 setupfun("instance",instanceof);
 
 
-hadseq := false;
+threadLocal hadseq := false;
 deeplen(a:Sequence):int := (
      n := 0;
      foreach x in a do (

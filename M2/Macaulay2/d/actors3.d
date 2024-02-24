@@ -450,7 +450,7 @@ compareop(lhs:Code,rhs:Code):Expr := (
 unaryQuestionFun(rhs:Code):Expr := unarymethod(rhs,QuestionS);
 setup(QuestionS,unaryQuestionFun,compareop);
 
-whichway := GreaterS;
+threadLocal whichway := GreaterS;
 threadLocal sortlist := emptySequence;
 subsort(l:int,r:int):Expr := (
      b := r+1-l;
