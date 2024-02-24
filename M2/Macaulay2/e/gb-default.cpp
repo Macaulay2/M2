@@ -574,9 +574,15 @@ void gbA::spair_text_out(buffer &o, spair *p)
  * S-pair heuristics *****
  *************************/
 
+#if defined(__has_feature) && __has_feature(thread_sanitizer)	// to avoid warnings
+static std::atomic_ulong ncalls(0);
+static std::atomic_ulong nloops(0);
+static std::atomic_ulong nsaved_unneeded(0);
+#else
 static unsigned long ncalls = 0;
 static unsigned long nloops = 0;
 static unsigned long nsaved_unneeded = 0;
+#endif
 bool gbA::pair_not_needed(spair *p, gbelem *m)
 {
   /* Check the criterion: in(m) divides lcm(p).
