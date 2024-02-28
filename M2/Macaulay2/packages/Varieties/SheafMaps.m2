@@ -105,8 +105,8 @@ SheafMap == SheafMap := Boolean => (psi, phi) -> (
 	regularity target g, regularity source g);
     truncate(r, psi.map) == truncate(r, phi.map))
 
-SheafMap == ZZ := Boolean => (f, z) -> image f == z
-ZZ == SheafMap := Boolean => (z, f) -> image f == z
+SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
+ZZ == SheafMap := Boolean => (n, f) -> f == n
 
 isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
@@ -122,13 +122,17 @@ isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(
 -- composition
 SheafMap * SheafMap := SheafMap => (phi, psi) -> (
     (d, e) := (degree phi, degree psi);
-    (f, g) := (
-	if d >= e then matrix phi else
-	truncate(d, matrix phi, MinimalGenerators => false),
-	truncate(d, matrix psi, MinimalGenerators => false));
-    if d >= e
-    then map(target phi, source psi, f * g)
-    else map(target phi, source psi, f * g, d))
+    --the below has a reordering issue coming from the truncation bug, which still needs to be fixed
+    if d >= e then(
+        phiMat := matrix phi;
+        psiMat := truncate(d, matrix psi);
+        --inducedMap in line below attempts to account for the bug in Truncation that reorders bases
+        map(target phi, source psi,phiMat*inducedMap(source phiMat,target psiMat)*psiMat)
+    )
+    else(
+        phiMat = truncate(d, matrix phi);
+        psiMat = truncate(d, matrix psi);
+        map(target phi, source psi,phiMat*inducedMap(source phiMat,target psiMat)*psiMat,d)))
 
 -- printing
 -- TODO: use abbreviations for source and target
@@ -432,6 +436,41 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	r := max(a1, a2) - e - m + 1;
 	M = truncate(r, M));
     moveToField basis(0, Ext^m(M, matrix f, opts)))
+
+connectingHomomorphism = method()
+connectingHomomorphism(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
+    e := 0; -- this is a sum of twists bound
+    if not instance(variety F, ProjectiveVariety)
+    then error "expected sheaves on a projective variety";
+    M := module F;
+    N1 := module source f;
+    N2 := module target f;
+    R := ring M;
+    if not isAffineRing R
+    then error "expected sheaves on a variety over a field";
+    l := max(
+	l1 := min(dim N1, m),
+	l2 := min(dim N2, m));
+    P1 := resolution flattenModule N1;
+    P2 := resolution flattenModule N2;
+    p := max(
+	p1 := length P1,
+	p2 := length P2);
+    n := dim ring P1 - 1;
+    -- in the first case the spectral sequence degenerates
+    if p >= n-l then (
+	-- the "regularity" between n-l and p indices
+	a1 := max apply(n - l1 .. p1, j -> (max degrees P1_j)#0 - j);
+	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
+	r := max(a1, a2,regularity ker f) - e - m + 1;
+        --need to truncate M in a way related to invariants of ker f
+        --probably just add in l3, P3, etc., take max as above
+	M = truncate(r, M));
+    reg := 1 + regularity coker matrix f;
+    fTruncated := truncate(reg,matrix f);
+    gTruncated := inducedMap(source fTruncated,ker fTruncated);
+    return connectingExtMap(M, fTruncated, gTruncated);
+    moveToField basis(0,( (connectingExtMap(M, fTruncated, gTruncated)))_m ) )
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
