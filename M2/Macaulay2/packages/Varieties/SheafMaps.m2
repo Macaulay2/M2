@@ -511,14 +511,18 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
 -----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
--- pullback and pushout
+-- pullback and pushout and concatenation
 -----------------------------------------------------------------------------
+
+SheafMap |  SheafMap := SheafMap => (f, g) -> map(target f, source f ++ source g, matrix f |  matrix g)
+-- TODO: we should truncate either f or g so that the source modules match
+SheafMap || SheafMap := SheafMap => (f, g) -> map(target f ++ target g, source f, matrix f || matrix g)
 
 -- TODO: also for a list of matrices
 pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> (
     -- TODO: use != instead
     if target f =!= target g then error "expected maps with the same target";
-    h := map(target f, source f ++ source g, matrix f | -matrix g);
+    h := f | -g;
     P := ker h;
     S := source h;
     P.cache.pullbackMaps = {
@@ -530,7 +534,7 @@ pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> (
 pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
     -- TODO: use != here instead
     if source matrix f =!= source matrix g then error "expected maps with the same source";
-    h := map(target f ++ target g, source f, matrix f || -matrix g);
+    h := f || -g;
     P := coker h;
     T := target h;
     P.cache.pushoutMaps = {
@@ -566,10 +570,6 @@ TEST ///
   assert(prune pullback(F_[0], F_[1]) == 0)
   assert(prune pushout(F^[0], F^[1]) == 0)
 ///
-
--- TODO:
--- pullback(SheafMap, SheafMap) := CoherentSheaf => ...
--- pushout(SheafMap, SheafMap) := CoherentSheaf => ...
 
 TEST ///
   debug Varieties
