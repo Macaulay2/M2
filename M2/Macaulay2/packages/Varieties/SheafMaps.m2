@@ -100,18 +100,12 @@ ZZ == SheafMap := Boolean => (z, f) -> image f == z
 isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
 isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
-    -- Note: sometimes calling isIsomorphic(prune F, prune G) is faster,
-    -- but we will leave it to the user to decide if that is the case.
-    -- Check if F and G are already pruned or if their minimal presentation is cached
-    M := if F.cache.?pruningMap then F.module else try F.cache.minimalPresentation.module;
-    N := if G.cache.?pruningMap then G.module else try G.cache.minimalPresentation.module;
-    -- Otherwise, we will compare truncated modules representing them, which works in general.
-    if M === null or N === null then (M, N) = (
-	maxRegs := max(regularity F.module, regularity G.module);
-	truncate(maxRegs, F.module, MinimalGenerators => false),
-	truncate(maxRegs, G.module, MinimalGenerators => false));
+    -- Check if F and G are already pruned
+    M := if F.cache.?pruningMap then F.module else (prune F).module;
+    N := if G.cache.?pruningMap then G.module else (prune G).module;
     (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then map(F, G, isom)))
+    (ret, if ret then map(sheaf M, sheaf N, isom)))
+
 isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
 
 -- composition
