@@ -574,7 +574,13 @@ void gbA::spair_text_out(buffer &o, spair *p)
  * S-pair heuristics *****
  *************************/
 
-#if defined(__has_feature) && __has_feature(thread_sanitizer)	// to avoid warnings
+#ifdef __has_feature	// a Clang and maybe gcc extension to determine compiler features
+    #if __has_feature(thread_sanitizer)
+	#define __SANITIZE_THREAD__	1	// gcc predefines this instead of __has_feature
+    #endif
+#endif
+
+#if __SANITIZE_THREAD__	// to avoid warnings
 static std::atomic_ulong ncalls(0);
 static std::atomic_ulong nloops(0);
 static std::atomic_ulong nsaved_unneeded(0);
