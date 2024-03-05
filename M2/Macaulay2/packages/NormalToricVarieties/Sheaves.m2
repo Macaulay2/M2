@@ -71,7 +71,7 @@ addHook((minimalPresentation, CoherentSheaf), Strategy => symbol NormalToricVari
     	if N != 0 then M = M/N;
     	C := freeResolution M;
     	-- is there a better bound?
-    	a := max(1, max flatten flatten apply(length C +1, i -> degrees C_i));
+	a := max(1, max apply(length C + 1, i -> i + max flatten degrees C_i));
 	return sheaf(X, minimalPresentation Hom(B^[a], M)) )
     )
 
