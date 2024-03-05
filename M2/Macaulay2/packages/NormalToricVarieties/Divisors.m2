@@ -143,7 +143,7 @@ effCone NormalToricVariety := (cacheValue symbol effCone) (X -> convexHull(matri
 nefCone NormalToricVariety := (cacheValue symbol nefCone) (X -> convexHull(matrix{0_(picardGroup X)}, nefGenerators X))
 
 effGenerators NormalToricVariety := fromWDivToCl
-nefGenerators NormalToricVariety := Matrix => X -> (
+nefGenerators NormalToricVariety := Matrix => (cacheValue symbol nefGenerators) (X -> (
     if isDegenerate X then 
 	error "-- not implemented for degenerate varieties";
     clX := classGroup X;
@@ -177,7 +177,7 @@ nefGenerators NormalToricVariety := Matrix => X -> (
     fromPic := matrix fromPicToCl X;
     indexOfPic := abs lcm (minors( rank source fromPic, fromPic^torsionlessCoord))_*;
     (indexOfPic * coneGens) // fromPic 
-    );
+    ))
 
 
 ------------------------------------------------------------------------------
