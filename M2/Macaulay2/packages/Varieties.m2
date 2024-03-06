@@ -369,7 +369,7 @@ CoherentSheaf  / Ideal         := CoherentSheaf => (F, I) -> sheaf(F.variety, F.
 Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I * F.module)
 directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.directSum(1 : F)
 
-components CoherentSheaf := List => F -> if F.cache.?components then F.cache.components else {F}
+components CoherentSheaf := List => (cacheValue symbol components) (F -> apply(components module F, N -> sheaf(F.variety, N)))
 
 -- multilinear ops
 -- TODO: document
