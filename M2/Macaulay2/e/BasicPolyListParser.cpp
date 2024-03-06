@@ -61,7 +61,10 @@ long readInteger(const std::string_view& str, size_t& begin_loc, size_t end_loc)
 
 int readIdentifier(const std::string_view& str, const IdentifierHash& map, size_t& begin_loc, size_t end_loc)
 {
-  // if str[0] is a character, find the identifier, and increment str past that,
+  /*
+    std::cout << str << "(begin=" << begin_loc << ", end=" << end_loc << " )" << std::endl;
+  */
+    // if str[0] is a character, find the identifier, and increment str past that,
   if (begin_loc >= end_loc or not isalpha(str[begin_loc])) return -1; // TODO: throw an error here?
   size_t loc = begin_loc;
   while (loc < end_loc and (isdigit(str[loc]) or isalpha(str[loc]) or str[loc] == '_'))
@@ -109,6 +112,7 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
     {
       ++begin_loc;
     }
+  while (end_loc > begin_loc and str[end_loc-1] == ' ') --end_loc;
   if (end_loc > begin_loc and str[end_loc-1] == ',') --end_loc;
   if (end_loc > begin_loc and str[end_loc-1] == ':') --end_loc;
   if (end_loc > begin_loc and str[end_loc-1] == ']') --end_loc;
@@ -235,7 +239,7 @@ BasicPolyList parseBasicPolyListFromString(std::string contents, std::vector<std
 ///////////////////////////////
 bool lineContainsVars(std::string_view& line) // if returns true, line now contains the part of the line with the variable names.
 {
-  std::string varHeader {"#for variable order "};
+  std::string varHeader {"#variable order:"};
   if (line.compare(0, varHeader.size(), varHeader) != 0)
     return false;
   line.remove_prefix(varHeader.size());
@@ -258,13 +262,16 @@ BasicPolyList parseMsolveFromString(std::string contents)
       if (lineContainsVars(thisline))
         {
           std::vector<std::string> idenList = readIdentifierList(thisline);
+          /*
+            std::cout << "-- idenList" << std::endl;
+          for (auto& id : idenList)
+            std::cout << id << std::endl;
+          */
           idenMap = { idenList };
           continue;
         }
 
-      if (thisline.size() == 0)
-        std::cout << "oops, this isn't good?" << std::endl;
-      if (thisline.size() == 0 or thisline[0] == '#')
+      if (thisline.size() == 0 or thisline[0] == '#' or thisline[0] == ']')
         {
           continue;
         }
