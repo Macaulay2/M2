@@ -513,15 +513,13 @@ pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
     P)
 
 trans := (C,v) -> (
+    -- TODO: should C_[0] (or C_[0,0], etc.) always work, even if the object isn't a direct sum?
+    if 1 == #components C then error "expected a direct sum of coherent sheaves";
+    w := toList v;
     if C.cache.?indexComponents then (
-	    Ci := C.cache.indexComponents;
-	    apply(v, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
-    else (
-        if not C.cache.?components then error "expected a direct sum of coherent sheaves";
-	    Cc := C.cache.components;
-	    apply(v, i -> if not Cc#?i then error "expected an index of a component of the direct sum");
-	    v)
-    )
+	Ci := C.cache.indexComponents;
+	apply(w, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
+    else try C.cache.components_w then v else error "expected an index of a component of the direct sum")
 
 CoherentSheaf _ Array := SheafMap => (F, v) -> (
     v = trans(F,v);

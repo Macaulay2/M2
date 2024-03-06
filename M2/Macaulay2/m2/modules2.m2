@@ -311,6 +311,7 @@ Module _ ZZ := Vector => (M,i) -> (
      p = map(M,R^1,p,Degree => d);
      new target p from {p})
 -----------------------------------------------------------------------------
+-- TODO: is caching here wise? There are 2^(#comps) many possibilities
 Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symbol ^,w) else M.cache#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
