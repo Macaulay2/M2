@@ -111,28 +111,25 @@ ZZ == SheafMap := Boolean => (n, f) -> f == n
 isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
 isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
-    -- Check if F and G are already pruned
-    M := if F.cache.?pruningMap then F.module else (prune F).module;
-    N := if G.cache.?pruningMap then G.module else (prune G).module;
+    M := module prune F;
+    N := module prune G;
+    -- TODO: isIsomorphic should check === first
+    if M === N then return (true, id_M);
     (ret, isom) := isIsomorphic(M, N, o, Strict => true);
     (ret, if ret then map(sheaf M, sheaf N, isom)))
 
 isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
 
 -- composition
-SheafMap * SheafMap := SheafMap => (phi, psi) -> (
-    (d, e) := (degree phi, degree psi);
-    --the below has a reordering issue coming from the truncation bug, which still needs to be fixed
-    if d >= e then(
-        phiMat := matrix phi;
-        psiMat := truncate(d, matrix psi);
-        --inducedMap in line below attempts to account for the bug in Truncation that reorders bases
-        map(target phi, source psi,phiMat*inducedMap(source phiMat,target psiMat)*psiMat)
-    )
-    else(
-        phiMat = truncate(d, matrix phi);
-        psiMat = truncate(d, matrix psi);
-        map(target phi, source psi,phiMat*inducedMap(source phiMat,target psiMat)*psiMat,d)))
+SheafMap * SheafMap := SheafMap => (f, g) -> (
+    (d, e) := (degree f, degree g);
+    (m, n) := (matrix f, matrix g);
+    if d < e then
+    m = truncate(d, m, MinimalGenerators => false);
+    n = truncate(d, n, MinimalGenerators => false);
+    if d >= e
+    then map(target f, source g, m * inducedMap(source m, target n) * n)
+    else map(target f, source g, m * inducedMap(source m, target n) * n, d))
 
 -- printing
 -- TODO: use abbreviations for source and target
@@ -302,8 +299,6 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     -- to a morphism between the underlying modules of F and G.
     phi := F'.cache.pruningMap;
     psi := G'.cache.pruningMap^-1;
-    -- FIXME: there's still a bug here where truncation
-    -- strangely flips the rows; see the failing test.
     B := basis(0, module H);
     g := inverse f * B;
     V := source moveToField B;
@@ -373,8 +368,9 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     -- Note: we use =!= to avoid pruning the sheaves
     -- we also don't verify g * f == 0 for the same reason
     if module source g =!= N then error "expected sheaf maps to be composable";
+    -- not sure why MinimalGenerators => false was relevant in line below, so we took it out
     -- truncate matrix f to match the degree of the source of g
-    f = inducedMap(truncate(d, N, MinimalGenerators => false), M, matrix f);
+    f = inducedMap(truncate(d, N), M, matrix f);
     sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
@@ -766,6 +762,7 @@ TEST ///
 TEST ///
   -- testing homology(SheafMap, SheafMap)
   S = QQ[x,y,z]
+  X = Proj S
   g = sheafMap(koszul_2 vars S, 4)
   g == 0 -- FIXME: this doesn't work with something I did
   f = sheafMap koszul_3 vars S
@@ -776,6 +773,7 @@ TEST ///
   assert(0 != prune homology(g(-1), f))
 
   S = QQ[x,y]
+  X=Proj S
   g = sheafMap koszul_1 vars S
   f = sheafMap koszul_2 vars S * g(-2)
   assert(0 == prune homology(g, f))
