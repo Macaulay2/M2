@@ -22,19 +22,17 @@ export{
     "leadingMonomials",
     "Output"
     }
-readMsolveOutput=method(TypicalValue=>Matrix);
-readMsolveOutput(String):=(msolveOut)->(
-    moutStrL:=separate(",",first separate("[]]",last separate("[[]",msolveOut)));
-    --the line below should be replaced by a call to the C-function to parse the string
-    M2Out:=for s in moutStrL list value(s);
-    return matrix {M2Out};
-    );
 debug Core
+use'readMsolveOutputFile := true;
 readMsolveOutputFile = method()
-readMsolveOutputFile(Ring,String) := Matrix => (R,mOut)->(
-    map(R, rawMatrixReadMsolveFile(raw R, mOut))
-    );
-
+readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutputFile 
+    then map(R, rawMatrixReadMsolveFile(raw R, mOut)) else (
+	msolveOut := get mOut;
+    	moutStrL:=separate(",",first separate("[]]",last separate("[[]",msolveOut)));
+    	--the line below should be replaced by a call to the C-function to parse the string
+    	M2Out:=for s in moutStrL list value(s);
+    	matrix {M2Out};
+    	)
 
 inputOkay=method(TypicalValue=>Boolean);
 inputOkay(Ideal):=I->(
@@ -72,7 +70,6 @@ grobBasis(Ideal):=(I)->(
     << "msolve output file is called: " << mOut << endl;
     callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
-    --msolGB:=readMsolveOutput(get(mOut));
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
@@ -93,28 +90,26 @@ leadingMonomials(Ideal):=(I)->(
     mOut:=temporaryFileName()|".ms";
     callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -g 1 -f "|mIn|" -o "|mOut;
     run(callStr);
-    msolGB:=readMsolveOutput(get(mOut));
-    --msolGB:=readMsolveOutputFile(R, mOut);
+    msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-eliminationIdeal=method(TypicalValue=>Matrix);
-eliminationIdeal(Ideal,RingElement):=(I,elimvar)->(
+eliminationIdeal=method();
+eliminationIdeal(Ideal,RingElement):=Ideal => (I,elimvar)->(
     return eliminationIdeal(I,{elimvar});
     );
-eliminationIdeal(RingElement,Ideal):=(elimvar,I)->(
-    return eliminationIdeal(I,{elimvar});
-    );
-eliminationIdeal(List,Ideal):=(elimvars,I)->(
-    return eliminationIdeal(I,elimvars);
-    );
-eliminationIdeal(Ideal,List):=(J,elimvars)->(
+eliminationIdeal(RingElement,Ideal):=Ideal => (elimvar,I) ->
+    eliminationIdeal(I,{elimvar})
+eliminationIdeal(List,Ideal):=Ideal => (elimvars,I) -> 
+    eliminationIdeal(I,elimvars)
+eliminationIdeal(Ideal,List):=Ideal => (J,elimvars)->(
     if not inputOkay(J) then return 0;
     mIn:=temporaryFileName()|".ms";
     S:=ring J;
     kk:=coefficientRing(S);
-    keepVars:=toList(set(gens(S))-set(elimvars));
+    keepVars:=select(gens S, s->not member(s,elimvars)); 
     elimNum:=length(elimvars);
-    R:=kk[join(elimvars,keepVars),MonomialOrder=>{numgens(S):1}];
+    R:=kk(monoid [join(elimvars,keepVars),MonomialOrder=>{numgens(S):1}]);
+    elimR:=kk(monoid [keepVars]);
     I:=sub(J,R);
     gR:=toString(gens R);
     l1:=substring(1,#gR-2,gR);
@@ -125,14 +120,11 @@ eliminationIdeal(Ideal,List):=(J,elimvars)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
+    << "mOut = " << mOut << endl;
     callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -e "|toString(elimNum)|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
-    M2Out:=readMsolveOutput(get(mOut));
-    --M2Out:=readMsolveOutputFile(R, mOut);
-    msolGB:=sub(selectInSubring(elimNum,M2Out),S);
-    use S;
-    return gens forceGB msolGB;
-    );
+    ideal readMsolveOutputFile(elimR, mOut)
+    )
 
 saturateByPoly=method(TypicalValue=>Matrix);
 saturateByPoly(Ideal,RingElement):=(I,f)->(
@@ -151,7 +143,6 @@ saturateByPoly(Ideal,RingElement):=(I,f)->(
     mOut:=temporaryFileName()|".ms";
     callStr:=msolveEXE|" -f "|mIn|" -S -g 2 -o "|mOut;
     run(callStr);
-    --msolGB:=readMsolveOutput(get(mOut));
     msolGB:=readMsolveOutputFile(R, mOut);
     << "msolve output file is called: " << mOut << endl;
     return gens forceGB msolGB;
@@ -530,6 +521,6 @@ R = QQ[x,a,b,c,d];
 f = x^2+a*x+b;
 g = x^2+c*x+d;
 eM2=eliminate(x,ideal(f,g));
-eMsolve=ideal eliminationIdeal(x,ideal(f,g));
-assert(eM2==eMsolve);
+eMsolve=eliminationIdeal(x,ideal(f,g));
+assert(eM2==sub(eMsolve,ring eM2))
 ///
