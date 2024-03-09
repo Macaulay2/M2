@@ -114,9 +114,27 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
     M := module prune F;
     N := module prune G;
     -- TODO: isIsomorphic should check === first
-    if M === N then return (true, id_M);
+    if M === N then return (true, id_F);
     (ret, isom) := isIsomorphic(M, N, o, Strict => true);
     (ret, if ret then map(sheaf M, sheaf N, isom)))
+
+-- TODO: perhaps better would be to construct random
+-- maps F --> G and check their kernel and cokernel.
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
+    -- Note: sometimes calling isIsomorphic(prune F, prune G) is faster,
+    -- but we will leave it to the user to decide if that is the case.
+    -- Check if F and G are already pruned or if their minimal presentation is cached
+    M := if F.cache.?pruningMap then F.module else try F.cache.minimalPresentation.module;
+    N := if G.cache.?pruningMap then G.module else try G.cache.minimalPresentation.module;
+    -- Otherwise, we will compare truncated modules representing them, which works in general.
+    if M === null or N === null then (M, N) = (
+	maxRegs := max(regularity F.module, regularity G.module);
+	truncate(maxRegs + 1, F.module, MinimalGenerators => false),
+	truncate(maxRegs + 1, G.module, MinimalGenerators => false));
+    -- TODO: isIsomorphic should check === first
+    if M === N then return (true, id_F);
+    (ret, isom) := isIsomorphic(M, N, o, Strict => true);
+    (ret, if ret then map(F, G, isom)))
 
 isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
 
