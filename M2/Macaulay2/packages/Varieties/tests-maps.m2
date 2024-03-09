@@ -358,3 +358,12 @@ TEST ///
   assert(prune pullback(F_[0], F_[1]) == 0)
   assert(prune pushout(F^[0], F^[1]) == 0)
 ///
+
+TEST ///
+  S = QQ[x_0..x_13]
+  X = Proj S
+  M = truncate(1, S^1)
+  F = sheaf M
+  elapsedTime assert first isIsomorphic(M, module F); -- 3.6s
+  elapsedTime assert first isIsomorphic(OO_X^1, F)    -- 8.4s
+///
