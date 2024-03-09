@@ -365,5 +365,5 @@ TEST ///
   M = truncate(1, S^1)
   F = sheaf M
   elapsedTime assert first isIsomorphic(M, module F); -- 3.6s
-  elapsedTime assert first isIsomorphic(OO_X^1, F)    -- 8.4s
+  elapsedTime assert first isIsomorphic(OO_X^1, F)    -- 8.4s -> 3.1s
 ///
