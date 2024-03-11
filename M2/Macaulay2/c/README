@@ -266,7 +266,7 @@ Expressions:
 	if a then b
 	until a do b
 	while a do b			evaluates b as long as a is true
-	while a list b			produces a list of the values of b, as long as a is true
+	while a list b			produces a list of the values of b, as long as a is true (not implemented!?)
 	foreach a in b do c		
 	foreach a at i in b do c
 	foreach a at i in b by s do c
@@ -330,7 +330,7 @@ Useful functions
 	+	-	*	/	%
 	^^					exclusive or
 	^					power (for doubles)
-	::					nothing
+	::					nothing (not implemented!?)
 
 Operators
 
