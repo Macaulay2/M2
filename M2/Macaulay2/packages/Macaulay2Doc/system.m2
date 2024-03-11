@@ -3,7 +3,9 @@ document {
      Headline => "information about the status of the garbage collector",
      PARA {
 	  "Macaulay2 uses the Hans Boehm ", TO2 {"GC garbage collector", "garbage collector"}, " to reclaim unused memory.  The function ", TT "GCstats", " 
-	  provides information about its status."
+	  provides information about its status, such as the total number of bytes allocated,
+	  the current heap size, the number of garbage collections done, the number of threads
+	  used in each collection, the total cpu time spent in garbage collection, etc."
 	  },
      EXAMPLE lines ///
      s = GCstats()
@@ -850,12 +852,16 @@ document {
      }
 document {
      Key => "elapsedTime",
-     Headline => "time a computation using time elapsed",
+     Headline => "time a computation including time elapsed",
 	Usage => "elapsedTime e",
      TT "elapsedTime e", " evaluates ", TT "e", ", prints the amount of time
-     elapsed, and returns the value of ", TT "e", ".",
+     elapsed, and returns the value of ", TT "e", ". The cpu time used by the Macaulay2
+     process, the current thread, and garbage collection during the evaluation of ", TT "e",
+     "is also shown."
      EXAMPLE "elapsedTime sleep 1",
-     SeeAlso => {"elapsedTiming", "cpuTime"}
+     SeeAlso => {"elapsedTiming", "cpuTime", "GCstats",
+	  "parallel programming with threads and tasks",
+	  "parallelism in engine computations"}
      }
 document {
      Key => Time,
