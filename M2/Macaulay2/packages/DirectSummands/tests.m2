@@ -38,7 +38,7 @@ TEST /// -- direct summands over field extensions
   debug needsPackage "DirectSummands"
   R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
   X = Proj R;
-  M = module frobeniusPushforward(OO_X, 1);
+  M = module frobeniusPushforward(1, OO_X);
   -* is smartBasis useful? yes!
   elapsedTime A = End M; -- ~0.65s
   elapsedTime B = basis({0}, A); -- ~0.23s
