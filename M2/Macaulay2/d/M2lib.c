@@ -27,16 +27,23 @@ void system_handleInterruptsSetup(M2_bool handleInterrupts) {
   oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
 }
 
-static __thread double startTime;
+static double startTime;
 double system_cpuTime(void) {
   struct timespec t;
-  int err = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t);
+  int err = clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
   if (err) return 0; /* silent about error */
   double u = t.tv_sec + t.tv_nsec * 1e-9;
   return u - startTime;
 }
 void system_cpuTime_init(void) {
   startTime = system_cpuTime();
+}
+
+double system_threadTime(void) {
+  struct timespec t;
+  int err = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t);
+  if (err) return 0; /* silent about error */
+  return t.tv_sec + t.tv_nsec * 1e-9;
 }
 
 void clean_up(void) {

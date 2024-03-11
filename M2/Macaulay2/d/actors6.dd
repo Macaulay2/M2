@@ -9,7 +9,7 @@ declarations "
 -- so that means we can write "use actors6;" only in a *.dd file, not in a *.d file.
 -- That's why we are renaming interp.d to interp.dd.  Eventually all *.d files should
 -- be renamed.
-Chrono := Type "std::chrono::steady_clock::time_point" ;    
+Chrono := Type "std::chrono::steady_clock::time_point" ;    -- or use clock_gettime(CLOCK_MONOTONIC, &ts)
 
 elapsedTimefun(a:Code):Expr := (
      time1 := Ccode(Chrono, "std::chrono::steady_clock::now()");
@@ -23,11 +23,20 @@ elapsedTimefun(a:Code):Expr := (
 setupop(elapsedTimingS,elapsedTimefun);
 showElapsedTimefun(a:Code):Expr := (
      time3 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+     cpuStart := cpuTime();
+     threadStart := threadTime();
+     gcStart := gcTime();
      ret := eval(a);
      time4 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+     cpuEnd := cpuTime();
+     threadEnd := threadTime();
+     gcEnd := gcTime();
      d := Ccode(uint64_t, "(time4-time3).count()");
      x := double(d)/1000000000.;
-     stdError << " -- " << x << " seconds elapsed" << endl;
+     stdError << " -- " << x << " seconds elapsed; "
+	  << cpuEnd - cpuStart << " process (cpu time); "
+	  << threadEnd - threadStart << " thread; "
+	  << gcEnd - gcStart << " gc (process)" << endl;
      ret);
 setupop(elapsedTimeS,showElapsedTimefun);
 
