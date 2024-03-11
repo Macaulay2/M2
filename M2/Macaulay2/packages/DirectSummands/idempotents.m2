@@ -69,5 +69,5 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
 findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M,opts)
 
 potentialExtension = method()
-potentialExtension CoherentSheaf := opts -> M -> potentialExtension(module M, opts)
-potentialExtension Module := opts -> M -> extField {char generalEndomorphism M}
+potentialExtension Module := M -> extField {char generalEndomorphism M}
+potentialExtension CoherentSheaf := M -> potentialExtension module M
