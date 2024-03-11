@@ -2037,49 +2037,39 @@ toExternalString(e:Expr):Expr := (
      );
 setupfun("toExternalString0",toExternalString);
 
+header "
+#define DEF_GC_FN0(s)	static void * s##_0(void *client_data) { (void) client_data; return (void *) (long) s(); }
+DEF_GC_FN0(GC_get_full_gc_total_time)
+DEF_GC_FN0(GC_get_free_space_divisor)
+";
+
+export gcTime():double := Ccode(double, "0.001 * (unsigned long) GC_call_with_alloc_lock(GC_get_full_gc_total_time_0, NULL)");
+
 GCstats(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) == 0 then Expr(toHashTable(Sequence(
-		    "heap size" => toExpr(Ccode(int,"GC_get_heap_size()")),
-		    "number of collections" => toExpr(Ccode(int,"GC_get_gc_no()")),
-		    "parallel" => toExpr(Ccode(bool,"!!GC_get_parallel()")),
-		    "finalize on demand" => toExpr(Ccode(bool,"!!GC_get_finalize_on_demand()")),
-		    "java finalization" => toExpr(Ccode(bool,"GC_get_java_finalization()")),
-		    "don't expand" => toExpr(Ccode(bool,"GC_get_dont_expand()")),
-		    "full freq" => toExpr(Ccode(int,"GC_get_full_freq()")),
-		    "max retries" => toExpr(Ccode(int,"GC_get_max_retries()")),
-		    "time limit" => toExpr(Ccode(ulong,"GC_get_time_limit()")),
-		    "GC_INITIAL_HEAP_SIZE" => toExpr(getenv("GC_INITIAL_HEAP_SIZE")),
-		    "GC_MAXIMUM_HEAP_SIZE" => toExpr(getenv("GC_MAXIMUM_HEAP_SIZE")),
-		    "GC_LOOP_ON_ABORT" => toExpr(getenv("GC_LOOP_ON_ABORT")),
-		    "GC_PRINT_STATS" => toExpr(getenv("GC_PRINT_STATS")),
-		    "GC_LOG_FILE" => toExpr(getenv("GC_LOG_FILE")),
-		    "GC_PRINT_VERBOSE_STATS" => toExpr(getenv("GC_PRINT_VERBOSE_STATS")),
-		    "GC_DUMP_REGULARLY" => toExpr(getenv("GC_DUMP_REGULARLY")),
-		    "GC_BACKTRACES" => toExpr(getenv("GC_BACKTRACES")),
-		    "GC_PRINT_ADDRESS_MAP" => toExpr(getenv("GC_PRINT_ADDRESS_MAP")),
-		    "GC_NPROCS" => toExpr(getenv("GC_NPROCS")),
-		    "GC_MARKERS" => toExpr(getenv("GC_MARKERS")),
-		    "GC_NO_BLACKLIST_WARNING" => toExpr(getenv("GC_NO_BLACKLIST_WARNING")),
-		    "GC_LARGE_ALLOC_WARN_INTERVAL" => toExpr(getenv("GC_LARGE_ALLOC_WARN_INTERVAL")),
-		    "GC_IGNORE_GCJ_INFO" => toExpr(getenv("GC_IGNORE_GCJ_INFO")),
-		    "GC_PRINT_BACK_HEIGHT" => toExpr(getenv("GC_PRINT_BACK_HEIGHT")),
-		    "GC_RETRY_SIGNALS," => toExpr(getenv("GC_RETRY_SIGNALS,")),
-		    "GC_USE_GETWRITEWATCH" => toExpr(getenv("GC_USE_GETWRITEWATCH")),
-		    "GC_DISABLE_INCREMENTAL" => toExpr(getenv("GC_DISABLE_INCREMENTAL")),
-		    "GC_ENABLE_INCREMENTAL" => toExpr(getenv("GC_ENABLE_INCREMENTAL")),
-		    "GC_PAUSE_TIME_TARGET" => toExpr(getenv("GC_PAUSE_TIME_TARGET")),
-		    "GC_FULL_FREQUENCY" => toExpr(getenv("GC_FULL_FREQUENCY")),
-		    "GC_FREE_SPACE_DIVISOR" => toExpr(getenv("GC_FREE_SPACE_DIVISOR")), -- the environment variable
-		    "GC_free_space_divisor" => toExpr(Ccode(long,"GC_get_free_space_divisor()")),           -- the set value in memory
-		    "GC_UNMAP_THRESHOLD" => toExpr(getenv("GC_UNMAP_THRESHOLD")),
-		    "GC_FORCE_UNMAP_ON_GCOLLECT" => toExpr(getenv("GC_FORCE_UNMAP_ON_GCOLLECT")),
-		    "GC_FIND_LEAK" => toExpr(getenv("GC_FIND_LEAK")),
-		    "GC_ALL_INTERIOR_POINTERS" => toExpr(getenv("GC_ALL_INTERIOR_POINTERS")),
-		    "GC_all_interior_pointers" => toExpr(Ccode(long,"GC_get_all_interior_pointers()")),           -- the set value in memory
-		    "GC_DONT_GC" => toExpr(getenv("GC_DONT_GC")),
-		    "GC_TRACE" => toExpr(getenv("GC_TRACE"))
-		    )))
+     if length(s) == 0 then (
+	  h := newHashTable(hashTableClass,nothingClass);
+	  h.beingInitialized = true;
+	  foreach eq in envp do if match(eq,0,"GC_") then (
+	       j := index(eq,0,'=');
+	       if j != -1 then (
+		    keyS := substr(eq,0,j);
+		    valS := substr(eq,j+1);
+		    storeInHashTable(h,toExpr(keyS),toExpr(valS))));
+	  Ccode(void, "
+	       struct GC_prof_stats_s stats;
+	       GC_get_prof_stats(&stats, sizeof stats);");
+	  -- M2 developers may (possibly) care about e.g.: GC_LOG_FILE GC_FIND_LEAK GC_IGNORE_GCJ_INFO GC_LARGE_ALLOC_WARN_INTERVAL
+	  --      GC_RETRY_SIGNALS GC_UNMAP_THRESHOLD GC_FORCE_UNMAP_ON_GCOLLECT GC_BACKTRACES GC_PRINT_ADDRESS_MAP GC_DONT_GC
+	  --      GC_USE_ENTIRE_HEAP GC_TRACE etc.
+	  storeInHashTable(h,toExpr("heapSize"),toExpr(Ccode(long, "stats.heapsize_full - stats.unmapped_bytes")));
+	  storeInHashTable(h,toExpr("bytesAlloc"),toExpr(Ccode(long, "stats.bytes_allocd_since_gc + stats.allocd_bytes_before_gc")));
+	  storeInHashTable(h,toExpr("numGCs"),toExpr(Ccode(long, "stats.gc_no")));
+	  storeInHashTable(h,toExpr("numGCThreads"),toExpr(Ccode(long, "stats.markers_m1 + 1")));
+	  storeInHashTable(h,toExpr("gcCpuTimeSecs"),toExpr(gcTime()));
+	  storeInHashTable(h,toExpr("GC_free_space_divisor"),	-- the set value in memory
+	       toExpr(Ccode(long, "(long) GC_call_with_alloc_lock(GC_get_free_space_divisor_0, NULL)")));
+	  Expr(sethash(h,false)))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("GCstats",GCstats);

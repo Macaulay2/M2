@@ -13,10 +13,10 @@ document {
 	  easily extracted, as follows."
 	  },
      EXAMPLE lines ///
-     s#"heap size"
+     s#"heapSize"
      ///,
      PARA {
-	  "The entries whose keys are upper case give the values of environment variables affecting the operation of the 
+	  "Any entries whose keys are all upper case give the values of environment variables affecting the operation of the 
 	  garbage collector that have been specified by the user."
 	  },
      PARA {

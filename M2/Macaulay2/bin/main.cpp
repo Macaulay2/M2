@@ -56,6 +56,11 @@ void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
 
+static void * GC_start_performance_measurement_0(void *) {
+  GC_start_performance_measurement();
+  return NULL;
+}
+
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
   /* find the number of environment variables defined */
@@ -63,6 +68,8 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }
 
   GC_INIT();
+  GC_call_with_alloc_lock(GC_start_performance_measurement_0, NULL);
+    // record total time of (full) gcs for GCstats()
   IM2_initialize();
 
 #ifndef NDEBUG

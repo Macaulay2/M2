@@ -54,7 +54,7 @@ export match(s:string,i:int,t:string):bool := (
      n := length(t);
      j := 0;
      while i < m && j < n do if s.i != t.j then return false else (i=i+1; j=j+1);
-     true);
+     j == n);
 export index(s:string,offset:int,sep:string):int := (
      i := offset;
      while i < length(s) do if match(s,i,sep) then return i else i=i+1;
