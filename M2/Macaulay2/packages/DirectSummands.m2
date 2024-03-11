@@ -111,7 +111,14 @@ changeBaseField(GaloisField, Module) := (L, M) -> (
     i := map(R, S, i1);
     directSum apply(components M, N -> i ** N))
 
-changeBaseField(GaloisField, CoherentSheaf) := (L, F) -> changeBaseField(L, module F)
+-- TODO: come up with a better way to extend ground field of a variety
+-- TODO: does this also need to be used for frobenius pushforward?
+sheaf' = (X, M) -> try sheaf(X, M) else (
+    if instance(X, ProjectiveVariety) then sheaf(Proj ring M, M) else
+    if instance(X,     AffineVariety) then sheaf(Spec ring M, M) else
+    error "extension of the coefficient field of the base variety is not implemented")
+
+changeBaseField(GaloisField, CoherentSheaf) := (L, F) -> sheaf'(variety F, changeBaseField(L, module F))
 
 nonzero = x -> select(x, i -> i != 0)
 nonnull = x -> select(x, i -> i =!= null)
@@ -250,7 +257,8 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
     ))
 
 -- TODO: if ExtendGroundField is given, change variety
-directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module F, opts), N -> sheaf(-*variety F,*- N))
+-- TODO: when ExtendGroundField is given, the variety will change!
+directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module F, opts), N -> sheaf'(variety F, N))
 
 -- tests whether L (perhaps a line bundle) is a summand of M
 -- Recursive => true (default) attempts to peel as many copies of L as possible
