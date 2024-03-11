@@ -770,7 +770,7 @@ export lookup(s:string,table:SymbolHashTable):(null or Symbol) := (
      if table == dummySymbolHashTable then error("dummy table used");
      lockRead(table.mutex);
      entryList := table.buckets.( hash(s) & (length(table.buckets)-1) );
-     res:(null or Symbol) := NULL;
+     res := (null or Symbol)(NULL);
      while true do
      when entryList
      is null do break

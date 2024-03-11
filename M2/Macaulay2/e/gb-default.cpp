@@ -580,7 +580,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
     #endif
 #endif
 
-#if __SANITIZE_THREAD__	// to avoid warnings
+#if __SANITIZE_THREAD__	// to avoid warnings; these variables are only used for diagnostics
 static std::atomic_ulong ncalls(0);
 static std::atomic_ulong nloops(0);
 static std::atomic_ulong nsaved_unneeded(0);

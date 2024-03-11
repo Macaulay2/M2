@@ -425,7 +425,7 @@ export lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
      entryList := table.buckets.(
 	  word.hash & (length(table.buckets)-1)
 	  );
-     res:(null or Symbol) := NULL;
+     res := (null or Symbol)(NULL);
      while true do
      when entryList
      is null do break

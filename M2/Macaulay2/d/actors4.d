@@ -245,7 +245,7 @@ any(f:Expr,n:int):Expr := (
 	  );
      False);
 any(f:Expr,obj:HashTable):Expr := (
-     v:Expr := False;
+     v := False;
      if obj.Mutable then lockRead(obj.mutex);
      foreach bucket in obj.table do (
 	  p := bucket;
