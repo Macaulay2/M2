@@ -78,6 +78,7 @@ TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
 
 TEST ///
   S = QQ[x_1..x_4];
+  X = Proj S;
   -- TODO: add assertions
   F = sheaf comodule intersect(ideal(x_1,x_2), ideal(x_3,x_4))
   pF = prune F
@@ -366,4 +367,20 @@ TEST ///
   F = sheaf M
   elapsedTime assert first isIsomorphic(M, module F); -- 3.6s
   elapsedTime assert first isIsomorphic(OO_X^1, F)    -- 8.4s -> 3.1s
+///
+
+
+TEST ///
+  S = QQ[x,y,z]
+  X = Proj S
+  m = module image vars S
+  f = id_m
+  assert(prune sheafMap(f,4) == id_(OO_X^1))
+  assert(prune sheafMap(f,-4) == id_(OO_X^1))
+  assert(prune sheafMap(f,6) == id_(OO_X^1))
+  f4=sheafMap(f,4)
+  g=inverse f4
+  assert(prune g == id_(OO_X^1))
+  assert( prune(f4*g)==id_(OO_X^1))
+  assert( prune(g*f4)==id_(OO_X^1))
 ///
