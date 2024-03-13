@@ -41,7 +41,8 @@ map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts ->
 
 sheafMap = method()
 sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
-sheafMap(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi, truncate(d, phi), d)
+sheafMap(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi,
+    truncate(d, phi, MinimalGenerators => false), d)
 
 isWellDefined SheafMap := f -> (
     (G, F) := (target f, source f);
@@ -71,7 +72,7 @@ isWellDefined SheafMap := f -> (
 	"source of the sheaf map does not match the source of the underlying matrix")
     and assert'(d >= min flatten degrees F, -- maybe not strictly necessary
 	"expected the degree of the sheaf map to be at least as high as the degrees of the source")
-    and assert'(try ( isWellDefined map(module G, truncate(d, module F), matrix f) ) else false,
+    and assert'(try ( isWellDefined map(module G, truncate(d, module F, MinimalGenerators => false), matrix f) ) else false,
 	"expected the matrix to induce a map between a truncation of the underlying modules")
     )
 
@@ -184,7 +185,7 @@ isLiftable(SheafMap, ZZ) := (shphi, d) -> (
 lift' = method()
 lift'(Matrix, Matrix) := Matrix => (phi, eta) -> (
     newPhi := homomorphism' phi;
-    homomorphism(newPhi // Hom(eta, target phi, MinimalGenerators => false))
+    homomorphism(newPhi // Hom(eta, target phi, MinimalGenerators => true))
     )
 
 --lifts a sheaf map shphi represented by a module map
@@ -272,7 +273,7 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     -- truncate the underlying map so it is an isomorphism
     -- TODO: make this more efficient, e.g. look at degrees of ann coker g
     e := (regularity ker g, regularity coker g);
-    -- TODO: this is kudgy, but maybe it works?
+    -- TODO: this is kludgy, but maybe it works?
     h := try inverse g else inverse inducedMap(
 	truncate(e#1   + 1, target g, MinimalGenerators => false),
 	truncate(max e + 1, source g, MinimalGenerators => false), g);
@@ -472,7 +473,7 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
     (G, F) := (target f, source f);
     prune G; prune F; -- these are pruned just to populate cached data
     -- F.cache.TorsionFree = M/H^0_B(M)
-    g := inducedMap(G.cache.TorsionFree, truncate(degree f, F.cache.TorsionFree), matrix f);
+    g := inducedMap(G.cache.TorsionFree, truncate(degree f, F.cache.TorsionFree, MinimalGenerators => false), matrix f);
     p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit);
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
