@@ -474,7 +474,8 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
     prune G; prune F; -- these are pruned just to populate cached data
     -- F.cache.TorsionFree = M/H^0_B(M)
     g := inducedMap(G.cache.TorsionFree, truncate(degree f, F.cache.TorsionFree, MinimalGenerators => false), matrix f);
-    p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit);
+    p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit) + max(0,degree f);
+    --added degree f in the line above... seems to make prune work in one step
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
     lift sheafMap prune Hom(Bp, g))
