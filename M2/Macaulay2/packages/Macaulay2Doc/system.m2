@@ -857,7 +857,7 @@ document {
      TT "elapsedTime e", " evaluates ", TT "e", ", prints the amount of time
      elapsed, and returns the value of ", TT "e", ". The cpu time used by the Macaulay2
      process, the current thread, and garbage collection during the evaluation of ", TT "e",
-     "is also shown."
+     " is also shown.",
      EXAMPLE "elapsedTime sleep 1",
      SeeAlso => {"elapsedTiming", "cpuTime", "GCstats",
 	  "parallel programming with threads and tasks",

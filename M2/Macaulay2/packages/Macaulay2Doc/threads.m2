@@ -93,9 +93,6 @@ Node
 
     Warning: Access to external libraries such as singular, etc., may not
     currently be thread safe.
- SeeAlso
-  "parallelism in engine computations"
-  elapsedTime
 Node
  Key
   (addCancelTask, Task, Task)
