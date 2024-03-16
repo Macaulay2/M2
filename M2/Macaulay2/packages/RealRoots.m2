@@ -2,7 +2,7 @@
 newPackage(
     "RealRoots",
     Version=>"0.1",
-    --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 2024/03/07
+    --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 2024/03/16
     Date=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
@@ -411,8 +411,18 @@ realRootIsolation (RingElement,A) := List => (f,r)->(
 	    E1 := flatten(apply(flatten(entries(E0)), i -> degree(i))); -- convert exponents to list
 	    MC := 1 + max(apply(drop(C1,1), abs)); -- Cauchy bound
 	    CK := apply(drop(C1,1),drop(E1,1), (c,e) -> 2*(c^(1/(E1#0-e)))); -- Knuth bound
-	    MK := max(apply(CK, i -> ceiling(C#0*i)/C#0)); --loosen slightly to keep in QQ
+	    MK := max CK;
+	    if ring MK === QQ or ring MK === ZZ then ( -- want to keep result in QQ
+	        MK = MK_QQ;
+	    ) else
+	        if abs(C#0) > 1 then  ( -- if suitable, keep bound in form similar to other bound 
+		    MK = ceiling(abs(C#0)*MK)/abs(C#0); -- (round up to nearest 1/leadcoeff, this is a bad rational approximation if MK was very small)
+		) else (
+		    MK = ceiling MK; -- if leading term is less than 1, the above approximation is less accurate than just taking the ceiling.
+		);
+	    );
 	    M = min(MC,MK); -- take the smaller of the two bounds.
+	);
 	);
 	
 	L := {{-M,M}};
