@@ -1,13 +1,13 @@
 
 newPackage(
         "RandomPoints",
-    	Version => "1.5.2",
-    	Date => "July 30th, 2021",
+    	Version => "1.5.3",
+    	Date => "May 17th, 2023",
     	Authors => {
-	     {Name => "Sankhaneel Bisui", Email => "sbisu@tulane.edu", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
+	     {Name => "Sankhaneel Bisui", Email => "Sankhaneel.Bisui@umanitoba.ca", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
          {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
-         {Name => "Sarasij Maitra", Email => "sm3vg@virginia.edu", HomePage => "https://sarasij93.github.io/"},         
-	     {Name=> "Thai Nguyen", Email =>"tnguyen11@tulane.edu", HomePage=>"https://sites.google.com/view/thainguyenmath "},
+         {Name => "Sarasij Maitra", Email => "maitra@math.utah.edu", HomePage => "https://sarasij93.github.io/"},         
+	     {Name=> "Thai Nguyen", Email =>"nguyt161@mcmaster.ca", HomePage=>"https://sites.google.com/view/thainguyenmath "},
          {Name=> "Frank-Olaf Schreyer", Email =>"schreyer@math.uni-sb.de", HomePage=>"https://www.math.uni-sb.de/ag/schreyer/index.php/ "},
 	     {Name=>"Karl Schwede", Email=>"schwede@math.utah.edu", HomePage=>"https://www.math.utah.edu/~schwede/" }	     	     
 	     },
