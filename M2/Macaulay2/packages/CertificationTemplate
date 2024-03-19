@@ -2,16 +2,16 @@
 
 ,
 	   Certification => {
-		"journal name" => "The Journal of Software for Algebra and Geometry",
-		"journal URI" => "http://j-sag.org/",
+		"journal name" => "Journal of Software for Algebra and Geometry",
+		"journal URI" => "https://msp.org/jsag/",
 		"article title" => "",
 		"acceptance date" => "",
 		"published article URI" => "",
-         	"published article DOI" => "",
+		"published article DOI" => "",
 		"published code URI" => "",
-     	        "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
-		"release at publication" => "",	    -- git commit number in hex
+		"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
+		"release at publication" => "",  -- git commit number in hex
 		"version at publication" => "",
-		"volume number" => "11",
-		"volume URI" => "https://msp.org/jsag/2021/11-1/"
+		"volume number" => "13",
+		"volume URI" => "https://msp.org/jsag/2023/13-1/"
 		}
