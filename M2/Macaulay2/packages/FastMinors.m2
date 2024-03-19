@@ -1,11 +1,12 @@
 newPackage( "FastMinors",
-Version => "1.2.5", Date => "April 7th, 2022", Authors => {
+Version => "1.2.6", Date => "May 15th, 2023", Authors => {
     {Name => "Boyana Martinova",
-    Email=> "u1056124@utah.edu"
+    Email=> "martinova@wisc.edu",
+    HomePage=> "https://sites.google.com/view/bmartinova"
     },
     {Name => "Marcus Robinson",
-    Email => "robinson@math.utah.edu",
-    HomePage => "http://www.math.utah.edu/~robinson"
+    Email => "mrobinso@reed.edu",
+    HomePage => "https://people.reed.edu/~mrobinso/"
     },
     {Name => "Karl Schwede",
     Email=> "schwede@math.utah.edu",
