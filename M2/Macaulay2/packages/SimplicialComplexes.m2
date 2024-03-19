@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 ------------------------------------------------------------------------------
--- Copyright 2021 Gregory G. Smith
+-- Copyright 2022 Ben Hersey, Gregory G. Smith, and Alexandre Zotine
 --
 -- This program is free software: you can redistribute it and/or modify it
 -- under the terms of the GNU General Public License as published by the Free
