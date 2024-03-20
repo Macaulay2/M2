@@ -4,7 +4,7 @@ x = {"PruneComplex", "CohomCalg", "Topcom", "ReflexivePolytopesDB", "AbstractTor
 y = for i in x list needsPackage i
 getName = x -> (new OptionTable from x).Name
 commaAnd = x -> concatenate (
-     if #x > 2 then (between (", ", drop(x,1)), ", and ", x#-1)
+     if #x > 2 then (between (", ", drop(x, -1)), ", and ", x#-1)
      else between (" and ", x))
 for i in y do (
      << ///	       	    LI { TO "///
