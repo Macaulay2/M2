@@ -535,7 +535,7 @@ Node
     optional argument for vFunctionP and vFunction
   Description
     Text
-      By default this argument is set to 2. Whether it is equal to 2 the vFunctionP and vFunction methods terminate after finding three "aligned" values $\text{v}_\mathfrak{p}(I^k),\text{v}_\mathfrak{p}(I^{k+1}),\text{v}_\mathfrak{p}(I^{k+2})$ of the $\text{v}_\mathfrak{p}$-function. That means that $\text{v}_\mathfrak{p}(I^{k+1})-\text{v}_\mathfrak{p}(I^k)=\text{v}_\mathfrak{p}(I^{k+2})-\text{v}_\mathfrak{p}(I^{k+1})$. By increasing its value, the methods termine after finding $\texttt{control}+1$ aligned values.
+      By default this argument is set to 2. Whether it is equal to 2 the vFunctionP and vFunction methods terminate after finding three "aligned" values $\text{v}_\mathfrak{p}(I^k),\text{v}_\mathfrak{p}(I^{k+1}),\text{v}_\mathfrak{p}(I^{k+2})$ of the $\text{v}_\mathfrak{p}$-function. That means that $\text{v}_\mathfrak{p}(I^{k+1})-\text{v}_\mathfrak{p}(I^k)=\text{v}_\mathfrak{p}(I^{k+2})-\text{v}_\mathfrak{p}(I^{k+1})$. By increasing its value, the methods terminate after finding $\texttt{control}+1$ aligned values.
   SeeAlso
     vFunctionP
     vFunction
