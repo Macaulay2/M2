@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+--	  TO "changes made for the next release",
+	  TO "changes, 1.23",
 	  TO "changes, 1.22",
 	  TO "changes, 1.21",
 	  TO "changes, 1.20",
@@ -39,8 +40,17 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes, 1.23",
      UL {
+	  LI { "packages that have been published and certified:",
+	       UL {
+		   LI { star, " ", TO "BettiCharacters::BettiCharacters", ", a package by Federico Galetto for finite group characters on free resolutions and graded modules, has been published." },
+		   LI { star, " ", TO "FastMinors::FastMinors", ", a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao for faster linear algebra operations, has been published." },
+		   LI { star, " ", TO "MixedMultiplicity::MixedMultiplicity", ", a package by Kriti Goel, Vivek Mukundan, Sudeshna Roy, and J. K. Verma for Mixed Multiplicities of ideals, has been published." },
+		   LI { star, " ", TO "RandomPoints::RandomPoints", ", a package by Sankhaneel Bisui, Zhan Jiang, Sarasij Maitra, Thai Nguyen, Frank-Olaf Schreyer, and Karl Schwede for find a point in a given variety over a finite field, has been published." },
+		   LI { star, " ", TO "SimplicialComplexes::SimplicialComplexes", ", a package by Gregory G. Smith, Ben Hersey, and Alexandre Zotine for exploring abstract simplicial complexes within commutative algebra, has been published." }
+		   }
+	       },
 	  LI { "new packages:",
 	       UL {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
@@ -50,6 +60,15 @@ document {
 			which used to be in the ", TO "Dmodules::Dmodules", " package." },
 		    LI { "The package ", TO "Varieties::Varieties", " has been added to encapsulate existing and new functionality for working
 			with affine and projective varieties and coherent sheaves on them. The package adds support for maps of coherent sheaves." },
+		    LI {TO "A1BrouwerDegrees::A1BrouwerDegrees", ", a package by Nikita Borisov, Thomas Brazelton, Frenly Espino, Tom Hagedorn, Zhaobo Han, Jordy Lopez Garcia, Joel Louwsma, Andrew Tawfeek, and Wern Juin Gabriel Ong for for working with A1-Brouwer degree computations, has been added." },
+		    LI {TO "AdjunctionForSurfaces::AdjunctionForSurfaces", ", a package by Frank-Olaf Schreyer for Adjunction for Surfaces, has been added." },
+		    LI {TO "MatrixSchubert::MatrixSchubert", ", a package by Ayah Almousa, Sean Grate, Daoji Huang, Patricia Klein, Adam LaClair, Yuyuan Luo, and Joseph McDonough for functions for investigating ASM and matrix Schubert varieties, has been added." },
+		    LI {TO "OIGroebnerBases::OIGroebnerBases", ", a package by Michael Morrow for OI-modules over Noetherian polynomial OI-algebras, has been added." },
+		    LI {TO "PlaneCurveLinearSeries::PlaneCurveLinearSeries", ", a package by David Eisenbud for Linear series on the normalization of a plane curve, has been added." },
+		    LI {TO "QuadraticIdealExamplesByRoos::QuadraticIdealExamplesByRoos", ", a package by David Eisenbud, Michael Perlman, Ritvik Ramkumar, Deepak Sireeshan, Aleksandra Sobieska, Teresa Yu, and Jacob Zoromski for Examples of Quadratic Ideals with Embedding Dimension Four by Jan-Erik Roos, has been added." },
+		    LI {TO "RInterface::RInterface", ", a package by Doug Torrance for interface to R for statistical computing, has been added." },
+		    LI {TO "TerraciniLoci::TerraciniLoci", ", a package by Francesco Galuppi, Pierpaola Santarsiero, Doug Torrance, and Ettore Teixeira Turatti for Terracini loci of projective varieties, has been added." },
+		    LI {TO "Valuations::Valuations", ", a package by Michael Burr, Colin Alstad, Michael Byrd, Ethan Partida, Shelby Cox, Courtney George, and Oliver Clarke for implementation of valuations for rings, has been added." },
 		    }
 	       },
 	  LI { "functionality added or improved:",

@@ -864,7 +864,11 @@ inline size_t rowReducedEchelonForm(const DMatGFFlintBig& A,
                                     DMatGFFlintBig& result_rref)
 {
   DMatGFFlintBig A1(A);
+#if __FLINT_RELEASE >= 30100
+  long rank = fq_nmod_mat_rref(A1.fq_nmod_mat(), A1.fq_nmod_mat(), A.ring().flintContext());
+#else
   long rank = fq_nmod_mat_rref(A1.fq_nmod_mat(), A.ring().flintContext());
+#endif
   result_rref.swap(A1);
   return rank;
 }
@@ -925,7 +929,11 @@ inline size_t rowReducedEchelonForm(const DMatGFFlint& A,
                                     DMatGFFlint& result_rref)
 {
   DMatGFFlint A1(A);
+#if __FLINT_RELEASE >= 30100
+  long rank = fq_zech_mat_rref(A1.fq_zech_mat(), A1.fq_zech_mat(), A.ring().flintContext());
+#else
   long rank = fq_zech_mat_rref(A1.fq_zech_mat(), A.ring().flintContext());
+#endif
   result_rref.swap(A1);
   return rank;
 }
