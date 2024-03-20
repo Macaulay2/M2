@@ -264,4 +264,7 @@ TerraciniLoci
 MatrixSchubert
 RInterface
 OIGroebnerBases
+PlaneCurveLinearSeries
+Valuations
+SchurVeronese
 VNumber
