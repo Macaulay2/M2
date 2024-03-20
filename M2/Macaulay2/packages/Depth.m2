@@ -263,7 +263,7 @@ isRegularSequence(List, Module) := Boolean => (X,M) -> (
 	  g := reduceHilbert hilbertSeries M;
      	  f := reduceHilbert hilbertSeries (M/ideal X);
 	  if numerator f == 0 then return false;
-     	  R := degreesRing M; 
+	  R := degreesRing ring M;
      	  T := R_0;
      	  numerator f * value denominator g == (value denominator f) * product(X,i-> (1-T^(first degree i))) * numerator g
 	  ) 

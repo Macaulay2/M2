@@ -215,8 +215,7 @@ linearComb(List,String) := DiffAlgElement => (L,varName) -> (
 	new class L_0 from {"f" => sum apply(gens C,L,(i,j)->sub(i,T)*sub(j,T))}
 )
 
-pullback = method();
-pullback(List,DiffAlgForm) := DiffAlgForm => (L,w) -> (
+pullback(List,DiffAlgForm) := DiffAlgForm => {} >> o -> (L,w) -> (
 	x := getSymbol VAR;
 	dx := getSymbol (VARD|VAR);
 	if not uniform L or class L_0 =!= DiffAlgForm or 

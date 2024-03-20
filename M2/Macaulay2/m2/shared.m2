@@ -22,6 +22,8 @@ isEmpty = method(TypicalValue => Boolean)
 
 -- symbols
 
+protect Base
+
 protect Jacobian
 
 protect Iterate

@@ -170,11 +170,6 @@ vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
 vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
 vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
 
--- TODO: deprecate these
-degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
-degreesRing Module := PolynomialRing => M -> degreesRing ring M
-degreeLength Module := M -> degreeLength ring M
-
 Module#id = M -> map(M, M, 1)
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring
@@ -361,7 +356,7 @@ schreyerOrder Module := Matrix => (F) -> (
      tar := new Module from (ring F, rawTarget m);
      map(tar,src,m))
 
-schreyerOrder Matrix := Matrix => (m) -> map(target m, new Module from (ring m, rawSchreyerSource raw m), m)
+schreyerOrder Matrix := Matrix => (m) -> map(ring m, schreyerOrder raw m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
 
 possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
@@ -414,7 +409,7 @@ Module#AfterPrint = M -> (
     else if rank ambient M > 0 then
     (", free",
 	if not all(degrees M, d -> all(d, zero))
-	then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
+	then (", degrees ",runLengthEncode if degreeLength ring M === 1 then flatten degrees M else degrees M)
 	)
     )
 

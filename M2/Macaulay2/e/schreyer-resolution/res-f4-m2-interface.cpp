@@ -1,5 +1,6 @@
 // Copyright 2016 Michael E. Stillman
 
+#include "m2tbb.hpp" // Needs to occur earlier than ffpack.
 #include "schreyer-resolution/res-f4-m2-interface.hpp"
 #include "ZZ.hpp"                                         // for RingZZ
 #include "aring-RRR.hpp"                                  // for ARingRRR
@@ -26,10 +27,6 @@
 #include "polyring.hpp"                                   // for PolynomialRing
 #include "ring.hpp"                                       // for Ring, globalZZ
 #include "schreyer-resolution/res-f4-computation.hpp"     // for F4ResComput...
-#include "schreyer-resolution/res-gausser-QQ-hybrid.hpp"  // for ResGausserQ...
-#include "schreyer-resolution/res-gausser-QQ.hpp"         // for ResGausserQQ
-#include "schreyer-resolution/res-gausser-ZZp.hpp"        // for ResGausserZZp
-#include "schreyer-resolution/res-gausser.hpp"            // for ResGausser
 #include "schreyer-resolution/res-moninfo.hpp"            // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"     // for res_monomia...
 #include "schreyer-resolution/res-poly-ring.hpp"          // for ResPolynomialIterator
@@ -43,149 +40,6 @@
 #include <type_traits>                                    // for move
 #include <vector>                                         // for vector, vec...
 
-bool ResGausserZZp::isAllowedCoefficientRing(const Ring* K) const
-{
-  return K->isFinitePrimeField();
-}
-
-ring_elem ResGausserZZp::to_ring_elem(const Ring* K,
-                                      const CoefficientVector& coeffs,
-                                      size_t loc) const
-{
-  auto& elems = coefficientVector(coeffs);
-  return K->from_long(coeff_to_int(elems[loc]));
-}
-
-void ResGausserZZp::from_ring_elem(CoefficientVector& result,
-                                   ring_elem a,
-                                   ring_elem unused) const
-{
-  auto& elems = coefficientVector(result);
-  int a1;
-  Kp->set_from_long(
-      a1, static_cast<int>(get_ring()->coerceToLongInteger(a).second));
-  elems.push_back(a1);
-}
-
-////////////////////
-// NOTE!! //////////
-// Even though the ring is the rationals, gbring 'ring_elem's are in ZZ.
-bool ResGausserQQ::isAllowedCoefficientRing(const Ring* K) const
-{
-  return K->ringID() == M2::ring_RR or
-         (K->isFinitePrimeField() and
-          K->characteristic() == Kp1.characteristic());
-}
-
-ring_elem ResGausserQQ::to_ring_elem(const Ring* K,
-                                     const CoefficientVector& coeffs,
-                                     size_t loc) const
-{
-  auto& elems = coefficientVector(coeffs);
-  ring_elem result;
-  if (K->ringID() == M2::ring_RR)
-    K->from_double(elems[loc].mDouble, result);
-  else if (K == globalZZ)
-    {
-      result = K->from_long(elems[loc].mDenominatorSize);
-    }
-  else
-    Kp1.to_ring_elem(result, elems[loc].mMod1);
-  return result;
-}
-
-void ResGausserQQ::from_ring_elem(CoefficientVector& result,
-                                  ring_elem numer,
-                                  ring_elem denom) const
-{
-  const M2::ARingZZGMP* Z = globalZZ->get_ARing();
-  auto& elems = coefficientVector(result);
-  const M2::ARingZZGMP::ElementType& numer1 = Z->from_ring_elem_const(numer);
-  const M2::ARingZZGMP::ElementType& denom1 = Z->from_ring_elem_const(denom);
-  bool isunit = Z->is_equal(numer1, denom1);
-  mpq_t c;
-  mpq_init(c);
-  mpq_set_num(c, &numer1);
-  mpq_set_den(c, &denom1);
-  mpq_canonicalize(c);
-  FieldElement b;
-  b.mDouble = mpq_get_d(c);
-  Kp1.set_from_mpq(b.mMod1, c);
-  b.mDenominatorSize = (isunit ? 0 : 1);
-  elems.push_back(b);
-  mpq_clear(c);
-}
-
-////////////////////////////////////
-// QQ Hybrid ring //////////////////
-////////////////////////////////////
-////////////////////
-// NOTE!! //////////
-// Even though the ring is the rationals, gbring 'ring_elem's are in ZZ.
-bool ResGausserQQHybrid::isAllowedCoefficientRing(const Ring* K) const
-{
-  return K->ringID() == M2::ring_RR or
-         (K->isFinitePrimeField() and
-          (K->characteristic() == Kp1.characteristic() or
-           K->characteristic() == Kp2.characteristic())) or
-         (K->get_precision() == mRRing.get_precision()) or (K == globalZZ);
-}
-
-ring_elem ResGausserQQHybrid::to_ring_elem(const Ring* K,
-                                           const CoefficientVector& coeffs,
-                                           size_t loc) const
-{
-  auto& elems = coefficientVector(coeffs);
-  ring_elem result;
-  if (K->ringID() == M2::ring_RR)
-    K->from_double(elems[loc].mDouble, result);
-  else if (K->ringID() == M2::ring_RRR)
-    K->from_BigReal(&(elems[loc].mLongDouble), result);
-  else if (K == globalZZ)
-    {
-      result = K->from_long(elems[loc].mDenominatorSize);
-    }
-  else if (K->characteristic() == Kp1.characteristic())
-    Kp1.to_ring_elem(result, elems[loc].mMod1);
-  else if (K->characteristic() == Kp2.characteristic())
-    Kp2.to_ring_elem(result, elems[loc].mMod2);
-  else
-    {
-      std::cout << "Internal logic error: should not get to this statement"
-                << std::endl;
-      exit(1);
-    }
-  return result;
-}
-
-void ResGausserQQHybrid::from_ring_elem(CoefficientVector& result,
-                                        ring_elem numer,
-                                        ring_elem denom) const
-{
-  //  std::cout << "creating element..." << std::flush;
-  const M2::ARingZZGMP* Z = globalZZ->get_ARing();
-  auto& elems = coefficientVector(result);
-  const M2::ARingZZGMP::ElementType& numer1 = Z->from_ring_elem_const(numer);
-  const M2::ARingZZGMP::ElementType& denom1 = Z->from_ring_elem_const(denom);
-  bool isunit = Z->is_equal(numer1, denom1);
-  mpq_t c;
-  mpq_init(c);
-  mpq_set_num(c, &numer1);
-  mpq_set_den(c, &denom1);
-  mpq_canonicalize(c);
-
-  FieldElement b;
-  init_element(b);
-  from_mpq_element(b, c, (isunit ? 0 : 1));
-
-  elems.emplace_back(std::move(b));
-
-  mpq_clear(c);
-  //  out(std::cout, result, elems.size()-1);
-  //  std::cout << " done" << std::endl;
-}
-
-////////////////////////////////////
 void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                      const FreeModule* F,
                                      vec v,
@@ -209,7 +63,8 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
 
   int* exp = new int[M->n_vars()];
 
-  CoefficientVector coeffs = R.resGausser().allocateCoefficientVector();
+  ElementArray coeffs = R.vectorArithmetic().allocateElementArray();
+
   // all these pointers (or values) are still in the element f.
   //  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n
   //  * R.monoid().max_monomial_size()]);
@@ -218,7 +73,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   res_monomial_word* nextmonom = monoms.data();
   for (gbvector* t = f; t != nullptr; t = t->next)
     {
-      R.resGausser().from_ring_elem(
+      R.vectorArithmetic().from_ring_elem(
           coeffs, t->coeff, f->coeff);  // note: f->coeff is assumed to be 1 for
                                         // finite fields, but for QQ both of
                                         // these are integers
@@ -264,7 +119,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       w = w + R.monoid().monomial_size(w);
       M->from_expvector(exp, m1);
       ring_elem a =
-          R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
+          R.vectorArithmetic().ringElemFromElementArray(f.coeffs,i);
       Nterm* g = origR->make_flat_term(a, m1);
       g->next = nullptr;
       if (last[comp] == nullptr)
@@ -378,7 +233,8 @@ Matrix* ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
   int j = 0;
   for (auto i = thislevel.cbegin(); i != thislevel.cend(); ++i, ++j)
     {
-      result.set_column(j, to_M2_vec(C.ring(), i->mSyzygy, tar));
+      vec v = to_M2_vec(C.ring(), i->mSyzygy, tar);
+      result.set_column(j, v);
     }
   return result.to_matrix();
 }
@@ -438,7 +294,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           C.ring().monoid().to_expvector(w, exp, comp);
           w = w + C.ring().monoid().monomial_size(w);
           M->from_expvector(exp, m1);
-          ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
+	  ring_elem a = C.vectorArithmetic().ringElemFromElementArray(f.coeffs, i);
           Nterm* g = RP->make_flat_term(a, m1);
           if (g == nullptr) continue;
           g->next = nullptr;
@@ -507,8 +363,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           long comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
-              ring_elem a = C.ring().resGausser().to_ring_elem(
-                  K, f.coeffs, i.coefficient_index());
+              ring_elem a = C.ring().vectorArithmetic().ringElemFromElementArray(
+                  f.coeffs, i.coefficient_index());
               result->set_entry(newcomps[comp], col, a);
             }
         }
@@ -557,7 +413,7 @@ public:
       }
   }
 
-  const Ring* ring() const { return mSchreyerFrame.gausser().get_ring(); }
+  const Ring* ring() const { return mSchreyerFrame.vectorArithmetic().ring(); }
 
   int numRows() const { return mNumRows; }
 
@@ -646,7 +502,7 @@ public:
             {
               mComponents.push_back(new_comp);
               long val =
-                mGenerator.mSchreyerFrame.gausser().to_modp_long(f.coeffs, i.coefficient_index());
+                mGenerator.mSchreyerFrame.vectorArithmetic().to_modp_long(f.coeffs, i.coefficient_index());
               mCoefficients.push_back(val);
             }
         }
@@ -759,7 +615,7 @@ template<typename Gen>
 int SchreyerFrame::rankUsingDenseMatrix(Gen& D, bool transposed)
 {
   unsigned int charac =
-      static_cast<unsigned int>(gausser().get_ring()->characteristic());
+      static_cast<unsigned int>(vectorArithmetic().ring()->characteristic());
   M2::ARingZZpFFPACK R(charac);
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
   if (!transposed)
@@ -792,7 +648,7 @@ template<typename Gen>
 int SchreyerFrame::rankUsingDenseMatrixFlint(Gen& D, bool transposed)
 {
   unsigned int charac =
-      static_cast<unsigned int>(gausser().get_ring()->characteristic());
+      static_cast<unsigned int>(vectorArithmetic().ring()->characteristic());
   M2::ARingZZpFlint R(charac);
   DMat<M2::ARingZZpFlint> M(R, 0, 0);
   if (!transposed)
@@ -830,9 +686,9 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
   double nelementsD = static_cast<double>(nelements);
   double frac_nonzero = (nelements > 0 ? nnonzeroD/nelementsD : 1.0);
 
-  if (M2_gbTrace >= 2 and nelements > 0)
+  if (M2_gbTrace >= 2)
     {
-      std::cout << "rank(" << slanted_degree << "," << lev << ") size = "
+      std::cout << "  rank(" << lev << "," << slanted_degree << ") size = "
                 << D.numRows() << " x " << D.numColumns()
                 << " frac non-zero= " << frac_nonzero << std::endl << std::flush;
     }

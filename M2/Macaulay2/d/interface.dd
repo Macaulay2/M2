@@ -2039,6 +2039,40 @@ export rawSparseMatrix2(e:Expr):Expr := (
      else WrongNumArgs(7));
 setupfun("rawSparseMatrix2",rawSparseMatrix2);
 
+export rawMatrixReadMsolveString(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawRingCell do (a := wa.p;
+  when s.1 is wb:stringCell do (b := wb.v;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawMatrixReadMsolveString(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArg(1,"a string")
+  ) else WrongArg(0,"a raw ring")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawMatrixReadMsolveString",rawMatrixReadMsolveString);
+
+export rawMatrixReadMsolveFile(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawRingCell do (a := wa.p;
+  when s.1 is wb:stringCell do (b := wb.v;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawMatrixReadMsolveFile(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArg(1,"a string")
+  ) else WrongArg(0,"a raw ring")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawMatrixReadMsolveFile",rawMatrixReadMsolveFile);
+
 export rawConcat(e:Expr):Expr := (
      if isSequenceOfMatrices(e) then
      toExpr(Ccode(RawMatrixOrNull, 
@@ -3377,7 +3411,7 @@ setupfun("rawGB",rawGB);
 
 export rawResolution(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 7 then WrongNumArgs(7) else
+     if length(s) != 8 then WrongNumArgs(7) else
      when s.0 is m:RawMatrixCell do
      when s.1 is resolveCokernel:Boolean do
      when s.2 is maxLevel:ZZcell do if !isInt(maxLevel) then WrongArgSmallInteger(3) else
@@ -3385,6 +3419,7 @@ export rawResolution(e:Expr):Expr := (
      when s.4 is maxSlantedDegree:ZZcell do if !isInt(maxSlantedDegree) then WrongArgSmallInteger(5) else
      when s.5 is algorithm:ZZcell do if !isInt(algorithm) then WrongArgSmallInteger(6) else
      when s.6 is strategy:ZZcell do if !isInt(strategy) then WrongArgSmallInteger(7) else
+     when s.7 is parallelizeByDegree:Boolean do
      if !isInt(algorithm) then WrongArgSmallInteger(8) else
      toExpr(
 	  Ccode(RawComputationOrNull,
@@ -3395,10 +3430,12 @@ export rawResolution(e:Expr):Expr := (
 		   isTrue(useMaxSlantedDegree),",",
 		   toInt(maxSlantedDegree),",",
 		   toInt(algorithm),",",
-		   toInt(strategy),
+		   toInt(strategy),",",
+                   parallelizeByDegree == True,
 	       ")"
 	       )
 	  )
+     else WrongArgBoolean(8)
      else WrongArgZZ(7)
      else WrongArgZZ(6)
      else WrongArgZZ(5)

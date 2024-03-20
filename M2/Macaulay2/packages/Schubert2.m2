@@ -23,7 +23,7 @@ schurVersion = value SchurRings.Options.Version
 if  schurVersion < 0.5 then protect EorH
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle'", "schubertCycle", "ReturnType",
-     "AbstractVarietyMap", "adams", "Base", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
+     "AbstractVarietyMap", "adams", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "exceptionalDivisor", "FlagBundle",
      "flagBundle", "projectiveBundle'", "projectiveBundle", "abstractProjectiveSpace'", "abstractProjectiveSpace", "integral", "IntersectionRing",
      "intersectionRing", "Rank","PullBack", "ChernClassVariableTable",
@@ -503,7 +503,7 @@ ChernClassVariable .. ChernClassVariable := (a,b) -> (
 
 installMethod(symbol _, OO, RingElement, AbstractSheaf => (OO,D) -> (
 	  if D != 0 and degree D != {1} then error "expected a cycle class of degree 1 (a divisor class)";
-	  1 - OO_(variety D)(-D)))
+	  1 - OO_(variety ring D)(-D)))
 installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => 
      (OO,X) -> (
 	  A := intersectionRing X;
@@ -1746,7 +1746,7 @@ diagrams(ZZ,ZZ,ZZ) := (k,n,d) -> (--partitions of d of above form
 toSchubertBasis = method()
 toSchubertBasis(RingElement) := c -> (
      --by Charley Crissman
-     try G := variety c else error "expected an element of an intersection ring"; 
+     try G := variety ring c else error "expected an element of an intersection ring";
      (S,T,U) := schubertRing(G);
      T c
      )

@@ -310,11 +310,6 @@ Module.directSum = args -> (
 	  N)
 Module ^ ZZ := Module => (M, i) -> if i > 0 then Module.directSum (i:M) else 0*M
 
-single := v -> (
-     if not same v 
-     then error "incompatible objects in direct sum";
-     v#0)
-
 indices = method()
 indices HashTable := X -> (
      if X.cache.?components then if X.cache.?indices then X.cache.indices else toList ( 0 .. #X.cache.components - 1 )
@@ -323,12 +318,14 @@ indices HashTable := X -> (
 
 directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
-     if #args === 0 then error "expected more than 0 arguments";
-     type := single apply(args, class);
-     meth := lookup(symbol directSum, type);
-     if meth === null then error "no method for direct sum";
-     S := meth args;
-     S)
+    if #args === 0 then error "expected more than 0 arguments";
+    type := if uniform args then class args#0 else error "incompatible objects in direct sum";
+    meth := lookup(symbol directSum, type);
+    if meth === null then error "no method for direct sum";
+    Y := youngest args;
+    key := (directSum, args);
+    if Y === null or not Y.?cache then meth args else
+    if Y.cache#?key then Y.cache#key else Y.cache#key = meth args)
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
@@ -338,9 +335,10 @@ Option.directSum = args -> (
      if #args === 0 then error "expected more than 0 arguments";
      objects := apply(args,last);
      labels  := toList args/first;
-     type := single apply(objects, class);
-     if not type.?directSum then error "no method for direct sum";
-     M := type.directSum objects;
+     type := if uniform objects then class objects#0 else error "incompatible objects in direct sum";
+     meth := lookup(symbol directSum, type);
+     if meth === null then error "no method for direct sum";
+     M := meth objects;
      M.cache.indices = labels;
      ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);
      -- now, in case M is a map (i.e., has a source and target), then label the source and target objects of the sum
@@ -417,20 +415,20 @@ submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
 	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
 -- given a module, find a part of the ambient module
 -- along with corresponding generators and relations
-submodule = (M, rows) -> (
+sliceModule = (M, rows) -> (
     rows = listZZ rows;
     if rows === toList(0 .. numgens M - 1) then M else
     if isFreeModule M    then (ring M)^((-degrees M)_rows) else
-    if not M.?relations  then image    submatrixFree(generators M, rows, ) else
+    if not M.?relations  then image    submatrixFree(generators M, , rows) else
     if not M.?generators then cokernel submatrixFree(relations  M, rows, ) else
-    subquotient(submatrixFree(generators M, rows, ), submatrixFree(relations M, rows, )))
+    subquotient(submatrixFree(generators M, , rows), submatrixFree(relations M, rows, )))
 
 submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
 
-submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(submodule(target m, rows), submodule(source m, cols), raw submatrixFree(m, rows, cols))
-submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(submodule(target m, rows), source m,                  raw submatrixFree(m, rows, null))
-submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                  submodule(source m, cols), raw submatrixFree(m, null, cols))
+submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(sliceModule(target m, rows), sliceModule(source m, cols), raw submatrixFree(m, rows, cols))
+submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(sliceModule(target m, rows), source m,                    raw submatrixFree(m, rows, null))
+submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                    sliceModule(source m, cols), raw submatrixFree(m, null, cols))
 submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
 submatrix(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
 
@@ -636,12 +634,13 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      N := target f;
      M := source f;
      if ring N' =!= ring M' or ring N' =!= ring f then error "inducedMap: expected modules and map over the same ring";
-     if isFreeModule N and isFreeModule M and (N =!= ambient N' and rank N === rank ambient N' or M =!= ambient M' and rank M === rank ambient M')
+    if isFreeModule N and isFreeModule M and (
+	N =!= ambient N' and rank N === rank ambient N' or
+	M =!= ambient M' and rank M === rank ambient M')
      then f = map(N = ambient N', M = ambient M', f)
      else (
-     	  if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
-     	  if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
-	  );
+	if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
+	if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module");
      c := runHooks((inducedMap, Module, Module, Matrix), (opts, N', M', f));
      (f', g, gbN', gbM) := if c =!= null then c else error "inducedMap: no method implemented for this type of input";
      if opts.Verify then (
@@ -667,8 +666,7 @@ addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M'
      (f', g, gbN', gbM)))
 
 inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
-     if ambient M != ambient N 
-     then error "'inducedMap' expected modules with same ambient free module";
+    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
 -- TODO: deprecate this in favor of isWellDefined

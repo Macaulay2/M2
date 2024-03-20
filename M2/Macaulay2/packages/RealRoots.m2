@@ -2,6 +2,7 @@
 newPackage(
     "RealRoots",
     Version=>"0.1",
+    --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 16/02/2024
     Date=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
@@ -391,14 +392,14 @@ realRootIsolation (RingElement,A) := List => (f,r)->(
     if not isUnivariatePolynomial(f) then error "Error: Expected univariate polynomial";
     R := ring f;
     
-    f = sub(f/gcd(f,diff(variable f,f)),R);
+    f = sub(f/gcd(f,diff(variable f,f)),R); --makes polynomial squarefree
     
     if (SturmCount(f)>0) then (
 	l := SturmSequence(f);
 	
 	--bound for real roots
-	C := (listForm f)/last;
-    	M := (sum(C,abs))/(leadCoefficient f);
+	C := (listForm ((f-leadTerm(f))/leadCoefficient(f)))/last; --make the polynomial monic, and obtain list of coefficients of non-lead monomials.
+    	M := min(1+max(0,max(apply(C,abs))),max(1,sum(C,abs))); --obtains Cauchy or Lagrange bound (setting M = 1 if the polynomial is only a single term)
 	
 	L := {{-M,M}};
 	midp := 0;
@@ -406,18 +407,23 @@ realRootIsolation (RingElement,A) := List => (f,r)->(
 	
 	while (max apply(L,I-> I#1-I#0) > r) or (max apply(L,I-> v#(I#0)-v#(I#1)) > 1) do (
 	    for I in L do (
-		midp = (sum I)/2;
-		v#midp = variations apply(l,g->signAt(g,midp));
-		L = drop(L,1);
-		if (v#(I#0)-v#midp > 0) then (
-		    L = append(L,{I#0,midp})
-		    );
-		if (v#midp-v#(I#1) > 0) then (
-		    L = append(L,{midp,I#1})
+		if ((v#(I#0)-v#(I#1) == 1) and (I#1-I#0 <= r)) then (
+	            L = take(L,{1,#L})|{L#0}; -- skip bisection if root is identified and bound is within interval size.
+		)
+		else (
+		    midp = (sum I)/2;
+		    v#midp = variations apply(l,g->signAt(g,midp));
+		    L = drop(L,1);
+		    if (v#(I#0)-v#midp > 0) then (
+		        L = append(L,{I#0,midp})
+		        );
+	  	    if (v#midp-v#(I#1) > 0) then (
+		        L = append(L,{midp,I#1})
+		        );
 		    )
 		)
 	    );
-	L
+	sort L --list is ordered from smallest to largest interval, in case the while look stops after a larger interval
 	) else (
 	{}
 	)
@@ -1033,7 +1039,7 @@ TEST ///
 TEST ///
     R = QQ[t];
     f = (t-1)^2*(t+3)*(t+5)*(t-6);
-    assert(realRootIsolation(f,1/2) == {{-161/32, -299/64}, {-207/64, -23/8}, {23/32, 69/64}, {23/4, 391/64}});
+    assert(realRootIsolation(f,1/2) == {{-1365/256,-637/128},{-819/256,-91/32},{91/128,273/256},{91/16,1547/256}});
     ///    
     
 TEST ///
@@ -1074,9 +1080,3 @@ TEST ///
     -- ///	 
     
 end
-
-
-
-
-
-

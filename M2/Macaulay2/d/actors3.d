@@ -2150,6 +2150,13 @@ scan(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("scan",scan);
+
+nextPrime(e:Expr):Expr := (
+     when e
+     is x:ZZcell do toExpr(nextPrime(x.v - oneZZ))
+     else WrongArgZZ());
+setupfun("nextPrime0", nextPrime);
+
 gcd(x:Expr,y:Expr):Expr := (
      when x
      is a:ZZcell do (
@@ -2159,6 +2166,25 @@ gcd(x:Expr,y:Expr):Expr := (
      else buildErrorPacket("expected an integer"));
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd0",gcdfun);
+
+binomial(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is n:ZZcell do (
+		when a.1
+		is k:ZZcell do (
+		    if isNegative(k.v)
+		    then zeroE
+		    else if !isULong(k)
+		    then WrongArgSmallUInteger(2)
+		    else toExpr(binomial(n.v, toULong(k))))
+		else WrongArgZZ(2))
+	    else WrongArgZZ(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("binomial0", binomial);
 
 sequencefun(e:Expr):Expr := (
      when e

@@ -3,8 +3,6 @@
 --- notes: 
 
 undocumented {
-    (degreeLength, Module),
-    (degreeLength, Ideal),
      (degreeLength, InexactField),
      (degreeLength,PolynomialRing), 
      (degreeLength,QuotientRing),

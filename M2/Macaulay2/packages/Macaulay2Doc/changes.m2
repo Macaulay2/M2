@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+--	  TO "changes made for the next release",
+	  TO "changes, 1.23",
 	  TO "changes, 1.22",
 	  TO "changes, 1.21",
 	  TO "changes, 1.20",
@@ -39,8 +40,17 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes, 1.23",
      UL {
+	  LI { "packages that have been published and certified:",
+	       UL {
+		   LI { star, " ", TO "BettiCharacters::BettiCharacters", ", a package by Federico Galetto for finite group characters on free resolutions and graded modules, has been published." },
+		   LI { star, " ", TO "FastMinors::FastMinors", ", a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao for faster linear algebra operations, has been published." },
+		   LI { star, " ", TO "MixedMultiplicity::MixedMultiplicity", ", a package by Kriti Goel, Vivek Mukundan, Sudeshna Roy, and J. K. Verma for Mixed Multiplicities of ideals, has been published." },
+		   LI { star, " ", TO "RandomPoints::RandomPoints", ", a package by Sankhaneel Bisui, Zhan Jiang, Sarasij Maitra, Thai Nguyen, Frank-Olaf Schreyer, and Karl Schwede for find a point in a given variety over a finite field, has been published." },
+		   LI { star, " ", TO "SimplicialComplexes::SimplicialComplexes", ", a package by Gregory G. Smith, Ben Hersey, and Alexandre Zotine for exploring abstract simplicial complexes within commutative algebra, has been published." }
+		   }
+	       },
 	  LI { "new packages:",
 	       UL {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
@@ -48,8 +58,67 @@ document {
 			TO "WeylAlgebras::WeylAlgebras", ", ", TO "HolonomicSystems::HolonomicSystems", ", and ", TO "BernsteinSato::BernsteinSato", ". ",
 			"The new addition ", TO "WeylAlgebras::WeylAlgebras", ", contains basic constructors and methods for working with Weyl algebras
 			which used to be in the ", TO "Dmodules::Dmodules", " package." },
+		    LI { "The package ", TO "Varieties::Varieties", " has been added to encapsulate existing and new functionality for working
+			with affine and projective varieties and coherent sheaves on them. The package adds support for maps of coherent sheaves." },
+		    LI {TO "A1BrouwerDegrees::A1BrouwerDegrees", ", a package by Nikita Borisov, Thomas Brazelton, Frenly Espino, Tom Hagedorn, Zhaobo Han, Jordy Lopez Garcia, Joel Louwsma, Andrew Tawfeek, and Wern Juin Gabriel Ong for for working with A1-Brouwer degree computations, has been added." },
+		    LI {TO "AdjunctionForSurfaces::AdjunctionForSurfaces", ", a package by Frank-Olaf Schreyer for Adjunction for Surfaces, has been added." },
+		    LI {TO "MatrixSchubert::MatrixSchubert", ", a package by Ayah Almousa, Sean Grate, Daoji Huang, Patricia Klein, Adam LaClair, Yuyuan Luo, and Joseph McDonough for functions for investigating ASM and matrix Schubert varieties, has been added." },
+		    LI {TO "OIGroebnerBases::OIGroebnerBases", ", a package by Michael Morrow for OI-modules over Noetherian polynomial OI-algebras, has been added." },
+		    LI {TO "PlaneCurveLinearSeries::PlaneCurveLinearSeries", ", a package by David Eisenbud for Linear series on the normalization of a plane curve, has been added." },
+		    LI {TO "QuadraticIdealExamplesByRoos::QuadraticIdealExamplesByRoos", ", a package by David Eisenbud, Michael Perlman, Ritvik Ramkumar, Deepak Sireeshan, Aleksandra Sobieska, Teresa Yu, and Jacob Zoromski for Examples of Quadratic Ideals with Embedding Dimension Four by Jan-Erik Roos, has been added." },
+		    LI {TO "RInterface::RInterface", ", a package by Doug Torrance for interface to R for statistical computing, has been added." },
+		    LI {TO "TerraciniLoci::TerraciniLoci", ", a package by Francesco Galuppi, Pierpaola Santarsiero, Doug Torrance, and Ettore Teixeira Turatti for Terracini loci of projective varieties, has been added." },
+		    LI {TO "Valuations::Valuations", ", a package by Michael Burr, Colin Alstad, Michael Byrd, Ethan Partida, Shelby Cox, Courtney George, and Oliver Clarke for implementation of valuations for rings, has been added." },
 		    }
 	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "Most flexible binary operators now have a corresponding ", TO "augmented assignment", " operator.  For example, ",
+			 SAMP "x += 1", " is equivalent to ", SAMP "x = x + 1", "."},
+		    LI { "A new type, ", TO AtomicInt, ", has been introduced providing atomic operations for use in parallel programs." },
+		    LI { "The null coalescing operator ", TO symbol ??, " has been added to the Macaulay2 language." },
+		    LI { "A polynomial ", SAMP "f", " may now be evaluated at a ring element or sequence of ring elements ", SAMP "x", " using ",
+			SAMP "f(x)", ".  The existing syntax, ", SAMP "f[x]", ", has been deprecated and may be removed in a future release. ",
+			"See ", TO (symbol SPACE, RingElement, Sequence), "." },
+		    LI { "The method ", TO (isMember, RingElement, Ideal), " has been added to test membership in an ideal." },
+		    LI { "When given just a module and no integer, ", TO hilbertFunction, " will now a return a function that accepts integers and ",
+			 "returns the corresponding values of the Hilbert function of the module." },
+		    LI { "Torsion is now taken into account when adding, subtracting, and negating matrices." },
+		    LI { "The source and target modules of a matrix will now be printed when both are free and/or have been assigned to global ",
+			 "variables.  Previously, they were only printed when both were free."},
+		    LI { "If a module in a chain complex has been assigned to a global variable, then that variable will appear when the complex ",
+			 "is printed, unless it is a free module."},
+		    LI { "Several improvements have been made to ", TO vector, " for constructing elements of modules."},
+		    LI { "It is now possible to view the code of a function defined on the standard input using ", TO code, "."},
+		    LI { "The particular subclass of ", TO Function, " is now displayed when a function that has not been assigned to a global ",
+			 "variable is printed." },
+		    LI { "The \"standalone\" class is now used by ", TO showTex, " so that the size of the resulting document will match the size ",
+			 "of the object being viewed." },
+		    LI { "Several new escape sequences have been added for strings:  ", SAMP "\\a", " (for audible bell), ", SAMP "\\e",
+			 " and ", SAMP "\\E", " (for escape), ", SAMP "\\v", " (for vertical tab), and ", SAMP "\\x", " (for indicating a character ",
+			 "using its ASCII encoding in hexadecimal).  See ", TO "\"", "." },
+		    LI { "Both ", TO exportFrom, " and ", TO importFrom, " now accept either a string or ", TO Package, " object as their first argument ",
+			 "and either a string or a list of strings as their second argument." },
+		    LI { TO "FLINT", " version 3 is now supported."},
+		    LI { SAMP "libatomic_ops", " has been dropped as a dependency and has been replaced with C11 and C++11 standard atomic operations." },
+            LI { "Some computations in the engine (e.g. minimal betti diagrams and Groebner bases over associative algebras), ",
+                  "can now take advantage of multiple CPU cores, see ", TO "parallelism in engine computations", "."}
+		    }
+	       },
+	  LI { "emacs updates:",
+	       UL {
+	            LI { "Indentation in the Macaulay2 major mode is now more consistent with other Emacs majors modes.  For example, it now respects ",
+			 "the Electric Indent minor mode.  In particular, it is possible to toggle whether code is automatically indented after pressing ",
+			 KBD "Return", " by running ", SAMP "M-x electric-indent-mode", "." },
+		    LI { "The Macaulay2 Interaction major mode now respects the ", SAMP "comint-use-prompt-regexp", " variable.  This controls how ",
+			 "many lines are sent to Macaulay2 when pressing ", KBD "Return", " after scrolling up to previous input.  If the variable is ",
+			 "set to ", SAMP "t", ", then one line will be sent.  If it is set to ", SAMP "nil", " (the default), then the entire input ",
+			 "field will be sent." },
+		    LI { "The function ", SAMP "M2-send-to-program", " (which is bound to ", KBD "F11", " by default), is now only intended to be ",
+			 "called from the Macaulay2 major mode.  A new function, ", SAMP "M2-send-input-or-get-input-from-demo-buffer", " has been ",
+			 "added (and bound to ", KBD "F11", ") for the Macaulay2 Interaction major mode.  The user experience should remain unchanged." }
+		    }
+	       }
 	  }
      }
 

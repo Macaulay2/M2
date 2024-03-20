@@ -491,8 +491,8 @@ freeResolution = method(Options => {
 	PairLimit		=> infinity,	-- number of pairs computed
 	HardDegreeLimit		=> {},		-- throw out information in degrees above this one
 	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
-	Strategy		=> null,	-- algorithm to use, usually 1, but sometimes 2
-	FastNonminimal		=> false
+	Strategy		=> null,     	-- 
+        ParallelizeByDegree     => false        -- currently: only used by Strategy => Nonminimal, gives warning if true and another Strategy selected
 	}
     )
 
@@ -699,6 +699,13 @@ part(List, Complex) := Complex => (deg, C) -> (
         )
     )
 part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
+
+truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
+    (lo, hi) := concentration C;
+    if lo === hi then return complex truncate(e, C_lo);
+    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
+    )
+truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
@@ -957,7 +964,11 @@ resolutionMap Complex := ComplexMap => opts -> C -> (
     else fC
     )
 
-resolution Complex := opts -> C -> source resolutionMap(C, opts)
+resolution Complex := opts -> C -> (
+    -- TODO: remove this hack once resolution doesn't have FastNonminimal anymore and is defined in Complexes).
+    opts1 := new OptionTable from for k in keys opts list if k === FastNonminimal then continue else k => opts#k;
+    source resolutionMap(C, opts1)
+    )
 
 augmentationMap = method()
 augmentationMap Complex := ComplexMap => 

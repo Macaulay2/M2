@@ -535,6 +535,14 @@ part(List, ComplexMap) := ComplexMap => (deg, f) -> (
     )
 part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
 
+truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
+    C := truncate(e, source f);
+    D := truncate(e, target f);
+    d := degree f;
+    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
+    )
+truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
+
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
 --------------------------------------------------------------------
@@ -1206,7 +1214,9 @@ tensorAssociativity(Complex, Complex, Complex) := ComplexMap => (A,B,C) -> (
 isQuasiIsomorphism = method(Options => {Concentration => (-infinity,infinity)})
 -- TODO: check this function for correctness, in the case when Concentration is given
 isQuasiIsomorphism ComplexMap := Boolean => opts -> f -> (
-    (lof,hif) := concentration f;
+    (loSrc,hiSrc) := concentration source f;
+    (loTar,hiTar) := concentration target f;
+    (lof,hif) := (min(loTar, loSrc), max(hiTar, hiSrc));
     (loO,hiO) := opts.Concentration;
     all(max(lof,loO)..min(hif,hiO),
         i -> HH_(i+1) cone f == 0

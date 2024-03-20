@@ -12,7 +12,7 @@ Module + Module := Module => (M,N) -> (
      if ring M =!= ring N
      then error "expected modules over the same ring";
      R := ring M;
-     if ambient M != ambient N
+     if ambient M =!= ambient N
      or M.?relations and N.?relations and M.relations != N.relations
      or M.?relations and not N.?relations
      or not M.?relations and N.?relations
@@ -29,6 +29,7 @@ tensor(Thing, Thing) := true >> opts -> (M, N) -> M ** N
 undocumented' (tensor, Thing, Thing)
 
 Module ** Module := Module => (M, N) -> tensor(M, N)
+Module^** ZZ     := Module => (F, n) -> BinaryPowerMethod(F, n, tensor, module @@ ring, dual)
 tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      (oM,oN) := (M,N);
      Y := youngest(M.cache.cache,N.cache.cache);
@@ -57,9 +58,6 @@ tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      -- we do not set T.cache.components, as "components" is for sums, not tensor products
      T.cache.formation = FunctionApplication (tensor, (M,N));
      T)
-
-Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
-Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
 
 -- TODO: this is undocumented and only works correctly in a specific case.
 -- can its goal be accomplished differently?
@@ -269,7 +267,7 @@ flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;
-     if L != ambient N then error "expected modules with the same ambient module";
+     if L =!= ambient N then error "expected modules with the same ambient module";
      R := ring M;
      if N.?generators
      then (
@@ -351,10 +349,33 @@ Module ^ List := Matrix => (M, rows) -> submatrix(map(cover M, M, id_M), rows,)
 Module _ List := Matrix => (M, cols) -> submatrix(map(M, cover M, id_M), cols)
 -----------------------------------------------------------------------------
 
+-- TODO: also implement for a longer lists of matrices or other types of map
+pullback = method(Options => true)
+pullback(Matrix, Matrix) := Module => {} >> o -> (f, g) -> (
+    if target f =!= target g then error "expected maps with the same target";
+    h := f | -g;
+    P := kernel h;
+    S := source h;
+    P.cache.pullbackMaps = {
+	map(source f, S, S^[0], Degree => - degree f) * inducedMap(S, P),
+	map(source g, S, S^[1], Degree => - degree g) * inducedMap(S, P)};
+    P)
+
+pushout = method()
+pushout(Matrix, Matrix) := Module => (f, g) -> (
+    if source f =!= source g then error "expected maps with the same source";
+    h := f || -g;
+    P := cokernel h;
+    T := target h;
+    P.cache.pushoutMaps = {
+	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
+	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
+    P)
+
 -----------------------------------------------------------------------------
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!
-     ambient M == ambient N and
+     ambient M === ambient N and
      if M.?relations and N.?relations then (
 	  image M.relations == image N.relations
 	  and

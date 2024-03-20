@@ -22,15 +22,22 @@ newPackage(
         { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
         },
     Keywords => { "Commutative Algebra" },
-    PackageImports => { "Polyhedra", "NormalToricVarieties", "Varieties" },
-    PackageExports => { "Complexes" },
+    PackageImports => { "Polyhedra" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
-importFrom_Core {"concatCols", "raw", "rawSelectByDegrees"}
+importFrom_Core {
+    "concatCols",
+    "raw", "rawSelectByDegrees",
+    "tryHooks",
+    }
 
 -- "truncate" is exported by Core
+export {
+    "effCone", "effGenerators",
+    "nefCone", "nefGenerators",
+    }
 
 protect Exterior
 protect Nef
@@ -66,22 +73,25 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
         then sort L else error("expected a list of multidegrees, each of length " | degrank))
     )
 
--- Helpers for toric varieties
+--------------------------------------------------------------------
+-- Divisorial information
+--------------------------------------------------------------------
 
 -- Generators of effective cone
-effGenerators = method()
-effGenerators Ring := (cacheValue symbol effGenerators) (R -> transpose matrix degrees R)
-effGenerators NormalToricVariety := X -> effGenerators ring X
+effGenerators = method(TypicalValue => Matrix)
+effGenerators Ring := R -> tryHooks((effGenerators, Ring), R, R -> map(degreeGroup R, , transpose matrix degrees R))
 
--- Nef cone of X as a polyhedral object
-nefCone = method()
-nefCone NormalToricVariety := (cacheValue symbol nefCone) (X -> convexHull(matrix{0_(picardGroup X)}, nefGenerators X))
-nefCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then nefCone R.variety
+-- Generators of Nef cone
+nefGenerators = method(TypicalValue => Matrix)
+nefGenerators Ring := R -> null -- will be overridden in Varieties package
 
 -- Effective cone of X as a polyhedral object
-effCone = method()
-effCone NormalToricVariety := (cacheValue symbol effCone) (X -> convexHull(matrix{0_(picardGroup X)}, effGenerators X))
-effCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then effCone R.variety
+effCone = method(TypicalValue => Cone)
+effCone Ring := R -> tryHooks((effCone, Ring), R, R -> convexHull(matrix{0_(degreeGroup R)}, effGenerators R))
+
+-- Nef cone of X as a polyhedral object
+nefCone = method(TypicalValue => Cone)
+nefCone Ring := R -> null -- will be overridden in Varieties package
 
 --------------------------------------------------------------------
 -- Polyhedral algorithms
@@ -201,6 +211,8 @@ truncation0 = (deg, M) -> (
     else image basis(deg, deg, M, Truncate => true))
 
 truncation1 = (deg, M) -> (
+    -- short-circuit the computation if no truncation is needed
+    if all(degrees M, d -> deg <= d) then return M;
     -- WARNING: valid for towers of rings with degree length = 1.
     -- uses the engine routines for basis with Truncate => true
     -- deg: a List of integers
@@ -250,26 +262,19 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
         gens truncate(degs, image  relations M, MinimalGenerators => false))
     )
 
+--------------------------------------------------------------------
+
 truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     F := truncate(degs, source f, opts);
     G := truncate(degs, target f, opts);
-    map(G, F, (f * gens F) // gens G))
+    -- FIXME, what is right?
+    fgenF := (f * inducedMap(source f, F) * inducedMap(F, source gens F, gens F));
+    map(G, F, inducedMap(G, source fgenF, fgenF) // inducedMap(G, source gens G, gens G)))
 
-truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
-    (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(e, C_lo);
-    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
-    )
-truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
+--------------------------------------------------------------------
 
-truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
-    C := truncate(e, source f);
-    D := truncate(e, target f);
-    d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
-    )
-truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
-
+truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
+    if d === -infinity then M else error "unexpected degree for truncation")
 
 --------------------------------------------------------------------
 -- basis using basisPolyhedron (experimental)

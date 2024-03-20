@@ -46,6 +46,7 @@ addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
     e := opts.DegreeLimit;
     -- TODO: any other cases which should be excluded?
     if e === null then return null;
+    if e === 0 then e = degree 0_M;
     A := presentation M; (G, F) := (target A, source A); -- M <-- G <-- F
     B := presentation N; (L, K) := (target B, source B); -- N <-- L <-- K
     piN := inducedMap(N, L, generators N);

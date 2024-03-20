@@ -1,7 +1,7 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
-	Version => "1.6.0",
-	Date => "November 7, 2022",
+	Version => "1.7.0",
+	Date => "February 6, 2024",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu"}},
@@ -9,7 +9,7 @@ newPackage("Matroids",
 	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
 	PackageExports => {"Graphs", "Posets"},
-	DebuggingMode => false,
+	DebuggingMode => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
@@ -68,6 +68,7 @@ export {
 	"relabel",
 	"quickIsomorphismTest",
 	"getIsos",
+	"isoTypes",
 	"tutteEvaluate",
 	"chromaticPolynomial",
 	"getCycles",
@@ -148,6 +149,11 @@ matroid (List, List) := Matroid => opts -> (E, L) -> (
 )
 matroid List := Matroid => opts -> L -> matroid(sort unique flatten L, L, opts)
 matroid (ZZ, List) := Matroid => opts -> (n, L) -> matroid(toList(0..<n), L, opts)
+matroid (List, List, ZZ) := Matroid => opts -> (E, N, r) -> ( -- non-spanning circuits
+	if #N > 0 and not instance(N#0, Set) then N = N/set;
+	spanningCircuits := subsets(E, r+1)/set - set flatten apply(N, c -> apply(subsets(E - c, r+1 - #c)/set, s -> s + c));
+	matroid(E, N | spanningCircuits, EntryMode => "circuits")
+)
 matroid Matrix := Matroid => opts -> A -> (
 	k := rank A;
 	setRepresentation(matroid(apply(numcols A, i -> A_{i}), (select(subsets(numcols A, k), S -> rank A_S == k))/set), A)
@@ -769,42 +775,94 @@ getIsos (Matroid, Matroid) := List => (M, N) -> (
 
 isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
 	if M == N then return hashTable apply(#M_*, i -> (i, i));
-	local coloopStore, local C, local D, local e, local C1, local c0slice;
-	local coverCircuits, local H, local candidates, local extraElts, local F, local E;
-	coloopStore = (M, N)/coloops/sort; -- sort is crucial!
-	if #(coloopStore#0) > 0 then (M, N) = (M \ (coloopStore#0), N \ (coloopStore#1)); -- reduces both (M, N) to unions of circuits
-	(C, D, e) = (sort(circuits M, c -> #c), circuits N, #M.groundSet);
-	if #C == 0 then return hashTable pack(2, mingle coloopStore);
-	C1 = C;
-	c0slice = sliceBySize(C1#0, C1);
-	coverCircuits = {C1#0} | while c0slice#?0 list (
+	-------------------------------
+	-- DFS: 9/12/23
+	-------------------------------
+	(C, D) := (sort((circuits M)/keys/sort, c -> #c), sort((circuits N)/keys/sort, c -> #c));
+	if tally sizes C =!= tally sizes D then return null;
+	numLoops := position(C, c -> #c > 1); -- numLoops cannot be null, since M != N
+	loopStore := apply(numLoops, i -> {C#i#0, D#i#0});
+	coloopStore := pack(2, mingle((toList M.groundSet - set flatten C, toList N.groundSet - set flatten D)/sort));
+	(C, D) = (C_(toList(numLoops..<#C)), D_(toList(numLoops..<#D)));
+	(circUnionM, circUnionN) := (C, D)/flatten/unique;
+	C1 := C;
+	c0slice := sliceBySizeList(C1#0, C1);
+	coverCircuits := {C1#0} | while c0slice#?0 list (
 		C1 = sort(c0slice#0, c -> #c);
-		c0slice = sliceBySize(C1#0, C1);
+		c0slice = sliceBySizeList(C1#0, C1);
 		C1#0
-	); -- creates maximal list of disjoint circuits in M, covering as much of M.groundSet as possible
-	H = apply(coverCircuits, c -> (c, select(D, d -> #d == #c and (pairs sliceBySize(c, C))/last/sizes/tally === (pairs sliceBySize(d, D))/last/sizes/tally))); -- creates list of ordered pairs: first element is member of coverCircuits, second element is list of circuits in N which have the same "intersection size pattern" as the first element
-	if min sizes(H/last) == 0 then return;
-	candidates = {H};
-	for i to #coverCircuits-1 do (
-		candidates = flatten apply(candidates, cand -> apply(#last(cand#i), j -> (
-			append(cand_{0..<i}, (coverCircuits#i, (last(cand#i))#j)) | apply(cand_{i+1..#coverCircuits-1}, S -> (S#0, select(S#1, s -> #(s*((last(cand#i))#j)) == 0)))
-		)))
-	); -- "de-nests" second-element lists of H (i.e. each list member becomes its own item, but keeping only those which are disjoint from previously matched circuits of N
-	extraElts = M.groundSet - flatten(coverCircuits/toList);
-	E = flatten(append(coverCircuits, extraElts)/keys/sort);
-	if #extraElts > 0 then candidates = apply(candidates, cand -> cand | {(extraElts, N.groundSet - flatten(cand/last/toList))});
-	for cand in candidates do (
-		for f in fold((a,b) -> flatten table(a,b,identity), cand/last/keys/permutations) /deepSplice/join do (
-			F = hashTable apply(e, i -> E#i => f#i);
-			if all(C, c -> member(c/(i -> F#i), D)) then return (
-				if #(coloopStore#0) == 0 then F else (
-					F = pairs F;
-					for i to #(coloopStore#0)-1 do F = apply(F, p -> (p#0 + (if p#0 >= coloopStore#0#i then 1 else 0), p#1 + (if p#1 >= coloopStore#1#i then 1 else 0)));
-					hashTable(pack(2, mingle coloopStore) | F)
-				)
-			);
-		);
 	);
+	extraElts := circUnionM - set flatten coverCircuits;
+	sym := permutations toList(0..<#extraElts);
+	level := 0;
+	c := coverCircuits#level;
+	pattern := (values sliceBySizeList(c, C))/sizes/tally;
+	searchTree := new MutableList from {flatten((select(D, d -> #d == #c and pattern === (values sliceBySizeList(d, D))/sizes/tally))/permutations)};
+	phi := new MutableHashTable from (apply(circUnionM, e -> {e, null}) | loopStore | coloopStore);
+	while #searchTree#0 > 0 do {
+		if #searchTree#level > 0 then scan(#c, i -> phi#(c#i) = searchTree#level#0#i);
+		if #searchTree#level == 0 then (
+			scan(#c, i -> phi#(c#i) = null);
+			level = level - 1;
+			c = coverCircuits#level;
+			searchTree#level = drop(searchTree#level, 1);
+		) else if level < #coverCircuits - 1 then (
+			level = level + 1;
+			c = coverCircuits#level;
+			pattern = (values sliceBySizeList(c, C))/sizes/tally;
+			candidates := select(D, d -> #d == #c and #(set d * set values phi) == 0 and pattern === (values sliceBySizeList(d, D))/sizes/tally);
+			searchTree#level = flatten(candidates/permutations);
+			if debugLevel > 0 then << "\rSearch tree: " << toString apply(#searchTree, i -> #searchTree#i) << flush;
+		) else (
+			extraEltsN := circUnionN - set values phi;
+			for p in sym do (
+				scan(#extraElts, i -> phi#(extraElts#i) = extraEltsN#(p#i));
+				if all(C, circ -> member(sort(circ/(i -> phi#i)), D)) then return hashTable pairs phi;
+			);
+			scan(#extraElts, i -> phi#(extraElts#i) = null);
+			searchTree#level = drop(searchTree#level, 1);
+		);
+	};
+	-------------------------------
+	-- Old algorithm
+	-------------------------------
+	-- local coloopStore, local C, local D, local e, local C1, local c0slice;
+	-- local coverCircuits, local H, local candidates, local extraElts, local F, local E;
+	-- coloopStore = (M, N)/coloops/sort; -- sort is crucial!
+	-- if #(coloopStore#0) > 0 then (M, N) = (M \ (coloopStore#0), N \ (coloopStore#1)); -- reduces both (M, N) to unions of circuits
+	-- (C, D, e) = (sort(circuits M, c -> #c), sort(circuits N, d -> #d), #M.groundSet);
+	-- if tally sizes C =!= tally sizes D then return null;
+	-- if #C == 0 then return hashTable pack(2, mingle coloopStore);
+	-- C1 = C;
+	-- c0slice = sliceBySize(C1#0, C1);
+	-- coverCircuits = {C1#0} | while c0slice#?0 list (
+		-- C1 = sort(c0slice#0, c -> #c);
+		-- c0slice = sliceBySize(C1#0, C1);
+		-- C1#0
+	-- ); -- creates maximal list of disjoint circuits in M, covering as much of M.groundSet as possible
+	-- H = apply(coverCircuits, c -> (c, select(D, d -> #d == #c and (values sliceBySize(c, C))/sizes/tally === (values sliceBySize(d, D))/sizes/tally))); -- creates list of ordered pairs: first element is member of coverCircuits, second element is list of circuits in N which have the same "intersection size pattern" as the first element
+	-- if min sizes(H/last) == 0 then return;
+	-- candidates = {H};
+	-- for i to #coverCircuits-1 do (
+		-- candidates = flatten apply(candidates, cand -> apply(#last(cand#i), j -> (
+			-- append(cand_{0..<i}, (coverCircuits#i, (last(cand#i))#j)) | apply(cand_{i+1..#coverCircuits-1}, S -> (S#0, select(S#1, s -> #(s*((last(cand#i))#j)) == 0)))
+		-- )))
+	-- ); -- "de-nests" second-element lists of H (i.e. each list member becomes its own item, but keeping only those which are disjoint from previously matched circuits of N
+	-- extraElts = M.groundSet - flatten(coverCircuits/toList);
+	-- E = flatten(append(coverCircuits, extraElts)/keys/sort);
+	-- if #extraElts > 0 then candidates = apply(candidates, cand -> cand | {(extraElts, N.groundSet - flatten(cand/last/toList))});
+	-- for cand in candidates do (
+		-- for f in fold((a,b) -> flatten table(a,b,identity), cand/last/keys/permutations) /deepSplice/join do (
+			-- F = hashTable apply(e, i -> E#i => f#i);
+			-- if all(C, c -> member(c/(i -> F#i), D)) then return (
+				-- if #(coloopStore#0) == 0 then F else (
+					-- F = pairs F;
+					-- for i to #(coloopStore#0)-1 do F = apply(F, p -> (p#0 + (if p#0 >= coloopStore#0#i then 1 else 0), p#1 + (if p#1 >= coloopStore#1#i then 1 else 0)));
+					-- hashTable(pack(2, mingle coloopStore) | F)
+				-- )
+			-- );
+		-- );
+	-- );
 )
 
 quickIsomorphismTest = method()
@@ -828,6 +886,16 @@ quickIsomorphismTest (Matroid, Matroid) := String => (M, N) -> (
 areIsomorphic (Matroid, Matroid) := Boolean => (M, N) -> (
 	testResult := quickIsomorphismTest(M, N);
 	if member(testResult, {null, "Could be isomorphic"}) then not(isomorphism(M, N) === null) else value testResult
+)
+
+isoTypes = method()
+isoTypes List := List => L -> (
+    isoClasses := {};
+    for o in L do (
+        isNewIsoClass := for c in isoClasses do if areIsomorphic(c, o) then break false;
+        if isNewIsoClass =!= false then isoClasses = append(isoClasses, o);
+    );
+    isoClasses
 )
 
 tuttePolynomialRing := ZZ(monoid(["x","y"]/getSymbol))
@@ -1067,21 +1135,23 @@ randomNonzero := k -> ( a := random k; while a == 0 do a = random k; a )
 
 rescalingRepresentative = method()
 rescalingRepresentative (Matrix, List) := Matrix => (A, O) -> (
-    k := ring A;
+    if A == 0 then return A;
+	k := ring A;
     r := numrows A; -- assumes A is full rank
     B := take(O, -r)/last;
     A = inverse(A_B) * A;
     colHash := hashTable((a,b) -> flatten{a, b}, drop(O, -r) /reverse);
     E := id_(k^r);
-    C := transpose matrix{(flatten apply(select(keys colHash, k -> not instance(colHash#k, ZZ)), c -> (
-        apply(drop(colHash#c, 1), row -> (
-            A_((colHash#c)#0,c)*E^{(colHash#c)#0} - A_(row,c)*E^{row}
-        ))
-    )))/transpose};
-    if debugLevel > 1 then << "rescalingRepresentative: " << C << endl;
-    K := gens ker C;
-    D := diagonalMatrix flatten entries sum(numcols K, i -> randomNonzero k * K_{i}); -- attempts to get element of K with all nonzero entries
-    A = D*A;
+	if any(values colHash, v -> instance(v, List)) then (
+		C := matrix flatten apply(select(keys colHash, k -> instance(colHash#k, List)), c -> (
+			apply(drop(colHash#c, 1), row -> {
+				A_((colHash#c)#0,c)*E^{(colHash#c)#0} - A_(row,c)*E^{row}
+			})
+		));
+		K := gens ker C;
+		D := diagonalMatrix flatten entries sum(numcols K, i -> randomNonzero k * K_{i}); -- attempts to get element of K with all nonzero entries
+		A = D*A;
+	);
     A*inverse diagonalMatrix apply(numcols A, j -> if colHash#?j then A_(if instance(colHash#j, ZZ) then colHash#j else colHash#j#0, j) else if member(j, B) then A_(position(B, p -> j == p), j) else 1_k)
 )
 
@@ -1115,7 +1185,7 @@ searchRepresentation (Matroid, GaloisField) := Matrix => opts -> (M, k) -> (
         msg := if total === (k.order - 1)^(#unknowns) then (
             (if total == 1 then "" else "likely ") | "no representation exists"
         ) else "please try again";
-        print("searchRepresentation: Could not find representation - " | msg);
+        if debugLevel > 0 then printerr("searchRepresentation: Could not find representation - " | msg);
         return;
     );
     A = matrix A_((sort pairs isomorphism(M, N))/last); -- makes matroid A == M
@@ -1176,16 +1246,13 @@ spike (ZZ, List) := Matroid => (r, C3) -> ( -- tipped r-spike
 spike ZZ := Matroid => r -> spike(r, {}) -- free tipped r-spike
 
 swirl = method()
-swirl ZZ := Matroid => r -> ( -- free rank-r swirl
-	E := toList(0..<2*r);
-	nonSpanningCircuits := (flatten flatten table(r, r-3, (i,j) -> (
+swirl ZZ := Matroid => r -> matroid(toList(0..<2*r), ( -- free rank-r swirl
+	(flatten flatten table(r, r-3, (i,j) -> (
 		v := toList apply(j, k -> 2*(i+k+1));
 		zChoices := toList((set{0,1})^**j/deepSplice/toList);
 		apply(zChoices, z -> {2*i, 2*i+1} | (z + v) | {2*(i+j+1), 2*(i+j+1)+1})
-	)))/(c -> c/(i -> i % (2*r)));
-	spanningCircuits := select(subsets(E, r+1), s -> not any(nonSpanningCircuits, c -> isSubset(c, s)));
-	matroid(E, nonSpanningCircuits | spanningCircuits, EntryMode => "circuits")
-)
+	)))/(c -> c/(i -> i % (2*r)))
+), r)
 
 wheel = method()
 wheel ZZ := Matroid => r -> if r == 2 then matroid(wheelGraph 3, ParallelEdges => {set{1,2}}) else matroid wheelGraph(r+1)
@@ -1356,6 +1423,11 @@ sizes = L -> L/(l -> #l)
 
 sliceBySize = (s, L) -> partition(l -> #(l*s), L) -- intersects a set against a list of sets, and records sizes
 
+sliceBySizeList = (s, L) -> ( -- intersects a list against a list of lists, and records sizes
+	s = set s;
+	partition(l -> #(s * set l), L)
+) -- note: this is different from sliceBySize(set s, L/set)
+
 load "./Matroids/doc-Matroids.m2"
 
 load "./Matroids/tests-Matroids.m2"
@@ -1365,7 +1437,7 @@ restart
 loadPackage("Matroids", Reload => true)
 uninstallPackage "Matroids"
 installPackage "Matroids"
-installPackage("Matroids", RemakeAllDocumentation => true)
+installPackage("Matroids", RerunExamples => true)
 viewHelp "Matroids"
 check "Matroids"
 

@@ -12,15 +12,15 @@ i5 : paramValues1={0,1+2*ii,0};
 
 i6 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
 
-o6 = {{{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}, {{12,
+o6 = {{{11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}, {13.3247, 1}}, {{11,
      ------------------------------------------------------------------------
-     2}, {13, 2}, {11, 2}}}
+     2}, {12, 2}, {13, 2}}}
 
 o6 : List
 
 i7 : bPH_0--the solutions to the system with parameters set equal to paramValues0
 
-o7 = {{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}
+o7 = {{11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}, {13.3247, 1}}
 
 o7 : List
 
@@ -57,19 +57,17 @@ o12 : List
 
 i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})
 
-o13 = {{{1, -2.30252e-16+1.70802e-16*ii, -1}, {1,
+o13 = {{{1, 1.04634e-17-1.01448e-17*ii, -1}, {1, 1.32111e-17+6.418e-20*ii,
       -----------------------------------------------------------------------
-      -5.73444e-16+3.53557e-16*ii, 1}}, {{-2.9577e-16-1.70683e-16*ii, 1, 1},
+      1}}, {{9.97833e-19+1.09185e-18*ii, 1, 1}, {-5.41884e-16+1.41201e-16*ii,
       -----------------------------------------------------------------------
-      {-2.1372e-17-6.80607e-17*ii, 1, -1}}}
+      1, -1}}}
 
 o13 : List
 
 i14 : bPH_0--The two solutions for finalParameters0
 
-o14 = {{1, -2.30252e-16+1.70802e-16*ii, -1}, {1, -5.73444e-16+3.53557e-16*ii,
-      -----------------------------------------------------------------------
-      1}}
+o14 = {{1, 1.04634e-17-1.01448e-17*ii, -1}, {1, 1.32111e-17+6.418e-20*ii, 1}}
 
 o14 : List
 
@@ -81,13 +79,13 @@ o15 : List
 
 i16 : bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})
 
-o16 = {{{1}, {-1}}, {{1.41421}, {-1.41421}}}
+o16 = {{{-1}, {1}}, {{-1.41421}, {1.41421}}}
 
 o16 : List
 
 i17 : bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputStyle=>"OutSolutions")
 
-o17 = {{{1}, {-1}}, {{1.41421}, {-1.41421}}}
+o17 = {{{-1}, {1}}, {{-1.41421}, {1.41421}}}
 
 o17 : List
 
@@ -111,13 +109,13 @@ i22 : bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup
 
 i23 : B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
 
-o23 = {{1}, {-1}}
+o23 = {{-1}, {1}}
 
 o23 : List
 
 i24 : B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
 
-o24 = {{1.41421}, {-1.41421}}
+o24 = {{-1.41421}, {1.41421}}
 
 o24 : List
 

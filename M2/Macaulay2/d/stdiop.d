@@ -112,7 +112,13 @@ export verifyMinimizeFilename(filename:string):string := (
 export tostring(w:Position) : string := (
      if w == dummyPosition 
      then "-*dummy position*-"
-     else errfmt(verifyMinimizeFilename(w.filename),int(w.line),int(w.column + 1),int(w.loadDepth)));
+     else (
+	 filename := verifyMinimizeFilename(w.filename);
+	 foreach c in filename do (
+	     if c == ' ' then (
+		 filename = "\"" + filename + "\"";
+		 break));
+	 errfmt(filename ,int(w.line),int(w.column + 1),int(w.loadDepth))));
 export (o:file) << (w:Position) : file := o << tostring(w);
 export (o:BasicFile) << (w:Position) : BasicFile := o << tostring(w);
 threadLocal export SuppressErrors := false;

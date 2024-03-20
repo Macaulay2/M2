@@ -97,6 +97,8 @@ set(HPPONLYFILES
   f4/memblock.hpp
   f4/ntuple-monomial.hpp
   f4/varpower-monomial.hpp
+  gb-f4/MonomialTypes.hpp
+  PolynomialStream.hpp
   schreyer-resolution/res-memblock.hpp
   schreyer-resolution/res-monomial-types.hpp
   schreyer-resolution/res-schreyer-order.hpp
@@ -151,6 +153,9 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+  BasicPoly
+  BasicPolyList
+  BasicPolyListParser
   myalloc
   matrix-ncbasis
   M2FreeAlgebraQuotient
@@ -281,13 +286,21 @@ set(SRCLIST
   ExponentList
   weylalg
   # Faugère's F4 Algorithm
+  gb-f4/Basis
+  gb-f4/GBF4Computation
+  gb-f4/GBF4Interface
+  gb-f4/MacaulayMatrix
+  gb-f4/MonomialHashTable
+  gb-f4/MonomialLookupTable
+  gb-f4/MonomialView
+  gb-f4/PolynomialList
+  gb-f4/SPairs
   f4/f4-computation
   f4/f4-m2-interface
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
   f4/f4
-  f4/gausser
   f4/hilb-fcn
   f4/monhashtable
   f4/moninfo
@@ -296,16 +309,13 @@ set(SRCLIST
   schreyer-resolution/res-f4-m2-interface
   schreyer-resolution/res-f4-monlookup
   schreyer-resolution/res-f4
-  schreyer-resolution/res-gausser-QQ-hybrid
-  schreyer-resolution/res-gausser-QQ
-  schreyer-resolution/res-gausser-ZZp
-  schreyer-resolution/res-gausser
   schreyer-resolution/res-moninfo-dense
   schreyer-resolution/res-moninfo-sparse
   schreyer-resolution/res-moninfo
   schreyer-resolution/res-monomial-sorter
   schreyer-resolution/res-poly-ring
   schreyer-resolution/res-schreyer-frame
+  schreyer-resolution/res-dep-graph
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -417,7 +427,11 @@ if(BUILD_TESTING)
     unit-tests/M2mem-replacement.c
     unit-tests/M2mem-replacement.h
 
+    unit-tests/util-polyring-creation.hpp
+    unit-tests/util-polyring-creation.cpp
+    unit-tests/NewF4Test.cpp
     unit-tests/MonoidTest.cpp
+    unit-tests/PolyRingTest.cpp
 
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
@@ -447,6 +461,7 @@ if(BUILD_TESTING)
     unit-tests/SubsetTest.cpp
     unit-tests/basics-test.cpp
 
+    unit-tests/MatrixIOTest.cpp
     unit-tests/fromStream.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
     )

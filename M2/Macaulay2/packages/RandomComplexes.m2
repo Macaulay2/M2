@@ -1038,6 +1038,10 @@ apply(5,i->hilbertFunction(i,Rp/Ip))
 A=Rp/(Ip+ideal random(1,Rp))
 apply(5,i->hilbertFunction(i,A))
 /// 
+
+-- the following example refers to example files that don't exist,
+-- and removed undocumented features of res.
+///
 restart
 needsPackage "SVDComplexes"
 needsPackage "AGRExamples"

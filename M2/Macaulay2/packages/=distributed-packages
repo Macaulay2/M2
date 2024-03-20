@@ -211,6 +211,7 @@ DecomposableSparseSystems
 MixedMultiplicity
 PencilsOfQuadrics
 ThreadedGB
+AdjunctionForSurfaces
 VectorGraphics
 GKMVarieties
 MonomialIntegerPrograms

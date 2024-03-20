@@ -213,7 +213,9 @@ RingMap Module := Module => (f, M) -> (
 -- misc
 tensor(RingMap, Module) := Module => {} >> opts -> (f, M) -> (
     if source f =!= ring M then error "expected module over source ring";
-    cokernel f presentation M);
+    subquotient(f ambient M,
+	if M.?generators then f M.generators,
+	if M.?relations  then f M.relations))
 RingMap ** Module := Module => (f, M) -> tensor(f, M)
 
 tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> (
@@ -387,7 +389,7 @@ RingMap * RingMap := RingMap => (g,f) -> (
 RingMap#1 = f -> (
     if source f =!= target f then error "expected source and target to agree"
     else id_(target f))
-RingMap ^ ZZ := BinaryPowerMethod
+RingMap ^ ZZ := RingMap => BinaryPowerMethod
 
 -----------------------------------------------------------------------------
 
@@ -554,7 +556,7 @@ map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Module,Nothing,RingMap,RawMatrix) := Matrix => o -> (M,N,p,f) -> (
-     d := degreeLength M;
+    d := degreeLength ring M;
      degs := pack(d,degrees source f);
      deg := o.Degree;
      if deg =!= null then degs = apply(degs, dg -> dg - deg);
