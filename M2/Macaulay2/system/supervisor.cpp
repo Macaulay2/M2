@@ -12,13 +12,13 @@ using std::lock_guard;
 
 // The maximum number of concurrent threads
 const static unsigned int numCores = std::thread::hardware_concurrency();
-// We allocate between 4 and 16 threads initially, to save trouble with memory allocation.
-const static int maxNumThreads = (numCores < 4) ? 4 : (16 < numCores ? 16 : numCores);
+// We allocate between 5 and 17 threads initially, to save trouble with memory allocation.
+const static int maxNumThreads = ((numCores < 4) ? 4 : (16 < numCores ? 16 : numCores)) + 1;
 
 // The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
 // There may be I/O bound threads, such as the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
 // number of cores plus the expected number of I/O bound threads.
-static atomic_int currentAllowedThreads(4);
+static atomic_int currentAllowedThreads(5);
 
 
 // The thread that the interpreter runs in.
@@ -88,12 +88,12 @@ extern "C" {
       {
 	task->m_ReadyToRun=true;
 	threadSupervisor->m_ReadyTasks.push_back(task);
+	pthread_cond_signal(&threadSupervisor->m_TaskReadyToRunCondition);
       }
     else
       {
 	threadSupervisor->m_WaitingTasks.push_back(task);
       }
-    pthread_cond_signal(&threadSupervisor->m_TaskWaitingCondition);
   }
 
   void delThread(pthread_t thread)
@@ -212,9 +212,7 @@ void* ThreadTask::waitOn()
     {
       pthread_cond_wait(&m_FinishCondition,&m_Mutex.m_Mutex);
     }
-  assert(m_Done || !m_KeepRunning);
-  void* ret = m_Result;
-  return ret;
+  return m_Result;
 }
 
 void staticThreadLocalInit()
@@ -248,7 +246,7 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   #endif
   //if not using get specific no initialization is necessary
   //initialize task waiting condition
-  if(pthread_cond_init(&m_TaskWaitingCondition,NULL))
+  if(pthread_cond_init(&m_TaskReadyToRunCondition,NULL))
     abort();
   //force everything to get done just in case there is some weird GC issue.
   std::atomic_signal_fence(std::memory_order_seq_cst);
@@ -275,6 +273,7 @@ void ThreadSupervisor::initialize()
       thread->start();
     }
 }
+// done or canceled; task's mutex is locked by caller
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)
 {
   lock_guard<pthreadMutex> supLock(m_Mutex);
@@ -312,7 +311,7 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
   m_WaitingTasks.remove(task);
   task->m_ReadyToRun=true;
   m_ReadyTasks.push_back(task);
-  if(pthread_cond_signal(&m_TaskWaitingCondition))
+  if(pthread_cond_signal(&m_TaskReadyToRunCondition))
     abort();
 }
 void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
@@ -333,7 +332,7 @@ struct ThreadTask* ThreadSupervisor::getTask()
     {
       //This exists in case pthread cond wait returns due to a signal/etc
     RESTART:
-      if(pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex.m_Mutex))
+      if(pthread_cond_wait(&m_TaskReadyToRunCondition,&m_Mutex.m_Mutex))
 	goto RESTART;
     }
   if(m_ReadyTasks.empty())
@@ -360,11 +359,11 @@ void ThreadTask::run(SupervisorThread* thread)
   m_Result = m_Func(m_UserData);
   lock_guard<pthreadMutex> lock(m_Mutex);
   m_Running=false;
+  threadSupervisor->_i_finished(this);
   if(!m_KeepRunning)
       return;
   m_Done = true;
   m_CurrentThread=NULL;
-  threadSupervisor->_i_finished(this);
   //cancel stuff_
   for(gc_set(ThreadTask*)::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
     threadSupervisor->_i_cancelTask(*it);

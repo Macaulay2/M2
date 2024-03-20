@@ -31,7 +31,7 @@ extern "C" {
   struct ThreadTask;
   extern void setInterpThread();
   extern int tryGlobalInterrupt(), tryGlobalAlarm(), tryGlobalTrace();
-  extern void* waitOnTask(struct ThreadTask* task);
+  extern void* waitOnTask(struct ThreadTask* task);	// wait until done or canceled
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
   extern void pushTask(struct ThreadTask* task);
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);

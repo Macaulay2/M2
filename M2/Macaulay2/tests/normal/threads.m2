@@ -11,19 +11,16 @@ assert not isReady t
 
 -- check whether we can get the result of a thread's computation: a function
 t = schedule ( () -> 2+2 )
-while not isReady t do nothing
 assert( 4 === taskResult t )
 
 -- check whether we can get the result of a thread's computation: a function with an argument
 t = schedule ( x -> x+2, 2 )
-while not isReady t do nothing
 assert( 4 === taskResult t )
 
 -- check whether thread local variables have separate values in separate threads
 threadVariable aaa
 assert( aaa === null )
 r = apply(3, i -> schedule (() -> ( aaa = i ; sleep 3 ; aaa )))
-while not all(r,isReady) do sleep 1
 assert( {0,1,2} == taskResult \ r )
 assert( aaa === null )
 
