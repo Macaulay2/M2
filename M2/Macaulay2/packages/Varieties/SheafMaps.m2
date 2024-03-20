@@ -220,6 +220,7 @@ inducedMap(CoherentSheaf, CoherentSheaf) := SheafMap => opts -> (G, F) -> map(G,
 -- TODO: what should this operation be?
 -- inducedMap(CoherentSheaf, CoherentSheaf, SheafMap)
 
+inducedMap(CoherentSheaf, CoherentSheaf, SheafMap) := SheafMap => opts -> (G, F, f) -> map(G, F, inducedMap(module target f, truncate(f.degree, module source f), matrix f, opts))
 -----------------------------------------------------------------------------
 -- Direct sums and components
 -----------------------------------------------------------------------------
@@ -411,40 +412,52 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	M = truncate(r, M));
     moveToField basis(0, Ext^m(M, matrix f, opts)))
 
-connectingHomomorphism = method()
-connectingHomomorphism(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
+
+--Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf, this returns Ext^i(F,im f)->Ext^(i+1)(F,ker f)
+ 
+connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> connectingExtMap(m, F, inducedMap(image f, source f,f), inducedMap(source f, ker f), opts)
+
+connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m, F, f, g) -> (
     e := 0; -- this is a sum of twists bound
     if not instance(variety F, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
+    if target g =!= source f then error "expected target g = source f";
     M := module F;
-    N1 := module source f;
-    N2 := module target f;
+    -- 0 <— N1 <— N2 < — N3 <— 0
+    N2 := module source f;
+    N1 := module target f;
+    N3 := module source g;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
     l := max(
 	l1 := min(dim N1, m),
-	l2 := min(dim N2, m));
+	l2 := min(dim N2, m),
+	l3 := min(dim N3, m));
     P1 := resolution flattenModule N1;
     P2 := resolution flattenModule N2;
+    P3 := resolution flattenModule N3;
     p := max(
 	p1 := length P1,
-	p2 := length P2);
+	p2 := length P2,
+	p3 := length P3);
     n := dim ring P1 - 1;
     -- in the first case the spectral sequence degenerates
     if p >= n-l then (
 	-- the "regularity" between n-l and p indices
 	a1 := max apply(n - l1 .. p1, j -> (max degrees P1_j)#0 - j);
 	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
-	r := max(a1, a2,regularity ker f) - e - m + 1;
+	a3 := max apply(n - l3 .. p3, j -> (max degrees P3_j)#0 - j);
+	r := max(a1, a2, a3) - e - m + 1;
         --need to truncate M in a way related to invariants of ker f
         --probably just add in l3, P3, etc., take max as above
 	M = truncate(r, M));
-    reg := 1 + regularity coker matrix f;
-    fTruncated := truncate(reg,matrix f);
-    gTruncated := inducedMap(source fTruncated,ker fTruncated);
-    return connectingExtMap(M, fTruncated, gTruncated);
-    moveToField basis(0,( (connectingExtMap(M, fTruncated, gTruncated)))_m ) )
+    reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
+    --TODO: truncate at the regularity of homology(f,g)?
+    fTruncated := truncate(reg, matrix f);
+    --gTruncated := truncate(reg, matrix g);
+    gTruncated := matrix g * inducedMap(source matrix g,truncate(reg, source matrix g));
+    moveToField basis(0, ( (connectingExtMap(M, fTruncated, gTruncated)))_(-m) ) )
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
