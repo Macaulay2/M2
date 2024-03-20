@@ -250,6 +250,20 @@ deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e,
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
+parallelApplyRaw = (L, f) ->
+     -- 'reverse's to minimize thread switching in 'taskResult's:
+     reverse (taskResult \ reverse apply(L, e -> schedule(f, e)));
+parallelApply = (L, f) -> (	-- (BasicList, Function) -> List
+     n := #L;
+     numThreads := min(n + 1, maxAllowableThreads);
+     oldAllowableThreads := allowableThreads;
+     if allowableThreads < numThreads then allowableThreads = numThreads;
+     numChunks := 3 * numThreads;
+     res := if n <= numChunks then toList parallelApplyRaw(L, f) else
+	  flatten parallelApplyRaw(pack(L, ceiling(n / numChunks)), chunk -> apply(chunk, f));
+     allowableThreads = oldAllowableThreads;
+     res);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

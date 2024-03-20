@@ -6,30 +6,64 @@ Node
  Key
   "parallel programming with threads and tasks"
  Subnodes
+  parallelApply
+  parallelApplyRaw
   createTask
   addCancelTask
   addDependencyTask
   addStartTask
-  (isReady,Task)
   schedule
+  (isReady,Task)
   taskResult
   cancelTask
   isCanceled
   setIOExclusive
   setIOSynchronized
   setIOUnSynchronized
-  "allowableThreads"
   "threadVariable"
+  "allowableThreads"
   "maxAllowableThreads"
   Task
+ SeeAlso
+  "parallelism in engine computations"
+  "elapsedTime"
  Description
   Text
+    The simplest way to run computations in parallel is to use @ TO parallelApply @. This works
+    like @ TO (apply,BasicList,Function) @, except that it uses all your cores, and always
+    returns a @ TO List @.
+  Example
+       parallelApply(1..10, n -> n!)
+  Text
+    There is some overhead to parallelism, so this will only speed things up for a big
+    computation. If the list is long, it will be split into chunks for each core, reducing the
+    overhead. But the speedup is still limited by the different threads competing for memory,
+    including cpu caches; it is like running Macaulay2 on a computer that is running other big
+    programs at the same time. We can see this using @ TO "elapsedTime" @.
+  Example
+       fib = n -> if n < 2 then n else fib(n-1)+fib(n-2);
+       elapsedTime         apply(1..30, n -> fib(20));
+       elapsedTime parallelApply(1..30, n -> fib(20));
+  Text
+    You will have to try it on your examples to see how much they speed up.
+
+    Warning: Threads computing in parallel can give wrong answers if their code is not "thread
+    safe", meaning they make modifications to memory without ensuring the modifications get
+    safely communicated to other threads. (Thread safety can slow computations some.) Currently,
+    modifications to Macaulay2 variables and mutable hash tables are thread safe, but not
+    changes inside mutable lists. Also, access to external libraries such as singular, etc., may
+    not currently be thread safe.
+    
+    The rest of this document describes how to control parallel tasks more directly.
+    
     The task system schedules functions and inputs to run on a preset number of
     threads. The number of threads to be used is given by the variable
     @ TO "allowableThreads" @, and may be examined and changed as follows.
+    (@ TO "allowableThreads" @ is temporarily increased if necessary inside
+    @ TO parallelApply @.)
   Example
        allowableThreads
-       allowableThreads = 4
+       allowableThreads = maxAllowableThreads
   Text
     To run a function in another thread use @ TO schedule @, as in the
     following example.
@@ -48,9 +82,8 @@ Node
     Use @ TO isReady @ to check whether the result is available yet.
   Example
        isReady t
-       while not isReady t do sleep 1
   Text
-    To retrieve the result, use @ TO taskResult @.
+    To wait for the result and then retrieve it, use @ TO taskResult @.
   Example
        taskResult t
        assert instance(oo,ChainComplex)
@@ -64,7 +97,6 @@ Node
   Example
        schedule t';
        t'
-       while not isReady t' do sleep 1
        taskResult t'
   Text
     One may use @ TO addStartTask @ to specify that one task is to be started after another
@@ -74,9 +106,7 @@ Node
        G = createTask(() -> "result of G")
        addStartTask(F,G)
        schedule F
-       while not isReady F do sleep 1
        taskResult F
-       while not isReady G do sleep 1
        taskResult G
   Text
     Use @ TO addCancelTask @ to specify that the completion of one task triggers the cancellation
@@ -90,9 +120,47 @@ Node
     Low level C API functionality using the same scheduler also exists in the
     Macaulay2/system directory. It works essentially the same way as the
     Macaulay2 interface.
-
-    Warning: Access to external libraries such as singular, etc., may not
-    currently be thread safe.
+Node
+ Key
+  parallelApply
+ Headline
+  apply a function to each element, using all cores
+ Usage
+  parallelApply(L,f)
+ Inputs
+  L:BasicList
+  f:Function
+ Outputs
+  :List
+    {\tt toList apply(L,f)}, with the result computed in parallel in chunks
+ Description
+  Text
+    See @ TO "parallel programming with threads and tasks" @ for more information and an
+    important warning about thread safety.
+Node
+ Key
+  parallelApplyRaw
+ Headline
+  apply a function to each element in parallel
+ Usage
+  parallelApplyRaw(L,f)
+ Inputs
+  L:BasicList
+  f:Function
+ Outputs
+  :BasicList
+    {\tt apply(apply(L, e -> schedule(f, e)), taskResult)}
+ Description
+  Text
+    A separate task is created for each element of {\tt L}. {\tt L} is not split into chunks,
+    @ TO "allowableThreads" @ is used unchanged, and the result has the same class as {\tt L}.
+    Normally @ TO parallelApply @ is more efficient.
+    
+    See @ TO "parallel programming with threads and tasks" @ for more information and an
+    important warning about thread safety.
+ SeeAlso
+  "parallel programming with threads and tasks"
+  parallelApply
 Node
  Key
   (addCancelTask, Task, Task)
@@ -169,10 +237,8 @@ Node
    f = x -> 2^x
    t = createTask(f,3)
    schedule t
-   while not isReady t do sleep 1
    taskResult t
    u = schedule(f,4)
-   while not isReady u do sleep 1
    taskResult u
 Node
  Key
@@ -191,8 +257,8 @@ Node
   t:
  Outputs
   :
-   the value returned by the function provided to @ TO (schedule,Function) @ when the task was started,
-   provided it is ready (done), as determined by @ TO (isReady, Task) @.  If the task is not ready,
+   the value returned by the function provided to @ TO (schedule,Function) @ when the task was started.
+   @ TO (taskResult,Task) @ will first wait for the task to finish if necessary.  If the task is cancelled,
    an error will be signaled.
  Consequences
   Item
@@ -215,7 +281,6 @@ Node
    threadVariable x
    x = 1
    t = schedule ( () -> ( x = 2 ; x ) )
-   while not isReady t do null
    taskResult t
    x
 Node
@@ -255,7 +320,6 @@ Node
    f = x -> 2^x
    t = createTask(f,3)
    schedule t
-   while not isReady t do sleep 1
    taskResult t
 Node
  Key
@@ -277,7 +341,6 @@ Node
      for i to 5 do t_i = createTask(() -> i)
      for i from 1 to 5 do addDependencyTask(t_i, t_(i - 1))
      schedule t_0
-     while not isReady t_5 do nanosleep 1000000
      taskResult t_5
 Node
  Key
@@ -301,9 +364,7 @@ Node
        G = createTask g
        addStartTask(F,G)
        schedule F
-       while not isReady F do sleep 1
        taskResult F
-       while not isReady G do sleep 1
        taskResult G
 Node
  Key
