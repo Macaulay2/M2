@@ -1,11 +1,12 @@
 newPackage( "FastMinors",
-Version => "1.2.5", Date => "April 7th, 2022", Authors => {
+Version => "1.2.6", Date => "May 15th, 2023", Authors => {
     {Name => "Boyana Martinova",
-    Email=> "u1056124@utah.edu"
+    Email=> "martinova@wisc.edu",
+    HomePage=> "https://sites.google.com/view/bmartinova"
     },
     {Name => "Marcus Robinson",
-    Email => "robinson@math.utah.edu",
-    HomePage => "http://www.math.utah.edu/~robinson"
+    Email => "mrobinso@reed.edu",
+    HomePage => "https://people.reed.edu/~mrobinso/"
     },
     {Name => "Karl Schwede",
     Email=> "schwede@math.utah.edu",
@@ -15,7 +16,22 @@ Version => "1.2.5", Date => "April 7th, 2022", Authors => {
     Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
-Headline => "faster linear algebra operations", PackageExports => {"RandomPoints"}, PackageImports => {"RandomPoints"}, DebuggingMode => false, Reload=>false)
+Headline => "faster linear algebra operations", PackageExports => {"RandomPoints"}, PackageImports => {"RandomPoints"}, DebuggingMode => false, Reload=>false,
+Certification => {
+    "journal name" => "Journal of Software for Algebra and Geometry",
+    "journal URI" => "https://msp.org/jsag/",
+    "article title" => "FastMinors package for Macaulay2",
+    "acceptance date" => "2023-05-08",
+    "published article URI" => "https://msp.org/jsag/2023/13-1/p02.xhtml",
+    "published article DOI" => "https://doi.org/10.2140/jsag.2023.13.13",
+    "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x02-FastMinors.m2",
+    "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/FastMinors.m2",
+    "release at publication" => "22181a306749088a24c9ba6f04eda8e622edb5ff",
+    "version at publication" => "1.2.6",
+    "volume number" => "13",
+    "volume URI" => "https://msp.org/jsag/2023/13-1/"
+    }
+)
 export{
 --  "selectSmallestTerms",
   "chooseSubmatrixSmallestDegree", --there are checks

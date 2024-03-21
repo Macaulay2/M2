@@ -33,7 +33,21 @@ newPackage(
     DebuggingMode => true,
     Reload => true,
     Headline => "Mixed Multiplicities of ideals",
-    PackageImports=>{"Divisor", "ReesAlgebra", "Depth", "Polyhedra"}
+    PackageImports=>{"Divisor", "ReesAlgebra", "Depth", "Polyhedra"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "Algorithms for computing mixed multiplicities, mixed volumes, and sectional Milnor numbers",
+	"acceptance date" => "2023-06-06",
+	"published article URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-p01-s.pdf",
+	"published article DOI" => "https://doi.org/10.2140/jsag.2023.13.1",
+	"published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x01-MixedMultiplicity.m2",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MixedMultiplicity.m2",
+	"release at publication" => "23c0f53e78831d43a978c61ccdc0cddef35efae7",
+	"version at publication" => "3.0",
+	"volume number" => "13",
+	"volume URI" => "https://msp.org/jsag/2023/13-1/"
+	}
 )
  
     

@@ -354,9 +354,11 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
        then return solve(g,f);	   	     	       	    
+     local retVal;
      if isQuotientOf(ZZ,ring target f)
        and isFreeModule source g and isFreeModule source f
-       then return solve(g,f);
+       then retVal = solve(g,f);
+     if retVal =!= null then return retVal;
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
