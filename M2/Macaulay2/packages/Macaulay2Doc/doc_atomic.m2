@@ -237,7 +237,7 @@ doc ///
   Description
     Text
       The values of @VAR "x"@ and @VAR "y"@ are compared.  If they agree,
-      then @TO true@ is returned and the value of @VAR "y"@ is stored in
+      then @TO true@ is returned and the value of @VAR "z"@ is stored in
       @VAR "x"@.  Otherwise, @TO false@ is returned.  This operation occurs
       atomically and is thread safe.
     Example
