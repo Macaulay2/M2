@@ -41,9 +41,9 @@ Node
     including cpu caches; it is like running Macaulay2 on a computer that is running other big
     programs at the same time. We can see this using @ TO "elapsedTime" @.
   Example
-       fib = n -> if n < 2 then n else fib(n-1)+fib(n-2);
-       elapsedTime         apply(1..30, n -> fib(20));
-       elapsedTime parallelApply(1..30, n -> fib(20));
+       L = random toList (1..10000);
+       elapsedTime         apply(1..100, n -> sort L);
+       elapsedTime parallelApply(1..100, n -> sort L);
   Text
     You will have to try it on your examples to see how much they speed up.
 
