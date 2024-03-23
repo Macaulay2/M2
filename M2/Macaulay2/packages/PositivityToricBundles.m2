@@ -7,11 +7,11 @@
 
 newPackage("PositivityToricBundles",
            Headline => "check positivity of toric vector bundles",
-           Version => "1.1",
-           Date => "June, 2020",
+           Version => "1.2",
+           Date => "March, 2024",
            Authors => { 
             {Name => "Andreas Hochenegger",
-             Email => "andreas.hochenegger@sns.it"}},
+             Email => "andreas.hochenegger@polimi.it"}},
            Keywords => {"Toric Geometry"},
            Configuration =>{},
 	   PackageImports => {"Varieties"},
@@ -48,7 +48,7 @@ protect Verbosity
 ---------------------------------------------------------------------------
 -- COPYRIGHT NOTICE:
 --
--- Copyright 2020 Andreas Hochenegger
+-- Copyright 2024 Andreas Hochenegger
 --
 --
 -- This program is free software: you can redistribute it and/or modify
@@ -325,24 +325,8 @@ distinctLines (List) := L -> (
 --          if vectors are chosen for compatible basis,
 --          remove these from flag (and all other vectors which lie in same span)
 removeChosenBasisVectorsFromFlags := (compatB,possFlagsList) -> (
- for possFlag in possFlagsList list (
-  for i in 0..< #possFlag list (
-   vecs :=for p in possFlag_i list (
-    addp := true;
-    for b in compatB do (
-     matB := if i==0 then b else fold( apply(take(possFlag,i), pB -> matrix pB_0), (i,j) -> i|j) | b;
-     if isSubset(image promote( matrix p, QQ), image promote(matB, QQ)) then (
-      addp = false;
-      break;
-     )
-   );
-    if not addp then continue;
-    p
-   );
-   if #vecs==0 then continue;
-   vecs
-  )
- )
+ matB := fold(compatB, (i,j) -> i|j);
+ apply(possFlagsList, pFS -> select(apply(pFS, f -> select(f, e-> not isSubset( image promote(matrix e,QQ), image promote(matB,QQ)))), L-> #L>0))
 )
 
 -- PURPOSE: Given the possible flags (as computed by possibleFlags) for rays of maximal cone
@@ -350,49 +334,29 @@ removeChosenBasisVectorsFromFlags := (compatB,possFlagsList) -> (
 --   INPUT: 'possFlagsList', list of possible flags
 --  OUTPUT: compatible base (list of vectors)
 compatibleBasis = method( Options => true )
-compatibleBasis (ZZ, List) := {Verbosity => 0} >> opts -> (n,possFlagsList) -> (
+compatibleBasis (List) := {Verbosity => 0} >> opts -> (possFlagsList) -> (
  if opts#Verbosity>0 then << "METHOD: compatibleBasis" << endl;
 
- compatB := flatten for possFlags in possFlagsList list 
-  flatten select(possFlags, b -> #b==1);
- compatB = distinctLines apply(compatB, matrix);
- if opts#Verbosity>0 then << "From the possible flag we have to take the unique: " << endl << compatB << endl;
- 
- while #compatB  < n do (
-  if opts#Verbosity>0 then << "These are not enough, we are missing " << (n - #compatB) << " element(s)." << endl;
-  remainingB := removeChosenBasisVectorsFromFlags(compatB,possFlagsList);
-  if opts#Verbosity>0 then (<< "Removing the already chosen elements, we get: " << endl; for r in remainingB do << r << endl);
-  rB0 := remainingB_0;
-  rBrest := drop(remainingB,1);
-  for i0 in 0 ..< #remainingB_0 do (
-   for v0 in remainingB_0_i0 do (
-    addv := true;
-    for k in 1 ..< #remainingB do (
-     foundv := false;
-     for ik in 0 ..< #remainingB_k do (
-      for vk in remainingB_k_ik do (
-       if image promote(matrix v0,QQ) == image promote(matrix vk,QQ) then ( 
-        foundv = true;
-        break;
-       );
-      );
-      if foundv then break;
-     );
-     if not foundv then ( 
-      addv = false;
-      break;
-     )
-    );
-    if addv then (
-     if opts#Verbosity>0 then << "Add following vector to compatible basis: " << endl << v0 << endl;
-     compatB = append(compatB, matrix v0);
-     break;
-    )
-   )
-  )
- );
+compatB := {};
+n := numgens target possFlagsList#0#0#0;
+flagsSortedByDim := select( apply(1..n, i -> flatten apply( possFlagsList, pFS -> select(pFS, f -> rank fold(f,(i,j)->i|j) == i))), L -> #L>0);
 
- matrix fold(compatB, (i,j) -> matrix i | matrix j)
+while #flagsSortedByDim>0 do (
+ while #(flagsSortedByDim#0)>0 do (
+  b := flagsSortedByDim#0#0#0; --<< "b = " << b << endl;
+  if #compatB == 0 then
+   compatB = {b}
+  else (
+   matB := fold(compatB,(i,j)->i|j); --<< "matB = " << matB << endl;
+   if not isSubset( image promote(b,QQ), image promote(matB,QQ)) then (
+    compatB = append(compatB,b); --<< "compatB = " << compatB << endl;
+   )
+  );
+  flagsSortedByDim = removeChosenBasisVectorsFromFlags(compatB, flagsSortedByDim);
+ );
+ flagsSortedByDim = drop(flagsSortedByDim,1)
+);
+fold(compatB,(i,j)->i|j)
 )
 
 -- MAIN METHOD: compatibleBases ----------------------------------------------
@@ -415,7 +379,7 @@ compatibleBases (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cach
   possFlagsSigma := for i in 0 ..< numgens target sigma list possFlagsTable#(matrix sigma_i);
   
   if opts#Verbosity>0 then (<< "possible flags are:" << endl; for pB in possFlagsSigma do  << pB << endl);
-  cB := compatibleBasis(rank tvb, possFlagsSigma, Verbosity=>(opts#Verbosity-1));
+  cB := compatibleBasis(possFlagsSigma, Verbosity=>(opts#Verbosity-1));
   if opts#Verbosity>0 then << "actual compatible basis is:" << endl << cB << endl;
   sigma => cB
  )
@@ -871,7 +835,7 @@ document {
    {"[RJS] Sandra Di Rocco, Kelly Jabbusch, Gregory Smith, ", EM "Toric vector bundles and parliaments of polytopes", ", Trans. AMS, 370, 2018."},
   },
 
-  "The following example computes the positivity for the tangent sheaf of ", TEX ///\mathbb P^2///, ":",
+  "The following example computes the positivity for the tangent sheaf of ", TEX ///$\mathbb P^2$///, ":",
   EXAMPLE {
    "E = tangentBundle projectiveSpaceFan 2",
    "isNef E",
@@ -907,7 +871,8 @@ document {
   PARA{},
   "Another warning concerns the toric variety: the methods of ", TT "PositivityToricBundles", " implicitly assume that the variety is complete (to apply the results of [HMP] and [P]) and in addition smooth (for [RJS]). For non-complete or singular toric varieties, methods might break or results might become meaningless."},
 
-  SeeAlso => {"Polyhedra::Polyhedra", "ToricVectorBundles::ToricVectorBundles"}
+  SeeAlso => {"Polyhedra::Polyhedra", "ToricVectorBundles::ToricVectorBundles"},
+  Contributors => {"The author of the package wants to thank Brett Nasserden and Alexandre Zotine for reporting bugs."}
   }
 
 
@@ -1355,26 +1320,13 @@ TEST ///
 -- Test with a randomized vector bundle
 
 r = 2 + random 4
-
 F = directProduct(projectiveSpaceFan 1, hirzebruch r)
-
-
 E = randomDeformation(tangentBundle F,4)
 
-rays E
 tw = toList apply( 1 .. # rays E, i-> random 3)
 E = twist(E, tw)
 
-base E
-
-filtration E
-
-isVectorBundle E
-
-
-recursionLimit = 1000
 gs = groundSet E
-
 p = parliament E;
 par = unique entries transpose fold(flatten apply(values p, latticePoints), (i,j) -> i|j)
 
@@ -1384,25 +1336,10 @@ degs = unique degrees HH^0 E
 
 assert( set par === set degs )
 
-cList  = apply(values c, l -> apply(l, v -> flatten entries transpose v))
-
-w = findWeights E
-
-wList = apply(w, l -> apply(l, m -> entries transpose m))
+cList  = apply(values c, l-> fold(l,(i,j)->i|j))
+wList = findWeights E
 
 assert( #cList == #wList )
-
-for i in 0 ..< #cList do (
- found := -1;
- for j in 0 ..< #wList do (
-  if member(cList_i,wList_j) then (
-   found = j;
-   break;
-  )
- );
- assert( found >= 0 );
- wList = drop(wList,{found,found});
-)
 
 ///
 
