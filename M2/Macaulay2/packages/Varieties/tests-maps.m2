@@ -371,18 +371,31 @@ TEST ///
 
 
 TEST ///
+  -- tests for consistent truncations
   S = QQ[x,y,z]
   X = Proj S
-  m = module image vars S
-  f = id_m
-  assert(prune sheafMap(f,4) == id_(OO_X^1))
-  assert(prune sheafMap(f,-4) == id_(OO_X^1))
-  assert(prune sheafMap(f,6) == id_(OO_X^1))
-  f4=sheafMap(f,4)
-  g=inverse f4
-  assert(prune g == id_(OO_X^1))
-  assert( prune(f4*g)==id_(OO_X^1))
-  assert( prune(g*f4)==id_(OO_X^1))
+  M = image vars S
+  F = OO_X^1
+  G = sheaf M
+  f = id_M
+  assert(sheafMap f === id_G)
+  assert isWellDefined sheafMap(f, 1)
+  assert isWellDefined sheafMap(f, 2)
+  assert(prune sheafMap(f,  4) === id_F)
+  assert(prune sheafMap(f, -4) === id_F)
+  assert(prune sheafMap(f,  6) === id_F)
+
+  m = inducedMap(S^1, image vars S)
+  f = sheafMap m
+  g = inverse f
+  assert(f * g  == id_F)
+  assert(g * f === id_G)
+
+  f = sheafMap(m, 4)
+  g = inverse f
+  assert(prune g      === id_F)
+  assert(prune(f * g) === id_F)
+  assert(prune(g * f) === id_F)
 ///
 
 

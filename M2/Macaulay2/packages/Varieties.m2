@@ -776,6 +776,7 @@ TEST ///
 
 needs "./Varieties/tests.m2"
 needs "./Varieties/tests-functors.m2"
+needs "./Varieties/tests-maps.m2"
 
 -----------------------------------------------------------------------------
 -- Documentation
