@@ -7,7 +7,7 @@ TEST ///
   I = PolyAnn f;
   J = RatAnn f;
   K = RatAnn (u-v^2, f);
-  L = directSum (W^1/I, W^1/J);
+  L = directSum (coker gens I, coker gens J);
   assert ( isHolonomic I );
   assert ( isHolonomic J );
   assert ( isHolonomic K );

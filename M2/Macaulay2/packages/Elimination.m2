@@ -81,6 +81,7 @@ eliminate1 = (elimindices,I) -> (
      ideal mingens ideal toR selectInSubring(1,generators gb J)
      )
 
+eliminate(List, LeftIdeal) :=
 eliminate (List, Ideal) := (v,I) -> (     
      R := ring I;
      -- if R is a quotient ring, then give error
@@ -92,8 +93,11 @@ eliminate (List, Ideal) := (v,I) -> (
      eliminate1(varlist, I)
      )
 
+eliminate(LeftIdeal, RingElement) :=
 eliminate (Ideal, RingElement) := (I,v) -> eliminate({v},I)
+eliminate(LeftIdeal, List) :=
 eliminate (Ideal, List) := (I,v) -> eliminate(v,I)
+eliminate(RingElement, LeftIdeal) :=
 eliminate(RingElement, Ideal) := (v,I) -> eliminate({v},I)
 
 -----------------------------------------------
@@ -175,6 +179,10 @@ document {
 
 
 undocumented {
+	  (eliminate, RingElement, LeftIdeal),
+	  (eliminate, LeftIdeal, RingElement),
+	  (eliminate, List, LeftIdeal),
+	  (eliminate, LeftIdeal, List),
 	  (eliminate, Ideal, RingElement), 
 	  (eliminate, Ideal, List)
      }

@@ -56,8 +56,9 @@ TEST///
   assert (Dtransposition (u*Du) ==-Du*u);
   assert (Dtransposition ideal (u*Dv^2+Du^2*Dv) == ideal (u*Dv^2-Du^2*Dv));
   assert (entries Dtransposition matrix {{u*Du, v}, {v*Dv^2, u^2}} == entries matrix {{-Du*u, v}, {Dv^2*v, u^2}});
-  C1 = Dtransposition res ideal(u*Du);
-  C2 = res ideal(-Du*u);
+  needsPackage "BernsteinSato"
+  C1 = Dtransposition Dres ideal(u*Du);
+  C2 = Dres ideal(-Du*u);
   assert (C1_1==C2_1);
 ///
 

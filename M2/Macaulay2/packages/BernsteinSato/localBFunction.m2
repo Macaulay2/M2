@@ -1,7 +1,7 @@
 -- internal, also used in multiplierIdeals.m2
 -- TODO: move to Dbasic?
 eliminateWA = method()
-eliminateWA(Ideal, List) := Ideal => (I, v) -> (
+eliminateWA(LeftIdeal, List) := LeftIdeal => (I, v) -> (
     R := ring I;
     if not isSubset(v, gens R) then error "expected generators of the ring";
     w := apply(gens R, g -> if member(g, v) then 1 else 0);

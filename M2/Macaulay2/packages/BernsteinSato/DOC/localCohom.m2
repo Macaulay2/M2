@@ -98,8 +98,9 @@ document {
 	       }
 	  },
      EXAMPLE {
-	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
+	  "R = QQ[X, Y, Z]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
+	  "W = makeWeylAlgebra R",
      	  "h = localCohom I",
      	  "pruneLocalCohom h"
 	  },
@@ -116,8 +117,9 @@ document {
      Outputs => { { "the local cohomology of ", TT "I", " in the degrees specified by ", EM "l" } },
      "See ", TO (localCohom, Ideal), " for the full description.",
      EXAMPLE { 
-	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
+	  "R = QQ[X, Y, Z]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
+	  "W = makeWeylAlgebra R",
      	  "h = localCohom({1,2}, I)",
      	  "pruneLocalCohom h"
 	  },
@@ -132,8 +134,9 @@ document {
      Outputs => {{ "the local cohomology of ", TT "I", " in degree ", EM "d" }},
      "See ", TO (localCohom, Ideal), " for the full description.",
      EXAMPLE { 
-	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
+	  "R = QQ[X, Y, Z]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
+	  "W = makeWeylAlgebra R",
 	  "h = localCohom (2,I)",
      	  "Dprune h"
 	  },
@@ -161,9 +164,10 @@ document {
 	       }
 	  },
      EXAMPLE {
-	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
+	  "R = QQ[X, Y, Z]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
-     	  "h = localCohom(I, W^1 / ideal{dX,dY,dZ})",
+	  "W = makeWeylAlgebra R",
+     	  "h = localCohom(I, coker gens ideal{dX,dY,dZ})",
      	  "pruneLocalCohom h"
 	  },
      Caveat => {"The modules returned are not simplified, 
@@ -183,9 +187,10 @@ document {
 	  }},
      "See ", TO "localCohom(Ideal,Module)", " for the full description.",
      EXAMPLE {
-	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
+	  "R = QQ[X, Y, Z]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
-	  "h = localCohom(2, I, W^1 / ideal{dX,dY,dZ})",
+	  "W = makeWeylAlgebra R",
+	  "h = localCohom(2, I, coker gens ideal{dX,dY,dZ})",
 	  "pruneLocalCohom h"
 	  },
      SeeAlso => {"pruneLocalCohom"} 
@@ -204,9 +209,10 @@ document {
 	  }},
      "See ", TO "localCohom(Ideal,Module)", " for the full description.",
      EXAMPLE {
-	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
+	  "R = QQ[X, Y, Z]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
-	  "h = localCohom({1,2}, I, W^1 / ideal{dX,dY,dZ})",
+	  "W = makeWeylAlgebra R",
+	  "h = localCohom({1,2}, I, coker gens ideal{dX,dY,dZ})",
 	  "pruneLocalCohom h"
 	  },
      SeeAlso => {"pruneLocalCohom"} 

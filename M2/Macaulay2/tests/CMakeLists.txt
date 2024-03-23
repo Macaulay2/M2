@@ -103,7 +103,7 @@ add_custom_target(M2-tests-ComputationsBook)
 set(CHAPTERS completeIntersections constructions d-modules exterior-algebra geometry
   monomialIdeals preface programming schemes solving toricHilbertScheme varieties)
 
-set(M2_ARGS -q --stop --print-width 0)
+set(M2_ARGS -q --stop --silent --print-width 0)
 
 foreach(_chapter IN LISTS CHAPTERS)
 

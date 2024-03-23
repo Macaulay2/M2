@@ -209,6 +209,7 @@ RingMap Module := Module => (f, M) -> (
 	-- use the same module if we can
 	if R === S and d === e then M else S^-e)
     )
+RingMap LeftIdeal := LeftIdeal => (f, I) -> ideal f module I
 
 -- misc
 tensor(RingMap, Module) := Module => {} >> opts -> (f, M) -> (

@@ -7,6 +7,7 @@
 --------------------------------------------------------------------------------
 -- This routine computes a monomial from a list of variables 
 -- and an exponent vector
+-- Note: when possible, use R_Exps instead
 List ^ List := (Vars, Exps) -> (
      product (Vars, Exps, (i,j) -> (i^j)) )
 
@@ -40,7 +41,7 @@ divideOutGCD RingElement := L -> (
 	       if member(j, W.dpairInds#1) then 0
 	       else min apply(exponents L, i -> i#j)) );
      newlistForm := apply(listForm L, i -> (i#0 - LCMexps, i#1));
-     sum(newlistForm, i -> (i#1)*( ((entries vars W)#0)^(i#0) ) )
+     sum(newlistForm, i -> i#1 * W_(i#0))
      )
 
 divideOutGCD Matrix := m -> (
@@ -56,7 +57,7 @@ divideOutGCD Matrix := m -> (
 --------------------------------------------------------------------------------
 
 Ddual = method()
-Ddual Ideal  := I -> Ddual comodule I
+Ddual LeftIdeal := I -> Ddual comodule I
 Ddual Module := M -> (
      pInfo(1, "ENTERING Ddual ... ");
      W := ring M;
@@ -86,24 +87,20 @@ Ddual Module := M -> (
 --------------------------------------------------------------------------------
 polynomialSolutions = method(Options => {Alg => GD} )
 
-polynomialSolutions Ideal := options -> I -> ( 
-     polynomialSolutions((ring I)^1/I, options) )
+polynomialSolutions LeftIdeal        := opts ->  I     -> polynomialSolutions(comodule I,    opts)
+polynomialSolutions(LeftIdeal, List) := opts -> (I, w) -> polynomialSolutions(comodule I, w, opts)
 
-polynomialSolutions(Ideal,List) := options -> (I,w) -> ( 
-     polynomialSolutions((ring I)^1/I, w, options) )
-
-polynomialSolutions Module := options -> M -> (
+polynomialSolutions Module := opts -> M -> (
      W := ring M;
      if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";     
      createDpairs W;
      n := #W.dpairVars#0;     
      w := toList(n:1);
-     polynomialSolutions(M, w, options)
+     polynomialSolutions(M, w, opts)
      )
 
-polynomialSolutions(Module, List) := options -> (M, w) -> (
-
+polynomialSolutions(Module, List) := opts -> (M, w) -> (
      pInfo (1, "ENTERING polynomialSolutions ...");
      W := ring M;
      K := coefficientRing W;
@@ -113,7 +110,7 @@ polynomialSolutions(Module, List) := options -> (M, w) -> (
      createDpairs W;
      n := #W.dpairVars#0;
 
-     if options#Alg == GD then (
+     if opts#Alg == GD then (
 	  -- error checking
 	  if not isQuotientModule M then error "expected
 	  input to be a quotient module";
@@ -126,7 +123,7 @@ polynomialSolutions(Module, List) := options -> (M, w) -> (
      	  I := ideal relations M;
 	  inI := inw(I, join(w,-w));
 	  if not W.?ThetaRing then createThetaRing W;
-	  if all(flatten entries gens inI, W.isGeneric) then (
+	  if all(inI_*, W.isGeneric) then (
 	       genI := gens inI;
 	       inI = ideal divideOutGCD gens inI;
 	       )
@@ -168,7 +165,7 @@ polynomialSolutions(Module, List) := options -> (M, w) -> (
 		    	 );
 		    pInfo(1, "Need to solve " | rank source linEqns |
 			 " equations");
-		    dummyEqn := sum((entries vars S)#0);
+		    dummyEqn := sum gens S;
 	       	    linEqns = (gens gb (linEqns, DegreeLimit 
 			      => 1)) | matrix{{dummyEqn}};
 --MES		    coeffs := substitute(
@@ -181,7 +178,7 @@ polynomialSolutions(Module, List) := options -> (M, w) -> (
 	       );
      	  )
 
-     else if options.Alg == Duality then (
+     else if opts.Alg == Duality then (
      	  diffSub := apply(W.dpairVars#1, i -> i => 0);
      	  if #w != n then error "expected weight vector of length n";
      	  if any(w, i->i<=0) then error "expected strictly positive weight vector";
@@ -255,11 +252,8 @@ polynomialSolutions(Module, List) := options -> (M, w) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 polynomialExt = method(Options => {Strategy => Schreyer})
-polynomialExt Ideal := options -> I -> (
-     polynomialExt ((ring I)^1/I, options)
-     )
-
-polynomialExt Module := options -> (M) -> (
+polynomialExt LeftIdeal := opts -> I -> polynomialExt(comodule I, opts)
+polynomialExt Module    := opts -> M -> (
      pInfo (1, "ENTERING polynomialExt ...");
      W := ring M;
      createDpairs W;
@@ -267,27 +261,24 @@ polynomialExt Module := options -> (M) -> (
      w := toList(n:1);
      outputList := {};
      N := Ddual M;
-     integrateTable := Dintegration(zeroize N, w, options);
+     integrateTable := Dintegration(zeroize N, w, opts);
      homologyTable := hashTable apply(toList(0..n), 
-	       i -> (n-i) => integrateTable#i);
-     homologyTable
+	 i -> (n-i) => integrateTable#i)
      )
 
-polynomialExt(ZZ, Ideal) := options -> (k, I) -> (
-     if not I.?quotient then I.quotient = (ring I)^1/I;
-     polynomialExt (k, I.quotient, options)
-     )
+polynomialExt(ZZ, LeftIdeal) := opts -> (k, I) -> (
+     if not I.?quotient then I.quotient = comodule I;
+     polynomialExt(k, I.quotient, opts))
 
-polynomialExt(ZZ, Module) := options -> (k, M) -> (
+polynomialExt(ZZ, Module) := opts -> (k, M) -> (
      pInfo (1, "ENTERING polynomialExt ...");
      W := ring M;
      createDpairs W;
      n := #W.dpairVars#0;
      w := toList(n:1);
      outputList := {};
-      N := Ddual M;
-     integrateModule := Dintegration(n-k, zeroize N, w, options);
-     integrateModule
+     N := Ddual M;
+     Dintegration(n-k, zeroize N, w, opts)
      )
 
 --------------------------------------------------------------------------------
@@ -297,7 +288,7 @@ polynomialExt(ZZ, Module) := options -> (k, M) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 rationalFunctionSolutions = method()
-rationalFunctionSolutions(Ideal) := (I) -> (
+rationalFunctionSolutions(LeftIdeal) := (I) -> (
      W := ring I;
      createDpairs W;
      w := toList(#W.dpairVars#0: 1);
@@ -305,19 +296,19 @@ rationalFunctionSolutions(Ideal) := (I) -> (
      rationalFunctionSolutions(I, f, w)
      )
 
-rationalFunctionSolutions(Ideal, List) := (I, w) -> (
+rationalFunctionSolutions(LeftIdeal, List) := (I, w) -> (
      f := (singLocus I)_0;
      rationalFunctionSolutions(I, f, w)
      )
 
-rationalFunctionSolutions(Ideal, RingElement) := (I, f) -> (
+rationalFunctionSolutions(LeftIdeal, RingElement) := (I, f) -> (
      W := ring I;
      createDpairs W;
      w := toList(#W.dpairVars#0: 1);
      rationalFunctionSolutions(I, f, w)
      )
 
-rationalFunctionSolutions(Ideal, RingElement, List) := (I, f, w) -> (
+rationalFunctionSolutions(LeftIdeal, RingElement, List) := (I, f, w) -> (
      W := ring I;
      bfunc := (globalB(I, f))#Bpolynomial;
      k := (max getIntRoots bfunc) + 1;
@@ -326,13 +317,11 @@ rationalFunctionSolutions(Ideal, RingElement, List) := (I, f, w) -> (
      	  numerators := polynomialSolutions (twistI, w);
      	  R := (coefficientRing W)(monoid [W.dpairVars#0]);
      	  F := substitute(f^k, R);
-     	  solsList := apply (numerators, i -> ( substitute(i,R)/F ) );
+	  apply(numerators, i -> substitute(i,R) / F )
 	  )
-     else solsList = polynomialSolutions(I, w);
-     solsList
-     )
+     else polynomialSolutions(I, w))
 
-rationalFunctionSolutions(Ideal, List, List) := (I, f, w) -> (
+rationalFunctionSolutions(LeftIdeal, List, List) := (I, f, w) -> (
      W := ring I;
      createDpairs W;
      bfuncs := apply(f, i -> (globalB(I, i))#Bpolynomial);
@@ -345,19 +334,17 @@ rationalFunctionSolutions(Ideal, List, List) := (I, f, w) -> (
      	  numerators := polynomialSolutions (twistI, w);
      	  R := (coefficientRing W)(monoid [W.dpairVars#0]);
      	  F := substitute(newf^newk, R);
-     	  solsList := apply (numerators, i -> (substitute(i,R) / F) );
+	  apply(numerators, i -> (substitute(i,R) / F))
 	  )
-     else solsList = polynomialSolutions(I, w);
-     solsList
-     )
+     else polynomialSolutions(I, w))
 
 -- internal
 TwistOperator = method()
-TwistOperator(Ideal, RingElement, ZZ) := (I, f, k) -> (
-     ideal apply((entries gens I)#0, L -> TwistOperator(L, f, k))
+TwistOperator(LeftIdeal, RingElement, ZZ) := (I, f, k) -> (
+     ideal apply(I_*, L -> TwistOperator(L, f, k))
      )
-TwistOperator(Ideal, List, List) := (I, f, k) -> (
-     ideal apply((entries gens I)#0, L -> TwistOperator(L, f, k))
+TwistOperator(LeftIdeal, List, List) := (I, f, k) -> (
+     ideal apply(I_*, L -> TwistOperator(L, f, k))
      )
 
 TwistOperator(RingElement, RingElement, ZZ) := (L, f, k) -> (
@@ -450,12 +437,12 @@ TwistOperator(RingElement, List, List) := (L, f, k) -> (
 --------------------------------------------------------------------------------
 rationalFunctionExt = method(Options => {Strategy => Schreyer} )
 
-rationalFunctionExt Ideal := options -> I -> (
+rationalFunctionExt LeftIdeal := opts -> I -> (
      f := (singLocus(I))_0;
      rationalFunctionExt (I, f)
      )
 
-rationalFunctionExt Module := options -> M -> (
+rationalFunctionExt Module := opts -> M -> (
      r := numgens target gens M; 
      -- case 1: M is a proper submodule of (D_n)^r/N
      if gens M != map (ring M)^r
@@ -468,11 +455,11 @@ rationalFunctionExt Module := options -> M -> (
      )
 
 
-rationalFunctionExt(Ideal, RingElement) := options -> (I, f) -> (
-     rationalFunctionExt ((ring I)^1/I, f, options)
+rationalFunctionExt(LeftIdeal, RingElement) := opts -> (I, f) -> (
+     rationalFunctionExt (comodule I, f, opts)
      )
 
-rationalFunctionExt(Module, RingElement) := options -> (M, f) -> (
+rationalFunctionExt(Module, RingElement) := opts -> (M, f) -> (
      pInfo (1, "ENTERING RatlExt ...");
      W := ring M;
      createDpairs W;
@@ -481,13 +468,13 @@ rationalFunctionExt(Module, RingElement) := options -> (M, f) -> (
      outputList := {};
      N := zeroize Ddual M;
      N2 := Dlocalize(N, f);
-     integrateTable := Dintegration(zeroize N2, w, options);
+     integrateTable := Dintegration(zeroize N2, w, opts);
      homologyTable := hashTable apply(toList(0..n), 
 	  i -> (n-i) => integrateTable#i);
      homologyTable
      )
 
-rationalFunctionExt(ZZ, Module) := options -> (k, M) -> (
+rationalFunctionExt(ZZ, Module) := opts -> (k, M) -> (
      r := numgens target gens M; 
      -- case 1: M is a proper submodule of (D_n)^r/N
      if gens M != map (ring M)^r 
@@ -499,16 +486,16 @@ rationalFunctionExt(ZZ, Module) := options -> (k, M) -> (
      rationalFunctionExt (k, M, f)
      )
 
-rationalFunctionExt(ZZ, Ideal) := options -> (k, I) -> (
+rationalFunctionExt(ZZ, LeftIdeal) := opts -> (k, I) -> (
      f := (singLocus(I))_0;
      rationalFunctionExt (k, I, f)
      )
 
-rationalFunctionExt(ZZ, Ideal, RingElement) := options -> (k, I, f) -> (
-     rationalFunctionExt (k, (ring I)^1/I, f, options)
+rationalFunctionExt(ZZ, LeftIdeal, RingElement) := opts -> (k, I, f) -> (
+     rationalFunctionExt (k, comodule I, f, opts)
      )
 
-rationalFunctionExt(ZZ, Module, RingElement) := options -> (k, M, f) -> (
+rationalFunctionExt(ZZ, Module, RingElement) := opts -> (k, M, f) -> (
      pInfo (1, "ENTERING RatlExt ...");
      W := ring M;
      createDpairs W;
@@ -517,7 +504,7 @@ rationalFunctionExt(ZZ, Module, RingElement) := options -> (k, M, f) -> (
      outputList := {};
       N := zeroize Ddual M;
       N2 := Dlocalize(N, f);
-     integrateModule := Dintegration(n-k, zeroize N2, w, options);
+     integrateModule := Dintegration(n-k, zeroize N2, w, opts);
      integrateModule
      )
 
@@ -531,25 +518,25 @@ rationalFunctionExt(ZZ, Module, RingElement) := options -> (k, M, f) -> (
 
 DHom = method(Options => {Strategy => Schreyer})
 
-DHom(Ideal, Ideal) := options -> (I, J) -> (
+DHom(LeftIdeal, LeftIdeal) := opts -> (I, J) -> (
      W := ring I;
      createDpairs W;
      n := #W.dpairVars#0;
      w := toList(2*n:1);
-     DHom(W^1/I, W^1/J, w, options)
+     DHom(comodule I, comodule J, w, opts)
      )
      
-DHom(Module, Module) := options -> (M, N) -> (
+DHom(Module, Module) := opts -> (M, N) -> (
      W := ring M;
      createDpairs W;
      n := #W.dpairVars#0;
      w := toList(2*n:1);
-     DHom(M, N, w, options)
+     DHom(M, N, w, opts)
      )
      
 protect diagonal
 
-DHom(Module, Module, List) := options -> (M, N, w) -> (
+DHom(Module, Module, List) := opts -> (M, N, w) -> (
      pInfo (1, "ENTERING DHom ...");
      W := ring M;
      nW := numgens W;
@@ -661,15 +648,15 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
 DExt = method(Options => {Strategy => Schreyer, Info => 1,
 	  Output => HomologyModules, Special => None})
 
-DExt(Module, Module) := options -> (M, N) -> (
+DExt(Module, Module) := opts -> (M, N) -> (
      W := ring M;
      createDpairs W;
      n := #W.dpairVars#0;
      w := toList(2*n:1);
-     DExt(M, N, w, options)
+     DExt(M, N, w, opts)
      )
 
-DExt(Module, Module, List) := options -> (M, N, w) -> (
+DExt(Module, Module, List) := opts -> (M, N, w) -> (
      pInfo (1, "ENTERING DExt ...");
      W := ring M;
      nW := numgens W;
@@ -699,7 +686,7 @@ DExt(Module, Module, List) := options -> (M, N, w) -> (
      MdualN := ExternalProduct(Mdual,N, TwistMap => true);
 
      restrictTable := computeRestriction((ring MdualN).twistMap ** MdualN, 
-	  w, -1, n+1, {HomologyModules}, options);
+	  w, -1, n+1, {HomologyModules}, opts);
      ExtTable := hashTable apply(toList(0..n), 
 	  i -> i => restrictTable#HomologyModules#(n-i));
      ExtTable
@@ -711,7 +698,7 @@ DExt(Module, Module, List) := options -> (M, N, w) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 ExternalProduct = method(Options => {TwistMap => false})
-ExternalProduct(Module, Module) := options -> (M, N) -> (
+ExternalProduct(Module, Module) := opts -> (M, N) -> (
 
      pInfo(1, "ENTERING ExternalProduct ...");
 
@@ -761,7 +748,7 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      WW.projMap2 = map(W2, WW, join(toList(nW1:0), projList2));
 
 -- MAKE TWISTMAP TO DIAGONAL
-     if W1 === W2 and options.TwistMap then (
+     if W1 === W2 and opts.TwistMap then (
 	  n := n1;
 	  nW := nW1;
 	  naux := m1;
@@ -793,7 +780,7 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      incM**incN    
      )
 
-ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
+ExternalProduct(ChainComplex, ChainComplex) := opts -> (F, G) -> (
 
      pInfo(1, "ENTERING ExternalProduct ...");
 
@@ -840,7 +827,7 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
 
 
 -- MAKE TWISTMAP TO DIAGONAL
-     if W1 === W2 and options.TwistMap then (
+     if W1 === W2 and opts.TwistMap then (
 	  n := n1;
 	  nW := nW1;
 	  naux := m1;
@@ -903,20 +890,19 @@ compareSpans (List, List) := (list1, list2) -> (
 
 
 
-TEST ///
 -- TESTS TO WRITE (exported symbols);
---    polynomialExt Ideal
+--    polynomialExt LeftIdeal
 --    polynomialExt Module
---    polynomialExt (ZZ, Ideal)
+--    polynomialExt (ZZ, LeftIdeal)
 --    polynomialExt (ZZ, Module)
 
---    rationalFunctionExt Ideal
+--    rationalFunctionExt LeftIdeal
 --    rationalFunctionExt Module
---    rationalFunctionExt (Ideal, RingElement)
+--    rationalFunctionExt (LeftIdeal, RingElement)
 --    rationalFunctionExt (Module, rationalFunctionExt)
 --    rationalFunctionExt (ZZ, Module)
---    rationalFunctionExt (ZZ, Ideal)
---    rationalFunctionExt (ZZ, Ideal, RingElement)
+--    rationalFunctionExt (ZZ, LeftIdeal)
+--    rationalFunctionExt (ZZ, LeftIdeal, RingElement)
 --    rationalFunctionExt (ZZ, Module, RingElement)
 
 --    DHom (Module, Module, List)
@@ -934,12 +920,14 @@ TEST ///
 --    divideOutGCD RingElement
 --    divideOutGCD Matrix
 
---    TwistOperator (Ideal, RingElement, ZZ)
---    TwistOperator (Ideal, List, List)
+--    TwistOperator (LeftIdeal, RingElement, ZZ)
+--    TwistOperator (LeftIdeal, List, List)
 --    TwistOperator (RingElement, RingElement, ZZ)
 --    TwistOperator (RingElement, List, List)
 
+TEST ///
 importFrom_"BernsteinSato" {"compareSpans"}
+
 ---------------- TESTS for compareSpan -----------------------
 -- Test 1:
 S = QQ[x,y,z];
@@ -962,14 +950,14 @@ mylist1 = {1, x, y};
 mylist2 = {x + y, x-y};
 assert(not compareSpans(mylist1, mylist2));
 
-
 ----------------------- TESTS for ^ -----------------------
 x = symbol x; y = symbol y; z = symbol z;
 R = QQ[x,y,z];
 assert({x,y,z}^{2,3,4} == x^2*y^3*z^4);
+///
 
-
-
+TEST///
+importFrom_"BernsteinSato" {"compareSpans"}
 ----------------------- TESTS for polynomialSolutions -------------------------
 -- Test 1: Simple example 
 x = symbol x; Dx = symbol Dx;
@@ -998,11 +986,12 @@ ansGD = polynomialSolutions(I, weight);
 R = ring ansGD#0;
 ansDuality = polynomialSolutions(I, Alg => Duality) / (f -> sub(f, R));
 assert(compareSpans(ansGD, ansDuality));
-
+///
 
 --------------------- TESTS for polynomialExt -----------------------
 
-
+TEST///
+importFrom_"BernsteinSato" {"compareSpans"}
 --------------------- TESTS for rationalFunctionSolutions -----------------------
 -- Test 1: 
 x = symbol x; Dx = symbol Dx;
@@ -1025,8 +1014,9 @@ ans = {(-x+y)/(-y^4 + 3*y^3 - 3*y^2 + y), (-x*y^3 + 3*x*y^2 - 3*x*y + 4*x - 3*y)
 
 thelcd = lcm((allSols | ans) / denominator);
 assert compareSpans( thelcd*allSols / (f -> lift(f, R)), thelcd*ans / (f -> lift(f, R)));
+///
 
-
+TEST///
 ---------------------- TESTS forDHom and DExt ------------------------
 -- Test 1: Simple ODE examples
 x = symbol x; dx = symbol dx;

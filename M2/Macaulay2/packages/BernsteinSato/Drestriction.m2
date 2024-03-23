@@ -72,7 +72,7 @@ ensureQuotientModule(Module, String) := (M,errorString) -> (
 --------------------------------------------------------------------------------
 
 Drestriction = method( Options => {Strategy => Schreyer} )
-Drestriction(Ideal,  List) := options -> (I,w) -> Drestriction(comodule I, w, options)
+Drestriction(LeftIdeal,  List) := options -> (I,w) -> Drestriction(comodule I, w, options)
 Drestriction(Module, List) := options -> (M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -83,7 +83,7 @@ Drestriction(Module, List) := options -> (M,w) -> (
      outputTable#HomologyModules
      )
 
-Drestriction(ZZ, Ideal, List) := options -> (k,I,w) -> Drestriction (k, comodule I, w, options)
+Drestriction(ZZ, LeftIdeal, List) := options -> (k,I,w) -> Drestriction (k, comodule I, w, options)
 Drestriction(ZZ,Module,List) := options -> (k,M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -101,7 +101,7 @@ Drestriction(ZZ,Module,List) := options -> (k,M,w) -> (
 --------------------------------------------------------------------------------
 
 DrestrictionClasses = method( Options => {Strategy => Schreyer} )
-DrestrictionClasses(Ideal, List) := options -> (I,w) -> DrestrictionClasses(comodule I, w, options)
+DrestrictionClasses(LeftIdeal, List) := options -> (I,w) -> DrestrictionClasses(comodule I, w, options)
 DrestrictionClasses(Module, List) := options -> (M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -116,7 +116,7 @@ DrestrictionClasses(Module, List) := options -> (M,w) -> (
      outputTable
      )
 
-DrestrictionClasses(ZZ, Ideal, List) := options -> (k,I,w) -> DrestrictionClasses (k, comodule I, w, options)
+DrestrictionClasses(ZZ, LeftIdeal, List) := options -> (k,I,w) -> DrestrictionClasses (k, comodule I, w, options)
 DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -147,8 +147,8 @@ DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
 --------------------------------------------------------------------------------
 
 DrestrictionComplex = method( Options => {Strategy => Schreyer} )
-DrestrictionComplex(Ideal,List) := options -> (I,w) -> (
-     DrestrictionComplex ((ring I)^1/I, w, options)     )
+DrestrictionComplex(LeftIdeal,List) := options -> (I,w) -> (
+     DrestrictionComplex (coker gens I, w, options)     )
 
 protect RestrictComplex
 
@@ -165,10 +165,10 @@ DrestrictionComplex(Module, List) := options -> (M,w) -> (
 --------------------------------------------------------------------------------
 
 DrestrictionIdeal = method( Options => {Strategy => Schreyer} )
-DrestrictionIdeal(Ideal,List) := options -> (I,w) -> (
+DrestrictionIdeal(LeftIdeal,List) := options -> (I,w) -> (
      d := #positions(w, i -> (i>0));
      outputRequest := {RestrictComplex, Explicit};
-     outputTable := computeRestriction ((ring I)^1/I, w, -1, 1, 
+     outputTable := computeRestriction (coker gens I, w, -1, 1, 
 	  outputRequest, options);
      M := cokernel (outputTable#RestrictComplex).dd#1;
      R := ring M;
@@ -184,8 +184,8 @@ DrestrictionIdeal(Ideal,List) := options -> (I,w) -> (
 --------------------------------------------------------------------------------
 
 DrestrictionAll = method( Options => {Strategy => Schreyer} )
-DrestrictionAll(Ideal,List) := options -> (I,w) -> (
-     DrestrictionAll ((ring I)^1/I, w, options)     )
+DrestrictionAll(LeftIdeal,List) := options -> (I,w) -> (
+     DrestrictionAll (coker gens I, w, options)     )
 
 DrestrictionAll(Module, List) := options -> (M,w) -> (
      ensureQuotientModule(M, 
@@ -212,8 +212,8 @@ DrestrictionAll(Module, List) := options -> (M,w) -> (
 --------------------------------------------------------------------------------
 
 Dintegration = method( Options => {Strategy => Schreyer} )
-Dintegration(Ideal,List) := options -> (I,w) -> (
-     Dintegration ((ring I)^1/I, w, options)     )
+Dintegration(LeftIdeal,List) := options -> (I,w) -> (
+     Dintegration (coker gens I, w, options)     )
 
 Dintegration(Module, List) := options -> (M,w) -> (
      W := ring M;
@@ -235,8 +235,8 @@ Dintegration(Module, List) := options -> (M,w) -> (
      Mout
      )     
 
-Dintegration(ZZ, Ideal, List) := options -> (k,I,w)  -> (
-     Dintegration (k, (ring I)^1/I, w, options)	 )
+Dintegration(ZZ, LeftIdeal, List) := options -> (k,I,w)  -> (
+     Dintegration (k, coker gens I, w, options)	 )
 
 Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
      W := ring M;
@@ -261,8 +261,8 @@ Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
 --------------------------------------------------------------------------------
 
 DintegrationClasses = method( Options => {Strategy => Schreyer} )
-DintegrationClasses(Ideal,List) := options -> (I,w) -> (
-     DintegrationClasses ((ring I)^1/I, w, options)     )
+DintegrationClasses(LeftIdeal,List) := options -> (I,w) -> (
+     DintegrationClasses (coker gens I, w, options)     )
 
 DintegrationClasses(Module, List) := options -> (M,w) -> (
      W := ring M;
@@ -294,8 +294,8 @@ DintegrationClasses(Module, List) := options -> (M,w) -> (
      hashTable outputList
      )
 
-DintegrationClasses(ZZ,Ideal,List) := options -> (k,I,w) -> (
-     DintegrationClasses (k, (ring I)^1/I, w, options)     )
+DintegrationClasses(ZZ,LeftIdeal,List) := options -> (k,I,w) -> (
+     DintegrationClasses (k, coker gens I, w, options)     )
 
 DintegrationClasses(ZZ,Module,List) := options -> (k,M,w) -> (
      W := ring M;
@@ -343,8 +343,8 @@ DintegrationClasses(ZZ,Module,List) := options -> (k,M,w) -> (
 --------------------------------------------------------------------------------
 
 DintegrationComplex = method( Options => {Strategy => Schreyer} )
-DintegrationComplex(Ideal, List) := options -> (I,w) -> (
-     DintegrationComplex ((ring I)^1/I, w, options)     )
+DintegrationComplex(LeftIdeal, List) := options -> (I,w) -> (
+     DintegrationComplex (coker gens I, w, options)     )
 
 DintegrationComplex(Module, List) := options -> (M,w) -> (
      W := ring M;
@@ -365,13 +365,13 @@ DintegrationComplex(Module, List) := options -> (M,w) -> (
 --------------------------------------------------------------------------------
 
 DintegrationIdeal = method( Options => {Strategy => Schreyer} )
-DintegrationIdeal(Ideal,List) := options -> (I,w) -> (
+DintegrationIdeal(LeftIdeal,List) := options -> (I,w) -> (
      W := ring I;
      d := #positions(w, i -> (i>0));
      n := numgens W;
      IF := Fourier I; 
      outputRequest := {RestrictComplex, Explicit};
-     outputTable := computeRestriction (W^1/IF, w, -1, 1, 
+     outputTable := computeRestriction (coker gens IF, w, -1, 1, 
 	  outputRequest, options);
      M := cokernel (outputTable#RestrictComplex).dd#1;
      resW := ring M;
@@ -390,8 +390,8 @@ DintegrationIdeal(Ideal,List) := options -> (I,w) -> (
 --------------------------------------------------------------------------------
 
 DintegrationAll = method( Options => {Strategy => Schreyer} )
-DintegrationAll(Ideal,List) := options -> (I,w) -> (
-     DintegrationAll ((ring I)^1/I, w, options)     )
+DintegrationAll(LeftIdeal,List) := options -> (I,w) -> (
+     DintegrationAll (coker gens I, w, options)     )
 
 DintegrationAll(Module, List) := options -> (M,w) -> (
      W := ring M;

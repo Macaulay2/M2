@@ -64,7 +64,11 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
-tensor(PolynomialRing, PolynomialRing) :=
+tensor(PolynomialRing, PolynomialRing) := monoidTensorDefaults >> optns -> (R, S) -> (
+    if (kk := coefficientRing R) === coefficientRing S
+    then kk tensor(monoid R, monoid S, optns)
+    else error "expected rings to have the same coefficient ring")
+
 tensor(QuotientRing,   PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
 tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) -> (
@@ -127,6 +131,8 @@ coerce(Thing,Thing) := (x,Y) -> if instance(x,Y) then x else error("no method fo
 coerce(Ideal,Ring) := quotient @@ first
 coerce(Thing,Nothing) := (x,Nothing) -> null		    -- avoid using this one, to save time earlier
 coerce(Ring,Ideal) := (R,Ideal) -> ideal R		    -- avoid using this one, to save time earlier
+coerce(LeftIdeal,Ring) := quotient @@ first
+coerce(LeftIdeal,Ideal) := first
 preprocessResultTemplate = (narrowers,r) -> (
      if instance(r,ZZ) then r = r:null;
      r = apply(sequence r,x -> if x === null then Thing else x);

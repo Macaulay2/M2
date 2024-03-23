@@ -266,6 +266,7 @@ export {
 	"LUdecomposition",
 	"Layout",
 	"Left",
+	"LeftIdeal",
 	"LengthLimit",
 	"Lex",
 	"Limit",
