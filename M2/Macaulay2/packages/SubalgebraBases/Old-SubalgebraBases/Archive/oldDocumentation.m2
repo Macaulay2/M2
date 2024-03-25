@@ -456,7 +456,7 @@ doc ///
      (makePresRing, Subring)
      [makePresRing, VarBaseName]
    Headline
-     Contstructs an instance of the PresRing type
+     Constructs an instance of the PresRing type
    Usage
      result = makePresRing(gndR, gensMat)
      result = makePresRing(gndR, gensList)

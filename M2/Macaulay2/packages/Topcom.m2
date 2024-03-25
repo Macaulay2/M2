@@ -422,7 +422,7 @@ Description
   Text
     Topcom assumes that the points do not lie on a hyperplane.  If they do, and the hyperplane is not
     through the origin (and they span that entire affine hyperplane), then give {\tt Homogenize => false} as an option.
-    This is essentially equivalent to considering the point configuration as a vector comfiguration.
+    This is essentially equivalent to considering the point configuration as a vector configuration.
     
     For example, the following three points lie on the hyperplane $x_0 + x_1 + x_2 = 2$.
   Example

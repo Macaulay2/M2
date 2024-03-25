@@ -339,7 +339,7 @@ document {
      ///,
      "The following operators can be applied to expressions: ", TO "SPACE", ", ", TO "*", ", ", TO "**", ", ", TO "+", ", ", TO "-", ", ", 
      TO "/", ", ", TO "==", ", ", TO "^", ", and ", TO "_", ".  They are contagious, in the sense that when applied to an expression and a non-expression,
-     the non-expression will be converted to an expression and the operator will be applied.  Only the most trivial algebraic simplications are applied.",
+     the non-expression will be converted to an expression and the operator will be applied.  Only the most trivial algebraic simplifications are applied.",
      EXAMPLE lines ///
      	  d + e
 	  d + 4
