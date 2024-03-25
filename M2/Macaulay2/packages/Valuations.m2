@@ -538,7 +538,7 @@ doc ///
             the lowest term valuation
      Description
        Text
-           This function construst a valuation which returns the exponent vector of the
+           This function builds a valuation which returns the exponent vector of the
            lead term of a polynomial with respect to the ring's term order.
            The valuation returns vectors in an @TT "ordered $\\QQ$-module"@,
            which respects the monomial order of the
