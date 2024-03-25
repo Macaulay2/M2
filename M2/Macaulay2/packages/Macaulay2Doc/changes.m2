@@ -218,7 +218,7 @@ document {
 			 character tables, decompositions, and other methods for characters.
 			 The GradedCharacter type has been removed, and the Character type
 			 has been modified to accommodate both homological and internal
-			 grading in a simplied format." 
+			 grading in a simplified format." 
                 	 }
 		     }
 		 },
