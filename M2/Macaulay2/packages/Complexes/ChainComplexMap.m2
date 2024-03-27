@@ -1379,14 +1379,14 @@ horseshoeResolution(Matrix, Matrix) := Sequence => opts -> (g,f) -> (
     horseshoeResolution(complex{g,f}, opts)
     )  
 
-connectingExtMap = method(Options => {Concentration => null})
+connectingExtMap = method(Options => {LengthLimit => infinity, Concentration => null})
 connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
-    F := freeResolution M;
-    connectingMap(Hom(F, g), Hom(F, f), opts)
+    F := freeResolution(M, LengthLimit => opts.LengthLimit);
+    connectingMap(Hom(F, g), Hom(F, f), Concentration => opts.Concentration)
     )
 connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
-    (g', f') := horseshoeResolution(g, f);
-    G := freeResolution N;
+    (g', f') := horseshoeResolution(g, f, LengthLimit => opts.LengthLimit);
+    G := freeResolution(N, LengthLimit => opts.LengthLimit);
     -- TODO: the indexing on opts.Concentration needs to be negated
-    connectingMap(Hom(f', G), Hom(g', G), opts)
+    connectingMap(Hom(f', G), Hom(g', G), Concentration => opts.Concentration)
     )

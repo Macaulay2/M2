@@ -72,7 +72,8 @@ isWellDefined SheafMap := f -> (
 	"source of the sheaf map does not match the source of the underlying matrix")
     and assert'(d >= min flatten degrees F, -- maybe not strictly necessary
 	"expected the degree of the sheaf map to be at least as high as the degrees of the source")
-    and assert'(try ( isWellDefined map(module G, truncate(d, module F, MinimalGenerators => false), matrix f) ) else false,
+    and assert'(try ( isWellDefined map(module G, F' := truncate(d, module F, MinimalGenerators => false),
+         matrix f * inducedMap(source matrix f, F') ) ) else false,
 	"expected the matrix to induce a map between a truncation of the underlying modules")
     )
 
@@ -283,6 +284,7 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     -- source f ==  target h
     -- target f === source h
     map(source f, sheaf(X, source h),
+    --the above line is maybe a bug; we think it should feed the truncation degree computed above
 	inducedMap(source g, target h) * h, e#1 + 1))
     )
 
@@ -414,7 +416,9 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 
 
 --Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf, this returns Ext^i(F,im f)->Ext^(i+1)(F,ker f)
- 
+
+
+
 connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> connectingExtMap(m, F, inducedMap(image f, source f,f), inducedMap(source f, ker f), opts)
 
 connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m, F, f, g) -> (
@@ -457,7 +461,7 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
     fTruncated := truncate(reg, matrix f);
     --gTruncated := truncate(reg, matrix g);
     gTruncated := matrix g * inducedMap(source matrix g,truncate(reg, source matrix g));
-    moveToField basis(0, ( (connectingExtMap(M, fTruncated, gTruncated)))_(-m) ) )
+    moveToField basis(0, ( (connectingExtMap(M, fTruncated, gTruncated, LengthLimit => opts.LengthLimit)))_(-m) ) )
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
