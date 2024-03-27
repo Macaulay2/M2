@@ -283,9 +283,7 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     -- We want:
     -- source f ==  target h
     -- target f === source h
-    map(source f, sheaf(X, source h),
-    --the above line is maybe a bug; we think it should feed the truncation degree computed above
-	inducedMap(source g, target h) * h, e#1 + 1))
+    map(sheaf source g, sheaf(X, source h), inducedMap(source g, target h) * h, e#1 + 1))
     )
 
 SheafMap#1 = f -> (
@@ -351,7 +349,7 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     if module source g =!= N then error "expected sheaf maps to be composable";
     -- not sure why MinimalGenerators => false was relevant in line below, so we took it out
     -- truncate matrix f to match the degree of the source of g
-    f = inducedMap(truncate(d, N), M, matrix f);
+    f = inducedMap(truncate(d, N,MinimalGenerators => false), M, matrix f);
     sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
