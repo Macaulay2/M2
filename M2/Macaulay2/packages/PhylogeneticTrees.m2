@@ -2558,7 +2558,7 @@ TEST ///
 -- We test the function toricSecantDim by computing the 
 -- dimension of a second secant of the CFN model
 -- which is known to be non-defective.
--- We also verify that the dimenson of the secant for the
+-- We also verify that the dimension of the secant for the
 -- CFN model for a 4-leaf tree is no larger than the ambient dimension. 
 
 A = phyloToricAMatrix(6, {{0,1},{2,3},{4,5}},CFNmodel);

@@ -266,7 +266,7 @@ projectiveImage(List, Ring) := Matrix => o -> (D0List, C) ->(
 
 
 projectiveImage Matrix := Ring => o -> M -> (
- -- in this case M is a 1-m matrix respresenting a
+ -- in this case M is a 1-m matrix representing a
  --linear series.
     R := ring M;
     kk := coefficientRing R;
