@@ -1,11 +1,11 @@
 newPackage(
 	"WhitneyStratifications",
 	Version => "2.03", 
-    	Date => "Febuary 3, 2024",
+    	Date => "March 30, 2024",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "mhelmer@ncsu.edu", 
 		  HomePage => "http://martin-helmer.com/"}},
-    	Headline => "Compute Whitney Statifications Algebraically & Stratifies Maps (Release version)",
+    	Headline => "Compute Whitney Statifications Algebraically & Stratifies Maps",
     	DebuggingMode => false,
 	PackageImports=>{"Elimination","PrimaryDecomposition","Saturation"}
     	);
