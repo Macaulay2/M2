@@ -121,7 +121,7 @@ whitneyStratify (Ideal,ZZ,ZZ):=opts->(I,level,Icodim)->(
     J:=ideal mingens(I+minors(codim I,jacobian I));
     if codim(J)>n then return V;
     for a from 0 to level-1 do(
-	--add singularities arising from intersections of current dimensional peices 
+	--add singularities arising from intersections of current dimensional pieces 
         intse:=unique flatten for s in subsets(toList(V#(dimI-a)),2) list decompose ideal mingens(sum(s));
         for th in intse do(
             Ti:=n-codim(th);
@@ -130,7 +130,7 @@ whitneyStratify (Ideal,ZZ,ZZ):=opts->(I,level,Icodim)->(
 		if opts.Print==true then <<"Strata found= "<<th<<endl;
 		);
 	    );
-	--now find singularities and Whitney points of current dim peices 
+	--now find singularities and Whitney points of current dim pieces 
 	for Ia in V#(dimI-a) do(
 	    dimIa:=dimI-a;
 	    J=ideal mingens(Ia+minors(codim Ia,jacobian Ia));
@@ -196,7 +196,7 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
     W:=new MutableHashTable;
     WcheckedBeforeInd:=new MutableHashTable;
     if opts.Projective then(
-	<<"Projective Option not implmented yet"<<endl;
+	<<"Projective Option not implemented yet"<<endl;
 	n=n-1;
 	m=m-1;
 	);
@@ -302,7 +302,7 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 	-- Y at codim>a 
 	if (dimY-aY)>0 then(
 	    if opts.Print==true then print "In Y";
-	    	--add subset interesections of Y at level aY
+	    	--add subset intersections of Y at level aY
 		tYind=WcheckedBeforeInd#(dimY-aY);
 		YaNew=(toList(W#(dimY-aY)))_(toList(tYind..(#(W#(dimY-aY))-1)));
 		YaOld=(toList(W#(dimY-aY)))_(toList(0..tYind-1));
@@ -403,7 +403,7 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		XaNew=(toList(V#(dimX-aX)))_(toList(tXind..(#(V#(dimX-aX))-1)));
 		XaOld=(toList(V#(dimX-aX)))_(toList(0..tXind-1));
 		tempSubsetsV=join(flatten for a1 in XaOld list(for b1 in XaNew list {a1,b1}),subsets(XaNew,2));
-	    	--Add subset interesections of Xa, push forward
+	    	--Add subset intersections of Xa, push forward
 		--tempSubsetsV=subsets(toList(V#(dimX-a)),2);
 		if opts.Print==true then<<"starting subset sing at "<<dimX-aX<<", num subsets V= "<<#tempSubsetsV<<endl;
 		    intse=unique flatten for s in tempSubsetsV list decompose ideal  mingens(sum(s));
@@ -620,7 +620,7 @@ Node
 	Text
 	    For this and other root classification examples the option isProper=>false should be used, as the corresponding projection maps are in general not proper. Note that the top dimensional strata in this case are the four connected components of $\RR^3-V(a(b^2-4ac))$, and so on for the lower dimensional strata. 
 	
-	    Another root classification example, this time we find the regions of the paramter space $\{(a,b)\in \RR^2\}$ where the number of real roots to the system $x^2-y^2+b = -ax+x^2+by=0$ is constant; this is Example 1.2 in Reference [2]. 
+	    Another root classification example, this time we find the regions of the parameter space $\{(a,b)\in \RR^2\}$ where the number of real roots to the system $x^2-y^2+b = -ax+x^2+by=0$ is constant; this is Example 1.2 in Reference [2]. 
 	Example
 	    R=QQ[a,b,x,y];
 	    I=ideal(x^2-y^2+b, -a*x+x^2+b*y);
