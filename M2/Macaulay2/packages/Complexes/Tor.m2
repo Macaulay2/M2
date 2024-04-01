@@ -28,10 +28,10 @@ Tor(ZZ, Module, Matrix) := Matrix => opts -> (i,M,f) -> (
         )
     )
 
-torSymmetry = method()
-torSymmetry(ZZ, Module, Module) := Matrix => (i, M, N) -> (
-    FM := freeResolution M;
-    FN := freeResolution N;
+torSymmetry = method(Options => {LengthLimit => infinity})
+torSymmetry(ZZ, Module, Module) := Matrix => opts -> (i, M, N) -> (
+    FM := freeResolution(M, LengthLimit => opts.LengthLimit);
+    FN := freeResolution(N, LengthLimit => opts.LengthLimit);
     TorMN := Tor_i(M,N);
     TorNM := Tor_i(N,M);
     alpha := gens TorMN;
@@ -46,15 +46,15 @@ torSymmetry(ZZ, Module, Module) := Matrix => (i, M, N) -> (
     map(TorNM, TorMN, delta)
     )
 
-connectingTorMap = method(Options => {Concentration => null})
+connectingTorMap = method(Options => {Concentration => null, LengthLimit => infinity})
 connectingTorMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
-    F := freeResolution M;
-    connectingMap(F ** g, F ** f, opts)
+    F := freeResolution(M, LengthLimit => opts.LengthLimit);
+    connectingMap(F ** g, F ** f, Concentration => opts.Concentration)
     )
 
 connectingTorMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, M) -> (
-    (g', f') := horseshoeResolution(g, f);
-    connectingMap(g' ** M, f' ** M, opts)
+    (g', f') := horseshoeResolution(g, f, LengthLimit => opts.LengthLimit);
+    connectingMap(g' ** M, f' ** M, Concentration => opts.Concentration)
     )
 
 TEST ///
@@ -175,6 +175,48 @@ TEST ///
   -- now for delta_3
   h3 = torSymmetry(2, kk, source f) * delta_3
   ts3 = torSymmetry(3, kk, target g)
+  ts3' = map(source delta'_3, source ts3, ts3)
+  h3' = delta'_3 * ts3'
+  assert(h3 == h3')
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-
+  -- for quotient rings, some methods reuqire LengthLimit.
+  S = ZZ/101[a..e]/(e^2);
+  I = ideal(c^3-b*d^2, b*c-a*d)
+  J = ideal(a*c^2-b^2*d, b^3-a^2*c)
+  g = map(S^1/(I+J), S^1/I ++ S^1/J, {{1,1}})
+  f = map(S^1/I ++ S^1/J, S^1/intersect(I,J), {{1},{-1}})
+  assert isShortExactSequence(g,f)
+  kk = coker vars S
+  delta = connectingTorMap(kk, g, f, LengthLimit => 5);
+  delta' = connectingTorMap(g, f, kk, LengthLimit => 5);
+  assert isWellDefined delta
+  assert isWellDefined delta'
+  F = freeResolution(kk, LengthLimit => 5)
+  LES = longExactSequence(F ** g, F ** f);
+  assert all(3, i -> dd^LES_(3*(i+1)) == delta_(i+1))
+  assert(HH LES == 0)
+  -- another way
+  (g',f') = horseshoeResolution(g,f, LengthLimit => 5);
+  assert isShortExactSequence(g',f')
+  LES' = longExactSequence(g' ** kk, f' ** kk);
+  assert(HH LES' == 0)
+  assert all(3, i -> dd^LES'_(3*(i+1)) == delta'_(i+1))
+  -- now we show commutativity of some squares 
+  -- which show that delta, delta' are isomorphic.
+  h2 = torSymmetry(1, kk, source f, LengthLimit => 5) * delta_2
+  ts = torSymmetry(2, kk, target g, LengthLimit => 5)
+  ts' = map(source delta'_2, source ts, ts)
+  h2' = delta'_2 * ts'
+  assert(h2 == h2')
+  -- now for delta_3
+  h3 = torSymmetry(2, kk, source f, LengthLimit => 5) * delta_3
+  ts3 = torSymmetry(3, kk, target g, LengthLimit => 5)
   ts3' = map(source delta'_3, source ts3, ts3)
   h3' = delta'_3 * ts3'
   assert(h3 == h3')

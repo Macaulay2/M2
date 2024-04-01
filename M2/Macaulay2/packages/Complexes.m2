@@ -395,6 +395,9 @@ doc ///
 
 
 S = ZZ/101[a..d]
-K = res coker vars S
+K = freeResolution coker vars S
 L = K ** K
+-- would be nice if these were fast(er):
 elapsedTime L**L;
+elapsedTime (oo ** K)
+elapsedTime (K ** ooo)
