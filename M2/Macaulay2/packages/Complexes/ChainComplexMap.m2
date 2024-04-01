@@ -308,7 +308,11 @@ ComplexMap == ZZ := Boolean => (f,n) -> (
     )
 ZZ == ComplexMap := Boolean => (n,f) -> f == n
 
-RingElement * ComplexMap := (r,f) -> (
+Number * ComplexMap :=
+RingElement * ComplexMap := ComplexMap => (r,f) -> (
+    if ring r =!= ring f then
+        try r = promote(r,ring f)
+        else error "can't promote scalar to ring of complex homomorphism";
     df := degree f;
     (lo,hi) := (source f).concentration;
     maps := hashTable for i from lo to hi list i => (
@@ -321,7 +325,11 @@ RingElement * ComplexMap := (r,f) -> (
     result
     )
 
+ComplexMap * Number :=
 ComplexMap * RingElement := (f,r) -> (
+    if ring r =!= ring f then
+        try r = promote(r,ring f)
+        else error "can't promote scalar to ring of complex homomorphism";
     df := degree f;
     (lo,hi) := (source f).concentration;
     maps := hashTable for i from lo to hi list i => (
@@ -332,16 +340,6 @@ ComplexMap * RingElement := (f,r) -> (
     if isCommutativeCached f and isCommutative ring f then
         result.cache.isCommutative = true;
     result
-    )
-
-Number * ComplexMap := (r,f) -> (
-    try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
-    r * f
-    )
-
-ComplexMap * Number := (f,r) -> (
-    try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
-    f * r
     )
 
 - ComplexMap := (f) -> (
@@ -1333,7 +1331,8 @@ connectingMap(ComplexMap, ComplexMap) := ComplexMap => opts -> (g, f) -> (
         assert isWellDefined p;
         assert isWellDefined q;
         );
-    HH(q) * (HH(p))^-1
+    << "we are returning the negative of previous result" << endl;
+    - HH(q) * (HH(p))^-1 -- sign is negative because of the def of cylinder.
     )
 
 longExactSequence = method(Options => true)
@@ -1379,14 +1378,15 @@ horseshoeResolution(Matrix, Matrix) := Sequence => opts -> (g,f) -> (
     horseshoeResolution(complex{g,f}, opts)
     )  
 
-connectingExtMap = method(Options => {Concentration => null})
+connectingExtMap = method(Options => {Concentration => null,
+        LengthLimit => infinity})
 connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
-    F := freeResolution M;
-    connectingMap(Hom(F, g), Hom(F, f), opts)
+    F := freeResolution(M, LengthLimit => opts.LengthLimit);
+    connectingMap(Hom(F, g), Hom(F, f), Concentration => opts.Concentration)
     )
 connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
-    (g', f') := horseshoeResolution(g, f);
-    G := freeResolution N;
+    (g', f') := horseshoeResolution(g, f, LengthLimit => opts.LengthLimit);
+    G := freeResolution(N, LengthLimit => opts.LengthLimit);
     -- TODO: the indexing on opts.Concentration needs to be negated
-    connectingMap(Hom(f', G), Hom(g', G), opts)
+    connectingMap(Hom(f', G), Hom(g', G), Concentration => opts.Concentration)
     )

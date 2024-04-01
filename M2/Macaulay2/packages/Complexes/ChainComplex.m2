@@ -783,15 +783,15 @@ homomorphism(ZZ, Matrix, Complex) := ComplexMap => (i, f, E) -> (
     if not E.cache.?homomorphism then error "expected target of map to be of the form 'Hom(C,D)'";
     if not isFreeModule source f
     or not rank source f == 1 then error "expected source of map to be free of rank 1";
-    if E_i =!= target f then (
-        -- if f arises from a kernel computation, then the target is not E_i
-        -- it is instead a submodule of E_i.  The next line provides the 'f'
-        -- that maps directly to E_i.
-        -- BUT: if you just use 'ambient f', which seems like it should
-        -- work, the problem is that the target of the map 'ambient f'
-        -- doesn't retain the information about the components of E_i
-        f = map(E_i, source f, super f);
-        );
+    -- we redefine f for two reasons:
+    -- (1) there might be a bug in 'super Matrix' where it gives a module which is === to E_i
+    --     but is missing the direct sum component information.
+    -- (2) If f is a map to the kernel of the differential then we use 'super'
+    --     to make the target exactly (this) E_i (with component info).
+    f = if E_i == target f then
+            map(E_i, source f, f)
+        else
+            map(E_i, source f, super f);
     (C,D) := E.cache.homomorphism;
     (lo,hi) := concentration C;
     H := hashTable for j from lo to hi list j => 
