@@ -251,6 +251,14 @@ tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
 	source phi ** source psi,
 	matrix phi ** matrix psi))
 
+--possible fix for ill-definedness of tensor product
+-*tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
+    (F,G,d,e) := (module source phi, module source psi, degree phi, degree psi);
+    map(target phi ** target psi,
+	sheaf truncate(d + e, F ** G, MinimalGenerators => false),
+	truncate(d + e, matrix phi ** matrix psi), d + e))*-
+
+
 SheafMap ** SheafMap      := SheafMap => (phi, psi) -> tensor(phi, psi)
 SheafMap ** CoherentSheaf := SheafMap => (phi,   F) -> tensor(phi, id_F)
 CoherentSheaf ** SheafMap := SheafMap => (F,   phi) -> tensor(id_F, phi)
