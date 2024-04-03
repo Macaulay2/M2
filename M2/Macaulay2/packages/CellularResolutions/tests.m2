@@ -511,7 +511,7 @@ e1 = newCell({v1,v3},x);
 assert(not isWellDefined e1);
 C2 = cellComplex(R,{e1});
 assert(not isWellDefined C2);
---label is not divisble by the labels in the boundary
+--label is not divisible by the labels in the boundary
 e2 = newSimplexCell({v1,v2},x);
 assert(not isWellDefined e2);
 C3 = cellComplex(R,{e2});

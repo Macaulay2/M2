@@ -41,7 +41,7 @@ export {
 debug Core
 
 -*
--- The following shuold be where?
+-- The following should be where?
 newChainComplexMap = method()
 newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      f := new ChainComplexMap;
