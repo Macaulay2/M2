@@ -151,6 +151,22 @@ TEST ///
 ///
 
 TEST ///
+  S = ZZ/11[x_0,x_1]
+  X = Proj S
+  -- f = sheafMap truncate(1, vars S)
+  m = random(S^3, S^{-1,-1})
+  f = sheafMap m
+  f' = sheafMap truncate(2, m)
+  f'' = sheafMap(m, 2)
+  g = f ** f;
+  assert isWellDefined g
+  -- FIXME
+  assert(f ** f == f' ** f')
+  -- FIXME
+  assert(f ** f == prune(f'' ** f''))
+///
+
+TEST ///
   kk = ZZ/17
   S = kk[x_0..x_3]
   j = inducedMap (ambient ker vars S, ker vars S)

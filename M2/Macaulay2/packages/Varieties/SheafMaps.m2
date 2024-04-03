@@ -105,7 +105,7 @@ SheafMap == SheafMap := Boolean => (psi, phi) -> (
     r := 1 + max(
 	regularity target f, regularity source f,
 	regularity target g, regularity source g);
-    truncate(r, psi.map) == truncate(r, phi.map))
+    truncate(r, f, MinimalGenerators => false) == truncate(r, g, MinimalGenerators => false))
 
 SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
 ZZ == SheafMap := Boolean => (n, f) -> f == n
@@ -257,6 +257,15 @@ CoherentSheaf ** SheafMap := SheafMap => (F,   phi) -> tensor(id_F, phi)
 -- TODO: what do these do?!
 SheafMap ** SheafOfRings  := SheafMap => (phi, O) -> phi ** (O^1)
 SheafOfRings ** SheafMap  := SheafMap => (O, phi) -> (O^1) ** phi
+
+SheafMap^** ZZ := SheafMap => (f, n) -> BinaryPowerMethod(f, n, tensor,
+    f -> id_((sheaf variety f)^1),
+    f -> error "SheafMap ^** ZZ: expected non-negative integer")
+
+-- TODO: move to Core
+Matrix  ^** ZZ := Matrix   => (f, n) -> BinaryPowerMethod(f, n, tensor,
+    f -> id_(module ring f),
+    f -> error "Matrix ^** ZZ: expected non-negative integer")
 
 -- twist notation
 SheafMap(ZZ) := SheafMap => (phi, d) -> phi ** OO_(variety phi)^1(d)
