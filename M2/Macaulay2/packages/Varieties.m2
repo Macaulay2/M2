@@ -78,6 +78,7 @@ importFrom_Core {
     "getAttribute", "hasAttribute", "ReverseDictionary",
     "applyMethod", "applyMethod''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
+    "concatRows", "concatCols",
     "tryHooks", "cacheHooks",
     "BinaryPowerMethod",
     }
