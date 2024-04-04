@@ -100,7 +100,7 @@ SheafMap == SheafMap := Boolean => (psi, phi) -> (
     f := if psi.cache.?minimalPresentation then psi.cache.minimalPresentation.map else psi.map;
     g := if phi.cache.?minimalPresentation then phi.cache.minimalPresentation.map else phi.map;
     if f == g then return true;
-    r := max(
+    r := 1 + max(
 	regularity target f, regularity source f,
 	regularity target g, regularity source g);
     truncate(r, psi.map) == truncate(r, phi.map))
@@ -128,9 +128,9 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
     N := if G.cache.?pruningMap then G.module else try G.cache.minimalPresentation.module;
     -- Otherwise, we will compare truncated modules representing them, which works in general.
     if M === null or N === null then (M, N) = (
-	maxRegs := max(regularity F.module, regularity G.module);
-	truncate(maxRegs + 1, F.module, MinimalGenerators => false),
-	truncate(maxRegs + 1, G.module, MinimalGenerators => false));
+	r := 1 + max(regularity F.module, regularity G.module);
+	truncate(r, F.module, MinimalGenerators => false),
+	truncate(r, G.module, MinimalGenerators => false));
     -- TODO: isIsomorphic should check === first
     if M === N then return (true, id_F);
     (ret, isom) := isIsomorphic(M, N, o, Strict => true);
