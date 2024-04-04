@@ -13,6 +13,23 @@ TEST /// -- twisted global section module
   assert(module Omega(1) === coker matrix(ring Cubic, {{-2*x_3, -2*x_2, -2*x_1}, {x_2, x_1, x_0}}))
 ///
 
+TEST /// -- twisted cubic curve
+  S = (ZZ/13)[x,y,z,w];
+  I = minors(2, matrix{{x,y,z}, {y,z,w}});
+  X = Proj(S/I);
+  Omega = cotangentSheaf X;
+  F = Omega ^** 3;
+  G = OO_X(-2);
+  -- note G is OO_(P^1)(-6)
+  assert(prune F === G);
+  maxRegs = max(regularity F.module, regularity G.module) + 1 -- 3
+  M = truncate(maxRegs, F.module, MinimalGenerators => false)
+  N = truncate(maxRegs, G.module, MinimalGenerators => false)
+  assert(prune sheaf M === prune F)
+  assert(prune sheaf N === G)
+  assert first isIsomorphic(M, N, Strict => true)
+///
+
 end
 
 -- multigraded Proj
