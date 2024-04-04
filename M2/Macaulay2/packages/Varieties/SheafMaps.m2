@@ -8,6 +8,23 @@ export {
     }
 
 -----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+-- given a graded map, truncate only the source
+-- and return the inclusion composed with the map
+-- TODO: should this be an option for truncate?
+subtruncate = { MinimalGenerators => false } >> opts -> (degs, f) -> (
+    f * inducedMap(source f, truncate(degs, source f, opts)))
+
+-- given a list of sheaf maps with matching targets,
+-- truncate only the sources of the corresponding
+-- matrices until they all have the same source
+autotruncate = { MinimalGenerators => false } >> opts -> L -> (
+    deg := max apply(L, f -> f.degree);
+    apply(L, f -> subtruncate(deg, f.map, opts)))
+
+-----------------------------------------------------------------------------
 -- SheafHom type declarations and basic constructors
 -----------------------------------------------------------------------------
 
@@ -143,9 +160,8 @@ isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(
 -- arithmetic ops
 - SheafMap := f -> map(target f, source f, -matrix f)
 ZZ * SheafMap := RingElement * SheafMap := (r, f) -> map(target f, source f, r * matrix f)
--- TODO: truncate until the sources are the same
-SheafMap + SheafMap := (f, g) -> map(target f, source f, matrix f + matrix g)
-SheafMap - SheafMap := (f, g) -> map(target f, source f, matrix f - matrix g)
+SheafMap + SheafMap := (f, g) -> map(target f, source f, sum autotruncate {f, g})
+SheafMap - SheafMap := (f, g) -> f + (-g)
 
 -- composition
 SheafMap * SheafMap := SheafMap => (f, g) -> (
@@ -529,9 +545,8 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
 -- pullback and pushout and concatenation
 -----------------------------------------------------------------------------
 
-SheafMap |  SheafMap := SheafMap => (f, g) -> map(target f, source f ++ source g, matrix f |  matrix g)
--- TODO: we should truncate either f or g so that the source modules match
-SheafMap || SheafMap := SheafMap => (f, g) -> map(target f ++ target g, source f, matrix f || matrix g)
+SheafMap |  SheafMap := SheafMap => (f, g) -> map(target f, source f ++ source g, concatCols {matrix f, matrix g})
+SheafMap || SheafMap := SheafMap => (f, g) -> map(target f ++ target g, source f, concatRows autotruncate {f, g})
 
 -- TODO: also for a list of matrices
 pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> (
