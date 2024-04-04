@@ -418,6 +418,18 @@ TEST ///
   assert(prune(g * f) === id_F)
 ///
 
+TEST ///
+  -- tests for inducedMap
+  K = ZZ/11
+  S = K[x,y,z,t]
+  P = Proj S
+  F = sheaf cokernel map(S^{1},S^{-1, 3:-2}, {{y*z-x*t, z^3-y*t^2, x*z^2-y^2*t, y^3-x^2*z}})
+  f = map(F, OO_P^1(1), map(module F, , {{1}}))
+  assert isWellDefined f
+  g = inducedMap(source f, ker f)
+  assert isWellDefined g
+  assert(g === sheafMap inducedMap(module source f, module ker f))
+///
 
 TEST ///
   -- tests for connectingExtMap
