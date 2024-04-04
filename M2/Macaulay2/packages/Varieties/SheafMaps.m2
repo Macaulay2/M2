@@ -409,6 +409,7 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     V)
 
 -- Note: homomorphism(Matrix) is defined to use V.cache.homomorphism
+-- TODO: target should have Hom info cached
 homomorphism' SheafMap := o -> h -> moveToField basis(0, homomorphism'(matrix h, o))
 
 -----------------------------------------------------------------------------
