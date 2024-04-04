@@ -140,6 +140,13 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
 
 isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
 
+-- arithmetic ops
+- SheafMap := f -> map(target f, source f, -matrix f)
+ZZ * SheafMap := RingElement * SheafMap := (r, f) -> map(target f, source f, r * matrix f)
+-- TODO: truncate until the sources are the same
+SheafMap + SheafMap := (f, g) -> map(target f, source f, matrix f + matrix g)
+SheafMap - SheafMap := (f, g) -> map(target f, source f, matrix f - matrix g)
+
 -- composition
 SheafMap * SheafMap := SheafMap => (f, g) -> (
     (d, e) := (degree f, degree g);
@@ -150,6 +157,8 @@ SheafMap * SheafMap := SheafMap => (f, g) -> (
     if d >= e
     then map(target f, source g, m * inducedMap(source m, target n) * n)
     else map(target f, source g, m * inducedMap(source m, target n) * n, d))
+
+-- TODO: add factoring of one sheaf map through another
 
 -- printing
 -- TODO: use abbreviations for source and target
@@ -566,8 +575,6 @@ CoherentSheaf ^ Array := SheafMap => (F, v) -> (
     v = trans(F,v);
     G := directSum apply(toList v, j -> F.cache.components#j);
     map(G, F, (cover module F)^v))
-
-- SheafMap := phi -> map(target phi, source phi, -matrix phi)
 
 -----------------------------------------------------------------------------
 -- Tests
