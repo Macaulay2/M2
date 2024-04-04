@@ -28,6 +28,9 @@ map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> 
         }
     )
 
+map(CoherentSheaf, Nothing, Matrix) := SheafMap => opts -> (F, null, psi) -> map(F, sheaf(variety F, source psi), psi, opts)
+map(Nothing, CoherentSheaf, Matrix) := SheafMap => opts -> (null, G, psi) -> map(sheaf(variety G, target psi), G, psi, opts)
+
 -- when phi is constructed by truncation >= d
 map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi, d) -> (
     newPhi := inducedMap(module G, target phi) * phi;
