@@ -90,6 +90,7 @@ isWellDefined SheafMap := f -> (
     and assert'(d >= min flatten degrees F, -- maybe not strictly necessary
 	"expected the degree of the sheaf map to be at least as high as the degrees of the source")
     and assert'(try ( isWellDefined map(module G, F' := truncate(d, module F, MinimalGenerators => false),
+	 -- TODO: should we use F' here or truncation of source matrix f?
          matrix f * inducedMap(source matrix f, F') ) ) else false,
 	"expected the matrix to induce a map between a truncation of the underlying modules")
     )
@@ -242,11 +243,10 @@ lift SheafMap := SheafMap => o -> shphi -> (
     )*-
 
 -- TODO: this needs to be improved: there are more inducedMap methods to add
-inducedMap(CoherentSheaf, CoherentSheaf) := SheafMap => opts -> (G, F) -> map(G, F, inducedMap(module G, module F, opts))
--- TODO: what should this operation be?
--- inducedMap(CoherentSheaf, CoherentSheaf, SheafMap)
+inducedMap(CoherentSheaf, CoherentSheaf)           := SheafMap => opts -> (G, F) -> inducedMap(G, F, id_(ambient G), opts)
+inducedMap(CoherentSheaf, CoherentSheaf, SheafMap) := SheafMap => opts -> (G, F, f) -> map(G, F,
+    inducedMap(module G, truncate(f.degree, module F), matrix f, opts))
 
-inducedMap(CoherentSheaf, CoherentSheaf, SheafMap) := SheafMap => opts -> (G, F, f) -> map(G, F, inducedMap(module target f, truncate(f.degree, module source f), matrix f, opts))
 -----------------------------------------------------------------------------
 -- Direct sums and components
 -----------------------------------------------------------------------------
