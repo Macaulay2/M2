@@ -392,7 +392,7 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     if module source g =!= N then error "expected sheaf maps to be composable";
     -- not sure why MinimalGenerators => false was relevant in line below, so we took it out
     -- truncate matrix f to match the degree of the source of g
-    f = inducedMap(truncate(d, N,MinimalGenerators => false), M, matrix f);
+    f = inducedMap(truncate(d, N, MinimalGenerators => false), M, matrix f);
     sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
@@ -493,14 +493,14 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
 	r := max(a1, a2, a3) - e - m + 1;
         --need to truncate M in a way related to invariants of ker f
         --probably just add in l3, P3, etc., take max as above
-	M = truncate(r, M));
+	M = truncate(r, M, MinimalGenerators => false));
+    -- TODO: can we truncate at the regularity of homology(f,g) instead?
     reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
-    -- TODO: truncate at the regularity of homology(f, g)?
-    f' := truncate(reg, matrix f);
-    g' := matrix g * inducedMap(source matrix g, truncate(reg, source matrix g));
-    -- TODO: should LengthLimit be based on m?
-    h := connectingExtMap(M, f', g', LengthLimit => opts.LengthLimit);
-    moveToField basis(0, h_(-m)))
+    ExtMap := connectingExtMap(M,
+	truncate(reg,    matrix f, MinimalGenerators => false),
+	subtruncate(reg, matrix g, MinimalGenerators => false),
+	LengthLimit => opts.LengthLimit);
+    moveToField basis(0, ExtMap_(-m)))
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
