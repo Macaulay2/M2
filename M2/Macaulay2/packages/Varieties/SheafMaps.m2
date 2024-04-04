@@ -391,7 +391,7 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     if module source g =!= N then error "expected sheaf maps to be composable";
     -- not sure why MinimalGenerators => false was relevant in line below, so we took it out
     -- truncate matrix f to match the degree of the source of g
-    f = inducedMap(truncate(d, N,MinimalGenerators => false), M, matrix f);
+    f = inducedMap(truncate(d, N, MinimalGenerators => false), M, matrix f);
     sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
@@ -454,13 +454,10 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	M = truncate(r, M));
     moveToField basis(0, Ext^m(M, matrix f, opts)))
 
-
---Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf, this returns Ext^i(F,im f)->Ext^(i+1)(F,ker f)
-
-
-
-connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> connectingExtMap(m, F, inducedMap(image f, source f,f), inducedMap(source f, ker f), opts)
-
+-- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
+-- this method returns Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
+connectingExtMap(ZZ, CoherentSheaf, SheafMap)           := Matrix => opts -> (m, F, f) -> (
+    connectingExtMap(m, F, inducedMap(image f, source f, f), inducedMap(source f, ker f), opts))
 connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m, F, f, g) -> (
     e := 0; -- this is a sum of twists bound
     if not instance(variety F, ProjectiveVariety)
@@ -495,13 +492,14 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
 	r := max(a1, a2, a3) - e - m + 1;
         --need to truncate M in a way related to invariants of ker f
         --probably just add in l3, P3, etc., take max as above
-	M = truncate(r, M));
+	M = truncate(r, M, MinimalGenerators => false));
+    -- TODO: can we truncate at the regularity of homology(f,g) instead?
     reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
-    --TODO: truncate at the regularity of homology(f,g)?
-    fTruncated := truncate(reg, matrix f);
-    --gTruncated := truncate(reg, matrix g);
-    gTruncated := matrix g * inducedMap(source matrix g,truncate(reg, source matrix g));
-    moveToField basis(0, ( (connectingExtMap(M, fTruncated, gTruncated, LengthLimit => opts.LengthLimit)))_(-m) ) )
+    ExtMap := connectingExtMap(M,
+	truncate(reg,    matrix f, MinimalGenerators => false),
+	subtruncate(reg, matrix g, MinimalGenerators => false),
+	LengthLimit => opts.LengthLimit);
+    moveToField basis(0, ExtMap_(-m)))
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext

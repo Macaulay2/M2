@@ -420,17 +420,17 @@ TEST ///
 
 
 TEST ///
-  S = (ZZ/11)[x,y,z,t]
+  -- tests for connectingExtMap
+  K = ZZ/11
+  S = K[x,y,z,t]
   P = Proj S
-  J = ker map((ZZ/11)[u,v],S,{u^4,u^3*v,u*v^3,v^4})
-  p = sheafMap inducedMap(S^1/J,S^1)
-  assert(rank connectingExtMap (0,OO_P^1,p**OO_P(1)) == 1)
+  J = ker map(K[u,v], S, {u^4, u^3*v, u*v^3, v^4})
+  p = sheafMap inducedMap(S^1/J, S^1)
+  assert(1 == rank connectingExtMap(0, OO_P^1, p ** OO_P(1)))
 
-///
-
-TEST ///
-  R = ZZ/3[x,y,z]/x
+  R = K[x,y,z]/x
   X = Proj R
-  assert(connectingExtMap(0, OO_X^1, sheafMap sub(vars prune R,R),LengthLimit => 5) == 1)
+  f = sheafMap sub(vars prune R, R)
+  assert(1 == rank connectingExtMap(0, OO_X^1, f, LengthLimit => 5))
 ///
 
