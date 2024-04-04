@@ -469,8 +469,7 @@ TEST ///
 -----------------------------------------------------------------------------
 
 -- Consider the sequence 0 -> m^[p] -> S -> S/m^[p] -> 0 and apply Hom(-,M)
-minimalPresentation SheafMap :=
-prune SheafMap := SheafMap => opts -> f -> (
+prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValue symbol minimalPresentation) (f -> (
     (G, F) := (target f, source f);
     prune G; prune F; -- these are pruned just to populate cached data
     -- F.cache.TorsionFree = M/H^0_B(M)
@@ -479,6 +478,7 @@ prune SheafMap := SheafMap => opts -> f -> (
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
     lift sheafMap prune Hom(Bp, g))
+    )
 
 -----------------------------------------------------------------------------
 -- Things to move to the Core
