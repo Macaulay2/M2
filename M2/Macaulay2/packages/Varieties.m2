@@ -775,9 +775,9 @@ TEST ///
   X = Spec ZZ/101[x,y]/(y^2-x^3)
 ///
 
-needs "./Varieties/tests.m2"
-needs "./Varieties/tests-functors.m2"
-needs "./Varieties/tests-maps.m2"
+load "./Varieties/tests.m2"
+load "./Varieties/tests-functors.m2"
+load "./Varieties/tests-maps.m2"
 
 -----------------------------------------------------------------------------
 -- Documentation
@@ -823,14 +823,14 @@ Node
     SheafMap
 ///
 
-needs "./Varieties/doc-varieties.m2"
-needs "./Varieties/doc-sheaves.m2"
-needs "./Varieties/doc-functors.m2"
-needs "./Varieties/euler-doc.m2"
-needs "./Varieties/genus-doc.m2"
-needs "./Varieties/genera-doc.m2"
-needs "./Varieties/tangentSheaf-doc.m2"
-needs "./Varieties/cotangentSheaf-doc.m2"
+load "./Varieties/doc-varieties.m2"
+load "./Varieties/doc-sheaves.m2"
+load "./Varieties/doc-functors.m2"
+load "./Varieties/euler-doc.m2"
+load "./Varieties/genus-doc.m2"
+load "./Varieties/genera-doc.m2"
+load "./Varieties/tangentSheaf-doc.m2"
+load "./Varieties/cotangentSheaf-doc.m2"
 
 -----------------------------------------------------------------------------
 -- Development
