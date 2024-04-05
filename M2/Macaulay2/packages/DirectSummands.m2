@@ -59,9 +59,9 @@ export {
 
 -- helpers for computing Frobenius pushforwards of modules and sheaves
 -- TODO: move to PushForward package?
-needs "./DirectSummands/frobenius.m2"
+load "./DirectSummands/frobenius.m2"
 -- helpers for finding random idempotents of a module
-needs "./DirectSummands/idempotents.m2"
+load "./DirectSummands/idempotents.m2"
 
 -----------------------------------------------------------------------------
 -- Things to move to the Core
@@ -335,7 +335,7 @@ diagonalize = M -> (
 -* Test section *-
 -----------------------------------------------------------------------------
 
-needs "./DirectSummands/tests.m2"
+load "./DirectSummands/tests.m2"
 
 -----------------------------------------------------------------------------
 -* Documentation section *-
@@ -343,7 +343,7 @@ needs "./DirectSummands/tests.m2"
 
 beginDocumentation()
 
-needs "./DirectSummands/docs.m2"
+load "./DirectSummands/docs.m2"
 
 end--
 
