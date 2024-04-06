@@ -116,6 +116,7 @@ void FractionField::simplify(frac_elem *f) const
       const RingElement *a = RingElement::make_raw(R_, x);
       const RingElement *b = RingElement::make_raw(R_, y);
       const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
+      if (!c) return;
 
 #if 0
       // Debugging code
