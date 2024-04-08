@@ -2,7 +2,7 @@
 newPackage(
     "RealRoots",
     Version=>"0.1",
-    --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 16/02/2024
+    --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 2024/03/16
     Date=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
@@ -398,13 +398,35 @@ realRootIsolation (RingElement,A) := List => (f,r)->(
 	l := SturmSequence(f);
 	
 	--bound for real roots
-	C := (listForm ((f-leadTerm(f))/leadCoefficient(f)))/last; --make the polynomial monic, and obtain list of coefficients of non-lead monomials.
-    	M := min(1+max(0,max(apply(C,abs))),max(1,sum(C,abs))); --obtains Cauchy or Lagrange bound (setting M = 1 if the polynomial is only a single term)
-	
+	--Cauchy bound is usually good, but Knuth is better in cases of coefficient blowup.
+		
+	(E0,C0) := coefficients f; -- get exponents and coefficients of polynomial as matrices
+
+	C := flatten(entries(C0)); -- convert coefficients to list
+	if #C == 1 then (
+	    M := 0; -- if polynomial is only one term (only root is 0), return 0.
+	) else (
+	    C = apply(C,i -> lift(i,QQ)); --lift coefficients to QQ
+	    C1 := apply(C,i -> abs(lift(i/C#0,QQ))); --divide coeffs by leading coeff, take abs, with values in QQ.
+	    E1 := flatten(apply(flatten(entries(E0)), i -> degree(i))); -- convert exponents to list
+	    MC := 1 + max(apply(drop(C1,1), abs)); -- Cauchy bound
+	    CK := apply(drop(C1,1),drop(E1,1), (c,e) -> 2*(c^(1/(E1#0-e)))); -- Knuth bound
+	    MK := max CK;
+	    if ring MK === QQ or ring MK === ZZ then ( -- want to keep result in QQ
+	        MK = MK_QQ;
+		) else (
+	        if abs(C#0) > 1 then  ( -- if suitable, keep bound in form similar to other bound 
+		        MK = ceiling(abs(C#0)*MK)/abs(C#0); -- (round up to nearest 1/leadcoeff, this is a bad rational approximation if MK was very small)
+		    ) else (
+		        MK = ceiling MK; -- if leading term is less than 1, the above approximation is less accurate than just taking the ceiling.
+	        );
+	    );
+	    M = min(MC,MK); -- take the smaller of the two bounds.
+	);
+
 	L := {{-M,M}};
 	midp := 0;
 	v := new MutableHashTable from {M=>variations apply(l,g->signAt(g,M)),-M=>variations apply(l,g->signAt(g,-M))};
-	
 	while (max apply(L,I-> I#1-I#0) > r) or (max apply(L,I-> v#(I#0)-v#(I#1)) > 1) do (
 	    for I in L do (
 		if ((v#(I#0)-v#(I#1) == 1) and (I#1-I#0 <= r)) then (
@@ -1039,7 +1061,7 @@ TEST ///
 TEST ///
     R = QQ[t];
     f = (t-1)^2*(t+3)*(t+5)*(t-6);
-    assert(realRootIsolation(f,1/2) == {{-1365/256,-637/128},{-819/256,-91/32},{91/128,273/256},{91/16,1547/256}});
+    assert(realRootIsolation(f,1/2) == {{-21/4,-39/8},{-27/8,-3},{3/4,9/8},{45/8,6}});
     ///    
     
 TEST ///
