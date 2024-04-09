@@ -7,7 +7,7 @@
 
 newPackage("PositivityToricBundles",
            Headline => "check positivity of toric vector bundles",
-           Version => "1.6",
+           Version => "1.7",
            Date => "April, 2024",
            Authors => { 
             {Name => "Andreas Hochenegger",
@@ -125,6 +125,7 @@ cartesianProduct2 = (L1,L2) -> flatten apply(L1, l1 -> apply(L2, l2 -> {l1,l2}))
 cartesianProductNested = L -> fold(L, cartesianProduct2)
 inductiveFlatten = (L,i) -> if i<=0 then L else ( {L#0} | inductiveFlatten (L#1,i-1))
 cartesianProduct = L -> (
+ if #L==1 then return apply(L#0, l-> {l}); -- border case
  n := #L-2;
  apply( cartesianProductNested L, l -> inductiveFlatten(l,n))
 )
@@ -294,26 +295,6 @@ isLocallyWeil (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheV
 ))
 
 ------------------------------------------------------------------------------
--- isLocallyFree
-------------------------------------------------------------------------------
-
--- PURPOSE: Given a toric reflexive sheaf in Klyachko's description
---          check whether it is locally free, that is, a vector bundle
---   INPUT: 'tvb', toric vector bundle
---  OUTPUT: true or false
-isLocallyFree = method( Options => true )
-isLocallyFree (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> (
- if opts#Verbosity>0 then << "METHOD: isLocallyFree" << endl;
- cbs := compatibleBases (tvb, Verbosity=>opts#Verbosity );
- isVB := applyValues(cbs, b -> numgens source b == rank tvb);
- if opts#Verbosity>0 then (
-   << "cones where sheaf is not locally free:" << endl;
-   for cb in pairs cbs do if not cb#1 then << cb#0 << endl;
- );
- all(values isVB, i->i)
-)
-
-------------------------------------------------------------------------------
 -- toricChernCharacter
 ------------------------------------------------------------------------------
 
@@ -433,20 +414,22 @@ separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opt
  uSigmaAreVertices := hashTable apply(uSigmaSet, u -> u => applyValues(parVertices, pol -> member(u, pol)));
  uSigmaAreVerticesNumber := applyValues( applyValues(uSigmaAreVertices, values), trueFalse -> number(trueFalse, i->i==true));
  -- check whether all uSigma are vertices of as many polytopes as their multiplicity
- if opts#Verbosity>0 then (
-  for i in 0 ..< #uSigmaSet do (
-   << " u = " << uSigmaSet#i << " appears as vertex " << uSigmaAreVerticesNumber#(uSigmaSet#i) << " times, and has multiplicity " << uSigmaMult#i << endl;
-  );
-  if all(0 ..< #uSigmaSet, i-> uSigmaAreVerticesNumber#(uSigmaSet#i) >= uSigmaMult#i ) then
-   << "on sigma globally generated." << endl
-  else
-   << "not globally generated on sigma." << endl
+ if not all(0 ..< #uSigmaSet, i-> uSigmaAreVerticesNumber#(uSigmaSet#i) >= uSigmaMult#i ) then 
+ (
+  if opts#Verbosity>0 then << << "on sigma not globally generated." << endl;
+  return -infinity;
  );
- if not all(0 ..< #uSigmaSet, i-> uSigmaAreVerticesNumber#(uSigmaSet#i) >= uSigmaMult#i ) then return -1;
 -- [RJS, Thm 6.2, condition (ii+iii)]
  sigmaDual := dualCone sigma;
  -- gives u=> {e's} such that u vertex of P(e) and u+sigma^vee contains P(e)
  uSigmaPE := applyPairs(uSigmaAreVertices, (u,eAV) -> (u, keys selectPairs(eAV, (e,AV) -> AV and contains(convexHull u + sigmaDual, par#e) ) ));
+ uSigmaPEnumber := applyValues(uSigmaPE, Ps -> #Ps);
+ -- [RJS, Thm 6.2, condition (iv)]
+ if min values uSigmaPEnumber == 0 then (
+  if opts#Verbosity>0 then << "there is no polytope with suitable local structure for at least one u(sigma): " << applyValues(uSigmaPE, l -> apply(l, e -> parVertices#e)) << endl;
+  if opts#Verbosity>0 then << << "on sigma not globally generated." << endl;
+  return -infinity;
+ );
  if opts#Verbosity>0 then << "the u(sigma) appear as vertices (and with locally correct structure) of " << applyValues(uSigmaPE, l -> apply(l, e -> parVertices#e)) << endl;
  oneFaces := facesAsCones(tvb#"dimension of the variety"-1, sigmaDual);
  -- calculate the intersection of the edges of u+sigmaDual with P(e)
@@ -456,20 +439,23 @@ separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opt
  if opts#Verbosity>0 then << "the intersections of u+sigmaDual with P(e) have vertices " << edges << endl;
  -- calculate the lattice length and take for each P(e) the minimal one
  edgeLengths := applyValues(edges, edgeSet -> apply(edgeSet, matSet -> min apply(matSet, mat -> gcd flatten entries (mat_0 - mat_(numgens source mat-1)))));
- -- take the biggest values (multiplicity times) and from these the minimum
- l := min flatten apply(0 ..< #uSigmaSet, i -> (rsort edgeLengths#(uSigmaSet#i))_{0..<uSigmaMult#i});
--- [RJS, Thm 6.2, condition (iv)] ???
- if any (0 ..< #uSigmaSet, i-> uSigmaAreVerticesNumber#(uSigmaSet#i) > uSigmaMult#i ) then
-  << "Warning: [RJS, Thm 6.2 condition (iv)] is not checked, which might be a problem for this bundle on the cone: " << sigmaMat << endl;
- if opts#Verbosity>0 then << "separates " << l << "-jets"  << endl;
+ -- [RJS, Thm 6.2, condition (iv)]
+ -- check which combinations of P(e)s give a basis
+ checkBaseOfMatroid := apply(cartesianProduct values uSigmaPE, es -> rank fold(es, (i,j)->i|j) == rank tvb);
+ -- for all bases compute the minimal edge number, take maximum among all
+ l := max apply(select(pack(2, mingle(checkBaseOfMatroid , cartesianProduct values edgeLengths)), i -> i#0), i -> min i#1);
+ if opts#Verbosity>0 then (
+  if l >= 0 then ( << "separates " << l << "-jets"  << endl ) else ( << "on sigma not globally generated." << endl )
+ );
  l
 )
+
 
 -- PURPOSE : Given a toric vector bundle in Klyachko's description,
 --           its parliament bases and toric Chern character
 --           compute the maximal l such that the bundle separates l-jets
 --   INPUT : 'tvb', toric vector bundle
---  OUTPUT :  Integer, -1 if not separates any l-jets, otherwise l
+--  OUTPUT :  Integer, -infinity if not separates any l-jets, otherwise l
 separatesJets = method( Options => true )
 separatesJets (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue separatesJets) ( tvb -> (
  if opts#Verbosity>0 then << "METHOD: separatesJets" << endl;
@@ -1073,7 +1059,7 @@ document {
   "Note that a toric vector bundle is globally generated or very ample, if it separates 0-jets or 1-jets, respectively, see [RJS, Theorem 1.2, 6.2 and 6.5]. ",
   "Hence, the methods ", TT "isGloballyGenerated", " and ", TT "isVeryAmple", " only ask whether ", TT "separatesJets", " returns a non-negative or positive integer, respectively. ",
   BR{},
-  "If the vector bundle is not even globally generated, then ", TT "separatesJets", " returns the value ", TT "-1", ". ",
+  "If the vector bundle is not even globally generated, then ", TT "separatesJets", " returns the value ", TT "-infinity", ". ",
   BR{},
   TT "separatesJets", " calls internally the methods  ",  TO parliament, " and ", TO toricChernCharacter, "; ",
   "whereas ", TT  "isGloballyGenerated", " and ", TT "isVeryAmple", " are simple checks on the output of ", TT "separatesJets", ".",
@@ -1084,6 +1070,7 @@ document {
    "isGloballyGenerated E",
    "isVeryAmple E"
   },
+
   "In this example, the vector bundle ", TEX ///$\mathcal E$///, " separates 1-jets, hence is very ample.",
   Caveat => {"This methods work for toric vector bundles on a complete simplicial toric variety.",
              BR{},
