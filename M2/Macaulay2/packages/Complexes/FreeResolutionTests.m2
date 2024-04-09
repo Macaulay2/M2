@@ -722,13 +722,13 @@ TEST ///
   assert isWellDefined C
 
   (usedtime2, C2) = toSequence timing freeResolution(I, Strategy => Nonminimal)
-  assert(usedtime2 < usedtime1/10)
+  assert BinaryOperation(symbol <, usedtime2, usedtime1/10)
 
   (usedtime3, C3) = toSequence timing freeResolution I
-  assert(usedtime3 >  5*usedtime2)
+  assert BinaryOperation(symbol >, usedtime3, 5*usedtime2)
 
   (usedtime4, C4) = toSequence timing freeResolution(I, Strategy => Engine)
-  assert(usedtime4 < usedtime3/2)
+  assert BinaryOperation(symbol <, usedtime4, usedtime3/2)
 
   freeResolution(I, Strategy => 0) -- not recomputing
   freeResolution(I, Strategy => 1) -- not recomputing
