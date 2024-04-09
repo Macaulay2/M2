@@ -294,26 +294,6 @@ isLocallyWeil (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheV
 ))
 
 ------------------------------------------------------------------------------
--- isLocallyFree
-------------------------------------------------------------------------------
-
--- PURPOSE: Given a toric reflexive sheaf in Klyachko's description
---          check whether it is locally free, that is, a vector bundle
---   INPUT: 'tvb', toric vector bundle
---  OUTPUT: true or false
-isLocallyFree = method( Options => true )
-isLocallyFree (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> (
- if opts#Verbosity>0 then << "METHOD: isLocallyFree" << endl;
- cbs := compatibleBases (tvb, Verbosity=>opts#Verbosity );
- isVB := applyValues(cbs, b -> numgens source b == rank tvb);
- if opts#Verbosity>0 then (
-   << "cones where sheaf is not locally free:" << endl;
-   for cb in pairs cbs do if not cb#1 then << cb#0 << endl;
- );
- all(values isVB, i->i)
-)
-
-------------------------------------------------------------------------------
 -- toricChernCharacter
 ------------------------------------------------------------------------------
 
