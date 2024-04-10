@@ -36,6 +36,7 @@ map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> 
     if variety G =!= variety F then error "expected sheaves over the same variety";
     if not instance(variety F, ProjectiveVariety) then error "maps of sheaves not yet implemented on other varieties";
     deg := if opts.Degree =!= null then opts.Degree else min flatten degrees source phi;
+    phi  = if module G =!= target phi then inducedMap(module G, target phi) * phi else phi;
     new SheafMap from {
         symbol source => F,
         symbol target => G,
@@ -49,9 +50,7 @@ map(CoherentSheaf, Nothing, Matrix) := SheafMap => opts -> (F, null, psi) -> map
 map(Nothing, CoherentSheaf, Matrix) := SheafMap => opts -> (null, G, psi) -> map(sheaf(variety G, target psi), G, psi, opts)
 
 -- when phi is constructed by truncation >= d
-map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi, d) -> (
-    newPhi := inducedMap(module G, target phi) * phi;
-    map(G, F, newPhi, Degree => d))
+map(CoherentSheaf, CoherentSheaf, Matrix, ZZ)             := SheafMap => opts -> (G, F, phi, d) -> map(G, F, phi, Degree => d)
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 -- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
