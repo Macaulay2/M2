@@ -701,13 +701,13 @@ Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
 	  -- in this case, it degenerates
 	if p < n-l then Ext^m(M, N, opts) else (
 	       a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
-	    r = a-e-m+1;
+	    r = a+e-m+1;
 	    Ext^m(truncate(r, M), N, opts)));
-    -- We no longer truncate E above e because the majority of uses
-    -- of this function are for computing Ext of sheaves, in which
-    -- case only basis(0, E) is needed, so truncation is not needed.
-    -- On the other hand, users can always truncate E if necessary.
-    E = if opts.MinimalGenerators then prune E else E;
+    -- When MinimalGenerators => false is given, we don't truncate
+    -- or prune E because the majority of uses of this function are
+    -- for computing Ext of sheaves, in which case only basis(0, E)
+    -- is needed and truncation is an unnecessary computation.
+    E = if opts.MinimalGenerators then prune truncate(e, E) else E;
     -- This is the degree at which M was truncated, which
     -- is used later for computing the Yoneda extension.
     E.cache.TruncateDegree = r;
@@ -717,8 +717,8 @@ Ext(ZZ, SheafOfRings, SheafOfRings)  :=
 Ext(ZZ, SheafOfRings, CoherentSheaf) :=
 Ext(ZZ, CoherentSheaf, SheafOfRings)  :=
 Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n,F,G) -> (
-     E := Ext^n(F,G(>=0),opts);
-     k := coefficientRing ring E;
+    E := Ext^n(F, G(>=0), opts ++ { MinimalGenerators => false });
+    k := coefficientRing ring E;
     V := k^(rank source basis(0, E));
     V.cache.formation = FunctionApplication { Ext, (n, F, G) };
     V.cache.TruncateDegree = E.cache.TruncateDegree;
