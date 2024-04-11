@@ -211,10 +211,8 @@ isProjective ProjectiveVariety := X -> true
 
 -- This method returns either a Variety, an AbstractVariety (from Schubert2),
 -- a NormalToricVariety, or any other variety stashed in R.variety.
--- TODO: instead of an error, return Proj R when there is no variety,
--- then replace Proj ring M in code for sheaf with variety ring M
 variety = method(TypicalValue => Variety)
-variety Ring  := S -> if S.?variety then S.variety else error "no variety associated with ring"
+variety Ring  := S -> if S.?variety then S.variety else Proj S
 variety Ideal := I -> Proj quotient I -- TODO: should this be Spec or Proj?
 
 assertSameVariety = Fs -> if not same apply(Fs, variety) then error "expected objects on the same variety"
