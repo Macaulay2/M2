@@ -307,9 +307,8 @@ Matrix  ^** ZZ := Matrix   => (f, n) -> BinaryPowerMethod(f, n, tensor,
 -- twist notation
 SheafMap(ZZ) := SheafMap => (phi, d) -> phi ** OO_(variety phi)^1(d)
 
--- FIXME: this fails if the target is truncated
--- TODO: would f -> Hom(f, sheaf variety f) work?
-dual  SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(dual source f, dual target f, dual(matrix f, o))
+-- TODO: can we also make the target to be the dual of the original source?
+dual SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(null, dual target f, dual(matrix f, o))
 
 -----------------------------------------------------------------------------
 -- inverse
