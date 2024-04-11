@@ -173,6 +173,12 @@ setup(HatHatS,hathatfun);
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 
+PowerTildefun(rhs:Code):Expr := unarymethod(rhs,PowerTildeS);
+setuppostfix(PowerTildeS,PowerTildefun);
+
+UnderscoreTildefun(rhs:Code):Expr := unarymethod(rhs,UnderscoreTildeS);
+setuppostfix(UnderscoreTildeS,UnderscoreTildefun);
+
 ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
 setuppostfix(ParenStarParenS,ParenStarParenfun);
 
@@ -182,8 +188,20 @@ setuppostfix(UnderscoreStarS,UnderscoreStarfun);
 PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
 setuppostfix(PowerStarS,PowerStarfun);
 
+--PowerSharpfun(rhs:Code):Expr := unarymethod(rhs,PowerSharpS);
+--setuppostfix(PowerSharpS,PowerSharpfun);
+
+--UnderscoreSharpfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreSharpS);
+--setuppostfix(UnderscoreSharpS,UnderscoreSharpfun);
+
 Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
 setuppostfix(ExclamationS,Exclamationfun);
+
+PowerExclamationfun(rhs:Code):Expr := unarymethod(rhs,PowerExclamationS);
+setuppostfix(PowerExclamationS,PowerExclamationfun);
+
+UnderscoreExclamationfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreExclamationS);
+setuppostfix(UnderscoreExclamationS,UnderscoreExclamationfun);
 
 factorial(x:Expr):Expr := (
      when x

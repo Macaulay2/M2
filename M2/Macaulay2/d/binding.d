@@ -329,6 +329,8 @@ bumpPrecedence();
      export AtAtS := makeKeyword(binaryleft("@@"));
 bumpPrecedence();
      export TildeS := makeKeyword(postfix("~"));
+     export PowerTildeS := makeKeyword(postfix("^~"));
+     export UnderscoreTildeS := makeKeyword(postfix("_~"));
      export UnderscoreStarS := makeKeyword(postfix("_*"));
      export PowerStarS := makeKeyword(postfix("^*"));
 bumpPrecedence();
@@ -341,6 +343,11 @@ bumpPrecedence();
      export DotQuestionS := makeKeyword(binaryleft(".?"));
 bumpPrecedence();
      export ExclamationS := makeKeyword(postfix("!"));
+     export PowerExclamationS := makeKeyword(postfix("^!"));
+     export UnderscoreExclamationS := makeKeyword(postfix("_!"));
+     -- TODO: can't work because of instances like R^#m
+     --export PowerSharpS := makeKeyword(postfix("^#"));
+     --export UnderscoreSharpS := makeKeyword(postfix("_#"));
 bumpPrecedence();
      --why are these using precSpace and not prec?
      special("symbol",unarysymbol,precSpace,prec);
@@ -481,7 +488,12 @@ export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
      notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
-export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS ,ExclamationS );
+export opsWithPostfixMethod := array(SymbolClosure)(
+    ExclamationS,    PowerExclamationS, UnderscoreExclamationS,
+    -- FIXME:        PowerSharpS,       UnderscoreSharpS,
+    ParenStarParenS, PowerStarS,        UnderscoreStarS,
+    TildeS,          PowerTildeS,       UnderscoreTildeS
+    );
 
 -- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
 export fixedBinaryOperators := array(SymbolClosure)(ColonEqualS,EqualS,LeftArrowS,RightArrowS,DoubleArrowS,EqualEqualEqualS,NotEqualEqualEqualS,NotEqualS,SharpS,SharpQuestionS,
