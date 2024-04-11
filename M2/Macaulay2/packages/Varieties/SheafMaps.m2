@@ -274,10 +274,12 @@ components SheafMap := List => phi -> if phi.cache.?components then phi.cache.co
 -- Tensors
 -----------------------------------------------------------------------------
 -- TODO: take care of the case when the rings are different
-tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
-    map(target phi ** target psi,
-	source phi ** source psi,
-	matrix phi ** matrix psi))
+-- FIXME: the source and target sheaves are not correct in this version
+tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> sheafMap(matrix phi ** matrix psi)
+-- tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
+--     map(target phi ** target psi,
+-- 	source phi ** source psi,
+-- 	matrix phi ** matrix psi))
 
 --possible fix for ill-definedness of tensor product
 -*tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
@@ -285,7 +287,6 @@ tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
     map(target phi ** target psi,
 	sheaf truncate(d + e, F ** G, MinimalGenerators => false),
 	truncate(d + e, matrix phi ** matrix psi), d + e))*-
-
 
 SheafMap ** SheafMap      := SheafMap => (phi, psi) -> tensor(phi, psi)
 SheafMap ** CoherentSheaf := SheafMap => (phi,   F) -> tensor(phi, id_F)
