@@ -112,17 +112,18 @@ cover   SheafMap := SheafMap => f -> sheafMap cover   matrix f
 ambient SheafMap := SheafMap => f -> sheafMap ambient matrix f
 super   SheafMap := SheafMap => f -> sheafMap super   matrix f
 
--- TODO: using regularity in places won't suffice in the multigraded case,
--- and multigradedRegularity may not be optimal. What should this and other
--- methods that truncate the base module do instead?
-SheafMap == SheafMap := Boolean => (psi, phi) -> (
-    f := if psi.cache.?minimalPresentation then psi.cache.minimalPresentation.map else psi.map;
-    g := if phi.cache.?minimalPresentation then phi.cache.minimalPresentation.map else phi.map;
-    if f == g then return true;
-    r := 1 + max(
-	regularity target f, regularity source f,
-	regularity target g, regularity source g);
-    truncate(r, f, MinimalGenerators => false) == truncate(r, g, MinimalGenerators => false))
+SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
+    target psi == target phi and source psi == source phi and matrix prune psi == matrix prune phi)
+    -- TODO: this can fails because the truncated source and target modules
+    -- may be only isomorphic. What should we use isIsomorphic in this case?
+    -- What do we expect from == and isIsomorphic for sheaf maps?
+    -- f := if psi.cache.?minimalPresentation then psi.cache.minimalPresentation.map else psi.map;
+    -- g := if phi.cache.?minimalPresentation then phi.cache.minimalPresentation.map else phi.map;
+    -- if f == g then return true;
+    -- r := 1 + max(
+    -- 	regularity target f, regularity source f,
+    -- 	regularity target g, regularity source g);
+    -- truncate(r, f, MinimalGenerators => false) == truncate(r, g, MinimalGenerators => false))
 
 SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
 ZZ == SheafMap := Boolean => (n, f) -> f == n
@@ -147,6 +148,9 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
     N := if G.cache.?pruningMap then G.module else try G.cache.minimalPresentation.module;
     -- Otherwise, we will compare truncated modules representing them, which works in general.
     if M === null or N === null then (M, N) = (
+	-- TODO: using regularity in won't suffice in the multigraded case,
+	-- and multigradedRegularity may not be optimal. What should methods
+	-- that truncate the base module do instead?
 	r := 1 + max(regularity F.module, regularity G.module);
 	truncate(r, F.module, MinimalGenerators => false),
 	truncate(r, G.module, MinimalGenerators => false));
