@@ -18,7 +18,9 @@ ring NormalToricVariety := PolynomialRing => (
 	)
     );
 
-normalToricVariety Ring := NormalToricVariety => opts -> S -> variety S
+normalToricVariety Ring := NormalToricVariety => opts -> S -> (
+    if S.?variety and instance(S.variety, NormalToricVariety) then S.variety
+    else error "no normal toric variety associated with ring")
 
 ideal NormalToricVariety := Ideal => (
     cacheValue symbol ideal) (
