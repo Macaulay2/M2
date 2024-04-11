@@ -285,7 +285,8 @@ sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
 	))
 
 -- TODO: consider adding IdealSheaf or SheafOfIdeals type
--- sheaf Ideal := Ideal ~ := CoherentSheaf => I -> sheaf(Proj ring M, I)
+sheaf Ideal := Ideal ~ := CoherentSheaf =>     I  -> sheaf(variety ring I, module I)
+sheaf(Variety, Ideal)  := CoherentSheaf => (X, I) -> sheaf(X,              module I)
 
 OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,     OO, class X), (OO, X)),
