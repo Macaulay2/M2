@@ -158,6 +158,30 @@ setup(GreaterGreaterS,greatergreaterfun2);
 barfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarS);
 setup(BarS,barfun);
 
+UnderscoreGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterS);
+setup(UnderscoreGreaterS,UnderscoreGreaterfun);
+
+UnderscoreGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterEqualS);
+setup(UnderscoreGreaterEqualS,UnderscoreGreaterEqualfun);
+
+UnderscoreLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessS);
+setup(UnderscoreLessS,UnderscoreLessfun);
+
+UnderscoreLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessEqualS);
+setup(UnderscoreLessEqualS,UnderscoreLessEqualfun);
+
+PowerGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterS);
+setup(PowerGreaterS,PowerGreaterfun);
+
+PowerGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterEqualS);
+setup(PowerGreaterEqualS,PowerGreaterEqualfun);
+
+PowerLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessS);
+setup(PowerLessS,PowerLessfun);
+
+PowerLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessEqualS);
+setup(PowerLessEqualS,PowerLessEqualfun);
+
 PowerStarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerStarStarS);
 setup(PowerStarStarS,PowerStarStarfun);
 
