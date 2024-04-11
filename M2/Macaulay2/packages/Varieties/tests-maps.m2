@@ -151,6 +151,7 @@ TEST ///
 ///
 
 TEST ///
+  -- tests for tensor
   S = ZZ/11[x_0,x_1]
   X = Proj S
   -- f = sheafMap truncate(1, vars S)
@@ -160,10 +161,8 @@ TEST ///
   f'' = sheafMap(m, 2)
   g = f ** f;
   assert isWellDefined g
-  -- FIXME
   assert(f ** f == f' ** f')
-  -- FIXME
-  assert(f ** f == prune(f'' ** f''))
+  assert(f ** f == f'' ** f'')
 ///
 
 TEST ///
