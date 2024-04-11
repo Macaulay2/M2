@@ -60,6 +60,8 @@ sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf sour
 sheafMap(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi,
     truncate(d, phi, MinimalGenerators => false), d)
 
+random(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> map(F, G, random(F.module, G.module, o))
+
 isWellDefined SheafMap := f -> (
     (G, F) := (target f, source f);
     X := variety f;
