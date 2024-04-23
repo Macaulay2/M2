@@ -164,7 +164,7 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- objects of type T
     e := smenu(toString \ select(syms, y -> not isMutable y and instance(value y, T)));
     DIV nonnull splice ( "class" => "waystouse",
-	if #b > 0 then ( SUBSECTION {"Types of ", TT if T.?synonym then T.synonym else toString T, " :"}, b),
+	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, " :"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, " :"}, a),
 	if #c > 0 then ( SUBSECTION {"Methods that use ",                    indefinite synonym T, " :"}, c),
 	if #e > 0 then ( SUBSECTION {"Fixed objects of class ",                     TT toString T, " :"}, e)))
