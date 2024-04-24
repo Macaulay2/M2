@@ -2074,6 +2074,21 @@ GCstats(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("GCstats",GCstats);
 
+showtimefun(a:Code):Expr := (
+     cpuStart := cpuTime();
+     threadStart := threadTime();
+     gcStart := gcTime();
+     ret := eval(a);
+     cpuEnd := cpuTime();
+     threadEnd := threadTime();
+     gcEnd := gcTime();
+     stdError << " -- used "
+	 << cpuEnd - cpuStart << "s (cpu); "
+	 << threadEnd - threadStart << "s (thread); "
+	 << gcEnd - gcStart << "s (gc)" << endl;
+     ret);
+setupop(timeS,showtimefun);
+
 header "
 extern void set_gftable_dir(char *); /* defined in library factory, as patched by us */
 ";

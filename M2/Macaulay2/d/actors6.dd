@@ -23,20 +23,11 @@ elapsedTimefun(a:Code):Expr := (
 setupop(elapsedTimingS,elapsedTimefun);
 showElapsedTimefun(a:Code):Expr := (
      time3 := Ccode(Chrono, "std::chrono::steady_clock::now()");
-     cpuStart := cpuTime();
-     threadStart := threadTime();
-     gcStart := gcTime();
      ret := eval(a);
      time4 := Ccode(Chrono, "std::chrono::steady_clock::now()");
-     cpuEnd := cpuTime();
-     threadEnd := threadTime();
-     gcEnd := gcTime();
      d := Ccode(uint64_t, "(time4-time3).count()");
      x := double(d)/1000000000.;
-     stdError << " -- " << x << " seconds elapsed; "
-	  << cpuEnd - cpuStart << " process (cpu time); "
-	  << threadEnd - threadStart << " thread; "
-	  << gcEnd - gcStart << " gc (process)" << endl;
+     stdError << " -- " << x << " seconds elapsed" << endl;
      ret);
 setupop(elapsedTimeS,showElapsedTimefun);
 

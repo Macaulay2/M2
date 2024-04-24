@@ -685,6 +685,8 @@ cpuTime(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("cpuTime",cpuTime);
 
+-- TODO: should "timing" return thread and gc times like "time"?
+-- (moved to actors5.d for gc time)
 timefun(a:Code):Expr := (
      v := cpuTime();
      ret := eval(a);
@@ -693,13 +695,6 @@ timefun(a:Code):Expr := (
      is Error do ret
      else list(timeClass,Sequence(toExpr(x-v),ret)));
 setupop(timingS,timefun);
-showtimefun(a:Code):Expr := (
-     v := cpuTime();
-     ret := eval(a);
-     x := cpuTime();
-     stdIO << "     -- used " << x-v << " seconds" << endl;
-     ret);
-setupop(timeS,showtimefun);
 
 exponent(e:Expr):Expr := (
      when e
