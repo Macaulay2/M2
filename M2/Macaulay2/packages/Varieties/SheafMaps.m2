@@ -178,7 +178,21 @@ SheafMap * SheafMap := SheafMap => (f, g) -> (
     then map(target f, source g, m * inducedMap(source m, target n) * n)
     else map(target f, source g, m * inducedMap(source m, target n) * n, d))
 
--- TODO: add factoring of one sheaf map through another
+-- factoring
+SheafMap // SheafMap := SheafMap => (f, g) -> quotient(f, g)
+-- TODO: should we replace quotient with factor instead?
+quotient(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
+    -- given f: A-->C and g: A-->B, then find (f//g): B-->C such that (f//g) o g = f
+    if source f ==  source g then (
+	(f', g') := autotruncate(f, g);
+	-- TODO: add assertLevel which causes these assertions to run
+	--assert(homomorphism' f % image Hom(g, target f) == 0)
+	map(target f, target g, homomorphism(homomorphism' f' // Hom(g', target f')))) else
+    -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) = f
+    if target f === target g then (
+	--assert(homomorphism' f % image Hom(source f, g) == 0)
+	map(source g, source f, matrix f // matrix g)) else
+    error "expected sheaf maps with the same source or the same target")
 
 -- printing
 -- TODO: use abbreviations for source and target
