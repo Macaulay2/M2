@@ -2,7 +2,6 @@ export {
     -- Types
     "SheafMap",
     -- Methods
-    "sheafMap",
     "isLiftable",
     "yonedaSheafExtension",
     }
@@ -55,9 +54,8 @@ map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts ->
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 -- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
 
-sheafMap = method()
-sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
-sheafMap(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi,
+sheaf Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
+sheaf(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi,
     truncate(d, phi, MinimalGenerators => false), d)
 
 random(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> map(F, G, random(F.module, G.module, o))
@@ -109,10 +107,10 @@ image   SheafMap := CoherentSheaf => phi -> (sheaf image matrix phi)
 coimage SheafMap := CoherentSheaf => phi -> (sheaf coimage matrix phi)
 coker   SheafMap := CoherentSheaf => phi -> (sheaf coker matrix phi)
 
--- TODO: is sheafMap sufficient here, or should we specify source/target/degree?
-cover   SheafMap := SheafMap => f -> sheafMap cover   matrix f
-ambient SheafMap := SheafMap => f -> sheafMap ambient matrix f
-super   SheafMap := SheafMap => f -> sheafMap super   matrix f
+-- TODO: is sheaf sufficient here, or should we specify source/target/degree?
+cover   SheafMap := SheafMap => f -> sheaf cover   matrix f
+ambient SheafMap := SheafMap => f -> sheaf ambient matrix f
+super   SheafMap := SheafMap => f -> sheaf super   matrix f
 
 SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
     target psi == target phi and source psi == source phi and matrix prune psi == matrix prune phi)
@@ -229,7 +227,7 @@ lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
     phi := matrix shphi;
     M := module source shphi;
     eta := inducedMap(truncate(e, M, MinimalGenerators => false), source phi);
-    sheafMap(lift'(phi, eta), e))
+    sheaf(lift'(phi, eta), e))
 
 --lifts a sheaf map shphi represented by a module map
 --phi : M(\geq d) --> N to a map M(\geq e) --> N that represents
@@ -277,7 +275,7 @@ components SheafMap := List => phi -> if phi.cache.?components then phi.cache.co
 -----------------------------------------------------------------------------
 -- TODO: take care of the case when the rings are different
 -- FIXME: the source and target sheaves are not correct in this version
-tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> sheafMap(matrix phi ** matrix psi)
+tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> sheaf(matrix phi ** matrix psi)
 -- tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
 --     map(target phi ** target psi,
 -- 	source phi ** source psi,
@@ -370,7 +368,7 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     B := basis(0, module H);
     g := inverse f * B;
     V := source moveToField B;
-    V.cache.homomorphism = h -> psi * sheafMap homomorphism(g * h) * phi;
+    V.cache.homomorphism = h -> psi * sheaf homomorphism(g * h) * phi;
     V.cache.formation = FunctionApplication { Hom, (F, G) };
     V.cache.Ext = (0, F, G);
     V)
@@ -523,7 +521,7 @@ yonedaSheafExtension Matrix := -* Complex => *- f -> (
     f' := basis(0, E') * f;
     C := yonedaExtension f';
     -- TODO: should return a complex of sheaf maps
-    -* complex *- apply(d + 1, i -> sheafMap C.dd_(i+1)))
+    -* complex *- apply(d + 1, i -> sheaf C.dd_(i+1)))
 
 -----------------------------------------------------------------------------
 -- Prune
@@ -539,7 +537,7 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
     --added degree f in the line above... seems to make prune work in one step
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
-    lift sheafMap prune Hom(Bp, g))
+    lift sheaf prune Hom(Bp, g))
     )
 
 -----------------------------------------------------------------------------
@@ -618,7 +616,7 @@ doc ///
     Text
       ToDo
   Subnodes
-    sheafMap
+    sheaf
 ///
 *-
 
@@ -649,11 +647,11 @@ S = QQ[x_1..x_3];
 X = Proj S;
 phi = vars S;
 psi = (transpose phi)**S^{1:-2}
-shphi = sheafMap(phi)
+shphi = sheaf(phi)
 assert(matrix entries shphi.map == matrix {{x_1, x_2, x_3}})
-shpsi = sheafMap(psi)
+shpsi = sheaf(psi)
 shphi*shpsi
-shphi3 = sheafMap(phi,3)
+shphi3 = sheaf(phi,3)
 shphi3*shpsi
 phii = matrix oo
 eta = inducedMap(truncate(2,source phii),truncate(3,source phii))
