@@ -602,7 +602,7 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
 	(opts, F) -> (
 	    -- this is the default algorithm
 	    G := sheaf(F.variety, HH^0 F(>=0));
-	    G.cache.pruningMap = sheafMap F.cache.SaturationMap;
+	    G.cache.pruningMap = sheaf F.cache.SaturationMap;
 	    G)))
 
 -----------------------------------------------------------------------------
