@@ -101,7 +101,7 @@ sagbi SAGBIBasis := opts -> SB -> (
     SBSubring := subring SB;
     if #{heft ring SB} == 0 then error "expected ring with heft vector";
     if (not infiniteLimitWarning) and (opts.Limit == infinity) then (
-        print "Warning: Option Limit is set to infinity.\nThis may produce an infinite loop.";
+        printerr "Warning: Option Limit is set to infinity.\nThis may produce an infinite loop.";
         infiniteLimitWarning = true;
     );
     -- if Recomputing then create a new SAGBIBasis object
