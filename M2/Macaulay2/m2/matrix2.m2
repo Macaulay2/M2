@@ -325,20 +325,35 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 	  map(M, L, rem)
      ))
 
-leftQuotientWarn = true
+--------------------------------------------------------------------------------
+-- factoring of a matrix through another
 
-Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
-Matrix \\ Matrix := (g,f) -> (if leftQuotientWarn then (leftQuotientWarn = false; printerr "Warning: 'm \\\\ n' is deprecated; use 'n // m' instead."); f // g)
-quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if not isFreeModule source f or not isFreeModule target f
-     or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";
-     dual quotient(dual f, dual g))
-quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     if target f != target g then error "quotient: expected maps with the same target";
-     c := runHooks((quotient, Matrix, Matrix), (opts, f, g));
-     if c =!= null then c else error "quotient: no method implemented for this type of input")
+-- Note: when f and g are endomorphisms, the sources and targets all agree,
+-- so we need both functions quotient and quotient' to distinguish them.
 
-addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
+-- factor matrices with same targets
+Matrix // Matrix := Matrix => (f, g) -> quotient(f, g)
+Number // Matrix := RingElement // Matrix := Matrix => (r, f) -> (r * id_(target f)) // f
+Matrix // Number := Matrix // RingElement := Matrix => (f, r) -> f // (r * id_(target f))
+
+-- factor matrices with same sources
+Matrix \\ Matrix := Matrix => (g, f) -> quotient'(f, g)
+Matrix \\ Number := Matrix \\ RingElement := Matrix => (g, r) -> g \\ (r * id_(source g))
+Number \\ Matrix := RingElement \\ Matrix := Matrix => (r, f) -> (r * id_(source f)) \\ f
+
+quotient(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
+    -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) + r = f
+    if target f != target g then error "quotient: expected maps with the same target";
+    c := runHooks((quotient, Matrix, Matrix), (opts, f, g));
+    if c =!= null then c else error "quotient: no method implemented for this type of input")
+
+addHook((quotient, Matrix, Matrix), Strategy => Default,
+    -- Note: this strategy only works if the remainder is zero, i.e.:
+    -- homomorphism' f % image Hom(source f, g) == 0
+    -- TODO: should we pass MinimalGenerators => false to Hom and homomorphism'?
+    (opts, f, g) -> map(source g, source f, homomorphism(homomorphism' f // Hom(source f, g))))
+
+addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if f == 0 or isFreeModule source f then (
      L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
@@ -368,16 +383,22 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
 	  Degree => degree f' - degree g'  -- set the degree in the engine instead
 	  )))
 
-Number // Matrix :=
-RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
-Matrix \\ Number :=
-Matrix \\ RingElement := (f,r) -> r // f
+quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
+    -- given f: A-->C and g: A-->B, then finds (g\\f): B-->C such that (g\\f) o g + r = f
+    if source f != source g then error "quotient': expected maps with the same source";
+    c := runHooks((quotient', Matrix, Matrix), (opts, f, g));
+    if c =!= null then c else error "quotient': no method implemented for this type of input")
 
-Matrix // Number :=
-Matrix // RingElement := (f,r) -> f // (r * id_(target f))
-Number \\ Matrix :=
-RingElement \\ Matrix      := (r,f) -> f // r
+addHook((quotient', Matrix, Matrix), Strategy => Default,
+    -- Note: this strategy only works if the remainder is zero, i.e.:
+    -- homomorphism' f % image Hom(g, target f) == 0
+    -- TODO: should we pass MinimalGenerators => false to Hom and homomorphism'?
+    (opts, f, g) -> map(target f, target g, homomorphism(homomorphism' f // Hom(g, target f))))
 
+addHook((quotient', Matrix, Matrix), Strategy => "Reflexive",
+    (opts, f, g) -> if all({source f, target f, source g, target g}, isFreeModule) then dual quotient(dual f, dual g, opts))
+
+--------------------
 
 remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g
