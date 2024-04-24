@@ -179,20 +179,24 @@ SheafMap * SheafMap := SheafMap => (f, g) -> (
     else map(target f, source g, m * inducedMap(source m, target n) * n, d))
 
 -- factoring
+-- Note: when f and g are endomorphisms, the sources and targets all agree,
+-- so we need quotient and quotient' to distinguish them.
 SheafMap // SheafMap := SheafMap => (f, g) -> quotient(f, g)
+SheafMap \\ SheafMap := SheafMap => (g, f) -> quotient'(f, g)
+
 -- TODO: should we replace quotient with factor instead?
+-- TODO: add assertLevel which causes these assertions to run
 quotient(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
-    -- given f: A-->C and g: A-->B, then find (f//g): B-->C such that (f//g) o g = f
-    if source f ==  source g then (
-	(f', g') := autotruncate(f, g);
-	-- TODO: add assertLevel which causes these assertions to run
-	--assert(homomorphism' f % image Hom(g, target f) == 0)
-	map(target f, target g, homomorphism(homomorphism' f' // Hom(g', target f')))) else
     -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) = f
-    if target f === target g then (
-	--assert(homomorphism' f % image Hom(source f, g) == 0)
-	map(source g, source f, matrix f // matrix g)) else
-    error "expected sheaf maps with the same source or the same target")
+    --if target f =!= target g then error "quotient: expected sheaf maps with the same target";
+    --assert(homomorphism' f % image Hom(source f, g) == 0)
+    map(source g, source f, quotient(matrix f, matrix g, opts)))
+
+quotient'(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
+    -- given f: A-->C and g: A-->B, then find (g\\f): B-->C such that (g\\f) o g = f
+    --if source f != source g then error "quotient': expected sheaf maps with the same source";
+    --assert(homomorphism' f % image Hom(g, target f) == 0)
+    map(target f, target g, quotient'(autotruncate(f, g), opts)))
 
 -- printing
 -- TODO: use abbreviations for source and target
