@@ -14,6 +14,8 @@ quotient = method(
 	  Strategy          => null
 	  }
      )
+-- used in matrix2.m2
+quotient' = method(Options => options quotient)
 
 -- moved to packages/Saturation.m2 in July 2020
 saturate = method(Options => options quotient)
