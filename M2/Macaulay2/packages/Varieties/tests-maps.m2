@@ -454,7 +454,7 @@ TEST ///
   -- given f: A-->C and g: A-->B, then find (f//g): B-->C such that (f//g) o g = f
   f = sheaf K.dd_2
   g = sheaf inducedMap(coker K.dd_3, K_2)
-  h = f // g
+  h = g \\ f
   -- TODO: tests this more thoroughly, since in general == may be best we can hope for
   assert(h * g === f)
   -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) = f
