@@ -854,7 +854,11 @@ export tostring5(
      else digits(o,x,i+1,s-i-1);
      tostring(o));
 
-export tostringRR(x:double) : string := tostring5(x,6,5,5,"e");
+export tostringRR(x:double) : string := (
+    o := newstring(25);
+    Ccode(void, "snprintf((char *)", o, "->array, 25, \"%g\", ", x, ")");
+    Ccode(void, o, "->len = strlen((char *)", o, "->array)");
+    o);
 
 export (o:file) << (x:double) : file := o << tostringRR(x);
 
