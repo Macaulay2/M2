@@ -109,7 +109,7 @@ document {
      }
 
 document {
-     Key => {(symbol /,List,Thing)},
+     Key => {(symbol /,List,RingElement),(symbol /,List,Number)},
      Headline => "vector division",
      Usage => "v/c",
      Inputs => {"v" => "to be treated as a vector", "c" => "a number or scalar ring element"},
