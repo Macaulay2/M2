@@ -56,6 +56,8 @@ subalgebraBasis Subring := opts -> S -> (
 -- if both are true or both are false then it does what is expected
 -- ** this should never happen
 
+infiniteLimitWarning := false;
+
 sagbi = method(
     TypicalValue => SAGBIBasis,
     Options => {
@@ -98,6 +100,10 @@ sagbi SAGBIBasis := opts -> SB -> (
     local S;
     SBSubring := subring SB;
     if #{heft ring SB} == 0 then error "expected ring with heft vector";
+    if (not infiniteLimitWarning) and (opts.Limit == infinity) then (
+        printerr "Warning: Option Limit is set to infinity.\nThis may produce an infinite loop.";
+        infiniteLimitWarning = true;
+    );
     -- if Recomputing then create a new SAGBIBasis object
     if opts.Recompute or SB#SAGBIoptions#Recompute then (
         remove(SBSubring.cache, SAGBIBasis);
