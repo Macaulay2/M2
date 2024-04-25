@@ -38,6 +38,7 @@ map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> 
     deg := if opts.Degree =!= null then opts.Degree else min flatten degrees source phi;
     phi  = if module G =!= target phi then inducedMap(module G, target phi) * phi else phi;
     new SheafMap from {
+	symbol variety => variety F,
         symbol source => F,
         symbol target => G,
         symbol degree => deg,
@@ -72,7 +73,9 @@ isWellDefined SheafMap := f -> (
     d := degree f;
     all({ G, F, matrix f }, isWellDefined)
     -- data type checks
-    and assert'(set keys f === set { symbol source, symbol target, symbol degree, symbol map, symbol cache },
+    and assert'(set keys f === set {
+	    symbol variety, symbol source, symbol target,
+	    symbol degree,  symbol map,    symbol cache },
 	"the hash table does not have the expected keys")
     and assert'(
 	instance(f.source, CoherentSheaf) and
@@ -103,7 +106,7 @@ isWellDefined SheafMap := f -> (
 -- basic methods
 source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
-variety SheafMap := Variety       => f -> f.source.variety
+variety SheafMap := Variety       => f -> f.variety
 ring    SheafMap := Ring          => f -> f.map.ring
 matrix  SheafMap := Matrix => opts -> f -> f.map
 degree  SheafMap := ZZ => f -> f.degree
