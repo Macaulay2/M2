@@ -816,44 +816,6 @@ export isnan(x:double):bool := x!=x;
 
 export tostring(x:bool):string := if x then "true" else "false";
 
-export tostring5(
-     x:double,						-- the number to format
-     s:int,					-- number of significant digits
-     l:int,					   -- max number leading zeroes
-     t:int,				    -- max number extra trailing digits
-     e:string			     -- separator between mantissa and exponent
-     ) : string := (
-     o := newvarstring(25);
-     if isinf(x) then return "infinity";
-     if isnan(x) then return "NotANumber";
-     if x==0. then return "0.";
-     if x<0. then (o << '-'; x=-x);
-     oldx := x;
-     i := 0;
-     if x >= 1. then (
-     	  until x < 10000000000. do ( x = x/10000000000.; i = i + 10 );
-     	  until x < 100000. do ( x = x/100000.; i = i + 5 );
-     	  until x < 100. do ( x = x/100.; i = i + 2 );
-     	  until x < 10. do ( x = x/10.; i = i + 1 );
-	  )
-     else (
-     	  until x >= 1./10000000000. do ( x = x*10000000000.; i = i - 10 );
-     	  until x >= 1./100000. do ( x = x*100000.; i = i - 5 );
-     	  until x >= 1./100. do ( x = x*100.; i = i - 2 );
-     	  until x >= 1. do ( x = x*10.; i = i - 1 );
-	  );
-     -- should rewrite this so the format it chooses is the one that takes the least space, preferring not to use the exponent when it's a tie
-     if i<0 then (
-	  if -i <= l 
-	  then digits(o,oldx,1,s-i-1)
-	  else (digits(o,x,1,s-1); o << e << tostring(i);))
-     else if i+1 > s then (
-	  if i+1-s <= t
-	  then digits(o,x,i+1,0)
-	  else (digits(o,x,1,s-1); o << e << tostring(i);))
-     else digits(o,x,i+1,s-i-1);
-     tostring(o));
-
 export tostringRR(x:double) : string := (
     o := newstring(25);
     Ccode(void, "snprintf((char *)", o, "->array, 25, \"%g\", ", x, ")");
