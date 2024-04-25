@@ -250,7 +250,7 @@ F = sheaf module truncate(4, S)
 HH^0(F(>=3))
 prune F
 
-f = (sheafMap vars S) ** OO_X(1)
+f = (sheaf vars S) ** OO_X(1)
 g = Hom(module m^[4], matrix f)
 HH^0(OO_X(1))
 HH^0(g) =>
