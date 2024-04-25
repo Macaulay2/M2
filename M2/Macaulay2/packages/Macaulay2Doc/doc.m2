@@ -471,25 +471,30 @@ document {
      TO "methods for normal forms and remainder", ".",
      SeeAlso => { remainder, remainder', pseudoRemainder, "//"}
      }
-     
+
+undocumented {
+    (symbol //, InfiniteNumber, RR),
+    (symbol //, InfiniteNumber, CC),
+    }
 document {
-     Key => {symbol //,(symbol //,ZZ,ZZ),
+     Key => {
+	   symbol //,
 	  (symbol //, CC, CC),
-	  (symbol //, CC, QQ),
 	  (symbol //, CC, RR),
+	  (symbol //, CC, QQ),
 	  (symbol //, CC, ZZ),
-	  (symbol //, InfiniteNumber, Number),
-	  (symbol //, InfiniteNumber, RR),
-	  (symbol //, Matrix, Number),
-	  (symbol //, QQ, QQ),
-	  (symbol //, Number, RingElement),
-	  (symbol //, QQ, ZZ),
-	  (symbol //, RingElement, Number),
 	  (symbol //, RR, QQ),
 	  (symbol //, RR, RR),
 	  (symbol //, RR, ZZ),
+	  (symbol //, QQ, QQ),
+	  (symbol //, QQ, ZZ),
+	  (symbol //, ZZ, ZZ),
 	  (symbol //, Number, InfiniteNumber),
-	  (symbol //, Number, Matrix),
+	  (symbol //, InfiniteNumber, Number),
+	  (symbol //, InfiniteNumber, InfiniteNumber),
+	  (symbol //, Number, RingElement),
+	  (symbol //, RingElement, Number),
+	  (symbol //, RingElement, RingElement),
 	  (symbol //, ZZ, MonomialIdeal)
 	  },
      Headline => "a binary operator, usually used for quotient",
