@@ -2,6 +2,7 @@ export {
     -- Types
     "SheafMap",
     -- Methods
+    "sheafMap",
     "isLiftable",
     "yonedaSheafExtension",
     }
@@ -59,6 +60,9 @@ sheaf(Matrix, ZZ)          := SheafMap => (phi, d)    -> sheaf(variety ring phi,
 sheaf(Variety, Matrix)     := SheafMap => (X, phi)    -> map(sheaf_X target phi, sheaf_X source phi, phi)
 sheaf(Variety, Matrix, ZZ) := SheafMap => (X, phi, d) -> map(sheaf_X target phi, sheaf_X source phi,
     truncate(d, phi, MinimalGenerators => false), d)
+
+sheafMapWarn = true
+sheafMap = x -> (if sheafMapWarn then (sheafMapWarn = false; printerr "Note: sheafMap is deprecated; use sheaf instead."); sheaf x)
 
 random(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> map(F, G, random(F.module, G.module, o))
 
