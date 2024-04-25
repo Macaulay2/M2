@@ -64,8 +64,18 @@ changesHelper List := opt -> pkgnames -> (
 	    << ".\" },"
 	    << endl)))
 
--- document {
---     Key => "changes made for the next release"}
+document {
+    Key => "changes made for the next release",
+    UL {
+	LI { "functionality changed in a way that could break code:",
+	    UL {
+		LI { "The method ", TO (symbol\\, Matrix, Matrix), " is now a shortcut for ", TO (quotient', Matrix, Matrix), ". ",
+		    "The previous functionality is still available via ", TO (symbol//, Matrix, Matrix), ", which is a shortcut for ",
+		    TO (quotient, Matrix, Matrix), ". Additionally, both methods now work for maps of non-free modules."}
+		}
+	    }
+	}
+    }
 
 document {
     Key => "changes, 1.24.11",
