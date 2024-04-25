@@ -34,11 +34,11 @@ TEST ///
   X = Proj S;
   phi = vars S;
   psi = (transpose phi)**S^{1:-2}
-  shphi = sheafMap(phi)
+  shphi = sheaf phi
   assert(matrix entries shphi.map == matrix {{x_1, x_2, x_3}})
-  shpsi = sheafMap(psi)
+  shpsi = sheaf psi
   shphi*shpsi
-  shphi3 = sheafMap(phi,3)
+  shphi3 = sheaf(phi, 3)
   shphi3*shpsi
 ///
 
@@ -88,14 +88,14 @@ TEST ///
   F = sheaf S^{5} / intersect(ideal(x_1,x_2,x_3), ideal(x_3,x_4))
   pF = prune F
   sMap = F.cache.SaturationMap
-  shsMap = sheafMap sMap
+  shsMap = sheaf sMap
   lift shsMap
   F = sheaf comodule intersect(ideal(x_1,x_2), ideal(x_3,x_4))
   pF = prune F
   sMap = F.cache.SaturationMap
   pF.module.cache.pruningMap
   peek F.module.cache
-  shsMap = sheafMap(sMap,4)
+  shsMap = sheaf(sMap,4)
   lift shsMap
 ///
 
@@ -103,7 +103,7 @@ TEST ///
   S = QQ[x_0..x_2];
   X = Proj S
   --TODO: check if things have already been pruned
-  f = sheafMap(truncate(2, vars S))
+  f = sheaf truncate(2, vars S)
   assert(f == prune f)
   assert all(4, i -> HH^i(f) == Ext^i(OO_X^1, f))
   assert all(4, i -> HH^i(f(1)) == Ext^i(OO_X^1(-1), f))
@@ -113,12 +113,12 @@ TEST ///
   assert(source Ext^2(F, f) == Ext^2(F, source f))
   assert(target Ext^2(F, f) == Ext^2(F, target f))
 
-  f = sheafMap vars S ** OO_X(1)
+  f = sheaf vars S ** OO_X(1)
   assert(HH^0 f == id_(QQ^3))
-  f = sheafMap vars S ** OO_X(-2)
+  f = sheaf vars S ** OO_X(-2)
   assert(source HH^2 f == HH^2 source f)
   assert(target HH^2 f == HH^2 target f)
-  f = sheafMap vars S ** OO_X(-3)
+  f = sheaf vars S ** OO_X(-3)
   assert(source HH^2 f == HH^2 source f)
   assert(target HH^2 f == HH^2 target f)
 
@@ -126,7 +126,7 @@ TEST ///
   S = kk[x_0..x_3]
   X = Proj S
   K = dual ker vars S
-  f = prune sheafMap dual wedgeProduct(1,1,K)
+  f = prune sheaf dual wedgeProduct(1,1,K)
   assert(f == prune f)
   --needsPackage "BGG"
   --cohomologyTable(source f, -5,5)
@@ -139,7 +139,7 @@ TEST ///
   S = kk[x_0..x_2]
   X = Proj S
   K = ker vars S
-  f = sheafMap wedgeProduct(1,1,K)
+  f = sheaf wedgeProduct(1,1,K)
   assert(f == prune f)
   assert(HH^2 f == 1)
   assert(HH^3 f == 0)
@@ -147,7 +147,7 @@ TEST ///
   S = QQ[x_0..x_3]
   R = S/ideal(x_0*x_1 - x_2*x_3)
   X = Proj R
-  f = sheafMap vars R ** OO_X(2)
+  f = sheaf vars R ** OO_X(2)
   HH^0 f
 ///
 
@@ -155,11 +155,11 @@ TEST ///
   -- tests for tensor
   S = ZZ/11[x_0,x_1]
   X = Proj S
-  -- f = sheafMap truncate(1, vars S)
+  -- f = sheaf truncate(1, vars S)
   m = random(S^3, S^{-1,-1})
-  f = sheafMap m
-  f' = sheafMap truncate(2, m)
-  f'' = sheafMap(m, 2)
+  f = sheaf m
+  f' = sheaf truncate(2, m)
+  f'' = sheaf(m, 2)
   g = f ** f;
   assert isWellDefined g
   assert(f ** f == f' ** f')
@@ -174,7 +174,7 @@ TEST ///
   R = quotient I; X = Proj R;
   F = sheaf coker (vars R)_{1,3} -- skyscraper sheaf
   phi = jacobian R;
-  psi = sheafMap( phi // (j**R))
+  psi = sheaf(phi // (j**R))
   OmegaX = coker psi;
   OmegaPX = target psi;
   a = inducedMap(OmegaX, OmegaPX)
@@ -199,19 +199,19 @@ TEST ///
   -- testing homology(SheafMap, SheafMap)
   S = QQ[x,y,z]
   X = Proj S
-  g = sheafMap(koszul_2 vars S, 4)
+  g = sheaf(koszul_2 vars S, 4)
   g == 0 -- FIXME: this doesn't work with something I did
-  f = sheafMap koszul_3 vars S
+  f = sheaf koszul_3 vars S
   assert(0 == prune homology(g, f))
 
-  g = sheafMap koszul_1 vars S
-  f = sheafMap koszul_3 vars S * g(-3)
+  g = sheaf koszul_1 vars S
+  f = sheaf koszul_3 vars S * g(-3)
   assert(0 != prune homology(g(-1), f))
 
   S = QQ[x,y]
   X = Proj S
-  g = sheafMap koszul_1 vars S
-  f = sheafMap koszul_2 vars S * g(-2)
+  g = sheaf koszul_1 vars S
+  f = sheaf koszul_2 vars S * g(-2)
   assert(0 == prune homology(g, f))
 ///
 
@@ -221,7 +221,7 @@ TEST ///
   X = Proj S
   f = map(coker matrix{{x^2,y^2}}, , {{x}});
   assert(f != 0)
-  g = sheafMap f;
+  g = sheaf f;
   assert(g == 0)
 ///
 
@@ -398,20 +398,20 @@ TEST ///
   F = OO_X^1
   G = sheaf M
   f = id_M
-  assert(sheafMap f === id_G)
-  assert isWellDefined sheafMap(f, 1)
-  assert isWellDefined sheafMap(f, 2)
-  assert(prune sheafMap(f,  4) === id_F)
-  assert(prune sheafMap(f, -4) === id_F)
-  assert(prune sheafMap(f,  6) === id_F)
+  assert(sheaf f === id_G)
+  assert isWellDefined sheaf(f, 1)
+  assert isWellDefined sheaf(f, 2)
+  assert(prune sheaf(f,  4) === id_F)
+  assert(prune sheaf(f, -4) === id_F)
+  assert(prune sheaf(f,  6) === id_F)
 
   m = inducedMap(S^1, image vars S)
-  f = sheafMap m
+  f = sheaf m
   g = inverse f
   assert(f * g  == id_F)
   assert(g * f === id_G)
 
-  f = sheafMap(m, 4)
+  f = sheaf(m, 4)
   g = inverse f
   assert(prune g      === id_F)
   assert(prune(f * g) === id_F)
@@ -428,7 +428,7 @@ TEST ///
   assert isWellDefined f
   g = inducedMap(source f, ker f)
   assert isWellDefined g
-  assert(g === sheafMap inducedMap(module source f, module ker f))
+  assert(g === sheaf inducedMap(module source f, module ker f))
 ///
 
 TEST ///
@@ -437,12 +437,12 @@ TEST ///
   S = K[x,y,z,t]
   P = Proj S
   J = ker map(K[u,v], S, {u^4, u^3*v, u*v^3, v^4})
-  p = sheafMap inducedMap(S^1/J, S^1)
+  p = sheaf inducedMap(S^1/J, S^1)
   assert(1 == rank connectingExtMap(0, OO_P^1, p ** OO_P(1)))
 
   R = K[x,y,z]/x
   X = Proj R
-  f = sheafMap sub(vars prune R, R)
+  f = sheaf sub(vars prune R, R)
   assert(1 == rank connectingExtMap(0, OO_X^1, f, LengthLimit => 5))
 ///
 

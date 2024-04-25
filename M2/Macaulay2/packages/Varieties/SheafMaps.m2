@@ -54,8 +54,10 @@ map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts ->
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 -- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
 
-sheaf Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
-sheaf(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi,
+sheaf Matrix               := SheafMap =>  phi        -> sheaf(variety ring phi, phi)
+sheaf(Matrix, ZZ)          := SheafMap => (phi, d)    -> sheaf(variety ring phi, phi, d)
+sheaf(Variety, Matrix)     := SheafMap => (X, phi)    -> map(sheaf_X target phi, sheaf_X source phi, phi)
+sheaf(Variety, Matrix, ZZ) := SheafMap => (X, phi, d) -> map(sheaf_X target phi, sheaf_X source phi,
     truncate(d, phi, MinimalGenerators => false), d)
 
 random(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> map(F, G, random(F.module, G.module, o))
@@ -102,15 +104,15 @@ ring    SheafMap := Ring          => f -> f.map.ring
 matrix  SheafMap := Matrix => opts -> f -> f.map
 degree  SheafMap := ZZ => f -> f.degree
 
-ker     SheafMap := CoherentSheaf => opts -> phi -> (sheaf ker matrix phi)
-image   SheafMap := CoherentSheaf => phi -> (sheaf image matrix phi)
-coimage SheafMap := CoherentSheaf => phi -> (sheaf coimage matrix phi)
-coker   SheafMap := CoherentSheaf => phi -> (sheaf coker matrix phi)
+image    SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, image    matrix f)
+kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   matrix f)
+coimage  SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, coimage  matrix f)
+cokernel SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, cokernel matrix f)
 
 -- TODO: is sheaf sufficient here, or should we specify source/target/degree?
-cover   SheafMap := SheafMap => f -> sheaf cover   matrix f
-ambient SheafMap := SheafMap => f -> sheaf ambient matrix f
-super   SheafMap := SheafMap => f -> sheaf super   matrix f
+cover   SheafMap := SheafMap => f -> sheaf(f.variety, cover   matrix f)
+ambient SheafMap := SheafMap => f -> sheaf(f.variety, ambient matrix f)
+super   SheafMap := SheafMap => f -> sheaf(f.variety, super   matrix f)
 
 SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
     target psi == target phi and source psi == source phi and matrix prune psi == matrix prune phi)
@@ -136,7 +138,7 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
     -- TODO: isIsomorphic should check === first
     if M === N then return (true, id_F);
     (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then map(sheaf M, sheaf N, isom)))
+    (ret, if ret then map(sheaf(F.variety, M), sheaf(G.variety, N), isom)))
 
 -- TODO: perhaps better would be to construct random
 -- maps F --> G and check their kernel and cokernel.
@@ -346,7 +348,7 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     -- We want:
     -- source f ==  target h
     -- target f === source h
-    map(sheaf source g, sheaf(X, source h), inducedMap(source g, target h) * h, e#1 + 1))
+    map(sheaf_X source g, sheaf_X source h, inducedMap(source g, target h) * h, e#1 + 1))
     )
 
 SheafMap#1 = f -> (
@@ -385,7 +387,7 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     B := basis(0, module H);
     g := inverse f * B;
     V := source moveToField B;
-    V.cache.homomorphism = h -> psi * sheaf homomorphism(g * h) * phi;
+    V.cache.homomorphism = h -> psi * sheaf(phi.variety, homomorphism(g * h)) * phi;
     V.cache.formation = FunctionApplication { Hom, (F, G) };
     V.cache.Ext = (0, F, G);
     V)
@@ -538,7 +540,7 @@ yonedaSheafExtension Matrix := -* Complex => *- f -> (
     f' := basis(0, E') * f;
     C := yonedaExtension f';
     -- TODO: should return a complex of sheaf maps
-    -* complex *- apply(d + 1, i -> sheaf C.dd_(i+1)))
+    -* complex *- apply(d + 1, i -> sheaf_X C.dd_(i+1)))
 
 -----------------------------------------------------------------------------
 -- Prune
@@ -554,7 +556,7 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
     --added degree f in the line above... seems to make prune work in one step
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring F)^[p];
-    lift sheaf prune Hom(Bp, g))
+    lift sheaf(f.variety, prune Hom(Bp, g)))
     )
 
 -----------------------------------------------------------------------------
