@@ -348,8 +348,9 @@ Matrix // Number := Matrix // RingElement := Matrix => (f, r) -> f // (r * id_(t
 
 -- factor matrices with same sources
 Matrix \\ Matrix := Matrix => (g, f) -> quotient'(f, g)
-Matrix \\ Number := Matrix \\ RingElement := Matrix => (g, r) -> g \\ (r * id_(source g))
-Number \\ Matrix := RingElement \\ Matrix := Matrix => (r, f) -> (r * id_(source f)) \\ f
+-- commented because they don't seem very meaningful
+--Matrix \\ Number := Matrix \\ RingElement := Matrix => (g, r) -> g \\ (r * id_(source g))
+--Number \\ Matrix := RingElement \\ Matrix := Matrix => (r, f) -> (r * id_(source f)) \\ f
 
 quotient(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
     -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) + r = f
