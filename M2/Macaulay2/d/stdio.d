@@ -790,24 +790,6 @@ export (o:file) << (x:uchar) : file := o << int(x);
 export (o:file) << (b:bool) : file := (
      o << if b then "true" else "false");
 
-digits(o:varstring,x:double,a:int,b:int):void := (
-     x = x + 0.5 * pow(10.,double(1-a-b));
-     if x >= 10. then (x = x/10.; a = a+1; b = if b==0 then 0 else b-1);
-     while a > 0 do (
-	  putdigit(o,int(x));
-	  x = 10. * (x - double(int(x)));
-	  a = a-1;
-	  );
-     o << '.';
-     lim := pow(10.,double(-b+1));
-     while b > 0 do (
-	  if x < lim then break;
-	  putdigit(o,int(x));
-	  x = 10. * (x - double(int(x)));
-	  lim = lim * 10.;
-	  b = b-1;
-	  ));
-
 export finite(x:double):bool := x==x && x-x == x-x;
 
 export isinf(x:double):bool := x==x && x-x != x-x;
