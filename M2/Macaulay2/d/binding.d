@@ -360,7 +360,7 @@ bumpPrecedence();
      --why are these using precSpace and not prec?
      special("symbol",unarysymbol,precSpace,prec);
      special("global",unaryglobal,precSpace,prec);
-     special("threadVariable",unarythread,precSpace,prec);
+     special("threadLocal",unarythread,precSpace,prec);
      special("local",unarylocal,precSpace,prec);
 -----------------------------------------------------------------------------
 export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");

@@ -19,7 +19,7 @@ Node
   setIOExclusive
   setIOSynchronized
   setIOUnSynchronized
-  "threadVariable"
+  "threadLocal"
   "allowableThreads"
   "maxAllowableThreads"
   Task
@@ -242,18 +242,18 @@ Node
    will signal an error.
 Node
  Key
-  "threadVariable"
+  "threadLocal"
  Headline
   create a symbol whose value in one thread is not shared with others
  Usage
-  threadVariable foo
+  threadLocal foo
  Outputs
   :
    a new symbol, whose name is "foo", for example, whose values in each thread will be independent of each other,
    with initial value @ TO null @
  Description
   Example
-   threadVariable x
+   threadLocal x
    x = 1
    t = schedule ( () -> ( x = 2 ; x ) )
    taskResult t

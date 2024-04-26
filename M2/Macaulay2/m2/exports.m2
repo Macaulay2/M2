@@ -1214,7 +1214,7 @@ export {
 	"tex",
 	"texMath",
 	"then",
-	"threadVariable",
+	"threadLocal",
 	"throw",
 	"time",
 	"times",
@@ -1297,6 +1297,7 @@ export {
         "numrows" => "numRows",
         "res" => "resolution",
         "sub" => "substitute",
+	"threadVariable" => "threadLocal", -- TODO: eventually remove this?
 	-- unicode synonyms:
 	"ℚ" => "QQ",
 	"ℝ" => "RR",
