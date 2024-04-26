@@ -7,7 +7,6 @@ Node
   "parallel programming with threads and tasks"
  Subnodes
   parallelApply
-  parallelApplyRaw
   createTask
   addCancelTask
   addDependencyTask
@@ -137,30 +136,6 @@ Node
   Text
     See @ TO "parallel programming with threads and tasks" @ for more information and an
     important warning about thread safety.
-Node
- Key
-  parallelApplyRaw
- Headline
-  apply a function to each element in parallel
- Usage
-  parallelApplyRaw(L,f)
- Inputs
-  L:BasicList
-  f:Function
- Outputs
-  :BasicList
-    {\tt apply(apply(L, e -> schedule(f, e)), taskResult)}
- Description
-  Text
-    A separate task is created for each element of {\tt L}. {\tt L} is not split into chunks,
-    @ TO "allowableThreads" @ is used unchanged, and the result has the same class as {\tt L}.
-    Normally @ TO parallelApply @ is more efficient.
-    
-    See @ TO "parallel programming with threads and tasks" @ for more information and an
-    important warning about thread safety.
- SeeAlso
-  "parallel programming with threads and tasks"
-  parallelApply
 Node
  Key
   (addCancelTask, Task, Task)
@@ -506,3 +481,29 @@ Node
   "parallel programming with threads and tasks"
   cancelTask
 ///
+
+-- not exported:
+-- Node
+--  Key
+--   parallelApplyRaw
+--  Headline
+--   apply a function to each element in parallel
+--  Usage
+--   parallelApplyRaw(L,f)
+--  Inputs
+--   L:BasicList
+--   f:Function
+--  Outputs
+--   :BasicList
+--     {\tt apply(apply(L, e -> schedule(f, e)), taskResult)}
+--  Description
+--   Text
+--     A separate task is created for each element of {\tt L}. {\tt L} is not split into chunks,
+--     @ TO "allowableThreads" @ is used unchanged, and the result has the same class as {\tt L}.
+--     Normally @ TO parallelApply @ is more efficient.
+--
+--     See @ TO "parallel programming with threads and tasks" @ for more information and an
+--     important warning about thread safety.
+--  SeeAlso
+--   "parallel programming with threads and tasks"
+--   parallelApply
