@@ -1915,7 +1915,7 @@ foreach s in syms do storeInHashTable(
 storeE = nullE;
 syms = SymbolSequence();
 
-export fileDictionaries := newHashTable(mutableHashTableClass,nothingClass);
+export fileDictionaries := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("fileDictionaries",Expr(fileDictionaries));
 
 export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
