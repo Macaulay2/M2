@@ -240,7 +240,13 @@ fSeq := new HashTable from splice {
     (2, symbol ^*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol _*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol ^~      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol _~      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol ^!      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol _!      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    --(2, symbol ^#      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    --(2, symbol _#      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
 
     -- assignment methods
     (3, class, Sequence) => s -> (toString s#1, " ", toString s#0#0, " ",

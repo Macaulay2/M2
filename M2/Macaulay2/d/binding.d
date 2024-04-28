@@ -329,18 +329,33 @@ bumpPrecedence();
      export AtAtS := makeKeyword(binaryleft("@@"));
 bumpPrecedence();
      export TildeS := makeKeyword(postfix("~"));
+     export PowerTildeS := makeKeyword(postfix("^~"));
+     export UnderscoreTildeS := makeKeyword(postfix("_~"));
      export UnderscoreStarS := makeKeyword(postfix("_*"));
      export PowerStarS := makeKeyword(postfix("^*"));
 bumpPrecedence();
      export PowerS := makeKeyword(binaryleft("^"));
+     export PowerGreaterS        := makeKeyword(binaryleft("^>"));
+     export PowerGreaterEqualS   := makeKeyword(binaryleft("^>="));
+     export PowerLessS           := makeKeyword(binaryleft("^<"));
+     export PowerLessEqualS      := makeKeyword(binaryleft("^<="));
      export PowerStarStarS := makeKeyword(binaryleft("^**"));
      export UnderscoreS := makeKeyword(binaryleft("_"));
+     export UnderscoreGreaterS        := makeKeyword(binaryleft("_>"));
+     export UnderscoreGreaterEqualS   := makeKeyword(binaryleft("_>="));
+     export UnderscoreLessS           := makeKeyword(binaryleft("_<"));
+     export UnderscoreLessEqualS      := makeKeyword(binaryleft("_<="));
      export SharpS := makeKeyword(unarybinaryleft("#")); SharpS.symbol.word.parse.unaryStrength = precSpace-1;
      export SharpQuestionS := makeKeyword(binaryleft("#?"));
      export DotS := makeKeyword(binaryleft("."));
      export DotQuestionS := makeKeyword(binaryleft(".?"));
 bumpPrecedence();
      export ExclamationS := makeKeyword(postfix("!"));
+     export PowerExclamationS := makeKeyword(postfix("^!"));
+     export UnderscoreExclamationS := makeKeyword(postfix("_!"));
+     -- TODO: can't work because of instances like R^#m
+     --export PowerSharpS := makeKeyword(postfix("^#"));
+     --export UnderscoreSharpS := makeKeyword(postfix("_#"));
 bumpPrecedence();
      --why are these using precSpace and not prec?
      special("symbol",unarysymbol,precSpace,prec);
@@ -476,12 +491,26 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS);
+     AdjacentS, AtAtS, orS, andS, xorS,
+     -- TODO: why are these four not listed here?
+     -- GreaterS, GreaterEqualS, LessS, LessEqualS,
+     PowerS,               UnderscoreS,
+     PowerGreaterS,        UnderscoreGreaterS,
+     PowerGreaterEqualS,   UnderscoreGreaterEqualS,
+     PowerLessS,           UnderscoreLessS,
+     PowerLessEqualS,      UnderscoreLessEqualS,
+     PowerStarStarS
+     );
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
      notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
-export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS ,ExclamationS );
+export opsWithPostfixMethod := array(SymbolClosure)(
+    ExclamationS,    PowerExclamationS, UnderscoreExclamationS,
+    -- FIXME:        PowerSharpS,       UnderscoreSharpS,
+    ParenStarParenS, PowerStarS,        UnderscoreStarS,
+    TildeS,          PowerTildeS,       UnderscoreTildeS
+    );
 
 -- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
 export fixedBinaryOperators := array(SymbolClosure)(ColonEqualS,EqualS,LeftArrowS,RightArrowS,DoubleArrowS,EqualEqualEqualS,NotEqualEqualEqualS,NotEqualS,SharpS,SharpQuestionS,
@@ -506,11 +535,21 @@ export augmentedAssignmentOperatorTable := newSymbolHashTable();
 offset := 0;
 export augmentedAssignmentOperatorWords := (
     new array(Word)
-    len length(opsWithBinaryMethod) - 9 at i
+    -- update the subtracted number here to match number of operators below
+    len length(opsWithBinaryMethod) - 17 at i
     do (
 	-- to avoid ambiguity and syntax errors, we don't create augmented
 	-- assignment operators for ==, <==, <===, :, SPACE, or, and, xor, ?
+	-- also _< _<= _> _>= ^< ^<= ^> ^>=
 	while (
+	    opsWithBinaryMethod.(i + offset) === UnderscoreLessS          ||
+	    opsWithBinaryMethod.(i + offset) === UnderscoreLessEqualS     ||
+	    opsWithBinaryMethod.(i + offset) === UnderscoreGreaterS       ||
+	    opsWithBinaryMethod.(i + offset) === UnderscoreGreaterEqualS  ||
+	    opsWithBinaryMethod.(i + offset) === PowerLessS               ||
+	    opsWithBinaryMethod.(i + offset) === PowerLessEqualS          ||
+	    opsWithBinaryMethod.(i + offset) === PowerGreaterS            ||
+	    opsWithBinaryMethod.(i + offset) === PowerGreaterEqualS       ||
 	    opsWithBinaryMethod.(i + offset) === EqualEqualS              ||
 	    opsWithBinaryMethod.(i + offset) === LongDoubleLeftArrowS     ||
 	    opsWithBinaryMethod.(i + offset) === LongLongDoubleLeftArrowS ||
