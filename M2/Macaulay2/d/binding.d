@@ -35,28 +35,28 @@ enlarge(table:SymbolHashTable):void := (
      );
 
 -- warning: these routines have similar code
--- thread safe because it replaces bucket with new bucket so no double counting
+-- old comment: thread safe because it replaces bucket with new bucket so no double counting
 export insert(entry:Symbol,table:SymbolHashTable):Symbol := (
-     lock(table.mutex);
+     lockWrite(table.mutex);
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := entry.word.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(entry.word,entry,table.buckets.h);
-     compilerBarrier();
+     -- compilerBarrier();
      unlock(table.mutex);
      entry);
 
--- thread safe because it replaces bucket with new bucket so no double counting
+-- old comment: thread safe because it replaces bucket with new bucket so no double counting
 export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- warning -- unsafe -- check that the dictionary of the symbol is the same as this dictionary
-     lock(table.mutex);
+     lockWrite(table.mutex);
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := newname.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(newname,entry,table.buckets.h);
      unlock(table.mutex);
-     compilerBarrier();
+     -- compilerBarrier();
      entry);
 
 --Error flag for parsing; should be thread local because may have multiple threads parsing at once
@@ -421,20 +421,25 @@ makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
 threadLocal lookupCountIncrement := 1;
 export lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
      if table == dummySymbolHashTable then error("dummy symbol table used");
+     lockRead(table.mutex);
      entryList := table.buckets.(
 	  word.hash & (length(table.buckets)-1)
 	  );
+     res:(null or Symbol) := NULL;
      while true do
      when entryList
-     is null do return NULL
+     is null do break
      is entryListCell:SymbolListCell do (
 	  if entryListCell.word == word 
 	  then (
 	       e := entryListCell.entry;
 	       e.lookupCount = e.lookupCount + lookupCountIncrement;
-	       return e;
+	       res = e;
+	       break;
 	       );
-	  entryList = entryListCell.next));
+	  entryList = entryListCell.next);
+     unlock(table.mutex);
+     res);
 
 export globalLookup(w:Word):(null or Symbol) := (
      d := globalDictionary;

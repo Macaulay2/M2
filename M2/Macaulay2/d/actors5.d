@@ -490,7 +490,7 @@ examine(e:Expr):Expr := (
 	  << " transient : " << d.transient << endl
 	  << " protected : " << d.Protected << endl
 	  << " local creation allowed : " << d.LocalCreationAllowed << endl
-	  << " symboltable size : " << d.symboltable.numEntries << endl;
+	  << " symboltable size : " << d.symboltable.numEntries << endl;	-- TODO: lockRead() ?
      	  showFrames(f);
           if d.frameID != f.frameID then stdIO << " -- warning: incorrect frameID on first frame" << endl;
 	  nullE)
@@ -629,47 +629,52 @@ removefun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("remove",removefun);
 
-erase(e:Expr):Expr := (
+erase(e:Expr):Expr :=
      when e is t:SymbolClosure do (
 	  s := t.symbol;
 	  d := globalDictionary;
 	  if t.frame != globalFrame then return WrongArg("a global symbol");
+	  found := false;
 	  while (
 	       table := d.symboltable;
+	       lockRead(table.mutex);
 	       i := s.word.hash & (length(table.buckets)-1);
 	       entryList := table.buckets.i;
 	       when entryList
-	       is entryListCell:SymbolListCell do (
+	       is entryListCell:SymbolListCell do
 		    if entryListCell.entry == s
 		    then (
-     	       	    	 if d.Protected then return buildErrorPacket("symbol is in a protected dictionary");
-			 table.numEntries = table.numEntries - 1;
-			 table.buckets.i = entryListCell.next;
-			 return nullE;
-			 );
-		    lastCell := entryListCell;
-		    entryList = entryListCell.next;
-		    while true do (
-			 when entryList
-			 is entryListCell:SymbolListCell do (
-			      if entryListCell.entry == s
-			      then (
-     	       	    	 	   if d.Protected then return buildErrorPacket("symbol is in a protected dictionary");
-				   table.numEntries = table.numEntries - 1;
-				   lastCell.next = entryListCell.next;
-				   return nullE;
-				   );
-			      lastCell = entryListCell;
-			      entryList = entryListCell.next;
-			      )
-			 is null do break;
-			 );
-		    )
+			 found = true;
+			 if ! d.Protected then (
+			      table.numEntries = table.numEntries - 1;
+			      table.buckets.i = entryListCell.next);
+			 )
+		    else (
+			 lastCell := entryListCell;
+			 entryList = entryListCell.next;
+			 while true do (
+			      when entryList
+			      is entryListCell:SymbolListCell do (
+				   if entryListCell.entry == s
+				   then (
+					found = true;
+					if ! d.Protected then (
+					     table.numEntries = table.numEntries - 1;
+					     lastCell.next = entryListCell.next);
+					break);
+				   lastCell = entryListCell;
+				   entryList = entryListCell.next;
+				   )
+			      is null do break;
+			      );
+			 )
 	       is null do nothing;
-	       d != d.outerDictionary ) do d = d.outerDictionary;
-	  buildErrorPacket("symbol has already been erased: "+s.word.name))
-     else WrongArg("a symbol")
-     );
+	       unlock(table.mutex);
+	       ! found && d != d.outerDictionary ) do d = d.outerDictionary;
+	  if ! found then buildErrorPacket("symbol has already been erased: "+s.word.name)
+	  else if d.Protected then buildErrorPacket("symbol is in a protected dictionary")
+	  else nullE)
+     else WrongArg("a symbol");
 setupfun("erase", erase);
 
 factorInt(n:int):Expr := (

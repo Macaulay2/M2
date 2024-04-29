@@ -68,10 +68,11 @@ setupfun("toList1",toList);
 values(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
-	  o := oc.dictionary;
-	  Expr(list(
-		    new Sequence len o.symboltable.numEntries do
-		    foreach bucket in o.symboltable.buckets do (
+	  o := oc.dictionary.symboltable;
+	  lockRead(o.mutex);
+	  l := Expr(list(
+		    new Sequence len o.numEntries do
+		    foreach bucket in o.buckets do (
 			 p := bucket;
 			 while true do (
 			      when p
@@ -80,24 +81,31 @@ values(e:Expr):Expr := (
 				   provide Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym));
 				   p=q.next;)
 			      else break;
-			      )))))
-     is o:HashTable do (lock(o.mutex); l:= list(
+			      ))));
+	  unlock(o.mutex);
+	  l)
+     is o:HashTable do (
+	if o.Mutable then lockRead(o.mutex);
+	l:= list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(p.value);
-		    p = p.next; ))); unlock(o.mutex); l)
+		    p = p.next; )));
+	if o.Mutable then unlock(o.mutex);
+	l)
      else WrongArg("a hash table or dictionary"));
 setupfun("values",values);
 
 pairs(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (    -- # typical value: pairs, Dictionary, List
-	  o := oc.dictionary;
-	  Expr(list(
-		    new Sequence len o.symboltable.numEntries do (
-			 foreach bucket in o.symboltable.buckets do (
+	  o := oc.dictionary.symboltable;
+	  lockRead(o.mutex);
+	  l := Expr(list(
+		    new Sequence len o.numEntries do (
+			 foreach bucket in o.buckets do (
 			      p := bucket;
 			      while true do (
 				   when p
@@ -108,14 +116,20 @@ pairs(e:Expr):Expr := (
 						  Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym))));
 					p=q.next;)
 				   else break; ));
-			 ))))
-     is o:HashTable do (lock(o.mutex); l:=list(	-- # typical value: pairs, HashTable, List
+			 )));
+	  unlock(o.mutex);
+	  l)
+     is o:HashTable do (
+	if o.Mutable then lockRead(o.mutex);
+	l:=list(	-- # typical value: pairs, HashTable, List
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(Sequence(p.key,p.value));
-		    p = p.next; ))); unlock(o.mutex); l )
+		    p = p.next; )));
+	if o.Mutable then unlock(o.mutex);
+	l )
      is o:Sequence do
 	  Expr(new Sequence len length(o) do (
 	    i := 0;

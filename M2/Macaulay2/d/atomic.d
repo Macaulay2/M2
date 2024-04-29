@@ -17,7 +17,8 @@ export load(x:atomicField) ::= Ccode(int, "load_Field(",x,")");
 export test(x:atomicField) ::= (load(x) != 0);
 export store(x:atomicField,y:int) ::= Ccode(void, "store_Field(",x,",",y,")");
 export store(x:atomicField,y:bool) ::= store(x, Ccode(int, y));
-export fetch_add(x:atomicField,y:int) ::= Ccode(int, "atomic_fetch_add(&(",x,").field,",y,")");
+export fetch_add(x:atomicField,y:int) ::=
+    Ccode(int, "atomic_fetch_add(&(",lvalue(x),").field,",y,")");
 
 export compilerBarrier() ::= Ccode(void,"atomic_signal_fence(memory_order_seq_cst)");
 

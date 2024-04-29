@@ -34,6 +34,7 @@ override(h:HashTable,v:Sequence,numopts:int):Expr := (
 	       when r is Error do return r else nothing;
 	       )
 	  is y:HashTable do (
+	       -- assume y is not Mutable so we don't lock it
 	       foreach bucket in y.table do (
 		    q := bucket;
 		    while q != q.next do (
@@ -65,6 +66,7 @@ override(v:Sequence,numopts:int):Expr := (
 	       when r is Error do return r else nothing;
 	       )
 	  is y:HashTable do (
+	       -- assume y is not Mutable so we don't lock it
 	       foreach bucket in y.table do (
 		    q := bucket;
 		    while q != q.next do (

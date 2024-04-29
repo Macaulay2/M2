@@ -92,7 +92,7 @@ export SymbolList := null or SymbolListCell;
 export SymbolHashTable := { 
      buckets:array(SymbolList),	 -- length always a power of 2
      numEntries:int,
-     mutex:SpinLock -- Modification mutex: lock before changing
+     mutex:ThreadRWLockPtr
      };
 
 export Dictionary := {
@@ -474,8 +474,8 @@ export HashTable := {+
      numEntries:int,
      hash:int,
      Mutable:bool,
-     beingInitialized:bool,-- if true, no need to lock a mutex while modifying it
-     mutex:SpinLock
+     beingInitialized:bool,-- if true, no need to lock the mutex
+     mutex:ThreadRWLockPtr
      };
 
 --This unfortunately needs to be here as it references Hash Table which needs expr.  

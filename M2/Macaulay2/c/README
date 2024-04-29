@@ -210,7 +210,7 @@ Types:
 
 	Pointer "bar"			a new pointer type, declared as "bar" in the C or C++ code produced
 	atomicPointer "bar"		a new atomic pointer type, declared as "bar" in the C or C++ code produced
-	malloc(T)			returns a pointer of type T pointing to new memory on the heap
+	GCmalloc(T)			returns a pointer of type T pointing to new memory on the heap
 					the number of bytes allocated is sizeof(*((T)0))
 					if T is a pointer type, the memory is cleared by GC_MALLOC
 					if T is an atomic pointer type, the memory is not cleared by GC_MALLOC_ATOMIC
