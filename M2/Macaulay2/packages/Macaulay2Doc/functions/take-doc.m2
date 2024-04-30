@@ -7,6 +7,7 @@ doc ///
   (take, BasicList, ZZ)
   (take, BasicList, List)
   (take, Thing, ZZ)
+  (take, Thing, List)
  Headline
   Take some elements from a list or sequence.
  Usage
@@ -44,6 +45,7 @@ doc ///
   Example
    take("Hello, world!", 5)
    take("Hello, world!", 20)
+   take("Hello, world!", {7, 11})
  SeeAlso
   drop
   select

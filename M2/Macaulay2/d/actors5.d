@@ -1129,31 +1129,58 @@ take(e:Expr):Expr := (
 	      if nextfunc == nullE
 	      then return buildErrorPacket(
 		  "no method for applying next to iterator");
+	      start := 0;
+	      stop := 0;
 	      when args.1
 	      is n:ZZcell do (
 		  if !isInt(n) then return WrongArgSmallInteger(2);
-		  m := toInt(n);
-		  if m < 0 then return WrongArg(2, "a positive integer");
-		  if m == 0 then return Expr(emptyList);
-		  r := new Sequence len m do provide nullE;
-		  j := 0;
-		  y := nullE;
-		  while (
-		      y = applyEE(nextfunc, iter);
-		      when y
-		      is Error do return returnFromFunction(y)
-		      else nothing;
-		      y != StopIterationE)
-		  do (
-		      r.j = y;
-		      j = j + 1;
-		      if j == m then break);
-		  Expr(list(
-			  if j == 0 then emptySequence
-			  else if j == m then r
-			  else new Sequence len j do (
-			      foreach x in r do provide x))))
-	      else WrongArgZZ(2)))
+		  stop = toInt(n);
+		  if stop < 0 then return WrongArg(2, "a nonnegative integer");
+		  if stop == 0 then return list())
+	      is x:List do (
+		  ok := true;
+		  if length(x.v) == 2 then (
+		      when x.v.0
+		      is a:ZZcell do (
+			  when x.v.1
+			  is b:ZZcell do (
+			      if !isInt(a) || !isInt(b)
+			      then ok = false
+			      else (
+				  start = toInt(a);
+				  stop = toInt(b) + 1))
+			  else ok = false)
+		      else ok = false)
+		  else ok = false;
+		  if !ok
+		  then return WrongArg(2, "a list of two small integers"))
+	      else return WrongArg(2, "an integer or list of integers");
+	      if stop < start then return list();
+	      j := 0;
+	      y := nullE;
+	      while (j < start && y != StopIterationE)
+	      do (
+		  y = applyEE(nextfunc, iter);
+		  when y
+		  is Error do return returnFromFunction(y)
+		  else nothing;
+		  j = j + 1);
+	      r := new Sequence len stop - start do provide nullE;
+	      while (
+		  y = applyEE(nextfunc, iter);
+		  when y
+		  is Error do return returnFromFunction(y)
+		  else nothing;
+		  y != StopIterationE)
+	      do (
+		  r.(j - start) = y;
+		  j = j + 1;
+		  if j == stop then break);
+	      list(
+		      if j < start then emptySequence
+		      else if j == stop then r
+		      else new Sequence len j - start do (
+			  foreach x in r do provide x))))
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("take",take);
