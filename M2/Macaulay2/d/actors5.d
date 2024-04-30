@@ -1133,7 +1133,7 @@ take(e:Expr):Expr := (
 	      is n:ZZcell do (
 		  if !isInt(n) then return WrongArgSmallInteger(2);
 		  m := toInt(n);
-		  if m < 0 then return WrongArg(2, "a positive integer");
+		  if m < 0 then return WrongArg(2, "a nonnegative integer");
 		  if m == 0 then return Expr(emptyList);
 		  r := new Sequence len m do provide nullE;
 		  j := 0;
