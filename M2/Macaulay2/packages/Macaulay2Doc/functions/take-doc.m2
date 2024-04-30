@@ -32,7 +32,7 @@ doc ///
    take({a,b,c,d,e,f,g}, {1,3})
    take({a,b,c,d,e,f,g}, {2,2})    
   Text
-   The pair {\tt \{j,k\}} must be given with both entries non-negative, and $j\le k$. Otherwise an empty list is returned.
+   The pair $\{j,k\}$ must be given with both entries non-negative, and $j\le k$. Otherwise an empty list is returned.
   Example
    take({a,b,c,d,e,f,g}, {3,1})
    take({a,b,c,d,e,f,g}, {4,-1})
