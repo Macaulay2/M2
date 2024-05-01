@@ -464,3 +464,24 @@ TEST ///
   h = f // g
   assert(g * h === f)
 ///
+
+TEST ///
+  -- tests for Euler sequence
+  S = QQ[x,y,z]
+  R = S/(x^2-y*z)
+  X = Proj S
+  Y = Proj R
+  M = sheaf(module cotangentSheaf X ** R)
+  (g,f) = eulerSequence Proj R
+  N = source f
+  assert(g*f == 0)
+  assert(homology(g, f) == 0)
+  assert first isIsomorphic(prune M, prune N)
+///
+
+TEST ///
+  -- tests for cotangentSurjection
+  S = QQ[x_0..x_3]
+  P = Proj S
+  Y = Proj(R = quotient minors(2, matrix{{x_0..x_2},{x_1..x_3}}))
+///
