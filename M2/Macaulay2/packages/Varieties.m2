@@ -72,6 +72,7 @@ export {
     "SaturationMap",
     "TorsionFree",
     "TruncateDegree",
+    "isLocallyFree",
     }
 
 importFrom_Core {
@@ -644,6 +645,16 @@ singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
      A := ring f;
      checkRing A;
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
+
+-----------------------------------------------------------------------------
+-- isLocallyFree
+-----------------------------------------------------------------------------
+
+isLocallyFree = method()
+isLocallyFree CoherentSheaf := Boolean => F -> (
+    if (d := rank F) == 0 then return F == 0;
+    dim fittingIdeal(d,   module F) <= 0
+    and fittingIdeal(d-1, module F) == ideal 0_(ring F))
 
 -----------------------------------------------------------------------------
 -- Sheaf Hom and Ext
