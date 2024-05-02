@@ -158,6 +158,9 @@ setup(GreaterGreaterS,greatergreaterfun2);
 barfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarS);
 setup(BarS,barfun);
 
+BarUnderscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarUnderscoreS);
+setup(BarUnderscoreS,BarUnderscorefun);
+
 UnderscoreGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterS);
 setup(UnderscoreGreaterS,UnderscoreGreaterfun);
 
