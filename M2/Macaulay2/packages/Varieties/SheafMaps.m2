@@ -299,7 +299,7 @@ SheafMap ++ SheafMap := SheafMap => (phi, psi) -> directSum(phi, psi)
 components SheafMap := List => phi -> if phi.cache.?components then phi.cache.components else {phi}
 
 -----------------------------------------------------------------------------
--- Tensors
+-- Tensors and exterior/symmetric powers
 -----------------------------------------------------------------------------
 -- TODO: take care of the case when the rings are different
 -- FIXME: the source and target sheaves are not correct in this version
@@ -337,6 +337,9 @@ SheafMap(ZZ) := SheafMap => (phi, d) -> phi ** OO_(variety phi)^1(d)
 
 -- TODO: can we also make the target to be the dual of the original source?
 dual SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(null, dual target f, dual(matrix f, o))
+
+exteriorPower (ZZ, SheafMap) := SheafMap => o -> (d, phi) -> sheaf(phi.variety,  exteriorPower(d, matrix phi, o))
+symmetricPower(ZZ, SheafMap) := SheafMap =>      (d, phi) -> sheaf(phi.variety, symmetricPower(d, matrix phi))
 
 -----------------------------------------------------------------------------
 -- inverse
