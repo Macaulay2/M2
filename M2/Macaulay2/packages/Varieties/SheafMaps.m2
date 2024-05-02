@@ -146,7 +146,7 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
     -- TODO: isIsomorphic should check === first
     if M === N then return (true, id_F);
     (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then map(sheaf(F.variety, M), sheaf(G.variety, N), isom)))
+    (ret, if ret then sheaf(F.variety, isom)))
 
 -- TODO: perhaps better would be to construct random
 -- maps F --> G and check their kernel and cokernel.
@@ -167,7 +167,7 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
     -- TODO: isIsomorphic should check === first
     if M === N then return (true, id_F);
     (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then map(F, G, isom)))
+    (ret, if ret then sheaf(F.variety, isom)))
 
 isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
 
