@@ -538,13 +538,12 @@ offset := 0;
 export augmentedAssignmentOperatorWords := (
     new array(Word)
     -- update the subtracted number here to match number of operators below
-    len length(opsWithBinaryMethod) - 18 at i
+    len length(opsWithBinaryMethod) - 17 at i
     do (
 	-- to avoid ambiguity and syntax errors, we don't create augmented
 	-- assignment operators for ==, <==, <===, :, SPACE, or, and, xor, ?
-	-- also |_ _< _<= _> _>= ^< ^<= ^> ^>=
+	-- also _< _<= _> _>= ^< ^<= ^> ^>=
 	while (
-	    opsWithBinaryMethod.(i + offset) === BarUnderscoreS           ||
 	    opsWithBinaryMethod.(i + offset) === UnderscoreLessS          ||
 	    opsWithBinaryMethod.(i + offset) === UnderscoreLessEqualS     ||
 	    opsWithBinaryMethod.(i + offset) === UnderscoreGreaterS       ||
