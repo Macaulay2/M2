@@ -4,7 +4,7 @@
 
 ---------------------------------------------------------------------------------
 AnnFs = method()
-AnnFs RingElement := Ideal => f -> (
+AnnFs RingElement := LeftIdeal => f -> (
 -- Input:   f, a polynomial in n variables 
 --             (has to be an element of A_n, the Weyl algebra).
 -- Output:  Ann f^s, an ideal in A_n[s].	
@@ -67,7 +67,7 @@ MalgrangeIdeal List := Ideal => F -> (
 ------------------------------------------------------------------------------
 --This needs documentation.
 AnnIFs = method()
-AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
+AnnIFs(LeftIdeal, RingElement) := LeftIdeal => (I, f) -> (
      pInfo(1, "AnnIFs: Warning! The method expects an f-saturated module"); 
      W := ring I;
      createDpairs W;
@@ -354,7 +354,7 @@ rationalFunctionAnnihilator(RingElement, RingElement) := (g,f) -> (
     if a == -1 and g == 1_W then Ia
     else (
     	compensate := -1 - a;
-    	F := map(W^1/Ia, W^1, matrix{{g*f^compensate}});
+	F := map(comodule Ia, W^1, matrix{{g*f^compensate}});
     	ideal mingens kernel F)
     )
 

@@ -40,7 +40,7 @@ makeQQ := f -> (
 
 -- trivial intersection strategy (internal)
 bfIntRing := method()
-bfIntRing(Ideal, List) :=  (I, w) -> (
+bfIntRing(LeftIdeal, List) :=  (I, w) -> (
      local tInfo;
      -- prep work
      if not (ring I).?IntRing then
@@ -91,7 +91,7 @@ bfIntRing(Ideal, List) :=  (I, w) -> (
 
 -- TryGeneric or NonGeneric strategy (internal)
 bfGenericOrNonGeneric := method(Options => {Strategy => TryGeneric})
-bfGenericOrNonGeneric(Ideal, List) := o -> (I, w) -> (
+bfGenericOrNonGeneric(LeftIdeal, List) := o -> (I, w) -> (
      local tInfo;
      -- prep work
      if not (ring I).?ThetaRing then
@@ -195,7 +195,7 @@ bfGenericOrNonGeneric(Ideal, List) := o -> (I, w) -> (
      makeQQ bfcn     	
      );
 
-bFunction(Ideal, List) := RingElement => o -> (I, w) -> (
+bFunction(LeftIdeal, List) := RingElement => o -> (I, w) -> (
      result := (
 	  if o.Strategy == IntRing then bfIntRing(I, w)
      	  else if o.Strategy == TryGeneric or o.Strategy == NonGeneric 

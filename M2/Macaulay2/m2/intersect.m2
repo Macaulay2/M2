@@ -85,6 +85,11 @@ intersect(Module, Module) := Module => moduleIntersectOpts >> opts -> L -> inter
 Ideal.intersect  =  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
 Module.intersect = moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
 
+-- Left ideals
+intersect LeftIdeal             := LeftIdeal => moduleIntersectOpts >> o ->  I     -> ideal intersect(module I, o)
+intersect(LeftIdeal, LeftIdeal) := LeftIdeal => moduleIntersectOpts >> o -> (I, J) -> ideal intersect(module I, module J, o)
+LeftIdeal.intersect =                           moduleIntersectOpts >> o ->  L     -> ideal intersect(module \ L, o)
+
 -----------------------------------------------------------------------------
 
 -- The algorithm below is optimized for intersecting all modules at once.

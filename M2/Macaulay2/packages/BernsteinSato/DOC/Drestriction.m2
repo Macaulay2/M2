@@ -24,13 +24,13 @@ document {
      }
 
 document {
-     Key => {Dresolution, (Dresolution,Module), (Dresolution,Ideal,List), 
-	  (Dresolution,Module,List), (Dresolution,Ideal)},
+     Key => {Dresolution, (Dresolution,Module), (Dresolution,LeftIdeal,List), 
+	  (Dresolution,Module,List), (Dresolution,LeftIdeal)},
      Headline => "resolution of a D-module",
      Usage => "Dresolution M, Dresolution I, Dresolution(M,w), Dresolution(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
@@ -81,14 +81,14 @@ document {
 	  }
 
 document {
-     Key => {Drestriction, (Drestriction,ZZ,Module,List), (Drestriction,Ideal,List), 
-	  (Drestriction,Module,List), (Drestriction,ZZ,Ideal,List)},
+     Key => {Drestriction, (Drestriction,ZZ,Module,List), (Drestriction,LeftIdeal,List), 
+	  (Drestriction,Module,List), (Drestriction,ZZ,LeftIdeal,List)},
      Headline => "restriction modules of a D-module",
      Usage => "N = Drestriction(M,w), NI = Drestriction(I,w), Ni = Drestriction(i,M,w),
      NIi = Drestriction(i,I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector",
 	  "i" => ZZ => "nonnegative"  
 	  },
@@ -131,15 +131,15 @@ document {
      }
 
 document {
-     Key => {DrestrictionIdeal, (DrestrictionIdeal, Ideal, List)},
+     Key => {DrestrictionIdeal, (DrestrictionIdeal, LeftIdeal, List)},
      Headline => "restriction ideal of a D-module",
      Usage => "DrestrictionIdeal(I,w)",
      Inputs => {
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
-     	  Ideal => {"the restriction ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
+     	  LeftIdeal => {"the restriction ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
 	  },
      "A supplementary function for ", TO "Drestriction", 
      " that computes the restriction ideal.",   
@@ -156,12 +156,12 @@ document {
 }
 
 document {
-     Key => {DrestrictionAll, (DrestrictionAll, Module, List), (DrestrictionAll, Ideal, List)},
+     Key => {DrestrictionAll, (DrestrictionAll, Module, List), (DrestrictionAll, LeftIdeal, List)},
      Headline => "restriction modules of a D-module (extended version)",
      Usage => "N = DrestrictionAll(M,w), NI = DrestrictionAll(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
@@ -184,12 +184,12 @@ document {
 }
 
 document {
-     Key => {DrestrictionComplex, (DrestrictionComplex, Module, List), (DrestrictionComplex, Ideal, List)},
+     Key => {DrestrictionComplex, (DrestrictionComplex, Module, List), (DrestrictionComplex, LeftIdeal, List)},
      Headline => "derived restriction complex of a D-module",
      Usage => "N = DrestrictionComplex(M,w), NI = DrestrictionComplex(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
@@ -212,14 +212,14 @@ document {
 
 
 document {
-     Key => {DrestrictionClasses, (DrestrictionClasses,ZZ,Module,List), (DrestrictionClasses,Ideal,List), (DrestrictionClasses,Module,List),
-      (DrestrictionClasses,ZZ,Ideal,List)},
+     Key => {DrestrictionClasses, (DrestrictionClasses,ZZ,Module,List), (DrestrictionClasses,LeftIdeal,List), (DrestrictionClasses,Module,List),
+      (DrestrictionClasses,ZZ,LeftIdeal,List)},
      Headline => "restriction classes of a D-module",
      Usage => "N = DrestrictionClasses(M,w), NI = DrestrictionClasses(I,w), Ni = DrestrictionClasses(i,M,w),
      NIi = DrestrictionClasses(i,I,w), ",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector",
 	  "i" => ZZ => "nonnegative"  
 	  },
@@ -297,14 +297,14 @@ document {
 }
 
 document {
-     Key => { Dintegration, (Dintegration,ZZ,Module,List), (Dintegration,Ideal,List), 
-	  (Dintegration,Module,List), (Dintegration,ZZ,Ideal,List) },
+     Key => { Dintegration, (Dintegration,ZZ,Module,List), (Dintegration,LeftIdeal,List), 
+	  (Dintegration,Module,List), (Dintegration,ZZ,LeftIdeal,List) },
      Headline => "integration modules of a D-module",
      Usage => "N = Dintegration(M,w), NI = Dintegration(I,w), Ni = Dintegration(i,M,w),
      NIi = Dintegration(i,I,w), ",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector",
 	  "i" => ZZ => "nonnegative"  
 	  },
@@ -344,15 +344,15 @@ document {
  }
 
 document {
-     Key => {DintegrationIdeal, (DintegrationIdeal, Ideal, List)},
+     Key => {DintegrationIdeal, (DintegrationIdeal, LeftIdeal, List)},
      Headline => "integration ideal of a D-module",
      Usage => "DintegrationIdeal(I,w)",
      Inputs => {
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
-     	  Ideal => {"the integration ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
+     	  LeftIdeal => {"the integration ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
 	  },
      "A supplementary function for ", TO "Dintegration", 
      " that computes the integration ideal.",   
@@ -369,12 +369,12 @@ document {
 }
 
 document {
-     Key => {DintegrationAll, (DintegrationAll, Module, List), (DintegrationAll, Ideal, List)},
+     Key => {DintegrationAll, (DintegrationAll, Module, List), (DintegrationAll, LeftIdeal, List)},
      Headline => "integration modules of a D-module (extended version)",
      Usage => "N = DintegrationAll(M,w), NI = DintegrationAll(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
@@ -397,12 +397,12 @@ document {
 }
 
 document {
-     Key => {DintegrationComplex, (DintegrationComplex, Module, List), (DintegrationComplex, Ideal, List)},
+     Key => {DintegrationComplex, (DintegrationComplex, Module, List), (DintegrationComplex, LeftIdeal, List)},
      Headline => "derived integration complex of a D-module",
      Usage => "N = DintegrationComplex(M,w), NI = DintegrationComplex(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
@@ -425,14 +425,14 @@ document {
 
 
 document {
-     Key => {DintegrationClasses, (DintegrationClasses,ZZ,Module,List), (DintegrationClasses,Ideal,List), (DintegrationClasses,Module,List),
-      (DintegrationClasses,ZZ,Ideal,List)},
+     Key => {DintegrationClasses, (DintegrationClasses,ZZ,Module,List), (DintegrationClasses,LeftIdeal,List), (DintegrationClasses,Module,List),
+      (DintegrationClasses,ZZ,LeftIdeal,List)},
      Headline => "integration classes of a D-module",
      Usage => "N = DintegrationClasses(M,w), NI = DintegrationClasses(I,w), Ni = DintegrationClasses(i,M,w),
      NIi = DintegrationClasses(i,I,w), ",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "w" => List => "a weight vector",
 	  "i" => ZZ => "nonnegative"  
 	  },
