@@ -325,7 +325,7 @@ doc ///
     Text
         The set of torus-invariant cycles forms an abelian group
         under addition.  The basic operations arising from this structure,
-        including addition, substraction, negation, and scalar
+        including addition, subtraction, negation, and scalar
         multplication by integers, are available.
     Text
         We illustrate a few of the possibilities on one variety.

@@ -159,7 +159,7 @@ doc ///
         essentially the same as classFromTropical, but it is optimized to this particular setting. Note that
         the closure of V(I) inside X is a wonderful compactification of V(I).
     Text
-        It is possible to explicitely input the toric variety, and this allows to implicitly specify the building set
+        It is possible to explicitly input the toric variety, and this allows to implicitly specify the building set
         of the wonderful compactification.
     Text
         A remarkable example among these is the moduli space of n-marked genus 0 curves M_0,n.
