@@ -37,36 +37,11 @@ scan(core "augmentedAssignmentOperators", op -> (
 		"augmented assignment",
 		"installing augmented assignment methods"}}))
 
-doc ///
+doc replace("@KEYS@",
+    concatenate apply(core "augmentedAssignmentOperators", op ->
+	(newline, 4, "(symbol ", regexQuote toString op, ", Type)")), ///
   Key
-    "installing augmented assignment methods"
-    (symbol <<=, Type)
-    (symbol >>=, Type)
-    (symbol ||=, Type)
-    (symbol <==>=, Type)
-    (symbol |-=, Type)
-    (symbol ==>=, Type)
-    (symbol ===>=, Type)
-    (symbol |=, Type)
-    (symbol ^^=, Type)
-    (symbol &=, Type)
-    (symbol ..=, Type)
-    (symbol ..<=, Type)
-    (symbol -=, Type)
-    (symbol +=, Type)
-    (symbol ++=, Type)
-    (symbol **=, Type)
-    (symbol *=, Type)
-    (symbol \\=, Type)
-    (symbol /=, Type)
-    (symbol \=, Type)
-    (symbol %=, Type)
-    (symbol //=, Type)
-    (symbol @=, Type)
-    (symbol @@=, Type)
-    (symbol ^=, Type)
-    (symbol _=, Type)
-    (symbol ^**=, Type)
+    "installing augmented assignment methods"@KEYS@
   Description
     Text
       In most cases, the default behavior of @TO "augmented assignment"@ gives
@@ -110,7 +85,7 @@ doc ///
   SeeAlso
     "augmented assignment"
     "installing methods"
-///
+///)
 
 doc ///
   Key
