@@ -18,7 +18,20 @@ newPackage(
                 }
                 },
         Keywords => {"Commutative Algebra"},
-        PackageImports => {"Depth", "PrimaryDecomposition"}
+        PackageImports => {"Depth", "PrimaryDecomposition"},
+	Certification => {
+	    "journal name" => "Journal of Software for Algebra and Geometry",
+	    "journal URI" => "https://msp.org/jsag/",
+	    "article title" => "The GeometricDecomposability package for Macaulay2",
+	    "acceptance date" => "2024-01-23",
+	    "published article URI" => "https://msp.org/jsag/2024/14-1/p06.xhtml",
+	    "published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x06-GeometricDecomposability.m2",
+	    "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GeometricDecomposability.m2",
+	    "release at publication" => "d29b1075986232868a6460344ad708dbddbdd29b",
+	    "version at publication" => "1.2",
+	    "volume number" => "14",
+	    "volume URI" => "https://msp.org/jsag/2024/14-1/"
+	    }
         )
 
 export {
