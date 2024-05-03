@@ -163,7 +163,7 @@ doc ///
   Inputs
     C: ToricCycle
   Outputs
-    : NormalToricVariety
+    : Variety
   Description
     Text
         This function returns the underlying toric variety of
