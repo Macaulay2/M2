@@ -19,13 +19,13 @@ newPackage(
 		"journal URI" => "https://msp.org/jsag/",
 		"article title" => "EdgeIdeals: a package for (hyper)graphs",
 		"acceptance date" => "2009-06-27",
-		"published article URI" => "http://j-sag.org/Volume1/jsag-1-2009.pdf",
-		"published code URI" => "http://j-sag.org/Volume1/EdgeIdeals.m2",
+		"published article URI" => "https://msp.org/jsag/2009/1-1/p01.xhtml",
+		"published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x01-code.zip",
 		"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/EdgeIdeals.m2",
 		"release at publication" => "38e96fec660168d488ad0449f8632e6608cc9ede",
 		"version at publication" => "1.0.0",
 		"volume number" => "1",
-		"volume URI" => "http://j-sag.org/Volume1/"
+		"volume URI" => "https://msp.org/jsag/2009/1-1/"
 	},
 	Authors => {
 		{
