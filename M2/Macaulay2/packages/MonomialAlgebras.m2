@@ -20,7 +20,7 @@ newPackage(
 	     "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
 	     "version at publication" => "2.3",
 	     "volume number" => "5",
-	     "volume URI" => "http://j-sag.org/Volume5/"
+	     "volume URI" => "https://msp.org/jsag/2013/5-1/"
 	     },
 	CacheExampleOutput => false,
      	PackageExports => { "Polyhedra" },
