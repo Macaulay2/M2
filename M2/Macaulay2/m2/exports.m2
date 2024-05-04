@@ -1222,6 +1222,7 @@ export {
 	"uniform",
 	"uninstallAllPackages",
 	"uninstallPackage",
+	"union",
 	"unique",
 	"unsequence",
 	"unstack",

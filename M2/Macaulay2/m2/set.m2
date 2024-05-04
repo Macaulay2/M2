@@ -2,12 +2,14 @@
 
 needs "methods.m2"
 
+-----------------------------------------------------------------------------
+-- Tally and VirtualTally type declarations and basic constructors
+-----------------------------------------------------------------------------
+
 VirtualTally.synonym = "virtual tally"
 Tally.synonym = "tally"
-Set.synonym = "set"
 
 elements = method()
-elements Set := x -> keys x
 elements Tally := x -> splice apply(pairs x, (k,v) -> v:k)
 
 toString VirtualTally := x -> concatenate( "new ", toString class x, " from {", demark(", ", sort apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
@@ -70,25 +72,42 @@ Number * Tally := (i,v) -> if i<=0 then new class v from {} else applyValues(v,y
 sum VirtualTally := (w) -> sum(pairs w, (k,v) -> v * k)
 product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
 
-new Set from List := Set => (X,x) -> set x
+-----------------------------------------------------------------------------
+-- Set type declarations and basic constructors
+-----------------------------------------------------------------------------
 
-Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
+Set.synonym = "set"
+
+-- constructor
+new Set from List := Set => (X,x) -> set x -- compiled function
+elements Set := List => x -> keys x
+
+-- set operations
+union(Set, Set) := Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
+
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
 Set ** Set := Set => (x,y) -> combine(x,y,identity,(i,j)->i,)
-special := symbol special
+
 Set * Set := Set => (x,y) -> (
      if # x < # y 
      then set select(keys x, k -> y#?k)
      else set select(keys y, k -> x#?k)
      )
+intersect(Set, Set) := intersection(Set, Set) := Set => {} >> o -> (x,y) -> x*y
+
 Set - Set := Set => (x,y) -> applyPairs(x, (i,v) -> if not y#?i then (i,v))
 List - Set := List => (x,y) -> select(x, i -> not y#?i)
 Set - List := Set => (x,y) -> x - set y
+
+--
 sum Set := s -> sum toList s
 product Set := s -> product toList s
 
+-----------------------------------------------------------------------------
+-- Methods that use sets
+-----------------------------------------------------------------------------
+
 unique = method(Dispatch => Thing, TypicalValue => List)
-unique Sequence := x -> unique toList x
 unique VisibleList := x -> (
      -- old faster way: keys set x
      -- new way preserves order:

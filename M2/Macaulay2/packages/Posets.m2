@@ -103,7 +103,7 @@ export {
     "isomorphism",
   --"product",
     "removeIsomorphicPosets",
-    "union",
+  --"union",
     --
     -- Enumerators
     "booleanLattice",
@@ -626,9 +626,8 @@ removeIsomorphicPosets List := List => L -> (
         )
     )
 
-union = method()
-union (Poset, Poset) := Poset => (P, Q) -> poset(unique join(P.GroundSet, Q.GroundSet), unique join(P.Relations, Q.Relations), AntisymmetryStrategy => "rank")
-Poset + Poset := union
+union(Poset, Poset) :=
+Poset + Poset := Poset => (P, Q) -> poset(unique join(P.GroundSet, Q.GroundSet), unique join(P.Relations, Q.Relations), AntisymmetryStrategy => "rank")
 
 ------------------------------------------
 -- Enumerators

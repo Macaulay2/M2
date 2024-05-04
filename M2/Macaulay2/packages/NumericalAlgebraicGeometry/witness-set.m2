@@ -6,7 +6,7 @@
 export { 
     "isOn",
     "sample", 
-    "union", -- aka "|"
+    --"union", -- aka "|"
     "removeRedundantComponents"
     }
 
@@ -257,10 +257,8 @@ isSubset(WitnessSet,NumericalVariety) := (W,V) -> any(components V, W'->isSubset
 isSubset(NumericalVariety,NumericalVariety) := (A,B) -> all(components A, W->isSubset(W,B)) 
 NumericalVariety == NumericalVariety := (A,B) -> isSubset(A,B) and isSubset(B,A)
 
-union = method()
-union (NumericalVariety, NumericalVariety) := (A,B) -> new NumericalVariety from 
-  merge(new HashTable from A, new HashTable from B,(a,b)->a|b)
-NumericalVariety | NumericalVariety := union
+union(NumericalVariety, NumericalVariety) :=
+NumericalVariety | NumericalVariety := NumericalVariety => (A, B) -> merge(A, B, (a,b) -> a|b)
 
 removeRedundantComponents = method(Options=>{Tolerance=>null})
 removeRedundantComponents NumericalVariety := o -> V -> (
