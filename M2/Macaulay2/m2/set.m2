@@ -116,14 +116,6 @@ unique VisibleList := x -> (
 
 repeats = L -> #L - #unique L
 
--- we've been waiting to do this:
-binaryOperators = unique binaryOperators
-prefixOperators = unique prefixOperators
-postfixOperators = unique postfixOperators
-flexibleOperators = unique flexibleOperators
-fixedOperators = unique fixedOperators
-allOperators = unique allOperators
-
 isSubset(Set,Set) := Boolean => (S,T) -> all(S, (k,v) -> T#?k)
 
 isSubset(VisibleList,Set) := Boolean => (S,T) -> all(S, x -> T#?x)
@@ -172,6 +164,15 @@ partition(Function,VisibleList,VisibleList) := HashTable => (f,s,i) -> (
      new HashTable from apply(p, (k,v) -> (k,new class s from values v)))
 -----------------------------------------------------------------------------
 -- a first use of sets:
+
+-- TODO: move these somewhere more appropriate
+-- we've been waiting to do this:
+binaryOperators = unique toList binaryOperators
+prefixOperators = unique toList prefixOperators
+postfixOperators = unique toList postfixOperators
+flexibleOperators = unique toList flexibleOperators
+fixedOperators = unique toList fixedOperators
+allOperators = unique toList allOperators
 
 protect Flexible
 protect Binary
