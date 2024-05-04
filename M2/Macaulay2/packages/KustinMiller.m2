@@ -20,13 +20,13 @@ newPackage(
 	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Implementing the Kustin-Miller complex construction",
 	     "acceptance date" => "2012-05-07",
-	     "published article URI" => "http://j-sag.org/Volume4/jsag-2-2012.pdf",
-	     "published code URI" => "http://j-sag.org/Volume4/KustinMiller.m2",
+	     "published article URI" => "https://msp.org/jsag/2012/4-1/p02.xhtml",
+	     "published code URI" => "https://msp.org/jsag/2012/4-1/jsag-v4-n1-x02-code.zip",
 	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/KustinMiller.m2",
 	     "release at publication" => "a611bb9148103fa0c7908595cc979c66d210bb70",
 	     "version at publication" => "1.4",
 	     "volume number" => "4",
-	     "volume URI" => "http://j-sag.org/Volume4/"
+	     "volume URI" => "https://msp.org/jsag/2012/4-1/"
 	     }
         )
 
