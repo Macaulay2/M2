@@ -39,7 +39,7 @@ newPackage(
 	"journal URI" => "https://msp.org/jsag/",
 	"article title" => "Algorithms for computing mixed multiplicities, mixed volumes, and sectional Milnor numbers",
 	"acceptance date" => "2023-06-06",
-	"published article URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-p01-s.pdf",
+	"published article URI" => "https://msp.org/jsag/2023/13-1/p01.xhtml",
 	"published article DOI" => "https://doi.org/10.2140/jsag.2023.13.1",
 	"published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x01-MixedMultiplicity.m2",
 	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MixedMultiplicity.m2",
