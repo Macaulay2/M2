@@ -46,7 +46,7 @@ newPackage(
 	     "acceptance date" => "2023-09-14",
 	     "published article URI" => "https://msp.org/jsag/2024/14-1/p02.xhtml",
 	     "published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x02-InvariantRing.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/InvariantRing.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/InvariantRing.m2",
 	     "release at publication" => "d708862d93052a37b7f9ff1e584a9b57d1cb7870",
 	     "version at publication" => "2.0",
 	     "volume number" => "14",

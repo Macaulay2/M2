@@ -32,7 +32,7 @@ newPackage(
 	"acceptance date" => "2023-10-31",
 	"published article URI" => "https://msp.org/jsag/2024/14-1/p03.xhtml",
 	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x03-MultiplicitySequence.m2",
-	"repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiplicitySequence.m2",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiplicitySequence.m2",
 	"release at publication" => "6a750d5611ff9685a31e1eb4e176bb71b6842a58",
 	"version at publication" => "0.7",
 	"volume number" => "14",

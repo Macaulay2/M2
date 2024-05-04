@@ -19,13 +19,13 @@ newPackage(
 	Headline => "computations in graded Lie algebras",
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Software for doing computations in graded Lie algebras",
 	     "acceptance date" => "28 August 2020",
 	     "published article URI" => "https://msp.org/jsag/2021/11-1/p02.xhtml",
              "published article DOI" => "10.2140/jsag.2021.11.9",
 	     "published code URI" => "",
-     	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GradedLieAlgebras.m2",
+     	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GradedLieAlgebras.m2",
 	     "release at publication" => "f0a30a45ffbd70f81cc7b5dece281162b4919fdf",	    -- git commit number in hex
 	     "version at publication" => "3.0",
 	     "volume number" => "11",

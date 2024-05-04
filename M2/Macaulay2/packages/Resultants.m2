@@ -17,7 +17,7 @@ newPackage(
 	PackageExports => { "Elimination" },
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "A package for computations with classical resultants",
 	     "acceptance date" => "18 May 2018",
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p03.xhtml",
