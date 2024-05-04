@@ -29,7 +29,7 @@ newPackage(
 	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing free bases for projective modules",
 	     "acceptance date" => "2013-09-18",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/QuillenSuslin.m2",
 	     "published article URI" => "https://msp.org/jsag/2013/5-1/p05.xhtml",
 	     "published code URI" => "https://msp.org/jsag/2013/5-1/jsag-v5-n1-x05-code.zip",
 	     "release at publication" => "8a3b2962b97153977eeaf6f92b5f48e246dd8e69",	    -- git commit number in hex
