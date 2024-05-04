@@ -16,7 +16,7 @@ newPackage(
 	     "acceptance date" => "2013-04-07",
 	     "published article URI" => "https://msp.org/jsag/2013/5-1/p02.xhtml",
 	     "published code URI" => "https://msp.org/jsag/2013/5-1/jsag-v5-n1-x02-code.zip",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MonomialAlgebras.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MonomialAlgebras.m2",
 	     "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
 	     "version at publication" => "2.3",
 	     "volume number" => "5",

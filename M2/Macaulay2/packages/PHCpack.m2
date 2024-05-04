@@ -41,7 +41,7 @@ newPackage(
 	"acceptance date" => "2013-07-11",
 	"published article URI" => "http://www.j-sag.org/Volume5/jsag-4-2013.pdf",
 	"published code URI" => "http://www.j-sag.org/Volume5/PHCpack.m2",
-	"repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PHCpack.m2",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PHCpack.m2",
 	"release at publication" => "48d32ceffeeb807b23eee20a5c9c243ce085b3ef",
 	"version at publication" => "1.6",
 	"volume number" => "5",
