@@ -21,7 +21,7 @@ newPackage( "RationalMaps",
     PackageExports => {"FastMinors", "Varieties"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "RationalMaps, a package for Macaulay2",
 	 "acceptance date" => "17 July 2022",
 	 "published article URI" => "https://msp.org/jsag/2022/12-1/p03.xhtml",

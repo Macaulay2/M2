@@ -16,7 +16,7 @@ newPackage("DeterminantalRepresentations",
         Reload => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing symmetric determinantal representations",
 	     "acceptance date" => "5 December 2019",
 	     "published article URI" => "https://msp.org/jsag/2020/10-1/p02.xhtml",

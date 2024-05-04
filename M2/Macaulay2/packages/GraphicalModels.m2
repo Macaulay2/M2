@@ -60,7 +60,7 @@ newPackage(
      PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Graphical Models",
 	  "acceptance date" => "2013-03-05",
 	  "published article URI" => "http://j-sag.org/Volume5/jsag-1-2013.pdf",

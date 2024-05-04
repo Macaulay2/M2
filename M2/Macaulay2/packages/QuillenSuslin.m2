@@ -26,7 +26,7 @@ newPackage(
 	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing free bases for projective modules",
 	     "acceptance date" => "2013-09-18",
 	     "published article URI" => "http://www.j-sag.org/Volume5/jsag-5-2013.pdf",

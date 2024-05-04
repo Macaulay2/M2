@@ -11,7 +11,7 @@ newPackage(
     DebuggingMode => false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Linear truncations package for Macaulay2",
 	 "acceptance date" => "18 May 2022",
 	 "published article URI" => "https://msp.org/jsag/2022/12-1/p02.xhtml",

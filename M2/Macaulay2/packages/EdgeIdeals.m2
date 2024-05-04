@@ -16,7 +16,7 @@ newPackage(
 	PackageImports => {"GenericInitialIdeal","PrimaryDecomposition"},
 	Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-		"journal URI" => "http://j-sag.org/",
+		"journal URI" => "https://msp.org/jsag/",
 		"article title" => "EdgeIdeals: a package for (hyper)graphs",
 		"acceptance date" => "2009-06-27",
 		"published article URI" => "http://j-sag.org/Volume1/jsag-1-2009.pdf",

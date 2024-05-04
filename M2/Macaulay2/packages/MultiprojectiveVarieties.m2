@@ -22,7 +22,7 @@ newPackage(
     Reload => false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Computations with rational maps between multi-projective varieties",
 	 "acceptance date" => "31 August 2021",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p14.xhtml",

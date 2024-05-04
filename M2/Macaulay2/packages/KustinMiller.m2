@@ -17,7 +17,7 @@ newPackage(
     	DebuggingMode => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Implementing the Kustin-Miller complex construction",
 	     "acceptance date" => "2012-05-07",
 	     "published article URI" => "http://j-sag.org/Volume4/jsag-2-2012.pdf",

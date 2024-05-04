@@ -11,7 +11,7 @@ newPackage(
     Certification => {
 	 -- same article as for package LieTypes
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Software for computing conformal block divisors on bar M_0,n",
 	  "acceptance date" => "2 August 2018",
 	  "published article URI" => "https://msp.org/jsag/2018/8-1/p08.xhtml",

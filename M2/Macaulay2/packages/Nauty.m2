@@ -20,7 +20,7 @@ newPackage select((
     DebuggingMode => false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Nauty in Macaulay2",
 	 "acceptance date" => "2011-04-20",
 	 "published article URI" => "http://j-sag.org/Volume3/jsag-1-2011.pdf",

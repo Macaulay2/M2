@@ -24,7 +24,7 @@ newPackage(
     PackageExports => {"SemidefiniteProgramming"},
     Certification => {
         "journal name" => "The Journal of Software for Algebra and Geometry",
-        "journal URI" => "http://j-sag.org/",
+        "journal URI" => "https://msp.org/jsag/",
         "article title" => "Sums of squares in Macaulay2",
         "acceptance date" => "6 January 2020",
         "published article URI" => "https://msp.org/jsag/2020/10-1/p03.xhtml",

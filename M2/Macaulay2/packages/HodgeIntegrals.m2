@@ -5,7 +5,7 @@ newPackage(
    Date => "29 April 2010",
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	"journal URI" => "http://j-sag.org/",
+	"journal URI" => "https://msp.org/jsag/",
 	"article title" => "Intersection numbers on Mbar_{g,n}",
 	"acceptance date" => "2010-04-17",
 	"published article URI" => "http://j-sag.org/Volume2/jsag-1-2010.pdf",

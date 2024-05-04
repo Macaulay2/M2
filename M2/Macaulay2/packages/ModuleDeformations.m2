@@ -14,7 +14,7 @@ newPackage(
      PackageImports => { "Truncations" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Deformations of Matrix Factorisations with Macaulay2",
 	  "acceptance date" => "2010-04-17",
 	  "published article URI" => "http://j-sag.org/Volume2/jsag-2-2010.pdf",

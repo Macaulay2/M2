@@ -11,7 +11,7 @@ newPackage(
     PackageExports=>{"ExteriorIdeals"},
     Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
-         "journal URI" => "http://j-sag.org/",
+         "journal URI" => "https://msp.org/jsag/",
          "article title" => "ExteriorModules: a package for computing monomial modules over an exterior algebra",
          "acceptance date" => "3 June 2021",
          "published article URI" => "https://msp.org/jsag/2021/11-1/p08.xhtml",

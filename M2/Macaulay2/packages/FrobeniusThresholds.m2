@@ -34,7 +34,7 @@ newPackage( "FrobeniusThresholds",
     PackageExports => {"TestIdeals"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "The FrobeniusThresholds package for Macaulay2",
 	 "acceptance date" => "11 September 2020",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p04.xhtml",

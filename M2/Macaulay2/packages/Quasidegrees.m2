@@ -10,7 +10,7 @@ newPackage(
 	PackageImports => {"FourTiTwo", "Depth", "Polyhedra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing quasidegrees of A-graded modules",
 	     "acceptance date" => "26 February 2019",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p04.xhtml",

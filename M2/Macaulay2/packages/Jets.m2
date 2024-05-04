@@ -37,7 +37,7 @@ newPackage(
      DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Computing with jets",
 	  "acceptance date" => "20 October 2022",
 	  "published article URI" => "https://msp.org/jsag/2022/12-1/p06.xhtml",

@@ -14,7 +14,7 @@ newPackage(
 	  Date => "July 3, 2009",
 	  Certification => {
 	       "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	       "journal URI" => "http://j-sag.org/",
+	       "journal URI" => "https://msp.org/jsag/",
 	       "article title" => "Computing inclusions of Schur modules",
 	       "acceptance date" => "2009-06-27",
 	       "published article URI" => "http://j-sag.org/Volume1/jsag-2-2009.pdf",

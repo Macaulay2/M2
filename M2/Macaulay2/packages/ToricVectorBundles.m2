@@ -21,7 +21,7 @@ newPackage("ToricVectorBundles",
     Keywords => {"Toric Geometry"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Computations with equivariant toric vector bundles",
 	 "acceptance date" => "2010-06-15",
 	 "published article URI" => "http://j-sag.org/Volume2/jsag-3-2010.pdf",

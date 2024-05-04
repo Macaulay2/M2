@@ -13,7 +13,7 @@ newPackage("Polyhedra",
     AuxiliaryFiles => true,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Polyhedra: a package for computations with convex polyhedral objects",
 	 "acceptance date" => "2009-09-07",
 	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",

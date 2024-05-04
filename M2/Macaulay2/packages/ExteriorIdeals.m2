@@ -10,7 +10,7 @@ newPackage(
         DebuggingMode => false,
         Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
-         "journal URI" => "http://j-sag.org/",
+         "journal URI" => "https://msp.org/jsag/",
          "article title" => "ExteriorIdeals: a package for computing monomial ideals in an exterior algebra",
          "acceptance date" => "24 June 2018",
          "published article URI" => "https://msp.org/jsag/2018/8-1/p07.xhtml",

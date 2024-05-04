@@ -28,7 +28,7 @@ newPackage (
 	},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "DiffAlg: a Differential algebra package",
 	     "acceptance date" => "19 November 2018",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p02.xhtml",

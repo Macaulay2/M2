@@ -30,7 +30,7 @@ newPackage ("VirtualResolutions",
     DebuggingMode => false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "The virtual resolutions package for Macaulay2",
 	 "acceptance date" => "19 May 2020",
 	 "published article URI" => "https://msp.org/jsag/2020/10-1/p06.xhtml",

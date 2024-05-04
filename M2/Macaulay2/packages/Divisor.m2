@@ -11,7 +11,7 @@ newPackage( "Divisor",
      PackageImports => { "IntegralClosure", "RationalMaps" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Divisor Package for Macaulay2",
 	  "acceptance date" => "31 August 2018",
 	  "published article URI" => "https://msp.org/jsag/2018/8-1/p09.xhtml",

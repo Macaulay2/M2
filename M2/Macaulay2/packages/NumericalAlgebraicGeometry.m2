@@ -24,7 +24,7 @@ newPackage select((
      DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Numerical Algebraic Geometry",
 	  "acceptance date" => "2011-05-20",
 	  "published article URI" => "http://j-sag.org/Volume3/jsag-2-2011.pdf",

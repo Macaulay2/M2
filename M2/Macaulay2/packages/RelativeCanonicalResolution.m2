@@ -12,7 +12,7 @@ newPackage(
 	 Keywords => {"Commutative Algebra"},
 	 Certification => {
 	        "journal name" => "The Journal of Software for Algebra and Geometry",
-		"journal URI" => "http://j-sag.org/",
+		"journal URI" => "https://msp.org/jsag/",
 		"article title" => "The relative canonical resolution: Macaulay2-package, experiments and conjectures",
 		"acceptance date" => "28 August 2020",
 		"published article URI" => "https://msp.org/jsag/2021/11-1/p03.xhtml",

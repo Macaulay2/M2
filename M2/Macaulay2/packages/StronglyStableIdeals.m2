@@ -10,7 +10,7 @@ newPackage("StronglyStableIdeals",
 	   PackageImports => {"gfanInterface","Truncations"},
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry",
-		"journal URI" => "http://j-sag.org/",
+		"journal URI" => "https://msp.org/jsag/",
 		"article title" => "Strongly stable ideals and Hilbert polynomials",
 		"acceptance date" => "4 November 2018",
 		"published article URI" => "https://msp.org/jsag/2019/9-1/p01.xhtml",

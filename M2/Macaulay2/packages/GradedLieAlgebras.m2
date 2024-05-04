@@ -19,7 +19,7 @@ newPackage(
 	Headline => "computations in graded Lie algebras",
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Software for doing computations in graded Lie algebras",
 	     "acceptance date" => "28 August 2020",
 	     "published article URI" => "https://msp.org/jsag/2021/11-1/p02.xhtml",

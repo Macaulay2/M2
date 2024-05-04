@@ -28,7 +28,7 @@ newPackage(
      PackageExports => {"WeylGroups"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Free resolutions and modules with a semisimple Lie group action",
 	  "acceptance date" => "5 June 2015",
 	  "published article URI" => "https://msp.org/jsag/2015/7-1/p03.xhtml",

@@ -12,7 +12,7 @@ newPackage("Matroids",
 	DebuggingMode => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Matroids: a Macaulay2 package",
 	     "acceptance date" => "27 September 2018",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p03.xhtml",

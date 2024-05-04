@@ -53,7 +53,7 @@ newPackage(
     	DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Random Monomial Ideals: a Macaulay2 package",
 	     "acceptance date" => "11 April 2019",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p08.xhtml",

@@ -18,7 +18,7 @@ newPackage (
    DebuggingMode => false,
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	"journal URI" => "http://j-sag.org/",
+	"journal URI" => "https://msp.org/jsag/",
 	"article title" => "Simplicial Decomposability",
 	"acceptance date" => "2010-08-03",
 	"published article URI" => "http://www.j-sag.org/Volume2/jsag-5-2010.pdf",

@@ -29,7 +29,7 @@ newPackage(
 	Keywords => {"Representation Theory", "Homological Algebra"},
 	Certification => {
 	     "journal name" => "Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing Schur complexes",
 	     "acceptance date" => "21 August 2019",
 	     "published article URI" => "https://msp.org/jsag/2019/9-2/p02.xhtml",

@@ -36,7 +36,7 @@ newPackage(
   Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
-	"journal URI" => "http://j-sag.org/",
+	"journal URI" => "https://msp.org/jsag/",
 	"article title" => "Interfacing with PHCpack",
 	"acceptance date" => "2013-07-11",
 	"published article URI" => "http://www.j-sag.org/Volume5/jsag-4-2013.pdf",

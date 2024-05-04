@@ -26,7 +26,7 @@ newPackage(
     DebuggingMode=>false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Decomposable sparse polynomial systems",
 	 "acceptance date" => "25 March 2021",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p06.xhtml",

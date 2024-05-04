@@ -22,7 +22,7 @@ newPackage("ThreadedGB",
     Headline => "Compute a Groebner basis using the classical Buchberger with multiple threads",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Threaded Gröbner bases: a Macaulay2 package",
 	 "acceptance date" => "8 October 2021",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p12.xhtml",

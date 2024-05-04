@@ -18,7 +18,7 @@ newPackage(
 	PackageImports => {"Varieties"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "A Macaulay2 package for computations with rational maps",
 	     "acceptance date" => "11 June 2018",
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p06.xhtml",
