@@ -27,13 +27,13 @@ newPackage select((
 	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Numerical Algebraic Geometry",
 	  "acceptance date" => "2011-05-20",
-	  "published article URI" => "http://j-sag.org/Volume3/jsag-2-2011.pdf",
-	  "published code URI" => "http://j-sag.org/Volume3/NumericalAlgebraicGeometry.tar",
+	  "published article URI" => "https://msp.org/jsag/2011/3-1/p02.xhtml",
+	  "published code URI" => "https://msp.org/jsag/2011/3-1/jsag-v3-n1-x02-code.zip",
 	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
 	  "release at publication" => "c3a7ec33ee30195c2a8a15eef3456b2f27d73bf3",
 	  "version at publication" => "1.4",
 	  "volume number" => "3",
-	  "volume URI" => "http://j-sag.org/Volume3/"
+	  "volume URI" => "https://msp.org/jsag/2011/3-1/"
 	  }
      ), x -> x =!= null)
 
