@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
---	  TO "changes made for the next release",
+	  TO "changes made for the next release",
 	  TO "changes, 1.23",
 	  TO "changes, 1.22",
 	  TO "changes, 1.21",
@@ -38,6 +38,28 @@ document {
 	  TO "list of obsolete functions"
 	  }
      }
+
+document {
+    Key => "changes made for the next release",
+    UL {
+	LI { "packages that have been published and certified:",
+	    UL {
+		LI { star, " ", TO "CotangentSchubert::CotangentSchubert", ", a package by Paul Zinn-Justin for Cotangent Schubert calculus, has been published." },
+		LI { star, " ", TO "GeometricDecomposability::GeometricDecomposability", ", a package by Mike Cummings and Adam Van Tuyl to check whether ideals are geometrically vertex decomposable, has been published." },
+		LI { star, " ", TO "InvariantRing::InvariantRing", ", a package by Luigi Ferraro, Federico Galetto, Francesca Gandini, Hang Huang, Thomas Hawes, Matthew Mastroeni, and Xianglong Ni for invariants of group actions, has been published." },
+		LI { star, " ", TO "MultiplicitySequence::MultiplicitySequence", ", a package by Justin Chen, Youngsu Kim, and Jonathan Montaño for computing the multiplicity sequence of an ideal, has been published." },
+		LI { star, " ", TO "Probability::Probability", ", a package by Doug Torrance for basic probability functions, has been published." },
+		LI { star, " ", TO "TropicalToric::TropicalToric", ", a package by Alessio Borzì on tropical methods for toric intersection theory, has been published." }
+		}
+	    },
+	LI { "new packages:",
+	    UL {
+		LI { TO "TropicalToric::TropicalToric", ", a package by Alessio Borzì on tropical methods for toric intersection theory, has been added." },
+		LI { TO "VNumber::VNumber", ", a package by Antonino Ficarra and Emanuele Sgroi to compute v-number of homogeneous ideals and v-function of monomial ideals, has been added." }
+		}
+	    }
+	}
+    }
 
 document {
      Key => "changes, 1.23",

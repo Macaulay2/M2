@@ -24,7 +24,21 @@ newPackage("Probability",
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Algebraic Statistics"})
+    Keywords => {"Algebraic Statistics"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "The Probability package for Macaulay2",
+	"acceptance date" => "2024-01-23",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p07.xhtml",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x07-Probability.m2",
+	"repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Probability.m2",
+	"release at publication" => "fe3f536ed3c90d114452e31a24fc3a935a3b9ca3",
+	"version at publication" => "0.3",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
+    )
 
 ---------------
 -- ChangeLog --
