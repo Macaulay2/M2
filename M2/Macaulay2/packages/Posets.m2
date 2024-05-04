@@ -35,14 +35,14 @@ newPackage select((
 	     "journal URI" => "http://j-sag.org/",
 	     "article title" => "Partially ordered sets in Macaulay2",
 	     "acceptance date" => "5 June 2015",
-	     "published article URI" => "http://msp.org/jsag/2015/7-1/p02.xhtml",
+	     "published article URI" => "https://msp.org/jsag/2015/7-1/p02.xhtml",
 	     "published article DOI" => "https://dx.doi.org/10.2140/jsag.2015.7.9-15",
-	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
+	     "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
 	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
 	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
 	     "version at publication" => "1.1.2",
 	     "volume number" => "7",
-	     "volume URI" => "http://msp.org/jsag/2015/7-1/"
+	     "volume URI" => "https://msp.org/jsag/2015/7-1/"
 	     },
         ), x -> x =!= null)
 
