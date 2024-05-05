@@ -123,18 +123,30 @@ Node
  Key
   parallelApply
   (parallelApply, BasicList, Function)
+  [parallelApply, Strategy]
  Headline
-  apply a function to each element, using all cores
+  apply a function to each element in parallel
  Usage
   parallelApply(L,f)
  Inputs
   L:BasicList
   f:Function
+  Strategy => {Nothing, String}
  Outputs
-  :List
-    {\tt toList apply(L,f)}, with the result computed in parallel in chunks
+  :{List, BasicList}
+    If the @TO Strategy@ option is @TO null@, then this behaves like
+    @M2CODE "toList apply(L,f)"@, with the result computed in parallel in
+    chunks using all cores.
+    If it is the string @SAMP "\"raw\""@, then this behaves like
+    @M2CODE "apply(apply(L, e -> schedule(f, e)), taskResult)"@.
  Description
   Text
+    If the option @SAMP "Strategy"@ is given the string @SAMP "\"raw\""@, then
+    a separate task is created for each element of @VAR "L"@. @VAR "L"@ is not
+    split into chunks, @ TO "allowableThreads" @ is used unchanged, and the
+    result has the same class as @VAR "L"@.   Normally the default strategy
+    (@M2CODE "Strategy => null"@) is more efficient.
+
     See @ TO "parallel programming with threads and tasks" @ for more information and an
     important warning about thread safety.
 Node
@@ -482,29 +494,3 @@ Node
   "parallel programming with threads and tasks"
   cancelTask
 ///
-
--- not exported:
--- Node
---  Key
---   parallelApplyRaw
---  Headline
---   apply a function to each element in parallel
---  Usage
---   parallelApplyRaw(L,f)
---  Inputs
---   L:BasicList
---   f:Function
---  Outputs
---   :BasicList
---     {\tt apply(apply(L, e -> schedule(f, e)), taskResult)}
---  Description
---   Text
---     A separate task is created for each element of {\tt L}. {\tt L} is not split into chunks,
---     @ TO "allowableThreads" @ is used unchanged, and the result has the same class as {\tt L}.
---     Normally @ TO parallelApply @ is more efficient.
---
---     See @ TO "parallel programming with threads and tasks" @ for more information and an
---     important warning about thread safety.
---  SeeAlso
---   "parallel programming with threads and tasks"
---   parallelApply
