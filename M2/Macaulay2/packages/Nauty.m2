@@ -24,6 +24,7 @@ newPackage select((
 	 "article title" => "Nauty in Macaulay2",
 	 "acceptance date" => "2011-04-20",
 	 "published article URI" => "https://msp.org/jsag/2011/3-1/p01.xhtml",
+	 "published article DOI" => "10.2140/jsag.2011.3.1",
 	 "published code URI" => "https://msp.org/jsag/2011/3-1/jsag-v3-n1-x01-code.zip",
 	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Nauty.m2",
 	 "release at publication" => "ea719b4fd3b65bb35ebd0f10f356c7d53ba73b7d",

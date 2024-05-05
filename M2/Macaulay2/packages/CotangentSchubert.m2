@@ -18,6 +18,7 @@ newPackage(
 	"article title" => "The CotangentSchubert Macaulay2 package",
 	"acceptance date" => "2024-02-06",
 	"published article URI" => "https://msp.org/jsag/2024/14-1/p09.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.73",
 	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x09-CotangentSchubert.m2",
 	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CotangentSchubert.m2",
 	"release at publication" => "6a750d5611ff9685a31e1eb4e176bb71b6842a58",
