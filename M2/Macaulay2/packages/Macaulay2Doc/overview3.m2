@@ -247,13 +247,12 @@ document {
 	  },
      UL {
 	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes, or number of gigabytes followed by 'G', similarly for 'M', 'K'" },
-	  LI { "GC_MAXIMUM_HEAP_SIZE -- maximum collected heap size" },
+	  LI { "GC_MAXIMUM_HEAP_SIZE -- optional maximum collected heap size" },
 	  LI { "GC_FREE_SPACE_DIVISOR -- if set to a number D, then
                          we try to make sure that we allocate at least N/D bytes between collections, where N is twice the
                          number of traced bytes, plus the number of untraced bytes, plus a rough estimate of the root set
                          size.  Increasing its value will use less space but more collection time.  Decreasing it will
-                         appreciably decrease collection time at the expense of space.
-			 Macaulay2 sets the initial default value to 12." },
+                         appreciably decrease collection time at the expense of space." },
 	  LI { "GC_PRINT_STATS -- whether to turn on logging" },
 	  LI { "GC_PRINT_VERBOSE_STATS -- whether to turn on even more logging" },
 	  LI { "GC_DUMP_REGULARLY -- whether to generate a debugging dump on startup and during every collection; very verbose" },

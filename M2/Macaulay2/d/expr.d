@@ -47,7 +47,7 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
      new array(SymbolList) 
      len 8						    -- must be a power of 2, for our hashing to work
      do provide NULL,
-     0,uninitializedSpinLock);
+     0,newThreadRWLock());
 
 export dummyFrame := Frame(self,
      -1,						    -- negative frame id's are ignored and give warning messages
@@ -63,7 +63,9 @@ export globalFrame := Frame(self, 0, globalFramesize, true,
 	  nullE						    -- one value for dummySymbol
 	  ));
 export threadFrameID := 0;
-export threadFramesize := 0;
+header "struct atomic_field expr_threadFramesize;";
+import threadFramesize:atomicField;
+store(threadFramesize, 0);
 export threadLocal threadFrame  := Frame(self, threadFrameID, 0, true, Sequence());
 export enlarge(f:Frame):int := (
      n := f.valuesUsed;
@@ -74,8 +76,8 @@ export enlarge(f:Frame):int := (
 	       while true do provide nullE));
      n);
 export enlargeThreadFrame():Frame := (
-     if threadFramesize > length(threadFrame.values) then (
-	  threadFrame.values = new Sequence len 2 * threadFramesize + 1 do (
+     if load(threadFramesize) > length(threadFrame.values) then (
+	  threadFrame.values = new Sequence len 2 * load(threadFramesize) + 1 do (
 	       foreach value in threadFrame.values do provide value;
 	       while true do provide nullE));
      threadFrame);
@@ -91,6 +93,7 @@ export completions(s:string):array(string) := (
      v := newvarstringarray(6);
      d := globalDictionary;
      while (
+	  lockRead(d.symboltable.mutex);
 	  foreach bucket in d.symboltable.buckets do (
 	       b := bucket;
 	       while true do when b
@@ -99,6 +102,7 @@ export completions(s:string):array(string) := (
 		    t := q.word.name;
 		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then append(v,t);
 		    b = q.next; ));
+	  unlock(d.symboltable.mutex);
 	  d != d.outerDictionary) do d = d.outerDictionary;
      extract(v));
 export DictionaryList := {
@@ -167,8 +171,8 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  Class,parent,0,0,
 	  true,				  -- mutable by default; careful: other routines depend on this
 	  false,
-	  uninitializedSpinLock
-	  ); init(ht.mutex); ht);
+	  newThreadRWLock()
+	  ); ht);
 export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
        ht:=newHashTable(Class,parent);
        ht.hash=nextHash();
@@ -245,8 +249,8 @@ export thingClass := (
 	  -- enlarge/shrink code in objects.d that the number of buckets
 	  -- here (four) is a power of two
           self,self,0,nextHash(),
-          true,false, uninitializedSpinLock);
-	  init(ht.mutex); ht);
+          true,false, newThreadRWLock());
+	  ht);
 
 export hashTableClass := newHashTableWithHash(thingClass,thingClass);
 export mutableHashTableClass := newHashTableWithHash(thingClass,hashTableClass);

@@ -1148,9 +1148,18 @@ lengthFun(rhs:Code):Expr := (
      e := eval(rhs);
      when e
      is Error do e
-     is x:HashTable do toExpr(x.numEntries)
+     is x:HashTable do (
+	  if (x.Mutable) then lockRead(x.mutex);
+	  res := toExpr(x.numEntries);
+	  if (x.Mutable) then unlock(x.mutex);
+	  res)
      is x:Sequence do toExpr(length(x))
-     is dc:DictionaryClosure do toExpr(dc.dictionary.symboltable.numEntries)
+     is dc:DictionaryClosure do (
+	  table := dc.dictionary.symboltable;
+	  lockRead(table.mutex);
+	  res := toExpr(table.numEntries);
+	  unlock(table.mutex);
+	  res)
      is x:List do toExpr(length(x.v))
      is s:stringCell do toExpr(length(s.v))
      is n:Net do toExpr(length(n.body))

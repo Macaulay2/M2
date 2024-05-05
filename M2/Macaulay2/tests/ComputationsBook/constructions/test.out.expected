@@ -308,8 +308,8 @@ i30 : K=ZZ/13;
 i31 : R=K[x_0..x_6];
 
 i32 : time b=randomModule2ForDeg17CY(8,R);
-     -- Trial n. 759, k=8
      -- used 12.3878 seconds
+     -- Trial n. 759, k=8
 
               3      16
 o32 : Matrix R  <-- R

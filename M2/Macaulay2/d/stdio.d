@@ -53,17 +53,17 @@ export newFile(
 	     	       	        -- The text after this point may be combined with
 				-- subsequently printed nets.
         hadNet:bool,		-- whether a Net is present, in which case the
-	     	       	        -- buffer will be empty
+				-- buffer will be empty (actually just outbol == outindex)
 	nets:NetList,	        -- list of nets, to be printed after the outbuffer
         bytesWritten:int,       -- bytes written so far
 	lastCharOut:int,        -- when outbuffer empty, last character written, or -1 if none
         readline:bool,          -- input handled by readline()
-	fileThreadState:int     -- state of thread handling 
+	fileThreadMode:int      -- mode of thread sync handling
 ):file := ( 
 foss := newFileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut,false);
 --foss:= newDefaultFileOutputSyncState();
 m2f := newm2cfile(foss);
-Ccode(void,"M2File_SetThreadMode(",lvalue(m2f),",",fileThreadState,")");
+Ccode(void,"M2File_SetThreadMode(",lvalue(m2f),",",fileThreadMode,")");
 file(nextHash(), filename,pid,error,errorMessage,listener,listenerfd,connection,numconns,input,infd,inisatty,inbuffer,inindex,insize,eof,
 promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,newMutex,m2f)
 
@@ -87,10 +87,12 @@ export startFileOutput(o:file):void := (
 export endFileOutput(o:file):void := (
     Ccode(void,"M2File_EndOutput(",lvalue(o.cfile),")");
 );
-export setFileThreadState(o:file, state:int):void :=
+export setFileThreadMode(o:file, mode:int):void :=
 (
-	Ccode(void,"M2File_SetThreadMode(",lvalue(o.cfile),",state)")
+	Ccode(void,"M2File_SetThreadMode(",lvalue(o.cfile),",mode)")
 );
+export getFileThreadMode(o:file):int := (
+    Ccode(int,"M2File_GetThreadMode(", lvalue(o.cfile), ")"));
 
 export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
 export fileErrorMessage(o:file,msg:string):string := (
@@ -413,6 +415,7 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
      endFileOutput(o);
      NOERROR);
 
+-- Add a string to foss.outbuffer, flushing on overflow, and updating outbol for flushnets().
 simpleout(o:file,x:string):int := (
      foss := getFileFOSS(o);
      i := 0;						    -- bytes of x transferred so far
@@ -436,6 +439,7 @@ simpleout(o:file,x:string):int := (
      releaseFileFOSS(o);
      NOERROR);
 
+-- Transfer any foss.nets to outbuffer, flushing on overflow.
 flushnets(o:file):int := (
      foss := getFileFOSS(o);
      if foss.hadNet then (
@@ -786,24 +790,6 @@ export (o:file) << (x:uchar) : file := o << int(x);
 export (o:file) << (b:bool) : file := (
      o << if b then "true" else "false");
 
-digits(o:varstring,x:double,a:int,b:int):void := (
-     x = x + 0.5 * pow(10.,double(1-a-b));
-     if x >= 10. then (x = x/10.; a = a+1; b = if b==0 then 0 else b-1);
-     while a > 0 do (
-	  putdigit(o,int(x));
-	  x = 10. * (x - double(int(x)));
-	  a = a-1;
-	  );
-     o << '.';
-     lim := pow(10.,double(-b+1));
-     while b > 0 do (
-	  if x < lim then break;
-	  putdigit(o,int(x));
-	  x = 10. * (x - double(int(x)));
-	  lim = lim * 10.;
-	  b = b-1;
-	  ));
-
 export finite(x:double):bool := x==x && x-x == x-x;
 
 export isinf(x:double):bool := x==x && x-x != x-x;
@@ -812,45 +798,11 @@ export isnan(x:double):bool := x!=x;
 
 export tostring(x:bool):string := if x then "true" else "false";
 
-export tostring5(
-     x:double,						-- the number to format
-     s:int,					-- number of significant digits
-     l:int,					   -- max number leading zeroes
-     t:int,				    -- max number extra trailing digits
-     e:string			     -- separator between mantissa and exponent
-     ) : string := (
-     o := newvarstring(25);
-     if isinf(x) then return "infinity";
-     if isnan(x) then return "NotANumber";
-     if x==0. then return "0.";
-     if x<0. then (o << '-'; x=-x);
-     oldx := x;
-     i := 0;
-     if x >= 1. then (
-     	  until x < 10000000000. do ( x = x/10000000000.; i = i + 10 );
-     	  until x < 100000. do ( x = x/100000.; i = i + 5 );
-     	  until x < 100. do ( x = x/100.; i = i + 2 );
-     	  until x < 10. do ( x = x/10.; i = i + 1 );
-	  )
-     else (
-     	  until x >= 1./10000000000. do ( x = x*10000000000.; i = i - 10 );
-     	  until x >= 1./100000. do ( x = x*100000.; i = i - 5 );
-     	  until x >= 1./100. do ( x = x*100.; i = i - 2 );
-     	  until x >= 1. do ( x = x*10.; i = i - 1 );
-	  );
-     -- should rewrite this so the format it chooses is the one that takes the least space, preferring not to use the exponent when it's a tie
-     if i<0 then (
-	  if -i <= l 
-	  then digits(o,oldx,1,s-i-1)
-	  else (digits(o,x,1,s-1); o << e << tostring(i);))
-     else if i+1 > s then (
-	  if i+1-s <= t
-	  then digits(o,x,i+1,0)
-	  else (digits(o,x,1,s-1); o << e << tostring(i);))
-     else digits(o,x,i+1,s-i-1);
-     tostring(o));
-
-export tostringRR(x:double) : string := tostring5(x,6,5,5,"e");
+export tostringRR(x:double) : string := (
+    o := newstring(25);
+    Ccode(void, "snprintf((char *)", o, "->array, 25, \"%g\", ", x, ")");
+    Ccode(void, o, "->len = strlen((char *)", o, "->array)");
+    o);
 
 export (o:file) << (x:double) : file := o << tostringRR(x);
 
@@ -1018,29 +970,31 @@ export setIOSynchronized(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0
-	  then (setFileThreadState(stdIO,1); setFileThreadState(stdError,1); nullE)
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
+	  then (setFileThreadMode(stdIO,1); setFileThreadMode(stdError,1); nullE)
+	  else WrongNumArgs(0, 1))
+     is f:file do (setFileThreadMode(f, 1); nullE)
+     else WrongArg("a file or ()")
 );
 
 export setIOExclusive(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0
-	  then (setFileThreadState(stdIO,2); setFileThreadState(stdError,2); nullE)
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
+	  then (setFileThreadMode(stdIO,2); setFileThreadMode(stdError,2); nullE)
+	  else WrongNumArgs(0, 1))
+     is f:file do (setFileThreadMode(f, 2); nullE)
+     else WrongArg("a file or ()")
 );
 
 export setIOUnSynchronized(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0
-	  then (setFileThreadState(stdIO,0); setFileThreadState(stdError,0); nullE)
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
+	  then (setFileThreadMode(stdIO,0); setFileThreadMode(stdError,0); nullE)
+	  else WrongNumArgs(0, 1))
+     is f:file do (setFileThreadMode(f, 0); nullE)
+     else WrongArg("a file or ()")
 );
-
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d stdio.o "

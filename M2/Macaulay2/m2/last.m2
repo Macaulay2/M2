@@ -14,7 +14,7 @@ recursionLimit = 300
 -- initialize the trivial monoid, see rawMonoid()
 degreesRing 0;
 
-setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
+-- setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
 
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})

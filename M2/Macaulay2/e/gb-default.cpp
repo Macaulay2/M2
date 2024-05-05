@@ -574,9 +574,21 @@ void gbA::spair_text_out(buffer &o, spair *p)
  * S-pair heuristics *****
  *************************/
 
+#ifdef __has_feature	// a Clang and maybe gcc extension to determine compiler features
+    #if __has_feature(thread_sanitizer)
+	#define __SANITIZE_THREAD__	1	// gcc predefines this instead of __has_feature
+    #endif
+#endif
+
+#if __SANITIZE_THREAD__	// to avoid warnings; these variables are only used for diagnostics
+static std::atomic_ulong ncalls(0);
+static std::atomic_ulong nloops(0);
+static std::atomic_ulong nsaved_unneeded(0);
+#else
 static unsigned long ncalls = 0;
 static unsigned long nloops = 0;
 static unsigned long nsaved_unneeded = 0;
+#endif
 bool gbA::pair_not_needed(spair *p, gbelem *m)
 {
   /* Check the criterion: in(m) divides lcm(p).

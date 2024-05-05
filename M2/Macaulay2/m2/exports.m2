@@ -723,6 +723,7 @@ export {
 	"get",
 	"getChangeMatrix",
 	"getGlobalSymbol",
+	"getIOThreadMode",
 	"getNetFile",
 	"getNonUnit",
 	"getPrimeWithRootOfUnity",
@@ -981,6 +982,7 @@ export {
 	"pad",
 	"pager",
 	"pairs",
+	"parallelApply",
 	"parent",
 	"part",
 	"partition",
@@ -1185,7 +1187,7 @@ export {
 	"tex",
 	"texMath",
 	"then",
-	"threadVariable",
+	"threadLocal",
 	"throw",
 	"time",
 	"times",
@@ -1270,6 +1272,7 @@ export {
         "numrows" => "numRows",
         "res" => "resolution",
         "sub" => "substitute",
+	"threadVariable" => "threadLocal", -- TODO: eventually remove this?
 	-- unicode synonyms:
 	"ℚ" => "QQ",
 	"ℝ" => "RR",

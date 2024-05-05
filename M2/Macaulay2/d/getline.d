@@ -1,6 +1,6 @@
 --		Copyright 1994-2000 by Daniel R. Grayson
 use tokens;
-tokenbuf := newvarstring(100);
+threadLocal tokenbuf := newvarstring(100);
 export getLine(o:file):StringOrError := (
      ch := 0;
      while (

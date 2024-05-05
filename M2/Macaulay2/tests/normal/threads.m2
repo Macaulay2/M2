@@ -11,19 +11,16 @@ assert not isReady t
 
 -- check whether we can get the result of a thread's computation: a function
 t = schedule ( () -> 2+2 )
-while not isReady t do nothing
 assert( 4 === taskResult t )
 
 -- check whether we can get the result of a thread's computation: a function with an argument
 t = schedule ( x -> x+2, 2 )
-while not isReady t do nothing
 assert( 4 === taskResult t )
 
 -- check whether thread local variables have separate values in separate threads
 threadVariable aaa
 assert( aaa === null )
 r = apply(3, i -> schedule (() -> ( aaa = i ; sleep 3 ; aaa )))
-while not all(r,isReady) do sleep 1
 assert( {0,1,2} == taskResult \ r )
 assert( aaa === null )
 
@@ -45,6 +42,48 @@ print (currentTime()-c)
 -- getMaxAllowableThreads, which uses the value of maxNumThreads.  So we want the files system/*.o 
 -- to come before the files d/*.o on the linker command line.
 assert ( maxAllowableThreads != 0 )
+
+-- thread modes
+restoremode = i -> (
+    if i == 0 then setIOUnSynchronized()
+    else if i == 1 then setIOSynchronized()
+    else if i == 2 then setIOExclusive()
+    else error "unknown thread mode")
+
+origmode = getIOThreadMode()
+
+setIOExclusive()
+setIOUnSynchronized()
+assert Equation(getIOThreadMode(), 0)
+assert Equation(getIOThreadMode stdio, 0)
+assert Equation(getIOThreadMode stderr, 0)
+
+setIOSynchronized()
+assert Equation(getIOThreadMode(), 1)
+assert Equation(getIOThreadMode stdio, 1)
+assert Equation(getIOThreadMode stderr, 1)
+
+setIOExclusive()
+assert Equation(getIOThreadMode(), 2)
+assert Equation(getIOThreadMode stdio, 2)
+assert Equation(getIOThreadMode stderr, 2)
+
+restoremode origmode
+
+fn = temporaryFileName()
+f = fn << "foo" << close
+
+setIOExclusive f
+setIOUnSynchronized f
+assert Equation(getIOThreadMode f, 0)
+
+setIOSynchronized f
+assert Equation(getIOThreadMode f, 1)
+
+setIOExclusive f
+assert Equation(getIOThreadMode f, 2)
+
+removeFile fn
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
