@@ -20,7 +20,7 @@ newPackage("DeterminantalRepresentations",
 	     "article title" => "Computing symmetric determinantal representations",
 	     "acceptance date" => "5 December 2019",
 	     "published article URI" => "https://msp.org/jsag/2020/10-1/p02.xhtml",
-	     "published article DOI" => "https://doi.org/10.2140/jsag.2020.10.9",
+	     "published article DOI" => "10.2140/jsag.2020.10.9",
 	     "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x02-DeterminantalRepresentations.m2",
 	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/DeterminantalRepresentations.m2",
 	     "release at publication" => "f3c4030a3e66ae51f54ec24a89e1d5b1992a82eb",	    -- git commit number in hex

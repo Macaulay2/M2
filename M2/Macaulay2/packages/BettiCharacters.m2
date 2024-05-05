@@ -32,7 +32,7 @@ newPackage(
 	 "article title" => "Setting the scene for Betti characters",
 	 "acceptance date" => "2023-05-30",
 	 "published article URI" => "https://msp.org/jsag/2023/13-1/p04.xhtml",
-	 "published article DOI" => "https://doi.org/10.2140/jsag.2023.13.45",
+	 "published article DOI" => "10.2140/jsag.2023.13.45",
 	 "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x04-BettiCharacters.m2",
 	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/BettiCharacters.m2",
 	 "release at publication" => "a446af4424af33c06ab97694761a4d5bbc4d535f",
