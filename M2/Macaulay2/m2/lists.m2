@@ -253,7 +253,8 @@ deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not m
 parallelApplyRaw = (L, f) ->
      -- 'reverse's to minimize thread switching in 'taskResult's:
      reverse (taskResult \ reverse apply(L, e -> schedule(f, e)));
-parallelApply = (L, f) -> (	-- (BasicList, Function) -> List
+parallelApply = method()
+parallelApply(BasicList, Function) := (L, f) -> (
      n := #L;
      numThreads := min(n + 1, maxAllowableThreads);
      oldAllowableThreads := allowableThreads;

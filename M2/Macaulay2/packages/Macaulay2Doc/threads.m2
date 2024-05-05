@@ -122,6 +122,7 @@ Node
 Node
  Key
   parallelApply
+  (parallelApply, BasicList, Function)
  Headline
   apply a function to each element, using all cores
  Usage
