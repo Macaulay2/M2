@@ -1,29 +1,29 @@
-			   Macaulay 2
+			   Macaulay2
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
 
-	available from http://www.math.uiuc.edu/Macaulay2/
+	available from https://macaulay2.com/
 
 			 version @PACKAGE_VERSION@
 
 Welcome to Macaulay2!
 
-Macaulay 2 is a software system for algebraic geometry research.  Macaulay 2 is
+Macaulay2 is a software system for algebraic geometry research.  Macaulay2 is
 a software system for algebraic geometry research, written by Daniel R. Grayson
 and Michael E. Stillman with generous support from the National Science
 Foundation, for which we are grateful.  Based on Groebner bases, it provides
 algorithms for computing homological invariants of rings and modules.
 
-Macaulay 2 is copyright 1993-2009 by Daniel R. Grayson and Michael E. Stillman.
+Macaulay2 is copyright 1993-2024 by Daniel R. Grayson and Michael E. Stillman.
 We permit you to use it under the terms of the GNU General Public License,
 version 2, as published by the Free Software Foundation; see the file COPYING,
 or refer to
 
-	http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+	https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 
 On Debian-based systems the file COPYING is not provided.  Instead, refer to:
 
-        /usr/share/common-licenses/GPL-2
+	/usr/share/common-licenses/GPL-2
 
 This is free software.  There is no warranty; not even for merchantability or
 fitness for a particular purpose.
@@ -34,5 +34,5 @@ itself.  These include the following programs: 4ti2, normaliz, and gfan.
 
 The source code for the libraries, programs, or packages that we use is
 available on our web site at
-	
-	http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/
+
+	https://macaulay2.com/Downloads/OtherSourceCode/
