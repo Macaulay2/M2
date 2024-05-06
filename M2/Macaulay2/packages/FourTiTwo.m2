@@ -162,7 +162,7 @@ toricGraver Matrix := Matrix => (A ->(
      ))
 toricGraver (Matrix,Ring) := Ideal => ((A,S)->toBinomial(toricGraver(A),S))
 
-hilbertBasis = method(Options=> {InputType => null})
+hilbertBasis = method(Options=> {InputType => null, Precision => 32})
 hilbertBasis Matrix := Matrix => o -> (A ->(
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
@@ -172,7 +172,8 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("hilbert", rootPath | filename);
+     run4ti2("hilbert",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".hil")
      ))
 
