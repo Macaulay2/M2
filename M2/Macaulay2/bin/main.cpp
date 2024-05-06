@@ -57,7 +57,9 @@ void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
 
 static void * GC_start_performance_measurement_0(void *) {
+#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
   GC_start_performance_measurement();
+#endif
   return NULL;
 }
 
