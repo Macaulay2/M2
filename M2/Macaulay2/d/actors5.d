@@ -2068,6 +2068,9 @@ toExternalString(e:Expr):Expr := (
 setupfun("toExternalString0",toExternalString);
 
 header "
+#ifndef GC_get_full_gc_total_time /* added in bdwgc 8 */
+unsigned long GC_get_full_gc_total_time(void) {return 0;}
+#endif
 #define DEF_GC_FN0(s)	static void * s##_0(void *client_data) { (void) client_data; return (void *) (long) s(); }
 DEF_GC_FN0(GC_get_full_gc_total_time)
 DEF_GC_FN0(GC_get_free_space_divisor)
