@@ -504,6 +504,7 @@ doc ///
      	  hilbertBasis
           (hilbertBasis, Matrix)
 	  [hilbertBasis, InputType]
+	  [hilbertBasis, Precision]
      Headline
      	  calculates the Hilbert basis of the cone; invokes "hilbert" from 4ti2
      Usage
@@ -511,6 +512,9 @@ doc ///
      Inputs
       	  A:Matrix    
 	       defining the cone $\{z : Az = 0, z \ge 0 \}$
+	  Precision => {ZZ, String}
+	       32, 64, or "gmp", the precision of the integers used during the
+	       computation
      Outputs
      	  B:Matrix 
 	       whose rows form the Hilbert basis of the cone $\{z : Az = 0, z \ge 0 \}$
