@@ -252,8 +252,9 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
 		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
 		    " on ",          cert#"acceptance date", ", in the article ",
-		                HREF{cert#"published article URI",  cert#"article title"}, ".",
-		    " That version can be obtained",
+		                HREF{cert#"published article URI",  cert#"article title"},
+		    " (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
+		    "). That version can be obtained",
 		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
 		    " from ",   HREF{commit, SPAN{"the ", EM "Macaulay2", " source code repository"}},
 		    "."}}

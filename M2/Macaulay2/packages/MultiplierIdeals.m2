@@ -56,7 +56,7 @@ newPackage(
        "article title" => "Software for multiplier ideals",
        "acceptance date" => "5 June 2015",
        "published article URI" => "https://msp.org/jsag/2015/7-1/p01.xhtml",
-       "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.1",
+       "published article DOI" => "10.2140/jsag.2015.7.1",
        "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x01-MultiplierIdeals.m2",
        "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiplierIdeals.m2",
        "release at publication" => "a71903e3507b0384ece1ed43f815b9344258ed1a",

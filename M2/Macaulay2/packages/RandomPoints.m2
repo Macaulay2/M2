@@ -22,7 +22,7 @@ newPackage(
 		    "article title" => "Finding points on varieties with Macaulay2",
 		    "acceptance date" => "2023-05-08",
 		    "published article URI" => "https://msp.org/jsag/2023/13-1/p03.xhtml",
-		    "published article DOI" => "https://doi.org/10.2140/jsag.2023.13.33",
+		    "published article DOI" => "10.2140/jsag.2023.13.33",
 		    "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x03-RandomPoints.m2",
 		    "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RandomPoints.m2",
 		    "release at publication" => "ae946e7b4ba5d4d16f3cf8b3ddfef75086ba0559",

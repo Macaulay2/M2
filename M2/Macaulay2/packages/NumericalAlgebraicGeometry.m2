@@ -28,6 +28,7 @@ newPackage select((
 	  "article title" => "Numerical Algebraic Geometry",
 	  "acceptance date" => "2011-05-20",
 	  "published article URI" => "https://msp.org/jsag/2011/3-1/p02.xhtml",
+	  "published article DOI" => "10.2140/jsag.2011.3.5",
 	  "published code URI" => "https://msp.org/jsag/2011/3-1/jsag-v3-n1-x02-code.zip",
 	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
 	  "release at publication" => "c3a7ec33ee30195c2a8a15eef3456b2f27d73bf3",
