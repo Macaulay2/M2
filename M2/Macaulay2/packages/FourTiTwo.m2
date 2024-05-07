@@ -341,6 +341,7 @@ doc ///
           (toricGroebner, Matrix)
      	  (toricGroebner, Matrix, Ring)
      	  [toricGroebner, Weights]
+	  [toricGroebner, Precision]
      Headline
      	  calculates a Groebner basis of the toric ideal I_A, given A; invokes "groebner" from 4ti2
      Usage
@@ -350,6 +351,9 @@ doc ///
 	       whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A}.
      	  R:Ring
 	       ring with as least as many generators as the columns of {\tt A}
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
 	       whose rows give binomials that form a Groebner basis of the toric ideal of {\tt A}
