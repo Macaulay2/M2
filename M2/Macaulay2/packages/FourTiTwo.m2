@@ -108,7 +108,7 @@ toBinomial(Matrix,Ring) := (M,S) -> (
      ideal apply(entries M, toBinom)
      )
 
-toricMarkov = method(Options=> {InputType => null})
+toricMarkov = method(Options=> {InputType => null, Precision => 64})
 toricMarkov Matrix := Matrix => o -> (A) -> (
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
@@ -118,7 +118,8 @@ toricMarkov Matrix := Matrix => o -> (A) -> (
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("markov", rootPath | filename);
+     run4ti2("markov",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".mar")
      )
 toricMarkov(Matrix,Ring) := o -> (A,S) -> toBinomial(toricMarkov(A,o), S)
