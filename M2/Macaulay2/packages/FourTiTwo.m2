@@ -181,13 +181,14 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
      getMatrix(filename|".hil")
      ))
 
-rays Matrix := Matrix => (A ->(
+rays Matrix := Matrix => { Precision => 64 } >> o -> (A ->(
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("rays", rootPath | filename);
+     run4ti2("rays",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".ray")
      ))
 
