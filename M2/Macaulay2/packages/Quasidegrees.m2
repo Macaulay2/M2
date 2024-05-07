@@ -141,7 +141,7 @@ toGradedRing(Matrix,PolynomialRing) := (A,R) -> (
 toricIdeal = method()
 toricIdeal(Matrix,Ring) := (A,R) -> (
     m := product gens R;
-    saturate(toBinomial(transpose(syz(A)),R),m)	
+    saturate(sub(toBinomial(transpose(syz(A)),R),R),m)
     )
 
 
