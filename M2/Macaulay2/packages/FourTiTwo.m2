@@ -555,6 +555,9 @@ doc ///
      Inputs
       	  A:Matrix   
 	       defining the cone $\{z : Az = 0, z \ge 0 \}$
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
 	       whose rows are the extreme rays of the cone $\{z : Az = 0, z \ge 0 \}$
