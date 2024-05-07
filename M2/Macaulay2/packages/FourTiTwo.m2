@@ -197,14 +197,15 @@ rays Matrix := Matrix => { Precision => 64 } >> o -> (A ->(
 -- the way 4ti2 does this is you tell it the whatever.mar or whatever.cir file and it writes the degrees
 -- to the screen.
 -- On the other hand, it doesn't matter because you can ask M2 for those degrees directly! 
-toricGraverDegrees = method()
-toricGraverDegrees Matrix := Matrix => (A ->(
+toricGraverDegrees = method(Options => {Precision => 32})
+toricGraverDegrees Matrix := Matrix => (o -> A ->(
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("graver", rootPath | filename);
+     run4ti2("graver",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      ret := run4ti2("output", "--degrees " | rootPath | filename|".gra");
      print ret#"output"
      ))
