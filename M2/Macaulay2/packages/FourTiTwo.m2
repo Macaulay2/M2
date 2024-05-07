@@ -153,17 +153,18 @@ toricCircuits Matrix := Matrix => (o -> A ->(
      getMatrix(filename|".cir")
      ))
 
-toricGraver = method()
-toricGraver Matrix := Matrix => (A ->(
+toricGraver = method(Options => {Precision => 32})
+toricGraver Matrix := Matrix => (o -> A ->(
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("graver -q ", rootPath | filename);
+     run4ti2("graver",
+	 "-q -p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".gra")
      ))
-toricGraver (Matrix,Ring) := Ideal => ((A,S)->toBinomial(toricGraver(A),S))
+toricGraver (Matrix,Ring) := Ideal => (o -> (A,S)->toBinomial(toricGraver(A),S))
 
 hilbertBasis = method(Options=> {InputType => null, Precision => 32})
 hilbertBasis Matrix := Matrix => o -> (A ->(
