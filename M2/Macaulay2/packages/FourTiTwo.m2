@@ -124,7 +124,7 @@ toricMarkov Matrix := Matrix => o -> (A) -> (
      )
 toricMarkov(Matrix,Ring) := o -> (A,S) -> toBinomial(toricMarkov(A,o), S)
 
-toricGroebner = method(Options=>{Weights=>null})
+toricGroebner = method(Options=>{Weights=>null, Precision => 64})
 toricGroebner Matrix := o -> (A) -> (
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
@@ -135,7 +135,8 @@ toricGroebner Matrix := o -> (A) -> (
 	  cost := concatenate apply(o.Weights, x -> (x|" "));
 	  (filename|".cost") << "1 " << #o.Weights << endl << cost << endl  << close;
 	  );
-     run4ti2("groebner", rootPath | filename);
+     run4ti2("groebner",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".gro")
      )
 toricGroebner(Matrix,Ring) := o -> (A,S) -> toBinomial(toricGroebner(A,o), S)
