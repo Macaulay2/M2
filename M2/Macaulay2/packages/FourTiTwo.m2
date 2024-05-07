@@ -444,6 +444,7 @@ doc ///
      	  toricGraver
           (toricGraver, Matrix)
      	  (toricGraver, Matrix, Ring)
+	  [toricGraver, Precision]
      Headline
      	  calculates the Graver basis of the toric ideal; invokes "graver" from 4ti2
      Usage
@@ -453,6 +454,9 @@ doc ///
 	       whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A}
 	  R:Ring
 	       polynomial ring in which the toric ideal $I_A$ should live
+	  Precision => {ZZ, String}
+	       32, 64, or "gmp", the precision of the integers used during the
+	       computation
      Outputs
      	  B:Matrix 
 	       whose rows give binomials that form the Graver basis of the toric ideal of {\tt A}, or
