@@ -484,6 +484,7 @@ doc ///
      Key
      	  toricGraverDegrees
           (toricGraverDegrees, Matrix)
+	  [toricGraverDegrees, Precision]
      Headline
      	  displays the degrees of all Graver basis elements for the toric ideal I_A
      Usage
@@ -491,6 +492,9 @@ doc ///
      Inputs
       	  A:Matrix    
 	       whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A}
+	  Precision => {ZZ, String}
+	       32, 64, or "gmp", the precision of the integers used during the
+	       computation
      Description
      	  Text
 	       Equivalent to "output --degrees foo.gra" in 4ti2.
