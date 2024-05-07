@@ -565,6 +565,7 @@ doc ///
      Key
      	  toricCircuits
           (toricCircuits, Matrix)
+	  [toricCircuits, Precision]
      Headline
      	  calculates the circuits of the toric ideal; invokes "circuits" from 4ti2
      Usage
@@ -572,6 +573,9 @@ doc ///
      Inputs
       	  A:Matrix    
                whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A} 
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
 	       whose rows form the circuits of A
