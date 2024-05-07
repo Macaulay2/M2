@@ -380,6 +380,7 @@ doc ///
           (toricMarkov, Matrix)
 	  (toricMarkov, Matrix, Ring)
 	  [toricMarkov, InputType]
+	  [toricMarkov, Precision]
      Headline
      	  calculates a generating set of the toric ideal I_A, given A; invokes "markov" from 4ti2
      Usage
@@ -393,6 +394,9 @@ doc ///
 	       which is the string "lattice" if rows of {\tt A} specify a lattice basis
 	  R:Ring
 	       polynomial ring in which the toric ideal $I_A$ should live
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
 	       whose rows form a Markov Basis of the lattice $\{z {\rm integral} : A z = 0\}$
