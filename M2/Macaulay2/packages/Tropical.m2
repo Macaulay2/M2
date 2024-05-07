@@ -726,7 +726,7 @@ convertToPolymake = (T) ->(
 
 --functions to get stuff from fans and tropical cycles
 
-rays TropicalCycle:= T->( rays fan T)
+rays TropicalCycle:= {} >> o -> T->( rays fan T)
 
 cones (ZZ,TropicalCycle):= (i,T)->( cones(i,fan T))
 

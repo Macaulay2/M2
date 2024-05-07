@@ -1246,7 +1246,7 @@ rank ToricVectorBundle := T -> T#"rank of the vector bundle"
 -- PURPOSE : Giving the rays of the underlying Fan of a toric vector bundle
 --   INPUT : 'tvb',  a TorcVectorBundle
 --  OUTPUT : 'L',  a List containing the rays of the Fan underlying the bundle
-rays ToricVectorBundle := tvb -> raySortOfFan tvb#"ToricVariety"
+rays ToricVectorBundle := {} >> o -> tvb -> raySortOfFan tvb#"ToricVariety"
 
 
 -- PURPOSE : Computing the 'l'-th symmetric power of a Toric Vector Bundle

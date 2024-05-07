@@ -433,7 +433,7 @@ fan NormalToricVariety := Fan => X -> (
 -- Basic attributes and properties
 ------------------------------------------------------------------------------
 -- The method 'rays' is defined in 'Polyhedra'
-rays NormalToricVariety := List => X -> X.rays
+rays NormalToricVariety := List => {} >> o -> X -> X.rays
 max  NormalToricVariety := List => X -> X.max
 dim NormalToricVariety := ZZ => (cacheValue symbol dim) (X -> #(rays X)#0)
 
