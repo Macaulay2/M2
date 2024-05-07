@@ -141,14 +141,15 @@ toricGroebner Matrix := o -> (A) -> (
      )
 toricGroebner(Matrix,Ring) := o -> (A,S) -> toBinomial(toricGroebner(A,o), S)
 
-toricCircuits = method()
-toricCircuits Matrix := Matrix => (A ->(
+toricCircuits = method(Options => {Precision => 64})
+toricCircuits Matrix := Matrix => (o -> A ->(
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("circuits", rootPath | filename);
+     run4ti2("circuits",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".cir")
      ))
 
