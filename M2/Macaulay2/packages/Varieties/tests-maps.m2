@@ -480,7 +480,37 @@ TEST ///
 
 TEST ///
   -- tests for cotangentSurjection
-  S = QQ[x_0..x_3]
+  S = QQ[x,y,z,w]
   P = Proj S
-  Y = Proj(R = quotient minors(2, matrix{{x_0..x_2},{x_1..x_3}}))
+  I = ideal(x*w-y*z)
+  R = S/I
+  X = Proj R
+  f = cotangentSurjection X
+  assert isWellDefined f
+  assert(prune ker f == OO_X(-2))
+
+  use S
+  J = minors(2,matrix{{x,y,z},{y,z,w}})
+  R = S/J
+  X = Proj R
+  f = cotangentSurjection X
+  assert isWellDefined f
+  assert(first isIsomorphic(prune ker f, sheaf(J/J^2**R)))
+///
+
+
+TEST ///
+  -- tests for embeddedToAbstract
+  S = (ZZ/17)[x,y,z]
+  I = ideal(x^5+y^5+z^5)
+  X = Proj(S/I)
+  assert not isSurjective embeddedToAbstract(X)
+///
+
+///
+  -- Slow test! Use this as benchmark to speed things up or only run it occasionally
+  S = (ZZ/17)[x,y,z,w]
+  I = ideal(x^4+y^4+z^4+w^4)
+  X = Proj(S/I)
+  assert(rank embeddedToAbstract(X) == 19)
 ///

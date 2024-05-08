@@ -8,6 +8,7 @@ export {
 --  "yonedaSheafExtension'",
     "cotangentSurjection",
     "eulerSequence",
+    "embeddedToAbstract",
     }
 
 -----------------------------------------------------------------------------
@@ -655,6 +656,8 @@ CoherentSheaf ^ Array := SheafMap => (F, v) -> (
 -- Common maps and complexes of sheaves
 -----------------------------------------------------------------------------
 
+-- TODO: Beilinson resolution of the diagonal for PP^n
+
 eulerSequence = method()
 -- TODO: should return a complex of sheaves
 eulerSequence ProjectiveVariety := Sequence => X -> (
@@ -663,16 +666,20 @@ eulerSequence ProjectiveVariety := Sequence => X -> (
     sheaf_X vars(S := ring X), sheaf_X inducedMap(source vars S, ker vars S))
 
 cotangentSurjection = method()
-cotangentSurjection ProjectiveVariety := SheafMap => X -> (
+cotangentSurjection ProjectiveVariety := SheafMap => (cacheValue symbol cotangentSurjection) (X -> (
     -- Given a projective variety X \subset PP^n,
     -- returns the surjection Omega_P^n|X -> Omega_X
     OmegaX := cotangentSheaf(X, MinimalGenerators => false);
     OmegaPX := source last eulerSequence(X);
     if gens module OmegaX != gens module OmegaPX then error "different generators";
     p := (sheaf inducedMap(coker relations module OmegaX, ambient module OmegaX)) * inducedMap(ambient OmegaPX, OmegaPX);
-    inducedMap(image p, source p))
+    inducedMap(image p, source p)))
 
--- TODO: Beilinson resolution of the diagonal for PP^n
+embeddedToAbstract = method()
+embeddedToAbstract(ProjectiveVariety) := Matrix => (cacheValue symbol embeddedToAbstract) (X -> (
+     g := dual cotangentSurjection X;
+     h := inducedMap(coker g, target g);
+     connectingExtMap(0, OO_X^1, h, LengthLimit=>2)))
 
 -----------------------------------------------------------------------------
 -- Tests
