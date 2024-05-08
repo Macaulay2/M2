@@ -77,6 +77,7 @@ prune dual canonicalBundle X === OO_X(3)
 
 -- add tests for sheaves on Spec k
 -- TODO: define f^# for the map on SheafOfRings?
+-- TODO: define M^~ for sheafification?
 
 -- TODO: ^++ for direct sums
 -- TODO: maps of sheaves?

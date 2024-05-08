@@ -167,9 +167,9 @@ document {
     }
 
 document {
-    Key => {(sheaf, Module),(symbol^~, Module)},
+    Key => {(sheaf, Module),(symbol ~, Module)},
     Headline => "make a coherent sheaf",
-    Usage => "sheaf M\nM^~",
+    Usage => "sheaf M\nM~",
     Inputs => {"M" => "homogeneous" },
     Outputs => {{ "the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M" }},
     EXAMPLE lines ///
@@ -177,21 +177,21 @@ document {
       X = Proj R
       M = R^{1,2,3}
       sheaf M
-      M^~
+      M~
     ///
     }
 
 document {
-    Key => {(sheaf, Ring),(symbol^~, Ring)},
+    Key => {(sheaf, Ring),(symbol ~, Ring)},
     Headline => "make a coherent sheaf of rings",
-    Usage => "sheaf R\nR^~",
+    Usage => "sheaf R\nR~",
     Inputs => {"R"},
     Outputs => {{"the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M"}},
     EXAMPLE lines ///
       R = QQ[x,y,z];
       X = Proj R
       sheaf R
-      R^~
+      R~
     ///
     }
 
@@ -412,7 +412,7 @@ document {
      EXAMPLE lines ///
 	  I = ideal(a^2,b^3,c^4,d^7)
      	  X = Proj R
-	  J = I^~
+	  J = (module I)~
 	  minimalPresentation J
      ///,
 *-
