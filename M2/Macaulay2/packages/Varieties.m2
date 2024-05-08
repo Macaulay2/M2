@@ -289,6 +289,10 @@ sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
 sheaf Ideal := Ideal^~ := CoherentSheaf =>     I  -> sheaf(variety ring I, module I)
 sheaf(Variety, Ideal)  := CoherentSheaf => (X, I) -> sheaf(X,              module I)
 
+-- TODO: remove by M2 1.25
+tildeWarn = true
+Thing~ := x -> (if tildeWarn then (tildeWarn = false; printerr "Note: M~ is deprecated; use M^~ or sheaf instead."); x^~)
+
 OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,     OO, class X), (OO, X)),
      argument  => X -> applyMethod((symbol SPACE, OO, class X), (OO, X)),
