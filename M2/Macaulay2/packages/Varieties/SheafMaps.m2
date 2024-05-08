@@ -64,6 +64,7 @@ sheaf(Variety, Matrix)     := SheafMap => (X, phi)    -> map(sheaf_X target phi,
 sheaf(Variety, Matrix, ZZ) := SheafMap => (X, phi, d) -> map(sheaf_X target phi, sheaf_X source phi,
     truncate(d, phi, MinimalGenerators => false), d)
 
+-- TODO: remove by M2 1.25
 sheafMapWarn = true
 sheafMap = x -> (if sheafMapWarn then (sheafMapWarn = false; printerr "Note: sheafMap is deprecated; use sheaf instead."); sheaf x)
 
