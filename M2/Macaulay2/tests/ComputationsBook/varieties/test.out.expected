@@ -333,12 +333,12 @@ o47 = | x3y6 x7y4 x2y9 x2y4z5 x11y2 xy12 x6y2z5 xy7z5 xy2z10 x15 y15 x10z5 y10z5
               1      16
 o47 : Matrix R  <-- R
 
-i48 : set flatten entries gens M - set flatten entries C.dd_1
+i48 : flatten entries gens M - set flatten entries C.dd_1
 
-            6 7   10 5   5 5 5   5 10
-o48 = set {x y , x  y , x y z , x y  }
+        6 7   5 5 5   5 10   10 5
+o48 = {x y , x y z , x y  , x  y }
 
-o48 : Set
+o48 : List
 
 i49 : C.dd_2
 
