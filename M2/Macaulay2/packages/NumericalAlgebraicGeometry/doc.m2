@@ -1101,7 +1101,42 @@ doc ///
 	G = F^{0,2}
     	gateMatrix G	
     ///
-    
+
+doc ///
+    Key
+      (polySystem, GateSystem, PolynomialRing)
+    Headline
+      classical polynomial system associated to a gate system
+    Usage
+      F = polySystem(G,R)
+    Inputs
+      G:
+      R:
+    Outputs
+      F: PolySystem
+    Description
+      Text
+        Given a gate system and a polynomial ring,
+	this function constructs a classical (represented via M2 polynomial map) polynomial system.
+      Example
+        variables = declareVariable \ {x,y}
+	G = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2},{x^2+2*y-3}})
+	R = CC[X,Y]
+	F = polySystem(G,R)
+	evaluate(F,matrix{{1,2}})
+	evaluate(G,matrix{{1,2}})
+      Text
+        The ring is expected to be of the form {\tt K[x_1..x_n]} or {\tt K[a_1..a_m][x_1..x_n]}.
+	In the latter case, the gate system is expected to take {\tt m} parameters.  
+      Example
+        variables = declareVariable \ {x,y}
+        params = declareVariable \ {a,b,c}
+	G = gateSystem(matrix{params}, matrix{variables}, matrix{{x*y-1},{a*x^2+b*y^2-c}})
+	R = CC[A,B,C][X,Y]
+	F = polySystem(G,R)
+	equations F
+///
+
 undocumented {
     (toExternalString,GateSystem),
     (evaluateJacobian,GateSystem,Matrix),
