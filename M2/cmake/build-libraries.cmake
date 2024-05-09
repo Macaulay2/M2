@@ -1022,8 +1022,8 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.10.1/normaliz-3.10.1.tar.gz
-  URL_HASH          SHA256=365e1d1e2a338dc4df1947a440e606bb66dd261307e617905e8eca64eaafcf6e
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.10.2/normaliz-3.10.2.tar.gz
+  URL_HASH          SHA256=0f649a8eae5535c18df15e8d35fc055fd0d7dbcbdd451e8876f4a47061481f07
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
