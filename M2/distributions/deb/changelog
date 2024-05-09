@@ -106,3 +106,5 @@ macaulay2 (1.23) stable; urgency=low
 macaulay2 (1.23.0.1) stable; urgency=low
   * release version 1.23.0.1
  -- Daniel R Grayson <dan@math.uiuc.edu>  Wed,  15 Feb 2023 09:50:25 -0500
+macaulay2 (1.24.05) stable; urgency=low
+ -- Doug Torrance <dtorrance@debian.org>  Thu, 09 May 2024 14:48:26 -0400
