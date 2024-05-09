@@ -335,8 +335,8 @@ o47 : Matrix R  <-- R
 
 i48 : set flatten entries gens M - set flatten entries C.dd_1
 
-            5 5 5   5 10   6 7   10 5
-o48 = set {x y z , x y  , x y , x  y }
+            6 7   10 5   5 5 5   5 10
+o48 = set {x y , x  y , x y z , x y  }
 
 o48 : Set
 

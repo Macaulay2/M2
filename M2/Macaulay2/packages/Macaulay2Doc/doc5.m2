@@ -241,7 +241,9 @@ document {
      }
 
 document { 
-     Key => (symbol +, Set, Set),
+     Key => {
+	 (union, Set, Set),
+	 (symbol +, Set, Set)},
      Headline => "set union",
      Usage => "x + y",
      Inputs => {
@@ -253,6 +255,7 @@ document {
 	  },
      EXAMPLE {
 	  "set{a,b,c} + set{a,d,f}",
+	  "union(set{a,b,c}, set{a,d,f}, set{a,c,e})",
 	  },
      PARA {
 	  "The function ", TT "sum", " can be used to form the union of a list of sets, but this can be slow for long lists."
@@ -265,8 +268,11 @@ document {
      }
 
 document {
-     Key => (symbol *, Set, Set),
-     Headline => "intersection of sets",
+     Key => {
+	 (intersection, Set, Set),
+	 (intersect, Set, Set),
+	 (symbol *, Set, Set)},
+     Headline => "set intersection",
      Usage => "x * y",
      Inputs => {
 	  "x",
@@ -276,6 +282,7 @@ document {
 	  {"the intersection of ", TT "x", " and ", TT "y"}
 	  },
      EXAMPLE "set {1,2,3} * set {2,3,4}",
+     EXAMPLE "intersect(set{1,2,3}, set{2,3,4}, set{2,4,6})",
      SeeAlso => {Set}
      }
 

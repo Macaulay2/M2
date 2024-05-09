@@ -11,6 +11,7 @@ rays = method(Options => true)
 
 decompose = method(Options => true)
 
+union = method(Binary => true)
 intersect = method(Options => true, Binary => true) -- an associative binary method
 intersection = method(Options => true)
 

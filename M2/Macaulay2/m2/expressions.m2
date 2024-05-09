@@ -1296,7 +1296,7 @@ texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
-expression Set := x -> Adjacent {set, expression (sortByName keys x)}
+expression Set := x -> Adjacent {set, expression keys x}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := texMath @@ expression
