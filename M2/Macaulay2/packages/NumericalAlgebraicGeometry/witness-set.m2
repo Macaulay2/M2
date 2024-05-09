@@ -22,7 +22,8 @@ polySystem WitnessSet := W->if W.cache.?SolutionSystem then W.cache.SolutionSyst
     	)
 
 check WitnessSet := o -> W -> for p in W.Points do 
-if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance then error "check failed" --!!!
+if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance
+then error "check failed" -- !!! should we check this differently: e.g., Newton method convergence?
 
 randomSlice = method()
 randomSlice (ZZ,ZZ,Ring) := (d,n,C) -> (randomUnitaryMatrix n)^(toList(0..d-1)) | random(C^d,C^1)   
