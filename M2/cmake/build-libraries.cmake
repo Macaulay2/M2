@@ -986,8 +986,8 @@ set(nauty_BINARIES
   genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig newedgeg pickg
   planarg ranlabg shortg showg subdivideg twohamg vcolg watercluster2)
 ExternalProject_Add(build-nauty
-  URL               ${M2_SOURCE_URL}/nauty27b11.tar.gz
-  URL_HASH          SHA256=5d52211cec767d8d8e43483d96202be235f85696d1373c307291273463c812fa
+  URL               https://pallini.di.uniroma1.it/nauty2_8_8.tar.gz
+  URL_HASH          SHA256=159d2156810a6bb240410cd61eb641add85088d9f15c888cdaa37b8681f929ce
   PREFIX            libraries/nauty
   SOURCE_DIR        libraries/nauty/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
