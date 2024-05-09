@@ -960,7 +960,7 @@ ExternalProject_Add(build-nauty
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
+_ADD_COMPONENT_DEPENDENCY(libraries nauty "" NAUTY_FOUND)
 
 
 # https://www.normaliz.uni-osnabrueck.de/
