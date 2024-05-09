@@ -10,7 +10,7 @@
 # Others, like TBB::tbb, FFI::ffi, and Boost::regex, are linked as imported libraries in those files.
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
+set(LIBRARIES_LIST MPSOLVE FROBBY NAUTY FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -116,6 +116,7 @@ find_package(GMP	6.0.0 REQUIRED)
 #   ntl		Victor Shoup's Number Theory Library	(needs gmp, mpfr)
 #   flint	Fast Library for Number Theory		(needs gmp, mpfr, ntl)
 #   factory	Multivariate Polynomal Package		(needs gmp, mpfr, ntl, flint)
+#   Nauty	automorphism groups of graphs
 #   frobby	Computations With Monomial Ideals	(needs gmp)
 #   cddlib	Double Description Method of Motzkin	(needs gmp)
 #   msolve	Multivariate polynomial system solver	(needs gmp, mpfr, flint)
@@ -133,6 +134,7 @@ find_package(NTL       10.5.0)
 find_package(Flint	2.6.0)
 find_package(Factory	4.2.0)
 find_package(MPSolve	3.2.0)
+find_package(Nauty	2.7.0)
 # TODO: add minimum version checks
 find_package(MSolve	0.4.0)
 find_package(Frobby	0.9.0)
@@ -198,7 +200,6 @@ find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
-find_program(NAUTY	NAMES	dreadnaut nauty-dreadnaut)
 find_program(TOPCOM	NAMES	checkregularity topcom-checkregularity)
 # NOTE: we don't build the following by default, but some packages use them, so
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
@@ -208,7 +209,7 @@ find_program(PHCPACK	NAMES	phc)
 find_program(HOM4PS2	NAMES	hom4ps2) # TODO: http://www.math.nsysu.edu.tw/~leetsung/works/HOM4PS_soft.htm
 # TODO: Maple and package convex
 
-set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP Nauty Normaliz TOPCOM)
+set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP NAUTY_EXECUTABLE Normaliz TOPCOM)
 
 ###############################################################################
 ## List installed components and unset those that we wish to build ourselves
