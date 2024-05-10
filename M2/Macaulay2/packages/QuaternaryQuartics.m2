@@ -23,7 +23,8 @@ newPackage(
         "GroebnerStrata" 
         },
     AuxiliaryFiles => true,
-    DebuggingMode => false
+    DebuggingMode => false,
+    Keywords => {"Examples and Random Objects"}
     )
 
 export {

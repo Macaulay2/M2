@@ -9,6 +9,7 @@ newPackage(
     Headline => "monomial modules over exterior algebras",
     DebuggingMode => false,
     PackageExports=>{"ExteriorIdeals"},
+    Keywords => {"Commutative Algebra"},
     Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
          "journal URI" => "https://msp.org/jsag/",

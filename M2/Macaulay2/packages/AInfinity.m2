@@ -10,7 +10,8 @@ newPackage(
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
 	PackageExports => {"Complexes", "DGAlgebras","PushForward","LocalRings"},
         Headline => "AInfinity structures on free resolutions",
-	DebuggingMode => true
+	DebuggingMode => true,
+	Keywords => {"Commutative Algebra"}
 	)
 
 export {

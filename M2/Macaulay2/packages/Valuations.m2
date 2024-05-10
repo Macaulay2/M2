@@ -13,7 +13,8 @@ newPackage("Valuations",
         DebuggingMode => true,
         HomePage => "https://github.com/Macaulay2/Workshop-2023-Minneapolis/tree/valuations",
         Configuration => {},
-        PackageExports => {"LocalRings", "SubalgebraBases", "InvariantRing", "gfanInterface", "Binomials"})
+        PackageExports => {"LocalRings", "SubalgebraBases", "InvariantRing", "gfanInterface", "Binomials"},
+	Keywords => {"Commutative Algebra"})
 
 ----- Eventually move to other packages
 ring Subring := A -> ambient A

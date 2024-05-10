@@ -40,7 +40,8 @@ newPackage(
 	},
     PackageExports=>{},
     AuxiliaryFiles=>true,
-    DebuggingMode=>true
+    DebuggingMode=>true,
+    Keywords => {"Commutative Algebra"}
     )
 
 

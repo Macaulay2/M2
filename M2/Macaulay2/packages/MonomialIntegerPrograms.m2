@@ -31,7 +31,8 @@ newPackage (
   CacheExampleOutput => true,
   PackageImports => {"LexIdeals","MinimalPrimes"},
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
-  DebuggingMode => false
+  DebuggingMode => false,
+  Keywords => {"Commutative Algebra"}
 )
 
 -------------

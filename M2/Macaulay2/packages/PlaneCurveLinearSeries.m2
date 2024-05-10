@@ -8,7 +8,8 @@ newPackage(
 		  HomePage => "eisenbud.io.github.com"}},
 	  PackageExports => {"IntegralClosure","PrimaryDecomposition"},
           AuxiliaryFiles => false,
-          DebuggingMode => false
+          DebuggingMode => false,
+	  Keywords => {"Projective Algebraic Geometry"}
           )
       export {
 	  "canonicalSeries",

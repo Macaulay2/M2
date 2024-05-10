@@ -34,6 +34,7 @@ newPackage(
     Reload => true,
     Headline => "Mixed Multiplicities of ideals",
     PackageImports=>{"Divisor", "ReesAlgebra", "Depth", "Polyhedra"},
+    Keywords => {"Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

@@ -26,7 +26,8 @@ newPackage(
         PackageExports => {"gfanInterface","EliminationMatrices","Matroids","Polyhedra"},
 	AuxiliaryFiles => true,
 --	AuxiliaryFiles => false,
-	CacheExampleOutput => true
+	CacheExampleOutput => true,
+	Keywords => {"Tropical Geometry"}
 )
 
 

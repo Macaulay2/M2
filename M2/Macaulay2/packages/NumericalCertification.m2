@@ -11,7 +11,8 @@ newPackage(
 	Configuration => {"ALPHACERTIFIEDexec" => "alphaCertified"},
     	DebuggingMode => true,		 -- set to true only during development
     	--DebuggingMode => false,
-	AuxiliaryFiles => true
+	AuxiliaryFiles => true,
+	Keywords => {"Numerical Algebraic Geometry"}
     	)
 
 -- Any symbols or functions that the user is to have access to
