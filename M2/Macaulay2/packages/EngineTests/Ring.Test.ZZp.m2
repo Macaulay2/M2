@@ -124,8 +124,9 @@ TEST ///
   -- the following should all give errors.
   assert try (ZZpFlint 1; false) else true
   assert try (ZZpFFPACK 1; false) else true
-  assert try (ZZp(1, Strategy=>null); false) else true
-  assert try (ZZp(1, Strategy=>"Aring"); false) else true
+  assert try (ZZp(2, Strategy=>null); false) else true
+  assert try (rawARingZZp 1; false) else true -- Strategy => "ARing"
+  assert try (rawZZp      1; false) else true -- Strategy => "Old"
 ///
 
 
