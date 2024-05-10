@@ -840,6 +840,7 @@ export {
 	"isRegularFile",
 	"isRing",
 	"isSkewCommutative",
+	"isSmooth",
 	"isSorted",
 	"isSquareFree",
 	"isSubmodule",

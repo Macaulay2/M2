@@ -21,6 +21,8 @@ truncate = method(Options => true)
 
 isEmpty = method(TypicalValue => Boolean)
 
+isSmooth = method(TypicalValue => Boolean, Options => true)
+
 -- symbols
 
 protect Base

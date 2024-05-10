@@ -81,7 +81,7 @@ export{
 	"dualize", --added checks
 	"embedAsIdeal", --added checks, has IsGraded option
 	"isDomain", --added checks
-	"isSmooth", --added checks, has IsGraded option
+	--"isSmooth", --added checks, has IsGraded option
     --options
     "Safe", --an option, if set true then the above commands avoid doing any checks
 	"CoefficientType", --an option, one can set the coefficient type
@@ -1912,9 +1912,7 @@ isDomain(Ring) := Boolean => (R1) -> (
 );
 
 --checks whether R/J1 is regular
-isSmooth  = method(Options => {IsGraded => false});
-
-isSmooth(Ideal) := Boolean => o->J1 -> (
+isSmooth(Ideal) := Boolean => {IsGraded => false} >> o -> J1 -> (
 	--empty schemes are smooth (which is why we are first check whether ideals are the whole ring or contain the irrelevant ideal
 	flag := false;
 	if (o.IsGraded == true) then (
@@ -4073,9 +4071,8 @@ doc ///
 
 doc /// 
    	Key
-   	 isSmooth
    	 (isSmooth, Ideal)
-   	 [isSmooth, IsGraded]
+	 [(isSmooth, Ideal), IsGraded]
    	Headline
    	 whether R mod the ideal is smooth
    	Usage

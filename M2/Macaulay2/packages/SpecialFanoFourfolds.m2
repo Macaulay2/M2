@@ -2699,8 +2699,8 @@ mapDefinedByDivisor = method();
 mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> rationalMap(R,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
 mapDefinedByDivisor (MultiprojectiveVariety,VisibleList) := (X,D) -> rationalMap(X,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
 
-isSmooth = method(TypicalValue => Boolean); -- sufficient conditions for smoothness ('Y' is assumed to be equidimensional)
-isSmooth EmbeddedProjectiveVariety := (cacheValue "isSmooth") (Y -> (
+-- sufficient conditions for smoothness ('Y' is assumed to be equidimensional)
+isSmooth EmbeddedProjectiveVariety := {} >> o -> (cacheValue "isSmooth") (Y -> (
     if Y.cache#?"singularLocus" or Y.cache#?"nonSaturatedSingularLocus" then return (dim singLocus Y == -1);
     X := fitVariety Y;
     isXsm := dim singLocus X == -1;
