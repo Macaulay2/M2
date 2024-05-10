@@ -372,6 +372,13 @@ TEST /// -- test of inducedTruncationMap
   assert(src === source g)
 ///
 
+TEST /// -- test of truncation of complexes
+  needsPackage "Complexes"
+  S = QQ[x,y,z]
+  C = koszulComplex vars S
+  truncate(3, C)
+///
+
 end--
 
 restart
