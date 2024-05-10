@@ -284,6 +284,12 @@ truncate(List,    List, Matrix) := Matrix => truncateModuleOpts >> opts -> (tard
 truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
     if d === -infinity then M else error "unexpected degree for truncation")
 
+-- TODO: implement union types in M2 and simplify stuff like this
+truncate(ZZ,      ZZ, Matrix) :=
+truncate(Nothing, ZZ, Matrix) :=
+truncate(Nothing,        InfiniteNumber, Matrix) :=
+truncate(InfiniteNumber, InfiniteNumber, Matrix) := lookup(truncate, List, List, Matrix)
+
 --------------------------------------------------------------------
 -- basis using basisPolyhedron (experimental)
 --------------------------------------------------------------------
