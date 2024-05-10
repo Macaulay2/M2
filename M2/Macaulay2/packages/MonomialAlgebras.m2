@@ -1038,24 +1038,25 @@ doc ///
 
       {\bf d = 3:}
 
-      a = 3:    @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/proveEG_33.m2","proveEG_33"}@
+      a = 3:    @HREF{"https://agag-jboehm.math.rptu.de/~boehm/Macaulay2/MonomialAlgebras/proveEG_33.m2","proveEG_33"}@
 
-      a = 4:    @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/proveEG_43.m2","proveEG_43"}@
+      a = 4:    @HREF{"https://agag-jboehm.math.rptu.de/~boehm/Macaulay2/MonomialAlgebras/proveEG_43.m2","proveEG_43"}@
 
-      a = 5:    @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/proveEG_53.zip","proveEG_53"}@
+      a = 5:    @HREF{"https://agag-jboehm.math.rptu.de/~boehm/Macaulay2/MonomialAlgebras/proveEG_53.zip","proveEG_53"}@
 
       {\bf d = 4:}
 
-      a = 2:    @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/proveEG_24.m2","proveEG_24"}@
+      a = 2:    @HREF{"https://agag-jboehm.math.rptu.de/~boehm/Macaulay2/MonomialAlgebras/proveEG_24.m2","proveEG_24"}@
 
-      a = 3:    @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/proveEG_34.zip","proveEG_34"}@
+      a = 3:    @HREF{"https://agag-jboehm.math.rptu.de/~boehm/Macaulay2/MonomialAlgebras/proveEG_34.zip","proveEG_34"}@
 
       {\bf d = 5:}
 
-      a = 2:    @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/proveEG_25.zip","proveEG_25"}@
+      a = 2:    @HREF{"https://agag-jboehm.math.rptu.de/~boehm/Macaulay2/MonomialAlgebras/proveEG_25.zip","proveEG_25"}@
 
-      More functions related to testing the Eisenbud-Goto conjecture can be found in the
-      @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebrasExtras/html","MonomialAlgebraExtras"}@ package.
+      -- TODO: Does the MonomialAlgebrasExtras package still exist anywhere?
+      -- More functions related to testing the Eisenbud-Goto conjecture can be found in the
+      -- @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebrasExtras/html","MonomialAlgebraExtras"}@ package.
 
       {\bf Diagrams:}
 
