@@ -700,12 +700,17 @@ part(List, Complex) := Complex => (deg, C) -> (
     )
 part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
 
-truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
+importFrom_Truncations { "inducedTruncationMap" }
+
+truncateModuleOpts := options(truncate, List, Module)
+truncate(ZZ,   Complex) :=
+truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) -> (
     (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(e, C_lo);
-    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
+    if lo === hi then return complex truncate(degs, C_lo, opts);
+    f := truncate(degs, dd^C_lo, opts);
+    complex hashTable for i from lo+1 to hi list i => (
+	f = inducedTruncationMap(source f, truncate(degs, C_i, opts), dd^C_i))
     )
-truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
