@@ -514,14 +514,14 @@ closeOut(g:Expr):Expr := (
      when g is f:file do when closeOut(f) is m:errmsg do buildErrorPacket(m.message) else g
      else WrongArg("an output file"));
 setupfun("closeOut",closeOut).Protected = false;
-flush(g:Expr):Expr := (
+flushfun(g:Expr):Expr := (
      when g
      is f:file do (
 	  if f.output
-	  then (flush(f); g)
+	  then (f << flush; g)
 	  else WrongArg("an output file"))
      else WrongArg("a file"));
-setupfun("flush",flush).Protected = false;
+setupfun("flush",flushfun).Protected = false;
 protect(e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
