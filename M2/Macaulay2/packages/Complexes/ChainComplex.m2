@@ -748,12 +748,22 @@ canonicalTruncation(Complex,InfiniteNumber,InfiniteNumber) :=
 canonicalTruncation(Complex,ZZ,Nothing) := 
 canonicalTruncation(Complex,Nothing,ZZ) := Complex => (C,lo,hi) -> canonicalTruncation(C, (lo,hi))
 
-truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
-    (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(e, C_lo);
-    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
-    )
-truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
+importFrom_Truncations { "inducedTruncationMap" }
+
+truncateModuleOpts := options(truncate, List, Module)
+truncate(ZZ,   Complex) :=
+truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) -> (
+    (lo, hi) := C.concentration;
+    if lo == hi
+    then complex(truncate(degs, C_lo, opts), Base => lo)
+    -- this is the simplest way to truncate the whole complex:
+    -- else complex applyValues(C.dd.map, f -> truncate(degs, f, opts)))
+    else (
+	-- this construction requires ~half as many truncations
+	f := truncate(degs, dd^C_lo, opts);
+	complex hashTable for i from lo+1 to hi list i => (
+	    f = inducedTruncationMap(source f, truncate(degs, C_i, opts), dd^C_i))
+    ))
 
 --------------------------------------------------------------------
 -- basis -----------------------------------------------------------
