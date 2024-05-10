@@ -37,8 +37,7 @@ newPackage(
 	},
     PackageImports => {
 	},
-    AuxiliaryFiles => true,
-    DebuggingMode  => true
+    AuxiliaryFiles => true
     )
 
 export {

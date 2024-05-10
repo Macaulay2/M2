@@ -14,7 +14,6 @@ newPackage(
     	Headline => "unprojection and the Kustin-Miller complex construction",
 	Keywords => {"Commutative Algebra"},
 	PackageExports => {"SimplicialComplexes"},
-    	DebuggingMode => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "https://msp.org/jsag/",

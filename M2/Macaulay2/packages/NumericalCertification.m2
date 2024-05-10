@@ -9,8 +9,6 @@ newPackage(
     	Headline => "numerical certification",
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	Configuration => {"ALPHACERTIFIEDexec" => "alphaCertified"},
-    	DebuggingMode => true,		 -- set to true only during development
-    	--DebuggingMode => false,
 	AuxiliaryFiles => true,
 	Keywords => {"Numerical Algebraic Geometry"}
     	)

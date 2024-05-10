@@ -19,7 +19,6 @@ newPackage(
   PackageImports => {
     "FourierMotzkin"
   },
-	DebuggingMode => true,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
   OptionalComponentsPresent => true,

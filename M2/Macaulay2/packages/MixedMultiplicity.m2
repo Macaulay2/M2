@@ -30,7 +30,6 @@ newPackage(
 	    }
 	},
     Headline => "Mixed Multiplicities",
-    DebuggingMode => true,
     Reload => true,
     Headline => "Mixed Multiplicities of ideals",
     PackageImports=>{"Divisor", "ReesAlgebra", "Depth", "Polyhedra"},
