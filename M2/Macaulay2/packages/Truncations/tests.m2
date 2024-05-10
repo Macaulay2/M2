@@ -358,6 +358,10 @@ TEST /// -- test of truncationPolyhedron with Nef option
   assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
 ///
 
+TEST /// -- test of inducedTruncationMap and subtruncate
+  debug needsPackage "Truncations"
+///
+
 end--
 
 restart
