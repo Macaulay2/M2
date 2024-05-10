@@ -362,6 +362,13 @@ TEST /// -- test of inducedTruncationMap and subtruncate
   debug needsPackage "Truncations"
 ///
 
+TEST /// -- test of truncation of complexes
+  needsPackage "Complexes"
+  S = QQ[x,y,z]
+  C = koszulComplex vars S
+  truncate(3, C)
+///
+
 end--
 
 restart
