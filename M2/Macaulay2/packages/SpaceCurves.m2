@@ -54,7 +54,7 @@ export {
 --Curves
     	"Curve",
 	"curve",
-	"isSmooth",
+	--"isSmooth",
 --ACM curves
 	"positiveChars",
 	"isACMBetti",
@@ -273,12 +273,11 @@ curve Divisor := D -> (
 )
 degree Curve := C -> degree ideal C
 genus Curve := C -> genus ideal C
-isSmooth = method()
-isSmooth Ideal := I -> (
+isSmooth Ideal := {} >> o -> I -> (
     c := codim I;
     dim(I + minors(c, jacobian I)) == 0
     )
-isSmooth Curve := C -> isSmooth ideal C
+isSmooth Curve := {} >> o -> C -> isSmooth ideal C
 isPrime Curve := {} >> o -> C -> isPrime ideal C
 
 --V.Minimal Curves
@@ -711,7 +710,7 @@ SUBSECTION "Curves",
 UL{ 
     TO	  "Curve",
     TO	  "curve",
-    TO	  "isSmooth"
+    TO	  (isSmooth,Curve)
 },
 PARA{},
 SUBSECTION "Minimal curves",  
@@ -992,7 +991,7 @@ document {
     )     
 }
 document {
-    Key => {isSmooth,(isSmooth,Ideal),(isSmooth, Curve)},
+    Key => {(isSmooth,Ideal), (isSmooth,Curve)},
     Headline => "checks smoothness of an ideal or of a Curve",
     {
     "The method ", TT "isSmooth", " uses Jacobian criterion to check the smoothness of
