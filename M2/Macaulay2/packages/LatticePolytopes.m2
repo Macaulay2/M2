@@ -407,8 +407,8 @@ listSmooth3D = () -> for P in Sm16in3D list convexHull P;
 
 -- PURPOSE : Test if a polyhedron is smooth.
 --           Extends isSmooth from package Polyhedra
-isSmooth(Polyhedron) := P -> isSmooth(normalFan(P));
-isSmooth(Matrix) := M -> isSmooth(normalFan(convexHull(M)));
+isSmooth Polyhedron := {} >> o -> P -> isSmooth normalFan P
+isSmooth Matrix     := {} >> o -> M -> isSmooth normalFan convexHull M
 
 
 

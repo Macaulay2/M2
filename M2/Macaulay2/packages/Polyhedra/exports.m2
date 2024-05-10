@@ -47,7 +47,7 @@ export {
    "isPure",
    "isReflexive",
    "isSimplicial", 
-   "isSmooth", 
+   --"isSmooth",
    "isVeryAmple",
    "faces", 
    "facesAsPolyhedra",

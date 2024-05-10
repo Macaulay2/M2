@@ -421,9 +421,8 @@ doc ///
             Cartier divisors.  For more information, see Theorem 4.2.1 in
             Cox-Little-Schenck's {\em Toric Varieties}.
     	Text
-            When the normal toric variety is @TO2(isSmooth, "smooth")@, the
-            Picard group is isomorphic to the 
-	    @TO2(classGroup, "class group")@.
+            When the normal toric variety is @TO2((isSmooth, NormalToricVariety), "smooth")@,
+	    the Picard group is isomorphic to the @TO2(classGroup, "class group")@.
       	Example
     	    PP3 = toricProjectiveSpace 3;
 	    assert (isSmooth PP3 and isProjective PP3)
@@ -493,9 +492,8 @@ doc ///
             function returns a matrix representing this map with respect to
             the chosen bases.  
     	Text
-            On a @TO2(isSmooth, "smooth")@ normal toric variety, the Picard
-            group is isomorphic to the class group, so the inclusion map is
-            the identity.
+	    On a smooth normal toric variety, the Picard group is isomorphic
+	    to the class group, so the inclusion map is the identity.
     	Example  
     	    PP3 = toricProjectiveSpace 3;
 	    assert (isSmooth PP3 and isProjective PP3)
@@ -574,8 +572,8 @@ doc ///
 	    the chosen bases.  For more information, see Theorem 4.2.1 in
 	    Cox-Little-Schenck's {\em Toric Varieties}.
 	Text
-            On a @TO2(isSmooth, "smooth")@ normal toric variety, the map from
-            the torus-invariant Cartier divisors to the Picard group is the
+	    On a smooth normal toric variety, the map from the torus-invariant
+	    Cartier divisors to the Picard group is the
             same as the map from the @TO2(weilDivisorGroup, "Weil divisors")@
             to the @TO2(classGroup, "class group")@.
     	Example
@@ -670,7 +668,7 @@ doc ///
 	    nefGenerators smoothFanoToricVariety (3,16)	    	    
 	    nefGenerators smoothFanoToricVariety (4,120)
 	Text
-	    There are @TO2(isSmooth, "smooth")@ @TO2(isComplete, "complete")@
+	    There are @TO2((isSmooth, NormalToricVariety), "smooth")@ @TO2(isComplete, "complete")@
             normal toric varieties with no nontrivial nef divisors.
     	Example    
             X = normalToricVariety ({{1,0,0},{0,1,0},{0,0,1},{0,-1,2},{0,0,-1},{-1,1,-1},{-1,0,-1},{-1,-1,0}},{{0,1,2},{0,2,3},{0,3,4},{0,4,5},{0,1,5},{1,2,7},{2,3,7},{3,4,7},{4,5,6},{4,6,7},{5,6,7},{1,5,7}});    

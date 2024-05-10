@@ -1172,7 +1172,7 @@ doc ///
             torus-invariant Weil divisors on $X$.  For arbitrary normal toric
             varieties, the @TO weilDivisorGroup@ is not a functor.  However,
             @TO weilDivisorGroup@ is a contravariant functor on the category
-            of @TO2(isSmooth, "smooth")@ normal toric varieties.
+	    of smooth normal toric varieties.
 	Text
 	    We illustrate this method on the projection from the first 
 	    @TO2(hirzebruchSurface, "Hirzebruch surface")@ to the 
@@ -1231,7 +1231,7 @@ doc ///
             class group of $Y$ to the class group of $X$.  For arbitrary normal
             toric varieties, the @TO classGroup@ is not a functor.  However,
             @TO classGroup@ is a contravariant functor on the category of
-            @TO2(isSmooth, "smooth")@ normal toric varieties.
+            smooth normal toric varieties.
 	Text
 	    We illustrate this method on the projection from the first 
 	    @TO2(hirzebruchSurface, "Hirzebruch surface")@ to the 
@@ -1251,8 +1251,7 @@ doc ///
             f'' = weilDivisorGroup f
             assert(f' * fromWDivToCl Y  == fromWDivToCl X  * f'')	    
 	Text
-	    The source of the toric map need not be 
-	    @TO2(isSmooth, "smooth")@.	    
+	    The source of the toric map need not be smooth.
 	Example
 	    Z = toricBlowup({0, 1}, X, {1,2});
     	    assert (isWellDefined Z and not isSmooth Z)	    
@@ -1309,8 +1308,7 @@ doc ///
             f'' = cartierDivisorGroup f
             assert(f' * fromCDivToPic Y  == fromCDivToPic X  * f'')	    
 	Text
-	    Neither the source nor the target of the toric map needs to be 
-	    @TO2(isSmooth, "smooth")@.	    
+	    Neither the source nor the target of the toric map needs to be smooth.
 	Example  
 	    W = weightedProjectiveSpace {1, 1, 2};	     
 	    Z = toricBlowup({0, 1, 4}, (W ** toricProjectiveSpace 1), {0, -2, 1});
@@ -1369,8 +1367,7 @@ doc ///
             f'' = picardGroup f
             assert(f'' * fromCDivToPic Y == fromCDivToPic X  * f')
 	Text
-	    Neither the source nor the target of the toric map needs to be 
-	    @TO2(isSmooth, "smooth")@.	    
+	    Neither the source nor the target of the toric map needs to be smooth.
 	Example  
 	    W = weightedProjectiveSpace {1, 1, 2};	     
 	    Z = toricBlowup({0, 1, 4}, (W ** toricProjectiveSpace 1), {0, -2, 1});

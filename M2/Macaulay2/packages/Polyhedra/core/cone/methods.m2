@@ -11,11 +11,10 @@ facesAsCones(ZZ, Cone) := (d, C) -> (
 )
 
 
+-- PURPOSE : Checks if the input is smooth
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
-isSmooth Cone := C -> (
-   getProperty(C, smooth)
-)
+isSmooth Cone := {} >> o -> C -> getProperty(C, smooth)
 
 
 -- PURPOSE : Tests if a Cone is pointed
