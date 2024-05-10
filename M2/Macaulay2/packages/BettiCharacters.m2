@@ -465,7 +465,7 @@ action(ChainComplex,List,List,ZZ):=ActionOnComplex=>op->(C,l,l0,i) -> (
 	    error "action: expected ring actor matrix to be a one-row substitution matrix";
 	    );
     	--convert variable substitutions to matrices
-	l=apply(l,g->(vars R)\\lift(g,R));
+	l=apply(l,g->lift(g,R)//(vars R));
 	) else (
 	--if ring actors are matrices they must be square
     	if not all(l,g->numRows(g)==n) then (
@@ -556,7 +556,7 @@ actors(ActionOnComplex,ZZ) := List => (A,i) -> (
 	    -- given a map of free modules C.dd_i : F <-- F',
 	    -- the inverse group action on the ring (as substitution)
 	    -- and the group action on F, computes the group action on F'
-	    (gInv,g0) -> sub(C.dd_i,gInv)\\(g0*C.dd_i)
+	    (gInv,g0) -> (g0*C.dd_i)//sub(C.dd_i,gInv)
 	    );
     	-- make cache function from f and run it on A
     	((cacheValue (symbol actors,i)) f) A
@@ -568,7 +568,7 @@ actors(ActionOnComplex,ZZ) := List => (A,i) -> (
 	    -- and the group action on F', computes the group action on F
 	    -- it is necessary to transpose because we need a left factorization
 	    -- but M2's command // always produces a right factorization
-	    transpose(transpose(C.dd_(i+1))\\transpose(sub(C.dd_(i+1),gInv)*g0))
+	    transpose(transpose(sub(C.dd_(i+1),gInv)*g0)//transpose(C.dd_(i+1)))
 	    );
     	-- make cache function from f and run it on A
     	((cacheValue (symbol actors,i)) f) A
@@ -656,7 +656,7 @@ action(Module,List,List):=ActionOnGradedModule=>op->(M,l,l0) -> (
 	    error "action: expected ring actor matrix to be a one-row substitution matrix";
 	    );
     	--convert variable substitutions to matrices
-	l=apply(l,g->(vars R)\\lift(g,R));
+	l=apply(l,g->lift(g,R)//(vars R));
 	) else (
 	--if ring actors are matrices they must be square
     	if not all(l,g->numRows(g)==n) then (

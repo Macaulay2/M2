@@ -27,10 +27,11 @@ Sequence | Sequence := Sequence => join
 List + List  := List => (v,w) -> apply(v,w,plus)
      - List  := List => v -> apply(v,minus)
 List - List  := List => (v,w) -> apply(v,w,difference)
+List * Thing := List => (v,a) -> apply(v,x->x * a)
 Thing * List := List => (a,v) -> apply(v,x->a * x)
 List ** List := List => (X,Y) -> flatten for x in X list apply(Y, y -> (x, y))
 
-List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
+List /  RingElement := List /  Number := List => (v,b) -> apply(v,x->x /  b)
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
 List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 

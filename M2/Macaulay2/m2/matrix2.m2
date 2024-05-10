@@ -335,8 +335,10 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 	  map(M, L, rem)
      ))
 
+leftQuotientWarn = true
+
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
-Matrix \\ Matrix := (g,f) -> f // g
+Matrix \\ Matrix := (g,f) -> (if leftQuotientWarn then (leftQuotientWarn = false; printerr "Warning: 'm \\\\ n' is deprecated; use 'n // m' instead."); f // g)
 quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
      or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";

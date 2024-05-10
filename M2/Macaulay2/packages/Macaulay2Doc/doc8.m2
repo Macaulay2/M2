@@ -196,17 +196,17 @@ document {
      }
 
 document { 
-     Key => {(symbol //, Matrix, Matrix),(symbol \\, Matrix, Matrix),
+     Key => {(symbol //, Matrix, Matrix),
        (symbol //, RingElement, MonomialIdeal),
        (symbol //, RingElement, GroebnerBasis),
        (symbol //, RingElement, RingElement),
        (symbol //, Matrix, MonomialIdeal),
        (symbol //, Matrix, GroebnerBasis),
-       (symbol //, Matrix, RingElement),(symbol \\, Matrix, RingElement),
-       (symbol //, RingElement, Matrix),(symbol \\, RingElement, Matrix)
+       (symbol //, Matrix, RingElement),
+       (symbol //, RingElement, Matrix)
        },
      Headline => "factor a map through another",
-     Usage => "f//g\ng\\\\f",
+     Usage => "f//g",
      Inputs => {
 	  "f" => {"between modules F --> H, or ",
 	     ofClass RingElement},
@@ -231,8 +231,7 @@ document {
      for the image of ", TT "g", ".",
      PARA{},
      "If the remainder ", TT "f - g*h", " is zero,
-     then the quotient ", TT "f//g", " satisfies the equation ", TT "f === g * (f//g)", "
-     and the quotient ", TT "g\\\\f", " satisfies the equation ", TT "f === g * (g\\\\f)", ".",
+     then the quotient ", TT "f//g", " satisfies the equation ", TT "f === g * (f//g)", ".",
      PARA{},
      "One common use is the following.  If an ideal contains 1, then we may write 1 in terms
      of the generators of the ideal.  First we make an ideal.",

@@ -863,7 +863,7 @@ needsPackage"Dmodules"
 A = matrix{{1,1,1,1},{0,1,5,11}}
 R = toGradedRing(A,QQ[a..d])
 I = toricIdeal(A,R)
-S = quasidegreesLocalCohomology R^1/I
+S = quasidegreesLocalCohomology(R^1/I)
 T = {}; for i to #S-1 do T=T|{(S_i)_0}
 for i to #T-1 do assert(holonomicRank(gkz(A,{0,0}))<holonomicRank(gkz(A,entries(T_i))))
 ///

@@ -105,6 +105,7 @@ document {
     (symbol*,  ChainComplexMap, ChainComplexMap),
     (symbol*,  RingElement, RingElement),
     (symbol*,  Thing, List),
+    (symbol*,  List, Thing),
     (symbol*,  ZZ, ProjectiveHilbertPolynomial),
     (symbol*,  ProjectiveHilbertPolynomial, ZZ),
     (symbol*,  RingElement, Vector),
