@@ -11,7 +11,7 @@ newPackage("MultigradedBGG",
 	{Name => "Sasha	Zotine",    	     Email => "18az45@queensu.ca",     HomePage => "https://sites.google.com/view/szotine/home" }
     },
     PackageExports => {"NormalToricVarieties", "Complexes"},
-    DebuggingMode => true
+    Keywords => {"Commutative Algebra"}
   )
 
 export {
