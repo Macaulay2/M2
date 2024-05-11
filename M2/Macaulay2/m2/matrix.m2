@@ -421,7 +421,7 @@ sliceModule = (M, rows) -> (
     if isFreeModule M    then (ring M)^((-degrees M)_rows) else
     if not M.?relations  then image    submatrixFree(generators M, , rows) else
     if not M.?generators then cokernel submatrixFree(relations  M, rows, ) else
-    subquotient(submatrixFree(generators M, , rows), submatrixFree(relations M, rows, )))
+    subquotient(submatrixFree(generators M, , rows), relations M))
 
 submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
