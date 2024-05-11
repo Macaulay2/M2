@@ -130,6 +130,8 @@ number = x -> # select x
 all = method(TypicalValue => Boolean)
 all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
 all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
+-- TODO: implement this for 'any'
+all BasicList := L -> not any(L, x -> not x)
 
 -- TODO: how to get this to work? When fixed, replace "same apply" with "same"
 --same = method(TypicalValue => Boolean)
