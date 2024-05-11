@@ -89,13 +89,11 @@ adjoint (Matrix, Module, Module) := Matrix => opts -> (m, F, G) -> (
 -----------------------------------------------------------------------------
 
 homomorphism = method()
-homomorphism Matrix := Matrix => f -> (
-    -- from a map R^1 -> Hom(M,N) produce a map M --> N
-    H := target f;
-    if not H.cache.?homomorphism then error "expected target of map to be of the form 'Hom(M,N)'";
-    if not isFreeModule source f
-    or not rank source f === 1 then error "expected source of map to be free of rank 1";
-    H.cache.homomorphism f)
+homomorphism Matrix := m -> homomorphism vector m
+homomorphism Vector := v -> (
+    -- from an element v in Hom(M, N) produce a map f:M --> N
+    if (H := module v).cache.?homomorphism then H.cache.homomorphism matrix v
+    else error "homomorphism: expected the input to be an element of a module of the form 'Hom(M,N)'")
 
 homomorphism' = method(Options => options Hom)
 homomorphism' Matrix := Matrix => opts -> f -> (

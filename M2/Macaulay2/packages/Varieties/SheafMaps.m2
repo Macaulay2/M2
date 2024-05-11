@@ -485,7 +485,6 @@ prune SheafMap := SheafMap => opts -> f -> (
 -----------------------------------------------------------------------------
 
 random Module := Vector => o -> M -> vector(gens M * random(cover M, module ring M, o))
-homomorphism Vector := v -> homomorphism matrix v
 
 -----------------------------------------------------------------------------
 -- pullback and pushout
