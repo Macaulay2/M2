@@ -162,6 +162,8 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
+random Module := Vector => o -> M -> vector(generators M * random(cover M, module ring M, o))
+
 random(ZZ,   Ideal) := RingElement => opts -> (d, I) -> random({d}, I, opts)
 random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (
     m := generators I;

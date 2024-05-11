@@ -484,8 +484,6 @@ prune SheafMap := SheafMap => opts -> f -> (
 -- Things to move to the Core
 -----------------------------------------------------------------------------
 
-random Module := Vector => o -> M -> vector(gens M * random(cover M, module ring M, o))
-
 -----------------------------------------------------------------------------
 -- pullback and pushout
 -----------------------------------------------------------------------------
