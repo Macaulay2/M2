@@ -128,8 +128,10 @@ number = x -> # select x
 -----------------------------------------------------------------------------
 
 all = method(TypicalValue => Boolean)
-all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
-all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
+all(ZZ,                   Function) := -- uses 0 .. n-1
+all(HashTable,            Function) := -- uses pairs h
+all(BasicList,            Function) := (x,    p) -> not any(x,    i  -> not p i)
+all(BasicList, BasicList, Function) := (x, y, p) -> not any(x, y, ij -> not p ij)
 -- TODO: implement this for 'any'
 all BasicList := L -> not any(L, x -> not x)
 
