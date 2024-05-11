@@ -364,6 +364,7 @@ addHook((quotient, Matrix, Matrix), Strategy => Default,
     -- TODO: should we pass MinimalGenerators => false to Hom and homomorphism'?
     (opts, f, g) -> map(source g, source f, homomorphism(homomorphism' f // Hom(source f, g))))
 
+-- FIXME: this is still causing unreasonable slow downs, e.g. for (large m) // (scalar)
 addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if f == 0 or isFreeModule source f then (
      L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
