@@ -78,6 +78,27 @@ String ..< String := Sequence => (s,t) -> (
      if #s =!= #t then error "expected strings of equal length (in utf8 encoding)";
      utf8 \ ( s ..< t ))
 
+-----------------------------------------------------------------------------
+-- positions, position, minPosition, maxPosition, number
+-----------------------------------------------------------------------------
+
+positions = method(TypicalValue => List)
+positions(MutableList, Function) :=
+positions(VisibleList, Function) := (v, f) -> for i from 0 to #v-1 list if f v#i then i else continue
+
+position = method(TypicalValue => ZZ, Options => {Reverse => false})
+position(VisibleList, Function) := o -> (v, f) -> (
+    if o.Reverse
+    then ( n := #v; for i to #v-1 do if f v#(n-1-i) then return n-1-i)
+    else (for i to #v-1 do if f v#i then return i)
+    )
+position(VisibleList, VisibleList, Function) := o -> (v, w, f) -> (
+    if #v != #w then error "expected lists of the same length";
+    if o.Reverse
+    then ( n := #v; for i to #v-1 do if f(v#(n-1-i),w#(n-1-i)) then return n-1-i)
+    else (for i to #v-1 do if f(v#i,w#i) then return i)
+    )
+
 maxPosition = method(Dispatch => Thing)
 minPosition = method(Dispatch => Thing)
 
@@ -97,7 +118,14 @@ minPosition BasicList := ZZ => x -> (
 	  scan(1 .. # x-1, i -> if x#i<m then (m=x#i;pos=i));
 	  pos))
 
+delete = method()
+delete(Thing, BasicList) := (x, v) -> select(v, i -> i =!= x)
+
 number = x -> # select x
+
+-----------------------------------------------------------------------------
+-- all, same, uniform, isMember
+-----------------------------------------------------------------------------
 
 all = method(TypicalValue => Boolean)
 all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
@@ -112,6 +140,8 @@ same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
 uniform = L -> same apply(L, class)
 
 isMember(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
+
+-----------------------------------------------------------------------------
 
 sum List := x -> plus toSequence x
 
