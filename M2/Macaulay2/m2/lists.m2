@@ -87,6 +87,7 @@ positions(MutableList, Function) :=
 positions(VisibleList, Function) := (v, f) -> for i from 0 to #v-1 list if f v#i then i else continue
 
 position = method(TypicalValue => ZZ, Options => {Reverse => false})
+position(ZZ,          Function) := o -> (n, f) -> position(0..n-1, f, o)
 position(VisibleList, Function) := o -> (v, f) -> (
     if o.Reverse
     then (for i to #v-1 do if f v#(-i-1) then return #v-i-1)
