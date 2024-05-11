@@ -369,6 +369,7 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if 
      L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
+     -- TODO: turn these into separate hooks
      if instance(ring M, InexactField)
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
