@@ -493,6 +493,26 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	M = truncate(r, M));
     moveToField basis(0, Ext^m(M, matrix f, opts)))
 
+
+extLES = method(Options => {LengthLimit => null})
+extLES(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
+    F := freeResolution(M, opts);
+    longExactSequence(Hom(F, g), Hom(F, f))
+    )
+
+extLES(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
+    (g', f') := horseshoeResolution(g, f, opts);
+    G := freeResolution(N, opts);
+    -- TODO: the indexing on opts.Concentration needs to be negated
+    longExactSequence(Hom(f', G), Hom(g', G))
+    )
+
+basis(ZZ,Complex) := Complex -> (d,C) -> (
+    (a,b) := concentration C;
+    L := for i from a to b list basis(d,C.dd_i);
+    complex(L, Base => a)
+    )
+
 -- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
 -- this method returns Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
 connectingExtMap(ZZ, CoherentSheaf, SheafMap)           := Matrix => opts -> (m, F, f) -> (
@@ -534,11 +554,12 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
 	M = truncate(r, M, MinimalGenerators => false));
     -- TODO: can we truncate at the regularity of homology(f,g) instead?
     reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
-    ExtMap := connectingExtMap(M,
+    ExtMap := extLES(M,
 	truncate(reg,    matrix f, MinimalGenerators => false),
 	subtruncate(reg, matrix g, MinimalGenerators => false),
-	LengthLimit => opts.LengthLimit);
-    moveToField basis(0, ExtMap_(-m)))
+	LengthLimit => m + 2);
+    --moveToField basis(0, ExtMap_(-m)))
+    (basis(0,ExtMap.dd_(-m-1)),basis(0,ExtMap.dd_(-m)), basis(0,ExtMap.dd_(-m+1))))
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
