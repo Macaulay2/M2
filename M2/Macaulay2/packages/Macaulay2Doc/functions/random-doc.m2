@@ -19,6 +19,7 @@ Node
     (random, List)
     (random, ZZ, Ideal)
     (random, ZZ, Ring)
+    (random, Module)
     (random, Module, Module)
   SeeAlso
     setRandomSeed
@@ -167,33 +168,66 @@ Node
       random toList (0 .. 12)
   SeeAlso
     setRandomSeed
-///
 
-document {
-     Key => {(random, Module, Module),[random, MaximalRank],[random, Density],[random, UpperTriangular]},
-     Headline => "make a random module map",
-     Usage => "f = random(F,G)",
-     Inputs => {
-	  "F" => {"a free module"},
-	  "G" => {"a free module"},
-	  MaximalRank => {"whether to ensure that the resulting map has maximal rank: designed mostly
-	       for use with matrices of numbers: for polynomial rings, returns inhomogeneous results"},
-	  Density => RR => {"the proportion of entries to set"},
-	  UpperTriangular => Boolean => {"whether to set just entries strictly above the diagonal"}
-	  },
-     Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
-     EXAMPLE lines ///
-	  R = ZZ/101[x,y];
-	  random(R^{1,2,3},R^{1,2,3})
-	  random(ZZ^3,ZZ^6,MaximalRank=>true)
-	  random(ZZ^3,ZZ^10,Density=>.3)
-	  random(ZZ^6,ZZ^6,UpperTriangular=>true)
-	  ///,
-     Caveat => {
-	  "Over a polynomial ring, specifying ", TT "MaximalRank=>true", " will yield a non-homogeneous matrix."
-	  },
-     SeeAlso => {"setRandomSeed"}
-     }
+Node
+  Key
+    (random, Module, Module)
+    [random, Density]
+    [random, MaximalRank]
+    [random, UpperTriangular]
+  Headline
+    get a random map of module
+  Usage
+    f = random(F, G)
+  Inputs
+    F:Module
+      a free module
+    G:Module
+      a free module
+    Density=>RR
+      the proportion of entries to set
+    MaximalRank=>Boolean
+      whether to ensure that the resulting map has maximal rank: designed mostly
+      for use with matrices of numbers: for polynomial rings, returns inhomogeneous results
+    UpperTriangular=>Boolean
+      whether to set just entries strictly above the diagonal
+  Outputs
+    f:Matrix
+      a random, graded, degree @TT "0"@ map $f: G \to F$
+  Description
+    Example
+      R = ZZ/101[x,y];
+      random(R^{1,2,3}, R^{1,2,3})
+      random(ZZ^3, ZZ^10, Density => .3)
+      random(ZZ^3, ZZ^6, MaximalRank => true)
+      random(ZZ^6, ZZ^6, UpperTriangular => true)
+  Caveat
+    Over a polynomial ring, specifying @TT "MaximalRank=>true"@ will yield a non-homogeneous matrix.
+  SeeAlso
+    (random, Module)
+    setRandomSeed
+
+Node
+  Key
+    (random, Module)
+  Headline
+    get a random vector in the module
+  Usage
+    v = random M
+  Inputs
+    M:Module
+  Outputs
+    v:Vector
+  Description
+    Example
+      R = ZZ/7[x,y]
+      E = End R^{-1,1}
+      h = homomorphism random E
+  SeeAlso
+    (Hom, Module, Module)
+    (random, Module, Module)
+    setRandomSeed
+///
 
 document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
 	  [randomMutableMatrix,Dense],
