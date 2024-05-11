@@ -53,6 +53,12 @@ export {
     "changeBaseField"
     }
 
+importFrom_Core {
+    "raw", "rawReshape",
+    "rawNumberOfColumns",
+    "rawNumberOfRows",
+    }
+
 -----------------------------------------------------------------------------
 -* Code section *-
 -----------------------------------------------------------------------------
@@ -76,7 +82,7 @@ submatrixByDegrees(Matrix, Sequence) := (m, degs) -> (
 
 -- TODO: perhaps also take degree into account
 CoherentSheaf ? CoherentSheaf :=
-Module ? Module := (M, N) -> rank M ? rank N
+Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
 
 -- TODO: move to Core
 position(ZZ, Function) := o -> (n, f) -> position(0..n-1, f)
@@ -174,8 +180,11 @@ smartBasis = (deg, M) -> (
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 
+flatten' = m -> map(R := ring m, rawReshape(m = raw m, raw R^1, raw R^(rawNumberOfColumns m * rawNumberOfRows m)))
+
 -- this is a kludge to handle the case when h^2 = ah
-reduceScalar = m -> m // scan(unique flatten entries m | {1}, x -> if isConstant x and not zero x then break x)
+reduceScalar = m -> if m == 0 then m else map(target m, source m, cover m // scan(
+	rawNumberOfColumns raw(mons := flatten' m), i -> if not zero mons_(0,i) then break leadCoefficient mons_(0,i)))
 isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
 
 -- TODO: can we return cached summands from the closest field extension?
