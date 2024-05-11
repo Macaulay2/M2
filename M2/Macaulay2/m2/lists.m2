@@ -89,15 +89,13 @@ positions(VisibleList, Function) := (v, f) -> for i from 0 to #v-1 list if f v#i
 position = method(TypicalValue => ZZ, Options => {Reverse => false})
 position(VisibleList, Function) := o -> (v, f) -> (
     if o.Reverse
-    then ( n := #v; for i to #v-1 do if f v#(n-1-i) then return n-1-i)
-    else (for i to #v-1 do if f v#i then return i)
-    )
+    then (for i to #v-1 do if f v#(-i-1) then return #v-i-1)
+    else (for i to #v-1 do if f v#i      then return i))
 position(VisibleList, VisibleList, Function) := o -> (v, w, f) -> (
     if #v != #w then error "expected lists of the same length";
     if o.Reverse
-    then ( n := #v; for i to #v-1 do if f(v#(n-1-i),w#(n-1-i)) then return n-1-i)
-    else (for i to #v-1 do if f(v#i,w#i) then return i)
-    )
+    then (for i to #v-1 do if f(v#(-i-1), w#(-i-1)) then return #v-i-1)
+    else (for i to #v-1 do if f(v#i,      w#i)      then return i))
 
 maxPosition = method(Dispatch => Thing)
 minPosition = method(Dispatch => Thing)
