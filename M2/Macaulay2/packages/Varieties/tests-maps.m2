@@ -347,7 +347,10 @@ TEST ///
   -- assert(0 == homology(prune \ (p, i)))
   assert(0 == ker i)
   assert(0 == coker p)
-  --
+///
+
+TEST ///
+  -- testing yonedaSheafExtension
   S = QQ[x,y,z]
   X = Proj S
   d = 1
@@ -366,6 +369,20 @@ TEST ///
   assert(0 == homology(prune \ (p, i)))
   assert(0 == ker i)
   assert(0 == coker p)
+///
+
+TEST ///
+  -- testing yonedaSheafExtension
+  S = (ZZ/17)[x,y,z]
+  I = ideal(x^3+y^3+z^3)
+  X = Proj(S/I)
+  E = Ext^1(OO_X, OO_X)
+  C = yonedaSheafExtension matrix E_{0}
+  -- TODO: once C is a complex, simply check homology
+  assert(0 == prune coker C_0)
+  assert(0 == prune homology(C_0, C_1))
+  assert(0 == prune ker C_1)
+  elapsedTime assert(target C_0 == OO_X^1) -- ~0.15s
 ///
 
 TEST ///
@@ -506,7 +523,6 @@ TEST ///
   X = Proj(S/I)
   assert not isSurjective embeddedToAbstract(X)
 ///
-
 ///
   -- Slow test! Use this as benchmark to speed things up or only run it occasionally
   S = (ZZ/17)[x,y,z,w]
