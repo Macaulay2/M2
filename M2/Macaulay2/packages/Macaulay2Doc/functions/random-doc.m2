@@ -181,9 +181,7 @@ Node
     f = random(F, G)
   Inputs
     F:Module
-      a free module
     G:Module
-      a free module
     Density=>RR
       the proportion of entries to set
     MaximalRank=>Boolean
