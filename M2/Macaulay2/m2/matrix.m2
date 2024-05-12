@@ -727,8 +727,9 @@ ambient Matrix := Matrix => f -> (
 
 degrees Ring := R -> degree \ generators R
 
-leadComponent Matrix := m -> apply(entries transpose m, col -> last positions (col, x -> x != 0))
-leadComponent Vector := m -> first apply(entries transpose m#0, col -> last positions (col, x -> x != 0))
+leadComponent = method()
+leadComponent Matrix := List => m -> nonnull for c to numColumns m - 1 list position(numRows m, r -> m_(r,c) != 0, Reverse => true)
+leadComponent Vector := ZZ   => v -> try first leadComponent matrix v else null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
