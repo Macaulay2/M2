@@ -99,7 +99,13 @@ document {
 		LI { "The ", TO intersect, " and ", TO intersection, " functions now work for sets."},
 		LI { "Creating integer quotient rings using ", M2CODE "ZZ/n", " now works when ", VAR "n", " is large and/or composite."},
 		LI { "The syntax ", CODE "g \\\\ f", " as a synonym for ", CODE "f // g", " when ", VAR "f", " and ", VAR "g", " are matrices has been deprecated.  ",
-		     "It will be replaced in the next release."}
+		     "It will be replaced in the next release."},
+		LI { "Modules may now be compared using ", TO symbol <, ", ", TO symbol <=, ", ", TO symbol >, ", and ", TO symbol >=,
+		    ", by their ranks and degrees.  In particular, lists of modules may now be sorted."},
+		LI { "The method ", TO (homomorphism, Vector), " was added for getting the homomorphism from an element of a Hom module."},
+		LI { "The method ", TO (random, Module), " was added for generating random elements of modules."},
+		LI { "The method ", TO (all, BasicList), " was added for checking if all elements of a list of booleans are true."},
+		LI { "The method ", TO (position, ZZ, Function), " was added for finding the smallest index for which a function returns true." }
 		}
 	    }
 	}
