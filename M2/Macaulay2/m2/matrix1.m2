@@ -84,7 +84,8 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  R := ring M;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
+	  g := rawMatrixRemake2(raw cover M, raw cover N, deg, raw f, 0);
+	  map(M, N, if M =!= f.target then reduce(M, g) else g)))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
