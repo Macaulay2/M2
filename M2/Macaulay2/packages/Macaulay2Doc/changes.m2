@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+--	  TO "changes made for the next release",
+	  TO "changes, 1.24.05",
 	  TO "changes, 1.23",
 	  TO "changes, 1.22",
 	  TO "changes, 1.21",
@@ -40,7 +41,7 @@ document {
      }
 
 document {
-    Key => "changes made for the next release",
+    Key => "changes, 1.24.05",
     UL {
 	LI { "packages that have been published and certified:",
 	    UL {
