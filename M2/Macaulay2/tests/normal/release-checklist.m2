@@ -10,11 +10,6 @@ pkgs = select(separate_" " version#"packages",
 if #pkgs > 0 then error("packages with debugging mode turned on:", newline,
     toString stack sort pkgs)
 
-end
-
--- https://github.com/Macaulay2/M2/issues/306
--- don't run this every build (takes ~45 s)
-
 importFrom(Core, "fetchRawDocumentation")
 elapsedTime pkgs = select(separate_" " version#"packages",
     p -> (
