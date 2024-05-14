@@ -17,6 +17,7 @@
 ## Requires CMake version 3.15 and is tested with 3.19
 cmake_minimum_required(VERSION 3.15...3.19)
 cmake_policy(VERSION 3.14)
+cmake_policy(SET CMP0096 NEW) # preserve leading zeros in version number
 
 ## Use the C++20 standard
 set(CMAKE_CXX_STANDARD 17)
