@@ -246,7 +246,7 @@ describe Module := M -> Describe (
      else if M.?generators
      then (expression image) (describe M.generators)
      else new Superscript from {unhold expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
-	 else expression(-degrees M)}
+	 else expression runLengthEncode(-degrees M)}
      )
 toExternalString Module := M -> toString describe M
 

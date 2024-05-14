@@ -134,6 +134,9 @@ Module == ZZ := (M,n) -> (
 	  )
      )
 
+-- used for sorting a list of modules
+Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
+
 -----------------------------------------------------------------------------
 
 presentation(Module) := Matrix => M -> (
