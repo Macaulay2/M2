@@ -35,6 +35,7 @@ newPackage(
      PackageImports => {"Varieties"},
      PackageExports => {"EdgeIdeals"},
      DebuggingMode => false,
+     Keywords => {"Algebraic Geometry"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
 	  "journal URI" => "https://msp.org/jsag/",

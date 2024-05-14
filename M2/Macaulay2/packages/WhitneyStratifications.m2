@@ -7,7 +7,8 @@ newPackage(
 		  HomePage => "http://martin-helmer.com/"}},
     	Headline => "Compute Whitney Statifications Algebraically & Stratifies Maps",
     	DebuggingMode => false,
-	PackageImports=>{"Elimination","PrimaryDecomposition","Saturation"}
+	PackageImports=>{"Elimination","PrimaryDecomposition","Saturation"},
+	Keywords => {"Algebraic Geometry"}
     	);
 export{
     "conormal",

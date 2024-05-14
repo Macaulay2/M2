@@ -17,6 +17,7 @@ Version => "1.2.6", Date => "May 15th, 2023", Authors => {
     }
 }, --this file is in the public domain
 Headline => "faster linear algebra operations", PackageExports => {"RandomPoints"}, PackageImports => {"RandomPoints"}, DebuggingMode => false, Reload=>false,
+Keywords => {"Linear Algebra"},
 Certification => {
     "journal name" => "Journal of Software for Algebra and Geometry",
     "journal URI" => "https://msp.org/jsag/",

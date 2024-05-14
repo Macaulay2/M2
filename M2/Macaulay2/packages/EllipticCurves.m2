@@ -507,6 +507,8 @@ beginDocumentation()
 document {
      Key => EllipticCurves,
      Headline => "elliptic curves and a brute-force method for point counting",
+     "This package defines classes for elliptic curves, points on elliptic ",
+     "curves, and related methods."
      }
 
 document {

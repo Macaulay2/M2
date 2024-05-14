@@ -8,7 +8,8 @@ newPackage(
 	     {Name => "    Kristine Jones", Email => "kejones84@gmail.com"}},
     	Headline => "a Macaulay2 package for computing Groebner loci in Hilbert schemes",
         PackageImports => {"Elimination"},
-    	DebuggingMode => false
+    	DebuggingMode => false,
+	Keywords => {"Commutative Algebra"}
     	)
 
 export { 

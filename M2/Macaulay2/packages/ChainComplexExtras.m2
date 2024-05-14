@@ -763,7 +763,9 @@ beginDocumentation()
 
 document {
      Key => ChainComplexExtras,
-     Headline => "More ChainComplex Functionality."
+     Headline => "More ChainComplex Functionality.",
+     "This package provides more functionality for working with ",
+     TO ChainComplex, " objects."
      }
 
 document {

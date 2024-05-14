@@ -23,8 +23,7 @@ newPackage(
         },
     Keywords => { "Commutative Algebra" },
     PackageImports => { "Polyhedra" },
-    AuxiliaryFiles => true,
-    DebuggingMode => true
+    AuxiliaryFiles => true
     )
 
 importFrom_Core {

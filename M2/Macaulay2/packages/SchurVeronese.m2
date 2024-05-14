@@ -46,6 +46,7 @@ newPackage("SchurVeronese",
 	{Name => "Jay Yang",                 Email => "jkyang@umn.edu",   HomePage => "http://www-users.math.umn.edu/~jkyang/"}
 	},
    AuxiliaryFiles => true,
+   Keywords => {"Projective Algebraic Geometry"},
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

@@ -33,8 +33,7 @@ newPackage(
         "SimplicialDecomposability",
         "Posets",
         "MinimalPrimes"
-    },
-    DebuggingMode => true
+    }
 )
 
 export{

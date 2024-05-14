@@ -16,6 +16,7 @@ newPackage(
 		DebuggingMode => false, 
 		Reload=>false,
 		AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
+		Keywords => {"Examples and Random Objects"},
 		Certification => {
 		    "journal name" => "Journal of Software for Algebra and Geometry",
 		    "journal URI" => "https://msp.org/jsag/",

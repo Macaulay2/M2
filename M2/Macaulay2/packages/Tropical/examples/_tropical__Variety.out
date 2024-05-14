@@ -13,8 +13,8 @@ i4 : rays(T)
 o4 = | 1 -1 0 |
      | 0 -1 1 |
 
-              2        3
-o4 : Matrix ZZ  <--- ZZ
+              2       3
+o4 : Matrix ZZ  <-- ZZ
 
 i5 : maxCones(T)
 
@@ -27,7 +27,7 @@ i6 : linealitySpace T
 o6 = 0
 
               2
-o6 : Matrix ZZ  <--- 0
+o6 : Matrix ZZ  <-- 0
 
 i7 : Polyhedra$fVector fan T
 
@@ -62,8 +62,8 @@ o12 = | 3  -1 -1 -1 |
       | -1 -1 3  -1 |
       | -1 -1 -1 3  |
 
-               4        4
-o12 : Matrix ZZ  <--- ZZ
+               4       4
+o12 : Matrix ZZ  <-- ZZ
 
 i13 : maxCones(T)
 
@@ -84,8 +84,8 @@ o16 = | 1  3  1  -1 1  -1 -1 -1 |
       | 1  -1 -1 -1 1  1  3  -1 |
       | -3 -1 -1 -1 -1 -1 -1 3  |
 
-               4        8
-o16 : Matrix ZZ  <--- ZZ
+               4       8
+o16 : Matrix ZZ  <-- ZZ
 
 i17 : maxCones(T)
 
@@ -108,8 +108,8 @@ o19 = | 1 |
       | 1 |
       | 1 |
 
-               4        1
-o19 : Matrix ZZ  <--- ZZ
+               4       1
+o19 : Matrix ZZ  <-- ZZ
 
 i20 : QQ[x,y,z,w];
 
@@ -126,8 +126,8 @@ o23 = | -4 4 0 0 4 4 |
       | -4 0 0 4 0 8 |
       | -3 1 1 1 3 3 |
 
-               4        6
-o23 : Matrix ZZ  <--- ZZ
+               4       6
+o23 : Matrix ZZ  <-- ZZ
 
 i24 : maxCones(T)
 
@@ -144,8 +144,8 @@ o25 = | 0 |
       | 0 |
       | 1 |
 
-               4        1
-o25 : Matrix ZZ  <--- ZZ
+               4       1
+o25 : Matrix ZZ  <-- ZZ
 
 i26 : multiplicities(T)
 

@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+--	  TO "changes made for the next release",
+	  TO "changes, 1.24.05",
 	  TO "changes, 1.23",
 	  TO "changes, 1.22",
 	  TO "changes, 1.21",
@@ -40,7 +41,7 @@ document {
      }
 
 document {
-    Key => "changes made for the next release",
+    Key => "changes, 1.24.05",
     UL {
 	LI { "packages that have been published and certified:",
 	    UL {
@@ -54,8 +55,58 @@ document {
 	    },
 	LI { "new packages:",
 	    UL {
+		LI { TO "MultigradedBGG::MultigradedBGG", ", a package by Maya Banks, Michael K. Brown, Tara Gomes, Prashanth Sridhar, Eduardo Torres Davila, and Sasha	Zotine for the multigraded BGG correspondence and differential modules, has been added." },
 		LI { TO "TropicalToric::TropicalToric", ", a package by Alessio Borzì on tropical methods for toric intersection theory, has been added." },
 		LI { TO "VNumber::VNumber", ", a package by Antonino Ficarra and Emanuele Sgroi to compute v-number of homogeneous ideals and v-function of monomial ideals, has been added." }
+		}
+	    },
+	LI { "improved packages:",
+	    UL {
+		LI { "Many ", TO "FourTiTwo::FourTiTwo", " methods now have a ", TO Precision, " option for setting the integer precision used by 4ti2."},
+		LI { TO "GeometricDecomposability::GeometricDecomposability", " has been updated to version 1.4.1 with minor updates."},
+		LI { TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", " has been updated to version 1.24 with small updates."},
+		LI { TO "PositivityToricBundles::PositivityToricBundles", " has been updated to version 1.7, adding several new methods, fixing bugs, and updating the documentation and tests. "},
+		LI { TO "ToricVectorBundles::ToricVectorBundles", " has been updated to version 1.2 with updated documentation."},
+		LI { TO "WhitneyStratifications::WhitneyStratifications", " has been updated to version 2.03, adding new routines to stratify algebraic maps to the package. The update also includes several performance improvements and bug fixes." },
+		}
+	    },
+	LI { "functionality added or improved:",
+	    UL {
+		LI { "It is now possible to create a fraction field of an iterated polymial ring using ", TO frac, "."},
+		LI { "A number of new operators have been added that may be used for defining methods.  See ", TO symbol ^!, ", ",
+		    TO symbol _!, ", ", TO symbol ^~, ", ", TO symbol _~, ", ", TO symbol ^>, ", ", TO symbol ^>=, ", ", TO symbol ^<, ", ",
+		    TO symbol ^<=, ", ", TO symbol _>, ", ", TO symbol _>=, ", ", TO symbol _<, ", ", TO symbol _<=, ", ", TO symbol |_, ", and ",
+		    TO symbol |_=, "." },
+		LI { "A number of improvements have been made to parallelization. In particular:",
+		    UL {
+			LI { "The function ", TO getIOThreadMode, " has been added for determining the current I/O thread mode. "},
+			LI { "The functions ", TO setIOExclusive, ", ", TO setIOSynchronized, ", and ", TO setIOUnSynchronized, " now also accept a file as an argument." },
+			LI { "The default I/O thread mode has been changed from 0 (unsynchronized) to 1 (synchronized)." },
+			LI { "Much of the code (e.g., reading mutable hash tables) is now thread safe." },
+			LI { "The output of ", TO GCstats, " has been improved." },
+			LI { "The initial heap size used by the garbage collector has been increased and the free space divisor has been decreased." },
+			LI { "The ", TO taskResult, " function now waits until a task is finished before returning its result." },
+			LI { "The ", TO parallelApply, " function has been added for applying a function to a list in parallel." },
+			LI { "The output when using the ", TO symbol time, " keyword now includes the time used by the current thread and in garbage collection. "},
+			LI { "The keyword ", M2CODE "threadVariable", " has been renamed to ", TO symbol threadLocal, ", although the former still exists as a synonym."}
+			},
+		    "See ", TO "parallel programming with threads and tasks", " for more."
+		    },
+		LI { "The hash counter for mutable hash tables increases much more slowly, decreasing the likelihood of overflowing." },
+		LI { "The ", TO take, " function will now accept a two-element list as its second element if the class of the first element has a ", TO iterator, " method installed."},
+		LI { "Broken links to the ", HREF{"https://msp.org/jsag/", "Journal of Software for Algebra and Geometry"}, " have been fixed in the documentation for older certified packages."},
+		LI { "The documentation page for each certified package now includes its DOI."},
+		LI { "The ", TO union, " function has been added for sets." },
+		LI { "The ", TO intersect, " and ", TO intersection, " functions now work for sets."},
+		LI { "Creating integer quotient rings using ", M2CODE "ZZ/n", " now works when ", VAR "n", " is large and/or composite."},
+		LI { "The syntax ", CODE "g \\\\ f", " as a synonym for ", CODE "f // g", " when ", VAR "f", " and ", VAR "g", " are matrices has been deprecated.  ",
+		     "It will be replaced in the next release."},
+		LI { "Modules may now be compared using ", TO symbol <, ", ", TO symbol <=, ", ", TO symbol >, ", and ", TO symbol >=,
+		    ", by their ranks and degrees.  In particular, lists of modules may now be sorted."},
+		LI { "The method ", TO (homomorphism, Vector), " was added for getting the homomorphism from an element of a Hom module."},
+		LI { "The method ", TO (random, Module), " was added for generating random elements of modules."},
+		LI { "The method ", TO (all, BasicList), " was added for checking if all elements of a list of booleans are true."},
+		LI { "The method ", TO (position, ZZ, Function), " was added for finding the smallest index for which a function returns true." }
 		}
 	    }
 	}

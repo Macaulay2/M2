@@ -32,7 +32,6 @@ newPackage(
     Keywords => {"Combinatorial Commutative Algebra"},
     PackageExports => { "Polyhedra" },
     AuxiliaryFiles => true,
-    DebuggingMode => true,
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

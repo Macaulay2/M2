@@ -19,11 +19,11 @@ newPackage(
   PackageImports => {
     "FourierMotzkin"
   },
-	DebuggingMode => true,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
   OptionalComponentsPresent => true,
   UseCachedExampleOutput => true,
+  Keywords => {"Tropical Geometry"},
   Certification => {
       "journal name" => "Journal of Software for Algebra and Geometry",
       "journal URI" => "https://msp.org/jsag/",

@@ -24,7 +24,7 @@ newPackage(
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}                 
 	         },
     	Headline => "Adjunction for Surfaces",
-    	DebuggingMode => true
+	Keywords => {"Projective Algebraic Geometry"}
     	)
 
 export {

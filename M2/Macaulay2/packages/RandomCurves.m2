@@ -28,6 +28,13 @@ beginDocumentation()
 doc ///
 Key
  RandomCurves
+Headline
+ random curves
+Description
+ Text
+  This package loads the @TO RandomObjects@, @TO RandomSpaceCurves@,
+  @TO RandomPlaneCurves@, @TO RandomGenus14Curves@, and
+  @TO RandomCanonicalCurves@ packages.
 ///
 
 end

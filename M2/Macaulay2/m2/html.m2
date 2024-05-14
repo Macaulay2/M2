@@ -187,7 +187,7 @@ show Hypertext := x -> (
     fn := temporaryFileName() | ".html";
     addEndFunction( () -> if fileExists fn then removeFile fn );
     fn << html HTML { defaultHEAD "Macaulay2 Output", BODY {x}} << endl << close;
-    show new URL from replace(" ", "%20", rootURI | realpath fn)) -- TODO: urlEncode might need to replace more characters
+    show URL urlEncode(rootURI | realpath fn))
 show URL := url -> (
     cmd := { getViewer("WWWBROWSER", "firefox"), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
     if fork() == 0 then (

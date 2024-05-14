@@ -43,7 +43,6 @@ newPackage(
 	  },
      Headline => "maximum likelihood estimates for graphical statistical models",
      Keywords => {"Algebraic Statistics"},
-     DebuggingMode => true,
      PackageExports => {"GraphicalModels","Graphs","EigenSolver","NumericalAlgebraicGeometry","StatGraphs"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",

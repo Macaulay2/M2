@@ -6,6 +6,7 @@ Date => "February 01, 2021",
 Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"}
            },
 Headline => "A Macaulay2 package to deal with t-spread ideals of a polynomial ring",
+Keywords => {"Commutative Algebra"},
 DebuggingMode => false
 )
 
