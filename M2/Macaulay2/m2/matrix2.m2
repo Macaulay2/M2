@@ -442,10 +442,9 @@ indices RingElement := (f) -> rawIndices raw f
 indices Matrix := (f) -> rawIndices raw f
 
 support = method()
-support RingElement := support Matrix := (f) -> (
-     x := rawIndices raw f;
-     apply(x, i -> (ring f)_i))
-support Ideal := (I) -> rsort toList sum apply(flatten entries generators I, f -> set support f)
+support RingElement :=
+support Matrix      := f -> apply(try rawIndices raw f else {}, i -> (ring f)_i)
+support Ideal       := I -> support generators I
 --------------------
 -- homogenization --
 --------------------
