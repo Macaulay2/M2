@@ -388,7 +388,8 @@ splitCharacter RingElement := ce -> (
 beginDocumentation()
 document {
      	  Key => SchurFunctors,
-	  Headline => "for computing Schur functors"
+	  Headline => "for computing Schur functors",
+	  "This package provides methods for computing Schur functors."
 	 }
 
 doc get (currentFileDirectory | "SchurFunctors/schurModule.txt")

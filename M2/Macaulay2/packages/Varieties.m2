@@ -778,6 +778,10 @@ Node
     Varieties
   Headline
     affine and projective algebraic geometry
+  Description
+    Text
+      This package provides routines for working with affine and projective
+      varieties and coherent sheaves on them.
   Acknowledgement
     Large portions of this package were originally in @TT "m2/varieties.m2"@.
     Work on the type @TO SheafMap@ and related algorithms began at a Macaulay2
