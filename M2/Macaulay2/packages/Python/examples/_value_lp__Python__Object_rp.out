@@ -2,7 +2,7 @@
 
 i1 : value pythonValue "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
 
-o1 = {1, 3.14159, foo, (1, 2, 3), HashTable{foo => bar}}
+o1 = {1, 3.14159, foo, (1, 2, 3), HashTable{"foo" => bar}}
 
 o1 : List
 
