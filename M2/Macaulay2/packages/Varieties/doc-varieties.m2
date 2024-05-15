@@ -119,6 +119,24 @@ document {
     SeeAlso => {ring, (ideal,Ring), Spec, AffineVariety, Proj, ProjectiveVariety}
     }
 
+doc ///
+Node
+  Key
+    (isWellDefined, Variety)
+  Headline
+    whether a variety is well-defined
+  Usage
+    isWellDefined X
+  Inputs
+    X:Variety
+  Outputs
+    :Boolean
+      whether $X$ is a well-defined affine or projective variety
+--  Description
+--    Text
+--    Example
+///
+
 -- TODO: [(codim, Variety), Generic]
 document {
     Key => (codim, Variety),
