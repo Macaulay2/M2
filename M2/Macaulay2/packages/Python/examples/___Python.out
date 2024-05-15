@@ -8,7 +8,7 @@ o1 : PythonObject of class list
 
 i2 : value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
 
-o2 = {1, .666667, foo, (1, 2, 3), HashTable{foo => bar}}
+o2 = {1, .666667, foo, (1, 2, 3), HashTable{"foo" => bar}}
 
 o2 : List
 
