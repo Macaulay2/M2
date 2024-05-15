@@ -101,7 +101,6 @@ Michael E. Stillman <mike@math.cornell.edu>
 setUpApplicationDirectory = () -> (
      dir := applicationDirectory();
      makeDirectory(dir);
-     makeDirectory(dir|"encap/");
      makeDirectory(dir|"local/");
      makeDirectory(dir|"code/");
      f := (n,c) -> (n = dir|n; if not fileExists n then n << c << close);
