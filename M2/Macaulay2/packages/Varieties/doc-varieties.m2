@@ -327,16 +327,41 @@ document {
 -- Arithmetic operations
 -----------------------------------------------------------------------------
 
-document {
-    Key => {(symbol **, AffineVariety, Ring)},
-    Usage => "X ** R",
-    Inputs => {"X","R"},
-    Outputs => {{"the tensor product of ", TT "X", " with ", TT "R"}},
-    EXAMPLE lines ///
-      X = Spec(QQ[x,y])
-      Y = X ** (QQ[t])
-      describe Y
-    ///
-    }
-
--- TODO: (symbol **, AffineVariety, AffineVariety), etc.
+doc ///
+Node
+  Key
+    (symbol **, AffineVariety, AffineVariety)
+    (symbol **, AffineVariety, Ring)
+  Headline
+    Cartesian product of two affine varieties
+  Synopsis
+    Usage
+      X ** Y
+    Inputs
+      X:AffineVariety
+      Y:AffineVariety
+    Outputs
+      :AffineVariety
+	the Cartesian product $X \times Y$
+    Description
+      Example
+	X = Spec QQ[x,y]
+	Y = X ** X
+	describe Y
+  Synopsis
+    Usage
+      X ** R
+    Inputs
+      X:AffineVariety
+      R:Ring
+    Outputs
+      :AffineVariety
+	the Cartesian product $X \times \mathrm{Spec} R$
+    Description
+      Example
+	Z = X ** QQ[t]
+	describe Z
+  Caveat
+    Cartesian products of non-affine varieties are not yet implemented in this package,
+    but see @TO "NormalToricVarieties::cartesianProduct(NormalToricVariety)"@ for another implementation.
+///
