@@ -15,8 +15,8 @@ i4 : NSC2phc(SchubProbP,k,n)
 o4 = | 3 3 4 7 8 |
      | 4 4 6 7 8 |
 
-              2        5
-o4 : Matrix ZZ  <--- ZZ
+              2       5
+o4 : Matrix ZZ  <-- ZZ
 
 i5 : k=4;
 
@@ -35,7 +35,7 @@ i8 : NSC2phc(SchubProbB,4,8)
 o8 = | 3 3 4 7 8 |
      | 4 4 6 7 8 |
 
-              2        5
-o8 : Matrix ZZ  <--- ZZ
+              2       5
+o8 : Matrix ZZ  <-- ZZ
 
 i9 : 
