@@ -218,7 +218,25 @@ document {
      }
 
 -- TODO: (ambient, AffineVariety), (ambient, ProjectiveVariety)
--- TODO: (singularLocus, AffineVariety), (singularLocus, ProjectiveVariety)
+doc ///
+Node
+  Key
+    (singularLocus,     AffineVariety)
+    (singularLocus, ProjectiveVariety)
+  Headline
+    the locus of singular points in a variety
+  Usage
+    singularLocus X
+  Inputs
+    X:{AffineVariety,ProjectiveVariety}
+  Outputs
+    :{AffineVariety,ProjectiveVariety}
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (singularLocus, Ring)
+///
 
 -----------------------------------------------------------------------------
 -- Methods specific to projective varieties
