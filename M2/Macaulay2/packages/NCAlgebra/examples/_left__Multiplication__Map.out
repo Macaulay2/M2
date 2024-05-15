@@ -21,8 +21,8 @@ o2 = | 1 0 0 0 0 0 |
      | 0 0 0 0 0 1 |
      | 0 0 0 0 0 0 |
 
-              10        6
-o2 : Matrix QQ   <--- QQ
+              10       6
+o2 : Matrix QQ   <-- QQ
 
 i3 : kernel oo
 
@@ -58,16 +58,16 @@ i8 : leftMultiplicationMap(x,1)
 o8 = | 1 -1 |
      | 0 0  |
 
-              2        2
-o8 : Matrix QQ  <--- QQ
+              2       2
+o8 : Matrix QQ  <-- QQ
 
 i9 : M=matrix gens kernel oo
 
 o9 = | 1 |
      | 1 |
 
-              2        1
-o9 : Matrix QQ  <--- QQ
+              2       1
+o9 : Matrix QQ  <-- QQ
 
 i10 : basis(1,D)*M
 

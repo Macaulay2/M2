@@ -24,8 +24,8 @@ i4 : matrix f
 
 o4 = | 0 0 a+b a-b |
 
-             1       4
-o4 : Matrix B  <--- B
+             1      4
+o4 : Matrix B  <-- B
 
 i5 : g = ncMap(A,A,{x,y,z,w})
 
