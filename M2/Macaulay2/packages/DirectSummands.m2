@@ -129,9 +129,6 @@ changeBaseField(GaloisField, CoherentSheaf) := (L, F) -> sheaf'(variety F, chang
 nonzero = x -> select(x, i -> i != 0)
 nonnull = x -> select(x, i -> i =!= null)
 
-random Module := Vector => o -> M -> vector(gens M * random(cover M, module ring M, o))
-homomorphism Vector := v -> homomorphism matrix v
-
 checkRecursionDepth = () -> if recursionDepth() > recursionLimit - 20 then printerr(
     "Warning: the recursion depth limit may need to be extended; use `recursionLimit = N`")
 
