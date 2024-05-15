@@ -31,8 +31,8 @@ i5 : f_1
 o5 = | 0 1 |
      | 1 0 |
 
-              2        2
-o5 : Matrix QQ  <--- QQ
+              2       2
+o5 : Matrix QQ  <-- QQ
 
 i6 : basis(2,A)
 
@@ -48,7 +48,7 @@ o7 = | 0 1 0 0  0 |
      | 0 0 0 -1 0 |
      | 0 0 1 0  0 |
 
-              5        5
-o7 : Matrix QQ  <--- QQ
+              5       5
+o7 : Matrix QQ  <-- QQ
 
 i8 : 

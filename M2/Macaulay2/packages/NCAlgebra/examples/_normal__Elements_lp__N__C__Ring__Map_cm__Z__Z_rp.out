@@ -39,7 +39,7 @@ i6 : normalElements(sigmaC,2)
 o6 = 0
 
               1
-o6 : Matrix QQ  <--- 0
+o6 : Matrix QQ  <-- 0
 
 i7 : normalElements(sigmaC @@ sigmaC,2)
 
