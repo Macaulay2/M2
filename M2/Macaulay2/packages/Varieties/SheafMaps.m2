@@ -9,6 +9,7 @@ export {
     "cotangentSurjection",
     "eulerSequence",
     "embeddedToAbstract",
+    "ExtLongExactSequence",
     }
 
 -----------------------------------------------------------------------------
@@ -511,11 +512,20 @@ basis(ZZ, Complex) := Complex -> opts -> (d, C) -> (
     L := for i from a to b list basis(d, C.dd_i, opts);
     complex(L, Base => a))
 
+--TODO: RHom(ZZ, SheafComplex, SheafComplex)
+--TODO: TorLongExactSequence
+
 -- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
--- this returns the connecting homomorphism Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
-connectingExtMap(ZZ, CoherentSheaf, SheafMap)           := Matrix => opts -> (m, F, f) ->
-    connectingExtMap(m, F, inducedMap(image f, source f,f), inducedMap(source f, ker f), opts)
-connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m, F, f, g) -> (
+-- this method returns the long exact sequence in cohomology;
+-- the concentration argument will give Ext^(lo) -> ... -> Ext^(hi)
+ExtLongExactSequence = method(Options => {Concentration => null})
+ExtLongExactSequence(CoherentSheaf, SheafMap)           := Matrix => opts -> (F, f) ->
+    ExtLongExactSequence(F, inducedMap(image f, source f, f), inducedMap(source f, ker f), opts)
+ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F, f, g) -> (
+    d := dim variety F;
+    -- TODO: gives garbage output when a narrow concentration is specified
+    (a, b) := if opts.Concentration === null then (0, d + 1)
+    else (first opts.Concentration, last opts.Concentration);
     e := 0; -- this is a sum of twists bound
     if not instance(variety F, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
@@ -529,9 +539,9 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
     l := max(
-	l1 := min(dim N1, m),
-	l2 := min(dim N2, m),
-	l3 := min(dim N3, m));
+	l1 := min(dim N1, b - 1),
+	l2 := min(dim N2, b - 1),
+	l3 := min(dim N3, b - 1));
     P1 := resolution flattenModule N1;
     P2 := resolution flattenModule N2;
     P3 := resolution flattenModule N3;
@@ -546,7 +556,7 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
 	a1 := max apply(n - l1 .. p1, j -> (max degrees P1_j)#0 - j);
 	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
 	a3 := max apply(n - l3 .. p3, j -> (max degrees P3_j)#0 - j);
-	r := max(a1, a2, a3) - e - m + 1;
+	r := max(a1, a2, a3) - e - (b - 1) + 1;
         --need to truncate M in a way related to invariants of ker f
         --probably just add in l3, P3, etc., take max as above
 	M = truncate(r, M, MinimalGenerators => false));
@@ -555,9 +565,20 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
     ExtMap := ExtLES(M,
 	truncate(reg,    matrix f, MinimalGenerators => false),
 	subtruncate(reg, matrix g, MinimalGenerators => false),
-	LengthLimit => m + 2);
-    --moveToField basis(0, ExtMap_(-m)))
-    (basis(0,ExtMap.dd_(-m-1)),basis(0,ExtMap.dd_(-m)), basis(0,ExtMap.dd_(-m+1))))
+	LengthLimit => b + 1);
+    -- TODO: simplify this
+    if opts.Concentration =!= null
+    then complex(for i from -3*b + 1 to -3*a + 2 list moveToField basis(0, ExtMap.dd_i), Base => -3*b)
+    else complex(for i from -3*d + 1 to 2        list moveToField basis(0, ExtMap.dd_i), Base => -3*d))
+
+-- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
+-- this returns the connecting homomorphism Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
+connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f0) -> (
+    f := inducedMap(image f0, source f0, f0);
+    g := inducedMap(source f, ker f);
+    h := ExtLongExactSequence(F, f, g,
+	Concentration => (m, m + 1));
+    h.dd_(-3*m))
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
