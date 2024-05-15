@@ -369,6 +369,9 @@ CoherentSheaf == ZZ            := Boolean => (F, z) -> if z == 0 then dim module
 ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
 -- isIsomorphic is defined in SheafMaps.m2 because we return the isomorphism as well
 
+-- use for sorting a list
+CoherentSheaf ? CoherentSheaf := lookup(symbol ?, Module, Module)
+
 -- arithmetic ops
 CoherentSheaf.directSum = args -> (
     assertSameVariety args;
