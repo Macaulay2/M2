@@ -180,11 +180,15 @@ smartBasis = (deg, M) -> (
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 
+-- same as flatten(Matrix), but doesn't bother homogenizing the result
 flatten' = m -> map(R := ring m, rawReshape(m = raw m, raw R^1, raw R^(rawNumberOfColumns m * rawNumberOfRows m)))
 
+-- not strictly speaking the "lead" coefficient
+leadCoefficient Matrix := RingElement => m -> for c to numcols m - 1 do for r to numrows m - 1 do (
+    if not zero m_(r,c) then return leadCoefficient m_(r,c))
+
 -- this is a kludge to handle the case when h^2 = ah
-reduceScalar = m -> if m == 0 then m else map(target m, source m, cover m // scan(
-	rawNumberOfColumns raw(mons := flatten' m), i -> if not zero mons_(0,i) then break leadCoefficient mons_(0,i)))
+reduceScalar = m -> if m == 0 then m else map(target m, source m, cover m // leadCoefficient m)
 isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
 
 -- TODO: can we return cached summands from the closest field extension?
