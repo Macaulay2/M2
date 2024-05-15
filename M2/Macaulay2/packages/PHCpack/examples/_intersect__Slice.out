@@ -6,8 +6,8 @@ i2 : M=matrix for i to 2 list for j to 3 list random(1,R)+random(0,R);
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
 
-             3       4
-o2 : Matrix R  <--- R
+             3      4
+o2 : Matrix R  <-- R
 
 i3 : I=minors(3,M);
 
@@ -19,16 +19,16 @@ i5 : (w,ns) = topWitnessSet(f,2);
 
 i6 : slcmat = matrix applyTable (entries w.Slice, x->1_CC*realPart x);
 
-                2          7
-o6 : Matrix CC    <--- CC
-              53         53
+                2         7
+o6 : Matrix CC    <-- CC
+              53        53
 
 i7 : Rtwo = ring w.Equations;
 
 i8 : X = transpose matrix {gens Rtwo | {1_CC}};
 
-                7          1
-o8 : Matrix Rtwo  <--- Rtwo
+                7         1
+o8 : Matrix Rtwo  <-- Rtwo
 
 i9 : slcRR = flatten entries (promote(slcmat,Rtwo) * X);
 
