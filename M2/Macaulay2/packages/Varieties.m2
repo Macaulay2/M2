@@ -207,7 +207,8 @@ AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X ** Sp
 isProjective = method(TypicalValue => Boolean)
 isProjective Variety           := X -> false
 isProjective ProjectiveVariety := X -> true
--- TODO: isSmooth
+
+isSmooth Variety := {} >> o -> X -> 1 == ideal singularLocus X
 
 -- This method returns either a Variety, an AbstractVariety (from Schubert2),
 -- a NormalToricVariety, or any other variety stashed in R.variety.
