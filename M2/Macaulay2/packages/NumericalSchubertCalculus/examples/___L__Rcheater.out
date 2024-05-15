@@ -6,8 +6,8 @@ i2 : n := 6;
 
 i3 : m := matrix{{3, 2, 4, 6}};
 
-              1        4
-o3 : Matrix ZZ  <--- ZZ
+              1       4
+o3 : Matrix ZZ  <-- ZZ
 
 i4 : t := LRtriple(n,m);
 
