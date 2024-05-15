@@ -300,7 +300,7 @@ i41 : normalElements(sigmaD,2)
 o41 = 0
 
                1
-o41 : Matrix QQ  <--- 0
+o41 : Matrix QQ  <-- 0
 
 i42 : normalElements(D,2,P,Q)
 Normal monomials of degree 2:

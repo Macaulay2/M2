@@ -34,8 +34,8 @@ o5 = | 2 0 0 |
      | 1 2 0 |
      | 1 2 3 |
 
-              3        3
-o5 : Matrix QQ  <--- QQ
+              3       3
+o5 : Matrix QQ  <-- QQ
 
 i6 : N*L
 

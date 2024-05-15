@@ -2,7 +2,7 @@
 
 i1 : fractions = import "fractions"
 
-o1 = <module 'fractions' from '/usr/lib/python3.9/fractions.py'>
+o1 = <module 'fractions' from '/usr/lib/python3.11/fractions.py'>
 
 o1 : PythonObject of class module
 

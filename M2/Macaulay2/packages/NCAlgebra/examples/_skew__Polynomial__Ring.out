@@ -12,8 +12,8 @@ o2 = | 1          q q |
      | -q3-q2-q-1 1 1 |
      | -q3-q2-q-1 1 1 |
 
-             3       3
-o2 : Matrix R  <--- R
+             3      3
+o2 : Matrix R  <-- R
 
 i3 : B = skewPolynomialRing(R,M,{x,y,z})
 
@@ -32,8 +32,8 @@ o5 = | 1 1 1 1 |
      | 1 1 1 1 |
      | 1 1 1 1 |
 
-              4        4
-o5 : Matrix ZZ  <--- ZZ
+              4       4
+o5 : Matrix ZZ  <-- ZZ
 
 i6 : C = skewPolynomialRing(QQ,promote(N,QQ), {a,b,c,d})
 --Calling Bergman for NCGB calculation.
