@@ -87,17 +87,15 @@ your "path", so Macaulay2's "load" and "input" commands will automatically look
 there for your files.
 
 You may obtain source code for Macaulay2 packages and install them yourself
-with the function "installPackage".  Behind the scenes, Macaulay2 will use the
-subdirectory "encap/" to house the code for those packages in separate
-subdirectories.  The subdirectory "local/" will hold a single merged directory
-tree for those packages, with symbolic links to the files of the packages.
+with the function "installPackage".  By default, these packages will be
+installed to the "local/" subdirectory.
 
 Good luck!
 
-http://www.math.uiuc.edu/Macaulay2/
+https://macaulay2.com/
 
 Daniel R. Grayson <dan@math.uiuc.edu>,
-Michael R. Stillman <mike@math.cornell.edu>
+Michael E. Stillman <mike@math.cornell.edu>
 ///
 
 setUpApplicationDirectory = () -> (
