@@ -204,7 +204,6 @@ AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X ** Sp
 --ProjectiveVariety ** Ring              := ProjectiveVariety => (X, R) -> X ** Proj R
 
 -- property checks
--- TODO: document
 isProjective = method(TypicalValue => Boolean)
 isProjective Variety           := X -> false
 isProjective ProjectiveVariety := X -> true

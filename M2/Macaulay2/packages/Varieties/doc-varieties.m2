@@ -194,6 +194,31 @@ document {
 -----------------------------------------------------------------------------
 -- for euler, genus, and genera see their respective documentation pages
 
+doc ///
+Node
+  Key
+    isProjective
+   (isProjective, Variety)
+   (isProjective, ProjectiveVariety)
+  Headline
+    whether a variety is projective
+  Usage
+    isProjective X
+  Inputs
+    X:Variety
+  Outputs
+    :Boolean
+  Description
+    Text
+      This method essentially returns whether $X$ was defined using @TO Proj@ or @TO Spec@.
+    Example
+      S = QQ[x,y,z]
+      isProjective Proj S
+      isProjective Spec S
+  SeeAlso
+    "NormalToricVarieties::isProjective(NormalToricVariety)"
+///
+
 document {
     Key => (degree, ProjectiveVariety),
     Usage => "degree X",
