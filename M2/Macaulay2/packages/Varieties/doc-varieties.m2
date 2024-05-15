@@ -217,8 +217,26 @@ document {
      "Returns the characteristic of the corresponding ring."
      }
 
--- TODO: (ambient, AffineVariety), (ambient, ProjectiveVariety)
 doc ///
+Node
+  Key
+    (ambient,     AffineVariety)
+    (ambient, ProjectiveVariety)
+  Headline
+    the ambient affine or projective space of an embedded variety
+  Usage
+    ambient X
+  Inputs
+    X:{AffineVariety,ProjectiveVariety}
+  Outputs
+    :{AffineVariety,ProjectiveVariety}
+      which is either an affine space or projective space where $X$ lies
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (ambient, Ring)
+
 Node
   Key
     (singularLocus,     AffineVariety)
