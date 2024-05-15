@@ -219,6 +219,30 @@ Node
     "NormalToricVarieties::isProjective(NormalToricVariety)"
 ///
 
+doc ///
+Node
+  Key
+   (isSmooth, Variety)
+  Headline
+    whether a variety is smooth
+  Usage
+    isSmooth X
+  Inputs
+    X:Variety
+  Outputs
+    :Boolean
+  Description
+    Text
+      An affine variety $X$ is smooth if the @TO2 {singularLocus, "singular locus"}@ of $X$ is empty,
+      while a projective variety is smooth if the singular locus is supported at the origin.
+    Example
+      R = quotient minors_2 genericMatrix(QQ[x,y,z,w], 2, 2)
+      isSmooth Proj R
+      isSmooth Spec R
+  SeeAlso
+    "NormalToricVarieties::isSmooth(NormalToricVariety)"
+///
+
 document {
     Key => (degree, ProjectiveVariety),
     Usage => "degree X",
