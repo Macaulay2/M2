@@ -227,31 +227,28 @@ document {
 -- Basic methods for sheaves
 -----------------------------------------------------------------------------
 
--- TODO: combine these two
-document {
-    Key => (variety, CoherentSheaf),
-    TT "variety F", " -- produce the variety over which a coherent sheaf is defined.",
-    PARA{},
-    EXAMPLE {
-	"X = Proj(QQ[x,y,z])",
-	"OO_X(3)",
-	"variety oo"
-	}
-    }
--- TODO: check that documentation of SourceCode shows correct code
-document { 
-    Key => (variety, SheafOfRings),
-    Usage => "variety O",
-    Inputs => { "O" },
-    Outputs => { { "the variety over which O is a quasicoherent sheaf of rings" } },
-    EXAMPLE lines ///
-      X = Proj(QQ[x..z])
-      O = OO_X
-      variety O
-    ///,
-    SourceCode => {(variety, SheafOfRings)}
-    }
--- TODO: (variety, SumOfTwists)
+doc ///
+Node
+  Key
+    (variety, CoherentSheaf)
+    (variety, SheafOfRings)
+    (variety, SumOfTwists)
+    (variety, SheafMap)
+  Headline
+    the underlying variety over which a coherent sheaf or morphism is defined.
+  Usage
+    variety F
+  Inputs
+    F:{CoherentSheaf,SheafOfRings,SumOfTwists,SheafMap}
+  Outputs
+    :Variety
+  Description
+    Example
+      X = Proj QQ[x,y,z]
+      variety OO_X
+      variety OO_X(3)
+      variety id_(OO_X(3))
+///
 
 doc ///
 Node
@@ -259,6 +256,7 @@ Node
     (ring, CoherentSheaf)
     (ring, SheafOfRings)
     (ring, SumOfTwists)
+    (ring, SheafMap)
   Headline
     the coordinate ring of the underlying variety
 ///
