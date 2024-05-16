@@ -167,7 +167,7 @@ document {
     }
 
 document {
-    Key => {(sheaf, Module),(symbol ~, Module)},
+    Key => {(sheaf, Module), (sheaf, Ideal), (symbol ~, Module), (symbol ~, Ideal)},
     Headline => "make a coherent sheaf",
     Usage => "sheaf M\nM~",
     Inputs => {"M" => "homogeneous" },
