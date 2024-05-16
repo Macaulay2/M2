@@ -199,6 +199,10 @@ document {
      SeeAlso => {(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,SheafOfRings),(euler,ProjectiveVariety)}
      }
 
+-----------------------------------------------------------------------------
+-- Hom
+-----------------------------------------------------------------------------
+
 document {
     Key => {(Hom,CoherentSheaf,CoherentSheaf),
 	(Hom, SheafOfRings, SheafOfRings),
@@ -225,6 +229,10 @@ document {
 	SeeAlso => {sheafHom, Ext, sheafExt}
 	}
 
+-----------------------------------------------------------------------------
+-- sheafHom
+-----------------------------------------------------------------------------
+
 document {
     Key => {
 	sheafHom,
@@ -248,6 +256,22 @@ document {
     ///,
     SeeAlso => {OO, sheafExt, Hom, Ext, HH, (Hom, CoherentSheaf, CoherentSheaf)}
     }
+
+doc ///
+Node
+  Key
+    (sheafHom, CoherentSheaf, SheafMap)
+    (sheafHom, SheafMap, CoherentSheaf)
+    (sheafHom, SheafOfRings, SheafMap)
+    (sheafHom, SheafMap, SheafOfRings)
+    (sheafHom, SheafMap, SheafMap)
+  Headline
+    functor of sheaf Hom
+///
+
+-----------------------------------------------------------------------------
+-- Ext
+-----------------------------------------------------------------------------
 
 document {
     Key => {
