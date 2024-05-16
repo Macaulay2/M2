@@ -1,5 +1,21 @@
 undocumented {
-    sheafMap,
+    sheafMap, -- deprecated
+    -- TODO: document some of these
+    (symbol SPACE, SheafMap, ZZ),
+    (symbol ^,   SheafMap, ZZ),
+    (symbol ^**, SheafMap, ZZ),
+    (symbol ++,  SheafMap, SheafMap),
+    (symbol +,   SheafMap, SheafMap),
+    (symbol *,   SheafMap, SheafMap),
+    (symbol *,   RingElement, SheafMap), (symbol *, ZZ, SheafMap),
+    (symbol -,   SheafMap, SheafMap), (symbol -, SheafMap),
+    (symbol **,  SheafMap, SheafMap),
+    (symbol **,  SheafMap, SheafOfRings),  (symbol **, SheafOfRings, SheafMap),
+    (symbol **,  SheafMap, CoherentSheaf), (symbol **, CoherentSheaf, SheafMap),
+    (symbol |,   SheafMap, SheafMap),
+    (symbol ||,  SheafMap, SheafMap),
+    (symbol ==,  SheafMap, SheafMap),
+    (symbol ==,  SheafMap, ZZ), (symbol ==, ZZ, SheafMap),
     }
 
 -----------------------------------------------------------------------------
@@ -89,6 +105,20 @@ Node
     (isWellDefined, Matrix)
 ///
 
+-----------------------------------------------------------------------------
+-- Arithmetic operations
+-----------------------------------------------------------------------------
+
+doc ///
+Node
+  Key
+    (quotient,  SheafMap, SheafMap)
+    (quotient', SheafMap, SheafMap)
+    (symbol //, SheafMap, SheafMap)
+    (symbol \\, SheafMap, SheafMap)
+  Headline
+    factoring a morphism of coherent sheaves through another
+///
 
 ///
 Node
