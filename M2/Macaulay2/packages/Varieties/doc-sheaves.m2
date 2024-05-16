@@ -293,6 +293,26 @@ document {
     }
 -- TODO: should (module, SumOfTwists) return HH^0(F) or module F?
 
+doc ///
+Node
+  Key
+    (isWellDefined, CoherentSheaf)
+  Headline
+    whether a coherent sheaf is well-defined
+  Usage
+    isWellDefined F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :Boolean
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (isWellDefined, Variety)
+--    (isWellDefined, Module)
+///
+
 -- TODO: [(codim, CoherentSheaf), Generic]
 document {
     Key => {(codim, CoherentSheaf)},
