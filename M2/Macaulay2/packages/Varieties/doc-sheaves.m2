@@ -355,8 +355,24 @@ Node
     (rank, Module)
     (degree, Module)
     (degree, Ring)
+
+Node
+  Key
+    (degrees, CoherentSheaf)
+  Headline
+    degrees of a coherent sheaf
+  Usage
+    degrees F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :List
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (degrees, Module)
 ///
--- TODO: (degrees, CoherentSheaf)
 
 document {
     Key => (numgens, CoherentSheaf),
