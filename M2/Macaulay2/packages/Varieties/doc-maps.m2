@@ -28,6 +28,26 @@ Node
     (sheaf, Variety, Matrix, ZZ)
   Headline
     the constructor of morphisms of coherent sheaves
+
+Node
+  Key
+    (random, CoherentSheaf, CoherentSheaf)
+  Headline
+    generate a random map of coherent sheaves
+  Usage
+    random(F, G)
+  Inputs
+    F:CoherentSheaf
+    G:CoherentSheaf
+  Outputs
+    :SheafMap
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    setRandomSeed
+    (random, Module, Module)
+    (map, CoherentSheaf, CoherentSheaf, Matrix)
 ///
 
 ///
