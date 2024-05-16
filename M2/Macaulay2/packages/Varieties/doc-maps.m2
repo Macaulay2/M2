@@ -49,6 +49,26 @@ Node
     (random, Module, Module)
     (map, CoherentSheaf, CoherentSheaf, Matrix)
 
+-----------------------------------------------------------------------------
+-- Basic methods for sheaves
+-----------------------------------------------------------------------------
+
+Node
+  Key
+    (matrix, SheafMap)
+  Headline
+    the morphism of modules representing a morphisms of coherent sheaves
+  Usage
+    matrix phi
+    phi.map
+  Inputs
+    phi:SheafMap
+  Outputs
+    :Matrix
+  SeeAlso
+    (truncate, List, Module)
+    (truncate, Nothing, List, Matrix)
+
 Node
   Key
     (isWellDefined, SheafMap)
@@ -68,6 +88,7 @@ Node
     (isWellDefined, Variety)
     (isWellDefined, Matrix)
 ///
+
 
 ///
 Node
