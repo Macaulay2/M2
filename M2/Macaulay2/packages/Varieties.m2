@@ -838,6 +838,7 @@ Node
 
 load "./Varieties/doc-varieties.m2"
 load "./Varieties/doc-sheaves.m2"
+load "./Varieties/doc-maps.m2"
 load "./Varieties/doc-functors.m2"
 load "./Varieties/euler-doc.m2"
 load "./Varieties/genus-doc.m2"
