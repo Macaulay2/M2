@@ -336,7 +336,26 @@ document {
     SeeAlso => {(dim,Module)}
     }
 
--- TODO: (rank, CoherentSheaf)
+doc ///
+Node
+  Key
+    (rank, CoherentSheaf)
+  Headline
+    rank of a coherent sheaf
+  Usage
+    rank F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :ZZ
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (rank, Module)
+    (degree, Module)
+    (degree, Ring)
+///
 -- TODO: (degrees, CoherentSheaf)
 
 document {
