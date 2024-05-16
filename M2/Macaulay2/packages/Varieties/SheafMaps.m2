@@ -544,9 +544,9 @@ ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F,
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
     l := max(
-	l1 := min(dim N1, b - 1),
-	l2 := min(dim N2, b - 1),
-	l3 := min(dim N3, b - 1));
+	l1 := min(dim N1, max(b - 1, 0)),
+	l2 := min(dim N2, max(b - 1, 0)),
+	l3 := min(dim N3, max(b - 1, 0)));
     P1 := resolution flattenModule N1;
     P2 := resolution flattenModule N2;
     P3 := resolution flattenModule N3;
