@@ -156,7 +156,7 @@ select(e:Expr,f:Expr):Expr := (
 	  c := select(b.v,f);
 	  when c
 	  is Error do c
-	  is v:Sequence do list(b.Class,v)
+	  is v:Sequence do list(b.Class,v,b.Mutable)
 	  else e			  -- shouldn't happen
 	  )
      is n:ZZcell do (
@@ -221,7 +221,7 @@ select(n:Expr,e:Expr,f:Expr,g:Expr,h:Expr):Expr := (
 	  c := select(toInt(n),b.v,f);
 	  when c
 	  is Error do c
-	  is v:Sequence do list(b.Class,v)
+	  is v:Sequence do list(b.Class,v,b.Mutable)
 	  else e			  -- shouldn't happen
 	  )
      else WrongArg(1+1,"a list")
