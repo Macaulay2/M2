@@ -42,6 +42,11 @@ toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toSt
 local exe
 local topBuilddir
 
+m2version := (
+    v := replace("^release-", "", version#"git description");
+    if v == version#"VERSION" then v -- stable release (at release tag)
+    else concatenate(v, 1, "(", version#"git branch", ")"))
+
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
      -- all global definitions here are set to read-only
@@ -158,7 +163,7 @@ if firstTime then (
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
 
      copyright = (
-	  "Macaulay2, version " | version#"VERSION" | newline
+	  "Macaulay2, version " | m2version | newline
 	  | "Copyright 1993-2024 Daniel R. Grayson and Michael E. Stillman:" | newline
      	  | "  source code licensed under the GNU General Public License version 2 or 3;" | newline
      	  | "  this binary code licensed under the GNU General Public License version 3." | newline
@@ -500,7 +505,7 @@ action := hashTable {
 			      << TeXmacsEnd << endl << flush)));
 	       )
 	  ),
-     "--version" => arg -> ( << version#"VERSION" << newline; exit 0; ),
+     "--version" => arg -> ( << m2version << newline; exit 0; ),
      "--webapp" => arg -> ( printWidth=0; topLevelMode = global WebApp; )
      };
 
