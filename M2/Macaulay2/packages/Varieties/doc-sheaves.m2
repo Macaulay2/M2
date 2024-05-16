@@ -2,6 +2,16 @@
 --"For a projective varieties and coherent sheaves, the functionality is not yet implemented."
 -- TODO: what would this mean?
 
+-- TODO: document some of these
+undocumented {
+    (symbol ^,  CoherentSheaf, Array),
+    (symbol _,  CoherentSheaf, Array),
+    (symbol ?,  CoherentSheaf, CoherentSheaf),
+    (symbol ==, CoherentSheaf, CoherentSheaf),
+    (symbol ==, CoherentSheaf, ZZ),
+    (symbol ==, ZZ, CoherentSheaf),
+    }
+
 document {
     Key => "coherent sheaves",
     "The main reason to implement algebraic varieties is support the
@@ -131,7 +141,9 @@ document {
      ///}
 
 document {
-    Key => (symbol ^, SheafOfRings, List),
+    Key => {
+	(symbol ^, SheafOfRings, List),
+	(symbol ^, SheafOfRings, ZZ)},
     Headline => "make a graded free coherent sheaf",
     Usage => "M = R^{i,j,k,...}",
     Inputs => {"R",
@@ -498,11 +510,10 @@ document {
     }
 
 -- TODO: should this move up, next to SheafOfRings ^ List?
--- TODO: CoherentSheaf ^ List
 document {
     Key => {
 	(symbol ^, CoherentSheaf, ZZ),
-	(symbol ^, SheafOfRings, ZZ)},
+	(symbol ^, CoherentSheaf, List)},
     Headline => "direct sum",
     Usage => "F^n",
     Inputs => {"F" => {", or a ", ofClass SheafOfRings}, "n"},
@@ -516,7 +527,6 @@ document {
     ///,
     SeeAlso => {Proj, sheaf}
     }
--- TODO: (symbol ^, CoherentSheaf, List)
 
 -- TODO: (directSum, CoherentSheaf)?
 document {
