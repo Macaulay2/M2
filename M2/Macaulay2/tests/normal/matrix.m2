@@ -364,6 +364,13 @@ assert Equation(A + A, 0)
 assert Equation(A - A, 0)
 assert Equation(A, -A)
 
+-- empty matrix
+scan({matrix {}, matrix(ZZ, {}), map(ZZ^0, ZZ^0, {}), map(ZZ^0,, {})}, A -> (
+	    assert Equation(numRows A, 0);
+	    assert Equation(numColumns A, 0);
+	    assert Equation(source A, ZZ^0);
+	    assert Equation(target A, ZZ^0)))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"
 -- End:

@@ -96,8 +96,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      local k;
      if N === null then (
 	  k = R;
-	  if #p === 0 then error "expected non-empty list of entries for matrix";
-	  rankN = #p#0;
+	  rankN = if #p === 0 then 0 else #p#0;
 	  )
      else if class N === ZZ then (
 	  k = R;
@@ -276,7 +275,7 @@ matrix(Matrix) := Matrix => opts -> (m) -> (
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
 
 matrix(List) := Matrix => opts -> (m) -> (
-     if #m === 0 then error "expected nonempty list";
+     if #m === 0 then return matrix(ZZ, {});
      mm := apply(splice m,splice);
      if #mm === 0 then error "expected nonempty list";
      types := unique apply(mm,class);
