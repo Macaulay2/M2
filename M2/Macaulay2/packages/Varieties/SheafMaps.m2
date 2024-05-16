@@ -121,6 +121,8 @@ kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   mat
 coimage  SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, coimage  matrix f)
 cokernel SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, cokernel matrix f)
 
+isSurjective SheafMap := Boolean => f -> coker f == 0
+
 -- TODO: is sheaf sufficient here, or should we specify source/target/degree?
 cover   SheafMap := SheafMap => f -> sheaf(f.variety, cover   matrix f)
 ambient SheafMap := SheafMap => f -> sheaf(f.variety, ambient matrix f)
