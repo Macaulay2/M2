@@ -30,6 +30,8 @@ Node
     the class of morphisms of coherent sheaves
   Subnodes
     (map, CoherentSheaf, CoherentSheaf, Matrix)
+    (random, CoherentSheaf, CoherentSheaf)
+    (inducedMap, CoherentSheaf, CoherentSheaf)
 
 Node
   Key
@@ -64,6 +66,13 @@ Node
     setRandomSeed
     (random, Module, Module)
     (map, CoherentSheaf, CoherentSheaf, Matrix)
+
+Node
+  Key
+    (inducedMap, CoherentSheaf, CoherentSheaf)
+    (inducedMap, CoherentSheaf, CoherentSheaf, SheafMap)
+  Headline
+    induced maps on coherent sheaves
 
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
