@@ -48,6 +48,25 @@ Node
     setRandomSeed
     (random, Module, Module)
     (map, CoherentSheaf, CoherentSheaf, Matrix)
+
+Node
+  Key
+    (isWellDefined, SheafMap)
+  Headline
+    whether a morphism of coherent sheaves is well-defined
+  Usage
+    isWellDefined phi
+  Inputs
+    phi:SheafMap
+  Outputs
+    :Boolean
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (isWellDefined, CoherentSheaf)
+    (isWellDefined, Variety)
+    (isWellDefined, Matrix)
 ///
 
 ///
