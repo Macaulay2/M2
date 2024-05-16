@@ -563,14 +563,7 @@ case $COMPRESS in
 esac
 
 AC_SUBST(GIT_DESCRIPTION)
-# TODO: currently finds the last commit that changed the VERSION file
-# but ideally it should get the last release commit instead
-NEW_COMMITS=`$GIT rev-list $($GIT rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
-GIT_COMMIT=`$GIT describe --dirty --always --match HEAD`
-if test "$NEW_COMMITS-$GIT_COMMIT" = "-"
-then GIT_DESCRIPTION=version-$PACKAGE_VERSION-unknown
-else GIT_DESCRIPTION=version-$PACKAGE_VERSION-$NEW_COMMITS-$GIT_COMMIT
-fi
+GIT_DESCRIPTION=`$GIT describe --tags --dirty || echo release-$PACKAGE_VERSION`
 AC_DEFINE_UNQUOTED(GIT_DESCRIPTION,"$GIT_DESCRIPTION",[summary of git status])
 
 AC_SUBST(DEB,no)
