@@ -62,26 +62,13 @@ set(PACKAGE_VERSION ${Macaulay2_VERSION})
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} describe --dirty --always --match HEAD
+    COMMAND ${GIT_EXECUTABLE} describe --tags --dirty
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE   GIT_COMMIT)
-  # TODO: currently finds the last commit that changed the VERSION file
-  # but ideally it should get the last release commit instead
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-list -1 HEAD VERSION
-    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE   _release_commit)
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-list ${_release_commit}..HEAD --count
-    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE   COMMIT_COUNT)
-  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
+    OUTPUT_VARIABLE   GIT_DESCRIPTION)
 else()
   message(NOTICE "## Not building from a git repository; submodules may need to be manually populated")
-  set(GIT_DESCRIPTION version-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  set(GIT_DESCRIPTION release-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
   file(GLOB _submodules LIST_DIRECTORIES true ${CMAKE_SOURCE_DIR}/submodules/*)
   foreach(_submodule IN LISTS _submodules)
     if(IS_DIRECTORY ${_submodule})
