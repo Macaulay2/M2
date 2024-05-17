@@ -235,6 +235,15 @@ document {
     Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }
     }
 
+doc ///
+Node
+  Key
+    canonicalBundle
+   (canonicalBundle, ProjectiveVariety)
+  Headline
+    the canonical bundle of a projective variety
+///
+
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
 -----------------------------------------------------------------------------
