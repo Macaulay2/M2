@@ -242,6 +242,46 @@ Node
    (canonicalBundle, ProjectiveVariety)
   Headline
     the canonical bundle of a projective variety
+
+Node
+  Key
+    tangentSheaf
+   (tangentSheaf, ProjectiveVariety)
+   [tangentSheaf, MinimalGenerators]
+  Headline
+    tangent sheaf of a projective variety
+  Usage
+    tangentSheaf X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the tangent sheaf of the projective variety $X$.
+    Text
+      Tangent sheaf of the projective plane:
+    Example
+      P2 = Proj QQ[a,b,c]
+      TP = tangentSheaf P2
+      HH^0(TP(-1))
+      HH^1(TP(-3))
+    Text
+      Tangent sheaf of a plane nodal and cuspidal curve:
+    Example
+      N = Proj QQ[a,b,c]/(b^2*c-a^2*(a+c))
+      TN = tangentSheaf N
+      HH^0(TN), HH^1(TN)
+      C = Proj QQ[a,b,c]/(b^2*c-a^3)
+      TC = tangentSheaf C
+      HH^0(TC), HH^1(TC)
+      --- TODO: update this once we can compute the kernel
+      --- of HH^0(phi) for a sheaf map phi: F -> G
+  SeeAlso
+    cotangentSheaf
+    ProjectiveVariety
 ///
 
 -----------------------------------------------------------------------------

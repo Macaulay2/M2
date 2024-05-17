@@ -847,7 +847,6 @@ load "./Varieties/doc-functors.m2"
 load "./Varieties/euler-doc.m2"
 load "./Varieties/genus-doc.m2"
 load "./Varieties/genera-doc.m2"
-load "./Varieties/tangentSheaf-doc.m2"
 load "./Varieties/cotangentSheaf-doc.m2"
 
 -----------------------------------------------------------------------------
