@@ -646,6 +646,9 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
 SheafMap |  SheafMap := SheafMap => (f, g) -> map(target f, source f ++ source g, concatCols {matrix f, matrix g})
 SheafMap || SheafMap := SheafMap => (f, g) -> map(target f ++ target g, source f, concatRows autotruncate {f, g})
 
+-- TODO: the code for pullback and pushout of matrices is categorical,
+-- so we should use e.g. lookup(pullback, Matrix, Matrix) here verbatim
+
 -- TODO: also for a list of matrices
 pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> (
     -- TODO: use != instead
