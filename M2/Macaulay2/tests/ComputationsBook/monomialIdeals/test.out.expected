@@ -172,7 +172,7 @@ o27 = -- code for method: dual(MonomialIdeal,List)
       | f      : FunctionClosure -- {*Function[/Users/dan/src/M2/Macaulay2/m2/monideal.m2:. /Users/dan/src/M2/Macaulay2/m2/option.m2:6:9-6:9
       | -- function f:
       | /Users/dan/src/M2/Macaulay2/m2/monideal.m2:243:44-250:60: --source code:
-      | dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
+      | dual(MonomialIdeal, List) := alexopts >> o -> (I, a) -> I.cache#(AlexanderDual, a) ??= (
       |      aI := first exponents lcm I;
       |      if aI =!= a then (
       |           if #aI =!= #a then error ( "expected list of length ", toString (#aI));
