@@ -3,7 +3,7 @@ export {
     "SheafMap",
     -- Methods
     "sheafMap",
-    "isLiftable",
+--  "isLiftable",
     "yonedaSheafExtension",
 --  "yonedaSheafExtension'",
     "cotangentSurjection",
