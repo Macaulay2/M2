@@ -665,9 +665,12 @@ singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
 -- isLocallyFree
 -----------------------------------------------------------------------------
 
-isLocallyFree = method()
-isLocallyFree CoherentSheaf := Boolean => F -> (
+isLocallyFree = method(TypicalValue => Boolean)
+isLocallyFree SumOfTwists   := S -> isLocallyFree S#0
+isLocallyFree SheafOfRings  := O -> true
+isLocallyFree CoherentSheaf := F -> (
     if (d := rank F) == 0 then return F == 0;
+    if isFreeModule module F then return true;
     dim fittingIdeal(d,   module F) <= 0
     and fittingIdeal(d-1, module F) == ideal 0_(ring F))
 
