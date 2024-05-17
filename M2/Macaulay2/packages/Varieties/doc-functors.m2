@@ -273,6 +273,8 @@ Node
 -- Ext
 -----------------------------------------------------------------------------
 
+-- Note: TruncateDegree is set by Ext^ZZ(CoherentSheaf, SumOfTwists)
+-- and used by yonedaSheafExtension to construct the extensions
 document {
     Key => {
 	(Ext, ZZ, CoherentSheaf, SumOfTwists),
@@ -304,7 +306,7 @@ document {
     Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746",
     PARA{},
     TEX ///If the vector space $Ext^i(M,N)$ is desired, see ///, TO (Ext,ZZ,CoherentSheaf,CoherentSheaf), ".",
-    SeeAlso => {resolution,Tor,Hom,HH,sheafExt}
+    SeeAlso => {resolution,Tor,Hom,HH,sheafExt,yonedaSheafExtension}
     }
 
 document {
