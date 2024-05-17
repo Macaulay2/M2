@@ -318,26 +318,25 @@ indices HashTable := X -> (
 
 directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
+    if #args === 0 then error "expected at least one argument";
     type := if uniform args then class args#0 else error "incompatible objects in direct sum";
     meth := lookup(symbol directSum, type);
-    if meth === null then error "no method for direct sum";
-    Y := youngest args;
+    if meth === null then error("no method for direct sum of ", pluralsynonym type);
     key := (directSum, args);
-    if Y === null or not Y.?cache then meth args else
-    if Y.cache#?key then Y.cache#key else Y.cache#key = meth args)
+    if (Y := youngest args) =!= null and Y.?cache
+    then Y.cache#key ??= meth args else meth args)
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
 Option ++ Option := directSum
 directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
-     if #args === 0 then error "expected more than 0 arguments";
+     if #args === 0 then error "expected at least one argument";
      objects := apply(args,last);
      labels  := toList args/first;
      type := if uniform objects then class objects#0 else error "incompatible objects in direct sum";
      meth := lookup(symbol directSum, type);
-     if meth === null then error "no method for direct sum";
+     if meth === null then error("no method for direct sum of ", pluralsynonym type);
      M := meth objects;
      M.cache.indices = labels;
      ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);
