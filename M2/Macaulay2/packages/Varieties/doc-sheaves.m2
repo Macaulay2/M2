@@ -440,6 +440,38 @@ Node
   SeeAlso
     (isWellDefined, Variety)
 --    (isWellDefined, Module)
+
+Node
+  Key
+    isLocallyFree
+   (isLocallyFree, SumOfTwists)
+   (isLocallyFree, SheafOfRings)
+   (isLocallyFree, CoherentSheaf)
+  Headline
+    whether a coherent sheaf is locally free
+  Usage
+    isLocallyFree F
+  Inputs
+    F:{SumOfTwists,SheafOfRings,CoherentSheaf}
+  Outputs
+    :Boolean
+  Description
+    Text
+      This method determines whether a coherent sheaf $\mathcal F$ on $X$ is locally free;
+      i.e. there is an open cover of $X$ such that $\mathcal F(U)$ for each patch $U\subset X$ is a free $\mathcal O_X(U)$-module.
+    Example
+      X = Proj QQ[x,y,z]
+      isLocallyFree OO_X
+      isLocallyFree OO_X^{1,2,3}
+      F = cotangentSheaf X
+      isLocallyFree F
+    Text
+      Internally, the algorithm uses a computation of @TO2 {fittingIdeal, "fitting ideals"}@.
+  SourceCode
+    (isLocallyFree, CoherentSheaf)
+  SeeAlso
+    fittingIdeal
+    isFreeModule
 ///
 
 -- TODO: [(codim, CoherentSheaf), Generic]
