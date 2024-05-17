@@ -286,7 +286,7 @@ Module _ ZZ := Vector => (M,i) -> (
      new target p from {p})
 -----------------------------------------------------------------------------
 -- TODO: is caching here wise? There are 2^(#comps) many possibilities
-Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symbol ^,w) else M.cache#(symbol ^,w) = (
+Module ^ Array := Matrix => (M, w) -> M.cache#(symbol ^, w) ??= (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.cache.?components then error "expected a direct sum module";
