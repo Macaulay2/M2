@@ -649,28 +649,26 @@ SheafMap || SheafMap := SheafMap => (f, g) -> map(target f ++ target g, source f
 -- TODO: the code for pullback and pushout of matrices is categorical,
 -- so we should use e.g. lookup(pullback, Matrix, Matrix) here verbatim
 
--- TODO: also for a list of matrices
-pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> (
+pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> pullback {f, g}
+SheafMap.pullback = args -> (
     -- TODO: use != instead
-    if target f =!= target g then error "expected maps with the same target";
-    h := f | -g;
+    if not same apply(args, target) then error "expected morphisms with the same target";
+    h := map(target args#0, directSum apply(args, source), concatCols apply(args, matrix));
     P := ker h;
     S := source h;
-    P.cache.pullbackMaps = {
-	S^[0] * inducedMap(S, P),
-	S^[1] * inducedMap(S, P)};
+    P.cache.formation = FunctionApplication (pullback, args);
+    P.cache.pullbackMaps = apply(#args, i -> S^[i] * inducedMap(S, P));
     P)
 
--- TODO: also for a list of matrices
-pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
+pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> pushout {f, g}
+SheafMap.pushout = args -> (
     -- TODO: use != here instead
-    if source matrix f =!= source matrix g then error "expected maps with the same source";
-    h := f || -g;
+    if not same apply(args, source) then error "expected morphisms with the same source";
+    h := map(directSum apply(args, target), source args#0, concatRows autotruncate args);
     P := coker h;
     T := target h;
-    P.cache.pushoutMaps = {
-	inducedMap(P, T) * T_[0],
-	inducedMap(P, T) * T_[1]};
+    P.cache.formation = FunctionApplication (pushout, args);
+    P.cache.pushoutMaps = apply(#args, i -> inducedMap(P, T) * T_[i]);
     P)
 
 trans := (C,v) -> (
