@@ -79,6 +79,26 @@ Node
   Headline
     induced maps on coherent sheaves
 
+Node
+  Key
+    yonedaSheafExtension
+   (yonedaSheafExtension, Matrix)
+
+Node
+  Key
+    cotangentSurjection
+   (cotangentSurjection, ProjectiveVariety)
+
+Node
+  Key
+    embeddedToAbstract
+   (embeddedToAbstract, ProjectiveVariety)
+
+Node
+  Key
+    eulerSequence
+   (eulerSequence, ProjectiveVariety)
+
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
 -----------------------------------------------------------------------------
