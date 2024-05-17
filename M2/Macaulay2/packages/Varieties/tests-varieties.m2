@@ -30,6 +30,11 @@ TEST /// -- twisted cubic curve
   assert first isIsomorphic(M, N, Strict => true)
 ///
 
+TEST ///
+  X = Spec ZZ/101[x,y]/(y^2-x^3)
+  assert(toString ring X == "(ZZ/101)[x..y]/(-x^3+y^2)")
+///
+
 end
 
 -- multigraded Proj
