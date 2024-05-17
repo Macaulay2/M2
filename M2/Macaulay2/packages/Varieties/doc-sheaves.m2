@@ -282,6 +282,76 @@ Node
   SeeAlso
     cotangentSheaf
     ProjectiveVariety
+
+Node
+  Key
+    cotangentSheaf
+   (cotangentSheaf, ProjectiveVariety)
+   [cotangentSheaf, MinimalGenerators]
+  Headline
+    cotangent sheaf of a projective variety
+  Usage
+    cotangentSheaf X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the cotangent sheaf of the projective variety $X$
+    Text
+      As an example we verify Gauss-Bonnet's theorem on a plane quartic curve:
+    Example
+      X = Proj QQ[x,y,z]/(x^4+y^4+z^4)
+      genus X
+      omega = cotangentSheaf X
+      degree omega
+  SeeAlso
+    tangentSheaf
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+    ProjectiveVariety
+
+Node
+  Key
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+  Headline
+    exterior powers of the cotangent sheaf of a projective variety
+  Usage
+    cotangentSheaf(p, X)
+  Inputs
+    p:ZZ
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the $p$-th exterior power of the @TO2 {cotangentSheaf, "cotangent sheaf"}@
+      of a projective variety $X$, usually denoted $\Omega_X^p$.
+    Text
+      As an example we compute $h^{1,1}$ on a K3 surface (a quartic in projective threespace):
+    Example
+      K3 = Proj QQ[x_0..x_3]/(x_0^4+x_1^4+x_2^4+x_3^4-11*x_0*x_1*x_2*x_3)
+      omega1 = cotangentSheaf(1, K3);
+      HH^1(omega1)
+    Text
+      As a second example we compute @TO2 {(hh, Sequence, ProjectiveVariety), "Hodge numbers"}@
+      of the Fermat quintic in projective fourspace:
+    Example
+      FermatQuintic = Proj QQ[x_0..x_4]/(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5)
+      omega1 = cotangentSheaf(1, FermatQuintic);
+      HH^1(omega1)
+      HH^2(omega1)
+      omega2 = cotangentSheaf(2, FermatQuintic);
+      HH^1(omega2)
+      HH^2(omega2)
+  SeeAlso
+    cotangentSheaf
+    ProjectiveVariety
+    (hh, Sequence, ProjectiveVariety)
 ///
 
 -----------------------------------------------------------------------------
