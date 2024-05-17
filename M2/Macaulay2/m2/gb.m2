@@ -307,9 +307,9 @@ degreeToHeft = (R, d) -> (
 gb = method(TypicalValue => GroebnerBasis, Options => gbDefaults)
 gb Ideal  := GroebnerBasis => opts -> I -> gb (module I, opts)
 gb Module := GroebnerBasis => opts -> M -> (
-    if M.?relations then (
-	if not M.cache#?"full gens" then M.cache#"full gens" = generators M | relations M;
-	gb(M.cache#"full gens", opts, SyzygyRows => numgens source generators M))
+    if M.?relations then gb(
+	M.cache#"full gens" ??= generators M | relations M, opts,
+	SyzygyRows => numgens source generators M)
     else gb(generators M, opts))
 gb Matrix := GroebnerBasis => opts -> m -> (
     checkArgGB m;

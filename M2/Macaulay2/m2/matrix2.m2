@@ -386,9 +386,7 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if 
      f' := matrix f;
      g' := matrix g;
      G := (
-	  if g.cache#?"gb for quotient"
-	  then g.cache#"gb for quotient"
-	  else g.cache#"gb for quotient" = (
+	 g.cache#"gb for quotient" ??= (
 	       if M.?relations 
 	       then gb(g' | relations M, ChangeMatrix => true, SyzygyRows => rank source g')
 	       else gb(g',               ChangeMatrix => true)));
