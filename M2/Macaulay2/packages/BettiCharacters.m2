@@ -203,12 +203,8 @@ Character Array := Character => (C,A) -> (
 	}
     )
 
--- character dual
--- borrowing default options from alexander dual method
-alexopts = {Strategy=>0};
-
 -- character of dual/contragredient representation with conjugation
-dual(Character,RingMap) := Character => alexopts >> o -> (c,phi) -> (
+dual(Character,RingMap) := Character => {} >> o -> (c,phi) -> (
     -- check characteristic
     R := c.ring;
     if char(R) != 0 then (
@@ -236,7 +232,7 @@ dual(Character,RingMap) := Character => alexopts >> o -> (c,phi) -> (
     )
 
 -- character of dual/contragredient representation without conjugation
-dual(Character,List) := Character => alexopts >> o -> (c,perm) -> (
+dual(Character,List) := Character => {} >> o -> (c,perm) -> (
     n := c.numActors;
     if #perm != n then (
 	error "dual: expected permutation size to match character length";
