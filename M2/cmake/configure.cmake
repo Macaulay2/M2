@@ -66,9 +66,15 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE   GIT_DESCRIPTION)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} branch --show-current
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   GIT_BRANCH)
 else()
   message(NOTICE "## Not building from a git repository; submodules may need to be manually populated")
   set(GIT_DESCRIPTION release-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  set(GIT_BRANCH "")
   file(GLOB _submodules LIST_DIRECTORIES true ${CMAKE_SOURCE_DIR}/submodules/*)
   foreach(_submodule IN LISTS _submodules)
     if(IS_DIRECTORY ${_submodule})
@@ -90,6 +96,7 @@ endif()
 message("## Configure Macaulay2
      M2 version        = ${PROJECT_VERSION}
      Git description   = ${GIT_DESCRIPTION}
+     Git branch        = ${GIT_BRANCH}
      Install prefix    = ${CMAKE_INSTALL_PREFIX}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_NATIVE      = ${BUILD_NATIVE}
