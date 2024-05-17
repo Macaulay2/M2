@@ -140,6 +140,15 @@ Node
     (isWellDefined, CoherentSheaf)
     (isWellDefined, Variety)
     (isWellDefined, Matrix)
+
+-- Note: this uses F.cache.TorsionFree and F.cache.GlobalSectionLimit,
+-- which are set by twistedGlobalSectionsModule and called by HH^0(SumOfTwists) and prune(CoherentSheaf)
+Node
+  Key
+    (prune, SheafMap)
+  SeeAlso
+    (prune, CoherentSheaf)
+    GlobalSectionLimit
 ///
 
 -----------------------------------------------------------------------------
