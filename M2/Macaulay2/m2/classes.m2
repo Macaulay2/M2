@@ -2,6 +2,19 @@
 
 -- TODO: make this TT toString X later?
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
+-- TODO: find a more permanent solution
+plurals = new MutableHashTable from {
+    "body"       => "bodies",
+    "dictionary" => "dictionaries",
+    "matrix"     => "matrices",
+    "sheaf"      => "sheaves",
+    "variety"    => "varieties",
+    }
+pluralize = s -> demark_" " append(
+    drop(ws := separate_" " s, -1),
+    if  plurals#?(last ws)
+    then plurals#(last ws) else last ws | "s")
+pluralsynonym = T -> if T.?synonym then pluralize T.synonym else "objects of class " | toString T
 
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"
