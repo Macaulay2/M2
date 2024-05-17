@@ -71,7 +71,7 @@ export {
     "GlobalSectionLimit",
     "SaturationMap",
     "TorsionFree",
-    "TruncateDegree",
+    -- "TruncateDegree",
     "isLocallyFree",
     }
 
@@ -706,6 +706,7 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
 -- See documentation of Ext^ZZ(CoherentSheaf,CoherentSheaf) for examples.
 -----------------------------------------------------------------------------
 
+protect TruncateDegree
 -- TODO: implement Ext with DegreeLimit as an optimization
 Ext(ZZ, SheafOfRings,  SumOfTwists) :=
 Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
