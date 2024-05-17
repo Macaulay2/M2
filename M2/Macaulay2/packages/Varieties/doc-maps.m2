@@ -79,10 +79,13 @@ Node
   Headline
     induced maps on coherent sheaves
 
+-- Note: TruncateDegree is set by Ext^ZZ(CoherentSheaf, SumOfTwists)
 Node
   Key
     yonedaSheafExtension
    (yonedaSheafExtension, Matrix)
+  SeeAlso
+    (Ext, ZZ, CoherentSheaf, CoherentSheaf)
 
 Node
   Key
