@@ -173,10 +173,11 @@ lcm MonomialIdeal := (I) -> (if I.cache.?lcm
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
-protect alexanderDual
+protect AlexanderDual
 alexopts = {Strategy=>0}
 
-dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
+dual MonomialIdeal        := alexopts >> o ->  I     -> dual(I, first exponents lcm I, o)
+dual(MonomialIdeal, List) := alexopts >> o -> (I, a) -> I.cache#(AlexanderDual, a) ??= (
      aI := first exponents lcm I;
      if aI =!= a then (
      	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
@@ -184,15 +185,7 @@ dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
 	  );
      newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
      )
-
 dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> dual(I,first exponents r,o)
-
-dual MonomialIdeal := alexopts >> o -> (I) -> (
-  if I.cache#?alexanderDual
-    then I.cache#alexanderDual
-    else I.cache#alexanderDual = (
-	 dual(I, first exponents lcm I, o)
-    ))
 
 --  TESTING IF A THING IS A SQUARE FREE MONOMIAL IDEAL  ----
 isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
