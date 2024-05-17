@@ -19,8 +19,11 @@ document {
      SeeAlso => {"coherent sheaves",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf),hh,CoherentSheaf}
           }
 
+-- Note: TorsionFree and GlobalSectionLimit are set by twistedGlobalSectionsModule,
+-- which is called by HH^0(SumOfTwists) and HH^0(CoherentSheaf) are used by prune(SheafMap)
+-- Similarly, SaturationMap is set here
 document {
-     Key => (cohomology,ZZ,SumOfTwists),
+     Key => {(cohomology,ZZ,SumOfTwists), TorsionFree, GlobalSectionLimit, SaturationMap},
      Headline => "coherent sheaf cohomology module",
      Usage => "HH^i(F(>=d))",
      Inputs => {
@@ -81,7 +84,8 @@ document {
            },
      Caveat => {"The computation will fail if the module is not finitely generated. Also
      the version HH^i(F(*)) is not yet implemented."},
-     SeeAlso => {"HH", (cohomology, ZZ, CoherentSheaf), (cohomology,ZZ,Module)}
+     SeeAlso => {"HH", (cohomology, ZZ, CoherentSheaf), (cohomology,ZZ,Module),
+	 (prune, CoherentSheaf), (prune, SheafMap)}
      }
 
 document {
