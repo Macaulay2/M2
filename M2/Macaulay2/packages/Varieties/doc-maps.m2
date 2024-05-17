@@ -40,12 +40,17 @@ Node
     (map, CoherentSheaf, CoherentSheaf, Matrix, ZZ)
     (map, CoherentSheaf, Nothing,       Matrix)
     (map, Nothing,       CoherentSheaf, Matrix)
+  Headline
+    the constructor of morphisms of coherent sheaves
+
+Node
+  Key
     (sheaf, Matrix)
     (sheaf, Matrix, ZZ)
     (sheaf, Variety, Matrix)
     (sheaf, Variety, Matrix, ZZ)
   Headline
-    the constructor of morphisms of coherent sheaves
+    the sheafification functor for morphisms
 
 Node
   Key
