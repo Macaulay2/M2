@@ -112,9 +112,10 @@ source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
 variety SheafMap := Variety       => f -> f.variety
 ring    SheafMap := Ring          => f -> f.map.ring
-matrix  SheafMap := Matrix => opts -> f -> f.map
--- TODO: find a better name and keep this
---degree  SheafMap := ZZ => f -> f.degree
+matrix  SheafMap := Matrix   => o -> f -> f.map
+-- TODO: does this make sense, or should all sheaf maps be degree zero?
+degree  SheafMap := ZZ            => f -> degree f.map
+-- TODO: add a method that returns f.degree
 
 image    SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, image    matrix f)
 kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   matrix f)
