@@ -565,6 +565,8 @@ esac
 AC_SUBST(GIT_DESCRIPTION)
 GIT_DESCRIPTION=`$GIT describe --tags --dirty || echo release-$PACKAGE_VERSION`
 AC_DEFINE_UNQUOTED(GIT_DESCRIPTION,"$GIT_DESCRIPTION",[summary of git status])
+GIT_BRANCH=`$GIT branch --show-current`
+AC_DEFINE_UNQUOTED([GIT_BRANCH], ["$GIT_BRANCH"], [current git branch])
 
 AC_SUBST(DEB,no)
 AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...)), DEB=$enableval)
@@ -1918,6 +1920,7 @@ AC_MSG_NOTICE([with  ARCH              = $ARCH])
 AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
+AC_MSG_NOTICE([with  GIT_BRANCH        = $GIT_BRANCH])
 AC_MSG_NOTICE([with  USING_MPIR        = $USING_MPIR])
 AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
 
