@@ -793,11 +793,8 @@ load "Varieties/SheafComplexes.m2"
 -- Tests
 -----------------------------------------------------------------------------
 
-TEST ///
-  X = Spec ZZ/101[x,y]/(y^2-x^3)
-///
-
-load "./Varieties/tests.m2"
+load "./Varieties/tests-varieties.m2"
+load "./Varieties/tests-sheaves.m2"
 load "./Varieties/tests-functors.m2"
 load "./Varieties/tests-maps.m2"
 
