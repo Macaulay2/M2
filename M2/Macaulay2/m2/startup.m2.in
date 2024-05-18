@@ -162,48 +162,11 @@ if firstTime then (
 
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
 
-     copyright = (
-	  "Macaulay2, version " | m2version | newline
-	  | "Copyright 1993-2024 Daniel R. Grayson and Michael E. Stillman:" | newline
-     	  | "  source code licensed under the GNU General Public License version 2 or 3;" | newline
-     	  | "  this binary code licensed under the GNU General Public License version 3." | newline
-     	  -- our binary code is linked with :
-	  --    mpir 2.4.0, which is under LGPL 2.1 or later
-     	  --    mpfr 3.0.1, which is under LGPL 3 or later
-	  -- so it cannot be licensed under GPL 2
-     	  -- There is another license statement in ../../INSTALL 
-	  | "For Macaulay2 packages, see their source code for licensing terms." | newline
-     	  | "Compiled with the following libraries:" | newline
-	  | "  GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
-	  | "  Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
-	  |    ( 
-	       if version#"frobby version" =!= "not present" 
-	       then ("  Frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
-	       else ""
-	       )
-	  | "  NTL " | version#"ntl version" | ", by V. Shoup" | newline
-	  | "  FLINT " | version#"flint version" | ", by W. Hart et al." | newline
-	  |    (
-	       if version#"gmp version" =!= "not present"
-	       then "  GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
-	       else ""
-	       )
-     	  |    (
-	       if version#"mpir version" =!= "not present"
-	       then "  MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
-	       else ""
-	       )
-          | "  Boost " | version#"boost version" | ", by the Boost community" | newline
-	  | "  FFLAS-FFPACK " | version#"fflas_ffpack version" | ", by the LinBox Team" | newline
-     	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
-	  | "  BLAS and LAPACK " | version#"lapack version" | ", by J. Dongarra et al." | newline
-	  | "  MPSolve " | version#"mpsolve version" | ", by D. Bini et al." | newline
-	  | "  Eigen " | version#"eigen version" | ", by B. Jacob et al." | newline
-	  | "  TBB " | version#"tbb version" | ", by Intel" | newline
-          | "  Memtailor " | version#"memtailor version" | ", by B. Roune" | newline
-          | "  Mathic " | version#"mathic version" | ", by B. Roune and M. Stillman" | newline
-          | "  MathicGB " | version#"mathicgb version" | ", by B. Roune and M. Stillman"
-	  );
+     startupBanner = "Macaulay2, version " | m2version | ///
+Copyright 1993-2024 Daniel R. Grayson and Michael E. Stillman
+This program comes with ABSOLUTELY NO WARRANTY.  This is free
+software, and you are welcome to redistribute it under certain
+conditions; type 'copyright' for details.///;
 
      use = x -> x;				  -- temporary, until methods.m2
 
@@ -599,7 +562,7 @@ if notify then printerr("executable = ", exe)
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-     stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
+     stderr << startupBanner << newline << flush;
      if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
 
 scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
@@ -608,7 +571,6 @@ homeDirectory = getenv "HOME" | "/"
 initcurrentlayout()
 
 if firstTime and fileExists(prefixDirectory | currentLayout#"program licenses") then
-copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
 
 path = {}
 pkgpath = {}
