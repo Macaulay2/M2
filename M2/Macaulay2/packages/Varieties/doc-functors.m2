@@ -287,7 +287,6 @@ Node
     (sheafHom, SheafMap, SheafMap)
   Headline
     functor of sheaf Hom
-///
 
 -----------------------------------------------------------------------------
 -- Ext
@@ -295,39 +294,51 @@ Node
 
 -- Note: TruncateDegree is set by Ext^ZZ(CoherentSheaf, SumOfTwists)
 -- and used by yonedaSheafExtension to construct the extensions
-document {
-    Key => {
-	(Ext, ZZ, CoherentSheaf, SumOfTwists),
-	(Ext, ZZ, SheafOfRings, SumOfTwists)
-	},
-    Usage => "Ext^i(M,N(>=d))",
-    Headline => "global Ext",
-    Inputs => { "i", "M", "N(>=d)"},
-    Outputs => {
-	Module => {"The R-module ", TEX ///$\oplus_{j \geq d} Ext^i_X(M,N(j))$///}
-	},
-    "If ", TT "M", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-    PARA{},
-    TT "M", " and ", TT "N", " must be coherent sheaves on the same projective variety or scheme ", TT "X = Proj R", ".",
-    PARA{},
-    "As an example, we consider the rational quartic curve in
-    ", TEX "$P^3$", ".",
-    EXAMPLE lines ///
-    S = QQ[a..d];
-    I = monomialCurveIdeal(S,{1,3,4})
-    R = S/I
-    X = Proj R
-    IX = sheaf (module I ** R)
-    Ext^1(IX,OO_X(>=-3))
-    Ext^0(IX,OO_X(>=-10))
-    ///,
-    PARA{},
-    "The method used may be found in:
-    Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746",
-    PARA{},
-    TEX ///If the vector space $Ext^i(M,N)$ is desired, see ///, TO (Ext,ZZ,CoherentSheaf,CoherentSheaf), ".",
-    SeeAlso => {resolution,Tor,Hom,HH,sheafExt,yonedaSheafExtension}
-    }
+Node
+  Key
+    (Ext, ZZ, CoherentSheaf, SumOfTwists)
+    (Ext, ZZ, SheafOfRings,  SumOfTwists)
+    -- TODO: document the option MinimalGenerators
+  Headline
+    global Ext
+  Usage
+    Ext^i(F, G(>=d))
+  Inputs
+    i:ZZ
+    F:{CoherentSheaf,SheafOfRings}
+    G(>=d):SumOfTwists -- see @TO2 {(symbol SPACE, CoherentSheaf, LowerBound), TT "G(>=d)"}@
+  Outputs
+    :Module
+      $\bigoplus_{j \geq d} \mathrm{Ext}_X^i(F, G(j))$
+  Description
+    Text
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+    Text
+      Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+    Text
+      As an example, we consider the rational quartic curve in $\mathbf P^3$.
+    Example
+      S = QQ[a..d]
+      I = monomialCurveIdeal(S, {1,3,4})
+      R = S/I
+      X = Proj R
+      IX = sheaf (module I ** R)
+      Ext^1(IX, OO_X(>=-3))
+      Ext^0(IX, OO_X(>=-10))
+    Text
+      The algorithm used may be found in:
+    Code
+      UL { LI { "Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746." } }
+    Text
+      If the vector space $\mathrm{Ext}^i(M, N)$ is desired, see @TO (Ext,ZZ,CoherentSheaf,CoherentSheaf)@.
+  SeeAlso
+    resolution
+    Tor
+    Hom
+    HH
+    sheafExt
+    yonedaSheafExtension
+///
 
 document {
     Key => {
