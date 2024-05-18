@@ -23,13 +23,8 @@ document {
 	  )
      }
 
--- TODO: combine these two
-document { Key => "copyright",
-     Headline => "a string containing the copyright notice for Macaulay2",
-     EXAMPLE "copyright" }
-
 document {
-     Key => "Copyright and license",
+     Key => {"Copyright and license", "copyright"},
      PARA {
 	  "Macaulay2, its object code, source code, and documentation,
 	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit you to use it either
@@ -44,7 +39,10 @@ document {
 	  },
      PARA {
       	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
-	  of programs, with their libraries, have been compiled and distributed with Macaulay2:"
+	  of programs, with their libraries, have been compiled and distributed with Macaulay2."
+	  },
+     PARA {
+	  "Run the command ", M2CODE "copyright", " to view this message."
 	  },
      Subnodes => {
 	  "libraries",
