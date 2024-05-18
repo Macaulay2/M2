@@ -226,7 +226,8 @@ setupconst("version", Expr(toHashTable(Sequence(
    "packages" => Ccode(constcharstar,"DISTRIBUTED_PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")
+   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION"),
+   "git branch" => Ccode(constcharstar, "GIT_BRANCH")
    ))));
 
 -- Local Variables:
