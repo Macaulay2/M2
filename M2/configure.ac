@@ -1858,6 +1858,21 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])],
 rm -f conftest.mapfile
 LDFLAGS=$SAVE
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81358
+AC_MSG_CHECKING([whether we need to link with -latomic])
+AC_LANG([C++])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([
+	#include <atomic>
+	], [std::atomic<int64_t> x; x++])],
+	[AC_MSG_RESULT([no])],
+	[LIBS="$LIBS -latomic"
+	 AC_LINK_IFELSE([AC_LANG_PROGRAM([
+		#include <atomic>
+		], [std::atomic<int64_t> x; x++])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([error])
+		 AC_MSG_ERROR([unable to handle 64-bit atomics])])])
+
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
 test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
