@@ -327,7 +327,7 @@ initcurrentlayout := () -> (
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
 prefixPath = {}
 
-fullCopyright := false
+fullCopyright = false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 nocore = false
@@ -357,7 +357,7 @@ usage := arg -> (
      << "options:"  << newline
      << "    --help             print this brief help message and exit" << newline
      << "    --no-backtrace     print no backtrace after error" << newline
-     << "    --copyright        display full copyright messasge" << newline
+     << "    --copyright        display full copyright message" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
      << "    --debug n          debug warning message n by signalling an error" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
