@@ -237,31 +237,47 @@ document {
 -- sheafHom
 -----------------------------------------------------------------------------
 
-document {
-    Key => {
-	sheafHom,
-	(sheafHom, CoherentSheaf, CoherentSheaf),
-	(sheafHom, SheafOfRings, CoherentSheaf),
-	(sheafHom, CoherentSheaf, SheafOfRings),
-	(sheafHom, SheafOfRings, SheafOfRings)
-	},
-    Headline => "sheaf Hom",
-    Usage => "sheafHom(M,N)",
-    Inputs => {"M","N"},
-    Outputs => {{"the coherent sheaf of homomorphisms from ", TT "M", " to ", TT "N", ""}},
-    "If ", TT "M", " or ", TT "N", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-    PARA{},
-    TT "M", " and ", TT "N", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
-    PARA{},
-    "The result is the sheaf associated to the graded module Hom(module M, module N).",
-    EXAMPLE lines ///
-    X = Proj(QQ[x,y])
-    sheafHom(OO_X^1(2),OO_X(11)^1)
-    ///,
-    SeeAlso => {OO, sheafExt, Hom, Ext, HH, (Hom, CoherentSheaf, CoherentSheaf)}
-    }
-
 doc ///
+Node
+  Key
+    sheafHom
+   (sheafHom, CoherentSheaf, CoherentSheaf)
+   (sheafHom, CoherentSheaf, SheafOfRings)
+   (sheafHom, SheafOfRings,  CoherentSheaf)
+   (sheafHom, SheafOfRings,  SheafOfRings)
+   [sheafHom, DegreeLimit]
+   [sheafHom, MinimalGenerators]
+   [sheafHom, Strategy]
+  Headline
+    sheaf Hom
+  Usage
+    sheafHom(F, G)
+  Inputs
+    F:{CoherentSheaf,SheafOfRings}
+    G:{CoherentSheaf,SheafOfRings}
+  Outputs
+    :CoherentSheaf
+      corresponding to homomorphisms from $M \to N$, where $F = \tilde M$ and $G = \tilde N$
+  Description
+    Text
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+    Text
+      Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+    Text
+      The result is the sheaf associated to the graded module @TT "Hom(module F, module G)"@.
+    Example
+      S = QQ[x,y]
+      X = Proj S
+      sheafHom(OO_X^1(2), OO_X^1(11))
+      Hom(S^{2}, S^{11})
+  SourceCode
+    (sheafHom, CoherentSheaf, CoherentSheaf)
+  SeeAlso
+    (Hom, Module, Module)
+    (Hom, CoherentSheaf, CoherentSheaf)
+    (sheafHom, CoherentSheaf, SheafMap)
+    (sheafExt, ZZ, CoherentSheaf, CoherentSheaf)
+
 Node
   Key
     (sheafHom, CoherentSheaf, SheafMap)
