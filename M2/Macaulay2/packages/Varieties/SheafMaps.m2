@@ -378,6 +378,7 @@ SheafMap^ZZ := SheafMap => BinaryPowerMethod
 -----------------------------------------------------------------------------
 -- sheafHom and Hom
 -----------------------------------------------------------------------------
+-- TODO: does sheafExt of sheaf maps also make sense?
 sheafHom(SheafMap, SheafMap)      := SheafMap => o -> (phi, psi) -> (dual phi) ** psi
 sheafHom(SheafMap, CoherentSheaf) := SheafMap => o -> (phi, F) -> sheafHom(phi, id_F)
 sheafHom(CoherentSheaf, SheafMap) := SheafMap => o -> (F, phi) -> sheafHom(id_F, phi)
