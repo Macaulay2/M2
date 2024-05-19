@@ -162,12 +162,6 @@ if firstTime then (
 
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
 
-     startupBanner = "Macaulay2, version " | m2version | ///
-Copyright 1993-2024 Daniel R. Grayson and Michael E. Stillman
-This program comes with ABSOLUTELY NO WARRANTY.  This is free
-software, and you are welcome to redistribute it under certain
-conditions; type 'copyright' for details.///;
-
      use = x -> x;				  -- temporary, until methods.m2
 
      Attributes = new MutableHashTable;
@@ -562,7 +556,7 @@ if notify then printerr("executable = ", exe)
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-     stderr << startupBanner << newline << flush;
+     stderr << "Macaulay2, version " << m2version << newline << flush;
      if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
 
 scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
