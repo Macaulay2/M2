@@ -240,6 +240,8 @@ Node
   Key
     canonicalBundle
    (canonicalBundle, ProjectiveVariety)
+   [canonicalBundle, MinimalGenerators]
+   [canonicalBundle, Strategy]
   Headline
     the canonical bundle of a projective variety
 
@@ -248,6 +250,7 @@ Node
     tangentSheaf
    (tangentSheaf, ProjectiveVariety)
    [tangentSheaf, MinimalGenerators]
+   [tangentSheaf, Strategy]
   Headline
     tangent sheaf of a projective variety
   Usage
@@ -255,7 +258,7 @@ Node
   Inputs
     X:ProjectiveVariety
     MinimalGenerators => Boolean
-      whether @TO prune@ the result before returning it
+      whether to @TO prune@ the result before returning it
   Outputs
     :CoherentSheaf
   Description
@@ -288,6 +291,7 @@ Node
     cotangentSheaf
    (cotangentSheaf, ProjectiveVariety)
    [cotangentSheaf, MinimalGenerators]
+   [cotangentSheaf, Strategy]
   Headline
     cotangent sheaf of a projective variety
   Usage
@@ -474,9 +478,8 @@ Node
     isFreeModule
 ///
 
--- TODO: [(codim, CoherentSheaf), Generic]
 document {
-    Key => {(codim, CoherentSheaf)},
+    Key => {(codim, CoherentSheaf), [(codim, CoherentSheaf), Generic]},
     Headline => "codimension of the support of a coherent sheaf on a projective variety",
     Usage => "codim F",
     Inputs => {"F" => {"a coherent sheaf over a ", TO "ProjectiveVariety", TT " X"}},
@@ -620,7 +623,14 @@ document {
     PARA{},
     }
 
-
+doc ///
+Node
+  Key
+    (minimalPresentation, CoherentSheaf)
+    (prune,               CoherentSheaf)
+  Headline
+    minimal presentation of a coherent sheaf
+///
 -* TODO: this is a piece of the documentation of (prune, Module)
 -- (minimalPresentation, CoherentSheaf), (prune, CoherentSheaf)
      "This function also works when ", TT "M", " is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ",

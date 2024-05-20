@@ -35,7 +35,8 @@ Node
 -- Similarly, SaturationMap is set here
 Node
   Key
-    (cohomology, ZZ, SumOfTwists)
+    (cohomology, ZZ,                    SumOfTwists)
+    (cohomology, ZZ, ProjectiveVariety, SumOfTwists)
     TorsionFree
     GlobalSectionLimit
     SaturationMap
@@ -109,8 +110,12 @@ Node
 
 Node
   Key
+    (cohomology, ZZ, AffineVariety, CoherentSheaf)
+
+Node
+  Key
     (cohomology, ZZ, ProjectiveVariety, CoherentSheaf)
-    (cohomology, ZZ, CoherentSheaf)
+    (cohomology, ZZ,                    CoherentSheaf)
   Headline
     cohomology of a coherent sheaf on a projective variety
   Usage
@@ -208,6 +213,11 @@ Node
     (cohomology, ZZ, Module)
     hh
     CoherentSheaf
+
+Node
+  Key
+    (cohomology, ZZ, ProjectiveVariety, SheafMap)
+    (cohomology, ZZ,                    SheafMap)
 
 -----------------------------------------------------------------------------
 -- hh
@@ -330,11 +340,11 @@ Node
 
 Node
   Key
-    (sheafHom, CoherentSheaf, SheafMap)
-    (sheafHom, SheafMap, CoherentSheaf)
-    (sheafHom, SheafOfRings, SheafMap)
-    (sheafHom, SheafMap, SheafOfRings)
     (sheafHom, SheafMap, SheafMap)
+    (sheafHom, SheafMap, SheafOfRings)
+    (sheafHom, SheafMap, CoherentSheaf)
+    (sheafHom, CoherentSheaf, SheafMap)
+    (sheafHom, SheafOfRings,  SheafMap)
   Headline
     functor of sheaf Hom
 
@@ -438,6 +448,28 @@ Node
     Hom
     HH
     sheafExt
+
+Node
+  Key
+    (Ext, ZZ, CoherentSheaf, SheafMap)
+
+Node
+  Key
+    (connectingExtMap, ZZ, CoherentSheaf, SheafMap)
+    [connectingExtMap, LengthLimit]
+
+Node
+  Key
+    ExtLongExactSequence
+   (ExtLongExactSequence, CoherentSheaf, SheafMap)
+   (ExtLongExactSequence, CoherentSheaf, SheafMap, SheafMap)
+   [ExtLongExactSequence, Concentration]
+  Headline
+    the long exact sequence of the Ext functor
+
+-----------------------------------------------------------------------------
+-- sheafExt
+-----------------------------------------------------------------------------
 
 Node
   Key
