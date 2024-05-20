@@ -2,8 +2,9 @@
 --"For a projective varieties and coherent sheaves, the functionality is not yet implemented."
 -- TODO: what would this mean?
 
--- TODO: document some of these
 undocumented {
+    SheafExpression,
+    -- TODO: document some of these
     (symbol ^,  CoherentSheaf, Array),
     (symbol _,  CoherentSheaf, Array),
     (symbol ?,  CoherentSheaf, CoherentSheaf),
@@ -612,15 +613,6 @@ document {
 	"V = Proj(ZZ/101[x_0..x_2]);",
 	"S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
 	"pdim S"}
-    }
-
--- TODO: is this necessary here, or should it go back to engine?
-document {
-    Key => SheafExpression,
-    Headline => "the class of sheaf expressions",
-    TT "SheafExpression", " is a type of ", TO "Expression", " representing
-    the sheaf associated to a given ring or module.",
-    PARA{},
     }
 
 doc ///
