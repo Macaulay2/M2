@@ -208,31 +208,43 @@ Node
     (cohomology, ZZ, Module)
     hh
     CoherentSheaf
-///
 
 -----------------------------------------------------------------------------
 -- hh
 -----------------------------------------------------------------------------
 
-document {
-     Key => {hh,(hh,Sequence,ProjectiveVariety)},
-     Headline => "Hodge numbers of a smooth projective variety",
-     Usage =>"hh^(p,q)(X)",
-     Inputs => { Nothing => { "a pair ", TT "(p,q)", " of non negative integers" }, "X" => ProjectiveVariety },
-     Outputs => {ZZ},
-     "The command computes the Hodge numbers h^{p,q} of the smooth
-     projective variety X. They are calculated as ",
-     TT "HH^q(cotangentSheaf(p,X))",
-     PARA{},
-     "As an example we compute h^11 of a K3 surface (Fermat quartic
-     in projective threespace:",
-     EXAMPLE {
-          "X = Proj(QQ[x_0..x_3]/ideal(x_0^4+x_1^4+x_2^4+x_3^4))",
-          "hh^(1,1)(X)"
-          },
-     Caveat => {"There is no check made if the projective variety X is smooth or not."},
-     SeeAlso => {(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,SheafOfRings),(euler,ProjectiveVariety)}
-     }
+Node
+  Key
+    hh
+   (hh, Sequence, ProjectiveVariety)
+  Headline
+    Hodge numbers of a smooth projective variety
+  Usage
+    hh^(p,q)(X)
+  Inputs
+    (p,q):
+      a pair of integers between 0 and $\dim X$
+    X:ProjectiveVariety
+  Outputs
+    :ZZ
+      the $(p,q)$-Hodge numbers of $X$
+  Description
+    Text
+      The command computes the Hodge numbers
+      $$ h^{p,q}(X) = \dim H^q(\Omega_X^p) $$
+      of the smooth projective variety $X$, calculated as @TT "HH^q(cotangentSheaf(p, X))"@.
+    Text
+      As an example we compute the Hodge diamond of a smooth K3 surface (Fermat quartic in projective threespace):
+    Example
+      X = Proj QQ[x_0..x_3]/ideal(x_0^4+x_1^4+x_2^4+x_3^4)
+      assert isSmooth X
+      matrix table(toList(0..2), toList(0..2), (p,q) -> hh^(p,q)(X))
+      euler X
+  SeeAlso
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+    (cohomology, ZZ, CoherentSheaf)
+    (euler, ProjectiveVariety)
+///
 
 -----------------------------------------------------------------------------
 -- Hom
