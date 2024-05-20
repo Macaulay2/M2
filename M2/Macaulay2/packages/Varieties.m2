@@ -578,6 +578,7 @@ cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) ->
     (F, b) := (S#0, S#1#0);
     if not F.cache.?HH    then F.cache.HH = new MutableHashTable;
     if F.cache.HH#?(p, b) then F.cache.HH#(p, b) else F.cache.HH#(p, b) =
+    -- TODO: when p>0, HH^p(F(*)) gives a "not implemented yet" error
     if p == 0 then twistedGlobalSectionsModule(F, b) else HH^(p+1)(module F, Degree => b))
 
 -- HH^p(X, F)
