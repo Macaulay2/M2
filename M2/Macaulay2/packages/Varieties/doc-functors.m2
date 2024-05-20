@@ -1,23 +1,31 @@
 -- TODO: cohomology(...,Degree=>...)
 
-document {
-     Key => (cohomology,ZZ,SheafOfRings),
-     Headline => "cohomology of a sheaf of rings on a projective variety",
-     Usage => "HH^d(R)",
-     Inputs => {"i"=> ZZ, "R" => SheafOfRings =>{"on a projective variety ", TT "X"}
-	  },
-     Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "R", " as a vector space
-	       over the coefficient field of ", TT "X"}
-	  },
-     "The command computes the ", TT "i", "-th cohomology group of ", TT "R",
-     " as a vector space over the coefficient field of ", TT "X",".",
-     PARA{},
-     EXAMPLE {
-	  "Cubic = Proj(QQ[x_0..x_2]/ideal(x_0^3+x_1^3+x_2^3))",
-	  "HH^1(OO_Cubic)"
-	  },
-     SeeAlso => {"coherent sheaves",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf),hh,CoherentSheaf}
-          }
+doc ///
+Node
+  Key
+    (cohomology, ZZ, SheafOfRings)
+  Headline
+    cohomology of a sheaf of rings on a projective variety
+  Usage
+    HH^d(OX)
+  Inputs
+    i:ZZ
+    OX:SheafOfRings
+      on a @syn ProjectiveVariety@ $X$
+  Outputs
+    :Module
+      representing a vector space over the coefficient field of $X$
+  Description
+    Text
+      The command computes the $i$-th cohomology group of $OX$ as a vector space over the coefficient field of $X$.
+    Example
+      Cubic = Proj QQ[x_0..x_2]/ideal(x_0^3+x_1^3+x_2^3)
+      HH^1(OO_Cubic)
+  SeeAlso
+    SheafOfRings
+    (cohomology, ZZ, SumOfTwists)
+    (cohomology, ZZ, CoherentSheaf)
+///
 
 -- Note: TorsionFree and GlobalSectionLimit are set by twistedGlobalSectionsModule,
 -- which is called by HH^0(SumOfTwists) and HH^0(CoherentSheaf) are used by prune(SheafMap)
