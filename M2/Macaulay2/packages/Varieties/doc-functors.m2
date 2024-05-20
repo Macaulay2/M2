@@ -419,27 +419,39 @@ Node
     Hom
     HH
     sheafExt
-///
 
-document {
-    Key => {
-	sheafExt,
-	(sheafExt, ZZ, CoherentSheaf, CoherentSheaf),
-	(sheafExt, ZZ, SheafOfRings, CoherentSheaf),
-	(sheafExt, ZZ, CoherentSheaf, SheafOfRings),
-	(sheafExt, ZZ, SheafOfRings, SheafOfRings)},
-    Headline => "sheaf Ext of coherent sheaves",
-    Usage => "sheafExt^n(F,G)",
-    Inputs => { "n", "F", "G" },
-    Outputs => { CoherentSheaf => { "the n-th sheaf Ext of ", TT "F", " and ", TT "G" } },
-    "If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-    PARA{},
-    TT "F", " and ", TT "G", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
-    PARA{},
-    "The result is the sheaf associated to the graded module ", TT "Ext^n(module M, module N).",
-    EXAMPLE lines ///
-    X = Proj(QQ[x,y])
-    sheafExt^1(OO_X^1(2),OO_X(-11)^1)
-    ///,
-    SeeAlso => {OO, sheafHom, Hom, Ext, HH, (Ext, ZZ, CoherentSheaf, CoherentSheaf)}
-    }
+Node
+  Key
+    sheafExt
+   (sheafExt, ZZ, CoherentSheaf, CoherentSheaf)
+   (sheafExt, ZZ, SheafOfRings, CoherentSheaf)
+   (sheafExt, ZZ, CoherentSheaf, SheafOfRings)
+   (sheafExt, ZZ, SheafOfRings, SheafOfRings)
+  Headline
+    sheaf extension of coherent sheaves
+  Usage
+    sheafExt^n(F,G)
+  Inputs
+    n:ZZ
+    F:{SheafOfRings,CoherentSheaf}
+    G:{SheafOfRings,CoherentSheaf}
+  Outputs
+    :CoherentSheaf
+      the n-th sheaf extension of @TT "F"@ and @TT "G"@
+  Description
+    Text
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+    Text
+      Both @TT "F"@ and @TT "S"@ must be coherent sheaves on the same projective variety or scheme $X$.
+    Text
+      The result is the sheaf associated to the graded module @TT "Ext^n(module F, module G)"@.
+    Example
+      X = Proj QQ[x,y]
+      sheafExt^1(OO_X^1(2), OO_X^1(-11))
+  SeeAlso
+    sheafHom
+    Hom
+    Ext
+    HH
+    (Ext, ZZ, CoherentSheaf, CoherentSheaf)
+///
