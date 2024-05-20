@@ -810,6 +810,9 @@ load "./Varieties/tests-maps.m2"
 
 beginDocumentation()
 
+-- TODO: move this to core?
+syn = type -> TO2 {type, synonym type}
+
 -- TODO: move "Tutorial: Fano varieties" and "Tutorial: Divisors" here
 -- TODO: "fibers of a map between varieties"
 -- TODO: update the node "varieties" in overviewA.m2 and "coherent sheaves" in overview2.m2
