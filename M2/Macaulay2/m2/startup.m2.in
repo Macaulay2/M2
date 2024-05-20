@@ -45,6 +45,7 @@ local topBuilddir
 m2version := (
     v := replace("^release-", "", version#"git description");
     if v == version#"VERSION" then v -- stable release (at release tag)
+    else if version#"git branch" == "" then v
     else concatenate(v, 1, "(", version#"git branch", ")"))
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
