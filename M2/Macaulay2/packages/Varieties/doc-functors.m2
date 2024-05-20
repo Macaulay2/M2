@@ -369,46 +369,57 @@ Node
     HH
     sheafExt
     yonedaSheafExtension
-///
 
-document {
-    Key => {
-	(Ext, ZZ, CoherentSheaf, CoherentSheaf),
-	(Ext, ZZ, SheafOfRings, CoherentSheaf),
-	(Ext, ZZ, CoherentSheaf, SheafOfRings),
-	(Ext, ZZ, SheafOfRings, SheafOfRings)
-	},
-    Usage => "Ext^i(M,N)",
-    Headline => "global Ext",
-    Inputs => { "i", "M", "N"},
-    Outputs => {
-	Module => {"The global Ext module ", TEX "$Ext^i_X(M,N)$"}
-	},
-    "If ", TT "M", " or ", TT "N", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-    PARA{},
-    TT "M", " and ", TT "N", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
-    PARA{},
-    "As an example, we compute Hom_X(I_X,OO_X), and Ext^1_X(I_X,OO_X), for the rational quartic curve in
-    ", TEX "$P^3$", ".",
-    EXAMPLE lines ///
-    S = QQ[a..d];
-    I = monomialCurveIdeal(S,{1,3,4})
-    R = S/I
-    X = Proj R
-    IX = sheaf (module I ** R)
-    Ext^1(IX,OO_X)
-    Hom(IX,OO_X)
-    ///,
-    "The Ext^1 being zero says that the point corresponding to I on the Hilbert scheme is
-    smooth (unobstructed), and vector space dimension of Hom tells us that the
-    dimension of the component at the point I is 16.",
-    PARA{},
-    "The method used may be found in:
-    Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746",
-    PARA{},
-    TEX ///If the module $\oplus_{d\geq 0} Ext^i(M,N(d))$ is desired, see ///, TO (Ext,ZZ,CoherentSheaf,SumOfTwists), ".",
-    SeeAlso => {resolution,Tor,Hom,HH,sheafExt,(Ext,ZZ,CoherentSheaf,SumOfTwists)}
-    }
+Node
+  Key
+    (Ext, ZZ, CoherentSheaf, CoherentSheaf)
+    (Ext, ZZ, CoherentSheaf, SheafOfRings)
+    (Ext, ZZ, SheafOfRings, CoherentSheaf)
+    (Ext, ZZ, SheafOfRings, SheafOfRings)
+  Usage
+    Ext^i(F, G)
+  Headline
+    global Ext
+  Inputs
+    i:ZZ
+    F:{SheafOfRings,CoherentSheaf}
+    G:{SheafOfRings,CoherentSheaf}
+  Outputs
+    :Module
+      the global Ext module $\mathrm{Ext}^i_X(\mathcal F, \mathcal G)$
+  Description
+    Text
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+    Text
+      Both @TT "F"@ and @TT "S"@ must be coherent sheaves on the same projective variety or scheme $X$.
+    Text
+      As an example, we compute $\mathrm{Hom}_X(\mathcal I_X,\mathcalO_X)$ and $\mathrm{Ext}^1_X(\mathcal I_X,\mathcal O_X)$,
+      for the rational quartic curve in $\PP^3$.
+    Example
+      S = QQ[a..d];
+      I = monomialCurveIdeal(S,{1,3,4})
+      R = S/I
+      X = Proj R
+      IX = sheaf (module I ** R)
+      Hom(IX, OO_X)
+      Ext^1(IX, OO_X)
+    Text
+      The $\mathrm{Ext}^1$ being zero says that the point corresponding to $I$
+      on the Hilbert scheme is smooth (unobstructed), and vector space dimension
+      of $\mathrm{Hom}$ tells us that the dimension of the component at the point $I$ is 16.
+    Text
+      The algorithm used may be found in:
+    Code
+      UL { LI { "Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746." } }
+    Text
+      If the module $\bigoplus_{a\geq 0} \mathrm{Ext}^i(M, N(a))$ is desired, see @TO (Ext,ZZ,CoherentSheaf,SumOfTwists)@.
+  SeeAlso
+    resolution
+    Tor
+    Hom
+    HH
+    sheafExt
+///
 
 document {
     Key => {
