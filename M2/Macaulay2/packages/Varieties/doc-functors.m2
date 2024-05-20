@@ -1,5 +1,9 @@
 -- TODO: cohomology(...,Degree=>...)
 
+-----------------------------------------------------------------------------
+-- sheaf cohomology
+-----------------------------------------------------------------------------
+
 doc ///
 Node
   Key
@@ -25,76 +29,84 @@ Node
     SheafOfRings
     (cohomology, ZZ, SumOfTwists)
     (cohomology, ZZ, CoherentSheaf)
-///
 
 -- Note: TorsionFree and GlobalSectionLimit are set by twistedGlobalSectionsModule,
 -- which is called by HH^0(SumOfTwists) and HH^0(CoherentSheaf) are used by prune(SheafMap)
 -- Similarly, SaturationMap is set here
-document {
-     Key => {(cohomology,ZZ,SumOfTwists), TorsionFree, GlobalSectionLimit, SaturationMap},
-     Headline => "coherent sheaf cohomology module",
-     Usage => "HH^i(F(>=d))",
-     Inputs => {
-	  "i",
-          { TT "F(>=d)", ", notation representing the sum of the twists ", TT "F(n)", " for
-               all ", TT "n", " greater than or equal to ", TT "d", ", where ", TT "F", " is
-               a coherent sheaf on a projective variety ", TT "X", "." }
-	  },
-     Outputs => {Module => {" M over the homogeneous coordinate ring of
-	   the variety ", TT "X", " which agrees, at least in degrees n greater than
-	   or equal to d, with the graded module that in degree n is the", TT "i", "-th
-	   cohomology group of ", TT "F(n)", "."}
-	  },
-     "The command computes a module over the homogeneous coordinate ring of
-      the variety ", TT "X", " which agrees, at least in degrees n greater than
-      or equal to the given d, with the graded module that in degree n is
-      the", TT "i", "-th cohomology group of ", TT "F(n)", ".",
-     PARA{},
-     "To discard the part of the module M of degree less than d,
-     use the ", TO "Truncations::truncate(ZZ,Module)", " command as ", TT "truncate(d,M)", ".",
-     PARA{},
-     "Use ", TT "HH^i(F(>d))", " to request the twists strictly greater than n.",
-     PARA{},
-     "Note: use ", TT "HH^i(F(*))", " to try to compute the whole graded module.  The
-     computation will fail if the module is not finitely generated.",
-     PARA{},
-     "As a first example we look at the cohomology of line bundles on the
-     projective plane",
-     EXAMPLE {
-	  "X = Proj(QQ[x_0..x_2])",
-	  "HH^0(OO_X^1(>=0))",
-	  "HH^1(OO_X^1(>=0))",
-	  "HH^2(OO_X^1(>=-3)) -- this should change to * once implemented",
-	  "TruncDual = HH^2(OO_X^1(>=-4))",
-	  "hilbertFunction(-4, TruncDual)",
-	  "hilbertFunction(-3, TruncDual)"
-	  },
-     PARA{},
-     "As a second example we compute the H^1 cohomology module T of
-     the Horrocks-Mumford bundle on the projective fourspace.  T is
-     an artinian module with Hilbert function (5,10,10,2):",
-     EXAMPLE {
-          "R = QQ[x_0..x_4];",
-          "a = {1,0,0,0,0}",
-          "b = {0,1,0,0,1}",
-          "c = {0,0,1,1,0}",
-          "M1 = matrix table(5,5, (i,j)-> x_((i+j)%5)*a_((i-j)%5))",
-          "M2 = matrix table(5,5, (i,j)-> x_((i+j)%5)*b_((i-j)%5))",
-          "M3 = matrix table(5,5, (i,j)-> x_((i+j)%5)*c_((i-j)%5))",
-          "M = M1 | M2 | M3;",
-          "betti (C=res coker M)",
-          "N = transpose submatrix(C.dd_3,{10..28},{2..36});",
-          "betti (D=res coker N)",
-          "Pfour = Proj(R)",
-          "HorrocksMumford = sheaf(coker D.dd_3);",
-          "T = HH^1(HorrocksMumford(>=-1))",
-	  "apply(-1..2, i-> hilbertFunction(i,T))"
-           },
-     Caveat => {"The computation will fail if the module is not finitely generated. Also
-     the version HH^i(F(*)) is not yet implemented."},
-     SeeAlso => {"HH", (cohomology, ZZ, CoherentSheaf), (cohomology,ZZ,Module),
-	 (prune, CoherentSheaf), (prune, SheafMap)}
-     }
+Node
+  Key
+    (cohomology, ZZ, SumOfTwists)
+    TorsionFree
+    GlobalSectionLimit
+    SaturationMap
+  Headline
+    coherent sheaf cohomology module
+  Usage
+    HH^i(F(>=d))
+  Inputs
+    i:ZZ
+    F(>=d):SumOfTwists -- see @TO2 {(symbol SPACE, CoherentSheaf, LowerBound), TT "F(>=d)"}@
+  Outputs
+    :Module
+      over the homogeneous coordinate ring of the variety $X$
+  Description
+    Text
+      Given a @syn CoherentSheaf@ @TT "F"@ on a @syn ProjectiveVariety@ $X$,
+      the notation @TT "F(>=d)"@ creates an object representing
+      the @syn SumOfTwists@ $\bigoplus_{a=d}^\infty\mathcal F(a)$.
+    Text
+      This command computes a graded module $M$ over the homogeneous coordinate ring of
+      the variety $X$ such that the graded component $M_a$ for $a\geq d$
+      is isomorphic to the cohomology group @TT "HH^i(F(a))"@.
+    Text
+      To discard the part of the module $M$ of degree less than $d$,
+      truncate the module with @TO2 {"Truncations::truncate(ZZ,Module)", TT "truncate(d, M)"}@.
+    Text
+      Use @TT "HH^i(F(>d))"@ to compute the cohomology of the twists strictly greater than $d$
+      and @TT "HH^i(F(*))"@ to try to compute the whole graded module.
+      When $i=0$, this is known as the module of twisted global sections
+      $$ \Gamma_*(\mathcal F) = \bigoplus_{a\in\mathbf Z}(X, \mathcal F(a)).$$
+      Note that this computation will fail if the module is not finitely generated.
+    Text
+      As a first example we look at the cohomology of line bundles on the projective plane.
+    Example
+      X = Proj QQ[x_0..x_2]
+      HH^0(OO_X^1(>=0))
+      HH^1(OO_X^1(>=0))
+      HH^2(OO_X^1(>=-3)) -- this should change to * once implemented
+      TruncDual = HH^2(OO_X^1(>=-4))
+      hilbertFunction(-4, TruncDual)
+      hilbertFunction(-3, TruncDual)
+    Text
+      As a second example we compute the $H^1$ cohomology module $T$ of
+      the Horrocks-Mumford bundle on the projective fourspace, which is
+      an artinian module with Hilbert function (5,10,10,2):
+    Example
+      R = QQ[x_0..x_4];
+      a = {1,0,0,0,0}
+      b = {0,1,0,0,1}
+      c = {0,0,1,1,0}
+      M1 = matrix table(5,5, (i,j)-> x_((i+j)%5)*a_((i-j)%5))
+      M2 = matrix table(5,5, (i,j)-> x_((i+j)%5)*b_((i-j)%5))
+      M3 = matrix table(5,5, (i,j)-> x_((i+j)%5)*c_((i-j)%5))
+      M = M1 | M2 | M3;
+      betti (C=res coker M)
+      N = transpose submatrix(C.dd_3,{10..28},{2..36});
+      betti (D=res coker N)
+      Pfour = Proj(R)
+      HorrocksMumford = sheaf(coker D.dd_3);
+      T = HH^1(HorrocksMumford(>=-1))
+      apply(-1..2, i-> hilbertFunction(i,T))
+  Caveat
+    The computation of @TT "HH^0(F(*))"@ will fail if the module is not finitely generated.
+    Also the version @TT "HH^i(F(*))"@ for $i>0$ is not yet implemented.
+  SeeAlso
+    HH
+    (cohomology, ZZ, CoherentSheaf)
+    (cohomology, ZZ, Module)
+    (prune, CoherentSheaf)
+    (prune, SheafMap)
+///
 
 document {
      Key => {(cohomology,ZZ,ProjectiveVariety,CoherentSheaf),(cohomology,ZZ,CoherentSheaf)},
@@ -190,6 +202,10 @@ document {
 	  },
      SeeAlso => {"coherent sheaves",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,SheafOfRings),hh,CoherentSheaf}
      }
+
+-----------------------------------------------------------------------------
+-- hh
+-----------------------------------------------------------------------------
 
 document {
      Key => {hh,(hh,Sequence,ProjectiveVariety)},
