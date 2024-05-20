@@ -244,43 +244,50 @@ Node
     (cotangentSheaf, ZZ, ProjectiveVariety)
     (cohomology, ZZ, CoherentSheaf)
     (euler, ProjectiveVariety)
-///
 
 -----------------------------------------------------------------------------
 -- Hom
 -----------------------------------------------------------------------------
 
-document {
-    Key => {(Hom,CoherentSheaf,CoherentSheaf),
-	(Hom, SheafOfRings, SheafOfRings),
-	(Hom, CoherentSheaf, SheafOfRings),
-	(Hom, SheafOfRings, CoherentSheaf)},
-    Headline => "global Hom",
-    Usage => "Hom(F,G)",
-    Inputs => {
-	"F", "G" => {"both should be sheaves on a
-	    projective variety or scheme ", TT "X = Proj R"},
-	    },
-	Outputs => {
-	    Module => {"over the coefficient field of ", TT "R"}
-	    },
-	PARA{"If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way."},
-	EXAMPLE lines ///
-	R = QQ[a..d];
-	P3 = Proj R
-	I = monomialCurveIdeal(R,{1,3,4})
-	G = sheaf module I
-	Hom(OO_P3,G(3))
-	HH^0(G(3))
-	///,
-	SeeAlso => {sheafHom, Ext, sheafExt}
-	}
+Node
+  Key
+    (Hom, CoherentSheaf, CoherentSheaf)
+    (Hom, CoherentSheaf, SheafOfRings)
+    (Hom, SheafOfRings, CoherentSheaf)
+    (Hom, SheafOfRings, SheafOfRings)
+  Headline
+    global Hom
+  Usage
+    Hom(F, G)
+  Inputs
+    F:{SheafOfRings,CoherentSheaf}
+    G:{SheafOfRings,CoherentSheaf}
+  Outputs
+    :Module
+      representing a vector space over the coefficient field of $X$
+  Description
+    Text
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+    Text
+      Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+    Text
+      The result is the sheaf associated to the graded module @TT "Hom(module F, module G)"@.
+    Example
+      R = QQ[a..d];
+      P3 = Proj R
+      I = monomialCurveIdeal(R, {1,3,4})
+      G = sheaf module I
+      Hom(OO_P3, G(3))
+      HH^0(G(3))
+  SeeAlso
+    sheafHom
+    sheafExt
+    (Ext, ZZ, CoherentSheaf, CoherentSheaf)
 
 -----------------------------------------------------------------------------
 -- sheafHom
 -----------------------------------------------------------------------------
 
-doc ///
 Node
   Key
     sheafHom
