@@ -235,7 +235,7 @@ document {
      }
 
 document { -- This node is used as an example in the documentation nodes: Inputs, Outputs
-     Key => {(resolution, Ideal),(resolution, MonomialIdeal)},
+     Key => (resolution, Ideal),
      Headline => "compute a projective resolution of (the quotient ring corresponding to) an ideal",
      Usage => "resolution I",
      Inputs => {
