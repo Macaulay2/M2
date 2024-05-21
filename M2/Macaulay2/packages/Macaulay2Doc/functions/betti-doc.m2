@@ -98,7 +98,6 @@ Node
    (betti, GradedModule)
    (betti, ChainComplex)
    (betti, GroebnerBasis)
-   (betti, MonomialIdeal)
   Headline
     display or modify a Betti diagram
   Usage
@@ -206,7 +205,7 @@ Node
     Usage
       betti I
     Inputs
-      I:{Ideal,MonomialIdeal}
+      I:Ideal
       Weights=>List
     Outputs
       :BettiTally

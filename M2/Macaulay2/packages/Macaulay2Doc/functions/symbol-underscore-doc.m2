@@ -317,7 +317,6 @@ document {
 document { 
      Key => {"generators of ideals and modules",
 	  (symbol _, Ideal, ZZ),
-	  (symbol _, MonomialIdeal, ZZ),
 	  (symbol _, Module, ZZ),
 	  (symbol _, Matrix, ZZ)},
      Headline => "",
@@ -325,7 +324,7 @@ document {
 	  Heading => "Synopsis",
      	  Usage => "L_i",
      	  Inputs => {
-	       "L" => ofClass{Ideal,MonomialIdeal,Module,Matrix},
+	       "L" => ofClass{Ideal,Module,Matrix},
 	       "i" => ZZ
 	       },
      	  Outputs => {

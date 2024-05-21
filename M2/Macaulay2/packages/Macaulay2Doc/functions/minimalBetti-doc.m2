@@ -3,7 +3,6 @@ doc ///
       minimalBetti
      (minimalBetti,Ideal)
      (minimalBetti,Module)
-     (minimalBetti,MonomialIdeal)
      [minimalBetti,DegreeLimit]
      [minimalBetti,LengthLimit]
      [minimalBetti,Weights]
@@ -14,7 +13,7 @@ doc ///
      B = minimalBetti I
      B = minimalBetti(I, DegreeLimit=>d, LengthLimit=>len, Weights=>h)
    Inputs
-     I:{Ideal,Module,MonomialIdeal}
+     I:{Ideal,Module}
        a homogeneous ideal or module in a singly graded polynomial ring or skew commuting polynomial ring over a finite prime field
      DegreeLimit=>ZZ
        if given, only compute enough to determine the Betti diagram up to and including the row labelled {\tt d}
