@@ -135,6 +135,10 @@ complement Matrix := Matrix => (f) -> (
      else if instance(R,QuotientRing) then map(target f,,R ** complement lift(f,ambient R))
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
+-----------------------------------------------------------------------------
+-- mingens and trim
+-----------------------------------------------------------------------------
+
 -- the method is declared in gb.m2
 -- TODO: the strategies should be separated
 mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
@@ -163,11 +167,8 @@ mingens Module := Matrix => opts -> M -> if isFreeModule M then generators M els
 	       else id_F)))
 
 trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
-trim Ring := Ring => opts -> (R) -> R
-trim QuotientRing := opts -> (R) -> (
-     f := presentation R;
-     A := ring f;
-     A/(trim(ideal f,opts)))
+trim Ring         := Ring => o -> identity
+trim QuotientRing := Ring => o -> R -> quotient trim(ideal presentation R, o)
 
 -- TODO: the strategies should be separated
 trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
@@ -254,6 +255,7 @@ addHook((trim, Module), Strategy => "PID",
 	)
     )
 
+-----------------------------------------------------------------------------
 
 syz Matrix := Matrix => opts -> (f) -> (
     c := runHooks((syz, Matrix), (opts, f));
