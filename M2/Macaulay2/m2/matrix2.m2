@@ -333,19 +333,19 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 
 -- factor matrices with same targets
 Matrix // Matrix := Matrix => (f, g) -> quotient(f, g)
-Number // Matrix := RingElement // Matrix := Matrix => (r, f) -> (r * id_(target f)) // f
-Matrix // Number := Matrix // RingElement := Matrix => (f, r) -> f // (r * id_(target f))
+Number // Matrix := RingElement // Matrix := Matrix => (r, g) -> map(source g, target g, map(target g, cover target g, r) // g)
+Matrix // Number := Matrix // RingElement := Matrix => (f, r) -> map(target f, source f, f // map(target f, cover target f, r))
 
 -- factor matrices with same sources
 Matrix \\ Matrix := Matrix => (g, f) -> quotient'(f, g)
 -- commented because they don't seem very meaningful
---Matrix \\ Number := Matrix \\ RingElement := Matrix => (g, r) -> g \\ (r * id_(source g))
---Number \\ Matrix := RingElement \\ Matrix := Matrix => (r, f) -> (r * id_(source f)) \\ f
+--Matrix \\ Number := Matrix \\ RingElement := Matrix => (g, r) -> map(source g, target g, g \\ map(cover source g, source g, r))
+--Number \\ Matrix := RingElement \\ Matrix := Matrix => (r, f) -> map(target g, source g, map(cover source g, source g, r) \\ f)
 
 quotient(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
     -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) + r = f
     if target f != target g then error "quotient: expected maps with the same target";
-    c := runHooks((quotient, Matrix, Matrix), (opts, f, g));
+    c := runHooks((quotient, Matrix, Matrix), (opts, f, g), Strategy => opts.Strategy);
     if c =!= null then c else error "quotient: no method implemented for this type of input")
 
 addHook((quotient, Matrix, Matrix), Strategy => Default,
@@ -354,6 +354,7 @@ addHook((quotient, Matrix, Matrix), Strategy => Default,
     -- TODO: should we pass MinimalGenerators => false to Hom and homomorphism'?
     (opts, f, g) -> map(source g, source f, homomorphism(homomorphism' f // Hom(source f, g))))
 
+-- FIXME: this is still causing unreasonable slow downs, e.g. for (large m) // (scalar)
 addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if f == 0 or isFreeModule source f then (
      L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
@@ -392,7 +393,7 @@ addHook((quotient, Matrix, Matrix), Strategy => ZZ, (opts, f, g) ->
 quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
     -- given f: A-->C and g: A-->B, then finds (g\\f): B-->C such that (g\\f) o g + r = f
     if source f != source g then error "quotient': expected maps with the same source";
-    c := runHooks((quotient', Matrix, Matrix), (opts, f, g));
+    c := runHooks((quotient', Matrix, Matrix), (opts, f, g), Strategy => opts.Strategy);
     if c =!= null then c else error "quotient': no method implemented for this type of input")
 
 addHook((quotient', Matrix, Matrix), Strategy => Default,
