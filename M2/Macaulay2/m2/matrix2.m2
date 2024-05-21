@@ -136,13 +136,11 @@ complement Matrix := Matrix => (f) -> (
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
 -- the method is declared in gb.m2
+-- TODO: the strategies should be separated
 mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
-mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
-        c := runHooks((mingens, Module), (opts, M));
-        if c =!= null then c else error "mingens: no method implemented for this type of module"))
-
--- FIXME: This is kind of a hack. The strategies should be separated in mingensHelper
-mingensHelper = ((opts, M) -> (
+mingens Module := Matrix => opts -> M -> if isFreeModule M then generators M else cacheHooks(
+    symbol mingens, M, (mingens, Module), (opts, M), (opts, M) -> (
+	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
@@ -164,9 +162,6 @@ mingensHelper = ((opts, M) -> (
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
 
-addHook((mingens, Module), Strategy => Inhomogeneous, (opts, M) -> mingensHelper(opts ++ {Strategy => Inhomogeneous}, M))
-addHook((mingens, Module), Strategy => Complement,    (opts, M) -> mingensHelper(opts ++ {Strategy => Complement},    M))
-
 trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
 trim Ring := Ring => opts -> (R) -> R
 trim QuotientRing := opts -> (R) -> (
@@ -174,15 +169,11 @@ trim QuotientRing := opts -> (R) -> (
      A := ring f;
      A/(trim(ideal f,opts)))
 
--- TODO: why is the caching key an Option?
-trim Ideal  := Ideal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
-trim Module := Module => opts -> (cacheValue symbol trim) (M -> (
-	if isFreeModule M then return M;
-	c := runHooks((trim, Module), (opts, M));
-	if c =!= null then c else error "trim: no method implemented for this type of module"))
-
--- FIXME: This is kind of a hack. The strategies should be separated in trimHelper
-trimHelper = ((opts, M) -> (
+-- TODO: the strategies should be separated
+trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
+trim Module := Module => opts -> M -> if isFreeModule M then M else cacheHooks(
+    (symbol trim, opts), M, (trim, Module), (opts, M), (opts, M) -> (
+	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
 	  -- does using "complement" as in "mingens Module" above offer a benefit?
@@ -243,9 +234,6 @@ trimHelper = ((opts, M) -> (
 	       );
 	  N.cache.trim = N;
 	  N))
-
-addHook((trim, Module), Strategy => Inhomogeneous, (opts, M) -> trimHelper(opts ++ {Strategy => Inhomogeneous}, M))
-addHook((trim, Module), Strategy => Complement,    (opts, M) -> trimHelper(opts ++ {Strategy => Complement},    M))
 
 trimPID := M -> if M.?relations then (if M.?generators then trimPID image generators M else ambient M) / trimPID image relations M else if not M.?generators then M else (
     f := presentation M;
