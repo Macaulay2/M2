@@ -358,15 +358,6 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if 
      L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
-     if instance(ring M, InexactField)
-       and numRows g === numColumns g
-       and isFreeModule source g and isFreeModule source f
-       then return solve(g,f);	   	     	       	    
-     local retVal;
-     if isQuotientOf(ZZ,ring target f)
-       and isFreeModule source g and isFreeModule source f
-       then retVal = solve(g,f);
-     if retVal =!= null then return retVal;
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
@@ -380,6 +371,20 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if 
      map(N, L, f' // G, 
 	  Degree => degree f' - degree g'  -- set the degree in the engine instead
 	  )))
+
+addHook((quotient, Matrix, Matrix), Strategy => InexactField, (opts, f, g) ->
+    if instance(ring target f, InexactField)
+    -- TODO: c.f. https://github.com/Macaulay2/M2/issues/3252
+    and numRows g === numColumns g
+    and isFreeModule source g
+    and isFreeModule source f
+    then solve(g, f))
+
+addHook((quotient, Matrix, Matrix), Strategy => ZZ, (opts, f, g) ->
+    if isQuotientOf(ZZ, ring target f)
+    and isFreeModule source g
+    and isFreeModule source f
+    then solve(g, f))
 
 quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
     -- given f: A-->C and g: A-->B, then finds (g\\f): B-->C such that (g\\f) o g + r = f
