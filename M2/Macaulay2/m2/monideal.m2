@@ -1,11 +1,7 @@
 -- Copyright 1995-2002 by Michael Stillman
 
-needs "basis.m2"
-needs "integers.m2" -- for lcm
-needs "matrix1.m2"
-needs "quotring.m2"
-needs "betti.m2"
-needs "res.m2"
+needs "hilbert.m2" -- for poincare
+needs "matrix2.m2"
 
 -----------------------------------------------------------------------------
 -- MonomialIdeal type declaration and basic constructors
