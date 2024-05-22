@@ -1,6 +1,7 @@
 -- Copyright 1994 by Daniel R. Grayson
 
 needs "methods.m2"
+needs "shared.m2" -- for union
 
 -----------------------------------------------------------------------------
 -- Tally and VirtualTally type declarations and basic constructors
