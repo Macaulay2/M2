@@ -77,9 +77,16 @@ MonomialIdeal == ZZ := (I, i) -> (
 ZZ == MonomialIdeal := (i, I) -> I == i
 
 isMonomialIdeal = method(TypicalValue => Boolean)
-isMonomialIdeal Thing := x -> false
-isMonomialIdeal Ideal := I -> isPolynomialRing ring I and all(I_*, r -> size r === 1 and leadCoefficient r == 1)
+isMonomialIdeal Thing         := x -> false
+isMonomialIdeal Ideal         := I -> isPolynomialRing ring I and all(I_*, r -> size r === 1 and leadCoefficient r == 1)
+isMonomialIdeal Module        := M -> isIdeal M and isMonomialIdeal ideal M
 isMonomialIdeal MonomialIdeal := I -> true
+
+-- We use E. Miller's definition for non-square free monomial ideals.
+isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
+isSquareFree Module        :=
+isSquareFree Ideal         := I -> isMonomialIdeal I and isSquareFree monomialIdeal I
+isSquareFree MonomialIdeal := I -> all(I_*, m -> all(first exponents m, i -> i < 2))
 
 -- printing methods
 toExternalString MonomialIdeal := I -> "monomialIdeal " | toExternalString generators I
@@ -150,10 +157,6 @@ dual(MonomialIdeal, List) := alexopts >> o -> (I, a) -> I.cache#(AlexanderDual, 
 dual(MonomialIdeal, RingElement) := alexopts >> o -> (I, r) -> dual(I, first exponents r, o)
 
 -----------------------------------------------------------------------------
-
--- We use E. Miller's definition for non-square free monomial ideals.
-isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
-isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(first exponents m, i -> i<2))
 
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
 -- algorithm 3.2.5 in Saito-Sturmfels-Takayama
