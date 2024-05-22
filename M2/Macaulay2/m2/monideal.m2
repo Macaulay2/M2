@@ -140,26 +140,22 @@ lcm MonomialIdeal := (I) -> (if I.cache.?lcm
   then I.cache.lcm
   else I.cache.lcm = (ring I) _ (rawMonomialIdealLCM raw I))
 
-protect alexanderDual
-alexopts = {Strategy=>0}
+-----------------------------------------------------------------------------
 
-dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
-     aI := first exponents lcm I;
-     if aI =!= a then (
-     	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
-	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
-	  );
-     newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
-     )
+protect AlexanderDual
+alexopts = { Strategy => 0 }
 
-dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> dual(I,first exponents r,o)
+dual MonomialIdeal        := alexopts >> o ->  I     -> dual(I, first exponents lcm I, o)
+dual(MonomialIdeal, List) := alexopts >> o -> (I, a) -> I.cache#(AlexanderDual, a) ??= (
+    aI := first exponents lcm I;
+    if aI =!= a then (
+	if #aI =!= #a            then error("expected list of length ", #aI);
+	if any(a-aI, i -> i < 0) then error "exponent vector not large enough");
+    newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
+    )
+dual(MonomialIdeal, RingElement) := alexopts >> o -> (I, r) -> dual(I, first exponents r, o)
 
-dual MonomialIdeal := alexopts >> o -> (I) -> (
-  if I.cache#?alexanderDual
-    then I.cache#alexanderDual
-    else I.cache#alexanderDual = (
-	 dual(I, first exponents lcm I, o)
-    ))
+-----------------------------------------------------------------------------
 
 -- We use E. Miller's definition for non-square free monomial ideals.
 isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
