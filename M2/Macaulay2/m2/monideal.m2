@@ -51,13 +51,45 @@ Ring * MonomialIdeal := MonomialIdeal => (S, I) -> I ** S
 RingElement * MonomialIdeal := ZZ * MonomialIdeal := MonomialIdeal => (r, I) -> monomialIdeal(r * generators I)
 
 -----------------------------------------------------------------------------
+-- Basic methods (specifically those which are distinct from Ideal)
+-----------------------------------------------------------------------------
+-- TODO: is degree(MonomialIdeal) faster with 'poincare' or with degree(Ideal)?
+
+raw MonomialIdeal := I -> I.RawMonomialIdeal
+ideal MonomialIdeal := I -> ideal generators I
 
 numgens MonomialIdeal := I -> I.numgens
-raw MonomialIdeal := I -> I.RawMonomialIdeal
-generators MonomialIdeal := opts -> (cacheValue symbol generators) ( (I) -> map(ring I, rawMonomialIdealToMatrix raw I) )
-toExternalString MonomialIdeal := (I) -> "monomialIdeal " | toExternalString generators I
 
-ideal MonomialIdeal := (I) -> ideal generators I
+generators MonomialIdeal := opts -> (cacheValue symbol generators) ( (I) -> map(ring I, rawMonomialIdealToMatrix raw I) )
+
+-- arithmetic operations
+Matrix %  MonomialIdeal := Matrix => (f, I) -> f %  forceGB generators I
+Matrix // MonomialIdeal := Matrix => (f, I) -> f // forceGB generators I
+
+RingElement %  MonomialIdeal := ZZ %  MonomialIdeal := RingElement => (r, I) -> r_(ring I) %  forceGB generators I
+RingElement // MonomialIdeal := ZZ // MonomialIdeal := RingElement => (r, I) -> r_(ring I) // forceGB generators I
+
+MonomialIdeal == MonomialIdeal := (I, J) -> I === J
+MonomialIdeal == ZZ := (I, i) -> (
+    if i === 0 then numgens I == 0 else
+    if i === 1 then 1 % I == 0     else
+    error "attempted to compare monomial ideal to nonzero integer")
+ZZ == MonomialIdeal := (i, I) -> I == i
+
+isMonomialIdeal = method(TypicalValue => Boolean)
+isMonomialIdeal Thing := x -> false
+isMonomialIdeal Ideal := I -> isPolynomialRing ring I and all(I_*, r -> size r === 1 and leadCoefficient r == 1)
+isMonomialIdeal MonomialIdeal := I -> true
+
+-- printing methods
+toExternalString MonomialIdeal := I -> "monomialIdeal " | toExternalString generators I
+expression MonomialIdeal := I -> (expression monomialIdeal) unsequence apply(toSequence first entries generators I, expression)
+
+MonomialIdeal#AfterPrint = MonomialIdeal#AfterNoPrint = I -> (MonomialIdeal, " of ", ring I)
+
+-----------------------------------------------------------------------------
+-- codim
+-----------------------------------------------------------------------------
 
 codimopts := { Generic => false }
 codim MonomialIdeal := codimopts >> opts -> m -> rawCodimension raw m
@@ -81,13 +113,11 @@ addHook((codim, Module), Strategy => Default, (opts, M) -> (
 	  c - codim monomialIdealOfRow(0,matrix{{0_R}}) -- same as c - codim R, except works for iterated rings
 	  )))
 
-MonomialIdeal == MonomialIdeal := (I,J) -> I === J
+dim MonomialIdeal := I -> dim ring I - codim I
 
-MonomialIdeal == ZZ := (I,i) -> (
-     if i === 0 then numgens I == 0
-     else if i === 1 then 1 % I == 0
-     else error "asked to compare monomial ideal to nonzero integer")
-ZZ == MonomialIdeal := (i,I) -> I == i
+-----------------------------------------------------------------------------
+-- Specialized algorithms for monomial ideals
+-----------------------------------------------------------------------------
 
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
@@ -101,31 +131,6 @@ independentSets MonomialIdeal := o -> (M) -> (
 	       if o.Limit === infinity then -1 else o.Limit));
      flatten entries generators result)
 independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
-
------------------------------------------------------------------------------
--- this code below here is by Greg Smith (and partially Mike Stillman)
------------------------------------------------------------------------------
-
-expression MonomialIdeal := (I) -> (expression monomialIdeal) unsequence apply(toSequence first entries generators I, expression)
-
-MonomialIdeal#AfterPrint = MonomialIdeal#AfterNoPrint = (I) ->  (MonomialIdeal," of ",ring I)
-
-numgens MonomialIdeal := I -> I.numgens
-
-isMonomialIdeal = method(TypicalValue => Boolean)
-isMonomialIdeal Thing := x -> false
-isMonomialIdeal MonomialIdeal := (I) -> true
-isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries generators I, r -> size r === 1 and leadCoefficient r == 1)
-
-Matrix % MonomialIdeal := Matrix => (f,I) -> f % forceGB generators I
-RingElement % MonomialIdeal := (r,I) -> r % forceGB generators I
-ZZ % MonomialIdeal := (r,I) -> r_(ring I) % forceGB generators I
-
-Matrix // MonomialIdeal := Matrix => (f,I) -> f // forceGB generators I
-RingElement // MonomialIdeal := (r,I) -> r // forceGB generators I
-ZZ // MonomialIdeal := (r,I) -> r_(ring I) // forceGB generators I
-
-dim MonomialIdeal := I -> dim ring I - codim I
 
 lcm MonomialIdeal := (I) -> (if I.cache.?lcm
   then I.cache.lcm
