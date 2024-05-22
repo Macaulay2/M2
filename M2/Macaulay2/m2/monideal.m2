@@ -41,15 +41,9 @@ MonomialIdeal#1 = I -> monomialIdeal 1_(ring I)
 MonomialIdeal ^ ZZ    := MonomialIdeal => (I, n) -> monomialIdeal (ideal I)^n
 MonomialIdeal ^ Array := MonomialIdeal => (I, e) -> monomialIdeal (ideal I)^e
 
-MonomialIdeal + MonomialIdeal := MonomialIdeal => (I,J) -> (
-     if ring I =!= ring J then error "expected monomial ideals in the same ring";
-     newMonomialIdeal(ring I, raw I + raw J))
-MonomialIdeal * MonomialIdeal := MonomialIdeal => (I,J) -> (
-     if ring I =!= ring J then error "expected monomial ideals in the same ring";
-     newMonomialIdeal(ring I, raw I * raw J))
-MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
-     if ring I =!= ring J then error "expected monomial ideals in the same ring";
-     newMonomialIdeal(ring I, raw I - raw J))
+MonomialIdeal + MonomialIdeal := MonomialIdeal => ((I, J) -> newMonomialIdeal(ring I, raw I + raw J)) @@ samering
+MonomialIdeal * MonomialIdeal := MonomialIdeal => ((I, J) -> newMonomialIdeal(ring I, raw I * raw J)) @@ samering
+MonomialIdeal - MonomialIdeal := MonomialIdeal => ((I, J) -> newMonomialIdeal(ring I, raw I - raw J)) @@ samering
 
 MonomialIdeal * Ring := MonomialIdeal => (I, S) -> if ring I === S then I else monomialIdeal(generators I ** S)
 Ring * MonomialIdeal := MonomialIdeal => (S, I) -> I ** S
