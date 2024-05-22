@@ -32,10 +32,7 @@ monomialIdeal Matrix := f -> (
     monomialIdealOfRow(0, f))
 
 monomialIdeal Ideal  := I -> monomialIdeal generators gb I
-monomialIdeal Module := M -> (
-    if isSubmodule M and rank ambient M === 1
-    then monomialIdeal generators gb M
-    else error "expected a submodule of a free module of rank 1")
+monomialIdeal Module := M -> monomialIdeal ideal M
 monomialIdeal MonomialIdeal := identity
 
 monomialIdeal List     := v -> monomialIdeal matrix {splice v}

@@ -555,11 +555,9 @@ ideal Matrix := Ideal => (f) -> (
 	  );
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
-ideal Module := Ideal => (M) -> (
-     F := ambient M;
-     if isSubmodule M and rank F === 1 then ideal generators M
-     else error "expected a submodule of a free module of rank 1"
-     )
+ideal Module := Ideal => M -> if isIdeal M then ideal generators M else (
+    error "expected a submodule of a free module of rank 1")
+
 idealPrepare = method()
 idealPrepare RingElement := 
 idealPrepare Number := identity
