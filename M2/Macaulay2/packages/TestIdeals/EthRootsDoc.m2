@@ -203,7 +203,8 @@ doc ///
             The function {\tt frobeniusRoot} works over arbitrary finite fields.
         Example
             p = 3;
-            R = GF(p^2)[x,y,z];
+            k = GF(p^2,Variable=>a)
+            R = k[x,y,z];
             I = ideal(a^(2*p)*x^p + y*z^p + x^p*y^p);
             frobeniusRoot(1, I)
         Text
