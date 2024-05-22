@@ -813,12 +813,6 @@ assert( degree U4 == 0 )
 
 
 --
-R=ZZ/101[x]
-assert(monomialIdeal vars R != 0)
-assert(monomialIdeal map(R^1,R^1,0) == 0)
-
-
---
 R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
 f = vars R
 C = resolution cokernel f
@@ -1184,22 +1178,6 @@ F 3
 
 --
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2,y^3,x*y^2*z,y*z^4);
-    J = polarize(I);
-    assert(betti res I==betti res J)
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2*y^2,y^2*z^2,x*y*z^4);
-    J = polarize(I, VariableBaseName => "whyNotAWord");
-    assert(betti res I==betti res J)
-
 
 --
 clearAll
