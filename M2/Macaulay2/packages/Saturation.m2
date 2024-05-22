@@ -36,7 +36,6 @@ importFrom_Core { "nonnull", "raw", "rawColon", "rawSaturate", "newMonomialIdeal
 importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
 
 -- TODO: where should these be placed?
-trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
 
 -- TODO: pick a better name and move to interpreter for speed?
 -- this is similar to override, except:
