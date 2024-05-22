@@ -96,7 +96,7 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      x := opts.Variable;
-     x = if x === null then getSymbol "a" else baseName x;
+     x = if x === null then local a else baseName x;
      R := (ZZ/p) (monoid [x]);
      t := R_0;
      local kk;
