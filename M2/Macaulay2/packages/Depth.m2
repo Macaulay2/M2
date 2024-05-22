@@ -898,6 +898,11 @@ I = ideal(a,b)
 assert(systemOfParameters I == ideal"24a - 36b")
 ///
 
+TEST /// -- issue #3254
+assert(depth(GF(2)[a]/ideal(a^2)) == 0)
+assert(depth(GF(5)[a,b,c]/ideal(a^3+b^3+c^3)) == 2)
+///
+
 end--
 
 restart
