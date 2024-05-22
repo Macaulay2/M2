@@ -60,6 +60,9 @@ ideal MonomialIdeal := I -> ideal generators I
 
 numgens MonomialIdeal := I -> I.numgens
 
+-- monomial ideals are trimmed by construction (c.f the == method below)
+trim       MonomialIdeal := MonomialIdeal => o -> identity
+mingens    MonomialIdeal := MonomialIdeal => o -> I -> sort generators I
 -- FIXME: for Ideal, this is cached in I.generators
 generators MonomialIdeal := o -> I -> I.cache.generators ??= map(ring I, rawMonomialIdealToMatrix raw I)
 
