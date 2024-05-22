@@ -25,11 +25,9 @@ monomialIdealOfRow := (i, m) -> newMonomialIdeal(ring m, rawMonomialIdeal(raw m,
 
 monomialIdeal = method(TypicalValue => MonomialIdeal, Dispatch => Thing)
 monomialIdeal Matrix := f -> (
-    -- TODO: ideal Matrix doesn't require any of these, but flattens the matrix
-    if not numgens target f == 1   then error "expected a matrix with 1 row";
     if not isCommutative ring f    then error "expected a commutative ring";
     if not isPolynomialRing ring f then error "expected a polynomial ring without quotient elements";
-    monomialIdealOfRow(0, f))
+    monomialIdealOfRow(0, flatten f))
 
 monomialIdeal Ideal  := I -> monomialIdeal generators gb I
 monomialIdeal Module := M -> monomialIdeal ideal M
