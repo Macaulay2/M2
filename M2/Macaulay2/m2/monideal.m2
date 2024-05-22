@@ -136,9 +136,7 @@ independentSets MonomialIdeal := o -> (M) -> (
      flatten entries generators result)
 independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 
-lcm MonomialIdeal := (I) -> (if I.cache.?lcm
-  then I.cache.lcm
-  else I.cache.lcm = (ring I) _ (rawMonomialIdealLCM raw I))
+lcm MonomialIdeal := I -> I.cache.lcm ??= (ring I) _ (rawMonomialIdealLCM raw I)
 
 -----------------------------------------------------------------------------
 
