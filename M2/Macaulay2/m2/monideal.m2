@@ -24,23 +24,19 @@ newMonomialIdeal = (R, rawI) -> new MonomialIdeal from {
 monomialIdealOfRow := (i, m) -> newMonomialIdeal(ring m, rawMonomialIdeal(raw m, i))
 
 monomialIdeal = method(TypicalValue => MonomialIdeal, Dispatch => Thing)
-monomialIdeal MonomialIdeal := identity
 monomialIdeal Matrix := f -> (
-    -- TODO: ideal Matrix doesn't require this
-    if numgens target f =!= 1 then error "expected a matrix with 1 row";
-    if not isCommutative ring f
-    then error "expected a commutative ring";
-    if not isPolynomialRing ring f
-    then error "expected a polynomial ring without quotient elements";
+    -- TODO: ideal Matrix doesn't require any of these, but flattens the matrix
+    if not numgens target f == 1   then error "expected a matrix with 1 row";
+    if not isCommutative ring f    then error "expected a commutative ring";
+    if not isPolynomialRing ring f then error "expected a polynomial ring without quotient elements";
     monomialIdealOfRow(0, f))
 
-monomialIdeal Ideal := I -> monomialIdeal generators gb I
-
+monomialIdeal Ideal  := I -> monomialIdeal generators gb I
 monomialIdeal Module := M -> (
     if isSubmodule M and rank ambient M === 1
     then monomialIdeal generators gb M
-    else error "expected a submodule of a free module of rank 1"
-    )
+    else error "expected a submodule of a free module of rank 1")
+monomialIdeal MonomialIdeal := identity
 
 monomialIdeal List     := v -> monomialIdeal matrix {splice v}
 monomialIdeal Sequence := v -> monomialIdeal toList v
@@ -60,10 +56,10 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
      newMonomialIdeal(ring I, raw I - raw J))
 
-MonomialIdeal * Ring := MonomialIdeal => (I, S) -> if ring I === S then I else monomialIdeal(I.generators ** S)
+MonomialIdeal * Ring := MonomialIdeal => (I, S) -> if ring I === S then I else monomialIdeal(generators I ** S)
 Ring * MonomialIdeal := MonomialIdeal => (S, I) -> I ** S
 
-RingElement * MonomialIdeal := ZZ * MonomialIdeal := MonomialIdeal => (r, I) -> monomialIdeal (r * generators I)
+RingElement * MonomialIdeal := ZZ * MonomialIdeal := MonomialIdeal => (r, I) -> monomialIdeal(r * generators I)
 
 -----------------------------------------------------------------------------
 
