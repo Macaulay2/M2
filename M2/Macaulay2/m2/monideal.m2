@@ -129,7 +129,7 @@ dim MonomialIdeal := I -> dim ring I - codim I
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 
-poincare MonomialIdeal := (cacheValue symbol poincare) (M -> new degreesRing ring M from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal)
+poincare MonomialIdeal := I -> I.cache.poincare ??= new degreesRing ring I from rawHilbert rawMonomialIdealToMatrix raw I
 
 independentSets = method(Options => { Limit => infinity })
 independentSets MonomialIdeal := o -> (M) -> (
