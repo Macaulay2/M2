@@ -99,13 +99,12 @@ MonomialIdeal#AfterPrint = MonomialIdeal#AfterNoPrint = I -> (MonomialIdeal, " o
 -----------------------------------------------------------------------------
 
 codimopts := { Generic => false }
-codim MonomialIdeal := codimopts >> opts -> m -> rawCodimension raw m
-codim Module := codimopts >> opts -> (cacheValue (symbol codim => opts)) (M -> runHooks((codim, Module), (opts, M)))
-codim Ideal := codimopts >> opts -> I -> codim( cokernel generators I, opts)
 codim PolynomialRing := codimopts >> opts -> R -> 0
-codim QuotientRing := codimopts >> opts -> (R) -> codim( cokernel presentation R, opts)
-
-addHook((codim, Module), Strategy => Default, (opts, M) -> (
+codim QuotientRing   := codimopts >> opts -> R -> codim(cokernel presentation R, opts)
+codim Ideal          := codimopts >> opts -> I -> codim(cokernel   generators I, opts)
+codim MonomialIdeal  := codimopts >> opts -> I -> I.cache#(symbol codim => opts) ??= rawCodimension raw I
+codim Module         := codimopts >> opts -> M -> M.cache#(symbol codim => opts) ??= tryHooks((codim, Module), (opts, M),
+    (opts, M) -> (
      R := ring M;
      if M == 0 then infinity
      else if isField R then 0
