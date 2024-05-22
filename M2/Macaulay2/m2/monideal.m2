@@ -60,7 +60,8 @@ ideal MonomialIdeal := I -> ideal generators I
 
 numgens MonomialIdeal := I -> I.numgens
 
-generators MonomialIdeal := opts -> (cacheValue symbol generators) ( (I) -> map(ring I, rawMonomialIdealToMatrix raw I) )
+-- FIXME: for Ideal, this is cached in I.generators
+generators MonomialIdeal := o -> I -> I.cache.generators ??= map(ring I, rawMonomialIdealToMatrix raw I)
 
 -- arithmetic operations
 Matrix %  MonomialIdeal := Matrix => (f, I) -> f %  forceGB generators I
