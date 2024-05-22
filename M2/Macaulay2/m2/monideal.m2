@@ -132,12 +132,9 @@ isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 poincare MonomialIdeal := I -> I.cache.poincare ??= new degreesRing ring I from rawHilbert rawMonomialIdealToMatrix raw I
 
 independentSets = method(Options => { Limit => infinity })
-independentSets MonomialIdeal := o -> (M) -> (
-     result := newMonomialIdeal(ring M,
-	  rawMaximalIndependentSets(M.RawMonomialIdeal,
-	       if o.Limit === infinity then -1 else o.Limit));
-     flatten entries generators result)
-independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
+independentSets Ideal         := List => opts -> I -> independentSets(monomialIdeal I, opts)
+independentSets MonomialIdeal := List => opts -> I -> first entries generators newMonomialIdeal(
+    ring I, rawMaximalIndependentSets(raw I, if opts.Limit === infinity then -1 else opts.Limit))
 
 lcm MonomialIdeal := I -> I.cache.lcm ??= (ring I) _ (rawMonomialIdealLCM raw I)
 
