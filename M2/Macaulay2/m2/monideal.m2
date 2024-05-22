@@ -9,6 +9,7 @@ needs "res.m2"
 
 MonomialIdeal = new Type of Ideal
 MonomialIdeal.synonym = "monomial ideal"
+
 monomialIdeal = method(TypicalValue => MonomialIdeal,Dispatch => Thing)
 numgens MonomialIdeal := I -> I.numgens
 raw MonomialIdeal := I -> I.RawMonomialIdeal
@@ -16,7 +17,6 @@ generators MonomialIdeal := opts -> (cacheValue symbol generators) ( (I) -> map(
 toExternalString MonomialIdeal := (I) -> "monomialIdeal " | toExternalString generators I
 
 ideal MonomialIdeal := (I) -> ideal generators I
-isIdeal MonomialIdeal := I -> true
 
 newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
      symbol numgens => rawNumgens rawI,
@@ -53,15 +53,13 @@ MonomialIdeal#1 = I -> monomialIdeal 1_(ring I)
 MonomialIdeal ^ ZZ    := MonomialIdeal => (I, n) -> monomialIdeal (ideal I)^n
 MonomialIdeal ^ Array := MonomialIdeal => (I, e) -> monomialIdeal (ideal I)^e
 
-Ring / MonomialIdeal := (R,I) -> R / ideal I
-
 monomialIdeal MonomialIdeal := identity
 
 monomialIdeal Matrix := MonomialIdeal => f -> (
      if numgens target f =!= 1 then error "expected a matrix with 1 row";
-     if not isCommutative ring f 
+     if not isCommutative ring f
        then error "expected a commutative ring";
-     if not isPolynomialRing ring f 
+     if not isPolynomialRing ring f
        then error "expected a polynomial ring without quotient elements";
      monomialIdealOfRow(0,f))
 
@@ -93,8 +91,8 @@ poincare MonomialIdeal := (cacheValue symbol poincare) (M -> new degreesRing rin
 
 independentSets = method(Options => { Limit => infinity })
 independentSets MonomialIdeal := o -> (M) -> (
-     result := newMonomialIdeal(ring M, 
-	  rawMaximalIndependentSets(M.RawMonomialIdeal, 
+     result := newMonomialIdeal(ring M,
+	  rawMaximalIndependentSets(M.RawMonomialIdeal,
 	       if o.Limit === infinity then -1 else o.Limit));
      flatten entries generators result)
 independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
@@ -110,39 +108,21 @@ MonomialIdeal#AfterPrint = MonomialIdeal#AfterNoPrint = (I) ->  (MonomialIdeal,"
 monomialIdeal Ideal :=  MonomialIdeal => (I) -> monomialIdeal generators gb I
 
 monomialIdeal Module := MonomialIdeal => (M) -> (
-     if isSubmodule M and rank ambient M === 1 
+     if isSubmodule M and rank ambient M === 1
      then monomialIdeal generators gb M
      else error "expected a submodule of a free module of rank 1"
      )
 
 monomialIdeal RingElement := MonomialIdeal => v -> monomialIdeal {v}
-ring MonomialIdeal := I -> I.ring
 numgens MonomialIdeal := I -> I.numgens
-MonomialIdeal _ ZZ := (I,n) -> (generators I)_(0,n)
 
 isMonomialIdeal = method(TypicalValue => Boolean)
 isMonomialIdeal Thing := x -> false
 isMonomialIdeal MonomialIdeal := (I) -> true
 isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries generators I, r -> size r === 1 and leadCoefficient r == 1)
 
-MonomialIdeal == Ideal := (I,J) -> ideal I == J
-Ideal == MonomialIdeal := (I,J) -> I == ideal J
-
-MonomialIdeal == Ring := (I,R) -> (
-     if ring I =!= R then error "expected ideals in the same ring";
-     1_R % I == 0)
-Ring == MonomialIdeal := (R,I) -> I == R
-
-MonomialIdeal + Ideal := Ideal => (I,J) -> ideal I + J
-Ideal + MonomialIdeal := Ideal => (I,J) -> I + ideal J
-
 RingElement * MonomialIdeal := MonomialIdeal => (r,I) -> monomialIdeal (r * generators I)
 ZZ * MonomialIdeal := MonomialIdeal => (r,I) -> monomialIdeal (r * generators I)
-
-MonomialIdeal * Ideal := Ideal => (I,J) -> ideal I * J
-Ideal * MonomialIdeal := Ideal => (I,J) -> I * ideal J
-
-MonomialIdeal * Module := Module => (I,M) -> ideal I * M
 
 MonomialIdeal * Ring := Ideal => (I,S) -> if ring I === S then I else monomialIdeal(I.generators ** S)
 Ring * MonomialIdeal := Ideal => (S,I) -> if ring I === S then I else monomialIdeal(I.generators ** S)
@@ -157,21 +137,9 @@ ZZ // MonomialIdeal := (r,I) -> r_(ring I) // forceGB generators I
 
 dim MonomialIdeal := I -> dim ring I - codim I
 
-degree MonomialIdeal := I -> degree cokernel generators I   -- maybe it's faster with 'poincare'
-
-jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
-
--- TODO: move to res.m2, or add as a strategy
-resolution MonomialIdeal := ChainComplex => opts -> I -> resolution ideal I
-betti MonomialIdeal := opts -> I -> betti(ideal I,opts)
-minimalBetti MonomialIdeal := opts -> I -> minimalBetti(ideal I,opts)
-
-lcm MonomialIdeal := (I) -> (if I.cache.?lcm 
+lcm MonomialIdeal := (I) -> (if I.cache.?lcm
   then I.cache.lcm
   else I.cache.lcm = (ring I) _ (rawMonomialIdealLCM raw I))
-
- -- We use E. Miller's definition for nonsquare 
- -- free monomial -- ideals.
 
 protect alexanderDual
 alexopts = {Strategy=>0}
@@ -194,9 +162,8 @@ dual MonomialIdeal := alexopts >> o -> (I) -> (
 	 dual(I, first exponents lcm I, o)
     ))
 
---  TESTING IF A THING IS A SQUARE FREE MONOMIAL IDEAL  ----
+-- We use E. Miller's definition for non-square free monomial ideals.
 isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
--- isSquareFree Thing := x -> false
 isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(first exponents m, i -> i<2))
 
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
@@ -209,13 +176,13 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
      X := generators R;
      S := {};
      k := coefficientRing R;
-     scan(D, L -> ( 
+     scan(D, L -> (
      	       Y := X;
      	       m := vars R;
 	       Lset := set L;
 	       Y = select(Y, r -> not Lset#?r);
      	       m = substitute(m, apply(L, r -> r => 1));
-	       -- using monoid to create ring to avoid 
+	       -- using monoid to create ring to avoid
 	       -- changing global ring.
      	       A := k (monoid [Y]);
      	       phi := map(A, R, substitute(m, A));
