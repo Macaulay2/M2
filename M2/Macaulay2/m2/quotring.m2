@@ -1,6 +1,7 @@
 --		Copyright 1996-2006 by Daniel R. Grayson and Michael E. Stillman
 
 needs "enginering.m2"
+needs "polyrings.m2"
 needs "matrix1.m2"
 
 -----------------------------------------------------------------------------

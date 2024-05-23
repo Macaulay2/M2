@@ -13,7 +13,7 @@ notsamering := (X,Y) -> (
 nottosamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
      else error("expected ",X.synonym," and ",Y.synonym," for compatible rings"))
-samering := (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
+samering = (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
 tosamering := (M,N) -> if ring M === ring N then (M,N) else (
      z := try 0_(ring M) + 0_(ring N) else nottosamering(class M,class N);
      (promote(M,ring z),promote(N,ring z)))
@@ -555,11 +555,9 @@ ideal Matrix := Ideal => (f) -> (
 	  );
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
-ideal Module := Ideal => (M) -> (
-     F := ambient M;
-     if isSubmodule M and rank F === 1 then ideal generators M
-     else error "expected a submodule of a free module of rank 1"
-     )
+ideal Module := Ideal => M -> if isIdeal M then ideal generators M else (
+    error "expected a submodule of a free module of rank 1")
+
 idealPrepare = method()
 idealPrepare RingElement := 
 idealPrepare Number := identity
