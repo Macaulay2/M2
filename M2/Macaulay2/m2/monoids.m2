@@ -474,14 +474,22 @@ checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!
 -- turns {x, y, z, y} into {x, y_0, z, y_1}
 -- adding 'toString' in a few places will eliminate more duplications
 -- but makes creating temporary rings in functions more difficult.
-dedupSymbols = varlist -> if 0 == repeats varlist then varlist else while 0 < repeats varlist do (
-    mapping := hashTable toList pairs varlist;
-    -- TODO: applyPairs with collision handler, and accepting MutableHashTable
-    counter := new MutableHashTable from applyKeys(mapping,
-	i -> varlist#i, dups -> makeVars(#dups, first dups));
-    varlist = values applyValues(mapping, var -> if instance(counter#(name := var), List)
-	then first(counter#name#0, counter#name = drop(counter#name, 1)) else var);
-    if 0 == repeats varlist then break varlist else varlist)
+dedupSymbols = varlist -> (
+    while repeats varlist > 0 do (
+	counts := tally varlist;
+	data := hashTable apply(keys counts,
+	    var -> (
+		var,
+		new MutableList from {
+		    0,
+		    if counts#var > 1 then (
+			makeVars(counts#var, var))
+		    else {var}}));
+	varlist = apply(varlist, var -> (
+		newvar := data#var#1#(data#var#0);
+		data#var#0 += 1;
+		newvar)));
+    varlist)
 
 -- also used in AssociativeAlgebras.m2
 findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
