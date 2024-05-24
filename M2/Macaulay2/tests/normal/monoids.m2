@@ -230,6 +230,7 @@ assert(gens(B = A ** A) == {x_0,y_0,x_1,y_1}) -- TODO: eliminate the warning
 assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(0,1),y_(0,1),x_(1,0),y_(1,0),x_(1,1),y_(1,1)})
 assert(toString gens(A ** B) == "{x, y, x_0, y_0, x_1, y_1}") -- TODO: not yet working without toString
 assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet working without toString
+assert(toString gens(monoid[x,x,x]) == "{x_0, x_1, x_2}") -- issue #3261
 
 -- test ^** and runLengthEncode
 -- TODO: what should happen for odd powers?
