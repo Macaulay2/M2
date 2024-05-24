@@ -476,6 +476,7 @@ expression ZZ := i -> (
      else if i < 0 then new Minus from { -i }
      else hold i
      )
+OneExpression ^ Expression :=
 Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
 Holder     ^ ZeroExpression :=
@@ -855,7 +856,7 @@ net Sum := v -> (
 		    then bigParenthesize net v#i
 		    else      	   	 net v#i))))
 
-isNumber = method(TypicalValue => Boolean)
+isNumber = method(Dispatch => Thing, TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
 isNumber QQ := -- QQ never appears in an expression...
@@ -1104,7 +1105,7 @@ texMathSuperscript := v -> (
     x := texMath v#0;
     y := texMath v#1;
     if precedence v#0 < p or class v#0 === Superscript or class v#0 === Power then x = "\\left(" | x | "\\right)"; -- precedence of double superscript
-    concatenate(x,"^{",y,"}") -- no braces around x
+    concatenate(x,"_{",y,"}",if class v#0===Symbol and last toString v#0=="'" then "{}") -- no braces around x
 )
 texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else texMathSuperscript v
 texMath Superscript := v -> if v#1 === moduleZERO then "0" else texMathSuperscript v
@@ -1196,7 +1197,8 @@ texMath MatrixExpression := x -> (
 )
 
 texMath VectorExpression := v -> (
-    concatenate(
+    if all(v,i->class i===ZeroExpression) then "0"
+    else concatenate(
 	"\\left(",
 	"\\!\\begin{array}{c}",
 	newline,
