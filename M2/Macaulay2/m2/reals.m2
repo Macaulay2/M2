@@ -415,6 +415,7 @@ texMath RR := x -> (
 	printingLeadLimit,
 	printingTrailLimit,
 	"}\\cdot 10^{", x ) | "}")
+texMath RRi := x -> concatenate("\\big[",texMath left x,",",texMath right x,"\\big]",if isEmpty x then "\\text{ (an empty interval)}")
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;

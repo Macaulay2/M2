@@ -10,8 +10,6 @@ regex.m2
 profile.m2
 debugging.m2
 remember.m2
-iterators.m2
-files.m2
 
 set.m2
 fold.m2
@@ -31,6 +29,8 @@ code.m2
 printing.m2
 http.m2
 
+iterators.m2
+files.m2
 computations.m2
 
 gateway.m2
