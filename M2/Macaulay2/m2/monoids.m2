@@ -478,7 +478,7 @@ dedupSymbols = varlist -> if 0 == repeats varlist then varlist else while 0 < re
     mapping := hashTable toList pairs varlist;
     -- TODO: applyPairs with collision handler, and accepting MutableHashTable
     counter := new MutableHashTable from applyKeys(mapping,
-	i -> varlist#i, dups -> makeVars(#dups, first dups));
+	i -> varlist#i, dups -> makeVars(#flatten dups, last dups));
     varlist = values applyValues(mapping, var -> if instance(counter#(name := var), List)
 	then first(counter#name#0, counter#name = drop(counter#name, 1)) else var);
     if 0 == repeats varlist then break varlist else varlist)
