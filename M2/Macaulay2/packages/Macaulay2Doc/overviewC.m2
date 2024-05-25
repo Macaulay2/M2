@@ -654,12 +654,12 @@ document {
      }
 
 document {
-     Key => "associative algebras",
-     "Eventually we will implement associative algebras, not necessarily
-     commutative."
-     }
+    Key => "associative algebras",
+    "Associative (i.e., not necessarily commutative) algebras are implemented in
+    the ", TO "AssociativeAlgebras::AssociativeAlgebras", " package."
+    }
 
-///
+-*
      "An element of the coefficient ring can be promoted to the polynomial ring.",
      EXAMPLE "promote(11/2,R)",
      "Conversely, an element of the polynomial ring that is known to be a scalar
@@ -687,7 +687,7 @@ document {
       	  "hilbertSeries S"
 	  },
      SeeAlso => { "monomial orderings",  "PolynomialRing"}
-///
+*-
 
 
 
