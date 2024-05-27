@@ -87,9 +87,11 @@ export remove(x:HashTable,key:Expr):Expr := (
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      prev := p;
+     ret := nullE;
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
+	       ret = p.value;
 	       --preserve ordering -- we change the numEntries last upon insertion so decrease it first when removing.
 	       x.numEntries = x.numEntries - 1;
 	       if prev == p then x.table.hmod = p.next
@@ -102,7 +104,7 @@ export remove(x:HashTable,key:Expr):Expr := (
 	  prev = p;
 	  p = p.next);
      if !x.beingInitialized then unlock(x.mutex);
-     Expr(x));
+     ret);
 export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
