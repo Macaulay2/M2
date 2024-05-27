@@ -603,9 +603,10 @@ remove(x:List,i:int):Expr:= (
      else if i >= n || i < -n then ArrayIndexOutOfBounds(i, n - 1)
      else (
 	  if i < 0 then i = n + i;
+	  ret := x.v.i;
 	  for j from i to n - 2 do x.v.j = x.v.(j + 1);
 	  Ccode(void, x.v, "->len = ", n - 1);
-	  nullE));
+	  ret));
 
 removefun(e:Expr):Expr := (
      when e
@@ -622,12 +623,14 @@ removefun(e:Expr):Expr := (
 		    when args.1 is key:stringCell do (
 	       		 if !f.isopen then return buildErrorPacket("database closed");
 	       		 if !f.Mutable then return buildErrorPacket("database not mutable");
-	       		 if 0 == dbmdelete(f.handle,key.v) then nullE
+			 ret := dbmfetch(f.handle,key.v);
+	       		 if 0 == dbmdelete(f.handle,key.v) then (
+			     when ret
+			     is s:string do toExpr(s)
+			     is null do nullE)
 	       		 else buildErrorPacket(dbmstrerror() + " : " + f.filename))
 		    else WrongArgString(2))
-	       is o:HashTable do (
-		    ret := remove(o,args.1);
-		    when ret is Error do ret else nullE)
+	       is o:HashTable do remove(o,args.1)
 	       else WrongArg(1,"a hash table or database")))
      else WrongNumArgs(2));
 setupfun("remove",removefun);
