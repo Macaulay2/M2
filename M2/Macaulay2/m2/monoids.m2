@@ -471,25 +471,18 @@ makeVars = (n, var) -> toList(
 -- TODO: why is (symbol <-, T) and not (symbol <-, T, Thing) the right method sequence for assignment?
 checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!= null then sym else error()
 
+-- TODO: the compiled function remove should return the removed value
+remove' = (L, i) -> (x := L#i; remove(L, i); x)
+
 -- turns {x, y, z, y} into {x, y_0, z, y_1}
 -- adding 'toString' in a few places will eliminate more duplications
 -- but makes creating temporary rings in functions more difficult.
-dedupSymbols = varlist -> (
-    while repeats varlist > 0 do (
-	counts := tally varlist;
-	data := hashTable apply(keys counts,
-	    var -> (
-		var,
-		new MutableList from {
-		    0,
-		    if counts#var > 1 then (
-			makeVars(counts#var, var))
-		    else {var}}));
-	varlist = apply(varlist, var -> (
-		newvar := data#var#1#(data#var#0);
-		data#var#0 += 1;
-		newvar)));
-    varlist)
+dedupSymbols = varlist -> if 0 == repeats varlist then varlist else while 0 < repeats varlist do (
+    mapping := hashTable toList pairs varlist;
+    counter := applyPairs(tally varlist, (name, count) ->
+	name => new MutableList from if count == 1 then {name} else makeVars(count, name));
+    varlist  = apply(varlist, var -> remove'(counter#var, 0));
+    if 0 == repeats varlist then break varlist else varlist)
 
 -- also used in AssociativeAlgebras.m2
 findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
