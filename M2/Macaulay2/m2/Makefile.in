@@ -21,7 +21,6 @@ DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/operators/*.m2 \
 		../packages/Macaulay2Doc.m2
-OTHERM2FILES := sagbi.m2
 ############################## loadsequence
 LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
 DUMPEDM2FILES += $(LOADSEQUENCE)
@@ -56,7 +55,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
 		$(DUMPEDM2SRCFILES) \
 		installedpackages \
-		$(OTHERM2FILES) \
 		$(shell @FIND@ @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
 		../editors/emacs/make-M2-emacs-help.m2 \
 		../editors/make-M2-symbols.m2 \
