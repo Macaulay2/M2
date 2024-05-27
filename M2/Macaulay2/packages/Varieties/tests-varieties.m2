@@ -35,6 +35,11 @@ TEST ///
   assert(toString ring X == "(ZZ/101)[x..y]/(-x^3+y^2)")
 ///
 
+TEST ///
+X = Proj(ZZ[x]/(2*x))
+assert(char X == 2)
+///
+
 end
 
 -- multigraded Proj
