@@ -182,7 +182,7 @@ dim     AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1 -- TODO: - Picard rank instead?
 
 char     AffineVariety := X -> char ring X
-char ProjectiveVariety := X -> char(ring X / saturate ideal X) -- TODO: saturate with respect to B?
+char ProjectiveVariety := X -> char quotient saturate ideal X -- TODO: saturate with respect to B?
 
 -- TODO: should these be defined, but return 0 for an AffineVariety?
 degree ProjectiveVariety := X -> degree ring X
