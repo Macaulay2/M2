@@ -644,8 +644,39 @@ document {
      ///,
      PARA {
 	  "If a component of the path to the current directory no longer exist, an error will be signalled."
-	  }
+	  },
+     SeeAlso => {changeDirectory}
      }
+
+doc ///
+  Key
+    changeDirectory
+  Headline
+    change the current working directory
+  Usage
+    changeDirectory dir
+  Inputs
+    dir:String
+  Outputs
+    :String -- the new working directory
+  Description
+    Text
+      Change the current working directory to @VAR "dir"@.
+    Example
+      dir = temporaryFileName()
+      makeDirectory dir
+      changeDirectory dir
+      currentDirectory()
+    Text
+      If @VAR "dir"@ is omitted, then the current working directory
+      is changed to the user's home directory.
+    Example
+      changeDirectory()
+      currentDirectory()
+  SeeAlso
+    currentDirectory
+///
+
 document {
      Key => exec,
      Headline => "execute another program",
