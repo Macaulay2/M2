@@ -17,7 +17,8 @@ makeDirectory String := name -> (			    -- make the whole path, too
      name = minimizeFilename name;
      parts := separate("/", name);
      if last parts === "" then parts = drop(parts,-1);
-     makeDir fold((a,b) -> ( makeDir a; a|"/"|b ), parts))
+     makeDir fold((a,b) -> ( makeDir a; a|"/"|b ), parts);
+     name)
 
 copyFile = method(Options => new OptionTable from { Verbose => false, UpdateOnly => false })
 copyFile(String,String) := opts -> (src,tar) -> (
