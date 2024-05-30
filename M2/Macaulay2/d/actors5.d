@@ -1316,11 +1316,6 @@ readlinkfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("readlink",readlinkfun);
 
-changeDirectory(e:Expr):Expr := (
-     when e is filename:stringCell do if chdir(filename.v) == -1 then buildErrorPacket(syscallErrorMessage("changing directory")) else nullE
-     else WrongArgString());
-setupfun("changeDirectory",changeDirectory);
-
 realpathfun(e:Expr):Expr := (
      when e is f:stringCell do (
      	  when realpath(expandFileName(f.v))
@@ -1731,6 +1726,21 @@ getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd 
      if length(s) == 0 then cwd() else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentDirectory",getcwdfun);
+
+changeDirectory(dir:string):Expr := (
+    if chdir(expandFileName(dir)) == -1
+    then buildErrorPacket(syscallErrorMessage("changing directory"))
+    else getcwdfun(emptySequenceE));
+
+changeDirectory(e:Expr):Expr := (
+    when e
+    is filename:stringCell do changeDirectory(filename.v)
+    is a:Sequence do (
+	if length(a) == 0
+	then changeDirectory("~")
+	else WrongArg("a string or ()"))
+    else WrongArg("a string or ()"));
+setupfun("changeDirectory",changeDirectory);
 
 export debuggerHook := nullE;
 
