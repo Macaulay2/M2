@@ -1223,6 +1223,7 @@ document {
      Headline => "make a directory",
      Usage => "makeDirectory dir",
      Inputs => { "dir" => String => "a path to the desired directory" },
+     Outputs => { String => "the name of the newly made directory" },
      Consequences => { { "the directory is made, with as many new path components as needed" } },
      EXAMPLE lines ///
 	  dir = temporaryFileName()
