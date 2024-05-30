@@ -142,6 +142,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
 			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
+			      file.posFile.line = file.posFile.line + 1;
+			      file.posFile.column = ushort(0);
 			      );
 			 )
 		    else (
