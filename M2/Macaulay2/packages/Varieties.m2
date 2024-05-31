@@ -787,8 +787,8 @@ euler ProjectiveVariety := X -> (
 -- Subpackages
 -----------------------------------------------------------------------------
 
-load "Varieties/SheafMaps.m2"
---load "Varieties/SheafComplexes.m2"
+load "./Varieties/SheafMaps.m2"
+--load "./Varieties/SheafComplexes.m2"
 
 -----------------------------------------------------------------------------
 -- Tests
