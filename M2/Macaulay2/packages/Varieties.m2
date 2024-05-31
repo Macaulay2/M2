@@ -84,6 +84,9 @@ importFrom_Core {
     "BinaryPowerMethod",
     }
 
+-- Backporting changes in the core that didn't make it to M2 v1.24.04
+load "./Varieties/backports.m2"
+
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------
@@ -794,7 +797,7 @@ euler ProjectiveVariety := X -> (
 -----------------------------------------------------------------------------
 
 load "Varieties/SheafMaps.m2"
-load "Varieties/SheafComplexes.m2"
+--load "Varieties/SheafComplexes.m2"
 
 -----------------------------------------------------------------------------
 -- Tests

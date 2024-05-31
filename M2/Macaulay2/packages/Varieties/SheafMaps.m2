@@ -210,11 +210,11 @@ quotient(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
     --assert(homomorphism' f % image Hom(source f, g) == 0)
     map(source g, source f, quotient(matrix f, matrix g, opts)))
 
-quotient'(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
+quotient'(SheafMap, SheafMap) := SheafMap => (f, g) -> (
     -- given f: A-->C and g: A-->B, then find (g\\f): B-->C such that (g\\f) o g = f
     --if source f != source g then error "quotient': expected sheaf maps with the same source";
     --assert(homomorphism' f % image Hom(g, target f) == 0)
-    map(target f, target g, quotient'(autotruncate(f, g), opts)))
+    map(target f, target g, quotient'(autotruncate(f, g))))
 
 -- printing
 -- TODO: use abbreviations for source and target
