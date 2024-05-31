@@ -303,20 +303,29 @@ Node
 
       Type one of these commands to get started reading the documentation:
 
-      @UL {
-	  SPAN (////copyright////, ////                         -- the copyright////),
-	  SPAN (////help "Macaulay2"////, ////                  -- top node of the documentation.////),
-	  SPAN (////help "reading the documentation"////, ////  -- ////),
-	  SPAN (////help "getting started"////, ////            -- ////),
-	  SPAN (////help "a first Macaulay2 session"////, ////  -- ////),
-	  SPAN (////help x////, ////                            -- show documentation for ////, TT ////x////),
-	  SPAN (////help about x////, ////                      -- show documentation about ////, TT ////x////),
-	  SPAN (////help about (x,Body=>true)////, ////         -- show documentation mentioning ////, TT ////x////),
-	  SPAN (////? f////, ////                               -- display brief documentation for a function ////, TT ////f////),
-	  SPAN (////printWidth = 80////, ////                   -- set print width to 80 characters////),
-	  SPAN (////viewHelp////, ////                          -- view documentation in a browser////),
-	  SPAN (////viewHelp x////, ////                        -- view documentation on ////, TT ////x////, //// in browser////),
-	  }@
+      @M2CODE ////copyright                         -- the copyright////@
+
+      @M2CODE ////help "Macaulay2"                  -- top node of the documentation.////@
+
+      @M2CODE ////help "reading the documentation"  -- ////@
+
+      @M2CODE ////help "getting started"            -- ////@
+
+      @M2CODE ////help "a first Macaulay2 session"  -- ////@
+
+      @M2CODE ////help x                            -- show documentation for x////@
+
+      @M2CODE ////help about x                      -- show documentation about x////@
+
+      @M2CODE ////help about (x,Body=>true)         -- show documentation mentioning x////@
+
+      @M2CODE ////? f                               -- display brief documentation for a function f////@
+
+      @M2CODE ////printWidth = 80                   -- set print width to 80 characters////@
+
+      @M2CODE ////viewHelp                          -- view documentation in a browser////@
+
+      @M2CODE ////viewHelp x                        -- view documentation on x in browser////@
 
       To read the documentation in info form, in case you happen to be running Macaulay2 in a
       terminal window, replace @TO "help"@ by @TO "infoHelp"@ in any of the commands above.
