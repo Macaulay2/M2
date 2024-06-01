@@ -229,7 +229,7 @@ expression ComplexMap := Expression => f -> (
     if #s === 0 then 
         new ZeroExpression from {0}
     else new VerticalList from for i in s list
-        RowExpression {i+d, ":", MapExpression { target f_i, source f_i, f_i }, ":", i}
+        RowExpression {i+d, ":", MapExpression { target f_i, source f_i, if instance(f_i,Matrix) then f_i else matrix f_i }, ":", i}
     )
 
 net ComplexMap := Net => f -> (
@@ -237,7 +237,7 @@ net ComplexMap := Net => f -> (
             for i in sort keys f.map list (
                 horizontalJoin(
 		            net (i+f.degree), " : ", net target f_i, " <--",
-		            lineOnTop net f_i,
+		            lineOnTop net if instance(f_i,Matrix) then f_i else matrix f_i,
 		            "-- ", net source f_i, " : ", net i
                     )
                 ));

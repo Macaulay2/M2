@@ -14,6 +14,7 @@ newPackage(
     Headline => "development package for beta testing new version of chain complexes",
     Keywords => {"Homological Algebra"},
     PackageExports => { "Truncations" },
+    PackageImports => { "Varieties"},
     AuxiliaryFiles => true
     )
 

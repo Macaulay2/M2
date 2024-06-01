@@ -38,6 +38,7 @@ newPackage(
 	},
     PackageImports => {
 	"Isomorphism",
+	"Complexes",
 	},
     AuxiliaryFiles => true
     )
@@ -497,6 +498,11 @@ flattenMorphism = f -> (
     -- TODO: sometimes lifting to ring g is enough, how can we detect this?
     -- TODO: why doesn't lift(f, ring g) do this automatically?
     map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+flattenComplex = C -> (
+    (lo,hi) := concentration C;
+    complex(for i from lo+1 to hi list flattenMorphism(C.dd_i), Base => lo)
+    )
+    
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
@@ -799,7 +805,7 @@ euler ProjectiveVariety := X -> (
 -----------------------------------------------------------------------------
 
 load "./Varieties/SheafMaps.m2"
---load "./Varieties/SheafComplexes.m2"
+load "./Varieties/SheafComplexes.m2"
 
 -----------------------------------------------------------------------------
 -- Tests

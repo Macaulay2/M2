@@ -60,6 +60,7 @@ map(CoherentSheaf, CoherentSheaf, Matrix, ZZ)             := SheafMap => opts ->
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 -- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
+map(CoherentSheaf, CoherentSheaf, ZZ)                     := SheafMap => opts -> (G,F,n)        -> sheaf map(module G, module F, 0)
 
 sheaf Matrix               := SheafMap =>  phi        -> sheaf(variety ring phi, phi)
 sheaf(Matrix, ZZ)          := SheafMap => (phi, d)    -> sheaf(variety ring phi, phi, d)
@@ -446,6 +447,10 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
 moveToField = f -> (
     kk := coefficientRing ring f;
     map(kk^(numrows f), kk^(numcols f), sub(cover f, kk)))
+cxToField = C -> (
+    (lo,hi) := concentration C;
+    complex(for i from lo+1 to hi list moveToField(C.dd_i),Base => lo)
+    )
 
 cohomology(ZZ,                    SheafMap) := Matrix => opts -> (p,    f) -> cohomology(p, variety f, f, opts)
 cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
