@@ -50,6 +50,11 @@ complex' List := Complex => opts -> L -> (
     error "expected a list of matrices or a list of modules";
     )
 
+sheaf Complex := Complex => C -> (
+    (lo,hi) := concentration C;
+    complex' for i from lo+1 to hi list sheaf C.dd_i
+    )
+
 -*
 map(Complex, Complex, HashTable) := ComplexMap => opts -> (tar, src, maps) -> (
     R := ring tar;
