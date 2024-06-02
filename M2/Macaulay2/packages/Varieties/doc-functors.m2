@@ -455,11 +455,6 @@ Node
 
 Node
   Key
-    (connectingExtMap, ZZ, CoherentSheaf, SheafMap)
-    [connectingExtMap, LengthLimit]
-
-Node
-  Key
     ExtLongExactSequence
    (ExtLongExactSequence, CoherentSheaf, SheafMap)
    (ExtLongExactSequence, CoherentSheaf, SheafMap, SheafMap)
