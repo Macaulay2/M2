@@ -395,6 +395,11 @@ directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.direc
 
 components CoherentSheaf := List => (cacheValue symbol components) (F -> apply(components module F, N -> sheaf(F.variety, N)))
 
+component(CoherentSheaf, Thing) := (F, k) -> (
+    if not F.cache.?indexComponents then error "expected Sheaf to be a direct sum with indexed components";
+    if not F.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
+    (components F)#(F.cache.indexComponents#k))
+
 -- multilinear ops
 -- TODO: document
 determinant        CoherentSheaf  := CoherentSheaf => o ->     F  -> exteriorPower(rank F, F, o)
@@ -872,6 +877,9 @@ end--
 
 uninstallPackage "Varieties"
 restart
+loadPackage("Truncations",  FileName => currentDirectory() | "Truncations.m2", Reload => true)
+loadPackage("Complexes",    FileName => currentDirectory() | "Complexes.m2",   Reload => true)
+installPackage("Varieties", FileName => currentDirectory() | "Varieties.m2")
 installPackage "Varieties"
 viewHelp "Varieties"
 
