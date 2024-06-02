@@ -81,7 +81,7 @@ importFrom_Core {
     "applyMethod", "applyMethod''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "concatRows", "concatCols",
-    "tryHooks", "cacheHooks",
+    "addHook", "tryHooks", "cacheHooks",
     "BinaryPowerMethod",
     }
 
@@ -877,10 +877,10 @@ end--
 
 uninstallPackage "Varieties"
 restart
-loadPackage("Truncations",  FileName => currentDirectory() | "Truncations.m2", Reload => true)
-loadPackage("Complexes",    FileName => currentDirectory() | "Complexes.m2",   Reload => true)
-installPackage("Varieties", FileName => currentDirectory() | "Varieties.m2")
-installPackage "Varieties"
+loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
+loadPackage("Complexes",   FileName => currentDirectory() | "Complexes.m2",   Reload => true)
+loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true)
+installPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2")
 viewHelp "Varieties"
 
 restart
