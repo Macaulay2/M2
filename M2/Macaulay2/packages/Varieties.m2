@@ -502,7 +502,6 @@ flattenComplex = C -> (
     (lo,hi) := concentration C;
     complex(for i from lo+1 to hi list flattenMorphism(C.dd_i), Base => lo)
     )
-    
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring

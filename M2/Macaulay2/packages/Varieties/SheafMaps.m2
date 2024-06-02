@@ -517,12 +517,6 @@ extLES(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
     longExactSequence(Hom(f', G), Hom(g', G))
     )
 
-basis(ZZ,Complex) := Complex -> (d,C) -> (
-    (a,b) := concentration C;
-    L := for i from a to b list basis(d,C.dd_i);
-    complex(L, Base => a)
-    )
-
 --TODO: RHom(ZZ, SheafComplex, SheafComplex)
 --TODO: TorLongExactSequence
 
