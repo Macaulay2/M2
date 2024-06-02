@@ -1,12 +1,12 @@
 -- override the complex to work with sheaves, already defined in Complexes
-complex HashTable := Complex => opts -> maps -> (
+addHook((complex, HashTable), Strategy => "sheaves", (opts, maps) -> (
     spots := sort keys maps;
     if #spots === 0 then
       error "expected at least one matrix";
     if not all(spots, k -> instance(k,ZZ)) then
       error "expected matrices to be labelled by integers";
-    if not all(spots, k -> instance(maps#k, SheafMap)) then
-      error "expected hash table or list of matrices";
+    if not all(spots, k -> instance(maps#k, SheafMap)) then return null;
+    --
     R := ring maps#(spots#0);
     if not all(values maps, f -> ring f === R) then
       error "expected all matrices to be over the same ring";
@@ -24,35 +24,14 @@ complex HashTable := Complex => opts -> maps -> (
            };
     C.dd = map(C,C,maps,Degree=>-1);
     C
-    )
-complex List := Complex => opts -> L -> (
-    -- L is a list of matrices or a list of modules
+    ))
+addHook((complex, List), Strategy => "sheaves", (opts, L) -> (
+    -- L is a list of sheaf maps or a list of coherent sheaves
     if not instance(opts.Base, ZZ) then
       error "expected Base to be an integer";
-    if all(L, ell -> instance(ell, SheafMap)) then (
-        mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
-        return complex(mapHash, opts)
-        );
-    -- if all(L, ell -> instance(ell,Module)) then (
-    --     R := ring L#0;
-    --     if any(L, ell -> ring ell =!= R) then
-    --         error "expected modules all over the same ring";
-    --     moduleHash := hashTable for i from 0 to #L-1 list opts.Base + i => L#i;
-    --     C := new Complex from {
-    --         symbol ring => R,
-    --         symbol concentration => (opts.Base, opts.Base + #L - 1),
-    --         symbol module => moduleHash,
-    --         symbol cache => new CacheTable
-    --         };
-    --     C.dd = map(C,C,0,Degree=>-1);
-    --     return C;
-    --     );
-    error "expected a list of matrices or a list of modules";
-    )
-
-
--- first, try to use the complex methods in Complex, then revert to the above
-addHook((complex, HashTable), Strategy => Default, maps -> if all(sort keys maps, k -> instance(maps#k, SheafMap)) then complex maps ) 
+    if not all(L, ell -> instance(ell, SheafMap)) then return null;
+    mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
+    complex(mapHash, opts)))
 
 sheaf Complex := Complex => C -> (
     (lo,hi) := concentration C;
