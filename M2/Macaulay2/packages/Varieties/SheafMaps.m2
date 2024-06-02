@@ -514,12 +514,6 @@ ExtLES(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
     -- TODO: the indexing on opts.Concentration needs to be negated
     longExactSequence(Hom(f', G), Hom(g', G)))
 
--- TODO: move to Complexes
-basis(ZZ, Complex) := Complex -> opts -> (d, C) -> (
-    (a, b) := concentration C;
-    L := for i from a to b list basis(d, C.dd_i, opts);
-    complex(L, Base => a))
-
 --TODO: RHom(ZZ, SheafComplex, SheafComplex)
 --TODO: TorLongExactSequence
 
