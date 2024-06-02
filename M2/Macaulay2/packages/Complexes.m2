@@ -75,6 +75,8 @@ export {
     "UseTarget"
     }
 
+importFrom_Core "tryHooks"
+
 -- keys into the type `Complex`
 protect modules
 
