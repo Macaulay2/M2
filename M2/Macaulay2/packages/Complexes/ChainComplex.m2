@@ -54,7 +54,7 @@ max Complex := ZZ => C -> max concentration C
 min Complex := ZZ => C -> min concentration C
 
 complex = method(Options => {Base=>0})
-complex HashTable := Complex => opts -> maps -> (
+complex HashTable := Complex => opts -> tryHooks((complex, HashTable), (opts, maps), (opts, maps) -> (
     spots := sort keys maps;
     if #spots === 0 then
       error "expected at least one matrix";
@@ -79,8 +79,8 @@ complex HashTable := Complex => opts -> maps -> (
            };
     C.dd = map(C,C,maps,Degree=>-1);
     C
-    )
-complex List := Complex => opts -> L -> (
+    ))
+complex List := Complex => opts -> tryHooks((complex, List), (opts, L), (opts, L) -> (
     -- L is a list of matrices or a list of modules
     if not instance(opts.Base, ZZ) then
       error "expected Base to be an integer";
@@ -103,7 +103,7 @@ complex List := Complex => opts -> L -> (
         return C;
         );
     error "expected a list of matrices or a list of modules";
-    )
+    ))
 complex Module := Complex => opts -> (M) -> (
     if not instance(opts.Base, ZZ) then
       error "complex: expected base to be an integer";

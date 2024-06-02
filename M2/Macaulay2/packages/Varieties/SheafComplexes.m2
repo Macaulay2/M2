@@ -1,5 +1,5 @@
-complex' = method(Options => {Base=>0})
-complex' HashTable := Complex => opts -> maps -> (
+-- override the complex to work with sheaves, already defined in Complexes
+complex HashTable := Complex => opts -> maps -> (
     spots := sort keys maps;
     if #spots === 0 then
       error "expected at least one matrix";
@@ -25,13 +25,13 @@ complex' HashTable := Complex => opts -> maps -> (
     C.dd = map(C,C,maps,Degree=>-1);
     C
     )
-complex' List := Complex => opts -> L -> (
+complex List := Complex => opts -> L -> (
     -- L is a list of matrices or a list of modules
     if not instance(opts.Base, ZZ) then
       error "expected Base to be an integer";
     if all(L, ell -> instance(ell, SheafMap)) then (
         mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
-        return complex'(mapHash, opts)
+        return complex(mapHash, opts)
         );
     -- if all(L, ell -> instance(ell,Module)) then (
     --     R := ring L#0;
@@ -50,9 +50,13 @@ complex' List := Complex => opts -> L -> (
     error "expected a list of matrices or a list of modules";
     )
 
+
+-- first, try to use the complex methods in Complex, then revert to the above
+addHook((complex, HashTable), Strategy => Default, maps -> if all(sort keys maps, k -> instance(maps#k, SheafMap)) then complex maps ) 
+
 sheaf Complex := Complex => C -> (
     (lo,hi) := concentration C;
-    complex' for i from lo+1 to hi list sheaf C.dd_i
+    complex for i from lo+1 to hi list sheaf C.dd_i
     )
 
 -*
@@ -100,7 +104,7 @@ debug Varieties
   G = OO_X(0)
   E = Ext^d(F, G)
   f = E_{0}
-  C = complex' yonedaSheafExtension f
+  C = complex yonedaSheafExtension f
 
 Complex _ ZZ := (C,i) -> if C.module#?i then C.module#i else OO_(variety C)^0 -- (ring C)^0
 variety Complex := Variety => C -> variety C_0
