@@ -60,7 +60,7 @@ complex HashTable := Complex => opts -> maps -> (
       error "expected at least one matrix";
     if not all(spots, k -> instance(k,ZZ)) then
       error "expected matrices to be labelled by integers";
-    if not all(spots, k -> instance(maps#k,Matrix) or instance(maps#k,SheafMap)) then
+    if not all(spots, k -> instance(maps#k,Matrix)) then
       error "expected hash table or list of matrices";
     R := ring maps#(spots#0);
     if not all(values maps, f -> ring f === R) then
@@ -255,10 +255,7 @@ isWellDefined Complex := Boolean => C -> (
     true
     )
 
-Complex _ ZZ := Module => (C,i) -> (
-    (lo,hi) := concentration C;
-    if C.module#?i then C.module#i else if instance(C_lo,Module) then (ring C)^0 else sheaf ((ring C)^0)
-    )
+Complex _ ZZ := Module => (C,i) -> if C.module#?i then C.module#i else (ring C)^0
 Complex ^ ZZ := Module => (C,i) -> C_(-i)
 
 length Complex := (C) -> (
