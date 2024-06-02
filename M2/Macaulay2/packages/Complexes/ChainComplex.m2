@@ -774,6 +774,20 @@ truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
 truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
 
 --------------------------------------------------------------------
+-- basis -----------------------------------------------------------
+--------------------------------------------------------------------
+-- returns the graded component of the complex in the given degree
+-- as a complex over the same ring (as opposed to the coefficient ring)
+-- TODO: also define basis given a degree range and infinite ranges
+-- TODO: also define for ComplexMap
+basis(ZZ,   Complex) :=
+basis(List, Complex) := Complex => opts -> (deg, C) -> (
+    (lo, hi) := C.concentration;
+    if lo == hi
+    then complex(image basis(deg, C_lo, opts), Base => lo)
+    else complex applyValues(C.dd.map, f -> basis(deg, f, opts)))
+
+--------------------------------------------------------------------
 -- homology --------------------------------------------------------
 --------------------------------------------------------------------
 homology Complex := Complex => opts -> C -> (
