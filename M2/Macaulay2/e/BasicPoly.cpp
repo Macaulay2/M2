@@ -51,7 +51,6 @@ void BasicPoly::displayCoefficient(std::ostream& o, T val, bool print_plus, bool
   bool is_negative = (val < 0);
   bool is_one = (val == 1 or val == -1);
 
-  T negative_val = - val;
   if (not is_negative and print_plus) o << '+';
   if (is_one)
     {

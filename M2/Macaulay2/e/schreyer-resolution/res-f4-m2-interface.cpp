@@ -248,7 +248,6 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
   // ring of C.
   const PolynomialRing* RP = R->cast_to_PolynomialRing();
   const Monoid* M = RP->getMonoid();
-  const Ring* K = RP->getCoefficientRing();
 
   if (lev <= 0 or lev > C.maxLevel())
     {
