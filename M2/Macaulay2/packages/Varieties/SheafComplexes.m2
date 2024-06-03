@@ -84,8 +84,14 @@ addHook((tensor, Complex, Complex), Strategy => "sheaves", (opts, C, D) -> (
 
 sheaf Complex := Complex => C -> (
     (lo,hi) := concentration C;
-    complex for i from lo+1 to hi list sheaf C.dd_i
+    sC := complex for i from lo+1 to hi list sheaf C.dd_i;
+    sC.sheafOf = C;
+    sC
     )
+
+sheafOf = method()
+sheafOf Complex := Complex => C -> if C.?sheafOf then C.sheafOf else error "Complex not obtained as sheaf associated to a complex";
+
 
 sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
@@ -135,6 +141,61 @@ sheafHom(SheafOfRings, Complex) := Complex => opts -> (R,C) -> sheafHom(complex 
 
 sheafDual = method();
 sheafDual Complex := Complex => (C) -> sheafHom(C, sheaf (ring C)^1)
+
+
+
+
+
+RHom = method()
+RHom(Complex, Complex) := Complex => (C, D) -> (
+    (loC, hiC) := C.concentration;
+    if not instance(variety C_loC, ProjectiveVariety)
+    then error "expected sheaves on a projective variety";
+    M := sheafOf C;
+    N := sheafOf D;
+    R := ring M;
+    if not isAffineRing R
+    then error "expected sheaves on a variety over a field";
+    H := prune HH N;
+    (loH, hiH) := concentration H;
+    L := for i from loH to hiH list dim H_i;
+    l := max L;
+    Resns := for i from loH to hiH list resolution flattenModule H_i;
+    P := for i in Resns list length i;
+    p := max P;
+    n := dim ring (H_loH) - 1;
+    if p >= n - l then (
+	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
+	r := a - l + 1;
+	M = truncate(r, M));
+    cxToField basis(0, Hom(res M, N))
+    )
+
+RHom(CoherentSheaf, Complex) := Complex => (C, D) -> (
+    if not instance(variety C, ProjectiveVariety)
+    then error "expected sheaves on a projective variety";
+    M := module C;
+    N := sheafOf D;
+    R := ring M;
+    if not isAffineRing R
+    then error "expected sheaves on a variety over a field";
+    H := prune HH N;
+    (loH, hiH) := concentration H;
+    L := for i from loH to hiH list dim H_i;
+    l := max L;
+    Resns := for i from loH to hiH list resolution flattenModule H_i;
+    P := for i in Resns list length i;
+    p := max P;
+    n := dim ring (H_loH) - 1;
+    if p >= n - l then (
+	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
+	r := a - l + 1;
+	M = truncate(r, M));
+    cxToField basis(0, Hom(freeResolution M, N))
+    )
+
+    
+
 
 end--
 
