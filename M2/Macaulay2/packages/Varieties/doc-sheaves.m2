@@ -284,6 +284,7 @@ Node
       --- TODO: update this once we can compute the kernel
       --- of HH^0(phi) for a sheaf map phi: F -> G
   SeeAlso
+    idealSheaf
     cotangentSheaf
     ProjectiveVariety
 
@@ -314,6 +315,7 @@ Node
       omega = cotangentSheaf X
       degree omega
   SeeAlso
+    idealSheaf
     tangentSheaf
     (cotangentSheaf, ZZ, ProjectiveVariety)
     ProjectiveVariety
