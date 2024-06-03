@@ -9,6 +9,10 @@ TEST ///
   assert(homology(C.dd_1, C.dd_2) == 0)
   M = sheaf(module cotangentSheaf X ** R)
   assert first isIsomorphic(M, C_2)
+
+  -- testing tensor of complexes of sheaves
+  D = complex OO_Y^{-1}
+  E = D ** C
 ///
 
 TEST ///

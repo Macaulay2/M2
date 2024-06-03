@@ -1,8 +1,23 @@
--- from now on, complexes may be defined with sheaf maps
+export {
+    }
+
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+-- Basic constructors for complexes of sheaves
+-----------------------------------------------------------------------------
+
+-- After this, complexes may be defined with sheaf maps
 importFrom_Complexes { "isMorphism", "isAbelianCategory" }
 isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
 
--- override the complex to work with sheaves, already defined in Complexes
+complex CoherentSheaf := Complex => lookup(complex, Module)
+
+-----------------------------------------------------------------------------
+-- Specialized methods for complexes of sheaves
+-----------------------------------------------------------------------------
 
 --addHook((symbol _, Complex, ZZ), Strategy => "sheaves",  (C,i) -> (
 --    (lo,hi) := concentration C;
