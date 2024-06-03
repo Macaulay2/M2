@@ -89,6 +89,13 @@ sheaf Complex := Complex => C -> (
     sC
     )
 
+Complex(ZZ) := Complex Sequence := Complex => (C,a) -> (
+    (loC, hiC) := concentration C;
+    tC := complex for i from loC+1 to hiC list (C.dd_i)(a);
+    if C.?sheafOf then tC.sheafOf = C.sheafOf**(ring C)^{a};
+    tC
+    )
+
 sheafOf = method()
 sheafOf Complex := Complex => C -> if C.?sheafOf then C.sheafOf else error "Complex not obtained as sheaf associated to a complex";
 
@@ -192,6 +199,38 @@ RHom(CoherentSheaf, Complex) := Complex => (C, D) -> (
 	r := a - l + 1;
 	M = truncate(r, M));
     cxToField basis(0, Hom(freeResolution M, N))
+    )
+
+Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
+    if not instance(variety C, ProjectiveVariety)
+    then error "expected sheaves on a projective variety";
+    M := module C;
+    N := sheafOf D;
+    R := ring M;
+    if not isAffineRing R
+    then error "expected sheaves on a variety over a field";
+    H := prune HH N;
+    (loH, hiH) := concentration H;
+    L := for i from loH to hiH list min(dim H_i,m);
+    l := max L;
+    Resns := for i from loH to hiH list resolution flattenModule H_i;
+    P := for i in Resns list length i;
+    p := max P;
+    n := dim ring (H_loH) - 1;
+    if p >= n - l then (
+	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
+	r := a - l + 1;
+	M = truncate(r, M));
+    (loD, hiD) := D.concentration;
+    complex for i from loD+1 to hiD list moveToField basis(0, Ext^m(M, matrix D.dd_i))
+    )
+
+cohomology(ZZ, Complex) := Complex => (p,C) -> (
+    (loC, hiC) := concentration C;
+    X := variety C_loC;
+    if not C.cache.?HH then C.cache.HH = new MutableHashTable;
+    if C.cache.HH#?p   then return C.cache.HH#p;
+    C.cache.HH#p = Ext^p(OO_X^1, C)
     )
 
     
