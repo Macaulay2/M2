@@ -815,6 +815,7 @@ load "./Varieties/tests-varieties.m2"
 load "./Varieties/tests-sheaves.m2"
 load "./Varieties/tests-functors.m2"
 load "./Varieties/tests-maps.m2"
+load "./Varieties/tests-complexes.m2"
 
 -----------------------------------------------------------------------------
 -- Documentation
@@ -866,6 +867,7 @@ Node
 load "./Varieties/doc-varieties.m2"
 load "./Varieties/doc-sheaves.m2"
 load "./Varieties/doc-maps.m2"
+load "./Varieties/doc-complexes.m2"
 load "./Varieties/doc-functors.m2"
 load "./Varieties/euler-doc.m2"
 load "./Varieties/genus-doc.m2"
