@@ -5,6 +5,7 @@ TEST ///
   X = Proj S
   Y = Proj R
   C = eulerSequence Proj R
+  assert all(3, i -> instance(C_i, CoherentSheaf))
   assert(C.dd_1 * C.dd_2 == 0)
   assert(homology(C.dd_1, C.dd_2) == 0)
   M = sheaf(module cotangentSheaf X ** R)

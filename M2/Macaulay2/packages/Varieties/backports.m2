@@ -1,4 +1,105 @@
 -----------------------------------------------------------------------------
+-- Core routines that need replaced
+-----------------------------------------------------------------------------
+importFrom_Core { "raw", "rawMatrixRemake2", "degreeCheck" }
+importFrom_Complexes { "isMorphism", "isAbelianCategory" }
+
+fixDegree := (m,d) -> (
+    M := target m;
+    N := source m;
+    map(M,N,rawMatrixRemake2(raw cover M, raw cover N, degreeCheck(d,ring m), raw m, 0)))
+
+matrixTable := opts -> (f) -> (
+    R := commonRing f;
+    havemat := false;
+    f = applyTable(f,
+	x -> if isMorphism x then (havemat = true; promote(x, R))
+	else if instance(x, RingElement) or instance(x, Number) then promote(x, R)
+	else error "expected numbers, ring elements, and matrices");
+    if not havemat then return map(R^#f, , f, opts);
+    types := unique apply(flatten f, class);
+    -- Note: we use Matrix.matrix here, which is different from Matrix#matrix
+    if # types === 1 and types#0 .?matrix then return ( types#0 .matrix opts)(f);
+    f = apply(f, row -> new MutableList from row);
+    m := #f;
+    n := #f#0;
+    tars := new MutableHashTable;
+    srcs := new MutableHashTable;
+    scan(m, row -> scan(n, col-> (
+		r := f#row#col;
+		if instance(r, Matrix) then (
+		    if tars#?row then (
+			if tars#row != target r then error "expected matrices in the same row to have equal targets";
+			)
+		    else tars#row = target r;
+		    if srcs#?col then (
+			if srcs#col != source r then error "expected matrices in the same column to have equal sources";
+			)
+		    else srcs#col = source r;
+		    ))));
+    scan(m, i->scan(n, j-> (
+		r := f#i#j;
+		if not instance(r,Matrix) and r != 0 then (
+		    d := degree r;
+		    if tars#?i then (
+			M := tars#i;
+			if srcs#?j then (
+			    N := srcs#j;
+			    if apply(degrees M, e -> e + d) =!= degrees N 
+			    then error ("matrices not compatible");
+			    f#i#j = map(M,N,r))
+			else (
+			    srcs#j = N = M ** R^{-d};
+			    f#i#j = map(M,N,r)))
+		    else (
+			if srcs#?j then (
+			    N = srcs#j;
+			    tars#i = M = N ** R^{d};
+			    f#i#j = map(M,N,r))
+			else (
+			    tars#i = M = R^1;
+			    srcs#j = N = R^{-d};
+			    f#i#j = map(M,N,r)))))));
+    scan(m, i->scan(n, j-> (
+		r := f#i#j;
+		if r == 0 then (
+		    if tars#?i then (
+			M := tars#i;
+			if srcs#?j then (
+			    N := srcs#j;
+			    f#i#j = map(M,N,0);)
+			else (
+			    srcs#j = M;
+			    f#i#j = map(M,M,0); ) )
+		    else (
+			if srcs#?j then (
+			    N = srcs#j;
+			    tars#i = N;
+			    f#i#j = map(N,N,0);
+			    )
+			else (
+			    M = tars#i = srcs#j = R^1;
+			    f#i#j = map(M,M,0);
+			    ))))));
+    f = toList \ f;
+    mm := concatBlocks f;
+    if opts.Degree === null
+    then mm
+    else fixDegree(mm,opts.Degree)
+    )
+
+matrix List := Matrix => opts -> L -> (
+    L = apply(splice L, splice); -- TODO: is this deepSplice?
+    if #L === 0 then error "expected nonempty list";
+    if not uniform L and instance(L#0, Module)
+    or not isTable L and uniform \ L then error "expected a list of vectors or a table of entries or maps";
+    -- construct a matrix by concatenating column vectors
+    if instance(class L#0, Module) then matrix { apply(L, matrix) } else
+    -- construct a matrix from a table of entries or maps
+    if isTable L then (matrixTable opts)(L)
+    else error "expected a rows all to be the same length")
+
+-----------------------------------------------------------------------------
 -- Compatibility with M2 v1.24.05
 -----------------------------------------------------------------------------
 
