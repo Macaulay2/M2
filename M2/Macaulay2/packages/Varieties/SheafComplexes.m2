@@ -26,9 +26,7 @@ sheaf Complex := Complex => C -> (
 
 Complex(ZZ) := Complex Sequence := Complex => (C,a) -> (
     (loC, hiC) := concentration C;
-    tC := complex for i from loC+1 to hiC list (C.dd_i)(a);
-    if C.?sheafOf then tC.sheafOf = C.sheafOf**(ring C)^{a};
-    tC
+    complex for i from loC+1 to hiC list (C.dd_i)(a)
     )
 
 
@@ -289,8 +287,8 @@ cohomology(ZZ, Complex) := Complex => (p,C) -> (
     )
 
 euler(Complex) := C -> (
-    d = length(C);
-    c = 0;
+    d := length(C);
+    c := 0;
     for i from -d to d do (
         c = c + (-1)^i * (euler(C_i))
     );
