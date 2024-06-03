@@ -92,6 +92,17 @@ TEST ///
   assert(prune pushout(F^[0], F^[1]) == 0)
 ///
 
+TEST ///
+  Q = QQ[x_1..x_3];
+  X = Proj Q;
+  K = koszulComplex vars Q;
+  sK = sheaf K
+  assert(sheafOf sK == K)
+  assert(length sK == 3)
+  assert(sK_1 == OO_X^3(-1))
+  assert(sK^2 == 0)
+///
+
 end--
 restart
 loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
