@@ -64,6 +64,7 @@ export {
     "tangentSheaf",
     "cotangentSheaf",
     "canonicalBundle",
+    "idealSheaf",
     "isProjective",
     "isLocallyFree",
     -- Functors
@@ -660,6 +661,10 @@ cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cota
 
 tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 tangentSheaf ProjectiveVariety := opts -> X -> dual cotangentSheaf(X, opts)
+
+-- TODO: document
+idealSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+idealSheaf ProjectiveVariety := opts -> X -> sheaf ideal (ring X).relations
 
 -- TODO: document
 canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
