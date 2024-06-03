@@ -896,7 +896,7 @@ uninstallPackage "Varieties"
 restart
 loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
 loadPackage("Complexes",   FileName => currentDirectory() | "Complexes.m2",   Reload => true)
-debug loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true)
+debug loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true, LoadDocumentation => true)
 installPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2")
 viewHelp "Varieties"
 
