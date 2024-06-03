@@ -29,7 +29,10 @@ newPackage(
 	    HomePage => "https://www.mast.queensu.ca/~ggsmith"},
 	{   Name => "Keller VandeBogert",
 	    Email => "kvandebo@nd.edu",
-	    HomePage => "https://sites.google.com/view/kellervandebogert/home"}
+	    HomePage => "https://sites.google.com/view/kellervandebogert/home"},
+	{   Name => "John Cobb",
+	    Email => "jdcobb3@gmail.com",
+	    HomePage => "https://johndcobb.github.io"}
 	},
     PackageExports => {
 	"Complexes",
