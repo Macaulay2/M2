@@ -588,7 +588,7 @@ ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F,
 -----------------------------------------------------------------------------
 
 yonedaSheafExtension = method()
-yonedaSheafExtension Matrix := -* Complex => *- f -> (
+yonedaSheafExtension Matrix := Complex => f -> (
     E := target f; -- Ext^d(F,G)
     (d, F, G) := if (try first formation E) === Ext then last formation E
     else error "expected target of map to be an Ext^d(F,G) module";
@@ -598,8 +598,7 @@ yonedaSheafExtension Matrix := -* Complex => *- f -> (
     E' := Ext^d(truncate(r, module F, MinimalGenerators => false), module G);
     f' := basis(0, E') * f;
     C := yonedaExtension f';
-    -- TODO: should return a complex of sheaf maps
-    -* complex *- apply(d + 1, i -> sheaf_X C.dd_(i+1)))
+    complex apply(d + 1, i -> sheaf_X C.dd_(i+1)))
 
 --yonedaSheafExtension' = method(Options => options Ext.argument)
 --yonedaSheafExtension' Complex := Matrix => opts -> C -> ()
