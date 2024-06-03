@@ -1443,6 +1443,7 @@ export (x:RR) + (y:int) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_add_si(", z, ",",  x, ",",  y, ", MPFR_RNDN)" );
      moveToRRandclear(z));
+export (x:int) + (y:RR) : RR := (y + x);
 
 export (x:RRi) + (y:int) : RRi := (
      z := newRRimutable(precision0(x));
@@ -2069,12 +2070,15 @@ export (x:CC) - (y:CC) : CC := toCC(x.re-y.re, x.im-y.im);
 export (x:RR) - (y:CC) : CC := toCC(x-y.re,-y.im);
 
 export (x:int) - (y:CC) : CC := toCC(x-y.re,-y.im);
+export (x:CC) - (y:int) : CC := toCC(x.re-y,x.im);
 
 export (x:CC) - (y:RR) : CC := toCC(x.re-y,x.im);
 
 export (x:CC) + (y:RR) : CC := toCC(x.re+y,x.im);
 
 export (x:RR) + (y:CC) : CC := toCC(x+y.re,y.im);
+
+export (x:int) + (y:CC) : CC := toCC(x+y.re,y.im);
 
 export -(y:CC) : CC := toCC(-y.re,-y.im);
 
