@@ -389,6 +389,20 @@ sheafHom(SheafMap, CoherentSheaf) := SheafMap => o -> (phi, F) -> sheafHom(phi, 
 sheafHom(CoherentSheaf, SheafMap) := SheafMap => o -> (F, phi) -> sheafHom(id_F, phi)
 sheafHom(SheafMap, SheafOfRings)  := SheafMap => o -> (phi, O) -> sheafHom(phi, id_(O^1))
 sheafHom(SheafOfRings, SheafMap)  := SheafMap => o -> (O, phi) -> sheafHom(id_(O^1), phi)
+sheafHom(SheafMap, Module) := SheafMap => o -> (F, G) -> (
+     sheaf(variety F, Hom(matrix F, G, o))
+)
+sheafHom(Module, SheafMap) := SheafMap => o -> (F, G) -> (
+    sheaf(variety G, Hom(F, matrix G, o))
+)
+sheafHom(ZZ, SheafMap) := SheafMap => o -> (d, F) -> (
+    if d != 0 then error "expected integer 0";
+    sheafHom((ring F)^0, F)
+)
+sheafHom(SheafMap, ZZ) := SheafMap => o -> (F, d) -> (
+    if d != 0 then error "expected integer 0";
+    sheafHom(F, (ring F)^0)
+)
 
 -- See [Hartshorne, Ch. III Exercise 6.1, pp. 237]
 -- TODO: these three calls could be simpler, but F^1 erases cached info of F
