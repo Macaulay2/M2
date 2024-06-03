@@ -1116,7 +1116,7 @@ sqrt(a:Expr):Expr := (
 	  )
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
      is Error do a
-     else WrongArgRR());
+     else WrongArgRRorRRiorCC());
 setupfun("sqrt",sqrt).Protected=false;
 
 export toSequence(e:Expr):Expr := (
