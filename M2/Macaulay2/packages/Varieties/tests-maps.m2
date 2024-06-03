@@ -152,6 +152,16 @@ TEST ///
 ///
 
 TEST ///
+  -- tests for concatenation
+  debug Varieties
+  f = sheaf vars(QQ[x,y,z])
+  assert(SheafMap.concatRows(3:f) == f || f || f)
+  assert(SheafMap.concatCols(3:f) == f |  f |  f)
+  isWellDefined SheafMap.concatBlocks(3:5:f)
+  isWellDefined matrix {{f,f},{f,f}}
+///
+
+TEST ///
   -- tests for tensor
   S = ZZ/11[x_0,x_1]
   X = Proj S
