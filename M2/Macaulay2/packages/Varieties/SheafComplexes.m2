@@ -1,37 +1,8 @@
+-- from now on, complexes may be defined with sheaf maps
+importFrom_Complexes { "isMorphism", "isAbelianCategory" }
+isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
+
 -- override the complex to work with sheaves, already defined in Complexes
-addHook((complex, HashTable), Strategy => "sheaves", (opts, maps) -> (
-    spots := sort keys maps;
-    if #spots === 0 then
-      error "expected at least one matrix";
-    if not all(spots, k -> instance(k,ZZ)) then
-      error "expected matrices to be labelled by integers";
-    if not all(spots, k -> instance(maps#k, SheafMap)) then return null;
-    --
-    R := ring maps#(spots#0);
-    if not all(values maps, f -> ring f === R) then
-      error "expected all matrices to be over the same ring";
-    moduleList := new MutableHashTable;
-    for k in spots do (
-        if not moduleList#?(k-1) 
-          then moduleList#(k-1) = target maps#k;
-        moduleList#k = source maps#k;
-        );
-    C := new Complex from {
-           symbol ring => R,
-           symbol module => new HashTable from moduleList,
-           symbol concentration => (first spots - 1, last spots),
-           symbol cache => new CacheTable
-           };
-    C.dd = map(C,C,maps,Degree=>-1);
-    C
-    ))
-addHook((complex, List), Strategy => "sheaves", (opts, L) -> (
-    -- L is a list of sheaf maps or a list of coherent sheaves
-    if not instance(opts.Base, ZZ) then
-      error "expected Base to be an integer";
-    if not all(L, ell -> instance(ell, SheafMap)) then return null;
-    mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
-    complex(mapHash, opts)))
 
 --addHook((symbol _, Complex, ZZ), Strategy => "sheaves",  (C,i) -> (
 --    (lo,hi) := concentration C;
@@ -99,7 +70,6 @@ Complex(ZZ) := Complex Sequence := Complex => (C,a) -> (
 sheafOf = method()
 sheafOf Complex := Complex => C -> if C.?sheafOf then C.sheafOf else error "Complex not obtained as sheaf associated to a complex";
 
-
 sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
     -- which agrees with Conrad (Grothendieck duality book)
@@ -148,10 +118,6 @@ sheafHom(SheafOfRings, Complex) := Complex => opts -> (R,C) -> sheafHom(complex 
 
 sheafDual = method();
 sheafDual Complex := Complex => (C) -> sheafHom(C, sheaf (ring C)^1)
-
-
-
-
 
 RHom = method()
 RHom(Complex, Complex) := Complex => (C, D) -> (
@@ -239,7 +205,9 @@ cohomology(ZZ, Complex) := Complex => (p,C) -> (
 end--
 
 restart
-debug Varieties
+loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
+loadPackage("Complexes",   FileName => currentDirectory() | "Complexes.m2",   Reload => true)
+debug loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true)
 
   S = QQ[x,y]
   X = Proj S
