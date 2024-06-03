@@ -65,6 +65,7 @@ export {
     "cotangentSheaf",
     "canonicalBundle",
     "isProjective",
+    "isLocallyFree",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
@@ -74,7 +75,6 @@ export {
     "SaturationMap",
     "TorsionFree",
     -- "TruncateDegree",
-    "isLocallyFree",
     }
 
 importFrom_Core {
