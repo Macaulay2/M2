@@ -8,6 +8,7 @@ export {
 --  "yonedaSheafExtension'",
     "cotangentSurjection",
     "eulerSequence",
+    "idealSheafSequence",
     "embeddedToAbstract",
     "ExtLongExactSequence",
     }
@@ -770,6 +771,16 @@ embeddedToAbstract(ProjectiveVariety) := Matrix => (cacheValue symbol embeddedTo
      g := dual cotangentSurjection X;
      h := inducedMap(coker g, target g);
      connectingExtMap(0, OO_X^1, h, LengthLimit=>2)))
+
+idealSheafSequence = method()
+idealSheafSequence ProjectiveVariety := Complex => X -> (
+    -- Given a projective variety X \subset PP^n, returns the sequence
+    -- 0 -> I_X -> OO_P -> OO_P/I_X -> 0
+    IX := idealSheaf(X);
+    i := inducedMap(ambient IX, IX);
+    p := inducedMap(coker i, ambient IX);
+    complex {p, i}
+    )
 
 -----------------------------------------------------------------------------
 -- Development
