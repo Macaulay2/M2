@@ -21,9 +21,7 @@ complex CoherentSheaf := Complex => lookup(complex, Module)
 
 sheaf Complex := Complex => C -> (
     (lo,hi) := concentration C;
-    sC := complex for i from lo+1 to hi list sheaf C.dd_i;
-    sC.sheafOf = C;
-    sC
+    complex for i from lo+1 to hi list sheaf C.dd_i
     )
 
 Complex(ZZ) := Complex Sequence := Complex => (C,a) -> (
@@ -33,8 +31,6 @@ Complex(ZZ) := Complex Sequence := Complex => (C,a) -> (
     tC
     )
 
-sheafOf = method()
-sheafOf Complex := Complex => C -> if C.?sheafOf then C.sheafOf else error "Complex not obtained as sheaf associated to a complex";
 
 sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
@@ -90,8 +86,8 @@ RHom(Complex, Complex) := Complex => (C, D) -> (
     (loC, hiC) := C.concentration;
     if not instance(variety C_loC, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
-    M := sheafOf C;
-    N := flattenComplex sheafOf D;
+    M := moduleComplex C;
+    N := flattenComplex moduleComplex D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -114,7 +110,7 @@ RHom(CoherentSheaf, Complex) := Complex => (C, D) -> (
     if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
     M := module C;
-    N := flattenComplex sheafOf D;
+    N := flattenComplex moduleComplex D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -137,7 +133,7 @@ RHom(Complex, CoherentSheaf) := Complex => (C,D) -> (
     (loC, hiC) := C.concentration;
     if not instance(variety C_loC, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
-    M := sheafOf C;
+    M := moduleComplex C;
     N := flattenModule module D;
     R := ring M;
     if not isAffineRing R
@@ -177,8 +173,8 @@ RHom(Complex, Complex, ZZ) := Complex => (C, D, d) -> (
     (loC, hiC) := C.concentration;
     if not instance(variety C_loC, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
-    M := sheafOf C;
-    N := flattenComplex sheafOf D;
+    M := moduleComplex C;
+    N := flattenComplex moduleComplex D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -201,7 +197,7 @@ RHom(CoherentSheaf, Complex, ZZ) := Complex => (C, D, d) -> (
 if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
     M := module C;
-    N := flattenComplex sheafOf D;
+    N := flattenComplex moduleComplex D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -224,7 +220,7 @@ RHom(Complex, CoherentSheaf, ZZ) := Complex => (C,D,d) -> (
     (loC, hiC) := C.concentration;
     if not instance(variety C_loC, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
-    M := sheafOf C;
+    M := moduleComplex C;
     N := flattenModule module D;
     R := ring M;
     if not isAffineRing R
@@ -264,7 +260,7 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
     if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
     M := module C;
-    N := sheafOf D;
+    N := moduleComplex D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -290,6 +286,23 @@ cohomology(ZZ, Complex) := Complex => (p,C) -> (
     if not C.cache.?HH then C.cache.HH = new MutableHashTable;
     if C.cache.HH#?p   then return C.cache.HH#p;
     C.cache.HH#p = Ext^p(OO_X^1, C)
+    )
+
+
+moduleComplex = method()
+moduleComplex(Complex) := Complex => C -> (
+    (lo, hi) := concentration C;
+    maxTruncDeg := max for i from lo+1 to hi list degree C.dd_i;
+    complex(for i from lo+1 to hi list truncate(maxTruncDeg, matrix C.dd_i), Base => lo)
+    )
+
+sheafRes = method()
+sheafRes(Complex) := Complex => C -> (
+    sheaf res moduleComplex C
+    )
+
+sheafRes(CoherentSheaf) := Complex => F -> (
+    sheaf freeResolution module F
     )
 
     
