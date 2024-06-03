@@ -255,7 +255,7 @@ isWellDefined Complex := Boolean => C -> (
     true
     )
 
-Complex _ ZZ := Module => (C,i) -> if C.module#?i then C.module#i else (ring C)^0
+Complex _ ZZ := Module => (C,i) -> tryHooks((symbol _, Complex, ZZ), (C,i), (C,i) -> ( if C.module#?i then C.module#i else (ring C)^0))
 Complex ^ ZZ := Module => (C,i) -> C_(-i)
 
 length Complex := (C) -> (
@@ -816,7 +816,8 @@ homomorphism(ZZ, Matrix, Complex) := ComplexMap => (i, f, E) -> (
 --------------------------------------------------------------------
 -- Tensor products -------------------------------------------------
 --------------------------------------------------------------------
-tensor(Complex, Complex) := Complex => {} >> opts -> (C, D) -> (
+
+tensor(Complex, Complex) := Complex => {} >> opts -> (C, D) -> tryHooks((tensor, Complex, Complex), (opts,C,D), (opts, C, D) -> (
     Y := youngest(C,D);
     if Y.cache#?(tensor,C,D) then return Y.cache#(tensor,C,D);
     R := ring C;
@@ -856,7 +857,7 @@ tensor(Complex, Complex) := Complex => {} >> opts -> (C, D) -> (
     result.cache.tensor = (C,D);
     Y.cache#(tensor,C,D) = result;
     result
-    )
+    ))
 Complex ** Complex := Complex => (C,D) -> tensor(C,D)
 Module ** Complex := Complex => (M,D) -> (complex M) ** D
 Complex ** Module := Complex => (C,N) -> C ** (complex N)
