@@ -103,6 +103,40 @@ TEST ///
   assert(sK^2 == 0)
 ///
 
+TEST ///
+  Q = QQ[x_1..x_3];
+  X = Proj Q;
+  K = koszulComplex vars Q;
+  sK = sheaf K
+  sheafOf sK
+  G = sheaf freeResolution ideal(x_1^2+x_2^2)
+  sheafOf G
+  RHom(OO_X^1, sK)
+  RHom(OO_X^1, G)
+  S := coker G.dd_1
+  HH^0 S
+  RHom(G, sK)
+  Ext^2(OO_X^1, sK(-3))
+  Ext^0 (OO_X^1, G(3))
+  RHom(OO_X^1, G(2))
+  RHom(OO_X^1, G, 3)
+  RHom(sK, G, 0)
+  RHom(sK, OO_X^1,0)
+  RHom(S, OO_X^1(3))
+  --all of the following are running just fine with the current complexes code
+  ssK = sK++sK
+  id_sK
+  idssK = id_sK ++ id_sK
+  components(sK ++ sK)
+  components(id_sK ++ id_sK)
+  ssK^[0]
+  ker ssK^[0]
+  ssK_[1]
+  ssK_[1]
+  idssK^[0]
+  ssK[1]
+///
+
 end--
 restart
 loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
