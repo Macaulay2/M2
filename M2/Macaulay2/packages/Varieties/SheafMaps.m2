@@ -60,9 +60,19 @@ map(CoherentSheaf, CoherentSheaf, Matrix, ZZ)             := SheafMap => opts ->
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 -- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
-map(CoherentSheaf, CoherentSheaf, ZZ)                     := SheafMap => opts -> (G,F,n)        -> sheaf map(module G, module F, 0)
+map(CoherentSheaf, CoherentSheaf, ZZ)                     := SheafMap => opts -> (G, F, n)      -> (
+    if n === 0 then sheaf map(module G, module F, 0) else
+    if F === G then n * id_G else
+    error "expected 0 or source and target equal")
 map(CoherentSheaf, CoherentSheaf, SheafMap)               := SheafMap => opts -> (G,F,phi)      -> sheaf map(G,F,matrix phi)
-
+map(CoherentSheaf, Module, ZZ) := SheafMap => opts -> (F, M, n) -> (
+    if n === 0 then sheaf map(module F, M, 0) else
+    if M === module F then n * id_F else
+    error "expected 0 or source and target equal")
+map(Module, CoherentSheaf, ZZ) := SheafMap => opts -> (M, F, n) -> (
+    if n === 0 then sheaf map(M, module F, 0) else
+    if M === module F then n * id_F else
+    error "expected 0 or source and target equal")
 sheaf SheafMap             := SheafMap =>  phi        -> sheaf matrix phi
 sheaf Matrix := Matrix^~   := SheafMap =>  phi        -> sheaf(variety ring phi, phi)
 sheaf(Matrix, ZZ)          := SheafMap => (phi, d)    -> sheaf(variety ring phi, phi, d)
@@ -392,8 +402,7 @@ sheafHom(CoherentSheaf, SheafMap) := SheafMap => o -> (F, phi) -> sheafHom(id_F,
 sheafHom(SheafMap, SheafOfRings)  := SheafMap => o -> (phi, O) -> sheafHom(phi, id_(O^1))
 sheafHom(SheafOfRings, SheafMap)  := SheafMap => o -> (O, phi) -> sheafHom(id_(O^1), phi)
 sheafHom(SheafMap, Module) := SheafMap => o -> (F, G) -> (
-     sheaf(variety F, Hom(matrix F, G, o))
-)
+     sheaf(variety F, Hom(matrix F, G, o)))
 sheafHom(Module, SheafMap) := SheafMap => o -> (F, G) -> (
     sheaf(variety G, Hom(F, matrix G, o))
 )
@@ -404,6 +413,12 @@ sheafHom(ZZ, SheafMap) := SheafMap => o -> (d, F) -> (
 sheafHom(SheafMap, ZZ) := SheafMap => o -> (F, d) -> (
     if d != 0 then error "expected integer 0";
     sheafHom(F, (ring F)^0)
+)
+sheafHom(CoherentSheaf, Matrix) := SheafMap => opts -> (F, phi) -> (
+    sheaf Hom(module F, phi, opts)
+)
+sheafHom(Matrix, CoherentSheaf) := SheafMap => opts -> (phi, F) -> (
+    sheaf Hom(phi, module F, opts)
 )
 
 -- See [Hartshorne, Ch. III Exercise 6.1, pp. 237]
