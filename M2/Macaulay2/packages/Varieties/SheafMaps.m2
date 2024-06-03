@@ -55,6 +55,8 @@ map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> 
 map(CoherentSheaf, Nothing, Matrix) := SheafMap => opts -> (F, null, psi) -> map(F, sheaf(variety F, source psi), psi, opts)
 map(Nothing, CoherentSheaf, Matrix) := SheafMap => opts -> (null, G, psi) -> map(sheaf(variety G, target psi), G, psi, opts)
 
+-- TODO: accept a list of lists instead of matrix
+
 -- when phi is constructed by truncation >= d
 map(CoherentSheaf, CoherentSheaf, Matrix, ZZ)             := SheafMap => opts -> (G, F, phi, d) -> map(G, F, phi, Degree => d)
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
