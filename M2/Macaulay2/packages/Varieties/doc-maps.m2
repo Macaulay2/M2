@@ -97,11 +97,6 @@ Node
     embeddedToAbstract
    (embeddedToAbstract, ProjectiveVariety)
 
-Node
-  Key
-    eulerSequence
-   (eulerSequence, ProjectiveVariety)
-
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
 -----------------------------------------------------------------------------
