@@ -221,6 +221,9 @@ quotient'(SheafMap, SheafMap) := SheafMap => (f, g) -> (
     --assert(homomorphism' f % image Hom(g, target f) == 0)
     map(target f, target g, quotient'(autotruncate(f, g))))
 
+-- base change
+promote(SheafMap, RingElement) := SheafMap => (f, R) -> if R === ring f then f else error "base change of maps of sheaves is not yet implemented"
+
 -- printing
 -- TODO: use abbreviations for source and target
 expression SheafMap := Expression => f -> (
@@ -660,8 +663,14 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
 -- pullback and pushout and concatenation
 -----------------------------------------------------------------------------
 
-SheafMap |  SheafMap := SheafMap => (f, g) -> map(target f, source f ++ source g, concatCols {matrix f, matrix g})
-SheafMap || SheafMap := SheafMap => (f, g) -> map(target f ++ target g, source f, concatRows autotruncate {f, g})
+SheafMap |  SheafMap := SheafMap => SheafMap.concatCols = maps -> map(
+    target maps#0, directSum apply(maps, source), concatCols apply(maps, matrix))
+SheafMap || SheafMap := SheafMap => SheafMap.concatRows = maps -> map(
+    directSum apply(maps, target), source maps#0, concatRows autotruncate maps)
+
+SheafMap.concatBlocks = maps -> SheafMap.concatRows apply(maps, SheafMap.concatCols)
+-- Note: this is (symbol matrix, SheafMap), not (matrix, SheafMap)!
+SheafMap.matrix = opts -> SheafMap.concatBlocks
 
 -- TODO: the code for pullback and pushout of matrices is categorical,
 -- so we should use e.g. lookup(pullback, Matrix, Matrix) here verbatim
