@@ -301,6 +301,7 @@ restart
 loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
 loadPackage("Complexes",   FileName => currentDirectory() | "Complexes.m2",   Reload => true)
 debug loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true)
+installPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2")
 
 Complex _ ZZ := (C,i) -> if C.module#?i then C.module#i else OO_(variety C)^0 -- (ring C)^0
 variety Complex := Variety => C -> variety C_0
