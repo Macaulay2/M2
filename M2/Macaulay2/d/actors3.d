@@ -829,14 +829,16 @@ log1p(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(log1p(x.v))				    -- # typical value: log1p, RR, RR
      is x:RRicell do toExpr(log1p(x.v))				    -- # typical value: log1p, RRi, RRi
-     else WrongArgRRorRRi()
+     is x:CCcell do toExpr(log(1 + x.v))                            -- # typical value: log1p, CC, CC
+     else WrongArgRRorRRiorCC()
      );
 setupfun("log1p",log1p).Protected=false;
 expm1(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(expm1(x.v))				    -- # typical value: expm1, RR, RR
      is x:RRicell do toExpr(expm1(x.v))				    -- # typical value: expm1, RRi, RRi
-     else WrongArgRRorRRi()
+     is x:CCcell do toExpr(exp(x.v) - 1)                            -- # typical value: expm1, CC, CC
+     else WrongArgRRorRRiorCC()
      );
 setupfun("expm1",expm1).Protected=false;
 eint(e:Expr):Expr := (
