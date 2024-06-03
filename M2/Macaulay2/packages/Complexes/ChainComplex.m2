@@ -268,7 +268,10 @@ isWellDefined Complex := Boolean => C -> (
     true
     )
 
-Complex _ ZZ := Module => (C,i) -> tryHooks((symbol _, Complex, ZZ), (C,i), (C,i) -> ( if C.module#?i then C.module#i else (ring C)^0))
+-- TODO: move this line to Core
+Module#0 = R -> R^0
+
+Complex _ ZZ := Module => (C,i) -> if C.module#?i then C.module#i else (class C_(C.concentration_0))#0 (ring C)
 Complex ^ ZZ := Module => (C,i) -> C_(-i)
 
 length Complex := (C) -> (
