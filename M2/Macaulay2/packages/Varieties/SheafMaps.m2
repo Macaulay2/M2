@@ -755,6 +755,13 @@ cotangentSurjection ProjectiveVariety := SheafMap => (cacheValue symbol cotangen
     p := (sheaf inducedMap(coker relations module OmegaX, ambient module OmegaX)) * inducedMap(ambient OmegaPX, OmegaPX);
     inducedMap(image p, source p)))
 
+cotangentSequence = method();
+cotangentSequence ProjectiveVariety := Complex => X -> (
+    p := cotangentSurjection X;
+    i := inducedMap(source p, ker p);
+    complex {p, i}
+    )
+
 embeddedToAbstract = method()
 embeddedToAbstract(ProjectiveVariety) := Matrix => (cacheValue symbol embeddedToAbstract) (X -> (
      g := dual cotangentSurjection X;
