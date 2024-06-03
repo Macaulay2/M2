@@ -718,7 +718,7 @@ truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) ->
 basis(ZZ,   Complex) :=
 basis(List, Complex) := Complex => opts -> (deg, C) -> (
     (a,b) := concentration C;
-    L := for i from a to b list basis(deg, C.dd_i, opts);
+    L := for i from a+1 to b list basis(deg, C.dd_i, opts);
     complex(L, Base => a))
 
 --------------------------------------------------------------------
