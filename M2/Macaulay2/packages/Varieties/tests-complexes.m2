@@ -97,20 +97,12 @@ TEST ///
   X = Proj Q;
   K = koszulComplex vars Q;
   sK = sheaf K
-  assert(sheafOf sK == K)
+  assert(module sK == K)
   assert(length sK == 3)
   assert(sK_1 == OO_X^3(-1))
   assert(sK^2 == 0)
-///
-
-TEST ///
-  Q = QQ[x_1..x_3];
-  X = Proj Q;
-  K = koszulComplex vars Q;
-  sK = sheaf K
-  sheafOf sK
+  --
   G = sheaf freeResolution ideal(x_1^2+x_2^2)
-  sheafOf G
   RHom(OO_X^1, sK)
   RHom(OO_X^1, G)
   S := coker G.dd_1
@@ -142,7 +134,5 @@ restart
 loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
 loadPackage("Complexes",   FileName => currentDirectory() | "Complexes.m2",   Reload => true)
 debug loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true)
-errorDepth=1
-installPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2")
 
 check Varieties
