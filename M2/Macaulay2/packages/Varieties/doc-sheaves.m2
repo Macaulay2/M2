@@ -320,6 +320,32 @@ Node
 
 Node
   Key
+    idealSheaf
+   (idealSheaf, ProjectiveVariety)
+  Headline
+    ideal sheaf of a projective variety
+  Usage
+    idealSheaf X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the ideal sheaf of the projective variety $X$
+    Text
+      As an example, consider the projective variety defined by the equation $x^4 + y^4 + z^4 = 0$. The ideal sheaf of this variety is computed.
+    Example
+      X = Proj QQ[x,y,z]/(x^4+y^4+z^4)
+      I = idealSheaf X
+  SeeAlso
+    cotangentSheaf
+    ProjectiveVariety
+
+Node
+  Key
     (cotangentSheaf, ZZ, ProjectiveVariety)
   Headline
     exterior powers of the cotangent sheaf of a projective variety
