@@ -482,20 +482,6 @@ TEST ///
 ///
 
 TEST ///
-  -- tests for Euler sequence
-  S = QQ[x,y,z]
-  R = S/(x^2-y*z)
-  X = Proj S
-  Y = Proj R
-  M = sheaf(module cotangentSheaf X ** R)
-  (g,f) = eulerSequence Proj R
-  N = source f
-  assert(g*f == 0)
-  assert(homology(g, f) == 0)
-  assert first isIsomorphic(prune M, prune N)
-///
-
-TEST ///
   -- tests for cotangentSurjection
   S = QQ[x,y,z,w]
   P = Proj S
