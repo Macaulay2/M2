@@ -264,6 +264,7 @@ CoherentSheaf.GlobalReleaseHook = globalReleaseFunction
 
 -- see Varieties/SheafMaps.m2
 CoherentSheaf#id = F -> map(F, F, id_(module F))
+CoherentSheaf#0  = X -> (sheaf X)^0
 
 -- constructors
 sheaf = method()
