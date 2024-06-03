@@ -288,6 +288,14 @@ cohomology(ZZ, Complex) := Complex => (p,C) -> (
     C.cache.HH#p = Ext^p(OO_X^1, C)
     )
 
+euler(Complex) := C -> (
+    d = length(C);
+    c = 0;
+    for i from -d to d do (
+        c = c + (-1)^i * (euler(C_i))
+    );
+    return c
+    )
 
 moduleComplex = method()
 moduleComplex(Complex) := Complex => C -> (
