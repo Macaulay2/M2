@@ -902,3 +902,6 @@ RHom(OO_X^1, G)
 S := coker G.dd_1
 HH^0 S
 RHom(G, sK)
+Ext^2(OO_X^1, sK(-3))
+Ext^0 (OO_X^1, G(3))
+RHom(OO_X^1, G(2))
