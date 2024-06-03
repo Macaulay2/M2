@@ -68,6 +68,7 @@ export {
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
+    "RHom",
     -- Symbols
     "GlobalSectionLimit",
     "SaturationMap",
@@ -880,10 +881,24 @@ uninstallPackage "Varieties"
 restart
 loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
 loadPackage("Complexes",   FileName => currentDirectory() | "Complexes.m2",   Reload => true)
-loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true)
+debug loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true)
 installPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2")
 viewHelp "Varieties"
 
 restart
 debug needsPackage "Varieties"
 check "Varieties"
+
+
+Q = QQ[x_1..x_3];
+X = Proj Q;
+K = koszulComplex vars Q;
+sK = sheaf K
+sheafOf sK
+G = sheaf freeResolution ideal(x_1^2+x_2^2)
+sheafOf G
+RHom(OO_X^1, sK)
+RHom(OO_X^1, G)
+S := coker G.dd_1
+HH^0 S
+RHom(G, sK)
