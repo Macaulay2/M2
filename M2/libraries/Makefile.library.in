@@ -92,7 +92,11 @@ else
 endif
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
+ifeq ($(SUBMODULE),true)
+UNTARCMD      ?= rsync -a @abs_top_srcdir@/submodules/$(LIBNAME)/* $(TARDIR)
+else
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
+endif
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 export PATH := @abs_top_srcdir@/usr-build/bin:$(PATH)
 all:prereq install post-install
@@ -115,13 +119,19 @@ unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
+ifeq ($(SUBMODULE),true)
+fetch: update-submodule
+else
 fetch: $(TARFILE_DIR)/$(TARFILE)
+endif
 patch: .patched-$(VERSION)
 license-dir: $(LICENSE_DIR)
 $(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
 compile: config-chk .compiled-$(VERSION) 
 configure: .configured-$(VERSION) config-chk 
 config-chk:
+update-submodule: download-enabled
+	git submodule update --init @abs_top_srcdir@/submodules/$(LIBNAME)
 
 PROGRAMS ?=
 LICENSEFILES ?=
@@ -181,7 +191,7 @@ endif
 	@ set -x ; ( $(CDBUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
 PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch --batch -p0 < $$i ; done
-.patched-$(VERSION) : $(PATCHFILE) $(TARFILE_DIR)/$(TARFILE)
+.patched-$(VERSION) : $(PATCHFILE)
 	$(WHY)
 	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
 	    then echo please remove or move $(OLDUNTARDIR)/$(UNTARDIR) out of the way ; \
@@ -192,6 +202,9 @@ PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch --batch -p0 < $$i 
 	cd $(UNTARDIR) && $(UNTARCMD)
 	$(PATCHCMD)
 	touch $@
+ifneq ($(SUBMODULE),true)
+.patched-$(VERSION): $(TARFILE_DIR)/$(TARFILE)
+endif
 .untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE)
 	$(WHY)
 	mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
@@ -223,10 +236,13 @@ CHECKFETCHED = case "$(URL)" in									\
 	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ;	\
 	    fi ;;										\
 	esac
-$(TARFILE_DIR)/$(TARFILE) :
-ifeq (@DOWNLOAD@,yes)
+$(TARFILE_DIR)/$(TARFILE) : download-enabled
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
-else
+distclean: package-distclean
+clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
+distclean: clean ; rm -rf Makefile
+download-enabled:
+ifneq (@DOWNLOAD@,yes)
 	@ echo "error: for the third-party library or program source \"$(LIBNAME)\"" >&2
 	@ echo "       the source code is not present in the file \"$@\"" >&2
 	@ echo "       so either download a \"fat\" tar file of the Macaulay2 source code" >&2
@@ -234,9 +250,6 @@ else
 	@ echo "       to enable automatic downloading of the source code over the internet" >&2
 	@ false
 endif
-distclean: package-distclean
-clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
-distclean: clean ; rm -rf Makefile
 
 SLIMIT ?= 8192
 TLIMIT ?= 100
