@@ -512,9 +512,10 @@ flattenMorphism = f -> (
     -- TODO: why doesn't lift(f, ring g) do this automatically?
     map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
 flattenComplex = C -> (
-    (lo,hi) := concentration C;
-    complex(for i from lo+1 to hi list flattenMorphism(C.dd_i), Base => lo)
-    )
+    (lo, hi) := C.concentration;
+    if lo === hi
+    then complex(flattenModule C_lo, Base => lo)
+    else complex applyValues(C.dd.map, flattenMorphism))
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
