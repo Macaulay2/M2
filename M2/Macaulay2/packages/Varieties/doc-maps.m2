@@ -2,9 +2,6 @@ undocumented {
     sheafMap, -- deprecated
     -- TODO: document some of these
     (symbol SPACE, SheafMap, ZZ),
-    (symbol ^,   SheafMap, ZZ),
-    (symbol ^**, SheafMap, ZZ),
-    (symbol ++,  SheafMap, SheafMap),
     (symbol +,   SheafMap, SheafMap),
     (symbol *,   SheafMap, SheafMap),
     (symbol *,   RingElement, SheafMap), (symbol *, ZZ, SheafMap),
@@ -151,6 +148,75 @@ Node
     (symbol \\, SheafMap, SheafMap)
   Headline
     factoring a morphism of coherent sheaves through another
+
+Node
+  Key
+    (symbol ^, SheafMap, ZZ)
+  Headline
+    raises a SheafMap to a power
+  Usage
+    f ^ n
+  Inputs
+    f:SheafMap
+      a sheaf map
+    n:ZZ
+      a non-negative integer
+  Outputs
+    :SheafMap
+      the sheaf map f raised to the power n
+  Description
+    Text
+      This will create a sheaf map g which is the square of f.
+    Example
+      R = QQ[x,y,z]
+      X = variety R
+      f = sheafHom(OO_X, OO_X)
+      g = f ^ 2
+
+Node
+  Key
+    (symbol ^**, SheafMap, ZZ)
+  Headline
+    repeatedly tensors a map
+  Usage
+    f ^** n
+  Inputs
+    f:SheafMap
+      a sheaf map
+    n:ZZ
+      a non-negative integer
+  Outputs
+    :SheafMap
+      the sheaf map f tensor n times
+  Description
+    Text
+      This will create a sheaf map g which is the tensor of f with itself.
+    Example
+      R = QQ[x,y,z]
+      X = variety R
+      f = sheafHom(OO_X, OO_X)
+      g = f ^** 2
+
+Node
+  Key
+    (symbol ++, SheafMap, SheafMap)
+  Headline
+    takes the direct sum of two sheaf maps
+  Usage
+    f ++ g
+  Inputs
+    f:SheafMap
+      a sheaf map
+    g:SheafMap
+      another sheaf map
+  Outputs
+    :SheafMap
+      the direct sum of sheaf maps f and g
+  Description 
+    Text
+        This will create a sheaf map h which is the direct sum of f and g.
+    Example
+      R = QQ[x,y,z]
 ///
 
 ///
