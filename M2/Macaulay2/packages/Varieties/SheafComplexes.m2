@@ -47,6 +47,7 @@ Complex ** CoherentSheaf := Complex => {} >> opts -> (C, F) -> tensor(C, F, opts
 -----------------------------------------------------------------------------
 
 isSheafComplex = C -> instance(C_(C.concentration#0), CoherentSheaf)
+variety Complex := C -> variety C_(C.concentration#0)
 
 sheaf Complex := Complex => C -> C.cache.sheaf ??= (
     if isSheafComplex C then return C;
@@ -143,14 +144,17 @@ sheafHom(SheafOfRings, Complex) := Complex => opts -> (R,C) -> sheafHom(complex 
 sheafDual = method();
 sheafDual Complex := Complex => (C) -> sheafHom(C, sheaf (ring C)^1)
 
+-----------------------------------------------------------------------------
+-- RHom and Ext
+-----------------------------------------------------------------------------
+
 -- TODO: turn this into a functor
 RHom = method()
 RHom(CoherentSheaf, CoherentSheaf) :=
 RHom(CoherentSheaf, Complex) :=
 RHom(Complex, CoherentSheaf) := Complex => (C, D) -> RHom(complex C, complex D)
 RHom(Complex,       Complex) := Complex => (C, D) -> (
-    (loC, hiC) := C.concentration;
-    if not instance(variety C_loC, ProjectiveVariety)
+    if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
     M := flattenComplex module C;
     N := flattenComplex module D;
@@ -177,8 +181,7 @@ RHom(CoherentSheaf, CoherentSheaf, ZZ) :=
 RHom(CoherentSheaf, Complex,       ZZ) :=
 RHom(Complex, CoherentSheaf, ZZ) := Complex => (C, D, d) -> RHom(complex C, complex D, d)
 RHom(Complex, Complex,       ZZ) := Complex => (C, D, d) -> (
-    (loC, hiC) := C.concentration;
-    if not instance(variety C_loC, ProjectiveVariety)
+    if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
     M := flattenComplex module C;
     N := flattenComplex module D;
@@ -200,6 +203,7 @@ RHom(Complex, Complex,       ZZ) := Complex => (C, D, d) -> (
     truncate(d, Hom(res M, N))
     )
 
+Ext(ZZ, SheafOfRings,  Complex) := Complex => opts -> (m, O, D) -> Ext(m, O^1, D, opts)
 Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
     if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
@@ -221,25 +225,19 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
 	r := a - l + 1;
 	M = truncate(r, M));
     (loD, hiD) := D.concentration;
-    complex for i from loD+1 to hiD list moveToField basis(0, Ext^m(M, matrix D.dd_i))
+    complex for i from loD+1 to hiD list moveToField basis(0, Ext^m(M, matrix D.dd_i, opts))
     )
 
-cohomology(ZZ, Complex) := Complex => (p,C) -> (
-    (loC, hiC) := concentration C;
-    X := variety C_loC;
-    if not C.cache.?HH then C.cache.HH = new MutableHashTable;
-    if C.cache.HH#?p   then return C.cache.HH#p;
-    C.cache.HH#p = Ext^p(OO_X^1, C)
-    )
+cohomology(ZZ,                    Complex) := Complex => opts -> (p,    C) -> cohomology(p, variety C, C, opts)
+cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
+    C.cache.cohomology   ??= new MutableHashTable;
+    C.cache.cohomology#p ??= Ext^p(sheaf X, C, opts))
 
-euler(Complex) := C -> (
-    d := length(C);
-    c := 0;
-    for i from -d to d do (
-        c = c + (-1)^i * (euler(C_i))
-    );
-    return c
-    )
+-----------------------------------------------------------------------------
+
+euler Complex := C -> sum(-length C .. length C, i -> (-1)^i * euler C_i)
+
+-----------------------------------------------------------------------------
 
 end--
 
