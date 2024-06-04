@@ -12,7 +12,6 @@ newPackage(
   },
   Headline => "A package for levaraging multigradings to solve implicitization problems",
   Keywords => {"Algebraic Statistics", "Commutative Algebra"},
-  DebuggingMode => true,
   PackageImports => {"gfanInterface"}
 )
 
