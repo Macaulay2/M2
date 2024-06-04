@@ -197,6 +197,7 @@ isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(
 -- arithmetic ops
 - SheafMap := f -> map(target f, source f, -matrix f)
 ZZ * SheafMap := RingElement * SheafMap := (r, f) -> map(target f, source f, r * matrix f)
+SheafMap * ZZ := SheafMap * RingElement := (f, r) -> r * f
 SheafMap + SheafMap := (f, g) -> map(target f, source f, sum autotruncate {f, g})
 SheafMap - SheafMap := (f, g) -> f + (-g)
 
