@@ -15,6 +15,27 @@ isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
 
 complex CoherentSheaf := Complex => lookup(complex, Module)
 
+
+-----------------------------------------------------------------------------
+-- Basic operations between sheaves, complexes, etc.
+-----------------------------------------------------------------------------
+
+tensor(CoherentSheaf, Complex) := Complex => {} >> opts -> (F, C) -> (
+    (lo,hi) := concentration C;
+    if not instance(C_lo, CoherentSheaf) then error "expected to tensor with a complex of sheaves";
+    sheaves := hashTable for i from lo to hi list i => tensor(F, C_i, opts);
+    if lo === hi then 
+        return complex(sheaves#lo, Base=>lo);
+    maps := hashTable for i from lo+1 to hi list i => 
+        map(sheaves#(i-1), sheaves#i, tensor(id_F, dd^C_i, opts));
+    complex maps
+    )
+
+tensor(Complex, CoherentSheaf) := Complex => {} >> opts -> (C, F) -> tensor(F, C, opts)
+
+CoherentSheaf ** Complex := Complex => {} >> opts -> (F, C) -> tensor(F, C, opts)
+Complex ** CoherentSheaf := Complex => {} >> opts -> (C, F) -> tensor(C, F, opts)
+
 -----------------------------------------------------------------------------
 -- Specialized methods for complexes of sheaves
 -----------------------------------------------------------------------------
@@ -310,9 +331,6 @@ sheafRes(Complex) := Complex => C -> (
 sheafRes(CoherentSheaf) := Complex => F -> (
     sheaf freeResolution module F
     )
-
-    
-
 
 end--
 
