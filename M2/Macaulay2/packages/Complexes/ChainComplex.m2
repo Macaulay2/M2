@@ -103,7 +103,7 @@ complex List := Complex => opts -> L -> (
         return complex(mapHash, opts)
         );
     if all(L, isAbelianCategory) then (
-	if same(ring \ L) then
+	if not same(ring \ L) then
 	  error "expected objects all over the same ring";
         moduleHash := hashTable for i from 0 to #L-1 list opts.Base + i => L#i;
         C := new Complex from {
