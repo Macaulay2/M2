@@ -5,7 +5,11 @@ export {
 -- Local utilities
 -----------------------------------------------------------------------------
 
-freeResolution' = X -> freeResolution(X, LengthLimit => 5)
+clearHom = (M, N) -> (
+    H := youngest(M.cache.cache, N.cache.cache);
+    apply(keys H, k -> remove(H, k)))
+
+freeResolution' = X -> freeResolution(X, LengthLimit => 3)
 
 -----------------------------------------------------------------------------
 -- Basic constructors for complexes of sheaves
@@ -46,6 +50,8 @@ isSheafComplex = C -> instance(C_(C.concentration#0), CoherentSheaf)
 
 sheaf Complex := Complex => C -> C.cache.sheaf ??= (
     if isSheafComplex C then return C;
+    (lo, hi) := C.concentration;
+    if lo === hi then return complex(sheaf C_lo, Base => lo);
     D := complex applyValues(C.dd.map, sheaf);
     D.cache.module = C;
     D)
@@ -60,6 +66,8 @@ sheaf ComplexMap := ComplexMap => phi -> phi.cache.sheaf ??= (
 
 module Complex := Complex => D -> D.cache.module ??= (
     if not isSheafComplex D then return D;
+    (lo, hi) := D.concentration;
+    if lo === hi then return complex(module D_lo, Base => lo);
     maxTruncDeg := max apply(values D.dd.map, f -> f.degree);
     C := complex applyValues(D.dd.map, f -> truncate(maxTruncDeg, f.map));
     C.cache.sheaf = D;
@@ -137,7 +145,10 @@ sheafDual Complex := Complex => (C) -> sheafHom(C, sheaf (ring C)^1)
 
 -- TODO: turn this into a functor
 RHom = method()
-RHom(Complex, Complex) := Complex => (C, D) -> (
+RHom(CoherentSheaf, CoherentSheaf) :=
+RHom(CoherentSheaf, Complex) :=
+RHom(Complex, CoherentSheaf) := Complex => (C, D) -> RHom(complex C, complex D)
+RHom(Complex,       Complex) := Complex => (C, D) -> (
     (loC, hiC) := C.concentration;
     if not instance(variety C_loC, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
@@ -158,73 +169,14 @@ RHom(Complex, Complex) := Complex => (C, D) -> (
 	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
 	r := a - l + 1;
 	M = truncate(r, M));
-    cxToField basis(0, Hom(res M, N))
-    )
-
-RHom(CoherentSheaf, Complex) := Complex => (C, D) -> (
-    if not instance(variety C, ProjectiveVariety)
-    then error "expected sheaves on a projective variety";
-    M := flattenModule module C;
-    N := flattenComplex module D;
-    R := ring M;
-    if not isAffineRing R
-    then error "expected sheaves on a variety over a field";
-    H := prune HH N;
-    (loH, hiH) := concentration H;
-    L := for i from loH to hiH list dim H_i;
-    l := max L;
-    Resns := for i from loH to hiH list resolution flattenModule H_i;
-    P := for i in Resns list length i;
-    p := max P;
-    n := dim ring (H_loH) - 1;
-    if p >= n - l then (
-	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
-	r := a - l + 1;
-	M = truncate(r, M));
-    cxToField basis(0, Hom(freeResolution' M, N))
-    )
-
-RHom(Complex, CoherentSheaf) := Complex => (C,D) -> (
-    (loC, hiC) := C.concentration;
-    if not instance(variety C_loC, ProjectiveVariety)
-    then error "expected sheaves on a projective variety";
-    M := flattenComplex module C;
-    N := flattenModule module D;
-    R := ring M;
-    if not isAffineRing R
-    then error "expected sheaves on a variety over a field";
-    l := dim N;
-    Resns := res N;
-    p := length Resns;
-    n := dim ring N - 1;
-    if p >= n - l then (
-	a := max apply(max(n - l,0) .. p, j-> ((max degrees (Resns_j))#0 - j));
-	r := a - l + 1;
-	M = truncate(r, M));
-    cxToField basis(0, Hom(res M, N))
-    )
-
-RHom(CoherentSheaf, CoherentSheaf) := Complex => (C,D) -> (
-    if not instance(variety C, ProjectiveVariety)
-    then error "expected sheaves on a projective variety";
-    M := flattenModule module C;
-    N := flattenModule module D;
-    R := ring M;
-    if not isAffineRing R
-    then error "expected sheaves on a variety over a field";
-    l := dim N;
-    Resns := res N;
-    p := length Resns;
-    n := dim ring N - 1;
-    if p >= n - l then (
-	a := max apply(max(n - l,0) .. p, j-> ((max degrees (Resns_j))#0 - j));
-	r := a - l + 1;
-	M = truncate(r, M));
-    cxToField basis(0, Hom(freeResolution' M, N))
+    cxToField basis(0, Hom(res M, N, DegreeLimit => 0))
     )
 
 --this version of RHom computes the complex for all twists above a certain point
-RHom(Complex, Complex, ZZ) := Complex => (C, D, d) -> (
+RHom(CoherentSheaf, CoherentSheaf, ZZ) :=
+RHom(CoherentSheaf, Complex,       ZZ) :=
+RHom(Complex, CoherentSheaf, ZZ) := Complex => (C, D, d) -> RHom(complex C, complex D, d)
+RHom(Complex, Complex,       ZZ) := Complex => (C, D, d) -> (
     (loC, hiC) := C.concentration;
     if not instance(variety C_loC, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
@@ -247,69 +199,6 @@ RHom(Complex, Complex, ZZ) := Complex => (C, D, d) -> (
 	M = truncate(r, M));
     truncate(d, Hom(res M, N))
     )
-
-RHom(CoherentSheaf, Complex, ZZ) := Complex => (C, D, d) -> (
-if not instance(variety C, ProjectiveVariety)
-    then error "expected sheaves on a projective variety";
-    M := flattenModule module C;
-    N := flattenComplex module D;
-    R := ring M;
-    if not isAffineRing R
-    then error "expected sheaves on a variety over a field";
-    H := prune HH N;
-    (loH, hiH) := concentration H;
-    L := for i from loH to hiH list dim H_i;
-    l := max L;
-    Resns := for i from loH to hiH list resolution flattenModule H_i;
-    P := for i in Resns list length i;
-    p := max P;
-    n := dim ring (H_loH) - 1;
-    if p >= n - l then (
-	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
-	r := a - l - d + 1;
-	M = truncate(r, M));
-    truncate(d, Hom(freeResolution' M, N))
-    )
-
-RHom(Complex, CoherentSheaf, ZZ) := Complex => (C,D,d) -> (
-    (loC, hiC) := C.concentration;
-    if not instance(variety C_loC, ProjectiveVariety)
-    then error "expected sheaves on a projective variety";
-    M := flattenComplex module C;
-    N := flattenModule module D;
-    R := ring M;
-    if not isAffineRing R
-    then error "expected sheaves on a variety over a field";
-    l := dim N;
-    Resns := res N;
-    p := length Resns;
-    n := dim ring N - 1;
-    if p >= n - l then (
-	a := max apply(max(n - l,0) .. p, j-> ((max degrees (Resns_j))#0 - j));
-	r := a - l - d + 1;
-	M = truncate(r, M));
-    truncate(d, Hom(res M, N))
-    )
-
-RHom(CoherentSheaf, CoherentSheaf, ZZ) := Complex => (C,D,d) -> (
-    if not instance(variety C, ProjectiveVariety)
-    then error "expected sheaves on a projective variety";
-    M := flattenModule module C;
-    N := flattenModule module D;
-    R := ring M;
-    if not isAffineRing R
-    then error "expected sheaves on a variety over a field";
-    l := dim N;
-    Resns := res N;
-    p := length Resns;
-    n := dim ring N - 1;
-    if p >= n - l then (
-	a := max apply(max(n - l,0) .. p, j-> ((max degrees (Resns_j))#0 - j));
-	r := a - l - d + 1;
-	M = truncate(r, M));
-    truncate(d, Hom(freeResolution' M, N))
-    )
-
 
 Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
     if not instance(variety C, ProjectiveVariety)
