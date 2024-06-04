@@ -97,11 +97,23 @@ TEST ///
   X = Proj Q;
   K = koszulComplex vars Q;
   sK = sheaf K
+  assert isWellDefined sK
   assert(module sK == K)
   assert(length sK == 3)
   assert(sK_1 == OO_X^3(-1))
   assert(sK^2 == 0)
   --
+  f = id_sK
+  assert isWellDefined f
+  f | f
+  f_1
+  f^10
+  assert(f - f == 0)
+  assert(f == 1)
+  x_1 * f
+  f * f
+  f + f
+  ComplexMap.directSum {f, f, f}
   G = sheaf freeResolution ideal(x_1^2+x_2^2)
   RHom(OO_X^1, sK)
   RHom(OO_X^1, G)
@@ -119,6 +131,8 @@ TEST ///
   ssK = sK++sK
   id_sK
   idssK = id_sK ++ id_sK
+  isCommutative idssK
+  assert(idssK == id_ssK)
   components(sK ++ sK)
   components(id_sK ++ id_sK)
   ssK^[0]
@@ -127,6 +141,21 @@ TEST ///
   ssK_[1]
   idssK^[0]
   ssK[1]
+  H = sheaf truncate(2, K)
+  Hp = prune H
+  g = Hp.cache.pruningMap
+  assert(g * g^(-1) == id_(target g) and g^(-1) * g == id_(source g))
+  naiveTruncation(g, (1,2), (2,3))
+  -- CanonicalTruncation does not work
+  -- canonicalMap does not work
+  -- cone does not work if not all modules are free
+  -- cylinder doesn't work, because it is constructing maps between modules instead of sheaves
+  phi = idssK^[0]
+  indpsi = inducedMap(source phi, ker phi)
+  assert isWellDefined indpsi
+  nu = idssK_[0]
+  indnu = inducedMap(coker nu, target nu)
+  -- above induced maps produce errors upon pruning
 ///
 
 end--
