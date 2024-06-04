@@ -102,7 +102,7 @@ isWellDefined SheafMap := f -> (
 	instance(f.target, CoherentSheaf) and
 	instance(f.cache, CacheTable) and
 	instance(f.map, Matrix) and
-	instance(f.degree, ZZ),
+	(instance(f.degree, ZZ) or f.degree == infinity),
 	"the hash table does not have the expected values")
     -- mathematical checks
     and assert'(ring f === ring X,
@@ -289,6 +289,8 @@ lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
 --the same morphism of sheaves, for the smallest possible value of e
 --WARNING: this method does not actually verify if the lift is possible
 lift SheafMap := SheafMap => o -> shphi -> (
+    -- TODO: what should happen when shphi is zero?
+    if shphi == 0 then return shphi;
     d := shphi.degree;
     M := module source shphi;
     m := min flatten degrees M;
@@ -665,6 +667,7 @@ yonedaSheafExtension Matrix := Complex => f -> (
 -- Consider the sequence 0 -> m^[p] -> S -> S/m^[p] -> 0 and apply Hom(-,M)
 prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValue symbol minimalPresentation) (f -> (
     (G, F) := (target f, source f);
+    if f == 0 then return map(prune G, prune F, 0);
     prune G; prune F; -- these are pruned just to populate cached data
     -- F.cache.TorsionFree = M/H^0_B(M)
     g := inducedMap(G.cache.TorsionFree, truncate(f.degree, F.cache.TorsionFree, MinimalGenerators => false), matrix f);
