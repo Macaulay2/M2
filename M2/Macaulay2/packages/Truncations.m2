@@ -282,7 +282,7 @@ truncate(List,    List, Matrix) := Matrix => truncateModuleOpts >> opts -> (tard
 --------------------------------------------------------------------
 
 truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
-    if d === -infinity then M else error "unexpected degree for truncation")
+    if d === -infinity then M else (ring M)^0)
 
 -- TODO: implement union types in M2 and simplify stuff like this
 truncate(ZZ,      ZZ, Matrix) :=
