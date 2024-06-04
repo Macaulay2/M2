@@ -27,6 +27,8 @@ TEST ///
   assert isWellDefined dual shphi4
   assert(shphi4.degree === 3)
   assert((dual shphi4).degree === 0)
+  --
+  isWellDefined map(OO_X^1, OO_X^0, 0)
 ///
 
 TEST ///
