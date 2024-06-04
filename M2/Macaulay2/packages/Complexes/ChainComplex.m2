@@ -705,8 +705,8 @@ importFrom_Truncations { "inducedTruncationMap" }
 truncateModuleOpts := options(truncate, List, Module)
 truncate(ZZ,   Complex) :=
 truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) -> (
-    (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(degs, C_lo, opts);
+    (lo, hi) := C.concentration;
+    if lo == hi then return complex(truncate(degs, C_lo, opts), Base => lo);
     f := truncate(degs, dd^C_lo, opts);
     complex hashTable for i from lo+1 to hi list i => (
 	f = inducedTruncationMap(source f, truncate(degs, C_i, opts), dd^C_i))
@@ -717,9 +717,10 @@ truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) ->
 --------------------------------------------------------------------
 basis(ZZ,   Complex) :=
 basis(List, Complex) := Complex => opts -> (deg, C) -> (
-    (a,b) := concentration C;
-    L := for i from a to b list basis(deg, C.dd_i, opts);
-    complex(L, Base => a))
+    (lo, hi) := C.concentration;
+    if lo == hi
+    then complex(basis(deg, C_lo, opts), Base => lo)
+    else complex applyValues(C.dd.map, f -> basis(deg, f, opts)))
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
