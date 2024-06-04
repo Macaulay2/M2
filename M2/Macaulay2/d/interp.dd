@@ -108,6 +108,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
 		    if isatty(file) || file.posFile.file.fulllines then flushToken(file);
+		    file.posFile.line = file.posFile.line + 1;
+		    file.posFile.column = ushort(0);
 		    )
 	       )
 	  else (
