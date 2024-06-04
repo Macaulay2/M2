@@ -1,15 +1,15 @@
+SUBMODULE = true
 # LIBNAME = flint2
 HOMEPAGE = http://flintlib.org
 # git://github.com/wbhart/flint2.git
-URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 2.8.4
+VERSION = 3.0.0
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
 
 # Many other tests keep failing, so disable them all:
 CHECKTARGET = .
 
-LICENSEFILES = flint.h LICENSE
+LICENSEFILES = LICENSE
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 CFLAGS += -O0 -fno-unroll-loops 
@@ -17,7 +17,8 @@ endif
 CFLAGS += -std=c90 -pedantic-errors
 # the flint configure script does not accept CPPFLAGS
 # CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls
-CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure --without-blas --disable-tls \
+CONFIGURECMD =  ./bootstrap.sh && \
+	LIB_DIRS=$(LIBRARIESDIR)/lib ./configure --without-blas  \
 			--prefix='$(PREFIX)' --disable-shared CC='$(CC)' \
 			CFLAGS='$(CFLAGS) $(CPPFLAGS)'
 

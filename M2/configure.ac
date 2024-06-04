@@ -996,6 +996,7 @@ then AC_LANG(C)
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
+     AC_DEFINE([HAVE_FLINT_NMOD_H])
 fi
 
 dnl debian: 4ti2-
