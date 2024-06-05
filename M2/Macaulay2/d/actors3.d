@@ -845,13 +845,15 @@ setupfun("expm1",expm1).Protected=false;
 eint(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(eint(x.v))				    -- # typical value: eint, RR, RR
+     is x:RRicell do toExpr(eint(x.v))				    -- # typical value: eint, RRi, RRi
      is x:CCcell do toExpr(eint(x.v))				    -- # typical value: eint, CC, CC
-     else WrongArgRRorCC()
+     else WrongArgRRorRRiorCC()
      );
 setupfun("eint",eint).Protected=false;
 Gamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Gamma(x.v))				    -- # typical value: Gamma, RR, RR
+     is x:RRicell do toExpr(Gamma(x.v))				    -- # typical value: Gamma, RRi, RRi
      is x:CCcell do toExpr(Gamma(x.v))				    -- # typical value: Gamma, CC, CC
      is a:Sequence do
 	 if length(a) != 2 then WrongNumArgs(1,2)
@@ -859,23 +861,30 @@ Gamma(e:Expr):Expr := (
 	     when a.0
 	     is s:RRcell do (
 		 when a.1
-		 is x:RRcell do toExpr(Gamma(     s.v,  x.v))	    -- # typical value: Gamma, RR, RR, RR
-		 is x:CCcell do toExpr(Gamma(toCC(s.v), x.v))	    -- # typical value: Gamma, RR, CC, CC
-		 else WrongArgRRorCC(2))
+		 is x:RRcell  do toExpr(Gamma(      s.v , x.v))	    -- # typical value: Gamma, RR, RR, RR
+		 is x:RRicell do toExpr(Gamma(toRRi(s.v), x.v))	    -- # typical value: Gamma, RR, RRi, RRi
+		 is x:CCcell  do toExpr(Gamma( toCC(s.v), x.v))	    -- # typical value: Gamma, RR, CC, CC
+		 else WrongArgRRorRRiorCC(2))
+	     is s:RRicell do (
+		 when a.1
+		 is x:RRcell  do toExpr(Gamma(s.v, toRRi(x.v)))	    -- # typical value: Gamma, RRi, RR, RRi
+		 is x:RRicell do toExpr(Gamma(s.v,       x.v ))	    -- # typical value: Gamma, RRi, RRi, RRi
+		 else WrongArgRRorRRi(2))
 	     is s:CCcell do (
 		 when a.1
 		 is x:RRcell do toExpr(Gamma(s.v, toCC(x.v)))	    -- # typical value: Gamma, CC, RR, CC
 		 is x:CCcell do toExpr(Gamma(s.v,      x.v))	    -- # typical value: Gamma, CC, CC, CC
 		 else WrongArgRRorCC(2))
 	     else WrongArgRRorCC(2))
-     else WrongArgRRorCC()
+     else WrongArgRRorRRiorCC()
      );
 setupfun("Gamma",Gamma).Protected=false;
 Digamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, RR, RR
+     is x:RRicell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, RRi, RRi
      is x:CCcell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, CC, CC
-     else WrongArgRR()
+     else WrongArgRRorRRiorCC()
      );
 setupfun("Digamma",Digamma).Protected=false;
 export lgamma(x:RR):Expr := (
@@ -886,29 +895,33 @@ export lgamma(x:RR):Expr := (
 lgamma(e:Expr):Expr := (
      when e
      is x:RRcell do lgamma(x.v)				    -- # typical value: lgamma, RR, RR
+     is x:RRicell do toExpr(lgamma(x.v))		    -- # typical value: lgamma, RRi, RRi
      is x:CCcell do toExpr(lgamma(x.v))			    -- # typical value: lgamma, CC, CC
-     else WrongArgRRorCC()
+     else WrongArgRRorRRiorCC()
      );
 setupfun("lgamma",lgamma);
 zeta(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(zeta(x.v))				    -- # typical value: zeta, RR, RR
+     is x:RRicell do toExpr(zeta(x.v))				    -- # typical value: zeta, RRi, RRi
      is x:CCcell do toExpr(zeta(x.v))                               -- # typical value: zeta, CC, CC
-     else WrongArgRRorCC()
+     else WrongArgRRorRRiorCC()
      );
 setupfun("zeta",zeta).Protected=false;
 erf(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(erf(x.v))				    -- # typical value: erf, RR, RR
+     is x:RRicell do toExpr(erf(x.v))				    -- # typical value: erf, RRi, RRi
      is x:CCcell do toExpr(erf(x.v))				    -- # typical value: erf, CC, CC
-     else WrongArgRRorCC()
+     else WrongArgRRorRRiorCC()
      );
 setupfun("erf",erf).Protected=false;
 erfc(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(erfc(x.v))				    -- # typical value: erfc, RR, RR
+     is x:RRicell do toExpr(erfc(x.v))				    -- # typical value: erfc, RRi, RRi
      is x:CCcell do toExpr(erfc(x.v))				    -- # typical value: erfc, CC, CC
-     else WrongArgRRorCC()
+     else WrongArgRRorRRiorCC()
      );
 setupfun("erfc",erfc).Protected=false;
 BesselJ(n:long,x:RR):RR := (
@@ -922,26 +935,34 @@ BesselJ(e:Expr):Expr := (
 	      if isLong(n.v) then (
 		  when s.1
 		  is x:RRcell do toExpr(BesselJ(toLong(n.v), x.v))
-		  is x:CCcell do toExpr(BesselJ(  toCC(n.v), x.v))
-		  else WrongArgRRorCC(2))
+		  is x:RRicell do toExpr(BesselJ(toRRi(n.v,precision(x.v)),x.v))
+		  is x:CCcell do toExpr(BesselJ(toCC(n.v), x.v))
+		  else WrongArgRRorRRiorCC(2))
 	      else (
 		  when s.1
-		  -- TODO: wrap arb function to return an RR
-		  is x:RRcell do toExpr(BesselJ(toCC(n.v), toCC(x.v)))
-		  is x:CCcell do toExpr(BesselJ(toCC(n.v),      x.v ))
-		  else WrongArgRRorCC(2)))
+		  is x:RRcell do toExpr(
+		      midpointRR(BesselJ(toRRi(n.v), toRRi(x.v))))
+		  is x:RRicell do toExpr(BesselJ(toRRi(n.v,precision(x.v)),x.v))
+		  is x:CCcell do toExpr(BesselJ(toCC(n.v), x.v ))
+		  else WrongArgRRorRRiorCC(2)))
 	  is n:RRcell do (
 	      when s.1
-	      -- TODO: wrap arb function to return an RR
-	      is x:RRcell do toExpr(BesselJ(toCC(n.v), toCC(x.v)))
-	      is x:CCcell do toExpr(BesselJ(toCC(n.v),      x.v ))
-	      else WrongArgRRorCC(2))
+	      is x:RRcell do toExpr(
+		  midpointRR(BesselJ(toRRi(n.v), toRRi(x.v))))
+	      is x:RRicell do toExpr(BesselJ(toRRi(n.v), x.v))
+	      is x:CCcell do toExpr(BesselJ(toCC(n.v), x.v ))
+	      else WrongArgRRorRRiorCC(2))
+	  is n:RRicell do (
+	      when s.1
+	      is x:RRcell do toExpr(BesselJ(n.v, toRRi(x.v)))
+	      is x:RRicell do toExpr(BesselJ(n.v, x.v))
+	      else WrongArgRRorRRi(2))
 	  is n:CCcell do (
 	      when s.1
 	      is x:RRcell do toExpr(BesselJ(n.v, toCC(x.v)))
-	      is x:CCcell do toExpr(BesselJ(n.v,      x.v ))
+	      is x:CCcell do toExpr(BesselJ(n.v, x.v ))
 	      else WrongArgRRorCC(2))
-	  else WrongArg(1, "an integer or real or complex number"))
+	  else WrongArg(1, "an integer, real number or interval, or complex number"))
      else WrongNumArgs(2));
 setupfun("BesselJ",BesselJ).Protected=false;
 BesselY(n:long,x:RR):RR := (
@@ -955,26 +976,34 @@ BesselY(e:Expr):Expr := (
 	      if isLong(n.v) then (
 		  when s.1
 		  is x:RRcell do toExpr(BesselY(toLong(n.v), x.v))
-		  is x:CCcell do toExpr(BesselY(  toCC(n.v), x.v))
-		  else WrongArgRRorCC(2))
+		  is x:RRicell do toExpr(BesselY(toRRi(n.v,precision(x.v)),x.v))
+		  is x:CCcell do toExpr(BesselY(toCC(n.v), x.v))
+		  else WrongArgRRorRRiorCC(2))
 	      else (
 		  when s.1
-		  -- TODO: wrap arb function to return an RR
-		  is x:RRcell do toExpr(BesselY(toCC(n.v), toCC(x.v)))
-		  is x:CCcell do toExpr(BesselY(toCC(n.v),      x.v ))
-		  else WrongArgRRorCC(2)))
+		  is x:RRcell do toExpr(
+		      midpointRR(BesselY(toRRi(n.v), toRRi(x.v))))
+		  is x:RRicell do toExpr(BesselY(toRRi(n.v,precision(x.v)),x.v))
+		  is x:CCcell do toExpr(BesselY(toCC(n.v), x.v ))
+		  else WrongArgRRorRRiorCC(2)))
 	  is n:RRcell do (
 	      when s.1
-	      -- TODO: wrap arb function to return an RR
-	      is x:RRcell do toExpr(BesselY(toCC(n.v), toCC(x.v)))
-	      is x:CCcell do toExpr(BesselY(toCC(n.v),      x.v ))
-	      else WrongArgRRorCC(2))
+	      is x:RRcell do toExpr(
+		  midpointRR(BesselY(toRRi(n.v), toRRi(x.v))))
+	      is x:RRicell do toExpr(BesselY(toRRi(n.v), x.v))
+	      is x:CCcell do toExpr(BesselY(toCC(n.v), x.v ))
+	      else WrongArgRRorRRiorCC(2))
+	  is n:RRicell do (
+	      when s.1
+	      is x:RRcell do toExpr(BesselY(n.v, toRRi(x.v)))
+	      is x:RRicell do toExpr(BesselY(n.v, x.v))
+	      else WrongArgRRorRRi(2))
 	  is n:CCcell do (
 	      when s.1
 	      is x:RRcell do toExpr(BesselY(n.v, toCC(x.v)))
-	      is x:CCcell do toExpr(BesselY(n.v,      x.v ))
+	      is x:CCcell do toExpr(BesselY(n.v, x.v ))
 	      else WrongArgRRorCC(2))
-	  else WrongArg(1, "an integer or real or complex number"))
+	  else WrongArg(1, "an integer, real number or interval, or complex number"))
      else WrongNumArgs(2));
 setupfun("BesselY",BesselY).Protected=false;
 atan2(yy:Expr,xx:Expr):Expr := (
@@ -1011,15 +1040,21 @@ Beta(yy:Expr,xx:Expr):Expr := (
      when yy
      is y:RRcell do (
 	  when xx
-	  is x:RRcell do toExpr(Beta(     y.v , x.v))		            -- # typical value: Beta, RR, RR, RR
-	  is x:CCcell do toExpr(Beta(toCC(y.v), x.v))		            -- # typical value: Beta, RR, CC, CC
-	  else WrongArgRRorCC(2))
+	  is x:RRcell do toExpr(Beta(y.v, x.v))			    -- # typical value: Beta, RR, RR, RR
+	  is x:RRicell do toExpr(Beta(toRRi(y.v), x.v))		    -- # typical value: Beta, RR, RRi, RRi
+	  is x:CCcell do toExpr(Beta(toCC(y.v), x.v))		    -- # typical value: Beta, RR, CC, CC
+	  else WrongArgRRorRRiorCC(2))
+     is y:RRicell do (
+	  when xx
+	  is x:RRcell do toExpr(Beta(y.v, toRRi(x.v)))		    -- # typical value: Beta, RRi, RR, RRi
+	  is x:RRicell do toExpr(Beta(y.v, x.v))		    -- # typical value: Beta, RRi, RRi, RRi
+	  else WrongArgRRorRRi(2))
      is y:CCcell do (
 	  when xx
-	  is x:RRcell do toExpr(Beta(y.v, toCC(x.v)))		            -- # typical value: Beta, CC, RR, CC
-	  is x:CCcell do toExpr(Beta(y.v,      x.v ))		            -- # typical value: Beta, CC, CC, CC
+	  is x:RRcell do toExpr(Beta(y.v, toCC(x.v)))		    -- # typical value: Beta, CC, RR, CC
+	  is x:CCcell do toExpr(Beta(y.v, x.v))			    -- # typical value: Beta, CC, CC, CC
 	  else WrongArgRRorCC(2))
-     else WrongArgRRorCC(1)
+     else WrongArgRRorRRiorCC(1)
      );
 Beta(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 2 then Beta(s.0,s.1)
