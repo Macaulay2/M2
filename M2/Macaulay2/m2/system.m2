@@ -242,7 +242,7 @@ locatePackageFile = (defaultPrefix,defaultLayoutIndex,pkgname,f) -> (
 locatePackageFileRelative = (defaultPrefix,defaultLayoutIndex,pkgname,f,installPrefix,installTail) -> (
      (prefix,tail) := locatePackageFile(defaultPrefix,defaultLayoutIndex,pkgname,f);
      if prefix === installPrefix			    -- we assume these are both real paths, without symbolic links
-     then relativizeFilename(installTail,tail)
+     then relativizeFilename(installTail, prefix | tail)
      else prefix|tail)
 
 locateCorePackageFile = (pkgname,f) -> locatePackageFile(prefixDirectory,currentLayout,pkgname,f)

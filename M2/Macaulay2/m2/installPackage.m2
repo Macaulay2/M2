@@ -318,7 +318,7 @@ makePackageIndex List := path -> (
 	BODY {
 	    PARA {"This is the directory for Macaulay2 and its packages. Bookmark this page for future reference,
 		or run the ", TT "viewHelp", " command in Macaulay2 to open up your browser on this page.
-		See the ", homeButton, " for the latest version."},
+		See the ", homeButton, " website for the latest version."},
 	    HEADER3 "Documentation",
 	    UL nonnull splice {
 		if prefixDirectory =!= null then (
