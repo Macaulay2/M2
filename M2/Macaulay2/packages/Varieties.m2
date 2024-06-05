@@ -258,6 +258,8 @@ SheafOfRings.synonym = "sheaf of rings"
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
+CoherentSheaf.GlobalAssignHook = globalAssignFunction
+CoherentSheaf.GlobalReleaseHook = globalReleaseFunction
 
 -- see Varieties/SheafMaps.m2
 CoherentSheaf#id = F -> map(F, F, id_(module F))
