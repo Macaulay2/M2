@@ -535,6 +535,7 @@ export {
 	"centerString",
 	"chainComplex",
 	"changeBase",
+	"changeDirectory",
 	"char",
 	"characters",
 	"check",
