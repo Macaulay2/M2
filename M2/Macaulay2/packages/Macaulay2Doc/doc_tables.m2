@@ -296,10 +296,10 @@ doc ///
     the key to remove (must be @ofClass ZZ@ if @TT "T"@ is a mutable list or
     @ofClass String@ if it is a database)
  Outputs
-  :Nothing
+  :Thing -- the removed value
  Description
   Text
-   {\tt remove(T, k)} removes the entry of {\tt T} stored under
+   {\tt remove(T, k)} removes and returns the entry of {\tt T} stored under
    the key {\tt k}.
   Example
    T = new MutableHashTable from {a => 1, b => 2, c => 3}; peek T
@@ -328,8 +328,6 @@ doc ///
   Example
     remove(T, -1)
     peek T
-  Text
-   The {\tt remove} command does not return any output.
  SeeAlso
   applyKeys
   applyPairs
