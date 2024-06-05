@@ -724,13 +724,6 @@ installPackage Package := opts -> pkg -> (
 	close rawdocDatabase;
 	verboseLog "closed the database";
 
-	-- run tests that are functions
-	-- TODO: is this used anywhere?
-	verboseLog "running tests that are functions";
-	scan(pairs pkg#"test inputs", (key, str) -> if instance(str, Function) then (
-		verboseLog("  running test ", key, ", function ", str);
-		str()));
-
 	-- directories for cached and generated example outputs
 	exampleDir := realpath currentSourceDir | pkg#"pkgname" | "/examples" | "/";
 	exampleOutputDir := installPrefix | replace("PKG", pkg#"pkgname", installLayout#"packageexampleoutput");
