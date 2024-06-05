@@ -45,6 +45,7 @@ set(DLIST
   pthread0.d
   stdiop0.d
   gmp.d
+  ballarith.d
   engine.dd
   xml.d		# removed unless WITH_XML
   stdio0.d
