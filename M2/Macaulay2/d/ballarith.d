@@ -93,3 +93,95 @@ moveToCCandclear(z:CCball, prec:ulong):CC := (
     r := toCC(z, prec);
     clear(z);
     r);
+
+export eint(z:CC):CC := (
+    w := toCCball(z);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_ei(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
+export Gamma(z:CC):CC := (
+    w := toCCball(z);
+    r := newCCball();
+    Ccode(void, "acb_gamma(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
+export Gamma(z:CC,w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCball(z);
+    y := toCCball(w);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_gamma_upper(", r, ", ", x, ", ", y, ", 0, ",
+	prec, ")");
+    clear(x);
+    clear(y);
+    moveToCCandclear(r, prec));
+
+export Digamma(z:CC):CC := (
+    w := toCCball(z);
+    r := newCCball();
+    Ccode(void, "acb_digamma(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
+export lgamma(z:CC):CC := (
+    w := toCCball(z);
+    r := newCCball();
+    Ccode(void, "acb_lgamma(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
+export zeta(z:CC):CC := (
+    w := toCCball(z);
+    r := newCCball();
+    Ccode(void, "acb_zeta(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
+export erf(z:CC):CC := (
+    w := toCCball(z);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_erf(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
+export erfc(z:CC):CC := (
+    w := toCCball(z);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_erfc(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
+export BesselJ(z:CC,w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCball(z);
+    y := toCCball(w);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_bessel_j(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToCCandclear(r, prec));
+
+export BesselY(z:CC,w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCball(z);
+    y := toCCball(w);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_bessel_y(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToCCandclear(r, prec));
+
+export Beta(z:CC,w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCball(z);
+    y := toCCball(w);
+    v := toCCball(toCC(1, prec));
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_beta_lower(", r, ", ", x, ", ", y, ", ", v,
+	 ", 0, ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToCCandclear(r, prec));
