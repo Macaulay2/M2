@@ -63,6 +63,99 @@ moveToRRiandclear(x:RRball, prec:ulong):RRi := (
     clear(x);
     r);
 
+-- special functions
+export eint(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_ei(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
+export Gamma(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_gamma(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
+export Gamma(z:RRi,w:RRi):RRi := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_gamma_upper(", r, ", ", x, ", ", y, ", 0, ",
+	prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRiandclear(r, prec));
+
+export Digamma(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_digamma(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
+export lgamma(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_lgamma(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
+export zeta(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_zeta(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
+export erf(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_erf(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
+export erfc(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_erfc(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
+export BesselJ(z:RRi,w:RRi):RRi := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_bessel_j(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRiandclear(r, prec));
+
+export BesselY(z:RRi,w:RRi):RRi := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_bessel_y(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRiandclear(r, prec));
+
+export Beta(z:RRi,w:RRi):RRi := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    v := toRRball(toRRi(1, prec));
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_beta_lower(", r, ", ", x, ", ", y, ", ", v,
+	 ", 0, ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRiandclear(r, prec));
+
 ------------
 -- CCBall --
 ------------

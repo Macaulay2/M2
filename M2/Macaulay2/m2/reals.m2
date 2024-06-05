@@ -278,7 +278,7 @@ lngamma RR := x -> (
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
 lngamma Number := lngamma @@ numeric
-lngamma CC := lgamma
+lngamma RRi := lngamma CC := lgamma
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
