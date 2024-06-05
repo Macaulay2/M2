@@ -10,9 +10,6 @@
 [submodule "M2/submodules/bdwgc"]
 	path = M2/submodules/bdwgc
 	url = https://github.com/Macaulay2/bdwgc.git
-[submodule "M2/submodules/libatomic_ops"]
-	path = M2/submodules/libatomic_ops
-	url = https://github.com/Macaulay2/libatomic_ops.git
 [submodule "M2/submodules/mpir"]
 	path = M2/submodules/mpir
 	url = https://github.com/Macaulay2/mpir.git
