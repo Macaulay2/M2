@@ -1282,10 +1282,8 @@ assert Equation(density_X 3, binomial(5, 3) * 0.25^3 * 0.75^3)
 assert Equation(density_X 3.5, 0)
 
 assert Equation(probability_X(-1), 0)
-assert Equation(probability_X 3,
-     0.25^3 * sum(0..3, x -> binomial(x + 2, 2) * 0.75^x))
-assert Equation(probability_X 3.5,
-     0.25^3 * sum(0..3, x -> binomial(x + 2, 2) * 0.75^x))
+assert(abs(probability_X 3 - 0.1694336) < 1e-7) -- R: pnbinom(3, 3, 0.25)
+assert(abs(probability_X 3.5 - 0.1694336) < 1e-7)
 
 assert Equation(quantile_X 0, 0)
 assert Equation(quantile_X 0.3, 5)
