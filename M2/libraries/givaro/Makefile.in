@@ -2,14 +2,13 @@
 # svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
 # see also (for older releases) https://forge.imag.fr/projects/givaro for source code
 # see also (for newer releases) https://github.com/linbox-team/givaro/releases
-URL = http://macaulay2.com/Downloads/OtherSourceCode
-
 # compilation of givaro needs a little extra memory
+SUBMODULE = true
 VLIMIT = 900000
 MLIMIT = 900000
 
-VERSION = 4.1.1
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 4.2.0
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # the patch modifies test/Makefile.am, so we must remake test/Makefile.in
 PRECONFIGURE = autoreconf -vif
 
