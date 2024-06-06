@@ -6,22 +6,8 @@ VPATH = @srcdir@
 .PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
 all install:										\
 	check-make config.status configured check-for-undefined-configure-variables	\
-	optional-git-submodule-update							\
 	srcdir protect-configs configured-files check-machine				\
 	M2 all-in-subdirs report-M2-location
-ifeq "@DEVELOPMENT@" "yes"
-optional-git-submodule-update:
-	: skipping automatic updating of submodules, because --enable-development was specified
-else ifeq "@BUILDSUBLIST@" ""
-optional-git-submodule-update:
-	: skipping automatic updating of submodules, because no submodules are being built
-else ifeq "@DOWNLOAD@" "yes"
-optional-git-submodule-update:
-	cd @srcdir@/.. && git submodule update
-else
-optional-git-submodule-update:
-	: skipping automatic updating of submodules, because --enable-download not provided to configure script
-endif
 configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
@@ -55,135 +41,12 @@ endef
 #   subdirectories of the source tree
 #     usr-build  -- install tools needed for rebuilding the configure script here, if needed
 #   subdirectories of the build tree
-#     usr-host   -- install the results of compilation of libraries, programs, and submodules, here, for the target machine
+#     usr-host   -- install the results of compilation of libraries and programs here, for the target machine
 #     usr-dist   -- place copies of everything needed in the final Macaulay2 distribution here, for the target machine
 
 check-stripped:
 	@ echo "-- checking for unstripped binaries"
 	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
-
-## submodules
-
-ifeq (@SHARED@,no)
-SUBMODULE_CONFIGOPTIONS += --disable-shared
-else
-# Our current strategy with submodules is to use them in place, so they don't have to be
-# installed.  We like avoiding the installation step, because running "make install" a second time
-# causes files to be copied again.  With shared libraries, though, the libraries have to be installed
-# for use at run-time and then distributed as part of binary distributions.  So we disable the building of
-# shared libraries here.
-SUBMODULE_CONFIGOPTIONS += --disable-shared
-endif
-
-ifneq (@build_alias@,)
-# it was ../configure --build=@build_alias@
-SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
-endif
-ifneq (@host_alias@,)
-# it was ../configure --build=@host_alias@ (for cross compiling)
-SUBMODULE_CONFIGOPTIONS += --host=@host_alias@
-endif
-
-# Note: we don't necessarily use the "install" target of submodules, even
-# though we did so for libraries.  The problem with "install" targets is that
-# they *always* copy their files, which is annoying.  Moreover, our submodules
-# don't even come with "uninstall" targets, typically.
-# include/config.Makefile.in for lines that add the locations of the the
-# include files and libraries to CPPFLAGS and LDFLAGS.
-BUILDSUBTARGETS = check all run-configure check install
-
-# Even for submodules not scheduled to be built, we might as well arrange
-# for these targets to fire also for them when doing them for all submodules:
-SUBTARGETS = clean distclean
-GITSUBTARGETS = git-clean git-update git-status git-describe
-
-$(foreach t,$(BUILDSUBTARGETS),$(eval $t:$t-in-submodules))
-
-$(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:))
-define build-submodule-rules
-$(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
-endef
-
-$(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:))
-define submodule-rules
-$(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
-all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
-copy-license-files-from-submodules: copy-license-files-from-$1
-copy-license-files-from-$1:
-	@$(MKDIR_P) $(BUILTLIBPATH)/licenses/$1
-	@for i in $$(LICENSE_FILES); do                                     \
-	  if ! ls $(BUILTLIBPATH)/licenses/$1/$$$$i > /dev/null 2>&1; then  \
-	    cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1; \
-	  fi ;                                                              \
-	done
-build-in-$1: submodules/$1/Makefile
-	$(MAKE) -C submodules/$1 all
-check-in-$1: run-configure-in-$1
-ifeq ($(no-check-$1),)
-	$(MAKE) -C submodules/$1 check
-endif
-
-install-in-$1: build-in-$1
-
-# it may look odd to make submodules/$1/Makefile, but this allows recovery if the submodule
-# has been updated or cleaned, and needing scripts (such as "missing") installed by libtool 
-# are no longer there:
-$(foreach c, clean distclean,
-    $(eval $c-in-$1:; + if [ -f submodules/$1/Makefile ]; then $(MAKE) submodules/$1/Makefile && $(MAKE) -C submodules/$1 $c; fi)
-    $(eval $c: $c-in-$1))
-
-git-checkout-in-$1:; cd @srcdir@/.. && git submodule update --init M2/submodules/$1
-git-update-in-$1:; cd @srcdir@/submodules/$1 && git checkout master && git pull
-git-status-in-$1:; cd @srcdir@/submodules/$1 && git status
-git-clean-in-$1:; cd @srcdir@/submodules/$1 && git clean -Xdf
-git-describe-in-$1:; cd @srcdir@/submodules/$1 && git describe --dirty --long --always --abbrev=40 --all
-run-configure-in-submodules: run-configure-in-$1
-run-configure-in-$1: submodules/$1/Makefile
-unconfigure-in-submodules: unconfigure-in-$1
-unconfigure-in-$1:; rm -f submodules/$1/Makefile
-submodules/$1/Makefile:@srcdir@/submodules/$1/configure @srcdir@/submodules/$1/Makefile.in
-	$(MKDIR_P) submodules/$1
-	@ $(call cdw,submodules/$1) &&							\
-	 @abs_srcdir@/submodules/$1/configure						\
-		--prefix=$(BUILTLIBPATH)						\
-		PKG_CONFIG_PATH="$$(BUILTLIBPATH)/lib/pkgconfig:$$(PKG_CONFIG_PATH)"	\
-		GTEST_PATH=@GTEST_PATH@							\
-		AR=@AR@									\
-		AS=@AS@									\
-		DLLTOOL=@DLLTOOL@							\
-		OBJDUMP=@OBJDUMP@							\
-		STRIP=@STRIP@								\
-		CXXFLAGS="$$(CXXFLAGS)"							\
-		CFLAGS="$$(CFLAGS)"							\
-		FFLAGS="$$(FCFLAGS)"							\
-		FCFLAGS="$$(FCFLAGS)"							\
-		TARGET_ARCH=$$(TARGET_ARCH)						\
-		CPPFLAGS="$$(CPPFLAGS)"							\
-		CC="$$(CC)"								\
-		CXX="$$(CXX)"								\
-		LDFLAGS="$$(LDFLAGS)"							\
-		LOADLIBES="$$(LOADLIBES)"						\
-		LDLIBS="$$(LDLIBS)"							\
-		LIBS="$$(LIBS)"								\
-		$$(SUBMODULE_CONFIGOPTIONS)
-
-git-checkout-warning-for-$1:
-	@ echo "error: for the submodule \"$1\"" >&2
-	@ echo "       the source code is not present in the directory \"submodules/$1\"" >&2
-	@ echo "       so either run 'git submodule update --init' in the source tree" >&2
-	@ echo "       or rerun the Macaulay2 \"configure\" command with the added option \"--enable-download\"" >&2
-	@ echo "       to enable automatic downloading of the source code over the internet." >&2
-	@ echo "       To clone a repository together with its submodules, add the option" >&2
-	@ echo "       '--recursive' to the 'git clone' command." >&2
-	@ false
-
-@srcdir@/submodules/$1/configure @srcdir@/submodules/$1/Makefile.in: @srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am
-	cd @srcdir@/submodules/$1 && NOCONFIGURE=1 ./autogen.sh
-endef
-$(foreach s,@SUBLIST@,$(eval $(call submodule-rules,$s)))
-$(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
-
-all-in-Macaulay2: all-in-submodules
 
 ## 
 distclean:clean distclean-in-subdirs distclean-this-dir
@@ -305,19 +168,6 @@ help:
 	@ echo "  check-in-libraries"
 	@ echo "  install-in-libraries"
 	@ echo "  clean-in-libraries"
-	@ echo ""
-	@ echo "targets for all submodules:"
-	@ echo "  all-in-submodules"
-	@ echo "  build-in-submodules"
-	@ echo "  check-in-submodules"
-	@ echo "  install-in-submodules"
-	@ echo "  clean-in-submodules"
-	@ echo ""
-	@ echo "targets for a submodule FOO:"
-	@ echo "  all-in-FOO"
-	@ echo "  build-in-FOO"
-	@ echo "  check-in-FOO"
-	@ echo "  clean-in-FOO"
 	@ echo ""
 	@ echo "configuration display:"
 	@ echo "  status                    show options used with 'configure'"

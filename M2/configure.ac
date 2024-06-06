@@ -678,10 +678,6 @@ AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
-AC_SUBST(SUBLIST, " ")
-
-# The list SUBLIST is the list of submodules that might be used and linked into M2.
-
 # These three lists reflect dependencies, with prerequisites listed first, including the following dependencies:
 #    mathicgb needs mathic and memtailor
 #    mathic needs memtailor
@@ -727,7 +723,7 @@ AC_SUBST(FILE_PREREQS)
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=""
 
-for i in $LIBLIST $SUBLIST $PROGLIST
+for i in $LIBLIST $PROGLIST
 do eval BUILD_$i=no
 done
 
@@ -744,9 +740,9 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
-     do case " $LIBLIST $SUBLIST $PROGLIST " in
+     do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
@@ -1720,12 +1716,6 @@ do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
 done
 
-AC_SUBST(BUILDSUBLIST)
-for i in $SUBLIST
-do eval t=\$BUILD_$i
-   test "$t" = yes && BUILDSUBLIST="$BUILDSUBLIST $i"
-done
-
 AC_SUBST(BUILDPROGLIST)
 for i in $PROGLIST
 do eval t=\$BUILD_$i
@@ -1905,7 +1895,6 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # by the 'configure' script, will be simply "alpha".
 
 AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST])
-AC_MSG_NOTICE([using BUILDSUBLIST  = $BUILDSUBLIST])
 AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST])
 AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST])
 AC_MSG_NOTICE([using BUILD_ALWAYS  = $BUILD_ALWAYS])
