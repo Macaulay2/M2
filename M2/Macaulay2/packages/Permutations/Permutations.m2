@@ -36,7 +36,7 @@ html Permutation := w -> html expression toList w
 -----------------------------------------------------------------------------
 -- Indexing permutations as lists
 -----------------------------------------------------------------------------
-Permutation _ ZZ := List => (w,n) -> ((toList w)_(n-1))
+Permutation _ ZZ := ZZ => (w,n) -> ((toList w)_(n-1))
 Permutation _ List := List => (w,l) -> ((toList w)_l)
 Permutation _ Sequence := List => (w,s) -> ((toList w)_(toList s))
 
@@ -56,7 +56,7 @@ expand (Permutation, ZZ) := Permutation => (w,n) -> (
     if n < #w then error(toString w | " is a permutation on more than " | toString n | " letters.");
     permutation(toList(w) | toList(#w+1..n))
 )
-expand (Permutation, Permutation) := (Permutation, Permutation) => (w,v) -> (
+expand (Permutation, Permutation) := Sequence => (w,v) -> (
     n := max(#w, #v);
     (expand(w,n), expand(v,n))
 )
@@ -95,7 +95,7 @@ Permutation * List := List => (w, l) -> (
 )
 -- group action on a matrix permutes the ROWS of the matrix
 -- maybe would prefer to permute the columns? Seems more natural
-Permutation * Matrix := List => (w, M) -> (
+Permutation * Matrix := Matrix => (w, M) -> (
     m := numRows M;
     if #(reduce w) > m then error(toString w | " permutes more than " | toString m | " elements.") 
     else (toMatrix expand(w, m)) * M
@@ -156,7 +156,7 @@ ascendingRuns Permutation := List => w -> (
     if #w == 1 then allRuns := {toSequence w}
     else (
         allRuns = {};
-        currentRun = {w#0};
+        currentRun := {w#0};
         for wi in w_(toList(1 ..< #w)) do (
             if wi > last currentRun then currentRun = append(currentRun, wi)
             else (
@@ -176,7 +176,7 @@ descendingRuns Permutation := List => w -> (
     if #w == 1 then allRuns := {toSequence w}
     else (
         allRuns = {};
-        currentRun = {w#0};
+        currentRun := {w#0};
         for wi in w_(toList(1 ..< #w)) do (
             if wi < last currentRun then currentRun = append(currentRun, wi)
             else (
@@ -274,6 +274,7 @@ foataBijection Permutation := Permutation => w -> (
 -----------------------------------------------------------------------------
 -- Miscellaneous
 -----------------------------------------------------------------------------
+-- inverse = method()
 inverse Permutation := Permutation => w -> (permutation to1Index inversePermutation to0Index toList w)
 
 -- order of a permutation, i.e. smallest integer n such that w^n = identity
@@ -308,5 +309,5 @@ fixedPoints Permutation := Boolean => w -> (for cycle in cycleDecomposition w li
 
 inversions = method(TypicalValue => List)
 inversions Permutation := List => w -> (
-    for idxPair in sort(subsets(toList w, 2) / sort) list if w_(idxPair#0 - 1) > w_(idxPair#1 - 1) then idxPair else continue
+    for idxPair in sort(subsets(toList w, 2) / sort) list if w_(idxPair#0) > w_(idxPair#1) then idxPair else continue
 )

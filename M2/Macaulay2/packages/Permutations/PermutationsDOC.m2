@@ -153,7 +153,7 @@ doc ///
    $p(i) > p(i+1)$. We can compute the set of ascents and the set of descents using
    {\tt ascents} and {\tt descents}, respectively.
   Example
-   p = {3,1,2,5,4};
+   p = permutation {3,1,2,5,4};
    ascents p
    descents p
   Text
@@ -161,7 +161,7 @@ doc ///
    Similarly, a \emph{descending run} is a maximal subsequence of successive 
    descents.
   Example
-   p = {3,1,2,5,4};
+   p = permutation {3,1,2,5,4};
    ascendingRuns p
    descendingRuns p
   Text
@@ -169,17 +169,17 @@ doc ///
    $p(i) > i$; this is called a \emph{weak exceedance} if the inequality is not 
    strict, i.e., $p(i) \geq i$.
   Example
-   p = {3,1,2,5,4};
+   p = permutation {3,1,2,5,4};
    exceedances p
   Text
    A permutation $p$ has a {\emph saliance} at $i$ if $p(j) < p(i)$ for all $j > i$.
   Example
-   p = {3,1,2,5,4};
+   p = permutation {3,1,2,5,4};
    saliances p
   Text
    A permutation $p$ has a \emph{record} at $i$ if $p(j) < p(i)$ for all $j < i$.
   Example
-   p = {3,1,2,5,4};
+   p = permutation {3,1,2,5,4};
    records p
 
   --
@@ -234,7 +234,7 @@ doc ///
 
    We can compute the \emph{inverse} of a permutation.
   Example
-   p = {3,1,2,5,4};
+   p = permutation {3,1,2,5,4};
    inverse p
   Text
    The \emph{order} of a permutation $p$ is its order in the symmetric group $\mathfrak{S}_n$, i.e.,
@@ -265,42 +265,42 @@ doc ///
   Example
    p = permutation {3,1,2,5,4};
    inversions p
-  SeeAlso
-   (symbol _, Permutation, ZZ)
-   (symbol _, Permutation, List)
-   (symbol _, Permutation, Sequence)
-   (symbol ==, Permutation, Permutation)
-   (symbol *, Permutation, List)
-   (symbol *, Permutation, Matrix)
-   (symbol *, Permutation, Permutation)
-   (symbol ^, Permutation, ZZ)
-   ascendingRuns
-   ascents
-   avoidsPattern
-   avoidsPatterns
-   cycleDecomposition
-   cycleType
-   descendingRuns
-   descents
-   exceedances
-   expand
-   fixedPoints
-   foataBijection
-   inverse
-   inversions
-   isCartwrightSturmfels
-   isCDG
-   isDerangement
-   isEven
-   isOdd
-   isValidPermutation
-   isVexillary
-   ord
-   records
-   reduce
-   saliances
-   sign
-   toMatrix
+ SeeAlso
+  (symbol _, Permutation, ZZ)
+  (symbol _, Permutation, List)
+  (symbol _, Permutation, Sequence)
+  (symbol ==, Permutation, Permutation)
+  (symbol *, Permutation, List)
+  (symbol *, Permutation, Matrix)
+  (symbol *, Permutation, Permutation)
+  (symbol ^, Permutation, ZZ)
+  ascendingRuns
+  ascents
+  avoidsPattern
+  avoidsPatterns
+  cycleDecomposition
+  cycleType
+  descendingRuns
+  descents
+  exceedances
+  expand
+  fixedPoints
+  foataBijection
+  inverse
+  inversions
+  isCartwrightSturmfels
+  isCDG
+  isDerangement
+  isEven
+  isOdd
+  isValidPermutation
+  isVexillary
+  ord
+  records
+  reduce
+  saliances
+  sign
+  toMatrix
 ///
 
 -- (symbol _, Permutation, ZZ)
@@ -351,8 +351,8 @@ doc ///
       p = permutation {3,1,2,5,4}
       p_{1,2}
   SeeAlso
-    (Symbol _, Permutation, Sequence)
-    (Symbol _, Permutation, ZZ)
+    (symbol _, Permutation, Sequence)
+    (symbol _, Permutation, ZZ)
 ///
 
 -- (symbol _, Permutation, Sequence)
@@ -379,8 +379,8 @@ doc ///
       p = permutation {3,1,2,5,4}
       p_(1,2)
   SeeAlso
-    (Symbol _, Permutation, List)
-    (Symbol _, Permutation, ZZ)
+    (symbol _, Permutation, List)
+    (symbol _, Permutation, ZZ)
 ///
 
 -- (symbol ==, Permutation, Permutation)
@@ -514,7 +514,7 @@ doc ///
     w^n
   Inputs
     w:Permutation
-    n:Permutation
+    n:ZZ
   Outputs
     :Permutation
   Description
@@ -799,7 +799,7 @@ doc ///
     w:Permutation
     n:ZZ
   Outputs
-    :Boolean
+    :Permutation
   Description
     Text
       A permutation on $n$ symbols is an element of the symmetric group on $n$ 
@@ -807,7 +807,7 @@ doc ///
       on $N > n$ symbols as well by fixing the $(n+1)$st through $N$th symbols.
     Example
       p = permutation {3,1,2,5,4}
-      expance(p, 7)
+      expand(p, 7)
   SeeAlso
     reduce
 ///
@@ -815,31 +815,32 @@ doc ///
 -- expand(w,v)
 -- TODO: how to write documentation for tuple output
 doc ///
-  Key
-    expand(Permutation,Permutation)
-  Headline
-    rewrites two permutations to be permutations on the same number of symbols
-  Usage
-    expand(w,v)
-  Inputs
-    w:Permutation
-    v:Permutation
-  Outputs
-    :List
-  Description
-    Text
-      For ease, we can also expand two permutations so that they are regarded as 
-      permutations on the same number of symbols. More precisely, if we have 
-      permutations $p=(p_1, \hdots, p_n)$ and $q=(q_1, \hdots, q_m)$, then 
-      {\tt expand(p,q)} will return both $p$ and $q$ as permutations on
-      $\text{max}(m,n)$ symbols.
-    Example
-      p = permutation {3,1,2,5,4}
-      q = permutation {2,3,1,4,5,7,6}
-      expand(p,q)
-  SeeAlso
-    expand(Permutation,ZZ)
-    reduce
+Key
+ (expand, Permutation, Permutation)
+Headline
+ rewrites two permutations to be permutations on the same number of symbols
+Usage
+ e = expand(w,v)
+Inputs
+ w:Permutation
+ v:Permutation
+Outputs
+ e:Sequence
+Description
+ Text
+  For ease, we can also expand two permutations so that they are regarded as 
+  permutations on the same number of symbols. More precisely, if we have 
+  permutations $p=(p_1, \hdots, p_n)$ and $q=(q_1, \hdots, q_m)$, then 
+  {\tt expand(p,q)} will return both $p$ and $q$ as permutations on
+  $\text{max}(m,n)$ symbols.
+ Example
+  p = permutation {3,1,2,5,4}
+  q = permutation {2,3,1,4,5,7,6}
+  expand(p,q)
+SeeAlso
+ (expand, Permutation, ZZ)
+ reduce
+
 ///
 
 -- fixedPoints
@@ -1268,9 +1269,5 @@ doc ///
       p = permutation {3,1,2,5,4}
       toMatrix p
   SeeAlso
-    (Symbol *, Permutation, Matrix)
+    (symbol *, Permutation, Matrix)
 ///
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:
