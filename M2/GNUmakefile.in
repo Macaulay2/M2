@@ -234,12 +234,6 @@ $(BUILTLIBPATH)/include/mathic.h:
 $(BUILTLIBPATH)/include/mathicgb.h:
 	$(MAKE) -C submodules/mathicgb install
 
-ifeq (@BUILD_givaro@,yes)
-# fflas_ffpack depends on givaro, so if they both get built, then build givaro first.
-# This is a counterintuitive way to specify a dependence of one submodule on another.
-submodules/fflas_ffpack/Makefile: install-in-givaro
-endif
-
 all-in-Macaulay2: all-in-submodules
 
 ## 
