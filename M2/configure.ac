@@ -671,14 +671,14 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest mathicgb ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest mathic mathicgb ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
-AC_SUBST(SUBLIST, " memtailor mathic ")
+AC_SUBST(SUBLIST, " memtailor ")
 
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 
@@ -1276,6 +1276,7 @@ if test $with_system_mathic = no
 then
     BUILD_mathic=yes
     BUILTLIBS="-lmathic $BUILTLIBS"
+    BUILD_ALWAYS="$BUILD_ALWAYS mathic"
 else AC_LANG(C++)
     AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
