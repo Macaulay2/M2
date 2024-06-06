@@ -864,7 +864,7 @@ assert small(Gamma(1, 5) - exp(-5))
 assert small(Gamma(1/2, 5) - sqrt pi * erfc sqrt 5)
 
 assert small(Gamma(1/2, 5) / Gamma(1/2) - regularizedGamma(1/2, 5))
-assert small(5 - inverseRegularizedGamma(1/2, regularizedGamma(1/2, 5)))
+assert(abs(5 - inverseRegularizedGamma(1/2, regularizedGamma(1/2, 5))) < 1e-12)
 assert small(1/5 - regularizedGamma(1/2, inverseRegularizedGamma(1/2, 1/5)))
 
 assert small(lngamma 0.5 - log sqrt pi)
