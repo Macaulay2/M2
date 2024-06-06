@@ -92,7 +92,6 @@ submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes \
 	--disable-cli # possibly add this option? --with-tbb
 submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
 submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
-submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
 
 # Note: we don't necessarily use the "install" target of submodules, even
 # though we did so for libraries.  The problem with "install" targets is that
@@ -123,9 +122,6 @@ $(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:))
 define build-submodule-rules
 $(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 endef
-
-# disable these ffpack checks, because they fail, and they're compile time only:
-no-check-fflas_ffpack = 1
 
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:))
 define submodule-rules
@@ -211,19 +207,13 @@ $(foreach s,@SUBLIST@,$(eval $(call submodule-rules,$s)))
 $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 
 # installation into usr-dist
-## It's annoying that fflas_ffpack will copy the files during installation every time.
-all-in-fflas_ffpack: install-in-fflas_ffpack
 all-in-memtailor:    install-in-memtailor
 all-in-mathic:       install-in-mathic
 all-in-mathicgb:     install-in-mathicgb
 
-install-in-fflas_ffpack: $(BUILTLIBPATH)/include/fflas-ffpack/fflas-ffpack.h
 install-in-memtailor:    $(BUILTLIBPATH)/include/memtailor.h
 install-in-mathic:       $(BUILTLIBPATH)/include/mathic.h
 install-in-mathicgb:     $(BUILTLIBPATH)/include/mathicgb.h
-
-$(BUILTLIBPATH)/include/fflas-ffpack/fflas-ffpack.h:
-	$(MAKE) -C submodules/fflas_ffpack install
 
 $(BUILTLIBPATH)/include/memtailor.h:
 	$(MAKE) -C submodules/memtailor install
