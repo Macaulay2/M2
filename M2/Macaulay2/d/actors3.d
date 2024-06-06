@@ -879,6 +879,32 @@ Gamma(e:Expr):Expr := (
      else WrongArgRRorRRiorCC()
      );
 setupfun("Gamma",Gamma).Protected=false;
+regularizedGamma(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) != 2 then WrongNumArgs(2)
+	else (
+	    when a.0
+	    is s:RRcell do (
+		when a.1
+		is x:RRcell do toExpr(
+		    midpointRR(regularizedGamma(toRRi(s.v), toRRi(x.v))))   -- # typical value: regularizedGamma, RR, RR, RR
+		is x:RRicell do toExpr(regularizedGamma(toRRi(s.v), x.v))   -- # typical value: regularizedGamma, RR, RRi, RRi
+		is x:CCcell do toExpr(regularizedGamma(toCC(s.v), x.v))     -- # typical value: regularizedGamma, RR, CC, CC
+		else WrongArgRRorRRiorCC(2))
+	    is s:RRicell do (
+		when a.1
+		is x:RRcell do toExpr(regularizedGamma(s.v, toRRi(x.v)))    -- # typical value: regularizedGamma, RRi, RR, RRi
+		is x:RRicell do toExpr(regularizedGamma(s.v, x.v))          -- # typical value: regularizedGamma, RRi, RRi, RRi
+		else WrongArgRRorRRi(2))
+	    is s:CCcell do (
+		when a.1
+		is x:RRcell do toExpr(regularizedGamma(s.v, toCC(x.v)))     -- # typical value: regularizedGamma, CC, RR, CC
+		is x:CCcell do toExpr(regularizedGamma(s.v, x.v))           -- # typical value: regularizedGamma, CC, CC, CC
+		else WrongArgRRorCC(2))
+	    else WrongArgRRorCC(2)))
+    else WrongNumArgs(2));
+setupfun("regularizedGamma",regularizedGamma).Protected=false;
 Digamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, RR, RR
@@ -924,6 +950,12 @@ erfc(e:Expr):Expr := (
      else WrongArgRRorRRiorCC()
      );
 setupfun("erfc",erfc).Protected=false;
+inverseErf(e:Expr):Expr := (
+     when e
+     is x:RRcell do toExpr(midpointRR(inverseErf(toRRi(x.v))))	    -- # typical value: inverseErf, RR, RR
+     is x:RRicell do toExpr(inverseErf(x.v))			    -- # typical value: inverseErf, RRi, RRi
+     else WrongArgRRorRRi());
+setupfun("inverseErf",inverseErf).Protected=false;
 BesselJ(n:long,x:RR):RR := (
      if n == long(0) then j0(x)
      else if n == long(1) then j1(x)
@@ -1061,6 +1093,61 @@ Beta(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("Beta",Beta).Protected=false;
+
+regularizedBeta(xx:Expr,yy:Expr,zz:Expr):Expr := (
+    when xx
+    is x:RRcell do (
+	when yy
+	is y:RRcell do (
+	    when zz
+	    is z:RRcell do toExpr(
+		midpointRR(regularizedBeta(toRRi(x.v), toRRi(y.v), toRRi(z.v)))) -- # typical value: regularizedBeta, RR, RR, RR, RR
+	    is z:RRicell do toExpr(regularizedBeta(toRRi(x.v), toRRi(y.v), z.v)) -- # typical value: regularizedBeta, RR, RR, RRi, RRi
+	    is z:CCcell do toExpr(regularizedBeta(toCC(x.v), toCC(y.v), z.v))    -- # typical value: regularizedBeta, RR, RR, CC, CC
+	    else WrongArgRRorRRiorCC(3))
+	is y:RRicell do (
+	    when zz
+	    is z:RRcell do toExpr(regularizedBeta(toRRi(x.v), y.v, toRRi(z.v)))  -- # typical value: regularizedBeta, RR, RRi, RR, RRi
+	    is z:RRicell do toExpr(regularizedBeta(toRRi(x.v), y.v, z.v))        -- # typical value: regularizedBeta, RR, RRi, RRi, RRi
+	    else WrongArgRRorRRi(3))
+	is y:CCcell do (
+	    when zz
+	    is z:RRcell do toExpr(regularizedBeta(toCC(x.v), y.v, toCC(z.v)))    -- # typical value: regularizedBeta, RR, CC, RR, CC
+	    is z:CCcell do toExpr(regularizedBeta(toCC(x.v), y.v, z.v))          -- # typical value: regularizedBeta, RR, CC, CC, CC
+	    else WrongArgRRorCC(3))
+	else WrongArgRRorRRiorCC(2))
+    is x:RRicell do (
+	when yy
+	is y:RRcell do (
+	    when zz
+	    is z:RRcell do toExpr(regularizedBeta(x.v, toRRi(y.v), toRRi(z.v)))  -- # typical value: regularizedBeta, RRi, RR, RR, RRi
+	    is z:RRicell do toExpr(regularizedBeta(x.v, toRRi(y.v), z.v))        -- # typical value: regularizedBeta, RRi, RR, RRi, RRi
+	    else WrongArgRRorRRi(3))
+	is y:RRicell do (
+	    when zz
+	    is z:RRcell do toExpr(regularizedBeta((x.v), y.v, toRRi(z.v)))       -- # typical value: regularizedBeta, RRi, RRi, RR, RRi
+	    is z:RRicell do toExpr(regularizedBeta(x.v, y.v, z.v))               -- # typical value: regularizedBeta, RRi, RRi, RRi, RRi
+	    else WrongArgRRorRRi(3))
+	else WrongArgRRorRRi(2))
+    is x:CCcell do (
+	when yy
+	is y:RRcell do (
+	    when zz
+	    is z:RRcell do toExpr(regularizedBeta(x.v, toCC(y.v), toCC(z.v)))    -- # typical value: regularizedBeta, CC, RR, RR, CC
+	    is z:CCcell do toExpr(regularizedBeta(x.v, toCC(y.v), z.v))          -- # typical value: regularizedBeta, CC, RR, CC, CC
+	    else WrongArgRRorRRiorCC(3))
+	is y:CCcell do (
+	    when zz
+	    is z:RRcell do toExpr(regularizedBeta(x.v, y.v, toCC(z.v)))          -- # typical value: regularizedBeta, CC, CC, RR, CC
+	    is z:CCcell do toExpr(regularizedBeta(x.v, y.v, z.v))                -- # typical value: regularizedBeta, CC, CC, CC, CC
+	    else WrongArgRRorCC(3))
+	else WrongArgRRorCC(2))
+    else WrongArgRRorRRiorCC(1));
+regularizedBeta(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 3 then regularizedBeta(s.0,s.1,s.2)
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
+setupfun("regularizedBeta",regularizedBeta).Protected=false;
 
 cosh(e:Expr):Expr := (
      when e
