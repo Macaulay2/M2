@@ -3,6 +3,7 @@
 dir = temporaryFileName()
 assert(changeDirectory makeDirectory dir == dir | "/")
 assert(currentDirectory() == dir | "/")
-assert(changeDirectory() == homeDirectory)
-assert(currentDirectory() == homeDirectory)
+if fileExists homeDirectory then (
+    assert(changeDirectory() == homeDirectory);
+    assert(currentDirectory() == homeDirectory))
 removeDirectory dir
