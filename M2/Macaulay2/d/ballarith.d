@@ -89,6 +89,17 @@ export Gamma(z:RRi,w:RRi):RRi := (
     clear(y);
     moveToRRiandclear(r, prec));
 
+export regularizedGamma(z:RRi,w:RRi):RRi := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_gamma_upper(", r, ", ", x, ", ", y, ", 1, ",
+	prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRiandclear(r, prec));
+
 export Digamma(x:RRi):RRi := (
     y := toRRball(x);
     r := newRRball();
@@ -124,6 +135,13 @@ export erfc(x:RRi):RRi := (
     clear(y);
     moveToRRiandclear(r, precision(x)));
 
+export inverseErf(x:RRi):RRi := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_erfinv(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRiandclear(r, precision(x)));
+
 export BesselJ(z:RRi,w:RRi):RRi := (
     prec := min(precision(z), precision(w));
     x := toRRball(z);
@@ -154,6 +172,19 @@ export Beta(z:RRi,w:RRi):RRi := (
 	 ", 0, ", prec, ")");
     clear(x);
     clear(y);
+    moveToRRiandclear(r, prec));
+
+export regularizedBeta(u:RRi,v:RRi,w:RRi):RRi := (
+    prec := min(min(precision(u), precision(v)), precision(w));
+    x := toRRball(u);
+    y := toRRball(v);
+    z := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_beta_lower(", r, ", ", y, ", ", z, ", ", x,
+	 ", 1, ", prec, ")");
+    clear(x);
+    clear(y);
+    clear(z);
     moveToRRiandclear(r, prec));
 
 ------------
@@ -207,6 +238,17 @@ export Gamma(z:CC,w:CC):CC := (
     y := toCCball(w);
     r := newCCball();
     Ccode(void, "acb_hypgeom_gamma_upper(", r, ", ", x, ", ", y, ", 0, ",
+	prec, ")");
+    clear(x);
+    clear(y);
+    moveToCCandclear(r, prec));
+
+export regularizedGamma(z:CC,w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCball(z);
+    y := toCCball(w);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_gamma_upper(", r, ", ", x, ", ", y, ", 1, ",
 	prec, ")");
     clear(x);
     clear(y);
@@ -277,4 +319,17 @@ export Beta(z:CC,w:CC):CC := (
 	 ", 0, ", prec, ")");
     clear(x);
     clear(y);
+    moveToCCandclear(r, prec));
+
+export regularizedBeta(u:CC,v:CC,w:CC):CC := (
+    prec := min(min(precision(u), precision(v)), precision(w));
+    x := toCCball(u);
+    y := toCCball(v);
+    z := toCCball(w);
+    r := newCCball();
+    Ccode(void, "acb_hypgeom_beta_lower(", r, ", ", y, ", ", z, ", ", x,
+	 ", 1, ", prec, ")");
+    clear(x);
+    clear(y);
+    clear(z);
     moveToCCandclear(r, prec));
