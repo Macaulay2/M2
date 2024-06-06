@@ -37,6 +37,7 @@ libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/mpfi/Makefile
 libraries/mpir/Makefile
+libraries/mathic/Makefile
 libraries/mathicgb/Makefile
 libraries/gtest/Makefile
 libraries/4ti2/Makefile
