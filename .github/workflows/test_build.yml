@@ -82,7 +82,7 @@ jobs:
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
-                  libnauty2-dev nauty lrslib polymake phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev
+                  libnauty2-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev
 
 # ----------------------
 #   Steps common to all build variants
@@ -192,7 +192,7 @@ jobs:
       - name: Validate HTML documentation
         if: matrix.build-system == 'autotools' && runner.os == 'Linux'
         run: |
-          python3 -m pip install html5validator
+          pipx install html5validator
           if test ${{ github.event_name }} = pull_request
           then
             git fetch --depth=1 origin development
