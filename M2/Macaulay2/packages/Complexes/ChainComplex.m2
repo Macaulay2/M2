@@ -33,17 +33,11 @@ Complex.synonym = "complex"
 ComplexMap.synonym = "map of complexes"
 
 --------------------------------------------------------------------
--- categories for which complexes are implemented ------------------
+-- Categories for which complexes are currently implemented --------
 --------------------------------------------------------------------
--- SheafMap and CoherentSheaf are added later in Varieties
-
-isMorphism = method(TypicalValue => Boolean)
-isMorphism Thing    := x -> false
-isMorphism Matrix   := f -> true
-
-isAbelianCategory = method(TypicalValue => Boolean)
-isAbelianCategory Thing         := x -> false
-isAbelianCategory Module        := M -> true
+-- Matrix and Module are added in m2/chaincomplexes.m2,
+-- SheafMap and CoherentSheaf are added later in Varieties.
+importFrom_Core { "isMorphism", "isAbelianCategory" }
 
 --------------------------------------------------------------------
 -- basic methods for chain complexes -------------------------------
