@@ -68,7 +68,7 @@ export{
     "nonCartierLocus", --added checks, has IsGraded option, cached
     "isSNC", --added checks, has IsGraded option, cached
     "isZeroDivisor", --added checks
-    "isVeryAmple", --added checks, 
+    --"isVeryAmple", --added checks,
     --functions for getting maps to projective space from divisors (graded only)
 	"baseLocus", --added checks
 	"mapToProjectiveSpace", --added checks
@@ -1542,9 +1542,7 @@ baseLocus(WeilDivisor) := Ideal => (D1) -> (
 	baseLocus(M1)
 );
 
-isVeryAmple = method(Options => {Verbose=>false});
-
-isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (    
+isVeryAmple WeilDivisor := { Verbose => false } >> o -> D1 -> (
     if (D1#cache#?isVeryAmple == true) then (
         return D1#cache#isVeryAmple;
     );    
@@ -2485,9 +2483,8 @@ doc ///
 
 doc ///
 	 Key
-		isVeryAmple
 		(isVeryAmple, WeilDivisor)
-		[isVeryAmple, Verbose]
+	       [(isVeryAmple, WeilDivisor), Verbose]
 	Headline
 		whether a divisor is very ample.
 	Usage

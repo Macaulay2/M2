@@ -11,6 +11,10 @@ document { Key => isSmooth,     methodstr, SeeAlso => {
 	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
 	"Polyhedra::isSmooth(Cone)", "NormalToricVarieties::isSmooth(NormalToricVariety)",
 	"SpecialFanoFourfolds::isSmooth(EmbeddedProjectiveVariety)" } }
+document { Key => isVeryAmple,  methodstr, SeeAlso => {
+	"Divisor::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
+	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
+	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
 
 document { Key => cone,
     Headline => "mapping cone or polyhedral cone",

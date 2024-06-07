@@ -849,6 +849,7 @@ export {
 	"isSurjective",
 	"isTable",
 	"isUnit",
+	"isVeryAmple",
 	"isWellDefined",
 	"isWeylAlgebra",
 	"iterator",

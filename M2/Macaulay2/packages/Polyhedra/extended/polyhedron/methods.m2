@@ -48,8 +48,7 @@ polar Polyhedron := P -> getProperty(P, computedPolar)
 -- PURPOSE : Checks if a polytope is very ample
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
-isVeryAmple = method()
-isVeryAmple Polyhedron := P -> getProperty(P, computedVeryAmple)
+isVeryAmple Polyhedron := {} >> o -> P -> getProperty(P, computedVeryAmple)
 
 
 -- PURPOSE : Computing the vertex-edge-matrix of a polyhedron

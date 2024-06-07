@@ -1512,7 +1512,7 @@ document {
      }
 
 document {
-     Key => {isVeryAmple,(isVeryAmple,Polyhedron)},
+     Key => {(isVeryAmple, Polyhedron)},
      Headline => "checks if the Polyhedron is very ample",
      Usage => " b = isVeryAmple P",
      Inputs => {
