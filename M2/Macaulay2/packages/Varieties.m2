@@ -87,6 +87,7 @@ importFrom_Core {
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "concatBlocks", "concatCols", "concatRows",
     "addHook", "tryHooks", "cacheHooks",
+    "isMorphism", "isAbelianCategory",
     "BinaryPowerMethod",
     }
 
