@@ -998,7 +998,7 @@ resolutionMapPrivate(Complex, Boolean) := ComplexMap => opts -> (C, isEpi) -> (
       or C.cache.resolutionMap.cache.LengthLimit < opts.LengthLimit then (
         (lo,hi) := concentration C;
         local f;
-        lengthlimit := defaultLengthLimit(ring C, length C, opts.LengthLimit);
+        lengthlimit := defaultLengthLimit(ring C, hi - lo, opts.LengthLimit);
         if lo === hi then (
             -- if C has only one nonzero module, use the faster free resolution code
             -- which is also important for Yoneda ext.
@@ -1029,11 +1029,11 @@ resolutionMapPrivate(Complex, Boolean) := ComplexMap => opts -> (C, isEpi) -> (
             -- of the base case above.
             f = naiveTruncation(f,(lo,infinity));
             );
-        f.cache.LengthLimit = if length source f < lengthlimit then infinity else lengthlimit;
+        f.cache.LengthLimit = if -difference concentration source f < lengthlimit then infinity else lengthlimit;
         C.cache.resolutionMap = f;
         );
     fC := C.cache.resolutionMap;
-    if opts.LengthLimit < length source fC
+    if opts.LengthLimit < -difference concentration source fC
     then naiveTruncation(fC, (0, opts.LengthLimit))
     else fC
     )
