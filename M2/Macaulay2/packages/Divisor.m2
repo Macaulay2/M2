@@ -75,7 +75,7 @@ export{
     --general useful functions not directly related to divisors
     "idealPower", --added checks
     "reflexify", --added checks
-	"isReflexive", --added checks
+	--"isReflexive", --added checks
 	"reflexivePower", --added checks
 	"torsionSubmodule", --added checks
 	"dualize", --added checks
@@ -1712,14 +1712,12 @@ reflexifyModule(Module) := Module => o-> (M1) -> (
 	)
 );
 
-isReflexive = method(Options => {Strategy => NoStrategy, KnownDomain=>true});
-
-isReflexive(Module) := Boolean => o -> (M1) ->(
+isReflexive Module := Boolean => { Strategy => NoStrategy, KnownDomain => true } >> o -> M1 -> (
 	g := reflexify(M1, ReturnMap => true, Strategy => o.Strategy, KnownDomain=>o.KnownDomain);
 	(-1 == dim coker g)
 );
 
-isReflexive(Ideal) := Boolean => o-> (I1) ->(
+isReflexive Ideal := Boolean => { Strategy => NoStrategy, KnownDomain => true } >> o -> I1 -> (
 	J1 := reflexify(I1, Strategy => o.Strategy, KnownDomain=>o.KnownDomain);
 	(J1 == I1)
 );
@@ -3079,7 +3077,7 @@ doc ///
 	 Text
 	  In the above, when KnownDomain=>true (an incorrect assumption), this function returns the incorrect answer for $I$.
 	SeeAlso
-	 isReflexive
+	 (isReflexive, Ideal)
 	 dualize
 ///
 
@@ -3195,7 +3193,7 @@ doc ///
 	  J1 == J2
 	SeeAlso
 	 reflexify
-	 isReflexive
+	 (isReflexive, Ideal)
 ///
 
 
@@ -3309,19 +3307,18 @@ doc ///
 
 doc ///
 	Key
-	 isReflexive
 	 (isReflexive, Ideal)
 	 (isReflexive, Module)
-	 [isReflexive, Strategy]
-	 [isReflexive, KnownDomain]
+	 [(isReflexive, Ideal), Strategy]
+	 [(isReflexive, Ideal), KnownDomain]
+	 [(isReflexive, Module), Strategy]
+	 [(isReflexive, Module), KnownDomain]
 	Headline
 	 whether an ideal or module is reflexive
 	Usage
-	 isReflexive( I1 )
-	 isReflexive( M1 )
+	 isReflexive I
 	Inputs
-	 I1: Ideal
-	 M1: Module
+	 I:{Ideal,Module}
 	 Strategy => Symbol
 	   specify a strategy for the internal call to reflexify
 	 KnownDomain => Boolean
