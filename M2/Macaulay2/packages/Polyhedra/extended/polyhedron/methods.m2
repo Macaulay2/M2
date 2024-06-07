@@ -201,8 +201,8 @@ polarFace(Polyhedron, Polyhedron) := (f, P) -> (
 -- PURPOSE : Checks if a lattice polytope is reflexive
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
-isReflexive = method(TypicalValue => Boolean)
-isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
+isReflexive = method(TypicalValue => Boolean, Options => true)
+isReflexive Polyhedron := {} >> o -> (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
 
 -- PURPOSE : Triangulating a compact Polyhedron
