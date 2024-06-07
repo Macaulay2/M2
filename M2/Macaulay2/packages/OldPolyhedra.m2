@@ -93,7 +93,7 @@ export {"PolyhedralObject",
 	"isReflexive",
 	"isSimplicial", 
 	--"isSmooth", 
-	"isVeryAmple",
+	--"isVeryAmple",
 	"boundaryMap", 
 	"dualFaceLattice", 
 	"faceLattice",
@@ -1499,8 +1499,7 @@ isSmooth Fan := {} >> o -> F -> (
 -- PURPOSE : Checks if a polytope is very ample
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
-isVeryAmple = method()
-isVeryAmple Polyhedron := P -> (
+isVeryAmple Polyhedron := {} >> o -> P -> (
      if not isCompact P then error("The polyhedron must be compact");
      if not dim P == ambDim P then error("The polyhedron must be full dimensional");
      if not isLatticePolytope P then error("The polyhedron must be a lattice polytope");

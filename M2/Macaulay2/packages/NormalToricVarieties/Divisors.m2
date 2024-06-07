@@ -488,7 +488,7 @@ isAmple ToricDivisor := Boolean => D -> (
 	 ) 
      );
 
-isVeryAmple ToricDivisor := Boolean => D -> (
+isVeryAmple ToricDivisor := {} >> o -> D -> (
     if not isAmple D then return false;
     if isSmooth variety D then return true;    
     V := vertices D;

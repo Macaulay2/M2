@@ -49,7 +49,7 @@ export {
    "isReflexive",
    "isSimplicial", 
    --"isSmooth",
-   "isVeryAmple",
+   --"isVeryAmple",
    "faces", 
    "facesAsPolyhedra",
    "facesAsCones",
