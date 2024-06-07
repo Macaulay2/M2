@@ -335,9 +335,9 @@ document {
 	       {1,4,6},{1,5,4},{1,5,5},{1,5,6},{1,5,7},{1,6,3},
 	       {1,6,4},{1,6,5},{1,6,6},{1,6,7},{1,7,4},{1,7,5},
 	       {1,7,6},{1,7,8},{1,8,4},{1,8,5},{1,8,6}})",
-    	  "halfspaces = fourierMotzkin raylist",
-	  "numgens source halfspaces#0",
-	  "extremalRays = fourierMotzkin halfspaces",
+	  "halfspaceList = fourierMotzkin raylist",
+	  "numgens source halfspaceList#0",
+	  "extremalRays = fourierMotzkin halfspaceList",
 	  "numgens source extremalRays#0"
 	  },
      
@@ -356,13 +356,14 @@ document {
      Key => "Finding the facets of the cyclic polytope",
      
      "The ", EM "cyclic polytope", " is the convex hull of distinct
-     points on the moment curve.  The function ", TT "cyclicPolytope",
-     " produces a matrix such that columns generate the cyclic ", 
-     TT "d", "-polytope with ", TT "n", " vertices.",
+     points on the moment curve. We can either use the function ", TO "cyclicPolytope",
+     " to produce the cyclic ", TT "d", "-polytope with ", TT "n", " vertices,
+     or directly construct a matrix whose columns are the vertices of the polytope.",
         
      EXAMPLE {
-	  "cyclicPolytope = (d,n) -> map(ZZ^d, ZZ^n, (i,j) -> j^(i+1));",
-	  "vertices = cyclicPolytope(4,8)"
+	  "P = cyclicPolytope(4, 8)",
+	  "vertexList = vertices P",
+	  "vertexList == map(QQ^4, QQ^8, (i,j) -> j^(i+1))"
 	  },
      
      PARA{}, "To find the halfspace representation for the convex hull
@@ -376,14 +377,14 @@ document {
      R := ring V;
      n := numgens source V;
      map(R^1, R^n, {toList(n:1)}) || V);",
-	  "polyCone = homogenizePolytope vertices",
+	  "polyCone = homogenizePolytope vertexList",
 	  "H = fourierMotzkin polyCone",
-	  "halfspaces = H#0",
-	  "numgens source halfspaces"
+	  "halfspaceList = H#0",
+	  "numgens source halfspaceList"
 	  },
      
      "Since ", TT "H#1", " is zero, the polyhedral cone spans 5-space.
-     The columns in the matrix ", TT "halfspaces", " describe a
+     The columns in the matrix ", TT "halfspaceList", " describe a
      complete minimal system of inequalities for the convex hull of
      these points.  In particular, this polytope has 20 facets.",
           
@@ -391,10 +392,10 @@ document {
      compute the facet-vertex incidence matrix.",
 
      EXAMPLE {
-	  "inequalityVector = transpose submatrix(halfspaces,{0},)",
-	  "inequalityMatrix = transpose submatrix(halfspaces,{1..4},)",
+	  "inequalityVector = transpose submatrix(halfspaceList,{0},)",
+	  "inequalityMatrix = transpose submatrix(halfspaceList,{1..4},)",
           "ones = map(ZZ^1,ZZ^8,{toList(8:1)})",
-	  "M = (inequalityMatrix * vertices) + (ones ** inequalityVector)",
+	  "M = (inequalityMatrix * vertexList) + (ones ** inequalityVector)",
 	  "incidence = matrix table(20,8, (i,j) -> if M_(i,j) == 0 then 1 else 0)"
 	  },
 
@@ -493,7 +494,7 @@ document {
         
      EXAMPLE {
 	  "permutahedron = d -> transpose matrix permutations toList(1..d+1);",
-	  "vertices = permutahedron 3",
+	  "vertexList = permutahedron 3",
 	  },
      
      PARA{}, "To find the halfspace representation for permutahedron, we
@@ -506,16 +507,16 @@ document {
      R := ring V;
      n := numgens source V;
      map(R^1, R^n, {toList(n:1)}) || V);",
-	  "H = fourierMotzkin homogenizePolytope vertices",
+	  "H = fourierMotzkin homogenizePolytope vertexList",
 	  "transpose H#1",
-	  "halfspaces = H#0;",
-	  "numgens source halfspaces",
+	  "halfspaceList = H#0;",
+	  "numgens source halfspaceList",
 	  },
      
      "Since ", TT "H#1", " has one column vector, the polyhedral cone
      spans a 4-dimensional subspace of 5-space.  Indeed, the sum of
      the components for each vertex is 10.  The columns in the matrix
-     ", TT "halfspaces", " describe a complete minimal system of
+     ", TT "halfspaceList", " describe a complete minimal system of
      inequalities for permutahedron.  In particular, this polytope has
      14 facets.",
           
@@ -523,11 +524,11 @@ document {
      compute the facet-vertex incidence matrix.",
      
      EXAMPLE {
-	  "inequalityMatrix = transpose submatrix(halfspaces,{1..4},)",
-	  "M = inequalityMatrix * vertices",
+	  "inequalityMatrix = transpose submatrix(halfspaceList,{1..4},)",
+	  "M = inequalityMatrix * vertexList",
 	  "incidence = matrix table(14,24, (i,j) -> if M_(i,j) == 0 then 1 else 0)",
 	  "vertexDegree = map(ZZ^1,ZZ^14,{toList(14:1)}) * incidence",
-	  "facets = transpose(incidence * transpose map(ZZ^1,ZZ^24,{toList(24:1)}))"
+	  "facetList = transpose(incidence * transpose map(ZZ^1,ZZ^24,{toList(24:1)}))"
 	  },
 
      "We see that each vertex has degree 3.  Moreover, there are 8
