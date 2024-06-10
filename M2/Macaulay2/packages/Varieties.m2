@@ -670,7 +670,7 @@ idealSheaf ProjectiveVariety := opts -> X -> sheaf ideal (ring X).relations
 
 -- TODO: document
 canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
-canonicalBundle ProjectiveVariety := opts -> X -> determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
+canonicalBundle ProjectiveVariety := opts -> X -> dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 -----------------------------------------------------------------------------
 -- singularLocus
