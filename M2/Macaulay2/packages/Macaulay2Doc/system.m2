@@ -670,9 +670,6 @@ doc ///
     Text
       If @VAR "dir"@ is omitted, then the current working directory
       is changed to the user's home directory.
-    Example
-      changeDirectory()
-      currentDirectory()
   SeeAlso
     currentDirectory
 ///
