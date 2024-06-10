@@ -1,0 +1,12 @@
+HOMEPAGE = https://github.com/broune/mathicgb
+SUBMODULE = true
+VPATH = @srcdir@
+VERSION = 20240205-4cd2bd1357
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PRECONFIGURE = autoreconf -i
+CONFIGOPTIONS = --disable-shared PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=@GTEST_PATH@ --with-gtest=yes
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mathicgb/Makefile
+# Local Variables:
+# compile-command: "make -w -C $M2BUILDDIR/libraries/mathicgb "
+# End:
