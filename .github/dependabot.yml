@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-action-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/M2/Macaulay2/editors/prism"
+    schedule:
+      interval: "monthly"
+    groups:
+      prism-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/M2/Macaulay2/packages/Style"
+    schedule:
+      interval: "monthly"
+    groups:
+      style-dependencies:
+        patterns:
+          - "*"
