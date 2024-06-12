@@ -342,6 +342,7 @@ export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
 export angleBarListClass := newtypeof(visibleListClass);
 export RRiClass := newbignumbertype();
+export CCiClass := newbignumbertype();
 export pointerClass := newbasictype();
 export atomicIntClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!

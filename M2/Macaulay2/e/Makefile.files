@@ -86,6 +86,7 @@ INTERFACE = \
 	aring-RRi \
 	aring-RR \
 	aring-CC \
+	aring-CCi \
 	aring-RRR \
 	aring-CCC \
 	aring-tower \

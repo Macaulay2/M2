@@ -2076,6 +2076,7 @@ toExternalString(e:Expr):Expr := (
      is x:RRcell do toExpr(toExternalString(x.v))
      is x:RRicell do toExpr(toExternalString(x.v))
      is x:CCcell do toExpr(toExternalString(x.v))
+     is x:CCicell do toExpr(toExternalString(x.v))
      else WrongArg("a real or complex number")
      );
 setupfun("toExternalString0",toExternalString);

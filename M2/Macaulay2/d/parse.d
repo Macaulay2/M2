@@ -378,6 +378,7 @@ export Expr := (
      CCcell or
      RRcell or
      RRicell or
+     CCicell or
      Boolean or
      CodeClosure or
      CompiledFunction or

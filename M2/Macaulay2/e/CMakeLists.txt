@@ -181,6 +181,7 @@ set(SRCLIST
   ZZ
   ZZp
   aring-RRi
+  aring-CCi
   aring-CC
   aring-CCC
   aring-RR

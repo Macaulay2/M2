@@ -593,6 +593,12 @@ leftshiftfun(e:Expr):Expr := (
 			 then toExpr(x.v << toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
+	       is x:CCicell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v) 
+			 then toExpr(x.v << toLong(y.v))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
 	       else WrongArg(1,"an integral, real, or complex number"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
@@ -607,6 +613,9 @@ installMethod(Expr(LessLessS),RRiClass,ZZClass,
      );
 installMethod(Expr(LessLessS),CCClass,ZZClass,
      Expr(newCompiledFunction(leftshiftfun))
+     );
+installMethod(Expr(LessLessS),CCiClass,ZZClass,
+     Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
 
 rightshiftfun(e:Expr):Expr := (
@@ -638,6 +647,12 @@ rightshiftfun(e:Expr):Expr := (
 			 then toExpr(x.v >> toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
+	       is x:CCicell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v) 
+			 then toExpr(x.v >> toLong(y.v))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
 	       else  WrongArgZZ(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
@@ -652,6 +667,9 @@ installMethod(Expr(GreaterGreaterS),RRiClass,ZZClass,
      );
 installMethod(Expr(GreaterGreaterS),CCClass,ZZClass,
      Expr(newCompiledFunction(rightshiftfun))
+     );
+installMethod(Expr(GreaterGreaterS),CCiClass,ZZClass,
+     Expr(CompiledFunction(rightshiftfun,nextHash()))
      );
 
 unSingleton(e:Expr):Expr := (
@@ -702,6 +720,7 @@ exponent(e:Expr):Expr := (
      is x:RRcell do toExpr(exponent(x.v))	      -- # typical value: size2, RR, ZZ
      is x:RRicell do toExpr(exponent(x.v))	      -- # typical value: size2, RRi, ZZ
      is z:CCcell do toExpr(exponent(z.v))	      -- # typical value: size2, CC, ZZ
+     is z:CCicell do toExpr(exponent(z.v))	      -- # typical value: size2, CCi, ZZ
      else WrongArg("a number"));
 setupfun("size2",exponent);
 
@@ -711,6 +730,7 @@ realPart(e:Expr):Expr := (
      is RRcell do e
      is RRicell do e
      is z:CCcell do toExpr(realPart(z.v))
+     is z:CCicell do toExpr(realPart(z.v))
      is QQcell do e
      else WrongArg("a number"));
 setupfun("realPart0",realPart);
@@ -721,6 +741,7 @@ imaginaryPart(e:Expr):Expr := (
      is RRcell do zeroE
      is RRicell do zeroE
      is z:CCcell do toExpr(imaginaryPart(z.v))
+     is z:CCicell do toExpr(imaginaryPart(z.v))
      is QQcell do zeroE
      else WrongArg("a number"));
 setupfun("imaginaryPart0",imaginaryPart);

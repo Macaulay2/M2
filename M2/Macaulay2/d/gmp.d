@@ -59,21 +59,36 @@ export RRmutable := Pointer "mpfr_ptr";
 
 export CCmutable := { re:RRmutable, im:RRmutable };
 
+export CCimutable := { re:RRimutable, im:RRimutable };
+
 export CC := { re:RR, im:RR };
+
+export CCi := { re:RRi, im:RRi };
 
 export CCorNull := CC or null;
 
+export CCiorNull := CCi or null;
+
 export CCcell := {+v:CC};
+export CCicell := {+v:CCi};
 dummy(x:RR):string := "";
 dummyi(x:RRi):string := "";  -- Added for MPFI
 
 export tostringRRpointer := dummy;
 export tostringRRipointer := dummyi;  -- Added for MPFI
+export tostringCCipointer := dummyi;  -- Added for MPFI
 dummy(x:CC):string := "";
+dummyi(x:CCi):string := "";  -- Added for MPFI
 
 export tonetCCpointer := dummy;
 
 export tonetCCparenpointer := dummy;
+
+dummy(x:CCi):string := "";
+
+export tonetCCipointer := dummy;
+
+export tonetCCiparenpointer := dummy;
 
 
 export min(x:int,y:int):int := if x<y then x else y;
@@ -202,6 +217,8 @@ clear(x:RRmutable) ::= Ccode( void, "mpfr_clear(",  x, ")" );
 clear(x:RRimutable) ::= Ccode( void, "mpfi_clear(",  x, ")" );
 
 clear(z:CCmutable):void := ( clear(z.re); clear(z.im); );
+
+clear(z:CCimutable):void := ( clear(z.re); clear(z.im); );
 
 export moveToZZ(z:ZZmutable):ZZ := (
      y := GCmalloc(ZZmutable);
@@ -852,7 +869,11 @@ export (x:QQ) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRef(x);
 
 export realPart(z:CC):RR := z.re;
 
+export realPart(z:CCi):RRi := z.re;
+
 export imaginaryPart(z:CC):RR := z.im;
+
+export imaginaryPart(z:CCi):RRi := z.im;
 
 -- warning: these routines just check the sign bit, and don't verify finiteness!
 isPositive0(x:RR) ::=  1 == Ccode(int, "mpfr_sgn(", x, ")");
@@ -893,6 +914,7 @@ export isZero    (x:RR):bool := isZero0(x) && isfinite0(x);
 export isZero    (x:RRi):bool := isZero0(x) && isfinite0(x);
 
 export isZero    (x:CC):bool := isZero0(x.re) && isfinite0(x.re) && isZero0(x.im) && isfinite0(x.im);
+export isZero    (x:CCi):bool := isZero0(x.re) && isfinite0(x.re) && isZero0(x.im) && isfinite0(x.im);
 
 export defaultPrecision := ulong(53); -- should 53 be computed?
 
@@ -906,13 +928,23 @@ export exponent(x:RR):long := if isZero0(x) && isfinite0(x) then minExponent els
 export exponent(x:RRi):long := if isZero0(x) && isfinite0(x) then minExponent else if isfinite0(x) then exponent0(x) else maxExponent;
                                     
 export exponent(x:CC):long := max(exponent(x.re),exponent(x.im));
+export exponent(x:CCi):long := max(exponent(x.re),exponent(x.im));
 
 export newCCmutable(prec:ulong):CCmutable := CCmutable(newRRmutable(prec),newRRmutable(prec));
 
+export newCCimutable(prec:ulong):CCimutable := CCimutable(newRRimutable(prec),newRRimutable(prec));
+
 export moveToCC(y:CCmutable):CC := CC(moveToRR(y.re), moveToRR(y.im));
+
+export moveToCCi(y:CCimutable):CCi := CCi(moveToRRi(y.re), moveToRRi(y.im));
 
 export moveToCCandclear(z:CCmutable):CC := (
      w := moveToCC(z);
+     clear(z);
+     w);
+
+export moveToCCiandclear(z:CCimutable):CCi := (
+     w := moveToCCi(z);
      clear(z);
      w);
 
@@ -920,11 +952,17 @@ precision0(x:RR) ::= Ccode(ulong,"(unsigned long)mpfr_get_prec(", x, ")");
 
 precision0(x:RRi) ::= Ccode(ulong,"(unsigned  long)mpfi_get_prec(", x, ")");
 
+precision0(x:CC) ::= Ccode(ulong,"(unsigned long)mpfr_get_prec(", x, ")");
+
+precision0(x:CCi) ::= Ccode(ulong,"(unsigned  long)mpfi_get_prec(", x, ")");
+
 export precision(x:RR):ulong := precision0(x);
 
 export precision(x:RRi):ulong := precision0(x);
 
 export precision(x:CC):ulong := precision0(x.re);
+
+export precision(x:CCi):ulong := precision0(x.re);
 
 export toRR(x:RR,prec:ulong):RR := (
      if precision0(x) == prec then return x;
@@ -1134,39 +1172,123 @@ export toCC(x:RR,y:RR):CC := (
      else CC(toRR(x,precision0(y)),y)
     );
 
+export toCCi(x:RR,y:RR):CCi := (
+     if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRRi(prec); CCi(z,z))
+     else if ( isinf0(x) || isinf0(y) ) then (prec := precision0(x); z := infinityRRi(prec,1); CCi(z,z))
+     else if precision0(x) == precision0(y) then CCi(toRRi(x),toRRi(y))
+     else if precision0(x) < precision0(y) then CCi(toRRi(x),toRRi(y,precision0(x)))
+     else CCi(toRRi(x,precision0(y)),toRRi(y))
+    );
+
+export toCCi(x:RRi,y:RR):CCi := (
+     if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRRi(prec); CCi(z,z))
+     else if ( isinf0(x) || isinf0(y) ) then (prec := precision0(x); z := infinityRRi(prec,1); CCi(z,z))
+     else if precision0(x) == precision0(y) then CCi(x,toRRi(y))
+     else if precision0(x) < precision0(y) then CCi(x,toRRi(y,precision0(x)))
+     else CCi(toRRi(x,precision0(y)),toRRi(y))
+    );
+
+export toCCi(x:RR,y:RRi):CCi := (
+     if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRRi(prec); CCi(z,z))
+     else if ( isinf0(x) || isinf0(y) ) then (prec := precision0(x); z := infinityRRi(prec,1); CCi(z,z))
+     else if precision0(x) == precision0(y) then CCi(toRRi(x),y)
+     else if precision0(x) < precision0(y) then CCi(toRRi(x),toRRi(y,precision0(x)))
+     else CCi(toRRi(x,precision0(y)),y)
+    );
+
+export toCCi(x:RRi,y:RRi):CCi := (
+     if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRRi(prec); CCi(z,z))
+     else if ( isinf0(x) || isinf0(y) ) then (prec := precision0(x); z := infinityRRi(prec,1); CCi(z,z))
+     else if precision0(x) == precision0(y) then CCi(x,y)
+     else if precision0(x) < precision0(y) then CCi(x,toRRi(y,precision0(x)))
+     else CCi(toRRi(x,precision0(y)),y)
+    );
+
 export infinityCC(prec:ulong):CC := (x := infinityRR(prec,1); toCC(x,x));
+
+export infinityCCi(prec:ulong):CCi := (x := infinityRRi(prec,1); toCCi(x,x));
 
 export nanCC(prec:ulong):CC := (x := nanRR(prec); toCC(x,x));
 
+export nanCCi(prec:ulong):CCi := (x := nanRRi(prec); toCCi(x,x));
+
 export toCC(x:RR):CC := CC(x,toRR(0,precision0(x)));
+
+export toCCi(x:RRi):CCi := CCi(x,toRRi(0,precision0(x)));
+
+export toCCi(x:RR):CCi := CCi(toRRi(x),toRRi(0,precision0(x)));
 
 export toCC(x:int,y:RR):CC := CC(toRR(x,precision0(y)),y);
 
+export toCCi(x:int,y:RRi):CCi := CCi(toRRi(x,precision0(y)),y);
+
+export toCCi(x:int,y:RR):CCi := CCi(toRRi(x,precision0(y)),toRRi(y));
+
 export toCC(x:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+
+export toCCi(x:RRi,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(0,prec));
+
+export toCCi(x:RR,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(0,prec));
 
 export toCC(x:CC,prec:ulong):CC := (
      if precision0(x.re) == prec then x
      else CC(toRR(x.re,prec),toRR(x.im,prec)));
 
+export toCCi(x:CCi,prec:ulong):CCi := (
+     if precision0(x.re) == prec then x
+     else CCi(toRRi(x.re,prec),toRRi(x.im,prec)));
+
+export toCCi(x:CC,prec:ulong):CCi := (
+     if precision0(x.re) == prec then CCi(toRRi(x.re,prec),toRRi(x.im,prec))
+     else CCi(toRRi(x.re,prec),toRRi(x.im,prec)));
+
 export toCC(x:RR,y:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
+
+export toCCi(x:RRi,y:RRi,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(y,prec));
+
+export toCCi(x:RR,y:RR,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(y,prec));
+
+export toCCi(x:RRi,y:RR,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(y,prec));
+
+export toCCi(x:RR,y:RRi,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(y,prec));
 
 export toCC(x:QQ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 
+export toCCi(x:QQ,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(0,prec));
+
 export toCC(x:ZZ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+
+export toCCi(x:ZZ,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(0,prec));
 
 export toCC(x:QQ):CC := toCC(x,defaultPrecision);
 
+export toCCi(x:QQ):CCi := toCCi(x,defaultPrecision);
+
 export toCC(x:ZZ):CC := toCC(x,defaultPrecision);
+
+export toCCi(x:ZZ):CCi := toCCi(x,defaultPrecision);
+
+export toCCi(x:CC):CCi := toCCi(x,defaultPrecision);
 
 export toCC(x:int,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 
+export toCCi(x:int,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(0,prec));
+
 export toCC(x:int,y:int,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
+
+export toCCi(x:int,y:int,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(y,prec));
 
 export toCC(x:ulong,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 
+export toCCi(x:ulong,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(0,prec));
+
 export toCC(x:double,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 
+export toCCi(x:double,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(0,prec));
+
 export toCC(x:double,y:double,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
+
+export toCCi(x:double,y:double,prec:ulong):CCi := CCi(toRRi(x,prec),toRRi(y,prec));
 
 export toFloat(x:RR):float := Ccode(float, "mpfr_get_flt(", x, ", MPFR_RNDN)");
 export toFloat(x:RRi):float := toFloat(midpointRR(x));
@@ -1197,9 +1319,15 @@ export isnan(x:RRi):bool := isnan0(x);
 
 export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
 
+export isfinite(x:CCi):bool := isfinite0(x.re) && isfinite0(x.im);
+
 export isinf(x:CC):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isnan0(x.re);
 
+export isinf(x:CCi):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isnan0(x.re);
+
 export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
+
+export isnan(x:CCi):bool := isnan0(x.re) || isnan0(x.im);
 
 export (x:RR) === (y:RR):bool := (			    -- weak equality
      Ccode( void, "mpfr_clear_flags()" );
@@ -1231,6 +1359,10 @@ export strictequality(x:RRi,y:RRi):bool := (
 
 compare0(x:RR, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
 
+--compare0(x:RRi, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
+
+compare0(x:RR, y:RRi) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
+
 compare0(x:RRi, y:RRi) ::= Ccode( int,  "(mpfr_clear_flags(),mpfi_cmp(",  x, ",",  y, "))" ); -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export compare(x:RR, y:RR):int := compare0(x,y);	    -- use flagged(), too!
@@ -1241,7 +1373,25 @@ export (x:RR)  <  (y:RR) : bool := compare0(x,y) <  0 && !flagged0();
 export (x:RR)  >= (y:RR) : bool := compare0(x,y) >= 0 && !flagged0();
 
 export (x:RR)  <= (y:RR) : bool := compare0(x,y) <= 0 && !flagged0();
-                                    
+
+--export compare(x:RRi, y:RR):int := compare0(x,y);	    -- use flagged(), too!
+--export (x:RRi)  >  (y:RR) : bool := compare0(x,y) >  0 && !flagged0();
+
+--export (x:RRi)  <  (y:RR) : bool := compare0(x,y) <  0 && !flagged0();
+
+--export (x:RRi)  >= (y:RR) : bool := (compare0(x,y)>0 || (leftRR(x) == y)) && !flagged0();
+
+--export (x:RRi)  <= (y:RR) : bool := (compare0(x,y)<0 || (rightRR(x) == y))  && !flagged0();
+
+--export compare(x:RR, y:RRi):int := compare0(x,y);	    -- use flagged(), too!
+--export (x:RR)  >  (y:RRi) : bool := compare0(x,y) >  0 && !flagged0();
+
+--export (x:RR)  <  (y:RRi) : bool := compare0(x,y) <  0 && !flagged0();
+
+--export (x:RR)  >= (y:RRi) : bool := (compare0(x,y)>0 || (x == rightRR(y))) && !flagged0();
+
+--export (x:RR)  <= (y:RRi) : bool := (compare0(x,y)<0 || (x == leftRR(y))) && !flagged0();
+
 export compare(x:RRi, y:RRi):int := compare0(x,y);	    -- use flagged(), too!
 export (x:RRi)  >  (y:RRi) : bool := compare0(x,y) >  0 && !flagged0();
 
@@ -1288,7 +1438,9 @@ export (x:RR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
 export (x:RRi)  <= (y:int) : bool :=  (compare0(x,long(y)) < 0 || rightRR(x) === y) && !flagged0();
 
 export (x:CC) === (y:int) : bool :=  x.re === y && x.im === 0;
-                                    
+
+export (x:CCi) === (y:int) : bool :=  x.re === y && x.im === 0;
+
 compare0(x:RR, y:double) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_d(",  x, ",", y, "))" );  
 
 export compare(x:RR, y:double):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_d(",  x, ",", y, "))" );
@@ -1428,7 +1580,10 @@ export hash(x:RRi):int := int(precision0(x)) + Ccode(int,
     ); -- End added for MPFI
 
 export hash(x:CC):int := 123 + hash(x.re) + 111 * hash(x.im);
-     
+
+export hash(x:CCi):int := 137 + hash(x.re) + 139 * hash(x.im);
+
+
 export (x:RR) + (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_add(", z, ",",  x, ",",  y, ", MPFR_RNDN)" );
@@ -1682,8 +1837,11 @@ export sqrt(x:RR):RR := (
 export sqrt(x:RRi):RRi := (
      z := newRRimutable(precision0(x));
      Ccode( void, "mpfi_sqrt(",  z, ",",  x, ")" );
-     moveToRRiandclear(z));
-
+     moveToRRiandclear(z)
+     );
+export negSqrt(x:RRi):CCi := (
+     toCCi(toRRi(0,precision0(x)),toRRi(sqrt(leftRR(-x)),sqrt(rightRR(-x))))
+     );
 export (x:RR) ^ (n:long) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_si(",  z, ",",  x, ",", n, ", MPFR_RNDN)" );
@@ -2065,12 +2223,18 @@ export (x:RRi) >> (n:int) : RRi := x << long(-n);
 
 export (x:CC) + (y:CC) : CC := toCC(x.re+y.re, x.im+y.im);
 
+export (x:CCi) + (y:CCi) : CCi := toCCi(x.re+y.re, x.im+y.im);
+
 export (x:CC) - (y:CC) : CC := toCC(x.re-y.re, x.im-y.im);
+
+export (x:CCi) - (y:CCi) : CCi := toCCi(x.re-y.re, x.im-y.im);
 
 export (x:RR) - (y:CC) : CC := toCC(x-y.re,-y.im);
 
 export (x:int) - (y:CC) : CC := toCC(x-y.re,-y.im);
 export (x:CC) - (y:int) : CC := toCC(x.re-y,x.im);
+
+export (x:int) - (y:CCi) : CCi := toCCi(x-y.re,-y.im);
 
 export (x:CC) - (y:RR) : CC := toCC(x.re-y,x.im);
 
@@ -2082,11 +2246,31 @@ export (x:int) + (y:CC) : CC := toCC(x+y.re,y.im);
 
 export -(y:CC) : CC := toCC(-y.re,-y.im);
 
+export -(y:CCi) : CCi := toCCi(-y.re,-y.im);
+
 export (x:CC) * (y:RR) : CC := (
      if isfinite0(x.re) && isfinite0(x.im) && isfinite0(y)
      then toCC(x.re*y, x.im*y)
      else if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
      else infinityCC(min(precision(x),precision(y))));
+
+export (x:CC) * (y:RRi) : CCi := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
+     then toCCi(y*x.re, y*x.im)
+     else if isnan(x) || isnan(y) then nanCCi(min(precision(x),precision(y)))
+     else infinityCCi(min(precision(x),precision(y))));
+
+export (x:CCi) * (y:RR) : CCi := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite0(y)
+     then toCCi(x.re*y, x.im*y)
+     else if isnan(x) || isnan(y) then nanCCi(min(precision(x),precision(y)))
+     else infinityCCi(min(precision(x),precision(y))));
+
+export (x:CCi) * (y:RRi) : CCi := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
+     then toCCi(x.re*y, x.im*y)
+     else if isnan(x) || isnan(y) then nanCCi(min(precision(x),precision(y)))
+     else infinityCCi(min(precision(x),precision(y))));
 
 export (y:RR) * (x:CC) : CC := (
      if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
@@ -2094,25 +2278,73 @@ export (y:RR) * (x:CC) : CC := (
      else if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
      else infinityCC(min(precision(x),precision(y))));
 
+export (y:RRi) * (x:CC) : CCi := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
+     then toCCi(y*x.re, y*x.im)
+     else if isnan(x) || isnan(y) then nanCCi(min(precision(x),precision(y)))
+     else infinityCCi(min(precision(x),precision(y))));
+
+export (y:RR) * (x:CCi) : CCi := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
+     then toCCi(x.re*y, x.im*y)
+     else if isnan(x) || isnan(y) then nanCCi(min(precision(x),precision(y)))
+     else infinityCCi(min(precision(x),precision(y))));
+
+export (y:RRi) * (x:CCi) : CCi := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
+     then toCCi(x.re*y, x.im*y)
+     else if isnan(x) || isnan(y) then nanCCi(min(precision(x),precision(y)))
+     else infinityCCi(min(precision(x),precision(y))));
+
 export (y:int) * (x:CC) : CC := (
      if isinf(x) && y != 0
      then infinityCC(precision(x))
      else toCC(x.re*y, x.im*y));
+
+export (y:int) * (x:CCi) : CCi := (
+     if isinf(x) && y != 0
+     then infinityCCi(precision(x))
+     else toCCi(x.re*y, x.im*y));
 
 export (x:CC) * (y:ZZ) : CC := (
      if isinf(x) && !isZero(y)
      then infinityCC(precision(x))
      else toCC(x.re*y, x.im*y));
 
+export (x:CCi) * (y:ZZ) : CCi := (
+     if isinf(x) && !isZero(y)
+     then infinityCCi(precision(x))
+     else toCCi(x.re*y, x.im*y));
+
 export (y:ZZ) * (x:CC) : CC := (
      if isinf(x) && !isZero(y)
      then infinityCC(precision(x))
      else toCC(x.re*y, x.im*y));
 
+export (y:ZZ) * (x:CCi) : CCi := (
+     if isinf(x) && !isZero(y)
+     then infinityCCi(precision(x))
+     else toCCi(x.re*y, x.im*y));
+
 export (x:CC) * (y:CC) : CC := (
      if isinf(x) && !isZero(y) && !isnan(y) || isinf(y) && !isZero(x) && !isnan(x)
      then infinityCC(min(precision(x),precision(y)))
      else toCC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im));
+
+export (x:CC) * (y:CCi) : CCi := (
+     if isinf(x) && !isZero(y) && !isnan(y) || isinf(y) && !isZero(x) && !isnan(x)
+     then infinityCCi(min(precision(x),precision(y)))
+     else toCCi(y.re*x.re-y.im*x.im, y.im*x.re+y.re*x.im));
+
+export (x:CCi) * (y:CC) : CCi := (
+     if isinf(x) && !isZero(y) && !isnan(y) || isinf(y) && !isZero(x) && !isnan(x)
+     then infinityCCi(min(precision(x),precision(y)))
+     else toCCi(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im));
+
+export (x:CCi) * (y:CCi) : CCi := (
+     if isinf(x) && !isZero(y) && !isnan(y) || isinf(y) && !isZero(x) && !isnan(x)
+     then infinityCCi(min(precision(x),precision(y)))
+     else toCCi(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im));
 
 export (x:CC) / (y:RR) : CC := (
      if isZero(y) && !isnan(x) && !isZero(x)
@@ -2124,17 +2356,33 @@ export (x:CC) / (y:int) : CC := (
      then infinityCC(precision(x))
      else toCC(x.re/y, x.im/y));
 
+export (x:CCi) / (y:int) : CCi := (
+     if y == 0 && !isnan(x) && !isZero(x)
+     then infinityCCi(precision(x))
+     else toCCi(x.re/y, x.im/y));
+
 export conj(x:CC):CC := toCC(x.re,-x.im);
 
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 
+export norm2(x:CCi):RRi := x.re*x.re + x.im*x.im;
+
 export (x:CC) << (n:long) : CC := if n == long(0) then x else CC(x.re<<n,x.im<<n);
+
+export (x:CCi) << (n:long) : CCi := if n == long(0) then x else CCi(x.re<<n,x.im<<n);
 
 export (x:CC) >> (n:long) : CC := if n == long(0) then x else CC(x.re>>n,x.im>>n);
 
+export (x:CCi) >> (n:long) : CCi := if n == long(0) then x else CCi(x.re>>n,x.im>>n);
+
 export (x:CC) << (n:int) : CC := if n == 0 then x else CC(x.re<<n,x.im<<n);
 
+export (x:CCi) << (n:int) : CCi := if n == 0 then x else CCi(x.re<<n,x.im<<n);
+
 export (x:CC) >> (n:int) : CC := if n == 0 then x else CC(x.re>>n,x.im>>n);
+
+export (x:CCi) >> (n:int) : CCi := if n == 0 then x else CCi(x.re>>n,x.im>>n);
+
 
 export inverse(z:CC):CC := (
      if isfinite(z) then 
@@ -2147,29 +2395,77 @@ export inverse(z:CC):CC := (
      else if isinf(z) then toCC(0,0,precision(z))
      else nanCC(precision(z)));
 
+export inverse(z:CCi):CCi := (
+     if isfinite(z) then 
+     if isZero0(z.re) && isZero0(z.im) then infinityCCi(precision0(z.re)) 
+     else (
+     	  expon := exponent(z);
+     	  if expon > 10000 || expon < -10000 then z = z >> expon else expon = long(0);
+     	  n2 := norm2(z);
+     	  toCCi((z.re/n2) >> expon, -(z.im/n2) >> expon))
+     else if isinf(z) then toCCi(0,0,precision(z))
+     else nanCCi(precision(z)));
+
+
 export (x:CC) / (y:CC) : CC := x * inverse(y);
 
+export (x:CCi) / (y:CC) : CCi := x * inverse(y);
+
+export (x:CCi) / (y:CCi) : CCi := toCCi((x.re * y.re+ x.im * y.im)/(y.re * y.re + y.im * y.im),(x.im * y.re- x.re * y.im)/(y.re * y.re + y.im * y.im));
+
 export (x:RR) / (y:CC) : CC := x * inverse(y);
+
+export (x:RRi) / (y:CC) : CCi := x * inverse(y);
 
 export (x:ZZ) / (y:CC) : CC := x * inverse(y);
 
 export (x:int) / (y:CC) : CC := x * inverse(y);
 
+export (x:int) / (y:CCi) : CCi := toCCi((y.re+y.im)/(y.re * y.re + y.im * y.im),(y.re-y.im)/(y.re * y.re + y.im * y.im));
+
 export strictequality(x:CC,y:CC):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
-     
+
+export strictequality(x:CCi,y:CCi):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
+
 export (x:CC) === (y:CC) : bool := x.re === y.re && x.im === y.im;
+
+export (x:CCi) === (y:CC) : bool := x.re === y.re && x.im === y.im;
+
+export (x:CC) === (y:CCi) : bool := x.re === y.re && x.im === y.im;
+
+export (x:CCi) === (y:CCi) : bool := x.re === y.re && x.im === y.im;
 
 export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;
 
+export (x:CC) === (y:RRi) : bool := x.re === y && x.im === 0;
+
+export (x:CCi) === (y:RRi) : bool := x.re === y && x.im === 0;
+
+export (x:CCi) === (y:RR) : bool := x.re === y && x.im === 0;
+
 export (x:RR) === (y:CC) : bool := x === y.re && y.im === 0;
+
+export (x:RRi) === (y:CC) : bool := x === y.re && y.im === 0;
+
+export (x:RRi) === (y:CCi) : bool := x === y.re && y.im === 0;
+
+export (x:RR) === (y:CCi) : bool := x === y.re && y.im === 0;
 
 export (x:CC) === (y:ZZ) : bool := x.re === y && x.im === 0;
 
+export (x:CCi) === (y:ZZ) : bool := x.re === y && x.im === 0;
+
 export (x:ZZ) === (y:CC) : bool := x === y.re && y.im === 0;
+
+export (x:ZZ) === (y:CCi) : bool := x === y.re && y.im === 0;
 
 export (x:CC) === (y:QQ) : bool := x.re === y && x.im === 0;
 
+export (x:CCi) === (y:QQ) : bool := x.re === y && x.im === 0;
+
 export (x:QQ) === (y:CC) : bool := x === y.re && y.im === 0;
+
+export (x:QQ) === (y:CCi) : bool := x === y.re && y.im === 0;
 
 export compare(x:CC,y:CC):int := (
      if ( isinf(x.re) || isinf(y.re) || isinf(x.im) || isinf(y.im) ) then (
@@ -2179,6 +2475,8 @@ export compare(x:CC,y:CC):int := (
      r := compare(x.re,y.re);
      if flagged() || r != 0 then r
      else compare(x.im,y.im));
+
+
 
 export compare(x:CC,y:RR):int := (
      if ( isinf(x.re) || isinf(x.im) || isinf(y) ) then (
@@ -2198,7 +2496,17 @@ export compare(x:RR,y:CC):int := (
      if flagged() || r != 0 then r
      else -compare0(y.im,0));
 
+
 export compare(x:CC,y:ZZ):int := (
+     if ( isinf(x.re) || isinf(x.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+
+export compare(x:CCi,y:ZZ):int := (
      if ( isinf(x.re) || isinf(x.im) ) then (
        setflag0();
        return 0;
@@ -2216,7 +2524,25 @@ export compare(x:ZZ,y:CC):int := (
      if flagged() || r != 0 then r
      else -compare0(y.im,0));
 
+export compare(x:ZZ,y:CCi):int := (
+     if ( isinf(y.re) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
 export compare(x:CC,y:QQ):int := (
+     if ( isinf(x.re) || isinf(x.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+
+export compare(x:CCi,y:QQ):int := (
      if ( isinf(x.re) || isinf(x.im) ) then (
        setflag0();
        return 0;
@@ -2234,10 +2560,24 @@ export compare(x:QQ,y:CC):int := (
      if flagged() || r != 0 then r
      else -compare0(y.im,0));
 
+export compare(x:QQ,y:CCi):int := (
+     if ( isinf(y.re) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
 export abs(x:CC):RR := (
      z := newRRmutable(precision(x));
      Ccode( void, "mpfr_hypot(", z, ",", x.re, ",", x.im, ",MPFR_RNDN)" );
      moveToRRandclear(z));
+
+export abs(x:CCi):RRi := (
+     z := newRRimutable(precision(x));
+     Ccode( void, "mpfi_hypot(", z, ",", x.re, ",", x.im,")");
+     moveToRRiandclear(z));
 
 header "#include <complex.h> ";
 
@@ -2245,6 +2585,20 @@ export sqrt(x:CC):CC := (
      z := newCCmutable(precision(x));
      Ccode( void, "mpfc_sqrt(", z, ",", x, ")" );	    -- see ../e/complex.c
      moveToCCandclear(z));
+
+export sqrt(x:CCi):CCi := (
+	  a := sqrt(toCC(leftRR(x.re),leftRR(x.im))).re;
+	  b := sqrt(toCC(leftRR(x.re),leftRR(x.im))).im;
+	  c := sqrt(toCC(rightRR(x.re),rightRR(x.im))).re;
+	  d := sqrt(toCC(rightRR(x.re),rightRR(x.im))).im;
+	  e := sqrt(toCC(rightRR(x.re),leftRR(x.im))).re;
+	  f := sqrt(toCC(rightRR(x.re),leftRR(x.im))).im;
+	  g := sqrt(toCC(leftRR(x.re),rightRR(x.im))).re;
+	  h := sqrt(toCC(leftRR(x.re),rightRR(x.im))).im;
+	  if leftRR(x.im) >= 0 then return toCCi(toRRi(a,c),toRRi(f,h));             
+	  if leftRR(x.im) <= 0 && rightRR(x.im) >= 0 then return toCCi(toRRi(a,c),toRRi(b,h));
+	  if leftRR(x.im) < 0 then toCCi(toRRi(g,e),toRRi(b,d))             
+	  );
 
 -- real transcendental functions
 
@@ -2583,7 +2937,11 @@ export sign(x:RRi):bool := 0 != Ccode(int,"mpfi_is_neg(",x,")");
 
 export exp(z:CC):CC := exp(z.re) * toCC(cos(z.im),sin(z.im));
 
+export exp(z:CCi):CCi := exp(z.re) * toCCi(cos(z.im),sin(z.im));
+
 export log(z:CC):CC := toCC(log(abs(z)),atan2(z.im,z.re));
+
+export log(z:CCi):CCi := toCCi(log(abs(z)),atan2(z.im,z.re));
 
 export logc(x:RR):CC := (				    -- works also for x<0
      if x<0 then toCC(log(-x),pi(precision0(x))) else toCC(log(x)));
@@ -2634,6 +2992,7 @@ idiv(z:CC):CC := toCC(z.im, -z.re);
 eitimes(z:CC):CC := exp(itimes(z));
 emitimes(z:CC):CC := exp(mitimes(z));
 
+
 export cos(z:CC):CC := (eitimes(z) + emitimes(z))/2;
 
 export sin(z:CC):CC := idiv(eitimes(z) - emitimes(z))/2;
@@ -2664,11 +3023,19 @@ square(z:CC):CC := (
      else infinityCC(precision0(z.re))
     );
 
+square(z:CCi):CCi := (
+     if isfinite0(z.re) && isfinite0(z.im) then toCCi(z.re^long(2)-z.im^long(2),2*z.re*z.im)
+     else if isnan0(z.re) || isnan0(z.im) then nanCCi(precision0(z.re))
+     else infinityCCi(precision0(z.re))
+    );
+
 export acos(z:CC):CC := idiv(log(z+itimes(sqrt(1-square(z)))));
 
 export asin(z:CC):CC := idiv(log(sqrt(1-square(z))+itimes(z)));
 
 export abs2(z:CC):RR := z.re^long(2) + z.im^long(2);
+
+export abs2(z:CCi):RRi := z.re^long(2) + z.im^long(2);
 
 export atan(x:CC):CC := (
      if isnan(x) then return x;
@@ -2677,9 +3044,25 @@ export atan(x:CC):CC := (
      y2 := x.im << 1;
      toCC( atan2(x.re<<1,1-ss)>>1, log((ss+1+y2)/(ss+1-y2))>>2 ));
 
+export (x:RRi) ^ (y:CC):CCi := exp(log(x)*y);
+
+export (x:RRi) ^ (y:CCi):CCi := exp(log(x)*y);
+
 export (x:CC) ^ (y:CC):CC := exp(log(x)*y);
 
+export (x:CC) ^ (y:CCi):CCi := exp(log(x)*y);
+
+export (x:CCi) ^ (y:CCi):CCi := exp(log(x)*y);
+
+export (x:CCi) ^ (y:CC):CCi := exp(log(x)*y);
+
 export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
+
+export (x:CCi) ^ (y:RR):CCi := exp(log(x)*y);
+
+export (x:CC) ^ (y:RRi):CCi := exp(log(x)*y);
+
+export (x:CCi) ^ (y:RRi):CCi := exp(log(x)*y);
 
 export (x:CC) ^ (y:ZZ):CC := (
      if isZero0(y) then return toCC(1,0,precision0(x.re));
@@ -2696,7 +3079,25 @@ export (x:CC) ^ (y:ZZ):CC := (
 	 );
      exp(log(x)*y));
 
+export (x:CCi) ^ (y:ZZ):CCi := (
+     if isZero0(y) then return toCCi(1,0,precision0(x.re));
+     if isZero0(x.re) && isZero0(x.im) && isfinite0(x.re) && isfinite0(x.im) then return if isNegative0(y) then infinityCCi(precision0(x.re)) else x;
+     if isinf(x) then return if isNegative0(y) then toCCi(0,precision0(x.re)) else x;
+     if isLong(y) then (
+	  n := toLong(y);
+     	  if n == long(0) then return toCCi(1,precision(x));
+	  if n == long(1) then return x;
+	  if n == long(-1) then return inverse(x);
+	  if n == long(2) then return square(x);
+	  if n == long(-2) then return inverse(square(x));
+	  -- we could do a few more of these optimizations here...
+	 );
+     if isEven(y) then return square(x^(y >> 1))
+     else (return x*(x^(y-1))));
+
 export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
+
+export (x:RR) ^ (y:CCi):CCi := if isNegative(x) then exp(log(toCCi(x))*y) else exp(log(x)*y);
 
 export arrayZZ := array(ZZ);
 

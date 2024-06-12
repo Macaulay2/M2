@@ -33,6 +33,7 @@ enum RingID {
   ring_GFFlintBig,
   ring_GFFlintZech,
   ring_RRi,
+  ring_CCi,
   ring_RR,
   ring_CC,
   ring_RRR,

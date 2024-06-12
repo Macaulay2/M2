@@ -110,6 +110,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:RRcell do toExpr(yy.v === xx.v)			    -- # typical value: symbol ==, ZZ, RR, Boolean
       is yy:RRicell do toExpr(yy.v === xx.v)			-- # typical value: symbol ==, ZZ, RRi, Boolean
 	  is yy:CCcell do toExpr(yy.v === xx.v)			    -- # typical value: symbol ==, ZZ, CC, Boolean
+	  is yy:CCicell do toExpr(yy.v === xx.v)			    -- # typical value: symbol ==, ZZ, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
      is xx:SymbolClosure do (
@@ -123,6 +124,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, QQ, RR, Boolean
       is yy:RRicell do toExpr(yy.v === xx.v)			-- # typical value: symbol ==, QQ, RRi, Boolean
 	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, QQ, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, QQ, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
      is xx:RRcell do (
@@ -132,6 +134,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RR, RR, Boolean
       is yy:RRicell do toExpr(yy.v === xx.v)			-- # typical value: symbol ==, RR, RRi, Boolean
 	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RR, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RR, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
       is xx:RRicell do (
@@ -139,13 +142,27 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
                  is yy:ZZcell do toExpr(xx.v === yy.v)   -- # typical value: symbol ==, RRi, ZZ, Boolean
                  is yy:QQcell do toExpr(xx.v === yy.v)   -- # typical value: symbol ==, RRi, QQ, Boolean
                  is yy:RRcell do toExpr(xx.v === yy.v)   -- # typical value: symbol ==, RRi, RR, Boolean
-          else buildErrorPacket(EngineError("equality not implemented")))
+	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RRi, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RRi, CCi, Boolean
+          else equalmethod(x,y))
      is xx:CCcell do (
 	  when y
 	  is yy:ZZcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, ZZ, Boolean
 	  is yy:QQcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, QQ, Boolean
 	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, RR, Boolean
+	  is yy:RRicell do toExpr(xx.v === yy.v)  -- # typical value: symbol ==, CC, RRi, Boolean
 	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, CCi, Boolean
+	  else equalmethod(x,y)
+	  )
+     is xx:CCicell do (
+	  when y
+	  is yy:ZZcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, ZZ, Boolean
+	  is yy:QQcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, QQ, Boolean
+	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, RR, Boolean
+	  is yy:RRicell do toExpr(xx.v === yy.v)  -- # typical value: symbol ==, CCi, RRi, Boolean
+	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
      is xx:Boolean do (
@@ -244,6 +261,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
+	  is y:CCicell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
      	  is Error do right
 	  else binarycomparison(left,right))
      is x:stringCell do (
@@ -300,6 +322,11 @@ compare(left:Expr,right:Expr):Expr := (
               else incomparableE
 	       )
 	  is y:CCcell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CCicell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
@@ -993,6 +1020,7 @@ exp(e:Expr):Expr := (
      is x:CCcell do toExpr(exp(x.v))			    -- # typical value: exp, CC, CC
      is x:RRcell do toExpr(exp(x.v))			    -- # typical value: exp, RR, RR
      is x:RRicell do toExpr(exp(x.v))			    -- # typical value: exp, RRi, RRi
+     is x:CCicell do toExpr(exp(x.v))                       -- # typical value: exp, CCi, CCi
      else buildErrorPacket("expected a number")
      );
 setupfun("exp",exp).Protected=false;
@@ -1031,6 +1059,7 @@ log(e:Expr):Expr := (
      is x:RRcell do if isNegative(x.v) then toExpr(logc(x.v)) else toExpr(log(x.v))				    -- # typical value: log, RR, RR
      is x:RRicell do if x.v >= 0 then toExpr(log(x.v))  -- # typical value: log, RRi, RRi
                      else buildErrorPacket("Not defined")
+     is x:CCicell do toExpr(log(x.v))   -- # typical value: log, CCi, CCi
      else WrongArg("a number or a pair of numbers")
      );
 setupfun("log",log).Protected=false;
@@ -1071,6 +1100,11 @@ floor(e:Expr):Expr := (
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  toExpr(floor(x.v.re))
 	  )
+     is x:CCicell do (
+	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  toExpr(floor(x.v.re))
+	  )
      is x:QQcell do toExpr(floor(x.v))
      is ZZcell do e
      else buildErrorPacket("expected an integral, rational, or real number")
@@ -1091,9 +1125,15 @@ round0(e:Expr):Expr := (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  toExpr(round(x.v)))
+     is x:CCicell do (
+	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  toExpr(round(x.v.re)))
      else buildErrorPacket("expected a real number")
      );
 setupfun("round0",round0);
+
+
 
 run(e:Expr):Expr := (
      when e
@@ -1113,10 +1153,18 @@ sqrt(a:Expr):Expr := (
 	  )
      is x:RRicell do (
 	  if leftRR(x.v) >= 0
-	  then toExpr(sqrt(x.v))                   -- # typical value: sqrt, RRi, RRi
+	  then toExpr(sqrt(x.v))                 -- # typical value: sqrt, RRi, RRi
+	  else if rightRR(x.v) <= 0
+	  then toExpr(negSqrt(x.v))		   
 	  else buildErrorPacket("Not implemented")
 	  )
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
+     is x:CCicell do (
+     	  if leftRR(x.v.re) >= 0 || rightRR(x.v.re) <= 0 || leftRR(x.v.im) >= 0 || rightRR(x.v.im) <= 0
+	  then if leftRR(x.v.re) <= rightRR(x.v.re) && leftRR(x.v.im) <= rightRR(x.v.im) then toExpr(sqrt(x.v))  -- # typical value: sqrt, CCi, CCi
+	       else buildErrorPacket("Not implemented")
+	       else buildErrorPacket("Not implemented")
+	  )
      is Error do a
      else WrongArgRRorRRiorCC());
 setupfun("sqrt",sqrt).Protected=false;
