@@ -85,8 +85,8 @@ check-libtool:
 	@ type libtool >/dev/null || $(MAKE) -f Makefile libtool-absent
 	@ if `libtool --version >/dev/null 2>&1` ;										\
 	  then MAJOR=`libtool --version | sed -e '1s/[^.]* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
-	       MINOR=`libtool --version | sed -e '1s/[^.]*\.\([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
-	       BABY=` libtool --version | sed -e '1s/[^.]*\.[^.]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'` ;				\
+	       MINOR=`libtool --version | sed -e '1s/[^.]*\.\([0-9]\{1,\}\)\..*/\1/' -e '2,$$d'` ;				\
+	       BABY=` libtool --version | sed -e '1s/[^.]*\.[^.]*\.\([0-9]\{1,\}\).*/\1/' -e '2,$$d'` ;				\
 	       if test "$$MAJOR" -gt "$(LIBTOOL_MAJOR)"										\
 		       -o \( "$$MAJOR" = "$(LIBTOOL_MAJOR)" -a "$$MINOR" -gt "$(LIBTOOL_MINOR)" \)				\
 		       -o \( $$MAJOR = $(LIBTOOL_MAJOR) -a $$MINOR = $(LIBTOOL_MINOR) -a $$BABY -ge $(LIBTOOL_BABY) \) ;	\
