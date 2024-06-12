@@ -298,7 +298,8 @@ findDocumentationPaths := path -> (
 		    packagesdir := Layout#i#"packages";
 		    if not match(packagesdir | "$", dir) then return;
 		    prefix := substring(dir, 0, #dir - #packagesdir);
-		    (prefix, i))))))
+		    if isDirectory(prefix | Layout#i#"docdir")
+		    then (prefix, i))))))
 
 -- TODO: this function runs on startup, unless -q is given, and takes about 0.1~0.2s
 makePackageIndex = method(Dispatch => Thing)
