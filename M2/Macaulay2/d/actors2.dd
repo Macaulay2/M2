@@ -245,14 +245,14 @@ newclassfun(e:Expr):Expr := (
      if length(a) == 2
      then when a.0
      is classs:HashTable do newClass(a.1,classs,false)
-     else WrongArg(1,"a hash table")
+     else WrongArgHashTable(1)
      else if length(a) == 3
      then when a.0
      is classs:HashTable do (
 	  when a.1
 	  is parent:HashTable do newClassParent(a.2,classs,parent,false)
-	  else WrongArg(2,"a hash table"))
-     else WrongArg(1,"a hash table")
+	  else WrongArgHashTable(2))
+     else WrongArgHashTable(1)
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("newClass",newclassfun);

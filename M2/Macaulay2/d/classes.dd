@@ -99,8 +99,8 @@ ancestorfun(e:Expr):Expr := (
 	  is xx:HashTable do (
 	       when y 
 	       is yy:HashTable do if ancestor(xx,yy) then True else False
-	       else WrongArg(1,"a hash table"))
-	  else WrongArg(2,"a hash table"))
+	       else WrongArgHashTable(1))
+	  else WrongArgHashTable(2))
      else WrongNumArgs(2));
 setupfun("ancestor",ancestorfun);
 

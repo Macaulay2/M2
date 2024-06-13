@@ -662,7 +662,7 @@ installfun(e:Expr):Expr := (
 	       when a.1 is s:HashTable do
 	       if s.Mutable then installMethod(a.0,s,a.2)
 	       else WrongArg(1+1,"a mutable hash table")
-	       else WrongArg(1+1,"a hash table"))
+	       else WrongArgHashTable(2))
 	  else if length(a) == 4 then (
 	       when a.1
 	       is lhs:HashTable do
@@ -671,9 +671,9 @@ installfun(e:Expr):Expr := (
 	       is rhs:HashTable do
 	       if rhs.Mutable then installMethod(a.0,lhs,rhs,a.3)
 	       else WrongArg(2+1,"a mutable hash table")
-	       else WrongArg(2+1,"a hash table")
+	       else WrongArgHashTable(3)
 	       else WrongArg(1+1,"a mutable hash table")
-	       else WrongArg(1+1,"a hash table"))
+	       else WrongArgHashTable(2))
 	  else if length(a) == 5 then (
 	       when a.1
 	       is s1:HashTable do
@@ -685,11 +685,11 @@ installfun(e:Expr):Expr := (
 	       is s3:HashTable do
 	       if s3.Mutable then installMethod(a.0,s1,s2,s3,a.4)
 	       else WrongArg(3+1,"a mutable hash table")
-	       else WrongArg(3+1,"a hash table")
+	       else WrongArgHashTable(4)
 	       else WrongArg(2+1,"a mutable hash table")
-	       else WrongArg(2+1,"a hash table")
+	       else WrongArgHashTable(3)
 	       else WrongArg(1+1,"a mutable hash table")
-	       else WrongArg(1+1,"a hash table"))
+	       else WrongArgHashTable(2))
 	  else WrongNumArgs(3,5))
      else WrongNumArgs(3,5));
 setupfun("installMethod",installfun);

@@ -256,7 +256,7 @@ dotfun(lhs:Code,rhs:Code):Expr := (
 	  when rhs
 	  is r:globalSymbolClosureCode do lookup1force(x, Expr(SymbolClosure(globalFrame,r.symbol)))
 	  else printErrorMessageE(rhs,"expected a symbol"))
-     else WrongArg(1,"a hash table")
+     else WrongArgHashTable(1)
      );
 setup(DotS,dotfun);
 
