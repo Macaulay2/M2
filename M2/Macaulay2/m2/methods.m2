@@ -487,6 +487,10 @@ select(ZZ, HashTable, Function) := HashTable => {} >> o -> lookup(
 select(HashTable, Function) := HashTable => {} >> o -> lookup(
     selectValues, HashTable, Function)
 
+select(ZZ, Set, Function) := Set => {} >> o -> lookup(
+    selectKeys, ZZ, HashTable, Function)
+select(Set, Function) := Set => {} >> o -> lookup(
+    selectKeys, HashTable, Function)
 
 oldnumerator := numerator
 erase symbol numerator
