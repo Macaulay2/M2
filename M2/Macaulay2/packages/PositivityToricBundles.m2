@@ -394,10 +394,6 @@ graphToricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts
 -- METHOD: separateJets
 ------------------------------------------------------------------------------
 
--- hT .. hashTable
--- fun .. function that takes key and value as input and returns true or false
-selectPairs = (hT, fun) -> hashTable select(pairs hT, (k,v) -> fun(k,v) )
-
 separatesJetsLocally = method( Options => true )
 separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opts -> (tvb,sigma) -> (
  if opts#Verbosity>0 then << "METHOD: separatesJetsLocally" << endl;
