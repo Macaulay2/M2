@@ -48,7 +48,7 @@ bucketsfun(e:Expr):Expr := (
 		    provide list(s))));
 	  if h.Mutable then unlock(h.mutex);
 	  res)
-     else WrongArg("a hash table"));
+     else WrongArgHashTable());
 setupfun("buckets",bucketsfun);
 
 -- Local Variables:

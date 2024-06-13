@@ -1196,7 +1196,7 @@ instanceof(e:Expr):Expr := (
      is args:Sequence do (
 	  when args.1
 	  is y:HashTable do if ancestor(Class(args.0),y) then True else False
-	  else WrongArg(2,"a hash table"))
+	  else WrongArgHashTable(2))
      else WrongNumArgs(2));
 setupfun("instance",instanceof);
 
