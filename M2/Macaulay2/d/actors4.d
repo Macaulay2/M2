@@ -236,6 +236,62 @@ select(e:Expr):Expr := (
      else WrongNumArgs(2,5));
 setupfun("select", select).Protected = false; -- will be overloaded in m2/lists.m2 and m2/regex.m2
 
+selectPairs(nval:int, obj:HashTable, f:Expr):Expr := (
+    u := newHashTable(obj.Class,obj.parent);
+    u.beingInitialized = true;
+    if nval > 0 then
+    foreach bucket in obj.table do (
+	p := bucket;
+	while nval > 0 && p != p.next do (
+	    newvalue := applyEEE(f,p.key,p.value);
+	    when newvalue
+	    is err:Error
+	    do (
+		if err.message == breakMessage
+		then return (
+		    if err.value == dummyExpr
+		    then nullE
+		    else err.value)
+		else return newvalue)
+	    else if newvalue == True
+	    then (
+		storeInHashTable(u,p.key,p.hash,p.value);
+		nval = nval-1;
+		)
+	    else (
+		if newvalue != False
+		then return buildErrorPacket(
+		    "expected predicate to yield true or false"));
+	    p = p.next));
+    Expr(sethash(u,obj.Mutable)));
+selectPairs(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	-- # typical value: selectPairs, HashTable, Function, HashTable
+	if length(a) == 2 then (
+	    when a.0
+	    is obj:HashTable do (
+		if obj.Mutable
+		then WrongArg(1, "an immutable hash table")
+		else selectPairs(obj.numEntries, obj, a.1))
+	    else WrongArgHashTable(1))
+	-- # typical value: selectPairs, ZZ, HashTable, Function, HashTable
+	else if length(a) == 3 then (
+	    when a.0
+	    is n:ZZcell do (
+		if !isInt(n) then WrongArgSmallInteger(1)
+		else (
+		    when a.1 is obj:HashTable
+		    do (
+			if obj.Mutable
+			then WrongArg(2, "an immutable hash table")
+			else selectPairs(toInt(n), obj, a.2))
+		    else WrongArgHashTable(2)))
+	    else WrongArgZZ(1))
+	else WrongNumArgs(2, 3))
+    else WrongNumArgs(2, 3));
+setupfun("selectPairs", selectPairs);
+
 any(f:Expr,n:int):Expr := (
      for i from 0 to n-1 do (
 	  v := applyEE(f,toExpr(i));
