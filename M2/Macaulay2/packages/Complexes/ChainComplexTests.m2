@@ -386,9 +386,9 @@ TEST ///
       S^{{1,1,0,0},{0,0,1,1}},
       S^{{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}},
       {{b, a, 0, 0}, {0, 0, d, c}})
-  assert(prune HH^2 C == M)
-  assert(prune HH^1 C == 0)
-  assert(prune HH^3 C == coker (vars S ** S^{{1,1,1,1}}))
+  assert(prune HH_-1 C == 0)
+  assert(prune HH_-2 C == M)
+  assert(prune HH_-3 C == coker (vars S ** S^{{1,1,1,1}}))
 ///
 
 TEST ///
@@ -1005,11 +1005,11 @@ TEST ///
   D = dual freeResolution J
   E = dual freeResolution K
   HCD = Hom(C,D)
-  prune HH^0(HCD)
+  prune HH_0(HCD)
   HDE = Hom(D,E)
-  prune HH^0(HDE)
+  prune HH_0(HDE)
   HCE = Hom(C,E)
-  prune HH^0(HCE)  
+  prune HH_0(HCE)
   ZHCD0 = ker dd^HCD_0;
   ZHDE0 = ker dd^HDE_0;
   ZHCE0 = ker dd^HCE_0;
