@@ -985,6 +985,12 @@ then AC_LANG(C)
 	  then SEARCH_LIBRARIES(_fmpz_mod_mul1,/usr/lib/libflint.a /usr/local/lib/libflint.a,,
 					       [AC_MSG_ERROR([libflint.a not found])])
 	  else AC_SEARCH_LIBS(_fmpz_mod_mul1,"flint",,[AC_MSG_ERROR([libflint not found])])
+	       AC_SEARCH_LIBS([arb_init], [arb flint-arb],,
+	                      [AC_MSG_ERROR([Arb not found])])
+	       dnl Arb headers were moved to flint subdir w/ FLINT 3.0
+	       AC_CHECK_HEADERS([arb.h],,
+		   [AC_CHECK_HEADERS([flint/arb.h],,
+		       [AC_MSG_ERROR([Arb headers not found])])])
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
@@ -993,6 +999,7 @@ fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
      AC_DEFINE([HAVE_FLINT_NMOD_H])
+     AC_DEFINE([HAVE_FLINT_ARB_H])
 fi
 
 dnl debian: 4ti2-
