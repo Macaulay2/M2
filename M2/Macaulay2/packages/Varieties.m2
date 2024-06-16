@@ -704,13 +704,18 @@ sheafHom(CoherentSheaf, SheafOfRings)  :=
 sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => opts -> (F, G) -> (
     assertSameVariety(F, G); sheaf(variety F, Hom(module F, module G, opts)))
 
+-*
+-- TODO: why are these methods necessary?
+-- should sheafHom(Module, Module) also be defined? this seems confusing.
 sheafHom(CoherentSheaf, Module) := CoherentSheaf => opts -> (F, G) -> sheaf(variety F, Hom(module F, G, opts))
 sheafHom(Module, CoherentSheaf) := CoherentSheaf => opts -> (F, G) -> sheaf(variety G, Hom(F, module G, opts))
 
+-- TODO: should Hom(ZZ, Module) also be defined?
 sheafHom(ZZ, CoherentSheaf) := CoherentSheaf => opts -> (d, F) -> (
-    if d != 0 then error "expected integer 0"; sheafHom((ring F)^0, F))
+    if d != 0 then error "expected integer 0"; sheafHom(OO_(variety F)^0, F))
 sheafHom(CoherentSheaf, ZZ) := CoherentSheaf => opts -> (F, d) -> (
-    if d != 0 then error "expected integer 0"; sheafHom(F, (ring F)^0))
+    if d != 0 then error "expected integer 0"; sheafHom(F, OO_(variety F)^0))
+*-
 
 sheafExt = new ScriptedFunctor from {
     superscript => i -> new ScriptedFunctor from {
