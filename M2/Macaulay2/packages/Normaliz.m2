@@ -1672,9 +1672,9 @@ document {
      EXAMPLE lines ///
           R=ZZ/37[x,y];
           L={x^3, x^2*y, y^3, x*y^2};
-          (latticePoints,ehrhart)=ehrhartRing L;
-          latticePoints
-          ehrhart
+          (A, B) = ehrhartRing L;
+          A
+          B
      ///,
    TEST ///
    R=ZZ/37[x,y,z,t];
@@ -1734,9 +1734,9 @@ document {
      EXAMPLE lines ///
           R=ZZ/37[x,y];
           L={x^3, x^2*y, y^3, x*y^2};
-       (latticePoints,ehrhart)=ehrhartRing(allComputations=>true,L);
-           latticePoints.cache#"cone"
-           ehrhart.cache#"cone"
+	  (A, B) = ehrhartRing(L, allComputations => true);
+	  A.cache#"cone"
+	  B.cache#"cone"
      ///,
 }
 
@@ -1753,9 +1753,9 @@ document {
     EXAMPLE  lines ///
     R=ZZ/37[x,y,t];
     L={x^3, x^2*y, y^3, x*y^2};
-    (latticePoints,ehrhart)=ehrhartRing(L,t);
-          latticePoints
-          ehrhart
+    (A, B) = ehrhartRing(L, t);
+    A
+    B
    ///,
 }
 
@@ -1772,9 +1772,9 @@ document {
     EXAMPLE  lines ///
     R=ZZ/37[x,y,t];
     L={x^3, x^2*y, y^3, x*y^2};
-    (latticePoints,ehrhart)=ehrhartRing(allComputations=>true,L,t);
-          latticePoints.cache#"cone"
-          ehrhart.cache#"cone"
+    (A, B) = ehrhartRing(L, t, allComputations => true);
+    A.cache#"cone"
+    B.cache#"cone"
    ///,
 }
 
