@@ -2757,9 +2757,8 @@ doc ///
     Key
         (homology, ComplexMap)
         (homology, ZZ, ComplexMap)
-        (cohomology, ZZ, ComplexMap)
     Headline
-        induced map on homology or cohomology
+        induced map on homology
     Usage
         h = HH f
     Inputs
@@ -2772,8 +2771,7 @@ doc ///
             to itself.  Given a map of chain complexes $f : C \to D$,
             this method returns the induced map $HH f : HH C \to HH D$.
         Text
-            To directly obtain the $n$-th map in $h$, use {\tt HH_n f} or
-            {\tt HH^n f}.  By definition {\tt HH^n f === HH_(-n) f}.
+            To directly obtain the $n$-th map in $h$, use {\tt HH_n f}.
             This can be more efficient, as it will compute only the desired
             induced map.
         Text
@@ -2807,7 +2805,6 @@ doc ///
     SeeAlso
         (homology, Complex)
         (homology, ZZ, Complex)
-        (cohomology, ZZ, Complex)
         (prune, ComplexMap)
 ///
 

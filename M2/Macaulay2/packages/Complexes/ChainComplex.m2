@@ -743,7 +743,6 @@ homology Complex := Complex => opts -> C -> (
     complex maps
     )
 homology(ZZ, Complex) := opts -> (i,C) -> homology(dd^C_i, dd^C_(i+1))
-cohomology(ZZ,Complex) := opts -> (i,C) -> homology(-i, C)
 
 --------------------------------------------------------------------
 -- Hom -------------------------------------------------------------
