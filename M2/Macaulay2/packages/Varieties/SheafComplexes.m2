@@ -103,8 +103,7 @@ sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
                         if k-j === {0,1} then (-1)^(k#1-k#0+1) * sheafHom(C_(k#0), dd^D_(k#1), opts)
                         else if k-j === { -1,0 } then sheafHom(dd^C_(j#0), D_(k#1), opts)
                         else 0);
-		    if instance(m, Matrix) then m else matrix m
-                    ))));
+		    m))));
     result = complex maps;
     result.cache.homomorphism = (C,D); -- source first, then target
     Y.cache#(sheafHom,C,D) = result;
