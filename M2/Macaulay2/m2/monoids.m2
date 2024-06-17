@@ -403,6 +403,7 @@ findHeft List := opts -> degs -> (
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
      if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
     heftvec := - sum entries map(ZZ, rawFourierMotzkin raw matrix degs);
+    if heftvec === 0 then return null;
     if (g := gcd heftvec) > 1   then heftvec = apply(heftvec, h -> h // g);
     if checkHeft(degs, heftvec) then heftvec)
 
