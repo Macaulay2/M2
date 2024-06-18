@@ -41,20 +41,12 @@ all: tvalues.m2
 tvalues.m2: @srcdir@/tvalues-make.m2 $(TVFILES)
 	@pre_exec_prefix@/bin/M2 $(ARGS) --no-preload --no-tvalues $< -e 'make "@srcdir@/../d/"; exit 0'
 clean::;rm -f tvalues.m2
-############################## installedpackages.m2
-# an obsolete file
-INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
-clean::; rm -f installedpackages.m2
-OTHERDUMPEDM2FILES += \
-	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
-	$(wildcard $(patsubst %, @srcdir@/../packages/%.m2  , $(INSTALLEDPACKAGES)))
 #################################
 all: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
 		$(DUMPEDM2SRCFILES) \
-		installedpackages \
 		$(shell @FIND@ @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
 		../editors/emacs/make-M2-emacs-help.m2 \
 		../editors/make-M2-symbols.m2 \
@@ -127,7 +119,7 @@ clean::; rm -f profile
 @pre_packagesdir@ :; @INSTALL@ -d $@
 @pre_packagesdir@/Core  : ; @INSTALL@ -d $@
 @pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
-FILES_TO_COPY := $(DUMPEDM2FILES) loadsequence installedpackages
+FILES_TO_COPY := $(DUMPEDM2FILES) loadsequence
 all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
 distclean: clean; rm -f Makefile version.m2

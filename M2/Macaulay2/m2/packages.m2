@@ -457,7 +457,22 @@ newPackage("Core",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION",
      Headline => "A computer algebra system designed to support algebraic geometry")
-Core#"preloaded packages" = lines get (currentFileDirectory | "installedpackages")
+Core#"preloaded packages" = {
+    "Elimination",
+    "LLLBases",
+    "IntegralClosure",
+    "PrimaryDecomposition",
+    "MinimalPrimes",
+    "Saturation",
+    "Classic",
+    "TangentCone",
+    "ReesAlgebra",
+    "ConwayPolynomials",
+    "InverseSystems",
+    "SimpleDoc",
+    "OnlineLookup",
+    "Isomorphism",
+    "Varieties"}
 
 protect PackageIsLoaded
 
