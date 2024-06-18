@@ -36,11 +36,15 @@ macro(_NAUTY_check_version)
   # Query NAUTY_VERSION
   file(READ "${NAUTY_INCLUDE_DIR}/nauty/nauty.h" _NAUTY_H)
 
-  string(REGEX MATCH "define[ \t]+NAUTYVERSION[ \t]+\"([0-9]+)\.([0-9]+)\.([0-9]+)"
+  string(REGEX MATCH "define[ \t]+NAUTYVERSION[ \t]+\"([0-9]+)\.([0-9]+)\.?([0-9]+)?"
     _NAUTY_version_match "${_NAUTY_H}")
   set(NAUTY_MAJOR_VERSION "${CMAKE_MATCH_1}")
   set(NAUTY_MINOR_VERSION "${CMAKE_MATCH_2}")
   set(NAUTY_PATCH_VERSION "${CMAKE_MATCH_3}")
+
+  if(NOT NAUTY_PATCH_VERSION)
+    set(NAUTY_PATCH_VERSION 0)
+  endif()
 
   set(NAUTY_VERSION
     ${NAUTY_MAJOR_VERSION}.${NAUTY_MINOR_VERSION}.${NAUTY_PATCH_VERSION})
