@@ -457,7 +457,7 @@ newPackage("Core",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION",
      Headline => "A computer algebra system designed to support algebraic geometry")
-Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
+Core#"preloaded packages" = lines get (currentFileDirectory | "installedpackages")
 
 protect PackageIsLoaded
 

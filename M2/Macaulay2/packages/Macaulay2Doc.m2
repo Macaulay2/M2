@@ -12,7 +12,7 @@ newPackage ("Macaulay2Doc",
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      Keywords => {"Documentation"},
-     PackageExports => Core#"pre-installed packages",
+     PackageExports => Core#"preloaded packages",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
