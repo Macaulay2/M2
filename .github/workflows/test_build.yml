@@ -65,6 +65,7 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
+          brew install --overwrite python
           brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi
           brew install --only-dependencies macaulay2/tap/M2
 
