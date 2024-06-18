@@ -35,7 +35,7 @@ okay(String, Symbol)  := (name, pkg) -> length name > 1 and isAlphaNumeric name
 -------------------------------------------------------------------------------
 -- Get a list of all symbols visible just after loading preloaded packages
 allPkgNames := separate(" ", version#"packages") | {"Core"}
-loadedPkgNames := Core#"pre-installed packages" | {"Core", "Text", "Parsing", "SimpleDoc"}
+loadedPkgNames := Core#"preloaded packages" | {"Core", "Text", "Parsing", "SimpleDoc"}
 symbols := unique sort join(
     apply(allPkgNames, pkgname -> (pkgname, symbol Core)),
     flatten apply(loadedPkgNames, pkgname -> (
