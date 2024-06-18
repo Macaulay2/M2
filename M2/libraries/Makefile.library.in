@@ -119,6 +119,7 @@ unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
+fetch: download-enabled
 ifeq ($(SUBMODULE),true)
 fetch: update-submodule
 else
@@ -130,7 +131,7 @@ $(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
 compile: config-chk .compiled-$(VERSION) 
 configure: .configured-$(VERSION) config-chk 
 config-chk:
-update-submodule: download-enabled
+update-submodule:
 	git submodule update --init @abs_top_srcdir@/submodules/$(LIBNAME)
 
 PROGRAMS ?=
@@ -236,7 +237,7 @@ CHECKFETCHED = case "$(URL)" in									\
 	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ;	\
 	    fi ;;										\
 	esac
-$(TARFILE_DIR)/$(TARFILE) : download-enabled
+$(TARFILE_DIR)/$(TARFILE) :
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
