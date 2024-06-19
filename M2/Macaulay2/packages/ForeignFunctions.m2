@@ -553,13 +553,10 @@ describe SharedLibrary := lib -> Describe FunctionApplication(
     openSharedLibrary, lib#1)
 toExternalString SharedLibrary := toExternalFormat @@ describe
 
--- on apple silicon machines, shared libraries are often in /opt/homebrew/lib,
--- but this is not in DYLD_LIBRARY_PATH, so we try there if the first call to
--- dlopen fails
+-- on some apple systems, dlopen doesn't check for libraries installed by
+-- homebrew, so we try there if the first call to dlopen fails
 importFrom_Core {"isAbsolutePath"}
-if (version#"operating system" == "Darwin" and
-    isMember(version#"architecture", {"aarch64", "arm", "arm64"}))
-then (
+if version#"operating system" == "Darwin" then (
     brewPrefix := replace("\\s+$", "", get "!brew --prefix");
     dlopen' = filename -> (
 	if isAbsolutePath filename then dlopen filename
