@@ -270,6 +270,8 @@ EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler, eRR
 CatalanConstant = new Constant from { symbol CatalanConstant, mpfrConstantCatalan, cRRi0}
 ii = new Constant from { symbol ii, ConstantII}
 
+isFinite Constant := x -> true
+
 lngamma = method()
 lngamma RR := x -> (
      (y,s) := lgamma x;
@@ -357,15 +359,6 @@ Number == Constant := (x,c) -> x == numeric c
 Constant ? Number := (c,x) -> numeric c ? x
 Number ? Constant := (x,c) -> x ? numeric c
 
-Constant + InfiniteNumber := (c,x) -> x
-InfiniteNumber + Constant := (x,c) -> x
-Constant - InfiniteNumber := (c,x) -> -x
-InfiniteNumber - Constant := (x,c) -> x
-Constant * InfiniteNumber := (c,x) -> (numeric c)*x
-InfiniteNumber * Constant := (x,c) -> x*(numeric c)
-Constant // InfiniteNumber := Constant / InfiniteNumber := (c,x) -> 0
-InfiniteNumber // Constant := (x,c) -> x // (numeric c)
-InfiniteNumber / Constant := (x,c) -> x / (numeric c)
 Constant ! := c -> (numeric c)!
 
 -- printing
