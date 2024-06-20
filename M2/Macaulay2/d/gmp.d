@@ -14,7 +14,7 @@ header "
 ";
 
 -- We introduce two types of big gmp-type integers here.  One type is mutable, and the vector of limbs gets
--- allocated with the standard memory allocator used by libgmp (or by its replacement, libmpir), when we use
+-- allocated with the standard memory allocator used by libgmp when we use
 -- gmp routines to create the integers.  The other type is immutable, and the limbs are allocated with libgc
 -- by us in final step after the computation.  The types ZZmutable and ZZ are distinct in the D language, so
 -- neither one can be used as the other, but the underlying pointer types are the same, except that mpz_srcptr

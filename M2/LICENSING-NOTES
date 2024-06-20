@@ -15,7 +15,6 @@ Libraries that may be linked with M2:
 -lmathicgb	mathicgb		GPL 2 or later
 -lmemtailor	memtailor		the Modified BSD License
 -lmpfr		mpfr			LGPL 3 or later
--lmpirxx -lmpir	mpir			LGPL 2.1 or later
 -lntl		ntl			GPL 2 or later
 -lpari		pari			GPL 2 or later
 -lreadline	readline		GPL 3
@@ -49,4 +48,4 @@ modifications by Paul Zinn-Justin			public domain
 
 for M2 binaries:
 
-We are prevented from using GPL 2 by mpir and mpfr
+We are prevented from using GPL 2 by mpfr
