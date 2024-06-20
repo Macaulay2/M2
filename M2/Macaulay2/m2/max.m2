@@ -3,7 +3,7 @@
 needs "fold.m2"
 needs "methods.m2"
 
-InfiniteNumber = new Type of BasicList
+InfiniteNumber = new Type of Number
 InfiniteNumber.synonym = "infinite number"
 infinity = new InfiniteNumber from {1}
 neginfinity = new InfiniteNumber from {-1}
@@ -11,7 +11,9 @@ neginfinity = new InfiniteNumber from {-1}
 setAttribute(infinity,ReverseDictionary,symbol infinity)
 setAttribute( infinity,PrintNames, "infinity")
 setAttribute(-infinity,PrintNames, "-infinity")
-toString InfiniteNumber := net InfiniteNumber := x -> getAttribute(x,PrintNames)
+toString         InfiniteNumber :=
+net              InfiniteNumber :=
+toExternalString InfiniteNumber := x -> getAttribute(x,PrintNames)
 
 IndeterminateNumber = new Type of BasicList
 IndeterminateNumber.synonym = "indeterminate number"
@@ -37,6 +39,10 @@ InfiniteNumber ^ InfiniteNumber := (x,y) -> (
 InfiniteNumber ..< InfiniteNumber := 
 InfiniteNumber .. InfiniteNumber := (i,j) -> if i < j then error "infinite range specified" else ()
 InfiniteNumber == InfiniteNumber := (x,y) -> x === y
+
+isFinite = method()
+isFinite Number := isFinite0
+isFinite InfiniteNumber := x -> false
 
 InfiniteNumber + Number := (i,j) -> (
   if isFinite j then
@@ -76,14 +82,14 @@ InfiniteNumber * CC := (i,j) -> (
     0_CC
   else (1/0.-1/0.+ii)
 )
-RR * InfiniteNumber := 
-QQ * InfiniteNumber := 
-ZZ * InfiniteNumber :=
-CC * InfiniteNumber := (i,j) -> j * i
+Number * InfiniteNumber := (i,j) -> j * i
     
 Number // InfiniteNumber := Number / InfiniteNumber := (i,j) -> if isFinite i then 0 else indeterminate
-InfiniteNumber // QQ := InfiniteNumber / QQ :=
-InfiniteNumber // ZZ := InfiniteNumber / ZZ := (i,j) -> if (isFinite j and j > 0) then i else if (isFinite j and j < 0) then -i else indeterminate
+InfiniteNumber // Number :=
+InfiniteNumber /  Number := (i,j) -> (
+    if (isFinite j and j > 0) then i
+    else if (isFinite j and j < 0) then -i
+    else indeterminate)
 InfiniteNumber // RR := InfiniteNumber / RR := (i,j) -> (
   if (isFinite j and j > 0.) then
     i

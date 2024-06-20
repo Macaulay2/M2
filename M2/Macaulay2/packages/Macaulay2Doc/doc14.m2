@@ -29,7 +29,11 @@ document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),
      ///
      }
 
-document { Key => {isFinite, (isFinite,Number)},
+document { Key => {
+	isFinite,
+	(isFinite,Constant),
+	(isFinite,InfiniteNumber),
+	(isFinite,Number)},
      Usage => "isFinite x",
      Headline => "whether a number is finite",
      Inputs => { "x" => Number },
