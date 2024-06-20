@@ -335,37 +335,6 @@ AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
 AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
-dnl Now we make the 32 bit / 64 bit choice explicit, because config.guess may guess it's a 32 bit system even though gcc compiles
-dnl 64 bit object code by default, and then mpir's configure script (versions 1.2.1 and 1.3.0-rc1) gets confused.
-dnl if test "$GCC" = yes
-dnl then if test "$SIZEOF_INT_P" = 4
-dnl      then case " $CC $CFLAGS " in
-dnl      	    *" -m32 "*) ;;
-dnl 	    *) CC="$CC -m32" ;;
-dnl 	  esac
-dnl      fi
-dnl      if test "$SIZEOF_INT_P" = 8
-dnl      then case " $CC $CFLAGS " in
-dnl      	    *" -m64 "*) ;;
-dnl 	    *) CC="$CC -m64" ;;
-dnl 	  esac
-dnl      fi
-dnl fi
-dnl if test "$GXX" = yes
-dnl then if test "$SIZEOF_INT_P" = 4
-dnl      then case " $CXX $CFLAGS " in
-dnl      	    *" -m32 "*) ;;
-dnl 	    *) CXX="$CXX -m32" ;;
-dnl 	  esac
-dnl      fi
-dnl      if test "$SIZEOF_INT_P" = 8
-dnl      then case " $CXX $CFLAGS " in
-dnl      	    *" -m64 "*) ;;
-dnl 	    *) CXX="$CXX -m64" ;;
-dnl 	  esac
-dnl      fi
-dnl fi
-
 AC_CHECK_HEADERS_ONCE([sys/time.h])
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
@@ -671,7 +640,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest memtailor mathic mathicgb ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -684,13 +653,12 @@ AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom
 #    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
 #    libfac has been replaced by code in factory
 #    lapack includes blas, makes both libblas and liblapack
-#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too.
-#    mpfr needs gmp (or mpir
+#    mpfr needs gmp
 #    	  mpfr puts pointers to gmp numbers in thread local variables, unless
 # 	  specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
-#    ntl needs gmp (or mpir)
+#    ntl needs gmp
 #    4ti2 needs glpk
-#    glpk needs gmp (or mpir)
+#    glpk needs gmp
 #    topcom depends on cddlib
 #    gfan needs cddlib
 #    cddlib uses gmp
@@ -709,9 +677,7 @@ AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom
 #    linbox needs fflas_ffpack and givaro
 #    givaro uses gmp
 #    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
-#    mpir is used by givaro
-#    mpir and mpfr are used by fplll
-#    flint depends on gmp (or mpir) and mpfr
+#    flint depends on gmp and mpfr
 #    frobby depends on gmp
 #    mpfi needs mpfr
 
@@ -740,7 +706,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -806,68 +772,23 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-# mpir and gmp serve the same purpose
 AC_SUBST(LIBS_GMP)
 AC_LANG(C)
 AC_CHECK_HEADER(gmp.h, FOUND_gmp=yes ,FOUND_gmp=no )
-AC_CHECK_HEADER(mpir.h,FOUND_mpir=yes,FOUND_mpir=no)
-dnl Remark: both gmp.h and mpir.h are surrounded by 
-dnl 	#ifndef __GMP_H__
-dnl 	#endif
-dnl , so only one can be loaded.  Similarly for gmpxx.h and mpirxx.h.  However, the contents of
-dnl the files differ.  For example, mpf_cmp_z is defined only in gmp.h.
-AC_SUBST(PREFERRED_INTEGER_PACKAGE,gmp)
-AC_ARG_WITH(integer-package,
-		AS_HELP_STRING(--with-integer-package=[mpir|gmp],specify the big integer package to use (mpir or gmp)),
-		if ! test $withval = mpir -o $withval = gmp
-		then AC_MSG_ERROR([big integer package option: invalid value: $withval])
-		fi
-		PREFERRED_INTEGER_PACKAGE=$withval)
-if test $BUILD_gmp = yes -a $BUILD_mpir = yes
-then AC_MSG_ERROR([refusing to build both mpir and gmp, since the are interchangeable])
-fi
-AC_MSG_CHECKING([whether to use gmp or mpir])
-if test "$PREFERRED_INTEGER_PACKAGE" = mpir
-then USING_MPIR=1
-     AC_MSG_RESULT([using mpir])
-     AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
-     if test "$FOUND_mpir" = no
-     then BUILD_mpir=yes
-          LIBS_GMP="-lmpirxx -lmpir"
-          BUILTLIBS="$LIBS_GMP $BUILTLIBS"
-     else if test $SHARED = no -a $TRY_STATIC = yes
-          then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libmpirxx.a /usr/lib/libmpir.a" "/usr/local/lib/libmpirxx.a /usr/local/lib/libmpir.a",,
-					    [AC_MSG_ERROR([libmpir.a not found])])
-	  else SEARCH_LIBRARIES(__gmpz_init,"-lmpirxx -lmpir",,[AC_MSG_ERROR([libmpir not found])])
-	  fi
-	  if test "none required" != "$ac_cv_search___gmpz_init"
-	  then LIBS_GMP=$ac_cv_search___gmpz_init
-	  fi
+if test "$FOUND_gmp" = no
+then BUILD_gmp=yes
+     LIBS_GMP="-lgmpxx -lgmp"
+     BUILTLIBS="$LIBS_GMP $BUILTLIBS"
+else AC_LANG(C)
+     if test $SHARED = no -a $TRY_STATIC = yes
+     then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libgmpxx.a /usr/lib/libgmp.a" "/usr/local/lib/libgmpxx.a /usr/local/lib/libgmp.a",,
+	  [AC_MSG_ERROR([libgmp.a not found])])
+     else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
      fi
-else USING_MPIR=0		# i.e., using gmp
-     AC_MSG_RESULT([using gmp])
-     AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
-     if test "$FOUND_gmp" = no
-     then BUILD_gmp=yes
-     	  LIBS_GMP="-lgmpxx -lgmp"
-          BUILTLIBS="$LIBS_GMP $BUILTLIBS"
-     else AC_LANG(C)
-	  if test $SHARED = no -a $TRY_STATIC = yes
-          then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libgmpxx.a /usr/lib/libgmp.a" "/usr/local/lib/libgmpxx.a /usr/local/lib/libgmp.a",,
-					    [AC_MSG_ERROR([libgmp.a not found])])
-	  else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
-	  fi
-	  if test "none required" != "$ac_cv_search___gmpz_init"
-	  then LIBS_GMP=$ac_cv_search___gmpz_init
-	  fi
-	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
-	  dnl $ pkg-config gmp --cflags
-	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
-	  dnl $ pkg-config gmp --libs
-	  dnl -L/usr/local/Cellar/gmp/6.2.0/lib -lgmp
+     if test "none required" != "$ac_cv_search___gmpz_init"
+     then LIBS_GMP=$ac_cv_search___gmpz_init
      fi
 fi
-AC_SUBST(USING_MPIR)
 
 AC_LANG(C)
 AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
@@ -891,7 +812,7 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-# including mpsolve (requires gmp or mpir) 
+# including mpsolve (requires gmp)
 AC_LANG(C)
 AC_CHECK_HEADER(mps/mps.h,LIBS="-lmps $LIBS",BUILD_mpsolve=yes)
 if test $BUILD_mpsolve = yes
@@ -1929,7 +1850,6 @@ AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  GIT_BRANCH        = $GIT_BRANCH])
-AC_MSG_NOTICE([with  USING_MPIR        = $USING_MPIR])
 AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
 
 subset() {
