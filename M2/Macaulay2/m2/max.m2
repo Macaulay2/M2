@@ -15,12 +15,17 @@ toString         InfiniteNumber :=
 net              InfiniteNumber :=
 toExternalString InfiniteNumber := x -> getAttribute(x,PrintNames)
 
-IndeterminateNumber = new Type of BasicList
+IndeterminateNumber = new Type of Number
 IndeterminateNumber.synonym = "indeterminate number"
 indeterminate = new IndeterminateNumber from {}
 setAttribute(indeterminate,ReverseDictionary,symbol indeterminate)
-toString IndeterminateNumber := net IndeterminateNumber := x -> "indeterminate"
+toString         IndeterminateNumber :=
+net              IndeterminateNumber :=
+toExternalString IndeterminateNumber := x -> "indeterminate"
 texMath IndeterminateNumber := x -> texMath toString x
+numeric(ZZ, IndeterminateNumber) := (prec, x) -> (
+    numeric(prec, 0) * numeric(prec, infinity))
+numeric IndeterminateNumber := x -> numeric(defaultPrecision, x)
 
 InfiniteNumber ? InfiniteNumber := (x,y) -> x#0 ? y#0
 InfiniteNumber + InfiniteNumber := (x,y) -> if x === y then x else indeterminate
