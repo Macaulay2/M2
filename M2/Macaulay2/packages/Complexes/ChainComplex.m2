@@ -899,26 +899,65 @@ Complex ** RingMap := Complex => (C, phi) -> tensor(phi, C)
 --------------------------------------------------------------------
 -- resolutions -----------------------------------------------------
 --------------------------------------------------------------------
+-- private function
 nextLambda = method()
-nextLambda ComplexMap := ComplexMap => (lambda) -> (
+-- nextLambda ComplexMap := ComplexMap => (lambda) -> (
+--     C := target lambda;
+--     L0 := source lambda;
+--     (lo,hi) := concentration L0;
+--     D := cone naiveTruncation(lambda, (hi,hi+2), (hi-1, hi));
+--     HC1 := HH_(hi+1) D;
+--     pHC1 := prune HC1;
+--     if pHC1 == 0 then return null;
+--     a1 := inducedMap(pHC1, cover pHC1);
+--     a2 := pHC1.cache.pruningMap;
+--     g1 := map(D_(hi+1), source gens HC1, (gens HC1) // (gens D_(hi+1)));
+--     g2 := map(HC1, source gens HC1, 1);
+--     h := g1 * ((a2 * a1)//g2);
+--     L1 := complex(append(for i from lo+1 to hi list dd^L0_i, h^[0]), Base=>lo);
+--     map(C,L1,i -> if i === hi+1 then -h^[1] else lambda_i)
+--     )
+-- -- private function
+-- nextLambdaEpi = method()
+-- nextLambdaEpi(ComplexMap) := ComplexMap => (lambda) -> (
+--     -- This version is for creating an epimorphism
+--     C := target lambda;
+--     L0 := source lambda;
+--     (lo,hi) := concentration L0;
+--     D := cone naiveTruncation(lambda, (hi,hi+2), (hi-1, hi));
+--     ZC1 := ker dd^D_(hi+1);
+--     --HC1 := HH_(hi+1) D;
+--     pZC1 := prune ZC1;
+--     if pZC1 == 0 then return null;
+--     a1 := inducedMap(pZC1, cover pZC1);
+--     a2 := pZC1.cache.pruningMap;
+--     g1 := map(D_(hi+1), source gens ZC1, (gens ZC1) // (gens D_(hi+1)));
+--     g2 := map(ZC1, source gens ZC1, 1);
+--     h := g1 * ((a2 * a1)//g2);
+--     L1 := complex(append(for i from lo+1 to hi list dd^L0_i, h^[0]), Base=>lo);
+--     map(C,L1,i -> if i === hi+1 then -h^[1] else lambda_i)
+--     )
+-- private function
+nextLambda(ComplexMap, Boolean) := ComplexMap => (lambda, isEpi) -> (
+    -- This version is for creating an epimorphism
     C := target lambda;
     L0 := source lambda;
     (lo,hi) := concentration L0;
     D := cone naiveTruncation(lambda, (hi,hi+2), (hi-1, hi));
-    HC1 := HH_(hi+1) D;
-    pHC1 := prune HC1;
-    if pHC1 == 0 then return null;
-    a1 := inducedMap(pHC1, cover pHC1);
-    a2 := pHC1.cache.pruningMap;
-    g1 := map(D_(hi+1), source gens HC1, (gens HC1) // (gens D_(hi+1)));
-    g2 := map(HC1, source gens HC1, 1);
+    keyModule := if isEpi then ker dd^D_(hi+1) else HH_(hi+1) D;
+    pkeyModule := prune keyModule;
+    if pkeyModule == 0 then return null;
+    a1 := inducedMap(pkeyModule, cover pkeyModule);
+    a2 := pkeyModule.cache.pruningMap;
+    g1 := map(D_(hi+1), source gens keyModule, (gens keyModule) // (gens D_(hi+1)));
+    g2 := map(keyModule, source gens keyModule, 1);
     h := g1 * ((a2 * a1)//g2);
     L1 := complex(append(for i from lo+1 to hi list dd^L0_i, h^[0]), Base=>lo);
     map(C,L1,i -> if i === hi+1 then -h^[1] else lambda_i)
     )
 
-resolutionMap = method(Options => options freeResolution)
-resolutionMap Complex := ComplexMap => opts -> C -> (
+resolutionMapPrivate = method(Options => options freeResolution)
+resolutionMapPrivate(Complex, Boolean) := ComplexMap => opts -> (C, isEpi) -> (
     if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
     if not C.cache.?resolutionMap
       or C.cache.resolutionMap.cache.LengthLimit < opts.LengthLimit then (
@@ -937,7 +976,7 @@ resolutionMap Complex := ComplexMap => opts -> C -> (
             local g;
             -- how to implement length limit here.  What does length limit mean?
             while (
-                g = nextLambda f;
+                g = nextLambda(f, isEpi);
                 (len <= hi - lo or g =!= null) and len <= lengthlimit
                 ) do (
                 if g === null then (
@@ -963,6 +1002,12 @@ resolutionMap Complex := ComplexMap => opts -> C -> (
     then naiveTruncation(fC, (0, opts.LengthLimit))
     else fC
     )
+
+resolutionMap = method(Options => options freeResolution)
+resolutionMap Complex := ComplexMap => opts -> C -> resolutionMapPrivate(C, false, opts)
+
+epicResolutionMap = method(Options => options freeResolution)
+epicResolutionMap Complex := ComplexMap => opts -> C -> resolutionMapPrivate(C, true, opts)
 
 resolution Complex := opts -> C -> (
     -- TODO: remove this hack once resolution doesn't have FastNonminimal anymore and is defined in Complexes).
