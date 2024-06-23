@@ -1,7 +1,6 @@
 #include "BasicPolyListParser.hpp"
 
 #include <iostream>
-#include <sstream>
 #include <fstream>
 
 std::string readEntireFile(const std::string &fileName)
@@ -10,7 +9,7 @@ std::string readEntireFile(const std::string &fileName)
 
   std::ifstream::pos_type fileSize = ifs.tellg();
   ifs.seekg(0, std::ios::beg);
-  
+
   std::vector<char> bytes(fileSize);
   ifs.read(bytes.data(), fileSize);
 
@@ -82,7 +81,7 @@ std::vector<std::string> readIdentifierList(const std::string_view line)
       char c = line[i];
       if (not isalpha(c)) continue; // possibly should give an error if we see a number? or non-identifieer start char?
       auto loc = i+1;
-      while ((isalpha(line[loc]) or isdigit(line[loc]) or line[loc] == '_') and (loc < line.size()))
+      while (loc < line.size() and (isalpha(line[loc]) or isdigit(line[loc]) or line[loc] == '_'))
         {
           loc++;
         }
@@ -105,7 +104,7 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
 
   result.mCoefficients.clear();
   result.mMonomials.clear();
-  
+
   if (end_loc > begin_loc and str[begin_loc] == '[')
     {
       ++begin_loc;
@@ -119,7 +118,7 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
   while (end_loc > begin_loc)
     {
       int sign = 1;
-      
+
       // Read the next term into `result`.
       if (str[begin_loc] == '+')
         {
@@ -132,7 +131,7 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
           sign = -1;
         }
       long coeff = readInteger(str, begin_loc, end_loc); // defaults to 1 if no integer present.
-        
+
       if (sign == -1) coeff = -coeff;
       result.mCoefficients.push_back(coeff);
 
@@ -158,12 +157,12 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
                 }
               c = str[begin_loc];
             }
-          
+
           if (not isalpha(c))
             // not well forrmed, I think.
             {
               throw parsing_error("expected an identifier at position " + std::to_string(begin_loc));
-            } 
+            }
           // TODO: in fact, throw an error here
           auto prev_loc = begin_loc;
           int v = readIdentifier(str, idenHash, begin_loc, end_loc);
@@ -242,7 +241,7 @@ bool lineContainsVars(std::string_view& line) // if returns true, line now conta
   line.remove_prefix(varHeader.size());
   return true;
 }
-  
+
 BasicPolyList parseMsolveFromString(std::string contents)
 {
   // Read in file
@@ -292,7 +291,7 @@ BasicPolyList parseMsolveFile(std::string filename)
 
 // BasicPolyList: should have a memoryUsed function.
 // Monoid: should return std::vector<std::string> of variable names.
-// 
+//
 
 // TODO: read sparse matrix, first line is `#rows #cols`, each line is of the form e.g. `0 5 2*x^2*y^2-3*x*y`
 //  how to end it?
