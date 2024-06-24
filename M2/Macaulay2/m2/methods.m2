@@ -90,7 +90,7 @@ BinaryNoOptions := outputs -> (
     methodFunction List     :=
     methodFunction Sequence := args -> (
 	-- Common code for every associative method without options
-	if #args == 0 then return binaryCaller(methodFunction, 1 : methodFunction, args, outputs);
+	if #args == 0 then return binaryCaller(methodFunction, 1 : methodFunction, (), outputs);
 	if #args == 1 and (f := lookup(methodFunction, dispatchBy args#0)) =!= null then return f(args#0);
 	-- TODO: a rudimentary caching of the lookup call here would be a significant benefit
 	binaryLookup := (x, y) -> binaryCaller(methodFunction, (methodFunction, dispatchBy x, dispatchBy y), (x, y), outputs);
@@ -108,7 +108,7 @@ BinaryWithOptions := (opts, outputs) -> (
 	-- Common code for every associative method with options
 	-- this is essentially a method installed on (methodFunction, VisibleList)
 	if not instance(args, VisibleList) then args = 1:args;
-	if #args == 0 then return binaryCaller'(methodFunction, 1 : methodFunction, args, outputs, dispatcher(o, args));
+	if #args == 0 then return binaryCaller'(methodFunction, 1 : methodFunction, (), outputs, dispatcher(o, ()));
 	if #args == 1 and (f := lookup(methodFunction, dispatchBy args#0)) =!= null then return (dispatcher(o, args#0)) f;
 	-- Note: specializations for simultaneous computation may be implemented
 	-- by installing method functions on types that inherit from VisibleList
