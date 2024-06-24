@@ -26,7 +26,7 @@ noMethodSingle = (M, args, outputs) -> toString stack     (  noMethErr M, printA
 noMethod       = (M, args, outputs) -> toString stack join( {noMethErr M},
     if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
 	i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
-    else {   printArgs(" ",            args,   false) }) -- TODO: do better here, in what way?
+    else {   printArgs(" ",            args,   args === ()) }) -- TODO: do better here, in what way?
 
 -- TODO: what is this for exactly?
 badClass := meth -> (i, args) -> (
