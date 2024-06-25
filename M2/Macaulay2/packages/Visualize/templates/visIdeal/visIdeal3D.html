@@ -80,8 +80,6 @@
   <script src="js/d3.v3.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="js/three.min.js"></script> 
-  <script src="js/underscore.js"></script> 
-		
 
 <script type="text/javascript">
 
@@ -202,16 +200,16 @@
     // var data = [[4,0,0],[2,3,0],[1,6,1],[0,0,4],[0,8,0]];
     // var data = visArray;
 
-	var maxX = _.max(data, function(d) { return d[0]; })[0];
+    var maxX = Math.max(...data.map(d => d[0]));
     maxX = maxX == 0 ? 1 : maxX;
-    
-	var maxY = _.max(data, function(d) { return d[1]; })[1];
+
+    var maxY = Math.max(...data.map(d => d[1]));
     maxY = maxY == 0 ? 1 : maxY;
-    
-	var maxZ = _.max(data, function(d) { return d[2]; })[2];
+
+    var maxZ = Math.max(...data.map(d => d[2]));
     maxZ = maxZ == 0 ? 1 : maxZ;
-	
-	var maxExponent = _.max([maxX,maxY,maxZ]);
+
+    var maxExponent = Math.max(maxX,maxY,maxZ);
 
     function newMesh(point, geometry, materials) {
       var mesh;
@@ -232,43 +230,6 @@
       data.forEach(function(d) {
         cubes.push([d[1],d[2],d[0]]);
       })
-      return cubes;
-    }
-
-  function expand(data) {
-    var cubes = [];
-    // Is this a good way to add squares?
-    // Probably not...
-    // var maxX = _.max(data, function(d) { return d[0]; })[0];
-    // maxX = maxX == 0 ? 1 : maxX;
-    // var maxZ = _.max(data, function(d) { return d[2]; })[2];
-    // maxZ = maxZ == 0 ? 1 : maxZ;
-    console.log(maxX);
-    console.log(maxZ);
-    var previousMin = 1;
-    // var k = 0;
-    for(var i = 1; i < maxX + 1; i++) {
-      for(var k = 1; k < maxZ + 1; k++) {
-        // for(var k = maxZ + 1; k >0; k--) {
-          var colPoints = _.filter(data, function(d) { return d[0] == (i - 1) && d[2] ==  (k - 1); });
-          var maxColY = _.max(colPoints, function(d) { return d[1]; })[1];
-          // console.log(maxColY);
-          if(!maxColY) {
-            // console.log(previousMax);
-            maxColY = previousMin;
-          } 
-          else {
-            // console.log(maxColY);
-            previousMin = _.min(colPoints, function(d) { return d[1]; })[1];
-          }
-
-          console.log("max: " + maxColY);
-          for(var j = maxColY ; j > 0; j--) {
-            cubes.push([i,j,k]);
-            // var mesh = newMesh([i,j,k], cube, material);
-          }
-        }
-      }
       return cubes;
     }
 
@@ -320,10 +281,9 @@
       /* geometry = new THREE.CubeGeometry(1,1,1); */
       /* cube = new THREE.Mesh(geometry, material); */
 
-      maxX = _.max(cubes_data, function(d) { return d[2] })[2];
-      maxY = _.max(cubes_data, function(d) { return d[0] })[0];
-      maxZ = _.max(cubes_data, function(d) { return d[1] })[1];
-
+      maxX = Math.max(...cubes_data.map(d => d[2]));
+      maxY = Math.max(...cubes_data.map(d => d[0]));
+      maxZ = Math.max(...cubes_data.map(d => d[1]));
 
       var lwidth = 3;
       var lineMaterial = new THREE.LineBasicMaterial({color: 0x044000, opacity: 0.8, linewidth: lwidth });
