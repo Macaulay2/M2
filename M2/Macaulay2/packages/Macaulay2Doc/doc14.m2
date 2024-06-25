@@ -29,7 +29,11 @@ document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),
      ///
      }
 
-document { Key => {isFinite, (isFinite,Number)},
+document { Key => {
+	isFinite,
+	(isFinite,Constant),
+	(isFinite,InfiniteNumber),
+	(isFinite,Number)},
      Usage => "isFinite x",
      Headline => "whether a number is finite",
      Inputs => { "x" => Number },
@@ -334,7 +338,7 @@ document { Key => {InexactNumber'},
 document { Key => {RingFamily},
      "This family is used to contain classes that correspond to a family of similar rings with a default member."
      }
-document { Key => {BesselJ,(BesselJ, ZZ, Number), (BesselJ, ZZ, Constant)},
+document { Key => {BesselJ,(BesselJ, ZZ, Number)},
      Usage => "BesselJ(n,x)\nBesselJ_n x",
      Headline => "Bessel function of the first kind",
      Inputs => {
@@ -351,7 +355,7 @@ document { Key => {BesselJ,(BesselJ, ZZ, Number), (BesselJ, ZZ, Constant)},
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselY }
      }
-document { Key => {BesselY,(BesselY, ZZ, Number), (BesselY, ZZ, Constant)},
+document { Key => {BesselY,(BesselY, ZZ, Number)},
      Usage => "BesselY(n,x)\nBesselY_n x",
      Headline => "Bessel function of the second kind",
      Inputs => {
