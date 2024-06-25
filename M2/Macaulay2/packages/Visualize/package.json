@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "postinstall": "copy-files-from-to"
+  },
+  "dependencies": {
+    "clipboard": "^2.0.11",
+    "copy-files-from-to": "^3.11.0"
+  },
+  "copyFiles": [
+    {
+      "from": "node_modules/clipboard/dist/clipboard.min.js",
+      "to": "js/"
+    }
+  ],
+  "copyFilesSettings": {
+    "whenFileExists": "overwrite"
+  }
+}
