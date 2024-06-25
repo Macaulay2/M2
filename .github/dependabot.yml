@@ -26,3 +26,12 @@ updates:
       style-dependencies:
         patterns:
           - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/M2/Macaulay2/packages/Visualize"
+    schedule:
+      interval: "monthly"
+    groups:
+      visualize-dependencies:
+        patterns:
+          - "*"
