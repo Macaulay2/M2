@@ -6,8 +6,8 @@ newPackage("DGAlgebras",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
-	   Email => "moorewf@wfu.edu"},
-       {Name => "Some documentation added by Daniel Rostamloo and David Eisenbud"}},
+	   Email => "moorewf@wfu.edu"}
+       },
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false,
      PackageExports => {"IntegralClosure"}
@@ -1475,6 +1475,8 @@ doc ///
   Description
     Text
       This package is used to define and manipulate DG algebras.
+  Contributors
+    Some documentation was added by Daniel Rostamloo and David Eisenbud.
   Subnodes
     "Basic operations on DG Algebras"
     "The Koszul complex as a DG Algebra"

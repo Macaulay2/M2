@@ -2329,7 +2329,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
      if contains(P,convexHull p) then (
 	  (M,v) := halfspaces P;
      	  (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  v = promote(v,QQ);
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
@@ -2351,7 +2351,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
      if contains(C,posHull p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
