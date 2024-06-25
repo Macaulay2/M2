@@ -80,7 +80,6 @@ jobs:
       - name: Install requirements for Linux
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository -y -n ppa:macaulay2/macaulay2
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-15 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libboost-stacktrace-dev \
