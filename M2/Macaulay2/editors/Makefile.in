@@ -41,7 +41,7 @@ else
 clean:
 	rm -rf @pre_emacsdir@/* $(addprefix emacs/, $(MADEFILES)) \
 		atom/macaulay2.cson pygments/macaulay2.py         \
-		$(PRISM_MADEFILES) $(HIGHLIGHTJS_MADEFILES)
+		$(PRISM_MADEFILES) highlightjs/macaulay2.js
 endif
 
 %/node_modules: %/package.json
@@ -56,17 +56,6 @@ prism/prism.js: prism/macaulay2.js        \
 	prism/webpack.config.js \
 	prism/index.js          \
 	prism/prism-M2.css
-	cd $(@D) && npm run build
-
-HIGHLIGHTJS_MADEFILES = $(addprefix highlightjs/, node_modules \
-	package-lock.json highlight.js macaulay2.js)
-
-highlightjs/highlight.js: highlightjs/macaulay2.js \
-	highlightjs/package.json      \
-	highlightjs/node_modules      \
-	highlightjs/webpack.config.js \
-	highlightjs/index.js          \
-	highlightjs/highlight-override.css
 	cd $(@D) && npm run build
 
 update-syntax-highlighting: prism/prism.js
