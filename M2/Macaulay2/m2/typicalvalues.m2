@@ -180,8 +180,28 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )
 
+-----------------------------------------------------------------------------
+-- The remainder of thie file generates the file "tvalues.m2" from ../d/*.d
+-- The file "tvalues.m2" should be distributed with binary distributions
+
+-- egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
+generateTypicalValues = (srcdir) -> (
+    outfile = openOut "tvalues.m2";
+    srcdir = minimizeFilename srcdir;
+    scan(sort select(readDirectory srcdir, dir -> match("\\.dd?$",dir)), file -> (
+	    file = srcdir | file;
+	    txt := get file;
+	    if match("-- . typical value: ",txt) then (
+		txt = select(lines txt, s -> match("-- . typical value: ",s));
+		txt = apply(txt, s -> replace(///.*-- . typical value: [[:space:]]*(.*[^[:space:]])[[:space:]]*///, ///typval(\1)///, s));
+			outfile << "-- typical values extracted from source file " << file << endl << stack txt << endl;
+			)));
+	    close outfile;
+	    )
+
 if isMember("--no-tvalues", commandLine) then end
 
+-----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
 redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
     f -> f => method());
