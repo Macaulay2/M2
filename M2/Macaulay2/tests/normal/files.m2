@@ -7,3 +7,12 @@ if fileExists homeDirectory then (
     assert(changeDirectory() == homeDirectory);
     assert(currentDirectory() == homeDirectory))
 removeDirectory dir
+
+assert(baseFilename "/foo/bar/baz" == "baz")
+assert(baseFilename "/foo/bar/baz/" == "baz")
+assert(baseFilename "foo" == "foo")
+assert(baseFilename "foo/" == "foo")
+assert(baseFilename "foo////" == "foo")
+assert(baseFilename "" == "")
+assert(baseFilename "/" == "/")
+assert(baseFilename "////" == "/")

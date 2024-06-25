@@ -58,9 +58,10 @@ moveFile String := opts -> src -> if fileExists src or readlink src =!= null the
 	  return bak))
 
 baseFilename = fn -> (
-     fn = separate("/",fn);
-     while #fn > 0 and fn#-1 === "" do fn = drop(fn,-1);
-     last fn)
+    m := regex("([^/]+)/*$", fn);
+    if m =!= null then substring(m#1, fn)
+    else if #fn > 0 then "/"
+    else fn)
 
 findFiles = method(Options => new OptionTable from { Exclude => {}, FollowLinks => false })
 findFiles String := opts -> name -> (
