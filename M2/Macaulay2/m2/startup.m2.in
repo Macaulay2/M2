@@ -611,11 +611,12 @@ loadCore = path -> (
 (loadDepth = 1; if firstTime and not nocore then loadCore path; loadDepth = 0)
 
 (loadDepth = 3; processCommandLineOptions 3; loadDepth = 0)
-(core "runStartFunctions")()
 
 if class Core =!= Symbol and not core "noinitfile" then (
     -- the location of init.m2 is documented in the node "initialization file"
     trySimpleLoad("init.m2", applicationDirectory() | "init.m2"));
+
+(core "runStartFunctions")()
 
 loadDepth = 0;
 ( loadDepth = 3;

@@ -67,6 +67,12 @@ sampleInitFile := ///-- This is a sample init.m2 file provided with Macaulay2.
 -- Uncomment and edit the following line to preload your favorite package.
 -- needsPackage "StateTables"
 
+-- Alternatively, you can modify the list of preloaded packages.
+-- For example, to add a single package to this list:
+-- Core#"preloaded packages" |= {"StateTables"}
+-- Or to not preload any packages:
+-- Core#"preloaded packages" = {}
+
 ///
 
 readmeFile := ///Welcome to Macaulay2!

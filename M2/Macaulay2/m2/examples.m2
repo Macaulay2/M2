@@ -88,7 +88,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
 	OutputDictionary,
 	PackageDictionary};
     if not hasmode ArgNoPreload then
-    scan(Core#"pre-installed packages", needsPackage);
+    scan(Core#"preloaded packages", needsPackage);
     if opts.PackageExports =!= null then (
 	 if instance(opts.PackageExports, String) then needsPackage opts.PackageExports
 	 else if instance(opts.PackageExports, Package) then needsPackage toString opts.PackageExports
