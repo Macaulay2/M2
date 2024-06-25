@@ -52,7 +52,7 @@ document {
      }
 
 document {
-     Key => {"operatorAttributes", Flexible, Postfix},
+     Key => {"operatorAttributes"},
      Headline => "a hashtable with information about Macaulay2 operators",
      Usage => "operatorAttributes",
      Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay2 language" }},
