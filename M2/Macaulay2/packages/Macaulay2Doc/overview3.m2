@@ -48,7 +48,6 @@ document {
 	  "libraries",
 	  TO "Singular-Factory",
 	  TO "frobby",
-	  TO "MPIR",
 	  TO "GNU MP",
 	  TO "MPFR",
       TO "MPFI",
@@ -356,14 +355,6 @@ document {
      }
 
 document {
-     Key => "MPIR",
-     "The MPIR library, version ", version#"mpir version", " provides
-     routines for arbitrary precision integer and floating point arithmetic.
-     It is available at ", HREF "http://www.mpir.org/", ".  To see whether your copy of Macaulay2 is linked
-     with it (or with GMP), examine the variable ", TO "version", "."
-     }
-
-document {
      Key => "4ti2",
      "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
      problems on linear spaces.  It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
@@ -373,8 +364,8 @@ document {
      Key => "GNU MP",
      "The GNU MP library (GMP) provides
      routines for arbitrary precision integer and floating point arithmetic.
-     It is available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and ", HREF "http://gmplib.org/", ".  To see whether your copy of Macaulay2 is linked
-     with it (or with MPIR), examine the variable ", TO "version", "."
+     It is available at ", HREF "https://gmplib.org/", " and ", HREF "https://gmplib.org/", ".
+     To see the version of the library your copy of Macaulay2 is linked with, examine the variable ", TO "version", "."
      }
 
 document {

@@ -28,11 +28,6 @@ endif
 
 include ../Makefile.library
 
-# I can't figure out how to get flint compiled with mpir instead of gmp, so we adopt an artifice:
-ifeq (@USING_MPIR@,1)
-CPPFLAGS := -I@abs_top_srcdir@/include/M2/gmp-to-mpir $(CPPFLAGS)
-endif
-
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/flint/Makefile
 # Local Variables:
 # mode: makefile-gmake

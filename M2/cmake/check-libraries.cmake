@@ -10,7 +10,7 @@
 # Others, like TBB::tbb, FFI::ffi, and Boost::regex, are linked as imported libraries in those files.
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
+set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -97,26 +97,9 @@ find_package(History	REQUIRED QUIET) # See FindHistory.cmake
 ###############################################################################
 ## Multi-precision arithmetic requirements:
 #   gmp		GNU Multiple Precision Arithmetic Library
-#   mpir	Multiple Precision Integers & Rationals
-#
-# CAUTION: switching from one to another in the same build directory is not advisable.
-# mpir.h and gmp.h both serve as multiple precision rational and integer arithmetic
-# libraries and are surrounded by #ifndef __GMP_H__ ... #endif so only one can be loaded.
-# Similarly for gmpxx.h and mpirxx.h. However, the contents of the files differ.
-# For example, mpf_cmp_z is defined only in gmp.h.
+# Note: MPIR is now deprecated.
 
-if(USING_MPIR)
-  find_package(MPIR	3.0.0)
-  set(MP_LIBRARY MPIR)
-  include_directories(BEFORE ${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
-else()
-  find_package(GMP	6.0.0 REQUIRED)
-  set(MP_LIBRARY GMP)
-endif()
-# MP will mask either GMP or MPIR
-foreach(var IN ITEMS FOUND ROOT INCLUDE_DIRS LIBRARY_DIRS LIBRARIES VERSION_OK)
-  set(MP_${var} ${${MP_LIBRARY}_${var}})
-endforeach()
+find_package(GMP	6.0.0 REQUIRED)
 
 ###############################################################################
 ## Libraries we build as a part of engine
@@ -128,7 +111,6 @@ endforeach()
 ## Libraries we can download and build:
 #   eigen3	C++ template library for linear algebra
 #   bdw-gc	Boehm-Demers-Weiser conservative C/C++ Garbage Collector
-#   mpir	Multiple Precision Integers & Rationals	(needs yasm)
 #   mpfr	Multiple Precision Floating Point	(needs gmp)
 #   mpfi	Multiple Precision F.-P. Interval	(needs gmp, mpfr)
 #   ntl		Victor Shoup's Number Theory Library	(needs gmp, mpfr)
@@ -166,7 +148,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 # TODO: add FindModules for these two as well
 
 set(LIBRARY_OPTIONS
-  Eigen3 BDWGC MPIR MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
+  Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
   GTest GLPK Givaro FFLAS_FFPACK)
 
 ###############################################################################
@@ -190,7 +172,7 @@ endif()
 
 ###############################################################################
 ## TODO: Do we still want these libraries?
-#   fplll	Lattice algorithms using floating-point arithmetic	(uses mpir and mpfr)
+#   fplll	Lattice algorithms using floating-point arithmetic	(uses gmp and mpfr)
 #   linbox	Exact computational linear algebra	(needs fflas and givaro)
 #   arb		arbitrary-precision ball arithmetic
 ## Requested by Greg Smith for future use:
@@ -361,7 +343,7 @@ else()
 endif()
 
 if(FROBBY_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR};${MP_INCLUDE_DIRS}")
+  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR};${GMP_INCLUDE_DIRS}")
   # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
   # TODO: remove when frobby is updated above 0.9.4 everywhere
   check_cxx_source_compiles([[#include <frobby.h>
