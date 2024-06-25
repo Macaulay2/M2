@@ -466,11 +466,31 @@ select' = select
 select = method(Options => true)
 select(ZZ,            Function) := List      => {} >> o -> select'
 select(ZZ, BasicList, Function) := BasicList => {} >> o -> select'
-select(ZZ, HashTable, Function) := HashTable => {} >> o -> select'
 select(    BasicList, Function) := BasicList => {} >> o -> select'
-select(    HashTable, Function) := HashTable => {} >> o -> select'
 select(    BasicList, Type)     := BasicList => {} >> o -> (L, T) -> select(L, e -> instance(e, T))
 -- two more methods installed in regex.m2
+
+selectKeys = method()
+selectKeys(ZZ, HashTable, Function) := HashTable => (n, x, f) -> (
+    selectPairs(n, x, (k, v) -> f k))
+selectKeys(HashTable, Function) := HashTable => (x, f) -> (
+    selectPairs(x, (k, v) -> f k))
+
+selectValues = method()
+selectValues(ZZ, HashTable, Function) := HashTable => (n, x, f) -> (
+    selectPairs(n, x, (k, v) -> f v))
+selectValues(HashTable, Function) := HashTable => (x, f) -> (
+    selectPairs(x, (k, v) -> f v))
+
+select(ZZ, HashTable, Function) := HashTable => {} >> o -> lookup(
+    selectValues, ZZ, HashTable, Function)
+select(HashTable, Function) := HashTable => {} >> o -> lookup(
+    selectValues, HashTable, Function)
+
+select(ZZ, Set, Function) := Set => {} >> o -> lookup(
+    selectKeys, ZZ, HashTable, Function)
+select(Set, Function) := Set => {} >> o -> lookup(
+    selectKeys, HashTable, Function)
 
 oldnumerator := numerator
 erase symbol numerator

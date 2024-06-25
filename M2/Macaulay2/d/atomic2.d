@@ -66,7 +66,7 @@ atomicLoad(e:Expr):Expr := (
 		when a.1
 		is x:atomicIntCell do toExpr(load(x.v))
 		else WrongArgAtomicInt(2))
-	    else WrongArg(1, "a hash table"))
+	    else WrongArgHashTable(1))
 	else WrongNumArgs(2))
     else WrongNumArgs(2));
 installMethod(NewFromS, ZZClass, atomicIntClass, atomicLoad);

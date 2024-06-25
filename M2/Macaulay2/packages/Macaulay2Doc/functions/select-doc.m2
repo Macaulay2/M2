@@ -116,9 +116,12 @@ document {
      }
 
 document { 
-     Key => (select,HashTable,Function),
+     Key => {
+	 (select,HashTable,Function),
+	 selectValues,
+	 (selectValues,HashTable,Function)},
      Headline => "select part of a hash table",
-     Usage => "select(v,f)",
+     Usage => "select(v,f)\nselectValues(v,f)",
      Inputs => { "v", "f" => {"returning either ", TO "true", " or ", TO "false"} },
      Outputs => {
 	  {"whose pairs are those key-value pairs ", TT "(k,w)", " of the hash table ", TT "v", " that
@@ -130,13 +133,19 @@ document {
 	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
 	  "select(x,odd)"
 	  },
-     SeeAlso => {partition}
+     SeeAlso => {
+	 (select,ZZ,HashTable,Function),
+	 partition,
+	 selectKeys,
+	 selectPairs}
      }
 
 document { 
-     Key => (select,ZZ,HashTable,Function),
+     Key => {
+	 (select,ZZ,HashTable,Function),
+	 (selectValues,ZZ,HashTable,Function)},
      Headline => "select a limited number of pairs from a hash table",
-     Usage => "select(n,v,f)",
+     Usage => "select(n,v,f)\nselectValues(n,v,f)",
      Inputs => { "n", "v", "f" => {"returning either ", TO "true", " or ", TO "false"} },
      Outputs => {
 	  {"whose pairs are those key-value pairs of the hash table ", TT "v", " that
@@ -149,7 +158,11 @@ document {
 	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
 	  "select(1,x,odd)"
 	  },
-     SeeAlso => {(select,HashTable,Function), partition}
+     SeeAlso => {
+	 (select,HashTable,Function),
+	 partition,
+	 selectKeys,
+	 selectPairs}
      }
 
 document { 
@@ -218,4 +231,86 @@ doc ///
     next
     StopIteration
     (apply, Thing, Function)
+///
+
+doc ///
+  Key
+    selectKeys
+    (selectKeys, HashTable, Function)
+    (selectKeys, ZZ, HashTable, Function)
+  Headline
+    select a part of a hash table by keys
+  Usage
+    selectKeys(x, f)
+    selectKeys(n, x, f)
+  Inputs
+    n:ZZ
+    x:HashTable -- must be immutable
+    f:Function
+  Outputs
+    :HashTable
+      containing all (or @VAR "n"@, if it is given) key-value pairs
+      (@VAR "k"@,@VAR "v"@) from @VAR "x"@ for which @CODE "f k"@ evaluates to
+      true.
+  Description
+    Example
+      x = hashTable{(1, a), (2, b), (3, c), (4, d), (5, e)}
+      selectKeys(x, odd)
+      selectKeys(2, x, odd)
+  SeeAlso
+    selectValues
+    selectPairs
+///
+
+doc ///
+  Key
+    selectPairs
+    (selectPairs, HashTable, Function)
+    (selectPairs, ZZ, HashTable, Function)
+  Headline
+    select a part of a hash table by pairs
+  Usage
+    selectPairs(x, f)
+    selectPairs(n, x, f)
+  Inputs
+    n:ZZ
+    x:HashTable -- must be immutable
+    f:Function
+  Outputs
+    :HashTable
+      containing all (or @VAR "n"@, if it is given) key-value pairs
+      (@VAR "k"@,@VAR "v"@) from @VAR "x"@ for which @CODE "f(k,v)"@ evaluates
+      to true.
+  Description
+    Example
+      x = hashTable{(1, 2), (2, 4), (3, 6), (4, 8), (5, 10)}
+      selectPairs(x, (k,v) -> odd(k + v))
+      selectPairs(2, x, (k, v) -> odd(k + v))
+  SeeAlso
+    selectValues
+    selectKeys
+///
+
+doc ///
+  Key
+    (select, ZZ, Set, Function)
+    (select, Set, Function)
+  Headline
+    select a part of a set
+  Usage
+    select(x, f)
+    select(n, x, f)
+  Inputs
+    n:ZZ
+    x:Set
+    f:Function
+  Outputs
+    :Set
+      containing all (or @VAR "n"@, if it is given) elements of @VAR "x"@
+      that evaluate to true when passed to @VAR "f"@
+  Description
+    Example
+      x = set(1..10)
+      select(x, odd)
+      select(2, x, odd)
 ///
