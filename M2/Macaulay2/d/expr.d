@@ -24,20 +24,22 @@ threadLocal export recursionLimit := 300;
 
 
 threadCounter := 0;
-threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + 3 + (threadCounter-1) * 10000 );
+threadLocal HashCounter := (
+    threadCounter = threadCounter + 1;
+    hash_t(1000000 + 3 + (threadCounter-1) * 10000 ));
 
-export nextHash():int := (
-     HashCounter = HashCounter + 1;
-     if HashCounter < 0 -- check for integer overflow
+export nextHash():hash_t := (
+     if HashCounter == Ccode(hash_t, "18446744073709551615ull") -- check for integer overflow
      then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
+     HashCounter = HashCounter + 1;
      HashCounter);
 
 -- Knuth, Art of Computer Programming, Section 6.4
-export fibonacciHash(k:int,p:int):int := (
-    Ccode(int, "(2654435769 * ",k,") >> (32 - ",p,")"));
+export fibonacciHash(k:hash_t,p:int):hash_t := (
+    Ccode(hash_t, "(2654435769 * ",k,") >> (32 - ",p,")"));
 
 -- hash codes for mutable objects that don't use nextHash
-export hashFromAddress(e:Expr):int := fibonacciHash(Ccode(int, "(long)",e), 9);
+export hashFromAddress(e:Expr):hash_t := fibonacciHash(Ccode(hash_t, "(long)", e), 9);
 
 export NULL ::= null();
 
@@ -158,7 +160,7 @@ export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
 
 -----------------------------------------------------------------------------
 
-export bucketEnd := KeyValuePair(nullE,0,nullE,self);
+export bucketEnd := KeyValuePair(nullE,hash_t(0),nullE,self);
 --Dummy Symbol needs to go in tokens because it needs error support.
 --To preserve existing hashes of types we use this workaround and preallocate it a hash number
 export dummySymbolHash := nextHash();
@@ -168,7 +170,7 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in hashtable.dd that the number of buckets
 	  -- (here four) is a power of two
-	  Class,parent,0,0,
+	  Class,parent,0,hash_t(0),
 	  true,				  -- mutable by default; careful: other routines depend on this
 	  false,
 	  newThreadRWLock()
@@ -179,7 +181,7 @@ export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
        ht);
 
 export newCompiledFunction(fn:fun):CompiledFunction := (
-    cf := CompiledFunction(fn, 0);
+    cf := CompiledFunction(fn, hash_t(0));
     cf.hash = hashFromAddress(Expr(cf));
     cf);
 
@@ -212,13 +214,13 @@ export emptySequence := Sequence();
 export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
-     Word("-*dummy symbol*-",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
+     Word("-*dummy symbol*-",TCnone,hash_t(0),newParseinfo()),dummySymbolHash,dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
      false,
      false,
-     0
+     hash_t(0)
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
@@ -226,7 +228,7 @@ export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
-     Word("-*dummy token*-",TCnone,0,newParseinfo()),
+     Word("-*dummy token*-",TCnone,hash_t(0),newParseinfo()),
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
@@ -235,7 +237,7 @@ export dummyToken   := Token(
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 
-export dummyWord    := Word("-*dummy word*-",TCnone,0,newParseinfo());
+export dummyWord    := Word("-*dummy word*-",TCnone,hash_t(0),newParseinfo());
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 

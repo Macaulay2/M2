@@ -1444,7 +1444,7 @@ export evalraw(c:Code):Expr := (
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
 	  is m:functionCode do (
-	       fc := FunctionClosure(noRecycle(localFrame),m,0);
+	       fc := FunctionClosure(noRecycle(localFrame),m,hash_t(0));
 	       fc.hash = hashFromAddress(Expr(fc));
 	       return Expr(fc))
 	  is r:localMemoryReferenceCode do (

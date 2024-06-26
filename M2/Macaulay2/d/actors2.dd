@@ -60,7 +60,7 @@ toList(e:Expr):Expr := (
 	  else Expr(
 	       sethash(
 	       	    List(listClass, if b.Mutable then copy(b.v) else b.v,
-		    	 0, false),
+		    	 hash_t(0), false),
 	       	    false)))
      is s:stringCell do list(strtoseq(s))
      else WrongArg("list, sequence, set, or string"));
@@ -173,7 +173,7 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
 	       else if classs == sequenceClass then Expr(o.v)
 	       else (
 	       	    is_mutable := ancestor(classs,mutableListClass);
-		    Expr(sethash( List(classs, if is_mutable || o.Mutable then copy(o.v) else o.v, 0,false), is_mutable))))
+		    Expr(sethash( List(classs, if is_mutable || o.Mutable then copy(o.v) else o.v, hash_t(0),false), is_mutable))))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
@@ -182,7 +182,7 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
 	       else if classs == sequenceClass then Expr(v)
 	       else (
 	       	    is_mutable := ancestor(classs,mutableListClass);
-		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, 0,false), is_mutable))))
+		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, hash_t(0),false), is_mutable))))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is s:SpecialExpr do (
@@ -217,7 +217,7 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 			 sethash(
 			      List(classs,
 				   if is_mutable || o.Mutable then copy(o.v) else o.v,
-				   0,false),
+				   hash_t(0),false),
 			      is_mutable))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
@@ -228,7 +228,7 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 	       if classs == sequenceClass then Expr(v)
 	       else (
 		    is_mutable := ancestor(classs,mutableListClass);
-		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, 0,false), is_mutable))))
+		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, hash_t(0),false), is_mutable))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
@@ -275,7 +275,7 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 		    break;
 		    );
 	       if p == cacheTableClass then (
-		    o.hash = 0;
+		    o.hash = hash_t(0);
 		    break;
 		    );
 	       p = p.parent;
@@ -286,7 +286,7 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 	  then buildErrorPacket("expected Nothing as parent for list")
 	  else if classs == sequenceClass
 	  then Expr(emptySequence)
-	  else Expr(sethash( List(classs,emptySequence,0,false), ancestor(classs,mutableListClass))))
+	  else Expr(sethash( List(classs,emptySequence,hash_t(0),false), ancestor(classs,mutableListClass))))
      else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
      else buildErrorPacket("basic type for 'new' method should have been BasicList, HashTable, or Dictionary"));
 makenew(classs:HashTable):Expr := makenew(classs,nothingClass);

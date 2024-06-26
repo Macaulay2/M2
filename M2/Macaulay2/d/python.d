@@ -23,9 +23,9 @@ toExpr(r:pythonObjectOrNull):Expr := (
     when r
     is null do buildPythonErrorPacket()
     is po:pythonObject do (
-	x := pythonObjectCell(po, 0);
-	h := int(Ccode(long, "PyObject_Hash(", po, ")"));
-	if h == -1 then ( -- unhashable object (e.g., a list)
+	x := pythonObjectCell(po, hash_t(0));
+	h := Ccode(hash_t, "PyObject_Hash(", po, ")");
+	if h == hash_t(-1) then ( -- unhashable object (e.g., a list)
 	    Ccode(void, "PyErr_Clear()");
 	    h = hashFromAddress(Expr(x)));
 	x.hash = h;
@@ -167,9 +167,9 @@ setupfun("initspam",runinitspam);
 ----------
 
 setupconst("pythonTrue",
-    Expr(pythonObjectCell(Ccode(pythonObject, "Py_True"), 1)));
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_True"), hash_t(1))));
 setupconst("pythonFalse",
-    Expr(pythonObjectCell(Ccode(pythonObject, "Py_False"), 0)));
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_False"), hash_t(0))));
 
 ----------
 -- ints --
@@ -444,7 +444,7 @@ setupfun("pythonWrapM2Function", PyWrapM2Function);
 ----------
 
 setupconst("pythonNone",
-    Expr(pythonObjectCell(Ccode(pythonObject, "Py_None"), 0xFCA86420)));
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_None"), hash_t(0xFCA86420))));
 
 ---------------
 -- importing --
