@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 674672945
+-- -*- M2-comint -*- hash: 1332114534705
 
 i1 : isc (sqrt 2*pi)
 

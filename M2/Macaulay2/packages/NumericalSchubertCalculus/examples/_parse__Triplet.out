@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1135376571
+-- -*- M2-comint -*- hash: 9868346020429268805
 
 i1 : (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
 
