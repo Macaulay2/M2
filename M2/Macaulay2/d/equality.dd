@@ -16,7 +16,7 @@ equal(x:HashTable,y:HashTable):Expr := (
      if x == y then return True;
      if x.hash != y.hash then return False;
      if x.Class != y.Class || x.parent != y.parent then return False;
-     if x.hash == 0 && x.Class == cacheTableClass then return True; -- cache tables have hash code 0
+     if x.hash == hash_t(0) && x.Class == cacheTableClass then return True; -- cache tables have hash code 0
      if x.Mutable || y.Mutable then return False;	-- so we don't need to lockRead() after this
      if x.numEntries != y.numEntries || length(x.table) != length(y.table) then return False;
      foreach a at i in x.table do (

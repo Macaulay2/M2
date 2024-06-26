@@ -4,21 +4,21 @@ use expr;
 
 header "#include <engine.h>"; -- required for raw hash functions
 
-export hash(e:Expr):int := (
+export hash(e:Expr):hash_t := (
      when e
      is x:HashTable do x.hash
      is x:SymbolClosure do x.symbol.hash -- should add in a hash code for the frame
      is s:SymbolBody do s.symbol.hash
      is x:Database do x.hash
      is x:ZZcell do hash(x.v)
-     is b:Boolean do if b.v then 444777 else 777333
-     is Nothing do 333889
+     is b:Boolean do if b.v then hash_t(444777) else hash_t(777333)
+     is Nothing do hash_t(333889)
      is x:List do x.hash
      is f:functionCode do f.hash
-     is MysqlConnectionWrapper do 237489 -- improve this later!
-     is MysqlFieldWrapper do 23748 -- improve this later!
-     is MysqlResultWrapper do 2374 -- improve this later!
-     is CodeClosure do 73889				 -- improve this later!
+     is MysqlConnectionWrapper do hash_t(237489) -- improve this later!
+     is MysqlFieldWrapper do hash_t(23748) -- improve this later!
+     is MysqlResultWrapper do hash_t(2374) -- improve this later!
+     is CodeClosure do hash_t(73889)       -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:QQcell do hash(x.v)
      is x:RRcell do hash(x.v)
@@ -26,7 +26,7 @@ export hash(e:Expr):int := (
      is x:CCcell do hash(x.v)
      is x:Sequence do (
 	  -- the numbers here are the same as in binary lookup() in objects.d!!
-	  h := 27449;
+	  h := hash_t(27449);
 	  foreach y in x do h = h * 27457 + hash(y);
 	  h)
      is x:stringCell do hash(x.v)				    -- for strings, keep internal and external hash the same
@@ -39,41 +39,41 @@ export hash(e:Expr):int := (
 	       hash(x.position.filename) 
 	       + 1299791 * (int(x.position.line) + 
 		    1299811 * int(x.position.column))))
-     is x:RawMonomialCell do int(hash(x.p))
-     is x:RawMonomialOrderingCell do int(Ccode(uint, "rawMonomialOrderingHash(",x.p,")" ))
-     is x:RawMonoidCell do int(Ccode(uint, "rawMonoidHash(",x.p,")" ))
-     is x:RawMatrixCell do int(Ccode(uint, "rawMatrixHash(",x.p,")" ))
-     is x:RawMutableMatrixCell do int(Ccode(uint, "rawMutableMatrixHash(",x.p,")" ))
-     is x:RawMutableComplexCell do int(Ccode(uint, "rawMutableComplexHash(",x.p,")" ))
+     is x:RawMonomialCell do hash(x.p)
+     is x:RawMonomialOrderingCell do Ccode(hash_t, "rawMonomialOrderingHash(",x.p,")" )
+     is x:RawMonoidCell do Ccode(hash_t, "rawMonoidHash(",x.p,")" )
+     is x:RawMatrixCell do Ccode(hash_t, "rawMatrixHash(",x.p,")" )
+     is x:RawMutableMatrixCell do Ccode(hash_t, "rawMutableMatrixHash(",x.p,")" )
+     is x:RawMutableComplexCell do Ccode(hash_t, "rawMutableComplexHash(",x.p,")" )
      -- NAG begin
-     is x:RawHomotopyCell do int(Ccode(uint, "rawHomotopyHash(",x.p,")" ))
-     is x:RawSLEvaluatorCell do int(Ccode(uint, "rawSLEvaluatorHash(",x.p,")" ))
-     is x:RawSLProgramCell do int(Ccode(uint, "rawSLProgramHash(",x.p,")" ))
-     is x:RawStraightLineProgramCell do int(Ccode(uint, "rawStraightLineProgramHash(",x.p,")" ))
-     is x:RawPathTrackerCell do int(Ccode(uint, "rawPathTrackerHash(",x.p,")" ))
-     is x:RawPointArrayCell do int(Ccode(uint, "rawPointArrayHash(",x.p,")" ))
+     is x:RawHomotopyCell do Ccode(hash_t, "rawHomotopyHash(",x.p,")" )
+     is x:RawSLEvaluatorCell do Ccode(hash_t, "rawSLEvaluatorHash(",x.p,")" )
+     is x:RawSLProgramCell do Ccode(hash_t, "rawSLProgramHash(",x.p,")" )
+     is x:RawStraightLineProgramCell do Ccode(hash_t, "rawStraightLineProgramHash(",x.p,")" )
+     is x:RawPathTrackerCell do Ccode(hash_t, "rawPathTrackerHash(",x.p,")" )
+     is x:RawPointArrayCell do Ccode(hash_t, "rawPointArrayHash(",x.p,")" )
      -- NAG end
-     is x:RawRingCell do int(Ccode(uint, "rawRingHash(",x.p,")" ))
-     is x:RawComputationCell do int(Ccode(uint, "rawComputationHash(",x.p,")" ))
-     is x:RawFreeModuleCell do int(Ccode(uint, "rawFreeModuleHash(",x.p,")" ))
-     is x:RawRingMapCell do int(Ccode(uint, "rawRingMapHash(",x.p,")" ))
-     is x:RawRingElementCell do int(Ccode(uint, "rawRingElementHash(",x.p,")" ))
-     is x:RawMonomialIdealCell do int(Ccode(uint, "rawMonomialIdealHash(",x.p,")" ))
+     is x:RawRingCell do Ccode(hash_t, "rawRingHash(",x.p,")" )
+     is x:RawComputationCell do Ccode(hash_t, "rawComputationHash(",x.p,")" )
+     is x:RawFreeModuleCell do Ccode(hash_t, "rawFreeModuleHash(",x.p,")" )
+     is x:RawRingMapCell do Ccode(hash_t, "rawRingMapHash(",x.p,")" )
+     is x:RawRingElementCell do Ccode(hash_t, "rawRingElementHash(",x.p,")" )
+     is x:RawMonomialIdealCell do Ccode(hash_t, "rawMonomialIdealHash(",x.p,")" )
      is s:SpecialExpr do s.Class.hash + 221 * hash(s.e)
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
-     is f:CompiledFunctionBody do 12347
+     is f:CompiledFunctionBody do hash_t(12347)
      is po:pythonObjectCell do po.hash
-     is xmlNodeCell do int(123456)
-     is xmlAttrCell do int(123457)
+     is xmlNodeCell do hash_t(123456)
+     is xmlAttrCell do hash_t(123457)
      is t:TaskCell do t.body.hash
-     is foss:fileOutputSyncState do int(123458)
+     is foss:fileOutputSyncState do hash_t(123458)
      -- cast to long first to avoid "different size" compiler warning
-     is x:pointerCell do int(long(Ccode(long, x.v)))
+     is x:pointerCell do Ccode(hash_t, "(long)", x.v)
      is x:atomicIntCell do x.hash
      );
 
-export hash(x:List):int := (
+export hash(x:List):hash_t := (
      h := x.Class.hash + 23407;
      foreach y in x.v do h = h * 1299833 + hash(y);
      h);
@@ -99,21 +99,21 @@ export reverse(a:Sequence):Sequence := (
      n := length(a);
      new Sequence len n do (n = n-1; provide a.n));
 export reverse(a:List):List := sethash( 
-     List( a.Class, reverse(a.v), 0, a.Mutable), a.Mutable 
+     List( a.Class, reverse(a.v), hash_t(0), a.Mutable), a.Mutable 
      );
 export seq():Expr := emptySequenceE;
 export seq(e:Expr,f:Expr):Expr := Expr(Sequence(e,f));
 export seq(e:Expr,f:Expr,g:Expr):Expr := Expr(Sequence(e,f,g));
 export list(a:Sequence):Expr := (
-     r := List(listClass,a,0,false);
+     r := List(listClass,a,hash_t(0),false);
      r.hash = hash(r);
      Expr(r));     
 export list(classs:HashTable,a:Sequence):Expr := (
-     r := List(classs,a,0,false);
+     r := List(classs,a,hash_t(0),false);
      r.hash = hash(r);
      Expr(r));     
 export list(classs:HashTable,a:Sequence,is_mutable:bool):Expr := (
-     r := List(classs,a,0,is_mutable);
+     r := List(classs,a,hash_t(0),is_mutable);
      r.hash = hash(r);
      Expr(r));     
 export list(classs:HashTable,e:Expr):Expr := (
@@ -128,7 +128,7 @@ export list(e:Expr,f:Expr,g:Expr):Expr := list(Sequence(e,f,g));
 export list(e:Expr,f:Expr,g:Expr,h:Expr):Expr := list(Sequence(e,f,g,h));
 
 export Array(a:Sequence):Expr := (
-     r := List(arrayClass,a,0,false);
+     r := List(arrayClass,a,hash_t(0),false);
      r.hash = hash(r);
      Expr(r));
 export Array(e:Expr):Expr := (
@@ -142,7 +142,7 @@ export Array(e:Expr,f:Expr,g:Expr):Expr := Array(Sequence(e,f,g));
 export Array(e:Expr,f:Expr,g:Expr,h:Expr):Expr := Array(Sequence(e,f,g,h));
 
 export AngleBarList(a:Sequence):Expr := (
-     r := List(angleBarListClass,a,0,false);
+     r := List(angleBarListClass,a,hash_t(0),false);
      r.hash = hash(r);
      Expr(r));
 export emptyAngleBarList := AngleBarList(Sequence());

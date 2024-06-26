@@ -66,7 +66,7 @@ prependfun(e:Expr):Expr := (
 			      provide elem;
 			      foreach t in y.v do provide t;
 			      ),
-			 0,y.Mutable);
+			 hash_t(0),y.Mutable);
 		    Expr(sethash(r,y.Mutable)))
 	       else WrongArg(1+1,"a list or sequence")
 	       )
@@ -96,7 +96,7 @@ appendfun(e:Expr):Expr := (
 			      foreach t in y.v do provide t;
 			      provide elem;
 			      ),
-			 0,y.Mutable);
+			 hash_t(0),y.Mutable);
 		    Expr(sethash(r,y.Mutable)))
 	       else WrongArg(0+1,"a list or sequence")
 	       )

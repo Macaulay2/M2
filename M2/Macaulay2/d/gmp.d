@@ -164,9 +164,9 @@ export minprec := Ccode(ulong,"MPFR_PREC_MIN");
 
 export maxprec := Ccode(ulong,"MPFR_PREC_MAX");
 
-export hash(x:ZZ):int := (
-     if isInt(x) then 0x7fffffff & toInt(x)
-     else Ccode(int, "mpz_hash(",					    -- see gmp_aux.c for this function
+export hash(x:ZZ):hash_t := (
+     if isInt(x) then hash_t(0x7fffffff & toInt(x))
+     else Ccode(hash_t, "mpz_hash(",					    -- see gmp_aux.c for this function
            x, ")"));
 
 getstr(str:charstarOrNull, base:int, x:ZZ) ::= Ccode(charstarOrNull, "mpz_get_str(", str, ",", base, ",", x, ")" );
@@ -370,6 +370,7 @@ export toInteger(i:uint64_t):ZZ := (
 	x := newZZmutable();
 	Ccode(void, "mpz_import(", x, ", 1, 1, 8, 0, 0, &", i, ")");
 	moveToZZandclear(x)));
+export toInteger(i:hash_t):ZZ := toInteger(uint64_t(i));
 
 abs(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_abs(", x, ",", y, ")" );
 
@@ -642,7 +643,7 @@ export numeratorRef  (x:QQmutable) ::= Ccode( ZZmutable, "mpq_numref(",  x, ")")
 
 export denominatorRef(x:QQmutable) ::= Ccode( ZZmutable, "mpq_denref(",  x, ")");
 
-export hash(x:QQ):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
+export hash(x:QQ):hash_t := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 
 isZero0    (x:QQ):bool :=  0 == Ccode(int, "mpq_sgn(",x,")");
 isNegative0(x:QQ):bool := -1 == Ccode(int, "mpq_sgn(",x,")");
@@ -1415,19 +1416,19 @@ export intersectRRi (x:RRi, y:RRi, prec:ulong):RRi := (
      Ccode( void, "mpfi_intersect(", z, ",",  x, ",",  y, ")" );
      moveToRRiandclear(z));
 
-export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
+export hash(x:RR):hash_t := hash_t(precision0(x)) + Ccode(hash_t,
      "mpfr_hash(",					    -- see gmp_aux.c for this function
           x, 
      ")"
     );
 
-export hash(x:RRi):int := int(precision0(x)) + Ccode(int,
+export hash(x:RRi):hash_t := hash_t(precision0(x)) + Ccode(hash_t,
     "mpfi_hash(",     -- Added for MPFI
     x,
     ")"
     ); -- End added for MPFI
 
-export hash(x:CC):int := 123 + hash(x.re) + 111 * hash(x.im);
+export hash(x:CC):hash_t := 123 + hash(x.re) + 111 * hash(x.im);
      
 export (x:RR) + (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));

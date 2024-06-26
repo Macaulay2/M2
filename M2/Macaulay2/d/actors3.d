@@ -615,7 +615,7 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	       else return WrongArg(1,"a list of pairs"));
 	  if n < length(x)+length(y)
 	  then z = new Sequence len n do foreach a in z do provide a;
-	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,0,false),xl.Mutable | yl.Mutable)))
+	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,hash_t(0),false),xl.Mutable | yl.Mutable)))
      else WrongArg(2,"a list")
      else WrongArg(1,"a list"));
 mergepairsfun(e:Expr):Expr := (

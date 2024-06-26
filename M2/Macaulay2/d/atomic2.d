@@ -7,7 +7,7 @@ use hashtables;
 header "#include \"M2mem.h\"";
 
 toExpr(x:atomicField):Expr := (
-    y := atomicIntCell(x, 0);
+    y := atomicIntCell(x, hash_t(0));
     y.hash = hashFromAddress(Expr(y));
     Expr(y));
 WrongArgAtomicInt(n:int):Expr := WrongArg(n, "an atomic integer");

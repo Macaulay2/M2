@@ -390,7 +390,7 @@ export convert(e:ParseTree):Code := (
      is a:Arrow do (
 	  fc := functionCode(
 	       a.Operator,		  -- just for display purposes!
-	       convert(a.rhs),a.desc,0);
+	       convert(a.rhs),a.desc,hash_t(0));
 	  fc.hash = hashFromAddress(Expr(fc));
 	  Code(fc))
      is u:Unary do (

@@ -114,15 +114,15 @@ export parseString(s:string):string := (
      tostring(v)
      );
 
-export thenW := Word("-*dummy word: then*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export whenW := Word("-*dummy word: when*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export elseW := Word("-*dummy word: else*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export ofW := Word("-*dummy word: of*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export doW := Word("-*dummy word: do*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export listW := Word("-*dummy word: list*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export fromW := Word("-*dummy word: from*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export inW := Word("-*dummy word: in*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export toW := Word("-*dummy word: to*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export thenW := Word("-*dummy word: then*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export whenW := Word("-*dummy word: when*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export elseW := Word("-*dummy word: else*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export ofW := Word("-*dummy word: of*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export doW := Word("-*dummy word: do*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export listW := Word("-*dummy word: list*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export fromW := Word("-*dummy word: from*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export inW := Word("-*dummy word: in*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export toW := Word("-*dummy word: to*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export debug := false;
 export tracefile := dummyfile;
 export openTokenFile(filename:string):(TokenFile or errmsg) := (

@@ -970,6 +970,8 @@ export (o:file) << (x:long) : file :=  o << tostring(x);
 
 export (o:file) << (x:ulong) : file :=  o << tostring(x);
 
+export (o:file) << (x:hash_t) : file := o << tostring(x);
+
 export setIOSynchronized(e:Expr):Expr :=(
      when e
      is a:Sequence do (
