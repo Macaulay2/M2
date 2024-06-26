@@ -1228,6 +1228,7 @@ then
 else AC_LANG(C++)
     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+    AC_CHECK_HEADER(mathicgb/mtbb.hpp,,BUILD_mathicgb=yes)
 fi
 
 if test $BUILD_gtest = no
