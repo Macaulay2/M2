@@ -191,7 +191,7 @@ endif
 	$(WHY)
 	@ set -x ; ( $(CDBUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
-PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch --batch -p0 < $$i ; done
+PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do @PATCH@ --batch -p0 < $$i ; done
 .patched-$(VERSION) : $(PATCHFILE)
 	$(WHY)
 	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
