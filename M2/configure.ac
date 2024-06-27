@@ -225,7 +225,12 @@ elif test "$DOCUMENTATION" = yes
 then DOCUMENTATION="html info"
 else for DOCTYPE in $DOCUMENTATION
     do case $DOCTYPE in
-            html|info|pdf)
+            html|pdf)
+                ;;
+            info)
+                AC_CHECK_PROGS([INSTALL_INFO], [install-info], [false])
+                AS_IF([test $INSTALL_INFO = false],
+                    AC_MSG_ERROR([install-info is required]))
                 ;;
             *)
                 AC_MSG_ERROR([unknown documentation type ($DOCTYPE); expected html, info, or pdf])
