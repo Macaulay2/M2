@@ -1200,6 +1200,8 @@ then
 else AC_LANG(C++)
     AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
+    AS_IF([test $BUILD_memtailor = yes],
+          [AC_MSG_WARN([memtailor not found, will build])])
 fi
 
 AC_ARG_WITH([system-mathic],
@@ -1214,6 +1216,8 @@ then
 else AC_LANG(C++)
     AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
+    AS_IF([test $BUILD_mathic = yes],
+          [AC_MSG_WARN([mathic not found, will build])])
 fi
 
 AC_ARG_WITH([system-mathicgb],
@@ -1229,6 +1233,8 @@ else AC_LANG(C++)
     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
     AC_CHECK_HEADER(mathicgb/mtbb.hpp,,BUILD_mathicgb=yes)
+    AS_IF([test $BUILD_mathicgb = yes],
+          [AC_MSG_WARN([mathicgb not found, will build])])
 fi
 
 if test $BUILD_gtest = no
