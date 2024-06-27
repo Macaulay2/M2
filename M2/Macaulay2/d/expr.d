@@ -35,10 +35,12 @@ export nextHash():hash_t := (
      HashCounter);
 
 -- Knuth, Art of Computer Programming, Section 6.4
+-- constant is approx. 2^64 / phi
 export fibonacciHash(k:hash_t,p:int):hash_t := (
-    Ccode(hash_t, "(2654435769 * ",k,") >> (32 - ",p,")"));
+    Ccode(hash_t, "(11400714819323198485ull * ",k,") >> (64 - ",p,")"));
 
 -- hash codes for mutable objects that don't use nextHash
+-- we use 9 since #buckets ZZ = 2^9
 export hashFromAddress(e:Expr):hash_t := fibonacciHash(Ccode(hash_t, "(long)", e), 9);
 
 export NULL ::= null();
