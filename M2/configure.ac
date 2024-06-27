@@ -268,9 +268,7 @@ AC_PROG_CXX()			# set CXXFLAGS before this
 AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 
 AC_PROG_YACC()
-if test "$YACC" = byacc
-then AC_MSG_ERROR([byacc found, but leads to a crash in scc1: install bison instead])
-fi
+AS_IF([test "$YACC" != "bison -y"], [AC_MSG_ERROR([bison is required])])
 
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
