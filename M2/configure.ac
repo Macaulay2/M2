@@ -170,6 +170,8 @@ AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
 AC_CHECK_PROGS(GIT,git,false)
+AC_CHECK_PROGS(PATCH,patch,false)
+AS_IF([test $PATCH = false], AC_MSG_ERROR([patch is required]))
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
