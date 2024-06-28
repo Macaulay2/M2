@@ -1138,8 +1138,7 @@ AC_CHECK_HEADER([frobby.h],
           BUILD_frobby=yes])])
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
-    dnl uncomment this to [1] when frobby is built from a submodule (?)
-    dnl AC_DEFINE([HAVE_FROBBY_VERSION], [0], [whether frobby has frobby_version])
+    AC_DEFINE([HAVE_FROBBY_VERSION], [1], [whether frobby has frobby_version])
 else
     AC_MSG_CHECKING([whether frobby has frobby_version])
     AC_COMPILE_IFELSE(
