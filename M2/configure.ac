@@ -1126,7 +1126,16 @@ dnl factory needs to know:
 AC_SUBST(BUILD_ntl)
 
 AC_LANG(C++)
-AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
+AC_CHECK_HEADER([frobby.h],
+    [LIBS="-lfrobby $LIBS"],
+    dnl check /usr/include/frobby (e.g., on Fedora)
+    [SAVECPPFLAGS="$CPPFLAGS"
+     CPPFLAGS="$CPPFLAGS -I/usr/include/frobby"
+     AS_UNSET([ac_cv_header_frobby_h])
+     AC_CHECK_HEADER([frobby.h],
+         [LIBS="-lfrobby $LIBS"],
+         [CPPFLAGS="$SAVECPPFLAGS"
+          BUILD_frobby=yes])])
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
     dnl uncomment this to [1] when frobby is built from a submodule (?)
