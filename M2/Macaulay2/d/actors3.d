@@ -518,6 +518,7 @@ setupfun("internalrsort",rsortfun);
 
 lessfun1(rhs:Code):Expr := unarymethod(rhs,LessS);
 lessfun2(lhs:Code,rhs:Code):Expr := (
+    -- # typical value: symbol <, Thing, Thing, Boolean
      e := compareop(lhs,rhs);
      when e 
      is Error do e
@@ -527,6 +528,7 @@ setup(LessS,lessfun1,lessfun2);
 
 greaterequalfun1(rhs:Code):Expr := unarymethod(rhs,GreaterEqualS);
 greaterequalfun2(lhs:Code,rhs:Code):Expr := (
+    -- # typical value: symbol >=, Thing, Thing, Boolean
      e := compareop(lhs,rhs);
      when e 
      is Error do e
@@ -543,6 +545,7 @@ setup(GreaterEqualS,greaterequalfun1,greaterequalfun2);
 
 greaterfun1(rhs:Code):Expr := unarymethod(rhs,GreaterS);
 greaterfun2(lhs:Code,rhs:Code):Expr := (
+    -- # typical value: symbol >, Thing, Thing, Boolean
      e := compareop(lhs,rhs);
      when e 
      is Error do e
@@ -552,6 +555,7 @@ setup(GreaterS,greaterfun1,greaterfun2);
 
 lessequalfun1(rhs:Code):Expr := unarymethod(rhs,LessEqualS);
 lessequalfun2(lhs:Code,rhs:Code):Expr := (
+    -- # typical value: symbol <=, Thing, Thing, Boolean
      e := compareop(lhs,rhs);
      when e 
      is Error do e

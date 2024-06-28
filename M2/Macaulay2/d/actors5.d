@@ -36,6 +36,7 @@ setup(DeductionS,unaryDeductionFun,binaryDeductionFun);
 
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (
+    -- # typical value: symbol =>, Thing, Thing, Option
      l := eval(lhs);
      when l is Error do l
      else (

@@ -1401,6 +1401,7 @@ export evalprof(c:Code):Expr := (
         e)
     else evalraw(c));
 export evalraw(c:Code):Expr := (
+    -- # typical value: symbol SPACE, Function, Thing, Thing
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (
