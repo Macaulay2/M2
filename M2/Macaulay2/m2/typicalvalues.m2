@@ -20,7 +20,6 @@ installMethod(symbol #?, BasicList, ZZ, Boolean => x -> (dummy x;))
 installMethod(symbol #, BasicList, ZZ, Thing => x -> (dummy x;))
 installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
 
-any(ZZ,Function) := any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
