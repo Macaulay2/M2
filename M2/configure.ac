@@ -270,6 +270,12 @@ AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 AC_PROG_YACC()
 AS_IF([test "$YACC" != "bison -y"], [AC_MSG_ERROR([bison is required])])
 
+dnl TODO: once autoconf 2.70 is available everyowhere, use the following:
+dnl AC_PROG_LEX([noyywrap])
+dnl the pre-2.70 version w/o arguments is deprecated and gives a warning
+AC_PROG_LEX()
+AS_IF([test "$LEX" != "flex"], [AC_MSG_ERROR([flex is required])])
+
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
