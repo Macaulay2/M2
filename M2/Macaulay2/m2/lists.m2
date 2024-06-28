@@ -123,8 +123,14 @@ delete(Thing, BasicList) := (x, v) -> select(v, i -> i =!= x)
 number = x -> # select x
 
 -----------------------------------------------------------------------------
--- all, same, uniform, isMember
+-- any, all, same, uniform, isMember
 -----------------------------------------------------------------------------
+
+-- method defined in actors4.d
+any(ZZ,                   Function) :=
+any(HashTable,            Function) :=
+any(BasicList,            Function) :=
+any(BasicList, BasicList, Function) := Boolean => any
 
 all = method(TypicalValue => Boolean)
 all(ZZ,                   Function) := -- uses 0 .. n-1
