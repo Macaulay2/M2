@@ -3,7 +3,7 @@
 
 set(CORE_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core)
 set(CORE_TESTS ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/Core/tests)
-set(M2_ARGS -q --silent --stop -e errorDepth=0 --no-preload --no-tvalues)
+set(M2_ARGS -q --silent --stop -e errorDepth=0 --no-preload)
 
 # List of Core sources
 file(STRINGS loadsequence M2LIST)
@@ -18,8 +18,7 @@ add_custom_target(M2-core ALL DEPENDS ${CORE_DIR}/tvalues.m2)
 
 add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
   COMMENT "Generating Macaulay2/Core/tvalues.m2"
-  COMMAND
-    M2-binary ${M2_ARGS} -e "debug Core; generateTypicalValues \"${CMAKE_SOURCE_DIR}/Macaulay2/d/\"; exit 0"
+  COMMAND M2-binary ${M2_ARGS} -e "debug Core; generateTypicalValues \"${CMAKE_SOURCE_DIR}/Macaulay2/d/\"; exit 0"
   WORKING_DIRECTORY ${CORE_DIR}
   DEPENDS M2-binary
   VERBATIM)
