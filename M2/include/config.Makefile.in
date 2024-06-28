@@ -160,27 +160,27 @@ ifeq "$(NORULES)" ""
 
 .SUFFIXES : .sig.tmp .sig .dep .d .dd -exports.h.tmp -exports.h -tmp.c -tmp.cc
 
-%.sig: ;	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
-%-exports.h: ;	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+%.sig: ;	test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+%-exports.h: ;	test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 
 %.sig.tmp %.dep: %.d
 	$(SHOW)SCC1 -dep $*.d
 	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
 	mv $*.dep.tmp $*.dep
-	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+	test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
 %.sig.tmp %.dep: %.dd
 	$(SHOW)SCC1 -dep $*.dd
 	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
 	mv $*.dep.tmp $*.dep
-	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+	test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
 %-tmp.c	 %-exports.h.tmp: %.d
 	$(SHOW)SCC1 $*.d
 	$(HIDE)$(SCC1) $(SCCFLAGS) $<
-	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+	test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 %-tmp.cc %-exports.h.tmp: %.dd
 	$(SHOW)SCC1 $*.dd
 	$(HIDE)$(SCC1) $(SCCFLAGS) $<
-	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+	test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 %.o: %-tmp.c  %-exports.h
 	$(SHOW)CC $*-tmp.c
 	$(HIDE)$(COMPILE.c) $(DCFLAGS) $< $(OUTPUT_OPTION)
