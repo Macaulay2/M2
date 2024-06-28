@@ -93,7 +93,8 @@ endif
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
 ifeq ($(SUBMODULE),true)
-UNTARCMD      ?= rsync -a @abs_top_srcdir@/submodules/$(LIBNAME)/* $(TARDIR)
+UNTARCMD      ?= $(MKDIR_P) $(TARDIR) && \
+		  cp -r @abs_top_srcdir@/submodules/$(LIBNAME)/* $(TARDIR)
 else
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
 endif
