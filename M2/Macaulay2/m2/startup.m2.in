@@ -378,7 +378,6 @@ usage := arg -> (
      << "    --no-threads       don't start any additional threads (or tasks)" << newline
      << "    --no-time          arrange for the current time to be always 0" << newline;
      << "    --no-tty           do not treat stdin and stdout as tty's" << newline
-     << "    --no-tvalues       do not load tvalues.m2" << newline
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
@@ -437,7 +436,6 @@ action := hashTable {
      "--no-core"         => arg -> if phase == 1 then nocore = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
      "--no-tty" => arg -> arg,			    -- handled in d/stdio.d
-     "--no-tvalues" => arg -> arg,		    -- handled in m2/typicalvalues.m2
      "--read-only-files" => arg -> arg,		    -- handled in d/stdio.d
      "--script" => arg -> error "script option should be first argument, of two",
      "--silent" => arg -> nobanner = true,

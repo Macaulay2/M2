@@ -52,7 +52,7 @@ ArgNoReadline  = 1 <<  6 -* add --no-readline *-
 ArgNoCore      = 1 <<  7 -* add --no-core *-
 ArgNoThreads   = 1 <<  8 -* add --no-threads *-
 ArgNoTTY       = 1 <<  9 -* add --no-tty *-
-ArgNoTValues   = 1 << 10 -* add --no-tvalues *-
+--no-tvalues was 1 << 10, now unused
 ArgNotify      = 1 << 11 -* add --notify *-
 ArgSilent      = 1 << 12 -* add --silent *-
 ArgStop        = 1 << 13 -* add --stop *-
@@ -115,7 +115,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgNoCore,      "--no-core");
      cmd = cmd | readmode(ArgNoThreads,   "--no-threads");
      cmd = cmd | readmode(ArgNoTTY,       "--no-tty");
-     cmd = cmd | readmode(ArgNoTValues,   "--no-tvalues");
+     -- readmode is empty for 1 << 10
      cmd = cmd | readmode(ArgNotify,      "--notify");
      cmd = cmd | readmode(ArgSilent,      "--silent");
      cmd = cmd | readmode(ArgStop,        "--stop");
