@@ -1148,23 +1148,30 @@ lengthFun(rhs:Code):Expr := (
      e := eval(rhs);
      when e
      is Error do e
+     -- # typical value: symbol #, HashTable, ZZ
      is x:HashTable do (
 	  if (x.Mutable) then lockRead(x.mutex);
 	  res := toExpr(x.numEntries);
 	  if (x.Mutable) then unlock(x.mutex);
 	  res)
+     -- # typical value: symbol #, Sequence, ZZ
      is x:Sequence do toExpr(length(x))
+     -- # typical value: symbol #, Dictionary, ZZ
      is dc:DictionaryClosure do (
 	  table := dc.dictionary.symboltable;
 	  lockRead(table.mutex);
 	  res := toExpr(table.numEntries);
 	  unlock(table.mutex);
 	  res)
+     -- # typical value: symbol #, List, ZZ
      is x:List do toExpr(length(x.v))
+     -- # typical value: symbol #, String, ZZ
      is s:stringCell do toExpr(length(s.v))
+     -- # typical value: symbol #, Net, ZZ
      is n:Net do toExpr(length(n.body))
-     else buildErrorPacket("expected a list, sequence, hash table, or string"));
+     else buildErrorPacket("expected a list, sequence, string, net, hash table, or dictionary"));
 setup(SharpS,lengthFun,subvalue);
+
 subvalueQ(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left is Error do left
