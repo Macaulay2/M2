@@ -2,9 +2,15 @@
 -- author(s): Lily Silverstein
 -- notes:
 
+undocumented {
+    (horizontalJoin, Net),
+    (horizontalJoin, Nothing),
+    (horizontalJoin, String),
+    }
+
 doc ///
  Key
-  horizontalJoin
+   horizontalJoin
   (horizontalJoin, BasicList)
  Headline
   join nets or strings horizontally

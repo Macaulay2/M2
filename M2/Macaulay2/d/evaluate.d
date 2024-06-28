@@ -1927,6 +1927,7 @@ merge(e:Expr):Expr := (
 	  else WrongArgHashTable(2)
 	  else WrongArgHashTable(1))
      else WrongNumArgs(3));
+-- # typical value: merge, HashTable, HashTable, Function, HashTable
 setupfun("merge",merge);		  -- see objects.d
 combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (	-- x and y are not Mutable
      z := newHashTable(x.Class,x.parent);
