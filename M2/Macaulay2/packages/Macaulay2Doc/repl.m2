@@ -215,7 +215,7 @@ document {
      ///,
      SeeAlso => {mutable, "try"}
      }
-document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, Pseudocode), (frames, Function)},
+document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, Pseudocode), (frames, FunctionClosure)},
      Headline => "get the frames associated to a closure",
      Usage => "frames f",
      Inputs => { "f" => {"() or ", ofClass{Symbol,Function,Pseudocode}}},
@@ -502,7 +502,7 @@ document { Key => LocalDictionary,
      have values; thus they may be referred to as dictionary closures.",
      SeeAlso => { localDictionaries, GlobalDictionary }
      }
-document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictionaries, Pseudocode), (localDictionaries, Dictionary), (localDictionaries, Function)},
+document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictionaries, Pseudocode), (localDictionaries, Dictionary), (localDictionaries, FunctionClosure)},
      Headline => "get local dictionaries",
      Usage => "localDictionaries f",
      Inputs => {
