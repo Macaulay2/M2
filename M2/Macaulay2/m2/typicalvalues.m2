@@ -15,21 +15,10 @@ typicalValues#(symbol symbol) = Symbol
 typicalValues#(symbol ?) = Boolean
 
 dummy := x -> error("dummy method function called")
-installMethod(symbol #?, HashTable, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol #?, Set, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol #?, Database, String, Boolean => x -> (dummy x;))
+-- TODO: where are these defined in the interpreter?
 installMethod(symbol #?, BasicList, ZZ, Boolean => x -> (dummy x;))
-installMethod(symbol #?, String, ZZ, Boolean => x -> (dummy x;))
-installMethod(symbol #, HashTable, Thing, Thing => x -> (dummy x;))
-installMethod(symbol #, Database, String, String => x -> (dummy x;))
-installMethod(symbol #, String, ZZ, Thing => x -> (dummy x;))
 installMethod(symbol #, BasicList, ZZ, Thing => x -> (dummy x;))
-
--- installMethod(symbol #, File, ZZ => x -> (dummy x;))
-installMethod(symbol #, Set, ZZ => x -> (dummy x;))
-installMethod(symbol #, HashTable, ZZ => x -> (dummy x;))
 installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
-installMethod(symbol #, String, ZZ => x -> (dummy x;))
 
 installMethod(symbol <, Thing, Thing, Boolean => x -> (dummy x;))
 installMethod(symbol <=, Thing, Thing, Boolean => x -> (dummy x;))
