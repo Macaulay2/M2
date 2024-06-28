@@ -189,6 +189,7 @@ typicalValuesFormat := "-- . typical value: *(.*?) *$"
 -- egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
 
 generateTypicalValues = (srcdir) -> (
+    if not fileExists srcdir then error "unable to find the source code for the interpreter";
     printerr("Extracting typical values from ", relativizeFilename srcdir);
     ddfiles := select(readDirectory srcdir, file -> match("\\.dd?$", file));
     printerr("Generating typical values in ", relativizeFilename typicalValuesSource);
@@ -198,8 +199,6 @@ generateTypicalValues = (srcdir) -> (
 	extracted := select(typicalValuesFormat, "typval(\\1)", get(srcdir | file));
 	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
     close outfile)
-
-if isMember("--no-tvalues", commandLine) then end
 
 if not fileExists typicalValuesSource then generateTypicalValues(currentFileDirectory | "../d/")
 

@@ -39,7 +39,7 @@ DUMPEDM2FILES += tvalues.m2
 TVFILES := $(wildcard @srcdir@/../d/*.d)
 all: tvalues.m2
 tvalues.m2: $(TVFILES)
-	@pre_exec_prefix@/bin/M2 $(ARGS) --no-preload --no-tvalues $< -e 'debug Core; generateTypicalValues "@srcdir@/../d/"; exit 0'
+	@pre_exec_prefix@/bin/M2 $(ARGS) --no-preload $< -e 'debug Core; generateTypicalValues "@srcdir@/../d/"; exit 0'
 clean::;rm -f tvalues.m2
 #################################
 all: tags
