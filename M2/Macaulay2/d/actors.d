@@ -812,6 +812,7 @@ export notFun(rhs:Code):Expr := (
      else unarymethod(a,notS));
 setup(notS,notFun);
 EqualEqualEqualfun(lhs:Code,rhs:Code):Expr := (
+    -- # typical value: symbol ===, Thing, Thing, Boolean
      x := eval(lhs);
      when x is Error do x
      else (
@@ -822,6 +823,7 @@ setup(EqualEqualEqualS,EqualEqualEqualfun);
 quicknot(z:Expr):Expr := (
      when z is Error do z else if z == True then False else True
      );
+-- # typical value: symbol =!=, Thing, Thing, Boolean
 notEqualEqualEqualfun(lhs:Code,rhs:Code):Expr := quicknot(EqualEqualEqualfun(lhs,rhs));
 setup(NotEqualEqualEqualS,notEqualEqualEqualfun);
 smallintarrays0 := new array(Expr) len 20 at i do (
@@ -838,6 +840,7 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 	  when right
 	  is Error do right
 	  is yy:ZZcell do (
+	      -- # typical value: symbol .., ZZ, ZZ, Sequence
 	       y := yy.v;
 	       if isInt(x) && isInt(y) then (
 	  	    i := toInt(x);
@@ -869,6 +872,7 @@ DotDotLessFun(lhs:Code,rhs:Code):Expr := (
 	  when right
 	  is Error do right
 	  is yy:ZZcell do (
+	      -- # typical value: symbol ..<, ZZ, ZZ, Sequence
 	       y := yy.v;
 	       if isInt(x) && isInt(y) then (
 	  	    i := toInt(x);

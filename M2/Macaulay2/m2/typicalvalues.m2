@@ -20,16 +20,6 @@ installMethod(symbol #?, BasicList, ZZ, Boolean => x -> (dummy x;))
 installMethod(symbol #, BasicList, ZZ, Thing => x -> (dummy x;))
 installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
 
-installMethod(symbol <, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol <=, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol =!=, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol ===, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol =>, Thing, Thing, Option => x -> (dummy x;))
-installMethod(symbol >, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
-
-installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
-installMethod(symbol ..<, ZZ, ZZ, Sequence => x -> (dummy x;))
 any(ZZ,Function) := any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
@@ -122,7 +112,6 @@ read File := String => read
 read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
-Function Thing := Thing => x -> (dummy x;)
 scan(BasicList,Function) := Nothing => scan
 scan(BasicList,BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
