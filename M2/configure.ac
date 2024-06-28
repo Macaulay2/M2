@@ -172,6 +172,8 @@ AC_CHECK_PROGS(LDD,ldd,false)
 AC_CHECK_PROGS(GIT,git,false)
 AC_CHECK_PROGS(PATCH,patch,false)
 AS_IF([test $PATCH = false], AC_MSG_ERROR([patch is required]))
+AC_CHECK_PROGS(WHICH,which,false) dnl used by 4ti2
+AS_IF([test $WHICH = false], AC_MSG_ERROR([which is required]))
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
