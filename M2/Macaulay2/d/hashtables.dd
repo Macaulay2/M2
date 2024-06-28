@@ -798,12 +798,15 @@ getvalue(x:Sequence,i:int):Expr := (
 	  else x.i));
 export subvalue(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalueQ below
+     -- # typical value: symbol #, Sequence, ZZ, Thing
      when left is x:Sequence do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then getvalue(x,toInt(r))
 	       else WrongArgSmallInteger())
 	  else buildErrorPacket("expected subscript to be an integer"))
+     -- # typical value: symbol #, HashTable, Thing, Thing
      is x:HashTable do lookup1force(x,right)
+     -- # typical value: symbol #, Database, String, String
      is f:Database do (
 	  when right
 	  is key:stringCell do (
@@ -812,11 +815,13 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       is a:string do Expr(stringCell(a))
 	       else buildErrorPacket("encountered missing value"))
 	  else buildErrorPacket("expected a string as key to database"))
+     -- # typical value: symbol #, List, ZZ, Thing
      is x:List do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then getvalue(x.v,toInt(r))
 	       else WrongArgSmallInteger())
 	  else buildErrorPacket("array index not an integer"))
+     -- # typical value: symbol #, Dictionary, String, Symbol
      is dc:DictionaryClosure do (
 	  when right is s:stringCell do (
 	       d := dc.dictionary;
@@ -826,6 +831,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       )
 	  else buildErrorPacket("expected key for dictionary to be a string")
 	  )
+     -- # typical value: symbol #, String, ZZ, String
      is x:stringCell do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -836,6 +842,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 		    else Expr(stringCell(string(x.v.rr))))
 	       else buildErrorPacket("string index out of bounds"))
 	  else buildErrorPacket("expected subscript to be an integer"))
+     -- # typical value: symbol #, Net, ZZ, String
      is n:Net do (
 	  x := n.body;
 	  when right is r:ZZcell do (
@@ -847,9 +854,10 @@ export subvalue(left:Expr,right:Expr):Expr := (
 		    else Expr(stringCell(x.rr)))
 	       else buildErrorPacket("net row index out of bounds"))
 	  else buildErrorPacket("expected subscript to be an integer"))
-     else buildErrorPacket("expected a list, hash table, or sequence"));
+     else buildErrorPacket("expected a list, sequence, string, net, hash table, database, or dictionary"));
 export subvalueQ(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalue above
+     -- # typical value: symbol #?, Sequence, ZZ, Boolean
      when left is x:Sequence do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -858,16 +866,20 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    )
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, HashTable, Thing, Boolean
      is x:HashTable do if lookup1Q(x,right) then True else False
+     -- # typical value: symbol #?, Dictionary, String, Boolean
      is dc:DictionaryClosure do (
 	  d := dc.dictionary;
 	  when right is s:stringCell do when lookup(s.v,d.symboltable) is Symbol do True else False
 	  else buildErrorPacket("expected key for dictionary to be a string")
 	  )
+     -- # typical value: symbol #?, Database, String, Boolean
      is x:Database do (
 	  when right
 	  is key:stringCell do dbmquery(x,key.v)
 	  else buildErrorPacket("expected a string as key to database"))
+     -- # typical value: symbol #?, List, ZZ, Boolean
      is x:List do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -876,6 +888,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    )
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, String, ZZ, Boolean
      is x:stringCell do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -885,6 +898,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    else True)
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, Net, ZZ, Boolean
      is n:Net do (
 	  x := n.body;
 	  when right is r:ZZcell do (
@@ -895,8 +909,9 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    else True)
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, Nothing, Thing, Boolean
      is Nothing do False				    -- we think of "null" as a universal gadget with no parts
-     else WrongArg(1,"null, a sequence, list, string, net, hashtable, database, or dictionary"));
+     else WrongArg(1,"null, a list, sequence, string, net, hash table, database, or dictionary"));
 
 export (x:string) => (y:Expr) ::= Sequence(toExpr(x),y);
 export (x:string) => (y:int) ::= x => toExpr(y);

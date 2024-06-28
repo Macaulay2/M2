@@ -81,9 +81,16 @@ Set.synonym = "set"
 
 -- constructor
 new Set from List := Set => (X,x) -> set x -- compiled function
-elements Set := List => x -> keys x
+
+-- compiled functions which will be documented
+-- TODO: why doesn't this work?
+-- # Set        := Boolean => lookup(symbol #,  HashTable)
+-- Set #? Thing := Boolean => lookup(symbol #?, HashTable, Thing)
+installMethod(symbol #,  Set,        Boolean => x -> x)
+installMethod(symbol #?, Set, Thing, Boolean => x -> x)
 
 -- set operations
+elements Set := List => keys
 installMethod(union, () -> set {})
 union(Set, Set) := Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 
