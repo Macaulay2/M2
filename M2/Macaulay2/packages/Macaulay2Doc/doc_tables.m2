@@ -440,6 +440,7 @@ doc ///
 doc ///
  Key
   values
+  (values, Dictionary)
   (values, HashTable)
  Headline
   values in a hash table

@@ -364,14 +364,17 @@ setupfun("any",any);
 --setupfun("find",find);
 
 ascii(e:Expr):Expr := (
+    -- # typical value: ascii, BasicList, String
      if isIntArray(e)
      then toExpr((
 	  v := toIntArray(e);
 	  new string len length(v) do foreach i in v do provide char(i)))
      else
+    -- # typical value: ascii, String, Sequence
      when e is s:stringCell do list(
 	  new Sequence len length(s.v) do (
 	       foreach c in s.v do provide toExpr(int(uchar(c)))))
+    -- # typical value: ascii, ZZ, String
      is i:ZZcell do (
 	  if isInt(i)
 	  then toExpr(new string len 1 do provide char(toInt(i)))
@@ -625,10 +628,14 @@ export stringcatseq(a:Sequence):Expr := (
 	  toExpr(s)));
 stringcatfun(e:Expr):Expr := (
      when e
+    -- # typical value: concatenate, BasicList, String
      is a:Sequence do stringcatseq(a)
      is a:List do stringcatseq(a.v)
+    -- # typical value: concatenate, Nothing, String
      is Nothing do emptyString
+    -- # typical value: concatenate, Symbol, String
      is y:SymbolClosure do toExpr(y.symbol.word.name)
+    -- # typical value: concatenate, ZZ, String
      is n:ZZcell do (
 	  if isInt(n) then (
 	       m := max(toInt(n), 0);
@@ -636,6 +643,7 @@ stringcatfun(e:Expr):Expr := (
 	       )
 	  else buildErrorPacket("encountered a large integer")
 	  )
+    -- # typical value: concatenate, String, String
      is stringCell do e
      else WrongArg("a sequence or list of strings, integers, or symbols"));
 setupfun("concatenate",stringcatfun);
@@ -665,6 +673,7 @@ minglefun(e:Expr):Expr := (
      is a:List do mingleseq(a.v)
      is Error do e
      else WrongArg("a list or sequence"));
+-- # typical value: mingle, BasicList, List
 setupfun("mingle", minglefun);
 
 packlist(v:Sequence,n:int):Expr := (
@@ -1284,10 +1293,14 @@ horizontalJoin(s:Sequence):Expr := (
      Expr(HorizontalJoin(v)));
 horizontalJoin(e:Expr):Expr := (
      when e
+     -- # typical value: horizontalJoin, BasicList, Net
      is s:Sequence do horizontalJoin(s)
      is s:List do horizontalJoin(s.v)
+     -- # typical value: horizontalJoin, Net, Net
      is n:Net do e
+     -- # typical value: horizontalJoin, String, Net
      is s:stringCell do Expr(toNet(s.v))
+     -- # typical value: horizontalJoin, Nothing, Net
      is Nothing do horizontalJoin(emptySequence)
      else WrongArg("a net, a string, or a list or sequence of nets and strings"));
 setupfun("horizontalJoin",horizontalJoin);
@@ -1311,10 +1324,14 @@ stack(s:Sequence):Expr := (
      Expr(VerticalJoin(v)));
 stack(e:Expr):Expr := (
      when e
+    -- # typical value: stack, BasicList, Net
      is s:Sequence do stack(s)
      is s:List do stack(s.v)
+    -- # typical value: stack, Net, Net
      is n:Net do e
+    -- # typical value: stack, String, Net
      is s:stringCell do Expr(toNet(s.v))
+    -- # typical value: stack, Nothing, Net
      is Nothing do stack(emptySequence)
      else WrongArg("a sequence of nets and strings"));
 setupfun("stack",stack);
@@ -1715,6 +1732,7 @@ powermod(e:Expr):Expr := (
      when s.0 is base:ZZcell do
      when s.1 is exp:ZZcell do
      when s.2 is mod:ZZcell do
+     -- # typical value: powermod, ZZ, ZZ, ZZ, ZZ
      toExpr(powermod(base.v,exp.v,mod.v))
      else WrongArgZZ(3)
      else WrongArgZZ(2)

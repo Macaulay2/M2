@@ -67,6 +67,7 @@ toList(e:Expr):Expr := (
 setupfun("toList1",toList);
 values(e:Expr):Expr := (
      when e
+     -- # typical value: values, Dictionary, List
      is oc:DictionaryClosure do (
 	  o := oc.dictionary.symboltable;
 	  lockRead(o.mutex);
@@ -84,6 +85,7 @@ values(e:Expr):Expr := (
 			      ))));
 	  unlock(o.mutex);
 	  l)
+      -- # typical value: values, HashTable, List
      is o:HashTable do (
 	if o.Mutable then lockRead(o.mutex);
 	l:= list(

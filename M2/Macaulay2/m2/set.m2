@@ -10,6 +10,10 @@ needs "shared.m2" -- for union
 VirtualTally.synonym = "virtual tally"
 Tally.synonym = "tally"
 
+-- constructors, defined in d/sets.dd
+tally String      :=
+tally VisibleList := Tally => tally
+
 elements = method()
 elements Tally := x -> splice apply(pairs x, (k,v) -> v:k)
 
@@ -79,8 +83,9 @@ product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
 
 Set.synonym = "set"
 
--- constructor
-new Set from List := Set => (X,x) -> set x -- compiled function
+-- constructors, both compiled functions defined in d/sets.dd
+set VisibleList := Set => set
+new Set from List := Set => (X,x) -> set x
 
 -- compiled functions which will be documented
 -- TODO: why doesn't this work?

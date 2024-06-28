@@ -629,6 +629,7 @@ mergepairsfun(e:Expr):Expr := (
      mergepairs(a.0,a.1,a.2)
      else WrongNumArgs(3)
      else WrongNumArgs(3));
+-- # typical value: mergePairs, BasicList, BasicList, Function, BasicList
 setupfun("mergePairs",mergepairsfun);
 
 --rmergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (

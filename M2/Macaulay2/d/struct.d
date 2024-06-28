@@ -35,6 +35,7 @@ export splice(a:Sequence):Sequence := (
      else a);
 export splice(e:Expr):Expr := (
      when e
+     -- # typical value: splice, BasicList, BasicList
      is v:Sequence do Expr(splice(v))
      is a:List do list(
 	  a.Class,

@@ -576,7 +576,9 @@ setupfun("netDepth",netDepth);
 
 unstack(e:Expr):Expr := (
      when e
+    -- # typical value: unstack, Net, List
      is n:Net do list(new Sequence len length(n.body) do foreach s in n.body do provide toExpr(s))
+    -- # typical value: unstack, String, List
      is stringCell do list(e)
      else WrongArg("a net"));
 setupfun("unstack",unstack);
@@ -1650,11 +1652,17 @@ listFrames(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (
 
 frames(e:Expr):Expr := (
      when e
+    -- # typical value: frames, Sequence, List
      is a:Sequence do if length(a) == 0 then listFrames(localFrame) else WrongNumArgs(0,1) 
+    -- # typical value: frames, Symbol, List
      is sc:SymbolClosure do Expr(listFrames(sc.frame))
+    -- # typical value: frames, Pseudocode, List
      is c:CodeClosure do Expr(listFrames(c.frame))
+    -- # typical value: frames, FunctionClosure, List
      is fc:FunctionClosure do Expr(listFrames(fc.frame))
+    -- # typical value: frames, CompiledFunctionClosure, List
      is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
+    -- # typical value: frames, CompiledFunction, List
      is CompiledFunction do Expr(list(listFrame(emptySequence)))
      is s:SpecialExpr do frames(s.e)
      else WrongArg("a function, a symbol, or ()"));
@@ -1664,12 +1672,19 @@ localDictionaries(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do 
 
 localDictionaries(e:Expr):Expr := (
      when e
+    -- # typical value: localDictionaries, Sequence, List
      is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
+    -- # typical value: localDictionaries, Dictionary, List
      is x:DictionaryClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, Symbol, List
      is x:SymbolClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, Pseudocode, List
      is x:CodeClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, FunctionClosure, List
      is x:FunctionClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, CompiledFunctionClosure, List
      is CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
+    -- # typical value: localDictionaries, CompiledFunction, List
      is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
      is s:SpecialExpr do localDictionaries(s.e)
      else WrongArg("a function, a symbol, or ()"));
