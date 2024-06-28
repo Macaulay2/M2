@@ -184,12 +184,14 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
 -- This function generates the file "tvalues.m2" from the files ../d/*.d
 -- The file "tvalues.m2" should be distributed with binary distributions
 
-typicalValuesSource := "tvalues.m2"
+typicalValuesSource := prefixDirectory | replace("PKG", "Core", currentLayout#"package") | "tvalues.m2"
 typicalValuesFormat := "-- . typical value: *(.*?) *$"
 -- egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
 
 generateTypicalValues = (srcdir) -> (
+    printerr("Extracting typical values from ", relativizeFilename srcdir);
     ddfiles := select(readDirectory srcdir, file -> match("\\.dd?$", file));
+    printerr("Generating typical values in ", relativizeFilename typicalValuesSource);
     outfile := openOut typicalValuesSource;
     for file in sort ddfiles do (
 	comment := "-- typical values extracted from " | file;
@@ -198,6 +200,8 @@ generateTypicalValues = (srcdir) -> (
     close outfile)
 
 if isMember("--no-tvalues", commandLine) then end
+
+if not fileExists typicalValuesSource then generateTypicalValues(currentFileDirectory | "../d/")
 
 -----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
