@@ -6,6 +6,15 @@ document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalP
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
 document { Key => chi,          methodstr }
 document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
+document { Key => isSmooth,     methodstr, SeeAlso => {
+	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
+	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
+	"Polyhedra::isSmooth(Cone)", "NormalToricVarieties::isSmooth(NormalToricVariety)",
+	"SpecialFanoFourfolds::isSmooth(EmbeddedProjectiveVariety)" } }
+document { Key => isVeryAmple,  methodstr, SeeAlso => {
+	"Divisor::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
+	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
+	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
 
 document { Key => cone,
     Headline => "mapping cone or polyhedral cone",

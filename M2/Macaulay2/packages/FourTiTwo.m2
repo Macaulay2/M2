@@ -28,6 +28,7 @@ newPackage(
 	Configuration => { "path" => "",
 	     "keep files" => true
 	      },
+	PackageExports => {"Polyhedra"}, -- for hilbertBasis
     	DebuggingMode => false
     	)
 
@@ -39,9 +40,9 @@ export {
      "toricGroebner",
      "toricCircuits",
      "toricGraver",
-     "hilbertBasis",
+     "toricGraverDegrees",
+     -- "hilbertBasis", -- defined in Polyhedra
      "InputType",
-     "toricGraverDegrees"
      }
 
 -- for backward compatibility
@@ -166,8 +167,8 @@ toricGraver Matrix := Matrix => (o -> A ->(
      ))
 toricGraver (Matrix,Ring) := Ideal => (o -> (A,S)->toBinomial(toricGraver(A),S))
 
-hilbertBasis = method(Options=> {InputType => null, Precision => 32})
-hilbertBasis Matrix := Matrix => o -> (A ->(
+-- hilbertBasis is defined in Polyhedra
+hilbertBasis Matrix := Matrix => { InputType => null, Precision => 32 } >> o -> A -> (
      filename := getFilename();
      if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      if o.InputType === "lattice" then
@@ -179,7 +180,7 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
      run4ti2("hilbert",
 	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".hil")
-     ))
+     )
 
 rays Matrix := Matrix => { Precision => 64 } >> o -> (A ->(
      filename := getFilename();
@@ -408,7 +409,7 @@ doc ///
 	       the computation
      Outputs
      	  B:Matrix 
-	       whose rows form a Markov Basis of the lattice $\{z {\rm integral} : A z = 0\}$
+	       whose rows form a Markov Basis of the lattice $\{z : z \text{ is integral and } A z = 0\}$
 	       or the lattice spanned by the rows of {\tt A} if the option {\tt InputType => "lattice"} is used
      Description
      	  Text
@@ -523,10 +524,9 @@ doc ///
 
 doc ///
      Key
-     	  hilbertBasis
           (hilbertBasis, Matrix)
-	  [hilbertBasis, InputType]
-	  [hilbertBasis, Precision]
+	 [(hilbertBasis, Matrix), InputType]
+	 [(hilbertBasis, Matrix), Precision]
      Headline
      	  calculates the Hilbert basis of the cone; invokes "hilbert" from 4ti2
      Usage
@@ -534,13 +534,15 @@ doc ///
      Inputs
       	  A:Matrix    
 	       defining the cone $\{z : Az = 0, z \ge 0 \}$
+	  InputType => String
+	       use the string "lattice" if rows of {\tt A} specify a lattice basis
 	  Precision => {ZZ, String}
 	       32, 64, or "gmp", the precision of the integers used during the
 	       computation
      Outputs
      	  B:Matrix 
 	       whose rows form the Hilbert basis of the cone $\{z : Az = 0, z \ge 0 \}$
-	       or the cone $\{z A : z {\rm {} is an integral vector and } z A \ge 0 \}$ if {\tt InputType => "lattice"} is used
+	       or the cone $\{z A : z \text{ is an integral vector and } z A \ge 0 \}$ if {\tt InputType => "lattice"} is used
      Description
 	  Example
 	       A = matrix "1,1,1,1; 1,2,3,4"

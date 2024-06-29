@@ -642,6 +642,7 @@ doc ///
       L = smallerMonomials M;
       mat = findWeightConstraints(M,L)
       needsPackage "Polyhedra"
+      needsPackage "FourTiTwo"
       dualCone posHull (-mat)
       rays oo
       posHull mat -- seems wrong?

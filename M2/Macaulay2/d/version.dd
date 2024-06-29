@@ -63,6 +63,8 @@ header "
    #endif
 
    #include <Eigen/Core>
+
+   #include <libnormaliz/version.h>
    ";
 
 header "
@@ -174,6 +176,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "gdbm version" => gdbmversion(),
    "gmp version" => Ccode(constcharstar,"__gmp_version"),
+   "normaliz version" => Ccode(constcharstar,"stringize(NMZ_VERSION)"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
    "flint version" => Ccode(constcharstar,"FLINT_VERSION"),

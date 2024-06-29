@@ -86,8 +86,8 @@ jobs:
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
-                  libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 normaliz coinor-csdp \
-                  nauty lrslib polymake phcpack w3c-markup-validator libtbb-dev qepcad libomp-15-dev
+                  libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
+                  libnauty2-dev nauty lrslib polymake phcpack w3c-markup-validator libtbb-dev qepcad libomp-15-dev
 
 # ----------------------
 #   Steps common to all build variants

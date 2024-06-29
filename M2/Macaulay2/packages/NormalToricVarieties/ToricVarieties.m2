@@ -451,7 +451,7 @@ isSimplicial NormalToricVariety := Boolean => (
 	)
     );
 
-isSmooth NormalToricVariety := Boolean => (
+isSmooth NormalToricVariety := Boolean => {} >> o -> (
     cacheValue symbol isSmooth) (X -> (
     	rayGenMatrix := transpose matrix rays X;
     	b := all(max X, sigma -> 

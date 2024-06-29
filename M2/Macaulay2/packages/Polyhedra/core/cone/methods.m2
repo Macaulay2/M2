@@ -11,11 +11,10 @@ facesAsCones(ZZ, Cone) := (d, C) -> (
 )
 
 
+-- PURPOSE : Checks if the input is smooth
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
-isSmooth Cone := C -> (
-   getProperty(C, smooth)
-)
+isSmooth Cone := {} >> o -> C -> getProperty(C, smooth)
 
 
 -- PURPOSE : Tests if a Cone is pointed
@@ -25,14 +24,14 @@ isPointed Cone := C -> (
    getProperty(C, pointed)
 )
 
--- hilbertBasis = method()
-hilbertBasis Cone := List => o -> (C -> (
+
+hilbertBasis = method(Options => true)
+hilbertBasis Cone := List => {} >> o -> (C -> (
       if isPointed C then getProperty(C, computedHilbertBasis)
       else error("Hilbert basis not implemented for non-pointed cones yet.")
    )
 )
 
-     
 
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Cone 'C'
