@@ -1042,14 +1042,12 @@ document {
      
      UL {
 	 {HREF("https://github.com/AndreaLombardo/BootSideMenu","BootSideMenu.js")},
-	 {HREF("https://github.com/dataarts/webgl-globe/blob/master/globe-vertex-texture/third-party/Three/Detector.js","Detectors.js")},
 	 {HREF("http://getbootstrap.com/","Bootstrap.js")},
 	 {HREF("https://clipboardjs.com/","clipboard.js")},
 	 {HREF("https://d3js.org/","D3.js")},
 	 {HREF("https://jquery.com/","jQuery")},
 	 {HREF("http://refreshless.com/nouislider/","noUiSlider.js")},
-	 {HREF("https://github.com/mrdoob/three.js/","Three.js")},
-	 {HREF("http://underscorejs.org/","Underscore.js")}
+	 {HREF("https://github.com/mrdoob/three.js/","Three.js")}
 	},
          
      
