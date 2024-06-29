@@ -8,7 +8,7 @@ YACC = @YACC@
 %.fixed.c : %.tab.c
 	sed 's="bison.simple"="/usr/share/bison.simple"=' <$< >$@.tmp
 	mv $@.tmp $@
-LEX = flex
+LEX = @LEX@
 LFLAGS += -f -s -i -8 -v
 CFLAGS += -Wall -g
 HSRC := buffer.h html-check-links.h getmem.h grammar.h
