@@ -57,6 +57,7 @@ abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
 abs Constant := abs @@ numeric
 
 lcm = method(Binary => true)
+installMethod(lcm, () -> 1)
 lcm(ZZ,ZZ) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then 0
