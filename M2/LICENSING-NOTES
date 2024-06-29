@@ -1,5 +1,24 @@
-See INSTALL file for our license.  Here we document briefly the licenses on the various
-libraries.
+                                   Macaulay2
+                   by Daniel R. Grayson <dan@math.uiuc.edu>
+                and Michael E. Stillman <mike@math.cornell.edu>
+
+                     available from http://Macaulay2.com/
+
+We thank the United States National Science Foundation for generous funding
+to develop Macaulay2.
+
+Macaulay2 is copyright 1993-2024 by Daniel R. Grayson and Michael E. Stillman.
+We permit you to use the source code under the terms of the GNU General Public
+License (GPL), version 2 or 3, as published by the Free Software Foundation;
+see the files Macaulay2/COPYING-*.  The packages contributed by various
+authors, located in the directory Macaulay2/packages/, come with separate
+licenses.  The binary distributions of Macaulay2 are licensed under GPL
+version 3.
+
+This is free software.  There is no warranty; not even for merchantability or
+fitness for a particular purpose.
+
+Here we document briefly the licenses on the various libraries.
 
 Libraries that may be linked with M2:
 
