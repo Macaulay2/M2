@@ -2,8 +2,9 @@
 use tokens;
 use lex;
 
-export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
+export parseRR(s:string):RRorNull := (			    -- 4.33234234234p345e-9
      prec := defaultPrecision;
+     overflow := false;
      ss := new string len length(s) + 1 do (		    -- we add 1 to get at least one null character at the end
      	  inPrec := false;
 	  foreach c in s do (
@@ -13,7 +14,11 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 		    )
 	       else if inPrec then (
 		    if isdigit(c) then (
-			 prec = 10 * prec + (c - '0');
+			 if !overflow then (
+			     newprec := 10 * prec + (c - '0');
+			     if newprec < prec
+			     then overflow = true
+			     else prec = newprec)
 			 )
 		    else (
 			 inPrec = false;
@@ -25,7 +30,8 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 		    ));
 	  while true do provide char(0);
 	  );
-     toRR(ss,prec));
+      if overflow then RRorNull(null())
+      else RRorNull(toRR(ss, prec)));
 parseError := false;
 parseMessage := "";
 utf8(w:varstring,i:int):varstring := (
