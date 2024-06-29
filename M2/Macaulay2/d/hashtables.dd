@@ -8,7 +8,7 @@ header "#include <cassert>";
 dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
 export applyEEEpointer := dummyapplyEEE;
 
-export hash(x:HashTable):int := (
+export hash(x:HashTable):hash_t := (
      lockit := x.Mutable && !x.beingInitialized;
      if (lockit) then lockRead(x.mutex);
      h := x.parent.hash + x.Class.hash * 231 + 32455;
@@ -105,7 +105,7 @@ export remove(x:HashTable,key:Expr):Expr := (
 	  p = p.next);
      if !x.beingInitialized then unlock(x.mutex);
      ret);
-export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+export storeInHashTable(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
      hmod := int(h & (length(x.table)-1));
@@ -138,7 +138,7 @@ export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      if !x.beingInitialized then unlock(x.mutex);
      value);
 export storeInHashTable(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTable(x,key,hash(key),value);
-export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+export storeInHashTableNoClobber(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      -- derived from storeInHashTable above!
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
@@ -165,7 +165,7 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
      if !x.beingInitialized then unlock(x.mutex);
      value);
 export storeInHashTableNoClobber(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTableNoClobber(x,key,hash(key),value);
-export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+export storeInHashTableMustClobber(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
      hmod := int(h & (length(x.table)-1));
@@ -300,7 +300,7 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
      x := HashTable(
 	  if newMutable || o.Mutable then copy(o.table) else o.table,
 	  newClass,
-	  newParent, o.numEntries, 0, newMutable, false, newThreadRWLock());
+	  newParent, o.numEntries, hash_t(0), newMutable, false, newThreadRWLock());
      if newMutable then (
 	  if newClass != cacheTableClass 
 	  then x.hash = nextHash(); -- cache tables are mutable and have hash code 0
@@ -311,7 +311,7 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
 export copy(o:HashTable,newClass:HashTable,newMutable:bool):HashTable := copy(o,newClass,o.parent,newMutable);
 -----------------------------------------------------------------------------
 
-export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
+export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      res := notfoundE;
      lockit := object.Mutable && !object.beingInitialized;
@@ -327,7 +327,7 @@ export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
      if lockit then unlock(object.mutex);
      res);
 export lookup1(object:HashTable,key:Expr):Expr := lookup1(object,key,hash(key));
-export lookup1force(object:HashTable,key:Expr,keyhash:int):Expr := (
+export lookup1force(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      lockit := object.Mutable && !object.beingInitialized;
      if lockit then lockRead(object.mutex);
      keymod := int(keyhash & (length(object.table)-1));
@@ -342,7 +342,7 @@ export lookup1force(object:HashTable,key:Expr,keyhash:int):Expr := (
      if lockit then unlock(object.mutex);
      buildErrorPacket("key not found in hash table"));
 export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
-export lookup1Q(object:HashTable,key:Expr,keyhash:int):bool := (
+export lookup1Q(object:HashTable,key:Expr,keyhash:hash_t):bool := (
      lockit := object.Mutable && !object.beingInitialized;
      if lockit then lockRead(object.mutex);
      keymod := int(keyhash & (length(object.table)-1));
@@ -356,7 +356,7 @@ export lookup1Q(object:HashTable,key:Expr,keyhash:int):bool := (
      if lockit then unlock(object.mutex);
      false);
 export lookup1Q(object:HashTable,key:Expr):bool := lookup1Q(object,key,hash(key));
-export lookup(object:HashTable,key:Expr,keyhash:int):Expr := (
+export lookup(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      while true do (
 	  lockit := object.Mutable && !object.beingInitialized;
 	  if lockit then lockRead(object.mutex);
@@ -458,7 +458,7 @@ export installMethod(meth:Expr,value:Expr):Expr := (
 -- unary methods
 export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := installIt(1, assignmentMethodP(meth), s, meth, value);
 threadLocal Key1 := Sequence(nullE,nullE);
-export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupUnaryValue(s:HashTable,meth:Expr,methhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      key1 := Key1;
      key1.0 = Expr(s);
@@ -481,7 +481,7 @@ export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
      );
 
 threadLocal Key2 := Sequence(nullE,nullE,nullE);
-export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key2 := Key2;
      key2.0 = meth;
      -- the big numbers here are the same as in hash() for sequences in structure.d
@@ -506,7 +506,7 @@ export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Ex
 	  lhs = lhs.parent;
 	  );
      nullE);
-export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      key2 := Key2;
      key2.0 = Expr(lhs);
@@ -536,7 +536,7 @@ export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,value:Expr
 	  Expr(Sequence(meth,Expr(s1),Expr(s2),Expr(s3))), 
 	  value));
 threadLocal Key3 := Sequence(nullE,nullE,nullE,nullE);
-export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key3 := Key3;
      key3.0 = meth;
      -- the big numbers here are the same is in hash() for sequences in structure.d
@@ -601,7 +601,7 @@ export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTab
 	  Expr(Sequence(meth,Expr(s1),Expr(s2),Expr(s3),Expr(s4))), 
 	  value));
 threadLocal Key4 := Sequence(nullE,nullE,nullE,nullE,nullE);
-export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key4 := Key4;
      key4.0 = meth;
      -- the big numbers here are the same is in hash() for sequences in structure.d

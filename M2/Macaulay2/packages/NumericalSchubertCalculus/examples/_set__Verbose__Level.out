@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 8865797
+-- -*- M2-comint -*- hash: 317641762447771653
 
 i1 : SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)
 

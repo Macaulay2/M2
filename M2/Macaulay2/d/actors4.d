@@ -1352,7 +1352,7 @@ youngest(e:Expr):Expr := (
 	  if length(b) == 0
 	  then nullE
 	  else (
-	       h := 0;
+	       h := hash_t(0);
 	       e = nullE;
 	       foreach x in b do (
 		    when x

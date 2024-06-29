@@ -108,7 +108,7 @@ export toArrayExpr(v:array(int)):Sequence := (
      );
 
 export newlist(classs:HashTable,v:Sequence):List := (
-     x := List(classs,v,0,false);
+     x := List(classs,v,hash_t(0),false);
      x.hash = hash(x);
      x);
 export basictype(o:HashTable):HashTable := (
