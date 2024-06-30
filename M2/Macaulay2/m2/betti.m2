@@ -210,6 +210,7 @@ minimalBetti = method(
 	Weights => null,
     ParallelizeByDegree => false -- currently: only used over primes fields of positive characteristic
 	})
+minimalBetti Ideal  := BettiTally => opts -> I -> minimalBetti(comodule I, opts)
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;
     weights := heftvec(opts.Weights, heft R);
@@ -249,10 +250,6 @@ minimalBetti Module := BettiTally => opts -> M -> (
 	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {}
         );
     betti(B, Weights => weights))
-minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
-    if I.cache.?quotient then I.cache.quotient
-    else I.cache.quotient = cokernel generators I, opts
-    )
 
 -----------------------------------------------------------------------------
 
