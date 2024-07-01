@@ -4570,30 +4570,3 @@ doc ///
 ///
 
 end--
--- example of free resolutions
-restart
-needsPackage "Complexes"
-S = ZZ/11[a..d]
-f = a*d-b*c
-f = a^2 + b^2
-I = monomialCurveIdeal(S, {1,3,4})
-M = comodule I
-C = koszulComplex{f} ** M
-prune HH C
-FC = res C
-
-ker dd^C
-
-
-dd^FC
-freeResolution M
-prune coker resolutionMap FC
-dd^FC
-FC2 = koszulComplex{f} ** freeResolution M
-dd^FC2
-dd^FC
-phi = randomComplexMap(FC, C2, Cycle => true)
-isWellDefined phi
-isCommutative phi
-prune ker phi == 0
-prune coker phi == 0

@@ -32,6 +32,7 @@ export {
     "connectingExtMap",
     "connectingTorMap",
     "cylinder",
+    "epicResolutionMap",
     "freeResolution",
     "homotopyMap",
     "horseshoeResolution",
