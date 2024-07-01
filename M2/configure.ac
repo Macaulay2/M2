@@ -1018,7 +1018,7 @@ AS_IF([test $BUILD_normaliz = no],
 	       LIBS="$LIBS -lnormaliz -lnauty -lgmp"
 	       AC_LINK_IFELSE(
 		   [AC_LANG_PROGRAM([
-		       #include <libnormaliz/libnormaliz.h>
+		       #include <libnormaliz/cone.h>
 		       ],
 		       [libnormaliz::Cone<long long>()])],
 		   [AC_MSG_RESULT([yes])
