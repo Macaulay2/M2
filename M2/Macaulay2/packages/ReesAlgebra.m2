@@ -64,7 +64,6 @@ export{
   "minimalReduction",
   "isReduction",
   "multiplicity",
-  "normalCone", 
   "reductionNumber",
   "reesIdeal",
   "reesAlgebra",
@@ -79,11 +78,10 @@ export{
   "expectedReesIdeal",
   "PlaneCurveSingularities",
   --synonyms
-  "associatedGradedRing" => "normalCone",
+  "associatedGradedRing", -- => "normalCone",
   "reesAlgebraIdeal" => "reesIdeal",
   "Trim" -- option in reesIdeal
   }
-
 
 symmetricAlgebraIdeal = method(Options =>
     {             VariableBaseName => "w"
@@ -209,8 +207,27 @@ isLinearType(Module, RingElement):= o-> (N,a)->(
      J := ideal((vars S) * P);
      ((gens I) % J) == 0)
 
-normalCone = method(TypicalValue => Ring, 
-    	    Options => {
+-- normalCone = method(TypicalValue => Ring, 
+--     	    Options => {
+-- 	  DegreeLimit => {},
+-- 	  BasisElementLimit => infinity,
+-- 	  PairLimit => infinity,
+-- 	  MinimalGenerators => true,
+-- 	  Strategy => null,
+-- 	  Variable => "w"
+-- 	  }
+-- )
+-- normalCone(Ideal) := o -> I -> (
+--      RI := reesAlgebra(I,o);
+--      RI/promote(I,RI)
+--      )
+
+-- normalCone(Ideal, RingElement) := o -> (I,a) -> (
+--      RI := reesAlgebra(I,a,o);
+--      RI/promote(I,RI)     
+--      )
+
+normalConeOptions = {
 	  DegreeLimit => {},
 	  BasisElementLimit => infinity,
 	  PairLimit => infinity,
@@ -218,16 +235,21 @@ normalCone = method(TypicalValue => Ring,
 	  Strategy => null,
 	  Variable => "w"
 	  }
-)
-normalCone(Ideal) := o -> I -> (
+
+
+normalCone Ideal := Ring => normalConeOptions >> o -> I -> (
      RI := reesAlgebra(I,o);
      RI/promote(I,RI)
      )
 
-normalCone(Ideal, RingElement) := o -> (I,a) -> (
+normalCone(Ideal, RingElement) := Ring => normalConeOptions >> o  -> (I,a) -> (
      RI := reesAlgebra(I,a,o);
      RI/promote(I,RI)     
      )
+
+associatedGradedRing = method(Options => normalConeOptions)
+associatedGradedRing Ideal := o -> I -> normalCone(I, o)
+associatedGradedRing(Ideal, RingElement) := o -> (I,a) -> normalCone(I, a, o)
 
 multiplicity = method(
     	    Options => {
@@ -1256,10 +1278,8 @@ doc ///
 
 doc ///
   Key
-    normalCone
-    (normalCone, Ideal)
     (normalCone, Ideal, RingElement)
-    
+    (normalCone, Ideal)
   Headline
     The normal cone of a subscheme
   Usage
@@ -1980,7 +2000,6 @@ doc ///
     [reesAlgebra,Strategy]
     [isLinearType,Strategy]
     [isReduction, Strategy]    	  
-    [normalCone, Strategy]    	  
     [multiplicity, Strategy]    	  
     [specialFiberIdeal, Strategy]    	  
     [specialFiber, Strategy]    	  
@@ -2025,7 +2044,6 @@ doc ///
     [specialFiber, PairLimit]
     [specialFiberIdeal, PairLimit]
     [multiplicity, PairLimit]
-    [normalCone, PairLimit]
     [isReduction, PairLimit]
     [isLinearType,PairLimit]
     [reesAlgebra,PairLimit]
@@ -2062,7 +2080,6 @@ doc ///
     [specialFiber, MinimalGenerators]
     [specialFiberIdeal, MinimalGenerators]
     [multiplicity, MinimalGenerators]
-    [normalCone, MinimalGenerators]
     [isReduction, MinimalGenerators]
     [isLinearType,MinimalGenerators]
     [reesAlgebra,MinimalGenerators]
@@ -2099,7 +2116,6 @@ doc ///
     [analyticSpread, BasisElementLimit]
     [specialFiber, BasisElementLimit]
     [multiplicity, BasisElementLimit]
-    [normalCone, BasisElementLimit]
     [isReduction, BasisElementLimit]
     [isLinearType,BasisElementLimit]
     [reesAlgebra,BasisElementLimit]
@@ -2135,7 +2151,6 @@ doc ///
     [distinguished,DegreeLimit]
     [analyticSpread, DegreeLimit]
     [specialFiber, DegreeLimit]
-    [normalCone, DegreeLimit]
     [multiplicity, DegreeLimit]
     [isReduction, DegreeLimit]
     [isLinearType,DegreeLimit]
