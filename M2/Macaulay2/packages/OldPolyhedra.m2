@@ -3053,7 +3053,7 @@ ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
 --   INPUT : '(P,Q)',  two polyhedra
 --  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
 -- COMMENT : 'Q' must be a face of P
-normalCone (Polyhedron,Polyhedron) := Cone => opts -> (P,Q) -> (
+normalCone (Polyhedron,Polyhedron) := Cone => {} >> opts -> (P,Q) -> (
      if not P.cache.?normalCone then P.cache.normalCone = new MutableHashTable;
      if not P.cache.normalCone#?Q then (
 	  -- Checking for input errors
