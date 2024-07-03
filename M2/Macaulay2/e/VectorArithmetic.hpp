@@ -296,8 +296,7 @@ public:
                            ElementArray& sparse, // output value: sets this value
                            int*& comps,
                            int first,
-                           int last,
-                           F4Vec& f4Vec) const
+                           int last) const
   {
     auto& dvec = * elementArray(dense);
     
@@ -308,7 +307,8 @@ public:
     for (int i = first; i >= 0 and i <= last; i++)
 	if (not mRing->is_zero(dvec[i])) len++;
 
-    comps = f4Vec.allocate(len);
+    //comps = f4Vec.allocate(len);
+    comps = new int[len];
 
     sparse = allocateElementArray(len);
     auto& svec = * elementArray(sparse);
@@ -716,9 +716,8 @@ public:
                            ElementArray& coeffs, // sets coeffs
                            int*& comps, // sets comps
                            int first,
-                           int last,
-                           F4Vec& f4Vec) const {
-    std::visit([&](auto& arg) { arg->denseToSparse(dense,coeffs,comps,first,last,f4Vec); }, mConcreteVector);  
+                           int last) const {
+    std::visit([&](auto& arg) { arg->denseToSparse(dense,coeffs,comps,first,last); }, mConcreteVector);  
   }
 
   template<typename LockType>

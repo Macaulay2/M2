@@ -32,14 +32,14 @@ enum spair_type {
   F4_SPAIR_ELEM
 };
 
-struct GBF4Polynomial : public our_new_delete
+struct GBF4Polynomial 
 {
   int len;
   ElementArray coeffs;
   monomial_word *monoms;  // This is all of the monomials written contiguously
 };
 
-struct pre_spair : public our_new_delete
+struct pre_spair 
 {
   enum spair_type type;
   int deg1;  // simple degree of quot
@@ -48,7 +48,7 @@ struct pre_spair : public our_new_delete
   bool are_disjoint;
 };
 
-struct spair : public our_new_delete
+struct spair
 {
   spair *next;
   spair_type type;
@@ -58,7 +58,7 @@ struct spair : public our_new_delete
   monomial_word lcm[1];  // packed_monomial
 };
 
-struct gbelem : public our_new_delete
+struct gbelem
 {
   GBF4Polynomial f;
   int deg;
@@ -66,16 +66,17 @@ struct gbelem : public our_new_delete
   gbelem_type minlevel;
 };
 
-typedef VECTOR(gbelem *) gb_array;
+// typedef VECTOR(gbelem *) gb_array;
+typedef std::vector<gbelem *> gb_array;
 
-struct sparse_row : public our_new_delete
+struct sparse_row
 {
   int len;
   ElementArray coeffs;
   int *comps; // of length len, allocated in a memory block.
 };
 
-struct row_elem : public our_new_delete
+struct row_elem
 {
   // Header information
   packed_monomial monom; // pointer, allocated monomial in a memory block
@@ -84,20 +85,22 @@ struct row_elem : public our_new_delete
   // The polynomial itself
   int len;
   ElementArray coeffs;
-  int *comps; // of length len, allocated in a memory block.
+  int *comps; // of length len, no longer allocated in a memory block, but with new[]
 };
 
-struct column_elem : public our_new_delete
+struct column_elem
 {
   packed_monomial monom; // pointer, allocated monomial in a memory block
   int head;  // which row is being used as a pivot for this column.
              // -1 means none, -2 means not set yet
 };
 
-struct coefficient_matrix : public our_new_delete
+struct coefficient_matrix
 {
-  typedef VECTOR(row_elem) row_array;
-  typedef VECTOR(column_elem) column_array;
+  //typedef VECTOR(row_elem) row_array;
+  //typedef VECTOR(column_elem) column_array;
+  typedef std::vector<row_elem> row_array;
+  typedef std::vector<column_elem> column_array;
 
   row_array rows;
   column_array columns;

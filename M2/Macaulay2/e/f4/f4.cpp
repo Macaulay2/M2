@@ -171,7 +171,8 @@ void F4GB::load_gen(int which)
   r.monom = nullptr;  // This says that this element corresponds to a generator
   r.elem = which;
   r.len = g.len;
-  r.comps = Mem->components.allocate(g.len);
+  // r.comps = Mem->components.allocate(g.len);
+  r.comps = new int[g.len];
   // r.coeffs is already initialized to [nullptr].
 
   monomial_word *w = g.monoms;
@@ -193,7 +194,8 @@ void F4GB::load_row(packed_monomial monom, int which)
   r.monom = monom;
   r.elem = which;
   r.len = g.len;
-  r.comps = Mem->components.allocate(g.len);
+  // r.comps = Mem->components.allocate(g.len);
+  r.comps = new int[g.len];
   // r.coeffs is already initialized to [nullptr].
   
   monomial_word *w = g.monoms;
@@ -290,8 +292,10 @@ void F4GB::reorder_columns()
 
   // sort the columns
 
-  int *column_order = Mem->components.allocate(ncols);
-  int *ord = Mem->components.allocate(ncols);
+  //int *column_order = Mem->components.allocate(ncols);
+  //int *ord = Mem->components.allocate(ncols);
+  int *column_order = new int[ncols];
+  int *ord = new int[ncols];
 
   ColumnsSorter C(M, mat);
 
@@ -352,8 +356,10 @@ void F4GB::reorder_columns()
     }
 
   std::swap(mat->columns, newcols);
-  Mem->components.deallocate(column_order);
-  Mem->components.deallocate(ord);
+  delete [] column_order;
+  delete [] ord;
+  //Mem->components.deallocate(column_order);
+  //Mem->components.deallocate(ord);
 }
 
 void F4GB::reorder_rows()
@@ -361,7 +367,7 @@ void F4GB::reorder_rows()
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
   coefficient_matrix::row_array newrows;
-  VECTOR(long) rowlocs;  // 0..nrows-1 of where row as been placed
+  std::vector<long> rowlocs;  // 0..nrows-1 of where row as been placed
 
   newrows.reserve(nrows);
   rowlocs.reserve(nrows);
@@ -400,7 +406,8 @@ void F4GB::clear_matrix()
     {
       if (not r.coeffs.isNull())
         mVectorArithmetic->deallocateElementArray(r.coeffs);
-      Mem->components.deallocate(r.comps);
+      // Mem->components.deallocate(r.comps);
+      delete [] r.comps;
       r.len = 0;
       r.elem = -1;
       r.monom = nullptr;
@@ -495,8 +502,8 @@ void F4GB::gauss_reduce(bool diagonalize)
       if (n_newpivots == 0) return;
     }
 
-//#if defined(WITH_TBB)
-#if 0
+#if defined(WITH_TBB)
+//#if 0
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -510,6 +517,7 @@ void F4GB::gauss_reduce(bool diagonalize)
                           threadLocalDense_t::reference my_dense = threadLocalDense.local();
                           for (auto i = r.begin(); i != r.end(); ++i)
                           {
+                             // these lines are commented out to avoid the hilbert hint for now...
                              //if ((not hilbert) or (n_newpivots > 0))
                              //{
                                 bool newNonzeroReduction = gauss_reduce_row(i, my_dense);
@@ -586,11 +594,14 @@ bool F4GB::gauss_reduce_row(int index,
 
       if (not r.coeffs.isNull())
         mVectorArithmetic->deallocateElementArray(r.coeffs);
-      Mem->components.deallocate(r.comps);
+      //Mem->components.deallocate(r.comps);
+      delete [] r.comps;
       r.len = 0;
       //Range<int> monomRange;
       //mVectorArithmetic->denseToSparse(gauss_row, r.coeffs, monomRange, firstnonzero, last, mComponentSpace);
-      mVectorArithmetic->denseToSparse(gauss_row, r.coeffs, r.comps, firstnonzero, last, Mem->components);
+      //mVectorArithmetic->denseToSparse(gauss_row, r.coeffs, r.comps, firstnonzero, last, Mem->components);
+      mVectorArithmetic->denseToSparse(gauss_row, r.coeffs, r.comps, firstnonzero, last);
+
       // TODO set r.comps from monomRange.  Question: who has allocated this space??
       // Maybe for now it is just the following line:
       r.len = mVectorArithmetic->size(r.coeffs);
@@ -653,7 +664,8 @@ void F4GB::tail_reduce()
         };
       if (anychange)
         {
-          Mem->components.deallocate(r.comps);
+          //Mem->components.deallocate(r.comps);
+          delete [] r.comps;
           mVectorArithmetic->deallocateElementArray(r.coeffs);
           r.len = 0;
           //Range<int> monomRange;
@@ -662,11 +674,15 @@ void F4GB::tail_reduce()
           //                                       monomRange,
           //                                       firstnonzero, last,
           //                                       mComponentSpace);
+          // mVectorArithmetic->denseToSparse(gauss_row,
+          //                                        r.coeffs,
+          //                                        r.comps,
+          //                                        firstnonzero, last,
+          //                                        Mem->components);
           mVectorArithmetic->denseToSparse(gauss_row,
                                                  r.coeffs,
                                                  r.comps,
-                                                 firstnonzero, last,
-                                                 Mem->components);
+                                                 firstnonzero, last);
           r.len = mVectorArithmetic->size(r.coeffs);
           //r.len = monomRange.size();
           //r.comps = Mem->components.allocate(r.len);
@@ -730,7 +746,9 @@ void F4GB::insert_gb_element(row_elem &r)
       M->copy(mat->columns[r.comps[i]].monom, nextmonom);
       nextmonom += nslots;
     }
-  Mem->components.deallocate(r.comps);
+  // Mem->components.deallocate(r.comps);
+  delete [] r.comps;
+  r.comps = nullptr;
   r.len = 0;
   result->deg = this_degree;
   result->alpha = static_cast<int>(M->last_exponent(result->f.monoms));
