@@ -10,7 +10,7 @@
 MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
 {
   nvars = nvars0;
-  hashfcn = newarray_atomic(monomial_word, nvars);
+  hashfcn = new monomial_word[nvars];
   for (int i = 0; i < nvars; i++) hashfcn[i] = rand();
   mask = 0x10000000;
 
@@ -55,7 +55,12 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
   firstvar = 2 + nweights;
 }
 
-MonomialInfo::~MonomialInfo() { freemem(hashfcn); }
+MonomialInfo::~MonomialInfo()
+{ 
+  delete [] hashfcn; 
+  //freemem(hashfcn);
+}
+
 monomial_word MonomialInfo::monomial_weight(const_packed_monomial m,
                                             const M2_arrayint wts) const
 {
