@@ -458,14 +458,11 @@ TEST ///
 ///
 
 TEST ///
---currently failing test for Hom(F,G)
    S = (ZZ/3)[x,y,z]
    I = ideal(x^3*y+y^3*z+z^3*x)
    R = S/I
    X = Proj R
    L = sheaf module ideal(x,y)
    L2 = L^**2
-   -- Hom(OO_X, prune L2) works fine, Hom(OO_X, L2) does not
-   -- the issue is in the line  "psi := G'.cache.pruningMap^-1" of the Hom code, with G' = L^**2; the pruningMap is not invertible
    assert(Hom(OO_X, prune L2) ==  Hom(OO_X, L2))
 ///

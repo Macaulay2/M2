@@ -379,17 +379,15 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     g := matrix f;
     -- truncate the underlying map so it is an isomorphism
     -- TODO: make this more efficient, e.g. look at degrees of ann coker g
-    e := (regularity ker g, regularity coker g);
+    e := max(regularity ker g, regularity coker g);
     -- TODO: this is kludgy, but maybe it works?
-    h := try inverse g else inverse inducedMap(
-	truncate(e#1   + 1, target g, MinimalGenerators => false),
-	truncate(max e + 1, source g, MinimalGenerators => false), g);
+    h := try inverse g else inverse truncate(e + 1, g);
     -- then invert and sheafify the new map
     -- We want:
     -- source f ==  target h
     -- target f === source h
     map(sheaf_X source g, sheaf_X source h,
-	inducedMap(source g, target h) * h, e#1 + 1))
+	inducedMap(source g, target h) * h, e + 1))
     )
 
 SheafMap#1 = f -> (
