@@ -210,15 +210,17 @@ minimalBetti = method(
 	Weights => null,
     ParallelizeByDegree => false -- currently: only used over primes fields of positive characteristic
 	})
+minimalBetti Ideal  := BettiTally => opts -> I -> minimalBetti(comodule I, opts)
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;
+    weights := heftvec(opts.Weights, heft R);
     degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
     lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
     -- check to see if a cached resolution is sufficient
     cacheKey := ResolutionContext{};
     if M.cache#?cacheKey and isComputationDone(C := M.cache#cacheKey,
 	DegreeLimit => degreelimit, LengthLimit => lengthlimit)
-    then return betti(C.Result.Resolution, Weights => opts.Weights);
+    then return betti(C.Result, Weights => weights);
     -- if not, compute a fast non-minimal resolution
     -- the following line is because we need to make sure we have the resolution
     -- either complete, or one more than the desired minimal betti numbers.
@@ -247,12 +249,7 @@ minimalBetti Module := BettiTally => opts -> M -> (
 	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
 	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {}
         );
-    betti(B, Weights => heftvec(opts.Weights, heft R))
-    )
-minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
-    if I.cache.?quotient then I.cache.quotient
-    else I.cache.quotient = cokernel generators I, opts
-    )
+    betti(B, Weights => weights))
 
 -----------------------------------------------------------------------------
 
