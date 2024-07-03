@@ -192,6 +192,7 @@ makeDocumentTag String      := opts -> key -> (
     then error ("mismatching packages ", pkg, " and ", toString opts#Package, " specified for key ", key);
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
+makeDocumentTag TOH := opts -> first
 
 -- before creating links, we recreate the document tag as a hack to
 -- correct its package, if it is incorrect (e.g. truncate, quotient)
