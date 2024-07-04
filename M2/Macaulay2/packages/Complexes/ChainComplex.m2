@@ -740,24 +740,6 @@ canonicalTruncation(Complex,InfiniteNumber,InfiniteNumber) :=
 canonicalTruncation(Complex,ZZ,Nothing) := 
 canonicalTruncation(Complex,Nothing,ZZ) := Complex => (C,lo,hi) -> canonicalTruncation(C, (lo,hi))
 
-part(List, Complex) := Complex => (deg, C) -> (
-    -- return a Complex over the coefficient ring
-    R := ring C;
-    A := coefficientRing R;
-    psi := map(A,R, DegreeMap => degR -> take(degR, - degreeLength A));
-    (lo, hi) := concentration C;
-    if lo === hi 
-    then complex(psi source basis(deg, C_lo), Base => lo)
-    else (
-        maps := hashTable for i from lo+1 to hi list (
-            f := psi matrix basis(deg, dd^C_i);
-            if source f == 0 then continue else i => f
-            );
-        if # keys maps === 0 then complex(psi source basis(deg, C_lo), Base => lo)  else complex maps
-        )
-    )
-part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
-
 truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
     (lo, hi) := concentration C;
     if lo === hi then return complex truncate(e, C_lo);
@@ -778,6 +760,19 @@ basis(List, Complex) := Complex => opts -> (deg, C) -> (
     if lo == hi
     then complex(image basis(deg, C_lo, opts), Base => lo)
     else complex applyValues(C.dd.map, f -> basis(deg, f, opts)))
+
+--------------------------------------------------------------------
+-- part ------------------------------------------------------------
+--------------------------------------------------------------------
+importFrom_Core "residueMap" -- gives a map back to the coefficient ring
+
+-- returns the graded component of the complex in the given degree
+-- but as a complex over the coefficient ring instead
+part(ZZ,   Complex) :=
+part(List, Complex) := Complex => (deg, C) -> (
+    D := basis(deg, C);
+    psi := residueMap ring C;
+    complex applyValues(D.dd.map, f -> psi cover f))
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
