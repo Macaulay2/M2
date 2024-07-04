@@ -127,7 +127,7 @@ basis = method(TypicalValue => Matrix,
 basis Module := opts -> M -> basis(-infinity, infinity, M, opts)
 basis Ideal  := opts -> I -> basis(module I, opts)
 basis Ring   := opts -> R -> basis(module R, opts)
--- TODO: add? basis Matrix := opts -> m -> basis(-infinity, infinity, m, opts)
+basis Matrix := opts -> m -> basis(-infinity, infinity, m, opts)
 
 -----------------------------------------------------------------------------
 
