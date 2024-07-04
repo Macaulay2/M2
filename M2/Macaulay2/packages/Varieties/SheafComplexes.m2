@@ -27,15 +27,11 @@ complex CoherentSheaf := Complex => lookup(complex, Module)
 -----------------------------------------------------------------------------
 
 tensor(CoherentSheaf, Complex) := Complex => {} >> opts -> (F, C) -> (
-    (lo,hi) := concentration C;
-    if not instance(C_lo, CoherentSheaf) then error "expected to tensor with a complex of sheaves";
-    sheaves := hashTable for i from lo to hi list i => tensor(F, C_i, opts);
-    if lo === hi then 
-        return complex(sheaves#lo, Base=>lo);
-    maps := hashTable for i from lo+1 to hi list i => 
-        map(sheaves#(i-1), sheaves#i, tensor(id_F, dd^C_i, opts));
-    complex maps
-    )
+    if not isSheafComplex C then error "expected to tensor with a complex of sheaves";
+    (lo, hi) := concentration C;
+    if lo === hi
+    then complex(tensor(F, C_lo, opts), Base => lo)
+    else complex applyValues(C.dd.map, f -> tensor(id_F, f, opts)))
 
 tensor(Complex, CoherentSheaf) := Complex => {} >> opts -> (C, F) -> tensor(F, C, opts)
 
