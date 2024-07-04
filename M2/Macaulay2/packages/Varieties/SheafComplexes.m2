@@ -93,8 +93,7 @@ sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- which agrees with Conrad (Grothendieck duality book)
     Y := youngest(C,D);
     if Y.cache#?(sheafHom,C,D) then return Y.cache#(sheafHom,C,D);
-    R := ring C;
-    if ring D =!= R then error "expected complexes over the same ring";
+    if ring C =!= ring D then error "expected complexes over the same ring";
     (loC,hiC) := C.concentration;
     (loD,hiD) := D.concentration;
     modules := hashTable for i from loD-hiC to hiD-loC list i => (
@@ -134,8 +133,8 @@ sheafHom(Complex, CoherentSheaf) := Complex => opts -> (C,M) -> sheafHom(C, comp
 sheafHom(Complex, SheafOfRings) := Complex => opts -> (C,R) -> sheafHom(C, complex R, opts)
 sheafHom(SheafOfRings, Complex) := Complex => opts -> (R,C) -> sheafHom(complex R, C, opts)
 
-sheafDual = method();
-sheafDual Complex := Complex => (C) -> sheafHom(C, sheaf (ring C)^1)
+sheafDual = method()
+sheafDual Complex := Complex => C -> sheafHom(C, ring C)
 
 -----------------------------------------------------------------------------
 -- RHom and Ext
