@@ -277,7 +277,8 @@ sheaf Ring := Ring^~ := SheafOfRings =>     R  -> sheaf(variety R, R)
 sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
 sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
-    new SheafOfRings from { symbol variety => X, symbol ring => R } )
+    -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
+    X.sheaf = X.sheaf ?? new SheafOfRings from { symbol variety => X, symbol ring => R } )
 
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
@@ -307,7 +308,7 @@ OO = new ScriptedFunctor from {
      argument  => X -> applyMethod((symbol SPACE, OO, class X), (OO, X)),
      }
 OO.texMath = ///{\mathcal O}///
-installMethod(symbol_, OO, Variety, (OO, X) -> sheaf(X, ring X))
+installMethod(symbol_, OO, Variety, SheafOfRings => (OO, X) -> sheaf(X, ring X))
 
 isWellDefined CoherentSheaf := F -> (
     M := module F;
@@ -333,8 +334,9 @@ isWellDefined CoherentSheaf := F -> (
 variety SheafOfRings  :=
 variety CoherentSheaf := F -> F.variety
 
+-- TODO: typicalValue#ring is Ring, so this might cause documentation errors
 ring SheafOfRings  :=
-ring CoherentSheaf := F -> ring F.variety
+ring CoherentSheaf := SheafOfRings => F -> sheaf variety F
 
 module SheafOfRings  := Module => F -> module F.ring
 module CoherentSheaf := Module => F -> F.module
@@ -364,8 +366,8 @@ hilbertPolynomial CoherentSheaf := opts -> F -> hilbertPolynomial(module F, opts
 -- twist and powers
 -- TODO: sheaf should dehomogenize modules on Affine varieties
 SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
-CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> sheaf(F.variety, F.module ** (ring F)^{splice{a}})
-SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring O)^n)
+CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> F ** (ring F)^{splice{a}}
+SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring variety O)^n)
 CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
@@ -527,7 +529,7 @@ killH0 := -*(cacheValue symbol TorsionFree)*- (M -> if (H0 := saturate(0*M)) == 
 -- NOTE: this may have elements in degrees below bound as well, is that a bug?
 twistedGlobalSectionsModule = (F, bound) -> (
     -- compute global sections module Gamma_(d >= bound)(X, F(d))
-    A := ring F;
+    A := ring variety F;
     -- FIXME: this line, as opposed to
     --  cokernel presentation module F
     -- breaks the test added in 975d780470.
@@ -600,7 +602,7 @@ cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) ->
 cohomology(ZZ,                    CoherentSheaf) := Module => opts -> (p,    F) -> cohomology(p, variety F, F, opts)
 cohomology(ZZ,     AffineVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
     checkVariety(X, F);
-    if p == 0 then module F else (ring F)^0)
+    if p == 0 then module F else (ring X)^0)
 cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
     checkVariety(X, F);
     F.cache.HH   ??= new MutableHashTable;
@@ -618,7 +620,7 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
 	-- TODO: check that X is proper (or at least finite type)
 	Ext^(n-p)(M, w));
-    k := coefficientRing ring F;
+    k := coefficientRing ring X;
     F.cache.HH#p = k^(rank source basis(0, G)))
 
 -----------------------------------------------------------------------------
@@ -691,7 +693,7 @@ isLocallyFree CoherentSheaf := F -> (
     if (d := rank F) == 0 then return F == 0;
     if isFreeModule module F then return true;
     dim fittingIdeal(d,   module F) <= 0
-    and fittingIdeal(d-1, module F) == ideal 0_(ring F))
+    and fittingIdeal(d-1, module F) == ideal 0_(ring variety F))
 
 -----------------------------------------------------------------------------
 -- Sheaf Hom and Ext

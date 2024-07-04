@@ -105,7 +105,7 @@ isWellDefined SheafMap := f -> (
 	(instance(f.degree, ZZ) or f.degree == infinity),
 	"the hash table does not have the expected values")
     -- mathematical checks
-    and assert'(ring f === ring X,
+    and assert'(ring matrix f === ring X,
 	"underlying matrix and variety do not have the same ring")
     and assert'(same {X, variety F, variety G},
 	"underlying variety does not match that of the source and target")
@@ -127,7 +127,7 @@ isWellDefined SheafMap := f -> (
 source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
 variety SheafMap := Variety       => f -> f.variety
-ring    SheafMap := Ring          => f -> f.map.ring
+ring    SheafMap := SheafOfRings  => f -> sheaf f.variety
 matrix  SheafMap := Matrix   => o -> f -> f.map
 -- TODO: does this make sense, or should all sheaf maps be degree zero?
 degree  SheafMap := ZZ            => f -> degree f.map
@@ -233,7 +233,9 @@ quotient'(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
     map(target f, target g, quotient'(autotruncate(f, g), opts)))
 
 -- base change
-promote(SheafMap, RingElement) := SheafMap => (f, R) -> if R === ring f then f else error "base change of maps of sheaves is not yet implemented"
+-- FIXME: this is a kludge; should we define Section as the parent of SheafOfRings?
+promote(SheafMap, Nothing)     := SheafMap => (f, O) -> if O === ring f         then f else error "base change of maps of sheaves is not yet implemented"
+promote(SheafMap, RingElement) := SheafMap => (f, R) -> if R === ring variety f then f else error "base change of maps of sheaves is not yet implemented"
 
 -- printing
 -- TODO: use abbreviations for source and target
@@ -640,7 +642,7 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValu
     -- TODO: verify that f.degree is always sufficient here
     p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit) + max(0, f.degree);
     -- TODO: substitute with appropriate irrelevant ideal
-    Bp := module (ideal vars ring F)^[p];
+    Bp := module (ideal vars ring variety F)^[p];
     lift sheaf(f.variety, prune Hom(Bp, g)))
     )
 
