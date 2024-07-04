@@ -86,11 +86,7 @@ sheafRes = method(Options => options freeResolution)
 sheafRes Complex       :=
 sheafRes CoherentSheaf := Complex => opts -> F -> sheaf freeResolution'(module F, opts)
 
-Complex(ZZ) := Complex Sequence := Complex => (C,a) -> (
-    (loC, hiC) := concentration C;
-    complex for i from loC+1 to hiC list (C.dd_i)(a)
-    )
-
+Complex(ZZ) := Complex(Sequence) := Complex => (C, a) -> complex applyValues(C.dd.map, f -> f(a))
 
 sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
@@ -124,6 +120,7 @@ sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
                         else if k-j === { -1,0 } then sheafHom(dd^C_(j#0), D_(k#1), opts)
                         else 0);
 		    m))));
+    -- TODO: switch to complex applyValues
     result = complex maps;
     result.cache.homomorphism = (C,D); -- source first, then target
     Y.cache#(sheafHom,C,D) = result;
@@ -220,9 +217,7 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
 	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
 	r := a - l + 1;
 	M = truncate(r, M));
-    (loD, hiD) := D.concentration;
-    complex for i from loD+1 to hiD list moveToField basis(0, Ext^m(M, matrix D.dd_i, opts))
-    )
+    complex applyValues(D.dd.map, f -> part(0, Ext^m(M, matrix f, opts))))
 
 cohomology(ZZ,                    Complex) := Complex => opts -> (p,    C) -> cohomology(p, variety C, C, opts)
 cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
