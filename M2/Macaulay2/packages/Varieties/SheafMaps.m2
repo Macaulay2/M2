@@ -425,7 +425,7 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     psi := G'.cache.pruningMap^-1;
     B := basis(0, module H);
     g := inverse f * B;
-    V := source moveToField B;
+    V := part(0, source B);
     V.cache.homomorphism = h -> psi * sheaf(phi.variety, homomorphism(g * h)) * phi;
     V.cache.formation = FunctionApplication { Hom, (F, G) };
     V.cache.Ext = (0, F, G);
@@ -433,7 +433,7 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
 
 -- Note: homomorphism(Matrix) is defined to use V.cache.homomorphism
 -- TODO: target should have Hom info cached
-homomorphism' SheafMap := o -> h -> moveToField basis(0, homomorphism'(matrix h, o))
+homomorphism' SheafMap := o -> h -> part(0, homomorphism'(matrix h, o))
 
 -----------------------------------------------------------------------------
 -- homology
@@ -461,19 +461,10 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
 -- Prune
 -----------------------------------------------------------------------------
 
--- TODO: is there a better way to do this?
-moveToField = f -> (
-    kk := coefficientRing ring f;
-    map(kk^(numrows f), kk^(numcols f), sub(cover f, kk)))
-cxToField = C -> (
-    (lo,hi) := concentration C;
-    complex(for i from lo+1 to hi list moveToField(C.dd_i),Base => lo)
-    )
-
 cohomology(ZZ,                    SheafMap) := Matrix => opts -> (p,    f) -> cohomology(p, variety f, f, opts)
 cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
     -- TODO: need to base change to the base field
-    if p == 0 then moveToField basis(0, matrix prune f) else (
+    if p == 0 then part(0, matrix prune f) else (
 	-- pushforward F to a projective space first
 	g := flattenMorphism matrix f;
 	A := ring g;
@@ -483,7 +474,7 @@ cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
 	-- using Serre duality for coherent sheaves on schemes with mild
 	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
 	-- TODO: check that X is proper (or at least finite type)
-	transpose moveToField basis(0, Ext^(n-p)(g, w)))
+	transpose part(0, Ext^(n-p)(g, w)))
     )
 
 --Some questions:
@@ -519,7 +510,7 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
 	r := max(a1, a2) - e - m + 1;
 	M = truncate(r, M));
-    moveToField basis(0, Ext^m(M, matrix f, opts)))
+    part(0, Ext^m(M, matrix f, opts)))
 
 -- internal method for modules only
 -- TODO: move this to Complexes?
@@ -544,10 +535,8 @@ ExtLongExactSequence(CoherentSheaf, SheafMap)           := Matrix => opts -> (F,
     ExtLongExactSequence(F, inducedMap(image f, source f, f), inducedMap(source f, ker f), opts)
 ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F, f, g) -> (
     d := dim variety F;
-    -- TODO: gives garbage output when a narrow concentration is specified
-    (a, b) := if opts.Concentration === null then (0, d + 1)
-    else (first opts.Concentration, last opts.Concentration);
     e := 0; -- this is a sum of twists bound
+    (lo, hi) := if opts.Concentration =!= null then opts.Concentration else (0, d);
     if not instance(variety F, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
     if target g =!= source f then error "expected target g = source f";
@@ -560,9 +549,9 @@ ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F,
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
     l := max(
-	l1 := min(dim N1, max(b - 1, 0)),
-	l2 := min(dim N2, max(b - 1, 0)),
-	l3 := min(dim N3, max(b - 1, 0)));
+	l1 := min(dim N1, max(hi, 0)),
+	l2 := min(dim N2, max(hi, 0)),
+	l3 := min(dim N3, max(hi, 0)));
     P1 := resolution flattenModule N1;
     P2 := resolution flattenModule N2;
     P3 := resolution flattenModule N3;
@@ -577,20 +566,18 @@ ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F,
 	a1 := max apply(n - l1 .. p1, j -> (max degrees P1_j)#0 - j);
 	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
 	a3 := max apply(n - l3 .. p3, j -> (max degrees P3_j)#0 - j);
-	r := max(a1, a2, a3) - e - (b - 1) + 1;
+	r := max(a1, a2, a3) - e - hi + 1;
         --need to truncate M in a way related to invariants of ker f
         --probably just add in l3, P3, etc., take max as above
 	M = truncate(r, M, MinimalGenerators => false));
     -- TODO: can we truncate at the regularity of homology(f,g) instead?
     reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
-    ExtMap := ExtLES(M,
+    -- TODO: verify the Base of the complex
+    -- TODO: should lo be used somewhere?
+    part_0 ExtLES(M,
 	truncate(reg,    matrix f, MinimalGenerators => false),
 	subtruncate(reg, matrix g, MinimalGenerators => false),
-	LengthLimit => b + 1);
-    -- TODO: simplify this
-    if opts.Concentration =!= null
-    then complex(for i from -3*b + 1 to -3*a + 2 list moveToField basis(0, ExtMap.dd_i), Base => -3*b)
-    else complex(for i from -3*d + 1 to 2        list moveToField basis(0, ExtMap.dd_i), Base => -3*d))
+	LengthLimit => hi + 1))
 
 -- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
 -- this returns the connecting homomorphism Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
