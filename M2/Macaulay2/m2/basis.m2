@@ -65,6 +65,7 @@ findHeftandVars := (R, varlist, ndegs) -> (
 
 -- TODO: can this be done via a tensor or push forward?
 -- c.f. https://github.com/Macaulay2/M2/issues/1522
+-- TODO: think about how this compares with part
 liftBasis = (M, phi, B, offset) -> (
     -- lifts a basis B of M via a ring map phi
     (R, S) := (phi.target, phi.source);
@@ -309,3 +310,23 @@ algorithms#(basis, List, List, Module) = new MutableHashTable from {
 -- Installing hooks for resolution
 scan({Default, Torsion}, strategy ->
     addHook(key := (basis, List, List, Module), algorithms#key#strategy, Strategy => strategy))
+
+-----------------------------------------------------------------------------
+-- part
+-----------------------------------------------------------------------------
+-- returns the graded component of an object in a specific degree
+
+-- gives a map back to the coefficient ring
+residueMap = (cacheValue symbol residueMap) (R -> map(A := coefficientRing R, R, DegreeMap => d -> take(d, - degreeLength A)))
+
+-- TODO: document these
+part(ZZ,   Ring) :=
+part(List, Ring) := Module => (deg, R) -> (residueMap R) source basis(deg, deg, module R)
+
+part(ZZ, Ideal)  :=
+part(ZZ, Module) :=
+part(List, Ideal)  :=
+part(List, Module) := Module => (deg, M) -> (residueMap ring M) source basis(deg, deg, M)
+
+part(ZZ,   Matrix) :=
+part(List, Matrix) := Matrix => (deg, f) -> (residueMap ring f) cover  basis(deg, f)
