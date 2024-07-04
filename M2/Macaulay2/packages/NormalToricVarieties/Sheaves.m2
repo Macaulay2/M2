@@ -54,14 +54,15 @@ sheaf (NormalToricVariety, Module) := CoherentSheaf => (X,M) -> (
 sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> (
     if ring X =!= R then 
 	error "-- expected the ring of the variety";
-    new SheafOfRings from { 
+    -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
+    X.sheaf = X.sheaf ?? new SheafOfRings from {
       	symbol variety => X, 
       	symbol ring    => R
 	}
     );
-sheaf NormalToricVariety := X -> sheaf_X ring X
+sheaf NormalToricVariety := SheafOfRings => X -> sheaf_X ring X
 
-installMethod(symbol _, OO, NormalToricVariety, (OO,X) -> sheaf(X, ring X))
+installMethod(symbol _, OO, NormalToricVariety, SheafOfRings => (OO,X) -> sheaf(X, ring X))
 
 -- Add a new strategy as a hook
 addHook((minimalPresentation, CoherentSheaf), Strategy => symbol NormalToricVarieties, (opts, F) ->
@@ -172,7 +173,7 @@ emsbound = (i, X, deg) -> (
     );
 
 cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) -> (
-    if ring F =!= ring X then 
+    if variety F =!= X then
     	error "-- expected a coherent sheaf on the toric variety";
     S := ring X;
     kk := coefficientRing S;
