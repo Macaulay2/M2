@@ -222,6 +222,25 @@ basis(Sequence, RingMap) := Matrix => opts -> (degs, f) -> (
 
 -----------------------------------------------------------------------------
 
+-- Note: f needs to be homogeneous, otherwise returns nonsense
+basis(ZZ,       RingMap) :=
+basis(List,     RingMap) := Matrix => opts -> (degs, f) -> basis((degs, degs), f, opts)
+basis(Sequence, RingMap) := Matrix => opts -> (degs, f) -> (
+    -- if not isHomogeneous f then error "expected a graded ring map (try providing a DegreeMap)";
+    if #degs != 2          then error "expected a sequence (tardeg, srcdeg) of degrees for target and source rings";
+    (T, S) := (target f, source f);
+    (tardeg, srcdeg) := degs;
+    if tardeg === null then tardeg = f.cache.DegreeMap  srcdeg;
+    if srcdeg === null then srcdeg = f.cache.DegreeLift tardeg;
+    targens := basis(tardeg, T);
+    srcgens := basis(srcdeg, S);
+    -- TODO: should matrix RingMap return this map instead?
+    -- mon := map(module T, image matrix(S, { S.FlatMonoid_* }), f, matrix f)
+    mat := last coefficients(f cover srcgens, Monomials => targens);
+    map(image targens, image srcgens, f, mat))
+
+-----------------------------------------------------------------------------
+
 basisHelper = (opts, lo, hi, M) -> (
     R := ring M;
     n := degreeLength R;
@@ -330,3 +349,6 @@ part(List, Module) := Module => (deg, M) -> (residueMap ring M) source basis(deg
 
 part(ZZ,   Matrix) :=
 part(List, Matrix) := Matrix => (deg, f) -> (residueMap ring f) cover  basis(deg, f)
+
+-- TODO: currently doesn't work unless source f === target f
+part(Sequence, RingMap) := Matrix => (degs, f) -> (residueMap target f) cover basis(degs, f)
