@@ -173,7 +173,7 @@ RHom(Complex,       Complex) := Complex => (C, D) -> (
 	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
 	r := a - l + 1;
 	M = truncate(r, M));
-    cxToField basis(0, Hom(res M, N, DegreeLimit => 0))
+    part(0, Hom(res M, N, DegreeLimit => 0))
     )
 
 --this version of RHom computes the complex for all twists above a certain point
