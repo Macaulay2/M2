@@ -787,10 +787,7 @@ cover' ComplexMap := ComplexMap => f -> (
 -- returns the graded component of the complex in the given degree
 -- but as a complex over the coefficient ring instead
 part(ZZ,   Complex) :=
-part(List, Complex) := Complex => (deg, C) -> (
-    D := basis(deg, C);
-    psi := residueMap ring C;
-    complex applyValues(D.dd.map, f -> psi cover f))
+part(List, Complex) := Complex => (deg, C) -> (residueMap ring C) cover' basis(deg, C)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
