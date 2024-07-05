@@ -92,8 +92,8 @@ class F4GB : public our_new_delete
 {
   // Basic required information
   const VectorArithmetic* mVectorArithmetic;
-  const MonomialInfo *M;
-  const FreeModule *F;
+  const MonomialInfo *mMonomialInfo;
+  const FreeModule *mFreeModule;
   M2_arrayint weights;  // The length of this is the number of variables, each
                         // entry is positive.
   M2_arrayint component_degrees;  // Degree of each free module element.
@@ -115,10 +115,10 @@ class F4GB : public our_new_delete
   // Monomial order information.  Should this be in M?
 
   // The main players in the computation
-  gb_array gens;
-  gb_array gb;
-  MonomialLookupTable *lookup;  // (monom,comp) --> index into gb
-  F4SPairSet *S;
+  gb_array mGenerators;
+  gb_array mGroebnerBasis;
+  MonomialLookupTable *mLookupTable;  // (monom,comp) --> index into gb
+  F4SPairSet *mSPairSet;
 
   // The matrix and its construction
   int next_col_to_process;
@@ -209,10 +209,10 @@ class F4GB : public our_new_delete
 
   void new_generators(int lo, int hi);
 
-  const gb_array &get_generators() const { return gens; }
-  gb_array &get_generators() { return gens; }
-  const gb_array &get_gb() const { return gb; }
-  gb_array &get_gb() { return gb; }
+  const gb_array &get_generators() const { return mGenerators; }
+  gb_array &get_generators() { return mGenerators; }
+  const gb_array &get_gb() const { return mGroebnerBasis; }
+  gb_array &get_gb() { return mGroebnerBasis; }
   void set_hilbert_function(const RingElement *hf);
 
   enum ComputationStatusCode start_computation(StopConditions &stop_);
