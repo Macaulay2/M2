@@ -250,67 +250,6 @@ describe Module := M -> Describe (
      )
 toExternalString Module := M -> toString describe M
 
-Module == Module := (M,N) -> M === N or (
-     -- this code might not be the quickest - Mike should check it
-     ring M === ring N
-     and degrees ambient M === degrees ambient N
-     and (
-	  if M.?relations 
-	  then N.?relations and (
-	       -- if isHomogeneous N.relations and isHomogeneous M.relations
-	       -- then gb N.relations == gb M.relations
-	       -- else 
-		    (
-		    -- temporary
-		    M.relations === N.relations
-		    or
-		    isSubset(image M.relations, image N.relations)
-		    and
-		    isSubset(image N.relations, image M.relations)
-		    )
-	       )
-     	  else not N.?relations
-	  )
-     and (
-	  if M.?generators then (
-	       if N.?generators then (
-		    f := (
-			 if M.?relations 
-			 then M.relations|M.generators
-		    	 else M.generators);
-		    g := (
-			 if N.?relations
-			 then N.relations|N.generators
-			 else N.generators);
-		    -- if isHomogeneous f and isHomogeneous g
-		    -- then gb f == gb g
-		    -- else 
-			 (
-			 -- temporary
-		    	 isSubset(image f, image g)
-		    	 and
-		    	 isSubset(image g, image f)
-			 )
-		    )
-	       else (
-		    f = (
-			 if M.?relations
-			 then M.relations|M.generators
-			 else M.generators
-			 );
-		    if isHomogeneous f then f = substitute(f,0);
-		    isSubset(ambient N, image f)))
-	  else (
-	       if N.?generators then (
-		    g = (
-			 if N.?relations 
-			 then N.relations|N.generators 
-			 else N.generators
-			 );
-		    if isHomogeneous g then g = substitute(g,0);
-		    isSubset(ambient M, image g))
-	       else true)))
-
 -- TODO: where is it set before being cached?
 degrees Module := -*(cacheValue symbol degrees) (*-N -> (
     r := degreeLength(R := ring N);
@@ -345,6 +284,45 @@ Ring ^ List := Module => (R, degs) -> (
 
 RingFamily ^ ZZ   :=
 RingFamily ^ List := Module => (T, degs) -> (default T)^degs
+
+-----------------------------------------------------------------------------
+-- Equality of Modules
+-----------------------------------------------------------------------------
+
+-- check equality of the column spans as sets
+-- Note: issub has hooks that use gb or local rings,
+-- hence why we don't compare gb directly here.
+-- TODO: move issub be before this.
+isequal := (f, g) -> f === g or issub(f, g) and issub(g, f)
+
+-- gives generators for the entire coset of the module
+allgens := M -> if M.?relations then M.relations | generators M else generators M
+
+Module == Module := (M, N) -> M === N or ring M === ring N and tryHooks((symbol ==, Module, Module), (M, N),
+    -- Specialized strategies for equality of modules may be added as hooks.
+    -- The following is the default strategy using generators and relations.
+    (M, N) -> (
+	-- TODO: first look to see if the minimal presentation
+	-- of M and N are cached, and if so compare them with ===
+	-- check that ambient free modules are the same
+	degrees ambient M === degrees ambient N
+	and (
+	    -- check that neither have relations
+	    not M.?relations and not N.?relations
+	    -- or that they have the same relations
+	    or M.?relations and N.?relations and isequal(M.relations, N.relations)
+	    )
+	and (
+	    -- check that both have generators and, together with their relations, their spans are equal
+	    -- (e.g. this ensures that subquotient(|x|, |x2,y|) & subquotient(|x,y|,|x2,y|) are equal)
+	    if M.?generators and N.?generators then isequal(allgens M, allgens N)
+	    -- otherwise check that the generators are superfluous, i.e. image gens M == ambient M (or the same for N)
+	    else if M.?generators then issub(generators N, if isHomogeneous M then substitute(allgens M, 0) else allgens M)
+	    else if N.?generators then issub(generators M, if isHomogeneous N then substitute(allgens N, 0) else allgens N)
+	    else true
+	    )
+	)
+    )
 
 -----------------------------------------------------------------------------
 
