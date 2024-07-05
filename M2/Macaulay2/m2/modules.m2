@@ -286,17 +286,22 @@ RingFamily ^ ZZ   :=
 RingFamily ^ List := Module => (T, degs) -> (default T)^degs
 
 -----------------------------------------------------------------------------
--- Equality of Modules
+-- Containment and Equality of Modules
 -----------------------------------------------------------------------------
 
+-- the key for issub hooks under GlobalHookStore
+protect ContainmentHooks
+issub = (f, g) -> f === g or ring f === ring g and tryHooks(ContainmentHooks, (f, g),
+    -- This is used by isSubset and for checking equality of modules and ideals.
+    -- Specialized strategies may be added as hooks, for instance for local rings.
+    -- TODO: how can do better in the homogeneous case?
+    (f, g) -> -1 === rawGBContains(raw gb g, raw f))
+
 -- check equality of the column spans as sets
--- Note: issub has hooks that use gb or local rings,
--- hence why we don't compare gb directly here.
--- TODO: move issub be before this.
 isequal := (f, g) -> f === g or issub(f, g) and issub(g, f)
 
 -- gives generators for the entire coset of the module
-allgens := M -> if M.?relations then M.relations | generators M else generators M
+cosetgens := M -> if M.?relations then M.relations | generators M else generators M
 
 Module == Module := (M, N) -> M === N or ring M === ring N and tryHooks((symbol ==, Module, Module), (M, N),
     -- Specialized strategies for equality of modules may be added as hooks.
@@ -315,10 +320,10 @@ Module == Module := (M, N) -> M === N or ring M === ring N and tryHooks((symbol 
 	and (
 	    -- check that both have generators and, together with their relations, their spans are equal
 	    -- (e.g. this ensures that subquotient(|x|, |x2,y|) & subquotient(|x,y|,|x2,y|) are equal)
-	    if M.?generators and N.?generators then isequal(allgens M, allgens N)
+	    if M.?generators and N.?generators then isequal(cosetgens M, cosetgens N)
 	    -- otherwise check that the generators are superfluous, i.e. image gens M == ambient M (or the same for N)
-	    else if M.?generators then issub(generators N, if isHomogeneous M then substitute(allgens M, 0) else allgens M)
-	    else if N.?generators then issub(generators M, if isHomogeneous N then substitute(allgens N, 0) else allgens N)
+	    else if M.?generators then issub(generators N, if isHomogeneous M then substitute(cosetgens M, 0) else cosetgens M)
+	    else if N.?generators then issub(generators M, if isHomogeneous N then substitute(cosetgens N, 0) else cosetgens N)
 	    else true
 	    )
 	)
@@ -331,6 +336,29 @@ Module == ZZ := (M, n) -> M.cache.isZero ??= (
     -- the default strategy for issub computes a gb for the relations
     if M.?relations  then issub(generators M, M.relations) else
     if M.?generators then M.generators == 0 else M.numgens == 0)
+
+isSubset(Module, Module) := (M, N) -> (
+    -- here is where we could use gb of a subquotient!
+    ambient M === ambient N and
+    if  not M.?relations and not N.?relations then issub(generators M, generators N)
+    else if M.?relations and     N.?relations then (
+	isequal(M.relations, N.relations) and issub(generators M, generators N | N.relations))
+    -- see the code for subquotient: if present, M.relations is nonzero; same for N
+    -- so one of the modules has nonzero relations and the other doesn't
+    else false)
+
+-----------------------------------------------------------------------------
+
+-- the key for issub hooks under GlobalHookStore
+protect ContainmentHooks
+issub = (f, g) -> f === g or ring f === ring g and tryHooks(ContainmentHooks, (f, g),
+    -- This is used by isSubset and for checking equality of ideals and modules.
+    -- Specialized strategies may be added as hooks, for instance for local rings.
+    -- TODO: how can do better in the homogeneous case?
+    (f, g) -> -1 === rawGBContains(raw gb g, raw f))
+
+-- used for sorting a list of modules
+Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
 
 -----------------------------------------------------------------------------
 
