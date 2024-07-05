@@ -42,8 +42,8 @@ F4GB::F4GB(const VectorArithmetic* VA,
            int max_degree,
            int numThreads)
     : mVectorArithmetic(VA),
-      M(M0),
-      F(F0),
+      mMonomialInfo(M0),
+      mFreeModule(F0),
       weights(weights0),
       component_degrees(nullptr),  // need to put this in
       n_pairs_computed(0),
@@ -54,10 +54,10 @@ F4GB::F4GB(const VectorArithmetic* VA,
       this_degree(),
       is_ideal(F0->rank() == 1),
       hilbert(nullptr),
-      gens(),
-      gb(),
-      lookup(nullptr),
-      S(nullptr),
+      mGenerators(),
+      mGroebnerBasis(),
+      mLookupTable(nullptr),
+      mSPairSet(nullptr),
       next_col_to_process(0),
       mat(nullptr),
       H(M0, 17),
@@ -72,17 +72,17 @@ F4GB::F4GB(const VectorArithmetic* VA,
     , mScheduler(mNumThreads)
 #endif
 {
-  lookup = new MonomialLookupTable(M->n_vars());
-  S = new F4SPairSet(M, gb);
+  mLookupTable = new MonomialLookupTable(mMonomialInfo->n_vars());
+  mSPairSet = new F4SPairSet(mMonomialInfo, mGroebnerBasis);
   mat = new coefficient_matrix;
 
   // TODO: set status?
-  if (M2_gbTrace >= 3) M->show();
+  if (M2_gbTrace >= 3) mMonomialInfo->show();
 }
 
 void F4GB::set_hilbert_function(const RingElement *hf)
 {
-  hilbert = new HilbertController(F, hf); // TODO MES: GC problem?
+  hilbert = new HilbertController(mFreeModule, hf); // TODO MES: GC problem?
 }
 
 void F4GB::delete_gb_array(gb_array &g)
@@ -98,22 +98,22 @@ void F4GB::delete_gb_array(gb_array &g)
 
 F4GB::~F4GB()
 {
-  delete S;
-  delete lookup;
+  delete mSPairSet;
+  delete mLookupTable;
   delete mat;
 
   // Now delete the gens, gb arrays.
-  delete_gb_array(gens);
-  delete_gb_array(gb);
+  delete_gb_array(mGenerators);
+  delete_gb_array(mGroebnerBasis);
 }
 
 void F4GB::new_generators(int lo, int hi)
 {
   for (int i = lo; i <= hi; i++)
     {
-      gbelem *g = gens[i];
+      gbelem *g = mGenerators[i];
       if (g->f.len == 0) continue;
-      S->insert_generator(g->deg, g->f.monoms, i);
+      mSPairSet->insert_generator(g->deg, g->f.monoms, i);
     }
 }
 
@@ -138,8 +138,8 @@ int F4GB::find_or_append_column(packed_monomial m)
   if (H.find_or_insert(m, new_m)) return static_cast<int>(new_m[-1]);
   // At this point, m is a new monomial to be placed as a column
   m = next_monom;
-  B.intern(1 + M->monomial_size(m));
-  next_monom = B.reserve(1 + M->max_monomial_size());
+  B.intern(1 + mMonomialInfo->monomial_size(m));
+  next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
   next_monom++;
   return new_column(m);
 }
@@ -152,20 +152,20 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
   // If it is there, return its column
   // If not, increment our memory block, and insert a new column.
   packed_monomial new_m;
-  M->unchecked_mult(m, n, next_monom);
+  mMonomialInfo->unchecked_mult(m, n, next_monom);
   if (H.find_or_insert(next_monom, new_m))
     return static_cast<int>(
         new_m[-1]);  // monom exists, don't save monomial space
   m = next_monom;
-  B.intern(1 + M->monomial_size(m));
-  next_monom = B.reserve(1 + M->max_monomial_size());
+  B.intern(1 + mMonomialInfo->monomial_size(m));
+  next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
   next_monom++;
   return new_column(m);
 }
 
 void F4GB::load_gen(int which)
 {
-  GBF4Polynomial &g = gens[which]->f;
+  GBF4Polynomial &g = mGenerators[which]->f;
 
   row_elem r{};
   r.monom = nullptr;  // This says that this element corresponds to a generator
@@ -178,9 +178,9 @@ void F4GB::load_gen(int which)
   monomial_word *w = g.monoms;
   for (int i = 0; i < g.len; i++)
     {
-      M->copy(w, next_monom);
+      mMonomialInfo->copy(w, next_monom);
       r.comps[i] = find_or_append_column(next_monom);
-      w += M->monomial_size(w);
+      w += mMonomialInfo->monomial_size(w);
     }
 
   mat->rows.push_back(r);
@@ -188,7 +188,7 @@ void F4GB::load_gen(int which)
 
 void F4GB::load_row(packed_monomial monom, int which)
 {
-  GBF4Polynomial &g = gb[which]->f;
+  GBF4Polynomial &g = mGroebnerBasis[which]->f;
 
   row_elem r{};
   r.monom = monom;
@@ -202,7 +202,7 @@ void F4GB::load_row(packed_monomial monom, int which)
   for (int i = 0; i < g.len; i++)
     {
       r.comps[i] = mult_monomials(monom, w);
-      w += M->monomial_size(w);
+      w += mMonomialInfo->monomial_size(w);
     }
 
   mat->rows.push_back(r);
@@ -219,13 +219,13 @@ void F4GB::process_column(int c)
   column_elem &ce = mat->columns[c];
   if (ce.head >= -1) return;
   int32_t which;
-  bool found = lookup->find_one_divisor_packed(M, ce.monom, which);
+  bool found = mLookupTable->find_one_divisor_packed(mMonomialInfo, ce.monom, which);
   if (found)
     {
       packed_monomial n = next_monom;
-      M->unchecked_divide(ce.monom, gb[which]->f.monoms, n);
-      B.intern(1 + M->monomial_size(n));
-      next_monom = B.reserve(1 + M->max_monomial_size());
+      mMonomialInfo->unchecked_divide(ce.monom, mGroebnerBasis[which]->f.monoms, n);
+      B.intern(1 + mMonomialInfo->monomial_size(n));
+      next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
       next_monom++;
       // M->set_component(which, n);
       ce.head = INTSIZE(mat->rows);
@@ -244,9 +244,9 @@ void F4GB::process_s_pair(spair *p)
       case F4_SPAIR_SPAIR:
         {
           packed_monomial n = next_monom;
-          M->unchecked_divide(p->lcm, gb[p->i]->f.monoms, n);
-          B.intern(1 + M->monomial_size(n));
-          next_monom = B.reserve(1 + M->max_monomial_size());
+          mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->i]->f.monoms, n);
+          B.intern(1 + mMonomialInfo->monomial_size(n));
+          next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
           next_monom++;
 
           load_row(n, p->i);
@@ -258,9 +258,9 @@ void F4GB::process_s_pair(spair *p)
             {
               // In this situation, we load the other half as a reducer
               n = next_monom;
-              M->unchecked_divide(p->lcm, gb[p->j]->f.monoms, n);
-              B.intern(1 + M->monomial_size(n));
-              next_monom = B.reserve(1 + M->max_monomial_size());
+              mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->j]->f.monoms, n);
+              B.intern(1 + mMonomialInfo->monomial_size(n));
+              next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
               next_monom++;
               load_row(n, p->j);
 
@@ -297,7 +297,7 @@ void F4GB::reorder_columns()
   int *column_order = new int[ncols];
   int *ord = new int[ncols];
 
-  ColumnsSorter C(M, mat);
+  ColumnsSorter C(mMonomialInfo, mat);
 
 // Actual sort of columns /////////////////
 
@@ -395,7 +395,7 @@ void F4GB::reset_matrix()
 {
   // mat
   next_col_to_process = 0;
-  next_monom = B.reserve(1 + M->max_monomial_size());
+  next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
   next_monom++;
 }
 
@@ -433,7 +433,7 @@ void F4GB::make_matrix()
   */
 
   spair *p;
-  while ((p = S->get_next_pair()))
+  while ((p = mSPairSet->get_next_pair()))
     {
       process_s_pair(p);
     }
@@ -470,8 +470,8 @@ const ElementArray& F4GB::get_coeffs_array(row_elem &r)
 
   // At this point, we must go find the coeff array
   if (r.monom == nullptr)  // i.e. a generator
-    return gens[r.elem]->f.coeffs;
-  return gb[r.elem]->f.coeffs;
+    return mGenerators[r.elem]->f.coeffs;
+  return mGroebnerBasis[r.elem]->f.coeffs;
 }
 
 bool F4GB::is_new_GB_row(int row) const
@@ -502,8 +502,8 @@ void F4GB::gauss_reduce(bool diagonalize)
       if (n_newpivots == 0) return;
     }
 
-#if defined(WITH_TBB)
-//#if 0
+  //#if defined(WITH_TBB)
+#if 0
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -716,7 +716,7 @@ void F4GB::insert_gb_element(row_elem &r)
   //  insert the monomial into the lookup table
   //  find new pairs associated to this new element
 
-  int nslots = M->max_monomial_size();
+  int nslots = mMonomialInfo->max_monomial_size();
   int nlongs = r.len * nslots;
 
   gbelem *result = new gbelem;
@@ -745,7 +745,7 @@ void F4GB::insert_gb_element(row_elem &r)
   monomial_word *nextmonom = result->f.monoms;
   for (int i = 0; i < r.len; i++)
     {
-      M->copy(mat->columns[r.comps[i]].monom, nextmonom);
+      mMonomialInfo->copy(mat->columns[r.comps[i]].monom, nextmonom);
       nextmonom += nslots;
     }
   // Mem->components.deallocate(r.comps);
@@ -753,32 +753,32 @@ void F4GB::insert_gb_element(row_elem &r)
   r.comps = nullptr;
   r.len = 0;
   result->deg = this_degree;
-  result->alpha = static_cast<int>(M->last_exponent(result->f.monoms));
+  result->alpha = static_cast<int>(mMonomialInfo->last_exponent(result->f.monoms));
   result->minlevel = ELEM_MIN_GB;  // MES: How do
   // we distinguish between ELEM_MIN_GB, ELEM_POSSIBLE_MINGEN?
 
-  int which = INTSIZE(gb);
-  gb.push_back(result);
+  int which = INTSIZE(mGroebnerBasis);
+  mGroebnerBasis.push_back(result);
 
   if (hilbert)
     {
       int x;
       //int *exp = newarray_atomic(int, M->n_vars());
-      int *exp = new int[M->n_vars()];
-      M->to_intstar_vector(result->f.monoms, exp, x);
+      int *exp = new int[mMonomialInfo->n_vars()];
+      mMonomialInfo->to_intstar_vector(result->f.monoms, exp, x);
       hilbert->addMonomial(exp, x + 1);
       delete [] exp;
       //freemem(exp);
     }
   // now insert the lead monomial into the lookup table
   //varpower_monomial vp = newarray_atomic(varpower_word, 2 * M->n_vars() + 1);
-  varpower_monomial vp = new varpower_word[2 * M->n_vars() + 1];
-  M->to_varpower_monomial(result->f.monoms, vp);
-  lookup->insert_minimal_vp(M->get_component(result->f.monoms), vp, which);
+  varpower_monomial vp = new varpower_word[2 * mMonomialInfo->n_vars() + 1];
+  mMonomialInfo->to_varpower_monomial(result->f.monoms, vp);
+  mLookupTable->insert_minimal_vp(mMonomialInfo->get_component(result->f.monoms), vp, which);
   delete [] vp;
   //freemem(vp);
   // now go forth and find those new pairs
-  S->find_new_pairs(is_ideal);
+  mSPairSet->find_new_pairs(is_ideal);
 }
 
 void F4GB::new_GB_elements()
@@ -825,7 +825,7 @@ void F4GB::do_spairs()
   n_lcmdups = 0;
   make_matrix();
 
-  if (M2_gbTrace >= 5)
+  if (M2_gbTrace >= 6)
     {
       fprintf(stderr, "---------\n");
       show_matrix();
@@ -856,7 +856,7 @@ void F4GB::do_spairs()
       fprintf(stderr, " gauss time          = %f\n", nsecs);
 
       fprintf(stderr, " lcm dups            = %ld\n", n_lcmdups);
-      if (M2_gbTrace >= 5)
+      if (M2_gbTrace >= 6)
         {
           fprintf(stderr, "---------\n");
           show_matrix();
@@ -864,11 +864,14 @@ void F4GB::do_spairs()
         }
     }
   new_GB_elements();
-  int ngb = INTSIZE(gb);
+  int ngb = INTSIZE(mGroebnerBasis);
   if (M2_gbTrace >= 1)
     {
       fprintf(stderr, " # GB elements   = %d\n", ngb);
-      if (M2_gbTrace >= 5) show_gb_array(gb);
+      if (M2_gbTrace >= 5) {
+        show_gb_array(mGroebnerBasis);
+        mSPairSet->display();
+      }
     }
 
   clear_matrix();
@@ -877,7 +880,7 @@ void F4GB::do_spairs()
 enum ComputationStatusCode F4GB::computation_is_complete(StopConditions &stop_)
 {
   // This handles everything but stop_.always, stop_.degree_limit
-  if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit)
+  if (stop_.basis_element_limit > 0 && mGroebnerBasis.size() >= stop_.basis_element_limit)
     return COMP_DONE_GB_LIMIT;
   if (stop_.pair_limit > 0 && n_pairs_computed >= stop_.pair_limit)
     return COMP_DONE_PAIR_LIMIT;
@@ -902,13 +905,13 @@ void F4GB::test_spair_code()
   // gb matrix, and then calling find_new_pairs after each one.
   // It displays the list of spairs after each generator.
 
-  gb.push_back(gens[0]);
-  for (int i = 1; i < gens.size(); i++)
+  mGroebnerBasis.push_back(mGenerators[0]);
+  for (int i = 1; i < mGenerators.size(); i++)
     {
-      gb.push_back(gens[i]);
-      S->find_new_pairs(false);
+      mGroebnerBasis.push_back(mGenerators[i]);
+      mSPairSet->find_new_pairs(false);
       fprintf(stderr, "---Just inserted element %d---\n", i);
-      S->display();
+      mSPairSet->display();
     }
 }
 
@@ -934,7 +937,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       is_done = computation_is_complete(stop_);
       if (is_done != COMP_COMPUTING) break;
 
-      this_degree = S->prepare_next_degree(-1, npairs);
+      this_degree = mSPairSet->prepare_next_degree(-1, npairs);
 
       if (npairs == 0)
         {
@@ -1000,8 +1003,8 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       {
         fprintf(stderr,
               "number of spairs removed by criterion = %ld\n",
-              S->n_unneeded_pairs());
-        M->show();
+              mSPairSet->n_unneeded_pairs());
+        mMonomialInfo->show();
       }
     }
 
@@ -1021,10 +1024,10 @@ void F4GB::show_gb_array(const gb_array &g) const
   for (int i = 0; i < g.size(); i++)
     {
       vec v = F4toM2Interface::to_M2_vec(
-          mVectorArithmetic, M, g[i]->f, F);
+          mVectorArithmetic, mMonomialInfo, g[i]->f, mFreeModule);
       o << "element " << i << " degree " << g[i]->deg << " alpha "
         << g[i]->alpha << newline << "    ";
-      F->get_ring()->vec_text_out(o, v);
+      mFreeModule->get_ring()->vec_text_out(o, v);
       o << newline;
     }
   emit(o.str());
@@ -1039,7 +1042,7 @@ void F4GB::show_row_info() const
       if (mat->rows[i].monom == nullptr)
         fprintf(stderr, "generator");
       else
-        M->show(mat->rows[i].monom);
+        mMonomialInfo->show(mat->rows[i].monom);
       fprintf(stderr, "\n");
     }
 }
@@ -1050,7 +1053,7 @@ void F4GB::show_column_info() const
   for (int i = 0; i < mat->columns.size(); i++)
     {
       fprintf(stderr, "head %4d monomial ", mat->columns[i].head);
-      M->show(mat->columns[i].monom);
+      mMonomialInfo->show(mat->columns[i].monom);
       fprintf(stderr, "\n");
     }
 }
@@ -1059,7 +1062,7 @@ void F4GB::show_matrix()
 {
   // Debugging routine
   MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(
-      mVectorArithmetic, mat, gens, gb);
+      mVectorArithmetic, mat, mGenerators, mGroebnerBasis);
   buffer o;
   q->text_out(o);
   emit(o.str());
