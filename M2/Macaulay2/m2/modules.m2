@@ -324,6 +324,14 @@ Module == Module := (M, N) -> M === N or ring M === ring N and tryHooks((symbol 
 	)
     )
 
+protect isZero
+ZZ == Module := (n, M) -> M == n
+Module == ZZ := (M, n) -> M.cache.isZero ??= (
+    if n =!= 0 then error "attempted to compare module to nonzero integer";
+    -- the default strategy for issub computes a gb for the relations
+    if M.?relations  then issub(generators M, M.relations) else
+    if M.?generators then M.generators == 0 else M.numgens == 0)
+
 -----------------------------------------------------------------------------
 
 schreyerOrder = method()

@@ -119,19 +119,6 @@ Ideal == ZZ := (I,n) -> (
      else error "attempted to compare ideal to integer not 0 or 1"
      )
 
-ZZ == Module := (n,M) -> M == n
-Module == ZZ := (M,n) -> (
-     if n =!= 0 then error "attempted to compare module to nonzero integer";
-     if M.?generators then (
-	  if M.?relations then issub(M.generators, M.relations)
-	  else M.generators == 0
-	  )
-     else (
-	  if M.?relations then issub(id_(ambient M), M.relations)
-	  else M.numgens === 0
-	  )
-     )
-
 -- used for sorting a list of modules
 Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
 
