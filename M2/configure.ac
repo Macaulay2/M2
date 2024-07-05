@@ -277,7 +277,9 @@ AS_IF([test "$YACC" != "bison -y"], [AC_MSG_ERROR([bison is required])])
 dnl TODO: once autoconf 2.70 is available everyowhere, use the following:
 dnl AC_PROG_LEX([noyywrap])
 dnl the pre-2.70 version w/o arguments is deprecated and gives a warning
-AC_PROG_LEX()
+m4_version_prereq([2.70],
+    [AC_PROG_LEX([noyywrap])],
+    [AC_PROG_LEX()])
 AS_IF([test "$LEX" != "flex"], [AC_MSG_ERROR([flex is required])])
 
 AC_PROG_RANLIB()
