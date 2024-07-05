@@ -104,13 +104,11 @@ Ring * Ideal := Ring ** Ideal := Ideal => (R, I) -> if ring I === R then I else 
 
 -- the key for issub hooks under GlobalHookStore
 protect ContainmentHooks
-issub := (f, g) -> (
-    if (R := ring f) =!= ring g then error "isSubset: expected objects of the same ring";
-    if (c := runHooks(ContainmentHooks, (f, g))) =!= null then c
-    else error "isSubset: no strategy implemented for this type of ring")
-
--- TODO: we can do better in the homogeneous case!
-addHook(ContainmentHooks, Strategy => Inhomogeneous, (f, g) -> -1 === rawGBContains(raw gb g, raw f))
+issub = (f, g) -> f === g or ring f === ring g and tryHooks(ContainmentHooks, (f, g),
+    -- This is used by isSubset and for checking equality of ideals and modules.
+    -- Specialized strategies may be added as hooks, for instance for local rings.
+    -- TODO: how can do better in the homogeneous case?
+    (f, g) -> -1 === rawGBContains(raw gb g, raw f))
 
 ZZ == Ideal := (n,I) -> I == n
 Ideal == ZZ := (I,n) -> (
