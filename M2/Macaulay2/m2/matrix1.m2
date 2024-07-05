@@ -540,6 +540,10 @@ Ideal == Ideal := (I,J) -> (
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
+isSubset(Module, Ideal) :=
+isSubset(Ideal, Module) :=
+isSubset(Ideal, Ideal)  := (I, J) -> isSubset(module I, module J)
+
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
      if not isFreeModule target f or not isFreeModule source f 
