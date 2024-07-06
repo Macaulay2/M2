@@ -309,6 +309,9 @@ Module == Module := (M, N) -> M === N or ring M === ring N and tryHooks((symbol 
     (M, N) -> (
 	-- TODO: first look to see if the minimal presentation
 	-- of M and N are cached, and if so compare them with ===
+	-- check whether M and N are equal as cosets to zero,
+	-- e.g. 0*S^1 == 0*S^2 but 0*S^1 != subquotient(|x|, |x|)
+	cosetgens M == 0 and cosetgens N == 0 or
 	-- check that ambient free modules are the same
 	degrees ambient M === degrees ambient N
 	and (
