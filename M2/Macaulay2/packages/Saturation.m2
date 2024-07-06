@@ -45,7 +45,7 @@ override' := (def, opts) -> nonnull apply(keys def, key -> if opts#?key and opts
 
 -- TODO: is this the right name for this function?
 ambient' = method()
-ambient' Module := Module => ambient
+ambient' Module := Module => super
 ambient' Ideal  := Ideal  => I -> (if instance(I, MonomialIdeal) then monomialIdeal else ideal) 1_(ring I)
 
 -- TODO: remove this once the Ideal vs. MonomialIdeal dichotomy is resolved
