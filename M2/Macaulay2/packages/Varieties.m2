@@ -168,7 +168,7 @@ isWellDefined Variety := X -> (
     R := ring X;
     true -- TODO: isWellDefined R
     -- data type checks
-    and assert'(set keys X === set { symbol ring, symbol cache },
+    and assert'(isSubset(keys X, { symbol ring, symbol sheaf, symbol cache }),
 	"the hash table does not have the expected keys")
     and assert'(
 	instance(X.ring, Ring) and
@@ -257,7 +257,8 @@ checkProjective := X -> if not isProjective X then error "expected a coherent sh
 -- SheafOfRings and CoherentSheaf type declarations and basic constructors
 -----------------------------------------------------------------------------
 
-SheafOfRings = new Type of HashTable
+-- TODO: is this a good idea for fixing type errors?
+SheafOfRings = new Type of Ring
 SheafOfRings.synonym = "sheaf of rings"
 
 CoherentSheaf = new Type of HashTable
@@ -275,7 +276,8 @@ sheaf = method()
 -- and if a variety doesn't already exist then either Proj or Spec should be defined and cached.
 sheaf Ring := Ring^~ := SheafOfRings =>     R  -> sheaf(variety R, R)
 sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
-sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
+-- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
+sheaf(Variety, Ring) := SheafOfRings => (X, R) -> X.sheaf = X.sheaf ?? (
     if ring X =!= R then error "sheaf: expected ring of the variety";
     -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
     X.sheaf = X.sheaf ?? new SheafOfRings from { symbol variety => X, symbol ring => R } )
@@ -334,7 +336,6 @@ isWellDefined CoherentSheaf := F -> (
 variety SheafOfRings  :=
 variety CoherentSheaf := F -> F.variety
 
--- TODO: typicalValue#ring is Ring, so this might cause documentation errors
 ring SheafOfRings  :=
 ring CoherentSheaf := SheafOfRings => F -> sheaf variety F
 
