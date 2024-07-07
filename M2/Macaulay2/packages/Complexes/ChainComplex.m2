@@ -750,16 +750,24 @@ truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
 --------------------------------------------------------------------
 -- basis -----------------------------------------------------------
 --------------------------------------------------------------------
+importFrom_Core { "inducedBasisMap" }
+
 -- returns the graded component of the complex in the given degree
 -- as a complex over the same ring (as opposed to the coefficient ring)
 -- TODO: also define basis given a degree range and infinite ranges
--- TODO: also define for ComplexMap
 basis(ZZ,   Complex) :=
 basis(List, Complex) := Complex => opts -> (deg, C) -> (
     (lo, hi) := C.concentration;
     if lo == hi
     then complex(image basis(deg, C_lo, opts), Base => lo)
-    else complex applyValues(C.dd.map, f -> basis(deg, f, opts)))
+    -- this is the simplest way to take the basis of the whole complex:
+    -- else complex applyValues(C.dd.map, f -> basis(deg, f, opts)))
+    else (
+	-- this construction requires ~half as many basis computations
+	f := basis(deg, dd^C_lo, opts);
+	complex hashTable for i from lo+1 to hi list i => (
+	    f = inducedBasisMap(source f, image basis(deg, C_i, opts), dd^C_i))
+    ))
 
 --------------------------------------------------------------------
 -- part ------------------------------------------------------------
