@@ -538,6 +538,20 @@ truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
 truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
 
 --------------------------------------------------------------------
+-- basis -----------------------------------------------------------
+--------------------------------------------------------------------
+-- returns the induced complex map between the graded components of
+-- the source and target complexes in the given degree, over the
+-- same ring as the input (as opposed to its coefficient ring)
+-- TODO: also define basis given a degree range and infinite ranges
+basis(ZZ,   ComplexMap) :=
+basis(List, ComplexMap) := ComplexMap => opts -> (deg, f) -> (
+    d := degree f;
+    C := basis(deg, source f, opts);
+    D := if source f === target f then C else basis(deg, target f, opts);
+    map(D, C, i -> inducedBasisMap(D_(i+d), C_i, f_i), Degree => d))
+
+--------------------------------------------------------------------
 -- homology --------------------------------------------------------
 --------------------------------------------------------------------
 minimalPresentation ComplexMap := 
