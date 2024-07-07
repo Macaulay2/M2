@@ -930,6 +930,12 @@ fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
      AC_DEFINE([HAVE_FLINT_NMOD_H])
+     AS_IF([test $BUILD_gmp = no],
+         [AC_SEARCH_LIBS([__gmpn_gcd_11], [gmp], [],
+             [AC_MSG_WARN([flint requires __gmp_gcd_11, so we will build gmp])
+              BUILD_gmp=yes
+              LIBS_GMP="-lgmpxx -lgmp"
+              BUILTLIBS="$LIBS_GMP $BUILTLIBS"])])
 fi
 
 dnl debian: 4ti2-
