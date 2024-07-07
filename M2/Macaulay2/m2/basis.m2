@@ -173,6 +173,18 @@ basis(ZZ,             ZZ,             Ring) := opts -> (lo, hi, R) -> basis(lo, 
 
 -----------------------------------------------------------------------------
 
+inducedBasisMap = (G, F, f) -> (
+    -- Assumes G = image basis(deg, target f) and F = image basis(deg, source f)
+    -- this helper routine is useful for computing basis of a pair of composable
+    -- matrices or a chain complex, when target f is the source of a matrix which
+    -- we previously computed basis for.
+    psi := f * inducedMap(source f, , generators F);
+    phi := last coefficients(ambient psi, Monomials => generators G);
+    map(G, F, phi, Degree => degree f))
+    -- TODO: benchmark against inducedTruncationMap in Truncations.m2
+    -- f' := f * inducedMap(source f, F)       * inducedMap(F, source generators F, generators F);
+    -- map(G, F, inducedMap(G, source f', f') // inducedMap(G, source generators G, generators G), Degree => degree f))
+
 basis(List,                           Matrix) :=
 basis(ZZ,                             Matrix) := opts -> (deg, M) -> basis(deg, deg, M, opts)
 basis(InfiniteNumber, InfiniteNumber, Matrix) :=
@@ -183,12 +195,8 @@ basis(List,           List,           Matrix) :=
 basis(List,           ZZ,             Matrix) :=
 basis(ZZ,             InfiniteNumber, Matrix) :=
 basis(ZZ,             List,           Matrix) :=
-basis(ZZ,             ZZ,             Matrix) := opts -> (lo, hi, M) -> (
-    BF := basis(lo, hi, target M, opts);
-    BG := basis(lo, hi, source M, opts);
-    -- TODO: is this general enough?
-    BM := last coefficients(matrix (M * BG), Monomials => BF);
-    map(image BF, image BG, BM))
+basis(ZZ,             ZZ,             Matrix) := opts -> (lo, hi, M) -> inducedBasisMap(
+    image basis(lo, hi, target M, opts), image basis(lo, hi, source M, opts), M)
 
 -----------------------------------------------------------------------------
 
