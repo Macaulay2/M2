@@ -312,6 +312,9 @@ OO = new ScriptedFunctor from {
 OO.texMath = ///{\mathcal O}///
 installMethod(symbol_, OO, Variety, SheafOfRings => (OO, X) -> sheaf(X, ring X))
 
+isWellDefined SheafOfRings := O -> O.variety.ring === O.ring and isWellDefined O.variety
+isCommutative SheafOfRings := O -> isCommutative O.ring
+
 isWellDefined CoherentSheaf := F -> (
     M := module F;
     X := variety F;
