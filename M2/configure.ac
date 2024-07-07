@@ -1016,9 +1016,21 @@ AS_IF([test $BUILD_normaliz = no],
 	       AC_LANG(C++)
 	       SAVELIBS=$LIBS
 	       LIBS="$LIBS -lnormaliz -lnauty -lgmp"
+	       dnl check if libnormaliz built w/ eantic
+	       AC_RUN_IFELSE(
+	           [AC_LANG_PROGRAM([
+		       #include <libnormaliz/nmz_config.h>
+		       ], [
+		       #ifdef ENFNORMALIZ
+		         return 0;
+		       #else
+		         return 1;
+		       #endif
+		       ])],
+		   [LIBS="$LIBS -leantic -leanticxx"])
 	       AC_LINK_IFELSE(
 		   [AC_LANG_PROGRAM([
-		       #include <libnormaliz/libnormaliz.h>
+		       #include <libnormaliz/cone.h>
 		       ],
 		       [libnormaliz::Cone<long long>()])],
 		   [AC_MSG_RESULT([yes])
