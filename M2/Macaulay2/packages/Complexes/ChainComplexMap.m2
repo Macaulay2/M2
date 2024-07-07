@@ -519,13 +519,13 @@ canonicalTruncation(ComplexMap,InfiniteNumber,InfiniteNumber) :=
 canonicalTruncation(ComplexMap,ZZ,Nothing) := 
 canonicalTruncation(ComplexMap,Nothing,ZZ) := ComplexMap => (f,lo,hi) -> canonicalTruncation(f, (lo,hi))
 
-truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
-    C := truncate(e, source f);
-    D := truncate(e, target f);
+truncateMatrixOpts := options(truncate, List, Matrix)
+truncate(ZZ,   ComplexMap) :=
+truncate(List, ComplexMap) := ComplexMap => truncateMatrixOpts >> opts -> (degs, f) -> (
     d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
-    )
-truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
+    C := truncate(degs, source f, opts);
+    D := if source f === target f then C else truncate(degs, target f, opts);
+    map(D, C, i -> inducedTruncationMap(D_(i+d), C_i, f_i), Degree => d))
 
 --------------------------------------------------------------------
 -- basis -----------------------------------------------------------
