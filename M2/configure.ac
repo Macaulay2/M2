@@ -277,7 +277,9 @@ AS_IF([test "$YACC" != "bison -y"], [AC_MSG_ERROR([bison is required])])
 dnl TODO: once autoconf 2.70 is available everyowhere, use the following:
 dnl AC_PROG_LEX([noyywrap])
 dnl the pre-2.70 version w/o arguments is deprecated and gives a warning
-AC_PROG_LEX()
+m4_version_prereq([2.70],
+    [AC_PROG_LEX([noyywrap])],
+    [AC_PROG_LEX()])
 AS_IF([test "$LEX" != "flex"], [AC_MSG_ERROR([flex is required])])
 
 AC_PROG_RANLIB()
@@ -350,8 +352,7 @@ AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
 AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
-AC_CHECK_HEADERS_ONCE([sys/time.h])
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
 dnl  pthread.h includes windows.h
@@ -940,7 +941,7 @@ PATH="/usr/lib/4ti2/bin:/usr/lib64/4ti2/bin:$PATH"
 FOUND_4ti2=no
 for fourti2_prefix in "" "4ti2-" "4ti2_"
 do
-    if command -v ${fourti2_prefix}circuits
+    if command -v ${fourti2_prefix}circuits > /dev/null
     then AC_MSG_RESULT([yes, using prefix "$fourti2_prefix"])
          FILE_PREREQS="$FILE_PREREQS `command -v ${fourti2_prefix}circuits`"
          FOUND_4ti2=yes
@@ -954,7 +955,7 @@ fi
 PATH=$SAVE
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
-if command -v cohomcalg
+if command -v cohomcalg > /dev/null
 then if test "$OS" = Darwin -a "$DMG" = yes
      then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
           # the user just copies a directory tree to /Applications.  Change this when
@@ -970,7 +971,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
-if command -v gfan
+if command -v gfan > /dev/null
 then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
      AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
           [AC_MSG_RESULT([yes])
@@ -984,7 +985,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
-if command -v lrs
+if command -v lrs > /dev/null
 then if test "$OS" = Darwin -a "$DMG" = yes
      then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
           # the user just copies a directory tree to /Applications.  Change this when
@@ -999,7 +1000,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package csdp is installed)
-if command -v csdp
+if command -v csdp > /dev/null
 then AC_MSG_RESULT([yes])
      FILE_PREREQS="$FILE_PREREQS `command -v csdp`"
 else AC_MSG_RESULT([no, will build])
@@ -1052,7 +1053,7 @@ then dnl debian/fedora: nauty-
      FOUND_nauty=no
      for nauty_prefix in "" "nauty-"
      do
-	 if command -v ${nauty_prefix}complg
+	 if command -v ${nauty_prefix}complg > /dev/null
 	 then
      dnl check if #1408 is a problem
 	     if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
@@ -1085,7 +1086,7 @@ AC_MSG_CHECKING(whether the package topcom is installed)
 FOUND_topcom=no
 for topcom_prefix in "" "topcom-"
 do
-    if command -v ${topcom_prefix}points2finetriangs
+    if command -v ${topcom_prefix}points2finetriangs > /dev/null
     then AC_MSG_RESULT([yes, using prefix "$topcom_prefix"])
          FILE_PREREQS="$FILE_PREREQS `command -v ${topcom_prefix}points2finetriangs`"
          FOUND_topcom=yes
@@ -1370,7 +1371,7 @@ AC_SUBST(ULIMIT_S,yes)
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     if command -v fflas-ffpack-config && test "`fflas-ffpack-config --decimal-version`" -gt 20000
+     if command -v fflas-ffpack-config > /dev/null && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
           FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
