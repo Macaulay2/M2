@@ -175,14 +175,11 @@ concatBlocks = mats -> (
 Matrix.matrix = options -> (f) -> concatBlocks f
 
 commonRing = method()
-trythese := rings -> ring try sum apply(rings, R -> 0_R) else error "common ring not found"
-commonRing List := f -> (
-     f = flatten f;
-     if #f == 0 then return ZZ;
-     types := unique apply(f, class);
-     if # types === 1 and instance(types#0,Ring) then return types#0;
-     rings := if all(types, T -> instance(T,Ring)) then types else unique apply(f,ring);
-     ring try sum apply(rings, R -> 0_R) else error "common ring not found")
+commonRing List := L -> (
+    rings := unique apply(flatten L, ring);
+    if #rings === 0 then ZZ      else
+    if #rings === 1 then rings#0 else
+    ring try sum apply(rings, R -> 0_R) else error "common ring not found")
 
 matrixTable = opts -> (f) -> (
      R := commonRing f;
