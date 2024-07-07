@@ -519,17 +519,6 @@ canonicalTruncation(ComplexMap,InfiniteNumber,InfiniteNumber) :=
 canonicalTruncation(ComplexMap,ZZ,Nothing) := 
 canonicalTruncation(ComplexMap,Nothing,ZZ) := ComplexMap => (f,lo,hi) -> canonicalTruncation(f, (lo,hi))
 
-part(List, ComplexMap) := ComplexMap => (deg, f) -> (
-    R := ring f;
-    A := coefficientRing R;
-    psi := map(A,R, DegreeMap => degR -> take(degR, - degreeLength A));
-    C := part(deg, source f);
-    D := part(deg, target f);
-    d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, psi matrix basis(deg, f_i)), Degree => d)
-    )
-part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
-
 truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
     C := truncate(e, source f);
     D := truncate(e, target f);
@@ -551,6 +540,21 @@ basis(List, ComplexMap) := ComplexMap => opts -> (deg, f) -> (
     C := basis(deg, source f, opts);
     D := if source f === target f then C else basis(deg, target f, opts);
     map(D, C, i -> inducedBasisMap(D_(i+d), C_i, f_i), Degree => d))
+
+--------------------------------------------------------------------
+-- part ------------------------------------------------------------
+--------------------------------------------------------------------
+-- returns the induced complex map between the graded component of
+-- the source and target complexes in the given degree, but as a map
+-- over the coefficient ring instead
+part(ZZ,   ComplexMap) :=
+part(List, ComplexMap) := ComplexMap => (deg, f) -> (
+    psi := residueMap ring f;
+    g := basis(deg, f);
+    C := psi cover source g;
+    D := psi cover target g;
+    d := degree f;
+    map(D, C, i -> map(D_(i+d), C_i, psi cover g_i), Degree => d))
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
