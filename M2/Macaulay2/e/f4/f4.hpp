@@ -123,8 +123,8 @@ class F4GB : public our_new_delete
   // The matrix and its construction
   int next_col_to_process;
   coefficient_matrix *mat;
-  MonomialHashTable<MonomialInfo> H;
-  F4MemoryBlock<monomial_word> B;
+  MonomialHashTable<MonomialInfo> mMonomialHashTable;
+  F4MemoryBlock<monomial_word> mMonomialMemoryBlock;
   monomial_word *next_monom;  // valid while creating the matrix
   
   F4Mem *Mem;  // Used to allocate and deallocate arrays used in the matrix

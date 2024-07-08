@@ -60,8 +60,8 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mSPairSet(nullptr),
       next_col_to_process(0),
       mat(nullptr),
-      H(M0, 17),
-      B(),
+      mMonomialHashTable(M0, 17),
+      mMonomialMemoryBlock(),
       next_monom(),
       Mem(Mem0),
       clock_sort_columns(0),
@@ -135,11 +135,11 @@ int F4GB::new_column(packed_monomial m)
 int F4GB::find_or_append_column(packed_monomial m)
 {
   packed_monomial new_m;
-  if (H.find_or_insert(m, new_m)) return static_cast<int>(new_m[-1]);
+  if (mMonomialHashTable.find_or_insert(m, new_m)) return static_cast<int>(new_m[-1]);
   // At this point, m is a new monomial to be placed as a column
   m = next_monom;
-  B.intern(1 + mMonomialInfo->monomial_size(m));
-  next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
+  mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(m));
+  next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
   next_monom++;
   return new_column(m);
 }
@@ -153,12 +153,12 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
   // If not, increment our memory block, and insert a new column.
   packed_monomial new_m;
   mMonomialInfo->unchecked_mult(m, n, next_monom);
-  if (H.find_or_insert(next_monom, new_m))
+  if (mMonomialHashTable.find_or_insert(next_monom, new_m))
     return static_cast<int>(
         new_m[-1]);  // monom exists, don't save monomial space
   m = next_monom;
-  B.intern(1 + mMonomialInfo->monomial_size(m));
-  next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
+  mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(m));
+  next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
   next_monom++;
   return new_column(m);
 }
@@ -224,8 +224,8 @@ void F4GB::process_column(int c)
     {
       packed_monomial n = next_monom;
       mMonomialInfo->unchecked_divide(ce.monom, mGroebnerBasis[which]->f.monoms, n);
-      B.intern(1 + mMonomialInfo->monomial_size(n));
-      next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
+      mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(n));
+      next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
       next_monom++;
       // M->set_component(which, n);
       ce.head = INTSIZE(mat->rows);
@@ -245,8 +245,8 @@ void F4GB::process_s_pair(spair *p)
         {
           packed_monomial n = next_monom;
           mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->i]->f.monoms, n);
-          B.intern(1 + mMonomialInfo->monomial_size(n));
-          next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
+          mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(n));
+          next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
           next_monom++;
 
           load_row(n, p->i);
@@ -259,8 +259,8 @@ void F4GB::process_s_pair(spair *p)
               // In this situation, we load the other half as a reducer
               n = next_monom;
               mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->j]->f.monoms, n);
-              B.intern(1 + mMonomialInfo->monomial_size(n));
-              next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
+              mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(n));
+              next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
               next_monom++;
               load_row(n, p->j);
 
@@ -395,7 +395,7 @@ void F4GB::reset_matrix()
 {
   // mat
   next_col_to_process = 0;
-  next_monom = B.reserve(1 + mMonomialInfo->max_monomial_size());
+  next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
   next_monom++;
 }
 
@@ -414,8 +414,8 @@ void F4GB::clear_matrix()
     }
   mat->rows.clear();
   mat->columns.clear();
-  H.reset();
-  B.reset();
+  mMonomialHashTable.reset();
+  mMonomialMemoryBlock.reset();
   if (M2_gbTrace >= 4)
     {
       Mem->components.show();
@@ -838,7 +838,7 @@ void F4GB::do_spairs()
   nsecs /= CLOCKS_PER_SEC;
   if (M2_gbTrace >= 2) fprintf(stderr, " make matrix time = %f\n", nsecs);
 
-  if (M2_gbTrace >= 3) H.dump();
+  if (M2_gbTrace >= 3) mMonomialHashTable.dump();
 
   begin_time = clock();
   gauss_reduce(true);
