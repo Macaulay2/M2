@@ -214,7 +214,7 @@ pushAuxHgs(RingMap):=(f)-> (
      if isInclusionOfCoefficientRing f then (
      --case when the source of f is the coefficient ring of the target:
 	 if not isModuleFinite target f then error "expected a finite map";
-	 matB = basis B;
+	 matB = basis(B, Variables => 0 .. numgens B - 1);
          mapf = if isHomogeneous f 
            then (b) -> (
              (mons,cfs) := coefficients(b,Monomials=>matB);
