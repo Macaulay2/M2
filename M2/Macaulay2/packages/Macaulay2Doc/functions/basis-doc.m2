@@ -146,7 +146,8 @@ doc ///
     Example
       A = ZZ/101[a..d];
       B = A[x,y]/(a*x, x^2, y^2);
-      basis B
+      try basis B
+      basis(B, Variables => B_*)
     Text
       If $M$ is an ideal or module, the resulting map looks somewhat strange, since maps between modules
       are given from generators, in terms of the generators of the target module.  Use @TO super@ or @TO cover@
