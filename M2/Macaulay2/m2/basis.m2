@@ -28,10 +28,10 @@ inf := t -> if t === infinity then -1 else t
 -----------------------------------------------------------------------------
 
 -- the output of this is used in BasisContext
-getVarlist = (R, varlist) -> (
+getVarlist = (R, varlist) -> toList(
     numvars := R.numallvars ?? numgens R;
     if varlist === null then toList(0 .. numvars - 1)
-    else if instance(varlist, List) then apply(varlist, v ->
+    else if instance(varlist, VisibleList) then apply(varlist, v ->
         -- TODO: what if R = ZZ?
         if instance(v, R)  then index v else
         if instance(v, ZZ) then v
