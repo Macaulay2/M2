@@ -75,6 +75,11 @@ assert(basis(0, A = ZZ/101[a, Degrees => {0}]) == gens A^1)
 assert(basis(0, A = ZZ/101[a, Degrees => {0}]/ideal(a^3)) == matrix"1,a,a2")
 assert(basis A == matrix"1,a,a2")
 assert(basis id_(A^1) == id_(image basis A))
+assert(basis map(A,A) == id_(image basis A))
+
+A = quotient ideal conwayPolynomial(2, 3)
+B = image basis A
+assert(basis map(A, A, {a^2}) == map(B, B, {{1, 0, 0}, {0, 0, 1}, {0, 1, 1}}))
 
 -- https://github.com/Macaulay2/M2/issues/1312
 R = QQ[]
@@ -126,3 +131,16 @@ assert(basis(2, R) == matrix"a2,b")
 -- FIXME: assert(basis(2, R, Truncate => true) == matrix "b,a2,c")
 assert(basis(2, R) == matrix"a2,b")
 
+-- tests for basis of ring maps
+R = ZZ/32003[s,t][a..d]
+f = map(A := coefficientRing R, R, DegreeMap => d -> take(d, - degreeLength A))
+assert(entries basis(({2}, {0,2}), f) == entries id_(ZZ^3))
+
+f = map(QQ[s,t], QQ[w,x,y,z], matrix"s3,s2t,st2,t3")
+b = basis((6, 2), f)
+-- FIXME: this is very non-minimal, but ker b doesn't work if f is homogeneous ...
+K = image map(source b, , gens ker b)
+-- FIXME: why isn't ker b a submodule of source b already?
+-- assert isSubset(ker b, source b)
+assert isSubset(K, source b)
+assert(ker f == K)
