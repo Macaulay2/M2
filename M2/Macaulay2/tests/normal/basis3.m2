@@ -69,6 +69,7 @@ assert(basis(0, A = ZZ/101[a, Degrees => {0}]) == gens A^1)
 -- this is finite over the field, so we include all vars
 assert(basis(0, A = ZZ/101[a, Degrees => {0}]/ideal(a^3)) == matrix"1,a,a2")
 assert(basis A == matrix"1,a,a2")
+assert(basis id_(A^1) == id_(image basis A))
 
 -- https://github.com/Macaulay2/M2/issues/1312
 R = QQ[]

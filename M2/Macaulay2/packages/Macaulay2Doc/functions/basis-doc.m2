@@ -30,6 +30,7 @@ doc ///
      (basis, List, ZZ, Matrix)
      (basis, List, ZZ, Module)
      (basis, List, ZZ, Ring)
+     (basis, Matrix)
      (basis, Module)
      (basis, Ring)
      (basis, ZZ, Ideal)
