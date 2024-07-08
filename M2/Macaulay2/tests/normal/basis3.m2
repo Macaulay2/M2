@@ -57,6 +57,11 @@ assert(basis(0, R) == gens R^1) -- ignores degree 0 vars
 assert try (basis(0, R, Variables => {0}); false) else true
 assert(basis(1, R) == 0)
 
+S = ZZ/101[s,t]
+R = S[a..d]
+assert(basis({0,1}, R) == sub(vars S, R))
+assert(basis({1,0}, R) == vars R)
+
 -- FIXME: these are also broken
 R = ZZ/101[a,b, Degrees => {0,1}]
 basis(1, R)
