@@ -276,8 +276,7 @@ sheaf = method()
 -- and if a variety doesn't already exist then either Proj or Spec should be defined and cached.
 sheaf Ring := Ring^~ := SheafOfRings =>     R  -> sheaf(variety R, R)
 sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
--- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
-sheaf(Variety, Ring) := SheafOfRings => (X, R) -> X.sheaf = X.sheaf ?? (
+sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
     -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
     X.sheaf = X.sheaf ?? new SheafOfRings from { symbol variety => X, symbol ring => R } )
