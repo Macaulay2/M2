@@ -13,6 +13,16 @@ assert(basis(0, 1, R) == matrix{{1, a, b}})
 assert(basis(0, 2, R) == matrix{{1, a, a^2, a*b, b, b^2}})
 assert(basis(0, 1, R) == matrix{{1, a, b}})
 
+-- c.f. examples "part(List,Complex)"
+R = QQ[a..d]
+M = coker matrix {{a*b, a*c, b*c, a*d}}
+N = image map(R^{4:-2}, , {{-c, -c, 0, -d}, {b, 0, -d, 0}, {0, a, 0, 0}, {0, 0, c, b}})
+P = image map(R^{4:-3}, , {{d}, {0}, {-c}, {b}})
+assert(basis(4, map(R^0, M, 0)) == 0)
+assert(basis(4, map(M,   N, 0)) == 0)
+assert(basis(4, map(N,   P, 0)) == 0)
+assert(basis(4, map(P, R^0, 0)) == 0)
+
 -- partial multidegrees
 -- see https://github.com/Macaulay2/M2/pull/2056
 assert(basis({3}, A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]) == matrix"a3,a2b,ab2,b3")
