@@ -5,7 +5,6 @@
 #include "buffer.hpp"              // for buffer
 #include "error.h"                 // for ERROR
 #include "f4/f4-m2-interface.hpp"  // for F4toM2Interface
-#include "f4/f4-mem.hpp"           // for F4Mem
 #include "f4/f4-types.hpp"         // for gb_array, gbelem
 #include "f4/f4.hpp"               // for F4GB
 #include "f4/moninfo.hpp"          // for MonomialInfo
@@ -33,13 +32,11 @@ GBComputation *createF4GB(const Matrix *m,
 {
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
-  F4Mem *Mem = new F4Mem;
   auto vectorArithmetic = new VectorArithmetic(K);
   // TODO: code here used to detect whether R, K is a valid ring here
 
   GBComputation *G;
   G = new F4Computation(vectorArithmetic,
-                        Mem,
                         m,
                         collect_syz,
                         n_rows_to_keep,
@@ -52,7 +49,6 @@ GBComputation *createF4GB(const Matrix *m,
 }
 
 F4Computation::F4Computation(const VectorArithmetic* VA,
-                             F4Mem *Mem0,
                              const Matrix *m,
                              M2_bool collect_syz,
                              int n_rows_to_keep,
@@ -62,15 +58,13 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
                              int max_degree,
                              int numThreads)
   : mFreeModule(m->rows()),
-    mVectorArithmetic(VA),
-    mMemoryBlock(Mem0)
+    mVectorArithmetic(VA)
 {
   mOriginalRing = m->get_ring()->cast_to_PolynomialRing();
   mMonoid = new MonomialInfo(mOriginalRing->n_vars(),
                         mOriginalRing->getMonoid()->getMonomialOrdering());
 
   mF4GB = new F4GB(mVectorArithmetic,
-                   Mem0,
                    mMonoid,
                    m->rows(),
                    collect_syz,
@@ -85,7 +79,7 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
   mF4GB->new_generators(0, m->n_cols() - 1);
 }
 
-F4Computation::~F4Computation() { delete mMemoryBlock; }
+F4Computation::~F4Computation() = default;
 /*************************
  ** Top level interface **
  *************************/
@@ -171,7 +165,6 @@ void F4Computation::show() const  // debug display
   stash::stats(o);
   emit(o.str());
 
-  mMemoryBlock->show();
   // f4->show();
 }
 

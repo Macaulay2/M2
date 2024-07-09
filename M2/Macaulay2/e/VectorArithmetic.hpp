@@ -16,7 +16,6 @@
 // #include "aring-glue.hpp"           // for ConcreteRing
 // #include "aring.hpp"                // for DummyRing, ring_GFFlintBig, ring_...
 // #include "buffer.hpp"               // for buffer
-// #include "f4/f4-mem.hpp"            // for F4Vec
 // #include "ring.hpp"                 // for Ring
 // #include "ringelem.hpp"             // for ring_elem
 
@@ -42,7 +41,6 @@
 #include "aring-glue.hpp"
 #include <variant>
 #include <type_traits>
-#include "f4/f4-mem.hpp"         // for F4Mem
 
 class Ring;
 using ComponentIndex = int;

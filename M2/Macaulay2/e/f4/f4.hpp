@@ -80,7 +80,6 @@
 #include "MemoryBlock.hpp"          // for MemoryBlock<T>
 #include <ctime>                    // for clock, CLOCKS_PER_SEC, clock_t
 
-class F4Mem;
 class FreeModule;
 class HilbertController;
 class RingElement;
@@ -127,8 +126,7 @@ class F4GB : public our_new_delete
   F4MemoryBlock<monomial_word> mMonomialMemoryBlock;
   monomial_word *next_monom;  // valid while creating the matrix
   
-  F4Mem *Mem;  // Used to allocate and deallocate arrays used in the matrix
-  MemoryBlock mComponentSpace; // stop-gap for use with VectorArithmetic and Mem.
+  MemoryBlock mComponentSpace; // stop-gap for use with VectorArithmetic and Mem. (TODO: what does this comment mean?)
 
   // cumulative timing info
   double clock_sort_columns;
@@ -191,7 +189,6 @@ class F4GB : public our_new_delete
 
  public:
   F4GB(const VectorArithmetic* VA,
-       F4Mem *Mem0,
        const MonomialInfo *MI,
        const FreeModule *F,  // used for debugging only...
        M2_bool collect_syz,
