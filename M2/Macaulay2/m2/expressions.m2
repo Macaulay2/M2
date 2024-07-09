@@ -566,6 +566,7 @@ expressionValue MatrixExpression := x -> (
     ))
 toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
     (opts,m) := matrixOpts x;
+    if #m!=0 and class m#0 === ZeroExpression then m=table(#(opts.Degrees#0),#(opts.Degrees#1),a->0);
     if opts.MutableMatrix then "mutableMatrix {" else "matrix {",
     between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
     "}" )
