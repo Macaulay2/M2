@@ -56,8 +56,8 @@ F4GB::F4GB(const VectorArithmetic* VA,
       hilbert(nullptr),
       mGenerators(),
       mGroebnerBasis(),
-      mLookupTable(nullptr),
-      mSPairSet(nullptr),
+      mLookupTable(mMonomialInfo->n_vars()),
+      mSPairSet(mMonomialInfo, mGroebnerBasis),
       next_col_to_process(0),
       mat(nullptr),
       mMonomialHashTable(M0, 17),
@@ -72,8 +72,8 @@ F4GB::F4GB(const VectorArithmetic* VA,
     , mScheduler(mNumThreads)
 #endif
 {
-  mLookupTable = new MonomialLookupTable(mMonomialInfo->n_vars());
-  mSPairSet = new F4SPairSet(mMonomialInfo, mGroebnerBasis);
+  //  mLookupTable = new MonomialLookupTable(mMonomialInfo->n_vars());
+  //  mSPairSet = new F4SPairSet(mMonomialInfo, mGroebnerBasis);
   mat = new coefficient_matrix;
 
   // TODO: set status?
@@ -98,8 +98,8 @@ void F4GB::delete_gb_array(gb_array &g)
 
 F4GB::~F4GB()
 {
-  delete mSPairSet;
-  delete mLookupTable;
+  //  delete mSPairSet;
+  // delete mLookupTable;
   delete mat;
 
   // Now delete the gens, gb arrays.
@@ -113,7 +113,7 @@ void F4GB::new_generators(int lo, int hi)
     {
       gbelem *g = mGenerators[i];
       if (g->f.len == 0) continue;
-      mSPairSet->insert_generator(g->deg, g->f.monoms, i);
+      mSPairSet.insert_generator(g->deg, g->f.monoms, i);
     }
 }
 
@@ -219,7 +219,7 @@ void F4GB::process_column(int c)
   column_elem &ce = mat->columns[c];
   if (ce.head >= -1) return;
   int32_t which;
-  bool found = mLookupTable->find_one_divisor_packed(mMonomialInfo, ce.monom, which);
+  bool found = mLookupTable.find_one_divisor_packed(mMonomialInfo, ce.monom, which);
   if (found)
     {
       packed_monomial n = next_monom;
@@ -433,7 +433,7 @@ void F4GB::make_matrix()
   */
 
   spair *p;
-  while ((p = mSPairSet->get_next_pair()))
+  while ((p = mSPairSet.get_next_pair()))
     {
       process_s_pair(p);
     }
@@ -774,11 +774,11 @@ void F4GB::insert_gb_element(row_elem &r)
   //varpower_monomial vp = newarray_atomic(varpower_word, 2 * M->n_vars() + 1);
   varpower_monomial vp = new varpower_word[2 * mMonomialInfo->n_vars() + 1];
   mMonomialInfo->to_varpower_monomial(result->f.monoms, vp);
-  mLookupTable->insert_minimal_vp(mMonomialInfo->get_component(result->f.monoms), vp, which);
+  mLookupTable.insert_minimal_vp(mMonomialInfo->get_component(result->f.monoms), vp, which);
   delete [] vp;
   //freemem(vp);
   // now go forth and find those new pairs
-  mSPairSet->find_new_pairs(is_ideal);
+  mSPairSet.find_new_pairs(is_ideal);
 }
 
 void F4GB::new_GB_elements()
@@ -870,7 +870,7 @@ void F4GB::do_spairs()
       fprintf(stderr, " # GB elements   = %d\n", ngb);
       if (M2_gbTrace >= 5) {
         show_gb_array(mGroebnerBasis);
-        mSPairSet->display();
+        mSPairSet.display();
       }
     }
 
@@ -909,9 +909,9 @@ void F4GB::test_spair_code()
   for (int i = 1; i < mGenerators.size(); i++)
     {
       mGroebnerBasis.push_back(mGenerators[i]);
-      mSPairSet->find_new_pairs(false);
+      mSPairSet.find_new_pairs(false);
       fprintf(stderr, "---Just inserted element %d---\n", i);
-      mSPairSet->display();
+      mSPairSet.display();
     }
 }
 
@@ -937,7 +937,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       is_done = computation_is_complete(stop_);
       if (is_done != COMP_COMPUTING) break;
 
-      this_degree = mSPairSet->prepare_next_degree(-1, npairs);
+      this_degree = mSPairSet.prepare_next_degree(-1, npairs);
 
       if (npairs == 0)
         {
@@ -1003,7 +1003,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       {
         fprintf(stderr,
               "number of spairs removed by criterion = %ld\n",
-              mSPairSet->n_unneeded_pairs());
+              mSPairSet.n_unneeded_pairs());
         mMonomialInfo->show();
       }
     }

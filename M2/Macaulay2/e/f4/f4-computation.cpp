@@ -65,11 +65,9 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
     mVectorArithmetic(VA),
     mMemoryBlock(Mem0)
 {
-  // Note: the F4Mem which K0 uses should be mMemoryBlock. ??TODO: no longer valid, still containing useful info?
   mOriginalRing = m->get_ring()->cast_to_PolynomialRing();
   mMonoid = new MonomialInfo(mOriginalRing->n_vars(),
                         mOriginalRing->getMonoid()->getMonomialOrdering());
-
 
   mF4GB = new F4GB(mVectorArithmetic,
                    Mem0,
