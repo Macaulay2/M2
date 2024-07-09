@@ -17,9 +17,7 @@ F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
   max_varpower_size = 2 * M->n_vars() + 1;
 
   spair *used_to_determine_size = nullptr;
-  size_t spair_size =
-      sizeofspair(used_to_determine_size, M->max_monomial_size());
-  spair_stash = new stash("F4 spairs", spair_size);
+  mSPairSizeInBytes = sizeofspair(used_to_determine_size, M->max_monomial_size());
 }
 
 F4SPairSet::~F4SPairSet()
@@ -29,12 +27,12 @@ F4SPairSet::~F4SPairSet()
   M = nullptr;
   heap = nullptr;
   this_set = nullptr;
-  delete spair_stash;
 }
 
 spair *F4SPairSet::make_spair(spair_type type, int deg, int i, int j)
 {
-  spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
+  spair *result = reinterpret_cast<spair*>(new char[mSPairSizeInBytes]);
+  //  spair *result = new spair;
   result->next = nullptr;
   result->type = type;
   result->deg = deg;
@@ -58,7 +56,7 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
   heap = result;
 }
 
-void F4SPairSet::delete_spair(spair *p) { spair_stash->delete_elem(p); }
+void F4SPairSet::delete_spair(spair *p) { delete p; }
 void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 {
   spair *p = make_spair(F4_SPAIR_GEN, deg, col, -1);
@@ -233,7 +231,7 @@ pre_spair *F4SPairSet::create_pre_spair(int j)
   return result;
 }
 
-void insert_pre_spair(VECTOR(VECTOR(pre_spair *)) & bins, pre_spair *p)
+void insert_pre_spair(std::vector<std::vector<pre_spair *>> & bins, pre_spair *p)
 {
   int d = p->deg1;
   if (d >= bins.size()) bins.resize(d + 1);
@@ -251,9 +249,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
   gbelem *me = gb[gb.size() - 1];
   int me_component = static_cast<int>(M->get_component(me->f.monoms));
 
-  typedef VECTOR(pre_spair *) spairs;
-
-  VECTOR(VECTOR(pre_spair *)) bins;
+  std::vector<std::vector<pre_spair *>> bins;
 
   // Loop through each element of gb, and create the pre_spair
   for (int i = 0; i < gb.size() - 1; i++)
@@ -279,9 +275,9 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
       std::stable_sort(bins[i].begin(), bins[i].end(), C);
 
       // Loop through each degree and potentially insert...
-      spairs::iterator first = bins[i].begin();
-      spairs::iterator next = first;
-      spairs::iterator end = bins[i].end();
+      auto first = bins[i].begin();
+      auto next = first;
+      auto end = bins[i].end();
       for (; first != end; first = next)
         {
           next = first + 1;
@@ -313,6 +309,77 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 
   return n_new_pairs;
 }
+
+#if 0
+// testing mathic and mathicgb routines...
+class TestPairQueueConfiguration
+{
+private:
+  // What should be here?
+  
+public:
+  TestPairQueueConfiguration(const gb_array& gb,
+                     XXX
+                     );
+  using PairData = MonomialInfo::OrderedMonomial;
+  void computePairData(
+                       size_t col,
+                       size_t row,
+                       PairData & m, // allocated space?
+                       ) const;
+
+  using CompareResult = bool;
+  bool compare(
+               size_t colA,
+               size_t rowA,
+               MonomialInfo::ConstOrderedMonomial a,
+               size_t colB,
+               size_t rowB,
+               MonomialInfo::ConstOrderedMonomial b) const
+  {
+    // What to change this test code to?
+    const auto cmp = orderMonoid().compare(*a, *b);
+    if (cmp == GT)
+      return true;
+    if (cmp == LT)
+      return false;
+      
+    const bool aRetired = mBasis.retired(rowA) || mBasis.retired(colA);
+    const bool bRetired = mBasis.retired(rowB) || mBasis.retired(colB);
+    if (aRetired || bRetired)
+      return !bRetired;
+      
+    if (mPreferSparseSPairs) {
+      const auto termCountA =
+        mBasis.basisElement(colA).termCount() +
+        mBasis.basisElement(rowA).termCount();
+      const auto termCountB =
+        mBasis.basisElement(colB).termCount() +
+        mBasis.basisElement(rowB).termCount();
+      if (termCountA > termCountB)
+        return true;
+      if (termCountA < termCountB)
+        return false;
+    }
+    return colA + rowA > colB + rowB;
+  }
+
+  bool cmpLessThan(bool v) const {return v;}
+};
+
+class TestSPairs
+{
+private:
+  mathic::PairQueue<TestPairQueueConfiguration> mPairQueue;
+
+public:
+  TestSPairs(gb_poly& currentGroebnerBasis);
+
+  ~TestSPairs() {} // anything here?
+
+  
+};
+#endif
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
