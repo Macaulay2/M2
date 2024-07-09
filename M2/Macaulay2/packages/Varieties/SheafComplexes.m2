@@ -218,7 +218,6 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
 	M = truncate(r, M));
     complex applyValues(D.dd.map, f -> part(0, Ext^m(M, matrix f, opts))))
 
-cohomology(ZZ,                    Complex) := Complex => opts -> (p,    C) -> cohomology(p, variety C, C, opts)
 cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
     C.cache.cohomology   ??= new MutableHashTable;
     C.cache.cohomology#p ??= Ext^p(sheaf X, C, opts))
