@@ -180,7 +180,7 @@ inducedBasisMap = (G, F, f) -> (
     -- this helper routine is useful for computing basis of a pair of composable
     -- matrices or a chain complex, when target f is the source of a matrix which
     -- we previously computed basis for.
-    psi := f * inducedMap(source f, , generators F);
+    psi := f * F.cache.Monomials; -- equivalent to f * inducedMap(source f, , gens F)
     phi := last coefficients(ambient psi, Monomials => generators G);
     map(G, F, phi, Degree => degree f))
     -- TODO: benchmark against inducedTruncationMap in Truncations.m2
