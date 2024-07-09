@@ -7,7 +7,6 @@
 #include "buffer.hpp"                  // for buffer
 #include "error.h"                     // for error
 #include "f4/f4-m2-interface.hpp"      // for F4toM2Interface
-#include "f4/f4-mem.hpp"               // for F4Mem, F4Vec
 #include "f4/f4-spairs.hpp"            // for F4SPairSet
 #include "f4/f4-types.hpp"             // for row_elem, coefficient_matrix
 #include "f4/hilb-fcn.hpp"             // for HilbertController
@@ -31,7 +30,6 @@
 class RingElement;
 
 F4GB::F4GB(const VectorArithmetic* VA,
-           F4Mem *Mem0,
            const MonomialInfo *M0,
            const FreeModule *F0,
            M2_bool collect_syz,
@@ -63,7 +61,6 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mMonomialHashTable(M0, 17),
       mMonomialMemoryBlock(),
       next_monom(),
-      Mem(Mem0),
       clock_sort_columns(0),
       clock_gauss(0),
       clock_make_matrix(0),
@@ -416,12 +413,6 @@ void F4GB::clear_matrix()
   mat->columns.clear();
   mMonomialHashTable.reset();
   mMonomialMemoryBlock.reset();
-  if (M2_gbTrace >= 4)
-    {
-      Mem->components.show();
-      Mem->coefficients.show();
-      Mem->show();
-    }
 }
 
 void F4GB::make_matrix()

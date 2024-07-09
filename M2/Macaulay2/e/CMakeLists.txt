@@ -299,7 +299,6 @@ set(SRCLIST
   gb-f4/SPairs
   f4/f4-computation
   f4/f4-m2-interface
-  f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
   f4/f4
