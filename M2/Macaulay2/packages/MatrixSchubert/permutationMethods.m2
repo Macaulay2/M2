@@ -224,18 +224,14 @@ isPatternAvoiding (List,List) := Boolean => (perm, pattern) -> (
     --input validation
     if not (isPerm perm) then error(toString perm | " is not a permutation.");
     --assume permutation is pattern-avoiding, break if not true
-    isAvoiding := true;
     for idx in subsets(0..#perm-1, #pattern) do {
-        vals := perm_(sort idx);
+        vals := perm_(idx);
         sortedVals := sort(vals);
         relPositions := hashTable toList apply(0..#vals-1, i -> {sortedVals#i, i});
         p := toList apply(vals, i -> (relPositions#i) + 1); 
-        if p == pattern then {
-            isAvoiding = false;
-            break;
-        };
+        if p == pattern then return false;
     };
-    isAvoiding
+    true
 )
 
 --------------------------------
