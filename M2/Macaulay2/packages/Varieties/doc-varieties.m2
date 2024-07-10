@@ -267,12 +267,37 @@ Node
     X:{AffineVariety,ProjectiveVariety}
   Outputs
     :{AffineVariety,ProjectiveVariety}
---  Description
---    Text
---    Example
+  Description
+    Text
+      The singular locus of a variety is the set of singular points of some variety $X$. Geometrically
+      it is the intersection of the points in the variety $X$ with the points at which the associated
+      jacobian matrix does not have maximal rank. Algebraically, this corresponds to the variety
+      defined the ideal obtained by taking the sum of the defining ideal of $X$ and the maximal minors
+      of the Jacobian matrix. In the projective case, one should also saturate to make sure the ideal
+      defines a reduced object.
+    Example
+      R = QQ[x,y]/(x^3 - y^2);
+      X = Spec R
+      S = singularLocus X
+      codim S
+      trim ideal ring S
+    Text
+      In the projective case, there may be additional irrelevant components that we would like to saturate
+      away:
+    Example
+      Q = QQ[x,y]/(x^2*y);
+      Y = Proj(Q)
+      S' = singularLocus Y
+      I = ideal ring S'
+      J = minors(1,jacobian ideal Q) + ideal Q
+      primaryDecomposition J
+    Text
+      As we see in the above, without saturating there is an irrelevant component arising
+      from the ideal $(x^2 , y)$ that disappears upon saturating. 
   SeeAlso
     (singularLocus, Ring)
 ///
+
 
 -----------------------------------------------------------------------------
 -- Methods specific to projective varieties
@@ -300,10 +325,17 @@ Node
       S = QQ[x,y,z]
       isProjective Proj S
       isProjective Spec S
+  Caveat
+    This method does absolutely no well-definedness checks and is very primitive. To check well-definedness
+    use @TO isWellDefined@ instead.
   SeeAlso
     "NormalToricVarieties::isProjective(NormalToricVariety)"
 ///
 
+
+--Comment about this code: isn't it sufficient to just check that the quotient by the
+--jacobian + the original ideal has finite length? Using the singularLocus command to do this
+--adds an additional saturation computation that seems unnecessary
 doc ///
 Node
   Key

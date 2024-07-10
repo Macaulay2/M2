@@ -25,6 +25,22 @@ Node
     SheafMap
   Headline
     the class of morphisms of coherent sheaves
+  Description
+    Text
+      The most essential data of the type @TO CoherentSheaf@ in Macaulay2 is the representative
+      module. For morphisms of sheaves, the data type requires a little
+      more care, because even if $\mathcal{F}$ and $\mathcal{G}$ are sheaves represented by
+      modules $M$ and $N$, respectively, a morphism of sheaves $\phi : \mathcal F \to \mathcal G$ is not necessarily the sheaf associated
+      to a module map $\psi : M \to N$. Indeed, the best one can say is that $\phi$ is represented by some map
+      $$\psi : M_{\geq d} \to N,$$
+      where $d$ is some truncation degree. This means that in Macaulay2, a morphism of sheaves is
+      represented as a morphism from some truncation of the source representative to the target representative.
+    Example
+      Q = QQ[x..z]; --Do example of accessing the truncation degree
+    Text
+      As illustrated in the above example, the source and target are still represented by the sheaves
+      $\mathcal F$ and $\mathcal G$. The key {\tt degree} accesses the truncation degree needed to represent
+      the map as a morphism of modules. To access the actual matrix representing the map, use {\tt matrix}. 
   Subnodes
     (map, CoherentSheaf, CoherentSheaf, Matrix)
     (random, CoherentSheaf, CoherentSheaf)

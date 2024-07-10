@@ -136,12 +136,22 @@ Node
     Text
       The command computes the $i$-th cohomology group of @TT "F"@
       as a vector space over the coefficient field of @TT "X"@.
-      For $i>0$ this is currently done via local duality, while
-      for $i=0$ it is computed as a limit of @TO2 {(Hom, Module, Module), "Hom"}@s.
+      For $i>0$ this is currently done via local duality. More precisely, the code takes advantage of
+      the isomorphism
+      $$H^i (X, \mathcal{F}) = ( H_{\mathfrak{m}}^i ( M) )_0,$$
+      where the notation $(-)_0$ denotes the degree $0$ part of a module, and $M$ is any module representing $\mathcal F$.
+      Combining this with the local duality isomorphism for the graded polynomial ring $S$ yields
+      $$H_{\mathfrak{m}}^i (M) \cong \operatorname{Ext}^{d-i}_S (M, S(-n-1)),$$
+      where we are viewing $X$ as being embedded into $\mathbb{P}^n$ via some affine morphism.
+      For $i=0$, things are not as simple since there is not a direct isomorphism between the global
+      sections of a sheaf and the degree 0 part of the $0$th local cohomology. Thus it is instead computed
+      as a limit of @TO2 {(Hom, Module, Module), "Hom"}@s.
     Text
       See @TO "BGG::cohomologyTable"@ and @TO "TateOnProducts::cohomologyHashTable"@ for
       alternative sheaf cohomology algorithms via the Bernstein-Gelfand-Gelfand correspondence.
     Text
+      --I feel like giving simpler examples that most users will already
+      --know the answer to should be done first, then do more complicated examples
       As examples we compute the Picard numbers, Hodge numbers and
       dimension of the infinitesimal deformation spaces of various
       quintic hypersurfaces in projective fourspace (or their Calabi-Yau small resolutions).
@@ -259,6 +269,9 @@ Node
 -- Hom
 -----------------------------------------------------------------------------
 
+
+--TODO: add the fact that we can access the actual morphism of sheaves corresponding
+--to a global section?
 Node
   Key
     (Hom, CoherentSheaf, CoherentSheaf)
@@ -418,6 +431,23 @@ Node
       the global Ext module $\mathrm{Ext}^i_X(\mathcal F, \mathcal G)$
   Description
     Text
+      The global Ext module $\operatorname{Ext}^i_X (\mathcal F, \mathcal G)$ is a vector space, defined
+      as the $i$th right derived functor of the global Hom functor $\operatorname{Hom}_X (\mathcal{F}, -)$. The
+      elements of the $i$th global Ext functor represent extensions of the sheaf $\mathcal{F}$ by $\mathcal{G}$; that
+      is, exact sequences of sheaves of the form
+      $$0 \to \mathcal{G} \to \mathcal{C}_i \to \mathcal{C}_{i-1} \to \cdots \to \mathcal{C}_1 \to \mathcal{F} \to 0.$$
+      These representatives can be accessed using the --put in yonedaSheafExt command
+    Text
+      Of course, in Macaulay2 these vector spaces are not computed using injective resolutions of sheaves.
+      Instead, a result of Greg Smith is used that shows that if $\mathca{F}$ and $\mathcal{G}$ are sheaves
+      represented by modules $M$ and $N$, respectively, then there exists an integer $d$ (depending on $M$, $N$, and $i$)
+      such that
+      $$\operatorname{Ext}^i_X (\mathcal F, \mathcal G) = \operatorname{Ext}^i_S (M_{\geq d} , N)_0,$$
+      where in the above $S$ is some polynomial ring over a field, $M_{\geq d}$ denotes truncation,
+      and $(-)_0$ denotes the degree $0$ part of a graded module. Moreover, the modules $M$ and $N$ are being
+      viewed as modules over the polynomial ring $S$ via restriction of scalars along the canonical
+      surjection $S \to R$, where $X = \operatorname{Proj} (R)$. 
+    Text
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
     Text
       Both @TT "F"@ and @TT "S"@ must be coherent sheaves on the same projective variety or scheme $X$.
@@ -452,6 +482,70 @@ Node
 Node
   Key
     (Ext, ZZ, CoherentSheaf, SheafMap)
+    Ext^i(F, g)
+  Headline
+    maps on global Ext induced by a sheaf map
+  Inputs
+    i:ZZ
+    F:{CoherentSheaf}
+    g:{SheafMap}
+  Outputs
+    :Matrix
+      the induced map on global Ext $\mathrm{Ext}^i_X(\mathcal{F} , g)$, where $g$ is some morphism of sheaves
+  Description
+    Text
+      As explained in @TO (Ext, ZZ, CoherentSheaf, CoherentSheaf)@, the global Ext module $\operatorname{Ext}^i_X (\mathcal F, \mathcal G)$ is a
+      vector space, defined as the $i$th right derived functor of the global Hom functor $\operatorname{Hom}_X (\mathcal{F}, -)$.
+      In particular, this implies that for any morphism of sheaves $g : \mathcal{G} \to \mathcal{G}'$ there is an induced map
+      $$\operatorname{Ext}^i_X (\mathcal F , g) : \operatorname{Ext}^i_X (\mathcal F , \mathcal G) \to \operatorname{Ext}^i_X (\mathcal F , \mathcal{G}').$$
+    Text
+      In Macaulay2, these vector spaces are not computed using injective resolutions of sheaves.
+      Instead, a result of Greg Smith is used that shows that if $\mathca{F}$ and $\mathcal{G}$ are sheaves
+      represented by modules $M$ and $N$, respectively, then there exists an integer $d$ (depending on $M$, $N$, and $i$)
+      such that
+      $$\operatorname{Ext}^i_X (\mathcal F, \mathcal G) = \operatorname{Ext}^i_S (M_{\geq d} , N)_0,$$
+      where in the above $S$ is some polynomial ring over a field, $M_{\geq d}$ denotes truncation,
+      and $(-)_0$ denotes the degree $0$ part of a graded module. Moreover, the modules $M$ and $N$ are being
+      viewed as modules over the polynomial ring $S$ via restriction of scalars along the canonical
+      surjection $S \to R$, where $X = \operatorname{Proj} (R)$. In particular, if $\mathcal{G}'$ is represented by some module $N'$,
+      then after taking $d$ to be the maximum of the integers required to satisfy the assumptions of G. Smith's
+      result, the induced map on global Ext may be computed as
+      $$\operatorname{Ext}^i_X (\mathcal F , g) = \operatorname{Ext}_S^i (M_{\geq d} , \widehat{g} )_0,$$
+      where $\widetilde{g}$ is some map of modules whose associated sheaf is equal to $g$. 
+    Text
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a free $\mathcal{O}_X$-module of rank $1$.
+      In particular, if $\mathcal{F} = \mathcal{O}_X$ then the map being computed is just the induced map
+      on cohomology
+      $$H^i (g) : H^i (\mathcal{G}) \to H^i (\mathcal{G}').$$
+    Text
+      Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+    Text
+      As an example, we compute $\mathrm{Hom}_X(\mathcal I_X,\mathcal O_X)$ and $\mathrm{Ext}^1_X(\mathcal I_X,\mathcal O_X)$,
+      for the rational quartic curve in $\PP^3$.
+    Example
+      S = QQ[a..d]; --KELLER: need to add examples here
+      I = monomialCurveIdeal(S,{1,3,4})
+      R = S/I
+      X = Proj R
+      IX = sheaf (module I ** R)
+      Hom(IX, OO_X)
+      Ext^1(IX, OO_X)
+    Text
+      The $\mathrm{Ext}^1$ being zero says that the point corresponding to $I$
+      on the Hilbert scheme is smooth (unobstructed), and vector space dimension
+      of $\mathrm{Hom}$ tells us that the dimension of the component at the point $I$ is 16.
+    Text
+      The algorithm used may be found in:
+    Code
+      UL { LI { "Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746." } }
+    Text
+      If the module $\bigoplus_{a\geq 0} \mathrm{Ext}^i(M, N(a))$ is desired, see @TO (Ext,ZZ,CoherentSheaf,SumOfTwists)@.
+  SeeAlso
+    resolution
+    Tor
+    Hom
+    HH
+    sheafExt
 
 Node
   Key
@@ -493,6 +587,41 @@ Node
       The result is the sheaf associated to the graded module @TT "Ext^n(module F, module G)"@.
     Example
       X = Proj QQ[x,y]
+      sheafExt^1(OO_X^1(2), OO_X^1(-11))
+  SeeAlso
+    sheafHom
+    Hom
+    Ext
+    HH
+    (Ext, ZZ, CoherentSheaf, CoherentSheaf)
+///
+
+
+///
+Node
+  Key
+   (determinant, CoherentSheaf)
+  Headline
+    sheaf extension of coherent sheaves
+  Usage
+    determinant(F)
+  Inputs
+    F:CoherentSheaf
+      preferably a vector bundle in order for determinant to be well-defined
+  Outputs
+    :CoherentSheaf
+      the top exterior power of the sheaf F
+  Description
+    Text
+      The determinant of a vector bundle is defined to be the top exterior power of that bundle. More precisely,
+      if $\mathcal E$ has rank $n$, then
+      $$\operatorname{det} (\mathcal E) := \bigwedge^n \mathcal{E}.$$
+    Text
+      Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+    Text
+      The result is the sheaf associated to the graded module $\bigwedge^n M$.
+    Example
+      X = Proj QQ[x,y] ----KELLER: DO
       sheafExt^1(OO_X^1(2), OO_X^1(-11))
   SeeAlso
     sheafHom
