@@ -70,7 +70,7 @@ document {
     ///
     }
 
-document { Key => variety, Headline => "get the variety" }
+-- document { Key => variety, Headline => "get the variety" }
 -- for (variety, CoherentSheaf), etc. see doc-sheaves.m2
 document { 
     Key => (variety, Ideal),
@@ -350,7 +350,7 @@ Node
     :Boolean
   Description
     Text
-      An affine variety $X$ is smooth if the @TO2 {singularLocus, "singular locus"}@ of $X$ is empty,
+      An affine variety $X$ is smooth if the @TO2 (singularLocus, "singular locus")@ of $X$ is empty,
       while a projective variety is smooth if the singular locus is supported at the origin.
     Example
       R = quotient minors_2 genericMatrix(QQ[x,y,z,w], 2, 2)
