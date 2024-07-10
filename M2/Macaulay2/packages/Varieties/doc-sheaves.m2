@@ -316,7 +316,7 @@ Node
   Description
     Text
       This method computes the canonical bundle of a projective variety $X$. Recall that the canonical
-      bundle is defined to be the top exterior power of the cotangent sheaf $\Omega_X$ on a variety.
+      bundle of a normal variety is the reflexive hull (aka the double dual) of the top exterior power of the cotangent sheaf $\Omega_X$ on a variety.
     Text
       An example --the example should be Serre duality and arithmetic genus computation
     Example
@@ -334,12 +334,12 @@ Node
       for i to 2 list HH^i (C)
       for i to 2 list HH^i ((dual C) ** omega') --dual
     Text
-      We can use this to see the failure of Serre duality for non-smooth varieties.
+      We can use this to see the difference between the top exterior power of the cotangent bundle of Z and its reflexive hull.
     Example
       Z = Proj(Q/(x_1^2*x_2 - x_3^2*x_4))
       isSmooth Z
-      for i to 2 list HH^i OO_Z
-      for i to 2 list HH^i om --NOT dual to above!
+      for i to 2 list HH^i canonicalBundle Z
+      for i to 2 list HH^i det cotangentSheaf Z
     Text
       Recall that the arithmetic genus is given by the number of global sections of the canonical bundle.
       Projective space has genus 0 in general, and smooth elliptic curves have genus 1. We verify the elliptic curve
@@ -348,6 +348,8 @@ Node
       R = QQ[x..z]/(y^3 - y*z^2 - x^3)
       E = Proj R
       for i to 1 list HH^i canonicalBundle E
+  Caveat
+      This method does not check that the input variety $X$ is normal, but rather always returns the reflexive hull of the top exterior power of the cotangent sheaf.
   SeeAlso
     cotangentSheaf
     
