@@ -512,6 +512,7 @@ Node
     (variety, SheafOfRings)
     (variety, SumOfTwists)
     (variety, SheafMap)
+    variety
   Headline
     the underlying variety over which a coherent sheaf or morphism is defined.
   Usage
