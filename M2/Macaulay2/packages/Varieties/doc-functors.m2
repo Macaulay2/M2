@@ -482,9 +482,10 @@ Node
 Node
   Key
     (Ext, ZZ, CoherentSheaf, SheafMap)
-    Ext^i(F, g)
   Headline
     maps on global Ext induced by a sheaf map
+  Usage
+    Ext^i(F, g)
   Inputs
     i:ZZ
     F:{CoherentSheaf}
