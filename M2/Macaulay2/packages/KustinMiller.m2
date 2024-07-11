@@ -13,7 +13,7 @@ newPackage(
                    },
     	Headline => "unprojection and the Kustin-Miller complex construction",
 	Keywords => {"Commutative Algebra"},
-	PackageExports => {"SimplicialComplexes"},
+	PackageExports => {"SimplicialComplexes", "Complexes"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "https://msp.org/jsag/",
@@ -149,7 +149,10 @@ resBE Matrix := A -> (
         p:=gens pfaffians(-1+rank source A,A);
         n:=rank source p;
         g:=matrix {apply(n,j-> (-1)^(j)*p_(n-j-1)_0)};
-        chainComplex {g,A,transpose g,map(R^1,R^0,0)})
+        g2 := map(source g,, A);
+        complex {g, g2, map(source g2,, transpose g)}
+        )
+--complex {g,A,transpose g,map(R^1,R^0,0)}) -- previously a zero was added on.
 
 
 
@@ -311,7 +314,7 @@ kustinMillerComplex(Ideal,Ideal,PolynomialRing):=opt->(I,J,T0)->(
         kustinMillerComplex(res I,res J,T0,opt))
 
 
-kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)->(
+kustinMillerComplex(Complex,Complex,PolynomialRing):=opt->(cI0,cJ0,T0)->(
              if opt.Verbose>1 then (
                <<"------------------------------------------------------------------------------------------------------------------------"<<endl;
                <<"res(I):"<<endl;
@@ -348,7 +351,7 @@ kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)
              );
         gJs:=sub(gens source phi,S);
         IJmap:=sub(matrix entries phi,S)*((gens ideal (dualcJ.dd_0))//gJs);
-        alphaDual:=extend(dualcI,dualcJ, map(dualcI#0,dualcJ#0,IJmap));
+        alphaDual:=extend(dualcI,dualcJ, map(dualcI_0,dualcJ_0,IJmap));
         w:=(alphaDual_(length cI))_0_0;
         alpha:=toList apply(g-1,j->sub(w^(-1),S)*((transpose alphaDual_(g-2-j))**S^{-degshift}));
              if opt.Verbose>1 then (
@@ -359,7 +362,7 @@ kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)
                 <<endl<<"------------------------------------------------------------------------------------------------------------------------"<<endl;
              );
         cJ1:=cJ[1];
-        betaMap:=map((cI#0,(cJ1#0)**S^{-degshift},-sub(matrix entries phi,S)*((gens ideal (cJ1.dd_0))//gJs)));
+        betaMap:=map((cI_0,(cJ1_0)**S^{-degshift},-sub(matrix entries phi,S)*((gens ideal (cJ1.dd_0))//gJs)));
         beta1:=extend(cI,cJ1**S^{-degshift},betaMap);
         beta:=toList apply(g, j-> (-1)^(j + codim I)*beta1_j);
              if opt.Verbose>1 then (
@@ -376,10 +379,10 @@ kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)
         -- construct the homotopy h
         h:={0_S};
         for j from 1 to g-1 do (
-          tC1:= chainComplex { id_(S^(rank (cI#j)))};
-          tC2:= chainComplex { cI.dd_j };
-          hi:= (extend ( tC2, tC1, map (tC2#0, tC1#0,  beta#(j-1)*alpha#(j-1) - h#(j-1)*cI.dd_j  )));
-          h=append(h,map(cI#j,cI#j**S^{-degshift},hi_1));
+          tC1:= complex { id_(S^(rank (cI_j)))};
+          tC2:= complex { cI.dd_j };
+          hi:= (extend ( tC2, tC1, map (tC2_0, tC1_0,  beta#(j-1)*alpha#(j-1) - h#(j-1)*cI.dd_j  )));
+          h=append(h,map(cI_j,cI_j**S^{-degshift},hi_1));
         );
              if opt.Verbose>1 then (
                 for j from 1 to #h-1 do (
@@ -422,7 +425,7 @@ kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)
                  <<endl<<"------------------------------------------------------------------------------------------------------------------------"<<endl;
              );
         );
-        chainComplex L)
+        complex L)
 
 --kustinMillerComplex(I,J,QQ[t])
 
@@ -587,12 +590,12 @@ assert(not isGorenstein ideal (x_1*x_2, x_1*x_3))
 
 -- we first find the first non-zero module
 firstNonzero=method()
-firstNonzero(ChainComplex):= cc -> (
+firstNonzero(Complex):= cc -> (
        for i from min cc to max cc do if cc_i!=0 then return i;
        infinity)
 
 isExactRes=method()
-isExactRes(ChainComplex):= cc ->(
+isExactRes(Complex):= cc ->(
         for j from firstNonzero(cc)+1 to max(cc)+1 do (
             if cc.dd_(j)*cc.dd_(j+1) !=0 then return false;
             if (HH_j cc) !=0 then return false;
@@ -602,13 +605,15 @@ isExactRes(ChainComplex):= cc ->(
 -- with this method also the substituted complexes
 -- recognize, when printed, if a name is assigned to
 -- the ring of the complex
-substitute(ChainComplex,Ring):=(cc,S)->(
-        dual cc;
-        cn:= new ChainComplex;
-        cn.ring = S;
-        for i from min(cc) to max(cc) do cn#i = S^(degrees (cc#i));
-        for i from min(cc)+1 to max(cc) do cn.dd_i = sub(cc.dd_i,S);
-        cn)
+substitute(Complex, Ring) := (C, S) -> (
+    (lo,hi) := concentration C;
+    moduleHash := hashTable for i from lo to hi list i => S^(degrees C_i);
+    if lo === hi then 
+        return complex(moduleHash#lo, Base=>lo);
+    mapHash := hashTable for i from lo+1 to hi list
+        i => map(moduleHash#(i-1), moduleHash#i, sub(dd^C_i, S));
+    complex mapHash
+    )
 
 --------------------------------------------------------------------------
 -- Stellar subdivision code
@@ -779,7 +784,7 @@ doc ///
   Key
     kustinMillerComplex
     (kustinMillerComplex,Ideal,Ideal,PolynomialRing)
-    (kustinMillerComplex,ChainComplex,ChainComplex,PolynomialRing)
+    (kustinMillerComplex,Complex,Complex,PolynomialRing)
   Headline
     Compute Kustin-Miller resolution of the unprojection of I in J
   Usage
@@ -790,15 +795,15 @@ doc ///
         in a positively graded polynomial ring R
     I:Ideal
         contained in J
-    cI:ChainComplex
+    cI:Complex
         resolution of I
-    cJ:ChainComplex
+    cJ:Complex
         resolution of J
     W:PolynomialRing
         over the same @TO coefficientRing@ as R
         with one variable T.
   Outputs
-    :ChainComplex
+    :Complex
   Description
    Text
     Compute Kustin-Miller resolution of the unprojection of I in J (or
@@ -1004,7 +1009,7 @@ doc ///
     A:Matrix
         skew-symmetric
   Outputs
-    :ChainComplex
+    :Complex
   Description
    Text
       Returns the Buchsbaum-Eisenbud resolution of the ideal of submaximal @TO pfaffians@ 
@@ -1023,13 +1028,13 @@ doc ///
 doc ///
   Key
     isExactRes
-    (isExactRes,ChainComplex)
+    (isExactRes,Complex)
   Headline
     Test whether a chain complex is an exact resolution.
   Usage
     isExactRes(cc)
   Inputs
-    cc:ChainComplex
+    cc:Complex
   Outputs
     :Boolean
   Description
@@ -1054,16 +1059,16 @@ doc ///
 
 doc ///
   Key
-    (substitute,ChainComplex,Ring)
+    (substitute,Complex,Ring)
   Headline
     Substitute a chain complex to a new ring.
   Usage
     substitute(cc,R)
   Inputs
-    cc:ChainComplex
+    cc:Complex
     R:Ring
   Outputs
-    :ChainComplex
+    :Complex
   Description
    Text
     Substitute a chain complex cc to a new ring R.
@@ -1168,7 +1173,7 @@ assert(pfaffians(4,A)==ideal cc.dd_1);
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
      cc= res I;
 assert(isExactRes cc);
-C=chainComplex presentation QQ^1;
+C=complex presentation QQ^1;
 assert(isExactRes C);
 assert(isExactRes(C[1]));
 assert(isExactRes(C[-1]));
@@ -1202,8 +1207,8 @@ TEST ///
      I=sub(ideal C47,R)
      c47=res I;
      cc=kustinMillerComplex(c47,c26,K[x_8]);
-assert(rank(cc#1)==16);
-assert(rank(cc#2)==30);
+assert(rank(cc_1)==16);
+assert(rank(cc_2)==30);
 assert(isExactRes(cc));
 ///
 
@@ -1235,8 +1240,8 @@ TEST ///
      cJ=res J
      betti cJ
      cc=kustinMillerComplex(cI,cJ,QQ[T]);
-assert(rank(cc#1)==9);
-assert(rank(cc#2)==16);
+assert(rank(cc_1)==9);
+assert(rank(cc_2)==16);
 assert(isExactRes cc);
 ///
 
