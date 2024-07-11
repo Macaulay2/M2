@@ -131,6 +131,12 @@ class F4GB : public our_new_delete
   // cumulative timing info
   double clock_sort_columns;
   clock_t clock_gauss;
+  double mGaussTime;
+  double mParallelGaussTime;
+  double mSerialGaussTime;
+  double mTailReduceTime;
+  double mNewSPairTime;
+  double mInsertGBTime;
   clock_t clock_make_matrix;
 
 #if defined (WITH_TBB)

@@ -63,6 +63,12 @@ F4GB::F4GB(const VectorArithmetic* VA,
       next_monom(),
       clock_sort_columns(0),
       clock_gauss(0),
+      mGaussTime(0),
+      mParallelGaussTime(0),
+      mSerialGaussTime(0),
+      mTailReduceTime(0),
+      mNewSPairTime(0),
+      mInsertGBTime(0),
       clock_make_matrix(0),
       mNumThreads(mtbb::numThreads(numThreads))
 #if defined(WITH_TBB)
@@ -493,8 +499,13 @@ void F4GB::gauss_reduce(bool diagonalize)
       if (n_newpivots == 0) return;
     }
 
-  //#if defined(WITH_TBB)
-#if 0
+
+  mtbb::tick_count t0;
+  mtbb::tick_count t1;
+
+#if defined(WITH_TBB)
+//#if 0
+  t0 = mtbb::tick_count::now();
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -521,7 +532,11 @@ void F4GB::gauss_reduce(bool diagonalize)
   });
   for (auto tlDense : threadLocalDense)
     mVectorArithmetic->deallocateElementArray(tlDense);
-#else
+  t1 = mtbb::tick_count::now();
+  mParallelGaussTime += (t1-t0).seconds();
+#endif 
+
+  t0 = mtbb::tick_count::now();
   ElementArray gauss_row { mVectorArithmetic->allocateElementArray(ncols) };
   for (int i = 0; i < nrows; i++)
     {
@@ -529,18 +544,29 @@ void F4GB::gauss_reduce(bool diagonalize)
       if ((not hilbert) or (n_newpivots > 0))
       {
          bool newNonzeroReduction = gauss_reduce_row(i, gauss_row);
-         if (not newNonzeroReduction) n_zero_reductions++;
+         if (newNonzeroReduction)
+         {
+            row_elem &r = mat->rows[i];
+            mVectorArithmetic->makeMonic(r.coeffs);
+            mat->columns[r.comps[0]].head = i;
+         }
+         else
+            n_zero_reductions++;
          if (hilbert && newNonzeroReduction)
             --n_newpivots;
       }
     }
   mVectorArithmetic->deallocateElementArray(gauss_row);
-#endif 
+  t1 = mtbb::tick_count::now();
+  mSerialGaussTime += (t1-t0).seconds();
 
   if (M2_gbTrace >= 3)
     fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions.load());
 
+  t0 = mtbb::tick_count::now();
   if (diagonalize) tail_reduce();
+  t1 = mtbb::tick_count::now();
+  mTailReduceTime += (t1-t0).seconds();
 }
 
 bool F4GB::gauss_reduce_row(int index,
@@ -605,14 +631,7 @@ bool F4GB::gauss_reduce_row(int index,
       // the above line leaves gauss_row zero, and also handles the case when
       // r.len is 0 (TODO: check this!!)
       // it also potentially frees the old r.coeffs and r.comps (TODO: ?? r.comps??)
-      if (r.len > 0)
-        {
-          mVectorArithmetic->makeMonic(r.coeffs);
-          mat->columns[r.comps[0]].head = index;
-          return true;
-        }
-      else
-        return false;
+      return (r.len > 0);
 }
                             
 
@@ -769,7 +788,10 @@ void F4GB::insert_gb_element(row_elem &r)
   delete [] vp;
   //freemem(vp);
   // now go forth and find those new pairs
+  mtbb::tick_count t0 = mtbb::tick_count::now();
   mSPairSet.find_new_pairs(is_ideal);
+  mtbb::tick_count t1 = mtbb::tick_count::now();
+  mNewSPairTime += (t1-t0).seconds();
 }
 
 void F4GB::new_GB_elements()
@@ -788,6 +810,7 @@ void F4GB::new_GB_elements()
      then
      we don't need to loop through all of these */
 
+  mtbb::tick_count t0 = mtbb::tick_count::now();
   for (int r = 0; r < mat->rows.size(); r++)
     {
       if (is_new_GB_row(r))
@@ -795,6 +818,8 @@ void F4GB::new_GB_elements()
           insert_gb_element(mat->rows[r]);
         }
     }
+  mtbb::tick_count t1 = mtbb::tick_count::now();
+  mInsertGBTime += (t1-t0).seconds();
 }
 
 ///////////////////////////////////////////////////
@@ -831,6 +856,12 @@ void F4GB::do_spairs()
 
   if (M2_gbTrace >= 3) mMonomialHashTable.dump();
 
+  double oldParallelGauss = mParallelGaussTime;
+  double oldSerialGauss = mSerialGaussTime;
+  double oldTailReduce = mTailReduceTime;
+  double oldNewSPair = mNewSPairTime;
+  double oldInsertNewGB = mInsertGBTime;
+
   begin_time = clock();
   gauss_reduce(true);
   end_time = clock();
@@ -845,6 +876,9 @@ void F4GB::do_spairs()
   if (M2_gbTrace >= 2)
     {
       fprintf(stderr, " gauss time          = %f\n", nsecs);
+      fprintf(stderr, " parallel gauss time          = %g\n", mParallelGaussTime - oldParallelGauss);
+      fprintf(stderr, " serial gauss time            = %g\n", mSerialGaussTime - oldSerialGauss);
+      fprintf(stderr, " tail reduce time             = %g\n", mTailReduceTime - oldTailReduce);
 
       fprintf(stderr, " lcm dups            = %ld\n", n_lcmdups);
       if (M2_gbTrace >= 6)
@@ -855,6 +889,9 @@ void F4GB::do_spairs()
         }
     }
   new_GB_elements();
+  fprintf(stderr, " finding new spair time             = %g\n", mNewSPairTime - oldNewSPair);
+  fprintf(stderr, " insert new gb time                 = %g\n", mInsertGBTime - oldInsertNewGB - (mNewSPairTime - oldNewSPair));
+  
   int ngb = INTSIZE(mGroebnerBasis);
   if (M2_gbTrace >= 1)
     {
@@ -984,6 +1021,18 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       fprintf(stderr,
               "total time for gauss: %f\n",
               ((double)clock_gauss) / CLOCKS_PER_SEC);
+      fprintf(stderr,
+              "parallel tbb time for gauss: %g\n",
+              mParallelGaussTime);
+      fprintf(stderr,
+              "serial tbb time for gauss: %g\n",
+              mSerialGaussTime);
+      fprintf(stderr,
+              "total time for finding new spairs: %g\n",
+              mNewSPairTime);
+      fprintf(stderr,
+              "total time for inserting new gb elements: %g\n",
+              mInsertGBTime);
       fprintf(stderr,
               "number of spairs computed           : %ld\n",
               n_pairs_computed);
