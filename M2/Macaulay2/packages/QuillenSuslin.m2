@@ -38,7 +38,7 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "https://msp.org/jsag/2013/5-1/"
 	     },
-	PackageImports => {"MinimalPrimes"},
+     PackageImports => {"MinimalPrimes", "Complexes"},
     	DebuggingMode => false
     	)
 
@@ -467,7 +467,7 @@ maxMinors(Matrix) := M -> (
 
 
 -- Method: trimResolution
--- Input: (Module,ChainComplex) -- projective module over a polynomial ring, given as a cokernel.  Also a free resolution of the module.
+-- Input: (Module,Complex) -- projective module over a polynomial ring, given as a cokernel.  Also a free resolution of the module.
 -- Output: (Matrix,Matrix) -- (Map from R^m -> R^n, Projection map from R^n -> P)
 -- Description:
 -- Given a projective module P which is presented as a cokernel,
@@ -477,7 +477,7 @@ maxMinors(Matrix) := M -> (
 -- "Applications of the Quillen-Suslin Theorem" (pg. 37)
 
 trimResolution = method()
-trimResolution(Module,ChainComplex) := (mp,F) -> (
+trimResolution(Module,Complex) := (mp,F) -> (
      local dd1; local dd2; local dd3; local dd3t; local ident;
      local mp; local p; local proj; local R; local T;
      
