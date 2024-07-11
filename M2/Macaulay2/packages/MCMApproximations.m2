@@ -6,6 +6,7 @@ Authors => {{Name => "David Eisenbud",
 Email => "de@msri.org",
 HomePage => "http://www.msri.org/~de"}},
 Headline => "MCM approximations and complete intersections",
+PackageExports => {"Complexes"},
 Keywords => {"Commutative Algebra"},
 DebuggingMode => false
 )
@@ -105,7 +106,7 @@ approximatione(ZZ,Module) := opts -> (n,M) ->(
     F := res(Mp, LengthLimit =>n);
     if F.dd_n == 0 then return map(M,(ring M)^0,0); -- in this case the n-th syz is 0
     G := res(coker transpose F.dd_n, LengthLimit =>n);
-    F' := chainComplex reverse apply(n, j-> transpose F.dd_(j+1));
+    F' := complex reverse apply(n, j-> transpose F.dd_(j+1));
     phi := extend(G, F', id_(G_0));
     M' := coker transpose G.dd_n;
     map(M, M',(matrix p)*transpose phi_n)
@@ -153,7 +154,8 @@ coApproximationSequence = M -> (
     alpha := coApproximation M;
     N := coker alpha;
     beta := inducedMap(N,target alpha);
-    chainComplex {map(S^0,N,0),beta,alpha,map(source alpha,S^0,0)})
+    complex({beta,alpha}, Base => 1)
+    )
 
 approximation = method(Options =>{CoDepth=>-1, Total =>true})
 approximation Module := opts -> M->(
@@ -183,7 +185,7 @@ approximationSequence = M->(
     tot := (alpha|beta);
     N := kernel tot;
     gamma := inducedMap(source tot,N);
-    chainComplex {map(S^0,M,0), tot,gamma,map(N,S^0,0)}
+    complex({tot,gamma}, Base => 1)
     )
 
 auslanderInvariant = method(Options =>{CoDepth => -1})
@@ -294,14 +296,14 @@ Description
    R = S/ideal(a^3+b^3+c^3)
    M = coker random(R^2, R^{4:-1});
    Ea = approximationSequence M;
-   netList apply({1,2,3}, i-> betti res Ea_i)
+   netList apply({1,2,3}, i-> betti res(Ea_i, LengthLimit => numgens R + 1))
   Text
    Here is a similar display for the co-approximation sequence. Here
    the Betti table of M is at the bottom, the Betti table of the module of finite projective dimension
    is in the middle, and that of the MCM module is at the top (
   Example
    Ec = coApproximationSequence M;
-   netList apply(5, i-> betti res prune Ec_i)   
+   netList apply(5, i-> betti res(prune Ec_i, LengthLimit => 10))
 ///
 
 
@@ -375,10 +377,10 @@ doc ///
     Example
      R = setupRings(4,3);
      M = coker vars R_2;
-     betti res M
+     betti res(M, LengthLimit => numgens ring M)
      betti syzygyModule(2,M)
      betti (N2 = syzygyModule(-2,M))
-     betti res N2
+     betti res(N2, LengthLimit => numgens ring N2)
      betti syzygyModule(-2,M,CoDepth=>2)
    Caveat
     ring M must be Gorenstein, and the program does not check
@@ -573,7 +575,7 @@ doc ///
    Inputs
     M:Module
    Outputs
-    E:ChainComplex
+    E:Complex
    Description
     Text
      The approximation sequence of a module M over a Gorenstein ring
@@ -599,7 +601,7 @@ doc ///
    Inputs
     M:Module
    Outputs
-    E:ChainComplex
+    E:Complex
    Description
     Text
      The  coapproximation sequence of a module M over a Gorenstein ring
@@ -815,7 +817,7 @@ ca = coApproximation M_(c-1)
 M'' = coker ca
 N = target ca
 assert(profondeur M'' == dim ring M'') -- an MCM module
-assert(betti res prune M'' == betti res source approximation(prune M'', Total=>false)) -- no free summands
+assert(betti res(prune M'', LengthLimit => 10) == betti res(source approximation(prune M'', Total=>false), LengthLimit => 10)) -- no free summands
 assert(2 == length res(N, LengthLimit =>10)) -- projective dimension <\infty
 ///
 ///TEST
@@ -905,7 +907,7 @@ M = module(ideal(a,b,c));
 Ea = approximationSequence M;
 Ec = coApproximationSequence M;
 assert(isFreeModule prune Ea_3 ===true)
-assert(length res prune Ec_2 == 1)
+assert(length res(prune Ec_2, LengthLimit => 10) == 1)
 ///
 
 end--
