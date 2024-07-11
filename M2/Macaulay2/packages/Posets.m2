@@ -30,6 +30,9 @@ newPackage(
             "Graphs",
             "FourTiTwo"
             },
+        PackageImports => {
+            "Complexes"
+            },
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",
@@ -1007,7 +1010,7 @@ randomPoset (List) := Poset => opts -> (G) -> (
 randomPoset (ZZ) := Poset => opts -> n -> randomPoset(toList(1..n), opts)
 
 resolutionPoset = method()
-resolutionPoset ChainComplex := Poset => C ->
+resolutionPoset Complex := Poset => C ->
     poset flatten flatten apply(sort unique (first \ keys betti C), d -> for r to numrows C.dd_d - 1 list for c to numcols C.dd_d - 1 list if C.dd_d_(r,c) != 0 then {{d-1,r}, {d,c}} else continue)
 resolutionPoset MonomialIdeal := Poset => I -> (
     P := resolutionPoset res I;
@@ -3828,7 +3831,7 @@ doc ///
 doc ///
     Key
         resolutionPoset
-        (resolutionPoset,ChainComplex)
+        (resolutionPoset,Complex)
         (resolutionPoset,Ideal)
         (resolutionPoset,MonomialIdeal)
     Headline
@@ -3837,7 +3840,7 @@ doc ///
         P = resolutionPoset C
         P = resolutionPoset I
     Inputs
-        C:ChainComplex
+        C:Complex
         I:MonomialIdeal
         I:Ideal
     Outputs
