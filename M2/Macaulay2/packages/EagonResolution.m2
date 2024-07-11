@@ -10,6 +10,7 @@ newPackage(
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
         Headline => "Compute the Eagon Resolution of the residue field",
 	Keywords => {"Commutative Algebra"},
+        PackageExports => {"Complexes"},
         DebuggingMode => false
         )
 
@@ -38,23 +39,23 @@ net EagonData := E -> net ("EagonData in <ring>.cache computed to length "| toSt
 
 --verticalStrand--
 verticalStrand = method()
-verticalStrand (EagonData, ZZ) := ChainComplex =>  (E,n) -> (
+verticalStrand (EagonData, ZZ) := Complex =>  (E,n) -> (
     	   Kemax :=select(keys E, k -> (k_0 === "dVert" and E#k !=0));
            maxn := max apply(Kemax, k->k_1);
 	   if n>maxn then error "That vertical strand wasn't defined";
     	   Ke := select(keys E, k -> (k_0 === 0 and k_1 === n and E#k !=0));
 	   b := max (Ke/(k-> k_2));
-           chainComplex(apply(b, i-> E#{"dVert", n,i+1})))
+           complex(apply(b, i-> E#{"dVert", n,i+1})))
        
 --horizontalStrand--       
 horizontalStrand = method()
-horizontalStrand (EagonData, ZZ) := ChainComplex =>  (E,i) -> (
+horizontalStrand (EagonData, ZZ) := Complex =>  (E,i) -> (
     	   Kemax :=select(keys E, k -> (k_0 === "dHor" and E#k !=0));
            maxi := max apply(Kemax, k->k_2);
 	   if i>maxi then error "That horizontal strand wasn't defined";
     	   Ke := select(keys E, k -> (k_0 === 0 and k_2 === i and E#k !=0));
 	   b := max (Ke/(k-> k_1));
-           chainComplex(apply(b-1, n -> E#{"dHor", n+1,i})))
+           complex(apply(b-1, n -> E#{"dHor", n+1,i})))
     
 ///
 restart
@@ -67,7 +68,7 @@ tensorL = (R,L) -> (if L === {} then return R^1;
 			      L_0**tensorL(R,drop(L,1)))
 --golodBetti--			  
 golodBetti = method()
-golodBetti (ChainComplex, ChainComplex, ZZ) := BettiTally => (F,G,b) ->(
+golodBetti (Complex, Complex, ZZ) := BettiTally => (F,G,b) ->(
     --F,G finite free complexes (resolutions) over a ring S.
     --Compute the Betti table of what should be the Eagon resolution of 
     --the module resolved by G over the ring resolved by F
@@ -76,7 +77,7 @@ golodBetti (ChainComplex, ChainComplex, ZZ) := BettiTally => (F,G,b) ->(
     mods := apply(symbs, s -> 
 	directSum apply(#s, 
 	    i-> G_(s_i_0)**tensorL(ring F, apply(s_i_1, j->F_(j)))));
-   betti chainComplex apply(b,i->map(mods_i,mods_(i+1),0))
+   betti complex apply(b,i->map(mods_i,mods_(i+1),0))
    )
 
 golodBetti (Module,ZZ) := BettiTally => (M,b) ->(
@@ -107,19 +108,19 @@ golodBetti(M,5)
 
 
 homologyCover = method()
-homologyCover(ChainComplex,ZZ) := Matrix => (C,i) ->(
+homologyCover(Complex,ZZ) := Matrix => (C,i) ->(
     --map from a free module to C_i giving a basis of HH_i C.
     --Note that HH_i C must be of finite length, or there's an error.
     B := basis HH_i C;
     (gens target B)*matrix B)
 
-homologyCover(ZZ, ChainComplex) := List => (b,C) -> 
+homologyCover(ZZ, Complex) := List => (b,C) -> 
     apply(b, i-> homologyCover(C,i))
 
-homologyCover(ChainComplex) := List => C -> homologyCover(1+length C, C)
+homologyCover(Complex) := List => C -> homologyCover(1+length C, C)
 
 homologyIsomorphism = method()
-homologyIsomorphism(Module, ChainComplex, ZZ) := Matrix => (M,C,i) ->(
+homologyIsomorphism(Module, Complex, ZZ) := Matrix => (M,C,i) ->(
     --If M is isomorphic to HH_i C then the matrix returned is a map
     -- target presentation M --> C_i 
     --inducing the isomorphism.
@@ -185,7 +186,7 @@ trimWithLabel Matrix := Matrix => f ->(
 
 trimWithLabel HashTable := HashTable => E -> hashTable apply(keys E, k-> (k,trimWithLabel E#k))
 
-trimWithLabel ChainComplex := ChainComplex => F -> chainComplex apply(
+trimWithLabel Complex := Complex => F -> complex apply(
                               length F, i-> trimWithLabel(F.dd_(i+1))
 			      )
 
@@ -239,7 +240,7 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
     Eagon#"numgens" = g;
 
     --now label the modules in the Koszul complex    
-    K := chainComplex(for i from 1 to length K0 list 
+    K := complex(for i from 1 to length K0 list 
 	map(labeler((i-1,{}), K0_(i-1)),
 	    labeler((i,{}), K0_(i)),
 	    K0.dd_i));
@@ -402,12 +403,12 @@ extractBlocks(Matrix, List) := Matrix => (phi, L) -> (
 
 --eagonResolution--
 eagonResolution = method()
-eagonResolution EagonData := ChainComplex => E ->(
+eagonResolution EagonData := Complex => E ->(
     b := max apply( select(keys E, k-> k_0 === 0 and k_2 === 0), k->k_1);
-    chainComplex(apply(b,n->E#{"dHor",n+1,0}))
+    complex(apply(b,n->E#{"dHor",n+1,0}))
     )    
 
-eagonResolution(Ring,ZZ) := ChainComplex => (R,b) ->(
+eagonResolution(Ring,ZZ) := Complex => (R,b) ->(
     eagonResolution eagon(R,b)
     )
 
@@ -488,7 +489,7 @@ displayBlocks Matrix := (M1) -> (
                 ))
         ), Alignment=>Center)
     )
-displayBlocks ChainComplex := List => C -> apply(length C, i -> displayBlocks(C.dd_(i+1)))
+displayBlocks Complex := List => C -> apply(length C, i -> displayBlocks(C.dd_(i+1)))
 displayBlocks EagonData := List => E -> displayBlocks eagonResolution E
 
     
@@ -527,7 +528,7 @@ pictureList Matrix := o -> (M1) -> (
     if o.Transpose then transpose L else L
     )
 
-pictureList ChainComplex := List => o -> C -> apply(length C, i-> pictureList(C.dd_(i+1), o))
+pictureList Complex := List => o -> C -> apply(length C, i-> pictureList(C.dd_(i+1), o))
 pictureList EagonData := List => o -> E -> pictureList (eagonResolution E, o)
 
 --picture--
@@ -536,7 +537,7 @@ picture Matrix := o -> (M1) -> (
     if o.Display === "DisplayBlocks" then return displayBlocks M1;
     netList (pictureList(M1,o), Alignment => Center)
     )  
-picture ChainComplex := Net => o -> C -> netList apply(length C, i-> picture(C.dd_(i+1), o))
+picture Complex := Net => o -> C -> netList apply(length C, i-> picture(C.dd_(i+1), o))
 picture EagonData := Net => o -> E -> picture (eagonResolution E, o)
 
 --mapComponent--
@@ -849,7 +850,7 @@ doc ///
     E:EagonData
      computed by eagon(R,n)
    Outputs
-    F:ChainComplex
+    F:Complex
      possibly non-minimal R-free resolution of R/(ideal vars R)    
    Description
     Text
@@ -868,20 +869,20 @@ doc ///
    Key
     picture
     (picture, Matrix)
-    (picture, ChainComplex)    
+    (picture, Complex)    
     (picture, EagonData)        
     [picture, Display]
     [picture, Verbose]
     [picture, Transpose]    
    Headline
-    information about components of a labeled Matrix or ChainComplex
+    information about components of a labeled Matrix or Complex
    Usage
     N = picture M
     L = picture C
     L = picture E
    Inputs
     M:Matrix
-    C:ChainComplex
+    C:Complex
     E:EagonData
      produced by eagon; picture E is equivalent to picture @TO eagonResolution@ E and to picture res E
    Outputs
@@ -1052,7 +1053,7 @@ doc///
     i:ZZ
      which strand
    Outputs
-    F:ChainComplex
+    F:Complex
      beginning of the free resolution of the i-th boundary module of the Koszul complex
    Description
     Text
@@ -1087,7 +1088,7 @@ doc ///
     i:ZZ
      which strand
    Outputs
-    F:ChainComplex
+    F:Complex
      beginning of the free resolution of the i-th boundary module of the Koszul complex
    Description
     Text
@@ -1159,7 +1160,7 @@ doc ///
 doc ///
    Key
     golodBetti
-    (golodBetti, ChainComplex, ChainComplex, ZZ)
+    (golodBetti, Complex, Complex, ZZ)
     (golodBetti, Module, ZZ)    
    Headline
     list the ranks of the free modules in the resolution of a Golod module
@@ -1167,9 +1168,9 @@ doc ///
     B = golodBetti(F,K,b)
     B = golodBetti(M,b)    
    Inputs
-    F:ChainComplex
+    F:Complex
      resolution, typically of (R = S/I)^1 over S
-    K:ChainComplex
+    K:Complex
      resolution, typically of an R-module M over S
     M:Module
      R-module
@@ -1381,7 +1382,7 @@ doc ///
    Inputs
     E:EagonData
    Outputs
-    C:ChainComplex
+    C:Complex
    Description
     Text
      This command is equivalent to @TO (eagonResolution, EagonData)@.
