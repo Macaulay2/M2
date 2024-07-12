@@ -237,6 +237,10 @@ assert(isPatternAvoiding({1,4,6,2,3,7,5}, {1,4,3,2}));
 assert(not isPatternAvoiding({7,2,5,8,1,3,6,4}, {2,1,4,3}));
 assert(isPatternAvoiding({1,6,9,2,4,7,3,5,8}, {2,1,4,3}));
 
+assert(not isPatternAvoiding({3,1,2},{3,1,2}));
+assert(not isPatternAvoiding({1,2,3,6,4,5}, {3,1,2}));
+assert(isPatternAvoiding({3,1,2},{2,3,1}));
+
 --isVexillary
 assert(not isVexillary({7,2,5,8,1,3,6,4}));
 assert(isVexillary({1,6,9,2,4,7,3,5,8}));
