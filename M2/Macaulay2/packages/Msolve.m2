@@ -16,8 +16,8 @@ if not instance(msolveEXE,String) then error "expected configuration option msol
 export{
     "grobBasis",
     "realSolutions", 
-    "rUR",
-    "saturateByPoly",
+    "rUR", -- rationalUnivariateRepresentation
+    "saturateByPoly", -- saturate(I, f, Strategy => Msolve), saturate(I, J, Strategy => Msolve)
     "eliminationIdeal",
     "leadingMonomials",
     "Output"
@@ -223,15 +223,45 @@ Node
      	  Macaulay2 interface for msolve; computes real solutions, Groebner basis (in GRevLex), saturations, and elimination ideals.
      Description
      	  Text
-	      This package provides a Macaulay2 interface for the msolve package (https://msolve.lip6.fr/) developed by Jérémy Berthomieu, Christian Eder, and Mohab Safey El Din.  
+
+              This package provides a Macaulay2 interface for the
+              msolve package (https://msolve.lip6.fr/) developed by
+              Jérémy Berthomieu, Christian Eder, and Mohab Safey El
+              Din.
 	      
-	      The package has functions to compute Groebner basis, in GRevLex order only, for ideals with rational or finite feild coefficents. Finite feild chacterisitics must be between 2^16 and 2^32. There are also functions to compute elimination ideals, for ideals with rational or finite feild coefficents. Finite feild chacterisitics must be between 2^16 and 2^32. 
+	      The package has functions to compute Groebner basis, in
+	      GRevLex order only, for ideals with rational or finite
+	      field coefficents. Finite feild chacterisitics must be
+	      between 2^16 and 2^32. There are also functions to
+	      compute elimination ideals, for ideals with rational or
+	      finite field coefficients. Finite field chacterisitics
+	      must be between 2^16 and 2^32.
 	      
-	      The saturation of an ideal by a single polynomial may be computed for ideals with finite feild coefficents, again with charcterisitc between 2^16 and 2^32.
+	      The saturation of an ideal by a single polynomial may be
+	      computed for ideals with finite field coefficients, again
+	      with characterisitc between 2^16 and 2^32.
 	      
-	      For zero dimensional polynomial ideals, with integer or rational coefficents, there are functions to compute all real solutions, and to compute a rational univariante representation of all (complex) solutions.
+	      For zero dimensional polynomial ideals, with integer or
+	      rational coefficents, there are functions to compute all
+	      real solutions, and to compute a rational univariante
+	      representation of all (complex) solutions.
 	      
-	      The M2 interface assumes that the binary executable is named "msolve", to tell the M2 package where to find the executable you should use either needsPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"}), or installPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"}) once and needsPackage("Msolve") on subsequent usages; here "path_to_folder_with_msolve_binary" denotes the folder where your msolve exectuable is saved. E.g. if your msolve binary (named msolve) is in a folder called msolve-v0.5.0 in your home directory then you would use either needsPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"}) or installPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"}) and needsPackage("Msolve") subseqently   
+	      The M2 interface assumes that the binary executable is
+	      named "msolve", to tell the M2 package where to find the
+	      executable you should use either needsPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"}),
+	      or installPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"})
+	      once and needsPackage("Msolve") on subsequent usages;
+	      here "path_to_folder_with_msolve_binary" denotes the
+	      folder where your msolve exectuable is saved. E.g. if
+	      your msolve binary (named msolve) is in a folder called
+	      msolve-v0.5.0 in your home directory then you would use
+	      either needsPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"})
+	      or installPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"})
+	      and needsPackage("Msolve") subseqently
 	      
 	      
 	      References:
