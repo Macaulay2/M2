@@ -27,6 +27,9 @@ threadCounter := 0;
 threadLocal HashCounter := (
     threadCounter = threadCounter + 1;
     hash_t(1000000 + 3 + (threadCounter-1) * 10000 ));
+-- give 32-bit machines enough space to store a 64-bit hash code
+-- TODO: instead, allow 64-bit entries in the array of thread local variables
+threadLocal HashCounterExtraBits := 0;
 
 export nextHash():hash_t := (
      if HashCounter == Ccode(hash_t, "18446744073709551615ull") -- check for integer overflow
