@@ -34,6 +34,7 @@ override(h:HashTable,v:Sequence,numopts:int):Expr := (
 	       when r is Error do return r else nothing;
 	       )
 	  is y:HashTable do (
+	       -- assume y is not Mutable so we don't lock it
 	       foreach bucket in y.table do (
 		    q := bucket;
 		    while q != q.next do (
@@ -65,6 +66,7 @@ override(v:Sequence,numopts:int):Expr := (
 	       when r is Error do return r else nothing;
 	       )
 	  is y:HashTable do (
+	       -- assume y is not Mutable so we don't lock it
 	       foreach bucket in y.table do (
 		    q := bucket;
 		    while q != q.next do (
@@ -450,7 +452,7 @@ compareop(lhs:Code,rhs:Code):Expr := (
 unaryQuestionFun(rhs:Code):Expr := unarymethod(rhs,QuestionS);
 setup(QuestionS,unaryQuestionFun,compareop);
 
-whichway := GreaterS;
+threadLocal whichway := GreaterS;
 threadLocal sortlist := emptySequence;
 subsort(l:int,r:int):Expr := (
      b := r+1-l;
@@ -613,7 +615,7 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	       else return WrongArg(1,"a list of pairs"));
 	  if n < length(x)+length(y)
 	  then z = new Sequence len n do foreach a in z do provide a;
-	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,0,false),xl.Mutable | yl.Mutable)))
+	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,hash_t(0),false),xl.Mutable | yl.Mutable)))
      else WrongArg(2,"a list")
      else WrongArg(1,"a list"));
 mergepairsfun(e:Expr):Expr := (
@@ -827,14 +829,16 @@ log1p(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(log1p(x.v))				    -- # typical value: log1p, RR, RR
      is x:RRicell do toExpr(log1p(x.v))				    -- # typical value: log1p, RRi, RRi
-     else WrongArgRRorRRi()
+     is x:CCcell do toExpr(log(1 + x.v))                            -- # typical value: log1p, CC, CC
+     else WrongArgRRorRRiorCC()
      );
 setupfun("log1p",log1p).Protected=false;
 expm1(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(expm1(x.v))				    -- # typical value: expm1, RR, RR
      is x:RRicell do toExpr(expm1(x.v))				    -- # typical value: expm1, RRi, RRi
-     else WrongArgRRorRRi()
+     is x:CCcell do toExpr(exp(x.v) - 1)                            -- # typical value: expm1, CC, CC
+     else WrongArgRRorRRiorCC()
      );
 setupfun("expm1",expm1).Protected=false;
 eint(e:Expr):Expr := (
@@ -1114,7 +1118,7 @@ sqrt(a:Expr):Expr := (
 	  )
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
      is Error do a
-     else WrongArgRR());
+     else WrongArgRRorRRiorCC());
 setupfun("sqrt",sqrt).Protected=false;
 
 export toSequence(e:Expr):Expr := (

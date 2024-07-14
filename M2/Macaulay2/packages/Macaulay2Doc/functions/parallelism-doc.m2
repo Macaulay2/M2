@@ -14,7 +14,7 @@ doc ///
        over a finite field.  Also included is (one of the algorithms for) the computation of Groebner
        bases in polynomial rings over finite fields, whether graded or not.
      Text
-       The variable {\tt nummTBBThreads} controls the number of cores used by Macaulay2.
+       The variable {\tt numTBBThreads} controls the number of cores used by Macaulay2.
        The default value (zero) means the system can choose an appropriate number
        of cores (often the maximum available).  Note that the default
        behavior is to use multiple cores.

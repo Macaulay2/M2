@@ -7,16 +7,18 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <mutex>
+using std::lock_guard;
 
 // The maximum number of concurrent threads
 const static unsigned int numCores = std::thread::hardware_concurrency();
-// We allocate between 4 and 16 threads initially, to save trouble with memory allocation.
-const static int maxNumThreads = (numCores < 4) ? 4 : (16 < numCores ? 16 : numCores);
+// We allocate between 5 and 17 threads initially, to save trouble with memory allocation.
+const static int maxNumThreads = ((numCores < 4) ? 4 : (16 < numCores ? 16 : numCores)) + 1;
 
 // The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
 // There may be I/O bound threads, such as the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
 // number of cores plus the expected number of I/O bound threads.
-static int currentAllowedThreads = 2;
+static atomic_int currentAllowedThreads(5);
 
 
 // The thread that the interpreter runs in.
@@ -78,76 +80,79 @@ extern "C" {
   }
   void pushTask(struct ThreadTask* task)
   {
-    threadSupervisor->m_Mutex.lock();
-    task->m_Mutex.lock();
+    lock_guard<pthreadMutex> supLock(threadSupervisor->m_Mutex);
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
     if(task->m_ReadyToRun)
-      {
-	task->m_Mutex.unlock();
 	return;
-      }
     if(task->m_Dependencies.empty())
       {
 	task->m_ReadyToRun=true;
 	threadSupervisor->m_ReadyTasks.push_back(task);
+	pthread_cond_signal(&threadSupervisor->m_TaskReadyToRunCondition);
       }
     else
       {
 	threadSupervisor->m_WaitingTasks.push_back(task);
       }
-    pthread_cond_signal(&threadSupervisor->m_TaskWaitingCondition);
-    task->m_Mutex.unlock();
-    threadSupervisor->m_Mutex.unlock();
   }
 
   void delThread(pthread_t thread)
   {
-    threadSupervisor->m_Mutex.lock();
+    lock_guard<pthreadMutex> supLock(threadSupervisor->m_Mutex);
     gc_map(pthread_t, struct ThreadSupervisorInformation*)::iterator it = threadSupervisor->m_ThreadMap.find(thread);
     if(it!=threadSupervisor->m_ThreadMap.end())
       {
 	threadSupervisor->m_ThreadMap.erase(it);
       }
-    threadSupervisor->m_Mutex.unlock();
   }
   void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel)
   {
-    task->m_Mutex.lock();
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
     task->m_CancelTasks.insert(cancel);
-    task->m_Mutex.unlock();
   }
   void addStartTask(struct ThreadTask* task, struct ThreadTask* start)
   {
-    task->m_Mutex.lock();
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
     task->m_StartTasks.insert(start);
-    task->m_Mutex.unlock();
   }
   void addDependency(struct ThreadTask* task, struct ThreadTask* dependency)
   {
     dependency->m_Mutex.lock();
     dependency->m_StartTasks.insert(task);
     dependency->m_Mutex.unlock(); 
-    task->m_Mutex.lock();
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
     task->m_Dependencies.insert(dependency);
-    task->m_Mutex.unlock();
   }
   int taskDone(struct ThreadTask* task)
   {
-    return task && task->m_Done;
+    if (! task)	return false;
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
+	// synchronizes-with the task's thread, avoids data races
+    return task->m_Done;
   }
   int taskStarted(struct ThreadTask* task)
   {
-    return task && task->m_Started;
+    if (! task)	return false;
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
+	// synchronizes-with the task's thread, avoids data races
+    return task->m_Started;
   }
   void* taskResult(struct ThreadTask* task)
   {
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
+	// synchronizes-with the task's thread, avoids data races
     return task->m_Result;
   }
   int taskKeepRunning(struct ThreadTask* task)
   {
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
+	// synchronizes-with the task's thread, avoids data races
     return task->m_KeepRunning;
   }
   int taskRunning(struct ThreadTask* task)
   {
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
+	// synchronizes-with the task's thread, avoids data races
     return task->m_Running;
   }
   void taskInterrupt(struct ThreadTask* task)
@@ -170,18 +175,14 @@ extern "C" {
     if(NULL == threadSupervisor)
       threadSupervisor = new (GC) ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);
-    threadSupervisor->m_Mutex.lock();
+    lock_guard<pthreadMutex> supLock(threadSupervisor->m_Mutex);
     if(threadSupervisor->m_ThreadLocalIdPtrSet.find(refno)!=threadSupervisor->m_ThreadLocalIdPtrSet.end())
-      {
-	threadSupervisor->m_Mutex.unlock();
 	return;
-      }
     threadSupervisor->m_ThreadLocalIdPtrSet.insert(refno);
     int ref = threadSupervisor->m_ThreadLocalIdCounter++;
     if(ref>threadSupervisor->s_MaxThreadLocalIdCounter)
      abort();
     *refno = ref;
-    threadSupervisor->m_Mutex.unlock();
   }
   int getAllowableThreads()
   {
@@ -206,15 +207,12 @@ ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userD
 ThreadTask::~ThreadTask() {}
 void* ThreadTask::waitOn()
 {
-  m_Mutex.lock();
+  lock_guard<pthreadMutex> lock(m_Mutex);
   while(!m_Done && m_KeepRunning)
     {
       pthread_cond_wait(&m_FinishCondition,&m_Mutex.m_Mutex);
     }
-  assert(m_Done || !m_KeepRunning);
-  void* ret = m_Result;
-  m_Mutex.unlock();
-  return ret;
+  return m_Result;
 }
 
 void staticThreadLocalInit()
@@ -248,7 +246,7 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   #endif
   //if not using get specific no initialization is necessary
   //initialize task waiting condition
-  if(pthread_cond_init(&m_TaskWaitingCondition,NULL))
+  if(pthread_cond_init(&m_TaskReadyToRunCondition,NULL))
     abort();
   //force everything to get done just in case there is some weird GC issue.
   std::atomic_signal_fence(std::memory_order_seq_cst);
@@ -275,9 +273,10 @@ void ThreadSupervisor::initialize()
       thread->start();
     }
 }
+// done or canceled; task's mutex is locked by caller
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)
 {
-  m_Mutex.lock();
+  lock_guard<pthreadMutex> supLock(m_Mutex);
   m_RunningTasks.remove(task);
   if(task->m_KeepRunning)
     {
@@ -289,26 +288,17 @@ void ThreadSupervisor::_i_finished(struct ThreadTask* task)
     }
   if(pthread_cond_broadcast(&task->m_FinishCondition))
     abort();  
-  m_Mutex.unlock();
 }
 void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* launcher)
 {
-  m_Mutex.lock();
-  task->m_Mutex.lock();
+  lock_guard<pthreadMutex> supLock(m_Mutex);
+  lock_guard<pthreadMutex> lock(task->m_Mutex);
   if(task->m_ReadyToRun)
-    {
-      task->m_Mutex.unlock();
-      m_Mutex.unlock();
       return;
-    }
   if(!task->m_Dependencies.empty())
     {
       if(!launcher)
-	{
-	  task->m_Mutex.unlock();
-	  m_Mutex.unlock();
 	  return;
-	}
       gc_set(struct ThreadTask*)::iterator it = task->m_Dependencies.find(launcher);
       if(it!=task->m_Dependencies.end())
 	{
@@ -316,41 +306,33 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 	  task->m_FinishedDependencies.insert(launcher);
 	}
       if(!task->m_Dependencies.empty())
-	{
-	  task->m_Mutex.unlock();
-	  m_Mutex.unlock();
 	  return;
-	}
     }
   m_WaitingTasks.remove(task);
   task->m_ReadyToRun=true;
   m_ReadyTasks.push_back(task);
-  if(pthread_cond_signal(&m_TaskWaitingCondition))
+  if(pthread_cond_signal(&m_TaskReadyToRunCondition))
     abort();
-  task->m_Mutex.unlock();
-  m_Mutex.unlock();
 }
 void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
 {
-  m_Mutex.lock();
-  task->m_Mutex.lock();
+  lock_guard<pthreadMutex> supLock(m_Mutex);
+  lock_guard<pthreadMutex> lock(task->m_Mutex);
   if(task->m_CurrentThread)
     {
       atomic_store(&task->m_CurrentThread->m_Interrupt->field, 1);
       atomic_store(&task->m_CurrentThread->m_Exception->field, 1);
     }
   task->m_KeepRunning=false;
-  task->m_Mutex.unlock();
-  m_Mutex.unlock();
 }
 struct ThreadTask* ThreadSupervisor::getTask()
 {
-  m_Mutex.lock();
+  lock_guard<pthreadMutex> supLock(m_Mutex);
   while(m_ReadyTasks.empty())
     {
       //This exists in case pthread cond wait returns due to a signal/etc
     RESTART:
-      if(pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex.m_Mutex))
+      if(pthread_cond_wait(&m_TaskReadyToRunCondition,&m_Mutex.m_Mutex))
 	goto RESTART;
     }
   if(m_ReadyTasks.empty())
@@ -358,7 +340,6 @@ struct ThreadTask* ThreadSupervisor::getTask()
   struct ThreadTask* task = m_ReadyTasks.front();
   m_ReadyTasks.pop_front();
   m_RunningTasks.push_back(task);
-  m_Mutex.unlock();
   return task;
 }
 void ThreadTask::run(SupervisorThread* thread)
@@ -376,23 +357,19 @@ void ThreadTask::run(SupervisorThread* thread)
   m_Running=true;
   m_Mutex.unlock();
   m_Result = m_Func(m_UserData);
-  m_Mutex.lock();
+  lock_guard<pthreadMutex> lock(m_Mutex);
   m_Running=false;
+  threadSupervisor->_i_finished(this);
   if(!m_KeepRunning)
-    {
-      m_Mutex.unlock();
       return;
-    }
   m_Done = true;
   m_CurrentThread=NULL;
-  threadSupervisor->_i_finished(this);
   //cancel stuff_
   for(gc_set(ThreadTask*)::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
     threadSupervisor->_i_cancelTask(*it);
   //start stuff
   for(gc_set(ThreadTask*)::iterator it = m_StartTasks.begin(); it!=m_StartTasks.end(); ++it)
     threadSupervisor->_i_startTask(*it,this);
-  m_Mutex.unlock();
 }
 
 SupervisorThread::SupervisorThread(int localThreadId):m_KeepRunning(true),m_LocalThreadId(localThreadId)

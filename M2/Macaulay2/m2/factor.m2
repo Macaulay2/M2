@@ -3,7 +3,6 @@
 needs "integers.m2"
 needs "lists.m2"
 needs "matrix1.m2"
-needs "structure.m2" -- for position
 
 -----------------------------------------------------------------------------
 

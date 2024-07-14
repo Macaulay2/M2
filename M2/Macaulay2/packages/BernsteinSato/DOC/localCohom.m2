@@ -8,7 +8,7 @@ document {
        UL {
             {BOLD "LocStrategy => null", 
                  " -- used only for ", TT "localCohom(...Ideal...)", 
-                 ", localizations are done by straigthforward computation of 
+                 ", localizations are done by straightforward computation of 
                  annihilators and b-polynomials as described in [1]."},
             {BOLD "LocStrategy => OaTaWa", 
                  " -- localizations are done following Oaku-Takayama-Walther method [2]."},

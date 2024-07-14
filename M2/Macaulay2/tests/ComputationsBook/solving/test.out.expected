@@ -397,10 +397,10 @@ i64 : testTransverse = F -> (
 i65 : testTransverse(ZZ/2);
 Failed for the prime 2 with 5 iterations
 
-i66 : (random 10;for i to 7 do random 2;testTransverse(GF 4);)
+i66 : (random 10;for i to 8 do random 2; testTransverse(GF 4);)
 Succeeded for the prime 2 in 4 iteration(s)
 
-i67 : testTransverse(ZZ/7);
+i67 : (for i to 2 do random 2; testTransverse(ZZ/7);)
 Succeeded for the prime 7 in 1 iteration(s)
 
 i68 : randomSymmetricMatrix = (R, n) -> (

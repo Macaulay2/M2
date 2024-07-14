@@ -27,10 +27,11 @@ Sequence | Sequence := Sequence => join
 List + List  := List => (v,w) -> apply(v,w,plus)
      - List  := List => v -> apply(v,minus)
 List - List  := List => (v,w) -> apply(v,w,difference)
+List * Thing := List => (v,a) -> apply(v,x->x * a)
 Thing * List := List => (a,v) -> apply(v,x->a * x)
 List ** List := List => (X,Y) -> flatten for x in X list apply(Y, y -> (x, y))
 
-List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
+List /  RingElement := List /  Number := List => (v,b) -> apply(v,x->x /  b)
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
 List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
@@ -77,6 +78,26 @@ String ..< String := Sequence => (s,t) -> (
      if #s =!= #t then error "expected strings of equal length (in utf8 encoding)";
      utf8 \ ( s ..< t ))
 
+-----------------------------------------------------------------------------
+-- positions, position, minPosition, maxPosition, number
+-----------------------------------------------------------------------------
+
+positions = method(TypicalValue => List)
+positions(MutableList, Function) :=
+positions(VisibleList, Function) := (v, f) -> for i from 0 to #v-1 list if f v#i then i else continue
+
+position = method(TypicalValue => ZZ, Options => {Reverse => false})
+position(ZZ,          Function) := o -> (n, f) -> position(0..n-1, f, o)
+position(VisibleList, Function) := o -> (v, f) -> (
+    if o.Reverse
+    then (for i to #v-1 do if f v#(-i-1) then return #v-i-1)
+    else (for i to #v-1 do if f v#i      then return i))
+position(VisibleList, VisibleList, Function) := o -> (v, w, f) -> (
+    if #v != #w then error "expected lists of the same length";
+    if o.Reverse
+    then (for i to #v-1 do if f(v#(-i-1), w#(-i-1)) then return #v-i-1)
+    else (for i to #v-1 do if f(v#i,      w#i)      then return i))
+
 maxPosition = method(Dispatch => Thing)
 minPosition = method(Dispatch => Thing)
 
@@ -96,11 +117,22 @@ minPosition BasicList := ZZ => x -> (
 	  scan(1 .. # x-1, i -> if x#i<m then (m=x#i;pos=i));
 	  pos))
 
+delete = method()
+delete(Thing, BasicList) := (x, v) -> select(v, i -> i =!= x)
+
 number = x -> # select x
 
+-----------------------------------------------------------------------------
+-- all, same, uniform, isMember
+-----------------------------------------------------------------------------
+
 all = method(TypicalValue => Boolean)
-all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
-all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
+all(ZZ,                   Function) := -- uses 0 .. n-1
+all(HashTable,            Function) := -- uses pairs h
+all(BasicList,            Function) := (x,    p) -> not any(x,    i  -> not p i)
+all(BasicList, BasicList, Function) := (x, y, p) -> not any(x, y, ij -> not p ij)
+-- TODO: implement this for 'any'
+all BasicList := L -> not any(L, x -> not x)
 
 -- TODO: how to get this to work? When fixed, replace "same apply" with "same"
 --same = method(TypicalValue => Boolean)
@@ -111,6 +143,8 @@ same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
 uniform = L -> same apply(L, class)
 
 isMember(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
+
+-----------------------------------------------------------------------------
 
 sum List := x -> plus toSequence x
 
@@ -249,6 +283,22 @@ isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
 deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e, f, g)) else toList{f L}
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
+
+parallelApplyRaw = (L, f) ->
+     -- 'reverse's to minimize thread switching in 'taskResult's:
+     reverse (taskResult \ reverse apply(L, e -> schedule(f, e)));
+parallelApply = method(Options => {Strategy => null})
+parallelApply(BasicList, Function) := o -> (L, f) -> (
+     if o.Strategy === "raw" then return parallelApplyRaw(L, f);
+     n := #L;
+     numThreads := min(n + 1, maxAllowableThreads);
+     oldAllowableThreads := allowableThreads;
+     if allowableThreads < numThreads then allowableThreads = numThreads;
+     numChunks := 3 * numThreads;
+     res := if n <= numChunks then toList parallelApplyRaw(L, f) else
+	  flatten parallelApplyRaw(pack(L, ceiling(n / numChunks)), chunk -> apply(chunk, f));
+     allowableThreads = oldAllowableThreads;
+     res);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

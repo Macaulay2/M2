@@ -135,14 +135,16 @@ complement Matrix := Matrix => (f) -> (
      else if instance(R,QuotientRing) then map(target f,,R ** complement lift(f,ambient R))
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
--- the method is declared in gb.m2
-mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
-mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
-        c := runHooks((mingens, Module), (opts, M));
-        if c =!= null then c else error "mingens: no method implemented for this type of module"))
+-----------------------------------------------------------------------------
+-- mingens and trim
+-----------------------------------------------------------------------------
 
--- FIXME: This is kind of a hack. The strategies should be separated in mingensHelper
-mingensHelper = ((opts, M) -> (
+-- the method is declared in gb.m2
+-- TODO: the strategies should be separated
+mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
+mingens Module := Matrix => opts -> M -> if isFreeModule M then generators M else cacheHooks(
+    symbol mingens, M, (mingens, Module), (opts, M), (opts, M) -> (
+	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
@@ -164,25 +166,15 @@ mingensHelper = ((opts, M) -> (
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
 
-addHook((mingens, Module), Strategy => Inhomogeneous, (opts, M) -> mingensHelper(opts ++ {Strategy => Inhomogeneous}, M))
-addHook((mingens, Module), Strategy => Complement,    (opts, M) -> mingensHelper(opts ++ {Strategy => Complement},    M))
-
 trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
-trim Ring := Ring => opts -> (R) -> R
-trim QuotientRing := opts -> (R) -> (
-     f := presentation R;
-     A := ring f;
-     A/(trim(ideal f,opts)))
+trim Ring         := Ring => o -> identity
+trim QuotientRing := Ring => o -> R -> quotient trim(ideal presentation R, o)
 
--- TODO: why is the caching key an Option?
-trim Ideal  := Ideal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
-trim Module := Module => opts -> (cacheValue symbol trim) (M -> (
-	if isFreeModule M then return M;
-	c := runHooks((trim, Module), (opts, M));
-	if c =!= null then c else error "trim: no method implemented for this type of module"))
-
--- FIXME: This is kind of a hack. The strategies should be separated in trimHelper
-trimHelper = ((opts, M) -> (
+-- TODO: the strategies should be separated
+trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
+trim Module := Module => opts -> M -> if isFreeModule M then M else cacheHooks(
+    (symbol trim, opts), M, (trim, Module), (opts, M), (opts, M) -> (
+	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
 	  -- does using "complement" as in "mingens Module" above offer a benefit?
@@ -244,9 +236,6 @@ trimHelper = ((opts, M) -> (
 	  N.cache.trim = N;
 	  N))
 
-addHook((trim, Module), Strategy => Inhomogeneous, (opts, M) -> trimHelper(opts ++ {Strategy => Inhomogeneous}, M))
-addHook((trim, Module), Strategy => Complement,    (opts, M) -> trimHelper(opts ++ {Strategy => Complement},    M))
-
 trimPID := M -> if M.?relations then (if M.?generators then trimPID image generators M else ambient M) / trimPID image relations M else if not M.?generators then M else (
     f := presentation M;
     (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
@@ -266,6 +255,7 @@ addHook((trim, Module), Strategy => "PID",
 	)
     )
 
+-----------------------------------------------------------------------------
 
 syz Matrix := Matrix => opts -> (f) -> (
     c := runHooks((syz, Matrix), (opts, f));
@@ -335,8 +325,10 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 	  map(M, L, rem)
      ))
 
+leftQuotientWarn = true
+
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
-Matrix \\ Matrix := (g,f) -> f // g
+Matrix \\ Matrix := (g,f) -> (if leftQuotientWarn then (leftQuotientWarn = false; printerr "Warning: 'm \\\\ n' is deprecated; use 'n // m' instead."); f // g)
 quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
      or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";
@@ -354,9 +346,11 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
        then return solve(g,f);	   	     	       	    
+     local retVal;
      if isQuotientOf(ZZ,ring target f)
        and isFreeModule source g and isFreeModule source f
-       then return solve(g,f);
+       then retVal = solve(g,f);
+     if retVal =!= null then return retVal;
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
@@ -438,10 +432,9 @@ indices RingElement := (f) -> rawIndices raw f
 indices Matrix := (f) -> rawIndices raw f
 
 support = method()
-support RingElement := support Matrix := (f) -> (
-     x := rawIndices raw f;
-     apply(x, i -> (ring f)_i))
-support Ideal := (I) -> rsort toList sum apply(flatten entries generators I, f -> set support f)
+support RingElement :=
+support Matrix      := f -> apply(try rawIndices raw f else {}, i -> (ring f)_i)
+support Ideal       := I -> support generators I
 --------------------
 -- homogenization --
 --------------------

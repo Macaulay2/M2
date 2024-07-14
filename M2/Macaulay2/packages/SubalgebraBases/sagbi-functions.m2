@@ -473,7 +473,6 @@ isFullIntersection IntersectedSubring := Boolean => S -> (
 
 -- subringIntersection(Subring, Subring)
 -- intersects the subrings using a method analogous to the GB method
--- subringIntersectionLimitWarning := false;
 subringIntersection = method(
     Options => {
         Strategy => "Master",

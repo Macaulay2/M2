@@ -38,8 +38,8 @@
    * these two macros affect the definition of GC_INIT, but have
    * to appear before we include gc.h, in order to take effect
    */
-  #define GC_FREE_SPACE_DIVISOR 12
-  #define GC_INITIAL_HEAP_SIZE 70000000
+  // #define GC_FREE_SPACE_DIVISOR 12
+  #define GC_INITIAL_HEAP_SIZE 70000000	// may be overridden in e.g. bin/main.cpp
 
   #include <gc/gc.h>
 

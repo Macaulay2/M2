@@ -24,20 +24,24 @@ threadLocal export recursionLimit := 300;
 
 
 threadCounter := 0;
-threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + 3 + (threadCounter-1) * 10000 );
+threadLocal HashCounter := (
+    threadCounter = threadCounter + 1;
+    hash_t(1000000 + 3 + (threadCounter-1) * 10000 ));
 
-export nextHash():int := (
-     HashCounter = HashCounter + 1;
-     if HashCounter < 0 -- check for integer overflow
+export nextHash():hash_t := (
+     if HashCounter == Ccode(hash_t, "18446744073709551615ull") -- check for integer overflow
      then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
+     HashCounter = HashCounter + 1;
      HashCounter);
 
 -- Knuth, Art of Computer Programming, Section 6.4
-export fibonacciHash(k:int,p:int):int := (
-    Ccode(int, "(2654435769 * ",k,") >> (32 - ",p,")"));
+-- constant is approx. 2^64 / phi
+export fibonacciHash(k:hash_t,p:int):hash_t := (
+    Ccode(hash_t, "(11400714819323198485ull * ",k,") >> (64 - ",p,")"));
 
 -- hash codes for mutable objects that don't use nextHash
-export hashFromAddress(e:Expr):int := fibonacciHash(Ccode(int, "(long)",e), 9);
+-- we use 9 since #buckets ZZ = 2^9
+export hashFromAddress(e:Expr):hash_t := fibonacciHash(Ccode(hash_t, "(long)", e), 9);
 
 export NULL ::= null();
 
@@ -47,7 +51,7 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
      new array(SymbolList) 
      len 8						    -- must be a power of 2, for our hashing to work
      do provide NULL,
-     0,uninitializedSpinLock);
+     0,newThreadRWLock());
 
 export dummyFrame := Frame(self,
      -1,						    -- negative frame id's are ignored and give warning messages
@@ -63,7 +67,9 @@ export globalFrame := Frame(self, 0, globalFramesize, true,
 	  nullE						    -- one value for dummySymbol
 	  ));
 export threadFrameID := 0;
-export threadFramesize := 0;
+header "struct atomic_field expr_threadFramesize;";
+import threadFramesize:atomicField;
+store(threadFramesize, 0);
 export threadLocal threadFrame  := Frame(self, threadFrameID, 0, true, Sequence());
 export enlarge(f:Frame):int := (
      n := f.valuesUsed;
@@ -74,8 +80,8 @@ export enlarge(f:Frame):int := (
 	       while true do provide nullE));
      n);
 export enlargeThreadFrame():Frame := (
-     if threadFramesize > length(threadFrame.values) then (
-	  threadFrame.values = new Sequence len 2 * threadFramesize + 1 do (
+     if load(threadFramesize) > length(threadFrame.values) then (
+	  threadFrame.values = new Sequence len 2 * load(threadFramesize) + 1 do (
 	       foreach value in threadFrame.values do provide value;
 	       while true do provide nullE));
      threadFrame);
@@ -91,6 +97,7 @@ export completions(s:string):array(string) := (
      v := newvarstringarray(6);
      d := globalDictionary;
      while (
+	  lockRead(d.symboltable.mutex);
 	  foreach bucket in d.symboltable.buckets do (
 	       b := bucket;
 	       while true do when b
@@ -99,6 +106,7 @@ export completions(s:string):array(string) := (
 		    t := q.word.name;
 		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then append(v,t);
 		    b = q.next; ));
+	  unlock(d.symboltable.mutex);
 	  d != d.outerDictionary) do d = d.outerDictionary;
      extract(v));
 export DictionaryList := {
@@ -154,7 +162,7 @@ export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
 
 -----------------------------------------------------------------------------
 
-export bucketEnd := KeyValuePair(nullE,0,nullE,self);
+export bucketEnd := KeyValuePair(nullE,hash_t(0),nullE,self);
 --Dummy Symbol needs to go in tokens because it needs error support.
 --To preserve existing hashes of types we use this workaround and preallocate it a hash number
 export dummySymbolHash := nextHash();
@@ -164,14 +172,18 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in hashtable.dd that the number of buckets
 	  -- (here four) is a power of two
-	  Class,parent,0,nextHash(),
+	  Class,parent,0,hash_t(0),
 	  true,				  -- mutable by default; careful: other routines depend on this
 	  false,
-	  uninitializedSpinLock
-	  ); init(ht.mutex); ht);
+	  newThreadRWLock()
+	  ); ht);
+export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
+       ht:=newHashTable(Class,parent);
+       ht.hash=nextHash();
+       ht);
 
 export newCompiledFunction(fn:fun):CompiledFunction := (
-    cf := CompiledFunction(fn, 0);
+    cf := CompiledFunction(fn, hash_t(0));
     cf.hash = hashFromAddress(Expr(cf));
     cf);
 
@@ -204,13 +216,13 @@ export emptySequence := Sequence();
 export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
-     Word("-*dummy symbol*-",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
+     Word("-*dummy symbol*-",TCnone,hash_t(0),newParseinfo()),dummySymbolHash,dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
      false,
      false,
-     0
+     hash_t(0)
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
@@ -218,7 +230,7 @@ export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
-     Word("-*dummy token*-",TCnone,0,newParseinfo()),
+     Word("-*dummy token*-",TCnone,hash_t(0),newParseinfo()),
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
@@ -227,7 +239,7 @@ export dummyToken   := Token(
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 
-export dummyWord    := Word("-*dummy word*-",TCnone,0,newParseinfo());
+export dummyWord    := Word("-*dummy word*-",TCnone,hash_t(0),newParseinfo());
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 
@@ -241,17 +253,17 @@ export thingClass := (
 	  -- enlarge/shrink code in objects.d that the number of buckets
 	  -- here (four) is a power of two
           self,self,0,nextHash(),
-          true,false, uninitializedSpinLock);
-	  init(ht.mutex); ht);
+          true,false, newThreadRWLock());
+	  ht);
 
-export hashTableClass := newHashTable(thingClass,thingClass);
-export mutableHashTableClass := newHashTable(thingClass,hashTableClass);
-export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
+export hashTableClass := newHashTableWithHash(thingClass,thingClass);
+export mutableHashTableClass := newHashTableWithHash(thingClass,hashTableClass);
+export typeClass := newHashTableWithHash(mutableHashTableClass,mutableHashTableClass);
        thingClass.Class = typeClass;
        typeClass.Class = typeClass;
        mutableHashTableClass.Class = typeClass;
        hashTableClass.Class = typeClass;
-       newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+       newtypeof(parent:HashTable):HashTable := newHashTableWithHash(typeClass,parent);
        newbasictype():HashTable := newtypeof(thingClass);
 export cacheTableClass := newtypeof(mutableHashTableClass);
 export basicListClass := newbasictype();
@@ -294,13 +306,13 @@ export ringElementClass := newtypeof(basicListClass);
 export numberClass := newtypeof(thingClass);
 export inexactNumberClass := newtypeof(numberClass);
 
-       newnumbertype():HashTable := newHashTable(ringClass,numberClass);
+       newnumbertype():HashTable := newHashTableWithHash(ringClass,numberClass);
 export ZZClass := newnumbertype();
 export QQClass := newnumbertype();
 
 export ringFamilyClass := newtypeof(typeClass);
 export inexactNumberTypeClass := newtypeof(ringFamilyClass);
-       newbignumbertype():HashTable := newHashTable(inexactNumberTypeClass,inexactNumberClass);
+       newbignumbertype():HashTable := newHashTableWithHash(inexactNumberTypeClass,inexactNumberClass);
 export RRClass := newbignumbertype();
 export CCClass := newbignumbertype();
 
@@ -354,6 +366,8 @@ export WrongArgRR():Expr := WrongArg("a real number");
 export WrongArgRR(n:int):Expr := WrongArg(n,"a real number");
 export WrongArgRRorRRi():Expr := WrongArg("a real number or interval");
 export WrongArgRRorRRi(n:int):Expr := WrongArg(n,"a real number or interval");
+export WrongArgRRorRRiorCC():Expr := WrongArg("a real number or interval or a complex number");
+export WrongArgRRorRRiorCC(n:int):Expr := WrongArg(n,"a real number or interval or a complex number");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
 export WrongArgSmallUInteger():Expr := WrongArg("a small non-negative integer");
@@ -366,6 +380,8 @@ export WrongArgMutableMatrix(n:int):Expr := WrongArg(n,"a raw mutable matrix");
 export WrongArgMutableMatrix():Expr := WrongArg("a raw mutable matrix");
 export WrongArgMatrix(n:int):Expr := WrongArg(n,"a raw matrix");
 export WrongArgMatrix():Expr := WrongArg("a raw matrix");
+export WrongArgHashTable():Expr := WrongArg("a hash table");
+export WrongArgHashTable(n:int):Expr := WrongArg(n, "a hash table");
 export ArgChanged(name:string,n:int):Expr := (
      buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)
 	  + " not to change its type during execution"));

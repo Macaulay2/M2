@@ -1,16 +1,17 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
 # get releases from https://github.com/Normaliz/Normaliz/releases
-# version 3.2 uses autoconf, so take advantage of that when upgrading
-VERSION = 3.9.2
-VERSION2 = 3.9
+VERSION = 3.10.3
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-# these authors sometimes change the file without changing the name, so we copy it to our own site:
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://github.com/Normaliz/Normaliz/releases/download/v$(VERSION)
 FIXTARCMD = :
 
 PRECONFIGURE = autoreconf -vif
-CONFIGOPTIONS += --disable-shared
+CONFIGOPTIONS += --disable-shared \
+	--without-cocoalib        \
+	--without-flint           \
+	--without-nauty           \
+	--without-e-antic
 
 # Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
 # I have filed a bug report, Bug ID# 8338749:
@@ -29,7 +30,7 @@ endif
 NORMFLAGS = 
 ####
 
-CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . $(CXXFLAGS0)
+CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -I .. -I . $(CXXFLAGS0)
 BUILDOPTIONS =  CXX="$(CXX)" \
 		NORMFLAGS="$(NORMFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \

@@ -9,7 +9,7 @@ document {
      }
      
 document { 
-     Key => {(ceiling,Number), (ceiling, Constant)},
+     Key => {(ceiling,Number)},
      Headline => "ceiling function",
      Usage => "ceiling x",
      Inputs => { "x" },

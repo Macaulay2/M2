@@ -6,6 +6,15 @@ document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalP
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
 document { Key => chi,          methodstr }
 document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
+document { Key => isSmooth,     methodstr, SeeAlso => {
+	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
+	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
+	"Polyhedra::isSmooth(Cone)", "NormalToricVarieties::isSmooth(NormalToricVariety)",
+	"SpecialFanoFourfolds::isSmooth(EmbeddedProjectiveVariety)" } }
+document { Key => isVeryAmple,  methodstr, SeeAlso => {
+	"Divisor::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
+	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
+	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
 
 document { Key => cone,
     Headline => "mapping cone or polyhedral cone",
@@ -55,6 +64,12 @@ document {
 document {
      Key => intersection,
      Headline => "compute an intersection",
+    PARA{
+	"When a more efficient algorithm is available for computing the intersection of all inputs
+	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
+	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
+	},
+    EXAMPLE ///code lookup(symbol intersect, Module)///,
      SeeAlso => { intersect }
      }
 
@@ -71,12 +86,6 @@ document {
 	For two arguments, this is the same as ", TT "A ** B", " except that options are allowed."
 	},
     EXAMPLE ///tensor(ZZ^2, ZZ^3, ZZ^4)///,
-    PARA{
-	"When a more efficient algorithm is available for computing the intersection of all inputs
-	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
-	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
-	},
-    EXAMPLE ///code lookup(symbol intersect, Module)///,
     SeeAlso => {
 	symbol**
 	-- add references to tensor methods installed in packages _other than Core_ here

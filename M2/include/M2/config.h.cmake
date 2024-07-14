@@ -330,9 +330,6 @@
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
 
-/* Whether we use MPIR (instead of GMP) */
-#cmakedefine01 USING_MPIR
-
 /* Whether we are building with tbb version >= 2021 */
 #cmakedefine WITH_TBB
 

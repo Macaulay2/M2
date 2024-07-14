@@ -1,0 +1,20 @@
+-- -*- M2-comint -*- hash: 18065710068257236467
+
+i1 : R = QQ[x_0..x_8];
+
+i2 : I = ideal {-x_0+x_3+x_4, -x_1+x_3+x_5,-x_2+x_3+x_6, -x_0+x_2+x_7, -x_1+x_2+x_8, -x_0+x_1+1};
+
+o2 : Ideal of R
+
+i3 : X = normalToricVariety fan tropicalVariety I;
+
+i4 : f = x_0*x_1-x_2*x_3;
+
+i5 : D = classWonderfulCompactification(X,I,f)
+
+o5 = 2*X    + 2*X     - X     + 2*X     + 2*X     - X     + X    - X    - 2*X    + X
+        {9}      {10}    {11}      {13}      {14}    {17}    {2}    {5}      {6}    {7}
+
+o5 : ToricCycle on X
+
+i6 : 

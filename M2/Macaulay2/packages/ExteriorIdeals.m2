@@ -10,13 +10,13 @@ newPackage(
         DebuggingMode => false,
         Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
-         "journal URI" => "http://j-sag.org/",
+         "journal URI" => "https://msp.org/jsag/",
          "article title" => "ExteriorIdeals: a package for computing monomial ideals in an exterior algebra",
          "acceptance date" => "24 June 2018",
          "published article URI" => "https://msp.org/jsag/2018/8-1/p07.xhtml",
          "published article DOI" => "10.2140/jsag.2018.8.71",
          "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x07-ExteriorIdeals.m2",
-         "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ExteriorIdeals.m2",
+         "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ExteriorIdeals.m2",
          "release at publication" => "1073789664ba1f00096121613a8b6d932a0e5c4e",        -- git commit number in hex
          "version at publication" => "1.0",
          "volume number" => "8",

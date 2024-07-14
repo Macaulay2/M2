@@ -3,6 +3,7 @@
 VERSION = 1.5.4
 LICENSEFILES = README COPYING.LESSER
 TARFILE = $(LIBNAME)-$(VERSION).tar.gz
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe

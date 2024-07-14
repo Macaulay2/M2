@@ -7,10 +7,11 @@ needs "methods.m2"
 chi = method()
 
 cone = method()
-rays = method()
+rays = method(Options => true)
 
 decompose = method(Options => true)
 
+union = method(Binary => true)
 intersect = method(Options => true, Binary => true) -- an associative binary method
 intersection = method(Options => true)
 
@@ -19,6 +20,9 @@ tensor    = method(Options => true, Binary => true) -- tensor is left-associativ
 truncate = method(Options => true)
 
 isEmpty = method(TypicalValue => Boolean)
+
+isSmooth = method(TypicalValue => Boolean, Options => true)
+isVeryAmple = method(TypicalValue => Boolean, Options => true)
 
 -- symbols
 

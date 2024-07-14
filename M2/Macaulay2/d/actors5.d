@@ -66,7 +66,7 @@ prependfun(e:Expr):Expr := (
 			      provide elem;
 			      foreach t in y.v do provide t;
 			      ),
-			 0,y.Mutable);
+			 hash_t(0),y.Mutable);
 		    Expr(sethash(r,y.Mutable)))
 	       else WrongArg(1+1,"a list or sequence")
 	       )
@@ -96,7 +96,7 @@ appendfun(e:Expr):Expr := (
 			      foreach t in y.v do provide t;
 			      provide elem;
 			      ),
-			 0,y.Mutable);
+			 hash_t(0),y.Mutable);
 		    Expr(sethash(r,y.Mutable)))
 	       else WrongArg(0+1,"a list or sequence")
 	       )
@@ -158,6 +158,33 @@ setup(GreaterGreaterS,greatergreaterfun2);
 barfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarS);
 setup(BarS,barfun);
 
+BarUnderscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarUnderscoreS);
+setup(BarUnderscoreS,BarUnderscorefun);
+
+UnderscoreGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterS);
+setup(UnderscoreGreaterS,UnderscoreGreaterfun);
+
+UnderscoreGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterEqualS);
+setup(UnderscoreGreaterEqualS,UnderscoreGreaterEqualfun);
+
+UnderscoreLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessS);
+setup(UnderscoreLessS,UnderscoreLessfun);
+
+UnderscoreLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessEqualS);
+setup(UnderscoreLessEqualS,UnderscoreLessEqualfun);
+
+PowerGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterS);
+setup(PowerGreaterS,PowerGreaterfun);
+
+PowerGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterEqualS);
+setup(PowerGreaterEqualS,PowerGreaterEqualfun);
+
+PowerLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessS);
+setup(PowerLessS,PowerLessfun);
+
+PowerLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessEqualS);
+setup(PowerLessEqualS,PowerLessEqualfun);
+
 PowerStarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerStarStarS);
 setup(PowerStarStarS,PowerStarStarfun);
 
@@ -173,6 +200,12 @@ setup(HatHatS,hathatfun);
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 
+PowerTildefun(rhs:Code):Expr := unarymethod(rhs,PowerTildeS);
+setuppostfix(PowerTildeS,PowerTildefun);
+
+UnderscoreTildefun(rhs:Code):Expr := unarymethod(rhs,UnderscoreTildeS);
+setuppostfix(UnderscoreTildeS,UnderscoreTildefun);
+
 ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
 setuppostfix(ParenStarParenS,ParenStarParenfun);
 
@@ -182,8 +215,20 @@ setuppostfix(UnderscoreStarS,UnderscoreStarfun);
 PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
 setuppostfix(PowerStarS,PowerStarfun);
 
+--PowerSharpfun(rhs:Code):Expr := unarymethod(rhs,PowerSharpS);
+--setuppostfix(PowerSharpS,PowerSharpfun);
+
+--UnderscoreSharpfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreSharpS);
+--setuppostfix(UnderscoreSharpS,UnderscoreSharpfun);
+
 Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
 setuppostfix(ExclamationS,Exclamationfun);
+
+PowerExclamationfun(rhs:Code):Expr := unarymethod(rhs,PowerExclamationS);
+setuppostfix(PowerExclamationS,PowerExclamationfun);
+
+UnderscoreExclamationfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreExclamationS);
+setuppostfix(UnderscoreExclamationS,UnderscoreExclamationfun);
 
 factorial(x:Expr):Expr := (
      when x
@@ -211,7 +256,7 @@ dotfun(lhs:Code,rhs:Code):Expr := (
 	  when rhs
 	  is r:globalSymbolClosureCode do lookup1force(x, Expr(SymbolClosure(globalFrame,r.symbol)))
 	  else printErrorMessageE(rhs,"expected a symbol"))
-     else WrongArg(1,"a hash table")
+     else WrongArgHashTable(1)
      );
 setup(DotS,dotfun);
 
@@ -448,7 +493,7 @@ examine(e:Expr):Expr := (
 	  << " transient : " << d.transient << endl
 	  << " protected : " << d.Protected << endl
 	  << " local creation allowed : " << d.LocalCreationAllowed << endl
-	  << " symboltable size : " << d.symboltable.numEntries << endl;
+	  << " symboltable size : " << d.symboltable.numEntries << endl;	-- TODO: lockRead() ?
      	  showFrames(f);
           if d.frameID != f.frameID then stdIO << " -- warning: incorrect frameID on first frame" << endl;
 	  nullE)
@@ -558,9 +603,10 @@ remove(x:List,i:int):Expr:= (
      else if i >= n || i < -n then ArrayIndexOutOfBounds(i, n - 1)
      else (
 	  if i < 0 then i = n + i;
+	  ret := x.v.i;
 	  for j from i to n - 2 do x.v.j = x.v.(j + 1);
 	  Ccode(void, x.v, "->len = ", n - 1);
-	  nullE));
+	  ret));
 
 removefun(e:Expr):Expr := (
      when e
@@ -577,57 +623,64 @@ removefun(e:Expr):Expr := (
 		    when args.1 is key:stringCell do (
 	       		 if !f.isopen then return buildErrorPacket("database closed");
 	       		 if !f.Mutable then return buildErrorPacket("database not mutable");
-	       		 if 0 == dbmdelete(f.handle,key.v) then nullE
+			 ret := dbmfetch(f.handle,key.v);
+	       		 if 0 == dbmdelete(f.handle,key.v) then (
+			     when ret
+			     is s:string do toExpr(s)
+			     is null do nullE)
 	       		 else buildErrorPacket(dbmstrerror() + " : " + f.filename))
 		    else WrongArgString(2))
-	       is o:HashTable do (
-		    ret := remove(o,args.1);
-		    when ret is Error do ret else nullE)
+	       is o:HashTable do remove(o,args.1)
 	       else WrongArg(1,"a hash table or database")))
      else WrongNumArgs(2));
 setupfun("remove",removefun);
 
-erase(e:Expr):Expr := (
+erase(e:Expr):Expr :=
      when e is t:SymbolClosure do (
 	  s := t.symbol;
 	  d := globalDictionary;
 	  if t.frame != globalFrame then return WrongArg("a global symbol");
+	  found := false;
 	  while (
 	       table := d.symboltable;
+	       lockRead(table.mutex);
 	       i := s.word.hash & (length(table.buckets)-1);
 	       entryList := table.buckets.i;
 	       when entryList
-	       is entryListCell:SymbolListCell do (
+	       is entryListCell:SymbolListCell do
 		    if entryListCell.entry == s
 		    then (
-     	       	    	 if d.Protected then return buildErrorPacket("symbol is in a protected dictionary");
-			 table.numEntries = table.numEntries - 1;
-			 table.buckets.i = entryListCell.next;
-			 return nullE;
-			 );
-		    lastCell := entryListCell;
-		    entryList = entryListCell.next;
-		    while true do (
-			 when entryList
-			 is entryListCell:SymbolListCell do (
-			      if entryListCell.entry == s
-			      then (
-     	       	    	 	   if d.Protected then return buildErrorPacket("symbol is in a protected dictionary");
-				   table.numEntries = table.numEntries - 1;
-				   lastCell.next = entryListCell.next;
-				   return nullE;
-				   );
-			      lastCell = entryListCell;
-			      entryList = entryListCell.next;
-			      )
-			 is null do break;
-			 );
-		    )
+			 found = true;
+			 if ! d.Protected then (
+			      table.numEntries = table.numEntries - 1;
+			      table.buckets.i = entryListCell.next);
+			 )
+		    else (
+			 lastCell := entryListCell;
+			 entryList = entryListCell.next;
+			 while true do (
+			      when entryList
+			      is entryListCell:SymbolListCell do (
+				   if entryListCell.entry == s
+				   then (
+					found = true;
+					if ! d.Protected then (
+					     table.numEntries = table.numEntries - 1;
+					     lastCell.next = entryListCell.next);
+					break);
+				   lastCell = entryListCell;
+				   entryList = entryListCell.next;
+				   )
+			      is null do break;
+			      );
+			 )
 	       is null do nothing;
-	       d != d.outerDictionary ) do d = d.outerDictionary;
-	  buildErrorPacket("symbol has already been erased: "+s.word.name))
-     else WrongArg("a symbol")
-     );
+	       unlock(table.mutex);
+	       ! found && d != d.outerDictionary ) do d = d.outerDictionary;
+	  if ! found then buildErrorPacket("symbol has already been erased: "+s.word.name)
+	  else if d.Protected then buildErrorPacket("symbol is in a protected dictionary")
+	  else nullE)
+     else WrongArg("a symbol");
 setupfun("erase", erase);
 
 factorInt(n:int):Expr := (
@@ -1087,31 +1140,58 @@ take(e:Expr):Expr := (
 	      if nextfunc == nullE
 	      then return buildErrorPacket(
 		  "no method for applying next to iterator");
+	      start := 0;
+	      stop := 0;
 	      when args.1
 	      is n:ZZcell do (
 		  if !isInt(n) then return WrongArgSmallInteger(2);
-		  m := toInt(n);
-		  if m < 0 then return WrongArg(2, "a positive integer");
-		  if m == 0 then return Expr(emptyList);
-		  r := new Sequence len m do provide nullE;
-		  j := 0;
-		  y := nullE;
-		  while (
-		      y = applyEE(nextfunc, iter);
-		      when y
-		      is Error do return returnFromFunction(y)
-		      else nothing;
-		      y != StopIterationE)
-		  do (
-		      r.j = y;
-		      j = j + 1;
-		      if j == m then break);
-		  Expr(list(
-			  if j == 0 then emptySequence
-			  else if j == m then r
-			  else new Sequence len j do (
-			      foreach x in r do provide x))))
-	      else WrongArgZZ(2)))
+		  stop = toInt(n);
+		  if stop < 0 then return WrongArg(2, "a nonnegative integer");
+		  if stop == 0 then return list())
+	      is x:List do (
+		  ok := true;
+		  if length(x.v) == 2 then (
+		      when x.v.0
+		      is a:ZZcell do (
+			  when x.v.1
+			  is b:ZZcell do (
+			      if !isInt(a) || !isInt(b)
+			      then ok = false
+			      else (
+				  start = toInt(a);
+				  stop = toInt(b) + 1))
+			  else ok = false)
+		      else ok = false)
+		  else ok = false;
+		  if !ok
+		  then return WrongArg(2, "a list of two small integers"))
+	      else return WrongArg(2, "an integer or list of integers");
+	      if stop < start then return list();
+	      j := 0;
+	      y := nullE;
+	      while (j < start && y != StopIterationE)
+	      do (
+		  y = applyEE(nextfunc, iter);
+		  when y
+		  is Error do return returnFromFunction(y)
+		  else nothing;
+		  j = j + 1);
+	      r := new Sequence len stop - start do provide nullE;
+	      while (
+		  y = applyEE(nextfunc, iter);
+		  when y
+		  is Error do return returnFromFunction(y)
+		  else nothing;
+		  y != StopIterationE)
+	      do (
+		  r.(j - start) = y;
+		  j = j + 1;
+		  if j == stop then break);
+	      list(
+		      if j < start then emptySequence
+		      else if j == stop then r
+		      else new Sequence len j - start do (
+			  foreach x in r do provide x))))
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("take",take);
@@ -1238,11 +1318,6 @@ readlinkfun(e:Expr):Expr := (
 	  if length(v) == 0 then nullE else toExpr(v))
      else WrongArgString());
 setupfun("readlink",readlinkfun);
-
-changeDirectory(e:Expr):Expr := (
-     when e is filename:stringCell do if chdir(filename.v) == -1 then buildErrorPacket(syscallErrorMessage("changing directory")) else nullE
-     else WrongArgString());
-setupfun("changeDirectory",changeDirectory);
 
 realpathfun(e:Expr):Expr := (
      when e is f:stringCell do (
@@ -1655,6 +1730,21 @@ getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd 
      else WrongNumArgs(0));
 setupfun("currentDirectory",getcwdfun);
 
+changeDirectory(dir:string):Expr := (
+    if chdir(expandFileName(dir)) == -1
+    then buildErrorPacket(syscallErrorMessage("changing directory"))
+    else getcwdfun(emptySequenceE));
+
+changeDirectory(e:Expr):Expr := (
+    when e
+    is filename:stringCell do changeDirectory(filename.v)
+    is a:Sequence do (
+	if length(a) == 0
+	then changeDirectory("~")
+	else WrongArg("a string or ()"))
+    else WrongArg("a string or ()"));
+setupfun("changeDirectory",changeDirectory);
+
 export debuggerHook := nullE;
 
 backtraceS := dummySymbol;
@@ -1873,7 +1963,7 @@ foreach s in syms do storeInHashTable(
 storeE = nullE;
 syms = SymbolSequence();
 
-export fileDictionaries := newHashTable(mutableHashTableClass,nothingClass);
+export fileDictionaries := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("fileDictionaries",Expr(fileDictionaries));
 
 export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
@@ -1990,56 +2080,62 @@ toExternalString(e:Expr):Expr := (
      );
 setupfun("toExternalString0",toExternalString);
 
+header "
+#ifndef GC_get_full_gc_total_time /* added in bdwgc 8 */
+unsigned long GC_get_full_gc_total_time(void) {return 0;}
+#endif
+#define DEF_GC_FN0(s)	static void * s##_0(void *client_data) { (void) client_data; return (void *) (long) s(); }
+DEF_GC_FN0(GC_get_full_gc_total_time)
+DEF_GC_FN0(GC_get_free_space_divisor)
+";
+
+export gcTime():double := Ccode(double, "0.001 * (unsigned long) GC_call_with_alloc_lock(GC_get_full_gc_total_time_0, NULL)");
+
 GCstats(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) == 0 then Expr(toHashTable(Sequence(
-		    "heap size" => toExpr(Ccode(int,"GC_get_heap_size()")),
-		    "number of collections" => toExpr(Ccode(int,"GC_get_gc_no()")),
-		    "parallel" => toExpr(Ccode(bool,"!!GC_get_parallel()")),
-		    "finalize on demand" => toExpr(Ccode(bool,"!!GC_get_finalize_on_demand()")),
-		    "java finalization" => toExpr(Ccode(bool,"GC_get_java_finalization()")),
-		    "don't expand" => toExpr(Ccode(bool,"GC_get_dont_expand()")),
-		    "full freq" => toExpr(Ccode(int,"GC_get_full_freq()")),
-		    "max retries" => toExpr(Ccode(int,"GC_get_max_retries()")),
-		    "time limit" => toExpr(Ccode(ulong,"GC_get_time_limit()")),
-		    "GC_INITIAL_HEAP_SIZE" => toExpr(getenv("GC_INITIAL_HEAP_SIZE")),
-		    "GC_MAXIMUM_HEAP_SIZE" => toExpr(getenv("GC_MAXIMUM_HEAP_SIZE")),
-		    "GC_LOOP_ON_ABORT" => toExpr(getenv("GC_LOOP_ON_ABORT")),
-		    "GC_PRINT_STATS" => toExpr(getenv("GC_PRINT_STATS")),
-		    "GC_LOG_FILE" => toExpr(getenv("GC_LOG_FILE")),
-		    "GC_PRINT_VERBOSE_STATS" => toExpr(getenv("GC_PRINT_VERBOSE_STATS")),
-		    "GC_DUMP_REGULARLY" => toExpr(getenv("GC_DUMP_REGULARLY")),
-		    "GC_BACKTRACES" => toExpr(getenv("GC_BACKTRACES")),
-		    "GC_PRINT_ADDRESS_MAP" => toExpr(getenv("GC_PRINT_ADDRESS_MAP")),
-		    "GC_NPROCS" => toExpr(getenv("GC_NPROCS")),
-		    "GC_MARKERS" => toExpr(getenv("GC_MARKERS")),
-		    "GC_NO_BLACKLIST_WARNING" => toExpr(getenv("GC_NO_BLACKLIST_WARNING")),
-		    "GC_LARGE_ALLOC_WARN_INTERVAL" => toExpr(getenv("GC_LARGE_ALLOC_WARN_INTERVAL")),
-		    "GC_IGNORE_GCJ_INFO" => toExpr(getenv("GC_IGNORE_GCJ_INFO")),
-		    "GC_PRINT_BACK_HEIGHT" => toExpr(getenv("GC_PRINT_BACK_HEIGHT")),
-		    "GC_RETRY_SIGNALS," => toExpr(getenv("GC_RETRY_SIGNALS,")),
-		    "GC_USE_GETWRITEWATCH" => toExpr(getenv("GC_USE_GETWRITEWATCH")),
-		    "GC_DISABLE_INCREMENTAL" => toExpr(getenv("GC_DISABLE_INCREMENTAL")),
-		    "GC_ENABLE_INCREMENTAL" => toExpr(getenv("GC_ENABLE_INCREMENTAL")),
-		    "GC_PAUSE_TIME_TARGET" => toExpr(getenv("GC_PAUSE_TIME_TARGET")),
-		    "GC_FULL_FREQUENCY" => toExpr(getenv("GC_FULL_FREQUENCY")),
-		    "GC_FREE_SPACE_DIVISOR" => toExpr(getenv("GC_FREE_SPACE_DIVISOR")), -- the environment variable
-		    "GC_free_space_divisor" => toExpr(Ccode(long,"GC_get_free_space_divisor()")),           -- the set value in memory
-		    "GC_UNMAP_THRESHOLD" => toExpr(getenv("GC_UNMAP_THRESHOLD")),
-		    "GC_FORCE_UNMAP_ON_GCOLLECT" => toExpr(getenv("GC_FORCE_UNMAP_ON_GCOLLECT")),
-		    "GC_FIND_LEAK" => toExpr(getenv("GC_FIND_LEAK")),
-		    "GC_ALL_INTERIOR_POINTERS" => toExpr(getenv("GC_ALL_INTERIOR_POINTERS")),
-		    "GC_all_interior_pointers" => toExpr(Ccode(long,"GC_get_all_interior_pointers()")),           -- the set value in memory
-		    "GC_DONT_GC" => toExpr(getenv("GC_DONT_GC")),
-		    "GC_TRACE" => toExpr(getenv("GC_TRACE"))
-		    )))
+     if length(s) == 0 then (
+	  h := newHashTable(hashTableClass,nothingClass);
+	  h.beingInitialized = true;
+	  foreach eq in envp do if match(eq,0,"GC_") then (
+	       j := index(eq,0,'=');
+	       if j != -1 then (
+		    keyS := substr(eq,0,j);
+		    valS := substr(eq,j+1);
+		    storeInHashTable(h,toExpr(keyS),toExpr(valS))));
+	  Ccode(void, "
+	       struct GC_prof_stats_s stats;
+	       GC_get_prof_stats(&stats, sizeof stats);");
+	  -- M2 developers may (possibly) care about e.g.: GC_LOG_FILE GC_FIND_LEAK GC_IGNORE_GCJ_INFO GC_LARGE_ALLOC_WARN_INTERVAL
+	  --      GC_RETRY_SIGNALS GC_UNMAP_THRESHOLD GC_FORCE_UNMAP_ON_GCOLLECT GC_BACKTRACES GC_PRINT_ADDRESS_MAP GC_DONT_GC
+	  --      GC_USE_ENTIRE_HEAP GC_TRACE etc.
+	  storeInHashTable(h,toExpr("heapSize"),toExpr(Ccode(long, "stats.heapsize_full - stats.unmapped_bytes")));
+	  storeInHashTable(h,toExpr("bytesAlloc"),toExpr(Ccode(long, "stats.bytes_allocd_since_gc + stats.allocd_bytes_before_gc")));
+	  storeInHashTable(h,toExpr("numGCs"),toExpr(Ccode(long, "stats.gc_no")));
+	  storeInHashTable(h,toExpr("numGCThreads"),toExpr(Ccode(long, "stats.markers_m1 + 1")));
+	  storeInHashTable(h,toExpr("gcCpuTimeSecs"),toExpr(gcTime()));
+	  storeInHashTable(h,toExpr("GC_free_space_divisor"),	-- the set value in memory
+	       toExpr(Ccode(long, "(long) GC_call_with_alloc_lock(GC_get_free_space_divisor_0, NULL)")));
+	  Expr(sethash(h,false)))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("GCstats",GCstats);
 
-header "
-extern void set_gftable_dir(char *); /* defined in library factory, as patched by us */
-";
+showtimefun(a:Code):Expr := (
+     cpuStart := cpuTime();
+     threadStart := threadTime();
+     gcStart := gcTime();
+     ret := eval(a);
+     cpuEnd := cpuTime();
+     threadEnd := threadTime();
+     gcEnd := gcTime();
+     stdError << " -- used "
+	 << cpuEnd - cpuStart << "s (cpu); "
+	 << threadEnd - threadStart << "s (thread); "
+	 << gcEnd - gcStart << "s (gc)" << endl;
+     ret);
+setupop(timeS,showtimefun);
+
+header "extern void set_gftable_dir(char *); /* defined in library factory, as patched by us */";
 setFactoryGFtableDirectory(e:Expr):Expr := (
      when e is d:stringCell do (
      	  Ccode(void,"set_gftable_dir(", tocharstar(d.v), ")");

@@ -24,7 +24,7 @@ newPackage(
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}                 
 	         },
     	Headline => "Adjunction for Surfaces",
-    	DebuggingMode => true
+	Keywords => {"Projective Algebraic Geometry"}
     	)
 
 export {
@@ -406,7 +406,7 @@ doc ///
           {r_1,...,r_s} of multiplicities 
   Outputs
      H: Matrix
-        a 1xn matrix whose entreis are a bases of L(d;r_1p_1,...,r_sp_s)      
+        a 1xn matrix whose entries are a bases of L(d;r_1p_1,...,r_sp_s)      
   Description
      Text
        The function chooses randomly s point p_i in P2 and computes the 
@@ -648,7 +648,7 @@ doc ///
 	to get a rational parametrization. However, one can always parametrize X in terms of the final
 	surface in the adjunction process.
 	
-	The nummerical data are collected in a list with an entry 
+	The numerical data are collected in a list with an entry 
 	
 	(n,d,pi)= (dim Pn_i, degree X_i, sectional genus of X_i)
 	

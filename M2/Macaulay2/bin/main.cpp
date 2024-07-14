@@ -56,6 +56,13 @@ void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
 
+static void * GC_start_performance_measurement_0(void *) {
+#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
+  GC_start_performance_measurement();
+#endif
+  return NULL;
+}
+
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
   /* find the number of environment variables defined */
@@ -63,6 +70,14 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }
 
   GC_INIT();
+  size_t heap_size = GC_get_heap_size(),
+	 min_heap_size = 150'000'000 + getMaxAllowableThreads() * 8'000'000;
+		// each thread is currently started with 8 MB of stack space
+  if (heap_size < min_heap_size)
+    GC_expand_hp(min_heap_size - heap_size);
+  GC_call_with_alloc_lock(GC_start_performance_measurement_0, NULL);
+    // record total time of (full) gcs for GCstats()
+
   IM2_initialize();
 
 #ifndef NDEBUG

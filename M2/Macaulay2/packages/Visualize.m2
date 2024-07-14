@@ -1042,14 +1042,12 @@ document {
      
      UL {
 	 {HREF("https://github.com/AndreaLombardo/BootSideMenu","BootSideMenu.js")},
-	 {HREF("https://github.com/dataarts/webgl-globe/blob/master/globe-vertex-texture/third-party/Three/Detector.js","Detectors.js")},
 	 {HREF("http://getbootstrap.com/","Bootstrap.js")},
 	 {HREF("https://clipboardjs.com/","clipboard.js")},
 	 {HREF("https://d3js.org/","D3.js")},
 	 {HREF("https://jquery.com/","jQuery")},
 	 {HREF("http://refreshless.com/nouislider/","noUiSlider.js")},
-	 {HREF("https://github.com/mrdoob/three.js/","Three.js")},
-	 {HREF("http://underscorejs.org/","Underscore.js")}
+	 {HREF("https://github.com/mrdoob/three.js/","Three.js")}
 	},
          
      
@@ -1285,7 +1283,7 @@ document {
 	 {BOLD "Highlight Neighbors: ", "Allows you to see the neighbors of a vertex when selected.", BR{}, BR{}}, 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 
@@ -1427,7 +1425,7 @@ document {
 	 {BOLD "Highlight Neighbors: ", "Allows you to see the neighbors of a vertex when selected.", BR{}, BR{}}, 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 
@@ -1530,7 +1528,7 @@ document {
 	 {BOLD "Fix extremal nodes: ", "Forces extremal nodes to be placed at the top and bottom of the image.", BR{}, BR{}}, 	 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 
@@ -1627,7 +1625,7 @@ document {
 	 {BOLD "Highlight faces: ", "Allows you to see the connecting faces when a vertex is selected.", BR{}, BR{}}, 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 

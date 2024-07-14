@@ -3,34 +3,34 @@
 ---------------------------------------------------------------------------
 -- PURPOSE: Computations with vector bundles on toric varieties 
 -- PROGRAMMER : René Birkner 
--- UPDATE HISTORY : November 2008, November 2009, April 2010
+-- UPDATE HISTORY : November 2008, November 2009, April 2010, May 2024
 ---------------------------------------------------------------------------
 newPackage("ToricVectorBundles",
     Headline => "vector bundles on toric varieties",
-    Version => "1.1",
-    Date => "August 21, 2014",
+    Version => "1.2",
+    Date => "May 7, 2024",
     Authors => {
-         {Name => "René Birkner",
-	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/indexen.htm",
-	  Email => "rbirkner@math.fu-berlin.de"},
+         {Name => "René Birkner"
+	  },
          {Name => "Nathan Ilten",
-	  HomePage => "http://people.cs.uchicago.edu/~nilten/",
-	  Email => "nilten@cs.uchicago.edu"},
-         {Name => "Lars Petersen",
-	  Email => "petersen@math.fu-berlin.de"}},
+	  HomePage => "https://www.sfu.ca/~nilten/",
+	  Email => "nilten@sfu.ca"},
+         {Name => "Lars Petersen"
+	  }},
     Keywords => {"Toric Geometry"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Computations with equivariant toric vector bundles",
 	 "acceptance date" => "2010-06-15",
-	 "published article URI" => "http://j-sag.org/Volume2/jsag-3-2010.pdf",
-	 "published code URI" => "http://j-sag.org/Volume2/ToricVectorBundles.m2",
+	 "published article URI" => "https://msp.org/jsag/2010/2-1/p03.xhtml",
+	 "published article DOI" => "10.2140/jsag.2010.2.11",
+	 "published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x03-code.zip",
 	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ToricVectorBundles.m2",
 	 "release at publication" => "314a1e7a1a5f612124f23e2161c58eabeb491f46",
 	 "version at publication" => "1.0",
 	 "volume number" => "2",
-	 "volume URI" => "http://j-sag.org/Volume2/"
+	 "volume URI" => "https://msp.org/jsag/2010/2-1/"
 	 },
     Configuration => {},
     PackageImports => {"Varieties"},
@@ -92,6 +92,7 @@ export {"ToricVectorBundle",
      "hirzebruchFan",
      "pp1ProductFan", 
      "projectiveSpaceFan",
+     "raySortOfFan",
      "customConeSort"}
 
 
@@ -1246,7 +1247,7 @@ rank ToricVectorBundle := T -> T#"rank of the vector bundle"
 -- PURPOSE : Giving the rays of the underlying Fan of a toric vector bundle
 --   INPUT : 'tvb',  a TorcVectorBundle
 --  OUTPUT : 'L',  a List containing the rays of the Fan underlying the bundle
-rays ToricVectorBundle := tvb -> raySortOfFan tvb#"ToricVariety"
+rays ToricVectorBundle := {} >> o -> tvb -> raySortOfFan tvb#"ToricVariety"
 
 
 -- PURPOSE : Computing the 'l'-th symmetric power of a Toric Vector Bundle
@@ -2399,7 +2400,7 @@ document {
 	  "b" => Boolean => {"whether ", TT "E", " and ", TT "F", " are isomorphic"}
 	  },     
      
-     PARA{}, TT "E"," and ",TT "F"," must be vector bundles over the same fan. Two equivariant vector 
+     PARA{}, TT "E"," and ",TT "F"," must be vector bundles over the same fan and the filtrations must be defined over the same ring. Two equivariant vector 
      bundles in Klyachko's description are isomorphic if there exists a simultaneous isomorphism for 
      the filtered vector spaces of all rays. The method then returns whether the bundles are 
      isomorphic.",     
@@ -2413,8 +2414,9 @@ document {
      
      PARA{}, "To obtain the isomorphism, if two bundles are isomorphic use ",TO isomorphism,".",
      
-     SeeAlso => {isomorphism,base,filtration,details}
+     SeeAlso => {isomorphism,base,filtration,details},
      
+     Caveat => {"If ",TT "E"," and ",TT "F"," are defined over different rings (e.g. ",TT "QQ"," and ",TT "ZZ",") then ",TT "areIsomorphic(E,F)"," will return ",TT "false",". Likewise, if the bundles are only defined over ",TT "ZZ",", the function will check for an isomorphism of the filtrations over ",TT "ZZ","."}
      }
 
 document {
@@ -2473,6 +2475,7 @@ document {
 	  " cartierIndex(L,F)"
 	  },
      
+     Caveat=> {"The ordering of the list ",TT "L"," must correspond to the ordering of the rays of the fan output by ",TO raySortOfFan,"."},
      SeeAlso => {weilToCartier}
      
      }
@@ -2887,7 +2890,9 @@ document {
      PARA{}, "Note that the data given in the description of ",TT "E"," defines an equivariant vector bundle 
      on the toric variety exactly if there exists a set of weight vectors for each maximal cone that admits a 
      decomposition. The function ",TO isVectorBundle," uses this.",
-     
+    
+     Caveat => {TT "existsDecomposition"," is known to produce incorrect output."},
+ 
      SeeAlso => {findWeights,isVectorBundle,(maxCones,ToricVectorBundle)}
      
      }
@@ -3220,6 +3225,7 @@ document {
 	  " isVectorBundle E"
 	  },
      
+     Caveat => {TT "isVectorBundle"," is known to produce incorrect output for Klyachko bundles. The user is recommended to instead use ",TT "isLocallyFree"," from the package ",TT "PositivityToricBundles","."},
      SeeAlso => {findWeights,
 	  existsDecomposition,
 	  addBase,
@@ -3422,7 +3428,8 @@ document {
 	  " details E1"
 	  },
      
-     SeeAlso => {base,filtration,details,isGeneral}
+     SeeAlso => {base,filtration,details,isGeneral},
+     Caveat =>{"In general, ",TT "randomDeformation"," will only produce a reflexive sheaf, not a locally free one. However, for smooth toric surfaces, equivariant reflexive sheaves are automatically locally free."}
      }
 
 document {
@@ -3473,6 +3480,29 @@ document {
 	  charts}
      
      }
+
+
+document {
+     Key => {raySortOfFan},
+     Headline => "The sorted rays of the fan",
+     Usage => " L = raySortOfFan F",
+     Inputs => {
+	  "F" => Fan
+	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     PARA{}, "Returns the rays of the fan as a list. Each ray is 
+     given as a one column matrix. This list is sorted in the same order as is used with all routines involving Klyachko-style vector bundles.",
+     
+     EXAMPLE {
+	  " F = projectiveSpaceFan 2",
+	  " raySortOfFan F"
+	  }
+     }
+
+
 
 document {
      Key => {regCheck, (regCheck,ToricVectorBundleKaneyama)},
@@ -3843,7 +3873,8 @@ document {
 	  " E1 = twist(E,L)",
 	  " details E1"
 	  },
-     
+    
+     Caveat=> {"The ordering of the list ",TT "L"," must correspond to the ordering of the rays of the fan output by ",TO raySortOfFan,"."},
      SeeAlso => {weilToCartier,cartierIndex,details}
      
      }
@@ -3882,6 +3913,7 @@ document {
 	  " details E"
 	  },
      
+     Caveat=> {"The ordering of the list ",TT "L"," must correspond to the ordering of the rays of the fan output by ",TO raySortOfFan,"."},
      SeeAlso => {cartierIndex}
      
      }

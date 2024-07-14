@@ -63,7 +63,7 @@ document {
      }
 
 document { 
-     Key => {(mingens,Module),(mingens,Ideal)},
+     Key => {(mingens,Module),(mingens,Ideal),(mingens,MonomialIdeal)},
      Usage => "mingens I",
      Inputs => {
 	  "I" => "or an ideal"

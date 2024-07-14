@@ -34,16 +34,17 @@ newPackage(
 	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Decompositions of binomial ideals",
 	     "acceptance date" => "2012-02-06",
-	     "published article URI" => "http://j-sag.org/Volume4/jsag-1-2012.pdf",
-	     "published code URI" => "http://j-sag.org/Volume4/Binomials.m2",
+	     "published article URI" => "https://msp.org/jsag/2012/4-1/p01.xhtml",
+	     "published article DOI" => "10.2140/jsag.2012.4.1",
+	     "published code URI" => "https://msp.org/jsag/2012/4-1/jsag-v4-n1-x01-code.zip",
 	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Binomials.m2",
 	     "release at publication" => "6c927c4f11724e29840c889e5ac7a426b17685ab",
 	     "version at publication" => "1.0",
 	     "volume number" => "4",
-	     "volume URI" => "http://j-sag.org/Volume4/"
+	     "volume URI" => "https://msp.org/jsag/2012/4-1/"
 	     }
     	)
    

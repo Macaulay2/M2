@@ -316,14 +316,15 @@ doc ///
 Node
   Key
     homomorphism
+   (homomorphism, Vector)
    (homomorphism, Matrix)
   Headline
     get the homomorphism from element of Hom
   Usage
     homomorphism f
   Inputs
-    f:Matrix
-      corresponding to a map $R^1 \to \mathrm{Hom}(M,N)$
+    f:{Vector,Matrix}
+      corresponding to an element in $\mathrm{Hom}(M,N)$ or a map $R^1 \to \mathrm{Hom}(M,N)$
   Outputs
     :Matrix
       the map $M \to N$, corresponding to the element $f \in \mathrm{Hom}(M,N)$

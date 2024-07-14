@@ -28,11 +28,10 @@ doc ///
     RObject
     (NewFromMethod, RObject, Boolean)
     (NewFromMethod, RObject, CC)
-    (NewFromMethod, RObject, Constant)
     (NewFromMethod, RObject, List)
     (NewFromMethod, RObject, Matrix)
     (NewFromMethod, RObject, Nothing)
-    (NewFromMethod, RObject, QQ)
+    (NewFromMethod, RObject, Number)
     (NewFromMethod, RObject, RR)
     (NewFromMethod, RObject, Sequence)
     (NewFromMethod, RObject, String)

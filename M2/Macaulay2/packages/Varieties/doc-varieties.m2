@@ -15,6 +15,37 @@ document { Key => Variety, Headline => "the class of all algebraic varieties", S
 document { Key => AffineVariety, Headline => "the class of all affine varieties" }
 document { Key => ProjectiveVariety, Headline => "the class of all projective varieties" }
 
+document { Key => "varieties",
+    "We may use ", TO "Spec", " to create an affine scheme (or algebraic variety) with
+    a specified coordinate ring and ", TO "ring", " to recover the ring.",
+    EXAMPLE {
+	"R = ZZ/2[x,y,z]",
+	"X = Spec R",
+	"ring X",
+	"dim X",
+	},
+    "The variety ", TT "X", " is a 3-dimensional affine space.",
+    PARA{},
+    "We may form products.",
+    EXAMPLE {
+	"X ** X",
+	"dim oo",
+	},
+    PARA{},
+    "We may use ", TO "Proj", " to create a projective scheme (or algebraic variety)
+    with a specified homogeneous coordinate ring.",
+    EXAMPLE {
+	"Y = Proj R",
+	"ring Y",
+	"dim Y",
+	},
+    "The most important reason for introducing the notion of algebraic variety into a computer
+    algebra system is to support the notion of coherent sheaf.  See ", TO "coherent sheaves", "
+    for information about that.",
+    PARA{},
+    "For more details about varieties, see ", TO "Variety", "."
+    }
+
 document {
     Key => {Spec, (Spec, Ring)},
     Headline => "make an affine variety",

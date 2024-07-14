@@ -1,7 +1,6 @@
 doc ///
   Key
     (truncate, Number)
-    (truncate, Constant)
   Headline
     round a number toward zero
   Usage

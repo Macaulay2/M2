@@ -1,6 +1,7 @@
 --		Copyright 1996-2006 by Daniel R. Grayson and Michael E. Stillman
 
 needs "enginering.m2"
+needs "polyrings.m2"
 needs "matrix1.m2"
 
 -----------------------------------------------------------------------------
@@ -80,14 +81,15 @@ ZZp Ideal := opts -> (I) -> (
      else if savedQuotients#?(typ, n) then
          savedQuotients#(typ, n)
      else (
-	  if not isPrime n
-	  then error ("ZZ/n not implemented yet for composite n = ", toString n);
+	  if not isPrime n or n > 2^64
+	  then return ZZ[DegreeRank => 0]/n;
 	  S := new QuotientRing from 
       if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n
         else if typ === "Aring" then rawARingZZp n
         else if typ === "Old" then rawZZp n
-        else error("unknown implementation choice: "|typ|///. Choices are "Flint" (default), "Ffpack", "Aring", "Old"///);
+        else error("unknown implementation choice: ", typ, ". ", newline,
+	    ///Choices are "Flint" (default), "Ffpack", "Aring", "Old"///);
 	  S.cache = new CacheTable;
 	  S.isBasic = true;
 	  S.ideal = I;

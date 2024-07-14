@@ -1,0 +1,19 @@
+-- -*- M2-comint -*- hash: 1062780515572211964
+
+i1 : X = toricProjectiveSpace 3;
+
+i2 : toricCycle(X_0)
+
+o2 = X
+      {0}
+
+o2 : ToricCycle on X
+
+i3 : toricCycle(X_1+X_2)
+
+o3 = X    + X
+      {1}    {2}
+
+o3 : ToricCycle on X
+
+i4 : 

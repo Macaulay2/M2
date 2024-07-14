@@ -16,3 +16,14 @@ diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/librari
  #include <CoreFoundation/CoreFoundation.h>
  
  /* From "Inside Mac OS X - Mach-O Runtime Architecture" published by Apple
+--- gc-8.0.4/mallocx.c	2024-02-09 21:01:29.914830890 -0500
++++ gc-8.0.4/mallocx.c	2024-02-09 21:01:40.854964129 -0500
+@@ -470,7 +470,7 @@ GC_API void GC_CALL GC_generic_malloc_ma
+ 
+     /* As a last attempt, try allocating a single object.  Note that    */
+     /* this may trigger a collection or expand the heap.                */
+-      op = GC_generic_malloc_inner(lb, k);
++      op = GC_generic_malloc_inner(lb - EXTRA_BYTES, k);
+       if (0 != op) obj_link(op) = 0;
+ 
+   out:

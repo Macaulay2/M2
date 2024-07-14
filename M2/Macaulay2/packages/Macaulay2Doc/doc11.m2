@@ -83,8 +83,6 @@ document {
      }
 
 undocumented { 
-     (symbol ==, Constant, RingElement),
-     (symbol ==, RingElement, Constant),
      ((symbol SPACE, symbol =), Function, Thing),
      ((symbol _*, symbol =), RingFamily) 
      }

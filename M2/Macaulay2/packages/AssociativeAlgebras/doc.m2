@@ -1480,7 +1480,7 @@ doc ///
      n : ZZ
      Strategy => String
        either "F4Parallel", "F4", or "Naive".  Default for finite prime fields with
-       a homogeneous ideal is "F4Parallel", and otherwise deault is "Naive", which
+       a homogeneous ideal is "F4Parallel", and otherwise default is "Naive", which
        uses a standard Buchberger-like algorithm
    Outputs
      Igb : Matrix

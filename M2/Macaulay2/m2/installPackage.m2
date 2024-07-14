@@ -298,7 +298,8 @@ findDocumentationPaths := path -> (
 		    packagesdir := Layout#i#"packages";
 		    if not match(packagesdir | "$", dir) then return;
 		    prefix := substring(dir, 0, #dir - #packagesdir);
-		    (prefix, i))))))
+		    if isDirectory(prefix | Layout#i#"docdir")
+		    then (prefix, i))))))
 
 -- TODO: this function runs on startup, unless -q is given, and takes about 0.1~0.2s
 makePackageIndex = method(Dispatch => Thing)
@@ -318,7 +319,7 @@ makePackageIndex List := path -> (
 	BODY {
 	    PARA {"This is the directory for Macaulay2 and its packages. Bookmark this page for future reference,
 		or run the ", TT "viewHelp", " command in Macaulay2 to open up your browser on this page.
-		See the ", homeButton, " for the latest version."},
+		See the ", homeButton, " website for the latest version."},
 	    HEADER3 "Documentation",
 	    UL nonnull splice {
 		if prefixDirectory =!= null then (
@@ -723,13 +724,6 @@ installPackage Package := opts -> pkg -> (
 		));
 	close rawdocDatabase;
 	verboseLog "closed the database";
-
-	-- run tests that are functions
-	-- TODO: is this used anywhere?
-	verboseLog "running tests that are functions";
-	scan(pairs pkg#"test inputs", (key, str) -> if instance(str, Function) then (
-		verboseLog("  running test ", key, ", function ", str);
-		str()));
 
 	-- directories for cached and generated example outputs
 	exampleDir := realpath currentSourceDir | pkg#"pkgname" | "/examples" | "/";

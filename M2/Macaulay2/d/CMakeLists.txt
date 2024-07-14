@@ -20,7 +20,7 @@ set(CLIST
   memdebug.c memdebug.h
   debug.c debug.h
   getpagesize.h M2mem.h
-  gmp_aux.c gmp_aux.h # TODO: needed with mpir?
+  gmp_aux.c gmp_aux.h
   gdbm_interface.c
   )
 
@@ -134,8 +134,9 @@ foreach(_d_source IN LISTS DLIST)
 endforeach()
 
 # To avoid unnecessary recompiling, only version.dd is given GIT_DESCRIPTION
-set_source_files_properties(version-tmp.cc
-  PROPERTIES COMPILE_DEFINITIONS GIT_DESCRIPTION="${GIT_DESCRIPTION}")
+set_property(SOURCE version-tmp.cc APPEND PROPERTY COMPILE_DEFINITIONS
+  GIT_DESCRIPTION="${GIT_DESCRIPTION}"
+  GIT_BRANCH="${GIT_BRANCH}")
 
 ###############################################################################
 ## Compile the interpreter

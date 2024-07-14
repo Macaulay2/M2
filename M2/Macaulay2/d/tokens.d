@@ -12,7 +12,7 @@ use expr;
 
 -- misc
 
-export flush(f:TokenFile):void := (f.nexttoken=NULL; flush(f.posFile););
+export flushToken(f:TokenFile):void := (f.nexttoken=NULL; flushInput(f.posFile););
 export close(file:TokenFile):int := close(file.posFile);
 export fileErrorMessage(f:TokenFile):string := fileErrorMessage(f.posFile);
 export fileError(f:TokenFile):bool := fileError(f.posFile);
