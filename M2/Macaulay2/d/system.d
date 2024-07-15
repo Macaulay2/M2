@@ -23,9 +23,6 @@ header "
 ";
 
 declarations "
-#ifndef _GNU_SOURCE
- #define _GNU_SOURCE
-#endif
 #ifdef HAVE_UNISTD_H
  #include <unistd.h>
 #endif
@@ -127,6 +124,7 @@ import exec(argv:array(string)):int;	-- beware: this routine calls GC_malloc
 export execstar(argv:charstarstar) ::= Ccode(int,"execvp(",argv,"[0],",argv,")");
 import getenv(s:string):string;
 import cpuTime():double;
+import threadTime():double;
 import strcmp(s:string,t:string):int;
 import strnumcmp(s:string,t:string):int;
 import randomint():int;

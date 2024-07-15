@@ -2,8 +2,9 @@
 use tokens;
 use lex;
 
-export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
+export parseRR(s:string):RRorNull := (			    -- 4.33234234234p345e-9
      prec := defaultPrecision;
+     overflow := false;
      ss := new string len length(s) + 1 do (		    -- we add 1 to get at least one null character at the end
      	  inPrec := false;
 	  foreach c in s do (
@@ -13,7 +14,11 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 		    )
 	       else if inPrec then (
 		    if isdigit(c) then (
-			 prec = 10 * prec + (c - '0');
+			 if !overflow then (
+			     newprec := 10 * prec + (c - '0');
+			     if newprec < prec
+			     then overflow = true
+			     else prec = newprec)
 			 )
 		    else (
 			 inPrec = false;
@@ -25,7 +30,8 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 		    ));
 	  while true do provide char(0);
 	  );
-     toRR(ss,prec));
+      if overflow then RRorNull(null())
+      else RRorNull(toRR(ss, prec)));
 parseError := false;
 parseMessage := "";
 utf8(w:varstring,i:int):varstring := (
@@ -114,15 +120,15 @@ export parseString(s:string):string := (
      tostring(v)
      );
 
-export thenW := Word("-*dummy word: then*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export whenW := Word("-*dummy word: when*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export elseW := Word("-*dummy word: else*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export ofW := Word("-*dummy word: of*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export doW := Word("-*dummy word: do*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export listW := Word("-*dummy word: list*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export fromW := Word("-*dummy word: from*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export inW := Word("-*dummy word: in*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export toW := Word("-*dummy word: to*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export thenW := Word("-*dummy word: then*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export whenW := Word("-*dummy word: when*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export elseW := Word("-*dummy word: else*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export ofW := Word("-*dummy word: of*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export doW := Word("-*dummy word: do*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export listW := Word("-*dummy word: list*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export fromW := Word("-*dummy word: from*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export inW := Word("-*dummy word: in*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export toW := Word("-*dummy word: to*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export debug := false;
 export tracefile := dummyfile;
 export openTokenFile(filename:string):(TokenFile or errmsg) := (
@@ -220,7 +226,7 @@ export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      if token == errorToken then return errorTree;
      ret := token.word.parse.funs.unary(token,file,prec,obeylines);
      if ret == errorTree then (
-	  if isatty(file) || file.posFile.file.fulllines then flush(file) else skip(file,prec));
+	  if isatty(file) || file.posFile.file.fulllines then flushToken(file) else skip(file,prec));
      ret
      );
 export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -238,7 +244,7 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      	  else ParseTree(dummy(position(token)))
 	  );
      if ret == errorTree then (
-	  if isatty(file) then flush(file) else skip(file,prec));
+	  if isatty(file) then flushToken(file) else skip(file,prec));
      ret
      );
 export binaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (

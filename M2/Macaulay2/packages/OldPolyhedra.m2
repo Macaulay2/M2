@@ -14,16 +14,17 @@ newPackage("OldPolyhedra",
     Date => "August 21, 2014",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Polyhedra: a package for computations with convex polyhedral objects",
 	 "acceptance date" => "2009-09-07",
-	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
-	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
+	 "published article URI" => "https://msp.org/jsag/2009/1-1/p03.xhtml",
+	 "published article DOI" => "10.2140/jsag.2009.1.11",
+	 "published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x03-code.zip",
 	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Polyhedra.m2",
 	 "release at publication" => "c065ec7651789907627333018dc7d675968639e4", -- git commit number in hex
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
-	 "volume URI" => "http://j-sag.org/Volume1/"
+	 "volume URI" => "https://msp.org/jsag/2009/1-1/"
 	 },
     Keywords => {"Convex Geometry"},
     Authors => {
@@ -91,8 +92,8 @@ export {"PolyhedralObject",
 	"isPure",
 	"isReflexive",
 	"isSimplicial", 
-	"isSmooth", 
-	"isVeryAmple",
+	--"isSmooth", 
+	--"isVeryAmple",
 	"boundaryMap", 
 	"dualFaceLattice", 
 	"faceLattice",
@@ -1479,22 +1480,18 @@ isSimplicial PolyhedralObject := (cacheValue symbol isSimplicial)(X -> (
 
 
 -- PURPOSE : Checks if the input is smooth
-isSmooth = method(TypicalValue => Boolean)
-
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
-isSmooth Cone := C -> (
+isSmooth Cone := {} >> o -> C -> (
      -- generating the non-linealityspace cone of C
      R := lift(transpose rays C,ZZ);
      n := dim C - C#"dimension of lineality space";
      -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
      numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1))
-     
-	   
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
-isSmooth Fan := F -> (
+isSmooth Fan := {} >> o -> F -> (
      if not F.cache.?isSmooth then F.cache.isSmooth = all(toList F#"generatingCones",isSmooth);
      F.cache.isSmooth)
 
@@ -1502,8 +1499,7 @@ isSmooth Fan := F -> (
 -- PURPOSE : Checks if a polytope is very ample
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
-isVeryAmple = method()
-isVeryAmple Polyhedron := P -> (
+isVeryAmple Polyhedron := {} >> o -> P -> (
      if not isCompact P then error("The polyhedron must be compact");
      if not dim P == ambDim P then error("The polyhedron must be full dimensional");
      if not isLatticePolytope P then error("The polyhedron must be a lattice polytope");
@@ -2328,7 +2324,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
      if contains(P,convexHull p) then (
 	  (M,v) := halfspaces P;
      	  (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  v = promote(v,QQ);
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
@@ -2350,7 +2346,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
      if contains(C,posHull p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
@@ -5870,7 +5866,7 @@ document {
      }
 
 document {
-     Key => {isSmooth, (isSmooth,Cone), (isSmooth,Fan)},
+     Key => {(isSmooth,Cone), (isSmooth,Fan)},
      Headline => "checks if a Cone or Fan is smooth",
      Usage => " b = isSmooth C \nb = isSmooth F",
      Inputs => {

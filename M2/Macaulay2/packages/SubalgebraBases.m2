@@ -35,7 +35,8 @@ newPackage(
         }},
     Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-    DebuggingMode => false -- set to true only during development
+    DebuggingMode => false, -- set to true only during development
+    Keywords => {"Commutative Algebra"}
 )
 
 needs "./SubalgebraBases/exports.m2"

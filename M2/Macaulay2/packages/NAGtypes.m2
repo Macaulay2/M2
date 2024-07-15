@@ -22,7 +22,7 @@ export {
      -- service functions
      "generalEquations", 
      -- witness set
-     "WitnessSet", "witnessSet", "equations", "slice", "points", 
+     "WitnessSet", "witnessSet", "equations", "slice", "points", "declareIrreducible", 
      "Equations", "Slice", "Points", "ProjectionDimension", 
      "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
      "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",

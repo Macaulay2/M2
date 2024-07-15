@@ -16,7 +16,6 @@ files.m2
 set.m2
 fold.m2
 max.m2
-structure.m2
 combinatorics.m2
 lists.m2
 tables.m2

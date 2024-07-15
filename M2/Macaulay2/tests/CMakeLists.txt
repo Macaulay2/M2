@@ -103,7 +103,7 @@ add_custom_target(M2-tests-ComputationsBook)
 set(CHAPTERS completeIntersections constructions d-modules exterior-algebra geometry
   monomialIdeals preface programming schemes solving toricHilbertScheme varieties)
 
-set(M2_ARGS -q --stop --print-width 0)
+set(M2_ARGS -q --stop --print-width 0 --silent)
 
 foreach(_chapter IN LISTS CHAPTERS)
 
@@ -124,7 +124,7 @@ foreach(_chapter IN LISTS CHAPTERS)
   ###############################################################################
   # we depend on "diff" accepting some options that perhaps only GNU diff does
   add_custom_target(M2-tests-ComputationsBook-${_chapter}
-    COMMAND ${M2} ${M2_ARGS} -e path=${M2_PATH} -e ${M2_TEST_STRING} -e "exit 0" > test.out
+    COMMAND ${M2} ${M2_ARGS} -e path=${M2_PATH} -e ${M2_TEST_STRING} -e "exit 0" > test.out 2>&1
     COMMAND sed -f ${book_patterns} -f ${chapter_patterns} > test.out.trim < test.out
     COMMAND sed -f ${book_patterns} -f ${chapter_patterns} > test.out.expected.trim
       < ${CMAKE_CURRENT_SOURCE_DIR}/${_group}/test.out.expected

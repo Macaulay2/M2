@@ -9,9 +9,10 @@ applyTable = (m,f) -> apply(m, v -> apply(v,f))
 subtable = (u,v,m) -> table(u, v, (i,j)->m_i_j)
 
 isTable = m -> (
-     instance(m, List) and
+     instance(m, List) and (
+     #m == 0 or
      #m > 0 and
-     all(m, row -> instance(row, List) and #row === #m#0))
+     all(m, row -> instance(row, List) and #row === #m#0)))
 
 transpose List := List => m -> (
      if isTable m

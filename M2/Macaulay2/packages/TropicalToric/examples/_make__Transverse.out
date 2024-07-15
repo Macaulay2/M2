@@ -1,0 +1,26 @@
+-- -*- M2-comint -*- hash: 14925543441925872208
+
+i1 : rayList={{1,0},{1,1},{0,1},{-1,-1}};
+
+i2 : coneList={{0,1},{1,2},{2,3},{3,0}};
+
+i3 : X = normalToricVariety fan (transpose matrix rayList,coneList);
+
+i4 : D = X_0+X_1;
+
+o4 : ToricDivisor on X
+
+i5 : C = {1,2};
+
+i6 : isTransverse(D,C)
+
+o6 = false
+
+i7 : makeTransverse(D,C)
+
+o7 = 2*X  + 0 + 0 + X
+        0            3
+
+o7 : ToricDivisor on X
+
+i8 : 

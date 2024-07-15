@@ -56,10 +56,11 @@ struct ThreadTask
   pthreadMutex m_Mutex;
   ///run task
   void run(SupervisorThread* thread);
-  ///Condition variable for task
+  ///Condition variable for task done or canceled
   pthread_cond_t m_FinishCondition;
   ///Current thread running on
   SupervisorThread* m_CurrentThread;
+  ///Wait until the task is done or canceled
   void* waitOn();
 };
 
@@ -134,8 +135,8 @@ struct ThreadSupervisor
   std::list<ThreadTask*> m_CanceledTasks;
   ///mutex for accessing lists
   pthreadMutex m_Mutex;
-  ///new task waiting
-  pthread_cond_t m_TaskWaitingCondition;
+  ///new task ready to run
+  pthread_cond_t m_TaskReadyToRunCondition;
   ///list of supervisor threads
   std::list<SupervisorThread*> m_Threads;
   ///set of initialized pointers

@@ -264,7 +264,7 @@ dbmopenhelper(filename:string,is_mutable:bool):Expr := (
     if handle == -1
     then buildErrorPacket(dbmstrerror() + " : " + filename)
     else (
-	db := Database(filename,0,handle,true,is_mutable);
+	db := Database(filename,hash_t(0),handle,true,is_mutable);
 	db.hash = hashFromAddress(Expr(db));
 	Expr(db)));
 export dbmopenin(filename:string):Expr := dbmopenhelper(filename, false);

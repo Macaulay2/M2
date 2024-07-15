@@ -201,21 +201,21 @@ TEST ///
   assert(betti C0 == betti C3)
 
   I = ideal I_*
-  (usedtime, C) = toSequence timing freeResolution(I, LengthLimit => 6, Strategy => 0)
+  (usedtime, C) = toSequence elapsedTiming freeResolution(I, LengthLimit => 6, Strategy => 0)
   assert isWellDefined C
   assert(length C == 6)
   
-  (usedtime1, C1) = toSequence timing freeResolution(I, LengthLimit => 6, Strategy => 1) -- no recomputation
+  (usedtime1, C1) = toSequence elapsedTiming freeResolution(I, LengthLimit => 6, Strategy => 1) -- no recomputation
   assert isWellDefined C1
   assert(length C1 == 6)
   assert(usedtime1 < usedtime/5) -- this /5 is a heuristic, just to check that essentially no computation is happening for usedtime1
 
-  (usedtime2, C2) = toSequence timing freeResolution(I, LengthLimit => 7, Strategy => 1)
+  (usedtime2, C2) = toSequence elapsedTiming freeResolution(I, LengthLimit => 7, Strategy => 1)
   assert isWellDefined C2
   assert(length C2 == 7)
   assert(usedtime1 < usedtime2/2)
   
-  (usedtime3, C3) = toSequence timing freeResolution(I, LengthLimit => 5, Strategy => 0) -- does change length, no recomputation
+  (usedtime3, C3) = toSequence elapsedTiming freeResolution(I, LengthLimit => 5, Strategy => 0) -- does change length, no recomputation
   assert isWellDefined C3
   assert(length C3 == 5)
   assert(usedtime3 < usedtime2/2)
@@ -718,17 +718,17 @@ TEST ///
   I = ideal"abc-de2, abd-c2d, ac2-bd2, abcde"
   gbTrace=2
 
-  (usedtime1, C) = toSequence timing freeResolution(I, Strategy => Nonminimal)
+  (usedtime1, C) = toSequence elapsedTiming freeResolution(I, Strategy => Nonminimal)
   assert isWellDefined C
 
-  (usedtime2, C2) = toSequence timing freeResolution(I, Strategy => Nonminimal)
-  assert(usedtime2 < usedtime1/10)
+  (usedtime2, C2) = toSequence elapsedTiming freeResolution(I, Strategy => Nonminimal)
+  assert BinaryOperation(symbol <, usedtime2, usedtime1/10)
 
-  (usedtime3, C3) = toSequence timing freeResolution I
-  assert(usedtime3 >  5*usedtime2)
+  (usedtime3, C3) = toSequence elapsedTiming freeResolution I
+  assert BinaryOperation(symbol >, usedtime3, 5*usedtime2)
 
-  (usedtime4, C4) = toSequence timing freeResolution(I, Strategy => Engine)
-  assert(usedtime4 < usedtime3/2)
+  (usedtime4, C4) = toSequence elapsedTiming freeResolution(I, Strategy => Engine)
+  assert BinaryOperation(symbol <, usedtime4, usedtime3/2)
 
   freeResolution(I, Strategy => 0) -- not recomputing
   freeResolution(I, Strategy => 1) -- not recomputing

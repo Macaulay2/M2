@@ -2,10 +2,10 @@
 -- put bindings to variables before the forward references, for safety
 use hashtables;
 use convertr;
-export globalAssignmentHooks := newHashTable(mutableHashTableClass,nothingClass);
+export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
-export evalSequenceHadError := false;
-export evalSequenceErrorMessage := nullE;
+export threadLocal evalSequenceHadError := false;
+export threadLocal evalSequenceErrorMessage := nullE;
 threadLocal errorreturn := nullE;
 --The recycleBin provides essentially a linked list of frames up to size 20 for easy reuse.
 --Questions: Can this lead to excess memory leaks if you create a ton of frames of the same size?
@@ -1444,7 +1444,7 @@ export evalraw(c:Code):Expr := (
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
 	  is m:functionCode do (
-	       fc := FunctionClosure(noRecycle(localFrame),m,0);
+	       fc := FunctionClosure(noRecycle(localFrame),m,hash_t(0));
 	       fc.hash = hashFromAddress(Expr(fc));
 	       return Expr(fc))
 	  is r:localMemoryReferenceCode do (
@@ -1692,7 +1692,7 @@ setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
-scanpairs(f:Expr,obj:HashTable):Expr := (
+scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -1710,13 +1710,13 @@ scanpairsfun(e:Expr):Expr := (
      if	       o.Mutable
      then      WrongArg("an immutable hash table")
      else      scanpairs(a.1,o)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
-mappairs(f:Expr,o:HashTable):Expr := (
+mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1725,7 +1725,7 @@ mappairs(f:Expr,o:HashTable):Expr := (
 	       if p == p.next then break;
 	       v := applyEEE(f,p.key,p.value);
 	       when v 
-	       is Error do return v 
+	       is Error do return v
 	       is Nothing do nothing
 	       is b:List do (
 		    if b.Class != optionClass then return mpre();
@@ -1752,12 +1752,12 @@ mappairsfun(e:Expr):Expr := (
      if        o.Mutable 
      then      WrongArg("an immutable hash table")
      else      mappairs(a.1,o)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
 
-export mapkeys(f:Expr,o:HashTable):Expr := (
+export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1771,7 +1771,7 @@ export mapkeys(f:Expr,o:HashTable):Expr := (
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
-export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (
+export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1806,12 +1806,12 @@ mapkeysfun(e:Expr):Expr := (
      if        o.Mutable
      then      WrongArg("an immutable hash table")
      else      if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2,3)
      else      WrongNumArgs(2,3));
 setupfun("applyKeys",mapkeysfun);
 
-export mapvalues(f:Expr,o:HashTable):Expr := (
+export mapvalues(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      hadError := false;
@@ -1845,7 +1845,7 @@ mapvaluesfun(e:Expr):Expr := (
      if        o.Mutable
      then      WrongArg("an immutable hash table")
      else      mapvalues(a.1,o)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("applyValues",mapvaluesfun);
@@ -1860,6 +1860,7 @@ merge(e:Expr):Expr := (
 	       z := copy(x);
 	       z.Mutable = true;
 	       z.beingInitialized = true;
+	       if (y.Mutable) then lockRead(y.mutex);
 	       foreach bucket in y.table do (
 		    q := bucket;
 		    while q != q.next do (
@@ -1867,7 +1868,10 @@ merge(e:Expr):Expr := (
 			 if val != notfoundE then (
 			      t := applyEEE(g,val,q.value);
 			      when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(z,q.key);
+			      	   if err.message != continueMessage then (
+					if (y.Mutable) then unlock(y.mutex);
+					return t)
+				   else remove(z,q.key);
 			      	   )
 			      else (
 				   storeInHashTable(z,q.key,q.hash,t);
@@ -1877,6 +1881,7 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
+	       if (y.Mutable) then unlock(y.mutex);
 	       mut := x.Mutable && y.Mutable;
 	       if x.parent == y.parent then (
 		    z.Class = commonAncestor(x.Class,y.Class);
@@ -1890,6 +1895,7 @@ merge(e:Expr):Expr := (
 	       z := copy(y);
 	       z.Mutable = true;
 	       z.beingInitialized = true;
+	       if (x.Mutable) then lockRead(x.mutex);
 	       foreach bucket in x.table do (
 		    q := bucket;
 		    while q != q.next do (
@@ -1897,7 +1903,10 @@ merge(e:Expr):Expr := (
 			 if val != notfoundE then (
 			      t := applyEEE(g,q.value,val);
 			      when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(z,q.key);
+			      	   if err.message != continueMessage then (
+					if (x.Mutable) then unlock(x.mutex);
+					return t)
+				   else remove(z,q.key);
 			      	   )
 			      else (
 				   storeInHashTable(z,q.key,q.hash,t);
@@ -1907,6 +1916,7 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
+	       if (x.Mutable) then unlock(x.mutex);
 	       mut := x.Mutable && y.Mutable;
 	       if x.parent == y.parent then (
 		    z.Class = commonAncestor(x.Class,y.Class);
@@ -1916,11 +1926,11 @@ merge(e:Expr):Expr := (
 		    if mut then z.Class = mutableHashTableClass else z.Class = hashTableClass;
 		    z.parent = nothingClass);
 	       Expr(sethash(z,mut)))
-	  else WrongArg(2,"a hash table")
-	  else WrongArg(1,"a hash table"))
+	  else WrongArgHashTable(2)
+	  else WrongArgHashTable(1))
      else WrongNumArgs(3));
 setupfun("merge",merge);		  -- see objects.d
-combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
+combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (	-- x and y are not Mutable
      z := newHashTable(x.Class,x.parent);
      z.beingInitialized = true;
      foreach pp in x.table do (
@@ -1963,7 +1973,8 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    );
 	       p = p.next));
      sethash(z,x.Mutable | y.Mutable));
-                                
+
+-- x and y are not Mutable:
 twistCombine(f:Expr,tw:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
      z := newHashTable(x.Class,x.parent);
      z.beingInitialized = true;
@@ -2037,8 +2048,8 @@ combine(e:Expr):Expr := (
         when v.1 is y:HashTable do
         if y.Mutable then WrongArg(2,"an immutable hash table") else
         combine(v.2,v.3,v.4,x,y)
-        else WrongArg(1+1,"a hash table")
-        else WrongArg(0+1,"a hash table")
+        else WrongArgHashTable(2)
+        else WrongArgHashTable(1)
      )
      else if length(v) == 6 then (
         when v.0 is x:HashTable do
@@ -2046,8 +2057,8 @@ combine(e:Expr):Expr := (
         when v.1 is y:HashTable do
         if y.Mutable then WrongArg(2,"an immutable hash table") else
         twistCombine(v.2,v.3,v.4,v.5,x,y)
-        else WrongArg(1+1,"a hash table")
-        else WrongArg(0+1,"a hash table")
+        else WrongArgHashTable(2)
+        else WrongArgHashTable(1)
      )
      else WrongNumArgs(5,6)
      else WrongNumArgs(5,6));

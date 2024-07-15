@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- hash: 8188472734618600370
+
+i1 : rayList={{1,0},{1,1},{0,1},{-1,-1}};
+
+i2 : coneList={{0,1},{1,2},{2,3},{3,0}};
+
+i3 : X = normalToricVariety(rayList,coneList);
+
+i4 : C = X_{0,1} + X_{1,2} - 3*X_{2,3}
+
+o4 = - 3*X       + X       + X
+          {2, 3}    {0, 1}    {1, 2}
+
+o4 : ToricCycle on X
+
+i5 : degCycle(C)
+
+o5 = -1
+
+o5 : QQ
+
+i6 : 

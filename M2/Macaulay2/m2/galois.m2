@@ -230,8 +230,9 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F)
 
 random GaloisField := opts -> F -> (
-     i := random F.order;
-     if i === 0 then 0_F else F_0^i
+     p := char F;
+     t := F_0;
+     sum(F.degree, i -> random p * t^i)
      )
 
 dim GaloisField := ZZ => R -> 0

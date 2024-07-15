@@ -450,7 +450,7 @@ evenExtModule Module := opts -> M -> (
      --over the polynomial ring kk[X_1..X_(codim R)],
      --where the vars have degree 1
      --unless the option Outring => outring is given, with outring being
-     --a polynomial ring with numGens ring E, in chich case this ring is used.
+     --a polynomial ring with numGens ring E, in which case this ring is used.
      E := ExtModule M;
      P := positions(flatten degrees E, even);
      Ee:=prune image (E_P);
@@ -783,7 +783,7 @@ matrixFactorization(Matrix, Module) := opts -> (ff, M) -> (
     dpartial := new MutableHashTable;    
     psi:= new MutableHashTable;--psi#p: B1#p-->target A#(p-1)
     psiS:= new MutableHashTable;--psi#p: B1#p-->target A#(p-1)    
-    inc := new MutableHashTable; --the #p versison are over R#(p-1)
+    inc := new MutableHashTable; --the #p version are over R#(p-1)
     inc' := new MutableHashTable;    
     inc'S := new MutableHashTable;        
     proj := new MutableHashTable; 
@@ -2504,11 +2504,11 @@ doc ///
      tally degrees E
      annihilator E
     Text
-     An example where the built-n global Ext is hard to compare directly
+     An example where the built-in global Ext is hard to compare directly
      with our method of computation: I *guess* that the sign choices in the built-in
      amount essentially to a change of variable
      in the new variables, and spoil an easy comparison. 
-     But for example the bi-graded betti numbers are equal.
+     But for example the bi-graded Betti numbers are equal.
      this seems to start with c=3.
     Example
      setRandomSeed 0
@@ -2532,7 +2532,7 @@ doc ///
      S' = ring EE -- note that S' is the polynomial ring
     
     Text
-     The two verstions of Ext appear to be the same up to change of variables:
+     The two versions of Ext appear to be the same up to change of variables:
     Example
      A = res ES
      B = res EE
@@ -4861,7 +4861,7 @@ doc ///
    Description
     Text
      The resolutions computed are those described in the paper "Layered Resolutions of Cohen-Macaulay modules"
-     by Eisenbud and Peeva. They are both minimal when M is a suffiently high syzygy of a module N.
+     by Eisenbud and Peeva. They are both minimal when M is a sufficiently high syzygy of a module N.
      If the option Verbose=>true is set, then (in the case of the resolution over S) the ranks of the 
      modules B_s in the resolution are output.
      
@@ -4911,7 +4911,7 @@ doc ///
      It returns pe(z/2), and compares to see whether this is equal to po(z/2-1/2).
      Avramov, Seceleanu and Zheng have proven that if the ideal of quadratic leading
      forms of a complete intersection of codimension c generate an ideal of codimension
-     at least c-1, then the betti numbers of any module grow, eventually, as a 
+     at least c-1, then the Betti numbers of any module grow, eventually, as a
      single polynomial (instead of requiring separate polynomials for even and 
      odd terms.) This script checks the result in the homogeneous case (in which
      case the condition is necessary and sufficient.)
@@ -5165,7 +5165,7 @@ doc ///
 
 ------TESTs------
 TEST///
---An example where the built-n global Ext is hard to compare directly
+--An example where the built-in global Ext is hard to compare directly
 --with our method of computation: I *guess* that the sign choices in the built-in
 --amount essentially to a change of variable
 --in the new variables, an spoil an easy comparison. 
@@ -5194,7 +5194,7 @@ S = ring ES
 EE = Ext(Mbar,K);
 S' = ring EE -- note that S' is the polynomial ring
 
---The two verstions of Ext appear to be the same up to change of variables:
+--The two versions of Ext appear to be the same up to change of variables:
 A = res ES
 B = res EE
 assert all(length A+1, i-> sort degrees A_i == sort degrees B_i)

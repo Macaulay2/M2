@@ -321,7 +321,6 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
     ) 
 *-
 
--- !!! replaces makeGateMatrix
 gateSystem PolySystem := GateSystem => F -> if F#?GateSystem then F#GateSystem else 
   F#GateSystem = gateSystem(F,parameters F)
 gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> ( 
@@ -337,6 +336,14 @@ gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> (
  
 -- !!! a general problem: some methods need PolySystem to be changed to GateSystem
 gateMatrix PolySystem := F -> gateMatrix gateSystem F
+
+polySystem(GateSystem, PolynomialRing) := (G,R) -> (
+    -- check that the ring is of form K[x] or K[y][x] !!!
+    C := coefficientRing R;
+    if numgens R != numVariables G then error "numbers of variables don't match";
+    if numgens C != numParameters G then error "numbers of parameters don't match";
+    polySystem transpose evaluate(G, vars C, vars R)
+    )
 
 -- Homotopy that follows a segment in the parameter space 
 parametricSegmentHomotopy = method()

@@ -97,7 +97,7 @@ document {
 	"Two basic finite fields are:",
      UL {
 	  TO2 {"integers modulo a prime", "ZZ/p"},
-	  TT "GF(p^n)"
+	  TO2 {"GF", "GF(p^n)"}
 	  },
      "Create a finite field with $q = p^n$ elements using",
      EXAMPLE "F = GF(81,Variable=>a)",
@@ -133,8 +133,11 @@ document {
      "In general, to make a finite field with ", TT "q", " elements, we use
      ", TO "GF", ".",
      EXAMPLE "k = GF 81",
-     "The generator of the field can be obtained as usual.",
-     EXAMPLE "k_0",
+     "The generator of the field is available as the variable ", VAR "a",
+     " or it can be obtained as usual.",
+     EXAMPLE {
+	 "a",
+	 "k_0"},
      "You may use ", TO "ambient", " to see the quotient ring the field is made from.",
      EXAMPLE "ambient k",
      "Use ", TO "ideal", " to see the ideal that defined that quotient ring.",
@@ -651,12 +654,12 @@ document {
      }
 
 document {
-     Key => "associative algebras",
-     "Eventually we will implement associative algebras, not necessarily
-     commutative."
-     }
+    Key => "associative algebras",
+    "Associative (i.e., not necessarily commutative) algebras are implemented in
+    the ", TO "AssociativeAlgebras::AssociativeAlgebras", " package."
+    }
 
-///
+-*
      "An element of the coefficient ring can be promoted to the polynomial ring.",
      EXAMPLE "promote(11/2,R)",
      "Conversely, an element of the polynomial ring that is known to be a scalar
@@ -684,7 +687,7 @@ document {
       	  "hilbertSeries S"
 	  },
      SeeAlso => { "monomial orderings",  "PolynomialRing"}
-///
+*-
 
 
 

@@ -60,7 +60,7 @@ toList(e:Expr):Expr := (
 	  else Expr(
 	       sethash(
 	       	    List(listClass, if b.Mutable then copy(b.v) else b.v,
-		    	 0, false),
+		    	 hash_t(0), false),
 	       	    false)))
      is s:stringCell do list(strtoseq(s))
      else WrongArg("list, sequence, set, or string"));
@@ -68,10 +68,11 @@ setupfun("toList1",toList);
 values(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
-	  o := oc.dictionary;
-	  Expr(list(
-		    new Sequence len o.symboltable.numEntries do
-		    foreach bucket in o.symboltable.buckets do (
+	  o := oc.dictionary.symboltable;
+	  lockRead(o.mutex);
+	  l := Expr(list(
+		    new Sequence len o.numEntries do
+		    foreach bucket in o.buckets do (
 			 p := bucket;
 			 while true do (
 			      when p
@@ -80,24 +81,31 @@ values(e:Expr):Expr := (
 				   provide Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym));
 				   p=q.next;)
 			      else break;
-			      )))))
-     is o:HashTable do (lock(o.mutex); l:= list(
+			      ))));
+	  unlock(o.mutex);
+	  l)
+     is o:HashTable do (
+	if o.Mutable then lockRead(o.mutex);
+	l:= list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(p.value);
-		    p = p.next; ))); unlock(o.mutex); l)
+		    p = p.next; )));
+	if o.Mutable then unlock(o.mutex);
+	l)
      else WrongArg("a hash table or dictionary"));
 setupfun("values",values);
 
 pairs(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (    -- # typical value: pairs, Dictionary, List
-	  o := oc.dictionary;
-	  Expr(list(
-		    new Sequence len o.symboltable.numEntries do (
-			 foreach bucket in o.symboltable.buckets do (
+	  o := oc.dictionary.symboltable;
+	  lockRead(o.mutex);
+	  l := Expr(list(
+		    new Sequence len o.numEntries do (
+			 foreach bucket in o.buckets do (
 			      p := bucket;
 			      while true do (
 				   when p
@@ -108,14 +116,20 @@ pairs(e:Expr):Expr := (
 						  Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym))));
 					p=q.next;)
 				   else break; ));
-			 ))))
-     is o:HashTable do (lock(o.mutex); l:=list(	-- # typical value: pairs, HashTable, List
+			 )));
+	  unlock(o.mutex);
+	  l)
+     is o:HashTable do (
+	if o.Mutable then lockRead(o.mutex);
+	l:=list(	-- # typical value: pairs, HashTable, List
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(Sequence(p.key,p.value));
-		    p = p.next; ))); unlock(o.mutex); l )
+		    p = p.next; )));
+	if o.Mutable then unlock(o.mutex);
+	l )
      is o:Sequence do
 	  Expr(new Sequence len length(o) do (
 	    i := 0;
@@ -146,20 +160,20 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
      when e
      is Error do e
      is o:HashTable do (
-	  if basicType == hashTableClass then (
+	  if basicType == hashTableClass || basicType == numberClass then (
 	       if o.Class == classs && o.parent == parent then e
 	       else Expr(copy(o,classs,parent,ancestor(classs,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
-     	  if basicType == basicListClass then (
+     	  if basicType == basicListClass || basicType == numberClass then (
 	       if parent != nothingClass
 	       then buildErrorPacket("expected Nothing as parent for list")
 	       else if o.Class == classs then e
 	       else if classs == sequenceClass then Expr(o.v)
 	       else (
 	       	    is_mutable := ancestor(classs,mutableListClass);
-		    Expr(sethash( List(classs, if is_mutable || o.Mutable then copy(o.v) else o.v, 0,false), is_mutable))))
+		    Expr(sethash( List(classs, if is_mutable || o.Mutable then copy(o.v) else o.v, hash_t(0),false), is_mutable))))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
@@ -168,7 +182,7 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
 	       else if classs == sequenceClass then Expr(v)
 	       else (
 	       	    is_mutable := ancestor(classs,mutableListClass);
-		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, 0,false), is_mutable))))
+		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, hash_t(0),false), is_mutable))))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is s:SpecialExpr do (
@@ -187,14 +201,14 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
      is Error do e
      is o:HashTable do (
 	  basicType := basictype(classs);
-	  if basicType == hashTableClass then (
+	  if basicType == hashTableClass || basicType == numberClass then (
 	       if o.Class == classs then e
 	       else Expr(copy(o,classs,ancestor(classs,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
 	  basicType := basictype(classs);
-	  if basicType == basicListClass then (
+	  if basicType == basicListClass || basicType == numberClass then (
 	       if o.Class == classs then e
 	       else if classs == sequenceClass then Expr(o.v)
 	       else (
@@ -203,7 +217,7 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 			 sethash(
 			      List(classs,
 				   if is_mutable || o.Mutable then copy(o.v) else o.v,
-				   0,false),
+				   hash_t(0),false),
 			      is_mutable))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
@@ -214,7 +228,7 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 	       if classs == sequenceClass then Expr(v)
 	       else (
 		    is_mutable := ancestor(classs,mutableListClass);
-		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, 0,false), is_mutable))))
+		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, hash_t(0),false), is_mutable))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
@@ -231,14 +245,14 @@ newclassfun(e:Expr):Expr := (
      if length(a) == 2
      then when a.0
      is classs:HashTable do newClass(a.1,classs,false)
-     else WrongArg(1,"a hash table")
+     else WrongArgHashTable(1)
      else if length(a) == 3
      then when a.0
      is classs:HashTable do (
 	  when a.1
 	  is parent:HashTable do newClassParent(a.2,classs,parent,false)
-	  else WrongArg(2,"a hash table"))
-     else WrongArg(1,"a hash table")
+	  else WrongArgHashTable(2))
+     else WrongArgHashTable(1)
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("newClass",newclassfun);
@@ -257,10 +271,11 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 		    break;
 		    );
 	       if p == mutableHashTableClass then (
+		    o.hash = nextHash();
 		    break;
 		    );
 	       if p == cacheTableClass then (
-		    o.hash = 0;
+		    o.hash = hash_t(0);
 		    break;
 		    );
 	       p = p.parent;
@@ -271,7 +286,7 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 	  then buildErrorPacket("expected Nothing as parent for list")
 	  else if classs == sequenceClass
 	  then Expr(emptySequence)
-	  else Expr(sethash( List(classs,emptySequence,0,false), ancestor(classs,mutableListClass))))
+	  else Expr(sethash( List(classs,emptySequence,hash_t(0),false), ancestor(classs,mutableListClass))))
      else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
      else buildErrorPacket("basic type for 'new' method should have been BasicList, HashTable, or Dictionary"));
 makenew(classs:HashTable):Expr := makenew(classs,nothingClass);
@@ -499,14 +514,14 @@ closeOut(g:Expr):Expr := (
      when g is f:file do when closeOut(f) is m:errmsg do buildErrorPacket(m.message) else g
      else WrongArg("an output file"));
 setupfun("closeOut",closeOut).Protected = false;
-flush(g:Expr):Expr := (
+flushfun(g:Expr):Expr := (
      when g
      is f:file do (
 	  if f.output
-	  then (flush(f); g)
+	  then (f << flush; g)
 	  else WrongArg("an output file"))
      else WrongArg("a file"));
-setupfun("flush",flush).Protected = false;
+setupfun("flush",flushfun).Protected = false;
 protect(e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
@@ -670,6 +685,8 @@ cpuTime(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("cpuTime",cpuTime);
 
+-- TODO: should "timing" return thread and gc times like "time"?
+-- (moved to actors5.d for gc time)
 timefun(a:Code):Expr := (
      v := cpuTime();
      ret := eval(a);
@@ -678,13 +695,6 @@ timefun(a:Code):Expr := (
      is Error do ret
      else list(timeClass,Sequence(toExpr(x-v),ret)));
 setupop(timingS,timefun);
-showtimefun(a:Code):Expr := (
-     v := cpuTime();
-     ret := eval(a);
-     x := cpuTime();
-     stdIO << "     -- used " << x-v << " seconds" << endl;
-     ret);
-setupop(timeS,showtimefun);
 
 exponent(e:Expr):Expr := (
      when e

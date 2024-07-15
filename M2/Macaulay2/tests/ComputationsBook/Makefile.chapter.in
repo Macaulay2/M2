@@ -43,7 +43,7 @@ test.out.expected.trim: $(EXPECTED) $(book_patterns) $(chapter_patterns)
 	@<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out: test.m2 always
-	@$(LIMIT) $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp
+	@$(LIMIT) $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp 2>&1
 	@mv test.out.tmp test.out
 
 clean:; rm -f *.trim

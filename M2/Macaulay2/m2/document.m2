@@ -121,7 +121,7 @@ toExternalString DocumentTag := tag -> (
 	if instance(tag.Key, Symbol) then toString tag.Key else tag.Key, tag.Format, tag.Package})
 
 new DocumentTag from BasicList := (T, t) -> (
-    new DocumentTag from new HashTable from {
+    new HashTable from {
 	Key                => t#0,
 	Format             => t#1,
 	symbol Package     => t#2,
@@ -192,6 +192,7 @@ makeDocumentTag String      := opts -> key -> (
     then error ("mismatching packages ", pkg, " and ", toString opts#Package, " specified for key ", key);
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
+makeDocumentTag TOH := opts -> first
 
 -- before creating links, we recreate the document tag as a hack to
 -- correct its package, if it is incorrect (e.g. truncate, quotient)
@@ -240,7 +241,13 @@ fSeq := new HashTable from splice {
     (2, symbol ^*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol _*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol ^~      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol _~      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol ^!      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol _!      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    --(2, symbol ^#      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    --(2, symbol _#      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
 
     -- assignment methods
     (3, class, Sequence) => s -> (toString s#1, " ", toString s#0#0, " ",
@@ -477,7 +484,7 @@ processSignature := (tag, fn) -> item -> (
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	maybeformat := if instance(opts#optsymb, String) then format else identity;
 	defval := SPAN{"default value ", maybeformat reproduciblePaths replace("^Function\\[.*\\]", "Function[]", toString opts#optsymb)};
-	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> headline opttag};
+	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> nonnull SPAN headline opttag};
 	text = if text =!= null and #text > 0 then (", ", text);
 	-- e.g: Key => an integer, default value 42, the meaning of the universe
 	{ (name, TT " => ", type), nonnull (defval, text) })

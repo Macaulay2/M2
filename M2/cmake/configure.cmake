@@ -14,7 +14,6 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
-option(USING_MPIR	"Use MPIR instead of GMP"		OFF)
 option(DEVELOPMENT	"Set the DEVELOPMENT macro in config.h"	OFF)
 option(EXPERIMENT	"Set the EXPERIMENT macro in config.h"	OFF)
 option(LINTING		"Enable linting source files"		OFF)
@@ -42,11 +41,6 @@ set(PARALLEL_JOBS 4
 set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
 set(SLOW_TESTS "eigen;ntl;flint"    CACHE STRING "Slow tests to skip")
 
-# TODO: hopefully make these automatic
-if(USING_MPIR)
-  list(APPEND BUILD_LIBRARIES "MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro")
-endif()
-
 # TODO: deprecate these variables
 set(M2SUFFIX "")
 set(EXEEXT   "${CMAKE_EXECUTABLE_SUFFIX}")
@@ -62,26 +56,19 @@ set(PACKAGE_VERSION ${Macaulay2_VERSION})
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} describe --dirty --always --match HEAD
+    COMMAND ${GIT_EXECUTABLE} describe --tags --dirty
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE   GIT_COMMIT)
-  # TODO: currently finds the last commit that changed the VERSION file
-  # but ideally it should get the last release commit instead
+    OUTPUT_VARIABLE   GIT_DESCRIPTION)
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-list -1 HEAD VERSION
+    COMMAND ${GIT_EXECUTABLE} branch --show-current
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE   _release_commit)
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-list ${_release_commit}..HEAD --count
-    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE   COMMIT_COUNT)
-  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
+    OUTPUT_VARIABLE   GIT_BRANCH)
 else()
   message(NOTICE "## Not building from a git repository; submodules may need to be manually populated")
-  set(GIT_DESCRIPTION version-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  set(GIT_DESCRIPTION release-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  set(GIT_BRANCH "")
   file(GLOB _submodules LIST_DIRECTORIES true ${CMAKE_SOURCE_DIR}/submodules/*)
   foreach(_submodule IN LISTS _submodules)
     if(IS_DIRECTORY ${_submodule})
@@ -103,6 +90,7 @@ endif()
 message("## Configure Macaulay2
      M2 version        = ${PROJECT_VERSION}
      Git description   = ${GIT_DESCRIPTION}
+     Git branch        = ${GIT_BRANCH}
      Install prefix    = ${CMAKE_INSTALL_PREFIX}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_NATIVE      = ${BUILD_NATIVE}
@@ -209,6 +197,7 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
+  add_compile_definitions(_GLIBCXX_ASSERTIONS)
   add_compile_definitions(GC_DEBUG)
   add_compile_options(-O0)
 else()

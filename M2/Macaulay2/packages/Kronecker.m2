@@ -1046,6 +1046,8 @@ beginDocumentation()
 document {
      Key => { Kronecker },
      Headline => "Kronecker and rational normal forms",
+     "This package provides methods for computing the Kronecker and rational ",
+     "normal forms of a matrix."
      }
 
 document {

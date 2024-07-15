@@ -23,13 +23,8 @@ document {
 	  )
      }
 
--- TODO: combine these two
-document { Key => "copyright",
-     Headline => "a string containing the copyright notice for Macaulay2",
-     EXAMPLE "copyright" }
-
 document {
-     Key => "Copyright and license",
+     Key => {"Copyright and license", "copyright"},
      PARA {
 	  "Macaulay2, its object code, source code, and documentation,
 	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit you to use it either
@@ -44,13 +39,15 @@ document {
 	  },
      PARA {
       	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
-	  of programs, with their libraries, have been compiled and distributed with Macaulay2:"
+	  of programs, with their libraries, have been compiled and distributed with Macaulay2."
+	  },
+     PARA {
+	  "Run the command ", M2CODE "copyright", " to view this message."
 	  },
      Subnodes => {
 	  "libraries",
 	  TO "Singular-Factory",
 	  TO "frobby",
-	  TO "MPIR",
 	  TO "GNU MP",
 	  TO "MPFR",
       TO "MPFI",
@@ -247,13 +244,12 @@ document {
 	  },
      UL {
 	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes, or number of gigabytes followed by 'G', similarly for 'M', 'K'" },
-	  LI { "GC_MAXIMUM_HEAP_SIZE -- maximum collected heap size" },
+	  LI { "GC_MAXIMUM_HEAP_SIZE -- optional maximum collected heap size" },
 	  LI { "GC_FREE_SPACE_DIVISOR -- if set to a number D, then
                          we try to make sure that we allocate at least N/D bytes between collections, where N is twice the
                          number of traced bytes, plus the number of untraced bytes, plus a rough estimate of the root set
                          size.  Increasing its value will use less space but more collection time.  Decreasing it will
-                         appreciably decrease collection time at the expense of space.
-			 Macaulay2 sets the initial default value to 12." },
+                         appreciably decrease collection time at the expense of space." },
 	  LI { "GC_PRINT_STATS -- whether to turn on logging" },
 	  LI { "GC_PRINT_VERBOSE_STATS -- whether to turn on even more logging" },
 	  LI { "GC_DUMP_REGULARLY -- whether to generate a debugging dump on startup and during every collection; very verbose" },
@@ -359,14 +355,6 @@ document {
      }
 
 document {
-     Key => "MPIR",
-     "The MPIR library, version ", version#"mpir version", " provides
-     routines for arbitrary precision integer and floating point arithmetic.
-     It is available at ", HREF "http://www.mpir.org/", ".  To see whether your copy of Macaulay2 is linked
-     with it (or with GMP), examine the variable ", TO "version", "."
-     }
-
-document {
      Key => "4ti2",
      "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
      problems on linear spaces.  It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
@@ -376,8 +364,8 @@ document {
      Key => "GNU MP",
      "The GNU MP library (GMP) provides
      routines for arbitrary precision integer and floating point arithmetic.
-     It is available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and ", HREF "http://gmplib.org/", ".  To see whether your copy of Macaulay2 is linked
-     with it (or with MPIR), examine the variable ", TO "version", "."
+     It is available at ", HREF "https://gmplib.org/", " and ", HREF "https://gmplib.org/", ".
+     To see the version of the library your copy of Macaulay2 is linked with, examine the variable ", TO "version", "."
      }
 
 document {

@@ -5,7 +5,6 @@ doc///
  Key
   unique
   (unique, VisibleList)
-  (unique, Sequence)
  Headline
   eliminate duplicates from a list
  Usage

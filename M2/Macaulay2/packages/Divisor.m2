@@ -11,13 +11,13 @@ newPackage( "Divisor",
      PackageImports => { "IntegralClosure", "RationalMaps" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Divisor Package for Macaulay2",
 	  "acceptance date" => "31 August 2018",
 	  "published article URI" => "https://msp.org/jsag/2018/8-1/p09.xhtml",
 	  "published article DOI" => "10.2140/jsag.2018.8.87",
 	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x09-Divisor.m2",
-	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Divisor.m2",
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Divisor.m2",
 	  "release at publication" => "0e40b423ff375d6eb0a98d6fbbe7be8b2db95a98",	    -- git commit number in hex
 	  "version at publication" => "0.3",
 	  "volume number" => "8",
@@ -68,20 +68,20 @@ export{
     "nonCartierLocus", --added checks, has IsGraded option, cached
     "isSNC", --added checks, has IsGraded option, cached
     "isZeroDivisor", --added checks
-    "isVeryAmple", --added checks, 
+    --"isVeryAmple", --added checks,
     --functions for getting maps to projective space from divisors (graded only)
 	"baseLocus", --added checks
 	"mapToProjectiveSpace", --added checks
     --general useful functions not directly related to divisors
     "idealPower", --added checks
     "reflexify", --added checks
-	"isReflexive", --added checks
+	--"isReflexive", --added checks
 	"reflexivePower", --added checks
 	"torsionSubmodule", --added checks
 	"dualize", --added checks
 	"embedAsIdeal", --added checks, has IsGraded option
 	"isDomain", --added checks
-	"isSmooth", --added checks, has IsGraded option
+	--"isSmooth", --added checks, has IsGraded option
     --options
     "Safe", --an option, if set true then the above commands avoid doing any checks
 	"CoefficientType", --an option, one can set the coefficient type
@@ -1542,9 +1542,7 @@ baseLocus(WeilDivisor) := Ideal => (D1) -> (
 	baseLocus(M1)
 );
 
-isVeryAmple = method(Options => {Verbose=>false});
-
-isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (    
+isVeryAmple WeilDivisor := { Verbose => false } >> o -> D1 -> (
     if (D1#cache#?isVeryAmple == true) then (
         return D1#cache#isVeryAmple;
     );    
@@ -1714,14 +1712,12 @@ reflexifyModule(Module) := Module => o-> (M1) -> (
 	)
 );
 
-isReflexive = method(Options => {Strategy => NoStrategy, KnownDomain=>true});
-
-isReflexive(Module) := Boolean => o -> (M1) ->(
+isReflexive Module := Boolean => { Strategy => NoStrategy, KnownDomain => true } >> o -> M1 -> (
 	g := reflexify(M1, ReturnMap => true, Strategy => o.Strategy, KnownDomain=>o.KnownDomain);
 	(-1 == dim coker g)
 );
 
-isReflexive(Ideal) := Boolean => o-> (I1) ->(
+isReflexive Ideal := Boolean => { Strategy => NoStrategy, KnownDomain => true } >> o -> I1 -> (
 	J1 := reflexify(I1, Strategy => o.Strategy, KnownDomain=>o.KnownDomain);
 	(J1 == I1)
 );
@@ -1912,9 +1908,7 @@ isDomain(Ring) := Boolean => (R1) -> (
 );
 
 --checks whether R/J1 is regular
-isSmooth  = method(Options => {IsGraded => false});
-
-isSmooth(Ideal) := Boolean => o->J1 -> (
+isSmooth(Ideal) := Boolean => {IsGraded => false} >> o -> J1 -> (
 	--empty schemes are smooth (which is why we are first check whether ideals are the whole ring or contain the irrelevant ideal
 	flag := false;
 	if (o.IsGraded == true) then (
@@ -2487,9 +2481,8 @@ doc ///
 
 doc ///
 	 Key
-		isVeryAmple
 		(isVeryAmple, WeilDivisor)
-		[isVeryAmple, Verbose]
+	       [(isVeryAmple, WeilDivisor), Verbose]
 	Headline
 		whether a divisor is very ample.
 	Usage
@@ -3084,7 +3077,7 @@ doc ///
 	 Text
 	  In the above, when KnownDomain=>true (an incorrect assumption), this function returns the incorrect answer for $I$.
 	SeeAlso
-	 isReflexive
+	 (isReflexive, Ideal)
 	 dualize
 ///
 
@@ -3200,7 +3193,7 @@ doc ///
 	  J1 == J2
 	SeeAlso
 	 reflexify
-	 isReflexive
+	 (isReflexive, Ideal)
 ///
 
 
@@ -3314,19 +3307,18 @@ doc ///
 
 doc ///
 	Key
-	 isReflexive
 	 (isReflexive, Ideal)
 	 (isReflexive, Module)
-	 [isReflexive, Strategy]
-	 [isReflexive, KnownDomain]
+	 [(isReflexive, Ideal), Strategy]
+	 [(isReflexive, Ideal), KnownDomain]
+	 [(isReflexive, Module), Strategy]
+	 [(isReflexive, Module), KnownDomain]
 	Headline
 	 whether an ideal or module is reflexive
 	Usage
-	 isReflexive( I1 )
-	 isReflexive( M1 )
+	 isReflexive I
 	Inputs
-	 I1: Ideal
-	 M1: Module
+	 I:{Ideal,Module}
 	 Strategy => Symbol
 	   specify a strategy for the internal call to reflexify
 	 KnownDomain => Boolean
@@ -4073,9 +4065,8 @@ doc ///
 
 doc /// 
    	Key
-   	 isSmooth
    	 (isSmooth, Ideal)
-   	 [isSmooth, IsGraded]
+	 [(isSmooth, Ideal), IsGraded]
    	Headline
    	 whether R mod the ideal is smooth
    	Usage

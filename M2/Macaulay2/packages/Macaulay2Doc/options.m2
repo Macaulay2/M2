@@ -16,7 +16,7 @@ optionalNames := select(unique \\ flatten \\ keys \ opts, s -> instance(s, Symbo
     not isUndocumented(d := makeDocumentTag s) and (isMissingDoc d or headline d === "an optional argument"))
 
 optionalValues := unique(flatten \\ values \ opts
-    | { Prune, Binomial, Test, Center, Right, Left } -- for manually added Symbols
+    | { Prune, Binomial, Test, Center, Right, Left, Flexible, Postfix } -- for manually added Symbols
     | last \ last \ hooks methods()) -- e.g. catch Iterate from [(saturate, Ideal, Ideal), Strategy -> Iterate]
 
 optionalValues = select(optionalValues, s -> instance(s, Symbol) and isGlobalSymbol toString s and

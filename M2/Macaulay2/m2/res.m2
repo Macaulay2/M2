@@ -279,6 +279,7 @@ updateComputation(ResolutionComputation, ChainComplex) := ChainComplex => option
 protect ManualResolution -- not to be exported
 storefuns#resolution = (M,C) -> M.cache.ManualResolution = C
 
+resolution Ideal  := ChainComplex => opts -> I -> resolution(comodule I, opts)
 resolution Module := ChainComplex => opts -> M -> (
     R := ring M;
     strategy := opts.Strategy;
@@ -307,10 +308,6 @@ resolution Module := ChainComplex => opts -> M -> (
     if C =!= null then C else if strategy === null
     then error("no applicable strategy for resolving over ", toString R)
     else error("assumptions for resolution strategy ", toString strategy, " are not met"))
-
-resolution Ideal := ChainComplex => opts -> I -> resolution(
-    if I.cache.?quotient then I.cache.quotient
-    else I.cache.quotient = cokernel generators I, opts)
 
 resolution Matrix := ChainComplexMap => opts -> f -> extend(
     resolution(target f, opts), resolution(source f, opts), matrix f)

@@ -585,7 +585,7 @@ document {
 	      ", the witness set describes a lifted variety (its projection on the first ", 
 	      TT "ProjectionDimension", " coordinates is the variety the witness set represents)"},
 	  },     
-     SeeAlso => {witnessSet, ProjectiveWitnessSet, NumericalVariety}
+     SeeAlso => {witnessSet, ProjectiveWitnessSet, NumericalVariety, declareIrreducible}
      }
 
 document {
@@ -652,6 +652,17 @@ peek w///
 -- peek w
 -- ///
 }
+
+doc ///
+Key
+    declareIrreducible
+    (declareIrreducible,WitnessSet)
+Headline
+    declares a component represented by the witness set irreducible
+Description
+    Text
+      This is a service method that for a witness set {\tt W} sets the flag {\tt W.cache.IsIrreducible} to {\tt true}.
+///
 
 document {
 	Key => {(sliceEquations,Matrix,Ring),sliceEquations,

@@ -50,10 +50,10 @@ document {
      }
 
 document {
-     Key => {atanh, (atanh,Number), (atanh,Constant)},
+     Key => {atanh, (atanh,Number)},
      Headline => "compute the hyperbolic arctangent of a number",
      Usage => "atanh x",
-     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Inputs => { "x" => { ofClass Number } },
      Outputs => {
 	  Number => { "the hyperbolic arctangent of ", TT "x" }
 	  },
@@ -64,10 +64,10 @@ document {
      }
 
 document {
-     Key => {acoth, (acoth,Number), (acoth,Constant)},
+     Key => {acoth, (acoth,Number)},
      Headline => "compute the hyperbolic arctangent of a number",
      Usage => "acoth x",
-     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Inputs => { "x" => { ofClass Number } },
      Outputs => {
 	  Number => { "the hyperbolic arccotangent of ", TT "x" }
 	  },

@@ -92,7 +92,6 @@ Thing#{WebApp,AfterNoPrint} = x -> (
 
 removeWebAppTags = s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
 if topLevelMode === WebApp then (
-    compactMatrixForm = false;
     extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
     -- the help hack: if started in WebApp mode, help is compiled in it as well
     processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));

@@ -5,10 +5,11 @@ newPackage(
           Headline => "Linear series on the normalization of a plane curve",
           Authors => {{ Name => "David Eisenbud", 
 		  Email => "de@berkeley.edu", 
-		  HomePage => "eisenbud.io.github.com"}},
+		  HomePage => "https://eisenbud.github.io/"}},
 	  PackageExports => {"IntegralClosure","PrimaryDecomposition"},
           AuxiliaryFiles => false,
-          DebuggingMode => false
+          DebuggingMode => false,
+	  Keywords => {"Projective Algebraic Geometry"}
           )
       export {
 	  "canonicalSeries",
@@ -266,7 +267,7 @@ projectiveImage(List, Ring) := Matrix => o -> (D0List, C) ->(
 
 
 projectiveImage Matrix := Ring => o -> M -> (
- -- in this case M is a 1-m matrix respresenting a
+ -- in this case M is a 1-m matrix representing a
  --linear series.
     R := ring M;
     kk := coefficientRing R;

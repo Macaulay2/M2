@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1393920928
+-- -*- M2-comint -*- hash: 4423001283312120928
 
 i1 : R = CC[x,t]; -- include the path variable in the ring
 

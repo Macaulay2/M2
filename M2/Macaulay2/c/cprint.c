@@ -296,7 +296,7 @@ static void cprintarraydef(node t){
      if (length(m) == 1) put("int len;");
      cprint(typ);
      put(" array[");
-     if (len!=NULL) cprint(len); else put("1");
+     if (len!=NULL) cprint(len);
      put("];};\n");
      }
 
@@ -379,8 +379,6 @@ static void cprintsomesizeof(node t, node arraylen){
 	       put(" + (");
 	       cprint(arraylen);
 	       put(")*sizeof(");
-	       cprint(typ);
-	       put(")-sizeof(");
 	       cprint(typ);
 	       put(")");
 	       }

@@ -40,6 +40,7 @@ stash::~stash()
       slab *p = slabs;
       slabs = slabs->next;
       GC_FREE(p);  // this dramatically improves our memory usage
+        // TODO: comment out all GC_FREE()s!?
       // printf("removed %p\n", p);
     }
 }

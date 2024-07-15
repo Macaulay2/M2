@@ -42,6 +42,12 @@ toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toSt
 local exe
 local topBuilddir
 
+m2version := (
+    v := replace("^release-", "", version#"git description");
+    if v == version#"VERSION" then v -- stable release (at release tag)
+    else if version#"git branch" == "" then v
+    else concatenate(v, 1, "(", version#"git branch", ")"))
+
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
      -- all global definitions here are set to read-only
@@ -156,49 +162,6 @@ if firstTime then (
 	 dir, if not match("/$", dir) then "/", name);
 
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
-
-     copyright = (
-	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "Copyright 2019 Daniel R. Grayson and Michael E. Stillman:" | newline
-     	  | "  source code licensed under the GNU General Public License version 2 or 3;" | newline
-     	  | "  this binary code licensed under the GNU General Public License version 3." | newline
-     	  -- our binary code is linked with :
-	  --    mpir 2.4.0, which is under LGPL 2.1 or later
-     	  --    mpfr 3.0.1, which is under LGPL 3 or later
-	  -- so it cannot be licensed under GPL 2
-     	  -- There is another license statement in ../../INSTALL 
-	  | "For Macaulay2 packages, see their source code for licensing terms." | newline
-     	  | "Compiled with the following libraries:" | newline
-	  | "  GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
-	  | "  Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
-	  |    ( 
-	       if version#"frobby version" =!= "not present" 
-	       then ("  Frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
-	       else ""
-	       )
-	  | "  NTL " | version#"ntl version" | ", by V. Shoup" | newline
-	  | "  FLINT " | version#"flint version" | ", by W. Hart et al." | newline
-	  |    (
-	       if version#"gmp version" =!= "not present"
-	       then "  GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
-	       else ""
-	       )
-     	  |    (
-	       if version#"mpir version" =!= "not present"
-	       then "  MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
-	       else ""
-	       )
-          | "  Boost " | version#"boost version" | ", by the Boost community" | newline
-	  | "  FFLAS-FFPACK " | version#"fflas_ffpack version" | ", by the LinBox Team" | newline
-     	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
-	  | "  BLAS and LAPACK " | version#"lapack version" | ", by J. Dongarra et al." | newline
-	  | "  MPSolve " | version#"mpsolve version" | ", by D. Bini et al." | newline
-	  | "  Eigen " | version#"eigen version" | ", by B. Jacob et al." | newline
-	  | "  TBB " | version#"tbb version" | ", by Intel" | newline
-          | "  Memtailor " | version#"memtailor version" | ", by B. Roune" | newline
-          | "  Mathic " | version#"mathic version" | ", by B. Roune and M. Stillman" | newline
-          | "  MathicGB " | version#"mathicgb version" | ", by B. Roune and M. Stillman"
-	  );
 
      use = x -> x;				  -- temporary, until methods.m2
 
@@ -359,7 +322,7 @@ initcurrentlayout := () -> (
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
 prefixPath = {}
 
-fullCopyright := false
+fullCopyright = false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 nocore = false
@@ -389,7 +352,7 @@ usage := arg -> (
      << "options:"  << newline
      << "    --help             print this brief help message and exit" << newline
      << "    --no-backtrace     print no backtrace after error" << newline
-     << "    --copyright        display full copyright messasge" << newline
+     << "    --copyright        display full copyright message" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
      << "    --debug n          debug warning message n by signalling an error" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
@@ -500,7 +463,7 @@ action := hashTable {
 			      << TeXmacsEnd << endl << flush)));
 	       )
 	  ),
-     "--version" => arg -> ( << version#"VERSION" << newline; exit 0; ),
+     "--version" => arg -> ( << m2version << newline; exit 0; ),
      "--webapp" => arg -> ( printWidth=0; topLevelMode = global WebApp; )
      };
 
@@ -594,16 +557,13 @@ if notify then printerr("executable = ", exe)
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-     stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
+     stderr << "Macaulay2, version " << m2version << newline << flush;
      if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
 
 scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
-
-if firstTime and fileExists(prefixDirectory | currentLayout#"program licenses") then
-copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
 
 path = {}
 pkgpath = {}
@@ -651,11 +611,12 @@ loadCore = path -> (
 (loadDepth = 1; if firstTime and not nocore then loadCore path; loadDepth = 0)
 
 (loadDepth = 3; processCommandLineOptions 3; loadDepth = 0)
-(core "runStartFunctions")()
 
 if class Core =!= Symbol and not core "noinitfile" then (
     -- the location of init.m2 is documented in the node "initialization file"
     trySimpleLoad("init.m2", applicationDirectory() | "init.m2"));
+
+(core "runStartFunctions")()
 
 loadDepth = 0;
 ( loadDepth = 3;

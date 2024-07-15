@@ -13,7 +13,7 @@ notsamering := (X,Y) -> (
 nottosamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
      else error("expected ",X.synonym," and ",Y.synonym," for compatible rings"))
-samering := (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
+samering = (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
 tosamering := (M,N) -> if ring M === ring N then (M,N) else (
      z := try 0_(ring M) + 0_(ring N) else nottosamering(class M,class N);
      (promote(M,ring z),promote(N,ring z)))
@@ -84,7 +84,8 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  R := ring M;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
+	  g := rawMatrixRemake2(raw cover M, raw cover N, deg, raw f, 0);
+	  map(M, N, if M =!= f.target then reduce(M, g) else g)))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -95,8 +96,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      local k;
      if N === null then (
 	  k = R;
-	  if #p === 0 then error "expected non-empty list of entries for matrix";
-	  rankN = #p#0;
+	  rankN = if #p === 0 then 0 else #p#0;
 	  )
      else if class N === ZZ then (
 	  k = R;
@@ -275,7 +275,7 @@ matrix(Matrix) := Matrix => opts -> (m) -> (
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
 
 matrix(List) := Matrix => opts -> (m) -> (
-     if #m === 0 then error "expected nonempty list";
+     if #m === 0 then return matrix(ZZ, {});
      mm := apply(splice m,splice);
      if #mm === 0 then error "expected nonempty list";
      types := unique apply(mm,class);
@@ -540,6 +540,10 @@ Ideal == Ideal := (I,J) -> (
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
+isSubset(Module, Ideal) :=
+isSubset(Ideal, Module) :=
+isSubset(Ideal, Ideal)  := (I, J) -> isSubset(module I, module J)
+
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
      if not isFreeModule target f or not isFreeModule source f 
@@ -555,11 +559,9 @@ ideal Matrix := Ideal => (f) -> (
 	  );
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
-ideal Module := Ideal => (M) -> (
-     F := ambient M;
-     if isSubmodule M and rank F === 1 then ideal generators M
-     else error "expected a submodule of a free module of rank 1"
-     )
+ideal Module := Ideal => M -> if isIdeal M then ideal generators M else (
+    error "expected a submodule of a free module of rank 1")
+
 idealPrepare = method()
 idealPrepare RingElement := 
 idealPrepare Number := identity

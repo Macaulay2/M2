@@ -14,15 +14,17 @@ newPackage(
 msolveEXE = (options Msolve).Configuration#"msolveExecutable";
 if not instance(msolveEXE,String) then error "expected configuration option msolveMainFolder to be a string."
 export{
-    "grobBasis",
-    "realSolutions", 
-    "rUR",
-    "saturateByPoly",
-    "eliminationIdeal",
-    "leadingMonomials",
+    "msolveGB",
+    "msolveSaturate",
+    "msolveEliminate",
+    "msolveRUR",
+    "msolveLeadMonomials",
+    "msolveRealSolutions",
+    -- option names
     "Output"
     }
-debug Core
+importFrom_Core { "raw", "rawMatrixReadMsolveFile" }
+
 use'readMsolveOutputFile := true;
 readMsolveOutputFile = method()
 readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutputFile 
@@ -37,22 +39,22 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
 inputOkay=method(TypicalValue=>Boolean);
 inputOkay(Ideal):=I->(
     R:=ring I;
-    if not instance(R,PolynomialRing) then (print "input must be in a polynomial ring over a feild";return false;);
+    if not instance(R,PolynomialRing) then (print "input must be in a polynomial ring over a field";return false;);
     kk:=coefficientRing(R);
     if instance(kk,InexactFieldFamily) then(
-	print "input must be over the rationals or a finite feild of chactersitic between 2^16 and 2^32";
+        print "input must be over the rationals or a (prime) finite field of chacteristic between 2^16 and 2^32";
 	return false;
 	);
     if char(kk)>0 then (
 	if (char(kk)<2^16) or (char(kk)>2^32) then(
-	    print "input must be over the rationals or a finite feild of chactersitic between 2^16 and 2^32";
+	    print "input must be over the rationals or a (prime) finite field of chacteristic between 2^16 and 2^32";
 	    return false;
 	    );
 	);
     return true;
     );
-grobBasis=method(TypicalValue=>Matrix);
-grobBasis(Ideal):=(I)->(
+msolveGB=method(TypicalValue=>Matrix);
+msolveGB(Ideal):=(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -73,8 +75,8 @@ grobBasis(Ideal):=(I)->(
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-leadingMonomials=method(TypicalValue=>Matrix);
-leadingMonomials(Ideal):=(I)->(
+msolveLeadMonomials=method(TypicalValue=>Matrix);
+msolveLeadMonomials(Ideal):=(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -93,26 +95,27 @@ leadingMonomials(Ideal):=(I)->(
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-eliminationIdeal=method();
-eliminationIdeal(Ideal,RingElement):=Ideal => (I,elimvar)->(
-    return eliminationIdeal(I,{elimvar});
+msolveEliminate=method();
+msolveEliminate(Ideal,RingElement):=Ideal => (I,elimvar)->(
+    return msolveEliminate(I,{elimvar});
     );
-eliminationIdeal(RingElement,Ideal):=Ideal => (elimvar,I) ->
-    eliminationIdeal(I,{elimvar})
-eliminationIdeal(List,Ideal):=Ideal => (elimvars,I) -> 
-    eliminationIdeal(I,elimvars)
-eliminationIdeal(Ideal,List):=Ideal => (J,elimvars)->(
+msolveEliminate(RingElement,Ideal):=Ideal => (elimvar,I) ->
+    msolveEliminate(I,{elimvar})
+msolveEliminate(List,Ideal):=Ideal => (elimvars,I) -> 
+    msolveEliminate(I,elimvars)
+msolveEliminate(Ideal,List):=Ideal => (J,elimvars)->(
     if not inputOkay(J) then return 0;
     mIn:=temporaryFileName()|".ms";
     S:=ring J;
     kk:=coefficientRing(S);
-    keepVars:=select(gens S, s->not member(s,elimvars)); 
+    keepvars:=select(gens S, s->not member(s,elimvars)); 
     elimNum:=length(elimvars);
-    R:=kk(monoid [join(elimvars,keepVars),MonomialOrder=>{numgens(S):1}]);
-    elimR:=kk(monoid [keepVars]);
+    --R:=kk(monoid [join(elimvars,keepVars),MonomialOrder=>{numgens(S):1}]);
+    R:=kk(monoid [join(elimvars,keepvars),MonomialOrder=>{#elimvars, #keepvars}]);
+    elimR:=kk(monoid [keepvars]);
     I:=sub(J,R);
     gR:=toString(gens R);
-    l1:=substring(1,#gR-2,gR);
+    l1:=substring(1,#gR-2,gR);  -- removing parentheses
     l2:=char R;
     gI:=toString flatten entries gens I;
     if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
@@ -123,11 +126,14 @@ eliminationIdeal(Ideal,List):=Ideal => (J,elimvars)->(
     << "mOut = " << mOut << endl;
     callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -e "|toString(elimNum)|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
-    ideal readMsolveOutputFile(elimR, mOut)
+    if char R === 0 then 
+      ideal readMsolveOutputFile(elimR, mOut)
+    else
+      ideal readMsolveOutputFile(R, mOut)
     )
 
-saturateByPoly=method(TypicalValue=>Matrix);
-saturateByPoly(Ideal,RingElement):=(I,f)->(
+msolveSaturate=method(TypicalValue=>Matrix);
+msolveSaturate(Ideal,RingElement):=(I,f)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -148,8 +154,8 @@ saturateByPoly(Ideal,RingElement):=(I,f)->(
     return gens forceGB msolGB;
     );
 
-realSolutions=method(TypicalValue=>List,Options => {Output=>"rationalInterval"});
-realSolutions(Ideal):=opts->(I)->(
+msolveRealSolutions=method(TypicalValue=>List,Options => {Output=>"rationalInterval"});
+msolveRealSolutions(Ideal):=opts->(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -175,8 +181,8 @@ realSolutions(Ideal):=opts->(I)->(
     if opts.Output=="floatInterval" then return (1.0*sols);
     if opts.Output=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
     );
-rUR=method(TypicalValue=>List);
-rUR(Ideal):=(I)->(
+msolveRUR=method(TypicalValue=>List);
+msolveRUR(Ideal):=(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -223,15 +229,45 @@ Node
      	  Macaulay2 interface for msolve; computes real solutions, Groebner basis (in GRevLex), saturations, and elimination ideals.
      Description
      	  Text
-	      This package provides a Macaulay2 interface for the msolve package (https://msolve.lip6.fr/) developed by Jérémy Berthomieu, Christian Eder, and Mohab Safey El Din.  
+
+              This package provides a Macaulay2 interface for the
+              msolve package (https://msolve.lip6.fr/) developed by
+              Jérémy Berthomieu, Christian Eder, and Mohab Safey El
+              Din.
 	      
-	      The package has functions to compute Groebner basis, in GRevLex order only, for ideals with rational or finite feild coefficents. Finite feild chacterisitics must be between 2^16 and 2^32. There are also functions to compute elimination ideals, for ideals with rational or finite feild coefficents. Finite feild chacterisitics must be between 2^16 and 2^32. 
+	      The package has functions to compute Groebner basis, in
+	      GRevLex order only, for ideals with rational or finite
+	      field coefficents. Finite field chacterisitics must be
+	      between 2^16 and 2^32. There are also functions to
+	      compute elimination ideals, for ideals with rational or
+	      finite field coefficients. Finite field chacterisitics
+	      must be between 2^16 and 2^32.
 	      
-	      The saturation of an ideal by a single polynomial may be computed for ideals with finite feild coefficents, again with charcterisitc between 2^16 and 2^32.
+	      The saturation of an ideal by a single polynomial may be
+	      computed for ideals with finite field coefficients, again
+	      with characterisitc between 2^16 and 2^32.
 	      
-	      For zero dimensional polynomial ideals, with integer or rational coefficents, there are functions to compute all real solutions, and to compute a rational univariante representation of all (complex) solutions.
+	      For zero dimensional polynomial ideals, with integer or
+	      rational coefficents, there are functions to compute all
+	      real solutions, and to compute a rational univariante
+	      representation of all (complex) solutions.
 	      
-	      The M2 interface assumes that the binary executable is named "msolve", to tell the M2 package where to find the executable you should use either needsPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"}), or installPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"}) once and needsPackage("Msolve") on subsequent usages; here "path_to_folder_with_msolve_binary" denotes the folder where your msolve exectuable is saved. E.g. if your msolve binary (named msolve) is in a folder called msolve-v0.5.0 in your home directory then you would use either needsPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"}) or installPackage("Msolve", Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"}) and needsPackage("Msolve") subseqently   
+	      The M2 interface assumes that the binary executable is
+	      named "msolve", to tell the M2 package where to find the
+	      executable you should use either needsPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"}),
+	      or installPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"})
+	      once and needsPackage("Msolve") on subsequent usages;
+	      here "path_to_folder_with_msolve_binary" denotes the
+	      folder where your msolve exectuable is saved. E.g. if
+	      your msolve binary (named msolve) is in a folder called
+	      msolve-v0.5.0 in your home directory then you would use
+	      either needsPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"})
+	      or installPackage("Msolve",
+	      Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"})
+	      and needsPackage("Msolve") subseqently
 	      
 	      
 	      References:
@@ -239,27 +275,27 @@ Node
 	      
 Node 
     Key
-    	grobBasis
-	(grobBasis, Ideal)
+    	msolveGB
+	(msolveGB, Ideal)
     Headline
     	Computes generators of a Groebner basis in GrevLex order.
     Usage
-    	grobBasis(I)
+    	msolveGB(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficents, integer coefficents, or finite feild coefficents. For a finite feild the charcterisitc must be between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and either rational coefficents, integer coefficents, or finite field coefficents. For a finite field the charcterisitc must be between 2^16 and 2^32. 
     Outputs
         GB:Matrix
 	    a matrix whose columns form a Groebner basis for the input ideal I, in the GrevLex order.    
     Description 
         Text
-    	    This functions uses the F4 implmentation in the msolve package to compute a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficents or finite feild coefficents with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficents, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficents.
+    	    This functions uses the F4 implmentation in the msolve package to compute a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficents or finite field coefficents with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficents, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficents.
     	Text
-	    First an example over a finite feild
+	    First an example over a finite field
 	Example
 	    R=ZZ/1073741827[z_1..z_3]
 	    I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-	    gB=grobBasis I
+	    gB=msolveGB I
 	    lT=monomialIdeal leadTerm gB
 	    degree lT
 	    dim lT	    
@@ -268,42 +304,42 @@ Node
 	Example 
 	    R=QQ[z_1..z_3]
 	    I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-	    gB=grobBasis I
+	    gB=msolveGB I
 	    (ideal gB)== ideal(groebnerBasis I)
 	    lT=monomialIdeal leadTerm gB
 	    degree lT
 	    dim lT  
 Node 
     Key
-    	leadingMonomials
-	(leadingMonomials, Ideal)
+    	msolveLeadMonomials
+	(msolveLeadMonomials, Ideal)
     Headline
     	Computes the leading monomials of a Groebner basis in GrevLex order.
     Usage
-    	leadingMonomials(I)
+    	msolveLeadMonomials(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficents, integer coefficents, or finite feild coefficents. For a finite feild the charcterisitc must be between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and either rational coefficents, integer coefficents, or finite field coefficents. For a finite field the charcterisitc must be between 2^16 and 2^32. 
     Outputs
         GB:Matrix
 	    a matrix whose columns are the leading monomials (of a Groebner basis for) the input ideal I, in the GrevLex order.    
     Description 
         Text
-    	    This functions uses the F4 implmentation in the msolve package to compute leading monomials via a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficents or finite feild coefficents with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficents, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficents.
+    	    This functions uses the F4 implmentation in the msolve package to compute leading monomials via a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficents or finite field coefficents with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficents, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficents.
     	Text
-	    First an example over a finite feild
+	    First an example over a finite field
 	Example
 	    R=ZZ/1073741827[z_1..z_3]
 	    I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-	    lm=monomialIdeal leadingMonomials I
+	    lm=monomialIdeal msolveLeadMonomials I
 	    degree lm
 	    dim lm	    
 	Text
-	    Now the same example over the rationals; note over the rationals msolve first computes over a finite feild and when only the leading monomials are asked for the correct leading monomials will be returned but the full Groebner basis over Q will not be computed. Hence if only degree and dimension are desired this command will often be faster that the Groeber basis command.  
+	    Now the same example over the rationals; note over the rationals msolve first computes over a finite field and when only the leading monomials are asked for the correct leading monomials will be returned but the full Groebner basis over Q will not be computed. Hence if only degree and dimension are desired this command will often be faster that the Groeber basis command.  
 	Example 
 	    R=QQ[z_1..z_3]
 	    I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-	    lm=monomialIdeal leadingMonomials I
+	    lm=monomialIdeal msolveLeadMonomials I
 	    lt=monomialIdeal leadTerm groebnerBasis I
 	    lm==lt
 	    degree lm
@@ -311,12 +347,12 @@ Node
 
 Node 
     Key
-    	realSolutions
-	(realSolutions, Ideal)
+    	msolveRealSolutions
+	(msolveRealSolutions, Ideal)
     Headline
     	Uses symbolic methods to compute a certified solution interval for each real solution to a zero dimentional polynomial system.
     Usage
-    	realSolutions(I)
+    	msolveRealSolutions(I)
     Inputs
     	I:Ideal
 	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficents. 
@@ -328,7 +364,7 @@ Node
     	    This functions uses the msolve package to compute the real solutions to a zero dimensional polynomial ideal with either integer or rational coefficents. The output is a list of lists, each entry in the list Sol consists of a list repsenting the coordinates of a solution. By default each solution coordinate value is also represetened by a two element list of rational numbers, {a, b}, this means that that coordinate of the solution has a value greater than or equal to a and less than or equal to b. This interval is computed symbolically and its correctness is gaurentted by exact methods. Note that using the option Output one may specify the output in terms of either a float inteval with "floatInterval" or an average of the interval endpoints as a single float with "float".      
 
     	Text
-	    First an example over a finite feild
+	    First an example over a finite field
 	Example
 	    n=3
 	    R=QQ[x_1..x_n]
@@ -336,9 +372,9 @@ Node
 	    g = (x_2-5/2)*(x_2-1/2)
 	    h=(x_3-2)*(x_3-1)
 	    I = ideal (f,g,h)
-	    sols=realSolutions(I)
-	    floatSolsInterval=realSolutions(I,Output=>"floatInterval")
-	    floatAproxSols=realSolutions(I,Output=>"float")
+	    sols=msolveRealSolutions(I)
+	    floatSolsInterval=msolveRealSolutions(I,Output=>"floatInterval")
+	    floatAproxSols=msolveRealSolutions(I,Output=>"float")
 	    	    
 	Text
 	    Note in cases where solutions have multiplicity this is not returned, but the presence of multiplcity also does not reduce accuracy or reliability in any way.   
@@ -349,17 +385,17 @@ Node
 	    g = (x_2-5/2)*(x_2-1/2)
 	    h=(x_3-2)*(x_3-1)
 	    I = ideal (f,g,h)
-	    sols=realSolutions(I)
-	    floatSolsInterval=realSolutions(I,Output=>"floatInterval")
-	    floatAproxSols=realSolutions(I,Output=>"float")
+	    sols=msolveRealSolutions(I)
+	    floatSolsInterval=msolveRealSolutions(I,Output=>"floatInterval")
+	    floatAproxSols=msolveRealSolutions(I,Output=>"float")
 Node 
     Key
-    	rUR
-	(rUR, Ideal)
+    	msolveRUR
+	(msolveRUR, Ideal)
     Headline
     	Uses symbolic methods to compute the rational univariate representation of a zero dimentional polynomial system.
     Usage
-    	rUR(I)
+    	msolveRUR(I)
     Inputs
     	I:Ideal
 	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficents. 
@@ -400,7 +436,7 @@ Node
 	    h=(x_3^2-9)
 	    I = ideal (f,g,h)
 	    decompose I
-	    rur=rUR(I)
+	    rur=msolveRUR(I)
 	    factor rur#"findRootsUniPoly"
 	    sols=-1*(rur#"numerator")	    
 	    denom= rur#"denominator"
@@ -411,15 +447,15 @@ Node
 
 Node 
     Key
-    	saturateByPoly
-	(saturateByPoly, Ideal,RingElement)
+    	msolveSaturate
+	(msolveSaturate, Ideal,RingElement)
     Headline
-    	Computes a Groebner basis for the saturation of an ideal by a single polynomial in GrevLex order; only works over a finite feild.
+    	Computes a Groebner basis for the saturation of an ideal by a single polynomial in GrevLex order; only works over a finite field.
     Usage
-    	saturateByPoly(I)
+    	msolveSaturate(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and finite feild coefficents. The finite feild must have charcterisitc between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and finite field coefficents. The finite field must have charcterisitc between 2^16 and 2^32. 
 	f:RingElement
 	    a polynomial in the same ring as I.    
     Outputs
@@ -429,25 +465,25 @@ Node
         Text
     	    This functions uses the saturation implmentation in the msolve package to compute a Groebner basis, in GrevLex order, of I:f^\infty, that is of the saturation of the ideal I by the principal ideal generated by the polynomial f.
     	Text
-	    First an example; note the ring must be a polynomial ring over a finite feild
+	    First an example; note the ring must be a polynomial ring over a finite field
 	Example
 	    R=ZZ/1073741827[z_1..z_3]
 	    I=ideal(z_1*(z_2^2-17*z_1-z_3^3),z_1*z_2)
-	    satMsolve=ideal saturateByPoly(I,z_1)
+	    satMsolve=ideal msolveSaturate(I,z_1)
 	    satM2=saturate(I,z_1)	    	    
 Node 
     Key
-    	eliminationIdeal
-	(eliminationIdeal, Ideal,List)
-	(eliminationIdeal, List,Ideal)
-	(eliminationIdeal, Ideal,RingElement)
+    	msolveEliminate
+	(msolveEliminate, Ideal,List)
+	(msolveEliminate, List,Ideal)
+	(msolveEliminate, Ideal,RingElement)
     Headline
     	Computes the elimination ideal of a given ideal.
     Usage
-    	eliminationIdeal(I,elimVars)
+    	msolveEliminate(I,elimVars)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with rational or finite feild coefficents. If working over a finite feild, it must have charcterisitc between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with rational or finite field coefficents. If working over a finite field, it must have charcterisitc between 2^16 and 2^32. 
 	elimVars:List
 	    a list of variables in the same ring as I, these variables will be eliminated.    
     Outputs
@@ -455,44 +491,56 @@ Node
 	    a matrix whose columns are generators for the elimination ideal.    
     Description 
         Text
-    	    This function takes as input a polynomial ideal and computes the elimination ideal given by eliminating the variables specified in the inputed list. 
-    	Text
+            This function takes as input a polynomial ideal and
+            computes the elimination ideal given by eliminating the
+            variables specified in the inputed list.
+
+            The behavior is very different over finite (prime) fields, and the rationals.
+            Over QQ, the subideal over a smaller set of variables eliminating the given ones is returned.
+            Over a finite field, the Groebner basis in the product order eliminating the given block of variables
+            is returned (warning: this is a copy of the ring with (potentially) permuted variables.
+        Text
 	    First an example over the rationals. 
 	Example
 	    R = QQ[x,a,b,c,d]
 	    f = 7*x^2+a*x+b
 	    g = 2*x^2+c*x+d
 	    M2elim=eliminate(x,ideal(f,g))
-	    Msolveelim=ideal eliminationIdeal(x,ideal(f,g))
-	    M2elim==Msolveelim    
+	    Msolveelim=msolveEliminate(x,ideal(f,g))
+	    sub(M2elim,ring Msolveelim)==Msolveelim    
 	Text
-	    We can also work over a finite feild. 
-	Example 
+            We can also work over a finite field. Here we get the full
+            Groebner basis in the permuted variables with a block
+            order.
+        Example 
 	    R = ZZ/1073741827[x,y,a,b,c,d]
 	    f = c*x^2+a*x+b*y^2+d*x*y+y
 	    g =diff(x,f)
 	    h=diff(y,f)
 	    M2elim=eliminate({x,y},ideal(f,g,h))
-	    Msolveelim=ideal eliminationIdeal({x,y},ideal(f,g,h))
-	    M2elim==Msolveelim 	    
+	    Msolveelim=msolveEliminate({x,y},ideal(f,g,h))
+	    M2elim_0 == sub(Msolveelim_0, R)
 ///	      
 
--*  
+-*
+    uninstallPackage "Msolve"
     restart
-    needsPackage "Msolve"
+    needsPackage("Msolve")
     installPackage "Msolve"
+    restart
+    check "Msolve"
 *-
 
 TEST ///
 R=ZZ/1073741827[z_1..z_3]
 I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-gB=grobBasis I
+gB=msolveGB I
 lT=monomialIdeal leadTerm gB
 degree lT
 dim lT
 R=QQ[z_1..z_3]
 I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-gB=grobBasis I
+gB=msolveGB I
 (ideal gB)== ideal(groebnerBasis I)
 lT=monomialIdeal leadTerm gB
 degree lT
@@ -503,7 +551,7 @@ TEST ///
 R=QQ[x,y];
 n=2;
 I = ideal ((x-3)*(x^2+1),y-1);
-sols=realSolutions(I,Output=>"float");
+sols=msolveRealSolutions(I,Output=>"float");
 assert(sols=={{3.0,1.0}});
 ///
 
@@ -512,7 +560,7 @@ S = ZZ/1073741827[t12,t13,t14,t23,t24,t34];
 I = ideal((t13*t12-t23)*(1-t14)+(t14*t12-t24)*(1-t13) - (t12+1)*(1-t13)*(1-t14), (t23*t12-t13)*(1-t24)+(t24*t12-t14)*(1-t23) - (t12+1)*(1-t23)*(1-t24), (t14*t34-t13)*(1-t24)+(t24*t34-t23)*(1-t14) - (t34+1)*(1-t14)*(1-t24));
 sat=(1-t24);
 J1= saturate(I,sat);
-J2=ideal saturateByPoly(I,sat);
+J2=ideal msolveSaturate(I,sat);
 assert(J1==J2);
 ///
 
@@ -521,6 +569,6 @@ R = QQ[x,a,b,c,d];
 f = x^2+a*x+b;
 g = x^2+c*x+d;
 eM2=eliminate(x,ideal(f,g));
-eMsolve=eliminationIdeal(x,ideal(f,g));
+eMsolve=msolveEliminate(x,ideal(f,g));
 assert(eM2==sub(eMsolve,ring eM2))
 ///

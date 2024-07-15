@@ -824,6 +824,8 @@ assert ( (-1.3) ^ - infinity === indeterminate )
 assert ( (1/1) ^ infinity == 1 )
 assert ( 1. ^ infinity == 1. )
 assert ( nan ^ infinity === indeterminate )
+assert ( atan infinity === pi/2)
+assert not isANumber sin indeterminate
 
 assert ( size2 4. == 3 )
 assert ( size2 3.999999 == 2 )

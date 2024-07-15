@@ -9,11 +9,11 @@ newPackage("Valuations",
             {Name => "Ethan Partida", Email => "ethan_partida@brown.edu", HomePage => "https://ethanpartida.github.io/"},
             {Name => "Shelby Cox", Email => "spcox@umich.edu"},
             {Name => "Courtney George", Email => "courtney.george@uky.edu"},
-            {Name => "Oliver Clarke", Email => "oliver.clarke@ed.ac.uk", HomePage => "oliverclarkemath.com"}},
-        DebuggingMode => true,
+            {Name => "Oliver Clarke", Email => "oliver.clarke@ed.ac.uk", HomePage => "https://www.oliverclarkemath.com/"}},
         HomePage => "https://github.com/Macaulay2/Workshop-2023-Minneapolis/tree/valuations",
         Configuration => {},
-        PackageExports => {"LocalRings", "SubalgebraBases", "InvariantRing", "gfanInterface", "Binomials"})
+        PackageExports => {"LocalRings", "SubalgebraBases", "InvariantRing", "gfanInterface", "Binomials"},
+	Keywords => {"Commutative Algebra"})
 
 ----- Eventually move to other packages
 ring Subring := A -> ambient A
@@ -538,7 +538,7 @@ doc ///
             the lowest term valuation
      Description
        Text
-           This function construst a valuation which returns the exponent vector of the
+           This function builds a valuation which returns the exponent vector of the
            lead term of a polynomial with respect to the ring's term order.
            The valuation returns vectors in an @TT "ordered $\\QQ$-module"@,
            which respects the monomial order of the

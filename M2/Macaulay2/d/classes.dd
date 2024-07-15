@@ -99,8 +99,8 @@ ancestorfun(e:Expr):Expr := (
 	  is xx:HashTable do (
 	       when y 
 	       is yy:HashTable do if ancestor(xx,yy) then True else False
-	       else WrongArg(1,"a hash table"))
-	  else WrongArg(2,"a hash table"))
+	       else WrongArgHashTable(1))
+	  else WrongArgHashTable(2))
      else WrongNumArgs(2));
 setupfun("ancestor",ancestorfun);
 
@@ -176,19 +176,10 @@ export Class(e:Expr):HashTable := (
 classfun(e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);
 
-export commonAncestor(x:HashTable,y:HashTable):HashTable := (
-     if x == y then return x;
-     t := x;
-     while t != thingClass do ( t.numEntries = - 1 - t.numEntries; t = t.parent; );
-     a := thingClass;
-     t = y;
-     while t != thingClass do (
-	  if t.numEntries < 0 then ( a = t; break; );
-	  t = t.parent;
-     	  );
-     t = x;
-     while t != thingClass do ( t.numEntries = - 1 - t.numEntries; t = t.parent; );
-     a);
+export commonAncestor(x:HashTable,y:HashTable):HashTable :=
+     if ancestor(x,y) then y
+     else if y == thingClass then y	-- shouldn't occur
+     else commonAncestor(x,y.parent)
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d classes.o "

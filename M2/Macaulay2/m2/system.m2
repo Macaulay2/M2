@@ -67,6 +67,12 @@ sampleInitFile := ///-- This is a sample init.m2 file provided with Macaulay2.
 -- Uncomment and edit the following line to preload your favorite package.
 -- needsPackage "StateTables"
 
+-- Alternatively, you can modify the list of preloaded packages.
+-- For example, to add a single package to this list:
+-- Core#"preloaded packages" |= {"StateTables"}
+-- Or to not preload any packages:
+-- Core#"preloaded packages" = {}
+
 ///
 
 readmeFile := ///Welcome to Macaulay2!
@@ -87,23 +93,20 @@ your "path", so Macaulay2's "load" and "input" commands will automatically look
 there for your files.
 
 You may obtain source code for Macaulay2 packages and install them yourself
-with the function "installPackage".  Behind the scenes, Macaulay2 will use the
-subdirectory "encap/" to house the code for those packages in separate
-subdirectories.  The subdirectory "local/" will hold a single merged directory
-tree for those packages, with symbolic links to the files of the packages.
+with the function "installPackage".  By default, these packages will be
+installed to the "local/" subdirectory.
 
 Good luck!
 
-http://www.math.uiuc.edu/Macaulay2/
+https://macaulay2.com/
 
 Daniel R. Grayson <dan@math.uiuc.edu>,
-Michael R. Stillman <mike@math.cornell.edu>
+Michael E. Stillman <mike@math.cornell.edu>
 ///
 
 setUpApplicationDirectory = () -> (
      dir := applicationDirectory();
      makeDirectory(dir);
-     makeDirectory(dir|"encap/");
      makeDirectory(dir|"local/");
      makeDirectory(dir|"code/");
      f := (n,c) -> (n = dir|n; if not fileExists n then n << c << close);
@@ -244,8 +247,10 @@ locatePackageFile = (defaultPrefix,defaultLayoutIndex,pkgname,f) -> (
 
 locatePackageFileRelative = (defaultPrefix,defaultLayoutIndex,pkgname,f,installPrefix,installTail) -> (
      (prefix,tail) := locatePackageFile(defaultPrefix,defaultLayoutIndex,pkgname,f);
-     if prefix === installPrefix			    -- we assume these are both real paths, without symbolic links
-     then relativizeFilename(installTail,tail)
+     if prefix === installPrefix then (		    -- we assume these are both real paths, without symbolic links
+	 if isAbsolutePath installTail
+	 then relativizeFilename(installTail, prefix | tail)
+	 else relativizeFilename(installTail, tail))
      else prefix|tail)
 
 locateCorePackageFile = (pkgname,f) -> locatePackageFile(prefixDirectory,currentLayout,pkgname,f)

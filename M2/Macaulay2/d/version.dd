@@ -63,6 +63,8 @@ header "
    #endif
 
    #include <Eigen/Core>
+
+   #include <libnormaliz/version.h>
    ";
 
 header "
@@ -173,20 +175,8 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "gdbm version" => gdbmversion(),
-   "gmp version" => Ccode(constcharstar,"
-	  #if USING_MPIR
-	       \"not present\"
-	  #else
-	       __gmp_version
-	  #endif
-	  "),
-   "mpir version" => Ccode(constcharstar,"
-	#if USING_MPIR
-	     __mpir_version
-	#else
-	     \"not present\"
-	#endif
-	"),
+   "gmp version" => Ccode(constcharstar,"__gmp_version"),
+   "normaliz version" => Ccode(constcharstar,"stringize(NMZ_VERSION)"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
    "flint version" => Ccode(constcharstar,"FLINT_VERSION"),
@@ -226,7 +216,8 @@ setupconst("version", Expr(toHashTable(Sequence(
    "packages" => Ccode(constcharstar,"DISTRIBUTED_PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")
+   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION"),
+   "git branch" => Ccode(constcharstar, "GIT_BRANCH")
    ))));
 
 -- Local Variables:

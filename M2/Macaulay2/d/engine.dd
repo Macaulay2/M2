@@ -241,7 +241,7 @@ export tostring(a:RawMonomial):string := Ccode(returns,"
      catch (const exc::engine_error& e) { o << \"[unprintable monomial]\"; }
      return o.to_string();
      ");
-export hash(a:RawMonomial):uint := Ccode(uint,"a->hash()");
+export hash(a:RawMonomial):hash_t := Ccode(hash_t,"a->hash()");
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d engine.o "

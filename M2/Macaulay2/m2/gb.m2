@@ -231,6 +231,9 @@ remainder(Matrix, GroebnerBasis) := Matrix      => (n, G) -> map(target n, , raw
 Number          % GroebnerBasis  :=
 RingElement     % GroebnerBasis  := RingElement => (r, G) -> (remainder(promote(r, ring G) * id_(target G), G))_(0,0)
 
+-- TODO: IM2_GB_is_equal is mentioned in the interpreter, but never defined
+GroebnerBasis == GroebnerBasis := (G1, G2) -> -1 === rawGBContains(raw G1, raw generators G2) and -1 === rawGBContains(raw G2, raw generators G1)
+
 -----------------------------------------------------------------------------
 -- helpers for gb
 -----------------------------------------------------------------------------

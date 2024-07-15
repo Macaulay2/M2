@@ -2,8 +2,8 @@
 
 newPackage(
         "GeometricDecomposability",
-        Version => "1.4",
-        Date => "February 7, 2024",
+        Version => "1.4.1",
+        Date => "May 7, 2024",
         Headline => "A package to check whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
@@ -18,7 +18,21 @@ newPackage(
                 }
                 },
         Keywords => {"Commutative Algebra"},
-        PackageImports => {"Depth", "PrimaryDecomposition"}
+        PackageImports => {"Depth", "PrimaryDecomposition"},
+	Certification => {
+	    "journal name" => "Journal of Software for Algebra and Geometry",
+	    "journal URI" => "https://msp.org/jsag/",
+	    "article title" => "The GeometricDecomposability package for Macaulay2",
+	    "acceptance date" => "2024-01-23",
+	    "published article URI" => "https://msp.org/jsag/2024/14-1/p06.xhtml",
+	    "published article DOI" => "10.2140/jsag.2024.14.41",
+	    "published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x06-GeometricDecomposability.m2",
+	    "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GeometricDecomposability.m2",
+	    "release at publication" => "d29b1075986232868a6460344ad708dbddbdd29b",
+	    "version at publication" => "1.2",
+	    "volume number" => "14",
+	    "volume URI" => "https://msp.org/jsag/2024/14-1/"
+	    }
         )
 
 export {
@@ -465,17 +479,17 @@ oneStepGVD(Ideal, RingElement) := opts -> (I, y) -> (
         z := sub(y, lexRing);
         G := if opts.UniversalGB then J_* else first entries gens gb J;
 
-        -- check whether the intersection condition holds
-        isValid := isValidOneStep(G, z);
-        if not isValid then (
-                printIf(opts.Verbose, "Warning: not a valid geometric vertex decomposition");
-                );
-
         -- get N_{y,I}
         NyI := ideal select(G, g -> degree(z, g) == 0);
 
         -- get C_{y, I}
         CyI := ideal apply(G, g -> getQ(g, z));
+
+        -- check whether the intersection condition holds
+        isValid := if opts.UniversalGB then isValidOneStepFromUGB(G, CyI, NyI, z) else isValidOneStep(G, z);
+        if not isValid then (
+                printIf(opts.Verbose, "Warning: not a valid geometric vertex decomposition");
+                );
 
         -- sub C and N into original ring
         -- by [CDSRVT, Theorem 2.9] variables in ring not appearing in the ideal do not matter 
@@ -625,7 +639,7 @@ isSquarefreeInY(RingElement, RingElement) := (m, y) -> (
 
 
 -- determine whether the one-step geometric vertex decomposition holds
--- uses [KR, Lemmas 2.6 and 2.12] and generalizations thereof
+-- uses [KR, Lemmas 2.6 and 2.12]
 isValidOneStep = method(TypicalValue => Boolean)
 isValidOneStep(List, RingElement) := (G, y) -> (
         -- G is a list, whose elements form a reduced Gröbner basis
@@ -636,6 +650,19 @@ isValidOneStep(List, RingElement) := (G, y) -> (
         yDegrees := unique flatten yDegreesByTerm;
         yMaxDegree := max yDegrees;
         return yMaxDegree <= 1;
+        )
+
+
+isValidOneStepFromUGB = method(TypicalValue => Boolean)
+isValidOneStepFromUGB(List, Ideal, Ideal, RingElement) := (G, C, N, y) -> (
+        -- G is a UGB for the ideal I it generates; C = C_{y, I} and N_{y, I}
+        -- the previous check may not work for UGBs because it requires the GB to be reduced
+        currentRing := ring y;
+        C1 := sub(C, currentRing);
+        N1 := sub(N, currentRing);
+
+        initYForms := sub(initialYForms(ideal G, y, UniversalGB=>true), currentRing);
+        return initYForms == intersect(C1, N1 + ideal(y));
         )
 
 
@@ -1918,6 +1945,17 @@ doc///
                                 ideal $I$, then $\{ q_1, \ldots, q_s \}$ and $\{ q_i \mid d_i = 0 \}$ are universal 
                                 Gröbner bases for $C_{y,I}$ and $N_{y,I}$ in $k[x_1, \ldots, \hat y, \ldots, x_n]$, 
                                 respectively.
+
+                Caveat
+                        If a universal Gr\"obner basis is not given, the intersection condition 
+                        ${\rm in}_y(I) = C_{y,I} \cap (N_{y,I} + \langle y \rangle)$ via the results of 
+                        [KR, Lemmas 2.6 and 2.12], which looks at the degree of $y$ in the reduced 
+                        Gr\"obner basis of $I$.
+                        In general, a universal Gr\"obner basis is not reduced, so the intersection condition
+                        must be checked explicitly.
+                        So, although providing a universal Gr\"obner basis will speed up computing the ideals
+                        $C_{y, I}$ and $N_{y, I}$, it may take longer to verify the intersection condition.
+
                 SeeAlso
                         oneStepGVDCyI
                         findOneStepGVD

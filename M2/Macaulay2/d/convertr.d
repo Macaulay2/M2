@@ -158,7 +158,13 @@ export convert(e:ParseTree):Code := (
 	  var := token.entry;
 	  wrd := token.word;
 	  if wrd.typecode == TCRR
-	  then Code(realCode(parseRR(wrd.name),position(token)))
+	  then (
+	       x:= parseRR(wrd.name);
+	       when x
+	       is y:RR do Code(realCode(y, position(token)))
+	       is null do Code(Error(position(token),
+		       "expected precision to be a small non-negative integer",
+		       nullE,false,dummyFrame)))
 	  else if wrd.typecode == TCint
 	  then Code(integerCode(parseInt(wrd.name),position(token)))
  	  else if wrd.typecode == TCstring
@@ -390,7 +396,7 @@ export convert(e:ParseTree):Code := (
      is a:Arrow do (
 	  fc := functionCode(
 	       a.Operator,		  -- just for display purposes!
-	       convert(a.rhs),a.desc,0);
+	       convert(a.rhs),a.desc,hash_t(0));
 	  fc.hash = hashFromAddress(Expr(fc));
 	  Code(fc))
      is u:Unary do (

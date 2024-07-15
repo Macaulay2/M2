@@ -80,9 +80,7 @@ doc ///
   Key
     lngamma
     (lngamma, RR)
-    (lngamma, ZZ)
-    (lngamma, QQ)
-    (lngamma, Constant)
+    (lngamma, Number)
   Headline
     logarithm of the Gamma function
   Usage

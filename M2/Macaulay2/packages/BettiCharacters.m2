@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Copyright 2021-2022  Federico Galetto
+-- Copyright 2021-2023  Federico Galetto
 --
 -- This program is free software: you can redistribute it and/or modify it under
 -- the terms of the GNU General Public License as published by the Free Software
@@ -18,15 +18,29 @@
 
 newPackage(
      "BettiCharacters",
-     Version => "2.0",
-     Date => "July 26, 2022",
+     Version => "2.1",
+     Date => "February 26, 2023",
      AuxiliaryFiles => false,
      Authors => {{Name => "Federico Galetto",
      	       Email => "galetto.federico@gmail.com",
 	       HomePage => "http://math.galetto.org"}},
      Headline => "finite group characters on free resolutions and graded modules",
-     PackageImports => {"SimpleDoc"},
-     DebuggingMode => false
+     DebuggingMode => false,
+     Keywords => {"Commutative Algebra"},
+     Certification => {
+	 "journal name" => "Journal of Software for Algebra and Geometry",
+	 "journal URI" => "https://msp.org/jsag/",
+	 "article title" => "Setting the scene for Betti characters",
+	 "acceptance date" => "2023-05-30",
+	 "published article URI" => "https://msp.org/jsag/2023/13-1/p04.xhtml",
+	 "published article DOI" => "10.2140/jsag.2023.13.45",
+	 "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x04-BettiCharacters.m2",
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/BettiCharacters.m2",
+	 "release at publication" => "a446af4424af33c06ab97694761a4d5bbc4d535f",
+	 "version at publication" => "2.1",
+	 "volume number" => "13",
+	 "volume URI" => "https://msp.org/jsag/2023/13-1/"
+	 }
      )
 
 export {
@@ -42,7 +56,6 @@ export {
     "CharacterTable",
     "decomposeCharacter",
     "inverseRingActors",
-    "labels",
     "Labels",
     "numActors",
     "ringActors",
@@ -62,6 +75,11 @@ CharacterDecomposition = new Type of HashTable
 Action = new Type of HashTable
 ActionOnComplex = new Type of Action
 ActionOnGradedModule = new Type of Action
+
+-- equality check for actions implemented below
+
+-- equality for characters as raw hash tables
+Character == Character := (A,B) -> A === B
 
 ----------------------------------------------------------------------
 -- Characters and character tables -----------------------------------
@@ -90,14 +108,15 @@ character(PolynomialRing,ZZ,HashTable) := Character => (R,cl,H) -> (
     dl := degreeLength R;
     degs := apply(k,last);
     if any(degs, i -> #i != dl or any(i, j -> class j =!= ZZ)) then (
-	error "character: expected integer degree vectors of length "
-	| toString(dl);
+	error ("character: expected integer degree vectors of length " | toString(dl));
 	);
     -- check character vectors are allowed
     v := values H;
-    if any(v, i -> numColumns i != cl or class i =!= Matrix) then (
-	error "character: expected characters to be one-row matrices with "
-	| toString(cl) | " columns";
+    if any(v, i -> class i =!= Matrix) then (
+	error "character: expected characters to be matrices";
+	);
+    if any(v, i -> numColumns i != cl) then (
+	error ("character: expected characters to be one-row matrices with " | toString(cl) | " columns");
 	);
     -- move character values into given ring
     H2 := try applyValues(H, v -> promote(v,R)) else (
@@ -184,12 +203,8 @@ Character Array := Character => (C,A) -> (
 	}
     )
 
--- character dual
--- borrowing default options from alexander dual method
-alexopts = {Strategy=>0};
-
 -- character of dual/contragredient representation with conjugation
-dual(Character,RingMap) := Character => alexopts >> o -> (c,phi) -> (
+dual(Character,RingMap) := Character => {} >> o -> (c,phi) -> (
     -- check characteristic
     R := c.ring;
     if char(R) != 0 then (
@@ -217,14 +232,14 @@ dual(Character,RingMap) := Character => alexopts >> o -> (c,phi) -> (
     )
 
 -- character of dual/contragredient representation without conjugation
-dual(Character,List) := Character => alexopts >> o -> (c,perm) -> (
+dual(Character,List) := Character => {} >> o -> (c,perm) -> (
     n := c.numActors;
     if #perm != n then (
 	error "dual: expected permutation size to match character length";
 	);
     -- check permutation has the right entries
     if set perm =!= set(1..n) then (
-	error "dual: expected a permutation of {1,..," | toString(n) | "}";
+	error ("dual: expected a permutation of {1,..," | toString(n) | "}");
 	);
     new Character from {
 	cache => new CacheTable,
@@ -281,9 +296,9 @@ o -> (conjSize,charTable,R,phi) -> (
     	l := for i to n-1 list "X"|toString(i);
 	) else (
 	if #o.Labels != n then (
-	    error "characterTable: expected " | toString(n) | " labels";
+	    error ("characterTable: expected " | toString(n) | " labels");
 	    );
-	if any(o.Labels, i -> class i =!= String and class i =!= Net) then (
+	if not all(o.Labels, i -> instance(i, Net)) then (
 	    error "characterTable: expected labels to be strings (or nets)";	    
 	    );
 	l = o.Labels;
@@ -294,7 +309,7 @@ o -> (conjSize,charTable,R,phi) -> (
 	(symbol table) => X,
 	(symbol ring) => R,
 	(symbol matrix) => m,
-	(symbol labels) => l,
+	(symbol Labels) => l,
 	}
     )
 
@@ -321,7 +336,7 @@ o -> (conjSize,charTable,R,perm) -> (
 	);
     -- check permutation has the right entries
     if set perm =!= set(1..n) then (
-	error "characterTable: expected a permutation of {1,..," | toString(n) | "}";
+	error ("characterTable: expected a permutation of {1,..," | toString(n) | "}");
 	);
     -- check characteristic
     ordG := sum conjSize;
@@ -342,7 +357,7 @@ o -> (conjSize,charTable,R,perm) -> (
     	l := for i to n-1 list "X"|toString(i);
 	) else (
 	if #o.Labels != n then (
-	    error "characterTable: expected " | toString(n) | " labels";
+	    error ("characterTable: expected " | toString(n) | " labels");
 	    );
 	if any(o.Labels, i -> class i =!= String and class i =!= Net) then (
 	    error "characterTable: expected labels to be strings (or nets)";	    
@@ -355,7 +370,7 @@ o -> (conjSize,charTable,R,perm) -> (
 	(symbol table) => X,
 	(symbol ring) => R,
 	(symbol matrix) => m,
-	(symbol labels) => l,
+	(symbol Labels) => l,
 	}
     )
 
@@ -383,7 +398,7 @@ CharacterDecomposition => (C,T) -> (
     new CharacterDecomposition from {
 	(symbol numActors) => C.numActors,
 	(symbol ring) => R,
-	(symbol labels) => T.labels,
+	(symbol Labels) => T.Labels,
 	(symbol decompose) => D,
 	(symbol positions) => p
 	}
@@ -437,12 +452,6 @@ action(ChainComplex,List,List,ZZ):=ActionOnComplex=>op->(C,l,l0,i) -> (
     if not isHomogeneous C then (
 	error "action: complex is not homogeneous";
 	);
-    --if user passes handcrafted complex give warning message
-    if not C.?Resolution then (
-	print "";
-	print "Warning: complex is not a resolution computed by M2.";
-	print "This could lead to errors or meaningless results.";
-	);
     --check the matrix of the action on the variables has right size
     n := dim R;
     if not all(l,g->numColumns(g)==n) then (
@@ -453,7 +462,7 @@ action(ChainComplex,List,List,ZZ):=ActionOnComplex=>op->(C,l,l0,i) -> (
 	    error "action: expected ring actor matrix to be a one-row substitution matrix";
 	    );
     	--convert variable substitutions to matrices
-	l=apply(l,g->(vars R)\\lift(g,R));
+	l=apply(l,g->lift(g,R)//(vars R));
 	) else (
 	--if ring actors are matrices they must be square
     	if not all(l,g->numRows(g)==n) then (
@@ -482,7 +491,6 @@ action(ChainComplex,List,List,ZZ):=ActionOnComplex=>op->(C,l,l0,i) -> (
 	(symbol numActors) => #l,
 	(symbol ringActors) => l,
 	(symbol inverseRingActors) => apply(l,inverse),
-	(symbol actors) => apply(l0,g->map(C_i,C_i,g)),
 	}
     )
 
@@ -492,6 +500,19 @@ action(ChainComplex,List) := ActionOnComplex => op -> (C,l) -> (
     R := ring C;
     l0 := toList(#l:(id_(R^1)));
     action(C,l,l0,min C,Sub=>op.Sub)
+    )
+
+-- equality check for actions on complexes
+-- user provided action is stored in cache because user
+-- may provide initial action in different homological degrees
+-- then it is not enough to compare as raw hash tables
+-- so we compare actors in all homological degrees
+ActionOnComplex == ActionOnComplex := (A,B) -> (
+    -- first compare raw hash tables
+    if A =!= B then return false;
+    -- if same, compare action which is stored in cache
+    C := A.target;
+    all(min C .. max C, i -> actors(A, i) == actors(B, i))
     )
 
 -- returns number of actors
@@ -518,9 +539,6 @@ inverseRingActors(Action) := List => op -> A -> (
 -- returns various group actors
 actors = method(TypicalValue=>List)
 
--- returns actors passed by user when constructing the action
-actors(Action) := List => A -> A.actors
-
 -- returns actors on resolution in a given homological degree
 -- if homological degree is not the one passed by user,
 -- the actors are computed and stored
@@ -535,7 +553,7 @@ actors(ActionOnComplex,ZZ) := List => (A,i) -> (
 	    -- given a map of free modules C.dd_i : F <-- F',
 	    -- the inverse group action on the ring (as substitution)
 	    -- and the group action on F, computes the group action on F'
-	    (gInv,g0) -> sub(C.dd_i,gInv)\\(g0*C.dd_i)
+	    (gInv,g0) -> (g0*C.dd_i)//sub(C.dd_i,gInv)
 	    );
     	-- make cache function from f and run it on A
     	((cacheValue (symbol actors,i)) f) A
@@ -547,7 +565,7 @@ actors(ActionOnComplex,ZZ) := List => (A,i) -> (
 	    -- and the group action on F', computes the group action on F
 	    -- it is necessary to transpose because we need a left factorization
 	    -- but M2's command // always produces a right factorization
-	    transpose(transpose(C.dd_(i+1))\\transpose(sub(C.dd_(i+1),gInv)*g0))
+	    transpose(transpose(sub(C.dd_(i+1),gInv)*g0)//transpose(C.dd_(i+1)))
 	    );
     	-- make cache function from f and run it on A
     	((cacheValue (symbol actors,i)) f) A
@@ -635,7 +653,7 @@ action(Module,List,List):=ActionOnGradedModule=>op->(M,l,l0) -> (
 	    error "action: expected ring actor matrix to be a one-row substitution matrix";
 	    );
     	--convert variable substitutions to matrices
-	l=apply(l,g->(vars R)\\lift(g,R));
+	l=apply(l,g->lift(g,R)//(vars R));
 	) else (
 	--if ring actors are matrices they must be square
     	if not all(l,g->numRows(g)==n) then (
@@ -694,6 +712,11 @@ action(Module,List) := ActionOnGradedModule => op -> (M,l) -> (
     action(M,l,l0,Sub=>op.Sub)
     )
 
+-- equality check for actions on graded modules
+-- since the user provided action on generators is stored
+-- it is enough to compare as raw hash tables
+ActionOnGradedModule == ActionOnGradedModule := (A,B) -> A === B
+
 -- returns actors on component of given multidegree
 -- the actors are computed and stored
 actors(ActionOnGradedModule,List) := List => (A,d) -> (
@@ -703,7 +726,7 @@ actors(ActionOnGradedModule,List) := List => (A,d) -> (
     b := ambient basis(d,M);
     if zero b then return toList(numActors(A):map(source b));
     -- function for actors of A in degree d
-    f := A -> apply(ringActors A,actors A, (g,g0) -> (
+    f := A -> apply(ringActors A, A.actors, (g,g0) -> (
     	    --g0*b acts on the basis of the ambient module
 	    --sub(-,g) acts on the polynomial coefficients
 	    --result must be reduced against module relations
@@ -843,7 +866,7 @@ symmetricGroupTable PolynomialRing := R -> (
 	(symbol ring) => R,
 	(symbol matrix) => m,
 	-- compact partition notation used for symmetric group labels
-	(symbol labels) => apply(P, p -> (
+	(symbol Labels) => apply(P, p -> (
     	    	t := tally toList p;
     	    	pows := apply(rsort keys t, k -> net Power(k,t#k));
     	    	commas := #pows-1:net(",");
@@ -908,7 +931,7 @@ net CharacterTable := T -> (
     -- top row of character table
     a := {{""} | T.size};
     -- body of character table
-    b := apply(pack(1,T.labels),entries T.table,(i,j)->i|j);
+    b := apply(pack(1,T.Labels),entries T.table,(i,j)->i|j);
     stack("Character table over "|(net T.ring)," ",
 	netList(a|b,BaseRow=>1,Alignment=>Right,Boxes=>{{1},{1}},HorizontalSpace=>2)
 	)
@@ -918,7 +941,7 @@ net CharacterTable := T -> (
 net CharacterDecomposition := D -> (
     p := D.positions;
     -- top row of decomposition table
-    a := {{""} | D.labels_p };
+    a := {{""} | D.Labels_p };
     -- body of decomposition table
     b := apply(sort pairs D.decompose,(k,v) -> {k} | (flatten entries v)_p );
     stack("Decomposition table"," ",
@@ -985,7 +1008,11 @@ Node
 	    @UL {(BOLD "1.0: ", "Initial version. Includes computation of
 		actions and Betti characters.") ,
 		(BOLD "2.0: ", "Introduces character tables, decompositions,
-		and other methods for characters.")
+		and other methods for characters."),
+		(BOLD "2.1: ", "Adds equality checks for actions and
+		    characters. Contains several small improvements to the
+		    code and documentation, including a new multigraded
+		    example.")
 		}@
     Subnodes
     	:Defining and computing actions
@@ -997,13 +1024,15 @@ Node
 	:Character tables and decompositions
 	characterTable
 	decomposeCharacter
-	:Symmetric group actions
+	:Additional methods
+	"Equality checks"
 	symmetricGroupActors
 	symmetricGroupTable
-    	:Examples from the literature
+    	:Examples
       	"BettiCharacters Example 1"
       	"BettiCharacters Example 2"
       	"BettiCharacters Example 3"
+      	"BettiCharacters Example 4"
 
 Node
     Key
@@ -1178,7 +1207,8 @@ Node
 	characters, we work over the cyclotomic field obtained by
 	adjoining a primitive 7th root of unity to $\mathbb{Q}$.
     Example
-    	kk = toField(QQ[a]/ideal(sum apply(7,i->a^i)))
+    	needsPackage "Cyclotomic"
+	kk = toField(QQ[a] / cyclotomicPoly(7, a))
 	R = kk[x,y,z]
 	f4 = x^3*y+y^3*z+z^3*x
 	H = jacobian transpose jacobian f4
@@ -1277,6 +1307,55 @@ Node
 	B = action(M,G,Sub=>false)
 	elapsedTime b = character(B,21)
 	b/T
+
+Node
+    Key
+    	"BettiCharacters Example 4"
+    Headline
+    	a multigraded example
+    Description
+    	Text
+	    Consider the polynomial ring $\mathbb{Q} [x_1,x_2,y_1,y_2,y_3]$
+       	    with the variables $x_i$ of bidegree @TT "{1,0}"@ and the
+       	    variables $y_j$ of bidegree @TT "{0,1}"@.
+	    We consider the action of a product of two symmetric
+	    groups, the first permuting the $x_i$ variables and the
+	    second permuting the $y_j$ variables. We compute the
+	    Betti characters of this group on the resolution of
+	    the bigraded irrelevant ideal
+	    $\langle x_1,x_2\rangle \cap \langle y_1,y_2,y_3\rangle$.
+	    This is also the edge ideal of the complete bipartite graph
+	    $K_{2,3}$.
+    	Example
+    	    R = QQ[x_1,x_2,y_1,y_2,y_3,Degrees=>{2:{1,0},3:{0,1}}]
+	    I = intersect(ideal(x_1,x_2),ideal(y_1,y_2,y_3))
+	    RI = res I
+    	    G = {
+	    	matrix{{x_1,x_2,y_2,y_3,y_1}},
+	    	matrix{{x_1,x_2,y_2,y_1,y_3}},
+	    	matrix{{x_1,x_2,y_1,y_2,y_3}},
+	    	matrix{{x_2,x_1,y_2,y_3,y_1}},
+	    	matrix{{x_2,x_1,y_2,y_1,y_3}},
+	    	matrix{{x_2,x_1,y_1,y_2,y_3}}
+	    	}
+    	    A = action(RI,G)
+    	    character A
+    	Text
+    	    We can also compute the characters of some graded
+	    components of the quotient by this ideal.
+    	Example
+    	    Q = R/I
+       	    B = action(Q,G)
+       	    character(B,{1,0})
+       	    character(B,{0,1})
+       	    character(B,{4,0})
+       	    character(B,{0,5})
+    	Text
+	    Note that all mixed degree components are zero.
+    	Example
+       	    character(B,{1,1})
+       	    character(B,{2,1})
+       	    character(B,{1,2})
 
 
 Node
@@ -1381,9 +1460,6 @@ Node
     	define finite group action
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this function to set up a finite group action on
 	    a minimal free resolution or graded module.
 	    See the specific use cases for more details.
@@ -1415,9 +1491,6 @@ Node
     	A:ActionOnComplex
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this function to define the action of a finite group
 	    on the minimal free resolution of a module over a
 	    polynomial ring with coefficients in a field.
@@ -1516,11 +1589,10 @@ Node
 	    G'' = toList(5:id_(R^1))
 	    action(RE,G,G'',3)
     Caveat
-    	This function determines if the complex @TT "C"@ is a free
-	resolution computed by Macaulay2. If this is not the case,
-	then the function produces a warning to inform the user that
-	later computations (i.e., Betti characters) may fail or
-	return meaningless results.
+    	This function does not check if the complex @TT "C"@ is a
+	free resolution. If the user passes a complex that is not a
+	free resolution, then later computations (i.e., Betti characters)
+	may fail or return meaningless results.
 
 
 Node
@@ -1549,9 +1621,6 @@ Node
     	A:ActionOnGradedModule
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this function to define the action of a finite group
 	    on a graded module over a polynomial ring
 	    with coefficients in a field. This includes also an
@@ -1633,46 +1702,56 @@ Node
 
 Node
     Key
+    	"Equality checks"
+    	(symbol ==,ActionOnComplex,ActionOnComplex)
+    	(symbol ==,ActionOnGradedModule,ActionOnGradedModule)
+    	(symbol ==,Character,Character)
+    Headline
+    	compare actions and characters
+    Description
+    	Text
+	    Use @TT "=="@ to check if two actions or characters are equal.
+	    
+	    For actions, the underlying ring and object (complex or
+	    module) must be the same.   
+	    The group elements used to set up the actions being
+	    compared must be the same and in the same order.
+	    In the case of actions on complexes, the @TT "=="@ operator
+	    compares the group action in all homological degrees.
+	    In the case of actions on modules, the @TT "=="@ operator
+	    compares the group action on the module generators.
+	    
+	    For characters, the underlying ring must be the same,
+	    as well as the number of entries in each character.
+	    Characters are compared across all homological and
+	    internal degrees.
+    	Example
+	    R = QQ[x_1..x_4]
+	    I = ideal apply(subsets(gens R, 2), product)
+	    RI = res I
+	    S4 = symmetricGroupActors(R)
+	    A = action(RI,S4)
+	    G = {map(RI_3, RI_3, {{0, -1, 1}, {1, 1, 0}, {0, 1, 0}}),
+		 map(RI_3, RI_3, {{0, 1, 0}, {-1, -1, 0}, {0, -1, 1}}),
+		 map(RI_3, RI_3, {{0, -1, 1}, {-1, 0, -1}, {0, 0, -1}}),
+		 map(RI_3, RI_3, {{0, 1, 0}, {1, 0, 0}, {0, 0, -1}}),
+		 map(RI_3, RI_3, {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}) }
+	    B = action(RI,S4,G,3)
+	    A == B
+	    character A == character B
+
+Node
+    Key
     	actors
-	(actors,Action)
     Headline
     	group elements of an action
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
-	    When called (without additional arguments) on an object
-	    of type @TO Action@,
-	    this function returns the list of group elements
-	    originally provided by the user to act on
-	    a module or in a given homological
-	    degree of a resolution. Note that these group elements
-	    are assumed to trivial, unless otherwise indicated
-	    when constructing the action.
-
-	    The user may specify additional arguments to obtain
-	    elements of the group acting in other degrees.
+	    This method is used to return lists of matrices
+	    representing the action of group elements on the
+	    graded components of a module or on the terms of
+	    a minimal free resolution.
 	    See the specific use cases for more details.
-    	Example	    
-	    R = QQ[x_1..x_4]
-	    I = ideal apply(subsets(gens R,2),product)
-	    M = module I
-	    RM = res M
-	    G = {matrix{{x_2,x_3,x_4,x_1}},
-    		 matrix{{x_2,x_3,x_1,x_4}},
-    		 matrix{{x_2,x_1,x_4,x_3}},
-    		 matrix{{x_2,x_1,x_3,x_4}},
-    		 matrix{{x_1,x_2,x_3,x_4}} }
-	    G' = { (id_(R^6))_{2,4,5,0,1,3},
-    		   (id_(R^6))_{2,0,1,4,5,3},
-    		   (id_(R^6))_{0,4,3,2,1,5},
-    		   (id_(R^6))_{0,2,1,4,3,5},
-    		    id_(R^6) }
-	    A = action(RM,G,G',0)
-	    actors(A)
-	    B = action(M,G)
-	    actors(B)
     SeeAlso
     	action	    
     Subnodes
@@ -1698,9 +1777,6 @@ Node
 	    of group elements acting in homological degree @TT "i"@
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
     	    This function returns matrices describing elements of a
 	    finite group acting on a minimal free resolution in a
 	    given homological degree. If the homological degree is
@@ -1763,9 +1839,6 @@ Node
 	    of group elements acting in the given (multi)degree
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
     	    This function returns matrices describing elements of a
 	    finite group acting on the graded component of
 	    (multi)degree @TT "d"@ of a module.
@@ -1804,9 +1877,6 @@ Node
     	compute characters of finite group action
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this method to compute the Betti characters
 	    of a finite group action on a minimal free resolution
 	    or the characters of a finite group action on the
@@ -1843,9 +1913,6 @@ Node
 	    Betti characters of the resolution
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this function to compute all nonzero Betti
 	    characters of a finite group action on a minimal free
 	    resolution.
@@ -1898,9 +1965,6 @@ Node
 	    the @TT "i"@-th Betti character of the resolution
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this function to compute the Betti characters of a
 	    finite group action on a minimal free resolution
 	    in a given homological degree.
@@ -1979,7 +2043,6 @@ Node
     	compute characters of graded components of a module
     Usage
     	character(A,d)
-    	character(A,lo,hi)
     Inputs
     	A:ActionOnGradedModule
 	    a finite group action on a graded module
@@ -1990,19 +2053,13 @@ Node
 	    the character of the components of a module in given degrees
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this function to compute the characters of the
 	    finite group action on the graded components of a
-	    module. The second argument is the (multi)degree of
-	    the desired component. For $\mathbb{Z}$-graded rings,
-	    one may compute characters in a range of degrees by
-	    providing the lowest and highest degrees in the range.
+	    module. The second argument is the multidegree (as a list)
+	    or the degree (as an integer) of the desired component.
 
 	    To illustrate, we compute the Betti characters of a
-	    symmetric group on the graded components of a polynomial
-	    ring, a monomial ideal, and their quotient.
+	    symmetric group on the graded components of a quotient ring.
 	    The characters are determined
 	    by five permutations with cycle types,
 	    in order: 4, 31, 22, 211, 1111.
@@ -2015,13 +2072,30 @@ Node
           	 matrix{{x_2,x_1,x_3,x_4}},
           	 matrix{{x_1,x_2,x_3,x_4}} }
 	    Q = R/I
-	    A = action(R,G)
-	    B = action(I,G)
-	    C = action(Q,G)
-	    character(A,0,5)
-	    character(B,0,5)
-	    character(C,0,5)
-	    character(C,6)
+	    A = action(Q,G)
+	    character(A,0)
+	    character(A,1)
+    Synopsis
+    	Usage
+	    character(A,lo,hi)
+    	Inputs
+	    A:ActionOnGradedModule
+	    	a finite group action on a graded module
+    	    lo:ZZ
+	    	the low degree
+    	    hi:ZZ
+	    	the high degree
+    	Outputs
+	    :Character
+	    	the character of the components of a module in the given range of degrees
+    Description
+    	Text
+	    For $\mathbb{Z}$-graded modules,
+	    one may compute characters in a range of degrees by
+	    providing the lowest and highest degrees in the range
+	    as the second and third argument.
+	Example
+	    character(A,0,4)
     SeeAlso
     	action
 
@@ -2044,9 +2118,6 @@ Node
     	:Character
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    The @TO character@ method is mainly designed to compute
 	    characters of finite group actions defined via @TO action@.
 	    The user who wishes to define characters by hand
@@ -2083,7 +2154,7 @@ Node
 	    character(A,0,3) === regRep
     Caveat
     	This constructor implements basic consistency checks, but
-	it is still be possible to construct objects that are not
+	it is still possible to construct objects that are not
 	actually characters (not even virtual).
     SeeAlso
     	character
@@ -2104,9 +2175,6 @@ Node
     	:Character
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use this function to recover a character from its decomposition
 	    into a linear combination of the irreducible characters
 	    in a character table. The shortcut @TT "d*T"@
@@ -2156,9 +2224,6 @@ Node
     	T:CharacterTable
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use the @TO characterTable@ method to construct
 	    the character table of a finite group.
 	    
@@ -2246,7 +2311,7 @@ Node
     	decomposeCharacter
     Subnodes
     	CharacterTable
-	labels
+	Labels
 
 Node
     Key
@@ -2267,9 +2332,6 @@ Node
     	:CharacterDecomposition
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Use the @TO decomposeCharacter@ method to decompose
 	    a character into a linear combination of irreducible
 	    characters in a character table. The shortcut @TT "c/T"@
@@ -2295,7 +2357,7 @@ Node
 	    columns are labeled by the irreducible characters.
 	    By default, irreducible characters in a character table
 	    are labeled as @TT "X0, X1, ..."@, etc, and the same
-	    labeling is inherited by the character decompsoition.
+	    labeling is inherited by the character decomposition.
 	    The user may pass custom labels in a list using
 	    the option @TO Labels@ when constructing the character
 	    table.
@@ -2320,9 +2382,6 @@ Node
     	:Character
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns the direct sum of the input characters.
 	    The operator @TT "++"@ may be used for the same purpose.
 	Example
@@ -2363,9 +2422,6 @@ Node
     	:Character
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns the dual of a character, i.e., the character
 	    of the dual or contragredient representation.
 	    
@@ -2434,9 +2490,6 @@ Node
 	    of group elements
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns a @TO List@ of group elements
 	    acting on the vector space spanned by the variables
 	    of the polynomial ring associated with the object
@@ -2455,7 +2508,6 @@ Node
 Node
     Key
     	Labels
-    	labels
 	[characterTable, Labels]
     Headline
     	custom labels for irreducible characters
@@ -2505,7 +2557,7 @@ Node
 	    decomposeCharacter(c,T)
     	Text
 	    The labels are stored in the character table under the
-	    key @TT "labels"@.
+	    key @TT "Labels"@.
     SeeAlso
     	characterTable
 	decomposeCharacter
@@ -2566,9 +2618,6 @@ Node
     	:ZZ
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns the number of group elements passed by the user
 	    when defining the given action.
 	    This number is not necessarily the order of the acting
@@ -2593,9 +2642,6 @@ Node
 	    associated with the object acted upon
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns the polynomial ring associated with the object
 	    being acted upon.
     SeeAlso
@@ -2617,9 +2663,6 @@ Node
 	    of group elements
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns a @TO List@ of group elements
 	    acting on the vector space spanned by the variables
 	    of the polynomial ring associated with the object
@@ -2645,9 +2688,6 @@ Node
     	format ring actors as one-row substitution matrices
     Description
     	Text
-	    This optional input is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    By default, the group elements acting on a ring are
 	    passed as one-row substitution matrices as those
 	    accepted by @TO substitute@. Setting @TT "Sub=>false"@
@@ -2702,9 +2742,6 @@ Node
     	:List
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns a list of of matrices, each representing an
 	    element of the symmetric group permuting the variables
 	    of the polynomial ring in the input. This simplifies
@@ -2741,9 +2778,6 @@ Node
     	:CharacterTable
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns the character table of the symmetric group
 	    $S_n$, where $n$ is the number of variables of the
 	    polynomial ring in the input. The irreducible
@@ -2769,9 +2803,6 @@ Node
     	A:Action
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns the object being acted upon.
 	    Depending on the action, this object may be a
 	    @TO ChainComplex@, a @TO PolynomialRing@, a
@@ -2794,9 +2825,6 @@ Node
     	:Character
     Description
     	Text
-	    This function is provided by the package
-	    @TO BettiCharacters@.
-	    
 	    Returns the tensor product of the input characters.
 	    The operator @TT "**"@ may be used for the same purpose.
 	    
@@ -2957,7 +2985,7 @@ assert( ddec.decompose#(0,{2}) == matrix{{2_R,2,0,0,0,0,0}})
 assert( ddec.decompose#(0,{3}) == matrix{{3_R,3,0,0,0,0,0}})
 ///
 
--- Test 3 (non symmetric group, tests actors)
+-- Test 2 (non symmetric group, tests actors)
 TEST ///
 clearAll
 kk = toField(QQ[w]/ideal(sum apply(5,i->w^i)))
@@ -2994,6 +3022,51 @@ b = {
 assert(actors(B,2) === b)
 cb2 = character(R,4, hashTable {((2,{4}), matrix{apply(b,trace)})})
 assert(character(B,2) === cb2)
+///
+
+-- Test 3 (multigraded ideal, product of symmetric groups)
+TEST ///
+clearAll
+R = QQ[x_1,x_2,y_1,y_2,Degrees=>{2:{1,0},2:{0,1}}]
+I = intersect(ideal(x_1,x_2),ideal(y_1,y_2))
+RI = res I
+G = {
+    matrix{{x_2,x_1,y_2,y_1}},
+    matrix{{x_2,x_1,y_1,y_2}},
+    matrix{{x_1,x_2,y_2,y_1}},
+    matrix{{x_1,x_2,y_1,y_2}}
+    }
+A = action(RI,G)
+a = character(R,4,hashTable {
+    ((0,{0,0}), matrix{{1,1,1,1}}),
+    ((1,{1,1}), matrix{{0,0,0,4}}),
+    ((2,{1,2}), matrix{{0,0,-2,2}}),
+    ((2,{2,1}), matrix{{0,-2,0,2}}),
+    ((3,{2,2}), matrix{{1,-1,-1,1}})
+    })
+assert((character A) == a)
+B = action(R,G)
+b = character(R,4,hashTable {
+    ((0,{0,2}), matrix{{1,3,1,3}}),
+    ((0,{2,0}), matrix{{1,1,3,3}})
+    })
+assert(character(B,{0,2}) ++ character(B,{2,0}) == b)
+C = action(R/I,G)
+assert(character(C,{0,2}) ++ character(C,{2,0}) == b)
+///
+
+-- Test 4 (dual and tensor, symmetric group)
+TEST ///
+clearAll
+R = QQ[x_1..x_4]
+K = res ideal vars R
+S4 = symmetricGroupActors(R)
+A = action(K,S4)
+c = character A
+sign = character(R,5, hashTable { (-4,{-4}) => matrix{{-1,1,1,-1,1}} })
+-- check duality of representations in Koszul complex
+-- which is true up to a twist by a sign representation
+assert(dual(c,id_QQ) == c ** sign)
 ///
 
 end
