@@ -53,8 +53,8 @@ inputOkay(Ideal):=I->(
 	);
     return true;
     );
-msolveGB=method(TypicalValue=>Matrix);
-msolveGB(Ideal):=(I)->(
+msolveGB=method(TypicalValue=>Matrix, Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveGB(Ideal):=opt->I->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -70,7 +70,7 @@ msolveGB(Ideal):=(I)->(
     mOut:=temporaryFileName()|".ms";
     << "msolve input file is called: " << mIn << endl;
     << "msolve output file is called: " << mOut << endl;
-    callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -g 2 -f "|mIn|" -o "|mOut;
+    callStr:=msolveEXE|" -v "|opt#"level of verbosity"|" -t "|toString(opt#"number of threads")|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
