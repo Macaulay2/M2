@@ -1,6 +1,16 @@
 doc ///
   Key
     Gamma
+   (Gamma,CC)
+   (Gamma,CC,CC)
+   (Gamma,CC,RR)
+   (Gamma,RR)
+   (Gamma,RR,CC)
+   (Gamma,RR,RR)
+   (Gamma,RR,RRi)
+   (Gamma,RRi)
+   (Gamma,RRi,RR)
+   (Gamma,RRi,RRi)
   Headline
     Gamma function
   Usage
@@ -31,6 +41,13 @@ doc ///
 doc ///
   Key
     regularizedGamma
+   (regularizedGamma,CC,CC)
+   (regularizedGamma,CC,RR)
+   (regularizedGamma,RR,CC)
+   (regularizedGamma,RR,RR)
+   (regularizedGamma,RR,RRi)
+   (regularizedGamma,RRi,RR)
+   (regularizedGamma,RRi,RRi)
   Headline
     upper regularized gamma function
   Usage
@@ -55,6 +72,7 @@ doc ///
 doc ///
   Key
     inverseRegularizedGamma
+   (inverseRegularizedGamma,RR,RR)
   Headline
     inverse of the upper regularized gamma function
   Usage
@@ -80,6 +98,8 @@ doc ///
   Key
     lngamma
     (lngamma, RR)
+    (lngamma, CC)
+    (lngamma, RRi)
     (lngamma, Number)
   Headline
     logarithm of the Gamma function
