@@ -766,13 +766,13 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is i:IfThen do (
 	  bind(i.predicate,dictionary);
-	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  -- i.thenClause = bindnewdictionary(i.thenClause,dictionary);
+	  bind(i.thenClause,dictionary);
 	  )
      is i:IfThenElse do (
 	  bind(i.predicate,dictionary);
-	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  -- i.thenClause = bindnewdictionary(i.thenClause,dictionary);
+	  bind(i.thenClause,dictionary);
 	  -- i.elseClause = bindnewdictionary(i.elseClause,dictionary);
 	  bind(i.elseClause,dictionary);
 	  )
