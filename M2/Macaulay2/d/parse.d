@@ -220,7 +220,7 @@ export evaluatedCode := {+ expr:Expr, position:Position};
 export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
-export stringCode := {+x:string};
+export stringCode := {+x:string,position:Position};
 export unaryCode := {+f:unop,rhs:Code,position:Position};
 export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
 export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
@@ -257,9 +257,10 @@ export functionDescription := {
      };
 export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := {+
-     body:Code, 
+     body:Code,
      desc:functionDescription,
-     hash:hash_t
+     hash:hash_t,
+     position:Position
      };
 export Code := (
      nullCode or realCode or stringCode or integerCode 

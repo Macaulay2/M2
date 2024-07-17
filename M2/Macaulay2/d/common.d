@@ -35,7 +35,7 @@ export codePosition(c:Code):Position := (
      is f:realCode do f.position
      is f:semiCode do f.position
      is f:sequenceCode do f.position
-     is f:stringCode do dummyPosition
+     is f:stringCode do f.position
      is f:ternaryCode do f.position
      is f:threadMemoryReferenceCode do f.position
      is f:threadSymbolClosureCode do f.position
