@@ -14,7 +14,7 @@ export codePosition(c:Code):Position := (
      is f:Error do f.position
      is f:evaluatedCode do f.position
      is f:forCode do f.position
-     is f:functionCode do position(f.arrow)
+     is f:functionCode do codePosition(f.body)
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
      is f:globalSymbolClosureCode do f.position
