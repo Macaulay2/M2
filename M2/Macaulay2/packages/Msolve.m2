@@ -237,7 +237,7 @@ Node
 	      
 	      The package has functions to compute Groebner basis, in
 	      GRevLex order only, for ideals with rational or finite
-	      field coefficents. Finite field chacterisitics must be
+	      field coefficients. Finite field chacterisitics must be
 	      between 2^16 and 2^32. There are also functions to
 	      compute elimination ideals, for ideals with rational or
 	      finite field coefficients. Finite field chacterisitics
@@ -248,7 +248,7 @@ Node
 	      with characterisitc between 2^16 and 2^32.
 	      
 	      For zero dimensional polynomial ideals, with integer or
-	      rational coefficents, there are functions to compute all
+	      rational coefficients, there are functions to compute all
 	      real solutions, and to compute a rational univariante
 	      representation of all (complex) solutions.
 	      
@@ -283,13 +283,13 @@ Node
     	msolveGB(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficents, integer coefficents, or finite field coefficents. For a finite field the charcterisitc must be between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the charcterisitc must be between 2^16 and 2^32. 
     Outputs
         GB:Matrix
 	    a matrix whose columns form a Groebner basis for the input ideal I, in the GrevLex order.    
     Description 
         Text
-    	    This functions uses the F4 implmentation in the msolve package to compute a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficents or finite field coefficents with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficents, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficents.
+    	    This functions uses the F4 implmentation in the msolve package to compute a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
     	Text
 	    First an example over a finite field
 	Example
@@ -319,13 +319,13 @@ Node
     	msolveLeadMonomials(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficents, integer coefficents, or finite field coefficents. For a finite field the charcterisitc must be between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the charcterisitc must be between 2^16 and 2^32. 
     Outputs
         GB:Matrix
 	    a matrix whose columns are the leading monomials (of a Groebner basis for) the input ideal I, in the GrevLex order.    
     Description 
         Text
-    	    This functions uses the F4 implmentation in the msolve package to compute leading monomials via a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficents or finite field coefficents with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficents, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficents.
+    	    This functions uses the F4 implmentation in the msolve package to compute leading monomials via a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with charcterisitc between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
     	Text
 	    First an example over a finite field
 	Example
@@ -355,13 +355,13 @@ Node
     	msolveRealSolutions(I)
     Inputs
     	I:Ideal
-	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficents. 
+	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficients. 
     Outputs
         Sols:List
 	    a list of lists, each entry in the list Sol consists of a list repsenting the coordinates of a solution. By default each solution coordinate value is also represetened by a two element list of rational numbers, {a, b}, this means that that coordinate of the solution has a value greater than or equal to a and less than or equal to b. This interval is computed symbolically and its correctness is gaurentted by exact methods.      
     Description 
         Text
-    	    This functions uses the msolve package to compute the real solutions to a zero dimensional polynomial ideal with either integer or rational coefficents. The output is a list of lists, each entry in the list Sol consists of a list repsenting the coordinates of a solution. By default each solution coordinate value is also represetened by a two element list of rational numbers, {a, b}, this means that that coordinate of the solution has a value greater than or equal to a and less than or equal to b. This interval is computed symbolically and its correctness is gaurentted by exact methods. Note that using the option Output one may specify the output in terms of either a float inteval with "floatInterval" or an average of the interval endpoints as a single float with "float".      
+    	    This functions uses the msolve package to compute the real solutions to a zero dimensional polynomial ideal with either integer or rational coefficients. The output is a list of lists, each entry in the list Sol consists of a list repsenting the coordinates of a solution. By default each solution coordinate value is also represetened by a two element list of rational numbers, {a, b}, this means that that coordinate of the solution has a value greater than or equal to a and less than or equal to b. This interval is computed symbolically and its correctness is gaurentted by exact methods. Note that using the option Output one may specify the output in terms of either a float inteval with "floatInterval" or an average of the interval endpoints as a single float with "float".      
 
     	Text
 	    First an example over a finite field
@@ -398,13 +398,13 @@ Node
     	msolveRUR(I)
     Inputs
     	I:Ideal
-	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficents. 
+	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficients. 
     Outputs
         RUR:HashTable
 	    a HashTable with 6 keys giving the rational univariate representation of I.     
     Description 
         Text
-    	    This functions uses the msolve package to compute the rational univariate representation (RUR) of a zero dimensional polynomial ideal with either integer or rational coefficents.
+    	    This functions uses the msolve package to compute the rational univariate representation (RUR) of a zero dimensional polynomial ideal with either integer or rational coefficients.
 	    
 	    The RUR gives a parametization for all complex solutions to the input system. For a complete definition of the RUR see the paper: Rouillier, Fabrice (1999). "Solving Zero-Dimensional Systems Through the Rational Univariate Representation". Appl. Algebra Eng. Commun. Comput. 9 (9): 433–461.
 	    
@@ -455,7 +455,7 @@ Node
     	msolveSaturate(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and finite field coefficents. The finite field must have charcterisitc between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and finite field coefficients. The finite field must have charcterisitc between 2^16 and 2^32. 
 	f:RingElement
 	    a polynomial in the same ring as I.    
     Outputs
@@ -483,7 +483,7 @@ Node
     	msolveEliminate(I,elimVars)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with rational or finite field coefficents. If working over a finite field, it must have charcterisitc between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with rational or finite field coefficients. If working over a finite field, it must have charcterisitc between 2^16 and 2^32. 
 	elimVars:List
 	    a list of variables in the same ring as I, these variables will be eliminated.    
     Outputs
