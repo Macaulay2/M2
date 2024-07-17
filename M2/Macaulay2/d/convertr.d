@@ -152,8 +152,8 @@ export convert(e:ParseTree):Code := (
 	  else if n.newinitializer == dummyTree
 	       then Code(newOfCode(convert(n.newclass),convert(n.newparent),treePosition(e)))
 	       else Code(newOfFromCode(convert(n.newclass),convert(n.newparent),convert(n.newinitializer),treePosition(e))))
-     is i:IfThen do Code(ifCode(convert(i.predicate),convert(i.thenclause),NullCode,treePosition(e)))
-     is i:IfThenElse do Code(ifCode(convert(i.predicate),convert(i.thenclause),convert(i.elseClause),treePosition(e)))
+     is i:IfThen do Code(ifCode(convert(i.predicate),convert(i.thenClause),NullCode,treePosition(e)))
+     is i:IfThenElse do Code(ifCode(convert(i.predicate),convert(i.thenClause),convert(i.elseClause),treePosition(e)))
      is token:Token do (
 	  var := token.entry;
 	  wrd := token.word;
