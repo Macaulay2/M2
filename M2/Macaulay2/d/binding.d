@@ -462,6 +462,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  when lookup(t.word,t.dictionary)
      	  is entry:Symbol do (
 	       t.entry = entry;
+	       if entry.position == tempPosition then entry.position = t.position;
 	       if entry.flagLookup then (
 		    printErrorMessage(t,"flagged symbol encountered");
 		    HadError=true;
