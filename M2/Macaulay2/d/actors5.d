@@ -445,7 +445,7 @@ examine(e:Expr):Expr := (
 	  stdIO << "symbol body :" << endl;
 	  showsym(sb.symbol);
 	  nullE)
-     is c:CodeClosure do (
+     is c:PseudocodeClosure do (
 	  f := c.frame;
      	  showFrames(f);
 	  nullE)
@@ -1635,7 +1635,7 @@ frame(e:Expr):Expr := (
      is s:Sequence do 
      if length(s) == 0 then Expr(listFrame(localFrame)) else WrongNumArgs(1,2)
      is sc:SymbolClosure do Expr(listFrame(sc.frame))
-     is c:CodeClosure do Expr(listFrame(c.frame))
+     is c:PseudocodeClosure do Expr(listFrame(c.frame))
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(listFrame(cfc.env))
      is CompiledFunction do Expr(listFrame(emptySequence))
@@ -1656,8 +1656,8 @@ frames(e:Expr):Expr := (
      is a:Sequence do if length(a) == 0 then listFrames(localFrame) else WrongNumArgs(0,1) 
     -- # typical value: frames, Symbol, List
      is sc:SymbolClosure do Expr(listFrames(sc.frame))
-    -- # typical value: frames, Pseudocode, List
-     is c:CodeClosure do Expr(listFrames(c.frame))
+    -- # typical value: frames, PseudocodeClosure, List
+    is c:PseudocodeClosure do Expr(listFrames(c.frame))
     -- # typical value: frames, FunctionClosure, List
      is fc:FunctionClosure do Expr(listFrames(fc.frame))
     -- # typical value: frames, CompiledFunctionClosure, List
@@ -1678,8 +1678,8 @@ localDictionaries(e:Expr):Expr := (
      is x:DictionaryClosure do localDictionaries(x.frame)
     -- # typical value: localDictionaries, Symbol, List
      is x:SymbolClosure do localDictionaries(x.frame)
-    -- # typical value: localDictionaries, Pseudocode, List
-     is x:CodeClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, PseudocodeClosure, List
+    is x:PseudocodeClosure do localDictionaries(x.frame)
     -- # typical value: localDictionaries, FunctionClosure, List
      is x:FunctionClosure do localDictionaries(x.frame)
     -- # typical value: localDictionaries, CompiledFunctionClosure, List
