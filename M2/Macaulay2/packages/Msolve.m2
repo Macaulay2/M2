@@ -12,6 +12,7 @@ newPackage(
     	);
 --currently setup to use the  configation option to point to the folder where the msolve binary file lives
 msolveEXE = (options Msolve).Configuration#"msolveExecutable";
+msolveEXEwithOpts:=(opt)->msolveEXE|" -v "|opt#"level of verbosity"|" -t "|toString(opt#"number of threads");
 if not instance(msolveEXE,String) then error "expected configuration option msolveMainFolder to be a string."
 export{
     "msolveGB",
@@ -70,13 +71,14 @@ msolveGB(Ideal):=opt->I->(
     mOut:=temporaryFileName()|".ms";
     << "msolve input file is called: " << mIn << endl;
     << "msolve output file is called: " << mOut << endl;
-    callStr:=msolveEXE|" -v "|opt#"level of verbosity"|" -t "|toString(opt#"number of threads")|" -g 2 -f "|mIn|" -o "|mOut;
+    callStr:=msolveEXEwithOpts(opt)|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
+    <<"done msolve"<<endl;
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-msolveLeadMonomials=method(TypicalValue=>Matrix);
-msolveLeadMonomials(Ideal):=(I)->(
+msolveLeadMonomials=method(TypicalValue=>Matrix, Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveLeadMonomials(Ideal):=opt->(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -90,20 +92,20 @@ msolveLeadMonomials(Ideal):=(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -g 1 -f "|mIn|" -o "|mOut;
+    callStr:=msolveEXEwithOpts(opt)|" -g 1 -f "|mIn|" -o "|mOut;
     run(callStr);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-msolveEliminate=method();
-msolveEliminate(Ideal,RingElement):=Ideal => (I,elimvar)->(
+msolveEliminate=method(Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveEliminate(Ideal,RingElement):=Ideal =>opt-> (I,elimvar)->(
     return msolveEliminate(I,{elimvar});
     );
-msolveEliminate(RingElement,Ideal):=Ideal => (elimvar,I) ->
+msolveEliminate(RingElement,Ideal):=Ideal => opt->(elimvar,I) ->
     msolveEliminate(I,{elimvar})
-msolveEliminate(List,Ideal):=Ideal => (elimvars,I) -> 
+msolveEliminate(List,Ideal):=Ideal => opt->(elimvars,I) -> 
     msolveEliminate(I,elimvars)
-msolveEliminate(Ideal,List):=Ideal => (J,elimvars)->(
+msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
     if not inputOkay(J) then return 0;
     mIn:=temporaryFileName()|".ms";
     S:=ring J;
@@ -124,7 +126,7 @@ msolveEliminate(Ideal,List):=Ideal => (J,elimvars)->(
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
     << "mOut = " << mOut << endl;
-    callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -e "|toString(elimNum)|" -g 2 -f "|mIn|" -o "|mOut;
+    callStr:=msolveEXEwithOpts(opt)|" -e "|toString(elimNum)|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
     if char R === 0 then 
       ideal readMsolveOutputFile(elimR, mOut)
@@ -132,8 +134,8 @@ msolveEliminate(Ideal,List):=Ideal => (J,elimvars)->(
       ideal readMsolveOutputFile(R, mOut)
     )
 
-msolveSaturate=method(TypicalValue=>Matrix);
-msolveSaturate(Ideal,RingElement):=(I,f)->(
+msolveSaturate=method(TypicalValue=>Matrix, Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -147,14 +149,14 @@ msolveSaturate(Ideal,RingElement):=(I,f)->(
     inStr:=l1|newline|l2|newline|Igens|","|newline|toString(f);
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    callStr:=msolveEXE|" -f "|mIn|" -S -g 2 -o "|mOut;
+    callStr:=msolveEXEwithOpts(opt)|" -f "|mIn|" -S -g 2 -o "|mOut;
     run(callStr);
     msolGB:=readMsolveOutputFile(R, mOut);
     << "msolve output file is called: " << mOut << endl;
     return gens forceGB msolGB;
     );
 
-msolveRealSolutions=method(TypicalValue=>List,Options => {Output=>"rationalInterval"});
+msolveRealSolutions=method(TypicalValue=>List,Options => {Output=>"rationalInterval","level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
 msolveRealSolutions(Ideal):=opts->(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
@@ -169,7 +171,7 @@ msolveRealSolutions(Ideal):=opts->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    callStr:=msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -f "|mIn|" -o "|mOut;
+    callStr:=msolveEXEwithOpts(opts)|" -f "|mIn|" -o "|mOut;
     run(callStr);
     outStrFull:=get(mOut);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",outStrFull))_0));
@@ -181,8 +183,8 @@ msolveRealSolutions(Ideal):=opts->(I)->(
     if opts.Output=="floatInterval" then return (1.0*sols);
     if opts.Output=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
     );
-msolveRUR=method(TypicalValue=>List);
-msolveRUR(Ideal):=(I)->(
+msolveRUR=method(TypicalValue=>List,Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveRUR(Ideal):=opt->(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
@@ -197,7 +199,7 @@ msolveRUR(Ideal):=(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    run(msolveEXE|" -t "|toString(max(maxAllowableThreads,allowableThreads))|" -P 2 -f "|mIn|" -o "|mOut);
+    run(msolveEXEwithOpts(opt)|" -P 2 -f "|mIn|" -o "|mOut);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",get(mOut)))_0));
     solsp:=value replace("[']","\"",mOutStr);
     if first solsp!=0  then (print "Input ideal not zero dimensional, no solutions found."; return 0;);
