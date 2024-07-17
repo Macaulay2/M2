@@ -232,10 +232,9 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
-currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
-
-FilePosition = new Type of BasicList
+-- FilePosition = new Type of BasicList -- defined in d
 FilePosition.synonym = "file position"
+toExternalString FilePosition :=
 toString FilePosition :=
 net FilePosition := p -> concatenate(
     if match(" ", p#0) then format p#0 else p#0,
@@ -243,6 +242,7 @@ net FilePosition := p -> concatenate(
     if #p>3 then ("-",toString p#3,":",toString p#4),
 --    if #p>5 then (" (",toString p#5,":",toString p#6,")")
     )
+currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
 
 locate' = locate -- defined in d/actors4.d
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)
@@ -251,7 +251,8 @@ locate FunctionBody:=
 locate Function    :=
 locate Pseudocode  :=
 locate Sequence    :=
-locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new FilePosition from x'
+locate Symbol      := FilePosition => locate'
+locate Command     := FilePosition => C -> locate'(C#0)
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
