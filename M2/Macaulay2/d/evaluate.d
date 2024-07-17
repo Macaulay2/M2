@@ -13,7 +13,7 @@ threadLocal recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 threadLocal export backtrace := true;
 threadLocal lastCode := dummyCode;
-threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
+threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
 export chars := new array(Expr) len 256 do (
     i := 0;
     while i<256 do (

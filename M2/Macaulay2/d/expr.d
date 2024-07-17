@@ -234,10 +234,7 @@ export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
      Word("-*dummy token*-",TCnone,hash_t(0),newParseinfo()),
-     dummyPosition.filename,
-     dummyPosition.line,
-     dummyPosition.column,
-     dummyPosition.loadDepth,
+     dummyPosition,
      Macaulay2Dictionary,dummySymbol,false);
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
