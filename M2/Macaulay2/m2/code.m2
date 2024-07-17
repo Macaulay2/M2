@@ -15,12 +15,13 @@ limit := 4
 
 -- TODO: also show _where_ a method is declared
 codeFunction := (key, func, level) -> if level <= limit then (
-    if locate func === null then DIV { synonym class func, " ", func, ": source code not available" }
-    else (
-	dicts := localDictionaries func;
-	symbs := flatten apply(#dicts - 1, i -> sortByHash values dicts#i);
-	DIV flatten {
-	    code locate func,
+    l := locate func;
+    c := code l;
+    dicts := localDictionaries func;
+    symbs := flatten apply(#dicts - 1, i -> sortByHash values dicts#i);
+    hooks := if key === null then {} else apply(listHooks(key, null), code);
+    DIV flatten {
+	if c =!= null then c else SPAN{ synonym class func, " ", func, ": ",if l =!= null and hasAttribute(func,ReverseDictionary) then l else ""," source code not available"},
 	    if #symbs > 0 then INDENT listSymbols symbs,
 	    if codeHelper#?(functionBody func) then apply(
 		codeHelper#(functionBody func) func,
@@ -28,10 +29,9 @@ codeFunction := (key, func, level) -> if level <= limit then (
 		    comment, BR{},
 		    if instance(val, Function) then codeFunction(key, val, level+1) else hold val -- hold for OptionTable or Option
 		    }),
-	    if key =!= null then INDENT apply(listHooks(key, null), code)
+	    if #hooks>0 then INDENT hooks
 	    }
 	)
-    )
 
 -- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
 previousMethodsFound = null
@@ -72,15 +72,7 @@ code FilePosition := x -> (
 		    )
 	       );
 	  file = lines file;
-	  while (
-	       file#?stop 
-	       and (				  -- can improve this
-		    l := set characters file#stop;
-		    l #? ")" and isSubset(l, wp)
-		    )
-	       ) do stop = stop + 1;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
 	  DIV splice { codeAddress(x), codeContent(start, stop, file) }
 	  ))
 code Symbol     :=
