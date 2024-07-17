@@ -170,7 +170,7 @@ export convert(e:ParseTree):Code := (
  	  else if wrd.typecode == TCstring
 	  then (
 	       s := parseString(wrd.name);
-	       Code(stringCode(s))
+	       Code(stringCode(s,token.position))
 	       )
 	  else (
 	       if var.frameID == 0
@@ -395,7 +395,7 @@ export convert(e:ParseTree):Code := (
 	  )
      is a:Arrow do (
 	  fc := functionCode(
-	       convert(a.rhs),a.desc,hash_t(0));
+	       convert(a.rhs),a.desc,hash_t(0),a.Operator.position);
 	  fc.hash = hashFromAddress(Expr(fc));
 	  Code(fc))
      is u:Unary do (
