@@ -712,6 +712,7 @@ document {
 	  TO "code",
 	  TO "current",
 	  TO "currentFileName",
+	  TO "pseudocode",
 	  TO "disassemble",
 	  TO "edit",
 	  TO "error",
