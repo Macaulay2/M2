@@ -284,6 +284,47 @@ debuggerHook = entering -> (
 	  )
      )
 
+-----------------------------------------------------------------------------
+-- disassemble and pseudocode
+-----------------------------------------------------------------------------
+-- Pseudocode and PseudocodeClosure are types defined in d/classes.dd
+-- pseudocode FunctionClosure produces a PseudocodeClosure
+-- pseudocode FunctionBody produces the Pseudocode inside (e.g. pseudocode functionBody f)
+
+-- commented because "a pseudocode" doesn't sound so great
+-- Pseudocode.synonym = "pseudocode"
+-- PseudocodeClosure.synonym = "pseudocode closure"
+
+-- the main way to traverse a Pseudocode or PseudocodeClosure
+Pseudocode _ ZZ := (x, i) -> (
+    x = last toList x;
+    if class x =!= Sequence or not x#?i then error "no such member";
+    x = x#i;
+    if class x === List then x = last x;
+    x)
+
+-- printing helpers
+CodeSequence := new Type of VisibleList
+html     CodeSequence := x -> html VerticalList x
+net      CodeSequence := x -> stack apply(x, net)
+toString CodeSequence := x -> demark(" ", apply(x, toString))
+
+CodeList := new Type of VisibleList
+html     CodeList := x -> html RowExpression between(" ", x)
+net      CodeList := x -> horizontalJoin between(" ", apply(x, net))
+toString CodeList := x -> concatenate("(", demark(" ", apply(x, toString)), ")")
+
+fmtCode = method(Dispatch => Thing)
+fmtCode Thing      := identity
+fmtCode List       := l -> new CodeList     from apply(l, fmtCode)
+fmtCode Sequence   := s -> new CodeSequence from apply(s, fmtCode)
+fmtCode Pseudocode := fmtCode @@ toList
+
+-- printing
+html     Pseudocode := html @@ fmtCode
+net      Pseudocode :=  net @@ fmtCode
+toString Pseudocode := disassemble
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
