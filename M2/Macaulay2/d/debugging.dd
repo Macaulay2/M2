@@ -1,0 +1,36 @@
+use util;
+use tokens;
+use common;
+use evaluate;
+use sets;
+
+export filePositionClass := newHashTableWithHash(typeClass, basicListClass);
+setupconst("FilePosition", Expr(filePositionClass));
+
+locate(p:Position):Expr := (
+    if p == dummyPosition || p == tempPosition
+    then nullE
+    else Expr(sethash(List(filePositionClass,
+		Sequence(
+		    toExpr(verifyMinimizeFilename(p.filename)),
+		    toExpr(int(p.line1)), toExpr(int(p.column1)),
+		    toExpr(int(p.line2)), toExpr(int(p.column2)),
+		    toExpr(int(p.line)), toExpr(int(p.column))),
+		hash_t(0), false), false)));
+
+locate(e:Expr):Expr := (
+    when e
+    is Nothing do nullE
+    is Sequence do locate(lookupfun(e))
+    is f:FunctionClosure do locate(f.model.position)
+    is f:functionCode    do locate(f.position)
+    -- TODO: can we use binary debug symbols?
+    is CompiledFunction        do nullE
+    is CompiledFunctionBody    do nullE
+    is CompiledFunctionClosure do nullE
+    is c:PseudocodeClosure do locate(codePosition(c.code))
+    is c:Pseudocode        do locate(codePosition(c.code))
+    is s:SymbolClosure do locate(s.symbol.position)
+    is s:SpecialExpr do locate(s.e)
+    else WrongArg("a function, symbol, sequence, or null"));
+setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
