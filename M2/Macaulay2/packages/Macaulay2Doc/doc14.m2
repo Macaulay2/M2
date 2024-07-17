@@ -114,7 +114,7 @@ doc ///
       exp(1p100e-10)-1
 ///
 
-document { Key => {eint,(eint, RR)},
+document { Key => {eint,(eint, RR),(eint,CC),(eint,RRi)},
      Usage => "eint x",
      Headline => "exponential integral",
      Inputs => { "x" },
@@ -124,7 +124,7 @@ document { Key => {eint,(eint, RR)},
      ///,
      PARA {"See ", wikipedia "Exponential integral", "."}
      }
-document { Key => {Digamma,(Digamma, RR)},
+document { Key => {Digamma,(Digamma, RR),(Digamma,CC),(Digamma,RRi)},
      Usage => "Digamma x",
      Headline => "Digamma function",
      Inputs => { "x" },
@@ -135,7 +135,7 @@ document { Key => {Digamma,(Digamma, RR)},
      PARA {"See ", wikipedia "Digamma function", "."},
      SeeAlso => {Gamma}
      }
-document { Key => {zeta,(zeta, RR)},
+document { Key => {zeta,(zeta, RR),(zeta,CC),(zeta,RRi)},
      Usage => "zeta x",
      Headline => "Riemann zeta function",
      Inputs => { "x" },
@@ -338,7 +338,7 @@ document { Key => {InexactNumber'},
 document { Key => {RingFamily},
      "This family is used to contain classes that correspond to a family of similar rings with a default member."
      }
-document { Key => {BesselJ,(BesselJ, ZZ, Number)},
+document { Key => {BesselJ,(BesselJ, ZZ, Number),(BesselJ,Number,Number)},
      Usage => "BesselJ(n,x)\nBesselJ_n x",
      Headline => "Bessel function of the first kind",
      Inputs => {
@@ -355,7 +355,7 @@ document { Key => {BesselJ,(BesselJ, ZZ, Number)},
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselY }
      }
-document { Key => {BesselY,(BesselY, ZZ, Number)},
+document { Key => {BesselY,(BesselY, ZZ, Number),(BesselY,Number,Number)},
      Usage => "BesselY(n,x)\nBesselY_n x",
      Headline => "Bessel function of the second kind",
      Inputs => {
@@ -372,7 +372,7 @@ document { Key => {BesselY,(BesselY, ZZ, Number)},
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselJ }
      }
-document { Key => {agm,	(agm, RR, RR), (agm,CC,CC)},
+document { Key => {agm, (agm, RR, RR), (agm,CC,CC), (agm,CC,RR), (agm,RR,CC)},
      Usage => "agm(x,y)",
      Inputs => { "x" => "a number", "y" => "a number" },
      Outputs => { {"the arithmetic-geometric mean of ", TT "x", " and ", TT "y"}},

@@ -122,7 +122,8 @@ R = QQ[x,y]
      	  "tutorial oo",
 	  "peek oo"
 	  }}
-document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,CC)},
+document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),
+	(round,CC),(round,Constant)},
      Headline => "round a number",
      SYNOPSIS (
 	  Usage => "round x",
