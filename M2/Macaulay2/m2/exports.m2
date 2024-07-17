@@ -338,6 +338,7 @@ export {
 	"ProgramRun",
 	"Prune",
 	"Pseudocode",
+	"PseudocodeClosure",
 	"QQ",
 	"QRDecomposition",
 	"Quotient",
