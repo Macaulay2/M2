@@ -103,6 +103,7 @@ export reverse(a:List):List := sethash(
      List( a.Class, reverse(a.v), hash_t(0), a.Mutable), a.Mutable 
      );
 export seq():Expr := emptySequenceE;
+export seq(e:Expr):Expr := Expr(Sequence(e));
 export seq(e:Expr,f:Expr):Expr := Expr(Sequence(e,f));
 export seq(e:Expr,f:Expr,g:Expr):Expr := Expr(Sequence(e,f,g));
 export list(a:Sequence):Expr := (
