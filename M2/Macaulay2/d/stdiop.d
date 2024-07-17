@@ -143,12 +143,12 @@ export printErrorMessage(position:Position,message:string):void := (
      );
 export printWarningMessage(position:Position,message:string):void := printMessage(position,"warning: "+message);
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
-     printErrorMessage(Position(filename,line,column,ushort(0)), message);
+     printErrorMessage(Position(filename,line,column,line,column,line,column,ushort(0)), message);
      );
 export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Position do o << w;
 export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
-export copy(p:Position):Position := Position(p.filename, p.line, p.column, loadDepth);
-export position(file:PosFile):Position := Position(file.filename,file.line,file.column,loadDepth);
+export copy(p:Position):Position := Position(p.filename, p.line, p.column, p.line1, p.column1, p.line2, p.column2, loadDepth);
+export position(file:PosFile):Position := Position(file.filename,file.line,file.column,file.line,file.column,file.line,file.column,loadDepth);
 export dummyPosFile := PosFile(dummyfile,0,"-*dummy file name*-",ushort(0),ushort(0));
 export fileError(f:PosFile):bool := fileError(f.file);
 export clearFileError(f:PosFile):void := clearFileError(f.file);
