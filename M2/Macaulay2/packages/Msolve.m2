@@ -262,7 +262,7 @@ Node
 	      Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"})
 	      once and needsPackage("Msolve") on subsequent usages;
 	      here "path_to_folder_with_msolve_binary" denotes the
-	      folder where your msolve exectuable is saved. E.g. if
+	      folder where your msolve executable is saved. E.g. if
 	      your msolve binary (named msolve) is in a folder called
 	      msolve-v0.5.0 in your home directory then you would use
 	      either needsPackage("Msolve",
