@@ -2085,7 +2085,8 @@ export binarymethod(left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Ex
      else applyEEE(method,left,right));
 
 AssignElemFun = assignelemfun;
-AssignQuotedElemFun = assignquotedelemfun;
+setup(EqualS,AssignElemFun);
+AssignQuotedElemFun = assignquotedelemfun; -- what is this for? never used
 
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
 
