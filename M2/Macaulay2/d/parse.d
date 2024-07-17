@@ -257,7 +257,6 @@ export functionDescription := {
      };
 export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := {+
-     arrow:Token,			  -- just for display purposes
      body:Code, 
      desc:functionDescription,
      hash:hash_t
