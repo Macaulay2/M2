@@ -3,7 +3,8 @@
 --- notes:
 
 document { 
-     Key => {atan2,(atan2,RR,RR),(atan2, RRi, RRi)
+     Key => {atan2,(atan2,RR,RR),(atan2, RRi, RRi),
+	 (atan2,RR,RRi), (atan2,RRi,RR)
 	  },
      Headline => "compute an angle of a certain triangle",
      Usage => "atan2(y,x)\natan2(y,I)\natan2(J,x)\natan2(J,I)",
