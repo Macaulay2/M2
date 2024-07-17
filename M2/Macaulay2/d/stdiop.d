@@ -118,7 +118,7 @@ export tostring(w:Position) : string := (
 	     if c == ' ' then (
 		 filename = "\"" + filename + "\"";
 		 break));
-	 errfmt(filename ,int(w.line),int(w.column + 1),int(w.loadDepth))));
+	 errfmt(filename ,int(w.line),int(w.column),int(w.loadDepth))));
 export (o:file) << (w:Position) : file := o << tostring(w);
 export (o:BasicFile) << (w:Position) : BasicFile := o << tostring(w);
 threadLocal export SuppressErrors := false;
