@@ -662,24 +662,6 @@ unSingleton(e:Expr):Expr := (
      else e);
 setupfun("unsequence",unSingleton);
 
-disassemble(e:Expr):Expr := (
-     when e
-     is f:FunctionClosure do toExpr(tostring(Code(f.model)))
-     is f:functionCode do toExpr(tostring(Code(f)))
-     is c:PseudocodeClosure do toExpr(tostring(c.code))
-     is s:SpecialExpr do disassemble(s.e)
-     else WrongArg("pseudocode or a function closure derived from Macaulay 2 code")
-     );
-setupfun("disassemble", disassemble);
-
-pseudocode(e:Expr):Expr := (
-     when e
-     is f:FunctionClosure do Expr(PseudocodeClosure(f.frame, Code(f.model)))
-     is s:SpecialExpr do pseudocode(s.e)
-     else WrongArg("a function closure derived from Macaulay 2 code")
-     );
-setupfun("pseudocode", pseudocode);
-
 cpuTime(e:Expr):Expr := (
      when e
      is s:Sequence do if length(s) == 0 then toExpr(cpuTime())
