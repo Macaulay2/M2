@@ -965,7 +965,8 @@ tostringfun(e:Expr):Expr := (
 	  + tostring(Ccode(int,"\n # if WITH_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is Net do toExpr("<<net>>")
-     is CodeClosure do toExpr("<<pseudocode>>")
+     is PseudocodeClosure do toExpr("<<pseudocode closure>>")
+     is Pseudocode do toExpr("<<pseudocode>>")
      is functionCode do toExpr("<<a function body>>")
      is CompiledFunction do toExpr("<<a compiled function>>")
      is CompiledFunctionClosure do toExpr("<<a compiled function closure>>")
@@ -1641,7 +1642,7 @@ locate(e:Expr):Expr := (
 		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)),
 		    toExpr(int(p.line)),toExpr(int(p.column))
 		    )))
-     is c:CodeClosure do (
+     is c:PseudocodeClosure do (
 	  locate0();
 	  locate(c.code);
 	  locate2(c.code))

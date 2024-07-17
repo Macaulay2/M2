@@ -475,12 +475,12 @@ commandInterpreter(e:Expr):Expr := (
        is Nothing do loadprint("-",newStaticLocalDictionaryClosure(),false)
        is x:DictionaryClosure do commandInterpreter(x)
        is x:SymbolClosure do commandInterpreter(x.frame)
-       is x:CodeClosure do commandInterpreter(x.frame)
+       is x:PseudocodeClosure do commandInterpreter(x.frame)
        is x:FunctionClosure do commandInterpreter(x.frame)
        is cfc:CompiledFunctionClosure do commandInterpreter(emptyFrame)	    -- some values are there, but no symbols
        is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
        is s:SpecialExpr do commandInterpreter(s.e)
-       else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
+       else WrongArg("a function, symbol, dictionary, pseudocode closure, or ()");
      decrementInterpreterDepth();
      ret);
 setupfun("commandInterpreter",commandInterpreter);
@@ -492,7 +492,7 @@ debugger(f:Frame,c:Code):Expr := (
      recursionDepth = 0;
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(currentS);
-       setGlobalVariable(currentS,Expr(CodeClosure(f,c)));
+       setGlobalVariable(currentS,Expr(PseudocodeClosure(f,c)));
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,True);
@@ -519,7 +519,8 @@ value(e:Expr):Expr := (
 	  if i < length(vals) then vals.i 
 	  else nullE					    -- localFrame is the only one that might be short
 	  )
-     is c:CodeClosure do eval(c.frame,c.code)
+     is c:PseudocodeClosure do eval(c.frame,c.code)
+     is c:Pseudocode do eval(c.code)
      is s:stringCell do (
       	  savecs := getGlobalVariable(currentString);
 	  setGlobalVariable(currentString,e);
