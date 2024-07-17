@@ -1,4 +1,5 @@
 --		Copyright 1994 by Daniel R. Grayson
+use debugging;
 use evaluate;
 use struct;
 use sets;
@@ -63,6 +64,9 @@ toList(e:Expr):Expr := (
 		    	 hash_t(0), false),
 	       	    false)))
      is s:stringCell do list(strtoseq(s))
+     is c:PseudocodeClosure do toList(c.code)
+     is c:Pseudocode do toList(c.code)
+     is s:SpecialExpr do toList(s.e)
      else WrongArg("list, sequence, set, or string"));
 setupfun("toList1",toList);
 values(e:Expr):Expr := (
