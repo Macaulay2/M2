@@ -76,6 +76,7 @@ M2_DFILES += mysqldummy.d
 endif
 M2_DFILES += pthread.d
 M2_DFILES += actors.d
+M2_DFILES += debugging.dd
 M2_DFILES += actors2.dd
 M2_DFILES += actors3.d
 M2_DFILES += actors4.d
