@@ -161,12 +161,12 @@ export convert(e:ParseTree):Code := (
 	  then (
 	       x:= parseRR(wrd.name);
 	       when x
-	       is y:RR do Code(realCode(y, position(token)))
-	       is null do Code(Error(position(token),
+	       is y:RR do Code(realCode(y, token.position))
+	       is null do Code(Error(token.position,
 		       "expected precision to be a small non-negative integer",
 		       nullE,false,dummyFrame)))
 	  else if wrd.typecode == TCint
-	  then Code(integerCode(parseInt(wrd.name),position(token)))
+	  then Code(integerCode(parseInt(wrd.name),token.position))
  	  else if wrd.typecode == TCstring
 	  then (
 	       s := parseString(wrd.name);
@@ -176,10 +176,10 @@ export convert(e:ParseTree):Code := (
 	       if var.frameID == 0
 	       then (
 		    if var.thread
-		    then Code(threadMemoryReferenceCode(var.frameindex,position(token)))
-		    else Code(globalMemoryReferenceCode(var.frameindex,position(token)))
+		    then Code(threadMemoryReferenceCode(var.frameindex,token.position))
+		    else Code(globalMemoryReferenceCode(var.frameindex,token.position))
 		    )
-	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,position(token)))
+	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,token.position))
 	       )
 	  )
      is a:Adjacent do Code(adjacentCode(convert(a.lhs),convert(a.rhs),treePosition(e)))
@@ -245,14 +245,14 @@ export convert(e:ParseTree):Code := (
 	       is u:Unary do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
 			 convert(u.rhs),
 			 convert(b.rhs),
 			 treePosition(e)))
 	       is u:Postfix do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
 			 convert(u.lhs),
 			 convert(b.rhs),
 			 treePosition(e)))
@@ -267,7 +267,7 @@ export convert(e:ParseTree):Code := (
 			 Code(ternaryCode(
 				   AssignElemFun,
 				   convert(c.lhs),
-			 	   Code(globalSymbolClosureCode(crhs.entry,position(crhs))),
+				   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
 				   convert(b.rhs),
 				   treePosition(e)))
 			 else dummyCode --should not happen
@@ -275,7 +275,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallValueFun,
 			      CodeSequence(
-				   Code(globalSymbolClosureCode(c.Operator.entry,position(c.Operator))), 
+				   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)),
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),
@@ -327,11 +327,11 @@ export convert(e:ParseTree):Code := (
 			      treePosition(e))))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
 			 convert(u.rhs), convert(b.rhs), treePosition(e)))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
 			 convert(u.lhs), convert(b.rhs), treePosition(e)))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
@@ -353,7 +353,7 @@ export convert(e:ParseTree):Code := (
 			 Code(ternaryCode(
 				   AssignElemFun,
 				   convert(c.lhs),
-			 	   Code(globalSymbolClosureCode(crhs.entry,position(crhs))),
+				   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
 				   convert(b.rhs),
 				   treePosition(e)))
 			 else dummyCode --should not happen
@@ -361,7 +361,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
-			 	   Code(globalSymbolClosureCode(c.Operator.entry,position(c.Operator))),
+				   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)),
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),

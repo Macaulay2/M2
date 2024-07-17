@@ -1559,7 +1559,7 @@ lookat(p:Position):void := (
 	  locatedCode.maxcol = int(p.column);
 	  );
      );
-locate(x:Token):void := lookat(position(x));
+locate(x:Token):void := lookat(x.position);
 locate(e:Code):void := (
      when e
      is nullCode do nothing

@@ -77,9 +77,8 @@ export printError(err:Error):Error := (
      then printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
      err.printed = true;
      err);
-export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
-export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
-export printWarningMessage(t:Token,message:string):void := printWarningMessage(position(t),message);
+export printErrorMessage(t:Token,message:string):void := printErrorMessage(t.position,message);
+export printWarningMessage(t:Token,message:string):void := printWarningMessage(t.position,message);
 
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
