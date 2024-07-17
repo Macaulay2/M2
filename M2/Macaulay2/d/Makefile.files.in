@@ -54,9 +54,9 @@ M2_DFILES += lex.d
 M2_DFILES += parser.d
 M2_DFILES += binding.d
 M2_DFILES += basic.d
-M2_DFILES += convertr.d
 M2_DFILES += common.d
 M2_DFILES += util.d
+M2_DFILES += convertr.d
 M2_DFILES += struct.d
 M2_DFILES += classes.dd
 M2_DFILES += buckets.dd
@@ -86,6 +86,7 @@ M2_SRCFILES += xmlactors.d
 endif
 M2_DFILES += actors5.d
 M2_DFILES += actors6.dd
+M2_DFILES += debugging.dd
 M2_DFILES += threads.dd
 
 ifeq (@PYTHON@,yes)

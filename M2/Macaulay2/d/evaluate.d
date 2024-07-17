@@ -13,7 +13,7 @@ threadLocal recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 threadLocal export backtrace := true;
 threadLocal lastCode := dummyCode;
-threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
+threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
 export chars := new array(Expr) len 256 do (
     i := 0;
     while i<256 do (
@@ -531,7 +531,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 	       )
 	  )
      else if desc.numparms != length(v)
-     then WrongNumArgs(model.arrow,desc.numparms,length(v))
+     then WrongNumArgs(Code(model),desc.numparms,length(v))
      else (
 	  if framesize == 0 then (
 	       saveLocalFrame := localFrame;
@@ -591,7 +591,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
      );
 
 wrongModel1(model:functionCode):Expr := printErrorMessageE(
-     model.arrow, 
+     Code(model), 
      "expected " + tostring(model.desc.numparms) + " argument" + (if model.desc.numparms == 1 then "" else "s") + " but got 1"
      );
 
@@ -828,7 +828,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 	  else applyFCS(c,v)
 	  )
      else if desc.numparms != length(cs)
-     then WrongNumArgs(model.arrow,desc.numparms,length(cs))
+     then WrongNumArgs(Code(model),desc.numparms,length(cs))
      else (
      	  previousFrame := c.frame;
      	  framesize := desc.framesize;
@@ -959,7 +959,7 @@ export applyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
 	  if desc.restargs
 	  then applyFCS(c,Sequence(e0,e1))
 	  else if desc.numparms != 2
-	  then WrongNumArgs(model.arrow,desc.numparms,2)
+	  then WrongNumArgs(Code(model),desc.numparms,2)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
@@ -1028,7 +1028,7 @@ export applyEEEE(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 	  if desc.restargs
 	  then applyFCS(c,Sequence(e0,e1,e2))
 	  else if desc.numparms != 3
-	  then WrongNumArgs(model.arrow,desc.numparms,3)
+	  then WrongNumArgs(Code(model),desc.numparms,3)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
@@ -1458,7 +1458,8 @@ export evalraw(c:Code):Expr := (
 		    nd = nd - 3;
 		    while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
 		    );
-	       return f.values.(r.frameindex))
+	       if r.frameindex>=length(f.values) then buildErrorPacket("frame error")
+	       else return f.values.(r.frameindex))
 	  is r:globalMemoryReferenceCode do return globalFrame.values.(r.frameindex)
 	  is r:threadMemoryReferenceCode do return (
 	       i := r.frameindex;
@@ -2080,7 +2081,9 @@ export binarymethod(left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Ex
      else applyEEE(method,left,right));
 
 AssignElemFun = assignelemfun;
-AssignQuotedElemFun = assignquotedelemfun;
+setup(EqualS,AssignElemFun);
+AssignQuotedElemFun = assignquotedelemfun; -- what is this for? never used
+setup(EqualS,AssignElemFun);
 
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
 

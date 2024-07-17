@@ -300,6 +300,7 @@ export toExpr(x:constucharstarOrNull) ::= toExpr(Ccode(constcharstarOrNull,"((co
 export toExpr(x:arrayZZ):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
 export arrayarrayZZ := array(arrayZZ);
 export toExpr(x:arrayarrayZZ):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
+export toExpr(c:Code):Expr := Pseudocode(c)
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d util.o "

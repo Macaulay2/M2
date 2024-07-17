@@ -400,7 +400,7 @@ export StopIterationE := Expr(StopIterationS);
 
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
-     e := makeSymbol(t.word,position(t),t.dictionary);
+     e := makeSymbol(t.word,t.position,t.dictionary);
      t.entry = e;
      e);
 export makeErrorTree(e:ParseTree,message:string):void := (
@@ -462,6 +462,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  when lookup(t.word,t.dictionary)
      	  is entry:Symbol do (
 	       t.entry = entry;
+	       if entry.position == tempPosition then entry.position = t.position;
 	       if entry.flagLookup then (
 		    printErrorMessage(t,"flagged symbol encountered");
 		    HadError=true;
@@ -483,7 +484,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
 
 		    locallyCreated := t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0;
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
-		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread,locallyCreated);
+		    t.entry = makeSymbol(t.word,t.position,globalDictionary,thread,locallyCreated);
 		    )
 	       else (
 	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
@@ -766,13 +767,13 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is i:IfThen do (
 	  bind(i.predicate,dictionary);
-	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  -- i.thenClause = bindnewdictionary(i.thenClause,dictionary);
+	  bind(i.thenClause,dictionary);
 	  )
      is i:IfThenElse do (
 	  bind(i.predicate,dictionary);
-	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  -- i.thenClause = bindnewdictionary(i.thenClause,dictionary);
+	  bind(i.thenClause,dictionary);
 	  -- i.elseClause = bindnewdictionary(i.elseClause,dictionary);
 	  bind(i.elseClause,dictionary);
 	  )

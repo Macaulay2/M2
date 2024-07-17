@@ -426,7 +426,7 @@ depth String := s -> 0
 -----------------------------------------------------------------------------
 
 toList = method(Dispatch => Thing)
-toList BasicList := toList Set := toList String := List => toList1
+toList BasicList := toList Set := toList String := toList Pseudocode := List => toList1
 
 -----------------------------------------------------------------------------
 

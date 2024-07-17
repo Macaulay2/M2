@@ -115,21 +115,21 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  else (
 	       t := u.word;
 	       if t == wordEOF then (
-		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << u.position << endl;
 		    return if returnLastvalue then lastvalue else nullE;
 		    )
 	       else if t == NewlineW then (
-		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << u.position << endl;
 		    gettoken(file,true);
 		    )
 	       else if t == wordEOC then (
-		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << u.position << endl;
 		    gettoken(file,true);
 		    )
 	       else (
 	  	    previousLineNumber = lineNumber;
 		    promptWanted = true;
-		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << u.position << endl;
 		    parsed := parse(file,SemicolonW.parse.precedence,true);
 		    if parsed == errorTree then (
 			 if test(interruptedFlag) then (
@@ -165,7 +165,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
 			      printErrorMessage(s,msg);
-			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
+			      if stopIfError || returnIfError then return Expr(Error(s.position,msg,nullE,false,dummyFrame));
 			      )
 			 else (
 			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
@@ -475,12 +475,12 @@ commandInterpreter(e:Expr):Expr := (
        is Nothing do loadprint("-",newStaticLocalDictionaryClosure(),false)
        is x:DictionaryClosure do commandInterpreter(x)
        is x:SymbolClosure do commandInterpreter(x.frame)
-       is x:CodeClosure do commandInterpreter(x.frame)
+       is x:PseudocodeClosure do commandInterpreter(x.frame)
        is x:FunctionClosure do commandInterpreter(x.frame)
        is cfc:CompiledFunctionClosure do commandInterpreter(emptyFrame)	    -- some values are there, but no symbols
        is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
        is s:SpecialExpr do commandInterpreter(s.e)
-       else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
+       else WrongArg("a function, symbol, dictionary, pseudocode closure, or ()");
      decrementInterpreterDepth();
      ret);
 setupfun("commandInterpreter",commandInterpreter);
@@ -492,7 +492,7 @@ debugger(f:Frame,c:Code):Expr := (
      recursionDepth = 0;
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(currentS);
-       setGlobalVariable(currentS,Expr(CodeClosure(f,c)));
+       setGlobalVariable(currentS,Expr(PseudocodeClosure(f,c)));
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,True);
@@ -519,7 +519,8 @@ value(e:Expr):Expr := (
 	  if i < length(vals) then vals.i 
 	  else nullE					    -- localFrame is the only one that might be short
 	  )
-     is c:CodeClosure do eval(c.frame,c.code)
+     is c:PseudocodeClosure do eval(c.frame,c.code)
+     is c:Pseudocode do eval(c.code)
      is s:stringCell do (
       	  savecs := getGlobalVariable(currentString);
 	  setGlobalVariable(currentString,e);

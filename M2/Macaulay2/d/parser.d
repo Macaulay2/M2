@@ -241,7 +241,7 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      	       token = gettoken(file,obeylines);
 	       token.word.parse.funs.unary(token,file,prec,obeylines)
 	       )
-     	  else ParseTree(dummy(position(token)))
+     	  else ParseTree(dummy(token.position))
 	  );
      if ret == errorTree then (
 	  if isatty(file) then flushToken(file) else skip(file,prec));
@@ -518,29 +518,29 @@ export treePosition(e:ParseTree):Position := (
      while true do (
 	  when e
 	  is dummy do return dummyPosition
-	  is token:Token do return position(token)
+	  is token:Token do return token.position
 	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do return position(binary.Operator)
-	  is a:Arrow do return position(a.Operator)
-	  is unary:Unary do return position(unary.Operator)
-	  is postfix:Postfix do return position(postfix.Operator)
-	  is a:Quote do return position(a.Operator)
-	  is a:GlobalQuote do return position(a.Operator)
-	  is a:ThreadQuote do return position(a.Operator)
-	  is a:LocalQuote do return position(a.Operator)
-	  is ee:Parentheses do return position(ee.left)
-	  is ee:EmptyParentheses do return position(ee.left)
-     	  is i:IfThen do return position(i.ifToken)
-	  is i:TryThenElse do return position(i.tryToken)
-	  is i:TryElse do return position(i.tryToken)
-	  is i:Try do return position(i.tryToken)
-	  is i:Catch do return position(i.catchToken)
-     	  is i:IfThenElse do return position(i.ifToken)
-     	  is w:For do return position(w.forToken)
-     	  is w:WhileDo do return position(w.whileToken)
-     	  is w:WhileList do return position(w.whileToken)
-     	  is w:WhileListDo do return position(w.whileToken)
-	  is n:New do return position(n.newtoken)
+	  is binary:Binary do return binary.Operator.position
+	  is a:Arrow do return a.Operator.position
+	  is unary:Unary do return unary.Operator.position
+	  is postfix:Postfix do return postfix.Operator.position
+	  is a:Quote do return a.Operator.position
+	  is a:GlobalQuote do return a.Operator.position
+	  is a:ThreadQuote do return a.Operator.position
+	  is a:LocalQuote do return a.Operator.position
+	  is ee:Parentheses do return ee.left.position
+	  is ee:EmptyParentheses do return ee.left.position
+     	  is i:IfThen do return i.ifToken.position
+	  is i:TryThenElse do return i.tryToken.position
+	  is i:TryElse do return i.tryToken.position
+	  is i:Try do return i.tryToken.position
+	  is i:Catch do return i.catchToken.position
+     	  is i:IfThenElse do return i.ifToken.position
+     	  is w:For do return w.forToken.position
+     	  is w:WhileDo do return w.whileToken.position
+     	  is w:WhileList do return w.whileToken.position
+     	  is w:WhileListDo do return w.whileToken.position
+	  is n:New do return n.newtoken.position
 	  )
      );
 
@@ -562,8 +562,8 @@ export size(e:ParseTree):int := (
      is x:LocalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
      is x:Parentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right) + size(x.contents)
      is x:EmptyParentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right)
-     is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause)
-     is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause) + size(x.elseClause)
+     is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause)
+     is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause) + size(x.elseClause)
      is x:TryThenElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel) + size(x.elseToken) + size(x.alternate)
      is x:TryElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.elseToken) + size(x.alternate)
      is x:Try do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)

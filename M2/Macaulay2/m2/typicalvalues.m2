@@ -80,7 +80,7 @@ horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
-localDictionaries Pseudocode := List => localDictionaries
+localDictionaries PseudocodeClosure := List => localDictionaries
 localDictionaries Dictionary := List => localDictionaries
 values HashTable := List => values
 merge(HashTable,HashTable,Function) := HashTable => merge
@@ -151,7 +151,7 @@ fileMode(ZZ,String) := fileMode
 frames(Sequence) := frames
 frames(Symbol) := frames
 frames(Function) := frames
-frames(Pseudocode) := frames
+frames(PseudocodeClosure) := frames
 powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
 chk := (type,key) -> if type#?key then (

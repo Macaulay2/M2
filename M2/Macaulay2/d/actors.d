@@ -900,6 +900,7 @@ assignNewFun(newclass:Code,rhs:Code):Expr := (
      is o:HashTable do installMethod(NewE,o,eval(rhs))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFun = assignNewFun;
+setup(NewS,AssignNewFun);
 assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c is Error do c
@@ -910,6 +911,7 @@ assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
 	  else printErrorMessageE(newparent,"expected a hash table as prospective parent"))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewOfFun = assignNewOfFun;
+setup(NewOfS,AssignNewOfFun);
 assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c is Error do c
@@ -920,6 +922,7 @@ assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
      	  else printErrorMessageE(newinitializer,"expected a hash table"))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFromFun = assignNewFromFun;
+setup(NewFromS,AssignNewFromFun);
 assignNewOfFromFun(args:CodeSequence):Expr := (
      newclass := args.0;
      newparent := args.1;
@@ -946,6 +949,7 @@ assignNewOfFromFun(args:CodeSequence):Expr := (
      else printErrorMessageE(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFromFun = assignNewOfFromFun;
+setup(NewOfFromS,AssignNewOfFromFun);
 installFun2(a:Expr,args:CodeSequence):Expr := (
      opr := eval(args.0);
      when opr 
@@ -1010,6 +1014,7 @@ installMethodFun2(arg1:Expr,args:CodeSequence):Expr := (
      else buildErrorPacket("expected left hand parameter to be a function, type, or a hash table"));
 installMethodFun(args:CodeSequence):Expr := installMethodFun2(eval(args.1),args);
 InstallMethodFun = installMethodFun;
+setup(ColonEqualS,InstallMethodFun);
 
 mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
 
@@ -1044,6 +1049,7 @@ installValueFun(args:CodeSequence):Expr := (
 -- 	  else buildErrorPacket(mess1))
 --      else buildErrorPacket(mess1));
 InstallValueFun = installValueFun;
+setup(EqualS,InstallValueFun);
 
 unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
      f := eval(meth);
@@ -1058,6 +1064,7 @@ unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
 	       )
 	  else printErrorMessageE(argtype,"expected a hash table")));
 UnaryInstallMethodFun = unaryInstallMethodFun;
+setup(ColonEqualS,UnaryInstallMethodFun);
 
 unaryInstallValueFun(meth:Code,lhs:Code,rhs:Code):Expr := (
      oper := eval(meth);
@@ -1089,6 +1096,7 @@ unaryInstallValueFun(meth:Code,lhs:Code,rhs:Code):Expr := (
 --      else printErrorMessageE(argtype,"expected a hash table")
 --      );
 UnaryInstallValueFun = unaryInstallValueFun;
+setup(EqualS,UnaryInstallValueFun);
 
 flatten(a:Sequence):Sequence := (
      -- warning - this function may return its argument without copying

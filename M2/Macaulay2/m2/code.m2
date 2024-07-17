@@ -15,12 +15,13 @@ limit := 4
 
 -- TODO: also show _where_ a method is declared
 codeFunction := (key, func, level) -> if level <= limit then (
-    if locate func === null then DIV{"function ", func, ": source code not available"}
-    else (
-	dicts := localDictionaries func;
-	symbs := flatten apply(#dicts - 1, i -> sortByHash values dicts#i);
-	DIV flatten {
-	    code locate func,
+    l := locate func;
+    c := code l;
+    dicts := localDictionaries func;
+    symbs := flatten apply(#dicts - 1, i -> sortByHash values dicts#i);
+    hooks := if key === null then {} else apply(listHooks(key, null), code);
+    DIV flatten {
+	if c =!= null then c else SPAN{"function ", func, ": ",if l =!= null and hasAttribute(func,ReverseDictionary) then l else ""," source code not available"},
 	    if #symbs > 0 then INDENT listSymbols symbs,
 	    if codeHelper#?(functionBody func) then apply(
 		codeHelper#(functionBody func) func,
@@ -28,10 +29,9 @@ codeFunction := (key, func, level) -> if level <= limit then (
 		    comment, BR{},
 		    if instance(val, Function) then codeFunction(key, val, level+1) else hold val -- hold for OptionTable or Option
 		    }),
-	    if key =!= null then INDENT apply(listHooks(key, null), code)
+	    if #hooks>0 then INDENT hooks
 	    }
 	)
-    )
 
 -- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
 previousMethodsFound = null
@@ -58,15 +58,7 @@ code FilePosition := x -> (
 		    )
 	       );
 	  file = lines file;
-	  while (
-	       file#?stop 
-	       and (				  -- can improve this
-		    l := set characters file#stop;
-		    l #? ")" and isSubset(l, wp)
-		    )
-	       ) do stop = stop + 1;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
 	  DIV {
 	      x, ": --source code:",
 	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
@@ -251,7 +243,6 @@ debuggerUsageMessage = ///--debugger activation depth control:
     	      	   	-- that produced an error
     code current        -- source code of current expression
     value current       -- execute current expression, obtain value
-    disassemble current -- display microcode of current expression
     currentString       -- the string being evaluated by 'value', if
                         -- an error occurred within it
 -- emacs commands in *M2* buffer:
@@ -270,6 +261,37 @@ debuggerHook = entering -> (
 	  popvar symbol inDebugger;
 	  )
      )
+
+-- disassemble
+CodeSequence := new Type of VisibleList
+html CodeSequence := x -> html VerticalList x
+net CodeSequence := x -> stack apply(x,net)
+toString CodeSequence := x -> demark(" ", apply(x,toString))
+CodeList := new Type of VisibleList
+html CodeList := x -> html RowExpression between(" ", x)
+net CodeList := x ->  horizontalJoin between(" ",apply(x,net))
+toString CodeList := x -> "(" | demark(" ", apply(x,toString)) |")"
+
+fmtCode = method(Dispatch=>Thing)
+fmtCode List := l -> new CodeList from apply(l,fmtCode)
+fmtCode Sequence := s -> new CodeSequence from apply(s,fmtCode)
+fmtCode Thing := identity
+fmtCode Pseudocode := fmtCode @@ toList
+
+html Pseudocode := html @@ fmtCode
+net Pseudocode := net @@ fmtCode
+toString Pseudocode := toString @@ fmtCode
+
+Pseudocode _ ZZ := (x,i) -> (
+    x=last toList x;
+    if class x =!= Sequence or not x#?i then error "no such member";
+    x=x#i;
+    if class x === List then x=last x;
+    x
+    )
+
+disassemble = method()
+disassemble Pseudocode := toString
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -215,10 +215,10 @@ document {
      ///,
      SeeAlso => {mutable, "try"}
      }
-document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, Pseudocode), (frames, Function)},
+document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, PseudocodeClosure), (frames, Function)},
      Headline => "get the frames associated to a closure",
      Usage => "frames f",
-     Inputs => { "f" => {"() or ", ofClass{Symbol,Function,Pseudocode}}},
+     Inputs => { "f" => {"() or ", ofClass{Symbol,Function,PseudocodeClosure}}},
      Outputs => {{"a list of mutable lists, the frames attached to the closure ", TT "f", " or, if ", TT "f", " is ", TT "()", ", then
 	       the frames attached to the current lexical scope"
 	       }},
@@ -502,11 +502,11 @@ document { Key => LocalDictionary,
      have values; thus they may be referred to as dictionary closures.",
      SeeAlso => { localDictionaries, GlobalDictionary }
      }
-document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictionaries, Pseudocode), (localDictionaries, Dictionary), (localDictionaries, Function)},
+document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictionaries, PseudocodeClosure), (localDictionaries, Dictionary), (localDictionaries, Function)},
      Headline => "get local dictionaries",
      Usage => "localDictionaries f",
      Inputs => {
-	  "f" => {"() or ", ofClass{Function,Symbol,Pseudocode,Dictionary}}
+	  "f" => {"() or ", ofClass{Function,Symbol,PseudocodeClosure,Dictionary}}
 	  },
      Outputs => {
 	  List => {"a list of the local dictionaries associated with the lexical scopes containing ", TT "f"}
@@ -536,7 +536,7 @@ document { Key => listLocalSymbols,
      Headline => "display of local symbols and their values",
      SYNOPSIS (
 	  Usage => "listLocalSymbols f",
-	  Inputs => { "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
+	  Inputs => { "f" => {ofClass{PseudocodeClosure,Symbol,Dictionary,Function}}},
 	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values"}},
 	  EXAMPLE lines ///
 	       x:=3; y:="hi there"; z:=2^30; f = x->x;
@@ -558,7 +558,7 @@ document { Key => listLocalSymbols,
 	  ),
      SYNOPSIS (
 	  Usage => "listLocalSymbols(X,f)",
-	  Inputs => { "X" => Type, "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
+	  Inputs => { "X" => Type, "f" => {ofClass{PseudocodeClosure,Symbol,Dictionary,Function}}},
 	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values, provided their
 		    values are instances of the type ", TT "X"}},
 	  EXAMPLE lines ///
@@ -969,12 +969,12 @@ document { Key => symbol OutputDictionary,
      ///,
      SeeAlso => { "dictionaryPath" }
      }
-document { Key => Pseudocode,
+document { Key => {Pseudocode, PseudocodeClosure},
      Headline => "the class of pseudocodes",
      "The Macaulay2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
      step, the evaluator is considering a pseudocode item.  These pseudocode items are normally not available to the user, but
-     the internal function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
-     a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
+     the internal function ", TO "pseudocode", " can convert
+     a function closure to pseudocode and display their contents, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
      and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
      }
@@ -982,44 +982,38 @@ document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",
      Usage => "pseudocode f",
      Inputs => { "f" => FunctionClosure },
-     Outputs => { Pseudocode => { "the pseudocode of the function ", TT "f"} },
-     SeeAlso => { disassemble },
+     Outputs => { PseudocodeClosure => { "the pseudocode of the function ", TT "f"} },
      EXAMPLE lines ///
 	  pseudocode resolution
-	  disassemble oo
-     ///
-     }
-document { Key => disassemble,
-     Headline => "disassemble pseudocode or a function",
-     Usage => "disassemble c",
-     Inputs => { "c" => Pseudocode },
-     Outputs => { String => {"the disassembled form of ", TT "c"} },
-     SeeAlso => { pseudocode },
-     EXAMPLE lines ///
-     disassemble res
      ///,
      PARA {
-	  "It may be useful to disassemble code during debugging, as in the following demonstration."
+	  "One can look at specific part of the code by using ", TT "_",":"
+	  },
+     EXAMPLE lines ///
+          oo_4_1_1_0
+	  value oo
+     ///,
+     PARA {
+	  "It may be useful to look at code during debugging, as in the following demonstration."
 	  },
      EXAMPLE lines ///
      load "Macaulay2Doc/demo1.m2"
      code g
      g 2
      code current
-     disassemble current
+     current
      ///
      }
 document { Key => "current",
      Headline => "the pseudocode that produced an error",
      Usage => "current",
-     Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
+     Outputs => { PseudocodeClosure => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
      "Use ", TO "value", " to evaluate the code again, for debugging purposes.",
      EXAMPLE lines ///
      load "Macaulay2Doc/demo1.m2"
      code g
      g 2
      code current
-     disassemble current
      value current
      x = 11
      value current

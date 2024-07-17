@@ -121,11 +121,18 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  -- other cases needed soon
 	  else False)
-     is c:CodeClosure do (
+     is c:PseudocodeClosure do (
 	  when rhs
-	  is d:CodeClosure do (
+	  is d:PseudocodeClosure do (
 	       if c.frame == d.frame
 	       && c.code == d.code
+	       then True else False)
+	  else False
+	  )
+     is c:Pseudocode do (
+	  when rhs
+	  is d:Pseudocode do (
+	       if c.code == d.code
 	       then True else False)
 	  else False
 	  )

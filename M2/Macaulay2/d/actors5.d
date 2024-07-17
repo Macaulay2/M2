@@ -444,7 +444,7 @@ examine(e:Expr):Expr := (
 	  stdIO << "symbol body :" << endl;
 	  showsym(sb.symbol);
 	  nullE)
-     is c:CodeClosure do (
+     is c:PseudocodeClosure do (
 	  f := c.frame;
      	  showFrames(f);
 	  nullE)
@@ -1581,7 +1581,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      is null do (
           if !isvalidsymbol(s) then return buildErrorPacket("invalid symbol");
 	  if d.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,d);
+	  t := makeSymbol(w,tempPosition,d);
 	  globalFrame.values.(t.frameindex)));
 
 getglobalsym(s:string):Expr := (
@@ -1590,7 +1590,7 @@ getglobalsym(s:string):Expr := (
      is x:Symbol do Expr(SymbolClosure(if x.thread then threadFrame else globalFrame,x))
      is null do (
 	  if globalDictionary.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,globalDictionary);
+	  t := makeSymbol(w,tempPosition,globalDictionary);
 	  globalFrame.values.(t.frameindex)));
 
 getGlobalSymbol(e:Expr):Expr := (
@@ -1625,14 +1625,14 @@ setupfun("isGlobalSymbol",isGlobalSymbol);
 --      else WrongNumArgs(0));
 -- setupfun("history",history);
 
-listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
+listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));
 listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables
 frame(e:Expr):Expr := (
      when e
      is s:Sequence do 
      if length(s) == 0 then Expr(listFrame(localFrame)) else WrongNumArgs(1,2)
      is sc:SymbolClosure do Expr(listFrame(sc.frame))
-     is c:CodeClosure do Expr(listFrame(c.frame))
+     is c:PseudocodeClosure do Expr(listFrame(c.frame))
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(listFrame(cfc.env))
      is CompiledFunction do Expr(listFrame(emptySequence))
@@ -1645,13 +1645,13 @@ numFrames(f:Frame):int := (
      while ( n = n+1; f != f.outerFrame ) do f = f.outerFrame;
      n);
 
-listFrames(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (provide listFrame(f) ; f != f.outerFrame ) do f = f.outerFrame));     
+listFrames(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (provide listFrame(f) ; f != f.outerFrame ) do f = f.outerFrame));
 
 frames(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) == 0 then listFrames(localFrame) else WrongNumArgs(0,1) 
      is sc:SymbolClosure do Expr(listFrames(sc.frame))
-     is c:CodeClosure do Expr(listFrames(c.frame))
+     is c:PseudocodeClosure do Expr(listFrames(c.frame))
      is fc:FunctionClosure do Expr(listFrames(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
      is CompiledFunction do Expr(list(listFrame(emptySequence)))
@@ -1666,7 +1666,7 @@ localDictionaries(e:Expr):Expr := (
      is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
      is x:DictionaryClosure do localDictionaries(x.frame)
      is x:SymbolClosure do localDictionaries(x.frame)
-     is x:CodeClosure do localDictionaries(x.frame)
+     is x:PseudocodeClosure do localDictionaries(x.frame)
      is x:FunctionClosure do localDictionaries(x.frame)
      is CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
      is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there

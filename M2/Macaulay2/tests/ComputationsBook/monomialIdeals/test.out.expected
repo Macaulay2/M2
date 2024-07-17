@@ -165,7 +165,6 @@ o27 = -- code for method: dual(MonomialIdeal,List)
              -- Common code for functions created with >> to process options and arguments.
              uncurry(f, override (opts,args))
              )
-        )
       | symbol   class              value                                                   location of symbol
       | ------   -----              -----                                                   ------------------                              
       | opts   : OptionTable     -- OptionTable{Strategy => 0}                              /Users/dan/src/M2/Macaulay2/m2/option.m2:6:4-6:7

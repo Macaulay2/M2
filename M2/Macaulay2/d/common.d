@@ -1,9 +1,9 @@
 --		Copyright 1994-2003 by Daniel R. Grayson
-
 use basic;
 use binding;
+use stdiop0;
 
-export codePosition(c:Code):Position := (
+export codePosition(c:Code):Position := ( -- TODO retire
      when c
      is f:adjacentCode do f.position
      is f:augmentedAssignmentCode do f.position
@@ -14,7 +14,7 @@ export codePosition(c:Code):Position := (
      is f:Error do f.position
      is f:evaluatedCode do f.position
      is f:forCode do f.position
-     is f:functionCode do position(f.arrow)
+     is f:functionCode do f.position
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
      is f:globalSymbolClosureCode do f.position
@@ -35,7 +35,7 @@ export codePosition(c:Code):Position := (
      is f:realCode do f.position
      is f:semiCode do f.position
      is f:sequenceCode do f.position
-     is f:stringCode do dummyPosition
+     is f:stringCode do f.position
      is f:ternaryCode do f.position
      is f:threadMemoryReferenceCode do f.position
      is f:threadSymbolClosureCode do f.position
@@ -56,7 +56,7 @@ export tostring(c:Code):string := (
      is x:semiCode do concatenate(array(string)( "(semi ", between(" ",new array(string) len length(x.w) do foreach s in x.w do provide tostring(s)), ")"))
      is x:arrayCode do concatenate(array(string)( "(array ", between(" ",new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
      is x:angleBarListCode do concatenate(array(string)( "(angleBarList ", between(" ",new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))
-     is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f)," ",tostring(x.lhs)," ",tostring(x.rhs),")"))
+     is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f).word.name," ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:adjacentCode do concatenate(array(string)("(adjacent ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:evaluatedCode do concatenate(array(string)(
 	       "(expr ",
@@ -94,7 +94,7 @@ export tostring(c:Code):string := (
      is x:listCode do concatenate(array(string)( "(list ", between(" ",new array(string) len length(x.y) do foreach s in x.y do provide tostring(s)), ")"))
      is x:localMemoryReferenceCode do concatenate(array(string)("(fetch ",tostring(x.frameindex)," ",tostring(x.nestingDepth),")"))
      is x:localSymbolClosureCode do concatenate(array(string)("(local ",x.symbol.word.name," nestingDepth: ",tostring(x.nestingDepth),")"))
-     is x:multaryCode do concatenate(array(string)( "(OP ",getMultopName(x.f)," ", between(" ",new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")" ))
+     is x:multaryCode do concatenate(array(string)( "(OP ",getMultopName(x.f).word.name," ", between(" ",new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")" ))
      is x:newLocalFrameCode do concatenate(array(string)())
      is x:nullCode do "(null)"
      is x:parallelAssignmentCode do (
@@ -103,9 +103,9 @@ export tostring(c:Code):string := (
 	       array(string)(
 	       	    "(parallel-assign (",
 		    between(" ",
-			 new array(string) len length(x.nestingDepth) do 
-			 for i from 0 to n-1 do 
-			 if x.lhs.i == dummySymbol 
+			 new array(string) len n do
+			 for i from 0 to n-1 do
+			 if x.lhs.i == dummySymbol
 			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
 			 else provide join("'",x.lhs.i.word.name)),
 		    ") ", tostring(x.rhs), ")" ) ) )
@@ -122,76 +122,82 @@ export tostring(c:Code):string := (
 		    between(" ",new array(string) len length(x.x) do foreach s in x.x do provide tostring(s)),
      	       	    ")")))
      is x:stringCode do concatenate(array(string)("\"",present(x.x),"\""))
-     is x:ternaryCode do concatenate(array(string)("(3-OP ",getTernopName(x.f)," ",tostring(x.arg1)," ",tostring(x.arg2)," ",tostring(x.arg3),")"))
+     is x:ternaryCode do concatenate(array(string)("(3-OP ",getTernopName(x.f).word.name," ",tostring(x.arg1)," ",tostring(x.arg2)," ",tostring(x.arg3),")"))
      is x:ifCode do concatenate(array(string)("(if ",tostring(x.predicate)," then: ",tostring(x.thenClause)," else: ",tostring(x.elseClause),")"))
      is x:tryCode do concatenate(array(string)("(try ",tostring(x.code)," ",tostring(x.thenClause)," ",tostring(x.elseClause),")"))
      is x:catchCode do concatenate(array(string)("(catch ",tostring(x.code),")"))
-     is x:unaryCode do concatenate(array(string)("(1-OP ",getUnopName(x.f)," ",tostring(x.rhs),")"))
+     is x:unaryCode do concatenate(array(string)("(1-OP ",getUnopName(x.f).word.name," ",tostring(x.rhs),")"))
      );
 
 export setup(word:Word):void := (
      makeSymbol(word,dummyPosition,globalDictionary);
      );
 export setup(word:Word,fn:unop):void := (
-     unopNameList = unopNameListCell(fn,word.name,unopNameList);
      e := makeSymbol(word,dummyPosition,globalDictionary);
+     unopNameList = unopNameListCell(fn,e,unopNameList);
      e.unary = fn;
      );
 export setup(word:Word,fn:binop):void := (
-     binopNameList = binopNameListCell(fn,word.name,binopNameList);
      e := makeSymbol(word,dummyPosition,globalDictionary);
+     binopNameList = binopNameListCell(fn,e,binopNameList);
      e.binary = fn;
      );
 export setup(word:Word,fun1:unop,fun2:binop):void := (
-     unopNameList = unopNameListCell(fun1,word.name,unopNameList);
-     binopNameList = binopNameListCell(fun2,word.name,binopNameList);
      e := makeSymbol(word,dummyPosition,globalDictionary);
+     unopNameList = unopNameListCell(fun1,e,unopNameList);
+     binopNameList = binopNameListCell(fun2,e,binopNameList);
      e.unary = fun1;
      e.binary = fun2;
      );
 export setup(word:Word,fun1:unop,fun2:unop):void := (
-     unopNameList = unopNameListCell(fun1,word.name,unopNameList);
-     unopNameList = unopNameListCell(fun2,word.name,unopNameList);
      e := makeSymbol(word,dummyPosition,globalDictionary);
+     unopNameList = unopNameListCell(fun2,e,unopNameList);
+     unopNameList = unopNameListCell(fun1,e,unopNameList);
      e.unary = fun1;
      e.postfix = fun2;
      );
 export setup(e:SymbolClosure,fn:unop):void := (
-     unopNameList = unopNameListCell(fn,e.symbol.word.name,unopNameList);
+     unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
      e.symbol.unary = fn;
      );
 export setuppostfix(e:SymbolClosure,fn:unop):void := (
-     unopNameList = unopNameListCell(fn,e.symbol.word.name,unopNameList);
+     unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
      e.symbol.postfix = fn;
      );
 export setup(e:SymbolClosure,fn:binop):void := (
-     binopNameList = binopNameListCell(fn,e.symbol.word.name,binopNameList);
+     binopNameList = binopNameListCell(fn,e.symbol,binopNameList);
      e.symbol.binary = fn;
      );
 export setup(e:SymbolClosure,fun1:unop,fun2:binop):void := (
-     unopNameList = unopNameListCell(fun1,e.symbol.word.name,unopNameList);
-     binopNameList = binopNameListCell(fun2,e.symbol.word.name,binopNameList);
+     unopNameList = unopNameListCell(fun1,e.symbol,unopNameList);
+     binopNameList = binopNameListCell(fun2,e.symbol,binopNameList);
      e.symbol.unary = fun1;
      e.symbol.binary = fun2;
      );
 export setup(e:SymbolClosure,fun1:unop,fun2:unop):void := (
-     unopNameList = unopNameListCell(fun1,e.symbol.word.name,unopNameList);
-     unopNameList = unopNameListCell(fun2,e.symbol.word.name,unopNameList);
+     unopNameList = unopNameListCell(fun1,e.symbol,unopNameList);
+     unopNameList = unopNameListCell(fun2,e.symbol,unopNameList);
      e.symbol.unary = fun1;
      e.symbol.postfix = fun2;
      );
 export setupop(s:SymbolClosure,fun:unop):void := (
-     unopNameList = unopNameListCell(fun,s.symbol.word.name,unopNameList);
+     unopNameList = unopNameListCell(fun,s.symbol,unopNameList);
      s.symbol.unary = fun;
      );
+export setup(e:SymbolClosure,fn:ternop):void := (
+     ternopNameList = ternopNameListCell(fn,e.symbol,ternopNameList);
+     );
+export setup(e:SymbolClosure,fn:multop):void := (
+     multopNameList = multopNameListCell(fn,e.symbol,multopNameList);
+     );
 export setupfun(name:string,fun:unop):Symbol := (
-     unopNameList = unopNameListCell(fun,name,unopNameList);
      word := makeUniqueWord(name,
 	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
      entry := makeSymbol(word,dummyPosition,globalDictionary);
+     unopNameList = unopNameListCell(fun,entry,unopNameList);
      entry.unary = fun;
      entry.Protected = true;
-     entry);     
+     entry);
 export setupfun(name:string,value:fun):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
@@ -234,7 +240,7 @@ export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when w
      if p.loadDepth >= errorDepth then printError(e);
      Expr(e));
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
-     printErrorMessageE(position(c),message));
+     printErrorMessageE(c.position,message));
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
 export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then if err.value == dummyExpr then nullE else err.value else z else z;
@@ -247,6 +253,7 @@ export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
      printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
 	  + tostring(got)));
+
 
 -----------------------------------------------------------------------------
 

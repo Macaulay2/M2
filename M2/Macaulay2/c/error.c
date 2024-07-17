@@ -7,7 +7,7 @@ void fatal(const char *s,...)
      va_list ap;
      va_start(ap,s);
      if (cur.filename != NULL) {
-     	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column+1,"");
+     	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column,"");
      	  }
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
@@ -26,7 +26,7 @@ void error(char *s,...)
      va_list ap;
      va_start(ap,s);
      fprintf(stderr,errfmt,
-	  cur.filename!=NULL?cur.filename:"",cur.lineno,cur.column+1,"");
+	  cur.filename!=NULL?cur.filename:"",cur.lineno,cur.column,"");
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
      fflush(stderr);
@@ -117,11 +117,11 @@ void fail(char *filename, int lineno) {
 void downpos(node n){
      struct POS *p = pos(n);
      if (p != NULL && p->filename != NULL) {
-	  fprintf(stderr,errfmt,p->filename,p->lineno,p->column+1,"");
+	  fprintf(stderr,errfmt,p->filename,p->lineno,p->column,"");
 	  }
      else {
 	  assert(cur.filename != NULL);
-	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column+1,"");
+	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column,"");
 	  }
      }
 

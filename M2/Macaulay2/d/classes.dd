@@ -7,7 +7,8 @@ setupconst("HashTable",Expr(hashTableClass));
 setupconst("Dictionary",Expr(dictionaryClass));
 setupconst("LocalDictionary",Expr(localDictionaryClass));
 setupconst("GlobalDictionary",Expr(globalDictionaryClass));
-setupconst("Pseudocode",Expr(codeClass));
+setupconst("Pseudocode",Expr(pseudocodeClass));
+setupconst("PseudocodeClosure",Expr(pseudocodeClosureClass));
 setupconst("FunctionBody",Expr(functionBodyClass));
 setupconst("SymbolBody",Expr(symbolBodyClass));
 setupconst("CompiledFunctionBody",Expr(compiledFunctionBodyClass));
@@ -119,7 +120,8 @@ export Class(e:Expr):HashTable := (
      is obj:HashTable do obj.Class
      is x:List do x.Class
      is ZZcell do ZZClass
-     is CodeClosure do codeClass
+     is PseudocodeClosure do pseudocodeClosureClass
+     is Pseudocode do pseudocodeClass
      is pythonObjectCell do pythonObjectClass
      is xmlNodeCell do xmlNodeClass
      is TaskCell do taskClass

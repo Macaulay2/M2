@@ -34,7 +34,7 @@ if firstTime then (
     PackageDictionary#("Package$Core") = getGlobalSymbol(PackageDictionary, "Core");
     )
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
-disassemble ( () -> debug Core )
+pseudocode ( () -> debug Core ) -- what is this for?
 if not firstTime then debug Core -- we need access to the private symbols (we remove the Core private dictionary later.)
 
 toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toString"

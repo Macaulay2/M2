@@ -228,13 +228,10 @@ dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
-export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
+export dummyPseudocodeClosure := PseudocodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
      Word("-*dummy token*-",TCnone,hash_t(0),newParseinfo()),
-     dummyPosition.filename,
-     dummyPosition.line,
-     dummyPosition.column,
-     dummyPosition.loadDepth,
+     dummyPosition,
      Macaulay2Dictionary,dummySymbol,false);
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
@@ -278,12 +275,12 @@ export compiledFunctionClass := newtypeof(functionClass);
 export compiledFunctionClosureClass := newtypeof(functionClass);
 export symbolClass := newbasictype();
 export keywordClass := newtypeof(symbolClass);
-export codeClass := newbasictype();
+export pseudocodeClass := newbasictype();
 export mysqlConnectionClass := newbasictype();
 export mysqlFieldClass := newbasictype();
 export mysqlResultClass := newbasictype();
 export functionBodyClass := newbasictype();
-export compiledFunctionBodyClass := newbasictype();
+export compiledFunctionBodyClass := newtypeof(functionBodyClass);
 export errorClass := newbasictype();
 export netClass := newbasictype();
 export netFileClass := newbasictype();
@@ -349,6 +346,7 @@ export RRiClass := newbignumbertype();
 export pointerClass := newbasictype();
 export atomicIntClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
+export pseudocodeClosureClass := newtypeof(pseudocodeClass);
 
 
 --Error Handling 

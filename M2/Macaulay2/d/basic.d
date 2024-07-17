@@ -16,9 +16,10 @@ export hash(e:Expr):hash_t := (
      is x:List do x.hash
      is f:functionCode do f.hash
      is MysqlConnectionWrapper do hash_t(237489) -- improve this later!
-     is MysqlFieldWrapper do hash_t(23748) -- improve this later!
-     is MysqlResultWrapper do hash_t(2374) -- improve this later!
-     is CodeClosure do hash_t(73889)       -- improve this later!
+     is MysqlFieldWrapper do hash_t(23748)       -- improve this later!
+     is MysqlResultWrapper do hash_t(2374)       -- improve this later!
+     is PseudocodeClosure do hash_t(73889)       -- improve this later!
+     is Pseudocode do hash_t(173889)             -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:QQcell do hash(x.v)
      is x:RRcell do hash(x.v)
@@ -102,6 +103,7 @@ export reverse(a:List):List := sethash(
      List( a.Class, reverse(a.v), hash_t(0), a.Mutable), a.Mutable 
      );
 export seq():Expr := emptySequenceE;
+export seq(e:Expr):Expr := Expr(Sequence(e));
 export seq(e:Expr,f:Expr):Expr := Expr(Sequence(e,f));
 export seq(e:Expr,f:Expr,g:Expr):Expr := Expr(Sequence(e,f,g));
 export list(a:Sequence):Expr := (

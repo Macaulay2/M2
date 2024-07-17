@@ -306,7 +306,7 @@ document { Key => "the debugger",
      with ", TO "break", ".",
      EXAMPLE "break",
      "The variable ", TO "errorDepth", " can be used to control how deep inside the code the debugger should be activated.",
-     SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "disassemble", "errorDepth" }
+     SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "pseudocode", "errorDepth" }
      }     
 
 -- Local Variables:

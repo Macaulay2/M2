@@ -9,7 +9,6 @@ reverse(e:Expr):Expr := (
      is s:stringCell do toExpr(reverse(s.v))
      else WrongArg("a list, sequence, or string"));
 setupfun("reverse",reverse);
-export seq(e:Expr):Expr := Expr(Sequence(e));
 -- setupfun("singleton",seq);
 export splice(a:Sequence):Sequence := (
      -- warning - this function may return its argument without copying
