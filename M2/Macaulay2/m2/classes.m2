@@ -31,7 +31,6 @@ File.synonym = "file"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
 Dictionary.synonym = "dictionary"
--- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
 Task.synonym = "task"
 
 -----------------------------------------------------------------------------
