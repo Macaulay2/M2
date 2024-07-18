@@ -1,0 +1,7 @@
+HOMEPAGE = https://msolve.lip6.fr/
+VERSION = 0.6.5
+URL = https://msolve.lip6.fr/downloads/v$(VERSION)
+LICENSEFILES = README.md COPYING
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/msolve/Makefile

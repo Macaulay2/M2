@@ -659,7 +659,7 @@ AC_SUBST(BUILTLIBS)
 AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest memtailor mathic mathicgb ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
-AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib gftables topcom cohomcalg")
+AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib gftables topcom cohomcalg msolve")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
@@ -722,7 +722,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib msolve)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -1103,6 +1103,14 @@ if test $FOUND_topcom = no
 then AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
 fi
+
+AS_IF([test $BUILD_msolve = no],
+    [AC_MSG_CHECKING(whether msolve is installed)
+     AS_IF([command -v msolve > /dev/null],
+         [AC_MSG_RESULT([yes])
+          FILE_PREREQS="$FILE_PREREQS `command -v msolve`"],
+         [AC_MSG_RESULT([no, will build])
+          BUILD_msolve=yes])])
 
 AC_MSG_CHECKING([whether eigen3 library is installed])
 if $PKG_CONFIG --exists eigen3
