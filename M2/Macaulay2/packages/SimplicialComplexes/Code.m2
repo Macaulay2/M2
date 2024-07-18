@@ -577,41 +577,41 @@ boundaryMap (ZZ, SimplicialComplex) := opts -> (r, D) -> (
 	)
     )
 
-chainComplex SimplicialComplex := ChainComplex => {Labels => {}} >> opts -> (
-    cacheValue(symbol chainComplex => opts)) (D -> (
+complex SimplicialComplex := Complex => {Labels => {}} >> opts -> (
+    cacheValue(symbol complex => opts)) (D -> (
     	d := dim D;
-    	C := if d < -1 then (coefficientRing D)^0[-1]
-    	     else if d === -1 then (coefficientRing D)^1
-    	     else chainComplex apply(0..d, r -> boundaryMap(r, D, Labels => opts.Labels));
+    	C := if d < -1 then (complex(coefficientRing D)^0)[-1]
+    	     else if d === -1 then complex (coefficientRing D)^1
+    	     else complex apply(toList(0..d), r -> boundaryMap(r, D, Labels => opts.Labels));
     	if opts.Labels === {} then C[1] 
 	else C
     	)
     )
 
 homology(ZZ, SimplicialComplex, Ring) := Module => opts -> (i, Delta, R) -> (
-    homology(i, chainComplex Delta ** R)
+    homology(i, (complex Delta) ** R)
     )
  
 homology(ZZ, SimplicialComplex) := Module => opts -> (i, Delta) -> (
-    homology(i, chainComplex Delta)
+    homology(i, complex Delta)
     )
  
 homology(Nothing, SimplicialComplex, Ring) :=
-homology(SimplicialComplex, Ring) := GradedModule => opts -> (Delta, R) -> (
-    homology(chainComplex Delta ** R)
+homology(SimplicialComplex, Ring) := Complex => opts -> (Delta, R) -> (
+    homology(complex Delta ** R)
     )
 
 homology(Nothing, SimplicialComplex) :=
-homology SimplicialComplex := GradedModule => opts -> Delta -> (
-    homology(chainComplex Delta)
+homology SimplicialComplex := Complex => opts -> Delta -> (
+    homology(complex Delta)
     )
 
 cohomology(ZZ, SimplicialComplex, Ring) := Module => opts -> (i, Delta, R) -> (
-    cohomology(i, Hom(chainComplex Delta ** R, module R))
+    cohomology(i, Hom(complex Delta ** R, module R))
     )
 
 cohomology(ZZ, SimplicialComplex) := Module => opts -> (i,Delta) -> (
-    cohomology(i, Hom(chainComplex Delta, module coefficientRing Delta))
+    cohomology(i, Hom(complex Delta, module coefficientRing Delta))
     )
 
 
@@ -735,23 +735,23 @@ buchbergerSimplicialComplex(MonomialIdeal, Ring) := (I,R) -> (
     buchbergerSimplicialComplex(flatten entries mingens I, R)
     )
 buchbergerResolution = method()
-buchbergerResolution List := ChainComplex => M -> (
+buchbergerResolution List := Complex => M -> (
     -- handle degenerate cases first
     if monomialIdeal M == 0
     then return (ring(monomialIdeal M))^1[0];
     -- Construct the buchbergerSimplicial Complex and homogenize
     R := ZZ(monoid[vars(0..#M-1)]);
     B := buchbergerSimplicialComplex(M,R);
-    chainComplex(B,Labels=>M)
+    complex(B,Labels=>M)
     )
-buchbergerResolution MonomialIdeal := ChainComplex => M -> (
+buchbergerResolution MonomialIdeal := Complex => M -> (
     if M == 0
     then (ring M)^1[0]
     else buchbergerResolution(first entries mingens M)
     )
 
 taylorResolution = method();
-taylorResolution List := ChainComplex => M -> (
+taylorResolution List := Complex => M -> (
     -- The Taylor resolution is the homogenization of the
     -- (numgens M - 1)-simplex. The implementation is
     -- straightforward once we've dealt with degenerate
@@ -764,9 +764,9 @@ taylorResolution List := ChainComplex => M -> (
     error "-- expected minimal generators of a monomial ideal";
     R := ZZ(monoid[vars(0..#M-1)]);
     Simplex := simplexComplex(#M-1,R);
-    chainComplex(Simplex,Labels=>M)
+    complex(Simplex,Labels=>M)
     )
-taylorResolution MonomialIdeal := ChainComplex => M -> (
+taylorResolution MonomialIdeal := Complex => M -> (
     if M == 0
     then (ring M)^1[0]
     else taylorResolution(first entries mingens M)
@@ -826,8 +826,8 @@ lyubeznikResolution List := opts -> L -> (
     MO := opts.MonomialOrder;
     R := QQ(monoid[vars(0..#L-1)]);
     if opts.MonomialOrder == {}
-    then chainComplex(lyubeznikSimplicialComplex(L,R),Labels=>L)
-    else chainComplex(lyubeznikSimplicialComplex(L,R),Labels=>L_MO)
+    then complex(lyubeznikSimplicialComplex(L,R),Labels=>L)
+    else complex(lyubeznikSimplicialComplex(L,R),Labels=>L_MO)
     )
 lyubeznikResolution MonomialIdeal := opts -> I -> (
     -- if I == monomialIdeal(0), then the set of mingens in empty and M2
@@ -840,10 +840,10 @@ lyubeznikResolution MonomialIdeal := opts -> I -> (
     R := QQ(monoid[vars(0..#(mingens I)-1)]);
     if opts.MonomialOrder == {}
     then return(
-	chainComplex(lyubeznikSimplicialComplex(I,R,MonomialOrder=>MO),Labels=>MinGens)
+	complex(lyubeznikSimplicialComplex(I,R,MonomialOrder=>MO),Labels=>MinGens)
 	)
     else return(
-	 chainComplex(lyubeznikSimplicialComplex(I,R,MonomialOrder=>MO),Labels=>MinGens_MO)
+	 complex(lyubeznikSimplicialComplex(I,R,MonomialOrder=>MO),Labels=>MinGens_MO)
 	 )
      )
 
@@ -880,13 +880,13 @@ scarfSimplicialComplex (MonomialIdeal,Ring) := (I,A) -> (
 scarfChainComplex = method()
 scarfChainComplex List := L ->(
     A := QQ(monoid[vars(0..#L-1)]);
-    chainComplex(scarfSimplicialComplex(L,A), Labels=>L)
+    complex(scarfSimplicialComplex(L,A), Labels=>L)
     )
 scarfChainComplex MonomialIdeal := I -> (
     if numgens I == 0 
     then return ((ring I)^1)[0];
     A := QQ(monoid[vars(0..#(mingens I)-1)]);
-    chainComplex(scarfSimplicialComplex(I,A), Labels=>(first entries mingens I))
+    complex(scarfSimplicialComplex(I,A), Labels=>(first entries mingens I))
     )
 
 
@@ -1019,11 +1019,11 @@ isWellDefined SimplicialMap := Boolean => f -> (
     true    
     )
 
-chainComplex SimplicialMap := ChainComplexMap => f -> (
+complex SimplicialMap := ComplexMap => {} >> opts -> f -> (
     D := source f;
     E := target f;
-    CD := chainComplex D;
-    CE := chainComplex E;
+    CD := complex D;
+    CE := complex E;
     kk := coefficientRing D;
     EE := kk(monoid[gens ring E, SkewCommutative => true]);
     ED := kk(monoid[gens ring D, SkewCommutative => true]);
@@ -1095,31 +1095,31 @@ image SimplicialMap := SimplicialComplex => f -> (
     )
 
 homology(Nothing, SimplicialMap) :=
-homology SimplicialMap := GradedModuleMap => opts -> f -> (
-    homology(chainComplex f)
+homology SimplicialMap := ComplexMap => opts -> f -> (
+    homology(complex f)
     )
-homology(ZZ, SimplicialMap) := Matrix => opts -> (i,f) -> homology(i, chainComplex f)
+homology(ZZ, SimplicialMap) := Matrix => opts -> (i,f) -> homology(i, complex f)
 
 homology(ZZ, SimplicialComplex, SimplicialComplex) := Module => opts -> (i,D,E) -> (
     inclusion := map(D, E, gens ring D);
-    C := coker chainComplex inclusion;
+    C := coker complex inclusion;
     homology(i,C)
     )
 
 homology(Nothing, SimplicialComplex, SimplicialComplex) :=
-homology(SimplicialComplex, SimplicialComplex) := ChainComplex => opts -> (D,E) -> (
+homology(SimplicialComplex, SimplicialComplex) := Complex => opts -> (D,E) -> (
     inclusion := map(D, E, gens ring D);
-    C := coker chainComplex inclusion;
+    C := coker complex inclusion;
     homology C
     )
 
 cohomology(ZZ, SimplicialMap) := Matrix => opts -> (i,f) -> (
-    cohomology(i, Hom(chainComplex f, module coefficientRing source f))
+    cohomology(i, Hom(complex f, module coefficientRing source f))
     )
 
 cohomology(ZZ, SimplicialComplex, SimplicialComplex) := Module => opts -> (i,D,E) -> (
     inclusion := map(D, E, gens ring D);
-    C := coker chainComplex inclusion;
+    C := coker complex inclusion;
     cohomology(i, Hom(C, module coefficientRing D))
     )
 
