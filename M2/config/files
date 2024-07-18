@@ -61,6 +61,7 @@ libraries/libtool/Makefile
 libraries/gftables/Makefile
 libraries/factory/Makefile
 libraries/mpsolve/Makefile
+libraries/msolve/Makefile
 libraries/frobby/Makefile
 libraries/lapack/Makefile
 Macaulay2/Makefile
