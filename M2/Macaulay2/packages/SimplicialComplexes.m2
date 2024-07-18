@@ -30,7 +30,7 @@ newPackage(
      },
     Headline => "exploring abstract simplicial complexes within commutative algebra",
     Keywords => {"Combinatorial Commutative Algebra"},
-    PackageExports => { "Polyhedra" },
+    PackageExports => { "Polyhedra", "Complexes" },
     AuxiliaryFiles => true,
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
