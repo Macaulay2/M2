@@ -49,6 +49,7 @@ Programs we include with our distribution:
 
 	    	4ti2			GPL 2
 	        gfan		        GPL 2
+		msolve			GPL 2
 	        normaliz		GPL 3
 
 Libraries linked with some of our programs:
