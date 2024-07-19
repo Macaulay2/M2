@@ -16,9 +16,6 @@ RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev \
 	libboost-regex-dev libboost-stacktrace-dev libomp-dev libtbb-dev && \
 	apt-get clean
 
-# This is a dependency that we should get rid of
-RUN apt-get install -y libatomic-ops-dev && apt-get clean
-
 # Libraries we can build (factory not available on ubuntu)
 RUN apt-get install -y libeigen3-dev  libglpk-dev libgmp3-dev libmpfr-dev \
       libntl-dev libnauty-dev libnormaliz-dev libfrobby-dev libgc-dev && apt-get clean
