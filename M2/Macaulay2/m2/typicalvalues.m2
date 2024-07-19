@@ -214,13 +214,13 @@ typval = x -> (
 	 else if #args === 3 then (
 	     if args#0 === RR then
 		 variants#(f, Number,   args#1, args#2) =
-		 (x,y,z) -> f'((numeric_min(precision y, precision z)) x, y, z);
+		 (x,y,z) -> f'(numeric(min(precision y, precision z), x), y, z);
 	     if args#1 === RR then
 		 variants#(f, args#0, Number,   args#2) =
-		 (x,y,z) -> f'(x, (numeric_min(precision x, precision z)) y, z);
+		 (x,y,z) -> f'(x, numeric(min(precision x, precision z), y), z);
 	     if args#2 === RR then
 		 variants#(f, args#0, args#1, Number)   =
-		 (x,y,z) -> f'(x, y, (numeric_min(precision x, precision y)) z);
+		 (x,y,z) -> f'(x, y, numeric(min(precision x, precision y), z));
 	     if args#0 === RR and args#1 === RR then
 		 variants#(f, Number,   Number,   args#2) =
 		 (x,y,z) ->
