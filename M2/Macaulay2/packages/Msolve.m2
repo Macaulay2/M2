@@ -1,7 +1,12 @@
+msolvePresent := run ("type msolve >/dev/null 2>&1") === 0
+-- msolveVersion := if msolvePresent then ... -- no way to get version info!!!
+msolveVersionNeeded := "0.6.4"
+msolvePresentAndModern := msolvePresent -- and match("^[0-9.]+$",msolveVersion) and msolveVersion >= msolveVersionNeeded
+
 newPackage(
 	"Msolve",
-	Version => "1.23", 
-    	Date => "March 2024",
+	Version => "1.24.05", 
+    	Date => "July 2024",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "mhelmer@ncsu.edu", 
 		  HomePage => "http://martin-helmer.com/"}, {Name => "Mike Stillman", 
@@ -12,21 +17,16 @@ newPackage(
     	Headline => "An interface to the msolve package (https://msolve.lip6.fr/) which computes Groebner Basis and does real root isolation",
     	AuxiliaryFiles => true,
 	DebuggingMode => false,       
-	Configuration => {"msolveExecutable"=>"msolve"}
-    	);
---currently setup to use the  configation option to point to the folder where the msolve binary file lives
-msolveEXE = (options Msolve).Configuration#"msolveExecutable";
-msolveEXEwithOpts:=(opt)->msolveEXE|" -v "|opt#"level of verbosity"|" -t "|toString(opt#"number of threads");
-if not instance(msolveEXE,String) then error "expected configuration option msolveMainFolder to be a string."
+	OptionalComponentsPresent => msolvePresent
+	);
+msolveEXEwithOpts:=(opt)->"msolve -v "|opt#"level of verbosity"|" -t "|toString(opt#"number of threads");
 export{
     "msolveGB",
     "msolveSaturate",
     "msolveEliminate",
     "msolveRUR",
     "msolveLeadMonomials",
-    "msolveRealSolutions",
-    -- option names
-    "Output"
+    "msolveRealSolutions"
     }
 importFrom_Core { "raw", "rawMatrixReadMsolveFile" }
 
@@ -160,7 +160,7 @@ msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     return gens forceGB msolGB;
     );
 
-msolveRealSolutions=method(TypicalValue=>List,Options => {Output=>"rationalInterval","level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveRealSolutions=method(TypicalValue=>List,Options => {"output type"=>"rationalInterval","level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
 msolveRealSolutions(Ideal):=opts->(I)->(
     if not inputOkay(I) then return 0;
     mIn:=temporaryFileName()|".ms";
@@ -183,9 +183,9 @@ msolveRealSolutions(Ideal):=opts->(I)->(
     if solsp_0>0 then (print "Input ideal not zero dimensional, no solutions found."; return 0;);
     if (solsp_1)_0>1 then (print "unexpected msolve output, returning full output"; return solsp;);
     sols:=(solsp_1)_1;
-    if opts.Output=="rationalInterval" then return sols;
-    if opts.Output=="floatInterval" then return (1.0*sols);
-    if opts.Output=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
+    if opts#"output type"=="rationalInterval" then return sols;
+    if opts#"output type"=="floatInterval" then return (1.0*sols);
+    if opts#"output type"=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
     );
 msolveRUR=method(TypicalValue=>List,Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
 msolveRUR(Ideal):=opt->(I)->(
@@ -259,21 +259,7 @@ Node
 	      representation of all (complex) solutions.
 	      
 	      The M2 interface assumes that the binary executable is
-	      named "msolve", to tell the M2 package where to find the
-	      executable you should use either needsPackage("Msolve",
-	      Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"}),
-	      or installPackage("Msolve",
-	      Configuration=>{"msolveBinaryFolder"=>"path_to_folder_with_msolve_binary"})
-	      once and needsPackage("Msolve") on subsequent usages;
-	      here "path_to_folder_with_msolve_binary" denotes the
-	      folder where your msolve executable is saved. E.g. if
-	      your msolve binary (named msolve) is in a folder called
-	      msolve-v0.5.0 in your home directory then you would use
-	      either needsPackage("Msolve",
-	      Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"})
-	      or installPackage("Msolve",
-	      Configuration=>{"msolveBinaryFolder"=>"~/msolve-v0.5.0"})
-	      and needsPackage("Msolve") subsequently
+	      named "msolve" is on the executable path. 
 	      
 	      
 	      References:
@@ -379,8 +365,8 @@ Node
 	    h=(x_3-2)*(x_3-1)
 	    I = ideal (f,g,h)
 	    sols=msolveRealSolutions(I)
-	    floatSolsInterval=msolveRealSolutions(I,Output=>"floatInterval")
-	    floatAproxSols=msolveRealSolutions(I,Output=>"float")
+	    floatSolsInterval=msolveRealSolutions(I,"output type"=>"floatInterval")
+	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float")
 	    	    
 	Text
 	    Note in cases where solutions have multiplicity this is not returned, but the presence of multiplicity also does not reduce accuracy or reliability in any way.   
@@ -392,8 +378,8 @@ Node
 	    h=(x_3-2)*(x_3-1)
 	    I = ideal (f,g,h)
 	    sols=msolveRealSolutions(I)
-	    floatSolsInterval=msolveRealSolutions(I,Output=>"floatInterval")
-	    floatAproxSols=msolveRealSolutions(I,Output=>"float")
+	    floatSolsInterval=msolveRealSolutions(I,"output type"=>"floatInterval")
+	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float")
 Node 
     Key
     	msolveRUR
@@ -483,6 +469,7 @@ Node
 	(msolveEliminate, Ideal,List)
 	(msolveEliminate, List,Ideal)
 	(msolveEliminate, Ideal,RingElement)
+	(msolveEliminate, RingElement,Ideal)
     Headline
     	Computes the elimination ideal of a given ideal.
     Usage
@@ -537,44 +524,4 @@ Node
     check "Msolve"
 *-
 
-TEST ///
-R=ZZ/1073741827[z_1..z_3]
-I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-gB=msolveGB I
-lT=monomialIdeal leadTerm gB
-degree lT
-dim lT
-R=QQ[z_1..z_3]
-I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
-gB=msolveGB I
-(ideal gB)== ideal(groebnerBasis I)
-lT=monomialIdeal leadTerm gB
-degree lT
-dim lT
-///
-	      
-TEST ///
-R=QQ[x,y];
-n=2;
-I = ideal ((x-3)*(x^2+1),y-1);
-sols=msolveRealSolutions(I,Output=>"float");
-assert(sols=={{3.0,1.0}});
-///
-
-TEST ///
-S = ZZ/1073741827[t12,t13,t14,t23,t24,t34];
-I = ideal((t13*t12-t23)*(1-t14)+(t14*t12-t24)*(1-t13) - (t12+1)*(1-t13)*(1-t14), (t23*t12-t13)*(1-t24)+(t24*t12-t14)*(1-t23) - (t12+1)*(1-t23)*(1-t24), (t14*t34-t13)*(1-t24)+(t24*t34-t23)*(1-t14) - (t34+1)*(1-t14)*(1-t24));
-sat=(1-t24);
-J1= saturate(I,sat);
-J2=ideal msolveSaturate(I,sat);
-assert(J1==J2);
-///
-
-TEST ///
-R = QQ[x,a,b,c,d];
-f = x^2+a*x+b;
-g = x^2+c*x+d;
-eM2=eliminate(x,ideal(f,g));
-eMsolve=msolveEliminate(x,ideal(f,g));
-assert(eM2==sub(eMsolve,ring eM2))
-///
+load "./Msolve/EXA/Msolve-testing.m2"
