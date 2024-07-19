@@ -10,7 +10,7 @@
 # Others, like TBB::tbb, FFI::ffi, and Boost::regex, are linked as imported libraries in those files.
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARIES_LIST MPSOLVE FROBBY NORMALIZ NAUTY FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
+set(LIBRARIES_LIST MPSOLVE FROBBY NORMALIZ FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -138,6 +138,7 @@ find_package(MPSolve	3.2.0)
 find_package(Nauty	2.7.0)
 find_package(Normaliz	3.8.0)
 # TODO: add minimum version checks
+find_package(EAntic	2.0.0)
 find_package(MSolve	0.4.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
@@ -359,4 +360,19 @@ if(FFI_FOUND)
   check_function_exists(ffi_get_struct_offsets HAVE_FFI_GET_STRUCT_OFFSETS)
 else()
   unset(HAVE_FFI_GET_STRUCT_OFFSETS CACHE)
+endif()
+
+if(NORMALIZ_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${NORMALIZ_INCLUDE_DIR}")
+  check_symbol_exists(ENFNORMALIZ "libnormaliz/nmz_config.h" HAVE_ENFNORMALIZ)
+  check_symbol_exists(NMZ_NAUTY   "libnormaliz/nmz_config.h" HAVE_NMZ_NAUTY)
+  if(HAVE_ENFNORMALIZ)
+    list(TRANSFORM LIBRARIES_LIST REPLACE NORMALIZ "NORMALIZ;EANTIC")
+  endif()
+  if(HAVE_NMZ_NAUTY)
+    list(TRANSFORM LIBRARIES_LIST REPLACE NORMALIZ "NORMALIZ;NAUTY")
+  endif()
+else()
+  unset(HAVE_ENFNORMALIZ CACHE)
+  unset(HAVE_NMZ_NAUTY CACHE)
 endif()

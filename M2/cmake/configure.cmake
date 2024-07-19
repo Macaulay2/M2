@@ -343,6 +343,7 @@ check_function_exists(fcntl	HAVE_FCNTL)
 check_function_exists(personality	HAVE_PERSONALITY)
 check_function_exists(ioctl	HAVE_IOCTL)
 
+include(CheckSymbolExists)
 include(CheckCSourceCompiles)
 include(CheckCXXSourceCompiles)
 
