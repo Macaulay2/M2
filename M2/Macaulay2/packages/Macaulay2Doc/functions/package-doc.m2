@@ -385,6 +385,19 @@ Node
 
 Node
   Key
+    Keywords
+  Headline
+    the list of keywords of a package
+  Description
+    Text
+      A symbol used as the name of an optional argument.  When used
+      with @TO newPackage@, it should provide a list of strings giving
+      the keywords of the package.  All packages should have at least
+      one keyword.  The keywords currently in use correspond to the
+      headings at @TO "packages provided with Macaulay2"@.
+
+Node
+  Key
      endPackage
     (endPackage, String)
   Headline
