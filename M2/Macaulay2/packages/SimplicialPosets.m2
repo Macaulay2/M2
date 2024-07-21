@@ -246,8 +246,7 @@ doc ///
 
     	    @HREF("https://www.semanticscholar.org/paper/f-vectors-and-h-vectors-of-simplicial-posets-Stanley/2787117152700af2abce3126dd7ba2325685d78b","Stanley's original paper.")@
 
-            {\bf Acknowledgements}:
-
+    Acknowledgement
     	    This package uses some code from the  @TO "Posets"@ package.
 	    
 	    Thanks to @HREF("http://www-users.math.umn.edu/~reiner/","Victor Reiner")@. This project was his idea.
