@@ -49,6 +49,16 @@ doc ///
          
       The value of {\tt LastT} is the end value of the continuation parameter:
       if it equals 1, then the solver reached the end of the path properly.
+  Contributors
+    @UL {
+	{HREF("http://www.math.gatech.edu/~leykin", "Anton Leykin")},
+	{HREF("http://www.math.uic.edu/~sommars", "Jeff Sommars")},
+	{HREF("http://www.math.tamu.edu/~tbrysiewicz/", "Taylor Brysiewicz")},
+	{HREF("http://www.coreyharris.name/", "Corey Harris")},
+	{HREF("http://www.mit.edu/~diegcif/", "Diego Cifuentes")},
+	{HREF("http://www.kaiekubjas.com/", "Kaie Kubjas")},
+	{HREF("https://math.berkeley.edu/~seigal/", "Anna Seigal")},
+	}@
   Caveat
     {\bf 1.} If you are having trouble installing the package, 
     check whether the path to your PHCpack executable was set correctly. 
@@ -69,11 +79,7 @@ doc ///
       loadPackage ("PHCpack", 
       Configuration=>{"path"=>"C:/cygwin/PHC/","PHCexe"=>"./phc"}) 
 
-    {\bf 2.} If the package SimpleDoc is not found when 
-    installing {\tt PHCpack.m2}, see questions and answers 6, 7, and 8 
-    on the Macaulay2 web site.
-
-    {\bf 3.} The current version 1.8 of PHCpack.m2 was developed with version 
+    {\bf 2.} The current version 1.8 of PHCpack.m2 was developed with version 
     1.9 of Macaulay2 and with version 2.4.17 of phc.
 ///;
 
