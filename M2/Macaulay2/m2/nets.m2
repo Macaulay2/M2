@@ -283,9 +283,7 @@ commentize Net       := S -> (
     (stack(commentize \ unstack S))^baseline)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
-warning  = msg -> if debugLevel > 0 then (
-    if msg =!= () then printerr("warning: " | msg);
-    error "warning issued, debugLevel > 0");
+warning  = msg -> (if debugLevel > 0 then error else printerr) ("warning: " | toString msg)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
