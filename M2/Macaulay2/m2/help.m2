@@ -501,33 +501,25 @@ setAttribute(infoHelp#0, ReverseDictionary, symbol infoHelp)
 -- View brief documentation within Macaulay2 using symbol?
 -----------------------------------------------------------------------------
 -- TODO: should this return a hypertext object instead of printing?
-briefDocumentation = method(Dispatch => Thing)
-briefDocumentation VisibleList := key -> null
-briefDocumentation Thing       := key -> (
-    if not isDocumentableThing key
-    then return if hasAttribute(key, ReverseDictionary) then (
-	S := getAttribute(key, ReverseDictionary);
+briefDocumentation = key -> (
+    if not isDocumentableMethod key and not isDocumentableThing key
+    then return if hasAttribute(key, ReverseDictionary) then DIV {
 	-- TODO: use either "formation" to enhance the result
 	-- or enhance "describe" or "getTechnical" using "formation"
-	DIV {
-	    BinaryOperation{symbol :=, key, describe key},
-	    getTechnical(S, key)
-	    }
-	);
+	-- TODO: add spaces around :=
+	BinaryOperation{symbol :=, key, describe key},
+	getTechnical(getAttribute(key, ReverseDictionary), key) };
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
     -- TODO: should it be getGlobalSymbol or getAttribute?
-    symb := getGlobalSymbol toString key;
     tag := getOption(rawdoc, symbol DocumentTag);
     title := getOption(rawdoc, Headline);
     synopsis := getSynopsis(key, tag, rawdoc);
-    waystouse := documentationValue(symb, key);
-    technical := getTechnical(symb, key);
-    DIV {
-    if title     =!= null then PARA {key, commentize title},
-    synopsis,
-    waystouse,
-    technical }
-)
+    try symb := getGlobalSymbol toString key then (
+	waystouse := documentationValue(symb, key);
+	technical := getTechnical(symb, key)) else ();
+    DIV nonnull {
+	PARA {format tag, commentize title},
+	synopsis, waystouse, technical })
 
 ? ScriptedFunctor :=
 ? Function :=
