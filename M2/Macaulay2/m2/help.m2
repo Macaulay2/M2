@@ -219,6 +219,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- exported symbols
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
+    f := toSequence pkg#"exported mutable symbols";
     -- functions and commands
     a := select(e, x -> instance(value x, Function) or instance(value x, Command));
     -- types
@@ -280,6 +281,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    if #a > 0 then LI {"Functions and commands", smenu a},
 		    if #m > 0 then LI {"Methods",                smenu m},
 		    if #c > 0 then LI {"Symbols",                smenu c},
+		    if #f > 0 then LI {"Mutable symbols",        smenu f},
 		    if #d > 0 then LI {"Other things",      smenuCLASS d}}}
 	    }))
 
