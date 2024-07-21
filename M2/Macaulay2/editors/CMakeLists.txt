@@ -69,6 +69,10 @@ file(MAKE_DIRECTORY PRISM_DIR)
 file(COPY prism/ DESTINATION ${PRISM_DIR}
   FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
 
+if(NOT NPM)
+  return()
+endif()
+
 add_custom_target(M2-prism ALL DEPENDS prism/prism.js)
 add_custom_command(OUTPUT prism/prism.js
   COMMENT "Generating prism.js syntax file"
