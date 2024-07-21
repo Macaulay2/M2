@@ -33,8 +33,7 @@ newPackage (
             {Name => "David Cook II", Email => "dcook.math@gmail.com", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Caroline Jansen", Email => "cjansen@alumni.nd.edu"},
             {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
-            {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
-            {Name => "Contributors of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
+            {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"}
         },
         Headline => "graphs and directed graphs (digraphs)",
 	Keywords => {"Graph Theory"},
@@ -1756,6 +1755,11 @@ doc ///
   Description
     Text
       This package defines classes for graphs and digraphs and related methods.
+  Contributors
+    Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons,
+    Olga Kuznetsova, Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman,
+    and Doug Torrance contributed to this package.
+
 ///
 
 -------------------------------
@@ -3017,7 +3021,7 @@ doc ///
         breadthFirstSearch
         (breadthFirstSearch, Digraph, Thing)
     Headline
-        runs a breadth first search on the digraph starting at a specified node and returns a list of the vertices in the order they were discovered
+        runs a breadth first search on the digraph starting at a specified node
     Usage
         bfs = breadthFirstSearch(D,v)
     Inputs
@@ -3400,7 +3404,7 @@ doc ///
         depthFirstSearch
         (depthFirstSearch, Digraph)
     Headline
-        runs a depth first search on the digraph or digraph and returns the discovery time and finishing time for each vertex in the digraph
+        runs a depth first search on the digraph
     Usage
         dfs = depthFirstSearch D
         dfs = depthFirstSearch G
@@ -3656,7 +3660,7 @@ doc ///
         floydWarshall
         (floydWarshall, Digraph)
     Headline
-        runs the Floyd-Warshall algorithm on a digraph to determine the minimum distance from one vertex to another in the digraph
+        runs the Floyd-Warshall algorithm on a digraph to determine the minimum distance from one vertex
     Usage
         F = floydWarshall D
     Inputs
@@ -4049,7 +4053,7 @@ doc ///
         reverseBreadthFirstSearch
         (reverseBreadthFirstSearch, Digraph, Thing)
     Headline
-        runs a reverse breadth first search on the digraph and returns a list of the vertexSet in the order they were discovered
+        runs a reverse breadth first search on the digraph starting at a specified node
     Usage
         bfs = reverseBreadthFirstSearch(D,v)
     Inputs
@@ -5289,7 +5293,7 @@ doc ///
         (topSort, Digraph) 
 	(topSort, Digraph, String)
     Headline
-        outputs a hashtable containing original digraph, new digraph with vertices topologically sorted and a map from vertices of original digraph to new digraph.
+        topologically sort the vertices of a digraph
     Usage
         topSort(D)
 	topSort(D,S)
