@@ -889,6 +889,10 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  -- i.alternate = bindnewdictionary(i.alternate,dictionary);
 	  bind(i.alternate,dictionary);
 	  )
+     is i:TryThen do (
+	  bind(i.primary,dictionary);
+	  bind(i.sequel,dictionary);
+	  )
      is i:TryThenElse do (
 	  bind(i.primary,dictionary);
 	  bind(i.sequel,dictionary);
