@@ -6,7 +6,7 @@ assert(isWellDefined e);
 assert(dim e === -infinity);
 assert(#maxCells e == 0);
 assert(#maxCells skeleton(0,e) == 0);
-chainComplex e;
+complex e;
 ///
 
 
@@ -27,10 +27,10 @@ assert(l1=!=l2);
 assert(dim l1==1);
 assert(dim l2==1);
 C = cellComplex(QQ,{l1,l2});
-CchainComplex = chainComplex C;
-assert(HH_0(CchainComplex)==0);
-assert(prune HH_1(CchainComplex)==QQ^1);
-assert(HH_2(CchainComplex)==0);
+Ccomplex = complex C;
+assert(HH_0(Ccomplex)==0);
+assert(prune HH_1(Ccomplex)==QQ^1);
+assert(HH_2(Ccomplex)==0);
 f1 = newCell {l1,l2};
 C = cellComplex(QQ,{f1});
 assert(dim C==2);
@@ -48,11 +48,11 @@ assert(rank source del2 == 1);
 assert(rank target del2 == 2);
 assert(rank del2 == 1);
 assert(del100 == map(QQ^0,QQ^0,{}));
-CchainComplex = chainComplex C;
-assert(HH_0(CchainComplex)==0);
-assert(HH_1(CchainComplex)==0);
-assert(HH_2(CchainComplex)==0);
-assert(HH C == HH CchainComplex);
+Ccomplex = complex C;
+assert(HH_0(Ccomplex)==0);
+assert(HH_1(Ccomplex)==0);
+assert(HH_2(Ccomplex)==0);
+assert(HH C == HH Ccomplex);
 assert(isFree(C));
 ///
 
@@ -63,11 +63,11 @@ l = newCell {v,v};
 f = newCell {(l,1),(l,1)};
 C = cellComplex(ZZ,{f});
 assert(dim C===2);
-prune HH chainComplex C
+prune HH complex C
 assert(HH_0 C == 0);
-assert(homology(0,chainComplex(C,Reduced=>false))==ZZ^1);
-assert(homology(1,chainComplex(C,Reduced=>false))==ZZ^1/(2*ZZ^1));
-assert(HH_1 chainComplex C == cokernel matrix {{2}})
+assert(homology(0,complex(C,Reduced=>false))==ZZ^1);
+assert(homology(1,complex(C,Reduced=>false))==ZZ^1/(2*ZZ^1));
+assert(HH_1 complex C == cokernel matrix {{2}})
 assert(HH^2 C == cokernel matrix {{2}});
 assert(HH^1 C == 0);
 assert(dim skeleton_1 C == 1);
@@ -82,11 +82,11 @@ assert(dim D == 1);
 assert(isSimplex a);
 assert(not isSimplex b1);
 assert(not isSimplex b2);
-DchainComplex = chainComplex D;
-assert(HH_0(DchainComplex)==0);
+Dcomplex = complex D;
+assert(HH_0(Dcomplex)==0);
 R = ring D;
-assert(prune HH_1(DchainComplex)==R^2);
-assert(HH_2(DchainComplex)==0);
+assert(prune HH_1(Dcomplex)==R^2);
+assert(HH_2(Dcomplex)==0);
 ///
 
 
@@ -133,7 +133,7 @@ lxz = newSimplexCell({vx,vz});
 fxyz = newSimplexCell({lxy,lyz,lxz});
 assert(cellLabel fxyz === x*y*z);
 D = cellComplex(R,{fxyz});
-C = (chainComplex D);
+C = (complex D);
 assert(HH_(-1)(C)==cokernel matrix {{x,y,z}});
 assert(C.dd^2==0);
 assert(degrees C_0 == {{1}, {1}, {1}});
@@ -150,7 +150,7 @@ lyz = newSimplexCell({vy,vz});
 lxz = newSimplexCell({vx,vz});
 fxyz = newSimplexCell({lxy,lyz,lxz});
 D = cellComplex(R,{fxyz});
-C = (chainComplex D)[-1];
+C = (complex D)[-1];
 assert(HH_0(C)==R^1/module ideal(x,y,z))
 assert(HH_1(C)==0)
 assert(C.dd^2==0);
@@ -167,7 +167,7 @@ lyz = newSimplexCell {vy,vz};
 lxz = newSimplexCell {vx,vz};
 fxyz = newSimplexCell {lxy,lyz,lxz};
 D = cellComplex(R,{fxyz});
-C = (chainComplex D)[-1];
+C = (complex D)[-1];
 assert(C.dd^2==0);
 assert(not isFree(D));
 ///
@@ -210,7 +210,7 @@ assert(# cells(3,C)==1);
 assert(HH_1(C)==0);
 assert(HH_2(C)==0);
 assert(HH_3(C)==0);
-assert((chainComplex C).dd^2==0);
+assert((complex C).dd^2==0);
 C1 = skeleton(1,C);
 assert(dim C1 == 1);
 assert(rank HH_1 C1 == 5);
@@ -353,7 +353,7 @@ C = cellComplex(R,P);
 S = ZZ[x];
 f = map(S,R,{});
 D = f**C;
-chainD = chainComplex D;
+chainD = complex D;
 assert(ring chainD === S);
 assert(HH_1(D)==0);
 assert(HH_2(D)==0);
@@ -432,7 +432,7 @@ e23 = newCell({v2,v3});
 e14 = newCell({v1,v4});
 f123 = newCell({e12,e13,e23});
 Delta = cellComplex(S, {f123,e14});
-C = chainComplex Delta;
+C = complex Delta;
 assert (dim Delta == 2);
 assert (length C == 3);
 ///
@@ -471,7 +471,7 @@ m = product(apply(numgens S, i -> S_i));
 G = apply(max X, l -> m//product(apply(l,i -> S_i)));
 H = hashTable apply(#G, i -> (j := F#i#0#0;((vertices P)_j,G_i)))
 C = cellComplex(S,P,Labels => H);
-Cres = (chainComplex C)[-1];
+Cres = (complex C)[-1];
 assert(betti (res B) == betti Cres);
 assert(HH_0 Cres == S^1/B);
 assert(HH_1 Cres == 0);
@@ -484,12 +484,12 @@ TEST ///
 R = QQ[x,y,z];
 I = monomialIdeal (x^2*z, x*y*z, y^2*z, x^3*y^5, x^4*y^4, x^5*y^3);
 H = hullComplex I;
-chainComplex H;
+complex H;
 assert(isMinimal H);
-assert(HH_(-1) chainComplex H == R^1/I);
-assert((HH_0 chainComplex H)==0);
+assert(HH_(-1) complex H == R^1/I);
+assert((HH_0 complex H)==0);
 H2 = hullComplex (3/2,I)
-assert((HH_0 chainComplex H2)!=0);
+assert((HH_0 complex H2)!=0);
 ///
 
 --isWellDefined test
