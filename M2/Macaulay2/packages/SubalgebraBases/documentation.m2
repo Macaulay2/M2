@@ -71,6 +71,8 @@ doc ///
         {HREF("https://mathematics.ku.edu/people/ritika-nair", "Ritika Nair")},
         {HREF("https://www.utm.utoronto.ca/math-cs-stats/people/ilir-dema", "Ilir Dema")}
         }@
+
+        Michael Stillman and  Harrison Tsai authored an earlier version of this package.
     SeeAlso
         "Example: Translation and rotation sub-actions of the adjoint action of SE(3)"
 ///

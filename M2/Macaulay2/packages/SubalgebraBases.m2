@@ -26,12 +26,6 @@ newPackage(
         Name => "Elise Walker",
         Email => "elise.walker@tamu.edu",
         HomePage => "https://sites.google.com/view/elise-walker/home"
-        }, {
-        Name => "Legacy author: Mike Stillman",
-        Email => "mike@math.cornell.edu",
-        HomePage => "http://www.math.cornell.edu/~mike/"
-        }, {
-        Name => "Legacy author: Harrison Tsai"
         }},
     Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
