@@ -246,7 +246,7 @@ newPackage String := opts -> pkgname -> (
     if opts.Authors =!= null and any(opts.Authors, author -> (
 	    author = new OptionTable from author;
 	    author.?Name and match_{"(C|c)ontribut", "(M|m)aintain", "(A|a)uthor", "(T|t)hank"} author.Name))
-    then warning("newPackage: use the Contributors or Acknowledgement keywords to acknowledge contributors in the package documentation");
+    then error("newPackage: use the Contributors or Acknowledgement keywords to acknowledge contributors of " | pkgname);
     -- optional package values
     scan({
 	    (Date,     String),
