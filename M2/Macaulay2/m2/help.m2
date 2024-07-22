@@ -22,7 +22,7 @@ needs "installPackage.m2" -- TODO: can this be removed?
 -- set by about and used by (help, ZZ)
 lastabout := null
 
-authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
+authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, HomePage => null, Maintainer => false }
 
 binary   := set flexibleBinaryOperators
 prefix   := set flexiblePrefixOperators
@@ -239,7 +239,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    (defs, args) := override(authorDefaults, toSequence au);
 		    LI {
 			if defs.HomePage === null then defs.Name else HREF{defs.HomePage, defs.Name},
-			if defs.Email    =!= null then SPAN{" <", HREF{concatenate("mailto:", defs.Email), defs.Email}, ">"}}))
+			if defs.Email    =!= null then SPAN{" <", HREF{concatenate("mailto:", defs.Email), defs.Email}, ">"},
+			if defs.Maintainer        then SPAN{" (maintainer)"}}))
 	    },
 	if (cert := pkg.Options.Certification) =!= null then (
 	    cert  = new HashTable from cert;
