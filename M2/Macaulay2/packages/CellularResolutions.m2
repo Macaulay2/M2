@@ -28,7 +28,7 @@ export {--types
         "cellLabel",
         "hullComplex",
         "isCycle",
-        "isFree",
+--        "isFree",
         "isMinimal",
         "isSimplex",
         "newCell",
@@ -42,8 +42,8 @@ export {--types
         "CellDimension",
         "InferLabels",
         "LabelRing",
-        "Reduced",
-        "Prune"
+        "Reduced"
+        --"Prune"
         }
 protect labelRing
 protect label
@@ -418,17 +418,17 @@ boundaryMap(ZZ,CellComplex) := opts -> (r,cellComplex) -> (
     sparseBlockMap(codomain,domain,new HashTable from L)
     );
 
-chainComplex(CellComplex) := {Reduced=>true, Prune=>true} >> o -> (cellComplex) -> (
-    if not cellComplex.cache.?chainComplex then (
-        cellComplex.cache.chainComplex =
-            (chainComplex apply(max((dim cellComplex) + 1,1), r -> boundaryMap(r,cellComplex)))[1]
+complex(CellComplex) := {Reduced=>true, Prune=>true} >> o -> (cellComplex) -> (
+    if not cellComplex.cache.?complex then (
+        cellComplex.cache.complex =
+            (complex apply(max((dim cellComplex) + 1,1), r -> boundaryMap(r,cellComplex)))[1]
         );
     ret := if not o.Reduced then (
-        Ccopy := chainComplex apply(max cellComplex.cache.chainComplex,
-                                    i -> cellComplex.cache.chainComplex.dd_(i+1));
+        Ccopy := complex apply(max cellComplex.cache.complex,
+                                    i -> cellComplex.cache.complex.dd_(i+1));
         Ccopy
         )
-        else cellComplex.cache.chainComplex;
+        else cellComplex.cache.complex;
     if o.Prune then (
         prune ret --how expensive is prune? should it be cached?
         )
@@ -437,16 +437,16 @@ chainComplex(CellComplex) := {Reduced=>true, Prune=>true} >> o -> (cellComplex) 
 
 --Get homology directly from cell complex
 homology(ZZ,CellComplex) := opts -> (i,cellComplex) -> (
-    homology_i chainComplex(cellComplex)
+    homology_i complex(cellComplex)
     );
 
 homology(CellComplex) := opts -> (cellComplex) -> (
-    homology chainComplex(cellComplex)
+    homology complex(cellComplex)
     );
 
 --Get cohomology directly from cell complex
 cohomology(ZZ,CellComplex) := opts -> (i,cellComplex) -> (
-    cohomology_i Hom(chainComplex(cellComplex),cellComplex.labelRing^1)
+    cohomology_i Hom(complex(cellComplex),cellComplex.labelRing^1)
     );
 
 ----------
@@ -516,7 +516,7 @@ facePoset(CellComplex) := (cellComplex) -> (
 -- Minimality
 -------------
 
-isFree = method(TypicalValue => Boolean);
+--isFree = method(TypicalValue => Boolean);
 --check if all the labels are free modules
 isFree(CellComplex) := (cellComplex) -> (
     R := cellComplex.labelRing;
