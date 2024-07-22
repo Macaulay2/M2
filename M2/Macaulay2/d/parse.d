@@ -127,9 +127,10 @@ export For := {+ forToken:Token, variable:ParseTree, inClause:ParseTree, fromCla
 export WhileDo := {+ whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
 export WhileList := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
 export WhileListDo := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
-export TryElse := {+ tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
 export TryThenElse := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
-export Try := {+ tryToken:Token, primary:ParseTree};
+export TryThen     := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree};
+export TryElse     := {+ tryToken:Token, primary:ParseTree,                                    elseToken:Token, alternate:ParseTree};
+export Try         := {+ tryToken:Token, primary:ParseTree};
 export Catch := {+ catchToken:Token, primary:ParseTree};
 export IfThen := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
 export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
@@ -150,7 +151,7 @@ export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
      or EmptyParentheses or IfThen or IfThenElse
      or Quote or GlobalQuote or ThreadQuote or LocalQuote
-     or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
+     or TryThenElse or TryThen or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
 
 -- Code
