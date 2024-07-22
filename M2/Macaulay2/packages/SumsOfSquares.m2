@@ -14,8 +14,7 @@ newPackage(
       HomePage => "http://www.mit.edu/~parrilo/"},
      {Name => "Helfried Peyrl",
       Email => "peyrl@control.ee.ethz.ch",
-      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"},
-     {Name => "Special thanks: Ilir Dema, Nidhi Kaihnsa, Anton Leykin"}
+      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
     Headline => "sums of squares",
     Keywords => {"Real Algebraic Geometry"},
