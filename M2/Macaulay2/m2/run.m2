@@ -3,8 +3,8 @@
 
 needs "system.m2"
 
--- TODO: get rid of these
-(hadError, numErrors) = (false, 0);
+-- see resetCounters and installPackage
+numExampleErrors = 0 -- FIXME: this is not reentrant
 
 --test limits
 utest := opt -> (
@@ -150,7 +150,6 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
      stderr << "M2: *** Error " << (if r<256 then r else r//256) << endl;
      if r == 2 then error "interrupted";
-     hadError = true;
-     numErrors = numErrors + 1;
+     numExampleErrors += 1;
      return false;
      )
