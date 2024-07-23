@@ -515,7 +515,6 @@ endPackage String := title -> (
 	  b = last \ sort apply(b, s -> (hash s, s));
 	  error splice ("mutable unexported unset symbol(s) in package ", pkg#"pkgname", ": ", toSequence between_", " b);
 	  );
-     -- TODO: check for hadDocumentationWarning and Error here?
      pkg.PackageIsLoaded = true;
      pkg)
 
