@@ -530,31 +530,30 @@ beginDocumentation = () -> (
 
 ---------------------------------------------------------------------
 
+implicitlyLoadedPackages = () -> nonnull unique apply(keys PackageDictionary, getpkgNoLoad)
+implicitlyLoadedDictionaries = () -> unique join(dictionaryPath,
+    apply(implicitlyLoadedPackages(), pkg -> pkg.Dictionary))
+
 package = method (Dispatch => Thing, TypicalValue => Package)
 package Package  := identity
 package Nothing  := x -> null
 package Option   := o -> youngest(package \ toSequence o)
 package Array    :=
-package Sequence := s -> if (d := fetchAnyRawDocumentation makeDocumentTag s) =!= null then package d.DocumentTag
+-- FIXME: if a package (other than Core) defines (degreeLength, ZZ), we wouldn't detect it!
+package Sequence := s -> if (d := fetchAnyRawDocumentation makeDocumentTag s) =!= null then (
+    if toString(pkg := package d.DocumentTag) === "Macaulay2Doc" then Core else pkg)   else youngest(package \ splice s)
 package String   := s -> if (d := fetchAnyRawDocumentation                 s) =!= null then package d.DocumentTag
 package Thing    := x -> if (d := dictionary x)                               =!= null then package d
-package Symbol   := s -> (
-    if instance(value s, Package) then return value s;
-    n := toString s;
-    r := scan(values PackageDictionary, pkg ->
-	if (pkg = value pkg).?Dictionary and pkg.Dictionary#?n and pkg.Dictionary#n === s then break pkg);
-    if r =!= null then return r;
-    scan(dictionaryPath, d -> if d#?n and d#n === s then if package d =!= null then break package d))
+-- TODO: oo belongs in Core, but where do o1, etc. belong to?
+package Symbol   := s -> if instance(obj := value s, Package) then obj else
+    scan(implicitlyLoadedDictionaries(),
+	dict -> try if value dict#(toString s) === obj then break package dict)
 package Function   :=
 package HashTable  := x -> if hasAttribute(x, ReverseDictionary) then package getAttribute(x, ReverseDictionary)
+-- TODO: where do OutputDictionary and PackageDictionary belong to?
 package Dictionary := d -> (
-    if currentPackage =!= null
-    and (  currentPackage.?Dictionary
-	and currentPackage.Dictionary === d
-	or currentPackage#?"private dictionary"
-	and currentPackage#"private dictionary" === d) then currentPackage
-    else scan(values PackageDictionary, pkg ->
-	if (pkg = value pkg).?Dictionary and pkg.Dictionary === d then break pkg))
+    scan(unique prepend_currentPackage implicitlyLoadedPackages(),
+	pkg -> if pkg.Dictionary === d or pkg#"private dictionary" === d then break pkg))
 
 -- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (

@@ -174,6 +174,7 @@ methods Sequence := F -> (
     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
 methods ScriptedFunctor := -- TODO: OO and other scripted functors aren't supported
+-- FIXME: why is 'methods Format' giving two things?
 methods Symbol :=
 methods Thing  := F -> (
     if F === HH
