@@ -587,6 +587,26 @@ getErrors = fn -> (
     if m =!= null then substring(m#0, err) else get("!tail " | fn)
     )
 
+isDocumentationComplete = pkg -> (
+    -- This function checks that everything is documented
+    -- and is run if CheckDocumentation => true is given.
+    -- Takes ~22s for Macaulay2Doc
+    resetCounters();
+    srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
+    -- compare this with documentationValue(Symbol, Package) in help.m2
+    things := join(
+	documentableMethods srcpkg,
+	srcpkg#"exported symbols",
+	srcpkg#"exported mutable symbols");
+    scan(things, key -> (
+	    tag := makeDocumentTag(key, Package => srcpkg);
+	    if  not isUndocumented tag
+	    and not hasDocumentation tag
+	    and signalDocumentationWarning tag
+	    then warning("installPackage: missing documentation for ", toExternalString tag.Key);
+	    ));
+    0 < numDocumentationWarnings)
+
 -----------------------------------------------------------------------------
 -- installPackage
 -----------------------------------------------------------------------------
@@ -778,29 +798,7 @@ installPackage Package := opts -> pkg -> (
 	pkg#"links next" = NEXT;
 	pkg#"links prev" = PREV;
 
-	-- check that everything is documented
-	-- ~22s for Macaulay2Doc
-	if chkdoc then (
-	    resetCounters();
-	    srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
-	    scan(join (srcpkg#"exported symbols", srcpkg#"exported mutable symbols"), s -> (
-		    tag := makeDocumentTag s;
-		    if  not isUndocumented tag
-		    and not hasDocumentation tag
-		    and signalDocumentationWarning tag then printerr(
-			"warning: symbol has no documentation: ", toString tag, ", package ", toString package tag);
-		    f := value s;
-		    if instance(f, Function) then (
-			scan(methods f, m -> if isDocumentableMethod m then (
-				tag := makeDocumentTag m;
-				if  not isUndocumented tag
-				and not hasDocumentation tag
-				and signalDocumentationWarning tag then printerr(
-				    "warning: method has no documentation: ", toString tag,
-				    ", key ", toExternalString tag.Key,
-				    ", package ", toString package tag);
-				));
-			))));
+	if chkdoc then isDocumentationComplete pkg;
 
 	if chkdoc and hadDocumentationError then error(
 	    toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);

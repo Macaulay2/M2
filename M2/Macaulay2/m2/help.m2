@@ -143,7 +143,7 @@ isDocumentableMethod  Command :=
 isDocumentableMethod Function :=
 isDocumentableMethod ScriptedFunctor := isDocumentableThing
 
-documentableMethods := key -> select(methods key, isDocumentableMethod)
+documentableMethods = key -> select(methods key, isDocumentableMethod)
 
 -----------------------------------------------------------------------------
 -- documentationValue
