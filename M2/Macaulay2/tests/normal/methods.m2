@@ -120,3 +120,7 @@ assert ( chainComplex (new X, FOO => 123 ) === (new OptionTable from {FOO => 123
 assert ( chainComplex (new X) === (new OptionTable from {FOO => BAR},new X from {}) )
 chainComplex X := identity
 assert( chainComplex (new X) === new X )
+
+-- this used to fail because of a bug in (package, Sequence)
+debug Core
+assert(1 == length methods needsPackage "FirstPackage")
