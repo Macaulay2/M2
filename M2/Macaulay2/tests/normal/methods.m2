@@ -121,6 +121,9 @@ assert ( chainComplex (new X) === (new OptionTable from {FOO => BAR},new X from 
 chainComplex X := identity
 assert( chainComplex (new X) === new X )
 
+-- this should list (net/info, HypertextContainer),
+-- even though HypertextContainer is not exported.
+assert(2 == length methods parent class help())
 -- this used to fail because of a bug in (package, Sequence)
 debug Core
 assert(1 == length methods needsPackage "FirstPackage")

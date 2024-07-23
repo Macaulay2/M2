@@ -137,6 +137,8 @@ edit = Command editMethod
 -----------------------------------------------------------------------------
 -- TODO: https://github.com/Macaulay2/M2/issues/1331
 
+-- Find in all dictionaries the symbols v
+-- whose value has type T and execute f(v)
 searchAllDictionaries := (T, f) -> (
     seen := new MutableHashTable;
     scan(flatten \\ pairs \ dictionaryPath, (name, sym) -> (
@@ -162,6 +164,11 @@ sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if in
     if instance(key, Sequence)        and tallyF <= tally         key     then  key     else
     if key === NewMethod              and tallyF <= tally splice (key, T) then (key, T))
 
+-- Note: even though HypertextContainer is not an exported type,
+-- but (net, HypertextContainer) is callable through `net help()`
+-- However, (editMethod, String) is not callable as a method.
+isCallable = key -> all(key, e -> instance(e, Type) or isMember(package e, loadedPackages))
+
 methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
 methods Manipulator := M -> methods class M
 methods Command  := c -> methods c#0
@@ -170,8 +177,10 @@ methods Sequence := F -> (
     found := new MutableHashTable;
     tallyF := tally splice F;
     searchAllDictionaries(Type, T -> scan(sequenceMethods(T, F, tallyF), key -> found#key = true));
+    -- this line makes so `methods parent class help()` shows (net, HypertextContainer)
+    -- despite the fact that HypertextContainer is not exported by default.
     scan(select(F, e -> instance(e, Type)), T -> scan(sequenceMethods(T, F, tallyF), key -> found#key = true));
-    previousMethodsFound = new NumberedVerticalList from sortByName keys found)
+    previousMethodsFound = new NumberedVerticalList from sortByName select(keys found, isCallable))
 
 methods ScriptedFunctor := -- TODO: OO and other scripted functors aren't supported
 -- FIXME: why is 'methods Format' giving two things?
