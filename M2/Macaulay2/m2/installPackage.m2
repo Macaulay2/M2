@@ -594,6 +594,10 @@ isDocumentationComplete = pkg -> (
     srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
     -- compare this with documentationValue(Symbol, Package) in help.m2
     things := join(
+	-- FIXME: this is still not perfect; if a preloaded a package other
+	-- than Core defines (degreeLength, ZZ), it will be listed as missing
+	-- documentation when installing Macaulay2Doc, and if the package is
+	-- not preloaded then it won't be listed as missing documentation at all.
 	documentableMethods srcpkg,
 	srcpkg#"exported symbols",
 	srcpkg#"exported mutable symbols");

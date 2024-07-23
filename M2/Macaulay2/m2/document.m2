@@ -154,7 +154,7 @@ makeDocumentTag' := opts -> key -> (
     -- Try to detect the package
     pkg = if pkg =!= null                    then pkg
     else  if opts#Package =!= null           then opts#Package
-    else  if isMember(fkey, allPackages())     then fkey
+    else  if isMember(fkey, allPackages())   then fkey
     -- for these three types, the method package actually calls
     -- makeDocumentTag, so we can't use it, and need workarounds:
     else  if instance(nkey, Array)           then youngest toSequence(package \ splice nkey)
