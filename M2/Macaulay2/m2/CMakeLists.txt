@@ -18,7 +18,8 @@ add_custom_target(M2-core ALL DEPENDS ${CORE_DIR}/tvalues.m2)
 
 add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
   COMMENT "Generating Macaulay2/Core/tvalues.m2"
-  COMMAND M2-binary ${M2_ARGS} -e "debug Core; generateTypicalValues \"${CMAKE_SOURCE_DIR}/Macaulay2/d/\"; exit 0"
+  COMMAND rm -f ${CORE_DIR}/tvalues.m2     # delete old tvalues.m2
+  COMMAND M2-binary ${M2_ARGS} -e "exit 0" # regenerate tvalues.m2
   WORKING_DIRECTORY ${CORE_DIR}
   DEPENDS M2-binary
   VERBATIM)

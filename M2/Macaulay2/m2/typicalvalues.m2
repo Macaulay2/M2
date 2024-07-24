@@ -124,6 +124,7 @@ generateTypicalValues = (srcdir) -> (
 	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
     close outfile)
 
+-- if missing, tvalues.m2 is regenerated directly
 if not fileExists typicalValuesSource then generateTypicalValues(currentFileDirectory | "../d/")
 
 -----------------------------------------------------------------------------
@@ -185,6 +186,7 @@ typval = x -> (
 	 )
      )
 
+-- tvalues.m2 is loaded here
 load typicalValuesSource
 
 scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
