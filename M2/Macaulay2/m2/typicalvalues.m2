@@ -107,7 +107,7 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
 -- The file "tvalues.m2" should be distributed with binary distributions
 
 typicalValuesSource := prefixDirectory | replace("PKG", "Core", currentLayout#"package") | "tvalues.m2"
-typicalValuesFormat := "-- # typical value: *(.*?) *"
+typicalValuesFormat := "-- # typical value: *(.*?), ([^ ]*) *"
 
 generateTypicalValues = (srcdir) -> (
     if not fileExists srcdir then error "unable to find the source code for the interpreter";
@@ -118,7 +118,8 @@ generateTypicalValues = (srcdir) -> (
     for file in sort ddfiles do (
 	comment := "-- typical values extracted from " | file;
 	srcstring := stack apply(pairs lines get(srcdir | file), (num, line) -> line | " -- " | file | ":" | num);
-	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1)\t-- \\2", toString srcstring);
+	-- TODO: separate method key (\\1) and output type (\\2)
+	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1, \\2)\t-- \\3", toString srcstring);
 	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
     close outfile)
 
