@@ -200,7 +200,6 @@ document {
     Key => {
 	 baseName,
 	(baseName, Thing),
-	(baseName, Holder),
 	(baseName, IndexedVariable),
 	(baseName, IndexedVariableTable),
 	(baseName, RingElement),
