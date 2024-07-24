@@ -433,7 +433,9 @@ symbolFrom = (pkgname, name) -> value (getpkg pkgname)#"private dictionary"#name
 
 importFrom = method()
 importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
-importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> if not currentPackage#"private dictionary"#?s then currentPackage#"private dictionary"#s = P#"private dictionary"#s)
+importFrom(Package, List) := (P, x) -> apply(nonnull x, s ->
+    try currentPackage#"private dictionary"#s = P#"private dictionary"#s
+    else warning("importFrom: failed to import symbol ", s))
 importFrom(String,  String) :=
 importFrom(Package, String) := (P, x) -> importFrom(P, {x})
 
