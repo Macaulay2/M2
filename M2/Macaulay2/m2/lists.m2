@@ -209,6 +209,11 @@ rotate(ZZ,VisibleList) := (n,s) -> (
 sort List :=  opts -> internalsort
 rsort List := opts -> internalrsort
 
+apply({sort, rsort}, sort ->
+    sort(List, Function) := opts -> (L, f) -> (
+	H := hashTable(join, apply(L, l -> f(l) => {l}));
+	flatten apply(sort keys H, k -> H#k)))
+
 List << List := (A, B) -> all(min(#A, #B), i -> A#i <= B#i)
 
 -- we've been waiting to do this:
