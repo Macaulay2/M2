@@ -149,20 +149,24 @@ documentableMethods = key -> select(methods key, isDocumentableMethod)
 -- documentationValue
 -----------------------------------------------------------------------------
 
+subclasses = T -> keys fold(ancestors  T, showStructure(),      lookup)
+subobjects = T -> keys fold(ancestors' T, showClassStructure(), lookup)
+descendants  = T -> flatten prepend(L := subclasses T, apply(L, descendants))
+descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
+
 -- specialized templates for documentation nodes
 documentationValue := method(TypicalValue => Hypertext)
 documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
-    syms := unique flatten apply(dictionaryPath, dict -> if isMutable dict then {} else values dict);
+    -- types that inherit from T
+    b := smenu(toString \ subclasses T);
     -- constructors of T
     a := smenu apply(select(pairs typicalValues, (key, Y) -> Y === T and isDocumentableMethod key), (key, Y) -> key);
-    -- types that inherit from T
-    b := smenu(toString \ select(syms, y -> instance(value y, Type) and parent value y === T));
     -- functions on T
     c := smenu select(documentableMethods T, key -> not typicalValues#?key or typicalValues#key =!= T);
     -- objects of type T
-    e := smenu(toString \ select(syms, y -> not isMutable y and class value y === T));
+    e := smenu(toString \ subobjects T);
     DIV nonnull splice ( "class" => "waystouse",
 	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),

@@ -281,7 +281,7 @@ document {
      }
 
 document {
-     Key => parent,
+     Key => {parent, (parent, Thing)},
      Headline => "parent type of an object",
      Usage => "X = parent x",
      Inputs => {
