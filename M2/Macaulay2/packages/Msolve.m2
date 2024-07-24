@@ -14,12 +14,13 @@ newPackage(
 		  HomePage => "https://math.cornell.edu/michael-e-stillman"},{Name => "Anton Leykin", 
 		  Email => "leykin@math.gatech.edu", 
 		  HomePage => "https://antonleykin.math.gatech.edu/"}},
+	  Keywords => {"Groebner Basis Algorithms" , "Interfaces"},
     	Headline => "An interface to the msolve package (https://msolve.lip6.fr/) which computes Groebner Basis and does real root isolation",
     	AuxiliaryFiles => true,
 	DebuggingMode => false,       
 	OptionalComponentsPresent => msolvePresent
 	);
-msolveEXEwithOpts:=(opt)->"msolve -v "|opt#"level of verbosity"|" -t "|toString(opt#"number of threads");
+msolveEXEwithOpts:=(opt)->"msolve -v "|opt#Verbosity|" -t "|toString(opt#"number of threads");
 export{
     "msolveGB",
     "msolveSaturate",
@@ -43,24 +44,25 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
 
 inputOkay=method(TypicalValue=>Boolean);
 inputOkay(Ideal):=I->(
+    if not msolvePresentAndModern then (error "msolve (version > 0.6.4) is not installed in system"; return false;);
     R:=ring I;
     if not instance(R,PolynomialRing) then (print "input must be in a polynomial ring over a field";return false;);
     kk:=coefficientRing(R);
-    if instance(kk,InexactFieldFamily) then(
-        print "input must be over the rationals or a (prime) finite field of chacteristic between 2^16 and 2^32";
+    if (instance(kk,InexactFieldFamily) or instance(kk,InexactField)) then(
+        print "input must be over the rationals or a (prime) finite field of chacteristic less than 2^32";
 	return false;
 	);
     if char(kk)>0 then (
-	if (char(kk)<2^16) or (char(kk)>2^32) then(
-	    print "input must be over the rationals or a (prime) finite field of chacteristic between 2^16 and 2^32";
+	if (char(kk)>2^32) then(
+	    print "input must be over the rationals or a (prime) finite field of chacteristic less than 2^32";
 	    return false;
 	    );
 	);
     return true;
     );
-msolveGB=method(TypicalValue=>Matrix, Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveGB=method(TypicalValue=>Matrix, Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
 msolveGB(Ideal):=opt->I->(
-    if not inputOkay(I) then return 0;
+    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
     kk:=coefficientRing(R);
@@ -73,17 +75,17 @@ msolveGB(Ideal):=opt->I->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    << "msolve input file is called: " << mIn << endl;
-    << "msolve output file is called: " << mOut << endl;
+    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
+    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
     callStr:=msolveEXEwithOpts(opt)|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
-    <<"done msolve"<<endl;
+    if opt#Verbosity>0 then<<"done msolve"<<endl;
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-msolveLeadMonomials=method(TypicalValue=>Matrix, Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveLeadMonomials=method(TypicalValue=>Matrix, Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
 msolveLeadMonomials(Ideal):=opt->(I)->(
-    if not inputOkay(I) then return 0;
+    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
     kk:=coefficientRing(R);
@@ -96,12 +98,14 @@ msolveLeadMonomials(Ideal):=opt->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
+    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
+    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
     callStr:=msolveEXEwithOpts(opt)|" -g 1 -f "|mIn|" -o "|mOut;
     run(callStr);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-msolveEliminate=method(Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveEliminate=method(Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
 msolveEliminate(Ideal,RingElement):=Ideal =>opt-> (I,elimvar)->(
     return msolveEliminate(I,{elimvar});
     );
@@ -110,7 +114,7 @@ msolveEliminate(RingElement,Ideal):=Ideal => opt->(elimvar,I) ->
 msolveEliminate(List,Ideal):=Ideal => opt->(elimvars,I) -> 
     msolveEliminate(I,elimvars)
 msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
-    if not inputOkay(J) then return 0;
+    if not inputOkay(J) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
     S:=ring J;
     kk:=coefficientRing(S);
@@ -129,7 +133,8 @@ msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    << "mOut = " << mOut << endl;
+    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
+    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
     callStr:=msolveEXEwithOpts(opt)|" -e "|toString(elimNum)|" -g 2 -f "|mIn|" -o "|mOut;
     run(callStr);
     if char R === 0 then 
@@ -138,9 +143,9 @@ msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
       ideal readMsolveOutputFile(R, mOut)
     )
 
-msolveSaturate=method(TypicalValue=>Matrix, Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveSaturate=method(TypicalValue=>Matrix, Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
 msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
-    if not inputOkay(I) then return 0;
+    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
     kk:=coefficientRing(R);
@@ -154,15 +159,16 @@ msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
     callStr:=msolveEXEwithOpts(opt)|" -f "|mIn|" -S -g 2 -o "|mOut;
+    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
+    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
     run(callStr);
     msolGB:=readMsolveOutputFile(R, mOut);
-    << "msolve output file is called: " << mOut << endl;
     return gens forceGB msolGB;
     );
 
-msolveRealSolutions=method(TypicalValue=>List,Options => {"output type"=>"rationalInterval","level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
-msolveRealSolutions(Ideal):=opts->(I)->(
-    if not inputOkay(I) then return 0;
+msolveRealSolutions=method(TypicalValue=>List,Options => {"output type"=>"rationalInterval",Verbosity=>0, "number of threads"=>allowableThreads});
+msolveRealSolutions(Ideal):=opt->(I)->(
+    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
     kk:=coefficientRing(R);
@@ -174,22 +180,23 @@ msolveRealSolutions(Ideal):=opts->(I)->(
     Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms";
-    callStr:=msolveEXEwithOpts(opts)|" -f "|mIn|" -o "|mOut;
+    mOut:=temporaryFileName()|".ms"; if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
+    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
+    callStr:=msolveEXEwithOpts(opt)|" -f "|mIn|" -o "|mOut;
     run(callStr);
     outStrFull:=get(mOut);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",outStrFull))_0));
     solsp:=value(mOutStr);
-    if solsp_0>0 then (print "Input ideal not zero dimensional, no solutions found."; return 0;);
+    if solsp_0>0 then (error "Input ideal not zero dimensional, no solutions found.";);
     if (solsp_1)_0>1 then (print "unexpected msolve output, returning full output"; return solsp;);
     sols:=(solsp_1)_1;
-    if opts#"output type"=="rationalInterval" then return sols;
-    if opts#"output type"=="floatInterval" then return (1.0*sols);
-    if opts#"output type"=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
+    if opt#"output type"=="rationalInterval" then return sols;
+    if opt#"output type"=="floatInterval" then return (1.0*sols);
+    if opt#"output type"=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
     );
-msolveRUR=method(TypicalValue=>List,Options=>{"level of verbosity"=>0, "number of threads"=>maxAllowableThreads});
+msolveRUR=method(TypicalValue=>List,Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
 msolveRUR(Ideal):=opt->(I)->(
-    if not inputOkay(I) then return 0;
+    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
     R:=ring I;
     kk:=coefficientRing(R);
@@ -203,6 +210,8 @@ msolveRUR(Ideal):=opt->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
+    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
+    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
     run(msolveEXEwithOpts(opt)|" -P 2 -f "|mIn|" -o "|mOut);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",get(mOut)))_0));
     solsp:=value replace("[']","\"",mOutStr);
@@ -232,7 +241,7 @@ Node
      Key
      	  Msolve
      Headline
-     	  Macaulay2 interface for msolve; computes real solutions, Groebner basis (in GRevLex), saturations, and elimination ideals.
+     	  Macaulay2 interface for msolve; computes real solutions and Groebner basis, etc. 
      Description
      	  Text
 
@@ -244,14 +253,13 @@ Node
 	      The package has functions to compute Groebner basis, in
 	      GRevLex order only, for ideals with rational or finite
 	      field coefficients. Finite field characteristics must be
-	      between 2^16 and 2^32. There are also functions to
+	      less than 2^32. There are also functions to
 	      compute elimination ideals, for ideals with rational or
-	      finite field coefficients. Finite field characteristics
-	      must be between 2^16 and 2^32.
+	      finite field coefficients.
 	      
 	      The saturation of an ideal by a single polynomial may be
 	      computed for ideals with finite field coefficients, again
-	      with characteristic between 2^16 and 2^32.
+	      with characteristic less than 2^32.
 	      
 	      For zero dimensional polynomial ideals, with integer or
 	      rational coefficients, there are functions to compute all
@@ -259,7 +267,20 @@ Node
 	      representation of all (complex) solutions.
 	      
 	      The M2 interface assumes that the binary executable is
-	      named "msolve" is on the executable path. 
+	      named "msolve" is on the executable path.
+
+	      
+	      Rings with double subscript variables are NOT supported,
+	      i.e. QQ[x_(1,1)..x_(1,3)] will NOT work. 
+	      You should use rings with single subscript, e.g., QQ[x_1..x_5],
+	      or rings with some characters as variables, e.g. QQ[a..d] or QQ[aa,bcd,x1] etc.
+
+	      For all functions the option Verbosity can be used. It has levels 0, 1, 2. The default is 0. 
+
+	      Msolve supports parallel computations. The option "number of threads" is used to set this. 
+	      The default value is allowableThreads, but this can be set manually by the user when 
+	      calling a function. E.g. for an ideal I:
+	      msolveGB(I, Verbosity=>2, "number of threads"=>6)
 	      
 	      
 	      References:
@@ -275,13 +296,13 @@ Node
     	msolveGB(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be less than 2^32. 
     Outputs
         GB:Matrix
 	    a matrix whose columns form a Groebner basis for the input ideal I, in the GrevLex order.    
     Description 
         Text
-    	    This functions uses the F4 implementation in the msolve package to compute a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with characteristic between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
+    	    This functions uses the F4 implementation in the msolve package to compute a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with characteristic less than 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
     	Text
 	    First an example over a finite field
 	Example
@@ -311,13 +332,13 @@ Node
     	msolveLeadMonomials(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be less than 2^32. 
     Outputs
         GB:Matrix
 	    a matrix whose columns are the leading monomials (of a Groebner basis for) the input ideal I, in the GrevLex order.    
     Description 
         Text
-    	    This functions uses the F4 implementation in the msolve package to compute leading monomials via a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with characteristic between 2^16 and 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
+    	    This functions uses the F4 implementation in the msolve package to compute leading monomials via a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with characteristic less than 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
     	Text
 	    First an example over a finite field
 	Example
@@ -342,7 +363,7 @@ Node
     	msolveRealSolutions
 	(msolveRealSolutions, Ideal)
     Headline
-    	Uses symbolic methods to compute a certified solution interval for each real solution to a zero dimensional polynomial system.
+    	Uses symbolic methods to compute all real solutions to a zero dim systems.
     Usage
     	msolveRealSolutions(I)
     Inputs
@@ -385,7 +406,7 @@ Node
     	msolveRUR
 	(msolveRUR, Ideal)
     Headline
-    	Uses symbolic methods to compute the rational univariate representation of a zero dimensional polynomial system.
+    	Uses symbolic methods to compute the rational univariate representation.
     Usage
     	msolveRUR(I)
     Inputs
@@ -447,7 +468,7 @@ Node
     	msolveSaturate(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and finite field coefficients. The finite field must have characteristic between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with GrevLex order and finite field coefficients. The finite field must have characteristic less than 2^32. 
 	f:RingElement
 	    a polynomial in the same ring as I.    
     Outputs
@@ -476,7 +497,7 @@ Node
     	msolveEliminate(I,elimVars)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with rational or finite field coefficients. If working over a finite field, it must have characteristic between 2^16 and 2^32. 
+	    an ideal in a polynomial ring with rational or finite field coefficients. If working over a finite field, it must have characteristic less than 2^32. 
 	elimVars:List
 	    a list of variables in the same ring as I, these variables will be eliminated.    
     Outputs
