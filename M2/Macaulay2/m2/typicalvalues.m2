@@ -41,7 +41,6 @@ installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
 
 installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
 installMethod(symbol ..<, ZZ, ZZ, Sequence => x -> (dummy x;))
-ancestor(Type,Type) := Boolean => ancestor
 any(ZZ,Function) := any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
@@ -64,7 +63,6 @@ isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
 isMutable(Thing) := Boolean => isMutable
-instance(Thing,Type) := Boolean => instance
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
