@@ -342,7 +342,6 @@ newPackage String := opts -> pkgname -> (
 	"test inputs"              => new MutableHashTable,
 	"raw documentation"        => new MutableHashTable, -- deposited here by 'document'
 	"processed documentation"  => new MutableHashTable, -- the output from 'documentation', look here first
-	"undocumented keys"        => new MutableHashTable,
 	"example inputs"           => new MutableHashTable,
 	"example data files"       => new MutableHashTable,
 	"example results"          => new MutableHashTable,
