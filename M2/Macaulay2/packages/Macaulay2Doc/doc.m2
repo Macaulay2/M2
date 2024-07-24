@@ -24,9 +24,6 @@ document {
 undocumented {
      (symbol *, Number, RingElement),
      (symbol *, RingElement, Number),
-    (symbol*,  Minus, Expression),
-    (symbol*,  Product, Holder),
-    (symbol*,  Minus, Minus),
     (symbol*,  Number, InfiniteNumber),
     (symbol*,  InfiniteNumber, ZZ),
     (symbol*,  InfiniteNumber, QQ),
@@ -34,15 +31,10 @@ undocumented {
     (symbol*,  ZZ, Ideal),
     (symbol*,  ZZ, GradedModuleMap),
     (symbol*,  InfiniteNumber, InfiniteNumber),
-    (symbol*,  Expression, Minus),
-    (symbol*,  Product, Product),
-    (symbol*,  Holder, Product),
     (symbol*,  ZZ, Module),
     (symbol*,  ZZ, MonomialIdeal),
     (symbol*,  String),
     (symbol*,  ZZ, ChainComplexMap),
-    (symbol*,  Expression, OneExpression),
-    (symbol*,  OneExpression, Expression),
     }
 
      
@@ -268,7 +260,6 @@ undocumented {
 document {
      Key => {symbol -,
 	  (symbol -, ChainComplexMap, ChainComplexMap),
-	  (symbol -, Minus),
 	  (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
 	  (symbol -, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol -, ZZ, ProjectiveHilbertPolynomial),
@@ -281,7 +272,6 @@ document {
 	  (symbol -, RingElement, RingElement),
 	  (symbol -, InfiniteNumber),
 	  (symbol -, InfiniteNumber, InfiniteNumber),
-	  (symbol -, ZeroExpression),
 	  (symbol -, RingElement, ChainComplexMap),
 	  (symbol -, ChainComplexMap),
 	  (symbol -, MutableMatrix, MutableMatrix),
@@ -329,7 +319,6 @@ document {
 	  (symbol -, Matrix),
 	  (symbol -, RingElement, Matrix),
 	  (symbol -, ChainComplexMap, RingElement),
-	  (symbol -, Holder),
 	  (symbol -, Vector, Vector)
 	  },
      Headline => "a unary or binary operator, usually used for negation or subtraction",
@@ -362,7 +351,6 @@ undocumented {
      (symbol /, InfiniteNumber, Number),
      (symbol /, InfiniteNumber, RR),
      (symbol /, EngineRing, Ideal),
-     (symbol /, Expression, OneExpression),
      (symbol /, List, SelfInitializingType)
      }
 
@@ -510,13 +498,6 @@ document {
      }
 
 undocumented {
-     (symbol ^, ZeroExpression, Holder),
-     (symbol ^, Holder, ZeroExpression),
-     (symbol ^, Holder, OneExpression),
-     (symbol ^, Expression, ZeroExpression),
-     (symbol ^, ZeroExpression, Expression),
-     (symbol ^, Expression, OneExpression),
-     (symbol ^, ZeroExpression, ZeroExpression),
      (symbol ^, InfiniteNumber, ZZ),
      (symbol ^, InfiniteNumber, QQ),
      (symbol ^, InfiniteNumber, RR),
@@ -794,13 +775,8 @@ document {
      "See ", TO "===", " for details."
      }
 
-isMissingDoc := core "isMissingDoc"
-isUndocumented := core "isUndocumented"
-equalityMethods := select(makeDocumentTag \ methods symbol ==,
-    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)
-
 document {
-    Key => { symbol == } | equalityMethods,
+    Key => { symbol == },
      Headline => "equality",
      Usage => "x == y",
      PARA {
@@ -893,7 +869,6 @@ document {
 
 undocumented {
     (symbol**, QuotientRing, PolynomialRing),
---    (symbol**, Expression, NonAssociativeProduct),
     (symbol**, QuotientRing, QuotientRing),
     (symbol**, Number, Matrix),
     (symbol**, Matrix, Number),
@@ -902,14 +877,8 @@ undocumented {
     (symbol **,RingElement,Number),
     (symbol **,RingElement,RingElement),
     (symbol **,Thing,InexactFieldFamily),
---    (symbol**, NonAssociativeProduct, NonAssociativeProduct),
     (symbol**, PolynomialRing, PolynomialRing),
     (symbol**, PolynomialRing, QuotientRing),
---    (symbol**, NonAssociativeProduct, Expression),
---    (symbol**, NonAssociativeProduct, Holder),
---    (symbol**, Holder, NonAssociativeProduct),
-    (symbol**, Expression, OneExpression),
-    (symbol**, OneExpression, Expression)
      }
 
 document {

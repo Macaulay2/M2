@@ -390,7 +390,6 @@ document {
 	  (symbol *,Constant,RingElement),
 	  (symbol *,RingElement,Constant),
 	  (symbol /,Constant,RingElement),
-	  (symbol /,Holder,OneExpression),
 	  (symbol /,RingElement,Constant)
      	  },
      PARA {
