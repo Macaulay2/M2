@@ -43,13 +43,13 @@ if msolveProgram === null then (
 	msolveProgram = findProgram("msolve", "msolve --help", Verbose => debugLevel > 0)))
 
 msolveDefaultOptions = new OptionTable from {
-    "number of threads" => allowableThreads,
+    Threads => allowableThreads,
     Verbosity => 0,
     }
 
 msolve = (mIn, mOut, args, opts) -> runProgram(msolveProgram,
     demark_" " { args,
-	"-t", toString opts#"number of threads",
+	"-t", toString opts.Threads,
 	"-v", toString opts.Verbosity,
 	"-f", mIn, "-o", mOut },
     KeepFiles => true,
@@ -289,10 +289,10 @@ Node
 
 	      For all functions the option Verbosity can be used. It has levels 0, 1, 2. The default is 0. 
 
-	      Msolve supports parallel computations. The option "number of threads" is used to set this. 
+	      Msolve supports parallel computations. The option @TT "Threads"@ is used to set this.
 	      The default value is allowableThreads, but this can be set manually by the user when 
 	      calling a function. E.g. for an ideal I:
-	      msolveGB(I, Verbosity=>2, "number of threads"=>6)
+	      msolveGB(I, Verbosity => 2, Threads => 6)
 	      
 	      
 	      References:
@@ -301,7 +301,9 @@ Node
 Node 
     Key
     	msolveGB
-	(msolveGB, Ideal)
+       (msolveGB, Ideal)
+       [msolveGB, Threads]
+       [msolveGB, Verbosity]
     Headline
     	Computes generators of a Groebner basis in GrevLex order.
     Usage
@@ -309,6 +311,8 @@ Node
     Inputs
     	I:Ideal
 	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be less than 2^32. 
+	Threads => ZZ -- number of processor threads to use
+	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
 	    a matrix whose columns form a Groebner basis for the input ideal I, in the GrevLex order.    
@@ -337,7 +341,9 @@ Node
 Node 
     Key
     	msolveLeadMonomials
-	(msolveLeadMonomials, Ideal)
+       (msolveLeadMonomials, Ideal)
+       [msolveLeadMonomials, Threads]
+       [msolveLeadMonomials, Verbosity]
     Headline
     	Computes the leading monomials of a Groebner basis in GrevLex order.
     Usage
@@ -345,6 +351,8 @@ Node
     Inputs
     	I:Ideal
 	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be less than 2^32. 
+	Threads => ZZ -- number of processor threads to use
+	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
 	    a matrix whose columns are the leading monomials (of a Groebner basis for) the input ideal I, in the GrevLex order.    
@@ -373,7 +381,9 @@ Node
 Node 
     Key
     	msolveRealSolutions
-	(msolveRealSolutions, Ideal)
+       (msolveRealSolutions, Ideal)
+       [msolveRealSolutions, Threads]
+       [msolveRealSolutions, Verbosity]
     Headline
     	Uses symbolic methods to compute all real solutions to a zero dim systems.
     Usage
@@ -381,6 +391,8 @@ Node
     Inputs
     	I:Ideal
 	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficients. 
+	Threads => ZZ -- number of processor threads to use
+	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         Sols:List
 	    a list of lists, each entry in the list Sol consists of a list representing the coordinates of a solution. By default each solution coordinate value is also represented by a two element list of rational numbers, {a, b}, this means that that coordinate of the solution has a value greater than or equal to a and less than or equal to b. This interval is computed symbolically and its correctness is guaranteed by exact methods.      
@@ -416,7 +428,9 @@ Node
 Node 
     Key
     	msolveRUR
-	(msolveRUR, Ideal)
+       (msolveRUR, Ideal)
+       [msolveRUR, Threads]
+       [msolveRUR, Verbosity]
     Headline
     	Uses symbolic methods to compute the rational univariate representation.
     Usage
@@ -424,6 +438,8 @@ Node
     Inputs
     	I:Ideal
 	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficients. 
+	Threads => ZZ -- number of processor threads to use
+	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         RUR:HashTable
 	    a HashTable with 6 keys giving the rational univariate representation of I.     
@@ -473,7 +489,9 @@ Node
 Node 
     Key
     	msolveSaturate
-	(msolveSaturate, Ideal,RingElement)
+       (msolveSaturate, Ideal,RingElement)
+       [msolveSaturate, Threads]
+       [msolveSaturate, Verbosity]
     Headline
     	Computes a Groebner basis for the saturation of an ideal by a single polynomial in GrevLex order; only works over a finite field.
     Usage
@@ -483,6 +501,8 @@ Node
 	    an ideal in a polynomial ring with GrevLex order and finite field coefficients. The finite field must have characteristic less than 2^32. 
 	f:RingElement
 	    a polynomial in the same ring as I.    
+	Threads => ZZ -- number of processor threads to use
+	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
 	    a matrix whose columns form a Groebner basis for the ideal I:f^\infty, in the GrevLex order.    
@@ -503,6 +523,8 @@ Node
 	(msolveEliminate, List,Ideal)
 	(msolveEliminate, Ideal,RingElement)
 	(msolveEliminate, RingElement,Ideal)
+       [msolveEliminate, Threads]
+       [msolveEliminate, Verbosity]
     Headline
     	Computes the elimination ideal of a given ideal.
     Usage
@@ -512,6 +534,8 @@ Node
 	    an ideal in a polynomial ring with rational or finite field coefficients. If working over a finite field, it must have characteristic less than 2^32. 
 	elimVars:List
 	    a list of variables in the same ring as I, these variables will be eliminated.    
+	Threads => ZZ -- number of processor threads to use
+	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
 	    a matrix whose columns are generators for the elimination ideal.    
