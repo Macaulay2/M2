@@ -47,14 +47,47 @@ msolveDefaultOptions = new OptionTable from {
     Verbosity => 0,
     }
 
-msolve = (mIn, mOut, args, opts) -> runProgram(msolveProgram,
+runMsolve = (mIn, mOut, args, opts) -> runProgram(msolveProgram,
     demark_" " { args,
 	"-t", toString opts.Threads,
 	"-v", toString opts.Verbosity,
-	"-f", mIn, "-o", mOut },
+	"-f", toString mIn,
+	"-o", toString mOut },
     KeepFiles => true,
     RaiseError => true,
     Verbose => opts.Verbosity > 0)
+
+-- e.g. turns x_(0,0)... to x_0...
+toMsolveRing = I -> (
+    S0 := ring I;
+    x := local x;
+    K := coefficientRing S0;
+    S := newRing(S0, Variables => x_0..x_(numgens S0 - 1));
+    S, K, substitute(I, vars S))
+
+toMsolveString = X -> (
+    elts := if instance(X, List)     then X
+    else if instance(X, Ring)        then X_*
+    else if instance(X, Ideal)       then X_*
+    else if instance(X, RingElement) then {X};
+    str := toExternalString elts;
+    -- (2/5)*x -> 2/5*x
+    str = replace("[)(]", "", str);
+    -- {x,y,z} -> x,y,z
+    str_(1, #str-2))
+
+toMsolveInput = (S, K, I) -> demark_newline {
+    toMsolveString S,
+    toString char K,
+    replace(",", ",\n",
+	toMsolveString I)}
+
+msolve = (S, K, I, args, opts) -> (
+    tmp := temporaryFileName();
+    mIn := (tmp | "-in.ms") << toMsolveInput(S, K, I) << endl << close;
+    mOut := tmp | "-out.ms";
+    runMsolve(mIn, mOut, args, opts);
+    mOut)
 
 use'readMsolveOutputFile := true;
 readMsolveOutputFile = method()
@@ -94,7 +127,7 @@ msolveGB(Ideal):=opt->I->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    msolve(mIn, mOut, "-g 2", opt);
+    runMsolve(mIn, mOut, "-g 2", opt);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
@@ -114,7 +147,7 @@ msolveLeadMonomials(Ideal):=opt->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    msolve(mIn, mOut, "-g 1", opt);
+    runMsolve(mIn, mOut, "-g 1", opt);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
@@ -147,7 +180,7 @@ msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    msolve(mIn, mOut, "-e " | toString elimNum | " -g 2", opt);
+    runMsolve(mIn, mOut, "-e " | toString elimNum | " -g 2", opt);
     if char R === 0 then 
       ideal readMsolveOutputFile(elimR, mOut)
     else
@@ -155,26 +188,16 @@ msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
     )
 
 msolveSaturate = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
-msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
-    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
-    mIn:=temporaryFileName()|".ms";
-    R:=ring I;
-    kk:=coefficientRing(R);
-    gR:=toString(gens R);
-    l1:=substring(1,#gR-2,gR);
-    l2:=char R;
+msolveSaturate(Ideal, RingElement) := opts -> (I0, f0) -> (
+    if not inputOkay I0 then error "Problem with input, please refer to documentation.";
+    (S, K, I) := toMsolveRing I0;
+    f := substitute(f0, vars S);
     -- see https://github.com/algebraic-solving/msolve/issues/165
-    if l2 < 2^16 or l2 =!= 1073741827 then error "msolve: unsupported prime for saturation";
-    gI:=toString flatten entries gens I;
-    if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
-    Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
-    inStr:=l1|newline|l2|newline|Igens|","|newline|toString(f);
-    mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms";
-    msolve(mIn, mOut, "-S -g 2", opt);
-    msolGB:=readMsolveOutputFile(R, mOut);
-    return gens forceGB msolGB;
-    );
+    if char K < 2^16 or char K =!= 1073741827 then error "msolveSaturate: unsupported prime for saturation";
+    -- msolve expects a list of the generators of the ideal followed by f
+    mOut := msolve(S, K, I_* | {f}, "-S -g 2", opts);
+    msolGB := readMsolveOutputFile(S, mOut);
+    gens forceGB substitute(msolGB, vars ring I0))
 addHook((saturate, Ideal, RingElement), Strategy => Msolve,
     -- msolveSaturate doesn't use any options of saturate, like DegreeLimit, etc.
     (opts, I, f) -> try ideal msolveSaturate(I, f))
@@ -195,7 +218,7 @@ msolveRealSolutions(Ideal):=opt->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    msolve(mIn, mOut, "", opt);
+    runMsolve(mIn, mOut, "", opt);
     outStrFull:=get(mOut);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",outStrFull))_0));
     solsp:=value(mOutStr);
@@ -223,7 +246,7 @@ msolveRUR(Ideal):=opt->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    msolve(mIn, mOut, "-P 2", opt);
+    runMsolve(mIn, mOut, "-P 2", opt);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",get(mOut)))_0));
     solsp:=value replace("[']","\"",mOutStr);
     if first solsp!=0  then (print "Input ideal not zero dimensional, no solutions found."; return 0;);
