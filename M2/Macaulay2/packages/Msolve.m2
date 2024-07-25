@@ -75,7 +75,7 @@ inputOkay Ideal := I -> (
 	if debugLevel > 0 then printerr "msolve input must be in a polynomial ring";
 	return false);
     if not isField K or instance(K, GaloisField) or precision K < infinity or char K > 2^31 then (
-	if debugLevel > 0 then printerr "msolve input must be over QQ or ZZ/p with chacteristic less than 2^32";
+	if debugLevel > 0 then printerr "msolve input must be over QQ or ZZ/p with chacteristic less than 2^31";
 	return false);
     true)
 
@@ -258,13 +258,13 @@ Node
 	      The package has functions to compute Groebner basis, in
 	      @TO GRevLex@ order only, for ideals with rational or finite
 	      field coefficients. Finite field characteristics must be
-	      less than $2^{32}$. There are also functions to
+	      less than $2^{31}$. There are also functions to
 	      compute elimination ideals, for ideals with rational or
 	      finite field coefficients.
 	      
 	      The @TO2 {"Saturation::saturate", "saturation"}@ of an ideal by a single polynomial may be
 	      computed for ideals with finite field coefficients, again
-	      with characteristic less than $2^{32}$.
+	      with characteristic less than $2^{31}$.
 	      
 	      For zero dimensional polynomial ideals, with integer or
 	      rational coefficients, there are functions to compute all
@@ -304,7 +304,7 @@ Node
     	msolveGB(I)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
@@ -344,7 +344,7 @@ Node
     	msolveLeadMonomials(I)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
@@ -488,7 +488,7 @@ Node
     	msolveSaturate(I)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
 	f:RingElement
 	    a polynomial in the same ring as I.    
 	Threads => ZZ -- number of processor threads to use
@@ -521,7 +521,7 @@ Node
     	msolveEliminate(I,elimVars)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@ or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@ or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
 	elimVars:List
 	    of variables in the same ring as @TT "I"@, these variables will be eliminated.
 	Threads => ZZ -- number of processor threads to use
