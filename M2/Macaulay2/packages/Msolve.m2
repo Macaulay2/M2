@@ -247,8 +247,8 @@ msolveRUR(Ideal):=opt->(I)->(
     );
 
 beginDocumentation()
-multidoc ///
 
+doc ///
 Node 
      Key
      	  Msolve
@@ -256,22 +256,21 @@ Node
      	  Macaulay2 interface for msolve; computes real solutions and Groebner basis, etc. 
      Description
      	  Text
-
               This package provides a Macaulay2 interface for the
-              msolve package (https://msolve.lip6.fr/) developed by
+	      msolve library [1] developed by
               Jérémy Berthomieu, Christian Eder, and Mohab Safey El
               Din.
 	      
 	      The package has functions to compute Groebner basis, in
-	      GRevLex order only, for ideals with rational or finite
+	      @TO GRevLex@ order only, for ideals with rational or finite
 	      field coefficients. Finite field characteristics must be
-	      less than 2^32. There are also functions to
+	      less than $2^{32}$. There are also functions to
 	      compute elimination ideals, for ideals with rational or
 	      finite field coefficients.
 	      
-	      The saturation of an ideal by a single polynomial may be
+	      The @TO2 {"Saturation::saturate", "saturation"}@ of an ideal by a single polynomial may be
 	      computed for ideals with finite field coefficients, again
-	      with characteristic less than 2^32.
+	      with characteristic less than $2^{32}$.
 	      
 	      For zero dimensional polynomial ideals, with integer or
 	      rational coefficients, there are functions to compute all
@@ -281,23 +280,24 @@ Node
 	      The M2 interface assumes that the binary executable is
 	      named "msolve" is on the executable path.
 
-	      
 	      Rings with double subscript variables are NOT supported,
 	      i.e. QQ[x_(1,1)..x_(1,3)] will NOT work. 
 	      You should use rings with single subscript, e.g., QQ[x_1..x_5],
 	      or rings with some characters as variables, e.g. QQ[a..d] or QQ[aa,bcd,x1] etc.
 
-	      For all functions the option Verbosity can be used. It has levels 0, 1, 2. The default is 0. 
+	      For all functions the option @TT "Verbosity"@ can be used.
+	      It has levels 0, 1, 2. The default is 0.
 
 	      Msolve supports parallel computations. The option @TT "Threads"@ is used to set this.
 	      The default value is allowableThreads, but this can be set manually by the user when 
 	      calling a function. E.g. for an ideal I:
+	  Example
+	      R = QQ[x,y,z]
+	      I = ideal(x, y, z)
 	      msolveGB(I, Verbosity => 2, Threads => 6)
-	      
-	      
-	      References:
-	      [1] msolve: https://msolve.lip6.fr/
-	      
+    References
+      [1] The msolve library: @HREF {"https://msolve.lip6.fr"}@;
+
 Node 
     Key
     	msolveGB
@@ -310,7 +310,7 @@ Node
     	msolveGB(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be less than 2^32. 
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
@@ -350,7 +350,7 @@ Node
     	msolveLeadMonomials(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and either rational coefficients, integer coefficients, or finite field coefficients. For a finite field the characteristic must be less than 2^32. 
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
@@ -390,7 +390,7 @@ Node
     	msolveRealSolutions(I)
     Inputs
     	I:Ideal
-	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficients. 
+	    which is zero dimensional, in a polynomial ring with coefficients over @TO ZZ@ or @TO QQ@.
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
@@ -403,11 +403,10 @@ Node
     	Text
 	    First an example over a finite field
 	Example
-	    n=3
-	    R=QQ[x_1..x_n]
+	    R = QQ[x_1..x_3]
 	    f = (x_1-1)*x_1
 	    g = (x_2-5/2)*(x_2-1/2)
-	    h=(x_3-2)*(x_3-1)
+	    h = (x_3-2)*(x_3-1)
 	    I = ideal (f,g,h)
 	    sols=msolveRealSolutions(I)
 	    floatSolsInterval=msolveRealSolutions(I,"output type"=>"floatInterval")
@@ -416,11 +415,9 @@ Node
 	Text
 	    Note in cases where solutions have multiplicity this is not returned, but the presence of multiplicity also does not reduce accuracy or reliability in any way.   
 	Example 
-	    n=3
-	    R=QQ[x_1..x_n]
 	    f = (x_1-1)*x_1^3
 	    g = (x_2-5/2)*(x_2-1/2)
-	    h=(x_3-2)*(x_3-1)
+	    h = (x_3-2)*(x_3-1)
 	    I = ideal (f,g,h)
 	    sols=msolveRealSolutions(I)
 	    floatSolsInterval=msolveRealSolutions(I,"output type"=>"floatInterval")
@@ -437,7 +434,7 @@ Node
     	msolveRUR(I)
     Inputs
     	I:Ideal
-	    a zero dimensional ideal in a polynomial ring with either rational or integer coefficients. 
+	    which is zero dimensional, in a polynomial ring with coefficients over @TO ZZ@ or @TO QQ@.
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
@@ -470,11 +467,10 @@ Node
     	Text
 	    A simple example, where the input ideal is zero dimensional and radical.
 	Example
-	    n=3
-	    R=QQ[x_1..x_n]
+	    R = QQ[x_1..x_3]
 	    f = (x_1-1)
 	    g = (x_2-2)
-	    h=(x_3^2-9)
+	    h = (x_3^2-9)
 	    I = ideal (f,g,h)
 	    decompose I
 	    rur=msolveRUR(I)
@@ -498,7 +494,7 @@ Node
     	msolveSaturate(I)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with GrevLex order and finite field coefficients. The finite field must have characteristic less than 2^32. 
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
 	f:RingElement
 	    a polynomial in the same ring as I.    
 	Threads => ZZ -- number of processor threads to use
@@ -531,9 +527,9 @@ Node
     	msolveEliminate(I,elimVars)
     Inputs
     	I:Ideal
-	    an ideal in a polynomial ring with rational or finite field coefficients. If working over a finite field, it must have characteristic less than 2^32. 
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@ or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{32}$.
 	elimVars:List
-	    a list of variables in the same ring as I, these variables will be eliminated.    
+	    of variables in the same ring as @TT "I"@, these variables will be eliminated.
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
@@ -565,10 +561,10 @@ Node
         Example 
 	    R = ZZ/1073741827[x,y,a,b,c,d]
 	    f = c*x^2+a*x+b*y^2+d*x*y+y
-	    g =diff(x,f)
-	    h=diff(y,f)
-	    M2elim=eliminate({x,y},ideal(f,g,h))
-	    Msolveelim=msolveEliminate({x,y},ideal(f,g,h))
+	    g = diff(x,f)
+	    h = diff(y,f)
+	    M2elim = eliminate({x,y}, ideal(f,g,h))
+	    Msolveelim = msolveEliminate({x,y}, ideal(f,g,h))
 	    M2elim_0 == sub(Msolveelim_0, R)
 ///	      
 
