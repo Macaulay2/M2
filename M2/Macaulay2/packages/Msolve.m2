@@ -20,7 +20,9 @@ newPackage(
 	DebuggingMode => false,       
 	OptionalComponentsPresent => msolvePresent
 	);
-msolveEXEwithOpts:=(opt)->"msolve -v "|opt#Verbosity|" -t "|toString(opt#"number of threads");
+
+---------------------------------------------------------------------------
+
 export{
     "msolveGB",
     "msolveSaturate",
@@ -29,7 +31,24 @@ export{
     "msolveLeadMonomials",
     "msolveRealSolutions"
     }
+
 importFrom_Core { "raw", "rawMatrixReadMsolveFile" }
+
+---------------------------------------------------------------------------
+
+msolve = (mIn, mOut, args, opts) -> (
+    mCmd := demark_" " { "msolve", args,
+	"-t", toString opts#"number of threads",
+	"-v", toString opts.Verbosity,
+	"-f", mIn, "-o", mOut };
+    if opts.Verbosity > 0 then (
+	printerr "msolve command:";
+	-- not commented for ease of copying
+	-- and running manually in terminal:
+	stderr << "\t" << mCmd << endl);
+    mRet := run mCmd;
+    if mRet =!= 0 then error("msolve exited with non-zero exit code ", mRet);
+    mRet)
 
 use'readMsolveOutputFile := true;
 readMsolveOutputFile = method()
@@ -75,11 +94,7 @@ msolveGB(Ideal):=opt->I->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
-    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
-    callStr:=msolveEXEwithOpts(opt)|" -g 2 -f "|mIn|" -o "|mOut;
-    run(callStr);
-    if opt#Verbosity>0 then<<"done msolve"<<endl;
+    msolve(mIn, mOut, "-g 2", opt);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
@@ -98,10 +113,7 @@ msolveLeadMonomials(Ideal):=opt->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
-    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
-    callStr:=msolveEXEwithOpts(opt)|" -g 1 -f "|mIn|" -o "|mOut;
-    run(callStr);
+    msolve(mIn, mOut, "-g 1", opt);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
@@ -133,10 +145,7 @@ msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
-    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
-    callStr:=msolveEXEwithOpts(opt)|" -e "|toString(elimNum)|" -g 2 -f "|mIn|" -o "|mOut;
-    run(callStr);
+    msolve(mIn, mOut, "-e " | toString elimNum | " -g 2", opt);
     if char R === 0 then 
       ideal readMsolveOutputFile(elimR, mOut)
     else
@@ -158,10 +167,7 @@ msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     inStr:=l1|newline|l2|newline|Igens|","|newline|toString(f);
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    callStr:=msolveEXEwithOpts(opt)|" -f "|mIn|" -S -g 2 -o "|mOut;
-    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
-    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
-    run(callStr);
+    msolve(mIn, mOut, "-S -g 2", opt);
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
@@ -180,10 +186,8 @@ msolveRealSolutions(Ideal):=opt->(I)->(
     Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms"; if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
-    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
-    callStr:=msolveEXEwithOpts(opt)|" -f "|mIn|" -o "|mOut;
-    run(callStr);
+    mOut:=temporaryFileName()|".ms";
+    msolve(mIn, mOut, "", opt);
     outStrFull:=get(mOut);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",outStrFull))_0));
     solsp:=value(mOutStr);
@@ -210,9 +214,7 @@ msolveRUR(Ideal):=opt->(I)->(
     inStr:=l1|newline|l2|newline|Igens;
     mIn<<inStr<<close;
     mOut:=temporaryFileName()|".ms";
-    if opt#Verbosity>0 then<< "msolve input file is called: " << mIn << endl;
-    if opt#Verbosity>0 then<< "msolve output file is called: " << mOut << endl;
-    run(msolveEXEwithOpts(opt)|" -P 2 -f "|mIn|" -o "|mOut);
+    msolve(mIn, mOut, "-P 2", opt);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",get(mOut)))_0));
     solsp:=value replace("[']","\"",mOutStr);
     if first solsp!=0  then (print "Input ideal not zero dimensional, no solutions found."; return 0;);
