@@ -27,6 +27,7 @@ newPackage(
      Headline => "finite group characters on free resolutions and graded modules",
      DebuggingMode => false,
      Keywords => {"Commutative Algebra"},
+     PackageExports => {"Complexes"},
      Certification => {
 	 "journal name" => "Journal of Software for Algebra and Geometry",
 	 "journal URI" => "https://msp.org/jsag/",
@@ -437,7 +438,7 @@ action = method(TypicalValue=>Action,Options=>{Sub=>true})
 -- 2) a list of actors on the ring variables
 -- 3) a list of actors on the i-th module of the resolution
 -- 4) homological index i
-action(ChainComplex,List,List,ZZ):=ActionOnComplex=>op->(C,l,l0,i) -> (
+action(Complex,List,List,ZZ):=ActionOnComplex=>op->(C,l,l0,i) -> (
     --check C is a homogeneous min free res over a poly ring over a field
     R := ring C;
     if not isPolynomialRing R then (
@@ -496,7 +497,7 @@ action(ChainComplex,List,List,ZZ):=ActionOnComplex=>op->(C,l,l0,i) -> (
 
 -- shortcut constructor for resolutions of quotient rings
 -- actors on generator are assumed to be trivial
-action(ChainComplex,List) := ActionOnComplex => op -> (C,l) -> (
+action(Complex,List) := ActionOnComplex => op -> (C,l) -> (
     R := ring C;
     l0 := toList(#l:(id_(R^1)));
     action(C,l,l0,min C,Sub=>op.Sub)
@@ -1465,21 +1466,21 @@ Node
 	    See the specific use cases for more details.
     Subnodes
     	Action
-	(action,ChainComplex,List,List,ZZ)
+	(action,Complex,List,List,ZZ)
 	(action,Module,List,List)
 	Sub
 	    
 Node
     Key
-    	(action,ChainComplex,List,List,ZZ)
-    	(action,ChainComplex,List)
+    	(action,Complex,List,List,ZZ)
+    	(action,Complex,List)
     Headline
     	define finite group action on a resolution
     Usage
     	A=action(C,G)
 	A=action(C,G,G',i)
     Inputs
-    	C:ChainComplex
+    	C:Complex
 	    a minimal free resolution over a polynomial ring @TT "R"@
 	G:List
 	    of group elements acting on the variables of @TT "R"@
@@ -2805,7 +2806,7 @@ Node
     	Text
 	    Returns the object being acted upon.
 	    Depending on the action, this object may be a
-	    @TO ChainComplex@, a @TO PolynomialRing@, a
+	    @TO Complex@, a @TO PolynomialRing@, a
 	    @TO QuotientRing@, an @TO Ideal@, or a @TO Module@.
     SeeAlso
     	action
@@ -3008,7 +3009,7 @@ ca = character(R,4, hashTable {((0,{3}), matrix{apply(a,trace)})})
 assert(character(A,3) === ca)
 d1=map(R^1,R^{4:-3},{{x^3,x^2*y,x*y^2,y^3}})
 d2=map(R^{4:-3},R^{3:-4},{{-y,0,0},{x,-y,0},{0,x,-y},{0,0,x}})
-Rm=chainComplex(d1,d2)
+Rm=complex{d1,d2}
 B = action(Rm,D5)
 assert(actors(B,1) === a)
 cb1 = character(R,4, hashTable {((1,{3}), matrix{apply(a,trace)})})
