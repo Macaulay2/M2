@@ -245,6 +245,8 @@ msolveRUR(Ideal):=opt->(I)->(
     return new HashTable from RUR;
     );
 
+load "./Msolve/tests.m2"
+
 beginDocumentation()
 
 doc ///
