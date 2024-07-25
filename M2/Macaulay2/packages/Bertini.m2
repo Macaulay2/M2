@@ -130,6 +130,7 @@ export {
   "RandomCoefficientGenerator",
   "B'SectionString",
   "B'Section",
+  "B'Slice",
   "NameB'Section",
   "ContainsMultiProjectivePoint",--Eventually we will want to have multiprojective points.
   "NameB'Slice",
