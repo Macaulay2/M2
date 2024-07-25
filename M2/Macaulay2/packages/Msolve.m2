@@ -173,6 +173,9 @@ msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
+addHook((saturate, Ideal, RingElement), Strategy => Msolve,
+    -- msolveSaturate doesn't use any options of saturate, like DegreeLimit, etc.
+    (opts, I, f) -> try ideal msolveSaturate(I, f))
 
 msolveRealSolutions = method(TypicalValue => List,
     Options => msolveDefaultOptions ++ { "output type" => "rationalInterval" })
