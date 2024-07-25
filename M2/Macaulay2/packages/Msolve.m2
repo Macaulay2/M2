@@ -42,6 +42,11 @@ if msolveProgram === null then (
     else ( printerr "warning: msolve found but its version is older than 0.6.7";
 	msolveProgram = findProgram("msolve", "msolve --help", Verbose => debugLevel > 0)))
 
+msolveDefaultOptions = new OptionTable from {
+    "number of threads" => allowableThreads,
+    Verbosity => 0,
+    }
+
 msolve = (mIn, mOut, args, opts) -> runProgram(msolveProgram,
     demark_" " { args,
 	"-t", toString opts#"number of threads",
@@ -79,7 +84,8 @@ inputOkay(Ideal):=I->(
 	);
     return true;
     );
-msolveGB=method(TypicalValue=>Matrix, Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
+
+msolveGB = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveGB(Ideal):=opt->I->(
     if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
@@ -98,7 +104,8 @@ msolveGB(Ideal):=opt->I->(
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-msolveLeadMonomials=method(TypicalValue=>Matrix, Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
+
+msolveLeadMonomials = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveLeadMonomials(Ideal):=opt->(I)->(
     if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
@@ -117,7 +124,8 @@ msolveLeadMonomials(Ideal):=opt->(I)->(
     msolGB:=readMsolveOutputFile(R, mOut);
     return gens forceGB msolGB;
     );
-msolveEliminate=method(Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
+
+msolveEliminate = method(Options => msolveDefaultOptions)
 msolveEliminate(Ideal,RingElement):=Ideal =>opt-> (I,elimvar)->(
     return msolveEliminate(I,{elimvar});
     );
@@ -152,7 +160,7 @@ msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
       ideal readMsolveOutputFile(R, mOut)
     )
 
-msolveSaturate=method(TypicalValue=>Matrix, Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
+msolveSaturate = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
@@ -172,7 +180,8 @@ msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     return gens forceGB msolGB;
     );
 
-msolveRealSolutions=method(TypicalValue=>List,Options => {"output type"=>"rationalInterval",Verbosity=>0, "number of threads"=>allowableThreads});
+msolveRealSolutions = method(TypicalValue => List,
+    Options => msolveDefaultOptions ++ { "output type" => "rationalInterval" })
 msolveRealSolutions(Ideal):=opt->(I)->(
     if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
@@ -198,7 +207,8 @@ msolveRealSolutions(Ideal):=opt->(I)->(
     if opt#"output type"=="floatInterval" then return (1.0*sols);
     if opt#"output type"=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
     );
-msolveRUR=method(TypicalValue=>List,Options=>{Verbosity=>0, "number of threads"=>allowableThreads});
+
+msolveRUR = method(TypicalValue => List, Options => msolveDefaultOptions)
 msolveRUR(Ideal):=opt->(I)->(
     if not inputOkay(I) then error "Problem with input, please refer to documentation.";
     mIn:=temporaryFileName()|".ms";
