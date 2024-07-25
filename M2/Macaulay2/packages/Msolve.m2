@@ -67,23 +67,17 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
     	matrix {M2Out};
     	)
 
-inputOkay=method(TypicalValue=>Boolean);
-inputOkay(Ideal):=I->(
-    R:=ring I;
-    if not instance(R,PolynomialRing) then (print "input must be in a polynomial ring over a field";return false;);
-    kk:=coefficientRing(R);
-    if (instance(kk,InexactFieldFamily) or instance(kk,InexactField)) then(
-        print "input must be over the rationals or a (prime) finite field of chacteristic less than 2^32";
-	return false;
-	);
-    if char(kk)>0 then (
-	if (char(kk)>2^32) then(
-	    print "input must be over the rationals or a (prime) finite field of chacteristic less than 2^32";
-	    return false;
-	    );
-	);
-    return true;
-    );
+inputOkay = method(TypicalValue => Boolean)
+inputOkay Ideal := I -> (
+    R := first flattenRing I;
+    K := ultimate(coefficientRing, R);
+    if not instance(R, PolynomialRing) then (
+	if debugLevel > 0 then printerr "msolve input must be in a polynomial ring";
+	return false);
+    if not isField K or instance(K, GaloisField) or precision K < infinity or char K > 2^31 then (
+	if debugLevel > 0 then printerr "msolve input must be over QQ or ZZ/p with chacteristic less than 2^32";
+	return false);
+    true)
 
 msolveGB = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveGB(Ideal):=opt->I->(
