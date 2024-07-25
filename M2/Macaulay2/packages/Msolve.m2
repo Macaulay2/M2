@@ -1,8 +1,3 @@
-msolvePresent := run ("type msolve >/dev/null 2>&1") === 0
--- msolveVersion := if msolvePresent then ... -- no way to get version info!!!
-msolveVersionNeeded := "0.6.4"
-msolvePresentAndModern := msolvePresent -- and match("^[0-9.]+$",msolveVersion) and msolveVersion >= msolveVersionNeeded
-
 newPackage(
 	"Msolve",
 	Version => "1.24.05", 
@@ -18,7 +13,7 @@ newPackage(
     	Headline => "An interface to the msolve package (https://msolve.lip6.fr/) which computes Groebner Basis and does real root isolation",
     	AuxiliaryFiles => true,
 	DebuggingMode => false,       
-	OptionalComponentsPresent => msolvePresent
+	OptionalComponentsPresent => run("command -v msolve > /dev/null") == 0
 	);
 
 ---------------------------------------------------------------------------
@@ -36,19 +31,25 @@ importFrom_Core { "raw", "rawMatrixReadMsolveFile" }
 
 ---------------------------------------------------------------------------
 
-msolve = (mIn, mOut, args, opts) -> (
-    mCmd := demark_" " { "msolve", args,
+msolveProgram = findProgram("msolve", "msolve --help",
+    MinimumVersion => ("0.6.7", "msolve -V"),
+    RaiseError => false,
+    Verbose => debugLevel > 0)
+
+if msolveProgram === null then (
+    if not (options currentPackage).OptionalComponentsPresent
+    then ( printerr "warning: msolve cannot be found; ending"; end )
+    else ( printerr "warning: msolve found but its version is older than 0.6.7";
+	msolveProgram = findProgram("msolve", "msolve --help", Verbose => debugLevel > 0)))
+
+msolve = (mIn, mOut, args, opts) -> runProgram(msolveProgram,
+    demark_" " { args,
 	"-t", toString opts#"number of threads",
 	"-v", toString opts.Verbosity,
-	"-f", mIn, "-o", mOut };
-    if opts.Verbosity > 0 then (
-	printerr "msolve command:";
-	-- not commented for ease of copying
-	-- and running manually in terminal:
-	stderr << "\t" << mCmd << endl);
-    mRet := run mCmd;
-    if mRet =!= 0 then error("msolve exited with non-zero exit code ", mRet);
-    mRet)
+	"-f", mIn, "-o", mOut },
+    KeepFiles => true,
+    RaiseError => true,
+    Verbose => opts.Verbosity > 0)
 
 use'readMsolveOutputFile := true;
 readMsolveOutputFile = method()
@@ -63,7 +64,6 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
 
 inputOkay=method(TypicalValue=>Boolean);
 inputOkay(Ideal):=I->(
-    if not msolvePresentAndModern then (error "msolve (version > 0.6.4) is not installed in system"; return false;);
     R:=ring I;
     if not instance(R,PolynomialRing) then (print "input must be in a polynomial ring over a field";return false;);
     kk:=coefficientRing(R);
