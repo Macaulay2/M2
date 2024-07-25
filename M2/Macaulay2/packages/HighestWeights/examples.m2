@@ -463,7 +463,7 @@ doc ///
     Example
     	R=QQ[x_(-2, 1),x_(-1, 0),x_(-1, 1),x_(0, 0),x_(1,-1),x_(1, 0),x_(2,-1)]
 	m=ideal vars R;
-	K=koszul gens m; betti K
+	K=koszulComplex gens m; betti K
     Text
     	Now we define  the list of weights of the variables and attach it to the ring.
 	
