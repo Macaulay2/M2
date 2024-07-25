@@ -25,7 +25,6 @@ undocumented {
      (symbol *, Number, RingElement),
      (symbol *, RingElement, Number),
     (symbol*,  Minus, Expression),
-    (symbol*,  Product, Holder),
     (symbol*,  Minus, Minus),
     (symbol*,  Number, InfiniteNumber),
     (symbol*,  InfiniteNumber, ZZ),
@@ -35,15 +34,29 @@ undocumented {
     (symbol*,  ZZ, GradedModuleMap),
     (symbol*,  InfiniteNumber, InfiniteNumber),
     (symbol*,  Expression, Minus),
-    (symbol*,  Product, Product),
-    (symbol*,  Holder, Product),
     (symbol*,  ZZ, Module),
     (symbol*,  ZZ, MonomialIdeal),
     (symbol*,  String),
     (symbol*,  ZZ, ChainComplexMap),
-    (symbol*,  Expression, OneExpression),
-    (symbol*,  OneExpression, Expression),
     }
+operator:= core "operator"
+unit:=core "unit"
+undocumented splice apply(core "assocList", opClass -> (
+	(opClass#operator,opClass,opClass),
+	(opClass#operator,opClass,Expression),
+	(opClass#operator,opClass,Holder),
+	(opClass#operator,Expression,opClass),
+	(opClass#operator,Holder,opClass),
+	(opClass#operator,Expression,Expression),
+	(opClass#operator,Expression,Thing),
+	(opClass#operator,Thing,Expression))
+	| if opClass#?unit then (
+	    (opClass#operator,Expression,opClass#unit),
+	    (opClass#operator,opClass#unit,Expression),
+	    (opClass#operator,opClass,opClass#unit),
+	    (opClass#operator,opClass#unit,opClass)
+	    ) else ())
+ 
 
      
 document {
@@ -893,7 +906,6 @@ document {
 
 undocumented {
     (symbol**, QuotientRing, PolynomialRing),
---    (symbol**, Expression, NonAssociativeProduct),
     (symbol**, QuotientRing, QuotientRing),
     (symbol**, Number, Matrix),
     (symbol**, Matrix, Number),
@@ -902,14 +914,8 @@ undocumented {
     (symbol **,RingElement,Number),
     (symbol **,RingElement,RingElement),
     (symbol **,Thing,InexactFieldFamily),
---    (symbol**, NonAssociativeProduct, NonAssociativeProduct),
     (symbol**, PolynomialRing, PolynomialRing),
     (symbol**, PolynomialRing, QuotientRing),
---    (symbol**, NonAssociativeProduct, Expression),
---    (symbol**, NonAssociativeProduct, Holder),
---    (symbol**, Holder, NonAssociativeProduct),
-    (symbol**, Expression, OneExpression),
-    (symbol**, OneExpression, Expression)
      }
 
 document {

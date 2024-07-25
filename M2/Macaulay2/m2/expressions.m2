@@ -14,10 +14,12 @@ lprec = prec = x -> (getParsing x)#0
 rprec = strength2 = x -> (getParsing x)#1
 uprec = strength1 = x -> (getParsing x)#2
 
--- local variables
-EmptyName := symbol EmptyName
-unit := symbol unit
-operator := symbol operator
+EmptyName = symbol EmptyName
+unit = symbol unit
+operator = symbol operator
+protect unit
+protect operator
+protect EmptyName
 -*
 letters := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 digits := set characters "0123456789"
@@ -433,7 +435,7 @@ expressionValue Adjacent := x -> (expressionValue x#0) (expressionValue x#1)
 -----------------------------------------------------------------------------
 prepend0 := (e,x) -> prepend(unhold e, x)
 append0 := (x,e) -> append(x, unhold e)
-assocList := {Sum,Product,DirectSum,TensorProduct,Equation} -- populate automatically?
+assocList = {Sum,Product,DirectSum,TensorProduct,Equation} -- populate automatically?
 scan(assocList, opClass -> (
 	installMethod(opClass#operator,opClass,opClass,join);
 	installMethod(opClass#operator,opClass,Expression,append);
