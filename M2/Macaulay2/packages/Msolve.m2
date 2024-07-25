@@ -163,6 +163,8 @@ msolveSaturate(Ideal,RingElement):=opt->(I,f)->(
     gR:=toString(gens R);
     l1:=substring(1,#gR-2,gR);
     l2:=char R;
+    -- see https://github.com/algebraic-solving/msolve/issues/165
+    if l2 < 2^16 or l2 =!= 1073741827 then error "msolve: unsupported prime for saturation";
     gI:=toString flatten entries gens I;
     if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
     Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
