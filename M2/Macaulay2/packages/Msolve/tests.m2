@@ -15,10 +15,20 @@ TEST ///
 ///
 
 TEST ///
-  A = QQ[x,y,z]
+  A = ZZ/1073741827[x,y,z]
   B = A[u,v,w]
   I = minors_2 matrix {{x,y,z}, {u,v,w}}
+  -- TODO: loses homogeneity
   assert(I == ideal msolveGB I)
+  assert(I == ideal msolveSaturate(I, B_0))
+  assert(I == ideal msolveSaturate(I, B_3))
+  -- TODO: eliminate doesn't work over tower rings
+  msolveEliminate(I, B_0) -- == eliminate(I, B_0)
+  -- TODO: msolveEliminate can't eliminate variables in the base ring:
+  -- msolveEliminate(I, B_3)
+  -- TODO: msolveLeadMonomials doesn't work for tower rings yet
+  -- msolveLeadMonomials I
+  --
   I = minors_2 matrix {{x,y^2,z^3}, {u^4,v^5,w^6}}
   assert(I == ideal msolveGB I)
 ///
