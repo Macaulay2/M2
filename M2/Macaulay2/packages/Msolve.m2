@@ -107,6 +107,14 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
     	matrix {M2Out};
     	)
 
+readMsolveList = mOutStr -> (
+    mOutStr = replace("\\[", "{", mOutStr);
+    mOutStr = replace("\\]", "}", mOutStr);
+    -- e.g. 'p_0' to "p_0"
+    mOutStr = replace("'", "\"",  mOutStr);
+    mOutStr = first separate(":", mOutStr);
+    value mOutStr)
+
 msolveGB = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveGB Ideal := opts -> I0 -> (
     (S, K, I) := toMsolveRing I0;
@@ -163,10 +171,9 @@ msolveRealSolutions = method(TypicalValue => List,
     Options => msolveDefaultOptions ++ { "output type" => "rationalInterval" })
 msolveRealSolutions Ideal := opt -> I0 -> (
     (S, K, I) := toMsolveRing I0;
-    mOut := msolve(S, K, I_*, "", opt);
-    outStrFull:=get(mOut);
-    mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",outStrFull))_0));
-    solsp:=value(mOutStr);
+    mOut := msolve(S, K, I_*, "", opt); -- optional: -p precision
+    -- format: [dim, [numlists, [ solution boxes ]]]
+    solsp := readMsolveList get mOut;
     if solsp_0>0 then (error "Input ideal not zero dimensional, no solutions found.";);
     if (solsp_1)_0>1 then (print "unexpected msolve output, returning full output"; return solsp;);
     sols:=(solsp_1)_1;
@@ -180,9 +187,9 @@ msolveRUR Ideal := opt -> I0 ->(
     S0 := ring I0;
     (S, K, I) := toMsolveRing I0;
     mOut := msolve(S, K, I_*, "-P 2", opt);
-    mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",get(mOut)))_0));
-    solsp:=value replace("[']","\"",mOutStr);
-    if first solsp!=0  then (print "Input ideal not zero dimensional, no solutions found."; return 0;);
+    -- format: [dim, [char, nvars, deg, vars, form, [1, [lw, lwp, param]]]]:
+    solsp := readMsolveList get mOut;
+    if first solsp != 0 then error "msolveRUR: expected zero dimensional input ideal";
     lc:=(solsp_1)_4;
     l:=sum(numgens S0,i->lc_i*S0_i);
     RUR:= new MutableHashTable;
