@@ -277,7 +277,7 @@ Node
      Key
      	  Msolve
      Headline
-     	  Macaulay2 interface for msolve; computes real solutions and Groebner basis, etc. 
+	  Macaulay2 interface for msolve; computes real solutions and Groebner basis, etc.
      Description
      	  Text
               This package provides a Macaulay2 interface for the
@@ -329,20 +329,27 @@ Node
        [msolveGB, Threads]
        [msolveGB, Verbosity]
     Headline
-    	Computes generators of a Groebner basis in GrevLex order.
+	compute generators of a Groebner basis in GRevLex order
     Usage
     	msolveGB(I)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO QQ@ or
+	    @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
-	    a matrix whose columns form a Groebner basis for the input ideal I, in the GrevLex order.    
+	    whose columns form a Groebner basis for the input ideal I, in the GRevLex order
     Description 
         Text
-    	    This functions uses the F4 implementation in the msolve package to compute a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with characteristic less than 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
+	    This functions uses the F4 implementation in the msolve package to compute a Groebner basis,
+	    in GRevLex order, of a polynomial ideal with either rational coefficients or finite field
+	    coefficients with characteristic less than $2^{31}$. If the input ideal is a polynomial ring
+	    with monomial order other than GRevLex a GRevLex basis is returned (and no warning is given).
+	    The input ideal may also be given in a ring with integer coefficients, in this case a Groebner
+	    basis for the given ideal over the rationals  will be computed, denominators will be cleared,
+	    and the output will be a Groebner basis over the rationals in GRevLex order with integer coefficients.
     	Text
 	    First an example over a finite field
 	Example
@@ -369,20 +376,28 @@ Node
        [msolveLeadMonomials, Threads]
        [msolveLeadMonomials, Verbosity]
     Headline
-    	Computes the leading monomials of a Groebner basis in GrevLex order.
+	compute the leading monomials of a Groebner basis in GRevLex order
     Usage
     	msolveLeadMonomials(I)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@, @TO QQ@, or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO QQ@ or
+	    @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
-	    a matrix whose columns are the leading monomials (of a Groebner basis for) the input ideal I, in the GrevLex order.    
+	    whose columns are the leading monomials (of a Groebner basis for) the input ideal I, in the GRevLex order
     Description 
         Text
-    	    This functions uses the F4 implementation in the msolve package to compute leading monomials via a Groebner basis, in GrevLex order, of a polynomial ideal with either rational coefficients or finite field coefficients with characteristic less than 2^32. If the input ideal is a polynomial ring with monomial order other than GrevLex a GrevLex basis is returned (and no warning is given). The input ideal may also be given in a ring with integer coefficients, in this case a Groebner basis for the given ideal over the rationals  will be computed, denominators will be cleared, and the output will be a Groebner basis over the rationals in GrevLex order with integer coefficients.
+	    This functions uses the F4 implementation in the msolve package to compute leading
+	    monomials via a Groebner basis, in GRevLex order, of a polynomial ideal with either
+	    rational coefficients or finite field coefficients with characteristic less than $2^{31}$.
+	    If the input ideal is a polynomial ring with monomial order other than GRevLex a GRevLex
+	    basis is returned (and no warning is given). The input ideal may also be given in a ring
+	    with integer coefficients, in this case a Groebner basis for the given ideal over the
+	    rationals  will be computed, denominators will be cleared, and the output will be a
+	    Groebner basis over the rationals in GRevLex order with integer coefficients.
     	Text
 	    First an example over a finite field
 	Example
@@ -392,7 +407,11 @@ Node
 	    degree lm
 	    dim lm	    
 	Text
-	    Now the same example over the rationals; note over the rationals msolve first computes over a finite field and when only the leading monomials are asked for the correct leading monomials will be returned but the full Groebner basis over Q will not be computed. Hence if only degree and dimension are desired this command will often be faster that the Groeber basis command.  
+	    Now the same example over the rationals; note over the rationals msolve first
+	    computes over a finite field and when only the leading monomials are asked for
+	    the correct leading monomials will be returned but the full Groebner basis over
+	    @TO QQ@ will not be computed. Hence if only degree and dimension are desired
+	    this command will often be faster that the Groebner basis command.
 	Example 
 	    R=QQ[z_1..z_3]
 	    I=ideal(7*z_1*z_2+5*z_2*z_3+z_3^2+z_1+5*z_3+10,8*z_1^2+13*z_1*z_3+10*z_3^2+z_2+z_1)
@@ -409,20 +428,34 @@ Node
        [msolveRealSolutions, Threads]
        [msolveRealSolutions, Verbosity]
     Headline
-    	Uses symbolic methods to compute all real solutions to a zero dim systems.
+	compute all real solutions to a zero dimensional system using symbolic methods
     Usage
     	msolveRealSolutions(I)
     Inputs
     	I:Ideal
-	    which is zero dimensional, in a polynomial ring with coefficients over @TO ZZ@ or @TO QQ@.
+	    which is zero dimensional, in a polynomial ring with coefficients over @TO QQ@
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         Sols:List
-	    a list of lists, each entry in the list Sol consists of a list representing the coordinates of a solution. By default each solution coordinate value is also represented by a two element list of rational numbers, {a, b}, this means that that coordinate of the solution has a value greater than or equal to a and less than or equal to b. This interval is computed symbolically and its correctness is guaranteed by exact methods.      
+	    of lists; each entry in the list @TT "Sols"@ consists of a list representing
+	    the coordinates of a solution. By default each solution coordinate value is
+	    also represented by a two element list of rational numbers, {a, b}, this means
+	    that that coordinate of the solution has a value greater than or equal to a and
+	    less than or equal to b. This interval is computed symbolically and its correctness
+	    is guaranteed by exact methods.
     Description 
         Text
-    	    This functions uses the msolve package to compute the real solutions to a zero dimensional polynomial ideal with either integer or rational coefficients. The output is a list of lists, each entry in the list Sol consists of a list representing the coordinates of a solution. By default each solution coordinate value is also represented by a two element list of rational numbers, {a, b}, this means that that coordinate of the solution has a value greater than or equal to a and less than or equal to b. This interval is computed symbolically and its correctness is guaranteed by exact methods. Note that using the option Output one may specify the output in terms of either a float interval with "floatInterval" or an average of the interval endpoints as a single float with "float".      
+	    This functions uses the msolve package to compute the real solutions to a zero
+	    dimensional polynomial ideal with either integer or rational coefficients.
+	    The output is a list of lists, each entry in the list Sol consists of a list
+	    representing the coordinates of a solution. By default each solution coordinate
+	    value is also represented by a two element list of rational numbers, {a, b},
+	    this means that that coordinate of the solution has a value greater than or
+	    equal to a and less than or equal to b. This interval is computed symbolically
+	    and its correctness is guaranteed by exact methods. Note that using the option
+	    Output one may specify the output in terms of either a float interval with
+	    "floatInterval" or an average of the interval endpoints as a single float with "float".
 
     	Text
 	    First an example over a finite field
@@ -437,7 +470,8 @@ Node
 	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float")
 	    	    
 	Text
-	    Note in cases where solutions have multiplicity this is not returned, but the presence of multiplicity also does not reduce accuracy or reliability in any way.   
+	    Note in cases where solutions have multiplicity this is not returned, but the presence
+	    of multiplicity also does not reduce accuracy or reliability in any way.
 	Example 
 	    f = (x_1-1)*x_1^3
 	    g = (x_2-5/2)*(x_2-1/2)
@@ -453,22 +487,26 @@ Node
        [msolveRUR, Threads]
        [msolveRUR, Verbosity]
     Headline
-    	Uses symbolic methods to compute the rational univariate representation.
+	compute the rational univariate representation using symbolic methods
     Usage
     	msolveRUR(I)
     Inputs
     	I:Ideal
-	    which is zero dimensional, in a polynomial ring with coefficients over @TO ZZ@ or @TO QQ@.
+	    which is zero dimensional, in a polynomial ring with coefficients over @TO QQ@
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         RUR:HashTable
-	    a HashTable with 6 keys giving the rational univariate representation of I.     
+	    with 6 keys giving the rational univariate representation of I
     Description 
         Text
-    	    This functions uses the msolve package to compute the rational univariate representation (RUR) of a zero dimensional polynomial ideal with either integer or rational coefficients.
+	    This functions uses the msolve package to compute the rational univariate representation
+	    (RUR) of a zero dimensional polynomial ideal with either integer or rational coefficients.
 	    
-	    The RUR gives a parametrization for all complex solutions to the input system. For a complete definition of the RUR see the paper: Rouillier, Fabrice (1999). "Solving Zero-Dimensional Systems Through the Rational Univariate Representation". Appl. Algebra Eng. Commun. Comput. 9 (9): 433–461.
+	    The RUR gives a parametrization for all complex solutions to the input system.
+	    For a complete definition of the RUR see the paper: Rouillier, Fabrice (1999).
+	    "Solving Zero-Dimensional Systems Through the Rational Univariate Representation".
+	    Appl. Algebra Eng. Commun. Comput. 9 (9): 433–461.
 	    
 	    If I is a zero dimensional ideal in QQ[x_1..x_n] then the RUR is given by:
 	    
@@ -480,13 +518,16 @@ Node
 	    
 	    The key "findRootsUniPoly" gives the polynomial w(T) above.
 	    
-	    The key "denominator"  gives the polynomial w'(T), which is the derivative of w(T) and is the denominator of each coordinate above.
+	    The key "denominator"  gives the polynomial w'(T), which is the derivative of w(T) and
+	    is the denominator of each coordinate above.
 	    
-	    The key "numerator" gives a list {v_1(T), .. , v_n(T)} of length n above, with n the number of variables, where the polynomial v_i(T) gives the numerator of the ith coordinate.
+	    The key "numerator" gives a list {v_1(T), .. , v_n(T)} of length n above, with n the
+	    number of variables, where the polynomial v_i(T) gives the numerator of the ith coordinate.
 	    
-	    The key "var" gives the variable name in the univariate polynomial ring; by default this is: T.
+	    The key "var" gives the variable name in the univariate polynomial ring; by default this is: "T".
 	    
-	    The key "T" gives the linear relation between the variables of the ring of I and the single variable, which is denoted T above.
+	    The key "T" gives the linear relation between the variables of the ring of I and
+	    the single variable, which is denoted T above.
 	    
     	Text
 	    A simple example, where the input ideal is zero dimensional and radical.
@@ -513,29 +554,35 @@ Node
        [msolveSaturate, Threads]
        [msolveSaturate, Verbosity]
     Headline
-    	Computes a Groebner basis for the saturation of an ideal by a single polynomial in GrevLex order; only works over a finite field.
+	compute a Groebner basis for the saturation of an ideal by a single polynomial in GRevLex order
     Usage
     	msolveSaturate(I)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over
+	    @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic more than $2^16$ and less than $2^{31}$
 	f:RingElement
 	    a polynomial in the same ring as I.    
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
-	    a matrix whose columns form a Groebner basis for the ideal I:f^\infty, in the GrevLex order.    
+	    whose columns form a Groebner basis for the ideal $I:f^\infty$, in the GRevLex order
     Description 
         Text
-    	    This functions uses the saturation implementation in the msolve package to compute a Groebner basis, in GrevLex order, of I:f^\infty, that is of the saturation of the ideal I by the principal ideal generated by the polynomial f.
+	    This functions uses the F4SAT algorithm implemented in the msolve library to compute a
+	    Groebner basis, in GRevLex order, of $I:f^\infty$, that is of the saturation of the
+	    ideal $I$ by the principal ideal generated by the polynomial $f$.
     	Text
 	    First an example; note the ring must be a polynomial ring over a finite field
 	Example
 	    R=ZZ/1073741827[z_1..z_3]
 	    I=ideal(z_1*(z_2^2-17*z_1-z_3^3),z_1*z_2)
 	    satMsolve=ideal msolveSaturate(I,z_1)
-	    satM2=saturate(I,z_1)	    	    
+	    satM2=saturate(I,z_1)
+    Caveat
+	Currently this algorithm only works over prime fields in characteristic between $2^{16}$ and $2^{31}$.
+
 Node 
     Key
     	msolveEliminate
@@ -546,19 +593,20 @@ Node
        [msolveEliminate, Threads]
        [msolveEliminate, Verbosity]
     Headline
-    	Computes the elimination ideal of a given ideal.
+	compute the elimination ideal of a given ideal
     Usage
     	msolveEliminate(I,elimVars)
     Inputs
     	I:Ideal
-	    in a polynomial ring with @TO GRevLex@ order and coefficients over @TO ZZ@ or @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$.
+	    in a polynomial ring with @TO GRevLex@ order and coefficients over
+	    @TO2 {"finite fields", TT "ZZ/p"}@ in characteristic less than $2^{31}$
 	elimVars:List
-	    of variables in the same ring as @TT "I"@, these variables will be eliminated.
+	    of variables in the same ring as @TT "I"@, these variables will be eliminated
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
         GB:Matrix
-	    a matrix whose columns are generators for the elimination ideal.    
+	    whose columns are generators for the elimination ideal
     Description 
         Text
             This function takes as input a polynomial ideal and
@@ -566,9 +614,9 @@ Node
             variables specified in the inputted list.
 
             The behavior is very different over finite (prime) fields, and the rationals.
-            Over QQ, the subideal over a smaller set of variables eliminating the given ones is returned.
+	    Over @TO QQ@, the subideal over a smaller set of variables eliminating the given ones is returned.
             Over a finite field, the Groebner basis in the product order eliminating the given block of variables
-            is returned (warning: this is a copy of the ring with (potentially) permuted variables.
+	    is returned (warning: this is a copy of the ring with potentially permuted variables).
         Text
 	    First an example over the rationals. 
 	Example
@@ -580,8 +628,7 @@ Node
 	    sub(M2elim,ring Msolveelim)==Msolveelim    
 	Text
             We can also work over a finite field. Here we get the full
-            Groebner basis in the permuted variables with a block
-            order.
+            Groebner basis in the permuted variables with a block order.
         Example 
 	    R = ZZ/1073741827[x,y,a,b,c,d]
 	    f = c*x^2+a*x+b*y^2+d*x*y+y
