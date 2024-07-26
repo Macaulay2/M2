@@ -613,13 +613,13 @@ monoidSymbol  = (M, x) -> ( b := try baseName x;
     and M.indexStrings#?x then M.indexSymbols#x     else
     error("expected an index, symbol, or name of variable of the ring or monoid: ", toString x))
 
--- also used in Elimination
--- TODO: fails for tower rings!
+-- also used in Elimination and Msolve
 monoidIndices = (M, v) -> apply(v, monoidIndex_M)
 monoidIndex   = (M, x) -> ( b := try baseName x;
     if instance(x, ZZ)    then x else
     if instance(x, List)  then monoidIndices(M, x) else
     if M.index#?b         then M.index#b else
+    try index x else -- last ditch attempt for ring elements
     error("expected an integer or variable of the ring or monoid: ", toString x))
 
 -----------------------------------------------------------------------------
