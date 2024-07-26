@@ -159,6 +159,8 @@ documentationValue := method(TypicalValue => Hypertext)
 documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
+    -- catch when an unexported type is documented; TODO: where should this be caught?
+    if package T === null then error("encountered unexported type ", toString T);
     -- types that inherit from T
     b := smenu(toString \ subclasses T);
     -- constructors of T
