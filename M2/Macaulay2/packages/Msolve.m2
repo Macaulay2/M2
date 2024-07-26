@@ -11,6 +11,7 @@ newPackage(
 		  HomePage => "https://antonleykin.math.gatech.edu/"}},
 	  Keywords => {"Groebner Basis Algorithms" , "Interfaces"},
     	Headline => "An interface to the msolve package (https://msolve.lip6.fr/) which computes Groebner Basis and does real root isolation",
+	PackageImports => { "Elimination", "Saturation" },
     	AuxiliaryFiles => true,
 	DebuggingMode => false,       
 	OptionalComponentsPresent => run("command -v msolve > /dev/null") == 0
@@ -28,6 +29,10 @@ export{
     }
 
 importFrom_Core { "raw", "rawMatrixReadMsolveFile" }
+
+-- used in msolveEliminate
+importFrom_Core { "monoidIndices" }
+importFrom_Elimination { "eliminationRing" }
 
 ---------------------------------------------------------------------------
 
@@ -57,13 +62,15 @@ runMsolve = (mIn, mOut, args, opts) -> runProgram(msolveProgram,
     RaiseError => true,
     Verbose => opts.Verbosity > 0)
 
--- e.g. turns x_(0,0)... to x_0...
+-- e.g. turns x_(0,0)... to p_0...
 toMsolveRing = I -> (
-    S0 := ring I;
-    x := local x;
-    K := coefficientRing S0;
-    S := newRing(S0, Variables => x_0..x_(numgens S0 - 1));
-    S, K, substitute(I, vars S))
+    S0 := first flattenRing ring I;
+    kk := ultimate(coefficientRing, S0);
+    if not instance(S0, PolynomialRing) or instance(kk, GaloisField)
+    or not isField kk or char kk > 2^31 or precision kk < infinity
+    then error "msolve: expected an ideal in a polynomial ring over QQ or ZZ/p with chacteristic less than 2^31";
+    S := newRing(S0, Variables => numgens S0);
+    S, kk, substitute(I, vars S))
 
 toMsolveString = X -> (
     elts := if instance(X, List)     then X
@@ -100,96 +107,46 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
     	matrix {M2Out};
     	)
 
-inputOkay = method(TypicalValue => Boolean)
-inputOkay Ideal := I -> (
-    R := first flattenRing I;
-    K := ultimate(coefficientRing, R);
-    if not instance(R, PolynomialRing) then (
-	if debugLevel > 0 then printerr "msolve input must be in a polynomial ring";
-	return false);
-    if not isField K or instance(K, GaloisField) or precision K < infinity or char K > 2^31 then (
-	if debugLevel > 0 then printerr "msolve input must be over QQ or ZZ/p with chacteristic less than 2^31";
-	return false);
-    true)
-
 msolveGB = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
-msolveGB(Ideal):=opt->I->(
-    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
-    mIn:=temporaryFileName()|".ms";
-    R:=ring I;
-    kk:=coefficientRing(R);
-    gR:=toString(gens R);
-    l1:=substring(1,#gR-2,gR);
-    l2:=char R;
-    gI:=toString flatten entries gens I;
-    if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
-    Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
-    inStr:=l1|newline|l2|newline|Igens;
-    mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms";
-    runMsolve(mIn, mOut, "-g 2", opt);
-    msolGB:=readMsolveOutputFile(R, mOut);
-    return gens forceGB msolGB;
-    );
+msolveGB Ideal := opts -> I0 -> (
+    (S, K, I) := toMsolveRing I0;
+    mOut := msolve(S, K, I_*, "-g 2", opts);
+    msolGB := readMsolveOutputFile(S, mOut);
+    gens forceGB substitute(msolGB, vars ring I0))
+-- TODO: add as a hook for gb
 
+importFrom_Core "numallvars"
 msolveLeadMonomials = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
-msolveLeadMonomials(Ideal):=opt->(I)->(
-    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
-    mIn:=temporaryFileName()|".ms";
-    R:=ring I;
-    kk:=coefficientRing(R);
-    gR:=toString(gens R);
-    l1:=substring(1,#gR-2,gR);
-    l2:=char R;
-    gI:=toString flatten entries gens I;
-    if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
-    Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
-    inStr:=l1|newline|l2|newline|Igens;
-    mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms";
-    runMsolve(mIn, mOut, "-g 1", opt);
-    msolGB:=readMsolveOutputFile(R, mOut);
-    return gens forceGB msolGB;
-    );
+msolveLeadMonomials Ideal := opts -> I0 -> (
+    -- TODO: premute the coefficient variables to make this work for tower rings
+    S0 := ring I0;
+    if numgens S0 =!= S0.numallvars then error "msolveLeadMonomials: unsupported tower ring";
+    (S, K, I) := toMsolveRing I0;
+    mOut := msolve(S, K, I_*, "-g 1", opts);
+    msolGB := readMsolveOutputFile(S, mOut);
+    gens forceGB substitute(msolGB, vars ring I0))
+-- TODO: add leadMonomials Ideal, then add this as a hook
 
 msolveEliminate = method(Options => msolveDefaultOptions)
-msolveEliminate(Ideal,RingElement):=Ideal =>opt-> (I,elimvar)->(
-    return msolveEliminate(I,{elimvar});
-    );
-msolveEliminate(RingElement,Ideal):=Ideal => opt->(elimvar,I) ->
-    msolveEliminate(I,{elimvar})
-msolveEliminate(List,Ideal):=Ideal => opt->(elimvars,I) -> 
-    msolveEliminate(I,elimvars)
-msolveEliminate(Ideal,List):=Ideal => opt->(J,elimvars)->(
-    if not inputOkay(J) then error "Problem with input, please refer to documentation.";
-    mIn:=temporaryFileName()|".ms";
-    S:=ring J;
-    kk:=coefficientRing(S);
-    keepvars:=select(gens S, s->not member(s,elimvars)); 
-    elimNum:=length(elimvars);
-    --R:=kk(monoid [join(elimvars,keepVars),MonomialOrder=>{numgens(S):1}]);
-    R:=kk(monoid [join(elimvars,keepvars),MonomialOrder=>{#elimvars, #keepvars}]);
-    elimR:=kk(monoid [keepvars]);
-    I:=sub(J,R);
-    gR:=toString(gens R);
-    l1:=substring(1,#gR-2,gR);  -- removing parentheses
-    l2:=char R;
-    gI:=toString flatten entries gens I;
-    if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
-    Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
-    inStr:=l1|newline|l2|newline|Igens;
-    mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms";
-    runMsolve(mIn, mOut, "-e " | toString elimNum | " -g 2", opt);
-    if char R === 0 then 
-      ideal readMsolveOutputFile(elimR, mOut)
-    else
-      ideal readMsolveOutputFile(R, mOut)
-    )
+msolveEliminate(RingElement, Ideal) := Ideal => opts -> (elimvar,  I) -> msolveEliminate(I, {elimvar}, opts)
+msolveEliminate(List,        Ideal) := Ideal => opts -> (elimvars, I) -> msolveEliminate(I,  elimvars, opts)
+msolveEliminate(Ideal, RingElement) := Ideal => opts -> (I,  elimvar) -> msolveEliminate(I, {elimvar}, opts)
+msolveEliminate(Ideal,        List) := Ideal => opts -> (I0, elimvars) -> (
+    -- turns generators into indices, but also allows indices
+    elimIndices := monoidIndices(S0 := ring I0, elimvars);
+    keepvars := S0_* - set S0_*_elimIndices;
+    -- gives ring maps to and from a ring with elimvars first, keepvars last
+    (toS0', toS0) := eliminationRing(elimIndices, S0);
+    (S, K, I) := toMsolveRing(I' := toS0' I0);
+    mOut := msolve(S, K, I_*, "-g 2 -e " | length elimIndices, opts);
+    S' := if char K === 0
+    then K(monoid [keepvars]) -- msolve does not return the remaining generators over QQ
+    else newRing(ring I', MonomialOrder => {#elimvars, #keepvars}); -- but over ZZ/p it does
+    ideal readMsolveOutputFile(S', mOut))
+-- TODO: add as a hook for eliminate
 
 msolveSaturate = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveSaturate(Ideal, RingElement) := opts -> (I0, f0) -> (
-    if not inputOkay I0 then error "Problem with input, please refer to documentation.";
     (S, K, I) := toMsolveRing I0;
     f := substitute(f0, vars S);
     -- see https://github.com/algebraic-solving/msolve/issues/165
@@ -204,21 +161,9 @@ addHook((saturate, Ideal, RingElement), Strategy => Msolve,
 
 msolveRealSolutions = method(TypicalValue => List,
     Options => msolveDefaultOptions ++ { "output type" => "rationalInterval" })
-msolveRealSolutions(Ideal):=opt->(I)->(
-    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
-    mIn:=temporaryFileName()|".ms";
-    R:=ring I;
-    kk:=coefficientRing(R);
-    gR:=toString(gens R);
-    l1:=substring(1,#gR-2,gR);
-    l2:=char R;
-    gI:=toString flatten entries gens I;
-    if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
-    Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
-    inStr:=l1|newline|l2|newline|Igens;
-    mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms";
-    runMsolve(mIn, mOut, "", opt);
+msolveRealSolutions Ideal := opt -> I0 -> (
+    (S, K, I) := toMsolveRing I0;
+    mOut := msolve(S, K, I_*, "", opt);
     outStrFull:=get(mOut);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",outStrFull))_0));
     solsp:=value(mOutStr);
@@ -231,30 +176,18 @@ msolveRealSolutions(Ideal):=opt->(I)->(
     );
 
 msolveRUR = method(TypicalValue => List, Options => msolveDefaultOptions)
-msolveRUR(Ideal):=opt->(I)->(
-    if not inputOkay(I) then error "Problem with input, please refer to documentation.";
-    mIn:=temporaryFileName()|".ms";
-    R:=ring I;
-    kk:=coefficientRing(R);
-    gRm2:=gens R;
-    gR:=toString(gRm2);
-    l1:=substring(1,#gR-2,gR);
-    l2:=char R;
-    gI:=toString flatten entries gens I;
-    if (isField(kk) and (char(kk)==0)) then gI=replace("[)(]","",gI);
-    Igens:=replace(" ",""|newline,substring(1,#gI-2,gI));
-    inStr:=l1|newline|l2|newline|Igens;
-    mIn<<inStr<<close;
-    mOut:=temporaryFileName()|".ms";
-    runMsolve(mIn, mOut, "-P 2", opt);
+msolveRUR Ideal := opt -> I0 ->(
+    S0 := ring I0;
+    (S, K, I) := toMsolveRing I0;
+    mOut := msolve(S, K, I_*, "-P 2", opt);
     mOutStr:=replace("[]]","}",replace("[[]","{",(separate("[:]",get(mOut)))_0));
     solsp:=value replace("[']","\"",mOutStr);
     if first solsp!=0  then (print "Input ideal not zero dimensional, no solutions found."; return 0;);
     lc:=(solsp_1)_4;
-    l:=sum(numgens R,i->lc_i*gRm2_i);
+    l:=sum(numgens S0,i->lc_i*S0_i);
     RUR:= new MutableHashTable;
     T:= getSymbol("T");
-    S2:=(coefficientRing(R))[T];
+    S2 := K(monoid[T]);
     T=first gens S2;
     RUR#"T"=l;
     RUR#"var"=T;
@@ -303,11 +236,6 @@ Node
 	      
 	      The M2 interface assumes that the binary executable is
 	      named "msolve" is on the executable path.
-
-	      Rings with double subscript variables are NOT supported,
-	      i.e. QQ[x_(1,1)..x_(1,3)] will NOT work. 
-	      You should use rings with single subscript, e.g., QQ[x_1..x_5],
-	      or rings with some characters as variables, e.g. QQ[a..d] or QQ[aa,bcd,x1] etc.
 
 	      For all functions the option @TT "Verbosity"@ can be used.
 	      It has levels 0, 1, 2. The default is 0.
