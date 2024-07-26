@@ -144,6 +144,13 @@ symbolsForHighlightJS = template -> (
     output = replace("@M2CONSTANTS@", hljsformat CONSTANTS, output);
     output)
 
+symbolsForTextMate = template -> (
+    output = replace("@M2KEYWORDS@",  demark("|", KEYWORDS),  template);
+    output = replace("@M2DATATYPES@", demark("|", DATATYPES), output);
+    output = replace("@M2FUNCTIONS@", demark("|", FUNCTIONS), output);
+    output = replace("@M2CONSTANTS@", demark("|", CONSTANTS), output);
+    output)
+
 -------------------------------------------------------------------------------
 -- Generate syntax files from templates in the same directory
 
@@ -177,6 +184,8 @@ generateGrammar("pygments/macaulay2.py", symbolsForPygments)
 
 -- highlight.js: Write macaulay2.js
 generateGrammar("highlightjs/macaulay2.js", symbolsForHighlightJS)
+
+generateGrammar("textmate/macaulay2.tmLanguage.json", symbolsForTextMate)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "
