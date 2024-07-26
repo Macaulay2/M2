@@ -614,6 +614,7 @@ monoidSymbol  = (M, x) -> ( b := try baseName x;
     error("expected an index, symbol, or name of variable of the ring or monoid: ", toString x))
 
 -- also used in Elimination
+-- TODO: fails for tower rings!
 monoidIndices = (M, v) -> apply(v, monoidIndex_M)
 monoidIndex   = (M, x) -> ( b := try baseName x;
     if instance(x, ZZ)    then x else
