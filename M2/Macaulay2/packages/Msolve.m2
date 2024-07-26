@@ -64,12 +64,14 @@ runMsolve = (mIn, mOut, args, opts) -> runProgram(msolveProgram,
 
 -- e.g. turns x_(0,0)... to p_0...
 toMsolveRing = I -> (
-    S0 := first flattenRing ring I;
+    S0 := ring I;
+    S1 := first flattenRing S0;
     kk := ultimate(coefficientRing, S0);
-    if not instance(S0, PolynomialRing) or instance(kk, GaloisField)
+    if not instance(S1, PolynomialRing) or instance(kk, GaloisField)
     or not isField kk or char kk > 2^31 or precision kk < infinity
     then error "msolve: expected an ideal in a polynomial ring over QQ or ZZ/p with chacteristic less than 2^31";
-    S := newRing(S0, Variables => numgens S0);
+    -- resets the variables to p_0...
+    S := newRing(S1, Variables => numgens S1);
     S, kk, substitute(I, vars S))
 
 toMsolveString = X -> (
@@ -99,7 +101,9 @@ msolve = (S, K, I, args, opts) -> (
 use'readMsolveOutputFile := true;
 readMsolveOutputFile = method()
 readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutputFile 
-    then map(R, rawMatrixReadMsolveFile(raw R, mOut)) else (
+    -- TODO: this substitution should be unnecessary,
+    -- but without it the result for tower rings is in the wrong order!
+    then substitute(map(R, rawMatrixReadMsolveFile(raw R, mOut)), R) else (
 	msolveOut := get mOut;
     	moutStrL:=separate(",",first separate("[]]",last separate("[[]",msolveOut)));
     	--the line below should be replaced by a call to the C-function to parse the string
@@ -119,8 +123,7 @@ msolveGB = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveGB Ideal := opts -> I0 -> (
     (S, K, I) := toMsolveRing I0;
     mOut := msolve(S, K, I_*, "-g 2", opts);
-    msolGB := readMsolveOutputFile(S, mOut);
-    gens forceGB substitute(msolGB, vars ring I0))
+    gens forceGB readMsolveOutputFile(ring I0, mOut))
 -- TODO: add as a hook for gb
 
 importFrom_Core "numallvars"
@@ -131,8 +134,7 @@ msolveLeadMonomials Ideal := opts -> I0 -> (
     if numgens S0 =!= S0.numallvars then error "msolveLeadMonomials: unsupported tower ring";
     (S, K, I) := toMsolveRing I0;
     mOut := msolve(S, K, I_*, "-g 1", opts);
-    msolGB := readMsolveOutputFile(S, mOut);
-    gens forceGB substitute(msolGB, vars ring I0))
+    gens forceGB readMsolveOutputFile(ring I0, mOut))
 -- TODO: add leadMonomials Ideal, then add this as a hook
 
 msolveEliminate = method(Options => msolveDefaultOptions)
@@ -161,8 +163,7 @@ msolveSaturate(Ideal, RingElement) := opts -> (I0, f0) -> (
     if char K < 2^16 or char K =!= 1073741827 then error "msolveSaturate: unsupported prime for saturation";
     -- msolve expects a list of the generators of the ideal followed by f
     mOut := msolve(S, K, I_* | {f}, "-S -g 2", opts);
-    msolGB := readMsolveOutputFile(S, mOut);
-    gens forceGB substitute(msolGB, vars ring I0))
+    gens forceGB readMsolveOutputFile(ring I0, mOut))
 addHook((saturate, Ideal, RingElement), Strategy => Msolve,
     -- msolveSaturate doesn't use any options of saturate, like DegreeLimit, etc.
     (opts, I, f) -> try ideal msolveSaturate(I, f))
