@@ -22,6 +22,7 @@ ring LocalRing := A -> A
 ambient LocalRing := A -> A
 
 export{"valuation",
+       "Valuation",
        "trivialValuation",
        "padicValuation",
        "leadTermValuation",
