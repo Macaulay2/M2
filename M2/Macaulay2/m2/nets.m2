@@ -284,7 +284,7 @@ commentize Net       := S -> (
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning' = (n, msg) -> if debugLevel >= n then printerr("warning: ", horizontalJoin msg)
-warning  =     msg  -> warning'(0, msg)
+warning  =     msg  -> warning'(1, msg)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
