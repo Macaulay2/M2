@@ -11,8 +11,6 @@ needs "methods.m2"
  MutableList.synonym = "mutable list"
 AngleBarList.synonym = "angle bar list"
 
-List#"major documentation node" = true
-
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
 Option ? Option := (s,t) -> toSequence s ? toSequence t
 
@@ -295,6 +293,16 @@ deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e,
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
+pack' = pack -- defined in d/actors4.d
+pack = method()
+pack(ZZ, String)    :=
+pack(ZZ, BasicList) := List => pack'
+-- TODO: deprecate these versions
+pack(String,    ZZ) :=
+pack(BasicList, ZZ) := List => (L, n) -> pack'(n, L)
+
+-----------------------------------------------------------------------------
+
 parallelApplyRaw = (L, f) ->
      -- 'reverse's to minimize thread switching in 'taskResult's:
      reverse (taskResult \ reverse apply(L, e -> schedule(f, e)));
@@ -310,6 +318,7 @@ parallelApply(BasicList, Function) := o -> (L, f) -> (
 	  flatten parallelApplyRaw(pack(L, ceiling(n / numChunks)), chunk -> apply(chunk, f));
      allowableThreads = oldAllowableThreads;
      res);
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

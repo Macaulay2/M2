@@ -676,93 +676,38 @@ minglefun(e:Expr):Expr := (
 -- # typical value: mingle, BasicList, List
 setupfun("mingle", minglefun);
 
-packlist(v:Sequence,n:int):Expr := (
+packlist(n:int, v:Sequence):Sequence := (
      d := length(v);
      i := 0;
-     list(new Sequence len (d + n - 1) / n do
+     new Sequence len (d + n - 1) / n do
      	  provide list(
 	       new Sequence len if n < d-i then n else d-i do (
 		    j := i;
 		    i = i+1;
-	       	    provide v.j))));
-packstring(s:string,n:int):Expr := (
-     d := length(s);
-     i := 0;
-     list(new Sequence len (d + n - 1) / n do
-	  provide stringCell(new string len if n < d - i then n else d - i do (
-	       j := i;
-	       i = i + 1;
-	       provide s.j))));
+		    provide v.j)));
 packfun(e:Expr):Expr := (
-     when e
-     is a:Sequence do (
-     	  if length(a) == 2 then (
-	       when a.0
-	       is n:ZZcell do (
-		    if isInt(n)
-		    then (
-			 nn := toInt(n);
-			 if nn > 0 then (
-			      when a.1
-			      is x:Sequence do packlist(x,nn)
-			      is x:List do packlist(x.v,nn)
-			      is x:stringCell do packstring(x.v,nn)
-			      else WrongArg(1,"a list or sequence")
-			      )
-			 else if nn == 0 then (
-			      when a.1
-			      is x:Sequence do if length(x) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      is x:List do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      is x:stringCell do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      else WrongArg(1,"a list, sequence, or string")
-			      )
-			 else WrongArg(1,"a positive integer")
-			 )
-		    else WrongArgSmallInteger(1)
-		    )
-	       is x:Sequence do (
-		    when a.1
-		    is n:ZZcell do (
-			 if isInt(n)
-			 then (
-			      nn := toInt(n);
-			      if nn > 0
-			      then packlist(x,nn)
-			      else if nn == 0 && length(x) == 0
-			      then emptyList
-			      else WrongArg(2,"a positive integer"))
-			 else WrongArgSmallInteger(2))
-		    else WrongArgZZ(2))
-	       is x:List do (
-		    when a.1
-		    is n:ZZcell do (
-			 if isInt(n)
-			 then (
-			      nn := toInt(n);
-			      if nn > 0
-			      then packlist(x.v,nn)
-			      else if nn == 0 && length(x.v) == 0
-			      then emptyList
-			      else WrongArg(2,"a positive integer"))
-			 else WrongArgSmallInteger(2))
-		    else WrongArgZZ(2))
-	       is x:stringCell do (
-		    when a.1
-		    is n:ZZcell do (
-			 if isInt(n)
-			 then (
-			      nn := toInt(n);
-			      if nn > 0
-			      then packstring(x.v,nn)
-			      else if nn == 0 && length(x.v) == 0
-			      then emptyList
-			      else WrongArg(2,"a positive integer"))
-			 else WrongArgSmallInteger(2))
-		    else WrongArgZZ(2))
-	       else WrongArg(1,"a list, sequence, or string"))
-	  else WrongNumArgs(2))
-     else WrongNumArgs(2));
-setupfun("pack", packfun);
+    when e is a:Sequence do
+    if length(a) == 2 then (
+	when a.0 is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1) else (
+	    s := toInt(n);
+	    when a.1
+	    is x:List do (
+		if s > 0 then list ( packlist(s, x.v) ) else
+		if s == 0 && length(x.v) == 0 then emptyList
+		else WrongArg(1, "a positive integer"))
+	    is x:Sequence do (
+		if s > 0 then list ( packlist(s, x) ) else
+		if s == 0 && length(x) == 0 then emptyList
+		else WrongArg(1, "a positive integer"))
+	    is x:stringCell do (
+		if s > 0 then list ( map(stringcatfun, packlist(s, strtoseq(x))) ) else
+		if s == 0 && length(x.v) == 0 then emptyList
+		else WrongArg(1, "a positive integer"))
+	    else WrongArg(2, "a basic list, sequence, or string"))
+	else WrongArg(1, "a positive integer"))
+    else WrongNumArgs(2)
+    else WrongNumArgs(2));
+setupfun("pack", packfun).Protected = false; -- will be overloaded in m2/lists.m2
 
 getenvfun(e:Expr):Expr := (
      when e
