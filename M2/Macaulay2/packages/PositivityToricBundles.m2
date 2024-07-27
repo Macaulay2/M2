@@ -7,7 +7,7 @@
 
 newPackage("PositivityToricBundles",
            Headline => "check positivity of toric vector bundles",
-           Version => "1.7.1",
+           Version => "1.8",
            Date => "July, 2024",
            Authors => { 
             {Name => "Andreas Hochenegger",
