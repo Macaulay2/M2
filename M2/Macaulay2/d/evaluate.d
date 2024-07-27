@@ -1690,6 +1690,7 @@ setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
+-- # typical value: scanPairs, HashTable, Function, Nothing
 scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
      foreach bucket in obj.table do (
 	  p := bucket;
@@ -1714,6 +1715,7 @@ scanpairsfun(e:Expr):Expr := (
 setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
+-- # typical value: applyPairs, HashTable, Function, HashTable
 mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
@@ -1755,6 +1757,7 @@ mappairsfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
 
+-- # typical value: applyKeys, HashTable, Function, HashTable
 export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
@@ -1769,6 +1772,7 @@ export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
+-- # typical value: applyKeys, HashTable, Function, Function, HashTable
 export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
@@ -1809,6 +1813,7 @@ mapkeysfun(e:Expr):Expr := (
      else      WrongNumArgs(2,3));
 setupfun("applyKeys",mapkeysfun);
 
+-- # typical value: applyValues, HashTable, Function, HashTable
 export mapvalues(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;

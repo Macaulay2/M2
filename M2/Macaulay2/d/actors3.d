@@ -1352,6 +1352,7 @@ export toSequence(e:Expr):Expr := (
 	 else WrongArg("a list, sequence, string, or iterable object")));
 setupfun("toSequence",toSequence);
 
+-- # typical value: apply, BasicList, BasicList, Function, BasicList
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
      if newlen != length(a2) then return WrongArg("lists of the same length");
@@ -1472,6 +1473,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  )
      is s:SpecialExpr do map(a1,a2,s.e)
      else WrongArg(2,"a function"));
+-- # typical value: apply, BasicList, Function, BasicList
 map(a:Sequence,f:Expr):Expr := (
      newlen := length(a);
      if newlen == 0 then return emptySequenceE;
@@ -1700,6 +1702,7 @@ map(a:Sequence,f:Expr):Expr := (
 	  ret)
      else WrongArg(2,"a function")
      );
+-- # typical value: apply, ZZ, Function, List
 map(newlen:int,f:Expr):Expr := (
      if newlen <= 0 then return emptyList;
      haderror := false;
@@ -1826,9 +1829,11 @@ map(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
+     -- # typical value: apply, String, Function, Sequence
      is s:stringCell do (
 	 toSequence(applyEEE(
 		 getGlobalVariable(applyIteratorS), getIterator(e), f)))
+     -- # typical value: apply, Thing, Function, Iterator
      else (
 	 iter := getIterator(e);
 	 if iter != nullE
@@ -1850,6 +1855,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	       is v:Sequence do list(b2.Class,v,b2.Mutable)
 	       else nullE		  -- will not happen
 	       )
+	  -- # typical value: apply, BasicList, String, Function, Sequence
 	  is s2:stringCell do map(a1, strtoseq(s2), f)
 	  else WrongArg(2,"a list, sequence, or string"))
      is b1:List do (
@@ -1876,8 +1882,10 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	  else WrongArg(2,"a list, sequence, or string"))
      is s1:stringCell do (
 	  when e2
+	  -- # typical value: apply, String, BasicList, Function, Sequence
 	  is a2:Sequence do map(strtoseq(s1), a2, f)
 	  is b2:List do map(strtoseq(s1), b2.v, f)
+	  -- # typical value: apply, String, String, Function, Sequence
 	  is s2:stringCell do map(strtoseq(s1), strtoseq(s2), f)
 	  else WrongArg(2, "a list, sequence, or string"))
      else WrongArg(1,"a list, sequence, or string"));
@@ -1891,6 +1899,7 @@ map(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("apply",map);
 
+-- # typical value: scan, ZZ, Function, Thing
 scan(n:int,f:Expr):Expr := (
      if n <= 0 then return nullE;
      if recursionDepth > recursionLimit then RecursionLimit()
@@ -1989,6 +1998,7 @@ scan(n:int,f:Expr):Expr := (
      is s:SpecialExpr do scan(n,s.e)
      else WrongArg(2,"a function"));
 
+-- # typical value: scan, BasicList, Function, Thing
 scan(a:Sequence,f:Expr):Expr := (
      oldlen := length(a);
      if oldlen == 0 then return nullE;
@@ -2184,13 +2194,7 @@ scan(a:Sequence,f:Expr):Expr := (
      recursionDepth = recursionDepth - 1;
      nullE);
 
--- scan(a:Sequence,f:Expr):Expr := (
---      foreach x in a do (
--- 	  y := apply(f,x);
--- 	  when y is Error do return y else nothing;
--- 	  );
---      nullE);
-
+-- # typical value: scan, BasicList, BasicList, Function, Thing
 scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
      if newlen != length(a2) then return WrongArg("lists of the same length");
@@ -2316,6 +2320,7 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
+     -- # typical value: scan, Thing, Function, Thing
      else (
 	 i := getIterator(e);
 	 if i != nullE
