@@ -20,24 +20,6 @@ installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
 
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
-scan(BasicList,Function) := Nothing => scan
-scan(BasicList,BasicList,Function) := Nothing => scan
-scan(ZZ,Function) := Nothing => scan
-scan(Thing,Function) := Nothing => scan
-scanPairs(HashTable,Function) := Nothing => scanPairs
-apply(BasicList,Function) := BasicList => apply
-apply(BasicList,BasicList,Function) := BasicList => apply
-apply(BasicList,String,Function) := Sequence => apply
-apply(String,Function) := Sequence => apply
-apply(String,BasicList,Function) := Sequence => apply
-apply(String,String,Function) := Sequence => apply
-apply(ZZ,Function) := List => apply
-apply(Thing,Function) := Iterator => apply
-
-applyKeys(HashTable,Function) := HashTable => applyKeys
-applyKeys(HashTable,Function,Function) := HashTable => applyKeys
-applyPairs(HashTable,Function) := HashTable => applyPairs
-applyValues(HashTable,Function) := HashTable => applyValues
 
 atEndOfFile(File) := Boolean => atEndOfFile
 echoOff File := Nothing => echoOff
