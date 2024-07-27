@@ -12,7 +12,7 @@ all: initialize
 Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 ##############################
 .SUFFIXES: .m2
-.PHONY: html initialize prep tags install-tmp
+.PHONY: html initialize tags install-tmp
 # there is a parallel list of tutorials in overview3.m2
 DUMPEDM2FILES := Core.m2 startup.m2
 DUMPEDM2SRCFILES := Core.m2 startup.m2.in
@@ -69,9 +69,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	  cd @srcdir@ && \
 	  @FIND@ ../packages/Macaulay2Doc -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
-prep:: $(DUMPEDM2FILES)
-
-phase1:: prep
 
 # try to eliminate this intermediate file:
 phase1:: .Macaulay2-made
