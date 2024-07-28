@@ -293,6 +293,20 @@ deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e,
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
+-----------------------------------------------------------------------------
+-- Tables (nested lists)
+-----------------------------------------------------------------------------
+
+isTable = L -> instance(L, List) and all(L, row -> instance(row, List)) and same apply(L, length)
+
+table = (rows, cols, f) -> apply(rows, r -> apply(cols, c -> f(r, c)))
+
+subtable = (rows, cols, a) -> table(rows, cols, (r, c) -> a_r_c)
+
+applyTable = (m,f) -> apply(m, v -> apply(v,f))
+
+transpose List := List => L -> if isTable L then pack(#L, mingle L) else error "transpose expected a table"
+
 pack' = pack -- defined in d/actors4.d
 pack = method()
 pack(ZZ, String)    :=
