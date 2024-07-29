@@ -30,7 +30,8 @@ newPackage ( "ResLengthThree",
     Headline => "Multiplication in free resolutions of length three",
     Reload => false,
     DebuggingMode => false,
-    Keywords => { "Homological Algebra" }
+    Keywords => { "Homological Algebra" },
+    PackageExports => { "Complexes" }
     )
 
 export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 
@@ -43,7 +44,7 @@ export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTa
 
 resLengthThreeAlg = method()
 
-resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
+resLengthThreeAlg(Complex, List) := (F, sym) -> (
    if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
    if length F != 3 then
      error "Expected a chain complex of length three which is free of rank one in degree zero.";
@@ -87,14 +88,14 @@ resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
    A
 )
 
-resLengthThreeAlg( ChainComplex ) := (F) -> (
+resLengthThreeAlg( Complex ) := (F) -> (
     resLengthThreeAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
 
 resLengthThreeTorAlg = method()
 
-resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
+resLengthThreeTorAlg(Complex,List) := (F,sym) -> (
    if F.cache#?"Tor Algebra Structure" then return F.cache#"Tor Algebra Structure";
    A := resLengthThreeAlg(F,sym);
    P := ambient A;
@@ -110,7 +111,7 @@ resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
    B
 )
 
-resLengthThreeTorAlg( ChainComplex ) := (F) -> (
+resLengthThreeTorAlg( Complex ) := (F) -> (
     resLengthThreeTorAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
@@ -119,16 +120,9 @@ makeRes = (d1,d2,d3) -> (
     if ( (image matrix entries gens ker d1) != image matrix entries gens image d2 or 
 	(image matrix entries gens ker d2) != image matrix entries gens image d3 or
 	ker d3 !=0) then error "Expected differentials of resolution of length three";
-    -- to build the maps correctly, what you should do is:
-    -- map(R^{degrees} (target), R^{degrees} (source), 
-    F := new ChainComplex; 
-    F.ring = ring d1;
-    F#0 = target d1; 
-    F#1 = source d1; F.dd#1 = d1; 
-    F#2 = source d2; F.dd#2 = d2;
-    F#3 = source d3; F.dd#3 = d3; 
-    F#4 = (F.ring)^{}; F.dd#4 = map(F#3,F#4,0);
-    F 
+    f2 := map(source d1,, matrix d2);
+    f3 := map(source f2,, matrix d3);
+    complex {d1, f2, f3}
     )
 
 multTableOneOne = method(Options => {Labels => true, Compact => false})
@@ -169,7 +163,7 @@ multTableOneTwo(Ring) := opts -> A -> (
 
 resLengthThreeTorAlgClass = method()
 
-resLengthThreeTorAlgClass ChainComplex := F -> (
+resLengthThreeTorAlgClass Complex := F -> (
   A := resLengthThreeTorAlg(F);
   p := rank multMap(A,1,1);
   q := rank multMap(A,1,2);
@@ -392,7 +386,7 @@ document{
 
 document{
   Key => {
-    resLengthThreeAlg, (resLengthThreeAlg, ChainComplex ), (resLengthThreeAlg, ChainComplex, List )
+    resLengthThreeAlg, (resLengthThreeAlg, Complex ), (resLengthThreeAlg, Complex, List )
     },
 
   Headline => "the minimal free resolution presented as a graded-commutative ring",
@@ -400,7 +394,7 @@ document{
   Usage => "resLengthThreeAlg F, resLengthThreeAlg(F,L)", 
 
   Inputs =>{
-      "F" => ChainComplex => "a length three free resolution of a cyclic module",
+      "F" => Complex => "a length three free resolution of a cyclic module",
       "L" => List => "of three symbols"
       },
   
@@ -428,7 +422,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"F = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"F = resLengthThreeAlg(res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3), {a,b,c} )",
 	"describe F",
 	},
 
@@ -437,7 +431,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,x*y,y^2,z^2)",
+	"A = resLengthThreeAlg res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3)",
 	"describe A",
 	},
 
@@ -446,7 +440,7 @@ document{
   EXAMPLE {
       "P = ZZ[x,y,z];",
       "Q = P/ideal(4_P);",
-      "A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+      "A = resLengthThreeAlg res(ideal (x^2,y^2,z^2), LengthLimit => 4)",
       "describe A"
 	},
         
@@ -455,7 +449,7 @@ Caveat => { "The ambient ring ", TT "Q ", "must be homogeneous." }
 
 document{
   Key => {
-    resLengthThreeTorAlg, (resLengthThreeTorAlg, ChainComplex ), (resLengthThreeTorAlg, ChainComplex, List )
+    resLengthThreeTorAlg, (resLengthThreeTorAlg, Complex ), (resLengthThreeTorAlg, Complex, List )
     },
 
   Headline => "the Tor algebra presented as a graded-commutative ring",
@@ -463,7 +457,7 @@ document{
   Usage => "resLengthThreeTorAlg F, resLengthThreeTorAlg(F,L)", 
 
   Inputs =>{
-      "F" => ChainComplex => "a length three free resolution of a cyclic module",
+      "F" => Complex => "a length three free resolution of a cyclic module",
       "L" => List => "of three symbols"
       },
   
@@ -491,7 +485,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"A = resLengthThreeTorAlg (res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
 	"describe A",
 	},
 
@@ -500,7 +494,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"A = resLengthThreeTorAlg ( res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
 	"describe A",
 	},
     
@@ -684,7 +678,7 @@ document{
 
 document{
   Key => {
-    resLengthThreeTorAlgClass, (resLengthThreeTorAlgClass, ChainComplex),(resLengthThreeTorAlgClass, Ideal),
+    resLengthThreeTorAlgClass, (resLengthThreeTorAlgClass, Complex),(resLengthThreeTorAlgClass, Ideal),
     },
 
   Headline => "the class (w.r.t. multiplication in homology) of an ideal",
@@ -692,7 +686,7 @@ document{
   Usage => "resLengthThreeTorAlgClass F", 
 
   Inputs =>{
-      "F" => ChainComplex => { "a length three free resolution of a cyclic module" } ,
+      "F" => Complex => { "a length three free resolution of a cyclic module" } ,
       "I" => Ideal => {"an ideal of codepth 3"},
       },
   
@@ -734,7 +728,7 @@ document{
       },
   
   Outputs => { 
-      ChainComplex => { "the resolution with differentials d1, d2, d3."}
+      Complex => { "the resolution with differentials d1, d2, d3."}
       },
   
     PARA { "Creates a resolution of length 3 that has the given three matrices as differentials." },
