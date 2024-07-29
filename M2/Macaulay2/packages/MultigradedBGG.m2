@@ -71,7 +71,7 @@ unfold(DifferentialModule,ZZ,ZZ) := Complex => (D,low,high)->(
     d := degree D;
     R := ring D;
     phi := differential D;
-    chainComplex apply(L,l-> phi)[-low]
+    (complex apply(L,l-> phi))[-low]
     )
 
 minFlagOneStep = method()
@@ -109,7 +109,7 @@ killingCyclesOneStep(DifferentialModule) := (D)->(
     d := degree D;
     R := ring D;
     homMat := mingens image((gens HH_0 D) %  (image D.dd_1));
-    G := res image homMat;
+    G := res(image homMat, LengthLimit => 1);
     psi := map(D_0,G_0**R^{d},homMat, Degree=>d);
     newDiff := matrix{{D.dd_1,psi},{map(G_0**R^{d},D_1,0, Degree=>d),map(G_0**R^{d},G_0**R^{d},0, Degree=>d)}}; 
     assert (newDiff*(newDiff) == 0);
