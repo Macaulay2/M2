@@ -26,6 +26,7 @@
 #include <algorithm>                   // for stable_sort
 #include <vector>                      // for swap, vector
 #include <atomic>                      // for atomic ints in gauss_reduce
+#include <strstream>
 
 class RingElement;
 
@@ -178,6 +179,7 @@ void F4GB::load_gen(int which)
   r.comps = new int[g.len];
   // r.coeffs is already initialized to [nullptr].
 
+  // TODO: this iterator requires knowledge about memory layout of monomials
   monomial_word *w = g.monoms;
   for (int i = 0; i < g.len; i++)
     {
@@ -200,7 +202,8 @@ void F4GB::load_row(packed_monomial monom, int which)
   // r.comps = Mem->components.allocate(g.len);
   r.comps = new int[g.len];
   // r.coeffs is already initialized to [nullptr].
-  
+
+  // TODO: this iterator requires knowledge about memory layout of monomials  
   monomial_word *w = g.monoms;
   for (int i = 0; i < g.len; i++)
     {
@@ -454,7 +457,82 @@ void F4GB::make_matrix()
   reorder_columns();
 
   // reorder_rows();  // This is only here so we can see what we are doing...?
+
+  // For debugging: let's compute the number of non-zero elements above the diagonal in A matrix.
+  // Also, let's compute the amount of space used for:
+  //  column info
+  //  row info
+  //  sum of values in each row
+  // Maybe so A B C D matrices separately.
+  macaulayMatrixStats();
 }
+
+auto F4GB::macaulayMatrixStats() const -> MacaulayMatrixStats
+{
+  // Want:
+  //  sizes of A, B, C, D.
+  //  number of elements in each part.
+  // loop through the rows, and for each row, determine: in A or C?
+  //   loop through elements in a row: for each, determine: in A/C or B/D
+
+  MacaulayMatrixStats stats;
+
+  // look at 'mat', determine number of rows, cols, etc.
+  long nrows = mat->rows.size();
+  long ncols = mat->columns.size();
+  for (long i=0; i<nrows; ++i)
+    {
+      bool is_pivot = is_pivot_row(i);
+      if (is_pivot)
+        ++stats.mTopAndLeft;
+
+      auto& r = mat->rows[i];
+      for (long j=0; j < r.len; ++j)
+          {
+            auto c = r.comps[j];
+            bool is_left = mat->columns[c].head >= 0;
+            if (is_pivot and is_left) ++stats.mAEntries;
+            if (is_pivot and not is_left) ++stats.mBEntries;
+            if (not is_pivot and is_left) ++stats.mCEntries;
+            if (not is_pivot and not is_left) ++stats.mDEntries;
+          }
+    }
+
+  stats.mAEntries -= stats.mTopAndLeft;
+  stats.mBottom = nrows - stats.mTopAndLeft;
+  stats.mRight = ncols - stats.mTopAndLeft;
+
+  stats.display();
+  return stats;
+}
+
+void F4GB::MacaulayMatrixStats::display(buffer& o)
+{
+  std::ostringstream s;
+  
+  s << "Quad matrix sizes" << std::endl;
+  s << "sizes of quad matrix" << std::endl;
+  s << std::setw(11) << " " << std::setw(11) << mTopAndLeft << std::setw(11) << mRight << std::endl;
+  s << std::setw(11) << mTopAndLeft << std::setw(11) << "A" << std::setw(11) << "B" << std::endl;
+  s << std::setw(11) << mBottom << std::setw(11) << "C" << std::setw(11) << "D" << std::endl;
+  s << std::endl;
+
+  s << "Quad matrix entries (no diagona on A)" << std::endl;
+  s << std::setw(11) << " " << std::setw(11) << mTopAndLeft << std::setw(11) << mRight << std::endl;
+  s << std::setw(11) << mTopAndLeft << std::setw(11) << mAEntries << std::setw(11) << mBEntries << std::endl;
+  s << std::setw(11) << mBottom << std::setw(11) << mCEntries << std::setw(11) <<  mDEntries << std::endl;
+  s << std::endl;
+  
+  o << s.str().c_str();
+}
+
+void F4GB::MacaulayMatrixStats::display()
+{
+  buffer o;
+  display(o);
+  emit(o.str());
+}
+
 
 ///////////////////////////////////////////////////
 // Gaussian elimination ///////////////////////////
@@ -505,6 +583,15 @@ void F4GB::gauss_reduce(bool diagonalize)
 
 #if defined(WITH_TBB)
 //#if 0
+
+  std::vector<int> spair_rows;
+  for (int i = 0; i < nrows; ++i)
+    {
+      if (not is_pivot_row(i))
+        spair_rows.push_back(i);
+    }
+  
+  std::mutex cout_guard;
   t0 = mtbb::tick_count::now();
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
   // create a dense array for each thread
@@ -513,16 +600,27 @@ void F4GB::gauss_reduce(bool diagonalize)
   });
   std::cout << "mNumThreads: " << mNumThreads << std::endl;
   mScheduler.execute([&] {
-    mtbb::parallel_for(mtbb::blocked_range<int>{0,nrows},
+    mtbb::parallel_for(mtbb::blocked_range<int>{0, INTSIZE(spair_rows)},
                        [&](const mtbb::blocked_range<int>& r)
                        {
-                          threadLocalDense_t::reference my_dense = threadLocalDense.local();
+                         // long actual_reductions = 0;
+                         //  for (auto i = r.begin(); i != r.end(); ++i)
+                         //    {
+                         //      if (not is_pivot_row(i))
+                         //        ++ actual_reductions;
+                         //    }
+
+                         //  cout_guard.lock();
+                         //  std::cout << "#reductions to do: " << actual_reductions << std::endl;
+                         //  cout_guard.unlock();
+
+                         threadLocalDense_t::reference my_dense = threadLocalDense.local();
                           for (auto i = r.begin(); i != r.end(); ++i)
                           {
                              // these lines are commented out to avoid the hilbert hint for now...
                              //if ((not hilbert) or (n_newpivots > 0))
                              //{
-                                bool newNonzeroReduction = gauss_reduce_row(i, my_dense);
+                                bool newNonzeroReduction = gauss_reduce_row(spair_rows[i], my_dense);
                              //   if (not newNonzeroReduction) n_zero_reductions++;
                              //   if (hilbert && newNonzeroReduction)
                              //     --n_newpivots;
@@ -569,6 +667,14 @@ void F4GB::gauss_reduce(bool diagonalize)
   mTailReduceTime += (t1-t0).seconds();
 }
 
+bool F4GB::is_pivot_row(int index) const
+{
+  row_elem &r = mat->rows[index];
+  int pivotcol = r.comps[0];
+  int pivotrow = mat->columns[pivotcol].head;
+  return (pivotrow == index);
+}
+
 bool F4GB::gauss_reduce_row(int index,
                             ElementArray& gauss_row)
 {
@@ -576,9 +682,10 @@ bool F4GB::gauss_reduce_row(int index,
    // returns false otherwise
       row_elem &r = mat->rows[index];
       if (r.len == 0) return false;  // could happen once we include syzygies...
+      if (is_pivot_row(index)) return false;
+
       int pivotcol = r.comps[0];
       int pivotrow = mat->columns[pivotcol].head;
-      if (pivotrow == index) return false;  // this is a pivot row, so leave it alone
 
       const ElementArray& rcoeffs = get_coeffs_array(r);
       n_pairs_computed++;
@@ -1030,6 +1137,12 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       fprintf(stderr,
               "total time for finding new spairs: %g\n",
               mNewSPairTime);
+      fprintf(stderr,
+              "total time for creating pre spairs: %g\n",
+              mSPairSet.secondsToCreatePrePairs());
+      fprintf(stderr,
+              "total time for minimizing new spairs: %g\n",
+              mSPairSet.secondsToMinimizePairs());
       fprintf(stderr,
               "total time for inserting new gb elements: %g\n",
               mInsertGBTime);

@@ -12,7 +12,8 @@
 #include <vector>             // for vector, vector<>::iterator
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
-    : M(M0), gb(gb0), heap(nullptr), this_set(nullptr), nsaved_unneeded(0)
+  : M(M0), gb(gb0), heap(nullptr), this_set(nullptr), nsaved_unneeded(0),
+    mMinimizePairsSeconds(0)
 {
   max_varpower_size = 2 * M->n_vars() + 1;
 
@@ -251,6 +252,8 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 
   std::vector<std::vector<pre_spair *>> bins;
 
+  mtbb::tick_count t0 {mtbb::tick_count::now()};
+  
   // Loop through each element of gb, and create the pre_spair
   for (int i = 0; i < gb.size() - 1; i++)
     {
@@ -259,6 +262,9 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
       pre_spair *p = create_pre_spair(i);
       insert_pre_spair(bins, p);
     }
+
+  mtbb::tick_count t1 {mtbb::tick_count::now()};
+  mPrePairsSeconds += (t1-t0).seconds();  
 
   ////////////////////////////
   // Now minimalize the set //
@@ -306,6 +312,8 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
         }
     }
   delete montab;
+  mtbb::tick_count t2 {mtbb::tick_count::now()};
+  mMinimizePairsSeconds += (t2-t1).seconds();
 
   return n_new_pairs;
 }
