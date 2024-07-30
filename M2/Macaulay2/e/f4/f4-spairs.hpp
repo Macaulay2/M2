@@ -62,6 +62,8 @@ class F4SPairSet
   // Returns how many pairs were created, then later removed due to
   // spair criteria.
 
+  double secondsToMinimizePairs() const { return mMinimizePairsSeconds; }
+  double secondsToCreatePrePairs() const { return mPrePairsSeconds; }
  private:
   F4MemoryBlock<pre_spair> PS;      // passed to constructor routine
   F4MemoryBlock<varpower_word> VP;  // used for constructing new pairs
@@ -75,6 +77,8 @@ class F4SPairSet
 
   // stats
   long nsaved_unneeded;
+  double mMinimizePairsSeconds;
+  double mPrePairsSeconds;
 };
 
 

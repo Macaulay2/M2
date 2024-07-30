@@ -139,6 +139,31 @@ class F4GB : public our_new_delete
   double mInsertGBTime;
   clock_t clock_make_matrix;
 
+  struct MacaulayMatrixStats
+  {
+  public:
+    // #rows/cols
+    long mTopAndLeft = 0;
+    long mBottom = 0;
+    long mRight = 0;
+    
+    // #entries
+    long mAEntries = 0; // but not the diagonals?
+    long mBEntries = 0;
+    long mCEntries = 0;
+    long mDEntries = 0;
+    
+    // memory usage: column info, row info, all the entries, hash table?
+    long mColumnInfo = 0;
+    long mRowInfo = 0;
+    long mEntries = 0;
+ 
+    void display(buffer& o);
+    void display();
+  };
+
+  MacaulayMatrixStats macaulayMatrixStats() const;  // For debugging info
+  
 #if defined (WITH_TBB)
   int mNumThreads;
   mtbb::task_arena mScheduler;
@@ -180,6 +205,8 @@ class F4GB : public our_new_delete
   // place
   // and also to determine if an element (row) needs to be tail reduced
 
+  bool is_pivot_row(int index) const;
+  
   void gauss_reduce(bool diagonalize);
   bool gauss_reduce_row(int index, ElementArray& gauss_row);
   void tail_reduce();
