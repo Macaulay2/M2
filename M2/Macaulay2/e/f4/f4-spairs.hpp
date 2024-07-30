@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <queue>                     // for std::priority_queue
+#include "MemoryBlock.hpp"           // for MemoryBlock
 #include "f4/f4-types.hpp"           // for spair (ptr only), gb_array, pre_...
 #include "f4/memblock.hpp"           // for F4MemoryBlock
 #include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), packed_...
@@ -10,9 +12,9 @@
 class F4SPairSet
 {
  private:
-  int determine_next_degree(int &result_number);
+  // int determine_next_degree(int &result_number);
 
-  spair *make_spair(spair_type type,
+  spair *make_spair(SPairType type,
                     int deg,
                     int i,
                     int j);  // CAUTION: lcm is allocated correctly, but is
@@ -42,13 +44,16 @@ class F4SPairSet
   int find_new_pairs(bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
 
-  int prepare_next_degree(int max, int &result_number);
+  std::pair<bool,int> setThisDegree();
+  
+  // int prepare_next_degree(int max, int &result_number);
   // Returns the (sugar) degree being done next, and collects all (or at
   // most 'max', if max>0) spairs in this lowest degree.
   // Returns the degree, sets result_number.
   // These spairs are not sorted in any way.  Should they be?
 
-  spair *get_next_pair();
+  // spair *get_next_pair();
+  std::pair<bool,spair> get_next_pair();
   // get the next pair in this degree (the one 'prepare_next_degree' set up')
   // returns 0 if at the end
 
@@ -67,13 +72,18 @@ class F4SPairSet
  private:
   F4MemoryBlock<pre_spair> PS;      // passed to constructor routine
   F4MemoryBlock<varpower_word> VP;  // used for constructing new pairs
+  MemoryBlock mSPairLCMs;  // used for spair lcms  
+  
   int max_varpower_size;
-  int mSPairSizeInBytes; // includes the LCM monomial space at the end
+  // int mSPairSizeInBytes; // includes the LCM monomial space at the end
 
   const MonomialInfo *M;
   const gb_array &gb;
   spair *heap;  // list of pairs
   spair *this_set;
+
+  std::priority_queue<spair,std::vector<spair>,SPairCompare> mSPairQueue;
+  long mThisDegree;
 
   // stats
   long nsaved_unneeded;

@@ -241,21 +241,35 @@ void F4GB::process_column(int c)
     ce.head = -1;
 }
 
+void F4GB::loadSPairRow(spair *p)
+{
+   packed_monomial n = next_monom;
+   mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->i]->f.monoms, n);
+   mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(n));
+   next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
+   next_monom++;
+   load_row(n, p->i);
+}
+
+void F4GB::loadReducerRow(spair *p)
+{
+   packed_monomial n = next_monom;
+   mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->j]->f.monoms, n);
+   mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(n));
+   next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
+   next_monom++;
+   load_row(n, p->j);
+}
+
 void F4GB::process_s_pair(spair *p)
 {
   int c;
 
   switch (p->type)
     {
-      case F4_SPAIR_SPAIR:
+    case SPairType::SPair:
         {
-          packed_monomial n = next_monom;
-          mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->i]->f.monoms, n);
-          mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(n));
-          next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
-          next_monom++;
-
-          load_row(n, p->i);
+          loadSPairRow(p);
           c = mat->rows[mat->rows.size() - 1].comps[0];
 
           if (mat->columns[c].head >= -1)
@@ -263,18 +277,12 @@ void F4GB::process_s_pair(spair *p)
           else
             {
               // In this situation, we load the other half as a reducer
-              n = next_monom;
-              mMonomialInfo->unchecked_divide(p->lcm, mGroebnerBasis[p->j]->f.monoms, n);
-              mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(n));
-              next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
-              next_monom++;
-              load_row(n, p->j);
-
+              loadReducerRow(p);
               mat->columns[c].head = INTSIZE(mat->rows) - 1;
             }
           break;
         }
-      case F4_SPAIR_GEN:
+    case SPairType::Generator:
         load_gen(p->i);
         break;
       default:
@@ -432,10 +440,13 @@ void F4GB::make_matrix()
      Is this the best order to do it in?  Maybe not...
   */
 
-  spair *p;
-  while ((p = mSPairSet.get_next_pair()))
+  //spair *p;
+  std::pair<bool,spair> p;
+  p = mSPairSet.get_next_pair();
+  while (p.first)
     {
-      process_s_pair(p);
+      process_s_pair(&p.second);
+      p = mSPairSet.get_next_pair();
     }
 
   while (next_col_to_process < mat->columns.size())
@@ -615,17 +626,17 @@ void F4GB::gauss_reduce(bool diagonalize)
                          //  cout_guard.unlock();
 
                          threadLocalDense_t::reference my_dense = threadLocalDense.local();
-                          for (auto i = r.begin(); i != r.end(); ++i)
-                          {
-                             // these lines are commented out to avoid the hilbert hint for now...
-                             //if ((not hilbert) or (n_newpivots > 0))
-                             //{
-                                bool newNonzeroReduction = gauss_reduce_row(spair_rows[i], my_dense);
-                             //   if (not newNonzeroReduction) n_zero_reductions++;
-                             //   if (hilbert && newNonzeroReduction)
-                             //     --n_newpivots;
-                             //}
-                          }
+                         for (auto i = r.begin(); i != r.end(); ++i)
+                         {
+                            // these lines are commented out to avoid the hilbert hint for now...
+                            //if ((not hilbert) or (n_newpivots > 0))
+                            //{
+                               bool newNonzeroReduction = gauss_reduce_row(spair_rows[i], my_dense);
+                            //   if (not newNonzeroReduction) n_zero_reductions++;
+                            //   if (hilbert && newNonzeroReduction)
+                            //     --n_newpivots;
+                            //}
+                         }
                        });
   });
   for (auto tlDense : threadLocalDense)
@@ -1055,7 +1066,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
   clock_sort_columns = 0;
   clock_gauss = 0;
   clock_make_matrix = 0;
-  int npairs;
+  int npairs = 0;
 
   //  test_spair_code();
 
@@ -1072,9 +1083,11 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       is_done = computation_is_complete(stop_);
       if (is_done != COMP_COMPUTING) break;
 
-      this_degree = mSPairSet.prepare_next_degree(-1, npairs);
-
-      if (npairs == 0)
+      //this_degree = mSPairSet.prepare_next_degree(-1, npairs);
+      auto thisDegInfo = mSPairSet.setThisDegree();
+      this_degree = thisDegInfo.second;
+      
+      if (not thisDegInfo.first)
         {
           is_done = COMP_DONE;
           break;
