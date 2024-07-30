@@ -191,7 +191,11 @@ class F4GB : public our_new_delete
   void load_gen(int which);
   void load_row(packed_monomial monom, int which);
   void process_column(int c);
+
+  void loadSPairRow(spair *p);
+  void loadReducerRow(spair *p);
   void process_s_pair(spair *p);
+
   void reorder_columns();
   void reorder_rows();
 

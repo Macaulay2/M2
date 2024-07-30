@@ -4,6 +4,7 @@
 #define _F4types_h_
 
 
+#include <climits>                   // for INT_MIN
 #include "VectorArithmetic.hpp"      // for ElementArray
 #include "f4/f4-monlookup.hpp"       // for F4MonomialLookupTableT
 #include "f4/moninfo.hpp"            // for MonomialInfo, monomial_word, pac...
@@ -24,12 +25,19 @@ enum gbelem_type {
 };
 
 enum spair_type {
-  F4_SPAIR_SPAIR,
-  F4_SPAIR_GCD_ZZ,
-  F4_SPAIR_RING,
-  F4_SPAIR_SKEW,
-  F4_SPAIR_GEN,
-  F4_SPAIR_ELEM
+  F4_SPAIR_SPAIR,        // arising from an honest spair
+  F4_SPAIR_GCD_ZZ,       // for gbs over the integers
+  F4_SPAIR_RING,         // an spair between a generator and a gen of the defining ideal
+  F4_SPAIR_SKEW,         // from exterior variables times a monomial
+  F4_SPAIR_GEN,          // a generator of the defining ideal
+  F4_SPAIR_ELEM          // 
+};
+
+enum class SPairType {
+  SPair,
+  Generator,
+  Retired
+  // later we would also like GCDZZ, Ring, Skew to handle those cases as well
 };
 
 struct GBF4Polynomial 
@@ -41,21 +49,39 @@ struct GBF4Polynomial
 
 struct pre_spair 
 {
-  enum spair_type type;
+  //enum spair_type type;
+  SPairType type;
   int deg1;  // simple degree of quot
   varpower_monomial quot;
   int j;
   bool are_disjoint;
 };
 
+// old spair type (linked list-style container)
+//struct spair
+//{
+//  spair *next;
+//  spair_type type;
+//  int deg; /* sugar degree of this spair */
+//  int i;
+//  int j;
+//  monomial_word lcm[1];  // packed_monomial
+//};
+
 struct spair
 {
-  spair *next;
-  spair_type type;
+public:
+  // spair *next;
+  SPairType type;
   int deg; /* sugar degree of this spair */
   int i;
   int j;
-  monomial_word lcm[1];  // packed_monomial
+  // monomial_word lcm[1];  // packed_monomial
+  monomial_word* lcm;  // pointer to a monomial space
+  
+  spair() : type(SPairType::Retired),deg(INT_MIN),i(-1),j(-1),lcm(nullptr) {}
+  spair(SPairType t, int deg0, int i0, int j0, monomial_word* lcm0) :
+    type(t), deg(deg0), i(i0), j(j0), lcm(lcm0) {}
 };
 
 struct gbelem
@@ -188,6 +214,18 @@ class PreSPairSorter
   void reset_ncomparisons() { ncmps = 0; }
   long ncomparisons() const { return ncmps; }
   ~PreSPairSorter() {}
+};
+
+class SPairCompare
+{
+public:
+  bool operator()(const spair& a, const spair& b)
+  {
+    if (a.deg > b.deg) return true;
+    if (a.deg < b.deg) return false;
+    if (a.i > b.i) return true;
+    return false;
+  }
 };
 
 typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;

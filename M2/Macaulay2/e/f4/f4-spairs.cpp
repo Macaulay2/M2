@@ -17,8 +17,8 @@ F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
 {
   max_varpower_size = 2 * M->n_vars() + 1;
 
-  spair *used_to_determine_size = nullptr;
-  mSPairSizeInBytes = sizeofspair(used_to_determine_size, M->max_monomial_size());
+  //spair *used_to_determine_size = nullptr;
+  //mSPairSizeInBytes = sizeofspair(used_to_determine_size, M->max_monomial_size());
 }
 
 F4SPairSet::~F4SPairSet()
@@ -30,17 +30,20 @@ F4SPairSet::~F4SPairSet()
   this_set = nullptr;
 }
 
-spair *F4SPairSet::make_spair(spair_type type, int deg, int i, int j)
+/*
+spair *F4SPairSet::make_spair(SPairType type, int deg, int i, int j)
 {
-  spair *result = reinterpret_cast<spair*>(new char[mSPairSizeInBytes]);
-  //  spair *result = new spair;
+  //spair *result = reinterpret_cast<spair*>(new char[mSPairSizeInBytes]);
+  spair *result = new spair;
   result->next = nullptr;
   result->type = type;
   result->deg = deg;
   result->i = i;
   result->j = j;
+  result->lcm = nullptr;
   return result;
 }
+*/
 
 void F4SPairSet::insert_spair(pre_spair *p, int me)
 {
@@ -48,27 +51,49 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
   int deg = p->deg1 + gb[me]->deg;
   // int me_component = M->get_component(gb[me]->f.monoms);
 
-  spair *result = make_spair(F4_SPAIR_SPAIR, deg, me, j);
+  // spair *result = make_spair(SPairType::SPair, deg, me, j);
 
-  M->from_varpower_monomial(p->quot, 0, result->lcm);
-  M->unchecked_mult(result->lcm, gb[me]->f.monoms, result->lcm);
+  spair result {SPairType::SPair, deg, me, j, nullptr};
+  
+  // mSPairQueue.emplace(SPairType::SPair,deg,me,j);
+  
+  auto allocRange = mSPairLCMs.allocateArray<monomial_word>(M->max_monomial_size());
+  result.lcm = allocRange.first;
+  
+  M->from_varpower_monomial(p->quot, 0, result.lcm);
+  M->unchecked_mult(result.lcm, gb[me]->f.monoms, result.lcm);
 
-  result->next = heap;
-  heap = result;
+  mSPairLCMs.shrinkLastAllocate(allocRange.first,
+                                allocRange.second,
+                                allocRange.first + M->monomial_size(result.lcm));
+
+  mSPairQueue.push(result);
+  
+  //result->next = heap;
+  //heap = result;
 }
 
 void F4SPairSet::delete_spair(spair *p) { delete p; }
 void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 {
-  spair *p = make_spair(F4_SPAIR_GEN, deg, col, -1);
-  M->copy(lcm, p->lcm);
-  p->next = heap;
-  heap = p;
+  // spair *p = make_spair(SPairType::Generator, deg, col, -1);
+  spair result {SPairType::Generator,deg,col,-1,nullptr};
+
+  auto allocRange = mSPairLCMs.allocateArray<monomial_word>(M->monomial_size(lcm));
+  result.lcm = allocRange.first;
+  
+  M->copy(lcm, result.lcm);
+
+  //p->next = heap;
+  //heap = p;
+
+  mSPairQueue.push(result);
 }
 
 bool F4SPairSet::pair_not_needed(spair *p, gbelem *m)
 {
-  if (p->type != F4_SPAIR_SPAIR && p->type != F4_SPAIR_RING) return false;
+  // if (p->type != SPairType::SPair && p->type != SPairType::Ring) return false;
+  if (p->type != SPairType::SPair) return false;
   if (M->get_component(p->lcm) != M->get_component(m->f.monoms)) return false;
   return M->unnecessary(
       m->f.monoms, gb[p->i]->f.monoms, gb[p->j]->f.monoms, p->lcm);
@@ -80,6 +105,7 @@ int F4SPairSet::remove_unneeded_pairs()
   // and do so.  Return the number removed.
 
   // MES: Check the ones in this_set? Probably not needed...
+  /*
   spair head;
   spair *p = &head;
   gbelem *m = gb[gb.size() - 1];
@@ -99,8 +125,11 @@ int F4SPairSet::remove_unneeded_pairs()
       p = p->next;
   heap = head.next;
   return nremoved;
+  */
+  return 0;
 }
 
+/*
 int F4SPairSet::determine_next_degree(int &result_number)
 {
   spair *p;
@@ -125,7 +154,9 @@ int F4SPairSet::determine_next_degree(int &result_number)
   result_number = len;
   return nextdeg;
 }
+*/
 
+/*
 int F4SPairSet::prepare_next_degree(int max, int &result_number)
 // Returns the (sugar) degree being done next, and collects all (or at
 // most 'max', if max>0) spairs in this lowest degree.
@@ -155,11 +186,23 @@ int F4SPairSet::prepare_next_degree(int max, int &result_number)
   heap = head.next;
   return result_degree;
 }
+*/
 
-spair *F4SPairSet::get_next_pair()
+std::pair<bool,int> F4SPairSet::setThisDegree()
+{
+  if (mSPairQueue.empty()) return {false, 0};
+  
+  auto& queueTop = mSPairQueue.top();
+  mThisDegree = queueTop.deg;
+  return {true,mThisDegree};
+}
+
+//spair *F4SPairSet::get_next_pair()
+std::pair<bool,spair> F4SPairSet::get_next_pair()
 // get the next pair in this degree (the one 'prepare_next_degree' set up')
 // returns 0 if at the end
 {
+  /*
   spair *result;
   if (!this_set) return nullptr;
 
@@ -167,12 +210,19 @@ spair *F4SPairSet::get_next_pair()
   this_set = this_set->next;
   result->next = nullptr;
   return result;
+  */
+  spair result = mSPairQueue.top();
+  if (result.deg != mThisDegree) return {false, {} };
+  mSPairQueue.pop();
+  return {true,result};
 }
 
 int F4SPairSet::find_new_pairs(bool remove_disjoints)
 // returns the number of new pairs found
 {
-  nsaved_unneeded += remove_unneeded_pairs();
+  // this is used for "late" removal of spairs -- will need to be reworked
+  //   in the new priority_queue approach
+  // nsaved_unneeded += remove_unneeded_pairs();
   int len = construct_pairs(remove_disjoints);
   return len;
 }
@@ -180,7 +230,7 @@ int F4SPairSet::find_new_pairs(bool remove_disjoints)
 void F4SPairSet::display_spair(spair *p)
 // A debugging routine which displays an spair
 {
-  if (p->type == F4_SPAIR_SPAIR)
+  if (p->type == SPairType::SPair)
     {
       fprintf(stderr, "[%d %d deg %d lcm ", p->i, p->j, p->deg);
       M->show(p->lcm);
@@ -195,7 +245,8 @@ void F4SPairSet::display_spair(spair *p)
 void F4SPairSet::display()
 // A debugging routine which displays the spairs in the set
 {
-  fprintf(stderr, "spair set\n");
+  /*
+    fprintf(stderr, "spair set\n");
   for (spair *p = heap; p != nullptr; p = p->next)
     {
       fprintf(stderr, "   ");
@@ -207,6 +258,7 @@ void F4SPairSet::display()
       fprintf(stderr, "   ");
       display_spair(p);
     }
+  */
 }
 
 ////////////////////////////////
@@ -221,7 +273,7 @@ pre_spair *F4SPairSet::create_pre_spair(int j)
   pre_spair *result = PS.allocate();
   result->quot = VP.reserve(max_varpower_size);
   result->j = j;
-  result->type = F4_SPAIR_SPAIR;
+  result->type = SPairType::SPair;;
   M->quotient_as_vp(gb[j]->f.monoms,
                     gb[gb.size() - 1]->f.monoms,
                     result->quot,
