@@ -9,6 +9,9 @@ if #pkgs > 0 then error("packages without a Keyword: ", demark_", " keys pkgs)
 pkgs = select(pkgopts, opts -> opts.DebuggingMode);
 if #pkgs > 0 then error("packages with 'DebuggingMode' turned on: ", demark_", " keys pkgs)
 
+pkgs = select(pkgopts, opts -> opts.Reload);
+if #pkgs > 0 then error("packages with 'Reload' turned on: ", demark_", " keys pkgs)
+
 -- c.f. commit 7a7e6f96
 pkgs = select(pkgopts, opts -> 100 < #opts.Headline)
 if #pkgs > 0 then error("packages whose headlines doesn't follow guidelines:", newline,
