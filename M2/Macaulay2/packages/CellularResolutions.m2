@@ -8,7 +8,7 @@ newPackage(
         {Name => "Jay Yang", Email => "jayy@wustl.edu"},
         {Name => "Aleksandra Sobieska", Email => "asobieska@math.wisc.edu"}
         },
-    Headline => "A package for cellular resolutions of monomial ideals",
+    Headline => "cellular resolutions of monomial ideals",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
     PackageExports => {"Polyhedra", "SimplicialComplexes", "Posets"},
     Keywords => {"Commutative Algebra"}

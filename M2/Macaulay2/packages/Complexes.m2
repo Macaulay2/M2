@@ -11,7 +11,7 @@ newPackage(
             Email => "mike@math.cornell.edu", 
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
-    Headline => "development package for beta testing new version of chain complexes",
+    Headline => "beta testing new version of chain complexes",
     Keywords => {"Homological Algebra"},
     PackageExports => { "Truncations" },
     AuxiliaryFiles => true

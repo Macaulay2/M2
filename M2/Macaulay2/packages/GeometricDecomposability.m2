@@ -4,7 +4,7 @@ newPackage(
         "GeometricDecomposability",
         Version => "1.4.1",
         Date => "May 7, 2024",
-        Headline => "A package to check whether ideals are geometrically vertex decomposable",
+        Headline => "checking whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
                 Name => "Mike Cummings",
