@@ -9,7 +9,7 @@ newPackage(
         HomePage=>"https://alessioborzi.github.io"
       }
   },
-	Headline => "A package on tropical methods for toric intersection theory",
+	Headline => "tropical methods for toric intersection theory",
 	Configuration => {},
   PackageExports => {
     "NormalToricVarieties",

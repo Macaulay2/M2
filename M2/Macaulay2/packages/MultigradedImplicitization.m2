@@ -10,7 +10,7 @@ newPackage(
     Email => "benhollering@gmail.com",
     HomePage => "https://sites.google.com/view/benhollering"}
   },
-  Headline => "A package for levaraging multigradings to solve implicitization problems",
+  Headline => "solving implicitization problems using multigradings",
   Keywords => {"Algebraic Statistics", "Commutative Algebra"},
   PackageImports => {"gfanInterface"}
 )
