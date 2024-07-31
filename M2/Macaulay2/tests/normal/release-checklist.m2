@@ -15,7 +15,8 @@ if #pkgs > 0 then error("packages with 'Reload' turned on: ", demark_", " keys p
 -- c.f. commit 7a7e6f96
 pkgs = select(pkgopts, opts -> 100 < #opts.Headline or match({
 --	    "^[A-Z]", -- headlines should not be capitalized, but hard to check
-	    "\\.$", -- headlines should not end with a period
+	    "\\.$",   -- headlines should not end with a period
+	    "\\n",    -- headlines should not contain line breaks
 	    -- redundant clauses for package headlines:
 	    "(T|t)his (P|p)ackage",
 	    "(P|p)ackage (for|on|to)"}, opts.Headline));

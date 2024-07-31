@@ -39,8 +39,7 @@ newPackage(
       Name => "Claudiu Raicu"
     }
   },
-  Headline => "multiplier ideals, log canonical thresholds,
-    and jumping numbers",
+  Headline => "multiplier ideals, log canonical thresholds, and jumping numbers",
   Keywords => {"D-modules"},
   PackageImports=>{
     "ReesAlgebra",
