@@ -257,7 +257,7 @@ newPackage String := opts -> pkgname -> (
 	 if class opts.Keywords =!= List then error "expected Keywords value to be a list";
 	 if not all(opts.Keywords, k -> class k === String) then error "expected Keywords value to be a list of strings";
 	 );
-    -- TODO: if #opts.Headline > 100 then error "newPackage: Headline is capped at 100 characters";
+    if #opts.Headline > 100 then error "newPackage: Headline should be less than 100 characters";
     -- the options coming from loadPackage are stored here
     loadOptions := if loadPackageOptions#?pkgname then loadPackageOptions#pkgname else loadPackageOptions#"default";
     -- the options are stored for readPackage

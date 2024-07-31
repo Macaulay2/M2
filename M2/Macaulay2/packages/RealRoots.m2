@@ -18,7 +18,7 @@ newPackage(
 	 Email=>"thomasjyahl@tamu.edu",
 	 HomePage=>"https://www.github.com/tjyahl"}
 	},
-    Headline=>"Package for symbolically exploring, counting, and locating real solutions to general polynomial systems",
+    Headline=>"symbolically exploring, counting, and locating real solutions to general polynomial systems",
     Keywords=>{"Real Algebraic Geometry"},
     PackageImports=>{},
     PackageExports=>{}
