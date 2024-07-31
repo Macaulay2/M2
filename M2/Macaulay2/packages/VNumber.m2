@@ -8,9 +8,8 @@ newPackage(
         {Name => "Emanuele Sgroi", Email => "emasgroi@unime.it", HomePage => "https://www.researchgate.net/profile/Emanuele-Sgroi"}},
     Headline => "compute v-number of homogeneous ideals and v-function of monomial ideals",
     Keywords => {"Documentation"},
-    DebuggingMode => false,
     PackageExports => {"PrimaryDecomposition","ReesAlgebra"},
-    Reload => true
+    DebuggingMode => false
 )
 
 export {"reesMap",
