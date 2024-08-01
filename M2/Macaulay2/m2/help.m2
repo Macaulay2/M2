@@ -64,8 +64,8 @@ optTO := key -> (
 	-- TODO: figure out how to align the lists using padding
 	-- ref = pad(ref, printWidth // 4);
 	(format ptag, fkey, next(), fixup (
-		if currentHelpTag === ptag then MaybeQuotedTT fkey
-		else SPAN {MaybeQuotedTT fkey, " -- see ", TOH{ptag}})))
+		if currentHelpTag === ptag then KBD fkey
+		else SPAN {KBD fkey, " -- see ", TOH{ptag}})))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
