@@ -583,5 +583,3 @@ Node
     restart
     check "Msolve"
 *-
-
-load "./Msolve/EXA/Msolve-testing.m2"
