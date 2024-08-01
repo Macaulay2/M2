@@ -89,7 +89,8 @@ span.tt {
 
 kbd {
   font-family: monospace;
-  padding: 3px 5px;
+  font-size: 75%;
+  padding: 1px 5px;
   vertical-align: middle;
   border: solid 1px;
   border-radius: 6px;
