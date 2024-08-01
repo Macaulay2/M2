@@ -36,7 +36,8 @@ newPackage (
     PackageImports => {},
     PackageExports => {},
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => true,
+    Keywords => {"Homotopy Theory","Commutative Algebra"},
     )
 
 export{
