@@ -160,7 +160,7 @@ msolveSaturate(Ideal, RingElement) := opts -> (I0, f0) -> (
     (S, K, I) := toMsolveRing I0;
     f := substitute(f0, vars S);
     -- see https://github.com/algebraic-solving/msolve/issues/165
-    if char K < 2^16 or char K =!= 1073741827 then error "msolveSaturate: unsupported prime for saturation";
+    if char K < 2^16 or 2^31 < char K then error "msolveSaturate: expected characteristic between 2^16 and 2^31 for F4SAT";
     -- msolve expects a list of the generators of the ideal followed by f
     mOut := msolve(S, K, I_* | {f}, "-S -g 2", opts);
     gens forceGB readMsolveOutputFile(ring I0, mOut))
