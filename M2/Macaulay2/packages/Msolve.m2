@@ -13,9 +13,8 @@ newPackage(
     	Headline => "An interface to the msolve package (https://msolve.lip6.fr/) which computes Groebner Basis and does real root isolation",
 	PackageImports => { "Elimination", "Saturation" },
     	AuxiliaryFiles => true,
-	DebuggingMode => false,       
-	OptionalComponentsPresent => run("command -v msolve > /dev/null") == 0
-	);
+	DebuggingMode => false
+	)
 
 ---------------------------------------------------------------------------
 
