@@ -124,7 +124,7 @@ getAnisotropicPartQQDimension2 GrothendieckWittClass := GrothendieckWittClass =>
 	    B = matrix(A) || B;
 	    );
 
-	-- Step 5f: Try to solve sytem of equations over GF(2)
+	-- Step 5f: Try to solve system of equations over GF(2)
         kk := GF(2);
     	W = matrix(kk, entries W);
     	B = matrix(kk, entries B);
