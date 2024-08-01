@@ -46,12 +46,6 @@ seeAbout := (f, i) -> (
 --   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
 
--- we want quotes around elements of the "Ways to use" list so that
--- "* String" works when running "help" inside Macaulay2, but we don't
--- need the quotes otherwise
-MaybeQuotedTT = new IntermediateMarkUpType of TT
-net MaybeQuotedTT := x -> formatNoEscaping x#0
-
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
