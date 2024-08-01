@@ -27,193 +27,195 @@ TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
 
     -- indexing into a permutation
-    assert(reducedIdentity_0 == 1)
-    assert(expandedIdentity_{0..2} == {1,2,3})
-    assert(expandedIdentity_{0,2,4,6} == {1,3,5,7})
-    assert(expandedIdentity_(0..2) == {1,2,3})
-    assert(expandedIdentity_(0,2,4,6) == {1,3,5,7})
+    assert(trimmedIdentity_0 == 1)
+    assert(extendedIdentity_{0..2} == {1,2,3})
+    assert(extendedIdentity_{0,2,4,6} == {1,3,5,7})
+    assert(extendedIdentity_(0..2) == {1,2,3})
+    assert(extendedIdentity_(0,2,4,6) == {1,3,5,7})
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
 
-    -- expand and reduce are inverse processes
-    assert(reduce expandedIdentity == reducedIdentity)
-    assert(expand(reducedIdentity, #expandedIdentity) == expandedIdentity)
-    assert(reduce expand(reducedIdentity, #expandedIdentity) == reducedIdentity)
-    assert(expand(reduce expandedIdentity, #expandedIdentity) == expandedIdentity)
+    -- extend and trim are inverse processes
+    assert(trim extendedIdentity == trimmedIdentity)
+    assert(extend(trimmedIdentity, #extendedIdentity) == extendedIdentity)
+    assert(trim extend(trimmedIdentity, #extendedIdentity) == trimmedIdentity)
+    assert(extend(trim extendedIdentity, #extendedIdentity) == extendedIdentity)
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
 
     -- basic operations
     -- equality
-    assert(reducedIdentity == expandedIdentity)
-    assert(reducedIdentity != permutation reverse expandedList)
-    assert(expandedIdentity != permutation reverse expandedList)
+    assert(trimmedIdentity == extendedIdentity)
+    assert(trimmedIdentity != permutation reverse extendedList)
+    assert(extendedIdentity != permutation reverse extendedList)
     -- multiplication
-    assert(reducedIdentity*reducedIdentity == reducedIdentity)
-    assert(reducedIdentity*expandedIdentity == reducedIdentity)
-    assert(expandedIdentity*expandedIdentity == reducedIdentity)
-    assert(expandedIdentity*(permutation switch(0, 1, expandedList)) == permutation switch(0, 1, expandedList))
-    assert((permutation switch(0, 1, expandedList))*expandedIdentity == (permutation switch(0, 1, expandedList)))
+    assert(trimmedIdentity*trimmedIdentity == trimmedIdentity)
+    assert(trimmedIdentity*extendedIdentity == trimmedIdentity)
+    assert(extendedIdentity*extendedIdentity == trimmedIdentity)
+    assert(extendedIdentity*(permutation switch(0, 1, extendedList)) == permutation switch(0, 1, extendedList))
+    assert((permutation switch(0, 1, extendedList))*extendedIdentity == (permutation switch(0, 1, extendedList)))
     -- powers
-    assert(reducedIdentity^2 == reducedIdentity)
-    assert(reducedIdentity^5 == reducedIdentity)
-    assert(reducedIdentity^(-1) == reducedIdentity)
-    assert(reducedIdentity^(-5) == reducedIdentity)
-    assert(reducedIdentity^0 == reducedIdentity)
+    assert(trimmedIdentity^2 == trimmedIdentity)
+    assert(trimmedIdentity^5 == trimmedIdentity)
+    assert(trimmedIdentity^(-1) == trimmedIdentity)
+    assert(trimmedIdentity^(-5) == trimmedIdentity)
+    assert(trimmedIdentity^0 == trimmedIdentity)
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
     
     -- matrix representation
-    assert(toMatrix reducedIdentity == id_(ZZ^1))
-    assert(toMatrix expandedIdentity == id_(ZZ^(#expandedIdentity)))
+    assert(toMatrix trimmedIdentity == id_(ZZ^1))
+    assert(toMatrix extendedIdentity == id_(ZZ^(#extendedIdentity)))
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
     
     -- Group actions
-    assert(reducedIdentity * {1} == {1})
-    assert(reducedIdentity * {1,2,3} == {1,2,3})
-    assert(reducedIdentity * {3,1,2} == {3,1,2})
-    assert(expandedIdentity * toList(1 .. #expandedIdentity) == toList(1 .. #expandedIdentity))
-    assert(expandedIdentity * toList(1 .. #expandedIdentity+2) == toList(1 .. #expandedIdentity+2))
-    assert(expandedIdentity * switch(0, 1, toList(1 .. #expandedIdentity+2)) == switch(0, 1, toList(1 .. #expandedIdentity+2)))
+    assert(trimmedIdentity * {1} == {1})
+    assert(trimmedIdentity * {1,2,3} == {1,2,3})
+    assert(trimmedIdentity * {3,1,2} == {3,1,2})
+    assert(extendedIdentity * toList(1 .. #extendedIdentity) == toList(1 .. #extendedIdentity))
+    assert(extendedIdentity * toList(1 .. #extendedIdentity+2) == toList(1 .. #extendedIdentity+2))
+    assert(extendedIdentity * switch(0, 1, toList(1 .. #extendedIdentity+2)) == switch(0, 1, toList(1 .. #extendedIdentity+2)))
 
-    assert(reducedIdentity * (toMatrix reducedIdentity) == toMatrix reducedIdentity)
-    assert(reducedIdentity * (toMatrix expand(reducedIdentity, 3)) == toMatrix expand(reducedIdentity, 3))
-    assert(reducedIdentity * (toMatrix permutation {3,1,2}) == toMatrix permutation {3,1,2})
-    assert(expandedIdentity * (toMatrix expand(expandedIdentity, #expandedIdentity+2)) == toMatrix expand(expandedIdentity, #expandedIdentity+2))
-    assert(expandedIdentity * (toMatrix permutation switch(0, 1, toList(1 .. #expandedIdentity+2))) == toMatrix permutation switch(0, 1, toList(1 .. #expandedIdentity+2)))
+    assert(trimmedIdentity * (toMatrix trimmedIdentity) == toMatrix trimmedIdentity)
+    assert(trimmedIdentity * (toMatrix extend(trimmedIdentity, 3)) == toMatrix extend(trimmedIdentity, 3))
+    assert(trimmedIdentity * (toMatrix permutation {3,1,2}) == toMatrix permutation {3,1,2})
+    assert(extendedIdentity * (toMatrix extend(extendedIdentity, #extendedIdentity+2)) == toMatrix extend(extendedIdentity, #extendedIdentity+2))
+    assert(extendedIdentity * (toMatrix permutation switch(0, 1, toList(1 .. #extendedIdentity+2))) == toMatrix permutation switch(0, 1, toList(1 .. #extendedIdentity+2)))
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
     
     -- cycle decomposition
-    assert(cycleDecomposition reducedIdentity == {1:1})
-    assert(cycleDecomposition expandedIdentity == for i in 1 .. #expandedIdentity list 1:i)
-    assert(cycleType reducedIdentity == 1:1)
-    assert(cycleType expandedIdentity == (#expandedIdentity):1)
+    assert(cycleDecomposition trimmedIdentity == {1:1})
+    assert(cycleDecomposition extendedIdentity == for i in 1 .. #extendedIdentity list 1:i)
+    assert(cycleType trimmedIdentity == 1:1)
+    assert(cycleType extendedIdentity == (#extendedIdentity):1)
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
     
     -- Ascents, descents, runs, exceedances, and records
-    assert(ascents reducedIdentity == {})
-    assert(ascents expandedIdentity == toList (1 .. #expandedIdentity-1))
-    assert(descents reducedIdentity == {})
-    assert(descents expandedIdentity == {})
-    assert(ascendingRuns reducedIdentity == {1:1})
-    assert(ascendingRuns expandedIdentity == {(1 .. #expandedIdentity)})
-    assert(descendingRuns reducedIdentity == {1:1})
-    assert(descendingRuns expandedIdentity == for i in (1 .. #expandedIdentity) list 1:i)
-    assert(exceedances reducedIdentity == {})
-    assert(exceedances expandedIdentity == {})
-    assert(exceedances(reducedIdentity, Weak=>true) == {1})
-    assert(exceedances(expandedIdentity, Weak=>true) == expandedList)
-    assert(saliances reducedIdentity == {last reducedIdentity})
-    assert(saliances expandedIdentity == {last expandedIdentity})
-    assert(records reducedIdentity == {1})
-    assert(records expandedIdentity == expandedList)
+    assert(ascents trimmedIdentity == {})
+    assert(ascents extendedIdentity == toList (1 .. #extendedIdentity-1))
+    assert(descents trimmedIdentity == {})
+    assert(descents extendedIdentity == {})
+    assert(ascendingRuns trimmedIdentity == {1:1})
+    assert(ascendingRuns extendedIdentity == {(1 .. #extendedIdentity)})
+    assert(descendingRuns trimmedIdentity == {1:1})
+    assert(descendingRuns extendedIdentity == for i in (1 .. #extendedIdentity) list 1:i)
+    assert(exceedances trimmedIdentity == {})
+    assert(exceedances extendedIdentity == {})
+    assert(exceedances(trimmedIdentity, Weak=>true) == {1})
+    assert(exceedances(extendedIdentity, Weak=>true) == extendedList)
+    assert(saliances trimmedIdentity == {last trimmedIdentity})
+    assert(saliances extendedIdentity == {last extendedIdentity})
+    assert(records trimmedIdentity == {1})
+    assert(records extendedIdentity == extendedList)
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
     
     -- pattern avoidance
-    assert(isVexillary reducedIdentity)
-    assert(isVexillary expandedIdentity)
-    assert(isCartwrightSturmfels reducedIdentity)
-    assert(isCartwrightSturmfels expandedIdentity)
-    assert(isCDG reducedIdentity)
-    assert(isCDG expandedIdentity)
+    assert(isVexillary trimmedIdentity)
+    assert(isVexillary extendedIdentity)
+    assert(isCartwrightSturmfels trimmedIdentity)
+    assert(isCartwrightSturmfels extendedIdentity)
+    assert(isCDG trimmedIdentity)
+    assert(isCDG extendedIdentity)
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
     
     -- Foata's fundamental bijection
-    assert(foataBijection reducedIdentity == reducedIdentity)
-    assert(foataBijection expandedIdentity == expandedIdentity)
+    assert(foataBijection trimmedIdentity == trimmedIdentity)
+    assert(foataBijection extendedIdentity == extendedIdentity)
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
-    expandedIdentity = permutation toList (1..8)
-    expandedList = toList (1 .. #expandedIdentity)
+    trimmedIdentity = permutation {1}
+    extendedIdentity = permutation toList (1..8)
+    extendedList = toList (1 .. #extendedIdentity)
     
     -- miscellaneous
-    assert(inverse reducedIdentity == reducedIdentity)
-    assert(inverse expandedIdentity == expandedIdentity)
-    assert(ord reducedIdentity == 1)
-    assert(ord expandedIdentity == 1)
-    assert(sign reducedIdentity == 1)
-    assert(sign expandedIdentity == 1)
-    assert(isEven reducedIdentity)
-    assert(isEven expandedIdentity)
-    assert(not isOdd reducedIdentity)
-    assert(not isOdd expandedIdentity)
-    assert(not isDerangement reducedIdentity)
-    assert(not isDerangement expandedIdentity)
-    assert(fixedPoints reducedIdentity == {1})
-    assert(fixedPoints expandedIdentity == expandedList)
-    assert(inversions reducedIdentity == {})
-    assert(inversions expandedIdentity == {})
+    assert(inverse trimmedIdentity == trimmedIdentity)
+    assert(inverse extendedIdentity == extendedIdentity)
+    assert(ord trimmedIdentity == 1)
+    assert(ord extendedIdentity == 1)
+    assert(sign trimmedIdentity == 1)
+    assert(sign extendedIdentity == 1)
+    assert(isEven trimmedIdentity)
+    assert(isEven extendedIdentity)
+    assert(not isOdd trimmedIdentity)
+    assert(not isOdd extendedIdentity)
+    assert(not isDerangement trimmedIdentity)
+    assert(not isDerangement extendedIdentity)
+    assert(fixedPoints trimmedIdentity == {1})
+    assert(fixedPoints extendedIdentity == extendedList)
+    assert(inversions trimmedIdentity == {})
+    assert(inversions extendedIdentity == {})
+    assert(length trimmedIdentity == 0)
+    assert(length extendedIdentity == 0)
 ///
 
 TEST ///
@@ -222,7 +224,7 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- indexing into a permutation
     assert(p_1 == 10)
@@ -238,40 +240,40 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
-    -- expand and reduce are inverse processes
-    assert(reduce p == p)
-    assert(expand(p, #p+2) == expandedP)
-    assert(reduce expand(p, #p+2) == p)
+    -- extend and trim are inverse processes
+    assert(trim p == p)
+    assert(extend(p, #p+2) == extendedP)
+    assert(trim extend(p, #p+2) == p)
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
+    trimmedIdentity = permutation {1}
 
     -----------------------
     -- longest permutation
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- basic operations
     -- equality
-    assert(p == expandedP)
-    -- assert(reducedIdentity != permutation reverse expandedList)
-    assert(reducedIdentity != reverse expandedP)
+    assert(p == extendedP)
+    -- assert(trimmedIdentity != permutation reverse extendedList)
+    assert(trimmedIdentity != reverse extendedP)
     -- multiplication
-    assert(reducedIdentity*reducedIdentity == reducedIdentity)
+    assert(trimmedIdentity*trimmedIdentity == trimmedIdentity)
     -- powers
-    assert(p^2 == reducedIdentity)
+    assert(p^2 == trimmedIdentity)
     assert(p^5 == p)
     assert(p^(-1) == p)
     assert(p^(-5) == p)
-    assert(p^0 == reducedIdentity)
+    assert(p^0 == trimmedIdentity)
 ///
 
 TEST ///
@@ -280,7 +282,7 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- matrix representation
     antiDiagIdentity = matrix for i in (0 ..< #p) list for j in (0 ..< #p) list if i+j == #p-1 then 1 else 0
@@ -293,11 +295,11 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- Group actions
     assert(p * toList(1 .. #p) == pList)
-    assert(p * toList(1 .. #p+2) == toList expandedP)
+    assert(p * toList(1 .. #p+2) == toList extendedP)
     assert(p * {5,4,3,2,1,10,9,8,7,6} == {6,7,8,9,10,1,2,3,4,5})
 
     assert(p * (toMatrix p) == id_(ZZ^#p))
@@ -319,7 +321,7 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- cycle decomposition
     assert(cycleDecomposition p == {(6,5), (7,4), (8,3), (9,2), (10,1)})
@@ -332,7 +334,7 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- Ascents, descents, runs, exceedances, and records
     assert(ascents p == {})
@@ -351,7 +353,7 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- pattern avoidance
     assert(isVexillary p)
@@ -365,7 +367,7 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- Foata's fundamental bijection
     assert(foataBijection p == permutation {6,5,7,4,8,3,9,2,10,1})
@@ -377,7 +379,7 @@ TEST ///
     -----------------------
     p = permutation reverse toList (1..10)
     pList = toList p
-    expandedP = permutation(pList | {max(pList)+1, max(pList)+2})
+    extendedP = permutation(pList | {max(pList)+1, max(pList)+2})
 
     -- miscellaneous
     assert(inverse p == p)
@@ -388,27 +390,37 @@ TEST ///
     assert(isDerangement p)
     assert(fixedPoints p == {})
     assert(sort inversions p == sort subsets(1 .. #p, 2))
+    assert(length p == binomial(#(toList p), 2))
 ///
 
 TEST ///
     -----------------------
     -- identity permutation
     -----------------------
-    reducedIdentity = permutation {1}
+    trimmedIdentity = permutation {1}
 
     -------
     -- Misc
     -------
     p = permutation random toList (1..10)
-    assert((inverse p)*p == reducedIdentity)
-    assert(p*(inverse p) == reducedIdentity)
+    assert((inverse p)*p == trimmedIdentity)
+    assert(p*(inverse p) == trimmedIdentity)
     assert(ord p == ord inverse p)
     assert(cycleType p == cycleType inverse p)
     assert(sign p == sign inverse p)
+///
 
-    -- some more pattern avoidance
+TEST ///
+    --------------------
+    -- Pattern avoidance
+    --------------------
     assert(not avoidsPattern(permutation {2,3,7,1,5,8,4,6}, {1,4,3,2}))
     assert(avoidsPattern(permutation {1,4,6,2,3,7,5}, {1,4,3,2}))
+
+    -- assert(not isPatternAvoiding(permutation {3,1,2},{3,1,2}));
+    -- assert(not isPatternAvoiding(permutation {1,2,3,6,4,5}, {3,1,2}));
+    -- assert(isPatternAvoiding(permutation {3,1,2},{2,3,1}));
+
     assert(not isVexillary(permutation {7,2,5,8,1,3,6,4}))
     assert(isVexillary(permutation {1,6,9,2,4,7,3,5,8}))
 ///

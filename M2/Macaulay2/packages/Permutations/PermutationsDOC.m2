@@ -283,7 +283,7 @@ doc ///
   descendingRuns
   descents
   exceedances
-  expand
+  extend
   fixedPoints
   foataBijection
   inverse
@@ -297,7 +297,7 @@ doc ///
   isVexillary
   ord
   records
-  reduce
+  trim
   saliances
   sign
   toMatrix
@@ -786,15 +786,15 @@ doc ///
     records
 ///
 
--- expand(w,n)
+-- extend(w,n)
 doc ///
   Key
-    expand
-    (expand, Permutation, ZZ)
+    extend
+    (extend, Permutation, ZZ)
   Headline
     rewrites a permutation as a permution on more symbols
   Usage
-    expand(w,n)
+    extend(w,n)
   Inputs
     w:Permutation
     n:ZZ
@@ -807,20 +807,20 @@ doc ///
       on $N > n$ symbols as well by fixing the $(n+1)$st through $N$th symbols.
     Example
       p = permutation {3,1,2,5,4}
-      expand(p, 7)
+      extend(p, 7)
   SeeAlso
-    reduce
+    trim
 ///
 
--- expand(w,v)
+-- extend(w,v)
 -- TODO: how to write documentation for tuple output
 doc ///
 Key
- (expand, Permutation, Permutation)
+ (extend, Permutation, Permutation)
 Headline
  rewrites two permutations to be permutations on the same number of symbols
 Usage
- e = expand(w,v)
+ e = extend(w,v)
 Inputs
  w:Permutation
  v:Permutation
@@ -828,18 +828,18 @@ Outputs
  e:Sequence
 Description
  Text
-  For ease, we can also expand two permutations so that they are regarded as 
+  For ease, we can also extend two permutations so that they are regarded as 
   permutations on the same number of symbols. More precisely, if we have 
   permutations $p=(p_1, \hdots, p_n)$ and $q=(q_1, \hdots, q_m)$, then 
-  {\tt expand(p,q)} will return both $p$ and $q$ as permutations on
+  {\tt extend(p,q)} will return both $p$ and $q$ as permutations on
   $\text{max}(m,n)$ symbols.
  Example
   p = permutation {3,1,2,5,4}
   q = permutation {2,3,1,4,5,7,6}
-  expand(p,q)
+  extend(p,q)
 SeeAlso
- (expand, Permutation, ZZ)
- reduce
+ (extend, Permutation, ZZ)
+ trim
 
 ///
 
@@ -930,6 +930,8 @@ doc ///
     Example
       p = permutation {3,1,2,5,4}
       inversions p
+  SeeAlso
+    length
 ///
 
 -- isCartwrightSturmfels
@@ -1114,6 +1116,28 @@ doc ///
     isCDG
 ///
 
+-- length
+doc ///
+  Key
+    (length, Permutation)
+  Headline
+    computes the length of a permutation
+  Usage
+    length w
+  Inputs
+    w:Permutation
+  Outputs
+    :ZZ
+  Description
+    Text
+      The {\emph length} of a permutation is the size of its inversion set.
+    Example
+      p = permutation {3,1,2,5,4}
+      length p
+  SeeAlso
+    inversions
+///
+
 -- ord
 doc ///
   Key
@@ -1165,30 +1189,30 @@ doc ///
     saliances
 ///
 
--- reduce
+-- trim
 doc ///
   Key
-    reduce
-    (reduce, Permutation)
+    trim
+    (trim, Permutation)
   Headline
     rewrites a permutation in its smallest representation
   Usage
-    reduce w
+    trim w
   Inputs
     w:Permutation
   Outputs
     :Permutation
   Description
     Text
-      {\tt reduce} rewrites a permutation $p$ as a permutation in $S_n$,
+      {\tt trim} rewrites a permutation $p$ as a permutation in $S_n$,
       where $n$ is the smallest integer such that $p$ is in $\mathfrak{S}_n$.
       In other words, it returns a permutation where any extraneous fixed points
       are removed. 
     Example
       p = permutation {3,1,2,5,4,6,7}
-      reduce p
+      trim p
   SeeAlso
-    expand
+    extend
 ///
 
 -- saliances

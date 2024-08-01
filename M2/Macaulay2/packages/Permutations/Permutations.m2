@@ -43,34 +43,30 @@ Permutation _ Sequence := List => (w,s) -> ((toList w)_(toList s))
 -----------------------------------------------------------------------------
 -- Change which symmetric group S_n to view a permutation as an element of
 -----------------------------------------------------------------------------
--- it would be nice if this method was called "trim", but that is a protected global variable
-reduce = method(TypicalValue => Permutation)
-reduce Permutation := Permutation => w -> (
+trim Permutation := Permutation => o -> w -> (
     w = w_(select(#w, i -> w_{i ..< #w} != toList(i+1 .. #w)));
     if #w == 0 then permutation {1} else permutation w
 )
 
--- it would be nice if this method was called "extend", but that is a protected global variable
-expand = method(TypicalValue => Permutation)
-expand (Permutation, ZZ) := Permutation => (w,n) -> (
+extend (Permutation, ZZ) := Permutation => o -> (w,n) -> (
     if n < #w then error(toString w | " is a permutation on more than " | toString n | " letters.");
     permutation(toList(w) | toList(#w+1..n))
 )
-expand (Permutation, Permutation) := Sequence => (w,v) -> (
+extend (Permutation, Permutation) := Sequence => o -> (w,v) -> (
     n := max(#w, #v);
-    (expand(w,n), expand(v,n))
+    (extend(w,n), extend(v,n))
 )
 
 -----------------------------------------------------------------------------
 -- Basic permutation operations
 -----------------------------------------------------------------------------
 Permutation == Permutation := Boolean => (w, v) -> (
-    (w, v) = expand(w,v);
+    (w, v) = extend(w,v);
     toList(w) == toList(v)
 )
 Permutation * Permutation := Permutation => (w, v) -> (
-    (w,v) = expand(w,v);
-    reduce permutation w_(to0Index toList v)
+    (w,v) = extend(w,v);
+    trim permutation w_(to0Index toList v)
 )
 -- power implementation modified from Mahrud's in https://github.com/Macaulay2/M2/issues/2581
 Permutation ^ ZZ := Permutation => (w, n) -> fold(if n < 0 then (-n):(permutation to1Index inversePermutation to0Index toList w) else n:w,
@@ -90,15 +86,15 @@ toMatrix Permutation := Matrix => w -> (
 -- Group actions
 -----------------------------------------------------------------------------
 Permutation * List := List => (w, l) -> (
-    if #(reduce w) > #l then error(toString w | " permutes more than " | toString #l | " elements.") 
-    else l_(to0Index toList expand(w, #l))
+    if #(trim w) > #l then error(toString w | " permutes more than " | toString #l | " elements.") 
+    else l_(to0Index toList extend(w, #l))
 )
 -- group action on a matrix permutes the ROWS of the matrix
 -- maybe would prefer to permute the columns? Seems more natural
 Permutation * Matrix := Matrix => (w, M) -> (
     m := numRows M;
-    if #(reduce w) > m then error(toString w | " permutes more than " | toString m | " elements.") 
-    else (toMatrix expand(w, m)) * M
+    if #(trim w) > m then error(toString w | " permutes more than " | toString m | " elements.") 
+    else (toMatrix extend(w, m)) * M
 )
 
 -----------------------------------------------------------------------------
@@ -212,14 +208,14 @@ records Permutation := List => w -> (
 avoidsPattern = method(TypicalValue => Boolean)
 avoidsPattern (Permutation,List) := Boolean => (w, pattern) -> (
     --assume permutation is pattern-avoiding, break if not true
-    isAvoiding := true;
-    for idx in subsets(0 ..< #w, #pattern) do (
-        sortedIdx := sort(idx);
-        pairwiseComparison := apply(pattern_{0..#pattern-2}, pattern_{1..#pattern-1}, (i,j) -> w#(sortedIdx#(i-1)) < w#(sortedIdx#(j-1))); -- pairwise comparison of permutation according to pattern
-        isAvoiding = not all(pairwiseComparison, i -> i == true); -- true if there was one inequality that failed, else all inequalities are true and so not pattern-avoiding
-        if not isAvoiding then break;
-    );
-    isAvoiding
+    for idx in subsets(0 .. #w-1, #pattern) do {
+        vals := w_(idx);
+        sortedVals := sort(vals);
+        relPositions := hashTable toList apply(0..#vals-1, i -> {sortedVals#i, i});
+        p := toList apply(vals, i -> (relPositions#i) + 1); 
+        if p == pattern then return false;
+    };
+    true
 )
 
 avoidsPatterns = method(TypicalValue => Boolean)
@@ -311,3 +307,5 @@ inversions = method(TypicalValue => List)
 inversions Permutation := List => w -> (
     for idxPair in sort(subsets(toList w, 2) / sort) list if w_(idxPair#0) > w_(idxPair#1) then idxPair else continue
 )
+
+length Permutation := ZZ => w -> (#(inversions w))
