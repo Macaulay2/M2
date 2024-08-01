@@ -139,7 +139,7 @@ find_package(Nauty	2.7.0)
 find_package(Normaliz	3.8.0)
 # TODO: add minimum version checks
 find_package(EAntic	2.0.0)
-find_package(MSolve	0.6.0)
+find_package(MSolve	0.7.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)

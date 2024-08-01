@@ -36,15 +36,16 @@ importFrom_Elimination { "eliminationRing" }
 
 ---------------------------------------------------------------------------
 
+msolveMinimumVersion = "0.7.0"
 msolveProgram = findProgram("msolve", "msolve --help",
-    MinimumVersion => ("0.6.7", "msolve -V"),
+    MinimumVersion => (msolveMinimumVersion, "msolve -V"),
     RaiseError => false,
     Verbose => debugLevel > 0)
 
 if msolveProgram === null then (
     if not (options currentPackage).OptionalComponentsPresent
     then ( printerr "warning: msolve cannot be found; ending"; end )
-    else ( printerr "warning: msolve found but its version is older than 0.6.7";
+    else ( printerr "warning: msolve found but its version is older than v" | msolveMinimumVersion;
 	msolveProgram = findProgram("msolve", "msolve --help", Verbose => debugLevel > 0)))
 
 msolveDefaultOptions = new OptionTable from {
