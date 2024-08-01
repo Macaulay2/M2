@@ -179,11 +179,12 @@ net  PRE  :=
 net   TT  :=
 net CODE  :=
 net SAMP  :=
-net  KBD  :=
 info TT   :=
 info SAMP :=
-info  KBD :=
 info CODE :=  x -> horizontalJoin apply(noopts x,net)
+
+net  KBD :=
+info KBD := x -> formatNoEscaping toString horizontalJoin apply(noopts x,net)
 
 info PRE  := x ->
     wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
