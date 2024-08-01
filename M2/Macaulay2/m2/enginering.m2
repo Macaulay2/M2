@@ -284,11 +284,13 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 -- freduce := (f) -> (numerator f)/(denominator f)
 
 factoryAlmostGood = R -> (
-     k := coefficientRing R;
-     k === QQ or
-     k === ZZ or
-     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
-     instance(k,GaloisField))
+    if instance(R,QuotientRing) then factoryAlmostGood ambient R
+    else if instance(R,PolynomialRing) then factoryAlmostGood coefficientRing R
+    else (R === QQ or
+     R === ZZ or
+     instance(R,GaloisField)
+     )
+ )
 factoryGood = R -> factoryAlmostGood R and not (options R).Inverses
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
@@ -459,9 +461,9 @@ promoteleftinexact = (f,g) -> (
 promoteleftexact = (f,g) -> (
      f = try promote(f,class g) else oops();
      (f,g))
-exchange = (x,y) -> (y,x)
-promoterightexact   = exchange @@ promoteleftexact   @@ exchange
-promoterightinexact = exchange @@ promoteleftinexact @@ exchange
+swap = (x,y) -> (y,x)
+promoterightexact   = swap @@ promoteleftexact   @@ swap
+promoterightinexact = swap @@ promoteleftinexact @@ swap
 
 divmod := R -> (f,g) -> (
      (q,r) := rawDivMod(raw f, raw g);

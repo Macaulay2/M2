@@ -77,8 +77,8 @@ randomMR := opts -> (F,G) -> (
      m := numgens F;
      n := numgens G;
      k := min(m,n);
-     d1 := toList ( degreeLength F : 1 );
-     d0 := toList ( degreeLength F : 0 );
+     d1 := toList ( degreeLength R : 1 );
+     d0 := toList ( degreeLength R : 0 );
      f := id_(R^k);
      if m>k then f = f || random(R^(toList( m-k : d1 )), R^n, opts)
      else if n > k then f = f | random(R^m, R^(toList (n-k : -d1)), opts);
@@ -113,7 +113,8 @@ randomMR := opts -> (F,G) -> (
      map(F,G,new Matrix from f))
 
 random(Module, Module) := Matrix => opts -> (F,G) -> (
-     if not isFreeModule F or not isFreeModule G then error "random: expected free modules";
+    if not isFreeModule F or not isFreeModule G
+    then return map(F, G, random(cover F, cover G, opts));
      R := ring F;
      if R =!= ring G then error "modules over different rings";
      if opts.MaximalRank then return (randomMR opts)(F,G);
@@ -161,6 +162,8 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 				   numused = numused + 1;
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
+
+random Module := Vector => o -> M -> vector(generators M * random(cover M, module ring M, o))
 
 random(ZZ,   Ideal) := RingElement => opts -> (d, I) -> random({d}, I, opts)
 random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (

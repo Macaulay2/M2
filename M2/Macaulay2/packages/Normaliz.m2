@@ -22,16 +22,17 @@ newPackage(
            DebuggingMode => false,
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-		"journal URI" => "http://j-sag.org/",
+		"journal URI" => "https://msp.org/jsag/",
 		"article title" => "A Macaulay2 interface for Normaliz",
 		"acceptance date" => "2010-08-08",
-		"published article URI" => "http://www.j-sag.org/Volume2/jsag-4-2010.pdf",
-		"published code URI" => "http://www.j-sag.org/Volume2/Normaliz.m2",
+		"published article URI" => "https://msp.org/jsag/2010/2-1/p04.xhtml",
+		"published article DOI" => "10.2140/jsag.2010.2.15",
+		"published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x04-code.zip",
 		"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Normaliz.m2",
 		"release at publication" => "d814bd64858da074bc73c626d27ff5494dfb7d4f",
 		"version at publication" => "2.0",
 		"volume number" => "2",
-		"volume URI" => "http://www.j-sag.org/volume2.html"
+		"volume URI" => "https://msp.org/jsag/2010/2-1/"
 		}
 )
 

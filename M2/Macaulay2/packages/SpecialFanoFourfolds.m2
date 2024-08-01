@@ -525,9 +525,9 @@ map HodgeSpecialSurface := o -> S -> (
 );
 curve = method();
 curve HodgeSpecialSurface := U -> first U#"CurveContainedInTheSurface";
-discriminant HodgeSpecialSurface := o -> S -> (
+discriminant HodgeSpecialSurface := ZZ => o -> S -> (
     if S.cache#?(curve S,"discriminantSurface") then return last S.cache#(curve S,"discriminantSurface");
-    if not member(o.Algorithm, {"Poisson", 1, 2}) then error "the Algorithm option accepts the values 1 and 2";
+    if not member(o.Algorithm, {null, 1, 2}) then error "the Algorithm option accepts the values 1 and 2";
     C := curve S;
     if dim C != 1 then error "expected a Hodge-special surface";
     if o.Algorithm === 2 then return discriminant2 S;
@@ -3161,9 +3161,6 @@ PARA{"The general type of Gushel-Mukai fourfold (called ",EM "ordinary",") can b
 PARA{"An object of the class ", TO SpecialGushelMukaiFourfold, " is basically represented by a couple ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a Gushel-Mukai fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///, ".  The main constructor for the objects of the class is the function ", TO specialGushelMukaiFourfold,"."},
 SeeAlso => {(discriminant,SpecialGushelMukaiFourfold)}}
 
-typValDisc := typicalValues#discriminant;
-typicalValues#discriminant = ZZ;
-
 document {Key => {(discriminant, SpecialCubicFourfold), (discriminant, HodgeSpecialFourfold)}, 
 Headline => "discriminant of a special cubic fourfold", 
 Usage => "discriminant X", 
@@ -3181,8 +3178,6 @@ Outputs => {ZZ => {"the discriminant of ", TEX///$X$///}},
 PARA{"This function applies a formula given in Section 7 of the paper ", HREF{"https://arxiv.org/abs/1302.1398", "Special prime Fano fourfolds of degree 10 and index 2"}, ", obtaining the data required through the functions ", TO cycleClass, ", ", TO EulerCharacteristic, " and ", TO Euler, " (the option ", TT "Algorithm", " allows you to select the method)."}, 
 EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "time discriminant X"}, 
 SeeAlso => {(discriminant, SpecialCubicFourfold)}} 
-
-typicalValues#discriminant = typValDisc;
 
 undocumented{(expression, SpecialGushelMukaiFourfold), (describe, SpecialGushelMukaiFourfold)} 
 

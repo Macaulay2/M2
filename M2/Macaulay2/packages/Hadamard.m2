@@ -165,6 +165,10 @@ doc ///
        Hadamard
      Headline
        a package to study Hadamard products of varieties.
+     Description
+       Text
+	 This package provides a class for representing points in projective
+	 space and methods for computing Hadamard products of varieties.
 ///
 
 doc ///

@@ -1,13 +1,13 @@
 name: Lint
 on:
   push: { branches: [ "development" ] }
-  pull_request: { branches: [ "development" ] }
+  pull_request: { branches: [ "development", "master" ] }
 
 jobs:
   codespell:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         shell: bash -l {0}
         run: |

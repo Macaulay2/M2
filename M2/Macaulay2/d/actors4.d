@@ -245,17 +245,25 @@ any(f:Expr,n:int):Expr := (
 	  );
      False);
 any(f:Expr,obj:HashTable):Expr := (
+     v := False;
+     if obj.Mutable then lockRead(obj.mutex);
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       v := applyEEE(f,p.key,p.value);
-	       when v is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return v else nothing;
-	       if v == True then return True;
-	       if v != False then return buildErrorPacket("any: expected true or false");
+	       v = applyEEE(f,p.key,p.value);
+	       if v != False then break;
 	       p = p.next;
-	       ));
-     False);
+	       );
+	  if v != False then break);
+     if obj.Mutable then unlock(obj.mutex);
+     when v
+     is err:Error do return
+	  if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value
+	  else v
+     else nothing;
+     if v != True && v != False then return buildErrorPacket("any: expected true or false");
+     v);
 any(f:Expr,a:Sequence):Expr := (
      foreach x at i in a do (
 	  y := applyEE(f,x);
@@ -301,7 +309,7 @@ any(e:Expr):Expr := (
 setupfun("any",any);
 
 --find(f:Expr,obj:HashTable):Expr := (
---     foreach bucket in obj.table do (
+--     foreach bucket in obj.table do (	-- also must lock
 --	  p := bucket;
 --	  while true do (
 --	       if p == bucketEnd then break;
@@ -1046,6 +1054,11 @@ tostringfun(e:Expr):Expr := (
 	Ccode(void, "sprintf((char *)", buf, "->array, \"%p\", ", x.v, ")");
 	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
 	toExpr(buf))
+    is x:atomicIntCell do (
+	buf := newstring(20);
+	Ccode(void, "sprintf((char *)", buf, "->array, \"%d\", ", load(x.v), ")");
+	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
+	toExpr(buf))
 );
 setupfun("simpleToString",tostringfun);
 
@@ -1188,7 +1201,7 @@ instanceof(e:Expr):Expr := (
 setupfun("instance",instanceof);
 
 
-hadseq := false;
+threadLocal hadseq := false;
 deeplen(a:Sequence):int := (
      n := 0;
      foreach x in a do (
@@ -1202,8 +1215,8 @@ deeplen(a:Sequence):int := (
 	       );
 	  );
      n);
-deepseq := emptySequence;
-deepindex := 0;
+threadLocal deepseq := emptySequence;
+threadLocal deepindex := 0;
 deepinsert(a:Sequence):int := (
      n := 0;
      foreach x in a do (
@@ -1221,7 +1234,7 @@ deepsplice(a:Sequence):Sequence := (
      hadseq = false;
      newlen := deeplen(a);
      if hadseq then (
-     	  deepseq = new Sequence len deeplen(a) do provide nullE;
+     	  deepseq = new Sequence len newlen do provide nullE;
      	  deepindex = 0;
      	  deepinsert(a);
      	  w := deepseq;
@@ -1579,11 +1592,13 @@ locate(e:Code):void := (
      when e
      is nullCode do nothing
      is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:augmentedAssignmentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs))
      is v:arrayCode do foreach c in v.z do locate(c)
      is v:angleBarListCode do foreach c in v.t do locate(c)
      is v:Error do lookat(v.position)
      is v:semiCode do foreach c in v.w do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:evaluatedCode do lookat(v.position)
      is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
      is v:functionCode do (locate(v.arrow);locate(v.body);)
      is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)

@@ -68,10 +68,11 @@ setupfun("toList1",toList);
 values(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
-	  o := oc.dictionary;
-	  Expr(list(
-		    new Sequence len o.symboltable.numEntries do
-		    foreach bucket in o.symboltable.buckets do (
+	  o := oc.dictionary.symboltable;
+	  lockRead(o.mutex);
+	  l := Expr(list(
+		    new Sequence len o.numEntries do
+		    foreach bucket in o.buckets do (
 			 p := bucket;
 			 while true do (
 			      when p
@@ -80,24 +81,31 @@ values(e:Expr):Expr := (
 				   provide Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym));
 				   p=q.next;)
 			      else break;
-			      )))))
-     is o:HashTable do (lock(o.mutex); l:= list(
+			      ))));
+	  unlock(o.mutex);
+	  l)
+     is o:HashTable do (
+	if o.Mutable then lockRead(o.mutex);
+	l:= list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(p.value);
-		    p = p.next; ))); unlock(o.mutex); l)
+		    p = p.next; )));
+	if o.Mutable then unlock(o.mutex);
+	l)
      else WrongArg("a hash table or dictionary"));
 setupfun("values",values);
 
 pairs(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (    -- # typical value: pairs, Dictionary, List
-	  o := oc.dictionary;
-	  Expr(list(
-		    new Sequence len o.symboltable.numEntries do (
-			 foreach bucket in o.symboltable.buckets do (
+	  o := oc.dictionary.symboltable;
+	  lockRead(o.mutex);
+	  l := Expr(list(
+		    new Sequence len o.numEntries do (
+			 foreach bucket in o.buckets do (
 			      p := bucket;
 			      while true do (
 				   when p
@@ -108,14 +116,20 @@ pairs(e:Expr):Expr := (
 						  Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym))));
 					p=q.next;)
 				   else break; ));
-			 ))))
-     is o:HashTable do (lock(o.mutex); l:=list(	-- # typical value: pairs, HashTable, List
+			 )));
+	  unlock(o.mutex);
+	  l)
+     is o:HashTable do (
+	if o.Mutable then lockRead(o.mutex);
+	l:=list(	-- # typical value: pairs, HashTable, List
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(Sequence(p.key,p.value));
-		    p = p.next; ))); unlock(o.mutex); l )
+		    p = p.next; )));
+	if o.Mutable then unlock(o.mutex);
+	l )
      is o:Sequence do
 	  Expr(new Sequence len length(o) do (
 	    i := 0;
@@ -257,6 +271,7 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 		    break;
 		    );
 	       if p == mutableHashTableClass then (
+		    o.hash = nextHash();
 		    break;
 		    );
 	       if p == cacheTableClass then (
@@ -499,14 +514,14 @@ closeOut(g:Expr):Expr := (
      when g is f:file do when closeOut(f) is m:errmsg do buildErrorPacket(m.message) else g
      else WrongArg("an output file"));
 setupfun("closeOut",closeOut).Protected = false;
-flush(g:Expr):Expr := (
+flushfun(g:Expr):Expr := (
      when g
      is f:file do (
 	  if f.output
-	  then (flush(f); g)
+	  then (f << flush; g)
 	  else WrongArg("an output file"))
      else WrongArg("a file"));
-setupfun("flush",flush).Protected = false;
+setupfun("flush",flushfun).Protected = false;
 protect(e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
@@ -670,6 +685,8 @@ cpuTime(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("cpuTime",cpuTime);
 
+-- TODO: should "timing" return thread and gc times like "time"?
+-- (moved to actors5.d for gc time)
 timefun(a:Code):Expr := (
      v := cpuTime();
      ret := eval(a);
@@ -678,13 +695,6 @@ timefun(a:Code):Expr := (
      is Error do ret
      else list(timeClass,Sequence(toExpr(x-v),ret)));
 setupop(timingS,timefun);
-showtimefun(a:Code):Expr := (
-     v := cpuTime();
-     ret := eval(a);
-     x := cpuTime();
-     stdIO << "     -- used " << x-v << " seconds" << endl;
-     ret);
-setupop(timeS,showtimefun);
 
 exponent(e:Expr):Expr := (
      when e

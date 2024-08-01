@@ -1751,6 +1751,11 @@ beginDocumentation()
 doc ///
   Key
     Graphs
+  Headline
+    graphs and digraphs
+  Description
+    Text
+      This package defines classes for graphs and digraphs and related methods.
 ///
 
 -------------------------------

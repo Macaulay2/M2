@@ -18,20 +18,8 @@ o6 : List
 
 i7 : peek S0_0
 
-o7 = Point{AccuracyEst => 5.92958e-13        }
-           AccuracyEstInternal => 2.00447e-13
-           ConditionNumber => 5.80657
+o7 = Point{cache => CacheTable{...14...}}
            Coordinates => {1.41421}
-           CycleNumber => 1
-           FinalTValue => .0015625
-           FunctionResidual => 5.55112e-17
-           MaxPrecisionUtilized => 52
-           Multiplicity => 1
-           NewtonResidual => 1.64398e-16
-           PathNumber => 0
-           PathsWithSameEndpoint => {}
-           PrecisionIncreased => 0
-           SolutionNumber => 1
 
 i8 : R=CC[x,y,t,a]; -- include the path variable in the ring
 

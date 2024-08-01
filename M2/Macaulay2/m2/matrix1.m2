@@ -84,7 +84,8 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  R := ring M;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
+	  g := rawMatrixRemake2(raw cover M, raw cover N, deg, raw f, 0);
+	  map(M, N, if M =!= f.target then reduce(M, g) else g)))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -269,7 +270,7 @@ matrixTable := opts -> (f) -> (
 matrix(Matrix) := Matrix => opts -> (m) -> (
      if isFreeModule target m and isFreeModule source m and (not opts.Degree =!= null or degree m === opts.Degree or degree m === {opts.Degree} )
      then m
-     else map(cover target m, cover source m, m, Degree => if opts.Degree =!= null then opts.Degree else degree m)
+     else map(cover target m, cover source m, raw m, Degree => if opts.Degree =!= null then opts.Degree else degree m)
      )
 
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
@@ -341,7 +342,7 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
 subquotient(Matrix,Matrix) := (subgens,relns) -> (
      R := ring relns;
      E := target subgens;
-     if E != target relns then error "expected maps with the same target"; -- we used to have =!=, but Schreyer orderings of free modules are discarded by "syz"
+     if E =!= target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
      if n == 0 then new Module from (R,rE)
@@ -383,10 +384,17 @@ tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;
+     if f === id_(R^1) then return g;
+     if g === id_(R^1) then return f;
      map(target f ** target g, 
 	  source f ** source g, 
 	  map(R, f.RawMatrix ** g.RawMatrix),
 	  Degree => degree f + degree g))) @@ toSameRing
+
+Matrix ** Module := Matrix => (f, M) -> tensor(f, id_M)
+Module ** Matrix := Matrix => (M, f) -> tensor(id_M, f)
+tensor(Matrix, Module) := Matrix => {} >> o -> (f, M) -> tensor(f, id_M)
+tensor(Module, Matrix) := Matrix => {} >> o -> (M, f) -> tensor(id_M, f)
 
 Matrix ** Number := (f,r) -> r * f
 Number ** Matrix := (r,f) -> r * f
@@ -435,9 +443,6 @@ isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
--- TODO: deprecate these
-degreeLength Ideal := I -> degreeLength ring I
-degreesRing Ideal := I -> degreesRing ring I
 
 promote(Ideal,Number) := 
 promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
@@ -601,14 +606,7 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N,Verify=>false)
-Hom(Module,Matrix) := Matrix => (M,g) -> inducedMap(Hom(M,target g),Hom(M,source g),dual cover M ** g,Verify=>false)
-Hom(Matrix,Matrix) := Matrix => (f,g) -> Hom(source f,g) * Hom(f,source g)
-
-dual(Matrix) := Matrix => {} >> o -> f -> (
-     R := ring f;
-     Hom(f,R^1)
-     )
+-----------------------------------------------------------------------------
 
      -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't use this code in inverse Matrix to check invertibility:
      -- if i % m != 0 then error "matrix not invertible";

@@ -14,7 +14,7 @@ o4 = | 1 0 |
      | 1 0 |
      | 0 1 |
 
-              3        2
-o4 : Matrix ZZ  <--- ZZ
+              3       2
+o4 : Matrix ZZ  <-- ZZ
 
 i5 : 

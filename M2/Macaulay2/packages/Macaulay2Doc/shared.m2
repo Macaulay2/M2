@@ -24,6 +24,18 @@ document { Key => rays,
 	}
     }
 
+document {
+     Key => pullback,
+     Headline => "compute the pullback morphism",
+     SeeAlso => { pushout }
+     }
+
+document {
+     Key => pushout,
+     Headline => "compute the pushout morphism",
+     SeeAlso => { pullback }
+     }
+
 -- also see functions/intersect-doc.m2
 document {
     Key => { intersect, (intersect, List), (intersect, Sequence) },

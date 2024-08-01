@@ -50,14 +50,8 @@ addHook((codim, Module), Strategy => Default, (opts, M) -> (
 	  )))
 
 MonomialIdeal#1 = I -> monomialIdeal 1_(ring I)
-MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> (
-     if n < 0 then error "expected nonnegative exponent"
-     else BinaryPowerMethod(I,n)
-     )
-
-MonomialIdeal ^ Array := (I, e) -> (
-   monomialIdeal (ideal I)^e
-)
+MonomialIdeal ^ ZZ    := MonomialIdeal => (I, n) -> monomialIdeal (ideal I)^n
+MonomialIdeal ^ Array := MonomialIdeal => (I, e) -> monomialIdeal (ideal I)^e
 
 Ring / MonomialIdeal := (R,I) -> R / ideal I
 
@@ -95,7 +89,7 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 
-poincare MonomialIdeal := (cacheValue symbol poincare) (M -> new degreesRing M from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal)
+poincare MonomialIdeal := (cacheValue symbol poincare) (M -> new degreesRing ring M from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal)
 
 independentSets = method(Options => { Limit => infinity })
 independentSets MonomialIdeal := o -> (M) -> (

@@ -18,13 +18,13 @@ newPackage(
     Certification => {
 	 -- same article as for package ConformalBlocks
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Software for computing conformal block divisors on bar M_0,n",
 	  "acceptance date" => "2 August 2018",
 	  "published article URI" => "https://msp.org/jsag/2018/8-1/p08.xhtml",
 	  "published article DOI" => "10.2140/jsag.2018.8.81",
 	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x08-LieTypes.m2",
-	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/LieTypes.m2",
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/LieTypes.m2",
 	  "release at publication" => "923fbcc7c77b23f510bb0d740e00fc1722a2f397",	    -- git commit number in hex
 	  "version at publication" => "0.5",
 	  "volume number" => "8",

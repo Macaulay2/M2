@@ -134,6 +134,7 @@ processAlgorithm := (alg, m) -> (
     else if alg === LinearAlgebra then (warnexp(); 6)
     else if alg === Toric         then (warnexp(); 7)
     else if alg === Test          then 8
+    else if alg === ParallelF4    then 9 -- also experimental
     else error "unknown algorithm encountered")
 
 -----------------------------------------------------------------------------

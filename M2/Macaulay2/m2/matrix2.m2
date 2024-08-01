@@ -289,7 +289,7 @@ modulo(Matrix,Nothing) := Matrix => options -> (m,null) -> syz(m,options)
 modulo(Nothing,Matrix) := Matrix => options -> (null,n) -> n
 modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      (P,L) := (target m, source m);
-     if P != target n then error "expected maps with the same target";
+     if P =!= target n then error "expected maps with the same target";
      if not isFreeModule P or not isFreeModule L or not isFreeModule source n
      then error "expected maps between free modules";
      dm := degree m;
@@ -306,18 +306,19 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      then map(L,source f,f)			    -- it can happen that L has a Schreier order, and we want to preserve that exactly
      else f)
 
-quotientRemainder'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if source f != source g then error "expected maps with the same source";
-     if not isFreeModule source f or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
-     (q,r) := quotientRemainder(dual f, dual g);
-     (dual q, dual r))
+quotientRemainder'(Matrix, Matrix) := Matrix => (f, g) -> (
+    L := source f;
+    M := target f;
+    N := target g;
+    if L =!= source g then error "expected maps with the same source";
+    if not all({L, M, N}, isFreeModule) then error "expected maps between free modules";
+    dual \ quotientRemainder(dual f, dual g))
 
 quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
-     if ring g =!= ring f then error "expected maps over the same ring";
      L := source f;					    -- result may not be well defined if L is not free
      M := target f;
      N := source g;
-     if M != target g then error "expected maps with the same target";
+     if M =!= target g then error "expected maps with the same target";
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
@@ -334,8 +335,10 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 	  map(M, L, rem)
      ))
 
+leftQuotientWarn = true
+
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
-Matrix \\ Matrix := (g,f) -> f // g
+Matrix \\ Matrix := (g,f) -> (if leftQuotientWarn then (leftQuotientWarn = false; printerr "Warning: 'm \\\\ n' is deprecated; use 'n // m' instead."); f // g)
 quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
      or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";
@@ -353,9 +356,11 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
        then return solve(g,f);	   	     	       	    
+     local retVal;
      if isQuotientOf(ZZ,ring target f)
        and isFreeModule source g and isFreeModule source f
-       then return solve(g,f);
+       then retVal = solve(g,f);
+     if retVal =!= null then return retVal;
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
@@ -389,7 +394,6 @@ remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual remainder(dual f, dual g))
 remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
-     R := ring n;
      if target m =!= target n then error "expected matrices with the same target";
      if not isFreeModule source n or not isFreeModule source m then error "expected maps from free modules";
      if not isQuotientModule target m then error "expected maps to a quotient module";
@@ -438,10 +442,9 @@ indices RingElement := (f) -> rawIndices raw f
 indices Matrix := (f) -> rawIndices raw f
 
 support = method()
-support RingElement := support Matrix := (f) -> (
-     x := rawIndices raw f;
-     apply(x, i -> (ring f)_i))
-support Ideal := (I) -> rsort toList sum apply(flatten entries generators I, f -> set support f)
+support RingElement :=
+support Matrix      := f -> apply(try rawIndices raw f else {}, i -> (ring f)_i)
+support Ideal       := I -> support generators I
 --------------------
 -- homogenization --
 --------------------

@@ -13,9 +13,8 @@ newPackage(
             }},
     Headline => "development package for beta testing new version of chain complexes",
     Keywords => {"Homological Algebra"},
-    PackageExports => {}, -- {"Truncations"},
-    AuxiliaryFiles => true,
-    DebuggingMode => true
+    PackageExports => { "Truncations" },
+    AuxiliaryFiles => true
     )
 
 export {
@@ -59,11 +58,14 @@ export {
     "yonedaMap'",
     "yonedaProduct",
     -- Option names
+    "OverField",
+    "OverZZ",
+    "Homogenization",
+    "Nonminimal",
     "Concentration",
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "Base",
     "UseTarget"
     }
 
@@ -102,33 +104,6 @@ homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
     -- returns the natural map: Hom(L ** M, N) --> Hom(L, Hom(M, N))
     -- phi -> (ell |-> (m |-> phi(ell ** m)))
     )
-
--- This belongs in M2 Core!!!
--- make this into a git issue.
-single = v -> (
-     if not same v 
-     then error "incompatible objects in direct sum";
-     v#0)
-directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
-    y := youngest args;
-    key := (directSum, args);
-    if y =!= null and y.cache#?key then y.cache#key else (
-        type := single apply(args, class);
-        meth := lookup(symbol directSum, type);
-        if meth === null then error "no method for direct sum";
-        S := meth args;
-        if y =!= null then y.cache#key = S;
-        S))
-
-Hom(Module, Module) := Module => (M,N) -> (
-    Y := youngest(M.cache.cache,N.cache.cache);
-    if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-    H := trim kernel (transpose presentation M ** N);
-    H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
-    Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
-    H.cache.formation = FunctionApplication { Hom, (M,N) };
-    H)
 
 --------------------------------------------------------------------
 -- package code ----------------------------------------------------

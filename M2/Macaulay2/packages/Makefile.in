@@ -136,7 +136,6 @@ validate-html:
 
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
-.NOTPARALLEL:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakeAllDocumentation=false IgnoreExampleErrors=false Verbose=false debugLevel=0"
 # End:

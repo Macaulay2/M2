@@ -1,7 +1,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
     Version => "0.3",
-    Date => "December 10, 2023",
+    Date => "February 8, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -15,10 +15,11 @@ newPackage("ForeignFunctions",
 
 -*
 
-0.3 (2023-12-10, M2 1.23)
+0.3 (2024-02-08, M2 1.23)
 * add subscripted assignment for various pointer types
-* add support for GMP integers
+* add support for GMP integers and MPFR reals
 * add support for describe, expression, toExternalString, and toString
+* use null coalescing operator
 
 0.2 (2023-05-13, M2 1.22)
 * improvements for displaying foreign objects in webapp mode
@@ -76,6 +77,7 @@ export {
     "mpzT",
     "float",
     "double",
+    "mpfrT",
     "voidstar",
     "charstar",
     "voidstarstar",
@@ -182,11 +184,10 @@ ForeignType.synonym = "foreign type"
 
 new ForeignType := T -> new ForeignType of ForeignObject
 
-net ForeignType := T -> if T.?Name then T.Name else "<<a foreign type>>"
+net ForeignType := T -> T.Name ?? "<<a foreign type>>"
 
 protect Address
-address ForeignType := T -> if T.?Address then T.Address else error(
-    toString T, " has no address")
+address ForeignType := T -> T.Address ?? error(toString T, " has no address")
 
 size ForeignType := ffiTypeSize @@ address
 
@@ -258,12 +259,7 @@ if version#"pointer size" == 4 then (
     ) else (
     long = int64;
     ulong = uint64)
-
-mpzT = new ForeignIntegerType;
-mpzT.Name = "mpz_t";
-mpzT.Address = ffiPointerType
-new mpzT from ZZ := (T, n) -> new T from {Address => ffiIntegerAddress n}
-value mpzT := ffiIntegerValue @@ address
+mpzT = foreignIntegerType("mpz_t", 0, true)
 
 ForeignIntegerType Number :=
 ForeignIntegerType Constant := (T, x) -> new T from truncate x
@@ -289,12 +285,13 @@ foreignRealType(String, ZZ) := (name, bits) -> (
 
 float = foreignRealType("float", 32)
 double = foreignRealType("double", 64)
+mpfrT = foreignRealType("mpfr_t", 0)
 
 ForeignRealType Number :=
 ForeignRealType Constant := (T, x) -> new T from realPart numeric x
 ForeignRealType RRi := (T, x) -> T toRR x
 
-isAtomic ForeignRealType := T -> true
+isAtomic ForeignRealType := T -> if T === mpfrT then false else true
 
 --------------------------
 -- foreign pointer type --
@@ -955,6 +952,29 @@ doc ///
     Example
       float
       double
+///
+
+doc ///
+  Key
+    mpfrT
+    (NewFromMethod, mpfrT, RR)
+    (value, mpfrT)
+  Headline
+    MPFR multiple-precision floating-point type
+  Description
+    Text
+      Macaulay2's native @TO RR@ real number type wraps around @TT
+      "mpfr_t"@ from @HREF{"https://mpfr.org/", "MPFR"}@.  This type
+      (which is an instance of @TO ForeignRealType@) allows for
+      conversion between Macaulay2 reals and MPFR reals without loss
+      of precision.
+    Example
+      mpfrT numeric(100, pi)
+      value oo
+      mpfrAdd = foreignFunction("mpfr_add", void, {mpfrT, mpfrT, mpfrT, int})
+      x = mpfrT 0p100
+      mpfrAdd(x, numeric(100, pi), exp 1p100, 0)
+      x
 ///
 
 doc ///
@@ -1962,6 +1982,7 @@ assert Equation(value mpzT 10^100, 10^100)
 -- real types
 assert Equation(value float 3.14159, 3.14159p24)
 assert Equation(value double 3.14159, 3.14159p53)
+assert Equation(value mpfrT 3.14159p100, 3.14159p100)
 
 -- pointer types
 ptr = address int 3

@@ -29,7 +29,7 @@ use strings1;
 use stdio0;
 use stdiop0;
 use pthread0;
-
+use atomic;
 
 export anywhereError(s:string) ::= Ccode(voidPointer,"err_error(",s,")");
 export anywhereAbort(s:string) ::= Ccode(exits,"err_abort(",s,")");
@@ -92,7 +92,7 @@ export SymbolList := null or SymbolListCell;
 export SymbolHashTable := { 
      buckets:array(SymbolList),	 -- length always a power of 2
      numEntries:int,
-     mutex:SpinLock -- Modification mutex: lock before changing
+     mutex:ThreadRWLockPtr
      };
 
 export Dictionary := {
@@ -206,6 +206,16 @@ export parallelAssignmentCode := {+
      rhs:Code,
      position:Position};
 
+export augmentedAssignmentCode := {+
+    oper:Symbol,
+    lhs:Code,
+    rhs:Code,
+    info:Symbol, -- variable name or operator
+    position:Position};
+
+-- code that's already been evaluated; needed for augmented assignment
+export evaluatedCode := {+ expr:Expr, position:Position};
+
 export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
@@ -256,7 +266,7 @@ export Code := (
      or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
      or globalAssignmentCode or localAssignmentCode 
      or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
-     or parallelAssignmentCode 
+     or parallelAssignmentCode or augmentedAssignmentCode or evaluatedCode
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
@@ -362,6 +372,8 @@ export TaskCell := {+ body:TaskCellBody };
 
 export pointerCell := {+ v:voidPointer };
 
+export atomicIntCell := {+ v:atomicField, hash:int };
+
 export Expr := (
      CCcell or
      RRcell or
@@ -416,7 +428,8 @@ export Expr := (
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
      fileOutputSyncState or
-     pointerCell
+     pointerCell or
+     atomicIntCell
      );
 export fun := function(Expr):Expr;
 
@@ -461,8 +474,8 @@ export HashTable := {+
      numEntries:int,
      hash:int,
      Mutable:bool,
-     beingInitialized:bool,-- if true, no need to lock a mutex while modifying it
-     mutex:SpinLock
+     beingInitialized:bool,-- if true, no need to lock the mutex
+     mutex:ThreadRWLockPtr
      };
 
 --This unfortunately needs to be here as it references Hash Table which needs expr.  

@@ -2,10 +2,10 @@
 -- put bindings to variables before the forward references, for safety
 use hashtables;
 use convertr;
-export globalAssignmentHooks := newHashTable(mutableHashTableClass,nothingClass);
+export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
-export evalSequenceHadError := false;
-export evalSequenceErrorMessage := nullE;
+export threadLocal evalSequenceHadError := false;
+export threadLocal evalSequenceErrorMessage := nullE;
 threadLocal errorreturn := nullE;
 --The recycleBin provides essentially a linked list of frames up to size 20 for easy reuse.
 --Questions: Can this lead to excess memory leaks if you create a ton of frames of the same size?
@@ -27,6 +27,7 @@ export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 
+handleError(c:Code,e:Expr):Expr;
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -628,11 +629,11 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 			 f.frameID = desc.frameID;
 			 f.values.0 = e;
 			 );
-		    ret := nullE;
+		    ret := nullE; tailCode := dummyCode;
 		    while true do (
 			 localFrame = f;
 	  		 recursionDepth = recursionDepth + 1;
-			 tailCode := evalAllButTail(model.body);
+			 tailCode = evalAllButTail(model.body);
 	  		 recursionDepth = recursionDepth - 1;
 			 -- formerly, just ret := eval(model.body); now do tail recursion instead
 			 when tailCode
@@ -745,7 +746,7 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 			 f.frameID = -2;				    -- just to be tidy, not really needed
 			 recycleBin.framesize = f;
 			 );
-		    when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
+		    when ret is Error do returnFromFunction(handleError(tailCode,ret)) else ret -- this check takes time, too!
 		    )
 	       else (
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
@@ -1209,6 +1210,93 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values")
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
 
+-- helper function used when evaluating tryCode and by null coalescion
+-- tryEvalSuccess is true unless an (non-interrupting) error occurred
+threadLocal tryEvalSuccess := true;
+tryEval(c:Code):Expr := (
+    oldSuppressErrors := SuppressErrors;
+    SuppressErrors = true;
+    p := eval(c);
+    if !SuppressErrors then ( -- eval could have turned it off
+	tryEvalSuccess = true)
+    else (
+	SuppressErrors = oldSuppressErrors;
+	when p
+	is err:Error do (
+	    if (
+		err.message == breakMessage           ||
+		err.message == returnMessage          ||
+		err.message == continueMessage        ||
+		err.message == continueMessageWithArg ||
+		err.message == unwindMessage          ||
+		err.message == throwMessage)
+	    then tryEvalSuccess = true
+	    else tryEvalSuccess = false)
+	else tryEvalSuccess = true);
+    p);
+
+augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
+    when lookup(x.oper.word, augmentedAssignmentOperatorTable)
+    is null do buildErrorPacket("unknown augmented assignment operator")
+    is s:Symbol do (
+	-- evaluate the left-hand side first
+	lexpr := nullE;
+	if s.word.name === "??" -- null coalescion; ignore errors
+	then (
+	    e := tryEval(x.lhs);
+	    if tryEvalSuccess then lexpr = e)
+	else lexpr = eval(x.lhs);
+	left := evaluatedCode(lexpr, dummyPosition);
+	when left.expr is e:Error do return Expr(e) else nothing;
+	-- check if user-defined method exists
+	meth := lookup(Class(left.expr),
+	    Expr(SymbolClosure(globalFrame, x.oper)));
+	if meth != nullE then (
+	    rightexpr := eval(x.rhs);
+	    when rightexpr is e:Error do return(e) else nothing;
+	    r := applyEEE(meth, left.expr, rightexpr);
+	    when r
+	    is s:SymbolClosure do (
+		if s.symbol.word.name === "Default" then nothing
+		else return r)
+	    else return r);
+	-- if not, use default behavior
+	when x.lhs
+	is y:globalMemoryReferenceCode do (
+	    r := s.binary(Code(left), x.rhs);
+	    when r is e:Error do Expr(e)
+	    else globalAssignment(y.frameindex, x.info, r))
+	is y:localMemoryReferenceCode do (
+	    r := s.binary(Code(left), x.rhs);
+	    when r is e:Error do Expr(e)
+	    else localAssignment(y.nestingDepth, y.frameindex, r))
+	is y:threadMemoryReferenceCode do (
+	    r := s.binary(Code(left), x.rhs);
+	    when r is e:Error do Expr(e)
+	    else globalAssignment(y.frameindex, x.info, r))
+	is y:binaryCode do (
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
+		    dummyPosition));
+	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+	    then AssignElemFun(y.lhs, y.rhs, r)
+	    else InstallValueFun(CodeSequence(Code(
+			globalSymbolClosureCode(x.info, dummyPosition)),
+		    y.lhs, y.rhs, r)))
+	is y:adjacentCode do (
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
+		    dummyPosition));
+	    InstallValueFun(CodeSequence(Code(globalSymbolClosureCode(
+			    AdjacentS.symbol, dummyPosition)),
+		    y.lhs, y.rhs, r)))
+	is y:unaryCode do (
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
+		    dummyPosition));
+	    UnaryInstallValueFun(
+		Code(globalSymbolClosureCode(x.info, dummyPosition)),
+		y.rhs, r))
+	else buildErrorPacket(
+	    "augmented assignment not implemented for this code")));
+
 -----------------------------------------------------------------------------
 steppingFurther(c:Code):bool := steppingFlag && (
      p := codePosition(c);
@@ -1232,7 +1320,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
 	  microStepCount >= 0)
      else false);
 
-handleError(c:Code,e:Expr):Expr := (
+export handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  if SuppressErrors then return e;
 	  if err.message == returnMessage
@@ -1382,22 +1470,18 @@ export evalraw(c:Code):Expr := (
 	       else localAssignment(x.nestingDepth,x.frameindex,newvalue))
 	  is a:globalAssignmentCode do globalAssignmentFun(a)
 	  is p:parallelAssignmentCode do parallelAssignmentFun(p)
+	  is c:augmentedAssignmentCode do augmentedAssignmentFun(c)
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
-	       oldSuppressErrors := SuppressErrors;
-	       SuppressErrors = true;
-	       p := eval(c.code);
-	       if !SuppressErrors then p		  -- eval could have turned it off
+	       p := tryEval(c.code);
+	       if tryEvalSuccess
+	       then (
+		   when p is Error do p
+		   else if c.thenClause == NullCode then p
+		   else eval(c.thenClause))
 	       else (
-		    SuppressErrors = oldSuppressErrors;
-		    when p is err:Error do (
-			 if err.message == breakMessage || err.message == returnMessage || 
-			 err.message == continueMessage || err.message == continueMessageWithArg || 
-			 err.message == unwindMessage || err.message == throwMessage
-			 then p
-			 else eval(c.elseClause))
-		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
+		   eval(c.elseClause)))
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
@@ -1428,6 +1512,7 @@ export evalraw(c:Code):Expr := (
 	       x := eval(n.body);
 	       localFrame = localFrame.outerFrame;
 	       x)
+	  is c:evaluatedCode do return c.expr
 	  is c:forCode do return evalForCode(c)
 	  is c:whileListDoCode do evalWhileListDoCode(c)
 	  is c:whileDoCode do evalWhileDoCode(c)
@@ -1607,7 +1692,7 @@ setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
-scanpairs(f:Expr,obj:HashTable):Expr := (
+scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -1631,7 +1716,7 @@ scanpairsfun(e:Expr):Expr := (
 setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
-mappairs(f:Expr,o:HashTable):Expr := (
+mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1640,7 +1725,7 @@ mappairs(f:Expr,o:HashTable):Expr := (
 	       if p == p.next then break;
 	       v := applyEEE(f,p.key,p.value);
 	       when v 
-	       is Error do return v 
+	       is Error do return v
 	       is Nothing do nothing
 	       is b:List do (
 		    if b.Class != optionClass then return mpre();
@@ -1672,7 +1757,7 @@ mappairsfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
 
-export mapkeys(f:Expr,o:HashTable):Expr := (
+export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1686,7 +1771,7 @@ export mapkeys(f:Expr,o:HashTable):Expr := (
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
-export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (
+export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1726,7 +1811,7 @@ mapkeysfun(e:Expr):Expr := (
      else      WrongNumArgs(2,3));
 setupfun("applyKeys",mapkeysfun);
 
-export mapvalues(f:Expr,o:HashTable):Expr := (
+export mapvalues(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      hadError := false;
@@ -1775,6 +1860,7 @@ merge(e:Expr):Expr := (
 	       z := copy(x);
 	       z.Mutable = true;
 	       z.beingInitialized = true;
+	       if (y.Mutable) then lockRead(y.mutex);
 	       foreach bucket in y.table do (
 		    q := bucket;
 		    while q != q.next do (
@@ -1782,7 +1868,10 @@ merge(e:Expr):Expr := (
 			 if val != notfoundE then (
 			      t := applyEEE(g,val,q.value);
 			      when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(z,q.key);
+			      	   if err.message != continueMessage then (
+					if (y.Mutable) then unlock(y.mutex);
+					return t)
+				   else remove(z,q.key);
 			      	   )
 			      else (
 				   storeInHashTable(z,q.key,q.hash,t);
@@ -1792,6 +1881,7 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
+	       if (y.Mutable) then unlock(y.mutex);
 	       mut := x.Mutable && y.Mutable;
 	       if x.parent == y.parent then (
 		    z.Class = commonAncestor(x.Class,y.Class);
@@ -1805,6 +1895,7 @@ merge(e:Expr):Expr := (
 	       z := copy(y);
 	       z.Mutable = true;
 	       z.beingInitialized = true;
+	       if (x.Mutable) then lockRead(x.mutex);
 	       foreach bucket in x.table do (
 		    q := bucket;
 		    while q != q.next do (
@@ -1812,7 +1903,10 @@ merge(e:Expr):Expr := (
 			 if val != notfoundE then (
 			      t := applyEEE(g,q.value,val);
 			      when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(z,q.key);
+			      	   if err.message != continueMessage then (
+					if (x.Mutable) then unlock(x.mutex);
+					return t)
+				   else remove(z,q.key);
 			      	   )
 			      else (
 				   storeInHashTable(z,q.key,q.hash,t);
@@ -1822,6 +1916,7 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
+	       if (x.Mutable) then unlock(x.mutex);
 	       mut := x.Mutable && y.Mutable;
 	       if x.parent == y.parent then (
 		    z.Class = commonAncestor(x.Class,y.Class);
@@ -1835,7 +1930,7 @@ merge(e:Expr):Expr := (
 	  else WrongArg(1,"a hash table"))
      else WrongNumArgs(3));
 setupfun("merge",merge);		  -- see objects.d
-combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
+combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (	-- x and y are not Mutable
      z := newHashTable(x.Class,x.parent);
      z.beingInitialized = true;
      foreach pp in x.table do (
@@ -1878,7 +1973,8 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    );
 	       p = p.next));
      sethash(z,x.Mutable | y.Mutable));
-                                
+
+-- x and y are not Mutable:
 twistCombine(f:Expr,tw:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
      z := newHashTable(x.Class,x.parent);
      z.beingInitialized = true;
@@ -1989,6 +2085,25 @@ AssignQuotedElemFun = assignquotedelemfun;
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
 
 applyEEEpointer = applyEEE;
+
+nullify(c:Code):Expr := (
+    e := tryEval(c);
+    if tryEvalSuccess
+    then (
+	when e
+	is Nothing do e
+	else (
+	    f := lookup(Class(e), QuestionQuestionS);
+	    if f == nullE then e
+	    else applyEE(f, e)))
+    else nullE);
+
+nullCoalescion(lhs:Code,rhs:Code):Expr := (
+    e := nullify(lhs);
+    when e
+    is Nothing do eval(rhs)
+    else e);
+setup(QuestionQuestionS, nullify, nullCoalescion);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "

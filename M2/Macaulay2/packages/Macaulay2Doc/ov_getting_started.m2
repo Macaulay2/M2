@@ -476,7 +476,7 @@ document {
 	  "Working with two buffers",
 	  "Sending lines or selected text to Macaulay2 using the f11 key",
 	  "Command completion with TAB",
-	  "Horizontal scrolling with f3,f4,f5,f6,f7"
+	  "Horizontal scrolling with f3 and f4"
 	  },
      PARA {"Before starting, note that when we say to type M-x M2, what we really mean is: press the x key while holding down the meta key (on Macs this is either
 	  the option key or the apple key, depending on how your emacs is set up); type M2; and then press the return (or enter) key after that.  Similarly, C-c
@@ -493,10 +493,7 @@ document {
 	  keys are not operable.  In that case press ", TT "C-c m", " instead. 
        	  Another
           reason may be that you have not installed Macaulay2 properly - the startup
-	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
-	  A third reason may be that you are in Windows-98 and are using anti-virus 
-	  software such as ", TT "Dr. Solomon's", ", which can interfere with emacs 
-	  when it tries to run a subprocess."
+	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path."
 	  },
      PARA {
      	  "You may use ", TT "C-x o", " freely to switch from one window to the other.
@@ -505,24 +502,32 @@ document {
 	  important, as it informs emacs to use the Macaulay2 mode).
 	  Paste the following text into a buffer.  If you wish, save the file using C-x C-s."
 	  },
-     PRE ///    R = QQ[x,y,z]
+     PRE M2CODE ///    R = QQ[x,y,z]
     f = symmetricPower(2,vars R)
     M = cokernel f
     C = resolution M
     betti C///,
      PARA {     
      "Position the cursor on the first line of code, and press the ", TT "f11", " function 
-	  key repeatedly to present each line to Macaulay2.  If you select several lines 
+	  key (or ", TT "C-<return>", ") repeatedly to present each line to Macaulay2.  If you select several lines 
 	  using the mouse, then pressing f11 will present the entire selection to
 	  Macaulay2.  Try this on some of these lines."
 	  },
+     PARA {"Here are some other useful keybindings:"},
+     UL {
+	 LI {TT "C-c C-j", ": send the current line"},
+	 LI {TT "C-c C-r", ": send the current region"},
+	 LI {TT "C-c C-b", ": send the entire buffer"},
+	 LI {TT "C-c C-<up>", ": send everything before the point"},
+	 LI {TT "C-c C-<down>", ": send everything after the point"},
+	 LI {TT "C-c C-p", ": send the current paragraph"}},
      HR{},
 "Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
 experiment with keyword completion.  Type ", TT "reso", " and then press the 
 ", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
 for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
 and then press the ", TT "TAB", " key.  The possible completions are displayed 
-in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
+in a window.  Switch to it with ", TT "M-x switch-to-completions", ", move to the desired 
 completion, select it with the ", TT "RETURN", " key, and then return to the 
 ", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
 mouse, use the middle button to select the desired completion. (On the mac, hold down the
@@ -539,7 +544,7 @@ slightly to change it before pressing return.",
      "Now let's see how we can handle wide and tall Macaulay2 output.  Execute the
      following line of code (put it in your foo.m2 buffer, and then press f11)",
      PARA{},
-     PRE ///printWidth=0; random(R^20,R^{6:-2})///,
+     PRE M2CODE ///printWidth=0; random(R^20,R^{6:-2})///,
      "Setting printWidth to zero removes line wrapping in the buffer, sometimes useful to 
      view large matrices.",
 PARA{},
@@ -547,8 +552,8 @@ PARA{},
 around to the next line, simply disappear off the right side of the screen,
 as indicated by the dollar signs or little arrows in the rightmost column.  Switch to the
 other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
-and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-c <", ") 
-and the function key ", TT "LinearAlgebra", " (or ", TT "C-c >", ").  In modern emacs implementations
+and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-x <", ") 
+and the function key ", TT "F4", " (or ", TT "C-x >", ").  In modern emacs implementations
 where mouse clicking works, click on the arrow to scroll in that direction.  In
 these versions of emacs, typing C-e, or C-a to get at the end or beginning of the line
 also horizontally scrolls the text to that position.  Older emacs tend to need
@@ -557,12 +562,12 @@ Notice how the use of
 ", TT "C-e", " to go to the end of the line
 sends the cursor to the dollar sign at the right hand side of the screen;
 that's where the cursor will appear whenever you go to a position off the
-screen to the right.  Then use the ", TT "f2", " function key (or ", TT "C-c .", ") to 
+screen to the right.  Then use the ", TT "f2", " function key (or ", TT "C-S-c .", ") to 
 scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-a", " to 
 move to the beginning of the line and then the ", TT "f2", " function key 
-(or ", TT "C-c .", ") to bring the left margin back into view.",
+(or ", TT "C-S-c .", ") to bring the left margin back into view.",
 PARA{},
-"You may use the ", TT "f5", " function key or (or ", TT "C-c ?", ") to 
+"You may use ", TT "C-S-c SPC", " to
 toggle whether long lines are truncated or wrapped; initially they are truncated."
      }
 
@@ -974,7 +979,7 @@ document {
      TO "teaching emacs how to find M2", ".",
      PARA{},
      "You may wish to bind the emacs function ", TT "M2-send-to-program", "
-     to a global keystroke for ease of use; this is done automatically for
+     to a global keystroke for ease of use; this is done automatically
      in Macaulay2 buffers.  For example, the following emacs code
      will bind it to the function key ", TT "f11", ".",
      PARA{},
@@ -987,7 +992,7 @@ document {
      the cursor on the first line of code, and press the ", TT "f11", " function 
      key repeatedly to present each line to Macaulay2.",
      PARA{},
-     PRE ///i1 : R = ZZ/101[x,y,z]
+     PRE M2CODE ///i1 : R = ZZ/101[x,y,z]
      i2 : f = symmetricPower(2,vars R)
      i3 : M = cokernel f
      i4 : C = resolution M

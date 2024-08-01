@@ -1,7 +1,7 @@
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
     Version => "0.1",
-    Date => "December 14, 2023",
+    Date => "January 28, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -429,6 +429,8 @@ scan({
 	installMethod(m2f, RObject, RObject, rf);
 	installMethod(m2f, RObject, Thing, rf);
 	installMethod(m2f, Thing, RObject, rf)))
+
+?? RObject := x -> if TYPEOF x > 0 then x
 
 load "./RInterface/test.m2"
 load "./RInterface/doc.m2"

@@ -36,16 +36,17 @@ newPackage(
   Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
-	"journal URI" => "http://j-sag.org/",
+	"journal URI" => "https://msp.org/jsag/",
 	"article title" => "Interfacing with PHCpack",
 	"acceptance date" => "2013-07-11",
-	"published article URI" => "http://www.j-sag.org/Volume5/jsag-4-2013.pdf",
-	"published code URI" => "http://www.j-sag.org/Volume5/PHCpack.m2",
-	"repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PHCpack.m2",
+	"published article URI" => "https://msp.org/jsag/2013/5-1/p04.xhtml",
+	"published article DOI" => "10.2140/jsag.2013.5.20",
+	"published code URI" => "https://msp.org/jsag/2013/5-1/jsag-v5-n1-x04-code.zip",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PHCpack.m2",
 	"release at publication" => "48d32ceffeeb807b23eee20a5c9c243ce085b3ef",
 	"version at publication" => "1.6",
 	"volume number" => "5",
-	"volume URI" => "http://j-sag.org/Volume5/"
+	"volume URI" => "https://msp.org/jsag/2013/5-1/"
 	},
   DebuggingMode => false,
   AuxiliaryFiles => true,

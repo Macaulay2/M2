@@ -173,7 +173,7 @@ GradedModuleMap ^ ZZ := GradedModuleMap => (f,n) -> (
 			      false)
 			 ) do (
 			 s = f_(i + j * f.degree) * s;
-			 j = j+1;
+			 j += 1;
 			 )
 		    ));
 	  g))

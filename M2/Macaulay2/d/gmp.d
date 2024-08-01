@@ -473,6 +473,12 @@ fmod(y:ZZ, z:ulong) ::= Ccode( ulong, "mpz_fdiv_ui(", y, ",", z, ")" );
 export (x:ZZ) % (y:ulong) : ulong := fmod(x,y);
 
 export (x:ZZ) % (y:ushort) : ushort := ushort(x % ulong(y));
+
+export nextPrime(x:ZZ):ZZ := (
+     w := newZZmutable();
+     Ccode(void, "mpz_nextprime(", w, ", ", x, ")");
+     moveToZZandclear(w));
+
 gcd(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_gcd(", x, ",", y, ",", z, ")" );
 
 export gcd(x:ZZ,y:ZZ):ZZ := (
@@ -2462,6 +2468,11 @@ export coth(x:RRi):RRi := (
 export factorial(x:ulong):ZZ := (
      w := newZZmutable();
      Ccode( void, "mpz_fac_ui(", w, ",", x, ")" );
+     moveToZZandclear(w));
+
+export binomial(n:ZZ, k:ulong):ZZ := (
+     w := newZZmutable();
+     Ccode(void, "mpz_bin_ui(", w, ", ", n, ", ", k, ")");
      moveToZZandclear(w));
 
 export log1p(x:RR):RR := (

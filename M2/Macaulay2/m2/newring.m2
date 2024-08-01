@@ -43,6 +43,8 @@ newRing QuotientRing := opts -> R -> (
 
 -- made a method and documented elsewhere.
 Ring ** Ring := Ring => (R,S) -> tensor(R,S)
+Ring^** ZZ   := Ring => (R, n) -> BinaryPowerMethod(R, n, tensor, R -> coefficientRing R,
+    R  -> error "Ring ^** ZZ: expected non-negative integer")
 tensor(Ring, Ring) := Ring => monoidTensorDefaults >> opts -> (R, S) -> (
      if R === (try coefficientRing S) then return S;
      if S === (try coefficientRing R) then return R;

@@ -17,7 +17,7 @@ i5 : rays T
 o5 = 0
 
               3
-o5 : Matrix ZZ  <--- 0
+o5 : Matrix ZZ  <-- 0
 
 i6 : maxCones T
 

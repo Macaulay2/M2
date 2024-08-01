@@ -2,7 +2,7 @@
 use hashtables;
 use evaluate;
 
-newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+newtypeof(parent:HashTable):HashTable := newHashTableWithHash(typeClass,parent);
 export VirtualTally := newtypeof(hashTableClass);
 setupconst("VirtualTally",Expr(VirtualTally));
 export Tally := newtypeof(VirtualTally);
@@ -22,6 +22,7 @@ makeSet(e:Expr):Expr := (
      else WrongArg("a visible list"));
 setupfun("set",makeSet);
 
+-- object is beingInitialized:
 modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (
      keyhash:= hash(key);
      keymod := int(keyhash & (length(object.table)-1));

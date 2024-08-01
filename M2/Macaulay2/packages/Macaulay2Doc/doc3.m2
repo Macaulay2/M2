@@ -21,6 +21,34 @@ document {
      }
 
 document {
+     Key => symbol ^!,
+     Headline => "a unary postfix operator, used for the upper shriek functor"
+     }
+
+document {
+     Key => symbol _!,
+     Headline => "a unary postfix operator, used for the lower shriek functor"
+     }
+
+document {
+     Key => symbol |_,
+     Headline => "a binary operator, used for restriction to a subset"
+     }
+
+document {
+     Key => symbol ^~,
+     Headline => "a unary postfix operator, used for sheafification"
+     }
+
+document {
+     Key => symbol _~,
+     Headline => "a unary postfix operator"
+     }
+
+apply({symbol ^>, symbol ^>=, symbol ^<, symbol ^<=, symbol _>, symbol _>=, symbol _<, symbol _<=},
+    symb -> document { Key => symb, Headline => "a binary operator, used for truncation" })
+
+document {
      Key => symbol <==>,
      Headline => "a binary operator"
      }
@@ -81,7 +109,7 @@ document {
      }
 
 document {
-     Key => {(symbol /,List,Thing)},
+     Key => {(symbol /,List,RingElement),(symbol /,List,Number)},
      Headline => "vector division",
      Usage => "v/c",
      Inputs => {"v" => "to be treated as a vector", "c" => "a number or scalar ring element"},

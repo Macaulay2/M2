@@ -2,6 +2,7 @@
 newPackage(
     "RealRoots",
     Version=>"0.1",
+    --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 2024/03/16
     Date=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
@@ -20,8 +21,7 @@ newPackage(
     Headline=>"Package for symbolically exploring, counting, and locating real solutions to general polynomial systems",
     Keywords=>{"Real Algebraic Geometry"},
     PackageImports=>{},
-    PackageExports=>{},
-    DebuggingMode=>true
+    PackageExports=>{}
     )
 
 
@@ -391,33 +391,60 @@ realRootIsolation (RingElement,A) := List => (f,r)->(
     if not isUnivariatePolynomial(f) then error "Error: Expected univariate polynomial";
     R := ring f;
     
-    f = sub(f/gcd(f,diff(variable f,f)),R);
+    f = sub(f/gcd(f,diff(variable f,f)),R); --makes polynomial squarefree
     
     if (SturmCount(f)>0) then (
 	l := SturmSequence(f);
 	
 	--bound for real roots
-	C := (listForm f)/last;
-    	M := (sum(C,abs))/(leadCoefficient f);
-	
+	--Cauchy bound is usually good, but Knuth is better in cases of coefficient blowup.
+		
+	(E0,C0) := coefficients f; -- get exponents and coefficients of polynomial as matrices
+
+	C := flatten(entries(C0)); -- convert coefficients to list
+	if #C == 1 then (
+	    M := 0; -- if polynomial is only one term (only root is 0), return 0.
+	) else (
+	    C = apply(C,i -> lift(i,QQ)); --lift coefficients to QQ
+	    C1 := apply(C,i -> abs(lift(i/C#0,QQ))); --divide coeffs by leading coeff, take abs, with values in QQ.
+	    E1 := flatten(apply(flatten(entries(E0)), i -> degree(i))); -- convert exponents to list
+	    MC := 1 + max(apply(drop(C1,1), abs)); -- Cauchy bound
+	    CK := apply(drop(C1,1),drop(E1,1), (c,e) -> 2*(c^(1/(E1#0-e)))); -- Knuth bound
+	    MK := max CK;
+	    if ring MK === QQ or ring MK === ZZ then ( -- want to keep result in QQ
+	        MK = MK_QQ;
+		) else (
+	        if abs(C#0) > 1 then  ( -- if suitable, keep bound in form similar to other bound 
+		        MK = ceiling(abs(C#0)*MK)/abs(C#0); -- (round up to nearest 1/leadcoeff, this is a bad rational approximation if MK was very small)
+		    ) else (
+		        MK = ceiling MK; -- if leading term is less than 1, the above approximation is less accurate than just taking the ceiling.
+	        );
+	    );
+	    M = min(MC,MK); -- take the smaller of the two bounds.
+	);
+
 	L := {{-M,M}};
 	midp := 0;
 	v := new MutableHashTable from {M=>variations apply(l,g->signAt(g,M)),-M=>variations apply(l,g->signAt(g,-M))};
-	
 	while (max apply(L,I-> I#1-I#0) > r) or (max apply(L,I-> v#(I#0)-v#(I#1)) > 1) do (
 	    for I in L do (
-		midp = (sum I)/2;
-		v#midp = variations apply(l,g->signAt(g,midp));
-		L = drop(L,1);
-		if (v#(I#0)-v#midp > 0) then (
-		    L = append(L,{I#0,midp})
-		    );
-		if (v#midp-v#(I#1) > 0) then (
-		    L = append(L,{midp,I#1})
+		if ((v#(I#0)-v#(I#1) == 1) and (I#1-I#0 <= r)) then (
+	            L = take(L,{1,#L})|{L#0}; -- skip bisection if root is identified and bound is within interval size.
+		)
+		else (
+		    midp = (sum I)/2;
+		    v#midp = variations apply(l,g->signAt(g,midp));
+		    L = drop(L,1);
+		    if (v#(I#0)-v#midp > 0) then (
+		        L = append(L,{I#0,midp})
+		        );
+	  	    if (v#midp-v#(I#1) > 0) then (
+		        L = append(L,{midp,I#1})
+		        );
 		    )
 		)
 	    );
-	L
+	sort L --list is ordered from smallest to largest interval, in case the while look stops after a larger interval
 	) else (
 	{}
 	)
@@ -1033,7 +1060,7 @@ TEST ///
 TEST ///
     R = QQ[t];
     f = (t-1)^2*(t+3)*(t+5)*(t-6);
-    assert(realRootIsolation(f,1/2) == {{-161/32, -299/64}, {-207/64, -23/8}, {23/32, 69/64}, {23/4, 391/64}});
+    assert(realRootIsolation(f,1/2) == {{-21/4,-39/8},{-27/8,-3},{3/4,9/8},{45/8,6}});
     ///    
     
 TEST ///
@@ -1074,9 +1101,3 @@ TEST ///
     -- ///	 
     
 end
-
-
-
-
-
-

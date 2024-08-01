@@ -13,7 +13,8 @@ newPackage(
         }
     },
     PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"},
-    PackageExports => {"Graphs", "Polyhedra"}
+    PackageExports => {"Graphs", "Polyhedra"},
+    Keywords => {"Toric Geometry"}
 )
 export {
 -- Methods/Functions

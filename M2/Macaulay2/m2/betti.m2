@@ -207,7 +207,8 @@ minimalBetti = method(
     Options => {
 	DegreeLimit => null,
 	LengthLimit => infinity,
-	Weights => null
+	Weights => null,
+    ParallelizeByDegree => false -- currently: only used over primes fields of positive characteristic
 	})
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;
@@ -234,7 +235,7 @@ minimalBetti Module := BettiTally => opts -> M -> (
     -- First, we need to comppute the non-minimal resolution to one further step.
     if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
     C = resolution(M,
-	StopBeforeComputation => true, FastNonminimal => true,
+	StopBeforeComputation => true, FastNonminimal => true, ParallelizeByDegree => opts.ParallelizeByDegree,
 	DegreeLimit => degreelimit, LengthLimit => lengthlimit);
     rC := if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation
     -- TODO: when can this error happen?
@@ -244,7 +245,8 @@ minimalBetti Module := BettiTally => opts -> M -> (
     --
     B := unpackEngineBetti rawMinimalBetti(rC,
 	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
-	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
+	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {}
+        );
     betti(B, Weights => heftvec(opts.Weights, heft R))
     )
 minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(

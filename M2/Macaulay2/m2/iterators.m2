@@ -1,3 +1,6 @@
+needs "classes.m2"
+needs "methods.m2"
+
 -- originally defined (as null) in evaluate.d
 iterator = method(Dispatch => Thing)
 next = method()
@@ -19,7 +22,7 @@ iterator String      := x -> Iterator (
 	if i >= #x then StopIteration
 	else (
 	    r := x#i;
-	    i = i + 1;
+	    i += 1;
 	    r)))
 
 toList Thing := x -> for y in x list y
@@ -56,7 +59,7 @@ joinIterators = a -> (
 		    r := next iters#i;
 		    r === StopIteration)
 		do (
-		    i = i + 1;
+		    i += 1;
 		    if i >= n then return StopIteration);
 		r))))
 

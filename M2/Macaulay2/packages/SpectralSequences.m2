@@ -110,7 +110,7 @@ support ChainComplex := List => (
 
 -- Computes the graded pieces of the total complex of a Hom double complex 
 -- (just as a graded module, so no maps!)
-Hom (GradedModule, GradedModule) := GradedModule => (C,D) -> (
+Hom (GradedModule, GradedModule) := GradedModule => opts -> (C, D) -> (
   R := C.ring;  if R =!= D.ring then error "expected graded modules over the same ring";
   (c,d) := (spots C, spots D);
   pairs := new MutableHashTable;
@@ -123,7 +123,7 @@ Hom (GradedModule, GradedModule) := GradedModule => (C,D) -> (
   E.ring = R;
   scan(keys pairs, k-> (
       p := pairs#k;
-      E#k = directSum(apply(p, v -> v => Hom(C_(v#0), D_(v#1) )));));
+      E#k = directSum(apply(p, v -> v => Hom(C_(v#0), D_(v#1), opts)));));
   E)
 
 
@@ -135,35 +135,36 @@ isWellDefined ChainComplexMap := Boolean => f -> (
 -- Computes the total complex of the Hom double complex of two chain complexes
 -- This code is different from that in ChainComplexExtras.  We need this version
 -- so that the indices are cached.
-Hom (ChainComplex, ChainComplex) := ChainComplex => (C,D) -> (
+Hom (ChainComplex, ChainComplex) := ChainComplex => opts -> (C, D) -> (
   if C.ring =!= D.ring then error "expected chain complexes over the same ring";
-  E := chainComplex (lookup( Hom, GradedModule, GradedModule))(C,D);
+  hom := lookup(Hom, GradedModule, GradedModule);
+  E := chainComplex (hom opts)(C, D);
   scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = 
     map(E#(i-1), E#i, 
       matrix table(
         E#(i-1).cache.indices, E#i.cache.indices, 
 	(j,k) -> map(E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j), 
 	  (E#i).cache.components#((E#i).cache.indexComponents#k),
-	  if j#0 === k#0 and j#1 === k#1-1 then (-1)^(k#0)*Hom(C_(k#0),D.dd_(k#1))
-	  else if j#0 === k#0 + 1 and j#1 === k#1 then Hom(C.dd_(j#0),D_(k#1))
+	  if j#0 === k#0 and j#1 === k#1-1 then (-1)^(k#0)*Hom(C_(k#0), D.dd_(k#1), opts)
+	  else if j#0 === k#0 + 1 and j#1 === k#1 then Hom(C.dd_(j#0), D_(k#1), opts)
 	  else 0))));
   E    	    		    
 )
 
-Hom (ChainComplex, ChainComplexMap) := ChainComplexMap => (C,f) -> (
-  (F,G) := (Hom(C,source f),Hom(C,target f)); 
+Hom (ChainComplex, ChainComplexMap) := ChainComplexMap => opts -> (C, f) -> (
+  (F, G) := (Hom(C, source f, opts), Hom(C, target f, opts));
   map(G,F, i -> map(G_i,F_i, matrix table( G_i.cache.indices,F_i.cache.indices, 
       (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
         F#i.cache.components#(F#i.cache.indexComponents#k),
-	if j === k then Hom(C_(j#0), f_(j#1)) 
+	if j === k then Hom(C_(j#0), f_(j#1), opts)
 	else 0)))))
 
-Hom (ChainComplexMap, ChainComplex) := ChainComplexMap => (f,C) -> (
-  (F,G) := (Hom(target f, C),Hom(source f, C));
+Hom (ChainComplexMap, ChainComplex) := ChainComplexMap => opts -> (f, C) -> (
+  (F, G) := (Hom(target f, C, opts), Hom(source f, C, opts));
   map(G,F, i -> map (G_i,F_i, matrix table(G_i.cache.indices,F_i.cache.indices,
         (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
 	  F#i.cache.components#(F#i.cache.indexComponents#k),
-	  if j === k then Hom(f_(j#0), C_(j#1)) 
+	  if j === k then Hom(f_(j#0), C_(j#1), opts)
 	  else 0)))))
   
 ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
@@ -429,24 +430,25 @@ xComplex := (T,n) ->
 	       )
 
 -- produce the "x-filtration" of the Hom complex.
-Hom (FilteredComplex, ChainComplex):= FilteredComplex => (K,D) -> (
+Hom (FilteredComplex, ChainComplex):= FilteredComplex => opts -> (K, D) -> (
     	C := complete D;
     	   supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N := - max support K_infinity;
      P := - min support K_infinity;
-     H := Hom(K_infinity,C);
+     H := Hom(K_infinity, C, opts);
      filteredComplex(reverse for i from N to P - 1 list inducedMap(H, xComplex(H,i)), 
 	 Shift => - N)
      )
  else ( if #supp == 1 then
 	(
 	p := min supp;
-	h := Hom(K_infinity , C);
+	h := Hom(K_infinity, C, opts);
 	filteredComplex( {inducedMap(h, xComplex(h, p))}, Shift =>  p + 1 )
 	)
-    	else( hhh:= Hom(K_infinity , C) ;
+	else(
+	    hhh := Hom(K_infinity, C, opts);
 	    filteredComplex({id_hhh})
 	    )
 	)
@@ -472,24 +474,25 @@ yComplex := (T,n) ->
 	       K
 	       )
 
-  Hom (ChainComplex, FilteredComplex) := FilteredComplex => (D,K) -> (
+Hom (ChainComplex, FilteredComplex) := FilteredComplex => opts -> (D, K) -> (
       C := complete D; 
      supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N :=  max support K_infinity;
      P :=  min support K_infinity;
-     H := Hom(C, K_infinity);
+     H := Hom(C, K_infinity, opts);
      filteredComplex(reverse for i from P to N - 1 list inducedMap(H, yComplex(H,i)), 
 	 Shift => - P)
      )
   else ( if #supp == 1 then
 	(
 	p := min supp;
-	h := Hom(C , K_infinity );
+	h := Hom(C, K_infinity, opts);
 	filteredComplex( {inducedMap(h, yComplex(h, p))}, Shift =>  - p  + 1 )
 	)
-    	else( hhh:= Hom(C, K_infinity) ;
+	else(
+	    hhh := Hom(C, K_infinity, opts);
 	    filteredComplex({id_hhh})
 	    )
 	) 

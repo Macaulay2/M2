@@ -10,6 +10,9 @@ INTERFACE2 = interrupted
 
 INTERFACE = \
 	myalloc \
+	BasicPoly \
+	BasicPolyList \
+	BasicPolyListParser \
 	matrix-ncbasis \
 	M2FreeAlgebraQuotient \
 	M2FreeAlgebra \
@@ -46,12 +49,18 @@ INTERFACE = \
 	schreyer-resolution/res-poly-ring \
 	schreyer-resolution/res-f4-m2-interface \
 	schreyer-resolution/res-schreyer-frame \
+	schreyer-resolution/res-dep-graph \
 	schreyer-resolution/res-f4 \
 	schreyer-resolution/res-f4-computation \
-	schreyer-resolution/res-gausser \
-	schreyer-resolution/res-gausser-ZZp \
-	schreyer-resolution/res-gausser-QQ \
-	schreyer-resolution/res-gausser-QQ-hybrid \
+	gb-f4/Basis \
+	gb-f4/GBF4Computation \
+	gb-f4/GBF4Interface \
+	gb-f4/MacaulayMatrix \
+	gb-f4/MonomialHashTable \
+	gb-f4/MonomialLookupTable \
+	gb-f4/MonomialView \
+	gb-f4/PolynomialList \
+	gb-f4/SPairs \
 	f4/f4 \
 	f4/f4-mem \
 	f4/f4-monlookup \
@@ -62,7 +71,6 @@ INTERFACE = \
 	f4/monhashtable \
 	monsort \
 	f4/moninfo \
-	f4/gausser \
 	betti \
 	GF \
 	ZZ \

@@ -9,7 +9,7 @@ declarations "
 -- so that means we can write "use actors6;" only in a *.dd file, not in a *.d file.
 -- That's why we are renaming interp.d to interp.dd.  Eventually all *.d files should
 -- be renamed.
-Chrono := Type "std::chrono::steady_clock::time_point" ;    
+Chrono := Type "std::chrono::steady_clock::time_point" ;    -- or use clock_gettime(CLOCK_MONOTONIC, &ts)
 
 elapsedTimefun(a:Code):Expr := (
      time1 := Ccode(Chrono, "std::chrono::steady_clock::now()");

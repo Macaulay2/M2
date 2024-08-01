@@ -47,7 +47,7 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
      new array(SymbolList) 
      len 8						    -- must be a power of 2, for our hashing to work
      do provide NULL,
-     0,uninitializedSpinLock);
+     0,newThreadRWLock());
 
 export dummyFrame := Frame(self,
      -1,						    -- negative frame id's are ignored and give warning messages
@@ -63,7 +63,9 @@ export globalFrame := Frame(self, 0, globalFramesize, true,
 	  nullE						    -- one value for dummySymbol
 	  ));
 export threadFrameID := 0;
-export threadFramesize := 0;
+header "struct atomic_field expr_threadFramesize;";
+import threadFramesize:atomicField;
+store(threadFramesize, 0);
 export threadLocal threadFrame  := Frame(self, threadFrameID, 0, true, Sequence());
 export enlarge(f:Frame):int := (
      n := f.valuesUsed;
@@ -74,8 +76,8 @@ export enlarge(f:Frame):int := (
 	       while true do provide nullE));
      n);
 export enlargeThreadFrame():Frame := (
-     if threadFramesize > length(threadFrame.values) then (
-	  threadFrame.values = new Sequence len 2 * threadFramesize + 1 do (
+     if load(threadFramesize) > length(threadFrame.values) then (
+	  threadFrame.values = new Sequence len 2 * load(threadFramesize) + 1 do (
 	       foreach value in threadFrame.values do provide value;
 	       while true do provide nullE));
      threadFrame);
@@ -91,6 +93,7 @@ export completions(s:string):array(string) := (
      v := newvarstringarray(6);
      d := globalDictionary;
      while (
+	  lockRead(d.symboltable.mutex);
 	  foreach bucket in d.symboltable.buckets do (
 	       b := bucket;
 	       while true do when b
@@ -99,6 +102,7 @@ export completions(s:string):array(string) := (
 		    t := q.word.name;
 		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then append(v,t);
 		    b = q.next; ));
+	  unlock(d.symboltable.mutex);
 	  d != d.outerDictionary) do d = d.outerDictionary;
      extract(v));
 export DictionaryList := {
@@ -164,11 +168,15 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in hashtable.dd that the number of buckets
 	  -- (here four) is a power of two
-	  Class,parent,0,nextHash(),
+	  Class,parent,0,0,
 	  true,				  -- mutable by default; careful: other routines depend on this
 	  false,
-	  uninitializedSpinLock
-	  ); init(ht.mutex); ht);
+	  newThreadRWLock()
+	  ); ht);
+export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
+       ht:=newHashTable(Class,parent);
+       ht.hash=nextHash();
+       ht);
 
 export newCompiledFunction(fn:fun):CompiledFunction := (
     cf := CompiledFunction(fn, 0);
@@ -241,17 +249,17 @@ export thingClass := (
 	  -- enlarge/shrink code in objects.d that the number of buckets
 	  -- here (four) is a power of two
           self,self,0,nextHash(),
-          true,false, uninitializedSpinLock);
-	  init(ht.mutex); ht);
+          true,false, newThreadRWLock());
+	  ht);
 
-export hashTableClass := newHashTable(thingClass,thingClass);
-export mutableHashTableClass := newHashTable(thingClass,hashTableClass);
-export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
+export hashTableClass := newHashTableWithHash(thingClass,thingClass);
+export mutableHashTableClass := newHashTableWithHash(thingClass,hashTableClass);
+export typeClass := newHashTableWithHash(mutableHashTableClass,mutableHashTableClass);
        thingClass.Class = typeClass;
        typeClass.Class = typeClass;
        mutableHashTableClass.Class = typeClass;
        hashTableClass.Class = typeClass;
-       newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+       newtypeof(parent:HashTable):HashTable := newHashTableWithHash(typeClass,parent);
        newbasictype():HashTable := newtypeof(thingClass);
 export cacheTableClass := newtypeof(mutableHashTableClass);
 export basicListClass := newbasictype();
@@ -294,13 +302,13 @@ export ringElementClass := newtypeof(basicListClass);
 export numberClass := newtypeof(thingClass);
 export inexactNumberClass := newtypeof(numberClass);
 
-       newnumbertype():HashTable := newHashTable(ringClass,numberClass);
+       newnumbertype():HashTable := newHashTableWithHash(ringClass,numberClass);
 export ZZClass := newnumbertype();
 export QQClass := newnumbertype();
 
 export ringFamilyClass := newtypeof(typeClass);
 export inexactNumberTypeClass := newtypeof(ringFamilyClass);
-       newbignumbertype():HashTable := newHashTable(inexactNumberTypeClass,inexactNumberClass);
+       newbignumbertype():HashTable := newHashTableWithHash(inexactNumberTypeClass,inexactNumberClass);
 export RRClass := newbignumbertype();
 export CCClass := newbignumbertype();
 
@@ -335,6 +343,7 @@ export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableCom
 export angleBarListClass := newtypeof(visibleListClass);
 export RRiClass := newbignumbertype();
 export pointerClass := newbasictype();
+export atomicIntClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

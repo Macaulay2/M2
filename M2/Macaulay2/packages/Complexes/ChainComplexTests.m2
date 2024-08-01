@@ -1062,17 +1062,19 @@ TEST ///
   kk = ZZ/101
   S = kk[a..d]
   I = ideal"a2-bc,ab-cd"
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   dd^C
   minC = minimize C
   minC.dd
+  assert isQuasiIsomorphism minC.cache.minimizingMap
 
   kk = ZZ/101  
   S = kk[a..e]
   F = random(3,S)
   I = inverseSystem F
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   minC = minimize C
+  assert isQuasiIsomorphism minC.cache.minimizingMap
   betti minC  
   minimize(C ++ C[9])
 ///
@@ -1132,33 +1134,35 @@ TEST ///
   needsPackage "Complexes"
 *-
   -- TODO: this test does not work, as the free resolutions take too long to complete.
-  -- add this test back in once Strategy => 4, or FastNonminimal => true works.
+  -- add this test back in once Strategy => Nonminimal works.
   kk = ZZ/32003
   S = kk[a..e]
   F = random(3,S)
   I = inverseSystem F
-  C = freeResolution(I, FastNonminimal=>true)
-  elapsedTime minimize C
+  C = freeResolution(I, Strategy => Nonminimal)
+  minC = minimize C
+  assert isQuasiIsomorphism minC.cache.minimizingMap
 
   S = kk[vars(0..8)]
   F = random(3,S)
   I = inverseSystem F;
-  C = freeResolution(I, FastNonminimal=>true)
-  ---- elapsedTime minimize C  -- very slow TODO: fix this
+  C = freeResolution(I, Strategy => Nonminimal)
+  -- elapsedTime minC = minimize C  -- very slow TODO: fix this
+  -- assert isQuasiIsomorphism minC.cache.minimizingMap
 
   -- good benchmark test:
   kk = ZZ/32003
   S = kk[vars(0..6)]
   F = random(3,S)
   I = inverseSystem F;
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   ---- elapsedTime minimize C  -- very slow, TODO: fix this
 -*
   needsPackage "PruneComplex"  
   needsPackage "ChainComplexExtras"
-  C' = res(I, FastNonminimal=>true)
+  C' = chainComplex freeResolution(I, Strategy => Nonminimal)
   elapsedTime pruneComplex(C', UnitTest=>isScalar) -- 17.7 sec on my MBP
-  C'' = res(ideal I_*, FastNonminimal=>true)  
+  C'' = chainComplex freeResolution(ideal I_*, Strategy => Nonminimal)  
   elapsedTime minimize C''  -- very slow, TODO: fix this
 *-  
 ///

@@ -3,6 +3,8 @@
 use evaluate;
 use struct;
 
+header "#include <assert.h>";
+
 export plus0():Expr := zeroE;
 export times0():Expr := oneE;
 export plus1(e:Expr) : Expr := e;
@@ -502,19 +504,16 @@ setup(BackslashBackslashS,BackslashBackslashFun);
 
 adjacentFun(lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
 setup(AdjacentS,adjacentFun);
-BinaryPowerMethod(x:Expr,y:Expr):Expr := (
+BinaryPowerMethod(x:Expr,y:Expr,times:Expr,onex:Expr,inver:Expr):Expr := (
      when y is i0:ZZcell do (
 	  i := i0.v;
 	  if i === 0 then (
-	       onex := lookup(Class(x),oneE);
-	       if onex == nullE then (
-		    return buildErrorPacket("missing unit element")
-		    )
+	       if onex == nullE
+	       then return buildErrorPacket("missing unit element")
 	       else return applyEE(onex, x);
 	       );
 	  if i < 0 then (
 	       i = -i;
-	       inver := lookup(Class(x),InverseS);
 	       if inver == nullE then return MissingMethod("^","InverseMethod");
 	       x = applyEE(inver,x);
 	       );
@@ -526,22 +525,26 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       if (n & 1) != 0 then (
 		    if z == nullE then z=w
 		    else (
-			 z=z*w;
+			 z = applyEEE(times, z, w);
 			 when z is Error do return z else nothing;
 			 ));
 	       n = n >> 1;
 	       if n == 0 then break;
-	       w = w*w;
+	       w = applyEEE(times, w, w);
 	       when w is Error do return w else nothing;
 	       );
 	  z)
      else WrongArgZZ(2));
 BinaryPowerMethodFun(e:Expr):Expr := (
      when e is a:Sequence do
-     if length(a)==2 then
-     BinaryPowerMethod(a . 0, a . 1)
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+     if length(a) == 2 then (
+	 t := Class(a . 0);
+	 BinaryPowerMethod(a . 0, a . 1, lookupBinaryMethod(t, t, StarS), lookup(t, oneE), lookup(t, InverseS)))
+     else if length(a) == 5 then (
+	 t := Class(a . 0);
+	 BinaryPowerMethod(a . 0, a . 1, a . 2, a . 3, a . 4))
+     else WrongNumArgs(5)
+     else WrongNumArgs(5));
 setupfun("BinaryPowerMethod",BinaryPowerMethodFun);
 SimplePowerMethod(x:Expr,y:Expr):Expr := (
      when y is i0:ZZcell do (
@@ -1145,9 +1148,18 @@ lengthFun(rhs:Code):Expr := (
      e := eval(rhs);
      when e
      is Error do e
-     is x:HashTable do toExpr(x.numEntries)
+     is x:HashTable do (
+	  if (x.Mutable) then lockRead(x.mutex);
+	  res := toExpr(x.numEntries);
+	  if (x.Mutable) then unlock(x.mutex);
+	  res)
      is x:Sequence do toExpr(length(x))
-     is dc:DictionaryClosure do toExpr(dc.dictionary.symboltable.numEntries)
+     is dc:DictionaryClosure do (
+	  table := dc.dictionary.symboltable;
+	  lockRead(table.mutex);
+	  res := toExpr(table.numEntries);
+	  unlock(table.mutex);
+	  res)
      is x:List do toExpr(length(x.v))
      is s:stringCell do toExpr(length(s.v))
      is n:Net do toExpr(length(n.body))

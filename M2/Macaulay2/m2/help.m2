@@ -27,7 +27,8 @@ authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, Ho
 binary   := set flexibleBinaryOperators
 prefix   := set flexiblePrefixOperators
 postfix  := set flexiblePostfixOperators
-operator := binary + prefix + postfix
+augmented := set augmentedAssignmentOperators
+operator := binary + prefix + postfix + augmented
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -45,6 +46,12 @@ seeAbout := (f, i) -> (
 --   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
 
+-- we want quotes around elements of the "Ways to use" list so that
+-- "* String" works when running "help" inside Macaulay2, but we don't
+-- need the quotes otherwise
+MaybeQuotedTT = new IntermediateMarkUpType of TT
+net MaybeQuotedTT := x -> formatNoEscaping x#0
+
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
@@ -54,11 +61,11 @@ optTO := key -> (
     if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
-	-- this is to avoid doubling "\" in documentation for symbol \ and symbol \\
-	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
 	-- TODO: figure out how to align the lists using padding
 	-- ref = pad(ref, printWidth // 4);
-	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then TT ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
+	(format ptag, fkey, next(), fixup (
+		if currentHelpTag === ptag then MaybeQuotedTT fkey
+		else SPAN {MaybeQuotedTT fkey, " -- see ", TOH{ptag}})))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
@@ -157,7 +164,7 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- objects of type T
     e := smenu(toString \ select(syms, y -> not isMutable y and instance(value y, T)));
     DIV nonnull splice ( "class" => "waystouse",
-	if #b > 0 then ( SUBSECTION {"Types of ", TT if T.?synonym then T.synonym else toString T, " :"}, b),
+	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, " :"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, " :"}, a),
 	if #c > 0 then ( SUBSECTION {"Methods that use ",                    indefinite synonym T, " :"}, c),
 	if #e > 0 then ( SUBSECTION {"Fixed objects of class ",                     TT toString T, " :"}, e)))
@@ -245,8 +252,9 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
 		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
 		    " on ",          cert#"acceptance date", ", in the article ",
-		                HREF{cert#"published article URI",  cert#"article title"}, ".",
-		    " That version can be obtained",
+		                HREF{cert#"published article URI",  cert#"article title"},
+		    " (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
+		    "). That version can be obtained",
 		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
 		    " from ",   HREF{commit, SPAN{"the ", EM "Macaulay2", " source code repository"}},
 		    "."}}
@@ -283,13 +291,15 @@ getOperator := key -> if operator#?key then (
     op := toString key;
     if match("^[[:alpha:]]*$", op) then op = " " | op | " ";
     fixup DIV (
-	if binary#?key then {
+	if binary#?key and key =!= symbol ?? then {
 	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
 		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",
 	    PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
+	if key === symbol ?? then { -- can't install binary methods
+	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". "}},
 	if prefix#?key then {
 	    PARA {"This operator may be used as a prefix unary operator in an expression like ", TT (op | "y"), ". ",
 		"The user may ", TO2{ "Macaulay2Doc :: installing methods", "install a method" }, " for handling such expressions with code such as"},
@@ -299,6 +309,11 @@ getOperator := key -> if operator#?key then (
 	    PARA {"This operator may be used as a postfix unary operator in an expression like ", TT ("x" | op), ". ",
 		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
 	    PRE ("         X "|op|"   := (x) -> ..."),
+	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
+	if augmented#?key then {
+	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
+		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
+	    PRE ("         X "|op|" (x,y) -> ..."),
 	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}}
 	))
 
@@ -440,7 +455,7 @@ viewHelp = method(Dispatch => Thing)
 viewHelp String := key -> viewHelp makeDocumentTag key
 viewHelp Thing  := key -> (
     if key === () then (
-        if fileExists frontpage then show URL { frontpage }
+        if fileExists frontpage then show URL urlEncode(rootURI | frontpage)
 	-- TODO: generate this on-demand
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
     else viewHelp makeDocumentTag key)
@@ -448,7 +463,7 @@ viewHelp DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;
     if ( tag' := getOption(rawdoc, symbol DocumentTag) ) =!= null
     and fileExists( docpage := concatenate htmlFilename tag' )
-    then show URL { docpage } else show help tag)
+    then show URL urlEncode(rootURI | docpage) else show help tag)
 viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
 viewHelp = new Command from viewHelp

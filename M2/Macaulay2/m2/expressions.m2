@@ -597,6 +597,14 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol ==> => "\\Longrightarrow ",
     symbol <== => "\\Longleftarrow ",
     symbol <==> => "\\Longleftrightarrow ",
+    symbol _>  => "{}_>",
+    symbol _>= => "{}_>=",
+    symbol _<  => "{}_<",
+    symbol _<= => "{}_<",
+    symbol ^>  => "{}^>",
+    symbol ^>= => "{}^>=",
+    symbol ^<  => "{}^<",
+    symbol ^<= => "{}^<",
     symbol ** => "\\otimes ",
     symbol ++ => "\\oplus ",
     symbol != => "\\ne ",
@@ -606,7 +614,14 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol <=== => "{\\large\\Longleftarrow}",
     symbol << => "\\ll ",
     symbol >> => "\\gg ",
-    symbol ~ => "\\sim ",
+    symbol  ! => "!",
+    symbol ^! => "{}^!",
+    symbol _! => "{}_!",
+    symbol  ~ => "\\sim ",
+    symbol ^~ => "{}^\\sim",
+    symbol _~ => "{}_\\sim",
+    --symbol ^# => "{}^\\sharp",
+    --symbol _# => "{}_\\sharp",
     symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol _ => "\\_",
     symbol { => "\\{",
@@ -1173,7 +1188,7 @@ texMath MatrixExpression := x -> (
 		 between("&",m#i),
 		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
-		 if blk then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
+		 if blk then (j += 1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
 		 )),
 	"\\end{array}\\!",
 	"\\right)"
@@ -1281,7 +1296,7 @@ texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
-expression Set := x -> Adjacent {set, expression (sortByName keys x)}
+expression Set := x -> Adjacent {set, expression keys x}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := texMath @@ expression

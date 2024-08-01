@@ -121,7 +121,7 @@ toExternalString DocumentTag := tag -> (
 	if instance(tag.Key, Symbol) then toString tag.Key else tag.Key, tag.Format, tag.Package})
 
 new DocumentTag from BasicList := (T, t) -> (
-    new DocumentTag from new HashTable from {
+    new HashTable from {
 	Key                => t#0,
 	Format             => t#1,
 	symbol Package     => t#2,
@@ -211,7 +211,13 @@ fixup DocumentTag := DocumentTag => tag -> (
 
 prefix := set flexiblePrefixOperators
 
-fSeq := new HashTable from {
+typicalValue := k -> (
+    if  typicalValues#?k     then typicalValues#k
+    else if instance(k, Sequence)
+    and typicalValues#?(k#0) then typicalValues#(k#0)
+    else Thing)
+
+fSeq := new HashTable from splice {
     (4, NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
     (3, NewFromMethod  ) => s -> ("new ", toString s#1,                       " from ", toString s#2),
     (3, NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
@@ -228,21 +234,34 @@ fSeq := new HashTable from {
     (3, class, Keyword ) => s -> (toString s#1, " ", toString s#0, " ", toString s#2), -- infix operator
     (3, class, Symbol  ) => s -> (toString s#1, " ", toString s#0, " ", toString s#2), -- infix operator
     -- infix assignment operator (really a ternary operator!)
-    (3, class, Sequence) => s -> (toString s#1, " ", toString s#0#0, " ", toString s#2, " ", toString s#0#1, " Thing"),
     (2, class, Keyword ) => s -> (toString s#0, " ", toString s#1), -- prefix operator
-    (2, class, Sequence) => s -> (
-	op := s#0#0;
-	if prefix#?op
-	then (toString op, " ", toString s#1, " ", toString s#0#1, " Thing")
-	else (toString s#1, " ", toString op, " ", toString s#0#1, " Thing")),
-
     (3, symbol SPACE   ) => s -> (toString s#1, " ", toString s#2),
-    (2, symbol <-      ) => s -> (toString s#1, " <- Thing"),       -- assignment statement with left hand side evaluated
     (2, symbol (*)     ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol ^*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol _*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol ^~      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol _~      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol ^!      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    (2, symbol _!      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    --(2, symbol ^#      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+    --(2, symbol _#      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+
+    -- assignment methods
+    (3, class, Sequence) => s -> (toString s#1, " ", toString s#0#0, " ",
+	toString s#2, " ", toString s#0#1, " ", toString typicalValue s),
+    (2, class, Sequence) => s -> (
+	op := s#0#0;
+	if prefix#?op
+	then (toString op, " ", toString s#1, " ", toString s#0#1, " ",
+	    toString typicalValue s)
+	else (toString s#1, " ", toString op, " ", toString s#0#1, " ",
+	    toString typicalValue s)),
+    (2, symbol <-      ) => s -> (toString s#1, " <- ",
+	toString typicalValue s),
+    apply(augmentedAssignmentOperators, op -> (2, op) => s ->
+	(toString s#1, " ", toString op, " ", toString typicalValue s)),
 
     -- ScriptedFunctors
     (4, class, ScriptedFunctor, ZZ) => s -> (
@@ -395,7 +414,8 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 locate DocumentTag := tag -> new FilePosition from (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
     then (
-	minimizeFilename((package tag)#"source directory" | rawdoc#"filename"),
+	minimizeFilename((package rawdoc.DocumentTag)#"source directory" |
+	    rawdoc#"filename"),
 	rawdoc#"linenum", 0)
     else (currentFileName, currentRowNumber(), currentColumnNumber()))
 
@@ -463,19 +483,13 @@ processSignature := (tag, fn) -> item -> (
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	maybeformat := if instance(opts#optsymb, String) then format else identity;
 	defval := SPAN{"default value ", maybeformat reproduciblePaths replace("^Function\\[.*\\]", "Function[]", toString opts#optsymb)};
-	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> headline opttag};
+	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> nonnull SPAN headline opttag};
 	text = if text =!= null and #text > 0 then (", ", text);
 	-- e.g: Key => an integer, default value 42, the meaning of the universe
 	{ (name, TT " => ", type), nonnull (defval, text) })
     else {TT {toString optsymb, " => ..."}};
     SPAN nonnull deepSplice between_", " nonnull nonempty result)
 
-
-typicalValue := k -> (
-    if  typicalValues#?k     then typicalValues#k
-    else if instance(k, Sequence)
-    and typicalValues#?(k#0) then typicalValues#(k#0)
-    else Thing)
 
 getSignature := method(Dispatch => Thing)
 getSignature Thing    := x -> ({},{})
@@ -485,11 +499,17 @@ getSignature Sequence := x -> (
     else (
 	-- putting something like OO in the key indicates a fake dispatch
 	x' := select(drop(toList x, 1), T -> not ancestor(Nothing, T));
-	if instance(x#0, Sequence)
-	and #x#0 === 2 and x#0#1 === symbol=
-	or  #x   === 2 and x#0   === symbol<-
-	then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
-	else ( x'            , { typicalValue x } )))
+	-- assignment methods
+	-- TODO: should we worry about the possibility of the input
+	-- and output types being different?
+	if (instance(x#0, Sequence) and #x#0 === 2 and x#0#1 === symbol=
+	    or #x === 2 and x#0 === symbol<-
+	    or isMember(x#0, augmentedAssignmentOperators))
+	then (append(x', typicalValue x), {typicalValue x})
+	-- for "new T from x", T is already known, so we just care about x
+	else if x#0 === NewFromMethod
+	then ( {x#2} , { typicalValue x } )
+	else (  x'   , { typicalValue x } )))
 
 isOption := opt -> instance(opt, Option) and #opt == 2 and instance(opt#0, Symbol);
 

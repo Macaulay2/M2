@@ -1392,19 +1392,7 @@ doc ///
 ------------------------------------------------------------------------------
 -- operations related to toric divisors and sheaves
 ------------------------------------------------------------------------------
-doc ///
-    Key
-        pullback
-    Headline
-        make the pullback along a toric map
-    Description
-        Text
-	    A toric map induces pullback operations in several different
-	    situations.  Those currently implemented in this package are
-	    listed below.	    
-///
-    
-    
+
 doc ///
     Key
         (pullback, ToricMap, ToricDivisor)

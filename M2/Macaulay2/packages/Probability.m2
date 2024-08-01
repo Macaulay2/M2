@@ -1,11 +1,45 @@
+-- Probability package for Macaulay2
+-- Copyright (C) 2022-2024 Doug Torrance
+
+-- This program is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License
+-- as published by the Free Software Foundation; either version 2
+-- of the License, or (at your option) any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+-- 02110-1301, USA.
+
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.3",
-    Date => "October 31, 2023",
+    Version => "0.4",
+    Date => "January 23, 2024",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}})
+	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+    Keywords => {"Algebraic Statistics"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "The Probability package for Macaulay2",
+	"acceptance date" => "2024-01-23",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p07.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.51",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x07-Probability.m2",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Probability.m2",
+	"release at publication" => "fe3f536ed3c90d114452e31a24fc3a935a3b9ca3",
+	"version at publication" => "0.3",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
+    )
 
 ---------------
 -- ChangeLog --
@@ -13,7 +47,11 @@ newPackage("Probability",
 
 -*
 
-0.3 (2023-10-31, M2 1.23)
+0.4 (2024-01-23, M2 1.23)
+* release under GPL
+* add keyword
+
+0.3 (2023-10-31, version submitted to JSAG)
 * add Caveats to docs warning user to ensure that pdf's are well-defined
 * use ASCII characters for chi-squared distribution
 * clarify in docs that the support of a discrete distribution will be a subset
