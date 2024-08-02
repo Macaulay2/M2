@@ -15,9 +15,7 @@ on:
       - master
       - development
   schedule:
-    # cron time in UTC
-    # a scheduled job runs on the default branch: 'master'
-    - cron: '0 6 * * *'
+    - cron: '0 6 * * SUN' # runs tests on the main branch every Sunday at 06:00 UTC
 
 concurrency:
   # Cancel in-progress runs when a new workflow with the same group name is triggered
