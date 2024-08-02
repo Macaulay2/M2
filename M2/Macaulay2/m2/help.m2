@@ -559,7 +559,7 @@ about Symbol   :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;
-    NumberedVerticalList apply(sort join(
+    NumberedVerticalList sort join(
         flatten for pkg in loadedPackages list (
             pkgname := pkg#"pkgname";
             if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
@@ -569,7 +569,7 @@ about String   := o -> re -> lastabout = (
                     matchfun_re if o.Body then pkg#rawKeyDB),
                 select(keys pkg#"raw documentation",
                     matchfun_re if o.Body then pkg#"raw documentation"));
-            apply(keyList, key -> (pkgname,key))),
+            apply(keyList, key -> pkgname | " :: " | key )),
         flatten for pkg in getPackageInfoList() list (
             pkgname := pkg#"name";
             if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
@@ -578,10 +578,7 @@ about String   := o -> re -> lastabout = (
             db := if o.Body then openDatabase dbname;
             keyList := select(dbkeys, matchfun_re db);
             if o.Body then close db;
-            apply(keyList, key -> (pkgname,key)))
-	    ),(pkgname,key) -> SPAN { pkgname, " ", TOH {pkgname | "::" | key} }
-	)
-    )
+            apply(keyList, key -> pkgname | " :: " | key ))))
 
 -- TODO: should this go to system?
 pager = x -> if height stdio > 0
