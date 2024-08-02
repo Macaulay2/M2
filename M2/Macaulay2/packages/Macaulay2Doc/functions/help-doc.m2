@@ -241,11 +241,13 @@ Node
       The packages searched are the loaded packages and the packages installed under one of the prefixes listed
       in @TO "prefixPath"@. The first search will take a few seconds while it reads all the documentation keys
       into memory.
-
-    -- this example won't work until after Macaulay2Doc is installed.
-    CannedExample
-      about resolution
-      help 5
+    Example
+      about firstFunction
+      help 1
+    Text
+      It is also possible to view a table of headlines corresponding to the results.
+    Example
+      headlines about firstFunction
   Caveat
     Since @TT "s"@ is taken as a regular expression, parentheses serve
     for grouping subexpressions, rather than matching themselves.
@@ -253,6 +255,7 @@ Node
     (help, ZZ)
     (symbol?, Symbol)
     apropos
+    headlines
     findSynonyms
     "regular expressions"
 
@@ -280,11 +283,42 @@ Node
       For example, to find all functions that start with @TT "mat"@ or @TT "Mat"@:
     Example
       apropos "^[mM]at"
+    Text
+      It is also possible to view a table of headlines corresponding to the results.
+    Example
+      headlines apropos "hilbert"
   SeeAlso
     help
     about
+    headlines
     findSynonyms
     "regular expressions"
+
+Node
+  Key
+    headlines
+  Headline
+    display a table of documentation headlines
+  Usage
+    headlines about s
+    headlines apropos p
+    headlines methods f
+  Description
+    Text
+      This method displays a table of documentation headlines for the input list.
+    Example
+      headlines about firstFunction
+      help 0
+      headlines apropos "hilbert"
+      headlines methods syz
+      code 0
+  SeeAlso
+    help
+    viewHelp
+    about
+    apropos
+    methods
+    code
 ///
 
 -- the node displayed by the help command by default
