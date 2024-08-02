@@ -558,6 +558,7 @@ document {
      }
 
 -- TODO: this needs some upgrades
+-- TODO: also show how to use "headlines methods X"
 document {
   Key => {
     methods,
