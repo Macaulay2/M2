@@ -747,6 +747,7 @@ export {
 	"groupID",
 	"hash",
 	"hashTable",
+	"headlines",
 	"heft",
 	"height",
 	"help",
