@@ -255,7 +255,7 @@ locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new 
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
-
+sortByLocation = sortBy(toString @@ locate)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
