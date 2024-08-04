@@ -172,7 +172,7 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux'
+        if: matrix.build-system == 'cmake' && runner.os == 'macOS'
         run: |
           set -xe
           ./M2 -q --check 1 -e 'exit 0'
