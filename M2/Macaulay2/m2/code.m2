@@ -180,7 +180,7 @@ methods Sequence := F -> (
     -- this line makes so `methods parent class help()` shows (net, HypertextContainer)
     -- despite the fact that HypertextContainer is not exported by default.
     scan(select(F, e -> instance(e, Type)), T -> scan(sequenceMethods(T, F, tallyF), key -> found#key = true));
-    previousMethodsFound = new NumberedVerticalList from sortByName select(keys found, isCallable))
+    previousMethodsFound = new NumberedVerticalList from sortByLocation select(keys found, isCallable))
 
 methods ScriptedFunctor := -- TODO: OO and other scripted functors aren't supported
 -- FIXME: why is 'methods Format' giving two things?
@@ -192,7 +192,7 @@ methods Thing  := F -> (
     -- TODO: either finish or remove nullaryMethods
     if nullaryMethods#?(1:F) then found#(1:F) = true;
     searchAllDictionaries(Type, T -> scan(thingMethods(T, F), key -> found#key = true));
-    previousMethodsFound = new NumberedVerticalList from sortByName keys found)
+    previousMethodsFound = new NumberedVerticalList from sortByLocation keys found)
 
 -- this one is here because it needs previousMethodsFound
 options ZZ := i -> options previousMethodsFound#i
