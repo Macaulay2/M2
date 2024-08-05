@@ -209,7 +209,6 @@ newPackage = method(
     Options => {
 	Authors                   => {},
 	AuxiliaryFiles            => false,
-	CacheExampleOutput        => null,
 	Certification             => null,
 	Configuration             => {},
 	Date                      => null,
@@ -218,11 +217,9 @@ newPackage = method(
 	HomePage                  => null,
 	InfoDirSection            => "Macaulay2 and its packages",
 	Keywords                  => {"Uncategorized"},
-	OptionalComponentsPresent => null,
 	PackageExports            => {},
 	PackageImports            => {},
 	Reload                    => false,
-	UseCachedExampleOutput    => null,
 	Version                   => "0.0"
 	})
 newPackage Sequence := opts -> x -> newPackage(x#0, opts) -- to allow null entries
@@ -316,8 +313,6 @@ newPackage String := opts -> pkgname -> (
 		    DebuggingMode => loadOptions.DebuggingMode}, last)));
     --
     if opts.DebuggingMode and not debuggingMode then opts = opts ++ {DebuggingMode => false};
-    if opts.OptionalComponentsPresent === null  then opts = opts ++ {OptionalComponentsPresent => opts.CacheExampleOutput =!= true};
-    if opts.UseCachedExampleOutput === null     then opts = opts ++ {UseCachedExampleOutput => not opts.OptionalComponentsPresent};
     --
     packagePrefix := (
 	-- Try to detect whether we are loading the package from an installed version.
@@ -521,7 +516,15 @@ endPackage String := title -> (
      pkg.PackageIsLoaded = true;
      pkg)
 
-beginDocumentation = () -> (
+beginDocumentation = {
+    CacheExampleOutput        => null,
+    OptionalComponentsPresent => null,
+    UseCachedExampleOutput    => null, -- TODO: not used by any package, retire this!
+    } >> opts -> () -> (
+    -- the options are used in installPackage and check
+    if opts.OptionalComponentsPresent === null  then opts = opts ++ {OptionalComponentsPresent => opts.CacheExampleOutput =!= true};
+    if opts.UseCachedExampleOutput === null     then opts = opts ++ {UseCachedExampleOutput => not opts.OptionalComponentsPresent};
+    currentPackage.Options ++= opts;
     pkgname := currentPackage#"pkgname";
     if loadPackageOptions#?pkgname and not loadPackageOptions#pkgname.LoadDocumentation
     and currentPackage#?rawKeyDB and isOpen currentPackage#rawKeyDB then (
