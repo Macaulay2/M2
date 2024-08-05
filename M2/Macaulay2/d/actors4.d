@@ -1211,16 +1211,6 @@ join(e:Expr):Expr := (
      else WrongArg("lists or sequences"));
 setupfun("join",join);
 
-instanceof(e:Expr):Expr := (
-     when e
-     is args:Sequence do (
-	  when args.1
-	  is y:HashTable do if ancestor(Class(args.0),y) then True else False
-	  else WrongArgHashTable(2))
-     else WrongNumArgs(2));
-setupfun("instance",instanceof);
-
-
 threadLocal hadseq := false;
 deeplen(a:Sequence):int := (
      n := 0;
