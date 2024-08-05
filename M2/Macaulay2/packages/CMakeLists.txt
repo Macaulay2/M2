@@ -116,6 +116,7 @@ foreach(_target IN LISTS _target_prefixes)
   add_custom_target(${_target}-packages DEPENDS ${${_dependencies_list}})
 endforeach()
 
+# Makes the target all (possibly) depend on info-packages and install-packages
 set_target_properties(${_all_target_list} PROPERTIES EXCLUDE_FROM_ALL OFF)
 
 #################################################################################
