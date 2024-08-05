@@ -113,6 +113,12 @@ u Number := identity
 assert( u ZZ === ZZ )
 assert( u(ZZ,FOO=>BAR) === (new OptionTable from {FOO => BAR},ZZ) )
 
+-- "code methods" should deduplicates identical functions
+u Matrix := identity
+s = code methods u
+assert match("-- code for method: u\\(Number\\)", toString net s#0)
+assert match("-- code for method: u\\(Matrix\\)", toString net s#0)
+
 -- chainComplex is now an example, because it is defined by chainComplex = method(Options => true, Dispatch => Thing, TypicalValue => ChainComplex)
 X = new Type of BasicList
 chainComplex X := { FOO => BAR } >> o -> x -> (o,x);
