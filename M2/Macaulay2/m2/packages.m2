@@ -205,6 +205,7 @@ getpkgNoLoad = pkgname -> if isPackageLoaded pkgname then value PackageDictionar
 -----------------------------------------------------------------------------
 
 newPackage = method(
+    Dispatch => Thing,
     Options => {
 	Authors                   => {},
 	AuxiliaryFiles            => false,
@@ -224,6 +225,7 @@ newPackage = method(
 	UseCachedExampleOutput    => null,
 	Version                   => "0.0"
 	})
+newPackage Sequence := opts -> x -> newPackage splice(nonnull x, opts) -- to allow null entries
 newPackage String := opts -> pkgname -> (
     -- package name must be alphanumeric
     checkPackageName pkgname;
