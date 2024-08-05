@@ -15,7 +15,7 @@ limit := 4
 
 -- TODO: also show _where_ a method is declared
 codeFunction := (key, func, level) -> if level <= limit then (
-    if locate func === null then DIV{"function ", func, ": source code not available"}
+    if locate func === null then DIV { synonym class func, " ", func, ": source code not available" }
     else (
 	dicts := localDictionaries func;
 	symbs := flatten apply(#dicts - 1, i -> sortByHash values dicts#i);
@@ -35,6 +35,20 @@ codeFunction := (key, func, level) -> if level <= limit then (
 
 -- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
 previousMethodsFound = null
+
+codeAddress = pos -> ( pos, ": --source code:" ) -- [addr]:[line]:[char]-[line]:[char]:
+codeContent = (s, e, filelines) -> PRE M2CODE stack filelines_{s-1 .. e-1}
+
+-- e.g. see code methods(map, Module, List)
+dedupMethods = L -> (
+    L = new MutableList from L;
+    scan(reverse(0..#L-2),
+	-- since we use sortByLocation in methods, we assume
+	-- that methods with identical code are adjacent in L
+	i -> if last L#i === last L#(i+1) then (
+	    tag := DIV drop(remove(L, i), -1);
+	    L#i = join(tag, L#i)));
+    toList L)
 
 code = method(Dispatch => Thing)
 code Nothing    := identity
@@ -67,10 +81,7 @@ code FilePosition := x -> (
 	       ) do stop = stop + 1;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
-	  DIV {
-	      x, ": --source code:",
-	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
-	      }
+	  DIV splice { codeAddress(x), codeContent(start, stop, file) }
 	  ))
 code Symbol     :=
 code Pseudocode := s -> code locate s
@@ -89,11 +100,11 @@ code Sequence   := s -> (
 	    then store#key.HookAlgorithms#strategy));
     -- TODO: say "strategies for method: ..."
     if func =!= null or (func = lookup key) =!= null
-    then DIV {mesg, formatDocumentTag s, codeFunction(s, func, 0) }
+    then DIV { DIV { mesg, formatDocumentTag s }, codeFunction(s, func, 0) }
     else "-- no method function found: " | formatDocumentTag key)
 code Function   := f -> codeFunction(null, f, 0)
 code Command    := C -> code C#0
-code List       := L -> DIV between_(HR{}) apply(L, code)
+code List       := L -> DIV between_(HR{}) dedupMethods apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
 
 -----------------------------------------------------------------------------
