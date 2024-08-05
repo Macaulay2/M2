@@ -4,14 +4,6 @@
 -- Functions dealing with types
 -----------------------------------------------------------------------------
 
--- defined in d/classes.d
-class  Thing := Type => class
-parent Thing := Type => parent
-
--- defined in d/classes.d
-instance(Thing, Type) := Boolean => instance
-ancestor(Type,  Type) := Boolean => ancestor
-
 -- TODO: is there a better name for ancestors'?
 ancestors  = T -> unique join({T}, while (T = parent T) =!= Thing list T, {Thing})
 ancestors' = T -> unique join({T}, while (T = class  T) =!= Type  list T, {Type})
