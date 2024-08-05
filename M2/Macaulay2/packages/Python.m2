@@ -2,8 +2,6 @@
 this does not work unless M2 is compiled --with-python
 *-
 
-pythonPresent := Core#"private dictionary"#?"pythonRunString"
-
 newPackage("Python",
     Version => "0.6",
     Date => "January 28, 2024",
@@ -17,8 +15,6 @@ newPackage("Python",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"Interfaces"},
     AuxiliaryFiles => true,
-    CacheExampleOutput => true,
-    OptionalComponentsPresent => pythonPresent
     )
 
 ---------------
@@ -63,6 +59,8 @@ newPackage("Python",
 *-
 
 verboseLog = if debugLevel > 0 then printerr else identity
+
+pythonPresent = Core#"private dictionary"#?"pythonRunString"
 
 if pythonPresent then verboseLog "success: python is present" else (
     verboseLog "warning: python is not present";

@@ -9,7 +9,6 @@ newPackage(
     	Headline => "adjoint ideals of plane curves and related computations",
 	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
-	CacheExampleOutput => true,
 	PackageImports => {"IntegralClosure","MapleInterface"},
 	AuxiliaryFiles => true
     	)
@@ -616,12 +615,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
 *-
 
-
-
-
-beginDocumentation()
-
-
+beginDocumentation(CacheExampleOutput => true)
 
 doc ///
   Key

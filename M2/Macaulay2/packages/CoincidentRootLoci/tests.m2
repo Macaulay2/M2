@@ -1,30 +1,30 @@
 TEST /// -- internal tests
 debug CoincidentRootLoci;
 F := matrix{{randomRealRootedBinaryForm(3,QQ),randomBinaryForm 3,randomBinaryForm 3,randomBinaryForm 3,randomBinaryForm 3}};
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert isSomeLinearCombinationRealRooted(F,Verbose=>true);
+assert isSomeLinearCombinationRealRooted(F,Verbose=>true);
 F = matrix{{randomBinaryForm 3,randomRealRootedBinaryForm(3,QQ),randomBinaryForm 3,randomBinaryForm 3,randomBinaryForm 3}};
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert isSomeLinearCombinationRealRooted(F,Verbose=>true);
+assert isSomeLinearCombinationRealRooted(F,Verbose=>true);
 F = matrix{{randomBinaryForm 3,randomBinaryForm 3,randomRealRootedBinaryForm(3,QQ),randomBinaryForm 3}};
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert isSomeLinearCombinationRealRooted(F,Verbose=>true);
+assert isSomeLinearCombinationRealRooted(F,Verbose=>true);
 x := local x;
 y := local y;
 R := QQ[x,y];
 f := (x-y)*(x-2*y)*(x-3*y)*(x-4*y);
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert isSomeLinearCombinationRealRooted(matrix f,Verbose=>true);
+assert isSomeLinearCombinationRealRooted(matrix f,Verbose=>true);
 f = (x-y)*(x-2*y)*(x^2+y^2);
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert not isSomeLinearCombinationRealRooted(matrix f,Verbose=>true);
+assert not isSomeLinearCombinationRealRooted(matrix f,Verbose=>true);
 (t1,t2) := (local t1,local t2);
 y = 1;
 R = QQ[t1,t2][x];
 f = (x-t1*y)*(x-t2*y)*(x^2-2*y^2);
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert isRealRootedViaQEPCAD f;
+assert isRealRootedViaQEPCAD f;
 f = (x-t1*y)*(x-t2*y)*(x^2+2*y^2);
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert not isRealRootedViaQEPCAD f;
+assert not isRealRootedViaQEPCAD f;
 eps := local eps;
 R = QQ[eps][t1,t2][x];
 f = (x-t1*y)*(x-t2*y)*(x^2-eps*y^2);
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert isRealRootedViaQEPCAD(f,Range=>(0,1/2));
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert not isRealRootedViaQEPCAD(f,Range=>(-1/2,0));
+assert isRealRootedViaQEPCAD(f,Range=>(0,1/2));
+assert not isRealRootedViaQEPCAD(f,Range=>(-1/2,0));
 -- isRealRootedViaQEPCAD(f,Range=>(-1/2,1/2),Verbose=>true);
 ///
 
@@ -67,7 +67,7 @@ F = {52521875*t_0^5+90037500*t_0^4*t_1+61740000*t_0^3*t_1^2+21168000*t_0^2*t_1^3
      t_0^5+3*t_0^4*t_1+3*t_0^3*t_1^2+3*t_0^2*t_1^3+2*t_0*t_1^4,
      8400*t_0^5+129620*t_0^4*t_1+173908*t_0^3*t_1^2+79803*t_0^2*t_1^3+14210*t_0*t_1^4+784*t_1^5};
 F' = flatten entries sub(matrix{F},QQ[][gens ring matrix {F}])
-if CoincidentRootLoci.Options.OptionalComponentsPresent then for i from 1 to 4 list assert(realrank(F'_(i-1)) == i)
+for i from 1 to 4 list assert(realrank(F'_(i-1)) == i)
 for i from 3 to 5 list assert(realrank F_(i-1) == i)
 ///
 
@@ -75,34 +75,34 @@ TEST /// -- real rank
 f = (eps,x,y) -> recover(x^2*(x^2+y^2),(y^2+eps*x^2)^2*(x-2*y));
 R := QQ[x,y];
 F = f(0,x,y)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Limit=>6) == (6,7))
+assert(realrank(F,Limit=>6) == (6,7))
 F = f(1/10,x,y)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Limit=>6) == (6,7))
+assert(realrank(F,Limit=>6) == (6,7))
 F = f(1/100,x,y)
--- if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Limit=>6) == (6,7))
+-- assert(realrank(F,Limit=>6) == (6,7))
 F = f(-1/10,x,y)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank F == 5)
+assert(realrank F == 5)
 F = f(-1/100,x,y)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank F == 5)
+assert(realrank F == 5)
 R = QQ[eps][x,y]
 F = f(eps,x,y)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Range=>(0,1/2),Limit=>4) == (5, 6, 7))
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Range=>[0,infinity],Limit=>5) == (5, 6, 7))
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Range=>[-1/2,-1/2]) == 5)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Range=>[1/2,1/2],Limit=>6) == (6,7))
+assert(realrank(F,Range=>(0,1/2),Limit=>4) == (5, 6, 7))
+assert(realrank(F,Range=>[0,infinity],Limit=>5) == (5, 6, 7))
+assert(realrank(F,Range=>[-1/2,-1/2]) == 5)
+assert(realrank(F,Range=>[1/2,1/2],Limit=>6) == (6,7))
 F = f(-eps,x,y)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Range=>(-infinity,infinity),Limit=>4) == (5, 6, 7))
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Range=>(0,1/2),Limit=>5) == (5, 6, 7))
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,Range=>(0,1/2)) == 5)
+assert(realrank(F,Range=>(-infinity,infinity),Limit=>4) == (5, 6, 7))
+assert(realrank(F,Range=>(0,1/2),Limit=>5) == (5, 6, 7))
+assert(realrank(F,Range=>(0,1/2)) == 5)
 ///
 
 TEST /// -- randomBinaryForm
 setRandomSeed 123456789
 for i from 1 to 6 do assert(complexrank randomBinaryForm(6,,i) == i)
 for i from 1 to 7 do assert(complexrank randomBinaryForm(7,,i) == i)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then for i from 1 to 4 do assert(realrank randomBinaryForm(6,i,) == i)
+for i from 1 to 4 do assert(realrank randomBinaryForm(6,i,) == i)
 assert(realrank randomBinaryForm(6,6,) == 6)
-if CoincidentRootLoci.Options.OptionalComponentsPresent then for i from 1 to 4 do (F = randomBinaryForm(6,i,i); assert(realrank F == i and complexrank F == i))
+for i from 1 to 4 do (F = randomBinaryForm(6,i,i); assert(realrank F == i and complexrank F == i))
 ///
 
 TEST /// -- real rank boundary (odd)
@@ -160,7 +160,7 @@ TEST///
 R := QQ[x,y]
 g = y^6+5*x^2*y^4-5*x^4*y^2-x^6
 f = y^6+15*x^4*y^2
-if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank f == 5)
+assert(realrank f == 5)
 X42 = coincidentRootLocus {4,2};
 X33 = coincidentRootLocus {3,3};
 assert(member(f,dual X42) and (not member(f,dual X33)) and (not member(g,dual X42)) and member(g,dual X33))

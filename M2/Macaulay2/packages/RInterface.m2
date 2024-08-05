@@ -7,11 +7,13 @@ newPackage("RInterface",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"Interfaces"},
-    OptionalComponentsPresent => run("command -v R > /dev/null") == 0,
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})
 
-if not (options currentPackage).OptionalComponentsPresent
+-- TODO: use findPackage
+RPresent = run("command -v R > /dev/null") == 0
+
+if not RPresent
 then (
     printerr "warning: R cannot be found; ending";
     end)

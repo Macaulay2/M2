@@ -11,10 +11,11 @@ newPackage(
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
-        OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
-        CacheExampleOutput => false,
         Reload => false
 )
+
+-- TODO: use findProgram
+qepcadPresent = try get "!qepcad -h 2>&1" then true else false
 
 export{"apolar",
        "recover",
@@ -1097,5 +1098,5 @@ load "./CoincidentRootLoci/tests.m2"
 
 welcome := "CoincidentRootLoci v."|CoincidentRootLoci.Options.Version|" loaded successfully (last updated: "|CoincidentRootLoci.Options.Date|")";
 if notify then
-  if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
+  if qepcadPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
 

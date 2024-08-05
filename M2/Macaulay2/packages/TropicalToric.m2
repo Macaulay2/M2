@@ -17,12 +17,10 @@ newPackage(
     "Package$gfanInterface"
   },
   PackageImports => {
+        "Polymake",
     "FourierMotzkin"
   },
 	AuxiliaryFiles => true,
-	CacheExampleOutput => true,
-  OptionalComponentsPresent => true,
-  UseCachedExampleOutput => true,
   Keywords => {"Tropical Geometry"},
   Certification => {
       "journal name" => "Journal of Software for Algebra and Geometry",
@@ -83,7 +81,11 @@ load "TropicalToric/polymakeContains.m2";
 -- DOCUMENTATION
 ------------------------------------------------------------------------------
 
-beginDocumentation()
+importFrom_Polymake "polymakePresent"
+
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => polymakePresent)
 
 load "TropicalToric/ToricCycleDoc.m2";
 load "TropicalToric/TropicalToricDoc.m2";

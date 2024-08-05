@@ -23,7 +23,6 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "https://msp.org/jsag/2013/5-1/"
 	     },
-	CacheExampleOutput => false,
      	PackageExports => { "Polyhedra" },
 	AuxiliaryFiles => true,
     	DebuggingMode => false,
@@ -764,7 +763,7 @@ if opt.Num==1 then (
 
 
 
-beginDocumentation()
+beginDocumentation(CacheExampleOutput => true)
 
 
 --generateAssertions

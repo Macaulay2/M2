@@ -2,7 +2,7 @@
 -- RInterface documentation --
 ------------------------------
 
-beginDocumentation()
+beginDocumentation(OptionalComponentsPresent => RPresent)
 
 doc ///
   Key

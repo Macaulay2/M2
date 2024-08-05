@@ -23,7 +23,12 @@ undocumented {(net,NCGroebnerBasis),
 	      NumberOfBins,
 	      Basis}
 
-beginDocumentation()
+-- TODO: use findProgram
+bergmanPresent = run "type bergman >/dev/null 2>&1" === 0
+
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => bergmanPresent)
 
 -------------------------
 ----- Types

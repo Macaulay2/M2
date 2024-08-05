@@ -217,10 +217,28 @@ Node
 Node
   Key
     beginDocumentation
+   [beginDocumentation, CacheExampleOutput]
+   [beginDocumentation, OptionalComponentsPresent]
+   [beginDocumentation, UseCachedExampleOutput]
   Headline
     start documentation section of a package
   Usage
     beginDocumentation()
+  Inputs
+    CacheExampleOutput=>Boolean
+      whether @TO installPackage@ should cache (newer) example output in a subdirectory of the auxiliary file directory
+      named @TT "examples"@, for use in a future installation. This value can be overridden by a value explicitly specified
+      when @TO installPackage@ is called. After the directory is created, it will necessary for the user also to specify
+      @TT "AuxiliaryFiles => true"@ with the @TO newPackage@ command.
+    OptionalComponentsPresent=>Boolean
+      whether all optional external components of the package are present on the system. Unless the user sets this
+      option to false or @TT "CacheExampleOutput"@ to @TT "true"@, this option will be initialized to @TT "true"@.
+    UseCachedExampleOutput=>Boolean
+      whether @TO installPackage@ should copy previously cached example output, if it is present and
+      corresponds to the current example input for a node, rather than rerunning the examples, which might
+      be important if optional external software is not present in the system. This is relevant only when
+      @TT "CacheExampleOutput"@ and @TT "AuxiliaryFiles"@ are set to @TT "true"@. Unless set by the user,
+      it is set to the negation of the value of @TT "OptionalComponentsPresent"@.
   Consequences
     Item
       Initiates the documentation section of a package.
@@ -235,10 +253,6 @@ Node
       in the documentation can be run, and the whole documentation can be stored in a database.
 
       For an example, see @TO "an example of a package"@.
-
-      To write documentation without using the function @TT "beginDocumentation"@, which is just
-      an optimization, use @TO needsPackage@ to load the packages @TO "SimpleDoc :: SimpleDoc"@
-      and @TO "Text :: Text"@.
   SeeAlso
     installPackage
     TEST

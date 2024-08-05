@@ -22,11 +22,9 @@ newPackage(
 		"tropicalMax" => false,
 		"polymakeCommand" =>""
 	},
-    	OptionalComponentsPresent => true,
         PackageExports => {"gfanInterface","EliminationMatrices","Matroids","Polyhedra"},
 	AuxiliaryFiles => true,
 --	AuxiliaryFiles => false,
-	CacheExampleOutput => true,
 	Keywords => {"Tropical Geometry"}
 )
 
@@ -49,7 +47,7 @@ export{
   "BergmanFan"
   }
 
-
+-- TODO: use findProgram
 polymakeCommand = (options Tropical)#Configuration#"polymakeCommand"
 polymakeOK = polymakeCommand != ""
 
@@ -801,7 +799,10 @@ BergmanFan = (M) -> (
 ------------------------------------------------------------------------------
 -- DOCUMENTATION
 ------------------------------------------------------------------------------
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => polymakeOK)
+
 doc ///
     Key
     	Tropical

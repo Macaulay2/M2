@@ -1,8 +1,3 @@
-phcPresent := run ("type phc >/dev/null 2>&1") === 0
-phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
-phcVersionNeeded := "2.4.77"
-phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
-
 newPackage(
   "PHCpack",
   Version => "1.8", 
@@ -50,10 +45,14 @@ newPackage(
 	},
   DebuggingMode => false,
   AuxiliaryFiles => true,
-  CacheExampleOutput => true,
   PackageExports => {"NAGtypes"},
-  OptionalComponentsPresent => phcPresentAndModern
 )
+
+-- TODO: use findProgram
+phcPresent := run ("type phc >/dev/null 2>&1") === 0
+phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
+phcVersionNeeded := "2.4.77"
+phcPresentAndModern = phcPresent and match("^[0-9.]+$", phcVersion) and phcVersion >= phcVersionNeeded
 
 checkIsRunnable = () -> (
      if not phcPresent then error "phc not present";
@@ -1855,7 +1854,9 @@ versionNumber(Nothing) :=  o -> (Nothing) -> (
 -- DOCUMENTATION
 --##########################################################################--
 
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => phcPresentAndModern)
 
 load "./PHCpack/PHCpackDoc.m2";
 

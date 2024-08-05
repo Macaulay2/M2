@@ -10,6 +10,9 @@ newPackage(
     	DebuggingMode => false
     	)
 
+-- TODO: use findPackage
+polymakePresent = run("command -v polymake > /dev/null") == 0
+
 export {"PolymakeObject", "polymakeObject",
      "removeComments",
      "getPropertyNames",

@@ -1,4 +1,6 @@
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => pythonPresent)
 
 doc ///
   Key

@@ -1,5 +1,3 @@
-bertiniPresent := run ("type bertini >/dev/null 2>&1") === 0
-
 newPackage(
   "Bertini",
   Version => "2.1.2.3",
@@ -24,8 +22,6 @@ newPackage(
   AuxiliaryFiles => true,
   PackageExports => {"NAGtypes"},
   PackageImports => {"NAGtypes"},
-  CacheExampleOutput => true,
-  OptionalComponentsPresent => bertiniPresent
 )
 
 exportMutable{"storeBM2Files"
@@ -2595,7 +2591,10 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniUserHomotopy.t
 -- DOCUMENTATION
 --##########################################################################--
 
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => true,
+    -- TODO: use findProgram
+    OptionalComponentsPresent => run ("type bertini >/dev/null 2>&1") === 0)
 
 doc ///
   Key
