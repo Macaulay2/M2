@@ -1,5 +1,5 @@
 beginDocumentation(
-    CacheExampleOutput        => true,
+    CacheExampleOutput        => false, -- only the cached example for realrank need qepcad
     OptionalComponentsPresent => qepcadPresent)
 
 document { 
