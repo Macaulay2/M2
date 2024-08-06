@@ -99,7 +99,8 @@ check(ZZ, String)  :=
 check(ZZ, Package) := opts -> (n, pkg) -> check({n}, pkg, opts)
 check(List, String)  := opts -> (L, pkg) -> check(L, needsPackage (pkg, LoadDocumentation => true), opts)
 check(List, Package) := opts -> (L, pkg) -> (
-    if not pkg.Options.OptionalComponentsPresent then (
+    if pkg.Options.?OptionalComponentsPresent
+    and not pkg.Options.OptionalComponentsPresent then (
 	printerr("warning: skipping tests; ", toString pkg, " requires optional components"); return);
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     --
