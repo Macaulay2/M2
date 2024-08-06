@@ -343,7 +343,8 @@ headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag k
 headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
 
 headlines = method()
-headlines List := L -> TABLE apply(#L, i -> {i | ".", TO2(tag := makeDocumentTag L#i, format tag), commentize headline tag})
+headlines List := L -> TABLE apply(#L, i -> { pad(floor log_10(#L) + 2, i | "."),
+	TO2(tag := makeDocumentTag L#i, net tag), commentize headline tag })
 
 -- Compare with SYNOPSIS in document.m2
 getSynopsis := (key, tag, rawdoc) -> (
