@@ -393,7 +393,7 @@ Node
 	Text
 	    Option "output type" (default = "rational interval") gives alternatives ways to provide output 
 	    eitherusing @TO RRi@ ("float interval")
-	    or by taking a floting point approximation of the average of the inteval endpoints ("float middle point").
+	    or by taking a floating point approximation of the average of the interval endpoints ("float middle point").
     	Text
 	    First an example over a finite field
 	Example
