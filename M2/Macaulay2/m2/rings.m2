@@ -79,6 +79,13 @@ isHomogeneous Ring := R -> (
      degreeLength R == 0 
      )
 
+-- printing
+-- technically this should not be allowed, since rings are mutable
+-- and therefore "R === value toExternalString R" will always be false,
+-- however, this is good enough to serialize a ring for another session.
+toExternalString Ring := toString @@ describe
+-- the rest of the printing methods will inherit from methods on Type
+
 -----------------------------------------------------------------------------
 -- promote, lift, liftable, and isConstant
 -----------------------------------------------------------------------------

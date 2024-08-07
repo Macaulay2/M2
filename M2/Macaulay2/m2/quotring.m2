@@ -55,7 +55,6 @@ expression QuotientRing := S -> (
     if hasAttribute(S, ReverseDictionary)
     then expression getAttribute(S, ReverseDictionary)
     else new Divide from { unhold expression ambient S, unhold expression printRels S })
-toExternalString QuotientRing := toString @@ describe
 -- TODO: add AfterPrint for QuotientRing
 
 -----------------------------------------------------------------------------
