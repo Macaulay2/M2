@@ -209,14 +209,16 @@ lift(QQi, Number) := o -> (x, R) -> (
 
 --------------------------------------------------------------------------------
 
+msolveDefaultPrecision = 32 -- alternative: defaultPrecision
+
 msolveRealSolutions = method(TypicalValue => List, Options => msolveDefaultOptions)
-msolveRealSolutions Ideal              := opt ->  I0     -> msolveRealSolutions(I0, QQi,       opt)
-msolveRealSolutions(Ideal, RingFamily) := opt -> (I0, F) -> msolveRealSolutions(I0, default F, opt)
+msolveRealSolutions Ideal              := opt ->  I0     -> msolveRealSolutions(I0, QQi, opt)
+msolveRealSolutions(Ideal, RingFamily) := opt -> (I0, F) -> msolveRealSolutions(I0, F_msolveDefaultPrecision, opt)
 msolveRealSolutions(Ideal, Ring)       := opt -> (I0, F) -> (
     if not any({QQ, QQi, RR_*, RRi_*}, F' -> ancestor(F', F))
     then error "msolveRealSolutions: expected target field to be rationals, reals, or a rational or real interval field";
     (S, K, I) := toMsolveRing I0;
-    prec := if precision F === infinity then defaultPrecision else precision F;
+    prec := if precision F === infinity then msolveDefaultPrecision else precision F;
     mOut := msolve(S, K, I_*, "-p " | prec, opt);
     -- format: [dim, [numlists, [ solution boxes ]]]
     (d, solsp) := toSequence readMsolveList get mOut;
