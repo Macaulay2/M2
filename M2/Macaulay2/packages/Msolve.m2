@@ -24,7 +24,8 @@ export{
     "msolveEliminate",
     "msolveRUR",
     "msolveLeadMonomials",
-    "msolveRealSolutions"
+    "msolveRealSolutions",
+    "QQi",
     }
 
 importFrom_Core { "raw", "rawMatrixReadMsolveFile" }
@@ -208,20 +209,25 @@ lift(QQi, Number) := o -> (x, R) -> (
 
 --------------------------------------------------------------------------------
 
-msolveRealSolutions = method(TypicalValue => List,
-    Options => msolveDefaultOptions ++ { "output type" => "rational interval" })
-msolveRealSolutions Ideal := opt -> I0 -> (
+msolveRealSolutions = method(TypicalValue => List, Options => msolveDefaultOptions)
+msolveRealSolutions Ideal              := opt ->  I0     -> msolveRealSolutions(I0, QQi,       opt)
+msolveRealSolutions(Ideal, RingFamily) := opt -> (I0, F) -> msolveRealSolutions(I0, default F, opt)
+msolveRealSolutions(Ideal, Ring)       := opt -> (I0, F) -> (
+    if not any({QQ, QQi, RR_*, RRi_*}, F' -> ancestor(F', F))
+    then error "msolveRealSolutions: expected target field to be rationals, reals, or a rational or real interval field";
     (S, K, I) := toMsolveRing I0;
-    mOut := msolve(S, K, I_*, "", opt); -- optional: -p precision
+    prec := if precision F === infinity then defaultPrecision else precision F;
+    mOut := msolve(S, K, I_*, "-p " | prec, opt);
     -- format: [dim, [numlists, [ solution boxes ]]]
-    solsp := readMsolveList get mOut;
-    if solsp_0>0 then (error "Input ideal not zero dimensional, no solutions found.";);
-    if (solsp_1)_0>1 then (print "unexpected msolve output, returning full output"; return solsp;);
-    sols:=(solsp_1)_1;
-    if opt#"output type"=="rational interval" then return sols;
-    if opt#"output type"=="float interval" then return (1.0*sols);
-    if opt#"output type"=="float middle point" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
-    );
+    (d, solsp) := toSequence readMsolveList get mOut;
+    if d =!= 0 then error "msolveRealSolutions: expected zero dimensional system of equations";
+    if solsp_0 > 1 then (
+	printerr "msolveRealSolutions: unexpected msolve output, returning full output"; return {d, solsp});
+    sols := apply(last solsp, sol -> apply(sol, QQinterval));
+    if ancestor(QQi,   F) then sols else
+    if ancestor(QQ,    F) then apply(sols, sol -> apply(sol, midpoint'))       else
+    if ancestor(RR_*,  F) then apply(sols, sol -> apply(sol, midpoint') * 1_F) else
+    if ancestor(RRi_*, F) then apply(sols, sol -> apply(sol, range -> interval(range, Precision => prec))))
 
 msolveRUR = method(TypicalValue => List, Options => msolveDefaultOptions)
 msolveRUR Ideal := opt -> I0 ->(
