@@ -391,7 +391,7 @@ Node
 	    equal to a and less than or equal to b. This interval is computed symbolically
 	    and its correctness is guaranteed by exact methods.
 	Text
-	    Option "output type" (default = "rational interval") gives alternatives ways to provide output 
+	    Option "output type" (default = "rational interval") gives alternative ways to provide output 
 	    either using @TO RRi@ ("float interval")
 	    or by taking a floating point approximation of the average of the interval endpoints ("float middle point").
     	Text
@@ -407,7 +407,7 @@ Node
 	    While the solver does not return multiplicities,
 	    it reliably outputs the verified isolating intervals for multiple solutions.  
 	Example 
-	    I = ideal {(x-1)*x^3, y^4-25}
+	    I = ideal {(x-1)*x^3, (y^2-5)^2}
 	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float interval")
 Node 
     Key
