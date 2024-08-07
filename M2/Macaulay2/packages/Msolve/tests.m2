@@ -70,7 +70,7 @@ TEST ///
 TEST ///
   R = QQ[x,y];
   I = ideal ((x-3)*(x^2+1),y-1);
-  assert({{3.0, 1.0}} == msolveRealSolutions(I, "output type" => "float"))
+  assert({{3.0, 1.0}} == msolveRealSolutions(I, "output type" => "float middle point"))
 ///
 
 TEST ///
