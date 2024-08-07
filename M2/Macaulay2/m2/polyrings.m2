@@ -64,8 +64,6 @@ expression PolynomialRing := R -> (
     if hasAttribute(R, ReverseDictionary)
     then expression getAttribute(R, ReverseDictionary)
     else(expression last R.baseRings) expressionPolynomialRing R)
-
-toExternalString PolynomialRing := toString @@ describe
 -- the rest are inherited from EngineRing
 
 -----------------------------------------------------------------------------
