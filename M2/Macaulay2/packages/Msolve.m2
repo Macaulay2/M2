@@ -169,7 +169,7 @@ addHook((saturate, Ideal, RingElement), Strategy => Msolve,
     (opts, I, f) -> try ideal msolveSaturate(I, f))
 
 msolveRealSolutions = method(TypicalValue => List,
-    Options => msolveDefaultOptions ++ { "output type" => "rationalInterval" })
+    Options => msolveDefaultOptions ++ { "output type" => "rational interval" })
 msolveRealSolutions Ideal := opt -> I0 -> (
     (S, K, I) := toMsolveRing I0;
     mOut := msolve(S, K, I_*, "", opt); -- optional: -p precision
@@ -178,9 +178,9 @@ msolveRealSolutions Ideal := opt -> I0 -> (
     if solsp_0>0 then (error "Input ideal not zero dimensional, no solutions found.";);
     if (solsp_1)_0>1 then (print "unexpected msolve output, returning full output"; return solsp;);
     sols:=(solsp_1)_1;
-    if opt#"output type"=="rationalInterval" then return sols;
-    if opt#"output type"=="floatInterval" then return (1.0*sols);
-    if opt#"output type"=="float" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
+    if opt#"output type"=="rational interval" then return sols;
+    if opt#"output type"=="float interval" then return (1.0*sols);
+    if opt#"output type"=="float middle point" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
     );
 
 msolveRUR = method(TypicalValue => List, Options => msolveDefaultOptions)
@@ -389,33 +389,26 @@ Node
 	    value is also represented by a two element list of rational numbers, {a, b},
 	    this means that that coordinate of the solution has a value greater than or
 	    equal to a and less than or equal to b. This interval is computed symbolically
-	    and its correctness is guaranteed by exact methods. Note that using the option
-	    Output one may specify the output in terms of either a float interval with
-	    "floatInterval" or an average of the interval endpoints as a single float with "float".
-
+	    and its correctness is guaranteed by exact methods.
+	Text
+	    Option "output type" (default = "rational interval") gives alternatives ways to provide output 
+	    eitherusing @TO RRi@ ("float interval")
+	    or by taking a floting point approximation of the average of the inteval endpoints ("float middle point").
     	Text
 	    First an example over a finite field
 	Example
-	    R = QQ[x_1..x_3]
-	    f = (x_1-1)*x_1
-	    g = (x_2-5/2)*(x_2-1/2)
-	    h = (x_3-2)*(x_3-1)
-	    I = ideal (f,g,h)
-	    sols=msolveRealSolutions(I)
-	    floatSolsInterval=msolveRealSolutions(I,"output type"=>"floatInterval")
-	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float")
-	    	    
+	    R = QQ[x,y]
+	    I = ideal {(x-1)*x, y^2-5}
+	    sols = msolveRealSolutions I
+	    floatSolsInterval = msolveRealSolutions(I,"output type"=>"float interval")
+	    floatAproxSols = msolveRealSolutions(I,"output type"=>"float middle point")	    	    
 	Text
-	    Note in cases where solutions have multiplicity this is not returned, but the presence
-	    of multiplicity also does not reduce accuracy or reliability in any way.
+	    Note in cases where solutions have multiplicity this is not reflected in the output.
+	    While the solver does not return multiplicities,
+	    it reliably outputs the verified isolating intervals for multiple solutions.  
 	Example 
-	    f = (x_1-1)*x_1^3
-	    g = (x_2-5/2)*(x_2-1/2)
-	    h = (x_3-2)*(x_3-1)
-	    I = ideal (f,g,h)
-	    sols=msolveRealSolutions(I)
-	    floatSolsInterval=msolveRealSolutions(I,"output type"=>"floatInterval")
-	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float")
+	    I = ideal {(x-1)*x^3, y^4-25}
+	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float interval")
 Node 
     Key
     	msolveRUR
