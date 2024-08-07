@@ -392,7 +392,7 @@ Node
 	    and its correctness is guaranteed by exact methods.
 	Text
 	    Option "output type" (default = "rational interval") gives alternatives ways to provide output 
-	    eitherusing @TO RRi@ ("float interval")
+	    either using @TO RRi@ ("float interval")
 	    or by taking a floating point approximation of the average of the interval endpoints ("float middle point").
     	Text
 	    First an example over a finite field
