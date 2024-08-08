@@ -292,6 +292,8 @@ Pseudocode _ ZZ := (x,i) -> (
 
 disassemble = method()
 disassemble Pseudocode := toString
+disassemble Function :=
+disassemble FunctionBody := toString @@ pseudocode
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
