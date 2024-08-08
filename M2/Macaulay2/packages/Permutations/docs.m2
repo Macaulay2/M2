@@ -238,7 +238,7 @@ doc ///
    inverse p
   Text
    The \emph{order} of a permutation $p$ is its order in the symmetric group $\mathfrak{S}_n$, i.e.,
-   the smallest postive integer $k$ such that $p^k$ is the identity permutation.
+   the smallest positive integer $k$ such that $p^k$ is the identity permutation.
   Example
    p = permutation {3,1,2,5,4};
    ord p
@@ -619,7 +619,7 @@ doc ///
     avoidsPatterns
     (avoidsPatterns, Permutation, List)
   Headline
-    whether a permutation simulataneously avoids a list of patterns
+    whether a permutation simultaneously avoids a list of patterns
   Usage
     avoidsPatterns(w, patterns)
   Inputs
