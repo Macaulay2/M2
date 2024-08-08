@@ -119,6 +119,14 @@ use S
 R = S/(x-y)
 monoid R
 
+-- used to be in debugme.m2
+A = ZZ[a]
+B = A/a^6
+C = B[b]
+assert(B === ring a)
+assert(C === ring b)
+assert(C === ring(a*b))
+
 --- test Cox rings with torsion degree group
 needsPackage "NormalToricVarieties"
 B = {{2, -1}, {-1, 2}, {-1,-1}}
