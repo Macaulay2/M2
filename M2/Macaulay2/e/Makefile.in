@@ -115,7 +115,7 @@ CXXFLAGS += -Wno-mismatched-tags
 # a stand-alone program made from test.dd
 # test : ../c/scc-core.o
 test : complex.o
-test : LDFLAGS += -L../d -lmpfr -lmpir -lfac -lcf -lcfmem
+test : LDFLAGS += -L../d -lmpfr -lgmp -lfac -lcf -lcfmem
 test : LDLIBS += -ld
 
 test.o : CXXFLAGS += -Wno-unused -Wno-uninitialized -Wno-cast-qual

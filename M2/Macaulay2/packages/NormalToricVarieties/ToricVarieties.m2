@@ -378,7 +378,7 @@ smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => opts -> (d, i) -> (
     	error "-- there are only 7622 smooth Fano toric 6-folds";
     if d > 6 then 
     	error "-- database doesn't include varieties with dimension > 6";
-    if i === 0 then return toricProjectiveSpace d;
+    if i === 0 then return toricProjectiveSpace(d, opts);
     if d < 5 then (
     	s := (getFano (d))#(d,i);
     	return normalToricVariety (s#0, s#1, 
@@ -451,7 +451,7 @@ isSimplicial NormalToricVariety := Boolean => (
 	)
     );
 
-isSmooth NormalToricVariety := Boolean => (
+isSmooth NormalToricVariety := Boolean => {} >> o -> (
     cacheValue symbol isSmooth) (X -> (
     	rayGenMatrix := transpose matrix rays X;
     	b := all(max X, sigma -> 

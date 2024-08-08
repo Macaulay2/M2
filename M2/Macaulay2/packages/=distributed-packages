@@ -271,4 +271,6 @@ SchurVeronese
 VNumber
 TropicalToric
 MultigradedBGG
+MultigradedImplicitization
+Msolve
 Permutations

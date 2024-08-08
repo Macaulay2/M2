@@ -7,7 +7,8 @@ document {
 	  (numeric, VisibleList), (numeric, ZZ, Constant), (numeric, Constant),
 	  (numeric, InfiniteNumber, Constant),
      	  (numeric, ZZ, Number), (numeric, Number),
-	  (numeric, ZZ, InfiniteNumber),(numeric, InfiniteNumber)},
+	  (numeric, ZZ, InfiniteNumber),(numeric, InfiniteNumber),
+	  (numeric, ZZ, IndeterminateNumber), (numeric, IndeterminateNumber)},
      Headline => "convert to floating point",
      Usage => "numeric x\nnumeric(prec,x)\nnumeric_prec x",
      Inputs => { 

@@ -22,6 +22,7 @@
 ---------------------------------------------------------------------------
 
 importFrom_Core {
+    "unhold",
     "getAttribute", "hasAttribute", "ReverseDictionary", "indexStrings", "indexSymbols",
     "generatorExpressions", "generatorSymbols", "commonEngineRingInitializations",
     "rawFraction", "rawNumerator", "rawDenominator", "rawIsLocalUnit", "rawLocalRing" }
@@ -36,8 +37,7 @@ LocalRing#{Standard,AfterPrint} = RP -> (
 
 localRing = method(TypicalValue => LocalRing)
        describe LocalRing := RP -> Describe (expression localRing) (expression last RP.baseRings, expression RP.maxIdeal)
-     expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else describe RP
-toExternalString LocalRing:= RP -> toString describe RP
+     expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else new FunctionApplication from unhold describe RP
 coefficientRing LocalRing := RP -> coefficientRing ring RP.maxIdeal
   isWellDefined LocalRing := RP -> isPrime RP.maxIdeal
   isCommutative LocalRing := RP -> isCommutative ring RP.maxIdeal -- FIXME make sure this is correct

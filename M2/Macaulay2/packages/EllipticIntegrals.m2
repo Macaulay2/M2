@@ -163,9 +163,9 @@ ellset = (b,c) -> (
 	  disc := sqrt( b^2 - 4*c );
 	  (- b + disc)/2, (- b - disc)/2       -- return r,s; larger root first
 	  );
-     translater := (r,s) -> (-r,s-r);			    -- prefer this one
+     translator := (r,s) -> (-r,s-r);			    -- prefer this one
      -- translates := (r,s) -> (-s,r-s);
-     chain' := makechain makebc translater makers (b0,c0);
+     chain' := makechain makebc translator makers (b0,c0);
      period := pi/M;
      period' := pi/(sqrt (last last chain'));
      period' = period' - round (period' / period) * period;

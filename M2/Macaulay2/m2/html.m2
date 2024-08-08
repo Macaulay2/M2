@@ -38,7 +38,6 @@ KaTeX := () -> (
       });
     </script>
     <style>.katex { font-size: 1em; }</style>
-    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css">
     <script defer="defer" src="%PATH%/contrib/copy-tex.min.js"></script>
     <script defer="defer" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
     LITERAL replace("%PATH%", katexPath, katexTemplate | newline))

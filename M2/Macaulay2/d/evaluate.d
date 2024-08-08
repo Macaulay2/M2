@@ -1444,7 +1444,7 @@ export evalraw(c:Code):Expr := (
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
 	  is m:functionCode do (
-	       fc := FunctionClosure(noRecycle(localFrame),m,0);
+	       fc := FunctionClosure(noRecycle(localFrame),m,hash_t(0));
 	       fc.hash = hashFromAddress(Expr(fc));
 	       return Expr(fc))
 	  is r:localMemoryReferenceCode do (
@@ -1474,14 +1474,11 @@ export evalraw(c:Code):Expr := (
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
-	       p := tryEval(c.code);
-	       if tryEvalSuccess
-	       then (
-		   when p is Error do p
-		   else if c.thenClause == NullCode then p
-		   else eval(c.thenClause))
-	       else (
-		   eval(c.elseClause)))
+	      ret := tryEval(c.code);
+	      if tryEvalSuccess then
+	      when ret is Error do ret
+	      else if c.thenClause == NullCode then ret   else eval(c.thenClause)
+	      else if c.elseClause == NullCode then nullE else eval(c.elseClause))
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
@@ -1710,7 +1707,7 @@ scanpairsfun(e:Expr):Expr := (
      if	       o.Mutable
      then      WrongArg("an immutable hash table")
      else      scanpairs(a.1,o)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("scanPairs",scanpairsfun);
@@ -1752,7 +1749,7 @@ mappairsfun(e:Expr):Expr := (
      if        o.Mutable 
      then      WrongArg("an immutable hash table")
      else      mappairs(a.1,o)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
@@ -1806,7 +1803,7 @@ mapkeysfun(e:Expr):Expr := (
      if        o.Mutable
      then      WrongArg("an immutable hash table")
      else      if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2,3)
      else      WrongNumArgs(2,3));
 setupfun("applyKeys",mapkeysfun);
@@ -1845,7 +1842,7 @@ mapvaluesfun(e:Expr):Expr := (
      if        o.Mutable
      then      WrongArg("an immutable hash table")
      else      mapvalues(a.1,o)
-     else      WrongArg(1,"a hash table")
+     else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("applyValues",mapvaluesfun);
@@ -1926,8 +1923,8 @@ merge(e:Expr):Expr := (
 		    if mut then z.Class = mutableHashTableClass else z.Class = hashTableClass;
 		    z.parent = nothingClass);
 	       Expr(sethash(z,mut)))
-	  else WrongArg(2,"a hash table")
-	  else WrongArg(1,"a hash table"))
+	  else WrongArgHashTable(2)
+	  else WrongArgHashTable(1))
      else WrongNumArgs(3));
 setupfun("merge",merge);		  -- see objects.d
 combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (	-- x and y are not Mutable
@@ -2048,8 +2045,8 @@ combine(e:Expr):Expr := (
         when v.1 is y:HashTable do
         if y.Mutable then WrongArg(2,"an immutable hash table") else
         combine(v.2,v.3,v.4,x,y)
-        else WrongArg(1+1,"a hash table")
-        else WrongArg(0+1,"a hash table")
+        else WrongArgHashTable(2)
+        else WrongArgHashTable(1)
      )
      else if length(v) == 6 then (
         when v.0 is x:HashTable do
@@ -2057,8 +2054,8 @@ combine(e:Expr):Expr := (
         when v.1 is y:HashTable do
         if y.Mutable then WrongArg(2,"an immutable hash table") else
         twistCombine(v.2,v.3,v.4,v.5,x,y)
-        else WrongArg(1+1,"a hash table")
-        else WrongArg(0+1,"a hash table")
+        else WrongArgHashTable(2)
+        else WrongArgHashTable(1)
      )
      else WrongNumArgs(5,6)
      else WrongNumArgs(5,6));

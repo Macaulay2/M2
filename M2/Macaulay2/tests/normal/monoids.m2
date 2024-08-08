@@ -135,6 +135,10 @@ assert(set first entries basis(degree D, S) === set L)
 -- FIXME should be homogeneous
 isHomogeneous sum({1,1,1,1}, L, times)
 
+-- test truncate
+needsPackage "Truncations"
+assert(set(truncate({0,3}, S))_* === set(monomials(X_0+2*X_1) | monomials(2*X_0+X_1) | monomials(3*X_0)))
+
 --- test passing a map of ZZ-modules for Degrees
 M = monoid[a,b,c, Degrees => A]
 assert(degreeGroup M == G)
@@ -230,6 +234,7 @@ assert(gens(B = A ** A) == {x_0,y_0,x_1,y_1}) -- TODO: eliminate the warning
 assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(0,1),y_(0,1),x_(1,0),y_(1,0),x_(1,1),y_(1,1)})
 assert(toString gens(A ** B) == "{x, y, x_0, y_0, x_1, y_1}") -- TODO: not yet working without toString
 assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet working without toString
+assert(toString gens(monoid[x,x,x]) == "{x_0, x_1, x_2}") -- issue #3261
 
 -- test ^** and runLengthEncode
 -- TODO: what should happen for odd powers?

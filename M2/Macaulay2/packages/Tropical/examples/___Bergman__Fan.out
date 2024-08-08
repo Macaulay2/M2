@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1587567648
+-- -*- M2-comint -*- hash: 10480927928276198368
 
 i1 : M=uniformMatroid(2,3);
 

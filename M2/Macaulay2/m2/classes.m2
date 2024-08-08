@@ -1,5 +1,21 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+-----------------------------------------------------------------------------
+-- Functions dealing with types
+-----------------------------------------------------------------------------
+
+-- defined in d/classes.d
+class  Thing := Type => class
+parent Thing := Type => parent
+
+-- defined in d/classes.d
+instance(Thing, Type) := Boolean => instance
+ancestor(Type,  Type) := Boolean => ancestor
+
+-- TODO: is there a better name for ancestors'?
+ancestors  = T -> unique join({T}, while (T = parent T) =!= Thing list T, {Thing})
+ancestors' = T -> unique join({T}, while (T = class  T) =!= Type  list T, {Type})
+
 -- TODO: make this TT toString X later?
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 

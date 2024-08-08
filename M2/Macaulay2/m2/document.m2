@@ -43,11 +43,13 @@ verifyKey Thing    := key -> key
 verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Module)
     if      #key == 0 then error "documentation key () encountered"
     else if #key == 1 and not instance(key#0, Function)
-    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
+    then if signalDocumentationError key
+    then printerr("error: documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
     else if #key  > 1
     and not any({Keyword, Command, Function, ScriptedFunctor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
     and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
-    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, or keyword");
+    then if signalDocumentationError key
+    then printerr("error: documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, or keyword");
     --
     if  isUnaryAssignmentOperator key           -- e.g., ((?, =), Type), or (?, =)
     or isBinaryAssignmentOperator key then true -- e.g., ((?, =), Type, Type)
@@ -58,16 +60,19 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
 	else if #key == 1 then ( nullaryMethods#?key and instance(nullaryMethods#key, Function) )
 	else false) then null
     else if #key > 1 and instance(key#0, Command) then verifyKey prepend(key#0#0, drop(key, 1))
-    else error("documentation key for ", format formatDocumentTag key, " encountered, but no method installed"))
+    else if signalDocumentationError key
+    then printerr("error: documentation key for ", format formatDocumentTag key, " encountered, but no method installed"))
 verifyKey Array    := key -> (
     (nkey, opt) := (key#0, key#1);                    -- e.g., [(res, Module), Strategy]
     if instance(opt,  Option)   then opt = first opt; -- e.g., [(res, Module), Strategy => FastNonminimal]
     fn := if instance(nkey, Function) then nkey
     else  if instance(nkey, Sequence) then ( verifyKey nkey; first nkey )
-    else error("expected ", format toString nkey, " to be a function or existing method key in document tag for optional argument: ", silentRobustString(40, 1, key));
+    else if signalDocumentationError key
+    then printerr("error: expected ", format toString nkey, " to be a function or existing method key in document tag for optional argument: ", silentRobustString(40, 1, key));
     if  not (options nkey)#?opt
     and not (options   fn)#?opt
-    then error("expected ", format toString  opt, " to be an optional argument for ", nkey, " in document tag for optional argument: ", silentRobustString(40, 1, key)))
+    then if signalDocumentationError key
+    then printerr("error: expected ", format toString  opt, " to be an optional argument for ", nkey, " in document tag for optional argument: ", silentRobustString(40, 1, key)))
 
 -----------------------------------------------------------------------------
 -- normalizeDocumentKey
@@ -154,7 +159,7 @@ makeDocumentTag' := opts -> key -> (
     -- Try to detect the package
     pkg = if pkg =!= null                    then pkg
     else  if opts#Package =!= null           then opts#Package
-    else  if isMember(fkey, allPackages())     then fkey
+    else  if isMember(fkey, allPackages())   then fkey
     -- for these three types, the method package actually calls
     -- makeDocumentTag, so we can't use it, and need workarounds:
     else  if instance(nkey, Array)           then youngest toSequence(package \ splice nkey)
@@ -192,6 +197,7 @@ makeDocumentTag String      := opts -> key -> (
     then error ("mismatching packages ", pkg, " and ", toString opts#Package, " specified for key ", key);
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
+makeDocumentTag TOH := opts -> first
 
 -- before creating links, we recreate the document tag as a hack to
 -- correct its package, if it is incorrect (e.g. truncate, quotient)

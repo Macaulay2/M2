@@ -916,7 +916,6 @@ f \in integral closure(ideal apply(numgens R,i-> x_i*df/dx_i))
 Conjecture (Huneke: f is never a minimal generator of the integral closure of
 ideal apply(numgens R,i-> df/dx_i).
 *-
-jacobian RingElement := Matrix => f -> jacobian ideal f
 
 testHunekeQuestion = method()
 testHunekeQuestion RingElement := Boolean => f -> (

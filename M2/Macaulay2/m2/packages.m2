@@ -342,7 +342,6 @@ newPackage String := opts -> pkgname -> (
 	"test inputs"              => new MutableHashTable,
 	"raw documentation"        => new MutableHashTable, -- deposited here by 'document'
 	"processed documentation"  => new MutableHashTable, -- the output from 'documentation', look here first
-	"undocumented keys"        => new MutableHashTable,
 	"example inputs"           => new MutableHashTable,
 	"example data files"       => new MutableHashTable,
 	"example results"          => new MutableHashTable,
@@ -433,7 +432,9 @@ symbolFrom = (pkgname, name) -> value (getpkg pkgname)#"private dictionary"#name
 
 importFrom = method()
 importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
-importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> if not currentPackage#"private dictionary"#?s then currentPackage#"private dictionary"#s = P#"private dictionary"#s)
+importFrom(Package, List) := (P, x) -> apply(nonnull x, s ->
+    try currentPackage#"private dictionary"#s = P#"private dictionary"#s
+    else warning("importFrom: failed to import symbol ", s))
 importFrom(String,  String) :=
 importFrom(Package, String) := (P, x) -> importFrom(P, {x})
 
@@ -457,7 +458,22 @@ newPackage("Core",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION",
      Headline => "A computer algebra system designed to support algebraic geometry")
-Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
+Core#"preloaded packages" = {
+    "Elimination",
+    "LLLBases",
+    "IntegralClosure",
+    "PrimaryDecomposition",
+    "MinimalPrimes",
+    "Saturation",
+    "Classic",
+    "TangentCone",
+    "ReesAlgebra",
+    "ConwayPolynomials",
+    "InverseSystems",
+    "SimpleDoc",
+    "OnlineLookup",
+    "Isomorphism",
+    "Varieties"}
 
 protect PackageIsLoaded
 
@@ -500,7 +516,6 @@ endPackage String := title -> (
 	  b = last \ sort apply(b, s -> (hash s, s));
 	  error splice ("mutable unexported unset symbol(s) in package ", pkg#"pkgname", ": ", toSequence between_", " b);
 	  );
-     -- TODO: check for hadDocumentationWarning and Error here?
      pkg.PackageIsLoaded = true;
      pkg)
 
@@ -516,31 +531,30 @@ beginDocumentation = () -> (
 
 ---------------------------------------------------------------------
 
+implicitlyLoadedPackages = () -> nonnull unique apply(keys PackageDictionary, getpkgNoLoad)
+implicitlyLoadedDictionaries = () -> unique join(dictionaryPath,
+    apply(implicitlyLoadedPackages(), pkg -> pkg.Dictionary))
+
 package = method (Dispatch => Thing, TypicalValue => Package)
 package Package  := identity
 package Nothing  := x -> null
 package Option   := o -> youngest(package \ toSequence o)
 package Array    :=
-package Sequence := s -> if (d := fetchAnyRawDocumentation makeDocumentTag s) =!= null then package d.DocumentTag
+-- FIXME: if a package (other than Core) defines (degreeLength, ZZ), we wouldn't detect it!
+package Sequence := s -> if (d := fetchAnyRawDocumentation makeDocumentTag s) =!= null then (
+    if toString(pkg := package d.DocumentTag) === "Macaulay2Doc" then Core else pkg)   else youngest(package \ splice s)
 package String   := s -> if (d := fetchAnyRawDocumentation                 s) =!= null then package d.DocumentTag
 package Thing    := x -> if (d := dictionary x)                               =!= null then package d
-package Symbol   := s -> (
-    if instance(value s, Package) then return value s;
-    n := toString s;
-    r := scan(values PackageDictionary, pkg ->
-	if (pkg = value pkg).?Dictionary and pkg.Dictionary#?n and pkg.Dictionary#n === s then break pkg);
-    if r =!= null then return r;
-    scan(dictionaryPath, d -> if d#?n and d#n === s then if package d =!= null then break package d))
+-- TODO: oo belongs in Core, but where do o1, etc. belong to?
+package Symbol   := s -> if instance(obj := value s, Package) then obj else
+    scan(implicitlyLoadedDictionaries(),
+	dict -> try if value dict#(toString s) === obj then break package dict)
 package Function   :=
 package HashTable  := x -> if hasAttribute(x, ReverseDictionary) then package getAttribute(x, ReverseDictionary)
+-- TODO: where do OutputDictionary and PackageDictionary belong to?
 package Dictionary := d -> (
-    if currentPackage =!= null
-    and (  currentPackage.?Dictionary
-	and currentPackage.Dictionary === d
-	or currentPackage#?"private dictionary"
-	and currentPackage#"private dictionary" === d) then currentPackage
-    else scan(values PackageDictionary, pkg ->
-	if (pkg = value pkg).?Dictionary and pkg.Dictionary === d then break pkg))
+    scan(unique prepend_currentPackage implicitlyLoadedPackages(),
+	pkg -> if pkg.Dictionary === d or pkg#"private dictionary" === d then break pkg))
 
 -- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (

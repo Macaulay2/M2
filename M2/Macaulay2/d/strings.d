@@ -35,8 +35,8 @@ export (s:string) < (t:string) : bool := strcmp(s,t) == -1;
 export (s:string) >= (t:string) : bool := !(s<t);
 export (s:string) > (t:string) : bool := t<s;
 export (s:string) <= (t:string) : bool := !(t<s);
-export hash(s:string):int := (
-     h := 0;
+export hash(s:string):hash_t := (
+     h := hash_t(0);
      foreach c in s do h = 31*h + int(c);
      h & 0x7fffffff
      );

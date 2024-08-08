@@ -66,7 +66,7 @@ prependfun(e:Expr):Expr := (
 			      provide elem;
 			      foreach t in y.v do provide t;
 			      ),
-			 0,y.Mutable);
+			 hash_t(0),y.Mutable);
 		    Expr(sethash(r,y.Mutable)))
 	       else WrongArg(1+1,"a list or sequence")
 	       )
@@ -96,7 +96,7 @@ appendfun(e:Expr):Expr := (
 			      foreach t in y.v do provide t;
 			      provide elem;
 			      ),
-			 0,y.Mutable);
+			 hash_t(0),y.Mutable);
 		    Expr(sethash(r,y.Mutable)))
 	       else WrongArg(0+1,"a list or sequence")
 	       )
@@ -256,7 +256,7 @@ dotfun(lhs:Code,rhs:Code):Expr := (
 	  when rhs
 	  is r:globalSymbolClosureCode do lookup1force(x, Expr(SymbolClosure(globalFrame,r.symbol)))
 	  else printErrorMessageE(rhs,"expected a symbol"))
-     else WrongArg(1,"a hash table")
+     else WrongArgHashTable(1)
      );
 setup(DotS,dotfun);
 
@@ -603,9 +603,10 @@ remove(x:List,i:int):Expr:= (
      else if i >= n || i < -n then ArrayIndexOutOfBounds(i, n - 1)
      else (
 	  if i < 0 then i = n + i;
+	  ret := x.v.i;
 	  for j from i to n - 2 do x.v.j = x.v.(j + 1);
 	  Ccode(void, x.v, "->len = ", n - 1);
-	  nullE));
+	  ret));
 
 removefun(e:Expr):Expr := (
      when e
@@ -622,12 +623,14 @@ removefun(e:Expr):Expr := (
 		    when args.1 is key:stringCell do (
 	       		 if !f.isopen then return buildErrorPacket("database closed");
 	       		 if !f.Mutable then return buildErrorPacket("database not mutable");
-	       		 if 0 == dbmdelete(f.handle,key.v) then nullE
+			 ret := dbmfetch(f.handle,key.v);
+	       		 if 0 == dbmdelete(f.handle,key.v) then (
+			     when ret
+			     is s:string do toExpr(s)
+			     is null do nullE)
 	       		 else buildErrorPacket(dbmstrerror() + " : " + f.filename))
 		    else WrongArgString(2))
-	       is o:HashTable do (
-		    ret := remove(o,args.1);
-		    when ret is Error do ret else nullE)
+	       is o:HashTable do remove(o,args.1)
 	       else WrongArg(1,"a hash table or database")))
      else WrongNumArgs(2));
 setupfun("remove",removefun);
@@ -1316,11 +1319,6 @@ readlinkfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("readlink",readlinkfun);
 
-changeDirectory(e:Expr):Expr := (
-     when e is filename:stringCell do if chdir(filename.v) == -1 then buildErrorPacket(syscallErrorMessage("changing directory")) else nullE
-     else WrongArgString());
-setupfun("changeDirectory",changeDirectory);
-
 realpathfun(e:Expr):Expr := (
      when e is f:stringCell do (
      	  when realpath(expandFileName(f.v))
@@ -1731,6 +1729,21 @@ getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd 
      if length(s) == 0 then cwd() else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentDirectory",getcwdfun);
+
+changeDirectory(dir:string):Expr := (
+    if chdir(expandFileName(dir)) == -1
+    then buildErrorPacket(syscallErrorMessage("changing directory"))
+    else getcwdfun(emptySequenceE));
+
+changeDirectory(e:Expr):Expr := (
+    when e
+    is filename:stringCell do changeDirectory(filename.v)
+    is a:Sequence do (
+	if length(a) == 0
+	then changeDirectory("~")
+	else WrongArg("a string or ()"))
+    else WrongArg("a string or ()"));
+setupfun("changeDirectory",changeDirectory);
 
 export debuggerHook := nullE;
 

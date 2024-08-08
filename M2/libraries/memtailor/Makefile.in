@@ -1,0 +1,14 @@
+SUBMODULE = true
+HOMEPAGE = https://github.com/broune/memtailor
+VPATH = @srcdir@
+VERSION = 20210630-51b88ac2f9
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+PRECONFIGURE = autoreconf -i
+CONFIGOPTIONS = --disable-shared PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=@GTEST_PATH@ --with-gtest=yes
+LICENSEFILES = license.txt
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/memtailor/Makefile
+# Local Variables:
+# compile-command: "make -w -C $M2BUILDDIR/libraries/memtailor "
+# End:

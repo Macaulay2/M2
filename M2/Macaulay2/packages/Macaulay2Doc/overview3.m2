@@ -23,13 +23,8 @@ document {
 	  )
      }
 
--- TODO: combine these two
-document { Key => "copyright",
-     Headline => "a string containing the copyright notice for Macaulay2",
-     EXAMPLE "copyright" }
-
 document {
-     Key => "Copyright and license",
+     Key => {"Copyright and license", "copyright"},
      PARA {
 	  "Macaulay2, its object code, source code, and documentation,
 	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit you to use it either
@@ -44,13 +39,15 @@ document {
 	  },
      PARA {
       	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
-	  of programs, with their libraries, have been compiled and distributed with Macaulay2:"
+	  of programs, with their libraries, have been compiled and distributed with Macaulay2."
+	  },
+     PARA {
+	  "Run the command ", M2CODE "copyright", " to view this message."
 	  },
      Subnodes => {
 	  "libraries",
 	  TO "Singular-Factory",
 	  TO "frobby",
-	  TO "MPIR",
 	  TO "GNU MP",
 	  TO "MPFR",
       TO "MPFI",
@@ -71,6 +68,7 @@ document {
 	  TO "nauty",
 	  TO "cdd+",
 	  TO "lrslib",
+	  TO "msolve",
 	  TO "topcom",
 	  TO "cohomCalg"
      	  }
@@ -358,14 +356,6 @@ document {
      }
 
 document {
-     Key => "MPIR",
-     "The MPIR library, version ", version#"mpir version", " provides
-     routines for arbitrary precision integer and floating point arithmetic.
-     It is available at ", HREF "http://www.mpir.org/", ".  To see whether your copy of Macaulay2 is linked
-     with it (or with GMP), examine the variable ", TO "version", "."
-     }
-
-document {
      Key => "4ti2",
      "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
      problems on linear spaces.  It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
@@ -375,9 +365,24 @@ document {
      Key => "GNU MP",
      "The GNU MP library (GMP) provides
      routines for arbitrary precision integer and floating point arithmetic.
-     It is available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and ", HREF "http://gmplib.org/", ".  To see whether your copy of Macaulay2 is linked
-     with it (or with MPIR), examine the variable ", TO "version", "."
+     It is available at ", HREF "https://gmplib.org/", " and ", HREF "https://gmplib.org/", ".
+     To see the version of the library your copy of Macaulay2 is linked with, examine the variable ", TO "version", "."
      }
+
+doc ///
+  Key
+    "msolve"
+  Headline
+    a library for solving multivariate polynomial systems
+  Description
+    Text
+      The program @SAMP "msolve"@, written by Jérémy Berthomieu, Christian Eder,
+      Vincent Neiger, and Mohab Safey El Din, uses advanced Groebner bases
+      algorithms, multi-threading, and vectorization to obtain exact solutions
+      for multivariate polynomial systems.  It is distributed under the GPLv2
+      license and is available at @HREF "https://msolve.lip6.fr/"@.  It is used
+      by the package @TO "Msolve::Msolve"@.
+///
 
 document {
      Key => "Acknowledgements",

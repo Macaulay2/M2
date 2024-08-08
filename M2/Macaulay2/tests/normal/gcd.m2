@@ -2,10 +2,12 @@ assert( gcd(2*3*5,2*3*7,2*5*7) == 2 )
 assert( gcd(2*3*5,2*3*7,2*5*7,3*5*7) == 1 )
 assert( gcd(1000:2) == 2 )
 assert( gcd splice(1000:2,3) == 1 )
+assert( gcd {} == 0 )
 assert( lcm(2,3,5,7) == 210 )
 assert( lcm(1000:2) == 2 )
 assert( lcm(0, 0) == 0 )
 assert( lcm(0/1, 0/1) == 0 )
+assert( lcm {} == 1 )
 
 R = ZZ/32003[x,y]
 f = (x+y)^3*(x-y^2)

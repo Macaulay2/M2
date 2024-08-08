@@ -131,7 +131,7 @@ I:=binomialIdeal R;
 R/I)
 
 affineAlgebra List := opt-> B -> (
-I:=binomialIdeal B;
+I:=binomialIdeal(B, opt);
 (ring I)/I)
 
 affineAlgebra MonomialAlgebra := opt -> M-> affineAlgebra ring M
@@ -937,6 +937,10 @@ TEST ///
 5}, {1, 1, 3}, {4, 0, 1}, {0, 2, 3}}})
 ///
 
+TEST /// -- issue #636
+assert(coefficientRing affineAlgebra({{1, 2}, {3, 4}},
+	CoefficientField => QQ) === QQ)
+///
 
 doc ///
   Key

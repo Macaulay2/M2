@@ -130,3 +130,7 @@ text.id {
 .noUi-horizontal.noUi-extended .noUi-origin  {
     right: -32px;
 }
+
+.list-group-item.active > textarea {
+    color: #333;
+}

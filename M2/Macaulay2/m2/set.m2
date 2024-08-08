@@ -1,6 +1,7 @@
 -- Copyright 1994 by Daniel R. Grayson
 
 needs "methods.m2"
+needs "shared.m2" -- for union
 
 -----------------------------------------------------------------------------
 -- Tally and VirtualTally type declarations and basic constructors
@@ -83,6 +84,7 @@ new Set from List := Set => (X,x) -> set x -- compiled function
 elements Set := List => x -> keys x
 
 -- set operations
+installMethod(union, () -> set {})
 union(Set, Set) := Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))

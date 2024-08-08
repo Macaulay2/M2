@@ -188,7 +188,7 @@ void Monoid::set_degrees()
     }
 
   auto degrk = mDegreeMonoid->n_vars();
-  auto *iter = &mDegrees.front();
+  auto *iter = mDegrees.data();
 
   if (mHeftVector.size() != degrk)
     {
@@ -209,9 +209,7 @@ void Monoid::set_degrees()
       }
   else
     {
-      // TODO: what is iter in this case?!
       auto m = mDegreeMonoid->make_one();
-      mDegreeMonoid->from_expvector(iter, m);
       mDegreeOfVar.assign(mVariableCount, m);
       mHeftDegrees.assign(mVariableCount, 1);
     }

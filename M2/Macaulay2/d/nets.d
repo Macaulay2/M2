@@ -334,8 +334,8 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 		    provide sepline;
 		    ))));
 
-export hash(n:Net):int := (
-     h := n.height * 3457 + n.width * 7753;
+export hash(n:Net):hash_t := (
+     h := hash_t(n.height * 3457 + n.width * 7753);
      foreach s in n.body do h = h * 77 + hash(s);
      h);
 

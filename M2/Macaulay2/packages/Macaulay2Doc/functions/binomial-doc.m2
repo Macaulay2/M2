@@ -4,9 +4,6 @@ doc ///
   Key
     binomial
     (binomial, Number, Number)
-    (binomial, Number, Constant)
-    (binomial, Constant, Number)
-    (binomial, Constant, Constant)
     (binomial, RingElement, ZZ)
     (binomial, ZZ, ZZ)
   Headline

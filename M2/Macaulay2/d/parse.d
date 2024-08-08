@@ -68,12 +68,12 @@ export TCstring := 4;
 export Word := {		-- a word, one for each name made by makeUniqueWord()
      name:string,		--   the string representing it in this language
      typecode:int,		--   TCid, TCint, TCRR, or TCstring
-     hash:int,	    		--   the hash value
+     hash:hash_t,               --   the hash value
      parse:parseinfo		--   parsing information
      };
 export Symbol := {		    -- symbol table entry for a symbol
      word:Word,			    --   the word
-     hash:int,			    --   based on the hash code of word, unchanging
+     hash:hash_t,		    --   based on the hash code of word, unchanging
      position:Position,	    	    --   the position where the definition was made
      unary:unop,
      postfix:unop,
@@ -85,7 +85,7 @@ export Symbol := {		    -- symbol table entry for a symbol
      Protected:bool,	            -- whether protected against assignment by the user
      flagLookup:bool,		    -- whether to warn when symbol is used
      thread:bool,		    -- whether to use threadFrame instead of globalFrame
-     serialNumber:int		    -- a counter, used to tell the age for the Serialization package
+     serialNumber:hash_t	    -- a counter, used to tell the age for the Serialization package
      };
 export SymbolListCell := {word:Word, entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
@@ -96,7 +96,7 @@ export SymbolHashTable := {
      };
 
 export Dictionary := {
-     hash:int,						    -- assigned sequentially
+     hash:hash_t,               -- assigned sequentially
      symboltable:SymbolHashTable,
      outerDictionary:Dictionary,          -- next outer dictionary, or pointer to self if none
      	       	    	        -- these pointers are munged by dictionaryPath, which is non-re-entrant!
@@ -127,9 +127,10 @@ export For := {+ forToken:Token, variable:ParseTree, inClause:ParseTree, fromCla
 export WhileDo := {+ whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
 export WhileList := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
 export WhileListDo := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
-export TryElse := {+ tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
 export TryThenElse := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
-export Try := {+ tryToken:Token, primary:ParseTree};
+export TryThen     := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree};
+export TryElse     := {+ tryToken:Token, primary:ParseTree,                                    elseToken:Token, alternate:ParseTree};
+export Try         := {+ tryToken:Token, primary:ParseTree};
 export Catch := {+ catchToken:Token, primary:ParseTree};
 export IfThen := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
 export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
@@ -150,7 +151,7 @@ export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
      or EmptyParentheses or IfThen or IfThenElse
      or Quote or GlobalQuote or ThreadQuote or LocalQuote
-     or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
+     or TryThenElse or TryThen or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
 
 -- Code
@@ -259,7 +260,7 @@ export functionCode := {+
      arrow:Token,			  -- just for display purposes
      body:Code, 
      desc:functionDescription,
-     hash:int
+     hash:hash_t
      };
 export Code := (
      nullCode or realCode or stringCode or integerCode 
@@ -282,10 +283,10 @@ export CodeClosure := {+ frame:Frame, code:Code };
 --misc
 
 
-export CompiledFunction := {+fn:fun,hash:int};
+export CompiledFunction := {+fn:fun,hash:hash_t};
 export CompiledFunctionClosure := {+
      fn:function(Expr,Sequence):Expr,
-     hash:int,
+     hash:hash_t,
      env:Sequence
      };
 export CompiledFunctionBody := {+
@@ -316,7 +317,7 @@ export DictionaryClosure := {+
      frame:Frame,      -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
      };
-export FunctionClosure := {+ frame:Frame, model:functionCode, hash:int };
+export FunctionClosure := {+ frame:Frame, model:functionCode, hash:hash_t };
 export SymbolClosure := {+
      frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
      symbol:Symbol
@@ -327,7 +328,7 @@ export SymbolBody := {+
 export List := {+
      Class:HashTable,
      v:Sequence,
-     hash:int,
+     hash:hash_t,
      Mutable:bool
      };
 
@@ -341,7 +342,7 @@ export Error := {+
 
 export Database := {+
      filename:string,
-     hash:int,
+     hash:hash_t,
      handle:int,
      isopen:bool,
      Mutable:bool
@@ -361,10 +362,10 @@ export MysqlField  := Pointer "struct st_mysql_field *";
 export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 
 export pythonObject := Pointer "struct _object *";
-export pythonObjectCell := {+v:pythonObject, hash:int};
+export pythonObjectCell := {+v:pythonObject, hash:hash_t};
 
 export TaskCellBody := {+
-     hash:int,
+     hash:hash_t,
      serialNumber:int,
      task:taskPointer, resultRetrieved:bool,
      fun:Expr, arg:Expr, returnValue:Expr  };
@@ -372,7 +373,7 @@ export TaskCell := {+ body:TaskCellBody };
 
 export pointerCell := {+ v:voidPointer };
 
-export atomicIntCell := {+ v:atomicField, hash:int };
+export atomicIntCell := {+ v:atomicField, hash:hash_t };
 
 export Expr := (
      CCcell or
@@ -466,13 +467,13 @@ export noRecycle(f:Frame):Frame := (
 
 -- hash tables for exprs
 
-export KeyValuePair := {key:Expr, hash:int, value:Expr, next:KeyValuePair};
+export KeyValuePair := {key:Expr, hash:hash_t, value:Expr, next:KeyValuePair};
 export HashTable := {+
      table:array(KeyValuePair), -- length is always a power of 2, initially 2^0 == 1
      Class:HashTable,
      parent:HashTable,
      numEntries:int,
-     hash:int,
+     hash:hash_t,
      Mutable:bool,
      beingInitialized:bool,-- if true, no need to lock the mutex
      mutex:ThreadRWLockPtr
@@ -487,7 +488,7 @@ export m2cfile := Pointer "struct M2File*";
 
 export file := {+
         -- general stuff
-     	hash:int,     	   	-- hash code
+     	hash:hash_t,            -- hash code
 	filename:string,	-- name of file
 	pid:int,	        -- pid if it's a pipe or pair of pipes to a child process, else 0
         error:bool,             -- a system call returned ERROR

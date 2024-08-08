@@ -5,8 +5,7 @@ needs "remember.m2"
 
 binomial(ZZ, ZZ) := ZZ => binomial0
 
-binomial(Number,   Number) := binomial(Number,   Constant) :=
-binomial(Constant, Number) := binomial(Constant, Constant) := ZZ => memoize (
+binomial(Number, Number) := ZZ => memoize (
      (n,i) -> (
 	  if instance(numeric n, CC) or instance(numeric i, CC)
 	  then error "not yet implemented for complex numbers";

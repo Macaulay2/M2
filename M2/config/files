@@ -36,7 +36,9 @@ libraries/flint/Makefile
 libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/mpfi/Makefile
-libraries/mpir/Makefile
+libraries/memtailor/Makefile
+libraries/mathic/Makefile
+libraries/mathicgb/Makefile
 libraries/gtest/Makefile
 libraries/4ti2/Makefile
 libraries/gfan/Makefile
@@ -59,6 +61,7 @@ libraries/libtool/Makefile
 libraries/gftables/Makefile
 libraries/factory/Makefile
 libraries/mpsolve/Makefile
+libraries/msolve/Makefile
 libraries/frobby/Makefile
 libraries/lapack/Makefile
 Macaulay2/Makefile

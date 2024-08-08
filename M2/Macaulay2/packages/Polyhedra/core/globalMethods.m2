@@ -66,8 +66,7 @@ fVector PolyhedralObject := PO -> getProperty(PO, computedFVector)
 -------------------------------------------------------------------------------
 -- For fan and cone
 isPointed = method(TypicalValue => Boolean)
--- PURPOSE : Checks if the input is smooth
-isSmooth = method(TypicalValue => Boolean)
+-- isSmooth = method(TypicalValue => Boolean)
 
 
 

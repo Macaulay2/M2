@@ -525,10 +525,7 @@ isProper SimplicialComplex := Boolean => D -> (
 ------------------------------------------------------------------------------
 -- Associated chain complexes
 ------------------------------------------------------------------------------
---- kludge to access parts of the 'Core'
-raw = value Core#"private dictionary"#"raw";
-rawIndices = value Core#"private dictionary"#"rawIndices";
-rawKoszulMonomials = value Core#"private dictionary"#"rawKoszulMonomials";
+importFrom_Core { "raw", "rawIndices", "rawKoszulMonomials" }
 
 -- local function
 lcmM = L -> (
