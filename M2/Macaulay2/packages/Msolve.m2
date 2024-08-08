@@ -168,6 +168,46 @@ addHook((saturate, Ideal, RingElement), Strategy => Msolve,
     -- msolveSaturate doesn't use any options of saturate, like DegreeLimit, etc.
     (opts, I, f) -> try ideal msolveSaturate(I, f))
 
+--------------------------------------------------------------------------------
+-- Rational interval type, constructors, and basic methods
+--------------------------------------------------------------------------------
+
+QQi = new Ring of List -- TODO: array looks better, but List implements arithmetic by default!
+QQi.synonym = "rational interval"
+
+ring      QQi := x -> QQi
+precision QQi := x -> infinity
+
+QQinterval = method(TypicalValue => QQi)
+QQinterval VisibleList := bounds -> (
+    if #bounds == 2 then QQinterval(bounds#0, bounds#1)
+    else error "expected a lower bound and upper bound")
+QQinterval Number                        := midpt  -> QQinterval(midpt/1, midpt/1)
+QQinterval InexactNumber                 := midpt  -> QQinterval lift(midpt, QQ)
+QQinterval(InexactNumber, InexactNumber) := (L, R) -> QQinterval(lift(L, QQ), lift(R, QQ))
+QQinterval(Number,        Number)        := (L, R) -> new QQi from [L/1, R/1]
+
+-- TODO: these are compiled functions, make them methods and define for QQi
+left'     = first
+right'    = last
+midpoint' = int -> sum int / 2
+diameter QQi := x -> x#1 - x#0
+
+interval QQi := opts -> x -> interval(x#0, x#1, opts)
+
+QQi == Number :=
+Number == QQi := (x, y) -> QQinterval x == QQinterval y
+
+-- ZZ, QQ, RR, RRi
+promote(Number, QQi) := (n, QQi) -> QQinterval n
+
+-- ZZ, QQ
+lift(QQi, Number) := o -> (x, R) -> (
+    if diameter x == 0 then lift(midpoint' x, R)
+    else if o.Verify then error "lift: interval has positive diameter")
+
+--------------------------------------------------------------------------------
+
 msolveRealSolutions = method(TypicalValue => List,
     Options => msolveDefaultOptions ++ { "output type" => "rational interval" })
 msolveRealSolutions Ideal := opt -> I0 -> (
