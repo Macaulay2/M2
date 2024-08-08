@@ -17,7 +17,6 @@ export {
     "Permutation",
     -- methods
     "permutation",
-    "isValidPermutation",
     "toMatrix",
     "cycleDecomposition",
     "cycleType",
@@ -60,16 +59,15 @@ to0Index := w -> (w / (i -> i-1))
 Permutation = new Type of BasicList
 Permutation.synonym = "permutation"
 
-isValidPermutation = method(TypicalValue => Boolean)
-isValidPermutation List := Boolean => w -> (((sort w) == toList(1..#w)) and not (#w == 0))
-
-new Permutation from BasicList := (typeofPermutation,w) -> (
-    if not isValidPermutation(w) then error(toString w | " is not a valid permutation in one-line notation.");
-    w
-)
+new Permutation from BasicList := (typeofPermutation,w) -> w
 
 permutation = method(TypicalValue => Permutation)
 permutation List := Permutation => w -> new Permutation from w
+
+isWellDefined Permutation := Boolean => w -> (
+    wList := toList w;
+    ((sort wList) == toList(1..#wList)) and not (#wList == 0)
+)
 
 ------------------------------------
 -- Permutation string representations

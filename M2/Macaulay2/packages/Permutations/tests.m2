@@ -13,14 +13,14 @@ TEST ///
     -- Should expression, string, TeX, and HTML outputs be tested?
 
     -- valid permutations should be nonempty lists consisting of only all numbers 1..n
-    assert(isValidPermutation {1})
-    assert(isValidPermutation toList (1..8))
-    assert(isValidPermutation random toList (1..8))
-    assert(not isValidPermutation {})
-    assert(not isValidPermutation {0})
-    assert(not isValidPermutation toList (0..8))
-    assert(not isValidPermutation random toList (0..8))
-    assert(not isValidPermutation {1,1,2})
+    assert(isWellDefined permutation {1})
+    assert(isWellDefined permutation  toList (1..8))
+    assert(isWellDefined permutation random toList (1..8))
+    assert(not isWellDefined permutation {})
+    assert(not isWellDefined permutation {0})
+    assert(not isWellDefined permutation toList (0..8))
+    assert(not isWellDefined permutation random toList (0..8))
+    assert(not isWellDefined permutation {1,1,2})
 ///
 
 TEST ///

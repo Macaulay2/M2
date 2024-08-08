@@ -293,7 +293,7 @@ doc ///
   isDerangement
   isEven
   isOdd
-  isValidPermutation
+  isWellDefined
   isVexillary
   ord
   records
@@ -1064,30 +1064,29 @@ doc ///
     sign
 ///
 
--- isValidPermutation
+-- isWellDefined
 doc ///
   Key
-    isValidPermutation
-    (isValidPermutation, List)
+    (isWellDefined, Permutation)
   Headline
     checks if a list is a valid permutation
   Usage
-    isValidPermutation w
-    isValidPermutation(w)
+    isWellDefined w
+    isWellDefined(w)
   Inputs
-    w:List
+    w:Permutation
   Outputs
      :Boolean
   Description
     Text
-      @TT "isValidPermutation p"@ determines if @TT "p"@ is a valid permutation.
+      @TT "isWellDefined p"@ determines if @TT "p"@ is a valid permutation.
       Permutations must be constructed from lists consisting of only the integers
       $1 \textemdash n$. If a list contains any other elements or does not consist of the entire
       range, then an error is thrown.
     Example
-      isValidPermutation {1, 2, 3}
-      isValidPermutation {0, 1, 2}
-      isValidPermutation {1, 1, 2}
+      isWellDefined permutation {1, 2, 3}
+      isWellDefined permutation {0, 1, 2}
+      isWellDefined permutation {1, 1, 2}
 ///
 
 -- isVexillary
