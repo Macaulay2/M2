@@ -360,12 +360,12 @@ length Permutation := ZZ => w -> (#(inversions w))
 -- **DOCUMENTATION** --
 -----------------------------------------------------------------------------
 beginDocumentation()    
-load "./Permutations/PermutationsDOC.m2"
+load "./Permutations/docs.m2"
 
 -----------------------------------------------------------------------------
 -- **TESTS** --
 -----------------------------------------------------------------------------
-load "./Permutations/PermutationsTests.m2"
+load "./Permutations/tests.m2"
 end
 
 -----------------------------------------------------------------------------
