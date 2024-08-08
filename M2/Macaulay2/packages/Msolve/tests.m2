@@ -105,6 +105,20 @@ TEST ///
   assert(eM2 == sub(eMsolve, ring eM2))
 ///
 
+TEST ///
+  --restart
+  debugLevel=1
+  needsPackage "Msolve";
+  R = QQ[x..z,t]
+  K = ideal(x^6+y^6+x^4*z*t+z^3,36*x^5+60*y^5+24*x^3*z*t,
+      -84*x^5+10*x^4*t-56*x^3*z*t+30*z^2,-84*y^5-6*x^4*t-18*z^2,
+      48*x^5+10*x^4*z+32*x^3*z*t,48*y^5-6*x^4*z,14*x^4*z+8*x^4*t+24*z^2)
+  errorDepth=2
+  W1 = msolveEliminate(R_0, K, Verbosity => 1)
+  W2 = eliminate(R_0, K)
+  sub(W1, R) == W2
+///
+
 end
 
 restart
