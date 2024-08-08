@@ -61,7 +61,7 @@ Permutation.synonym = "permutation"
 
 new Permutation from VisibleList := (typeofPermutation,w) -> w
 
-permutation = method(TypicalValue => Permutation)
+permutation = method()
 permutation List := Permutation => w -> new Permutation from w
 
 isWellDefined Permutation := Boolean => w -> (
@@ -122,7 +122,7 @@ Permutation ^ ZZ := Permutation => (w, n) -> fold(if n < 0 then (-n):(permutatio
 ------------------------------------
 -- some people prefer the transpose of this
 toMatrix = method(TypicalValue => Matrix)
-toMatrix Permutation := Matrix => w -> (
+toMatrix Permutation := w -> (
     id_(ZZ^(#w))_(to0Index toList w)
 )
 
@@ -145,7 +145,7 @@ Permutation * Matrix := Matrix => (w, M) -> (
 -- Cycle decomposition of a permutation
 ------------------------------------
 -- every permutation can be written as a product of disjoint cycles (in cycle notation)
-cycleDecomposition = method(TypicalValue => List)
+cycleDecomposition = method()
 cycleDecomposition Permutation := List => w -> (
     w = to0Index toList w;
     cycles := {};
@@ -170,7 +170,7 @@ cycleDecomposition Permutation := List => w -> (
     sort sortedCycles
 )
 
-cycleType = method(TypicalValue => Sequence)
+cycleType = method()
 cycleType Permutation := Sequence => w -> (
     toSequence rsort for cycle in cycleDecomposition w list #cycle
 )
@@ -179,17 +179,17 @@ cycleType Permutation := Sequence => w -> (
 -- Ascents, descents, runs, exceedances, and records
 -- NOTE: All return the 1-indexed results for consistency with the permutation notation
 ------------------------------------
-ascents = method(TypicalValue => List)
+ascents = method()
 ascents Permutation := List => w -> (
     for i in 1 ..< #w list if w_i < w_(i+1) then i else continue
 )
 
-descents = method(TypicalValue => List)
+descents = method()
 descents Permutation := List => w -> (
     for i in 1 ..< #w list if w_i > w_(i+1) then i else continue
 )
 
-ascendingRuns = method(TypicalValue => List)
+ascendingRuns = method()
 ascendingRuns Permutation := List => w -> (
     -- inspired from the SageMath implementation
     -- https://github.com/sagemath/sage/blob/develop/src/sage/combinat/permutation.py
@@ -209,7 +209,7 @@ ascendingRuns Permutation := List => w -> (
     allRuns
 )
 
-descendingRuns = method(TypicalValue => List)
+descendingRuns = method()
 descendingRuns Permutation := List => w -> (
     -- inspired from the SageMath implementation
     -- https://github.com/sagemath/sage/blob/develop/src/sage/combinat/permutation.py
@@ -229,19 +229,18 @@ descendingRuns Permutation := List => w -> (
     allRuns
 )
 
-exceedances = method(TypicalValue => List,
-                     Options => {Weak => false})
+exceedances = method(Options => {Weak => false})
 exceedances Permutation := List => opts -> w -> (
     compare := if opts.Weak then ((i,j) -> i <= j) else ((i,j) -> i < j);
     for i in 1 .. #w list if compare(i,w_i) then i else continue 
 )
 
-saliances = method(TypicalValue => List)
+saliances = method()
 saliances Permutation := List => w -> (
     to1Index positions(1 .. #w, i -> all(i+1 .. #w, j -> w_i > w_j))
 )
 
-records = method(TypicalValue => List)
+records = method()
 records Permutation := List => w -> (
     to1Index positions(1 .. #w, i -> all(1 ..< i, j -> w_j < w_i))
 )
@@ -250,7 +249,7 @@ records Permutation := List => w -> (
 -- Pattern avoidance
 ------------------------------------
 avoidsPattern = method(TypicalValue => Boolean)
-avoidsPattern (Permutation,List) := Boolean => (w, pattern) -> (
+avoidsPattern (Permutation,List) := (w, pattern) -> (
     --assume permutation is pattern-avoiding, break if not true
     for idx in subsets(0 .. #w-1, #pattern) do {
         vals := w_(idx);
@@ -263,17 +262,17 @@ avoidsPattern (Permutation,List) := Boolean => (w, pattern) -> (
 )
 
 avoidsPatterns = method(TypicalValue => Boolean)
-avoidsPatterns (Permutation, List) := Boolean => (w, patterns) -> (
+avoidsPatterns (Permutation, List) := (w, patterns) -> (
     all(patterns, pattern -> avoidsPattern(w, pattern))
 )
 
 isVexillary = method(TypicalValue => Boolean)
-isVexillary Permutation := Boolean => (w) -> (
+isVexillary Permutation := (w) -> (
     avoidsPattern(w, {2,1,4,3})
 )
 
 isCartwrightSturmfels = method(TypicalValue => Boolean)
-isCartwrightSturmfels Permutation := Boolean => w -> (
+isCartwrightSturmfels Permutation := w -> (
     patterns := {{1,2,5,4,3}, 
                  {1,3,2,5,4}, 
                  {1,3,5,2,4}, 
@@ -290,7 +289,7 @@ isCartwrightSturmfels Permutation := Boolean => w -> (
 )
 
 isCDG = method(TypicalValue => Boolean)
-isCDG Permutation := Boolean => w -> (
+isCDG Permutation := w -> (
     patterns := {{1,3,2,5,4},
                  {2,1,5,4,3},
                  {2,1,4,6,3,5},
@@ -306,7 +305,7 @@ isCDG Permutation := Boolean => w -> (
 -- Foata's fundamental bijection
 ------------------------------------
 -- see https://en.wikipedia.org/wiki/Permutation#Foata's_transition_lemma
-foataBijection = method(TypicalValue => Permutation)
+foataBijection = method()
 foataBijection Permutation := Permutation => w -> (
     permutation splice cycleDecomposition w
 )
@@ -319,35 +318,35 @@ inverse Permutation := Permutation => w -> (permutation to1Index inversePermutat
 
 -- order of a permutation, i.e. smallest integer n such that w^n = identity
 -- the order of a permutation can be expressed as the lcm of its cycle lengths
-ord = method(TypicalValue => ZZ)
+ord = method()
 ord Permutation := ZZ => w -> (
     lcm((cycleDecomposition w) / length)
 )
 
 -- see https://en.wikipedia.org/wiki/Parity_of_a_permutation for different ways
 -- to compute the sign or parity of a permutation
-sign = method(TypicalValue => ZZ)
+sign = method()
 sign Permutation := ZZ => w -> (
     if even(#w - #(cycleDecomposition w)) then 1 else -1
 )
 
 isEven = method(TypicalValue => Boolean)
-isEven Permutation := Boolean => w -> (
+isEven Permutation := w -> (
     sign w == 1
 )
 
 isOdd = method(TypicalValue => Boolean)
-isOdd Permutation := Boolean => w -> (
+isOdd Permutation := w -> (
     sign w == -1
 )
 
 isDerangement = method(TypicalValue => Boolean)
-isDerangement Permutation := Boolean => w -> (not any(cycleDecomposition w, cycle -> #cycle == 1))
+isDerangement Permutation := w -> (not any(cycleDecomposition w, cycle -> #cycle == 1))
 
-fixedPoints = method(TypicalValue => List)
-fixedPoints Permutation := Boolean => w -> (for cycle in cycleDecomposition w list if #cycle == 1 then unsequence cycle else continue)
+fixedPoints = method()
+fixedPoints Permutation := List => w -> (for cycle in cycleDecomposition w list if #cycle == 1 then unsequence cycle else continue)
 
-inversions = method(TypicalValue => List)
+inversions = method()
 inversions Permutation := List => w -> (
     for idxPair in sort(subsets(toList w, 2) / sort) list if w_(idxPair#0) > w_(idxPair#1) then idxPair else continue
 )
