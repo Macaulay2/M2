@@ -74,6 +74,13 @@ TEST ///
   assert(msolveRealSolutions I === msolveRealSolutions(I, QQi))
   scan({QQ, QQi, RR, RR_53, RRi, RR_53},
       F -> assert({{3.0, 1.0}} == msolveRealSolutions(I, F)))
+  assert(precision first first msolveRealSolutions I           == infinity)
+  assert(precision first first msolveRealSolutions(I, RR)      == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RR_20)   == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RR_100)  == 100)
+  assert(precision first first msolveRealSolutions(I, RRi)     == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RRi_20)  == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RRi_100) == 100)
 ///
 
 TEST ///

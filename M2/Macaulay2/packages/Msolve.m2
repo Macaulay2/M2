@@ -218,6 +218,7 @@ msolveRealSolutions(Ideal, Ring)       := opt -> (I0, F) -> (
     if not any({QQ, QQi, RR_*, RRi_*}, F' -> ancestor(F', F))
     then error "msolveRealSolutions: expected target field to be rationals, reals, or a rational or real interval field";
     (S, K, I) := toMsolveRing I0;
+    -- if precision is not specified, we want to use msolve's default precision
     prec := if precision F === infinity then msolveDefaultPrecision else precision F;
     mOut := msolve(S, K, I_*, "-p " | prec, opt);
     -- format: [dim, [numlists, [ solution boxes ]]]
@@ -225,10 +226,11 @@ msolveRealSolutions(Ideal, Ring)       := opt -> (I0, F) -> (
     if d =!= 0 then error "msolveRealSolutions: expected zero dimensional system of equations";
     if solsp_0 > 1 then (
 	printerr "msolveRealSolutions: unexpected msolve output, returning full output"; return {d, solsp});
+    prec  = max(defaultPrecision, prec); -- we want the output precision to be at least defaultPrecision
     sols := apply(last solsp, sol -> apply(sol, QQinterval));
     if ancestor(QQi,   F) then sols else
-    if ancestor(QQ,    F) then apply(sols, sol -> apply(sol, midpoint'))       else
-    if ancestor(RR_*,  F) then apply(sols, sol -> apply(sol, midpoint') * 1_F) else
+    if ancestor(QQ,    F) then apply(sols, sol -> apply(sol, midpoint'))                    else
+    if ancestor(RR_*,  F) then apply(sols, sol -> apply(sol, midpoint') * numeric(prec, 1)) else
     if ancestor(RRi_*, F) then apply(sols, sol -> apply(sol, range -> interval(range, Precision => prec))))
 
 msolveRUR = method(TypicalValue => List, Options => msolveDefaultOptions)
