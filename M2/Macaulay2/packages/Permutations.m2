@@ -56,10 +56,10 @@ to0Index := w -> (w / (i -> i-1))
 ------------------------------------
 -- Permutation type declarations and basic constructors
 ------------------------------------
-Permutation = new Type of BasicList
+Permutation = new Type of VisibleList
 Permutation.synonym = "permutation"
 
-new Permutation from BasicList := (typeofPermutation,w) -> w
+new Permutation from VisibleList := (typeofPermutation,w) -> w
 
 permutation = method(TypicalValue => Permutation)
 permutation List := Permutation => w -> new Permutation from w
