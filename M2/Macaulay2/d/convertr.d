@@ -474,10 +474,10 @@ export convert0(e:ParseTree):Code := (
 	  p := combinePosition(q.Operator.position,token.position);
 	  nd := nestingDepth(sym.frameID,token.dictionary);
 	  Code(localSymbolClosureCode(nd,sym,p)))
-     is i:TryThenElse do Code(tryCode(convert(i.primary),            convert(i.sequel),              unseq(c:=convert0(i.alternate)), combinePosition(i.tryToken.position,codePosition(c))))
-     is i:TryThen     do Code(tryCode(convert(i.primary),            convert(c:=convert0(i.sequel)), NullCode,                        combinePosition(i.tryToken.position,codePosition(c))))
-     is i:TryElse     do Code(tryCode(convert(i.primary),            NullCode,                       unseq(c:=convert0(i.alternate)), combinePosition(i.tryToken.position,codePosition(c))))
-     is i:Try         do Code(tryCode(unseq(c:=convert0(i.primary)), NullCode,                       NullCode,                        combinePosition(i.tryToken.position,codePosition(c))))
+     is i:TryThenElse do Code(tryCode(convert(i.primary),            convert(i.sequel),            unseq(c:=convert0(i.alternate)), combinePosition(i.tryToken.position,codePosition(c))))
+     is i:TryThen     do Code(tryCode(convert(i.primary),            unseq(c:=convert0(i.sequel)), NullCode,                        combinePosition(i.tryToken.position,codePosition(c))))
+     is i:TryElse     do Code(tryCode(convert(i.primary),            NullCode,                     unseq(c:=convert0(i.alternate)), combinePosition(i.tryToken.position,codePosition(c))))
+     is i:Try         do Code(tryCode(unseq(c:=convert0(i.primary)), NullCode,                     NullCode,                        combinePosition(i.tryToken.position,codePosition(c))))
      is i:Catch       do Code(catchCode(unseq(c:=convert0(i.primary)),combinePosition(i.catchToken.position,codePosition(c))))
      is u:Postfix     do Code(unaryCode(u.Operator.entry.postfix,unseq(c:=convert0(u.lhs)),combinePosition(codePosition(c),u.Operator.position)))
      is d:dummy do dummyCode
