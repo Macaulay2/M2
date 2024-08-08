@@ -106,12 +106,10 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
     -- TODO: this substitution should be unnecessary,
     -- but without it the result for tower rings is in the wrong order!
     then substitute(map(R, rawMatrixReadMsolveFile(raw R, mOut)), R) else (
-	msolveOut := get mOut;
-    	moutStrL:=separate(",",first separate("[]]",last separate("[[]",msolveOut)));
-    	--the line below should be replaced by a call to the C-function to parse the string
-    	M2Out:=for s in moutStrL list value(s);
-    	matrix {M2Out};
-    	)
+	--the line below should be replaced by a call to the C-function to parse the string
+	-- this is a hack that has global consequences (e.g. breaks rings with p_i vars)
+	use newRing(R, Variables => numgens R);
+	substitute(matrix {value readMsolveList get mOut}, vars R))
 
 readMsolveList = mOutStr -> (
     mOutStr = toString stack select(lines mOutStr,
@@ -121,7 +119,7 @@ readMsolveList = mOutStr -> (
     -- e.g. 'p_0' to "p_0"
     mOutStr = replace("'", "\"",  mOutStr);
     mOutStr = first separate(":", mOutStr);
-    value mOutStr)
+    mOutStr)
 
 msolveGB = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveGB Ideal := opts -> I0 -> (
@@ -225,7 +223,7 @@ msolveRealSolutions(Ideal, Ring)       := opt -> (I0, F) -> (
     prec := if precision F === infinity then msolveDefaultPrecision else precision F;
     mOut := msolve(S, K, I_*, "-p " | prec, opt);
     -- format: [dim, [numlists, [ solution boxes ]]]
-    (d, solsp) := toSequence readMsolveList get mOut;
+    (d, solsp) := toSequence value readMsolveList get mOut;
     if d =!= 0 then error "msolveRealSolutions: expected zero dimensional system of equations";
     if solsp_0 > 1 then (
 	printerr "msolveRealSolutions: unexpected msolve output, returning full output"; return {d, solsp});
@@ -242,7 +240,7 @@ msolveRUR Ideal := opt -> I0 ->(
     (S, K, I) := toMsolveRing I0;
     mOut := msolve(S, K, I_*, "-P 2", opt);
     -- format: [dim, [char, nvars, deg, vars, form, [1, [lw, lwp, param]]]]:
-    solsp := readMsolveList get mOut;
+    solsp := value readMsolveList get mOut;
     if first solsp != 0 then error "msolveRUR: expected zero dimensional input ideal";
     lc:=(solsp_1)_4;
     l:=sum(numgens S0,i->lc_i*S0_i);
