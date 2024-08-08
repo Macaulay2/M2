@@ -1475,14 +1475,11 @@ export evalraw(c:Code):Expr := (
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
-	       p := tryEval(c.code);
-	       if tryEvalSuccess
-	       then (
-		   when p is Error do p
-		   else if c.thenClause == NullCode then p
-		   else eval(c.thenClause))
-	       else (
-		   eval(c.elseClause)))
+	      ret := tryEval(c.code);
+	      if tryEvalSuccess then
+	      when ret is Error do ret
+	      else if c.thenClause == NullCode then ret   else eval(c.thenClause)
+	      else if c.elseClause == NullCode then nullE else eval(c.elseClause))
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p

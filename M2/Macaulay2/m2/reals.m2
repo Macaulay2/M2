@@ -278,6 +278,7 @@ lngamma RR := x -> (
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
 lngamma Number := lngamma @@ numeric
+lngamma RRi := lngamma CC := lgamma
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
@@ -446,10 +447,12 @@ acot Number := z -> atan(1/z)
 BesselJ' = BesselJ
 BesselJ = method()
 BesselJ(ZZ, Number) := (n, x) -> BesselJ'(n, numeric x)
+BesselJ(Number, Number) := (n, x) -> BesselJ'(numeric n, numeric x)
 
 BesselY' = BesselY
 BesselY = method()
 BesselY(ZZ, Number) := (n, x) -> BesselY'(n, numeric x)
+BesselY(Number, Number) := (n, x) -> BesselY'(numeric n, numeric x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

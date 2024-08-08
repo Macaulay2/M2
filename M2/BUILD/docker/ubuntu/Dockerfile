@@ -2,13 +2,13 @@
 # Net usage:  ~255MB
 # Disk usage: <1GB docker image + 650MB Macaulay2 build
 
-FROM ubuntu:focal
+FROM ubuntu:noble
 
 # Programs we require to build
 RUN apt-get update && \
     apt-get install -y apt-transport-https build-essential curl git gnupg && \
     curl https://apt.kitware.com/keys/kitware-archive-latest.asc -s --output - | apt-key add - && \
-    echo 'deb https://apt.kitware.com/ubuntu/ focal main' > \
+    echo 'deb https://apt.kitware.com/ubuntu/ noble main' > \
       /etc/apt/sources.list.d/cmake.list && \
     apt-get update && apt-get install -y autoconf bison ccache cmake flex libtool ninja-build yasm && apt-get clean
 
@@ -20,14 +20,11 @@ RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev \
 	libboost-regex-dev libboost-stacktrace-dev libomp-dev libtbb-dev && \
 	apt-get clean
 
-# This is a dependency that we should get rid of
-RUN apt-get install -y libatomic-ops-dev && apt-get clean
-
 # Libraries we can build
 RUN apt-get install -y --no-install-recommends software-properties-common && \
     add-apt-repository -y ppa:macaulay2/macaulay2 && apt-get update && \
     apt-get install -y -q --no-install-recommends libeigen3-dev libgc-dev \
-	libglpk-dev libgmp3-dev libmpfr-dev libmps-dev libgtest-dev \
+	libglpk-dev libgmp3-dev libmpfr-dev libmpfi-dev libmps-dev libgtest-dev \
 	libntl-dev libflint-dev libsingular-dev singular-data libfrobby-dev \
 	libnauty-dev libnormaliz-dev && apt-get clean
 
@@ -43,7 +40,6 @@ RUN apt-get update && \
     apt-get update && apt-get clean
 
 RUN apt-get install -y libgivaro-dev fflas-ffpack
-RUN apt-get install -y libmpfi-dev
 
 # Optional packages
 RUN apt-get install -y mlocate bash-completion

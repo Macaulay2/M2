@@ -27,6 +27,9 @@ threadCounter := 0;
 threadLocal HashCounter := (
     threadCounter = threadCounter + 1;
     hash_t(1000000 + 3 + (threadCounter-1) * 10000 ));
+-- give 32-bit machines enough space to store a 64-bit hash code
+-- TODO: instead, allow 64-bit entries in the array of thread local variables
+threadLocal HashCounterExtraBits := 0;
 
 export nextHash():hash_t := (
      if HashCounter == Ccode(hash_t, "18446744073709551615ull") -- check for integer overflow
@@ -362,6 +365,8 @@ export WrongArgZZ():Expr := WrongArg("an integer");
 export WrongArgZZ(n:int):Expr := WrongArg(n,"an integer");
 export WrongArgRR():Expr := WrongArg("a real number");
 export WrongArgRR(n:int):Expr := WrongArg(n,"a real number");
+export WrongArgRRorCC():Expr := WrongArg("a real or complex number");
+export WrongArgRRorCC(n:int):Expr := WrongArg(n,"a real or complex number");
 export WrongArgRRorRRi():Expr := WrongArg("a real number or interval");
 export WrongArgRRorRRi(n:int):Expr := WrongArg(n,"a real number or interval");
 export WrongArgRRorRRiorCC():Expr := WrongArg("a real number or interval or a complex number");

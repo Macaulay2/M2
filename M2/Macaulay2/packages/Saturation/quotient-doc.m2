@@ -16,6 +16,7 @@ Node
     (quotient, MonomialIdeal, RingElement)
     (symbol:, Ideal, Ideal)
     (symbol:, Ideal, RingElement)
+    (symbol:, MonomialIdeal, RingElement)
 -- return a module
     (quotient, Module, Ideal)
     (quotient, Module, RingElement)

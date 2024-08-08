@@ -73,6 +73,7 @@ load "./doc_iterators.m2"
 load "./doc_augmented_assignment.m2"
 load "./doc_atomic.m2"
 load "./options.m2" -- this must come last
+load "./undocumented.m2"
 
 load "./M2-Singular-Book.m2"
 

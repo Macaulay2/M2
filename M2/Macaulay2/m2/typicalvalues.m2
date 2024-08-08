@@ -41,7 +41,6 @@ installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
 
 installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
 installMethod(symbol ..<, ZZ, ZZ, Sequence => x -> (dummy x;))
-ancestor(Type,Type) := Boolean => ancestor
 any(ZZ,Function) := any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
@@ -64,7 +63,6 @@ isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
 isMutable(Thing) := Boolean => isMutable
-instance(Thing,Type) := Boolean => instance
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
@@ -216,13 +214,13 @@ typval = x -> (
 	 else if #args === 3 then (
 	     if args#0 === RR then
 		 variants#(f, Number,   args#1, args#2) =
-		 (x,y,z) -> f'((numeric_min(precision y, precision z)) x, y, z);
+		 (x,y,z) -> f'(numeric(min(precision y, precision z), x), y, z);
 	     if args#1 === RR then
 		 variants#(f, args#0, Number,   args#2) =
-		 (x,y,z) -> f'(x, (numeric_min(precision x, precision z)) y, z);
+		 (x,y,z) -> f'(x, numeric(min(precision x, precision z), y), z);
 	     if args#2 === RR then
 		 variants#(f, args#0, args#1, Number)   =
-		 (x,y,z) -> f'(x, y, (numeric_min(precision x, precision y)) z);
+		 (x,y,z) -> f'(x, y, numeric(min(precision x, precision y), z));
 	     if args#0 === RR and args#1 === RR then
 		 variants#(f, Number,   Number,   args#2) =
 		 (x,y,z) ->

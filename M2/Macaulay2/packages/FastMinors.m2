@@ -64,7 +64,6 @@ export{
   "Rank", --a value for Strategy in isRankAtLeast
  -- "MutableSmallest",
  -- "MutableLargest",
-  "Threads",
   "MinorsCache",
   "Modulus",
 --  "MaxMinorsFunction", 
@@ -1698,7 +1697,6 @@ doc ///
         isRankAtLeast
         (isRankAtLeast, ZZ, Matrix)
         [isRankAtLeast, Verbose]
-        [isRankAtLeast, Threads]
     Headline
         determines if the matrix has rank at least a number
     Usage
@@ -1734,7 +1732,6 @@ doc ///
         getSubmatrixOfRank
         (getSubmatrixOfRank, ZZ, Matrix)
         [getSubmatrixOfRank, Verbose]
-        [getSubmatrixOfRank, Threads]
     Headline
         tries to find a submatrix of the given rank
     Usage
@@ -1998,7 +1995,6 @@ doc ///
         recursiveMinors
         (recursiveMinors, ZZ, Matrix)
         [recursiveMinors, MinorsCache]
-        [recursiveMinors, Threads]
         [recursiveMinors,Verbose]
         MinorsCache
     Headline
@@ -2106,12 +2102,14 @@ doc ///
 
 doc ///
     Key
-        Threads
+        [isRankAtLeast, Threads]
+	[getSubmatrixOfRank, Threads]
+	[recursiveMinors, Threads]
     Headline
         an option for various functions
     Description
         Text
-            Increasing this function may tell various functions to multithread their operations.  You may also want to increase {\tt allowableThreads}.
+            Increasing this option may tell various functions to multithread their operations.  You may also want to increase {\tt allowableThreads}.
     SeeAlso
         isRankAtLeast
         getSubmatrixOfRank

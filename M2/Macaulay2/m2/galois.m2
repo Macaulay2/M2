@@ -7,9 +7,6 @@ needs "polyrings.m2"
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
-toExternalString GaloisField := k -> toString describe k
-toString GaloisField := toString @@ expression
-net GaloisField := net @@ expression
 expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression GF) (expression F.order)
 describe GaloisField := F -> Describe (expression GF) (expression F.order)
 

@@ -146,14 +146,16 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 	    makeDirectory opts.RunDirectory;
 	"cd " | opts.RunDirectory | " && " ) else "";
     cmd = cmd | program#"path" | addPrefix(name, program#"prefix") | " " | args;
+    if opts.Verbose then printerr("running: ", cmd);
     if match("\\|", cmd) then cmd = "{ " | cmd | ";}";
-    returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
-    message := "running: " | cmd | "\n";
+    returnValue := (
+	if opts.Verbose
+	then run ("(((((" | cmd | "; echo $? >&4) | tee " | outFile |
+	    ") 3>&1 1>&2 2>&3 | tee " | errFile |
+	    " >&5) 4>&1) | (read r; exit $r)) 5>&1")
+	else run (cmd | " > " | outFile | " 2> " | errFile));
     output := get outFile;
-    if output != "" then message = message | output;
     err := get errFile;
-    if err != "" then message = message | err;
-    if opts.Verbose then print(message);
     result := {
 	"command" => cmd,
 	"output" => output,
@@ -167,8 +169,8 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 	removeFile errFile;
     );
     if opts.RaiseError and returnValue != 0 then error(
-	program#"name" | " returned an error" |
-	if opts.Verbose then "" else "\n" | message);
+	program#"name" | " returned an error (" | toString returnValue |")" |
+	if opts.Verbose then "" else ":\n" | err);
     new ProgramRun from result
 )
 

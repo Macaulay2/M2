@@ -59,7 +59,6 @@ export {
     }
 
 importFrom("Core", {"concatRows"})
-exportFrom(FastMinors, {"Threads"})
 
 terraciniLocus = method(Options => {Threads => 0})
 

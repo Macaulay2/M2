@@ -745,6 +745,10 @@ document {
      PARA{},
      "The clause '", TT "then y", "' may be omitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
      PARA{},
+     "The clause '", TT "else z", "' may be omitted,
+     in which case the return value is the value returned by ", TT "y", ",
+     unless an error or alarm occurs, in which case ", TO "null", " is returned.",
+     PARA{},
      "The clauses '", TT "then y else z", "' may both be omitted, in which case the return value is the value returned by ", TT "x", ", unless an error or
      alarm occurs, in which case ", TO "null", " is returned.",
      PARA{},

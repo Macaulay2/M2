@@ -484,8 +484,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/releases/download/v0.5.0/msolve-0.5.0.tar.gz
-  URL_HASH          SHA256=13ad04757b0ba0bd44cf9a5abcf5aff416d5560b035323e9561ad4d4c020cfe5
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.7.1.tar.gz
+  URL_HASH          SHA256=c5090d464999b3180b98e45a46ae1c13713a6255a95bdbab52c695038c2c0ed5
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -1103,9 +1103,9 @@ ExternalProject_Add(build-polymake
 
 # http://homepages.math.uic.edu/~jan/download.html
 ExternalProject_Add(build-phcpack
-  URL               https://github.com/janverschelde/PHCpack/archive/v2.4.79.tar.gz
-  URL_HASH          SHA256=5b3542555958eb3692fa2d37a325b47466b2ab8b0854cc47995e5a83d2bc0146
-  DOWNLOAD_NAME     PHCpack-v2.4.79.tar.gz
+  URL               https://github.com/janverschelde/PHCpack/archive/refs/tags/v2.4.90.tar.gz
+  URL_HASH          SHA256=7db1529b019a24e6fc2217ecccbcf3aa56f1b098bbe2f75e834f415e58c8bde7
+  DOWNLOAD_NAME     PHCpack-2.4.90.tar.gz
   PREFIX            libraries/phcpack
   SOURCE_DIR        libraries/phcpack/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles

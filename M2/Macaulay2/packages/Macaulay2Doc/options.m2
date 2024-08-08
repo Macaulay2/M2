@@ -14,6 +14,7 @@ opts  = unique opts;
 
 optionalNames := select(unique \\ flatten \\ keys \ opts, s -> instance(s, Symbol) and isGlobalSymbol toString s and
     not isUndocumented(d := makeDocumentTag s) and (isMissingDoc d or headline d === "an optional argument"))
+optionalNames = unique join({ Threads }, optionalNames)
 
 optionalValues := unique(flatten \\ values \ opts
     | { Prune, Binomial, Test, Center, Right, Left, Flexible, Postfix } -- for manually added Symbols

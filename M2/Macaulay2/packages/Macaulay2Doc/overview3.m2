@@ -68,6 +68,7 @@ document {
 	  TO "nauty",
 	  TO "cdd+",
 	  TO "lrslib",
+	  TO "msolve",
 	  TO "topcom",
 	  TO "cohomCalg"
      	  }
@@ -367,6 +368,21 @@ document {
      It is available at ", HREF "https://gmplib.org/", " and ", HREF "https://gmplib.org/", ".
      To see the version of the library your copy of Macaulay2 is linked with, examine the variable ", TO "version", "."
      }
+
+doc ///
+  Key
+    "msolve"
+  Headline
+    a library for solving multivariate polynomial systems
+  Description
+    Text
+      The program @SAMP "msolve"@, written by Jérémy Berthomieu, Christian Eder,
+      Vincent Neiger, and Mohab Safey El Din, uses advanced Groebner bases
+      algorithms, multi-threading, and vectorization to obtain exact solutions
+      for multivariate polynomial systems.  It is distributed under the GPLv2
+      license and is available at @HREF "https://msolve.lip6.fr/"@.  It is used
+      by the package @TO "Msolve::Msolve"@.
+///
 
 document {
      Key => "Acknowledgements",

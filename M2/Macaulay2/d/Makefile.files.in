@@ -34,6 +34,7 @@ M2_DFILES += interrupts.d
 M2_DFILES += pthread0.d
 M2_DFILES += stdiop0.d 
 M2_DFILES += gmp.d
+M2_DFILES += ballarith.d
 M2_DFILES += engine.dd
 ifeq (@XML@,yes)
 M2_DFILES += xml.d

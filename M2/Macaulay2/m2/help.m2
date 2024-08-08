@@ -143,26 +143,32 @@ isDocumentableMethod  Command :=
 isDocumentableMethod Function :=
 isDocumentableMethod ScriptedFunctor := isDocumentableThing
 
-documentableMethods := key -> select(methods key, isDocumentableMethod)
+documentableMethods = key -> select(methods key, isDocumentableMethod)
 
 -----------------------------------------------------------------------------
 -- documentationValue
 -----------------------------------------------------------------------------
+
+subclasses = T -> keys fold(ancestors  T, showStructure(),      lookup)
+subobjects = T -> keys fold(ancestors' T, showClassStructure(), lookup)
+descendants  = T -> flatten prepend(L := subclasses T, apply(L, descendants))
+descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
 
 -- specialized templates for documentation nodes
 documentationValue := method(TypicalValue => Hypertext)
 documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
-    syms := unique flatten apply(dictionaryPath, dict -> if isMutable dict then {} else values dict);
+    -- catch when an unexported type is documented; TODO: where should this be caught?
+    if package T === null then error("encountered unexported type ", toString T);
+    -- types that inherit from T
+    b := smenu(toString \ subclasses T);
     -- constructors of T
     a := smenu apply(select(pairs typicalValues, (key, Y) -> Y === T and isDocumentableMethod key), (key, Y) -> key);
-    -- types that inherit from T
-    b := smenu(toString \ select(syms, y -> instance(value y, Type) and parent value y === T));
     -- functions on T
     c := smenu select(documentableMethods T, key -> not typicalValues#?key or typicalValues#key =!= T);
     -- objects of type T
-    e := smenu(toString \ select(syms, y -> not isMutable y and class value y === T));
+    e := smenu(toString \ subobjects T);
     DIV nonnull splice ( "class" => "waystouse",
 	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
@@ -219,6 +225,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- exported symbols
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
+    f := toSequence pkg#"exported mutable symbols";
     -- functions and commands
     a := select(e, x -> instance(value x, Function) or instance(value x, Command));
     -- types
@@ -280,6 +287,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    if #a > 0 then LI {"Functions and commands", smenu a},
 		    if #m > 0 then LI {"Methods",                smenu m},
 		    if #c > 0 then LI {"Symbols",                smenu c},
+		    if #f > 0 then LI {"Mutable symbols",        smenu f},
 		    if #d > 0 then LI {"Other things",      smenuCLASS d}}}
 	    }))
 
@@ -499,33 +507,25 @@ setAttribute(infoHelp#0, ReverseDictionary, symbol infoHelp)
 -- View brief documentation within Macaulay2 using symbol?
 -----------------------------------------------------------------------------
 -- TODO: should this return a hypertext object instead of printing?
-briefDocumentation = method(Dispatch => Thing)
-briefDocumentation VisibleList := key -> null
-briefDocumentation Thing       := key -> (
-    if not isDocumentableThing key
-    then return if hasAttribute(key, ReverseDictionary) then (
-	S := getAttribute(key, ReverseDictionary);
+briefDocumentation = key -> (
+    if not isDocumentableMethod key and not isDocumentableThing key
+    then return if hasAttribute(key, ReverseDictionary) then DIV {
 	-- TODO: use either "formation" to enhance the result
 	-- or enhance "describe" or "getTechnical" using "formation"
-	DIV {
-	    BinaryOperation{symbol :=, key, describe key},
-	    getTechnical(S, key)
-	    }
-	);
+	-- TODO: add spaces around :=
+	BinaryOperation{symbol :=, key, describe key},
+	getTechnical(getAttribute(key, ReverseDictionary), key) };
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
     -- TODO: should it be getGlobalSymbol or getAttribute?
-    symb := getGlobalSymbol toString key;
     tag := getOption(rawdoc, symbol DocumentTag);
     title := getOption(rawdoc, Headline);
     synopsis := getSynopsis(key, tag, rawdoc);
-    waystouse := documentationValue(symb, key);
-    technical := getTechnical(symb, key);
-    DIV {
-    if title     =!= null then PARA {key, commentize title},
-    synopsis,
-    waystouse,
-    technical }
-)
+    try symb := getGlobalSymbol toString key then (
+	waystouse := documentationValue(symb, key);
+	technical := getTechnical(symb, key)) else ();
+    DIV nonnull {
+	PARA {format tag, commentize title},
+	synopsis, waystouse, technical })
 
 ? ScriptedFunctor :=
 ? Function :=
