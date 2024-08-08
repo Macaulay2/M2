@@ -606,18 +606,17 @@ document {
 		},
 	SeeAlso => {"if", "then"}
      }
-document { Key => "catch",
-     Headline => "catch a thrown exception", SeeAlso => {"throw"},
-     Usage => "catch c",
-     Outputs => {{"the value obtained by evaluating the code ", TT "c", ", or, if a ", TO "throw", " was executed during the evaluation of ", TT "c", ",
-	       the argument given to ", TO "throw", "."}},
-     EXAMPLE lines ///
-          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
-     ///}
-document { Key => "throw",
-     Headline => "throw an exception", SeeAlso => {"catch"},
-     Usage => "throw x", 
-     Consequences => {{"the flow of control is passed to the surrounding ", TO "catch", ", and ", TT "x", " is returned as its value"}},
+document {
+    Key => {"throw", "catch"},
+    Headline => "throw and catch exceptions",
+    Usage => "catch c\nthrow x",
+    Outputs => {{
+	    TT "catch", " returns the value obtained by evaluating the code ", TT "c",
+	    ", or, if a ", TT "throw", " was executed during the evaluation of ", TT "c",
+	    ", the argument given to ", TT "throw", "."}},
+    Consequences => {{
+	    TT "throw", " passes the flow of control to the surrounding ", TT "catch",
+	    ", and ", TT "x", " is returned as its value"}},
      EXAMPLE lines ///
           catch scan(0..10, i -> if i == 5 then throw 18 else print i)
      ///}
