@@ -1114,10 +1114,21 @@ then AC_MSG_RESULT([no, will build])
 fi
 
 AS_IF([test $BUILD_msolve = no],
-    [AC_MSG_CHECKING(whether msolve is installed)
+    [AC_MSG_CHECKING([whether msolve is installed])
      AS_IF([command -v msolve > /dev/null],
-         [AC_MSG_RESULT([yes])
-          FILE_PREREQS="$FILE_PREREQS `command -v msolve`"],
+         [AS_IF([msolve -V > /dev/null 2>&1],
+             [msolve_actual_version=$(msolve -V)
+              dnl keep in sync with msolveMinimumVersion in Msolve.m2
+              msolve_min_version=0.7.0
+              AX_COMPARE_VERSION(
+                  [$msolve_actual_version], [ge], [$msolve_min_version],
+                  [AC_MSG_RESULT([yes])
+                   FILE_PREREQS="$FILE_PREREQS `command -v msolve`"],
+                  [AC_MSG_RESULT([yes, but version $msolve_actual_version was \
+found and $msolve_min_version is required; will build])
+                   BUILD_msolve=yes])],
+             [AC_MSG_RESULT([yes, but cannot detect version; will build])
+              BUILD_msolve=yes])],
          [AC_MSG_RESULT([no, will build])
           BUILD_msolve=yes])])
 
