@@ -2,6 +2,8 @@
 -- put bindings to variables before the forward references, for safety
 use hashtables;
 use convertr;
+use debugging;
+
 export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
 export threadLocal evalSequenceHadError := false;

@@ -70,13 +70,13 @@ set(DLIST
   equality.dd
   hashtables.dd
   regex.dd
+  debugging.dd
   evaluate.d
   sets.dd
   mysql.d	# removed unless WITH_SQL
   mysqldummy.d	# removed if WITH_SQL
   pthread.d
   actors.d
-  debugging.dd
   actors2.dd
   actors3.d
   actors4.d
