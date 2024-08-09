@@ -924,6 +924,8 @@ then AC_LANG(C)
 	  else AC_SEARCH_LIBS(_fmpz_mod_mul1,"flint",,[AC_MSG_ERROR([libflint not found])])
 	       AC_SEARCH_LIBS([arb_init], [arb flint-arb],,
 	                      [AC_MSG_ERROR([Arb not found])])
+	       AC_SEARCH_LIBS([arb_hypgeom_erfinv],,,
+	                      [AC_MSG_ERROR([Arb found but too old])])
 	       dnl Arb headers were moved to flint subdir w/ FLINT 3.0
 	       AC_CHECK_HEADERS([arb.h],,
 		   [AC_CHECK_HEADERS([flint/arb.h],,
