@@ -70,7 +70,17 @@ TEST ///
 TEST ///
   R = QQ[x,y];
   I = ideal ((x-3)*(x^2+1),y-1);
-  assert({{3.0, 1.0}} == msolveRealSolutions(I, "output type" => "float middle point"))
+  assert(msolveRealSolutions I == {{3.0, 1.0}})
+  assert(msolveRealSolutions I === msolveRealSolutions(I, QQi))
+  scan({QQ, QQi, RR, RR_53, RRi, RR_53},
+      F -> assert({{3.0, 1.0}} == msolveRealSolutions(I, F)))
+  assert(precision first first msolveRealSolutions I           == infinity)
+  assert(precision first first msolveRealSolutions(I, RR)      == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RR_20)   == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RR_100)  == 100)
+  assert(precision first first msolveRealSolutions(I, RRi)     == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RRi_20)  == defaultPrecision)
+  assert(precision first first msolveRealSolutions(I, RRi_100) == 100)
 ///
 
 TEST ///
@@ -93,6 +103,20 @@ TEST ///
   eM2 = eliminate(x, I);
   eMsolve = msolveEliminate(x, I);
   assert(eM2 == sub(eMsolve, ring eM2))
+///
+
+TEST ///
+  --restart
+  debugLevel=1
+  needsPackage "Msolve";
+  R = QQ[x..z,t]
+  K = ideal(x^6+y^6+x^4*z*t+z^3,36*x^5+60*y^5+24*x^3*z*t,
+      -84*x^5+10*x^4*t-56*x^3*z*t+30*z^2,-84*y^5-6*x^4*t-18*z^2,
+      48*x^5+10*x^4*z+32*x^3*z*t,48*y^5-6*x^4*z,14*x^4*z+8*x^4*t+24*z^2)
+  errorDepth=2
+  W1 = msolveEliminate(R_0, K, Verbosity => 1)
+  W2 = eliminate(R_0, K)
+  sub(W1, R) == W2
 ///
 
 end

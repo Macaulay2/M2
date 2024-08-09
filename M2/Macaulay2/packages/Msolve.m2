@@ -24,7 +24,8 @@ export{
     "msolveEliminate",
     "msolveRUR",
     "msolveLeadMonomials",
-    "msolveRealSolutions"
+    "msolveRealSolutions",
+    "QQi",
     }
 
 importFrom_Core { "raw", "rawMatrixReadMsolveFile" }
@@ -44,8 +45,9 @@ msolveProgram = findProgram("msolve", "msolve --help",
 if msolveProgram === null then (
     if not (options currentPackage).OptionalComponentsPresent
     then ( printerr "warning: msolve cannot be found; ending"; end )
-    else ( printerr "warning: msolve found but its version is older than v" | msolveMinimumVersion;
-	msolveProgram = findProgram("msolve", "msolve --help", Verbose => debugLevel > 0)))
+    else ( printerr("warning: msolve found but its version is older than v" | msolveMinimumVersion);
+	-- note: msolve -h returns status code 1 :/
+	msolveProgram = findProgram("msolve", "true", Verbose => debugLevel > 0)))
 
 msolveDefaultOptions = new OptionTable from {
     Threads => allowableThreads,
@@ -104,20 +106,20 @@ readMsolveOutputFile(Ring,String) := Matrix => (R,mOut) -> if use'readMsolveOutp
     -- TODO: this substitution should be unnecessary,
     -- but without it the result for tower rings is in the wrong order!
     then substitute(map(R, rawMatrixReadMsolveFile(raw R, mOut)), R) else (
-	msolveOut := get mOut;
-    	moutStrL:=separate(",",first separate("[]]",last separate("[[]",msolveOut)));
-    	--the line below should be replaced by a call to the C-function to parse the string
-    	M2Out:=for s in moutStrL list value(s);
-    	matrix {M2Out};
-    	)
+	--the line below should be replaced by a call to the C-function to parse the string
+	-- this is a hack that has global consequences (e.g. breaks rings with p_i vars)
+	use newRing(R, Variables => numgens R);
+	substitute(matrix {value readMsolveList get mOut}, vars R))
 
 readMsolveList = mOutStr -> (
+    mOutStr = toString stack select(lines mOutStr,
+	line -> not match("#", line));
     mOutStr = replace("\\[", "{", mOutStr);
     mOutStr = replace("\\]", "}", mOutStr);
     -- e.g. 'p_0' to "p_0"
     mOutStr = replace("'", "\"",  mOutStr);
     mOutStr = first separate(":", mOutStr);
-    value mOutStr)
+    mOutStr)
 
 msolveGB = method(TypicalValue => Matrix, Options => msolveDefaultOptions)
 msolveGB Ideal := opts -> I0 -> (
@@ -168,20 +170,69 @@ addHook((saturate, Ideal, RingElement), Strategy => Msolve,
     -- msolveSaturate doesn't use any options of saturate, like DegreeLimit, etc.
     (opts, I, f) -> try ideal msolveSaturate(I, f))
 
-msolveRealSolutions = method(TypicalValue => List,
-    Options => msolveDefaultOptions ++ { "output type" => "rational interval" })
-msolveRealSolutions Ideal := opt -> I0 -> (
+--------------------------------------------------------------------------------
+-- Rational interval type, constructors, and basic methods
+--------------------------------------------------------------------------------
+
+QQi = new Ring of List -- TODO: array looks better, but List implements arithmetic by default!
+QQi.synonym = "rational interval"
+
+ring      QQi := x -> QQi
+precision QQi := x -> infinity
+
+QQinterval = method(TypicalValue => QQi)
+QQinterval VisibleList := bounds -> (
+    if #bounds == 2 then QQinterval(bounds#0, bounds#1)
+    else error "expected a lower bound and upper bound")
+QQinterval Number                        := midpt  -> QQinterval(midpt/1, midpt/1)
+QQinterval InexactNumber                 := midpt  -> QQinterval lift(midpt, QQ)
+QQinterval(InexactNumber, InexactNumber) := (L, R) -> QQinterval(lift(L, QQ), lift(R, QQ))
+QQinterval(Number,        Number)        := (L, R) -> new QQi from [L/1, R/1]
+
+-- TODO: these are compiled functions, make them methods and define for QQi
+left'     = first
+right'    = last
+midpoint' = int -> sum int / 2
+diameter QQi := x -> x#1 - x#0
+
+interval QQi := opts -> x -> interval(x#0, x#1, opts)
+
+QQi == Number :=
+Number == QQi := (x, y) -> QQinterval x == QQinterval y
+
+-- ZZ, QQ, RR, RRi
+promote(Number, QQi) := (n, QQi) -> QQinterval n
+
+-- ZZ, QQ
+lift(QQi, Number) := o -> (x, R) -> (
+    if diameter x == 0 then lift(midpoint' x, R)
+    else if o.Verify then error "lift: interval has positive diameter")
+
+--------------------------------------------------------------------------------
+
+msolveDefaultPrecision = 32 -- alternative: defaultPrecision
+
+msolveRealSolutions = method(TypicalValue => List, Options => msolveDefaultOptions)
+msolveRealSolutions Ideal              := opt ->  I0     -> msolveRealSolutions(I0, QQi, opt)
+msolveRealSolutions(Ideal, RingFamily) := opt -> (I0, F) -> msolveRealSolutions(I0, F_msolveDefaultPrecision, opt)
+msolveRealSolutions(Ideal, Ring)       := opt -> (I0, F) -> (
+    if not any({QQ, QQi, RR_*, RRi_*}, F' -> ancestor(F', F))
+    then error "msolveRealSolutions: expected target field to be rationals, reals, or a rational or real interval field";
     (S, K, I) := toMsolveRing I0;
-    mOut := msolve(S, K, I_*, "", opt); -- optional: -p precision
+    -- if precision is not specified, we want to use msolve's default precision
+    prec := if precision F === infinity then msolveDefaultPrecision else precision F;
+    mOut := msolve(S, K, I_*, "-p " | prec, opt);
     -- format: [dim, [numlists, [ solution boxes ]]]
-    solsp := readMsolveList get mOut;
-    if solsp_0>0 then (error "Input ideal not zero dimensional, no solutions found.";);
-    if (solsp_1)_0>1 then (print "unexpected msolve output, returning full output"; return solsp;);
-    sols:=(solsp_1)_1;
-    if opt#"output type"=="rational interval" then return sols;
-    if opt#"output type"=="float interval" then return (1.0*sols);
-    if opt#"output type"=="float middle point" then return (for s in sols list(for s1 in s list sum(s1)/2.0));
-    );
+    (d, solsp) := toSequence value readMsolveList get mOut;
+    if d =!= 0 then error "msolveRealSolutions: expected zero dimensional system of equations";
+    if solsp_0 > 1 then (
+	printerr "msolveRealSolutions: unexpected msolve output, returning full output"; return {d, solsp});
+    prec  = max(defaultPrecision, prec); -- we want the output precision to be at least defaultPrecision
+    sols := apply(last solsp, sol -> apply(sol, QQinterval));
+    if ancestor(QQi,   F) then sols else
+    if ancestor(QQ,    F) then apply(sols, sol -> apply(sol, midpoint'))                    else
+    if ancestor(RR_*,  F) then apply(sols, sol -> apply(sol, midpoint') * numeric(prec, 1)) else
+    if ancestor(RRi_*, F) then apply(sols, sol -> apply(sol, range -> interval(range, Precision => prec))))
 
 msolveRUR = method(TypicalValue => List, Options => msolveDefaultOptions)
 msolveRUR Ideal := opt -> I0 ->(
@@ -189,7 +240,7 @@ msolveRUR Ideal := opt -> I0 ->(
     (S, K, I) := toMsolveRing I0;
     mOut := msolve(S, K, I_*, "-P 2", opt);
     -- format: [dim, [char, nvars, deg, vars, form, [1, [lw, lwp, param]]]]:
-    solsp := readMsolveList get mOut;
+    solsp := value readMsolveList get mOut;
     if first solsp != 0 then error "msolveRUR: expected zero dimensional input ideal";
     lc:=(solsp_1)_4;
     l:=sum(numgens S0,i->lc_i*S0_i);
@@ -357,58 +408,73 @@ Node
 	    degree lm
 	    dim lm
 
+Node
+    Key
+        QQi
+    Headline
+        the class of all rational intervals
+    Description
+        Text
+            This class is similar to the class of @TO2(RRi, "real intervals")@,
+	    except that the boundaries are arbitrary precision rational numbers.
+    Caveat
+        Currently this class is not implemented in the interpreter,
+	which means rings or matrices over rational intervals are not supported,
+	and many functionalities of @TO RRi@ are not yet available.
+
 Node 
     Key
     	msolveRealSolutions
        (msolveRealSolutions, Ideal)
+       (msolveRealSolutions, Ideal, Ring)
+       (msolveRealSolutions, Ideal, RingFamily)
        [msolveRealSolutions, Threads]
        [msolveRealSolutions, Verbosity]
     Headline
 	compute all real solutions to a zero dimensional system using symbolic methods
     Usage
     	msolveRealSolutions(I)
+	msolveRealSolutions(I, K)
     Inputs
     	I:Ideal
 	    which is zero dimensional, in a polynomial ring with coefficients over @TO QQ@
+	K:{Ring,RingFamily}
+	    the field to find answers in, which must be one of
+	    @TO QQi@ (default), @TO QQ@, @TO RR@, or @TO RRi@ (possibly with specified precision)
 	Threads => ZZ -- number of processor threads to use
 	Verbosity => ZZ -- level of verbosity between 0, 1, and 2
     Outputs
-        Sols:List
-	    of lists; each entry in the list @TT "Sols"@ consists of a list representing
+        :List
+	    of lists; each entry in the list consists of a list representing
 	    the coordinates of a solution. By default each solution coordinate value is
-	    also represented by a two element list of rational numbers, {a, b}, this means
-	    that that coordinate of the solution has a value greater than or equal to a and
-	    less than or equal to b. This interval is computed symbolically and its correctness
-	    is guaranteed by exact methods.
+	    also represented by a @TO2(QQi, "rational interval")@ consisting of a two element
+	    list of rational numbers, @TT "{a, b}"@, this means that that coordinate of the
+	    solution has a value greater than or equal to @TT "a"@ and less than or equal to @TT "b"@.
+	    This interval is computed symbolically and its correctness is guaranteed by exact methods.
     Description 
         Text
 	    This functions uses the msolve package to compute the real solutions to a zero
 	    dimensional polynomial ideal with either integer or rational coefficients.
-	    The output is a list of lists, each entry in the list Sol consists of a list
-	    representing the coordinates of a solution. By default each solution coordinate
-	    value is also represented by a two element list of rational numbers, {a, b},
-	    this means that that coordinate of the solution has a value greater than or
-	    equal to a and less than or equal to b. This interval is computed symbolically
-	    and its correctness is guaranteed by exact methods.
 	Text
-	    Option "output type" (default = "rational interval") gives alternative ways to provide output 
-	    either using @TO RRi@ ("float interval")
-	    or by taking a floating point approximation of the average of the interval endpoints ("float middle point").
-    	Text
-	    First an example over a finite field
+	    The second input is optional, and indicates the alternative ways to provide output
+	    either using an exact rational interval @TO QQi@, a real interval @TO RRi@,
+	    or by taking a rational or real approximation of the midpoint of the intervals.
 	Example
 	    R = QQ[x,y]
 	    I = ideal {(x-1)*x, y^2-5}
-	    sols = msolveRealSolutions I
-	    floatSolsInterval = msolveRealSolutions(I,"output type"=>"float interval")
-	    floatAproxSols = msolveRealSolutions(I,"output type"=>"float middle point")	    	    
+	    rationalIntervalSols = msolveRealSolutions I
+	    rationalApproxSols = msolveRealSolutions(I, QQ)
+	    floatIntervalSols = msolveRealSolutions(I, RRi)
+	    floatIntervalSols = msolveRealSolutions(I, RRi_10)
+	    floatApproxSols = msolveRealSolutions(I, RR)
+	    floatApproxSols = msolveRealSolutions(I, RR_10)
 	Text
 	    Note in cases where solutions have multiplicity this is not reflected in the output.
 	    While the solver does not return multiplicities,
 	    it reliably outputs the verified isolating intervals for multiple solutions.  
 	Example 
 	    I = ideal {(x-1)*x^3, (y^2-5)^2}
-	    floatAproxSols=msolveRealSolutions(I,"output type"=>"float interval")
+	    floatApproxSols = msolveRealSolutions(I, RRi)
 Node 
     Key
     	msolveRUR
@@ -502,15 +568,15 @@ Node
 	    This functions uses the F4SAT algorithm implemented in the msolve library to compute a
 	    Groebner basis, in GRevLex order, of $I:f^\infty$, that is of the saturation of the
 	    ideal $I$ by the principal ideal generated by the polynomial $f$.
-    	Text
-	    First an example; note the ring must be a polynomial ring over a finite field
 	Example
 	    R=ZZ/1073741827[z_1..z_3]
 	    I=ideal(z_1*(z_2^2-17*z_1-z_3^3),z_1*z_2)
 	    satMsolve=ideal msolveSaturate(I,z_1)
 	    satM2=saturate(I,z_1)
+	Text
+	    Note that the ring must be a polynomial ring over a finite field.
     Caveat
-	Currently this algorithm only works over prime fields in characteristic between $2^{16}$ and $2^{31}$.
+	Currently the F4SAT algorithm is only implemented over prime fields in characteristic between $2^{16}$ and $2^{31}$.
 
 Node 
     Key
