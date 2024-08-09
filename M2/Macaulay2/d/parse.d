@@ -256,7 +256,7 @@ export functionDescription := {
      restargs:bool		    -- whether last parm gets rest of args
      };
 export dummyDesc := functionDescription(-1,0,0,false);
-export functionCode := {+
+export functionCode := {+ -- this is called FunctionBody in the top-level
      body:Code,
      desc:functionDescription,
      hash:hash_t,

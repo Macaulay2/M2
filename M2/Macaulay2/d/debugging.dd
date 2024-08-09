@@ -161,18 +161,27 @@ export toList(c:Code):Expr := (
 
 disassemble(e:Expr):Expr := (
     when e
-    is f:FunctionClosure do toExpr(tostring(Code(f.model)))
-    is f:functionCode do toExpr(tostring(Code(f)))
+    -- # typical value: disassemble, PseudocodeClosure, String
     is c:PseudocodeClosure do toExpr(tostring(c.code))
-    is s:SpecialExpr do disassemble(s.e)
-    else WrongArg("pseudocode or a function closure derived from Macaulay 2 code"));
+    -- # typical value: disassemble, FunctionClosure, String
+    is f:FunctionClosure   do toExpr(tostring(Code(f.model)))
+    -- # typical value: disassemble, FunctionBody, String
+    is f:functionCode      do toExpr(tostring(Code(f)))
+    -- e.g. if X = new Type of FunctionClosure is defined,
+    -- this makes disassemble(new X from (a -> 2*a)) work
+    is s:SpecialExpr       do disassemble(s.e)
+    else WrongArg("a pseudocode or function closure derived from Macaulay2 code"));
 setupfun("disassemble", disassemble);
 
 pseudocode(e:Expr):Expr := (
     when e
+    -- # typical value: pseudocode, FunctionClosure, PseudocodeClosure
     is f:FunctionClosure do Expr(PseudocodeClosure(f.frame, Code(f.model)))
-    is f:functionCode do Expr(Pseudocode(f.body))
-    is s:SpecialExpr do pseudocode(s.e)
+    -- # typical value: pseudocode, FunctionBody, PseudocodeClosure
+    is f:functionCode    do Expr(Pseudocode(f.body))
+    -- e.g. if X = new Type of FunctionClosure is defined,
+    -- this makes pseudocode(new X from (a -> 2*a)) work
+    is s:SpecialExpr     do pseudocode(s.e)
     else WrongArg("a function derived from Macaulay2 code"));
 setupfun("pseudocode", pseudocode);
 
