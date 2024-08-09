@@ -163,10 +163,12 @@ disassemble(e:Expr):Expr := (
     when e
     -- # typical value: disassemble, PseudocodeClosure, String
     is c:PseudocodeClosure do toExpr(tostring(c.code))
+    -- # typical value: disassemble, Pseudocode, String
+    is c:Pseudocode        do toExpr(tostring(c.code))
     -- # typical value: disassemble, FunctionClosure, String
     is f:FunctionClosure   do toExpr(tostring(Code(f.model)))
     -- # typical value: disassemble, FunctionBody, String
-    is f:functionCode      do toExpr(tostring(Code(f)))
+    is f:functionCode      do toExpr(tostring(Code(f.body)))
     -- e.g. if X = new Type of FunctionClosure is defined,
     -- this makes disassemble(new X from (a -> 2*a)) work
     is s:SpecialExpr       do disassemble(s.e)
