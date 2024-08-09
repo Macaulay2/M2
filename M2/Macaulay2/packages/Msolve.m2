@@ -43,11 +43,9 @@ msolveProgram = findProgram("msolve", "msolve --help",
     Verbose => debugLevel > 0)
 
 if msolveProgram === null then (
-    if not (options currentPackage).OptionalComponentsPresent
-    then ( printerr "warning: msolve cannot be found; ending"; end )
-    else ( printerr("warning: msolve found but its version is older than v" | msolveMinimumVersion);
-	-- note: msolve -h returns status code 1 :/
-	msolveProgram = findProgram("msolve", "true", Verbose => debugLevel > 0)))
+    printerr("warning: could not find msolve with version at least v" | msolveMinimumVersion);
+    -- note: msolve -h returns status code 1 :/
+    msolveProgram = findProgram("msolve", "true", Verbose => debugLevel > 0))
 
 msolveDefaultOptions = new OptionTable from {
     Threads => allowableThreads,
