@@ -21,7 +21,7 @@ export tostring(c:Code):string := (
     is x:globalSymbolClosureCode do concatenate(array(string)("(global ", x.symbol.word.name, ")"))
     is x:threadSymbolClosureCode do concatenate(array(string)("(thread ", x.symbol.word.name, ")"))
     --
-    is x:localMemoryReferenceCode  do concatenate(array(string)("(fetch ",        tostring(x.frameindex), " ", tostring(x.nestingDepth), ")"))
+    is x:localMemoryReferenceCode  do concatenate(array(string)("(local-fetch ",  tostring(x.frameindex), " ", tostring(x.nestingDepth), ")"))
     is x:globalMemoryReferenceCode do concatenate(array(string)("(global-fetch ", tostring(x.frameindex), ")"))
     is x:threadMemoryReferenceCode do concatenate(array(string)("(thread-fetch ", tostring(x.frameindex), ")"))
     --
@@ -101,7 +101,7 @@ export toList(c:Code):Expr := (
     is x:globalSymbolClosureCode do list(toExpr("global"), Expr(SymbolBody(x.symbol)), toExpr(x.symbol.frameindex))
     is x:threadSymbolClosureCode do list(toExpr("thread"), Expr(SymbolBody(x.symbol)), toExpr(x.symbol.frameindex))
     --
-    is x:localMemoryReferenceCode  do list(toExpr("fetch"),        toExpr(x.frameindex), toExpr(x.nestingDepth))
+    is x:localMemoryReferenceCode  do list(toExpr("local-fetch"),  toExpr(x.frameindex), toExpr(x.nestingDepth))
     is x:globalMemoryReferenceCode do list(toExpr("global-fetch"), toExpr(x.frameindex))
     is x:threadMemoryReferenceCode do list(toExpr("thread-fetch"), toExpr(x.frameindex))
     --
