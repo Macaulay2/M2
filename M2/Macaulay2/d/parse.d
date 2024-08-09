@@ -263,6 +263,7 @@ export functionCode := {+
      position:Position
      };
 export Code := (
+    -- when adding or removing classes of core here, also update debugging.dd
      nullCode or realCode or stringCode or integerCode 
      or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
      or globalAssignmentCode or localAssignmentCode 

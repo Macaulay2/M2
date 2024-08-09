@@ -1,8 +1,85 @@
-use util;
 use tokens;
 use common;
-use evaluate;
-use sets;
+use util;
+use hashtables;
+
+export tostring(c:Code):string := (
+    when c
+    is x:nullCode    do "(null)"
+    is x:realCode    do tostringRR(x.x)
+    is x:integerCode do tostring(x.x)
+    is x:stringCode  do concatenate(array(string)("\"", present(x.x), "\""))
+    is x:Error       do concatenate(array(string)("(error \"", x.message, "\")"))
+    --
+    is x:sequenceCode     do concatenate(array(string)("(sequence ",     between(" ", new array(string) len length(x.x) do foreach s in x.x do provide tostring(s)), ")"))
+    is x:listCode         do concatenate(array(string)("(list ",         between(" ", new array(string) len length(x.y) do foreach s in x.y do provide tostring(s)), ")"))
+    is x:arrayCode        do concatenate(array(string)("(array ",        between(" ", new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
+    is x:angleBarListCode do concatenate(array(string)("(angleBarList ", between(" ", new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))
+    is x:semiCode         do concatenate(array(string)("(semi ",         between(" ", new array(string) len length(x.w) do foreach s in x.w do provide tostring(s)), ")"))
+    --
+    is x:localSymbolClosureCode  do concatenate(array(string)("(local ",  x.symbol.word.name, " nestingDepth: ", tostring(x.nestingDepth), ")"))
+    is x:globalSymbolClosureCode do concatenate(array(string)("(global ", x.symbol.word.name, ")"))
+    is x:threadSymbolClosureCode do concatenate(array(string)("(thread ", x.symbol.word.name, ")"))
+    --
+    is x:localMemoryReferenceCode  do concatenate(array(string)("(fetch ",        tostring(x.frameindex), " ", tostring(x.nestingDepth), ")"))
+    is x:globalMemoryReferenceCode do concatenate(array(string)("(global-fetch ", tostring(x.frameindex), ")"))
+    is x:threadMemoryReferenceCode do concatenate(array(string)("(thread-fetch ", tostring(x.frameindex), ")"))
+    --
+    is x:localAssignmentCode     do concatenate(array(string)("(local-assign ",  tostring(x.frameindex), " ", tostring(x.nestingDepth), " ", tostring(x.rhs), ")"))
+    is x:globalAssignmentCode    do concatenate(array(string)("(global-assign ", x.lhs.word.name,        " ",                                tostring(x.rhs), ")"))
+    is x:augmentedAssignmentCode do concatenate(array(string)("(augmented-assign ", x.oper.word.name, " ", tostring(x.lhs), " ", tostring(x.rhs), " ", x.info.word.name, ")"))
+    is x:parallelAssignmentCode  do (
+	n := length(x.nestingDepth);
+	concatenate(array(string)(
+		"(parallel-assign (", between(" ",
+		    new array(string) len n do
+		    for i from 0 to n-1 do
+		    if x.lhs.i == dummySymbol
+		    then provide concatenate(array(string)("(", tostring(x.frameindex.i), " ", tostring(x.nestingDepth.i), ")"))
+		    else provide join("'", x.lhs.i.word.name)),
+		") ", tostring(x.rhs), ")")))
+    -- TODO: what is an example that yields this?
+    is x:evaluatedCode do concatenate(array(string)("(expr ", tostring(hash(x.expr)), ")"))
+    --
+    is x:ifCode    do concatenate(array(string)("(if ",    tostring(x.predicate), " then: ", tostring(x.thenClause), " else: ", tostring(x.elseClause), ")"))
+    is x:tryCode   do concatenate(array(string)("(try ",   tostring(x.code), " ",            tostring(x.thenClause), " ",       tostring(x.elseClause), ")"))
+    is x:catchCode do concatenate(array(string)("(catch ", tostring(x.code), ")"))
+    --
+    is x:unaryCode    do concatenate(array(string)("(1-OP ", getUnopName(x.f).word.name,   " ", tostring(x.rhs), ")"))
+    is x:binaryCode   do concatenate(array(string)("(2-OP ", getBinopName(x.f).word.name,  " ", tostring(x.lhs),  " ", tostring(x.rhs), ")"))
+    is x:ternaryCode  do concatenate(array(string)("(3-OP ", getTernopName(x.f).word.name, " ", tostring(x.arg1), " ", tostring(x.arg2), " ", tostring(x.arg3), ")"))
+    is x:multaryCode  do concatenate(array(string)("(OP ",   getMultopName(x.f).word.name, " ",
+	    between(" ", new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")"))
+    is x:adjacentCode do concatenate(array(string)("(adjacent ", tostring(x.lhs), " ", tostring(x.rhs), ")"))
+    --
+    is x:functionCode do concatenate(array(string)(
+	    "(function",
+	    " restargs: ",  tostring(x.desc.restargs),
+	    " numparms: ",  tostring(x.desc.numparms),
+	    " framesize: ", tostring(x.desc.framesize),
+	    " frameID: ",   tostring(x.desc.frameID),
+	    " ",            tostring(x.body), ")"))
+    --
+    is x:forCode do concatenate(array(string)(
+	    "(for",
+	    " in: ",   tostring(x.inClause),
+	    " from: ", tostring(x.fromClause),
+	    " to: ",   tostring(x.toClause),
+	    " when: ", tostring(x.whenClause),
+	    " list: ", tostring(x.listClause),
+	    " do: ",   tostring(x.doClause), ")"))
+    --
+    is x:whileListDoCode do concatenate(array(string)("(while ", tostring(x.predicate), " list: ", tostring(x.listClause), " do: ", tostring(x.doClause), ")"))
+    is x:whileDoCode     do concatenate(array(string)("(while ", tostring(x.predicate),                                    " do: ", tostring(x.doClause), ")"))
+    is x:whileListCode   do concatenate(array(string)("(while ", tostring(x.predicate), " list: ", tostring(x.listClause), ")"))
+    --
+    is x:newOfFromCode do concatenate(array(string)("(new ", tostring(x.newClause), " of: ", tostring(x.ofClause), " from: ", tostring(x.fromClause), ")"))
+    is x:newFromCode   do concatenate(array(string)("(new ", tostring(x.newClause),                                " from: ", tostring(x.fromClause), ")"))
+    is x:newOfCode     do concatenate(array(string)("(new ", tostring(x.newClause), " of: ", tostring(x.ofClause), ")"))
+    is x:newCode       do concatenate(array(string)("(new ", tostring(x.newClause), ")"))
+    --
+    is x:newLocalFrameCode do concatenate(array(string)()) -- soon obsolete
+    );
 
 export toExpr(c:Code):Expr := Pseudocode(c);
 export toList(c:Code):Expr := (
