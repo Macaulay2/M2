@@ -64,6 +64,7 @@ M2_DFILES += buckets.dd
 M2_DFILES += equality.dd
 M2_DFILES += hashtables.dd
 M2_DFILES += regex.dd
+M2_DFILES += debugging.dd
 M2_DFILES += evaluate.d
 M2_DFILES += sets.dd
 M2_DFILES += version.dd
@@ -76,7 +77,6 @@ M2_DFILES += mysqldummy.d
 endif
 M2_DFILES += pthread.d
 M2_DFILES += actors.d
-M2_DFILES += debugging.dd
 M2_DFILES += actors2.dd
 M2_DFILES += actors3.d
 M2_DFILES += actors4.d
