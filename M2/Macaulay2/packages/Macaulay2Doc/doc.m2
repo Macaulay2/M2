@@ -32,7 +32,7 @@ undocumented {
     (symbol*,  ZZ, GradedModuleMap),
     (symbol*,  InfiniteNumber, InfiniteNumber),
     (symbol*,  ZZ, Module),
-    (symbol*,  ZZ, MonomialIdeal),
+    (symbol*,  Number, MonomialIdeal),
     (symbol*,  String),
     (symbol*,  ZZ, ChainComplexMap),
     }
@@ -415,7 +415,7 @@ document {
 	  (symbol //, RingElement, Number),
 	  (symbol //, Number, InfiniteNumber),
 	  (symbol //, Number, Matrix),
-	  (symbol //, ZZ, MonomialIdeal)
+	  (symbol //, Number, MonomialIdeal)
 	  },
      Headline => "a binary operator, usually used for quotient",
      Usage => "x // y",

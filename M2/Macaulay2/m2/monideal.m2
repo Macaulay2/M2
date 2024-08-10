@@ -44,7 +44,7 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => ((I, J) -> newMonomialIdeal(ri
 MonomialIdeal * Ring := MonomialIdeal => (I, S) -> if ring I === S then I else monomialIdeal(generators I ** S)
 Ring * MonomialIdeal := MonomialIdeal => (S, I) -> I ** S
 
-RingElement * MonomialIdeal := ZZ * MonomialIdeal := MonomialIdeal => (r, I) -> monomialIdeal(r * generators I)
+RingElement * MonomialIdeal := Number * MonomialIdeal := MonomialIdeal => (r, I) -> monomialIdeal(r * generators I)
 
 -----------------------------------------------------------------------------
 -- Basic methods (specifically those which are distinct from Ideal)
