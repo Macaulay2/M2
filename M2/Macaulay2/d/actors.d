@@ -1152,6 +1152,7 @@ lengthFun(rhs:Code):Expr := (
      e := eval(rhs);
      when e
      is Error do e
+     -- # typical value: symbol #, Set, ZZ
      -- # typical value: symbol #, HashTable, ZZ
      is x:HashTable do (
 	  if (x.Mutable) then lockRead(x.mutex);
@@ -1168,6 +1169,7 @@ lengthFun(rhs:Code):Expr := (
 	  unlock(table.mutex);
 	  res)
      -- # typical value: symbol #, List, ZZ
+     -- # typical value: symbol #, BasicList, ZZ
      is x:List do toExpr(length(x.v))
      -- # typical value: symbol #, String, ZZ
      is s:stringCell do toExpr(length(s.v))

@@ -816,6 +816,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       else buildErrorPacket("encountered missing value"))
 	  else buildErrorPacket("expected a string as key to database"))
      -- # typical value: symbol #, List, ZZ, Thing
+     -- # typical value: symbol #, BasicList, ZZ, Thing
      is x:List do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then getvalue(x.v,toInt(r))
@@ -866,6 +867,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    )
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, Set, Thing, Boolean
      -- # typical value: symbol #?, HashTable, Thing, Boolean
      is x:HashTable do if lookup1Q(x,right) then True else False
      -- # typical value: symbol #?, Dictionary, String, Boolean
@@ -880,6 +882,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 	  is key:stringCell do dbmquery(x,key.v)
 	  else buildErrorPacket("expected a string as key to database"))
      -- # typical value: symbol #?, List, ZZ, Boolean
+     -- # typical value: symbol #?, BasicList, ZZ, Boolean
      is x:List do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
