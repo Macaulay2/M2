@@ -194,17 +194,12 @@ minimizeDM(DifferentialModule) := r ->(
 ---
 
 --  Input:  a free complex F and a degree d
---  Output: the corresponding free differential module of degree da
+--  Output: the corresponding free differential module of degree d
 foldComplex = method();
 foldComplex(Complex,ZZ) := DifferentialModule => (F,d)->(
     R := ring F;
-    L := apply(length F+1,j->(
-	    --sasha: i removed the concatMatrices method since 'matrix {_}' just does the same thing
-	    transpose matrix {apply(length F+1,i->map(F_j,F_i, if i == j+1 then F.dd_i else 0))}
-	));
-    FDiff := transpose(matrix {L});
-    FMod := F_0;
-    scan(length F+1, i-> FMod = FMod ++ ((F_(i+1))**(R)^{(i+1)*d}));
+    FDiff := directSum apply(min F .. max F + 1, i -> F.dd_i);
+    FMod := directSum apply(min F .. max F, i -> F_i ** R^{i*d});
     degFDiff := map(FMod,FMod,FDiff, Degree=>d); 
     differentialModule(complex({-degFDiff,-degFDiff})[1]) 
     )
@@ -1242,3 +1237,9 @@ L = stronglyLinearStrand(M)
 assert(L == koszulComplex {x_1})
 ///
 
+TEST ///
+  S = QQ[x,y]
+  K = koszulComplex vars S
+  assert(differential foldComplex(K, 0) == map(S^{{0}, 2:{-1}, {-2}},S^{{0}, 2:{-1}, {-2}},{{0, x, y, 0}, {0, 0, 0, -y}, {0, 0, 0, x}, {0, 0, 0, 0}}))
+  assert(differential foldComplex(dual K, 0) == map(S^{{2}, 2:{1}, {0}},S^{{2}, 2:{1}, {0}},{{0, -y, x, 0}, {0, 0, 0, x}, {0, 0, 0, y}, {0, 0, 0, 0}}))
+///
