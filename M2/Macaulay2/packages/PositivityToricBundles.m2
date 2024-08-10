@@ -1162,7 +1162,7 @@ document {
   Outputs => {
    "F" => ToricVectorBundleKlyachko },
 
-  "A toric vector bundle in Klyachko's description as used in ", TO "ToricVectorBundles", " is given by ascending filtrations. Unfortunately, the filtration steps are not always stored in an ascending way by certain methods, like ", TO "ToricVectorBundles::dual(ToricVectorBundle)", " or ", TO "ToricVectorBundles::tensor(ToricVectorBundle,ToricVectorBundle)", " (and maybe others). This may cause problems in some methods of ", TT "PositivityToricBundles", ", for example in ", TO "toricChernCharacter", ". This method ensures that the filtration steps are stored in an ascending way and therefore, that the methods of this package can be used savely.",
+  "A toric vector bundle in Klyachko's description as used in ", TO "ToricVectorBundles", " is given by ascending filtrations. Unfortunately, the filtration steps are not always stored in an ascending way by certain methods, like ", TO "ToricVectorBundles::dual(ToricVectorBundle)", " or ", TO "ToricVectorBundles::tensor(ToricVectorBundle,ToricVectorBundle)", " (and maybe others). This may cause problems in some methods of ", TT "PositivityToricBundles", ", for example in ", TO "toricChernCharacter", ". This method ensures that the filtration steps are stored in an ascending way and therefore, that the methods of this package can be used safely.",
 
   EXAMPLE {
     "T = tangentBundle projectiveSpaceFan 2",
