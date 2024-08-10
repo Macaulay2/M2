@@ -13,10 +13,6 @@ typicalValues#(symbol symbol) = Symbol
 typicalValues#(symbol ?) = Boolean
 
 dummy := x -> error("dummy method function called")
--- TODO: where are these defined in the interpreter?
-installMethod(symbol #?, BasicList, ZZ, Boolean => x -> (dummy x;))
-installMethod(symbol #, BasicList, ZZ, Thing => x -> (dummy x;))
-installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
 
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
