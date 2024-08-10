@@ -66,8 +66,8 @@ generators MonomialIdeal := o -> I -> I.cache.generators ??= map(ring I, rawMono
 Matrix %  MonomialIdeal := Matrix => (f, I) -> f %  forceGB generators I
 Matrix // MonomialIdeal := Matrix => (f, I) -> f // forceGB generators I
 
-RingElement %  MonomialIdeal := ZZ %  MonomialIdeal := RingElement => (r, I) -> r_(ring I) %  forceGB generators I
-RingElement // MonomialIdeal := ZZ // MonomialIdeal := RingElement => (r, I) -> r_(ring I) // forceGB generators I
+RingElement %  MonomialIdeal := Number %  MonomialIdeal := RingElement => (r, I) -> r_(ring I) %  forceGB generators I
+RingElement // MonomialIdeal := Number // MonomialIdeal := RingElement => (r, I) -> r_(ring I) // forceGB generators I
 
 MonomialIdeal == MonomialIdeal := (I, J) -> I === J
 MonomialIdeal == ZZ := (I, i) -> (

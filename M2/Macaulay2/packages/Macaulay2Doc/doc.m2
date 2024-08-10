@@ -404,63 +404,15 @@ document {
      }
 
 document {
-     Key => {symbol %,
-	  (symbol %, CC, CC),
-	  (symbol %, CC, QQ),
-	  (symbol %, CC, RR),
-	  (symbol %, CC, ZZ),
-	  (symbol %, Number, RingElement),
-	  (symbol %, QQ, QQ),
-	  (symbol %, QQ, ZZ),
-	  (symbol %, RingElement, Number),
-	  (symbol %, RR, QQ),
-	  (symbol %, RR, RR),
-	  (symbol %, RR, ZZ),
-	  (symbol %, Number, GroebnerBasis),
-	  (symbol %, Number, Ideal),
-	  (symbol %, ZZ, MonomialIdeal),
-	  (symbol %, ZZ, ZZ)
-	  },	  
-     Headline => "a binary operator, usually used for remainder and reduction",
-     Usage => "x % y",
-     "The usual meaning for this operator is remainder, or normal form with respect
-     to a Gröbner basis.",
-     PARA{},
-     "For integers, the remainder is non-negative.",
-     EXAMPLE lines ///
-       1232132141242345 % 1000000
-       (-4)%5
-       ///,
-     PARA{},
-     "In polynomial rings, the division algorithm is used.",
-     EXAMPLE lines ///
-       A = ZZ[a,b]
-       (3*a^3-a*b-4) % (5*a-b)
-       pseudoRemainder(3*a^3-a*b-4, 5*a-b)
-       B = QQ[a,b]
-       (3*a^3-a*b-4) % (5*a-b)
-     ///,
-     "In more complicated situations, Gröbner bases are usually needed.  See ",
-     TO "methods for normal forms and remainder", ".",
-     SeeAlso => { remainder, remainder', pseudoRemainder, "//"}
-     }
-     
-document {
-     Key => {symbol //,(symbol //,ZZ,ZZ),
-	  (symbol //, CC, CC),
-	  (symbol //, CC, QQ),
-	  (symbol //, CC, RR),
-	  (symbol //, CC, ZZ),
+    Key => {
+	 symbol //,
+	(symbol //, ZZ, ZZ),
+	(symbol //, Number, Number),
 	  (symbol //, InfiniteNumber, Number),
 	  (symbol //, InfiniteNumber, RR),
 	  (symbol //, Matrix, Number),
-	  (symbol //, QQ, QQ),
 	  (symbol //, Number, RingElement),
-	  (symbol //, QQ, ZZ),
 	  (symbol //, RingElement, Number),
-	  (symbol //, RR, QQ),
-	  (symbol //, RR, RR),
-	  (symbol //, RR, ZZ),
 	  (symbol //, Number, InfiniteNumber),
 	  (symbol //, Number, Matrix),
 	  (symbol //, ZZ, MonomialIdeal)
