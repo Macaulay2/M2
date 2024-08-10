@@ -399,7 +399,7 @@ graphToricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts
 
 -- hT .. hashTable
 -- fun .. function that takes key and value as input and returns true or false
-selectPairs = (hT, fun) -> hashTable select(pairs hT, (k,v) -> fun(k,v) )
+--selectPairs = (hT, fun) -> hashTable select(pairs hT, (k,v) -> fun(k,v) )
 
 separatesJetsLocally = method( Options => true )
 separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opts -> (tvb,sigma) -> (
@@ -425,7 +425,8 @@ separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opt
 -- [RJS, Thm 6.2, condition (ii+iii)]
  sigmaDual := dualCone sigma;
  -- gives u=> {e's} such that u vertex of P(e) and u+sigma^vee contains P(e)
- uSigmaPE := applyPairs(uSigmaAreVertices, (u,eAV) -> (u, keys selectPairs(eAV, (e,AV) -> AV and contains(convexHull u + sigmaDual, par#e) ) ));
+ --uSigmaPE := applyPairs(uSigmaAreVertices, (u,eAV) -> (u, keys selectPairs(eAV, (e,AV) -> AV and contains(convexHull u + sigmaDual, par#e) ) ));
+ uSigmaPE := applyPairs(uSigmaAreVertices, (u,eAV) -> (u, keys hashTable select(pairs eAV, (e,AV) -> AV and contains(convexHull u + sigmaDual, par#e) ) ));
  uSigmaPEnumber := applyValues(uSigmaPE, Ps -> #Ps);
  -- [RJS, Thm 6.2, condition (iv)]
  if min values uSigmaPEnumber == 0 then (
