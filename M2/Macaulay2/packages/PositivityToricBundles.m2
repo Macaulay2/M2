@@ -483,7 +483,7 @@ if separatesJets(tvb, Verbosity=>opts#Verbosity) >= 0 then true else false;
 --   INPUT : 'tvb', toric vector bundle
 --  OUTPUT :  'true' if very ample, otherwise 'false'
 --isVeryAmple = method( Options => true ) -- already defined in Polyhedra
-isVeryAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> if separatesJets(tvb, Verbosity=>opts#Verbosity) >= 1 then true else false
+isVeryAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> separatesJets(tvb, opts) >= 1
   
 ------------------------------------------------------------------------------
 -- METHOD: restrictToInvCurves, isNef, isAmple
