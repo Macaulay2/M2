@@ -95,6 +95,10 @@ extern void fatalarrayindex(int indx, int len, const char *file, int line, int c
 
 extern void fatalarraylen(int len, const char *file, int line, int column);
 
+/******************************************************************************/
+/*  Functions dealing with libreadline and completion                         */
+/******************************************************************************/
+
 static char *M2_completion_generator(const char *text, int state) {
   static int i;
   static char **v;
@@ -123,6 +127,14 @@ static char **M2_completion(const char *text, int start, int end) {
   rl_attempted_completion_over = TRUE;
   /* if (start > 0 && rl_line_buffer[start-1] == '"') ... filename completion ... */
   return rl_completion_matches(text, M2_completion_generator);
+}
+
+void system_addHistory(char *buf) { add_history(buf); }
+char *system_getHistory(const int n)
+{
+  HIST_ENTRY *entry = history_get(n);
+  if (entry != NULL) return entry->line;
+  return NULL;
 }
 
 void system_initReadlineVariables(void) {

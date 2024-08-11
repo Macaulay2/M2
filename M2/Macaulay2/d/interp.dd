@@ -662,6 +662,13 @@ runBasicTests(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("runBasicTests",runBasicTests);
 
+getHistory(e:Expr):Expr := (
+    when e is n:ZZcell do if isInt(n)
+    then toExpr(tostring(getHistory(toInt(n))))
+    else WrongArgSmallInteger()
+    else WrongArgZZ());
+setupfun("getHistory", getHistory);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "
 -- End:
