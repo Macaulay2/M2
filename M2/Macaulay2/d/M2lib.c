@@ -140,6 +140,7 @@ char *system_getHistory(const int n)
 void system_initReadlineVariables(void) {
   static char readline_name[] = "M2";
   static char basic_word_break_characters[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
+  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
   rl_readline_name = readline_name;
   rl_attempted_completion_function = M2_completion;
   rl_basic_word_break_characters = basic_word_break_characters;
