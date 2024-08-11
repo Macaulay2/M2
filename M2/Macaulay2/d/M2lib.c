@@ -129,6 +129,12 @@ static char **M2_completion(const char *text, int start, int end) {
   return rl_completion_matches(text, M2_completion_generator);
 }
 
+int system_readHistory(char *filename) { return read_history(filename); }
+int system_appendHistory(int n, char *filename)
+{
+  return append_history(n, filename);
+}
+
 void system_addHistory(char *buf) { add_history(buf); }
 char *system_getHistory(const int n)
 {
