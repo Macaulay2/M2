@@ -14,7 +14,6 @@
 
 #include <gdbm.h>
 #include <mpfr.h>
-#include <readline/readline.h>
 
 #include <boost/stacktrace.hpp>
 #include <atomic>
@@ -90,7 +89,6 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   interrupt_jmp.is_set = FALSE;
 
   signal(SIGPIPE,SIG_IGN); /* ignore the broken pipe signal */
-  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
 
   static struct ArgCell* M2_vargs;
   M2_vargs = (ArgCell*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct ArgCell));
