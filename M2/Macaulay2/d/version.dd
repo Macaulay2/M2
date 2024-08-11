@@ -100,10 +100,6 @@ factoryversion():constcharstar := Ccode(returns,"
      ");
 
 header "#include <readline/readline.h>";
-readlineversion():constcharstar := Ccode(returns,"
-     static char buf[8];
-     snprintf(buf, 8, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
-     return buf");
 
 header "#include <gdbm.h>";
 gdbmversion():constcharstar := Ccode(returns, "return gdbm_version");
@@ -192,7 +188,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
    "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
-   "readline version" => readlineversion(),
+   "readline version" => Ccode(constcharstar,"stringize(RL_VERSION_MAJOR) \".\" stringize(RL_VERSION_MINOR)"),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
    "tbb version" => Ccode(constcharstar,"
