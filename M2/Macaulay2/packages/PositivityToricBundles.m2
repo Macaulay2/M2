@@ -397,10 +397,6 @@ graphToricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts
 -- METHOD: separateJets
 ------------------------------------------------------------------------------
 
--- hT .. hashTable
--- fun .. function that takes key and value as input and returns true or false
---selectPairs = (hT, fun) -> hashTable select(pairs hT, (k,v) -> fun(k,v) )
-
 separatesJetsLocally = method( Options => true )
 separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opts -> (tvb,sigma) -> (
  if opts#Verbosity>0 then << "METHOD: separatesJetsLocally" << endl;
@@ -486,8 +482,7 @@ if separatesJets(tvb, Verbosity=>opts#Verbosity) >= 0 then true else false;
 --           check if the vector bundle is very ample, using [RJS, Cor. 6.7]
 --   INPUT : 'tvb', toric vector bundle
 --  OUTPUT :  'true' if very ample, otherwise 'false'
---isVeryAmple = method( Options => true ) -- conflicts with Polyhedra
---isVeryAmple (ToricVectorBundleKlyachko) := (tvb) -> if separatesJets(tvb) >= 1 then true else false;
+--isVeryAmple = method( Options => true ) -- already defined in Polyhedra
 isVeryAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> if separatesJets(tvb, Verbosity=>opts#Verbosity) >= 1 then true else false
   
 ------------------------------------------------------------------------------
