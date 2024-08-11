@@ -669,6 +669,22 @@ getHistory(e:Expr):Expr := (
     else WrongArgZZ());
 setupfun("getHistory", getHistory);
 
+readHistory(e:Expr):Expr := (
+    when e is filename:stringCell
+    do toExpr(readHistory(tocharstar(expandFileName(filename.v))))
+    else WrongArgString(1));
+setupfun("readHistory", readHistory);
+
+appendHistory(e:Expr):Expr := (
+    when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+    when s.0 is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1) else
+    when s.1 is filename:stringCell
+    do toExpr(appendHistory(toInt(n), tocharstar(expandFileName(filename.v))))
+    else WrongArgString(2)
+    else WrongArgZZ(1)
+    else WrongNumArgs(2));
+setupfun("appendHistory", appendHistory);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "
 -- End:

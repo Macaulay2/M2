@@ -117,6 +117,21 @@ needs = filename -> if not filesLoaded#?filename then load filename else (
      if filetime < fileTime filepath then load filepath)
 
 -----------------------------------------------------------------------------
+-- Setup persistent history
+-----------------------------------------------------------------------------
+historyFilename = "~/.Macaulay2-history"
+
+if not gotarg "--no-readline" then (
+    addStartFunction(() -> readHistory historyFilename);
+    -- TODO: find a better alternative to addEndFunction, because
+    -- exiting with Ctrl+D duplicates the last line of history file,
+    -- but if we use lineNumber-1, then exit and restart miss the first
+    -- entry from the current session. Moreover, maybe we shouldn't save
+    -- exit and restart in the history anyway.
+    addEndFunction(() -> appendHistory(lineNumber, historyFilename));
+    )
+
+-----------------------------------------------------------------------------
 -- Load the rest of Core
 -----------------------------------------------------------------------------
 
