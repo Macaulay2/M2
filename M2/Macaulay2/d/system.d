@@ -178,6 +178,8 @@ import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
 import getHistory(n:int):charstar;
 import addHistory(s:charstar):void;
+import appendHistory(n:int,f:charstar):int;
+import readHistory(f:charstar):int;
 import chdir(name:string):int;
 import initReadlineVariables():void;
 import handleInterruptsSetup(handleInterrupts:bool):void;
