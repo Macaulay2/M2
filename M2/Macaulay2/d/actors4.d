@@ -20,7 +20,7 @@ header "// required for toString routines
 #include <interface/ring.h>                 // for IM2_Ring_to_string
 #include <interface/ringelement.h>          // for IM2_RingElement_to_string
 #include <interface/ringmap.h>              // for IM2_RingMap_to_string
-#include <readline/history.h>               // for history_get";
+";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
@@ -1657,19 +1657,6 @@ locate(e:Expr):Expr := (
 	  locate2(f.model.body))
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
-
-historyGet(e:Expr):Expr := (
-    when e
-    is n:ZZcell do (
-	if !isInt(n) then WrongArgSmallInteger()
-	else (
-	    entry := Ccode(voidPointer, "history_get(", toInt(n), ")");
-	    if entry == nullPointer()
-	    then buildErrorPacket("no history entry with that offset")
-	    else toExpr(tostring(Ccode(charstar, "((HIST_ENTRY *)", entry,
-			")->line")))))
-    else WrongArgZZ());
-setupfun("historyGet", historyGet);
 
 powermod(e:Expr):Expr := (
      when e is s:Sequence do

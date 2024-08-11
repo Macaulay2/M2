@@ -65,7 +65,7 @@ code FilePosition := x -> (
 	       else if filename === "stdio" then (
 		    start = 1;
 		    stop = x#3 - x#1 + 1;
-		    toString stack apply(x#1..x#3, historyGet))
+		    toString stack apply(x#1..x#3, getHistory))
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
 		    get filename
