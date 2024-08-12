@@ -42,12 +42,6 @@ toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toSt
 local exe
 local topBuilddir
 
-m2version := (
-    v := replace("^release-", "", version#"git description");
-    if v == version#"VERSION" then v -- stable release (at release tag)
-    else if version#"git branch" == "" then v
-    else concatenate(v, 1, "(", version#"git branch", ")"))
-
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
      -- all global definitions here are set to read-only
@@ -279,8 +273,33 @@ if firstTime then (
      initlayout();
      )
 
+pathsearch := (exe) -> (
+    if not isFixedExecPath exe then (
+	-- we search the path, but we don't do it the same way execvp does, too bad.
+	PATH := separate(":", getenv "PATH" | ":.:/bin:/usr/bin");
+	PATH = apply(PATH, dir -> if dir === "" then "." else dir);
+	exe = scan(PATH, dir -> if fileExists(dir | "/" | exe) then break(dir | "/" | exe)));
+    exe)
+
 dir  := s -> ( m := regex(".*/",s); if m === null or 0 === #m then "./" else substring(m#0#0,m#0#1-1,s))
 base := s -> ( m := regex(".*/",s); if m === null or 0 === #m then s    else substring(m#0#1,      s))
+exe = minimizeFilename (
+    -*
+    -- this can be a reliable way to get the executable in linux
+    -- but we don't want to use it because we don't want to chase symbolic links and it does that for us
+    processExe := "/proc/self/exe";
+    if fileExists processExe and readlink processExe =!= null then readlink processExe
+    else
+    *-
+    if isAbsolutePath commandLine#0 then commandLine#0 else
+    if isStablePath commandLine#0 then concatenate(currentDirectory() | commandLine#0)
+    else pathsearch commandLine#0)
+
+if not isAbsolutePath exe then exe = currentDirectory() | exe;
+exe = concatenate(realpath dir exe, base exe)
+if notify then printerr("executable      = ", exe)
+
+-- called by M2version()
 initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
      bindir = dir exe | "/";
@@ -315,8 +334,10 @@ initcurrentlayout := () -> (
      if notify then printerr("topBuilddir     = ", topBuilddir);
      topSrcdir = if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
 	  sdir := first lines get(topBuilddir|"srcdir");
-	  minimizeFilename concatPath(topBuilddir,sdir));
+	  realpath concatPath(topBuilddir, sdir));
      if notify then printerr("topSrcdir       = ", topSrcdir);
+     coredir = prefixDirectory | replace("PKG", "Core", currentLayout#"package");
+     if notify then printerr("coredir         = ", coredir);
      )
 
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
@@ -329,21 +350,13 @@ nocore = false
 noinitfile = false
 interpreter := commandInterpreter
 
--*
-getRealPath := fn -> (					    -- use this later if realpath doesn't work
-     local s;
-     while ( s = readlink fn; s =!= null ) do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
-     fn)
-*-
-
-pathsearch := e -> (
-     if not isFixedExecPath e then (
-	  -- we search the path, but we don't do it the same way execvp does, too bad.
-	  PATH := separate(":",if "" =!= getenv "PATH" then getenv "PATH" else ".:/bin:/usr/bin");
-	  PATH = apply(PATH, x -> if x === "" then "." else x);
-	  scan(PATH, p -> if fileExists (p|"/"|e) then (e = p|"/"|e; break));
-	  );
-     e)
+M2version := () -> (
+    initcurrentlayout();
+    trySimpleLoad("version.m2", coredir | "version.m2");
+    v := replace("^release-", "", version#"git description");
+    if version#"VERSION"    == v  -- stable release (at release tag)
+    or version#"git branch" == "" then v
+    else concatenate(v, 1, "(", version#"git branch", ")"))
 
 progname := notdir commandLine#0
 usage := arg -> (
@@ -461,7 +474,7 @@ action := hashTable {
 			      << TeXmacsEnd << endl << flush)));
 	       )
 	  ),
-     "--version" => arg -> ( << m2version << newline; exit 0; ),
+     "--version" => arg -> ( << M2version() << newline; exit 0; ),
      "--webapp" => arg -> ( printWidth=0; topLevelMode = global WebApp; )
      };
 
@@ -538,30 +551,16 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 
 if firstTime then processCommandLineOptions 1
 
-exe = minimizeFilename (
-     -*
-     -- this can be a reliable way to get the executable in linux
-     -- but we don't want to use it because we don't want to chase symbolic links and it does that for us
-     processExe := "/proc/self/exe";
-     if fileExists processExe and readlink processExe =!= null then readlink processExe
-     else 
-     *-
-     if isAbsolutePath commandLine#0 then commandLine#0 else
-     if isStablePath commandLine#0 then concatenate(currentDirectory()|commandLine#0)
-     else pathsearch commandLine#0)
-if not isAbsolutePath exe then exe = currentDirectory() | exe ;
-exe = concatenate(realpath dir exe, base exe)
-if notify then printerr("executable = ", exe)
+-- also calls initcurrentlayout()
+srcversion = M2version()
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-     stderr << "Macaulay2, version " << m2version << newline << flush;
+     stderr << "Macaulay2, version " << srcversion << newline << flush;
      if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
 
 scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
-
-initcurrentlayout()
 
 path = {}
 pkgpath = {}
