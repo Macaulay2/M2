@@ -38,6 +38,7 @@ add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
   DEPENDS M2-binary
   VERBATIM)
 
+## Populate GIT_DESCRIPTION and GIT_BRANCH
 configure_file(version.m2.in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/version.m2 @ONLY)
 
 foreach(filename IN LISTS M2LIST ITEMS
