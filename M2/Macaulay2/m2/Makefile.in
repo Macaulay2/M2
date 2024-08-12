@@ -20,6 +20,10 @@ DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/operators/*.m2 \
 		../packages/Macaulay2Doc.m2
+############################## version.m2
+all: version.m2
+version.m2: version.m2.in ; ./config.status Macaulay2/m2/version.m2
+clean::; rm -f version.m2
 ############################## tvalues.m2
 STOP = --stop
 ARGS = -q --silent $(STOP) -e errorDepth=0
