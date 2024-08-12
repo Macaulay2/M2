@@ -60,6 +60,10 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE   GIT_DESCRIPTION)
+  if(NOT GIT_DESCRIPTION)
+    message(NOTICE "## Git repository detected, but could not use `git describe`")
+    set(GIT_DESCRIPTION release-${PACKAGE_VERSION})
+  endif()
   execute_process(
     COMMAND ${GIT_EXECUTABLE} branch --show-current
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
