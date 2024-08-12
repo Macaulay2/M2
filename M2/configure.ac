@@ -547,11 +547,10 @@ case $COMPRESS in
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(GIT_DESCRIPTION)
-GIT_DESCRIPTION=`$GIT describe --tags --dirty || echo release-$PACKAGE_VERSION`
-AC_DEFINE_UNQUOTED(GIT_DESCRIPTION,"$GIT_DESCRIPTION",[summary of git status])
-GIT_BRANCH=`$GIT branch --show-current`
-AC_DEFINE_UNQUOTED([GIT_BRANCH], ["$GIT_BRANCH"], [current git branch])
+AC_SUBST([GIT_DESCRIPTION],
+         [`$GIT describe --tags --dirty || echo release-$PACKAGE_VERSION`])
+AC_SUBST([GIT_BRANCH],
+         [`$GIT branch --show-current`])
 
 AC_SUBST(DEB,no)
 AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...)), DEB=$enableval)
