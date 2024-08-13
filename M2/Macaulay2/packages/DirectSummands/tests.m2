@@ -56,7 +56,22 @@ TEST ///
   C = res(coker vars R, LengthLimit => 3)
   D = res(coker transpose C.dd_3, LengthLimit => 3)
   M = coker D.dd_3
-  summands M
+  assert(8 == #summands M)
+///
+
+TEST /// -- testing in char 0
+  -- FIXME:
+  --S = ZZ[x,y];
+  --assert(2 == #summands coker matrix "x,y;y,x")
+  S = QQ[x,y];
+  assert(2 == #summands coker matrix "x,y; y,x")
+  assert(1 == #summands coker matrix "x,y;-y,x")
+  K = toField(QQ[i]/(i^2+1));
+  S = K[x,y];
+  assert(2 == #summands coker matrix "x,y; y,x")
+  assert(2 == #summands coker matrix "x,y;-y,x")
+  S = K[a,b,c,d];
+  assert(4 == #summands coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a")
 ///
 
 TEST ///

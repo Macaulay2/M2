@@ -55,16 +55,20 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
     K := quotient ideal gens ring M;
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
     q := infinity;
-    for i to opts.Tries - 1 do (
+    for c to opts.Tries - 1 do (
         f := generalEndomorphism M;
         chi := char f;
         K' := extField {chi};
         if p != 0 then q = min(q, K'.order) else q = K';
         eigen := flatten rationalPoints ideal chi;
-        opers := flatten for i in eigen list if p == 0 then (f - i*id_M) else for j from 0 to e list largePower'(p,j+1, largePower(p,l,f-i*id_M));
-        idem := position(opers, g -> isIdempotent(K ** g) and g != id_M and K ** g != 0);
+	-- if at most one eigenvalue is found then the module is probably indecomposable
+	if #eigen <= 1 then continue;
+        opers := flatten for y in eigen list (
+	    if p == 0 then (f - y*id_M) else (
+		for j from 0 to e list largePower'(p, j+1, largePower(p, l, f - y*id_M))));
+        idem := position(opers, g -> isWeakIdempotent(K ** g) and g != id_M and K ** g != 0);
         if idem =!= null then (
-	    if 1 < debugLevel then printerr("found idempotent after ", toString i, " attempts.");
+	    if 1 < debugLevel then printerr("found idempotent after ", toString c, " attempts.");
 	    return opers_idem));
     -- TODO: skip the "Try passin" line if the field is large enough, e.g. q === K
     error("no idempotent found after ", toString opts.Tries, " attempts. Try passing

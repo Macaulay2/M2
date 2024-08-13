@@ -187,6 +187,7 @@ leadCoefficient Matrix := RingElement => m -> for c to numcols m - 1 do for r to
 -- this is a kludge to handle the case when h^2 = ah
 reduceScalar = m -> if m == 0 then m else map(target m, source m, cover m // leadCoefficient m)
 isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
+isWeakIdempotent = h -> 0 == det cover(reduceScalar(h^2) - reduceScalar h)
 
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
