@@ -9,7 +9,7 @@
 ------------------------------------------
 ------------------------------------------
 
-newPackage select((
+newPackage(
     "Posets",
         Version => "1.1.3",
         Date => "May 15, 2021",
@@ -44,7 +44,7 @@ newPackage select((
 	     "volume number" => "7",
 	     "volume URI" => "https://msp.org/jsag/2015/7-1/"
 	     },
-        ), x -> x =!= null)
+    )
 
 -- Load configurations
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
