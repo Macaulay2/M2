@@ -13,3 +13,14 @@ scan({ZZ, QQ, RR, CC}, F -> (
 
 assert((pi*ii) // (3*ii) == 1)
 assert((pi*ii) %  (3*ii) + 3*ii == pi*ii)
+
+R = ZZ[x]
+f = (2*x+2)^3
+assert same {(x+1)^3, f // 8, f / 8}
+assert same {(x+1)*x, f // 16}
+assert(try f / 16 then false else true)
+
+R = QQ[x]
+f = (2*x+2)^3
+assert same {(x+1)^3,   f // 8,  f / 8}
+assert same {(x+1)^3/2, f // 16, f / 16}
