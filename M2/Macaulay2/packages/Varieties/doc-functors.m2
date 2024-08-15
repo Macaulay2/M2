@@ -44,6 +44,7 @@ Node
     coherent sheaf cohomology module
   Usage
     HH^i(F(>=d))
+    HH^i(F(*))
   Inputs
     i:ZZ
     F(>=d):SumOfTwists -- see @TO2 {(symbol SPACE, CoherentSheaf, LowerBound), TT "F(>=d)"}@
