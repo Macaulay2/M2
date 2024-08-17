@@ -311,6 +311,14 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
 export copy(o:HashTable,newClass:HashTable,newMutable:bool):HashTable := copy(o,newClass,o.parent,newMutable);
 -----------------------------------------------------------------------------
 
+KeyNotFound(object:string, key:Expr):Expr := (
+    msg := "key not found in " + object;
+    when key
+    is x:stringCell do msg = msg + ": \"" + present(x.v) + "\""
+    is x:SymbolClosure do msg = msg + ": " + x.symbol.word.name
+    else nothing;
+    buildErrorPacket(msg));
+
 export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      res := notfoundE;
@@ -340,7 +348,7 @@ export lookup1force(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
 	  bucket = bucket.next;
 	  );
      if lockit then unlock(object.mutex);
-     buildErrorPacket("key not found in hash table"));
+     KeyNotFound("hash table", key));
 export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
 export lookup1Q(object:HashTable,key:Expr,keyhash:hash_t):bool := (
      lockit := object.Mutable && !object.beingInitialized;
@@ -813,7 +821,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       if !f.isopen then return buildErrorPacket("database closed");
 	       when dbmfetch(f.handle,key.v)
 	       is a:string do Expr(stringCell(a))
-	       else buildErrorPacket("encountered missing value"))
+	       else KeyNotFound("database", right))
 	  else buildErrorPacket("expected a string as key to database"))
      -- # typical value: symbol #, List, ZZ, Thing
      -- # typical value: symbol #, BasicList, ZZ, Thing
@@ -828,7 +836,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       d := dc.dictionary;
 	       when lookup(s.v,d.symboltable)
 	       is x:Symbol do Expr(SymbolClosure(if x.thread then threadFrame else dc.frame,x))
-	       else buildErrorPacket("key not found in dictionary")
+	       else KeyNotFound("dictionary", right)
 	       )
 	  else buildErrorPacket("expected key for dictionary to be a string")
 	  )
