@@ -57,6 +57,13 @@ silentRobustStringWithClass = (wid,sec,y) -> (
      part2 := concatenate(" (of class ", silentRobustString(wid//2,           sec,class y), ")");
      part1 :=                            silentRobustString(wid - width part2,sec,      y);
      concatenate(part1, part2));
+
+Thing.RobustPrintMethod = (msg, obj) -> (
+    output := silentRobustNetWithClass(60, 5, 3, obj);
+    if width output > 28 or height output != 1 or depth output != 0
+    then toString stack { msg | ":", "\t" | output }
+    else concatenate { msg, ": ", toString output })
+
 hush := false
 commentGuardString := "--"
 commentGuardNet := raise(horizontalJoin commentGuardString,-1)
