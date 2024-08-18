@@ -37,13 +37,23 @@ addStartFunction(
      	       dismiss "User";
 	       newPackage("User",
 		   Headline       => "default package for interpreter interactions",
-		   DebuggingMode  => true,
-		   PackageImports => if isMember("--no-preload", commandLine) then {} else Core#"preloaded packages");
+		   DebuggingMode  => true);
 	       User.PackageIsLoaded = true;
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
-	       );
+	       )))
+
+-- the location of init.m2 is documented in the node "initialization file"
+addStartFunction( () -> (
+	if not noinitfile
+	then load(applicationDirectory() | "init.m2")))
+
+addStartFunction( () -> (
+	if not isMember("--no-preload", commandLine)
+	then for pkg in Core#"preloaded packages" do needsPackage pkg))
+
+addStartFunction( () -> (
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
 	       relevant := select(loadedPackages,mentionQ);
