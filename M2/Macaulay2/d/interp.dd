@@ -686,6 +686,14 @@ appendHistory(e:Expr):Expr := (
     else WrongNumArgs(2));
 setupfun("appendHistory", appendHistory);
 
+historyLength(e:Expr):Expr := (
+    when e
+    is s:Sequence do (
+	if length(s) == 0 then toExpr(historyLength())
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("historyLength", historyLength);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "
 -- End:

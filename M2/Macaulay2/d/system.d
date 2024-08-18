@@ -180,6 +180,7 @@ import getHistory(n:int):charstar;
 import addHistory(s:charstar):void;
 import appendHistory(n:int,f:charstar):int;
 import readHistory(f:charstar):int;
+import historyLength():int;
 import chdir(name:string):int;
 import initReadlineVariables():void;
 import handleInterruptsSetup(handleInterrupts:bool):void;
