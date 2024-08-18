@@ -5,6 +5,8 @@ use classes;
 
 header "#include <cassert>";
 
+-- applyEEE is not defined until evaluate.d,
+-- so we use a pointer and populate it later.
 dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
 export applyEEEpointer := dummyapplyEEE;
 
@@ -311,12 +313,15 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
 export copy(o:HashTable,newClass:HashTable,newMutable:bool):HashTable := copy(o,newClass,o.parent,newMutable);
 -----------------------------------------------------------------------------
 
+lookup(object:HashTable, key:Expr):Expr; -- forward declaration
+
 KeyNotFound(object:string, key:Expr):Expr := (
+    -- TODO: implement a similar trick to call synonym(object)
     msg := "key not found in " + object;
-    when key
-    is x:stringCell do msg = msg + ": \"" + present(x.v) + "\""
-    is x:SymbolClosure do msg = msg + ": " + x.symbol.word.name
-    else nothing;
+    see := lookup(Class(key), RobustPrintE);
+    if see != notfoundE then
+    when applyEEEpointer(see, toExpr(msg), key)
+    is str:stringCell do msg = str.v else nothing;
     buildErrorPacket(msg));
 
 export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
