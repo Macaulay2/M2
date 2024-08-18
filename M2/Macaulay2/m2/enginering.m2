@@ -643,7 +643,7 @@ frac0 = (f,g) -> f/g
 
 -- TODO: should these be more uniform? see 3e329d60815 and 13675361300
 Number / RingElement := frac0 @@ promoteleftexact
-RingElement / Number := (f, g) -> if f % g == 0 then f // g else (1/g) * f
+RingElement / Number := (f, g) -> if (try f % g == 0 else false) then f // g else (1/g) * f
 
 -- Note: % is not implemented for inexact fields
 InexactNumber / RingElement := frac0 @@ promoteleftinexact
