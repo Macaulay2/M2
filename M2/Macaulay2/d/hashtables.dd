@@ -348,24 +348,15 @@ export lookup1Q(object:HashTable,key:Expr,keyhash:hash_t):bool := (
     result := lookup1(object, key, keyhash);
     if result != notfoundE then true else false);
 export lookup1Q(object:HashTable,key:Expr):bool := lookup1Q(object,key,hash(key));
+
+-- lookup a key in the hash table or its parent until it is found, otherwise return null
 export lookup(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
-     while true do (
-	  lockit := object.Mutable && !object.beingInitialized;
-	  if lockit then lockRead(object.mutex);
-     	  keymod := int(keyhash & (length(object.table)-1));
-     	  bucket := object.table.keymod;
-     	  while bucket != bucket.next do (
-	       if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
-		    res := bucket.value;
-		    if lockit then unlock(object.mutex);
-		    return res);
-	       bucket = bucket.next;
-	       );
-	  if lockit then unlock(object.mutex);
-	  if object == thingClass then break;
-	  object = object.parent;
-	  );
-     nullE);	  
+    while true do (
+	result := lookup1(object, key, keyhash);
+	if result != notfoundE  then return result;
+	if object == thingClass then break;
+	object = object.parent);
+    nullE);
 export lookup(object:HashTable,key:Expr):Expr := lookup(object,key,hash(key));
 export lookup(object:HashTable,key:SymbolClosure):Expr := (
      lookup(object,Expr(key),key.symbol.hash)
