@@ -342,19 +342,11 @@ export lookup1force(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
     if result != notfoundE then result
     else KeyNotFound("hash table", key));
 export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
+
+-- query a key in the hash table and report whether it is found or not
 export lookup1Q(object:HashTable,key:Expr,keyhash:hash_t):bool := (
-     lockit := object.Mutable && !object.beingInitialized;
-     if lockit then lockRead(object.mutex);
-     keymod := int(keyhash & (length(object.table)-1));
-     bucket := object.table.keymod;
-     while bucket != bucket.next do (
-	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
-	       if lockit then unlock(object.mutex);
-	       return true);
-	  bucket = bucket.next;
-	  );
-     if lockit then unlock(object.mutex);
-     false);
+    result := lookup1(object, key, keyhash);
+    if result != notfoundE then true else false);
 export lookup1Q(object:HashTable,key:Expr):bool := lookup1Q(object,key,hash(key));
 export lookup(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      while true do (
