@@ -143,6 +143,8 @@ char *system_getHistory(const int n)
   return NULL;
 }
 
+int system_historyLength() { return history_length; }
+
 void system_initReadlineVariables(void) {
   static char readline_name[] = "M2";
   static char basic_word_break_characters[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
