@@ -335,20 +335,12 @@ export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      if lockit then unlock(object.mutex);
      res);
 export lookup1(object:HashTable,key:Expr):Expr := lookup1(object,key,hash(key));
+
+-- lookup a key in the hash table and either return the value or an error packet if not found
 export lookup1force(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
-     lockit := object.Mutable && !object.beingInitialized;
-     if lockit then lockRead(object.mutex);
-     keymod := int(keyhash & (length(object.table)-1));
-     bucket := object.table.keymod;
-     while bucket != bucket.next do (
-	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
-	       res := bucket.value;
-	       if lockit then unlock(object.mutex);
-	       return res);
-	  bucket = bucket.next;
-	  );
-     if lockit then unlock(object.mutex);
-     KeyNotFound("hash table", key));
+    result := lookup1(object, key, keyhash);
+    if result != notfoundE then result
+    else KeyNotFound("hash table", key));
 export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
 export lookup1Q(object:HashTable,key:Expr,keyhash:hash_t):bool := (
      lockit := object.Mutable && !object.beingInitialized;
