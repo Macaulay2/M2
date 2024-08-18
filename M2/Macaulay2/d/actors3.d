@@ -713,8 +713,6 @@ bitnotfun(e:Expr):Expr := (
     else WrongArgZZ());
 setupfun("bitnotfun", bitnotfun);
 
-semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
-setup(SemicolonS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
 timesfun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
