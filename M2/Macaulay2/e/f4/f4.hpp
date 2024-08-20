@@ -117,7 +117,6 @@ class F4GB : public our_new_delete
   gb_array mGenerators;
   gb_array mGroebnerBasis;
   MonomialLookupTable mLookupTable;  // (monom,comp) --> index into mGroebnerBasis
-  F4SPairSet mSPairSet;
 
   // The matrix and its construction
   int next_col_to_process;
@@ -171,7 +170,9 @@ class F4GB : public our_new_delete
   mtbb::task_arena& getScheduler() { return mScheduler; }
 #endif
 
- private:
+  F4SPairSet mSPairSet;
+
+private:
   ////////////////////////////////////////////////////////////////////
   void delete_gb_array(gb_array &g);
 

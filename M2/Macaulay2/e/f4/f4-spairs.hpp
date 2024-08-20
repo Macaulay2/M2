@@ -28,8 +28,12 @@ class F4SPairSet
   int construct_pairs(bool remove_disjoints);
 
  public:
-  F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);
-
+#if defined(WITH_TBB)
+  F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0,mtbb::task_arena& scheduler);
+#else
+  F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);  
+#endif
+  
   ~F4SPairSet();
 
   void insert_generator(int deg, packed_monomial lcm, int column);
@@ -87,6 +91,11 @@ class F4SPairSet
   long nsaved_unneeded;
   double mMinimizePairsSeconds;
   double mPrePairsSeconds;
+
+#if defined (WITH_TBB)
+  mtbb::task_arena& mScheduler;
+#endif
+  
 };
 
 

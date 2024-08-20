@@ -57,7 +57,6 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mGenerators(),
       mGroebnerBasis(),
       mLookupTable(mMonomialInfo->n_vars()),
-      mSPairSet(mMonomialInfo, mGroebnerBasis),
       next_col_to_process(0),
       mat(nullptr),
       mMonomialHashTable(M0, 17),
@@ -72,9 +71,12 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mNewSPairTime(0),
       mInsertGBTime(0),
       clock_make_matrix(0),
-      mNumThreads(mtbb::numThreads(numThreads))
+      mNumThreads(mtbb::numThreads(numThreads)),
 #if defined(WITH_TBB)
-    , mScheduler(mNumThreads)
+      mScheduler(mNumThreads),
+      mSPairSet(mMonomialInfo, mGroebnerBasis, mScheduler)
+#else
+      mSPairSet(mMonomialInfo, mGroebnerBasis)
 #endif
 {
   //  mLookupTable = new MonomialLookupTable(mMonomialInfo->n_vars());
