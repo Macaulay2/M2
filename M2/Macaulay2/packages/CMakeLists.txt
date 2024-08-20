@@ -70,7 +70,7 @@ set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   DebuggingMode          => true)]])
 set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, DebuggingMode=>true)]])
 set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@_i@, "@package@")]])
-set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << close]]) # ignore the color
+set(M2_INFO_TEMPLATE    [["info-"|"@package@" << #@package@#"test inputs" << close]]) # ignore the color
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false, Verbose=>$<IF:$<BOOL:${VERBOSE}>,true,false>)]])
 
 # TODO: simplify
