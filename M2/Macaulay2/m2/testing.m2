@@ -14,6 +14,7 @@ locate TestInput := T -> T#"location"
 net TestInput := lookup(net, Function)
 precedence TestInput := lookup(precedence, Function)
 editMethod TestInput := editMethod @@ locate
+capture TestInput := opt -> T -> capture(toString T, opt)
 
 -----------------------------------------------------------------------------
 -- TEST
