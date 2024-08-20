@@ -9,7 +9,7 @@ TestInput = new SelfInitializingType of HashTable
 TestInput.synonym = "test input"
 
 code TestInput := T -> T#"code"
-toString TestInput := toString @@ locate
+toString TestInput := T -> T#"code"
 locate TestInput := T -> T#"location"
 net TestInput := lookup(net, Function)
 precedence TestInput := lookup(precedence, Function)
@@ -115,7 +115,7 @@ check(List, Package) := opts -> (L, pkg) -> (
     outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
     if #errorList > 0 then (
 	if opts.Verbose then apply(errorList, (k, errfile) -> (
-		stderr << toString inputs#k << " error:" << endl;
+		stderr << locate inputs#k << " error:" << endl;
 		printerr getErrors(outfile errfile)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 
