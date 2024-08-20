@@ -3,28 +3,14 @@ needs "code.m2"
 needs "run.m2"
 
 -----------------------------------------------------------------------------
--- Local utilities
------------------------------------------------------------------------------
-
-sourceFileStamp = (filename, linenum) -> toString commentize(
-    pos := new FilePosition from (toAbsolutePath filename, linenum, 1);
-    toString pos, ": location of test code")
-
------------------------------------------------------------------------------
 -- TestInput
 -----------------------------------------------------------------------------
 TestInput = new SelfInitializingType of HashTable
-new TestInput from Sequence := (T, S) -> TestInput {
-    "filename" => S_0,
-    "line number" => S_1,
-    "code" => concatenate(sourceFileStamp(S_0, S_1), newline, S_2)}
 TestInput.synonym = "test input"
 
 code TestInput := T -> T#"code"
-locate TestInput := T -> new FilePosition from (T#"filename",
-    T#"line number" - depth net code T, 1,
-    T#"line number", 1,,)
 toString TestInput := toString @@ locate
+locate TestInput := T -> T#"location"
 net TestInput := lookup(net, Function)
 precedence TestInput := lookup(precedence, Function)
 editMethod TestInput := editMethod @@ locate
@@ -37,12 +23,21 @@ TEST = method(Options => {FileName => false})
 TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
 TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = TestInput if opts.FileName then (
-        testCode := get teststring;
-        (minimizeFilename teststring, depth net testCode + 1, testCode)
-        ) else
-        (minimizeFilename currentFileName, currentRowNumber(), teststring);
-    currentPackage#"test number" = n + 1;)
+    if opts.FileName then (
+	filename := teststring;
+	teststring = get filename;
+	start := 1;
+	stop := depth net teststring)
+    else (
+	filename = currentFileName;
+	stop = currentRowNumber() - 1;
+	start = stop - depth net teststring);
+    currentPackage#"test inputs"#n = TestInput {
+	"location" => new FilePosition from {
+	    minimizeFilename filename,
+	    start, 1, stop, 80}, -- TODO: get actual final column
+	"code" => teststring};
+    currentPackage#"test number" += 1;)
 -- TODO: support test titles
 
 -----------------------------------------------------------------------------
