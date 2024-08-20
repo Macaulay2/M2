@@ -22,7 +22,7 @@ editMethod TestInput := editMethod @@ locate
 TEST = method(Options => {FileName => false})
 TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
 TEST String := opts -> teststring -> (
-    n := currentPackage#"test number";
+    n := #currentPackage#"test inputs";
     if opts.FileName then (
 	filename := teststring;
 	teststring = get filename;
@@ -36,8 +36,7 @@ TEST String := opts -> teststring -> (
 	"location" => new FilePosition from {
 	    minimizeFilename filename,
 	    start, 1, stop, 80}, -- TODO: get actual final column
-	"code" => teststring};
-    currentPackage#"test number" += 1;)
+	"code" => teststring};)
 -- TODO: support test titles
 
 -----------------------------------------------------------------------------
