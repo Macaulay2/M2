@@ -87,7 +87,7 @@ tests = method()
 tests Package := pkg -> (
     if not pkg#?"test directory loaded" then loadTestDir pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
-    previousMethodsFound = new HashTable from pkg#"test inputs"
+    previousMethodsFound = new NumberedVerticalList from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
 tests(ZZ, Package) := tests(ZZ, String) := (i, pkg) -> (tests pkg)#i
@@ -107,7 +107,7 @@ check(List, Package) := opts -> (L, pkg) -> (
     tmp := previousMethodsFound;
     inputs := tests pkg;
     previousMethodsFound = tmp;
-    testKeys := if L == {} then keys inputs else L;
+    testKeys := if L == {} then toList(0..#inputs-1) else L;
     if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
     errorList := for k in testKeys list (
