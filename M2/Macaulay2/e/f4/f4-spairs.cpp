@@ -12,7 +12,11 @@
 #include <vector>             // for vector, vector<>::iterator
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
-  : M(M0), gb(gb0), heap(nullptr), this_set(nullptr), nsaved_unneeded(0),
+  : M(M0),
+    gb(gb0),
+    mSPairCompare(mSPairs),
+    mSPairQueue(mSPairCompare),
+    nsaved_unneeded(0),
     mMinimizePairsSeconds(0)
 {
   max_varpower_size = 2 * M->n_vars() + 1;
@@ -26,24 +30,7 @@ F4SPairSet::~F4SPairSet()
   // Deleting the stash deletes all memory used here
   // PS, VP are deleted automatically.
   M = nullptr;
-  heap = nullptr;
-  this_set = nullptr;
 }
-
-/*
-spair *F4SPairSet::make_spair(SPairType type, int deg, int i, int j)
-{
-  //spair *result = reinterpret_cast<spair*>(new char[mSPairSizeInBytes]);
-  spair *result = new spair;
-  result->next = nullptr;
-  result->type = type;
-  result->deg = deg;
-  result->i = i;
-  result->j = j;
-  result->lcm = nullptr;
-  return result;
-}
-*/
 
 void F4SPairSet::insert_spair(pre_spair *p, int me)
 {
@@ -51,11 +38,7 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
   int deg = p->deg1 + gb[me]->deg;
   // int me_component = M->get_component(gb[me]->f.monoms);
 
-  // spair *result = make_spair(SPairType::SPair, deg, me, j);
-
   spair result {SPairType::SPair, deg, me, j, nullptr};
-  
-  // mSPairQueue.emplace(SPairType::SPair,deg,me,j);
   
   auto allocRange = mSPairLCMs.allocateArray<monomial_word>(M->max_monomial_size());
   result.lcm = allocRange.first;
@@ -67,16 +50,15 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
                                 allocRange.second,
                                 allocRange.first + M->monomial_size(result.lcm));
 
-  mSPairQueue.push(result);
+  auto sPairIndex = mSPairs.size();
+  mSPairs.push_back(result);  
+  mSPairQueue.push(sPairIndex);
   
-  //result->next = heap;
-  //heap = result;
 }
 
 void F4SPairSet::delete_spair(spair *p) { delete p; }
 void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 {
-  // spair *p = make_spair(SPairType::Generator, deg, col, -1);
   spair result {SPairType::Generator,deg,col,-1,nullptr};
 
   auto allocRange = mSPairLCMs.allocateArray<monomial_word>(M->monomial_size(lcm));
@@ -84,10 +66,9 @@ void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
   
   M->copy(lcm, result.lcm);
 
-  //p->next = heap;
-  //heap = p;
-
-  mSPairQueue.push(result);
+  auto sPairIndex = mSPairs.size();
+  mSPairs.push_back(result);  
+  mSPairQueue.push(sPairIndex);
 }
 
 bool F4SPairSet::pair_not_needed(spair *p, gbelem *m)
@@ -105,116 +86,42 @@ int F4SPairSet::remove_unneeded_pairs()
   // and do so.  Return the number removed.
 
   // MES: Check the ones in this_set? Probably not needed...
-  /*
-  spair head;
-  spair *p = &head;
+
+  if (gb.size() == 0) return 0;
+  
   gbelem *m = gb[gb.size() - 1];
-  int nremoved = 0;
+  std::atomic<int> nremoved = 0;
 
-  head.next = heap;
-  while (p->next != nullptr)
-    if (pair_not_needed(p->next, m))
-      {
-        nremoved++;
-        spair *tmp = p->next;
-        p->next = tmp->next;
-        tmp->next = nullptr;
-        delete_spair(tmp);
-      }
-    else
-      p = p->next;
-  heap = head.next;
-  return nremoved;
-  */
-  return 0;
-}
-
-/*
-int F4SPairSet::determine_next_degree(int &result_number)
-{
-  spair *p;
-  int nextdeg;
-  int len = 1;
-  if (heap == nullptr)
+  for (auto& p : mSPairs)
+  {
+    if (pair_not_needed(&p,m))
     {
-      result_number = 0;
-      return 0;
+      p.type = SPairType::Retired;
+      ++nremoved;
     }
-  nextdeg = heap->deg;
-  for (p = heap->next; p != nullptr; p = p->next)
-    if (p->deg > nextdeg)
-      continue;
-    else if (p->deg < nextdeg)
-      {
-        len = 1;
-        nextdeg = p->deg;
-      }
-    else
-      len++;
-  result_number = len;
-  return nextdeg;
+  }
+  return nremoved;
+  
 }
-*/
-
-/*
-int F4SPairSet::prepare_next_degree(int max, int &result_number)
-// Returns the (sugar) degree being done next, and collects all (or at
-// most 'max', if max>0) spairs in this lowest degree.
-// Returns the degree, sets result_number.
-{
-  this_set = nullptr;
-  int result_degree = determine_next_degree(result_number);
-  if (result_number == 0) return 0;
-  if (max > 0 && max < result_number) result_number = max;
-  int len = result_number;
-  spair head;
-  spair *p;
-  head.next = heap;
-  p = &head;
-  while (p->next != nullptr)
-    if (p->next->deg != result_degree)
-      p = p->next;
-    else
-      {
-        spair *tmp = p->next;
-        p->next = tmp->next;
-        tmp->next = this_set;
-        this_set = tmp;
-        len--;
-        if (len == 0) break;
-      }
-  heap = head.next;
-  return result_degree;
-}
-*/
 
 std::pair<bool,int> F4SPairSet::setThisDegree()
 {
   if (mSPairQueue.empty()) return {false, 0};
   
   auto& queueTop = mSPairQueue.top();
-  mThisDegree = queueTop.deg;
+  mThisDegree = mSPairs[queueTop].deg;
   return {true,mThisDegree};
 }
 
 //spair *F4SPairSet::get_next_pair()
 std::pair<bool,spair> F4SPairSet::get_next_pair()
 // get the next pair in this degree (the one 'prepare_next_degree' set up')
-// returns 0 if at the end
 {
-  /*
-  spair *result;
-  if (!this_set) return nullptr;
-
-  result = this_set;
-  this_set = this_set->next;
-  result->next = nullptr;
-  return result;
-  */
-  spair result = mSPairQueue.top();
-  if (result.deg != mThisDegree) return {false, {} };
+  if (mSPairQueue.empty()) return {false, {}};
+  auto result = mSPairQueue.top();
+  if (mSPairs[result].deg != mThisDegree) return {false, {} };
   mSPairQueue.pop();
-  return {true,result};
+  return {true,mSPairs[result]};
 }
 
 int F4SPairSet::find_new_pairs(bool remove_disjoints)
@@ -222,7 +129,7 @@ int F4SPairSet::find_new_pairs(bool remove_disjoints)
 {
   // this is used for "late" removal of spairs -- will need to be reworked
   //   in the new priority_queue approach
-  // nsaved_unneeded += remove_unneeded_pairs();
+  nsaved_unneeded += remove_unneeded_pairs();
   int len = construct_pairs(remove_disjoints);
   return len;
 }
@@ -437,7 +344,6 @@ public:
 
   ~TestSPairs() {} // anything here?
 
-  
 };
 #endif
 
