@@ -26,6 +26,7 @@ locate TestInput := T -> new FilePosition from (T#"filename",
     T#"line number", 1,,)
 toString TestInput := toString @@ locate
 net TestInput := lookup(net, Function)
+precedence TestInput := lookup(precedence, Function)
 editMethod TestInput := editMethod @@ locate
 
 -----------------------------------------------------------------------------
