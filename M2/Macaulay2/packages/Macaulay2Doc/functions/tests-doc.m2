@@ -17,11 +17,11 @@ doc ///
     i:ZZ
     pkg:{Package, String}
   Outputs
-    :{HashTable, TestInput}
+    :{NumberedVerticalList, TestInput}
   Description
     Text
-      Returns @ofClass HashTable@ containing the tests for the given
-      package.  Each key of this hash table is an integer, which would
+      When an integer is not provided, this returns all the tests
+      for the given package.  The position of each element would
       be passed as the first argument of @TO check@ to run the test.
       Each value is a @TT "TestInput"@ object.  These are printed with
       the location of the file so that you may quickly jump to the
