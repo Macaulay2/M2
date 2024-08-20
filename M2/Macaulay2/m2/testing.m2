@@ -8,7 +8,7 @@ needs "run.m2"
 TestInput = new SelfInitializingType of HashTable
 TestInput.synonym = "test input"
 
-code TestInput := T -> T#"code"
+code TestInput := code @@ locate
 toString TestInput := T -> T#"code"
 locate TestInput := T -> T#"location"
 net TestInput := lookup(net, Function)
@@ -108,7 +108,7 @@ check(List, Package) := opts -> (L, pkg) -> (
     --
     errorList := for k in testKeys list (
 	    if not inputs#?k then error(pkg, " has no test #", k);
-	    teststring := code inputs#k;
+	    teststring := inputs#k#"code";
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
 	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
