@@ -219,13 +219,21 @@ class PreSPairSorter
 class SPairCompare
 {
 public:
-  bool operator()(const spair& a, const spair& b)
+  SPairCompare(const std::vector<spair> &spairs) : mSPairs(spairs) { }
+
+public:
+  bool operator()(size_t s, size_t t) const
   {
+    const spair& a = mSPairs[s];
+    const spair& b = mSPairs[t];
     if (a.deg > b.deg) return true;
     if (a.deg < b.deg) return false;
     if (a.i > b.i) return true;
     return false;
   }
+
+private:
+  const std::vector<spair>& mSPairs;
 };
 
 typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;

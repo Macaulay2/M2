@@ -12,8 +12,6 @@
 class F4SPairSet
 {
  private:
-  // int determine_next_degree(int &result_number);
-
   spair *make_spair(SPairType type,
                     int deg,
                     int i,
@@ -52,10 +50,8 @@ class F4SPairSet
   // Returns the degree, sets result_number.
   // These spairs are not sorted in any way.  Should they be?
 
-  // spair *get_next_pair();
   std::pair<bool,spair> get_next_pair();
   // get the next pair in this degree (the one 'prepare_next_degree' set up')
-  // returns 0 if at the end
 
   void display_spair(spair *p);
   // A debugging routine which displays an spair
@@ -67,6 +63,8 @@ class F4SPairSet
   // Returns how many pairs were created, then later removed due to
   // spair criteria.
 
+  size_t numberOfSPairs() const { return mSPairs.size(); }
+
   double secondsToMinimizePairs() const { return mMinimizePairsSeconds; }
   double secondsToCreatePrePairs() const { return mPrePairsSeconds; }
  private:
@@ -75,14 +73,14 @@ class F4SPairSet
   MemoryBlock mSPairLCMs;  // used for spair lcms  
   
   int max_varpower_size;
-  // int mSPairSizeInBytes; // includes the LCM monomial space at the end
 
   const MonomialInfo *M;
   const gb_array &gb;
-  spair *heap;  // list of pairs
-  spair *this_set;
 
-  std::priority_queue<spair,std::vector<spair>,SPairCompare> mSPairQueue;
+  std::vector<spair> mSPairs;
+  SPairCompare mSPairCompare;
+  std::priority_queue<size_t,std::vector<size_t>,SPairCompare> mSPairQueue;
+
   long mThisDegree;
 
   // stats

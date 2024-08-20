@@ -27,6 +27,7 @@
 #include <vector>                      // for swap, vector
 #include <atomic>                      // for atomic ints in gauss_reduce
 #include <strstream>
+#include <iostream>
 
 class RingElement;
 
@@ -285,7 +286,7 @@ void F4GB::process_s_pair(spair *p)
     case SPairType::Generator:
         load_gen(p->i);
         break;
-      default:
+    case SPairType::Retired:
         break;
     }
 }
@@ -1007,8 +1008,9 @@ void F4GB::do_spairs()
         }
     }
   new_GB_elements();
-  fprintf(stderr, " finding new spair time             = %g\n", mNewSPairTime - oldNewSPair);
-  fprintf(stderr, " insert new gb time                 = %g\n", mInsertGBTime - oldInsertNewGB - (mNewSPairTime - oldNewSPair));
+  fprintf(stderr, " finding new spair time             = %g\n",  mNewSPairTime - oldNewSPair);
+  fprintf(stderr, " number of spairs in queue          = %zu\n", mSPairSet.numberOfSPairs());
+  fprintf(stderr, " insert new gb time                 = %g\n",  mInsertGBTime - oldInsertNewGB - (mNewSPairTime - oldNewSPair));
   
   int ngb = INTSIZE(mGroebnerBasis);
   if (M2_gbTrace >= 1)
