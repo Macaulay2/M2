@@ -339,7 +339,6 @@ newPackage String := opts -> pkgname -> (
 	"previous currentPackage"  => currentPackage,
 	"previous dictionaries"    => dictionaryPath,
 	"previous packages"        => loadedPackages,
-	"test number"              => 0,
 	"test inputs"              => new MutableList,
 	"raw documentation"        => new MutableHashTable, -- deposited here by 'document'
 	"processed documentation"  => new MutableHashTable, -- the output from 'documentation', look here first
