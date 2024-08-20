@@ -11,13 +11,20 @@
 #include <algorithm>          // for stable_sort
 #include <vector>             // for vector, vector<>::iterator
 
+#if defined(WITH_TBB)
+F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0, mtbb::task_arena& scheduler)
+#else
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
+#endif
   : M(M0),
     gb(gb0),
     mSPairCompare(mSPairs),
     mSPairQueue(mSPairCompare),
     nsaved_unneeded(0),
     mMinimizePairsSeconds(0)
+#if defined(WITH_TBB)
+  , mScheduler(scheduler)
+#endif
 {
   max_varpower_size = 2 * M->n_vars() + 1;
 
@@ -90,17 +97,34 @@ int F4SPairSet::remove_unneeded_pairs()
   if (gb.size() == 0) return 0;
   
   gbelem *m = gb[gb.size() - 1];
-  std::atomic<int> nremoved = 0;
+  //long nremoved = 0;
 
+#if defined(WITH_TBB)
+  mScheduler.execute([&] {
+    mtbb::parallel_for(mtbb::blocked_range<int>{0, INTSIZE(mSPairs)},
+                       [&](const mtbb::blocked_range<int>& r)
+                       {
+                         for (auto i = r.begin(); i != r.end(); ++i)
+                           {
+                             if (pair_not_needed(&mSPairs[i],m))
+                               {
+                                 mSPairs[i].type = SPairType::Retired;
+                               }
+                           }
+                       });
+  });
+#else  
   for (auto& p : mSPairs)
   {
     if (pair_not_needed(&p,m))
     {
       p.type = SPairType::Retired;
-      ++nremoved;
+      //++nremoved;
     }
   }
-  return nremoved;
+#endif  
+  return 0;
+  //return nremoved;
   
 }
 
