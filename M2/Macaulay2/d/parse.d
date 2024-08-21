@@ -40,7 +40,6 @@ export binop := function(Code,Code):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
 
-
 export TokenFile := {+
      posFile:PosFile,
      nexttoken:(null or Token)
@@ -273,22 +272,9 @@ export Code := (
 export PseudocodeClosure := {+ frame:Frame, code:Code };
 export Pseudocode := {+ code:Code };
 
-
-
---misc
-
-
-export CompiledFunction := {+fn:fun,hash:hash_t};
-export CompiledFunctionClosure := {+
-     fn:function(Expr,Sequence):Expr,
-     hash:hash_t,
-     env:Sequence
-     };
-export CompiledFunctionBody := {+
-     fn:function(Expr,Sequence):Expr			    -- it's hard to make hash codes for these things!
-     };
-
-
+export CompiledFunction        := {+ fn:function(Expr):Expr,          hash:hash_t };
+export CompiledFunctionBody    := {+ fn:function(Expr,Sequence):Expr }; -- TODO: compute hash
+export CompiledFunctionClosure := {+ fn:function(Expr,Sequence):Expr, hash:hash_t, env:Sequence };
 
 -- Expr
 
@@ -428,7 +414,6 @@ export Expr := (
      pointerCell or
      atomicIntCell
      );
-export fun := function(Expr):Expr;
 
 --Unique True expression
 export True := Expr(Boolean(true));	  -- don't make new ones!
