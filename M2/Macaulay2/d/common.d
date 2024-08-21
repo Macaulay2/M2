@@ -118,7 +118,7 @@ export setupfun(name:string,fun:unop):Symbol := (
      entry.unary = fun;
      entry.Protected = true;
      entry);
-export setupfun(name:string,value:fun):Symbol := (
+export setupfun(name:string, value:function(Expr):Expr):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
      globalFrame.values.(entry.frameindex) = Expr(newCompiledFunction(value));
