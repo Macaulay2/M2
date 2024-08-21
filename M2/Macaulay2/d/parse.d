@@ -37,7 +37,6 @@ export anywhereAbort(s:string) ::= Ccode(exits,"err_abort(",s,")");
 -- Typedefs for functions of various numbers of arguments
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
-export binopExpr := function(Expr,Expr):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
 
