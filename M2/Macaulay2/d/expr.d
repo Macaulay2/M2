@@ -185,7 +185,7 @@ export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
        ht.hash=nextHash();
        ht);
 
-export newCompiledFunction(fn:fun):CompiledFunction := (
+export newCompiledFunction(fn:function(Expr):Expr):CompiledFunction := (
     cf := CompiledFunction(fn, hash_t(0));
     cf.hash = hashFromAddress(Expr(cf));
     cf);
