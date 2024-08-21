@@ -243,11 +243,6 @@ export semiCode         := {+w:CodeSequence, position:Position};
 export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
 export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 
-export newLocalFrameCode := {+
-     frameID:int,
-     framesize:int,
-     body:Code
-     };
 export functionDescription := {
      frameID:int,		    -- seqno of dictionary
      framesize:int,
@@ -274,7 +269,6 @@ export Code := (
      or whileDoCode or whileListCode or whileListDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode
      or Error						    -- for tail recursion
-     or newLocalFrameCode				    -- soon obsolete
      );
 export PseudocodeClosure := {+ frame:Frame, code:Code };
 export Pseudocode := {+ code:Code };
