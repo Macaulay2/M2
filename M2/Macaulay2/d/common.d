@@ -27,7 +27,6 @@ export codePosition(c:Code):Position := ( -- TODO retire
      is f:multaryCode do f.position
      is f:newCode do f.position
      is f:newFromCode do f.position
-     is f:newLocalFrameCode do codePosition(f.body)
      is f:newOfCode do f.position
      is f:newOfFromCode do f.position
      is f:nullCode do dummyPosition

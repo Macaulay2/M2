@@ -77,8 +77,6 @@ export tostring(c:Code):string := (
     is x:newFromCode   do concatenate(array(string)("(new ", tostring(x.newClause),                                " from: ", tostring(x.fromClause), ")"))
     is x:newOfCode     do concatenate(array(string)("(new ", tostring(x.newClause), " of: ", tostring(x.ofClause), ")"))
     is x:newCode       do concatenate(array(string)("(new ", tostring(x.newClause), ")"))
-    --
-    is x:newLocalFrameCode do concatenate(array(string)()) -- soon obsolete
     );
 
 export toExpr(c:Code):Expr := Pseudocode(c);
