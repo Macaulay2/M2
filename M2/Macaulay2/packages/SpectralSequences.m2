@@ -1830,7 +1830,7 @@ doc ///
 	       $H^i(X, \mathcal{F})$ can be realized as the degree zero piece of the multigraded
 	       module
 	       $Ext^i(B^{[l]}, F)$ for sufficiently large $l$; here $B^{[l]}$ denotes
-	       the $l$th Forbenius power of $B$ and $F$ is any multigraded module whose
+	       the $l$th Frobenius power of $B$ and $F$ is any multigraded module whose
 	       corresponding sheaf on $X$ is $\mathcal{F}$.  
 	       
 	       Given the fan of
