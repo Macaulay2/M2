@@ -2280,8 +2280,8 @@ TEST ///
   beta = map(E, D, {d,e,f})
   isWellDefined alpha
   isWellDefined beta
-  phi = complex chainComplex alpha
-  psi = complex chainComplex beta
+  phi = complex alpha
+  psi = complex beta
   prune HH phi
   prune HH psi
   isNullHomotopic phi

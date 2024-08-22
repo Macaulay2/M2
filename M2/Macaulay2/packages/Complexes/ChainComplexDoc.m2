@@ -408,9 +408,10 @@ doc ///
 
 doc ///
     Key
-        complex
         (complex, List)
-        [complex, Base]
+        complex
+        (complex, Matrix)
+        [(complex, List), Base]
         Base
     Headline
         make a chain complex
@@ -418,7 +419,7 @@ doc ///
         complex L
     Inputs
         L:List
-            of maps
+            of maps, or a single matrix.
         Base => ZZ
             the index of the target of the first map 
             in the differential.
@@ -483,6 +484,14 @@ doc ///
             HH C
             prune HH C
             prune HH_1 C
+        Text
+            Having the input be a matrix is equivalent to having it be
+            a singleton list containing this matrix.
+        Example
+            C' = complex F1
+            assert isWellDefined C'
+            C'' = complex(F1, Base => 3)
+            assert isWellDefined C''
     Caveat
         This constructor minimizes computation
         and does very little error checking. To verify that a complex
@@ -4363,6 +4372,66 @@ doc ///
         freeResolution
 ///
 
+doc ///
+    Key
+        (Ext,Module,Module)
+        (Ext,Ideal,Ideal)
+        (Ext,Ideal,Module)
+        (Ext,Ideal,Ring)
+        (Ext,Module,Ideal)
+        (Ext,Module,Ring)
+    Headline
+        total Ext module
+    Usage
+        Ext(M, N)
+    Inputs
+        M:Module
+            or ofClass{Ideal,Ring}, that is homogeneous
+        N:Module
+            or ofClass{Ideal,Ring} over the same ring as $M$, that is also homogeneous
+    Outputs
+        :Module
+            the $\operatorname{Ext}$ module of $M$ and $N$, as a
+            multigraded module, with the modules
+            $\operatorname{Ext}^i(M,N)$ for all values of $i$
+            appearing simultaneously.
+    Description
+        Text
+            The computation of the total Ext module is possible for modules over the
+            ring $R$ of a complete intersection, according to the algorithm
+            of Shamash-Eisenbud-Avramov-Buchweitz.  The result is provided as a finitely
+            presented module over a new ring with one additional variable of degree
+            $\{-2,-d\}$ for each equation of degree $d$ defining $R$.  The 
+            variables in this new ring have degree length $1$ more than the degree length of 
+            the original ring.  In other words, it is multigraded with the
+            degree $d$ part of $\operatorname{Ext}^n(M,N)$ appearing as the degree
+	        $\{-n,d\}$ part of $\operatorname{Ext}(M,N)$.
+        Text
+            We illustrate this in the following example.
+        Example
+            R = QQ[x,y]/(x^3,y^2);
+            N = cokernel matrix {{x^2, x*y}}
+            H = Ext(N,N);
+            ring H
+            S = ring H;
+            H
+            isHomogeneous H
+            rank source basis( { -2,-3 }, H)
+            rank source basis( { -3 }, Ext^2(N,N) )
+            rank source basis( { -4,-5 }, H)
+            rank source basis( { -5 }, Ext^4(N,N) )
+            hilbertSeries H
+            hilbertSeries(H,Order=>11)
+        Text
+            For more information, see the chapter {\it Resolutions and cohomology over complete intersections}
+            by Luchezar L. Avramov and Daniel R. Grayson, in the book
+            @HREF("https://macaulay2.com/Book/ComputationsBook/book/book.pdf", "Computatations in Algebraic Geometry with Macaulay2")@.
+        Text
+            The result of the computation is cached for future reference.
+    SeeAlso
+        "computing with Ext"
+///
+
 ///
     Key
     Headline
@@ -4375,3 +4444,5 @@ doc ///
     Caveat
     SeeAlso
 ///
+
+

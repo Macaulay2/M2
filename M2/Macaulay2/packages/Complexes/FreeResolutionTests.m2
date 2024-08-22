@@ -886,3 +886,10 @@ needsPackage "Complexes"
   assert isWellDefined F
   F2 = freeResolution(M, LengthLimit => 2)
 ///
+
+TEST ///
+  R = QQ[x, Degrees => {{}}]
+  M = image x
+  F = freeResolution M -- gives: "error: map with index 0 has inconsistent source"
+  assert(isWellDefined F)
+///

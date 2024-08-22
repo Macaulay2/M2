@@ -1271,6 +1271,7 @@ doc ///
 doc ///
     Key
         (dual, ComplexMap)
+        (transpose, ComplexMap)
     Headline
         the dual of a map of complexes
     Usage
@@ -1299,10 +1300,16 @@ doc ///
             D' = (freeResolution coker matrix{{a^2,a*b,c^3}})[-1]
             f' = randomComplexMap(D', D)
             dual(f' * f) == dual f * dual f'
+        Text
+            For backwards compatibility, one can also use {\tt transpose}.
+        Example
+            h' = transpose f
+            assert(h == h')
     SeeAlso
         (Hom, ComplexMap, ComplexMap)
         (randomComplexMap, Complex, Complex)
         (dual, Matrix)
+        (transpose, Matrix)
 ///
 
 doc ///
