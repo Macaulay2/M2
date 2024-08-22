@@ -634,6 +634,7 @@ Hom(Matrix, ComplexMap) := ComplexMap => opts -> (f,g) ->
     Hom(map(complex target f, complex source f, i -> if i === 0 then f), g, opts)
 
 dual ComplexMap := ComplexMap => {} >> o -> f -> Hom(f, (ring f)^1)
+transpose ComplexMap := ComplexMap => f -> dual f
 
 homomorphism ComplexMap := ComplexMap => (h) -> (
     -- h should be a homomorphism of complexes from R^1[-i] --> E = Hom(C,D)
@@ -1116,13 +1117,13 @@ nullHomotopyFreeSource = f -> (
     (lo,hi) := concentration f;
     for i from lo to hi do (
         if hs#?(i-1) then ( 
-            rem := (f_i - hs#(i-1) * dd^C_i) % (dd^D_(i+deg));
-            if rem != 0 then return null; -- error "can't construct homotopy";
+            --rem := (f_i - hs#(i-1) * dd^C_i) % (dd^D_(i+deg));
+            --if rem != 0 then return null; -- error "can't construct homotopy";
             hs#i = (f_i - hs#(i-1) * dd^C_i) // (dd^D_(i+deg))
             )
         else (
-            rem = f_i % dd^D_(i+deg);
-            if rem != 0 then return null; -- error "can't construct homotopy";
+            --rem = f_i % dd^D_(i+deg);
+            --if rem != 0 then return null; -- error "can't construct homotopy";
             hs#i = f_i // dd^D_(i+deg)
             )
         );

@@ -46,9 +46,10 @@ export {
     "isNullHomotopyOf",
     "isShortExactSequence",
     "liftMapAlongQuasiIsomorphism",
+--    "minimalBetti",
     "minimizingMap",
     "nullHomotopy",
-    "nullhomotopy" => "nullHomotopy",
+    --"nullhomotopy" => "nullHomotopy",
     "naiveTruncation",
     "randomComplexMap",
 --    "res" => "resolution",
@@ -116,6 +117,7 @@ load "Complexes/ChainComplex.m2"
 load "Complexes/FreeResolutions.m2"
 load "Complexes/ChainComplexMap.m2"
 load "Complexes/Tor.m2"
+load "Complexes/Ext.m2"
 
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
@@ -129,7 +131,7 @@ chainComplex Complex := ChainComplex => (cacheValue symbol ChainComplex) (C -> (
     D
     ))
 
-complex ChainComplex := Complex => opts -> (cacheValue symbol Complex)(D -> (
+complex ChainComplex := Complex => {} >> opts -> (cacheValue symbol Complex)(D -> (
     (lo,hi) := (min D, max D);
     while lo < hi and (D_lo).numgens == 0 do lo = lo+1;
     while lo < hi and (D_hi).numgens == 0 do hi = hi-1;
@@ -150,7 +152,7 @@ chainComplex ComplexMap := ChainComplexMap => f -> (
     g
     )
 
-complex ChainComplexMap := ComplexMap => opts -> g -> (
+complex ChainComplexMap := ComplexMap => {} >> opts -> g -> (
     map(complex target g, complex source g, i -> g_i, Degree => degree g)
     )
 --------------------------------------------------------------------
