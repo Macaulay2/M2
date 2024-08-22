@@ -81,11 +81,11 @@ if firstTime then (
 	  symbol currentPrompts <- noPrompts;
 	  );
 
-     startFunctions := {};
+     startFunctions = {};
      addStartFunction = f -> ( startFunctions = append(startFunctions,f); f);
      runStartFunctions = () -> scan(startFunctions, f -> f());
 
-     endFunctions := {};
+     endFunctions = {};
      addEndFunction = f -> ( endFunctions = append(endFunctions,f); f);
      runEndFunctions = () -> (
 	  save := endFunctions;
