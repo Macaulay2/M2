@@ -49,6 +49,7 @@ addStartFunction( () -> (
 	if not noinitfile
 	then load(applicationDirectory() | "init.m2")))
 
+-- packages are loaded after init.m2, so preloaded packages can be adjusted
 addStartFunction( () -> (
 	if not isMember("--no-preload", commandLine)
 	then for pkg in Core#"preloaded packages" do needsPackage pkg))
