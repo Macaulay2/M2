@@ -484,7 +484,6 @@ export {
 	"addDependencyTask",
 	"addEndFunction",
 	"addHook",
-	"addStartFunction",
 	"addStartTask",
 	"adjoint",
 	"adjoint'",
