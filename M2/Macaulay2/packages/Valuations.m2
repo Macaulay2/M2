@@ -120,7 +120,7 @@ net Valuation := v -> (
 --------------------------- Ordered QQ-module Types ----------------------------
 --------------------------------------------------------------------------------
 
--- Ordered Module based on the monomial order of a polyomial ring
+-- Ordered Module based on the monomial order of a polynomial ring
 --
 -- given two elements a, b in QQ^n they are compared by using the
 -- the monomial order of the polynomial ring:
@@ -145,7 +145,7 @@ orderedQQn(ZZ, List) := (n, monOrder) -> (
     ordMod
 )
 
--- Two ordered modules are equal iff their cached rings are identitcal
+-- Two ordered modules are equal iff their cached rings are identical
 OrderedQQn == OrderedQQn := (N, M) -> (
     N.cache.Ring === M.cache.Ring
 )

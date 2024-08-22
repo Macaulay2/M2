@@ -1239,7 +1239,7 @@ doc ///
      a+1 is the degree of the strand
    Outputs
      L:List
-      the diagonal entries of the Smith normal form of a the cruital
+      the diagonal entries of the Smith normal form of a the crucial
       matrix
    Description
     Text

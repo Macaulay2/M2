@@ -696,7 +696,7 @@ f << close;
 
 -- PURPOSE: ensures ascending entries in the filtration matrices of a toric vector bundle
 --   INPUT: 'tvb', toric vector bundle
---  OUTPUT: a toric vector bundle, whose filtation matrices have ascending entries
+--  OUTPUT: a toric vector bundle, whose filtration matrices have ascending entries
 
 wellformedBundleFiltrations = method ()
 wellformedBundleFiltrations (ToricVectorBundleKlyachko) := tvb -> (

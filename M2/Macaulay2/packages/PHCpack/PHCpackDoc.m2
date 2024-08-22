@@ -246,7 +246,7 @@ doc ///
   Headline
     Option to specify the dimension to begin searching for positive dimensional components
   Usage
-    numericalIrreducibleDecompositon(...,StartDimension=>ZZ)
+    numericalIrreducibleDecomposition(...,StartDimension=>ZZ)
 ///;
 
 doc ///
