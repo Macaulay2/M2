@@ -140,7 +140,7 @@ doc ///
     Description
         Text
             Computes a partial subalgebra basis for its input.
-            This command returns the computed generators and not a computaiton object.
+            This command returns the computed generators and not a computation object.
             If the input is @ ofClass Subring@,
             then the computation object is stored in the cache of the input.
         Example

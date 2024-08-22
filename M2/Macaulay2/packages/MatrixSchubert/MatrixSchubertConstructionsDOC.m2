@@ -231,7 +231,7 @@ doc ///
 	    efficiently by computing the associated invariants for their antidiagonal initial ideals,
 	    which are known to be squarefree by [Wei17]. Therefore the extremal Betti numbers
 	    (which encode regularity, depth, and projective dimension) of ASM ideals coincide 
-	    with those of their antidiagonal initical ideals by [CV20].
+	    with those of their antidiagonal initial ideals by [CV20].
 	Example
 	    time schubertRegularity B
 	    time regularity comodule schubertDeterminantalIdeal B

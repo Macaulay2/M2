@@ -288,7 +288,7 @@ newCell(List,Ideal) := opt -> (boundary,label) -> (
     if not isCycle boundary then error "Expected the boundary to be a cycle";
     cd := if opt.CellDimension=!=null then opt.CellDimension else 0;
     c := makeCell(boundary,label,cd);
-    if opt.CellDimension=!=null and dim c > cd then error "Incorrect CellDimesion optional parameter";
+    if opt.CellDimension=!=null and dim c > cd then error "Incorrect CellDimension optional parameter";
     c
     )
 newCell(List) := opt -> cells -> newCell(cells,inferLabel cells,CellDimension=>opt.CellDimension);

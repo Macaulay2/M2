@@ -84,7 +84,7 @@ document {
 	    },
 	LI { "functionality added or improved:",
 	    UL {
-		LI { "It is now possible to create a fraction field of an iterated polymial ring using ", TO frac, "."},
+		LI { "It is now possible to create a fraction field of an iterated polynomial ring using ", TO frac, "."},
 		LI { "A number of new operators have been added that may be used for defining methods.  See ", TO symbol ^!, ", ",
 		    TO symbol _!, ", ", TO symbol ^~, ", ", TO symbol _~, ", ", TO symbol ^>, ", ", TO symbol ^>=, ", ", TO symbol ^<, ", ",
 		    TO symbol ^<=, ", ", TO symbol _>, ", ", TO symbol _>=, ", ", TO symbol _<, ", ", TO symbol _<=, ", ", TO symbol |_, ", and ",
