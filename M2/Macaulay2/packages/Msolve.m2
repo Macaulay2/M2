@@ -220,9 +220,11 @@ msolveRealSolutions(Ideal, Ring)       := opt -> (I0, F) -> (
     -- if precision is not specified, we want to use msolve's default precision
     prec := if precision F === infinity then msolveDefaultPrecision else precision F;
     mOut := msolve(S, K, I_*, "-p " | prec, opt);
-    -- format: [dim, [numlists, [ solution boxes ]]]
-    (d, solsp) := toSequence value readMsolveList get mOut;
+    -- format: [dim, [numlists, [ solution boxes ]]] when zero-dimensional, otherwise [1?, numgens, -1, []]
+    mSeq := toSequence value readMsolveList get mOut;
+    d := mSeq#0;
     if d =!= 0 then error "msolveRealSolutions: expected zero dimensional system of equations";
+    solsp := mSeq#1;
     if solsp_0 > 1 then (
 	printerr "msolveRealSolutions: unexpected msolve output, returning full output"; return {d, solsp});
     prec  = max(defaultPrecision, prec); -- we want the output precision to be at least defaultPrecision
