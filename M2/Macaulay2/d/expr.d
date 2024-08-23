@@ -37,14 +37,17 @@ export nextHash():hash_t := (
      HashCounter = HashCounter + 1;
      HashCounter);
 
--- Knuth, Art of Computer Programming, Section 6.4
--- constant is approx. 2^64 / phi
-export fibonacciHash(k:hash_t,p:int):hash_t := (
-    Ccode(hash_t, "(11400714819323198485ull * ",k,") >> (64 - ",p,")"));
-
--- hash codes for mutable objects that don't use nextHash
--- we use 9 since #buckets ZZ = 2^9
-export hashFromAddress(e:Expr):hash_t := fibonacciHash(Ccode(hash_t, "(long)", e), 9);
+------------------------------------------------------------
+-- hash codes for mutable objects that don't use nextHash --
+------------------------------------------------------------
+-- We use Fibonacci hashing (Knuth, Art of Computer Programming, Section 6.4)
+-- The constant 11400714819323198485 is approximately 2^64 / phi.
+-- We want to use the p most significant bits for hashing (where 2^p is the
+-- number of buckets), but in practice we use the p least significant bits,
+-- so we swap them.  We use p = 10 here since #buckets Matrix = 2^10.
+export hashFromAddress(e:Expr):hash_t := (
+    x := Ccode(hash_t, "11400714819323198485ull * (unsigned long)", e);
+    Ccode(hash_t, "(", x, " >> 54) | (", x, " << 10)"));
 
 export NULL ::= null();
 
