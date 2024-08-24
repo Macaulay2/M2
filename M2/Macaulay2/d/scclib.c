@@ -10,7 +10,7 @@
 
 #include "../system/supervisorinterface.h"
 
-extern void M2_stack_trace();
+extern void M2_stack_trace(int);
 
 void
 fatal(const char *s,...)   {
@@ -23,7 +23,7 @@ fatal(const char *s,...)   {
 #ifndef NDEBUG
      trap();
 #endif
-     M2_stack_trace();
+     M2_stack_trace(0);
      exit(1);
      }
 
