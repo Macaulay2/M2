@@ -1346,9 +1346,7 @@ export handleError(c:Code,e:Expr):Expr := (
 	       if !err.printed || backtrace && localFrame != oldReportFrame then (
 		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
-			 printErrorMessage(err.position,"--entering debugger (type help to see debugger commands)");
-			 z := debuggerFun(localFrame,c);
-			 -- printErrorMessage(err.position,"--leaving debugger");
+			 z := debuggerpointer(localFrame,c);
 			 when z is z:Error do (
 			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
 			      else if z.message == returnMessage then (

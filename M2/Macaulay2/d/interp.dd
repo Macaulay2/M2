@@ -494,6 +494,7 @@ debugger(f:Frame,c:Code):Expr := (
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(currentS);
        setGlobalVariable(currentS,Expr(PseudocodeClosure(f,c)));
+	 printMessage(codePosition(c), "entering debugger (enter 'help' to see commands)");
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,True);
@@ -504,12 +505,13 @@ debugger(f:Frame,c:Code):Expr := (
 		r := applyEE(debuggerHook,False);
 		when r is Error do return r else nothing;
 		);
+	 printMessage(codePosition(c), "leaving debugger");
 	 decrementInterpreterDepth();
        setGlobalVariable(currentS,oldDebuggerCode);
      setDebuggingMode(true);
      recursionDepth = oldrecursionDepth;
      ret);
-debuggerFun = debugger;
+debuggerpointer = debugger;
 
 currentString := setupvar("currentString", nullE);
 value(e:Expr):Expr := (

@@ -527,6 +527,7 @@ export {
 	"binomial",
 	"borel",
 	"break",
+	"breakpoint",
 	"cache",
 	"cacheValue",
 	"cancelTask",
