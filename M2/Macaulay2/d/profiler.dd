@@ -14,16 +14,18 @@ void profiler_stacktrace(std::ostream &, int);
 // the top-level runtime stack
 thread_local std::vector<stdiop0_Position> M2_stack;";
 
+-- TODO: implement better std::vector utilities
 stackpush(p:Position):void := Ccode(void, "M2_stack.emplace_back(", p, ")" );
 stackpop(e:Expr):Expr    := ( Ccode(void, "M2_stack.pop_back()"); e );
 
-export stacktrace(n:int):void := Ccode(void, "
-    for (stdiop0_Position frameptr : M2_stack)
-      std::cout << stdiop_tostring(frameptr) << std::endl;");
+export stacktrace(traceDepth:int):Expr := (
+    if traceDepth == 0
+    then ( Ccode(void, "profiler_stacktrace(std::cout, 0)"); nullE )
+    else Expr(new Sequence len Ccode(int, "M2_stack.size()") at i do
+	provide locate(Ccode(Position, "M2_stack[", i, "]"))));
 stacktrace(e:Expr):Expr := (
     when e is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1)
-    else ( if toInt(n) != 0 then stacktrace(toInt(n))
-	else Ccode(void, "profiler_stacktrace(std::cout, 0)"); nullE )
+    else stacktrace(toInt(n))
     else WrongArgSmallInteger(1));
 setupfun("stacktrace", stacktrace);
 
