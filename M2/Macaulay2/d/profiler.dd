@@ -1,0 +1,29 @@
+-- Copyright 2024 by Mahrud Sayrafi
+
+use binding;  -- for symbols
+use evaluate; -- for eval
+
+header "extern \"C\" void M2_stack_push(char*);";
+header "extern \"C\" void M2_stack_pop();";
+header "extern \"C\" void M2_stack_trace();";
+
+stacktrace(e:Expr):Expr := (
+    Ccode(void, "M2_stack_trace()"); e );
+setupfun("stacktrace", stacktrace);
+
+export evalprof(c:Code):Expr := (
+    when c is f:semiCode do (
+	Ccode(void, "M2_stack_push(", tocharstar(tostring(codePosition(c))), ")");
+	e := evalraw(c);
+	Ccode(void, "M2_stack_pop()");
+	e)
+    else evalraw(c));
+evalprofpointer = evalprof;
+
+profile(c:Code):Expr := (
+    stdError << " -- profile called" << endl;
+    profiling = true;
+    ret := eval(c);
+    profiling = false;
+    ret);
+setupop(profileS, profile);

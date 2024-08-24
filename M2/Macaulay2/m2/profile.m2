@@ -2,6 +2,8 @@
 
 needs "methods.m2"
 
+end--
+
 profile = method()
 
 record := new MutableHashTable

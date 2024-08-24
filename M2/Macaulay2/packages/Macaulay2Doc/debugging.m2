@@ -219,6 +219,7 @@ document {
      }
 
 
+-*
 document {
      Key => {profile,(profile, Function),(profile, String, Function)},
      Headline => "profile a function",
@@ -243,7 +244,7 @@ document {
      TT "profileSummary", " -- a command that will display the data
      accumulated by running functions produced with ", TO "profile", "."
      }
-
+*-
 
 document {
      Key => uncurry,
