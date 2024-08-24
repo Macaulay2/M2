@@ -4,25 +4,32 @@ use binding;  -- for symbols
 use evaluate; -- for eval
 
 header "
-extern \"C\" {
-  void M2_stack_trace(int);
-  void M2_stack_push(char*);
-  void M2_stack_pop();
-}";
+#include <thread>
+#include <vector>
+#include <iostream>
 
+// defined in main.cpp, uses Boost::stacktrace
+void profiler_stacktrace(std::ostream &, int);
+
+// the top-level runtime stack
+thread_local std::vector<char*> M2_stack;";
+
+stackpush(pos:string):void := Ccode(void, "M2_stack.emplace_back(", tocharstar(pos), ")" );
+stackpop(e:Expr):Expr    := ( Ccode(void, "M2_stack.pop_back()"); e );
+
+export stacktrace(n:int):void := Ccode(void, "
+    for (char* frameptr : M2_stack)
+      std::cout << frameptr << std::endl;");
 stacktrace(e:Expr):Expr := (
     when e is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1)
-    else ( Ccode(void, "M2_stack_trace(", toInt(n), ")"); e )
+    else ( if toInt(n) != 0 then stacktrace(toInt(n))
+	else Ccode(void, "profiler_stacktrace(std::cout, 0)"); nullE )
     else WrongArgSmallInteger(1));
 setupfun("stacktrace", stacktrace);
 
 export evalprof(c:Code):Expr := (
-    when c is f:semiCode do (
-	Ccode(void, "M2_stack_push(", tocharstar(tostring(codePosition(c))), ")");
-	e := evalraw(c);
-	Ccode(void, "M2_stack_pop()");
-	e)
-    else evalraw(c));
+    stackpush(tostring(codePosition(c)));
+    stackpop(evalraw(c)));
 evalprofpointer = evalprof;
 
 profile(c:Code):Expr := (

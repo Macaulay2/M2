@@ -5,6 +5,7 @@ use evaluate;
 use parser;
 use texmacs;
 use actors5;
+use profiler;
 
 import dirname(s:string):string;
 
