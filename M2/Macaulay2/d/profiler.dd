@@ -3,12 +3,17 @@
 use binding;  -- for symbols
 use evaluate; -- for eval
 
-header "extern \"C\" void M2_stack_push(char*);";
-header "extern \"C\" void M2_stack_pop();";
-header "extern \"C\" void M2_stack_trace();";
+header "
+extern \"C\" {
+  void M2_stack_trace(int);
+  void M2_stack_push(char*);
+  void M2_stack_pop();
+}";
 
 stacktrace(e:Expr):Expr := (
-    Ccode(void, "M2_stack_trace()"); e );
+    when e is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1)
+    else ( Ccode(void, "M2_stack_trace(", toInt(n), ")"); e )
+    else WrongArgSmallInteger(1));
 setupfun("stacktrace", stacktrace);
 
 export evalprof(c:Code):Expr := (
