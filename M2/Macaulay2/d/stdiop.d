@@ -127,7 +127,7 @@ cleanscreen():void := (
     if stdIO.outfd == stdError.outfd && !atEndOfLine(stdIO) || test(interruptedFlag)
     then stdIO << newline << flush;);
 
-printMessage(position:Position,message:string):void := (
+export printMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();
 	  stdError << position;
