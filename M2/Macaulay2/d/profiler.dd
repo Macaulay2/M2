@@ -15,9 +15,13 @@ void profiler_stacktrace(std::ostream &, int);
 thread_local std::vector<stdiop0_Position> M2_stack;";
 
 -- TODO: implement better std::vector utilities
+-- push and pop the given positions in the top-level call stack log
 stackpush(p:Position):void := Ccode(void, "M2_stack.emplace_back(", p, ")" );
 stackpop(e:Expr):Expr    := ( Ccode(void, "M2_stack.pop_back()"); e );
 
+-- if traceDepth = 0, _prints_ the engine stacktrace using Boost::stacktrace
+-- if traceDepth > 0, returns a sequence of positions from the parsing tree
+-- TODO: limit this to Code, packages, stc for traceDepth = 1, 2, 3, etc.
 export stacktrace(traceDepth:int):Expr := (
     if traceDepth == 0
     then ( Ccode(void, "profiler_stacktrace(std::cout, 0)"); nullE )
@@ -29,16 +33,20 @@ stacktrace(e:Expr):Expr := (
     else WrongArgSmallInteger(1));
 setupfun("stacktrace", stacktrace);
 
+-- when profiling = true is set, eval is substituted with evalprof,
+-- so that everytime evalraw recursively calls eval, this one runs.
 export evalprof(c:Code):Expr := (
     stdIO << tostring(codePosition(c)) << " " << tostring(c) << endl;
-    stackpush(codePosition(c)) ;
+    stackpush(codePosition(c));
     stackpop(evalraw(c)));
 evalprofpointer = evalprof;
 
+-- briefly enables the profiler and evaluates the code that follows
 profile(c:Code):Expr := (
-    stdError << " -- profile called" << endl;
+    stdError << " -- starting profiler" << endl;
     profiling = true;
-    ret := eval(c);
+    ret := evalprof(c);
     profiling = false;
+    stdError << " -- stopping profiler" << endl;
     ret);
 setupop(profileS, profile);
