@@ -12,14 +12,14 @@ header "
 void profiler_stacktrace(std::ostream &, int);
 
 // the top-level runtime stack
-thread_local std::vector<char*> M2_stack;";
+thread_local std::vector<stdiop0_Position> M2_stack;";
 
-stackpush(pos:string):void := Ccode(void, "M2_stack.emplace_back(", tocharstar(pos), ")" );
+stackpush(p:Position):void := Ccode(void, "M2_stack.emplace_back(", p, ")" );
 stackpop(e:Expr):Expr    := ( Ccode(void, "M2_stack.pop_back()"); e );
 
 export stacktrace(n:int):void := Ccode(void, "
-    for (char* frameptr : M2_stack)
-      std::cout << frameptr << std::endl;");
+    for (stdiop0_Position frameptr : M2_stack)
+      std::cout << stdiop_tostring(frameptr) << std::endl;");
 stacktrace(e:Expr):Expr := (
     when e is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1)
     else ( if toInt(n) != 0 then stacktrace(toInt(n))
@@ -28,7 +28,8 @@ stacktrace(e:Expr):Expr := (
 setupfun("stacktrace", stacktrace);
 
 export evalprof(c:Code):Expr := (
-    stackpush(tostring(codePosition(c)));
+    stdIO << tostring(codePosition(c)) << " " << tostring(c) << endl;
+    stackpush(codePosition(c)) ;
     stackpop(evalraw(c)));
 evalprofpointer = evalprof;
 
