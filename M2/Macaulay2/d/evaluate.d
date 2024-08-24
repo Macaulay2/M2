@@ -4,6 +4,11 @@ use hashtables;
 use convertr;
 use debugging;
 
+-- evalprof is not defined until profiler.dd
+-- so we use a pointer and populate it later.
+dummyevalprof(c:Code):Expr := nullE;
+export evalprofpointer := dummyevalprof;
+
 export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
 export threadLocal evalSequenceHadError := false;
@@ -14,6 +19,7 @@ threadLocal errorreturn := nullE;
 threadLocal recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 threadLocal export backtrace := true;
+threadLocal export profiling := false;
 threadLocal lastCode := dummyCode;
 threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
 export chars := new array(Expr) len 256 do (
@@ -1393,28 +1399,11 @@ handleError(c:Code,e:Expr):Expr := (
 	       e))
      else e);
 
-header "extern void M2_stack_push(char*);";
-header "extern void M2_stack_pop();";
-header "extern void M2_stack_trace();";
-stacktrace(e:Expr):Expr := (
-    Ccode(void,"M2_stack_trace()"); e );
-setupfun("stacktrace",stacktrace);
-
-evalprof(c:Code):Expr;
 evalraw(c:Code):Expr;
 export eval(c:Code):Expr := (
-    if Ccode(bool,"PROFILING == 1")
-    then Ccode(Expr,"evaluate_evalprof(",c,")")
-    else Ccode(Expr,"evaluate_evalraw(",c,")"));
-export evalprof(c:Code):Expr := (
-    when c is f:semiCode do ( -- what makes semiCode special?
-        -- printErrorMessage(codePosition(c),"--evaluating a semiCode");
-        -- TODO: how to get f.name?
-        Ccode(void,"M2_stack_push(",tocharstar(tostring(codePosition(c))),")");
-        e := evalraw(c);
-        Ccode(void,"M2_stack_pop()");
-        e)
-    else evalraw(c));
+    if profiling -- see evalprof in profiling.dd
+    then Ccode(Expr, "evaluate_evalprofpointer(", c, ")")
+    else Ccode(Expr, "evaluate_evalraw(", c, ")"));
 export evalraw(c:Code):Expr := (
     -- # typical value: symbol SPACE, Function, Thing, Thing
      -- better would for cancellation requests to set exceptionFlag:
