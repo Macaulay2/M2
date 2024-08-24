@@ -1751,8 +1751,10 @@ storeInHashTable(
      Expr(newCompiledFunction(storeGlobalDictionaries)));
 
 getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
-     when e is s:Sequence do
-     if length(s) == 0 then cwd() else WrongNumArgs(0)
+    when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else (
+	dir := getcwd();
+	if dir != "" then Expr(stringCell(dir))
+	else buildErrorPacket("can't get current working directory: " + syserrmsg()))
      else WrongNumArgs(0));
 setupfun("currentDirectory",getcwdfun);
 

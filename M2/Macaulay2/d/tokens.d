@@ -55,12 +55,6 @@ export steppingMessage := "--stepping limit reached";
 --export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 --export buildErrorPacket(pos:Position,message:string):Expr := Expr(Error(pos,message,nullE,false,dummyFrame));
 --export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
-export cwd():Expr := (
-     r := getcwd();
-     if r === "" then buildErrorPacket("can't get current working directory: " + syserrmsg())
-     else Expr(stringCell(r)));
-dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
-export debuggerFun := dummyDebuggerFun;
 export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
 (threadLocal export debuggingMode := false) = true;
