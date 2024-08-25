@@ -65,11 +65,11 @@ evalprofpointer = evalprof;
 -- briefly enables the profiler and evaluates the code that follows,
 -- storing the resulting statistics in the global ProfileTable.
 profile(c:Code):Expr := (
-    -- stdError << " -- starting profiler" << endl;
+    if debugLevel == -2 then printMessage(codePosition(c), "entering profiler");
     profiling = true;
     data := cpuTimer(c); -- calls eval, not evalraw
     profiling = false;
-    -- stdError << " -- stopping profiler" << endl;
+    if debugLevel == -2 then printMessage(codePosition(c), "leaving profiler");
     -- now update the profiling totals
     key := toExpr("total");
     current := lookup(ProfileTable, key);

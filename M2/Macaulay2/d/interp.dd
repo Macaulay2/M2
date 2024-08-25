@@ -505,6 +505,7 @@ debugger(f:Frame,c:Code):Expr := (
 		r := applyEE(debuggerHook,False);
 		when r is Error do return r else nothing;
 		);
+	 if debugLevel != 0 then
 	 printMessage(codePosition(c), "leaving debugger");
 	 decrementInterpreterDepth();
        setGlobalVariable(currentS,oldDebuggerCode);
