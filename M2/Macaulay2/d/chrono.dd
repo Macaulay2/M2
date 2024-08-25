@@ -30,7 +30,7 @@ cpuTime(e:Expr):Expr := (
     else WrongNumArgs(0));
 setupfun("cpuTime", cpuTime);
 
-cpuTimer(c:Code):Sequence := (
+export cpuTimer(c:Code):Sequence := (
     T0 := cpuTime();
     ret := eval(c);
     T1 := cpuTime();
