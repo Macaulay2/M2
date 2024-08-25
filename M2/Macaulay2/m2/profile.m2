@@ -2,6 +2,20 @@
 
 needs "methods.m2"
 
+leaderboard = dataset -> (
+    (ttime, tticks) := toSequence sum(toList \ values dataset);
+    data := sort pairs hashTable(join,
+	apply(pairs dataset, (k, v) -> (v, {k})));
+    rows := min(20, #data);
+    high := reverse take(data, {#data - rows - 1, #data - 1});
+    form := (loc, num, t) -> (loc, num, format(4,2,2,2,"e", 100 * t / ttime));
+    body := apply(rows,
+	i -> splice { pad(floor log_10(rows) + 1, i | "."),
+	    form reverse splice high#i});
+    TABLE join({{"#", "Address", "#run", "%time"}}, body, {{"-", "Totals:", tticks, ttime}}))
+
+profileSummary = Command(() -> leaderboard ProfileTable)
+
 end--
 
 profile = method()
