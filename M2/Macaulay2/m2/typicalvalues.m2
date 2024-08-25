@@ -121,10 +121,11 @@ generateTypicalValues = (srcdir) -> (
 	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1, \\2) -- \\3", toString srcstring);
 	extracted  = apply(extracted, line -> first select("(.*?)--(.*?)$", "\\1" | pad_(91-#line) "\t-- \\2", line));
 	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
-    close outfile)
+    outfile << "-- DONE: generated based on " | version#"git description" << endl << close)
 
--- if missing, tvalues.m2 is regenerated directly
-if not fileExists typicalValuesSource then generateTypicalValues(currentFileDirectory | "../d/")
+-- if missing or not successfully generated, tvalues.m2 is regenerated directly
+if not fileExists typicalValuesSource or not match("-- DONE", get typicalValuesSource)
+then generateTypicalValues(currentFileDirectory | "../d/")
 
 -----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
