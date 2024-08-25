@@ -45,7 +45,7 @@ setupconst("ProfileTable", Expr(ProfileTable));
 -- evaluates the code while measuring and storing the timing data
 measure(c:Code):Expr := (
     key := locate(codePosition(c));
-    data := wallTimer(c); -- calls evalraw
+    data := wallTimer(c); -- calls evalraw, not eval
     -- TODO: optimize the bucket search
     current := lookup(ProfileTable, key);
     storeInHashTable(ProfileTable, key,
@@ -67,8 +67,15 @@ evalprofpointer = evalprof;
 profile(c:Code):Expr := (
     -- stdError << " -- starting profiler" << endl;
     profiling = true;
-    ret := evalprof(c);
+    data := cpuTimer(c); -- calls eval, not evalraw
     profiling = false;
     -- stdError << " -- stopping profiler" << endl;
-    ret);
+    -- now update the profiling totals
+    key := toExpr("total");
+    current := lookup(ProfileTable, key);
+    storeInHashTable(ProfileTable, key,
+	Expr(when current is s:Sequence
+	    do   Sequence(data.0 + s.0, oneE + s.1)
+	    else Sequence(data.0,       oneE)));
+    data.1);
 setupop(profileS, profile);

@@ -2,18 +2,20 @@
 
 needs "methods.m2"
 
-leaderboard = dataset -> (
-    (ttime, tticks) := toSequence sum(toList \ values dataset);
-    data := sort pairs hashTable(join,
-	apply(pairs dataset, (k, v) -> (v, {k})));
+head := () -> ("#run", "%time", "position")
+form := (ttime, t, n, loc) -> (n, format(4,2,2,2,"e", 100 * t / ttime), loc)
+tail := (ttime, tticks) -> (tticks, format(4,4,4,4,"e",ttime) | "s", "elapsed total")
+
+leaderboard = ProfileTable -> (
+    dataset := pairs ProfileTable;
+    if #dataset == 0 then return TABLE {head(), tail(0,0)};
+    (ttime, tticks) := ProfileTable#"total";
+    data := sort pairs hashTable(join, apply(dataset,
+	    (k, v) -> if k =!= "total" then (v, {k})));
     rows := min(20, #data);
     high := reverse take(data, {#data - rows - 1, #data - 1});
-    form := (loc, num, t) -> (loc, num, format(4,2,2,2,"e", 100 * t / ttime));
-    body := apply(rows,
-	i -> splice { pad(floor log_10(rows) + 1, i | "."),
-	    form reverse splice high#i});
-    TABLE join({{"#", "Address", "#run", "%time"}}, body, {{"-", "Totals:", tticks, ttime}}))
-
+    body := apply(rows, i -> form_ttime splice high#i);
+    TABLE join({head()}, body, {tail(ttime, tticks)}))
 profileSummary = Command(() -> leaderboard ProfileTable)
 
 end--
