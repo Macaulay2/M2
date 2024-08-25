@@ -6,7 +6,12 @@
 needs "methods.m2"
 needs "lists.m2"
 
+-- TODO: are these used in the documentation?
+-- TODO: how to find all missing keywords?
+-- TODO: is there a better place for these?
 typicalValues#(symbol timing) = Time
+typicalValues#(symbol elapsedTiming) = Time
+typicalValues#(symbol threadLocal) = Symbol
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
