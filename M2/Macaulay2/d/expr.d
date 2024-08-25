@@ -204,6 +204,7 @@ dummybinary(w:ParseTree,v:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree :
      w);
 export nopr := -1;						    -- represents unused precedence
 export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
+
 export dummyUnaryFun(c:Code):Expr := (
      anywhereError("dummy unary function called");
      nullE);
@@ -216,9 +217,11 @@ export dummyBinaryFun(c:Code,d:Code):Expr := (
 export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
      anywhereError("dummy ternary function called");
      nullE);
+export dummyMultaryFun(c:CodeSequence):Expr := (
+     anywhereError("dummy multary function called");
+     nullE);
 
 export emptySequence := Sequence();
-
 export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
