@@ -3,10 +3,6 @@ use binding;
 use common;
 use util;
 
-dummyMultaryFun(c:CodeSequence):Expr := (
-     error("dummy multary function called");
-     nullE);
-
 export AssignElemFun := dummyTernaryFun;	-- filled
 export AssignQuotedElemFun := dummyTernaryFun;	-- filled
 export NewFun := dummyUnaryFun;	  -- filled in later
