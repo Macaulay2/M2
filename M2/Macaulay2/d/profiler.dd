@@ -36,12 +36,11 @@ stacktrace(e:Expr):Expr := (
 setupfun("stacktrace", stacktrace);
 
 -- this hash table will contain the accumulation of
--- profiling data (counts and times) in each session
+-- profiling data (ticks and times) in each session
 -- TODO: this should be thread local as well
 ProfileTable := newHashTable(Tally, nothingClass);
 ProfileTable.beingInitialized = false; -- mutex locks will occur
-
-addone(e:Expr):Expr := when e is n:ZZcell do Expr(ZZcell(n.v + 1)) else e;
+setupconst("ProfileTable", Expr(ProfileTable));
 
 -- evaluates the code while measuring and storing the timing data
 measure(c:Code):Expr := (
@@ -50,7 +49,9 @@ measure(c:Code):Expr := (
     -- TODO: optimize the bucket search
     current := lookup(ProfileTable, key);
     storeInHashTable(ProfileTable, key,
-	if current == nullE then oneE else addone(current));
+	Expr(when current is s:Sequence
+	    do   Sequence(data.0 + s.0, oneE + s.1)
+	    else Sequence(data.0,       oneE)));
     data.1);
 
 -- when profiling = true is set, eval is substituted with evalprof,
@@ -64,11 +65,10 @@ evalprofpointer = evalprof;
 -- briefly enables the profiler and evaluates the code that follows,
 -- storing the resulting statistics in the global ProfileTable.
 profile(c:Code):Expr := (
-    stdError << " -- starting profiler" << endl;
+    -- stdError << " -- starting profiler" << endl;
     profiling = true;
     ret := evalprof(c);
     profiling = false;
-    stdError << " -- stopping profiler" << endl;
-    -- TODO: do we need to call sethash?
-    Expr(ProfileTable));
+    -- stdError << " -- stopping profiler" << endl;
+    ret);
 setupop(profileS, profile);
