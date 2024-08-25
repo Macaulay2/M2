@@ -1,6 +1,4 @@
 -- -*- coding: utf-8 -*-
-polymake := findProgram("polymake", "polymake --version", RaiseError => false)
-
 newPackage(
 	"StatePolytope",
     	Version => "1.2", 
@@ -14,9 +12,7 @@ newPackage(
 	--   but false after it is done
     	DebuggingMode => false,
 	AuxiliaryFiles => true,
-	CacheExampleOutput => true,
 	PackageImports => {"gfanInterface"},
-	OptionalComponentsPresent => polymake =!= null
     	)
 
 export { 
@@ -28,6 +24,8 @@ export {
      --"maxUGBDegree", 
      "isStable" --documented
      }
+
+polymake := findProgram("polymake", "polymake --version", RaiseError => false)
 
 initialIdeals = method(
      TypicalValue => List
@@ -107,7 +105,10 @@ isStable(ZZ,Ideal) := (m,I) -> (
 	then true else false
 )
 
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => polymake =!= null)
+
 document {    
 	Key => StatePolytope,
 	Headline => "computes state polytopes of ideals",

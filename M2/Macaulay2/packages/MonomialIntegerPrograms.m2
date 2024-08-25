@@ -28,12 +28,13 @@ newPackage (
       "CustomScipPrintLevel" => ""
       },
   AuxiliaryFiles => true,
-  CacheExampleOutput => true,
   PackageImports => {"LexIdeals","MinimalPrimes"},
-  OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
   DebuggingMode => false,
   Keywords => {"Commutative Algebra"}
 )
+
+-- TODO: use findProgram
+scipPresent := run "type scip >/dev/null 2>&1" === 0
 
 -------------
 -- exports --
@@ -509,7 +510,9 @@ unPolarizeSome (List, PolynomialRing) := (L, R) -> (
 -- documentation --
 -------------------
 
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput => true,
+    OptionalComponentsPresent => scipPresent)
 
 doc ///
  Key

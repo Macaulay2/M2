@@ -10,6 +10,9 @@ newPackage(
     	DebuggingMode => false
     	)
 
+-- TODO: use findPackage
+polymakePresent = run("command -v polymake > /dev/null") == 0
+
 export {"PolymakeObject", "polymakeObject",
      "removeComments",
      "getPropertyNames",
@@ -189,51 +192,7 @@ document {
 	}
 end
 
-
-document {
-	Key => {(firstFunction,ZZ),firstFunction},
-	Headline => "a silly first function",
-	Usage => "firstFunction n",
-	Inputs => { "n" },
-	Outputs => {{ "a silly string, depending on the value of ", TT "n" }},
-        SourceCode => {(firstFunction,ZZ)},
-	EXAMPLE lines ///
-	   firstFunction 1
-	   firstFunction 0
-     	///
-	}
-   
-document {
-	Key => {(firstFunction,ZZ),firstFunction},
-	Headline => "a silly first function",
-	Usage => "firstFunction n",
-	Inputs => { "n" },
-	Outputs => {{ "a silly string, depending on the value of ", TT "n" }},
-        SourceCode => {(firstFunction,ZZ)},
-	EXAMPLE lines ///
-	   firstFunction 1
-	   firstFunction 0
-     	///
-	}
-
-document {
-	Key => {(firstFunction,ZZ),firstFunction},
-	Headline => "a silly first function",
-	Usage => "firstFunction n",
-	Inputs => { "n" },
-	Outputs => {{ "a silly string, depending on the value of ", TT "n" }},
-        SourceCode => {(firstFunction,ZZ)},
-	EXAMPLE lines ///
-	   firstFunction 1
-	   firstFunction 0
-     	///
-	}
-
 ------------------------- TEST ---------------------------
-
-TEST ///
-    assert ( firstFunction 2 == "D'oh!" )
-///
 
 readMat = method(TypicalValue => Matrix)
 readMat(String,Ring) := (filename,R) -> (
@@ -242,9 +201,6 @@ readMat(String,Ring) := (filename,R) -> (
                  t = apply(t,value);
                      select(t, x -> class x =!= Nothing))))
 )
-
-firstFunction = method(TypicalValue => String)
-firstFunction ZZ := String => n -> if n == 1 then "Hello World!" else "D'oh!"
 
 restart
 loadPackage "Polymake"

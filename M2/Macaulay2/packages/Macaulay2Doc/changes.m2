@@ -1163,7 +1163,7 @@ document {
 		    LI { "The function ", TO "LocalRings :: localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
 		    LI { "The function ", TO (length, Module), " now can compute length of Artinian modules over local rings." },
 		    LI {
-			 "The function ", TO "newPackage", " now takes two new options: 
+			 "The function ", TO "beginDocumentation", " now takes two new options: 
 			 ", TT "OptionalComponentsPresent", " tells whether all optional external components of the package are present on the system,
 			 and ", TT "UseCachedExampleOutput", " tells whether to use the cached example output files.  This will be useful for packages
 			 that use external programs that are not always present, so they can seize the opportunity to rerun examples when the external
@@ -2470,7 +2470,7 @@ document {
 		    TO [map,DegreeLift],
 		    TO [monoid,DegreeLift],
 		    TO [monoid,Join],
-		    TO [newPackage,CacheExampleOutput],
+		    TO [beginDocumentation,CacheExampleOutput],
 		    TO [newRing,DegreeLift],
 		    TO [newRing,DegreeMap],
 		    TO [newRing,Join],

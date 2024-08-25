@@ -28,8 +28,9 @@ export {
 	"MarkedPolynomialList",
 	"markedPolynomialList",
 	"MPLConverter",
-	"polymakeFanToFan",
-	"polymakeConeToCone",
+	-- retired circa 2019 in 25ed2cbf8f3
+	-- "polymakeFanToFan",
+	-- "polymakeConeToCone",
 	"gfan", -- done!
 	"gfanBuchberger", -- done!
 	"gfanDoesIdealContain", -- done!
@@ -4350,10 +4351,10 @@ doc ///
 		   a polynomial ideal with coefficients in ZZ.  The
 		   input is given as an {\tt Ideal}.  If just the
 		   ideal is given then the option "groebnerFan" =>
-		   true" should also be added.  For the second
+		   true should also be added.  For the second
 		   version, the list w is a weight vector for which
 		   the initial ideal or Groebner basis will be
-		   computed (depending on whether "initialIdeal=>true"
+		   computed (depending on whether "initialIdeal"=>true
 		   or "groebnerBasis"=>true is set).  Only one of
 		   these two can be set.  Note that the Groebner fan
 		   over ZZ is more refined than the Groebner fan of

@@ -2,6 +2,8 @@
 --- author(s): Mahrud
 --- notes: functions below are all defined in packages.m2
 
+undocumented (newPackage, Sequence)
+
 doc ///
 Node
   Key
@@ -256,7 +258,6 @@ Node
     (newPackage, String)
     [newPackage, Authors]
     [newPackage, AuxiliaryFiles]
-    [newPackage, CacheExampleOutput]
     [newPackage, Certification]
     [newPackage, Configuration]
     [newPackage, Date]
@@ -265,11 +266,9 @@ Node
     [newPackage, HomePage]
     [newPackage, InfoDirSection]
     [newPackage, Keywords]
-    [newPackage, OptionalComponentsPresent]
     [newPackage, PackageExports]
     [newPackage, PackageImports]
     [newPackage, Reload]
-    [newPackage, UseCachedExampleOutput]
     [newPackage, Version]
     Name
     Email
@@ -307,20 +306,6 @@ Node
       the entries are names of other packages to load, both for the user and for the code of the new package
     PackageImports=>List
       the entries of names of other packages to load, just for the code of the new package
-    CacheExampleOutput=>Boolean
-      whether @TO installPackage@ should cache (newer) example output in a subdirectory of the auxiliary file directory
-      named @TT "examples"@, for use in a future installation. This value can be overridden by a value explicitly specified
-      when @TO installPackage@ is called. After the directory is created, it will necessary for the user also to specify
-      @TT "AuxiliaryFiles => true"@.
-    OptionalComponentsPresent=>Boolean
-      whether all optional external components of the package are present on the system. Unless the user sets this
-      option or @TT "CacheExampleOutput"@ to @TT "true"@, this option will be initialized to @TT "true"@.
-    UseCachedExampleOutput=>Boolean
-      whether @TO installPackage@ should copy previously cached example output, if it is present and
-      corresponds to the current example input for a node, rather than rerunning the examples, which might
-      be important if optional external software is not present in the system. This is relevant only when
-      @TT "CacheExampleOutput"@ and @TT "AuxiliaryFiles"@ are set to @TT "true"@. Unless set by the user,
-      it is set to the negation of the value of @TT "OptionalComponentsPresent"@.
     Certification=>List
       the certification block inserted by the maintainers of @EM "Macaulay2"@ after the package has been accepted
       for publication by a journal, such as The Journal of Software for Algebra and Geometry: @EM "Macaulay2"@.
@@ -490,7 +475,7 @@ Node
     CacheExampleOutput=>Boolean
       whether to cache (newer) example output in a subdirectory of the @TO2 {[newPackage, AuxiliaryFiles], "auxiliary file directory"}@
       named @TT "examples"@ for use in a future installation. This value, if set to true or false, will
-      override any value explicitly specified when @TO newPackage@ is called. After the directory is created, it will
+      override any value explicitly specified when @TO beginDocumentation@ is called. After the directory is created, it will
       be necessary for the user to specify @TT "AuxiliaryFiles => true"@ with the @TO newPackage@ command.
     SeparateExec=>Boolean
       whether to install the files of the package in two separate directory trees, one for the architecture

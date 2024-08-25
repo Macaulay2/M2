@@ -21,8 +21,6 @@ newPackage(
     PackageImports=>{"PHCpack","Polyhedra","DeterminantalRepresentations"},
     PackageExports=>{"NumericalAlgebraicGeometry"},
     AuxiliaryFiles=>true,
-    OptionalComponentsPresent => (readPackage "PHCpack").OptionalComponentsPresent,
-    CacheExampleOutput => true,
     DebuggingMode=>false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -550,8 +548,12 @@ monteCarloMixedVolume (List) := ZZ => F ->(
 --                     --
 -------------------------
 
+importFrom_PHCpack "phcPresentAndModern"
 
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => phcPresentAndModern)
+
 doc///
 	Key 
 		DecomposableSparseSystems

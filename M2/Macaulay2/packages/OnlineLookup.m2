@@ -10,7 +10,6 @@ newPackage(
 	Keywords => {"System"},
         DebuggingMode => false,
 	AuxiliaryFiles => true,
-	CacheExampleOutput => true,
 	PackageImports => {"Text"}
         )
 
@@ -107,8 +106,9 @@ isc String := s -> (
     )
 
 
-beginDocumentation()
-multidoc ///
+beginDocumentation(CacheExampleOutput => true)
+
+doc ///
  Node
   Key
    OnlineLookup

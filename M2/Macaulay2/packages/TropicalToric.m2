@@ -9,21 +9,18 @@ newPackage(
         HomePage=>"https://alessioborzi.github.io"
       }
   },
-	Headline => "A package on tropical methods for toric intersection theory",
-	Configuration => {},
+    Headline => "tropical methods for toric intersection theory",
   PackageExports => {
     "NormalToricVarieties",
     "Tropical",
-    "Package$gfanInterface"
+    "gfanInterface"
   },
   PackageImports => {
+        "Polymake",
     "FourierMotzkin"
   },
 	AuxiliaryFiles => true,
-	CacheExampleOutput => true,
-  OptionalComponentsPresent => true,
-  UseCachedExampleOutput => true,
-  Keywords => {"Tropical Geometry"},
+    Keywords => { "Intersection Theory", "Toric Geometry", "Tropical Geometry" },
   Certification => {
       "journal name" => "Journal of Software for Algebra and Geometry",
       "journal URI" => "https://msp.org/jsag/",
@@ -83,7 +80,11 @@ load "TropicalToric/polymakeContains.m2";
 -- DOCUMENTATION
 ------------------------------------------------------------------------------
 
-beginDocumentation()
+importFrom_Polymake "polymakePresent"
+
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => polymakePresent)
 
 load "TropicalToric/ToricCycleDoc.m2";
 load "TropicalToric/TropicalToricDoc.m2";

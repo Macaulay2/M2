@@ -1,4 +1,7 @@
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => false, -- only the cached example for realrank need qepcad
+    OptionalComponentsPresent => qepcadPresent)
+
 document { 
 Key => CoincidentRootLoci, 
 Headline => "A package for computations with coincident root loci",
@@ -220,6 +223,7 @@ document {
 Key => {(switch,RingElement),(switch,List),(switch,Ideal)},
 PARA{"A binary form ",TEX///$F(t_0,t_1) = a_0\,t_0^n+n\,a_1\,t_0^{n-1}\,t_1+1/2\,n\,(n-1)\,a_2\,t_0^{n-2}\,t_1^2+\,\cdots\,+n\,a_{n-1}\,t_0\,t_1^{n-1}+a_n\,t_1^n$///," can be identified with the list ",TEX///$\{a_0,a_1,\ldots,a_n\}$///," of its coefficients, and also with the ideal of the corresponding point of ",TEX///$\mathbb{P}^n$///,". The method ",TT "switch"," when applied to a binary form returns the list of its coefficients; when applied to a list of coefficients returns the ideal of the corresponding point; when applied to the ideal of a point returns the corresponding binary form."},
 EXAMPLE {"F = randomBinaryForm 9","L = switch F","I = switch L","switch I","oo == F"}}
+
 document { 
 Key => {realrank,(realrank,RingElement)},
 Headline => "compute the real rank", 
@@ -228,47 +232,19 @@ Inputs => {"F" => RingElement => {"a binary form ",TEX///$F\in K[x,y]$///," of d
 Outputs => {ZZ => {"the real rank of ",TEX///$F$///,", i.e., the minimum integer ",TEX///$r$///," such that there is a decomposition ",TEX///$F = c_1\,(l_1)^d+\cdots+c_r\,(l_r)^d$///," where ",TEX///$l_1,\ldots,l_r$///," are real linear forms and ",TEX///$c_1,\ldots,c_r\in\mathbb{R}$///}},
 PARA{"This method requires generally the program ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to be installed. Source code and installation instructions for it are available at ",HREF{"https://www.usna.edu/CS/qepcadweb/INSTALL/IQ.html","Downloading and Installing QEPCAD"},"."},
 PARA{"Below we compute the real rank of a binary form of degree 7."},
-if CoincidentRootLoci.Options.OptionalComponentsPresent 
-then EXAMPLE {"R := QQ[x,y];","F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7","realrank F"}
-else PRE ///i1 : R := QQ[x,y];
-
-i2 : F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7
-
-       7     6        5 2       4 3      3 4      2 5        6     7
-o2 = 2x  + 7x y + 168x y  + 140x y  + 70x y  + 21x y  + 56x*y  + 4y
-
-o2 : QQ[x..y]
-
-i3 : realrank F
-
-o3 = 5
-///,
+EXAMPLE {
+    "R := QQ[x,y];",
+    "F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7",
+    "realrank F"},
 PARA{"In the case when the coefficient ring ",TEX///$K$///," contains a variable, say ",TEX///$u$///,", then the method returns a value ",TEX///$r$///," if the real rank of ",TEX///$F$///," is ",TEX///$r$///," for all the real values of ",TEX///$u$///," in the range specified by the option ",TO [realrank, Range],". An error is thrown if the answer is not uniform."},
-if CoincidentRootLoci.Options.OptionalComponentsPresent 
-then EXAMPLE {"Ru := QQ[u][x,y];","F = u*x^4*y+2*x^2*y^3","realrank(F,Range=>(0,infinity))","realrank(F,Range=>[-1,0])","realrank(F,Range=>(-infinity,-1))"}
-else PRE ///
-i4 : Ru := QQ[u][x,y];
-
-i5 : F = u*x^4*y+2*x^2*y^3
-
-        4      2 3
-o5 = u*x y + 2x y
-
-o5 : QQ[u][x..y]
-
-i6 : realrank(F,Range=>(0,infinity))
-
-o6 = 3
-
-i7 : realrank(F,Range=>[-1,0])
-
-o7 = 3
-
-i8 : realrank(F,Range=>(-infinity,-1))
-
-o8 = 3
-///,
+EXAMPLE {
+    "Ru := QQ[u][x,y];",
+    "F = u*x^4*y+2*x^2*y^3",
+    "realrank(F,Range=>(0,infinity))",
+    "realrank(F,Range=>[-1,0])",
+    "realrank(F,Range=>(-infinity,-1))"},
 SeeAlso => {complexrank}}
+
 document { 
 Key => {complexrank,(complexrank,RingElement)},
 Headline => "compute the complex rank", 

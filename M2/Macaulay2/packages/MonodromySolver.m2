@@ -19,8 +19,6 @@ newPackage(
 	AuxiliaryFiles => true,
   	DebuggingMode => false,		
   	--DebuggingMode => true,		 -- set to true only during development
-  	CacheExampleOutput => false
---        OptionalComponentsPresent => true --  set to true only during development
     	)
 
 
@@ -41,7 +39,8 @@ needs "./MonodromySolver/galois-group.m2"
 needs "./MonodromySolver/Tests.m2"
 
 
-beginDocumentation()
+beginDocumentation(-* OptionalComponentsPresent => true *-) --  set to true only during development
+
 needs "./MonodromySolver/Documentation.m2"
 end
 

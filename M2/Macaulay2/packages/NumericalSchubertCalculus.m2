@@ -1,8 +1,3 @@
-phcPresent := run ("type phc >/dev/null 2>&1") === 0
-phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
-phcVersionNeeded := "2.3.80"
-phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
-
 newPackage(
     "NumericalSchubertCalculus",
     Version => "1.17", 
@@ -33,11 +28,13 @@ newPackage(
         "Schubert2"
 	},
     AuxiliaryFiles => true,
-    CacheExampleOutput => true,
-    OptionalComponentsPresent => phcPresentAndModern,
     DebuggingMode => false
     )
+
+importFrom_PHCpack "phcPresentAndModern"
+
 debug NumericalAlgebraicGeometry
+
 export { 
    "changeFlags",
    "resetStatistics",
@@ -982,7 +979,10 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -------------------
 -- Documentation --
 -------------------
-beginDocumentation()
+beginDocumentation(
+    CacheExampleOutput        => true,
+    OptionalComponentsPresent => phcPresentAndModern)
+
 load "NumericalSchubertCalculus/doc.m2"
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 

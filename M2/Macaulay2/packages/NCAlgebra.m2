@@ -14,9 +14,7 @@ newPackage("NCAlgebra",
 	   Email => "crgibbon@hamilton.edu"}},
      Keywords => {"Noncommutative Algebra", "Interfaces"},
      AuxiliaryFiles => true,
-     CacheExampleOutput => true,
      PackageExports =>{"IntegralClosure"},
-     OptionalComponentsPresent => bergmanPresent := run "type bergman >/dev/null 2>&1" === 0
      )
 
 export { "NCRing", "NCQuotientRing", "NCPolynomialRing",
@@ -2002,7 +2000,7 @@ newBasis(ZZ,NCRing) := NCMatrix => opts -> (n,B) -> (
       ncMatrix(B,{},{})
 )
 
-if bergmanPresent then TEST ///
+TEST ///
 debug NCAlgebra						   -- to get "newBasis"
 A = QQ{a,b,c,d}
 setWeights(A,{1,1,2,3})
@@ -2053,7 +2051,7 @@ leftMultiplicationMap(NCRingElement,List,List) := (f,fromBasis,toBasis) -> (
    )
 )
 
-if bergmanPresent then TEST ///
+TEST ///
 A = QQ{a,b}
 I = ncIdeal {a*a*a,a*a*b,a*b*a,a*b*b,b*a*a,b*a*b,b*b*a,b*b*b}
 B = A/I
