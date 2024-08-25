@@ -2,6 +2,8 @@
 
 use binding;  -- for symbols
 use evaluate; -- for eval
+use chrono;   -- for wallTimer
+use sets;     -- for Tally
 
 header "
 #include <thread>
@@ -33,20 +35,40 @@ stacktrace(e:Expr):Expr := (
     else WrongArgSmallInteger(1));
 setupfun("stacktrace", stacktrace);
 
+-- this hash table will contain the accumulation of
+-- profiling data (counts and times) in each session
+-- TODO: this should be thread local as well
+ProfileTable := newHashTable(Tally, nothingClass);
+ProfileTable.beingInitialized = false; -- mutex locks will occur
+
+addone(e:Expr):Expr := when e is n:ZZcell do Expr(ZZcell(n.v + 1)) else e;
+
+-- evaluates the code while measuring and storing the timing data
+measure(c:Code):Expr := (
+    key := locate(codePosition(c));
+    data := wallTimer(c); -- calls evalraw
+    -- TODO: optimize the bucket search
+    current := lookup(ProfileTable, key);
+    storeInHashTable(ProfileTable, key,
+	if current == nullE then oneE else addone(current));
+    data.1);
+
 -- when profiling = true is set, eval is substituted with evalprof,
 -- so that everytime evalraw recursively calls eval, this one runs.
 export evalprof(c:Code):Expr := (
-    stdIO << tostring(codePosition(c)) << " " << tostring(c) << endl;
+    -- stdIO << tostring(codePosition(c)) << " " << tostring(c) << endl;
     stackpush(codePosition(c));
-    stackpop(evalraw(c)));
+    stackpop(measure(c)));
 evalprofpointer = evalprof;
 
--- briefly enables the profiler and evaluates the code that follows
+-- briefly enables the profiler and evaluates the code that follows,
+-- storing the resulting statistics in the global ProfileTable.
 profile(c:Code):Expr := (
     stdError << " -- starting profiler" << endl;
     profiling = true;
     ret := evalprof(c);
     profiling = false;
     stdError << " -- stopping profiler" << endl;
-    ret);
+    -- TODO: do we need to call sethash?
+    Expr(ProfileTable));
 setupop(profileS, profile);
