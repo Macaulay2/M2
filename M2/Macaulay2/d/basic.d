@@ -38,8 +38,8 @@ export hash(e:Expr):hash_t := (
      is x:Error do (
 	  929+hash(x.message)+12963*(
 	       hash(x.position.filename) 
-	       + 1299791 * (int(x.position.line) + 
-		    1299811 * int(x.position.column))))
+	       +   1299791 * (int(x.position.lineF) +
+		   1299811 *  int(x.position.columnF))))
      is x:RawMonomialCell do hash(x.p)
      is x:RawMonomialOrderingCell do Ccode(hash_t, "rawMonomialOrderingHash(",x.p,")" )
      is x:RawMonoidCell do Ccode(hash_t, "rawMonoidHash(",x.p,")" )
