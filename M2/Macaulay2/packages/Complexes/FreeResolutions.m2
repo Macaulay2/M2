@@ -454,12 +454,12 @@ resolutionBySyzygies = (opts, M) -> (
 
     RO.complex = (lengthlimit) -> (
         syzmats := toList RO.SyzygyList;
-        C := if numcols first syzmats === 0 then complex M
+        C := if numcols first syzmats === 0 then complex target first syzmats
              else (
                  if numcols last syzmats === 0 then syzmats = drop(syzmats, -1);
                  complex syzmats
                  );
-        C.cache.augmentationMap = map(complex M, C, i -> map(M, target presentation M, 1));
+        C.cache.augmentationMap = map(complex M, C, i -> map(M, C_0, 1));
         C);
     
     RO.compute(opts.LengthLimit, opts.DegreeLimit);
