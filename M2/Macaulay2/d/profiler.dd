@@ -42,17 +42,23 @@ ProfileTable := newHashTable(Tally, nothingClass);
 ProfileTable.beingInitialized = false; -- mutex locks will occur
 setupconst("ProfileTable", Expr(ProfileTable));
 
--- evaluates the code while measuring and storing the timing data
-measure(c:Code):Expr := (
-    key := locate(codePosition(c));
-    data := wallTimer(c); -- calls evalraw, not eval
+-- increments the entry corresponding to key in ProfileTable.
+increment(key:Expr, data:Sequence):Expr := (
+    seconds := data.0;
+    outcome := data.1;
     -- TODO: optimize the bucket search
     current := lookup(ProfileTable, key);
     storeInHashTable(ProfileTable, key,
 	Expr(when current is s:Sequence
-	    do   Sequence(data.0 + s.0, oneE + s.1)
-	    else Sequence(data.0,       oneE)));
-    data.1);
+	    do   Sequence(seconds + s.0, oneE + s.1)
+	    else Sequence(seconds,       oneE)));
+    outcome);
+
+-- evaluates the code, increments the stopwatch, and returns the value
+measure(c:Code):Expr := (
+    key := locate(codePosition(c));
+    data := wallTimer(c); -- calls evalraw, not eval
+    increment(key, data));
 
 -- when profiling = true is set, eval is substituted with evalprof,
 -- so that everytime evalraw recursively calls eval, this one runs.
@@ -63,19 +69,13 @@ export evalprof(c:Code):Expr := (
 evalprofpointer = evalprof;
 
 -- briefly enables the profiler and evaluates the code that follows,
--- storing the resulting statistics in the global ProfileTable.
+-- updating the resulting statistics in the global ProfileTable.
 profile(c:Code):Expr := (
     if debugLevel == -2 then printMessage(codePosition(c), "entering profiler");
     profiling = true;
     data := cpuTimer(c); -- calls eval, not evalraw
     profiling = false;
     if debugLevel == -2 then printMessage(codePosition(c), "leaving profiler");
-    -- now update the profiling totals
-    key := toExpr("total");
-    current := lookup(ProfileTable, key);
-    storeInHashTable(ProfileTable, key,
-	Expr(when current is s:Sequence
-	    do   Sequence(data.0 + s.0, oneE + s.1)
-	    else Sequence(data.0,       oneE)));
-    data.1);
+    -- increment the total time in profiler and return the result
+    increment(toExpr("total"), data));
 setupop(profileS, profile);
