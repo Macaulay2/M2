@@ -890,6 +890,10 @@ needsPackage "Complexes"
 TEST ///
   R = QQ[x, Degrees => {{}}]
   M = image x
-  F = freeResolution M -- gives: "error: map with index 0 has inconsistent source"
+  F = freeResolution M
   assert(isWellDefined F)
+  epsilon = augmentationMap F
+  assert isWellDefined epsilon
+  assert(M === (target epsilon)_0)
 ///
+

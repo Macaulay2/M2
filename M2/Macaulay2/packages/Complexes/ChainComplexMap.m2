@@ -1141,8 +1141,10 @@ isNullHomotopic ComplexMap := Boolean => f -> (
 nullHomotopy ComplexMap := ComplexMap => f -> (
     -- we check that the source is free, as that can be much faster
     -- TODO: nullHomotopy should perhaps be hook-ified.
-    result := if isFree source f then nullHomotopyFreeSource f;
-    if result =!= null then return result;
+    -- The following code might require that the source is free
+    --  and the target is exact?
+    --result := if isFree source f then nullHomotopyFreeSource f;
+    --if result =!= null then return result;
     g := homomorphism' f;
     H := target g; 
     d := degree f;
@@ -1332,7 +1334,6 @@ connectingMap(ComplexMap, ComplexMap) := ComplexMap => opts -> (g, f) -> (
         assert isWellDefined p;
         assert isWellDefined q;
         );
-    << "we are returning the negative of previous result" << endl;
     - HH(q) * (HH(p))^-1 -- sign is negative because of the def of cylinder.
     )
 

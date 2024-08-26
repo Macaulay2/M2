@@ -3408,10 +3408,6 @@ doc ///
             assert isWellDefined h'
             assert(degree h' === degree g + 1)
             assert not isNullHomotopyOf(h', g)
-        Text
-            For developers: when the source of $f$ is a free complex,
-            a procedure, that is often faster, is attempted.  In the
-            general case this method uses the Hom complex.
     Caveat
         The output is only a null homotopy when one exists.
     SeeAlso
