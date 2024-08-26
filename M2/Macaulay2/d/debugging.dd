@@ -194,9 +194,9 @@ locate(p:Position):Expr := (
     else Expr(sethash(List(filePositionClass,
 		Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
-		    toExpr(int(p.line1)), toExpr(int(p.column1)),
-		    toExpr(int(p.line2)), toExpr(int(p.column2)),
-		    toExpr(int(p.line)), toExpr(int(p.column))),
+		    toExpr(int(p.lineL)), toExpr(int(p.columnL)),
+		    toExpr(int(p.lineR)), toExpr(int(p.columnR)),
+		    toExpr(int(p.lineF)), toExpr(int(p.columnF))),
 		hash_t(0), false), false)));
 
 locate(e:Expr):Expr := (

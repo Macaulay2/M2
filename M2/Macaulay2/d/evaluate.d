@@ -1305,11 +1305,11 @@ steppingFurther(c:Code):bool := steppingFlag && (
      if p == dummyPosition || p.loadDepth < errorDepth then return true;
      if stepCount >= 0 then (
 	  if lastCodePosition.filename != p.filename
-	  || lastCodePosition.line != p.line
+	  || lastCodePosition.lineF != p.lineF
 	  then (
      	       stepCount = stepCount - 1;
      	       lastCodePosition.filename = p.filename;
-	       lastCodePosition.line = p.line;
+	       lastCodePosition.lineF = p.lineF;
 	       if debugLevel == 1001 && stepCount >= 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
 	       );
 	  stepCount >= 0)
