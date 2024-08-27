@@ -1397,7 +1397,6 @@ handleError(c:Code,e:Expr):Expr := (
 	       e))
      else e);
 
-evalraw(c:Code):Expr;
 export eval(c:Code):Expr := (
     if profiling -- see evalprof in profiling.dd
     then Ccode(Expr, "evaluate_evalprofpointer(", c, ")")
