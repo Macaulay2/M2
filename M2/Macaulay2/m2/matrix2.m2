@@ -393,22 +393,20 @@ addHook((remainder, Matrix, Matrix), Strategy => Default, (n, m) -> n % gb image
 
 Matrix % Module := Matrix => (f,M) -> f % gb M
 
+Number % Matrix :=
 RingElement % Matrix := (r,f) -> (
      if isFreeModule target f and numgens target f === 1 
      then ((r * id_(target f)) % f)_(0,0)
      else error "expected target of matrix to be free, and of rank 1"
      )
 
+Number % Ideal := (r, I) -> r_(ring I) % I
 RingElement % Ideal := (r,I) -> (
      R := ring I;
      if ring r =!= R then error "expected ring element and ideal for the same ring";
      if r == 0 then return r;
      r % if isHomogeneous I and heft R =!= null then gb(I, DegreeLimit => degree r) else gb I)
-Number % Ideal := (r,I) -> (
-     R := ring I;
-     r = promote(r,R);
-     if r == 0 then return r;
-     r % if isHomogeneous I and heft R =!= null then gb(I,DegreeLimit => toList (degreeLength R : 0)) else gb I)
+
 isMember(RingElement, Ideal) :=
 isMember(Number,      Ideal) := (r, I) -> zero(r % I)
 
