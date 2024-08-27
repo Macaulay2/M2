@@ -699,7 +699,7 @@ toricBlowup (List, NormalToricVariety, List) := NormalToricVariety => (s, X, v) 
 	if all (s, i -> member (i,t)) then continue
 	else t | {n}
 	);
-    Z := normalToricVariety (rays X | {v}, coneList | coneList');
+    Z := normalToricVariety (rays X | {v}, coneList | coneList', CoefficientRing => X.cache.CoefficientRing);
     Z.cache.toricBlowup = X;
     Z
     );
