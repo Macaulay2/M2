@@ -18,8 +18,8 @@ thread_local std::vector<stdiop0_Position> M2_stack;";
 
 -- TODO: implement better std::vector utilities
 -- push and pop the given positions in the top-level call stack log
-stackpush(p:Position):void := Ccode(void, "M2_stack.emplace_back(", p, ")" );
-stackpop(e:Expr):Expr    := ( Ccode(void, "M2_stack.pop_back()"); e );
+stackpush(p:Position):Expr := ( Ccode(void, "M2_stack.emplace_back(", p, ")"); locate(p) );
+stackpop(e:Expr):Expr      := ( Ccode(void, "M2_stack.pop_back()"); e );
 
 -- if traceDepth = 0, _prints_ the engine stacktrace using Boost::stacktrace
 -- if traceDepth > 0, returns a sequence of positions from the parsing tree
@@ -54,28 +54,29 @@ increment(key:Expr, data:Sequence):Expr := (
 	    else Sequence(seconds,       oneE)));
     outcome);
 
--- evaluates the code, increments the stopwatch, and returns the value
-measure(c:Code):Expr := (
-    key := locate(codePosition(c));
-    data := wallTimer(c); -- calls evalraw, not eval
-    increment(key, data));
+-- pushes the code position into the stack, times the evaluation,
+-- increments the stopwatch, pops the stack, and returns the value!
+-- Note: wallTimer calls evalraw, not eval
+measure(c:Code):Expr := stackpop(increment(stackpush(codePosition(c)), wallTimer(c)));
 
 -- when profiling = true is set, eval is substituted with evalprof,
 -- so that everytime evalraw recursively calls eval, this one runs.
 export evalprof(c:Code):Expr := (
     -- stdIO << tostring(codePosition(c)) << " " << tostring(c) << endl;
     when c
-    is f:functionCode do (
-	stackpush(codePosition(c));
-	stackpop(measure(c)))
+    is c:ifCode do (
+	p := measure(c.predicate);
+	when p is Error do p
+	else if p == True  then measure(c.thenClause)
+	else if p == False then measure(c.elseClause)
+	else printErrorMessageE(c.predicate, "expected true or false"))
     is v:semiCode do (
 	i := 0;
 	w := v.w;
 	r := nullE;
 	n := length(w);
 	while i < n do (
-	    stackpush(codePosition(c));
-	    r = stackpop(measure(w.i));
+	    r = measure(w.i);
 	    i = when r is Error do n else i+1);
 	r)
     else evalraw(c));
