@@ -21,6 +21,13 @@ profileSummary String := filename -> (
     TABLE join({head()}, body, {tail(ttime, tticks)}))
 profileSummary = new Command from profileSummary
 
+coverageSummary = method(Dispatch => Thing)
+coverageSummary Thing := x -> coverageSummary if x === () then "" else first locate x
+coverageSummary String := filename -> (
+    body := sort select(toString \ keys ProfileTable, match_filename);
+    stack join({"covered lines:"}, body))
+coverageSummary = new Command from coverageSummary
+
 end--
 
 profile = method()

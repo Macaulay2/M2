@@ -596,6 +596,7 @@ export {
 	"coth",
 	"cover",
 	"coverMap",
+	"coverageSummary",
 	"cpuTime",
 	"createTask",
 	"csc",
