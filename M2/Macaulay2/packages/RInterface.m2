@@ -11,15 +11,19 @@ newPackage("RInterface",
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})
 
-if not (options currentPackage).OptionalComponentsPresent
-then (
-    printerr "warning: R cannot be found; ending";
+
+endpkg = msg -> (
+    document {Key => RInterface,
+	Headline => (options currentPackage).Headline,
+	"Warning: RInterface was loaded without key components."};
+    printerr("warning: ", msg, "; ending");
     end)
 
+if not (options currentPackage).OptionalComponentsPresent
+then endpkg "R cannot be found"
+
 if not ForeignFunctions#"private dictionary"#?"foreignFunction"
-then (
-    printerr "warning: foreign function interface is not available; ending";
-    end)
+then endpkg "foreign function interface is not available"
 
 export {
     -- types
