@@ -6,8 +6,11 @@ head := () -> ("#run", "%time", "position")
 form := (ttime, t, n, loc) -> (n, format(4,2,2,2,"e", 100 * t / ttime), loc)
 tail := (ttime, tticks) -> (tticks, format(4,4,4,4,"e",ttime) | "s", "elapsed total")
 
-leaderboard = ProfileTable -> (
-    dataset := pairs ProfileTable;
+profileSummary = method(Dispatch => Thing)
+profileSummary Thing := x -> profileSummary if x === () then "" else first locate x
+profileSummary String := filename -> (
+    dataset := select(pairs ProfileTable,
+	(k, v) -> match_filename toString k);
     if #dataset == 0 then return TABLE {head(), tail(0,0)};
     (ttime, tticks) := ProfileTable#"total";
     data := sort pairs hashTable(join, apply(dataset,
@@ -16,7 +19,7 @@ leaderboard = ProfileTable -> (
     high := reverse take(data, {#data - rows - 1, #data - 1});
     body := apply(rows, i -> form_ttime splice high#i);
     TABLE join({head()}, body, {tail(ttime, tticks)}))
-profileSummary = Command(() -> leaderboard ProfileTable)
+profileSummary = new Command from profileSummary
 
 end--
 
