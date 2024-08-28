@@ -693,13 +693,15 @@ toricBlowup (List, NormalToricVariety, List) := NormalToricVariety => (s, X, v) 
       	    if member (s#0,t) then continue
       	    else sort (t | s)
 	    );
-	return normalToricVariety (rays X, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable)
+	Z := normalToricVariety (rays X, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
+        Z.cache.toricBlowup = X;
+        return Z
 	);
     coneList' = for t in clStar list (
 	if all (s, i -> member (i,t)) then continue
 	else t | {n}
 	);
-    Z := normalToricVariety (rays X | {v}, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
+    Z = normalToricVariety (rays X | {v}, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
     Z.cache.toricBlowup = X;
     Z
     );
