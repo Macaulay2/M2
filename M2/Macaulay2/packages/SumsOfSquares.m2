@@ -63,7 +63,7 @@ export {
 --##########################################################################--
 
 -- Constants
-MaxRoundTol = 32 --maximum rounding tolerance
+MaxRoundTol = 33 --maximum rounding tolerance
 HighPrecision = 1e-10 --e.g. for numerical linear algebra
 MedPrecision = 1e-6 --e.g. for SDP solutions
 LowPrecision = 1e-4
