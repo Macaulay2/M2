@@ -832,13 +832,13 @@ dual ToricVectorBundle := {} >> opts -> tvb -> (
 	  -- Inverting the filtration. If the filtration has d steps then the new n-th boundary is -(d-n+1th boundary)-1 and the n-th step is the 
      	  -- d-n+2 th step
 	  fT := hashTable apply(pairs tvb#"filtrationTable", (r,e) -> r => (
-		                newkeys := reverse drop(sort keys e, 1);
-		                newvalues := {{}} | apply(newkeys, k -> e#k);
-		                newkeys = {-first newkeys - 1} | -newkeys;
-		                hashTable apply(#newkeys, i -> newkeys#i => newvalues#i)
-		                )
-	                  );
-     	  fMT := hashTable apply(pairs fT, q -> q#0 => (q1new:= hashTable flatten apply(pairs q#1, p -> apply(p#1, i -> i => p#0)); matrix {apply(#q1new, j -> q1new#j)}));
+		  newkeys := reverse drop(sort keys e, 1);
+		  newvalues := {{}} | apply(newkeys, k -> e#k);
+		  newkeys = {-first newkeys - 1} | -newkeys;
+		  hashTable apply(#newkeys, i -> newkeys#i => newvalues#i)
+		  )
+	      );
+	  fMT := hashTable apply(pairs fT, q -> q#0 => (q1new:= hashTable flatten apply(pairs q#1, p -> apply(p#1, i -> i => p#0)); matrix {apply(#q1new, j -> q1new#j)}));
      	  -- The orthogonal complement is given by the transpose of the inverse matrix
      	  bT := hashTable apply(pairs tvb#"baseTable", p -> p#0 => transpose inverse p#1);
      	  T := new ToricVectorBundleKlyachko from {
