@@ -311,6 +311,7 @@ bumpPrecedence();
      export elapsedTimeS := special("elapsedTime",unaryop,precSpace,wide);
      export elapsedTimingS := special("elapsedTiming",unaryop,precSpace,wide);
      export shieldS := special("shield",unaryop,precSpace,wide);
+     export TestS := special("TEST",unaryop,precSpace,wide);
      export throwS := special("throw",nunaryop,precSpace,wide);
      export returnS := special("return",nunaryop,precSpace,wide);
      export breakS := special("break",nunaryop,precSpace,wide);

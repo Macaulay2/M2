@@ -188,7 +188,7 @@ setupfun("pseudocode", pseudocode);
 export filePositionClass := newHashTableWithHash(typeClass, basicListClass);
 setupconst("FilePosition", Expr(filePositionClass));
 
-locate(p:Position):Expr := (
+export locate(p:Position):Expr := (
     if p == dummyPosition || p == tempPosition
     then nullE
     else Expr(sethash(List(filePositionClass,
