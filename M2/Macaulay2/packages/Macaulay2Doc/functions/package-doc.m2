@@ -33,7 +33,7 @@ Node
         exportMutable
         beginDocumentation
         document
-        TEST
+        symbol TEST
 
       :Functions useful when debugging a package:
         "debugging"
