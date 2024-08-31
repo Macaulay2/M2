@@ -28,6 +28,10 @@ addTest(String, FilePosition) := (str, loc) -> (
     currentPackage#"test inputs"#n = TestInput {
 	"location" => loc,
 	"code" => str})
+-- the following is not called by TEST, but called directly when we want to
+-- add a test from a file (used by loadTestDir)
+addTest String := filename -> addTest(get filename,
+    new FilePosition from(filename, 1, 1))
 -- TODO: support test titles
 
 -----------------------------------------------------------------------------
@@ -63,9 +67,8 @@ loadTestDir := pkg -> (
     if fileExists testDir then (
         tmp := currentPackage;
         currentPackage = pkg;
-        TEST(sort apply(select(readDirectory testDir, file ->
-            match("\\.m2$", file)), test -> testDir | test),
-            FileName => true);
+	scan(sort select(readDirectory testDir, file -> match("\\.m2$", file)),
+	    test -> addTest(testDir | test));
         currentPackage = tmp;
         true) else false)
 

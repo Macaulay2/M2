@@ -358,8 +358,5 @@ for tst in sort select(tsts, f -> match("^y_", f)) do (
 close outfile
 ///
 
-TEST(currentPackage#"source directory" | "JSON/test-parse.m2",
-    FileName => true)
-
-TEST(currentPackage#"source directory" | "JSON/test-encode.m2",
-    FileName => true)
+TEST get(currentPackage#"auxiliary files" | "test-parse.m2")
+TEST get(currentPackage#"auxiliary files" | "test-encode.m2")
