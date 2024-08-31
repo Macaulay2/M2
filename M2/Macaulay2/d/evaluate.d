@@ -1663,6 +1663,14 @@ breakFun(a:Code):Expr := (
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 
+addTestS := setupvar("addTest", nullE); -- will be overwritten in testing.m2
+testfun(c:Code):Expr := (
+    r := applyEE(
+	getGlobalVariable(addTestS),
+	seq(eval(c), locate(codePosition(c))));
+    when r is Error do r else nullE);
+setupop(TestS, testfun);
+
 assigntofun(lhs:Code,rhs:Code):Expr := (
     left := eval(lhs);
     when left is Error do return left else (

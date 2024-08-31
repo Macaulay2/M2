@@ -20,24 +20,14 @@ capture TestInput := opt -> T -> capture(toString T, opt)
 -- TEST
 -----------------------------------------------------------------------------
 
-TEST = method(Options => {FileName => false})
-TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
-TEST String := opts -> teststring -> (
+-- TEST is a keyword that takes an object as input and determines its
+-- location.  It then passes the object and its location to addTest.
+addTest = method()
+addTest(String, FilePosition) := (str, loc) -> (
     n := #currentPackage#"test inputs";
-    if opts.FileName then (
-	filename := teststring;
-	teststring = get filename;
-	start := 1;
-	stop := depth net teststring)
-    else (
-	filename = currentFileName;
-	stop = currentRowNumber() - 1;
-	start = stop - depth net teststring);
     currentPackage#"test inputs"#n = TestInput {
-	"location" => new FilePosition from {
-	    minimizeFilename filename,
-	    start, 1, stop, 80}, -- TODO: get actual final column
-	"code" => teststring};)
+	"location" => loc,
+	"code" => str})
 -- TODO: support test titles
 
 -----------------------------------------------------------------------------
