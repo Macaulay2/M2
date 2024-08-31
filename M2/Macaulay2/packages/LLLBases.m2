@@ -1248,6 +1248,7 @@ TEST ///
 
 TEST 
 /// -- DON'T TEST YET??
+    -- no-check-flag (encountered an unknown key or option: Engine)
      testLLL = (m) -> (
   	  -- Test 1:
   	  remove(m.cache,symbol LLL);
