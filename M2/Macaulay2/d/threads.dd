@@ -1,3 +1,7 @@
 use pthread;
 
+-- async(c:Code):Expr := nullE;
+-- setupop(asyncS, async);
 
+-- await(c:Code):Expr := nullE;
+-- setupop(awaitS, await);

@@ -311,6 +311,8 @@ bumpPrecedence();
      export leftbrace   := parens("{","}",precSpace, precRightParen, precRightParen);
      parseWORD.precedence = prec; parseWORD.binaryStrength = nopr; parseWORD.unaryStrength = nopr;
      export TestS          := special("TEST",          unaryop, precSpace, wide);
+     --export asyncS         := special("async",         unaryop, precSpace, wide);
+     --export awaitS         := special("await",         unaryop, precSpace, wide);
      export timeS          := special("time",          unaryop, precSpace, wide);
      export timingS        := special("timing",        unaryop, precSpace, wide);
      export elapsedTimeS   := special("elapsedTime",   unaryop, precSpace, wide);
