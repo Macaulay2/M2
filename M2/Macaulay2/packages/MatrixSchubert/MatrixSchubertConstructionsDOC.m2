@@ -718,7 +718,7 @@ doc ///
     	:Ideal
     Description
         Text
-            Given a permutation in 1-line notation or, more generally, a partial alternating sign matrix, outputs the associated alternating sign matrix ideal (which is called a Schubert determinantal ideal in the case of a permutation).  (The convention throughout this package is that the permutation matrix of a pemutation $w$ has 1's in positions $(i,w(i))$.)
+            Given a permutation in 1-line notation or, more generally, a partial alternating sign matrix, outputs the associated alternating sign matrix ideal (which is called a Schubert determinantal ideal in the case of a permutation).  (The convention throughout this package is that the permutation matrix of a permutation $w$ has 1's in positions $(i,w(i))$.)
 	    
 	    This function computes over the coefficient field of rational numbers unless an alternative is specified.
         Example

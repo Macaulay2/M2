@@ -1684,7 +1684,7 @@ fVector Cone := C -> apply(C#"dimension of the cone" + 1, d -> #faces(dim C - d,
 --  OUTPUT : 'L',  a list containing the Hilbert basis as one column matrices 
 hilbertBasis = method(TypicalValue => List)
 hilbertBasis Cone := C -> (
-     -- Computing the row echolon form of the matrix M
+     -- Computing the row echelon form of the matrix M
      ref := M -> (
 	  n := numColumns M;
 	  s := numRows M;
@@ -3794,7 +3794,7 @@ chkQQZZ = (M,msg) -> (
 
 
 -- PURPOSE : Computing the Hilbert basis of a standardised cone (project and lift algorithm
---   INPUT : 'A' a matrix, the row echolon form of the defining half-spaces of the cone
+--   INPUT : 'A' a matrix, the row echelon form of the defining half-spaces of the cone
 --  OUTPUT : a list of one column matrices, the generators of the cone over A intersected with 
 --     	     the positive orthant
 constructHilbertBasis = A -> (
