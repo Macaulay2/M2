@@ -1219,7 +1219,7 @@ fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := (V,W,l) -> (
         	while cnt < #pr do (
 --		    s := sum(u,pr'#i,times);
 		    s := killingForm(g,u,pr#i); -- is the same just more explicit
-		    sn := numerator s; sd := denominator s; -- in non simply laced types, there can be a denimonator
+		    sn := numerator s; sd := denominator s; -- in non simply laced types, there can be a denominator
 		    if sd == 1 and sn % l == 0 then break else if s < -l or s > l then (
 			u=u-((sn+l*sd)//(2*l*sd))*l*pr#i;
 			cnt=0;
