@@ -412,6 +412,7 @@ export {
 	"TeXmacs",
 	"Test",
 	"TestClosure",
+	"TestFiles",
 	"Thing",
 	"Threads",
 	"Time",

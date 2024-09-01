@@ -56,16 +56,16 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
 
 loadTestDir := pkg -> (
     -- TODO: prioritize reading the tests from topSrcdir | "Macaulay2/tests/normal" instead
-    testDir := pkg#"package prefix" |
-        replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
-    pkg#"test directory loaded" =
-    if fileExists testDir then (
-        tmp := currentPackage;
-        currentPackage = pkg;
-	scan(sort select(readDirectory testDir, file -> match("\\.m2$", file)),
-	    test -> addTest(testDir | test));
-        currentPackage = tmp;
-        true) else false)
+    testDir := pkg#"package prefix" | replace("PKG", pkg#"pkgname",
+	currentLayout#"packagetests");
+    pushvar(symbol currentPackage, pkg);
+    if fileExists testDir then scan(
+	sort select(readDirectory testDir, file -> match("\\.m2$", file)),
+	test -> addTest(testDir | test));
+    if pkg#?"auxiliary files" then scan((options pkg).TestFiles,
+	file ->  addTest(pkg#"auxiliary files" | file));
+    popvar symbol currentPackage;
+    pkg#"test directory loaded" = true)
 
 tests = method()
 tests Package := pkg -> (
