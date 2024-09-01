@@ -1153,6 +1153,7 @@ export {
 	"splitWWW",
 	"sqrt",
 	"stack",
+	"stacktrace",
 	"standardForm",
 	"standardPairs",
 	"stashValue",
