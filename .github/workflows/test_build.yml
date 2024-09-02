@@ -209,7 +209,7 @@ jobs:
               make validate-html
             else
             # otherwise, just validate HTML docs for packages that have been updated
-              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq | xargs)
+              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq | sed 's/undistributed-packages//g' | xargs)
               make validate-html PACKAGES="$PACKAGES"
             fi
           else
