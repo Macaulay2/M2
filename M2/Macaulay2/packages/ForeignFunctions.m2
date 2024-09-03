@@ -697,6 +697,13 @@ doc ///
       value oo
     Text
       It is powered by @HREF{"https://sourceware.org/libffi/", "libffi"}@.
+  Subnodes
+    :Types
+      ForeignFunction
+      SharedLibrary
+      ForeignType
+      ForeignObject
+      Pointer
 ///
 
 doc ///
@@ -723,6 +730,10 @@ doc ///
     Example
       ptr + 5
       ptr - 3
+  Subnodes
+    "nullPointer"
+    address
+    (symbol SPACE, ForeignType, Pointer)
 ///
 
 doc ///
@@ -757,6 +768,18 @@ doc ///
 	  LI {TT "Address", ", ", ofClass Pointer, ", a pointer to the ",
 	      "corresponding ", TT "ffi_type", " object, used by ",
 	      TO (address, ForeignType), "."}}@
+  Subnodes
+    (size, ForeignType)
+    :Subtypes
+      ForeignArrayType
+      ForeignIntegerType
+      ForeignPointerType
+      ForeignPointerArrayType
+      ForeignRealType
+      ForeignStringType
+      ForeignStructType
+      ForeignUnionType
+      ForeignVoidType
 ///
 
 doc ///
@@ -894,6 +917,9 @@ doc ///
       ulong
   SeeAlso
     mpzT
+  Subnodes
+    mpzT
+    (symbol SPACE, ForeignIntegerType, Number)
 ///
 
 doc ///
@@ -964,6 +990,9 @@ doc ///
     Example
       float
       double
+  Subnodes
+    mpfrT
+    (symbol SPACE, ForeignRealType, Number)
 ///
 
 doc ///
@@ -1025,6 +1054,11 @@ doc ///
       @TT "voidstar"@.
     Example
       voidstar
+  Subnodes
+    (symbol SPACE, ForeignPointerType, Pointer)
+    ((symbol *, symbol =), voidstar)
+    (symbol *, ForeignType, voidstar)
+    getMemory
 ///
 
 doc ///
@@ -1060,6 +1094,8 @@ doc ///
       arrays.  There is one built-in type, @TT "charstar"@.
     Example
       charstar
+  Subnodes
+    (symbol SPACE, ForeignStringType, String)
 ///
 
 doc ///
@@ -1114,6 +1150,9 @@ doc ///
     Example
       x_0 = 9
       x
+  Subnodes
+    foreignArrayType
+    (symbol SPACE, ForeignArrayType, VisibleList)
 ///
 
 doc ///
@@ -1227,6 +1266,9 @@ doc ///
     Example
       x_0 = "qux"
       x
+  Subnodes
+    foreignPointerArrayType
+    (symbol SPACE, ForeignPointerArrayType, VisibleList)
 ///
 
 doc ///
@@ -1293,6 +1335,9 @@ doc ///
       This is the class for @wikipedia("Struct_(C_programming_language)",
       "C struct")@ types.  There are no built-in types.  They must be
       constructed using @TO "foreignStructType"@.
+  Subnodes
+    foreignStructType
+    (symbol SPACE, ForeignStructType, VisibleList)
 ///
 
 doc ///
@@ -1364,6 +1409,9 @@ doc ///
       This is the class for @wikipedia("Union_type", "C union")@ types.  There
       are no built-in types.  They must be  constructed using
       @TO "foreignUnionType"@.
+  Subnodes
+    foreignUnionType
+    (symbol SPACE, ForeignUnionType, Thing)
 ///
 
 doc ///
@@ -1532,6 +1580,12 @@ doc ///
       Use @TO class@ to determine the type of the object.
     Example
       class x
+  Subnodes
+    foreignObject
+    foreignSymbol
+    (value, ForeignObject)
+    (symbol SPACE, ForeignType, ForeignObject)
+    (registerFinalizer, ForeignObject, Function)
 ///
 
 doc ///
@@ -1724,6 +1778,8 @@ doc ///
     Example
       mpfr = openSharedLibrary "mpfr"
       peek mpfr
+  Subnodes
+    openSharedLibrary
 ///
 
 doc ///
