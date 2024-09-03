@@ -702,7 +702,7 @@ doc ///
       mycos pi
       value oo
     Text
-      In this example, we created a @TO ForeignFunction@ object using the
+      In this example, we created a @CODE "ForeignFunction"@ object using the
       @TO foreignFunction@ constructor method and specified that both its
       output and input were instances of the @TO double@ type, which is one
       of several @TO ForeignType@ objects that are available.
@@ -1765,6 +1765,8 @@ doc ///
       finalizer = x -> (print("freeing memory at " | net x); free x)
       for i to 9 do (x := malloc 8; registerFinalizer(x, finalizer))
       collectGarbage()
+  SeeAlso
+    getMemory
 ///
 
 doc ///
@@ -1952,6 +1954,8 @@ doc ///
       should be set will be determined automatically.
     Example
       ptr = getMemory int
+  SeeAlso
+    (registerFinalizer, ForeignObject, Function)
 ///
 
 doc ///
