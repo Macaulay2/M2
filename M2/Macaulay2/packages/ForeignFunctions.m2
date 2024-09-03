@@ -706,7 +706,15 @@ doc ///
       @TO foreignFunction@ constructor method and specified that both its
       output and input were instances of the @TO double@ type, which is one
       of several @TO ForeignType@ objects that are available.
+
+      See also the following additional examples:
+
+      @UL {
+	  LI {TOH "fast Fourier transform example"}
+	  }@
   Subnodes
+    :Examples
+      "fast Fourier transform example"
     :Types
       ForeignFunction
       SharedLibrary
@@ -2008,6 +2016,156 @@ doc ///
     Text
       Make sure that the memory at which @TT "ptr"@ points is properly
       allocated.  Otherwise, segmentation faults may occur!
+///
+
+doc ///
+  Key
+    "fast Fourier transform example"
+  Headline
+    fast Fourier transforms using foreign function calls to the FFTW library
+  Description
+    Text
+      In this example, we make foreign function calls using the
+      @HREF{"https://www.fftw.org/", "FFTW"}@ library to compute fast Fourier
+      transforms for polynomial multiplication.
+
+      Once FFTW is installed, there should be a file named @CODE "libfftw3.so"@
+      or @CODE "libfftw3.dylib"@ available on the system in one of the standard
+      shared library directories.  We can then open the library using
+      @TO openSharedLibrary@.
+    CannedExample
+      i2 : libfftw = openSharedLibrary "fftw3"
+
+      o2 = fftw3
+
+      o2 : SharedLibrary
+    Text
+      Next, we create our foreign functions using the constructor method
+      @TO foreignFunction@.  We will need three: one to wrap
+      @CODE "fftw_plan_dft_1d"@, which creates the plan for a fast Fourier
+      transform computation, one to wrap @CODE "fftw_execute"@, which actually
+      does the computation, and one to wrap @CODE "fftw_destroy_plan"@,
+      which deallocates the memory allocated by @CODE "fftw_plan_dft_1d"@.
+
+      Let's walk through each of these.
+
+      According to the FFTW documentation, @CODE "fftw_plan_dft_1d"@ has the
+      following signature: @CODE "fftw_plan fftw_plan_dft_1d(int n0,
+      fftw_complex *in, fftw_complex *out, int sign, unsigned flags)"@.
+      Our goal is to compute the discrete Fourier transform
+      $\mathscr F\{\mathbf a\}$ of a vector $\mathbf a\in\CC^n$.  In this case,
+      @CODE "n0"@ will be $n$, @CODE "in"@ will be $\mathbf a$ represented as
+      an array of $2n$ @TO double@ objects (alternating between real and
+      imaginary parts), @CODE "out"@ will be an array ultimately containing
+      $\mathscr F\{\mathbf a\}$, @CODE "sign"@ will be 1 unless we want to
+      compute the inverse discrete Fourier transform
+      $\mathscr F^{-1}\{\mathbf a\}$, in which case it will be $-1$.  Finally,
+      @CODE "flags"@ will contain planning flags for the computation.  When
+      setting up our foreign function objects, we won't worry about the
+      structures of the @CODE "fftw_plan"@ or @CODE "fftw_complex"@ types and
+      will just use @TO voidstar@ to indicate that they are pointers.
+    CannedExample
+      i3 : fftwPlanDft1d = foreignFunction(libfftw, "fftw_plan_dft_1d", voidstar,
+               {int, voidstar, voidstar, int, uint})
+
+      o3 = fftw3::fftw_plan_dft_1d
+
+      o3 : ForeignFunction
+    Text
+      Next, we define foreign functions for @CODE "fftw_execute"@, which has
+      signature @CODE "void fftw_execute(const fftw_plan plan)"@, and
+      @CODE "fftw_destroy_plan"@, which has signature
+      @CODE "void fftw_destroy_plan(fftw_plan plan)"@.
+    CannedExample
+      i4 : fftwExecute = foreignFunction(libfftw, "fftw_execute", void, voidstar)
+
+      o4 = fftw3::fftw_execute
+
+      o4 : ForeignFunction
+
+      i5 : fftwDestroyPlan = foreignFunction(libfftw, "fftw_destroy_plan", void, voidstar)
+
+      o5 = fftw3::fftw_destroy_plan
+
+      o5 : ForeignFunction
+    Text
+      Now we wrap these functions inside Macaulay2 functions.  Since
+      computing $\mathscr F\{\mathbf a\}$ and $\mathscr F^{-1}\{\mathbf a\}$
+      using FFTW requires only changing the @CODE "sign"@ parameter of the
+      call to @CODE "fftw_plan_dft_1d"@, we create a helper function that
+      will do most of the work.
+
+      This helper function takes a list @CODE "x"@ representing the vector
+      $\mathbf a$ as well as the value of @CODE "sign"@, allocates the
+      memory required for the @CODE "in"@ and @CODE "out"@ lists using
+      @TO getMemory@, and then calls the foreign function
+      @CODE "fftwPlanDft1d"@.  Note that we pass 64 as the value of
+      @CODE "flags"@.  This specifies the @CODE "FFTW_ESTIMATE"@ planning
+      flag, which uses a simple heuristic to quickly pick a plan for the
+      computation.  We then call
+      @TO (registerFinalizer, ForeignObject, Function)@ to make sure
+      that the @CODE "fftw_plan"@ object that was returned is properly
+      deallocated during garbage collection.  Next, we set up the @CODE "in"@
+      array by finding the real and imaginary parts of the elements of
+      @CODE "x"@ and assigning them using @TO ((symbol *, symbol =), voidstar)@.
+      Finally, we call @CODE "fftw_execute"@ and convert the result back
+      to a list of complex numbers.
+    CannedExample
+      i6 : fftHelper = (x, sign) -> (
+               n := #x;
+               inptr := getMemory(2 * n * size double);
+               outptr := getMemory(2 * n * size double);
+               p := fftwPlanDft1d(n, inptr, outptr, sign, 64);
+               registerFinalizer(p, fftwDestroyPlan);
+               dbls := splice apply(x, y -> (realPart numeric y, imaginaryPart numeric y));
+               apply(2 * n, i -> *(value inptr + i * size double) = double dbls#i);
+               fftwExecute p;
+               r := ((2 * n) * double) outptr;
+               apply(n, i -> value r_(2 * i) + ii * value r_(2 * i + 1)));
+
+      i7 : fastFourierTransform = method();
+
+      i8 : fastFourierTransform List := x -> fftHelper(x, -1);
+
+      i9 : inverseFastFourierTransform = method();
+
+      i10 : inverseFastFourierTransform List := x -> fftHelper(x, 1);
+    Text
+      One application of fast Fourier transforms is log-linear time
+      multiplication of polynomials.  Indeed, if $f,g\in\CC[x]$ have degrees
+      $m$ and $n$, respectively, and if $\mathbf a,\mathbf b\in\CC^{m+n+1}$ are
+      the vectors formed by taking $a_i$ to be the coefficient of $x^i$ in $f$
+      and $b_i$ the coefficient of $x_i$ in $g$, then
+      $\frac{1}{m+n+1}\mathscr F^{-1}\left\{\mathscr F\{\mathbf a\}\cdot
+      \mathscr F\{\mathbf b\}\right\}$, where $\mathscr F\{\mathbf a\}\cdot
+      \mathscr F\{\mathbf b\}$ is computed using component-wise multiplication,
+      contains the coefficients of the product $fg$.  In some cases, this process
+      can be faster than Macaulay2's native polynomial multiplication.
+
+      Let's look at a particular example.
+    CannedExample
+      i11 : fftMultiply = (f, g) -> (
+                m := first degree f;
+                n := first degree g;
+                a := fastFourierTransform splice append(
+                    apply(m + 1, i -> coefficient(x^i, f)), n:0);
+                b := fastFourierTransform splice append(
+                    apply(n + 1, i -> coefficient(x^i, g)), m:0);
+                c := inverseFastFourierTransform apply(a, b, times);
+                sum(m + n + 1, i -> c#i * x^i)/(m + n + 1));
+
+      i12 : R = CC[x];
+
+      i13 : f = x - 1;
+
+      i14 : g = x^2 + x + 1;
+
+      i15 : fftMultiply(f, g)
+
+             3
+      o15 = x  - 1
+
+      o15 : R
 ///
 
 TEST ///
