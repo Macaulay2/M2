@@ -690,13 +690,22 @@ doc ///
     Text
       This package provides the ability to load and call "foreign" functions
       from shared libraries and to convert back and forth between Macaulay2
-      things and the foreign objects used by these functions.
+      things and the foreign objects used by these functions.  It is powered
+      by @HREF{"https://sourceware.org/libffi/", "libffi"}@.
+
+      As a simple example, we call the @CODE "cos"@ function from the C
+      standard library, which sends a @CODE "double"@ (a real number
+      represented as a double-precision floating point number) to another
+      @CODE "double"@, the cosine of the input.
     Example
       mycos = foreignFunction("cos", double, double)
       mycos pi
       value oo
     Text
-      It is powered by @HREF{"https://sourceware.org/libffi/", "libffi"}@.
+      In this example, we created a @TO ForeignFunction@ object using the
+      @TO foreignFunction@ constructor method and specified that both its
+      output and input were instances of the @TO double@ type, which is one
+      of several @TO ForeignType@ objects that are available.
   Subnodes
     :Types
       ForeignFunction
