@@ -1875,7 +1875,7 @@ doc ///
     Text
       If the foreign function allocates any memory, then register a finalizer
       for its outputs to deallocate the memory during garbage collection using
-      @TT "registerFinalizer"@.
+      @TO (registerFinalizer, ForeignObject, Function)@.
     Example
       malloc = foreignFunction("malloc", voidstar, ulong)
       free = foreignFunction("free", void, voidstar)
