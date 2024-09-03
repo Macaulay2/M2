@@ -72,6 +72,7 @@ random(List,Ring) := RingElement => opts -> (deg,R) -> (
 
 random(ZZ,Ring) := RingElement => opts -> (n,R) -> random({n},R,opts)
 
+other := (i, m) -> (i + random m) % m
 randomMR := opts -> (F,G) -> (
      R := ring F;
      m := numgens F;
@@ -83,7 +84,6 @@ randomMR := opts -> (F,G) -> (
      if m>k then f = f || random(R^(toList( m-k : d1 )), R^n, opts)
      else if n > k then f = f | random(R^m, R^(toList (n-k : -d1)), opts);
      f = mutableMatrix f;
-     other := (i,m) -> (i + random(m-1)) % m;
      if m>k then (
 	  for i to k-1 do rowAdd(f, i, random(d0,R,opts), random(k,m-1));
 	  for i to k-1 do rowSwap(f, i, other(i,m)))
