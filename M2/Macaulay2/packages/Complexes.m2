@@ -63,6 +63,7 @@ export {
     "yonedaMap'",
     "yonedaProduct",
     -- Option names
+    "FreeToExact", -- used in nullHomotopy
     "OverField",
     "OverZZ",
     "Homogenization",
