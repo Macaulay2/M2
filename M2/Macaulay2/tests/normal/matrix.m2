@@ -371,6 +371,9 @@ scan({matrix {}, matrix(ZZ, {}), map(ZZ^0, ZZ^0, {}), map(ZZ^0,, {})}, A -> (
 	    assert Equation(source A, ZZ^0);
 	    assert Equation(target A, ZZ^0)))
 
+-- issue #3456
+assert Equation(matrix {{ii}}, matrix {{numeric ii}})
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"
 -- End:
