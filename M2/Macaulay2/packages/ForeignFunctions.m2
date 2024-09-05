@@ -710,11 +710,13 @@ doc ///
       See also the following additional examples:
 
       @UL {
-	  LI {TOH "fast Fourier transform example"}
+	  LI {TOH "fast Fourier transform example"},
+	  LI {TOH "general linear model example"}
 	  }@
   Subnodes
     :Examples
       "fast Fourier transform example"
+      "general linear model example"
     :Types
       ForeignFunction
       SharedLibrary
@@ -2166,6 +2168,98 @@ doc ///
       o15 = x  - 1
 
       o15 : R
+///
+
+doc ///
+  Key
+    "general linear model example"
+  Headline
+    constrained least squares using foreign function calls to the LAPACK library
+  Description
+    Text
+      In this example, we make foreign function calls to
+      @HREF{"https://www.netlib.org/lapack/", "LAPACK"}@ to solve constrained
+      least squares problems. LAPACK is already used by Macaulay2 for a number
+      of its linear algebra computations, but some functions aren't available.
+
+      One of these is @CODE "dggglm"@, which solves constrained least squares
+      problems that have applications to general Gauss-Markov linear models in
+      statistics.  In particular, suppose $A$ is an $n\times m$ real matrix,
+      $B$ is an $n\times p$ real matrix, and $\mathbf d$ is a vector in
+      $\RR^n$.  We would like to find the vectors $\mathbf x\in\RR^m$ and
+      $\mathbf y\in\RR^p$ that minimize $\|\mathbf y\|$ subject to the
+      constraint $\mathbf d = A\mathbf x + B\mathbf y$.
+
+      The @CODE "dggglm"@ function does exactly this.  Its signature is
+      @CODE "void dggglm_(int *n, int *m, int *p, double *A, int *ldA,
+      double *B, int *ldB, double *d, double *x, double *y, double *work,
+      int *lwork, int *info)"@.  Note the trailing underscore that was
+      added by the Fortran compiler.  Each of the 13 arguments are pointers,
+      so we use @TO voidstar@ to represent them in our call to
+      @TO foreignFunction@.  Since Macaulay2 is already linked against LAPACK,
+      we don't need to worry about calling @TO openSharedLibrary@.
+    Example
+      dggglm = foreignFunction("dggglm_", void, toList(13:voidstar))
+    Text
+      The parameters @CODE "n"@, @CODE "m"@ and @CODE "p"@ are exactly the
+      numbers $n$, $m$, and $p$ above.  The parameters @CODE "A"@, @CODE "B"@,
+      and @CODE "d"@ are arrays that will store the entries of $A$, $B$, and
+      $\mathbf d$.  LAPACK expects these to be in column-major order, in
+      contrast to the row-major order used by Macaulay2.  So we add
+      helper methods to take care of this conversion.  The local variable
+      @CODE "T"@ is a @TO ForeignArrayType@ created by
+      @TO (symbol *, ZZ, ForeignType)@.
+    Example
+      toLAPACK = method();
+      toLAPACK Matrix := A -> (
+          T := (numRows A * numColumns A) * double;
+          T flatten entries transpose A);
+      toLAPACK Vector := toLAPACK @@ matrix;
+    Text
+      The parameters @CODE "ldA"@ and @CODE "ldB"@ are the "leading dimensions"
+      of the arrays @CODE "A"@ and @CODE "B"@.  We will use $n$ for both.  The
+      arrays @CODE "x"@ and @CODE "y"@ will store the solutions.  The array
+      @CODE "work"@ has dimension @CODE "lwork"@ (for which we will use $n + m
+      + p$) that the procedure will use as a workspace.  Finally, @CODE "info"@
+      stores the return value (0 on success).
+
+      The following method prepares matrices $A$ and $B$ and a vector
+      $\mathbf d$ to be sent to the foreign function we created above, and then
+      converts the solutions into a sequence two of Macaulay2 vectors.  Note
+      that we use @TO getMemory@ to allocate memory for @CODE "x"@, @CODE "y"@,
+      and @CODE "info"@ (which we name @CODE "i"@ here to avoid conflicting
+      with @TO info@) and @TO address@ to get pointers to the other integer
+      arguments.  We also use @TO (symbol *, ForeignType, voidstar)@ to
+      dereference @CODE "i"@ and determine whether the call was successful.
+    Example
+      generalLinearModel= method();
+      generalLinearModel(Matrix, Matrix, Vector) := (A, B, d) -> (
+          if numRows A != numRows B
+          then error "expected first two arguments to have the same number of rows";
+          n := numRows A;
+          m := numColumns A;
+          p := numColumns B;
+          x := getMemory(m * size double);
+          y := getMemory(p * size double);
+          lwork := n + m + p;
+          work := getMemory(lwork * size double);
+          i := getMemory int;
+          dggglm(address int n, address int m, address int p, toLAPACK A,
+              address int n, toLAPACK B, address int n, toLAPACK d, x, y, work,
+              address int lwork, i);
+          if value(int * i) != 0 then error("call to dggglm failed");
+          (vector value (m * double) x, vector value (p * double) y));
+    Text
+      Finally, let's call this method and solve a constrained least squares
+      problem.  This example is from
+      @HREF{"https://doi.org/10.1080/01621459.1981.10477694",
+	  "Kourouklis, S., & Paige, \"A Constrained Least Squares Approach to
+	  the General Gauss-Markov Linear Model\""}@.
+    Example
+      A = matrix {{1, 2, 3}, {4, 1, 2}, {5, 6, 7}, {3, 4, 6}};
+      B = matrix {{1, 0, 0, 0}, {2, 3, 0, 0}, {4, 5, 1e-5, 0}, {7, 8, 9, 10}};
+      d = vector {1, 2, 3, 4};
+      generalLinearModel(A, B, d)
 ///
 
 TEST ///
