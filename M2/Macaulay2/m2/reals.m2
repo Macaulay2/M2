@@ -270,6 +270,11 @@ EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler, eRR
 CatalanConstant = new Constant from { symbol CatalanConstant, mpfrConstantCatalan, cRRi0}
 ii = new Constant from { symbol ii, ConstantII}
 
+ring Constant := ring @@ numeric
+promote(Constant, InexactNumber') :=
+promote(Constant, RingElement)    := (x, R) -> (
+    promote(numeric(precision R, x), R))
+
 isFinite Constant := x -> true
 
 lngamma = method()
