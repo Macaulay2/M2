@@ -1068,9 +1068,6 @@ coimage ComplexMap := Complex => f -> (
 -- homotopy --------------------------------------------------------
 --------------------------------------------------------------------
 isNullHomotopyOf = method()
-isNullHomotopic = method()
-nullHomotopy = method() -- this function attempts to construct one, might fail
-
 isNullHomotopyOf(ComplexMap, ComplexMap) := (h, f) -> (
     -- returns true if h is a null homotopy for f : C --> D.
     -- if debugLevel > 0, then more info as to where it is not, is given
@@ -1104,12 +1101,20 @@ isNullHomotopyOf(ComplexMap, ComplexMap) := (h, f) -> (
         )
     )
 
--- TODO: we are keeping this version so that we may compare the 
---   more general version with this version, at a later date.
-nullHomotopyFreeSource = f -> (
-    -- f:ComplexMap
-    -- key assumption: 'source f' is a complex of free modules
+isNullHomotopic = method()
+isNullHomotopic ComplexMap := Boolean => f -> (
+    g := homomorphism' f;
+    H := target g; 
+    d := degree f;
+    g1 := g_0 // dd^H_(d+1); 
+    g_0 == dd^H_(d+1) * g1
+    )
+
+nullHomotopyFreeToExact = f -> (
+    -- key assumption: 'source f' is a complex of free modules AND the target is exact
     -- result is a ComplexMap h : C --> D, of degree degree(f)+1
+    if not isFree source f then error "expected source of complex map to be free";
+    -- Note: we do not check that the target is exact!
     C := source f;
     D := target f;
     deg := degree f + 1;
@@ -1130,21 +1135,9 @@ nullHomotopyFreeSource = f -> (
     map(D, C, new HashTable from hs, Degree => deg)
     )
 
-isNullHomotopic ComplexMap := Boolean => f -> (
-    g := homomorphism' f;
-    H := target g; 
-    d := degree f;
-    g1 := g_0 // dd^H_(d+1); 
-    g_0 == dd^H_(d+1) * g1
-    )
-
-nullHomotopy ComplexMap := ComplexMap => f -> (
-    -- we check that the source is free, as that can be much faster
-    -- TODO: nullHomotopy should perhaps be hook-ified.
-    -- The following code might require that the source is free
-    --  and the target is exact?
-    --result := if isFree source f then nullHomotopyFreeSource f;
-    --if result =!= null then return result;
+nullHomotopy = method(Options => true) -- this function attempts to construct one, might fail
+nullHomotopy ComplexMap := ComplexMap => {FreeToExact => false} >> opts -> f -> (
+    if opts.FreeToExact then return nullHomotopyFreeToExact f;
     g := homomorphism' f;
     H := target g; 
     d := degree f;

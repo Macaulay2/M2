@@ -15,6 +15,9 @@ document { Key => isVeryAmple,  methodstr, SeeAlso => {
 	"Divisor::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
 	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
 	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
+document { Key => isNormal,      methodstr, SeeAlso => { "Polyhedra::isNormal(Polyhedron)","IntegralClosure::isNormal(Ring)"} }
+document { Key => normalCone,      methodstr, SeeAlso => { "Polyhedra::normalCone(Polyhedron,Polyhedron)","ReesAlgebra::normalCone(Ideal)"} }
+
 
 document { Key => cone,
     Headline => "mapping cone or polyhedral cone",
