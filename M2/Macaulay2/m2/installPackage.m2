@@ -770,7 +770,7 @@ installPackage Package := opts -> pkg -> (
 	verboseLog("making example result files in ", minimizeFilename exampleOutputDir);
 	generateExampleResults(pkg, rawDocumentationCache, exampleDir, exampleOutputDir, verboseLog, pkgopts, opts);
 
-	if 0 < numExampleErrors then verboseLog concatenate apply(readDirectory exampleOutputDir,
+	if 0 < numExampleErrors then verboseLog stack apply(readDirectory exampleOutputDir,
 	    file -> if match("\\.errors$", file) then stack {
 		file, concatenate(width file : "*"), getErrors(exampleOutputDir | file)});
 
