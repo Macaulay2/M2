@@ -711,12 +711,14 @@ doc ///
 
       @UL {
 	  LI {TOH "fast Fourier transform example"},
-	  LI {TOH "general linear model example"}
+	  LI {TOH "general linear model example"},
+	  LI {TOH "just-in-time compilation example"}
 	  }@
   Subnodes
     :Examples
       "fast Fourier transform example"
       "general linear model example"
+      "just-in-time compilation example"
     :Types
       ForeignFunction
       SharedLibrary
@@ -2260,6 +2262,68 @@ doc ///
       B = matrix {{1, 0, 0, 0}, {2, 3, 0, 0}, {4, 5, 1e-5, 0}, {7, 8, 9, 10}};
       d = vector {1, 2, 3, 4};
       generalLinearModel(A, B, d)
+///
+
+doc ///
+  Key
+    "just-in-time compilation example"
+  Headline
+    using foreign function calls for computing Fibonacci numbers using JIT
+  Description
+    Text
+      Macaulay2's language is interpreted, which means that in general programs
+      will run more slowly than programs written in a compiled language like C.
+      If the speed of a compiled language is desirable, then one option is
+      @wikipedia "just-in-time compilation"@ (JIT), where we compile some code
+      at runtime.
+
+      As an example, let's suppose that we would like to compute Fibonacci
+      numbers using the recursive definition, i.e., for all nonnegative
+      $n\in\ZZ$, $F_n = n$ if $n < 2$ and $F_n = F_{n-2} + F_{n-1}$ otherwise.
+      As an algorithm, this is horribly inefficient and has exponential running
+      time, but it will be useful to illustrate our point.
+
+      We will write two functions.  One will be a straight Macaulay2
+      implementation:
+    CannedExample
+      i2 : fibonacci1 = n -> if n < 2 then n else fibonacci1(n - 1) + fibonacci1(n - 2);
+    Text
+      The next will be a function that creates a C source file, compiles it
+      into a shared library using @HREF{"https://gcc.gnu.org/", "GCC"}@, opens
+      that library using @TO openSharedLibrary@, calls @TO foreignFunction@ to
+      create a foreign function, calls that foreign function, and then converts
+      the output back into a Macaulay2 integer using @TO(value, ForeignObject)@.
+    CannedExample
+      i3 : fibonacci2 = n -> (
+               dir := temporaryFileName();
+               makeDirectory dir;
+               dir | "/libfib.c" << ////int fibonacci2(int n)
+           {
+               if (n < 2)
+                   return n;
+               else
+                   return fibonacci2(n - 1) + fibonacci2(n - 2);
+           }
+           //// << close;
+               run("gcc -c -fPIC " | dir | "/libfib.c -o " | dir | "/libfib.o");
+               run("gcc -shared " | dir | "/libfib.o -o " | dir | "/libfib.so");
+               lib := openSharedLibrary("libfib", FileName => dir | "/libfib.so");
+               f = foreignFunction(lib, "fibonacci2", int, int);
+               value f n);
+    Text
+      Now let's run both functions to compare the results.
+    CannedExample
+      i4 : peek elapsedTiming fibonacci1 35
+
+      o4 = Time{10.0202, 9227465}
+
+      i5 : peek elapsedTiming fibonacci2 35
+
+      o5 = Time{.0958821, 9227465}
+    Text
+      As we can see, despite the additional overhead of creating a shared
+      library and making a foreign function call, the function that used JIT was
+      significantly faster.
 ///
 
 TEST ///
