@@ -18,8 +18,8 @@
 
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.3",
-    Date => "February 8, 2024",
+    Version => "0.4",
+    Date => "September 6, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -32,6 +32,12 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.4 (2024-09-06, M2 1.24.11)
+* remove redundant Constant methods now that it's a subclass of Number
+* further tweak macOS dlopen hack (not just ARM machines)
+* license under GPL-2+
+* significant documentation improvements (e.g., subnodes, more examples)
 
 0.3 (2024-02-08, M2 1.23)
 * add subscripted assignment for various pointer types
