@@ -49,26 +49,6 @@ export pos(c:Code):void := (					    -- for use in the debugger
      stdIO << codePosition(c) << endl;
      );
 
-export setup(word:Word):void := (
-     makeSymbol(word,dummyPosition,globalDictionary);
-     );
-export setup(word:Word,fn:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fn,e,unopNameList);
-     e.unary = fn;
-     );
-export setup(word:Word,fn:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     binopNameList = binopNameListCell(fn,e,binopNameList);
-     e.binary = fn;
-     );
-export setup(word:Word,fun1:unop,fun2:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fun1,e,unopNameList);
-     binopNameList = binopNameListCell(fun2,e,binopNameList);
-     e.unary = fun1;
-     e.binary = fun2;
-     );
 export setuppostfix(e:SymbolClosure,fn:unop):void := (
      unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
      e.symbol.postfix = fn;
