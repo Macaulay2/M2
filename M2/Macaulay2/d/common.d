@@ -65,10 +65,6 @@ export setup(word:Word,fun1:unop,fun2:binop):void := (
      e.unary = fun1;
      e.binary = fun2;
      );
-export setup(e:SymbolClosure,fn:unop):void := (
-     unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
-     e.symbol.unary = fn;
-     );
 export setuppostfix(e:SymbolClosure,fn:unop):void := (
      unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
      e.symbol.postfix = fn;
