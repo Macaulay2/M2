@@ -812,7 +812,7 @@ export notFun(rhs:Code):Expr := (
      else if a == True then False
      else if a == False then True
      else unarymethod(a,notS));
-setup(notS,notFun);
+setupop(notS,notFun);
 EqualEqualEqualfun(lhs:Code,rhs:Code):Expr := (
     -- # typical value: symbol ===, Thing, Thing, Boolean
      x := eval(lhs);
