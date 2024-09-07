@@ -69,14 +69,6 @@ export setup(e:SymbolClosure,fn:ternop):void := (
 export setup(e:SymbolClosure,fn:multop):void := (
      multopNameList = multopNameListCell(fn,e.symbol,multopNameList);
      );
-export setupfun(name:string,fun:unop):Symbol := (
-     word := makeUniqueWord(name,
-	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
-     entry := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fun,entry,unopNameList);
-     entry.unary = fun;
-     entry.Protected = true;
-     entry);
 export setupfun(name:string, value:function(Expr):Expr):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
