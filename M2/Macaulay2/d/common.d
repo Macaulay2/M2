@@ -65,13 +65,6 @@ export setup(word:Word,fun1:unop,fun2:binop):void := (
      e.unary = fun1;
      e.binary = fun2;
      );
-export setup(word:Word,fun1:unop,fun2:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fun2,e,unopNameList);
-     unopNameList = unopNameListCell(fun1,e,unopNameList);
-     e.unary = fun1;
-     e.postfix = fun2;
-     );
 export setup(e:SymbolClosure,fn:unop):void := (
      unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
      e.symbol.unary = fn;
@@ -89,12 +82,6 @@ export setup(e:SymbolClosure,fun1:unop,fun2:binop):void := (
      binopNameList = binopNameListCell(fun2,e.symbol,binopNameList);
      e.symbol.unary = fun1;
      e.symbol.binary = fun2;
-     );
-export setup(e:SymbolClosure,fun1:unop,fun2:unop):void := (
-     unopNameList = unopNameListCell(fun1,e.symbol,unopNameList);
-     unopNameList = unopNameListCell(fun2,e.symbol,unopNameList);
-     e.symbol.unary = fun1;
-     e.symbol.postfix = fun2;
      );
 export setupop(s:SymbolClosure,fun:unop):void := (
      unopNameList = unopNameListCell(fun,s.symbol,unopNameList);
