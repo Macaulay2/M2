@@ -151,6 +151,12 @@ symbolsForTextMate = template -> (
     output = replace("@M2CONSTANTS@", demark("|", CONSTANTS), output);
     output)
 
+symbolsForMacaulay2Web = template -> (
+    output := concatenate("// ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",   version#"VERSION",    output);
+    output = replace("@M2SYMBOLS@",   demark(",", format \ SYMBOLS), output);
+    output)
+
 -------------------------------------------------------------------------------
 -- Generate syntax files from templates in the same directory
 
@@ -186,6 +192,10 @@ generateGrammar("pygments/macaulay2.py", symbolsForPygments)
 generateGrammar("highlightjs/macaulay2.js", symbolsForHighlightJS)
 
 generateGrammar("textmate/macaulay2.tmLanguage.json", symbolsForTextMate)
+
+-- Macaulay2Web: Write M2-symbols.ts
+generateGrammar("Macaulay2Web/M2-symbols.ts", symbolsForMacaulay2Web)
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "
