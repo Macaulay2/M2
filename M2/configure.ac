@@ -1045,6 +1045,7 @@ AS_IF([test $BUILD_normaliz = no],
 	       SAVELIBS=$LIBS
 	       LIBS="$LIBS -lnormaliz -lnauty -lgmp"
 	       CHECK_NMZ_PACKAGE([ENFNORMALIZ], [-leantic -leanticxx])
+	       CHECK_NMZ_PACKAGE([NMZ_COCOA], [-lcocoa])
 	       AC_LINK_IFELSE(
 		   [AC_LANG_PROGRAM([
 		       #include <libnormaliz/cone.h>
