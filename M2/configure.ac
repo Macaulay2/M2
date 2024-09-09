@@ -1043,9 +1043,10 @@ AS_IF([test $BUILD_normaliz = no],
 	       AC_MSG_CHECKING([for libnormaliz])
 	       AC_LANG(C++)
 	       SAVELIBS=$LIBS
-	       LIBS="$LIBS -lnormaliz -lnauty -lgmp"
+	       LIBS="$LIBS -lnormaliz -lgmp"
 	       CHECK_NMZ_PACKAGE([ENFNORMALIZ], [-leantic -leanticxx])
 	       CHECK_NMZ_PACKAGE([NMZ_COCOA], [-lcocoa])
+	       CHECK_NMZ_PACKAGE([NMZ_NAUTY], [-lnauty])
 	       AC_LINK_IFELSE(
 		   [AC_LANG_PROGRAM([
 		       #include <libnormaliz/cone.h>
