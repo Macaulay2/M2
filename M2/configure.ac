@@ -1021,6 +1021,19 @@ else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
+AC_DEFUN([CHECK_NMZ_PACKAGE],
+    [AC_RUN_IFELSE(
+        [AC_LANG_PROGRAM([
+	    #include <libnormaliz/nmz_config.h>
+	    ], [
+	    #ifdef $1
+	      return 0;
+	    #else
+	      return 1;
+	    #endif
+	    ])],
+	[LIBS="$LIBS $2"])])
+
 AS_IF([test $BUILD_normaliz = no],
     [AC_MSG_CHECKING(whether the package normaliz is installed)
      AS_IF([command -v normaliz > /dev/null],
@@ -1031,18 +1044,7 @@ AS_IF([test $BUILD_normaliz = no],
 	       AC_LANG(C++)
 	       SAVELIBS=$LIBS
 	       LIBS="$LIBS -lnormaliz -lnauty -lgmp"
-	       dnl check if libnormaliz built w/ eantic
-	       AC_RUN_IFELSE(
-	           [AC_LANG_PROGRAM([
-		       #include <libnormaliz/nmz_config.h>
-		       ], [
-		       #ifdef ENFNORMALIZ
-		         return 0;
-		       #else
-		         return 1;
-		       #endif
-		       ])],
-		   [LIBS="$LIBS -leantic -leanticxx"])
+	       CHECK_NMZ_PACKAGE([ENFNORMALIZ], [-leantic -leanticxx])
 	       AC_LINK_IFELSE(
 		   [AC_LANG_PROGRAM([
 		       #include <libnormaliz/cone.h>
