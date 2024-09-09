@@ -60,7 +60,7 @@ Ext(Module, Module) := Module => opts -> (M, N) -> (
     blks := new MutableHashTable;
     blks#(exponents 1_Rmon) = C.dd;
     scan(0 .. c-1, i -> 
-       blks#(exponents Rmon_i) = nullHomotopy (- f_i*id_C));
+       blks#(exponents Rmon_i) = nullHomotopy(- f_i*id_C, FreeToExact => true));
     -- a helper function to list the factorizations of a monomial
     factorizations := (gamma) -> (
         -- Input: gamma is the list of exponents for a monomial
@@ -81,7 +81,7 @@ Ext(Module, Module) := Module => opts -> (M, N) -> (
                         then blks#alpha * blks#beta
                         else 0));
                 -- compute and save the nonzero nullhomotopies
-                if s != 0 then blks#gamma = nullhomotopy s))));
+                if s != 0 then blks#gamma = nullHomotopy(s, FreeToExact => true)))));
     -- make a free module whose basis elements have the right degrees
     (loC, hiC) := concentration C;
     Cstar := S^(apply(toList(loC..hiC),
