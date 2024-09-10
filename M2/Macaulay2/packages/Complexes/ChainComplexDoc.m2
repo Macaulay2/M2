@@ -2351,8 +2351,8 @@ doc ///
    Usage
      D = C1 ** C2
    Inputs
-     C1:{Module}
-     C2:{Module}
+     C1:{Complex, Module}
+     C2:{Complex, Module}
    Outputs
      D:Complex
        tensor product of {\tt C1} and {\tt C2}
@@ -2409,8 +2409,8 @@ doc ///
    Usage
      D = Hom(C1,C2)
    Inputs
-     C1:{Module, Ring}
-     C2:{Module, Ring}
+     C1:{Complex, Module, Ring}
+     C2:{Complex, Module, Ring}
    Outputs
      D:Complex
        the complex of homomorphisms between {\tt C1} and {\tt C2}
@@ -4382,9 +4382,9 @@ doc ///
     Usage
         Ext(M, N)
     Inputs
-        M:{Ideal, Ring}
+        M:{Module, Ideal, Ring}
             that is homogeneous
-        N:{Ideal, Ring}
+        N:{Module, Ideal, Ring}
             over the same ring as $M$, that is also homogeneous
     Outputs
         :Module
