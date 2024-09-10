@@ -131,10 +131,18 @@ int F4SPairSet::remove_unneeded_pairs()
 std::pair<bool,int> F4SPairSet::setThisDegree()
 {
   if (mSPairQueue.empty()) return {false, 0};
-  
-  auto& queueTop = mSPairQueue.top();
+
+  auto queueTop = mSPairQueue.top();
+  while (mSPairs[queueTop].type == SPairType::Retired)
+    {
+      mSPairQueue.pop();
+      if (mSPairQueue.empty()) return {false, 0};
+      queueTop = mSPairQueue.top();
+    }
+
   mThisDegree = mSPairs[queueTop].deg;
   return {true,mThisDegree};
+
 }
 
 //spair *F4SPairSet::get_next_pair()
@@ -154,6 +162,7 @@ void F4SPairSet::discardSPairsInCurrentDegree()
     {
       auto result = mSPairQueue.top();
       if (mSPairs[result].deg != mThisDegree) return;
+      mSPairs[result].type = SPairType::Retired;
       mSPairQueue.pop();
     }
 }
