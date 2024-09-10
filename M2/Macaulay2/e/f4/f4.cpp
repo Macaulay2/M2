@@ -421,10 +421,14 @@ void F4GB::clear_matrix()
   // Clear the rows first
   for (auto & r : mat->rows)
     {
+      //      std::cout << "at A" << std::endl;
       if (not r.coeffs.isNull())
         mVectorArithmetic->deallocateElementArray(r.coeffs);
       // Mem->components.deallocate(r.comps);
-      delete [] r.comps;
+      //      std::cout << "at B" << std::endl;
+      if (r.comps != nullptr)
+        delete [] r.comps;
+      //      std::cout << "at C" << std::endl;
       r.len = 0;
       r.elem = -1;
       r.monom = nullptr;
@@ -583,11 +587,21 @@ void F4GB::gauss_reduce(bool diagonalize)
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
 
-  std::atomic<int> n_newpivots = -1;  // the number of new GB elements in this degree
-  std::atomic<int> n_zero_reductions = 0;
+  int n_newpivots = -1;  // the number of new GB elements in this degree
+  std::atomic<long> n_zero_reductions = 0;
 
   mtbb::tick_count t0;
   mtbb::tick_count t1;
+
+  if (hilbert)
+    {
+      n_newpivots = hilbert->nRemainingExpected();
+      if (n_newpivots == 0)
+        {
+          std::cout << "Oh crap, our logic is wrong: should not get here if no new GB elements expected in this degree" << std::endl;
+          return;
+        }
+    }
 
 #if defined(WITH_TBB)
 //#if 0
@@ -629,7 +643,7 @@ void F4GB::gauss_reduce(bool diagonalize)
                             //if ((not hilbert) or (n_newpivots > 0))
                             //{
                                bool newNonzeroReduction = gauss_reduce_row(spair_rows[i], my_dense);
-                            //   if (not newNonzeroReduction) n_zero_reductions++;
+                               if (not newNonzeroReduction) ++n_zero_reductions;
                             //   if (hilbert && newNonzeroReduction)
                             //     --n_newpivots;
                             //}
@@ -642,32 +656,38 @@ void F4GB::gauss_reduce(bool diagonalize)
   mParallelGaussTime += (t1-t0).seconds();
 #endif 
 
+  std::cout << "About to do serial loop, n_newpivots = " << n_newpivots << std::endl;
   t0 = mtbb::tick_count::now();
   ElementArray gauss_row { mVectorArithmetic->allocateElementArray(ncols) };
-  for (int i = 0; i < nrows; i++)
+  for (auto i = 0; i < spair_rows.size(); i++)
     {
-      // TODO: Do we need access to n_newpivots to be thread-safe?
+      auto this_row = spair_rows[i];
       if ((not hilbert) or (n_newpivots > 0))
       {
-         bool newNonzeroReduction = gauss_reduce_row(i, gauss_row);
+         bool newNonzeroReduction = gauss_reduce_row(this_row, gauss_row);
          if (newNonzeroReduction)
          {
-            row_elem &r = mat->rows[i];
+            row_elem &r = mat->rows[this_row];
             mVectorArithmetic->makeMonic(r.coeffs);
-            mat->columns[r.comps[0]].head = i;
+            mat->columns[r.comps[0]].head = this_row;
+            if (hilbert) --n_newpivots;
          }
          else
-            n_zero_reductions++;
-         if (hilbert && newNonzeroReduction)
-            --n_newpivots;
-      }
+            ++n_zero_reductions;
+      } else if (hilbert)
+        {
+          // Inform code that we don't want a new GB element from this row.
+          // The row will be deleted with clear_matrix.
+          row_elem &r = mat->rows[this_row];
+          r.len = 0;
+        }
     }
   mVectorArithmetic->deallocateElementArray(gauss_row);
   t1 = mtbb::tick_count::now();
   mSerialGaussTime += (t1-t0).seconds();
 
   if (M2_gbTrace >= 3)
-    fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions.load());
+    fprintf(stderr, "-- #zeroreductions %ld\n", n_zero_reductions.load());
 
   t0 = mtbb::tick_count::now();
   if (diagonalize) tail_reduce();
@@ -728,6 +748,7 @@ bool F4GB::gauss_reduce_row(int index,
         mVectorArithmetic->deallocateElementArray(r.coeffs);
       //Mem->components.deallocate(r.comps);
       delete [] r.comps;
+      r.comps = nullptr;
       r.len = 0;
       //Range<int> monomRange;
       //mVectorArithmetic->denseToSparse(gauss_row, r.coeffs, monomRange, firstnonzero, last, mComponentSpace);
@@ -1084,13 +1105,15 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
       //this_degree = mSPairSet.prepare_next_degree(-1, npairs);
       auto thisDegInfo = mSPairSet.setThisDegree();
-      this_degree = thisDegInfo.second;
       
       if (not thisDegInfo.first)
         {
           is_done = COMP_DONE;
           break;
         }
+
+      this_degree = thisDegInfo.second;
+      
       if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
         {
           is_done = COMP_DONE_DEGREE_LIMIT;
