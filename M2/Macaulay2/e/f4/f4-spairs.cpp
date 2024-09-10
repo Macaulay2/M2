@@ -148,6 +148,16 @@ std::pair<bool,spair> F4SPairSet::get_next_pair()
   return {true,mSPairs[result]};
 }
 
+void F4SPairSet::discardSPairsInCurrentDegree()
+{
+  while (not mSPairQueue.empty())
+    {
+      auto result = mSPairQueue.top();
+      if (mSPairs[result].deg != mThisDegree) return;
+      mSPairQueue.pop();
+    }
+}
+
 int F4SPairSet::find_new_pairs(bool remove_disjoints)
 // returns the number of new pairs found
 {

@@ -57,6 +57,9 @@ class F4SPairSet
   std::pair<bool,spair> get_next_pair();
   // get the next pair in this degree (the one 'prepare_next_degree' set up')
 
+  // discard all of the spairs in the current set degree
+  void discardSPairsInCurrentDegree();
+  
   void display_spair(spair *p);
   // A debugging routine which displays an spair
 
