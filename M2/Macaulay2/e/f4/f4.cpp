@@ -585,12 +585,6 @@ void F4GB::gauss_reduce(bool diagonalize)
 
   std::atomic<int> n_newpivots = -1;  // the number of new GB elements in this degree
   std::atomic<int> n_zero_reductions = 0;
-  if (hilbert)
-    {
-      n_newpivots = hilbert->nRemainingExpected();
-      if (n_newpivots == 0) return;
-    }
-
 
   mtbb::tick_count t0;
   mtbb::tick_count t1;
@@ -951,6 +945,7 @@ void F4GB::do_spairs()
 {
   if (hilbert && hilbert->nRemainingExpected() == 0)
     {
+      mSPairSet.discardSPairsInCurrentDegree();
       if (M2_gbTrace >= 1)
         fprintf(stderr,
                 "-- skipping degree...no elements expected in this degree\n");
