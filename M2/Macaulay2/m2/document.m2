@@ -432,16 +432,17 @@ locate DocumentTag := tag -> new FilePosition from (
 -- e.g. gb vs (codim, Ideal)
 getOptionBase := key -> (
     if instance(key, Symbol) then key = value key;
-    try options key =!= null then key else try options key#0 =!= null then key#0 else key)
+    try if options key   =!= null then return key;
+    try if options key#0 =!= null then return key#0;
+    key)
 
 emptyOptionTable := new OptionTable from {}
 -- TODO: this should return either an OptionTable or true, if any option is accepted
 getOptionDefaultValues := method(Dispatch => Thing)
 getOptionDefaultValues Thing    := x -> emptyOptionTable
 getOptionDefaultValues Symbol   := x -> if instance(f := value x, Function) then getOptionDefaultValues f else emptyOptionTable
-getOptionDefaultValues Sequence := s -> if (opts := options s) === null then (
-    if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable) else opts
-getOptionDefaultValues Function := f -> if (opts := options f) === null then emptyOptionTable  else opts
+getOptionDefaultValues Sequence := s -> options s ?? getOptionDefaultValues s#0 ?? emptyOptionTable
+getOptionDefaultValues Function := f -> options f ?? emptyOptionTable
 
 isType := T -> instance(T, Type)
 isTypeSignature := L -> instance(L, List) and all(L, isType)
