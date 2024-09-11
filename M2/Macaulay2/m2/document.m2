@@ -429,27 +429,34 @@ locate DocumentTag := tag -> new FilePosition from (
 -- helpers for the document function
 -----------------------------------------------------------------------------
 
-emptyOptionTable := new OptionTable from {}
-getOptionDefaultValues := method(Dispatch => Thing)
-getOptionDefaultValues Symbol   := x -> if instance(f := value x, Function) then getOptionDefaultValues f else emptyOptionTable
-getOptionDefaultValues Thing    := x -> emptyOptionTable
-getOptionDefaultValues Function := f -> (
-     o := options f;
-     if o =!= null then o else emptyOptionTable)
-getOptionDefaultValues Sequence := s -> (
-     o := options s;
-     if o =!= null then o else if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable)
+-- e.g. gb vs (codim, Ideal)
+getOptionBase := key -> (
+    if instance(key, Symbol) then key = value key;
+    try options key =!= null then key else try options key#0 =!= null then key#0 else key)
 
-processSignature := (tag, fn) -> item -> (
-    key := if tag =!= null then tag.Key;
+emptyOptionTable := new OptionTable from {}
+-- TODO: this should return either an OptionTable or true, if any option is accepted
+getOptionDefaultValues := method(Dispatch => Thing)
+getOptionDefaultValues Thing    := x -> emptyOptionTable
+getOptionDefaultValues Symbol   := x -> if instance(f := value x, Function) then getOptionDefaultValues f else emptyOptionTable
+getOptionDefaultValues Sequence := s -> if (opts := options s) === null then (
+    if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable) else opts
+getOptionDefaultValues Function := f -> if (opts := options f) === null then emptyOptionTable  else opts
+
+isType := T -> instance(T, Type)
+isTypeSignature := L -> instance(L, List) and all(L, isType)
+
+processSignature := (tag, fn) -> (type0, item) -> (
+    if tag === null then tag = makeDocumentTag fn;
     -- "inp" => ZZ => ("hypertext sequence")
     --  opt  => ZZ => ("hypertext sequence")
+    optbase := getOptionBase tag.Key;
     optsymb := null; --  opt
     inpname := null; -- "inp"
-    type := null;    -- ZZ
+    type := null;    -- ZZ or {Ideal,Module}
     text := null;    -- ("hypertext sequence")
-    fn = if (instance(key, Sequence) or instance(key, Function)) and options key =!= null then key
-    else if fn =!= null then fn else key;
+    -- 'type0' is the type in the primary document tag, e.g. Module,
+    -- while 'type' may be Ideal or {Ring,Ideal,Module}, etc.
 
     -- checking for various pieces of the synopsis item
     -- allow either a variable name or a visible list for rare exceptions
@@ -457,9 +464,11 @@ processSignature := (tag, fn) -> item -> (
     isOptionName := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, Symbol);
     isInputName  := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, String) and isVariable y;
     -- putting null or Nothing as input type means don't display the type deduced from the description of the method
-    isInputType  := y -> instance(y, Type) and (
-	if not (type === null or y === Nothing) and type =!= y then error("type mismatch: ", toString type, " =!= ", toString y, " in documentation for ", toExternalString fn)
-	else if type === null or y === Nothing   or type === y then true else false);
+    -- putting a list like {ZZ,QQ} as input type means either is acceptable
+    isInputType  := y -> y === Nothing or isType y and isInputType {y} or isTypeSignature y and (
+	-- TODO: the other types are not sanity checked
+	type0 === null or if isMember(type0, y) then true else error("type mismatch: ",
+	    type0, " not among types ", y, " in documentation for ", format tag));
     isInputText  := y -> text === null and any({String, Hypertext, List, Sequence}, T -> instance(y, T));
 
     -- parse the chain of options
@@ -470,9 +479,9 @@ processSignature := (tag, fn) -> item -> (
 	    if          null === y then null
 	    else if isOptionName y then optsymb = y -- option symbol, e.g Strategy
 	    else if  isInputName y then inpname = y --    input name, e.g n
-	    else if  isInputType y then    type = y --    input type, e.g ZZ
+	    else if  isInputType y then    type = y --    input type, e.g ZZ or {Ideal,Module}
 	    else if  isInputText y then    text = y --   description, e.g {"hypertext sequence"}
-	    else error("encountered unrecognizable synopsis item in documentation for ", toExternalString key))
+	    else error("encountered unrecognizable synopsis item ", toString y, " in documentation for ", format tag))
 	) item;
     if debugLevel > 1 then printerr("parsed synopsis item:\t", toExternalString (optsymb, inpname, type, text));
 
@@ -481,10 +490,11 @@ processSignature := (tag, fn) -> item -> (
 	if inpname =!= null then TT inpname,
 	if    type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above
 	text}
-    else if fn =!= null then (
-	opts := getOptionDefaultValues fn;
-	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", toExternalString fn);
-	opttag := getPrimaryTag makeDocumentTag([fn, optsymb], Package => package tag);
+    else if optbase =!= null then (
+	opts := getOptionDefaultValues optbase;
+	if opts === true then opts = new OptionTable from { optsymb => null };
+	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", toExternalString optbase);
+	opttag := getPrimaryTag makeDocumentTag([optbase, optsymb], Package => package tag);
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	maybeformat := if instance(opts#optsymb, String) then format else identity;
@@ -496,13 +506,12 @@ processSignature := (tag, fn) -> item -> (
     else {TT {toString optsymb, " => ..."}};
     SPAN nonnull deepSplice between_", " nonnull nonempty result)
 
-
 getSignature := method(Dispatch => Thing)
 getSignature Thing    := x -> ({},{})
+getSignature Array    := x -> ({},{})
 getSignature Function := x -> ({},{typicalValue x})
 getSignature Sequence := x -> (
-    if #x > 1 and instance(x#-1, Symbol) then ({}, {}) -- it's an option ...
-    else (
+    (inputs, outputs) := (
 	-- putting something like OO in the key indicates a fake dispatch
 	x' := select(drop(toList x, 1), T -> not ancestor(Nothing, T));
 	-- assignment methods
@@ -515,38 +524,44 @@ getSignature Sequence := x -> (
 	-- for "new T from x", T is already known, so we just care about x
 	else if x#0 === NewFromMethod
 	then ( {x#2} , { typicalValue x } )
-	else (  x'   , { typicalValue x } )))
+	else (  x'   , { typicalValue x } ));
+    -- When T is not exported, its class evaluates to Symbol instead of Type
+    inputs  = apply(inputs,  T -> if instance(T, Symbol) then value T else T);
+    outputs = apply(outputs, T -> if instance(T, Symbol) then value T else T);
+    (inputs, outputs))
 
 isOption := opt -> instance(opt, Option) and #opt == 2 and instance(opt#0, Symbol);
 
 processUsage := (tag, fn, o) -> (
-    if not o.?Usage and (o.?Inputs or o.?Outputs)
-    then error "document: Inputs or Outputs specified, but Usage not provided";
-    arg := if o.?Inputs then o.Inputs else {};
-    out := if o.?Outputs then o.Outputs else {};
-    (ino, inp) := toSequence values partition(isOption, arg, {true, false});
-    opt := getOptionDefaultValues tag.Key;
-    inoh:= new HashTable from ino;
-    if not isSubset(keys inoh, keys opt)
-    then error concatenate("not among the options for ", toString fn, ": ", between_", " keys (set keys inoh - set keys opt));
-    ino = join(ino, sortByName (keys opt - set keys inoh));
-    if o.?Usage then (
-	(inp', out') := getSignature tag.Key;
-	inp' = select(inp', T -> T =!= Nothing);
-	out' = select(out', T -> T =!= Nothing);
-	-- When T is not exported, its class evaluates to Symbol instead of Type
-	inp' = apply(inp', T -> if instance(T, Symbol) then value T else T);
-	out' = apply(out', T -> if instance(T, Symbol) then value T else T);
-	if out' === {Thing} then out' = {};		    -- not informative enough
-	if #inp === 0 then inp = inp';
-	if #out === 0 then out = out';
-	if #inp' =!= 0 then (
-	    if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", format tag);
-	    inp = apply(inp',inp,(T,v) -> T => v));
-	if #out' =!= 0 then (
-	    if #out =!= #out' then error ("mismatched number of outputs in documentation for ", format tag);
-	    out = apply(out',out,(T,v) -> T => v)));
-    apply((inp, out, ino), x -> apply(x, processSignature(tag, fn))))
+    if not o.?Usage then (
+	if o.?Inputs or o.?Outputs then error "document: Inputs or Outputs specified, but Usage not provided";
+	return ({}, {}, {}));
+    -- inputs, outputs, and options provided in the documentation
+    arguments := partition(isOption, if o.?Inputs then o.Inputs else {}, {false, true});
+    inputList  := arguments#false;
+    optionList := arguments#true;
+    outputList := if o.?Outputs then o.Outputs else {};
+    optionNames := keys hashTable optionList;
+    -- default inputs, outputs, and options of the function or method
+    (inputs0, outputs0) := getSignature tag.Key;
+    options0 := getOptionDefaultValues  tag.Key;
+    -- e.g. map(Module, Nothing, Matrix)
+    inputs0  = select( inputs0, T -> T =!= Nothing);
+    outputs0 = select(outputs0, T -> T =!= Nothing and T =!= Thing);
+    options0 = if options0 === true then optionNames else keys options0;
+    -- check that option names are valid
+    if not isSubset(optionNames, options0) then error("not among the options for ", format tag, ": ",
+	between_", " (optionNames - set options0));
+    optionList = join(optionList, sortByName (options0 - set optionNames));
+    --
+    if  #inputList === 0 then  inputList =  inputs0;
+    if #outputList === 0 then outputList = outputs0;
+    if #inputs0  == 0 then  inputs0 =  #inputList:null else if  #inputList =!=  #inputs0 then error ("mismatched number of inputs in documentation for ",  format tag);
+    if #outputs0 == 0 then outputs0 = #outputList:null else if #outputList =!= #outputs0 then error ("mismatched number of outputs in documentation for ", format tag);
+    inputList  = apply(inputs0,  inputList,  identity);
+    outputList = apply(outputs0, outputList, identity);
+    optionList = apply(optionList, option -> (null, option));
+    apply((inputList, outputList, optionList), x -> apply(x, processSignature(tag, fn))))
 
 -- "x" => List => { "a list of numbers" }
 -- "x" => List => "a list of numbers"
@@ -751,7 +766,7 @@ SYNOPSIS Thing    :=
 SYNOPSIS Sequence := o -> x -> (
     o = applyPairs(o, (k, v) -> (k, if v =!= {} then KeywordFunctions#k v else v));
     fn := o#BaseFunction;
-    proc := processSignature(, fn);
+    proc := item -> (processSignature(, fn))(null, item);
     fixup DIV nonnull {
 	SUBSECTION o.Heading,
 	UL {
