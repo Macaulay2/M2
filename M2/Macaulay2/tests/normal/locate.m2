@@ -6,7 +6,7 @@ getcols = P -> (toList P)_{2,4,6}
 assert( (getcols locate f) === {4,54,7} );
 assert( (getcols locate f) === {4,54,7} );
 assert( (getcols locate F) === {4,54,7} );
-assert( (getcols locate c) === {10,54,43} );
+assert( (getcols locate c) === {4,54,7} );
 assert( (getcols locate C) === {10,54,43} );
 assert( (getcols locate C_0) === {15,19,15} );
 assert( (getcols locate C_1) === {29,35,29} );
