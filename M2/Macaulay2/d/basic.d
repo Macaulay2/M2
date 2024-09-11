@@ -11,7 +11,7 @@ export hash(e:Expr):hash_t := (
      is s:SymbolBody do s.symbol.hash
      is x:Database do x.hash
      is x:ZZcell do hash(x.v)
-     is b:Boolean do if b.v then hash_t(444777) else hash_t(777333)
+     is b:Boolean do Ccode(hash_t, b.v)
      is Nothing do hash_t(333889)
      is x:List do x.hash
      is f:functionCode do f.hash
