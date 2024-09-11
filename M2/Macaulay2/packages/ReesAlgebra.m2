@@ -1257,11 +1257,11 @@ doc ///
 
 doc ///
   Key
-    (normalCone, Ideal)
-    (normalCone, Ideal, RingElement)
     associatedGradedRing
     (associatedGradedRing, Ideal)
     (associatedGradedRing, Ideal, RingElement)
+    (normalCone, Ideal)
+    (normalCone, Ideal, RingElement)
   Headline
     The normal cone of a subscheme
   Usage
