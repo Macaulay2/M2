@@ -249,6 +249,7 @@ oftab := new HashTable from {
     functionBody(true >> identity)                         => f -> null,
     }
 
+-- TODO: this should return either an OptionTable or true, if any option is accepted
 options Function := f -> if oftab#?(fb := functionBody f) then oftab#fb f
 
 -----------------------------------------------------------------------------
