@@ -3,7 +3,7 @@
 newPackage(
     "VNumber",
     Version => "1.0",
-    Date => "October 24, 2023",
+    Date => "September 12, 2024",
     Authors => {{Name => "Antonino Ficarra", Email => "antficarra@unime.it", HomePage => "https://www.researchgate.net/profile/Antonino-Ficarra"},
         {Name => "Emanuele Sgroi", Email => "emasgroi@unime.it", HomePage => "https://www.researchgate.net/profile/Emanuele-Sgroi"}},
     Headline => "compute v-number of homogeneous ideals and v-function of monomial ideals",
@@ -375,12 +375,12 @@ soc (Ideal, Ideal) := (I, P) -> (
   XP := ring I;
   if not(isMember(true, (stableMax(I)/(Q->P==Q)))) then XP = product(select(stablePrimes(I), Q -> (Q!=P and isSubset(P,Q)==true)));
   f := reesMap(I);
-  R := source f/(sub(I, source f) + ker f);
+  R := source f/ker f;
   IR := sub(I,R);
   PR := sub(P,R);
-  QR := if not(XP===ring I) then sub(P + saturate XP, R) else ideal(1_R);
+  QR := if not(XP===ring I) then sub(XP, R) else ideal(1_R);
   A := quotient(IR, PR);
-  B := quotient(IR, QR);
+  B := intersect(quotient(IR, PR), saturate(IR, QR));
   A/B
 );
 
