@@ -68,12 +68,8 @@ toMonomial (Ring,List) := (S,l) -> (
 	n:=numgens S-1;
 	u:=1;
         j:=0;
-        if not(#l==n+1)==true then return "expected a multidegree whose size equals the number of variables of the polynomial ring"
-        else for i from 0 to n do (
-            j=l#i;
-            u=u*S_i^j;
-        );
-        u
+        if not(#l==n+1) then error "the list does not have the right length";
+        product(n + 1, i -> S_i^(l#i))
     );
 
 -------------------------------------------------------------------------------------------
@@ -106,17 +102,9 @@ Node
 toMultidegree = method(TypicalValue=>List)
 toMultidegree (RingElement) := u -> (
 	S:=ring u;
-        if isMonomialIdeal(ideal(u))==false then return "expected a monomial"
-        else n:=numgens S-1;
-        L:={};
-        for i from 0 to n do (
-              mdeg:={};
-              for j from 0 to n do (
-                     if j==i then mdeg=append(mdeg,1)
-                     else mdeg=append(mdeg,0);
-              );
-              L=append(L,mdeg);
-        );
+        if not isMonomialIdeal(ideal(u)) then error "expected a monomial";
+        n:=numgens S-1;
+        L := for i to n list for j to n list if i == j then 1 else 0;
         R:=newRing(S,Degrees=>L);
         f:=map(R,S);
         degree f u
@@ -151,15 +139,11 @@ Node
 
 boundingMultidegree = method(TypicalValue=>List)
 boundingMultidegree (Ideal) := I -> (
-	if isMonomialIdeal(I)==false then return "expected a monomial ideal"
-        else S:=ring I;
+	if not isMonomialIdeal(I) then error "expected a monomial ideal";
+        S:=ring I;
         n:=numgens S-1;
         L:=apply(flatten entries mingens I,x->toMultidegree(x));
-        bDeg:={};
-        for i from 0 to n do (
-              bDeg=append(bDeg,max(apply(L,x->x#i)));
-        );
-        bDeg
+        max \ transpose L
     );
 
 -------------------------------------------------------------------------------------------
@@ -195,8 +179,8 @@ Node
 
 matchingProduct = method(TypicalValue=>Ideal)
 matchingProduct (Ideal,Ideal) := (I,J) -> (
-        if ring I=!=ring J then return "expected monomial ideals in the same polynomial ring"
-        else S:=ring I;
+        if ring I=!=ring J then error "expected monomial ideals in the same polynomial ring";
+        S:=ring I;
         gI:=apply(apply(flatten entries mingens I,x->toMultidegree x),y->toMonomial(S,y));
         gJ:=apply(apply(flatten entries mingens J,x->toMultidegree x),y->toMonomial(S,y));
         l:={};
@@ -356,11 +340,10 @@ Node
 isLinearlyRelated = method(TypicalValue=>Boolean)
 isLinearlyRelated (Ideal) := I -> (
         genDeg:=flatten apply(flatten entries mingens I,x->degree x);
-        if min(genDeg)=!=max(genDeg) then return "expected an ideal generated in a single degree"
-        else S:=ring I;
+        if min(genDeg)=!=max(genDeg) then error "expected an ideal generated in a single degree";
+        S:=ring I;
         E:=toList(set flatten entries (res I).dd_2 - set{0_S});
-        if max(flatten apply(E,x->degree x))==1 then return true
-        else return false
+        max(flatten apply(E,x->degree x))==1
     );
 	
 -------------------------------------------------------
