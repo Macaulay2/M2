@@ -152,7 +152,7 @@ toMonomial (Ring,List) := (S,l) -> (
 	n:=numgens S-1;
 	u:=1;
         j:=0;
-        if #l != n+1 then error "the list does not have the right lenght";
+        if #l != n+1 then error "the list does not have the right length";
         product(n + 1, i -> S_i^(l#i))
     );
 
