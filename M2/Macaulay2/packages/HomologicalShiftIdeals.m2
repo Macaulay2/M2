@@ -4,7 +4,7 @@ newPackage(
         Version => "1.0", 
         Date => "May 9, 2022",
         Authors => {{Name => "Antonino Ficarra", Email => "antficarra@unime.it"}},
-        Headline => "A Macaulay2 package for computing the homological shift ideals of a monomial ideal of a polynomial ring",
+        Headline => "compute the homological shift ideals of a monomial ideal",
         DebuggingMode => false,
         PackageImports => {"SimplicialComplexes", "SimplicialDecomposability"},
         Reload => true
@@ -73,7 +73,7 @@ Node
 
 supportIdeal = method(TypicalValue=>List)
 supportIdeal (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         n:=numgens S;  
         GI:=flatten entries mingens I;
@@ -118,7 +118,7 @@ Node
 
 isFullySupported = method(TypicalValue=>Boolean)
 isFullySupported (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else n:=numgens ring I;
         suppI:=supportIdeal I;
         if #suppI==n then return true
@@ -197,7 +197,7 @@ Node
 toMultidegree = method(TypicalValue=>List)
 toMultidegree (RingElement) := u -> (
 	S:=ring u;
-        if isMonomialIdeal(ideal(u))==false then return "expected a monomial"
+        if not isMonomialIdeal(ideal(u)) then error
         else n:=numgens S-1;
         L:={};
         for i from 0 to n do (
@@ -242,7 +242,7 @@ Node
 
 boundingMultidegree = method(TypicalValue=>List)
 boundingMultidegree (Ideal) := I -> (
-	if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+	if not isMonomialIdeal(I) then error
         else S:=ring I;
         n:=numgens S-1;
         L:=apply(flatten entries mingens I,x->toMultidegree(x));
@@ -289,7 +289,7 @@ Node
 
 multigradedShifts = method(TypicalValue=>List)
 multigradedShifts (Ideal,ZZ) := (I,k) -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         n:=numgens S-1;
         r:=k+1;
@@ -351,7 +351,7 @@ Node
 
 HS = method(TypicalValue=>Ideal)
 HS (Ideal,ZZ) := (I,k) -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         M:=multigradedShifts(I,k);
         H:=trim ideal(M);
@@ -388,7 +388,7 @@ Node
 
 socle = method(TypicalValue=>List)
 socle (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         n:=numgens S-1;
         soc:=multigradedShifts(I,n);
@@ -438,7 +438,7 @@ Node
 
 hasLinearResolution = method(TypicalValue=>Boolean)
 hasLinearResolution (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         m:=min flatten apply(flatten entries mingens I,x->degree x);
         if m==regularity I then return true
@@ -478,7 +478,7 @@ Node
 
 hasHomologicalLinearResolution = method(TypicalValue=>Boolean)
 hasHomologicalLinearResolution (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         p:=pdim module I;
         i:=0;
@@ -522,7 +522,7 @@ Node
 
 hasLinearQuotients = method(TypicalValue=>Boolean)
 hasLinearQuotients (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else DualI:=dual simplicialComplex polarize(monomialIdeal I);
         if isShellable(DualI)==true then return true
         else false
@@ -561,7 +561,7 @@ Node
 
 hasHomologicalLinearQuotients = method(TypicalValue=>Boolean)
 hasHomologicalLinearQuotients (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         p:=pdim module I;
         i:=0;
@@ -605,7 +605,7 @@ Node
 
 admissibleOrder = method(TypicalValue=>List)
 admissibleOrder (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else if hasLinearQuotients(I)==false then return "the ideal does not have linear quotients"
         else S:=ring I;
         n:=numgens S-1;
@@ -668,7 +668,7 @@ Node
 
 isAdmissibleOrder = method(TypicalValue=>Boolean)
 isAdmissibleOrder (Ideal,List) := (I,L) -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else if not (set L)===(set flatten entries mingens I) or #L!=#(flatten entries mingens I) then return "incorrect list"
         else mu:=#(flatten entries mingens I);
         if mu==1 then return true
@@ -714,7 +714,7 @@ Node
 
 isPolymatroidal = method(TypicalValue=>Boolean)
 isPolymatroidal (Ideal) := (I) -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else if #(unique apply(flatten entries mingens I,x->degree x))!=1 then return "the ideal is not equigenerated"
         else S:=ring I;
         n:=numgens S-1;
@@ -770,7 +770,7 @@ Node
 
 isHomologicalPolymatroidal = method(TypicalValue=>Boolean)
 isHomologicalPolymatroidal (Ideal) := I -> (
-        if isMonomialIdeal(I)==false then return "expected a monomial ideal"
+        if not isMonomialIdeal(I) then error
         else S:=ring I;
         p:=pdim module I;
         i:=0;
