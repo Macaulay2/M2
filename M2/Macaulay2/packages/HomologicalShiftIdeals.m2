@@ -83,7 +83,7 @@ supportIdeal (Ideal) := I -> (
              suppI=suppI+s;
         );
         suppI
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether an ideal is fully supported
@@ -123,8 +123,7 @@ isFullySupported (Ideal) := I -> (
         suppI:=supportIdeal I;
         if #suppI==n then return true
         else return false
-    )
-
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the monomial with a given multidegree
@@ -166,7 +165,7 @@ toMonomial (Ring,List) := (S,l) -> (
             u=u*S_i^j;
         );
         u
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the multidegree of a given monomial
@@ -212,7 +211,7 @@ toMultidegree (RingElement) := u -> (
         R:=newRing(S,Degrees=>L);
         f:=map(R,S);
         degree f u
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the bounding multidegree of a monomial ideal
@@ -252,7 +251,7 @@ boundingMultidegree (Ideal) := I -> (
               bDeg=append(bDeg,max(apply(L,x->x#i)));
         );
         bDeg
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the kth multigraded shifts of a monomial ideal
@@ -314,7 +313,7 @@ multigradedShifts (Ideal,ZZ) := (I,k) -> (
               M;
         );
         unique M
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the kth homological shift ideal of a monomial ideal
@@ -358,7 +357,7 @@ HS (Ideal,ZZ) := (I,k) -> (
         H:=trim ideal(M);
         if H==(0) or H==(1) then return ideal(0_S)
         else return H
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the socle elements of a monomial ideal
@@ -404,7 +403,7 @@ socle (Ideal) := I -> (
         f:=map(S,frac S);
         L=apply(L,x->f x);
         L
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether an ideal has a linear resolution
@@ -444,7 +443,7 @@ hasLinearResolution (Ideal) := I -> (
         m:=min flatten apply(flatten entries mingens I,x->degree x);
         if m==regularity I then return true
         else return false
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether a monomial ideal and its homological shift ideals have a linear resolution
@@ -488,7 +487,7 @@ hasHomologicalLinearResolution (Ideal) := I -> (
         );
         if hasLinearResolution(HS(I,i))==true then return true
         else false
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether a monomial ideal has linear quotients
@@ -527,7 +526,7 @@ hasLinearQuotients (Ideal) := I -> (
         else DualI:=dual simplicialComplex polarize(monomialIdeal I);
         if isShellable(DualI)==true then return true
         else false
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether a monomial ideal and its homological shift ideals have linear quotients
@@ -571,7 +570,7 @@ hasHomologicalLinearQuotients (Ideal) := I -> (
         );
         if hasLinearQuotients(HS(I,i))==true then return true
         else false
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute an admissible order of a monomial ideal with linear quotients
@@ -630,7 +629,7 @@ admissibleOrder (Ideal) := I -> (
         f:=map(S,R,L)*map(R,frac R);
         M=apply(M,x->f x);
         M
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether a list of monomials is an admissible order for a monomial ideal
@@ -680,7 +679,7 @@ isAdmissibleOrder (Ideal,List) := (I,L) -> (
         );
         if max(flatten apply(flatten entries mingens quotient(ideal(take(L,{0,j})),ideal(L#(j+1))),x->degree x))==1 then return true
         else false
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether a monomial ideal is polymatroidal
@@ -736,7 +735,7 @@ isPolymatroidal (Ideal) := (I) -> (
              );
         );
         true
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 -- Whether a monomial ideal and its homological shift ideals are polymatroidal
@@ -780,7 +779,7 @@ isHomologicalPolymatroidal (Ideal) := I -> (
         );
         if isPolymatroidal(HS(I,i))==true then return true
         else false
-    )
+    );
 
 ------------------------------------------------------
 --DOCUMENTATION HomologicalShiftIdeals
