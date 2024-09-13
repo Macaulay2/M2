@@ -28,9 +28,7 @@ newPackage(
         PackageExports => {
             "SimplicialComplexes",
             "Graphs",
-            "FourTiTwo"
-            },
-        PackageImports => {
+            "FourTiTwo",
             "Complexes"
             },
 	Certification => {
