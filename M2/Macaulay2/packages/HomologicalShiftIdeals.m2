@@ -26,7 +26,7 @@ export {"supportIdeal",
         "isAdmissibleOrder",
         "isPolymatroidal",
         "isHomologicalPolymatroidal"
-}
+};
 
 mydoc := "";
 mydoc = concatenate(mydoc,///
