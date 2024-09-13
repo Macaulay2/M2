@@ -19,7 +19,7 @@ export {"toMultidegree",
         "monomialGrade",
         "gFunction",
         "isLinearlyRelated"
-}
+};
 
 mydoc := "";
 mydoc = concatenate(mydoc,///
