@@ -442,7 +442,7 @@ assert(stoichSubspaceKer CRN ==
     mingens image transpose matrix{{2,1,-1,1,0},{-2,-1,2,0,1}})
 ///
 
-concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
+concentration := (species,N,R) -> R_(position(N.Species, s->s==species))
 
 --I think this is part of the code that is a problem
 termInp = (a,inp,out,N,R) -> if member(a,inp/first) then (
