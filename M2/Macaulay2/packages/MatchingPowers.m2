@@ -74,7 +74,7 @@ toMonomial (Ring,List) := (S,l) -> (
             u=u*S_i^j;
         );
         u
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the multidegree of a given monomial
@@ -120,7 +120,7 @@ toMultidegree (RingElement) := u -> (
         R:=newRing(S,Degrees=>L);
         f:=map(R,S);
         degree f u
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the bounding multidegree of a monomial ideal
@@ -160,7 +160,7 @@ boundingMultidegree (Ideal) := I -> (
               bDeg=append(bDeg,max(apply(L,x->x#i)));
         );
         bDeg
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Compute the matching product of two monomial ideals
@@ -206,7 +206,7 @@ matchingProduct (Ideal,Ideal) := (I,J) -> (
               );
         );
         trim ideal(l)
-)
+);
 
 -------------------------------------------------------------------------------------------
 --  Compute a matching power of a monomial ideal
@@ -246,7 +246,7 @@ matchingPower (Ideal,ZZ) := (I,k) -> (
             J=matchingProduct(J,I);
         );
         J
-)
+);
 
 -------------------------------------------------------------------------------------------
 --  Compute the monomialGrade of a monomial ideal
@@ -282,7 +282,7 @@ monomialGrade (Ideal) := I -> (
               k=k+1;
         );       
         k
-)
+);
 
 -------------------------------------------------------------------------------------------
 --  Compute the normalized depth function of a monomial ideal
@@ -320,7 +320,7 @@ gFunction (Ideal) := I -> (
             G=append(G,m-pdim(module matchingPower(I,p))-(min apply(flatten entries mingens matchingPower(I,p),x->degree x))#0);
         );
         G
-    )
+    );
 
 -------------------------------------------------------------------------------------------
 --  Whether a monomial ideal is linearly related
@@ -361,7 +361,7 @@ isLinearlyRelated (Ideal) := I -> (
         E:=toList(set flatten entries (res I).dd_2 - set{0_S});
         if max(flatten apply(E,x->degree x))==1 then return true
         else return false
-    )
+    );
 	
 -------------------------------------------------------
 --DOCUMENTATION MatchingPowers
