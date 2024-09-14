@@ -67,21 +67,6 @@ gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
   return result;
 }
 
-gmp_QQ rawRandomQQ(gmp_ZZ height)
-/* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
-/* if height is the null pointer, use the default height */
-{
-  mpq_ptr result = getmemstructtype(mpq_ptr);
-  mpq_init(result);
-  if (height == nullptr) height = maxHeight;
-  mpz_urandomm(mpq_numref(result), state, height);
-  mpz_urandomm(mpq_denref(result), state, height);
-  mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
-  mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
-  mpq_canonicalize(result);
-  return moveTo_gmpQQ(result);
-}
-
 void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
 /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 /* if height is the null pointer, use the default height */
@@ -92,6 +77,16 @@ void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
   mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
   mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
   mpq_canonicalize(result);
+}
+
+gmp_QQ rawRandomQQ(gmp_ZZ height)
+/* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
+/* if height is the null pointer, use the default height */
+{
+  mpq_ptr result = getmemstructtype(mpq_ptr);
+  mpq_init(result);
+  rawSetRandomQQ(result, height);
+  return moveTo_gmpQQ(result);
 }
 
 gmp_RR rawRandomRR(unsigned long precision)
