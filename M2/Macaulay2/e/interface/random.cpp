@@ -104,6 +104,15 @@ gmp_RR rawRandomRR(unsigned long precision)
   return moveTo_gmpRR(result);
 }
 
+gmp_RR rawRandomRRNormal(unsigned long precision)
+/* returns a normally distributed random real with the given precision */
+{
+  mpfr_ptr result = getmemstructtype(mpfr_ptr);
+  mpfr_init2(result, precision);
+  mpfr_nrandom(result, state, MPFR_RNDN);
+  return moveTo_gmpRR(result);
+}
+
 gmp_CC rawRandomCC(unsigned long precision)
 /* returns a uniformly distributed random complex in the box [0.0,0.0],
  * [1.0,1.0] */
