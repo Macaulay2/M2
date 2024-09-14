@@ -1,8 +1,8 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.2",
-    Date => "January 28, 2024",
+    Version => "0.3",
+    Date => "September 14, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -16,6 +16,11 @@ newPackage(
 ---------------
 
 -*
+
+0.3 (2024-09-14, M2 1.24.11)
+* remove redundant Constant methods now that we can use inheritance
+* remove use of now-unsupported FileName option to TEST
+* update test after "format" bug fix
 
 0.2 (2024-01-24, M2 1.23)
 * use single-string version of exportFrom
