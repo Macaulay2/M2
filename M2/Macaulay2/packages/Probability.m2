@@ -18,8 +18,8 @@
 
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.4",
-    Date => "January 23, 2024",
+    Version => "0.5",
+    Date => "September 13, 2024",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -46,6 +46,13 @@ newPackage("Probability",
 ---------------
 
 -*
+
+0.5 (2024-09-13, M2 1.24.11)
+* add JSAG info
+* remove Constant methods now that we can use inheritance
+* adjust tests now that we use flint instead of boost for some special functions
+* use mpfr's built-in function for generating normally distributed variates
+* add subnodes to improve docs
 
 0.4 (2024-01-23, M2 1.23)
 * release under GPL
