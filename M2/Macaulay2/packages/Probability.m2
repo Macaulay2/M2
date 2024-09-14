@@ -547,7 +547,7 @@ doc ///
   Key
     DistributionFunction
   Headline
-    cumulative density function
+    cumulative distribution function
   Description
     Text
       A key in @TO ProbabilityDistribution@ objects and an option for
