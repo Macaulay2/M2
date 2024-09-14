@@ -28,6 +28,12 @@ int32_t rawRandomInt(int32_t max);
 gmp_ZZ rawRandomInteger(gmp_ZZ maxN);
 /* if height is the null pointer, use the default height */
 
+void rawSetFareyApproximation(mpq_ptr result, gmp_RR x, gmp_ZZ height);
+/* sets result = the nearest rational to x w/ denominator <= height */
+
+gmp_QQ rawFareyApproximation(gmp_RR x, gmp_ZZ height);
+/* returns the nearest rational to x w/ denominator <= height */
+
 gmp_QQ rawRandomQQ(gmp_ZZ height);
 /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 /* if height is the null pointer, use the default height */

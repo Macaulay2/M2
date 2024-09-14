@@ -67,6 +67,93 @@ gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
   return result;
 }
 
+void rawSetFareyApproximation(mpq_ptr result, gmp_RR x, gmp_ZZ height)
+/* sets result = the nearest rational to x w/ denominator <= height */
+/* see https://en.wikipedia.org/wiki/Farey_sequence                 */
+{
+  int sgn;
+  mpfr_t fracpart, tmp1, tmp2;
+  mpz_t intpart, a, b, c, d, q, p;
+  mpq_t tmp3;
+
+  // get integer and fractional parts of |x|
+  sgn = mpfr_sgn(x);
+  mpfr_init2(fracpart, mpfr_get_prec(x));
+  mpfr_abs(fracpart, x, MPFR_RNDN);
+  mpz_init(intpart);
+  mpfr_get_z(intpart, fracpart, MPFR_RNDD);
+  mpfr_frac(fracpart, fracpart, MPFR_RNDN);
+
+  // goal: find nearest rational number to fracpart
+  // start w/ a/b = 0, p/q = 1/2, c/d = 1
+  mpfr_init2(tmp1, mpfr_get_prec(x));
+  mpfr_init2(tmp2, mpfr_get_prec(x));
+  mpz_init_set_ui(a, 0);
+  mpz_init_set_ui(b, 1);
+  mpz_init_set_ui(c, 1);
+  mpz_init_set_ui(d, 1);
+  mpz_init_set_ui(p, 1);
+  mpz_init_set_ui(q, 2);
+  mpq_init(tmp3);
+
+  // compute mediant p/q = (a+c)/(b+d) until q > height
+  while (mpz_cmp(q, height) <= 0) {
+    mpfr_mul_z(tmp1, fracpart, q, MPFR_RNDN);
+    // check if fracpart is to the left or right of p/q
+    // and update a/b or c/d accordingly
+    if (mpfr_cmp_z(tmp1, p) <= 0) {
+      mpz_set(c, p);
+      mpz_set(d, q);
+    } else {
+      mpz_set(a, p);
+      mpz_set(b, q);
+    }
+    mpz_add(p, a, c);
+    mpz_add(q, b, d);
+  }
+
+  // now check which endpoint is closest
+  // tmp1 = fracpart - a/b
+  mpfr_set_z(tmp1, a, MPFR_RNDN);
+  mpfr_neg(tmp1, tmp1, MPFR_RNDN);
+  mpfr_div_z(tmp1, tmp1, b, MPFR_RNDN);
+  mpfr_add(tmp1, tmp1, fracpart, MPFR_RNDN);
+
+  // tmp2 = c/d - fracpart
+  mpfr_set_z(tmp2, c, MPFR_RNDN);
+  mpfr_div_z(tmp2, tmp2, d, MPFR_RNDN);
+  mpfr_sub(tmp2, tmp2, fracpart, MPFR_RNDN);
+
+  if (mpfr_cmp(tmp1, tmp2) <= 0) {
+    mpq_set_z(result, a);
+    mpq_set_z(tmp3, b);
+  } else {
+    mpq_set_z(result, c);
+    mpq_set_z(tmp3, d);
+  }
+
+  // finally, add back intpart and negate if x < 0
+  mpq_div(result, result, tmp3);
+  mpq_set_z(tmp3, intpart);
+  mpq_add(result, result, tmp3);
+  mpq_set_si(tmp3, sgn, 1);
+  mpq_mul(result, result, tmp3);
+  mpq_canonicalize(result);
+
+  mpz_clears(intpart, a, b, c, d, p, q, nullptr);
+  mpfr_clears(fracpart, tmp1, tmp2, nullptr);
+  mpq_clear(tmp3);
+}
+
+gmp_QQ rawFareyApproximation(gmp_RR x, gmp_ZZ height)
+/* returns the nearest rational to x w/ denominator <= height */
+{
+  mpq_ptr result = getmemstructtype(mpq_ptr);
+  mpq_init(result);
+  rawSetFareyApproximation(result, x, height);
+  return moveTo_gmpQQ(result);
+}
+
 void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
 /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 /* if height is the null pointer, use the default height */
