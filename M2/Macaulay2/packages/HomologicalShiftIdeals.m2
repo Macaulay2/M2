@@ -188,7 +188,7 @@ toMultidegree (RingElement) := u -> (
 	S:=ring u;
         if not isMonomialIdeal(ideal(u)) then error "expected a monomial";
         n:=numgens S-1;
-        L := for i to n list for j to n list if i == j then 1 else 0;
+        L:=for i to n list for j to n list if i == j then 1 else 0;
         R:=newRing(S,Degrees=>L);
         f:=map(R,S);
         degree f u
@@ -270,15 +270,7 @@ multigradedShifts (Ideal,ZZ) := (I,k) -> (
         S:=ring I;
         n:=numgens S-1;
         r:=k+1;
-        L:={};
-        for i from 0 to n do (
-              mdeg:={};
-              for j from 0 to n do (
-                     if j==i then mdeg=append(mdeg,1)
-                     else mdeg=append(mdeg,0);
-              );
-              L=append(L,mdeg);
-        );
+        L:=for i to n list for j to n list if i == j then 1 else 0;
         R:=newRing(S,Degrees=>L);
         f:=map(R,S);
         J:=f I;
@@ -570,7 +562,7 @@ admissibleOrder (Ideal) := I -> (
         S:=ring I;
         n:=numgens S-1;
         bDeg:=boundingMultidegree I;
-        L:=for i to n list for j to bDeg#i-1 list S_i;
+        L:=flatten for i to n list for j to bDeg#i-1 list S_i;
         J:=polarize (monomialIdeal I);
         DualI:=dual simplicialComplex J;
         Ord:=shellingOrder DualI;
