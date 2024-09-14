@@ -332,6 +332,7 @@ exponentialDistribution Number := lambda -> (
 	QuantileFunction => p -> -log(1 - p) / lambda,
 	Description => "Exp(" | toString lambda | ")"))
 
+importFrom(Core, "rawRandomRRNormal")
 normalDistribution = method()
 normalDistribution(Number, Number) := (mu, sigma) -> (
     checkReal mu;
@@ -342,9 +343,9 @@ normalDistribution(Number, Number) := (mu, sigma) -> (
 	    1/2 * (1 + erf((x - mu) / (sigma * sqrt 2))),
 	QuantileFunction => p ->
 	    mu + sigma * sqrt 2 * inverseErf(2 * p - 1),
-	-- box muller transform
-	RandomGeneration => () ->
-	    mu + sigma * sqrt(-2 * log random 1.) * cos (2 * pi * random 1.),
+	RandomGeneration => (
+	    p := min(precision numeric mu, precision numeric sigma);
+	    () -> mu + sigma * rawRandomRRNormal p),
 	Support => (-infinity, infinity),
 	Description => "N" | toString (mu, sigma)))
 
