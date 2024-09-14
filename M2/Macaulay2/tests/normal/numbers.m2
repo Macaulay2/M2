@@ -394,6 +394,20 @@ assert( format_(10,49) 7.7778888e-50 === "1e-49" )
 assert( format_(10,48) 7.7778888e-50 === "0" )
 assert( format_(10,47) 7.7778888e-50 === "0" )
 
+-- issue #708
+assert( format 11p4 == "11" )
+assert( format 12p4 == "12" )
+assert( format 13p4 == "13" )
+assert( format 14p4 == "14" )
+assert( format 15p4 == "15" )
+assert( format_(0, -1) 9007199254740985p53 === "9007199254740985" )
+assert( format_(0, -1) 9007199254740986p53 === "9007199254740986" )
+assert( format_(0, -1) 9007199254740987p53 === "9007199254740987" )
+assert( format_(0, -1) 9007199254740988p53 === "9007199254740988" )
+assert( format_(0, -1) 9007199254740989p53 === "9007199254740989" )
+assert( format_(0, -1) 9007199254740990p53 === "9007199254740990" )
+assert( format_(0, -1) 9007199254740991p53 === "9007199254740991" )
+
 assert ( 1 == # set (toString \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
 assert ( 4 == # set (toExternalString \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
 
