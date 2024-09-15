@@ -30,8 +30,7 @@ option(WITH_TBB		"Link with the TBB library"		ON)
 option(WITH_FFI		"Link with the FFI library"		ON)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
-# TODO: still not operational
-option(WITH_PYTHON	"Link with the Python library"		OFF)
+option(WITH_PYTHON	"Link with the Python library"		ON)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
 
 set(BUILD_PROGRAMS  "" CACHE STRING "Build programs, even if found")
