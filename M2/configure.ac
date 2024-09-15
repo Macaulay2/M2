@@ -1328,10 +1328,13 @@ else
 fi
 AC_SUBST(GTEST_PATH)
 
-AC_SUBST(PYTHON,no)
+AC_SUBST([PYTHON])
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python@<:@=3.x@:>@.,
     [link with libpython. If the version number is not specified, then the
-     system's default version will be detected.]), PYTHON=$withval)
+     system's default version will be detected.  Use --without-python to turn
+     off Python support.]),
+    [PYTHON=$withval],
+    [PYTHON=yes])
 if test $PYTHON != no
 then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
     if test $PYTHON = yes
