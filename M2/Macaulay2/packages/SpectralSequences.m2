@@ -296,11 +296,11 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
   if all(#L, p -> class L#p === SimplicialComplex) then (
     kk := coefficientRing L#0;
     if opts.ReducedHomology == true then (
-    C = chainComplex L#0; -- By default the ambient simplicial complex is the first element of the list
-    maps = apply(#L-1, p -> map(C, chainComplex L#(p+1), 
+    C = chainComplex complex L#0; -- By default the ambient simplicial complex is the first element of the list
+    maps = apply(#L-1, p -> map(C, chainComplex complex L#(p+1), 
         i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
-    else (C = truncate(chainComplex L#0,1); -- By default the ambient simplicial complex is the first element of the list
-    maps = apply(#L-1, p -> map(C, truncate(chainComplex L#(p+1),1), 
+    else (C = truncate(chainComplex complex L#0,1); -- By default the ambient simplicial complex is the first element of the list
+    maps = apply(#L-1, p -> map(C, truncate(chainComplex complex L#(p+1),1), 
         i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))   
  )
   else (
@@ -1566,7 +1566,7 @@ doc ///
 	  Text
 	     We can check that the homology of the simplicial complex twoSphere agrees with that of $\mathbb{S}^2$.
 	  Example
-	      C = truncate(chainComplex twoSphere,1)	
+	      C = truncate(chainComplex complex twoSphere,1)	
 	      prune HH C
 	  Text
 	      We now write down our simplicial complex whose topological realization 
@@ -1578,7 +1578,7 @@ doc ///
 	      Again we can check that we've entered a simplicial complex
        	      whose homology agrees with that of the real projective plane.
 	  Example
-	      B = truncate(chainComplex realProjectivePlane,1)	 
+	      B = truncate(chainComplex complex realProjectivePlane,1)	 
 	      prune HH B
     	  Text
 	      We now compute the fibers of the anti-podal quotient map
@@ -1633,7 +1633,7 @@ doc///
 	      We can check that the homology of this simplicial complex agrees with that
 	      of the Klein Bottle:
 	 Example     
-	      C = truncate(chainComplex Delta,1)
+	      C = truncate(chainComplex complex Delta,1)
 	      prune HH C
     	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
@@ -1684,7 +1684,7 @@ doc ///
 	      $\Delta$ agrees with that of the torus
 	      $\mathbb{S}^1 \times \mathbb{S}^1 $
 	 Example          
-	      C = truncate(chainComplex Delta,1)
+	      C = truncate(chainComplex complex Delta,1)
 	      prune HH C
 	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
