@@ -1011,7 +1011,7 @@ resolutionPoset = method()
 resolutionPoset Complex := Poset => C ->
     poset flatten flatten apply(sort unique (first \ keys betti C), d -> for r to numrows C.dd_d - 1 list for c to numcols C.dd_d - 1 list if C.dd_d_(r,c) != 0 then {{d-1,r}, {d,c}} else continue)
 resolutionPoset MonomialIdeal := Poset => I -> (
-    P := resolutionPoset res I;
+    P := resolutionPoset freeResolution I;
     cvrs := applyValues(partition(last, coveringRelations P), v -> last \ first \ v);
     lbl := {{{0,0} => {0,0}}, apply(#I_*, i -> {1,i} => I_i)};
     for r in drop(rankPoset P, 2) do lbl = append(lbl, for v in r list v => lcm (last \ (last lbl)_(cvrs#v)));
@@ -3850,7 +3850,7 @@ doc ///
             component of the resolution.
         Example
             R = QQ[x,y,z];
-            C = res ideal(y*z,x*z,x^2*y)
+            C = freeResolution ideal(y*z,x*z,x^2*y)
             resolutionPoset C
             (resolutionPoset C).GroundSet
         Text

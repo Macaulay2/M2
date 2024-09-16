@@ -13,7 +13,7 @@ newPackage(
                   Email => "daniel@momo.math.rwth-aachen.de",
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
-        PackageImports => { "Complexes" },
+        PackageExports => { "Complexes" },
 	Keywords => {"Groebner Basis Algorithms"},
         DebuggingMode => false
         )
@@ -846,7 +846,7 @@ document {
         EXAMPLE lines ///
           R = QQ[x,y,z];
 	  I = ideal(x,y,z);
-	  C = res(I, Strategy => Involutive)
+	  C = freeResolution(I, Strategy => Involutive)
 	  multVar(C, 2)
         ///,
         EXAMPLE lines ///
@@ -897,7 +897,7 @@ document {
         EXAMPLE lines ///
           R = QQ[x,y,z];
 	  I = ideal(x,y,z);
-	  C = res(I, Strategy => Involutive)
+	  C = freeResolution(I, Strategy => Involutive)
 	  janetBasis(C, 2)
         ///,
         SeeAlso => {janetMultVar,pommaretMultVar,isPommaretBasis,invReduce,invSyzygies,janetResolution}
@@ -1200,7 +1200,7 @@ document {
         EXAMPLE lines ///
           R = QQ[x,y,z];
 	  I = ideal(x,y,z);
-	  res(I, Strategy => Involutive)
+	  freeResolution(I, Strategy => Involutive)
         ///,
         SeeAlso => {janetBasis,multVar,invSyzygies}
         }
