@@ -4,9 +4,8 @@ assert( ((c = pseudocode   f;)) === null );
 assert( ((C = pseudocode   F;)) === null );
 getcols = P -> (toList P)_{2,4,6}
 assert( (getcols locate f) === {4,54,7} );
-assert( (getcols locate f) === {4,54,7} );
-assert( (getcols locate F) === {4,54,7} );
 assert( (getcols locate c) === {4,54,7} );
+assert( (getcols locate F) === {10,54,43} );
 assert( (getcols locate C) === {10,54,43} );
 assert( (getcols locate C_0) === {15,19,15} );
 assert( (getcols locate C_1) === {29,35,29} );
@@ -25,10 +24,9 @@ f = () -> if ( true ) then ( "true" ) else ( "false" )
 (c = pseudocode   f;)
 (C = pseudocode   F;)
 getcols = P -> (toList P)_{2,4,6}
-getcols locate f
 getcols locate f-* why is focus on '->'? *-
-getcols locate F
-getcols locate c-* why is focus on '( "false" )'? *-
+getcols locate c
+getcols locate F-* why is focus on '( "false" )'? *-
 getcols locate C
 getcols locate C_0
 getcols locate C_1
