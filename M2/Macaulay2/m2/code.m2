@@ -53,7 +53,7 @@ dedupMethods = L -> (
 code = method(Dispatch => Thing)
 code Nothing    := identity
 code FilePosition := x -> (
-    filename := x#0; start := x#1; stop := x#3;
+    filename := x#0; start := x#1; stop := x#3 ?? x#1;
      (
 	  wp := set characters " \t\r);";
 	  file := (
@@ -64,8 +64,8 @@ code FilePosition := x -> (
 		    else currentString)
 	       else if filename === "stdio" then (
 		    start = 1;
-		    stop = x#3 - x#1 + 1;
-		    toString stack apply(x#1..x#3,
+		    stop += 1 - x#1;
+		    toString stack apply(x#1..x#1+stop-1,
 			i -> getHistory(i + historyOffset)))
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
