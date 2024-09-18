@@ -258,6 +258,7 @@ Node
     headlines
     findSynonyms
     "regular expressions"
+    (examples, ZZ)
 
 Node
   Key
