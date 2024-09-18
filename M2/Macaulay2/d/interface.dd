@@ -70,12 +70,12 @@ export rawRandomQQ(e:Expr):Expr := (
      is ht:ZZcell do toExpr(Ccode(QQ, "rawRandomQQ(", ht.v, ")"))
      else WrongArgZZ());
 setupfun("rawRandomQQ",rawRandomQQ);
-export rawRandomRR(e:Expr):Expr := (
+export rawRandomRRUniform(e:Expr):Expr := (
      when e
      is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger() 
-     else toExpr(Ccode(RR, "rawRandomRR(", toULong(prec.v), ")"))
+     else toExpr(Ccode(RR, "rawRandomRRUniform(", toULong(prec.v), ")"))
      else WrongArgZZ());
-setupfun("rawRandomRR",rawRandomRR);
+setupfun("rawRandomRRUniform",rawRandomRRUniform);
 export rawRandomRRNormal(e:Expr):Expr := (
      when e
      is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger()

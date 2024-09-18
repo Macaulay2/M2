@@ -42,7 +42,7 @@ void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height);
 /* sets result = a sample from the uniform distribution on [0, height], */
 /* rounded to the nearest rational number with denominator bounded by height */
 
-gmp_RR rawRandomRR(unsigned long prec);
+gmp_RR rawRandomRRUniform(unsigned long prec);
 /* returns a uniformly distributed random real with the given precision, in
  * range [0.0,1.0] */
 

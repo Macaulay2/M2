@@ -178,7 +178,7 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
   return moveTo_gmpQQ(result);
 }
 
-gmp_RR rawRandomRR(unsigned long precision)
+gmp_RR rawRandomRRUniform(unsigned long precision)
 /* returns a uniformly distributed random real with the given precision, in
  * range [0.0,1.0] */
 {
@@ -202,8 +202,8 @@ gmp_CC rawRandomCC(unsigned long precision)
  * [1.0,1.0] */
 {
   gmp_CCmutable result = getmemstructtype(gmp_CCmutable);
-  result->re = const_cast<gmp_RRmutable>(rawRandomRR(precision));
-  result->im = const_cast<gmp_RRmutable>(rawRandomRR(precision));
+  result->re = const_cast<gmp_RRmutable>(rawRandomRRUniform(precision));
+  result->im = const_cast<gmp_RRmutable>(rawRandomRRUniform(precision));
   return reinterpret_cast<gmp_CC>(result);
 }
 
