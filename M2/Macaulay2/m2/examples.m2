@@ -9,6 +9,7 @@
 
 needs "hypertext.m2"
 needs "run.m2"
+needs "document.m2" -- for DocumentTag
 
 processExamplesStrict = true
 
@@ -169,11 +170,23 @@ extractExamples = docBody -> (
 -- examples: get a list of examples in a documentation node
 -----------------------------------------------------------------------------
 
+getExampleInput := method()
+getExampleInput Hypertext   := stack @@ extractExamplesLoop
+getExampleInput DocumentTag := tag  -> (
+    rawdoc := fetchAnyRawDocumentation tag;
+    if rawdoc =!= null and rawdoc.?Description
+    then getExampleInput DIV{rawdoc.Description})
+
 examples = method(Dispatch => Thing)
-examples Hypertext := dom -> raise(stack extractExamplesLoop dom, -1)
-examples Thing     := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    if rawdoc =!= null and rawdoc.?Description then examples DIV{rawdoc.Description})
+examples Thing       := examples @@ makeDocumentTag
+examples DocumentTag := tag -> (
+    ex := getExampleInput tag;
+    if ex === null or #ex == 0
+    then "-- no examples for tag: " | format tag
+    else stack(
+	"-- examples for tag: " | format tag,
+	"-- " | net locate tag,
+	ex))
 
 -----------------------------------------------------------------------------
 -- storeExampleOutput
@@ -193,7 +206,7 @@ getExampleOutput := (pkg, fkey) -> (
     filename := getExampleOutputFilename(pkg, fkey);
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
-    else if width (ex := examples fkey) =!= 0
+    else if width (ex := getExampleInput makeDocumentTag fkey) =!= 0
     then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, PackageExports => pkg) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
