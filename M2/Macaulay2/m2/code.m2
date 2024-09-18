@@ -57,7 +57,7 @@ code FilePosition := x -> (
      (
 	  wp := set characters " \t\r);";
 	  file := (
-	       if match("startup.m2.in$", filename) then startupString
+	       if match("startup\\.m2\\.in$", filename) then startupString
 	       else if filename === "currentString" then (
 		    if currentString === null
 		    then error "code no longer available"
