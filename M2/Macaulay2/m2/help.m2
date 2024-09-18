@@ -34,11 +34,13 @@ operator := binary + prefix + postfix + augmented
 -- Local utilities
 -----------------------------------------------------------------------------
 
--- used by help, viewHelp, and infoHelp
+-- used by help, viewHelp, infoHelp, and examples
 seeAbout := (f, i) -> (
     if     lastabout === null then error "no previous 'about' response";
     if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
     f lastabout#i)
+
+examples ZZ := seeAbout_examples
 
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return sequence:
