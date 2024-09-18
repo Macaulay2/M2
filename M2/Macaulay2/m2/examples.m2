@@ -188,6 +188,16 @@ examples DocumentTag := tag -> (
 	"-- " | net locate tag,
 	ex))
 
+examples List := L -> (
+    L = splice \ pairs apply(L, key ->
+	(tag := makeDocumentTag key, locate tag));
+    n := #L;
+    stack apply(L, (i, tag, loc) -> (
+	    ex := examples tag;
+	    -- deduplicate tags w/ same location
+	    if i < n - 1 and loc === L#(i + 1)#2 then ex#0
+	    else if i < n - 1 then ex || net HR() else ex)))
+
 -----------------------------------------------------------------------------
 -- storeExampleOutput
 -----------------------------------------------------------------------------
