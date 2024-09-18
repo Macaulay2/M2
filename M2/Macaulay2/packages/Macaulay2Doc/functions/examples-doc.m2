@@ -56,6 +56,7 @@ Node
      examples
     (examples, Thing)
     (examples, ZZ)
+    (examples, List)
   Headline
     list the examples in documentation
   Usage
@@ -83,6 +84,11 @@ Node
     Example
       about firstFunction
       examples 0
+    Text
+      If the input is a list, then the examples for all of its elements will be
+      gathered into a single net.
+    Example
+      examples about firstFunction
   SeeAlso
     "reading the documentation"
     capture
