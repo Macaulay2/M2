@@ -652,7 +652,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib gftables topcom cohomcalg msolve")
@@ -1132,15 +1132,18 @@ found and $msolve_min_version is required; will build])
          [AC_MSG_RESULT([no, will build])
           BUILD_msolve=yes])])
 
-AC_MSG_CHECKING([whether eigen3 library is installed])
-if $PKG_CONFIG --exists eigen3
-then CFO=`$PKG_CONFIG --cflags-only-other eigen3`
-     CFI=`$PKG_CONFIG --cflags-only-I eigen3`
-     CXXFLAGS="$CXXFLAGS $CFO"
-     CPPFLAGS="$CPPFLAGS $CFI"
-     AC_MSG_RESULT([yes, with flags $CFI $CFO])
-else AC_MSG_ERROR(eigen library not found)
-fi
+AS_IF([test $BUILD_eigen = no],
+  [AC_MSG_CHECKING([whether pkg-config provides flags for eigen])
+   AS_IF([$PKG_CONFIG --exists eigen3],
+      [CFO=`$PKG_CONFIG --cflags-only-other eigen3`
+       CFI=`$PKG_CONFIG --cflags-only-I eigen3`
+       CXXFLAGS="$CXXFLAGS $CFO"
+       CPPFLAGS="$CPPFLAGS $CFI"
+       AC_MSG_RESULT([yes, $CFI $CFO])],
+      [AC_MSG_RESULT([no])])
+   AC_CHECK_HEADER([Eigen/SVD],,
+      [AC_MSG_NOTICE([eigen is not installed; will build])
+       BUILD_eigen=yes])])
 
 AC_LANG(C++)
 AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
