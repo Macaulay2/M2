@@ -33,6 +33,7 @@ libraries/cddlib/Makefile
 libraries/cddplus/Makefile
 libraries/cohomcalg/Makefile
 libraries/csdp/Makefile
+libraries/eigen/Makefile
 libraries/factory/Makefile
 libraries/fflas_ffpack/Makefile
 libraries/flint/Makefile
