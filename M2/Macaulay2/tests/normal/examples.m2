@@ -1,3 +1,4 @@
 document { Key => "foo", "hi there", EXAMPLE "a", "ho there", EXAMPLE "b" }
-examples "foo"
-assert( oo == "a\nb"^-1)
+ex = examples "foo"
+assert( ex#-2 == "a" )
+assert( ex#-1 == "b" )
