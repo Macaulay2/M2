@@ -920,7 +920,6 @@ scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMetho
 	    x.Package === "Text" and (isMissingDoc x or isUndocumented x)))
 
 undocumented {
-    (examples, Hypertext),
     (hypertext, Hypertext)
     }
 
