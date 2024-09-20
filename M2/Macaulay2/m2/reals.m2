@@ -259,6 +259,9 @@ RR'.random = opts -> R -> rawRandomRRUniform R.precision
 CC'.random = opts -> C -> rawRandomCC C.precision
 random RingFamily := opts -> R -> random(default R,opts)
 
+random QQ := QQ => opts -> x -> rawFareyApproximation(
+    random numeric x, opts.Height)
+
 -- algebraic operations and functions
 
 RR.isBasic = CC.isBasic = RRi.isBasic = true
