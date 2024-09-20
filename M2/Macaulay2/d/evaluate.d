@@ -29,6 +29,8 @@ export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 
+addTestS := setupvar("addTest", nullE); -- will be overwritten in testing.m2
+
 handleError(c:Code,e:Expr):Expr;
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
@@ -1442,7 +1444,11 @@ export evalraw(c:Code):Expr := (
 	  is m:functionCode do (
 	       fc := FunctionClosure(noRecycle(localFrame),m,hash_t(0));
 	       fc.hash = hashFromAddress(Expr(fc));
-	       return Expr(fc))
+	       if m.Operator == TestS.symbol.word
+	       then (
+		   r := applyEE(getGlobalVariable(addTestS), Expr(fc));
+		   when r is Error do r else nullE)
+	       else Expr(fc))
 	  is r:localMemoryReferenceCode do (
 	       f := localFrame;
 	       nd := r.nestingDepth;
@@ -1655,14 +1661,6 @@ breakFun(a:Code):Expr := (
      e := if a == dummyCode then dummyExpr else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
-
-addTestS := setupvar("addTest", nullE); -- will be overwritten in testing.m2
-testfun(c:Code):Expr := (
-    r := applyEE(
-	getGlobalVariable(addTestS),
-	seq(eval(c), locate(codePosition(c))));
-    when r is Error do r else nullE);
-setupop(TestS, testfun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
     left := eval(lhs);
