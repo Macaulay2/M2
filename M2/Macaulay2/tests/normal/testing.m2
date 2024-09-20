@@ -6,10 +6,10 @@ TEST "assert Equation(1 + 1, 2)"
 loadPackage("TestPackage", FileName => testpkg)
 check "TestPackage"
 pkgtest = tests(0, "TestPackage")
-assert instance(pkgtest, TestInput)
+assert instance(pkgtest, TestClosure)
 assert Equation(toSequence locate pkgtest, (testpkg, 3, 5, 3, 32, 3, 5))
 assert Equation(toString pkgtest, "assert Equation(1 + 1, 2)")
-assert Equation(net pkgtest, "TestInput[" | testpkg | ":3:5-3:32]")
+assert Equation(net pkgtest, "TestClosure[" | testpkg | ":3:5-3:32]")
 beginDocumentation()
 expectedCode = DIV{
     new FilePosition from (testpkg, 3, 5, 3, 32, 3, 5),

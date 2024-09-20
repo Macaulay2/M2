@@ -3,18 +3,12 @@ needs "code.m2"
 needs "run.m2"
 
 -----------------------------------------------------------------------------
--- TestInput
+-- TestClosure
 -----------------------------------------------------------------------------
-TestInput = new SelfInitializingType of HashTable
-TestInput.synonym = "test input"
+TestClosure = new SelfInitializingType of FunctionClosure
+TestClosure.synonym = "test closure"
 
-code TestInput := code @@ locate
-toString TestInput := T -> T#"code"
-locate TestInput := T -> T#"location"
-net TestInput := lookup(net, Function)
-precedence TestInput := lookup(precedence, Function)
-editMethod TestInput := editMethod @@ locate
-capture TestInput := opt -> T -> capture(toString T, opt)
+capture TestClosure := opt -> T -> capture(toString T, opt)
 
 -----------------------------------------------------------------------------
 -- TEST
@@ -25,9 +19,10 @@ capture TestInput := opt -> T -> capture(toString T, opt)
 addTest = method()
 addTest(String, FilePosition) := (str, loc) -> (
     n := #currentPackage#"test inputs";
-    currentPackage#"test inputs"#n = TestInput {
+    currentPackage#"test inputs"#n = TestClosure {
 	"location" => loc,
 	"code" => str})
+
 -- the following is not called by TEST, but called directly when we want to
 -- add a test from a file (used by loadTestDir)
 addTest String := filename -> addTest(get filename,

@@ -411,7 +411,7 @@ export {
 	"TensorProduct",
 	"TeXmacs",
 	"Test",
-	"TestInput",
+	"TestClosure",
 	"Thing",
 	"Threads",
 	"Time",
@@ -1284,6 +1284,7 @@ export {
         "numrows" => "numRows",
         "res" => "resolution",
         "sub" => "substitute",
+	"TestInput" => "TestClosure",
 	"threadVariable" => "threadLocal", -- TODO: eventually remove this?
 	-- unicode synonyms:
 	"ℚ" => "QQ",
