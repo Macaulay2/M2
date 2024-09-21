@@ -225,6 +225,10 @@ export convert0(e:ParseTree):Code := (
 	  else 
 	  dummyCode			  -- should not happen
 	  )
+    is a:Arrow do (
+	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), treePosition(e));
+	fc.hash = hashFromAddress(Expr(fc));
+	Code(fc))
      is b:Binary do (
 	  if b.Operator.entry == DotS.symbol
 	  || b.Operator.entry == DotQuestionS.symbol
@@ -418,13 +422,6 @@ export convert0(e:ParseTree):Code := (
 	  else Code(binaryCode(b.Operator.entry.binary,unseq(c1:=convert0(b.lhs)),
 		  unseq(c2:=convert0(b.rhs)), combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
 	  )
-     is a:Arrow do (
-	 p:=treePosition(a.lhs);
-	 fc:=functionCode(
-	     unseq(c:=convert0(a.rhs)),a.desc,hash_t(0),
-	     combinePositionC(p,codePosition(c), a.Operator.position));
-	 fc.hash = hashFromAddress(Expr(fc));
-	 Code(fc))
      is u:Unary do (
 	  if u.Operator.word == CommaW
 	  then Code(sequenceCode(s:=makeCodeSequence(e, CommaW),     combinePositionL(u.Operator.position, codePosition(s.(length(s)-1)))))
