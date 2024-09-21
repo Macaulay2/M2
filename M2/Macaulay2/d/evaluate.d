@@ -1662,6 +1662,29 @@ breakFun(a:Code):Expr := (
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 
+addTestFromFile(e:Expr):Expr := (
+    when e
+    is filename:stringCell do (
+	x := get(filename.v);
+	when x
+	is err:errmsg do buildErrorPacket(err.message)
+	is s:stringCell do (
+	    lastrow := 1;
+	    lastcol := 0;
+	    for i from 0 to length(s.v) - 2 do (
+		if s.v.i == '\n' then (
+		    lastcol = 0;
+		    lastrow = lastrow + 1)
+		else lastcol = lastcol + 1);
+	    p := Position(filename.v, ushort(1), ushort(1), ushort(lastrow),
+		ushort(lastcol), ushort(1), ushort(1), loadDepth);
+	    fc := functionCode(stringCode(s.v, p), dummyDesc, hash_t(0), p,
+		TestS.symbol.word);
+	    fc.hash = hashFromAddress(Expr(fc));
+	    eval(Code(fc))))
+    else WrongArgString());
+setupfun("addTestFromFile", addTestFromFile);
+
 assigntofun(lhs:Code,rhs:Code):Expr := (
     left := eval(lhs);
     when left is Error do return left else (

@@ -24,8 +24,8 @@ addTest FunctionClosure := f -> (
 
 -- the following is not called by TEST, but called directly when we want to
 -- add a test from a file (used by loadTestDir)
-addTest String := filename -> addTest(get filename,
-    new FilePosition from(filename, 1, 1))
+addTest String := addTestFromFile
+
 -- TODO: support test titles
 
 -----------------------------------------------------------------------------
