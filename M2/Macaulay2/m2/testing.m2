@@ -95,15 +95,21 @@ check(List, Package) := opts -> (L, pkg) -> (
     --
     errorList := for k in testKeys list (
 	    if not inputs#?k then error(pkg, " has no test #", k);
-	    teststring := inputs#k#"code";
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
-	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
-	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
+	    elapsedTime (
+		try teststring := inputs#k() then (
+		    if instance(teststring, String) then (
+			if captureTestResult(desc, teststring, pkg, usermode)
+			then continue
+			else (k, temporaryFilenameCounter - 2))
+		    else (checkmsg("calling", desc); continue))
+		else (checkmsg("calling", desc); (k, null))));
     outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
     if #errorList > 0 then (
 	if opts.Verbose then apply(errorList, (k, errfile) -> (
-		stderr << locate inputs#k << " error:" << endl;
-		printerr getErrors(outfile errfile)));
+		if errfile =!= null then (
+		    stderr << locate inputs#k << " error:" << endl;
+		    printerr getErrors(outfile errfile))));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 
 checkAllPackages = () -> (
