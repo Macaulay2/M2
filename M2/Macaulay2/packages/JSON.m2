@@ -1,21 +1,25 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.2",
-    Date => "January 28, 2024",
+    Version => "0.3",
+    Date => "September 28, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
     PackageImports => {"Parsing"},
-    AuxiliaryFiles => true)
+    AuxiliaryFiles => true,
+    TestFiles => {"test-parse.m2", "test-encode.m2"})
 
 ---------------
 -- ChangeLog --
 ---------------
 
 -*
+
+0.3 (2024-09-28, M2 1.24.11)
+* use new TestFiles options instead of TEST for loading tests
 
 0.2 (2024-01-24, M2 1.23)
 * use single-string version of exportFrom
@@ -357,6 +361,3 @@ for tst in sort select(tsts, f -> match("^y_", f)) do (
     format json << ", " << toExternalString fromJSON json << ")" << endl)
 close outfile
 ///
-
-TEST get(currentPackage#"auxiliary files" | "test-parse.m2")
-TEST get(currentPackage#"auxiliary files" | "test-encode.m2")
