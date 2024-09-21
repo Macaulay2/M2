@@ -142,6 +142,14 @@ export unseq(c:Code):Code := (
      else c
      );
 
+convertParentheses(seq:CodeSequence, word:Word, pos:Position):Code := (
+    if word == leftparen    then Code(sequenceCode(seq,     pos)) else
+    if word == leftbrace    then Code(listCode(seq,         pos)) else
+    if word == leftbracket  then Code(arrayCode(seq,        pos)) else
+    if word == leftAngleBar then Code(angleBarListCode(seq, pos)) else
+    dummyCode -- should not happen
+    );
+
 export convert0(e:ParseTree):Code := (
      when e
      is w:For do (
@@ -199,30 +207,11 @@ export convert0(e:ParseTree):Code := (
 	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,token.position))
 	       )
 	  )
+    is p:EmptyParentheses do convertParentheses(CodeSequence(),
+	p.left.word, treePosition(e))
+    is p:Parentheses do convertParentheses(makeCodeSequence(p.contents, CommaW),
+	p.left.word, treePosition(e))
     is a:Adjacent do Code(adjacentCode(unseq(c:=convert0(a.lhs)), unseq(cc:=convert0(a.rhs)), combinePositionAdjacent(codePosition(c), codePosition(cc))))
-    is p:EmptyParentheses do (
-	pp := combinePositionL(p.left.position, p.right.position);
-	  if p.left.word == leftparen then Code(sequenceCode(CodeSequence(),pp))
-	  else if p.left.word == leftbrace then Code(listCode(CodeSequence(),pp))
-	  else if p.left.word == leftbracket then Code(arrayCode(CodeSequence(),pp))
-	  else if p.left.word == leftAngleBar then Code(angleBarListCode(CodeSequence(),pp))
-	  else dummyCode			  -- should not happen
-	  )
-    is p:Parentheses do (
-	pp := combinePositionL(p.left.position, p.right.position);
-	  if p.left.word == leftparen
-	  then Code(sequenceCode(makeCodeSequence(p.contents,CommaW),pp))
-	  else if p.left.word == leftbrace 
-	  then Code(listCode(makeCodeSequence(p.contents,CommaW),pp))
-	  else 
-	  if p.left.word == leftbracket 
-	  then Code(arrayCode(makeCodeSequence(p.contents,CommaW),pp))
-	  else 
-	  if p.left.word == leftAngleBar
-	  then Code(angleBarListCode(makeCodeSequence(p.contents,CommaW),pp))
-	  else 
-	  dummyCode			  -- should not happen
-	  )
     is a:Arrow do (
 	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), treePosition(e));
 	fc.hash = hashFromAddress(Expr(fc));
