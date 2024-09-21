@@ -15,6 +15,7 @@ Node
       This function can be used to get randomized objects of various sorts.
   Subnodes
     (random, ZZ, ZZ)
+    (random, QQ)
     (random, Type)
     (random, List)
     (random, ZZ, Ideal)
@@ -57,6 +58,29 @@ Node
       tally apply(100, i -> random(10,15))
       random(10.,20.)
       random(10p100,20p100)
+  SeeAlso
+    setRandomSeed
+
+Node
+  Key
+    (random, QQ)
+  Headline
+    get a random rational number
+  Usage
+    random x
+  Inputs
+    x:QQ
+    Height => ZZ
+  Outputs
+    :QQ -- randomly chosen from the interval $[0, x]$
+  Description
+    Text
+      A random number is chosen from the uniform distribution on the interval
+      $[0, x]$ and then rounded (using the @wikipedia "Farey sequence"@) to the
+      nearest rational number with denominator bounded by the @CODE "Height"@
+      option.
+    Example
+      apply(10, i -> random(7_QQ, Height => 5))
   SeeAlso
     setRandomSeed
 
