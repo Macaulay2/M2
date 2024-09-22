@@ -38,5 +38,5 @@ export combinePositionC(L:Position, R:Position, C:Position):Position := Position
     L.filename, L.lineL, L.columnL, R.lineR, R.columnR, C.lineF, C.columnF, L.loadDepth);
 
 -- combine two positions belonging to adjacent tokens (focus is on endpoint of the first one)
-export combinePositionAdjacent(L:Position, R:Position):Position := Position(
+export combinePositionM(L:Position, R:Position):Position := Position(
     L.filename, L.lineL, L.columnL, R.lineR, R.columnR, L.lineR, L.columnR, L.loadDepth);
