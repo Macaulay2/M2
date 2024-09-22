@@ -171,8 +171,6 @@ export convert0(e:ParseTree):Code := (
 	else if n.newinitializer == dummyTree
 	then Code(newOfCode(    convert(n.newclass), unseq(c:=convert0(n.newparent)),                                      combinePositionR(n.newtoken.position, codePosition(c))))
 	else Code(newOfFromCode(convert(n.newclass),           convert(n.newparent), unseq(c:=convert0(n.newinitializer)), combinePositionR(n.newtoken.position, codePosition(c)))))
-    is i:IfThen     do Code(ifCode(convert(i.predicate), unseq(c:=convert0(i.thenClause)), NullCode,                         combinePositionR(i.ifToken.position, codePosition(c))))
-    is i:IfThenElse do Code(ifCode(convert(i.predicate),           convert(i.thenClause),  unseq(c:=convert0(i.elseClause)), combinePositionR(i.ifToken.position, codePosition(c))))
      is token:Token do (
 	  var := token.entry;
 	  wrd := token.word;
@@ -462,6 +460,8 @@ export convert0(e:ParseTree):Code := (
 	  p := combinePositionR(q.Operator.position, token.position);
 	  nd := nestingDepth(sym.frameID,token.dictionary);
 	  Code(localSymbolClosureCode(nd,sym,p)))
+    is i:IfThen      do Code(ifCode(convert(i.predicate), convert(i.thenClause), NullCode,              treePosition(e)))
+    is i:IfThenElse  do Code(ifCode(convert(i.predicate), convert(i.thenClause), convert(i.elseClause), treePosition(e)))
     is i:TryThenElse do Code(tryCode(convert(i.primary),            convert(i.sequel),            unseq(c:=convert0(i.alternate)), combinePositionR(i.tryToken.position, codePosition(c))))
     is i:TryThen     do Code(tryCode(convert(i.primary),            unseq(c:=convert0(i.sequel)), NullCode,                        combinePositionR(i.tryToken.position, codePosition(c))))
     is i:TryElse     do Code(tryCode(convert(i.primary),            NullCode,                     unseq(c:=convert0(i.alternate)), combinePositionR(i.tryToken.position, codePosition(c))))
