@@ -543,9 +543,9 @@ export treePosition(e:ParseTree):Position := (
     -- TODO: split into New, NewOf, NewFrom, and NewOfFrom
     is t:New do (
 	lastClass :=
-	if t.newinitializer != dummyTree then t.newinitializer else
-	if t.newparent      != dummyTree then t.newparent      else t.newclass;
-	combinePositionL(t.newtoken.position, treePosition(lastClass)))
+	if t.newInitializer != dummyTree then t.newInitializer else
+	if t.newParent      != dummyTree then t.newParent      else t.newClass;
+	combinePositionL(t.newToken.position, treePosition(lastClass)))
     is dummy do dummyPosition
     );
 
@@ -578,7 +578,7 @@ export size(e:ParseTree):int := (
      is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)
      is x:WhileList do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.listtoken) + size(x.listClause)
      is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause) + size(x.listtoken) + size(x.listClause)
-     is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newtoken) + size(x.newclass) + size(x.newparent) + size(x.newinitializer)
+    is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newToken) + size(x.newClass) + size(x.newParent) + size(x.newInitializer)
      );
 
 -- Local Variables:

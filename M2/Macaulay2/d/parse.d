@@ -132,7 +132,7 @@ export Try         := {+ tryToken:Token, primary:ParseTree};
 export Catch := {+ catchToken:Token, primary:ParseTree};
 export IfThen := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree };
 export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree, elseClause:ParseTree};
-export New := {+ newtoken:Token, newclass:ParseTree, newparent:ParseTree, newinitializer:ParseTree};
+export New := {+ newToken:Token, newClass:ParseTree, newParent:ParseTree, newInitializer:ParseTree };
 export Arrow := {+lhs:ParseTree, Operator:Token, rhs:ParseTree, desc:functionDescription};
 export Quote := {+Operator:Token, rhs:Token};
 export GlobalQuote := {+Operator:Token, rhs:Token, global:void};
@@ -145,12 +145,15 @@ export ArrayParseTree := array(ParseTree);
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
-export ParseTree := (
-     Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse
-     or Quote or GlobalQuote or ThreadQuote or LocalQuote
-     or TryThenElse or TryThen or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
+export ParseTree := (
+    Token or Parentheses or EmptyParentheses or Adjacent or Arrow
+    or Quote or GlobalQuote or ThreadQuote or LocalQuote
+    or Unary or Binary or Postfix or IfThen or IfThenElse
+    or Try or TryThen or TryThenElse or TryElse or Catch
+    or WhileDo or WhileListDo or WhileList or For
+    or New
+    or dummy );
 
 -- Code
 
