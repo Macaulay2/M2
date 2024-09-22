@@ -5,8 +5,8 @@ assert( ((C = pseudocode   F;)) === null );
 getcols = P -> (toList P)_{2,4,6}
 assert( (getcols locate f) === {4,54,4} );
 assert( (getcols locate c) === {4,54,4} );
-assert( (getcols locate F) === {10,54,43} );
-assert( (getcols locate C) === {10,54,43} );
+assert( (getcols locate F) === {10,54,10} );
+assert( (getcols locate C) === {10,54,10} );
 assert( (getcols locate C_0) === {15,19,15} );
 assert( (getcols locate C_1) === {29,35,29} );
 assert( (getcols locate C_2) === {45,52,45} );
@@ -37,7 +37,7 @@ f = () -> if ( true ) then ( "true" ) else ( "false" )
 getcols = P -> (toList P)_{2,4,6}
 getcols locate f
 getcols locate c
-getcols locate F-* why is focus on '( "false" )'? *-
+getcols locate F
 getcols locate C
 getcols locate C_0
 getcols locate C_1
