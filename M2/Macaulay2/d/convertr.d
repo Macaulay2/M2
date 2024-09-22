@@ -21,22 +21,6 @@ export UnaryInstallMethodFun := dummyTernaryFun;
 export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
--- combine two positions with emphasis borrowed from beginning of the first one
-combinePositionL(L:Position, R:Position):Position := Position(
-    L.filename, L.lineL, L.columnL, R.lineR, R.columnR, L.lineF, L.columnF, L.loadDepth);
-
--- combine two positions with emphasis borrowed from endpoint of the second one
-combinePositionR(L:Position, R:Position):Position := Position(
-    L.filename, L.lineL, L.columnL, R.lineR, R.columnR, R.lineF, R.columnF, L.loadDepth);
-
--- combine two positions with emphasis borrowed from a third, central point
-combinePositionC(L:Position, R:Position, C:Position):Position := Position(
-    L.filename, L.lineL, L.columnL, R.lineR, R.columnR, C.lineF, C.columnF, L.loadDepth);
-
--- combine two positions belonging to adjacent tokens (focus is on endpoint of the first one)
-combinePositionAdjacent(L:Position, R:Position):Position := Position(
-    L.filename, L.lineL, L.columnL, R.lineR, R.columnR, L.lineR, L.columnR, L.loadDepth);
-
 convert0(e:ParseTree):Code;
 convert(e:ParseTree):Code;
 unseq(c:Code):Code;

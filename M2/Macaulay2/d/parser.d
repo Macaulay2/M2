@@ -513,35 +513,41 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
 
 export treePosition(e:ParseTree):Position := (
-     while true do (
-	  when e
-	  is dummy do return dummyPosition
-	  is token:Token do return token.position
-	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do return binary.Operator.position
-	  is a:Arrow do return a.Operator.position
-	  is unary:Unary do return unary.Operator.position
-	  is postfix:Postfix do return postfix.Operator.position
-	  is a:Quote do return a.Operator.position
-	  is a:GlobalQuote do return a.Operator.position
-	  is a:ThreadQuote do return a.Operator.position
-	  is a:LocalQuote do return a.Operator.position
-	  is ee:Parentheses do return ee.left.position
-	  is ee:EmptyParentheses do return ee.left.position
-     	  is i:IfThen do return i.ifToken.position
-	  is i:TryThenElse do return i.tryToken.position
-	  is i:TryThen do return i.tryToken.position
-	  is i:TryElse do return i.tryToken.position
-	  is i:Try do return i.tryToken.position
-	  is i:Catch do return i.catchToken.position
-     	  is i:IfThenElse do return i.ifToken.position
-     	  is w:For do return w.forToken.position
-     	  is w:WhileDo do return w.whileToken.position
-     	  is w:WhileList do return w.whileToken.position
-     	  is w:WhileListDo do return w.whileToken.position
-	  is n:New do return n.newtoken.position
-	  )
-     );
+    when e
+    is t:Token            do t.position
+    is s:Parentheses      do combinePositionL(s.left.position,       s.right.position)
+    is s:EmptyParentheses do combinePositionL(s.left.position,       s.right.position)
+    is a:Adjacent         do combinePositionL(treePosition(a.lhs),   treePosition(a.rhs))
+    is a:Arrow            do combinePositionL(treePosition(a.lhs),   treePosition(a.rhs))
+    is o:Unary            do combinePositionL(o.Operator.position,   treePosition(o.rhs))
+    is o:Binary           do combinePositionL(treePosition(o.lhs),   treePosition(o.rhs))
+    is o:Postfix          do combinePositionL(treePosition(o.lhs),   o.Operator.position)
+    is o:Quote            do combinePositionL(o.Operator.position,   o.rhs.position)
+    is o:GlobalQuote      do combinePositionL(o.Operator.position,   o.rhs.position)
+    is o:ThreadQuote      do combinePositionL(o.Operator.position,   o.rhs.position)
+    is o:LocalQuote       do combinePositionL(o.Operator.position,   o.rhs.position)
+    is t:IfThen           do combinePositionL(t.ifToken.position,    treePosition(t.thenClause))
+    is t:IfThenElse       do combinePositionL(t.ifToken.position,    treePosition(t.elseClause))
+    is t:Try              do combinePositionL(t.tryToken.position,   treePosition(t.primary))
+    is t:TryThen          do combinePositionL(t.tryToken.position,   treePosition(t.sequel))
+    is t:TryThenElse      do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
+    is t:TryElse          do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
+    is t:Catch            do combinePositionL(t.catchToken.position, treePosition(t.primary))
+    is t:WhileDo          do combinePositionL(t.whileToken.position, treePosition(t.doClause))
+    is t:WhileListDo      do combinePositionL(t.whileToken.position, treePosition(t.doClause))
+    is t:WhileList        do combinePositionL(t.whileToken.position, treePosition(t.listClause))
+    -- TODO: split into ForDo and ForList
+    is t:For do (
+	lastClause := if t.doClause != dummyTree then t.doClause else t.listClause;
+	combinePositionL(t.forToken.position, treePosition(lastClause)))
+    -- TODO: split into New, NewOf, NewFrom, and NewOfFrom
+    is t:New do (
+	lastClass :=
+	if t.newinitializer != dummyTree then t.newinitializer else
+	if t.newparent      != dummyTree then t.newparent      else t.newclass;
+	combinePositionL(t.newtoken.position, treePosition(lastClass)))
+    is dummy do dummyPosition
+    );
 
 size(x:Token):int := Ccode(int,"sizeof(*",x,")");
 size(x:functionDescription):int := Ccode(int,"sizeof(*",x,")");
