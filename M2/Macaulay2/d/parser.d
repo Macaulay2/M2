@@ -521,7 +521,7 @@ export treePosition(e:ParseTree):Position := (
     is a:Arrow            do combinePositionL(treePosition(a.lhs),   treePosition(a.rhs))
     is o:Unary            do combinePositionL(o.Operator.position,   treePosition(o.rhs))
     is o:Binary           do combinePositionL(treePosition(o.lhs),   treePosition(o.rhs))
-    is o:Postfix          do combinePositionL(treePosition(o.lhs),   o.Operator.position)
+    is o:Postfix          do combinePositionR(treePosition(o.lhs),   o.Operator.position)
     is o:Quote            do combinePositionL(o.Operator.position,   o.rhs.position)
     is o:GlobalQuote      do combinePositionL(o.Operator.position,   o.rhs.position)
     is o:ThreadQuote      do combinePositionL(o.Operator.position,   o.rhs.position)
