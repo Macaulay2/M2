@@ -197,76 +197,64 @@ export convert0(e:ParseTree):Code := (
 	       is token:Token do (
 	  	    wrd := token.word;
 		    var := token.entry;
-		    p := token.position;
+		    rhs := Code(globalSymbolClosureCode(var, token.position));
 		    if wrd.typecode == TCid
-		    then (
-	       		 Code(binaryCode(
-			 	   b.Operator.entry.binary,
-			 	   unseq(c:=convert0(b.lhs)),
-	       	    	 	   Code(globalSymbolClosureCode(var,p)),
-				   combinePositionC(codePosition(c), p, b.Operator.position)
-				   )
-			      )
-			 )
+		    then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, treePosition(e)))
 		    else dummyCode	  -- should not occur
 		    )
 	       else dummyCode		  -- should not occur
 	       )
 	  else if b.Operator.word == CommaW
-	  then Code(sequenceCode(s:=makeCodeSequence(e, CommaW),     combinePositionL(codePosition(s.0), codePosition(s.(length(s)-1)))))
+	  then Code(sequenceCode(makeCodeSequence(e, CommaW),     treePosition(e)))
 	  else if b.Operator.word == SemicolonW
-	  then Code(semiCode(    s:=makeCodeSequence(e, SemicolonW), combinePositionL(codePosition(s.0), codePosition(s.(length(s)-1)))))
+	  then Code(semiCode(    makeCodeSequence(e, SemicolonW), treePosition(e)))
 	  else if b.Operator.word == EqualW
 	  then (
 	       when b.lhs
-	       is a:Adjacent do (
-		    Code(
-			 multaryCode(
-			      InstallValueFun,
-			      CodeSequence(
-			      	   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyPosition)),
-			      	   unseq(c:=convert0(a.lhs)),
-			      	   convert(a.rhs),
-			      	   unseq(cc:=convert0(b.rhs))),
-			      combinePositionC(codePosition(c), codePosition(cc), b.Operator.position))))
+	       is a:Adjacent do Code(
+		   multaryCode(
+		       InstallValueFun,
+		       CodeSequence(
+			   Code(globalSymbolClosureCode(AdjacentS.symbol, dummyPosition)),
+			   convert(a.lhs), convert(a.rhs), convert(b.rhs)),
+		       treePosition(e)))
 	       is u:Unary do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,p:=u.Operator.position)),
-			 convert(u.rhs),
-			 unseq(cc:=convert0(b.rhs)),
-			 combinePositionC(p, codePosition(cc), b.Operator.position)))
+			 Code(globalSymbolClosureCode(u.Operator.entry, u.Operator.position)),
+			 convert(u.rhs), convert(b.rhs),
+			 treePosition(e)))
 	       is u:Postfix do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
-			 unseq(c:=convert0(u.lhs)),
-			 unseq(cc:=convert0(b.rhs)),
-			 combinePositionC(codePosition(c), codePosition(cc), b.Operator.position)))
+			 convert(u.lhs), convert(b.rhs),
+			 treePosition(e)))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
-		    then Code(ternaryCode( AssignElemFun, c1:=convert(c.lhs),
-			    convert(c.rhs), unseq(c2:=convert0(b.rhs)), combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
+		    then Code(
+			ternaryCode(
+			    AssignElemFun,
+			    convert(c.lhs), convert(c.rhs), convert(b.rhs),
+			    treePosition(e)))
 		    else if c.Operator.entry == DotS.symbol
 		    then (
 			 when c.rhs
 			 is crhs:Token do
 			 Code(ternaryCode(
 				   AssignElemFun,
-				   c1:=convert(c.lhs),
+				   convert(c.lhs),
 			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
-				   unseq(c2:=convert0(b.rhs)),
-				   combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
+				   convert(b.rhs),
+				   treePosition(e)))
 			 else dummyCode --should not happen
 			 )
 		    else Code(multaryCode(
 			      InstallValueFun,
 			      CodeSequence(
 				   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)), 
-				   c1:=convert(c.lhs),
-				   convert(c.rhs),
-				   unseq(c2:=convert0(b.rhs))),
-			      combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position))))
+				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
+			      treePosition(e))))
 	       is t:Token do tokenAssignment(t,b.rhs)
 	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
 	       else dummyCode		  -- should not happen
@@ -280,80 +268,74 @@ export convert0(e:ParseTree):Code := (
 		    then Code(binaryCode(
 			      AssignNewFun,
 			      convert(n.newClass),
-			      unseq(c:=convert0(b.rhs)), 
-			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position)))
+			      convert(b.rhs),
+			      treePosition(e)))
 		    else Code(ternaryCode(
 			      AssignNewFromFun,
 			      convert(n.newClass),
 			      convert(n.newInitializer),
-			      unseq(c:=convert0(b.rhs)),
-			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position)))
+			      convert(b.rhs),
+			      treePosition(e)))
 		    else if n.newInitializer == dummyTree
 		    then Code(ternaryCode(
 			      AssignNewOfFun,
 			      convert(n.newClass),
 			      convert(n.newParent),
-			      unseq(c:=convert0(b.rhs)),
-			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position)))
+			      convert(b.rhs),
+			      treePosition(e)))
 		    else Code(multaryCode(
 			      AssignNewOfFromFun,
 			      CodeSequence(
 				   convert(n.newClass),
 				   convert(n.newParent),
 				   convert(n.newInitializer),
-				   unseq(c:=convert0(b.rhs))),
-			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position))))
-	       is a:Adjacent do (
-		    Code(multaryCode(
-			      InstallMethodFun,
-			      CodeSequence(
-			      	   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyPosition)),
-			      	   unseq(c:=convert0(a.lhs)),
-			      	   convert(a.rhs),
-			      	   unseq(cc:=convert0(b.rhs))),
-			      combinePositionC(codePosition(c), codePosition(cc), b.Operator.position))))
+				   convert(b.rhs)),
+			      treePosition(e))))
+	       is a:Adjacent do Code(
+		   multaryCode(
+		       InstallMethodFun,
+		       CodeSequence(
+			   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyPosition)),
+			   convert(a.lhs), convert(a.rhs), convert(b.rhs)),
+		       treePosition(e)))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,p:=u.Operator.position)),
-			 convert(u.rhs), unseq(c:=convert0(b.rhs)), combinePositionC(p, codePosition(c), b.Operator.position)))
+			 Code(globalSymbolClosureCode(u.Operator.entry, u.Operator.position)),
+			 convert(u.rhs), convert(b.rhs), treePosition(e)))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
-			 unseq(c:=convert0(u.lhs)), unseq(cc:=convert0(b.rhs)), combinePositionC(codePosition(c), codePosition(cc), b.Operator.position)))
+			 convert(u.lhs), convert(b.rhs), treePosition(e)))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
-		    then Code(ternaryCode( AssignElemFun, c1:=convert(c.lhs),
-			    convert(c.rhs), unseq(c2:=convert0(b.rhs)), combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
+		    then Code(ternaryCode(AssignElemFun,
+			    convert(c.lhs), convert(c.rhs), convert(b.rhs), treePosition(e)))
 		    else if c.Operator.entry == UnderscoreS.symbol
 		    then Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence( 
 			      	   Code(globalSymbolClosureCode(UnderscoreS.symbol,dummyPosition)),
-				   unseq(c1:=convert0(c.lhs)),
-				   convert(c.rhs),
-			      	   unseq(c2:=convert0(b.rhs))),
-			      combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
+				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
+			      treePosition(e)))
 		    else if c.Operator.entry == DotS.symbol
 		    then (
 			 when c.rhs
 			 is crhs:Token do
 			 Code(ternaryCode(
 				   AssignElemFun,
-				   unseq(c1:=convert0(c.lhs)),
+				   convert(c.lhs),
 			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
-				   unseq(c2:=convert0(b.rhs)),
-				   combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
+				   convert(b.rhs),
+				   treePosition(e)))
 			 else dummyCode --should not happen
 			 )
 		    else Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
 			 	   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)),
-				   unseq(c1:=convert0(c.lhs)),
-				   convert(c.rhs),
-				   unseq(c2:=convert0(b.rhs))),
-			      combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
-	       )
+				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
+			      treePosition(e)))
+		    )
 	       is t:Token do tokenAssignment(t,b.rhs)
 	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
 	       else dummyCode		  -- should not happen
@@ -361,26 +343,20 @@ export convert0(e:ParseTree):Code := (
 	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
 	  then (
 	      when b.lhs
-	      is a:Adjacent
-	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), AdjacentS.symbol, combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
-	      is u:Unary
-	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
-	      is u:Postfix
-	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
-	      is c:Binary
-	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), c.Operator.entry, combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
-	      is t:Token
-	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)),          t.entry, combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
-	      else Code(augmentedAssignmentCode(b.Operator.entry, dummyCode,
-		      dummyCode, dummySymbol, dummyPosition)) -- CHECK
+	      is a:Adjacent do Code(augmentedAssignmentCode(
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), AdjacentS.symbol, treePosition(e)))
+	      is o:Unary do Code(augmentedAssignmentCode(
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, treePosition(e)))
+	      is o:Postfix do Code(augmentedAssignmentCode(
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, treePosition(e)))
+	      is o:Binary do Code(augmentedAssignmentCode(
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, treePosition(e)))
+	      is t:Token do Code(augmentedAssignmentCode(
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), t.entry, treePosition(e)))
+	      else Code(augmentedAssignmentCode(
+		      b.Operator.entry, dummyCode, dummyCode, dummySymbol, dummyPosition)) -- CHECK
 		      )
-	  else Code(binaryCode(b.Operator.entry.binary,unseq(c1:=convert0(b.lhs)),
-		  unseq(c2:=convert0(b.rhs)), combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
+	  else Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), convert(b.rhs), treePosition(e)))
 	  )
     is u:Unary do (
 	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     treePosition(e))) else
