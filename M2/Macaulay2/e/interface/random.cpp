@@ -3,6 +3,9 @@
 #include "interface/random.h"
 #include "interface/gmp-util.h"
 
+#include "exceptions.hpp"
+#include "error.h"
+
 #define INITIALMAXINT 10
 
 #define IA 16807
@@ -161,6 +164,9 @@ void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
   mpfr_t x;
 
   if (height == nullptr) height = maxHeight;
+  if (mpz_cmp_si(height, 0) <= 0)
+    throw exc::engine_error("expected a positive height");
+
   mpfr_init2(x, gmp_defaultPrecision);
   mpfr_urandomb(x, state);
   mpfr_mul_z(x, x, height, MPFR_RNDN);
@@ -174,7 +180,14 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
 {
   mpq_ptr result = getmemstructtype(mpq_ptr);
   mpq_init(result);
-  rawSetRandomQQ(result, height);
+
+  try {
+    rawSetRandomQQ(result, height);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+
   return moveTo_gmpQQ(result);
 }
 
