@@ -151,23 +151,7 @@ convertParentheses(seq:CodeSequence, word:Word, pos:Position):Code := (
     );
 
 export convert0(e:ParseTree):Code := (
-     when e
-     is w:For do (
-       c:=convert0(w.doClause);
-       cc:=convert0(w.listClause);
-       loc:=codePosition(c);
-       when c is
-         nullCode do loc=codePosition(cc)
-	 else nothing;
-       Code(
-	  forCode(
-	       convert(w.inClause), convert(w.fromClause), convert(w.toClause),
-	       convert(w.whenClause), unseq(cc),
-	       unseq(c),
-	       w.dictionary.frameID,
-	       w.dictionary.framesize,
-	       combinePositionR(w.forToken.position, loc)
-	  )))
+    when e
     is n:New do (
 	if n.newparent == dummyTree
 	then if n.newinitializer == dummyTree
@@ -456,6 +440,11 @@ export convert0(e:ParseTree):Code := (
     is w:WhileDo     do Code(whileDoCode(    convert(w.predicate),                        convert(w.doClause), treePosition(e)))
     is w:WhileListDo do Code(whileListDoCode(convert(w.predicate), convert(w.listClause), convert(w.doClause), treePosition(e)))
     is w:WhileList   do Code(whileListCode(  convert(w.predicate), convert(w.listClause),                      treePosition(e)))
+    is f:For         do Code(
+	forCode(
+	    convert(f.inClause),   convert(f.fromClause), convert(f.toClause),
+	    convert(f.whenClause), convert(f.listClause), convert(f.doClause),
+	    f.dictionary.frameID, f.dictionary.framesize, treePosition(e)))
     is u:Postfix     do Code(unaryCode(u.Operator.entry.postfix, unseq(c:=convert0(u.lhs)), combinePositionR(codePosition(c), u.Operator.position)))
      is d:dummy do dummyCode
      );
