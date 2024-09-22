@@ -39,13 +39,13 @@ TEST ///
   assert( intersect decompose J == J )
 ///
 
-TEST get(currentFileDirectory | "decompose-test.m2") -- FIXME: one test here may be wrong
-TEST get(currentFileDirectory | "decompose2-test.m2") -- FIXME: not testing anything
-TEST get(currentFileDirectory | "decompose4-test.m2")
-TEST get(currentFileDirectory | "decompose5-test.m2")
-TEST get(currentFileDirectory | "minprimes-test.m2")
-TEST get(currentFileDirectory | "minprimes2-test.m2") -- TODO: add Binomial strategy
-TEST get(currentFileDirectory | "radical-test.m2") -- FIXME: not testing anything
+TEST get(MinimalPrimes#"auxiliary files" | "decompose-test.m2") -- FIXME: one test here may be wrong
+TEST get(MinimalPrimes#"auxiliary files" | "decompose2-test.m2") -- FIXME: not testing anything
+TEST get(MinimalPrimes#"auxiliary files" | "decompose4-test.m2")
+TEST get(MinimalPrimes#"auxiliary files" | "decompose5-test.m2")
+TEST get(MinimalPrimes#"auxiliary files" | "minprimes-test.m2")
+TEST get(MinimalPrimes#"auxiliary files" | "minprimes2-test.m2") -- TODO: add Binomial strategy
+TEST get(MinimalPrimes#"auxiliary files" | "radical-test.m2") -- FIXME: not testing anything
 
 TEST ///
   R = ZZ/101[a..d]

@@ -27,9 +27,9 @@ TEST ///
   assert(Q == quotient(Q, a))
 ///
 
-TEST get(currentFileDirectory | "saturate3.m2")
-TEST get(currentFileDirectory | "saturate4.m2")
-TEST get(currentFileDirectory | "saturate5.m2")
+TEST get(Saturation#"auxiliary files" | "saturate3.m2")
+TEST get(Saturation#"auxiliary files" | "saturate4.m2")
+TEST get(Saturation#"auxiliary files" | "saturate5.m2")
 
 TEST ///
   -- used to be in tests/quarantine/saturate.m2
