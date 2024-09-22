@@ -382,19 +382,11 @@ export convert0(e:ParseTree):Code := (
 	  else Code(binaryCode(b.Operator.entry.binary,unseq(c1:=convert0(b.lhs)),
 		  unseq(c2:=convert0(b.rhs)), combinePositionC(codePosition(c1), codePosition(c2), b.Operator.position)))
 	  )
-     is u:Unary do (
-	  if u.Operator.word == CommaW
-	  then Code(sequenceCode(s:=makeCodeSequence(e, CommaW),     combinePositionL(u.Operator.position, codePosition(s.(length(s)-1)))))
-	  else if u.Operator.word == SemicolonW
-	  then Code(semiCode(    s:=makeCodeSequence(e, SemicolonW), combinePositionL(u.Operator.position, codePosition(s.(length(s)-1)))))
-	  else (
-	    c:=convert0(u.rhs);
-	    loc:=codePosition(c);
-	    loc2:=u.Operator.position;
-	    when c is
-              nullCode do nothing
-	    else loc2 = combinePositionL(loc2, loc);
-	  Code(unaryCode(u.Operator.entry.unary,unseq(c),loc2))))
+    is u:Unary do (
+	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     treePosition(e))) else
+	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), treePosition(e)))
+	else Code(unaryCode(u.Operator.entry.unary, convert(u.rhs), treePosition(e))))
+    is u:Postfix do Code(unaryCode(u.Operator.entry.postfix, convert(u.lhs), treePosition(e)))
      is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
@@ -445,9 +437,8 @@ export convert0(e:ParseTree):Code := (
 	else if n.newInitializer == dummyTree
 	then Code(newOfCode(    convert(n.newClass), convert(n.newParent),                            treePosition(e)))
 	else Code(newOfFromCode(convert(n.newClass), convert(n.newParent), convert(n.newInitializer), treePosition(e))))
-    is u:Postfix     do Code(unaryCode(u.Operator.entry.postfix, unseq(c:=convert0(u.lhs)), combinePositionR(codePosition(c), u.Operator.position)))
-     is d:dummy do dummyCode
-     );
+    is d:dummy do dummyCode
+    );
 
 export convert(e:ParseTree):Code := unseq(convert0(e));
 
