@@ -138,6 +138,7 @@ convertParentheses(seq:CodeSequence, word:Word, pos:Position):Code := (
     );
 
 export convert0(e:ParseTree):Code := (
+    pos := treePosition(e);
     when e
      is token:Token do (
 	  var := token.entry;
@@ -167,13 +168,11 @@ export convert0(e:ParseTree):Code := (
 	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,token.position))
 	       )
 	  )
-    is p:EmptyParentheses do convertParentheses(CodeSequence(),
-	p.left.word, treePosition(e))
-    is p:Parentheses do convertParentheses(makeCodeSequence(p.contents, CommaW),
-	p.left.word, treePosition(e))
-    is a:Adjacent do Code(adjacentCode(convert(a.lhs), convert(a.rhs), treePosition(e)))
+    is p:EmptyParentheses do convertParentheses(CodeSequence(),                  p.left.word, pos)
+    is p:Parentheses do convertParentheses(makeCodeSequence(p.contents, CommaW), p.left.word, pos)
+    is a:Adjacent do Code(adjacentCode(convert(a.lhs), convert(a.rhs), pos))
     is a:Arrow do (
-	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), treePosition(e));
+	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), pos);
 	fc.hash = hashFromAddress(Expr(fc));
 	Code(fc))
      is b:Binary do (
@@ -186,15 +185,15 @@ export convert0(e:ParseTree):Code := (
 		    var := token.entry;
 		    rhs := Code(globalSymbolClosureCode(var, token.position));
 		    if wrd.typecode == TCid
-		    then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, treePosition(e)))
+		    then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, pos))
 		    else dummyCode	  -- should not occur
 		    )
 	       else dummyCode		  -- should not occur
 	       )
 	  else if b.Operator.word == CommaW
-	  then Code(sequenceCode(makeCodeSequence(e, CommaW),     treePosition(e)))
+	  then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos))
 	  else if b.Operator.word == SemicolonW
-	  then Code(semiCode(    makeCodeSequence(e, SemicolonW), treePosition(e)))
+	  then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
 	  else if b.Operator.word == EqualW
 	  then (
 	       when b.lhs
@@ -204,26 +203,26 @@ export convert0(e:ParseTree):Code := (
 		       CodeSequence(
 			   Code(globalSymbolClosureCode(AdjacentS.symbol, dummyPosition)),
 			   convert(a.lhs), convert(a.rhs), convert(b.rhs)),
-		       treePosition(e)))
+		       pos))
 	       is u:Unary do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry, u.Operator.position)),
 			 convert(u.rhs), convert(b.rhs),
-			 treePosition(e)))
+			 pos))
 	       is u:Postfix do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
 			 convert(u.lhs), convert(b.rhs),
-			 treePosition(e)))
+			 pos))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
 		    then Code(
 			ternaryCode(
 			    AssignElemFun,
 			    convert(c.lhs), convert(c.rhs), convert(b.rhs),
-			    treePosition(e)))
+			    pos))
 		    else if c.Operator.entry == DotS.symbol
 		    then (
 			 when c.rhs
@@ -233,7 +232,7 @@ export convert0(e:ParseTree):Code := (
 				   convert(c.lhs),
 			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
 				   convert(b.rhs),
-				   treePosition(e)))
+				   pos))
 			 else dummyCode --should not happen
 			 )
 		    else Code(multaryCode(
@@ -241,7 +240,7 @@ export convert0(e:ParseTree):Code := (
 			      CodeSequence(
 				   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)), 
 				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
-			      treePosition(e))))
+			      pos)))
 	       is t:Token do tokenAssignment(t,b.rhs)
 	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
 	       else dummyCode		  -- should not happen
@@ -256,20 +255,20 @@ export convert0(e:ParseTree):Code := (
 			      AssignNewFun,
 			      convert(n.newClass),
 			      convert(b.rhs),
-			      treePosition(e)))
+			      pos))
 		    else Code(ternaryCode(
 			      AssignNewFromFun,
 			      convert(n.newClass),
 			      convert(n.newInitializer),
 			      convert(b.rhs),
-			      treePosition(e)))
+			      pos))
 		    else if n.newInitializer == dummyTree
 		    then Code(ternaryCode(
 			      AssignNewOfFun,
 			      convert(n.newClass),
 			      convert(n.newParent),
 			      convert(b.rhs),
-			      treePosition(e)))
+			      pos))
 		    else Code(multaryCode(
 			      AssignNewOfFromFun,
 			      CodeSequence(
@@ -277,33 +276,33 @@ export convert0(e:ParseTree):Code := (
 				   convert(n.newParent),
 				   convert(n.newInitializer),
 				   convert(b.rhs)),
-			      treePosition(e))))
+			      pos)))
 	       is a:Adjacent do Code(
 		   multaryCode(
 		       InstallMethodFun,
 		       CodeSequence(
 			   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyPosition)),
 			   convert(a.lhs), convert(a.rhs), convert(b.rhs)),
-		       treePosition(e)))
+		       pos))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry, u.Operator.position)),
-			 convert(u.rhs), convert(b.rhs), treePosition(e)))
+			 convert(u.rhs), convert(b.rhs), pos))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
-			 convert(u.lhs), convert(b.rhs), treePosition(e)))
+			 convert(u.lhs), convert(b.rhs), pos))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
 		    then Code(ternaryCode(AssignElemFun,
-			    convert(c.lhs), convert(c.rhs), convert(b.rhs), treePosition(e)))
+			    convert(c.lhs), convert(c.rhs), convert(b.rhs), pos))
 		    else if c.Operator.entry == UnderscoreS.symbol
 		    then Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence( 
 			      	   Code(globalSymbolClosureCode(UnderscoreS.symbol,dummyPosition)),
 				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
-			      treePosition(e)))
+			      pos))
 		    else if c.Operator.entry == DotS.symbol
 		    then (
 			 when c.rhs
@@ -313,7 +312,7 @@ export convert0(e:ParseTree):Code := (
 				   convert(c.lhs),
 			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
 				   convert(b.rhs),
-				   treePosition(e)))
+				   pos))
 			 else dummyCode --should not happen
 			 )
 		    else Code(multaryCode(
@@ -321,7 +320,7 @@ export convert0(e:ParseTree):Code := (
 			      CodeSequence(
 			 	   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)),
 				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
-			      treePosition(e)))
+			      pos))
 		    )
 	       is t:Token do tokenAssignment(t,b.rhs)
 	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
@@ -331,74 +330,68 @@ export convert0(e:ParseTree):Code := (
 	  then (
 	      when b.lhs
 	      is a:Adjacent do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), AdjacentS.symbol, treePosition(e)))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), AdjacentS.symbol, pos))
 	      is o:Unary do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, treePosition(e)))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
 	      is o:Postfix do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, treePosition(e)))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
 	      is o:Binary do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, treePosition(e)))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
 	      is t:Token do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), t.entry, treePosition(e)))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), t.entry, pos))
 	      else Code(augmentedAssignmentCode(
 		      b.Operator.entry, dummyCode, dummyCode, dummySymbol, dummyPosition)) -- CHECK
 		      )
-	  else Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), convert(b.rhs), treePosition(e)))
+	  else Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), convert(b.rhs), pos))
 	  )
     is u:Unary do (
-	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     treePosition(e))) else
-	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), treePosition(e)))
-	else Code(unaryCode(u.Operator.entry.unary, convert(u.rhs), treePosition(e))))
-    is u:Postfix do Code(unaryCode(u.Operator.entry.postfix, convert(u.lhs), treePosition(e)))
+	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos)) else
+	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
+	else Code(unaryCode(u.Operator.entry.unary, convert(u.rhs), pos)))
+    is u:Postfix do Code(unaryCode(u.Operator.entry.postfix, convert(u.lhs), pos))
     is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  pos := treePosition(e);
 	  if sym.frameID == 0
-	  then (
-	       if sym.thread
-	       then Code(threadSymbolClosureCode(sym, pos))
-	       else Code(globalSymbolClosureCode(sym, pos))
-	       )
+	  then if sym.thread
+	  then Code(threadSymbolClosureCode(sym, pos))
+	  else Code(globalSymbolClosureCode(sym, pos))
 	  else Code(localSymbolClosureCode(nestingDepth(sym.frameID, token.dictionary), sym, pos)))
     is q:GlobalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  pos := treePosition(e);
 	  Code(globalSymbolClosureCode(sym, pos)))
     is q:ThreadQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  pos := treePosition(e);
 	  Code(threadSymbolClosureCode(sym, pos)))
     is q:LocalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  pos := treePosition(e);
 	  Code(localSymbolClosureCode(nestingDepth(sym.frameID, token.dictionary), sym, pos)))
-    is i:IfThen      do Code(ifCode(convert(i.predicate), convert(i.thenClause), NullCode,              treePosition(e)))
-    is i:IfThenElse  do Code(ifCode(convert(i.predicate), convert(i.thenClause), convert(i.elseClause), treePosition(e)))
-    is i:Try         do Code(tryCode(convert(i.primary), NullCode,          NullCode,             treePosition(e)))
-    is i:TryThen     do Code(tryCode(convert(i.primary), convert(i.sequel), NullCode,             treePosition(e)))
-    is i:TryThenElse do Code(tryCode(convert(i.primary), convert(i.sequel), convert(i.alternate), treePosition(e)))
-    is i:TryElse     do Code(tryCode(convert(i.primary), NullCode,          convert(i.alternate), treePosition(e)))
-    is i:Catch       do Code(catchCode(convert(i.primary), treePosition(e)))
-    is w:WhileDo     do Code(whileDoCode(    convert(w.predicate),                        convert(w.doClause), treePosition(e)))
-    is w:WhileListDo do Code(whileListDoCode(convert(w.predicate), convert(w.listClause), convert(w.doClause), treePosition(e)))
-    is w:WhileList   do Code(whileListCode(  convert(w.predicate), convert(w.listClause),                      treePosition(e)))
+    is i:IfThen      do Code(ifCode(convert(i.predicate), convert(i.thenClause), NullCode,              pos))
+    is i:IfThenElse  do Code(ifCode(convert(i.predicate), convert(i.thenClause), convert(i.elseClause), pos))
+    is i:Try         do Code(tryCode(convert(i.primary), NullCode,          NullCode,             pos))
+    is i:TryThen     do Code(tryCode(convert(i.primary), convert(i.sequel), NullCode,             pos))
+    is i:TryThenElse do Code(tryCode(convert(i.primary), convert(i.sequel), convert(i.alternate), pos))
+    is i:TryElse     do Code(tryCode(convert(i.primary), NullCode,          convert(i.alternate), pos))
+    is i:Catch       do Code(catchCode(convert(i.primary), pos))
+    is w:WhileDo     do Code(whileDoCode(    convert(w.predicate),                        convert(w.doClause), pos))
+    is w:WhileListDo do Code(whileListDoCode(convert(w.predicate), convert(w.listClause), convert(w.doClause), pos))
+    is w:WhileList   do Code(whileListCode(  convert(w.predicate), convert(w.listClause),                      pos))
     is f:For         do Code(
 	forCode(
 	    convert(f.inClause),   convert(f.fromClause), convert(f.toClause),
 	    convert(f.whenClause), convert(f.listClause), convert(f.doClause),
-	    f.dictionary.frameID, f.dictionary.framesize, treePosition(e)))
+	    f.dictionary.frameID, f.dictionary.framesize, pos))
     is n:New do (
 	if n.newParent      == dummyTree then
 	if n.newInitializer == dummyTree
-	then Code(newCode(      convert(n.newClass),                            treePosition(e)))
-	else Code(newFromCode(  convert(n.newClass), convert(n.newInitializer), treePosition(e)))
+	then Code(newCode(      convert(n.newClass),                            pos))
+	else Code(newFromCode(  convert(n.newClass), convert(n.newInitializer), pos))
 	else if n.newInitializer == dummyTree
-	then Code(newOfCode(    convert(n.newClass), convert(n.newParent),                            treePosition(e)))
-	else Code(newOfFromCode(convert(n.newClass), convert(n.newParent), convert(n.newInitializer), treePosition(e))))
+	then Code(newOfCode(    convert(n.newClass), convert(n.newParent),                            pos))
+	else Code(newOfFromCode(convert(n.newClass), convert(n.newParent), convert(n.newInitializer), pos)))
     is d:dummy do dummyCode
     );
 
