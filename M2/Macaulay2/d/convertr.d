@@ -168,9 +168,6 @@ export convert0(e:ParseTree):Code := (
 	       w.dictionary.framesize,
 	       combinePositionR(w.forToken.position, loc)
 	  )))
-    is w:WhileDo     do Code(whileDoCode(    convert(w.predicate), unseq(c:=convert0(w.doClause)),                                  combinePositionR(w.whileToken.position, codePosition(c))))
-    is w:WhileList   do Code(whileListCode(  convert(w.predicate), unseq(c:=convert0(w.listClause)),                                combinePositionR(w.whileToken.position, codePosition(c))))
-    is w:WhileListDo do Code(whileListDoCode(convert(w.predicate),           convert(w.listClause), unseq(c:=convert0(w.doClause)), combinePositionR(w.whileToken.position, codePosition(c))))
     is n:New do (
 	if n.newparent == dummyTree
 	then if n.newinitializer == dummyTree
@@ -456,6 +453,9 @@ export convert0(e:ParseTree):Code := (
     is i:TryThenElse do Code(tryCode(convert(i.primary), convert(i.sequel), convert(i.alternate), treePosition(e)))
     is i:TryElse     do Code(tryCode(convert(i.primary), NullCode,          convert(i.alternate), treePosition(e)))
     is i:Catch       do Code(catchCode(convert(i.primary), treePosition(e)))
+    is w:WhileDo     do Code(whileDoCode(    convert(w.predicate),                        convert(w.doClause), treePosition(e)))
+    is w:WhileListDo do Code(whileListDoCode(convert(w.predicate), convert(w.listClause), convert(w.doClause), treePosition(e)))
+    is w:WhileList   do Code(whileListCode(  convert(w.predicate), convert(w.listClause),                      treePosition(e)))
     is u:Postfix     do Code(unaryCode(u.Operator.entry.postfix, unseq(c:=convert0(u.lhs)), combinePositionR(codePosition(c), u.Operator.position)))
      is d:dummy do dummyCode
      );
