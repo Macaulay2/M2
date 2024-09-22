@@ -21,9 +21,7 @@ export UnaryInstallMethodFun := dummyTernaryFun;
 export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
-convert0(e:ParseTree):Code;
 convert(e:ParseTree):Code;
-unseq(c:Code):Code;
 CodeSequenceLength(e:ParseTree,separator:Word):int := (
      i := 0;
      while true do (
@@ -130,14 +128,6 @@ parallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
     foreach x in syms do if x.frameID != 0 then x = dummySymbol;
     Code(parallelAssignmentCode(nd, fr, syms, vals, pos))
     );
-
-export unseq(c:Code):Code := (
-     when c
-     is s:sequenceCode do (
-     if length(s.x)==1 then s.x.0 else c
-     )
-     else c
-     );
 
 convertParentheses(seq:CodeSequence, word:Word, pos:Position):Code := (
     if word == leftparen    then Code(sequenceCode(seq,     pos)) else
@@ -412,8 +402,11 @@ export convert0(e:ParseTree):Code := (
     is d:dummy do dummyCode
     );
 
-export convert(e:ParseTree):Code := unseq(convert0(e));
+export unseq(c:Code):Code := (
+    when c is s:sequenceCode do if length(s.x) == 1
+    then s.x.0 else c else c);
 
+export convert(e:ParseTree):Code := unseq(convert0(e));
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d convertr.o "
