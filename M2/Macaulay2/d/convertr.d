@@ -184,7 +184,7 @@ export convert0(e:ParseTree):Code := (
 	p.left.word, treePosition(e))
     is p:Parentheses do convertParentheses(makeCodeSequence(p.contents, CommaW),
 	p.left.word, treePosition(e))
-    is a:Adjacent do Code(adjacentCode(unseq(c:=convert0(a.lhs)), unseq(cc:=convert0(a.rhs)), combinePositionAdjacent(codePosition(c), codePosition(cc))))
+    is a:Adjacent do Code(adjacentCode(convert(a.lhs), convert(a.rhs), treePosition(e)))
     is a:Arrow do (
 	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), treePosition(e));
 	fc.hash = hashFromAddress(Expr(fc));
