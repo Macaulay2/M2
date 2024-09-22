@@ -66,8 +66,7 @@ export rawFareyApproximation(e:Expr):Expr := (
 setupfun("rawFareyApproximation", rawFareyApproximation);
 export rawRandomQQ(e:Expr):Expr := (
      when e
-     is Nothing do toExpr(Ccode(QQ, "rawRandomQQ(", "0)"))
-     is ht:ZZcell do toExpr(Ccode(QQ, "rawRandomQQ(", ht.v, ")"))
+     is ht:ZZcell do toExpr(Ccode(QQorNull, "rawRandomQQ(", ht.v, ")"))
      else WrongArgZZ());
 setupfun("rawRandomQQ",rawRandomQQ);
 export rawRandomRRUniform(e:Expr):Expr := (
