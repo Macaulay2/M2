@@ -759,10 +759,10 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  )
      is n:New do (
 	  if colon then (
-	       bind(n.newclass,dictionary);
-	       bind(n.newparent,dictionary);
-	       bind(n.newinitializer,dictionary);
-	       bind(body,dictionary))
+	    bind(n.newClass,       dictionary);
+	    bind(n.newParent,      dictionary);
+	    bind(n.newInitializer, dictionary);
+	    bind(body,             dictionary))
 	  else makeErrorTree(assn.Operator, 
 	       "left hand side of assignment inappropriate"))
      else makeErrorTree(assn.Operator, 
@@ -885,9 +885,10 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(w.doClause,dictionary);
 	  )
      is n:New do (
-     	  bind(n.newclass,dictionary);
-     	  bind(n.newparent,dictionary);
-     	  bind(n.newinitializer,dictionary);)
+	 bind(n.newClass,       dictionary);
+	 bind(n.newParent,      dictionary);
+	 bind(n.newInitializer, dictionary);
+	 )
      is i:TryElse do (
 	  -- i.primary = bindnewdictionary(i.primary,dictionary);
 	  bind(i.primary,dictionary);

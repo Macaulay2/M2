@@ -152,14 +152,6 @@ convertParentheses(seq:CodeSequence, word:Word, pos:Position):Code := (
 
 export convert0(e:ParseTree):Code := (
     when e
-    is n:New do (
-	if n.newparent == dummyTree
-	then if n.newinitializer == dummyTree
-	then Code(newCode(unseq(c:=convert0(n.newclass)),                                      combinePositionR(n.newtoken.position, codePosition(c))))
-	else Code(newFromCode(      convert(n.newclass), unseq(c:=convert0(n.newinitializer)), combinePositionR(n.newtoken.position, codePosition(c))))
-	else if n.newinitializer == dummyTree
-	then Code(newOfCode(    convert(n.newclass), unseq(c:=convert0(n.newparent)),                                      combinePositionR(n.newtoken.position, codePosition(c))))
-	else Code(newOfFromCode(convert(n.newclass),           convert(n.newparent), unseq(c:=convert0(n.newinitializer)), combinePositionR(n.newtoken.position, codePosition(c)))))
      is token:Token do (
 	  var := token.entry;
 	  wrd := token.word;
@@ -283,34 +275,34 @@ export convert0(e:ParseTree):Code := (
 	  then (
 	       when b.lhs
 	       is n:New do (
-		    if n.newparent == dummyTree 
-		    then if n.newinitializer == dummyTree 
+		   if n.newParent == dummyTree
+		   then if n.newInitializer == dummyTree
 		    then Code(binaryCode(
 			      AssignNewFun,
-			      convert(n.newclass),
+			      convert(n.newClass),
 			      unseq(c:=convert0(b.rhs)), 
-			      combinePositionC(n.newtoken.position, codePosition(c), b.Operator.position)))
+			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position)))
 		    else Code(ternaryCode(
 			      AssignNewFromFun,
-			      convert(n.newclass),
-			      convert(n.newinitializer),
+			      convert(n.newClass),
+			      convert(n.newInitializer),
 			      unseq(c:=convert0(b.rhs)),
-			      combinePositionC(n.newtoken.position, codePosition(c), b.Operator.position)))
-     	       	    else if n.newinitializer == dummyTree 
+			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position)))
+		    else if n.newInitializer == dummyTree
 		    then Code(ternaryCode(
 			      AssignNewOfFun,
-			      convert(n.newclass),
-			      convert(n.newparent),
+			      convert(n.newClass),
+			      convert(n.newParent),
 			      unseq(c:=convert0(b.rhs)),
-			      combinePositionC(n.newtoken.position, codePosition(c), b.Operator.position)))
+			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position)))
 		    else Code(multaryCode(
 			      AssignNewOfFromFun,
 			      CodeSequence(
-				   convert(n.newclass),
-				   convert(n.newparent),
-				   convert(n.newinitializer),
+				   convert(n.newClass),
+				   convert(n.newParent),
+				   convert(n.newInitializer),
 				   unseq(c:=convert0(b.rhs))),
-			      combinePositionC(n.newtoken.position, codePosition(c), b.Operator.position))))
+			      combinePositionC(n.newToken.position, codePosition(c), b.Operator.position))))
 	       is a:Adjacent do (
 		    Code(multaryCode(
 			      InstallMethodFun,
@@ -445,6 +437,14 @@ export convert0(e:ParseTree):Code := (
 	    convert(f.inClause),   convert(f.fromClause), convert(f.toClause),
 	    convert(f.whenClause), convert(f.listClause), convert(f.doClause),
 	    f.dictionary.frameID, f.dictionary.framesize, treePosition(e)))
+    is n:New do (
+	if n.newParent      == dummyTree then
+	if n.newInitializer == dummyTree
+	then Code(newCode(      convert(n.newClass),                            treePosition(e)))
+	else Code(newFromCode(  convert(n.newClass), convert(n.newInitializer), treePosition(e)))
+	else if n.newInitializer == dummyTree
+	then Code(newOfCode(    convert(n.newClass), convert(n.newParent),                            treePosition(e)))
+	else Code(newOfFromCode(convert(n.newClass), convert(n.newParent), convert(n.newInitializer), treePosition(e))))
     is u:Postfix     do Code(unaryCode(u.Operator.entry.postfix, unseq(c:=convert0(u.lhs)), combinePositionR(codePosition(c), u.Operator.position)))
      is d:dummy do dummyCode
      );
