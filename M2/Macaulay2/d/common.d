@@ -45,10 +45,6 @@ export codePosition(c:Code):Position := ( -- TODO retire
     is f:Error                     do f.position
     );
 
-export pos(c:Code):void := (					    -- for use in the debugger
-     stdIO << codePosition(c) << endl;
-     );
-
 export setup(word:Word):void := (
      makeSymbol(word,dummyPosition,globalDictionary);
      );
@@ -161,6 +157,9 @@ export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when w
      Expr(e));
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
      printErrorMessageE(c.position,message));
+
+-- for use in the debugger
+export printPosition(c:Code):void := ( stdIO << codePosition(c) << endl; );
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
 export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then if err.value == dummyExpr then nullE else err.value else z else z;
