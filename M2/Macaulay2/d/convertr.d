@@ -108,7 +108,27 @@ nestingDepth(frameID:int,d:Dictionary):int := (
 	  );
      n);
 
-tokenAssignment(token:Token, rhs:ParseTree):Code := (
+convertTokenReference(token:Token):Code := (
+    wrd := token.word;
+    var := token.entry;
+    pos := token.position;
+    if wrd.typecode == TCint    then Code(integerCode(parseInt(wrd.name),   pos)) else
+    if wrd.typecode == TCstring then Code(stringCode(parseString(wrd.name), pos)) else
+    if wrd.typecode == TCRR
+    then (
+	when parseRR(wrd.name)
+	is y:RR do Code(realCode(y, pos))
+	is null do Code(Error(
+		pos, "expected precision to be a small non-negative integer", nullE, false, dummyFrame)))
+    else (
+	if var.frameID == 0 then
+	if var.thread
+	then Code(threadMemoryReferenceCode(var.frameindex, pos))
+	else Code(globalMemoryReferenceCode(var.frameindex, pos))
+	else Code(localMemoryReferenceCode(nestingDepth(var.frameID, token.dictionary), var.frameindex, pos)))
+    );
+
+convertTokenAssignment(token:Token, rhs:ParseTree):Code := (
     sym := token.entry;
     val := convert(rhs);
     pos := combinePositionR(token.position, treePosition(rhs));
@@ -118,7 +138,7 @@ tokenAssignment(token:Token, rhs:ParseTree):Code := (
 	    nestingDepth(sym.frameID, token.dictionary), sym.frameindex, val, pos))
     );
 
-parallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
+convertParallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
     syms := makeSymbolSequence(ParseTree(par)); -- silly -- rethink
     vals := convert(rhs);
     pos := combinePositionR(par.left.position, treePosition(rhs));
@@ -140,34 +160,7 @@ convertParentheses(seq:CodeSequence, word:Word, pos:Position):Code := (
 export convert0(e:ParseTree):Code := (
     pos := treePosition(e);
     when e
-     is token:Token do (
-	  var := token.entry;
-	  wrd := token.word;
-	  if wrd.typecode == TCRR
-	  then (
-	       x:= parseRR(wrd.name);
-	       when x
-	       is y:RR do Code(realCode(y, token.position))
-	       is null do Code(Error(token.position,
-		       "expected precision to be a small non-negative integer",
-		       nullE,false,dummyFrame)))
-	  else if wrd.typecode == TCint
-	  then Code(integerCode(parseInt(wrd.name),token.position))
- 	  else if wrd.typecode == TCstring
-	  then (
-	       s := parseString(wrd.name);
-	       Code(stringCode(s,token.position))
-	       )
-	  else (
-	       if var.frameID == 0
-	       then (
-		    if var.thread
-		    then Code(threadMemoryReferenceCode(var.frameindex,token.position))
-		    else Code(globalMemoryReferenceCode(var.frameindex,token.position))
-		    )
-	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,token.position))
-	       )
-	  )
+    is token:Token do convertTokenReference(token)
     is p:EmptyParentheses do convertParentheses(CodeSequence(),                  p.left.word, pos)
     is p:Parentheses do convertParentheses(makeCodeSequence(p.contents, CommaW), p.left.word, pos)
     is a:Adjacent do Code(adjacentCode(convert(a.lhs), convert(a.rhs), pos))
@@ -241,8 +234,8 @@ export convert0(e:ParseTree):Code := (
 				   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)), 
 				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
 			      pos)))
-	       is t:Token do tokenAssignment(t,b.rhs)
-	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
+	       is t:Token do convertTokenAssignment(t, b.rhs)
+	       is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
 	       else dummyCode		  -- should not happen
 	       )
 	  else if b.Operator.word == ColonEqualW
@@ -322,8 +315,8 @@ export convert0(e:ParseTree):Code := (
 				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
 			      pos))
 		    )
-	       is t:Token do tokenAssignment(t,b.rhs)
-	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
+	       is t:Token do convertTokenAssignment(t, b.rhs)
+	       is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
 	       else dummyCode		  -- should not happen
 	       )
 	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
@@ -352,8 +345,8 @@ export convert0(e:ParseTree):Code := (
     is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  if sym.frameID == 0
-	  then if sym.thread
+	  if sym.frameID == 0 then
+	  if sym.thread
 	  then Code(threadSymbolClosureCode(sym, pos))
 	  else Code(globalSymbolClosureCode(sym, pos))
 	  else Code(localSymbolClosureCode(nestingDepth(sym.frameID, token.dictionary), sym, pos)))
