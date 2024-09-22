@@ -149,6 +149,18 @@ convertParallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
     Code(parallelAssignmentCode(nd, fr, syms, vals, pos))
     );
 
+export convertGlobalOperator(oper:Token):Code := Code(globalSymbolClosureCode(oper.entry, oper.position));
+export convertGlobalOperator(sym:Symbol):Code := Code(globalSymbolClosureCode(sym, dummyPosition));
+
+convertUnaryInstallCode(f:ternop, opcode:Code, lhs:Code, rhs:Code, pos:Position):Code := (
+    Code(ternaryCode(f, opcode, lhs, rhs, pos)));
+
+convertBinaryInstallCode(f:ternop, lhs:Code, key:Code, rhs:Code, pos:Position):Code := (
+    Code(ternaryCode(f, lhs, key, rhs, pos)));
+
+convertMultaryInstallCode(f:multop, opcode:Code, lhs:Code, key:Code, rhs:Code, pos:Position):Code := (
+    Code(multaryCode(f, CodeSequence(opcode, lhs, key, rhs), pos)));
+
 convertParentheses(seq:CodeSequence, word:Word, pos:Position):Code := (
     if word == leftparen    then Code(sequenceCode(seq,     pos)) else
     if word == leftbrace    then Code(listCode(seq,         pos)) else
@@ -175,8 +187,7 @@ export convert0(e:ParseTree):Code := (
 	       when b.rhs
 	       is token:Token do (
 	  	    wrd := token.word;
-		    var := token.entry;
-		    rhs := Code(globalSymbolClosureCode(var, token.position));
+		    rhs := convertGlobalOperator(token);
 		    if wrd.typecode == TCid
 		    then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, pos))
 		    else dummyCode	  -- should not occur
@@ -187,57 +198,43 @@ export convert0(e:ParseTree):Code := (
 	  then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos))
 	  else if b.Operator.word == SemicolonW
 	  then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
-	  else if b.Operator.word == EqualW
-	  then (
-	       when b.lhs
-	       is a:Adjacent do Code(
-		   multaryCode(
-		       InstallValueFun,
-		       CodeSequence(
-			   Code(globalSymbolClosureCode(AdjacentS.symbol, dummyPosition)),
-			   convert(a.lhs), convert(a.rhs), convert(b.rhs)),
-		       pos))
-	       is u:Unary do Code(
-		    ternaryCode(
-			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry, u.Operator.position)),
-			 convert(u.rhs), convert(b.rhs),
-			 pos))
-	       is u:Postfix do Code(
-		    ternaryCode(
-			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
-			 convert(u.lhs), convert(b.rhs),
-			 pos))
-	       is c:Binary do (
-		    if c.Operator.entry == SharpS.symbol
-		    then Code(
-			ternaryCode(
-			    AssignElemFun,
-			    convert(c.lhs), convert(c.rhs), convert(b.rhs),
-			    pos))
-		    else if c.Operator.entry == DotS.symbol
-		    then (
-			 when c.rhs
-			 is crhs:Token do
-			 Code(ternaryCode(
-				   AssignElemFun,
-				   convert(c.lhs),
-			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
-				   convert(b.rhs),
-				   pos))
-			 else dummyCode --should not happen
-			 )
-		    else Code(multaryCode(
-			      InstallValueFun,
-			      CodeSequence(
-				   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)), 
-				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
-			      pos)))
-	       is t:Token do convertTokenAssignment(t, b.rhs)
-	       is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
-	       else dummyCode		  -- should not happen
-	       )
+	-- global value assignment code
+	else if b.Operator.word == EqualW
+	then (
+	    when b.lhs
+	    -- e.g. x = ...
+	    is t:Token       do convertTokenAssignment(t, b.rhs)
+	    -- e.g. (x,y,z) = (...)
+	    is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
+	    -- Note: usable, but not used anywhere yet
+	    is u:Unary   do convertUnaryInstallCode(UnaryInstallValueFun,
+		convertGlobalOperator(u.Operator), convert(u.rhs), convert(b.rhs), pos)
+	    -- e.g. RingFamily_* = (RR,e) -> RR#(symbol _*) = e
+	    is u:Postfix do convertUnaryInstallCode(UnaryInstallValueFun,
+		convertGlobalOperator(u.Operator), convert(u.lhs), convert(b.rhs), pos)
+	    is c:Binary  do (
+		-- e.g. X#key = v
+		if c.Operator.entry == SharpS.symbol
+		then convertBinaryInstallCode(AssignElemFun,
+		    convert(c.lhs), convert(c.rhs), convert(b.rhs), pos)
+		-- e.g. X.sym = v
+		else if c.Operator.entry == DotS.symbol
+		then (
+		    when c.rhs is crhs:Token do (
+			convertBinaryInstallCode(AssignElemFun,
+			    convert(c.lhs), convertGlobalOperator(crhs), convert(b.rhs), pos))
+		    else dummyCode -- should not happen
+		    )
+		-- e.g. M_(i,j) = x
+		-- e.g. MutableMatrix _ Sequence = (M,ij,val) -> (...)
+		-- FIXME: should these be separated?
+		else convertMultaryInstallCode(InstallValueFun,
+		    convertGlobalOperator(c.Operator), convert(c.lhs), convert(c.rhs), convert(b.rhs), pos))
+	    -- e.g. poincare M = f
+	    is a:Adjacent do convertMultaryInstallCode(InstallValueFun,
+		convertGlobalOperator(AdjacentS.symbol), convert(a.lhs), convert(a.rhs), convert(b.rhs), pos)
+	    else dummyCode -- should not happen
+	    )
 	  else if b.Operator.word == ColonEqualW
 	  then (
 	       when b.lhs
@@ -274,16 +271,16 @@ export convert0(e:ParseTree):Code := (
 		   multaryCode(
 		       InstallMethodFun,
 		       CodeSequence(
-			   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyPosition)),
+			   convertGlobalOperator(AdjacentS.symbol),
 			   convert(a.lhs), convert(a.rhs), convert(b.rhs)),
 		       pos))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry, u.Operator.position)),
+			 convertGlobalOperator(u.Operator),
 			 convert(u.rhs), convert(b.rhs), pos))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.Operator.entry,u.Operator.position)),
+			 convertGlobalOperator(u.Operator),
 			 convert(u.lhs), convert(b.rhs), pos))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
@@ -293,7 +290,7 @@ export convert0(e:ParseTree):Code := (
 		    then Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence( 
-			      	   Code(globalSymbolClosureCode(UnderscoreS.symbol,dummyPosition)),
+				  convertGlobalOperator(UnderscoreS.symbol),
 				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
 			      pos))
 		    else if c.Operator.entry == DotS.symbol
@@ -303,7 +300,7 @@ export convert0(e:ParseTree):Code := (
 			 Code(ternaryCode(
 				   AssignElemFun,
 				   convert(c.lhs),
-			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
+				   convertGlobalOperator(crhs),
 				   convert(b.rhs),
 				   pos))
 			 else dummyCode --should not happen
@@ -311,7 +308,7 @@ export convert0(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
-			 	   Code(globalSymbolClosureCode(c.Operator.entry,c.Operator.position)),
+				  convertGlobalOperator(c.Operator),
 				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
 			      pos))
 		    )
