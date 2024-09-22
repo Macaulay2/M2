@@ -363,33 +363,32 @@ export convert0(e:ParseTree):Code := (
 	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), treePosition(e)))
 	else Code(unaryCode(u.Operator.entry.unary, convert(u.rhs), treePosition(e))))
     is u:Postfix do Code(unaryCode(u.Operator.entry.postfix, convert(u.lhs), treePosition(e)))
-     is q:Quote do (
+    is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePositionR(q.Operator.position, token.position);
+	  pos := treePosition(e);
 	  if sym.frameID == 0
 	  then (
 	       if sym.thread
-	       then Code(threadSymbolClosureCode(sym,p))
-	       else Code(globalSymbolClosureCode(sym,p))
+	       then Code(threadSymbolClosureCode(sym, pos))
+	       else Code(globalSymbolClosureCode(sym, pos))
 	       )
-	  else Code(localSymbolClosureCode(nestingDepth(sym.frameID,token.dictionary),sym,p)))
-     is q:GlobalQuote do (
+	  else Code(localSymbolClosureCode(nestingDepth(sym.frameID, token.dictionary), sym, pos)))
+    is q:GlobalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePositionR(q.Operator.position, token.position);
-     	  Code(globalSymbolClosureCode(sym,p)))
-     is q:ThreadQuote do (
+	  pos := treePosition(e);
+	  Code(globalSymbolClosureCode(sym, pos)))
+    is q:ThreadQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePositionR(q.Operator.position, token.position);
-     	  Code(threadSymbolClosureCode(sym,p)))
-     is q:LocalQuote do (
+	  pos := treePosition(e);
+	  Code(threadSymbolClosureCode(sym, pos)))
+    is q:LocalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePositionR(q.Operator.position, token.position);
-	  nd := nestingDepth(sym.frameID,token.dictionary);
-	  Code(localSymbolClosureCode(nd,sym,p)))
+	  pos := treePosition(e);
+	  Code(localSymbolClosureCode(nestingDepth(sym.frameID, token.dictionary), sym, pos)))
     is i:IfThen      do Code(ifCode(convert(i.predicate), convert(i.thenClause), NullCode,              treePosition(e)))
     is i:IfThenElse  do Code(ifCode(convert(i.predicate), convert(i.thenClause), convert(i.elseClause), treePosition(e)))
     is i:Try         do Code(tryCode(convert(i.primary), NullCode,          NullCode,             treePosition(e)))
