@@ -517,7 +517,7 @@ export treePosition(e:ParseTree):Position := (
     is t:Token            do t.position
     is s:Parentheses      do combinePositionL(s.left.position,       s.right.position)
     is s:EmptyParentheses do combinePositionL(s.left.position,       s.right.position)
-    is a:Adjacent         do combinePositionL(treePosition(a.lhs),   treePosition(a.rhs))
+    is a:Adjacent         do combinePositionM(treePosition(a.lhs),   treePosition(a.rhs))
     is a:Arrow            do combinePositionL(treePosition(a.lhs),   treePosition(a.rhs))
     is o:Unary            do combinePositionL(o.Operator.position,   treePosition(o.rhs))
     is o:Binary           do combinePositionL(treePosition(o.lhs),   treePosition(o.rhs))
