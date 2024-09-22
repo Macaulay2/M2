@@ -110,29 +110,26 @@ nestingDepth(frameID:int,d:Dictionary):int := (
 	  );
      n);
 
-tokenAssignment(t:Token,p:ParseTree):Code := (
-     c:=convert0(p);
-     l:=combinePositionR(t.position, codePosition(c));
-     c=unseq(c);
-     if t.entry.frameID == 0
-     then Code(globalAssignmentCode(t.entry,c,l))
-     else Code(localAssignmentCode(nestingDepth(t.entry.frameID,t.dictionary),t.entry.frameindex,c,l))
-     );
+tokenAssignment(token:Token, rhs:ParseTree):Code := (
+    sym := token.entry;
+    val := convert(rhs);
+    pos := combinePositionR(token.position, treePosition(rhs));
+    if sym.frameID == 0
+    then Code(globalAssignmentCode(sym, val, pos))
+    else Code(localAssignmentCode(
+	    nestingDepth(sym.frameID, token.dictionary), sym.frameindex, val, pos))
+    );
 
 parallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
-     symbols := makeSymbolSequence(ParseTree(par)); -- silly -- rethink
-     n := length(symbols);
-     nd := new array(int) len n do foreach x in symbols do provide nestingDepth(x.frameID,d); -- rethink dictionary
-     fr := new array(int) len n do foreach x in symbols do provide x.frameindex;
-     foreach x in symbols do if x.frameID != 0 then x = dummySymbol;
-     Code(parallelAssignmentCode(
-	       nd,
-	       fr,
-	       symbols,
-	       unseq(c:=convert0(rhs)),
-	       combinePositionR(par.left.position, codePosition(c))
-	       ))
-     );
+    syms := makeSymbolSequence(ParseTree(par)); -- silly -- rethink
+    vals := convert(rhs);
+    pos := combinePositionR(par.left.position, treePosition(rhs));
+    n := length(syms);
+    nd := new array(int) len n do foreach x in syms do provide nestingDepth(x.frameID, d); -- rethink dictionary
+    fr := new array(int) len n do foreach x in syms do provide x.frameindex;
+    foreach x in syms do if x.frameID != 0 then x = dummySymbol;
+    Code(parallelAssignmentCode(nd, fr, syms, vals, pos))
+    );
 
 export unseq(c:Code):Code := (
      when c
