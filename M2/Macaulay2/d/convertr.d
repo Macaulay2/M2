@@ -235,38 +235,9 @@ export convert0(e:ParseTree):Code := (
 		convertGlobalOperator(AdjacentS.symbol), convert(a.lhs), convert(a.rhs), convert(b.rhs), pos)
 	    else dummyCode -- should not happen
 	    )
-	  else if b.Operator.word == ColonEqualW
-	  then (
-	       when b.lhs
-	       is n:New do (
-		   if n.newParent == dummyTree
-		   then if n.newInitializer == dummyTree
-		    then Code(binaryCode(
-			      AssignNewFun,
-			      convert(n.newClass),
-			      convert(b.rhs),
-			      pos))
-		    else Code(ternaryCode(
-			      AssignNewFromFun,
-			      convert(n.newClass),
-			      convert(n.newInitializer),
-			      convert(b.rhs),
-			      pos))
-		    else if n.newInitializer == dummyTree
-		    then Code(ternaryCode(
-			      AssignNewOfFun,
-			      convert(n.newClass),
-			      convert(n.newParent),
-			      convert(b.rhs),
-			      pos))
-		    else Code(multaryCode(
-			      AssignNewOfFromFun,
-			      CodeSequence(
-				   convert(n.newClass),
-				   convert(n.newParent),
-				   convert(n.newInitializer),
-				   convert(b.rhs)),
-			      pos)))
+	else if b.Operator.word == ColonEqualW
+	then (
+	    when b.lhs
 	    -- e.g. x := ...
 	    is t:Token       do convertTokenAssignment(t, b.rhs)
 	    -- e.g. (x,y,z) := (...)
@@ -284,6 +255,31 @@ export convert0(e:ParseTree):Code := (
 	    -- e.g. resolution Module := ...
 	    is a:Adjacent do convertMultaryInstallCode(InstallMethodFun,
 		convertGlobalOperator(AdjacentS.symbol), convert(a.lhs), convert(a.rhs), convert(b.rhs), pos)
+	    is n:New do (
+		if n.newParent      == dummyTree then
+		if n.newInitializer == dummyTree
+		-- e.g. new ChainComplex := ChainComplex => T -> ...
+		then Code(binaryCode(AssignNewFun,
+			convert(n.newClass),
+			convert(b.rhs), pos))
+		-- e.g. new Set from List := Set => ...
+		else Code(ternaryCode(AssignNewFromFun,
+			convert(n.newClass),
+			convert(n.newInitializer),
+			convert(b.rhs), pos))
+		else if n.newInitializer == dummyTree
+		-- Note: not used anywhere yet
+		then Code(ternaryCode(AssignNewOfFun,
+			convert(n.newClass),
+			convert(n.newParent),
+			convert(b.rhs), pos))
+		-- e.g. new RealField of Nothing' from ZZ := ...
+		else Code(multaryCode(AssignNewOfFromFun,
+			CodeSequence(
+			    convert(n.newClass),
+			    convert(n.newParent),
+			    convert(n.newInitializer),
+			    convert(b.rhs)), pos)))
 	    else dummyCode -- should not happen
 	    )
 	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
