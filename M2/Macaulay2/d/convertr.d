@@ -180,24 +180,26 @@ export convert0(e:ParseTree):Code := (
 	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), pos);
 	fc.hash = hashFromAddress(Expr(fc));
 	Code(fc))
-     is b:Binary do (
-	  if b.Operator.entry == DotS.symbol
-	  || b.Operator.entry == DotQuestionS.symbol
-	  then (
-	       when b.rhs
-	       is token:Token do (
-	  	    wrd := token.word;
-		    rhs := convertGlobalOperator(token);
-		    if wrd.typecode == TCid
-		    then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, pos))
-		    else dummyCode	  -- should not occur
-		    )
-	       else dummyCode		  -- should not occur
-	       )
-	  else if b.Operator.word == CommaW
-	  then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos))
-	  else if b.Operator.word == SemicolonW
-	  then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
+    is b:Binary do (
+	-- e.g. X.y and X.?y
+	if b.Operator.entry == DotS.symbol
+	|| b.Operator.entry == DotQuestionS.symbol
+	then (
+	    when b.rhs is token:Token do (
+		rhs := convertGlobalOperator(token);
+		-- TODO: is this check necessary?
+		if token.word.typecode == TCid
+		then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, pos))
+		else dummyCode -- should not occur
+		)
+	    else dummyCode -- should not occur
+	    )
+	-- e.g. 1,2,3 or (0;1,2,3) but not (1,2,3) or {1,2,3}
+	else if b.Operator.word == CommaW
+	then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos))
+	-- e.g. (1;2;3) but not 1;2;3
+	else if b.Operator.word == SemicolonW
+	then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
 	-- global value assignment code
 	else if b.Operator.word == EqualW
 	then (
