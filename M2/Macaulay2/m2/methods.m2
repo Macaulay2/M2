@@ -620,7 +620,7 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     -- this is the hashtable of Hooks for a specific key, which stores HookAlgorithms and HookPriority
     if not store#?key then store#key = new MutableHashTable from {
 	HookAlgorithms => new MutableHashTable, -- a mutable hash table "strategy key" => "strategy code"
-	HookPriority   => new MutableList},     -- a mutable list of strategy keys, in order
+	HookPriority   => new MutableList};     -- a mutable list of strategy keys, in order
     store = store#key;
     ind := #store.HookPriority; -- index to add the hook in the list; TODO: use Priority to insert in the middle?
     alg := if opts.Strategy =!= null then opts.Strategy else ind;
