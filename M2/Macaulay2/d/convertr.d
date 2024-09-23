@@ -278,23 +278,9 @@ export convert0(e:ParseTree):Code := (
 	    -- e.g. Ring_* := ...
 	    is u:Postfix do convertUnaryInstallCode(UnaryInstallMethodFun,
 		convertGlobalOperator(u.Operator), convert(u.lhs), convert(b.rhs), pos)
-	    is c:Binary  do (
-		-- TODO: is this usable?
-		if c.Operator.entry == SharpS.symbol
-		then convertBinaryInstallCode(AssignElemFun,
-		    convert(c.lhs), convert(c.rhs), convert(b.rhs), pos)
-		-- TODO: is this usable?
-		else if c.Operator.entry == DotS.symbol
-		then (
-		    when c.rhs is crhs:Token do (
-			convertBinaryInstallCode(AssignElemFun,
-			    convert(c.lhs), convertGlobalOperator(crhs), convert(b.rhs), pos))
-		    else dummyCode -- should not happen
-		    )
-		-- e.g. MutableMatrix _ Sequence := (M, ij) -> (...)
-		else convertMultaryInstallCode(InstallMethodFun,
-		    convertGlobalOperator(c.Operator), convert(c.lhs), convert(c.rhs), convert(b.rhs), pos)
-		)
+	    -- e.g. MutableMatrix _ Sequence := (M, ij) -> (...)
+	    is c:Binary  do convertMultaryInstallCode(InstallMethodFun,
+		convertGlobalOperator(c.Operator), convert(c.lhs), convert(c.rhs), convert(b.rhs), pos)
 	    -- e.g. resolution Module := ...
 	    is a:Adjacent do convertMultaryInstallCode(InstallMethodFun,
 		convertGlobalOperator(AdjacentS.symbol), convert(a.lhs), convert(a.rhs), convert(b.rhs), pos)
