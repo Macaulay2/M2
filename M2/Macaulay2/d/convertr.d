@@ -267,55 +267,39 @@ export convert0(e:ParseTree):Code := (
 				   convert(n.newInitializer),
 				   convert(b.rhs)),
 			      pos)))
-	       is a:Adjacent do Code(
-		   multaryCode(
-		       InstallMethodFun,
-		       CodeSequence(
-			   convertGlobalOperator(AdjacentS.symbol),
-			   convert(a.lhs), convert(a.rhs), convert(b.rhs)),
-		       pos))
-	       is u:Unary do Code(ternaryCode(
-			 UnaryInstallMethodFun,
-			 convertGlobalOperator(u.Operator),
-			 convert(u.rhs), convert(b.rhs), pos))
-	       is u:Postfix do Code(ternaryCode(
-			 UnaryInstallMethodFun,
-			 convertGlobalOperator(u.Operator),
-			 convert(u.lhs), convert(b.rhs), pos))
-	       is c:Binary do (
-		    if c.Operator.entry == SharpS.symbol
-		    then Code(ternaryCode(AssignElemFun,
-			    convert(c.lhs), convert(c.rhs), convert(b.rhs), pos))
-		    else if c.Operator.entry == UnderscoreS.symbol
-		    then Code(multaryCode(
-			      InstallMethodFun,
-			      CodeSequence( 
-				  convertGlobalOperator(UnderscoreS.symbol),
-				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
-			      pos))
-		    else if c.Operator.entry == DotS.symbol
-		    then (
-			 when c.rhs
-			 is crhs:Token do
-			 Code(ternaryCode(
-				   AssignElemFun,
-				   convert(c.lhs),
-				   convertGlobalOperator(crhs),
-				   convert(b.rhs),
-				   pos))
-			 else dummyCode --should not happen
-			 )
-		    else Code(multaryCode(
-			      InstallMethodFun,
-			      CodeSequence(
-				  convertGlobalOperator(c.Operator),
-				   convert(c.lhs), convert(c.rhs), convert(b.rhs)),
-			      pos))
+	    -- e.g. x := ...
+	    is t:Token       do convertTokenAssignment(t, b.rhs)
+	    -- e.g. (x,y,z) := (...)
+	    is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
+	    -- e.g. - Matrix := ...
+	    -- TODO: can #T be implemented here?
+	    is u:Unary   do convertUnaryInstallCode(UnaryInstallMethodFun,
+		convertGlobalOperator(u.Operator), convert(u.rhs), convert(b.rhs), pos)
+	    -- e.g. Ring_* := ...
+	    is u:Postfix do convertUnaryInstallCode(UnaryInstallMethodFun,
+		convertGlobalOperator(u.Operator), convert(u.lhs), convert(b.rhs), pos)
+	    is c:Binary  do (
+		-- TODO: is this usable?
+		if c.Operator.entry == SharpS.symbol
+		then convertBinaryInstallCode(AssignElemFun,
+		    convert(c.lhs), convert(c.rhs), convert(b.rhs), pos)
+		-- TODO: is this usable?
+		else if c.Operator.entry == DotS.symbol
+		then (
+		    when c.rhs is crhs:Token do (
+			convertBinaryInstallCode(AssignElemFun,
+			    convert(c.lhs), convertGlobalOperator(crhs), convert(b.rhs), pos))
+		    else dummyCode -- should not happen
 		    )
-	       is t:Token do convertTokenAssignment(t, b.rhs)
-	       is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
-	       else dummyCode		  -- should not happen
-	       )
+		-- e.g. MutableMatrix _ Sequence := (M, ij) -> (...)
+		else convertMultaryInstallCode(InstallMethodFun,
+		    convertGlobalOperator(c.Operator), convert(c.lhs), convert(c.rhs), convert(b.rhs), pos)
+		)
+	    -- e.g. resolution Module := ...
+	    is a:Adjacent do convertMultaryInstallCode(InstallMethodFun,
+		convertGlobalOperator(AdjacentS.symbol), convert(a.lhs), convert(a.rhs), convert(b.rhs), pos)
+	    else dummyCode -- should not happen
+	    )
 	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
 	  then (
 	      when b.lhs
