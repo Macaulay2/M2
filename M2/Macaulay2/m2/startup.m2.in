@@ -492,11 +492,13 @@ action2 := hashTable {
      "--debug" => arg -> debugWarningHashcode = value' arg,
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
 	  prefixPath = { prefixDirectory = concatPath(arg, "") }),
-	  else if phase == 1 and arg == "1" then
-	       runBasicTests()
      "--check" => arg -> if arg != "1" and arg != "2" and arg != "3" then (
 	       stopIfError = true;
 	       error ("--check ",arg,": expected 1, 2, or 3"))
+	  else if phase == 1 and arg == "1" then (
+	       stopIfError = true;
+	       runBasicTests();
+	       exit 0)
 	  -- FIXME: doesn't work with --no-core
 	  else if phase == 4 and arg == "2" then (
 	       argumentMode = defaultMode - SetCaptureErr - SetUlimit -
