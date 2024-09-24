@@ -176,9 +176,9 @@ jobs:
         if: matrix.build-system == 'cmake' && runner.os == 'macOS'
         run: |
           set -xe
-          ./M2 -q --check 1 -e 'exit 0'
-          ./M2 -q --check 2 -e 'exit 0'
-          ./M2 -q --check 3 -e 'exit 0'
+          ./M2 -q --check 1
+          ./M2 -q --check 2
+          ./M2 -q --check 3
           cmake --build . --target M2-tests
           cmake --build . --target M2-unit-tests
           cmake --build . --target memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
