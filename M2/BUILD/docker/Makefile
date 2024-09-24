@@ -32,9 +32,9 @@ run-emacs-tui:;	docker run $(VOLUME) -it --entrypoint emacs $(TAG)
 run-emacs:;	docker run $(VOLUME) --entrypoint emacs --net=host --env="DISPLAY" $(TAG)
 
 check: check-1
-check-1:;	docker run $(VOLUME) -it --entrypoint M2 $(TAG) -q --no-preload --check 1 -e 'exit 0'
-check-2:;	docker run $(VOLUME) -it --entrypoint M2 $(TAG) -q --no-preload --check 2 -e 'exit 0'
-check-3:;	docker run $(VOLUME) -it --entrypoint M2 $(TAG) -q --no-preload --check 3 -e 'exit 0'
+check-1:;	docker run $(VOLUME) -it --entrypoint M2 $(TAG) -q --no-preload --check 1
+check-2:;	docker run $(VOLUME) -it --entrypoint M2 $(TAG) -q --no-preload --check 2
+check-3:;	docker run $(VOLUME) -it --entrypoint M2 $(TAG) -q --no-preload --check 3
 
 ###############################################################################
 # Terminal targets

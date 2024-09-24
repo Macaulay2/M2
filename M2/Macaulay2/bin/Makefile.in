@@ -50,7 +50,7 @@ relink:
 foo : ; : @libdir@ $(BUILTLIBPATH)
 
 check: $(EXEFILE)
-	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 -q --stop -E "exit 0"
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 -q
 
 ifeq (@OS@,Darwin)
 # We specify the search path for finding shareable libraries, in case there are any,
