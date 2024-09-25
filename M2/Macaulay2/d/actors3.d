@@ -730,7 +730,7 @@ sin(e:Expr):Expr := (
      is x:CCcell do toExpr(sin(x.v))				    -- # typical value: sin, CC, CC
      is x:RRcell do toExpr(sin(x.v))				    -- # typical value: sin, RR, RR
      is x:RRicell do toExpr(sin(x.v))				    -- # typical value: sin, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("sin",sin).Protected=false;
 cos(e:Expr):Expr := (
@@ -738,7 +738,7 @@ cos(e:Expr):Expr := (
      is x:CCcell do toExpr(cos(x.v))				    -- # typical value: cos, CC, CC
      is x:RRcell do toExpr(cos(x.v))				    -- # typical value: cos, RR, RR
      is x:RRicell do toExpr(cos(x.v))				    -- # typical value: cos, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("cos",cos).Protected=false;
 tan(e:Expr):Expr := (
@@ -746,7 +746,7 @@ tan(e:Expr):Expr := (
      is x:CCcell do toExpr(tan(x.v))				    -- # typical value: tan, CC, CC
      is x:RRcell do toExpr(tan(x.v))				    -- # typical value: tan, RR, RR
      is x:RRicell do toExpr(tan(x.v))				    -- # typical value: tan, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("tan",tan).Protected=false;
 acos(e:Expr):Expr := (
@@ -762,7 +762,7 @@ acos(e:Expr):Expr := (
 	  then toExpr(acos(x.v))                    -- # typical value: acos, RRi, RRi
       else buildErrorPacket("Must be between -1 and 1")
 	  )
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("acos",acos).Protected=false;
 sec(e:Expr):Expr := (
@@ -770,7 +770,7 @@ sec(e:Expr):Expr := (
      is x:CCcell do toExpr(sec(x.v))				    -- # typical value: sec, CC, CC
      is x:RRcell do toExpr(sec(x.v))				    -- # typical value: sec, RR, RR
      is x:RRicell do toExpr(sec(x.v))				    -- # typical value: sec, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("sec",sec).Protected=false;
 csc(e:Expr):Expr := (
@@ -778,7 +778,7 @@ csc(e:Expr):Expr := (
      is x:CCcell do toExpr(csc(x.v))				    -- # typical value: csc, CC, CC
      is x:RRcell do toExpr(csc(x.v))				    -- # typical value: csc, RR, RR
      is x:RRicell do toExpr(csc(x.v))				    -- # typical value: csc, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("csc",csc).Protected=false;
 cot(e:Expr):Expr := (
@@ -786,7 +786,7 @@ cot(e:Expr):Expr := (
      is x:CCcell do toExpr(cot(x.v))				    -- # typical value: cot, CC, CC
      is x:RRcell do toExpr(cot(x.v))				    -- # typical value: cot, RR, RR
      is x:RRicell do toExpr(cot(x.v))				    -- # typical value: cot, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("cot",cot).Protected=false;
 sech(e:Expr):Expr := (
@@ -794,7 +794,7 @@ sech(e:Expr):Expr := (
      is x:CCcell do toExpr(sech(x.v))				    -- # typical value: sech, CC, CC
      is x:RRcell do toExpr(sech(x.v))				    -- # typical value: sech, RR, RR
      is x:RRicell do toExpr(sech(x.v))				    -- # typical value: sech, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("sech",sech).Protected=false;
 csch(e:Expr):Expr := (
@@ -802,7 +802,7 @@ csch(e:Expr):Expr := (
      is x:CCcell do toExpr(csch(x.v))				    -- # typical value: csch, CC, CC
      is x:RRcell do toExpr(csch(x.v))				    -- # typical value: csch, RR, RR
      is x:RRicell do toExpr(csch(x.v))				    -- # typical value: csch, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("csch",csch).Protected=false;
 coth(e:Expr):Expr := (
@@ -810,7 +810,7 @@ coth(e:Expr):Expr := (
      is x:CCcell do toExpr(coth(x.v))				    -- # typical value: coth, CC, CC
      is x:RRcell do toExpr(coth(x.v))				    -- # typical value: coth, RR, RR
      is x:RRicell do toExpr(coth(x.v))				    -- # typical value: coth, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("coth",coth).Protected=false;
 asin(e:Expr):Expr := (
@@ -826,7 +826,7 @@ asin(e:Expr):Expr := (
 	  then toExpr(asin(x.v))                                    -- # typical value: asin, RRi, RRi
 	  else buildErrorPacket("Must be between -1 and 1")
 	  )
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("asin",asin).Protected=false;
 log1p(e:Expr):Expr := (
@@ -1062,7 +1062,7 @@ atan(e:Expr):Expr := (
      is x:RRicell do toExpr(atan(x.v))				    -- # typical value: atan, RRi, RRi
      is a:Sequence do if length(a) == 2 then buildErrorPacket("atan(x,y) has been replaced by atan2(y,x)")
      else WrongNumArgs(1)
-     else buildErrorPacket("expected a number or a pair of numbers")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("atan",atan).Protected=false;
 atan2(e:Expr):Expr := (
@@ -1157,7 +1157,7 @@ cosh(e:Expr):Expr := (
      is x:CCcell do toExpr(cosh(x.v))				    -- # typical value: cosh, CC, CC
      is x:RRcell do toExpr(cosh(x.v))				    -- # typical value: cosh, RR, RR
      is x:RRicell do toExpr(cosh(x.v))				    -- # typical value: cosh, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("cosh",cosh).Protected=false;
 sinh(e:Expr):Expr := (
@@ -1165,7 +1165,7 @@ sinh(e:Expr):Expr := (
      is x:CCcell do toExpr(sinh(x.v))				    -- # typical value: sinh, CC, CC
      is x:RRcell do toExpr(sinh(x.v))				    -- # typical value: sinh, RR, RR
      is x:RRicell do toExpr(sinh(x.v))				    -- # typical value: sinh, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("sinh",sinh).Protected=false;
 tanh(e:Expr):Expr := (
@@ -1173,7 +1173,7 @@ tanh(e:Expr):Expr := (
      is x:CCcell do toExpr(tanh(x.v))				    -- # typical value: tanh, CC, CC
      is x:RRcell do toExpr(tanh(x.v))				    -- # typical value: tanh, RR, RR
      is x:RRicell do toExpr(tanh(x.v))				    -- # typical value: tanh, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("tanh",tanh).Protected=false;
 exp(e:Expr):Expr := (
@@ -1181,7 +1181,7 @@ exp(e:Expr):Expr := (
      is x:CCcell do toExpr(exp(x.v))			    -- # typical value: exp, CC, CC
      is x:RRcell do toExpr(exp(x.v))			    -- # typical value: exp, RR, RR
      is x:RRicell do toExpr(exp(x.v))			    -- # typical value: exp, RRi, RRi
-     else buildErrorPacket("expected a number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("exp",exp).Protected=false;
 log(e:Expr):Expr := (
@@ -1200,7 +1200,7 @@ log(e:Expr):Expr := (
                     else
                         buildErrorPacket("Not defined")
 		    )
-	       else WrongArg(1,"a number"))
+	       else WrongArgRRorRRiorCC(1))
     is b:RRicell do (
 	       when a.1
                 is x:RRcell do (    -- # typical value: log, RRi, RR, RRi
@@ -1213,13 +1213,13 @@ log(e:Expr):Expr := (
                     else
                         buildErrorPacket("Not defined")
 		    )
-	       else WrongArg(1,"a number"))
-	  else WrongArg(2,"a number"))
+	       else WrongArgRRorRRi(2))
+	  else WrongArgRRorRRi(1))
      is x:CCcell do toExpr(log(x.v))				    -- # typical value: log, CC, CC
      is x:RRcell do if isNegative(x.v) then toExpr(logc(x.v)) else toExpr(log(x.v))				    -- # typical value: log, RR, RR
      is x:RRicell do if x.v >= 0 then toExpr(log(x.v))  -- # typical value: log, RRi, RRi
                      else buildErrorPacket("Not defined")
-     else WrongArg("a number or a pair of numbers")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("log",log).Protected=false;
 agm(e:Expr):Expr := (
@@ -1231,13 +1231,13 @@ agm(e:Expr):Expr := (
 	       when a.1
 	       is y:CCcell do toExpr(agm(x.v,y.v)) -- # typical value: agm, CC, CC, CC
 	       is y:RRcell do toExpr(agm(x.v,toCC(y.v)))			            -- # typical value: agm, CC, RR, CC
-	       else WrongArg(1,"a number"))
+	       else WrongArgRRorCC(2))
 	  is x:RRcell do (
 	       when a.1
 	       is y:CCcell do toExpr(agm(toCC(x.v),y.v)) -- # typical value: agm, RR, CC, CC
 	       is y:RRcell do toExpr(agm(x.v,y.v))			            -- # typical value: agm, RR, RR, RR
-	       else WrongArg(1,"a number"))
-	  else WrongArg(2,"a number"))
+	       else WrongArgRRorCC(2))
+	  else WrongArgRRorCC(1))
      else WrongNumArgs(2)
      );
 setupfun("agm",agm).Protected=false;
@@ -1279,14 +1279,14 @@ round0(e:Expr):Expr := (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  toExpr(round(x.v)))
-     else buildErrorPacket("expected a real number")
+     else WrongArgRRorRRiorCC()
      );
 setupfun("round0",round0);
 
 run(e:Expr):Expr := (
      when e
      is x:stringCell do toExpr(run(x.v))
-     else buildErrorPacket("expected a string")
+     else WrongArgString()
      );
 setupfun("run",run);
 
@@ -2359,8 +2359,8 @@ gcd(x:Expr,y:Expr):Expr := (
      is a:ZZcell do (
 	  when y
 	  is b:ZZcell do toExpr(gcd(a.v,b.v))
-	  else buildErrorPacket("expected an integer"))
-     else buildErrorPacket("expected an integer"));
+	  else WrongArgZZ(2))
+     else WrongArgZZ(1));
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd0",gcdfun);
 
