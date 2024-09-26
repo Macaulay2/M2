@@ -843,27 +843,24 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_MSG_CHECKING([whether givaro library is installed])
-AC_SUBST(BUILD_givaro)
-if $PKG_CONFIG --exists givaro
-then AC_MSG_RESULT(yes)
-     LIBS="`$PKG_CONFIG --libs givaro` $LIBS"
-     CPPFLAGS="$CPPFLAGS `$PKG_CONFIG --cflags-only-I givaro`"
-     AC_MSG_CHECKING([whether givaro has isUnit or isunit])
-     AC_LANG([C++])
-     AC_COMPILE_IFELSE(
-	 [AC_LANG_PROGRAM( [ #include <givaro/gfq.h>
-	 		     ],
-	 		   [ class Givaro::GFqDom<long int> foo; foo.isunit(0) ])],
-	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1],[whether givaro has isunit])],
-	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])])
-else AC_MSG_RESULT(no)
-     AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])
-     BUILD_givaro=yes
-fi
-if test $BUILD_givaro = yes
-then BUILTLIBS="-lgivaro $BUILTLIBS"
-fi
+AS_IF([test $BUILD_givaro = no],
+    [AC_LANG([C++])
+     AC_CHECK_HEADER([givaro/givinteger.h],
+        [AC_MSG_CHECKING([whether givaro library is installed])
+         SAVELIBS=$LIBS
+         LIBS="$LIBS -lgivaro"
+         AC_LINK_IFELSE(
+             [AC_LANG_PROGRAM([
+                 #include <givaro/givinteger.h>
+                 ], [
+                 Givaro::Integer a;])],
+             [AC_MSG_RESULT([yes])],
+             [AC_MSG_RESULT([no; will build])
+              LIBS=$SAVELIBS
+              BUILD_givaro=yes])],
+        [AC_MSG_NOTICE([givaro headers not found; will build])
+         BUILD_givaro=yes])])
+AS_IF([test $BUILD_givaro = yes], [BUILTLIBS="-lgivaro $BUILTLIBS"])
 
 # We add these directories to the end, so the user can override this by setting CPPFLAGS.
 # /cddlib/ is more modern than /cdd/
