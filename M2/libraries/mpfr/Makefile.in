@@ -2,8 +2,7 @@
 
 VERSION = 4.2.1
 LICENSEFILES = README COPYING.LESSER
-TARFILE = $(LIBNAME)-$(VERSION).tar.xz
-TAROPTIONS = --xz
+TARFILE = $(LIBNAME)-$(VERSION).tar.gz
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe
