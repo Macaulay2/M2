@@ -6,6 +6,8 @@ LICENSEFILES = README.md COPYING
 
 PRECONFIGURE = ./autogen.sh
 
+CONFIGOPTIONS += LIBS=-lpthread # needed to detect flint
+
 VLIMIT = unlimited
 
 include ../Makefile.library
