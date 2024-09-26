@@ -367,26 +367,32 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-AC_SUBST(ENABLE_TBB,yes)  AC_ARG_ENABLE(tbb, AS_HELP_STRING(--disable-tbb,disable use of the tbb (threaded building blocks) library), ENABLE_TBB=$enableval)
-if test $ENABLE_TBB = yes
-then AC_DEFINE(WITH_TBB,1,[whether the tbb library has been enabled by the builder])
-     AC_SUBST(LIBTBB)		dnl LIBTBB is usually set to -ltbb
-     AC_LANG(C++)
-     AC_CHECK_HEADER(tbb/tbb.h,
-	[AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
-	   LIBTBB=$ac_cv_search_TBB_runtime_interface_version,
-	   [AC_MSG_ERROR([tbb library not found])])],
-	 [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
-     AC_RUN_IFELSE([AC_LANG_SOURCE([[
-		#include <stdio.h>
-		#define TBB_SUPPRESS_DEPRECATED_MESSAGES 1
-		#include <tbb/tbb.h>
-		int main () {
-		  printf("tbb version %d.%d found\n", TBB_VERSION_MAJOR, TBB_VERSION_MINOR);
-		  return 0;
-		}
- 	     ]])])
-fi
+AC_SUBST([ENABLE_TBB], [yes])
+AC_ARG_ENABLE([tbb],
+    [AS_HELP_STRING([--disable-tbb],
+        [disable use of the tbb (threaded building blocks) library])],
+    [ENABLE_TBB=$enableval])
+AS_IF([test $ENABLE_TBB = yes],
+    [AC_DEFINE([WITH_TBB], [1],
+        [whether the tbb library has been enabled by the builder])
+     AC_LANG([C++])
+     AC_CHECK_HEADER([tbb/tbb.h],,
+        [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
+     AC_SEARCH_LIBS([TBB_runtime_interface_version], [tbb],,
+        [AC_MSG_ERROR([tbb library not found])])
+     AC_RUN_IFELSE(
+        [AC_LANG_PROGRAM([
+            #include <iostream>
+            #define TBB_SUPPRESS_DEPRECATED_MESSAGES 1
+            #include <tbb/tbb.h>
+            ], [
+            std::cout << "checking for TBB version... " << TBB_VERSION_MAJOR <<
+                "." << TBB_VERSION_MINOR << std::endl;
+            if (TBB_VERSION_MAJOR < 2020)
+              return 1;
+            else
+              return 0;])],,
+        [AC_MSG_ERROR([TBB >= 2020 required])])])
 
 AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
