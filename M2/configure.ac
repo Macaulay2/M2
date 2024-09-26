@@ -809,8 +809,25 @@ else AC_LANG(C)
      fi
 fi
 
-AC_LANG(C)
-AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
+AC_LANG([C])
+AS_IF([test $BUILD_mpfr = no],
+    [AC_CHECK_HEADER([mpfr.h],
+        dnl need mpfr >= 4 for mpfr_nrandom, mpfr_beta, mpfr_gamma_inc
+        [AC_MSG_CHECKING([for mpfr version])
+         AC_RUN_IFELSE(
+            [AC_LANG_PROGRAM([
+                #include <stdio.h>
+                #include <mpfr.h>
+                ], [
+                puts(MPFR_VERSION_STRING);
+                if (MPFR_VERSION_MAJOR < 4)
+                  return 1;
+                else
+                  return 0;])],,
+            [AC_MSG_NOTICE([mpfr >= 4 required; will build])
+             BUILD_mpfr=yes])],
+        [AC_MSG_NOTICE([mpfr headers not found; will build])
+         BUILD_mpfr=yes])])
 if test $BUILD_mpfr = yes
 then BUILTLIBS="-lmpfr $BUILTLIBS"
 else if test $SHARED = no -a $TRY_STATIC = yes
