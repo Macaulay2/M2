@@ -64,6 +64,7 @@ libraries/ntl/Makefile
 libraries/pari/Makefile
 libraries/polymake/Makefile
 libraries/readline/Makefile
+libraries/tbb/Makefile
 libraries/topcom/Makefile
 Macaulay2/Makefile
 Macaulay2/README

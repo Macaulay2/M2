@@ -1,0 +1,15 @@
+HOMEPAGE = https://oneapi-src.github.io/oneTBB/
+VERSION = 2021.13.0
+URL = https://github.com/oneapi-src/oneTBB/archive/refs/tags
+TARDIR = oneTBB-$(VERSION)
+TARFILE = v$(VERSION).tar.gz
+LICENSEFILES = README.md LICENSE.txt
+
+CONFIGURECMD = @CMAKE@ -DCMAKE_INSTALL_PREFIX=$(LIBRARIESDIR) \
+	-DCMAKE_INSTALL_LIBDIR=lib -DTBB_TEST=OFF .
+
+VLIMIT = unlimited
+CHECKCMD = @CMAKE@ -DTBB_TEST=ON . && make && ctest
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/tbb/Makefile
