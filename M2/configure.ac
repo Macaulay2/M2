@@ -862,6 +862,12 @@ AS_IF([test $BUILD_givaro = no],
          BUILD_givaro=yes])])
 AS_IF([test $BUILD_givaro = yes], [BUILTLIBS="-lgivaro $BUILTLIBS"])
 
+AS_IF([test $BUILD_fflas_ffpack = no],
+    [AC_LANG([C++])
+     AC_CHECK_HEADER([fflas-ffpack/fflas-ffpack.h],,
+        [AC_MSG_NOTICE([fflas-ffpack not found; will build])
+         BUILD_fflas_ffpack=yes])])
+
 # We add these directories to the end, so the user can override this by setting CPPFLAGS.
 # /cddlib/ is more modern than /cdd/
 if test -d /usr/local/include/cddlib 
@@ -1437,21 +1443,6 @@ AC_SUBST(ULIMIT_S,yes)
 ( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 ( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
-
-# test for fflas_ffpack
-if test $BUILD_fflas_ffpack = no
-then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     if command -v fflas-ffpack-config > /dev/null && test "`fflas-ffpack-config --decimal-version`" -gt 20000
-     then AC_MSG_RESULT(found)
-          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
-	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
-          M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
-	  LIBS="$LIBS `fflas-ffpack-config --libs`" dnl note: this might add "-Xpreprocessor -fopenmp" to LIBS, and that will confuse libtool
-	  LIBS=`echo $LIBS | sed 's/-Xpreprocessor -fopenmp//'`
-     else AC_MSG_RESULT(not found, will build)
-          BUILD_fflas_ffpack=yes
-     fi
-fi
 
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
