@@ -6,7 +6,7 @@
 SUBMODULE = true
 VERSION = 2.5.0
 PRECONFIGURE = autoreconf -vif
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = fflas-ffpack-$(VERSION)
 TARFILE = fflas-ffpack-$(VERSION).tar.gz
 
