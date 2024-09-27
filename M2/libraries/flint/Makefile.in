@@ -17,7 +17,7 @@ endif
 CFLAGS += -std=c90 -pedantic-errors
 
 PRECONFIGURE = ./bootstrap.sh
-CONFIGOPTIONS += --without-blas --disable-shared
+CONFIGOPTIONS += --disable-shared
 
 ifneq ($(VERBOSE),)
 BUILDOPTIONS += AT= QUIET_CC= QUIET_CXX= QUIET_AR=
