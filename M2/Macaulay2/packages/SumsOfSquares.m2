@@ -1157,9 +1157,9 @@ checkLowerBound(String) := o -> (solver) -> (
 
     t1:= (
         R = RR[x,y];
-        f = (x-exp(1)*y)^2 + x^2 + (y-4)^2;
+        f = (x-exp(1)*y)^2 + x^2 + (y-2)^2;
         (bound,sol) = lowerBound(f, Solver=>solver,Verbosity=>o.Verbosity);
-        equal(bound,16*exp(2)/(2+exp(2)))
+        equal(bound,4*exp(2)/(2+exp(2)))
         );
 
     t2:= (
