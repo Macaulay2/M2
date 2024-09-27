@@ -14,10 +14,6 @@ TARFILE = fflas-ffpack-$(VERSION).tar.gz
 # there seems to be no way to omit them with the "-o" option to "make"
 CHECKTARGET = check TESTS="test-lu test-det test-echelon test-rankprofiles test-compressQ test-permutations test-fadd test-finit test-fscal test-fgemm test-fgemm-check test-ftrsm-check test-invert-check test-charpoly-check test-fger test-multifile test-maxdelayeddim regression-check"
 
-# We disable simd here because otherwise, we get compiler error message from clang under Mac OS about
-# always-inlined functions requiring target feature "xsave"; it's an interaction between givaro and fflas-ffpack.
-CONFIGOPTIONS += --disable-simd
-
 CONFIGOPTIONS += --disable-openmp
 
 LICENSEFILES = COPYING
