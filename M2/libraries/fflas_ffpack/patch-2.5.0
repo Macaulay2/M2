@@ -14,6 +14,11 @@ Date: Fri, 27 Sep 2024 13:38:29 -0400
 Subject: [PATCH] Add declarations for ssyrk_ and dsyrk_ when cblas is not
  available
 
+From b559549fb3f4abfa69ca7e5da337544ab02c44a1 Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance@piedmont.edu>
+Date: Fri, 27 Sep 2024 16:33:16 -0400
+Subject: [PATCH] Add missing "static inline" to cblas_dsyrk wrapper
+
 diff -u b/fflas-ffpack/config-blas.h b/fflas-ffpack/config-blas.h
 --- b/fflas-ffpack/config-blas.h
 +++ fflas-ffpack-2.5.0/fflas-ffpack/config-blas.h
@@ -42,7 +47,8 @@ diff -u b/fflas-ffpack/config-blas.h b/fflas-ffpack/config-blas.h
 -           ssryk_ (EXT_BLAS_UPLO (Uplo), EXT_BLAS_TRANSPOSE(Trans), N, K, alpha, A, lda, beta, C, ldc); 
 +           ssyrk_ (EXT_BLAS_UPLO (Uplo), EXT_BLAS_TRANSPOSE(Trans), &N, &K, &alpha, A, &lda, &beta, C, &ldc);
      }
-     void cblas_dsyrk(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
+-    void cblas_dsyrk(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
++    static inline void cblas_dsyrk(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
                   const enum CBLAS_TRANSPOSE Trans, const int N, const int K,
                   const double alpha, const double *A, const int lda,
                       const double beta, double *C, const int ldc){
