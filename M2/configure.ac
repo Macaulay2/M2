@@ -19,6 +19,8 @@ m4_include(m4/openmp.m4)
 m4_include(m4/search-libraries.m4)
 m4_include(m4/ax_boost_base.m4)
 m4_include(m4/ax_boost_regex.m4)
+m4_include(m4/ax_blas.m4)
+m4_include(m4/ax_lapack.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -424,27 +426,6 @@ then LDFLAGS="$LDFLAGS -faltivec"
      CXXFLAGS="$CXXFLAGS -faltivec"
 fi
 
-AC_PROG_FC()			dnl check for Fortran compiler presence
-USE_FCLIBS=unspecified
-AC_ARG_ENABLE(fc-lib-ldflags,
-    AS_HELP_STRING(--disable-fc-lib-ldflags,[do not use extra libraries for linking with Fortran (the default under Cygwin)]),
-    USE_FCLIBS=$enableval)
-
-if test "$USE_FCLIBS" = unspecified
-then if test "$ISSUE" = Cygwin
-     then USE_FCLIBS=no
-          AC_MSG_NOTICE([by default under Cygwin, not adding linker flags to link with Fortran libraries])
-     else USE_FCLIBS=yes
-          AC_MSG_NOTICE([by default, adding linker flags to link with Fortran libraries])
-     fi
-fi
-
-if test "$FC"
-then AC_FC_DUMMY_MAIN()
-     AC_FC_WRAPPERS()
-     AC_FC_LIBRARY_LDFLAGS()
-fi
-
 dnl if test "$PTHREADS" = yes
 dnl then
     AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)
@@ -842,6 +823,19 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      then LIBS_GLPK=$ac_cv_search_glp_free
      fi
 fi
+
+AC_PROG_FC
+AC_FC_LIBRARY_LDFLAGS
+AS_IF([test $BUILD_lapack = no],
+    [AX_BLAS
+     AX_LAPACK
+     AS_IF([test $ax_blas_ok = no -o $ax_lapack_ok = no],
+         [AC_MSG_NOTICE([blas/lapack not found; will build])
+          BUILD_lapack=yes])])
+AS_IF([test $BUILD_lapack = yes],
+    [BLAS_LIBS=-lrefblas
+     LAPACK_LIBS=-llapack])
+AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
 AS_IF([test $BUILD_givaro = no],
     [AC_LANG([C++])
@@ -1536,105 +1530,6 @@ then
 else AC_DEFINE([FACTORY_STREAMIO], [1], [whether factory was built with --enable-streamio])
 fi
 
-AC_SUBST(LINALGLIBS)
-
-# we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
-# one of them to $LIBS, making it impossible to check for the presence of C or
-# C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
-# needlessly causes the library to be linked against.)
-FORTRANUSED=no
-if test $BUILD_lapack = yes
-then if test $USE_FCLIBS != no
-     then LIBS="$FCLIBS $LIBS"
-     fi
-else lapack_found=no
-     blas_found=no
-     AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
-     LINALGLIBS="-framework Accelerate"
-     SAVELIBS=$LIBS LIBS="$LINALGLIBS $LIBS"
-     AC_LANG(C)
-     AC_LINK_IFELSE(
-	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [USE_FCLIBS=no; blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
-	 [LINALGLIBS= LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
-     if test $blas_found = no
-     then AC_MSG_CHECKING([whether package blas is provided (by pkg-config)])
-	  if pkg-config --exists blas
-	  then AC_MSG_RESULT(yes)
-	       blas_found=yes
-	       BLASLIBS=`pkg-config --libs blas`
-	       LIBS="$BLASLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I blas | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $BLASLIBS))
-	  else AC_MSG_RESULT(no)
-	  fi
-     fi
-     if test $lapack_found = no
-     then AC_MSG_CHECKING([whether package lapack is provided (by pkg-config)])
-	  if pkg-config --exists lapack
-	  then AC_MSG_RESULT(yes)
-	       lapack_found=yes
-	       LAPACKLIBS="`pkg-config --libs lapack`"
-	       LIBS="$LAPACKLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I lapack | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $LAPACKLIBS))
-	  else AC_MSG_RESULT(no)
-	  fi
-     fi
-     if test $USE_FCLIBS != no
-     then LIBS="$FCLIBS $LIBS"; added_fclibs=yes
-     fi
-     if test $blas_found = no
-     then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,
-                         blas_found=yes
-			 if test "none required" != "$ac_cv_search_sgemv_"
-			 then BLASLIBS=$ac_cv_search_sgemv_
-			 fi
-			 )
-          # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
-     fi
-     if test $lapack_found = no
-     then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,
-	  		 lapack_found=yes
-			 if test "none required" != "$ac_cv_search_dgetrf_"
-			 then LAPACKLIBS=$ac_cv_search_dgetrf_
-			 fi
-			 )
-     fi
-     if test $blas_found = no -o $lapack_found = no
-     then BUILD_lapack=yes
-          LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
-     else LINALGLIBS="$LINALGLIBS $LAPACKLIBS $BLASLIBS"
-     fi
-fi
-
-if test $BUILD_lapack = yes
-then if test $added_fclibs != yes
-     then LIBS="$FCLIBS $LIBS"
-     fi
-     LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
-     dnl we'll need the fortran compiler to be present to compile lapack
-     FORTRANUSED=yes
-     if test "$FC" = ""
-     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
-     else AC_MSG_NOTICE(using fortran compiler $FC)
-     fi
-fi
-
-dnl This code doesn't seem to be needed, and it wasn't ever working, anyway:
-dnl if test $BUILD_lapack = yes
-dnl then # test whether the fortran compiler can handle lapack, which, starting with
-dnl      # version 3.2, requires fortran 90, not fortran 77
-dnl     AC_LANG(Fortran)
-dnl     AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
-dnl     AC_COMPILE_IFELSE([intrinsic maxloc], dnl this is said to be a Fortran 90 feature
-dnl 	AC_MSG_RESULT(yes),
-dnl 	AC_MSG_RESULT(no))
-dnl fi
-
-test "$USE_FCLIBS" = no && FCLIBS=
-test "$FORTRANUSED" = no && FCLIBS=
-
 AC_LANG(C)
 
 dnl        The installation of libxml2 under Mac OS X is problematic:
@@ -1956,8 +1851,8 @@ AC_MSG_NOTICE([using FC                = $FC])
 AC_MSG_NOTICE([using AR                = $AR])
 AC_MSG_NOTICE([using RANLIB            = $RANLIB])
 AC_MSG_NOTICE([using LDFLAGS           = $LDFLAGS])
-AC_MSG_NOTICE([using BLASLIBS          = $BLASLIBS])
-AC_MSG_NOTICE([using LAPACKLIBS        = $LAPACKLIBS])
+AC_MSG_NOTICE([using BLAS_LIBS         = $BLAS_LIBS])
+AC_MSG_NOTICE([using LAPACK_LIBS       = $LAPACK_LIBS])
 AC_MSG_NOTICE([using LIBS_GDBM         = $LIBS_GDBM])
 AC_MSG_NOTICE([using LIBS_GLPK         = $LIBS_GLPK])
 AC_MSG_NOTICE([using LIBS_GMP          = $LIBS_GMP])
