@@ -81,7 +81,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-16 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends liblzma-dev libboost-stacktrace-dev \
-                  libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
+                  libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev libopenblas-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
