@@ -8,7 +8,8 @@ needs "run.m2"
 TestClosure = new SelfInitializingType of FunctionClosure
 TestClosure.synonym = "test closure"
 
-capture TestClosure := opt -> T -> capture(toString T, opt)
+capture TestClosure := o -> t -> (
+    if instance(teststring := t(), String) then capture(teststring, o))
 
 -----------------------------------------------------------------------------
 -- TEST
