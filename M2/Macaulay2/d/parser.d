@@ -257,6 +257,13 @@ export nbinaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeyline
 export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      e := parse(file,token2.word.parse.binaryStrength,obeylines);
      if e == errorTree then e else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
+-- "thunk" operator (e.g., TEST) for creating nullary functions
+export thunkop(token:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree:=(
+    ret := parse(file,max(prec,token.word.parse.unaryStrength),obeylines);
+    if ret == errorTree then ret
+    else accumulate(
+	ParseTree(Arrow(dummy(dummyPosition), token, ret, dummyDesc)),
+	file, prec, obeylines));
 MatchPair := {left:string, right:string, next:(null or MatchPair)};
 
 matchList := (null or MatchPair)(NULL);
@@ -518,7 +525,10 @@ export treePosition(e:ParseTree):Position := (
     is s:Parentheses      do combinePositionL(s.left.position,       s.right.position)
     is s:EmptyParentheses do combinePositionL(s.left.position,       s.right.position)
     is a:Adjacent         do combinePositionM(treePosition(a.lhs),   treePosition(a.rhs))
-    is a:Arrow            do combinePositionL(treePosition(a.lhs),   treePosition(a.rhs))
+    is a:Arrow            do (
+	when a.lhs
+	is dummy          do combinePositionL(a.Operator.position,   treePosition(a.rhs))
+	else                 combinePositionL(treePosition(a.lhs),   treePosition(a.rhs)))
     is o:Unary            do combinePositionL(o.Operator.position,   treePosition(o.rhs))
     is o:Binary           do combinePositionC(treePosition(o.lhs),   treePosition(o.rhs), o.Operator.position)
     is o:Postfix          do combinePositionR(treePosition(o.lhs),   o.Operator.position)
