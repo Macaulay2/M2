@@ -177,7 +177,8 @@ export convert0(e:ParseTree):Code := (
     is p:Parentheses do convertParentheses(makeCodeSequence(p.contents, CommaW), p.left.word, pos)
     is a:Adjacent do Code(adjacentCode(convert(a.lhs), convert(a.rhs), pos))
     is a:Arrow do (
-	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), pos);
+	fc := functionCode(convert(a.rhs), a.desc, hash_t(0), pos,
+	    a.Operator.word);
 	fc.hash = hashFromAddress(Expr(fc));
 	Code(fc))
     is b:Binary do (
