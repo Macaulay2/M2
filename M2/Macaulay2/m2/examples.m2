@@ -142,7 +142,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(capture|read|input|load|needs)\\b",       inputs) -- these commands hide undesirable functions
     and not match("([Cc]ommand|fork|schedule|thread|Task)",   inputs) -- remove when threads work more predictably
     and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
-    and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
+    and not match("(addHook|export|newPackage|TEST)",         inputs) -- these commands have permanent effects
     and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
     and not match("(Global.*Hook|add.*Function|Echo|Print)",  inputs) -- same as above
     and not match("(importFrom|exportFrom)",                  inputs) -- currently capture tries to clear all symbols created, these break it
