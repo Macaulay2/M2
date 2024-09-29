@@ -90,8 +90,9 @@ Node
       One provides tests using the @TO symbol TEST@ function following the @TO beginDocumentation@ call in the source
       of the package.
 
-      Optionally, one can store all tests in a @TT "tests.m2"@ directory under the auxiliary subdirectory of
-      the package and load the file from the main package source file.
+      Optionally, one can store tests as files in the auxiliary subdirectory of
+      the package and include their filenames in the @TO TestFiles@ option
+      to @TO newPackage@.
 
       For example, to run the tests for the @TO "LLLBases :: LLLBases"@ package (Lenstra-Lenstra-Lovasz bases), use:
     CannedExample
