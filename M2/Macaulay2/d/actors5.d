@@ -459,7 +459,8 @@ examine(e:Expr):Expr := (
 	  << " restargs : " << desc.restargs << endl
 	  << " frameID : " << desc.frameID << endl
 	  << " framesize : " << desc.framesize << endl
-	  << " numparms : " << desc.numparms << endl;
+	  << " numparms : " << desc.numparms << endl
+	  << " operator : " << model.Operator.name << endl;
      	  showFrames(f);
 	  nullE)
      is model:functionCode do (
@@ -470,7 +471,8 @@ examine(e:Expr):Expr := (
 	  << " restargs : " << desc.restargs << endl
 	  << " frameID : " << desc.frameID << endl
 	  << " framesize : " << desc.framesize << endl
-	  << " numparms : " << desc.numparms << endl;
+	  << " numparms : " << desc.numparms << endl
+	  << " operator : " << model.Operator.name << endl;
 	  nullE)
      is fn:CompiledFunction do (
 	  stdIO

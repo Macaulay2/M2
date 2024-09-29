@@ -227,6 +227,7 @@ bumpPrecedence();
      export RightArrowW := binaryright("->",arrowop); export RightArrowS := makeKeyword(RightArrowW);
      export DoubleArrowS := makeKeyword(binaryright("=>"));
      export GreaterGreaterS := makeKeyword(binaryright(">>"));
+     export TestS := special("TEST", thunkop, prec, prec);
 bumpPrecedence();
      whenW = token("when"); makeKeyword(whenW);
      ofW = token("of"); makeKeyword(ofW);
@@ -311,7 +312,6 @@ bumpPrecedence();
      export elapsedTimeS := special("elapsedTime",unaryop,precSpace,wide);
      export elapsedTimingS := special("elapsedTiming",unaryop,precSpace,wide);
      export shieldS := special("shield",unaryop,precSpace,wide);
-     export TestS := special("TEST",unaryop,precSpace,wide);
      export throwS := special("throw",nunaryop,precSpace,wide);
      export returnS := special("return",nunaryop,precSpace,wide);
      export breakS := special("break",nunaryop,precSpace,wide);
@@ -846,7 +846,9 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      is a:Arrow do (
 	  newdict := newLocalDictionary(dictionary);
 	  a.desc = functionDescription(newdict.frameID,0,0,false);
-	  bindParenParmList(a.lhs,newdict,a.desc);
+	  when a.lhs
+	  is dummy do nothing
+	  else bindParenParmList(a.lhs,newdict,a.desc);
 	  bind(a.rhs,newdict);
 	  a.desc.framesize = newdict.framesize;
 	  )

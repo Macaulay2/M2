@@ -3,35 +3,30 @@ needs "code.m2"
 needs "run.m2"
 
 -----------------------------------------------------------------------------
--- TestInput
+-- TestClosure
 -----------------------------------------------------------------------------
-TestInput = new SelfInitializingType of HashTable
-TestInput.synonym = "test input"
+TestClosure = new SelfInitializingType of FunctionClosure
+TestClosure.synonym = "test closure"
 
-code TestInput := code @@ locate
-toString TestInput := T -> T#"code"
-locate TestInput := T -> T#"location"
-net TestInput := lookup(net, Function)
-precedence TestInput := lookup(precedence, Function)
-editMethod TestInput := editMethod @@ locate
-capture TestInput := opt -> T -> capture(toString T, opt)
+capture TestClosure := o -> t -> (
+    if instance(teststring := t(), String) then capture(teststring, o))
 
 -----------------------------------------------------------------------------
 -- TEST
 -----------------------------------------------------------------------------
 
--- TEST is a keyword that takes an object as input and determines its
--- location.  It then passes the object and its location to addTest.
+-- TEST is a keyword that takes M2 code and turns it into a nullary function,
+-- which it then passes to addTest
+
 addTest = method()
-addTest(String, FilePosition) := (str, loc) -> (
+addTest FunctionClosure := f -> (
     n := #currentPackage#"test inputs";
-    currentPackage#"test inputs"#n = TestInput {
-	"location" => loc,
-	"code" => str})
+    currentPackage#"test inputs"#n = TestClosure f)
+
 -- the following is not called by TEST, but called directly when we want to
 -- add a test from a file (used by loadTestDir)
-addTest String := filename -> addTest(get filename,
-    new FilePosition from(filename, 1, 1))
+addTest String := addTestFromFile
+
 -- TODO: support test titles
 
 -----------------------------------------------------------------------------
@@ -61,16 +56,16 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
 
 loadTestDir := pkg -> (
     -- TODO: prioritize reading the tests from topSrcdir | "Macaulay2/tests/normal" instead
-    testDir := pkg#"package prefix" |
-        replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
-    pkg#"test directory loaded" =
-    if fileExists testDir then (
-        tmp := currentPackage;
-        currentPackage = pkg;
-	scan(sort select(readDirectory testDir, file -> match("\\.m2$", file)),
-	    test -> addTest(testDir | test));
-        currentPackage = tmp;
-        true) else false)
+    testDir := pkg#"package prefix" | replace("PKG", pkg#"pkgname",
+	currentLayout#"packagetests");
+    pushvar(symbol currentPackage, pkg);
+    if fileExists testDir then scan(
+	sort select(readDirectory testDir, file -> match("\\.m2$", file)),
+	test -> addTest(testDir | test));
+    if pkg#?"auxiliary files" then scan((options pkg).TestFiles,
+	file ->  addTest(pkg#"auxiliary files" | file));
+    popvar symbol currentPackage;
+    pkg#"test directory loaded" = true)
 
 tests = method()
 tests Package := pkg -> (
@@ -101,15 +96,21 @@ check(List, Package) := opts -> (L, pkg) -> (
     --
     errorList := for k in testKeys list (
 	    if not inputs#?k then error(pkg, " has no test #", k);
-	    teststring := inputs#k#"code";
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
-	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
-	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
+	    elapsedTime (
+		try teststring := inputs#k() then (
+		    if instance(teststring, String) then (
+			if captureTestResult(desc, teststring, pkg, usermode)
+			then continue
+			else (k, temporaryFilenameCounter - 2))
+		    else (checkmsg("calling", desc); continue))
+		else (checkmsg("calling", desc); (k, null))));
     outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
     if #errorList > 0 then (
 	if opts.Verbose then apply(errorList, (k, errfile) -> (
-		stderr << locate inputs#k << " error:" << endl;
-		printerr getErrors(outfile errfile)));
+		if errfile =!= null then (
+		    stderr << locate inputs#k << " error:" << endl;
+		    printerr getErrors(outfile errfile))));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 
 checkAllPackages = () -> (

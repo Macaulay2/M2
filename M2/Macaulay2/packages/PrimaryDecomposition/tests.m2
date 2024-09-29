@@ -37,9 +37,9 @@ TEST ///
   assert(primaryDecomposition M == {0})
 ///
 
-TEST get(currentFileDirectory | "associatedPrimes-test.m2")
-TEST get(currentFileDirectory | "associatedPrimes2-test.m2")
-TEST get(currentFileDirectory | "primaryDecomposition-test.m2")
+TEST get(PrimaryDecomposition#"auxiliary files" | "associatedPrimes-test.m2")
+TEST get(PrimaryDecomposition#"auxiliary files" | "associatedPrimes2-test.m2")
+TEST get(PrimaryDecomposition#"auxiliary files" | "primaryDecomposition-test.m2")
 
 testResult = method()
 testResult(Ideal,List) := (I,L) -> (

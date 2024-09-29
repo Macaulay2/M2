@@ -256,7 +256,8 @@ export functionCode := {+ -- this is called FunctionBody in the top-level
      body:Code,
      desc:functionDescription,
      hash:hash_t,
-     position:Position
+     position:Position,
+     Operator:Word
      };
 export Code := (
     -- when adding or removing classes of core here, also update debugging.dd

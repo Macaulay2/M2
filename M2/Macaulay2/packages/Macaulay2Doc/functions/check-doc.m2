@@ -25,12 +25,23 @@ Node
       If a test should be skipped when running @TO "check"@, e.g., it is
       known to fail under certain circumstances, then the comment
       @TT "-* no-check-flag *-"@ may be added to @TT "s"@.
+
+      Tests may also be defined using arbitrary Macaulay2 code.  Tests created
+      in this way will be called as functions with no arguments, and so it
+      is important to write them as such.  For example, variables should be
+      local (see @TO "local variables in a function"@) and all but the final
+      statement should end with a @TO symbol ;@.
+    Example
+      TEST (
+          x := 4;
+          assert(2 + 2 == x))
   Caveat
     When creating tests, try to ensure that they run relatively quickly.
   SeeAlso
     assert
     beginDocumentation
     check
+    tests
 ///
 
 doc ///
@@ -79,8 +90,9 @@ Node
       One provides tests using the @TO symbol TEST@ function following the @TO beginDocumentation@ call in the source
       of the package.
 
-      Optionally, one can store all tests in a @TT "tests.m2"@ directory under the auxiliary subdirectory of
-      the package and load the file from the main package source file.
+      Optionally, one can store tests as files in the auxiliary subdirectory of
+      the package and include their filenames in the @TO TestFiles@ option
+      to @TO newPackage@.
 
       For example, to run the tests for the @TO "LLLBases :: LLLBases"@ package (Lenstra-Lenstra-Lovasz bases), use:
     CannedExample

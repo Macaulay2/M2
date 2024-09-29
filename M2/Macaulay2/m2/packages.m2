@@ -223,7 +223,8 @@ newPackage = method(
 	PackageImports            => {},
 	Reload                    => false,
 	UseCachedExampleOutput    => null,
-	Version                   => "0.0"
+	Version                   => "0.0",
+	TestFiles                 => {}
 	})
 newPackage Sequence := opts -> x -> newPackage splice(nonnull x, opts) -- to allow null entries
 newPackage String := opts -> pkgname -> (

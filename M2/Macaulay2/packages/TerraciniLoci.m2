@@ -31,8 +31,8 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.1",
-    Date => "November 16, 2023",
+    Version => "0.2",
+    Date => "September 22, 2024",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -50,9 +50,26 @@ newPackage("TerraciniLoci",
     HomePage => "https://github.com/d-torrance/terracini-loci",
     Keywords => {"Projective Algebraic Geometry"},
     PackageImports => {
-	"CorrespondenceScrolls",
-	"FastMinors",
-	"MinimalPrimes"})
+	"CorrespondenceScrolls",-- for productOfProjectiveSpaces
+	"FastMinors",           -- for recursiveMinors
+	"MinimalPrimes",        -- for radical
+	"PrimaryDecomposition", -- for primaryDecomposition (tests)
+	"Resultants"})          -- for veronese (tests)
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2024-09-22, M2 1.24.11)
+* convert tests from strings to functions for new TEST behavior
+* add PrimaryDecomposition and Resultants to PackageImports (needed for tests)
+
+0.1 (2023-11-16, M2 1.23)
+* initial release
+
+*-
 
 export {
     "terraciniLocus"
@@ -181,71 +198,64 @@ doc ///
 -----------
 -- just the faster (< 1s) examples
 
-TEST ///
--- rational normal curves
-needsPackage "Resultants"
-assertEmptyTerracini = (r, f) -> assert Equation(terraciniLocus(r, f), 1)
+TEST (
+    -- rational normal curves
+    assertEmptyTerracini := (r, f) -> assert Equation(terraciniLocus(r, f), 1);
 
--- ring map
-assertEmptyTerracini(2, veronese(1, 3))
-assertEmptyTerracini(2, veronese(1, 4))
+    -- ring map
+    assertEmptyTerracini(2, veronese(1, 3));
+    assertEmptyTerracini(2, veronese(1, 4));
 
--- ideal (slower)
-assertEmptyTerracini(2, ker veronese(1, 3))
+    -- ideal (slower)
+    assertEmptyTerracini(2, ker veronese(1, 3));
 
--- also check Threads option
-assert Equation(terraciniLocus(2, veronese(1, 3), Threads => 2), 1)
-///
+    -- also check Threads option
+    assert Equation(terraciniLocus(2, veronese(1, 3), Threads => 2), 1))
 
-TEST ///
--- del pezzo surfaces
-delPezzoSurface = t -> (
-    kk := ZZ/32003;
-    d := 9 - t;
-    (x, y) := (symbol x, symbol y);
-    R := kk[y_0..y_2];
-    S := kk[x_0..x_d];
-    P := intersect \\ ideal \ {
-	{y_0, y_1}, {y_0, y_2}, {y_1, y_2}, {y_0 - y_1, y_0 - y_2}
-	}_{0..t - 1};
-    map(R, S, super basis(3, P)))
+TEST (
+    -- del pezzo surfaces
+    delPezzoSurface := t -> (
+	kk := ZZ/32003;
+	d := 9 - t;
+	(x, y) := (symbol x, symbol y);
+	R := kk[y_0..y_2];
+	S := kk[x_0..x_d];
+	P := intersect \\ ideal \ {
+	    {y_0, y_1}, {y_0, y_2}, {y_1, y_2}, {y_0 - y_1, y_0 - y_2}
+	    }_{0..t - 1};
+	map(R, S, super basis(3, P)));
 
-assert Equation(
-    apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 1),
-	I -> dim I - 2), {3})
-assert Equation(
-    apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 2),
-	I -> dim I - 2), {3, 3})
-assert Equation(
-    apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 3),
-	I -> dim I - 2), {3, 3, 3})
-assert Equation(
-    apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 4),
-	I -> dim I - 2), {3, 3, 3, 3, 3})
-///
+    assert Equation(
+	apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 1),
+	    I -> dim I - 2), {3});
+    assert Equation(
+	apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 2),
+	    I -> dim I - 2), {3, 3});
+    assert Equation(
+	apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 3),
+	    I -> dim I - 2), {3, 3, 3});
+    assert Equation(
+	apply(primaryDecomposition terraciniLocus(2, delPezzoSurface 4),
+	    I -> dim I - 2), {3, 3, 3, 3, 3}))
 
-TEST ///
--- veronese
-needsPackage "Resultants"
+TEST (
+    -- veronese
+    assert Equation(terraciniLocus(2, veronese(2, 3)), 1))
 
-assert Equation(terraciniLocus(2, veronese(2, 3)), 1)
-///
+TEST (
+    -- segre-veronese
 
-TEST ///
--- segre-veronese
+    segreVeronese := (n, d) -> (
+	x := symbol x;
+	r := #n;
+	R := QQ new Array from splice apply(r, i -> x_(i, 0)..x_(i, n#i));
+	y := symbol y;
+	S := QQ[y_0..y_(product(n, d, (ni, di) -> binomial(ni + di, di)) - 1)];
+	map(R, S, flatten entries first tensor apply(r, i -> (
+		    vector apply(subsets(n#i + d#i, d#i), A -> product(d#i, j ->
+			    x_(i, A#j - j)))))));
 
-segreVeronese = (n, d) -> (
-    x := symbol x;
-    r := #n;
-    R := QQ new Array from splice apply(r, i -> x_(i, 0)..x_(i, n#i));
-    y := symbol y;
-    S := QQ[y_0..y_(product(n, d, (ni, di) -> binomial(ni + di, di)) - 1)];
-    map(R, S, flatten entries first tensor apply(r, i -> (
-		vector apply(subsets(n#i + d#i, d#i), A -> product(d#i, j ->
-			x_(i, A#j - j)))))))
-
-assert Equation(
-    apply(
-	primaryDecomposition terraciniLocus(2, segreVeronese({1, 1}, {1, 2})),
-	I -> dim I - 4), {3, 3})
-///
+    assert Equation(
+	apply(
+	    primaryDecomposition terraciniLocus(2, segreVeronese({1, 1}, {1, 2})),
+	    I -> dim I - 4), {3, 3}))
