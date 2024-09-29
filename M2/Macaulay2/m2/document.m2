@@ -416,13 +416,12 @@ isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?Pr
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
--- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
 locate DocumentTag := tag -> new FilePosition from (
-    if (rawdoc := fetchAnyRawDocumentation tag) =!= null
-    then (
-	minimizeFilename((package rawdoc.DocumentTag)#"source directory" |
-	    rawdoc#"filename"),
-	rawdoc#"linenum", 0)
+    rawdoc := fetchAnyRawDocumentation tag;
+    if rawdoc =!= null then (
+	pkg := package rawdoc.DocumentTag;
+	src := minimizeFilename(pkg#"source directory" | rawdoc#"filename");
+	src, rawdoc#"linenum", 0)
     else (currentFileName, currentRowNumber(), currentColumnNumber()))
 
 -----------------------------------------------------------------------------
