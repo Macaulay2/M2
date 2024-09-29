@@ -170,23 +170,21 @@ extractExamples = docBody -> (
 -- examples: get a list of examples in a documentation node
 -----------------------------------------------------------------------------
 
-getExampleInput := method()
-getExampleInput Hypertext   := stack @@ extractExamplesLoop
-getExampleInput DocumentTag := tag  -> (
+fetchExamples = tag -> (
     rawdoc := fetchAnyRawDocumentation tag;
     if rawdoc =!= null and rawdoc.?Description
-    then getExampleInput DIV{rawdoc.Description})
+    then toList extractExamplesLoop DIV { rawdoc.Description })
 
 examples = method(Dispatch => Thing)
 examples Thing       := examples @@ makeDocumentTag
 examples DocumentTag := tag -> (
-    ex := getExampleInput tag;
+    ex := fetchExamples tag;
     if ex === null or #ex == 0
     then "-- no examples for tag: " | format tag
     else stack(
 	"-- examples for tag: " | format tag,
 	"-- " | net locate tag,
-	ex))
+	stack ex))
 
 examples List := L -> (
     L = splice \ pairs apply(L, key ->
@@ -202,6 +200,12 @@ examples List := L -> (
 -- storeExampleOutput
 -----------------------------------------------------------------------------
 
+captureExamples := (pkg, fkey) -> (
+    src := fetchExamples makeDocumentTag(fkey, Package => pkg);
+    if #src =!= 0 then last capture(src,
+	UserMode       => false,
+	PackageExports => pkg))
+
 getExampleOutputFilename := (pkg, fkey) -> (
     if pkg#?"package prefix" and pkg#"package prefix" =!= null then (
 	packageLayout := detectCurrentLayout pkg#"package prefix";
@@ -216,8 +220,7 @@ getExampleOutput := (pkg, fkey) -> (
     filename := getExampleOutputFilename(pkg, fkey);
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
-    else if width (ex := getExampleInput makeDocumentTag fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, PackageExports => pkg) );
+    else ( verboseLog("info: capturing example results for ", fkey); captureExamples(pkg, fkey) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
