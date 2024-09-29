@@ -39,6 +39,7 @@ addStartFunction(
 		   Headline       => "default package for interpreter interactions",
 		   DebuggingMode  => true);
 	       User.PackageIsLoaded = true;
+	       User#"source directory" = "";
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
