@@ -7,11 +7,11 @@
  * examples
  *-
 
+processExamplesStrict = true
+
 needs "hypertext.m2"
 needs "run.m2"
 needs "document.m2" -- for DocumentTag
-
-processExamplesStrict = true
 
 -----------------------------------------------------------------------------
 -- local utilities

@@ -85,8 +85,8 @@ schubert.m2
 local.m2
 
 packages.m2
-examples.m2
 document.m2
+examples.m2
 installPackage.m2
 testing.m2
 help.m2
