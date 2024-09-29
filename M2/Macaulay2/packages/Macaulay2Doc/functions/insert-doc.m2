@@ -4,7 +4,7 @@
 doc///
  Key
   insert
-  (insert,ZZ,Thing,VisibleList)
+  (insert,ZZ,Thing,BasicList)
  Headline
   copy a list, inserting an element
  Usage
@@ -12,9 +12,9 @@ doc///
  Inputs
   i: ZZ
   x: Thing
-  L: VisibleList
+  L: BasicList
  Outputs
-  L2: VisibleList
+  L2: BasicList
    a copy of {\tt L} in which {\tt x} has been inserted into position {\tt i}
  Description
   Example
