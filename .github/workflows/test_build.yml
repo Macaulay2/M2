@@ -45,8 +45,8 @@ jobs:
         include:
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-14
-            compiler: clang-15
+            os: macos-15
+            compiler: clang-16
             cxx: clang++
             cc: clang
         exclude:
