@@ -85,6 +85,8 @@ Matrix * Number :=
 Matrix * RingElement := (m,r) -> (
     if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
      map(target m, source m, reduce(target m, raw m * raw r)))
+Matrix / Number      :=
+Matrix / RingElement := (m,r) -> m * (1/r)
 
 toSameRing = (m,n) -> (
      if ring m =!= ring n then (
