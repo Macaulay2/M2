@@ -403,6 +403,33 @@ document {
      SeeAlso => { "//"}
      }
 
+doc ///
+  Key
+    (symbol /, Matrix, Number)
+    (symbol /, Matrix, RingElement)
+    (symbol /, Vector, Number)
+    (symbol /, Vector, RingElement)
+  Headline
+    scalar division
+  Usage
+    v / c
+  Inputs
+    v:{Matrix, Vector}
+    c:{Number, RingElement}
+  Outputs
+    :{Matrix, Vector}
+  Description
+    Text
+      This operation is equivalent to right scalar multiplication by the
+      multiplicative inverse of @CODE "c"@, i.e., @CODE "v * (1/c)"@.
+    Example
+      R = QQ[a,b,c,d]
+      matrix {{d, -b}, {-c, a}} / (a * d - b * c)
+  Caveat
+    The base ring of the output will be a field containing the base ring
+    of @CODE "v"@.
+///
+
 document {
      Key => {symbol %,
 	  (symbol %, CC, CC),
