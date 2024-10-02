@@ -1763,18 +1763,12 @@ doc ///
     Text
       Load a function contained in a shared library using the C function
       @TT "dlsym"@ and declare its signature.
-    Example
-      mpfr = openSharedLibrary "mpfr"
-      mpfrVersion = foreignFunction(mpfr, "mpfr_get_version", charstar, void)
-      mpfrVersion()
-    Text
       The library may be omitted if it is already loaded, e.g., for functions
       in the C standard library or libraries that Macaulay2 is already linked
-      against.  For example, since Macaulay2 uses @TT "mpfr"@ for its
-      arbitrary precision real numbers, the above example may be simplified.
+      against.
     Example
-      mpfrVersion = foreignFunction("mpfr_get_version", charstar, void)
-      mpfrVersion()
+      mycos = foreignFunction("cos", double, double)
+      mycos pi
     Text
       If a function takes multiple arguments, then provide these argument
       types using a list.
