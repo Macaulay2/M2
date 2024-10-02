@@ -1829,15 +1829,10 @@ doc ///
     Text
       This function is a wrapper around the C function @TT "dlsym"@.  It
       loads a symbol from a shared library using the specified foreign type.
-    Example
-      mps = openSharedLibrary "mps"
-      cplxT = foreignStructType("cplx_t", {"r" => double, "i" => double})
-      foreignSymbol(mps, "cplx_i", cplxT)
-    Text
       If the shared library is already linked against Macaulay2, then it may
       be omitted.
     Example
-      foreignSymbol("cplx_i", cplxT)
+      foreignSymbol("errno", int)
 ///
 
 doc ///
