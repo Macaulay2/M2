@@ -965,10 +965,6 @@ doc ///
     Example
       mpfrT numeric(100, pi)
       value oo
-      mpfrAdd = foreignFunction("mpfr_add", void, {mpfrT, mpfrT, mpfrT, int})
-      x = mpfrT 0p100
-      mpfrAdd(x, numeric(100, pi), exp 1p100, 0)
-      x
 ///
 
 doc ///
