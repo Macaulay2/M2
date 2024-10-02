@@ -466,3 +466,34 @@ TEST ///
    L2 = L^**2
    assert(Hom(OO_X, prune L2) ==  Hom(OO_X, L2))
 ///
+
+TEST ///
+  S = (ZZ/2)[x,y,z,w]
+  I = ideal(x^3+x^2*y+y^3+x*y*z+z^3+w^3)
+  R = S/I
+  X = Proj R
+  B = sheaf coker map(R^{21:{-1}, {-2}}, ,
+      matrix {{y+z, x+z, 0, y, x+y, x, x, w^2, w^2, 0, x*y+y*z, x*z+z^2, x^2+y*z+z^2, w^2, 0, 0, w^2, w^2, 0, x*w, y*w+z*w, y*w},
+	  {z, y+z, w, x+y, x, x+y+z, 0, w^2, 0, w^2, x*y+x*z+y*z, x^2+x*y+y^2+x*z+z^2, x*y+x*z+z^2, 0, 0, w^2, w^2, w^2, 0, x*w+y*w, x*w+z*w, z*w},
+	  {y+z, y, w, y, y, y, x+y, w^2, w^2, 0, y^2, y*z, y^2+z^2, w^2, 0, w^2, w^2, w^2, w^2, y*w, y*w+z*w, 0},
+	  {w, 0, 0, 0, w, 0, w, x*y+y^2+x*z+z^2, x*y+y*z+z^2, x^2+x*z+y*z, y*w, x*w, 0, x*y+y^2+x*z, x*y+y^2+x*z, x*y+y^2+x*z, x*y+y*z+z^2, x*y+y^2, z^2, w^2, w^2, 0},
+	  {0, 0, 0, w, 0, 0, w, x*y+y*z+z^2, x*y+y*z+z^2, x*y+y^2+x*z, x*w+y*w, y*w, z*w, x^2+x*y+y^2+y*z, x*y+y^2+x*z, x*y+y*z, y^2+x*z+y*z, x*y+x*z+y*z+z^2, x*y+y^2, 0, w^2, 0},
+	  {y+z, y, 0, z, x, y+z, z, 0, w^2, w^2, y^2, y*z, 0, 0, 0, 0, w^2, 0, w^2, y*w, 0, z*w},
+	  {0, w, 0, w, 0, w, 0, 0, x*y+y^2+x*z+z^2, 0, x*w+y*w, x*w, x*w+y*w, x*y+y^2+x*z, x^2+x*z+y*z, x*z, x*y+y*z+z^2, z^2, y^2+x*z+y*z+z^2, 0, 0, w^2},
+	  {x+z, x, 0, x+z, y, y+z, y, w^2, 0, 0, x^2+x*y+x*z+y*z, x*y+y*z+z^2, y^2+x*z+y*z+z^2, w^2, 0, 0, 0, 0, w^2, y*w, x*w+y*w+z*w, y*w+z*w},
+	  {z, y, w, x+y, z, y+z, y+z, w^2, 0, w^2, y^2, y*z, y*z, w^2, 0, w^2, w^2, 0, w^2, z*w, z*w, z*w},
+	  {w, w, 0, 0, 0, 0, 0, x^2+x*y+y^2+y*z, 0, x*y+z^2, 0, y*w, x*w+y*w, x*y+y^2+x*z, 0, y^2+x*z+y*z+z^2, x*y+y*z+z^2, x*y+z^2, x*z, w^2, 0, 0},
+	  {0, 0, 0, 0, 0, w, 0, 0, x*y+y*z+z^2, 0, x*w+y*w, x*w, z*w, y^2+x*z+z^2, x*y+y^2+x*z, x*y+x*z+y*z+z^2, x^2+y^2+z^2, x*y+y^2+x*z+y*z, x*y+z^2, w^2, 0, 0},
+	  {x+y, z, w, y, z, y, z, 0, 0, w^2, y*z, z^2, y^2, w^2, 0, 0, w^2, w^2, 0, 0, 0, z*w},
+	  {w, 0, 0, 0, 0, w, 0, x*y+y*z+z^2, x^2+y^2+z^2, x*y+y^2+x*z, x*w+y*w+z*w, y*w+z*w, x*w+y*w, x*y+y^2+x*z, y^2+x*z+z^2, y*z, x*y+y*z+z^2, y^2+y*z+z^2, x*y+y*z+z^2, w^2, w^2, 0},
+	  {y+z, x, 0, z, y+z, y, y, 0, w^2, w^2, z^2, y^2+z^2, y^2+y*z, 0, 0, w^2, 0, 0, 0, 0, z*w, z*w},
+	  {y+z, z, 0, y, 0, x+y, y+z, w^2, w^2, 0, y*z, z^2, y*z+z^2, w^2, 0, w^2, 0, w^2, 0, z*w, z*w, y*w},
+	  {0, 0, x, 0, 0, 0, 0, y*w+z*w, x*w+y*w+z*w, x*w+y*w+z*w, 0, w^2, w^2, x*w+z*w, 0, z*w, y*w, x*w, 0, z^2, x^2+y^2+z^2, x*y+x*z},
+	  {0, 0, x+z, 0, 0, 0, 0, x*w+y*w, x*w, z*w, 0, 0, w^2, x*w+y*w, 0, x*w+y*w, x*w+y*w+z*w, x*w, y*w+z*w, x^2+x*y+y^2+z^2, x*y+x*z+y*z, y^2+y*z+z^2},
+	  {0, w, 0, 0, w, w, w, 0, x*y+y*z+z^2, 0, x*w, x*w+y*w+z*w, x*w+y*w, x*y+y^2+x*z, x*y+y^2+x*z, x^2+y^2+x*z+z^2, x*y+y*z+z^2, y^2+x*z+y*z+z^2, x*y+y^2+x*z, 0, 0, 0},
+	  {0, 0, x+y, 0, 0, 0, 0, y*w, y*w+z*w, y*w+z*w, w^2, w^2, w^2, y*w, z*w, y*w, y*w, y*w, y*w, y^2+y*z+z^2, y*z, y^2+y*z+z^2},
+	  {0, 0, 0, w, w, w, 0, x*y+y*z+z^2, x*y+y*z+z^2, x*y+y^2+x*z, x*w+y*w+z*w, x*w+y*w+z*w, x*w+z*w, x*y+y^2+x*z, x*y+y^2+x*z, y^2+x*z+y*z+z^2, x*y+y*z+z^2, x^2+x*y+z^2, y^2+x*z+y*z+z^2, 0, 0, 0},
+	  {0, 0, 0, 0, 0, 0, w, 0, 0, 0, y*w, y*w, x*w, x*y+y^2+x*z, 0, x*y+y*z+z^2, x*y+y*z+z^2, x*y+y^2+x*z, x^2+x*y+y^2+x*z+y*z, w^2, 0, 0},
+	  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, w, w, w, w, w, y, y+z, x}})
+  assert(rank Hom(B, OO_X) == 15)
+///
