@@ -341,15 +341,15 @@ updateComputationMaster SAGBIComputation := sagbiComputation -> (
         -- e.g. if you're adding less than 2-3% of the total number of generators
         if (numNewGens == 0 or numNewGens == 1) and (lastSagbiGenDegree > 8) then (
             if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
-                print "-- [updateComputationMaster] Detected few new generators; " |
-                    "using Incremental Strategy";
+                print ("-- [updateComputationMaster] Detected few new generators; " |
+                    "using Incremental Strategy");
             );
             updateComputationIncremental sagbiComputation;
         )
         else (
             if sagbiComputation#SAGBIoptions#PrintLevel > 4 then (
-                print "-- [updateComputationMaster] Detected many or low-degree new generators; " |
-                    " using DegreeByDegree Strategy";
+                print ("-- [updateComputationMaster] Detected many or low-degree new generators; " |
+                    " using DegreeByDegree Strategy");
             );
             updateComputationDegreeByDegree sagbiComputation;
         );
