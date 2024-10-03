@@ -3,9 +3,9 @@
 newPackage(
     "SCMAlgebras",
     Version => "1.0",
-    Date => "October 2, 2024",
+    Date => "October 3, 2024",
     Authors => {{Name => "Ernesto Lax", Email => "erlax@unime.it", HomePage => "https://www.researchgate.net/profile/Ernesto-Lax"}},
-    Headline => "a package to work with sequentially Cohen-Macaulay modules or ideals",
+    Headline => "sequentially Cohen-Macaulay modules or ideals",
     Keywords => {"Commutative Algebra"},
     PackageExports => {"Depth","MinimalPrimes"},
     DebuggingMode => false
@@ -18,7 +18,7 @@ export{
     "filterIdeal",
     "isSCM",
     -- Service
-    "minDim"
+    "minimumDimension"
 };
 
 
@@ -28,7 +28,7 @@ Node
   Key
     SCMAlgebras
   Headline
-    a package to work with sequentially Cohen-Macaulay modules or ideals
+    sequentially Cohen-Macaulay modules or ideals
   Description
     Text
       SCMAlgebras is a package to check whether a module or an ideal is sequentially Cohen-Macaulay,
@@ -84,14 +84,14 @@ deficiencyModule(Module,ZZ) := (M,i) -> (
     t:=depth M;
     d:=dim M;
     if i<t or i>d then (
-        Di:=Ext^(n+1)(M,S^{-n})
-    ) else Di=Ext^(n-i)(M,S^{-n});
-    return Di
+        return Ext^(n+1)(M,S^{-n}); --zero module
+    ) else Di:=Ext^(n-i)(M,S^{-n});
+    Di
 )
 -------------------------------------------------------------------------
 deficiencyModule(Ideal,ZZ) := (I,i) -> (
     S:=ring I;
-    return deficiencyModule((S^1/I),i)
+    deficiencyModule((S^1/I),i)
 )
 --=======================================================================
 
@@ -136,12 +136,12 @@ canonicalModule(Module) := M -> (
     d:=dim M;
     r:=dim S;
     K:=Ext^(r-d)(M,S^{-r});
-    return K
+    K
 )
 -------------------------------------------------------------------------
 canonicalModule(Ideal) := I -> (
     S:=ring I;
-    return canonicalModule(S^1/I)
+    canonicalModule(S^1/I)
 )
 --=======================================================================
 
@@ -153,12 +153,12 @@ canonicalModule(Ideal) := I -> (
 MyDoc=concatenate(MyDoc,///
 Node
   Key
-    minDim
-    (minDim,Ideal)
+    minimumDimension
+    (minimumDimension,Ideal)
   Headline
     computes the minimum dimension of $I$.
   Usage
-    minDim I
+    minimumDimension I
   Inputs
     I:Ideal
       a homogeneous ideal of the polynomial ring $S=K[x_1,\ldots,x_n]$, with $K$ a field
@@ -173,17 +173,17 @@ Node
       S = QQ[x_1..x_10,y_1..y_10];
       E = {{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{6,7},{8,9},{8,10},{9,10}};
       J=ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
-      minDim J
+      minimumDimension J
   SeeAlso
     filterIdeal
     isSCM
 ///);
 -------------------------------------------------------------------------
-minDim = method(TypicalValue=>ZZ);
-minDim(Ideal) := I -> (
+minimumDimension = method(TypicalValue=>ZZ);
+minimumDimension(Ideal) := I -> (
     T:=decompose I;
     D:=for Q in T list dim(radical Q);
-    return min(D)
+    min(D)
 )
 --=======================================================================
 
@@ -219,7 +219,7 @@ Node
       J=ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
       filterIdeal(J,5)
   SeeAlso
-    minDim
+    minimumDimension
     isSCM
 ///);
 -------------------------------------------------------------------------
@@ -228,29 +228,17 @@ filterIdeal = method(TypicalValue=>Ideal);
 filterIdeal(Ideal,ZZ) := Ideal => (I,i) -> (
     S:=ring I;
     d:=dim I;
-    d0:=minDim I;
+    d0:=minimumDimension I;
     if i>-2 and i<d0 then (
         Ii:=I;
-    ) else if i>=d0 and i<d then ( 
-        Q:=decompose I;
-        L:={};
-        for k from 0 to #Q-1 do (
-            Qk:=Q#k;
-            Pk:=radical Qk;
-            dk:=dim Pk;
-            L=L|{{dk,Qk}};
-        );
-        Pi:={};
-        for k from 0 to #L-1 do (
-            if (L#k)#0 > i then (
-                Pi=Pi|{(L#k)#1};
-            );
-        );
+    ) else if i>=d0 and i<d then (
+        L:=apply(decompose I, Q -> {P := radical Q, dim P});
+        Pi:=for l in L when (l#1)>i list (l#0);
         Ii=intersect(Pi);
     ) else if i==d then (
         Ii=ideal(S^1);
     ) else error("Expected an integer greater than -2 and at most " | toString(d) | ".");
-    return Ii
+    Ii
 )
 --=======================================================================
 
@@ -299,25 +287,22 @@ isSCM(Module) := M -> (
     for i from 0 to d-1 do ( 
         Oi:=deficiencyModule(M,i);
         if  Oi != 0 then (
-            if (isCM(Oi) == false) or (dim(Oi)!=i) then (
-                return false;
-            );
+            if (not isCM(Oi)) or (dim(Oi)!=i) then return false;
         );
     );
-    return true;
+    true
 )
 ------------------------------------------------------------------------- 
 isSCM(Ideal) := I -> (
     S:=ring I;
     d:=dim I;
-    d0:=minDim I;
+    d0:=minimumDimension I;
     for i from 0 to d-1 do (
         Ii:=filterIdeal(I,i);
         Si:=(S^1/Ii);
-        if depth Si < i+1 then
-            return false;	
+        if depth Si < i+1 then return false;
     );
-    return true;
+    true
 )
 --=======================================================================
 
