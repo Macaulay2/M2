@@ -141,7 +141,6 @@ export LocalQuote := {+Operator:Token, rhs:Token, local:void};
 export Binary := {+lhs:ParseTree, Operator:Token, rhs:ParseTree};
 export Unary  := {+Operator:Token, rhs:ParseTree};
 export Postfix:= {+lhs:ParseTree, Operator:Token};
-export ArrayParseTree := array(ParseTree);
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
