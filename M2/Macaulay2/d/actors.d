@@ -331,7 +331,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("monomial ideal multiplication failed"))
 	       )
 	  else binarymethod(lhs,rhs,StarS))
-     is x:RawMatrixCell do (				    -- # typical value: symbol *, RawMatrix, RawRingElement, RawRingElement
+     is x:RawMatrixCell do (					    -- # typical value: symbol *, RawMatrix, RawRingElement, RawMatrix
 	  when rhs
 	  is y:RawRingElementCell do (
 	       when x.p*y.p
