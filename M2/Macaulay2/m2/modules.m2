@@ -352,14 +352,6 @@ isSubset(Module, Module) := (M, N) -> (
 
 -----------------------------------------------------------------------------
 
--- the key for issub hooks under GlobalHookStore
-protect ContainmentHooks
-issub = (f, g) -> f === g or ring f === ring g and tryHooks(ContainmentHooks, (f, g),
-    -- This is used by isSubset and for checking equality of ideals and modules.
-    -- Specialized strategies may be added as hooks, for instance for local rings.
-    -- TODO: how can do better in the homogeneous case?
-    (f, g) -> -1 === rawGBContains(raw gb g, raw f))
-
 -- used for sorting a list of modules
 Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
 
