@@ -166,9 +166,9 @@ Matrix * Matrix := Matrix => (m,n) -> (
      else (
      	  R := ring m;
 	  S := ring target n;
-	  if R =!= S then (
-	       try m = m ** S else
-	       try n = n ** R else
+	  if R =!= S then ( -- use toSameRing?
+	       try m = promote(m,S) else
+	       try n = promote(n,R) else
 	       error "maps over incompatible rings";
 	       );
 	  M = target m;
