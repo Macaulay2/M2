@@ -90,12 +90,13 @@ toExternalString Ring := toString @@ describe
 -- promote, lift, liftable, and isConstant
 -----------------------------------------------------------------------------
 
+-- TODO rename isLiftable; currently impossible due to conflict with Varieties::isLiftable
 -- some remnants from lift and promote, version 2
 liftable = method(TypicalValue => Boolean, Dispatch => {Thing, Type, Type})
 liftable(Number,      Number)      :=
 liftable(Number,      RingElement) :=
 liftable(RingElement, Number)      :=
-liftable(RingElement, RingElement) := (f, R) -> null =!= lift(f, R, Verify => false)
+liftable(RingElement, RingElement) := (f, R) -> lookup(lift,class f,R) =!= null and null =!= lift(f, R, Verify => false)
 
 isConstant = method(TypicalValue => Boolean)
 isConstant RingElement := r -> liftable(r, coefficientRing ring r)
