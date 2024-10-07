@@ -19,11 +19,6 @@ LICENSEFILES = COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt
 # had a chance to initialize it.
 CONFIGOPTIONS += --disable-shared
 
-# Disable vectorized instructions: SSE4.1, AVX, AVX2:
-# (this is needed if we wish to distribute binaries to others.  But it might be bad
-# for us if we don't.  So the configure script should have an option for that.)
-CONFIGOPTIONS += --disable-simd
-
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/givaro/Makefile
 # Local Variables:

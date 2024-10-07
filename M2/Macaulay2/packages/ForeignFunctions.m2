@@ -965,10 +965,6 @@ doc ///
     Example
       mpfrT numeric(100, pi)
       value oo
-      mpfrAdd = foreignFunction("mpfr_add", void, {mpfrT, mpfrT, mpfrT, int})
-      x = mpfrT 0p100
-      mpfrAdd(x, numeric(100, pi), exp 1p100, 0)
-      x
 ///
 
 doc ///
@@ -1767,18 +1763,12 @@ doc ///
     Text
       Load a function contained in a shared library using the C function
       @TT "dlsym"@ and declare its signature.
-    Example
-      mpfr = openSharedLibrary "mpfr"
-      mpfrVersion = foreignFunction(mpfr, "mpfr_get_version", charstar, void)
-      mpfrVersion()
-    Text
       The library may be omitted if it is already loaded, e.g., for functions
       in the C standard library or libraries that Macaulay2 is already linked
-      against.  For example, since Macaulay2 uses @TT "mpfr"@ for its
-      arbitrary precision real numbers, the above example may be simplified.
+      against.
     Example
-      mpfrVersion = foreignFunction("mpfr_get_version", charstar, void)
-      mpfrVersion()
+      mycos = foreignFunction("cos", double, double)
+      mycos pi
     Text
       If a function takes multiple arguments, then provide these argument
       types using a list.
@@ -1839,15 +1829,10 @@ doc ///
     Text
       This function is a wrapper around the C function @TT "dlsym"@.  It
       loads a symbol from a shared library using the specified foreign type.
-    Example
-      mps = openSharedLibrary "mps"
-      cplxT = foreignStructType("cplx_t", {"r" => double, "i" => double})
-      foreignSymbol(mps, "cplx_i", cplxT)
-    Text
       If the shared library is already linked against Macaulay2, then it may
       be omitted.
     Example
-      foreignSymbol("cplx_i", cplxT)
+      foreignSymbol("errno", int)
 ///
 
 doc ///
