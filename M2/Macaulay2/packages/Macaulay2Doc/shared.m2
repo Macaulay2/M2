@@ -15,7 +15,11 @@ document { Key => isVeryAmple,  methodstr, SeeAlso => {
 	"Divisor::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
 	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
 	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
-document { Key => isNormal,      methodstr, SeeAlso => { "Polyhedra::isNormal(Polyhedron)","IntegralClosure::isNormal(Ring)"} }
+document { Key => isNormal,     methodstr, SeeAlso => {
+	"Polyhedra::isNormal(Polyhedron)",
+	"IntegralClosure::isNormal(Ring)",
+	"AssociativeAlgebras::isNormal(RingElement)",
+	} }
 document { Key => normalCone,      methodstr, SeeAlso => { "Polyhedra::normalCone(Polyhedron,Polyhedron)","ReesAlgebra::normalCone(Ideal)"} }
 
 

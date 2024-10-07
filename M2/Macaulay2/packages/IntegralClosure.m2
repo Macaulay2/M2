@@ -1170,7 +1170,6 @@ doc ///
 
 doc ///
   Key
-    isNormal
     (isNormal, Ring)
   Headline
     determine if a reduced ring is normal
@@ -2173,7 +2172,7 @@ document {
      "With this extra bit of information, the user can now compute
      integral closures of principal ideals in ", TT "R", " via ",
      TO icPIdeal, ".",
-     SeeAlso => {"icPIdeal", "integralClosure", "isNormal"},
+     SeeAlso => {"icPIdeal", "integralClosure", (isNormal, Ring)},
      Caveat => "The interface to this algorithm will likely change eventually"
 --     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
 }

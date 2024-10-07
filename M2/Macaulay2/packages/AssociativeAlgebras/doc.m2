@@ -227,7 +227,7 @@ doc ///
       Text
          The normal elements in degree 2 are x^2, y^2 and z^2. The basis
 	 calculation shows y^2 and z^2 are normal forms in B. The normalElements
-	 method first checks all basis monomials using @ TO isNormal @. In this case
+	 method first checks all basis monomials using @ TO (isNormal, RingElement)@. In this case
 	 it finds y^2 and z^2 are normal and returns this information. However,  
 	 x^2 is not a normal form expression. The normal form of x^2 is y*z+z*y. In 
 	 the second phase of the calculation, the method returns generators of the

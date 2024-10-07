@@ -1142,7 +1142,7 @@ doc ///
       
       In the following example, we find the Rees Algebra of a monomial curve
       singularity.  We also demonstrate the use of @TO reesIdeal@, @TO symmetricKernel@,
-      @TO isLinearType@, @TO normalCone@, @TO associatedGradedRing@, @TO specialFiberIdeal@.
+      @TO isLinearType@, @TO (normalCone, Ideal, RingElement)@, @TO associatedGradedRing@, @TO specialFiberIdeal@.
     Example
       S = QQ[x_0..x_3]
       i = monomialCurveIdeal(S,{3,7,8})      
@@ -1257,11 +1257,11 @@ doc ///
 
 doc ///
   Key
-    (normalCone, Ideal, RingElement)
-    (normalCone, Ideal)
     associatedGradedRing
     (associatedGradedRing, Ideal)
     (associatedGradedRing, Ideal, RingElement)
+    (normalCone, Ideal)
+    (normalCone, Ideal, RingElement)
   Headline
     The normal cone of a subscheme
   Usage
@@ -1284,8 +1284,7 @@ doc ///
       isomorphic to $S/IS$, which is how it is computed here.
   SeeAlso
     reesAlgebra
-    associatedGradedRing
-    normalCone
+    "MultiplicitySequence::grGr"
 ///
 
 
@@ -1928,6 +1927,8 @@ doc ///
     [reesIdeal, Variable]
     [reesAlgebra, Variable]
     [associatedGradedRing, Variable]
+    [(normalCone, Ideal), Variable]
+    [(normalCone, Ideal, RingElement), Variable]
     [specialFiberIdeal, Variable]
     [specialFiber, Variable]
     [distinguished, Variable]
@@ -1986,6 +1987,8 @@ doc ///
     [isReduction, Strategy]    	  
     [multiplicity, Strategy]
     [associatedGradedRing, Strategy]
+    [(normalCone, Ideal), Strategy]
+    [(normalCone, Ideal, RingElement), Strategy]
     [specialFiberIdeal, Strategy]    	  
     [specialFiber, Strategy]    	  
     [analyticSpread, Strategy]    	  
@@ -2011,7 +2014,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2030,6 +2033,8 @@ doc ///
     [specialFiberIdeal, PairLimit]
     [multiplicity, PairLimit]
     [associatedGradedRing, PairLimit]
+    [(normalCone, Ideal), PairLimit]
+    [(normalCone, Ideal, RingElement), PairLimit]
     [isReduction, PairLimit]
     [isLinearType,PairLimit]
     [reesAlgebra,PairLimit]
@@ -2048,7 +2053,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2067,6 +2072,8 @@ doc ///
     [specialFiberIdeal, MinimalGenerators]
     [multiplicity, MinimalGenerators]
     [associatedGradedRing, MinimalGenerators]
+    [(normalCone, Ideal), MinimalGenerators]
+    [(normalCone, Ideal, RingElement), MinimalGenerators]
     [isReduction, MinimalGenerators]
     [isLinearType,MinimalGenerators]
     [reesAlgebra,MinimalGenerators]
@@ -2086,7 +2093,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2104,6 +2111,8 @@ doc ///
     [specialFiber, BasisElementLimit]
     [multiplicity, BasisElementLimit]
     [associatedGradedRing, BasisElementLimit]
+    [(normalCone, Ideal), BasisElementLimit]
+    [(normalCone, Ideal, RingElement), BasisElementLimit]
     [isReduction, BasisElementLimit]
     [isLinearType,BasisElementLimit]
     [reesAlgebra,BasisElementLimit]
@@ -2123,7 +2132,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2141,6 +2150,8 @@ doc ///
     [specialFiber, DegreeLimit]
     [multiplicity, DegreeLimit]
     [associatedGradedRing, DegreeLimit]
+    [(normalCone, Ideal), DegreeLimit]
+    [(normalCone, Ideal, RingElement), DegreeLimit]
     [isReduction, DegreeLimit]
     [isLinearType,DegreeLimit]
     [reesAlgebra,DegreeLimit]
@@ -2162,7 +2173,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
