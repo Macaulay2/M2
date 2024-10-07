@@ -11,6 +11,8 @@
 --  - highlight.js
 
 -------------------------------------------------------------------------------
+exportFrom_Core "sortBy"
+
 -- TODO: Move these two elsewhere:
 Function and Function := (f, g) -> s -> f s and g s
 Function or  Function := (f, g) -> s -> f s or  g s
@@ -36,7 +38,7 @@ okay(String, Symbol)  := (name, pkg) -> length name > 1 and isAlphaNumeric name
 -- Get a list of all symbols visible just after loading preloaded packages
 allPkgNames := separate(" ", version#"packages") | {"Core"}
 loadedPkgNames := Core#"preloaded packages" | {"Core", "Text", "Parsing", "SimpleDoc"}
-symbols := unique sort join(
+symbols := unique (sortBy ascii @@ first) join(
     apply(allPkgNames, pkgname -> (pkgname, symbol Core)),
     flatten apply(loadedPkgNames, pkgname -> (
 	    pkg := needsPackage pkgname;
