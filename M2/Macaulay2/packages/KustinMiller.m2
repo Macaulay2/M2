@@ -311,7 +311,7 @@ kustinMillerComplex(Ideal,Ideal,PolynomialRing):=opt->(I,J,T0)->(
         if ring I =!= ring J then error "expected the rings of the first and second argument to be the same";
         if not isSubset(I,J) then error "expected first argument to be an ideal contained in the second";
         if codim(I) != -1+codim(J) then error "expected an unprojection locus of codimension 1";
-        kustinMillerComplex(res I,res J,T0,opt))
+        kustinMillerComplex(freeResolution I,freeResolution J,T0,opt))
 
 
 kustinMillerComplex(Complex,Complex,PolynomialRing):=opt->(cI0,cJ0,T0)->(
@@ -839,9 +839,9 @@ doc ///
    Example
      R = QQ[x_1..x_4,z_1..z_4]
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-     betti res I
+     betti freeResolution I
      J = ideal (z_1..z_4)
-     betti res J
+     betti freeResolution J
      cc=kustinMillerComplex(I,J,QQ[T]);
      S=ring cc
      cc
@@ -927,7 +927,7 @@ doc ///
      C=delta(4,R)
      fVector C
      I=ideal C
-     betti res I
+     betti freeResolution I
 ///
 
 
@@ -1020,7 +1020,7 @@ doc ///
       A=matrix {{0,x_1,x_2,x_3,x_4},{-x_1,0,0,z_1,z_2},{-x_2,0,0,z_3,z_4},{-x_3,-z_1,-z_3,0,0},{-x_4,-z_2,-z_4,0,0}}
       resBE A
   SeeAlso
-     res
+     freeResolution
 ///
 
 
@@ -1048,12 +1048,12 @@ doc ///
    Example
      R = QQ[x_1..x_4,z_1..z_4]
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-     cc= res I
+     cc= freeResolution I
      isExactRes cc
      isExactRes(cc[1])
      isExactRes(cc[-1])
   SeeAlso
-    res
+    freeResolution
 ///
 
 
@@ -1075,7 +1075,7 @@ doc ///
 
    Example
      R=QQ[x_1..x_4,z_1];
-     cc=res ideal(x_4*x_3, -x_1*x_2+x_4*z_1);
+     cc=freeResolution ideal(x_4*x_3, -x_1*x_2+x_4*z_1);
      cs=substitute(cc,QQ[x_1..x_4])
      cs.dd_1
   SeeAlso
@@ -1110,13 +1110,13 @@ doc ///
    Example
      R=QQ[x_0..x_4];
      I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
-     betti res I
+     betti freeResolution I
      D=simplicialComplex I 
      fc=facets(D) / face
      S=QQ[x_5]
      D5=stellarSubdivision(D,fc#0,S)
      I5=ideal D5
-     betti res I5
+     betti freeResolution I5
    Text
 
    Example
@@ -1125,7 +1125,7 @@ doc ///
      D=simplicialComplex I
      S=QQ[x_7]
      Dsigma=stellarSubdivision(D,face {x_1,x_2,x_3},S)
-     betti res ideal Dsigma
+     betti freeResolution ideal Dsigma
   SeeAlso
      simplicialComplex
      facets
@@ -1171,7 +1171,7 @@ assert(pfaffians(4,A)==ideal cc.dd_1);
 ///TEST
      R = QQ[x_1..x_4,z_1..z_4];
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
-     cc= res I;
+     cc= freeResolution I;
 assert(isExactRes cc);
 C=complex presentation QQ^1;
 assert(isExactRes C);
@@ -1202,10 +1202,10 @@ TEST ///
      C26=delta(2,K[z,x_2..x_6])
      R=K[z,x_1..x_7]
      J=sub(ideal C26,R)
-     c26=res J;
+     c26=freeResolution J;
      C47=delta(4,K[x_1..x_7])
      I=sub(ideal C47,R)
-     c47=res I;
+     c47=freeResolution I;
      cc=kustinMillerComplex(c47,c26,K[x_8]);
 assert(rank(cc_1)==16);
 assert(rank(cc_2)==30);
@@ -1218,10 +1218,10 @@ TEST ///
      C26=delta(2,K[z,x_2..x_6])
      R=K[z,x_1..x_7]
      J=sub(ideal C26,R)
-     c26=res J;
+     c26=freeResolution J;
      C47=delta(4,K[x_1..x_7])
      I=sub(ideal C47,R)
-     c47=res I;
+     c47=freeResolution I;
      cc=kustinMillerComplex(c47,c26,K[x_8]);
      R'=K[x_1..x_8];
      C48=delta(4,R');
@@ -1234,10 +1234,10 @@ assert(I48==sub(ideal cc.dd_1,R'))
 TEST ///
      R = QQ[x_1..x_4,z_1..z_4]
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-     cI=res I
+     cI=freeResolution I
      betti cI
      J = ideal (z_1..z_4)
-     cJ=res J
+     cJ=freeResolution J
      betti cJ
      cc=kustinMillerComplex(cI,cJ,QQ[T]);
 assert(rank(cc_1)==9);
@@ -1561,9 +1561,9 @@ doc ///
     I=ideal(x_1*x_2*x_3)
     Ilink=I:ideal(x_1*x_2)
     J=Ilink+ideal(z_1)
-    cI=res I
+    cI=freeResolution I
     betti cI
-    cJ=res J
+    cJ=freeResolution J
     betti cJ
     cc=kustinMillerComplex(cI,cJ,K[x_4]);
     S=ring cc
@@ -1586,9 +1586,9 @@ doc ///
     I=ideal(x_1*x_2*x_3,x_4*x_5*x_6)
     Ilink=I:ideal(x_1*x_2*x_4*x_6)
     J=Ilink+ideal(z_1*z_2*z_3)
-    cI=res I
+    cI=freeResolution I
     betti cI
-    cJ=res J
+    cJ=freeResolution J
     betti cJ
     cc=kustinMillerComplex(cI,cJ,K[x_7]);
     S=ring cc
@@ -1630,9 +1630,9 @@ doc ///
     F=face {x_1,x_2}
     Ilink=I:ideal(product vertices F)
     J=Ilink+ideal(z_1)
-    cI=res I
+    cI=freeResolution I
     betti cI
-    cJ=res J
+    cJ=freeResolution J
     betti cJ
     cc=kustinMillerComplex(cI,cJ,K[x_6]);
     S=ring cc
@@ -1651,9 +1651,9 @@ doc ///
     I=ideal(x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_5,x_5*x_1)
     Ilink=I:ideal(x_1*x_3)
     J=Ilink+ideal(z_1)
-    cI=res I
+    cI=freeResolution I
     betti cI
-    cJ=res J
+    cJ=freeResolution J
     betti cJ
     cc=kustinMillerComplex(cI,cJ,K[x_10]);
     betti cc
@@ -1666,9 +1666,9 @@ doc ///
     I=monomialIdeal(x_1*x_2,x_3*x_4,x_5*x_6,x_7*x_8*x_9)
     Ilink=I:ideal(x_1*x_3)
     J=Ilink+ideal(z_1)
-    cI=res I
+    cI=freeResolution I
     betti cI
-    cJ=res J
+    cJ=freeResolution J
     betti cJ
     cc=kustinMillerComplex(cI,cJ,K[x_10]);
     S=ring cc;
@@ -1690,7 +1690,7 @@ doc ///
     C'===simplicialComplex I'
   SeeAlso
     kustinMillerComplex
-    res
+    freeResolution
     betti
 ///
 
@@ -1718,11 +1718,11 @@ doc ///
      C26=delta(2,K[z,x_2..x_6])
      R=K[z,x_1..x_7]
      J=sub(ideal C26,R)
-     c26=res J;
+     c26=freeResolution J;
      betti c26
      C47=delta(4,K[x_1..x_7])
      I=sub(ideal C47,R)
-     c47=res I;
+     c47=freeResolution I;
      betti c47
      cc=kustinMillerComplex(c47,c26,K[x_8]);
      betti cc
@@ -1736,7 +1736,7 @@ doc ///
      R'=K[x_1..x_8];
      C48=delta(4,R')
      I48=ideal C48
-     betti res I48
+     betti freeResolution I48
      I48==sub(ideal cc.dd_1,R')
    Text
 
@@ -1748,7 +1748,7 @@ doc ///
      print cc.dd_3
   SeeAlso
     kustinMillerComplex
-    res
+    freeResolution
     betti
 ///
 
@@ -1774,7 +1774,7 @@ doc ///
      betti(cI=resBE b2)
      b1 = cI.dd_1
      J = ideal (z_1..z_4);
-     betti(cJ=res J)
+     betti(cJ=freeResolution J)
      betti(cU=kustinMillerComplex(cI,cJ,QQ[T]))
      S=ring cU
      isExactRes cU
@@ -1784,7 +1784,7 @@ doc ///
      print cU.dd_4
   SeeAlso
     kustinMillerComplex
-    res
+    freeResolution
     betti
     "Jerry"
 ///
@@ -1807,10 +1807,10 @@ doc ///
    Example
      R = QQ [x_1..x_3, z_1..z_4]
      I = ideal(-z_2*z_3+z_1*x_1,-z_2*z_4+z_1*x_2,-z_3*z_4+z_1*x_3,-z_3*x_2+z_2*x_3,z_4*x_1-z_3*x_2)
-     cI=res I
+     cI=freeResolution I
      betti cI
      J = ideal (z_1..z_4)
-     cJ=res J
+     cJ=freeResolution J
      betti cJ
      cc=kustinMillerComplex(cI,cJ,QQ[T]);
      S=ring cc
@@ -1823,7 +1823,7 @@ doc ///
      print cc.dd_4
   SeeAlso
     kustinMillerComplex
-    res
+    freeResolution
     betti
     "Tom"
 ///
