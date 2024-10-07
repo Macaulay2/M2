@@ -117,7 +117,9 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
      else error (opts.Strategy | " is not a valid argument for' Strategy' option")
      )
 
-GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
+GF(ZZ,ZZ) := GaloisField => (
+    memo := new CacheTable;
+    opts -> (p,n) -> memo#(p, n, opts) ??= (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      if n == 1 and isMember(opts.Strategy, {"Old", "Aring"})
@@ -126,7 +128,7 @@ GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      primelem := findGalois(p,n,opts);
      GF(ring primelem, PrimitiveElement=>primelem, Strategy=>opts.Strategy, 
          SizeLimit=>opts.SizeLimit, Variable=>opts.Variable)
-     )
+     ))
 
 --     x = if x === null then getSymbol "a" else baseName x;
 --     R := (ZZ/p) (monoid [x]);
