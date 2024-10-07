@@ -130,7 +130,6 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
-            -DWITH_PYTHON=ON \
             --debug-trycompile
 
       - name: Build libraries using Ninja
@@ -161,7 +160,7 @@ jobs:
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
           export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
             -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
-          ../../configure --enable-download --with-python --with-system-gc
+          ../../configure --enable-download --with-system-gc
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
