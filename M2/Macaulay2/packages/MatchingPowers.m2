@@ -189,6 +189,7 @@ matchingProduct (Ideal,Ideal) := (I,J) -> (
                    if (set support u)*(set support v)===set{} then l=append(l,u*v);
               );
         );
+        if ideal(l)==ideal(0_ZZ) then return ideal(0_S);
         trim ideal(l)
 );
 
