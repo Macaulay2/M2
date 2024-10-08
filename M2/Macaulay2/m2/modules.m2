@@ -132,6 +132,7 @@ lift(Vector,Number) := Vector => o -> (v,S) -> vector (lift(v#0,S))
 - Vector := Vector => v -> new class v from {-v#0}
 Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
 Vector * Number := Vector * RingElement := Vector => (v,r) -> vector(v#0 * r)
+Vector / Number := Vector / RingElement := Vector => (v,r) -> vector(v#0 / r)
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
 Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)

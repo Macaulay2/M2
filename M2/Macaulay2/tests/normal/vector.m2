@@ -23,3 +23,7 @@ assert Equation(2 * v, vector(N, {2, 4, 6}))
 assert Equation(x * v, vector map(N, R^{-1}, {{x}, {2*x}, {3*x}}))
 assert Equation(v * 2, vector(N, {2, 4, 6}))
 assert Equation(v * x, vector map(N, R^{-1}, {{x}, {2*x}, {3*x}}))
+assert Equation(v / 2, vector(N, {1/2, 1, 3/2}))
+v = vector {x, y, z}
+kk = frac R
+assert Equation(v / x, vector map(kk^3, kk^{-1}, {{1}, {y/x}, {z/x}}))
