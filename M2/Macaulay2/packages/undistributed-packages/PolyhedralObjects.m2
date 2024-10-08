@@ -93,7 +93,6 @@ doc ///
 
 			If the {\tt PolyhedralObject} is obtained as output of the software Gfan via the gfanInterface package, then we store their own string representation ({\tt "GfanFileRawString"}), along with parsed blocks ({\tt "GfanFileRawBlocks"}) and a separated header ({\tt "GfanFileHeader"}).  The name of the Gfan file is stored in {\tt "GfanFileName"}.
 
-		Example
 	SeeAlso
 		Fan
 	        Cone
@@ -107,7 +106,6 @@ doc ///
 			A {\tt Fan} is a type of @TO "PolymakeObject"@ which stores various information
 			about a polyhedral fan. A {\tt Fan} is structured as @TO "HashTable"@ with strings for	keys that point to the stored information.
 
-		Example
 		Text
 			Most of the keys refer to polyhedral information, while the keys starting with {\tt"Gfan"} refers to parsing information.
 
@@ -125,7 +123,6 @@ doc ///
 			about a polyhedral cone. A {\tt Cone} is structured as @TO "Hashtable"@ with strings for
 			keys that point to the stored information.
 
-		Example
 		Text
 			Most of the keys refer to polyhedral information, while the keys starting with {\tt"Gfan"} refers to parsing information.
 
