@@ -6,7 +6,7 @@
 
 undocumented {(liftable, Number, Number), (liftable, Number, RingElement), 
      (liftable, RingElement, Number), (liftable, RingElement, RingElement),
-     (liftable, QQ, QQ), (liftable, QQ, ZZ),
+     (liftable, QQ, ZZ),
      (lift, Matrix, InexactNumber),
      (lift,Matrix,InexactNumber'),(lift, Number, InexactNumber),
      (liftable, Number, InexactNumber),

@@ -63,6 +63,29 @@ assert( rawLift(raw C, f) == raw C_0 )
 --E = frac D
 --F = GF(2,5)
 
+-- more sophisticated, m2 level, promotes
+R=QQ[x]; S=R[y];
+a=promote(1/x,frac S)
+assert(lift(a,frac R) == 1/x)
+assert(1/x + 1/y == a + 1/y)
+assert(y/x == a * y)
+assert(promote((frac R)^{1,2},frac S)==(frac S)^{{1,0},{2,0}})
+T=R**QQ[z];
+assert(promote(x_R,T) == x_T)
+assert(lift(x_T,R) == x_R)
+assert(lift(z,R,Verify=>false) === null)
+
+R=QQ[x_1,x_2]
+R'=QQ[e_1,e_2,Degrees=>{1,2}]
+f=map(R,R',{x_1+x_2,x_1*x_2})
+setupPromote f
+assert(e_2==x_1*x_2)
+assert(map(R,R') === f)
+
+R=QQ[u]; S=QQ[v];
+setupPromote map(R,S,{u^2},DegreeMap=>i->2*i)
+assert(isHomogeneous map(R,S))
+assert(promote(S^{1,2},R)==R^{2,4})
 
 end
 -- Local Variables:
