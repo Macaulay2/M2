@@ -2009,10 +2009,12 @@ TEST ///
   restart
   needsPackage "Complexes"
 *-
-
   S = ZZ/101[a..d, Degrees=>{2:{1,0},2:{0,1}}]
   B = ideal(a,b) * ideal(c,d)
-  Ext^1(B, S)
+  E = Ext^1(B, S)
+  C = yonedaExtension map(E, , matrix random cover E)
+  assert(C_0 == module B)
+  assert(C_2 == module S)
   F = random({1,2}, S)
   f = map(S^1, S^{-degree F}, {{F}})
   assert isHomogeneous f

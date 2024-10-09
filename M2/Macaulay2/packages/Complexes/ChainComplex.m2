@@ -1155,7 +1155,7 @@ yonedaExtension Matrix := Complex => f -> (
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
     -- if g has a non-zero degree, we must twist the target to preserve homogeneity
     gdegree := degree g;
-    g = map(N ** (ring g)^gdegree, source g, g);
+    g = map(N ** (ring g)^{gdegree}, source g, g);
     if d <= 0 then error "Yoneda extension only defined for Ext^d module for d at least 1";
     h := dd^FM_d || g;
     P := coker h; -- FM_d --> FM_(d-1) ++ N --> P --> 0
