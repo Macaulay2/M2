@@ -274,3 +274,5 @@ MultigradedBGG
 MultigradedImplicitization
 Msolve
 SCMAlgebras
+HomologicalShiftIdeals
+MatchingPowers
