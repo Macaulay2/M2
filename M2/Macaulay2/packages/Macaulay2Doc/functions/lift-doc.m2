@@ -122,5 +122,5 @@ document {
      .0001^QQ
      .0001_QQ
      ///,
-     SeeAlso => {baseRings,liftable,promote}
+     SeeAlso => {baseRings,liftable,promote,setupLift}
      }
