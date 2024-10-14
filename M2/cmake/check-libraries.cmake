@@ -154,7 +154,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 
 set(LIBRARY_OPTIONS
   Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
-  GTest GLPK Givaro FFLAS_FFPACK)
+  GTest GLPK Givaro FFLAS_FFPACK Normaliz)
 
 ###############################################################################
 ## Optional libraries:
