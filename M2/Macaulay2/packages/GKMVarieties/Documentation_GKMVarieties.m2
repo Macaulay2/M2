@@ -208,7 +208,7 @@ doc ///
 
 		Text
 			Similarly as in type $B$, Spin groups are not implemented, so the two connected components of 
-			$SOGr(4,8)$ need be separatedly created in the following way.
+			$SOGr(4,8)$ need be separately created in the following way.
 
 		Example
 			SOGr48odd = generalizedFlagVariety("D",4,{3,3})

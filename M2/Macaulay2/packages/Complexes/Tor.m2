@@ -185,7 +185,7 @@ TEST ///
   restart
   needsPackage "Complexes"
 *-
-  -- for quotient rings, some methods reuqire LengthLimit.
+  -- for quotient rings, some methods require LengthLimit.
   S = ZZ/101[a..e]/(e^2);
   I = ideal(c^3-b*d^2, b*c-a*d)
   J = ideal(a*c^2-b^2*d, b^3-a^2*c)

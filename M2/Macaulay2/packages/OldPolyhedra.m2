@@ -5,7 +5,7 @@
 --
 -- PURPOSE: Computations with convex polyhedra 
 -- PROGRAMMER : René Birkner 
--- UPDATE HISTORY : April 2008, December 2008, March 2009, Juli 2009,
+-- UPDATE HISTORY : April 2008, December 2008, March 2009, July 2009,
 --     	    	    September 2009, October 2009, January 2010
 ---------------------------------------------------------------------------
 newPackage("OldPolyhedra",

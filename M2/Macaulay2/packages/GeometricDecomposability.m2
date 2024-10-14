@@ -191,7 +191,7 @@ initialYForms(Ideal, RingElement) := opts -> (I, y) -> (
                 return sub(ideal listOfInitYForms, givenRing);
                 );
 
-        -- if we don't have a universal Gröbner bais
+        -- if we don't have a universal Gröbner basis
         inyFormIdeal := ideal leadTerm(1,I);
         return sub(inyFormIdeal, givenRing);
         )
