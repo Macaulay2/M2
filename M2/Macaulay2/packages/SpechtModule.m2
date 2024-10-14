@@ -2244,7 +2244,7 @@ multidoc ///
     	    y:YoungTableau
     	Outputs
     	    :List
-		a dubly nested list with the permutations in the row stabilizer
+		a doubly nested list with the permutations in the row stabilizer
     	Description
 	    Text
     	    	The row stabilizer of a tableau is the group of the permutations that fixes the rows of

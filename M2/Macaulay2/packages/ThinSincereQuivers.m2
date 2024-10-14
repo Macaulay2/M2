@@ -2833,7 +2833,7 @@ multidoc ///
         Description
             Text
                 This method uses the {\tt interiorVector} method for a Cone from the {\tt Polyhedra}
-                package to generate a single internal poin for each of the cones in the input list {\tt QCS}.
+                package to generate a single internal point for each of the cones in the input list {\tt QCS}.
             Example
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
                 CS = coneSystem Q;

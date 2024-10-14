@@ -245,7 +245,7 @@ doc ///
 --   Headline
 --     headline
 --   Usage
---     functio(input)
+--     function(input)
 --   Inputs
 --     input: type of the input
 --       some text
