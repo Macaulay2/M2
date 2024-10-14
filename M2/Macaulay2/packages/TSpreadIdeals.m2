@@ -727,7 +727,7 @@ Key => {tNextMon,(tNextMon,RingElement,ZZ)},
 Headline => "give the t-lex successor of a given t-spread monomial",
 Usage => "tNextMon(u,t)",
 Inputs => {"u" => {"a t-spread monomial of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {RingElement => {"the greatest ", TT "t", "-spread monomial less than ", TT "u", ", with respect to lexcografic order"}},
 "the function ", TT "tNextMon(u,t)", " gives the ", TT "t" , "-lex successor of ", TT "t", ", that is, the greatest ", TT "t" , "-spread monomial less than ", , TT "u", " with respect to ", TEX///$>_\mathrm{slex}.$///,BR{},
@@ -748,7 +748,7 @@ Headline => "give the last t-spread monomial of the Borel shadow a given t-sprea
 Usage => "tLastMon(u,gap,t)",
 Inputs => {"u" => {"a t-spread monomial of a polynomial ring"},
            "gap" => {"a positive integer representing the difference between the degrees"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {RingElement => {"the smallest ", TT "t", "-spread monomial of the Borel shadow of ", TT "u", ", with respect to lexcografic order"}},
 "the function ", TT "tLastMon(u,gap,t)", " gives the smallest ", TT "t" , "-spread monomials of the Borel shadow iterated ", TT "gap", "times of ", TT "u", ", that is, the smallest monomial of ", TEX///$B_\texttt{t}\{\texttt{u}\}$///, ", with respect to ", TEX///$>_\mathrm{slex}.$///,BR{},
@@ -769,7 +769,7 @@ Headline => "give the t-lex segment with given extremes",
 Usage => "tLexSeg(v,u,t)",
 Inputs => {"v" => {"a t-spread monomial of a polynomial ring"},
            "u" => {"a t-spread monomial of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the set of all the ", TT "t", "-spread monomials smaller than ", TT "v", " and greater than ", TT "u", ", with respect to lexcografic order"}},
 "the function ", TT "tLexSeg(v,u,t)", " gives the ", TT "t" , "-lex segment defined by ", TT "v", " and ", TT "u", ", that is, the set of all the ", TT "t" , "-spread monomials smaller than ", , TT "v", " and greater than ", TT "u", ", with respect to ", TEX///$>_\mathrm{slex}.$///,BR{},
@@ -805,7 +805,7 @@ Key => {tLexMon,(tLexMon,RingElement,ZZ)},
 Headline => "give the smallest initial t-lex segment containing a given monomial",
 Usage => "tLexMon(u,t)",
 Inputs => {"u" => {"a t-spread monomial of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the set of all the ", TT "t", "-spread monomials greater than ", TT "u", ", with respect to lexcografic order"}},
 "the function ", TT "tLexMon(u,t)", " gives the initial ", TT "t" , "-lex segment defined by ", TT "u", ", that is, the set of all the ", TT "t" , "-spread monomials greater than ", TT "u", ", with respect to ", TEX///$>_\mathrm{slex}.$///,BR{},
@@ -824,7 +824,7 @@ Key => {countTLexMon,(countTLexMon,RingElement,ZZ)},
 Headline => "give the cardinality of the smallest initial t-lex segment containing a given monomial",
 Usage => "countTLexMon(u,t)",
 Inputs => {"u" => {"a t-spread monomial of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {ZZ => {"the number of all the ", TT "t", "-spread monomials greater than ", TT "u", ", with respect to lexcografic order"}},
 "the function ", TT "countTLexMon(u,t)", " gives the cardinality of ", TEX///$L_t\{u\}$///, ", the initial ", TT "t" , "-lex segment defined by ", TT "u", ", that is, the number of all the ", TT "t" , "-spread monomials greater than ", TT "u", ", with respect to ", TEX///$>_\mathrm{slex}.$///,BR{},
@@ -846,7 +846,7 @@ Headline => "give the Veronese set of t-spread monomials of a given degree",
 Usage => "tVeroneseSet(S,d,t)",
 Inputs => {"S" => {"a polynomial ring"},
            "d" => {"a nonnegative integer that identifies the degree of the monomials"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the set of all the ", TT "t", "-spread monomials of ", TT "S", " of degree ", TT "d"}},
 "the function ", TT "tVeroneseSet(S,d,t)", " gives the Veronese set of ", TT "t" , "-spread monomials of degree ", TT "d", ", that is, the set of all the ", TT "t" , "-spread monomials of ", TT "S", " of degree ", TT "d",
@@ -866,7 +866,7 @@ Headline => "give the Veronese ideal of t-spread monomials of a given degree",
 Usage => "tVeroneseIdeal(S,d,t)",
 Inputs => {"S" => {"a polynomial ring"},
            "d" => {"a nonnegative integer that identifies the degree of the monomials"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Ideal => {"the ideal generated by all the ", TT "t", "-spread monomials of ", TT "S", " of degree ", TT "d"}},
 "the function ", TT "tVeroneseIdeal(S,d,t)", " returns the Veronese ideal of ", TT "t" , "-spread monomials of degree ", TT "d", ", that is, the ideal generated by all the ", TT "t" , "-spread monomials of ", TT "S", " of degree ", TT "d",
@@ -885,7 +885,7 @@ Key => {tPascalIdeal,(tPascalIdeal,Ring,ZZ)},
 Headline => "give the Pascal ideal of t-spread monomials of a given polynomial ring",
 Usage => "tPascalIdeal(S,t)",
 Inputs => {"S" => {"a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Ideal => {"the Pascal ideal of ", TT "t", "-spread monomials of ", TT "S"}},
 "the function ", TT "tPascalIdeal(S,t)", " returns the Pascal ideal of ", TT "t" , "-spread monomials of ", TT "S", ", that is, the ideal generated by the minimum number of ", TT "t" , "-spread monomials of ", TT "S", " with the greatest possible degrees and such that the supports of the generators are pairwise disjoint.",
@@ -902,7 +902,7 @@ Key => {tSpreadList,(tSpreadList,List,ZZ)},
 Headline => "give the set of all t-spread monomials of a given list",
 Usage => "tSpreadList(l,t)",
 Inputs => {"l" => {"a list of t-spread monomials of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the set of all the ", TT "t", "-spread monomials belonging to ", TT "l"}},
 "the function ", TT "tSpreadList(l,t)", " gives the list of all the ", TT "t" , "-spread monomials ", TT "l", ".",BR{},
@@ -923,7 +923,7 @@ Key => {tSpreadIdeal,(tSpreadIdeal,Ideal,ZZ)},
 Headline => "give the ideal generated by the t-spread monomials which are among the generators of a given ideal",
 Usage => "tSpreadIdeal(I,t)",
 Inputs => {"I" => {"a graded ideal of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Ideal => {"the ideal generated by all the ", TT "t", "-spread monomials belonging to the generator set of the ideal ", TT "I"}},
 "the function ", TT "tSpreadIdeal(I,t)", " gives the ideal generated by all the ", TT "t" , "-spread monomials which are among the generators of the ideal ", TT "I", ".",BR{},
@@ -946,7 +946,7 @@ Usage => "isTSpread(u,t), isTSpread(l,t) or isTSpread(I,t)",
 Inputs => {"u" => {"a monomial of a polynomial ring"},
            "l" => {"a list of monomials of a polynomial ring"},
            "I" => {"a monomial ideal of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Boolean => {"whether a given monomial ", TT "u", ", a list of monomials " , TT "l", " or a monomial ideal ", TT "I", " is ", TT "t", "-spread"}},
 "the function ", TT "isTSpread(-,t)", " has three overloading changing for the first parameter. It checks whether a given monomial ", TT "u", ", a list of monomials ", TT "l", " or a monomial ideal ", TT "I", " is ", TT "t" , "-spread.",BR{},
@@ -969,7 +969,7 @@ Headline => "give the t-spread shadow of a given t-spread monomial or a given li
 Usage => "tShadow(u,t)",
 Inputs => {"u" => {"a t-spread monomial of a polynomial ring"},
            "l" => {"a list of t-spread monomials of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the list of all the ", TT "t", "-spread monomial of the shadow of the ", TT "t", "-spread monomial ", TT "u", " or of the list ", TT "l"}},
 "the function ", TT "tShadow(u,t)", " gives the ", TT "t" , "-spread shadow of ", TT "u", ", that is, the set of all the ", TT "t" , "-spread monomials of the shadow of ", TT "u", ". The overloading function ", TT "tShadow(l,t)", " gives the ", TT "t" , "-spread shadow of ", TT "l", ", that is, the set of all the ", TT "t" , "-spread monomials of the shadow of each ", TT "t", "-spread monomial belonging to ", TT "l", ".",BR{},
@@ -994,7 +994,7 @@ Usage => "tMacaulayExpansion(a,n,d,t)",
 Inputs => {"a" => {"a positive integer to be expanded"},
            "n" => {"a positive integer that identifies the number of indeterminates"},
            "d" => {"a positive integer that identifies the degree"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"pairs of positive integers representing the ", TT "d", "-th (shifted) t-Macaulay expansion of ", TT "a", " with a given ", TT "n"}},
 "Given four positive integers ", TT "(a,n,d,t)", " there is a unique expression of ", TT "a", " as a sum of binomials ", TEX///$a=\binom{a_d}{d} + \binom{a_{d-1}}{d-1} + \cdots + \binom{a_j}{j}.$///, " where ", TEX///$a_i > a_{i-1} > \cdots > a_j > j >= 1.$///,BR{},
@@ -1014,7 +1014,7 @@ Key => {fTVector,(fTVector,Ideal,ZZ)},
 Headline => "compute the ft-vector of a given t-spread ideal of a polynomial ring",
 Usage => "fTVector(I,t)",
 Inputs => {"I" => {"a t-spread ideal of polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"a list of nonnegative integers representing the ft-vector of the t-spread ideal ", TT "I"}},
 "Let ", TT "I", " be a ", TT "t", "-spread ideal of the polynomial ring ", TEX///$S=K[x_1,\ldots,x_n]$///, " One can define the ", TEX///$f_\texttt{t}$///, "-vector of ", TT "I", " as ", TEX///$f_\texttt{t}(\texttt{I})=\left( f_{\texttt{t},-1}(\texttt{I}), f_{\texttt{t},0}(\texttt{I}), \ldots, f_{\texttt{t},j}(\texttt{I}), \ldots \right),$///, BR{},
@@ -1035,7 +1035,7 @@ Headline => "whether a given list of nonnegative integers is the ft-vector of a 
 Usage => "isFTVector(S,f,t)",
 Inputs => {"S" => {"a polynomial ring"},
            "f" => {"a list of nonnegative integers"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Boolean => {"whether the list ", TT "f", " represents the ft-vector of a t-strongly stable ideal of ", TT "S"}},
 "Let ", TEX///$\texttt{S}=K[x_1,\ldots,x_n]$///, ", ", TEX///$\texttt{t}\geq 1$///, " and let ", TEX///$\texttt{f}=(f(0),f(1),\ldots,f(d),\ldots)$///, " be a sequence of nonnegative integers. The sequence ", TT "f", " is the ", TEX///$\texttt{f}_\texttt{t}$///, "-vector of a ", TT "t", "-spread ideal of ", TT "S", " if the following conditions hold:",BR{},
@@ -1060,7 +1060,7 @@ Usage => "tLexIdeal(S,f,t) or tLexIdeal(I,t)",
 Inputs => {"S" => {"a polynomial ring"},
            "f" => {"a sequence of nonnegative integers"},
            "I" => {"a t-strongly stable ideal of a polynomial ring"},
-          "t" => {"a positive integer that idenfies the t-spread contest"}
+          "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Ideal => {"the t-spread lex ideal with ft-vector ", TT "f", " or the t-spread lex ideal with the same ft-vector of ", TT "I"}},
 "It has been proved that if ", TT "I", " is a ", TT "t", "-strongly stable ideal then a unique ", TT "t", "-lex ideal with the same ", TEX///$f_\texttt{t}$///, "-vector of ", TT "I", " exists.", BR{},
@@ -1084,7 +1084,7 @@ Key => {isTLexIdeal,(isTLexIdeal,Ideal,ZZ)},
 Headline => "whether a given t-spread ideal is t-spread lex",
 Usage => "isTLexIdeal(I,t)",
 Inputs => {"I" => {"a t-spread ideal of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Boolean => {"whether the ideal ", TT "I", " is t-spread lex"}},
 "Let ", TEX///$\texttt{S}=K[x_1,\ldots,x_n]$///, ", ", TEX///$\texttt{t}\geq 1$///, " and a ", TT "t", "-spread ideal ", TT "I", ". Then ", TT "I", " is called a ", TT "t", "-lex ideal, if ", TEX///$[I_j]_t$///, " is a ", TT "t", "-spread lex set for all ", TEX///$j$///, ".",BR{},
@@ -1104,7 +1104,7 @@ Headline => "give the t-strongly stable segment with the given extremes",
 Usage => "tStronglyStableSeg(v,u,t)",
 Inputs => {"v" => {"a t-spread monomial of a polynomial ring"},
            "u" => {"a t-spread monomial of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the set of all the ", TT "t", "-spread monomials of the t-stromgly stable set generated by ", TT "u", " and smaller than ", TT "u", ", with respect to lexcografic order"}},
 "the function ", TT "tStronglyStableSeg(v,u,t)", " gives the set of ", TT "t" , "-spread monomials belonging to the strongly stable set generated by ", TT "u", " and smaller than ", TT "v", ", that is, ", TEX///$B_t[v,u]=\{w\in B_t\{u\}\ :\ v\geq_\mathrm{slex} w\}.$///,BR{},
@@ -1124,7 +1124,7 @@ Key => {isTStronglyStableSeg,(isTStronglyStableSeg,List,ZZ)},
 Headline => "whether the given list of t-spread monomials is a t-strongly stable segment",
 Usage => "isTStronglyStableSeg(l,t)",
 Inputs => {"l" => {"a list of t-spread monomials of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Boolean => {"whether the list ", TT "l", " of ", TT "t", "-spread monomials is a ", TT "t", "-strongly stable segment"}},
 "the function ", TT "isTStronglyStableSeg(l,t)", " is ", TT "true", " whether the list of monomials ", TT "l" , " is a ", TT "t", "-strongly stable segment, that is, the set of all the ", TT "t" , "-spread monomials belonging to the strongly stable set generated by the smallest monomial of ", TT "l", " and smaller than the greatest monomial of ", TT "l", ", with respect to ", TEX///$>_\mathrm{slex}.$///,BR{},
@@ -1145,7 +1145,7 @@ Key => {tStronglyStableMon,(tStronglyStableMon,RingElement,ZZ)},
 Headline => "give the t-strongly stable set generated by a given monomial",
 Usage => "tStronglyStableMon(u,t)",
 Inputs => {"u" => {"a t-spread monomial of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the list of all the ", TT "t", "-spread monomials of the ", TT "t", "-strongly stable set generated by ", TT "u"}},
 "the function ", TT "tStronglyStableMon(u,t)", " gives the list of all the monomials belonging to the ", TT "t" , "-strongly stable set generated by ", TT "u", ", that is, ", TEX///$B_t\{u\}.$///,BR{},
@@ -1165,7 +1165,7 @@ Key => {countTStronglyStableMon,(countTStronglyStableMon,RingElement,ZZ)},
 Headline => "give the cardinality of the t-strongly stable set generated by a given monomial",
 Usage => "countTStronglyStableMon(u,t)",
 Inputs => {"u" => {"a t-spread monomial of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {ZZ => {"the number of all the ", TT "t", "-spread monomials of the ", TT "t", "-strongly stable set generated by ", TT "u"}},
 "the function ", TT "countTStronglyStableMon(u,t)", " gives the cardinality of ", TEX///$B_t\{u\}$///, ", the ", TT "t" , "-strongly stable set generated by ", TT "u", ", that is, the number of all the ", TT "t" , "-spread monomials belonging to the smallest ", TT "t", "-strongly stable set containing ", TT "u",BR{},
@@ -1185,7 +1185,7 @@ Key => {tStronglyStableIdeal,(tStronglyStableIdeal,Ideal,ZZ)},
 Headline => "give the smallest t-strongly stable ideal containing a given t-spread ideal",
 Usage => "tStronglyStableIdeal(I,t)",
 Inputs => {"I" => {"a t-spread ideal of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the smallest ", TT "t", "-strongly stable ideal containing the ", TT "t", "-spread ideal ", TT "I"}},
 "the function ", TT "tStronglyStableIdeal(I,t)", " gives the smallest ", TT "t" , "-strongly stable ideal containing ", TT "I", ", that is, ", TEX///$B_t(G(I))$///, " where ", TEX///$G(I)$///, " is the minimal set of generators of ", TEX///$I$///, BR{},
@@ -1206,7 +1206,7 @@ Key => {isTStronglyStableIdeal,(isTStronglyStableIdeal,Ideal,ZZ)},
 Headline => "whether a given t-spread ideal is t-strongly stable",
 Usage => "isTStronglyStableIdeal(I,t)",
 Inputs => {"I" => {"a t-spread ideal of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {Boolean => {"whether the ideal ", TT "I", " is t-spread lex"}},
 "Let ", TEX///$\texttt{S}=K[x_1,\ldots,x_n]$///, ", ", TEX///$\texttt{t}\geq 1$///, " and a ", TT "t", "-spread ideal ", TT "I", ". Then ", TT "I", " is called a ", TT "t", "-strongly stable ideal, if ", TEX///$[I_j]_t$///, " is a ", TT "t", "-strongly stable set for all ", TEX///$j$///, ".",BR{},
@@ -1225,7 +1225,7 @@ Key => {tExtremalBettiCorners,(tExtremalBettiCorners,Ideal,ZZ)},
 Headline => "give the corners of the extremal Betti numbers of a given t-strongly stable ideal",
 Usage => "tExtremalBettiCorners(I,t)",
 Inputs => {"I" => {"a t-strongly stable graded ideal of a polynomial ring"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the corners of the extremal Betti numbers of the ideal ", TT "I"}},
 "let ", TEX///$S=K[x_1,\ldots,x_n]$///, " be a polynomial ring over a field ", TEX///$K$///," and let ", TT "I", " a graded ideal of ", TEX///$S$///,". A graded Betti number of the ideal ", TEX///$\beta_{k,k+\ell}(I)\ne 0$///, " is called extremal if ", TEX///$\beta_{i,i+j}(I)=0$///, " for all ", TEX///$i\ge k,j\ge\ell,(i,j)\ne(k,\ell).$///,BR{},
@@ -1248,7 +1248,7 @@ Usage => "tExtremalBettiMonomials(S,corners,a,t)",
 Inputs => {"S" => {"a polynomial ring"},
            "corners" => {"a list of pairs of positive integers"},
            "a" => {"a list of positive integers"},
-           "t" => {"a positive integer that idenfies the t-spread contest"}
+           "t" => {"a positive integer that identifies the t-spread contest"}
 },
 Outputs => {List => {"the t-spread basic monomials to obtain the extremal Betti numbers positioned in ", TT "cornes", " and with values ", TT "a"}},
 "let ", TEX///$S=K[x_1,\ldots,x_n]$///, " be a polynomial ring over a field ", TEX///$K$///," and let ", TT "I", " a graded ideal of ", TEX///$S$///,". A graded Betti number of the ideal ", TEX///$\beta_{k,k+\ell}(I)\ne 0$///, " is called extremal if ", TEX///$\beta_{i,i+j}(I)=0$///, " for all ", TEX///$i\ge k,j\ge\ell,(i,j)\ne(k,\ell).$///,BR{},
