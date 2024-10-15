@@ -95,12 +95,12 @@ Node
 Node
   Key
     cotangentSurjection
-   (cotangentSurjection, ProjectiveVariety)
+--   (cotangentSurjection, ProjectiveVariety)
 
 Node
   Key
     embeddedToAbstract
-   (embeddedToAbstract, ProjectiveVariety)
+--   (embeddedToAbstract, ProjectiveVariety)
 
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves

@@ -388,7 +388,7 @@ TEST ///
   assert(g === sheaf inducedMap(module source f, module ker f))
 ///
 
-TEST ///
+///
   -- tests for connectingExtMap
   K = ZZ/11
   S = K[x,y,z,t]
@@ -421,7 +421,7 @@ TEST ///
   assert(g * h === f)
 ///
 
-TEST ///
+///
   -- tests for cotangentSurjection
   S = QQ[x,y,z,w]
   P = Proj S
@@ -442,7 +442,7 @@ TEST ///
 ///
 
 
-TEST ///
+///
   -- tests for embeddedToAbstract
   S = (ZZ/17)[x,y,z]
   I = ideal(x^5+y^5+z^5)

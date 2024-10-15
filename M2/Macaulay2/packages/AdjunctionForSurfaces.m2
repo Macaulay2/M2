@@ -794,7 +794,7 @@ doc ///
         Y=specialFamiliesOfSommeseVandeVen(kk,4);
 	betti(fY=res Y)
 	P5=ring Y, dim P5==6
-	betti(omegaY=prune Ext^2(module Y,P5^{-6}))
+	betti(omegaY=Ext^2(module Y,P5^{-6}))
 	betti(fib=trim ideal (random(kk^1,kk^3)*presentation omegaY))
 	dim fib, degree fib
      Text 

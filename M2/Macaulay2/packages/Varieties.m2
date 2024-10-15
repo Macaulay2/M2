@@ -35,13 +35,13 @@ newPackage(
 	    HomePage => "https://johndcobb.github.io"}
 	},
     PackageExports => {
-	"Complexes",
+--	"Complexes",
 	"Saturation",
 	"Truncations",
 	},
     PackageImports => {
 	"Isomorphism",
-	"Complexes",
+--	"Complexes",
 	},
     AuxiliaryFiles => true
     )
@@ -406,10 +406,12 @@ directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.direc
 
 components CoherentSheaf := List => (cacheValue symbol components) (F -> apply(components module F, N -> sheaf(F.variety, N)))
 
+-*
 component(CoherentSheaf, Thing) := (F, k) -> (
     if not F.cache.?indexComponents then error "expected Sheaf to be a direct sum with indexed components";
     if not F.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
     (components F)#(F.cache.indexComponents#k))
+*-
 
 -- multilinear ops
 -- TODO: document
@@ -509,11 +511,13 @@ flattenMorphism = f -> (
     -- TODO: sometimes lifting to ring g is enough, how can we detect this?
     -- TODO: why doesn't lift(f, ring g) do this automatically?
     map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+-*
 flattenComplex = C -> (
     (lo, hi) := C.concentration;
     if lo === hi
     then complex(flattenModule C_lo, Base => lo)
     else complex applyValues(C.dd.map, flattenMorphism))
+*-
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
@@ -819,7 +823,7 @@ euler ProjectiveVariety := X -> (
 -----------------------------------------------------------------------------
 
 load "./Varieties/SheafMaps.m2"
-load "./Varieties/SheafComplexes.m2"
+--load "./Varieties/SheafComplexes.m2"
 
 -----------------------------------------------------------------------------
 -- Tests
@@ -829,7 +833,7 @@ load "./Varieties/tests-varieties.m2"
 load "./Varieties/tests-sheaves.m2"
 load "./Varieties/tests-functors.m2"
 load "./Varieties/tests-maps.m2"
-load "./Varieties/tests-complexes.m2"
+--load "./Varieties/tests-complexes.m2"
 
 -----------------------------------------------------------------------------
 -- Documentation
@@ -881,7 +885,7 @@ Node
 load "./Varieties/doc-varieties.m2"
 load "./Varieties/doc-sheaves.m2"
 load "./Varieties/doc-maps.m2"
-load "./Varieties/doc-complexes.m2"
+--load "./Varieties/doc-complexes.m2"
 load "./Varieties/doc-functors.m2"
 load "./Varieties/euler-doc.m2"
 load "./Varieties/genus-doc.m2"

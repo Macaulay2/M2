@@ -427,7 +427,7 @@ Node
     idealSheaf
     tangentSheaf
     cotangentSurjection
-    (cotangentSheaf, ZZ, ProjectiveVariety)
+--    (cotangentSheaf, ZZ, ProjectiveVariety)
     ProjectiveVariety
 
 Node
