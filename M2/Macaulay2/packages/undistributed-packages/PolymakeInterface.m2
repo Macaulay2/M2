@@ -16,12 +16,12 @@ newPackage(
     	)
 
 export {
-     runPolymake,
-     ParseAllProperties,
-     hasProperty,
-     getProperty,
-     getPropertyNames,
-     parseAllAvailableProperties
+     "runPolymake",
+     "ParseAllProperties",
+     "hasProperty",
+     "getProperty",
+     "getPropertyNames",
+     "parseAllAvailableProperties"
      }
 
 ---------------------------------------------------------------------------
