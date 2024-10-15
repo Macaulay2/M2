@@ -47,6 +47,11 @@ document {
 	    UL {
 		LI { "The function ", TO remove, ", which previously had no return value, now returns the value that was removed." }
 		}
+	    },
+	LI { "improved packages:",
+	    UL {
+		LI { TO "Jets::Jets", " has been updated to version 1.2 with improvements and new methods for principal jets."},
+		}
 	    }
 	}
     }
