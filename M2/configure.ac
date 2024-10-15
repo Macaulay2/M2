@@ -2,7 +2,7 @@ AC_INIT([Macaulay2],[m4_esyscmd_s([cat VERSION])],[https://github.com/Macaulay2/
 AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR([VERSION])
 AC_CONFIG_HEADERS(include/M2/config.h)
-AC_CONFIG_FILES(m4_include(config/files))
+AC_CONFIG_FILES(m4_include(m4/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
 AC_SUBST(CONFIG_ARGS,"$ac_configure_args")
 echo "'$0' $ac_configure_args" > config.args
@@ -10,16 +10,15 @@ C_CONFIG_ARGS=` echo "$ac_configure_args" | sed -e 's=\\\\=\\\\\\\\=g' -e 's=\\"
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
-AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
-m4_include(config/ax_compare_version.m4)
-m4_include(config/ax_prog_cc_for_build.m4)
-m4_include(config/ax_func_accept_argtypes.m4)
-m4_include(config/relpaths.m4)
-m4_include(config/gtest.m4)
-m4_include(config/openmp.m4)
-m4_include(config/search-libraries.m4)
-m4_include(config/ax_boost_base.m4)
-m4_include(config/ax_boost_regex.m4)
+m4_include(m4/ax_compare_version.m4)
+m4_include(m4/ax_prog_cc_for_build.m4)
+m4_include(m4/ax_func_accept_argtypes.m4)
+m4_include(m4/relpaths.m4)
+m4_include(m4/gtest.m4)
+m4_include(m4/openmp.m4)
+m4_include(m4/search-libraries.m4)
+m4_include(m4/ax_boost_base.m4)
+m4_include(m4/ax_boost_regex.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
