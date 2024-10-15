@@ -7,11 +7,12 @@
 --  - 2001: Global Ext is implemented by Greg Smith (see ae0cef36)
 --  - 2023: SheafMap is implemented at AIM.
 --  - 2024: Varieties is added as a package (see 0f1c1485)
+--          Complexes of sheaves are implemented at workshop in Utah
 ---------------------------------------------------------------------------
 newPackage(
     "Varieties",
-    Date     => "29 Jan 2024",
-    Version  => "0.2",
+    Date     => "28 Feb 2025",
+    Version  => "0.3",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
