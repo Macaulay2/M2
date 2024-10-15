@@ -105,7 +105,7 @@ srcdir:
 subst: config.status ; ./config.status
 show: config.status
 	<$< sed -e 's/\\\n//' |egrep '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
-CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
+CONFIG_FILES = @srcdir@/configure @srcdir@/install-sh @srcdir@/config.sub @srcdir@/config.guess @srcdir@/config/files
 reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
 protect-configs:
 	 @ chmod a-w $(shell cat @srcdir@/config/files)
