@@ -1043,7 +1043,7 @@ AS_IF([test $BUILD_normaliz = no],
 	       AC_MSG_CHECKING([for libnormaliz])
 	       AC_LANG(C++)
 	       SAVELIBS=$LIBS
-	       LIBS="$LIBS -lnormaliz -lgmp"
+	       LIBS="$LIBS -lnormaliz -lgmp -lgmpxx"
 	       CHECK_NMZ_PACKAGE([ENFNORMALIZ], [-leantic -leanticxx])
 	       CHECK_NMZ_PACKAGE([NMZ_COCOA], [-lcocoa])
 	       CHECK_NMZ_PACKAGE([NMZ_NAUTY], [-lnauty])
