@@ -1,4 +1,4 @@
-GNUmakefile
+Makefile
 check-configure/Makefile
 include/config.Makefile
 include/configuration
