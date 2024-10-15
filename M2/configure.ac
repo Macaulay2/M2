@@ -154,8 +154,6 @@ AC_MSG_NOTICE([operating system information:
    OS    = $OS
    ISSUE = $ISSUE])
 
-AC_CONFIG_AUX_DIR(config)
-
 AC_CHECK_PROGS(MAKE,gmake make,false)
 AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
 if test $PKG_CONFIG = false; then AC_MSG_ERROR(pkg-config is required); fi
