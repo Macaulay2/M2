@@ -552,9 +552,9 @@ Node
 Node
   Key
     ExtLongExactSequence
-   (ExtLongExactSequence, CoherentSheaf, SheafMap)
-   (ExtLongExactSequence, CoherentSheaf, SheafMap, SheafMap)
-   [ExtLongExactSequence, Concentration]
+--   (ExtLongExactSequence, CoherentSheaf, SheafMap)
+--   (ExtLongExactSequence, CoherentSheaf, SheafMap, SheafMap)
+--   [ExtLongExactSequence, Concentration]
   Headline
     the long exact sequence of the Ext functor
 
