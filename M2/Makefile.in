@@ -10,7 +10,7 @@ all install:										\
 	M2 all-in-subdirs report-M2-location
 configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
-M2: GNUmakefile
+M2:
 	rm -f M2
 	(echo '#! /bin/sh'; echo 'exec @pre_bindir@/M2 "$$@"') >M2
 	chmod a+x M2
@@ -83,7 +83,7 @@ status: @srcdir@/configure
 	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
-srcdir: GNUmakefile
+srcdir:
 	: creating or removing symbolic link to common staging area, if necessary,
 	: based on comparison of these directories:
 	:                      pre_prefix : @pre_prefix@

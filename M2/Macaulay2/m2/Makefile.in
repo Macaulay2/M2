@@ -55,7 +55,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../tests/slow/Makefile.in \
 		../tests/engine/Makefile.in \
 		../packages/Makefile.in \
-		../../Makefile ../../GNUmakefile.in
+		../../Makefile.in
 	: making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
