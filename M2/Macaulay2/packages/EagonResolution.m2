@@ -83,16 +83,16 @@ golodBetti (Complex, Complex, ZZ) := BettiTally => (F,G,b) ->(
 golodBetti (Module,ZZ) := BettiTally => (M,b) ->(
     --case where M is a module over a factor ring R = S/I,
     --MS is the same module over S
-    --F = res I
-    --K = res MS
+    --F = freeResolution I
+    --K = freeResolution MS
     R := ring M;
     p := presentation R;
     S := ring p;
     phi1 := substitute(presentation M, S);
     phi := phi1 | target phi1 ** p;
     MS := prune coker phi;
-    K := res MS;
-    F := res coker p;
+    K := freeResolution MS;
+    F := freeResolution coker p;
     golodBetti(F,K,b)
     )
 
@@ -200,7 +200,6 @@ E
 eagonResolution E
 
 resolution E
-res E
 eagon(R,4)
 eagon(R,-1)
 ///
@@ -427,7 +426,7 @@ eagonResolution E -- works
 --resolution EagonData := E -> eagonResolution E
 resolution E -- fails
 eagonResolution E
-res R.cache.EagonData
+freeResolution R.cache.EagonData
 eagonResolution E
 ///
 
@@ -661,7 +660,7 @@ Description
 
    or simply 
 
-   res EE
+   res E
 
    produces the first 5 steps of a 
    (not necessarily minimal) R-free resolution of the residue field of R.  The function picture gives
@@ -674,7 +673,7 @@ Description
    R = S/I
    E = eagon(R,5)
    F = eagonResolution E
-   assert(F == res E)
+   assert(F == resolution E)
   Text
    As stated above, F = K\otimes T(F'), and one can see the maps between 
    each pair of summands. We label the summand 
@@ -1203,12 +1202,12 @@ doc ///
     Example
      S = ZZ/101[a,b,c]
      I = (ideal(a,b,c^2))^2
-     F = res(S^1/I)
-     K = res coker vars S
+     F = freeResolution(S^1/I)
+     K = freeResolution coker vars S
      R = S/I
      E = eagon(R,6);
      golodBetti(F,K,6)
-     betti res (coker vars R, LengthLimit => 6)
+     betti freeResolution (coker vars R, LengthLimit => 6)
      betti eagonResolution E     
    SeeAlso
     eagon
@@ -1342,8 +1341,8 @@ doc ///
      S = ZZ/101[a,b]
      R = S/ideal"a2,b2"
      E = eagon(R,3)
-     picture res E
-     picture(res E, Transpose => true)
+     picture resolution E
+     picture(resolution E, Transpose => true)
    SeeAlso
     DisplayBlocks
     Verbose
@@ -1441,7 +1440,7 @@ R = S/(ideal"ab,ac")^2 --a simple Golod ring on which to try this
 b = 6
 E = eagon(R,b);
 F = eagonResolution E
-G = res (coker vars R, LengthLimit => b)
+G = freeResolution (coker vars R, LengthLimit => b)
 assert(betti F == betti G)
 assert(F.dd^2== 0)
 assert(all(b-1, i-> prune (HH_(i+1) F) == 0))
@@ -1472,7 +1471,7 @@ F = eagonResolution(R,bound)
 F = eagonResolution E
 assert isHomogeneous F
 assert all(bound-1,i-> prune HH_(i+1) F == 0)
-assert(betti res(coker vars R,LengthLimit => bound) == betti F)
+assert(betti freeResolution(coker vars R,LengthLimit => bound) == betti F)
 
 S = ZZ/101[a,b,c,d,e]
 R = S/(ideal(e^2,d*e^4)+(ideal"ab,ac")^2) --a non-Golod ring, generators in different degrees
@@ -1506,10 +1505,10 @@ TEST///
 S = ZZ/101[x,y,z]
 I = trim(ideal(x,y)*ideal"x,y2,z")
 R = S/I
-F = res I
-G = res coker vars S
+F = freeResolution I
+G = freeResolution coker vars S
 b = 6
-H = res(coker vars R,LengthLimit =>6)
+H = freeResolution(coker vars R,LengthLimit =>6)
 E = eagon(R,b);
 assert(betti eagonResolution E == betti H)
 assert(golodBetti(F,G,b) == betti H)
