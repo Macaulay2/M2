@@ -38,7 +38,8 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "https://msp.org/jsag/2013/5-1/"
 	     },
-     PackageImports => {"MinimalPrimes", "Complexes"},
+        PackageExports => {"Complexes"},
+        PackageImports => {"MinimalPrimes"},
     	DebuggingMode => false
     	)
 
@@ -1880,7 +1881,7 @@ qsIsomorphism(Module) := opts -> M -> (
      pruneMap = mp.cache.pruningMap;
      if verbosity >= 3 then print("qsIsomorphism: Constructing a free resolution of the minimal presentation.");
      
-     F = res mp;
+     F = freeResolution mp;
      -- If Macaulay2 already knows that the module is free, then just return the pruning map.
      if length F == 0 then (
 	  if verbosity >= 2 then print "qsIsomorphism: Macaulay2 already knows that this module is free.  Returning the pruning map.";
