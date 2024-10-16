@@ -979,6 +979,7 @@ ExternalProject_Add(build-normaliz
                       --without-flint # ${FLINT_ROOT}
 		      --without-nauty
 		      --without-cocoalib
+		      --without-e-antic
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
