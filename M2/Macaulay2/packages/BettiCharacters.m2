@@ -1083,7 +1083,7 @@ Node
 	I1=ideal apply({4,5,6,7}, i -> (x_1-x_2)*(x_3-x_i));
 	I2=ideal apply(subsets({3,4,5,6,7},2), s -> (x_1-x_(s#0))*(x_2-x_(s#1)));
 	I=I1+I2
-	RI=res I
+	RI=freeResolution I
 	betti RI
     Text
     	Next we set up the group action on the resolution.
@@ -1152,7 +1152,7 @@ Node
     Example
 	R=QQ[x_1..x_6]
 	I=intersect(apply(subsets(gens R,4),x->(ideal x)^3))
-	RI=res I
+	RI=freeResolution I
 	betti RI
     Text
     	Next, we set up the group action on the resolution.
@@ -1215,10 +1215,10 @@ Node
 	H = jacobian transpose jacobian f4
 	f6 = -1/54*det(H)
 	I = minors(2,jacobian matrix{{f4,f6}})
-	RI = res I
+	RI = freeResolution I
 	betti RI
 	I2 = I^2;
-	RI2 = res I2
+	RI2 = freeResolution I2
 	betti RI2
     Text
 	The unique simple group of order 168 acts as described
@@ -1330,7 +1330,7 @@ Node
     	Example
     	    R = QQ[x_1,x_2,y_1,y_2,y_3,Degrees=>{2:{1,0},3:{0,1}}]
 	    I = intersect(ideal(x_1,x_2),ideal(y_1,y_2,y_3))
-	    RI = res I
+	    RI = freeResolution I
     	    G = {
 	    	matrix{{x_1,x_2,y_2,y_3,y_1}},
 	    	matrix{{x_1,x_2,y_2,y_1,y_3}},
@@ -1424,7 +1424,7 @@ Node
     	Example
 	    R = QQ[x,y,z]
 	    I = ideal(x*y,x*z,y*z)
-	    RI = res I
+	    RI = freeResolution I
 	    S3 = symmetricGroupActors R
 	    A = action(RI,S3)
 	    a = character A
@@ -1521,7 +1521,7 @@ Node
     	Example
 	    R = QQ[x_1..x_4]
 	    I = ideal apply(subsets(gens R,2),product)
-	    RI = res I
+	    RI = freeResolution I
 	    G = {matrix{{x_2,x_3,x_4,x_1}},
     		 matrix{{x_2,x_3,x_1,x_4}},
     		 matrix{{x_2,x_1,x_4,x_3}},
@@ -1566,7 +1566,7 @@ Node
 	    these matrices by permuting columns of the identity.
     	Example
 	    M = module I
-	    RM = res M
+	    RM = freeResolution M
 	    G' = { (id_(R^6))_{2,4,5,0,1,3},
     		   (id_(R^6))_{2,0,1,4,5,3},
     		   (id_(R^6))_{0,4,3,2,1,5},
@@ -1586,7 +1586,7 @@ Node
 	    module). This can be achieved as follows.
     	Example
 	    E = Ext^3(R^1/I,R^{-4})
-	    RE = res E
+	    RE = freeResolution E
 	    G'' = toList(5:id_(R^1))
 	    action(RE,G,G'',3)
     Caveat
@@ -1694,7 +1694,7 @@ Node
 	    resolution.
     	Example
 	    E = Ext^3(R^1/I,R^{-4})
-	    RE = res E
+	    RE = freeResolution E
 	    G'' = toList(5:id_(R^1))
 	    B = action(RE,G,G'',3)
 	    G' = actors(B,0)
@@ -1729,7 +1729,7 @@ Node
     	Example
 	    R = QQ[x_1..x_4]
 	    I = ideal apply(subsets(gens R, 2), product)
-	    RI = res I
+	    RI = freeResolution I
 	    S4 = symmetricGroupActors(R)
 	    A = action(RI,S4)
 	    G = {map(RI_3, RI_3, {{0, -1, 1}, {1, 1, 0}, {0, 1, 0}}),
@@ -1798,7 +1798,7 @@ Node
     	Example	    
 	    R = QQ[x_1..x_4]
 	    I = ideal apply(subsets(gens R,2),product)
-	    RI = res I
+	    RI = freeResolution I
 	    G = {matrix{{x_2,x_3,x_4,x_1}},
     		 matrix{{x_2,x_3,x_1,x_4}},
     		 matrix{{x_2,x_1,x_4,x_3}},
@@ -1933,7 +1933,7 @@ Node
 	Example
 	    R = QQ[x_1..x_4]
 	    J = intersect(apply(subsets(gens R,3),x->(ideal x)^2))
-	    RJ = res J
+	    RJ = freeResolution J
 	    G = { matrix{{x_2,x_3,x_4,x_1}},
     		  matrix{{x_2,x_3,x_1,x_4}},
     		  matrix{{x_2,x_1,x_4,x_3}},
@@ -1991,7 +1991,7 @@ Node
 	Example
 	    R = QQ[x_1..x_4]
 	    J = intersect(apply(subsets(gens R,3),x->(ideal x)^2))
-	    RJ = res J
+	    RJ = freeResolution J
 	    G = { matrix{{x_2,x_3,x_4,x_1}},
     		  matrix{{x_2,x_3,x_1,x_4}},
     		  matrix{{x_2,x_1,x_4,x_3}},
@@ -2708,7 +2708,7 @@ Node
     	Example
 	    R = QQ[x_1..x_4]
 	    I = ideal apply(subsets(gens R,2),product)
-	    RI = res I
+	    RI = freeResolution I
 	    G = { (id_(R^4))_{1,2,3,0},
     		  (id_(R^4))_{1,2,0,3},
     		  (id_(R^4))_{1,0,3,2},
@@ -2856,7 +2856,7 @@ TEST ///
 clearAll
 R = QQ[x,y,z]
 I = ideal(x*y,x*z,y*z)
-RI = res I
+RI = freeResolution I
 S3 = {matrix{{y,z,x}},matrix{{y,x,z}},matrix{{x,y,z}}}
 assert(S3 == symmetricGroupActors(R))
 A = action(RI,S3)
@@ -2918,7 +2918,7 @@ I = ideal(
     	(x_1-x_2)*(x_3-x_5),
     	(x_1-x_2)*(x_3-x_4)	
     )
-RI = res I
+RI = freeResolution I
 S5 = for p in partitions(5) list (
     L := gens R;
     g := for u in p list (
@@ -3030,7 +3030,7 @@ TEST ///
 clearAll
 R = QQ[x_1,x_2,y_1,y_2,Degrees=>{2:{1,0},2:{0,1}}]
 I = intersect(ideal(x_1,x_2),ideal(y_1,y_2))
-RI = res I
+RI = freeResolution I
 G = {
     matrix{{x_2,x_1,y_2,y_1}},
     matrix{{x_2,x_1,y_1,y_2}},
@@ -3060,7 +3060,7 @@ assert(character(C,{0,2}) ++ character(C,{2,0}) == b)
 TEST ///
 clearAll
 R = QQ[x_1..x_4]
-K = res ideal vars R
+K = freeResolution ideal vars R
 S4 = symmetricGroupActors(R)
 A = action(K,S4)
 c = character A
