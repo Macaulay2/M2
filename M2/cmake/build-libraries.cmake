@@ -982,7 +982,7 @@ ExternalProject_Add(build-normaliz
 		      --without-e-antic
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
+                      "CXXFLAGS=${CXXFLAGS} -std=gnu++14"
                       "LDFLAGS=${LDFLAGS}  -L${GMP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
