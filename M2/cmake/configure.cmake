@@ -139,7 +139,7 @@ set(ENV{PKG_CONFIG_PATH}	${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
 
 ## Setting the prefixes where CMake will look for headers, libraries, and programs
 set(CMAKE_SYSTEM_PREFIX_PATH	${M2_HOST_PREFIX} ${CMAKE_SYSTEM_PREFIX_PATH})
-set(CMAKE_PREFIX_PATH		${CMAKE_PREFIX_PATH} ${M2_HOST_PREFIX})
+set(CMAKE_PREFIX_PATH		${M2_HOST_PREFIX} ${CMAKE_PREFIX_PATH})
 
 ## Setting the folder for Macaulay2 Core and packages
 set(CMAKE_INSTALL_DATADIR	share/Macaulay2)
