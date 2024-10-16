@@ -21,7 +21,8 @@ newPackage(
          "version at publication" => "1.0",
          "volume number" => "8",
          "volume URI" => "https://msp.org/jsag/2018/8-1/"
-         }
+         },
+        PackageExports => {"Complexes"}
         )
 
 export {
@@ -370,7 +371,7 @@ stableIdeal Ideal := I -> (
 -- Computes the minimal Betti numbers of a graded ideal
 ----------------------------------------------------------------------------------------------
 minimalBettiNumbers = method(Options => {LengthLimit => infinity})
-minimalBettiNumbers Ideal := BettiTally => opts -> I -> betti res(ideal flatten entries mingens I, opts)
+minimalBettiNumbers Ideal := BettiTally => opts -> I -> betti freeResolution(ideal flatten entries mingens I, opts)
 
 
 -------------------------------------------------------------------------------------------

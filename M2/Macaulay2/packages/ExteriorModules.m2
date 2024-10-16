@@ -8,7 +8,7 @@ newPackage(
                 },
     Headline => "monomial modules over exterior algebras",
     DebuggingMode => false,
-    PackageExports=>{"ExteriorIdeals"},
+    PackageExports=>{"ExteriorIdeals", "Complexes"},
     Keywords => {"Commutative Algebra"},
     Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -459,7 +459,7 @@ O
 -------------------------------------------------------------------------------------------
 -- compute the (minimal) Betti numbers of M
 ----------------------------------------------------------------------------------------------
-minimalBettiNumbers Module := opts -> M -> betti res(image mingens M, opts)
+minimalBettiNumbers Module := opts -> M -> betti freeResolution(image mingens M, opts)
 
 
 -------------------------------------------------------------------------------------------
