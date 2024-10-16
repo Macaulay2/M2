@@ -1063,7 +1063,7 @@ AS_IF([test $BUILD_normaliz = no],
          BUILD_normaliz=yes])])
 
 AS_IF([test $BUILD_normaliz = yes],
-    [BUILTLIBS="-lnormaliz -fopenmp $BUILTLIBS"])
+    [BUILTLIBS="-lnormaliz $OPENMP_CXXFLAGS $OPENMP_LIBS $BUILTLIBS"])
 
 if test "$BUILD_nauty" = no
 then dnl debian/fedora: nauty-
