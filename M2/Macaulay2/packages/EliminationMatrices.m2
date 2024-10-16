@@ -14,7 +14,8 @@ newPackage("EliminationMatrices",
 	     },
    Headline => "resultants",
    Keywords => {"Commutative Algebra"},
-   PackageImports => { "Elimination", "Complexes" },
+   PackageExports => { "Complexes" },
+   PackageImports => { "Elimination" },
    DebuggingMode => false
    )
 
@@ -697,7 +698,7 @@ regularityVar(List, Ideal) := (var, I) -> (
 
 	ff:= map (S, R);
 	IS:= ff(I);
-	resIS:= resolution IS;
+	resIS:= freeResolution IS;
 	
  -- we compute the list of b_i's and the regularity 
 	b:= {};
@@ -754,7 +755,7 @@ eliminationMatrix((ZZ, List, Matrix)) := Matrix => options -> (r, var, g) -> (
 	else if getFamilyStrategy(options) == 5 then return detRes (r, var, g)
 	else if getFamilyStrategy(options) == 0 then (
 		I := minors (r+1,g);
-		return (mapsComplex(regularityVar (var,I), var, res I ))_0;
+		return (mapsComplex(regularityVar (var,I), var, freeResolution I ))_0;
 		)
 	else if (getFamilyStrategy(options) == 1 or getFamilyStrategy(options) == 3 or getFamilyStrategy(options) == 4 ) then error "with this input, 'Strategy' keyword must be 'Macaulay', 'determinantal' or 'byResolution'"
 	-- at this point Strategy is null
@@ -769,7 +770,7 @@ eliminationMatrix(List, Matrix, Matrix) := Matrix => options -> (var, g, H) -> (
 	else if getFamilyStrategy(options) == 4 then return ciRes (var, g, H)
 	else if getFamilyStrategy(options) == 0 then (
 		I := (ideal (g*H): ideal g);
-		return (mapsComplex(regularityVar (var,I), var, res I))_0;
+		return (mapsComplex(regularityVar (var,I), var, freeResolution I))_0;
 		)
 	else if (getFamilyStrategy(options) == 1 or getFamilyStrategy(options) == 3 or getFamilyStrategy(options) == 4 ) then error "with this input, 'Strategy' keyword must be 'CM2Residual', 'ciResidual' or 'byResolution'"
 	-- at this point Strategy is null
@@ -778,7 +779,7 @@ eliminationMatrix(List, Matrix, Matrix) := Matrix => options -> (var, g, H) -> (
 	else (
 		print "A strategy is required; please choose 'CM2Residual', 'ciResidual' or 'byResolution' depending on your inputs.";
 --		J := (ideal (g*H): ideal g);
---		return (mapsComplex(regularityVar (var,J), var, res J))_0;
+--		return (mapsComplex(regularityVar (var,J), var, freeResolution J))_0;
 		);
 );
 
@@ -1832,7 +1833,7 @@ l = {x,y,z};
 CmR = (eliminationMatrix (l,G,H, Strategy => CM2Residual))
 
 I := (ideal (G*H): ideal G);
-Mat= (mapsComplex(regularity I -1, l, res I))_0
+Mat= (mapsComplex(regularity I -1, l, freeResolution I))_0
 
 fittI = minors(10,Mat)
 fittCmR = minors(10,CmR)
