@@ -23,6 +23,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <flint/flint.h> // for flint_set_abort
 
 /* ######################################################################### */
 
@@ -54,6 +55,7 @@ bool interrupts_interruptShield;
 void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
+void  M2_flint_abort(void);
 
 static void * GC_start_performance_measurement_0(void *) {
 #ifdef GC_start_performance_measurement /* added in bdwgc 8 */
@@ -89,6 +91,8 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   interrupt_jmp.is_set = FALSE;
 
   signal(SIGPIPE,SIG_IGN); /* ignore the broken pipe signal */
+
+  flint_set_abort(M2_flint_abort);
 
   static struct ArgCell* M2_vargs;
   M2_vargs = (ArgCell*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct ArgCell));
@@ -132,6 +136,11 @@ void stack_trace(std::ostream &stream, bool M2) {
     stream << boost::stacktrace::stacktrace();
     stream << "-- end stack trace *-" << std::endl;
   }
+}
+
+void M2_flint_abort(void) {
+  stack_trace(std::cerr, false);
+  abort();
 }
 
 extern "C" {
