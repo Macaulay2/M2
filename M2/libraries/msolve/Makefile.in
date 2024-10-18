@@ -6,6 +6,10 @@ LICENSEFILES = README.md COPYING
 
 PRECONFIGURE = ./autogen.sh
 
+# need to link against libpthread for configure script to find flint
+# need to build as a static library since we build flint as a static library
+CONFIGOPTIONS += LIBS=-lpthread --disable-shared
+
 VLIMIT = 1500000
 
 include ../Makefile.library

@@ -319,16 +319,7 @@ unset(CMAKE_REQUIRED_LIBRARIES)
 unset(CMAKE_REQUIRED_INCLUDES)
 
 ###############################################################################
-## Set four library related definitions
-
-if(GIVARO_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${GIVARO_INCLUDE_DIRS}")
-  # whether givaro has isUnit (4.0.3) or isunit (4.0.2)
-  check_cxx_source_compiles([[#include <givaro/gfq.h>
-    int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
-else()
-  unset(HAVE_GIVARO_isunit CACHE)
-endif()
+## Set several library related definitions
 
 if(FACTORY_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${FACTORY_INCLUDE_DIR}")
