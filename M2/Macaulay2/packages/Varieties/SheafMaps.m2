@@ -413,11 +413,10 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	M = truncate(r, M));
     moveToField basis(0, Ext^m(M, matrix f, opts)))
 
-
---Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf, this returns Ext^i(F,im f)->Ext^(i+1)(F,ker f)
- 
-connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> connectingExtMap(m, F, inducedMap(image f, source f,f), inducedMap(source f, ker f), opts)
-
+-- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
+-- this returns the connecting homomorphism Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
+connectingExtMap(ZZ, CoherentSheaf, SheafMap)           := Matrix => opts -> (m, F, f) ->
+    connectingExtMap(m, F, inducedMap(image f, source f,f), inducedMap(source f, ker f), opts)
 connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m, F, f, g) -> (
     e := 0; -- this is a sum of twists bound
     if not instance(variety F, ProjectiveVariety)
@@ -454,11 +453,12 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (m,
         --probably just add in l3, P3, etc., take max as above
 	M = truncate(r, M));
     reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
-    --TODO: truncate at the regularity of homology(f,g)?
-    fTruncated := truncate(reg, matrix f);
-    --gTruncated := truncate(reg, matrix g);
-    gTruncated := matrix g * inducedMap(source matrix g,truncate(reg, source matrix g));
-    moveToField basis(0, ( (connectingExtMap(M, fTruncated, gTruncated)))_(-m) ) )
+    -- TODO: truncate at the regularity of homology(f, g)?
+    f' := truncate(reg, matrix f);
+    g' := matrix g * inducedMap(source matrix g, truncate(reg, source matrix g));
+    -- TODO: should LengthLimit be based on m?
+    h := connectingExtMap(M, f', g', LengthLimit => opts.LengthLimit);
+    moveToField basis(0, h_(-m)))
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext

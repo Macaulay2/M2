@@ -407,4 +407,8 @@ TEST ///
   p = sheafMap inducedMap(S^1/J,S^1)
   assert(rank connectingExtMap (0,OO_P^1,p**OO_P(1)) == 1)
 
+  R = ZZ/3[x,y,z]/x
+  X = Proj R
+  -- TODO: this LengthLimit should really be unnecessary
+  assert(connectingExtMap(0, OO_X^1, sheafMap sub(vars prune R, R), LengthLimit => 5) == 1)
 ///
