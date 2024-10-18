@@ -72,7 +72,8 @@ isWellDefined SheafMap := f -> (
 	"source of the sheaf map does not match the source of the underlying matrix")
     and assert'(d >= min flatten degrees F, -- maybe not strictly necessary
 	"expected the degree of the sheaf map to be at least as high as the degrees of the source")
-    and assert'(try ( isWellDefined map(module G, truncate(d, module F, MinimalGenerators => false), matrix f) ) else false,
+    and assert'(try ( isWellDefined map(module G, F' := truncate(d, module F, MinimalGenerators => false),
+         matrix f * inducedMap(source matrix f, F') ) ) else false,
 	"expected the matrix to induce a map between a truncation of the underlying modules")
     )
 
@@ -282,7 +283,7 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     -- We want:
     -- source f ==  target h
     -- target f === source h
-    map(source f, sheaf(X, source h),
+    map(sheaf source g, sheaf(X, source h),
 	inducedMap(source g, target h) * h, e#1 + 1))
     )
 

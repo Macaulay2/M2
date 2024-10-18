@@ -278,11 +278,12 @@ TEST ///
   assert isWellDefined inverse f
   assert isIsomorphism(f * inverse f)
   assert isIsomorphism(inverse f * f)
-  -- assert(prune(inverse f * f) === id_(OO_X^1)) -- FIXME
+  assert(prune(inverse f * f) === id_(OO_X^1))
   assert(prune(f * inverse f) === id_(OO_X^1))
   --
   f = map(sheaf truncate(2, S^1), OO_X^1, truncate(2, id_(S^1)), 2)
-  -- assert isWellDefined inverse f -- FIXME
+  assert isWellDefined f
+  assert isWellDefined inverse f
   assert isIsomorphism(f * inverse f)
   assert isIsomorphism(inverse f * f)
   -- assert(prune(inverse f * f) === id_(OO_X^1)) -- FIXME
