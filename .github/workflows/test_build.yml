@@ -154,7 +154,7 @@ jobs:
       - name: Configure Macaulay2 using Autotools
         if: matrix.build-system == 'autotools'
         run: |
-          pushd ../.. && ./autogen.sh && popd
+          ../../autogen.sh
           export PYVERSION=`python3 -c "from sys import version_info; \
             print(f'{version_info.major}.{version_info.minor}')"`
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"

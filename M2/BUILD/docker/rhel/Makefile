@@ -12,9 +12,9 @@ define M2_BUILD_SCRIPT_autotools
 set -xe
 
 git config --global --add safe.directory $(M2_HOME)/M2
-pushd M2/M2 && ./autogen.sh && popd
 mkdir -p M2/$(BUILD_DIR)
 cd M2/$(BUILD_DIR)
+$(M2_HOME)/M2/M2/autogen.sh
 $(M2_HOME)/M2/M2/configure --with-system-gc --enable-download
 make
 endef
