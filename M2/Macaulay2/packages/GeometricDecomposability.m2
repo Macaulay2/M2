@@ -2,14 +2,15 @@
 
 newPackage(
         "GeometricDecomposability",
-        Version => "1.4.2",
-        Date => "May 17, 2024",
-        Headline => "A package to check whether ideals are geometrically vertex decomposable",
+        Version => "1.5.1",
+        Date => "October 18, 2024",
+
+        Headline => "checking whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
                 Name => "Mike Cummings",
-                Email => "cummim5@mcmaster.ca",
-                HomePage => "https://math.mcmaster.ca/~cummim5/"
+                Email => "mike.cummings@uwaterloo.ca",
+                HomePage => "https://mikecummings.ca"
                 },
                 {
                 Name => "Adam Van Tuyl",
