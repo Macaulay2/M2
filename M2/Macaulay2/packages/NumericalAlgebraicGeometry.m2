@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
-newPackage select((
+newPackage(
      "NumericalAlgebraicGeometry",
      Version => "1.24",
      Date => "May 2024",
@@ -36,7 +36,7 @@ newPackage select((
 	  "volume number" => "3",
 	  "volume URI" => "https://msp.org/jsag/2011/3-1/"
 	  }
-     ), x -> x =!= null)
+    )
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists

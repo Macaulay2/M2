@@ -515,8 +515,8 @@ contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m)
 
 jacobian = method()
 jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)
-
 jacobian Ring := Matrix => (R) -> jacobian presentation R ** R
+jacobian RingElement := Matrix => f -> jacobian matrix {{f}}
 
 leadTerm(ZZ, Matrix) := Matrix => (i,m) -> (
      map(target m, source m, rawInitial(i,m.RawMatrix)))

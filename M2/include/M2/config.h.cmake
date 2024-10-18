@@ -57,6 +57,9 @@
 /* whether we have the flint header file nmod.h */
 #cmakedefine HAVE_FLINT_NMOD_H 1
 
+/* whether we have the flint header file arb.h */
+#cmakedefine HAVE_FLINT_ARB_H 1
+
 /* whether frobby has frobby_version >=0.9.4 or constants::version <0.9.4 */
 #cmakedefine HAVE_FROBBY_VERSION 1
 
@@ -329,9 +332,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
-
-/* Whether we use MPIR (instead of GMP) */
-#cmakedefine01 USING_MPIR
 
 /* Whether we are building with tbb version >= 2021 */
 #cmakedefine WITH_TBB

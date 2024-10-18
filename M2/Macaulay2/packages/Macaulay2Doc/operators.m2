@@ -112,7 +112,8 @@ document {
      }
 
 document {
-     Key => {log,(log, RR),(log,CC),(log, RRi),(log, RR, RR),(log, RRi, RRi)},
+     Key => {log,(log, RR),(log,CC),(log, RRi),(log, RR, RR),(log, RRi, RRi),
+	 (log,RR,CC),(log,RR,RRi),(log,RRi,RR)},
      Headline => "logarithm function",
      Usage => "log x\nlog(b,x)\nlog_b x\nlog I\nlog(b,I)\nlog_b I\nlog(J,x)\nlog_J x\nlog(J,I)\nlog_J I",
 Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"}, "I" => RRi, "J" => RRi => {"an interval of bases for the logarithm"} },

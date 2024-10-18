@@ -7,8 +7,8 @@
 
 newPackage("PositivityToricBundles",
            Headline => "check positivity of toric vector bundles",
-           Version => "1.7",
-           Date => "April, 2024",
+           Version => "1.9",
+           Date => "August, 2024",
            Authors => { 
             {Name => "Andreas Hochenegger",
              Email => "andreas.hochenegger@polimi.it"}},
@@ -33,6 +33,7 @@ export {
         "isNef",
         "isAmple",
         "drawParliament2Dtikz",
+        "wellformedBundleFiltrations",
 -- Options
         "Verbosity",
         "DrawCohomology",
@@ -100,9 +101,11 @@ flags = method()
 flags (ToricVectorBundleKlyachko) := (cacheValue symbol filtrationFlags) ( tvb -> (
   hashTable for rho in rays tvb list (
    filtSteps := flatten entries (filtration tvb)#rho;
-   rho => for i in unique filtSteps list (
+   rayFlag := for i in unique filtSteps list (
     ((base tvb)#rho)_(positions(filtSteps, j->j<=i))
-   )
+   );
+   rayFlag = sort(rayFlag, mat -> numgens source mat);
+   rho => rayFlag
  )
 ))
 
@@ -394,10 +397,6 @@ graphToricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts
 -- METHOD: separateJets
 ------------------------------------------------------------------------------
 
--- hT .. hashTable
--- fun .. function that takes key and value as input and returns true or false
-selectPairs = (hT, fun) -> hashTable select(pairs hT, (k,v) -> fun(k,v) )
-
 separatesJetsLocally = method( Options => true )
 separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opts -> (tvb,sigma) -> (
  if opts#Verbosity>0 then << "METHOD: separatesJetsLocally" << endl;
@@ -422,7 +421,8 @@ separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opt
 -- [RJS, Thm 6.2, condition (ii+iii)]
  sigmaDual := dualCone sigma;
  -- gives u=> {e's} such that u vertex of P(e) and u+sigma^vee contains P(e)
- uSigmaPE := applyPairs(uSigmaAreVertices, (u,eAV) -> (u, keys selectPairs(eAV, (e,AV) -> AV and contains(convexHull u + sigmaDual, par#e) ) ));
+ --uSigmaPE := applyPairs(uSigmaAreVertices, (u,eAV) -> (u, keys selectPairs(eAV, (e,AV) -> AV and contains(convexHull u + sigmaDual, par#e) ) ));
+ uSigmaPE := applyPairs(uSigmaAreVertices, (u,eAV) -> (u, keys hashTable select(pairs eAV, (e,AV) -> AV and contains(convexHull u + sigmaDual, par#e) ) ));
  uSigmaPEnumber := applyValues(uSigmaPE, Ps -> #Ps);
  -- [RJS, Thm 6.2, condition (iv)]
  if min values uSigmaPEnumber == 0 then (
@@ -482,8 +482,8 @@ if separatesJets(tvb, Verbosity=>opts#Verbosity) >= 0 then true else false;
 --           check if the vector bundle is very ample, using [RJS, Cor. 6.7]
 --   INPUT : 'tvb', toric vector bundle
 --  OUTPUT :  'true' if very ample, otherwise 'false'
---isVeryAmple = method( Options => true ) -- conflicts with Polyhedra
-isVeryAmple (ToricVectorBundleKlyachko) := (tvb) -> if separatesJets(tvb) >= 1 then true else false;
+--isVeryAmple = method( Options => true ) -- already defined in Polyhedra
+isVeryAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> separatesJets(tvb, opts) >= 1
   
 ------------------------------------------------------------------------------
 -- METHOD: restrictToInvCurves, isNef, isAmple
@@ -690,6 +690,40 @@ f << ///\end{tikzpicture}/// << endl;
 
 f << close;
 )
+
+
+--- METHOD: wellformedBundleFiltrations -----------------------------------
+
+-- PURPOSE: ensures ascending entries in the filtration matrices of a toric vector bundle
+--   INPUT: 'tvb', toric vector bundle
+--  OUTPUT: a toric vector bundle, whose filtration matrices have ascending entries
+
+wellformedBundleFiltrations = method ()
+wellformedBundleFiltrations (ToricVectorBundleKlyachko) := tvb -> (
+ fMTlist := applyValues(filtration tvb, f -> sort flatten entries f );
+ fMT := applyValues(fMTlist, f -> matrix {f});
+ fMTunique := applyValues(fMTlist, unique);
+ permutations := applyPairs(fMTunique, (rho,f)-> rho => apply(f, i-> positions(flatten entries (filtration tvb)#rho, j->i==j)) );
+ bT := applyPairs(base tvb, (rho,m) -> rho => fold(apply(permutations#rho, i -> m_i), (i,j) -> i|j));
+ -- the following is taken from ToricVectorBundles#makeVBKlyachko
+ fT := hashTable apply(pairs fMT, p -> (
+               L := flatten entries p#1;
+               L1 := sort unique L;
+               p#0 => hashTable ({(min L1-1) => {}} | apply(L1, l -> l => positions(L,e -> e == l)))));
+ new ToricVectorBundleKlyachko from {
+               "ring" => tvb#"ring",
+               "rayTable" => tvb#"rayTable",
+               "baseTable" => bT,
+               "filtrationMatricesTable" => fMT,
+               "filtrationTable" => fT,
+               "ToricVariety" => tvb#"ToricVariety",
+               "number of affine charts" => tvb#"number of affine charts",
+               "dimension of the variety" => tvb#"dimension of the variety",
+               "rank of the vector bundle" => tvb#"rank of the vector bundle",
+               "number of rays" => tvb#"number of rays",
+               symbol cache => new CacheTable}
+)
+
  
 ---------------------------------------------------------------------------
 -- DOCUMENTATION
@@ -762,7 +796,7 @@ document {
   "The description of a toric variety and a toric vector bundle by filtrations involves the choice of signs. ", TT "PositivityToricBundles", " follows the same choice of signs as ", TT "ToricVectorBundles", ", which are",
   UL {
    {"the fan associated to a polytope will be generated by inner normals,"},
-   {"the filtrations for describing a toric vector bundle are increasing."},
+   {"the filtrations for describing a toric vector bundle are increasing and that the filtration steps are stored in that way, see ", TO "wellformedBundleFiltrations", "."},
   },
   "Unfortunately, the above cited articles use decreasing filtrations and, moreover, [HMP], [P] and [RJS] use outer normals.",
   PARA{},
@@ -1072,7 +1106,7 @@ document {
   },
 
   "In this example, the vector bundle ", TEX ///$\mathcal E$///, " separates 1-jets, hence is very ample.",
-  Caveat => {"This methods work for toric vector bundles on a complete simplicial toric variety.",
+  Caveat => {"These methods work for toric vector bundles on a complete simplicial toric variety.",
              BR{},
              "[RJS, Theorem 6.2, condition (iv)] is not checked, which might give a wrong result in special cases (too many polytopes of the parliament share common vertices). If this happens, the method ", TT "separatesJets", " will print a warning. In these cases, also the results of ", TT "isGloballyGenerated", " and ", TT "isVeryAmple", " might be wrong."},
 
@@ -1108,12 +1142,44 @@ document {
    "isAmple E"
   },
   "In this example we see that the vector bundle is ample, as all integers are positive.",
-  Caveat => {"This methods work for toric vector bundles on a complete simplicial toric variety."},
+  Caveat => {"These methods work for toric vector bundles on a complete simplicial toric variety."},
 
 
   SeeAlso => {"ToricVectorBundles::ToricVectorBundleKlyachko", parliament, compatibleBases, toricChernCharacter}
   }
 
+
+
+document {
+  Key => { wellformedBundleFiltrations, (wellformedBundleFiltrations, ToricVectorBundleKlyachko) },
+  Headline => "produces the same toric vector bundle, but where the filtration steps are stored in matrices with ascending entries.",
+  Usage => "F = wellformedBundleFiltrations E",
+  Inputs => { 
+   "E"  => ToricVectorBundleKlyachko },
+  Outputs => {
+   "F" => ToricVectorBundleKlyachko },
+
+  "A toric vector bundle in Klyachko's description as used in ", TO "ToricVectorBundles", " is given by ascending filtrations. Unfortunately, the filtration steps are not always stored in an ascending way by certain methods, like ", TO "ToricVectorBundles::dual(ToricVectorBundle)", " or ", TO "ToricVectorBundles::tensor(ToricVectorBundle,ToricVectorBundle)", " (and maybe others). This may cause problems in some methods of ", TT "PositivityToricBundles", ", for example in ", TO "toricChernCharacter", ". This method ensures that the filtration steps are stored in an ascending way and therefore, that the methods of this package can be used safely.",
+
+  EXAMPLE {
+    "T = tangentBundle projectiveSpaceFan 2",
+    "E = T ** (dual T)",
+    "details E",
+    "toricChernCharacter E"
+  },
+  "Note that the filtration steps of E are neither ascending nor descending. The method ", TO "toricChernCharacter", " produces nonsense here: ", TEX ///$\mathcal{O}_{\mathbb P^2}$///, " is a direct summand of E, so 0 has to appear in the toric Chern character.",
+
+  EXAMPLE {
+    "F = wellformedBundleFiltrations E",
+    "details F",
+    "toricChernCharacter F"
+  },
+  "By passing to ascending filtration steps, the result becomes correct.",
+
+  Caveat => {"This method works for any toric reflexive sheaf."},
+
+  SeeAlso => {"ToricVectorBundles::dual(ToricVectorBundle)", "ToricVectorBundles::tensor(ToricVectorBundle,ToricVectorBundle)"}
+  }
 
 
 
@@ -1130,8 +1196,6 @@ document {
 --         If this changes at some point in the future, all tests will fail.
 
 -- Test 0
--- [RJS, Example 3.7]
-
 TEST ///
 -- This is [RJS, Example 3.7]
 -- auxiliary methods
@@ -1169,7 +1233,7 @@ assert(
         set {{0,2},{-1,0},{1,1}} } );
 ///
 
-
+-- Test 1
 TEST ///
 -- This is [RJS, Example 3.8] for d=2
 V = tangentBundle(projectiveSpaceFan 2);
@@ -1195,10 +1259,9 @@ assert(isVeryAmple V);
 
 assert(isNef V);
 assert(isAmple V);
-
 ///
 
-
+-- Test 2
 TEST ///
 -- This is [RJS, Example 3.8] for d=3
 V = tangentBundle(projectiveSpaceFan 3);
@@ -1226,9 +1289,9 @@ assert(isVeryAmple V);
 
 assert(isNef V);
 assert(isAmple V);
-
 ///
 
+-- Test 3
 TEST ///
 -- This is [RJS, Example 4.2] 
 -- auxiliary methods
@@ -1272,10 +1335,9 @@ assert(not isVeryAmple V);
 
 assert(isNef V);
 assert(isAmple V);
-
-
 ///
 
+-- Test 4
 TEST ///
 -- This is [RJS, Example 4.4] 
 -- auxiliary methods
@@ -1318,9 +1380,9 @@ assert(isVeryAmple V);
 
 assert(isNef V);
 assert(isAmple V);
-
 ///
 
+-- Test 5
 TEST ///
 -- This is [RJS, Example 6.4] 
 -- auxiliary methods
@@ -1363,10 +1425,9 @@ assert(not isVeryAmple V);
 
 assert(isNef V);
 assert(isAmple V);
- 
 ///
 
-
+-- Test 6
 TEST ///
 -- Test with a randomized vector bundle on 3-dim variety
 
@@ -1425,11 +1486,9 @@ foundList = for i in 0 ..< #cList list (
 )
 
 assert(all(foundList, i->i>=0))
-
-
 ///
 
-
+-- Test 7
 TEST ///
 -- Test with a randomized vector bundle of rank 3 on hirzebruch
 
@@ -1485,11 +1544,9 @@ foundList = for i in 0 ..< #cList list (
 )
 
 assert(all(foundList, i->i>=0))
-
-
 ///
 
-
+-- Test 8
 TEST ///
 -- Test with a randomized vector bundle of rank 4 on hirzebruch
 
@@ -1545,7 +1602,52 @@ foundList = for i in 0 ..< #cList list (
 )
 
 assert(all(foundList, i->i>=0))
+///
 
+-- Test 9
+TEST ///
+-- Test whether the filtration steps obtained from the toric Chern character are correct
+-- Such a test would have failed before version 1.8, 
+-- because of a bug in the internal method flags:
+-- the method made an assumption on the form how the filtration steps are ordered 
+-- in the bundles generated by the package ToricVectorBundles. 
+-- Usually true, this assumption does not apply, if the bundle arises 
+-- by using the method dual of ToricVectorBundles (e.g. cotangent bundles).
+
+E = dual tangentBundle projectiveSpaceFan 2
+
+getCols = mat -> toList apply( 0..<numgens source mat, i->mat_i )
+
+filtE = applyValues(filtration E, filt -> flatten entries filt);
+raysE = keys filtE;
+filtFromTCC := applyPairs( toricChernCharacter E, (cone,us) -> 
+ cone => (
+  filtRay := for ray in getCols cone list sort apply(us, u -> ( (transpose matrix ray)*u)_(0,0))
+ )
+);
+
+applyPairs(filtFromTCC, (cone, filts) -> (
+  cone => for ray in getCols cone do
+           assert isMember( sort filtE#(matrix ray), filts)
+ )
+)
+///
+
+-- Test 10
+TEST ///
+-- the methods dual, tensor (and maybe others?) from ToricVectorBundles
+-- may produce a ToricVectorBundleKlyachko whose matrices containing the filtration steps
+-- have not ascending entries.
+-- The method wellformedBundleFiltrations (added in version 1.9) ensures ascending entries.
+-- The following test fails when omitting this method.
+T = tangentBundle projectiveSpaceFan 2
+E = wellformedBundleFiltrations( T ** (dual T))
+F = wellformedBundleFiltrations((dual T) ** T)
+
+origin = matrix map(ZZ^2,ZZ^1,0)
+
+assert( all(values toricChernCharacter E, L -> isMember(origin, L)) )
+assert( all(values toricChernCharacter F, L -> isMember(origin, L)) )
 ///
 
 end

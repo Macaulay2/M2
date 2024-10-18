@@ -11,11 +11,6 @@ newPackage("ThreadedGB",
 	    Name => "Sara Jamshidi Zelenberg",
 	    Email => "szelenberg@mx.lakeforest.edu",
 	    HomePage => "https://www.sjzelenberg.com/"
-	},
-        {
-      	    Name => "Contributing Author: Tanner Zielinski",
-	    Email => "tzielin1@hawk.iit.edu",
-	    HomePage => "https://www.linkedin.com/in/tannerzielinski/"
 	}
     },
     Keywords => {"Groebner Basis Algorithms"},
@@ -398,6 +393,8 @@ doc ///
       a remainder.
   SeeAlso
     tgb
+  Contributors
+    @HREF{"https://www.linkedin.com/in/tannerzielinski/", "Tanner Zielinski"}@ <@HREF{"mailto:tzielin1\@hawk.iit.edu", "tzielin1\@hawk.iit.edu"}@>
 ///
 doc ///
   Key

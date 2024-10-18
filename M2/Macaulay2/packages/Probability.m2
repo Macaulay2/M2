@@ -18,8 +18,8 @@
 
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.4",
-    Date => "January 23, 2024",
+    Version => "0.5",
+    Date => "September 13, 2024",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -46,6 +46,13 @@ newPackage("Probability",
 ---------------
 
 -*
+
+0.5 (2024-09-13, M2 1.24.11)
+* add JSAG info
+* remove Constant methods now that we can use inheritance
+* adjust tests now that we use flint instead of boost for some special functions
+* use mpfr's built-in function for generating normally distributed variates
+* add subnodes to improve docs
 
 0.4 (2024-01-23, M2 1.23)
 * release under GPL
@@ -121,8 +128,7 @@ density' := (X, x) -> (
     else X.DensityFunction x)
 
 density = method()
-density(ProbabilityDistribution, Number)   :=
-density(ProbabilityDistribution, Constant) := density'
+density(ProbabilityDistribution, Number) := density'
 
 probability' := true >> o -> (X, x) -> (
     p := if x < first X.Support then 0
@@ -131,8 +137,7 @@ probability' := true >> o -> (X, x) -> (
     if o.LowerTail then p else 1 - p)
 
 probability = method(Options => {LowerTail => true})
-probability(ProbabilityDistribution, Number)   :=
-probability(ProbabilityDistribution, Constant) := o -> (X, x) ->
+probability(ProbabilityDistribution, Number) := o -> (X, x) ->
      probability'(X, x, o)
 
 quantile' = true >> o -> (X, p) -> (
@@ -142,8 +147,7 @@ quantile' = true >> o -> (X, p) -> (
     else X.QuantileFunction if o.LowerTail then p else 1 - p)
 
 quantile = method(Options => {LowerTail => true})
-quantile(ProbabilityDistribution, Number)   :=
-quantile(ProbabilityDistribution, Constant) := o -> (X, p) -> quantile'(X, p, o)
+quantile(ProbabilityDistribution, Number) := o -> (X, p) -> quantile'(X, p, o)
 
 random ProbabilityDistribution := o -> X -> X.RandomGeneration()
 net ProbabilityDistribution := X -> X.Description
@@ -204,22 +208,18 @@ discreteProbabilityDistribution Function := o -> f -> (
 	Support              => o.Support,
 	Description          => o.Description})
 
-density(DiscreteProbabilityDistribution, Number)   :=
-density(DiscreteProbabilityDistribution, Constant) := (X, x) ->
+density(DiscreteProbabilityDistribution, Number) := (X, x) ->
     if x != floor x then 0 else density'(X, x)
 
-probability(DiscreteProbabilityDistribution, Number)   :=
-probability(DiscreteProbabilityDistribution, Constant) := o -> (X, x) ->
+probability(DiscreteProbabilityDistribution, Number) := o -> (X, x) ->
     probability'(X, floor x, o)
 
-quantile(DiscreteProbabilityDistribution, Number)   :=
-quantile(DiscreteProbabilityDistribution, Constant) := o -> (X, p) -> (
+quantile(DiscreteProbabilityDistribution, Number) := o -> (X, p) -> (
     maybefloor := x -> if isInfinite x then x else floor x;
     maybefloor quantile'(X, p, o))
 
 binomialDistribution = method()
-binomialDistribution(ZZ, Number)   :=
-binomialDistribution(ZZ, Constant) := (n, p) -> (
+binomialDistribution(ZZ, Number) := (n, p) -> (
     checkPositive n;
     checkProbability p;
     discreteProbabilityDistribution(
@@ -229,20 +229,17 @@ binomialDistribution(ZZ, Constant) := (n, p) -> (
 	Description => "B" | toString (n, p)))
 
 bernoulliDistribution = method()
-bernoulliDistribution Number   :=
-bernoulliDistribution Constant := p -> binomialDistribution(1, p)
+bernoulliDistribution Number := p -> binomialDistribution(1, p)
 
 poissonDistribution = method()
-poissonDistribution Number   :=
-poissonDistribution Constant := lambda -> (
+poissonDistribution Number := lambda -> (
     checkPositive lambda;
     discreteProbabilityDistribution(x -> lambda^x / x! * exp(-lambda),
 	DistributionFunction => x -> regularizedGamma(floor(x + 1), lambda),
 	Description => "Pois(" | toString lambda | ")"))
 
 geometricDistribution = method()
-geometricDistribution Number   :=
-geometricDistribution Constant := p -> (
+geometricDistribution Number := p -> (
     checkProbability p;
     discreteProbabilityDistribution(x -> p * (1 - p)^x,
 	DistributionFunction => x -> 1 - (1 - p)^(x + 1),
@@ -250,10 +247,7 @@ geometricDistribution Constant := p -> (
 	Description => "Geo(" | toString p | ")"))
 
 negativeBinomialDistribution = method()
-negativeBinomialDistribution(Number,   Number)   :=
-negativeBinomialDistribution(Number,   Constant) :=
-negativeBinomialDistribution(Constant, Number)   :=
-negativeBinomialDistribution(Constant, Constant) := (r, p) -> (
+negativeBinomialDistribution(Number, Number) := (r, p) -> (
     checkPositive r;
     checkProbability p;
     discreteProbabilityDistribution(
@@ -323,10 +317,7 @@ continuousProbabilityDistribution Function := o -> f -> (
 	Description          => o.Description})
 
 uniformDistribution = method()
-uniformDistribution(Number,   Number)   :=
-uniformDistribution(Number,   Constant) :=
-uniformDistribution(Constant, Number)   :=
-uniformDistribution(Constant, Constant) := (a, b) -> (
+uniformDistribution(Number, Number) := (a, b) -> (
     checkReal a;
     checkReal b;
     if a >= b then error("expected parameters to be in increasing order: ",
@@ -340,8 +331,7 @@ uniformDistribution(Constant, Constant) := (a, b) -> (
 installMethod(uniformDistribution, () -> uniformDistribution(0, 1))
 
 exponentialDistribution = method()
-exponentialDistribution Number   :=
-exponentialDistribution Constant := lambda -> (
+exponentialDistribution Number := lambda -> (
     checkPositive lambda;
     continuousProbabilityDistribution(
 	x -> lambda * exp(-lambda * x),
@@ -349,11 +339,9 @@ exponentialDistribution Constant := lambda -> (
 	QuantileFunction => p -> -log(1 - p) / lambda,
 	Description => "Exp(" | toString lambda | ")"))
 
+importFrom(Core, "rawRandomRRNormal")
 normalDistribution = method()
-normalDistribution(Number,   Number)   :=
-normalDistribution(Number,   Constant) :=
-normalDistribution(Constant, Number)   :=
-normalDistribution(Constant, Constant) := (mu, sigma) -> (
+normalDistribution(Number, Number) := (mu, sigma) -> (
     checkReal mu;
     checkPositive sigma;
     continuousProbabilityDistribution(
@@ -362,9 +350,9 @@ normalDistribution(Constant, Constant) := (mu, sigma) -> (
 	    1/2 * (1 + erf((x - mu) / (sigma * sqrt 2))),
 	QuantileFunction => p ->
 	    mu + sigma * sqrt 2 * inverseErf(2 * p - 1),
-	-- box muller transform
-	RandomGeneration => () ->
-	    mu + sigma * sqrt(-2 * log random 1.) * cos (2 * pi * random 1.),
+	RandomGeneration => (
+	    p := min(precision numeric mu, precision numeric sigma);
+	    () -> mu + sigma * rawRandomRRNormal p),
 	Support => (-infinity, infinity),
 	Description => "N" | toString (mu, sigma)))
 
@@ -372,10 +360,7 @@ normalDistribution(Constant, Constant) := (mu, sigma) -> (
 installMethod(normalDistribution, () -> normalDistribution(0, 1))
 
 gammaDistribution = method()
-gammaDistribution(Number,   Number)   :=
-gammaDistribution(Number,   Constant) :=
-gammaDistribution(Constant, Number)   :=
-gammaDistribution(Constant, Constant) := (alpha, lambda) -> (
+gammaDistribution(Number, Number) := (alpha, lambda) -> (
     checkPositive alpha;
     checkPositive lambda;
     continuousProbabilityDistribution(
@@ -385,8 +370,7 @@ gammaDistribution(Constant, Constant) := (alpha, lambda) -> (
 	Description => "Gamma" | toString (alpha, lambda)))
 
 chiSquaredDistribution = method()
-chiSquaredDistribution Number   :=
-chiSquaredDistribution Constant := n -> (
+chiSquaredDistribution Number := n -> (
     checkPositive n;
     continuousProbabilityDistribution(
 	x -> 1/(2^(n/2) * Gamma(n/2)) * x^(n/2 - 1) * exp(-x / 2),
@@ -395,8 +379,7 @@ chiSquaredDistribution Constant := n -> (
 	Description => "chi2(" | toString n | ")"))
 
 tDistribution = method()
-tDistribution Number :=
-tDistribution Constant := df -> (
+tDistribution Number := df -> (
     checkPositive df;
     continuousProbabilityDistribution(
 	x -> Gamma((df + 1)/2) / (sqrt(df * pi) * Gamma(df / 2)) *
@@ -411,10 +394,7 @@ tDistribution Constant := df -> (
 	Description => "t(" | toString df | ")"))
 
 fDistribution = method()
-fDistribution(Number,   Number)   :=
-fDistribution(Number,   Constant) :=
-fDistribution(Constant, Number)   :=
-fDistribution(Constant, Constant) := (d1, d2) -> (
+fDistribution(Number, Number) := (d1, d2) -> (
     checkPositive d1;
     checkPositive d2;
     continuousProbabilityDistribution(
@@ -428,10 +408,7 @@ fDistribution(Constant, Constant) := (d1, d2) -> (
 	Description => "F" | toString (d1, d2)))
 
 betaDistribution = method()
-betaDistribution(Number,   Number)   :=
-betaDistribution(Number,   Constant) :=
-betaDistribution(Constant, Number)   :=
-betaDistribution(Constant, Constant) := (alpha, beta) -> (
+betaDistribution(Number, Number) := (alpha, beta) -> (
     checkPositive alpha;
     checkPositive beta;
     continuousProbabilityDistribution(
@@ -491,6 +468,8 @@ doc ///
     As is always the case when working with real numbers in Macaulay2,
     unexpected results may occur due to the limitations of floating
     point arithmetic.
+  Subnodes
+    ProbabilityDistribution
 ///
 
 doc ///
@@ -544,6 +523,16 @@ doc ///
       constructor methods, @TO discreteProbabilityDistribution@,
       @TO continuousProbabilityDistribution@, or any of the various built-in
       methods for common distributions.
+  Subnodes
+    :Keys
+    DensityFunction
+    DistributionFunction
+    QuantileFunction
+    RandomGeneration
+    Support
+    :Constructor methods
+    discreteProbabilityDistribution
+    continuousProbabilityDistribution
 ///
 
 doc ///
@@ -557,19 +546,23 @@ doc ///
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the probability
       density/mass function to be used by @TO density@.
+  Subnodes
+    density
 ///
 
 doc ///
   Key
     DistributionFunction
   Headline
-    cumulative density function
+    cumulative distribution function
   Description
     Text
       A key in @TO ProbabilityDistribution@ objects and an option for
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the cumulative
       distribution function to be used by @TO probability@.
+  Subnodes
+    probability
 ///
 
 doc ///
@@ -583,6 +576,8 @@ doc ///
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the quantile function
       to be used by @TO quantile@.
+  Subnodes
+    quantile
 ///
 
 doc ///
@@ -596,6 +591,8 @@ doc ///
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the random generation
       function to be used by @TO (random, ProbabilityDistribution)@.
+  Subnodes
+    (random, ProbabilityDistribution)
 ///
 
 doc ///
@@ -615,9 +612,7 @@ doc ///
   Key
     density
     (density, ProbabilityDistribution, Number)
-    (density, ProbabilityDistribution, Constant)
     (density, DiscreteProbabilityDistribution, Number)
-    (density, DiscreteProbabilityDistribution, Constant)
   Headline
     probability density (or mass) function
   Usage
@@ -663,9 +658,7 @@ doc ///
   Key
     probability
     (probability, ProbabilityDistribution, Number)
-    (probability, ProbabilityDistribution, Constant)
     (probability, DiscreteProbabilityDistribution, Number)
-    (probability, DiscreteProbabilityDistribution, Constant)
     [probability, LowerTail]
   Headline
     cumulative distribution function
@@ -690,15 +683,15 @@ doc ///
       probability \(S_X(x) = P(X > x)\).
     Example
       probability_Z(1.96, LowerTail => false)
+  Subnodes
+    LowerTail
 ///
 
 doc ///
   Key
     quantile
     (quantile, ProbabilityDistribution, Number)
-    (quantile, ProbabilityDistribution, Constant)
     (quantile, DiscreteProbabilityDistribution, Number)
-    (quantile, DiscreteProbabilityDistribution, Constant)
     [quantile, LowerTail]
   Headline
     quantile function
@@ -829,6 +822,12 @@ doc ///
     When defining a probability mass function, the user must be careful that
     it satisfies the definition, i.e., it must be nonnegative and its values
     must sum to 1 on its support.
+  Subnodes
+    binomialDistribution
+    poissonDistribution
+    geometricDistribution
+    negativeBinomialDistribution
+    hypergeometricDistribution
 ///
 
 doc ///
@@ -897,16 +896,23 @@ doc ///
     When defining a probability density function, the user must be careful that
     it satisfies the definition, i.e., it must be nonnegative and it must
     integrate to 1 on its support.
+  Subnodes
+    uniformDistribution
+    exponentialDistribution
+    normalDistribution
+    gammaDistribution
+    chiSquaredDistribution
+    tDistribution
+    fDistribution
+    betaDistribution
 ///
 
 doc ///
   Key
     binomialDistribution
     (binomialDistribution, ZZ, Number)
-    (binomialDistribution, ZZ, Constant)
     bernoulliDistribution
     (bernoulliDistribution, Number)
-    (bernoulliDistribution, Constant)
   Headline
     binomial distribution
   Usage
@@ -939,7 +945,6 @@ doc ///
   Key
     poissonDistribution
     (poissonDistribution, Number)
-    (poissonDistribution, Constant)
   Headline
     Poisson distribution
   Usage
@@ -965,7 +970,6 @@ doc ///
   Key
     geometricDistribution
     (geometricDistribution, Number)
-    (geometricDistribution, Constant)
   Headline
     geometric distribution
   Usage
@@ -995,9 +999,6 @@ doc ///
   Key
     negativeBinomialDistribution
     (negativeBinomialDistribution, Number, Number)
-    (negativeBinomialDistribution, Number, Constant)
-    (negativeBinomialDistribution, Constant, Number)
-    (negativeBinomialDistribution, Constant, Constant)
   Headline
     negative binomial distribution
   Usage
@@ -1059,9 +1060,6 @@ doc ///
     uniformDistribution
     1:uniformDistribution
     (uniformDistribution, Number, Number)
-    (uniformDistribution, Number, Constant)
-    (uniformDistribution, Constant, Number)
-    (uniformDistribution, Constant, Constant)
   Headline
     continuous uniform distribution
   Usage
@@ -1091,7 +1089,6 @@ doc ///
   Key
     exponentialDistribution
     (exponentialDistribution, Number)
-    (exponentialDistribution, Constant)
   Headline
     exponential distribution
   Usage
@@ -1118,9 +1115,6 @@ doc ///
     normalDistribution
     1:normalDistribution
     (normalDistribution, Number, Number)
-    (normalDistribution, Number, Constant)
-    (normalDistribution, Constant, Number)
-    (normalDistribution, Constant, Constant)
   Headline
     normal distribution
   Usage
@@ -1152,9 +1146,6 @@ doc ///
   Key
     gammaDistribution
     (gammaDistribution, Number, Number)
-    (gammaDistribution, Number, Constant)
-    (gammaDistribution, Constant, Number)
-    (gammaDistribution, Constant, Constant)
   Headline
     gamma distribution
   Usage
@@ -1185,7 +1176,6 @@ doc ///
   Key
     chiSquaredDistribution
     (chiSquaredDistribution, Number)
-    (chiSquaredDistribution, Constant)
   Headline
     chi-squared distribution
   Usage
@@ -1211,7 +1201,6 @@ doc ///
   Key
     tDistribution
     (tDistribution, Number)
-    (tDistribution, Constant)
   Headline
     Student's t-distribution
   Usage
@@ -1235,9 +1224,6 @@ doc ///
   Key
     fDistribution
     (fDistribution, Number, Number)
-    (fDistribution, Number, Constant)
-    (fDistribution, Constant, Number)
-    (fDistribution, Constant, Constant)
   Headline
     F-distribution
   Usage
@@ -1263,9 +1249,6 @@ doc ///
   Key
     betaDistribution
     (betaDistribution, Number, Number)
-    (betaDistribution, Number, Constant)
-    (betaDistribution, Constant, Number)
-    (betaDistribution, Constant, Constant)
   Headline
     beta distribution
   Usage
@@ -1344,10 +1327,8 @@ assert Equation(density_X 3, binomial(5, 3) * 0.25^3 * 0.75^3)
 assert Equation(density_X 3.5, 0)
 
 assert Equation(probability_X(-1), 0)
-assert Equation(probability_X 3,
-     0.25^3 * sum(0..3, x -> binomial(x + 2, 2) * 0.75^x))
-assert Equation(probability_X 3.5,
-     0.25^3 * sum(0..3, x -> binomial(x + 2, 2) * 0.75^x))
+assert(abs(probability_X 3 - 0.1694336) < 1e-7) -- R: pnbinom(3, 3, 0.25)
+assert(abs(probability_X 3.5 - 0.1694336) < 1e-7)
 
 assert Equation(quantile_X 0, 0)
 assert Equation(quantile_X 0.3, 5)

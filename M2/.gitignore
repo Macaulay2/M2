@@ -1,11 +1,13 @@
-*~
 /M2
 /config.args
 /config.log
 /config.status
+/config.guess
+/config.sub
+/install-sh
 /include/M2/config.h
 /srcdir
-/GNUmakefile
+/Makefile
 /check-configure/Makefile
 /include/config.Makefile
 /include/configuration

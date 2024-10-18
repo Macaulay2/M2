@@ -41,7 +41,7 @@ void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_realloc)(void*, size_t);
 
 
 
-#define sizeofarray(s,len) (sizeof(*(s)) - sizeof((s)->array) + (len)*sizeof((s)->array[0]))
+#define sizeofarray(s,len) (sizeof(*(s)) + (len)*sizeof((s)->array[0]))
 #define sizeofarraytype(S,len) sizeofarray((S)0,len)
 #define sizeofstruct(s) sizeof(*(s))
 #define sizeofstructtype(S) sizeofstruct((S)0)

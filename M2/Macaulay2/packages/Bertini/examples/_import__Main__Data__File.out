@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 408841555
+-- -*- M2-comint -*- hash: 13875702623998209363
 
 i1 : makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},

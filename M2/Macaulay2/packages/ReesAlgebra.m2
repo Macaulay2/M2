@@ -57,14 +57,14 @@ check "ReesAlgebra"
 *-
 
 export{
-  "analyticSpread", 
+  "analyticSpread",
+  "associatedGradedRing",
   "distinguished",
   "intersectInP",
   "isLinearType", 
   "minimalReduction",
   "isReduction",
   "multiplicity",
-  "normalCone", 
   "reductionNumber",
   "reesIdeal",
   "reesAlgebra",
@@ -79,11 +79,9 @@ export{
   "expectedReesIdeal",
   "PlaneCurveSingularities",
   --synonyms
-  "associatedGradedRing" => "normalCone",
   "reesAlgebraIdeal" => "reesIdeal",
   "Trim" -- option in reesIdeal
   }
-
 
 symmetricAlgebraIdeal = method(Options =>
     {             VariableBaseName => "w"
@@ -209,8 +207,7 @@ isLinearType(Module, RingElement):= o-> (N,a)->(
      J := ideal((vars S) * P);
      ((gens I) % J) == 0)
 
-normalCone = method(TypicalValue => Ring, 
-    	    Options => {
+normalConeOptions = {
 	  DegreeLimit => {},
 	  BasisElementLimit => infinity,
 	  PairLimit => infinity,
@@ -218,16 +215,20 @@ normalCone = method(TypicalValue => Ring,
 	  Strategy => null,
 	  Variable => "w"
 	  }
-)
-normalCone(Ideal) := o -> I -> (
+
+normalCone Ideal := Ring => normalConeOptions >> o -> I -> (
      RI := reesAlgebra(I,o);
      RI/promote(I,RI)
      )
 
-normalCone(Ideal, RingElement) := o -> (I,a) -> (
+normalCone(Ideal, RingElement) := Ring => normalConeOptions >> o  -> (I,a) -> (
      RI := reesAlgebra(I,a,o);
      RI/promote(I,RI)     
      )
+
+associatedGradedRing = method(Options => normalConeOptions)
+associatedGradedRing Ideal := Ring => o -> I -> normalCone(I, o)
+associatedGradedRing(Ideal, RingElement) := Ring => o -> (I,a) -> normalCone(I, a, o)
 
 multiplicity = method(
     	    Options => {
@@ -1256,15 +1257,18 @@ doc ///
 
 doc ///
   Key
-    normalCone
-    (normalCone, Ideal)
     (normalCone, Ideal, RingElement)
-    
+    (normalCone, Ideal)
+    associatedGradedRing
+    (associatedGradedRing, Ideal)
+    (associatedGradedRing, Ideal, RingElement)
   Headline
     The normal cone of a subscheme
   Usage
     normalCone I
     normalCone(I,f)
+    associatedGradedRing I
+    associatedGradedRing(I,f)
   Inputs
     I:Ideal
     f:RingElement
@@ -1980,8 +1984,8 @@ doc ///
     [reesAlgebra,Strategy]
     [isLinearType,Strategy]
     [isReduction, Strategy]    	  
-    [normalCone, Strategy]    	  
-    [multiplicity, Strategy]    	  
+    [multiplicity, Strategy]
+    [associatedGradedRing, Strategy]
     [specialFiberIdeal, Strategy]    	  
     [specialFiber, Strategy]    	  
     [analyticSpread, Strategy]    	  
@@ -2025,7 +2029,7 @@ doc ///
     [specialFiber, PairLimit]
     [specialFiberIdeal, PairLimit]
     [multiplicity, PairLimit]
-    [normalCone, PairLimit]
+    [associatedGradedRing, PairLimit]
     [isReduction, PairLimit]
     [isLinearType,PairLimit]
     [reesAlgebra,PairLimit]
@@ -2062,7 +2066,7 @@ doc ///
     [specialFiber, MinimalGenerators]
     [specialFiberIdeal, MinimalGenerators]
     [multiplicity, MinimalGenerators]
-    [normalCone, MinimalGenerators]
+    [associatedGradedRing, MinimalGenerators]
     [isReduction, MinimalGenerators]
     [isLinearType,MinimalGenerators]
     [reesAlgebra,MinimalGenerators]
@@ -2099,7 +2103,7 @@ doc ///
     [analyticSpread, BasisElementLimit]
     [specialFiber, BasisElementLimit]
     [multiplicity, BasisElementLimit]
-    [normalCone, BasisElementLimit]
+    [associatedGradedRing, BasisElementLimit]
     [isReduction, BasisElementLimit]
     [isLinearType,BasisElementLimit]
     [reesAlgebra,BasisElementLimit]
@@ -2135,8 +2139,8 @@ doc ///
     [distinguished,DegreeLimit]
     [analyticSpread, DegreeLimit]
     [specialFiber, DegreeLimit]
-    [normalCone, DegreeLimit]
     [multiplicity, DegreeLimit]
+    [associatedGradedRing, DegreeLimit]
     [isReduction, DegreeLimit]
     [isLinearType,DegreeLimit]
     [reesAlgebra,DegreeLimit]

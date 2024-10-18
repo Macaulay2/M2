@@ -5,10 +5,12 @@ use classes;
 
 header "#include <cassert>";
 
+-- applyEEE is not defined until evaluate.d,
+-- so we use a pointer and populate it later.
 dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
 export applyEEEpointer := dummyapplyEEE;
 
-export hash(x:HashTable):int := (
+export hash(x:HashTable):hash_t := (
      lockit := x.Mutable && !x.beingInitialized;
      if (lockit) then lockRead(x.mutex);
      h := x.parent.hash + x.Class.hash * 231 + 32455;
@@ -87,9 +89,11 @@ export remove(x:HashTable,key:Expr):Expr := (
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      prev := p;
+     ret := nullE;
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
+	       ret = p.value;
 	       --preserve ordering -- we change the numEntries last upon insertion so decrease it first when removing.
 	       x.numEntries = x.numEntries - 1;
 	       if prev == p then x.table.hmod = p.next
@@ -102,8 +106,8 @@ export remove(x:HashTable,key:Expr):Expr := (
 	  prev = p;
 	  p = p.next);
      if !x.beingInitialized then unlock(x.mutex);
-     Expr(x));
-export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+     ret);
+export storeInHashTable(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
      hmod := int(h & (length(x.table)-1));
@@ -136,7 +140,7 @@ export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      if !x.beingInitialized then unlock(x.mutex);
      value);
 export storeInHashTable(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTable(x,key,hash(key),value);
-export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+export storeInHashTableNoClobber(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      -- derived from storeInHashTable above!
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
@@ -163,7 +167,7 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
      if !x.beingInitialized then unlock(x.mutex);
      value);
 export storeInHashTableNoClobber(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTableNoClobber(x,key,hash(key),value);
-export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+export storeInHashTableMustClobber(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
      hmod := int(h & (length(x.table)-1));
@@ -298,7 +302,7 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
      x := HashTable(
 	  if newMutable || o.Mutable then copy(o.table) else o.table,
 	  newClass,
-	  newParent, o.numEntries, 0, newMutable, false, newThreadRWLock());
+	  newParent, o.numEntries, hash_t(0), newMutable, false, newThreadRWLock());
      if newMutable then (
 	  if newClass != cacheTableClass 
 	  then x.hash = nextHash(); -- cache tables are mutable and have hash code 0
@@ -309,7 +313,18 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
 export copy(o:HashTable,newClass:HashTable,newMutable:bool):HashTable := copy(o,newClass,o.parent,newMutable);
 -----------------------------------------------------------------------------
 
-export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
+lookup(object:HashTable, key:Expr):Expr; -- forward declaration
+
+KeyNotFound(object:string, key:Expr):Expr := (
+    -- TODO: implement a similar trick to call synonym(object)
+    msg := "key not found in " + object;
+    see := lookup(Class(key), RobustPrintE);
+    if see != notfoundE then
+    when applyEEEpointer(see, toExpr(msg), key)
+    is str:stringCell do msg = str.v else nothing;
+    buildErrorPacket(msg));
+
+export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      res := notfoundE;
      lockit := object.Mutable && !object.beingInitialized;
@@ -325,53 +340,28 @@ export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
      if lockit then unlock(object.mutex);
      res);
 export lookup1(object:HashTable,key:Expr):Expr := lookup1(object,key,hash(key));
-export lookup1force(object:HashTable,key:Expr,keyhash:int):Expr := (
-     lockit := object.Mutable && !object.beingInitialized;
-     if lockit then lockRead(object.mutex);
-     keymod := int(keyhash & (length(object.table)-1));
-     bucket := object.table.keymod;
-     while bucket != bucket.next do (
-	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
-	       res := bucket.value;
-	       if lockit then unlock(object.mutex);
-	       return res);
-	  bucket = bucket.next;
-	  );
-     if lockit then unlock(object.mutex);
-     buildErrorPacket("key not found in hash table"));
+
+-- lookup a key in the hash table and either return the value or an error packet if not found
+export lookup1force(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
+    result := lookup1(object, key, keyhash);
+    if result != notfoundE then result
+    else KeyNotFound("hash table", key));
 export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
-export lookup1Q(object:HashTable,key:Expr,keyhash:int):bool := (
-     lockit := object.Mutable && !object.beingInitialized;
-     if lockit then lockRead(object.mutex);
-     keymod := int(keyhash & (length(object.table)-1));
-     bucket := object.table.keymod;
-     while bucket != bucket.next do (
-	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
-	       if lockit then unlock(object.mutex);
-	       return true);
-	  bucket = bucket.next;
-	  );
-     if lockit then unlock(object.mutex);
-     false);
+
+-- query a key in the hash table and report whether it is found or not
+export lookup1Q(object:HashTable,key:Expr,keyhash:hash_t):bool := (
+    result := lookup1(object, key, keyhash);
+    if result != notfoundE then true else false);
 export lookup1Q(object:HashTable,key:Expr):bool := lookup1Q(object,key,hash(key));
-export lookup(object:HashTable,key:Expr,keyhash:int):Expr := (
-     while true do (
-	  lockit := object.Mutable && !object.beingInitialized;
-	  if lockit then lockRead(object.mutex);
-     	  keymod := int(keyhash & (length(object.table)-1));
-     	  bucket := object.table.keymod;
-     	  while bucket != bucket.next do (
-	       if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
-		    res := bucket.value;
-		    if lockit then unlock(object.mutex);
-		    return res);
-	       bucket = bucket.next;
-	       );
-	  if lockit then unlock(object.mutex);
-	  if object == thingClass then break;
-	  object = object.parent;
-	  );
-     nullE);	  
+
+-- lookup a key in the hash table or its parent until it is found, otherwise return null
+export lookup(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
+    while true do (
+	result := lookup1(object, key, keyhash);
+	if result != notfoundE  then return result;
+	if object == thingClass then break;
+	object = object.parent);
+    nullE);
 export lookup(object:HashTable,key:Expr):Expr := lookup(object,key,hash(key));
 export lookup(object:HashTable,key:SymbolClosure):Expr := (
      lookup(object,Expr(key),key.symbol.hash)
@@ -456,7 +446,7 @@ export installMethod(meth:Expr,value:Expr):Expr := (
 -- unary methods
 export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := installIt(1, assignmentMethodP(meth), s, meth, value);
 threadLocal Key1 := Sequence(nullE,nullE);
-export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupUnaryValue(s:HashTable,meth:Expr,methhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      key1 := Key1;
      key1.0 = Expr(s);
@@ -471,15 +461,15 @@ export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
 	  Expr(Sequence(meth,Expr(lhs),Expr(rhs))),
 	  value));
 
-export installMethod(s:SymbolClosure,X:HashTable,f:fun):Expr := (
+export installMethod(s:SymbolClosure, X:HashTable,              f:function(Expr):Expr):Expr := (
      installMethod(Expr(s),X,Expr(newCompiledFunction(f)))
      );
-export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
+export installMethod(s:SymbolClosure, X:HashTable, Y:HashTable, f:function(Expr):Expr):Expr := (
      installMethod(Expr(s),X,Y,Expr(newCompiledFunction(f)))
      );
 
 threadLocal Key2 := Sequence(nullE,nullE,nullE);
-export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key2 := Key2;
      key2.0 = meth;
      -- the big numbers here are the same as in hash() for sequences in structure.d
@@ -504,7 +494,7 @@ export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Ex
 	  lhs = lhs.parent;
 	  );
      nullE);
-export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      key2 := Key2;
      key2.0 = Expr(lhs);
@@ -534,7 +524,7 @@ export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,value:Expr
 	  Expr(Sequence(meth,Expr(s1),Expr(s2),Expr(s3))), 
 	  value));
 threadLocal Key3 := Sequence(nullE,nullE,nullE,nullE);
-export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key3 := Key3;
      key3.0 = meth;
      -- the big numbers here are the same is in hash() for sequences in structure.d
@@ -599,7 +589,7 @@ export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTab
 	  Expr(Sequence(meth,Expr(s1),Expr(s2),Expr(s3),Expr(s4))), 
 	  value));
 threadLocal Key4 := Sequence(nullE,nullE,nullE,nullE,nullE);
-export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr,methhash:int):Expr := (
+export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key4 := Key4;
      key4.0 = meth;
      -- the big numbers here are the same is in hash() for sequences in structure.d
@@ -660,7 +650,7 @@ installfun(e:Expr):Expr := (
 	       when a.1 is s:HashTable do
 	       if s.Mutable then installMethod(a.0,s,a.2)
 	       else WrongArg(1+1,"a mutable hash table")
-	       else WrongArg(1+1,"a hash table"))
+	       else WrongArgHashTable(2))
 	  else if length(a) == 4 then (
 	       when a.1
 	       is lhs:HashTable do
@@ -669,9 +659,9 @@ installfun(e:Expr):Expr := (
 	       is rhs:HashTable do
 	       if rhs.Mutable then installMethod(a.0,lhs,rhs,a.3)
 	       else WrongArg(2+1,"a mutable hash table")
-	       else WrongArg(2+1,"a hash table")
+	       else WrongArgHashTable(3)
 	       else WrongArg(1+1,"a mutable hash table")
-	       else WrongArg(1+1,"a hash table"))
+	       else WrongArgHashTable(2))
 	  else if length(a) == 5 then (
 	       when a.1
 	       is s1:HashTable do
@@ -683,11 +673,11 @@ installfun(e:Expr):Expr := (
 	       is s3:HashTable do
 	       if s3.Mutable then installMethod(a.0,s1,s2,s3,a.4)
 	       else WrongArg(3+1,"a mutable hash table")
-	       else WrongArg(3+1,"a hash table")
+	       else WrongArgHashTable(4)
 	       else WrongArg(2+1,"a mutable hash table")
-	       else WrongArg(2+1,"a hash table")
+	       else WrongArgHashTable(3)
 	       else WrongArg(1+1,"a mutable hash table")
-	       else WrongArg(1+1,"a hash table"))
+	       else WrongArgHashTable(2))
 	  else WrongNumArgs(3,5))
      else WrongNumArgs(3,5));
 setupfun("installMethod",installfun);
@@ -796,34 +786,41 @@ getvalue(x:Sequence,i:int):Expr := (
 	  else x.i));
 export subvalue(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalueQ below
+     -- # typical value: symbol #, Sequence, ZZ, Thing
      when left is x:Sequence do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then getvalue(x,toInt(r))
 	       else WrongArgSmallInteger())
 	  else buildErrorPacket("expected subscript to be an integer"))
+     -- # typical value: symbol #, HashTable, Thing, Thing
      is x:HashTable do lookup1force(x,right)
+     -- # typical value: symbol #, Database, String, String
      is f:Database do (
 	  when right
 	  is key:stringCell do (
 	       if !f.isopen then return buildErrorPacket("database closed");
 	       when dbmfetch(f.handle,key.v)
 	       is a:string do Expr(stringCell(a))
-	       else buildErrorPacket("encountered missing value"))
+	       else KeyNotFound("database", right))
 	  else buildErrorPacket("expected a string as key to database"))
+     -- # typical value: symbol #, List, ZZ, Thing
+     -- # typical value: symbol #, BasicList, ZZ, Thing
      is x:List do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then getvalue(x.v,toInt(r))
 	       else WrongArgSmallInteger())
 	  else buildErrorPacket("array index not an integer"))
+     -- # typical value: symbol #, Dictionary, String, Symbol
      is dc:DictionaryClosure do (
 	  when right is s:stringCell do (
 	       d := dc.dictionary;
 	       when lookup(s.v,d.symboltable)
 	       is x:Symbol do Expr(SymbolClosure(if x.thread then threadFrame else dc.frame,x))
-	       else buildErrorPacket("key not found in dictionary")
+	       else KeyNotFound("dictionary", right)
 	       )
 	  else buildErrorPacket("expected key for dictionary to be a string")
 	  )
+     -- # typical value: symbol #, String, ZZ, String
      is x:stringCell do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -834,6 +831,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 		    else Expr(stringCell(string(x.v.rr))))
 	       else buildErrorPacket("string index out of bounds"))
 	  else buildErrorPacket("expected subscript to be an integer"))
+     -- # typical value: symbol #, Net, ZZ, String
      is n:Net do (
 	  x := n.body;
 	  when right is r:ZZcell do (
@@ -845,9 +843,10 @@ export subvalue(left:Expr,right:Expr):Expr := (
 		    else Expr(stringCell(x.rr)))
 	       else buildErrorPacket("net row index out of bounds"))
 	  else buildErrorPacket("expected subscript to be an integer"))
-     else buildErrorPacket("expected a list, hash table, or sequence"));
+     else buildErrorPacket("expected a list, sequence, string, net, hash table, database, or dictionary"));
 export subvalueQ(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalue above
+     -- # typical value: symbol #?, Sequence, ZZ, Boolean
      when left is x:Sequence do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -856,16 +855,22 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    )
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, Set, Thing, Boolean
+     -- # typical value: symbol #?, HashTable, Thing, Boolean
      is x:HashTable do if lookup1Q(x,right) then True else False
+     -- # typical value: symbol #?, Dictionary, String, Boolean
      is dc:DictionaryClosure do (
 	  d := dc.dictionary;
 	  when right is s:stringCell do when lookup(s.v,d.symboltable) is Symbol do True else False
 	  else buildErrorPacket("expected key for dictionary to be a string")
 	  )
+     -- # typical value: symbol #?, Database, String, Boolean
      is x:Database do (
 	  when right
 	  is key:stringCell do dbmquery(x,key.v)
 	  else buildErrorPacket("expected a string as key to database"))
+     -- # typical value: symbol #?, List, ZZ, Boolean
+     -- # typical value: symbol #?, BasicList, ZZ, Boolean
      is x:List do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -874,6 +879,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    )
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, String, ZZ, Boolean
      is x:stringCell do (
 	  when right is r:ZZcell do (
 	       if isInt(r) then (
@@ -883,6 +889,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    else True)
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, Net, ZZ, Boolean
      is n:Net do (
 	  x := n.body;
 	  when right is r:ZZcell do (
@@ -893,8 +900,9 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    else True)
 	       else False)
 	  else False)
+     -- # typical value: symbol #?, Nothing, Thing, Boolean
      is Nothing do False				    -- we think of "null" as a universal gadget with no parts
-     else WrongArg(1,"null, a sequence, list, string, net, hashtable, database, or dictionary"));
+     else WrongArg(1,"null, a list, sequence, string, net, hash table, database, or dictionary"));
 
 export (x:string) => (y:Expr) ::= Sequence(toExpr(x),y);
 export (x:string) => (y:int) ::= x => toExpr(y);

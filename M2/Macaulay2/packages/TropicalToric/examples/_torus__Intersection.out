@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -746296924
+-- -*- M2-comint -*- hash: 1827265772020591012
 
 i1 : X = NormalToricVarieties$cartesianProduct apply((1,1), i-> toricProjectiveSpace i);
 

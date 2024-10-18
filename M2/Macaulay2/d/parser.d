@@ -2,8 +2,9 @@
 use tokens;
 use lex;
 
-export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
+export parseRR(s:string):RRorNull := (			    -- 4.33234234234p345e-9
      prec := defaultPrecision;
+     overflow := false;
      ss := new string len length(s) + 1 do (		    -- we add 1 to get at least one null character at the end
      	  inPrec := false;
 	  foreach c in s do (
@@ -13,7 +14,11 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 		    )
 	       else if inPrec then (
 		    if isdigit(c) then (
-			 prec = 10 * prec + (c - '0');
+			 if !overflow then (
+			     newprec := 10 * prec + (c - '0');
+			     if newprec < prec
+			     then overflow = true
+			     else prec = newprec)
 			 )
 		    else (
 			 inPrec = false;
@@ -25,7 +30,8 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 		    ));
 	  while true do provide char(0);
 	  );
-     toRR(ss,prec));
+      if overflow then RRorNull(null())
+      else RRorNull(toRR(ss, prec)));
 parseError := false;
 parseMessage := "";
 utf8(w:varstring,i:int):varstring := (
@@ -114,15 +120,15 @@ export parseString(s:string):string := (
      tostring(v)
      );
 
-export thenW := Word("-*dummy word: then*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export whenW := Word("-*dummy word: when*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export elseW := Word("-*dummy word: else*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export ofW := Word("-*dummy word: of*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export doW := Word("-*dummy word: do*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export listW := Word("-*dummy word: list*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export fromW := Word("-*dummy word: from*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export inW := Word("-*dummy word: in*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export toW := Word("-*dummy word: to*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export thenW := Word("-*dummy word: then*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export whenW := Word("-*dummy word: when*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export elseW := Word("-*dummy word: else*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export ofW := Word("-*dummy word: of*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export doW := Word("-*dummy word: do*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export listW := Word("-*dummy word: list*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export fromW := Word("-*dummy word: from*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export inW := Word("-*dummy word: in*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export toW := Word("-*dummy word: to*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export debug := false;
 export tracefile := dummyfile;
 export openTokenFile(filename:string):(TokenFile or errmsg) := (
@@ -235,7 +241,7 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      	       token = gettoken(file,obeylines);
 	       token.word.parse.funs.unary(token,file,prec,obeylines)
 	       )
-     	  else ParseTree(dummy(position(token)))
+     	  else ParseTree(dummy(token.position))
 	  );
      if ret == errorTree then (
 	  if isatty(file) then flushToken(file) else skip(file,prec));
@@ -266,30 +272,6 @@ matcher(left:string):string := (
 	  rest = matchPair.next;	  
 	  );
      ""
-     );
-export varexprlist := {
-     list:array(ParseTree),
-     size:int
-     };
-export newvarexprlist(i:int):varexprlist := varexprlist(
-     new array(ParseTree) len i do provide dummyTree, 
-     0);
-needatleast(i:int,v:varexprlist):void := (
-     if length(v.list) < i then (
-     	  v.list = new array(ParseTree) len 2*i do (
-	       foreach e in v.list do provide e;
-	       while true do provide dummyTree;
-	       );
-     	  );
-     );
-export (v:varexprlist) << (e:ParseTree) : varexprlist := (
-     needatleast(v.size + 1,v);
-     v.list.(v.size) = e;
-     v.size = v.size + 1;
-     v
-     );
-export toexprlist(v:varexprlist):ArrayParseTree := (
-     new array(ParseTree) len v.size do foreach e in v.list do provide e
      );
 export unaryparen(left:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      rightparen := matcher(left.word.name);
@@ -481,9 +463,7 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
 	       if elseClause == errorTree then return errorTree;
 	       accumulate(ParseTree(TryThenElse(tryToken,primary,thenToken,thenClause,elseToken,elseClause)),file,prec,obeylines))
-	  else (
-	       printErrorMessage(tryToken,"syntax error : expected 'else' to match this 'try'");
-	       errorTree))
+	  else accumulate(ParseTree(TryThen(tryToken,primary,thenToken,thenClause)),file,prec,obeylines))
      else accumulate(ParseTree(Try(tryToken,primary)),file,prec,obeylines));
 export unarycatch(catchToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      primary := parse(file,catchToken.word.parse.unaryStrength,obeylines);
@@ -509,34 +489,41 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
 
 export treePosition(e:ParseTree):Position := (
-     while true do (
-	  when e
-	  is dummy do return dummyPosition
-	  is token:Token do return position(token)
-	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do return position(binary.Operator)
-	  is a:Arrow do return position(a.Operator)
-	  is unary:Unary do return position(unary.Operator)
-	  is postfix:Postfix do return position(postfix.Operator)
-	  is a:Quote do return position(a.Operator)
-	  is a:GlobalQuote do return position(a.Operator)
-	  is a:ThreadQuote do return position(a.Operator)
-	  is a:LocalQuote do return position(a.Operator)
-	  is ee:Parentheses do return position(ee.left)
-	  is ee:EmptyParentheses do return position(ee.left)
-     	  is i:IfThen do return position(i.ifToken)
-	  is i:TryThenElse do return position(i.tryToken)
-	  is i:TryElse do return position(i.tryToken)
-	  is i:Try do return position(i.tryToken)
-	  is i:Catch do return position(i.catchToken)
-     	  is i:IfThenElse do return position(i.ifToken)
-     	  is w:For do return position(w.forToken)
-     	  is w:WhileDo do return position(w.whileToken)
-     	  is w:WhileList do return position(w.whileToken)
-     	  is w:WhileListDo do return position(w.whileToken)
-	  is n:New do return position(n.newtoken)
-	  )
-     );
+    when e
+    is t:Token            do t.position
+    is s:Parentheses      do combinePositionL(s.left.position,       s.right.position)
+    is s:EmptyParentheses do combinePositionL(s.left.position,       s.right.position)
+    is a:Adjacent         do combinePositionM(treePosition(a.lhs),   treePosition(a.rhs))
+    is a:Arrow            do combinePositionL(treePosition(a.lhs),   treePosition(a.rhs))
+    is o:Unary            do combinePositionL(o.Operator.position,   treePosition(o.rhs))
+    is o:Binary           do combinePositionC(treePosition(o.lhs),   treePosition(o.rhs), o.Operator.position)
+    is o:Postfix          do combinePositionR(treePosition(o.lhs),   o.Operator.position)
+    is o:Quote            do combinePositionL(o.Operator.position,   o.rhs.position)
+    is o:GlobalQuote      do combinePositionL(o.Operator.position,   o.rhs.position)
+    is o:ThreadQuote      do combinePositionL(o.Operator.position,   o.rhs.position)
+    is o:LocalQuote       do combinePositionL(o.Operator.position,   o.rhs.position)
+    is t:IfThen           do combinePositionL(t.ifToken.position,    treePosition(t.thenClause))
+    is t:IfThenElse       do combinePositionL(t.ifToken.position,    treePosition(t.elseClause))
+    is t:Try              do combinePositionL(t.tryToken.position,   treePosition(t.primary))
+    is t:TryThen          do combinePositionL(t.tryToken.position,   treePosition(t.sequel))
+    is t:TryThenElse      do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
+    is t:TryElse          do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
+    is t:Catch            do combinePositionL(t.catchToken.position, treePosition(t.primary))
+    is t:WhileDo          do combinePositionL(t.whileToken.position, treePosition(t.doClause))
+    is t:WhileListDo      do combinePositionL(t.whileToken.position, treePosition(t.doClause))
+    is t:WhileList        do combinePositionL(t.whileToken.position, treePosition(t.listClause))
+    -- TODO: split into ForDo and ForList
+    is t:For do (
+	lastClause := if t.doClause != dummyTree then t.doClause else t.listClause;
+	combinePositionL(t.forToken.position, treePosition(lastClause)))
+    -- TODO: split into New, NewOf, NewFrom, and NewOfFrom
+    is t:New do (
+	lastClass :=
+	if t.newInitializer != dummyTree then t.newInitializer else
+	if t.newParent      != dummyTree then t.newParent      else t.newClass;
+	combinePositionL(t.newToken.position, treePosition(lastClass)))
+    is dummy do dummyPosition
+    );
 
 size(x:Token):int := Ccode(int,"sizeof(*",x,")");
 size(x:functionDescription):int := Ccode(int,"sizeof(*",x,")");
@@ -556,17 +543,18 @@ export size(e:ParseTree):int := (
      is x:LocalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
      is x:Parentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right) + size(x.contents)
      is x:EmptyParentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right)
-     is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause)
-     is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause) + size(x.elseClause)
-     is x:TryThenElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel) + size(x.elseToken) + size(x.alternate)
-     is x:TryElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.elseToken) + size(x.alternate)
-     is x:Try do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)
+     is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause)
+     is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause) + size(x.elseClause)
+    is x:TryThenElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel) + size(x.elseToken) + size(x.alternate)
+    is x:TryThen     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel)
+    is x:TryElse     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                                      + size(x.elseToken) + size(x.alternate)
+    is x:Try         do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)
      is x:Catch do Ccode(int,"sizeof(*",x,")") + size(x.catchToken) + size(x.primary)
      is x:For do Ccode(int,"sizeof(*",x,")")+ size(x.forToken) + size(x.variable) + size(x.inClause) + size(x.fromClause) + size(x.toClause) + size(x.whenClause) + size(x.listClause) + size(x.doClause)
      is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)
      is x:WhileList do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.listtoken) + size(x.listClause)
      is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause) + size(x.listtoken) + size(x.listClause)
-     is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newtoken) + size(x.newclass) + size(x.newparent) + size(x.newinitializer)
+    is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newToken) + size(x.newClass) + size(x.newParent) + size(x.newInitializer)
      );
 
 -- Local Variables:

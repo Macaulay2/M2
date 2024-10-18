@@ -1,6 +1,7 @@
 # from https://github.com/google/googletest/archive/release-1.8.0.tar.gz, renamed to gtest-1.8.0.tar.gz
-VERSION = 1.10.0
-TARDIR = googletest-release-$(VERSION)/googletest
+SUBMODULE = true
+LIBNAME = googletest
+VERSION = 1.11.0
 CONFIGURECMD = :
 BUILDCMD = :
 
@@ -11,7 +12,7 @@ VLIMIT = 1400000
 TLIMIT = 400
 
 
-INSTALLCMD = $(MKDIR_P) $(BUILTLIBPATH)/include && rm -rf $(BUILTLIBPATH)/include/gtest && ln -s ../../libraries/gtest/$(BUILDDIR) $(BUILTLIBPATH)/include/gtest
+INSTALLCMD = $(MKDIR_P) $(BUILTLIBPATH)/include && rm -rf $(BUILTLIBPATH)/include/gtest && ln -s ../../libraries/gtest/$(BUILDDIR)/googletest $(BUILTLIBPATH)/include/gtest
 CHECKTARGET = .
 
 include ../Makefile.library

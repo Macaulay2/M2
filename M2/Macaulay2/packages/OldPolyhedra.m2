@@ -5,7 +5,7 @@
 --
 -- PURPOSE: Computations with convex polyhedra 
 -- PROGRAMMER : René Birkner 
--- UPDATE HISTORY : April 2008, December 2008, March 2009, Juli 2009,
+-- UPDATE HISTORY : April 2008, December 2008, March 2009, July 2009,
 --     	    	    September 2009, October 2009, January 2010
 ---------------------------------------------------------------------------
 newPackage("OldPolyhedra",
@@ -92,8 +92,8 @@ export {"PolyhedralObject",
 	"isPure",
 	"isReflexive",
 	"isSimplicial", 
-	"isSmooth", 
-	"isVeryAmple",
+	--"isSmooth", 
+	--"isVeryAmple",
 	"boundaryMap", 
 	"dualFaceLattice", 
 	"faceLattice",
@@ -1480,22 +1480,18 @@ isSimplicial PolyhedralObject := (cacheValue symbol isSimplicial)(X -> (
 
 
 -- PURPOSE : Checks if the input is smooth
-isSmooth = method(TypicalValue => Boolean)
-
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
-isSmooth Cone := C -> (
+isSmooth Cone := {} >> o -> C -> (
      -- generating the non-linealityspace cone of C
      R := lift(transpose rays C,ZZ);
      n := dim C - C#"dimension of lineality space";
      -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
      numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1))
-     
-	   
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
-isSmooth Fan := F -> (
+isSmooth Fan := {} >> o -> F -> (
      if not F.cache.?isSmooth then F.cache.isSmooth = all(toList F#"generatingCones",isSmooth);
      F.cache.isSmooth)
 
@@ -1503,8 +1499,7 @@ isSmooth Fan := F -> (
 -- PURPOSE : Checks if a polytope is very ample
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
-isVeryAmple = method()
-isVeryAmple Polyhedron := P -> (
+isVeryAmple Polyhedron := {} >> o -> P -> (
      if not isCompact P then error("The polyhedron must be compact");
      if not dim P == ambDim P then error("The polyhedron must be full dimensional");
      if not isLatticePolytope P then error("The polyhedron must be a lattice polytope");
@@ -1689,7 +1684,7 @@ fVector Cone := C -> apply(C#"dimension of the cone" + 1, d -> #faces(dim C - d,
 --  OUTPUT : 'L',  a list containing the Hilbert basis as one column matrices 
 hilbertBasis = method(TypicalValue => List)
 hilbertBasis Cone := C -> (
-     -- Computing the row echolon form of the matrix M
+     -- Computing the row echelon form of the matrix M
      ref := M -> (
 	  n := numColumns M;
 	  s := numRows M;
@@ -2329,7 +2324,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
      if contains(P,convexHull p) then (
 	  (M,v) := halfspaces P;
      	  (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  v = promote(v,QQ);
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
@@ -2351,7 +2346,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
      if contains(C,posHull p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
@@ -3058,7 +3053,7 @@ ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
 --   INPUT : '(P,Q)',  two polyhedra
 --  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
 -- COMMENT : 'Q' must be a face of P
-normalCone (Polyhedron,Polyhedron) := Cone => opts -> (P,Q) -> (
+normalCone (Polyhedron,Polyhedron) := Cone => {} >> opts -> (P,Q) -> (
      if not P.cache.?normalCone then P.cache.normalCone = new MutableHashTable;
      if not P.cache.normalCone#?Q then (
 	  -- Checking for input errors
@@ -3799,7 +3794,7 @@ chkQQZZ = (M,msg) -> (
 
 
 -- PURPOSE : Computing the Hilbert basis of a standardised cone (project and lift algorithm
---   INPUT : 'A' a matrix, the row echolon form of the defining half-spaces of the cone
+--   INPUT : 'A' a matrix, the row echelon form of the defining half-spaces of the cone
 --  OUTPUT : a list of one column matrices, the generators of the cone over A intersected with 
 --     	     the positive orthant
 constructHilbertBasis = A -> (
@@ -5871,7 +5866,7 @@ document {
      }
 
 document {
-     Key => {isSmooth, (isSmooth,Cone), (isSmooth,Fan)},
+     Key => {(isSmooth,Cone), (isSmooth,Fan)},
      Headline => "checks if a Cone or Fan is smooth",
      Usage => " b = isSmooth C \nb = isSmooth F",
      Inputs => {

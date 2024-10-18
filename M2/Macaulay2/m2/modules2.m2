@@ -102,16 +102,6 @@ Ring * Ideal := Ring ** Ideal := Ideal => (R, I) -> if ring I === R then I else 
 
 -----------------------------------------------------------------------------
 
--- the key for issub hooks under GlobalHookStore
-protect ContainmentHooks
-issub := (f, g) -> (
-    if (R := ring f) =!= ring g then error "isSubset: expected objects of the same ring";
-    if (c := runHooks(ContainmentHooks, (f, g))) =!= null then c
-    else error "isSubset: no strategy implemented for this type of ring")
-
--- TODO: we can do better in the homogeneous case!
-addHook(ContainmentHooks, Strategy => Inhomogeneous, (f, g) -> -1 === rawGBContains(raw gb g, raw f))
-
 ZZ == Ideal := (n,I) -> I == n
 Ideal == ZZ := (I,n) -> (
      if n === 0
@@ -120,22 +110,6 @@ Ideal == ZZ := (I,n) -> (
      then issub(matrix {{1_(ring I)}}, generators I)
      else error "attempted to compare ideal to integer not 0 or 1"
      )
-
-ZZ == Module := (n,M) -> M == n
-Module == ZZ := (M,n) -> (
-     if n =!= 0 then error "attempted to compare module to nonzero integer";
-     if M.?generators then (
-	  if M.?relations then issub(M.generators, M.relations)
-	  else M.generators == 0
-	  )
-     else (
-	  if M.?relations then issub(id_(ambient M), M.relations)
-	  else M.numgens === 0
-	  )
-     )
-
--- used for sorting a list of modules
-Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
 
 -----------------------------------------------------------------------------
 
@@ -374,26 +348,6 @@ pushout(Matrix, Matrix) := Module => (f, g) -> (
 	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
 	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
     P)
-
------------------------------------------------------------------------------
-isSubset(Module,Module) := (M,N) -> (
-     -- here is where we could use gb of a subquotient!
-     ambient M === ambient N and
-     if M.?relations and N.?relations then (
-	  image M.relations == image N.relations
-	  and
-	  issub(M.relations | generators M, N.relations | generators N))
-     else if not M.?relations and not N.?relations then (
-	  issub(generators M, generators N))
-     else (
-	  -- see the code for subquotient: if present, M.relations is nonzero; same for N
-	  -- so one of the modules has nonzero relations and the other doesn't
-	  false
-	  )
-     )
-isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)
-isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
-isSubset(Ideal,Module) := (I,N) -> isSubset(module I, N)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

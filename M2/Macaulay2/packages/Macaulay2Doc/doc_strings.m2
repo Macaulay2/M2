@@ -208,6 +208,12 @@ document {
      SeeAlso => {String, "///", ascii, utf8}
      }
 
+undocumented {
+    (stack, Net),
+    (stack, Nothing),
+    (stack, String),
+    }
+
 document {
      Key => {stack,(stack, BasicList)},
      Headline => "join nets or string vertically",
@@ -390,7 +396,7 @@ document {
      }
 
 document {
-    Key => {ascii, (ascii, List), (ascii, String)},
+    Key => {ascii, (ascii, BasicList), (ascii, String), (ascii, ZZ)},
     Headline => "ASCII character conversion",
     SYNOPSIS (
      	Usage => "ascii v",

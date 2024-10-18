@@ -64,7 +64,7 @@ assert(abs(   (importParameterFile(storeBM2Files,NameParameterFile=>"final_param
        setsOfParameters={{1,1},{1,2}}
        b'PHSequence(storeBM2Files, setsOfParameters, SaveData=>true)
 
---When we have the SaveData option set to true we can see the intermmediate solutions. 
+--When we have the SaveData option set to true we can see the intermediate solutions.
 assert(#importSolutionsFile(storeBM2Files)==3)
 
 assert(#importParameterFile(storeBM2Files,NameParameterFile=>"start_parameters1")==2)
@@ -89,5 +89,3 @@ assert(#importParameterFile(storeBM2Files,StorageFolder=>"StoreMyFiles",NamePara
 assert(#importSolutionsFile(storeBM2Files,StorageFolder=>"StoreMyFiles",NameSolutionsFile=>"nonsingular_solutions1")==2)
 assert(#importParameterFile(storeBM2Files,StorageFolder=>"StoreMyFiles",NameParameterFile=>"start_parameters2")==2)
 assert(#importSolutionsFile(storeBM2Files,StorageFolder=>"StoreMyFiles",NameSolutionsFile=>"nonsingular_solutions2")==2)
-
-    

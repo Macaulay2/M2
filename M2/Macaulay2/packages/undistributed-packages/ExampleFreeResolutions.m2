@@ -705,7 +705,7 @@ doc ///
     (AGR, ZZ, ZZ, ZZ)
     (AGR, ZZ, ZZ, ZZ, ZZ)
   Headline
-    construct a random arithemtically Gorenstein ring (AGR)
+    construct a random arithmetically Gorenstein ring (AGR)
   Usage
     AGR(deg, n, deg, characteristic)
     AGR(deg, n, numpowers, characteristic)

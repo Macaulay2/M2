@@ -50,7 +50,8 @@ document {
      code f
      f 0
      return
-     disassemble current
+     current
+     disassemble oo
      step(-3)
      step
      step
@@ -156,7 +157,7 @@ document {
      things that can be converted to strings and concatenated) is printed.
      Execution of the code is interrupted, and control is returned
      to top level. Here is an explicit example showing how this command is used:",
-     PRE///exampleCode = p -> (
+     PRE M2CODE///exampleCode = p -> (
      if not isPrime p
      then error "expected a prime integer";
      if p == 2
@@ -558,6 +559,7 @@ document {
      }
 
 -- TODO: this needs some upgrades
+-- TODO: also show how to use "headlines methods X"
 document {
   Key => {
     methods,

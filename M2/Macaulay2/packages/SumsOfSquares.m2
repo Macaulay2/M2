@@ -14,8 +14,7 @@ newPackage(
       HomePage => "http://www.mit.edu/~parrilo/"},
      {Name => "Helfried Peyrl",
       Email => "peyrl@control.ee.ethz.ch",
-      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"},
-     {Name => "Special thanks: Ilir Dema, Nidhi Kaihnsa, Anton Leykin"}
+      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
     Headline => "sums of squares",
     Keywords => {"Real Algebraic Geometry"},
@@ -64,7 +63,7 @@ export {
 --##########################################################################--
 
 -- Constants
-MaxRoundTol = 32 --maximum rounding tolerance
+MaxRoundTol = 33 --maximum rounding tolerance
 HighPrecision = 1e-10 --e.g. for numerical linear algebra
 MedPrecision = 1e-6 --e.g. for SDP solutions
 LowPrecision = 1e-4
@@ -1158,9 +1157,9 @@ checkLowerBound(String) := o -> (solver) -> (
 
     t1:= (
         R = RR[x,y];
-        f = (x-exp(1)*y)^2 + x^2 + (y-4)^2;
+        f = (x-exp(1)*y)^2 + x^2 + (y-2)^2;
         (bound,sol) = lowerBound(f, Solver=>solver,Verbosity=>o.Verbosity);
-        equal(bound,16*exp(2)/(2+exp(2)))
+        equal(bound,4*exp(2)/(2+exp(2)))
         );
 
     t2:= (

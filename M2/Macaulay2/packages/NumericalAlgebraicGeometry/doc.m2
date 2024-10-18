@@ -878,7 +878,7 @@ document {
 	"valuesP" => {" contains (possibly several sets of) values of the parameters"}  
 	},
     Outputs => { "sols"=>" lists of lists of solutions for each set of the parameters" },
-    "Solves a parameteric polynomial system for several values of parameters.", 
+    "Solves a parametric polynomial system for several values of parameters.", 
     EXAMPLE lines ///
     R = CC[u1,u2,u3,x,y]
     f1 = u1*(y-1)+u2*(y-2)+u3*(y-3)

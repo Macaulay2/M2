@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
---	  TO "changes made for the next release",
+	  TO "changes made for the next release",
 	  TO "changes, 1.24.05",
 	  TO "changes, 1.23",
 	  TO "changes, 1.22",
@@ -41,6 +41,23 @@ document {
      }
 
 document {
+    Key => "changes made for the next release",
+    UL {
+	LI { "functionality changed in a way that could break code:",
+	    UL {
+		LI { "The function ", TO remove, ", which previously had no return value, now returns the value that was removed." }
+		}
+	    },
+	LI { "improved packages:",
+	    UL {
+		LI { TO "Jets::Jets", " has been updated to version 1.2 with improvements and new methods for principal jets."},
+		}
+	    }
+	}
+    }
+
+
+document {
     Key => "changes, 1.24.05",
     UL {
 	LI { "packages that have been published and certified:",
@@ -72,7 +89,7 @@ document {
 	    },
 	LI { "functionality added or improved:",
 	    UL {
-		LI { "It is now possible to create a fraction field of an iterated polymial ring using ", TO frac, "."},
+		LI { "It is now possible to create a fraction field of an iterated polynomial ring using ", TO frac, "."},
 		LI { "A number of new operators have been added that may be used for defining methods.  See ", TO symbol ^!, ", ",
 		    TO symbol _!, ", ", TO symbol ^~, ", ", TO symbol _~, ", ", TO symbol ^>, ", ", TO symbol ^>=, ", ", TO symbol ^<, ", ",
 		    TO symbol ^<=, ", ", TO symbol _>, ", ", TO symbol _>=, ", ", TO symbol _<, ", ", TO symbol _<=, ", ", TO symbol |_, ", and ",
@@ -739,7 +756,7 @@ document {
                     LI { "The ", TO "FLINT", " library, and several others, no longer need to be patched while building Macaulay2.
 			 This involved a reorganization of the way memory management is done in the engine and the interpreter.
 		      	 As a result, we can use versions of several basic libraries as provided by the operating system, including ", 
-		      	 TO "GNU MP", ",", TO "MPIR", ",", TO "MPFR", ", and the ", TO "NTL library", "." 
+			 TO "GNU MP", ",", TT "MPIR", ",", TO "MPFR", ", and the ", TO "NTL library", "."
 			 },
 		    LI {
 			 TEX {
@@ -2420,9 +2437,7 @@ document {
 		    TO (symmetricAlgebra,Ring,Nothing,Matrix),
 		    TO (symmetricAlgebra,Ring,Ring,Matrix),
 		    TO (symbol ^, Number, Ring),
-		    TO (symbol ^, Number, RingFamily),
-		    TO (symbol ^, Constant, Ring),
-		    TO (symbol ^, Constant, RingFamily)
+		    TO (symbol ^, Number, RingFamily)
 		    }
 	       },
 	  LI { "new variables:",

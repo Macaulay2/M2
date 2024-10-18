@@ -37,11 +37,9 @@ scan(core "augmentedAssignmentOperators", op -> (
 		"augmented assignment",
 		"installing augmented assignment methods"}}))
 
-doc replace("@KEYS@",
-    concatenate apply(core "augmentedAssignmentOperators", op ->
-	(newline, 4, "(symbol ", regexQuote toString op, ", Type)")), ///
+doc ///
   Key
-    "installing augmented assignment methods"@KEYS@
+    "installing augmented assignment methods"
   Description
     Text
       In most cases, the default behavior of @TO "augmented assignment"@ gives
@@ -60,12 +58,8 @@ doc replace("@KEYS@",
       Note that an intermediate @SAMP "Foo"@ object was created and then
       assigned to @SAMP "x"@.  Instead, it would be more efficient if @SAMP "x"@
       was modified directly.
-
-      The first two lines below do exactly the same thing; the second
-      line is syntactic sugar for the first.
     Example
       installMethod(symbol +=, Foo, (x, y) -> (x#0 += y#0; x));
-      Foo += (x, y) -> (x#0 += y#0; x);
       x += y
     Text
       In some cases, it may be useful to fall back on the default behavior
@@ -75,9 +69,9 @@ doc replace("@KEYS@",
       Bar = new SelfInitializingType of List;
       net Bar := x -> net x#0#0;
       Bar * Bar := (x, y) -> Bar {{x#0#0 * y#0#0}};
-      Bar *= (x, y) -> if isMutable x#0 then (
-	  print "using custom method";
-	  x#0#0 *= y#0#0; x) else Default;
+      installMethod(symbol *=, Bar, (x, y) -> if isMutable x#0 then (
+	      print "using custom method";
+	      x#0#0 *= y#0#0; x) else Default)
       x = Bar {new MutableList from {3}}
       y = Bar {{4}}
       x *= y
@@ -85,7 +79,7 @@ doc replace("@KEYS@",
   SeeAlso
     "augmented assignment"
     "installing methods"
-///)
+///
 
 doc ///
   Key

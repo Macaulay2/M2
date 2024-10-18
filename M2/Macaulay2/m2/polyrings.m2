@@ -4,7 +4,6 @@
 needs "methods.m2"
 needs "enginering.m2"
 needs "monoids.m2"
-needs "tables.m2"
 needs "indeterminates.m2" -- runLengthEncode
 
 -----------------------------------------------------------------------------
@@ -64,8 +63,6 @@ expression PolynomialRing := R -> (
     if hasAttribute(R, ReverseDictionary)
     then expression getAttribute(R, ReverseDictionary)
     else(expression last R.baseRings) expressionPolynomialRing R)
-
-toExternalString PolynomialRing := toString @@ describe
 -- the rest are inherited from EngineRing
 
 -----------------------------------------------------------------------------

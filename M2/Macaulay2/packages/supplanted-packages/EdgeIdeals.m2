@@ -1330,7 +1330,7 @@ doc ///
 			E = {{a,b,c},{b,c,d},{c,d,e},{e,d,f}}
 			h = hyperGraph (R,E)
 		Text
-		        Altenatively, if the polynomial ring has already been defined, it suffices to simply enter
+		        Alternatively, if the polynomial ring has already been defined, it suffices to simply enter
 			the list of the edges.
 		Example
 		        S = QQ[z_1..z_8]
@@ -1417,7 +1417,7 @@ doc ///
 			E = {{a,b},{b,c},{c,f},{d,a},{e,c},{b,d}}
 			g = graph (R,E) 
 		Text
-		        Altenatively, if the polynomial ring has already been defined, it suffices to simply enter
+		        Alternatively, if the polynomial ring has already been defined, it suffices to simply enter
 			the list of the edges.
 		Example
 		        S = QQ[z_1..z_8]

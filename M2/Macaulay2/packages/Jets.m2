@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Copyright 2021-2022  Federico Galetto, Nicholas Iammarino
+-- Copyright 2021-2024  Federico Galetto, Nicholas Iammarino
 --
 -- This program is free software: you can redistribute it and/or modify it under
 -- the terms of the GNU General Public License as published by the Free Software
@@ -17,8 +17,8 @@
 
 newPackage(
      "Jets",
-     Version => "1.1",
-     Date => "June 10, 2022",
+     Version => "1.2",
+     Date => "October 15, 2024",
      AuxiliaryFiles => true,
      Authors => {
 	 {
@@ -54,7 +54,7 @@ newPackage(
 
 
 
-importFrom(MinimalPrimes, {"radical"});
+importFrom(MinimalPrimes, {"radical","minimalPrimes"});
 
 export {
     "JJ",
@@ -69,7 +69,9 @@ export {
     "jetsProjection",
     "jetsInfo",
     "principalComponent",
-    "Saturate"
+    "Saturate",
+    "liftingFunction",
+    "liftingMatrix"
     }
 
 jetsOptions = {
@@ -354,7 +356,7 @@ jets(ZZ,HyperGraph) := HyperGraph => o -> (n,G) -> (
     hyperGraph E
     )
 
-jets(ZZ,AffineVariety) := o -> (n,V) -> (
+jets(ZZ,AffineVariety) := Variety => o -> (n,V) -> (
     if n<0 then error("jets order must be a non-negative integer");
     R := ring V;
     JR := jets(n,R,Projective=> o.Projective);
@@ -417,9 +419,30 @@ JJ = new ScriptedFunctor from {
  
 --compute an ideal whose vanishing locus is the
 --principal component of the jets of an ideal
+--changed in v1.2 with a faster algorithm for monomial ideals
+--and to fix the behavior for reducible varieties
+-- FG's note: I tried an option for bypassing the computation
+-- of minimal primes, but for some reason this method appears to
+-- work faster if minimal primes are found first
+-- (at least for 2x2 minors of a generic 3x3 matrix)
 principalComponent = method(Options=>{Saturate=>true},TypicalValue=>Ideal)
 principalComponent(ZZ,Ideal) := o -> (n,I) -> (
     if n<0 then error("jets order must be a non-negative integer");
+    -- find minimal primes
+    mp := minimalPrimes I;
+    -- for a monomial ideal use shortcut from Galetto-Iammarino-Yu
+    if isMonomialIdeal(I) then (
+	return intersect(apply(mp, P -> jets(n,P)));
+	);
+    -- compute the singular locus of I by breaking up components
+    -- and finding singular locus of each
+    -- (this is necessary as of v1.24.05 because the singularLocus
+    -- method only works for irreducible ideals)
+    singComp := apply(mp, P -> ideal singularLocus P);
+    -- then also intersect components two at a time
+    pairwiseInt := apply(subsets(mp,2),sum);
+    -- and finally take the union
+    sing := intersect(singComp|pairwiseInt);
     -- compute jets of I
     JI := jets(n,I);
     -- get the jets projection
@@ -427,18 +450,50 @@ principalComponent(ZZ,Ideal) := o -> (n,I) -> (
     p := jetsProjection(n,0,R);
     -- identify original ambient ring with 0-jets
     i := map(source p,R,vars source p);
-    --compute the singular locus of I
-    --map it to the zero jets via the map i
+    --map the singular locus to the zero jets via the map i
     --then to the n jets via the map p
-    sing := p(i(ideal singularLocus I));
+    sing0 := p i sing;
     --default is to saturate JI wrt sing
     if o.Saturate then (
-    	saturate(JI,sing)
+    	saturate(JI,sing0)
 	)
     --if JI is radical, colon is enough
     else (
-	JI:sing
+	JI:sing0
 	)
+    )
+
+-- the following methods (liftingFunction, liftingMatrix)
+-- follow the definitions in the paper by Galetto-Iammarino-Yu
+-- unexported recursive computation of lifting function
+lf = (s,j,k) -> (
+    -- deal with edge cases
+    if (k<j or k>(s+1)*j) then return 0_ZZ;
+    if (k==j) then return ((s+1)^j)_ZZ;
+    if (k==(s+1)*j) then return 1_ZZ;
+    -- recursive computation
+    sum(min(k,s+1), i -> binomial(s+1,i+1) * mlf(s,j-1,k-i-1) )
+    )
+
+-- speeds up computation by storing values
+mlf = memoize lf
+
+-- lifting function method for user
+liftingFunction = method(TypicalValue => ZZ);
+liftingFunction(ZZ,ZZ,ZZ) := ZZ => (s,j,k) -> (
+    -- check arguments are nonnegative
+    if (s<0 or j<0 or k<0) then error("arguments should be nonnegative");
+    mlf(s,j,k)
+    )
+
+-- enter values of lifting function in a matrix
+-- row/column indices start at zero
+liftingMatrix = method(TypicalValue => Matrix);
+liftingMatrix(ZZ,ZZ,ZZ) := Matrix => (s,r,c) -> (
+    -- check arguments are nonnegative
+    if (s<0) then error("first argument should be nonnegative");
+    if (r<=0 or c<=0) then error("second and third argument should be positive");
+    matrix table(r,c, (j,k) -> mlf(s,j,k) )
     )
 
 beginDocumentation()
@@ -547,6 +602,22 @@ TEST ///
     p = jetsProjection(3,1,R)
     assert(ring p JI === jets(3,R))
 ///
+
+-- for lifting function
+TEST ///
+    M=matrix{{1,0,0,0,0,0,0,0,0},
+    {0,2,1,0,0,0,0,0,0},
+    {0,0,4,4,1,0,0,0,0},
+    {0,0,0,8,12,6,1,0,0},
+    {0,0,0,0,16,32,24,8,1}}
+    assert(liftingMatrix(1,5,9) === M)
+    N=matrix{{1,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,3,3,1,0,0,0,0,0,0,0,0,0},
+    {0,0,9,18,15,6,1,0,0,0,0,0,0},
+    {0,0,0,27,81,108,81,36,9,1,0,0,0},
+    {0,0,0,0,81,324,594,648,459,216,66,12,1}}
+    assert(liftingMatrix(2,5,13) === N)
+///
 ----------------------------------------------------------------------
 -- Documentation
 ----------------------------------------------------------------------
@@ -571,29 +642,42 @@ Node
 	    the radical of jets of monomial ideals, a function
 	    to construct jets of graphs, a method for principal components of jets,
 	    and an option for jets with "projective" gradings.
+
+	    @HEADER4 "Version history:"@
+	    
+	    @UL {(BOLD "1.1: ", "JSAG version."),
+		    (BOLD "1.2: ", "Improved method for principal components.
+		    Added methods for invariants of principal components
+		    of monomial ideals.")
+		}@
     References
     	@arXiv("math/0612862","L. Ein and M. Mustaţă,
     		Jet schemes and singularities.")@
-		
-    	@arXiv("2104.08933","F. Galetto, E. Helmick, and M. Walsh,
-    		Jet graphs.")@
+
+    	@arXiv("math/0407113","P. Vojta,
+	    	Jets via Hasse-Schmidt Derivations.")@
 		
     	@HREF("https://doi.org/10.1080/00927870500454927",
 	    "R.A. Goward and K.E. Smith,
 	    The jet scheme of a monomial scheme.")@
-
-    	@arXiv("math/0407113","P. Vojta,
-	    	Jets via Hasse-Schmidt Derivations.")@
+		
+    	@arXiv("2104.08933","F. Galetto, E. Helmick, and M. Walsh,
+    		Jet graphs.")@
+		
+    	@arXiv("2407.01836","F. Galetto, N. Iammarino, and T. Yu,
+	    Jets and principal components of monomial ideals, and very well-covered graphs")@
     Subnodes
     	:Package methods
     	jets
 	jetsProjection
 	jetsRadical
 	principalComponent
+	liftingFunction
 	:Examples from the literature
 	"Example 1"
 	"Example 2"
 	"Example 3"
+	"Example 4"
 	:Technical information
 	"Storing Computations"
 
@@ -1226,6 +1310,11 @@ Node
 	    P = primaryDecomposition jets(2,I)
 	    any(P,c -> c == PC)
 	    PC == intersect(select(P,c -> degree c == 1))
+	Text
+	    If $I$ is a monomial ideal, this method uses a different characterization
+	    of the principal component (see Theorem 6.7 in
+		@arXiv("2407.01836","F. Galetto, N. Iammarino, and T. Yu,
+	    Jets and principal components of monomial ideals, and very well-covered graphs")@).
     Caveat
     	This function requires computation of a singular locus,
 	a saturation (or quotient), and jets, with each step being
@@ -1263,6 +1352,82 @@ Node
 	    JJ_2 R
 	    JJ_2 I
 
+Node
+    Key
+    	liftingFunction
+    	(liftingFunction,ZZ,ZZ,ZZ)
+    Headline
+    	compute values of a lifting function
+    Usage
+    	liftingFunction(s,j,k)
+    Inputs
+	s:ZZ
+	    a natural number
+	j:ZZ
+	    a natural number
+	k:ZZ
+	    a natural number
+    Outputs
+    	:ZZ
+	 the number of cardinality $k$ lifts of a cardinality $j$ set under depolarization
+    Description
+    	Text
+	    This function was added in version 1.2 of the package @TO Jets@.
+
+	    Given a set $X$ and a natural number $s$, let $\mathcal{J}_s (X)$
+	    be the set that contains the elements $x_0,\dots,x_s$ for every
+	    element $x\in X$. The @EM "depolarization"@ map
+	    $\delta_s \colon \mathcal{J}_s (X)\to X$ is defined by
+	    $\delta_s (x_i) = x$ for every $x\in X$ and $i\in \{0,\dots,s\}$.
+
+	    The @EM "lifting function"@ $l_s (j,k)$ counts the number
+	    of subsets $V\subseteq \mathcal{J}_s (X)$ of cardinality $k$
+	    such that $\delta_s (V) = U$, where $U\subseteq X$ is a fixed
+	    subset of cardinality $j$. Note that this number does not
+	    depend on $U$ but only on its cardinality.
+	    See @arXiv("2407.01836","F. Galetto, N. Iammarino, and T. Yu,
+	    Jets and principal components of monomial ideals, and very well-covered graphs")@
+	    for computing this function.
+    	Example
+	    liftingFunction(1,2,3)
+	    liftingFunction(2,2,3)
+	    liftingFunction(1,3,2)
+	    liftingFunction(1,0,0)
+	Text
+	    For uses of the lifting function, see @TO "Example 4"@.
+    Subnodes
+    	liftingMatrix
+	
+Node
+    Key
+    	liftingMatrix
+    	(liftingMatrix,ZZ,ZZ,ZZ)
+    Headline
+    	arrange values of lifting function in a matrix
+    Usage
+    	liftingMatrix(s,r,c)
+    Inputs
+	s:ZZ
+	    a natural number
+	r:ZZ
+	    a positive integer
+	c:ZZ
+	    a positive integer
+    Outputs
+    	:Matrix
+	 @TT "r"@ by @TT "c"@, whose entries are the values of the order @TT "s"@ lifting function
+    Description
+    	Text
+	    This function was added in version 1.2 of the package @TO Jets@.
+
+	    This function collects the values of the @TO "liftingFunction"@
+	    $l_s (j,k)$ and arranges them in an @TT "r"@ by @TT "c"@ matrix $L_s (j,k)$
+	    with row index $j\geqslant 0$ and column index $k\geqslant 0$.
+    	Example
+	    liftingMatrix(2,3,5)
+	Text
+	    For uses of the lifting matrix, see @TO "Example 4"@.
+	    
 Node
     Key
     	"Example 1"
@@ -1432,5 +1597,71 @@ Node
     	Example
 	    apply({P_0,I2}, X -> hilbertSeries(X,Reduce=>true))
 	    numerator (first oo) == (numerator last oo)^2
+
+Node
+    Key
+    	"Example 4"
+    Headline
+    	invariants of principal jets of monomial ideals
+    Description
+    	Text
+	    This follows Examples 7.5 and 7.7 in
+	    @arXiv("2407.01836","F. Galetto, N. Iammarino, and T. Yu,
+	    Jets and principal components of monomial ideals, and very well-covered graphs")@.
+	
+	    Consider the following squarefree monomial ideal in a standard graded polynomial ring.
+	Example
+	    R = QQ[v..z]
+	    I = ideal(v*w*x,x*y,y*z)
+	Text
+	    This is the Stanley-Reisner ideal of a simplicial complex $\Delta$
+	    whose $f$-vector we compute below.
+	Example
+	    needsPackage "SimplicialComplexes"
+	    Δ = simplicialComplex I
+	    f = matrix{fVector(Δ)}
+	Text
+	    Next, we construct the ideal $\mathcal{P}_1 (I)$ of principal 1-jets of $I$
+	    (see @TO "principalComponent"@ for details).
+	    This is also the Stanley-Reisner ideal of a simplicial complex
+	    $\Gamma_1$ and we can compute its $f$-vector.
+	Example
+	    P1 = principalComponent(1,I)
+	    phi = last flattenRing ring P1;
+	    Γ1 = simplicialComplex phi P1
+	    F = matrix{fVector Γ1}
+	Text
+	    The $f$-vector of $\Gamma_1$ can be obtained by multiplying
+	    the $f$-vector of $\Delta$ with a @TO "liftingMatrix"@ of the
+	    appropriate size.
+	Example
+	    L = liftingMatrix(1,4,7)
+	    F == f*L
+	Text
+	    There is a similar relation between the Betti numbers of
+	    the Stanley-Reisner rings $\Bbbk [\Delta]$
+	    and $\Bbbk [\Gamma_1]$. First, we compute the Betti
+	    diagram of $\Bbbk [\Delta]$ and turn it into a matrix by
+	    sliding the $i$-th row $i$ units to the right.
+	Example
+	    betti res I
+	    b = mutableMatrix(ZZ,3,5);
+	    scanPairs(betti res I, (k,v) -> b_(k_2-k_0,k_2) = v);
+	    b = matrix b
+	Text
+	    Next, we do the same with the Betti diagram of $\Bbbk [\Gamma_1]$.
+	Example
+	    betti res P1
+	    B = mutableMatrix(ZZ,3,9);
+	    scanPairs(betti res P1, (k,v) -> B_(k_2-k_0,k_2) = v);
+	    B = matrix B
+	Text
+	    The matrix containing the Betti numbers of $\Bbbk [\Gamma_1]$
+	    can be obtained by multiplying the matrix containing the Betti
+	    numbers of $\Bbbk [\Delta]$ with a @TO "liftingMatrix"@ of the
+	    appropriate size.
+	Example
+	    L = liftingMatrix(1,5,9)
+	    B == b*L
 ///
 end

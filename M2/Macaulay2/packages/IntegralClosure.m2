@@ -32,7 +32,6 @@ export{
      "integralClosure", 
      "icFractions", 
      "icMap", 
-     "isNormal", 
      "conductor", 
      "makeS2",
      "idealizer", 
@@ -662,7 +661,8 @@ fInIdeal = (f,I) -> (
 -- COMMENT: This computes the jacobian of the ring which can be expensive.  
 -- However, it first checks the less expensive S2 condition and then 
 -- checks R1.  
-isNormal = method()     
+
+--isNormal = method()     
 isNormal(Ring) := Boolean => (R) -> (
      -- 1 argument:  A ring - usually a quotient ring. 
      -- Return: A boolean value, true if the ring is normal and false
@@ -916,7 +916,6 @@ f \in integral closure(ideal apply(numgens R,i-> x_i*df/dx_i))
 Conjecture (Huneke: f is never a minimal generator of the integral closure of
 ideal apply(numgens R,i-> df/dx_i).
 *-
-jacobian RingElement := Matrix => f -> jacobian ideal f
 
 testHunekeQuestion = method()
 testHunekeQuestion RingElement := Boolean => f -> (

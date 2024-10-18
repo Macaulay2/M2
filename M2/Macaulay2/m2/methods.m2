@@ -26,7 +26,7 @@ noMethodSingle = (M, args, outputs) -> toString stack     (  noMethErr M, printA
 noMethod       = (M, args, outputs) -> toString stack join( {noMethErr M},
     if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
 	i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
-    else {   printArgs(" ",            args,   false) }) -- TODO: do better here, in what way?
+    else {   printArgs(" ",            args,   args === ()) }) -- TODO: do better here, in what way?
 
 -- TODO: what is this for exactly?
 badClass := meth -> (i, args) -> (
@@ -90,7 +90,7 @@ BinaryNoOptions := outputs -> (
     methodFunction List     :=
     methodFunction Sequence := args -> (
 	-- Common code for every associative method without options
-	if #args == 0 then return binaryCaller(methodFunction, 1 : methodFunction, args, outputs);
+	if #args == 0 then return binaryCaller(methodFunction, 1 : methodFunction, (), outputs);
 	if #args == 1 and (f := lookup(methodFunction, dispatchBy args#0)) =!= null then return f(args#0);
 	-- TODO: a rudimentary caching of the lookup call here would be a significant benefit
 	binaryLookup := (x, y) -> binaryCaller(methodFunction, (methodFunction, dispatchBy x, dispatchBy y), (x, y), outputs);
@@ -108,7 +108,7 @@ BinaryWithOptions := (opts, outputs) -> (
 	-- Common code for every associative method with options
 	-- this is essentially a method installed on (methodFunction, VisibleList)
 	if not instance(args, VisibleList) then args = 1:args;
-	if #args == 0 then return binaryCaller'(methodFunction, 1 : methodFunction, args, outputs, dispatcher(o, args));
+	if #args == 0 then return binaryCaller'(methodFunction, 1 : methodFunction, (), outputs, dispatcher(o, ()));
 	if #args == 1 and (f := lookup(methodFunction, dispatchBy args#0)) =!= null then return (dispatcher(o, args#0)) f;
 	-- Note: specializations for simultaneous computation may be implemented
 	-- by installing method functions on types that inherit from VisibleList
@@ -249,6 +249,7 @@ oftab := new HashTable from {
     functionBody(true >> identity)                         => f -> null,
     }
 
+-- TODO: this should return either an OptionTable or true, if any option is accepted
 options Function := f -> if oftab#?(fb := functionBody f) then oftab#fb f
 
 -----------------------------------------------------------------------------
@@ -426,7 +427,7 @@ depth String := s -> 0
 -----------------------------------------------------------------------------
 
 toList = method(Dispatch => Thing)
-toList BasicList := toList Set := toList String := List => toList1
+toList BasicList := toList Set := toList String := toList Pseudocode := List => toList1
 
 -----------------------------------------------------------------------------
 
@@ -466,11 +467,31 @@ select' = select
 select = method(Options => true)
 select(ZZ,            Function) := List      => {} >> o -> select'
 select(ZZ, BasicList, Function) := BasicList => {} >> o -> select'
-select(ZZ, HashTable, Function) := HashTable => {} >> o -> select'
 select(    BasicList, Function) := BasicList => {} >> o -> select'
-select(    HashTable, Function) := HashTable => {} >> o -> select'
 select(    BasicList, Type)     := BasicList => {} >> o -> (L, T) -> select(L, e -> instance(e, T))
 -- two more methods installed in regex.m2
+
+selectKeys = method()
+selectKeys(ZZ, HashTable, Function) := HashTable => (n, x, f) -> (
+    selectPairs(n, x, (k, v) -> f k))
+selectKeys(HashTable, Function) := HashTable => (x, f) -> (
+    selectPairs(x, (k, v) -> f k))
+
+selectValues = method()
+selectValues(ZZ, HashTable, Function) := HashTable => (n, x, f) -> (
+    selectPairs(n, x, (k, v) -> f v))
+selectValues(HashTable, Function) := HashTable => (x, f) -> (
+    selectPairs(x, (k, v) -> f v))
+
+select(ZZ, HashTable, Function) := HashTable => {} >> o -> lookup(
+    selectValues, ZZ, HashTable, Function)
+select(HashTable, Function) := HashTable => {} >> o -> lookup(
+    selectValues, HashTable, Function)
+
+select(ZZ, Set, Function) := Set => {} >> o -> lookup(
+    selectKeys, ZZ, HashTable, Function)
+select(Set, Function) := Set => {} >> o -> lookup(
+    selectKeys, HashTable, Function)
 
 oldnumerator := numerator
 erase symbol numerator
@@ -599,7 +620,7 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     -- this is the hashtable of Hooks for a specific key, which stores HookAlgorithms and HookPriority
     if not store#?key then store#key = new MutableHashTable from {
 	HookAlgorithms => new MutableHashTable, -- a mutable hash table "strategy key" => "strategy code"
-	HookPriority   => new MutableList},     -- a mutable list of strategy keys, in order
+	HookPriority   => new MutableList};     -- a mutable list of strategy keys, in order
     store = store#key;
     ind := #store.HookPriority; -- index to add the hook in the list; TODO: use Priority to insert in the middle?
     alg := if opts.Strategy =!= null then opts.Strategy else ind;
@@ -710,11 +731,6 @@ show = method()
 registerFinalizer' = registerFinalizer
 registerFinalizer = method()
 registerFinalizer(Thing, String) := registerFinalizer'
-
--- augmented assignment -- syntactic sugar for installing methods
--- e.g., "T += f" is equivalent to "installMethod(symbol +=, T, f)"
-scan(augmentedAssignmentOperators, op ->
-    installMethod(op, Type, Function => (T, f) -> installMethod(op, T, f)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

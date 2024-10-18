@@ -1271,6 +1271,7 @@ doc ///
 doc ///
     Key
         (dual, ComplexMap)
+        (transpose, ComplexMap)
     Headline
         the dual of a map of complexes
     Usage
@@ -1299,10 +1300,16 @@ doc ///
             D' = (freeResolution coker matrix{{a^2,a*b,c^3}})[-1]
             f' = randomComplexMap(D', D)
             dual(f' * f) == dual f * dual f'
+        Text
+            For backwards compatibility, one can also use {\tt transpose}.
+        Example
+            h' = transpose f
+            assert(h == h')
     SeeAlso
         (Hom, ComplexMap, ComplexMap)
         (randomComplexMap, Complex, Complex)
         (dual, Matrix)
+        (transpose, Matrix)
 ///
 
 doc ///
@@ -3401,10 +3408,6 @@ doc ///
             assert isWellDefined h'
             assert(degree h' === degree g + 1)
             assert not isNullHomotopyOf(h', g)
-        Text
-            For developers: when the source of $f$ is a free complex,
-            a procedure, that is often faster, is attempted.  In the
-            general case this method uses the Hom complex.
     Caveat
         The output is only a null homotopy when one exists.
     SeeAlso
@@ -4356,6 +4359,201 @@ doc ///
     Outputs
     Description
         Text
+            I don't know how to create morphisms of complexes which are quasi-isomorphisms but not epic...
+            One way (doesn't seem to exactly work): start with a map of two complexes, create their liftings, and construct the map between their free resolutions.
+        Example
+            restart
+            needsPackage "Complexes"
+            kk = ZZ/101;
+            S = kk[x_0..x_3]
+            K1 = koszulComplex{x_0*x_1, x_1*x_2} ** 
+            K2 = koszulComplex{x_0*x_1, x_1*x_2, x_1^2-x_0*x_2, x_2^2-x_1*x_3}
+            phi = randomComplexMap(K2, K1, Cycle => true)
+            resolution K2
+
+            
+
+        Example
+            S = kk[x_0..x_3, Degrees => {2:{1,0}, 2:{0,1}}]
+            K1 = koszulComplex{x_0, x_1}
+            K2 = koszulComplex{x_2, x_3}
+            K = K1 ** K2
+            K0 = K ** coker vars S
+            phi = resolutionMap K0
+            prune coker phi -- surjective
+            prune ker phi -- not injective...
+            B = ideal(x_0, x_1) * ideal(x_2, x_3)
+            K = koszulComplex gens B
+            F = freeResolution B
+            K0 = K ** coker vars S
+            F0 = F ** coker vars S
+            
+            prune HH F0
+            prune HH K0
+            prune HH F
+            prune HH K
+            phi = randomComplexMap(F, K, Cycle => true)
+            isHomogeneous F
+            isHomogeneous K
+            prune coker phi
+            prune ker phi -- phi is neither injective nor surjective
+            phi0 = randomComplexMap(F0, K0, Cycle => true)
+            prune coker phi0
+            prune ker phi0 -- phi is neither injective nor surjective
+            
+    Caveat
+    SeeAlso
+///
+
+///
+    Key
+        "Standard maps for complexes"
+    Headline
+        Standard maps for complexes
+    Description
+        Text
+            TODO: naturality of these constructions.
+    	Text
+    	    @SUBSECTION "Unitor"@
+        Text
+            Let $C$ be an $R$-complex.  There is an isomorphism from $R \otimes_R C \to C$ given by $r \otimes m \mapsto rm$.
+            In \emph{Macaulay2}, this isomorphism is simply the identity map on $C$.
+        Example
+            R = ZZ/11[a..c]
+            C = koszulComplex{a,b,c}
+            R ** C == C
+            unitor = map(C, R**C, 1)
+            assert(unitor == id_C)
+            assert isWellDefined unitor
+    	Text
+    	    @SUBSECTION "Counitor"@
+        Text
+            Let $C$ be an $R$-complex.  There is an isomorphism from $C \to Hom(R, C)$ given by
+            $m \mapsto (r \mapsto rm)$.
+            In \emph{Macaulay2}, this isomorphism is simply the identity map on $C$.
+        Example
+            R = ZZ/11[a..c]
+            C = koszulComplex{a,b,c}
+            dd^(Hom(R, C)), dd^C
+        Text
+            Note that the signs of the odd degree differentials are not the same.
+        Example
+            counitor = map(Hom(R, C), C, i -> if member(i % 4, {0,1}) then id_(C_i) else -id_(C_i))
+            isWellDefined counitor
+            isComplexMorphism counitor
+            unitor = map(C, R**C, 1)
+            assert(unitor == id_C)
+            assert isWellDefined unitor
+        Example
+            R = ZZ/11[vars(0..17)]
+            m1 = genericMatrix(R,a,3,3)
+            m2 = genericMatrix(R,j,3,3)
+            I = ideal(m1*m2-m2*m1)
+            C = freeResolution I
+            counitor = map(Hom(R, C), C, i -> if member(i % 4, {0,1}) then id_(C_i) else -id_(C_i));
+            isWellDefined counitor
+            isComplexMorphism counitor
+        Text
+            Counitor is compatible with shifts in homological degree.
+        Example
+            counitor = map(Hom(R, C[1]), C[1], i -> if member(i % 4, {0,1}) then id_((C[1])_i) else -id_((C[1])_i));
+            assert isWellDefined counitor
+            assert isComplexMorphism counitor
+            counitor = map(Hom(R, C[-1]), C[-1], i -> if member(i % 4, {0,1}) then id_((C[-1])_i) else -id_((C[-1])_i));
+            assert isWellDefined counitor
+            assert isComplexMorphism counitor
+        Text
+    	    @SUBSECTION "Tensor commutativity"@
+        Text
+        Example
+            R = ZZ/11[a..d]
+            C = koszulComplex{a,b,c,d}
+            D = koszulComplex{a^2, b^2, c^2-d^2}
+            phi = tensorCommutativity(C, D);
+            assert isWellDefined phi
+            assert isComplexMorphism phi
+            assert(ker phi == 0 and coker phi == 0)
+            assert(source phi === C ** D)
+            assert(target phi === D ** C)
+            assert(C ** D != D ** C)
+        Example
+            (C, D) = (C[-1], D[3]);
+            phi = tensorCommutativity(C, D);
+            assert isWellDefined phi
+            assert isComplexMorphism phi
+            assert(ker phi == 0 and coker phi == 0)
+            assert(source phi === C ** D)
+            assert(target phi === D ** C)
+            assert(C ** D != D ** C)
+    	Text
+    	    @SUBSECTION "Tensor Associativity"@
+        Text
+            R = ZZ/11[a..d];
+            A = koszulComplex{a,b,c,d}
+            B = koszulComplex{a^2, b^2, c^2-d^2}
+            C = koszulComplex{b-1,c-1}
+            phi = tensorAssociativity(A, B, C);
+            assert isWellDefined phi
+            assert isComplexMorphism phi
+            assert(ker phi == 0 and coker phi == 0)
+            assert(source phi === A ** (B ** C))
+            assert(target phi === (A ** B) ** C)
+        Example
+            (A, B, C) = (A[3], B[-1], C[2]);
+            phi = tensorAssociativity(A, B, C);
+            assert isWellDefined phi
+            assert isComplexMorphism phi
+            assert(ker phi == 0 and coker phi == 0)
+            assert(source phi === A ** (B ** C))
+            assert(target phi === (A ** B) ** C)
+    	Text
+    	    @SUBSECTION "Hom swap"@
+        Text
+            First, we start with the version: $R$ is commutative, and
+            all the complexes are $R$-complexes.
+
+            For $A, B, C$ complexes over $R$, the {\bf Hom swap}
+            map is the $R$-complex morphism from
+            $\Hom_R(A, \Hom_R(B, C)) \to \Hom_R(B, \Hom_R(A, C)),$
+            defined as follows.  TODO: finish.
+        Text
+            First, we consider Hom-swap and adjunction for modules.
+        Example
+            R = ZZ/11[a..d];
+            C = cokernel matrix{{a,b,c}}
+            B = (cokernel matrix{{a,b,c},{b,c,d}}) ** R^{3}
+            A = image matrix{{a,b,c},{b,c,0}}
+            A = R^{0,1}
+            C = R^{100, 101, 102}
+            B = R^{10, 11, 12, 13}
+            Hom(A,C)
+            Hom(B,C)
+            HABC = Hom(A, Hom(B,C))
+            HBAC = Hom(B, Hom(A,C))
+            f = tensorCommutativity(dual A, dual B) ** id_C
+            source f === HABC
+            target f === HBAC
+        Example
+            R = ZZ/11[a..d];
+            A = koszulComplex{a,b,c,d}
+            B = koszulComplex{a^2, b^2, c^2-d^2}
+            C = koszulComplex{b-1,c-1}
+            E1 = Hom(A, Hom(B, C))
+            E2 = Hom(B, Hom(A, C))
+            E1.dd_2, E2.dd_2
+        Text
+    	    @SUBSECTION "Adjunction"@
+    SeeAlso
+///
+
+///
+    Key
+    Headline
+    Usage
+    Inputs
+    Outputs
+    Description
+        Text
         Example
     Caveat
     SeeAlso
@@ -4374,3 +4572,4 @@ doc ///
             TODO: email from Janina Letz on March 23, 2021, has some bugs in Complexes...
 ///
 
+end--
