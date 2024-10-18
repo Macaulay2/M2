@@ -5,6 +5,22 @@ set -e
 echo "-- Generating configure script"
 autoreconf --verbose --force --install
 
+# These files may not be created by older versions of autoconf
+if test ! -f config.guess
+then
+    cp -v $(automake --print-libdir)/config.guess .
+fi
+
+if test ! -f config.sub
+then
+    cp -v $(automake --print-libdir)/config.sub .
+fi
+
+if test ! -f install-sh
+then
+    cp -v $(automake --print-libdir)/install-sh .
+fi
+
 if test ! -f Macaulay2/editors/emacs/M2.el
 then
     if test -e ../.git
