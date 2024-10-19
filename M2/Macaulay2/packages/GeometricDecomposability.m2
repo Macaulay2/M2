@@ -486,7 +486,7 @@ oneStepGVD(Ideal, RingElement) := opts -> (I, y) -> (
         CyI := ideal apply(G, g -> getQ(g, z));
 
         -- check whether the intersection condition holds
-        isValid := if opts.UniversalGB then isValidOneStepFromUGB(G, (CyI, NyI), z, opts.AllowSub) else isValidOneStep(G, z, opts.AllowSub);
+        isValid := if opts.UniversalGB then isValidOneStepFromUGB(G, (CyI, NyI), z) else isValidOneStep(G, z);
         if not isValid then (
                 printIf(opts.Verbose, "Warning: not a valid geometric vertex decomposition");
                 );
@@ -648,21 +648,15 @@ isValidOneStep(List, RingElement) := (G, y) -> (
         gbTerms := G / terms;
         yDegreesByTerm := apply(gbTerms, L -> apply(L, m -> degree(y, m)));
 
-        if not allowingSub then (
-                yDegrees := unique flatten yDegreesByTerm;
-                yMaxDegree := max yDegrees;
-                return yMaxDegree <= 1;
-                );
+        yDegrees := unique flatten yDegreesByTerm;
+        yMaxDegree := max yDegrees;
+        return yMaxDegree <= 1;
 
-        yMaxDegreesByTerm := yDegreesByTerm / max;
-        yMax := max yMaxDegreesByTerm;
-        yOtherMaxDegrees := delete(0, delete(yMax, yMaxDegreesByTerm));
-        return (#yOtherMaxDegrees == 0);
         )
 
 
 isValidOneStepFromUGB = method(TypicalValue => Boolean)
-isValidOneStepFromUGB(List, Sequence, RingElement, Boolean) := (G, S, y, allowingSub) -> (
+isValidOneStepFromUGB(List, Sequence, RingElement) := (G, S, y) -> (
         -- G is a UGB for the ideal I it generates; S = (C, N), where C = C_{y, I} and N_{y, I}
         -- the previous check may not work for UGBs because it requires the GB to be reduced
         C := first S;
