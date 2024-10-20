@@ -12,7 +12,6 @@ AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 m4_include(m4/ax_compare_version.m4)
 m4_include(m4/ax_prog_cc_for_build.m4)
-m4_include(m4/ax_func_accept_argtypes.m4)
 m4_include(m4/relpaths.m4)
 m4_include(m4/gtest.m4)
 m4_include(m4/openmp.m4)
@@ -373,8 +372,6 @@ AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
-
-AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
 
 if test $host_os = mingw32
 then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
