@@ -203,7 +203,7 @@ getBasis (ZZ,DGAlgebra) := opts -> (homDegree,A) -> getBasis(homDegree,A.natural
 getBasis (ZZ,Ring) := opts -> (homDegree,R) -> (
    local retVal;
    myMap := map(R, R.cache.basisAlgebra);
-   tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit)) / myMap;
+   tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit, Variables => 0 .. numgens R-1)) / myMap;
    if tempList == {} then retVal = map((R)^1,(R)^0, 0) else
    (
       -- move this to an assert?
