@@ -33,6 +33,13 @@ Complex.synonym = "complex"
 ComplexMap.synonym = "map of complexes"
 
 --------------------------------------------------------------------
+-- Categories for which complexes are currently implemented --------
+--------------------------------------------------------------------
+-- Matrix and Module are added in m2/chaincomplexes.m2,
+-- SheafMap and CoherentSheaf are added later in Varieties.
+importFrom_Core { "isMorphism", "isAbelianCategory" }
+
+--------------------------------------------------------------------
 -- basic methods for chain complexes -------------------------------
 --------------------------------------------------------------------
 ring Complex := Ring => C -> C.ring
@@ -54,19 +61,18 @@ max Complex := ZZ => C -> max concentration C
 min Complex := ZZ => C -> min concentration C
 
 complexOptions = {Base => 0}
---complex = method(Options => {Base=>0})
 complex = method(Options => true)
 complex HashTable := Complex => complexOptions >> opts -> maps -> (
     spots := sort keys maps;
+    arrows := apply(spots, k -> maps#k);
     if #spots === 0 then
-      error "expected at least one matrix";
+      error "expected at least one map";
     if not all(spots, k -> instance(k,ZZ)) then
-      error "expected matrices to be labelled by integers";
-    if not all(spots, k -> instance(maps#k,Matrix)) then
-      error "expected hash table or list of matrices";
-    R := ring maps#(spots#0);
-    if not all(values maps, f -> ring f === R) then
-      error "expected all matrices to be over the same ring";
+      error "expected maps to be labelled by integers";
+    if not uniform arrows or not isMorphism arrows#0 then
+      error "expected hash table or list of maps";
+    if not same(ring \ arrows) then
+      error "expected all maps to be over the same ring";
     moduleList := new MutableHashTable;
     for k in spots do (
         if not moduleList#?(k-1) 
@@ -74,7 +80,8 @@ complex HashTable := Complex => complexOptions >> opts -> maps -> (
         moduleList#k = source maps#k;
         );
     C := new Complex from {
-           symbol ring => R,
+	symbol ring => ring arrows#0,
+	-- TODO: rename module to category agnostic term
            symbol module => new HashTable from moduleList,
            symbol concentration => (first spots - 1, last spots),
            symbol cache => new CacheTable
@@ -86,17 +93,16 @@ complex List := Complex => complexOptions >> opts -> L -> (
     -- L is a list of matrices or a list of modules
     if not instance(opts.Base, ZZ) then
       error "expected Base to be an integer";
-    if all(L, ell -> instance(ell,Matrix)) then (
+    if uniform L and isMorphism L#0 then (
         mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
         return complex(mapHash, opts)
         );
-    if all(L, ell -> instance(ell,Module)) then (
-        R := ring L#0;
-        if any(L, ell -> ring ell =!= R) then
-            error "expected modules all over the same ring";
+    if all(L, isAbelianCategory) then (
+	if not same(ring \ L) then
+	  error "expected objects all over the same ring";
         moduleHash := hashTable for i from 0 to #L-1 list opts.Base + i => L#i;
         C := new Complex from {
-            symbol ring => R,
+	    symbol ring => ring L#0,
             symbol concentration => (opts.Base, opts.Base + #L - 1),
             symbol module => moduleHash,
             symbol cache => new CacheTable
@@ -104,7 +110,7 @@ complex List := Complex => complexOptions >> opts -> L -> (
         C.dd = map(C,C,0,Degree=>-1);
         return C;
         );
-    error "expected a list of matrices or a list of modules";
+    error "expected a list of maps or objects from an abelian category";
     )
 complex Matrix := Complex => complexOptions >> opts -> M -> (
     complex({M}, opts)
@@ -837,6 +843,7 @@ homomorphism(ZZ, Matrix, Complex) := ComplexMap => (i, f, E) -> (
 --------------------------------------------------------------------
 -- Tensor products -------------------------------------------------
 --------------------------------------------------------------------
+
 tensor(Complex, Complex) := Complex => {} >> opts -> (C, D) -> (
     Y := youngest(C,D);
     if Y.cache#?(tensor,C,D) then return Y.cache#(tensor,C,D);
@@ -998,7 +1005,7 @@ resolutionMapPrivate(Complex, Boolean) := ComplexMap => opts -> (C, isEpi) -> (
       or C.cache.resolutionMap.cache.LengthLimit < opts.LengthLimit then (
         (lo,hi) := concentration C;
         local f;
-        lengthlimit := defaultLengthLimit(ring C, length C, opts.LengthLimit);
+        lengthlimit := defaultLengthLimit(ring C, hi - lo, opts.LengthLimit);
         if lo === hi then (
             -- if C has only one nonzero module, use the faster free resolution code
             -- which is also important for Yoneda ext.
@@ -1029,11 +1036,11 @@ resolutionMapPrivate(Complex, Boolean) := ComplexMap => opts -> (C, isEpi) -> (
             -- of the base case above.
             f = naiveTruncation(f,(lo,infinity));
             );
-        f.cache.LengthLimit = if length source f < lengthlimit then infinity else lengthlimit;
+        f.cache.LengthLimit = if -difference concentration source f < lengthlimit then infinity else lengthlimit;
         C.cache.resolutionMap = f;
         );
     fC := C.cache.resolutionMap;
-    if opts.LengthLimit < length source fC
+    if opts.LengthLimit < -difference concentration source fC
     then naiveTruncation(fC, (0, opts.LengthLimit))
     else fC
     )
@@ -1131,6 +1138,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
             );
         H.cache.yonedaExtension = liftmap;
         H.cache.yonedaExtension' = invmap;
+        H.cache.formation = FunctionApplication { Ext, (i, M, N) };
         H.cache.Ext = (i,M,N);
         H
         );
@@ -1154,7 +1162,7 @@ yonedaExtension Matrix := Complex => f -> (
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
     -- if g has a non-zero degree, we must twist the target to preserve homogeneity
     gdegree := degree g;
-    g = map(N ** (ring g)^gdegree, source g, g);
+    g = map(N ** (ring g)^{gdegree}, source g, g);
     if d <= 0 then error "Yoneda extension only defined for Ext^d module for d at least 1";
     h := dd^FM_d || g;
     P := coker h; -- FM_d --> FM_(d-1) ++ N --> P --> 0

@@ -358,6 +358,25 @@ TEST /// -- test of truncationPolyhedron with Nef option
   assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
 ///
 
+TEST /// -- test of inducedTruncationMap
+  debug needsPackage "Truncations"
+  S = QQ[x,y,z]
+  gbTrace = 2
+  M = image map(S^3, , {{x}, {y}, {z}})
+  f = inducedMap(S^3, M)
+  (tar, src) = (truncate(2, S^3), truncate(2, M))
+  g = inducedTruncationMap(tar, src, f)
+  assert isWellDefined g
+  assert(g   === truncate(2, f))
+  assert(tar === target g)
+  assert(src === source g)
+///
+
+TEST /// -- test of subtruncate
+  M = module(QQ[x,y])
+  assert(truncate(1, 2, id_M) == map(truncate(1, M), truncate(2, M), {{y, 0, 0}, {0, y, x}}))
+///
+
 end--
 
 restart
