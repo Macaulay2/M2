@@ -433,7 +433,7 @@ getDegNModule (ZZ,Ring,Ring) := (n,R,A) -> (
 deviations = method(TypicalValue=>Tally,Options=>{DegreeLimit=>3})
 deviations Ring := opts -> R -> (
   --tally degrees torAlgebra(R,GenDegreeLimit=>opts.DegreeLimit)
-  kRes := res(coker vars R, LengthLimit => opts.DegreeLimit);
+  kRes := freeResolution(coker vars R, LengthLimit => opts.DegreeLimit);
   deviations kRes
 )
 
@@ -513,7 +513,7 @@ torAlgebra Ring := opts -> R -> (
   n := 3;
   if opts.GenDegreeLimit != infinity then n = opts.GenDegreeLimit;
   baseRing := coefficientRing R;
-  kRes := res(coker vars R, LengthLimit => n);
+  kRes := freeResolution(coker vars R, LengthLimit => n);
   X := getSymbol("X");
   -- now build the degreeList and skewList out of the output from deviations
   RDevs := deviations(R,DegreeLimit=>opts.GenDegreeLimit);
@@ -2257,7 +2257,7 @@ doc ///
       HB = torAlgebra(R,S,GenDegreeLimit=>4,RelDegreeLimit=>8)
       numgens HB
       apply(5,i -> #(flatten entries getBasis(i,HB)))      
-      Mres = res(M, LengthLimit=>8)
+      Mres = freeResolution(M, LengthLimit=>8)
     Text
       Note that in this example, $Tor_*^R(S,k)$ has trivial multiplication, since the
       map from R to S is a Golod homomorphism by a theorem of Levin and Avramov.
@@ -2473,7 +2473,7 @@ doc ///
     Example
       R = ZZ/101[a,b,c,d]/ideal {a^3,b^3,c^3,d^3}
       A = degreesRing R
-      kRes = res(coker vars R, LengthLimit => 4)
+      kRes = freeResolution(coker vars R, LengthLimit => 4)
       pSeries = poincareN kRes
       devA = deviations(R,DegreeLimit=>5)
       devB = deviations(kRes,DegreeLimit=>5)
@@ -2504,7 +2504,7 @@ doc ///
       R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
       RDevs = deviations(R,DegreeLimit=>6)
       devPSeries = deviationsToPoincare(RDevs,DegreeLimit=>6)
-      pSeries = poincareN (res(coker vars R, LengthLimit=>6))
+      pSeries = poincareN (freeResolution(coker vars R, LengthLimit=>6))
       substitute(devPSeries,ring pSeries) == pSeries
 ///
 
@@ -3422,7 +3422,7 @@ doc///
    in the following example:
   Example
    R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
-   G = betti res (coker vars R, LengthLimit => 5)
+   G = betti freeResolution (coker vars R, LengthLimit => 5)
   Text
    It is a free graded-commutative divided power algebra on generator of each degree starting with 1.
    We can compute the beginning of the complex corresponding to the first 3 factors with as
@@ -3558,7 +3558,7 @@ assert(apply(maxDegree(A)+1, i -> prune HH_i(Add)) == {coker vars R,0,0,coker va
 TEST ///
 -- test 1 : differential tests
 R = ZZ/101[x,y,z, Degrees => {2,2,3}]
-kRes = res coker vars R
+kRes = freeResolution coker vars R
 kRes.dd_3
 A = koszulComplexDGA(R)
 d3 = A.dd_3
@@ -3609,7 +3609,7 @@ TorR1 = torAlgebra(R1,GenDegreeLimit=>4)
 devR1 = deviations(R1,DegreeLimit=>4)
 use R1
 M = coker matrix {{x^2*y^3*z^4}}
-Mres = res(M, LengthLimit => 7)
+Mres = freeResolution(M, LengthLimit => 7)
 R2 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 time TorR1R2 = torAlgebra(R1,R2,GenDegreeLimit=>5,RelDegreeLimit=>10)
 -- the multiplication is trivial, since the map R3 --> R4 is Golod
@@ -3785,7 +3785,7 @@ TEST ///
 S = QQ[x,y,z,u]
 I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
  -- you can see that the mult on the koszul homology will be trivial
-betti (A = res I)
+betti (A = freeResolution I)
 R = S/I
 assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
 assert(isGolod R == false)
@@ -3918,7 +3918,7 @@ devR1 = deviations R1
 devR2 = deviations R2
 poincR2 = deviationsToPoincare devR2
 coefficients(poincR2, Variables=>{first gens ring poincR2})
-res coker vars R2
+freeResolution coker vars R2
 R3 = ZZ/101[a,b,c,d,Degrees=>entries id_(ZZ^4)]/ideal{a^3,b^3,c^3,d^3,a^2*b^2*c^2*d^2}
 degrees R3
 devR3 = deviations R3
@@ -3991,7 +3991,7 @@ A = source M
 B = target M
 Mpush = pushForward(f,M)
 -- test functoriality of pushForward
-kSRes = res(coker matrix {{x,y,z,w}}, LengthLimit=>5)
+kSRes = freeResolution(coker matrix {{x,y,z,w}}, LengthLimit=>5)
 kSRes1push = pushForward(f,kSRes.dd_1)
 kSRes2push = pushForward(f,kSRes.dd_2)
 kSRes3push = pushForward(f,kSRes.dd_3)
@@ -4251,7 +4251,7 @@ restart
 loadPackage "DGAlgebras"
 Q = QQ[a,b,c,d,e,f,g,h,i]
 I = ideal (h^2-a*i,g^2-c*h,f^2-e*g,e*f-b*h,e^2-d*g,d*e-a*h,d^2-c*e,c*g-a*h,c*d-b*f,c^2-a*g,b*d-a*f,b^2-a*c)
-res coker gens I
+freeResolution coker gens I
 oo.dd
 R = Q/I
 A = koszulComplexDGA(R)
@@ -4280,7 +4280,7 @@ debug DGAlgebras
 R = QQ[x,y,z,w]/ideal{x^3,y^4,z^5}
 A = acyclicClosure(R,EndDegree=>1)
 time Add = toComplex(A,20);
-time kRes = res(coker vars R, LengthLimit => 20)
+time kRes = freeResolution(coker vars R, LengthLimit => 20)
 
 -- Homology
 restart
@@ -4288,7 +4288,7 @@ loadPackage "DGAlgebras"
 R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
 A3 = acyclicClosure(R3,EndDegree=>1)
 time apply(7, i -> time numgens prune homology(i,A3))
-time kRes = res(coker vars R3, LengthLimit=> 18)
+time kRes = freeResolution(coker vars R3, LengthLimit=> 18)
 time apply(17, i -> time HH_i(kRes));
 
 -- Tor algebras
@@ -4297,16 +4297,16 @@ loadPackage "DGAlgebras"
 R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
 time TorR3 = torAlgebra(R3)
 apply(16, i -> hilbertFunction(i,TorR3))
-time res(coker vars R3, LengthLimit => 15)
+time freeResolution(coker vars R3, LengthLimit => 15)
 R4 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 TorR4 = torAlgebra(R4,GenDegreeLimit=>8)
 apply(10, i -> hilbertFunction(i,TorR4))
-res(coker vars R4, LengthLimit => 9)
+freeResolution(coker vars R4, LengthLimit => 9)
 TorR3R4 = torAlgebra(R3,R4,GenDegreeLimit=>4,RelDegreeLimit=>10)
 reduceHilbert hilbertSeries TorR3R4
 use R3
 R4mod = coker matrix {{x^2*y^3*z^4}}
-res(R4mod, LengthLimit => 6)
+freeResolution(R4mod, LengthLimit => 6)
 
 -- Acyclic closures
 restart
