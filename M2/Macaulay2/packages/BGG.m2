@@ -62,7 +62,7 @@ tateResolution(Matrix, PolynomialRing, ZZ, ZZ) := Complex => (m,E,loDeg,hiDeg)->
      ofixed   :=  map(E^{(rank target o):bnd+1},
                 E^{(rank source o):bnd},
                 o);
-     res(coker ofixed, LengthLimit=>max(1,bnd-loDeg+1)));
+     freeResolution(coker ofixed, LengthLimit=>max(1,bnd-loDeg+1)));
 
 sortedBasis = (i,E) -> (
      m := basis(i,E);
@@ -230,7 +230,7 @@ directImageComplex Module := Complex => opts -> (M) -> (
      xm := regM * degree(S_0);
      phi := symmetricToExteriorOverA(N ** S^{xm});
      E := ring phi;
-     F := res( image phi, LengthLimit => max(1,1+regM));
+     F := freeResolution( image phi, LengthLimit => max(1,1+regM));
      F = E^{-xm} ** F[regM];
      F0 := degreeD(0, F);
      toA := map(coefficientRing E,E,DegreeMap=> i -> drop(i,1));
@@ -267,8 +267,8 @@ directImageComplex Matrix := ComplexMap =>  opts -> (f) -> (
      phiM := symmetricToExteriorOverA(M ** S^{xm});
      phiN := symmetricToExteriorOverA(N ** S^{xm});
      E := ring phiM;
-     FM := res( image phiM, LengthLimit => max(1,1+regMN));
-     FN := res( image phiN, LengthLimit => max(1,1+regMN));
+     FM := freeResolution( image phiM, LengthLimit => max(1,1+regMN));
+     FN := freeResolution( image phiN, LengthLimit => max(1,1+regMN));
      fMN := extend(FN, FM, truncfA ** E);
      fMN = E^{-xm} ** fMN[regMN];
      FM = E^{-xm} ** FM[regMN];
@@ -328,7 +328,7 @@ directImageComplex Complex := Complex => opts -> F -> (
      E := ring Ediffs_0;
      EtoA := map(A,E,DegreeMap=> i -> drop(i,1));     
 
-     Ereslen := apply(len+1, i -> res( image Ediffs_i, LengthLimit => len+1));
+     Ereslen := apply(len+1, i -> freeResolution( image Ediffs_i, LengthLimit => len+1));
      mapsE := apply(len, i -> map((Ereslen_i)_0, Ereslen_(i+1)_0, mapsA_i ** E));
      FE := apply(len, i -> extend(Ereslen_i, Ereslen_(i+1), mapsE_i));
 
@@ -346,7 +346,7 @@ directImageComplex Complex := Complex => opts -> F -> (
 	       if j == i+1 then ((FE_i)_(-regF-j)) else 
 	       map(CE0_i, CE1_j, 0)));
      Dmat := matrix D;
-     Eres := res(coker Dmat, LengthLimit => max(1,1+regF+len));
+     Eres := freeResolution(coker Dmat, LengthLimit => max(1,1+regF+len));
      dirIm := (EtoA degreeD(0,Eres))[regF+1-minF];
      --now truncate away the parts below zero and above 
      nonzero := positions(apply(min dirIm..max dirIm, i -> rank dirIm_i != 0), t -> t);
@@ -798,13 +798,13 @@ document {
      EXAMPLE lines /// 
           S = ZZ/32003[x_0..x_4]; 
 	  X = Proj S; 
-          ff = res coker map(S^{1:0},S^{3:-1,2:-2},{{x_0..x_2,x_3^2,x_4^2}}); 
+          ff = freeResolution coker map(S^{1:0},S^{3:-1,2:-2},{{x_0..x_2,x_3^2,x_4^2}}); 
 	  alpha = map(S^{1:-2},target ff.dd_3,{{1,4:0,x_0,2:0,x_1,0}})*ff.dd_3; 
 	  beta = ff.dd_4//syz alpha; 
 	  K = syz syz alpha|beta;
-	  fK = res prune coker K;
+	  fK = freeResolution prune coker K;
 	  s = random(target fK.dd_1,S^{1:-4,3:-5});
-	  ftphi = res prune coker transpose (fK.dd_1|s);
+	  ftphi = freeResolution prune coker transpose (fK.dd_1|s);
 	  I = ideal ftphi.dd_2;
 	  F = sheaf S^1/I; 
 	  cohomologyTable(F,-2,6)
@@ -847,7 +847,7 @@ document {
 	  alphad' = beilinson(alphad,S)
 	  alpha' = beilinson(alpha,S)
 	  F = prune homology(alphad',alpha');
-	  betti res F
+	  betti freeResolution F
 	  regularity F
 	  cohomologyTable(presentation F,E,-6,6)
      	  ///,
@@ -1021,7 +1021,7 @@ doc ///
      complex itself in this case.
     Example
      m = transpose D_(-1)
-     betti res coker m
+     betti freeResolution coker m
      (dual oo)[-3]
    SeeAlso
      directImageComplex
