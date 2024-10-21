@@ -236,7 +236,7 @@ layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
     L := null;
     cod := numcols ff;
     if cod <=1 then (
-	L = res M;
+	L = freeResolution M;
 --    	<<{rank L_0, rank L_1} << " in codimension "<< cod<<endl;	
         return (L, map(M,L_0,id_(L_0))));
     S := ring ff;
@@ -319,7 +319,7 @@ layeredResolution(Matrix, Module, ZZ) := opts -> (ff, M, len) ->(
     MS := pushForward(StoR, M);
     
     if cod == 0 then (
-    	L := res(M,LengthLimit => len);
+    	L := freeResolution(M,LengthLimit => len);
     	return (L, map(M, L_0, id_(L_0))));
     ff' := ff_{0..cod-2};
     R' := S/ideal ff';
@@ -561,7 +561,7 @@ cosyzygyRes (ZZ,Module) := (p,M)-> (
     --This is zero if the module
     --is annihilated by a nonzerodivisor. Makes most sense for
     --an MCM over a Gorenstein ring.
-    E:=res (transpose M, LengthLimit => p+1);
+    E:=freeResolution (transpose M, LengthLimit => p+1);
     complex apply(p+1, j->transpose E.dd_(p+1-j))
     )
 	     
@@ -628,7 +628,7 @@ lmfa(Matrix,Module) := opts -> (ff,M) ->(
     --MS will be the target of gamma
     --check that MS is MCM of the right codim
     if opts.Check == true then(
-    FS := res MS;
+    FS := freeResolution MS;
     if length FS != c then 
        error"module is not MCM mod the regular sequence");
     ---
@@ -1070,7 +1070,7 @@ highSyzygy Module := opts -> M0 ->(
     --bound, which is best possible.
     -- But if that's not good enough, use Optimism=>-1 etc
     len := 1+mfBound M0-opts#Optimism;
-    F := res(M0, LengthLimit => len);
+    F := freeResolution(M0, LengthLimit => len);
     coker F.dd_len)
 
 
@@ -1416,7 +1416,7 @@ exteriorTorModule(Matrix, Module) := (f,M) -> (
      S := ring M;
      n := numgens S;
      k := coefficientRing S;     
-     F := res M;
+     F := freeResolution M;
      H := makeHomotopies1(f,F);
      e := symbol e;
      E := k[e_0..e_(numcols f -1), SkewCommutative => true];
@@ -1444,7 +1444,7 @@ exteriorTorModule(Matrix,Module,Module) := (ff,M,N) ->(
     --this is NOT symmetric in the two factors.
     --NOTE:
     --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
-    Mres := res M;
+    Mres := freeResolution M;
     exteriorHomologyModule(ff, Mres**N)
     )
 
@@ -1468,7 +1468,7 @@ exteriorExtModule(Matrix, Module, Module) := (ff, M,N)->(
     --this is NOT symmetric in the two factors.
     --NOTE:
     --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
-    Mres := res M;
+    Mres := freeResolution M;
     exteriorHomologyModule(ff, Hom(Mres,N))
     )
 
@@ -1507,8 +1507,8 @@ S2(ZZ,Module) := Matrix => (b,M)-> (
 
 TateResolution = method()
 TateResolution(Module,ZZ,ZZ) := (M,low,high) ->(
-         d := transpose ((res(M, LengthLimit => high)).dd_high);
-	 F := res (coker d, LengthLimit =>(high-low+2));
+         d := transpose ((freeResolution(M, LengthLimit => high)).dd_high);
+	 F := freeResolution (coker d, LengthLimit =>(high-low+2));
          T := (complex reverse apply(high-low+1, j->transpose (F.dd_j)))[-low];
 	 T
          )
@@ -1677,10 +1677,10 @@ moduleAsExt(Module,Ring) := (M,R) ->(
     reg := regularity M;
     --truncate M at the regularity to get MM
     MM := minimalPresentation truncate(1+reg, M)**rr^{reg};
-    F := res MM;
+    F := freeResolution MM;
     m := length F;
     --now prepare the CI operators as maps of resolutions
-    K := res(coker vars R, LengthLimit => m+1);
+    K := freeResolution(coker vars R, LengthLimit => m+1);
     T1 := apply (m, i->makeT(ff, K, 2+i));
     T := apply (m, i->apply(c, j-> 
 	    map(K_i,
@@ -1963,7 +1963,7 @@ kk := coefficientRing R;
 n := numgens R;
 bar := map(Rbar,R);
 RM := pushForward(bar, Mbar); -- M as R-module
-RF := res RM;
+RF := freeResolution RM;
 if o.Check == true then (
     assert(isHomogeneous RM and (RF)_(n+1) == 0)
     );
@@ -2192,8 +2192,8 @@ if o.Check == true then(
     S' := ring EE; -- note that S' is the polynomial ring
     StoSbar := map(Sbar,S);
     ES := prune pushForward(StoSbar, E);
-    A := res ES;
-    B := res EE;
+    A := freeResolution ES;
+    B := freeResolution EE;
     assert all(length A+1, i-> sort degrees A_i == sort degrees B_i)
     );
 --and optionally move it back to the polynomial ring
@@ -2391,7 +2391,7 @@ Description
   ff = X*map(source X, , genericMatrix(S,a_(1,1),c,c));
   R = S/ideal ff;
   mbound = mfBound coker (R**X)
-  F = res(coker (R**X) , LengthLimit =>mbound+1);
+  F = freeResolution(coker (R**X) , LengthLimit =>mbound+1);
   M = coker F.dd_(mbound+1);
   MF = matrixFactorization(ff,M)
   netList BRanks MF
@@ -2408,12 +2408,12 @@ Description
   from the matrix factorization MF by the routine
   makeFiniteResolution(ff,MF).
  Example
-  betti res(M, LengthLimit => 7)
+  betti freeResolution(M, LengthLimit => 7)
   infiniteBettiNumbers(MF,7)
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF  
   G = makeFiniteResolution (ff,MF)
-  G' = res(pushForward(map(R,S),M))
+  G' = freeResolution(pushForward(map(R,S),M))
  Text
   The group of routines ExtModule, evenExtModule, oddExtmodule,
   extModuleData (which call the routine
@@ -2538,8 +2538,8 @@ doc ///
     Text
      The two versions of Ext appear to be the same up to change of variables:
     Example
-     A = res ES
-     B = res EE
+     A = freeResolution ES
+     B = freeResolution EE
      all(length A+1, i-> sort degrees A_i == sort degrees B_i)
     Text
      but they have apparently different annihilators
@@ -2863,7 +2863,7 @@ Description
   M = highSyzygy (R^1/ideal vars R);
   mf = matrixFactorization (ff, M)
   G = makeFiniteResolution(ff,mf)
-  F = res pushForward(map(R,S),M)
+  F = freeResolution pushForward(map(R,S),M)
   G.dd_1
   F.dd_1
   G.dd_2
@@ -2885,7 +2885,7 @@ Description
   G = makeFiniteResolution(ff,mf);
   codim ring G
   R1 = ring G
-  F = res(prune pushForward(map(R,R1),M), LengthLimit => 4)
+  F = freeResolution(prune pushForward(map(R,R1),M), LengthLimit => 4)
   betti F
   betti G
 
@@ -2970,7 +2970,7 @@ Description
   complexity M
   mf = matrixFactorization (ff, M)
   complexity mf
-  betti res (R^1/ideal"a2b2", LengthLimit=>10)
+  betti freeResolution (R^1/ideal"a2b2", LengthLimit=>10)
 SeeAlso
  matrixFactorization
  makeFiniteResolution
@@ -3079,7 +3079,7 @@ Description
   Ops = kk[x_1,x_2,x_3];
   MM = Ops^1/(x_1*ideal(x_2^2,x_3));
   N = moduleAsExt(MM,R);
-  betti res( N, LengthLimit => 10)
+  betti freeResolution( N, LengthLimit => 10)
   hfModuleAsExt(12,MM,3)
 Caveat
   The elements f_1..f_c must be homogeneous of the same degree.
@@ -3133,7 +3133,7 @@ Description
   Ops = kk[x_1,x_2,x_3];
   MM = Ops^1/(x_1*ideal(x_2^2,x_3));
   N = moduleAsExt(MM,R);
-  betti res( N, LengthLimit => 10)
+  betti freeResolution( N, LengthLimit => 10)
   hfModuleAsExt(12,MM,3)
 SeeAlso
  moduleAsExt
@@ -3286,9 +3286,9 @@ doc ///
      ff = f*random(source f, source f)
      R = S/ideal f
      M0 = R^1/ideal"x2z2,xyz"
-     betti res (M0, LengthLimit => 7)
+     betti freeResolution (M0, LengthLimit => 7)
      mfBound M0
-     M = betti res(highSyzygy M0, LengthLimit => 7)
+     M = betti freeResolution(highSyzygy M0, LengthLimit => 7)
      netList BRanks matrixFactorization(ff, highSyzygy M0)
     Text
      In this case as in all others we have examined, 
@@ -3414,7 +3414,7 @@ doc ///
      f = map(S^1, S^4, (i,j) -> S_j^3)
      R = S/ideal f;
      M = R^1/ideal"ab2+cd2";     
-     betti (F = res(M, LengthLimit => 5))
+     betti (F = freeResolution(M, LengthLimit => 5))
      E = ExtModuleData M;
      E_2     
      E_3          
@@ -3534,7 +3534,7 @@ doc ///
      ff = matrix"x3,y3,z3";
      R = S/ideal ff;
      M = coker matrix"x,y,z;y,z,x";
-     betti (F = res(M, LengthLimit => 3))
+     betti (F = freeResolution(M, LengthLimit => 3))
      T = makeT(ff,F,3);
      netList T
      isHomogeneous T_2
@@ -3570,7 +3570,7 @@ doc ///
 	  I1 = ideal "x3y"
 	  R1 = S/I1
 	  M1 = R1^1/ideal(x^2)
-	  betti res (M1, LengthLimit =>5)
+	  betti freeResolution (M1, LengthLimit =>5)
 	  E = ExtModule M1
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eeven = evenExtModule(M1)
@@ -3582,7 +3582,7 @@ doc ///
 	  I2 = ideal"x3,yz"
 	  R2 = S/I2
 	  M2 = R2^1/ideal"x2,y,z"
-	  betti res (M2, LengthLimit =>10)	  
+	  betti freeResolution (M2, LengthLimit =>10)	  
 	  E = ExtModule M2
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eeven = evenExtModule M2
@@ -3629,7 +3629,7 @@ doc ///
 	  I2 = ideal"x3,yz"
 	  R2 = S/I2
 	  M2 = R2^1/ideal"x2,y,z"
-	  betti res (M2, LengthLimit =>10)	  
+	  betti freeResolution (M2, LengthLimit =>10)	  
 	  E = ExtModule M2
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eeven = evenExtModule M2
@@ -3666,7 +3666,7 @@ doc ///
 	  I2 = ideal"x3,yz"
 	  R2 = S/I2
 	  M2 = R2^1/ideal"x2,y,z"
-	  betti res (M2, LengthLimit =>10)	  
+	  betti freeResolution (M2, LengthLimit =>10)	  
 	  E = ExtModule M2
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eodd = oddExtModule M2
@@ -3730,7 +3730,7 @@ Description
  Example
   kk=ZZ/101
   S = kk[a,b,c,d]
-  F = res ideal vars S  
+  F = freeResolution ideal vars S  
   f = matrix{{a,b,c}}
   homot = makeHomotopies(f,F,2)
  Text
@@ -3746,7 +3746,7 @@ Description
   kk= ZZ/32003;
   S = kk[a,b,c,d];
   M = S^1/(ideal"a2,b2,c2,d2");
-  F = res M
+  F = freeResolution M
   setRandomSeed 0
   f = random(S^1,S^{2:-5});
   homot = makeHomotopies(f,F,5)
@@ -3861,7 +3861,7 @@ Description
   SE = prune target S2map;
   extra = prune coker S2map;
   KE = prune ker S2map;
-  betti res(Mb, LengthLimit => 10)
+  betti freeResolution(Mb, LengthLimit => 10)
   apply (5, i-> hilbertFunction(i, KE))
   apply (5, i-> hilbertFunction(i, E))
   apply (5, i-> hilbertFunction(i, SE))
@@ -4019,9 +4019,9 @@ Description
   MF = matrixFactorization(ff,M);
   netList BRanks MF
   netList bMaps MF
-  betti res(M, LengthLimit => 7)
+  betti freeResolution(M, LengthLimit => 7)
   infiniteBettiNumbers (MF,7)
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF
 SeeAlso
   finiteBettiNumbers
@@ -4058,13 +4058,13 @@ Description
   ff = matrix"au,bv"
   R = S/ideal ff
   M0 = R^1/ideal"a,b"
-  F = res(M0, LengthLimit =>3)
+  F = freeResolution(M0, LengthLimit =>3)
   M = coker F.dd_3;
   MF = matrixFactorization(ff,M);
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF
   infiniteBettiNumbers(MF,5)
-  betti res (M, LengthLimit => 5)
+  betti freeResolution (M, LengthLimit => 5)
 SeeAlso
   matrixFactorization
   infiniteBettiNumbers
@@ -4099,13 +4099,13 @@ Description
   ff = matrix"au,bv"
   R = S/ideal ff
   M0 = R^1/ideal"a,b"
-  F = res(M0, LengthLimit =>3)
+  F = freeResolution(M0, LengthLimit =>3)
   M = coker F.dd_3;
   MF = matrixFactorization(ff,M);
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF
   infiniteBettiNumbers(MF,5)
-  betti res (M, LengthLimit => 5)
+  betti freeResolution (M, LengthLimit => 5)
 SeeAlso
   matrixFactorization
   finiteBettiNumbers
@@ -4165,17 +4165,17 @@ Description
   R = S/ideal f
   p = map(R,S)
   M = coker map(R^2, R^{3:-1}, {{a,b,c},{b,c,a}})			       
-  betti (FF =res( M, LengthLimit =>6))
+  betti (FF =freeResolution( M, LengthLimit =>6))
   MS = prune pushForward(p, coker FF.dd_6);
   T = exteriorTorModule(f,MS);
   betti T
-  betti res (PT = prune T, LengthLimit => 4)
+  betti freeResolution (PT = prune T, LengthLimit => 4)
   ann PT
   PT0 = image (inducedMap(PT,cover PT)* ((cover PT)_{0..12}));
   PT1 = image (inducedMap(PT,cover PT)* ((cover PT)_{13..30}));
-  betti res(prune PT0, LengthLimit => 4)
-  betti res(prune PT1, LengthLimit => 4)
-  betti res(prune PT, LengthLimit => 4)
+  betti freeResolution(prune PT0, LengthLimit => 4)
+  betti freeResolution(prune PT1, LengthLimit => 4)
+  betti freeResolution(prune PT, LengthLimit => 4)
 SeeAlso
   makeModule
 ///
@@ -4224,15 +4224,15 @@ Description
   R = S/ideal f
   p = map(R,S)
   M = coker map(R^2, R^{3:-1}, {{a,b,c},{b,c,a}})			       
-  betti (FF =res( M, LengthLimit =>6))
+  betti (FF =freeResolution( M, LengthLimit =>6))
   MS = prune pushForward(p, coker FF.dd_6);
   resFld := pushForward(p, coker vars R);
   T = exteriorTorModule(f,MS);
   E = exteriorExtModule(f,MS);
   hf(-4..0,E)
-  betti res MS
-  betti res (PE = prune E, LengthLimit => 6)
-  betti res (PT = prune T, LengthLimit => 6)
+  betti freeResolution MS
+  betti freeResolution (PE = prune E, LengthLimit => 6)
+  betti freeResolution (PT = prune T, LengthLimit => 6)
   
   E1 = prune exteriorExtModule(f, MS, resFld);
   ring E1
@@ -4565,7 +4565,7 @@ Description
  Example
   E = ZZ/101[a,b,c,d, SkewCommutative => true]
   P = E^1/ideal(a*b,c)
-  betti res(P, LengthLimit => 5)
+  betti freeResolution(P, LengthLimit => 5)
   hf(0..3, P)
   S = ZZ/101[x,y,z,w]
   betti BGGL(P,S)
@@ -4686,7 +4686,7 @@ doc ///
      M = R^1/ideal"a,bc"
      k = 1
      m = k+5
-     F = res(M, LengthLimit => m)
+     F = freeResolution(M, LengthLimit => m)
      syzygies = apply(1..m, i->coker F.dd_i);
      t1 = makeT(ff,F,k+4);
      t2 = makeT(ff,F,k+2);
@@ -4740,7 +4740,7 @@ doc ///
      S = ZZ/101[x,y,z]
      R = S/ideal"x3,y3"
      M = R^1/ideal(x,y,z)
-     F = res(M, LengthLimit => 4)
+     F = freeResolution(M, LengthLimit => 4)
      ff = matrix{{z^3}}
      R1 = R/ideal ff
      betti F
@@ -4789,7 +4789,7 @@ doc ///
     Example     
      x = symbol x
      S = ZZ/101[x_0..x_4]
-     F = res coker vars S
+     F = freeResolution coker vars S
      ff = matrix{{x_0^2,x_1^3}}     
      R = S/(ideal ff)
      len = 10
@@ -4824,7 +4824,7 @@ doc ///
      S = ZZ/101[a..f]
      R = S/ideal"a3,b3"
      M = coker vars R     
-     F = res(M, LengthLimit => 7)
+     F = freeResolution(M, LengthLimit => 7)
      betti F     
      ff = matrix"c3"
      R1 = R/ideal ff
@@ -4877,7 +4877,7 @@ doc ///
      M = syzygyModule(2,coker vars R)
      (FF, aug) = layeredResolution(ff,M,5)
      betti FF
-     betti res(M, LengthLimit=>5)
+     betti freeResolution(M, LengthLimit=>5)
      C = complex flatten {{aug} |apply(4, i-> FF.dd_(i+1))}
      apply(4, i ->FF.dd_(i+1))
      apply(5, j-> prune HH_j C == 0)
@@ -4888,7 +4888,7 @@ doc ///
      (GG, aug) = layeredResolution(ff,MS)
      (GG, aug) = layeredResolution(ff,MS, Verbose =>true)
      betti GG
-     betti res MS
+     betti freeResolution MS
      C = complex flatten {{aug} |apply(length GG -1, i-> GG.dd_(i+1))}    
      apply(length GG +1 , j-> prune HH_j C == 0)     
 ///
@@ -4980,7 +4980,7 @@ doc///
      pushing it forward to S and seeing that it has a linear
      resolution of length 2:
     Example
-     betti res pushForward(map(R,S),M)
+     betti freeResolution pushForward(map(R,S),M)
     Text
      We compute the layered resolution and the associated homotopies and augmentation,
      giving the matrix factorization:
@@ -5199,8 +5199,8 @@ EE = Ext(Mbar,K);
 S' = ring EE -- note that S' is the polynomial ring
 
 --The two versions of Ext appear to be the same up to change of variables:
-A = res ES
-B = res EE
+A = freeResolution ES
+B = freeResolution EE
 assert all(length A+1, i-> sort degrees A_i == sort degrees B_i)
 --but they have apparently different annihilators
 ann EE
@@ -5358,21 +5358,21 @@ len = 4
 ff = matrix{{}}
 M = S1^1
 (FF, aug) = layeredResolution(ff,M,len)
-betti FF == betti res(M, LengthLimit=>len)
+betti FF == betti freeResolution(M, LengthLimit=>len)
 --codim 1
 use S1
 ff = matrix"a3" 
 R1 = S1/ideal ff
 M = syzygyModule(3,coker vars R1)
 (FF, aug) = layeredResolution(ff,M,len)
-betti FF == betti res(M, LengthLimit=>len)
+betti FF == betti freeResolution(M, LengthLimit=>len)
 --codim 2
 use S1
 ff = matrix"a3, b3" 
 R1 = S1/ideal ff
 M = syzygyModule(2,coker vars R1)
 (FF, aug) = layeredResolution(ff,M,len)
-assert(betti FF == betti res(M, LengthLimit=>len))
+assert(betti FF == betti freeResolution(M, LengthLimit=>len))
 --codim 3
 use S1
 len = 5
@@ -5380,7 +5380,7 @@ ff = matrix"a3, b3, c3"
 R1 = S1/ideal ff
 M = syzygyModule(2,coker vars R1)
 (FF, aug) = layeredResolution(ff,M,len)
-assert(betti FF == betti res(M, LengthLimit=>len))
+assert(betti FF == betti freeResolution(M, LengthLimit=>len))
 C = complex flatten {{aug} |apply(len-1, i-> FF.dd_(i+1))}
 scan(len, j-> assert(prune HH_j C == 0))
 ///
@@ -5392,8 +5392,8 @@ setRandomSeed 0
 ff = ff1*random(source ff1, source ff1)
 R = S/(ideal ff)
 M = coker matrix {{R_0,R_1,R_2},{R_1,R_2,R_0}}
-F = res(coker vars R, LengthLimit => 3)
-F0 = res (M, LengthLimit =>3)
+F = freeResolution(coker vars R, LengthLimit => 3)
+F0 = freeResolution (M, LengthLimit =>3)
 makeT(ff, F0, 4)
 min F0
 --generateAssertions"makeT(ff, F0, 2)"
@@ -5408,7 +5408,7 @@ assert( (makeT(ff, F0, 2)) === {map((R)^{{-3},{-3}},(R)^{{-3},{-3},{-3},{-3},{-3
 S = ZZ/101[x,y,z]
 R = S/ideal"x3,y3"
 M = R^1/ideal(x,y,z)
-F = res(M, LengthLimit => 4)
+F = freeResolution(M, LengthLimit => 4)
 ff = matrix{{z^3}}
 FF = Shamash(ff,F,4)
 scan(length FF -1, i->assert(0==(HH_(i+1)FF)))
@@ -5451,7 +5451,7 @@ R = S/ideal ff;
 M = highSyzygy (R^1/ideal vars R)
 mf = matrixFactorization (ff, M)
 G = makeFiniteResolution(ff,mf)
-F = res pushForward(map(R,S),M)
+F = freeResolution pushForward(map(R,S),M)
 assert(betti G == betti F)
 ///
 
@@ -5476,7 +5476,7 @@ R = S/ideal ff
 M0 = R^1/ideal"a,b"
 assert(2==regularity ExtModule M0)
 len = 2
-F = res(M0, LengthLimit =>len)
+F = freeResolution(M0, LengthLimit =>len)
 MF = matrixFactorization(ff, coker F.dd_len, Check=>true)
 use S
 assert(BRanks MF=={{2,2}})
@@ -5600,7 +5600,7 @@ TEST///
   assert(BRanks mf == {{2, 2}, {1, 2}})
   G = makeFiniteResolution(ff,mf);
   R1 = ring G
-  F = res prune pushForward(map(R,R1),M);
+  F = freeResolution prune pushForward(map(R,R1),M);
   assert(betti F ==  betti G)
 ///
 ///TEST
@@ -5608,7 +5608,7 @@ TEST///
      ff = matrix"x3,y3,z3";
      R = S/ideal ff;
      M = coker matrix"x,y,z;y,z,x";
-     betti (F = res(M, LengthLimit => 4))
+     betti (F = freeResolution(M, LengthLimit => 4))
 assert( (makeT(ff,F,3)) === {map(R^{{-4},{-4},{-4}},R^{{-4},{-4},{-4},{-4},{-4},{-4}},{{0, 0, 0, 0, 1,
       --------------------------------------------------------------------------------------------------------
       0}, {0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0,
@@ -5667,7 +5667,7 @@ S = kk[a,b,c];
 ff = matrix{{a^2,b^2}};
 R = S/ideal ff;
 red = map(R,S);
-F = res (ideal (vars R)_{0..2}, LengthLimit => 3);
+F = freeResolution (ideal (vars R)_{0..2}, LengthLimit => 3);
 MS2 = pushForward(red, coker F.dd_3);
 MS1 = pushForward(red, coker F.dd_2);
 
@@ -5680,7 +5680,7 @@ T1 = exteriorTorModule(ff, MS2);
 assert(apply(10, d->rank source basis(d, T1))==
     apply(10, d->rank source basis(Tor_d(MS2,coker vars ring MS2))))
 
-Ex1 = exteriorHomologyModule(ff, (coker vars ring ff)**dual res MS2);
+Ex1 = exteriorHomologyModule(ff, (coker vars ring ff)**dual freeResolution MS2);
 assert(apply(10, d->rank source basis(-d, Ex1))=={0, 0, 5, 7, 1, 3, 0, 0, 0, 0});
 ///
 
@@ -5695,14 +5695,14 @@ toe presentation t)
 ff = matrix{{a^2,b^2}}
 R = S/ideal ff
 red = map(R,S)
-F = res (ideal (vars R)_{0..2}, LengthLimit => 7)
+F = freeResolution (ideal (vars R)_{0..2}, LengthLimit => 7)
 M = apply(7, i-> coker F.dd_(i+1));
 MS = M/(Mi -> pushForward(red, Mi));
 
-C = (res MS_1)**MS_0;
+C = (freeResolution MS_1)**MS_0;
 T0 = apply(7, i -> exteriorTorModule(ff,MS_i));
 T1 = apply(7, i -> exteriorTorModule(ff, MS_i, coker vars S));
-T2 = apply(7, i -> exteriorHomologyModule(ff, (res MS_i)**coker vars S));
+T2 = apply(7, i -> exteriorHomologyModule(ff, (freeResolution MS_i)**coker vars S));
 assert( (apply(T0, t->isHomogeneous t)) === {true,true,true,true,true,true,true} );
        assert( (apply(T1, t->isHomogeneous t)) === {true,true,true,true,true,true,true} );
        assert( (apply(T2, t->isHomogeneous t)) === {true,true,true,true,true,true,true} );
@@ -5754,15 +5754,15 @@ R = S/ideal ff;
 q = map(R,S);
 M0= coker random(R^2, R^{4:-1});
 M = pushForward(q,syzygyModule(3,M0));
-assert(betti (layeredResolution(ff,M))_0 == betti res(M, LengthLimit => 3))
+assert(betti (layeredResolution(ff,M))_0 == betti freeResolution(M, LengthLimit => 3))
 ///
 
 TEST///
 S = ZZ/101[x,y,z]
 ff = matrix {apply(gens S, x->x^3)}
-F = res (ideal gens S)^2
+F = freeResolution (ideal gens S)^2
 R = S/ideal ff
-F = res(coker vars R, LengthLimit => 3)
+F = freeResolution(coker vars R, LengthLimit => 3)
 makeHomotopiesOnHomology(vars R, F)
 ///
 
