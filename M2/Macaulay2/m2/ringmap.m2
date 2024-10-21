@@ -14,8 +14,6 @@ needs "mutablemat.m2"
 -- should do something about the degree map here
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
-workable = f -> try (f(); true) else false
-
 -----------------------------------------------------------------------------
 -- RingMap type declarations and basic methods
 -----------------------------------------------------------------------------
@@ -85,7 +83,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 		    " into a degree of length ", toString degreeLength R);
 	       opts.DegreeMap
 	       )
-	  else if workable (() -> promote({},S,R)) then (d -> first promote({d},S,R))
+	  else if (pr:=lookup(promote,List,S,R)) =!= null then (d -> first pr({d},S,R))
 	  else if degreeLength R === degreeLength S then identity
 	  else if degreeLength S === 0 or degreeLength R === 0 then degmap0 degreeLength R
 	  else (
@@ -125,7 +123,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
-		    if A === R or isMember(A, R.baseRings) then (
+		    if A === R or isPromotable(A, R) then (
 			 -- we can promote
 			 mE = mE | promote(vars A, R);
 			 if instance(A,GaloisField) and A.rawGaloisField then (
@@ -568,6 +566,18 @@ map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f
 map(Module,Module,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,ring M ** N,f),o)
 map(Module,Nothing,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,,f),o)
 map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,map(M,cover M,1),o)
+
+--
+setupPromote (RingMap,Ring,Ring,Function) := lookup(setupPromote,Function,Ring,Ring,Function)
+setupPromote (RingMap,Ring,Ring) := (f,R,S) -> setupPromote(f,R,S,f.cache.DegreeMap)
+-- note that promote(Module,R,S) := (M,R,S) -> f ** M would make more sense, but promote only works with free modules anyway
+setupPromote RingMap := f -> setupPromote(f,source f,target f)
+setupPromote (Ring,Ring) := (R,S) -> setupPromote map(S,R)
+
+setupLift (RingMap,Ring,Ring) := (f,R,S) -> -- f is a partial inverse to the promote map
+    setupLift( a -> ( b := f a; if promote(b,R) == a then b else error "cannot lift" ), R,S,f.cache.DegreeMap);
+
+setupLift RingMap := f -> setupLift(f,source f,target f)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
