@@ -191,7 +191,7 @@ resLengthThreeTorAlgClass Complex := F -> (
 )
 
 resLengthThreeTorAlgClass Ideal := I -> (
-   resLengthThreeTorAlgClass res I
+   resLengthThreeTorAlgClass freeResolution I
 )
 
 
@@ -263,7 +263,7 @@ tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
 
 TEST ///
 Q = QQ[x,y,z];
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+F = freeResolution ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 G = resLengthThreeAlg F;
 assert ( e_1*e_2 == y*f_1 )
 assert ( e_1*f_4 == -x*g_1 )
@@ -271,7 +271,7 @@ assert ( e_1*f_4 == -x*g_1 )
 
 TEST ///
 Q = QQ[x,y,z];
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+F = freeResolution ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 G = resLengthThreeAlg F
 assert ( e_1*e_2 == y*f_1 )
 assert ( e_1*f_4 == -x*g_1 )
@@ -304,7 +304,7 @@ assert( resLengthThreeTorAlgClass I === "G(2)" )
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
-assert( resLengthThreeTorAlgClass res I === "H(0,0)" )
+assert( resLengthThreeTorAlgClass freeResolution I === "H(0,0)" )
 ///
 
 TEST ///
@@ -344,7 +344,7 @@ assert(e_3*e_5===sub(0,T))
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x*y, y*z, x^3, y^3-x*z^2,x^2*z, z^3)
-G = resLengthThreeAlg res I
+G = resLengthThreeAlg freeResolution I
 assert( e_1*e_2 == y*f_1 )
 assert( e_1*e_3 == x*f_2 )
 assert( e_1*e_4 == -x*z*f_1 + y*f_3 - z*f_5 )
@@ -409,7 +409,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"describe A",
 	"e_1*e_2",
 	"e_1*f_2",
@@ -422,7 +422,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"F = resLengthThreeAlg(res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3), {a,b,c} )",
+	"F = resLengthThreeAlg(freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3), {a,b,c} )",
 	"describe F",
 	},
 
@@ -431,7 +431,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeAlg res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3)",
+	"A = resLengthThreeAlg freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3)",
 	"describe A",
 	},
 
@@ -440,7 +440,7 @@ document{
   EXAMPLE {
       "P = ZZ[x,y,z];",
       "Q = P/ideal(4_P);",
-      "A = resLengthThreeAlg res(ideal (x^2,y^2,z^2), LengthLimit => 4)",
+      "A = resLengthThreeAlg freeResolution(ideal (x^2,y^2,z^2), LengthLimit => 4)",
       "describe A"
 	},
         
@@ -472,7 +472,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeTorAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeTorAlg freeResolution ideal (x^2,y^2,z^2)",
 	"describe A",
 	"e_1*e_2",
 	"e_1*f_2",
@@ -485,7 +485,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"A = resLengthThreeTorAlg (res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
+	"A = resLengthThreeTorAlg (freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
 	"describe A",
 	},
 
@@ -494,7 +494,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeTorAlg ( res(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
+	"A = resLengthThreeTorAlg ( freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
 	"describe A",
 	},
     
@@ -530,7 +530,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"multTableOneOne A",
 	"netList multTableOneOne A"
 	},
@@ -557,7 +557,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"netList multTableOneOne (A, Labels => false)",
 	},
 }
@@ -583,7 +583,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"multTableOneOne (A, Compact => true)",
 	"netList multTableOneOne(A, Compact => true)",
 	},
@@ -616,7 +616,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"multTableOneTwo A",
 	"netList multTableOneTwo A"
 	},
@@ -643,7 +643,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"netList multTableOneOne (A, Labels => false)",
 	"netList multTableOneTwo (A, Labels => false)",
 	},
@@ -670,7 +670,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"netList multTableOneTwo (A, Labels => false)",
 	},
 }
