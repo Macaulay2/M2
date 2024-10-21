@@ -1,4 +1,4 @@
-testpkg = temporaryFileName() | ".m2"
+testpkg = minimizeFilename(temporaryFileName() | ".m2")
 testpkg << ///newPackage("TestPackage")
 beginDocumentation()
 TEST "assert Equation(1 + 1, 2)"
@@ -12,7 +12,7 @@ assert Equation(toString pkgtest, "assert Equation(1 + 1, 2)")
 assert Equation(net pkgtest, "TestInput[" | testpkg | ":3:5-3:32]")
 beginDocumentation()
 expectedCode = DIV{
-    new FilePosition from (minimizeFilename testpkg, 3, 5, 3, 32, 3, 5),
+    new FilePosition from (testpkg, 3, 5, 3, 32, 3, 5),
     ": --source code:",
     PRE{CODE{"class" => "language-macaulay2",
 	    "TEST \"assert Equation(1 + 1, 2)\""}}}
