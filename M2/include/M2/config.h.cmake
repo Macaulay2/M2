@@ -4,28 +4,6 @@
 #ifndef _M2_CONFIG_H
 #define _M2_CONFIG_H
 
-// TODO: remove the following five? Currently they are hardcoded.
-// See https://gist.github.com/stalkerg/7a1e891a887b65823ef9.
-
-// one of: 'int' 'unsigned int' 'unsigned long long'
-/* type of arg 1 of accept() */
-#define ACCEPT_TYPE_ARG1 int
-
-// one of: 'struct sockaddr *' 'void *'
-/* type of arg 2 of accept() */
-#define ACCEPT_TYPE_ARG2 struct sockaddr *
-
-// one of: 'socklen_t *' 'size_t *' 'unsigned int *' 'int *'
-/* type of arg 3 of accept() */
-#define ACCEPT_TYPE_ARG3 socklen_t *
-
-// one of: 'int' 'unsigned long long'
-/* type of return value of accept() */
-#define ACCEPT_TYPE_RETURN int
-
-/* socket length type used by accept() */
-#define SOCKLEN_T socklen_t
-
 /* machine hardware type */
 #define ARCH "${CMAKE_SYSTEM_PROCESSOR}"
 

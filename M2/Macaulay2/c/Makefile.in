@@ -1,3 +1,5 @@
+# In this directory, we compile "scc1", the D to C translator
+
 # @configure_input@
 ############################## main targets
 ifneq (@ETAGS@,false)
@@ -5,10 +7,6 @@ all: tags
 endif
 all: scc1 scc-core.o
 include ../../include/config.Makefile
-
-# In this directory, we compile "scc1", the D to C translator, which we want to run
-# on the "build" machine, in the sense of autoconf.  So we do not want the cross-compiling compiler:
-# CC = @ CC_FOR_BUILD @
 
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
