@@ -99,13 +99,9 @@ map(Complex, Complex, ZZ) := ComplexMap => opts -> (D, C, j) -> (
         result.cache.isCommutative = true;
         return result
         );
-    if j === 1 then (
-        if C == D and (opts.Degree === null or opts.Degree === 0) then
-            return id_C;
-        error "expected source and target to be the same";
-        );
-    error "expected integer to be zero or one";
-    )
+    if C == D and (opts.Degree === null or opts.Degree === 0) then
+        return j * id_C;
+    error "expected 0 or source and target to be the same")
 
 map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
     deg := if opts.Degree === null then degree f else opts.Degree;
@@ -1373,8 +1369,7 @@ horseshoeResolution(Matrix, Matrix) := Sequence => opts -> (g,f) -> (
     horseshoeResolution(complex{g,f}, opts)
     )  
 
-connectingExtMap = method(Options => {Concentration => null,
-        LengthLimit => infinity})
+connectingExtMap = method(Options => {LengthLimit => infinity, Concentration => null})
 connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
     F := freeResolution(M, LengthLimit => opts.LengthLimit);
     connectingMap(Hom(F, g), Hom(F, f), Concentration => opts.Concentration)
