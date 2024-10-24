@@ -29,6 +29,18 @@ cmake-appleclang:
 		-DBUILD_NATIVE=off \
 		../../../..
 
+cmake-clang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-clang
+	cd builds.tmp/cmake-clang; CC=/opt/homebrew/opt/llvm/bin/clang CXX=/opt/homebrew/opt/llvm/bin/clang++ cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`" \
+		-DBUILD_DOCS=on \
+		-DBUILD_NATIVE=off \
+		../../../..
+
 cmake-appleclang-notbb:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/cmake-appleclang-notbb
