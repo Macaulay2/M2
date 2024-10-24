@@ -1549,7 +1549,7 @@ nakayamaAut FreeAlgebraQuotient := opts -> B -> (
    X := matrix entries transpose splitElement sp;
    Y := matrix entries transpose splitElement cycleElement sp;
    -- should multiply by (-1)^(gldim + 1) here, but this is expensive to compute and should be known by the user.
-   -- the map P defined below should satify X = YP where Y is the matrix after cycling
+   -- the map P defined below should satisfy X = YP where Y is the matrix after cycling
    -- and X is the matrix representation of the original superpotential.
    P := (X // Y);
    -- if the algebra is quadratic, mult by (-1)^(word length sp + 1)
