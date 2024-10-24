@@ -1707,9 +1707,95 @@ doc ///
          This function uses the superpotential to compute the Nakayama
 	 automorphism of an m-Koszul AS regular algebra B.  For example,
 	 the Nakayama automorphism of the commutative polynomial ring is trivial:
+         As a Groebner basis may need to be performed, one may pass the
+         strategy as an optional argument.  The "Naive" strategy is used
+         here as the default Groebner basis strategy is not compatible with
+         coefficients not over a finite field, so passing this option
+         helps suppress certain warnings.
       Example
+         kk = QQ
+         R = skewPolynomialRing(kk,1_kk,{x,y,z})
+         nak = nakayamaAut(R, Strategy => "Naive")
+      Text
+         In contrast, the Nakayama automorphism of a skew polynomial
+         ring is given in terms of the skewing parameters:
+      Example
+         ll = frac(QQ[a,b,c])
+         M = matrix {{1,a,b},{a^(-1),1,c},{b^(-1),c^(-1),1}}
+	 S = skewPolynomialRing(ll,M,{x,y,z})
+         nak2 = nakayamaAut(S, Strategy => "Naive")
+      Text
+	 One may also find the Nakayama automorphism corresponding
+         to a twisted superpotential, although this will give a ring
+         map on the ambient tensor product rather than the quotient.
+      Example
+         wR = superpotential(R, Strategy => "Naive")
+         A = ambient R
+         nak3 = nakayamaAut wR
+   SeeAlso
+      superpotential
 ///
 
+doc ///
+   Key
+     superpotential
+     (superpotential, FreeAlgebraQuotient)
+   Headline
+     Computes the (twisted) superpotential of an m-Koszul AS regular algebra
+   Usage
+     w = superpotential B
+   Inputs
+     B : FreeAlgebraQuotient
+   Outputs
+     w : RingElement
+   Description
+      Text
+         This function uses the Koszul dual of the algebra to compute
+         the superpotential of an m-Koszul AS regular algebra.  The
+         method is laid out in Dubois-Violette's original paper on
+	 derivation-quotient algebras.  The basic algorithm is as follows:
+         Since the algebra is m-Koszul, its homogeneous dual is isomorphic
+         to the Ext algebra of the algebra, which is Frobenius since the
+         algebra is AS regular.  Suppose the "top form" of the Frobenius
+	 algebra is in degree m.  Then given any monomial of degree m
+	 in the ambient tensor algebra of the Koszul dual, its image
+         in the Koszul dual is a scalar multiple of this top form.  This
+         provides a functional from an appropriate tensor power, and the
+         values of this functional are the coefficients of the superpotential.
+      
+	 For an easy example, the superpotential of the commutative polynomial
+         ring is the "determinant form"; that is, it is the orbit sum over
+	 the symmetric group of the product of the variables, with coefficient
+	 given by the sign of the permutation.
+      Example
+         kk = QQ
+         R = skewPolynomialRing(kk,1_kk,{x,y,z,w})
+         nak = superpotential(R, Strategy => "Naive")
+      Text
+         Skew polynomial rings with general skewing factors can also
+         be considered.
+      Example
+         ll = frac(QQ[a,b,c])
+         M = matrix {{1,a,b},{a^(-1),1,c},{b^(-1),c^(-1),1}}
+	 S = skewPolynomialRing(ll,M,{x,y,z})
+         wS = superpotential(S, Strategy => "Naive")
+      Text
+         As well as any quadratic AS regular algebra, such as
+	 Sklyanin algebras.
+      Example
+         T = threeDimSklyanin(QQ,{p,q,r})
+         ideal T
+         wT = superpotential(T, Strategy => "Naive")
+      Text
+         Cubic AS-regular algebra of GK dimension three may also
+         be considered
+      Example
+         A = kk <| u,v |>
+         I = ideal (u^2*v + v*u^2, v^2*u + u*v^2 )
+         Igb = NCGB(I, 10, Strategy => "Naive")
+         U = A/I
+         wU = superpotential(U, Strategy => "Naive")
+///
 
 -*
 
